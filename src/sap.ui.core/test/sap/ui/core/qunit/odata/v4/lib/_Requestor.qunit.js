@@ -86,7 +86,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("request", function (assert) {
-		var oPayload = {"foo" : 42},
+		var oChangedPayload = {"foo" : 42},
+			oPayload = {},
 			oPromise,
 			fnOnCreateGroup = sinon.spy(),
 			oRequestor = _Requestor.create(sServiceUrl, undefined, {
@@ -95,9 +96,11 @@ sap.ui.require([
 			oResult = {},
 			fnSubmit = sinon.spy();
 
+		this.mock(_Requestor).expects("cleanPayload")
+			.withExactArgs(oPayload).returns(oChangedPayload);
 		this.mock(jQuery).expects("ajax")
 			.withExactArgs(sServiceUrl + "Employees?foo=bar", {
-				data : JSON.stringify(oPayload),
+				data : JSON.stringify(oChangedPayload),
 				headers : sinon.match({
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 				}),
@@ -401,6 +404,7 @@ sap.ui.require([
 					"MIME-Version" : "1.0"
 				}
 			},
+			oCleanedPayload = {},
 			oRequestor = _Requestor.create("/Service/", {"_foo" : "_bar"}, {"sap-client" : "111"}),
 			oRequestPayload = {},
 			sResponseContentType = "multipart/mixed; boundary=foo",
@@ -414,8 +418,11 @@ sap.ui.require([
 				"status" : 403
 			};
 
-		this.mock(_Batch).expects("serializeBatchRequest").twice()
+		this.mock(_Requestor).expects("cleanBatch").twice()
 			.withExactArgs(sinon.match.same(oRequestPayload))
+			.returns(oCleanedPayload);
+		this.mock(_Batch).expects("serializeBatchRequest").twice()
+			.withExactArgs(sinon.match.same(oCleanedPayload))
 			.returns(oBatchRequest);
 		this.mock(_Batch).expects("deserializeBatchResponse").once()
 			.withExactArgs(sResponseContentType, sinon.match.same(oResponsePayload))
@@ -904,7 +911,7 @@ sap.ui.require([
 					"MIME-Version" : "1.0"
 				}
 			},
-			aBatchRequests = [1],
+			aBatchRequests = [{}],
 			aExpectedResponses = [],
 			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"}),
 			oResult = "abc",
@@ -1364,6 +1371,57 @@ sap.ui.require([
 				assert.strictEqual(oRequestor.mBatchQueue["$parked.$auto"], undefined);
 			});
 		}, undefined);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("cleanPayload", function (assert) {
+		var oUnchanged = {
+				"foo" : "bar"
+			},
+			oPostData = {
+				"foo" : "bar",
+				"a@$ui5.b" : "c",
+				"@$ui51" : "bar",
+				"@$ui5.option" : "baz",
+				"@$ui5.transient" : true
+			},
+			oChangedPostData = {
+				"foo" : "bar",
+				"@$ui51" : "bar",
+				"a@$ui5.b" : "c"
+			};
+
+		assert.strictEqual(_Requestor.cleanPayload(undefined), undefined);
+		assert.strictEqual(_Requestor.cleanPayload(oUnchanged), oUnchanged);
+
+		this.spy(jQuery, "extend");
+
+		assert.deepEqual(_Requestor.cleanPayload(oPostData), oChangedPostData);
+		assert.strictEqual(oPostData["@$ui5.option"], "baz");
+		assert.strictEqual(oPostData["@$ui5.transient"], true);
+
+		sinon.assert.calledOnce(jQuery.extend);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("cleanBatch", function (assert) {
+		var oBody1 = {},
+			oBody2 = {
+				"@$ui5.foo" : "bar"
+			},
+			oChangedBody2 = {},
+			oRequestorMock = this.mock(_Requestor),
+			aRequests = [[{body : oBody1}], {method : "FOO", body : oBody2}],
+			aResult = [[{body : oBody1}], {method : "FOO", body : oChangedBody2}];
+
+		oRequestorMock.expects("cleanPayload")
+			.withExactArgs(sinon.match.same(oBody1)).returns(oBody1);
+		oRequestorMock.expects("cleanPayload")
+			.withExactArgs(sinon.match.same(oBody2)).returns(oChangedBody2);
+
+		// code under test
+		assert.strictEqual(_Requestor.cleanBatch(aRequests), aRequests);
+		assert.deepEqual(aRequests, aResult);
 	});
 
 	//*********************************************************************************************
