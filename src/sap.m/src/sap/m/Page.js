@@ -234,7 +234,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		};
 
     Page.prototype.onAfterRendering = function () {
-		  jQuery.sap.delayedCall(10, this, this._adjustFooterPadding);
+      jQuery.sap.delayedCall(10, this, this._adjustFooterPadding);
       jQuery.sap.delayedCall(10, this, this._adjustFooterWidth);
     };
 
@@ -400,7 +400,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		};
 
 		Page.prototype._adjustFooterPadding = function() {
-				if(!this.getShowFooter() || !this.getFooter() || !sap.ui.Device.browser.safari) {
+				if (!this.getShowFooter() || !this.getFooter() || !sap.ui.Device.browser.safari) {
 					return;
 				}
 				var $footer = jQuery(this.getDomRef()).find(".sapMPageFooter").last();
