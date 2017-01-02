@@ -26,10 +26,6 @@
 				</SearchField>
 			</Toolbar>
 		</subHeader>
-		<footer>
-			<Toolbar>
-			</Toolbar>
-		</footer>
 		<content>
 			<PullToRefresh
 				id="pullToRefresh"
