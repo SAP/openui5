@@ -55,7 +55,6 @@ function(jQuery, Test, ElementEnablementTest) {
 	 * @override
 	 */
 	LibraryEnablementTest.prototype.run = function() {
-		var that = this;
 		this._aResult = [];
 		var oTestData = this.getTestData() || {};
 		var sLibraryName = this.getLibraryName();
@@ -106,7 +105,7 @@ function(jQuery, Test, ElementEnablementTest) {
 
 
 		return fnIterate().then(function(aResults) {
-			var mResult = that.createSuite("Library Enablement Test");
+			var mResult = this.createSuite("Library Enablement Test");
 
 			aResults.forEach(function(mElementTestResult) {
 				var mChild = mElementTestResult.children[0];
@@ -119,10 +118,10 @@ function(jQuery, Test, ElementEnablementTest) {
 				}
 			});
 
-			mResult = that.aggregate(mResult);
+			mResult = this.aggregate(mResult);
 
 			return mResult;
-		});
+		}.bind(this));
 
 
 	};

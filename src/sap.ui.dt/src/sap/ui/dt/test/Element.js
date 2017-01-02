@@ -95,13 +95,11 @@ function(jQuery, ElementUtil, OverlayRegistry) {
 	 * @return {map} result object
 	 */
 	ElementTest.getAggregationsInfo = function(oElement) {
-		var that = this;
-
 		var mAggregationTests = {};
 
 		ElementUtil.iterateOverAllPublicAggregations(oElement, function(oAggregation) {
-			mAggregationTests[oAggregation.name] = that.getAggregationInfo(oElement, oAggregation.name);
-		});
+			mAggregationTests[oAggregation.name] = this.getAggregationInfo(oElement, oAggregation.name);
+		}.bind(this));
 
 		return mAggregationTests;
 	};

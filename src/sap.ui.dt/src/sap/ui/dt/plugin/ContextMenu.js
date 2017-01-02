@@ -120,16 +120,15 @@ sap.ui.define([
 	 * @private
 	 */
 	ContextMenu.prototype._onItemSelected = function(oEvent) {
-		var that = this;
 		var sId = oEvent.getParameter("item").data("id");
 		this._aMenuItems.some(function(oItem) {
 			if (sId === oItem.id) {
-				var oDesignTime = that.getDesignTime();
+				var oDesignTime = this.getDesignTime();
 				var aSelection = oDesignTime.getSelection();
 				oItem.handler(aSelection);
 				return true;
 			}
-		});
+		}, this);
 	};
 
 	/**

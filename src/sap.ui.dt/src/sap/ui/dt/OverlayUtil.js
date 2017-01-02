@@ -205,16 +205,14 @@ sap.ui.define([
 			// get next sibling in the same aggregation
 			if (iIndex !== aAggregationOverlays.length - 1) {
 				return aAggregationOverlays[iIndex + 1];
-			} else {
+			} else if (iIndex === aAggregationOverlays.length - 1) {
 				// get next sibling from next aggregation in the same parent
-				if (iIndex === aAggregationOverlays.length - 1) {
-					var oParent = oOverlay.getParentElementOverlay();
-					aAggregationOverlays = oParent.getAggregationOverlays();
-					for (iIndex = aAggregationOverlays.indexOf(oParentAggregationOverlay) + 1; iIndex < aAggregationOverlays.length; iIndex++) {
-						var aOverlays = aAggregationOverlays[iIndex].getChildren();
-						if (aOverlays.length) {
-							return aOverlays[0];
-						}
+				var oParent = oOverlay.getParentElementOverlay();
+				aAggregationOverlays = oParent.getAggregationOverlays();
+				for (iIndex = aAggregationOverlays.indexOf(oParentAggregationOverlay) + 1; iIndex < aAggregationOverlays.length; iIndex++) {
+					var aOverlays = aAggregationOverlays[iIndex].getChildren();
+					if (aOverlays.length) {
+						return aOverlays[0];
 					}
 				}
 			}
@@ -236,16 +234,14 @@ sap.ui.define([
 			// get previous sibling from the same aggregation
 			if (iIndex > 0) {
 				return aAggregationOverlays[iIndex - 1];
-			} else {
+			} else if (iIndex === 0) {
 				// get previous sibling from previous aggregation in the same parent
-				if (iIndex === 0) {
-					var oParent = oOverlay.getParentElementOverlay();
-					aAggregationOverlays = oParent.getAggregationOverlays();
-					for (iIndex = aAggregationOverlays.indexOf(oParentAggregationOverlay) - 1; iIndex >= 0; iIndex--) {
-						var aOverlays = aAggregationOverlays[iIndex].getChildren();
-						if (aOverlays.length) {
-							return aOverlays[aOverlays.length - 1];
-						}
+				var oParent = oOverlay.getParentElementOverlay();
+				aAggregationOverlays = oParent.getAggregationOverlays();
+				for (iIndex = aAggregationOverlays.indexOf(oParentAggregationOverlay) - 1; iIndex >= 0; iIndex--) {
+					var aOverlays = aAggregationOverlays[iIndex].getChildren();
+					if (aOverlays.length) {
+						return aOverlays[aOverlays.length - 1];
 					}
 				}
 			}
@@ -322,28 +318,24 @@ sap.ui.define([
 	 *
 	 */
 	OverlayUtil.iterateOverlayElementTree = function(oElementOverlay, fnCallback) {
-		var that = this;
-
 		fnCallback(oElementOverlay);
 
 		oElementOverlay.getAggregationOverlays().forEach(function(oAggregationOverlay) {
 			oAggregationOverlay.getChildren().forEach(function(oChildOverlay) {
-				that.iterateOverlayElementTree(oChildOverlay, fnCallback);
-			});
-		});
+				this.iterateOverlayElementTree(oChildOverlay, fnCallback);
+			}, this);
+		}, this);
 	};
 
 	/**
 	 *
 	 */
 	OverlayUtil.iterateOverlayTree = function(oOverlay, fnCallback) {
-		var that = this;
-
 		fnCallback(oOverlay);
 
 		oOverlay.getChildren().forEach(function(oChildOverlay) {
-			that.iterateOverlayTree(oChildOverlay, fnCallback);
-		});
+			this.iterateOverlayTree(oChildOverlay, fnCallback);
+		}, this);
 	};
 
 

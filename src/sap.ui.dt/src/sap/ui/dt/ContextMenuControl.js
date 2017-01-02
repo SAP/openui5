@@ -80,8 +80,6 @@ sap.ui.define([
 	 * @private
 	 */
 	ContextMenuControl.prototype.setMenuItems = function(aMenuItems, oTargetOverlay) {
-		var that = this;
-
 		this.destroyItems();
 
 		aMenuItems.forEach(function(oItem) {
@@ -103,9 +101,9 @@ sap.ui.define([
 				if ((oItem.startSection && typeof (oItem.startSection) === "boolean" ) || (typeof (oItem.startSection) === "function" && oItem.startSection(oTargetOverlay.getElementInstance()))) {
 					oMenuItem.setStartsSection(true);
 				}
-				that.addItem(oMenuItem);
+				this.addItem(oMenuItem);
 			}
-		});
+		}, this);
 		return this;
 	};
 
