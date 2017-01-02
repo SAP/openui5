@@ -7,12 +7,12 @@
 	{
 		"CategoryName" : "Desktop Computers",
 		"Category" : "DC",
-		"NumberOfProducts" : 4
+		"NumberOfProducts" : 5
 	},
 	{
 		"CategoryName" : "Flat Screens",
 		"Category" : "FS",
-		"NumberOfProducts" : 2
+		"NumberOfProducts" : 3
 	},
 	{
 		"CategoryName" : "Keyboards",
@@ -40,9 +40,9 @@
 		"NumberOfProducts" : 7
 	},
 	{
-	"CategoryName" : "Computer System Accessories",
-	"Category" : "CSA",
-	"NumberOfProducts" : 8
+		"CategoryName" : "Computer System Accessories",
+		"Category" : "CSA",
+		"NumberOfProducts" : 7
 	},
 	{
 		"CategoryName" : "Graphics Card",

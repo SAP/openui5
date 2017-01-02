@@ -83,6 +83,19 @@ sap.ui.define([
 
 		onCartButtonPress :  function () {
 			this._router.navTo("cart");
+		},
+
+		onAvailabilityFilterToggle : function (oEvent) {
+			var oList = this.getView().byId("productList");
+			var oBinding = oList.getBinding("items");
+			var oStatusFilter = new Filter("status", FilterOperator.EQ, "A");
+
+			if(oEvent.getParameter("pressed")) {
+				oBinding.filter([oStatusFilter]);
+			}
+			else {
+				oBinding.filter(null);
+			}
 		}
 	});
 });

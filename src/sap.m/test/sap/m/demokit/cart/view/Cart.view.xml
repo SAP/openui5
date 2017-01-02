@@ -22,7 +22,7 @@
 					text="{
 						path : 'cartProducts>/cartEntries',
 						formatter : '.formatter.totalPrice'
-					}" />
+					} EUR" />
 				<ToolbarSpacer/>
 				<Button
 					id="proceedButton"
