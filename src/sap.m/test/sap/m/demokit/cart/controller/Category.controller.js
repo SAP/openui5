@@ -14,22 +14,28 @@ sap.ui.define([
 	return Controller.extend("sap.ui.demo.cart.controller.Category", {
 		formatter : formatter,
 
-		onInit : function () {
+		onInit: function () {
 			var oComponent = this.getOwnerComponent();
+
 			this._router = oComponent.getRouter();
 			this._router.getRoute("category").attachMatched(this._loadCategory, this);
+			this._router.getRoute("product").attachMatched(this._loadCategory, this);
 		},
 
-		_loadCategory : function(oEvent) {
+		_loadCategory: function(oEvent) {
 			var oProductList = this.getView().byId("productList");
 			this._changeNoDataTextToIndicateLoading(oProductList);
 			var oBinding = oProductList.getBinding("items");
 			oBinding.attachDataReceived(this.fnDataReceived, this);
 			var sId = oEvent.getParameter("arguments").id;
 			this._sProductId = oEvent.getParameter("arguments").productId;
-			this.getView().byId("page").setTitle(sId);
-			var oFilter = new Filter("Category", FilterOperator.EQ, sId);
-			oBinding.filter([ oFilter ]);
+
+			this.getView().bindElement({
+				path : "/ProductCategories('" + sId + "')",
+				parameters: {
+					expand: "Products"
+				}
+			});
 		},
 
 		_changeNoDataTextToIndicateLoading: function (oList) {

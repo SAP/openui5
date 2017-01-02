@@ -1081,7 +1081,7 @@
 	},
 	{
 		"ProductId": "HT-1115",
-		"Category": "TK",
+		"Category": "TC",
 		"MainCategory": "Computer Components",
 		"TaxTarifCode": "1",
 		"SupplierName": "Red Point Stores",
@@ -1099,7 +1099,7 @@
 	},
 	{
 		"ProductId": "HT-1116",
-		"Category": "TK",
+		"Category": "TC",
 		"MainCategory": "Computer Components",
 		"TaxTarifCode": "1",
 		"SupplierName": "Red Point Stores",
@@ -1117,7 +1117,7 @@
 	},
 	{
 		"ProductId": "HT-1117",
-		"Category": "TK",
+		"Category": "TC",
 		"MainCategory": "Computer Components",
 		"TaxTarifCode": "1",
 		"SupplierName": "Technocom",
@@ -1171,7 +1171,7 @@
 	},
 	{
 		"ProductId": "HT-1137",
-		"Category": "FT",
+		"Category": "FS",
 		"MainCategory": "Computer Components",
 		"TaxTarifCode": "1",
 		"SupplierName": "Technocom",
@@ -1207,7 +1207,7 @@
 	},
 	{
 		"ProductId": "HT-1210",
-		"Category": "PCs",
+		"Category": "DC",
 		"MainCategory": "Computer Systems",
 		"TaxTarifCode": "1",
 		"SupplierName": "Technocom",
