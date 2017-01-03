@@ -1,0 +1,18 @@
+/* ============================ */
+/* CSS for control sap.m/Token  */
+/* High Contrast Black theme    */
+/* ============================ */
+
+html.sap-desktop .sapMToken:focus {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -3px;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMToken:focus {
+		.sapMTokenText:before {
+			border: 0.125rem dashed @sapUiContentFocusColor; //dashed only in IE due to visual issues with dotted - ticket 1670468323
+		}
+	}
+}
