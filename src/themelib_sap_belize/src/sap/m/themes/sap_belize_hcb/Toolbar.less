@@ -1,0 +1,46 @@
+/* ============================== */
+/* CSS for control sap.m/Toolbar  */
+/* High Contrast Black theme      */
+/* ============================== */
+
+/* Info Toolbar Context */
+.sapMTB-Info-CTX.sapMTB {
+	height: 1.75rem;
+	padding: 0 .25rem 0 .5rem;
+	margin: 0.125rem 0.1875rem;
+	border: 0.125rem solid @sapUiGroupTitleBorderColor;
+	border-radius: 0.3125rem;
+}
+
+.sapMTB-Info-CTX.sapMTBActive:focus {
+	outline: 0.125rem dotted @sapUiContentContrastFocusColor;
+	outline-offset: -0.1875rem;
+}
+
+/* IE ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"].sap-desktop {
+	.sapMTB-Info-CTX.sapMTBActive:focus {
+		outline: none;
+		position: relative;
+	}
+	.sapMTB-Info-CTX.sapMTBActive:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: calc(~'100% - 0.0625rem');
+		height: calc(~'100% - 0.0625rem');
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.125rem dotted @sapUiContentContrastFocusColor;
+		pointer-events: none;
+	}
+}
+
+/* HCB Additional Styles */
+.sapMTB-Solid-CTX.sapMTB {
+	border: 1px solid @sapUiGroupTitleBorderColor;
+}
+
+.sapMFooter-CTX.sapMTB {
+	border-top: 1px solid @sapUiPageFooterBorderColor;
+}
