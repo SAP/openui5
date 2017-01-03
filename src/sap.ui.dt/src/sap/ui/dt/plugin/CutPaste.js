@@ -103,11 +103,14 @@ sap.ui.define([
 	CutPaste.prototype._onKeyDown = function(oEvent) {
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 
-		if ((oEvent.keyCode === jQuery.sap.KeyCodes.X) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (oEvent.ctrlKey === true)) {
+		// on macintosh os cmd-key is used instead of ctrl-key
+		var bCtrlKey = sap.ui.Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey;
+
+		if ((oEvent.keyCode === jQuery.sap.KeyCodes.X) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (bCtrlKey === true)) {
 			// CTRL+X
 			this.cut(oOverlay);
 			oEvent.stopPropagation();
-		} else if ((oEvent.keyCode === jQuery.sap.KeyCodes.V) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (oEvent.ctrlKey === true)) {
+		} else if ((oEvent.keyCode === jQuery.sap.KeyCodes.V) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (bCtrlKey === true)) {
 			// CTRL+V
 			this.paste(oOverlay);
 			oEvent.stopPropagation();
