@@ -1643,6 +1643,18 @@
 			strictEqual(oLastListItem.getTitle(), 'Filter text B', 'Last item is not "Remove Filter"');
 		});
 
+		module("Miscellaneous");
+
+		test("Setting any property does not prevent internal popover to be destroyed ", function(){
+			var oVSP = new sap.m.ViewSettingsPopover({tooltip: "Hello"});
+			oVSP.placeAt('qunit-fixture');
+
+			sap.ui.getCore().applyChanges();
+			oVSP.destroy();
+
+			equal(oVSP._popover, null, "After destroy, no internal _popover instance should be available");
+		});
+
 	</script>
 </head>
 <body id="body" class="sapUiBody">
