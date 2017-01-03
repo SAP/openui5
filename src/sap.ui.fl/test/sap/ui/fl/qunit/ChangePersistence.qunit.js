@@ -113,10 +113,10 @@ jQuery.sap.require("sap.m.Button");
 	QUnit.test("loadChangesMapForComponent shall return the a map of changes for the component", function(assert) {
 
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
-		    {
-		    	fileName:"change1",
-		    	fileType: "change",
-		    	selector: { id: "controlId" }
+			{
+				fileName:"change1",
+				fileType: "change",
+				selector: { id: "controlId" }
 			},
 			{
 				fileName:"change2",
@@ -137,14 +137,46 @@ jQuery.sap.require("sap.m.Button");
 			assert.ok(mChanges);
 			assert.ok(mChanges["controlId"]);
 			assert.ok(mChanges["anotherControlId"]);
-			assert.strictEqual(mChanges["controlId"].length, 2);
-			assert.strictEqual(mChanges["anotherControlId"].length, 1);
+			assert.equal(mChanges["controlId"].length, 2);
+			assert.equal(mChanges["anotherControlId"].length, 1);
 			assert.ok(mChanges["controlId"][0] instanceof Change, "Change is instanceof Change" );
 			assert.ok(mChanges["controlId"][1] instanceof Change, "Change is instanceof Change" );
 			assert.ok(mChanges["anotherControlId"][0] instanceof Change, "Change is instanceof Change" );
 			assert.ok(mChanges["controlId"].some(function(oChange){return oChange.getId() === "change1";}));
 			assert.ok(mChanges["controlId"].some(function(oChange){return oChange.getId() === "change2";}));
 			assert.ok(mChanges["anotherControlId"].some(function(oChange){return oChange.getId() === "change3";}));
+		});
+	});
+
+	QUnit.test("deleteChanges shall remove the given change from the map", function(assert) {
+
+		var that = this;
+
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+			{
+				fileName:"change1",
+				fileType: "change",
+				selector: { id: "controlId" }
+			},
+			{
+				fileName:"change2",
+				fileType: "change",
+				selector: { id: "controlId" }
+			},
+			{
+				fileName:"change3",
+				fileType: "change",
+				selector: { id: "anotherControlId" }
+			}
+		]}}));
+
+		return this.oChangePersistence.loadChangesMapForComponent().then(function(fnGetChangesMap) {
+			var mChanges = fnGetChangesMap();
+			var oChangeForDeletion = mChanges["controlId"][1]; // second change for 'controlId' shall be removed
+			that.oChangePersistence.deleteChange(oChangeForDeletion);
+			assert.equal(mChanges["controlId"].length, 1, "'controlId' has only one change in the map");
+			assert.equal(mChanges["controlId"][0].getId(), "change1", "the change has the id 'change1'");
+			assert.equal(mChanges["anotherControlId"].length, 1, "'anotherControlId' has still one change in the map");
 		});
 	});
 
@@ -286,12 +318,6 @@ jQuery.sap.require("sap.m.Button");
 		// REVISE There might be more elegant implementation
 		var oChangeContent1, oChangeContent2, lrepConnectorMock;
 
-		var createSlowPromise = function(){
-			return new Promise(function(resolve){
-				setTimeout(function(){resolve();}, 100);
-			});
-		};
-
 		lrepConnectorMock = this.lrepConnectorMock;
 		lrepConnectorMock.create = function(aChanges){
 			assert.equal(aChanges.length, 2, "both changes should be passed within one call");
@@ -420,7 +446,7 @@ jQuery.sap.require("sap.m.Button");
 		var oChange = this.oChangePersistence.addChange(oChangeContent);
 
 		//Call CUT
-	    this.oChangePersistence.deleteChange(oChange);
+		this.oChangePersistence.deleteChange(oChange);
 
 		var aDirtyChanges = this.oChangePersistence.getDirtyChanges();
 		assert.strictEqual(aDirtyChanges.length, 0);
