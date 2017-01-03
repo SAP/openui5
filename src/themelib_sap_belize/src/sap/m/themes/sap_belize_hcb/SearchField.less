@@ -1,0 +1,103 @@
+/* ================================== */
+/* CSS for control sap.m/SearchField  */
+/* High Contrast Black theme          */
+/* ================================== */
+
+.sapMSFDisabled > .sapMSFF {
+	background: @sapUiFieldDisabledBackground;
+	border-color: @sapUiFieldDisabledBorderColor;
+	color: @sapUiContentDisabledTextColor;
+	font-weight: normal;
+	-webkit-text-fill-color: @sapUiContentDisabledTextColor;
+}
+
+.sapMFocus > .sapMSFF {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -3px;
+}
+
+/* fix for IE focus outline */
+html[data-sap-ui-browser^="ie"] .sapMFocus > .sapMSFF {
+	outline: none;
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		display: block;
+		width: 100%;
+		height: 100%;
+		border: 0.125rem dotted @sapUiContentFocusColor;
+		box-sizing: border-box;
+		pointer-events: none;
+	}
+}
+
+.sapMHeader-CTX .sapMBarChild > .sapMSFF {
+	border-color: @sapUiFieldBorderColor;
+}
+
+/* custom buttons */
+.sapMSFB {
+	box-sizing: border-box;
+	vertical-align: middle;
+	border-width: 1px;
+	border-left: 1px solid transparent;
+	cursor: pointer;
+}
+
+.sapMFocus>.sapMSFF>.sapMSFB {
+	color: @sapUiContentIconColor;
+}
+
+/* button highlight on hover/press */
+html.sap-desktop .sapMSFB:hover,
+.sapMSFB:active {
+	/* Needs repeating statements because of IE interpretation of :focus */
+	border-width: 0 0 0 1px;
+	background-color: @sapUiButtonHoverBackground;
+	border-left-color: @sapUiButtonHoverBorderColor;
+	border-left-style: solid;
+}
+
+.sapMFocus>.sapMSFF>.sapMSFB.sapMSFBA {
+	background-color: @sapUiButtonActiveBackground;
+	color: @sapUiContentIconColor;
+	border-left: 1px solid @sapUiButtonActiveBorderColor;
+}
+
+.sapMSFR {
+	border-right: 1px solid transparent;
+}
+
+.sapMFocus>.sapMSFF>.sapMSFR:active,
+.sapMSFR:active,
+.sapMSFB.sapMSFR:hover {
+	border-right: 1px solid @sapUiButtonActiveBorderColor;
+	border-left: 1px solid @sapUiButtonActiveBorderColor;
+	background-color: @sapUiButtonActiveBackground;
+}
+
+/* active state colors */
+.sapMSFI:focus {
+	color: @sapUiFieldTextColor;
+}
+
+/*grouping is not allowed here*/
+.sapMSFI::-webkit-input-placeholder {
+	font-style:	   normal;
+}
+
+.sapMSFI:-ms-input-placeholder {
+	font-style:	   normal;
+}
+
+.sapMSFI::-moz-placeholder {
+	font-style:	   normal;
+}
+
+/* custom placeholder if not natively supported (IE9) */
+.sapMSF>.sapMSFF>.sapMSFPlaceholder {
+	font-style: normal;
+}

@@ -1,0 +1,55 @@
+/* ================================== */
+/* CSS for control sap.m/RadioButton  */
+/* High Contrast Black theme          */
+/* ================================== */
+
+.sapMRbB {
+	height: 2.875rem;
+	width: 2.875rem;
+	padding: 1px; /* using padding here so that margin won't collide */
+}
+
+.sapMRbHasLabel:focus {
+	outline: none;
+}
+
+.sapMRb:focus:before {
+	border: .125rem dotted @sapUiContentFocusColor;
+}
+
+.sapMRbHoverable:hover,
+.sapMRb.sapMRbBTouched .sapMRbBOut {
+	background-color: @sapUiSelected;
+}
+
+/* Selected */
+
+.sapMRbSel .sapMRbBInn {
+	background-color: @sapUiContentIconColor;
+}
+
+/* Value states */
+
+.sapMRbErr .sapMRbBOut {
+  background-color: @sapUiFieldInvalidBackground;
+  border-style: dashed;
+}
+
+.sapMRbWarn .sapMRbBOut {
+  border-style: dashed;
+}
+
+/* Disabled */
+
+.sapMRbDis.sapMRbSel .sapMRbBInn {
+  background-color: @sapUiFieldDisabledBorderColor;
+}
+
+.sapMRbDis .sapMRbBOut {
+  background-color: @sapUiFieldDisabledBackground;
+  border-color: @sapUiFieldDisabledBorderColor;
+}
+
+.sapMRbDis .sapMLabel {
+	color: @sapUiContentDisabledTextColor;
+}
