@@ -41,6 +41,7 @@ sap.ui.define([
 		},
 		mSupportedParameters = {
 			annotationURI : true,
+			autoExpandSelect : true,
 			groupId : true,
 			operationMode : true,
 			serviceUrl : true,
@@ -61,6 +62,11 @@ sap.ui.define([
 	 *   wins). The same annotations are overwritten; if an annotation file contains other elements
 	 *   (like a type definition) that are already merged, an error is thrown.
 	 *   Supported since 1.41.0
+	 * @param {boolean} [mParameters.autoExpandSelect=false]
+	 *   Whether the OData model's bindings automatically generate $select and $expand system query
+	 *   options from the binding hierarchy.
+	 *   Note: Dynamic changes to the binding hierarchy are not supported.
+	 *   Supported since 1.47.0
 	 * @param {string} [mParameters.groupId="$auto"]
 	 *   Controls the model's use of batch requests: '$auto' bundles requests from the model in a
 	 *   batch request which is sent automatically before rendering; '$direct' sends requests
@@ -163,6 +169,11 @@ sap.ui.define([
 					this.checkGroupId(mParameters.updateGroupId, false,
 						"Invalid update group ID: ");
 					this.sUpdateGroupId = mParameters.updateGroupId || this.getGroupId();
+					if (mParameters.autoExpandSelect !== undefined
+							&& typeof mParameters.autoExpandSelect !== "boolean") {
+						throw new Error("Value for autoExpandSelect must be true or false");
+					}
+					this.bAutoExpandSelect = mParameters.autoExpandSelect === true;
 
 					this.oMetaModel = new ODataMetaModel(
 						_MetadataRequestor.create(mHeaders, this.mUriParameters),
