@@ -76,10 +76,10 @@
 	};
 
 	var fnPress = function(oEvent) {
-		if (oEvent.getSource().getScope() === sap.m.GenericTileScope.Actions &&
+		if (oEvent.getParameter("scope") === sap.m.GenericTileScope.Actions &&
 			oEvent.getParameter("action") === "Press") {
 			var oActionSheet = new sap.m.ActionSheet({
-				title : "Chosse Your Action",
+				title : "Choose Your Action",
 				showCancelButton : true,
 				placement : "Bottom",
 				buttons : [
