@@ -507,6 +507,7 @@ sap.ui.require([
 	QUnit.test("basics", function (assert) {
 		var sAnnotationUri = "my/annotation.xml",
 			aAnnotationUris = [ sAnnotationUri, "uri2.xml"],
+			oModel = {},
 			oMetadataRequestor = {
 				read : function () { throw new Error(); }
 			},
@@ -535,6 +536,9 @@ sap.ui.require([
 
 		assert.deepEqual(oMetaModel.aAnnotationUris, [sAnnotationUri],
 			"single annotation is wrapped");
+
+		// code under test
+		oMetaModel = new ODataMetaModel(null, null, null, oModel);
 	});
 
 	//*********************************************************************************************
@@ -1943,14 +1947,16 @@ sap.ui.require([
 			oMetaModel = oModel.getMetaModel(),
 			oValueListModel;
 
+		oModel.oRequestor.mHeaders["X-CSRF-Token"] = "xyz";
+
 		// code under test
 		oValueListModel = oMetaModel.getOrCreateValueListModel("../ValueListService/$metadata");
 
 		assert.ok(oValueListModel instanceof ODataModel);
 		assert.strictEqual(oValueListModel.sServiceUrl, "/Foo/ValueListService/");
 		assert.strictEqual(oValueListModel.getDefaultBindingMode(), BindingMode.OneWay);
-		assert.strictEqual(oValueListModel.getGroupId(), "$direct");
 		assert.strictEqual(oValueListModel.sOperationMode, OperationMode.Server);
+		assert.strictEqual(oValueListModel.oRequestor.mHeaders["X-CSRF-Token"], "xyz");
 
 		// code under test
 		assert.strictEqual(oMetaModel.getOrCreateValueListModel("/Foo/ValueListService/$metadata"),
@@ -1959,6 +1965,16 @@ sap.ui.require([
 		// code under test
 		assert.strictEqual(oValueListModel.getMetaModel()
 				.getOrCreateValueListModel("/Foo/ValueListService/$metadata"),
+			oValueListModel);
+
+		oModel = new ODataModel({
+			serviceUrl : "/Foo/DataService2/",
+			synchronizationMode : "None"
+		});
+
+		// code under test - even a totally different model gets the very same value list model
+		assert.strictEqual(oModel.getMetaModel()
+				.getOrCreateValueListModel("../ValueListService/$metadata"),
 			oValueListModel);
 	});
 

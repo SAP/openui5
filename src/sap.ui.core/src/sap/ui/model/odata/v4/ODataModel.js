@@ -165,7 +165,7 @@ sap.ui.define([
 
 					this.oMetaModel = new ODataMetaModel(
 						_MetadataRequestor.create(mHeaders, this.mUriParameters),
-						this.sServiceUrl + "$metadata", mParameters.annotationURI);
+						this.sServiceUrl + "$metadata", mParameters.annotationURI, this);
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
 						this.mUriParameters, function (sGroupId) {
 							if (sGroupId === "$auto") {
@@ -1056,9 +1056,6 @@ sap.ui.define([
 	ODataModel.prototype.toString = function () {
 		return sClassName + ": " + this.sServiceUrl;
 	};
-
-	// pass this constructor to ODataMetaModel to avoid the cyclic dependency
-	ODataMetaModel.setODataModel(ODataModel);
 
 	return ODataModel;
 }, /* bExport= */ true);

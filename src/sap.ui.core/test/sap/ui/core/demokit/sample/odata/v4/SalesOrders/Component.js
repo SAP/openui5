@@ -32,6 +32,7 @@ sap.ui.define([
 					? "$direct" // switch off batch
 					: undefined,
 				bHasOwnProxy = this.proxy !== BaseComponent.prototype.proxy,
+				oMetaModel,
 				oModel = this.getModel(),
 				fnProxy = bHasOwnProxy
 					? this.proxy
@@ -57,6 +58,8 @@ sap.ui.define([
 				});
 				this.setModel(oModel);
 			}
+
+			oMetaModel = oModel.getMetaModel();
 
 			// TODO: Add Mockdata for single sales orders *with expand*
 			// http://localhost:8080/testsuite/proxy/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/SalesOrderList('050001110')?custom-option=value&$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))
@@ -175,7 +178,10 @@ sap.ui.define([
 
 			// Simulate a templating-based app: The metadata is already
 			// available when the view is created.
-			oModel.getMetaModel().requestObject("/").then(function () {
+			Promise.all([
+				oMetaModel.requestObject("/SalesOrderList/"),
+				oMetaModel.requestObject("/SOLineItemList/")
+			]).then(function () {
 				oViewContainer.addItem(sap.ui.view({
 					id : "sap.ui.core.sample.odata.v4.SalesOrders.Main",
 					models : { undefined : oModel,
