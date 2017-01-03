@@ -570,6 +570,11 @@
 			});
 
 			test("Multiple selection", function() {
+				
+				// ensure that tested date range is displayed in calendar
+				oCal4.displayDate(oCal4.getMinDate());
+				sap.ui.getCore().applyChanges();
+
 				var $selectedDate = jQuery("#Cal4--Month0-20161130"),
 					$selectedDateFromTheOtherMonth = jQuery("#Cal4--Month1-20161130"),
 					$otherSelectedDate,
