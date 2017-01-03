@@ -1055,6 +1055,147 @@
 			equal(oIntervalRow.getId(), "PC1-Row1", "row returned");
 		});
 
+		module("Proxy calls", {
+			beforeEach: function () {
+				this.sut = createPlanningCalendar("invalidationExample", new sap.m.SearchField(), new sap.m.Button(), new Date(2015, 0, 7), sap.ui.unified.CalendarIntervalType.Week);
+				this.sutInterval = this.sut.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
+				this.sut.placeAt('uiArea2');
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.sut.destroy();
+				this.sut = undefined;
+			}
+		});
+
+		test("Calling 'invalidate()' on PlanningCalendar invokes its interval child 'invalidate()'", function () {
+			//prepare
+			var oPCInvalidateSpy = this.spy(this.sut, 'invalidate'),
+				oIntervalInvalidateSpy = this.spy(this.sutInterval, 'invalidate');
+
+			//act
+			this.sut._bDateRangeChanged = true;
+			this.sut.invalidate();
+			//assert
+			strictEqual(oPCInvalidateSpy.callCount, 1, "'PlanningCalendar invalidate()' was called once");
+			strictEqual(oIntervalInvalidateSpy.callCount, 1, "'CalendarWeekInterval invalidate()' was called once");
+			ok(oPCInvalidateSpy.callCount == oIntervalInvalidateSpy.callCount == 1, "Both methods are called exact (1) time");
+		});
+
+		test("Calling 'exit()' on PlanningCalendar invokes its interval child 'destroy()'", function () {
+			//prepare
+			var oPCExitSpy = this.spy(this.sut, 'exit'),
+				oIntervalDestroySpy = this.spy(this.sutInterval, 'destroy');
+
+			//act
+			this.sut.exit();
+			//assert
+			strictEqual(oPCExitSpy.callCount, 1, "'PlanningCalendar exit()' was called once");
+			strictEqual(oIntervalDestroySpy.callCount, 1, "'CalendarWeekInterval destroy()' was called once");
+			ok(oPCExitSpy.callCount == oIntervalDestroySpy.callCount == 1, "Both methods are called exact (1) time");
+		});
+
+		test("'_handleCalendarSelect()' invokes its internal child methods 'fireSelect()'", function () {
+			//prepare
+			var oMonth = this.sutInterval.getAggregation('month')[0],
+				oMonthSelectSpy = this.spy(oMonth, 'fireSelect'),
+				oCalendarSelectSpy = this.spy(this.sutInterval, 'fireSelect'),
+				oPlanningCalendarIntervalSelectSpy = this.spy(this.sut, 'fireIntervalSelect'),
+				aIntervalDomChilds = oMonth.$('days').children(),
+				oFirstCalendarIntervalItem = aIntervalDomChilds[0],
+				oStartDate = this.sut.getStartDate(),
+				oEndDate = new Date(oStartDate.getTime());
+
+			//act
+			oEndDate.setDate(oStartDate.getDate() + 1);
+			qutils.triggerKeydown(oFirstCalendarIntervalItem, "ENTER", false, false, false);
+			sap.ui.getCore().applyChanges();
+			//assert
+			strictEqual(oMonthSelectSpy.callCount, 1, "MonthSelect fired once");
+			strictEqual(oCalendarSelectSpy.callCount, 1, "CalendarSelect fired once");
+			strictEqual(oPlanningCalendarIntervalSelectSpy.callCount, 1, "PlanningCalendar IntervalSelect fired once");
+		});
+
+		test("'_handleMonthSelect()' invokes its internal child '_adjustFocusedDateUponMonthChange()'", function () {
+			//prepare
+			var oYearPicker = this.sutInterval.getAggregation('yearPicker'),
+				_adjustFocusedDateUponYearChangeSpy = this.spy(this.sutInterval, "_adjustFocusedDateUponYearChange");
+
+			//act
+			oYearPicker.fireSelect();
+			//assert
+			strictEqual(_adjustFocusedDateUponYearChangeSpy.callCount, 1, "'_adjustFocusedDateUponMonthChange()' was called once");
+			ok(_adjustFocusedDateUponYearChangeSpy.calledWith(this.sutInterval._getFocusedDate(), oYearPicker.getYear()),
+				"'_adjustFocusedDateUponYearChange()' was called with the correct parameters");
+		});
+
+		test("'_handleYearSelect()' invokes its interval child '_adjustFocusedDateUponYearChange()'", function () {
+			//prepare
+			var oMonthPicker = this.sutInterval.getAggregation('monthPicker'),
+				_adjustFocusedDateUponMonthChangeSpy = this.spy(this.sutInterval, "_adjustFocusedDateUponMonthChange");
+
+			//act
+			oMonthPicker.fireSelect();
+			//assert
+			strictEqual(_adjustFocusedDateUponMonthChangeSpy.callCount, 1, "'_adjustFocusedDateUponMonthChange()' was called once");
+			ok(_adjustFocusedDateUponMonthChangeSpy.calledWith(this.sutInterval._getFocusedDate(), oMonthPicker.getMonth()),
+				"'_adjustFocusedDateUponMonthChange()' was called with the correct parameters");
+		});
+
+		module("Private API", {
+			beforeEach: function () {
+				this.sut = createPlanningCalendar("invalidationExample", new sap.m.SearchField(), new sap.m.Button(), new Date(Date.UTC(2015, 0, 7)), sap.ui.unified.CalendarIntervalType.Week);
+				this.sutInterval = this.sut.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
+				this.sut.placeAt('uiArea2');
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.sut.destroy();
+				this.sut = undefined;
+			}
+		});
+
+		test("'_updateTodayButtonState()' has correct output", function () {
+			//prepare
+			var _dateMatchesVisibleRangeSpy = this.spy(this.sut, '_dateMatchesVisibleRange');
+			//act
+			this.sut._updateTodayButtonState();
+			//assert
+			strictEqual(_dateMatchesVisibleRangeSpy.callCount, 1, "'_dateMatchesVisibleRangeSpy()' was called once");
+		});
+
+		test("'_dateMatchesVisibleRange()' has correct output" , function () {
+			//prepare
+			var sViewKey = this.sut.getViewKey(),
+				oView = this.sut._getView(sViewKey),
+				iIntervals = this.sut._getIntervals(oView),
+				oStartDate = this.sut.getStartDate(),
+				oDate = new Date(oStartDate.getTime());
+
+			//act
+			oDate.setUTCDate(oStartDate.getUTCDate() - iIntervals);
+			for (var iIndex = 1; iIndex < iIntervals * 3; iIndex++) {
+				if (iIndex > iIntervals && iIndex <= iIntervals * 2) {
+					ok(this.sut._dateMatchesVisibleRange(oDate, sViewKey), "Date '" + oDate + "' is visible on the current viewport");
+				} else {
+					notOk(this.sut._dateMatchesVisibleRange(oDate, sViewKey), "Date '" + oDate + "' is NOT visible on the current viewport");
+				}
+				oDate.setUTCDate(oDate.getUTCDate() + 1);
+			}
+		});
+
+		test("'_getViews()' has correct output", function () {
+			//prepare
+			var sViewKey = this.sut.getViewKey(),
+				oWeekView = this.sut._getView(sViewKey);
+			//The act of this test is done in the module beforeEach
+			//assert
+			strictEqual(this.sut._aViews.length, 4, "Correct number (4) of views assigned to PlanningCalendar");
+			strictEqual(oWeekView.getIntervalsS(), 7, "Correct number (7) intervals for S screen sizes");
+			strictEqual(oWeekView.getIntervalsM(), 7, "Correct number (7) intervals for M screen sizes");
+			strictEqual(oWeekView.getIntervalsL(), 7, "Correct number (7) intervals for L screen sizes");
+		});
+
 		module("Interaction", {
 			beforeEach: function() {
 				var oSearchField = new sap.m.SearchField(),
@@ -2140,5 +2281,6 @@
 <ol id="qunit-tests"></ol>
 <br>
 <div id="uiArea1"></div>
+<div id="uiArea2"></div>
 </body>
 </html>
