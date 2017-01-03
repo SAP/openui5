@@ -65,6 +65,9 @@ sap.ui.define([
 				"moveElements": [
 					"CUSTOMER", "VENDOR"
 				],
+				"moveControls": [
+					"CUSTOMER", "VENDOR"
+				],
 				"propertyChange": [
 					"VENDOR"
 				],

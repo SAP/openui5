@@ -28,7 +28,7 @@ sap.ui.define([],
 					}
 				},
 				actions : {
-					move : "moveElements"
+					move : "moveControls"
 				}
 			}
 		},
