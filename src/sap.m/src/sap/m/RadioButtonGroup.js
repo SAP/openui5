@@ -476,24 +476,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			};
 
 			RadioButtonGroup.prototype.updateButtons = function() {
-
-				var iSelectedIndex = this.getSelectedIndex();
-
 				this._bUpdateButtons = true;
 				this.updateAggregation("buttons");
 				this._bUpdateButtons = undefined;
-
-				// if selectedIndex is still valid -> restore
-				var aButtons = this.getButtons();
-				if (aButtons.length > 0) {
-					// if not defined -> select first one
-					this.setSelectedIndex(0);
-				}else if (iSelectedIndex >= 0 && aButtons.length == 0) {
-					this.setSelectedIndex(-1);
-				}else if (iSelectedIndex >= aButtons.length) {
-					// if less items than before -> select last one
-					this.setSelectedIndex(aButtons.length - 1);
-				}
 			};
 
 			/**
