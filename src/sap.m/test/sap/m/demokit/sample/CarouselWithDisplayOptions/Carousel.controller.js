@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller','sap/ui/model/js
 			var oScreenSizesModel = new JSONModel(oScreenSizes);
 			this.getView().setModel(oScreenSizesModel, "ScreenSizesModel");
 
-			this._setNumberOfImagesInCarousel(5);
+			this._setNumberOfImagesInCarousel(3);
 		},
 		onArrowsPlacementSelect: function (oEvent) {
 			var oCarousel = this.getView().byId("carouselSample");
