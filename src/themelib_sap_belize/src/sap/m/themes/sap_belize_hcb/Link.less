@@ -1,0 +1,57 @@
+/* =========================== */
+/* CSS for control sap.m/Link  */
+/* High Contrast Black theme   */
+/* =========================== */
+
+.sapMLnk {
+	text-decoration: underline;
+}
+
+.sapMLnkDsbl, .sapMLnkDsbl:visited {
+	outline: none;
+	cursor: default;
+	color: @sapUiContentDisabledTextColor;
+	text-decoration: underline;
+}
+
+html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
+	text-decoration: none;
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+}
+
+/* IE and Edge ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMLnk:focus:not(.sapMLnkDsbl):before {
+		border: 0.125rem dashed @sapUiContentFocusColor;
+	}
+}
+
+html.sap-desktop .sapMLnk:hover:not(.sapMLnkDsbl) {
+	text-decoration: none;
+}
+
+.sapMLnk:hover.sapMLnkDsbl, .sapMLnk:focus.sapMLnkDsbl {
+	outline: none;
+}
+
+/* Link in sap.ui.table.* tables */
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl),
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl) {
+	outline: none;
+	position: relative;
+}
+
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl):before,
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl):before {
+	position: absolute;
+	top: 0.125rem;
+	left: 0.125rem;
+	right: 0.125rem;
+	bottom: 0.125rem;
+	border-width: 0.125rem;
+	border-style: dashed;
+	border-color: @sapUiContentFocusColor;
+	content: "";
+	pointer-events: none;
+}

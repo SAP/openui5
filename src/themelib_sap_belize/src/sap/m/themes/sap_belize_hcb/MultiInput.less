@@ -1,0 +1,39 @@
+/* ================================= */
+/* CSS for control sap.m/MultiInput  */
+/* High Contrast Black theme         */
+/* ================================= */
+
+.sapMInputFocused:not(.sapMInputBaseReadonly) .sapMMultiInputBorder::before {
+	border: 2px dotted @sapUiContentFocusColor;
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	pointer-events: none;
+}
+
+.sapMMultiInput:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:hover,
+.sapMMultiInput:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:focus {
+	border-left: 1px solid @sapUiButtonLiteHoverBorderColor;
+}
+
+.sapMMultiInput:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:active {
+	border-left: 1px solid @sapUiButtonLiteActiveBorderColor;
+}
+
+.sapMMultiInput.sapMInputBaseWarning .sapMMultiInputBorder,
+.sapMMultiInput.sapMInputBaseError .sapMMultiInputBorder,
+.sapMMultiInput.sapMInputBaseSuccess .sapMMultiInputBorder {
+	border-width: 1px;
+}
+
+.sapMMultiInput.sapMInputBaseWarning .sapMMultiInputBorder,
+.sapMMultiInput.sapMInputBaseError .sapMMultiInputBorder {
+	border-style: dashed;
+}
+
+.sapMMultiInput.sapMInputBaseError .sapMMultiInputBorder {
+	background-color: @sapUiFieldInvalidBackground;
+}
