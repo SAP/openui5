@@ -1,7 +1,7 @@
 /*
  * ${copyright}
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServer"], function(jQuery, Device, MockServer) {
+sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServer", "jquery.sap.sjax"], function(jQuery, Device, MockServer/*, jQuerySapSjax*/) {
 	"use strict";
 	return {
 

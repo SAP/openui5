@@ -6,8 +6,9 @@ sap.ui.define([
 		'sap/ui/core/util/LibraryInfo',
 		'sap/ui/model/odata/ODataModel',
 		'sap/m/App',
-		'sap/m/Page'
-	], function(Component, ComponentContainer, LibraryInfo, ODataModel, App, Page) {
+		'sap/m/Page',
+		'jquery.sap.sjax'
+	], function(Component, ComponentContainer, LibraryInfo, ODataModel, App, Page, sjax) {
 
 	"use strict";
 
