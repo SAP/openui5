@@ -45,20 +45,17 @@
 	display: none;
 	position: absolute;
 	top: calc(50% - 3.875rem);
-	width: 3rem;
-	height: 3rem;
 	margin: -1.5625px 0 0 0;
 	padding: 0;
+	width: 3rem;
+	height: 3rem;
 	text-decoration: none;
 	overflow: hidden;
-	background-color: @sapUiInvertedElement;
 	border-radius: 50%;
-	color: @sapUiInvertedElement;
 	-webkit-transition: opacity 0.1s ease-in;
 	-moz-transition: opacity 0.1s ease-in;
 	transition: opacity 0.1s ease-in;
-	box-shadow: 0 0.0625rem 0.25rem fade(@sapUiDarkShadowTint, 30);
-}
+    box-shadow: 0 0.0625rem 0.25rem fade(@sapUiDarkShadowTint, 30);}
 
 .sapMCrsl{
 	box-sizing: border-box;
@@ -153,4 +150,49 @@ html[dir='rtl'] .sapMCrslNext > .sapMCrslHudInner > .sapUiIcon,
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
+}
+.sapMCrslControls,
+.sapMCrslHud {
+	.sapMCrslPrev,
+	.sapMCrslNext {
+		border-radius: 50%;
+		margin: 0.25rem;
+		background-color: white;
+		color: @sapUiInvertedElement;
+		font-family: "SAP-icons";
+		font-size: 1.375rem;
+		font-weight: bold;
+		text-indent: 0;
+		text-align: center;
+		display: table;
+		z-index: 9;
+		border:1px solid @sapUiLightestBorder;
+	}
+}
+
+.sapMCrslControls,
+.sapMCrslHud {
+	.sapMCrslArrowInner {
+		border-radius: 50%;
+		margin:0.2rem;
+		background-color: @sapUiHighlight;
+		color: @sapUiInvertedElement;
+		font-family: "SAP-icons";
+		font-size: 1.375rem;
+		font-weight: bold;
+		text-indent: 0;
+		text-align: center;
+		display: table;
+		z-index: 9;
+		width: 2.5rem;
+		height: 2.5rem;
+	}
+}
+.sapMCrslControls,
+.sapMCrslHud {
+	.sapMCrslArrowInner {
+		.sapUiIcon{
+			font-size: 1.375rem;
+		}
+	}
 }
