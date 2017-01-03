@@ -1,0 +1,78 @@
+/* ======================================== */
+/* CSS for control sap.m/ProgressIndicator  */
+/* High Contrast Black theme                */
+/* ======================================== */
+
+.sapMPIBarNeutral {
+	background: @sapUiHighlight;
+	box-sizing: border-box;
+	border: 1px solid @sapUiFieldBorderColor;
+}
+
+.sapMPIBarPositive {
+	background: @sapUiHighlight;
+	box-sizing: border-box;
+	border: 1px solid @sapUiFieldBorderColor;
+}
+
+.sapMPIBarNegative {
+	background: @sapUiHighlight;
+	box-sizing: border-box;
+	border: 1px solid @sapUiFieldBorderColor;
+}
+
+.sapMPIBarCritical {
+	background: @sapUiHighlight;
+	box-sizing: border-box;
+	border: 1px solid @sapUiFieldBorderColor;
+}
+
+/* HCB Additional Styles */
+.sapMPIText::before {
+	font-family: 'SAP-icons';
+	font-size: 0.875rem;
+	margin-right: 0.5rem;
+	vertical-align: bottom;
+}
+
+.sapMPIBarPositive > .sapMPITextLeft::before,
+.sapMPIBarPositive + .sapMPIBarRemaining > .sapMPITextRight::before {
+	content: '\e1ab';
+}
+
+.sapMPIBarNegative > .sapMPITextLeft::before,
+.sapMPIBarNegative + .sapMPIBarRemaining > .sapMPITextRight::before {
+	content: '\e1ac';
+}
+
+.sapMPIBarCritical > .sapMPITextLeft::before,
+.sapMPIBarCritical + .sapMPIBarRemaining > .sapMPITextRight::before {
+	content: '\e1ae';
+}
+
+.sapMPIBarPositive + .sapMPIBarRemaining > .sapMPITextRight::before,
+.sapMPIBarNegative + .sapMPIBarRemaining > .sapMPITextRight::before,
+.sapMPIBarCritical + .sapMPIBarRemaining > .sapMPITextRight::before {
+	color: @sapUiContentForegroundTextColor;
+}
+
+.sapMPIBarDisabled {
+	opacity: 1;
+	border-color: @sapUiHcReducedAltForeground;
+
+	.sapMPITextLeft {
+		color: @sapUiHcReducedAltForeground;
+	}
+
+	.sapMPITextRight,
+	.sapMPIBarRemaining > .sapMPITextRight::before {
+		color: @sapUiHcReducedForeground;
+	}
+
+	.sapMPIBarNeutral,
+	.sapMPIBarPositive,
+	.sapMPIBarNegative,
+	.sapMPIBarCritical {
+		background: @sapUiHcReducedForeground;
+	}
+}

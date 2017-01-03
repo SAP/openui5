@@ -1,0 +1,31 @@
+/* ================================== */
+/* CSS for control sap.m/SplitButton  */
+/* High Contrast Black theme          */
+/* ================================== */
+
+.sapMSB:focus .sapMSBInner::after {
+	top: 0.25rem;
+	bottom: 0.25rem;
+	left: 0;
+	right: 0;
+	border: 0.125rem dotted @sapUiContentFocusColor;
+}
+
+.sapMSB:focus .sapMBtnInner {
+	border-color: @sapUiButtonBackground;
+}
+
+.sapMSB:focus .sapMSBText .sapMBtnInner {
+	border-right-color: @sapUiContentFocusColor;
+}
+
+.sapMSB:focus .sapMSBArrow .sapMBtnInner {
+	border-left-color: @sapUiContentFocusColor;
+}
+
+.sapUiSizeCompact {
+	.sapMSB:focus .sapMSBInner::after {
+		top: 0.1875rem;
+		bottom: 0.1875rem;
+	}
+}

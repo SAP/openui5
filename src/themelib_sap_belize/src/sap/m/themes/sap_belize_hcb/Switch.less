@@ -1,0 +1,100 @@
+/* ============================= */
+/* CSS for control sap.m/Switch  */
+/* High Contrast Black theme     */
+/* ============================= */
+
+/* ------------------------------ */
+/* Switch container               */
+/* ------------------------------ */
+
+/* focus */
+
+html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+}
+
+/* ------------------------------ */
+/* Switch                         */
+/* ------------------------------ */
+
+/* disabled */
+
+.sapMSwtOn.sapMSwtDisabled:not(.sapMSwtAcceptReject) {
+	background: @sapUiHcReducedBackground;
+	border-color: @sapUiHcReducedAltForeground;
+}
+
+.sapMSwtOff.sapMSwtDisabled:not(.sapMSwtAcceptReject) {
+	border-color: @sapUiHcReducedForeground;
+}
+
+/* ------------------------------ */
+/* Switch text                    */
+/* ------------------------------ */
+
+/* disabled */
+
+.sapMSwtOn.sapMSwtDisabled:not(.sapMSwtAcceptReject) .sapMSwtText {
+	color: @sapUiHcReducedAltForeground;
+}
+
+.sapMSwtOff.sapMSwtDisabled:not(.sapMSwtAcceptReject) .sapMSwtText {
+	color: @sapUiContentDisabledTextColor;
+}
+
+/* ------------------------------ */
+/* Switch handler                 */
+/* ------------------------------ */
+
+/* disabled */
+
+.sapMSwtOn.sapMSwtDisabled:not(.sapMSwtAcceptReject) .sapMSwtHandle,
+.sapMSwtOff.sapMSwtDisabled:not(.sapMSwtAcceptReject) .sapMSwtHandle {
+	border: 0.125rem solid @sapUiHcReducedAltForeground;
+}
+
+/* ====================================================== */
+/* Switch type "AcceptReject"                             */
+/* ====================================================== */
+
+/* ----------------------------------------- */
+/* Switch type "AcceptReject" common styles  */
+/* ----------------------------------------- */
+
+/* disabled */
+
+.sapMSwtAcceptReject.sapMSwtDisabled {
+	border-color: @sapUiHcReducedForeground;
+}
+
+/* ------------------------------ */
+/* Switch text                    */
+/* ------------------------------ */
+
+/* hover */
+
+.sapMSwtAcceptReject.sapMSwtHoverable:hover .sapMSwtLabel::before {
+	color: @sapUiContentIconColor;
+}
+
+/* disabled */
+
+.sapMSwtAcceptReject.sapMSwtDisabled .sapMSwtLabel::before {
+	color: @sapUiContentDisabledTextColor;
+}
+
+/* ------------------------------ */
+/* Switch handler                 */
+/* ------------------------------ */
+
+/* hover */
+
+.sapMSwtAcceptReject.sapMSwtHoverable:hover .sapMSwtHandle {
+	border-color: @sapUiButtonHoverBorderColor;
+}
+
+/* disabled */
+
+.sapMSwtAcceptReject.sapMSwtDisabled .sapMSwtHandle {
+	border-color: @sapUiHcReducedForeground;
+}
