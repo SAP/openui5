@@ -1999,7 +1999,7 @@ sap.ui.define([
 		var rString = /([(=,])('.*?')([,)])/g,
 			rNumType = /[MLDF](?=[,)](?:[^']*'[^']*')*[^']*$)/g;
 		function normalizeEncoding(value, p1, p2, p3) {
-			return p1 + encodeURIComponent(decodeURI(p2)) + p3;
+			return p1 + encodeURIComponent(decodeURIComponent(p2)) + p3;
 		}
 		function normalizeCase(value) {
 			return value.toLowerCase();
