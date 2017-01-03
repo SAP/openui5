@@ -33,7 +33,7 @@
 			background-color: @sapUiToggleButtonPressedBackground;
 			color: @sapUiToggleButtonPressedTextColor;
 			&:hover {
-				background-color: @sapUiToggleButtonPressedHoverBackground;
+				background-color: @sapUiToggleButtonPressedBackground;
 				color: @sapUiToggleButtonPressedTextColor;
 			}
 			&:focus {
@@ -43,6 +43,12 @@
 	}
 }
 
+
+.sapMTimePicker .sapMInputVH:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:hover,
+.sapMTimePicker .sapMInputVH:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:focus {
+	background-color: @sapUiToggleButtonPressedBackground;
+}
+
 .TPSliderItemHidden {
 	display: none;
 }
@@ -50,6 +56,7 @@
 /* ======================================== */
 /* TimePicker Dropdown                      */
 /* ======================================== */
+
 .sapMTimePickerDropDown {
 	overflow: hidden !important;
 	-webkit-user-select: none;
@@ -248,10 +255,13 @@
 /* ======================================== */
 /* COMPACT MODE STYLES                      */
 /* ======================================== */
+
 .sapUiSizeCompact {
+	
 	/* ======================================== */
 	/* TimePicker Dropdown                      */
 	/* ======================================== */
+	
 	.sapMTimePickerDropDown {
 		border-radius: 0 0 0.25rem 0.25rem !important; //Need to override this with important because of popover stronger selectors
 		box-shadow: @sapUiShadowLevel1 !important; //Need to override this with important because of popover stronger selectors
@@ -328,6 +338,7 @@ html.sap-phone {
 	/* ======================================== */
 	/* TimePicker Input Field                   */
 	/* ======================================== */
+	
 	.sapMTimePicker {
 		.sapUiIcon {
 			color: @sapUiContentIconColor;
@@ -356,6 +367,7 @@ html.sap-phone {
 	/* ======================================== */
 	/* TimePicker Dropdown                      */
 	/* ======================================== */
+	
 	.sapMTimePickerDropDown {
 		/* This centers content in landscape & portrait mode */
 		.sapMDialogScrollCont {
