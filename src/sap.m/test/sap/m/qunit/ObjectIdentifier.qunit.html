@@ -52,9 +52,11 @@
 		//Assert
 		ok(jQuery.sap.domById(sut.getId()), "ObjectIdentifier should be rendered.");
 
-		var children = $("#" + sut.getId()).children();
-		equal($(children[0]).text(), sTitle, "Title is rendered.");
-		equal($(children[1]).text(), sText, "Text is rendered.");
+		var childrenTitle = $("#" + sut.getId()+"-title").children();
+		var childrenText = $("#" + sut.getId()+"-text").children();
+		equal($(childrenTitle[0]).text(), sTitle, "Title is rendered.");
+		equal($(childrenTitle[1]).text(), sap.m.ObjectIdentifier.OI_ARIA_ROLE, "Aria is rendered.");
+		equal($(childrenText[0]).text(), sText, "Text is rendered.");
 
 		ok(jQuery.sap.domById(sut.getId() + "-attachments-icon"), "Attachments icon is rendered.");
 		ok(jQuery.sap.domById(sut.getId() + "-notes-icon"), "Notes icon is rendered.");
@@ -103,9 +105,11 @@
 		//Assert
 		ok(jQuery.sap.domById(sut.getId()), "ObjectIdentifier should be rendered.");
 
-		var children = $("#" + sut.getId()).children();
-		equal($(children[0]).text(), sTitle, "Title is rendered.");
-		equal($(children[1]).text(), sText, "Text is rendered.");
+		var childrenTitle = $("#" + sut.getId()+"-title").children();
+		var childrenText = $("#" + sut.getId()+"-text").children();
+
+		equal($(childrenTitle[0]).text(), sTitle, "Title is rendered.");
+		equal($(childrenText[0]).text(), sText, "Text is rendered.");
 
 		ok(jQuery.sap.domById(sut.getId() + "-attachments-icon"), "Attachments icon is rendered.");
 		ok(jQuery.sap.domById(sut.getId() + "-notes-icon"), "Notes icon is rendered.");
@@ -317,7 +321,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		strictEqual(oObjectIdentifier.$("title").children(0).text(), sEmptyTitle, "The title text is empty as expected");
+		strictEqual($(oObjectIdentifier.$("title").children()[0]).text(), sEmptyTitle, "The title text is empty as expected");
 		equal(oObjectIdentifier.$("title").children(0).css("display"), "none", "The title control should not be visible if title is empty initially");
 
 		//Act
@@ -325,7 +329,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		strictEqual(oObjectIdentifier.$("title").children(0).text(), sDummyTitle, "The title text is correctly set");
+		strictEqual($(oObjectIdentifier.$("title").children()[0]).text(), sDummyTitle, "The title text is correctly set");
 		notEqual(oObjectIdentifier.$("title").children(0).css("display"), "none", "The title control should be visible if title is not empty");
 
 		//Act
@@ -333,7 +337,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		strictEqual(oObjectIdentifier.$("title").children(0).text(), sEmptyTitle, "The title text is empty as expected");
+		strictEqual($(oObjectIdentifier.$("title").children()[0]).text(), sEmptyTitle, "The title text is empty as expected");
 		equal(oObjectIdentifier.$("title").children(0).css("display"), "none", "The title control should not be visible if title is empty");
 
 		//Cleanup
