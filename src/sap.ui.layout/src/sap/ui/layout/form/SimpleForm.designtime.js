@@ -159,6 +159,28 @@ sap.ui.define([], function() {
 									var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
 									return oTextResources.getText("MSG_REMOVING_TOOLBAR");
 								}
+							},
+							getState : function(oSimpleForm) {
+								var aContent = oSimpleForm.getContent();
+								return {
+									content : aContent.map(function(oElement) {
+										return {
+											element : oElement,
+											visible : oElement.getVisible ? oElement.getVisible() : undefined,
+											index : aContent.indexOf(oElement)
+										};
+									})
+								};
+
+							},
+							restoreState : function(oSimpleForm, oState) {
+								oSimpleForm.removeAllContent();
+								oState.content.forEach(function(oElementState) {
+									oSimpleForm.insertContent(oElementState.element, oElementState.index);
+									if (oElementState.element.setVisible){
+										oElementState.element.setVisible(oElementState.visible);
+									}
+								});
 							}
 						};
 					},
