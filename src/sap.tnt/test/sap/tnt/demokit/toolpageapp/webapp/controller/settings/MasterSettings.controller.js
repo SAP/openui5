@@ -33,11 +33,11 @@ sap.ui.define([
 			}
 		},
 
-		handleSaveSettings: function () {
+		onSavePressed: function () {
 			MessageToast.show("Save was pressed");
 		},
 
-		handleCancelSettings: function () {
+		onCancelPressed: function () {
 			MessageToast.show("Cancel was pressed");
 		}
 

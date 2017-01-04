@@ -13,7 +13,7 @@ sap.ui.define([
 		'sap/m/MessagePopoverItem',
 		'sap/ui/core/CustomData',
 		'sap/m/MessageToast'
-	], function (BaseController, jQuery, Fragment, Controller, JSONModel, Popover,MessagePopOver, Button, Link, Bar, Notification, Message,CustomData, MessageToast) {
+	], function (BaseController, jQuery, Fragment, Controller, JSONModel, Popover,MessagePopOver, Button, Link, Bar, NotificationListItem, MessagePopoverItem,CustomData, MessageToast) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.toolpageapp.controller.App", {
@@ -47,16 +47,16 @@ sap.ui.define([
 				}
 			},
 
-			handleUserNamePress: function(oEvent) {
+			onUserNamePress: function(oEvent) {
 				// close message popover
-				var oMessagePopover = this.getView().byId("messagePopover");
+				var oMessagePopover = this.getView().byId("errorMessagePopover");
 				if (oMessagePopover && oMessagePopover.isOpen()) {
 					oMessagePopover.destroy();
 				}
 				var fnHandleUserMenuItemPress = function (oEvent) {
 					MessageToast.show(oEvent.getSource().getText() + " was pressed");
 				};
-				var oPopover = new Popover({
+				var oPopover = new Popover(this.getView().createId("userMessagePopover"), {
 					showHeader: false,
 					placement: sap.m.PlacementType.Bottom,
 					content:[
@@ -112,9 +112,9 @@ sap.ui.define([
 			},
 
 			// Errors Pressed
-			handleMessagePopoverPress: function (oEvent) {
-				if (!this.getView().byId("messagePopover")) {
-					var oMessagePopover = new MessagePopOver(this.getView().createId("messagePopover"), {
+			onMessagePopoverPress: function (oEvent) {
+				if (!this.getView().byId("errorMessagePopover")) {
+					var oMessagePopover = new MessagePopOver(this.getView().createId("errorMessagePopover"), {
 						placement: sap.m.VerticalPlacementType.Bottom,
 						items: {
 							path: 'alerts>/alerts/errors',
@@ -131,10 +131,14 @@ sap.ui.define([
 				}
 			},
 
-			// Notifications Pressed
-			handleNotificationPress: function (oEvent) {
+			/**
+			 * Event handler for the notification button
+			 * @param {sap.ui.base.Event} oEvent the button press event
+			 * @public
+			 */
+			onNotificationPress: function (oEvent) {
 				// close message popover
-				var oMessagePopover = this.getView().byId("messagePopover");
+				var oMessagePopover = this.getView().byId("errorMessagePopover");
 				if (oMessagePopover && oMessagePopover.isOpen()) {
 					oMessagePopover.destroy();
 				}
@@ -144,7 +148,7 @@ sap.ui.define([
 						MessageToast.show("Show all Notifications was pressed");
 					}
 				});
-				var oNotificationPopover = new Popover({
+				var oNotificationPopover = new Popover(this.getView().createId("notificationMessagePopover"), {
 					title: "Notifications",
 					contentWidth: "300px",
 					footer: new Bar({
@@ -165,9 +169,16 @@ sap.ui.define([
 				oNotificationPopover.openBy(oEvent.getSource());
 			},
 
+			/**
+			 * Factory function for the notification items
+			 * @param {string} sId The id for the item
+			 * @param {sap.ui.model.Context} oBindingContext The binding context for the item
+			 * @returns {sap.m.NotificationListItem} The new notification list item
+			 * @private
+			 */
 			_createNotification: function (sId, oBindingContext) {
 				var oBindingObject = oBindingContext.getObject();
-				var oNotificationItem = new Notification({
+				var oNotificationItem = new NotificationListItem({
 					title: oBindingObject.title,
 					description: oBindingObject.description,
 					priority: oBindingObject.priority,
@@ -196,13 +207,13 @@ sap.ui.define([
 
 			_createError: function (sId, oBindingContext) {
 				var oBindingObject = oBindingContext.getObject();
-				var oLink = new Link({
+				var oLink = new Link("moreDetailsLink", {
 					text: "More Details",
 					press: function() {
 						MessageToast.show("More Details was pressed");
 					}
 				});
-				var oMessageItem = new Message({
+				var oMessageItem = new MessagePopoverItem({
 					title: oBindingObject.title,
 					subtitle: oBindingObject.subTitle,
 					description: oBindingObject.description,
