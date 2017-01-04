@@ -90,8 +90,10 @@ sap.ui.define([
 				/**
 				 * Determines whether the header is expanded.
 				 *
-				 * <b>Note:</b> The header can be also expanded/collapsed by user interaction,
+				 * The header can be also expanded/collapsed by user interaction,
 				 * which requires the property to be internally mutated by the control to reflect the changed state.
+				 *
+				 * <b>Note:</b> Please be aware that initially collapsed header state is not supported, so <code>headerExpanded</code> should not be set to <code>false</code> when initializing the control.
 				 */
 				headerExpanded: {type: "boolean", group: "Behavior", defaultValue: true},
 
