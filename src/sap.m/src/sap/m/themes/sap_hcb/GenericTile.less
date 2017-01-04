@@ -13,8 +13,11 @@
 	border: 0.0625rem solid @sapHCStandardFG;
 }
 
-.sapMGTLineMode.sapMGTFailed .sapMGTLineModeFailedIcon ~ *:not(.sapMGTStyleHelper) {
-	opacity: 0.5;
+.sapMGTLineMode.sapMGTFailed, .sapMGTLineMode.sapMGTDisabled {
+	border-color: @sapHCReducedFG;
+	.sapMGTHdrTxt, .sapMGTSubHdrTxt {
+		color: @sapUiContentDisabledTextColor;
+	}
 }
 
 /************************ LINE MODE COMPACT *****************/
@@ -65,15 +68,12 @@
 			}
 		}
 
-		&.sapMGTDisabled {
+		&.sapMGTFailed, &.sapMGTDisabled {
 			.sapMGTLineStyleHelperInner {
-				border: 1px solid @sapHCReducedFG;
+				box-shadow: 0 0 0 1px @sapHCReducedFG;
 			}
-			.sapMGTHdrTxt {
-				color: @sapHCReducedFG;
-			}
-			.sapMGTSubHdrTxt {
-				color: @sapHCReducedFG;
+			.sapMGTHdrTxt, .sapMGTSubHdrTxt {
+				color: @sapUiContentDisabledTextColor;
 			}
 		}
 	}
