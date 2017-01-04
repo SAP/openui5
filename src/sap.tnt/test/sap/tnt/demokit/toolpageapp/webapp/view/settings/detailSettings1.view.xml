@@ -1,0 +1,148 @@
+<mvc:View
+	controllerName="sap.ui.demo.toolpageapp.controller.settings.MasterSettings"
+	xmlns="sap.uxap"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:m="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<ObjectPageLayout
+		id="objectPageLayout">
+
+		<headerTitle>
+			<ObjectPageHeader>
+				<actions>
+					<ObjectPageHeaderActionButton
+						text="{i18n>save}"
+						hideText="false"
+						press="handleSaveSettings"
+						type="Emphasized"/>
+					<ObjectPageHeaderActionButton
+						text="{i18n>cancel}"
+						press="handleCancelSettings"
+						hideText="false"/>
+				</actions>
+			</ObjectPageHeader>
+		</headerTitle>
+		<headerContent>
+			<l:VerticalLayout>
+				<m:Title
+					text="{i18n>systemSettingsTitle}"
+					titleStyle="H2"
+					textAlign="Center"/>
+				<m:Text
+					text="{i18n>systemSettingsDescriptionTitle}"
+					textAlign="Center"
+					class="sapUiSmallMarginBottom"/>
+				<m:MessageStrip
+						text="{
+							parts: [
+								'i18n>systemSettingsLastLoginTitle',
+								'view>/currentUser',
+								'view>/lastLogin'
+							],
+							formatter: 'jQuery.sap.formatMessage'
+						}"
+						type="Information"
+						showIcon="true">
+				</m:MessageStrip>
+
+			</l:VerticalLayout>
+		</headerContent>
+		<sections>
+			<ObjectPageSection>
+			<subSections>
+				<ObjectPageSubSection
+					id="shopOwnerId"
+					title="{i18n>shopOwnerTitle}">
+					<blocks>
+						<ObjectPageLazyLoader
+							id="shopOwnerLazyLoader">
+							<f:SimpleForm
+								title="{i18n>editOwnerDetailTitle}"
+								columnsL="2"
+								columnsM="2"
+								editable="true"
+								layout="ResponsiveGridLayout">
+								<f:content>
+									<core:Title text="{i18n>ownerAddress}" />
+									<l:VerticalLayout>
+										<m:Label text="{i18n>ownerFirstName}"/>
+										<m:Input type="Text" width="100%" value="John"/>
+										<m:Label text="{i18n>ownerLastName}"/>
+										<m:Input type="Text" width="100%" value="Doe"/>
+										<m:Label text="{i18n>ownerStreet}"/>
+										<m:Input type="Text" width="100%" value="Midtown Street 23"/>
+										<m:Label text="{i18n>ownerZipCode}"/>
+										<m:Input type="Text" width="100%" value="12345 Newport"/>
+										<m:Label text="{i18n>ownerCountry}"/>
+										<m:Input type="Text" width="100%" value="England"/>
+									</l:VerticalLayout>
+
+									<core:Title text="{i18n>ownerContact}" />
+									<l:VerticalLayout>
+										<m:Label text="{i18n>ownerMobile}"/>
+										<m:Input type="Tel" width="100%" value="+1 234 / 56789"/>
+										<m:Label text="{i18n>ownerFax}"/>
+										<m:Input type="Tel" width="100%" value="+1 987 / 654321"/>
+										<m:Label text="{i18n>mail}"/>
+										<m:Input type="Email" width="100%" value="john.doe@myshop.com"/>
+									</l:VerticalLayout>
+
+								</f:content>
+							</f:SimpleForm>
+						</ObjectPageLazyLoader>
+					</blocks>
+				</ObjectPageSubSection>
+			</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection>
+				<subSections>
+					<ObjectPageSubSection
+						id="shopConfigurationId"
+						title="{i18n>shopConfigurationTitle}">
+						<blocks>
+							<ObjectPageLazyLoader
+								id="shopConfigurationLazyLoader">
+								<f:SimpleForm
+									title="{i18n>editSystemConfigurationTitle}"
+									columnsL="2"
+									columnsM="2"
+									editable="true"
+									layout="ResponsiveGridLayout" >
+									<f:content>
+										<core:Title text="{i18n>storeSettings}" />
+										<l:VerticalLayout>
+											<m:Label text="{i18n>storeName}"/>
+											<m:Input type="Text" width="100%" value="My Shop"/>
+											<m:Label text="{i18n>storeDefaultLanguage}"/>
+											<m:Input type="Text" width="100%" value="English"/>
+											<m:Label text="{i18n>storeCode}"/>
+											<m:Input type="Text" width="100%" value="R2D2-C3P0"/>
+										</l:VerticalLayout>
+										<core:Title text="{i18n>StoreContact}" />
+										<l:VerticalLayout>
+											<m:Label text="{i18n>storeWebSite}"/>
+											<m:Input type="Url" width="100%" value="http://www.myshop.com"/>
+											<m:Label text="{i18n>storePhone}"/>
+											<m:Input type="Tel" width="100%" value="+1 2345/6789"/>
+											<m:Label text="{i18n>mail}"/>
+											<m:Input type="Email" width="100%" value="info@myshop.com"/>
+										</l:VerticalLayout>
+									</f:content>
+								</f:SimpleForm>
+							</ObjectPageLazyLoader>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+
+
+		</sections>
+	</ObjectPageLayout>
+
+
+</mvc:View>

@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/resource/ResourceModel"
-], function (UIComponent, JSONModel, ResourceModel) {
+], function (UIComponent, JSONModel, ResourceModel, DeviceSupport) {
 	"use strict";
 	return UIComponent.extend("sap.ui.demo.toolpageapp.Component", {
 		metadata: {
@@ -21,12 +21,18 @@ sap.ui.define([
 			};
 			var oModel = new JSONModel(oData);
 			this.setModel(oModel);
+		},
 
-			// set i18n model
-			var i18nModel = new ResourceModel({
-				bundleName: "sap.ui.demo.toolpageapp.i18n.i18n"
-			});
-			this.setModel(i18nModel, "i18n");
+		getContentDensityClass: function () {
+			if(!this._sContentDensityClass) {
+				if(!sap.ui.Device.support.touch){
+					this._sContentDensityClass="sapUiSizeCompact";
+				}
+				else{
+					this._sContentDensityClass="sapUiSizeCozy";
+				}
+			}
+			return this._sContentDensityClass;
 		}
 	});
 });
