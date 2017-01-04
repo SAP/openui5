@@ -506,6 +506,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var fnCut = function(oEvent) {
 			var aSelectedTokens = self.getSelectedTokens(),
 			sSelectedText = "",
+			aRemovedTokens = [],
 			token;
 
 		for (var i = 0; i < aSelectedTokens.length; i++) {
@@ -513,7 +514,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			sSelectedText += (i > 0 ? "\r\n" : "") + token.getText();
 			if (token.getEditable()) {
 				self.removeToken(token);
+				aRemovedTokens.push(token);
 			}
+		}
+
+		if (aRemovedTokens.length > 0) {
+			self.fireTokenUpdate({
+				addedTokens : [],
+				removedTokens : aRemovedTokens,
+				type : Tokenizer.TokenUpdateType.Removed
+			});
 		}
 
 		if (!sSelectedText) {
