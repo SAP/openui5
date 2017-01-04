@@ -100,7 +100,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 * Handler for beforerendering
 	 */
 	SlideTile.prototype.onBeforeRendering = function() {
-		GenericTile.prototype._initScopeContent.call(this);
+		// initialize SlideTile scope with SlideTile CSS class name
+		GenericTile.prototype._initScopeContent.call(this, "sapMST");
 		this._stopAnimation();
 		this._sWidth = this._sHeight = undefined;
 		this._iCurrentTile = this._iPreviousTile = undefined;
