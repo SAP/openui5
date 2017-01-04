@@ -931,10 +931,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				for (i = 0; i < iToolbarElements; i++) {
 					// Only the newest instance of FileUploader is useful, which will be in the place holder position.
 					// Other ones can be hidden.
-					if (i === this._iFileUploaderPH && this._bFocusFileUploader) {
-						this._oHeaderToolbar.getContent()[i].$().find("button").focus();
-					} else {
-						this._oHeaderToolbar.getContent()[i].$().hide();
+					if (this._oHeaderToolbar.getContent()[i] instanceof sap.ui.unified.FileUploader) {
+						if (i === this._iFileUploaderPH && this._bFocusFileUploader) {
+							this._oHeaderToolbar.getContent()[i].$().find("button").focus();
+						} else {
+							this._oHeaderToolbar.getContent()[i].$().hide();
+						}
 					}
 				}
 			}
