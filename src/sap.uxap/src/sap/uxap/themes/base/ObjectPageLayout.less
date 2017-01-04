@@ -7,6 +7,8 @@
     display: flex;
     -webkit-flex-direction: column;
     flex-direction: column;
+	isolation: isolate;
+	z-index: 0;
 }
 
 body > .sapUxAPObjectPageLayout,
@@ -17,10 +19,6 @@ body > .sapUxAPObjectPageLayout,
 .sapUxAPObjectPageHeaderTitle {
     flex-shrink: 0;
     -webkit-flex-shrink: 0;
-}
-
-.sapUxAPObjectPageHeaderTitle.sapUxAPObjectPageHeaderTitleBusy {
-	z-index: 0;
 }
 
 .sapUxAPObjectPageSubSectionPromoted:not(:first-of-type) {
