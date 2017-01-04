@@ -181,7 +181,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/ui/base/Object
 			}
 
 			if (bBack) {
-				oTargetControl.backToPage(sViewId, oArguments, oTransitionParameters);
+				oTargetControl._safeBackToPage(sViewId, sTransition, oArguments, oTransitionParameters);
 			} else {
 				oTargetControl.to(sViewId, sTransition, oArguments, oTransitionParameters);
 			}

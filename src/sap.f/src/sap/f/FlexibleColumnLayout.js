@@ -1212,6 +1212,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Proxy to the _safeBackToPage methods of the internal nav containers
+	 * @param pageId
+	 * @param transitionName
+	 * @param backData
+	 * @param oTransitionParameters
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._safeBackToPage = function(pageId, transitionName, backData, oTransitionParameters) {
+		if (this._getBeginColumn().getPage(pageId)) {
+			this._getBeginColumn()._safeBackToPage(pageId, transitionName, backData, oTransitionParameters);
+		} else if (this._getMidColumn().getPage(pageId)) {
+			this._getMidColumn()._safeBackToPage(pageId, transitionName, backData, oTransitionParameters);
+		} else {
+			this._getEndColumn()._safeBackToPage(pageId, transitionName, backData, oTransitionParameters);
+		}
+	};
+
+	/**
 	 * Navigates to a given Begin column page.
 	 *
 	 * @param {string} sPageId
