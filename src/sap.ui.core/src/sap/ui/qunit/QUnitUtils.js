@@ -12,8 +12,8 @@
  * @public
  */
 
-sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType'],
-	function(jQuery, Device, DataType) {
+sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType', 'jquery.sap.script'],
+	function(jQuery, Device, DataType /*, jQuerySap1 */) {
 	"use strict";
 
 	if ( typeof QUnit !== 'undefined' ) {
@@ -37,17 +37,17 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 		// only when instrumentation is done on server-side blanket itself doesn't
 		// take care about rendering the report - in this case we do it manually
 		// when the URL parameter "coverage-report" is set to true or x
-		if (window["sap-ui-qunit-coverage"] !== "client" && /x|true/i.test(jQuery.sap.getUriParameters().get("coverage-report"))) {
+		if (window["sap-ui-qunit-coverage"] !== "client" && /x|true/i.test(mParams.get("coverage-report"))) {
 			QUnit.done(function(failures, total) {
 				// only when coverage is available and modern browser (not IE8!)
 				if (window._$blanket && document.addEventListener) {
 					// we remove the QUnit object to avoid blanket to automatically
-					// trigger start on QUnit which leads to failures in qunit-junit-reporter
+					// trigger start on QUnit which leads to failures in qunit-reporter-junit
 					var QUnit = window.QUnit;
 					window.QUnit = undefined;
 					// load the blanket instance
-					jQuery.sap.require("sap.ui.thirdparty.blanket");
-					// reset the QUnit object
+					sap.ui.requireSync("sap/ui/thirdparty/blanket");
+					// restore the QUnit object
 					window.QUnit = QUnit;
 					// trigger blanket to display the coverage report
 					window.blanket.report({});
@@ -262,7 +262,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 	QUtils.triggerEvent = function(sEventName, oTarget, oParams) {
 
 		if (typeof (oTarget) == "string") {
-			oTarget = jQuery.sap.domById(oTarget);
+			oTarget = oTarget ? document.getElementById(oTarget) : null;
 		}
 
 		var oEvent = fakeEvent(sEventName, /* no target */ null, oParams);
@@ -285,7 +285,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 	QUtils.triggerTouchEvent = function(sEventName, oTarget, oParams, sEventHandlerPrefix) {
 
 		if (typeof (oTarget) == "string") {
-			oTarget = jQuery.sap.domById(oTarget);
+			oTarget = oTarget ? document.getElementById(oTarget) : null;
 		}
 
 		var oEvent = fakeEvent(sEventName, oTarget, oParams),
@@ -300,7 +300,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 
 
 	/**
-	 * Programmtically triggers a keyboard event specified by its name on a specified target.
+	 * Programmatically triggers a keyboard event specified by its name on a specified target.
 	 * @see sap.ui.test.qunit.triggerEvent
 	 *
 	 * @param {string} sEventType The name of the browser keyboard event (like "keydown")
@@ -324,7 +324,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 
 
 	/**
-	 * Programmtically triggers a keydown event on a specified target.
+	 * Programmatically triggers a 'keydown' event on a specified target.
 	 * @see sap.ui.test.qunit.triggerKeyEvent
 	 *
 	 * @param {string | DOMElement} oTarget The ID of a DOM element or a DOM element which serves as target of the event
@@ -340,7 +340,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 
 
 	/**
-	 * Programmtically triggers a keydup event on a specified target.
+	 * Programmatically triggers a 'keyup' event on a specified target.
 	 * @see sap.ui.test.qunit.triggerKeyEvent
 	 *
 	 * @param {string | DOMElement} oTarget The ID of a DOM element or a DOM element which serves as target of the event
@@ -371,7 +371,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 
 
 	/**
-	 * Programmtically triggers a keypress event on a specified target.
+	 * Programmatically triggers a 'keypress' event on a specified target.
 	 * @see sap.ui.test.qunit.triggerEvent
 	 *
 	 * @param {string | DOMElement} oTarget The ID of a DOM element or a DOM element which serves as target of the event
@@ -400,7 +400,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 
 
 	/**
-	 * Programmtically triggers a keypress event on a specified input field target and appends the character to the value
+	 * Programmatically triggers a 'keypress' event on a specified input field target and appends the character to the value
 	 * of this input field.
 	 * @see sap.ui.test.qunit.triggerKeypress
 	 *
@@ -412,7 +412,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 		QUtils.triggerKeypress(oInput, sChar);
 
 		if (typeof (oInput) == "string") {
-			oInput = jQuery.sap.domById(oInput);
+			oInput = oInput ? document.getElementById(oInput) : null;
 		}
 		var $Input = jQuery(oInput);
 		$Input.val($Input.val() + sChar);
@@ -509,7 +509,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 			"string" : ["", "some", "very long otherwise not normal and so on whatever", "<" + "script>alert('XSS attack!');</" + "script>"]
 		};
 
-		var mDefaultTestValues = jQuery.sap.newObject(M_DEFAULT_TEST_VALUES);
+		var mDefaultTestValues = Object.create(M_DEFAULT_TEST_VALUES);
 
 		function ensureArray(o) {
 			return o && !(o instanceof Array) ? [o] : o;
@@ -523,7 +523,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 			if ( typeof sType === "string" ) {
 				delete mDefaultTestValues[sType];
 			} else {
-				mDefaultTestValues = jQuery.sap.newObject(M_DEFAULT_TEST_VALUES);
+				mDefaultTestValues = Object.create(M_DEFAULT_TEST_VALUES);
 			}
 		};
 
@@ -813,7 +813,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 			 *
 			 * Note: during initialization, this variable also represents the number
 			 * of created entries in the occurs[] array. As all entries are created with
-			 * a value of 0, the definiton above still holds.
+			 * a value of 0, the definition above still holds.
 			 */
 			var nPairs = 0;
 
