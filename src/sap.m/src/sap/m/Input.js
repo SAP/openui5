@@ -2000,10 +2000,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			subString,
 			newText = '';
 
+		if (!Input._wordStartsWithValue(text, value)) {
+			return text;
+		}
+
 		var index = lowerText.indexOf(value);
 
-		if (index > -1) {
+		// search for the first word which starts with these characters
+		if (index > 0) {
+			index = lowerText.indexOf(' ' + value) + 1;
+		}
 
+		if (index > -1) {
 			newText += text.substring(0, index);
 			subString = text.substring(index, index + count);
 			newText += '<span class="sapMInputHighlight">' + subString + '</span>';
