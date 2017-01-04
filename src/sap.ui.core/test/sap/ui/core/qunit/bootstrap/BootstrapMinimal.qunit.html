@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<script src="../../shared-config.js"></script>
+
+		<!-- minimal bootstrap code starts here --> 
+		<script src="../../../../../../resources/sap/ui/thirdparty/jquery.js"></script>
+		<script src="../../../../../../resources/sap/ui/thirdparty/jqueryui/jquery-ui-position.js"></script>
+		<script src="../../../../../../resources/sap/ui/Device.js"></script>
+		<script src="../../../../../../resources/sap/ui/thirdparty/URI.js"></script>
+		<script src="../../../../../../resources/sap/ui/thirdparty/es6-promise.js"></script>
+		<script src="../../../../../../resources/jquery.sap.global.js"
+			id="sap-ui-bootstrap" 
+			data-sap-ui-compatversion="edge">
+		</script>
+		<!-- end of minimal bootstrap code -->
+		<link  href="../../../../../../resources/sap/ui/thirdparty/qunit.css" rel="stylesheet" media="screen" />
+		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"
+			data-cover-flags="branchTracking">
+		</script>
+		<script>
+
+			QUnit.test("basic APIs", function(assert) {
+				assert.strictEqual(typeof sap.ui.define, "function", "sap.ui.define must exist");
+				assert.strictEqual(typeof sap.ui.require, "function", "sap.ui.require must exist");
+				assert.strictEqual(typeof sap.ui.Device, "object", "sap.ui.Device must exist");
+				assert.strictEqual(typeof sap.ui.base, "undefined", "sap.ui.base must not yet exist"); // Note: QUnitUtils would load DataType!
+				assert.strictEqual(typeof sap.ui.core, "undefined", "sap.ui.core must not yet exist");
+				assert.strictEqual(typeof sap.ui.model, "undefined", "sap.ui.model must not yet exist");
+				assert.strictEqual(typeof sap.ui.getCore, "undefined", "sap.ui.getCore must not yet exist");
+				assert.strictEqual(typeof sap.ui.version, "undefined", "sap.ui.version must not yet exist");
+			});
+			
+			QUnit.test("require and boot the Core", function(assert) {
+				var done = assert.async();
+				sap.ui.require(['sap/ui/core/Core'], function() {
+					assert.strictEqual(typeof sap.ui.base, "object", "sap.ui.base must exist");
+					assert.strictEqual(typeof sap.ui.core, "object", "sap.ui.core must exist");
+					assert.strictEqual(typeof sap.ui.model, "object", "sap.ui.model must exist");
+					assert.strictEqual(typeof sap.ui.getCore, "function", "sap.ui.getCore must not yet exist");
+					done();
+				});
+			});
+
+		</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>
