@@ -2861,7 +2861,7 @@
 			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
 			equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 			equal(oEvent.getParameter('async'), true , "Param check: async");
-			equal(oEvent.getParameter('headers').Accept, "application/json", "Param check: headers");
+			equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 			var aRequests = oEvent.getParameter('requests');
 			ok(aRequests.length == 1, "should contain one request");
@@ -2885,7 +2885,7 @@
 				ok(oEvent.getParameter('success'), "Param check: success");
 				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 				equal(oEvent.getParameter('async'), true , "Param check: async");
-				equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
+				equal(oEvent.getParameter('headers').Accept, "multipart/mixed", true , "Param check: headers");
 				ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 				var aRequests = oEvent.getParameter('requests');
 				ok(aRequests.length == 1, "should contain one request");
@@ -2943,7 +2943,7 @@
 			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
 			equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 			equal(oEvent.getParameter('async'), true , "Param check: async");
-			equal(oEvent.getParameter('headers').Accept, "application/json", "Param check: headers");
+			equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 			var aRequests = oEvent.getParameter('requests');
 			ok(aRequests.length == 1, "should contain one request");
@@ -3035,7 +3035,7 @@
 			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
 			equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 			equal(oEvent.getParameter('async'), true , "Param check: async");
-			equal(oEvent.getParameter('headers').Accept, "application/json", "Param check: headers");
+			equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			var aRequests = oEvent.getParameter('requests');
 			ok(aRequests.length == 1, "should contain one request");
 			equal(aRequests[0].method, "GET", "internal request, Param Check: method");
@@ -3282,7 +3282,7 @@
 				ok(oEvent.getParameter('success'), "Param check: success");
 				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 				equal(oEvent.getParameter('async'), true , "Param check: async");
-				equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
+				equal(oEvent.getParameter('headers').Accept, "multipart/mixed", true , "Param check: headers");
 				ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 				var aRequests = oEvent.getParameter('requests');
 
