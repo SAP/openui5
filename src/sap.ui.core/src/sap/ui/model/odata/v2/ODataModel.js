@@ -2637,11 +2637,15 @@ sap.ui.define([
 
 		sUrl = this.sServiceUrl	+ "/$batch";
 
+
 		if (this.aUrlParams.length > 0) {
 			sUrl += "?" + this.aUrlParams.join("&");
 		}
 
 		jQuery.extend(oChangeHeader, this.mCustomHeaders, this.oHeaders);
+
+		// Set Accept header for $batch requests
+		oChangeHeader["Accept"] = "multipart/mixed";
 
 		// reset
 		delete oChangeHeader["Content-Type"];
