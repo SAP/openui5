@@ -56,10 +56,10 @@ sap.ui.define([
 
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(this.oSandbox, {
-					"Equipments?$orderby=Category,Name&$select=Category,ID,Name,EmployeeId&$skip=0&$top=5" : {
+					"Equipments?$count=true&$orderby=Category,Name&$select=Category,ID,Name,EmployeeId&$skip=0&$top=5" : {
 						source : "equipments.json"
 					},
-					"Equipments?$orderby=Category,Name&$select=Category,ID,Name,EmployeeId&$skip=5&$top=5" : {
+					"Equipments?$count=true&$orderby=Category,Name&$select=Category,ID,Name,EmployeeId&$skip=5&$top=4" : {
 						source : "equipments2.json"
 					},
 					"GetEmployeeMaxAge()" : {
