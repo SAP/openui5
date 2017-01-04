@@ -80,6 +80,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 		return SemanticConfiguration._oTypeConfigs[sType].getSettings().ariaLabelledBy;
 	};
 
+	SemanticConfiguration.getShareMenuConfig = function (sRuleSetType) {
+
+		switch (sRuleSetType) {
+
+			case sap.m.semantic.SemanticRuleSetType.Classic:
+
+				return {
+					baseButtonPlacement: sap.m.PlacementType.Bottom,
+					actionSheetPlacement: sap.m.PlacementType.Top
+				};
+
+			case sap.m.semantic.SemanticRuleSetType.Optimized:
+
+				return {
+					baseButtonPlacement: sap.m.PlacementType.Top,
+					actionSheetPlacement: sap.m.PlacementType.Bottom
+				};
+		}
+	};
+
 	SemanticConfiguration._oTypeConfigs = (function () { //TODO: set from outside?
 
 	var oTypeConfigs = {},

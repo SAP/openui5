@@ -111,6 +111,16 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 					type: "boolean",
 					group:"Appearance",
 					defaultValue: false
+				},
+
+				/**
+				 * Declares the type of semantic ruleset that will govern the styling and positioning of semantic content.
+				 * @since 1.44
+				 */
+				semanticRuleSet: {
+					type: "sap.m.semantic.SemanticRuleSetType",
+					group: "Misc",
+					defaultValue: sap.m.semantic.SemanticRuleSetType.Classic
 				}
 			},
 			defaultAggregation: "content",
@@ -184,7 +194,14 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 		this._getPage().setCustomHeader(this._getInternalHeader());
 		this._getPage().setFooter(new OverflowToolbar(this.getId() + "-footer"));
 		this._getPage().setLandmarkInfo(new PageAccessibleLandmarkInfo());
+		this._getPage().setShowHeader(false);
+
+		var oHeader = this._getInternalHeader();
+		oHeader._attachModifyAggregation("contentLeft", null, this._updateHeaderVisibility, this);
+		oHeader._attachModifyAggregation("contentMiddle", null, this._updateHeaderVisibility, this);
+		oHeader._attachModifyAggregation("contentRight", null, this._updateHeaderVisibility, this);
 	};
+
 
 	/**
 	 * Function is called when exiting the control.
@@ -505,6 +522,14 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 		}
 
 		return ManagedObject.prototype.destroyAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
+	};
+
+	SemanticPage.prototype._updateHeaderVisibility = function () {
+		var oHeader = this._getInternalHeader();
+		var bEmpty = (oHeader.getContentLeft().length === 0)
+			&& (oHeader.getContentMiddle().length === 0)
+			&& (oHeader.getContentRight().length === 0);
+		this._getPage().setShowHeader(!bEmpty);
 	};
 
 	SemanticPage.prototype._getTitle = function () {
