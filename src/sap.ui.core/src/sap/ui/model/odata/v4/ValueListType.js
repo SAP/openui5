@@ -7,13 +7,13 @@ sap.ui.define(function () {
 	"use strict";
 
 	/**
-	* @class
 	* Specifies the value list type of a property.
 	*
 	* @alias sap.ui.model.odata.v4.ValueListType
+	* @enum {string}
 	* @public
+	* @readonly
 	* @since 1.45.0
-	* @static
 	*
 	* @see sap.ui.model.odata.v4.ODataMetaModel#getValueListType
 	*/
@@ -21,6 +21,7 @@ sap.ui.define(function () {
 		/**
 		 * There is no value list.
 		 *
+		 * @constant
 		 * @public
 		 * @since 1.45.0
 		 */
@@ -29,6 +30,7 @@ sap.ui.define(function () {
 		/**
 		 * There is one enumeration of fixed values.
 		 *
+		 * @constant
 		 * @public
 		 * @since 1.45.0
 		 */
@@ -37,6 +39,7 @@ sap.ui.define(function () {
 		/**
 		 * There is a dynamic value list with multiple queries including selection criteria.
 		 *
+		 * @constant
 		 * @public
 		 * @since 1.45.0
 		 */
