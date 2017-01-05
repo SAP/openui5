@@ -243,6 +243,10 @@
 			checkRMWriter("Hello&#x20;&amp;&lt;&quot;&#x27;&#x5c;", true, 0, function(rm){
 				return rm.writeEscaped("Hello &<\"\'\\");
 			});
+			// in design time tools and in general string and enum (string) properties could be null
+			checkRMWriter("", true, 0, function(rm){
+				return rm.writeEscaped(null);
+			});
 		});
 
 		test("RenderManager.writeControlData", function() {
