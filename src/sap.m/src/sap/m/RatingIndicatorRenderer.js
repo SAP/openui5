@@ -90,7 +90,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
         oRm.writeAccessibilityState(oControl, {
             "role": "slider",
             "orientation": "horizontal",
-            "live": "assertive",
             "valuemin": 0,
             "disabled": !oControl.getEnabled(),
             "labelledby": {
