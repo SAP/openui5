@@ -1372,6 +1372,35 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("refreshInternal: relative with own cache", function (assert) {
+		var oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", undefined, undefined, undefined, {
+				$$groupId : "group"
+			}),
+			oBindingMock = this.mock(oBinding),
+			oCache = {},
+			oCachePromise = {},
+			oContext = Context.create(this.oModel, {}, "/TEAMS('1')"),
+			that = this;
+
+		oBindingMock.expects("makeCache")
+			.withExactArgs(sinon.match.same(oContext)).returns(_SyncPromise.resolve(oCache));
+		oBinding.setContext(oContext);
+		oBindingMock.expects("makeCache")
+			.withExactArgs(sinon.match.same(oContext)).returns(oCachePromise);
+		that.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
+		that.mock(that.oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oBinding))
+			.returns([]);
+		oBinding.mCacheByContext = {}; // would have been set by makeCache
+
+		//code under test
+		oBinding.refreshInternal("myGroup");
+
+		assert.strictEqual(oBinding.mCacheByContext, undefined);
+		assert.strictEqual(oBinding.oCachePromise, oCachePromise);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("refreshInternal: dependent bindings with transient contexts", function (assert) {
 		var oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
