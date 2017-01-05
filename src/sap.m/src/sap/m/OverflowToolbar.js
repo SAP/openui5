@@ -232,17 +232,11 @@ sap.ui.define([
 			return;
 		}
 
-		// Old flexbox polyfill
-		if (Toolbar.hasFlexBoxSupport) {
-			var $This = this.$();
-			var oDomRef = $This[0] || {};
-			$This.removeClass("sapMTBOverflow");
-			var bOverflow = oDomRef.scrollWidth > oDomRef.clientWidth;
-			bOverflow && $This.addClass("sapMTBOverflow");
-			// IE - run the polyfill
-		} else {
-			Toolbar.flexie(this.$());
-		}
+		var $This = this.$();
+		var oDomRef = $This[0] || {};
+		$This.removeClass("sapMTBOverflow");
+		var bOverflow = oDomRef.scrollWidth > oDomRef.clientWidth;
+		bOverflow && $This.addClass("sapMTBOverflow");
 	};
 
 

@@ -105,13 +105,8 @@
 
 		function setFlexboxMode(sMode) {
 			if (sMode === "new") {
-				this.stub(sap.m.Toolbar, "hasFlexBoxSupport", true);
 				this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", true);
 			} else if (sMode === "old") {
-				this.stub(sap.m.Toolbar, "hasFlexBoxSupport", true);
-				this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", false);
-			} else if (sMode === "none") {
-				this.stub(sap.m.Toolbar, "hasFlexBoxSupport", false);
 				this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", false);
 			}
 		}
@@ -130,7 +125,7 @@
 
 
 		function testAllFlexBoxModes(sName, fnTest) {
-			["new", "old", "none"].forEach(function(sMode) {
+			["new", "old"].forEach(function(sMode) {
 				test("[" + sMode.toUpperCase() + " flexbox] " + sName, function () {
 					setFlexboxMode.call(this, "new");
 					fnTest.call(this, sName, fnTest);
