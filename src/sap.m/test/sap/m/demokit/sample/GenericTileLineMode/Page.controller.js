@@ -9,12 +9,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/m/Message
 		},
 
 		press : function(evt) {
+			var oTile = evt.getSource(),
+			    sTileName = oTile.getHeader() || oTile.getTooltip();
+
+			if (evt.getParameter("action") === "Remove") {
+				MessageToast.show("Remove action of GenericTile \"" + sTileName + "\" has been pressed.");
+			} else {
+				MessageToast.show("The GenericTile \"" + sTileName + "\" has been pressed.");
+			}
+		},
+
+		pressSlideTile : function(evt) {
 			var oTile = evt.getSource();
 
 			if (evt.getParameter("action") === "Remove") {
-				MessageToast.show("Remove action of GenericTile \"" + oTile.getHeader() + "\" has been pressed.");
+				MessageToast.show("Remove action of SlideTile \"" + oTile.getTooltip() + "\" has been pressed.");
 			} else {
-				MessageToast.show("The GenericTile \"" + oTile.getHeader() + "\" has been pressed.");
+				MessageToast.show("The SlideTile \"" + oTile.getTooltip() + "\" has been pressed.");
 			}
 		}
 	});
