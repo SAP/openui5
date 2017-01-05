@@ -9,7 +9,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataParentBinding"
 ], function (jQuery, ChangeReason, _Helper, _SyncPromise, asODataParentBinding) {
 	/*global QUnit, sinon */
-	/*eslint no-warning-comments: 0 */
+	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
 	"use strict";
 
 	/**
@@ -81,10 +81,11 @@ sap.ui.require([
 	//*********************************************************************************************
 	[undefined, "up"].forEach(function (sGroupId) {
 		QUnit.test("updateValue: absolute binding", function (assert) {
-			var oBinding = new ODataParentBinding({
-					oCache : {
-						update : function () {}
-					},
+			var oCache = {
+					update : function () {}
+				},
+				oBinding = new ODataParentBinding({
+					oCachePromise : _SyncPromise.resolve(oCache),
 					sPath : "/absolute",
 					bRelative : false,
 					sUpdateGroupId : "myUpdateGroup"
@@ -92,7 +93,7 @@ sap.ui.require([
 				sPath = "SO_2_SOITEM/42",
 				oResult = {};
 
-			this.mock(oBinding.oCache).expects("update")
+			this.mock(oCache).expects("update")
 				.withExactArgs(sGroupId || "myUpdateGroup", "bar", Math.PI, "edit('URL')", sPath)
 				.returns(Promise.resolve(oResult));
 
@@ -105,8 +106,26 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("updateValue: cache is not yet available", function (assert) {
+		var oCache = {
+				update : function () {}
+			},
+			oBinding = new ODataParentBinding({
+				oCachePromise : _SyncPromise.resolve(Promise.resolve(oCache))
+			});
+
+		this.mock(oCache).expects("update").never();
+
+		// code under test
+		assert.throws(function () {
+			oBinding.updateValue("myUpdateGroup", "bar", Math.PI, "edit('URL')", "SO_2_SOITEM/42");
+		}, new Error("PATCH request not allowed"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("updateValue: relative binding", function (assert) {
 		var oBinding = new ODataParentBinding({
+				oCachePromise : _SyncPromise.resolve(undefined),
 				oContext : {
 					updateValue : function () {}
 				},
@@ -292,19 +311,16 @@ sap.ui.require([
 		[undefined, "foo eq 42"], //set filter
 		["/canonical2", "foo eq 42"] //set context and filter
 	].forEach(function (oFixture) {
-		QUnit.test("createCache: proxy interface, " + oFixture[0] + ", " + oFixture[1],
+		QUnit.test("createCache: async " + oFixture[0] + ", " + oFixture[1],
 			function (assert) {
-				var oBinding = new ODataParentBinding({
-						toString : function () { return "TheBinding"; }
-					}),
-					oFilterPromise = oFixture[1] && Promise.resolve(oFixture[1]),
-					oPathPromise = oFixture[0] && Promise.resolve(oFixture[0]),
+				var oBinding = new ODataParentBinding(),
 					oCache = {
 						fetchValue : function () {},
 						read : function () {}
 					},
-					oCacheProxy,
-					oReadResult = {};
+					oCachePromise,
+					oFilterPromise = oFixture[1] && Promise.resolve(oFixture[1]),
+					oPathPromise = oFixture[0] && Promise.resolve(oFixture[0]);
 
 				function createCache(sPath, sFilter) {
 					assert.strictEqual(sPath, oFixture[0]);
@@ -312,56 +328,28 @@ sap.ui.require([
 					return oCache;
 				}
 
-				this.mock(oCache).expects("read").withExactArgs(0, 10, "$auto")
-					.returns(Promise.resolve(oReadResult));
-				this.mock(oCache).expects("fetchValue").withExactArgs("$auto", "foo")
-					.returns(Promise.resolve(oReadResult));
-
 				// code under test
-				oCacheProxy = oBinding.createCache(createCache, oPathPromise, oFilterPromise);
-
-				assert.throws(function () {
-					oCacheProxy._delete();
-				}, new Error("DELETE request not allowed"));
-				assert.throws(function () {
-					oCacheProxy.create();
-				}, new Error("POST request not allowed"));
-				oCacheProxy.deregisterChange("path/to/property", {});
-				assert.strictEqual(oCacheProxy.hasPendingChangesForPath(), false);
-				oCacheProxy.resetChangesForPath();
-				oCacheProxy.setActive(false);
-				assert.throws(function () {
-					oCacheProxy.post();
-				}, new Error("POST request not allowed"));
-				assert.throws(function () {
-					oCacheProxy.update();
-				}, new Error("PATCH request not allowed"));
-				assert.strictEqual(oCacheProxy.toString(), "Cache proxy for " + oBinding);
-
-				return Promise.all([
-					oCacheProxy.read(0, 10, "$auto").then(function (oResult) {
-						assert.strictEqual(oBinding.oCache, oCache);
-						assert.strictEqual(oCache.$canonicalPath, oFixture[0]);
-						assert.strictEqual(oResult, oReadResult);
-					}),
-					oCacheProxy.fetchValue("$auto", "foo").then(function (oResult) {
-						assert.strictEqual(oBinding.oCache, oCache);
-						assert.strictEqual(oCache.$canonicalPath, oFixture[0]);
-						assert.strictEqual(oResult, oReadResult);
-					})
-				]);
+				oCachePromise = oBinding.createCache(createCache, oPathPromise, oFilterPromise)
+					.then(function (oResolvedCache) {
+						assert.strictEqual(oResolvedCache, oCache);
+					});
+				assert.strictEqual(oCachePromise.isFulfilled(), false,
+					"Cache-Promise not yet resolved");
 			});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("createCache: deactivates previous cache", function (assert) {
-		var oBinding = new ODataParentBinding();
+		var oCache = { setActive : function () {} },
+			oBinding = new ODataParentBinding();
 
 		// code under test
 		oBinding.createCache(function () {});
 
-		oBinding.oCache = { setActive : function () {} };
-		this.mock(oBinding.oCache).expects("setActive").withExactArgs(false);
+		oBinding = new ODataParentBinding({
+			oCachePromise : _SyncPromise.resolve(oCache)
+		});
+		this.mock(oCache).expects("setActive").withExactArgs(false);
 
 		// code under test
 		oBinding.createCache(function () {});
@@ -379,19 +367,23 @@ sap.ui.require([
 			createCache = this.spy(function () { return oCache; });
 
 		// code under test
-		oBinding.createCache(createCache, oPathPromise);
+		oBinding.oCachePromise = oBinding.createCache(createCache, oPathPromise);
 
-		return oBinding.oCache.read().then(function () {
-			assert.strictEqual(oBinding.oCache, oCache);
+		return oBinding.oCachePromise.then(function (oResolvedCache) {
+			return oCache.read().then(function () {
+				assert.strictEqual(oResolvedCache, oCache);
 
-			oCacheMock.expects("setActive").withExactArgs(false);
-			oCacheMock.expects("setActive").withExactArgs(true);
-			// code under test
-			oBinding.createCache(createCache, oPathPromise);
+				oCacheMock.expects("setActive").withExactArgs(false);
+				oCacheMock.expects("setActive").withExactArgs(true);
+				// code under test
+				oBinding.oCachePromise = oBinding.createCache(createCache, oPathPromise);
 
-			return oBinding.oCache.read().then(function () {
-				assert.strictEqual(oBinding.oCache, oCache);
-				assert.strictEqual(createCache.callCount, 1);
+				return oBinding.oCachePromise.then(function (oResolvedCache2) {
+					return oResolvedCache2.read().then(function () {
+						assert.strictEqual(oResolvedCache2, oCache);
+						assert.strictEqual(createCache.callCount, 1);
+					});
+				});
 			});
 		});
 	});
@@ -405,17 +397,23 @@ sap.ui.require([
 			createCache = this.spy(function () { return oCache; });
 
 		// code under test
-		oBinding.createCache(createCache, oPathPromise);
+		oBinding.oCachePromise = oBinding.createCache(createCache, oPathPromise);
 
-		assert.strictEqual(oBinding.oCache, oCache);
+		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), true);
+		oBinding.oCachePromise.then(function (oResolvedCache) {
+			assert.strictEqual(oResolvedCache, oCache);
+		});
 
 		oCacheMock.expects("setActive").withExactArgs(false);
 		oCacheMock.expects("setActive").withExactArgs(true);
 
 		// code under test
-		oBinding.createCache(createCache, oPathPromise);
+		oBinding.oCachePromise = oBinding.createCache(createCache, oPathPromise);
 
-		assert.strictEqual(oBinding.oCache, oCache);
+		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), true);
+		oBinding.oCachePromise.then(function (oResolvedCache) {
+			assert.strictEqual(oResolvedCache, oCache);
+		});
 		assert.strictEqual(createCache.callCount, 1);
 	});
 
@@ -425,39 +423,53 @@ sap.ui.require([
 			oCache = {setActive : function () {}},
 			createCache = this.spy(function () { return oCache; });
 
-		// code under test
-		oBinding.createCache(createCache, undefined);
+		this.mock(oCache).expects("setActive").withExactArgs(false);
 
 		// code under test
-		oBinding.createCache(createCache, undefined);
+		oBinding.oCachePromise = oBinding.createCache(createCache, undefined);
+
+		// code under test
+		oBinding.oCachePromise = oBinding.createCache(createCache, undefined);
 
 		assert.strictEqual(createCache.callCount, 2);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createCache: cache proxy !== binding's cache", function (assert) {
-		var oBinding = new ODataParentBinding(),
-			oCache = {read : function () {}},
-			oPromise,
-			oReadResult = {};
-
-		this.mock(oCache).expects("read").returns(Promise.resolve(oReadResult));
+	QUnit.test("createCache: cache promise !== binding's cache promise", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {
+					reportError : function () {}
+				},
+				toString : function () {return "MyBinding";}
+			}),
+			oCache = {},
+			createCache = this.spy(function () { return oCache; }),
+			oPromise;
 
 		// create a binding asynchronously and read from it
-		oBinding.createCache(function () {
-			return {/*cache*/};
-		}, Promise.resolve("Employees('42')"));
-		oPromise = oBinding.oCache.read();
+		oBinding.oCachePromise = oBinding.createCache(createCache,
+			Promise.resolve("Employees('42')"));
+		oPromise = oBinding.oCachePromise;
+
+		this.mock(oBinding.oModel).expects("reportError")
+			.withExactArgs("Failed to create cache for binding MyBinding",
+				"sap.ui.model.odata.v4.ODataParentBinding", sinon.match.instanceOf(Error));
 
 		// create a binding synchronously afterwards (overtakes the first one, but must win)
-		oBinding.createCache(function () {
-			return oCache;
-		});
-
-		assert.strictEqual(oBinding.oCache, oCache);
-		return oPromise.then(function (oResult) {
-			assert.strictEqual(oBinding.oCache, oCache);
-			assert.strictEqual(oResult, oReadResult);
+		oBinding.oCachePromise = oBinding.createCache(createCache);
+		return _SyncPromise.all([
+			oPromise.then(function () {
+				assert.ok(false, "Expected a rejected cache-promise");
+			}, function (oError) {
+				assert.strictEqual(oError.message,
+					"Cache discarded as a new cache has been created");
+				assert.strictEqual(oError.canceled, true);
+			}),
+			oBinding.oCachePromise.then(function (oResolvedCache) {
+				assert.strictEqual(oResolvedCache, oCache);
+			})
+		]).then(function () {
+			assert.strictEqual(createCache.callCount, 1);
 		});
 	});
 
@@ -480,10 +492,7 @@ sap.ui.require([
 				"sap.ui.model.odata.v4.ODataParentBinding", sinon.match.same(oError));
 
 		// code under test
-		oBinding.createCache(unexpected, Promise.reject(oError));
-
-		// code under test
-		return oBinding.oCache.read("$auto", "foo").catch(function (oError0) {
+		return oBinding.createCache(unexpected, Promise.reject(oError)).catch(function (oError0) {
 			assert.strictEqual(oError0, oError);
 		});
 	});
@@ -507,12 +516,10 @@ sap.ui.require([
 				"sap.ui.model.odata.v4.ODataParentBinding", sinon.match.same(oError));
 
 		// code under test
-		oBinding.createCache(unexpected, undefined, Promise.reject(oError));
-
-		// code under test
-		return oBinding.oCache.read("$auto", "foo").catch(function (oError0) {
-			assert.strictEqual(oError0, oError);
-		});
+		return oBinding.createCache(unexpected, undefined, Promise.reject(oError))
+			.catch(function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
 	});
 	//*********************************************************************************************
 	[{

@@ -4,8 +4,9 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/odata/v4/ODataBinding"
-], function (jQuery, _Helper, asODataBinding) {
+], function (jQuery, _Helper, _SyncPromise, asODataBinding) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -235,12 +236,13 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("hasPendingChangesForPath: with cache", function (assert) {
-		var oBinding = new ODataBinding({
-				oCache : {
-					hasPendingChangesForPath : function () {}
-				}
+		var oCache = {
+				hasPendingChangesForPath : function () {}
+			},
+			oBinding = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(oCache)
 			}),
-			oCacheMock = this.mock(oBinding.oCache),
+			oCacheMock = this.mock(oCache),
 			oResult = {};
 
 		["foo", ""].forEach(function (sPath) {
@@ -253,6 +255,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("hasPendingChangesForPath: without cache", function (assert) {
 		var oBinding = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(undefined),
 				sPath : "relative"
 			}),
 			sBuildPath = "~/foo",
@@ -264,8 +267,8 @@ sap.ui.require([
 			oResult = {};
 
 		//code under test
-		assert.strictEqual(oBinding.hasPendingChangesForPath("foo"), false);
-		assert.strictEqual(oBinding.hasPendingChangesForPath(""), false);
+		assert.strictEqual(oBinding.hasPendingChangesForPath("foo"), false, "foo");
+		assert.strictEqual(oBinding.hasPendingChangesForPath(""), false, "empty path");
 
 		oBinding.oContext = oContext;
 		["foo", ""].forEach(function (sPath) {
@@ -281,32 +284,59 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("hasPendingChangesForPath: without cache, base context", function (assert) {
-		assert.strictEqual(new ODataBinding({oContext : {}}).hasPendingChangesForPath("foo"),
-			false);
+		var oBinding = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(undefined),
+				oContext : {}
+			});
+		assert.strictEqual(oBinding.hasPendingChangesForPath("foo"), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasPendingChangesForPath: cache is not yet available", function (assert) {
+		var oCache = {
+				hasPendingChangesForPath : function () {}
+			},
+			oBinding = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(Promise.resolve(oCache))
+			});
+		this.mock(oCache).expects("hasPendingChangesForPath").never();
+
+		//code under test
+		assert.strictEqual(oBinding.hasPendingChangesForPath("foo"), false);
+
+		return oBinding.oCachePromise.then(); // wait for cache promise
 	});
 
 	//*********************************************************************************************
 	QUnit.test("hasPendingChangesInDependents", function (assert) {
-		var oChild1 = new ODataBinding({
-				oCache : {
-					hasPendingChangesForPath : function () {}
-				}
+		var oCache = {
+				hasPendingChangesForPath : function () {}
+			},
+			oChild1 = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(oCache)
 			}),
-			oChild2 = new ODataBinding(),
+			oChild2 = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(undefined)
+			}),
+			oChild3 = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(Promise.resolve())
+			}),
 			oBinding = new ODataBinding({
 				oModel : {
 					getDependentBindings : function () {}
 				}
 			}),
-			oChild1CacheMock = this.mock(oChild1.oCache),
+			oChild1CacheMock = this.mock(oCache),
 			oChild1Mock = this.mock(oChild1),
-			oChild2Mock = this.mock(oChild2);
+			oChild2Mock = this.mock(oChild2),
+			oChild3Mock = this.mock(oChild3);
 
 		this.mock(oBinding.oModel).expects("getDependentBindings").exactly(4)
-			.withExactArgs(sinon.match.same(oBinding)).returns([oChild1, oChild2]);
+			.withExactArgs(sinon.match.same(oBinding)).returns([oChild1, oChild2, oChild3]);
 		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
 		oChild1Mock.expects("hasPendingChangesInDependents").never();
 		oChild2Mock.expects("hasPendingChangesInDependents").never();
+		oChild3Mock.expects("hasPendingChangesInDependents").never();
 
 		// code under test
 		assert.strictEqual(oBinding.hasPendingChangesInDependents(), true);
@@ -333,6 +363,30 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("hasPendingChangesInDependents: cache is not yet available", function (assert) {
+		var oCache = {
+				hasPendingChangesForPath : function () {}
+			},
+			oChild = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(Promise.resolve(oCache))
+			}),
+			oBinding = new ODataBinding({
+				oModel : {
+					getDependentBindings : function () {}
+				}
+			});
+
+		this.mock(oBinding.oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oBinding)).returns([oChild]);
+		this.mock(oCache).expects("hasPendingChangesForPath").never();
+
+		// code under test
+		assert.strictEqual(oBinding.hasPendingChangesInDependents(), false);
+
+		return oChild.oCachePromise.then(); // wait for cache promise
+	});
+
+	//*********************************************************************************************
 	QUnit.test("resetChanges", function (assert) {
 		var oBinding = new ODataBinding(),
 			oBindingMock = this.mock(oBinding);
@@ -346,12 +400,13 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("resetChangesForPath: with cache", function (assert) {
-		var oBinding = new ODataBinding({
-				oCache : {
-					resetChangesForPath : function () {}
-				}
+		var oCache = {
+				resetChangesForPath : function () {}
+			},
+			oBinding = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(oCache)
 			}),
-			oCacheMock = this.mock(oBinding.oCache);
+			oCacheMock = this.mock(oCache);
 
 		["foo", ""].forEach(function (sPath) {
 			oCacheMock.expects("resetChangesForPath").withExactArgs(sPath);
@@ -361,8 +416,24 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("resetChangesForPath: with cache is not yet available", function (assert) {
+		var oCache = {
+				resetChangesForPath : function () {}
+			},
+			oBinding = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(Promise.resolve(oCache))
+			}),
+			oCacheMock = this.mock(oCache);
+
+		oCacheMock.expects("resetChangesForPath").never();
+
+		oBinding.resetChangesForPath("");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("resetChangesForPath: without cache", function (assert) {
 		var oBinding = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(undefined),
 				sPath : "relative"
 			}),
 			sBuildPath = "~/foo",
@@ -389,17 +460,26 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("resetChangesForPath: without cache, base context", function (assert) {
-		new ODataBinding({oContext : {}}).resetChangesForPath("foo");
+		new ODataBinding({
+			oCachePromise : _SyncPromise.resolve(undefined),
+			oContext : {}
+		}).resetChangesForPath("foo");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("resetChangesInDependents", function (assert) {
-		var oChild1 = new ODataBinding({
-				oCache : {
-					resetChangesForPath : function () {}
-				}
+		var oCache = {
+				resetChangesForPath : function () {}
+			},
+			oChild1 = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(oCache)
 			}),
-			oChild2 = new ODataBinding(),
+			oChild2 = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(undefined)
+			}),
+			oChild3 = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(Promise.resolve(undefined))
+			}),
 			oBinding = new ODataBinding({
 				oModel : {
 					getDependentBindings : function () {}
@@ -407,10 +487,11 @@ sap.ui.require([
 			});
 
 		this.mock(oBinding.oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oBinding)).returns([oChild1, oChild2]);
-		this.mock(oChild1.oCache).expects("resetChangesForPath").withExactArgs("");
+			.withExactArgs(sinon.match.same(oBinding)).returns([oChild1, oChild2, oChild3]);
+		this.mock(oCache).expects("resetChangesForPath").withExactArgs("");
 		this.mock(oChild1).expects("resetChangesInDependents").withExactArgs();
 		this.mock(oChild2).expects("resetChangesInDependents").withExactArgs();
+		this.mock(oChild3).expects("resetChangesInDependents").never();
 
 		// code under test
 		oBinding.resetChangesInDependents();

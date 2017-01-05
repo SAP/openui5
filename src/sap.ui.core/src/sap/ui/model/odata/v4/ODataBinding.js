@@ -71,8 +71,16 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.hasPendingChangesForPath = function (sPath) {
-		if (this.oCache) {
-			return this.oCache.hasPendingChangesForPath(sPath);
+		var oCache;
+
+		if (!this.oCachePromise.isFulfilled()) {
+			// No pending changes because create and update are not allowed
+			return false;
+		}
+
+		oCache = this.oCachePromise.getResult();
+		if (oCache) {
+			return oCache.hasPendingChangesForPath(sPath);
 		}
 		if (this.oContext && this.oContext.hasPendingChangesForPath) {
 			return this.oContext.hasPendingChangesForPath(_Helper.buildPath(this.sPath, sPath));
@@ -90,7 +98,15 @@ sap.ui.define([
 	 */
 	ODataBinding.prototype.hasPendingChangesInDependents = function () {
 		return this.oModel.getDependentBindings(this).some(function (oDependent) {
-			return oDependent.oCache && oDependent.oCache.hasPendingChangesForPath("")
+			var oCache;
+
+			if (!oDependent.oCachePromise.isFulfilled()) {
+				// No pending changes because create and update are not allowed
+				return false;
+			}
+
+			oCache = oDependent.oCachePromise.getResult();
+			return oCache && oCache.hasPendingChangesForPath("")
 				|| oDependent.hasPendingChangesInDependents();
 		});
 	};
@@ -211,8 +227,16 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.resetChangesForPath = function (sPath) {
-		if (this.oCache) {
-			this.oCache.resetChangesForPath(sPath);
+		var oCache;
+
+		if (!this.oCachePromise.isFulfilled()) {
+			// No pending changes because create and update are not allowed
+			return;
+		}
+
+		oCache = this.oCachePromise.getResult();
+		if (oCache) {
+			oCache.resetChangesForPath(sPath);
 		} else if (this.oContext && this.oContext.resetChangesForPath) {
 			this.oContext.resetChangesForPath(_Helper.buildPath(this.sPath, sPath));
 		}
@@ -228,8 +252,16 @@ sap.ui.define([
 	 */
 	ODataBinding.prototype.resetChangesInDependents = function () {
 		this.oModel.getDependentBindings(this).forEach(function (oDependent) {
-			if (oDependent.oCache) {
-				oDependent.oCache.resetChangesForPath("");
+			var oCache;
+
+			if (!oDependent.oCachePromise.isFulfilled()) {
+				// No pending changes because create and update are not allowed
+				return;
+			}
+
+			oCache = oDependent.oCachePromise.getResult();
+			if (oCache) {
+				oCache.resetChangesForPath("");
 			}
 			oDependent.resetChangesInDependents();
 		});
