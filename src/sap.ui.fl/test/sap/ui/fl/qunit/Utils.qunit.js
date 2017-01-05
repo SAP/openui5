@@ -768,8 +768,20 @@ jQuery.sap.require("sap.m.Button");
 		}
 	});
 
-	QUnit.test("checkControlId shall log an error if the id was generated and return false", function (assert) {
+	QUnit.test("checkControlId shall return false if the id was generated", function (assert) {
 		assert.equal(Utils.checkControlId(this.oControlWithGeneratedId, this.oComponent), false);
+	});
+
+	QUnit.test("checkControlId shall throw an error if the id was generated", function (assert) {
+		var spyLog = this.spy(jQuery.sap.log, "warning");
+		Utils.checkControlId(this.oControlWithGeneratedId, this.oComponent);
+		assert.ok(spyLog.calledOnce);
+	});
+
+	QUnit.test("checkControlId does not throw an error if the id was generated but the logging was suppressed", function (assert) {
+		var spyLog = this.spy(jQuery.sap.log, "warning");
+		Utils.checkControlId(this.oControlWithGeneratedId, this.oComponent, true);
+		assert.equal(spyLog.callCount, 0);
 	});
 
 	QUnit.test("checkControlId shall return true if control id was not generated", function (assert) {
