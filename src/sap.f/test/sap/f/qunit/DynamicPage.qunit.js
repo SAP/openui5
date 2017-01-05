@@ -140,7 +140,7 @@
 			},
 			exists: function (vObject) {
 				if (arguments.length === 1) {
-					return Array.isArray(vObject) ? vObject.length > 0 : !!vObject;
+					return vObject && ("length" in vObject) ? vObject.length > 0 : !!vObject;
 				}
 
 				return Array.prototype.slice.call(arguments).every(function (oObject) {

@@ -146,7 +146,11 @@ sap.ui.define([
 
 	function exists(vObject) {
 		if (arguments.length === 1) {
-			return Array.isArray(vObject) ? vObject.length > 0 : !!vObject;
+			// Check if vObject is an Array or jQuery empty object,
+			// by looking for the inherited property "length" via the "in" operator.
+			// If yes - check if the "length" is positive.
+			// If not - cast the vObject to Boolean.
+			return vObject && ("length" in vObject) ? vObject.length > 0 : !!vObject;
 		}
 
 		return Array.prototype.slice.call(arguments).every(function (oObject) {
