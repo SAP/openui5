@@ -987,17 +987,15 @@ sap.ui.define([
 
 		if (sPath[0] === "/") {
 			sResolvedPath = sPath;
-		} else {
-			if (oContext) {
-				if (sPath) {
-					if (oContext.getPath().slice(-1) === "/") {
-						sResolvedPath = oContext.getPath() + sPath;
-					} else {
-						sResolvedPath = oContext.getPath() + "/" + sPath;
-					}
+		} else if (oContext) {
+			if (sPath) {
+				if (oContext.getPath().slice(-1) === "/") {
+					sResolvedPath = oContext.getPath() + sPath;
 				} else {
-					sResolvedPath = oContext.getPath();
+					sResolvedPath = oContext.getPath() + "/" + sPath;
 				}
+			} else {
+				sResolvedPath = oContext.getPath();
 			}
 		}
 
