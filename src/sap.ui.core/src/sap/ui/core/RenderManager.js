@@ -111,18 +111,19 @@ sap.ui.define([
 		 *
 		 * For details about the escaping refer to {@link jQuery.sap.encodeHTML}
 		 *
-		 * @param {string} sText
+		 * @param {any} sText
 		 * @param {boolean} bLineBreaks Whether to convert line breaks into <br> tags
 		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
 		 * @public
 		 */
-		this.writeEscaped = function(/** string */ sText, bLineBreaks) {
-			jQuery.sap.assert( typeof sText === "string", "sText must be a string");
-			sText = jQuery.sap.encodeHTML(sText);
-			if (bLineBreaks) {
-				sText = sText.replace(/&#xa;/g, "<br>");
+		this.writeEscaped = function(sText, bLineBreaks) {
+			if ( sText != null ) {
+				sText = jQuery.sap.encodeHTML( String(sText) );
+				if (bLineBreaks) {
+					sText = sText.replace(/&#xa;/g, "<br>");
+				}
+				aBuffer.push(sText);
 			}
-			aBuffer.push(sText);
 			return this;
 		};
 
