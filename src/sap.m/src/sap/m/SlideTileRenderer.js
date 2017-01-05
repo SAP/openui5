@@ -37,9 +37,9 @@ sap.ui.define(["sap/m/GenericTileScope"], function(GenericTileScope) {
 		oRm.writeAttribute("tabindex", "0");
 		oRm.writeAttribute("role", "presentation");
 		oRm.write(">");
-		this._renderPausePlayIcon(oRm, oControl);
 		iLength = oControl.getTiles().length;
-		if (iLength > 1) {
+		if (iLength > 1 && sScope === GenericTileScope.Display) {
+			this._renderPausePlayIcon(oRm, oControl);
 			this._renderTilesIndicator(oRm, oControl);
 		}
 		this._renderTiles(oRm, oControl, iLength);
