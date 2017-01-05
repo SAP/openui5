@@ -70,6 +70,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			*/
 			_invisibleAriaTexts: {type : "sap.ui.core.InvisibleText", multiple : true, visibility : "hidden"}
 		},
+		defaultAggregation : "buttons",
 		events : {
 
 			/**
