@@ -19,11 +19,6 @@
 	  "tablet": true,
 	  "phone": true
 	},
-	"deviceTypes": {
-	  "desktop": true,
-	  "tablet": true,
-	  "phone": true
-	},
 	"supportedThemes": [
 	  "sap_hcb",
 	  "sap_bluecrystal",
