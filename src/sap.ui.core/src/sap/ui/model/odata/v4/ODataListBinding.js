@@ -573,6 +573,7 @@ sap.ui.define([
 			this.aContexts[-1].destroy();
 		}
 		this.oModel.bindingDestroyed(this);
+		this.oCachePromise = undefined;
 		ListBinding.prototype.destroy.apply(this);
 	};
 

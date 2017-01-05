@@ -1461,6 +1461,8 @@ sap.ui.require([
 		// code under test
 		oBinding.destroy();
 
+		assert.strictEqual(oBinding.oCachePromise, undefined);
+
 		oBinding = this.oModel.bindContext("relative");
 		oBinding.setContext(oContext);
 		this.mock(oBinding.oElementContext).expects("destroy").withExactArgs();

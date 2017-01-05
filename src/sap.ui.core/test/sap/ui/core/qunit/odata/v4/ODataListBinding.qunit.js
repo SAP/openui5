@@ -2047,6 +2047,8 @@ sap.ui.require([
 
 		oBinding.destroy();
 
+		assert.strictEqual(oBinding.oCachePromise, undefined);
+
 		oBinding = this.oModel.bindList("/absolute", oContext);
 		oBinding.aContexts = [oBindingContext];
 		oBinding.aContexts[-1] = oTransientBindingContext;
