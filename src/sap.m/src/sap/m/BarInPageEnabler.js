@@ -236,6 +236,17 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 		oControl.addStyleClass("sapMBarChild");
 	};
 
+	/**
+	 * Termination of the BarInPageEnabler control
+	 * @private
+	 */
+	BarInPageEnabler.prototype.exit = function () {
+		if (this._sInternalAriaLabelId) {
+			this._sInternalAriaLabelId.destroy();
+			this._sInternalAriaLabelId = null;
+		}
+	};
+
 	return BarInPageEnabler;
 
 }, /* bExport= */ true);
