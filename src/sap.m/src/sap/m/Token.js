@@ -131,10 +131,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 			noTabStop: true,
 			press : function(oEvent) {
 				var oParent = that.getParent();
+
+				// fire "delete" event before Tokenizer's _onTokenDelete because the Tokenizer will destroy the token
+				// and the token's delete handler will not be executed
+				that.fireDelete();
+
 				if (oParent instanceof Tokenizer) {
 					oParent._onTokenDelete(that);
 				}
-				that.fireDelete();
+
 				oEvent.preventDefault();
 			}
 		});
