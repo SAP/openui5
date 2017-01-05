@@ -586,20 +586,18 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getQueryOptions", function (assert) {
-		var oParentContext = {},
-			oBinding = {
-				getContext : function () { return oParentContext; },
-				getQueryOptions : function () {}
+	QUnit.test("getQueryOptionsForPath: delegation to parent binding", function (assert) {
+		var oBinding = {
+				getQueryOptionsForPath : function () {}
 			},
 			oContext = Context.create(null, oBinding, "/EMPLOYEES/42"),
+			sPath = "any/path",
 			mResult = {};
 
-		this.mock(oBinding).expects("getQueryOptions")
-			.withExactArgs(sinon.match.same(oParentContext)).returns(mResult);
+		this.mock(oBinding).expects("getQueryOptionsForPath").withExactArgs(sPath).returns(mResult);
 
 		// code under test
-		assert.strictEqual(oContext.getQueryOptions(), mResult);
+		assert.strictEqual(oContext.getQueryOptionsForPath(sPath), mResult);
 	});
 
 	//*********************************************************************************************

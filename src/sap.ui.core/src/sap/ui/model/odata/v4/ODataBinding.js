@@ -3,8 +3,9 @@
  */
 //Provides mixin sap.ui.model.odata.v4.ODataBinding for classes extending sap.ui.model.Binding
 sap.ui.define([
-	"./lib/_Helper"
-], function (_Helper) {
+	"./lib/_Helper",
+	"./lib/_SyncPromise"
+], function (_Helper, _SyncPromise) {
 	"use strict";
 
 	/**
@@ -14,6 +15,118 @@ sap.ui.define([
 	 * @mixin
 	 */
 	function ODataBinding() {}
+
+	/**
+	 * Creates a cache for this binding if a cache is needed and updates <code>oCachePromise</code>.
+	 *
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context instance to be used, may be undefined for absolute bindings
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.fetchCache = function (oContext) {
+		var oCurrentCache,
+			oPromise,
+			that = this;
+
+		if (this.oOperation) { // operation binding manages its cache on its own
+			return;
+		}
+
+		if (!this.bRelative) {
+			oContext = undefined;
+		}
+		if (this.oCachePromise.isFulfilled()) {
+			oCurrentCache = this.oCachePromise.getResult();
+			if (oCurrentCache) {
+				oCurrentCache.setActive(false);
+			}
+		}
+		oPromise = this.fetchQueryOptionsForOwnCache(oContext).then(function (mLocalQueryOptions) {
+			var vCanonicalPath;
+
+			if (mLocalQueryOptions) {
+				vCanonicalPath = _SyncPromise.resolve(oContext && (oContext.fetchCanonicalPath
+					? oContext.fetchCanonicalPath() : oContext.getPath()));
+				return vCanonicalPath.then(function (sCanonicalPath) {
+					var oCache,
+						mCacheQueryOptions,
+						oError;
+
+					// create cache only if oCachePromise has not been changed in the meantime
+					if (!oPromise || that.oCachePromise === oPromise) {
+						mCacheQueryOptions = jQuery.extend({}, that.oModel.mUriParameters,
+							mLocalQueryOptions);
+						if (sCanonicalPath) { // quasi-absolute or relative binding
+							// mCacheByContext has to be reset if parameters are changing
+							that.mCacheByContext = that.mCacheByContext || {};
+							oCache = that.mCacheByContext[sCanonicalPath];
+							if (oCache) {
+								oCache.setActive(true);
+							} else {
+								oCache = that.doCreateCache(
+									_Helper.buildPath(sCanonicalPath, that.sPath).slice(1),
+									mCacheQueryOptions, oContext);
+								that.mCacheByContext[sCanonicalPath] = oCache;
+								oCache.$canonicalPath = sCanonicalPath;
+							}
+						} else { // absolute binding
+							oCache = that.doCreateCache(that.sPath.slice(1), mCacheQueryOptions,
+								oContext);
+						}
+						return oCache;
+					} else {
+						oError = new Error("Cache discarded as a new cache has been created");
+						oError.canceled = true;
+						throw oError;
+					}
+				});
+			}
+		});
+		oPromise["catch"](function (oError) {
+			//Note: this may also happen if the promise to read data for the canonical path's
+			// key predicate is rejected with a canceled error
+			that.oModel.reportError("Failed to create cache for binding " + that,
+				"sap.ui.model.odata.v4.ODataBinding", oError);
+		});
+		this.oCachePromise = oPromise;
+	};
+
+	/**
+	 * Determines whether this binding needs an own cache.
+	 *
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context instance to be used, must be undefined for absolute bindings
+	 * @returns {SyncPromise}
+	 *   A promise which resolves with the binding's local query options if an own cache is needed,
+	 *   or with undefined otherwise
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.fetchQueryOptionsForOwnCache = function (oContext) {
+		var that = this;
+
+		if (this.oOperation) {
+			return _SyncPromise.resolve(undefined);
+		}
+
+		if (this.bRelative && !oContext) { // unresolved
+			return _SyncPromise.resolve(undefined);
+		}
+
+		return this.doFetchQueryOptions(oContext).then(function (mQueryOptions) {
+			if (!that.bRelative || oContext && !oContext.fetchValue) { // (quasi-)absolute
+				return mQueryOptions;
+			}
+
+			if (that.mParameters && Object.keys(that.mParameters).length) {
+				// relative with parameters
+				return mQueryOptions;
+			}
+			return Object.keys(mQueryOptions).length === 0
+				? undefined : mQueryOptions;
+		});
+	};
 
 	/**
 	 * Returns the group ID of the binding that is used for read requests.

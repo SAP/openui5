@@ -379,15 +379,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the query options from the associated binding.
+	 * Returns the query options from the associated binding for the given path.
 	 *
+	 * @param {string} sPath
+	 *   The relative path for which the query options are requested
 	 * @returns {object}
 	 *   The query options from the associated binding
 	 *
 	 * @private
 	 */
-	Context.prototype.getQueryOptions = function () {
-		return this.oBinding.getQueryOptions(this.oBinding.getContext());
+	Context.prototype.getQueryOptionsForPath = function (sPath) {
+		return this.oBinding.getQueryOptionsForPath(sPath);
 	};
 
 	/**

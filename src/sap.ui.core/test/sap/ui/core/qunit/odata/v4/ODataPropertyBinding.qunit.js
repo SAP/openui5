@@ -162,7 +162,7 @@ sap.ui.require([
 	QUnit.test("c'tor initializes oCachePromise", function (assert) {
 		var oBinding,
 			oContext = {};
-		this.mock(ODataPropertyBinding.prototype).expects("makeCache")
+		this.mock(ODataPropertyBinding.prototype).expects("fetchCache")
 			.withExactArgs(sinon.match.same(oContext));
 
 		oBinding = new ODataPropertyBinding(this.oModel, "Name", oContext);
@@ -229,19 +229,15 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("bindProperty with relative path and !v4.Context", function (assert) {
 		var oBinding,
-			oCache = {},
+			oCachePromise = _SyncPromise.resolve(),
 			oContext = {getPath : function () {return "/EMPLOYEES(ID='1')";}},
 			oCreatedBinding,
-			sPath = "Name",
-			sResolvedPath = "/EMPLOYEES(ID='1')/Name";
+			sPath = "Name";
 
-		this.oSandbox.mock(this.oModel).expects("resolve")
-			.withExactArgs(sPath, oContext)
-			.returns(sResolvedPath);
-		this.oSandbox.mock(_Cache).expects("createProperty")
-			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResolvedPath.slice(1),
-				{"sap-client" : "111"})
-			.returns(oCache);
+		this.stub(ODataPropertyBinding.prototype, "fetchCache", function (oContext0) {
+			assert.strictEqual(oContext0, oContext);
+			this.oCachePromise = oCachePromise;
+		});
 		this.oSandbox.stub(this.oModel, "bindingCreated", function (oBinding) {
 			oCreatedBinding = oBinding;
 		});
@@ -253,10 +249,10 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getModel(), this.oModel);
 		assert.strictEqual(oBinding.getContext(), oContext);
 		assert.strictEqual(oBinding.getPath(), sPath);
-		assert.strictEqual(oBinding.hasOwnProperty("oCachePromise"), true);
-		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 		assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
 		assert.strictEqual(oBinding.sGroupId, undefined);
+		assert.strictEqual(oBinding.oCachePromise, oCachePromise);
 	});
 
 	//*********************************************************************************************
@@ -271,10 +267,12 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
 				sinon.match.same(mParameters))
 			.returns(mQueryOptions);
-		this.mock(_Cache).expects("createProperty")
-			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES(ID='1')/Name",
-				sinon.match.same(mQueryOptions));
+		this.stub(ODataPropertyBinding.prototype, "fetchCache", function (oContext) {
+			assert.strictEqual(oContext, null);
+			this.oCachePromise = _SyncPromise.resolve();
+		});
 
+		// code under test
 		oBinding = this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name", null, mParameters);
 
 		assert.strictEqual(oBinding.mParameters, undefined,
@@ -283,6 +281,7 @@ sap.ui.require([
 		//error for invalid parameters
 		oModelMock.expects("buildQueryOptions").throws(oError);
 
+		// code under test
 		assert.throws(function () {
 			this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name", null, mParameters);
 		}, oError);
@@ -1285,12 +1284,16 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("hasPendingChanges: relative binding resolved", function (assert) {
 		var oContext = {
-				hasPendingChangesForPath : function () {},
-				getPath : function () {return "Name";}
+				hasPendingChangesForPath : function () {}
 			},
-			oPropertyBinding = this.oModel.bindProperty("Name", oContext),
+			oPropertyBinding,
 			oResult = {};
 
+		this.stub(ODataPropertyBinding.prototype, "fetchCache", function (oContext0) {
+			assert.strictEqual(oContext0, oContext);
+			this.oCachePromise = _SyncPromise.resolve();
+		});
+		oPropertyBinding = this.oModel.bindProperty("Name", oContext);
 		this.oSandbox.mock(oContext).expects("hasPendingChangesForPath").withExactArgs("Name")
 			.returns(oResult);
 
@@ -1308,15 +1311,19 @@ sap.ui.require([
 			oBindingMock = this.mock(oBinding),
 			oContext = Context.create(this.oModel, {}, "/EMPLOYEES/42");
 
-		oBindingMock.expects("makeCache").withExactArgs(sinon.match.same(oContext));
+		this.stub(ODataPropertyBinding.prototype, "fetchCache", function (oContext0) {
+			assert.strictEqual(oContext0, oContext);
+			this.oCachePromise = _SyncPromise.resolve();
+		});
 		oBindingMock.expects("checkUpdate").withExactArgs(false, ChangeReason.Context);
 		oBinding.setContext(oContext);
 
-		oBindingMock.expects("makeCache").withExactArgs(sinon.match.same(oContext));
 		oBindingMock.expects("checkUpdate").withExactArgs(true, ChangeReason.Refresh, "myGroup");
 
 		// code under test
 		oBinding.refreshInternal("myGroup");
+
+		assert.strictEqual(ODataPropertyBinding.prototype.fetchCache.callCount, 2);
 	});
 
 	//*********************************************************************************************
@@ -1330,6 +1337,7 @@ sap.ui.require([
 		this.oSandbox.mock(this.oModel).expects("bindingDestroyed")
 			.withExactArgs(sinon.match.same(oPropertyBinding));
 
+		// code under test
 		oPropertyBinding.destroy("foo", 42);
 
 		assert.strictEqual(oPropertyBinding.oCachePromise, undefined);
@@ -1341,15 +1349,22 @@ sap.ui.require([
 				deregisterChange : function () {},
 				getPath : function () {return "Name";}
 			},
-			oPropertyBinding = this.oModel.bindProperty("Name", oContext);
+			oPropertyBinding;
 
+		this.stub(ODataPropertyBinding.prototype, "fetchCache", function (oContext0) {
+			assert.strictEqual(oContext0, oContext);
+			this.oCachePromise = _SyncPromise.resolve();
+		});
+		oPropertyBinding = this.oModel.bindProperty("Name", oContext);
 		this.oSandbox.mock(oContext).expects("deregisterChange")
 			.withExactArgs("Name", oPropertyBinding);
 		this.oSandbox.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding);
 		this.oSandbox.mock(this.oModel).expects("bindingDestroyed")
 			.withExactArgs(sinon.match.same(oPropertyBinding));
 
+		// code under test
 		oPropertyBinding.destroy();
+
 		assert.strictEqual(oPropertyBinding.oCachePromise, undefined);
 	});
 
@@ -1360,6 +1375,7 @@ sap.ui.require([
 		this.oSandbox.mock(this.oModel).expects("bindingDestroyed")
 			.withExactArgs(sinon.match.same(oPropertyBinding));
 
+		// code under test
 		oPropertyBinding.destroy();
 	});
 
@@ -1391,6 +1407,40 @@ sap.ui.require([
 			}, new Error(oPropertyBinding + " is not resolved yet"));
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("doFetchQueryOptions", function (assert) {
+		var oBinding = this.oModel.bindProperty("foo"),
+			oPromise;
+
+		// code under test
+		oPromise = oBinding.doFetchQueryOptions();
+
+		assert.deepEqual(oPromise.getResult(), {});
+
+		// code under test
+		assert.strictEqual(oBinding.doFetchQueryOptions(), oPromise,
+			"all bindings share the same promise");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doCreateCache", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/Name"),
+			oCache = {},
+			mCacheQueryOptions = {};
+
+		this.mock(_Cache).expects("createProperty")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES('1')/Name",
+				sinon.match.same(mCacheQueryOptions))
+			.returns(oCache);
+
+		// code under test
+		assert.strictEqual(oBinding.doCreateCache("EMPLOYEES('1')/Name", mCacheQueryOptions),
+			oCache);
+	});
+	//TODO discuss change in behavior for relative bindings:
+	//   $$groupId, $$updateGroupId, custom query option now leads to own
+	//   cache for property binding -> adapt jsdoc for ODPB ctor, ODModel#bindProperty (remove Note: ...)
 
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {

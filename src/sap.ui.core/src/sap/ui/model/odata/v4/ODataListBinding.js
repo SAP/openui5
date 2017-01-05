@@ -53,8 +53,9 @@ sap.ui.define([
 	 *   Map of binding parameters which can be OData query options as specified in
 	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
 	 *   and "$$updateGroupId".
-	 *   Note: If parameters are provided for a relative binding path, the binding accesses data
-	 *   with its own service requests instead of using its parent binding.
+	 *   Note: The binding creates its own data service request if it is absolute or if it has any
+	 *   parameters or if it is relative and has a context created via
+	 *   {@link ODataModel#createBindingContext} or if it has sorters or filters.
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
@@ -248,7 +249,7 @@ sap.ui.define([
 		this.mParameters = mParameters; // store mParameters at binding after validation
 
 		this.mCacheByContext = undefined;
-		this.oCachePromise = this.makeCache(this.oContext);
+		this.fetchCache(this.oContext);
 		this.reset(sChangeReason);
 	};
 
@@ -288,40 +289,6 @@ sap.ui.define([
 				+ "': v4.ODataListBinding#attachEvent");
 		}
 		return ListBinding.prototype.attachEvent.apply(this, arguments);
-	};
-
-	/**
-	 * Builds the value for the OData V4 '$orderby' system query option from the given sorters
-	 * and the optional static '$orderby' value which is appended to the sorters.
-	 *
-	 * @param {sap.ui.model.Sorter[]} [aSorters]
-	 *   An array of <code>Sorter</code> objects to be converted into a corresponding '$orderby'
-	 *   string.
-	 * @param {string} [sOrderbyQueryOption]
-	 *   The static '$orderby' system query option which is appended to the converted 'aSorters'
-	 *   parameter.
-	 * @returns {string}
-	 *   The concatenated '$orderby' system query option
-	 * @throws {Error}
-	 *   If 'aSorters' contains elements that are not {@link sap.ui.model.Sorter} instances.
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype.buildOrderbyOption = function (aSorters, sOrderbyQueryOption) {
-		var aOrderbyOptions = [],
-			that = this;
-
-		aSorters.forEach(function (oSorter) {
-			if (oSorter instanceof Sorter) {
-				aOrderbyOptions.push(oSorter.sPath + (oSorter.bDescending ? " desc" : ""));
-			} else {
-				throw new Error("Unsupported sorter: " + oSorter + " - " + that);
-			}
-		});
-		if (sOrderbyQueryOption) {
-			aOrderbyOptions.push(sOrderbyQueryOption);
-		}
-		return aOrderbyOptions.join(',');
 	};
 
 	/*
@@ -591,6 +558,61 @@ sap.ui.define([
 		ListBinding.prototype.destroy.apply(this);
 	};
 
+	/**
+	 * Hook method for {@link ODataBinding#fetchCache} to create a cache for this binding with the
+	 * given resource path and query options.
+	 *
+	 * @param {string} sResourcePath
+	 *   The resource path, for example "EMPLOYEES"
+	 * @param {object} mQueryOptions
+	 *   The query options
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context instance to be used, must be undefined for absolute bindings
+	 * @returns {sap.ui.model.odata.v4.lib._Cache}
+	 *   The new cache instance
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext) {
+		var mInheritedQueryOptions;
+
+		if (!Object.keys(this.mParameters).length) {
+			// mQueryOptions can contain only dynamic filter and sorter AND model options;
+			// mix-in inherited static query options
+			mInheritedQueryOptions = this.getQueryOptionsForPath("", oContext);
+			if (mQueryOptions.$orderby && mInheritedQueryOptions.$orderby) {
+				mQueryOptions.$orderby += "," + mInheritedQueryOptions.$orderby;
+			}
+			if (mQueryOptions.$filter && mInheritedQueryOptions.$filter) {
+				mQueryOptions.$filter = "(" + mQueryOptions.$filter + ") and ("
+					+ mInheritedQueryOptions.$filter + ")";
+			}
+			mQueryOptions = jQuery.extend({}, mInheritedQueryOptions, mQueryOptions);
+		}
+		return _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions);
+	};
+
+	/**
+	 * Hook method for {@link ODataBinding#fetchUseOwnCache} to determine the query options for
+	 * this binding.
+	 *
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context instance to be used, must be undefined for absolute bindings
+	 * @returns {SyncPromise}
+	 *   A promise resolving with the binding's query options
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.doFetchQueryOptions = function (oContext) {
+		var sOrderby = this.getOrderby(this.mQueryOptions.$orderby),
+			that = this;
+
+		return this.fetchFilter(oContext, this.mQueryOptions.$filter)
+			.then(function (sFilter) {
+				return that.mergeQueryOptions(that.mQueryOptions, sOrderby, sFilter);
+			});
+	};
+
 	/*
 	 * Delegates to {@link sap.ui.model.ListBinding#enableExtendedChangeDetection} while disallowing
 	 * the <code>vKey</code> parameter.
@@ -646,10 +668,6 @@ sap.ui.define([
 	 *   The context instance to be used; it is given as a parameter and this.oContext is unused
 	 *   because setContext calls this method (indirectly) before calling the superclass to ensure
 	 *   that the cache promise is already created when the events are fired.
-	 * @param {sap.ui.model.Filter[]} aApplicationFilters
-	 *   The application filters
-	 * @param {sap.ui.model.Filter[]} aControlFilters
-	 *   The control filters
 	 * @param {string} sStaticFilter
 	 *   The static filter value
 	 * @returns {SyncPromise} A promise which resolves with the $filter value or "" if the
@@ -658,8 +676,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.fetchFilter = function (oContext, aApplicationFilters,
-			aControlFilters, sStaticFilter) {
+	ODataListBinding.prototype.fetchFilter = function (oContext, sStaticFilter) {
 		var aNonEmptyFilters = [],
 			that = this;
 
@@ -792,8 +809,8 @@ sap.ui.define([
 		}
 
 		return _SyncPromise.all([
-			fetchArrayFilter(aApplicationFilters, /*bAnd*/true),
-			fetchArrayFilter(aControlFilters, /*bAnd*/true)
+			fetchArrayFilter(this.aApplicationFilters, /*bAnd*/true),
+			fetchArrayFilter(this.aFilters, /*bAnd*/true)
 		]).then(function (aFilterValues) {
 			if (aFilterValues[0]) { aNonEmptyFilters.push(aFilterValues[0]); }
 			if (aFilterValues[1]) { aNonEmptyFilters.push(aFilterValues[1]); }
@@ -879,7 +896,7 @@ sap.ui.define([
 			this.aApplicationFilters = _Helper.toArray(vFilters);
 		}
 		this.mCacheByContext = undefined;
-		this.oCachePromise = this.makeCache(this.oContext);
+		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Filter);
 
 		return this;
@@ -1146,6 +1163,37 @@ sap.ui.define([
 	};
 
 	/**
+	 * Builds the value for the OData V4 '$orderby' system query option from the given sorters
+	 * and the optional static '$orderby' value which is appended to the sorters.
+	 *
+	 * @param {string} [sOrderbyQueryOption]
+	 *   The static '$orderby' system query option which is appended to the converted 'aSorters'
+	 *   parameter.
+	 * @returns {string}
+	 *   The concatenated '$orderby' system query option
+	 * @throws {Error}
+	 *   If 'aSorters' contains elements that are not {@link sap.ui.model.Sorter} instances.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.getOrderby = function (sOrderbyQueryOption) {
+		var aOrderbyOptions = [],
+			that = this;
+
+		this.aSorters.forEach(function (oSorter) {
+			if (oSorter instanceof Sorter) {
+				aOrderbyOptions.push(oSorter.sPath + (oSorter.bDescending ? " desc" : ""));
+			} else {
+				throw new Error("Unsupported sorter: " + oSorter + " - " + that);
+			}
+		});
+		if (sOrderbyQueryOption) {
+			aOrderbyOptions.push(sOrderbyQueryOption);
+		}
+		return aOrderbyOptions.join(',');
+	};
+
+	/**
 	 * Calculates the index range to be read for the given start, length and threshold.
 	 * Checks if <code>aContexts</code> entries are available for the given index range plus
 	 * half the threshold left and right to it.
@@ -1208,55 +1256,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a cache for the binding using the given context.
-	 * Ensures that sort and filter parameters are added to the query string.
-	 *
-	 * The context is given as a parameter and this.oContext is unused because setContext calls
-	 * this method before calling the superclass to ensure that the cache is already created when
-	 * the events are fired.
-	 *
-	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context instance to be used, may be omitted for absolute bindings
-	 * @returns {SyncPromise}
-	 *   A promise which resolves with a cache instance or with <code>undefined</code> if no cache
-	 *   is needed
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype.makeCache = function (oContext) {
-		var vCanonicalPath, oFilterPromise, mQueryOptions,
-			that = this;
-
-		function createCache(sPath, sFilter) {
-			var sOrderby = that.buildOrderbyOption(that.aSorters,
-					mQueryOptions && mQueryOptions.$orderby);
-
-			return _Cache.create(that.oModel.oRequestor,
-				_Helper.buildPath(sPath, that.sPath).slice(1),
-				that.mergeQueryOptions(mQueryOptions, sOrderby, sFilter));
-		}
-
-		if (this.bRelative) {
-			if (!oContext
-					|| oContext.fetchCanonicalPath
-					&& !Object.keys(this.mParameters).length
-					&& !this.aSorters.length
-					&& !this.aFilters.length
-					&& !this.aApplicationFilters.length) {
-				return _SyncPromise.resolve(); // no need for an own cache
-			}
-		} else {
-			oContext = undefined; // must be ignored for absolute bindings
-		}
-		mQueryOptions = this.getQueryOptions(oContext);
-		vCanonicalPath = oContext && (oContext.fetchCanonicalPath
-			? oContext.fetchCanonicalPath() : oContext.getPath());
-		oFilterPromise = this.fetchFilter(oContext, this.aApplicationFilters, this.aFilters,
-			mQueryOptions && mQueryOptions.$filter);
-		return this.createCache(createCache, vCanonicalPath, oFilterPromise);
-	};
-
-	/**
 	 * Merges the given values for "$orderby" and "$filter" into the given map of query options.
 	 * Ensures that the original map is left unchanged, but creates a copy only if necessary.
 	 *
@@ -1268,6 +1267,8 @@ sap.ui.define([
 	 *   The new value for the query option "$filter"
 	 * @returns {object}
 	 *   The merged map of query options
+	 *
+	 * @private
 	 */
 	ODataListBinding.prototype.mergeQueryOptions = function (mQueryOptions, sOrderby, sFilter) {
 		var mResult;
@@ -1297,7 +1298,7 @@ sap.ui.define([
 		this.oCachePromise.then(function (oCache) {
 			if (oCache) {
 				that.mCacheByContext = undefined;
-				that.oCachePromise = that.makeCache(that.oContext);
+				that.fetchCache(that.oContext);
 			}
 			that.reset(ChangeReason.Refresh);
 			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
@@ -1356,7 +1357,7 @@ sap.ui.define([
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
 				this.reset();
-				this.oCachePromise = this.makeCache(oContext);
+				this.fetchCache(oContext);
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);
 			} else {
@@ -1403,7 +1404,7 @@ sap.ui.define([
 
 		this.aSorters = _Helper.toArray(vSorters);
 		this.mCacheByContext = undefined;
-		this.oCachePromise = this.makeCache(this.oContext);
+		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Sort);
 		return this;
 	};
