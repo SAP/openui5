@@ -300,12 +300,12 @@ sap.ui.define([
 			oCache = this.oCachePromise.getResult();
 			if (oCache) {
 				oCache.deregisterChange(undefined, this);
-				this.oCachePromise = null;
 			} else if (this.oContext) {
 				this.oContext.deregisterChange(this.sPath, this);
 			}
 		}
 		this.oModel.bindingDestroyed(this);
+		this.oCachePromise = undefined;
 		PropertyBinding.prototype.destroy.apply(this, arguments);
 	};
 

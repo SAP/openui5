@@ -1320,7 +1320,7 @@ sap.ui.require([
 
 		oPropertyBinding.destroy("foo", 42);
 
-		assert.strictEqual(oPropertyBinding.oCachePromise, null);
+		assert.strictEqual(oPropertyBinding.oCachePromise, undefined);
 	});
 
 	//*********************************************************************************************
@@ -1338,6 +1338,7 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oPropertyBinding));
 
 		oPropertyBinding.destroy();
+		assert.strictEqual(oPropertyBinding.oCachePromise, undefined);
 	});
 
 	//*********************************************************************************************
