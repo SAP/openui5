@@ -68,6 +68,7 @@
 				}
 				oInput.setValue(sValue);
 			}
+			setEventLog("'appointmentSelect' for appointment: " + (oAppointment ? oAppointment.getTitle() : "<no app>"));
 		};
 
 		var handleAddRow = function(oEvent){
@@ -91,6 +92,8 @@
 			var aSelectedRows = oPC.getSelectedRows();
 			var iStartOffset = 3;
 			var iEndOffset = 3;
+
+			setEventLog("'intervalSelect': startDate=" + oEventStartDate + ", endDate=" + oEventEndDate);
 
 			if (oEventStartDate) {
 				// add appointment in selected interval
@@ -153,9 +156,21 @@
 
 		var handleStartDateChange = function(oEvent) {
 			var oDf = sap.ui.core.format.DateFormat.getTimeInstance("HH:mm:ss");
-			oEventLabel.setText("startDateChange event at " + oDf.format(new Date()) + " with params:"  + JSON.stringify(oEvent.mParameters));
-			oEventLabel.$().attr('style', "background-color: rgb(" + Math.ceil(Math.random()*255).toString() + "," + Math.ceil(Math.random()*255).toString() + "," + Math.ceil(Math.random()*255).toString() + ");");
+			setEventLog("startDateChange event at " + oDf.format(new Date()) + " with params:"  + JSON.stringify(oEvent.mParameters));
 		};
+
+		//adds some event info to the event log label
+		function setEventLog(sMessage) {
+			oEventLabel.setText(sMessage);
+			oEventLabel.$().attr('style', "background-color: rgb(" + Math.ceil(Math.random()*255).toString() + "," + Math.ceil(Math.random()*255).toString() + "," + Math.ceil(Math.random()*255).toString() + ");");
+		}
+
+		var handleRowHeaderClick = function(oEvent) {
+			var oRow = oEvent.getParameter("row"),
+					sEmployeeInfo = oRow.getTitle() + " " + oRow.getText();
+			setEventLog("'rowHeaderClick' on employee:\n'" + sEmployeeInfo + "'");
+		};
+
 		var handleLegend = function(oEvent){
 			oDialog.open();
 		};
@@ -655,6 +670,7 @@
 			appointmentSelect: handleAppointmentSelect,
 			intervalSelect: handleAddAppointment,
 			startDateChange: handleStartDateChange,
+			rowHeaderClick: handleRowHeaderClick
 		});
 
 		var oInput = new sap.m.Input("I1", {
