@@ -752,15 +752,19 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		setTimeout(function () {
 			if (aSeparatedText) {
 				if (this.fireEvent("_validateOnPaste", {texts: aSeparatedText}, true)) {
-					this.updateDomValue("");
+					var lastInvalidText = "";
 					for (i = 0; i < aSeparatedText.length; i++) {
 						if (aSeparatedText[i]) { // pasting from excel can produce empty strings in the array, we don't have to handle empty strings
 							var oToken = this._convertTextToToken(aSeparatedText[i]);
 							if (oToken) {
 								aValidTokens.push(oToken);
+							} else {
+								lastInvalidText = aSeparatedText[i];
 							}
 						}
 					}
+
+					this.updateDomValue(lastInvalidText);
 
 					for (i = 0; i < aValidTokens.length; i++) {
 						if (this._tokenizer._addUniqueToken(aValidTokens[i])) {
