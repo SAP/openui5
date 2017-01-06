@@ -134,7 +134,9 @@ public class ReleaseNotes {
     if (previousChanges.exists()) {
       deleteFolder(previousChanges);
     }
-    int currentMinor = Integer.parseInt(context.branch.substring(6));
+    //this will get the minor version from branch name
+    //example rel-1.44 will take 44 
+    int currentMinor = Integer.parseInt(context.branch.substring(6, 8));
     for (int i = context.lowestMinor; i < currentMinor; i += 2) {
       checkoutRel(i);
       scan(repoFile);
