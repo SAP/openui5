@@ -1662,7 +1662,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * </pre>
 	 *
 	 * @param {string|object} vConfig ID of an existing Component or the configuration object to create the Component
-	 * @param {string} vConfig.name Name of the Component to load
+	 * @param {string} vConfig.name Name of the Component to load, as a dot-separated name;
+	 *              Even when an alternate location is specified from which the manifest should be loaded (e.g.
+	 *              <code>vConfig.manifest</code> is set to a non-empty string), then the name specified in that
+	 *              manifest will be ignored and this name will be used instead to determine the module to be loaded.
 	 * @param {string} [vConfig.url] Alternate location from where to load the Component. If a <code>manifestUrl</code> is given, this URL specifies the location of the final component defined via that manifest, otherwise it specifies the location of the component defined via its name <code>vConfig.name</code>.
 	 * @param {object} [vConfig.componentData] Initial data of the Component (@see sap.ui.core.Component#getComponentData)
 	 * @param {string} [vConfig.id] sId of the new Component
@@ -1672,11 +1675,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @param {string[]} [vConfig.asyncHints.libs] Libraries that should be (pre-)loaded before the Component (experimental setting)
 	 * @param {string[]} [vConfig.asyncHints.components] Components that should be (pre-)loaded before the Component (experimental setting)
 	 * @param {Promise|Promise[]} [vConfig.asyncHints.waitFor] @since 1.37.0 a <code>Promise</code> or and array of <code>Promise</code>s for which the Component instantiation should wait (experimental setting)
-	 * @param {string} [vConfig.manifestUrl] @since 1.33.0 Determines whether the component should be loaded and defined
-	 *                                       via the <code>manifest.json</code>
-	 * @param {string} [vConfig.manifestFirst] @since 1.33.0 defines whether the manifest is loaded before or after the
-	 *                                         Component controller. Defaults to <code>sap.ui.getCore().getConfiguration().getManifestFirst()</code>
-	 * @param {string} [vConfig.handleValidation=false] If set to <code>TRUE</code> validation of the component is handled by the <code>MessageManager</code>
+	 * @param {boolean|string|object} [vConfig.manifest=undefined] @since 1.49.0 Controls when and from where to load the manifest for the Component.
+	 *              When set to any truthy value, the manifest will be loaded and evaluated before the Component controller, if it is set to a falsy value
+	 *              other than <code>undefined</code>, the manifest will be loaded after the controller.
+	 *              A non-empty string value will be interpreted as the URL location from where to load the manifest.
+	 *              A non-null object value will be interpreted as manifest content.
+	 *              Setting this property to a value other than <code>undefined</code>, completely deactivates the properties
+	 *              <code>manifestUrl</code> and <code>manifestFirst</code>, no matter what their values are.
+	 * @param {string} [vConfig.manifestUrl] @since 1.33.0 Specifies the URL from where the manifest should be loaded from
+	 *              Using this property implies <code>vConfig.manifestFirst=true</code>.
+	 *              <b>DEPRECATED since 1.49.0, use <code>vConfig.manifest=url</code> instead!</b>.
+	 *              Note that this property is ignored when <code>vConfig.manifest</code> has a value other than <code>undefined</code>.
+	 * @param {boolean} [vConfig.manifestFirst] @since 1.33.0 defines whether the manifest is loaded before or after the
+	 *              Component controller. Defaults to <code>sap.ui.getCore().getConfiguration().getManifestFirst()</code>
+	 *              <b>DEPRECATED since 1.49.0, use <code>vConfig.manifest=true|false</code> instead!</b>
+	 *              Note that this property is ignored when <code>vConfig.manifest</code> has a value other than <code>undefined</code>.
+	 * @param {string} [vConfig.handleValidation=false] If set to <code>true</code> validation of the component is handled by the <code>MessageManager</code>
 	 * @return {sap.ui.core.Component|Promise} the Component instance or a Promise in case of asynchronous loading
 	 *
 	 * @public
@@ -1856,10 +1870,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			sUrl = oConfig.url,
 			oConfiguration = sap.ui.getCore().getConfiguration(),
 			bComponentPreload = /^(sync|async)$/.test(oConfiguration.getComponentPreload()),
-			bManifestFirst = typeof oConfig.manifestFirst !== "undefined" ? oConfig.manifestFirst : oConfiguration.getManifestFirst(),
+			vManifest = oConfig.manifest,
+			bManifestFirst,
+			sManifestUrl,
 			oManifest,
 			mModels,
 			fnCallLoadComponentCallback;
+
+		function createSanitizedManifest( oRawManifestJSON ) {
+			var oManifest = new Manifest( JSON.parse(JSON.stringify(oRawManifestJSON)) );
+			return oConfig.async ? Promise.resolve(oManifest) : oManifest;
+		}
+
+		if ( vManifest === undefined ) {
+			// no manifest property set, evaluate legacy properties
+			bManifestFirst = oConfig.manifestFirst === undefined ? oConfiguration.getManifestFirst() : !!oConfig.manifestFirst;
+			sManifestUrl = oConfig.manifestUrl;
+			// oManifest = undefined;
+		} else {
+			bManifestFirst = !!vManifest;
+			sManifestUrl = vManifest && typeof vManifest === 'string' ? vManifest : undefined;
+			oManifest = vManifest && typeof vManifest === 'object' ? createSanitizedManifest(vManifest) : undefined;
+		}
 
 		// set the name of this newly loaded component at the interaction measurement,
 		// as otherwise this would be the outer component from where it was called,
@@ -1868,9 +1900,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 		// if we find a manifest URL in the configuration
 		// we will load the manifest from the specified URL (sync or async)
-		if (oConfig.manifestUrl) {
+		if (!oManifest && sManifestUrl) {
 			oManifest = Manifest.load({
-				manifestUrl: oConfig.manifestUrl,
+				manifestUrl: sManifestUrl,
 				componentName: sName,
 				async: oConfig.async
 			});
@@ -1893,12 +1925,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// check the type of the name
 			jQuery.sap.assert(typeof sName === 'string', "sName must be a string");
 
-		}
+			// if a component name and a URL is given, we register this URL for the name of the component:
+			// the name is the package in which the component is located (dot separated)
+			if (sName && sUrl) {
+				jQuery.sap.registerModulePath(sName, sUrl);
+			}
 
-		// if a component name and a URL is given we register this URL for the name of the component:
-		// the name is the package in which the component is located (dot separated)
-		if (sName && sUrl) {
-			jQuery.sap.registerModulePath(sName, sUrl);
 		}
 
 		// in case of loading the manifest first by configuration we need to
@@ -2189,12 +2221,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				}));
 
 				fnCallLoadComponentCallback = function(oLoadedManifest) {
-					// if a callback is registered to the component load call it with the configuration
+					// if a callback is registered to the component load, call it with the configuration
 					if (typeof Component._fnLoadComponentCallback === "function") {
 						// secure configuration and manifest from manipulation
 						var oConfigCopy = jQuery.extend(true, {}, oConfig);
 						var oManifestCopy = jQuery.extend(true, {}, oLoadedManifest);
-						// trigger the callback with a copy if its required data
+						// trigger the callback with a copy of its required data
 						// do not await any result from the callback nor stop component loading on an occurring error
 						try {
 							Component._fnLoadComponentCallback(oConfigCopy, oManifestCopy);
