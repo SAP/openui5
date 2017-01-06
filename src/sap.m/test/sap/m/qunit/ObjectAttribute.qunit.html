@@ -331,6 +331,67 @@
         oObjectAttribute.destroy();
     });
 
+	module("Active attribute", {
+		beforeEach: function () {
+			this.oActiveAttr = new sap.m.ObjectAttribute("oAAtt", {
+				title: "Title",
+				text: "Contract #D1234567890",
+				active: true
+			});
+		},
+		afterEach: function () {
+			this.oActiveAttr.destroy();
+		}
+	});
+
+
+	test("Standalone active attribute is rendered in separate spans", function() {
+		this.oActiveAttr.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		ok(this.oActiveAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
+		ok(this.oActiveAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span has class sapMObjectAttributeTitle.");
+		ok(this.oActiveAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span has class sapMObjectAttributeColon.");
+		ok(this.oActiveAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span has class sapMObjectAttributeText.");
+	});
+
+	test("Active attribute inside ObjectListItem is rendered in separate spans", function() {
+		var oObjectListItem = new sap.m.ObjectListItem("oOL4", {
+			attributes : [this.oActiveAttr]
+		});
+
+		oObjectListItem.placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		ok(this.oActiveAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
+		ok(this.oActiveAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span has class sapMObjectAttributeTitle.");
+		ok(this.oActiveAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span has class sapMObjectAttributeColon.");
+		ok(this.oActiveAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span has class sapMObjectAttributeText.");
+
+		// Clean up
+		oObjectListItem.destroy();
+	});
+
+	test("Active attribute inside static ObjectHeader is rendered in separate spans", function() {
+		var oObjectHeaderS = new sap.m.ObjectHeader({
+			attributes : [this.oActiveAttr]
+		});
+		oObjectHeaderS.placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		ok(this.oActiveAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
+		ok(this.oActiveAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span has class sapMObjectAttributeTitle.");
+		ok(this.oActiveAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span has class sapMObjectAttributeColon.");
+		ok(this.oActiveAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span has class sapMObjectAttributeText.");
+
+		// Clean up
+		oObjectHeaderS.destroy();
+	});
 </script>
 </head>
 

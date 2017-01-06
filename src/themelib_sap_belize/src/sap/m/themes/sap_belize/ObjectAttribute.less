@@ -10,6 +10,17 @@ html.sap-desktop .sapMObjectAttributeActive:focus > .sapMText {
 	outline-offset: -1px;
 }
 
+.sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
+	text-decoration: none;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeText:active,
+.sapMObjectAttributeActive .sapMObjectAttributeText:hover {
+	text-decoration: underline;
+}
+
 html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
 	.sapMObjectAttributeActive:focus > .sapMText {
 		outline-style: dashed;
