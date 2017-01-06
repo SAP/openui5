@@ -15,13 +15,14 @@ sap.ui.define([
 	'sap/m/library',
 	'sap/m/Text',
 	'../util/ToggleFullScreenHandler',
-	'../data'
+	'../data',
+	'sap/ui/demokit/explored/view/base.controller'
 ],
-function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Controller, History, JSONModel, mobileLibrary, Text, ToggleFullScreenHandler, data) {
+function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Controller, History, JSONModel, mobileLibrary, Text, ToggleFullScreenHandler, data, Base) {
 
 	"use strict";
 
-	var SampleController = Controller.extend("sap.ui.demokit.explored.view.sample", {
+	var SampleController = Base.extend("sap.ui.demokit.explored.view.sample", {
 
 		onInit : function () {
 			this.router = UIComponent.getRouterFor(this);
@@ -32,6 +33,10 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 			});
 			this._loadRuntimeAuthoring();
 			this.getView().setModel(this._viewModel);
+
+			this.getView().addEventDelegate({
+				onBeforeFirstShow: jQuery.proxy(this._applyViewConfigurations, this)
+			});
 		},
 		onRouteMatched : function (oEvt) {
 

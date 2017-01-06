@@ -14,11 +14,12 @@ sap.ui.define([
 	"sap/ui/demokit/util/JSDocUtil",
 	"../util/ObjectSearch",
 	"../util/ToggleFullScreenHandler",
-	"../data"
-], function (jQuery, Device, Component, UIComponent, History, Controller, JSONModel, EntityInfo, JSDocUtil, ObjectSearch, ToggleFullScreenHandler, data) {
+	"../data",
+	"sap/ui/demokit/explored/view/base.controller"
+], function (jQuery, Device, Component, UIComponent, History, Controller, JSONModel, EntityInfo, JSDocUtil, ObjectSearch, ToggleFullScreenHandler, data, Base) {
 	"use strict";
 
-	return Controller.extend("sap.ui.demokit.explored.view.entity", {
+	return Base.extend("sap.ui.demokit.explored.view.entity", {
 
 		descriptionText: function (text) {
 			var html;
@@ -35,6 +36,10 @@ sap.ui.define([
 			this._component = Component.getOwnerComponentFor(this.getView());
 			// click handler for @link tags in JSdoc fragments
 			this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
+
+			this.getView().addEventDelegate({
+				onBeforeFirstShow: jQuery.proxy(this._applyViewConfigurations, this)
+			});
 		},
 
 		onExit: function() {
