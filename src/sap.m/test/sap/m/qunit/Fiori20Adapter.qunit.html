@@ -273,6 +273,22 @@
                 ok(!jQuery.sap.byId("myPage-navButton").hasClass("sapF2AdaptedNavigation"), "back button is not adapted");
             });
 
+            QUnit.test("Back Button is not adapted if already hidden", function(assert){
+
+                var oAdaptOptions = {bHideBackButton: true},
+                bShowNavButton = sap.ui.Device.system.phone,
+                oModel = new sap.ui.model.json.JSONModel({showButton: bShowNavButton});
+
+                this.oPage.bindProperty("showNavButton", "device>/showButton");
+                this.oPage.setModel(oModel, "device");
+
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+                sap.ui.getCore().applyChanges();
+
+                // Assert
+                assert.strictEqual(jQuery.sap.byId("myPage-navButton").hasClass("sapF2AdaptedNavigation"), bShowNavButton , "back button is not adapted");
+            });
+
             QUnit.test("Back Button is adapted when bHideBackButton=true", function(assert){
                 var oAdaptOptions = {bHideBackButton: true};
                 this.oPage.setShowNavButton(true);
