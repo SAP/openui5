@@ -26,6 +26,12 @@ html.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont:after{
 	border: 0.0625rem dotted @sapUiContentFocusColor;
 }
 
+html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
+	.sapUiCalendarApp:focus > .sapUiCalendarAppCont:after{
+		border-style: dashed;
+	}
+}
+
 html.sap-desktop .sapUiCalendarAppSel:focus > .sapUiCalendarAppCont:after{
 	border-color: @sapUiContentContrastFocusColor;
 	left: 2px;
