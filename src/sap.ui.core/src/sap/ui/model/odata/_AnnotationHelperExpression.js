@@ -734,7 +734,8 @@ sap.ui.define([
 					oConstraints.maxLength = oProperty.maxLength;
 					oIsDigitSequence = oProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"];
 					if (oIsDigitSequence) {
-						oConstraints.isDigitSequence = oIsDigitSequence.Bool;
+						oConstraints.isDigitSequence =
+							oIsDigitSequence.Bool ? oIsDigitSequence.Bool : "true";
 					}
 					break;
 				// no default

@@ -8,6 +8,9 @@
 	</edmx:Reference>
 	<edmx:DataServices>
 		<Schema Namespace="foo" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<Annotations Target="com.sap.ui5.OData.EdmTypes/DigitSequence">
+				<Annotation Term="com.sap.vocabularies.Common.v1.IsDigitSequence" />
+			</Annotations>
 			<Annotations Target="com.sap.ui5.OData.EdmTypes">
 				<Annotation Term="com.sap.vocabularies.UI.v1.Identification">
 					<Collection>
