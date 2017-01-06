@@ -28,11 +28,15 @@
 				"sap/ui/test/Opa5",
 				"sap/ui/test/opaQunit",
 				"sap/ui/test/matchers/AggregationLengthEquals",
+				"sap/ui/test/matchers/Ancestor",
+				"sap/ui/test/matchers/Properties",
 				"sap/ui/test/actions/Press",
 				"sap/ui/test/actions/EnterText"
 			], function (Opa5,
 						 opaTest,
 						 AggregationLengthEquals,
+						 Ancestor,
+						 Properties,
 						 Press,
 						 EnterText) {
 				QUnit.module("Navigation using the press action");
@@ -105,6 +109,32 @@
 						},
 						errorMessage: "The text was not entered"
 					});
+				});
+
+				QUnit.module("Select using the press action");
+
+				opaTest("Should select an item in a Select", function(Given, When, Then) {
+
+					When.waitFor({
+						id: "mySelect",
+						actions: new Press(),
+						success: function(oSelect) {
+							this.waitFor({
+								controlType: "sap.ui.core.Item",
+								matchers: [
+									new Ancestor(oSelect),
+									new Properties({ key: "Germany"})
+								],
+								actions: new Press(),
+								success: function() {
+									Opa5.assert.strictEqual(oSelect.getSelectedKey(), "Germany", "Selected Germany");
+								},
+								errorMessage: "Cannot select Germany from mySelect"
+							});
+						},
+						errorMessage: "Could not find mySelect"
+					});
+
 				});
 
 				QUnit.module("Custom Actions");
