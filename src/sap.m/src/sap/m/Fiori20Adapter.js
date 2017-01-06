@@ -165,7 +165,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 		if (HeaderAdapter._isAdaptableHeader(this._oHeader)) {
 			var aBeginContent = this._oHeader.getContentLeft();
-			if (aBeginContent.length > 0 && isInstanceOf(aBeginContent[0], "sap/m/Button") &&
+			if (aBeginContent.length > 0 && isInstanceOf(aBeginContent[0], "sap/m/Button") && (aBeginContent[0].getVisible() === true) &&
 				(aBeginContent[0].getType() === "Back" || aBeginContent[0].getType() === "Up" || aBeginContent[0].getIcon() === "sap-icon://nav-back")) {
 				return aBeginContent[0];
 			}
