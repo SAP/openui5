@@ -50,17 +50,15 @@ sap.ui.define(['jquery.sap.global'],
 			 *
 			 */
 			ElementUtil.iterateOverAllPublicAggregations = function(oElement, fnCallback) {
-				var that = this;
-
 				var mAggregations = oElement.getMetadata().getAllAggregations();
 				var aAggregationNames = Object.keys(mAggregations);
 
 				aAggregationNames.forEach(function(sAggregationName) {
 					var oAggregation = mAggregations[sAggregationName];
-					var vAggregationValue = that.getAggregation(oElement, sAggregationName);
+					var vAggregationValue = this.getAggregation(oElement, sAggregationName);
 
 					fnCallback(oAggregation, vAggregationValue);
-				});
+				}, this);
 			};
 
 			/**
@@ -150,18 +148,18 @@ sap.ui.define(['jquery.sap.global'],
 			 *
 			 */
 			ElementUtil.findAllPublicElements = function(oElement) {
-				var that = this;
 				var aFoundElements = [];
 
-				function internalFind(oElement) {
-					oElement = that.fixComponentContainerElement(oElement);
+				var internalFind = function (oElement) {
+					oElement = this.fixComponentContainerElement(oElement);
 					if (oElement) {
 						aFoundElements.push(oElement);
-						that.iterateOverAllPublicAggregations(oElement, function(oAggregation, vElements) {
-							that.iterateOverElements(vElements, internalFind);
-						});
+						this.iterateOverAllPublicAggregations(oElement, function(oAggregation, vElements) {
+							this.iterateOverElements(vElements, internalFind);
+						}.bind(this));
 					}
-				}
+				}.bind(this);
+
 				internalFind(oElement);
 
 				return aFoundElements;
@@ -201,17 +199,15 @@ sap.ui.define(['jquery.sap.global'],
 			 */
 			ElementUtil.isElementFiltered = function(oControl, aType) {
 				// TODO: Is this method still needed?
-				var that = this;
-
 				aType = aType || this.getControlFilter();
 				var bFiltered = false;
 
 				aType.forEach(function(sType) {
-					bFiltered = that.isInstanceOf(oControl, sType);
+					bFiltered = this.isInstanceOf(oControl, sType);
 					if (bFiltered) {
 						return false;
 					}
-				});
+				}, this);
 
 				return bFiltered;
 			};
@@ -223,12 +219,10 @@ sap.ui.define(['jquery.sap.global'],
 				// TODO: Is this method still needed?
 				if (oNode && oNode.getAttribute("data-sap-ui")) {
 					return sap.ui.getCore().byId(oNode.getAttribute("data-sap-ui"));
+				} else if (oNode.parentNode) {
+					this.findClosestControlInDom(oNode.parentNode);
 				} else {
-					if (oNode.parentNode) {
-						this.findClosestControlInDom(oNode.parentNode);
-					} else {
-						return null;
-					}
+					return null;
 				}
 			};
 
@@ -422,28 +416,30 @@ sap.ui.define(['jquery.sap.global'],
 			 * 'changeType' : <name of change type e.g "Move" .* })
 			 */
 			ElementUtil.executeActions = function(aActions) {
+				var oTargetParent, oMovedElement;
+
 				for (var i = 0; i < aActions.length; i++) {
 					var oAction = aActions[i];
 					switch (oAction.changeType) {
 						case ElementUtil.sACTION_MOVE :
-							var oTargetParent = sap.ui.getCore().byId(oAction.target.parent);
-							var oMovedElement = sap.ui.getCore().byId(oAction.element);
+							oTargetParent = sap.ui.getCore().byId(oAction.target.parent);
+							oMovedElement = sap.ui.getCore().byId(oAction.element);
 							ElementUtil.insertAggregation(oTargetParent, oAction.target.aggregation, oMovedElement,
 									oAction.target.index);
 							break;
 						case ElementUtil.sACTION_CUT :
-							var oTargetParent = sap.ui.getCore().byId(oAction.source.parent);
-							var oMovedElement = sap.ui.getCore().byId(oAction.element);
+							oTargetParent = sap.ui.getCore().byId(oAction.source.parent);
+							oMovedElement = sap.ui.getCore().byId(oAction.element);
 							ElementUtil.removeAggregation(oTargetParent, oAction.source.aggregation, oMovedElement);
 							break;
 						case ElementUtil.sACTION_PASTE :
-							var oTargetParent = sap.ui.getCore().byId(oAction.target.parent);
-							var oMovedElement = sap.ui.getCore().byId(oAction.element);
+							oTargetParent = sap.ui.getCore().byId(oAction.target.parent);
+							oMovedElement = sap.ui.getCore().byId(oAction.element);
 							ElementUtil.insertAggregation(oTargetParent, oAction.target.aggregation, oMovedElement,
 									oAction.target.index);
 							break;
 						case ElementUtil.sREORDER_AGGREGATION :
-							var oTargetParent = sap.ui.getCore().byId(oAction.target.parent);
+							oTargetParent = sap.ui.getCore().byId(oAction.target.parent);
 							var sAggregationRemoveAllMutator = this
 									.getAggregationAccessors(oTargetParent, oAction.target.aggregation).removeAll;
 							oTargetParent[sAggregationRemoveAllMutator]();

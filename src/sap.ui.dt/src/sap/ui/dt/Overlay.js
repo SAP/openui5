@@ -410,12 +410,11 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 */
 	Overlay.prototype._onSyncScrollWithDomRef = function(oEvt) {
 		window.clearTimeout(this._iSyncScrollWithDomRef);
-		var that = this;
 		// timeout needed so that scroll wheel in chrome windows works fast
 		this._iSyncScrollWithDomRef = window.setTimeout(function() {
-			that._syncScrollWithDomRef();
-			delete that._iSyncScrollWithDomRef;
-		}, 0);
+			this._syncScrollWithDomRef();
+			delete this._iSyncScrollWithDomRef;
+		}.bind(this), 0);
 	};
 
 	/**
@@ -670,8 +669,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @public
 	 */
 	Overlay.prototype.getFirstHiddenAggregationOverlay = function() {
-
-		var oPreviousOverlay = this;
+		var oPreviousOverlay = this; // eslint-disable-line consistent-this
 		var oParentOverlay = this.getParentElementOverlay();
 		while (oParentOverlay && oParentOverlay.isInHiddenTree()
 				&& ElementUtil.isInstanceOf(oParentOverlay, "sap.ui.dt.ElementOverlay")) {

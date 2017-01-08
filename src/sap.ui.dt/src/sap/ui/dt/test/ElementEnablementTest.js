@@ -92,23 +92,22 @@ function(jQuery, Test, DesignTime, ElementTest) {
 	 * @override
 	 */
 	ElementEnablementTest.prototype.run = function() {
-
-		var that = this;
 		return this._setup().then(function() {
 
-			that._mResult = that.createSuite("Element Enablement Test");
+			this._mResult = this.createSuite("Element Enablement Test");
 
-			var mElementTest = that.addGroup(that._mResult.children,
-				that.getType(),
-				"Given that an DesignTime is created for " + that.getType()
+			var mElementTest = this.addGroup(
+				this._mResult.children,
+				this.getType(),
+				"Given that an DesignTime is created for " + this.getType()
 			);
 
-			that._testAggregations(mElementTest.children);
+			this._testAggregations(mElementTest.children);
 
-			that._mResult = that.aggregate(that._mResult);
+			this._mResult = this.aggregate(this._mResult);
 
-			return that._mResult;
-		});
+			return this._mResult;
+		}.bind(this));
 	};
 
 
@@ -154,51 +153,49 @@ function(jQuery, Test, DesignTime, ElementTest) {
 	 * @private
 	 */
 	ElementEnablementTest.prototype._setup = function() {
-		var that = this;
-
 		window.clearTimeout(this._iTimeout);
 		this._bNoRenderer = false;
 		this._bErrorDuringRendering = false;
 
 		return new Promise(function(fnResolve, fnReject) {
-			that._oElement = that._createElement();
+			this._oElement = this._createElement();
 
 			try {
-				that._oElement.getRenderer();
+				this._oElement.getRenderer();
 			} catch (oError) {
-				that._bNoRenderer = true;
+				this._bNoRenderer = true;
 			}
 
-			if (!that._bNoRenderer) {
+			if (!this._bNoRenderer) {
 				try {
-					that._oElement.placeAt(that._getTestArea().get(0));
+					this._oElement.placeAt(this._getTestArea().get(0));
 					sap.ui.getCore().applyChanges();
 				} catch (oError) {
-					that._bErrorDuringRendering = true;
+					this._bErrorDuringRendering = true;
 				}
 
-				if (!that._bErrorDuringRendering) {
-					that._oDesignTime = new DesignTime({
-						rootElements : [that._oElement]
+				if (!this._bErrorDuringRendering) {
+					this._oDesignTime = new DesignTime({
+						rootElements : [this._oElement]
 					});
-					that._oDesignTime.attachEventOnce("synced", function() {
+					this._oDesignTime.attachEventOnce("synced", function() {
 						sap.ui.getCore().applyChanges();
-						if (that.getTimeout()) {
-							that._iTimeout = window.setTimeout(function() {
+						if (this.getTimeout()) {
+							this._iTimeout = window.setTimeout(function() {
 								fnResolve();
-							}, that.getTimeout());
+							}, this.getTimeout());
 						} else {
 							fnResolve();
 						}
 
-					}, that);
+					}, this);
 				} else {
 					fnResolve();
 				}
 			} else {
 				fnResolve();
 			}
-		});
+		}.bind(this));
 	};
 
 
@@ -243,7 +240,6 @@ function(jQuery, Test, DesignTime, ElementTest) {
 				);
 
 				if (!mAggregationTestInfo.ignored) {
-
 					this.addTest(mAggregationTest.children,
 						mAggregationTestInfo.overlayVisible,
 						"Overlay Visible",
@@ -268,26 +264,20 @@ function(jQuery, Test, DesignTime, ElementTest) {
 							"Dom Ref Visible",
 							"Declared DomRef is visible"
 						);
-
+					} else if (mAggregationTestInfo.overlayVisible) {
+						this.addTest(mAggregationTest.children,
+							mAggregationTestInfo.overlayGeometryCalculatedByChildren,
+							"Overlay Geometry calculated by children",
+							"Control might work based on DT Heuristic, but safer with domRefDeclared",
+							Test.STATUS.PARTIAL_SUPPORTED
+						);
 					} else {
-						if (mAggregationTestInfo.overlayVisible) {
-
-							this.addTest(mAggregationTest.children,
-								mAggregationTestInfo.overlayGeometryCalculatedByChildren,
-								"Overlay Geometry calculated by children",
-								"Control might work based on DT Heuristic, but safer with domRefDeclared",
-								Test.STATUS.PARTIAL_SUPPORTED
-							);
-
-						} else {
-
-							this.addTest(mAggregationTest.children,
-								false,
-								"Overlay Dom Ref",
-								"Overlay domRef is not declared and aggregation overlay is not visible (please, declare domRef for this aggregation)",
-								Test.STATUS.PARTIAL_SUPPORTED
-							);
-						}
+						this.addTest(mAggregationTest.children,
+							false,
+							"Overlay Dom Ref",
+							"Overlay domRef is not declared and aggregation overlay is not visible (please, declare domRef for this aggregation)",
+							Test.STATUS.PARTIAL_SUPPORTED
+						);
 					}
 					if (mAggregationTestInfo.overlayTooSmall) {
 						this.addTest(mAggregationTest.children,

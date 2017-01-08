@@ -305,7 +305,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 				return;
 			}
 			var fnGetDomRef = oDesignTimeMetadata.getDomRef();
-			if (fnGetDomRef) {
+			if (typeof fnGetDomRef === "function") {
 				oDomRef = fnGetDomRef(this.getElementInstance());
 			}
 		}
@@ -400,13 +400,11 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @public
 	 */
 	ElementOverlay.prototype.sync = function() {
-		var that = this;
-
 		if (this.isVisible()) {
 			var aAggregationOverlays = this.getAggregationOverlays();
 			aAggregationOverlays.forEach(function(oAggregationOverlay) {
-				that._syncAggregationOverlay(oAggregationOverlay);
-			});
+				this._syncAggregationOverlay(oAggregationOverlay);
+			}, this);
 		}
 	};
 
@@ -436,7 +434,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @private
 	 */
 	ElementOverlay.prototype._createAggregationOverlays = function() {
-		var that = this;
 		this._mAggregationOverlays = {};
 
 		var oElement = this.getElementInstance();
@@ -447,8 +444,8 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		ElementUtil.iterateOverAllPublicAggregations(oElement, function(oAggregation, aAggregationElements) {
 			var sAggregationName = oAggregation.name;
 			mAggregationsWithOverlay[sAggregationName] = true;
-			that._createAggregationOverlay(sAggregationName, that.isInHiddenTree());
-		});
+			this._createAggregationOverlay(sAggregationName, this.isInHiddenTree());
+		}.bind(this));
 
 		// create aggregation overlays also for a hidden aggregations which are not ignored in the DT Metadata
 		var mAggregationsMetadata = oDesignTimeMetadata.getAggregations();
@@ -459,9 +456,9 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 				// this is needed to point out, that a control is both in public and private tree, so that it has a "public" parent, which can be different from a getParent()
 				// flag is needed so that parents could have possibility to handle actions for the children. The better solution yet to come: probably, propagation of metadata from parents to children
 				var bIsInHiddenTree = oAggregationMetadata.inHiddenTree;
-				that._createAggregationOverlay(sAggregationName, bIsInHiddenTree);
+				this._createAggregationOverlay(sAggregationName, bIsInHiddenTree);
 			}
-		});
+		}, this);
 
 		this.sync();
 	};
@@ -507,8 +504,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @private
 	 */
 	ElementOverlay.prototype._syncAggregationOverlay = function(oAggregationOverlay) {
-		var that = this;
-
 		if (oAggregationOverlay.isVisible()) {
 			var sAggregationName = oAggregationOverlay.getAggregationName();
 
@@ -525,10 +520,10 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			var aAggregationElements = ElementUtil.getAggregation(this.getElementInstance(), sAggregationName);
 			aAggregationElements.forEach(function(oAggregationElement) {
 				var oChildElementOverlay = OverlayRegistry.getOverlay(oAggregationElement);
-				if (oChildElementOverlay  && oChildElementOverlay.getParent() !== that) {
+				if (oChildElementOverlay  && oChildElementOverlay.getParent() !== this) {
 					oAggregationOverlay.addChild(oChildElementOverlay);
 				}
-			});
+			}, this);
 		}
 	};
 
