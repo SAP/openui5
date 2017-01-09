@@ -56,7 +56,7 @@ sap.ui.define([
         throw new Error("qUnitTestHarness.test: parameter 'featurePath' must be a valid string");
       }
 
-      if ($.type(args.steps) !== "function") {
+      if (($.type(args.steps) !== "function") || !((new args.steps())._generateTestStep)) {
         throw new Error("qUnitTestHarness.test: parameter 'steps' must be a valid StepDefinitions constructor");
       }
 
