@@ -89,10 +89,6 @@
 			assert.ok(!this.oRadioButton1.getSelected(), "RadioButton should not be selected");
 			assert.ok(!this.oRadioButton2.getSelected(), "RadioButton should not be selected");
 			assert.ok(this.oRadioButton3.getSelected(), "RadioButton should be selected");
-
-			// cleanup
-			this.oRadioButton1.destroy();
-			this.oRadioButton2.destroy();
 		});
 
 		QUnit.test("setGroupName", function (assert) {
@@ -279,6 +275,20 @@
 			ok(sClasses.indexOf("sapUiRbDis") == -1, "rb1 className is containing 'sapUiRbDis' after being enabled");
 			ok(sClasses.indexOf("sapUiRbRo") > -1, "rb1 className is missing 'sapUiRbRo'");
 		});
+
+			module("GroupName");
+
+			test("_groupNames clean-up", function() {
+				this.oRadioButton = new sap.ui.commons.RadioButton();
+
+				this.oRadioButton.placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+
+				this.oRadioButton.destroy();
+
+				strictEqual(this.oRadioButton._groupNames['sapUiRbDefaultGroup'].length, 0, "RadioButton was removed from _groupNames");
+			});
 		</script>
 	</head>
 	<body>
