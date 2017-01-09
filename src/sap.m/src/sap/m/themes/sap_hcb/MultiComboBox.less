@@ -7,19 +7,20 @@
 /* BorderDiv                      */
 /* ------------------------------ */
 
-.sapMFocus.sapMMultiComboBox:not(.sapMInputBaseReadonly) > .sapMMultiComboBoxBorder::after {
+.sapMMultiComboBox.sapMMultiComboBoxFocus .sapMMultiComboBoxInputInner {
+	background-color: transparent;
+
+	&:focus {
+		outline: none;
+	}
+}
+
+.sapMMultiComboBoxFocus .sapMMultiComboBoxBorder::after {
 	border: 2px dotted @sapUiContentFocusColor;
-	content: "";
-	position: absolute;
 	top: 0;
 	right: 0;
 	bottom: 0;
 	left: 0;
-	pointer-events: none;
-}
-
-.sapMFocus.sapMMultiComboBox .sapMInputBaseInner:focus {
-	outline: 0 none;
 }
 
 /* ------------------------------ */
