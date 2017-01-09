@@ -330,7 +330,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 		return this.generate().then(function(sContent) {
 			var oExportType = this.getExportType();
 			// Trigger the save action
-			File.save(sContent, sFileName || "data", oExportType.getFileExtension(), oExportType.getMimeType(), oExportType.getCharset());
+			File.save(sContent, sFileName || "data", oExportType.getFileExtension(), oExportType.getMimeType(), oExportType.getCharset(), oExportType.getByteOrderMark());
 		});
 	};
 

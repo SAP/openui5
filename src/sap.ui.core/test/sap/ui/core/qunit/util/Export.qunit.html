@@ -17,10 +17,12 @@
 
 		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<!-- Cover all modules starting with sap/ui/core/util/Export (includes e.g. ExportTypeCSV) -->
 		<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"
-			data-sap-ui-cover-only="sap/ui/core/util/Export">
+			data-sap-ui-cover-only="[sap/ui/core/util/Export,sap/ui/core/util/File]">
 		</script>
 		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
@@ -32,10 +34,11 @@
 		sap.ui.require([
 			"sap/ui/core/util/Export",
 			"sap/ui/core/util/ExportTypeCSV",
+			"sap/ui/core/util/File",
 			"sap/ui/model/Sorter",
 			"sap/ui/model/Filter",
 			"sap/ui/model/json/JSONModel"
-		], function(Export, ExportTypeCSV, Sorter, Filter, JSONModel) {
+		], function(Export, ExportTypeCSV, File, Sorter, Filter, JSONModel) {
 
 			var getJSONModelData = function() {
 				return [
@@ -98,7 +101,9 @@
 				];
 			};
 
-			QUnit.test("Generate", function(assert) {
+			QUnit.module("generate");
+
+			QUnit.test("Default", function(assert) {
 				var done = assert.async();
 
 				new Export({
@@ -156,7 +161,7 @@
 
 			});
 
-			QUnit.test("Generate with sorted rows", function(assert) {
+			QUnit.test("With sorted rows", function(assert) {
 				var done = assert.async();
 
 				new Export({
@@ -211,7 +216,7 @@
 
 			});
 
-			QUnit.test("Generate with old binding syntax", function(assert) {
+			QUnit.test("With old binding syntax", function(assert) {
 				var done = assert.async();
 
 				var oExport = new Export({
@@ -263,7 +268,7 @@
 
 			});
 
-			QUnit.test("Generate without model", function(assert) {
+			QUnit.test("Without model", function(assert) {
 				var done = assert.async();
 
 				new Export({
@@ -287,7 +292,7 @@
 
 			});
 
-			QUnit.test("Generate without columns", function(assert) {
+			QUnit.test("Without columns", function(assert) {
 				var done = assert.async();
 
 				new Export({
@@ -308,6 +313,103 @@
 				.always(function() {
 					this.destroy();
 					done();
+				});
+
+			});
+
+			QUnit.module("saveFile", {
+				beforeEach: function() {
+					this.oFileMock = sinon.mock(File);
+
+					this.oExport = new Export({
+						exportType: new ExportTypeCSV(),
+						rows: "{/}",
+						columns: createColumns(),
+						models: createJSONModel()
+					});
+
+				},
+				afterEach: function() {
+					this.oFileMock.restore();
+				}
+			});
+
+			QUnit.test("csv, utf-8", function(assert) {
+
+				var oExpectFileSave = this.oFileMock.expects("save");
+				var oExport = this.oExport;
+
+				return oExport.generate().then(function(sContent) {
+
+					// Set expected arguments (use content from previous generate() result)
+					oExpectFileSave.once().withExactArgs(sContent, "my-file-name", "csv", "text/csv", "utf-8", undefined);
+
+					return oExport.saveFile("my-file-name").then(function() {
+						oExpectFileSave.verify();
+					});
+
+				});
+
+			});
+
+			QUnit.test("csv, utf-8, byteOrderMark=true", function(assert) {
+
+				var oExpectFileSave = this.oFileMock.expects("save");
+				var oExport = this.oExport;
+				oExport.getExportType().setByteOrderMark(true);
+
+				return oExport.generate().then(function(sContent) {
+
+					// Set expected arguments (use content from previous generate() result)
+					oExpectFileSave.once().withExactArgs(sContent, "my-file-name", "csv", "text/csv", "utf-8", true);
+
+					return oExport.saveFile("my-file-name").then(function() {
+						oExpectFileSave.verify();
+					});
+
+				});
+
+			});
+
+			QUnit.test("csv, utf-8, byteOrderMark=false", function(assert) {
+
+				var oExpectFileSave = this.oFileMock.expects("save");
+				var oExport = this.oExport;
+				oExport.getExportType().setByteOrderMark(false);
+
+				return oExport.generate().then(function(sContent) {
+
+					// Set expected arguments (use content from previous generate() result)
+					oExpectFileSave.once().withExactArgs(sContent, "my-file-name", "csv", "text/csv", "utf-8", false);
+
+					return oExport.saveFile("my-file-name").then(function() {
+						oExpectFileSave.verify();
+					});
+
+				});
+
+			});
+
+			QUnit.test("csv, iso-8859-1, byteOrderMark=true", function(assert) {
+
+				var oExpectFileSave = this.oFileMock.expects("save");
+				var oExport = this.oExport;
+
+				// Although this does not make sense it should be possible to set the properties
+				// but they should get ignored within the sap.ui.core.util.File.save method as
+				// byte-order-mark only applies to unicode charsets
+				oExport.getExportType().setCharset("iso-8859-1");
+				oExport.getExportType().setByteOrderMark(true);
+
+				return oExport.generate().then(function(sContent) {
+
+					// Set expected arguments (use content from previous generate() result)
+					oExpectFileSave.once().withExactArgs(sContent, "my-file-name", "csv", "text/csv", "iso-8859-1", true);
+
+					return oExport.saveFile("my-file-name").then(function() {
+						oExpectFileSave.verify();
+					});
+
 				});
 
 			});

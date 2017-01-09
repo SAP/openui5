@@ -66,6 +66,16 @@
 			<td><input id="separator-char" value="," maxlength="1"></td>
 		</tr>
 		<tr>
+			<td>Byte order mark</td>
+			<td>
+				<select id="byte-order-mark">
+					<option value="default">Default (utf-8 = true)</option>
+					<option value="false">false</option>
+					<option value="true">true</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
 			<td></td>
 			<td><button id="export">Export</button><button id="download">Download</button></td>
 		</tr>
@@ -80,13 +90,15 @@ sap.ui.require(['jquery.sap.global', 'sap/ui/model/json/JSONModel', 'sap/ui/mode
 		var getSettings = function() {
 
 			var sExportType = $('#export-type').val(),
-				sSeparatorChar = $('#separator-char').val();
+				sSeparatorChar = $('#separator-char').val(),
+				bByteOrderMark = $('#byte-order-mark').val() === "default" ? undefined : $('#byte-order-mark').val() === "true";
 
 			var oExportType;
 
 			if (sExportType === 'csv') {
 				oExportType = new ExportTypeCSV({
-					separatorChar: sSeparatorChar
+					separatorChar: sSeparatorChar,
+					byteOrderMark: bByteOrderMark
 				});
 			}
 

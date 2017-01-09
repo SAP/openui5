@@ -42,14 +42,22 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {string} sFileExtension file extension
 		 * @param {string} sMimeType file mime-type
 		 * @param {string} sCharset file charset
+		 * @param {boolean} [bByteOrderMark] Whether to prepend an unicode byte order mark (only applies for utf-8 charset).
+		 *                                   Default is <code>false</code> except when <code>sFileExtension</code> = <code>csv/code> it is <code>true</code> (compatibility reasons).
 		 *
 		 * @public
 		 */
-		save: function(sData, sFileName, sFileExtension, sMimeType, sCharset) {
+		save: function(sData, sFileName, sFileExtension, sMimeType, sCharset, bByteOrderMark) {
 			var sFullFileName = sFileName + '.' + sFileExtension;
 
-			// prepend utf-8 byte-order-mark (BOM) to prevent encoding issues in .csv files
-			if (sCharset === 'utf-8' && sFileExtension === 'csv') {
+			// Compatibility handling:
+			// Add Byte Order Mark by default for utf-8 / csv to not break existing scenarios
+			if (typeof bByteOrderMark === 'undefined' && sCharset === 'utf-8' && sFileExtension === 'csv') {
+				bByteOrderMark = true;
+			}
+
+			// Prepend UTF-8 Byte Order Mark (BOM)
+			if (bByteOrderMark === true && sCharset === 'utf-8') {
 				sData = '\ufeff' + sData;
 			}
 
