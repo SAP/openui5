@@ -374,9 +374,6 @@ var AnnotationsParser =  {
 					oEntityType = aEntityTypes[j];
 					oExtensions = {};
 					oProperties = {};
-					if (oEntityType.hasStream && oEntityType.hasStream === "true") {
-						continue;
-					}
 					for (var k in oEntityType.property) {
 						oProperty = oEntityType.property[k];
 						if (oProperty.type.substring(0, sNamespace.length) === sNamespace) {
