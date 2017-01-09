@@ -281,7 +281,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				offsetY: 0,
 				initialFocus: this,
 				bounce: false,
-				showArrow: false
+				showArrow: false,
+				ariaLabelledBy: this.getPopupHiddenLabelId()
 			});
 
 			oPicker.open = function() {

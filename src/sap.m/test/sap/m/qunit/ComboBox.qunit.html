@@ -10266,6 +10266,24 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.test("It should add a hidden text to the Picker ", function(assert) {
+			var oItem = new sap.ui.core.Item({
+				key: "li",
+				text: "lorem ipsum"
+			}), oComboBox = new sap.m.ComboBox({
+					items: [
+						oItem
+					]
+			}), oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("COMBOBOX_AVAILABLE_OPTIONS");
+
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(sap.ui.getCore().byId(oComboBox.getPopupHiddenLabelId()).getText(), oResourceBundle, 'popup ariaLabelledBy is set');
+
+			oComboBox.destroy();
+		});
+
 		QUnit.module("Integration");
 
 		QUnit.test("Keep selected value on parent re-render", function () {

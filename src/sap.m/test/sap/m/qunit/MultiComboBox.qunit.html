@@ -4811,6 +4811,23 @@
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Popup should have ariaLabelledBy that points to the PopupHiddenLabelId", function(assert) {
+		var oItem = new sap.ui.core.Item({
+			key: "li",
+			text: "lorem ipsum"
+		}), oMultiComboBox = new sap.m.ComboBox({
+				items: [
+					oItem
+				]
+		}), oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("COMBOBOX_AVAILABLE_OPTIONS");
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(sap.ui.getCore().byId(oMultiComboBox.getPopupHiddenLabelId()).getText(), oResourceBundle, 'popup ariaLabelledBy is set');
+		oMultiComboBox.destroy();
+	});
+
 
 	QUnit.module("Integrations");
 
