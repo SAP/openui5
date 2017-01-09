@@ -2,6 +2,7 @@
 	controllerName="sap.ui.core.sample.ViewTemplate.scenario.Main"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
+	xmlns:demokit="sap.ui.demokit"
 	xmlns:layout="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	>
@@ -21,7 +22,8 @@
 		<Panel expandable="false" visible="{ui>/codeVisible}" headerText="Design-Time Source Code"
 			width="inherit" class="sapUiResponsiveMargin">
 			<content>
-				<core:HTML content="{ui>/code}" preferDOM="false"/>
+				<demokit:CodeViewer class="sapUiExploredCodeViewer" source="{ui>/code}"
+					lineNumbering="true" visible="true"/>
 			</content>
 		</Panel>
 		<layout:HorizontalLayout id="detailBox"/>
