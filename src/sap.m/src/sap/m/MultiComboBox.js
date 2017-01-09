@@ -1522,7 +1522,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 					fireFinishEvent: true, // Fire selectionFinish if token is deleted directly in input field
 					suppressInvalidate: true
 				});
-				this.focus();
+
+				!this.isPickerDialog() && this.focus();
 				this.fireChangeEvent("");
 			}
 		}

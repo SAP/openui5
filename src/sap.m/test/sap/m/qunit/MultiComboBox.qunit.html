@@ -4314,12 +4314,15 @@
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(1000);
+		this.clock.tick(300);
 
 		oMultiComboBox.open();
+		this.clock.tick(1000);
+
 
 		oMultiComboBox.setSelectedItems([oItem]);
 		oMultiComboBox.getPicker().getCustomHeader().getContentRight()[0].firePress();
+		this.clock.tick(300);
 
 		strictEqual(oMultiComboBox.getSelectedItems().length, 0, "No items selected after cancel selection");
 
@@ -4468,6 +4471,38 @@
 
 		assert.ok(!oStub.called, "onfocusin of the MCB should not be triggered after dialog is opened");
 
+		oStub.restore();
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test('Endless focus loop should not be triggered when token is deleted on phone', function(assert) {
+		// system under test
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+		var oItem = new sap.ui.core.Item({ text: "test" }),
+			oFakeEvent = new sap.ui.base.Event,
+			oMultiComboBox = new sap.m.MultiComboBox({
+				items: [oItem]
+			}).placeAt("MultiComboBox-content"),
+			oSpy = sinon.spy(sap.m.MultiComboBox.prototype, "focus"),
+			oHandleTokensStub = sinon.stub(sap.ui.base.Event.prototype, "getParameter");
+
+		oMultiComboBox.setSelectedItems([oItem]);
+		sap.ui.getCore().applyChanges();
+
+		oHandleTokensStub.withArgs("type").returns(sap.m.Tokenizer.TokenChangeType.Removed);
+		oHandleTokensStub.withArgs("token").returns(oMultiComboBox._oTokenizer.getTokens()[0]);
+		oMultiComboBox._handleTokenChange(oFakeEvent);
+		this.clock.tick(300);
+
+		assert.ok(!oSpy.called, "onfocusin of the MCB should not be triggered after a token is deleted");
+
+		oSpy.restore();
+		oFakeEvent.destroy();
+		oHandleTokensStub.restore();
 		oMultiComboBox.destroy();
 	});
 
