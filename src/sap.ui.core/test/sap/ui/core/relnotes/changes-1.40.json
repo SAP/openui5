@@ -3572,5 +3572,28 @@
         "references": []
       }
     ]
+  },
+  "1.40.14": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "42a1f6dceac7fbe2f565c39f28b23d7c9ee36356",
+        "type": "FIX",
+        "text": " Avoid unguarded access to window.localStorage during bootstrap",
+        "references": []
+      },
+      {
+        "id": "1469a00e8975850440f845e68517f89ab84993d1",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: SelectAll",
+        "references": []
+      },
+      {
+        "id": "701ac36488a26e1159b0e6450ace50e1e012cbde",
+        "type": "FIX",
+        "text": " v2.ODataModel: setProperty detect changes in __metadata",
+        "references": []
+      }
+    ]
   }
 }

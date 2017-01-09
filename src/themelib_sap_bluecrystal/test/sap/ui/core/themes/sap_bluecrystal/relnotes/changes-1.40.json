@@ -1221,5 +1221,22 @@
         "references": []
       }
     ]
+  },
+  "1.40.14": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "3466944670a87baaa3f8124484b5fd7037f82bdb",
+        "type": "FIX",
+        "text": " sap.m.Button: Emphasized button has correct contrast ratio",
+        "references": []
+      },
+      {
+        "id": "2ddddd37c165336d186f99208d87ff6309f257ac",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Layout no longer breaks on resize",
+        "references": []
+      }
+    ]
   }
 }

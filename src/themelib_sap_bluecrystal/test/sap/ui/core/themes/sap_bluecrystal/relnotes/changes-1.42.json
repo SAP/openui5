@@ -279,5 +279,46 @@
         "references": []
       }
     ]
+  },
+  "1.42.8": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "b1ecb6034502dc94ab7a1b0039e8c34636cf506d",
+        "type": "FIX",
+        "text": " sap.m.Button: Emphasized button has correct contrast ratio",
+        "references": []
+      },
+      {
+        "id": "7bc40ec7c72e6d458276e3acc984c50985dcfc31",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Focus outline corrected",
+        "references": []
+      },
+      {
+        "id": "e99182cf6fd6405c95b68815a03ba78e2b356fea",
+        "type": "FIX",
+        "text": " sap.m.Carousel: bluecrystal arrows in content fixed",
+        "references": []
+      },
+      {
+        "id": "9dc12b9e2c4aec24763719fb50188e5390fde146",
+        "type": "FIX",
+        "text": " sap.m.Link: Dashed focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "4e3056e81114955ffa2b6abbfecec567b101afce",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Layout no longer breaks on resize",
+        "references": []
+      },
+      {
+        "id": "88a820535b761e7c2f5dc1b5bd69af01965bf172",
+        "type": "FIX",
+        "text": " sap.m.Page: rendering performance",
+        "references": []
+      }
+    ]
   }
 }

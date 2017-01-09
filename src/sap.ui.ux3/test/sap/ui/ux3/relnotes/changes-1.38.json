@@ -128,5 +128,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.15": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "9dcbc1b7b10645fa40995d90d469a93664672a01",
+        "type": "FIX",
+        "text": " sap.ui.ux3.FeedChunk: tools button icon missing",
+        "references": []
+      }
+    ]
   }
 }

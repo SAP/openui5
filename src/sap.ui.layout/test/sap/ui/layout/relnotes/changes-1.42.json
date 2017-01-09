@@ -184,5 +184,28 @@
         "references": []
       }
     ]
+  },
+  "1.42.8": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "d2fa939e6b3ba96e6f039d02fbd7684876c787b6",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Control no longer flickers",
+        "references": []
+      },
+      {
+        "id": "1da90f54c034dc5139c6b5bf68181342941950da",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Unwanted scrollbar is now removed",
+        "references": []
+      },
+      {
+        "id": "014f33ed022ed1da950107a884d51d5fd3ec23cf",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveFlowLayout: Destroy render manager only if it exists",
+        "references": []
+      }
+    ]
   }
 }

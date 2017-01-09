@@ -15,5 +15,22 @@
         "references": []
       }
     ]
+  },
+  "1.42.8": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "f544526e641b9556f70a3a846621a154a3479dc1",
+        "type": "FIX",
+        "text": " sap.ui.ux3.FeedChunk: tools button icon missing",
+        "references": []
+      },
+      {
+        "id": "5da6f718bdda56009b41505b7b0c2f4ae7c6939c",
+        "type": "FIX",
+        "text": " sap.ui.ux3.OverlayDialog: Corrected positioning values",
+        "references": []
+      }
+    ]
   }
 }
