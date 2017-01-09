@@ -713,7 +713,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		if (bActionsScope && (jQuery.sap.PseudoEvents.sapdelete.fnCheck(event) || jQuery.sap.PseudoEvents.sapbackspace.fnCheck(event))) {
 			oParams = {
 				scope: sScope,
-				action: GenericTile._Action.Remove
+				action: GenericTile._Action.Remove,
+				domRef : this._oRemoveButton.getPopupAnchorDomRef()
 			};
 			bFirePress = true;
 		}

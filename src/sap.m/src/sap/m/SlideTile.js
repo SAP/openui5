@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 					"action": { type: "string" },
 
 					/**
-					 * The Element's DOM Element. Points to SlideTile instance DOM Element in Display scope.
+					 * The Element's DOM Element.
 					 * In Actions scope the domRef points to the DOM Element of the remove icon (if pressed) or the more icon.
 					 * @experimental since 1.46.0
 					 */
@@ -163,9 +163,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 */
 	SlideTile.prototype.ontap = function(oEvent) {
 		var sScope = this.getScope();
-		if (sap.ui.Device.browser.internet_explorer) {
-			this.$().focus();
-		}
+		this.$().focus();
 		if (sScope === library.GenericTileScope.Actions){
 			var oParams = this._getEventParams(oEvent);
 			this.firePress(oParams);
@@ -231,6 +229,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	SlideTile.prototype.onkeyup = function(oEvent) {
+		var oParams;
 		if (this.getScope() === library.GenericTileScope.Display) {
 			if (jQuery.sap.PseudoEvents.sapenter.fnCheck(oEvent)) {
 				var oGenericTile = this.getTiles()[this._iCurrentTile];
@@ -246,8 +245,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 			if (oEvent.which === jQuery.sap.KeyCodes.F && this._bAnimationPause) {
 				this._scrollToNextTile(true, false);
 			}
+		} else if (this.getScope() === library.GenericTileScope.Actions) {
+			if (jQuery.sap.PseudoEvents.sapselect.fnCheck(oEvent)) {
+				this.firePress(this._getEventParams(oEvent));
+				oEvent.preventDefault();
+			} else if (jQuery.sap.PseudoEvents.sapdelete.fnCheck(oEvent) || jQuery.sap.PseudoEvents.sapbackspace.fnCheck(oEvent)) {
+				oParams = {
+						scope : this.getScope(),
+						action : GenericTile._Action.Remove,
+						domRef : this._oRemoveButton.getPopupAnchorDomRef()
+				};
+				this.firePress(oParams);
+				oEvent.preventDefault();
+			}
 		}
-		// TODO: implement keyboard handling for Actions Scope
 	};
 
 	/**
