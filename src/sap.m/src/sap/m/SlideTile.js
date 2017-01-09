@@ -288,7 +288,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 		if (this.getScope() === library.GenericTileScope.Actions) {
 			return;
 		}
-		if (this.getTiles().length > 1 && !this._isFocusInsideST()) {
+		if (this.getTiles().length > 1 && !this._isFocusInsideST() && this._bAnimationPause) {
 			this._startAnimation();
 			this._updatePausePlayIcon();
 		}
