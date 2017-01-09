@@ -87,24 +87,10 @@
 	/* old align-items: center does not respect margins and vertical align values */
 	vertical-align: middle;
 	margin-bottom: 0;
-	margin-top: 0
-}
-
-/* NonFlex */
-/* vertical centering trick, without flexbox */
-/* @TODO: This can break the after pseudo element theming */
-.sapMTBNoFlex::after {
-	content: "";
-	height: 100%;
-	display: inline-block;
-	vertical-align: middle;
-}
-.sapMTB.sapMTBNoFlex > * {
-	vertical-align: middle;
-	display: inline-block; /* @TODO: can we set the display of unknown item? */
-	margin-bottom: 0;
 	margin-top: 0;
-	float: none; /* float has no effect on a flexible item */
+
+	/* float has no effect on a flexible item */
+	float: none;
 }
 
 /*** Toolbar inside of Form as Form- and Container- header ***/

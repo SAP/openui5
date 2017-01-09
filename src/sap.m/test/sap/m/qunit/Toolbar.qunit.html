@@ -277,57 +277,6 @@
 
 	});
 
-	test("should detect whether toolbar overflows or not", function() {
-		var sLongText = new Array(1000).join("text ");
-
-		// test wrapper
-		var testOverflow = function(sMessage, bExpected, oConfig) {
-			var oTB = createToolbar(oConfig || {});
-			strictEqual(sap.m.Toolbar.checkOverflow(oTB.$()), bExpected, sMessage);
-			oTB.destroy();
-		};
-
-		// run test
-		testOverflow("101px content in 100px toolbar", true, {
-			Toolbar : {width: "100px"},
-			ToolbarSpacer : {width : "101px"}
-		});
-
-		testOverflow("101% unshrinkable content", true, {
-			Toolbar : {},
-			ToolbarSpacer : {width : "101%"}
-		});
-
-		testOverflow("Long button text", true, {
-			Toolbar : {},
-			Button : {text : sLongText}
-		});
-
-		testOverflow("Should respect min width", true, {
-			Toolbar : {width: "100px"},
-			Label : {text : "t"},
-			ToolbarSpacer : {width : "80px"}
-		});
-
-		testOverflow("Empty toolbar", false, {
-			Toolbar : {}
-		});
-
-		testOverflow("Invisible toolbar", false, {
-			Toolbar : {visible: false}
-		});
-
-		testOverflow("100% unshrinkable content", false, {
-			Toolbar : {},
-			ToolbarSpacer : {width : "100%"}
-		});
-
-		testOverflow("1px content in 100px toolbar", false, {
-			Toolbar : {},
-			ToolbarSpacer : {width : "100%"}
-		});
-	});
-
 	test("controls shoulds return correct original and initial width", function() {
 		var getOrigWidth = sap.m.Toolbar.getOrigWidth;
 
@@ -460,7 +409,6 @@
 	test("should behave correct according to latest flex box support", function() {
 		// stub for latest flex support
 		var spy = this.spy(sap.m.Toolbar.prototype, "_registerContentResize");
-		this.stub(sap.m.Toolbar, "hasFlexBoxSupport", true);
 		this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", true);
 		var oTB = createToolbar({
 			Toolbar : {},
@@ -476,7 +424,6 @@
 	test("should behave correct according to old flex box support", function() {
 		// stub for latest old flex support
 		var spy = this.spy(sap.m.Toolbar.prototype, "_registerContentResize");
-		this.stub(sap.m.Toolbar, "hasFlexBoxSupport", true);
 		this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", false);
 		var oTB = createToolbar({
 			Toolbar : {},
@@ -486,22 +433,6 @@
 		ok(oTB._sResizeListenerId, "Toolbar has resize handler");
 		ok(oTB.$().hasClass("sapMTBOldFlex"), "Toolbar has correct sapMTBOldFlex class");
 		strictEqual(oTB.$().find(".sapMLabel").css("display"), "block", "Display is set to block for shrinkable item");
-		strictEqual(spy.callCount, 1, "Content resize handler is registered once");
-		oTB.destroy();
-	});
-
-	test("should behave correct if there is no flex box support", function() {
-		// stub for no flex box support
-		var spy = this.spy(sap.m.Toolbar.prototype, "_registerContentResize");
-		this.stub(sap.m.Toolbar, "hasFlexBoxSupport", false);
-		this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", false);
-		var oTB = createToolbar({
-			Toolbar : {},
-			Label : {text: "text"}
-		});
-
-		ok(oTB._sResizeListenerId, "Toolbar has resize handler");
-		ok(oTB.$().hasClass("sapMTBNoFlex"), "Toolbar has correct sapMTBNoFlex class");
 		strictEqual(spy.callCount, 1, "Content resize handler is registered once");
 		oTB.destroy();
 	});
@@ -612,7 +543,7 @@
 			var oDomRef = oTB.getDomRef();
 			sMessage += " so Toolbar should not overflow";
 			ok(oDomRef.scrollWidth === oDomRef.clientWidth, sMessage + ".");
-			oTB.setWidth("500px")._reflexie();	// runs the polyfill
+			oTB.setWidth("500px");
 			ok(oDomRef.scrollWidth === oDomRef.clientWidth, sMessage + " even after resize.");
 			oTB.destroy();
 		};

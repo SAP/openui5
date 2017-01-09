@@ -125,28 +125,6 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	};
 
 	/*
-	 * This sets inner controls to the initial width and
-	 * checks the given element overflows horizontally
-	 *
-	 * @static
-	 * @protected
-	 * @param {jQuery} $Element jQuery Object
-	 * @return {boolean} whether overflow or not
-	 */
-	Toolbar.checkOverflow = function($Element) {
-		if (!$Element || !$Element.length) {
-			return false;
-		}
-
-		$Element.children().each(function() {
-			this.style.width = Toolbar.getOrigWidth(this.id);
-		});
-
-		return $Element[0].scrollWidth > $Element[0].clientWidth;
-
-	};
-
-	/*
 	 * Returns the original width(currently only control's width) via Control ID
 	 * TODO: This function is not smart enough to detect DOM width changes
 	 * But tracking width changes is also expensive
@@ -215,167 +193,10 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		}
 	};
 
-	/*
-	 * Grow-Shrink flexbox polyfill for Toolbar
-	 *
-	 * @static
-	 * @protected
-	 * @param {jQuery} $Element The container of flex items
-	 * @param {String} [sFlexClass] Flexible item class
-	 * @param {String} [sShrinkClass] Shrinkable item class
-	 */
-	Toolbar.flexie = function($Element, sFlexClass, sShrinkClass) {
-
-		// check element exists and has width to calculate
-		if (!$Element || !$Element.length || !$Element.width()) {
-			return;
-		}
-
-		// set default values
-		sShrinkClass = sShrinkClass || this.shrinkClass;
-		sFlexClass = sFlexClass || ToolbarSpacer.flexClass;
-
-		// initial values
-		var iTotalPercent = 0,
-			aFlexibleItems = [],
-			aShrinkableItems = [],
-			iTotalUnShrinkableWidth = 0,
-			iInnerWidth = $Element.width(),
-			$Children = $Element.children(),
-			bOverflow = this.checkOverflow($Element),
-			isAutoWidth = function(sWidth) {
-				return !sWidth || sWidth == "auto" || sWidth == "inherit";
-			},
-			calcUnShrinkableItem = function($Item) {
-				// add to unshrinkable width calculation with margins
-				iTotalUnShrinkableWidth += $Item.outerWidth(true);
-			},
-			pushShrinkableItem = function($Item) {
-				// if calculated width and the min-width is same then item cannot shrink
-				var fBoxWidth = parseFloat($Item.css("width")) || 0;
-				var fMinWidth = parseFloat($Item.css("min-width")) || 0;
-				if (fBoxWidth == fMinWidth) {
-					calcUnShrinkableItem($Item);
-					return;
-				}
-
-				// calculate related percentage according to inner width
-				var iBoxSizing = 0;
-				var fWidth = $Item.width();
-				var fPercent = (fWidth * 100) / iInnerWidth;
-				iTotalPercent += fPercent;
-
-				// margins + paddings + borders are not shrinkable
-				iTotalUnShrinkableWidth += $Item.outerWidth(true) - fWidth;
-				if ($Item.css("box-sizing") == "border-box") {
-					iBoxSizing = $Item.outerWidth() - fWidth;
-				}
-
-				// should also take account of max width
-				// browsers does not respect computed max width when it has %
-				// https://code.google.com/p/chromium/issues/detail?id=228938
-				var sMaxWidth = $Item.css("max-width");
-				var fMaxWidth = parseFloat(sMaxWidth);
-				if (sMaxWidth.indexOf("%") > 0) {
-					fMaxWidth = Math.ceil((fMaxWidth * $Element.outerWidth()) / 100);
-				}
-
-				// push item
-				aShrinkableItems.push({
-					boxSizing : iBoxSizing,
-					maxWidth : fMaxWidth,
-					minWidth : fMinWidth,
-					percent : fPercent,
-					el : $Item[0]
-				});
-			},
-			setWidths = function(iTotalWidth) {
-				var iSumOfWidth = 0;
-
-				// check for max and min width and remove items if they cannot not shrink or grow anymore
-				aShrinkableItems.forEach(function(oItem, iIndex) {
-					var fRelativePercent = Math.min(100, (oItem.percent * 100) / iTotalPercent);
-					var iContentWidth = Math.floor((iTotalWidth * fRelativePercent) / 100);
-					var iCalcWidth = oItem.boxSizing + iContentWidth;
-
-					// if we cannot set calculated shrink width because of the minimum width restriction
-					// then we should shrink the other items because current item cannot shrink more
-					if (iCalcWidth < oItem.minWidth) {
-						oItem.el.style.width = oItem.minWidth + "px";
-						iTotalWidth -= (oItem.minWidth - oItem.boxSizing);
-
-						// ignore this element cannot shrink more
-						iTotalPercent -= oItem.percent;
-						delete aShrinkableItems[iIndex];
-					}
-
-					// if there is a max width restriction and calculated grow width is more than max width
-					// then we should share this extra grow gap for the other items
-					if (oItem.maxWidth && oItem.maxWidth > oItem.minWidth && iCalcWidth > oItem.maxWidth) {
-						oItem.el.style.width = oItem.maxWidth + "px";
-						iTotalWidth += (iCalcWidth - oItem.maxWidth);
-
-						// ignore this element cannot grow more
-						iTotalPercent -= oItem.percent;
-						delete aShrinkableItems[iIndex];
-					}
-				});
-
-				// share the width to the items (can grow or shrink)
-				aShrinkableItems.forEach(function(oItem) {
-					var fRelativePercent = Math.min(100, (oItem.percent * 100) / iTotalPercent);
-					var fContentWidth = (iTotalWidth * fRelativePercent) / 100;
-					var fCalcWidth = oItem.boxSizing + fContentWidth;
-					oItem.el.style.width = fCalcWidth + "px";
-					iSumOfWidth += fCalcWidth;
-				});
-
-				// calculate remain width
-				iTotalWidth -= iSumOfWidth;
-				if (iTotalWidth > 1) {
-					// share the remaining width to the spacers
-					aFlexibleItems.forEach(function(oFlexibleItem) {
-						var fWidth = iTotalWidth / aFlexibleItems.length;
-						oFlexibleItem.style.width = fWidth + "px";
-					});
-				}
-			};
-
-		// start calculation
-		// here items are in their initial width
-		$Children.each(function() {
-			var $Child = jQuery(this);
-			var bAutoWidth = isAutoWidth(this.style.width);
-			if (bAutoWidth && $Child.hasClass(sFlexClass)) {
-				// flexible item
-				aFlexibleItems.push(this);
-				this.style.width = "0px";
-			} else if ($Child.is(":hidden")) {
-				// invisible item
-				return;
-			} else if (bOverflow && $Child.hasClass(sShrinkClass)) {
-				// shrinkable marked item when toolbar overflows
-				pushShrinkableItem($Child);
-			} else {
-				// unshrinkable item
-				calcUnShrinkableItem($Child);
-			}
-		});
-
-		// check if there is still place for flex or do the shrink
-		var iRemainWidth = iInnerWidth - iTotalUnShrinkableWidth;
-		setWidths(Math.max(iRemainWidth, 0));
-	};
-
-	// determines whether toolbar has flexbox support or not
-	Toolbar.hasFlexBoxSupport = jQuery.support.hasFlexBoxSupport;
-
 	// determines whether toolbar has new flexbox (shrink) support
 	Toolbar.hasNewFlexBoxSupport = (function() {
 		var oStyle = document.documentElement.style;
-		return (oStyle.flex !== undefined ||
-				oStyle.msFlex !== undefined ||
-				oStyle.webkitFlexShrink !== undefined);
+		return (oStyle.flex !== undefined || oStyle.webkitFlexShrink !== undefined);
 	}());
 
 	Toolbar.prototype.init = function() {
@@ -477,17 +298,11 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 
 	// apply the layout calculation according to flexbox support
 	Toolbar.prototype._doLayout = function() {
-		// let the flexbox do its job
 		if (Toolbar.hasNewFlexBoxSupport) {
 			return;
 		}
 
-		// apply layout according to flex support
-		if (Toolbar.hasFlexBoxSupport) {
-			this._resetOverflow();
-		} else {
-			this._reflexie();
-		}
+		this._resetOverflow();
 	};
 
 	// reset overflow and mark with classname if overflows
@@ -498,14 +313,6 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		$This.removeClass("sapMTBOverflow");
 		var bOverflow = oDomRef.scrollWidth > oDomRef.clientWidth;
 		bOverflow && $This.addClass("sapMTBOverflow");
-		this._iEndPoint = this._getEndPoint();
-		this._registerResize();
-	};
-
-	// recalculate flexbox layout
-	Toolbar.prototype._reflexie = function() {
-		this._deregisterResize();
-		Toolbar.flexie(this.$());
 		this._iEndPoint = this._getEndPoint();
 		this._registerResize();
 	};

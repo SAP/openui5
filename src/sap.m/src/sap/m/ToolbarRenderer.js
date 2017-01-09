@@ -41,9 +41,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 		}
 
 
-		if (!sap.m.Toolbar.hasFlexBoxSupport) {
-			rm.addClass("sapMTBNoFlex");
-		} else if (!sap.m.Toolbar.hasNewFlexBoxSupport) {
+		if (!sap.m.Toolbar.hasNewFlexBoxSupport) {
 			rm.addClass("sapMTBOldFlex");
 		} else {
 			rm.addClass("sapMTBNewFlex");

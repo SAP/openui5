@@ -20,15 +20,8 @@
 	jQuery.sap.require("sap.ui.core.IconPool");
 
 	// for behaviour testing
-	if (oUriParameters.get("noFlex")) {
+	if (oUriParameters.get("oldFlex")) {
 		sap.m.Toolbar.hasNewFlexBoxSupport = false;
-		sap.m.Toolbar.hasFlexBoxSupport = false;
-	} else if (oUriParameters.get("oldFlex")) {
-		sap.m.Toolbar.hasNewFlexBoxSupport = false;
-		sap.m.Toolbar.hasFlexBoxSupport = true;
-	} else if (oUriParameters.get("newFlex")) {
-		sap.m.Toolbar.hasNewFlexBoxSupport = true;
-		sap.m.Toolbar.hasFlexBoxSupport = true;
 	}
 
 	var oApp = new sap.m.App();
