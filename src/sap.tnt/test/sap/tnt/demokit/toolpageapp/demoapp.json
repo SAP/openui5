@@ -5,7 +5,6 @@
    "webapp/controller/App.controller.js",
    "webapp/controller/BaseController.js",
    "webapp/controller/Home.controller.js",
-   "webapp/controller/settings/detailSettings2.controller.js",
    "webapp/controller/settings/MasterSettings.controller.js",
    "webapp/controller/Statistic.controller.js",
    "webapp/css/shopAdminTitleCss.css",
@@ -20,7 +19,7 @@
    "webapp/view/App.view.xml",
    "webapp/view/Home.view.xml",
    "webapp/view/settings/AppSettings.view.xml",
-   "webapp/view/settings/detailSettings1.view.xml",
+   "webapp/view/settings/DetailSettings1.view.xml",
    "webapp/view/settings/MasterSettings.view.xml",
    "webapp/view/Statistic.view.xml"
   ]
