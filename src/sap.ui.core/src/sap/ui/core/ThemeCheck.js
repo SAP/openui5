@@ -56,29 +56,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 
 	ThemeCheck.themeLoaded = false;
 
-	ThemeCheck.checkStyle = function(oStyle, bLog){
-		if (typeof (oStyle) === "string") {
-			oStyle = jQuery.sap.domById(oStyle);
-		}
-		var $Style = jQuery(oStyle);
+	ThemeCheck.checkStyle = function(sId, bLog) {
+		var oStyle = document.getElementById(sId);
 
 		try {
-			var res = !oStyle || !!((oStyle.sheet && oStyle.sheet.href === oStyle.href && oStyle.sheet.cssRules && oStyle.sheet.cssRules.length > 0) ||
-							!!(oStyle.styleSheet && oStyle.styleSheet.href === oStyle.href && oStyle.styleSheet.cssText && oStyle.styleSheet.cssText.length > 0) ||
-							!!(oStyle.innerHTML && oStyle.innerHTML.length > 0));
-			var res2 = $Style.attr("data-sap-ui-ready");
-			res2 = !!(res2 === "true" || res2 === "false");
-			if (bLog) {
-				jQuery.sap.log.debug("ThemeCheck: Check styles '" + $Style.attr("id") + "': " + res + "/" + res2 + "/" + !!oStyle);
+
+			var bNoLinkElement = false,
+			    bLinkElementFinishedLoading = false,
+			    bSheet = false,
+			    bInnerHtml = false;
+
+			// Check if <link> element is missing (e.g. misconfigured library)
+			bNoLinkElement = !oStyle;
+
+			// Check if <link> element has finished loading (see jQuery.sap.includeStyleSheet)
+			bLinkElementFinishedLoading = !!(oStyle && (oStyle.getAttribute("data-sap-ui-ready") === "true" || oStyle.getAttribute("data-sap-ui-ready") === "false"));
+
+			// Check for "sheet" object and if rules are available
+			try {
+				bSheet = !!(oStyle && oStyle.sheet && oStyle.sheet.href === oStyle.href && oStyle.sheet.cssRules && oStyle.sheet.cssRules.length > 0);
+			} catch (e) {
+				// Firefox throws a SecurityError or InvalidAccessError if "oStyle.sheet.cssRules"
+				// is accessed on a stylesheet with 404 response code or is some other special cases.
+				// Only rethrow if the error is different
+				if (e.name !== 'SecurityError' && e.name !== 'InvalidAccessError') {
+					throw e;
+				}
 			}
-			return res || res2;
+
+			// Check for "innerHTML" content
+			bInnerHtml = !!(oStyle && oStyle.innerHTML && oStyle.innerHTML.length > 0);
+
+			// One of the previous four checks need to be successful
+			var bResult = bNoLinkElement || bSheet || bInnerHtml || bLinkElementFinishedLoading;
+
+			if (bLog) {
+				jQuery.sap.log.debug("ThemeCheck: " + sId + ": " + bResult + " (noLinkElement: " + bNoLinkElement + ", sheet: " + bSheet + ", innerHtml: " + bInnerHtml + ", linkElementFinishedLoading: " + bLinkElementFinishedLoading + ")");
+			}
+
+			return bResult;
+
 		} catch (e) {
-			//escape eslint check for empty block
+			if (bLog) {
+				jQuery.sap.log.error("ThemeCheck: " + sId + ": Error during check styles '" + sId + "'", e);
+			}
 		}
 
-		if (bLog) {
-			jQuery.sap.log.debug("ThemeCheck: Error during check styles '" + $Style.attr("id") + "': false/false/" + !!oStyle);
-		}
 		return false;
 	};
 
