@@ -142,7 +142,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var oFilterData = data.filter;
 			var oFilterModel = new JSONModel(oFilterData);
 			oFilterModel.setSizeLimit(100000);
-			oView.setModel(oFilterModel, "filter");
+			this.setModel(oFilterModel, "filter");
 
 			// set device model
 			var deviceModel = new JSONModel({

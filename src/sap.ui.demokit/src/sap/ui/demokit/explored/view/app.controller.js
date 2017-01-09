@@ -36,7 +36,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/Component",
 
 				// apply theme and compact mode also to iframe samples
 				var oSampleFrame = sap.ui.getCore().byId("sampleFrame");
-				if (oSampleFrame) {
+				if (oSampleFrame && oSampleFrame.$()[0]) {
 					var oSampleFrameContent = oSampleFrame.$()[0].contentWindow;
 					if (oSampleFrameContent) {
 						oSampleFrameContent.sap.ui.getCore().applyTheme(oData.themeActive);
