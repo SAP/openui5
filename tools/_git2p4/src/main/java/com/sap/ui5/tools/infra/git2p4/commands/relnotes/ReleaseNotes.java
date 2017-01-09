@@ -3,6 +3,7 @@ package com.sap.ui5.tools.infra.git2p4.commands.relnotes;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,11 +27,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -211,14 +214,19 @@ public class ReleaseNotes {
   }
 
   private void processLibrary(File file) throws IOException {
+	String lib;
     Matcher m = LIBSRC.matcher(file.getCanonicalPath());
+    
     if (m.find()){
-      String lib = m.group();
-      if(filterLibraryFiles(lib)){
+        lib = m.group();
+      } else{
+      	lib = getLibDataFromLibraryfile("/appData/releasenotes/@libfolder",file);
+      }
+    
+    if(filterLibraryFiles(lib)){
         Log.println("Processing library file: '" + file + "' with sources: " + lib);
         processCommand.execute(getNotesFile(file), lib);
       }
-    }
   }
 
   private boolean filterLibraryFiles(String lib) {
@@ -370,18 +378,36 @@ public class ReleaseNotes {
     isNewNote = true;
   }
 
-  private File getNotesFile(File file) throws IOException {
-    XPath xpath = XPathFactory.newInstance().newXPath();
+  public Document parseFileToDocument(File file) throws IOException, SAXException, IOException, ParserConfigurationException{
+	  Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new FileInputStream(file));
+	  return document;
+  }
+  
+  private String getLibDataFromLibraryfile(String libUrl, File file) throws IOException {
+	  String libName;
+	  XPath xpath = XPathFactory.newInstance().newXPath();
     try {
-      Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new FileInputStream(file));
-      String relNotesFile = xpath.evaluate("/" + file.getName().substring(1) + "/appData/releasenotes/@url", doc, XPathConstants.STRING).toString();
+      Document doc = parseFileToDocument(file);
+      libName = xpath.evaluate("/" + file.getName().substring(1) + libUrl, doc, XPathConstants.STRING).toString();
+      if ("".equals(libName)){
+        return null;
+      }
+      return libName;
+    }catch (Exception e) {
+        throw new IOException(e);
+      }
+  }
+  
+  private File getNotesFile(File file) throws IOException {
+    try {
+      String relNotesFile = getLibDataFromLibraryfile("/appData/releasenotes/@url", file);
       if ("".equals(relNotesFile)){
         return null;
       }
       //special case for platform library
       if (!relNotesFile.contains("/sap/ui/server/java/")){
         Map<String, String> resourcesMap = new HashMap<String, String>();
-        String addToRelNotesPath = ""; 
+        String addToRelNotesPath = "";
         if (file.getAbsolutePath().contains(File.separator+"main"+File.separator+"uilib"+File.separator)){
           resourcesMap.put("/test-resources/", "/src/test/uilib/");
           resourcesMap.put("/resources/", "/src/main/uilib/");
