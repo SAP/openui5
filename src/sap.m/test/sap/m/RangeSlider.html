@@ -202,6 +202,11 @@
             }).placeAt("content4");
 
             new sap.m.RangeSlider({enableTickmarks: true}).placeAt("content5");
+
+            new sap.m.RangeSlider({
+	            enableTickmarks: true,
+	            scale: new sap.m.ResponsiveScale({tickmarksBetweenLabels: 5})
+            }).placeAt("content6");
         </script>
     </head>
     <body class="sapUiBody">
@@ -228,6 +233,9 @@
 
             <h2>RangeSlider with tickmarks</h2>
             <div id="content5"></div>
+
+            <h2>RangeSlider with tickmarks and labels</h2>
+            <div id="content6"></div>
         </div>
     </body>
 </html>

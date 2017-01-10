@@ -21,5 +21,9 @@
 		<RangeSlider enableTickmarks="true" range="0,10" min="0" max="10" class="sapUiSmallMarginBottom"  />
 		<RangeSlider enableTickmarks="true" class="sapUiSmallMarginBottom"  />
 		<RangeSlider enableTickmarks="true" min="-100" max="100" step="5" class="sapUiSmallMarginBottom"  />
+		<Text text="RangeSlider with tickmarks and labels"/>
+		<RangeSlider min="0" max="30" range="5,20" enableTickmarks="true" class="sapUiSmallMarginBottom">
+			<ResponsiveScale tickmarksBetweenLabels="3"/>
+		</RangeSlider>
 	</l:VerticalLayout>
 </mvc:View>
