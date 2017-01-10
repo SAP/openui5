@@ -2,8 +2,9 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/Fragment',
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/json/JSONModel'
-], function(jQuery, Fragment, Controller, JSONModel) {
+	'sap/ui/model/json/JSONModel',
+	'sap/m/MessageToast'
+], function(jQuery, Fragment, Controller, JSONModel, MessageToast) {
 	"use strict";
 
 	var CController = Controller.extend("sap.m.sample.QuickViewCard.QuickView", {
@@ -138,6 +139,16 @@ sap.ui.define([
 		},
 
 		onNavigate : function(oEvent) {
+			var oNavOrigin = oEvent.getParameter("navOrigin");
+
+			if (oNavOrigin) {
+				MessageToast.show('Link "' + oNavOrigin.getText() + '" was clicked');
+			} else {
+				MessageToast.show('Back button was clicked');
+			}
+		},
+
+		onAfterNavigate : function(oEvent) {
 			var oButton = this.getView().byId('buttonBack');
 			oButton.setEnabled(!oEvent.getParameter('isTopPage'));
 		}

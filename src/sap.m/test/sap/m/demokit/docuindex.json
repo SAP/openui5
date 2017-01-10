@@ -572,7 +572,8 @@
 		  "category": "Popup",
 		  "since": "1.30",
 		  "samples": [
-			"sap.m.sample.QuickView"
+			"sap.m.sample.QuickView",
+			"sap.m.sample.QuickViewNavOrigin"
 		  ]
 		},
 		{
@@ -1298,6 +1299,11 @@
 		  "id": "sap.m.sample.QuickView",
 		  "name": "QuickView",
 		  "description": "QuickView embedded in popover"
+		},
+		{
+		  "id": "sap.m.sample.QuickViewNavOrigin",
+		  "name": "QuickView with navigation and data binding",
+		  "description": "QuickView using navOrigin parameter when navigating"
 		},
 		{
 		  "id": "sap.m.sample.QuickViewCard",
