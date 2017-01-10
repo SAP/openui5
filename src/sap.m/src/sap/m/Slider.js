@@ -6,12 +6,11 @@ sap.ui.define([
 		'jquery.sap.global',
 		'./library',
 		'sap/ui/core/Control',
-		'sap/ui/core/Element',
 		'sap/ui/core/EnabledPropagator',
 		'./Input',
 		'sap/ui/core/InvisibleText'
 	],
-	function(jQuery, library, Control, Element, EnabledPropagator, Input, InvisibleText) {
+	function(jQuery, library, Control, EnabledPropagator, Input, InvisibleText) {
 		"use strict";
 
 		/**
@@ -153,6 +152,7 @@ sap.ui.define([
 				 */
 				enableTickmarks: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
+			defaultAggregation: "scale",
 			aggregations: {
 				/**
 				 * Scale for visualisation of tickmarks and labels
