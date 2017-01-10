@@ -35,25 +35,17 @@ sap.ui.define([],
 		});
 
 		var iColumns = oRBGroup.getColumns();
-		var bEnabled = oRBGroup.getEnabled();
 		var sControlTextDir = oRBGroup.getTextDirection();
 		var bGlobalTextDir = sap.ui.getCore().getConfiguration().getRTL();
-
-		if (bEnabled) {
-			// check if at least one button is enabled
-			var aButtons = oRBGroup.getButtons();
-			bEnabled = false;
-			for (var i = 0; i < aButtons.length; i++) {
-				if (aButtons[i].getEnabled()) {
-					bEnabled = true;
-					break;
-				}
-			}
-		}
 
 		rm.write("<div");
 		rm.writeControlData(oRBGroup);
 		rm.addClass("sapMRbG");
+
+		if (!oRBGroup.getEditable()) {
+			rm.addClass("sapMRbGRo");
+		}
+
 		if (iColumns > 1) {
 			if (iColumns == aVisibleRBs.length) {
 				rm.addClass("sapMRbG1Row");
