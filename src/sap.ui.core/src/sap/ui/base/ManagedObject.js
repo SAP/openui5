@@ -407,6 +407,9 @@ sap.ui.define([
 			this.mBindingInfos = {};
 			this.mObjectBindingInfos = {};
 
+			// contextual settings
+			this._oContextualSettings = ManagedObject._defaultContextualSettings;
+
 			// apply the owner id if defined
 			this._sOwnerId = ManagedObject._sOwnerId;
 
@@ -2156,6 +2159,16 @@ sap.ui.define([
 				}
 			}
 
+			this._oContextualSettings = ManagedObject._defaultContextualSettings;
+			if (!this._bIsBeingDestroyed) {
+				setTimeout(function() {
+					// if object is being destroyed or parent is set again (move) no propagation is needed
+					if (!this.oParent) {
+						this._propagateContextualSettings();
+					}
+				}.bind(this), 0);
+			}
+
 			jQuery.sap.act.refresh();
 
 			// Note: no need (and no way how) to invalidate
@@ -2201,6 +2214,8 @@ sap.ui.define([
 			this.fireModelContextChange();
 		}
 
+		this._applyContextualSettings(oParent._oContextualSettings);
+
 		// only the parent knows where to render us, so we have to invalidate it
 		if ( oParent && !this.isInvalidateSuppressed() ) {
 			oParent.invalidate(this);
@@ -2216,6 +2231,63 @@ sap.ui.define([
 
 		return this;
 	};
+
+	/**
+	 * Applies new contextual settings to a managed object, and propagates them to its children
+	 * @param oContextualSettings
+	 * @private
+	 */
+	ManagedObject.prototype._applyContextualSettings = function(oContextualSettings) {
+
+		if (this._oContextualSettings !== oContextualSettings) {
+			this._oContextualSettings = oContextualSettings;
+			this._propagateContextualSettings();
+			this._onContextualSettingsChanged();
+		}
+	};
+
+	/**
+	 * Hook method to let descendants of ManagedObject know when propagated contextual settings have changed
+	 * @private
+	 * @sap-restricted sap.ui.core.Element
+	 */
+	ManagedObject.prototype._onContextualSettingsChanged = function () {};
+
+	/**
+	 * Recursively applies a managed object's contextual settings to its children
+	 * @private
+	 */
+	ManagedObject.prototype._propagateContextualSettings = function () {
+		var oSettings = this._oContextualSettings,
+			sAggregationName,
+			oAggregation,
+			i;
+
+		for (sAggregationName in this.mAggregations) {
+
+			oAggregation = this.mAggregations[sAggregationName];
+			if (oAggregation instanceof ManagedObject) {
+				oAggregation._applyContextualSettings(oSettings);
+			} else if (oAggregation instanceof Array) {
+				for (i = 0; i < oAggregation.length; i++) {
+					if (oAggregation[i] instanceof ManagedObject) {
+						oAggregation[i]._applyContextualSettings(oSettings);
+					}
+				}
+			}
+		}
+	};
+
+	/**
+	 * Returns the contextual settings of a ManagedObject
+	 * @returns {undefined|*}
+	 * @private
+	 */
+	ManagedObject.prototype._getContextualSettings = function () {
+		return this._oContextualSettings;
+	};
+
+
 
 	/**
 	 * Returns the parent managed object or <code>null</code> if this object hasn't been added to a parent yet.
@@ -4447,6 +4519,8 @@ sap.ui.define([
 		return aAggregatedObjects;
 
 	};
+
+	ManagedObject._defaultContextualSettings = {};
 
 	return ManagedObject;
 

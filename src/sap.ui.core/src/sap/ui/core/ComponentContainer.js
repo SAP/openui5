@@ -221,6 +221,17 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 		}
 	};
 
+	/*
+	 * overridden to support contextual settings propagation to the associated component
+	 * no need to call the parent prototype method as there are no aggregations to propagate to
+	 */
+	ComponentContainer.prototype._propagateContextualSettings = function () {
+		var oComponent = this.getComponentInstance();
+		if (oComponent) {
+			oComponent._applyContextualSettings(this._getContextualSettings());
+		}
+	};
+
 	return ComponentContainer;
 
 });
