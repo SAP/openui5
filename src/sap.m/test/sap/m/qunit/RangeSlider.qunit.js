@@ -59,10 +59,10 @@
 
 	QUnit.test("RangeSlider's Labels", function (assert) {
 		assert.ok(jQuery(".sapMSliderLabels"), "The labels container is rendered.");
-		assert.strictEqual(jQuery(".sapMSliderLabel").length, 2, "There are two labels rendered.");
-		assert.strictEqual(jQuery(".sapMSliderLabel").length, 2, "There are two labels rendered.");
-		assert.equal(this.rangeSlider.$().find(".sapMSliderLabel:eq(0)").html(), this.rangeSlider.getMin(), "The start label shows the min value");
-		assert.equal(this.rangeSlider.$().find(".sapMSliderLabel:eq(1)").html(), this.rangeSlider.getMax(), "The end label shows the max value");
+		assert.strictEqual(jQuery(".sapMSliderRangeLabel").length, 2, "There are two labels rendered.");
+		assert.strictEqual(jQuery(".sapMSliderRangeLabel").length, 2, "There are two labels rendered.");
+		assert.equal(this.rangeSlider.$().find(".sapMSliderRangeLabel:eq(0)").html(), this.rangeSlider.getMin(), "The start label shows the min value");
+		assert.equal(this.rangeSlider.$().find(".sapMSliderRangeLabel:eq(1)").html(), this.rangeSlider.getMax(), "The end label shows the max value");
 	});
 
 	QUnit.test("Overlapping handles", function (assert) {
