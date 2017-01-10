@@ -3,10 +3,9 @@
  */
 
 // Provides a filter for list bindings
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 'sap/ui/Device'],
-	function(jQuery, BaseObject, FilterOperator, Device) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator'],
+	function(jQuery, BaseObject, FilterOperator) {
 	"use strict";
-
 
 	/**
 	 * Constructor for Filter.
@@ -103,10 +102,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 's
 				}
 				this.oValue1 = oValue1;
 				this.oValue2 = oValue2;
-			}
-			// apply normalize polyfill to non mobile browsers when it is a string filter
-			if (!String.prototype.normalize && typeof this.oValue1 == "string" && !Device.browser.mobile) {
-				jQuery.sap.require("jquery.sap.unicode");
 			}
 			if (jQuery.isArray(this.aFilters) && !this.sPath && !this.sOperator && !this.oValue1 && !this.oValue2) {
 				this._bMultiFilter = true;

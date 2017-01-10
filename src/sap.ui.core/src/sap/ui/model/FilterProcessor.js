@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
+sap.ui.define(['jquery.sap.global', "jquery.sap.unicode"],
 	function(jQuery) {
 	"use strict";
 

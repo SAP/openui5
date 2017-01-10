@@ -802,9 +802,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 */
 	Component.prototype.getService = function(sLocalServiceAlias) {
 
-		// require the Service Factory Registry on-demand
-		var ServiceFactoryRegistry = sap.ui.requireSync("sap/ui/core/service/ServiceFactoryRegistry");
-
 		// check whether the Service has already been created or not
 		if (!this._mServices[sLocalServiceAlias]) {
 
@@ -813,48 +810,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// cache the promise to avoid redundant creation
 			this._mServices[sLocalServiceAlias].promise = new Promise(function(fnResolve, fnReject) {
 
-				var oServiceManifestEntry = this.getManifestEntry("/sap.ui5/services/" + sLocalServiceAlias);
+				sap.ui.require(["sap/ui/core/service/ServiceFactoryRegistry"], function(ServiceFactoryRegistry){
 
-				// lookup the factoryName in the manifest
-				var sServiceFactoryName = oServiceManifestEntry.factoryName;
-				if (!sServiceFactoryName) {
-					fnReject(new Error("Service " + sLocalServiceAlias + " not declared!"));
-					return;
-				}
+					var oServiceManifestEntry = this.getManifestEntry("/sap.ui5/services/" + sLocalServiceAlias);
 
-				// lookup the factory in the registry
-				var oServiceFactory = ServiceFactoryRegistry.get(sServiceFactoryName);
-				if (oServiceFactory) {
-					// create a new Service instance with the current Component as context
-					oServiceFactory.createInstance({
-						scopeObject: this,
-						scopeType: "component",
-						settings: oServiceManifestEntry.settings || {}
-					}).then(function(oServiceInstance) {
-						if (!this.bIsDestroyed) {
-							// store the created Service instance and interface
-							this._mServices[sLocalServiceAlias].instance = oServiceInstance;
-							this._mServices[sLocalServiceAlias].interface = oServiceInstance.getInterface();
-
-							// return the Service interface
-							fnResolve(this._mServices[sLocalServiceAlias].interface);
-						} else {
-							fnReject(new Error("Service " + sLocalServiceAlias + " could not be loaded as its Component was destroyed."));
-						}
-					}.bind(this)).catch(fnReject);
-
-				} else {
-
-					// the Service Factory could not be found in the registry
-					var sErrorMessage = "The ServiceFactory " + sServiceFactoryName + " for Service " + sLocalServiceAlias + " not found in ServiceFactoryRegistry!";
-					var bOptional = this.getManifestEntry("/sap.ui5/services/" + sLocalServiceAlias + "/optional");
-					if (!bOptional) {
-						// mandatory services will log an error into the console
-						jQuery.sap.log.error(sErrorMessage);
+					// lookup the factoryName in the manifest
+					var sServiceFactoryName = oServiceManifestEntry.factoryName;
+					if (!sServiceFactoryName) {
+						fnReject(new Error("Service " + sLocalServiceAlias + " not declared!"));
+						return;
 					}
-					fnReject(new Error(sErrorMessage));
 
-				}
+					// lookup the factory in the registry
+					var oServiceFactory = ServiceFactoryRegistry.get(sServiceFactoryName);
+					if (oServiceFactory) {
+						// create a new Service instance with the current Component as context
+						oServiceFactory.createInstance({
+							scopeObject: this,
+							scopeType: "component",
+							settings: oServiceManifestEntry.settings || {}
+						}).then(function(oServiceInstance) {
+							if (!this.bIsDestroyed) {
+								// store the created Service instance and interface
+								this._mServices[sLocalServiceAlias].instance = oServiceInstance;
+								this._mServices[sLocalServiceAlias].interface = oServiceInstance.getInterface();
+
+								// return the Service interface
+								fnResolve(this._mServices[sLocalServiceAlias].interface);
+							} else {
+								fnReject(new Error("Service " + sLocalServiceAlias + " could not be loaded as its Component was destroyed."));
+							}
+						}.bind(this)).catch(fnReject);
+
+					} else {
+
+						// the Service Factory could not be found in the registry
+						var sErrorMessage = "The ServiceFactory " + sServiceFactoryName + " for Service " + sLocalServiceAlias + " not found in ServiceFactoryRegistry!";
+						var bOptional = this.getManifestEntry("/sap.ui5/services/" + sLocalServiceAlias + "/optional");
+						if (!bOptional) {
+							// mandatory services will log an error into the console
+							jQuery.sap.log.error(sErrorMessage);
+						}
+						fnReject(new Error(sErrorMessage));
+
+					}
+				}.bind(this));
 			}.bind(this));
 		}
 		return this._mServices[sLocalServiceAlias].promise;
