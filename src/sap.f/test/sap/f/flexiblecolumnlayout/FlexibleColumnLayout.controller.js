@@ -8,15 +8,21 @@ sap.ui.define([
 		onInit: function () {
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oRouter.attachRouteMatched(this.onRouteMatched, this);
+			this.oRouter.attachBeforeRouteMatched(this.onBeforeRouteMatched, this);
 		},
 
-		onRouteMatched: function (oEvent) {
+		onBeforeRouteMatched: function(oEvent) {
+
 			var oModel = this.getOwnerComponent().getModel();
-			var sRouteName = oEvent.getParameter("name");
+
 			var sLayout = oEvent.getParameters().arguments.layout;
 
 			// Update the layout of the FlexibleColumnLayout
-			oModel.setProperty("/layout", sLayout);
+			sLayout && oModel.setProperty("/layout", sLayout);
+		},
+
+		onRouteMatched: function (oEvent) {
+			var sRouteName = oEvent.getParameter("name");
 
 			this._updateUIElements();
 
@@ -41,6 +47,11 @@ sap.ui.define([
 			var oModel = this.getOwnerComponent().getModel();
 			var oUIState = this.getOwnerComponent().getHelper().getCurrentUIState();
 			oModel.setData(oUIState);
+		},
+
+		onExit: function () {
+			this.oRouter.detachRouteMatched(this.onRouteMatched, this);
+			this.oRouter.detachBeforeRouteMatched(this.onBeforeRouteMatched, this);
 		}
 	});
 }, true);

@@ -26,7 +26,8 @@
 				{
 					"pattern": "",
 					"name": "master",
-					"target": "master"
+					"target": "master",
+					"layout": "OneColumn"
 				},
 				{
 					"pattern": "detail/{layout}",
