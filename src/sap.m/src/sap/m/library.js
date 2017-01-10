@@ -313,6 +313,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 				"sap.m.CheckBox": "sap/m/flexibility/CheckBox",
 				"sap.m.Label": "sap/m/flexibility/Label",
 				"sap.m.Page": "sap/m/flexibility/Page",
+				"sap.m.Panel": "sap/m/flexibility/Panel",
 				"sap.m.RadioButton": "sap/m/flexibility/RadioButton",
 				"sap.m.RatingIndicator": {
 					"hideControl": "default",
