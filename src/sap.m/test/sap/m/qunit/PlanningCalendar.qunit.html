@@ -1270,6 +1270,32 @@
 			equal(oIntervalRow.getId(), "PC1-Row1", "row returned");
 		});
 
+		test("rowHeaderClick", function () {
+			// Arrange
+			var oSpy,
+				oSecondRow = oPC1.getRows()[1], // Get second row
+				handleRowHeaderClick = function (oEvent) {
+					var oRow = oEvent.getParameter("row");
+
+					// Assert
+					ok(oRow, "There must be a returned row");
+					ok(oRow instanceof sap.m.PlanningCalendarRow, "Returned row must derive from sap.m.PlanningCalendarRow");
+					strictEqual(oRow, oSecondRow, "Returned row must be reference to the second row");
+				};
+
+			oSpy = sinon.spy(handleRowHeaderClick);
+			oPC1.attachEvent("rowHeaderClick", oSpy);
+
+			// Act - click on the second row header
+			qutils.triggerEvent("click", "PC1-Row2-Head-content");
+
+			// Assert
+			strictEqual(oSpy.callCount, 1, "Event method must be called once");
+
+			// Cleanup
+			oPC1.detachEvent("rowHeaderClick", oSpy);
+		});
+
 		module("Proxy calls", {
 			beforeEach: function () {
 				this.sut = createPlanningCalendar("invalidationExample", new sap.m.SearchField(), new sap.m.Button(), new Date(2015, 0, 7), sap.ui.unified.CalendarIntervalType.Week);
