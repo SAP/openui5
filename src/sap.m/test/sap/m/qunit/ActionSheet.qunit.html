@@ -518,6 +518,88 @@
 
 			module("Screen reader");
 
+			test("Popup should have ariaLabelledBy that points to the sPopupHiddenLabelId", function(assert) {
+				var done = assert.async(),
+					oButton = new sap.m.Button({
+						text : "Open ActionSheet",
+						press : function() {
+							oActionSheet.openBy(this);
+						}
+					}),
+					oActionSheet = new sap.m.ActionSheet({
+						buttons: [
+							new sap.m.Button({
+								id: 'oButton1',
+								type: sap.m.ButtonType.Reject,
+								text: "Reject Action"
+							})
+						]
+					}),
+					sExpectedText = oResourceBundle.getText("ACTIONSHEET_AVAILABLE_ACTIONS"),
+					sActualText;
+
+				page.addContent(oButton);
+				sap.ui.getCore().applyChanges();
+				oButton.firePress();
+
+				sActualText = sap.ui.getCore().byId(oActionSheet.getPopupHiddenLabelId()).getText();
+
+				setTimeout(function(){
+					assert.equal(sActualText, sExpectedText, 'popup ariaLabelledBy is set');
+
+					oActionSheet.close();
+					oButton.destroy();
+					oActionSheet.destroy();
+					done();
+				});
+			});
+
+			test('Dialog without a title on mobile phone should have ariaLabeleedBy pointing to the sPopupHiddenLabelId', function(assert){
+				var done = assert.async(),
+					oSystem = {
+						desktop: false,
+						phone: true,
+						tablet: false
+				};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+
+				var oButton = new sap.m.Button({
+					text : "Open ActionSheet",
+					press : function() {
+						oActionSheet.openBy(this);
+					}
+				}),
+					oActionSheet = new sap.m.ActionSheet({
+						showCancelButton: true,
+						buttons: [
+							new sap.m.Button({
+								id: 'oButton1',
+								type: sap.m.ButtonType.Reject,
+								text: "Reject Action"
+							})
+						]
+					}),
+					sExpectedText = oResourceBundle.getText("ACTIONSHEET_AVAILABLE_ACTIONS"),
+					sActualText;
+
+
+				page.addContent(oButton);
+				sap.ui.getCore().applyChanges();
+				oButton.firePress();
+
+				sActualText = sap.ui.getCore().byId(oActionSheet.getPopupHiddenLabelId()).getText();
+
+				setTimeout(function(){
+					assert.equal(sActualText, sExpectedText, 'popup ariaLabelledBy is set');
+
+					oActionSheet.close();
+					oButton.destroy();
+					oActionSheet.destroy();
+					done();
+				}, 500)
+			});
+
 			asyncTest('Button should have ariaLabelledBy that points to itself and hidden text', function() {
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
