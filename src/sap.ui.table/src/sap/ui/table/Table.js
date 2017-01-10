@@ -2923,6 +2923,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 			$SelAll.toggleClass("sapUiTableSelAll", bClearSelectAll);
 			this._getAccExtension().setSelectAllState(!bClearSelectAll);
+			if (bClearSelectAll) {
+				this.$("selall").attr('title', this._oResBundle.getText("TBL_SELECT_ALL"));
+			}
 		}
 	};
 
