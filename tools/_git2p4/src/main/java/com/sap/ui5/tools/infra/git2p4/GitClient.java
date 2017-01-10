@@ -349,17 +349,21 @@ public class GitClient {
     		baseUrl.append("@");
     	}
   	} else {
+  	  //make base ssh url like ssh://<username><suffix> to match one of the host entries in ssh config file.
+  	  //ssh config entry example 
+  	  //Host i043963
+  	  //  User i043963
+  	  //  HostName git.wdf.sap.corp
+  	  //  Port 29418
+  	  //  IdentityFile C:/Users/i043963/.ssh/i043963/id_rsa
   		baseUrl.append("ssh://");
     	if (sshUser != null) {
     		baseUrl.append(sshUser + (this.suffix != null ? this.suffix : ""));
-    		//baseUrl.append("@");
     	}
   	}
   	if (useHTTPS) {
   	  baseUrl.append(getGitURL()).append(":");
   		baseUrl.append(getGitHttpsPort());
-  	} else {
-  	  		//baseUrl.append("29418");
   	}
   	return baseUrl.toString();
   }
