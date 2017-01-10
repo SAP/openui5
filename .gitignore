@@ -33,3 +33,6 @@ bower_components
 web.config
 /.user.project.json
 /sap-ui-cachebuster-info.json
+
+# Ignore Visual Studio Code project and settings files
+.vscode/
