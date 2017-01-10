@@ -1,0 +1,45 @@
+/* ====================================== */
+/* CSS for control sap.m/ObjectAttribute  */
+/* Belize High Contrast Black theme       */
+/* ====================================== */
+
+html.sap-desktop .sapMObjectAttributeActive:focus > .sapMText {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.125rem;
+}
+
+.sapMObjectAttributeActive .sapMText {
+	color: @sapUiListActiveTextColor;
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.sapMObjectAttributeActive .sapMText:hover {
+	text-decoration: none;
+}
+
+/*=========================================== */
+/* Custom design for Responsive Object Header */
+/*=========================================== */
+
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText {
+	text-decoration: underline;
+}
+
+.sapMOHR .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+	outline: 0.125rem dotted @sapUiHcStandardForeground;
+	outline-offset: -0.125rem;
+}
+
+/*=========================================== */
+/* Custom design for Static Object Header     */
+/*=========================================== */
+
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText {
+	text-decoration: underline;
+}
+
+.sapMOH .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.125rem;
+}

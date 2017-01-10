@@ -432,8 +432,6 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	 * @protected
 	 */
 	DragDrop.prototype.showGhost = function(oOverlay, oEvent) {
-		var that = this;
-
 		// IE and Edge do no support dataTransfer.setDragImage on D&D event
 		if (!sap.ui.Device.browser.internet_explorer && !sap.ui.Device.browser.edge && !sap.ui.Device.browser.msie &&
 			oEvent && oEvent.originalEvent && oEvent.originalEvent.dataTransfer && oEvent.originalEvent.dataTransfer.setDragImage) {
@@ -443,8 +441,8 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 			this._$ghost.appendTo("#overlay-container");
 			// if ghost will be removed without timeout, setDragImage won't work
 			setTimeout(function() {
-				that._removeGhost();
-			}, 0);
+				this._removeGhost();
+			}.bind(this), 0);
 			oEvent.originalEvent.dataTransfer.setDragImage(
 				this._$ghost.get(0),
 				oEvent.originalEvent.pageX - oOverlay.$().offset().left,
@@ -495,8 +493,6 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	 * @private
 	 */
 	DragDrop.prototype._getAssociatedDomCopy = function(oOverlay) {
-		var that = this;
-
 		var $DomCopy = jQuery("<div></div>");
 
 		oOverlay.getAggregationOverlays().forEach(function(oAggregationOverlay) {
@@ -505,10 +501,10 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 				if (oChildDom) {
 					DOMUtil.cloneDOMAndStyles(oChildDom, $DomCopy);
 				} else {
-					DOMUtil.cloneDOMAndStyles(that._getAssociatedDomCopy(oChildOverlay), $DomCopy);
+					DOMUtil.cloneDOMAndStyles(this._getAssociatedDomCopy(oChildOverlay), $DomCopy);
 				}
-			});
-		});
+			}, this);
+		}, this);
 
 		return $DomCopy;
 	};
@@ -695,12 +691,10 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	 * @private
 	 */
 	DragDrop.prototype._clearScrollIntervalFor = function(sElementId) {
-		var that = this;
-
 		if (this._mScrollIntervals[sElementId]) {
 			Object.keys(this._mScrollIntervals[sElementId]).forEach(function(sDirection) {
-				that._clearScrollInterval(sElementId, sDirection);
-			});
+				this._clearScrollInterval(sElementId, sDirection);
+			}, this);
 		}
 	};
 

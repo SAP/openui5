@@ -1,0 +1,38 @@
+/* ====================================== */
+/* CSS for control sap.m/RatingIndicator  */
+/* Belize High Contrast White theme       */
+/* ====================================== */
+
+.sapMRIIconSel,
+.sapMRIIconHov,
+.sapMPointer .sapMRIIconUnsel {
+	color: @sapUiContentIconColor;
+}
+
+.sapMRIIconUnsel {
+	color: @sapUiHcReducedAltForeground;
+}
+
+/* Custom focus outline */
+html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled) {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.125rem;
+}
+
+/* IE ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"].sap-desktop {
+	.sapMRI:focus {
+		outline: none;
+		position: relative;
+	}
+	.sapMRI:focus:not(.sapMRIDisabled)::before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.125rem dotted @sapUiContentFocusColor;;
+	}
+}

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Tokenizer.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ScrollEnablement'],
-	function(jQuery, library, Control, ScrollEnablement) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/Device'],
+	function(jQuery, library, Control, ScrollEnablement, Device) {
 	"use strict";
 
 
@@ -506,6 +506,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var fnCut = function(oEvent) {
 			var aSelectedTokens = self.getSelectedTokens(),
 			sSelectedText = "",
+			aRemovedTokens = [],
 			token;
 
 		for (var i = 0; i < aSelectedTokens.length; i++) {
@@ -513,7 +514,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			sSelectedText += (i > 0 ? "\r\n" : "") + token.getText();
 			if (token.getEditable()) {
 				self.removeToken(token);
+				aRemovedTokens.push(token);
 			}
+		}
+
+		if (aRemovedTokens.length > 0) {
+			self.fireTokenUpdate({
+				addedTokens : [],
+				removedTokens : aRemovedTokens,
+				type : Tokenizer.TokenUpdateType.Removed
+			});
 		}
 
 		if (!sSelectedText) {
@@ -1253,6 +1263,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Tokenizer.prototype.onsapend = function(oEvent) {
 		this.scrollToEnd();
+	};
+
+	/**
+	 * Handles the touch start event on the control.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 */
+	Tokenizer.prototype.ontouchstart = function(oEvent) {
+        // Workaround for chrome bug
+        // BCP: 1680011538
+		if (Device.browser.chrome && window.getSelection()) {
+			window.getSelection().removeAllRanges();
+		}
 	};
 
 	/**

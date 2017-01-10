@@ -3,6 +3,10 @@
 /* Belize High Contrast Black theme  */
 /* ================================= */
 
+.sapMBtn {
+	background-color: transparent;
+}
+
 .sapMBtnInner {
 	border-radius:    0.375rem;
 }
@@ -40,8 +44,9 @@ html.sap-desktop .sapMBtn:focus > .sapMFocusable:not(.sapMBtnActive) {
 	border-radius:    0;
 }
 
+/* dotted line appears blurry in IE and EDGE browsers. In these cases use dashed */
 .sapMBtn:focus .sapMBtnFocusDiv {
-	border:           2px dotted @sapUiContentFocusColor;
+	border:           2px dashed @sapUiContentFocusColor;
 }
 
 /* ---------------------------------------------------------------------*/

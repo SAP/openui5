@@ -272,7 +272,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.ViewSettingsFilterItem",
 			"sap.m.ViewSettingsItem",
 			"sap.m.semantic.SemanticButton",
-			"sap.m.semantic.SemanticSelect"
+			"sap.m.semantic.SemanticSelect",
+			"sap.m.semantic.AddAction",
+			"sap.m.semantic.CancelAction",
+			"sap.m.semantic.DeleteAction",
+			"sap.m.semantic.DiscussInJamAction",
+			"sap.m.semantic.EditAction",
+			"sap.m.semantic.FavoriteAction",
+			"sap.m.semantic.FilterAction",
+			"sap.m.semantic.FilterSelect",
+			"sap.m.semantic.FlagAction",
+			"sap.m.semantic.ForwardAction",
+			"sap.m.semantic.GroupAction",
+			"sap.m.semantic.GroupSelect",
+			"sap.m.semantic.MainAction",
+			"sap.m.semantic.MessagesIndicator",
+			"sap.m.semantic.MultiSelectAction",
+			"sap.m.semantic.NegativeAction",
+			"sap.m.semantic.OpenInAction",
+			"sap.m.semantic.PositiveAction",
+			"sap.m.semantic.PrintAction",
+			"sap.m.semantic.SaveAction",
+			"sap.m.semantic.SendEmailAction",
+			"sap.m.semantic.SendMessageAction",
+			"sap.m.semantic.ShareInJamAction",
+			"sap.m.semantic.SortAction",
+			"sap.m.semantic.SortSelect"
 		],
 		extensions: {
 			flChangeHandlers: {
@@ -284,14 +309,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"unhideControl": "default"
 				},
 				"sap.m.CheckBox": "sap/m/flexibility/CheckBox",
+				"sap.m.Label": "sap/m/flexibility/Label",
 				"sap.m.Page": "sap/m/flexibility/Page",
-				"sap.m.RadioButton": {
-					"hideControl": "default",
-					"renameRadioButton": "sap/m/changeHandler/RenameRadioButton",
-					"unhideControl": "default"
-				},
+				"sap.m.RadioButton": "sap/m/flexibility/RadioButton",
 				"sap.m.RatingIndicator": {
 					"hideControl": "default",
+					"unhideControl": "default"
+				},
+				"sap.m.ScrollContainer": {
+					"hideControl": "default",
+					"moveElements": "default",
 					"unhideControl": "default"
 				},
 				"sap.m.Text": "sap/m/flexibility/Text",
@@ -3775,6 +3802,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 				}, 0);
 			}
 		});
+	}
+
+	// ES6 constant represents the maximum safe integer
+	if (!Number.MAX_SAFE_INTEGER) {
+		Number.MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 	}
 
 	return sap.m;

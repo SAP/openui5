@@ -1323,7 +1323,7 @@ if (typeof window.sap.ui !== "object") {
 		}
 
 		if (device.media.hasRangeSet(oConfig.name)) {
-			logger.log(INFO, "Range set " + oConfig.name + " hase already been initialized", 'DEVICE.MEDIA');
+			logger.log(INFO, "Range set " + oConfig.name + " has already been initialized", 'DEVICE.MEDIA');
 			return;
 		}
 

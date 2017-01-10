@@ -563,8 +563,21 @@ sap.ui.define([
 		return this._oChangePersistence.saveDirtyChanges();
 	};
 
-	FlexController.prototype.deleteChangesForControlDeeply = function (oControl) {
-		return Promise.resolve();
+	/**
+	 * Discard changes on the server for a specific selector ID.
+	 *
+	 * @param {string} sId for which the changes should be deleted
+	 * @param {boolean} bDiscardPersonalization - (optional) specifies that only changes in the USER layer are discarded
+	 * @returns {Promise} promise that resolves without parameters
+	 */
+	FlexController.prototype.discardChangesForId = function (sId, bDiscardPersonalization) {
+		if (!sId) {
+			return Promise.resolve();
+		}
+
+		var oChangesMap = this._oChangePersistence.getChangesMapForComponent();
+		var aChanges = oChangesMap[sId] || [];
+		return this.discardChanges(aChanges, bDiscardPersonalization);
 	};
 
 	/**

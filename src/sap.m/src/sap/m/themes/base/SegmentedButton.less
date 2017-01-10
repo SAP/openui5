@@ -191,7 +191,7 @@ html[data-sap-ui-os^="iOS"] {
 			padding-right: 0.4375rem;
 		}
 	}
-	
+
 	.sapMSegBIcons {
 		.sapMSegBBtn.sapMSegBBtnMixed {
 			.sapMImg,
@@ -207,5 +207,28 @@ html[data-sap-ui-os^="iOS"] {
 html[data-sap-ui-os^="Android"] {
 	.sapUiSizeCompact .sapMSegBBtn .sapUiIcon {
 		line-height: 1.6rem;
+	}
+}
+
+/* IE ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMSegB {
+		.sapMSegBBtnFocusable.sapMSegBBtnSel:focus {
+			outline: none;
+			position: relative;
+		}
+		.sapMSegBBtnFocusable.sapMSegBBtnSel:focus:before {
+			content: " ";
+			box-sizing: border-box;
+			position: absolute;
+			top: 0;
+			left: 0;
+			margin-top: 1px;
+			margin-left: 1px;
+			width: calc(~'100% - 2px');
+			height: calc(~'100% - 2px');
+			pointer-events: none;
+		}
 	}
 }

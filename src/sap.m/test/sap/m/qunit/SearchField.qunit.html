@@ -14,6 +14,8 @@
 <script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script>
 
@@ -182,9 +184,51 @@
 			setTimeout( function(){
 				ok(/\uE00A/.test(getIconId(sf3, "search")), "Defocused search field icon is synchronize");
 				start();
-				}, 350)
-			}, 200);
+			}, 350)
+		}, 200);
 
+	});
+
+	QUnit.module("Rendering", {
+		setup: function () {
+			this.SearchField = new sap.m.SearchField({
+				placeholder: sPlaceholder,
+				value: sValue,
+				enabled: true,
+				showRefreshButton: true,
+				visible: true
+			}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+        },
+        teardown: function() {
+			this.SearchField.destroy();
+        }
+    });
+
+	QUnit.test("ARIA attributes for Chrome specific", function(assert) {
+		// arrange
+        var bHasAutocorrect;
+		this.stub(sap.ui.Device, "browser", {name: "cr", chrome: true});
+
+        // act
+        this.SearchField.rerender();
+		bHasAutocorrect = this.SearchField.$("I").attr("autocorrect") == "off";
+
+        // assert
+		assert.strictEqual(bHasAutocorrect, false, "Shouldn't be rendered");
+    });
+
+	QUnit.test("ARIA attributes for Safari specific", function(assert) {
+		// arrange
+		var bHasAutocorrect;
+		this.stub(sap.ui.Device, "browser", {name: "sf", safari: true});
+
+		// act
+		this.SearchField.rerender();
+		bHasAutocorrect = this.SearchField.$("I").attr("autocorrect") == "off";
+
+		// assert
+		assert.strictEqual(bHasAutocorrect, true, "Should be rendered when on Safari");
 	});
 
 </script>

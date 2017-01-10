@@ -23,7 +23,6 @@
 	opacity: 0;
 	-webkit-transition: opacity .15s, transform 0.2s;
 	transition: opacity .15s, transform 0.2s;
-	-ms-transform: translate(-50%, -50%) scale(0.9);
 	-webkit-transform: translate(-50%, -50%) scale(0.9);
 	transform: translate(-50%, -50%) scale(0.9);
 	border: solid 1px transparent;
@@ -34,15 +33,7 @@
 		//prevent blurring when the device pixel ration is 1 (not high density screens)
 		//this is done with style and not with media query for wider support
 		-webkit-filter: blur(0);
-		-moz-filter: blur(0);
-		-ms-filter: blur(0);
 		filter: blur(0);
-	}
-}
-
-html[data-sap-ui-browser^="ie9"] .sapMDialog {
-  	&:not(.sapMDialogHighPixelDensity) {
-		filter: none;
 	}
 }
 
@@ -123,7 +114,6 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog {
 	border-radius: 0;
 	box-shadow: 0;
 	transform: none;
-	-ms-transform: none;
 	-webkit-transform: none;
 	right: 0 !important;
 	bottom: 0 !important;
@@ -143,8 +133,6 @@ html.sap-phone .sapMDialog {
 
 	& > footer  {
 		display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
-		display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
-		display: -ms-flexbox; /* TWEENER - IE 10 */
 		display: -webkit-flex; /* NEW - Chrome */
 		display: flex;
 		padding: 0 0.25rem;
@@ -155,9 +143,7 @@ html.sap-phone .sapMDialog {
 
 		.sapMBtn {
 			-webkit-box-flex: 1; /* OLD - iOS 6-, Safari 3.1-6 */
-			-moz-box-flex: 1; /* OLD - Firefox 19- */
 			-webkit-flex: 1; /* Chrome */
-			-ms-flex: 1; /* IE 10 */
 			flex: 1;
 			min-width: 31%;
 		}
@@ -207,11 +193,9 @@ html.sap-desktop .sapMDialog {
 
 .sapMDialogSliding {
 	transition-duration: 0.3s;
-	-moz-transition-duration: 0.3s;
 	-webkit-transition-duration: 0.3s;
 
 	/* The style without prefix needs to be put to the end because Firefox browser recognize the 'transition-property' but can't interpret the value 'transform' and it needs '-webkit-transform' instead */
-	-moz-transition-property: -webkit-transform;
 	-webkit-transition-property: -webkit-transform;
 	transition-property: transform;
 }
@@ -267,14 +251,12 @@ html.sap-desktop .sapMDialog {
 .sapMDialogOpen {
 	opacity: 1;
 	transform: translate(-50%, -50%) scale(1);
-	-ms-transform: translate(-50%, -50%) scale(1);
 	-webkit-transform: translate(-50%, -50%) scale(1);
 }
 
 .sapMDialogBlockLayerAnimation {
 	position: absolute;
 	transition: opacity 0.2s linear;
-	-moz-transition: opacity 0.2s linear;
 	-webkit-transition: opacity 0.2s linear;
 }
 
@@ -426,7 +408,6 @@ html.sap-desktop .sapMDialog {
 //remove the transform translate
 .sapMDialogTouched {
 	transform: scale(1);
-	-ms-transform: scale(1);
 	-webkit-transform: scale(1);
 }
 

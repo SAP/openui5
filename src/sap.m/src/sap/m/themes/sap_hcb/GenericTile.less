@@ -1,20 +1,10 @@
-/* ========================================= */
-/* CSS for control sap.m/GenericTile.control */
-/* ========================================= */
+/* ================================== */
+/* CSS for control sap.m/GenericTile  */
+/* High Contrast Black theme          */
+/* ================================== */
+
 .sapMGT {
 	border-radius: 0.375rem;
-	box-shadow: 0 0 0 1px @sapHCStandardFG; /* Usage of px as aligned with designers. */
-	background: @sapHCStandardBG;
-}
-
-.sapMGT.sapMGTScopeActions {
-	.sapMGTRemoveButton {
-		border: 1px solid @sapUiButtonBorderColor;
-	}
-
-	.sapMGTMoreIcon {
-		color: @sapUiButtonIconColor;
-	}
 }
 
 .sapMGT.sapMGTBackgroundImage .sapMGTContent {
@@ -29,15 +19,13 @@
 /************************ LINE MODE COZY ********************/
 
 .sapMGT.sapMGTLineMode {
-	border: 0.0625rem solid @sapHCStandardFG;
+	border: 0.0625rem solid @sapUiTileBorderColor;
 }
 
-.sapMGTLineMode.sapMGTFailed {
-	.sapMGTHdrTxt {
-		opacity: 0.5;
-	}
-	.sapMGTSubHdrTxt {
-		opacity: 0.5;
+.sapMGTLineMode.sapMGTFailed, .sapMGTLineMode.sapMGTDisabled {
+	border-color: @sapUiHcReducedForeground;
+	.sapMGTHdrTxt, .sapMGTSubHdrTxt {
+		color: @sapUiContentDisabledTextColor;
 	}
 }
 
@@ -49,7 +37,7 @@
 		border: none;
 
 		.sapMGTHdrTxt {
-			color: @sapHCStandardFG;
+			color: @sapUiTileTitleTextColor;
 			font-weight: bold;
 			font-size: @sapMFontMediumSize;
 			font-family: @sapUiFontFamily;
@@ -57,13 +45,13 @@
 
 		.sapMGTLineModeFailedIcon {
 			cursor: pointer;
-			color: @sapHCStandardFG;
-			border-right: 0.25rem solid transparent; //padding-right
+			color: @sapUiTileTextColor;
+			border-right: 0.25rem solid transparent;
 		}
 
 		.sapMGTLineStyleHelper {
 			.sapMGTLineStyleHelperInner {
-				box-shadow: 0 0 0 1px @sapHCStandardFG;
+				box-shadow: @sapUiShadowLevel0;
 				bottom: 1px;
 			}
 
@@ -89,15 +77,12 @@
 			}
 		}
 
-		&.sapMGTDisabled {
+		&.sapMGTFailed, &.sapMGTDisabled {
 			.sapMGTLineStyleHelperInner {
-				border: 1px solid @sapHCReducedFG;
+				box-shadow: 0 0 0 1px @sapUiHcReducedForeground;
 			}
-			.sapMGTHdrTxt {
-				color: @sapHCReducedFG;
-			}
-			.sapMGTSubHdrTxt {
-				color: @sapHCReducedFG;
+			.sapMGTHdrTxt, .sapMGTSubHdrTxt {
+				color: @sapUiContentDisabledTextColor;
 			}
 		}
 	}
@@ -109,7 +94,7 @@
 	}
 
 	&:not(.sapMGTDisabled):not(.sapMGTFailed):hover .sapMGTLineStyleHelperInner {
-		box-shadow: 0 0 0 0.1875rem @sapHCStandardFG;
+		box-shadow: 0 0 0 0.1875rem @sapUiContentShadowColor;
 		margin-top: 1px;
 		margin-bottom: 1px;
 	}
@@ -126,57 +111,23 @@
 		bottom: 1px;
 		right: 1px;
 		box-sizing: border-box;
-		border: 2px dotted @sapHCStandardFG;
+		border: 0.125rem dotted @sapUiContentFocusColor;
 	}
 }
 
 .sapMGTHdrContent {
-	color: @sapHCStandardFG;
+	color: @sapUiTileTextColor;
 }
 
 .sapMGTBackgroundImage {
 	border: none;
 }
 
-.sapMGTHdrTxt > .sapMText {
-	color: @sapHCStandardFG;
-	font-weight: normal;
-	font-family: @sapUiFontFamily;
-	font-size: @sapMFontHeader5Size;
-}
-
-.sapMGTSubHdrTxt {
-	font-family: @sapUiFontFamily;
-	font-size: @sapMFontMediumSize;
-	font-weight: normal;
-	color: @sapHCStandardFG;
-}
-
-.sapMGTHdrIconImage {
-	font-family: @sapUiFontFamily;
-	color: @sapHCStandardFG;
-}
-
 html.sap-desktop .sapMGT:focus .sapMGTFocusDiv {
 	border: 0.125rem dotted @sapUiContentFocusColor;
 }
 
-html.sap-desktop .sapMGT:focus:not([tabindex]) {
-	border-color: transparent;
-}
-
-.sapMGenericTileFtrFldTxt {
-	font-family: @sapUiFontFamily;
-	font-size: @sapMFontMediumSize;
-	color: @sapHCStandardFG;
-}
-
-.sapMGenericTileFtrFldIcn {
-	color: @sapHCStandardFG;
-}
-
 .sapMGTOverlay {
-	background-color: @sapUiBaseBG;
 	opacity: 1;
 }
 
@@ -190,22 +141,11 @@ html.sap-phone .sapMGTHvrOutln:active,
 html.sap-tablet .sapMGTHvrOutln:active,
 html.sap-phone .sapMGTBackgroundHvrOutln:active,
 html.sap-tablet .sapMGTBackgroundHvrOutln:active {
-	box-shadow: 0 0 0 0.125rem @sapHCStandardFG;
+	box-shadow: 0 0 0 0.125rem @sapUiContentShadowColor;
 }
 
 .sap-desktop .sapMGTLineMode:hover {
 	&.sapMGTDisabled, &.sapMGTLineModePress, &.sapMGTFailed {
 		box-shadow: none;
-	}
-}
-
-/* BREAKPOINT FOR SMALL PHONES */
-@media screen and (max-width: 374px) {
-	.sapMGTHdrTxt > .sapMText {
-		font-size: @sapMFontHeader6Size;
-	}
-
-	.sapMGTSubHdrTxt {
-		font-size: @sapMFontSmallSize;
 	}
 }

@@ -3,22 +3,6 @@
 /* Belize theme                       */
 /* ================================== */
 
-.sapMGT.sapMGTScopeActions {
-	.sapMGTRemoveButton {
-		border: 1px solid @sapUiButtonBorderColor;
-		background-color: @sapUiButtonBackground;
-		color: @sapUiButtonTextColor;
-
-		&:before {
-			color: @sapUiButtonIconColor;
-		}
-	}
-
- 	.sapMGTMoreIcon {
-		color: @sapUiButtonIconColor;
-	}
-}
-
 .sapMGT.sapMGTBackgroundImage {
 	.sapMGTContent {
 		border-bottom-left-radius: 0.125rem;
@@ -161,20 +145,6 @@
 
 /************************************************************/
 
-.sapMGTHdrTxt > .sapMText {
-	color: @sapUiTileTitleTextColor;
-	font-weight: normal;
-	font-family: @sapUiFontFamily;
-	font-size: @sapMFontHeader5Size;
-}
-
-.sapMGTSubHdrTxt {
-	font-family: @sapUiFontFamily;
-	font-size: @sapMFontMediumSize;
-	font-weight: normal;
-	color: @sapUiTileTextColor;
-}
-
 .sapMGTLineMode .sapMGTHdrTxt {
 	color: @sapUiShellTextColor;
 	font-size: @sapMFontMediumSize;
@@ -185,28 +155,6 @@
 	color: @sapUiTileTextColor;
 	font-size: @sapMFontMediumSize;
 	text-shadow: @sapUiShadowText;
-}
-
-.sapMGTHdrIconImage {
-	font-family: @sapUiFontHeaderFamily;
-	font-weight: @sapUiFontHeaderWeight;
-	color: @sapUiHighlight;
-}
-
-.sapMGT {
-	border: 1px solid @sapUiTileBorderColor;
-	box-shadow: @sapUiShadowLevel0;
-	background: @sapUiTileBackground;
-}
-
-.sapMGenericTileFtrFldTxt {
-	font-family: @sapUiFontFamily;
-	font-size: @sapMFontSmallSize;
-	color: @sapUiContentLabelColor;
-}
-
-.sapMGenericTileFtrFldIcn {
-	color: @sapUiContentLabelColor;
 }
 
 html.sap-desktop .sapMGTWithoutImageHoverOverlay,
@@ -256,23 +204,4 @@ html.sap-desktop .sapMGT:focus .sapMGTFocusDiv,
 html.sap-desktop .sapMGT:active .sapMGTFocusDiv,
 html.sap-desktop .sapMGTLineModePress .sapMGTFocusDiv {
 	border: 1px dotted @sapUiContentFocusColor;
-}
-
-html.sap-desktop .sapMGT:focus:not([tabindex]) {
-	border-color: transparent;
-}
-
-.sapMGTOverlay {
-	background-color: @sapUiTileBackground;
-}
-
-/* BREAKPOINT FOR SMALL PHONES */
-@media screen and (max-width: 374px) {
-	.sapMGTHdrTxt > .sapMText {
-		font-size: @sapMFontHeader6Size;
-	}
-
-	.sapMGTSubHdrTxt {
-		font-size: @sapMFontSmallSize;
-	}
 }

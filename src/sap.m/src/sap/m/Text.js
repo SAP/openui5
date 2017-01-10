@@ -110,19 +110,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Text.prototype.ellipsis = '…';
 
 	/**
-	 * Defines whether browser supports native line clamp or not
-	 *
-	 * @since 1.13.2
-	 * @returns {boolean}
-	 * @protected
-	 * @readonly
-	 * @static
-	 */
-	Text.hasNativeLineClamp = (function() {
-		return (typeof document.documentElement.style.webkitLineClamp != "undefined");
-	})();
-
-	/**
 	 * To prevent from the layout thrashing of the textContent call, this method
 	 * first tries to set the nodeValue of the first child if it exists.
 	 *
@@ -182,8 +169,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Text.prototype.onAfterRendering = function() {
 		// check visible, max-lines and line-clamping support
 		if (this.getVisible() &&
-			this.hasMaxLines() &&
-			!this.canUseNativeLineClamp()) {
+			this.hasMaxLines()) {
 
 			// set max-height for maxLines support
 			this.clampHeight();
@@ -220,35 +206,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 
 		return this.getDomRef();
-	};
-
-	/**
-	 * Decides whether the control can use native line clamp feature or not.
-	 *
-	 * In RTL mode native line clamp feature is not supported.
-	 *
-	 * @since 1.20
-	 * @protected
-	 * @return {Boolean}
-	 */
-	Text.prototype.canUseNativeLineClamp = function() {
-		// has line clamp feature
-		if (!Text.hasNativeLineClamp) {
-			return false;
-		}
-
-		// is text direction rtl
-		var oDirection = sap.ui.core.TextDirection;
-		if (this.getTextDirection() == oDirection.RTL) {
-			return false;
-		}
-
-		// is text direction inherited as rtl
-		if (this.getTextDirection() == oDirection.Inherit && sap.ui.getCore().getConfiguration().getRTL()) {
-			return false;
-		}
-
-		return true;
 	};
 
 	/**

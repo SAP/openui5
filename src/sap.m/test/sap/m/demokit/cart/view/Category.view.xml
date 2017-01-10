@@ -17,10 +17,6 @@
 				press="onCartButtonPress">
 			</Button>
 		</headerContent>
-		<footer>
-			<Toolbar>
-			</Toolbar>
-		</footer>
 		<content>
 			<List
 				id="productList"
@@ -29,7 +25,7 @@
 				noDataText="{i18n>CATEGORY_NO_DATA}"
 				busyIndicatorDelay="0"
 				items="{
-					path : '/Products',
+					path : 'Products',
 					sorter : {
 						path : 'Name',
 						descending : false

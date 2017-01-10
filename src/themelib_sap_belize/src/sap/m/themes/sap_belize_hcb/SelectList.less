@@ -1,0 +1,39 @@
+/* ================================= */
+/* CSS for control sap.m/SelectList  */
+/* Belize High Contrast Black theme  */
+/* ================================= */
+
+/* ------------------------------ */
+/* item                           */
+/* ------------------------------ */
+
+.sapMSelectListItemBase {
+	border-bottom: 1px solid @sapUiListBorderColor;
+}
+
+/* selected */
+.sapMSelectListItemBaseSelected {
+	background: @sapUiListSelectionBackgroundColor;
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.188rem;
+}
+
+/* disabled */
+.sapMSelectListItemBaseDisabled {
+	background: @sapUiHcReducedBackground;
+	color: @sapUiContentDisabledTextColor;
+}
+
+/* focus */
+html.sap-desktop li.sapMSelectListItemBase:focus {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.188rem;
+}
+
+/* FIX: IE and Edge do not support css outline-offset */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected::before {
+		border: 0.125rem dashed @sapUiContentFocusColor;
+	}
+}

@@ -1,0 +1,58 @@
+{
+	"customers": [
+		{
+			"name": "Marry",
+			"productId": 38761,
+			"lastPurchase": "11.5.2016",
+			"payment": "Received",
+			"state": "Success",
+			"amount": 234,
+			"currencyCode": "EUR"
+		},
+		{
+			"name": "Roney",
+			"productId": 88921,
+			"lastPurchase": "29.4.2016",
+			"payment": "Overdue",
+			"state": "Error",
+			"amount": 111,
+			"currencyCode": "EUR"
+		},
+		{
+			"name": "Jack",
+			"productId": 38791,
+			"lastPurchase": "7.7.2016",
+			"payment": "Pending",
+			"state": "Warning",
+			"amount": 19,
+			"currencyCode": "EUR"
+		},
+		{
+			"name": "John",
+			"productId": 19783,
+			"lastPurchase": "14.10.2016",
+			"payment": "Received",
+			"state": "Success",
+			"amount": 89,
+			"currencyCode": "EUR"
+		},
+		{
+			"name": "Goerge",
+			"productId": 33453,
+			"lastPurchase": "15.8.2016",
+			"payment": "Pending",
+			"state": "Warning",
+			"amount": 32,
+			"currencyCode": "EUR"
+		},
+		{
+			"name": "Reham",
+			"productId": 99123,
+			"lastPurchase": "19.3.2016",
+			"payment": "Received",
+			"state": "Success",
+			"amount": 22,
+			"currencyCode": "EUR"
+		}
+	]
+}

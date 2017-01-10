@@ -70,15 +70,32 @@ sap.ui.define([], function() {
 						};
 					}
 				},
+				beforeMove : function (oSimpleForm) {
+					if (oSimpleForm){
+						oSimpleForm._bChangedByMe = true;
+					}
+				},
+				afterMove : function (oSimpleForm) {
+					if (oSimpleForm){
+						oSimpleForm._bChangedByMe = false;
+					}
+				},
 				actions : {
 					move : function(oMovedElement){
 						var sType = oMovedElement.getMetadata().getName();
 
+						var oMoveMetadata;
 						if (sType === "sap.ui.layout.form.FormContainer"){
-							return "moveSimpleFormGroup";
+							oMoveMetadata = {
+								changeType : "moveSimpleFormGroup"
+							};
 						} else if (sType === "sap.ui.layout.form.FormElement"){
-							return "moveSimpleFormField";
+							oMoveMetadata = {
+								changeType : "moveSimpleFormField"
+							};
 						}
+
+						return oMoveMetadata;
 					},
 					rename : function(oElement){
 						var sType = oElement.getMetadata().getName();
@@ -94,8 +111,6 @@ sap.ui.define([], function() {
 								domRef : function (oControl){
 									if (oControl.getTitle && oControl.getTitle()) {
 										return oControl.getTitle().getDomRef();
-									} else {
-										return;
 									}
 								}
 							};
@@ -144,6 +159,28 @@ sap.ui.define([], function() {
 									var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
 									return oTextResources.getText("MSG_REMOVING_TOOLBAR");
 								}
+							},
+							getState : function(oSimpleForm) {
+								var aContent = oSimpleForm.getContent();
+								return {
+									content : aContent.map(function(oElement) {
+										return {
+											element : oElement,
+											visible : oElement.getVisible ? oElement.getVisible() : undefined,
+											index : aContent.indexOf(oElement)
+										};
+									})
+								};
+
+							},
+							restoreState : function(oSimpleForm, oState) {
+								oSimpleForm.removeAllContent();
+								oState.content.forEach(function(oElementState) {
+									oSimpleForm.insertContent(oElementState.element, oElementState.index);
+									if (oElementState.element.setVisible){
+										oElementState.element.setVisible(oElementState.visible);
+									}
+								});
 							}
 						};
 					},
@@ -151,7 +188,7 @@ sap.ui.define([], function() {
 						var sType = oElement.getMetadata().getName();
 						var oCreateContainerMetadata;
 						if (sType === "sap.ui.layout.form.FormElement"){
-							return;
+							return null;
 						} else if (sType === "sap.ui.layout.form.SimpleForm") {
 							oCreateContainerMetadata = {
 								changeType : "addSimpleFormGroup",

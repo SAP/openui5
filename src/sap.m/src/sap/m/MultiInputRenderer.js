@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 			oRm.addClass("sapMMultiInputMultiLine");
 		}
 
-		if (oControl.getTokens().length > 1) {
+		if (oControl.getTokens().length > 0) {
 			oRm.addClass("sapMMultiInputNoPlaceholder");
 		}
 	};

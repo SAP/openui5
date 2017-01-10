@@ -75,7 +75,7 @@
 		<!-- filtering properties -->
 		<version>${project.version}</version>
 		<copyright><![CDATA[UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
 ]]></copyright>
 		<buildtime>${maven.build.timestamp}</buildtime>
@@ -289,7 +289,7 @@
 					<plugin>
 						<groupId>com.sap.eslint</groupId>
 						<artifactId>eslint-maven-plugin</artifactId>
-						<version>0.1.13</version>
+						<version>0.1.14</version>
 						<executions>
 							<execution>
 								<phase>verify</phase>
@@ -299,7 +299,7 @@
 							</execution>
 						</executions>
 						<configuration>
-							<version>1.6.0</version>
+							<version>1.10.3</version>
 							<skip>${sap.ui5.eslint.skip.validation}</skip>
 							<failOnError>${sap.ui5.eslint.failonerror}</failOnError>
 							<onlyChangedFiles>${sap.ui5.eslint.onlyChangedFiles}</onlyChangedFiles>

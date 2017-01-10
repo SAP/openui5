@@ -1,0 +1,48 @@
+/* ================================= */
+/* CSS for control sap.m/Carousel    */
+/* Belize High Contrast White theme  */
+/* ================================= */
+
+/* Carousel controls: Bulleted */
+.sapMCrslBulleted > span {
+	border: 1px solid @sapUiContentForegroundBorderColor;
+}
+
+.sapMCrslBulleted > span.sapMCrslActive {
+	border: none;
+}
+
+/* Carousel controls: HUD */
+.sapMCrsl {
+    border: 0.125rem solid transparent;
+}
+
+.sapMCrsl:focus {
+    outline: none;
+    border: 0.125rem dotted @sapUiContentFocusColor;
+}
+
+.sapMCrsl:hover .sapMCrslHud a {
+	opacity: 1;
+	display: block;
+}
+
+/* extra bits */
+
+/* HCB Additional Styles */
+.sapMCrslHud .sapMCrslPrev,
+.sapMCrslHud .sapMCrslNext {
+	border: 2px solid @sapUiButtonBorderColor;
+}
+
+.sapMCrslControls .sapMCrslPrev,
+.sapMCrslControls .sapMCrslNext {
+	border: 2px solid @sapUiButtonBorderColor;
+}
+
+.sapMCrslPrev:focus, .sapMCrslNext:focus {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+}
+.sapMCrslHud a:focus {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+}

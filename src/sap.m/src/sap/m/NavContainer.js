@@ -532,6 +532,41 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks whether a page is in the history stack or not
+	 * @param pageId
+	 * @returns {boolean}
+	 * @private
+	 */
+	NavContainer.prototype._isInPageStack = function (pageId) {
+		return this._pageStack.some(function (oPage) {
+			return oPage.id === pageId;
+		});
+	};
+
+	/**
+	 * Navigates back to a page, if the page is in the history stack. Otherwise, navigates to it.
+	 *
+	 * This method can be used to navigate to previously visited pages which are however not in the stack any more.
+	 * Such a situation can be observed when navigating back to a page several levels back.
+	 * @param pageId
+	 * @param transitionName
+	 * @param data
+	 * @param oTransitionParameters
+	 * @private
+	 */
+	NavContainer.prototype._safeBackToPage = function (pageId, transitionName, data, oTransitionParameters) {
+		if (!this.getPage(pageId)) {
+			return this;
+		}
+
+		if (this._isInPageStack(pageId)) {
+			return this.backToPage(pageId, data, oTransitionParameters);
+		} else {
+			return this.to(pageId, transitionName, data, oTransitionParameters);
+		}
+	};
+
+	/**
 	 * Navigates to the next page (with drill-down semantic) with the given (or default) animation. This creates a new history item inside the NavContainer and allows going back.
 	 *
 	 * Note that any modifications to the target page (like setting its title, or anything else that could cause a re-rendering) should be done BEFORE calling to(), in order to avoid unwanted side effects, e.g. related to the page animation.

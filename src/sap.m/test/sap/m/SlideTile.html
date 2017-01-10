@@ -134,28 +134,7 @@
 			var sMsg = oContext.getProperty("message");
 			if (sMsg) {
 				oGenericTile.attachPress(function(oEvent) {
-					if (oEvent.getSource().getScope() === sap.m.GenericTileScope.Actions &&
-						oEvent.getParameter("action") === "Press") {
-						var oActionSheet = new sap.m.ActionSheet({
-							title : "Chosse Your Action",
-							showCancelButton : true,
-							placement : "Bottom",
-							buttons : [
-								new sap.m.Button({
-									text : "Move"
-								}),
-								new sap.m.Button({
-									text : "Whatever"
-								})
-							],
-							afterClose : function () {
-								oActionSheet.destroy();
-							}
-						});
-						oActionSheet.openBy(oEvent.getParameter("domRef"));
-					} else {
-						sap.m.MessageToast.show(sMsg + " was pressed.");
-					}
+					sap.m.MessageToast.show(sMsg + " was pressed.");
 				});
 			}
 			return oGenericTile;
@@ -164,7 +143,28 @@
 	};
 
 	var handleActionsPress = function(oEvent) {
-		sap.m.MessageToast.show("Press event from SlideTile in " + oEvent.getParameter("scope") + " scope with parameter " + oEvent.getParameter("action"));
+		if (oEvent.getSource().getScope() === sap.m.GenericTileScope.Actions &&
+			oEvent.getParameter("action") === "Press") {
+			var oActionSheet = new sap.m.ActionSheet({
+				title : "Choose Your Action",
+				showCancelButton : true,
+				placement : "Bottom",
+				buttons : [
+					new sap.m.Button({
+						text : "Move"
+					}),
+					new sap.m.Button({
+						text : "Whatever"
+					})
+				],
+				afterClose : function () {
+					oActionSheet.destroy();
+				}
+			});
+			oActionSheet.openBy(oEvent.getParameter("domRef"));
+		} else {
+			sap.m.MessageToast.show("Press event from SlideTile in " + oEvent.getParameter("scope") + " scope with parameter " + oEvent.getParameter("action"));
+		}
 	};
 
 	var oFeedSlideTile = new sap.m.SlideTile("st-feed", {
@@ -176,7 +176,7 @@
 			path : "/feedTiles"
 		},
 		press: handleActionsPress
-	});
+	}).addStyleClass("sapUiTinyMarginTop");
 
 	var oNewsTileContent = new sap.m.TileContent({
 		footer : "{footer}",
@@ -195,7 +195,7 @@
 			path : "/newsTiles"
 		},
 		press: handleActionsPress
-	});
+	}).addStyleClass("sapUiTinyMarginTop");
 
 	var oOneSlideTile = new sap.m.SlideTile("st-one", {
 		displayTime : "{/displayTime}",
@@ -206,7 +206,7 @@
 			path : "/oneTile"
 		},
 		press: handleActionsPress
-	});
+	}).addStyleClass("sapUiTinyMarginTop");
 
 	var oTileNoContent = new sap.m.SlideTile("st-noContent");
 

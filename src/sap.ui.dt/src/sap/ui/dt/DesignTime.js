@@ -347,12 +347,11 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	 * @public
 	 */
 	DesignTime.prototype.getElementOverlays = function() {
-		var that = this;
 		var aElementOverlays = [];
 
 		this._iterateRootElements(function(oRootElement) {
-			aElementOverlays = aElementOverlays.concat(that._getAllElementOverlaysIn(oRootElement));
-		});
+			aElementOverlays = aElementOverlays.concat(this._getAllElementOverlaysIn(oRootElement));
+		}, this);
 
 		return aElementOverlays;
 	};
@@ -363,8 +362,6 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	 * @private
 	 */
 	DesignTime.prototype._createElementOverlay = function(oElement, bInHiddenTree) {
-		var that = this;
-
 		oElement = ElementUtil.fixComponentContainerElement(oElement);
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 		if (oElement && !oElement.bIsDestroyed && !oElementOverlay) {
@@ -388,24 +385,24 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 				}
 				// merge the DTMetadata from the DesignTime and from UI5
 				var oMergedDesignTimeMetadata = oDesignTimeMetadata || {};
-				jQuery.extend(true, oMergedDesignTimeMetadata, that.getDesignTimeMetadataFor(oElement));
+				jQuery.extend(true, oMergedDesignTimeMetadata, this.getDesignTimeMetadataFor(oElement));
 				var oElementDesignTimeMetadata = new ElementDesignTimeMetadata({
 					libraryName : oElement.getMetadata().getLibraryName(),
 					data : oMergedDesignTimeMetadata});
 
 				oElementOverlay.setDesignTimeMetadata(oElementDesignTimeMetadata);
-				that.fireElementOverlayCreated({elementOverlay : oElementOverlay});
-			}).catch(function(oError) {
-				jQuery.sap.log.error("exception occured in sap.ui.dt.DesignTime._createElementOverlay", oError);
+				this.fireElementOverlayCreated({elementOverlay : oElementOverlay});
+			}.bind(this)).catch(function(oError) {
+				jQuery.sap.log.error("exception occured in sap.ui.dt.DesignTime._createElementOverlay", oError.stack || oError);
 				if (oError instanceof Error) {
-					that.fireSyncFailed();
+					this.fireSyncFailed();
 				}
-			}).then(function() {
-				that._iOverlaysPending--;
-				if (that._iOverlaysPending === 0) {
-					that.fireSynced();
+			}.bind(this)).then(function() {
+				this._iOverlaysPending--;
+				if (this._iOverlaysPending === 0) {
+					this.fireSynced();
 				}
-			});
+			}.bind(this));
 		}
 
 		return oElementOverlay;
@@ -436,25 +433,21 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	 * @private
 	 */
 	DesignTime.prototype._destroyAllOverlays = function() {
-		var that = this;
-
 		this._iterateRootElements(function(oRootElement) {
-			that._destroyOverlaysForElement(oRootElement);
-		});
+			this._destroyOverlaysForElement(oRootElement);
+		}, this);
 	};
 
 	/**
 	 * @private
 	*/
 	DesignTime.prototype._createChildOverlaysForAggregation = function(oElementOverlay, sAggregationName) {
-		var that = this;
-
 		var oAggregationOverlay = oElementOverlay.getAggregationOverlay(sAggregationName);
 		var oElement = oElementOverlay.getElementInstance();
 		var vChildren = ElementUtil.getAggregation(oElement, sAggregationName);
 		ElementUtil.iterateOverElements(vChildren, function(oChild) {
-			that._createElementOverlay(oChild, oAggregationOverlay.isInHiddenTree());
-		});
+			this._createElementOverlay(oChild, oAggregationOverlay.isInHiddenTree());
+		}.bind(this));
 	};
 
 	/**
@@ -496,8 +489,6 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	 * @private
 	 */
 	DesignTime.prototype._onElementModified = function(oEvent) {
-		var that = this;
-
 		var oParams = oEvent.getParameters();
 		if (oParams.type === "addOrSetAggregation" || oParams.type === "insertAggregation") {
 			this._onElementOverlayAddAggregation(oParams.value, oParams.target, oParams.name);
@@ -505,10 +496,10 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 			// timeout is needed because UI5 controls & apps can temporary "dettach" controls from control tree
 			// and add them again later, so the check if the control is dettached from root element's tree is delayed
 			setTimeout(function() {
-				if (!that.bIsDestroyed) {
-					that._checkIfOverlayShouldBeDestroyed(oParams.target, oParams.value);
+				if (!this.bIsDestroyed) {
+					this._checkIfOverlayShouldBeDestroyed(oParams.target, oParams.value);
 				}
-			}, 0);
+			}.bind(this), 0);
 		}
 	};
 
@@ -561,12 +552,12 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	 * @param {function} fnStep function called with every root element
 	 * @private
 	 */
-	DesignTime.prototype._iterateRootElements = function(fnStep) {
+	DesignTime.prototype._iterateRootElements = function(fnStep, oScope) {
 		var aRootElements = this.getRootElements();
 		aRootElements.forEach(function(sRootElementId) {
 			var oRootElement = ElementUtil.getElementInstance(sRootElementId);
-			fnStep(oRootElement);
-		});
+			fnStep.call(oScope || this, oRootElement);
+		}, this);
 	};
 
 	/**

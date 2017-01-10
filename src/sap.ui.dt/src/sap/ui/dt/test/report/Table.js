@@ -164,13 +164,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JS
 	 * @private
 	 */
 	_onSearch : function(oEvt) {
-		var that = this;
-
 		var sFilter = oEvt.getParameter('newValue');
 		clearTimeout(this._iFilterTimeout);
 		this._iFilterTimeout = setTimeout(function() {
-			that.filter(sFilter);
-		},100);
+			this.filter(sFilter);
+		}.bind(this),100);
 	},
 
 

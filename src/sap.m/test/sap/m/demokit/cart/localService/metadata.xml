@@ -69,6 +69,8 @@
 				<Property Name="PictureUrl" Type="Edm.String" Nullable="false"
 					MaxLength="255" sap:label="Product Image URL" sap:creatable="false"
 					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<NavigationProperty Name="ProductCategory" Relationship="EPM_DEVELOPER_SCENARIO_SRV.FK_ProductCategory_Product" FromRole="Product" ToRole="ProductCategory" />
+
 			</EntityType>
 
 			<EntityType Name="ProductCategory" sap:content-version="1"
@@ -91,7 +93,21 @@
 				<Property Name="NumberOfProducts" Type="Edm.Int32"
 					Nullable="false" sap:creatable="false" sap:updatable="false"
 					sap:sortable="false" sap:filterable="false" />
+				<NavigationProperty Name="Products" Relationship="EPM_DEVELOPER_SCENARIO_SRV.FK_ProductCategory_Product" FromRole="ProductCategory" ToRole="Product" />
 			</EntityType>
+
+			<Association Name="FK_ProductCategory_Product">
+				<End Role="Product" Type="EPM_DEVELOPER_SCENARIO_SRV.Product" Multiplicity="*" />
+				<End Role="ProductCategory" Type="EPM_DEVELOPER_SCENARIO_SRV.ProductCategory" Multiplicity="1" />
+				<ReferentialConstraint>
+					<Principal Role="Product">
+						<PropertyRef Name="Category" />
+					</Principal>
+					<Dependent Role="ProductCategory">
+						<PropertyRef Name="Category" />
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
 
 			<EntityContainer Name="EPM_DEVELOPER_SCENARIO_SRV"
 				m:IsDefaultEntityContainer="true">
@@ -104,6 +120,11 @@
 					sap:creatable="false" sap:updatable="false" sap:deletable="false"
 					sap:pageable="false" sap:content-version="1"
 					xmlns:sap="http://www.sap.com/Protocols/SAPData" />
+				<AssociationSet Name="EPM_DEVELOPER_SCENARIO_SRV.FK_ProductCategory_Product"
+								Association="EPM_DEVELOPER_SCENARIO_SRV.FK_ProductCategory_Product">
+					<End Role="Product" EntitySet="Products" />
+					<End Role="ProductCategory" EntitySet="ProductCategories" />
+				</AssociationSet>
 			</EntityContainer>
 		</Schema>
 	</edmx:DataServices>

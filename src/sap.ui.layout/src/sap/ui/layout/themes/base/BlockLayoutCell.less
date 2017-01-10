@@ -1,7 +1,6 @@
 .sapUiBlockLayoutCell {
 	display: -webkit-box;
 	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 }
 
@@ -43,8 +42,12 @@
 .sapUiBlockCellTitle {
     font-weight: normal;
 	font-size: @sapUiFontHeader2Size;
+	margin-top: 0;
 	margin-bottom: 1rem;
-	margin-top: 0rem;
+}
+
+.sapUiBlockCellTitleNoContent {
+	margin-bottom: 0;
 }
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */

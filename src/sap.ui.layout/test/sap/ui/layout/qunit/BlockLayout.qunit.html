@@ -92,9 +92,9 @@
 		QUnit.test("Adding new cell should invalidate the guidelines", function (assert) {
 			this.BlockLayoutRow.addContent(new sap.ui.layout.BlockLayoutCell());
 			sap.ui.getCore().applyChanges();
-			 this.cells.forEach(function (cell) {
-			 	assert.strictEqual(cell._getDifferentSBreakpointSize(), false, "The cell should have different representation in S breakpoint");
-			 });
+			this.cells.forEach(function (cell) {
+				assert.strictEqual(cell._getDifferentSBreakpointSize(), false, "The cell should have different representation in S breakpoint");
+			});
 		});
 
 		QUnit.test("Width property change invaldiates the guidelines", function (assert) {
@@ -332,6 +332,30 @@
 			oCell1 = null;
 			oRow = null;
 			oBlockLayout.destroy();
+		});
+
+		QUnit.test("Blocklayout cell margins with and without content", function () {
+			// System under test
+			var oContainer = new sap.ui.layout.BlockLayoutCell({
+					title: "Dummy"
+				}),
+				$cell;
+
+			// Act
+			oContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			$cell = oContainer.$("Title");
+
+			// Assert
+			strictEqual($cell.css("margin-bottom"), "0px", "The bottom margin is 0 when the content of the cell is not filled");
+
+			// Act
+			oContainer.addContent(new sap.ui.layout.BlockLayoutCell());
+			sap.ui.getCore().applyChanges();
+			$cell = oContainer.$("Title");
+
+			// Assert
+			strictEqual($cell.css("margin-bottom"), "16px", "The bottom margin is 16px when the content of the cell is filled");
 		});
 
 		QUnit.test("Container Padding Classes", function () {

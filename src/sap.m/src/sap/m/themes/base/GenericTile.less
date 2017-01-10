@@ -1,14 +1,18 @@
-/* ========================================= */
-/* CSS for control sap.m/GenericTile.control */
-/* ========================================= */
+/* ================================== */
+/* CSS for control sap.m/GenericTile  */
+/* Base theme                         */
+/* ================================== */
+
 .sapMGT {
 	display: inline-block;
 	border-radius: 0.125rem;
-	border: 1px solid transparent;
 	position: relative;
 	outline: none;
 	box-sizing: border-box;
 	background-position: 0px;
+	background: @sapUiTileBackground;
+	border: 1px solid @sapUiTileBorderColor;
+	box-shadow: @sapUiShadowLevel0;
 }
 
 .sapMGT.sapMPointer * {
@@ -64,11 +68,23 @@
 		line-height: 1.375rem;
 	}
 }
+
+.sapMGTHdrTxt > .sapMText {
+	color: @sapUiTileTitleTextColor;
+	font-weight: normal;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontHeader5Size;
+}
+
 .sapMGTSubHdrTxt {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	line-height: 1.375rem;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	color: @sapUiTileTextColor;
 }
 
 .sapMGTHdrContent {
@@ -83,6 +99,27 @@
 	width: 2.5rem;
 	min-height: 2.5rem;
 	font-size: 2.5rem;
+	font-family: @sapUiFontHeaderFamily;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapUiTileIconColor;
+}
+
+.sapMGenericTileFtrFldTxt {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontSmallSize;
+	color: @sapUiTileTextColor;
+}
+
+.sapMGenericTileFtrFldIcn {
+	color: @sapUiTileTextColor;
+}
+
+html.sap-desktop .sapMGT:focus:not([tabindex]) {
+	border-color: transparent;
+}
+
+.sapMGTOverlay {
+	background-color: @sapUiTileBackground;
 }
 
 .sapMGT.sapMGTScopeActions {
@@ -103,12 +140,12 @@
 	}
 
 	.sapMGTMoreIcon {
-		width: 1rem;
 		height: 1rem;
 		position: absolute;
 		right: 0.75rem;
 		bottom: 0.563rem;
-		z-index: 1;
+		z-index: 1; // Remark: If increased, this will break FLP footer visualization.
+		color: @sapUiButtonIconColor;
 		&:focus {
 			outline: none;
 		}
@@ -122,8 +159,14 @@
 		position: absolute;
 		top: -0.5rem;
 		right: -0.5rem;
-		z-index: 3;
+		z-index: 3; // Remark: If increased, this will break FLP footer visualization.
 		overflow: hidden;
+		background-color: @sapUiButtonBackground;
+		border: 1px solid @sapUiButtonBorderColor;
+		color: @sapUiButtonTextColor;
+		&:before {
+			color: @sapUiButtonIconColor;
+		}
 
 		.sapMBtnFocusDiv {
 			display: none;
@@ -304,7 +347,7 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 		position: static;
 		top: 0rem;
 		right: 0rem;
-		z-index: 0;
+		z-index: 0; // Remark: If increased, this will break FLP footer visualization.
 
 		&:before {
 			content: none;
@@ -413,7 +456,7 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 		right: 0px;
 		bottom: 0px;
 		line-height: 1.375rem;
-		z-index: 2;
+		z-index: 2; // Remark: If increased, this will break FLP footer visualization.
 		padding: 0px;
 		height: 1.5rem;
 
@@ -426,7 +469,7 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 		display: inline-block;
 		position: relative;
 		top: 0.5rem;
-		z-index: 3;
+		z-index: 3; // Remark: If increased, this will break FLP footer visualization.
 	}
 
 	.sapMGTStyleHelper {
@@ -475,7 +518,7 @@ html[dir=rtl] .sapMGTLineMode {
 	right: 0px;
 	left: 0px;
 	bottom: 0px;
-	border-radius: 0.25rem;
+	border-radius: 0.125rem;
 }
 
 .sapMGTFocusDiv {
@@ -614,5 +657,16 @@ html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-
 			right: 0.5rem;
 			bottom: 0.313rem;
 		}
+	}
+}
+
+/* BREAKPOINT FOR SMALL PHONES */
+@media screen and (max-width: 374px) {
+	.sapMGTHdrTxt > .sapMText {
+		font-size: @sapMFontHeader6Size;
+	}
+
+	.sapMGTSubHdrTxt {
+		font-size: @sapMFontSmallSize;
 	}
 }

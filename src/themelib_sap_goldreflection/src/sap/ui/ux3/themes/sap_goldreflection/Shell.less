@@ -5,22 +5,14 @@
 .sapUiUx3ShellHeader {
 	text-shadow: 1px 1px 2px @sapUiDarkText;
 	color: @sapUiExtraLightBG;
-	background-image: -moz-linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom);
 	background-image: -webkit-linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom);
-	background-image: -ms-linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom); /* starting with IE10 this works in IE */
 	background-image: linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom);
 	background-position: left top;
 	padding: 9px 0 0 20px;
 }
 
-html[data-sap-ui-browser="ie9"] .sapUiUx3ShellHeader {
-	background-image: url(img/shell/Workset_bg.png);
-	background-size: auto; /* IE9 does understand background-size, but it is meant for the gradient which it does not understand... */
-}
-
 /* fading does not look too great
 .sapUiUx3ShellHeader.sapUiUx3ShellHeaderFadeout {
-	background-image: -moz-linear-gradient(top center, #606366, #525557 30px, rgba(80,83,85, 0) 35px, #2C2C2C);
   background-image: -webkit-gradient(linear, left top, left bottom, from(#606366), to(#2C2C2C));
   background-image: -webkit-linear-gradient(top center, #606366, #525557 30px, rgba(80,83,85, 0) 35px, #2C2C2C);
   background-image: linear-gradient(top center, #606366, #525557 30px, rgba(80,83,85, 0) 35px, #2C2C2C);
@@ -134,7 +126,6 @@ html[data-sap-ui-browser="ie9"] .sapUiUx3ShellHeader {
 
 .sapUiUx3ShellByD .sapUiUx3ShellHeader {
 	background-color: #666666;
-	background: -moz-linear-gradient(center left, #525252, #808080, #525252);
 	background: -webkit-gradient(linear, left center, right center, from(#525252), to(#525252), color-stop(0.5, #808080) );
 	background: -webkit-linear-gradient(center left, #525252, #808080, #525252);
 	background: linear-gradient(center left, #525252, #808080, #525252);
@@ -160,18 +151,10 @@ html[data-sap-ui-browser="ie9"] .sapUiUx3ShellHeader {
 }
 
 .sapUiUx3ShellBgImg {
-	background-image: -moz-linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom);
 	background-image: -webkit-linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom);
-	background-image: -ms-linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom); /* starting with IE10 this works in IE */
 	background-image: linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom);
-	-moz-background-size: 100% 100%;
 	background-size: 100% 100%;
 	background-position: left top;
-}
-
-html[data-sap-ui-browser="ie9"] .sapUiUx3ShellBgImg {
-	background-image: url(img/shell/Workset_bg.png);
-	background-size: auto; /* IE9 does understand background-size, but it is meant for the gradient which it does not understand... */
 }
 
 .sapUiUx3Shell.sapUiUx3ShellHeadSlimNavigation > .sapUiUx3ShellWorksetBar > .sapUiUx3NavBar.sapUiUx3NavBarToplevel > .sapUiUx3NavBarBack,
@@ -182,7 +165,6 @@ html[data-sap-ui-browser="ie9"] .sapUiUx3ShellBgImg {
 /* tool palette area */
 .sapUiUx3ShellToolPaletteArea, .sapUiUx3ShellPaneBar {
 	background-repeat: no-repeat;
-	-moz-background-origin: border;
 	background-origin: border-box;
 }
 
@@ -321,7 +303,6 @@ html[data-sap-ui-browser="ie9"] .sapUiUx3ShellBgImg {
 .sapUiUx3ShellCanvasBackgroundOpen > .sapUiUx3ShellCanvasBackgroundRight { /* do not hardcode pane width here */
 	background-image: url(img/shell/Canvas_shadow_panel.png);
 	background-repeat: repeat-y;
-	/*-moz-box-shadow: 0 12px 1em black;*/
 }
 .sapUiUx3ShellNoPane > .sapUiUx3ShellCanvasBackground > .sapUiUx3ShellCanvasBackgroundRight {
 	display: none;
@@ -339,7 +320,6 @@ html[data-sap-ui-browser="ie9"] .sapUiUx3ShellBgImg {
 }
 
 /******** Light Designs *********/
-html[data-sap-ui-browser="ie9"] .sapUiUx3ShellDesignLight > .sapUiUx3ShellHeader,
 .sapUiUx3ShellDesignLight > .sapUiUx3ShellHeader {
     background-color:   lighten(@sapUiUx3ShellHeaderColor, 20);
     background-image:   none;
@@ -369,14 +349,11 @@ html[data-sap-ui-browser="ie9"] .sapUiUx3ShellDesignLight > .sapUiUx3ShellHeader
 
 .sapUiUx3ShellDesignLight > .sapUiUx3ShellBg {
     background:         @sapUiLightBG; /* Old browsers */
-    background:         -moz-linear-gradient(left, @sapUiLightBG 0%, #ffffff 33%, #ffffff 66%, @sapUiLightBG 100%); /* FF3.6+ */
     background:         -webkit-gradient(linear, left top, right top, color-stop(0%,@sapUiLightBG), color-stop(33%,#ffffff), color-stop(66%,#ffffff), color-stop(100%,@sapUiLightBG)); /* Chrome,Safari4+ */
     background:         -webkit-linear-gradient(left, @sapUiLightBG 0%,#ffffff 33%,#ffffff 66%,@sapUiLightBG 100%); /* Chrome10+,Safari5.1+ */
-    background:         -ms-linear-gradient(left, @sapUiLightBG 0%,#ffffff 33%,#ffffff 66%,@sapUiLightBG 100%); /* IE10+ */
     background:         linear-gradient(to right, @sapUiLightBG 0%,#ffffff 33%,#ffffff 66%,@sapUiLightBG 100%); /* W3C */
 }
 
-html[data-sap-ui-browser="ie9"] .sapUiUx3ShellDesignLight > .sapUiUx3ShellBgImg,
 .sapUiUx3ShellDesignLight > .sapUiUx3ShellBgImg {
     background-image:   url(img/shell/lightBG.png);
     background-size:    auto auto;
@@ -554,8 +531,7 @@ html[data-sap-ui-browser="ie9"] .sapUiUx3ShellDesignLight > .sapUiUx3ShellBgImg,
     top:                43px;
     clip:               rect(-8px,14px,14px,-8px);
     -webkit-transform:  rotate(45deg); /* Safari */
-    -moz-transform:     rotate(45deg); /* Firefox */
-    -ms-transform:      rotate(45deg); /* IE */
+    transform:          rotate(45deg);
 }
 
 html[dir="rtl"] .sapUiUx3ShellDesignLight .sapUiUx3NavBarToplevel .sapUiUx3NavBarArrow {
@@ -563,7 +539,6 @@ html[dir="rtl"] .sapUiUx3ShellDesignLight .sapUiUx3NavBarToplevel .sapUiUx3NavBa
 }
 
 /******** Crystal design - based on Light ********/
-html[data-sap-ui-browser="ie9"] .sapUiUx3ShellDesignCrystal > .sapUiUx3ShellHeader,
 .sapUiUx3ShellDesignCrystal > .sapUiUx3ShellHeader {
     background-color:   @sapUiHeaderBGCrystal;
     background-image:   none;

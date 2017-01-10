@@ -311,7 +311,11 @@
 			this.oGenericTile = new sap.m.GenericTile({
 				scope: sap.m.GenericTileScope.Display,
 				header: "This is a header",
-				subheader: "This is a subheader"
+				subheader: "This is a subheader",
+				tileContent : new sap.m.TileContent("tile-cont", {
+					unit : "EUR",
+					footer : "Current Quarter"
+				})
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -319,6 +323,27 @@
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
 		}
+	});
+
+	QUnit.test("Display scope with actions view", function(assert) {
+		//Arrange
+		this.oGenericTile.showActionsView(true);
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(this.oGenericTile.getScope(), sap.m.GenericTileScope.Display, "The GenericTile was in Display scope");
+		assert.ok(this.oGenericTile.$().hasClass("sapMGTScopeActions"), "The actions scope class was added");
+		assert.notOk(jQuery.sap.domById("tile-cont-footer-text"), "The footer text has not been rendered in actions view");
+	});
+
+	QUnit.test("Display scope with actions view in failed state", function(assert) {
+		//Arrange
+		this.oGenericTile.setState("Failed");
+		this.oGenericTile.showActionsView(true);
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(this.oGenericTile.$("failed-text").length === 0, "Failed text has not been rendered");
 	});
 
 	QUnit.test("Action scope in normal mode", function(assert) {
@@ -1251,7 +1276,7 @@
 		//Assert
 		assert.equal(oParams.scope, sap.m.GenericTileScope.Display, "Event parameter 'scope' is 'Display'");
 		assert.equal(oParams.action, sap.m.GenericTile._Action.Press, "Event parameter 'action' is 'Press'");
-		assert.equal(oParams.domRef, this.oGenericTile.getDomRef(), "Event parameter 'domRef' points to GenericTile")
+		assert.equal(oParams.domRef, this.oGenericTile.getDomRef(), "Event parameter 'domRef' points to GenericTile");
 	});
 
 	QUnit.test("Internal method _getEventParams in scope 'Actions', tap icon 'Remove'", function(assert) {
@@ -1271,7 +1296,7 @@
 		//Assert
 		assert.equal(oParams.scope, sap.m.GenericTileScope.Actions, "Event parameter 'scope' is 'Actions'");
 		assert.equal(oParams.action, sap.m.GenericTile._Action.Remove, "Event parameter 'action' is 'Remove'");
-		assert.equal(oParams.domRef, this.oGenericTile._oRemoveButton.getPopupAnchorDomRef(), "Event parameter 'domRef' points to Remove Button")
+		assert.equal(oParams.domRef, this.oGenericTile._oRemoveButton.getPopupAnchorDomRef(), "Event parameter 'domRef' points to Remove Button");
 	});
 
 	QUnit.test("Internal method _getEventParams in scope 'Actions', tap icon 'More'", function(assert) {
@@ -1291,7 +1316,7 @@
 		//Assert
 		assert.equal(oParams.scope, sap.m.GenericTileScope.Actions, "Event parameter 'scope' is 'Actions'");
 		assert.equal(oParams.action, sap.m.GenericTile._Action.Press, "Event parameter 'action' is 'Press'");
-		assert.equal(oParams.domRef, this.oGenericTile._oMoreIcon.getDomRef(), "Event parameter 'domRef' points to More Icon")
+		assert.equal(oParams.domRef, this.oGenericTile._oMoreIcon.getDomRef(), "Event parameter 'domRef' points to More Icon");
 	});
 
 	QUnit.module("Internal methods for ARIA-label and tooltip handling", {
@@ -2044,7 +2069,6 @@
 
 		//Assert
 		function handlePress(oEvent) {
-			assert.ok(true, "Press event is triggered on mouse click.");
 			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Display, "Press event has correct parameter 'scope'");
 			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Press, "Press event has correct parameter 'action'");
 		}
@@ -2052,6 +2076,7 @@
 
 	QUnit.test("Press event on 'tap' with correct parameters in Actions scope", function(assert) {
 		//Arrange
+		var oGenericTile = this.oGenericTile;
 		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", handlePress);
@@ -2063,6 +2088,7 @@
 		function handlePress(oEvent) {
 			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Actions, "Press event has correct parameter 'scope'");
 			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Press, "Press event has correct parameter 'action'");
+			assert.equal(oEvent.getParameter("domRef"), oGenericTile._oMoreIcon.getDomRef(), "Event parameter 'domRef' points to More Icon");
 		}
 	});
 
@@ -2122,7 +2148,9 @@
 
 	QUnit.test("SPACE key event in Display scope with correct parameters", function(assert) {
 		//Arrange
+		var oGenericTile = this.oGenericTile;
 		this.oGenericTile.setScope(sap.m.GenericTileScope.Display);
+		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", handlePress);
 		var e = jQuery.Event('keyup');
 		e.keyCode = jQuery.sap.KeyCodes.SPACE;
@@ -2132,8 +2160,9 @@
 
 		//Assert
 		function handlePress(oEvent) {
-		assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Display, "Press event has correct parameter 'scope'");
-		assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Press, "Press event has correct parameter 'action'");
+			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Display, "Press event has correct parameter 'scope'");
+			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Press, "Press event has correct parameter 'action'");
+			assert.equal(oEvent.getParameter("domRef"), oGenericTile.getDomRef(), "Event parameter 'domRef' points to GenericTile");
 		}
 	});
 
@@ -2154,6 +2183,7 @@
 
 	QUnit.test("SPACE key event in Actions scope with correct parameters", function(assert) {
 		//Arrange
+		var oGenericTile = this.oGenericTile;
 		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", handlePress);
@@ -2167,6 +2197,7 @@
 		function handlePress(oEvent) {
 			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Actions, "Press event has correct parameter 'scope'");
 			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Press, "Press event has correct parameter 'action'");
+			assert.equal(oEvent.getParameter("domRef"), oGenericTile._oMoreIcon.getDomRef(), "Event parameter 'domRef' points to More Icon");
 		}
 	});
 
@@ -2198,7 +2229,9 @@
 
 	QUnit.test("DELETE key event in Actions scope with correct parameters", function(assert) {
 		//Arrange
+		var oGenericTile = this.oGenericTile;
 		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", handlePress);
 		var e = jQuery.Event('keyup');
 		e.keyCode = jQuery.sap.KeyCodes.DELETE;
@@ -2210,11 +2243,13 @@
 		function handlePress(oEvent) {
 			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Actions, "Press event has correct parameter 'scope'");
 			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Remove, "Press event has correct parameter 'action'");
+			assert.equal(oEvent.getParameter("domRef"), oGenericTile._oRemoveButton.getPopupAnchorDomRef(), "Event parameter 'domRef' points to Remove Button");
 		}
 	});
 
 	QUnit.test("BACKSPACE key event in Actions scope with correct parameters", function(assert) {
 		//Arrange
+		var oGenericTile = this.oGenericTile;
 		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", handlePress);
@@ -2228,6 +2263,7 @@
 		function handlePress(oEvent) {
 			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Actions, "Press event has scope arameter 'Actions'");
 			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Remove, "Press event has action parameter 'Remove'");
+			assert.equal(oEvent.getParameter("domRef"), oGenericTile._oRemoveButton.getPopupAnchorDomRef(), "Event parameter 'domRef' points to Remove Button");
 		}
 	});
 </script>

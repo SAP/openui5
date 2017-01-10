@@ -1,34 +1,10 @@
-/* ========================================= */
-/* CSS for control sap.m/GenericTile.control */
-/* ========================================= */
-
-.sapMGTHdrTxt > .sapMText {
-	color: @sapUiTileTitleTextColor;
-	font-weight: normal;
-	font-family: @sapUiFontFamily;
-	font-size: @sapMFontHeader5Size;
-}
-
-.sapMGTSubHdrTxt {
-	color: @sapUiTileTextColor;
-	font-family: @sapUiFontFamily;
-	font-size: @sapMFontMediumSize;
-	font-weight: normal;
-}
-
-.sapMGTHdrIconImage {
-	font-family: @sapUiFontHeaderFamily;
-	font-weight: @sapUiFontHeaderWeight;
-	color: @sapUiTileIconColor;
-}
-
-.sapMGT {
-	border: 1px solid @sapUiTileBorderColor;
-	background: @sapUiTileBackground;
-}
+/* ================================== */
+/* CSS for control sap.m/GenericTile  */
+/* BlueCrystal theme                  */
+/* ================================== */
 
 html.sap-desktop .sapMGT:focus .sapMGTFocusDiv {
-	border: 1px solid @sapUiContentContrastShadowColor;
+	border: 1px solid @sapUiTileBackground;
 }
 
 html.sap-desktop .sapMGT:focus .sapMGTFocusDiv:after {
@@ -43,22 +19,8 @@ html.sap-desktop .sapMGT:focus .sapMGTFocusDiv:after {
 	border: 1px dotted @sapUiContentFocusColor;
 }
 
-html.sap-desktop .sapMGT:focus:not([tabindex]) {
-	border-color: transparent;
-}
-
 .sapMGTBackgroundImage {
 	border-color: fade(@sapUiTileBorderColor, 60);
-}
-
-.sapMGenericTileFtrFldTxt {
-	font-family: @sapUiFontFamily;
-	font-size: @sapMFontSmallSize;
-	color: @sapUiTileTextColor;
-}
-
-.sapMGenericTileFtrFldIcn {
-	color: lighten(@sapUiTileTextColor, 20);
 }
 
 html.sap-desktop .sapMGT:hover,
@@ -75,28 +37,9 @@ html.sap-tablet .sapMGTBackgroundImage:active {
 	border-color: fade(@sapUiTileBorderColor, 60);
 }
 
-.sapMGenericTileFtrFldIcn {
-	color: @sapUiTileTextColor;
-}
-
-.sapMGTOverlay {
-	background-color: @sapUiLightestBG;
-}
-
 .sapMGTFocusDiv {
 	left: 1px;
 	top: 1px;
 	right: 1px;
 	bottom: 1px;
-}
-
-/* BREAKPOINT FOR SMALL PHONES */
-@media screen and (max-width: 374px) {
-	.sapMGTHdrTxt > .sapMText {
-		font-size: @sapMFontHeader6Size;
-	}
-
-	.sapMGTSubHdrTxt {
-		font-size: @sapMFontSmallSize;
-	}
 }

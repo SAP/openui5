@@ -1,21 +1,13 @@
-/* ============================================== */
-/* CSS for control sap.m/SlideTile.control */
-/* ============================================== */
-.sapMST {
-	box-shadow: 0rem 0rem 0rem 1px @sapHCStandardFG; /* Usage of px as aligned with designers. */
-}
-
-html.sap-desktop .sapMST:hover,
-html.sap-tablet .sapMSTHvr:active,
-html.sap-phone .sapMSTHvr:active {
-	box-shadow: 0rem 0rem 0rem 0.125rem @sapHCStandardFG;
-}
+/* ================================ */
+/* CSS for control sap.m/SlideTile  */
+/* High Contrast Black theme        */
+/* ================================ */
 
 html.sap-desktop .sapMST:focus .sapMSTFocusDiv {
-	left: 0rem;
-	top: 0rem;
-	right: 0rem;
-	bottom: 0rem;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
 	border: 0.125rem dotted @sapUiContentFocusColor;
 }
 
@@ -25,13 +17,12 @@ html.sap-desktop .sapMST:focus:not([tabindex]) {
 
 /* Bulleted indicator of multiple tiles*/
 .sapMSTBulleted > span {
-	background-color: @sapHCStandardBG;
-	box-shadow: 0rem 0rem 0rem 1px #ffffff;
-	border-color: @sapHCStandardFG;
+	background-color: @sapUiTileBackground;
+	border-color: 1px solid @sapUiTileBorderColor;
 }
 
 .sapMSTBulleted > span.sapMSTActive {
-	background-color: @sapHCStandardFG;
+	background-color: @sapUiContentContrastIconColor;
 }
 
 .sapMST .sapMSTIconDisplayArea {

@@ -44,20 +44,6 @@ function(ManagedObject) {
 				designTime : { // its defined as a property because spa.ui.dt.designTime is a managed object and UI5 only allows associations for elements
 					type : "object",
 					multiple : false
-				},
-
-				commandFactory : {
-					type : "object",
-					multiple : false
-				}
-			},
-			associations : {
-			},
-			events : {
-				elementModified : {
-					command : {
-						type : "sap.ui.dt.command.BaseCommand"
-					}
 				}
 			}
 		}

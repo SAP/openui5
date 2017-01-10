@@ -30,13 +30,24 @@
 						&:hover {
 							background: @_sap_m_TimePicker_ItemHoverColor;
 						}
+						&:active {
+							background: @sapUiHighlight;
+							color: @sapUiContentContrastTextColor;
+						}
+						
 					}
 					.sapMTPPickerSelectionFrame {
 						outline: 0.125rem solid @sapUiSelected;
-						outline-offset: -5px;
+						outline-offset: -0.188rem;
 						&:hover {
 							+ ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
 								background: @_sap_m_TimePicker_ItemHoverColor;
+							}
+						}
+						&:active {
+							& + ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
+								background: @sapUiSelected;
+								color: @sapUiContentContrastTextColor;
 							}
 						}
 					}
@@ -51,6 +62,7 @@ html.sap-phone {
 	/* ======================================== */
 	/* TimePicker Dropdown                      */
 	/* ======================================== */
+	
 	.sapMTimePickerDropDown {
 		.sapMTimePickerContainer {
 			.sapMTPColumn {
@@ -67,7 +79,7 @@ html.sap-phone {
 						}
 						.sapMTPPickerSelectionFrame {
 							outline: 0.125rem solid @sapUiSelected;
-							outline-offset: -0.313rem;
+							outline-offset: -0.188rem;
 						}
 					}
 				}

@@ -81,7 +81,14 @@ sap.ui.define(['jquery.sap.global'],
 				rm.write("</label>");
 			}
 
-			rm.write('<input type="search" autocorrect="off" autocomplete="off"');
+			rm.write('<input');
+			rm.writeAttribute("type", "search");
+			rm.writeAttribute("autocomplete", "off");
+
+			if (sap.ui.Device.browser.safari) {
+				rm.writeAttribute("autocorrect", "off");
+			}
+
 			rm.writeAttribute("id", oSF.getId() + "-I");
 
 			rm.addClass("sapMSFI");

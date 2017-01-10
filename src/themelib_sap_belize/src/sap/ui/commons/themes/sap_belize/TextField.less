@@ -19,14 +19,6 @@
 	border-width: 1px;
 }
 
-html[data-sap-ui-browser="ie9"] .sapUiTfMono.sapUiTf{
-	padding-top: 4px;
-}
-
-html[data-sap-ui-browser="ie10"] .sapUiTf:not(.sapUiTfInner){
-	padding-top: 3px;
-}
-
 .sapUiTfBrd.sapUiTfStd:hover {
 	border-color: @sapUiFieldHoverBorderColor;
 }
@@ -87,13 +79,6 @@ html[data-sap-ui-browser^="cr"] .sapUiTfBrd > .sapUiTfInner{
 /* ================= */
 /* Alignment in Form */
 /* ================= */
-
-/* GridLayout */
-html[data-sap-ui-browser="ie9"] .sapUiGrid td > .sapUiTfBrd,
-html[data-sap-ui-browser="ie10"] .sapUiGrid td > .sapUiTfBrd{
-	padding-top: 3px; /* in IE9 text of TextField it 1px moved */
-	padding-bottom: 2px;
-}
 
 /* ResponsiveGridLayout */
 html[data-sap-ui-browser^="ie"].sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > div > .sapUiTf,

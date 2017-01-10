@@ -37,10 +37,6 @@
 	padding-bottom: .75rem;
 }
 
-html[data-sap-ui-browser="ie9"] .sapMText.sapMObjLTitle {
-	word-break: break-all;
-}
-
 .sapMText.sapMObjLTitle {
 	vertical-align: top;
 	word-break: break-word;
@@ -163,23 +159,18 @@ html[dir=rtl] .sapMObjLStatusDiv {
 
 .sapMObjLItem > .sapMLIBContent {
 	-webkit-box-flex: 1;
-	-ms-flex: 1;
 	flex: 1 1 auto;
 }
 
 .sapMObjLListModeDiv {
 	display: -webkit-box;
-	display: -ms-flexbox;
 	display: flex;
 	-webkit-box-orient: horizontal;
 	-webkit-box-align: center;
-	-ms-flex-direction: row;
-	-ms-flex-align: center;
 	flex-direction: row;
 	align-items: center;
 }
 
-html[data-sap-ui-browser="ie10"] .sapMObjLItem > .sapMLIBContent,
 html[data-sap-ui-browser="ie11"] .sapMObjLItem > .sapMLIBContent
 {
 	width: 100%;
@@ -187,7 +178,6 @@ html[data-sap-ui-browser="ie11"] .sapMObjLItem > .sapMLIBContent
 
 /* overwrite transform for the markers favorite and flag icon */
 html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
-	-ms-transform: none; /* IE 9 */
 	-webkit-transform: none; /* Chrome, Safari, Opera */
 	transform: none;
 }

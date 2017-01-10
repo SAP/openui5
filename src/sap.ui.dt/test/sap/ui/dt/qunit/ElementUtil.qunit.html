@@ -168,6 +168,9 @@
 				assert.equal(aSiblings.length, 2, " then both controls are found (including the original control)");
 				assert.equal(aSiblings[0].getId(), this.oHorizontalLayoutChild.getContent()[0].getId(), "and the sibling is the right control ");
 				assert.equal(aSiblings[1].getId(), this.oButton.getId(), "and the sibling is the right control ");
+				this.oHorizontalLayoutChild.removeContent(this.oButton);
+				aSiblings = ElementUtil.findAllSiblingsInContainer(this.oButton, this.oHorizontalLayoutChild);
+				assert.strictEqual(aSiblings.length, 0, "and the siblings array is empty, if control doesn't have parent");
 			});
 
 			QUnit.test("when asking for the siblings in a container, where the container is on higher levels", function(assert) {

@@ -32,7 +32,7 @@
 				press="onToggleFullScreen" />
 			<Button
 				id="toggleRTA"
-				text="Adapt"
+				icon="sap-icon://wrench"
 				class="sapUiHideOnPhone"
 				tooltip="{i18n>sampleAdaptTooltip}"
 				press="onAdaptUI" visible="false"/>

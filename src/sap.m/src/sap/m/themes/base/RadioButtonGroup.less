@@ -9,13 +9,11 @@
 
 .sapMRbGTab{
 	display: -webkit-box;
-	display: -ms-flexbox;
 	display: -webkit-flex;
 	display: flex;
 }
 
 .sapMRbGCol{
-	-ms-flex-positive: 1;
 	-webkit-box-flex: 1;
 	flex-grow: 1;
 	vertical-align: top;
@@ -26,7 +24,6 @@
 }
 
 .sapMRbGDummy {
-	-ms-flex-positive: 100;
 	-webkit-box-flex: 100;
 	flex-grow: 100;
 }
@@ -67,6 +64,19 @@
 	margin: 0.8125rem;
 }
 
+/* Read only */
+.sapMRbGRo {
+	.sapMRb .sapMRbBOut {
+		background-color: @sapUiFieldReadOnlyBackground;
+		border-color: @sapUiFieldReadOnlyBorderColor;
+	}
+
+	.sapMRb.sapMRbSel .sapMRbBInn {
+		background-color: @sapUiContentNonInteractiveIconColor;
+	}
+}
+
+/* Right to left */
 .sapMRbG[dir=rtl] .sapMRbB {
 	right: 0;
 }
@@ -76,6 +86,7 @@
 	padding-right: 3rem;
 }
 
+/* Compact Size */
 .sapUiSizeCompact {
 	.sapMRbG .sapMRbHasLabel .sapMRbB {
 		width: 2rem;

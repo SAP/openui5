@@ -66,11 +66,10 @@ function(jQuery, ManagedObject) {
 		 */
 		setData : function(oData) {
 			if (oData) {
-				var that = this;
 				var aChildren = oData.children;
 				aChildren.forEach(function(oGroup) {
-					that._createModule(oGroup);
-				});
+					this._createModule(oGroup);
+				}, this);
 			}
 			this.setProperty("data", oData);
 		},
@@ -80,11 +79,10 @@ function(jQuery, ManagedObject) {
 		 * @private
 		 */
 		_createModule : function(oGroup) {
-			var that = this;
 			QUnit.module(oGroup.message);
 			oGroup.children.forEach(function(oGroup) {
-				that._createTest(oGroup);
-			});
+				this._createTest(oGroup);
+			}, this);
 		},
 
 
@@ -92,13 +90,11 @@ function(jQuery, ManagedObject) {
 		 * @private
 		 */
 		_createTest : function(oGroup) {
-			var that = this;
-
 			QUnit.test(oGroup.name + ": " + oGroup.message, function(assert) {
 				oGroup.children.forEach(function(oGroup) {
-					that._createAssertion(oGroup);
-				});
-			});
+					this._createAssertion(oGroup);
+				}, this);
+			}.bind(this));
 		},
 
 

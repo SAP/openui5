@@ -1,0 +1,97 @@
+<mvc:View height="100%"
+	controllerName="sap.ui.demo.toolpageapp.controller.App"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:tnt="sap.tnt">
+
+	<tnt:ToolPage
+		id="app"
+		class="sapUiDemoToolPage">
+		<tnt:header>
+			<tnt:ToolHeader>
+				<OverflowToolbar width="40%">
+					<Button id="sideNavigationToggleButton"
+							icon="sap-icon://menu2"
+							type="Transparent"
+							press="onSideNavButtonPress">
+						<layoutData>
+							<OverflowToolbarLayoutData priority="NeverOverflow"/>
+						</layoutData>
+					</Button>
+				</OverflowToolbar>
+				<OverflowToolbar width="20%">
+					<ToolbarSpacer/>
+					<Title text="{i18n>appTitle}">
+						<layoutData>
+							<OverflowToolbarLayoutData priority="Disappear"/>
+						</layoutData>
+					</Title>
+					<ToolbarSpacer/>
+				</OverflowToolbar>
+				<OverflowToolbar width="40%">
+					<ToolbarSpacer/>
+					<Button
+						icon="sap-icon://message-popup"
+						text="{= ${alerts>/alerts/errors}.length }"
+						visible="{= ${alerts>/alerts/errors}.length === 0 ? false : true }"
+						type="Transparent"
+						press="handleMessagePopoverPress">
+						<layoutData>
+							<OverflowToolbarLayoutData priority="Low"/>
+						</layoutData>
+					</Button>
+					 <Button
+						icon="sap-icon://ui-notifications"
+						text="{= ${alerts>/alerts/notifications}.length }"
+						visible="{= ${alerts>/alerts/notifications}.length === 0 ? false : true }"
+						type="Transparent"
+						press="handleNotificationPress">
+						 <layoutData>
+							 <OverflowToolbarLayoutData priority="Low"/>
+						 </layoutData>
+					 </Button>
+					 <Button text="Administrator" type="Transparent" press="handleUserNamePress">
+						 <layoutData>
+							 <OverflowToolbarLayoutData priority="NeverOverflow"/>
+						 </layoutData>
+					 </Button>
+				</OverflowToolbar>
+			</tnt:ToolHeader>
+		</tnt:header>
+		<tnt:sideContent>
+			<tnt:SideNavigation
+				expanded="true"
+				itemSelect="onItemSelect">
+				<tnt:NavigationList
+					items="{path: 'side>/navigation', templateShareable: false}">
+					<tnt:NavigationListItem
+						text="{side>title}"
+						icon="{side>icon}"
+						expanded="{side>/expanded}"
+						items="{path: 'side>items', templateShareable: false}"
+						key="{side>key}">
+						<tnt:NavigationListItem
+							text="{side>title}"
+							key="{side>key}"
+							enabled="{side>enabled}">
+						</tnt:NavigationListItem>
+					</tnt:NavigationListItem>
+				</tnt:NavigationList>
+				<tnt:fixedItem>
+					<tnt:NavigationList
+						items="{path: 'side>/fixedNavigation', templateShareable: false}">
+						<tnt:NavigationListItem
+							text="{side>title}"
+							icon="{side>icon}"
+							key="{side>key}">
+						</tnt:NavigationListItem>
+					</tnt:NavigationList>
+				</tnt:fixedItem>
+			</tnt:SideNavigation>
+		</tnt:sideContent>
+		<tnt:mainContents>
+			<App id="mainContents"/>
+		</tnt:mainContents>
+	</tnt:ToolPage>
+
+</mvc:View>

@@ -24,6 +24,7 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	 *     <li>sap.m.List - More Button</li>
 	 *     <li>sap.m.Table - More Button</li>
 	 *     <li>sap.m.StandardTile</li>
+	 *     <li>sap.m.ComboBox</li>
 	 *     <li>sap.ui.comp.smartfilterbar.SmartFilterBar - Go Button</li>
 	 * </ul>
 	 *
@@ -122,6 +123,7 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	Press.controlAdapters["sap.m.Page"] = "navButton";
 	Press.controlAdapters["sap.m.semantic.FullscreenPage"] = "navButton";
 	Press.controlAdapters["sap.m.semantic.DetailPage"] = "navButton";
+	Press.controlAdapters["sap.m.ComboBox"] = "arrow";
 	Press.controlAdapters["sap.ui.comp.smartfilterbar.SmartFilterBar"] = "btnGo";
 
 	return Press;

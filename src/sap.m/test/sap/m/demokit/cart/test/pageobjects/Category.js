@@ -47,7 +47,7 @@ sap.ui.define([
 					iShouldBeTakenToTheSecondCategory : function () {
 						return this.waitFor({
 							controlType : "sap.m.Page",
-							matchers : new PropertyStrictEquals({name : "title", value : "FS"}),
+							matchers : new PropertyStrictEquals({name : "title", value : "Flat Screens"}),
 							success : function (aPage) {
 								Opa5.assert.ok(
 									aPage,

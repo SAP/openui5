@@ -1,3 +1,4 @@
+/* global QUnit */
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 if (window.blanket) {
@@ -12,6 +13,7 @@ jQuery.sap.require("sap.ui.dt.plugin.CutPaste");
 
 jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 (function(DesignTime, OverlayRegistry, TabHandlingPlugin, MouseSelectionPlugin, CutPastePlugin, ElementMover) {
+	"use strict";
 
 	var aMOVABLE_TYPES = ["sap.ui.layout.form.FormElement", "sap.ui.layout.form.FormContainer"];
 
@@ -58,265 +60,59 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 			}
 		});
 
-		QUnit.test("When moving titel1 to position of titel2", function(assert) {
+		QUnit.test("When moving title1 to position of title2 using cut & paste", function(assert) {
 
-			var done = assert.async();
-			oCutPaste.attachElementModified(function(oEvent) {
-
-				var oCommand = oEvent.getParameter("command");
-				assert.ok(oCommand, "then an ElementModified event is recieved with a move command");
-
-				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
-				var aFormContainers = oSimpleFormForm.getFormContainers();
-				var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
-				assert.equal(iPosition, 2, "and the titel1 is now located at index 2");
-				done();
-			}, this);
-
-			var oElementGroup1 = sap.ui.getCore().byId("testView--Group1")
-			var oElementGroup2 = sap.ui.getCore().byId("testView--Group2")
+			var oElementGroup1 = sap.ui.getCore().byId("testView--Group1");
+			var oElementGroup2 = sap.ui.getCore().byId("testView--Group2");
 			var oSourceOverlay = OverlayRegistry.getOverlay(oElementGroup1.getParent());
 			var oTargetOverlay = OverlayRegistry.getOverlay(oElementGroup2.getParent());
 
 			oCutPaste.cut(oSourceOverlay);
 			oCutPaste.paste(oTargetOverlay);
 
+			var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
+			var aFormContainers = oSimpleFormForm.getFormContainers();
+			var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
+			assert.equal(iPosition, 2, "and the title1 is now located at index 2");
+
 		});
 
-		QUnit.test("When moving titel1 to position of titel2 and undoing the move", function(assert) {
+		QUnit.test("When moving title2 to position of title1 using cut & paste", function(assert) {
 
-			var done = assert.async();
-			oCutPaste.attachElementModified(function(oEvent) {
-				var oCommand = oEvent.getParameter("command");
-				assert.ok(oCommand, "then an ElementModified event is recieved with a move command");
-				oCommand.undo();
-				sap.ui.getCore().applyChanges();
-				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
-				var aFormContainers = oSimpleFormForm.getFormContainers();
-				var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
-				assert.equal(iPosition, 1, "and the titel1 is again located at index 1");
-				done();
-			}, this);
-
-			var oElementGroup1 = sap.ui.getCore().byId("testView--Group1")
-			var oElementGroup2 = sap.ui.getCore().byId("testView--Group2")
+			var oElementGroup2 = sap.ui.getCore().byId("testView--Group1");
+			var oElementGroup1 = sap.ui.getCore().byId("testView--Group2");
 			var oSourceOverlay = OverlayRegistry.getOverlay(oElementGroup1.getParent());
 			var oTargetOverlay = OverlayRegistry.getOverlay(oElementGroup2.getParent());
 
 			oCutPaste.cut(oSourceOverlay);
 			oCutPaste.paste(oTargetOverlay);
 
+			var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
+			var aFormContainers = oSimpleFormForm.getFormContainers();
+			var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
+			assert.equal(iPosition, 1, "and the title2 is now located at index 1");
+
 		});
 
-		QUnit.test("When moving titel2 to position of titel1", function(assert) {
+		QUnit.test("When moving within group1 first element to position of second element using cut & paste", function(assert) {
 
-			var done = assert.async();
-
-			oCutPaste.attachElementModified(function(oEvent) {
-
-				var oCommand = oEvent.getParameter("command");
-				assert.ok(oCommand, "then an ElementModified event is recieved with a move command");
-
-				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
-				var aFormContainers = oSimpleFormForm.getFormContainers();
-				var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
-				assert.equal(iPosition, 1, "and the titel2 is now located at index 1");
-				done();
-			}, this);
-
-			var oElementGroup2 = sap.ui.getCore().byId("testView--Group1")
-			var oElementGroup1 = sap.ui.getCore().byId("testView--Group2")
-			var oSourceOverlay = OverlayRegistry.getOverlay(oElementGroup1.getParent());
-			var oTargetOverlay = OverlayRegistry.getOverlay(oElementGroup2.getParent());
+			var oElementBeforeInPosition0 = sap.ui.getCore().byId("testView--Input1").getParent();
+			var oElementBeforeInPosition1 = sap.ui.getCore().byId("testView--Input3").getParent();
+			var oSourceOverlay = OverlayRegistry.getOverlay(oElementBeforeInPosition0);
+			var oTargetOverlay = OverlayRegistry.getOverlay(oElementBeforeInPosition1);
 
 			oCutPaste.cut(oSourceOverlay);
 			oCutPaste.paste(oTargetOverlay);
 
-		});
-
-		QUnit.test("When moving titel2 to position of titel1 and undoing the move", function(assert) {
-
-			var done = assert.async();
-
-			oCutPaste.attachElementModified(function(oEvent) {
-
-				var oCommand = oEvent.getParameter("command");
-				assert.ok(oCommand, "then an ElementModified event is recieved with a move command");
-				oCommand.undo();
-				sap.ui.getCore().applyChanges();
-				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
-				var aFormContainers = oSimpleFormForm.getFormContainers();
-				var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
-				assert.equal(iPosition, 2, "and the titel2 is again located at index 2");
-				done();
-			}, this);
-
-			var oElementGroup2 = sap.ui.getCore().byId("testView--Group1")
-			var oElementGroup1 = sap.ui.getCore().byId("testView--Group2")
-			var oSourceOverlay = OverlayRegistry.getOverlay(oElementGroup1.getParent());
-			var oTargetOverlay = OverlayRegistry.getOverlay(oElementGroup2.getParent());
-
-			oCutPaste.cut(oSourceOverlay);
-			oCutPaste.paste(oTargetOverlay);
+			var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form").getParent();
+			var oElementNowInPosition1 = oSimpleFormForm.getAggregation("form").
+				getAggregation("formContainers")[1].
+					getAggregation("formElements")[1];
+			assert.equal(oElementNowInPosition1, oElementBeforeInPosition0, "the element was moved properly");
 
 		});
 
-		QUnit.test("When moving within group1 label1 to position of label2", function(assert) {
-
-			var done = assert.async();
-			oCutPaste.attachElementModified(function(oEvent) {
-
-				var oCommand = oEvent.getParameter("command");
-				assert.ok(oCommand, "then an ElementModified event is recieved with a move command");
-
-				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form").getParent();
-				var iPositionLabel = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label1"));
-				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
-				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
-
-				assert.equal(iPositionLabel, 4, "and the label1 is now located at index 4");
-				assert.equal(iPositionInput1, 5, "and the Input1 is now located at index 5");
-				assert.equal(iPositionInput2, 6, "and the Input2 is now located at index 6");
-
-				done();
-			}, this);
-
-			var oElement0 = sap.ui.getCore().byId("testView--Input1").getParent();
-			var oElement1 = sap.ui.getCore().byId("testView--Input3").getParent();
-			var oTargetOverlay = OverlayRegistry.getOverlay(oElement1);
-			var oSourceOverlay = OverlayRegistry.getOverlay(oElement0);
-
-			oCutPaste.cut(oSourceOverlay);
-			oCutPaste.paste(oTargetOverlay);
-
-		});
-
-		QUnit.test("When moving within group1 label1 to position of label2 and undoing the move", function(assert) {
-
-			var done = assert.async();
-			oCutPaste.attachElementModified(function(oEvent) {
-
-				var oCommand = oEvent.getParameter("command");
-				assert.ok(oCommand, "then an ElementModified event is recieved with a move command");
-				oCommand.undo();
-				sap.ui.getCore().applyChanges();
-
-				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form").getParent();
-				var iPositionLabel = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label1"));
-				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
-				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
-
-				assert.equal(iPositionLabel, 2, "and after undo the label1 is again located at index 2");
-				assert.equal(iPositionInput1, 3, "and after undo the Input1 is again located at index 3");
-				assert.equal(iPositionInput2, 4, "and after undo the Input2 is again located at index 4");
-
-				done();
-			}, this);
-
-			var oElement0 = sap.ui.getCore().byId("testView--Input1").getParent();
-			var oElement1 = sap.ui.getCore().byId("testView--Input3").getParent();
-			var oTargetOverlay = OverlayRegistry.getOverlay(oElement1);
-			var oSourceOverlay = OverlayRegistry.getOverlay(oElement0);
-
-			oCutPaste.cut(oSourceOverlay);
-			oCutPaste.paste(oTargetOverlay);
-
-		});
-
-		QUnit.test("When moving label1 between group1 and group3 to position of label6", function(assert) {
-
-			var done = assert.async();
-			oCutPaste.attachElementModified(function(oEvent) {
-
-				var oCommand = oEvent.getParameter("command");
-				assert.ok(oCommand, "then an ElementModified event is recieved with a move command");
-
-				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form").getParent();
-				var iPositionLabel1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label1"));
-				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
-				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
-				var iPositionLabel6 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label6"));
-				var iPositionInput9 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input9"));
-
-				assert.equal(iPositionLabel1, 14, "and the label1 is now located at index 14");
-				assert.equal(iPositionInput1, 15, "and the Input1 is now located at index 15");
-				assert.equal(iPositionInput2, 16, "and the Input2 is now located at index 16");
-
-				assert.equal(iPositionLabel6, 17, "and the label6 is still located at index 17");
-				assert.equal(iPositionInput9, 18, "and the Input1 is still located at index 18");
-
-				done();
-			}, this);
-
-			var oElement0 = sap.ui.getCore().byId("testView--Input1").getParent();
-			var oElement1 = sap.ui.getCore().byId("testView--Input9").getParent();
-			var oTargetOverlay = OverlayRegistry.getOverlay(oElement1);
-			var oSourceOverlay = OverlayRegistry.getOverlay(oElement0);
-
-			oCutPaste.cut(oSourceOverlay);
-			oCutPaste.paste(oTargetOverlay);
-
-		});
-
-		QUnit.test("When moving label1 between group1 and group3 to position of label6 and undoing the move", function(
-				assert) {
-
-			var done = assert.async();
-			oCutPaste.attachElementModified(function(oEvent) {
-
-				var oCommand = oEvent.getParameter("command");
-				assert.ok(oCommand, "then an ElementModified event is recieved with a move command");
-				oCommand.undo();
-				sap.ui.getCore().applyChanges();
-
-				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form").getParent();
-				var iPositionLabel1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label1"));
-				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
-				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
-				var iPositionLabel6 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label6"));
-				var iPositionInput9 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input9"));
-
-				assert.equal(iPositionLabel1, 2, "and the label1 is again located at index 2");
-				assert.equal(iPositionInput1, 3, "and the Input1 is again located at index 3");
-				assert.equal(iPositionInput2, 4, "and the Input2 is again located at index 4");
-
-				assert.equal(iPositionLabel6, 17, "and the label6 is still located at index 17");
-				assert.equal(iPositionInput9, 18, "and the Input1 is still located at index 18");
-
-				done();
-			}, this);
-
-			var oElement0 = sap.ui.getCore().byId("testView--Input1").getParent();
-			var oElement1 = sap.ui.getCore().byId("testView--Input9").getParent();
-			var oTargetOverlay = OverlayRegistry.getOverlay(oElement1);
-			var oSourceOverlay = OverlayRegistry.getOverlay(oElement0);
-
-			oCutPaste.cut(oSourceOverlay);
-			oCutPaste.paste(oTargetOverlay);
-
-		});
-
-		QUnit.test("When moving label2 into empty first group0", function(assert) {
-
-			var done = assert.async();
-			oCutPaste.attachElementModified(function(oEvent) {
-
-				var oCommand = oEvent.getParameter("command");
-				assert.ok(oCommand, "then an ElementModified event is recieved with a move command");
-
-				sap.ui.getCore().applyChanges();
-
-				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form").getParent();
-				var iPositionLabel = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label1"));
-				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
-				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
-
-				assert.equal(iPositionLabel, 1, "and the label1 is now located at index 1");
-				assert.equal(iPositionInput1, 2, "and the Input1 is now located at index 2");
-				assert.equal(iPositionInput2, 3, "and the Input2 is now located at index 3");
-
-				done();
-			}, this);
+		QUnit.test("When moving label2 group element into empty first group0 using cut & paste", function(assert) {
 
 			var oElement0 = sap.ui.getCore().byId("testView--Input1").getParent();
 			var oSourceOverlay = OverlayRegistry.getOverlay(oElement0);
@@ -328,109 +124,20 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 			oCutPaste.cut(oSourceOverlay);
 			oCutPaste.paste(oTargetOverlay);
 
-		});
-
-		QUnit.test("When moving label1 into empty first group0 and undoing the move", function(assert) {
-
-			var done = assert.async();
-			oCutPaste.attachElementModified(function(oEvent) {
-
-				var oCommand = oEvent.getParameter("command");
-				assert.ok(oCommand, "then an ElementModified event is recieved with a move command");
-				oCommand.undo();
-				sap.ui.getCore().applyChanges();
-
-				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form").getParent();
-				var iPositionLabel = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label1"));
-				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
-				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
-
-				assert.equal(iPositionLabel, 2, "and the label1 is again located at index 2");
-				assert.equal(iPositionInput1, 3, "and the Input1 is again located at index 3");
-				assert.equal(iPositionInput2, 4, "and the Input2 is again located at index 4");
-
-				done();
-			}, this);
-
-			var oElement0 = sap.ui.getCore().byId("testView--Input1").getParent();
-			var oSourceOverlay = OverlayRegistry.getOverlay(oElement0);
-
-			var oElement1 = sap.ui.getCore().byId("testView--Group0");
-			var oTargetOverlay = OverlayRegistry.getOverlay(oElement1);
-			oTargetOverlay = oTargetOverlay.getParentElementOverlay();
-
-			oCutPaste.cut(oSourceOverlay);
-			oCutPaste.paste(oTargetOverlay);
+			var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form").getParent();
+			var oElementNowInGroup0 = oSimpleFormForm.getAggregation("form").
+				getAggregation("formContainers")[0].
+					getAggregation("formElements")[0];
+			assert.equal(oElementNowInGroup0, oElement0, "the element was moved properly");
 
 		});
 
-		QUnit.test("When moving label2 into empty last group42", function(assert) {
+		// TODO!
+		// QUnit.test("When moving title1 to position of title2 using drag & drop", function(assert) {
 
-			var done = assert.async();
-			oCutPaste.attachElementModified(function(oEvent) {
 
-				var oCommand = oEvent.getParameter("command");
-				assert.ok(oCommand, "then an ElementModified event is recieved with a move command");
 
-				sap.ui.getCore().applyChanges();
-
-				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form").getParent();
-				var iPositionLabel = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label1"));
-				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
-				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
-
-				assert.equal(iPositionLabel, 21, "and the label1 is now located at index 21");
-				assert.equal(iPositionInput1, 22, "and the Input1 is now located at index 22");
-				assert.equal(iPositionInput2, 23, "and the Input2 is now located at index 23");
-
-				done();
-			}, this);
-
-			var oElement0 = sap.ui.getCore().byId("testView--Input1").getParent();
-			var oSourceOverlay = OverlayRegistry.getOverlay(oElement0);
-
-			var oElement1 = sap.ui.getCore().byId("testView--Group42");
-			var oTargetOverlay = OverlayRegistry.getOverlay(oElement1);
-			oTargetOverlay = oTargetOverlay.getParentElementOverlay();
-
-			oCutPaste.cut(oSourceOverlay);
-			oCutPaste.paste(oTargetOverlay);
-
-		});
-
-		QUnit.test("When moving label1 into empty last group42 and undoing the move", function(assert) {
-
-			var done = assert.async();
-			oCutPaste.attachElementModified(function(oEvent) {
-
-				var oCommand = oEvent.getParameter("command");
-				assert.ok(oCommand, "then an ElementModified event is recieved with a move command");
-				oCommand.undo();
-				sap.ui.getCore().applyChanges();
-
-				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form").getParent();
-				var iPositionLabel = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label1"));
-				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
-				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
-
-				assert.equal(iPositionLabel, 2, "and the label1 is again located at index 2");
-				assert.equal(iPositionInput1, 3, "and the Input1 is again located at index 3");
-				assert.equal(iPositionInput2, 4, "and the Input2 is again located at index 4");
-
-				done();
-			}, this);
-
-			var oElement0 = sap.ui.getCore().byId("testView--Input1").getParent();
-			var oSourceOverlay = OverlayRegistry.getOverlay(oElement0);
-
-			var oElement1 = sap.ui.getCore().byId("testView--Group42");
-			var oTargetOverlay = OverlayRegistry.getOverlay(oElement1);
-			oTargetOverlay = oTargetOverlay.getParentElementOverlay();
-
-			oCutPaste.cut(oSourceOverlay);
-			oCutPaste.paste(oTargetOverlay);
-
-		});
+		// });
 
 	};
 

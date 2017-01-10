@@ -912,11 +912,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			if (oCCnt) {
 				var iUsedHeight = oDomRef.scrollHeight - oCCnt.clientHeight;
+				// take into account controls above the table in the container
+				var iTableTop = 0;
+				if (oDomRef.parentNode.firstChild !== oDomRef) {
+					var iParentPadding = parseFloat(window.getComputedStyle(oDomRef.parentNode).paddingTop);
+					if (isNaN(iParentPadding)) {
+						iParentPadding = 0;
+					}
+					iTableTop = oDomRef.offsetTop - iParentPadding;
+				}
 
 				// For simplicity always add the default height of the horizontal scrollbar to the used height, even if it will not be visible.
 				iUsedHeight += 18;
 
-				return jQuery(oDomRef.parentNode).height() - iUsedHeight;
+				return jQuery(oDomRef.parentNode).height() - iUsedHeight - iTableTop;
 			}
 		}
 
@@ -1191,8 +1200,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype._updateTableSizes = function(bForceUpdateTableSizes, bSkipHandleRowCountMode) {
 		var oDomRef = this.getDomRef();
+		var that = this;
 
 		if (this._bInvalid || !oDomRef) {
+			return;
+		}
+
+		if (!oDomRef.offsetWidth) { // do not update sizes of an invisible table
+			TableUtils.deregisterResizeHandler(this, "");
+			registerResizeHandler();
 			return;
 		}
 
@@ -1222,6 +1238,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var oTableRef = oTable.getDomRef();
 			var iAbsoluteMinWidth = TableUtils.Column.getMinColumnWidth();
 			var aNotFixedVariableColumns = [];
+			var bColumnHeaderVisible = oTable.getColumnHeaderVisible();
 
 			function calcNewWidth(iDomWidth, iMinWidth) {
 				if (iDomWidth <= iMinWidth) {
@@ -1242,7 +1259,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				// do not change freezed columns
 				if (TableUtils.isVariableWidth(colWidth) && !TableUtils.isFixedColumn(oTable, col.getIndex())) {
 					aColHeaders = oTableRef.querySelectorAll('th[data-sap-ui-colid="' + col.getId() + '"]');
-					colHeader = aColHeaders[1]; // column headers may have display:none, use data table
+					colHeader = aColHeaders[bColumnHeaderVisible ? 0 : 1]; // if column headers have display:none, use data table
 					domWidth = colHeader && colHeader.offsetWidth;
 					if (domWidth) {
 						if (domWidth <= minWidth) {
@@ -1252,8 +1269,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 							// reset the minimum style width that was set previously
 							return {headers : aColHeaders, newWidth: colWidth};
 						}
+						aNotFixedVariableColumns.push({col: col, header: colHeader, minWidth: minWidth, headers: aColHeaders});
 					}
-					aNotFixedVariableColumns.push({col: col, header: colHeader, minWidth: minWidth, headers: aColHeaders});
 				}
 				return null;
 			}
@@ -1305,7 +1322,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 		this._updateHSb(oTableSizes);
 
-		var that = this;
 		var $this = this.$();
 
 		if (TableUtils.hasRowActions(this)) {
@@ -2907,6 +2923,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 			$SelAll.toggleClass("sapUiTableSelAll", bClearSelectAll);
 			this._getAccExtension().setSelectAllState(!bClearSelectAll);
+			if (bClearSelectAll) {
+				this.$("selall").attr('title', this._oResBundle.getText("TBL_SELECT_ALL"));
+			}
 		}
 	};
 

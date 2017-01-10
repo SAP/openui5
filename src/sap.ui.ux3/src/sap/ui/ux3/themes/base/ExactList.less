@@ -80,12 +80,6 @@ html[data-sap-ui-browser^="ie"] .sapUiUx3ExactLstLst {
 	position: relative;
 }
 
-html[data-sap-ui-browser="ie9"] .sapUiUx3ExactLstLb > ul > .sapUiLbxI,
-html[data-sap-ui-browser="ie10"] .sapUiUx3ExactLstLb > ul > .sapUiLbxI {
-	border: 1px solid transparent;
-	box-sizing: border-box;
-}
-
 .sapUiUx3ExactLstCollapsed > .sapUiUx3ExactLstLst {
 	display: none;
 }
@@ -109,11 +103,6 @@ html[data-sap-ui-browser="ie10"] .sapUiUx3ExactLstLb > ul > .sapUiLbxI {
 
 .sapUiUx3ExactLstLb > ul > .sapUiLbxI.sapUiUx3ExactLstNoIco > .sapUiLbxIIco {
 	display: none;
-}
-
-html[data-sap-ui-browser="ie9"] .sapUiUx3ExactLstLb > ul > .sapUiLbxI > .sapUiLbxIIco,
-html[data-sap-ui-browser="ie10"] .sapUiUx3ExactLstLb > ul > .sapUiLbxI > .sapUiLbxIIco {
-	top: 3px;
 }
 
 .sapUiUx3ExactLstLst.sapUiUx3ExactLstScroll > .sapUiUx3ExactLstLb:hover > ul > .sapUiLbxI > .sapUiLbxIIco {
@@ -293,10 +282,7 @@ html[data-sap-ui-browser="ie10"] .sapUiUx3ExactLstLb > ul > .sapUiLbxI > .sapUiL
 }
 
 .sapUiUx3ExactLstCollapsed > .sapUiUx3ExactLstHead > .sapUiUx3ExactLstHeadTxt {
-	-moz-transform:rotate(270deg);
 	-webkit-transform:rotate(270deg);
-	-ms-transform:rotate(270deg);
-	-moz-transform-origin: 0 0;
 	-webkit-transform-origin: 0 0;
 	-ms-transform-origin: 0 0;
 	background-color: transparent;
@@ -308,7 +294,6 @@ html[data-sap-ui-browser="ie10"] .sapUiUx3ExactLstLb > ul > .sapUiLbxI > .sapUiL
 html[dir=rtl] .sapUiUx3ExactLstCollapsed > .sapUiUx3ExactLstHead > .sapUiUx3ExactLstHeadTxt {
 	bottom: 5px;
 	left: 22px; /*should be right -> swapped with right by RTL transformation*/
-	-moz-transform-origin: 0% 100%; /*should be '100% 100%' -> swapped with right by RTL transformation*/
 	-webkit-transform-origin: 0% 100%; /*should be '100% 100%' -> swapped with right by RTL transformation*/
 	-ms-transform-origin: 0% 100%; /*should be '100% 100%' -> swapped with right by RTL transformation*/
 }

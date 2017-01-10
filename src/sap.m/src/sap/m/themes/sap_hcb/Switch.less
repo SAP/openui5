@@ -48,12 +48,9 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 
 /* disabled */
 
-.sapMSwtOn.sapMSwtDisabled:not(.sapMSwtAcceptReject) .sapMSwtHandle {
-	background: @sapUiHcReducedAltForeground;
-}
-
+.sapMSwtOn.sapMSwtDisabled:not(.sapMSwtAcceptReject) .sapMSwtHandle,
 .sapMSwtOff.sapMSwtDisabled:not(.sapMSwtAcceptReject) .sapMSwtHandle {
-	background: @sapUiHcReducedForeground;
+	border: 0.125rem solid @sapUiHcReducedAltForeground;
 }
 
 /* ====================================================== */
@@ -93,7 +90,6 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 /* hover */
 
 .sapMSwtAcceptReject.sapMSwtHoverable:hover .sapMSwtHandle {
-	background: @sapUiButtonHoverBackground;
 	border-color: @sapUiButtonHoverBorderColor;
 }
 

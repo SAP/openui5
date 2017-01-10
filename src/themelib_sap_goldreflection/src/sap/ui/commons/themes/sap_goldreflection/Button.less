@@ -44,21 +44,6 @@ html[data-sap-ui-browser^="cr"] .sapUiBtnS > .sapUiBtnTxt {
 	margin-top: 1px;
 }
 
-html[data-sap-ui-browser="ie9"] .sapUiBtnS,
-html[data-sap-ui-browser="ie10"] .sapUiBtnS{
-	padding-top: 2px;
-}
-
-html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite{
-	padding-top: 1px;
-}
-
-html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnIconOnly > .sapUiBtnIco,
-html[data-sap-ui-browser="ie9"] .sapUiBtnS > .sapUiBtnTxt,
-html[data-sap-ui-browser^="cr"] .sapUiBtnS.sapUiBtnIconOnly > .sapUiBtnIco{
-	margin-top: -1px;
-}
-
 /* End of pain */
 
 .sapUiBtnS.sapUiBtnNorm.sapUiBtnStd{
@@ -120,11 +105,6 @@ html[data-sap-ui-browser^="ie"] .sapUiBtnS.sapUiBtnDsbl:active > .sapUiBtnTxt{
 	margin-top: -2px;
 }
 
-html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnAct > .sapUiBtnTxt,
-html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .sapUiBtnTxt{
-	margin-top: 0;
-}
-
 /* emphasized button */
 .sapUiBtnS.sapUiBtnNorm.sapUiBtnEmph{
 	background-image: -moz-linear-gradient(top center, @sapUiButtonEmphasizedHoverBackground, @sapUiButtonEmphasizedActiveBackground);
@@ -137,7 +117,6 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 	background-repeat: repeat-x;
 	background-position: left bottom; /*because IE8 don't know background-size*/
 	background-size: 1px 100%;
-	-moz-background-size: 1px 100%;
 	-webkit-background-size: 1px 100%;
 }
 
@@ -196,7 +175,6 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 	background-repeat: repeat-x;
 	background-position: left bottom; /*because IE8 don't know background-size*/
 	background-size: 1px 100%;
-	-moz-background-size: 1px 100%;
 	-webkit-background-size: 1px 100%;
 }
 
@@ -248,7 +226,6 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 	background-repeat: repeat-x;
 	background-position: left bottom; /*because IE8 don't know background-size*/
 	background-size: 1px 100%;
-	-moz-background-size: 1px 100%;
 	-webkit-background-size: 1px 100%;
 }
 
@@ -281,14 +258,4 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 
 html[data-sap-ui-browser^="cr"] .sapUiBtnS.sapUiBtnIconOnly > span.sapUiBtnIco {
 	margin-top: 1px;
-}
-
-html[data-sap-ui-browser="ie9"] .sapUiBtnS,
-html[data-sap-ui-browser="ie10"] .sapUiBtnS {
-	> img,
-	> span.sapUiBtnTxt,
-	&.sapUiBtnIconOnly > span.sapUiBtnIco,
-	> span.sapUiBtnIco {
-		margin-top: 0;
-	}
 }

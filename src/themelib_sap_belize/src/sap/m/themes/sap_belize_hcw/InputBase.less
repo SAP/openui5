@@ -1,0 +1,136 @@
+/* ================================= */
+/* CSS for control sap.m/InputBase   */
+/* Belize High Contrast White theme  */
+/* ================================= */
+
+.sapMInputBaseInner {
+	font-style: normal;
+}
+
+.sapMInputBaseDisabled {
+	opacity: 1;
+}
+
+.sapMInputBaseDisabledInner {
+	background: @sapUiHcReducedBackground;
+	border-color: @sapUiHcReducedForeground;
+	color: @sapUiContentDisabledTextColor;
+	font-weight: normal;
+	-webkit-text-fill-color: @sapUiContentDisabledTextColor;
+}
+
+.sapMInputBaseInner::-webkit-input-placeholder {
+	font-style: normal;
+	font-weight: normal;
+}
+
+.sapMInputBaseInner::-moz-placeholder {
+	font-style: normal;
+	font-weight: normal;
+	opacity: 1;
+}
+
+.sapMInputBaseInner:-ms-input-placeholder {
+	font-style: normal;
+	font-weight: normal;
+}
+
+.sapMInputBasePlaceholder {
+	font-style: normal;
+	font-weight: normal;
+}
+
+.sapMInputBaseWarning > .sapMInputBasePlaceholder {
+	color: @sapUiFieldTextColor;
+	font-style: italic;
+	background: @sapUiFieldBackground;
+}
+
+.sapMInputBaseError > .sapMInputBasePlaceholder {
+	color: @sapUiFieldTextColor;
+	font-style: italic;
+	font-weight: bold;
+}
+
+.sapMInputBaseStateInner {
+	border-width: 1px;
+}
+
+.sapMInputBaseWarningInner {
+	border-style: dashed;
+	font-weight: normal;
+	font-style: italic;
+}
+
+.sapMInputBaseWarningInner::-webkit-input-placeholder {
+	color: @sapUiFieldTextColor;
+	font-style: italic;
+	font-weight: normal;
+}
+
+.sapMInputBaseWarningInner::-moz-placeholder {
+	color: @sapUiFieldTextColor;
+	font-style: italic;
+	font-weight: normal;
+	opacity: 1;
+}
+
+.sapMInputBaseWarningInner:-ms-input-placeholder {
+	color: @sapUiFieldTextColor;
+	font-style: italic;
+	font-weight: normal;
+}
+
+.sapMInputBaseErrorInner {
+	border-style: dashed;
+	font-style: italic;
+	font-weight: bold;
+}
+
+.sapMInputBaseErrorInner::-webkit-input-placeholder {
+	color: @sapUiFieldTextColor;
+	font-style: italic;
+	font-weight: bold;
+}
+
+.sapMInputBaseErrorInner::-moz-placeholder {
+	color: @sapUiFieldTextColor;
+	font-style: italic;
+	font-weight: bold;
+	opacity: 1;
+}
+
+.sapMInputBaseErrorInner:-ms-input-placeholder {
+	color: @sapUiFieldTextColor;
+	font-style: italic;
+	font-weight: bold;
+}
+
+/* focus on browsers except IE */
+.sapMInputBase .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.188rem;
+}
+
+/* focus in IE (workaround) */
+html[data-sap-ui-browser^="ie"] {
+	.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus,
+	.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):hover {
+		outline: none;
+	}
+
+	.sapMFocus.sapMInputBase:not(.sapMInputBaseReadonly):not(.sapMInputBaseDisabled) {
+		&::before {
+			content: "";
+			position: absolute;
+			top: 5px;
+			left: 1px;
+			right: 1px;
+			bottom:5px;
+			display: block;
+			border: 2px dotted @sapUiContentFocusColor;
+			box-sizing: border-box;
+			pointer-events: none;
+		}
+	}
+}

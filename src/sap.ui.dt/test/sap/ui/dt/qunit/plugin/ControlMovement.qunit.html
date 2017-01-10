@@ -264,25 +264,6 @@
 
 		this.oControlDragDrop._onAggregationDragEnter(stubEventFor(this.oLayoutAggregationOverlay));
 
-		var that = this;
-		this.oControlDragDrop.getElementMover().attachElementMoved(function(oEvent) {
-			var aActions = oEvent.getParameter("data");
-			assert.equal(aActions.length, 1, "the expected number of actions is found")
-			assert.deepEqual(aActions[0], {
-				element: that.oObjectAttribute,
-				source: {
-					parent: that.oObjectHeader,
-					aggregation: "attributes",
-					index: 0
-				},
-				target: {
-					parent: that.oLayout,
-					aggregation: "content",
-					index: 3
-				}
-			}, "element moved event is fired with the correct data");
-		});
-
 		this.oControlDragDrop._onDragEnd(stubEventFor(this.oLayoutAggregationOverlay));
 
 		assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
@@ -330,25 +311,6 @@
 
 	QUnit.test("and object attribute was cutted, when paste is triggered on the button (control in a target zone aggregation), then", function(assert) {
 		sap.ui.test.qunit.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
-
-		var that = this;
-		this.oCutPaste.getElementMover().attachElementMoved(function(oEvent) {
-			var aActions = oEvent.getParameter("data");
-			assert.equal(aActions.length, 1, "the expected number of actions is found")
-			assert.deepEqual(aActions[0], {
-				element: that.oObjectAttribute,
-				source: {
-					parent: that.oObjectHeader,
-					aggregation: "attributes",
-					index: 0
-				},
-				target: {
-					parent: that.oLayout,
-					aggregation: "content",
-					index: 1
-				}
-			}, "element moved event is fired with the correct data");
-		});
 
 		sap.ui.test.qunit.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.V, false, false, true);
 

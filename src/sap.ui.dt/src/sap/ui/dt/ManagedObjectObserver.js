@@ -66,11 +66,9 @@ sap.ui.define([
 	 * @protected
 	 */
 	ManagedObjectObserver.prototype.init = function() {
-		var that = this;
-
 		this._fnFireModified = function() {
-			that.fireModified();
-		};
+			this.fireModified();
+		}.bind(this);
 	};
 
 	/**
@@ -110,19 +108,16 @@ sap.ui.define([
 	 * @protected
 	 */
 	ManagedObjectObserver.prototype.observe = function(oTarget) {
-		var that = this;
+		var that = this;  // eslint-disable-line consistent-this
 
 		oTarget.attachEvent("_change", this._fnFireModified, this);
 
 		// Wrapper for the destroy method to recognize changes
-		var fnOriginalDestroy = this._fnOriginalDestroy = oTarget.destroy;
-		var bDestroyed = false;
+		this._fnOriginalDestroy = oTarget.destroy;
 		oTarget.destroy = function() {
-			if (bDestroyed) {
-				return;
-			}
 			that.unobserve();
-			var vOriginalReturn = fnOriginalDestroy.apply(this, arguments);
+			// Original destroy method was restored by unobserve() call above
+			var vOriginalReturn = this.destroy.apply(this, arguments);
 			that.fireDestroyed();
 
 			return vOriginalReturn;
@@ -277,16 +272,16 @@ sap.ui.define([
 			return vOriginalReturn;
 		};
 
-		that._aOriginalAddMutators = {};
-		that._aOriginalInsertMutators = {};
-		that._aOriginalRemoveMutators = {};
-		that._aOriginalRemoveAllMutators = {};
-		that._aOriginalDestructors = {};
+		this._aOriginalAddMutators = {};
+		this._aOriginalInsertMutators = {};
+		this._aOriginalRemoveMutators = {};
+		this._aOriginalRemoveAllMutators = {};
+		this._aOriginalDestructors = {};
 		var mAllAggregations = oTarget.getMetadata().getAllAggregations();
 		Object.keys(mAllAggregations).forEach(function(sAggregationName) {
 			var oAggregation = mAllAggregations[sAggregationName];
 			var _fnOriginalAddMutator = oTarget[oAggregation._sMutator];
-			that._aOriginalAddMutators[oAggregation.name] = _fnOriginalAddMutator;
+			this._aOriginalAddMutators[oAggregation.name] = _fnOriginalAddMutator;
 			oTarget[oAggregation._sMutator] = function(oObject) {
 				that._bAddOrSetAggregationCall = false;
 				// if addAggregation or setAggregation method wasn't called directly
@@ -306,7 +301,7 @@ sap.ui.define([
 			};
 
 			var _fnOriginalInsertMutator = oTarget[oAggregation._sInsertMutator];
-			that._aOriginalInsertMutators[oAggregation.name] = _fnOriginalInsertMutator;
+			this._aOriginalInsertMutators[oAggregation.name] = _fnOriginalInsertMutator;
 			oTarget[oAggregation._sInsertMutator] = function(oObject, iIndex) {
 				that._bInsertAggregationCall = false;
 
@@ -326,7 +321,7 @@ sap.ui.define([
 			};
 
 			var _fnOriginalRemoveMutator = oTarget[oAggregation._sRemoveMutator];
-			that._aOriginalRemoveMutators[oAggregation.name] = _fnOriginalRemoveMutator;
+			this._aOriginalRemoveMutators[oAggregation.name] = _fnOriginalRemoveMutator;
 			oTarget[oAggregation._sRemoveMutator] = function(vObject, bSuppressInvalidate) {
 				that._bRemoveAggregationCall = false;
 				var vOriginalReturn = _fnOriginalRemoveMutator.apply(this, arguments);
@@ -343,7 +338,7 @@ sap.ui.define([
 			};
 
 			var _fnOriginalRemoveAllMutator = oTarget[oAggregation._sRemoveAllMutator];
-			that._aOriginalRemoveAllMutators[oAggregation.name] = _fnOriginalRemoveAllMutator;
+			this._aOriginalRemoveAllMutators[oAggregation.name] = _fnOriginalRemoveAllMutator;
 			oTarget[oAggregation._sRemoveAllMutator] = function(bSuppressInvalidate) {
 				that._bRemoveAllAggregationCall = false;
 				var aRemovedObjects = this.getAggregation(sAggregationName);
@@ -361,7 +356,7 @@ sap.ui.define([
 			};
 
 			var _fnOriginalDestructor = oTarget[oAggregation._sDestructor];
-			that._aOriginalDestructors[oAggregation.name] = _fnOriginalDestructor;
+			this._aOriginalDestructors[oAggregation.name] = _fnOriginalDestructor;
 			oTarget[oAggregation._sDestructor] = function(bSuppressInvalidate) {
 				that._bDestroyAggregationCall = false;
 				var aRemovedObjects = this.getAggregation(sAggregationName);
@@ -377,7 +372,7 @@ sap.ui.define([
 				}
 				return vOriginalReturn;
 			};
-		});
+		}, this);
 
 	};
 
@@ -388,8 +383,6 @@ sap.ui.define([
 	 * @protected
 	 */
 	ManagedObjectObserver.prototype.unobserve = function() {
-		var that = this;
-
 		var oTarget = this.getTargetInstance();
 
 		if (oTarget) {
@@ -410,12 +403,12 @@ sap.ui.define([
 			var mAllAggregations = oTarget.getMetadata().getAllAggregations();
 			Object.keys(mAllAggregations).forEach(function(sAggregationName) {
 				var oAggregation = mAllAggregations[sAggregationName];
-				oTarget[oAggregation._sMutator] = that._aOriginalAddMutators[oAggregation.name];
-				oTarget[oAggregation._sInsertMutator] = that._aOriginalInsertMutators[oAggregation.name];
-				oTarget[oAggregation._sRemoveMutator] = that._aOriginalRemoveMutators[oAggregation.name];
-				oTarget[oAggregation._sRemoveAllMutator] = that._aOriginalRemoveAllMutators[oAggregation.name];
-				oTarget[oAggregation._sDestructor] = that._aOriginalDestructors[oAggregation.name];
-			});
+				oTarget[oAggregation._sMutator] = this._aOriginalAddMutators[oAggregation.name];
+				oTarget[oAggregation._sInsertMutator] = this._aOriginalInsertMutators[oAggregation.name];
+				oTarget[oAggregation._sRemoveMutator] = this._aOriginalRemoveMutators[oAggregation.name];
+				oTarget[oAggregation._sRemoveAllMutator] = this._aOriginalRemoveAllMutators[oAggregation.name];
+				oTarget[oAggregation._sDestructor] = this._aOriginalDestructors[oAggregation.name];
+			}, this);
 			oTarget.detachEvent("_change", this._fnFireModified, this);
 		}
 

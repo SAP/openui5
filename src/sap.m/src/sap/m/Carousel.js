@@ -225,7 +225,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Carousel.prototype._cleanUpScrollContainer = function() {
 		var oScrollCont;
-		while (this.length > 0) {
+		while (this._aScrollContainers && this._aScrollContainers.length > 0) {
 			oScrollCont = this._aScrollContainers.pop();
 			oScrollCont.removeAllContent();
 			if (oScrollCont && typeof oScrollCont.destroy === 'function') {

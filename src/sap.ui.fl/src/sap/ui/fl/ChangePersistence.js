@@ -361,29 +361,50 @@ sap.ui.define([
 
 	/**
 	 * Prepares a change to be deleted with the next call to
-	 * @see {ChangePersistence#saveDirtyChanges}.
+	 * @see {ChangePersistence#saveDirtyChanges};
 	 *
 	 * If the given change is already in the dirty changes and
 	 * has pending action 'NEW' it will be removed, assuming,
-	 * it has just been created in the current session.
+	 * it has just been created in the current session;
 	 *
 	 * Otherwise it will be marked for deletion.
 	 *
 	 * @param {sap.ui.fl.Change} oChange - the change to be deleted
 	 */
 	ChangePersistence.prototype.deleteChange = function(oChange) {
-		var index = this._aDirtyChanges.indexOf(oChange);
+		var nIndexInDirtyChanges = this._aDirtyChanges.indexOf(oChange);
 
-		if (index > -1) {
+		if (nIndexInDirtyChanges > -1) {
 			if (oChange.getPendingAction() === "DELETE"){
 				return;
 			}
-			this._aDirtyChanges.splice(index, 1);
+			this._aDirtyChanges.splice(nIndexInDirtyChanges, 1);
+			this._deleteChangeInMap(oChange);
 			return;
 		}
 
 		oChange.markForDeletion();
 		this._aDirtyChanges.push(oChange);
+		this._deleteChangeInMap(oChange);
+	};
+
+	/**
+	 * Deletes a change object from the internal map.
+	 *
+	 * @param {sap.ui.fl.Change} oChange which has to be removed from the mapping
+	 * @private
+	 */
+	ChangePersistence.prototype._deleteChangeInMap = function (oChange) {
+		var that = this;
+
+		Object.keys(this._mChanges).some(function (key) {
+			var aChanges = that._mChanges[key];
+			var nIndexInMapElement = aChanges.indexOf(oChange);
+			if (nIndexInMapElement !== -1) {
+				aChanges.splice(nIndexInMapElement, 1);
+				return true;
+			}
+		});
 	};
 
 	return ChangePersistence;

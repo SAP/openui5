@@ -51,13 +51,11 @@ sap.ui.define([
 	 * @protected
 	 */
 	MutationObserver.prototype.init = function() {
-		var that = this;
-
 		this._fnFireResizeDomChanged = function() {
-			that.fireDomChanged({
+			this.fireDomChanged({
 				type : "resize"
 			});
-		};
+		}.bind(this);
 		this._onScroll = this._fireDomChangeOnScroll.bind(this);
 
 		this._startMutationObserver();
@@ -80,8 +78,6 @@ sap.ui.define([
 	 * @private
 	 */
 	MutationObserver.prototype._startMutationObserver = function() {
-		var that = this;
-
 		if (this._oMutationObserver) {
 			return;
 		}
@@ -113,13 +109,13 @@ sap.ui.define([
 				});
 
 				if (aTargetNodes.length) {
-					that.fireDomChanged({
+					this.fireDomChanged({
 						type : "mutation",
 						elementIds : aElementIds,
 						targetNodes : aTargetNodes
 					});
 				}
-			});
+			}.bind(this));
 
 			// we should observe whole DOM, otherwise position change of elements can be triggered via outter changes
 			// (like change of body size, container insertions etc.)

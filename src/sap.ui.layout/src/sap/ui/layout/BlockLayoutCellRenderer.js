@@ -63,6 +63,11 @@ sap.ui.define(['jquery.sap.global', './library'],
 				var alignmentClass = "sapUiBlockCell" + blockLayoutCell.getTitleAlignment(),
 					titleClass = "sapUiBlockCellTitle " + alignmentClass;
 
+				// remove bottom margin if cell does not have a content
+				if (blockLayoutCell.getContent().length === 0) {
+					titleClass += " sapUiBlockCellTitleNoContent";
+				}
+
 				var level = blockLayoutCell.getTitleLevel(),
 					autoLevel = level == sap.ui.core.TitleLevel.Auto,
 					tag = autoLevel ? "h2" : level;

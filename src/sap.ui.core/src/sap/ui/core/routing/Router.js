@@ -239,7 +239,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 				if (this._oRoutes[oConfig.name]) {
 					jQuery.sap.log.error("Route with name " + oConfig.name + " already exists", this);
 				}
-				this._oRoutes[oConfig.name] = new Route(this, oConfig, oParent);
+				this._oRoutes[oConfig.name] = this._createRoute(this, oConfig, oParent);
 			},
 
 			/**
@@ -446,6 +446,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 					config: oConfig,
 					targets: oTargetsConfig
 				});
+			},
+
+			_createRoute : function (oRouter, oConfig, oParent) {
+				return new Route(oRouter, oConfig, oParent);
 			},
 
 			/**
