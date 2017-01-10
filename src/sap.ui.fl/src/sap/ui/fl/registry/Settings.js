@@ -26,7 +26,8 @@ sap.ui.define([
 		if (!oSettings.features) {
 			// hardcoded list of flex features (change types) and their valid "writable layer"
 			oSettings.features = {
-				"addField": [
+				//addField is not listed so it remains always enabled for compatibility reasons, although currently only addFields is used
+				"addFields": [
 					"CUSTOMER", "VENDOR"
 				],
 				"addGroup": [
