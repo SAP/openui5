@@ -351,7 +351,7 @@ public class GitClient {
   	} else {
   		baseUrl.append("ssh://");
     	if (sshUser != null) {
-    		baseUrl.append(sshUser + this.suffix != null ? this.suffix : "");
+    		baseUrl.append(sshUser + (this.suffix != null ? this.suffix : ""));
     		//baseUrl.append("@");
     	}
   	}
