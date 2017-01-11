@@ -11,21 +11,29 @@ sap.ui.define([
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/MetaModel",
+	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/PropertyBinding",
+	"sap/ui/thirdparty/URI",
 	"./lib/_Helper",
-	"./lib/_SyncPromise"
+	"./lib/_SyncPromise",
+	"./ValueListType"
 ], function (jQuery, BindingMode, ContextBinding, BaseContext, FilterProcessor, JSONListBinding,
-		MetaModel, PropertyBinding, _Helper, _SyncPromise) {
+		MetaModel, OperationMode, PropertyBinding, URI, _Helper, _SyncPromise, ValueListType) {
 	"use strict";
+	/*eslint max-nested-callbacks: 0 */
 
 	var DEBUG = jQuery.sap.log.Level.DEBUG,
 		ODataMetaContextBinding,
 		ODataMetaListBinding,
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
 		ODataMetaPropertyBinding,
+		ODataModel, // see ODataMetaModel#.setODataModel
 		// rest of segment after opening ( and segments that consist only of digits
 		rNotMetaContext = /\([^/]*|\/-?\d+/g,
 		rNumber = /^-?\d+$/,
+		mSupportedEvents = {
+			messageChange : true
+		},
 		mUi5TypeForEdmType = {
 			"Edm.Boolean" : {type : "sap.ui.model.odata.type.Boolean"},
 			"Edm.Byte" : {type : "sap.ui.model.odata.type.Byte"},
@@ -64,9 +72,7 @@ sap.ui.define([
 				type : "sap.ui.model.odata.type.TimeOfDay"
 			}
 		},
-		mSupportedEvents = {
-			messageChange : true
-		},
+		sValueListMapping = "@com.sap.vocabularies.Common.v1.ValueListMapping",
 		WARNING = jQuery.sap.log.Level.WARNING;
 
 	/**
@@ -203,6 +209,7 @@ sap.ui.define([
 			this.oRequestor = oRequestor;
 			this.mSupportedBindingModes = {"OneTime" : true};
 			this.sUrl = sUrl;
+			this.mValueListModels = {};
 		}
 	});
 
@@ -1006,6 +1013,40 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates a value list model for the given mapping URL. Normalizes the path. Caches it and
+	 * retrieves it from the cache upon further requests.
+	 *
+	 * @param {string} sMappingUrl
+	 *   The mapping URL
+	 * @returns {sap.ui.model.odata.v4.ODataModel}
+	 *   The value list model
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.getOrCreateValueListModel = function (sMappingUrl) {
+		var oValueListModel,
+			sValueListUrl;
+
+		// the MappingUrl references the metadata document, remove the filename part and make it
+		// absolute based on the data service URL to get rid of ".." segments
+		sValueListUrl = new URI(sMappingUrl).filename("").absoluteTo(this.sUrl).toString();
+		oValueListModel = this.mValueListModels[sValueListUrl];
+		if (!oValueListModel) {
+			oValueListModel = new ODataModel({
+				groupId : "$direct",
+				operationMode : OperationMode.Server,
+				serviceUrl : sValueListUrl,
+				synchronizationMode : "None"
+			});
+			oValueListModel.setDefaultBindingMode(BindingMode.OneWay);
+			this.mValueListModels[sValueListUrl] = oValueListModel;
+			// give the value list meta model a reference to its model
+			oValueListModel.getMetaModel().mValueListModels[sValueListUrl] = oValueListModel;
+		}
+		return oValueListModel;
+	};
+
+	/**
 	 * Method not supported
 	 *
 	 * @throws {Error}
@@ -1074,6 +1115,47 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataMetaModel.prototype.getUI5Type = _SyncPromise.createGetMethod("fetchUI5Type", true);
+
+	/**
+	 * Determines which type of value list exists for the given property.
+	 *
+	 * @param {string} sPropertyPath
+	 *   An absolute path to an OData property within the OData data model
+	 * @returns {sap.ui.model.odata.v4.ValueListType}
+	 *   The type of the value list
+	 * @throws {Error}
+	 *   If the metadata is not yet loaded or the property cannot be found in the metadata
+	 *
+	 * @public
+	 * @since 1.45.0
+	 */
+	ODataMetaModel.prototype.getValueListType = function (sPropertyPath) {
+		var oContext = this.getMetaContext(sPropertyPath),
+			oPromise,
+			that = this;
+
+		oPromise = this.fetchObject("", oContext).then(function (oProperty) {
+			if (!oProperty) {
+				throw new Error("No metadata for " + sPropertyPath);
+			}
+			// now we can use getObject() because the property's annotations are definitely loaded
+			if (that.getObject("@com.sap.vocabularies.Common.v1.ValueListWithFixedValues",
+					oContext)) {
+				return ValueListType.Fixed;
+			}
+			if (that.getObject("@com.sap.vocabularies.Common.v1.ValueListReference", oContext)) {
+				return ValueListType.Standard;
+			}
+			return ValueListType.None;
+		});
+		if (oPromise.isRejected()) {
+			throw oPromise.getResult();
+		}
+		if (!oPromise.isFulfilled()) {
+			throw new Error("Metadata not yet loaded");
+		}
+		return oPromise.getResult();
+	};
 
 	/**
 	 * Method not supported
@@ -1310,6 +1392,122 @@ sap.ui.define([
 		= _SyncPromise.createRequestMethod("fetchUI5Type");
 
 	/**
+	 * Requests information to retrieve a value list for the property given by
+	 * <code>sPropertyPath</code>.
+	 *
+	 * @param {string} sPropertyPath
+	 *   An absolute path to an OData property within the OData data model
+	 * @returns {Promise}
+	 *   A promise which is resolved with a map of qualifier to value list mapping objects
+	 *   structured as defined by <code>com.sap.vocabularies.Common.v1.ValueListMappingType</code>;
+	 *   the map entry with key "" represents the mapping without qualifier. Each entry has an
+	 *   additional property "$model" which is the {@link sap.ui.model.odata.v4.ODataModel} instance
+	 *   to read value list data via this mapping.
+	 *
+	 *   The promise is rejected with an error if there is no value list information available
+	 *   for the given property path. Use {@link #getValueListType} to determine if value list
+	 *   information exists.
+	 *
+	 * @public
+	 * @since 1.45.0
+	 */
+	ODataMetaModel.prototype.requestValueListInfo = function (sPropertyPath) {
+		var oContext = this.getMetaContext(sPropertyPath),
+			that = this;
+
+		/*
+		 * Determines the namespace of the given qualified name.
+		 */
+		function namespace(sName) {
+			var iIndex = sName.indexOf("/");
+
+			if (iIndex >= 0) {
+				// consider only the first path segment
+				sName = sName.slice(0, iIndex);
+			}
+			// now we have a qualified name, drop the last segment (the name)
+			return sName.slice(0, sName.lastIndexOf("."));
+		}
+
+		/*
+		 * Checks that the term it is a value list mapping term and determines the qualifier.
+		 * @param {string} sTerm The term
+		 * @returns {string} The key or undefined if the term does not specify a value list mapping
+		 */
+		function getMappingKey(sTerm) {
+			if (sTerm === sValueListMapping) {
+				return "";
+			}
+			if (sTerm.indexOf(sValueListMapping + "#") === 0) {
+				return sTerm.slice(sValueListMapping.length + 1);
+			}
+		}
+
+		return Promise.all([
+			this.requestObject("/$EntityContainer"),
+			this.requestObject("", oContext),
+			this.requestObject("@com.sap.vocabularies.Common.v1.ValueListReference", oContext)
+		]).then(function (aResults) {
+			// the namespace of the container is the namespace of the service
+			var sNamespace = namespace(aResults[0]),
+				oProperty = aResults[1],
+				oValueListModel,
+				oValueListReference = aResults[2];
+
+			if (!oProperty) {
+				throw new Error("No metadata for " + sPropertyPath);
+			}
+			if (!oValueListReference) {
+				throw new Error("No value list info for " + sPropertyPath);
+			}
+			oValueListModel = that.getOrCreateValueListModel(oValueListReference.MappingUrl);
+
+			// We cannot use fetchObject here for two reasons: We only have a property path and not
+			// necessarily the property's qualified name, and accessing a property annotation would
+			// fail because the value list service does not have the property. So we choose another
+			// way: We inspect all annotations in the value list service and try to resolve the
+			// target in the data service.
+			return oValueListModel.getMetaModel().fetchEntityContainer()
+				.then(function (oValueListMetadata) {
+					var oTargets = oValueListMetadata.$Annotations,
+						oValueListInfo = {};
+
+					Object.keys(oTargets).forEach(function (sTarget) {
+						var oTerms = oTargets[sTarget];
+
+						if (namespace(sTarget) !== sNamespace) {
+							// target is not in the namespace of the data service -> ignore
+							return;
+						}
+						if (that.getObject("/" + sTarget) !== oProperty) {
+							if (that === oValueListModel.getMetaModel()) {
+								return; // value list on value list
+							}
+							// target is not the property
+							throw new Error("Unexpected annotation target in value list metadata: "
+								+ sTarget);
+						}
+						Object.keys(oTerms).forEach(function (sTerm) {
+							var sKey = getMappingKey(sTerm);
+
+							if (sKey !== undefined) {
+								oValueListInfo[sKey] = jQuery.extend(true, {
+									$model : oValueListModel
+								}, oTerms[sTerm]);
+							} else if (that !== oValueListModel.getMetaModel()) {
+								throw new Error(
+									"Unexpected annotation term in value list metadata: "
+									+ sTarget + sTerm);
+							}
+						});
+					});
+
+					return oValueListInfo;
+				});
+		});
+	};
+
+	/**
 	 * Resolves the given path relative to the given context. Without a context, a relative path
 	 * cannot be resolved and <code>undefined</code> is returned. An absolute path is returned
 	 * unchanged. A relative path is appended to the context's path separated by a forward slash
@@ -1390,6 +1588,20 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.toString = function () {
 		return sODataMetaModel + ": " + this.sUrl;
+	};
+
+	/**
+	 * Sets the constructor for ODataModel. We cannot import it via sap.ui.define because this would
+	 * lead to a cyclic dependency.
+	 *
+	 * @param {function} fnODataModel
+	 *   The constructor for ODataModel
+	 *
+	 * @private
+	 */
+	ODataMetaModel.setODataModel = function (fnODataModel) {
+		// save it globally
+		ODataModel = fnODataModel;
 	};
 
 	return ODataMetaModel;

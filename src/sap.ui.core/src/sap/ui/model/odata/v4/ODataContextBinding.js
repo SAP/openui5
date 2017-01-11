@@ -114,14 +114,12 @@ sap.ui.define([
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#resetChanges as #resetChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#resume as #resume
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#suspend as #suspend
+	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#changeParameters as #changeParameters
 	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#initialize as #initialize
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
-				var oBindingParameters,
-					iPos = sPath.indexOf("(...)"),
-					bDeferred = iPos >= 0;
-
+				var iPos = sPath.indexOf("(...)");
 
 				ContextBinding.call(this, oModel, sPath, undefined /*context is set below*/,
 					mParameters);
@@ -130,37 +128,27 @@ sap.ui.define([
 					throw new Error("Invalid path: " + sPath);
 				}
 
-				this.oCache = undefined;
+				this.oCachePromise = _SyncPromise.resolve(undefined);
 				this.mCacheByContext = undefined;
 				this.sGroupId = undefined;
 				this.oOperation = undefined;
-				this.mQueryOptions = this.oModel.buildQueryOptions(oModel.mUriParameters,
-					mParameters, true);
 				this.sRefreshGroupId = undefined;
 				this.sUpdateGroupId = undefined;
 
-				if (!this.bRelative || bDeferred || mParameters
-						|| oContext && !oContext.getBinding) {
-					oBindingParameters = this.oModel.buildBindingParameters(mParameters,
-						["$$groupId", "$$updateGroupId"]);
-					this.sGroupId = oBindingParameters.$$groupId;
-					this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-					if (bDeferred) {
-						this.oOperation = {
-							bAction : undefined,
-							oMetadataPromise : undefined,
-							mParameters : {},
-							sResourcePath : undefined
-						};
-						if (iPos !== sPath.length - 5) {
-							throw new Error(
-								"The path must not continue after a deferred operation: " + sPath);
-						}
-					} else if (!this.bRelative) {
-						this.oCache = this.makeCache();
+				if (iPos >= 0) { // deferred operation binding
+					this.oOperation = {
+						bAction : undefined,
+						oMetadataPromise : undefined,
+						mParameters : {},
+						sResourcePath : undefined
+					};
+					if (iPos !== this.sPath.length - 5) {
+						throw new Error(
+							"The path must not continue after a deferred operation: " + this.sPath);
 					}
 				}
 
+				this.applyParameters(jQuery.extend(true, {}, mParameters));
 				this.oElementContext = this.bRelative
 					? null
 					: Context.create(this.oModel, this, sPath);
@@ -251,6 +239,34 @@ sap.ui.define([
 		return this.oOperation.oMetadataPromise;
 	};
 
+	/**
+	 * Applies the given map of parameters to this binding's parameters.
+	 *
+	 * @param {object} [mParameters]
+	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
+	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
+	 *   Change reason if called from {@link #changeParameters}
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
+		var oBindingParameters;
+
+		this.mQueryOptions = this.oModel.buildQueryOptions(undefined, mParameters, true);
+
+		oBindingParameters = this.oModel.buildBindingParameters(mParameters,
+			["$$groupId", "$$updateGroupId"]);
+		this.sGroupId = oBindingParameters.$$groupId;
+		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
+		if (sChangeReason) { // set this.mParameters if called from changeParameters
+			this.mParameters = mParameters;
+		}
+		if (!this.oOperation) {
+			this.oCachePromise = this.makeCache(this.oContext);
+			this.checkUpdate();
+		}
+	};
+
 	// See class documentation
 	// @override
 	// @public
@@ -305,19 +321,21 @@ sap.ui.define([
 				+ "must not be called with parameters");
 		}
 
-		if (this.oCache && this.bRelative && this.oContext.fetchCanonicalPath) {
-			this.oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
-				if (that.oCache.$canonicalPath !== sCanonicalPath) { // entity of context changed
-					that.refreshInternal();
-				} else {
-					updateDependents();
-				}
-			})["catch"](function (oError) {
-				that.oModel.reportError("Failed to update " + that, sClassName, oError);
-			});
-		} else {
-			updateDependents();
-		}
+		this.oCachePromise.then(function (oCache) {
+			if (oCache && that.bRelative && that.oContext.fetchCanonicalPath) {
+				that.oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
+					if (oCache.$canonicalPath !== sCanonicalPath) { // entity of context changed
+						that.refreshInternal();
+					} else {
+						updateDependents();
+					}
+				})["catch"](function (oError) {
+					that.oModel.reportError("Failed to update " + that, sClassName, oError);
+				});
+			} else {
+				updateDependents();
+			}
+		});
 	};
 
 	/**
@@ -371,28 +389,34 @@ sap.ui.define([
 	 * @param {function} fnCallback
 	 *   A function which is called after the entity has been deleted from the server and from the
 	 *   cache; the index of the entity is passed as parameter
-	 * @returns {Promise}
+	 * @returns {SyncPromise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
-	 *   instance of <code>Error</code> in case of failure.
+	 *   instance of <code>Error</code> in case of failure
 	 * @throws {Error}
-	 *   If the resulting group ID is neither '$auto' nor '$direct'
+	 *   If this binding is a deferred operation binding, if the group ID is neither '$auto'
+	 *   nor '$direct' or if the cache promise for this binding is not yet fulfilled
 	 *
 	 * @private
 	 */
 	ODataContextBinding.prototype.deleteFromCache = function (sGroupId, sEditUrl, sPath,
 			fnCallback) {
-		var oPromise;
+		var oCache;
 
 		if (this.oOperation) {
 			throw new Error("Cannot delete a deferred operation");
 		}
-		if (this.oCache) {
+
+		if (!this.oCachePromise.isFulfilled()) {
+			throw new Error("DELETE request not allowed");
+		}
+
+		oCache = this.oCachePromise.getResult();
+		if (oCache) {
 			sGroupId = sGroupId || this.getUpdateGroupId();
 			if (sGroupId !== "$auto" && sGroupId !== "$direct") {
 				throw new Error("Illegal update group ID: " + sGroupId);
 			}
-			oPromise = this.oCache._delete(sGroupId, sEditUrl, sPath, fnCallback);
-			return oPromise;
+			return oCache._delete(sGroupId, sEditUrl, sPath, fnCallback);
 		}
 		return this.oContext.getBinding().deleteFromCache(sGroupId, sEditUrl,
 			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), fnCallback);
@@ -409,8 +433,16 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.deregisterChange = function (sPath, oListener) {
-		if (this.oCache) {
-			this.oCache.deregisterChange(sPath, oListener);
+		var oCache;
+
+		if (!this.oCachePromise.isFulfilled()) {
+			// Be prepared for late deregistrations by dependents of parked contexts
+			return;
+		}
+
+		oCache = this.oCachePromise.getResult();
+		if (oCache) {
+			oCache.deregisterChange(sPath, oListener);
 		} else if (this.oContext) {
 			this.oContext.deregisterChange(_Helper.buildPath(this.sPath, sPath), oListener);
 		}
@@ -428,6 +460,7 @@ sap.ui.define([
 			this.oElementContext.destroy();
 		}
 		this.oModel.bindingDestroyed(this);
+		this.oCachePromise = undefined;
 		ContextBinding.prototype.destroy.apply(this);
 	};
 
@@ -465,10 +498,11 @@ sap.ui.define([
 		 * @param {object} oOperationMetadata The operation's metadata
 		 * @param {string} sPathPrefix
 		 *   The prefix for the path that results from the binding parameter
-		 * @returns {Promise} The request promise
+		 * @returns {SyncPromise} The request promise
 		 */
 		function createCacheAndRequest(oOperationMetadata, sPathPrefix) {
-			var sETag,
+			var oCache,
+				sETag,
 				iIndex,
 				aOperationParameters,
 				aParameters,
@@ -477,11 +511,10 @@ sap.ui.define([
 			sGroupId = sGroupId || that.getGroupId();
 			that.oOperation.bAction = oOperationMetadata.$kind === "Action";
 			if (that.oOperation.bAction) {
-				// the action may reuse the cache because the resource path never changes
-				if (!that.oCache) {
-					that.oCache = _Cache.createSingle(that.oModel.oRequestor,
-						(sPathPrefix + that.sPath).slice(1, -5), that.mQueryOptions, true);
-				}
+				// Recreate the cache, because the query options might have changed
+				oCache = _Cache.createSingle(that.oModel.oRequestor,
+					(sPathPrefix + that.sPath).slice(1, -5),
+					that.getQueryOptions(that.oContext), true);
 				if (that.bRelative && that.oContext.getBinding) {
 					// @odata.etag is not added to path to avoid "failed to drill-down" in cache
 					// if no ETag is available
@@ -489,7 +522,7 @@ sap.ui.define([
 					sETag = that.oContext.getObject(
 						iIndex >= 0 ? that.sPath.slice(0, iIndex) : "")["@odata.etag"];
 				}
-				oPromise = that.oCache.post(sGroupId, that.oOperation.mParameters, sETag);
+				oPromise = oCache.post(sGroupId, that.oOperation.mParameters, sETag);
 			} else {
 				// the function must always recreate the cache because the parameters influence the
 				// resource path
@@ -510,10 +543,12 @@ sap.ui.define([
 					});
 				}
 				that.oOperation.sResourcePath = that.sPath.replace("...", aParameters.join(','));
-				that.oCache = _Cache.createSingle(that.oModel.oRequestor,
-					(sPathPrefix + that.oOperation.sResourcePath).slice(1), that.mQueryOptions);
-				oPromise = that.oCache.read(sGroupId);
+				oCache = _Cache.createSingle(that.oModel.oRequestor,
+					(sPathPrefix + that.oOperation.sResourcePath).slice(1),
+					that.getQueryOptions(that.oContext));
+				oPromise = oCache.fetchValue(sGroupId);
 			}
+			that.oCachePromise = _SyncPromise.resolve(oCache);
 			return oPromise;
 		}
 
@@ -567,18 +602,21 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.fetchAbsoluteValue = function (sPath) {
-		var sResolvedPath;
+		var that = this;
 
-		if (this.oCache) {
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-			if (sPath === sResolvedPath || sPath.lastIndexOf(sResolvedPath + "/") === 0) {
-				return this.fetchValue(sPath.slice(sResolvedPath.length + 1));
+		return this.oCachePromise.then(function (oCache) {
+			var sResolvedPath;
+
+			if (oCache) {
+				sResolvedPath = that.oModel.resolve(that.sPath, that.oContext);
+				if (sPath === sResolvedPath || sPath.lastIndexOf(sResolvedPath + "/") === 0) {
+					return that.fetchValue(sPath.slice(sResolvedPath.length + 1));
+				}
 			}
-		}
-		if (this.oContext && this.oContext.fetchAbsoluteValue) {
-			return this.oContext.fetchAbsoluteValue(sPath);
-		}
-		return _SyncPromise.resolve();
+			if (that.oContext && that.oContext.fetchAbsoluteValue) {
+				return that.oContext.fetchAbsoluteValue(sPath);
+			}
+		});
 	};
 
 	/**
@@ -595,34 +633,36 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.fetchValue = function (sPath, oListener) {
-		var bDataRequested = false,
-			sGroupId,
-			that = this;
+		var that = this;
 
-		if (this.oCache) {
-			sGroupId = this.sRefreshGroupId || this.getGroupId();
-			this.sRefreshGroupId = undefined;
-			return this.oCache.read(sGroupId, sPath, function () {
-				bDataRequested = true;
-				that.fireDataRequested();
-			}, oListener).then(function (vValue) {
-				if (bDataRequested) {
-					that.fireDataReceived();
-				}
-				return vValue;
-			}, function (oError) {
-				if (bDataRequested) {
-					that.oModel.reportError("Failed to read path " + that.sPath, sClassName,
-						oError);
-					that.fireDataReceived(oError.canceled ? undefined : {error : oError});
-				}
-				throw oError;
-			});
-		}
-		if (this.oContext && this.oContext.fetchValue) {
-			return this.oContext.fetchValue(_Helper.buildPath(this.sPath, sPath), oListener);
-		}
-		return _SyncPromise.resolve();
+		return this.oCachePromise.then(function (oCache) {
+			var bDataRequested = false,
+				sGroupId;
+
+			if (oCache) {
+				sGroupId = that.sRefreshGroupId || that.getGroupId();
+				that.sRefreshGroupId = undefined;
+				return oCache.fetchValue(sGroupId, sPath, function () {
+					bDataRequested = true;
+					that.fireDataRequested();
+				}, oListener).then(function (vValue) {
+					if (bDataRequested) {
+						that.fireDataReceived();
+					}
+					return vValue;
+				}, function (oError) {
+					if (bDataRequested) {
+						that.oModel.reportError("Failed to read path " + that.sPath, sClassName,
+							oError);
+						that.fireDataReceived(oError.canceled ? undefined : {error : oError});
+					}
+					throw oError;
+				});
+			}
+			if (that.oContext && that.oContext.fetchValue) {
+				return that.oContext.fetchValue(_Helper.buildPath(that.sPath, sPath), oListener);
+			}
+		});
 	};
 
 	/**
@@ -646,8 +686,9 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context instance to be used, may be omitted for absolute bindings
-	 * @returns {object}
-	 *   The created cache, cache proxy or undefined if none is required (allows for easier testing)
+	 * @returns {SyncPromise}
+	 *   A promise which resolves with a cache instance or <code>undefined</code> if no cache is
+	 *   needed
 	 *
 	 * @private
 	 */
@@ -664,9 +705,9 @@ sap.ui.define([
 		if (!this.bRelative) {
 			oContext = undefined; // must be ignored for absolute bindings
 		} else if (!oContext || oContext.fetchCanonicalPath && !this.mParameters) {
-			return undefined; // no need for an own cache
+			return _SyncPromise.resolve(undefined); // no need for an own cache
 		}
-		mQueryOptions = this.getQueryOptions("", oContext);
+		mQueryOptions = this.getQueryOptions(oContext);
 		vCanonicalPath = oContext && (oContext.fetchCanonicalPath
 			? oContext.fetchCanonicalPath() : oContext.getPath());
 		return this.createCache(createCache, vCanonicalPath);
@@ -677,23 +718,27 @@ sap.ui.define([
 	 * @inheritdoc
 	 */
 	ODataContextBinding.prototype.refreshInternal = function (sGroupId) {
-		if (!this.oElementContext) { // refresh after delete
-			this.oElementContext = Context.create(this.oModel, this,
-				this.oModel.resolve(this.sPath, this.oContext));
-			if (!this.oCache) { // make sure event IS fired
-				this._fireChange({reason : ChangeReason.Refresh});
+		var that = this;
+
+		this.oCachePromise.then(function (oCache) {
+			if (!that.oElementContext) { // refresh after delete
+				that.oElementContext = Context.create(that.oModel, that,
+					that.oModel.resolve(that.sPath, that.oContext));
+				if (!oCache) { // make sure event IS fired
+					that._fireChange({reason : ChangeReason.Refresh});
+				}
 			}
-		}
-		if (this.oCache) {
-			if (!this.oOperation || !this.oOperation.bAction) {
-				this.sRefreshGroupId = sGroupId;
-				this.oCache = this.makeCache(this.oContext);
-				this.mCacheByContext = undefined;
-				this._fireChange({reason : ChangeReason.Refresh});
+			if (oCache) {
+				if (!that.oOperation || !that.oOperation.bAction) {
+					that.sRefreshGroupId = sGroupId;
+					that.oCachePromise = that.makeCache(that.oContext);
+					that.mCacheByContext = undefined;
+					that._fireChange({reason : ChangeReason.Refresh});
+				}
 			}
-		}
-		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			oDependentBinding.refreshInternal(sGroupId);
+			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+				oDependentBinding.refreshInternal(sGroupId);
+			});
 		});
 	};
 
@@ -715,12 +760,12 @@ sap.ui.define([
 					this.oElementContext.destroy();
 					this.oElementContext = null;
 				}
-				this.oCache = undefined;
+				this.oCachePromise = _SyncPromise.resolve(undefined);
 				if (oContext) {
 					this.oElementContext = Context.create(this.oModel, this,
 						this.oModel.resolve(this.sPath, oContext));
 					if (!this.oOperation && (this.mParameters || !oContext.getBinding)) {
-						this.oCache = this.makeCache(oContext);
+						this.oCachePromise = this.makeCache(oContext);
 					}
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
@@ -757,7 +802,6 @@ sap.ui.define([
 		this.oOperation.mParameters[sParameterName] = vValue;
 		return this;
 	};
-
 
 	/**
 	 * Returns a string representation of this object including the binding path. If the binding is

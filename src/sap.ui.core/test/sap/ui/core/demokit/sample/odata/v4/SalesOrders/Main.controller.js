@@ -408,6 +408,12 @@ sap.ui.define([
 				? undefined
 				: new Sorter("GrossAmount", bDescending)
 			);
+
+			// reset contexts for Supplier Details and remove Sales Oder Line Items selection
+			oUIModel.setProperty("/bLineItemSelected", false);
+			oView.byId("SalesOrderLineItems").removeSelections();
+			oView.byId("SupplierContactData").setBindingContext(undefined);
+			oView.byId("SupplierDetailsForm").setBindingContext(undefined);
 		},
 
 		/**

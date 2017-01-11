@@ -9,8 +9,10 @@ sap.ui.define([
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/PropertyBinding",
 	"./lib/_Cache",
+	"./lib/_SyncPromise",
 	"./ODataBinding"
-], function (jQuery, BindingMode, ChangeReason, PropertyBinding, _Cache, asODataBinding) {
+], function (jQuery, BindingMode, ChangeReason, PropertyBinding, _Cache, _SyncPromise,
+		asODataBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
@@ -237,15 +239,17 @@ sap.ui.define([
 				})
 			);
 		}
-		if (this.oCache) {
-			sGroupId = sGroupId || this.getGroupId();
-			oReadPromise = this.oCache.read(sGroupId, /*sPath*/undefined, function () {
-				bDataRequested = true;
-				that.fireDataRequested();
-			}, this);
-		} else {
-			oReadPromise = this.oContext.fetchValue(this.sPath, this);
-		}
+		oReadPromise = this.oCachePromise.then(function (oCache) {
+			if (oCache) {
+				sGroupId = sGroupId || that.getGroupId();
+				return oCache.fetchValue(sGroupId, /*sPath*/undefined, function () {
+					bDataRequested = true;
+					that.fireDataRequested();
+				}, that);
+			} else {
+				return that.oContext.fetchValue(that.sPath, that);
+			}
+		});
 		aPromises.push(oReadPromise.then(function (vValue) {
 			if (vValue && typeof vValue === "object") {
 				jQuery.sap.log.error("Accessed value is not primitive", sResolvedPath, sClassName);
@@ -290,13 +294,18 @@ sap.ui.define([
 	 */
 	// @override
 	ODataPropertyBinding.prototype.destroy = function () {
-		if (this.oCache) {
-			this.oCache.deregisterChange(undefined, this);
-			this.oCache = null;
-		} else if (this.oContext) {
-			this.oContext.deregisterChange(this.sPath, this);
+		var oCache;
+
+		if (this.oCachePromise.isFulfilled()) { // cache is available
+			oCache = this.oCachePromise.getResult();
+			if (oCache) {
+				oCache.deregisterChange(undefined, this);
+			} else if (this.oContext) {
+				this.oContext.deregisterChange(this.sPath, this);
+			}
 		}
 		this.oModel.bindingDestroyed(this);
+		this.oCachePromise = undefined;
 		PropertyBinding.prototype.destroy.apply(this, arguments);
 	};
 
@@ -315,6 +324,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines which type of value list exists for this property.
+	 *
+	 * @returns {sap.ui.model.odata.v4.ValueListType}
+	 *   The value list type
+	 * @throws {Error}
+	 *   If the binding is not resolved yet, if the metadata is not loaded yet or if the property
+	 *   cannot be found in the metadata
+	 *
+	 * @public
+	 * @since 1.45.0
+	 */
+	ODataPropertyBinding.prototype.getValueListType = function () {
+		var sResolvedPath = this.getModel().resolve(this.sPath, this.oContext);
+
+		if (!sResolvedPath) {
+			throw new Error(this + " is not resolved yet");
+		}
+		return this.getModel().getMetaModel().getValueListType(sResolvedPath);
+	};
+
+	/**
 	 * Creates the cache for absolute bindings and bindings with a base context.
 	 *
 	 * The context is given as a parameter and this.oContext is unused because setContext may call
@@ -327,20 +357,27 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.makeCache = function (oContext) {
-		var sResolvedPath = this.sPath;
+		var oCache,
+			oCurrentCache,
+			sResolvedPath = this.sPath;
 
-		if (this.oCache) {
-			this.oCache.setActive(false);
+		if (this.oCachePromise && this.oCachePromise.isFulfilled()) {
+			oCurrentCache = this.oCachePromise.getResult();
+			if (oCurrentCache) {
+				oCurrentCache.setActive(false);
+			}
 		}
+
 		if (oContext && !oContext.fetchValue) {
 			sResolvedPath = this.oModel.resolve(this.sPath, oContext);
 		}
 		if (sResolvedPath[0] === "/") {
-			this.oCache = _Cache.createProperty(this.oModel.oRequestor, sResolvedPath.slice(1),
+			oCache = _Cache.createProperty(this.oModel.oRequestor, sResolvedPath.slice(1),
 				this.mQueryOptions);
 		} else {
-			this.oCache = undefined;
+			oCache = undefined;
 		}
+		this.oCachePromise = _SyncPromise.resolve(oCache);
 	};
 
 	/**
@@ -366,6 +403,33 @@ sap.ui.define([
 	};
 
 	/**
+	 * Requests information to retrieve a value list for this property.
+	 *
+	 * @returns {Promise}
+	 *   A promise which is resolved with a map of qualifier to value list mapping objects
+	 *   structured as defined by <code>com.sap.vocabularies.Common.v1.ValueListMappingType</code>;
+	 *   the map entry with key "" represents the mapping without qualifier. Each entry has an
+	 *   additional property "$model" which is the {@link sap.ui.model.odata.v4.ODataModel} instance
+	 *   to read value list data via this mapping.
+	 *
+	 *   The promise is rejected with an error if there is no value list information available. Use
+	 *   {@link #getValueListType} to determine if value list information exists.
+	 * @throws {Error}
+	 *   If the binding is not resolved yet
+	 *
+	 * @public
+	 * @since 1.45.0
+	 */
+	ODataPropertyBinding.prototype.requestValueListInfo = function () {
+		var sResolvedPath = this.getModel().resolve(this.sPath, this.oContext);
+
+		if (!sResolvedPath) {
+			throw new Error(this + " is not resolved yet");
+		}
+		return this.getModel().getMetaModel().requestValueListInfo(sResolvedPath);
+	};
+
+	/**
 	 * Sets the (base) context if the binding path is relative. Triggers (@link #makeCache) to check
 	 * if a cache needs to be created and {@link #checkUpdate} to check for the current value if the
 	 * context has changed. In case of absolute bindings nothing is done.
@@ -378,8 +442,13 @@ sap.ui.define([
 	 */
 	// @override
 	ODataPropertyBinding.prototype.setContext = function (oContext) {
+		var oCache;
+
 		if (this.oContext !== oContext) {
-			if (!this.oCache && this.oContext) {
+			if (this.oCachePromise.isFulfilled()) {
+				oCache = this.oCachePromise.getResult();
+			}
+			if (!oCache && this.oContext) {
 				this.oContext.deregisterChange(this.sPath, this);
 			}
 			this.oContext = oContext;
@@ -445,12 +514,13 @@ sap.ui.define([
 		this.oModel.checkGroupId(sGroupId);
 
 		if (this.vValue !== vValue) {
-			if (this.oCache) {
-				jQuery.sap.log.error("Cannot set value on this binding",
-					this.oModel.resolve(this.sPath, this.oContext), sClassName);
-				// do not update this.vValue!
-			} else if (this.oContext) {
-				this.oContext.updateValue(sGroupId, this.sPath, vValue)
+			this.oCachePromise.then(function (oCache) {
+				if (oCache) {
+					jQuery.sap.log.error("Cannot set value on this binding",
+						that.oModel.resolve(that.sPath, that.oContext), sClassName);
+					// do not update that.vValue!
+				} else if (that.oContext) {
+					that.oContext.updateValue(sGroupId, that.sPath, vValue)
 					["catch"](function (oError) {
 						if (!oError.canceled) {
 							that.oModel.reportError("Failed to update path "
@@ -458,11 +528,12 @@ sap.ui.define([
 								sClassName, oError);
 						}
 					});
-			} else {
-				jQuery.sap.log.warning("Cannot set value on relative binding without context",
-					this.sPath, sClassName);
-				// do not update this.vValue!
-			}
+				} else {
+					jQuery.sap.log.warning("Cannot set value on relative binding without context",
+						that.sPath, sClassName);
+					// do not update that.vValue!
+				}
+			});
 		}
 	};
 

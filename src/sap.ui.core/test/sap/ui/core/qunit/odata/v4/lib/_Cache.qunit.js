@@ -269,32 +269,35 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read and drill-down", function (assert) {
-		var fnDataRequested = {},
-			oExpectedResult = {
-				// "@odata.context"
-				value : [{}]
-			},
-			oRequestor = _Requestor.create("/~/"),
-			sResourcePath = "Employees",
-			oCache = _Cache.create(oRequestor, sResourcePath, {$select : "foo"});
+	QUnit.test("_CollectionCache#fetchValue", function (assert) {
+		var oCache = _Cache.create(),
+			oCacheMock = this.mock(oCache),
+			fnDataRequested = {},
+			oListener = {},
+			oResult;
 
-		assert.throws(function () {
-			oCache.read(0, 0, undefined, "");
-		}, new Error("Cannot drill-down for length 0"));
-		assert.throws(function () {
-			oCache.read(0, 2, undefined, "");
-		}, new Error("Cannot drill-down for length 2"));
+		oCacheMock.expects("checkActive");
+		oCacheMock.expects("drillDown")
+			.withExactArgs(sinon.match.same(oCache.aElements), "").returns("elements");
 
-		this.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath + "?$select=foo&$skip=0&$top=1", undefined,
-				undefined, undefined, sinon.match.same(fnDataRequested))
-			.returns(Promise.resolve(oExpectedResult));
-		this.mock(oCache).expects("drillDown")
-			.withExactArgs(sinon.match.same(oExpectedResult.value[0]), "foo").returns("bar");
+		// code under test
+		assert.strictEqual(oCache.fetchValue("group", "").getResult(), "elements");
 
-		return oCache.read(0, 1, undefined, "foo", fnDataRequested).then(function (oResult) {
-			assert.strictEqual(oResult, "bar");
+		oCacheMock.expects("registerChange")
+			.withExactArgs("42/foo/bar", sinon.match.same(oListener));
+		oCacheMock.expects("read")
+			.withExactArgs(42, 1, "group", sinon.match.same(fnDataRequested))
+			.returns(_SyncPromise.resolve(Promise.resolve([{}])));
+		oCacheMock.expects("checkActive");
+		oCacheMock.expects("drillDown")
+			.withExactArgs(sinon.match.same(oCache.aElements), "42/foo/bar").returns("baz");
+
+		// code under test
+		oResult = oCache.fetchValue("group", "42/foo/bar", fnDataRequested, oListener);
+
+		assert.strictEqual(oResult.isFulfilled(), false);
+		return oResult.then(function (vValue) {
+			assert.strictEqual(vValue, "baz");
 		});
 	});
 
@@ -392,8 +395,7 @@ sap.ui.require([
 
 			oFixture.reads.forEach(function (oRead) {
 				oPromise = oPromise.then(function () {
-					return oCache.read(oRead.index, oRead.length, undefined, undefined,
-							fnDataRequested)
+					return oCache.read(oRead.index, oRead.length, undefined, fnDataRequested)
 						.then(function (oResult) {
 							assert.deepEqual(oResult, createResult(oRead.index, oRead.length));
 					});
@@ -419,8 +421,7 @@ sap.ui.require([
 			});
 
 			oFixture.reads.forEach(function (oRead) {
-				aPromises.push(oCache.read(oRead.index, oRead.length, undefined, undefined,
-						fnDataRequested)
+				aPromises.push(oCache.read(oRead.index, oRead.length, undefined, fnDataRequested)
 					.then(function (oResult) {
 						assert.deepEqual(oResult, createResult(oRead.index, oRead.length));
 				}));
@@ -808,8 +809,6 @@ sap.ui.require([
 
 		oCache.aElements[42] = {};
 		oCache.aElements[43] = oSuccessor;
-		this.mock(oCache).expects("read").withExactArgs(42, 1, "groupId", "")
-			.returns(_SyncPromise.resolve(/*don't care*/));
 		this.stub(oRequestor, "request", function () {
 			// simulate another delete while this one is waiting for its promise
 			oCache.aElements.splice(0, 1);
@@ -1098,11 +1097,12 @@ sap.ui.require([
 			assert.strictEqual(oResult.value[0].name, "John Doe");
 
 			// code under test
-			oResult = oCache.read(-1, 1, "$direct", "name").getResult();
+			oResult = oCache.fetchValue("$direct", "-1/name").getResult();
 			assert.strictEqual(oResult, "John Doe");
 		});
 	});
 
+	//*********************************************************************************************
 	QUnit.test("delete transient", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees"),
@@ -1159,9 +1159,6 @@ sap.ui.require([
 		oRequestor.mBatchQueue[sGroupId][0][0].$resolve(oEntity);
 
 		return oCreatedPromise.then(function () {
-			that.mock(oCache).expects("read").withExactArgs(-1, 1, "$auto", "")
-				.returns(_SyncPromise.resolve(oEntity));
-
 			that.mock(oRequestor).expects("request")
 				.withExactArgs("DELETE", "/Employees('4711')", "$auto",
 					{"If-Match" : "anyEtag"})
@@ -1179,15 +1176,15 @@ sap.ui.require([
 	//if (vDeleteProperty === -1) { // TODO might be string, might be result of failed indexOf
 
 	//**********************************************W***********************************************
-	QUnit.test("read single employee", function (assert) {
+	QUnit.test("_SingleCache: fetchValue", function (assert) {
 		var oCache,
 			oCacheMock,
-			fnDataRequested = sinon.spy(),
+			fnDataRequested1 = {},
+			fnDataRequested2 = {},
 			oExpectedResult = {},
-			aPromises = [],
-			mQueryParams = {
-				"sap-client" : "300"
-			},
+			oListener1 = {},
+			oListener2 = {},
+			mQueryParams = {},
 			oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees('1')";
 
@@ -1197,9 +1194,11 @@ sap.ui.require([
 		oCache = _Cache.createSingle(oRequestor, sResourcePath, mQueryParams);
 		oCacheMock = this.mock(oCache);
 
+		oCacheMock.expects("registerChange").withExactArgs(undefined, sinon.match.same(oListener1));
+		oCacheMock.expects("registerChange").withExactArgs("foo", sinon.match.same(oListener2));
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("GET", sResourcePath + "?~", "group", undefined, undefined,
-				fnDataRequested)
+				sinon.match.same(fnDataRequested1))
 			.returns(Promise.resolve(oExpectedResult).then(function () {
 					oCacheMock.expects("checkActive").twice();
 					oCacheMock.expects("drillDown")
@@ -1211,13 +1210,17 @@ sap.ui.require([
 					return oExpectedResult;
 				}));
 
-		aPromises.push(oCache.read("group", undefined, fnDataRequested).then(function (oResult) {
-			assert.strictEqual(oResult, oExpectedResult);
-		}));
-		aPromises.push(oCache.read("group", "foo", fnDataRequested).then(function (oResult) {
-			assert.strictEqual(oResult, "bar");
-		}));
-		return Promise.all(aPromises);
+		// code under test
+		return Promise.all([
+			oCache.fetchValue("group", undefined, fnDataRequested1, oListener1)
+				.then(function (oResult) {
+					assert.strictEqual(oResult, oExpectedResult);
+				}),
+			oCache.fetchValue("group", "foo", fnDataRequested2, oListener2)
+				.then(function (oResult) {
+					assert.strictEqual(oResult, "bar");
+				})
+		]);
 	});
 
 	//*********************************************************************************************
@@ -1295,19 +1298,19 @@ sap.ui.require([
 
 		// fill the cache and attach multiple listeners for the same path, one of them twice
 		return Promise.all([
-			oCache.read(0, 1, "groupId", "SO_2_SOITEM/0/Note", undefined, oNoteListener1),
-			oCache.read(0, 1, "groupId", "SO_2_SOITEM/0/Note", undefined, oNoteListener1),
-			oCache.read(0, 1, "groupId", "SO_2_SOITEM/0/Note", undefined, oNoteListener2),
-			oCache.read(0, 1, "groupId", "SO_2_SOITEM/0/Note", undefined, oNoteListener3),
-			oCache.read(0, 1, "groupId", "SO_2_SOITEM/0/SideEffect1", undefined,
+			oCache.fetchValue("groupId", "0/SO_2_SOITEM/0/Note", undefined, oNoteListener1),
+			oCache.fetchValue("groupId", "0/SO_2_SOITEM/0/Note", undefined, oNoteListener1),
+			oCache.fetchValue("groupId", "0/SO_2_SOITEM/0/Note", undefined, oNoteListener2),
+			oCache.fetchValue("groupId", "0/SO_2_SOITEM/0/Note", undefined, oNoteListener3),
+			oCache.fetchValue("groupId", "0/SO_2_SOITEM/0/SideEffect1", undefined,
 				oSideEffect1Listener),
-			oCache.read(0, 1, "groupId", "SO_2_SOITEM/0/SideEffect2/property", undefined,
+			oCache.fetchValue("groupId", "0/SO_2_SOITEM/0/SideEffect2/property", undefined,
 				oSideEffect2Listener1),
-			oCache.read(0, 1, "groupId", "SO_2_SOITEM/0/SideEffect2/inner/property", undefined,
+			oCache.fetchValue("groupId", "0/SO_2_SOITEM/0/SideEffect2/inner/property", undefined,
 				oSideEffect2Listener2),
-			oCache.read(0, 1, "groupId", "SO_2_SOITEM/0/SideEffect3/property", undefined,
+			oCache.fetchValue("groupId", "0/SO_2_SOITEM/0/SideEffect3/property", undefined,
 				oSideEffect3Listener),
-			oCache.read(0, 1, "groupId", "SO_2_SOITEM/0/SideEffect4/inner/property", undefined,
+			oCache.fetchValue("groupId", "0/SO_2_SOITEM/0/SideEffect4/inner/property", undefined,
 				oSideEffect4Listener)
 		]).then(function () {
 			var oUpdatePromise;
@@ -1334,7 +1337,7 @@ sap.ui.require([
 					sinon.assert.calledWithExactly(oSideEffect3Listener.onChange, undefined);
 					sinon.assert.calledWithExactly(oSideEffect4Listener.onChange, undefined);
 
-					return oCache.read(0, 1, undefined, "SO_2_SOITEM/0")
+					return oCache.fetchValue(undefined, "0/SO_2_SOITEM/0")
 						.then(function (oResult0) {
 							assert.deepEqual(oResult0, {
 								"@odata.etag" : oResult["@odata.etag"],
@@ -1360,7 +1363,7 @@ sap.ui.require([
 			sinon.assert.notCalled(oNoteListener2.onChange);
 			sinon.assert.calledWithExactly(oNoteListener3.onChange, "foo");
 
-			oCache.read(0, 1, undefined, "SO_2_SOITEM/0").then(function (oResult0) {
+			oCache.fetchValue(undefined, "0/SO_2_SOITEM/0").then(function (oResult0) {
 				assert.strictEqual(oResult0.Note, "foo",
 					"Note has been updated with user input");
 
@@ -1400,7 +1403,7 @@ sap.ui.require([
 					undefined, undefined)
 				.returns(oPromise);
 			// fill the cache and register a listener
-			return oCache.read(0, 1, "groupId", "SO_2_SOITEM/0/Note", undefined, oNoteListener)
+			return oCache.fetchValue("groupId", "0/SO_2_SOITEM/0/Note", undefined, oNoteListener)
 				.then(function () {
 					var oUpdatePromise,
 						oError = new Error(),
@@ -1419,7 +1422,7 @@ sap.ui.require([
 							if (bCancel) {
 								sinon.assert.calledWithExactly(oNoteListener.onChange, "Some Note");
 							}
-							return oCache.read(0, 1, undefined, "SO_2_SOITEM/0")
+							return oCache.fetchValue(undefined, "0/SO_2_SOITEM/0")
 								.then(function (oResult0) {
 									if (bCancel) {
 										assert.strictEqual(oResult0.Note, "Some Note",
@@ -1540,7 +1543,7 @@ sap.ui.require([
 				undefined, undefined)
 			.returns(oPromise);
 		// fill the cache
-		return oCache.read(0, 1, "groupId", "SO_2_SOITEM/10/Note").then(function () {
+		return oCache.fetchValue("groupId", "0/SO_2_SOITEM/10/Note").then(function () {
 			var aUpdatePromises;
 
 			assert.strictEqual(oCache.hasPendingChangesForPath(""), false);
@@ -1595,7 +1598,7 @@ sap.ui.require([
 				undefined, undefined)
 			.returns(Promise.resolve(oReadResult));
 		this.mock(oCache).expects("drillDown")
-			.withExactArgs(sinon.match.same(oReadResult.value[0]), "invalid/path")
+			.withExactArgs(sinon.match.same(oCache.aElements), "0/invalid/path")
 			.returns(undefined);
 
 		return oCache.update("groupId", "foo", "bar", sEditUrl, "0/invalid/path").then(function () {
@@ -1663,12 +1666,12 @@ sap.ui.require([
 
 		// code under test
 		assert.throws(function () {
-			oCache.read();
-		}, new Error("Read before a POST request"));
+			oCache.fetchValue();
+		}, new Error("Cannot fetch a value before the POST request"));
 		oPromise = oCache.post(sGroupId, oPostData, "etag").then(function (oPostResult1) {
 			assert.strictEqual(oPostResult1, oResult1);
 			return Promise.all([
-				oCache.read("foo", "", fnDataRequested).then(function (oReadResult) {
+				oCache.fetchValue("foo", "", fnDataRequested).then(function (oReadResult) {
 					assert.strictEqual(oReadResult, oResult1);
 					assert.strictEqual(fnDataRequested.callCount, 0);
 				}),
@@ -1735,7 +1738,7 @@ sap.ui.require([
 				sResourcePath = "TEAMS('TEAM_01')",
 				oCache = _Cache.createSingle(oRequestor, sResourcePath);
 
-			return oCache.read().then(function (oResult) {
+			return oCache.fetchValue().then(function (oResult) {
 				assert.deepEqual(oResult, oExpectedResult);
 			});
 		});
@@ -1817,13 +1820,13 @@ sap.ui.require([
 
 			// fill the cache and attach multiple listeners for the same path, one of them twice
 			aPromises = [
-				oCache.read("groupId", o.sReadPath, undefined, oNameListener1),
-				oCache.read("groupId", o.sReadPath, undefined, oNameListener1),
-				oCache.read("groupId", o.sReadPath, undefined, oNameListener2),
-				oCache.read("groupId", o.sReadPath, undefined, oNameListener3)
+				oCache.fetchValue("groupId", o.sReadPath, undefined, oNameListener1),
+				oCache.fetchValue("groupId", o.sReadPath, undefined, oNameListener1),
+				oCache.fetchValue("groupId", o.sReadPath, undefined, oNameListener2),
+				oCache.fetchValue("groupId", o.sReadPath, undefined, oNameListener3)
 			];
 			if (o.sSideEffectPath) {
-				aPromises.push(oCache.read("groupId", o.sSideEffectPath, undefined,
+				aPromises.push(oCache.fetchValue("groupId", o.sSideEffectPath, undefined,
 					oSideEffectListener));
 			}
 			return Promise.all(aPromises).then(function () {
@@ -1845,7 +1848,7 @@ sap.ui.require([
 							sinon.assert.calledWithExactly(oSideEffectListener.onChange, "after");
 						}
 
-						return oCache.read(undefined, o.sUpdatePath).then(function (vResult0) {
+						return oCache.fetchValue(undefined, o.sUpdatePath).then(function (vResult0) {
 							assert.strictEqual(vResult0["@odata.etag"], oResult["@odata.etag"],
 								"@odata.etag has been updated");
 							assert.strictEqual(vResult0.Name, oResult.Name,
@@ -1864,7 +1867,7 @@ sap.ui.require([
 				sinon.assert.calledWithExactly(oNameListener2.onChange, "foo");
 				sinon.assert.notCalled(oNameListener3.onChange);
 
-				oCache.read(undefined, o.sUpdatePath).then(function (vResult0) {
+				oCache.fetchValue(undefined, o.sUpdatePath).then(function (vResult0) {
 					assert.strictEqual(vResult0.Name, "foo",
 						"Name has been updated with user input");
 
@@ -1910,7 +1913,7 @@ sap.ui.require([
 			.withExactArgs("GET", sResourcePath, "groupId", undefined, undefined, undefined)
 			.returns(Promise.resolve(oReadResult));
 
-		return oCache.read("groupId", "SO_2_BP/Address/City").then(function () {
+		return oCache.fetchValue("groupId", "SO_2_BP/Address/City").then(function () {
 			oHelperMock.expects("updateCache").withExactArgs(
 					sinon.match.same(oCache.mChangeListeners), "SO_2_BP",
 					sinon.match.same(oReadResult.SO_2_BP), oPatchData);
@@ -1973,7 +1976,7 @@ sap.ui.require([
 					.returns(Promise.resolve(JSON.parse(JSON.stringify(o.oGetResult))));
 
 				// fill the cache and attach a listener
-				return oCache.read("groupId", o.sReadPath, undefined, oNameListener)
+				return oCache.fetchValue("groupId", o.sReadPath, undefined, oNameListener)
 					.then(function () {
 						var oUpdatePromise,
 							oExpectation = oRequestorMock.expects("request")
@@ -1995,7 +1998,7 @@ sap.ui.require([
 									sinon.assert.calledWithExactly(oNameListener.onChange,
 										"MyName");
 								}
-								oCache.read(undefined, o.sUpdatePath).then(function (vResult0) {
+								oCache.fetchValue(undefined, o.sUpdatePath).then(function (vResult0) {
 									assert.strictEqual(vResult0.Name, sName, "Name " + sComment);
 								});
 							});
@@ -2038,7 +2041,7 @@ sap.ui.require([
 			.withExactArgs("GET", sResourcePath, "groupId", undefined, undefined, undefined)
 			.returns(oPromise);
 		// fill the cache
-		return oCache.read("groupId").then(function () {
+		return oCache.fetchValue("groupId").then(function () {
 			var oUpdatePromise;
 
 			oRequestorMock.expects("request")
@@ -2100,7 +2103,7 @@ sap.ui.require([
 			.withExactArgs("GET", sResourcePath, "groupId", undefined, undefined, undefined)
 			.returns(oPromise);
 		// fill the cache and register a listener
-		return oCache.read("groupId", "Note").then(function () {
+		return oCache.fetchValue("groupId", "Note").then(function () {
 			var aUpdatePromises;
 
 			assert.strictEqual(oCache.hasPendingChangesForPath(""), false);
@@ -2182,7 +2185,7 @@ sap.ui.require([
 					undefined, undefined)
 				.returns(Promise.resolve(oData));
 
-			return oCache.read("groupId").then(function () {
+			return oCache.fetchValue("groupId").then(function () {
 				var fnCallback = sinon.spy(),
 					oError = new Error(""),
 					oPromise;
@@ -2239,7 +2242,7 @@ sap.ui.require([
 				undefined)
 			.returns(Promise.resolve(oData));
 
-		return oCache.read("groupId").then(function () {
+		return oCache.fetchValue("groupId").then(function () {
 			var fnCallback = sinon.spy();
 
 			oRequestorMock.expects("request")
@@ -2273,7 +2276,7 @@ sap.ui.require([
 			.withExactArgs("GET", "Employees('42')", "groupId", undefined, undefined, undefined)
 			.returns(Promise.resolve(oData));
 
-		return oCache.read("groupId").then(function () {
+		return oCache.fetchValue("groupId").then(function () {
 			var fnCallback = sinon.spy();
 
 			oRequestorMock.expects("request")
@@ -2287,7 +2290,7 @@ sap.ui.require([
 					sinon.assert.calledOnce(fnCallback);
 					sinon.assert.calledWithExactly(fnCallback);
 
-					oCache.read().then(function () {
+					oCache.fetchValue().then(function () {
 						assert.ok(false);
 					}, function (oError) {
 						assert.strictEqual(oError.message, "Cannot read a deleted entity");
@@ -2310,7 +2313,7 @@ sap.ui.require([
 				"@odata.etag" : "successor"
 			}];
 
-		this.mock(oCache).expects("read").withExactArgs("groupId", "Equipments")
+		this.mock(oCache).expects("fetchValue").withExactArgs("groupId", "Equipments")
 			.returns(_SyncPromise.resolve(aEquipments));
 		this.stub(oRequestor, "request", function () {
 			// simulate another delete while this one is waiting for its promise
@@ -2330,7 +2333,7 @@ sap.ui.require([
 	QUnit.test("SingleCache#_delete: Must not delete twice", function (assert) {
 		var oCache = _Cache.createSingle(null, "Employees('42')", {$expand : {Equipments: true}});
 
-		this.mock(oCache).expects("read").withExactArgs("groupId", "Equipments")
+		this.mock(oCache).expects("fetchValue").withExactArgs("groupId", "Equipments")
 			.returns(_SyncPromise.resolve([{"$ui5.deleting" : true}]));
 
 		// code under test
@@ -2342,18 +2345,15 @@ sap.ui.require([
 	});
 
 	//**********************************************W***********************************************
-	QUnit.test("PropertyCache: read", function (assert) {
+	QUnit.test("PropertyCache: fetchValue", function (assert) {
 		var oCache,
 			oCacheMock,
-			fnDataRequested = {},
+			fnDataRequested1 = {},
+			fnDataRequested2 = {},
 			oExpectedResult = {},
 			oListener1 = {},
 			oListener2 = {},
-			mQueryParams = {
-				"sap-client" : "300"
-			},
-			oReadPromise1,
-			oReadPromise2,
+			mQueryParams = {},
 			oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees('1')";
 
@@ -2369,22 +2369,24 @@ sap.ui.require([
 
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("GET", sResourcePath + "?~", "group", undefined, undefined,
-				sinon.match(fnDataRequested))
+				sinon.match.same(fnDataRequested1))
 			.returns(Promise.resolve().then(function () {
 					oCacheMock.expects("checkActive").exactly(3);
 					return {value : oExpectedResult};
 				}));
 
-		oReadPromise1 = oCache.read("group", fnDataRequested, oListener1).then(function (oResult) {
-			assert.strictEqual(oResult, oExpectedResult);
+		return Promise.all([
+			oCache.fetchValue("group", "", fnDataRequested1, oListener1)
+				.then(function (oResult) {
+					assert.strictEqual(oResult, oExpectedResult);
 
-			assert.strictEqual(oCache.read("group").getResult(), oExpectedResult);
-		});
-		assert.strictEqual(oReadPromise1.isFulfilled(), false);
-		oReadPromise2 = oCache.read("group", fnDataRequested, oListener2).then(function (oResult) {
-			assert.strictEqual(oResult, oExpectedResult);
-		});
-		return Promise.all([oReadPromise1, oReadPromise2]);
+					assert.strictEqual(oCache.fetchValue("group", "").getResult(), oExpectedResult);
+				}),
+			oCache.fetchValue("group", "", fnDataRequested2, oListener2)
+				.then(function (oResult) {
+					assert.strictEqual(oResult, oExpectedResult);
+				})
+		]);
 	});
 });
 //TODO: resetCache if error in update?

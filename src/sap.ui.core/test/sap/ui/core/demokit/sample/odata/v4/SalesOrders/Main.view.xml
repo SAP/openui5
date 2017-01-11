@@ -3,6 +3,7 @@
 	controllerName="sap.ui.core.sample.odata.v4.SalesOrders.Main"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
+	xmlns:demo="sap.ui.core.sample.odata.v4.SalesOrders"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc">
 	<VBox>
@@ -79,6 +80,7 @@
 								</Input>
 								<Label labelFor="NewNote" text="Note"/>
 								<Input id="NewNote" value="{Note}"/>
+								<demo:ValueHelp id="NewCurrencyCode" value="{CurrencyCode}"/>
 							</form:content>
 						</form:SimpleForm>
 					</content>
@@ -142,30 +144,30 @@
 				</Toolbar>
 			</headerToolbar>
 			<columns>
-				<Column>
+				<Column width="8em">
 					<Text text="Sales Order ID"/>
 				</Column>
-				<Column>
+				<Column width="8em">
 					<Text text="Buyer Name"/>
 				</Column>
-				<Column>
+				<Column hAlign="Right" width="8em">
 					<Button enabled="{ui>/bRealOData}" id ="sortByGrossAmount"
 						icon="{ui>/sSortGrossAmountIcon}" iconFirst="false"
 						press="onSortByGrossAmount" text="Gross Amount" />
 				</Column>
-				<Column>
-					<Text text="Currency"/>
+				<Column width="3em">
+					<Text text="Curr." tooltip="Currency"/>
 				</Column>
-				<Column>
+				<Column demandPopin="true" minScreenWidth="Large">
 					<Text text="Supplier Company Name"/>
 				</Column>
-				<Column>
+				<Column demandPopin="true" minScreenWidth="Medium">
 					<Text text="Note"/>
 				</Column>
-				<Column>
+				<Column demandPopin="true" minScreenWidth="Large">
 					<Text text="Life Cycle Status"/>
 				</Column>
-				<Column>
+				<Column minScreenWidth="Large">
 					<Text text="Changed At"/>
 				</Column>
 			</columns>
@@ -372,9 +374,15 @@
 						<Text text="Product"/>
 					</Column>
 					<Column>
-						<Text text="Supplier"/>
+						<Text text="Category"/>
 					</Column>
 					<Column>
+						<Text text="TypeCode"/>
+					</Column>
+					<Column>
+						<Text text="Supplier"/>
+					</Column>
+					<Column hAlign="Right">
 						<Text text="Gross Amount"/>
 					</Column>
 					<Column>
@@ -397,6 +405,14 @@
 						</cells>
 						<cells>
 							<Text text="{Product/ProductName}"/>
+						</cells>
+						<cells>
+							<demo:ValueHelp value="{SOITEM_2_PRODUCT/Category}"
+								valueHelpOnly="true"/>
+						</cells>
+						<cells>
+							<demo:ValueHelp value="{SOITEM_2_PRODUCT/TypeCode}"
+								valueHelpOnly="true"/>
 						</cells>
 						<cells>
 							<Text text="{SOITEM_2_PRODUCT/SupplierName}"/>
