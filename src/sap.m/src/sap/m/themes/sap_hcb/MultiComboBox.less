@@ -1,134 +1,26 @@
-/* ===================================================== */
-/* CSS for control sap.m/MultiComboBox.control HCB theme */
-/* ===================================================== */
+/* ==================================== */
+/* CSS for control sap.m/MultiComboBox  */
+/* High Contrast Black theme            */
+/* ==================================== */
 
 /* ------------------------------ */
 /* BorderDiv                      */
 /* ------------------------------ */
 
-.sapMFocus.sapMMultiComboBox:not(.sapMInputBaseReadonly) > .sapMMultiComboBoxBorder::after {
-	border: 2px dotted @sapHCStandardFG;
-	content: "";
-	position: absolute;
+.sapMMultiComboBox.sapMMultiComboBoxFocus .sapMMultiComboBoxInputInner {
+	background-color: transparent;
+
+	&:focus {
+		outline: none;
+	}
+}
+
+.sapMMultiComboBoxFocus .sapMMultiComboBoxBorder::after {
+	border: 2px dotted @sapUiContentFocusColor;
 	top: 0;
 	right: 0;
 	bottom: 0;
 	left: 0;
-	pointer-events: none;
-}
-
-.sapMFocus.sapMMultiComboBox .sapMInputBaseInner:focus {
-	outline: 0 none;
-}
-
-.sapMMultiComboBoxBorder {
-	background: @sapHCStandardBG;
-	white-space: nowrap;
-	position: relative;
-	overflow: hidden;
-	overflow-x: auto;
-	overflow-y: hidden;
-	height: 100%;
-}
-
-.sapMMultiComboBox .sapMTokenizerScrollContainer {
-	padding-left: 0.6875rem;
-}
-
-/* on the desktop we hide the overflow */
-html.sap-desktop .sapMMultiComboBoxBorder {
-	overflow: hidden;
-}
-
-.sapUiSizeCompact .sapMMultiComboBox .sapMTokenizerScrollContainer {
-	padding-left: 0.1875rem;
-}
-
-.sapMInputBaseReadonly > .sapMMultiComboBoxBorder {
-	background-color: @sapHCReducedBG;
-}
-
-/* ------------------------------ */
-/* InputDiv and ShadowDiv         */
-/* ------------------------------ */
-.sapMMultiComboBoxInputContainer {
-	overflow:hidden;
-	position: absolute;
-	display: inline;
-	right: 0;
-	height: 100%;
-}
-
-.sapUiSizeCompact .sapMMultiComboBoxInputContainer > input,
-.sapUiSizeCompact .sapMMultiComboBoxShadowDiv {
-	padding-left: 0.1875rem; //0.25 - 0.0625 margin of last token
-	padding-right: 0.25rem;
-	min-width: 1.5rem;
-	height: 100%;
-}
-
-.sapMMultiComboBoxInputContainer > input,
-.sapMMultiComboBoxShadowDiv {
-	padding-left: 0.125rem; //0.375 - 0.25 margin of last token
-	padding-right: 0.375rem;
-	min-width: 2.25rem;
-	height: 2.375rem;
-}
-
-.sapMMultiComboBoxShadowDiv {
-	display: inline;
-	visibility: collapse;
-	position: absolute;
-	top: 0;
-	left: 0;
-}
-
-/* Keep placeholder invisible, when at least one token is chosen */
-
-/* Webkit */
-.sapMMultiComboBoxHasToken .sapMMultiComboBoxInputInner::-webkit-input-placeholder {
-	color: transparent;
-}
-
-/* Firefox 19+ */
-.sapMMultiComboBoxHasToken .sapMMultiComboBoxInputInner::-moz-placeholder {
-	color: transparent;
-}
-
-/* IE */
-.sapMMultiComboBoxHasToken .sapMMultiComboBoxInputInner:-ms-input-placeholder {
-	color: transparent;
-}
-
-/* Keep placeholder invisible, when at least one token is chosen. IE solution */
-.sapMMultiComboBoxHasToken > .sapMInputBasePlaceholder {
-	color: transparent;
-	max-width: 0;
-}
-
-// If a non-native placeholder is used, make sure that it is in front of children elements.
-.sapMMultiComboBox > .sapMInputBasePlaceholder {
-	z-index: 1;
-}
-
-// If a non-native placeholder is used, make sure that arrow button is in front of placeholder.
-.sapMMultiComboBox .sapMComboBoxBaseArrow {
-	z-index: 2;
-}
-
-/* ------------------------------ */
-/* InputInner                     */
-/* ------------------------------ */
-.sapMMultiComboBoxInputContainer > input.sapMComboBoxBaseInputInner {
-	height: 2.375rem;
-	// Padding must be removed in this case, because MCB calculates the size of the input field on its own.
-	padding-right: 0;
-}
-
-.sapUiSizeCompact .sapMMultiComboBoxInputContainer > input.sapMComboBoxBaseInputInner {
-	height: 1.625rem;
-	// Padding must be removed in this case, because MCB calculates the size of the input field on its own.
-	padding-right: 0;
 }
 
 /* ------------------------------ */
@@ -136,29 +28,12 @@ html.sap-desktop .sapMMultiComboBoxBorder {
 /* ------------------------------ */
 
 .sapMComboBoxTextFieldError.sapMMultiComboBox .sapMMultiComboBoxBorder {
-	background-color: @sapHCHighlightBG;
+	background-color: @sapUiFieldInvalidBackground;
 }
 
 /* focus to allow go down via keyboard navigation into list */
 html.sap-desktop .sapMMultiComboBoxList .sapMComboBoxBaseItem:focus {
 	position: relative;
-}
-
-.sapMMultiComboBoxItem .sapMCb {
-	height: 2.5rem;
-	line-height: 2.5rem;
-}
-
-li.sapMMultiComboBoxItem {
-	height: 2.5rem;
-}
-
-.sapMMultiComboBoxPicker .sapMSLITitleOnly {
-	font-size: 0.875rem;
-}
-
-html.sap-desktop li.sapMMultiComboBoxItemRangeSelection {
-	background-color : @sapHCHighlightAltBG;
 }
 
 /* HCB Additional Styles */
@@ -168,7 +43,7 @@ html.sap-desktop li.sapMMultiComboBoxItemRangeSelection {
 .sapMComboBoxBaseDisabled.sapMInputBaseError .sapMMultiComboBoxBorder,
 .sapMComboBoxBaseDisabled.sapMInputBaseWarning .sapMMultiComboBoxBorder,
 .sapMComboBoxBaseDisabled.sapMInputBaseSuccess .sapMMultiComboBoxBorder {
-	background-color: @sapHCReducedBG;
-	border-color: @sapHCReducedAltFG;
-	color: @sapHCReducedFG;
+	background-color: @sapUiFieldDisabledBackground;
+	border-color: @sapUiFieldDisabledBorderColor;
+	color: @sapUiContentDisabledTextColor;
 }
