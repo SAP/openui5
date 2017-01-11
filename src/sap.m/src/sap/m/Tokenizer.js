@@ -1070,6 +1070,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			type: Tokenizer.TokenUpdateType.Removed
 		});
 
+		var oParent = this.getParent();
+
+		if (oParent && oParent instanceof sap.m.MultiInput && !oParent._bUseDialog) {
+			// not set focus to MultiInput in phone mode
+			oParent.$('inner').focus();
+		}
+
 		this._doSelect();
 
 		return this;
