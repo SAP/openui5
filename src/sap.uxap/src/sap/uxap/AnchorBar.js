@@ -140,7 +140,7 @@ sap.ui.define([
 			var oSelectedSectionId = oButton.data("sectionId");
 
 			if (oSelectedSectionId) {
-				this._oSelect.setSelectedKey(oButton.getId());
+				this._oSelect.setSelectedKey(oSelectedSectionId);
 			}
 
 			if (this._bHasButtonsBar) {
@@ -262,7 +262,7 @@ sap.ui.define([
 		//create the phone equivalent item if the button has some visible text (UX rule)
 		if (oButton.getText().trim() != "" && (!bIsSecondLevel || oButton.data("bTitleVisible") === true)) {
 			var oPhoneItem = new Item({
-				key: oButton.getId(),
+				key: oButton.data("sectionId"),
 				text: oButton.getText(),
 				customData: [
 					new CustomData({
@@ -438,15 +438,15 @@ sap.ui.define([
 	 * @private
 	 */
 	AnchorBar.prototype._onSelectChange = function (oEvent) {
-		var oSelectedItem = oEvent.getParameter("selectedItem"), oOriginalControl;
+		var oSelectedItem = oEvent.getParameter("selectedItem"), oSelectedSection;
 
-		oOriginalControl = sap.ui.getCore().byId(oSelectedItem.getKey());
+		oSelectedSection = sap.ui.getCore().byId(oSelectedItem.getKey());
 
-		if (oOriginalControl) {
+		if (oSelectedSection) {
 
-			this._requestScrollToSection(oOriginalControl.data("sectionId"));
+			this._requestScrollToSection(oSelectedSection.getId());
 		} else {
-			jQuery.sap.log.error("AnchorBar :: cannot find corresponding button", oSelectedItem.getKey());
+			jQuery.sap.log.error("AnchorBar :: cannot find corresponding section", oSelectedItem.getKey());
 		}
 	};
 
