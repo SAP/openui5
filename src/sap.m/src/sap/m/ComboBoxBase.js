@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolbar', './Button', './Bar', './Title', './SelectList', './Popover', 'sap/ui/core/IconPool', './library'],
-	function(jQuery, Dialog, ComboBoxTextField, Toolbar, Button, Bar, Title, SelectList, Popover, IconPool, library) {
+sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolbar', './Button', './Bar', './Text', './Title', './SelectList', './Popover', 'sap/ui/core/IconPool', 'sap/ui/core/ValueStateSupport', './library'],
+	function(jQuery, Dialog, ComboBoxTextField, Toolbar, Button, Bar, Text, Title, SelectList, Popover, IconPool, ValueStateSupport, library) {
 		"use strict";
 
 		/**
@@ -245,6 +245,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 			// indicates if the picker is opened by the keyboard or by a click/tap on the downward-facing arrow button
 			this.bOpenedByKeyboardOrButton = false;
 
+			this._oPickerValueStateText = null;
 			this.bProcessingLoadItemsEvent = false;
 			this.iLoadItemsEventInitialProcessingTimeoutID = -1;
 			this.aMessageQueue = [];
@@ -254,12 +255,25 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 			this._bDoTypeAhead = true;
 		};
 
+		ComboBoxBase.prototype.onBeforeRendering = function() {
+			var sNoneState = this.getValueState() === sap.ui.core.ValueState.None;
+			ComboBoxTextField.prototype.onBeforeRendering.apply(this, arguments);
+
+			if (!this.isPickerDialog() && sNoneState) {
+				this._showValueStateText(false);
+			}
+		};
+
 		ComboBoxBase.prototype.exit = function() {
 			ComboBoxTextField.prototype.exit.apply(this, arguments);
 
 			if (this.getList()) {
 				this.getList().destroy();
 				this._oList = null;
+			}
+
+			if (this._oPickerValueStateText) {
+				this._oPickerValueStateText.destroy();
 			}
 
 			clearTimeout(this.iLoadItemsEventInitialProcessingTimeoutID);
@@ -515,6 +529,135 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 			return this._sPickerType;
 		};
 
+		ComboBoxBase.prototype.setValueState = function(sValueState) {
+			var sAdditionalText,
+				sValueStateText = this.getValueStateText(),
+				bShow = this.getShowValueStateMessage();
+
+			this._sOldValueState = this.getValueState();
+			ComboBoxTextField.prototype.setValueState.apply(this, arguments);
+			sAdditionalText = ValueStateSupport.getAdditionalText(this);
+
+			if (sValueStateText) {
+				this._showValueStateText(bShow);
+				this._setValueStateText(sValueStateText);
+			} else if (sValueState === sap.ui.core.ValueState.None) {
+				this._showValueStateText(false);
+			} else {
+				this._showValueStateText(bShow);
+				this._setValueStateText(sAdditionalText);
+			}
+
+			this._alignValueStateStyles();
+			return this;
+		};
+
+		ComboBoxBase.prototype.setValueStateText = function(sText) {
+			ComboBoxTextField.prototype.setValueStateText.apply(this, arguments);
+			this._setValueStateText(this.getValueStateText());
+			return this;
+		};
+
+		ComboBoxBase.prototype.setShowValueStateMessage = function(bShow) {
+			ComboBoxTextField.prototype.setShowValueStateMessage.apply(this, arguments);
+			this._showValueStateText(this.getShowValueStateMessage());
+			return this;
+		};
+
+		ComboBoxBase.prototype._showValueStateText = function(bShow) {
+			var oCustomHeader;
+
+			if (this.isPickerDialog()) {
+
+				if (this._oPickerValueStateText) {
+					this._oPickerValueStateText.setVisible(bShow);
+				}
+			} else {
+				oCustomHeader = this._getPickerCustomHeader();
+
+				if (oCustomHeader) {
+					oCustomHeader.setVisible(bShow);
+				}
+			}
+		};
+
+		ComboBoxBase.prototype._setValueStateText = function(sText) {
+			var oHeader;
+
+			if (this.isPickerDialog()) {
+				this._oPickerValueStateText = this.getPickerValueStateText();
+				this._oPickerValueStateText.setText(sText);
+			} else {
+				oHeader = this._getPickerCustomHeader();
+				if (oHeader) {
+					oHeader.getContentLeft()[0].setText(sText);
+				}
+			}
+		};
+
+		ComboBoxBase.prototype._getPickerCustomHeader = function() {
+			var oInternalTitle, oInternalHeader,
+				oPicker = this.getPicker(),
+				sPickerTitleClass = this.getRenderer().CSS_CLASS_COMBOBOXBASE + "PickerTitle";
+
+			if (!oPicker) {
+				return;
+			}
+
+			if (oPicker.getCustomHeader()) {
+				return oPicker.getCustomHeader();
+			}
+
+			oInternalTitle = new Title({ textAlign: "Left" }).addStyleClass(sPickerTitleClass);
+			oInternalHeader = new Bar({ visible: false, contentLeft: oInternalTitle });
+
+			oPicker.setCustomHeader(oInternalHeader);
+
+			return oInternalHeader;
+		};
+
+		ComboBoxBase.prototype._alignValueStateStyles = function() {
+			var sOldValueState = this._sOldValueState,
+				PICKER_CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Picker",
+				sPickerWithState = PICKER_CSS_CLASS + "ValueState",
+				sOldCssClass = PICKER_CSS_CLASS + sOldValueState + "State",
+				sCssClass = PICKER_CSS_CLASS + this.getValueState() + "State",
+				oCustomHeader;
+
+			if (this.isPickerDialog() && this._oPickerValueStateText) {
+				this._oPickerValueStateText.addStyleClass(sPickerWithState);
+				this._oPickerValueStateText.removeStyleClass(sOldCssClass);
+				this._oPickerValueStateText.addStyleClass(sCssClass);
+			} else {
+
+				oCustomHeader = this._getPickerCustomHeader();
+
+				if (oCustomHeader) {
+					oCustomHeader.addStyleClass(sPickerWithState);
+					oCustomHeader.removeStyleClass(sOldCssClass);
+					oCustomHeader.addStyleClass(sCssClass);
+				}
+			}
+		};
+
+		ComboBoxBase.prototype.shouldValueStateMessageBeOpened = function() {
+			var bShouldValueStateMessageBeOpened = ComboBoxTextField.prototype.shouldValueStateMessageBeOpened.apply(this, arguments);
+			return (bShouldValueStateMessageBeOpened && !this.isOpen());
+		};
+
+		ComboBoxBase.prototype.onPropertyChange = function(oControlEvent, oData) {
+			var sNewValue = oControlEvent.getParameter("newValue"),
+				sProperty = oControlEvent.getParameter("name"),
+				sMutator = "set" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1),
+				oControl = (oData && oData.srcControl) || this.getPickerTextField();
+
+			// propagate some property changes to the picker text field
+			if (/\bvalue\b|\benabled\b|\bname\b|\bplaceholder\b|\beditable\b|\btextAlign\b|\btextDirection\b|\bvalueState\b/.test(sProperty) &&
+				oControl && (typeof oControl[sMutator] === "function")) {
+				oControl[sMutator](sNewValue);
+			}
+		};
+
 		/*
 		 * Determines if the Picker is a Dialog
 		 *
@@ -524,6 +667,24 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		 */
 		ComboBoxBase.prototype.isPickerDialog = function() {
 			return this.getPickerType() === "Dialog";
+		};
+
+		/*
+		 * Gets the picker value state message object.
+		 *
+		 * @returns {sap.m.Text}
+		 * @protected
+		 * @since 1.46
+		 */
+		ComboBoxBase.prototype.getPickerValueStateText = function() {
+			var oPicker = this.getPicker();
+
+			if (!this._oPickerValueStateText) {
+				this._oPickerValueStateText = new Text({ width: "100%" });
+				oPicker.insertContent(this._oPickerValueStateText, 0);
+			}
+
+			return this._oPickerValueStateText;
 		};
 
 		/**
