@@ -55,7 +55,8 @@
 				strictEqual($MessageToast[0].style.width, "15em", "Default MessageToast width is 15em");
 				strictEqual($MessageToast.css("visibility"), "visible", "After calling the sap.m.MessageToast.show(): the MessageToast is visible");
 				strictEqual($MessageToast.css("position"), "absolute", "Position absolute");
-				strictEqual($MessageToast.text(), "message toast");
+				strictEqual($MessageToast.attr("aria-label"), " ", "The aria-labelledby is set");
+				strictEqual($MessageToast.text(), "message toast", "The message toast displays the correct text");
 				strictEqual(getBoxSizing($MessageToast), "border-box", "Is using old box model");
 				strictEqual(typeof $MessageToast.css("box-shadow"), "string", "Is using box shadow");
 				strictEqual($MessageToast.css("text-align"), "center", "The text is centered");
