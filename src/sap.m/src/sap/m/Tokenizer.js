@@ -152,6 +152,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		//if bScrollToEndIsActive === true, than tokenizer will keep last token visible
 		this._bScrollToEndIsActive = false;
 
+		this.bAllowTextSelection = false;
+
 		this._aTokenValidators = [];
 
 		this._oScroller = new ScrollEnablement(this, this.getId() + "-scrollContainer", {
@@ -1142,7 +1144,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		// simple select, neither ctrl nor shift key was pressed, deselects other tokens
-		this._oSelectionOrigin = false;
+		this._oSelectionOrigin = oTokenSource;
 
 		for (i = 0; i < aTokens.length; i++) {
 			oToken = aTokens[i];
