@@ -2549,6 +2549,44 @@
 	// ------------------------------ //
 	// Scenarios - specification      //
 	// ------------------------------ //
+	// 
+	QUnit.test("Enter completely new value should refilter the picker", function(assert) {
+		var oMultiComboBox = new sap.m.MultiComboBox({
+			items: [
+				new sap.ui.core.Item({ text: "lest" }),
+				new sap.ui.core.Item({ text: "lest2" }),
+				new sap.ui.core.Item({ text: "test" })
+			]
+		});
+		var oFakeEvent = {
+			target: {
+				value: "l"
+			},
+			srcControl: oMultiComboBox
+		};
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		oMultiComboBox.setValue("l");
+		sap.ui.getCore().applyChanges();
+		oMultiComboBox.open();
+		this.clock.tick(300);
+
+		oMultiComboBox.fireChange({ value: "l" });
+		oMultiComboBox.oninput(oFakeEvent);
+		sap.ui.getCore().applyChanges();
+
+		oFakeEvent.target.value = "t";
+		oMultiComboBox.fireChange({ value: "t" });
+		oMultiComboBox.oninput(oFakeEvent);
+		oMultiComboBox.setValue("t");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMultiComboBox.getSelectableItems().length, 1, "1 item should be available");
+		assert.strictEqual(oMultiComboBox.getSelectableItems()[0].getText(), "test", "selectable item should be test");
+
+		oMultiComboBox.destroy();
+		this.clock.reset();
+	});
 
 	test("Scenario 'FIXED_CHAR': add invalid character.", function() {
 
