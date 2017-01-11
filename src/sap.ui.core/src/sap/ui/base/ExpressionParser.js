@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 		sPerformanceParse = sExpressionParser + "#parse",
 		mSymbols = { //symbol table
 			"BINDING": {
-				led: unexpected,
+				led: unexpected, // Note: cannot happen due to lbp: 0
 				nud: function (oToken, oParser) {
 					return BINDING.bind(null, oToken.value);
 				}
@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 				}
 			},
 			"IDENTIFIER": {
-				led: unexpected,
+				led: unexpected, // Note: cannot happen due to lbp: 0
 				nud: function (oToken, oParser) {
 					if (!(oToken.value in oParser.globals)) {
 						jQuery.sap.log.warning("Unsupported global identifier '" + oToken.value
@@ -92,7 +92,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 				}
 			},
 			"CONSTANT": {
-				led: unexpected,
+				led: unexpected, // Note: cannot happen due to lbp: 0
 				nud: function (oToken, oParser) {
 					return CONSTANT.bind(null, oToken.value);
 				}
@@ -452,11 +452,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 	 * @param {object} oToken - the unexpected token
 	 */
 	function unexpected(oToken) {
-		var sToken = oToken.input.slice(oToken.start, oToken.end);
-
-		error("Unexpected " + oToken.id + (sToken !== oToken.id ? ": " + sToken : ""),
-			oToken.input,
-			oToken.start + 1 /*position for error starts counting at 1*/);
+		// Note: position for error starts counting at 1
+		error("Unexpected " + oToken.id, oToken.input, oToken.start + 1);
 	}
 
 	/**
@@ -659,7 +656,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 	 *   formatter: the formatter function to evaluate the expression which
 	 *     takes the parts corresponding to bindings embedded in the expression as
 	 *     parameters; undefined in case of an invalid expression
-	 *   at: the index of the first character after the expression in sInput
+	 *   at: the index of the first character after the expression in sInput, or
+	 *     <code>undefined</code> if all tokens have been consumed
 	 */
 	function parse(aTokens, sInput, mGlobals) {
 		var fnFormatter,
@@ -737,7 +735,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 
 		fnFormatter = expression(0); // do this before calling current() below!
 		return {
-			at: current() ? current().start : undefined,
+			at: current() && current().start,
 			// call separate function to reduce the closure size of the formatter
 			formatter: tryCatch(fnFormatter, sInput)
 		};

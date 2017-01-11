@@ -135,6 +135,15 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Parsing a full string", function (assert) {
+		var oExpression = ExpressionParser.parse(null, "42");
+
+		assert.strictEqual(oExpression.result, undefined, "no formatter for constant expression");
+		assert.strictEqual(oExpression.constant, 42);
+		assert.strictEqual(oExpression.at, 2);
+	});
+
+	//*********************************************************************************************
 	[
 		{ binding: "{=${target>sap:semantics}}" },
 		{ binding: "{=${ b}   }" },
