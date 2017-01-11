@@ -1060,9 +1060,26 @@
 					oMultiInputCustomAsyncValidatorML,
 					new sap.m.Label({text : "MultiInput in simple form", width:"100%"}),
 					oSimpleForm,
-					new sap.m.MultiInput("mIWarning", { placeholder: "Warning", valueState: "Warning", valueHelpRequest: fValueHelpRequested, width:"33%" }),
-					new sap.m.MultiInput("mIError", { placeholder: "Error", valueState: "Error", valueHelpRequest: fValueHelpRequested, width:"33%" }),
-					new sap.m.MultiInput("mISuccess", { placeholder: "Success", valueState: "Success", valueHelpRequest: fValueHelpRequested, width:"33%" }),
+					new sap.m.MultiInput("mIWarning", {
+						placeholder: "Placeholder text",
+						valueState: "Warning",
+						valueStateText: "Simple value state warning text",
+						valueHelpRequest: fValueHelpRequested,
+						width: "33%"
+					}),
+					new sap.m.MultiInput("mIError", {
+						placeholder: "Placeholder text",
+						valueStateText: "Simple value state error text",
+						valueState: "Error",
+						valueHelpRequest: fValueHelpRequested,
+						width: "33%"
+					}),
+					new sap.m.MultiInput("mISuccess", {
+						placeholder: "Placeholder text",
+						valueState: "Success",
+						valueHelpRequest: fValueHelpRequested,
+						width: "33%"
+					}),
 					new sap.m.Label({text : "MultiInput.editable = false", width:"100%"}),
 					oMultiInput4,
 					new sap.m.VBox({items: [new sap.m.Button({text: "Open Popup", press: openDialog})]}),
