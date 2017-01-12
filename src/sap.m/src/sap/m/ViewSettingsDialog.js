@@ -683,12 +683,13 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 		var sType = this._getListType(sAggregationName);
 		if (this.mToList[sType]) {
 			var oList = this._getList(sType);
-			var oRemovedListItems = oList.removeAllItems();
+			if (oList) { //we may not have any internal lists (e.g. no sortItems for this VSD instance)
+				var oRemovedListItems = oList.removeAllItems();
 
-			oRemovedListItems.forEach(function(oItem) {
-				oItem.destroy();
-			});
-
+				oRemovedListItems.forEach(function(oItem) {
+					oItem.destroy();
+				});
+			}
 			vRemovedObjects.forEach(function(oItem) {
 				this._detachItemPropertyChange(oItem);
 			}, this);
