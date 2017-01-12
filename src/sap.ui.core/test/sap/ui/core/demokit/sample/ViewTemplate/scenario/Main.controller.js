@@ -87,10 +87,7 @@ sap.ui.define([
 					.replace(/<!--.*-->/g, "") // remove comments
 					.replace(/\t/g, "  ") // indent by just 2 spaces
 					.replace(/\n\s*\n/g, "\n"); // remove empty lines
-				oView.getModel("ui").setProperty("/code", "<div style='"
-					+ "font-family: monospace; white-space: pre-wrap;"
-					+ "margin: 1em 0; display: block;'>"
-					+ "<code>" + jQuery.sap.encodeHTML(sSource) + "</code></div>");
+				oView.getModel("ui").setProperty("/code", sSource);
 			}
 		},
 
