@@ -38,6 +38,30 @@ sap.ui.define([
     // for testability these need to be accessible outside of public 'test' function's scope
     _oOpa5: new Opa5(),
     _opaTest: opaTest,
+    _fnAlternateTestStepGenerator: function(oStep) {
+      // Automatically generates test steps from Opa Page Objects, only used when args.generateMissingSteps is true
+
+      var sToEval = oStep.keyword + ".";
+      var sFinalFunction = oStep.text;
+      var aMatch = oStep.text.match(/(.*?)\s*:\s*(.*)/);
+      if (aMatch) {
+        sToEval += dataTableUtils.normalization.camelCase(aMatch[1]) + ".";
+        sFinalFunction = aMatch[2];
+      }
+      sToEval += dataTableUtils.normalization.camelCase(sFinalFunction) + "();";
+
+      return {
+        isMatch: true,
+        text: oStep.text,
+        regex: /Generated Step/,
+        parameters: [],
+        func: function(Given, When, Then) {
+          $.sap.log.info("[GHERKIN] Generated Step: " + sToEval);
+          eval(sToEval);
+        },
+        _sToEval: sToEval // exposing this for testability
+      };
+    },
 
     /**
      * Dynamically generates Opa5 tests
@@ -89,36 +113,12 @@ sap.ui.define([
         throw new Error("opa5TestHarness.test: if specified, parameter 'generateMissingSteps' must be a valid boolean");
       }
 
-      // Automatically generates test steps from Opa Page Objects, only used when args.generateMissingSteps is true
-      var fnAlternateTestStepGenerator = function(oStep) {
-
-        var sToEval = oStep.keyword + ".";
-        var sFinalFunction = oStep.text;
-        var aMatch = oStep.text.match(/(.*?)\s*:\s*(.*)/);
-        if (aMatch) {
-          sToEval += dataTableUtils.normalization.camelCase(aMatch[1]) + ".";
-          sFinalFunction = aMatch[2];
-        }
-        sToEval += dataTableUtils.normalization.camelCase(sFinalFunction) + "();";
-
-        return {
-          isMatch: true,
-          text: oStep.text,
-          regex: /Generated Step/,
-          parameters: [],
-          func: function(Given, When, Then) {
-            $.sap.log.info("[GHERKIN] Generated Step: " + sToEval);
-            eval(sToEval);
-          }
-        };
-      };
-
       // if the user did not input a StepDefinitions constructor
       if (!args.steps) {
         // then use a default StepDefinitions constructor
         args.steps = StepDefinitions;
       }
-      var fnTestStepGenerator = (args.generateMissingSteps) ? fnAlternateTestStepGenerator : null;
+      var fnTestStepGenerator = (args.generateMissingSteps) ? this._fnAlternateTestStepGenerator : null;
 
       var oTestGenerator = new GherkinTestGenerator(args.featurePath, args.steps, fnTestStepGenerator);
       var oFeatureTest = oTestGenerator.generate();
