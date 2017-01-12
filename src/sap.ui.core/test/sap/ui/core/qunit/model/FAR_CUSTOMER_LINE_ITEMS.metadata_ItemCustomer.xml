@@ -77,6 +77,22 @@
 					</Record>
 				</Annotation>
 			</Annotations>
+			<!-- fictitious annotation for unit testing only, don't take care of annotations
+				starting with com.sap.vocabularies.Common.v1.ValueList -->
+			<Annotations Target="FAR_CUSTOMER_LINE_ITEMS.Item/Customer" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListFOO">
+					<Record>
+						<PropertyValue Property="Any" String="Value"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="FAR_CUSTOMER_LINE_ITEMS.Item/Customer" Qualifier="BAR" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListFOO">
+					<Record>
+						<PropertyValue Property="Any" String="Value"/>
+					</Record>
+				</Annotation>
+			</Annotations>
 			<!-- fictitious annotation for unit testing only, overwrites sap:deletable="false" -->
 			<Annotations Target="FAR_CUSTOMER_LINE_ITEMS.FAR_CUSTOMER_LINE_ITEMS_Entities/VL_SH_DEBIA" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 				<Annotation Term="Org.OData.Capabilities.V1.DeleteRestrictions">
