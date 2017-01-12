@@ -79,6 +79,14 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.base.ExpressionParser", {
+		beforeEach : function () {
+			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
+		},
+		afterEach : function () {
+			this.oLogMock.verify();
+		},
 		/**
 		 * Checks that the code throws an expected error.
 		 *
@@ -91,9 +99,7 @@ sap.ui.require([
 		 *   the expected error position
 		 */
 		checkError : function (assert, sExpression, sMessage, iAt) {
-			var oLogMock = this.mock(jQuery.sap.log);
-
-			oLogMock.expects("error").withExactArgs(
+			this.oLogMock.expects("error").withExactArgs(
 				sMessage + (iAt !== undefined ? " at position " + iAt : ""),
 				sExpression,
 				"sap.ui.base.ExpressionParser"
@@ -457,15 +463,13 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("Warning for undefined global identifier", function (assert) {
-		var oLogMock = this.mock(jQuery.sap.log);
-
-		oLogMock.expects("warning").withExactArgs(
+		this.oLogMock.expects("warning").withExactArgs(
 			"Unsupported global identifier 'foo' in expression parser input '{=42 === foo}'",
 			undefined, "sap.ui.base.ExpressionParser");
 
 		check(assert, "{=42 === foo}", "false");
 
-		oLogMock.expects("warning").withExactArgs(
+		this.oLogMock.expects("warning").withExactArgs(
 			"Unsupported global identifier 'typeof42' in expression parser input '{=typeof42}'",
 			undefined, "sap.ui.base.ExpressionParser");
 
@@ -492,9 +496,7 @@ sap.ui.require([
 		{expression: "{=Array.isArray([])}", result: "true"},
 		{expression: "{=Array.isArray({})}", result: "false"},
 		{expression: "{=JSON.stringify({a:1})}", result: '{"a":1}'}
-	], function (oSandbox) {
-		oSandbox.mock(jQuery.sap.log).expects("warning").never();
-	});
+	]);
 
 	//*********************************************************************************************
 	QUnit.test("odata.compare", function (assert) {
@@ -534,7 +536,7 @@ sap.ui.require([
 
 		// Note: no need to log the stacktrace, it does not really matter to most people here
 		// Note: the exact error message is browser-dependent
-		this.mock(jQuery.sap.log).expects("warning").withExactArgs(
+		this.oLogMock.expects("warning").withExactArgs(
 			sinon.match(/TypeError:.*null/i),
 			sExpression,
 			"sap.ui.base.ExpressionParser");
@@ -577,8 +579,6 @@ sap.ui.require([
 			assert.strictEqual(oBindingInfo.parts.length, iExpectedParts, sExpression);
 			check(assert, sBinding, sExpectedResult, oScope);
 		}
-
-		this.mock(jQuery.sap.log).expects("warning").never();
 
 		checkParts("${/five} ? ${/five} : '7'", "5", 1);
 		checkParts("${/five} ? ${path: '/five', type: 'sap.ui.model.type.String'} : '7'", "5", 2);
