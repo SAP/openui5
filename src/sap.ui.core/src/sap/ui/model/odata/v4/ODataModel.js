@@ -987,17 +987,15 @@ sap.ui.define([
 
 		if (sPath[0] === "/") {
 			sResolvedPath = sPath;
-		} else {
-			if (oContext) {
-				if (sPath) {
-					if (oContext.getPath().slice(-1) === "/") {
-						sResolvedPath = oContext.getPath() + sPath;
-					} else {
-						sResolvedPath = oContext.getPath() + "/" + sPath;
-					}
+		} else if (oContext) {
+			if (sPath) {
+				if (oContext.getPath().slice(-1) === "/") {
+					sResolvedPath = oContext.getPath() + sPath;
 				} else {
-					sResolvedPath = oContext.getPath();
+					sResolvedPath = oContext.getPath() + "/" + sPath;
 				}
+			} else {
+				sResolvedPath = oContext.getPath();
 			}
 		}
 
@@ -1056,6 +1054,9 @@ sap.ui.define([
 	ODataModel.prototype.toString = function () {
 		return sClassName + ": " + this.sServiceUrl;
 	};
+
+	// pass this constructor to ODataMetaModel to avoid the cyclic dependency
+	ODataMetaModel.setODataModel(ODataModel);
 
 	return ODataModel;
 }, /* bExport= */ true);

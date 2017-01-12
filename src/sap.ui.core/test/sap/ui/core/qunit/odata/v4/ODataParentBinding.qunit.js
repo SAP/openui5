@@ -9,7 +9,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataParentBinding"
 ], function (jQuery, ChangeReason, _Helper, _SyncPromise, asODataParentBinding) {
 	/*global QUnit, sinon */
-	/*eslint no-warning-comments: 0 */
+	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
 	"use strict";
 
 	/**
@@ -81,10 +81,11 @@ sap.ui.require([
 	//*********************************************************************************************
 	[undefined, "up"].forEach(function (sGroupId) {
 		QUnit.test("updateValue: absolute binding", function (assert) {
-			var oBinding = new ODataParentBinding({
-					oCache : {
-						update : function () {}
-					},
+			var oCache = {
+					update : function () {}
+				},
+				oBinding = new ODataParentBinding({
+					oCachePromise : _SyncPromise.resolve(oCache),
 					sPath : "/absolute",
 					bRelative : false,
 					sUpdateGroupId : "myUpdateGroup"
@@ -92,7 +93,7 @@ sap.ui.require([
 				sPath = "SO_2_SOITEM/42",
 				oResult = {};
 
-			this.mock(oBinding.oCache).expects("update")
+			this.mock(oCache).expects("update")
 				.withExactArgs(sGroupId || "myUpdateGroup", "bar", Math.PI, "edit('URL')", sPath)
 				.returns(Promise.resolve(oResult));
 
@@ -105,8 +106,26 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("updateValue: cache is not yet available", function (assert) {
+		var oCache = {
+				update : function () {}
+			},
+			oBinding = new ODataParentBinding({
+				oCachePromise : _SyncPromise.resolve(Promise.resolve(oCache))
+			});
+
+		this.mock(oCache).expects("update").never();
+
+		// code under test
+		assert.throws(function () {
+			oBinding.updateValue("myUpdateGroup", "bar", Math.PI, "edit('URL')", "SO_2_SOITEM/42");
+		}, new Error("PATCH request not allowed"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("updateValue: relative binding", function (assert) {
 		var oBinding = new ODataParentBinding({
+				oCachePromise : _SyncPromise.resolve(undefined),
 				oContext : {
 					updateValue : function () {}
 				},
@@ -131,131 +150,157 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[
-		{mQueryOptions : undefined, sPath : "foo", sQueryPath : "delegate/to/context"},
-		{mQueryOptions : undefined, sPath : "foo", sQueryPath : undefined}
-	].forEach(function (oFixture, i) {
-		QUnit.test("getQueryOptions: delegating #" + i, function (assert) {
-			var oBinding = new ODataParentBinding({
-					mQueryOptions : oFixture.mQueryOptions,
-					sPath : oFixture.sPath
-				}),
-				oContext = {
-					getQueryOptions : function () {}
+	QUnit.test("getQueryOptions: own options", function(assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {
+					mUriParameters : {}
 				},
-				mResultingQueryOptions = {},
-				sResultPath = "any/path";
+				mQueryOptions : {$select : "foo"}
+			}),
+			oContext = {},
+			mResultingQueryOptions = {};
 
-			this.mock(_Helper).expects("buildPath")
-				.withExactArgs(oBinding.sPath, oFixture.sQueryPath).returns(sResultPath);
-			this.mock(oContext).expects("getQueryOptions")
-				.withExactArgs(sResultPath)
-				.returns(mResultingQueryOptions);
+		this.mock(jQuery).expects("extend")
+			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
+				sinon.match.same(oBinding.mQueryOptions))
+			.returns(mResultingQueryOptions);
 
-			// code under test
-			assert.strictEqual(oBinding.getQueryOptions(oFixture.sQueryPath, oContext),
-				mResultingQueryOptions, "sQueryPath:" + oFixture.sQueryPath);
-
-			// code under test
-			assert.strictEqual(oBinding.getQueryOptions(oFixture.sQueryPath, undefined),
-				undefined, "no query options and no context");
-		});
+		// code under test
+		assert.strictEqual(oBinding.getQueryOptions(oContext), mResultingQueryOptions);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getQueryOptions: ignores base context", function (assert) {
-		var oBaseContext = {},
-			oBinding = new ODataParentBinding({
-				mQueryOptions : undefined,
-				sPath : "foo"
+	QUnit.test("getQueryOptions: inherited options", function(assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {
+					mUriParameters : {}
+				},
+				mQueryOptions : {}
+			}),
+			oContext = {},
+			mInheritedQueryOptions = {},
+			mResultingQueryOptions = {};
+
+		this.mock(oBinding).expects("inheritQueryOptions")
+			.withExactArgs(oContext).returns(mInheritedQueryOptions);
+		this.mock(jQuery).expects("extend")
+			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
+				sinon.match.same(mInheritedQueryOptions))
+			.returns(mResultingQueryOptions);
+
+		// code under test
+		assert.strictEqual(oBinding.getQueryOptions(oContext), mResultingQueryOptions);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("inheritQueryOptions: no context", function(assert) {
+		var oBinding = new ODataParentBinding({
+				isRelative : function () { return true; }
 			});
 
 		// code under test
-		assert.strictEqual(oBinding.getQueryOptions("", oBaseContext), undefined,
-			"no query options and base context ignored");
+		assert.strictEqual(oBinding.inheritQueryOptions(undefined), undefined);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getQueryOptions: query options and no path", function (assert) {
+	QUnit.test("inheritQueryOptions: base context", function(assert) {
 		var oBinding = new ODataParentBinding({
-				mQueryOptions : {}
+				isRelative : function () { return true; }
+			}),
+			oContext = {};
+
+		// code under test
+		assert.strictEqual(oBinding.inheritQueryOptions(oContext), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("inheritQueryOptions: absolute binding with unnecessary context", function(assert) {
+		var oBinding = new ODataParentBinding({
+				isRelative : function () { return false; }
+			}),
+			oContext = {
+				oBinding : {}
+			};
+
+		// code under test
+		assert.strictEqual(oBinding.inheritQueryOptions(oContext), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("inheritQueryOptions: no parent query options", function(assert) {
+		var oBinding = new ODataParentBinding({
+				isRelative : function () { return true; },
+				sPath : "bindingPath"
 			}),
 			oContext = {
 				getQueryOptions : function () {}
 			};
 
-		this.mock(_Helper).expects("buildPath").never();
-		this.mock(oContext).expects("getQueryOptions").never();
+		this.mock(oContext).expects("getQueryOptions")
+			.withExactArgs().returns(undefined);
 
 		// code under test
-		assert.strictEqual(oBinding.getQueryOptions(undefined, oContext), oBinding.mQueryOptions);
-		assert.strictEqual(oBinding.getQueryOptions("", oContext), oBinding.mQueryOptions);
+		assert.strictEqual(oBinding.inheritQueryOptions(oContext), undefined);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getQueryOptions: find in query options", function (assert) {
-		var mEmployee2EquipmentOptions = {
-				$orderby : "EquipmentId"
-			},
-			mTeam2EmployeeOptions = {
-				"$expand" : {
-					"Employee_2_Equipment" : mEmployee2EquipmentOptions
-				},
-				$orderby : "EmployeeId"
-			},
-			mParameters = {
-				"$expand" : {
-					"Team_2_Employees" : mTeam2EmployeeOptions,
-					"Team_2_Manager" : null,
-					"Team_2_Equipments" : true
-				},
-				"$orderby" : "TeamId",
-				"sap-client" : "111"
-			},
-			oBinding = new ODataParentBinding({
-				oModel : {
-					mUriParameters : {"sap-client" : "111"},
-					buildQueryOptions : function () {}
-				},
-				mQueryOptions : mParameters,
-				sPath : "any/path"
-			}),
-			oContext = {
-				getQueryOptions : function () {}
-			},
-			oModelMock = this.mock(oBinding.oModel),
-			mResultingQueryOptions = {}; // content not relevant
-
-		this.mock(_Helper).expects("buildPath").never();
-		this.mock(oContext).expects("getQueryOptions").never();
-
-		[
-			{sQueryPath : "foo", mResult : undefined},
-			{sQueryPath : "Team_2_Employees", mResult : mTeam2EmployeeOptions},
-			{
-				sQueryPath : "Team_2_Employees/Employee_2_Equipment",
-				mResult : mEmployee2EquipmentOptions
-			},
-			{sQueryPath : "Team_2_Employees/Employee_2_Equipment/foo", mResult : undefined},
-			{sQueryPath : "Team_2_Employees/foo/Employee_2_Equipment", mResult : undefined},
-			{sQueryPath : "Team_2_Manager", mResult : undefined},
-			{sQueryPath : "Team_2_Equipments", mResult : undefined},
-			{
-				sQueryPath : "Team_2_Employees(2)/Employee_2_Equipment('42')",
-				mResult : mEmployee2EquipmentOptions
-			},
-			{
-				sQueryPath : "15/Team_2_Employees/2/Employee_2_Equipment/42",
-				mResult : mEmployee2EquipmentOptions
+	[{ // $select=Bar
+		options : {
+			$select : "Bar"
+		},
+		path : "FooSet/WithoutExpand",
+		result : undefined
+	}, { // $expand(ExpandWithoutOptions)
+		options : {
+			$expand : {
+				ExpandWithoutOptions : true
 			}
-		].forEach(function (oFixture, i) {
-			oModelMock.expects("buildQueryOptions")
-				.withExactArgs(sinon.match.same(oBinding.oModel.mUriParameters),
-					oFixture.mResult ? sinon.match.same(oFixture.mResult) : undefined, true)
-				.returns(mResultingQueryOptions);
+		},
+		path : "ExpandWithoutOptions",
+		result : undefined
+	}, { // $expand(FooSet=$select(Bar,Baz))
+		options : {
+			$expand : {
+				FooSet : {
+					$select : ["Bar", "Baz"]
+				}
+			}
+		},
+		path : "FooSet('0815')",
+		result : {
+			$select : ["Bar", "Baz"]
+		}
+	}, {// $expand(FooSet=$expand(BarSet=$select(Baz)))
+		options : {
+			$expand : {
+				FooSet : {
+					$expand : {
+						BarSet : {
+							$select : "Baz"
+						}
+					}
+				}
+			}
+		},
+		path : "FooSet('0815')/12/BarSet",
+		result : {
+			$select : "Baz"
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("inheritQueryOptions: V4 context, path=" + oFixture.path, function(assert) {
+			var oBinding = new ODataParentBinding({
+					isRelative : function () { return true; },
+					sPath : oFixture.path
+				}),
+				oContext = {
+					getQueryOptions : function () {}
+				};
+
+			this.mock(oContext).expects("getQueryOptions")
+				.withExactArgs().returns(oFixture.options);
+
 			// code under test
-			assert.strictEqual(oBinding.getQueryOptions(oFixture.sQueryPath, oContext),
-				mResultingQueryOptions, "sQueryPath:" + oFixture.sQueryPath);
+			assert.deepEqual(oBinding.inheritQueryOptions(oContext), oFixture.result);
 		});
 	});
 	//TODO handle encoding in getQueryOptions
@@ -266,18 +311,16 @@ sap.ui.require([
 		[undefined, "foo eq 42"], //set filter
 		["/canonical2", "foo eq 42"] //set context and filter
 	].forEach(function (oFixture) {
-		QUnit.test("createCache: proxy interface, " + oFixture[0] + ", " + oFixture[1],
+		QUnit.test("createCache: async " + oFixture[0] + ", " + oFixture[1],
 			function (assert) {
-				var oBinding = new ODataParentBinding({
-						toString : function () { return "TheBinding"; }
-					}),
-					oFilterPromise = oFixture[1] && Promise.resolve(oFixture[1]),
-					oPathPromise = oFixture[0] && Promise.resolve(oFixture[0]),
+				var oBinding = new ODataParentBinding(),
 					oCache = {
+						fetchValue : function () {},
 						read : function () {}
 					},
-					oCacheProxy,
-					oReadResult = {};
+					oCachePromise,
+					oFilterPromise = oFixture[1] && Promise.resolve(oFixture[1]),
+					oPathPromise = oFixture[0] && Promise.resolve(oFixture[0]);
 
 				function createCache(sPath, sFilter) {
 					assert.strictEqual(sPath, oFixture[0]);
@@ -285,47 +328,28 @@ sap.ui.require([
 					return oCache;
 				}
 
-				this.mock(oCache).expects("read").withExactArgs("$auto", "foo")
-					.returns(Promise.resolve(oReadResult));
-
 				// code under test
-				oCacheProxy = oBinding.createCache(createCache, oPathPromise, oFilterPromise);
-
-				assert.throws(function () {
-					oCacheProxy._delete();
-				}, new Error("DELETE request not allowed"));
-				assert.throws(function () {
-					oCacheProxy.create();
-				}, new Error("POST request not allowed"));
-				oCacheProxy.deregisterChange("path/to/property", {});
-				assert.strictEqual(oCacheProxy.hasPendingChangesForPath(), false);
-				oCacheProxy.resetChangesForPath();
-				oCacheProxy.setActive(false);
-				assert.throws(function () {
-					oCacheProxy.post();
-				}, new Error("POST request not allowed"));
-				assert.throws(function () {
-					oCacheProxy.update();
-				}, new Error("PATCH request not allowed"));
-				assert.strictEqual(oCacheProxy.toString(), "Cache proxy for " + oBinding);
-
-				return oCacheProxy.read("$auto", "foo").then(function (oResult) {
-					assert.strictEqual(oBinding.oCache, oCache);
-					assert.strictEqual(oCache.$canonicalPath, oFixture[0]);
-					assert.strictEqual(oResult, oReadResult);
-				});
+				oCachePromise = oBinding.createCache(createCache, oPathPromise, oFilterPromise)
+					.then(function (oResolvedCache) {
+						assert.strictEqual(oResolvedCache, oCache);
+					});
+				assert.strictEqual(oCachePromise.isFulfilled(), false,
+					"Cache-Promise not yet resolved");
 			});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("createCache: deactivates previous cache", function (assert) {
-		var oBinding = new ODataParentBinding();
+		var oCache = { setActive : function () {} },
+			oBinding = new ODataParentBinding();
 
 		// code under test
 		oBinding.createCache(function () {});
 
-		oBinding.oCache = { setActive : function () {} };
-		this.mock(oBinding.oCache).expects("setActive").withExactArgs(false);
+		oBinding = new ODataParentBinding({
+			oCachePromise : _SyncPromise.resolve(oCache)
+		});
+		this.mock(oCache).expects("setActive").withExactArgs(false);
 
 		// code under test
 		oBinding.createCache(function () {});
@@ -343,19 +367,23 @@ sap.ui.require([
 			createCache = this.spy(function () { return oCache; });
 
 		// code under test
-		oBinding.createCache(createCache, oPathPromise);
+		oBinding.oCachePromise = oBinding.createCache(createCache, oPathPromise);
 
-		return oBinding.oCache.read().then(function () {
-			assert.strictEqual(oBinding.oCache, oCache);
+		return oBinding.oCachePromise.then(function (oResolvedCache) {
+			return oCache.read().then(function () {
+				assert.strictEqual(oResolvedCache, oCache);
 
-			oCacheMock.expects("setActive").withExactArgs(false);
-			oCacheMock.expects("setActive").withExactArgs(true);
-			// code under test
-			oBinding.createCache(createCache, oPathPromise);
+				oCacheMock.expects("setActive").withExactArgs(false);
+				oCacheMock.expects("setActive").withExactArgs(true);
+				// code under test
+				oBinding.oCachePromise = oBinding.createCache(createCache, oPathPromise);
 
-			return oBinding.oCache.read().then(function () {
-				assert.strictEqual(oBinding.oCache, oCache);
-				assert.strictEqual(createCache.callCount, 1);
+				return oBinding.oCachePromise.then(function (oResolvedCache2) {
+					return oResolvedCache2.read().then(function () {
+						assert.strictEqual(oResolvedCache2, oCache);
+						assert.strictEqual(createCache.callCount, 1);
+					});
+				});
 			});
 		});
 	});
@@ -369,17 +397,23 @@ sap.ui.require([
 			createCache = this.spy(function () { return oCache; });
 
 		// code under test
-		oBinding.createCache(createCache, oPathPromise);
+		oBinding.oCachePromise = oBinding.createCache(createCache, oPathPromise);
 
-		assert.strictEqual(oBinding.oCache, oCache);
+		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), true);
+		oBinding.oCachePromise.then(function (oResolvedCache) {
+			assert.strictEqual(oResolvedCache, oCache);
+		});
 
 		oCacheMock.expects("setActive").withExactArgs(false);
 		oCacheMock.expects("setActive").withExactArgs(true);
 
 		// code under test
-		oBinding.createCache(createCache, oPathPromise);
+		oBinding.oCachePromise = oBinding.createCache(createCache, oPathPromise);
 
-		assert.strictEqual(oBinding.oCache, oCache);
+		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), true);
+		oBinding.oCachePromise.then(function (oResolvedCache) {
+			assert.strictEqual(oResolvedCache, oCache);
+		});
 		assert.strictEqual(createCache.callCount, 1);
 	});
 
@@ -389,39 +423,53 @@ sap.ui.require([
 			oCache = {setActive : function () {}},
 			createCache = this.spy(function () { return oCache; });
 
-		// code under test
-		oBinding.createCache(createCache, undefined);
+		this.mock(oCache).expects("setActive").withExactArgs(false);
 
 		// code under test
-		oBinding.createCache(createCache, undefined);
+		oBinding.oCachePromise = oBinding.createCache(createCache, undefined);
+
+		// code under test
+		oBinding.oCachePromise = oBinding.createCache(createCache, undefined);
 
 		assert.strictEqual(createCache.callCount, 2);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createCache: cache proxy !== binding's cache", function (assert) {
-		var oBinding = new ODataParentBinding(),
-			oCache = {read : function () {}},
-			oPromise,
-			oReadResult = {};
-
-		this.mock(oCache).expects("read").returns(Promise.resolve(oReadResult));
+	QUnit.test("createCache: cache promise !== binding's cache promise", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {
+					reportError : function () {}
+				},
+				toString : function () {return "MyBinding";}
+			}),
+			oCache = {},
+			createCache = this.spy(function () { return oCache; }),
+			oPromise;
 
 		// create a binding asynchronously and read from it
-		oBinding.createCache(function () {
-			return {/*cache*/};
-		}, Promise.resolve("Employees('42')"));
-		oPromise = oBinding.oCache.read();
+		oBinding.oCachePromise = oBinding.createCache(createCache,
+			Promise.resolve("Employees('42')"));
+		oPromise = oBinding.oCachePromise;
+
+		this.mock(oBinding.oModel).expects("reportError")
+			.withExactArgs("Failed to create cache for binding MyBinding",
+				"sap.ui.model.odata.v4.ODataParentBinding", sinon.match.instanceOf(Error));
 
 		// create a binding synchronously afterwards (overtakes the first one, but must win)
-		oBinding.createCache(function () {
-			return oCache;
-		});
-
-		assert.strictEqual(oBinding.oCache, oCache);
-		return oPromise.then(function (oResult) {
-			assert.strictEqual(oBinding.oCache, oCache);
-			assert.strictEqual(oResult, oReadResult);
+		oBinding.oCachePromise = oBinding.createCache(createCache);
+		return _SyncPromise.all([
+			oPromise.then(function () {
+				assert.ok(false, "Expected a rejected cache-promise");
+			}, function (oError) {
+				assert.strictEqual(oError.message,
+					"Cache discarded as a new cache has been created");
+				assert.strictEqual(oError.canceled, true);
+			}),
+			oBinding.oCachePromise.then(function (oResolvedCache) {
+				assert.strictEqual(oResolvedCache, oCache);
+			})
+		]).then(function () {
+			assert.strictEqual(createCache.callCount, 1);
 		});
 	});
 
@@ -444,10 +492,7 @@ sap.ui.require([
 				"sap.ui.model.odata.v4.ODataParentBinding", sinon.match.same(oError));
 
 		// code under test
-		oBinding.createCache(unexpected, Promise.reject(oError));
-
-		// code under test
-		return oBinding.oCache.read("$auto", "foo").catch(function (oError0) {
+		return oBinding.createCache(unexpected, Promise.reject(oError)).catch(function (oError0) {
 			assert.strictEqual(oError0, oError);
 		});
 	});
@@ -471,11 +516,205 @@ sap.ui.require([
 				"sap.ui.model.odata.v4.ODataParentBinding", sinon.match.same(oError));
 
 		// code under test
-		oBinding.createCache(unexpected, undefined, Promise.reject(oError));
+		return oBinding.createCache(unexpected, undefined, Promise.reject(oError))
+			.catch(function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
+	});
+	//*********************************************************************************************
+	[{
+		sTestName : "Add parameters",
+		mParameters : {
+			$search : "Foo NOT Bar"
+		},
+		mExpectedParameters : {
+			$apply : "filter(OLD gt 0)",
+			$expand : "foo",
+			$search : "Foo NOT Bar",
+			$select : "ProductID"
+		}
+	}, {
+		sTestName : "Delete parameters",
+		mParameters : {
+			$expand : undefined
+		},
+		mExpectedParameters : {
+			$apply : "filter(OLD gt 0)",
+			$select : "ProductID"
+		}
+	}, {
+		sTestName : "Change parameters",
+		mParameters : {
+			$apply : "filter(NEW gt 0)"
+		},
+		mExpectedParameters : {
+			$apply : "filter(NEW gt 0)",
+			$expand : "foo",
+			$select : "ProductID"
+		}
+	}, {
+		sTestName : "Add, delete, change parameters",
+		mParameters : {
+			$apply : "filter(NEW gt 0)",
+			$expand : {$search : "Foo NOT Bar"},
+			$search : "Foo NOT Bar",
+			$select : undefined
+		},
+		mExpectedParameters : {
+			$apply : "filter(NEW gt 0)",
+			$expand : {$search : "Foo NOT Bar"},
+			$search : "Foo NOT Bar"
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("changeParameters: " + oFixture.sTestName, function (assert) {
+			var oBinding = new ODataParentBinding({
+					oModel : {},
+					mParameters : {
+						$apply: "filter(OLD gt 0)",
+						$expand : "foo",
+						$select : "ProductID"
+					},
+					sPath : "/ProductList",
+					applyParameters : function () {}
+				});
+
+			this.mock(oBinding).expects("applyParameters")
+				.withExactArgs(oFixture.mExpectedParameters, ChangeReason.Change);
+
+			// code under test
+			oBinding.changeParameters(oFixture.mParameters);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters: with binding parameters", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {},
+				mParameters : {},
+				sPath : "/EMPLOYEES"
+			});
+
+		//code under test
+		assert.throws(function () {
+			oBinding.changeParameters({"$filter" : "filter(Amount gt 3)",
+				"$$groupId" : "newGroupId"});
+		}, new Error("Unsupported parameter: $$groupId"));
+
+		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters: with empty map", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {},
+				sPath : "/EMPLOYEES",
+				applyParameters : function () {}
+			});
+
+
+		this.mock(oBinding).expects("applyParameters").never();
 
 		// code under test
-		return oBinding.oCache.read("$auto", "foo").catch(function (oError0) {
-			assert.strictEqual(oError0, oError);
-		});
+		oBinding.changeParameters({});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters: with undefined map", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {},
+				mParameters : {},
+				sPath : "/EMPLOYEES"
+			});
+
+		// code under test
+		assert.throws(function () {
+			oBinding.changeParameters(undefined);
+		}, new Error("Missing map of binding parameters"));
+
+		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters: try to delete non-existing parameters", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {},
+				mParameters : {},
+				sPath : "/EMPLOYEES"
+			});
+
+		// code under test
+		oBinding.changeParameters({$apply: undefined});
+
+		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters: try to change existing parameter", function (assert) {
+		var mParameters = {
+				$apply: "filter(Amount gt 3)"
+			},
+			oBinding = new ODataParentBinding({
+					oModel : {},
+					mParameters : {
+						$apply : "filter(Amount gt 3)"
+					},
+					sPath : "/EMPLOYEES",
+					applyParameters : function () {}
+				});
+
+		this.mock(oBinding).expects("applyParameters").never();
+
+		// code under test
+		oBinding.changeParameters(mParameters);
+	});
+
+	//*********************************************************************************************
+	QUnit.skip("changeParameters: adding not allowed parameter", function (assert) {
+		var mParameters = {
+				$apply: "filter(Amount gt 3)"
+			},
+			oBinding = new ODataParentBinding({
+				oModel : {},
+				mParameters : mParameters,
+				sPath : "/EMPLOYEES",
+				applyParameters : function () {}
+			}),
+			mNewParameters = {
+				$apply: "filter(Amount gt 5)",
+				$foo: "bar"
+			};
+
+		// code under test
+		assert.throws(function () {
+			oBinding.changeParameters(mNewParameters);
+		}, new Error("System query option $foo is not supported"));
+		assert.deepEqual(oBinding.mParameters, mParameters, "parameters unchanged on error");
+		// TODO do we need this test?
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters: cloning mParameters", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {},
+				mParameters : {},
+				sPath : "/EMPLOYEES",
+				applyParameters : function (mParameters) {
+					this.mParameters = mParameters; // store mParameters at binding after validation
+				}
+			}),
+			mParameters = {
+				$expand : {
+					SO_2_SOITEM : {
+						$orderby : "ItemPosition"
+					}
+				}
+			};
+
+		// code under test
+		oBinding.changeParameters(mParameters);
+
+		mParameters.$expand.SO_2_SOITEM.$orderby = "ItemID";
+
+		assert.strictEqual(oBinding.mParameters.$expand.SO_2_SOITEM.$orderby, "ItemPosition");
 	});
 });

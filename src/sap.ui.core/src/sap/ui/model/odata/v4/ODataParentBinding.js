@@ -27,101 +27,116 @@ sap.ui.define([
 	var rNotMetaContext = /\([^/]*|\/\d+|^\d+\//g;
 
 	/**
-	 * Creates a cache using the given function and sets it at the binding. If the given
-	 * SyncPromises are not fulfilled yet, it temporarily sets a proxy acting as substitute.
+	 * Changes this binding's parameters and refreshes the binding. The parameters are changed
+	 * according to the given map of parameters: Parameters with an <code>undefined</code> value are
+	 * removed, the other parameters are set, and missing parameters remain unchanged.
+	 *
+	 * @param {object} mParameters
+	 *   Map of binding parameters, see {@link sap.ui.model.odata.v4.ODataModel#bindList} and
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}
+	 * @throws {Error}
+	 *   If <code>mParameters</code> is missing, contains binding-specific or unsupported
+	 *   parameters, or contains unsupported values.
+	 *
+	 * @public
+	 * @since 1.45.0
+	 */
+	ODataParentBinding.prototype.changeParameters = function (mParameters) {
+		var bChanged = false,
+			sKey,
+			mBindingParameters = jQuery.extend(true, {}, this.mParameters);
+
+		if (!mParameters) {
+			throw new Error("Missing map of binding parameters");
+		}
+
+		for (sKey in mParameters) {
+			if (sKey.indexOf("$$") === 0) {
+				throw new Error("Unsupported parameter: " + sKey);
+			}
+			if (mParameters[sKey] === undefined && mBindingParameters[sKey] !== undefined) {
+					delete mBindingParameters[sKey];
+					bChanged = true;
+			} else if (mBindingParameters[sKey] !== mParameters[sKey]) {
+				if (typeof mParameters[sKey] === 'object') {
+					mBindingParameters[sKey] = jQuery.extend(true, {}, mParameters[sKey]);
+				} else {
+					mBindingParameters[sKey] = mParameters[sKey];
+				}
+				bChanged = true;
+			}
+		}
+
+		if (bChanged) {
+			this.applyParameters(mBindingParameters, ChangeReason.Change);
+		}
+	};
+
+	/**
+	 * Creates a cache using the given function when the given SyncPromises are fulfilled.
 	 * If there is already a cache for the canonical path in the binding's
 	 * <code>mCacheByContext</code>, it is activated again and used, no cache is created.
 	 *
 	 * If there is already a cache for the binding, it is deactivated, so that pending read
 	 * requests do not deliver results to the binding any more.
 	 *
-	 * If the path promise or the filter promise fail, an error is reported to the model and
-	 * the proxy is not replaced, so that subsequent reads fail.
+	 * If the path promise or the filter promise fail, an error is reported to the model.
 	 *
 	 * @param {function} fnCreateCache
 	 *   Function to create the cache which is called with the canonical path and the $filter
 	 *   value as parameter and returns the cache.
 	 * @param {String|_SyncPromise} [vCanonicalPath]
 	 *   The canonical path for the cache or a promise resolving with it
-	 * @param {_SyncPromise} [oFilterPromise]
+	 * @param {SyncPromise} [oFilterPromise]
 	 *   Promise which resolves with a value for the $filter query option to be used when
 	 *   creating the cache
-	 * @returns {object}
-	 *   The created cache or cache proxy (allows for easier testing)
+	 * @returns {SyncPromise}
+	 *   A promise which resolves with a cache instance or <code>undefined</code> if no cache is
+	 *   needed
 	 *
 	 * @private
 	 */
 	ODataParentBinding.prototype.createCache = function (fnCreateCache, vCanonicalPath,
 			oFilterPromise) {
-		var oCacheProxy,
+		var oCurrentCache,
 			oPromise,
 			that = this;
 
-		if (this.oCache) {
-			this.oCache.setActive(false);
+		if (this.oCachePromise && this.oCachePromise.isFulfilled()) {
+			oCurrentCache = this.oCachePromise.getResult();
+			if (oCurrentCache) {
+				oCurrentCache.setActive(false);
+			}
 		}
 
 		oPromise = _SyncPromise.all([vCanonicalPath, oFilterPromise]).then(function (aResult) {
-			var sCanonicalPath = aResult[0];
+			var sCanonicalPath = aResult[0],
+				oCache,
+				oError;
 
-			// do not create if a cache proxy was created, but the cache now has another one
-			if (!oCacheProxy || that.oCache === oCacheProxy) {
+			// create cache only if oCachePromise has not been changed in the meantime
+			if (!oPromise || that.oCachePromise === oPromise) {
 				if (sCanonicalPath) {
+					//mCacheByContext has to be reset if parameters are changing
 					that.mCacheByContext = that.mCacheByContext || {};
-					that.oCache = that.mCacheByContext[sCanonicalPath];
-					if (that.oCache) {
-						that.oCache.setActive(true);
+					oCache = that.mCacheByContext[sCanonicalPath];
+					if (oCache) {
+						oCache.setActive(true);
 					} else {
-						that.mCacheByContext[sCanonicalPath] = that.oCache
+						oCache = that.mCacheByContext[sCanonicalPath]
 							= fnCreateCache(sCanonicalPath, aResult[1]);
-						that.oCache.$canonicalPath = sCanonicalPath;
+						oCache.$canonicalPath = sCanonicalPath;
 					}
 				} else {
-					that.oCache = fnCreateCache(sCanonicalPath, aResult[1]);
+					oCache = fnCreateCache(sCanonicalPath, aResult[1]);
 				}
+				return oCache;
+			} else {
+				oError = new Error("Cache discarded as a new cache has been created");
+				oError.canceled = true;
+				throw oError;
 			}
 		});
-
-		if (!oPromise.isFulfilled()) {
-			this.oCache = oCacheProxy = {
-				_delete : function () {
-					throw new Error("DELETE request not allowed");
-				},
-				create : function () {
-					throw new Error("POST request not allowed");
-				},
-				deregisterChange : function () {
-					// Be prepared for late deregistrations by dependents of parked contexts
-				},
-				hasPendingChangesForPath : function () {
-					// No pending changes because create and update are not allowed
-					return false;
-				},
-				post : function () {
-					throw new Error("POST request not allowed");
-				},
-				read : function () {
-					var aReadArguments = arguments;
-
-					return oPromise.then(function () {
-						return that.oCache.read.apply(that.oCache, aReadArguments);
-					});
-				},
-				resetChangesForPath : function () {
-					// No pending changes because create and update are not allowed
-				},
-				setActive : function () {
-					// Do not deactivate, the cache that finally replaces the proxy must be
-					// active.
-				},
-				toString : function () {
-					return "Cache proxy for " + that;
-				},
-				update : function () {
-					throw new Error("PATCH request not allowed");
-				}
-			};
-		}
 
 		oPromise["catch"](function (oError) {
 			//Note: this may also happen if the promise to read data for the canonical path's
@@ -130,42 +145,65 @@ sap.ui.define([
 				"sap.ui.model.odata.v4.ODataParentBinding", oError);
 		});
 
-		return this.oCache;
+		return oPromise;
 	};
 
 	/**
-	 * Returns the query options for the binding.
+	 * Returns the query options for the binding. Uses the options resulting from the binding
+	 * parameters or the options inherited from the parent binding by
+	 * using {@link #inheritQueryOptions}. Merges the model's query options.
 	 *
-	 * @param {string} sPath
-	 *   The path (relative to this binding) for which the OData query options are requested
-	 * @param {sap.ui.model.Context} oContext
-	 *   The context to be used to to compute the inherited query options
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context that is used to compute the inherited query options
+	 * @returns {object}
+	 *   The computed query options
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.getQueryOptions = function (oContext) {
+		var mOwnQueryOptions = this.mQueryOptions;
+
+		if (!Object.keys(mOwnQueryOptions).length) {
+			mOwnQueryOptions = this.inheritQueryOptions(oContext);
+		}
+
+		return jQuery.extend({}, this.oModel.mUriParameters, mOwnQueryOptions);
+	};
+
+	/**
+	 * Returns the query options that are inherited from the parent binding. This is the case if
+	 * the parent binding has a <code>$expand</code> within the binding path.
+	 *
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context that is used to compute the inherited query options
 	 * @returns {object}
 	 *   The query options for the given path
 	 *
 	 * @private
 	 */
-	ODataParentBinding.prototype.getQueryOptions = function (sPath, oContext) {
-		var oResult = this.mQueryOptions;
+	ODataParentBinding.prototype.inheritQueryOptions = function (oContext) {
+		var oResult;
 
+		if (!this.isRelative() || !oContext || !oContext.getQueryOptions) {
+			return undefined;
+		}
+
+		oResult = oContext.getQueryOptions();
 		if (!oResult) {
-			return oContext && oContext.getQueryOptions
-				&& oContext.getQueryOptions(_Helper.buildPath(this.sPath, sPath));
-		}
-		if (!sPath) {
-			return oResult;
+			return undefined;
 		}
 
-		sPath = sPath.replace(rNotMetaContext, ""); // transform path to metadata path
-		sPath.split("/").some(function (sSegment) {
-			oResult = oResult.$expand && oResult.$expand[sSegment];
-			if (!oResult || oResult === true) {
-				oResult = undefined;
-				return true;
-			}
-		});
+		this.sPath
+			.replace(rNotMetaContext, "") // transform path to metadata path
+			.split("/").some(function (sSegment) {
+				oResult = oResult.$expand && oResult.$expand[sSegment];
+				if (!oResult || oResult === true) {
+					oResult = undefined;
+					return true;
+				}
+			});
 
-		return this.oModel.buildQueryOptions(this.oModel.mUriParameters, oResult, true);
+		return oResult;
 	};
 
 	/**
@@ -198,16 +236,25 @@ sap.ui.define([
 	 *   The edit URL for the entity which is updated
 	 * @param {string} [sPath]
 	 *   Some relative path
-	 * @returns {Promise}
+	 * @returns {SyncPromise}
 	 *   A promise on the outcome of the cache's <code>update</code> call
+	 * @throws {Error}
+	 *   If the cache promise for this binding is not yet fulfilled
 	 *
 	 * @private
 	 */
 	ODataParentBinding.prototype.updateValue = function (sGroupId, sPropertyName, vValue, sEditUrl,
 			sPath) {
-		if (this.oCache) {
+		var oCache;
+
+		if (!this.oCachePromise.isFulfilled()) {
+			throw new Error("PATCH request not allowed");
+		}
+
+		oCache = this.oCachePromise.getResult();
+		if (oCache) {
 			sGroupId = sGroupId || this.getUpdateGroupId();
-			return this.oCache.update(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
+			return oCache.update(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
 		}
 
 		return this.oContext.updateValue(sGroupId, sPropertyName, vValue, sEditUrl,

@@ -67,6 +67,18 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 
 			},
 			assertions : {
+				checkCurrencyCodeIsF4Help : function () {
+					return this.waitFor({
+						controlType : "sap.ui.core.sample.odata.v4.SalesOrders.ValueHelp",
+						matchers : new Interactable(),
+						id : "NewCurrencyCode",
+						success : function (oValueHelp) {
+							Opa5.assert.ok(oValueHelp.getShowValueHelp(),
+								"CurrencyCode has value help");
+						},
+						viewName : sViewName
+					});
+				},
 				checkNewBuyerId : function (sExpectedBuyerID) {
 					return this.waitFor({
 						controlType : "sap.m.Input",
@@ -154,6 +166,31 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						id : "filterGrossAmount",
 						success : function (oSearchField) {
 							Opa5.assert.ok(true, "Filter by GrossAmount:" + sFilterValue);
+						},
+						viewName : sViewName
+					});
+				},
+				filterSOItemsByProductIdWithChangeParameters : function (iRow) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrderLineItems",
+						success : function (oSOItemsTable) {
+							var oRow = oSOItemsTable.getItems()[iRow],
+								sProductID = oRow.getCells()[2].getText();
+
+							// store sales order id and item postion for later comparison
+							sap.ui.test.Opa.getContext().sExpectedSalesOrderID =
+								oRow.getCells()[ID_COLUMN_INDEX].getText();
+							sap.ui.test.Opa.getContext().sExpectedItem =
+								oRow.getCells()[ITEM_COLUMN_INDEX].getText();
+
+							// filter for SOItem with Product ID from 2nd row
+							oSOItemsTable.getBinding("items")
+								.changeParameters({
+									$filter : "Product/ProductID eq '" + sProductID + "'"
+								});
+							Opa5.assert.ok(true, "Filter by ProductID with changeParameters:"
+								+ sProductID);
 						},
 						viewName : sViewName
 					});
@@ -327,6 +364,18 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "sortByGrossAmount",
+						viewName : sViewName
+					});
+				},
+				unselectSODetailsNoteWithChangeParameters : function () {
+					return this.waitFor({
+						controlType : "sap.m.VBox",
+						id : "ObjectPage",
+						success : function (oSODetails) {
+							oSODetails.getBindingContext().getBinding().changeParameters({
+								$select : 'ChangedAt,CreatedAt,LifecycleStatusDesc,SalesOrderID'
+							});
+						},
 						viewName : sViewName
 					});
 				}
@@ -528,10 +577,27 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						success : function (oSalesOrderItemsTable) {
 							var oRow = oSalesOrderItemsTable.getItems()[iRow];
 
+							// if called without 2nd and 3rd parameter use previously stored values
+							// for comparison
+							sExpectedSalesOrderID = sExpectedSalesOrderID
+								|| sap.ui.test.Opa.getContext().sExpectedSalesOrderID;
+							sExpectedItem = sExpectedItem
+								|| sap.ui.test.Opa.getContext().sExpectedItem;
+
 							Opa5.assert.strictEqual(oRow.getCells()[ID_COLUMN_INDEX].getText(),
 								sExpectedSalesOrderID, "Sales Order ID in row " + iRow);
 							Opa5.assert.strictEqual(oRow.getCells()[ITEM_COLUMN_INDEX].getText(),
 								sExpectedItem, "Item position in row " + iRow);
+						},
+						viewName : sViewName
+					});
+				},
+				checkSalesOrderDetailsNote: function () {
+					return this.waitFor({
+						controlType : "sap.m.Input",
+						id : "Note",
+						success : function (oSONote) {
+							Opa5.assert.strictEqual(oSONote.getValue(), "");
 						},
 						viewName : sViewName
 					});

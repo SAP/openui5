@@ -587,17 +587,19 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getQueryOptions", function (assert) {
-		var oBinding = {
+		var oParentContext = {},
+			oBinding = {
+				getContext : function () { return oParentContext; },
 				getQueryOptions : function () {}
 			},
 			oContext = Context.create(null, oBinding, "/EMPLOYEES/42"),
-			sPath = "foo/bar",
 			mResult = {};
 
-		this.mock(oBinding).expects("getQueryOptions").withExactArgs(sPath).returns(mResult);
+		this.mock(oBinding).expects("getQueryOptions")
+			.withExactArgs(sinon.match.same(oParentContext)).returns(mResult);
 
 		// code under test
-		assert.strictEqual(oContext.getQueryOptions(sPath), mResult);
+		assert.strictEqual(oContext.getQueryOptions(), mResult);
 	});
 
 	//*********************************************************************************************

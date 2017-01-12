@@ -334,6 +334,7 @@ sap.ui.require([
 			oPropertyBinding2 = oModel.bindProperty("Team_Id");
 
 		// cache proxy for oRelativeContextBinding
+		this.mock(oContext).expects("getQueryOptions").returns(undefined);
 		this.mock(oContext).expects("fetchCanonicalPath").returns(_SyncPromise.resolve("~"));
 		oRelativeContextBinding.setContext(oContext);
 		oListBinding3.setContext(oBaseContext);

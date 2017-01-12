@@ -9,17 +9,20 @@ sap.ui.require([
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/MetaModel",
+	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/model/odata/v4/ValueListType",
 	"sap/ui/model/PropertyBinding",
-	"sap/ui/test/TestUtils"
+	"sap/ui/test/TestUtils",
+	"sap/ui/thirdparty/URI"
 ], function (jQuery, BindingMode, BaseContext, ContextBinding, FilterProcessor, JSONListBinding,
-		MetaModel, AnnotationHelper, Context, _Helper, _SyncPromise, ODataMetaModel, ODataModel,
-		PropertyBinding, TestUtils) {
+		MetaModel, OperationMode, AnnotationHelper, Context, _Helper, _SyncPromise, ODataMetaModel,
+		ODataModel, ValueListType, PropertyBinding, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint no-loop-func: 0, no-warning-comments: 0 */
 	"use strict";
@@ -384,6 +387,8 @@ sap.ui.require([
 		},
 		oContainerData = mScope["tea_busi.DefaultContainer"],
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
+		sSampleServiceUrl
+			= "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/",
 		oTeamData = mScope["tea_busi.TEAM"],
 		oTeamLineItem = mScope.$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
 		oWorkerData = mScope["tea_busi.Worker"];
@@ -1928,5 +1933,394 @@ sap.ui.require([
 		}, new Error("Overwriting 'com.sap.gateway.default.iwbep.tea_busi.v0001.Department'"
 				+ " with the value defined in '/my/annotation.xml' is not supported"));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getOrCreateValueListModel", function(assert) {
+		var oModel = new ODataModel({
+				serviceUrl : "/Foo/DataService/",
+				synchronizationMode : "None"
+			}),
+			oMetaModel = oModel.getMetaModel(),
+			oValueListModel;
+
+		// code under test
+		oValueListModel = oMetaModel.getOrCreateValueListModel("../ValueListService/$metadata");
+
+		assert.ok(oValueListModel instanceof ODataModel);
+		assert.strictEqual(oValueListModel.sServiceUrl, "/Foo/ValueListService/");
+		assert.strictEqual(oValueListModel.getDefaultBindingMode(), BindingMode.OneWay);
+		assert.strictEqual(oValueListModel.getGroupId(), "$direct");
+		assert.strictEqual(oValueListModel.sOperationMode, OperationMode.Server);
+
+		// code under test
+		assert.strictEqual(oMetaModel.getOrCreateValueListModel("/Foo/ValueListService/$metadata"),
+			oValueListModel);
+
+		// code under test
+		assert.strictEqual(oValueListModel.getMetaModel()
+				.getOrCreateValueListModel("/Foo/ValueListService/$metadata"),
+			oValueListModel);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getValueListType: metadata not yet loaded", function (assert) {
+		var oContext = {},
+			oMetaModel = new ODataMetaModel(),
+			oMetaModelMock = this.mock(oMetaModel),
+			sPath = "/Products('HT-1000')/Foo";
+
+		oMetaModelMock.expects("getMetaContext").withExactArgs(sPath).returns(oContext);
+		oMetaModelMock.expects("fetchObject")
+			.withExactArgs("", sinon.match.same(oContext))
+			.returns(_SyncPromise.resolve(Promise.resolve({})));
+
+		// code under test
+		assert.throws(function () {
+			oMetaModel.getValueListType(sPath);
+		}, new Error("Metadata not yet loaded"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getValueListType: unknown property", function (assert) {
+		var oContext = {},
+			oMetaModel = new ODataMetaModel(),
+			oMetaModelMock = this.mock(oMetaModel),
+			sPath = "/Products('HT-1000')/Foo";
+
+		oMetaModelMock.expects("getMetaContext").withExactArgs(sPath).returns(oContext);
+		oMetaModelMock.expects("fetchObject")
+			.withExactArgs("", sinon.match.same(oContext))
+			.returns(_SyncPromise.resolve(undefined));
+
+		// code under test
+		assert.throws(function () {
+			oMetaModel.getValueListType(sPath);
+		}, new Error("No metadata for " + sPath));
+	});
+
+	//*********************************************************************************************
+	[{
+		sValueListType : ValueListType.None
+	}, {
+		oReferenceAnnotation : {},
+		sValueListType : ValueListType.Standard
+	}, {
+		oFixedAnnotation : true,
+		sValueListType : ValueListType.Fixed
+	}].forEach(function (oFixture) {
+		QUnit.test("getValueListType: " + oFixture.sValueListType, function (assert) {
+			var oContext = {},
+				oMetaModel = new ODataMetaModel(),
+				oMetaModelMock = this.mock(oMetaModel),
+				sPropertyPath = "/ProductList('HT-1000')/Status";
+
+			oMetaModelMock.expects("getMetaContext")
+				.withExactArgs(sPropertyPath).returns(oContext);
+			oMetaModelMock.expects("fetchObject")
+				.withExactArgs("", sinon.match.same(oContext))
+				.returns(_SyncPromise.resolve({}));
+			oMetaModelMock.expects("getObject")
+				.withExactArgs("@com.sap.vocabularies.Common.v1.ValueListWithFixedValues",
+					sinon.match.same(oContext))
+				.returns(oFixture.oFixedAnnotation);
+			if (!oFixture.oFixedAnnotation) {
+				oMetaModelMock.expects("getObject")
+					.withExactArgs("@com.sap.vocabularies.Common.v1.ValueListReference",
+						sinon.match.same(oContext))
+					.returns(oFixture.oReferenceAnnotation);
+			}
+
+			// code under test
+			assert.strictEqual(oMetaModel.getValueListType(sPropertyPath), oFixture.sValueListType);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		oProperty: undefined,
+		sExpectedError : "No metadata"
+	}, {
+		oProperty: {},
+		sExpectedError : "No value list info"
+	}].forEach(function (oFixture) {
+		QUnit.test("requestValueListInfo: " + oFixture.sExpectedError, function (assert) {
+			var oMetaContext = {},
+				oModel = new ODataModel({
+					serviceUrl : "/~/",
+					synchronizationMode : "None"
+				}),
+				oMetaModelMock = this.mock(oModel.getMetaModel()),
+				sPropertyPath = "/ProductList('HT-1000')/Status";
+
+			oMetaModelMock.expects("getMetaContext")
+				.withExactArgs(sPropertyPath)
+				.returns(oMetaContext);
+			oMetaModelMock.expects("requestObject")
+				.withExactArgs("/$EntityContainer")
+				.returns(Promise.resolve("gw_sample_basic.Container"));
+			oMetaModelMock.expects("requestObject")
+				.withExactArgs("", sinon.match.same(oMetaContext))
+				.returns(Promise.resolve(oFixture.oProperty));
+			oMetaModelMock.expects("requestObject")
+				.withExactArgs("@com.sap.vocabularies.Common.v1.ValueListReference",
+					sinon.match.same(oMetaContext))
+				.returns(Promise.resolve(undefined));
+
+			// code under test
+			return oModel.getMetaModel().requestValueListInfo(sPropertyPath).then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.message,
+					oFixture.sExpectedError + " for " + sPropertyPath);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestValueListInfo: success", function (assert) {
+		var oMetaContext = {},
+			oModel = new ODataModel({
+				serviceUrl : "/Foo/DataService/",
+				synchronizationMode : "None"
+			}),
+			oMetaModelMock = this.mock(oModel.getMetaModel()),
+			oProperty = {},
+			sPropertyPath = "/ProductList('HT-1000')/Category",
+			oValueListMetaModel = {
+				fetchEntityContainer : function () {}
+			},
+			oValueListMetadata = {
+				"$Annotations" : {
+					"gw_sample_basic.Product/Category" : {
+						"@com.sap.vocabularies.Common.v1.ValueListMapping" : {
+							"CollectionPath" : "VH_Category1Set",
+							"Parameters" : [{"p1" : "foo"}]
+						},
+						"@com.sap.vocabularies.Common.v1.ValueListMapping#foo" : {
+							"CollectionPath" : "VH_Category2Set",
+							"Parameters" : [{"p2" : "bar"}]
+						}
+					},
+					"some.other.Target" : true
+				}
+			},
+			oValueListModel = {
+				getMetaModel : function () { return oValueListMetaModel; }
+			},
+			oValueListReference = {
+				MappingUrl : "../ValueListService/$metadata"
+			};
+
+		oMetaModelMock.expects("getMetaContext")
+			.withExactArgs(sPropertyPath)
+			.returns(oMetaContext);
+		oMetaModelMock.expects("requestObject")
+			.withExactArgs("/$EntityContainer")
+			.returns(Promise.resolve("gw_sample_basic.Container"));
+		oMetaModelMock.expects("requestObject")
+			.withExactArgs("", sinon.match.same(oMetaContext))
+			.returns(Promise.resolve(oProperty));
+		oMetaModelMock.expects("requestObject")
+			.withExactArgs("@com.sap.vocabularies.Common.v1.ValueListReference",
+				sinon.match.same(oMetaContext))
+			.returns(Promise.resolve(oValueListReference));
+		oMetaModelMock.expects("getOrCreateValueListModel")
+			.withExactArgs(oValueListReference.MappingUrl)
+			.returns(oValueListModel);
+		this.mock(oValueListMetaModel).expects("fetchEntityContainer")
+			.returns(Promise.resolve(oValueListMetadata));
+		oMetaModelMock.expects("getObject").withExactArgs("/gw_sample_basic.Product/Category")
+			.returns(oProperty);
+
+		// code under test
+		return oModel.getMetaModel().requestValueListInfo(sPropertyPath).then(function (oResult) {
+			assert.strictEqual(oResult[""].$model, oValueListModel);
+			assert.strictEqual(oResult.foo.$model, oValueListModel);
+			delete oResult[""].$model;
+			delete oResult.foo.$model;
+			assert.deepEqual(oResult, {
+				"" : {
+					"CollectionPath" : "VH_Category1Set",
+					"Parameters" : [{"p1" : "foo"}]
+				},
+				"foo" : {
+					"CollectionPath" : "VH_Category2Set",
+					"Parameters" : [{"p2" : "bar"}]
+				}
+			});
+			assert.notStrictEqual(oResult.foo.Parameters, oValueListMetadata.$Annotations
+					["gw_sample_basic.Product/Category"]
+					["@com.sap.vocabularies.Common.v1.ValueListMapping#foo"].Parameters,
+				"result is a deep copy");
+		});
+	});
+	// TODO Will BindingMode.OneTime also work, i.e. are there cases where value list data changes?
+
+	//*********************************************************************************************
+	[{
+		annotations : {
+			"gw_sample_basic.Product/CurrencyCode/type.cast" : true
+		},
+		error : "Unexpected annotation target in value list metadata:"
+			+ " gw_sample_basic.Product/CurrencyCode/type.cast"
+	}, {
+		annotations : {
+			"gw_sample_basic.Product/Category" : {
+				"@some.other.Term" : true
+			}
+		},
+		error : "Unexpected annotation term in value list metadata: "
+			+ "gw_sample_basic.Product/Category@some.other.Term"
+	}].forEach(function (oFixture) {
+		QUnit.test("requestValueListInfo: " + oFixture.error, function (assert) {
+			var oMetaContext = {},
+				oModel = new ODataModel({
+					serviceUrl : "/Foo/DataService/",
+					synchronizationMode : "None"
+				}),
+				oMetaModel = oModel.getMetaModel(),
+				oMetaModelMock = this.mock(oMetaModel),
+				oProperty = {},
+				sPropertyPath = "/ProductList('HT-1000')/Category",
+				oValueListMetaModel = {
+					fetchEntityContainer : function () {}
+				},
+				oValueListMetadata = {
+					"$Annotations" : oFixture.annotations
+				},
+				oValueListModel = {
+					getMetaModel : function () { return oValueListMetaModel; }
+				},
+				oValueListReference = {
+					MappingUrl : "../ValueListService/$metadata"
+				},
+				sTarget = Object.keys(oFixture.annotations)[0];
+
+			oMetaModelMock.expects("getMetaContext")
+				.withExactArgs(sPropertyPath)
+				.returns(oMetaContext);
+			oMetaModelMock.expects("requestObject")
+				.withExactArgs("/$EntityContainer")
+				.returns(Promise.resolve("gw_sample_basic.Container"));
+			oMetaModelMock.expects("requestObject")
+				.withExactArgs("", sinon.match.same(oMetaContext))
+				.returns(Promise.resolve(oProperty));
+			oMetaModelMock.expects("requestObject")
+				.withExactArgs("@com.sap.vocabularies.Common.v1.ValueListReference",
+					sinon.match.same(oMetaContext))
+				.returns(Promise.resolve(oValueListReference));
+			oMetaModelMock.expects("getOrCreateValueListModel")
+				.withExactArgs(oValueListReference.MappingUrl)
+				.returns(oValueListModel);
+			this.mock(oValueListMetaModel).expects("fetchEntityContainer")
+				.returns(Promise.resolve(oValueListMetadata));
+			oMetaModelMock.expects("getObject")
+				.withExactArgs("/" + sTarget)
+				.returns(sTarget === "gw_sample_basic.Product/Category" ? oProperty : {});
+
+			// code under test
+			return oMetaModel.requestValueListInfo(sPropertyPath).then(function (oResult) {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.message, oFixture.error);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestValueListInfo: data model and value list model identical", function(assert) {
+		var oMetaContext = {},
+			oModel = new ODataModel({
+				serviceUrl : "/Foo/ValueListService/",
+				synchronizationMode : "None"
+			}),
+			oMetaModelMock = this.mock(oModel.getMetaModel()),
+			oProperty = {},
+			sPropertyPath = "/VH_BusinessPartnerSet/Country",
+			oValueListReference = {
+				MappingUrl : "$metadata"
+			},
+			oValueListMetadata = {
+				"$Annotations" : {
+					"gw_sample_basic.BusinessPartnerList/BusinessPartnerID" : {
+						"@com.sap.vocabularies.Common.v1.ValueListMapping" : {
+							"CollectionPath" : "VH_BusinessPartnerSet"
+						}
+					},
+					// value list on value list
+					"value_list.VH_BusinessPartner/Country" : {
+						"@com.sap.vocabularies.Common.v1.ValueListReference" : oValueListReference,
+						"@com.sap.vocabularies.Common.v1.ValueListMapping" : {
+							"CollectionPath" : "VH_CountrySet",
+							"Parameters" : [{"p1" : "foo"}]
+						}
+					},
+					"value_list.VH_BusinessPartner/Foo" : {/* some other field w/ value list*/}
+				}
+			};
+
+		oMetaModelMock.expects("getMetaContext")
+			.withExactArgs(sPropertyPath)
+			.returns(oMetaContext);
+		oMetaModelMock.expects("requestObject")
+			.withExactArgs("/$EntityContainer")
+			.returns(Promise.resolve("value_list.Container"));
+		oMetaModelMock.expects("requestObject")
+			.withExactArgs("", sinon.match.same(oMetaContext))
+			.returns(Promise.resolve(oProperty));
+		oMetaModelMock.expects("requestObject")
+			.withExactArgs("@com.sap.vocabularies.Common.v1.ValueListReference",
+				sinon.match.same(oMetaContext))
+			.returns(Promise.resolve(oValueListReference));
+		oMetaModelMock.expects("getOrCreateValueListModel")
+			.withExactArgs(oValueListReference.MappingUrl)
+			.returns(oModel);
+		this.mock(oModel.getMetaModel()).expects("fetchEntityContainer")
+			.returns(Promise.resolve(oValueListMetadata));
+		oMetaModelMock.expects("getObject").withExactArgs("/value_list.VH_BusinessPartner/Country")
+			.returns(oProperty);
+		oMetaModelMock.expects("getObject").withExactArgs("/value_list.VH_BusinessPartner/Foo")
+			.returns(undefined);
+
+		// code under test
+		return oModel.getMetaModel().requestValueListInfo(sPropertyPath).then(function (oResult) {
+			assert.strictEqual(oResult[""].$model, oModel);
+			delete oResult[""].$model;
+			assert.deepEqual(oResult, {
+				"" : {
+					"CollectionPath" : "VH_CountrySet",
+					"Parameters" : [{"p1" : "foo"}]
+				}
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	if (TestUtils.isRealOData()) {
+
+		//*****************************************************************************************
+		QUnit.test("getValueListType, requestValueListInfo: realOData", function (assert) {
+			var sPath = new URI(TestUtils.proxy(sSampleServiceUrl))
+					.absoluteTo(window.location.pathname).toString(),
+				oModel = new ODataModel({
+					serviceUrl : sPath,
+					synchronizationMode : "None"
+				}),
+				oMetaModel = oModel.getMetaModel(),
+				sPropertyPath = "/ProductList('HT-1000')/Category";
+
+			return oMetaModel.requestObject("/ProductList/").then(function () {
+				assert.strictEqual(oMetaModel.getValueListType(
+						"/com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.Contact/Sex"),
+					ValueListType.Fixed);
+				assert.strictEqual(oMetaModel.getValueListType(sPropertyPath),
+					ValueListType.Standard);
+				return oMetaModel.requestValueListInfo(sPropertyPath).then(function (oResult) {
+					var oValueListInfo = oResult[""];
+					assert.strictEqual(oValueListInfo.CollectionPath, "H_EPM_PD_CATS_SH_SET");
+				});
+			});
+		});
+	}
 });
 //TODO getContext vs. createBindingContext; map of "singletons" vs. memory leak
