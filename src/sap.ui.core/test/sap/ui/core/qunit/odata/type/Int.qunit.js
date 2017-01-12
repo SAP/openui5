@@ -192,11 +192,11 @@ sap.ui.require([
 				oNumberFormat = NumberFormat.getIntegerInstance({
 					groupingEnabled :true});
 
-			sExpectedMessage = "EnterIntMin " + oNumberFormat.format(iMin);
+			sExpectedMessage = "EnterNumberMin " + oNumberFormat.format(iMin);
 			testRange(assert, -Infinity, sExpectedMessage);
 			testRange(assert, iMin - 1, sExpectedMessage);
 
-			sExpectedMessage = "EnterIntMax " + oNumberFormat.format(iMax);
+			sExpectedMessage = "EnterNumberMax " + oNumberFormat.format(iMax);
 			testRange(assert, iMax + 1, sExpectedMessage);
 			testRange(assert, Infinity, sExpectedMessage);
 		});

@@ -46,6 +46,12 @@ sap.ui.define([
 			},
 			"Edm.Decimal" : {
 				constraints : {
+					"@Org.OData.Validation.V1.Minimum" : "minimum",
+					"@Org.OData.Validation.V1.Minimum@Org.OData.Validation.V1.Exclusive" :
+						"minimumExclusive",
+					"@Org.OData.Validation.V1.Maximum" : "maximum",
+					"@Org.OData.Validation.V1.Maximum@Org.OData.Validation.V1.Exclusive" :
+						"maximumExclusive",
 					"$Precision" : "precision",
 					"$Scale" : "scale"
 				},
