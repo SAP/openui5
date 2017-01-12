@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Tokenizer.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ScrollEnablement'],
-	function(jQuery, library, Control, ScrollEnablement) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/Device'],
+	function(jQuery, library, Control, ScrollEnablement, Device) {
 	"use strict";
 
 
@@ -1192,6 +1192,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Tokenizer.prototype.onsapend = function(oEvent) {
 		this.scrollToEnd();
+	};
+
+	/**
+	 * Handles the touch start event on the control.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 */
+	Tokenizer.prototype.ontouchstart = function(oEvent) {
+        // Workaround for chrome bug
+        // BCP: 1680011538
+		if (Device.browser.chrome && window.getSelection()) {
+			window.getSelection().removeAllRanges();
+		}
 	};
 
 	/**
