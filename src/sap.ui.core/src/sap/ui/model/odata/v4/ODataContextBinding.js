@@ -121,8 +121,7 @@ sap.ui.define([
 			constructor : function (oModel, sPath, oContext, mParameters) {
 				var iPos = sPath.indexOf("(...)");
 
-				ContextBinding.call(this, oModel, sPath, undefined /*context is set below*/,
-					mParameters);
+				ContextBinding.call(this, oModel, sPath);
 
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
@@ -244,12 +243,10 @@ sap.ui.define([
 	 *
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
-	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
-	 *   Change reason if called from {@link #changeParameters}
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
+	ODataContextBinding.prototype.applyParameters = function (mParameters) {
 		var oBindingParameters;
 
 		this.mQueryOptions = this.oModel.buildQueryOptions(undefined, mParameters, true);
@@ -258,9 +255,7 @@ sap.ui.define([
 			["$$groupId", "$$updateGroupId"]);
 		this.sGroupId = oBindingParameters.$$groupId;
 		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-		if (sChangeReason) { // set this.mParameters if called from changeParameters
-			this.mParameters = mParameters;
-		}
+		this.mParameters = mParameters;
 		if (!this.oOperation) {
 			this.oCachePromise = this.makeCache(this.oContext);
 			this.checkUpdate();
@@ -704,8 +699,9 @@ sap.ui.define([
 
 		if (!this.bRelative) {
 			oContext = undefined; // must be ignored for absolute bindings
-		} else if (!oContext || oContext.fetchCanonicalPath && !this.mParameters) {
-			return _SyncPromise.resolve(undefined); // no need for an own cache
+		} else if (!oContext || oContext.fetchCanonicalPath
+			&& !Object.keys(this.mParameters).length) {
+				return _SyncPromise.resolve(undefined); // no need for an own cache
 		}
 		mQueryOptions = this.getQueryOptions(oContext);
 		vCanonicalPath = oContext && (oContext.fetchCanonicalPath
