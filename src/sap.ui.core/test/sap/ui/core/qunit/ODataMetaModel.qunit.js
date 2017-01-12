@@ -264,6 +264,9 @@ sap.ui.require([
 <Annotations Target="GWSAMPLE_BASIC.Assoc_Foo/FromRole_Foo">\
 	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.Assoc_Foo/FromRole_Foo" />\
 </Annotations>\
+<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/AnyProperty">\
+	<Annotation Term="com.sap.vocabularies.Common.v1.IsDigitSequence"/>\
+</Annotations>\
 <Annotations Target="GWSAMPLE_BASIC.BusinessPartner/ToFoo">\
 	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.BusinessPartner/ToFoo" />\
 </Annotations>\
@@ -1214,6 +1217,7 @@ sap.ui.require([
 					oProductSet = oEntityContainer.entitySet[1],
 					oProductWeightMeasure =  oProduct.property[2],
 					oProductWeightUnit =  oProduct.property[3],
+					oValue,
 					oVHSex = oGWSampleBasic.entityType[1],
 					oVHSexSet = oEntityContainer.entitySet[2];
 
@@ -1645,9 +1649,13 @@ sap.ui.require([
 				// sap:display-format
 				assert.deepEqual(oAnyProperty["sap:display-format"], "NonNegative");
 				delete oAnyProperty["sap:display-format"];
-				assert.deepEqual(oAnyProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"], {
-					"Bool" : (i === 0 ? "true" : "false")
-				}, "sap:display-format=NonNegative");
+				oValue = oAnyProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"];
+				if (i === 2) {
+					assert.deepEqual(oValue, {}, "sap:display-format=NonNegative");
+				} else {
+					assert.deepEqual(oValue, { "Bool" : (i === 0 ? "true" : "false") },
+						"sap:display-format=NonNegative");
+				}
 				delete oAnyProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"];
 
 				assert.deepEqual(oBusinessPartnerId["sap:display-format"], "UpperCase");
