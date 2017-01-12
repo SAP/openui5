@@ -8,27 +8,28 @@ sap.ui.controller("sap.ui.demokit.explored.view.notFound", {
 		this.router = sap.ui.core.UIComponent.getRouterFor(this);
 		this.router.attachRoutePatternMatched(this.onRouteMatched, this);
 		this.getView().addEventDelegate(this);
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
+		this.getView().setModel(new sap.ui.model.json.JSONModel({
+			entityName: ""
+		}));
 	},
-
-	_msg : "<div class='titlesNotFound'>The requested object '{0}' is unknown to the explored app. We suspect it's lost in space.</div>",
 
 	onRouteMatched : function (evt) {
 		if (evt.getParameter("name") !== "notFound") {
 			return;
 		}
 		var params = evt.getParameter("arguments")["all*"];
-		var html = this._msg.replace("{0}", params);
-		this.getView().byId("msgHtml").setContent(html);
+		this.getView().getModel().setProperty("/entityName", params);
 	},
 
 	onBeforeShow : function (evt) {
 		if (evt.data.path) {
-			var html = this._msg.replace("{0}", evt.data.path);
-			this.getView().byId("msgHtml").setContent(html);
+			this.getView().getModel().setProperty("/entityName", evt.data.path);
 		}
 	},
 
 	onNavBack : function () {
 		this.router.myNavBack("home", {});
 	}
+
 });
