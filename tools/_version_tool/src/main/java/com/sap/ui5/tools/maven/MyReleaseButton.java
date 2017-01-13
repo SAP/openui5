@@ -232,11 +232,12 @@ public class MyReleaseButton {
 
     public ProcessingFilter(String name, EnumSet<ProcessingTypes> filter) {
       this.name = name;
-      this.processingTypes = filter;
+      this.includedProcessingTypes = filter;
     }
 
     public String name = "default";
-    public EnumSet<ProcessingTypes> processingTypes = EnumSet.allOf(ProcessingTypes.class);
+    public EnumSet<ProcessingTypes> includedProcessingTypes = EnumSet.allOf(ProcessingTypes.class);
+    public EnumSet<ProcessingTypes> excludedProcessingTypes = EnumSet.allOf(ProcessingTypes.class);
   }
 
   static Pattern fromS, fromSVO, fromT, fromQ_POM, fromQ, fromR;
@@ -303,7 +304,8 @@ public class MyReleaseButton {
       processingTypes.add(ProcessingTypes.OnlyVersionWithSnapshot);
     }	
     
-    processingTypes.removeAll(EnumSet.complementOf(filter.processingTypes));
+    processingTypes.removeAll(EnumSet.complementOf(filter.includedProcessingTypes));
+    processingTypes.removeAll(filter.excludedProcessingTypes);
     
     if ( !processingTypes.isEmpty() ) {
       CharSequence orig = readFile(file, encoding);
