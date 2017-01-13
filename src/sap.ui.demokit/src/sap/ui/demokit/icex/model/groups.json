@@ -392,8 +392,8 @@
 				{ "name" : "italic-text" },
 				{ "name" : "decrease-line-height" },
 				{ "name" : "indent" },
-				{ "name" : "cursor-arrow" }
-
+				{ "name" : "cursor-arrow" },
+				{ "name" : "fx" }
 			]
 		},
 
@@ -737,7 +737,8 @@
 				{ "name" : "sys-help-2" },
 				{ "name" : "add-coursebook" },
 				{ "name" : "slim-arrow-right" },
-				{ "name" : "negative" }
+				{ "name" : "negative" },
+				{ "name" : "fx" }
 
 			]
 		},
