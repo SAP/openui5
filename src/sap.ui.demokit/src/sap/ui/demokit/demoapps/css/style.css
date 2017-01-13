@@ -1,17 +1,8 @@
+.sapUiDemoApps .headlineCell {
+    background-color: white !important;
+}
 
-.sapMTile .sapMStdTileNumM {
-	font-size: 1rem;
-	color: #999999;
-}
-.sapMTile .sapMStdTileNumS {
-	font-size: 1rem;
-	color: #999999;
-}
-.sapMStdTileTitle {
-	font-size: 1.25rem;
-}
-.sapMStdTileInfo {
-	white-space: normal;
-	margin-top: 0;
-	color: #777777;
+.sapUiDemoApps .headlineCell .sapUiBlockCellContent {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
 }

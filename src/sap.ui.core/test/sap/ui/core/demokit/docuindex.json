@@ -1,4 +1,19 @@
 {
+	"demo": {
+		"text": "sap.ui.core",
+		"links": [
+			{
+				"icon": "map-2",
+				"text": "Employee Directory",
+				"desc": "This app is an employee directory and shows the final result of the 'Navigation Tutorial'",
+				"ref": "test-resources/sap/ui/core/demokit/tutorial/navigation/09/webapp/index.html#/employees",
+				"links": {
+					"Navigation Tutorial": "#docs/guide/1b6dcd39a6a74f528b27ddb22f15af0d.html"
+				},
+				"category": "Tutorial"
+			}
+		]
+	},
 	"explored" : {
 		"entitiesDefaults" : {
 			"formFactors" : "-"

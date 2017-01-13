@@ -1,4 +1,7 @@
-sap.ui.define(["jquery.sap.global", "codeUnterTest/view/sample.controller"], function ($, Controller) {
+sap.ui.define([
+	"jquery.sap.global",
+	"codeUnterTest/view/sample.controller"
+], function ($, Controller) {
 	var MODULE_PATH = "modulePathForTesting";
 	var URL_PREFIX = "./";
 	$.sap.registerResourcePath(MODULE_PATH, URL_PREFIX);
