@@ -105,7 +105,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSeri
 				this._serializeRecursive(aContent[i]);
 			}
 		} else if (oControl.getMetadata().getClass() === this._oWindow.sap.ui.core.ComponentContainer) {
-			this._serializeRecursive(oControl.getComponentInstance().getAggregation("rootControl"));
+			this._serializeRecursive(oControl.getComponentInstance().getRootControl());
 		} else {
 			var mAggregations = oControl.getMetadata().getAllAggregations();
 			if (mAggregations) {

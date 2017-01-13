@@ -32,7 +32,7 @@ sap.ui.define([
 			this.setModel(oDeviceModel, "device");
 
 			// set dialog
-			this._helloDialog = new HelloDialog(this.getAggregation("rootControl"));
+			this._helloDialog = new HelloDialog(this.getRootControl());
 
 			// create the views based on the url/hash
 			this.getRouter().initialize();

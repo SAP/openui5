@@ -85,7 +85,7 @@
 			});
 
 			QUnit.test("When the component container is rendered...", function(assert) {
-				var oInnerLayout = this.oComponent.getAggregation("rootControl");
+				var oInnerLayout = this.oComponent.getRootControl();
 				var oInnerLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oInnerLayout);
 
 				var oOuterLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout);

@@ -382,7 +382,7 @@
 
 		sap.ui.getCore().applyChanges();
 
-		var oRootControl = oComponent.getAggregation("rootControl");
+		var oRootControl = oComponent.getRootControl();
 		assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!")
 		assert.ok(!jQuery.sap.startsWith(oRootControl.getId(), oComponent.getId()), "View id doesn't start with component id!");
 
@@ -403,7 +403,7 @@
 
 		sap.ui.getCore().applyChanges();
 
-		var oRootControl = oComponent.getAggregation("rootControl");
+		var oRootControl = oComponent.getRootControl();
 		assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!")
 		assert.ok(!jQuery.sap.startsWith(oRootControl.getId(), oComponent.getId()), "View id doesn't start with component id!");
 
@@ -424,7 +424,7 @@
 
 		sap.ui.getCore().applyChanges();
 
-		var oRootControl = oComponent.getAggregation("rootControl");
+		var oRootControl = oComponent.getRootControl();
 		assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!")
 		assert.ok(jQuery.sap.startsWith(oRootControl.getId(), oComponent.getId() + "---"), "View id starts with component id!");
 
@@ -448,7 +448,7 @@
 
 		sap.ui.getCore().applyChanges();
 
-		var oRootControl = oComponent.getAggregation("rootControl");
+		var oRootControl = oComponent.getRootControl();
 		assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!")
 		assert.ok(jQuery.sap.startsWith(oRootControl.getId(), oComponent.getId() + "---"), "View id starts with component id!");
 
