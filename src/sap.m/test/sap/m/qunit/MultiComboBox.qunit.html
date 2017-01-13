@@ -4821,7 +4821,7 @@
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(sap.ui.getCore().byId(oMultiComboBox.getPopupHiddenLabelId()).getText(), oResourceBundle, 'popup ariaLabelledBy is set');
+		assert.equal(sap.ui.getCore().byId(oMultiComboBox.getPickerInvisibleTextId()).getText(), oResourceBundle, 'popup ariaLabelledBy is set');
 		oMultiComboBox.destroy();
 	});
 
