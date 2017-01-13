@@ -137,6 +137,8 @@ sap.ui.define([], function() {
 							}
 						} else if (sType === "sap.ui.layout.form.FormElement"){
 							sChangeType = "hideSimpleFormField";
+						} else {
+							return undefined;
 						}
 
 						return {
