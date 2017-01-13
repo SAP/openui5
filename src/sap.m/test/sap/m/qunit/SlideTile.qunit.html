@@ -154,7 +154,7 @@
 
 	QUnit.test("Test sliding continues on focusout", function(assert) {
 		//Arrange
-		var spy = sinon.spy(this.oSlideTile, "_toggleAnimation");
+		this.oSlideTile._bAnimationPause = true;
 		//Act
 		this.oSlideTile.$().blur();
 		//Assert
