@@ -746,7 +746,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 			offsetY: 0,
 			initialFocus: this,
 			bounce: false,
-			ariaLabelledBy: this.getPopupHiddenLabelId()
+			ariaLabelledBy: this.getPickerInvisibleTextId() || undefined
 		});
 
 		this._decoratePopover(oPopup);

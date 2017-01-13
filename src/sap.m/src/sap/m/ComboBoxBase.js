@@ -73,8 +73,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 			}
 		});
 
-		//Keeps the ID of the static aria text for Available Values
-		var sPopupHiddenLabelId;
+		//Keeps the ID of the static aria text for available options
+		var sPickerHiddenLabelId;
 
 		/* =========================================================== */
 		/* Private methods                                             */
@@ -227,23 +227,23 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 
 		/**
 		 * Gets the ID of the hidden label
-		 * @returns {string|undefined} Id of hidden text or undefined if there is no accessibility
+		 * @returns {string} Id of hidden text
 		 * @protected
 		 */
-		ComboBoxBase.prototype.getPopupHiddenLabelId = function() {
+		ComboBoxBase.prototype.getPickerInvisibleTextId = function() {
 			if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
-				return;
+				return "";
 			}
 
 			// Load the resources
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-			if (!sPopupHiddenLabelId) {
-				sPopupHiddenLabelId = new InvisibleText({
+			if (!sPickerHiddenLabelId) {
+				sPickerHiddenLabelId = new InvisibleText({
 					text: oResourceBundle.getText("COMBOBOX_AVAILABLE_OPTIONS")
 				}).toStatic().getId();
 			}
-			return sPopupHiddenLabelId;
+			return sPickerHiddenLabelId;
 		};
 
 		/* =========================================================== */
@@ -806,7 +806,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 				beforeOpen: function() {
 					that.updatePickerHeaderTitle();
 				},
-				ariaLabelledBy: that.getPopupHiddenLabelId()
+				ariaLabelledBy: that.getPickerInvisibleTextId() || undefined
 			});
 		};
 

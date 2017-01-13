@@ -10279,7 +10279,7 @@
 			oComboBox.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			assert.equal(sap.ui.getCore().byId(oComboBox.getPopupHiddenLabelId()).getText(), oResourceBundle, 'popup ariaLabelledBy is set');
+			assert.equal(sap.ui.getCore().byId(oComboBox.getPickerInvisibleTextId()).getText(), oResourceBundle, 'popup ariaLabelledBy is set');
 
 			oComboBox.destroy();
 		});
