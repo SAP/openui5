@@ -8,13 +8,13 @@
 /************************************/
 /* toggled without context */
 html.sap-desktop .sapMToggleBtnPressed,
-.sapMToggleBtnPressed,
+.sapMToggleBtnPressed:not(.sapMBtnDisabled),
 /* Bar context*/
 html.sap-desktop .sapMIBar-CTX .sapMToggleBtnPressed,
-.sapMIBar-CTX .sapMToggleBtnPressed,
+.sapMIBar-CTX .sapMToggleBtnPressed:not(.sapMBtnDisabled),
 /* Toolbar transparent context */
 html.sap-desktop .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed,
-.sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed {
+.sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnDisabled) {
 	background-image: none;
 	background-color: @sapUiToggleButtonPressedBackground;
 	border-color: @sapUiToggleButtonPressedBorderColor;
