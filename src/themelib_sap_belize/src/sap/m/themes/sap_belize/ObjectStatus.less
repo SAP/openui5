@@ -3,7 +3,9 @@
 /* Belize theme                        */
 /* =================================== */
 
-.sapContrast .sapMObjStatus .sapMObjStatusText,
-.sapContrast.sapMObjStatus .sapMObjStatusIcon {
-	text-shadow: @sapUiShadowText;
+@_sap_m_ObjectStatus_TextShadowColor: none;
+
+.sapMObjStatus .sapMObjStatusText,
+.sapMObjStatus .sapMObjStatusIcon {
+	text-shadow: @_sap_m_ObjectStatus_TextShadowColor;
 }

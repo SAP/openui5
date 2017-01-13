@@ -3,6 +3,8 @@
 /* Belize theme                */
 /* =========================== */
 
+@_sap_m_Link_TextShadowColor: none;
+
 .sapMLnkDsbl {
 	opacity: 0.5;
 	outline: none;
@@ -22,7 +24,6 @@
 	color: @sapUiContentFocusColor;
 }
 
-.sapContrast .sapMLnk,
-.sapContrast.sapMLnk {
-	text-shadow: @sapUiShadowText;
+.sapMLnk {
+	text-shadow: @_sap_m_Link_TextShadowColor;
 }
