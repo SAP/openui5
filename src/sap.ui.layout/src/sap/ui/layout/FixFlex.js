@@ -290,13 +290,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 			oScroller.setVertical(false);
 			oScroller.setHorizontal(false);
 
-			if (this.getVertical()) {
-				oInnerScroller.setVertical(true);
-				oInnerScroller.setHorizontal(false);
-			} else {
-				oInnerScroller.setVertical(false);
-				oInnerScroller.setHorizontal(true);
-			}
+			oInnerScroller.setVertical(true);
+			oInnerScroller.setHorizontal(true);
 		};
 
 		/**
