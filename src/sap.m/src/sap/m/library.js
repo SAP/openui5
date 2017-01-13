@@ -306,6 +306,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 				"sap.m.Bar": {
 					"moveElements": "default"
 				},
+				"sap.m.ListItemBase": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
+				"sap.m.StandardListItem": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
+				"sap.m.ColumnListItem": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
+				"sap.m.CustomListItem": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
+				"sap.m.InputListItem": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
 				"sap.m.DatePicker": {
 					"hideControl": "default",
 					"unhideControl": "default"

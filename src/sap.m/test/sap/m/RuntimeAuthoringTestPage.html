@@ -62,6 +62,14 @@
 								})
 								,
 								content: [
+									new sap.m.List({
+										id: "list",
+										items: [
+											new sap.m.StandardListItem({id: "listItem1", title: "Item 1"}),
+											new sap.m.StandardListItem({id: "listItem2", title: "Item 2"}),
+											new sap.m.StandardListItem({id: "listItem3", title: "Item 3"})
+										]
+									}),
 									new sap.ui.layout.VerticalLayout({
 										id: "verticalLayout",
 										content: [
