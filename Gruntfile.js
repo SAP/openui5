@@ -130,6 +130,10 @@ module.exports = function(grunt) {
 					path: 'src/sap.ui.fl'
 			},
 			{
+					name: 'sap.ui.codeeditor',
+					path: 'src/sap.ui.codeeditor'
+			},
+			{
 					name: 'themelib_sap_bluecrystal',
 					path: 'src/themelib_sap_bluecrystal',
 					type: 'theme'
