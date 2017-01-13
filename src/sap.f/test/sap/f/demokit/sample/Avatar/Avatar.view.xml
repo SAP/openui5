@@ -12,7 +12,7 @@
 		horizontal="false"
 		vertical="true">
 		<m:Text
-				text="The Avatar can be set to a square or circular shape with a predefined size:"
+				text="The Avatar Control allows usage of different shapes, sizes and content:"
 				width="100%"
 				class="sapUiSmallMarginTop sapUiSmallMarginBegin sapUiMediumMarginBottom">
 		</m:Text>
