@@ -31,26 +31,32 @@
 				<OverflowToolbar width="40%">
 					<ToolbarSpacer/>
 					<Button
+						id="errorButton"
 						icon="sap-icon://message-popup"
 						text="{= ${alerts>/alerts/errors}.length }"
 						visible="{= ${alerts>/alerts/errors}.length === 0 ? false : true }"
 						type="Transparent"
-						press="handleMessagePopoverPress">
+						press="onMessagePopoverPress">
 						<layoutData>
 							<OverflowToolbarLayoutData priority="Low"/>
 						</layoutData>
 					</Button>
 					 <Button
+						id="notificationButton"
 						icon="sap-icon://ui-notifications"
 						text="{= ${alerts>/alerts/notifications}.length }"
 						visible="{= ${alerts>/alerts/notifications}.length === 0 ? false : true }"
 						type="Transparent"
-						press="handleNotificationPress">
+						press="onNotificationPress">
 						 <layoutData>
 							 <OverflowToolbarLayoutData priority="Low"/>
 						 </layoutData>
 					 </Button>
-					 <Button text="Administrator" type="Transparent" press="handleUserNamePress">
+					 <Button
+						id="userButton"
+						text="{i18n>userName}"
+						type="Transparent"
+						press="onUserNamePress">
 						 <layoutData>
 							 <OverflowToolbarLayoutData priority="NeverOverflow"/>
 						 </layoutData>

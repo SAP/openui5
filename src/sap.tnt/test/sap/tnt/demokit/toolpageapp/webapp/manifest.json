@@ -78,15 +78,10 @@
 			"target": "home"
 		},
 		{
-		  "pattern": "System Settings",
+		  "pattern": "SystemSettings",
 		  "name": "systemSettings",
 		  "target": ["masterSettings", "detailSettings1"]
 		},
-		  {
-		  "pattern": "Order Settings",
-		  "name": "orderSettings",
-		  "target": ["masterSettings", "detailSettings2"]
-		  },
 		  {
 		  "pattern": "Statistics",
 		  "name": "statistics",
