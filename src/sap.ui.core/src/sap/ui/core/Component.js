@@ -108,7 +108,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		// copy all functions from the metadata object except of the
 		// manifest related functions which will be instance specific now
 		for (var m in oMetadata) {
-			if (!/^(getManifest|getManifestEntry|getMetadataVersion)$/.test(m) && typeof oMetadata[m] === "function") {
+			if (!/^(getManifest|getManifestObject|getManifestEntry|getMetadataVersion)$/.test(m) && typeof oMetadata[m] === "function") {
 				oMetadataProxy[m] = oMetadata[m].bind(oMetadata);
 			}
 		}
@@ -116,6 +116,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		// return the content of the manifest instead of the static metadata
 		oMetadataProxy.getManifest = function() {
 			return oManifest && oManifest.getJson();
+		};
+		oMetadataProxy.getManifestObject = function() {
+			return oManifest;
 		};
 		oMetadataProxy.getManifestEntry = function(sKey, bMerged) {
 			return getManifestEntry(oMetadata, oManifest, sKey, bMerged);
@@ -411,6 +414,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	};
 
 	/**
+	 * Returns true, if the Component instance is a variant.
+	 * @TODO more details
+	 *
+	 * @return {boolean} true, if the Component instance is a variant
+	 * @private
+	 * @since 1.45.0
+	 */
+	Component.prototype._isVariant = function() {
+		if (this._oManifest) {
+			// read the "/sap.app/id" from static manifest/metadata
+			var sMetadataId = this._oMetadataProxy._oMetadata.getManifestEntry("/sap.app/id");
+			// a variant differs in the "/sap.app/id"
+			return sMetadataId !== this.getManifestEntry("/sap.app/id");
+		} else {
+			return false;
+		}
+	};
+
+	/**
 	 * Activates the Customizing configuration for the given Component.
 	 * @param {string} sComponentName the name of the component to activate
 	 * @private
@@ -545,7 +567,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		}
 
 		// register the component instance
-		this.getMetadata().onInitComponent();
+		if (this._isVariant()) {
+			this._oManifest.onInitComponent();
+		} else {
+			this.getMetadata().onInitComponent();
+		}
 
 		// make user specific data available during component instantiation
 		this.oComponentData = mSettings && mSettings.componentData;
@@ -633,7 +659,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		}
 
 		// unregister the component instance
-		this.getMetadata().onExitComponent();
+		if (this._isVariant()) {
+			this._oManifest.onExitComponent();
+		} else {
+			this.getMetadata().onExitComponent();
+		}
 
 	};
 
