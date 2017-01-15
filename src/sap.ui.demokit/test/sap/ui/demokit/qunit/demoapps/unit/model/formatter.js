@@ -5,15 +5,29 @@ sap.ui.define([
 ], function (Text, formatter, FakeI18n) {
 	"use strict";
 
+	QUnit.module("formatter - crossLink");
+
+	QUnit.test("Should format a link starting with # to current URL prepended with the link", function (assert) {
+		var sOriginalHash = document.location.hash;
+		document.location.hash="demoapps.html";
+		assert.ok(formatter.crossLink("#test123").search("#test123") > 0, "the link is appended at the end");
+		document.location.hash = sOriginalHash;
+	});
+
+	QUnit.test("Should not format any other link", function (assert) {
+		assert.strictEqual(formatter.crossLink("something.different"), "something.different");
+		assert.strictEqual(formatter.crossLink(""), "");
+	});
+
 	QUnit.module("formatter - libraryLink");
 
 	QUnit.test("Should format a library link with sap.* to the corresponding demokit hash", function (assert) {
-		assert.strictEqual(formatter.libraryLink("sap.foo.bar"), "#docs/api/symbols/sap.foo.bar.html");
+		assert.strictEqual(formatter.libraryLink.call({formatter: formatter}, "sap.foo.bar"), "#docs/api/symbols/sap.foo.bar.html");
 	});
 
 	QUnit.test("Should format any other library link to the empty string", function (assert) {
-		assert.strictEqual(formatter.libraryLink("something.different"), "");
-		assert.strictEqual(formatter.libraryLink(""), "");
+		assert.strictEqual(formatter.libraryLink.call({formatter: formatter}, "something.different"), "");
+		assert.strictEqual(formatter.libraryLink.call({formatter: formatter}, ""), "");
 	});
 
 	QUnit.module("formatter - libraryLinkEnabled");

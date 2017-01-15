@@ -21,7 +21,8 @@
 				class="sapUiTinyMarginBottom"/>
 			<Link
 				href="{ref}"
-				text="View Demo"
+				target="_blank"
+				text="{i18n>demoAppTileLaunchDemo}"
 				class="sapUiSmallMarginBottom"
 				emphasized="true"/>
 			<Label
@@ -33,7 +34,11 @@
 				class="sapUiTinyMarginBottom"
 				visible="{= ${links}.length === 0 ? false : true }">
 				<Link
-					href="{ref}"
+					href="{
+						path: 'ref',
+						formatter: '.formatter.crossLink'
+					}"
+					target="_blank"
 					text="{name}"/>
 			</l:VerticalLayout>
 			<l:HorizontalLayout>

@@ -35,6 +35,8 @@ sap.ui.define([
 
 			oDownloadDialog.getBinding("items").filter([]);
 			oDownloadDialog.open();
+			// hack: override of the SelectDialog's internal dialog height
+			oDownloadDialog._oDialog.setContentHeight("");
 		},
 
 		/**
@@ -54,7 +56,8 @@ sap.ui.define([
 		 * @public
 		 */
 		onDownloadPress: function (oEvent) {
-			var oListItem = oEvent.getParameters().selectedItem;
+			var oSelectedItem = oEvent.getParameters().selectedItem,
+				oListItem = oSelectedItem ? oSelectedItem : oEvent.getSource().getParent();
 
 			this._oDownloadButton.setBusy(true);
 			sap.ui.require([
@@ -95,11 +98,11 @@ sap.ui.define([
 
 						// show success message
 						this._oDownloadButton.setBusy(false);
-						MessageToast.show("Downloading for app \"" + oListItem.getTitle() + "\" has been started");
+						MessageToast.show("Downloading for app \"" + oListItem.getLabel() + "\" has been started");
 
 						// still make the available files ready for download
 						var oContent = oZipFile.generate({type:"blob"});
-						this._createArchive(oFile, oContent, oListItem.getTitle());
+						this._createArchive(oFile, oContent, oListItem.getLabel());
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));

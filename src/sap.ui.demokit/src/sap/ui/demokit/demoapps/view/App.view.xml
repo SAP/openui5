@@ -60,18 +60,22 @@
 			<dependents>
 				<SelectDialog id="downloadDialog"
 					items="{/demoApps}"
-					title="Downloads"
+					title="{i18n>downloadDialogTitle}"
 					liveChange="onSearch"
 					confirm="onDownloadPress">
-					<StandardListItem
+					<InputListItem
 						visible="{= !!${config} }"
-						title="{name}"
+						label="{name}"
 						type="Active"
 						icon="sap-icon://{icon}">
 						<customData>
 							<core:CustomData key="config" value="{config}"/>
 						</customData>
-					</StandardListItem>
+						<Button
+							text="{i18n>downloadButtonText}"
+							type="Emphasized"
+							press="onDownloadPress"/>
+					</InputListItem>
 				</SelectDialog>
 			</dependents>
 		</Page>

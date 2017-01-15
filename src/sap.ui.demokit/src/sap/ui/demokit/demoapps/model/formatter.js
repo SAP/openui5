@@ -13,9 +13,23 @@ sap.ui.define([], function () {
 		 * @param {string} sNamespace value to be formatted
 		 * @returns {string} formatted link
 		 */
+		crossLink: function (sLink) {
+			if (sLink[0] === "#") {
+				sLink = document.location.href.substring(0,document.location.href.search("demoapps\.html")) + sLink;
+			}
+			return sLink;
+		},
+
+		/**
+		 * Formats a library namespace to link to the API reference if it starts with sap.
+		 *
+		 * @public
+		 * @param {string} sNamespace value to be formatted
+		 * @returns {string} formatted link
+		 */
 		libraryLink: function (sNamespace) {
 			if (sNamespace && sNamespace.search("sap\\.") === 0) {
-				return "#docs/api/symbols/" + sNamespace + ".html";
+				return this.formatter.crossLink("#docs/api/symbols/" + sNamespace + ".html");
 			} else {
 				return "";
 			}
@@ -29,7 +43,7 @@ sap.ui.define([], function () {
 		 * @returns {boolean} true or false
 		 */
 		libraryLinkEnabled: function (sNamespace) {
-			return !!this.formatter.libraryLink(sNamespace);
+			return !!this.formatter.libraryLink.bind(this)(sNamespace);
 		},
 
 		/**
