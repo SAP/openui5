@@ -4774,12 +4774,16 @@
 		}
 	}
 
-	function _includeScript(sUrl, sId, fnLoadCallback, fnErrorCallback) {
+	function _includeScript(sUrl, mAttributes, fnLoadCallback, fnErrorCallback) {
 		var oScript = window.document.createElement("script");
 		oScript.src = sUrl;
 		oScript.type = "text/javascript";
-		if (sId) {
-			oScript.id = sId;
+		if (typeof mAttributes === "object") {
+			Object.keys(mAttributes).forEach(function(sKey) {
+				if (mAttributes[sKey] != null) {
+					oScript.setAttribute(sKey, mAttributes[sKey]);
+				}
+			});
 		}
 
 		if (fnLoadCallback) {
@@ -4798,7 +4802,7 @@
 
 		// jQuery("head").append(oScript) doesn't work because they filter for the script
 		// and execute them directly instead adding the SCRIPT tag to the head
-		var oOld;
+		var oOld, sId = mAttributes && mAttributes.id;
 		if ((sId && (oOld = jQuery.sap.domById(sId)) && oOld.tagName === "SCRIPT")) {
 			jQuery(oOld).remove(); // replacing scripts will not trigger the load event
 		}
@@ -4815,8 +4819,10 @@
 	 *            vUrl.url the URL of the script to load
 	 * @param {string}
 	 *            [vUrl.id] id that should be used for the script tag
-	 * @param {string}
-	 *            [sId] id that should be used for the script tag
+	 * @param {object}
+	 *            [vUrl.attributes] map of attributes that should be used for the script tag
+	 * @param {string|object}
+	 *            [vId] id that should be used for the script tag or map of attributes
 	 * @param {function}
 	 *            [fnLoadCallback] callback function to get notified once the script has been loaded
 	 * @param {function}
@@ -4831,32 +4837,37 @@
 	 * @static
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
 	 */
-	jQuery.sap.includeScript = function includeScript(vUrl, sId, fnLoadCallback, fnErrorCallback) {
-		var oConfig = typeof vUrl === "string" ? {
-			url: vUrl,
-			id: sId
-		} : vUrl;
-
+	jQuery.sap.includeScript = function includeScript(vUrl, vId, fnLoadCallback, fnErrorCallback) {
 		if (typeof vUrl === "string") {
-			_includeScript(oConfig.url, oConfig.id, fnLoadCallback, fnErrorCallback);
+			var mAttributes = typeof vId === "string" ? {id: vId} : vId;
+			_includeScript(vUrl, mAttributes, fnLoadCallback, fnErrorCallback);
 		} else {
+			jQuery.sap.assert(typeof vUrl === 'object' && vUrl.url, "vUrl must be an object and requires a URL");
+			if (vUrl.id) {
+				vUrl.attributes = vUrl.attributes || {};
+				vUrl.attributes.id = vUrl.id;
+			}
 			return new Promise(function(fnResolve, fnReject) {
-				_includeScript(oConfig.url, oConfig.id, fnResolve, fnReject);
+				_includeScript(vUrl.url, vUrl.attributes, fnResolve, fnReject);
 			});
 		}
 	};
 
-	function _includeStyleSheet(sUrl, sId, fnLoadCallback, fnErrorCallback) {
+	function _includeStyleSheet(sUrl, mAttributes, fnLoadCallback, fnErrorCallback) {
 
-		var _createLink = function(sUrl, sId, fnLoadCallback, fnErrorCallback){
+		var _createLink = function(sUrl, mAttributes, fnLoadCallback, fnErrorCallback){
 
 			// create the new link element
 			var oLink = document.createElement("link");
 			oLink.type = "text/css";
 			oLink.rel = "stylesheet";
 			oLink.href = sUrl;
-			if (sId) {
-				oLink.id = sId;
+			if (typeof mAttributes === "object") {
+				Object.keys(mAttributes).forEach(function(sKey) {
+					if (mAttributes[sKey] != null) {
+						oLink.setAttribute(sKey, mAttributes[sKey]);
+					}
+				});
 			}
 
 			var fnError = function() {
@@ -4907,8 +4918,8 @@
 		};
 
 		// check for existence of the link
-		var oLink = _createLink(sUrl, sId, fnLoadCallback, fnErrorCallback);
-		var oOld = jQuery.sap.domById(sId);
+		var oLink = _createLink(sUrl, mAttributes, fnLoadCallback, fnErrorCallback);
+		var oOld = jQuery.sap.domById(mAttributes && mAttributes.id);
 		if (oOld && oOld.tagName === "LINK" && oOld.rel === "stylesheet") {
 			// link exists, so we replace it - but only if a callback has to be attached or if the href will change. Otherwise don't touch it
 			if (fnLoadCallback || fnErrorCallback || oOld.href !== URI(String(sUrl), URI().search("") /* returns current URL without search params */ ).toString()) {
@@ -4936,8 +4947,10 @@
 	 *            vUrl.url the URL of the stylesheet to load
 	 * @param {string}
 	 *            [vUrl.id] id that should be used for the link tag
-	 * @param {string}
-	 *          [sId] id that should be used for the link tag
+	 * @param {object}
+	 *            [vUrl.attributes] map of attributes that should be used for the script tag
+	 * @param {string|object}
+	 *          [vId] id that should be used for the link tag or map of attributes
 	 * @param {function}
 	 *          [fnLoadCallback] callback function to get notified once the stylesheet has been loaded
 	 * @param {function}
@@ -4958,17 +4971,18 @@
 	 * @static
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
 	 */
-	jQuery.sap.includeStyleSheet = function includeStyleSheet(vUrl, sId, fnLoadCallback, fnErrorCallback) {
-		var oConfig = typeof vUrl === "string" ? {
-			url: vUrl,
-			id: sId
-		} : vUrl;
-
+	jQuery.sap.includeStyleSheet = function includeStyleSheet(vUrl, vId, fnLoadCallback, fnErrorCallback) {
 		if (typeof vUrl === "string") {
-			_includeStyleSheet(oConfig.url, oConfig.id, fnLoadCallback, fnErrorCallback);
+			var mAttributes = typeof vId === "string" ? {id: vId} : vId;
+			_includeStyleSheet(vUrl, mAttributes, fnLoadCallback, fnErrorCallback);
 		} else {
+			jQuery.sap.assert(typeof vUrl === 'object' && vUrl.url, "vUrl must be an object and requires a URL");
+			if (vUrl.id) {
+				vUrl.attributes = vUrl.attributes || {};
+				vUrl.attributes.id = vUrl.id;
+			}
 			return new Promise(function(fnResolve, fnReject) {
-				_includeStyleSheet(oConfig.url, oConfig.id, fnResolve, fnReject);
+				_includeStyleSheet(vUrl.url, vUrl.attributes, fnResolve, fnReject);
 			});
 		}
 	};
