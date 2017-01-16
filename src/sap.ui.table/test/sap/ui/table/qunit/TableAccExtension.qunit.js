@@ -910,7 +910,7 @@ QUnit.asyncTest("ARIA for NoData", function(assert) {
 
 QUnit.test("HiddenTexts", function(assert) {
 	var aHiddenTexts = ["ariadesc", "ariacount", "toggleedit", "ariaselectall", "ariarowheaderlabel", "ariarowgrouplabel", "ariagrandtotallabel", "ariagrouptotallabel",
-		"ariacolrowheaderlabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariarowselected", "ariacolmenu", "ariacolfiltered", "ariacolsortedasc", "ariacolsorteddes",
+		"ariacolrowheaderlabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariarowselected", "ariacolmenu", "ariacolspan", "ariacolfiltered", "ariacolsortedasc", "ariacolsorteddes",
 		"ariafixedcolumn", "ariainvalid"];
 	var $Elem = oTable.$().find(".sapUiTableHiddenTexts");
 	assert.strictEqual($Elem.length, 1, "Hidden Text Area available");
@@ -965,6 +965,51 @@ QUnit.test("_debug()", function(assert) {
 	assert.ok(!oExtension._ExtensionHelper, "No debug mode");
 	oExtension._debug();
 	assert.ok(!!oExtension._ExtensionHelper, "Debug mode");
+});
+
+QUnit.test("ExtensionHelper.getRelevantColumnHeaders", function(assert) {
+	var oExtension = oTable._getAccExtension();
+	oExtension._debug();
+	var oHelper = oExtension._ExtensionHelper;
+
+	oTable.setFixedColumnCount(0);
+	oTable.getColumns()[0].addMultiLabel(new TestControl());
+	oTable.getColumns()[1].addMultiLabel(new TestControl());
+	oTable.getColumns()[1].addMultiLabel(new TestControl());
+	oTable.getColumns()[1].addMultiLabel(new TestControl());
+	oTable.getColumns()[2].addMultiLabel(new TestControl());
+	oTable.getColumns()[2].addMultiLabel(new TestControl());
+	oTable.getColumns()[2].addMultiLabel(new TestControl());
+	oTable.getColumns()[3].addMultiLabel(new TestControl());
+	oTable.getColumns()[3].addMultiLabel(new TestControl());
+	oTable.getColumns()[1].setHeaderSpan([3,2,1]);
+	sap.ui.getCore().applyChanges();
+
+	function checkColumnHeaders(tbl, col, aExpectedHeaders) {
+		var aHeaders = oHelper.getRelevantColumnHeaders(tbl, col);
+		var sId = tbl && col ? col.getId() : "";
+		assert.equal(aHeaders.length, aExpectedHeaders.length, sId + ": Number of relevant headers");
+		for (var i = 0; i < aExpectedHeaders.length; i++) {
+			assert.equal(aHeaders[i], aExpectedHeaders[i], sId + ": Header " + i + " == " + aHeaders[i]);
+		}
+	}
+
+	var oCol = oTable.getColumns()[0];
+	checkColumnHeaders(null, oCol, []);
+	checkColumnHeaders(oTable, null, []);
+	checkColumnHeaders(oTable, oCol, [oCol.getId(), oCol.getId() + "_1", oCol.getId() + "_2"]);
+
+	oCol = oTable.getColumns()[1];
+	checkColumnHeaders(oTable, oCol, [oCol.getId(), oCol.getId() + "_1", oCol.getId() + "_2"]);
+
+	oCol = oTable.getColumns()[2];
+	checkColumnHeaders(oTable, oCol, [oTable.getColumns()[1].getId(), oTable.getColumns()[1].getId() + "_1", oCol.getId() + "_2"]);
+
+	oCol = oTable.getColumns()[3];
+	checkColumnHeaders(oTable, oCol, [oTable.getColumns()[1].getId(), oCol.getId() + "_1", oCol.getId() + "_2"]);
+
+	oCol = oTable.getColumns()[4];
+	checkColumnHeaders(oTable, oCol, [oCol.getId(), oCol.getId() + "_1", oCol.getId() + "_2"]);
 });
 
 

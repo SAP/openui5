@@ -135,6 +135,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		},
 
 		/*
+		 * Returns the IDs of the column headers which are relevant for the given column (esp. in multi header case).
+		 */
+		getRelevantColumnHeaders : function(oTable, oColumn) {
+			if (!oTable || !oColumn) {
+				return [];
+			}
+
+			var iHeaderRowCount = TableUtils.getHeaderRowCount(oTable),
+				sColumnId = oColumn.getId(),
+				aLabels = [sColumnId];
+
+			if (iHeaderRowCount > 1) {
+				for (var i = 1; i < iHeaderRowCount; i++) {
+					aLabels.push(sColumnId + "_" + i);
+				}
+
+				var aSpans = TableUtils.Column.getParentSpannedColumns(oTable, sColumnId);
+				if (aSpans && aSpans.length) {
+					for (var i = 0; i < aSpans.length; i++) {
+						var iLevel = aSpans[i].level;
+						var sParentId = aSpans[i].column.getId();
+						aLabels[iLevel] = iLevel === 0 ? sParentId : (sParentId + "_" + iLevel);
+					}
+				}
+			}
+
+			return aLabels;
+		},
+
+		/*
 		 * Returns whether the given cell is hidden
 		 */
 		isHiddenCell : function($Cell, oCell) {
@@ -399,13 +429,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 					index: $Cell.attr("data-sap-ui-colindex")
 				}),
 				sText = ExtensionHelper.getColumnTooltip(oColumn),
-				aLabels = [oTable.getId() + "-colnumberofcols"].concat(mAttributes["aria-labelledby"]);
+				aLabels = [oTable.getId() + "-colnumberofcols"].concat(mAttributes["aria-labelledby"]),
+				oHeaderInfo = TableUtils.getColumnHeaderCellInfo($Cell),
+				iSpan = oHeaderInfo ? oHeaderInfo.span : 1;
+
+			if (iSpan > 1) {
+				aLabels.push(oTable.getId() + "-ariacolspan");
+				// Update Span information
+				oTable.$("ariacolspan").text(oTable._oResBundle.getText("TBL_COL_DESC_SPAN", ["" + iSpan]));
+			}
 
 			if (sText) {
 				aLabels.push(oTable.getId() + "-cellacc");
 			}
 
-			//TBD: Improve handling for multiple headers
 			ExtensionHelper.performCellModifications(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"],
 				aLabels, mAttributes["aria-describedby"], sText);
 		},
@@ -484,7 +521,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 					var oColumn = mParams && mParams.column;
 					var bIsMainHeader = oColumn && oColumn.getId() === mParams.headerId;
 					mAttributes["role"] = "columnheader";
-					mAttributes["aria-labelledby"] = mParams && mParams.headerId ?  [mParams.headerId] : [];
+					var aLabels = [];
+
+					if (mParams && mParams.headerId) {
+						var aHeaders = ExtensionHelper.getRelevantColumnHeaders(oTable, oColumn);
+						var iIdx = jQuery.inArray(mParams.headerId, aHeaders);
+						aLabels = iIdx > 0 ? aHeaders.slice(0, iIdx + 1) : [mParams.headerId];
+					}
+					mAttributes["aria-labelledby"] = aLabels;
+
 					if (mParams && (mParams.index < oTable.getFixedColumnCount())) {
 						mAttributes["aria-labelledby"].push(sTableId + "-ariafixedcolumn");
 					}
@@ -511,36 +556,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 						oColumn = mParams && mParams.column ? mParams.column : null;
 
 					if (oColumn) {
-						var aMultiLabels = oColumn.getMultiLabels();
-						var iMultiLabels = aMultiLabels.length;
-
-						// get IDs of column labels
-						if (oTable.getColumnHeaderVisible()) {
-							var sColumnId = oColumn.getId();
-							aLabels.push(sColumnId); // first column header has no suffix, just the column ID
-							if (iMultiLabels > 1) {
-								for (var i = 1; i < iMultiLabels; i++) {
-									aLabels.push(sColumnId + "_" + i); // for all other column header rows we add the suffix
-								}
-							}
-						} else {
-							// column header is not rendered therefore there is no <div> tag. Link aria description to label
-							var oLabel;
-							if (iMultiLabels == 0) {
-								oLabel = oColumn.getLabel();
-								if (oLabel) {
-									aLabels.push(oLabel.getId());
-								}
-							} else {
-								for (var i = 0; i < iMultiLabels; i++) {
-									// for all other column header rows we add the suffix
-									oLabel = aMultiLabels[i];
-									if (oLabel) {
-										aLabels.push(oLabel.getId());
-									}
-								}
-							}
-						}
+						aLabels = ExtensionHelper.getRelevantColumnHeaders(oTable, oColumn);
 
 						if (mParams && mParams.fixed) {
 							aLabels.push(sTableId + "-ariafixedcolumn");
