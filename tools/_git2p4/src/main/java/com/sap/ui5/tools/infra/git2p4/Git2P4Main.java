@@ -908,6 +908,9 @@ private static File extractSnapshotVersionJs() throws IOException {
       } else if ( "next-snapshot".equals(args[i])) {
         op = ReleaseOperation.NextSnapshot;
         command = "version-change";
+        //Don't update contributors versions when increasing snapshot in rel branch, after stage branch was created
+        filter = new ProcessingFilter();
+        filter.excludedProcessingTypes = EnumSet.of(ProcessingTypes.ContributorsVersions);
       }  else if (objectIdChange.equals(args[i])) {
     	  command = objectIdChange;
     	  op = ReleaseOperation.ChangeObjectId;
