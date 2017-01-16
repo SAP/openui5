@@ -705,11 +705,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @private
 	 */
 	Core.prototype._setupAnimation = function($html) {
-		$html = $html || jQuery("html");
+		if (this.oConfiguration) {
+			$html = $html || jQuery("html");
+			var bAnimation = this.oConfiguration.getAnimation();
+			$html.attr("data-sap-ui-animation", bAnimation ? "on" : "off");
+			jQuery.fx.off = !bAnimation;
 
-		var bAnimation = this.oConfiguration.getAnimation();
-		$html.attr("data-sap-ui-animation", bAnimation ? "on" : "off");
-		jQuery.fx.off = !bAnimation;
+			var sAnimationMode = this.oConfiguration.getAnimationMode();
+			$html.attr("data-sap-ui-animation-mode", sAnimationMode);
+		}
 	};
 
 	/**
