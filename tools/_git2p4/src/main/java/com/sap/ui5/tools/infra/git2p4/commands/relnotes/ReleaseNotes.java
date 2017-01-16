@@ -378,26 +378,21 @@ public class ReleaseNotes {
     isNewNote = true;
   }
 
-  public Document parseFileToDocument(File file) throws IOException, SAXException, IOException, ParserConfigurationException{
-	  Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new FileInputStream(file));
-	  return document;
+  public Document parseFileToDocument(File file) throws IOException, SAXException, IOException, ParserConfigurationException {
+    Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new FileInputStream(file));
+    return document;
   }
-  
-  private String getLibDataFromLibraryfile(String libUrl, File file) throws IOException {
-	  String libName;
-	  XPath xpath = XPathFactory.newInstance().newXPath();
+
+  private String getLibDataFromLibraryfile(String dataUrl, File file) throws IOException {
+    XPath xpath = XPathFactory.newInstance().newXPath();
     try {
       Document doc = parseFileToDocument(file);
-      libName = xpath.evaluate("/" + file.getName().substring(1) + libUrl, doc, XPathConstants.STRING).toString();
-      if ("".equals(libName)){
-        return null;
-      }
-      return libName;
-    }catch (Exception e) {
-        throw new IOException(e);
-      }
+      return xpath.evaluate("/" + file.getName().substring(1) + dataUrl, doc, XPathConstants.STRING).toString();
+    } catch (Exception e) {
+      throw new IOException(e);
+    }
   }
-  
+
   private File getNotesFile(File file) throws IOException {
     try {
       String relNotesFile = getLibDataFromLibraryfile("/appData/releasenotes/@url", file);
