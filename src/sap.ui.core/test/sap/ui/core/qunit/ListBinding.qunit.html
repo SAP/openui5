@@ -246,7 +246,18 @@
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
-
+	QUnit.module("Sorter");
+	
+	QUnit.test("getGroupFunction", function(assert) {
+		var oSorter = new sap.ui.model.Sorter("myProperty", false);
+		assert.equal(oSorter.getGroupFunction(), undefined, "sorter without group configuration should return undefined group function");
+		var oSorter = new sap.ui.model.Sorter("myProperty", false, function() { return this});
+		assert.equal(typeof oSorter.getGroupFunction(), 'function', "sorter with group configuration should return a group function");
+		assert.strictEqual(oSorter.getGroupFunction().call(window), oSorter, "invocation of the group function should use the sorter as this context");
+		var oSorter = new sap.ui.model.Sorter("myProperty", false, true);
+		assert.equal(typeof oSorter.getGroupFunction(), 'function', "sorter with group configuration 'true' should return a group function");
+	});
+	
 	</script>
 
 </head>

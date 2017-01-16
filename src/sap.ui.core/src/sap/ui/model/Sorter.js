@@ -93,7 +93,7 @@ sap.ui.define(['sap/ui/base/Object'],
 		 * @public
 		 */
 		getGroupFunction : function() {
-			return this.fnGroup.bind(this);
+			return this.fnGroup && this.fnGroup.bind(this);
 		}
 
 	});
