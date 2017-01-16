@@ -4,8 +4,11 @@
 	jQuery.sap.require("sap.m.WizardProgressNavigator");
 
 	QUnit.module("sap.m.WizardProgressNavigator API", {
+		oSpies: {},
 		setup: function () {
+			this.oSpies.stepChanged = sinon.spy();
 			this.oProgressNavigator = new sap.m.WizardProgressNavigator({
+				stepChanged: this.oSpies.stepChanged,
 				stepCount: 5
 			}).placeAt("qunit-fixture");
 
@@ -54,6 +57,53 @@
 		this.oProgressNavigator.nextStep();
 		assert.strictEqual(iCurrentStep + 2, this.oProgressNavigator.getCurrentStep(),
 			"Should be on step 3.");
+	});
+
+	QUnit.test("NestStep() should fire stepChanged event", function (assert) {
+		this.oProgressNavigator.nextStep();
+		assert.strictEqual(this.oSpies.stepChanged.calledOnce, true, "Event should be fired");
+	});
+
+	QUnit.test("NestStep(true) should suppress stepChanged event", function (assert) {
+		this.oProgressNavigator.nextStep(true);
+		assert.strictEqual(this.oSpies.stepChanged.calledOnce, false, "Event should be suppressed");
+	});
+
+	QUnit.test("PreviousStep() should fire stepChanged event", function (assert) {
+		this.oProgressNavigator.nextStep(true);
+		this.oProgressNavigator.previousStep();
+		assert.strictEqual(this.oSpies.stepChanged.calledOnce, true, "Event should be fired");
+	});
+
+	QUnit.test("PreviousStep(true) should suppress stepChanged event", function (assert) {
+		this.oProgressNavigator.nextStep(true);
+		this.oProgressNavigator.previousStep(true);
+		assert.strictEqual(this.oSpies.stepChanged.calledOnce, false, "Event should be suppressed");
+	});
+
+	QUnit.test("DiscardProgress(true) should suppress stepChanged event", function (assert) {
+		this.oProgressNavigator.nextStep(true);
+		this.oProgressNavigator.nextStep(true);
+		this.oProgressNavigator.discardProgress(1, true);
+		assert.strictEqual(this.oSpies.stepChanged.calledOnce, false, "Event should be suppressed");
+	});
+
+	QUnit.test("DiscardProgress() should fire stepChanged event", function (assert) {
+		this.oProgressNavigator.nextStep(true);
+		this.oProgressNavigator.nextStep(true);
+		this.oProgressNavigator.discardProgress(1);
+		assert.strictEqual(this.oSpies.stepChanged.calledOnce, true, "Event should be fire");
+	});
+
+	QUnit.test("Call count test of stepChange event", function (assert) {
+		this.oProgressNavigator.nextStep();
+		this.oProgressNavigator.nextStep(true);
+		this.oProgressNavigator.previousStep(true);
+		this.oProgressNavigator.previousStep();
+		this.oProgressNavigator.nextStep();
+		this.oProgressNavigator.nextStep();
+		this.oProgressNavigator.discardProgress(1);
+		assert.strictEqual(this.oSpies.stepChanged.callCount, 5, "Event should be fired 5 times");
 	});
 
 	QUnit.test("NextStep() should not overflow", function (assert) {
