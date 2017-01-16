@@ -65,12 +65,20 @@ html.sap-desktop .sapMBtn:focus > .sapMFocusable:not(.sapMBtnActive) {
 	cursor: default;
 }
 
-.sapMBtnDisabled .sapMBtnInner{
+.sapMBtnDisabled .sapMBtnInner {
+	border-color: @sapUiHcReducedForeground;
+	color: @sapUiContentDisabledTextColor;
+}
+
+.sapMBtnDisabled span.sapMBtnInner.sapMBtnAccept
+.sapMBtnDisabled span.sapMBtnInner.sapMBtnReject
+.sapMBtnDisabled span.sapMBtnInner.sapMBtnEmphasized {
 	border-color: @sapUiHcReducedForeground;
 	color: @sapUiContentDisabledTextColor;
 }
 
 .sapMBtnDisabled .sapMBtnInner .sapMBtnIcon {
+	border-color: @sapUiHcReducedForeground;
 	color: @sapUiContentDisabledTextColor;
 }
 
