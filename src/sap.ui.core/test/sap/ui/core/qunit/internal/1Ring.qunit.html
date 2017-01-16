@@ -21,9 +21,8 @@
 		data-sap-ui-compatversion="edge">
 	</script>
 	<!-- end of minimal bootstrap code -->
-	<link rel="stylesheet"
-		href="../../../../../../resources/sap/ui/thirdparty/qunit.css"
-		type="text/css" media="screen" />
+	<link href="../../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen"
+		rel="stylesheet">
 	<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -32,8 +31,8 @@
 	<script src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"
 		data-cover-flags="branchTracking"
-		data-sap-ui-cover-never="[/qunit/,/test/,/v2/]"
-		data-sap-ui-cover-only="[/odata/type/,/odata/v4/,AnnotationHelper,ExpressionParser,ODataMetaModel,XMLPreprocessor]"
+		data-sap-ui-cover-never="[.qunit.js]"
+		data-sap-ui-cover-only="[/odata/type/,/odata/v4/,AnnotationHelper,BindingParser,ExpressionParser,ODataMetaModel,XMLPreprocessor]"
 		></script>
 	<script>
 		// Note: to cover "sap/ui/base", this MUST happen after "qunit-coverage.js" is included!
@@ -43,6 +42,7 @@
 	</script>
 
 	<script src="ODataV4.qunit.js"></script>
+	<script src="../BindingParser.qunit.js"></script>
 	<script src="../ExpressionParser.qunit.js"></script>
 	<script src="../odata/_AnnotationHelperBasics.qunit.js"></script>
 	<script src="../odata/_AnnotationHelperExpression.qunit.js"></script>
@@ -67,10 +67,7 @@
 
 	<title>One Ring To Rule Them All</title>
 	</head>
-	<body><h1 id="qunit-header"></h1>
-		<h2 id="qunit-banner"></h2>
-		<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
+	<body>
+		<div id="qunit"></div>
 	</body>
 </html>
