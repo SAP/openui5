@@ -62,7 +62,8 @@
 					"Run Integration Tests": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/integration/opaTests.qunit.html"
 				},
 				"teaser": "test-resources/sap/m/demokit/tutorial/testing/demoappteaser",
-				"category": "Tutorial"
+				"category": "Tutorial",
+				"config": "test-resources/sap/m/demokit/tutorial/testing/demoapp.json"
 			},
 			{
 				"icon": "list",
@@ -74,7 +75,8 @@
 					"Run Integration Tests": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/integration/opaTests.qunit.html",
 					"Run Unit Tests": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/unit/unitTests.qunit.html"
 				},
-				"category": "Tutorial"
+				"category": "Tutorial",
+				"config": "test-resources/sap/m/demokit/tutorial/worklist/demoapp.json"
 			},
 			{
 				"icon": "learning-assistant",
@@ -86,7 +88,8 @@
 					"Run Integration Tests": "test-resources/sap/m/demokit/tutorial/walkthrough/37/webapp/test/integration/opaTests.qunit.html",
 					"Run Unit Tests": "test-resources/sap/m/demokit/tutorial/walkthrough/37/webapp/test/unit/unitTests.qunit.html"
 				},
-				"category": "Tutorial"
+				"category": "Tutorial",
+				"config": "test-resources/sap/m/demokit/tutorial/walkthrough/demoapp.json"
 			},
 			{
 				"icon": "retail-store-manager",
@@ -97,7 +100,8 @@
 					"Run Unit Tests": "test-resources/sap/m/demokit/orderbrowser/webapp/test/unit/unitTests.qunit.html",
 					"Run Integration Tests": "test-resources/sap/m/demokit/orderbrowser/webapp/test/integration/opaTests.qunit.html"
 				},
-				"category": "Showcase"
+				"category": "Showcase",
+				"config": "test-resources/sap/m/demokit/orderbrowser/demoapp.json"
 			}
 		]
 	},

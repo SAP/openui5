@@ -1,5 +1,5 @@
 {
-	"cwd": "test-resources/sap/m/demokit/worklist/webapp/",
+	"cwd": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/",
 	"files" : [
 		"Component.js",
 		"controller/App.controller.js",
@@ -9,9 +9,9 @@
 		"controller/Object.controller.js",
 		"controller/Worklist.controller.js",
 		"i18n/i18n.properties",
-		"index.html",
 		"localService/metadata.xml",
-		"localService/mockdata/Objects.json",
+		"localService/mockdata/Products.json",
+		"localService/mockdata/Suppliers.json",
 		"localService/mockserver.js",
 		"manifest.json",
 		"model/formatter.js",

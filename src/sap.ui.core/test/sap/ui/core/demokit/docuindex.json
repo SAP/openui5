@@ -10,7 +10,8 @@
 				"links": {
 					"Navigation Tutorial": "#docs/guide/1b6dcd39a6a74f528b27ddb22f15af0d.html"
 				},
-				"category": "Tutorial"
+				"category": "Tutorial",
+				"config": "test-resources/sap/ui/core/demokit/tutorial/navigation/demoapp.json"
 			}
 		]
 	},
