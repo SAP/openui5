@@ -12,8 +12,7 @@ sap.ui.define(['jquery.sap.global', './util/MyRouter'],
 
 		metadata : {
 			includes : [
-				"css/style.css",
-				"css/titles.css"
+				"css/style.css"
 			],
 			routing : {
 				config : {
