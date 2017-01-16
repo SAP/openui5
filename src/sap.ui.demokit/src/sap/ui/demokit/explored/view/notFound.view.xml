@@ -8,12 +8,9 @@
 		title="Not Found"
 		showNavButton="{device>/isPhone}"
 		navButtonPress="onNavBack"
-		enableScrolling="false"
-		class="titlesSpace" >
+		enableScrolling="false" >
 		<content>
-			<core:HTML
-				id="msgHtml"
-				sanitizeContent="true" />
+			<Text text="The requested entity '{/entityName}' is unknown to the explored app." textAlign="Center" width="100%"></Text>
 		</content>
 	</Page>
 </mvc:View>
