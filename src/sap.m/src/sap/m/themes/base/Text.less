@@ -5,6 +5,13 @@
 	word-wrap: break-word; /* works only if browser knows the width */
 	cursor: text;
 }
+html[data-sap-ui-browser="sf10"] {
+	.sapUiVltCell, .sapuiVltCell {
+		.sapMText {
+			display: block;
+		} 
+	}
+}
 
 .sapMTextNoWrap,
 .sapMTextMaxLine{
