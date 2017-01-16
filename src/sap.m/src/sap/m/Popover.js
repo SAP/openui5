@@ -1116,11 +1116,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				var oParent = this._getOpenByDomRef();
 				var bHasParent = oParent !== undefined;
 				var iParentWidth = bHasParent ? oParent.getBoundingClientRect().width : 0;
-				iFlipOffset = oFlipPlacement === "PreferredRightOrFlip" ? Math.abs(iParentWidth) : -Math.abs(iParentWidth);
+				iFlipOffset = oFlipPlacement === sap.m.PlacementType.PreferredRightOrFlip ? Math.abs(iParentWidth) : -Math.abs(iParentWidth);
 			}
 
 			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
-			return iFlipOffset * (bRtl ? -1 : 1) + this.getOffsetX() * (bRtl ? -1 : 1);
+			var iOffsetX = iFlipOffset * (bRtl ? -1 : 1) + this.getOffsetX() * (bRtl ? -1 : 1);
+			return iOffsetX;
 		};
 
 		/**
@@ -1147,7 +1148,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				iOffsetY = this._getOffsetY();
 
 			var aParts = sOffset.split(" ");
-			return (parseInt(aParts[0], 10) + iOffsetX) + " " + (parseInt(aParts[1], 10) + iOffsetY);
+			var sOffset = (parseInt(aParts[0], 10) + iOffsetX) + " " + (parseInt(aParts[1], 10) + iOffsetY);
+			return sOffset;
 		};
 
 		Popover.prototype._calcPlacement = function () {
@@ -1518,7 +1520,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					break;
 				case sap.m.PlacementType.Right:
 					if (bRtl) {
-						oPosParams._fMarginRight = oPosParams._fDocumentWidth - oPosParams._$parent.offset().left + this._arrowOffset - oPosParams._fOffsetX;
+						oPosParams._fMarginRight = oPosParams._fDocumentWidth - Popover.outerWidth(oPosParams._$parent[0], false) - oPosParams._$parent.offset().left + this._arrowOffset;
 					} else {
 						oPosParams._fMarginLeft = oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false) + this._arrowOffset + oPosParams._fOffsetX;
 					}
@@ -1590,12 +1592,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				}
 			}
 
-			return {
+			var mPosition = {
 				top: iTop,
 				bottom: iBottom - oPosParams._fWindowTop,
 				left: iLeft,
 				right: typeof iRight === "number" ? iRight - oPosParams._fWindowLeft : iRight
 			};
+
+			return mPosition;
 		};
 
 		/**

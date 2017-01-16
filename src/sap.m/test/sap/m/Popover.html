@@ -359,9 +359,9 @@
 
 		oButton.addStyleClass("positioned");
 		var oButton1 = new sap.m.Button("btn1", {
-			text: "Popover Right",
+			text: "Popover Preferred Right or Flip",
 			press: function () {
-				oPopover.setPlacement(sap.m.PlacementType.Right);
+				oPopover.setPlacement(sap.m.PlacementType.PreferredRightOrFlip);
 				oPopover.openBy(this);
 			}
 		});
