@@ -27,6 +27,15 @@ sap.ui.define([
 							actions : new Press(),
 							errorMessage : "The cart button was not found and could not be pressed"
 						});
+					},
+
+					iPressTheAvailabilityFilterToggleButton : function () {
+						this.waitFor({
+							controlType : "sap.m.ToggleButton",
+							matchers : new PropertyStrictEquals({name : "icon", value : "sap-icon://complete"}),
+							actions : new Press(),
+							errorMessage : "The filter toggle button was not found and could not be pressed"
+						});
 					}
 				},
 
@@ -70,11 +79,37 @@ sap.ui.define([
 							},
 							errorMessage : "The product list does not contain any entries"
 						});
+					},
+
+					iShouldOnlySeeAvailableProducts : function () {
+						this.waitFor({
+							id : "productList",
+							matchers : new AggregationFilled({name : "items"}),
+							success : function (oList) {
+								Opa5.assert.ok(
+									oList.getItems().length === 2,
+									"The product list has been filtered"
+								);
+							},
+							errorMessage : "The product list was not filtered"
+						});
+					},
+
+					iShouldSeeAllProductsOfTheCategory : function () {
+						this.waitFor({
+							id : "productList",
+							matchers : new AggregationFilled({name : "items"}),
+							success : function (oList) {
+								Opa5.assert.ok(
+									oList.getItems().length === 3,
+									"All products of the category are visible"
+								);
+							},
+							errorMessage : "The product list was not filtered"
+						});
 					}
 				}
-
 			}
 		});
-
 	}
 );

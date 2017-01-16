@@ -11,11 +11,17 @@
 		navButtonPress="onNavButtonPress"
 		showFooter="{device>/isNoPhone}" >
 		<headerContent>
+			<ToggleButton
+				icon="sap-icon://complete"
+				tooltip="{i18n>CATEGORY_AVAILABILITY_FILTER_TOOLTIP}"
+				press="onAvailabilityFilterToggle"
+				pressed="{ui>/availabilityFilterOn}"/>
 			<Button
 				icon="sap-icon://cart"
 				tooltip="{i18n>TO_CART_BUTTON_TOOLTIP}"
 				press="onCartButtonPress">
 			</Button>
+
 		</headerContent>
 		<content>
 			<List
