@@ -569,7 +569,8 @@ sap.ui.require([
 		oRequestor.request("GET", "SalesOrders", "group2");
 
 		this.mock(oRequestor).expects("request")
-			.withExactArgs("POST", "$batch", undefined, undefined, aExpectedRequests)
+			.withExactArgs("POST", "$batch", undefined, {"Accept" : "multipart/mixed"},
+				aExpectedRequests)
 			.returns(Promise.resolve(aBatchResults));
 
 		aPromises.push(oRequestor.submitBatch("group1").then(function (oResult) {
@@ -593,7 +594,7 @@ sap.ui.require([
 
 		oRequestor.request("GET", "Products", "groupId");
 		this.mock(oRequestor).expects("request")
-			.withExactArgs("POST", "$batch", undefined, undefined, [
+			.withExactArgs("POST", "$batch", undefined, {"Accept" : "multipart/mixed"}, [
 				// Note: no empty change set!
 				sinon.match({method: "GET", url: "Products"})
 			]).returns(Promise.resolve([
@@ -644,7 +645,7 @@ sap.ui.require([
 			.request("PATCH", "BusinessPartners('42')", "groupId", {"If-Match" : ""},
 				{Address : {PostalCode: "69190"}}, fnSubmit3));
 		this.mock(oRequestor).expects("request")
-			.withExactArgs("POST", "$batch", undefined, undefined, [
+			.withExactArgs("POST", "$batch", undefined, {"Accept" : "multipart/mixed"}, [
 				[
 					sinon.match({
 						body : {Name : "bar", Note : "hello, world"},
@@ -1079,7 +1080,7 @@ sap.ui.require([
 		assert.strictEqual(oRequestor.hasPendingChanges(), false);
 
 		this.mock(oRequestor).expects("request")
-			.withExactArgs("POST", "$batch", undefined, undefined, [
+			.withExactArgs("POST", "$batch", undefined, {"Accept" : "multipart/mixed"}, [
 				sinon.match({
 					method : "POST",
 					url : "ActionImport('42')"
@@ -1186,7 +1187,7 @@ sap.ui.require([
 		];
 
 		this.mock(oRequestor).expects("request")
-			.withExactArgs("POST", "$batch", undefined, undefined, [
+			.withExactArgs("POST", "$batch", undefined, {"Accept" : "multipart/mixed"}, [
 				sinon.match({
 					method : "PATCH",
 					url : "Products('0')",
@@ -1254,7 +1255,7 @@ sap.ui.require([
 		assert.ok(oRequestor.cancelChangeRequests.calledWithExactly(sinon.match.func, "groupId"));
 
 		this.mock(oRequestor).expects("request")
-			.withExactArgs("POST", "$batch", undefined, undefined, [
+			.withExactArgs("POST", "$batch", undefined, {"Accept" : "multipart/mixed"}, [
 				sinon.match({
 					method : "POST",
 					url : "Products",
