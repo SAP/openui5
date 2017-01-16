@@ -1033,7 +1033,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 
 		/**
-		 * Enum for possible frame size types for sap.m.DynamicContent and sap.m.GenericTile control.
+		 * Enum for possible frame size types for sap.m.TileContent and sap.m.GenericTile control.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1056,12 +1056,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 		/**
 		 * The 2/3 frame type.
+		 * @deprecated since 1.48.0
 		 * @protected
 		 */
 		TwoThirds : "TwoThirds",
 
 		/**
 		 * The Auto frame type that adjusts the size of the control to the content.
+		 * Support for this type in sap.m.GenericTile is deprecated since 1.48.0.
 		 * @protected
 		 */
 		Auto : "Auto"

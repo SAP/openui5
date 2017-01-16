@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				 */
 				"size" : {type : "sap.m.Size", group : "Misc", defaultValue : sap.m.Size.Auto},
 				/**
-				 * The frame type: 1x1 or 2x1.
+				 * The frame type: OneByOne or TwoByOne. Set to OneByOne as default if no property is defined or set to Auto by the app.
 				 */
 				"frameType" : {type : "sap.m.FrameType", group : "Misc", defaultValue : sap.m.FrameType.OneByOne},
 				/**
@@ -298,6 +298,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 
 		sap.ui.getCore().detachIntervalTimer(this._checkContentDensity, this);
+
+		if (this.getFrameType() === library.FrameType.Auto) {
+			this.setProperty("frameType", library.FrameType.OneByOne, true);
+		}
 	};
 
 	GenericTile.prototype.onAfterRendering = function() {
