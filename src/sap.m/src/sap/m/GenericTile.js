@@ -737,7 +737,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		sap.ui.core.Control.prototype.setProperty.apply(this, arguments);
 
 		//If these properties are being changed, update all sibling controls that are GenericTiles in LineMode
-		var aLineModeProperties = [ "state", "subheader", "header" ];
+		var aLineModeProperties = [ "state", "subheader", "header", "scope" ];
 		if (this.getMode() === library.GenericTileMode.LineMode && aLineModeProperties.indexOf(sPropertyName) !== -1) {
 			this._bUpdateLineTileSiblings = true;
 		}
