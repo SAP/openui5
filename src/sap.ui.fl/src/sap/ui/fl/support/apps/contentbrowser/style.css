@@ -1,0 +1,7 @@
+div > span.codeBlock {
+	white-space: pre-wrap;
+}
+
+.sapMNav.sapMSplitContainerMaster{
+	width: 480px;
+}
