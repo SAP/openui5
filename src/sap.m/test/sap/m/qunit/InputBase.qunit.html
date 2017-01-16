@@ -1321,6 +1321,38 @@
 				oInput.destroy();
 			});
 
+			test("it should prevent the change event from being fired", function() {
+
+				// system under test
+				sap.m.InputBase.extend("InputSubclass", {
+					renderer: {},
+					preventChangeOnFocusLeave: function() {
+						return true;
+					}
+				});
+
+				var oInput = new InputSubclass();
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oInput.focus();
+				var fnFireChangeSpy = this.spy(oInput, "fireChange");
+				sap.ui.test.qunit.triggerCharacterInput(oInput.getFocusDomRef(), "a");
+
+				// act
+				oInput.getFocusDomRef().blur();
+				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
+
+				// assertions
+				strictEqual(fnFireChangeSpy.callCount, 0, "The change event should not be fired");
+
+				// cleanup
+				oInput.destroy();
+				InputSubclass = null;
+				delete InputSubclass;
+			});
+
 			test("onChange handler should fire the change event when last known and dom value are not same", function() {
 				// system under test
 				var sInitValue = "Test";
