@@ -740,5 +740,64 @@
         "references": []
       }
     ]
+  },
+  "1.40.15": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "193df59e6c7015833d79f5d460dc214016cb6b29",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Focus outline corrected",
+        "references": []
+      },
+      {
+        "id": "924162f23a8304c9cb625fb82ae857c2f1c75f81",
+        "type": "FIX",
+        "text": " sap.m.Link: Dashed focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "8fa6a9c44dce82f2614e8e48617cce811bb3ed0d",
+        "type": "FIX",
+        "text": " sap.m.NotificationListGroup: Focus outline in IE corrected",
+        "references": []
+      },
+      {
+        "id": "553ce281a247c88477f1f53462f3eb657e86dea1",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Focus clear visible on IE",
+        "references": []
+      },
+      {
+        "id": "895f376af16feab0cf303f4da51ef2cb715b6c12",
+        "type": "FIX",
+        "text": " sap.m.Page: rendering performance",
+        "references": []
+      },
+      {
+        "id": "c9f7a734bb0d4e6362ea6f8bd914647d4fc0e003",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Appointments focus corrected for Belize on IE",
+        "references": []
+      },
+      {
+        "id": "be69daa7fd645b21331ec8bae15f62bc62777ff4",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Focus contrast ratio in IE/Edge is now correct",
+        "references": []
+      },
+      {
+        "id": "0a5c53872da189448708225bfaf664a0c668ff7c",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: Focus contrast ratio in IE is now correct",
+        "references": []
+      },
+      {
+        "id": "bab1fbdac705a9c2607d90d4e38df648ae55a810",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Focus has sufficient contrast ratio in IE",
+        "references": []
+      }
+    ]
   }
 }

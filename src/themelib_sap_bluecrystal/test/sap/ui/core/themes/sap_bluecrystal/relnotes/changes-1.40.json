@@ -1238,5 +1238,40 @@
         "references": []
       }
     ]
+  },
+  "1.40.15": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "193df59e6c7015833d79f5d460dc214016cb6b29",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Focus outline corrected",
+        "references": []
+      },
+      {
+        "id": "924162f23a8304c9cb625fb82ae857c2f1c75f81",
+        "type": "FIX",
+        "text": " sap.m.Link: Dashed focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "553ce281a247c88477f1f53462f3eb657e86dea1",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Focus clear visible on IE",
+        "references": []
+      },
+      {
+        "id": "895f376af16feab0cf303f4da51ef2cb715b6c12",
+        "type": "FIX",
+        "text": " sap.m.Page: rendering performance",
+        "references": []
+      },
+      {
+        "id": "71a26108ad0e34530a6199ac95fab7d80c62afce",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Setters no longer modify RadioButtons\u0027 states",
+        "references": []
+      }
+    ]
   }
 }

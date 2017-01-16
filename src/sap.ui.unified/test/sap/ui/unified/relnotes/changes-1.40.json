@@ -557,5 +557,16 @@
         "references": []
       }
     ]
+  },
+  "1.40.15": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "dd026456b7c2f87290cbbe36ed9a57dba728bb93",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: multiple selection when multiple months is now consistent with the single selection",
+        "references": []
+      }
+    ]
   }
 }

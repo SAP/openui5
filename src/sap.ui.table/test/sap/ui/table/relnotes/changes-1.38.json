@@ -891,5 +891,28 @@
         "references": []
       }
     ]
+  },
+  "1.38.16": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "4a402c6b3415d5cfa22a0b868bb9c6b284fee679",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: SelectAll",
+        "references": []
+      },
+      {
+        "id": "6188426211ffdc3fb039d6f60227410f1a8b1fda",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Fix selection of fixed top rows.",
+        "references": []
+      },
+      {
+        "id": "b8035b207e01586845fad38f92226b0ee3fac83d",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Ignore the additional empty row at the end in the vertical scrolling feature.",
+        "references": []
+      }
+    ]
   }
 }
