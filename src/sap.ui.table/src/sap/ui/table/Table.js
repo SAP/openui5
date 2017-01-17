@@ -1121,6 +1121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype.onAfterRendering = function(oEvent) {
 		var bEventIsMarked = oEvent && oEvent.isMarked("insertTableRows");
+
 		if (bEventIsMarked) {
 			this._getScrollExtension().updateVerticalScrollbarHeight();
 			this._updateVSbRange();
@@ -1166,8 +1167,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		if (!bEventIsMarked) {
-			this._updateVSbTop();
-
 			// needed for the column resize ruler
 			this._aTableHeaders = this.$().find(".sapUiTableColHdrCnt th");
 
@@ -1320,7 +1319,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (!bSkipHandleRowCountMode) {
 			this._setRowContentHeight(iRowContentSpace);
 		}
+
 		this._updateHSb(oTableSizes);
+		this._updateVSbTop();
 
 		var $this = this.$();
 
