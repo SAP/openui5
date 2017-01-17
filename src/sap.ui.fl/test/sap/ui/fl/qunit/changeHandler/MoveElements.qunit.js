@@ -176,32 +176,6 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		}
 	});
 
-	QUnit.test("When providing change data via specific change info, Then", function(assert) {
-		var mSpecificChangeInfo = {
-			movedElements : [{
-				element : this.oObjectAttribute, // optional fallback for id
-				id : this.oObjectAttribute.getId(),
-				sourceIndex : 0,
-				targetIndex : 2
-			}],
-			source : {
-				id : this.oObjectHeader.getId(), // could also be parent
-				aggregation : "attributes"
-			},
-			target : {
-				parent : this.oLayout, // could also be id
-				aggregation : "content"
-			}
-		};
-		var oChange = new Change({selector: JsControlTreeModifier.getSelector(mSpecificChangeInfo.source.id, oComponent)});
-
-		MoveElementsHandler.completeChangeContent(oChange, mSpecificChangeInfo, {modifier: JsControlTreeModifier, appComponent: oComponent});
-
-		assert.deepEqual(oChange.getSelector(), this.mSelectorWithLocalId, "the change SELECTOR is filled correctly");
-		assert.deepEqual(oChange.getContent(), this.mSingleMoveChangeContentWithLocalId, "the change CONTENT is filled correctly");
-		assert.equal(oChange.getChangeType(), "moveElements", "the change TYPE is filled correctly");
-	});
-
 	QUnit.test("When applying the single move change on jsControlTree with local id, Then", function(assert) {
 		var oChange = new Change({
 			selector : this.mSelectorWithLocalId,
