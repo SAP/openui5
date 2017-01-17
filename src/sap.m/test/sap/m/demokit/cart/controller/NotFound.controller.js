@@ -1,10 +1,15 @@
-sap.ui.controller("sap.ui.demo.cart.controller.NotFound", {
+sap.ui.define([
+	'sap/ui/demo/cart/controller/BaseController'
+], function (BaseController) {
+	"use strict";
 
-	onInit : function () {
-		this._router = sap.ui.core.UIComponent.getRouterFor(this);
-	},
+	return BaseController.extend("sap.ui.demo.cart.controller.NotFound", {
+		onInit: function () {
+			this._router = sap.ui.core.UIComponent.getRouterFor(this);
+		},
 
-	onNavBack : function () {
-		this._router._myNavBack();
-	}
+		onNavBack: function () {
+			this._router._myNavBack();
+		}
+	})
 });

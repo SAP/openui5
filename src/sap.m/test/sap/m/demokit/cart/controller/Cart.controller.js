@@ -1,5 +1,5 @@
 sap.ui.define([
-	'sap/ui/core/mvc/Controller',
+	'sap/ui/demo/cart/controller/BaseController',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/Device',
 	'sap/ui/demo/cart/model/formatter',
@@ -8,7 +8,7 @@ sap.ui.define([
 	'sap/m/Dialog',
 	'sap/m/Button'
 ], function (
-	Controller,
+	BaseController,
 	JSONModel,
 	Device,
 	formatter,
@@ -20,7 +20,7 @@ sap.ui.define([
 	var sSavedForLaterEntries = "savedForLaterEntries";
 	var sCartEntries = "cartEntries";
 
-	return Controller.extend("sap.ui.demo.cart.controller.Cart", {
+	return BaseController.extend("sap.ui.demo.cart.controller.Cart", {
 		formatter: formatter,
 
 		onInit: function () {
