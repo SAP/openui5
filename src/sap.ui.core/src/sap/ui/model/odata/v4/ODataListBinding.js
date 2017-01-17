@@ -122,7 +122,9 @@ sap.ui.define([
 				this.aSorters = _Helper.toArray(vSorters);
 
 				this.applyParameters(jQuery.extend(true, {}, mParameters));
-
+				this.oHeaderContext = this.bRelative
+					? null
+					: Context.create(this.oModel, this, sPath);
 				this.setContext(oContext);
 				oModel.bindingCreated(this);
 			}
@@ -439,8 +441,7 @@ sap.ui.define([
 	 * @param {number} iResultLength
 	 *   The number of OData entities read from the cache for the given range
 	 * @param {number} [iCount]
-	 *   The $count as reported from the cache: a number representing the server-side element count,
-	 *   of course not including transient entities.
+	 *   The $count as reported from the cache: A number representing the server-side element count.
 	 * @returns {boolean}
 	 *   <code>true</code>, if contexts have been created or <code>isLengthFinal</code> has changed
 	 *
@@ -582,6 +583,9 @@ sap.ui.define([
 		this.aContexts.forEach(function (oContext) {
 			oContext.destroy();
 		});
+		if (this.oHeaderContext) {
+			this.oHeaderContext.destroy();
+		}
 		if (this.aContexts[-1]) {
 			this.aContexts[-1].destroy();
 		}
@@ -1124,6 +1128,32 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the header context which allows binding to <code>$count</code>. If known, the value
+	 * of such a binding is the element count of the collection on the server. Otherwise it is
+	 * <code>undefined</code>. The value is a number and its type is <code>Edm.Int64</code>.
+	 *
+	 * The count is known to the binding in the following situations:
+	 * <ul>
+	 *   <li>It has been requested from the server via the system query option <code>$count</code>.
+	 *   <li>A "short read" in a paged collection (the server delivered less elements than
+	 *     requested) indicated that the server has no more unread elements.
+	 *   <li>It has been read completely in one request, for example an embedded collection via
+	 *     <code>$expand</code>.
+	 * </ul>
+	 *
+	 * The <code>$count</code> is unknown, if the binding is relative, but has no context.
+	 *
+	 * @returns {sap.ui.model.odata.v4.Context}
+	 *   The header context
+	 *
+	 * @public
+	 * @since 1.45.0
+	 */
+	ODataListBinding.prototype.getHeaderContext = function () {
+		return this.oHeaderContext;
+	};
+
+	/**
 	 * Returns the number of entries in the list. As long as the client does not know the size on
 	 * the server an estimated length is returned.
 	 *
@@ -1355,7 +1385,15 @@ sap.ui.define([
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
 				this.reset();
+				if (this.oHeaderContext) {
+					this.oHeaderContext.destroy();
+					this.oHeaderContext = null;
+				}
 				this.oCachePromise = this.makeCache(oContext);
+				if (oContext) {
+					this.oHeaderContext = Context.create(this.oModel, this,
+						this.oModel.resolve(this.sPath, oContext));
+				}
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);
 			} else {
