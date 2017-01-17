@@ -227,16 +227,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("c'tor calls applyParameters", function (assert) {
-		var mParameters = {
+	QUnit.test("c'tor initializes oCachePromise and calls applyParameters", function (assert) {
+		var oBinding,
+			mParameters = {
 				$filter : "foo"
 			};
 
 		this.mock(ODataListBinding.prototype).expects("applyParameters")
 			.withExactArgs(mParameters);
 
-		new ODataListBinding(this.oModel, "/EMPLOYEES", undefined, undefined, undefined,
+		oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES", undefined, undefined, undefined,
 			mParameters);
+
+		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 	});
 
 	//*********************************************************************************************
@@ -2945,7 +2948,7 @@ sap.ui.require([
 			oPrototype = this.mock(ODataListBinding.prototype);
 
 		oPrototype.expects("makeCache")
-			.returns(_SyncPromise.resolve(undefined)); // from applyParameters
+			.returns(_SyncPromise.resolve()); // from applyParameters
 		oPrototype.expects("makeCache")
 			.returns(_SyncPromise.resolve(oCacheTeam1)); // from setContext
 		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext, undefined, undefined,
@@ -2974,7 +2977,7 @@ sap.ui.require([
 			oPrototype = this.mock(ODataListBinding.prototype);
 
 		oPrototype.expects("makeCache")
-			.returns(_SyncPromise.resolve(undefined)); // from applyParameters
+			.returns(_SyncPromise.resolve()); // from applyParameters
 		oPrototype.expects("makeCache")
 			.returns(_SyncPromise.resolve(oCacheTeam1)); // from setContext
 		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext, undefined, undefined,
@@ -3004,7 +3007,7 @@ sap.ui.require([
 			oPrototype = this.mock(ODataListBinding.prototype);
 
 		oPrototype.expects("makeCache")
-			.returns(_SyncPromise.resolve(undefined)); // from applyParameters
+			.returns(_SyncPromise.resolve()); // from applyParameters
 		oPrototype.expects("makeCache")
 			.returns(_SyncPromise.resolve(oCacheTeam1)); // from setContext
 		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext, undefined, undefined,
@@ -3286,7 +3289,7 @@ sap.ui.require([
 			.withExactArgs(oBinding.sPath).returns(oMetaContext);
 		this.mock(oBinding.oModel.oMetaModel).expects("fetchObject")
 			.withExactArgs("BuyerName", sinon.match.same(oMetaContext))
-			.returns(_SyncPromise.resolve(undefined));
+			.returns(_SyncPromise.resolve());
 
 		return oBinding.fetchFilter(undefined, [oFilter], [], undefined).then(function () {
 			assert.ok(false);
