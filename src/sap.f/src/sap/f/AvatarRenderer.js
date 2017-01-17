@@ -8,7 +8,7 @@ sap.ui.define([],
 		"use strict";
 
 		/**
-		 * Avatar renderer.
+		 * <code>Avatar</code> renderer.
 		 * @author SAP SE
 		 * @namespace
 		 */

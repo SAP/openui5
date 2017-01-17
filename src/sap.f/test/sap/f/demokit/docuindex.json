@@ -52,7 +52,7 @@
       {
         "id": "sap.f.sample.Avatar",
         "name": "Avatar",
-        "description": "This sample demonstrates the basic usage of an avatar of various shapes/sizes/types/etc..."
+        "description": "This sample demonstrates different combinations of types, shapes, and sizes of the Avatar."
       }
     ]
   }
