@@ -21,13 +21,13 @@
 	background: transparent;
 }
 
-.sap-desktop .sapMGT.sapMGTLineMode:not(.sapMGTDisabled):not(.sapMGTFailed) {
+.sap-desktop .sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
 	&:not(.sapMGTLineModePress):hover {
 		background: fade(@sapUiShellHoverBackground, 10);
 	}
 }
 
-.sapMGT.sapMGTLineMode:not(.sapMGTDisabled):not(.sapMGTFailed).sapMGTLineModePress {
+.sapMGT.sapMGTLineMode:not(.sapMGTDisabled).sapMGTLineModePress {
 	background: fade(@sapUiShellHoverBackground, 12);
 }
 
@@ -88,7 +88,7 @@
 			}
 		}
 
-		&:not(.sapMGTFailed):hover .sapMGTLineStyleHelperInner {
+		&:hover .sapMGTLineStyleHelperInner {
 			background: fade(@sapUiShellHoverBackground, 10);
 		}
 	}
@@ -133,7 +133,7 @@
 			transition: background 0.2s;
 		}
 
-		&.sapMGTLineModePress:not(.sapMGTDisabled):not(.sapMGTFailed) {
+		&.sapMGTLineModePress:not(.sapMGTDisabled) {
 			&, &:hover {
 				.sapMGTLineStyleHelperInner {
 					background: fade(@sapUiShellHoverBackground, 12);
@@ -159,6 +159,7 @@
 
 html.sap-desktop .sapMGTWithoutImageHoverOverlay,
 html.sap-desktop .sapMGTWithImageHoverOverlay {
+	z-index: 1;
 	position: absolute;
 	pointer-events: none;
 	top: 0;

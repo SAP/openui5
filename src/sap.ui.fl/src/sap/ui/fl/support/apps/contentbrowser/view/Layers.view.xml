@@ -1,0 +1,26 @@
+<core:View xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m" controllerName="sap.ui.fl.support.apps.contentbrowser.controller.Layers"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+	<Page title="Layers">
+		<List id="masterComponentsList" items="{layers>/}">
+			<items>
+				<StandardListItem
+					title="{layers>name}"
+					type="Navigation"
+					press="onLayerSelected"
+					icon="{layers>icon}">
+				</StandardListItem>
+			</items>
+		</List>
+		<footer>
+			<Toolbar visible="{= ${messages>/length} > 0 }">
+				<Button
+					icon="sap-icon://alert"
+					text="{messages>/length}"
+					type="Emphasized"
+					press=".handleMessagePopoverPress"/>
+			</Toolbar>
+		</footer>
+	</Page>
+</core:View>

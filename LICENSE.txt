@@ -215,6 +215,14 @@ OpenUI5 includes the following subcomponents that are subject to separate licens
 Your use of these subcomponents is subject to the seperate license terms applicable to
 each subcomponent.
 
+Component: ace 1.2.5
+Licensor: Ajax.org B.V.
+Website: https://ace.c9.io/
+License: BSD 3-clause "New" or "Revised" License
+<OWNER>: Ajax.org B.V.
+<ORGANIZATION>: Ajax.org B.V.
+<YEAR> = 2010
+
 Component: Array every Method
 Licensor: Mozilla Developer Network
 Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every#Polyfill

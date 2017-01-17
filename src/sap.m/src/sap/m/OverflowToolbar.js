@@ -210,6 +210,7 @@ sap.ui.define([
 			if (this._iPreviousToolbarWidth !== iWidth) {
 				this._iPreviousToolbarWidth = iWidth;
 				this._setControlsOverflowAndShrinking(iWidth);
+				this.fireEvent("_controlWidthChanged");
 			}
 
 		}
@@ -541,6 +542,19 @@ sap.ui.define([
 
 		return aToolbarContent.filter(function (oControl) {
 			return aActionSheetContent.indexOf(oControl) === -1;
+		});
+	};
+
+	/**
+	* Returns all the controls from the <code>sap.m.OverflowToolbar</code>,
+	* that are not in the overflow area and their <code>visible</code> property is <code>true</code>.
+	* @private
+	* @sap-restricted
+	* @returns {*|Array.<T>}
+	*/
+	OverflowToolbar.prototype._getVisibleAndNonOverflowContent = function () {
+		return this._getVisibleContent().filter(function (oControl) {
+			return oControl.getVisible();
 		});
 	};
 

@@ -66,9 +66,12 @@ sap.ui.define(['jquery.sap.global'],
 			this.renderHandles(oRm, oSlider);
 			oRm.write("</div>");
 
-			this.renderTickmarks(oRm, oSlider);
-
-			this.renderLabels(oRm, oSlider);
+			if (oSlider.getEnableTickmarks()) {
+				this.renderTickmarks(oRm, oSlider);
+			} else {
+				// Keep the "old" labels for backwards compatibility
+				this.renderLabels(oRm, oSlider);
+			}
 
 			if (oSlider.getName()) {
 				this.renderInput(oRm, oSlider);
@@ -211,13 +214,48 @@ sap.ui.define(['jquery.sap.global'],
 		};
 
 		SliderRenderer.renderTickmarks = function (oRm, oSlider) {
-			if (!oSlider.getEnableTickmarks()) {
+			var i, iTickmarksToRender, fTickmarksDistance, iLabelsCount, fStep, fSliderSize,fSliderStep,
+				oScale = oSlider.getAggregation("scale");
+
+			if (!oSlider.getEnableTickmarks() || !oScale) {
 				return;
 			}
 
-			oRm.write("<ul class=\"sapMSliderTickmarks\">");
-			oRm.write("<li  class=\"sapMSliderTick\" style=\"width: calc(100% - 1px);\"></li>");
+			fSliderSize = Math.abs(oSlider.getMin() - oSlider.getMax());
+			fSliderStep = oSlider.getStep();
+
+			iLabelsCount = oScale.getTickmarksBetweenLabels();
+			iTickmarksToRender = oScale.calcNumTickmarks(fSliderSize, fSliderStep, oSlider._CONSTANTS.TICKMARKS.MAX_POSSIBLE);
+			fTickmarksDistance = oSlider._getPercentOfValue(
+				oScale.calcTickmarksDistance(iTickmarksToRender, oSlider.getMin(), oSlider.getMax(), fSliderStep));
+
+
+			oRm.write("<ul class=\"" + SliderRenderer.CSS_CLASS + "Tickmarks\">");
+			this.renderTickmarksLabel(oRm, oSlider, oSlider.getMin());
+
+			for (i = 0; i < iTickmarksToRender; i++) {
+				if (iLabelsCount && i > 0 && (i % iLabelsCount === 0)) {
+					fStep = i * fTickmarksDistance;
+					this.renderTickmarksLabel(oRm, oSlider, oSlider._getValueOfPercent(fStep));
+				}
+
+				oRm.write("<li class=\"" + SliderRenderer.CSS_CLASS + "Tick\" style=\"width: " + fTickmarksDistance + "%;\"></li>");
+			}
+
+			this.renderTickmarksLabel(oRm, oSlider, oSlider.getMax());
 			oRm.write("</ul>");
+		};
+
+		SliderRenderer.renderTickmarksLabel = function (oRm, oSlider, fValue) {
+			var fLeft = oSlider._getPercentOfValue(fValue);
+
+			oRm.write("<li class=\"" + SliderRenderer.CSS_CLASS + "TickLabel\"");
+			oRm.write(" style=\"left: " + fLeft + "%;\"");
+			oRm.write(">");
+			oRm.write("<div class=\"" + SliderRenderer.CSS_CLASS + "Label\">");
+			oRm.writeEscaped("" + fValue);
+			oRm.write("</div>");
+			oRm.write("</li>");
 		};
 
 		/**

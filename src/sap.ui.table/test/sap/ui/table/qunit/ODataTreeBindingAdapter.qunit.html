@@ -1702,6 +1702,24 @@
 
 			var aContexts = oBinding.getContexts(1, 10);
 		});
+
+		test("Empty binding should not cause exceptions", function() {
+			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+				displayRootNode: true,
+				numberOfExpandedLevels: 2,
+				rootLevel: 1
+			});
+
+			// Keep the binding empty, so that the adapter can't find any nodes
+
+			// The following function calls should fail but not throw an exception
+			oBinding.expand(999);
+			oBinding.collapse(999);
+			oBinding.toggleIndex(999);
+			oBinding.setNodeSelection({});
+
+			ok(true, "No exceptions thrown");
+		});
 	});
 
 </script>

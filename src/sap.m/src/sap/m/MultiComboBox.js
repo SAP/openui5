@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField', './ComboBoxBase', './Dialog', './MultiInput', './Input', './ToggleButton', './List', './MultiComboBoxRenderer', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'jquery.sap.xml'],
-	function(jQuery, Bar, InputBase, ComboBoxTextField, ComboBoxBase, Dialog, MultiInput, Input, ToggleButton, List, MultiComboBoxRenderer, Popover, library, EnabledPropagator, IconPool/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField', './ComboBoxBase', './Dialog', './MultiInput', './Input', './ToggleButton', './List', './MultiComboBoxRenderer', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/InvisibleText', 'sap/ui/core/IconPool', 'jquery.sap.xml'],
+	function(jQuery, Bar, InputBase, ComboBoxTextField, ComboBoxBase, Dialog, MultiInput, Input, ToggleButton, List, MultiComboBoxRenderer, Popover, library, EnabledPropagator, InvisibleText, IconPool/* , jQuerySap */) {
 	"use strict";
 
 	/**
@@ -310,8 +310,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	 */
 	MultiComboBox.prototype.onfocusin = function(oEvent) {
 		this.getEditable() && this.addStyleClass("sapMMultiComboBoxFocus");
-
-		// !this.getEditable() && this.addStyleClass("test");
 
 		if (oEvent.target === this.getOpenArea()) {
 			// force the focus to stay in the input field
@@ -743,12 +741,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	MultiComboBox.prototype.createPopover = function() {
 		var oPopup = new Popover({
 			showArrow: false,
-			showHeader: false,
 			placement: sap.m.PlacementType.Vertical,
 			offsetX: 0,
 			offsetY: 0,
 			initialFocus: this,
-			bounce: false
+			bounce: false,
+			ariaLabelledBy: this.getPickerInvisibleTextId() || undefined
 		});
 
 		this._decoratePopover(oPopup);

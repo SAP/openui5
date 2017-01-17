@@ -545,6 +545,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		this.aItems = [];
 		this._aDeletedItemForPendingUpload = [];
 		this._aFileUploadersForPendingUpload = [];
+		this._aFilesFromDragAndDropForPendingUpload = [];
 		this._iFileUploaderPH = null; // Index of the place holder for the File Uploader
 		this._oListEventDelegate = null;
 		this._oItemToUpdate = null;
@@ -732,6 +733,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		for (var i = 0; i < iFileUploadersCounter; i++) {
 			this._iUploadStartCallCounter = 0;
 			this._aFileUploadersForPendingUpload[i].upload();
+		}
+		if (this._aFilesFromDragAndDropForPendingUpload.length > 0) {
+			this._getFileUploader()._sendFilesFromDragAndDrop(this._aFilesFromDragAndDropForPendingUpload);
 		}
 	};
 
@@ -1040,6 +1044,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._bindDragEnterLeave = function() {
+		this._bDragDropEnabled = this.getUploadEnabled();
+		if (!this._bDragDropEnabled) {
+			return;
+		}
 		if (this.getUIArea()) {
 			this._$RootNode = jQuery(this.getUIArea().getRootNode());
 			this._$RootNode.bind("dragenter", this._onDragEnterUIArea.bind(this));
@@ -1049,6 +1057,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		this._$DragDropArea = this.$("drag-drop-area");
 		this.$().bind("dragenter", this._onDragEnterUploadCollection.bind(this));
 		this.$().bind("dragleave", this._onDragLeaveUploadCollection.bind(this));
+		this.$().bind("dragover", this._onDragOverUploadCollection.bind(this));
+		this.$().bind("drop", this._onDropOnUploadCollection.bind(this));
 	};
 
 	/**
@@ -1057,6 +1067,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._unbindDragEnterLeave = function() {
+		if (!this._bDragDropEnabled) {
+			return;
+		}
 		if (this._$RootNode) {
 			this._$RootNode.unbind("dragenter", this._onDragEnterTheUIArea);
 			this._$RootNode.unbind("dragleave", this._onDragLeaveUIArea);
@@ -1064,11 +1077,13 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		}
 		this.$().unbind("dragenter", this._onDragEnterUploadCollection);
 		this.$().unbind("dragleave", this._onDragLeaveUploadCollection);
+		this.$().unbind("dragover", this._onDragOverUploadCollection);
+		this.$().unbind("drop", this._onDropOnUploadCollection);
 	};
 
 	/**
 	 * Handler when file is dragged in UIArea.
-	 * @param {event} event which was fired
+	 * @param {jQuery.Event} event which was fired
 	 * @private
 	 */
 	UploadCollection.prototype._onDragEnterUIArea = function(event) {
@@ -1079,7 +1094,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 	/**
 	 * Handler when file is dragged over UIArea.
-	 * @param {event} event which was fired
+	 * @param {jQuery.Event} event which was fired
 	 * @private
 	 */
 	UploadCollection.prototype._onDragOverUIArea = function(event) {
@@ -1088,7 +1103,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 	/**
 	 * Handler when file is dragged away from UIArea.
-	 * @param {event} event which was fired
+	 * @param {jQuery.Event} event which was fired
 	 * @private
 	 */
 	UploadCollection.prototype._onDragLeaveUIArea = function(event) {
@@ -1098,8 +1113,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	/**
-	 * Handler when file is dragged in UploadCollection drag drop area.
-	 * @param {event} event which was fired
+	 * Handler when file is dragged in UploadCollection drop enabled area.
+	 * @param {jQuery.Event} event which was fired
 	 * @private
 	 */
 	UploadCollection.prototype._onDragEnterUploadCollection = function(event) {
@@ -1111,14 +1126,45 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	/**
-	 * Handler when file is dragged away from UploadCollection drag drop area.
-	 * @param {event} event which was fired
+	 * Handler when file is dragged over UploadCollection drop enabled area.
+	 * @param {jQuery.Event} event which was fired
+	 * @private
+	 */
+	UploadCollection.prototype._onDragOverUploadCollection = function(event) {
+		event.preventDefault();
+	};
+
+	/**
+	 * Handler when file is dragged away from UploadCollection drop enabled area.
+	 * @param {jQuery.Event} event which was fired
 	 * @private
 	 */
 	UploadCollection.prototype._onDragLeaveUploadCollection = function(event) {
 		if (event.target === this._$DragDropArea[0]) {
 			this.$("drag-drop-area").removeClass("sapMUCDropIndicator");
 			this.getAggregation("_dragDropText").setText(this._oRb.getText("UPLOADCOLLECTION_DRAG_FILE_INDICATOR"));
+		}
+	};
+
+	/**
+	 * Handler when file is dropped on UploadCollection drop enabled area.
+	 * @param {jQuery.Event} event which was fired
+	 * @private
+	 */
+	UploadCollection.prototype._onDropOnUploadCollection = function(event) {
+		if (event.target === this._$DragDropArea[0]) {
+			event.preventDefault();
+			this._$DragDropArea.addClass("sapMUCDragDropOverlayHide");
+			var aFiles = event.originalEvent.dataTransfer.files;
+			var oFileUploader = this._getFileUploader();
+			if (!this.getInstantUpload()) {
+				oFileUploader.fireChange({
+					files: aFiles
+				});
+				this._aFilesFromDragAndDropForPendingUpload = this._aFilesFromDragAndDropForPendingUpload.concat(Array.prototype.slice.call(aFiles));
+			} else {
+				oFileUploader._sendFilesFromDragAndDrop(aFiles);
+			}
 		}
 	};
 

@@ -34,15 +34,16 @@
 	text-align: center;
 	text-shadow: none;
 	color: @sapUiSegmentedButtonTextColor;
-	border-top: 1px solid @sapUiSegmentedButtonBorderColor;
-	border-left: 1px solid @sapUiSegmentedButtonBorderColor;
-	border-bottom: 1px solid @sapUiSegmentedButtonBorderColor;
-	border-right: 1px solid transparent;
+	border: 1px solid @sapUiSegmentedButtonBorderColor;
 	background-color: @sapUiSegmentedButtonBackground;
 	&:not(.sapMSegBBtnMixed) .sapMImg {
 		padding-left: 1rem;
 		padding-right: 1rem;
 	}
+}
+
+.sapMSegB .sapMSegBBtn:not(:last-child) {
+	border-right: 1px solid transparent;
 }
 
 // Adding margin to be displayed correct in sap.m.Bar
@@ -187,6 +188,7 @@ html[data-sap-ui-os^="iOS"] {
 	.sapMSegBIcons:not(.sapMSegBBtnMixed) {
 		.sapMImg,
 		.sapUiIcon {
+			min-width: 2rem;
 			padding-left: 0.4375rem;
 			padding-right: 0.4375rem;
 		}

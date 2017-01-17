@@ -136,6 +136,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			"sap:sortable" : [ "Org.OData.Capabilities.V1.SortRestrictions",
 				"NonSortableProperties" ]
 		},
+		rValueList = /^com\.sap\.vocabularies\.Common\.v1\.ValueList(#.*)?$/,
 		iWARNING = jQuery.sap.log.Level.WARNING,
 		Utils;
 
@@ -676,13 +677,15 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @returns {object} map of ValueList annotations contained in oProperty
 		 */
 		getValueLists : function (oProperty) {
-			var sName,
+			var aMatches,
+				sName,
 				sQualifier,
 				mValueLists = {};
 
 			for (sName in oProperty) {
-				if (jQuery.sap.startsWith(sName, "com.sap.vocabularies.Common.v1.ValueList")) {
-					sQualifier = sName.split("#")[1] || "";
+				aMatches = rValueList.exec(sName);
+				if (aMatches){
+					sQualifier = (aMatches[1] || "").slice(1); // remove leading #
 					mValueLists[sQualifier] = oProperty[sName];
 				}
 			}

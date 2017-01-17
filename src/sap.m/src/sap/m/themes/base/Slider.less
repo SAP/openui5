@@ -56,19 +56,46 @@
 	list-style: none;
 	position: absolute;
 	z-index: -1;
-	height: 40%;
-	top: 30%;
+	top: 0.625rem;
 	left: 1.0625rem;
 	right: 1.0625rem;;
 	display: block;
-	border-right: 0.0625rem solid @sapUiFieldBorderColor;
+	height: 1.75rem;
 }
 
 .sapMSliderTick {
 	display: inline-block;
+	height: 0.875rem;
 	border-left: 0.0625rem solid @sapUiFieldBorderColor;
-	height: 100%;
-	position: relative;
+	margin: 0.4375rem 0 0 -0.0625rem;
+}
+
+
+.sapMSliderTickLabel {
+	display: inline-block;
+	position: absolute;
+	z-index: 1;
+	width: 0.0625rem;
+	background-color: @sapUiFieldBorderColor;
+	height: 1.75rem;
+	margin: 0 0 0 -0.0625rem;
+
+	&:last-child {
+		right: 0;
+	}
+}
+
+.sapMSliderLabel {
+	font-size: 0.75rem;
+	display: block;
+	width: 5rem;
+	text-align: center;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	position: absolute;
+	top: 1.75rem;
+	left: -2.5rem;
 }
 
 /* slider progress bar */
@@ -96,16 +123,35 @@
 /* ============ */
 
 /* slider */
-.sapUiSizeCompact .sapMSlider {
-	height: 2rem;
-	padding-top: 1rem;
-	padding-bottom: 1rem;
-}
+.sapUiSizeCompact {
+	.sapMSlider {
+		height: 2rem;
+		padding-top: 1rem;
+		padding-bottom: 1rem;
+	}
 
-/* slider handle */
-.sapUiSizeCompact .sapMSliderHandle {
-	height: 1.375rem;
-	width: 1.375rem;
-	margin-left: -0.8125rem;
-	top: -0.75rem;
+	/* slider handle */
+	.sapMSliderHandle {
+		height: 1.375rem;
+		width: 1.375rem;
+		margin-left: -0.8125rem;
+		top: -0.75rem;
+	}
+
+	.sapMSliderTickmarks {
+		height: 1rem;
+	}
+
+	.sapMSliderLabel {
+		top: 1rem;
+	}
+
+	.sapMSliderTick {
+		margin-top: 0.125rem;
+		height: 0.75rem;
+	}
+
+	.sapMSliderTickLabel {
+		height: 1rem;
+	}
 }

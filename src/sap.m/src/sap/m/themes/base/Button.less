@@ -161,7 +161,7 @@ html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 /* Compact size                                     */
 /* ------------------------------------------------ */
 
-.sapUiSizeCompact{
+.sapUiSizeCompact {
 	.sapMBtn {
 		height:           2.000rem;
 		padding:          0.1875rem 0;
@@ -472,15 +472,15 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner {
 
 .sapMIBar-CTX .sapMBtnDisabled,
 .sapMIBar-CTX .sapMBtnDisabled .sapMBtnContent > .sapMBtnIcon {
-	color:            @sapUiButtonHeaderDisabledTextColor;
-	text-shadow:      none;
+	color: @sapUiButtonHeaderDisabledTextColor;
+	text-shadow: none;
 }
 
 .sapMIBar-CTX.sapMHeader-CTX :not(.sapMBtnDisabled) > .sapMBtnActive,
 .sapMIBar-CTX.sapMFooter-CTX :not(.sapMBtnDisabled) > .sapMBtnActive {
 	background-color: @sapUiButtonActiveBackground;
-	color:            @sapUiButtonActiveTextColor;
-	text-shadow:      none;
+	color: @sapUiButtonActiveTextColor;
+	text-shadow: none;
 }
 
 /* ------------------------------------------------ */
@@ -488,10 +488,14 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner {
 /* ------------------------------------------------ */
 
 /* transparent Toolbar Context */
-.sapMTB-Transparent-CTX .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject) {
-	background-image:     none;
-	background:           @sapUiButtonLiteBackground;
-	border-color:         @sapUiButtonLiteBorderColor;
+.sapMTB-Transparent-CTX .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive) {
+	background-image: none;
+	background: @sapUiButtonLiteBackground;
+	border-color: @sapUiButtonLiteBorderColor;
+}
+
+.sapMTB-Transparent-CTX .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive):hover {
+	background: @sapUiButtonLiteHoverBackground;
 }
 
 /* overwrite list's default active state color */

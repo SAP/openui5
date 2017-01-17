@@ -350,7 +350,19 @@ sap.ui.define(['jquery.sap.global'],
 				parseValue: function(sValue) {
 					return sValue ? JSON.parse(sValue) : null;
 				}
+			}),
+
+		"function" :
+			createType("function", {
+				defaultValue : null,
+				isValid : function(vValue) {
+					return vValue == null || typeof vValue === 'function';
+				},
+				parseValue: function(sValue) {
+					throw new TypeError("values of type function can't be parsed from a string");
+				}
 			})
+
 	};
 
 	/**

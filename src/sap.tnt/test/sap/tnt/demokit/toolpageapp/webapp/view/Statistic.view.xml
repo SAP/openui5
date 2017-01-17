@@ -15,11 +15,15 @@
 							level="H4"
 							textAlign="Left"/>
 						<ToolbarSpacer/>
-						<Button icon="sap-icon://refresh" press="onRefresh"/>
+						<Button
+							id="refresh"
+							icon="sap-icon://refresh"
+							press="onRefresh"/>
 					</Toolbar>
 				</headerToolbar>
 				<l:BlockLayout
 					id="statisticsBlockLayout"
+					busy="false"
 					background="Dashboard">
 					<l:BlockLayoutRow
 						rowColorSet="ColorSet2">

@@ -110,7 +110,7 @@ sap.ui.define(["jquery.sap.global",
 	sap.ui.lazyRequire("sap.f.routing.Targets");
 
 	/**
-	 * Used by the <code>Avatar</code> control to define which shape to use
+	 * Types of shape for the {@link sap.f.Avatar} control.
 	 *
 	 * @enum {string}
 	 * @public
@@ -119,20 +119,20 @@ sap.ui.define(["jquery.sap.global",
 	 */
 	sap.f.AvatarShape = {
 		/**
-		 * Circle shape for the avatar
+		 * Circular shape.
 		 * @public
 		 */
 		Circle: "Circle",
 
 		/**
-		 * Square shape for the avatar
+		 * Square shape.
 		 * @public
 		 */
 		Square: "Square"
 	};
 
 	/**
-	 * Used by the <code>Avatar</code> control to define which size to use
+	 * Predefined sizes for the {@link sap.f.Avatar} control.
 	 *
 	 * @enum {string}
 	 * @public
@@ -141,31 +141,36 @@ sap.ui.define(["jquery.sap.global",
 	 */
 	sap.f.AvatarSize = {
 		/**
-		 * Extra small size
+		 * Control size - 2rem
+		 * Font size - 0.75rem
 		 * @public
 		 */
 		XS: "XS",
 
 		/**
-		 * Small size
+		 * Control size - 3rem
+		 * Font size - 1.125rem
 		 * @public
 		 */
 		S: "S",
 
 		/**
-		 * Medium size
+		 * Control size - 4rem
+		 * Font size - 1.625rem
 		 * @public
 		 */
 		M: "M",
 
 		/**
-		 * Large size
+		 * Control size - 5rem
+		 * Font size - 2rem
 		 * @public
 		 */
 		L: "L",
 
 		/**
-		 * Extra large size
+		 * Control size - 7rem
+		 * Font size - 2.75rem
 		 * @public
 		 */
 		XL: "XL",
@@ -178,7 +183,7 @@ sap.ui.define(["jquery.sap.global",
 	};
 
 	/**
-	 * Used by the <code>Avatar</code> control to define it's type
+	 * Types of {@link sap.f.Avatar} based on the displayed content.
 	 *
 	 * @enum {string}
 	 * @public
@@ -187,23 +192,23 @@ sap.ui.define(["jquery.sap.global",
 	 */
 	sap.f.AvatarType = {
 		/**
-		 * Type icon for the avatar
+		 * The displayed content is an icon.
 		 * @public
 		 */
 		Icon: "Icon",
 		/**
-		 * Type image for the avatar
+		 * The displayed content is an image.
 		 * @public
 		 */
 		Image: "Image",
 		/**
-		 * Type initials for the avatar
+		 * The displayed content is initials.
 		 * @public
 		 */
 		Initials: "Initials"
 	};
 	/**
-	 * Used by the <code>Avatar</code> control to define it's image size
+	 * Types of image size and position that determine how an image fits in the {@link sap.f.Avatar} control area.
 	 *
 	 * @enum {string}
 	 * @public
@@ -212,12 +217,12 @@ sap.ui.define(["jquery.sap.global",
 	 */
 	sap.f.AvatarImageFitType = {
 		/**
-		 * The background image will be as large as possible, so that the background area is completely covered by the image
+		 * The image is scaled to be large enough so that the control area is completely covered.
 		 * @public
 		 */
 		Cover: "Cover",
 		/**
-		 * The background image will be scaled to the largest size such that both its width and height can fit
+		 * The image is scaled to the largest size so that both its width and height can fit in the control area.
 		 * @public
 		 */
 		Contain: "Contain"

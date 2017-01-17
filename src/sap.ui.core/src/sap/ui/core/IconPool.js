@@ -181,7 +181,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				'mirrored-task-circle': 0xe25c, 'mirrored-task-circle-2': 0xe25d, 'checklist-item': 0xe25e, 'checklist-item-2': 0xe25f,
 				'checklist': 0xe260, 'checklist-2': 0xe261, 'chart-table-view': 0xe262, 'filter-analytics': 0xe263, 'filter-facets': 0xe264,
 				'filter-fields': 0xe265, 'indent': 0xe266, 'outdent': 0xe267, 'heading1': 0x1e268, 'heading2': 0x1e269, 'heading3': 0x1e26a,
-				'decrease-line-height': 0xe26b, 'increase-line-height': 0xe26c
+				'decrease-line-height': 0xe26b, 'increase-line-height': 0xe26c, 'fx': 0x1e26d
 			}
 		};
 

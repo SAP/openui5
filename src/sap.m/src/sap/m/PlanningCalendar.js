@@ -253,7 +253,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * <code>viewKey</code> was changed by user interaction
 			 */
-			viewChange : {}
+			viewChange : {},
+
+			/**
+			 * Fires when a row header is clicked.
+			 * @since 1.46.0
+			 */
+			rowHeaderClick: {
+
+				/**
+				 * The row user clicked on.
+				 */
+				row : {type : "sap.m.PlanningCalendarRow"}
+			}
 		}
 	}});
 
@@ -373,6 +385,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		});
 		oTable.attachEvent("selectionChange", _handleTableSelectionChange, this);
 
+		oTable.addDelegate({
+			onBeforeRendering: function () {
+				if (this._rowHeaderClickEvent) {
+					this._rowHeaderClickEvent.off();
+				}
+			},
+			onAfterRendering: function () {
+				this._rowHeaderClickEvent = oTable.$().find(".sapMPlanCalRowHead > div.sapMLIB").click(function (oEvent) {
+					var oRowHeader = jQuery(oEvent.currentTarget).control(0),
+						oRow = sap.ui.getCore().byId(oRowHeader.getAssociation("parentRow"));
+
+					this.fireRowHeaderClick({row: oRow});
+				}.bind(this));
+			}
+		}, false, this);
+
 		this.setAggregation("table", oTable, true);
 
 		this.setStartDate(new Date());
@@ -421,6 +449,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this._oToolbar = undefined;
 		}
 
+		// Remove event listener for rowHeaderClick event
+		if (this._rowHeaderClickEvent) {
+			this._rowHeaderClickEvent.off();
+			this._rowHeaderClickEvent = null;
+		}
 	};
 
 	PlanningCalendar.prototype.onBeforeRendering = function(){

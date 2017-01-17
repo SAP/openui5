@@ -1,0 +1,36 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout">
+	<List footerText="Total: 1.079,00 EUR">
+		<headerToolbar>
+			<Toolbar>
+				<Title text="Products (23)" level="H2"/>
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://settings"/>
+				<Button icon="sap-icon://person-placeholder"/>
+			</Toolbar>
+		</headerToolbar>
+		<infoToolbar>
+			<Toolbar>
+				<Label text="Your Shopping cart contains 1 item" />
+			</Toolbar>
+		</infoToolbar>
+		<ObjectListItem
+			intro="HT-2001"
+			icon="test-resources/sap/ui/demokit/explored/img/HT-2001.jpg"
+			title="10&quot; Portable DVD player"
+			number="499.00"
+			numberUnit="EUR"
+			iconDensityAware="false">
+			<attributes>
+				<ObjectAttribute text="Titanium"/>
+			</attributes>
+			<firstStatus>
+				<ObjectStatus
+					text="Avalaible"
+					state="Success"/>
+			</firstStatus>
+		</ObjectListItem>
+	</List>
+</core:FragmentDefinition>

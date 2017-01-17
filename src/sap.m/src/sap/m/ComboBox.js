@@ -276,13 +276,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		ComboBox.prototype.createDropdown = function() {
 			var that = this;
 			var oPicker = new Popover({
-				showHeader: false,
 				placement: sap.m.PlacementType.VerticalPreferredBottom,
 				offsetX: 0,
 				offsetY: 0,
 				initialFocus: this,
 				bounce: false,
-				showArrow: false
+				showArrow: false,
+				ariaLabelledBy: this.getPickerInvisibleTextId() || undefined
 			});
 
 			oPicker.open = function() {
@@ -301,6 +301,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		ComboBox.prototype.createPickerTextField = function() {
 			var oTextField = new ComboBoxTextField({
 				width: "100%",
+				showValueStateMessage: false,
 				showButton: false
 			}).addEventDelegate({
 				onsapenter: function() {
@@ -652,12 +653,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 				// the "aria-activedescendant" attribute is removed when the currently active descendant is not visible
 				oDomRef.removeAttribute("aria-activedescendant");
-
-				// if the focus is back to the input after closing the picker,
-				// the value state message should be reopen
-				if (this.shouldValueStateMessageBeOpened() && (document.activeElement === oDomRef)) {
-					this.openValueStateMessage();
-				}
 			}
 
 			// remove the active state of the control's field
@@ -679,6 +674,12 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			// notice that to prevent flickering, the filter is cleared
 			// after the close animation is completed
 			this.clearFilter();
+
+			// if the focus is back to the input after closing the picker,
+			// the value state message should be reopen
+			if (this.shouldValueStateMessageBeOpened() && (document.activeElement === oDomRef)) {
+				this.openValueStateMessage();
+			}
 		};
 
 		/**
@@ -714,19 +715,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 					// no default
 				}
-			}
-		};
-
-		ComboBox.prototype.onPropertyChange = function(oControlEvent, oData) {
-			var sNewValue = oControlEvent.getParameter("newValue"),
-				sProperty = oControlEvent.getParameter("name"),
-				sMutator = "set" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1),
-				oControl = (oData && oData.srcControl) || this.getPickerTextField();
-
-			// propagate some property changes to the picker text field
-			if (/\bvalue\b|\benabled\b|\bname\b|\bplaceholder\b|\beditable\b|\btextAlign\b|\btextDirection\b/.test(sProperty) &&
-				oControl && (typeof oControl[sMutator] === "function")) {
-				oControl[sMutator](sNewValue);
 			}
 		};
 

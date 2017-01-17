@@ -175,11 +175,6 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/ui/base/Object
 
 			$.sap.log.info("navigation to view with id: " + sViewId + " the targetControl is " + oTargetControl.getId() + " backwards is " + bBack);
 
-			// Only apply a parameter if the app developer explicitly set it in the route config. Otherwise, they might want to manipulate it manually.
-			if (typeof oParams.layout !== "undefined") {
-				oTargetControl.setLayout(oParams.layout);
-			}
-
 			if (bBack) {
 				oTargetControl._safeBackToPage(sViewId, sTransition, oArguments, oTransitionParameters);
 			} else {

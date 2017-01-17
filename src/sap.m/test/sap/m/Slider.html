@@ -165,19 +165,25 @@
 				step: 0.01,
 				min: 10.4,
 				max: 500.5,
-				liveChange: function(oControlEvent) {
+				liveChange: function (oControlEvent) {
 					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
 				},
-				change : function(oControlEvent) {
+				change: function (oControlEvent) {
 					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 				}
 			}),
 
-			oSlider12 = new sap.m.Slider({enableTickmarks: true});
+			oSlider12 = new sap.m.Slider({enableTickmarks: true}),
+
+			oSlider13 = new sap.m.Slider({
+				enableTickmarks: true,
+				scale: new sap.m.ResponsiveScale({tickmarksBetweenLabels: 5})
+			});
 
 			oPage1 = new sap.m.Page("page1", {
 				title: "Mobile Slider Control",
-				content: [oSlider0, oSlider1, oSlider2, oSlider3, oSlider4, oSlider5, oSlider6, oSlider7, oSlider8, oSlider9, oSlider10, oSlider11, oSlider12]
+				content: [oSlider0, oSlider1, oSlider2, oSlider3, oSlider4, oSlider5, oSlider6, oSlider7, oSlider8,
+					oSlider9, oSlider10, oSlider11, oSlider12, oSlider13]
 			});
 
 			oApp.addPage(oPage1);

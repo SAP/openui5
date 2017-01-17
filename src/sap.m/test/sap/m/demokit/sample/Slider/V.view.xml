@@ -26,5 +26,11 @@
 		<Slider enableTickmarks="true" range="0,10" min="0" max="10" class="sapUiSmallMarginBottom" width="400px"/>
 		<Slider enableTickmarks="true" class="sapUiSmallMarginBottom" width="400px"/>
 		<Slider enableTickmarks="true" min="-100" max="100" step="5" class="sapUiSmallMarginBottom" width="400px"/>
+
+		<Text text="Slider with tickmarks and labels"/>
+		<Slider min="0" max="30" enableTickmarks="true" class="sapUiSmallMarginBottom" width="400px">
+			<ResponsiveScale tickmarksBetweenLabels="3"/>
+		</Slider>
+
 	</l:VerticalLayout>
 </mvc:View>

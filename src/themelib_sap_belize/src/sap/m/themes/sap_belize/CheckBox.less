@@ -3,18 +3,13 @@
 /* Belize theme                    */
 /* =============================== */
 
+@_sap_m_CheckBox_SelectedWarningColor: darken(@sapUiFieldWarningColor, 100);
+
 .sapMCb.sapMCbWarn .sapMCbBg {
 	background-color: @sapUiFieldWarningBackground;
 	border-color: @sapUiFieldWarningColor;
 	&.sapMCbMarkChecked:before {
-		color: darken(@sapUiFieldWarningColor,100);
-	}
-}
-
-.sapContrast .sapMCb.sapMCbWarn .sapMCbBg,
-.sapContrast.sapMCb.sapMCbWarn .sapMCbBg {
-	&.sapMCbMarkChecked:before {
-		color: @sapUiFieldWarningColor;
+		color: @_sap_m_CheckBox_SelectedWarningColor;
 	}
 }
 

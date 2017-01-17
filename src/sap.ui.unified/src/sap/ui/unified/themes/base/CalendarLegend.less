@@ -5,7 +5,7 @@
 
 .sapUiUnifiedLegend {
 	color: @sapUiContentLabelColor;
-	font-familiy: @sapUiFontFamily;
+	font-family: @sapUiFontFamily;
 	font-size: @sapUiFontSmallSize;
 	font-weight: normal;
 	padding: 12px;
@@ -13,31 +13,26 @@
 	-moz-column-gap: 8px; /* Firefox */
 	-webkit-column-gap: 8px; /* Safari and Chrome */
 	background-color: @sapUiListBackground;
-	font-size: @sapMFontSmallSize;
-}
-
-.sapUiUnifiedLegendItem {
-	display: inline-block;
-	width: 100%;
-	margin: 4px;
 }
 
 .sapUiUnifiedLegendDescription {
-	float: left;
-	vertical-align: middle;
-	word-wrap: break-word;
+	display: inline-block;
+	line-height: 16px;
+	margin-top: 4px;
+	margin-bottom: 4px;
 	/* width is 100% without the width and margin of sapUiUnifiedLegendSquare
 	(the square in front of the legend description) */
-	width: calc(100% - 24px);
+	width: calc(100% - 28px);
 	cursor: default;
 }
 
 .sapUiUnifiedLegendSquare {
+	display: inline-block;
+	vertical-align: top;
 	height: 16px;
 	width: 16px;
-	margin-right: 8px;
+	margin: 4px 8px 4px 4px;
 	background: @sapUiListBackground;
-	float: left;
 }
 
 .sapUiUnifiedLegendSquareColor {
@@ -65,10 +60,12 @@
 	-webkit-column-gap: 6px; /* Safari and Chrome */
 }
 
-.sapUiSizeCompact .sapUiUnifiedLegendItem {
-	display: inline-block;
-	width: 100%;
-	margin: 2px;
+.sapUiSizeCompact .sapUiUnifiedLegendSquare {
+	margin: 2px 8px 2px 2px;
+}
+
+.sapUiSizeCompact .sapUiUnifiedLegendDescription {
+	line-height: 12px;
 }
 
 /*** items and colors ***/

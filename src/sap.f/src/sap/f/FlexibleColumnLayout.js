@@ -7,12 +7,13 @@ sap.ui.define([
 	"jquery.sap.global",
 	"./library",
 	"./LayoutType",
+	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/Control",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Button",
 	"sap/m/NavContainer"
-], function (jQuery, library, LT, ResizeHandler, Control, InvisibleText, Button, NavContainer) {
+], function (jQuery, library, LT, Device, ResizeHandler, Control, InvisibleText, Button, NavContainer) {
 	"use strict";
 
 
@@ -527,18 +528,18 @@ sap.ui.define([
 
 	FlexibleColumnLayout.prototype.init = function () {
 
+		// Create the 3 nav containers
+		this._initNavContainers();
+
 		// Create the expand/collapse arrows
 		this._initButtons();
 
 		// Holds an object, responsible for saving and searching the layout history
 		this._oLayoutHistory = new LayoutHistory();
-
-		// The first NavContainer should always be created in advance - it cannot be hidden
-		this.setAggregation("_beginColumnNav", this._createNavContainer("begin"));
 	};
 
 	/**
-	 * One-time nav container creation method
+	 * Instantiates a nav container for the column and binds events
 	 * @param sColumn - the column for which a nav container must be created
 	 * @returns {*}
 	 * @private
@@ -581,7 +582,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Getter for the Begin column nav container - this one is always eagerly created, thus returned directly
+	 * Getter for the Begin column nav container
 	 * @returns {*}
 	 * @private
 	 */
@@ -590,37 +591,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Getter for the Mid column nav container - lazily created
+	 * Getter for the Mid column nav container
 	 * @returns {*}
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._getMidColumn = function () {
-		var oMidColumn = this.getAggregation("_midColumnNav");
-
-		if (!oMidColumn) {
-			oMidColumn = this._createNavContainer("mid");
-			this.setAggregation("_midColumnNav", oMidColumn, true);
-			this._flushColumnContent("mid", oMidColumn);
-		}
-
-		return oMidColumn;
+		return this.getAggregation("_midColumnNav");
 	};
 
 	/**
-	 * Getter for the End column nav container - lazily created
+	 * Getter for the End column nav container
 	 * @returns {*}
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._getEndColumn = function () {
-		var oEndColumn = this.getAggregation("_endColumnNav");
-
-		if (!oEndColumn) {
-			oEndColumn = this._createNavContainer("end");
-			this.setAggregation("_endColumnNav", oEndColumn, true);
-			this._flushColumnContent("end", oEndColumn);
-		}
-
-		return oEndColumn;
+		return this.getAggregation("_endColumnNav");
 	};
 
 	/**
@@ -629,14 +614,10 @@ sap.ui.define([
 	 * @param oControl
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._flushColumnContent = function (sColumn, oControl) {
-		var oRm;
+	FlexibleColumnLayout.prototype._flushColumnContent = function (sColumn) {
+		var oControl = this.getAggregation("_" + sColumn + "ColumnNav"),
+			oRm = sap.ui.getCore().createRenderManager();
 
-		if (!this.getDomRef()) {
-			return;
-		}
-
-		oRm = sap.ui.getCore().createRenderManager();
 		oRm.renderControl(oControl);
 		oRm.flush(this._$columns[sColumn][0], undefined, true);
 		oRm.destroy();
@@ -656,10 +637,6 @@ sap.ui.define([
 		var vResult = this.setProperty("layout", sNewLayout, true);
 		this._oLayoutHistory.addEntry(sNewLayout);
 
-		if (typeof this._$columns === "undefined") {
-			return vResult;
-		}
-
 		this._resizeColumns();
 		this._hideShowArrows();
 
@@ -671,13 +648,17 @@ sap.ui.define([
 	};
 
 	FlexibleColumnLayout.prototype.onAfterRendering = function () {
-
 		this._registerResizeHandler();
 
 		this._cacheDOMElements();
 
 		this._hideShowArrows();
 		this._resizeColumns();
+
+		this._flushColumnContent("begin");
+		this._flushColumnContent("mid");
+		this._flushColumnContent("end");
+
 		this._fireStateChange(false, false);
 	};
 
@@ -699,6 +680,16 @@ sap.ui.define([
 			ResizeHandler.deregister(this._iResizeHandlerId);
 			this._iResizeHandlerId = null;
 		}
+	};
+
+	/**
+	 * Creates the nav containers
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._initNavContainers = function () {
+		this.setAggregation("_beginColumnNav", this._createNavContainer("begin"), true);
+		this.setAggregation("_midColumnNav", this._createNavContainer("mid"), true);
+		this.setAggregation("_endColumnNav", this._createNavContainer("end"), true);
 	};
 
 	/**
@@ -742,7 +733,7 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype._cacheDOMElements = function () {
 		this._cacheColumns();
 
-		if (!sap.ui.Device.system.phone) {
+		if (!Device.system.phone) {
 			this._cacheArrows();
 		}
 	};
@@ -781,6 +772,7 @@ sap.ui.define([
 	 */
 	FlexibleColumnLayout.prototype._resizeColumns = function () {
 		var iPercentWidth,
+			iNewWidth,
 			sNewWidth,
 			iTotalMargin,
 			iAvailableWidth,
@@ -791,7 +783,7 @@ sap.ui.define([
 			iVisibleColumnsCount;
 
 		// Stop here if the control isn't rendered yet
-		if (typeof this._$columns === "undefined") {
+		if (!this.isActive()) {
 			return;
 		}
 
@@ -821,12 +813,18 @@ sap.ui.define([
 			this._$columns[sColumn].removeClass("sapFFCLColumnFirstActive");
 
 			// Change the width of the column
+			iNewWidth = Math.round(iAvailableWidth * (iPercentWidth / 100));
 			if ([100, 0].indexOf(iPercentWidth) !== -1) {
 				sNewWidth = iPercentWidth + "%";
 			} else {
-				sNewWidth = Math.round(iAvailableWidth * (iPercentWidth / 100)) + "px";
+				sNewWidth = iNewWidth + "px";
 			}
 			this._$columns[sColumn].width(sNewWidth);
+
+			// For tablet and desktop - notify child controls to render with reduced container size, if they need to
+			if (!Device.system.phone) {
+				this._updateColumnCSSClasses(sColumn, iNewWidth);
+			}
 
 			// After the first non-zero width column is shown, set the flag to enable margins for all other non-zero width columns that will follow
 			if (iPercentWidth > 0) {
@@ -851,6 +849,23 @@ sap.ui.define([
 			this._$columns[aActiveColumns[0]].addClass("sapFFCLColumnFirstActive");
 			this._$columns[aActiveColumns[aActiveColumns.length - 1]].addClass("sapFFCLColumnLastActive");
 		}
+	};
+
+	FlexibleColumnLayout.prototype._updateColumnCSSClasses = function (sColumn, iWidth) {
+		var sNewClassName = "";
+
+		this._$columns[sColumn].removeClass("sapUiContainer-Narrow sapUiContainer-Medium sapUiContainer-Wide sapUiContainer-ExtraWide");
+		if (iWidth < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
+			sNewClassName = "Narrow";
+		} else if (iWidth < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
+			sNewClassName = "Medium";
+		} else if (iWidth < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[2]) {
+			sNewClassName = "Wide";
+		} else {
+			sNewClassName = "ExtraWide";
+		}
+
+		this._$columns[sColumn].addClass("sapUiContainer-" + sNewClassName);
 	};
 
 	/**
@@ -975,14 +990,16 @@ sap.ui.define([
 	 */
 	FlexibleColumnLayout.prototype._hideShowArrows = function () {
 		var sLayout = this.getLayout(),
-			iMaxColumnsCount = this.getMaxColumnsCount(),
 			oMap = {},
-			aNeededArrows = [];
+			aNeededArrows = [],
+			iMaxColumnsCount;
 
 		// Stop here if the control isn't rendered yet or in phone mode, where arrows aren't necessary
-		if (typeof this._$columns === "undefined" || sap.ui.Device.system.phone) {
+		if (!this.isActive() || Device.system.phone) {
 			return;
 		}
+
+		iMaxColumnsCount = this.getMaxColumnsCount();
 
 		// Only show arrows if 2 or 3 columns can be displayed at a time
 		if (iMaxColumnsCount > 1) {
@@ -1058,7 +1075,7 @@ sap.ui.define([
 	// Mid column proxies
 
 	FlexibleColumnLayout.prototype.getMidColumnPages = function () {
-		return this.getAggregation("_midColumnNav") ? this._getMidColumn().getPages() : [];
+		return this._getMidColumn().getPages();
 	};
 
 	FlexibleColumnLayout.prototype.addMidColumnPage = function (oPage) {
@@ -1083,7 +1100,7 @@ sap.ui.define([
 	// End column proxies
 
 	FlexibleColumnLayout.prototype.getEndColumnPages = function () {
-		return this.getAggregation("_endColumnNav") ? this._getEndColumn().getPages() : [];
+		return this._getEndColumn().getPages();
 	};
 
 	FlexibleColumnLayout.prototype.addEndColumnPage = function (oPage) {
@@ -1469,23 +1486,13 @@ sap.ui.define([
 
 	FlexibleColumnLayout.prototype.setDefaultTransitionNameMidColumn = function(sTransition) {
 		this.setProperty("defaultTransitionNameMidColumn", sTransition, true);
-
-		// Only update the nav container, if already created - else, the property will be applied on creation
-		if (this.getAggregation("_midColumnNav")) {
-			this._getMidColumn().setDefaultTransitionName(sTransition);
-		}
-
+		this._getMidColumn().setDefaultTransitionName(sTransition);
 		return this;
 	};
 
 	FlexibleColumnLayout.prototype.setDefaultTransitionNameEndColumn = function(sTransition) {
 		this.setProperty("defaultTransitionNameEndColumn", sTransition, true);
-
-		// Only update the nav container, if already created - else, the property will be applied on creation
-		if (this.getAggregation("_endColumnNav")) {
-			this._getEndColumn().setDefaultTransitionName(sTransition);
-		}
-
+		this._getEndColumn().setDefaultTransitionName(sTransition);
 		return this;
 	};
 

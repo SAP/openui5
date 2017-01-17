@@ -355,50 +355,6 @@ jQuery.sap.require("sap.f.FlexibleColumnLayout");
 		assert.ok(oEventSpy.called, "Layout change event fired");
 	});
 
-	QUnit.test("Mid column is loaded lazily", function (assert) {
-
-		this.oFCL = oFactory.createFCL({
-			defaultTransitionNameMidColumn: "fade"
-		});
-
-		assert.ok(!this.oFCL.getAggregation("_midColumnNav"), "Initially no Mid column NavContainer is created");
-
-		var aPages = this.oFCL.getMidColumnPages();
-		assert.ok(!this.oFCL.getAggregation("_midColumnNav"), "Calling getMidColumnPages does not force a NavContainer creation");
-		assert.ok(aPages.constructor === Array && aPages.length === 0, "getMidColumnPages returns an empty array");
-
-		var oEventSpy = this.spy(this.oFCL, "onAfterRendering");
-
-		this.oFCL.addMidColumnPage(oFactory.createPage("mid"));
-		oCore.applyChanges();
-		assert.ok(this.oFCL.getAggregation("_midColumnNav") instanceof sap.m.NavContainer, "There is a NavContainer in the column");
-		assert.ok(this.oFCL.getAggregation("_midColumnNav").$().length, "The NavContainer is rendered");
-		assert.equal(this.oFCL.getAggregation("_midColumnNav").getDefaultTransitionName(), "fade", "The correct default transition name was applied");
-		assert.ok(!oEventSpy.called, "The control was not rerendered");
-	});
-
-	QUnit.test("End column is loaded lazily", function (assert) {
-
-		this.oFCL = oFactory.createFCL({
-			defaultTransitionNameEndColumn: "fade"
-		});
-
-		assert.ok(!this.oFCL.getAggregation("_endColumnNav"), "Initially no End column NavContainer is created");
-
-		var aPages = this.oFCL.getEndColumnPages();
-		assert.ok(!this.oFCL.getAggregation("_endColumnNav"), "Calling getEndColumnPages does not force a NavContainer creation");
-		assert.ok(aPages.constructor === Array && aPages.length === 0, "getEndColumnPages returns an empty array");
-
-		var oEventSpy = this.spy(this.oFCL, "onAfterRendering");
-
-		this.oFCL.addEndColumnPage(oFactory.createPage("end"));
-		oCore.applyChanges();
-		assert.ok(this.oFCL.getAggregation("_endColumnNav") instanceof sap.m.NavContainer, "There is a NavContainer in the column");
-		assert.ok(this.oFCL.getAggregation("_endColumnNav").$().length, "The NavContainer is rendered");
-		assert.equal(this.oFCL.getAggregation("_endColumnNav").getDefaultTransitionName(), "fade", "The correct default transition name was applied");
-		assert.ok(!oEventSpy.called, "The control was not rerendered");
-	});
-
 	QUnit.module("TABLET - API", {
 		beforeEach: function () {
 			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");

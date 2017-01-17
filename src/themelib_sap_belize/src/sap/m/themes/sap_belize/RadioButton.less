@@ -3,6 +3,8 @@
 /* Belize theme                       */
 /* ================================== */
 
+@_sap_m_RadioButton_SelectedWarningColor: darken(@sapUiFieldWarningColor, 100);
+
 .sapMRb:focus:before {
 	border: 1px dotted @sapUiContentFocusColor;
 }
@@ -32,16 +34,11 @@
 }
 
 .sapMRbWarn.sapMRbSel .sapMRbBInn {
-	background-color: darken(@sapUiFieldWarningColor, 100);
+	background-color: @_sap_m_RadioButton_SelectedWarningColor;
 }
 
 .sapMRbWarn .sapMRbBOut,
 .sapMRbWarn.sapMRbBTouched .sapMRbBOut {
 	border-color: @sapUiFieldWarningColor;
 	background-color: @sapUiFieldWarningBackground;
-}
-
-.sapContrast .sapMRbWarn.sapMRbSel .sapMRbBInn,
-.sapContrast.sapMRbWarn.sapMRbSel .sapMRbBInn {
-  background-color: @sapUiFieldWarningColor;
 }

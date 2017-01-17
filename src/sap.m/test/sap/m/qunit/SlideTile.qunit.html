@@ -200,7 +200,7 @@
 
 	QUnit.test("Test sliding continues on focusout", function(assert) {
 		//Arrange
-		var spy = sinon.spy(this.oSlideTile, "_toggleAnimation");
+		this.oSlideTile._bAnimationPause = true;
 		//Act
 		this.oSlideTile.$().blur();
 		//Assert
@@ -266,104 +266,107 @@
 		}
 	});
 
-	QUnit.test("SlideTile key down handler test", function(assert) {
-		//Arrange
-		var spy = sinon.spy(this.oSlideTile.getTiles()[0], "onkeydown"),
-			oEvent = jQuery.Event("keydown");
-		oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
-		//Act
-		this.oSlideTile.$().trigger(oEvent);
-		//Assert
-		assert.ok(spy.calledOnce, "Key down handler is triggered");
-	});
+	//Keyboard and mouse tests only valid on desktop
+	if (sap.ui.Device.system.desktop) {
+		QUnit.test("SlideTile key down handler test", function(assert) {
+			//Arrange
+			var spy = sinon.spy(this.oSlideTile.getTiles()[0], "onkeydown"),
+				oEvent = jQuery.Event("keydown");
+			oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
+			//Act
+			this.oSlideTile.$().trigger(oEvent);
+			//Assert
+			assert.ok(spy.calledOnce, "Key down handler is triggered");
+		});
 
-	QUnit.test("SlideTile key up handler and press delegation on GenericTile test", function(assert) {
-		//Arrange
-		var oEvent = jQuery.Event("keyup");
-		this.oSlideTile.getTiles()[0].attachEvent("press", this.fnPressHandler);
-		this.oSlideTile.getTiles()[1].attachEvent("press", this.fnSecondPressHandler);
-		oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
-		//Act
-		this.oSlideTile.$().trigger(oEvent);
-		//Assert
-		assert.ok(this.fnPressHandler.calledOnce, "Press delegation on first GenericTile works");
-		assert.ok(this.fnSecondPressHandler.notCalled, "The second GenericTile press event is not triggered");
-	});
+		QUnit.test("SlideTile key up handler and press delegation on GenericTile test", function(assert) {
+			//Arrange
+			var oEvent = jQuery.Event("keyup");
+			this.oSlideTile.getTiles()[0].attachEvent("press", this.fnPressHandler);
+			this.oSlideTile.getTiles()[1].attachEvent("press", this.fnSecondPressHandler);
+			oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
+			//Act
+			this.oSlideTile.$().trigger(oEvent);
+			//Assert
+			assert.ok(this.fnPressHandler.calledOnce, "Press delegation on first GenericTile works");
+			assert.ok(this.fnSecondPressHandler.notCalled, "The second GenericTile press event is not triggered");
+		});
 
-	QUnit.test("SlideTile keyboard button B test", function(assert) {
-		//Arrange
-		var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
-		oEvent = jQuery.Event("keyup");
-		oEvent.which = jQuery.sap.KeyCodes.B;
-		this.oSlideTile._bAnimationPause = true;
-		//Act
-		this.oSlideTile.$().trigger(oEvent);
-		//Assert
-		assert.ok(spy.calledOnce, "Backwards sliding by using key B works");
-	});
+		QUnit.test("SlideTile keyboard button B test", function(assert) {
+			//Arrange
+			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
+			oEvent = jQuery.Event("keyup");
+			oEvent.which = jQuery.sap.KeyCodes.B;
+			this.oSlideTile._bAnimationPause = true;
+			//Act
+			this.oSlideTile.$().trigger(oEvent);
+			//Assert
+			assert.ok(spy.calledOnce, "Backwards sliding by using key B works");
+		});
 
-	QUnit.test("In Action Scope keyboard button B is ignored", function(assert) {
-		//Arrange
-		this.oSlideTile.setScope("Actions");
-		sap.ui.getCore().applyChanges();
-		var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
-		oEvent = jQuery.Event("keyup");
-		oEvent.which = jQuery.sap.KeyCodes.B;
-		this.oSlideTile._bAnimationPause = true;
-		//Act
-		this.oSlideTile.$().trigger(oEvent);
-		//Assert
-		assert.ok(spy.notCalled, "Backwards sliding by using key B is not executed in Actions Scope");
-	});
+		QUnit.test("In Action Scope keyboard button B is ignored", function(assert) {
+			//Arrange
+			this.oSlideTile.setScope("Actions");
+			sap.ui.getCore().applyChanges();
+			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
+			oEvent = jQuery.Event("keyup");
+			oEvent.which = jQuery.sap.KeyCodes.B;
+			this.oSlideTile._bAnimationPause = true;
+			//Act
+			this.oSlideTile.$().trigger(oEvent);
+			//Assert
+			assert.ok(spy.notCalled, "Backwards sliding by using key B is not executed in Actions Scope");
+		});
 
-	QUnit.test("SlideTile keyboard button F test", function(assert) {
-		//Arrange
-		var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
-		oEvent = jQuery.Event("keyup");
-		oEvent.which = jQuery.sap.KeyCodes.F;
-		this.oSlideTile._bAnimationPause = true;
-		//Act
-		this.oSlideTile.$().trigger(oEvent);
-		//Assert
-		assert.ok(spy.calledOnce, "Forwards sliding by using key F works");
-	});
+		QUnit.test("SlideTile keyboard button F test", function(assert) {
+			//Arrange
+			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
+			oEvent = jQuery.Event("keyup");
+			oEvent.which = jQuery.sap.KeyCodes.F;
+			this.oSlideTile._bAnimationPause = true;
+			//Act
+			this.oSlideTile.$().trigger(oEvent);
+			//Assert
+			assert.ok(spy.calledOnce, "Forwards sliding by using key F works");
+		});
 
-	QUnit.test("In Action Scope keyboard button F is ignored", function(assert) {
-		//Arrange
-		this.oSlideTile.setScope("Actions");
-		sap.ui.getCore().applyChanges();
-		var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
-		oEvent = jQuery.Event("keyup");
-		oEvent.which = jQuery.sap.KeyCodes.F;
-		this.oSlideTile._bAnimationPause = true;
-		//Act
-		this.oSlideTile.$().trigger(oEvent);
-		//Assert
-		assert.ok(spy.notCalled, "Forwards sliding by using key F is not executed in Actions Scope");
-	});
+		QUnit.test("In Action Scope keyboard button F is ignored", function(assert) {
+			//Arrange
+			this.oSlideTile.setScope("Actions");
+			sap.ui.getCore().applyChanges();
+			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
+			oEvent = jQuery.Event("keyup");
+			oEvent.which = jQuery.sap.KeyCodes.F;
+			this.oSlideTile._bAnimationPause = true;
+			//Act
+			this.oSlideTile.$().trigger(oEvent);
+			//Assert
+			assert.ok(spy.notCalled, "Forwards sliding by using key F is not executed in Actions Scope");
+		});
 
-	QUnit.test("SlideTile mouse down handler test", function(assert) {
-		//Arrange
-		var oDom = this.oSlideTile.$().find(".sapMSTIconClickTapArea")[0];
-		var oEvent = jQuery.Event("mousedown");
-		oEvent.target = oDom;
-		//Act
-		this.oSlideTile.$().trigger(oEvent);
-		//Assert
-		assert.ok(this.oSlideTile.$().hasClass("sapMSTIconPressed"), "Press class is added");
-	});
+		QUnit.test("SlideTile mouse down handler test", function(assert) {
+			//Arrange
+			var oDom = this.oSlideTile.$().find(".sapMSTIconClickTapArea")[0];
+			var oEvent = jQuery.Event("mousedown");
+			oEvent.target = oDom;
+			//Act
+			this.oSlideTile.$().trigger(oEvent);
+			//Assert
+			assert.ok(this.oSlideTile.$().hasClass("sapMSTIconPressed"), "Press class is added");
+		});
 
-	QUnit.test("SlideTile mouse up handler and click delegation on GenericTile test", function(assert) {
-		//Arrange
-		var oEvent = {preventDefault: function(){}};
-		this.oSlideTile.getTiles()[0].attachEvent("press", this.fnPressHandler);
-		this.oSlideTile.getTiles()[1].attachEvent("press", this.fnSecondPressHandler);
-		//Act
-		this.oSlideTile.onmouseup(oEvent);
-		//Assert
-		assert.ok(this.fnPressHandler.calledOnce, "Tap delegation on first GenericTile works");
-		assert.ok(this.fnSecondPressHandler.notCalled, "The second GenericTile press event is not triggered");
-	});
+		QUnit.test("SlideTile mouse up handler and click delegation on GenericTile test", function(assert) {
+			//Arrange
+			var oEvent = {preventDefault: function(){}};
+			this.oSlideTile.getTiles()[0].attachEvent("press", this.fnPressHandler);
+			this.oSlideTile.getTiles()[1].attachEvent("press", this.fnSecondPressHandler);
+			//Act
+			this.oSlideTile.onmouseup(oEvent);
+			//Assert
+			assert.ok(this.fnPressHandler.calledOnce, "Tap delegation on first GenericTile works");
+			assert.ok(this.fnSecondPressHandler.notCalled, "The second GenericTile press event is not triggered");
+		});
+	}
 
 	QUnit.test("SlideTile touch start handler test - touch on Pause/play icon", function(assert) {
 		//Arrange

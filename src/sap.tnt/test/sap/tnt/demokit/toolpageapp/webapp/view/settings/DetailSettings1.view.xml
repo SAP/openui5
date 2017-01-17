@@ -14,13 +14,15 @@
 			<ObjectPageHeader>
 				<actions>
 					<ObjectPageHeaderActionButton
+						id="save"
 						text="{i18n>save}"
 						hideText="false"
-						press="handleSaveSettings"
+						press="onSavePressed"
 						type="Emphasized"/>
 					<ObjectPageHeaderActionButton
+						id="cancel"
 						text="{i18n>cancel}"
-						press="handleCancelSettings"
+						press="onCancelPressed"
 						hideText="false"/>
 				</actions>
 			</ObjectPageHeader>

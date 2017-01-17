@@ -282,7 +282,7 @@ sap.ui.define([
 		},
 		metadata : {
 			publicMethods : ["read", "create", "update", "remove", "submitChanges", "getServiceMetadata", "metadataLoaded",
-			                 "hasPendingChanges", "refresh", "refreshMetadata", "resetChanges", "setDefaultCountMode",
+			                 "hasPendingChanges", "getPendingChanges", "refresh", "refreshMetadata", "resetChanges", "setDefaultCountMode",
 			                 "setDefaultBindingMode", "getDefaultBindingMode", "getDefaultCountMode",
 			                 "setProperty", "getSecurityToken", "refreshSecurityToken", "setHeaders",
 			                 "getHeaders", "setUseBatch", "setDeferredBatchGroups", "getDeferredBatchGroups",
@@ -4765,6 +4765,12 @@ sap.ui.define([
 		return this.aPendingRequestHandles.length > 0;
 	};
 
+	/**
+	 * Returns the changed properties of all changed entities in a map which are still pending.
+	 * The key is the string name of the entity and the value is an object which contains the changed properties.
+	 * @return {map} the pending changes in a map
+	 * @public
+	 */
 	ODataModel.prototype.getPendingChanges = function() {
 		return jQuery.sap.extend(true, {}, this.mChangedEntities);
 	};
@@ -5049,6 +5055,15 @@ sap.ui.define([
 			jQuery.sap.log.fatal(this + " path " + sPath + " must be absolute if no Context is set");
 		}
 		return this.resolve(sPath, oContext);
+	};
+
+	/**
+	 * @returns {boolean} bRefreshAfterChange Whether to automatically refresh after changes
+	 * @public
+	 * @since 1.46.0
+	 */
+	ODataModel.prototype.getRefreshAfterChange = function() {
+		return this.bRefreshAfterChange;
 	};
 
 	/**

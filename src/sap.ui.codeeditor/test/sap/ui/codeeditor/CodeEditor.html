@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8">
+
+<title>Testpage - sap.ui.codeeditor.Example</title>
+
+<base href="../../../../">
+
+<script id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.ui.codeeditor"
+	data-sap-ui-theme="sap_bluecrystal"
+	src="resources/sap-ui-core.js">
+</script>
+
+<script>
+	sap.ui.getCore().attachInit(function() {
+		var oCodeEditor = new sap.ui.codeeditor.CodeEditor({width:"400px"});
+		oCodeEditor.placeAt("content");
+		oCodeEditor.setValue("Test");
+		var oCodeEditor = new sap.ui.codeeditor.CodeEditor({width:"400px", editable:false});
+		oCodeEditor.placeAt("content");
+		oCodeEditor.setValue("Test");
+		oCodeEditor.setColorTheme("hcb_bright");
+		var oCodeEditor = new sap.ui.codeeditor.CodeEditor({});
+		oCodeEditor.placeAt("resizable");
+		oCodeEditor.setValue("Test");
+		oCodeEditor.setColorTheme("hcb_blue");
+		oCodeEditor.setSyntaxHints(false);
+		var oCodeEditor = new sap.ui.codeeditor.CodeEditor({});
+		oCodeEditor.placeAt("resizable");
+		oCodeEditor.setValue("Test");
+		oCodeEditor.setColorTheme("hcb_blue");
+		oCodeEditor.setSyntaxHints(true);
+		oCodeEditor.setLineNumbers(false);
+	});
+	
+</script>
+</head>
+<body id="body" class="sapUiBody" style="margin:0px; padding: 10px; box-sizing: border-box; height:100vh">
+	<h1 id="header">Test Page for <code>sap.ui.codeeditor.Example</code></h1>
+	<div id="content"></div>
+	<div id="resizable" style="height:50%;width:50%" >
+	</div>
+</body>
+</html>

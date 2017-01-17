@@ -2176,19 +2176,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		 * @public
 		 */
 		Popover.prototype.setTitle = function (sTitle) {
-			if (sTitle) {
-				this.setProperty("title", sTitle, true);
-				if (this._headerTitle) {
-					this._headerTitle.setText(sTitle);
-				} else {
-					this._headerTitle = new sap.m.Title(this.getId() + "-title", {
-						text: this.getTitle(),
-						level: "H1"
-					});
+			this.setProperty("title", sTitle, true);
+			if (this._headerTitle) {
+				this._headerTitle.setText(sTitle);
+			} else {
+				this._headerTitle = new sap.m.Title(this.getId() + "-title", {
+					text: this.getTitle(),
+					level: "H1"
+				});
 
-					this._createInternalHeader();
-					this._internalHeader.addContentMiddle(this._headerTitle);
-				}
+				this._createInternalHeader();
+				this._internalHeader.addContentMiddle(this._headerTitle);
 			}
 
 			return this;

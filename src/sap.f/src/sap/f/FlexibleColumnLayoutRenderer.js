@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/f/FlexibleColumnLayout"],
-	function (FCL) {
+sap.ui.define(["sap/f/FlexibleColumnLayout", "sap/ui/Device"],
+	function (FCL, Device) {
 		"use strict";
 
 		var FCLRenderer = {};
@@ -38,8 +38,6 @@ sap.ui.define(["sap/f/FlexibleColumnLayout"],
 			oRm.writeStyles();
 			oRm.write(">");
 
-			oRm.renderControl(oControl._getBeginColumn());
-
 			// Arrow - collapse begin
 			FCLRenderer.renderArrow(oRm, oBeginColumnBackArrow);
 
@@ -61,10 +59,6 @@ sap.ui.define(["sap/f/FlexibleColumnLayout"],
 			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.write(">");
-
-			if (oControl.getAggregation("_midColumnNav")) {
-				oRm.renderControl(oControl._getMidColumn());
-			}
 
 			// Arrow - expand begin
 			FCLRenderer.renderArrow(oRm, oMidColumnForwardArrow);
@@ -90,10 +84,6 @@ sap.ui.define(["sap/f/FlexibleColumnLayout"],
 			oRm.writeStyles();
 			oRm.write(">");
 
-			if (oControl.getAggregation("_endColumnNav")) {
-				oRm.renderControl(oControl._getEndColumn());
-			}
-
 			// Arrow - right
 			FCLRenderer.renderArrow(oRm, oEndColumnForwardArrow);
 
@@ -101,7 +91,7 @@ sap.ui.define(["sap/f/FlexibleColumnLayout"],
 		};
 
 		FCLRenderer.renderArrow = function (oRm, oArrow) {
-			if (!sap.ui.Device.system.phone) {
+			if (!Device.system.phone) {
 				oRm.renderControl(oArrow);
 			}
 		};

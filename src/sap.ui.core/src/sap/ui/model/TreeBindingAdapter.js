@@ -252,7 +252,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		};
 
 		TreeBindingAdapter.prototype._createNodeState = function (mParameters) {
-			jQuery.sap.assert(mParameters.groupID, "To create a node state a group ID is mandatory!");
+			if (!mParameters.groupID) {
+				jQuery.sap.assert(false, "To create a node state a group ID is mandatory!");
+				return;
+			}
 
 			// check if the tree has an initial expansion state for the given groupID
 			var bInitiallyExpanded;
@@ -304,10 +307,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		TreeBindingAdapter.prototype._updateNodeSections = function (sGroupID, oNewSection) {
 			var oNodeState = this._getNodeState(sGroupID);
 
-			jQuery.sap.assert(oNodeState, "No Node State for Group ID '" + sGroupID + "' found!");
-			jQuery.sap.assert(oNewSection, "No Section given!");
-			jQuery.sap.assert(oNewSection.length > 0, "The length of the given section must be positive greater than 0.");
-			jQuery.sap.assert(oNewSection.startIndex >= 0, "The sections start index mus be greater/equal to 0.");
+			if (!oNodeState) {
+				jQuery.sap.assert(false, "No Node State for Group ID '" + sGroupID + "' found!");
+				return;
+			} else if (!oNewSection) {
+				jQuery.sap.assert(false, "No Section given!");
+				return;
+			} else if (oNewSection.length <= 0) {
+				jQuery.sap.assert(false, "The length of the given section must be positive greater than 0.");
+				return;
+			} else if (oNewSection.startIndex < 0) {
+				jQuery.sap.assert(false, "The sections start index must be greater/equal to 0.");
+				return;
+			}
 
 			// Iterate over all known/loaded sections of the node
 			oNodeState.sections = TreeBindingUtils.mergeSections(oNodeState.sections, oNewSection);
@@ -795,7 +807,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		TreeBindingAdapter.prototype.expand = function(iIndex) {
 			var oNode = this.findNode(iIndex);
 
-			jQuery.sap.assert(oNode, "No node found for index " + iIndex);
+			if (!oNode) {
+				jQuery.sap.assert(false, "No node found for index " + iIndex);
+				return;
+			}
 
 			this._updateTreeState({groupID: oNode.nodeState.groupID, fallbackNodeState: oNode.nodeState, expanded: true});
 			this._fireChange({reason: ChangeReason.Expand});
@@ -834,8 +849,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 				oNodeStateForCollapsingNode = vParam;
 			} else if (typeof vParam === "number") {
 				var oNode = this.findNode(vParam);
-				jQuery.sap.assert(oNode, "No node found for index " + vParam);
-
+				if (!oNode) {
+					jQuery.sap.assert(false, "No node found for index " + vParam);
+					return;
+				}
 				oNodeStateForCollapsingNode = oNode.nodeState;
 			}
 
@@ -971,7 +988,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		TreeBindingAdapter.prototype.toggleIndex = function(iIndex) {
 			var oNode = this.findNode(iIndex);
 
-			jQuery.sap.assert(oNode, "There is no node at index " + iIndex + ".");
+			if (!oNode) {
+				jQuery.sap.assert(false, "There is no node at index " + iIndex + ".");
+				return;
+			}
 
 			if (oNode.nodeState.expanded) {
 				this.collapse(iIndex);
@@ -1011,7 +1031,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		 */
 		TreeBindingAdapter.prototype.setNodeSelection = function (oNodeState, bIsSelected) {
 
-			jQuery.sap.assert(oNodeState.groupID, "NodeState must have a group ID!");
+			if (!oNodeState.groupID) {
+				jQuery.sap.assert(false, "NodeState must have a group ID!");
+				return;
+			}
 
 			oNodeState.selected = bIsSelected;
 

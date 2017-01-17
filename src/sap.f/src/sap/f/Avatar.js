@@ -12,13 +12,40 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new Avatar
+	 * Constructor for a new <code>Avatar</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Avatar allows usage of different content, shapes, sizes depending on the use case.
+	 * An image-like control that has different display options for representing images, initials,
+	 * and icons.
+	 *
+	 * <h3>Overview</h3>
+	 *
+	 * The <code>Avatar</code> control allows the usage of different content, shapes, and sizes
+	 * depending on the use case.
+	 *
+	 * The content types that can be displayed are either images, icons, or initials. The shape
+	 * can be circular or square. There are several predefined sizes, as well as an option to
+	 * set a custom size.
+	 *
+	 * <h3>Usage</h3>
+	 *
+	 * Up to two Latin letters can be displayed as initials in an <code>Avatar</code>. If there
+	 * are more than two letters, or if there's a non-Latin character present, a default image
+	 * placeholder will be created.
+	 *
+	 * There are two options for how the displayed image can fit inside the
+	 * available area:
+	 * <ul>
+	 * <li>Cover - the image is scaled to cover all of the available area</li>
+	 * <li>Contain - the image is scaled as large as possible while both
+	 * its height and width fit inside the avalable area</li>
+	 * </ul>
+	 * <b>Note:</b> To set a custom size for the <code>Avatar</code>, you have to choose the <code>Custom</code>
+	 * value for the <code>displaySize</code> property. Then, you have to set both the
+	 * <code>customDisplaySize</code> and <code>customFontSize</code> properties.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -36,37 +63,41 @@ sap.ui.define([
 			library: "sap.f",
 			properties: {
 				/**
-				 *  Path to the desired image or icon
+				 * Determines the path to the desired image or icon.
 				 */
 				src: {type: "sap.ui.core.URI", group: "Data", defaultValue: null},
 				/**
-				 *  Property to hold the initials
+				 * Defines the displayed initials.
 				 */
 				initials: {type: "string", group: "Data", defaultValue: null},
 				/**
-				 * Defines the avatar shape. <code>Circle</code> shape is recommended to be used for people and the <code>Square</code> shape works better for products, company logos, different types of media
+				 * Defines the shape of the <code>Avatar</code>.
 				 */
 				displayShape: {type: "sap.f.AvatarShape", group: "Appearance", defaultValue: sap.f.AvatarShape.Circle},
 				/**
-				 * Option to set predefined size.
+				 * Sets a predefined display size of the <code>Avatar</code>.
 				 */
 				displaySize: {type: "sap.f.AvatarSize", group: "Appearance", defaultValue: sap.f.AvatarSize.S},
 				/**
-				 * Specifies the display size of the avatar, when <code>displaySize</code> is set to <code>Custom</code>
+				 * Specifies custom display size of the <code>Avatar</code>.
+				 *
+				 *<b>Note:</b> It takes effect if the <code>displaySize</code> property is set to <code>Custom</code>.
 				 */
 				customDisplaySize: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "3rem"},
 				/**
-				 * Specifies the avatar's font-size, when <code>displaySize</code> is set to <code>Custom</code>
+				 * Specifies custom font size of the <code>Avatar</code>.
+				 *
+				 *<b>Note:</b> It takes effect if the <code>displaySize</code> property is set to <code>Custom</code>.
 				 */
 				customFontSize: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "1.125rem"},
 				/**
-				 * Property that specifies the fit of an image avatar.
+				 * Specifies how an image would fit in the <code>Avatar</code>.
 				 */
 				imageFitType: {type: "sap.f.AvatarImageFitType", group: "Appearance", defaultValue: sap.f.AvatarImageFitType.Cover}
 			},
 			events : {
 				/**
-				 * Event is fired when the user clicks on the control.
+				 * Fired when the user selects the control.
 				 */
 				press: {}
 			}
@@ -129,7 +160,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function is called when the <code>Avatar</code> is clicked.
+	 * Called when the <code>Avatar</code> is selected.
 	 *
 	 * @private
 	 */
@@ -153,7 +184,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function that checks the validity of the <code>initials</code> parameter and returns true if the initials are correct.
+	 * Checks the validity of the <code>initials</code> parameter and returns <code>true</code> if the
+	 * initials are correct.
 	 *
 	 * @param sInitials
 	 * @returns {boolean}
@@ -172,7 +204,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function that validates the <code>src</code> parameter, and sets the actual type appropriately
+	 * Validates the <code>src</code> parameter, and sets the actual type appropriately.
 	 *
 	 * @param sSrc
 	 * @returns {sap.f.Avatar}
@@ -190,7 +222,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function that validates the entered parameters, and returns what the actual display type parameter would be.
+	 * Validates the entered parameters, and returns what the actual display type parameter would be.
 	 *
 	 * @returns {string|*}
 	 * @private
@@ -213,7 +245,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function that returns the path for the default icon, based on the avatar's shape.
+	 * Returns the path for the default icon, based on the value of the <code>DisplayShape</code> property.
 	 *
 	 * @param sDisplayShape
 	 * @returns {*}
@@ -232,7 +264,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function returning a control of type <code>Icon</code>. This function just changes the <code>src</code> parameter if the Icon control was already created.
+	 * Returns a control of type <code>Icon</code> and changes the <code>src</code> value if the
+	 * <code>Icon</code> control was already created.
 	 *
 	 * @returns {sap.ui.core.Control}
 	 * @private

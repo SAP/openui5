@@ -3626,6 +3626,113 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.test("it should render the picker value state message", function(assert) {
+
+			// System under test
+			var oErrorComboBox = new sap.m.ComboBox({
+				valueState: "Error",
+				items: [
+					new sap.ui.core.Item({
+						key: "DZ",
+						text: "Algeria"
+					}),
+					new sap.ui.core.Item({
+						key: "GER",
+						text: "Germany"
+					}),
+					new sap.ui.core.Item({
+						key: "CU",
+						text: "Cuba"
+					})
+				]
+			});
+
+			// Arrange
+			oErrorComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.ok(oErrorComboBox.getPicker().getShowHeader(), "Header should be shown");
+			assert.ok(oErrorComboBox._getPickerCustomHeader().hasStyleClass(oErrorComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "PickerValueState"), "Header has value state class");
+			assert.ok(oErrorComboBox._getPickerCustomHeader().hasStyleClass(oErrorComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "PickerErrorState"), "Header has error value state class");
+
+			// Cleanup
+			oErrorComboBox.destroy();
+		});
+
+		QUnit.test("it should not render the dropdown list header if the valuestate property is set to none", function(assert) {
+
+			// System under test
+			var oErrorComboBox = new sap.m.ComboBox({
+				valueState: "None",
+				items: [
+					new sap.ui.core.Item({
+						key: "DZ",
+						text: "Algeria"
+					})
+				]
+			});
+
+			// Arrange
+			oErrorComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.notOk(oErrorComboBox.getPicker().getCustomHeader().getVisible(), "Header should not be visible");
+
+			// Cleanup
+			oErrorComboBox.destroy();
+		});
+
+		QUnit.test("it should not render the dropdown list header if the property showValueStateMessage is set to false", function(assert) {
+
+			// System under test
+			var oErrorComboBox = new sap.m.ComboBox({
+				showValueStateMessage: false,
+				items: [
+					new sap.ui.core.Item({
+						key: "DZ",
+						text: "Algeria"
+					})
+				]
+			});
+
+			// Arrange
+			oErrorComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.notOk(oErrorComboBox.getPicker().getCustomHeader().getVisible(), "Header should not be visible");
+
+			// Cleanup
+			oErrorComboBox.destroy();
+		});
+
+		QUnit.test("it should set custom text for valueState", function(assert) {
+
+			// System under test
+			var oErrorComboBox = new sap.m.ComboBox({
+				valueState: "Error",
+				valueStateText: "custom",
+				items: [
+					new sap.ui.core.Item({
+						key: "DZ",
+						text: "Algeria"
+					})
+				]
+			});
+
+			// Arrange
+			oErrorComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(oErrorComboBox.getPicker().getCustomHeader().getContentLeft()[0].getText(), "custom", "text should be custom");
+
+			// Cleanup
+			oErrorComboBox.destroy();
+		});
+
 		QUnit.module("destroy()");
 
 		QUnit.test("destroy()", function(assert) {
@@ -10156,6 +10263,24 @@
 
 			assert.strictEqual(oArrowSpan.tagName.toLowerCase(), "span", "tag should be span");
 			assert.strictEqual(oArrowSpan.getAttribute("role"), "button", "role should be button");
+			oComboBox.destroy();
+		});
+
+		QUnit.test("It should add a hidden text to the Picker ", function(assert) {
+			var oItem = new sap.ui.core.Item({
+				key: "li",
+				text: "lorem ipsum"
+			}), oComboBox = new sap.m.ComboBox({
+					items: [
+						oItem
+					]
+			}), oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("COMBOBOX_AVAILABLE_OPTIONS");
+
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(sap.ui.getCore().byId(oComboBox.getPickerInvisibleTextId()).getText(), oResourceBundle, 'popup ariaLabelledBy is set');
+
 			oComboBox.destroy();
 		});
 

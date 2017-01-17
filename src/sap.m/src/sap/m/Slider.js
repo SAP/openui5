@@ -8,10 +8,9 @@ sap.ui.define([
 		'sap/ui/core/Control',
 		'sap/ui/core/EnabledPropagator',
 		'./Input',
-		'sap/ui/core/InvisibleText',
-		'sap/ui/Device'
+		'sap/ui/core/InvisibleText'
 	],
-	function(jQuery, library, Control, EnabledPropagator, Input, InvisibleText, Device) {
+	function(jQuery, library, Control, EnabledPropagator, Input, InvisibleText) {
 		"use strict";
 
 		/**
@@ -153,6 +152,15 @@ sap.ui.define([
 				 */
 				enableTickmarks: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
+			defaultAggregation: "scale",
+			aggregations: {
+				/**
+				 * Scale for visualisation of tickmarks and labels
+				 *
+				 * @since 1.46
+				 */
+				scale: {type: "sap.m.IScale", multiple: false, singularName: "scale"}
+			},
 			associations: {
 
 				/**
@@ -192,22 +200,15 @@ sap.ui.define([
 		}});
 
 		//Defines object which contains constants used by the control.
-		var _CONSTANTS = {
+		Slider.prototype._CONSTANTS = {
 			CHARACTER_WIDTH_PX: 8,
 			INPUT_STATE_NONE: "None",
 			INPUT_STATE_ERROR: "Error",
 			TICKMARKS: {
 				MAX_POSSIBLE: 100,
-				TYPE: {
-					SMALL: "small",
-					WITH_LABEL: "big"
-				},
 				MIN_SIZE: {
 					SMALL: 8,
-					WITH_LABEL: {
-						MOBILE: 48,
-						DESKTOP: 32
-					}
+					WITH_LABEL: 80
 				}
 			}
 		};
@@ -246,7 +247,7 @@ sap.ui.define([
 			this._fHandleWidth = this.$("handle").width();
 
 			this._fTooltipHalfWidthPercent =
-				((this._fSliderWidth - (this._fSliderWidth - (this._iLongestRangeTextWidth / 2 + _CONSTANTS.CHARACTER_WIDTH_PX))) / this._fSliderWidth) * 100;
+				((this._fSliderWidth - (this._fSliderWidth - (this._iLongestRangeTextWidth / 2 + this._CONSTANTS.CHARACTER_WIDTH_PX))) / this._fSliderWidth) * 100;
 		};
 
 		/**
@@ -292,8 +293,27 @@ sap.ui.define([
 		 * @returns {float} percent
 		 */
 		Slider.prototype._getPercentOfValue = function(fValue) {
+			var fMin = this.getMin(),
+				fPercent = ((fValue - fMin) / (this.getMax() - fMin)) * 100;
+
+			return fPercent;
+		};
+
+		/**
+		 * Get the value on certain position
+		 *
+		 * @param fPercent
+		 * @returns {number}
+		 * @private
+		 */
+		Slider.prototype._getValueOfPercent = function (fPercent) {
 			var fMin = this.getMin();
-			return ((fValue - fMin) / (this.getMax() - fMin)) * 100;
+			var fValue = (fPercent * (this.getMax() - fMin) / 100) + fMin;
+			var valuePrecision = ("" + this.getStep()).split(".")[1];
+
+			valuePrecision = valuePrecision ? valuePrecision.length : 0;
+
+			return Number(fValue.toFixed(valuePrecision));
 		};
 
 		/**
@@ -323,147 +343,35 @@ sap.ui.define([
 		};
 
 		/**
-		 * How many tickmarks is possible to be displayed for current slider's space
-		 *
-		 * @param {float} fWidthPx Width of the slider in PX
-		 * @param {string} sType  _CONSTANTS.TICKMARKS.TYPE
-		 * @returns {number}
-		 * @private
-		 */
-		Slider.prototype._getMaxVisibleTickmarks = function (fWidthPx, sType) {
-			var iMinTickmarksDistance,
-				// There's a border which draws the tickmark. It should be included in the calculation
-				iBorderWidth = 1;
-
-			switch (sType) {
-				case _CONSTANTS.TICKMARKS.TYPE.WITH_LABEL:
-					// Min distance between the tickmarks: 32px (desktop) vs 48px (mobile)
-					iMinTickmarksDistance = _CONSTANTS.TICKMARKS.MIN_SIZE.WITH_LABEL[Device.browser.mobile ? "MOBILE" : "DESKTOP"] + iBorderWidth;
-					break;
-				default: //_CONSTANTS.TICKMARKS.TYPE.SMALL
-					iMinTickmarksDistance = _CONSTANTS.TICKMARKS.MIN_SIZE.SMALL + iBorderWidth;
-					break;
-			}
-
-			// At most how many tickmarks would be possible to be shown on the screen
-			return Math.floor(fWidthPx / iMinTickmarksDistance);
-		};
-
-		/**
-		 * How many tickmarks could be placed at the slider if we put a tickmark for every step
-		 *
-		 * @returns {number}
-		 * @private
-		 */
-		Slider.prototype._getMaxPossibleTickmarks = function () {
-			var fSliderSize = Math.abs(this.getMax() - this.getMin()),//The ABS size from Min to Max
-				iMaxPossible = Math.floor(fSliderSize / this.getStep());//How many tickmarks would be there if we show one for each step?
-
-			iMaxPossible = iMaxPossible > _CONSTANTS.TICKMARKS.MAX_POSSIBLE ? _CONSTANTS.TICKMARKS.MAX_POSSIBLE : iMaxPossible;
-
-			return iMaxPossible;
-		};
-
-
-		/**
-		 * Determine how many tickmarks would fit into the available area.
-		 * Min distance and max possible tickmarks are taken into account.
-		 *
-		 * @param {int} iSliderWidth Slider's width. Usually taken with this.$().width()
-		 * @returns {number}
-		 * @private
-		 */
-		Slider.prototype._getTickmarksToRender = function (iSliderWidth) {
-			var iTickmarksToRender = _CONSTANTS.TICKMARKS.MAX_POSSIBLE,
-
-			//Calculate tickmarks count boundaries
-				iMaxPossibleTickmarks = this._getMaxPossibleTickmarks(),
-				iMaxVisibleTickmarks = this._getMaxVisibleTickmarks(iSliderWidth);
-
-			iTickmarksToRender = iTickmarksToRender > iMaxPossibleTickmarks ? iMaxPossibleTickmarks : iTickmarksToRender;
-			iTickmarksToRender = iTickmarksToRender > iMaxVisibleTickmarks ? iMaxVisibleTickmarks : iTickmarksToRender;
-
-			return iTickmarksToRender;
-		};
-
-		/**
-		 *  Calculates what's the distance between the tikmarks when Slider's width and tickmarks count is provided.
-		 *
-		 * @param {int} iSliderWidth
-		 * @param {int} iTickmarksCount
-		 * @returns {float}
-		 * @private
-		 */
-		Slider.prototype._calculateTickmarksDistance = function (iSliderWidth, iTickmarksCount) {
-			var fMin = this.getMin(),
-				fStep = this.getStep(),
-				fSingleStepWidthPX = iSliderWidth * (this._getPercentOfValue(fMin + fStep) / 100),
-				iNumStepsToFill = Math.ceil(_CONSTANTS.TICKMARKS.MIN_SIZE.SMALL / fSingleStepWidthPX);
-
-			var fPotentialTickWidthPX = iSliderWidth / iTickmarksCount,
-				iNumStepsToFillTheSlider = Math.round(fPotentialTickWidthPX / fSingleStepWidthPX);
-
-			iNumStepsToFill = iNumStepsToFill > iNumStepsToFillTheSlider ? iNumStepsToFill : iNumStepsToFillTheSlider;
-
-			return this._getPercentOfValue(fMin + (fStep * iNumStepsToFill));
-		};
-
-		/**
 		 * Shows/hides tickmarks when some limitations are met.
 		 *
 		 * @private
 		 */
 		Slider.prototype._handleTickmarksResponsiveness = function () {
-			var aTickmarksInDOM = this.$().find(".sapMSliderTick"),
-				bShowTickmarks = aTickmarksInDOM.eq(0).width() >= _CONSTANTS.TICKMARKS.MIN_SIZE.SMALL;
+			var aLabelsInDOM, fOffsetLeftPct, fOffsetLeftPx, aHiddenLabels,
+				oScale = this.getAggregation("scale"),
+				aTickmarksInDOM = this.$().find(".sapMSliderTick"),
+				iScaleWidth = this.$().find(".sapMSliderTickmarks").width(),
+				bShowTickmarks = (iScaleWidth / aTickmarksInDOM.size()) >= this._CONSTANTS.TICKMARKS.MIN_SIZE.SMALL;
 
 			//Small tickmarks should get hidden if their width is less than _CONSTANTS.TICKMARKS.MIN_SIZE.SMALL
 			if (this._bTickmarksLastVisibilityState !== bShowTickmarks) {
-				aTickmarksInDOM.not(":first-child").toggle(bShowTickmarks);
+				aTickmarksInDOM.toggle(bShowTickmarks);
 				this._bTickmarksLastVisibilityState = bShowTickmarks;
 			}
-		};
 
-		/**
-		 *
-		 * @returns {sap.m.Slider}
-		 * @private
-		 */
-		Slider.prototype._buildTickmarks = function () {
-			var i, iTickmarksToRender, fDistanceBetweenTickmarksPct,
-				aTickmarksBuilder = [],
-				aTickmarksPlaceholder = this.$().find(".sapMSliderTickmarks"),
-				aTickmarksInDOM = aTickmarksPlaceholder.find(".sapMSliderTick"),
-				iSliderWidth = aTickmarksPlaceholder.width();
+			// Tickmarks with labels responsiveness
+			aLabelsInDOM = this.$().find(".sapMSliderTickLabel").toArray();
+			// The distance between the first and second label in % of Scale's width
+			fOffsetLeftPct = parseFloat(aLabelsInDOM[1].style.left);
+			// Convert to PX
+			fOffsetLeftPx = iScaleWidth * fOffsetLeftPct / 100;
+			// Get which labels should become hidden
+			aHiddenLabels = oScale.getHiddenTickmarksLabels(iScaleWidth, aLabelsInDOM.length, fOffsetLeftPx, this._CONSTANTS.TICKMARKS.MIN_SIZE.WITH_LABEL);
 
-			if (!this.getEnableTickmarks() || !aTickmarksPlaceholder || iSliderWidth < _CONSTANTS.TICKMARKS.MIN_SIZE.SMALL) { //If tickmarks could not be added to the DOM, don't continue
-				jQuery.sap.log.warning("Warning: Can't add tickmarks to the DOM.", this);
-				return this;
-			}
-
-			iSliderWidth = aTickmarksPlaceholder.width();
-			iTickmarksToRender = this._getTickmarksToRender(iSliderWidth);
-
-			// We don't need to manipulate anything if tickmarks number is the same
-			if (iTickmarksToRender === aTickmarksInDOM.size()) {
-				return this;
-			}
-
-			fDistanceBetweenTickmarksPct = this._calculateTickmarksDistance(iSliderWidth, iTickmarksToRender);
-			// If the sum of all tickmarks' widths exceeds 100%, we'll need to recalculate tickmarks count and the distances between them
-			if (iTickmarksToRender * fDistanceBetweenTickmarksPct > 100) {
-				iTickmarksToRender = Math.floor(100 / fDistanceBetweenTickmarksPct);
-				fDistanceBetweenTickmarksPct = this._calculateTickmarksDistance(iSliderWidth, iTickmarksToRender);
-			}
-
-			for (i = 0; i < iTickmarksToRender; i++) {
-				aTickmarksBuilder.push(
-					"<li  class=\"sapMSliderTick\" style=\"width: calc(" + fDistanceBetweenTickmarksPct + "% - 1px);\"></li>"
-				);
-			}
-			aTickmarksPlaceholder[0].innerHTML = aTickmarksBuilder.join("");
-
-			return this;
+			aLabelsInDOM.forEach(function (oElem, iIndex) {
+				oElem.style.display = aHiddenLabels[iIndex] ? "none" : "inline-block";
+			});
 		};
 
 		Slider.prototype.getDecimalPrecisionOfNumber = function(fValue) {
@@ -580,7 +488,7 @@ sap.ui.define([
 			if (!bInputTooltips) {
 				oTooltip.innerHTML = sNewValue;
 			} else if (bInputTooltips && oTooltip.getValue() !== sNewValue) {
-				oTooltip.setValueState(_CONSTANTS.INPUT_STATE_NONE);
+				oTooltip.setValueState(this._CONSTANTS.INPUT_STATE_NONE);
 				oTooltip.setValue(sNewValue);
 				oTooltip.$("inner").attr("value", sNewValue);
 			}
@@ -683,7 +591,7 @@ sap.ui.define([
 		Slider.prototype._createInputField = function (sSuffix, oAriaLabel) {
 			var oInput = new Input(this.getId() + "-" + sSuffix, {
 				value: this.getMin(),
-				width: this._iLongestRangeTextWidth + (2 * _CONSTANTS.CHARACTER_WIDTH_PX) /*16 px in paddings for the input*/ + "px",
+				width: this._iLongestRangeTextWidth + (2 * this._CONSTANTS.CHARACTER_WIDTH_PX) /*16 px in paddings for the input*/ + "px",
 				type: "Number",
 				textAlign: sap.ui.core.TextAlign.Center,
 				ariaLabelledBy: oAriaLabel
@@ -706,11 +614,11 @@ sap.ui.define([
 			var newValue = parseFloat(oEvent.getParameter("value"));
 
 			if (isNaN(newValue) || newValue < this.getMin() || newValue > this.getMax()) {
-				oInput.setValueState(_CONSTANTS.INPUT_STATE_ERROR);
+				oInput.setValueState(this._CONSTANTS.INPUT_STATE_ERROR);
 				return;
 			}
 
-			oInput.setValueState(_CONSTANTS.INPUT_STATE_NONE);
+			oInput.setValueState(this._CONSTANTS.INPUT_STATE_NONE);
 
 			this.setValue(newValue);
 
@@ -780,7 +688,7 @@ sap.ui.define([
 
 			if (this.getShowAdvancedTooltip()) {
 				this._iLongestRangeTextWidth = ((aAbsRange[iRangeIndex].toString()).length
-					+ this.getDecimalPrecisionOfNumber(this.getStep()) + 1) * _CONSTANTS.CHARACTER_WIDTH_PX;
+					+ this.getDecimalPrecisionOfNumber(this.getStep()) + 1) * this._CONSTANTS.CHARACTER_WIDTH_PX;
 			}
 
 			if (this.getInputsAsTooltips() && !this._oInputTooltip) {
@@ -789,6 +697,11 @@ sap.ui.define([
 					tooltip: this._createInputField("Tooltip", oSliderLabel),
 					label: oSliderLabel
 				};
+			}
+
+			// For backwards compatibility when tickmarks are enabled, should be visible
+			if (this.getEnableTickmarks() && !this.getAggregation("scale")) {
+				this.setAggregation("scale", new sap.m.ResponsiveScale());
 			}
 		};
 
@@ -799,8 +712,9 @@ sap.ui.define([
 			}
 
 			if (this.getEnableTickmarks()) {
-				this._parentResizeHandler = sap.ui.core.ResizeHandler.register(this, this._handleTickmarksResponsiveness.bind(this));
-				jQuery.sap.delayedCall(0, this, "_buildTickmarks");
+				jQuery.sap.delayedCall(0, this, function () {
+					this._parentResizeHandler = sap.ui.core.ResizeHandler.register(this, this._handleTickmarksResponsiveness.bind(this));
+				});
 			}
 		};
 
@@ -1303,6 +1217,7 @@ sap.ui.define([
 		 * Default value is <code>0</code>.
 		 *
 		 * @param {float} fNewValue new value for property <code>value</code>.
+		 * @param {object} mOptions
 		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
 		 * @public
 		 */

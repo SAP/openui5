@@ -150,7 +150,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
      */
     RangeSliderRenderer.renderStartLabel = function (oRM, oControl) {
         oRM.write("<div");
-        oRM.addClass(SliderRenderer.CSS_CLASS + "Label");
+        oRM.addClass(SliderRenderer.CSS_CLASS + "RangeLabel");
         oRM.writeClasses();
         oRM.write(">");
 
@@ -167,7 +167,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
      */
     RangeSliderRenderer.renderEndLabel = function (oRM, oControl) {
         oRM.write("<div");
-        oRM.addClass(SliderRenderer.CSS_CLASS + "Label");
+        oRM.addClass(SliderRenderer.CSS_CLASS + "RangeLabel");
         oRM.writeClasses();
         oRM.write(">");
 
