@@ -26,6 +26,7 @@ sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
 		var bHasPress = oControl.hasListeners("press");
 		var sState = oControl.getState();
 		var sScope = oControl.getScope();
+		var sStateClass = jQuery.sap.encodeCSS("sapMGTState" + sState);
 		var sScopeClass = jQuery.sap.encodeCSS("sapMGTScope" + sScope);
 
 		oRm.write("<div");
@@ -34,6 +35,7 @@ sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
 			oRm.writeAttributeEscaped("title", sTooltipText);
 		}
 		oRm.addClass("sapMGT");
+		oRm.addClass(sStateClass);
 		oRm.addClass(sScopeClass);
 		// render actions view for SlideTile actions scope
 		if (sScope !== GenericTileScope.Actions && oControl._bShowActionsView) {
@@ -95,11 +97,10 @@ sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
 
 		if (sState !== LoadState.Loaded) {
 			this._renderStateOverlay(oRm, oControl, sTooltipText);
-		} else {
-			this._renderHoverOverlay(oRm, oControl);
 		}
 
 		if (sState !== LoadState.Disabled) {
+			this._renderHoverOverlay(oRm, oControl);
 			this._renderFocusDiv(oRm, oControl);
 		}
 
