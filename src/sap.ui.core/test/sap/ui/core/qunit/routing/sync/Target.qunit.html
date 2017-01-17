@@ -9,6 +9,7 @@
 	src="../../../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3,sap.m"
+	data-sap-ui-bindingSyntax="complex"
 	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
 
 </script>
@@ -479,6 +480,33 @@
 
 			this.oTarget.attachTitleChanged(function(oEvent) {
 				assert.equal(oEvent.getParameter("title"), sResult);
+				done();
+			});
+
+			this.oTarget.display();
+		});
+
+		QUnit.test("title with complex binding string (simulate configuration passed from manifest.json)", function(assert) {
+			var done = assert.async();
+			var sProductName = "laptop";
+			var oModel = new sap.ui.model.json.JSONModel({
+				productName: sProductName
+			});
+			var fnUpperFirstLetter = function(sInput) {
+				return sInput.substring(0, 1).toUpperCase() + sInput.substring(1);
+			};
+			var sProductNameToCompare = fnUpperFirstLetter(sProductName);
+			this.oView.setModel(oModel);
+			this.oConfig.title = "{path:'/productName', formatter: '.rename'}";
+			this.oView.getController = function() {
+				return {
+					rename: fnUpperFirstLetter
+				};
+			};
+			this.oTarget = new sap.ui.core.routing.Target(this.oConfig, this.oViews);
+
+			this.oTarget.attachTitleChanged(function(oEvent) {
+				assert.equal(oEvent.getParameter("title"), sProductNameToCompare);
 				done();
 			});
 
