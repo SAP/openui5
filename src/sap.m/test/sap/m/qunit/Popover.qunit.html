@@ -640,6 +640,12 @@
 			equal(jQuery.sap.byId(oPopover.getId() + "-title").text(), sNewTitleValue, "Title should be changed to the new value");
 		});
 
+		test("Set title to empty string", function () {
+			oPopover.setTitle("");
+			sap.ui.getCore().applyChanges();
+			equal(jQuery.sap.byId(oPopover.getId() + "-title").text(), "", "Title should be able to be set to empty string");
+		});
+
 		test("Add left button", function () {
 			oPopover.setBeginButton(oBeginButton);
 			sap.ui.getCore().applyChanges();
