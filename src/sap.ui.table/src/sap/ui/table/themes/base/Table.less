@@ -709,11 +709,15 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	top: 0;
 	height: 100%;
 	box-sizing: border-box;
-	border-left: 1px solid @sapUiListTableFixedBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 	display: none;
 	z-index: 4; /* Ensure Action Area before Resize/Reorder bars*/
 	background-color: @sapUiListHeaderBackground;
 	width: 2 * @_sapUiTableRowHdrWidth;
+}
+
+.sapUiTableHScr .sapUiTableRowActionHeader {
+	border-left-color: @sapUiListTableFixedBorder;
 }
 
 .sapUiTableRowActionHeader > span {
@@ -776,10 +780,14 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	background-color: @sapUiListBackground;
 	border-bottom: 1px solid @sapUiListBorderColor;
 	border-right: 1px solid @sapUiListVerticalBorderColor;
-	border-left: 1px solid @sapUiListTableFixedBorder;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
 	box-sizing: border-box;
 	position: relative;
 	padding: 0 0.25rem;
+}
+
+.sapUiTableHScr .sapUiTableRowAction {
+	border-left-color: @sapUiListTableFixedBorder;
 }
 
 .sapUiTableRowAction > .sapUiTableAction {
