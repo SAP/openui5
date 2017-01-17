@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global' /* cyclic: , 'sap/ui/core/Co
 		// and 'getRoot' behavior.
 		var aControls = this.control();
 		if (aControls.length > 0) {
-			return jQuery.map(aControls, fgetUIAreaOfCtrl);
+			return aControls.map(fgetUIAreaOfCtrl);
 		}
 
 		var aUIAreas = this.uiarea();

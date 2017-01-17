@@ -27,8 +27,8 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 
 			this._attachTitleChanged(vTargets, sTitleTarget);
 
-			if (jQuery.isArray(vTargets)) {
-				jQuery.each(vTargets, function(i, sTarget) {
+			if (Array.isArray(vTargets)) {
+				vTargets.forEach(function(sTarget) {
 					that._displaySingleTarget(sTarget, vData);
 				});
 			} else {

@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 
 			this.iIdCounter = 0;
 
-			this.fDestroyHandler = jQuery.proxy(this.destroy, this);
+			this.fDestroyHandler = this.destroy.bind(this);
 
 			jQuery(window).bind("unload", this.fDestroyHandler);
 
@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 		jQuery(window).unbind("unload", this.fDestroyHandler);
 		oCoreRef = null;
 		this.aResizeListeners = [];
-		clearListener.apply(this);
+		clearListener.call(this);
 	};
 
 	/**
@@ -96,7 +96,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 			oDom = bIsControl ? oRef.getDomRef() : oRef,
 			iWidth = oDom ? oDom.offsetWidth : 0,
 			iHeight = oDom ? oDom.offsetHeight : 0,
-			sId = "rs-" + new Date().valueOf() + "-" + this.iIdCounter++,
+			sId = "rs-" + Date.now() + "-" + this.iIdCounter++,
 			dbg;
 
 		if (bIsControl) {
@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 		this.aResizeListeners.push({sId: sId, oDomRef: bIsControl ? null : oRef, oControl: bIsControl ? oRef : null, fHandler: fHandler, iWidth: iWidth, iHeight: iHeight, dbg: dbg});
 		log.debug("registered " + dbg);
 
-		initListener.apply(this);
+		initListener.call(this);
 
 		return sId;
 	};
@@ -122,18 +122,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 	 * @private
 	 */
 	ResizeHandler.prototype.detachListener = function(sId){
-		var that = this;
-		jQuery.each(this.aResizeListeners, function(index, oResizeListener){
-			if (oResizeListener.sId == sId) {
-				that.aResizeListeners.splice(index,1);
+		var aResizeListeners = this.aResizeListeners;
+		for ( var i = 0; i < aResizeListeners.length; i++ ) {
+			if (aResizeListeners[i].sId === sId) {
+				aResizeListeners.splice(i, 1);
 				log.debug("deregistered " + sId);
-				return false; //break the loop
+				break;
 			}
-		});
+		}
 
 		// if list is empty now, stop interval
-		if (this.aResizeListeners.length == 0) {
-			clearListener.apply(this);
+		if (aResizeListeners.length === 0) {
+			clearListener.call(this);
 		}
 	};
 
@@ -147,7 +147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 		if ( bDebug ) {
 			log.debug("checkSizes:");
 		}
-		jQuery.each(this.aResizeListeners, function(index, oResizeListener){
+		this.aResizeListeners.forEach(function(oResizeListener){
 			if (oResizeListener) {
 				var bCtrl = !!oResizeListener.oControl,
 					oDomRef = bCtrl ? oResizeListener.oControl.getDomRef() : oResizeListener.oDomRef;
@@ -187,7 +187,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 		}
 
 		if (!jQuery.sap.act.isActive() && !ResizeHandler._keepActive) {
-			clearListener.apply(this);
+			clearListener.call(this);
 		}
 	};
 
@@ -252,14 +252,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 			return;
 		}
 
-		var aIds = [];
-		jQuery.each(oCoreRef.oResizeHandler.aResizeListeners, function(index, oResizeListener){
-			if (oResizeListener && oResizeListener.oControl && oResizeListener.oControl.getId() === sControlId) {
-				aIds.push(oResizeListener.sId);
-			}
-		});
-		jQuery.each(aIds, function(index, sId){
-			ResizeHandler.deregister(sId);
+		oCoreRef.oResizeHandler.aResizeListeners.filter(function(oResizeListener){
+			return oResizeListener && oResizeListener.oControl && oResizeListener.oControl.getId() === sControlId;
+		}).forEach(function(oResizeListener) {
+			ResizeHandler.deregister(oResizeListener.sId);
 		});
 	};
 

@@ -358,8 +358,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target', './
 				var that = this,
 					aResult = [];
 
-				if (jQuery.isArray(vName)) {
-					jQuery.each(vName, function (i, sName) {
+				if (Array.isArray(vName)) {
+					vName.forEach(function (sName) {
 						var oTarget = that._mTargets[sName];
 
 						if (oTarget) {

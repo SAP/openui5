@@ -169,7 +169,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 			if (oResponse.success) {
 				oResult = oResponse.data;
 
-				if ( jQuery.isArray(oResult) ) {
+				if ( Array.isArray(oResult) ) {
 					// in the sap-ui-merged use case, multiple JSON files are merged into and transfered as a single JSON array
 					for (var j = 0; j < oResult.length; j++) {
 						var oParams = oResult[j];

@@ -347,7 +347,7 @@
 			 */
 			LessSupport.prototype.registerLink = function(oLink) {
 				if (window.less && window.less.sheets) {
-					var iIndex = jQuery.inArray(oLink, window.less.sheets);
+					var iIndex = window.less.sheets.indexOf(oLink);
 					if (iIndex === -1) {
 						window.less.sheets.push(oLink);
 					}
@@ -362,7 +362,7 @@
 			LessSupport.prototype.unregisterLink = function(oLink) {
 				if (window.less && window.less.sheets) {
 					var sLibName = oLink.id.substr(13);
-					var iIndex = jQuery.inArray(oLink, window.less.sheets);
+					var iIndex = window.less.sheets.indexOf(oLink);
 					if (iIndex >= 0) {
 						window.less.sheets.splice(iIndex, 1);
 						// clear the content of the LESS style element

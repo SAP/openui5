@@ -165,6 +165,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 			return aResult;
 
+			function identity(sId) {
+				return sId;
+			}
+
+			function createId(sId) {
+				return oView._oContainingView.createId(sId);
+			}
+
 			/**
 			 * Parses an XML node that might represent a UI5 control or simple XHTML.
 			 * XHTML will be added to the aResult array as a sequence of strings,
@@ -440,16 +448,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 						} else if (oInfo && oInfo._iKind === 3 /* SINGLE_ASSOCIATION */ ) {
 							// ASSOCIATION
-							mSettings[sName] = oView._oContainingView.createId(sValue); // use the value as ID
+							mSettings[sName] = createId(sValue); // use the value as ID
 
 						} else if (oInfo && oInfo._iKind === 4 /* MULTIPLE_ASSOCIATION */ ) {
-							// we support "," and " " to separate IDs
-							/*eslint-disable no-loop-func */
-							mSettings[sName] = jQuery.map(sValue.split(/[\s,]+/g), function(sId) {
-								// Note: empty IDs need to ignored, therefore splitting by a sequence of separators is okay.
-								return sId ? oView._oContainingView.createId(sId) : null;
-							});
-							/*eslint-enable no-loop-func */
+							// we support "," and " " to separate IDs and filter out empty IDs
+							mSettings[sName] = sValue.split(/[\s,]+/g).filter(identity).map(createId);
 
 						} else if (oInfo && oInfo._iKind === 5 /* EVENT */ ) {
 							// EVENT
@@ -593,7 +596,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 				if (!vNewControlInstance) {
 					vNewControlInstance = [];
-				} else if (!jQuery.isArray(vNewControlInstance)) {
+				} else if (!Array.isArray(vNewControlInstance)) {
 					vNewControlInstance = [vNewControlInstance];
 				}
 
@@ -629,12 +632,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 				if (xmlNode.getAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id")) {
 					return xmlNode.getAttribute("id");
 				} else {
-					return oView._oContainingView.createId(sId ? sId : xmlNode.getAttribute("id"));
+					return createId(sId ? sId : xmlNode.getAttribute("id"));
 				}
 			}
 
 			function setId(oView, xmlNode) {
-				xmlNode.setAttribute("id", oView._oContainingView.createId(xmlNode.getAttribute("id")));
+				xmlNode.setAttribute("id", createId(xmlNode.getAttribute("id")));
 				xmlNode.setAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id", true);
 			}
 

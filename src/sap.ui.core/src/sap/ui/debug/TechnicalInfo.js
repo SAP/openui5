@@ -643,7 +643,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 					try { // Necessary for FF when Cookies are disabled
 						var sUserUrls = window.localStorage.getItem("sap-ui-reboot-URLs");
 						var aUserUrls = sUserUrls ? sUserUrls.split(" ") : [];
-						if (jQuery.inArray(sRebootUrl, aUserUrls) === -1) {
+						if ( aUserUrls.indexOf(sRebootUrl) === -1) {
 							aUserUrls.push(sRebootUrl.replace(/ /g,"%20"));
 							window.localStorage.setItem("sap-ui-reboot-URLs", aUserUrls.join(" "));
 						}

@@ -1133,7 +1133,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 			if (mEvents[sName].aTypes) {
 				for (var j = 0, js = mEvents[sName].aTypes.length; j < js; j++) {
 					var sType = mEvents[sName].aTypes[j];
-					if (jQuery.inArray(sType, aResult) == -1) {
+					if (aResult.indexOf(sType) == -1) {
 						aResult.push(sType);
 					}
 				}
@@ -1185,7 +1185,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 	jQuery.Event.prototype.getPseudoTypes = function() {
 		var aPseudoTypes = [];
 
-		if (jQuery.inArray(this.type, PSEUDO_EVENTS_BASIC_TYPES) != -1) {
+		if (PSEUDO_EVENTS_BASIC_TYPES.indexOf(this.type) != -1) {
 			var aPseudoEvents = PSEUDO_EVENTS;
 			var ilength = aPseudoEvents.length;
 			var oPseudo = null;
@@ -1193,7 +1193,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 			for (var i = 0; i < ilength; i++) {
 				oPseudo = jQuery.sap.PseudoEvents[aPseudoEvents[i]];
 				if (oPseudo.aTypes
-						&& jQuery.inArray(this.type, oPseudo.aTypes) > -1
+						&& oPseudo.aTypes.indexOf(this.type) > -1
 						&& oPseudo.fnCheck
 						&& oPseudo.fnCheck(this)) {
 					aPseudoTypes.push(oPseudo.sName);
@@ -1219,7 +1219,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 		var aPseudoTypes = this.getPseudoTypes();
 
 		if (sType) {
-			return jQuery.inArray(sType, aPseudoTypes) > -1;
+			return aPseudoTypes.indexOf(sType) > -1;
 		} else {
 			return aPseudoTypes.length > 0;
 		}
@@ -1763,7 +1763,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 			aScopes = null;
 
 		if (oSettings && oSettings.scope) {
-			aScopes = jQuery.isArray(oSettings.scope) ? oSettings.scope : [oSettings.scope];
+			aScopes = Array.isArray(oSettings.scope) ? oSettings.scope : [oSettings.scope];
 		}
 
 		navigate(oTarget, aScopes, !oEvent.shiftKey);

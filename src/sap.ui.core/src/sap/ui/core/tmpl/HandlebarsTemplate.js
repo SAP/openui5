@@ -561,7 +561,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', './Templat
 		};
 
 		// ignore the following block helper
-		jQuery.each(["each", "if", "unless", "with"], function(iIndex, sValue) {
+		["each", "if", "unless", "with"].forEach(function(sValue) {
 			oHelpers[sValue] = function() {};
 		});
 

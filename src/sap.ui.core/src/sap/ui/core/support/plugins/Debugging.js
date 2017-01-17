@@ -535,7 +535,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				sNewUrl = oEvent.getParameter("passThroughData"),
 				aUserUrls = sUserUrls.split(" ");
 
-			if (jQuery.inArray(sNewUrl, aUserUrls) === -1) {
+			if (aUserUrls.indexOf(sNewUrl) === -1) {
 				aUserUrls.push(sNewUrl.replace(/ /g,"%20"));
 
 				this._oStub.sendEvent(this._localStorageId + "SetItem", {

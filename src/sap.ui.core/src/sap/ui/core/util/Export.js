@@ -66,7 +66,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 
 			// Map jQuery Promise methods to standard methods and add a deprecation warning
 
-			jQuery.each([ {
+			[ {
 				jq: "done",
 				es6: "then"
 			}, {
@@ -75,11 +75,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 			}, {
 				jq: "always",
 				es6: "then"
-			}], function(i, mConfig) {
+			}].forEach(function(mConfig) {
 				oPromise[mConfig.jq] = function() {
 					printJqPromiseDeprecationWarning(mConfig.jq);
 					var oReturnPromise = null;
-					jQuery.each(Array.prototype.concat.apply([], arguments), function(i, fnCallback) {
+					Array.prototype.concat.apply([], arguments).forEach(function(fnCallback) {
 						var fnWrappedCallback = wrapCallback(fnCallback, oContext);
 						var fnFinalCallback = function(v) {
 							fnWrappedCallback.apply(this, arguments);

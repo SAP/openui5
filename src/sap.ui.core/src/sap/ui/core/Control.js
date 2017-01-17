@@ -337,7 +337,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 */
 	Control.prototype.attachBrowserEvent = function(sEventType, fnHandler, oListener) {
 		if (sEventType && (typeof (sEventType) === "string")) { // do nothing if the first parameter is empty or not a string
-			if (fnHandler && typeof (fnHandler) === "function") {   // also do nothing if the second parameter is not a function
+			if (typeof fnHandler === "function") {   // also do nothing if the second parameter is not a function
 				// store the parameters for bind()
 				if (!this.aBindParameters) {
 					this.aBindParameters = [];
@@ -345,9 +345,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				oListener = oListener || this;
 
 				// FWE jQuery.proxy can't be used as it breaks our contract when used with same function but different listeners
-				var fnProxy = function() {
-					fnHandler.apply(oListener, arguments);
-				};
+				var fnProxy = fnHandler.bind(oListener);
 
 				this.aBindParameters.push({
 					sEventType: sEventType,
@@ -380,7 +378,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 */
 	Control.prototype.detachBrowserEvent = function(sEventType, fnHandler, oListener) {
 		if (sEventType && (typeof (sEventType) === "string")) { // do nothing if the first parameter is empty or not a string
-			if (fnHandler && typeof (fnHandler) === "function") {   // also do nothing if the second parameter is not a function
+			if (typeof (fnHandler) === "function") {   // also do nothing if the second parameter is not a function
 				var $ = this.$(),i,oParamSet;
 				oListener = oListener || this;
 
@@ -863,7 +861,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			return this.checkFieldGroupIds(vFieldGroupIds.split(","));
 		}
 		var aFieldGroups = this._getFieldGroupIds();
-		if (jQuery.isArray(vFieldGroupIds)) {
+		if (Array.isArray(vFieldGroupIds)) {
 			var iFound = 0;
 			for (var i = 0; i < vFieldGroupIds.length; i++) {
 				if (aFieldGroups.indexOf(vFieldGroupIds[i]) > -1) {
