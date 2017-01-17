@@ -318,7 +318,6 @@ sap.ui.define([
 
 		this._iREMSize = parseInt(jQuery("body").css("font-size"), 10);
 		this._iOffset = parseInt(0.25 * this._iREMSize, 10);
-		this._iScrollBarWidth = jQuery.position.scrollbarWidth();
 
 		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
 
@@ -467,13 +466,15 @@ sap.ui.define([
 		var iHeaderOffset = 0,
 			sStyleAttribute = sap.ui.getCore().getConfiguration().getRTL() ? "left" : "right",
 			bHasVerticalScroll = this._hasVerticalScrollBar(),
-			iActionsOffset = this._iOffset;
+			iActionsOffset = this._iOffset,
+			iScrollbarWidth;
 
 		if (sap.ui.Device.system.desktop) {
-			iHeaderOffset = this._iScrollBarWidth;
+			iScrollbarWidth = jQuery.sap.scrollbarSize().width;
+			iHeaderOffset = iScrollbarWidth;
 			if (!bHasVerticalScroll) {
 				iHeaderOffset = 0;
-				iActionsOffset += this._iScrollBarWidth;
+				iActionsOffset += iScrollbarWidth;
 			}
 		}
 		return {"sStyleAttribute": sStyleAttribute, "iActionsOffset": iActionsOffset, "iMarginalsOffset": iHeaderOffset};
