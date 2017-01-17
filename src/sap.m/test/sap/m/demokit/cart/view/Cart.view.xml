@@ -1,6 +1,6 @@
-<mvc:View controllerName="sap.ui.demo.cart.controller.Cart"
+<mvc:View
+	controllerName="sap.ui.demo.cart.controller.Cart"
 	xmlns="sap.m"
-	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
 		id="page"

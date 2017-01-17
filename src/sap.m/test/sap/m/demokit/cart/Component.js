@@ -1,8 +1,12 @@
 sap.ui.define([
 	'sap/ui/core/UIComponent',
-	'sap/ui/model/json/JSONModel'
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/demo/cart/model/LocalStorageModel'
 ], function (UIComponent,
-			JSONModel) {
+			JSONModel,
+			LocalStorageModel) {
+
+	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.cart.Component", {
 
@@ -15,7 +19,7 @@ sap.ui.define([
 			UIComponent.prototype.init.apply(this, arguments);
 
 			//create and set cart model
-			var oCartModel = new JSONModel({
+			var oCartModel = new LocalStorageModel("SHOPPING_CART", {
 				cartEntries: {},
 				savedForLaterEntries: {},
 				showEditButton: false,

@@ -1,10 +1,7 @@
 <mvc:View
 	controllerName="sap.ui.demo.cart.controller.Product"
 	xmlns="sap.m"
-	xmlns:core="sap.ui.core"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:control="control"
-	xmlns:h="http://www.w3.org/1999/xhtml">
+	xmlns:mvc="sap.ui.core.mvc">
 	<Page
 		id="page"
 		title="{Name}"

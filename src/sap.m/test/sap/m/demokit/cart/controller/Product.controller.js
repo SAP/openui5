@@ -1,11 +1,11 @@
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/ui/core/mvc/Controller',
+	'sap/ui/demo/cart/controller/BaseController',
 	'sap/ui/demo/cart/model/formatter',
 	'sap/m/MessageToast',
 	'sap/m/MessageBox'
-], function ($, Controller, formatter, MessageToast, MessageBox) {
-	return Controller.extend("sap.ui.demo.cart.controller.Product", {
+], function ($, BaseController, formatter, MessageToast, MessageBox) {
+	return BaseController.extend("sap.ui.demo.cart.controller.Product", {
 		formatter : formatter,
 
 		onInit : function () {
