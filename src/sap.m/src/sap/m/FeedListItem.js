@@ -164,7 +164,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 
 	FeedListItem.prototype.onBeforeRendering = function() {
 		this.getAggregation("_text").setHtmlText(this.getText());
-		this._sFullText = this.getAggregation("_text").getHtmlText();
+		this._sFullText = this.getAggregation("_text").getHtmlText().replace(/\n/g, "<br>");
 		this._sShortText = this._getCollapsedText();
 	};
 
