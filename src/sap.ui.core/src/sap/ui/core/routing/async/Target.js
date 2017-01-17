@@ -84,18 +84,22 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 
 				oSequencePromise = oSequencePromise.then(function(oParentInfo) {
 					// waiting to be loaded
-					return oView.loaded().then(function(oView) {
-						oView.addDependent(that._oTitleProvider);
-						return {
-							view: oView,
-							parentInfo: oParentInfo || {}
-						};
-					}, function(sErrorMessage) {
-						return Promise.reject({
-							name: oOptions.name,
-							error: sErrorMessage
-						});
-					});
+					return oView
+							.loaded()
+							.then(function(oView) {
+								that._bindTitleInTitleProvider(oView);
+
+								oView.addDependent(that._oTitleProvider);
+								return {
+									view: oView,
+									parentInfo: oParentInfo || {}
+								};
+							}, function(sErrorMessage) {
+								return Promise.reject({
+									name: oOptions.name,
+									error: sErrorMessage
+								});
+							});
 				}).then(function(oViewInfo) {
 					// loaded and do placement
 					vValid = this._isValid(oViewInfo.parentInfo);
