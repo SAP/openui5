@@ -148,5 +148,28 @@
         "references": []
       }
     ]
+  },
+  "1.42.8": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "79fc1b2a13bc602f57a97345264b7669a3f10cd2",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Day selection drag threshold added",
+        "references": []
+      },
+      {
+        "id": "6628672c3ac5c581b4a1cabc534863ac07ca1a45",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Day selection drag threshold reverted",
+        "references": []
+      },
+      {
+        "id": "795cc2760d15d491f91f1c6eb58fb58e304885e9",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: multiple selection when multiple months is now consistent with the single selection",
+        "references": []
+      }
+    ]
   }
 }

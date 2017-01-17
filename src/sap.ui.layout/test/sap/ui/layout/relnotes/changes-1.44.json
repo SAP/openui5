@@ -93,5 +93,40 @@
         "references": []
       }
     ]
+  },
+  "1.44.5": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "4a92cd53a76e593caa84308d3dc4f8b0aa8ab8f2",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Control no longer flickers",
+        "references": []
+      },
+      {
+        "id": "b8ccbbd8d751913101011ed5b7ef36ebf2adf6ec",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Unwanted scrollbar is now removed",
+        "references": []
+      },
+      {
+        "id": "23fff59d552a3722687b4e42a7a0a9ee62b225e4",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveFlowLayout: Destroy render manager only if it exists",
+        "references": []
+      },
+      {
+        "id": "41dc917ab52976b83d2a6bd0b6cf33a80603a238",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Unsubscribing to __preserveContent fixed",
+        "references": []
+      },
+      {
+        "id": "f213b3af5b800e8ac314a6011268718cc6ee8713",
+        "type": "FIX",
+        "text": " sap.ui.layout.form.SimpleForm adding content twice",
+        "references": []
+      }
+    ]
   }
 }

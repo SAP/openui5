@@ -263,5 +263,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.16": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "f989603dc48259fd7e2ca3157e7bc34a1e01ef99",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveFlowLayout: Destroy render manager only if it exists",
+        "references": []
+      }
+    ]
   }
 }

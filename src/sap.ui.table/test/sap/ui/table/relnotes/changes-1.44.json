@@ -354,5 +354,136 @@
         "references": []
       }
     ]
+  },
+  "1.44.5": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "f645a68188d5d73372f2b16c89742a0aab30de0e",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: SelectAll",
+        "references": []
+      },
+      {
+        "id": "a9a1fb2dd00596ea8604e17281e90e8a0b0e2b6f",
+        "type": "FIX",
+        "text": " sap.m.Link / sap.m.Text: Bold style in AnalyticalTable summary row",
+        "references": []
+      },
+      {
+        "id": "2a710b63f0b358054f7b497c47b3edd5e440f4b0",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Apply padding for touch group header menu button only for non-desktop devices",
+        "references": []
+      },
+      {
+        "id": "603787911ed32b9d49c9083ef52fc2c2fd56de7c",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Fire cellClick event before",
+        "references": []
+      },
+      {
+        "id": "5c0e55baf7dc25ad680891ebf5b64cd8cda8ad24",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Fix content height when custom row height is defined",
+        "references": []
+      },
+      {
+        "id": "567ed33bef1db5cc38a585d3e2a7a9606631b8d0",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Fix row content flash on vertical scrolling.",
+        "references": []
+      },
+      {
+        "id": "03a489dff2595d03aa0d684313f71e363766892c",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Fix tooltip of select all button",
+        "references": []
+      },
+      {
+        "id": "09a6824fa1e98822a6183aeaee0d140e5f0d4bef",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Focus visualization of table cells",
+        "references": []
+      },
+      {
+        "id": "61f58886d35d435459f2cd1c3d41bd7e8774437a",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Screenreader announcement of column header menu",
+        "references": []
+      },
+      {
+        "id": "0a7322092c5dbf1908cd7326ad0494390d3875a6",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Workaround sub-pixel problems when zooming is not 100% in Chrome",
+        "references": []
+      },
+      {
+        "id": "22b71758c8ada43a70a4faea2b7597dde2f2df41",
+        "type": "FIX",
+        "text": " sap.ui.table.*: fixes that bindRows was not called when table was bound via XML view",
+        "references": []
+      },
+      {
+        "id": "a75bde4d1b283470a18ad8ad5ad5743eb439ab9a",
+        "type": "FIX",
+        "text": " sap.ui.table.Table with VisibleRowCountMode.Auto: incorrect number of rows",
+        "references": []
+      },
+      {
+        "id": "58ba85f881464a4dd361cbed43160588eca466b8",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Ignore the additional empty row at the end in the vertical scrolling feature.",
+        "references": []
+      },
+      {
+        "id": "8cb3fe785defe8424222087bf3f627b11f8d0133",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: The resize handler is registered in a promise instead of a timeout.",
+        "references": []
+      },
+      {
+        "id": "84c89d29693565da5788e1b3d290b017133fbe54",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: context menu for a column header with span has incorrect position",
+        "references": []
+      },
+      {
+        "id": "191d0271cf89575c629379eaecb3a9b55bfbbc6a",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: exception \"Cannot read property \u0027_onTableResize\u0027 of undefined\"",
+        "references": []
+      },
+      {
+        "id": "9e35e190967fb74d82091f68e91bc1e9b31c00c1",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: incorrect column width by hidden column headers",
+        "references": []
+      },
+      {
+        "id": "cb50a413fb6b5b0942fbfd02dce44f816f7fa598",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: minimal column width is not taken into account",
+        "references": []
+      },
+      {
+        "id": "18426978362e56b037e99d2e251303eeede5eb2f",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: uncorrect column header widths",
+        "references": []
+      },
+      {
+        "id": "e7a8f7c1836643d867da368154d7e00b9de5641b",
+        "type": "FIX",
+        "text": " sap.ui.table.TableACCExtension: Various fixes",
+        "references": []
+      },
+      {
+        "id": "872cc64517a48d69419531c46582b92f2f5e8c1d",
+        "type": "FIX",
+        "text": " sap.ui.table.TreeTable: fixes toggleOpenState event for leaves",
+        "references": []
+      }
+    ]
   }
 }

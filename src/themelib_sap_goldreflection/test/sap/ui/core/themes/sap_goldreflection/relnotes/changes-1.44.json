@@ -50,5 +50,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.5": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "0b487c57d684084a2a902b9178aece249fdb0dfd",
+        "type": "FIX",
+        "text": " BusyIndicator (Global): Fix missing wait cursor",
+        "references": []
+      }
+    ]
   }
 }

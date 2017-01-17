@@ -2869,5 +2869,40 @@
         "references": []
       }
     ]
+  },
+  "1.38.16": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "a0997eda8af466b42fb0def346024257e03fa336",
+        "type": "FIX",
+        "text": " sap.m.CustomTile: CSS file for HCB added",
+        "references": []
+      },
+      {
+        "id": "e1aa5b9c9197f8dc530d376b6eb20c7de8c13120",
+        "type": "FIX",
+        "text": " sap.m.Input: RTL for numbers is now fixed",
+        "references": []
+      },
+      {
+        "id": "59b681f7b9736f0e4a6525b6e98f2ceff6dfe8d4",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Pressing backspace on disabled input doesn\u0027t navigate to previous page any more",
+        "references": []
+      },
+      {
+        "id": "b9cfb287e25466d8d07f55040a5f9a351ff53bb3",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Title text is now correctly displayed in two lines",
+        "references": []
+      },
+      {
+        "id": "dacd55cb0538c840010ec7065b2805dd4b61cd9d",
+        "type": "FIX",
+        "text": " sap.m.QuickViewPage: Content is now destroyed correctly",
+        "references": []
+      }
+    ]
   }
 }

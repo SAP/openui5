@@ -74,5 +74,52 @@
         "references": []
       }
     ]
+  },
+  "1.44.5": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "c9f4f250d8cd736592bed58ace8c0c10b06bd246",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Displayed correctly in RTL",
+        "references": []
+      },
+      {
+        "id": "c7c893245ae3484093bdd75b65221078c5b7c99a",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Day selection drag threshold added",
+        "references": []
+      },
+      {
+        "id": "7796ed58a1f363c166c2d1fa9251cddd598673b6",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Day selection drag threshold reverted",
+        "references": []
+      },
+      {
+        "id": "8b46505083e10881fe0628c821e495f7cd218f94",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: multiple selection when multiple months is now consistent with the single selection",
+        "references": []
+      },
+      {
+        "id": "d957ca8f7b969486df4e0274ae5fca0dcd0d4fde",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarUtils: Week number calculated correctly for all \"en-US\" locales",
+        "references": []
+      },
+      {
+        "id": "672a5d4a08704e2e40c8f73fc5074ba87dd0d68e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Shell/sap.m.Toolbar: Fix focus contrast issues in IE/Edge",
+        "references": []
+      },
+      {
+        "id": "a7d71a9f283a07c32916efd7d7c3b21f8ab02ead",
+        "type": "FIX",
+        "text": " sap.ui.unified.Shell: Avoid URL announcement of Screenreader",
+        "references": []
+      }
+    ]
   }
 }

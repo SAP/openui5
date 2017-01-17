@@ -1238,5 +1238,34 @@
         "references": []
       }
     ]
+  },
+  "1.40.14": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "1469a00e8975850440f845e68517f89ab84993d1",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: SelectAll",
+        "references": []
+      },
+      {
+        "id": "998727153de4980d28491688fff88ffc27733fc5",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Fix large data scrolling.",
+        "references": []
+      },
+      {
+        "id": "7b412a2baa05391b4062e263b796d3e47b0d2817",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Fix selection of fixed top rows.",
+        "references": []
+      },
+      {
+        "id": "4f2235576b2c8296bc69caf38d5c23b22c088555",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Ignore the additional empty row at the end in the vertical scrolling feature.",
+        "references": []
+      }
+    ]
   }
 }

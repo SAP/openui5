@@ -5400,5 +5400,237 @@
         "references": []
       }
     ]
+  },
+  "1.40.14": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "cc4d507a3a49ed808f9ac7a68cfa19da01917535",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: AriaLabelledby dependency to self of each button aded twice",
+        "references": []
+      },
+      {
+        "id": "51c4681f50eb2e75beb7341a0360d64846f75c30",
+        "type": "FIX",
+        "text": " sap.m.CustomTile: CSS file for HCB added",
+        "references": []
+      },
+      {
+        "id": "332fbc8844b22ce656586ca228fa64438aedd3e7",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Default value of JS doc corrected",
+        "references": []
+      },
+      {
+        "id": "8796f7ee67d10a61dd960d08635aada738ef3287",
+        "type": "FIX",
+        "text": " sap.m.Input: RTL for numbers is now fixed",
+        "references": []
+      },
+      {
+        "id": "e1988508f26b12fdcfb55879c8d26999d7ef1f6e",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Pressing backspace on disabled input doesn\u0027t navigate to previous page any more",
+        "references": []
+      },
+      {
+        "id": "2ddddd37c165336d186f99208d87ff6309f257ac",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Layout no longer breaks on resize",
+        "references": []
+      },
+      {
+        "id": "d8680584c5310a94d7d9fae79df71a6f6be2ba7b",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar\u0027s popover would cause the other popup to close",
+        "references": []
+      },
+      {
+        "id": "61322612f6e160734145d6e86e450cd359a24fca",
+        "type": "FIX",
+        "text": " sap.m.Page: Logged errors for Page with usescaped id and footer are corrected",
+        "references": []
+      },
+      {
+        "id": "6e34b1ef3cba097179b63c7254c4783c068c648e",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: long texts didn\u0027t truncate",
+        "references": []
+      },
+      {
+        "id": "094e5c295c997c8bc88f6f901c985e523a280a03",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Title text is now correctly displayed in two lines",
+        "references": []
+      },
+      {
+        "id": "5ea91df30354d456275f0107a99ad7c8862faba8",
+        "type": "FIX",
+        "text": " sap.m.QuickViewPage: Content is now destroyed correctly",
+        "references": []
+      },
+      {
+        "id": "f969885f60b339d8884d93a947c77e44aa66641f",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Console error _getAnyHeader now corrected",
+        "references": []
+      },
+      {
+        "id": "e3c9b665990e49bb5188fe0c0db0fdede3723054",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Close button inside the select list is now positioned correctly in IE",
+        "references": []
+      }
+    ]
+  },
+  "1.40.15": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "288424da68014c86e2230391d55d3558d12590af",
+        "type": "FIX",
+        "text": " sap.m.BarInPageEnabler: Memory leak fixed.",
+        "references": []
+      },
+      {
+        "id": "37fad07f40672fd166d019f63f86823c4fad358c",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: The dialog is no longer closed while navigating between pages",
+        "references": []
+      },
+      {
+        "id": "193df59e6c7015833d79f5d460dc214016cb6b29",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Focus outline corrected",
+        "references": []
+      },
+      {
+        "id": "4ff0843e94354fece9299b673c4c306b1a5b792e",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Scroll containers destroying now corrected",
+        "references": []
+      },
+      {
+        "id": "9999c99e06de65c13962bfceccec1d4f38d9f992",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Opening animation now works properly",
+        "references": []
+      },
+      {
+        "id": "4d9319020cabf01bab693adf71c5dc3532de0e82",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Keyboard issues are now ok",
+        "references": []
+      },
+      {
+        "id": "e751269980054dac4d205734af67210632695dea",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Pasted invalid value is no longer cleared",
+        "references": []
+      },
+      {
+        "id": "610cfbcf64c7ee239e34f74bd649f87e289d551f",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Correct color inside ColumnListItem",
+        "references": []
+      },
+      {
+        "id": "553ce281a247c88477f1f53462f3eb657e86dea1",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Focus clear visible on IE",
+        "references": []
+      },
+      {
+        "id": "fa97dd90af7bc6f6e4cf01b7b6c4a48b47186fe8",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Padding fixed in HCB",
+        "references": []
+      },
+      {
+        "id": "89f396a7f871e6be49580f1473be51611243484b",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: ARIA fixed",
+        "references": []
+      },
+      {
+        "id": "895f376af16feab0cf303f4da51ef2cb715b6c12",
+        "type": "FIX",
+        "text": " sap.m.Page: rendering performance",
+        "references": []
+      },
+      {
+        "id": "bfe920f6fb2e8795f465473f1e9b292768fdf99c",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Clone method detaches and ataches events properly",
+        "references": []
+      },
+      {
+        "id": "0862a52acc74f2e74e7fa1926f5a0f7ca2e0fcb8",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Property binding issue",
+        "references": []
+      },
+      {
+        "id": "71a26108ad0e34530a6199ac95fab7d80c62afce",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Setters no longer modify RadioButtons\u0027 states",
+        "references": []
+      },
+      {
+        "id": "be69daa7fd645b21331ec8bae15f62bc62777ff4",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Focus contrast ratio in IE/Edge is now correct",
+        "references": []
+      },
+      {
+        "id": "58d1dc930d589fe1f7880eef7e0103fccd70e7e2",
+        "type": "FIX",
+        "text": " sap.m.SlideTile: Focus out behavior corrected",
+        "references": []
+      },
+      {
+        "id": "77fd3786ad3717cb8c716bd3ca4b27a97c4d78e9",
+        "type": "FIX",
+        "text": " sap.m.TabStrip: Focus corrected for IE",
+        "references": []
+      },
+      {
+        "id": "3415d2184b3cd9dba332a05b68d16baefaed9a77",
+        "type": "FIX",
+        "text": " sap.m.Text: Spacing between paragraphs is now correct on iPhone",
+        "references": []
+      },
+      {
+        "id": "ff5339408b4597ca6c635db4f1eda822e58f4b3f",
+        "type": "FIX",
+        "text": " sap.m.TimePicker - when destroyed all mask rules are destroyed as well.",
+        "references": []
+      },
+      {
+        "id": "fd30437a4e99453258608a5434f5ecb48b936716",
+        "type": "FIX",
+        "text": " sap.m.Token: Delete event is now fired properly",
+        "references": []
+      },
+      {
+        "id": "00f7c8539376597e34520540abb5de4ba9eaa136",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Scrolling not working properly in chrome now corrected",
+        "references": []
+      },
+      {
+        "id": "5a821fb2ddc05e156818754fd5cdcad71e7db8be",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Focus handling in Upload Pending scenario improved",
+        "references": []
+      },
+      {
+        "id": "ce8fdf54d77a52b80a77c9c32d249e029053f606",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog - calling method removeAllSortItems() does not throw an exception if no items exist.",
+        "references": []
+      }
+    ]
   }
 }
