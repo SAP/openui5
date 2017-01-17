@@ -1011,7 +1011,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		if (oComponent && bMergeParent) {
 			// identify the configuration in parent chain
 			var oMeta = oComponent.getMetadata();
-			while (oMeta && oMeta instanceof ComponentMetadata) {
+			while (oMeta instanceof ComponentMetadata) {
 				var oCurrentManifest = oMeta.getManifestObject();
 
 				var mCurrentDataSources = oMeta.getManifestEntry("/sap.app/dataSources");
@@ -1307,7 +1307,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			}
 
 			// normalize settings object to array
-			if (oModelConfig.settings && !jQuery.isArray(oModelConfig.settings)) {
+			if (oModelConfig.settings && !Array.isArray(oModelConfig.settings)) {
 				oModelConfig.settings = [ oModelConfig.settings ];
 			}
 
@@ -1922,8 +1922,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			}
 
 			// load any required preload bundles
-			if ( hints.preloadBundles ) {
-				jQuery.each(hints.preloadBundles, function(i, vBundle) {
+			if ( Array.isArray(hints.preloadBundles) ) {
+				hints.preloadBundles.forEach(function(vBundle) {
 					collectAfterModelPreload(function() {
 						return jQuery.sap._loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true);
 					});
@@ -1931,7 +1931,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			}
 
 			// preload required libraries
-			if ( hints.libs ) {
+			if ( Array.isArray(hints.libs) ) {
 				collectAfterModelPreload(function() {
 					return sap.ui.getCore().loadLibraries( hints.libs.map(processOptions).filter(identity) );
 				});

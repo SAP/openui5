@@ -95,7 +95,7 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 				iEra = UniversalDate.getCurrentEra(sap.ui.core.CalendarType.Japanese);
 				vYear = [iEra, vYear];
 			}
-		} else if (!jQuery.isArray(vYear)) {
+		} else if (!Array.isArray(vYear)) {
 			// Invalid year
 			vYear = [];
 		}

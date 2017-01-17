@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global'],
 							fragmentName: extensionConfig.fragmentName,
 							containingView: oView
 						});
-						vResult = (jQuery.isArray(oFragment) ? oFragment : [oFragment]); // vResult is now an array, even if empty - so if a Fragment is configured, the default content below is not added anymore
+						vResult = (Array.isArray(oFragment) ? oFragment : [oFragment]); // vResult is now an array, even if empty - so if a Fragment is configured, the default content below is not added anymore
 
 					} else if (extensionConfig.className === "sap.ui.core.mvc.View") {
 						var oView = sap.ui.view({type: extensionConfig.type, viewName: extensionConfig.viewName});
@@ -93,7 +93,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		// if the result returned from the default content is no array, wrap it in one
-		if (vResult && !jQuery.isArray(vResult)){
+		if (vResult && !Array.isArray(vResult)){
 			vResult = [vResult];
 		}
 

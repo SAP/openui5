@@ -200,8 +200,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 					// convert customData object array to key-value map
 					var mCustomData = {};
-					jQuery.each(aCells[iIndex].getCustomData(), function() {
-						mCustomData[this.getKey()] = this.getValue();
+					aCells[iIndex].getCustomData().forEach(function(oCustomData) {
+						mCustomData[oCustomData.getKey()] = oCustomData.getValue();
 					});
 
 					return {

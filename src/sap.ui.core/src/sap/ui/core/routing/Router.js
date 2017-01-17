@@ -205,11 +205,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 					oRoutes = {};
 				}
 
-				if (jQuery.isArray(oRoutes)) {
+				if (Array.isArray(oRoutes)) {
 					//Convert route object
 					aRoutes = oRoutes;
 					oRoutes = {};
-					jQuery.each(aRoutes, function(iRouteIndex, oRouteConfig) {
+					aRoutes.forEach(function(oRouteConfig) {
 						oRoutes[oRouteConfig.name] = oRouteConfig;
 					});
 				}

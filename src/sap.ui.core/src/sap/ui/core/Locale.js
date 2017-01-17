@@ -193,7 +193,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 			hasPrivateUseSubtag : function(sSubtag) {
 				jQuery.sap.assert(sSubtag && sSubtag.match(/^[0-9A-Z]{1,8}$/i), "subtag must be a valid BCP47 private use tag");
-				return jQuery.inArray(sSubtag, this.getPrivateUseSubtags()) >= 0;
+				return this.getPrivateUseSubtags().indexOf(sSubtag) >= 0;
 			},
 
 			toString : function() {
@@ -331,10 +331,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			sLanguage = (sLanguage && M_ISO639_OLD_TO_NEW[sLanguage]) || sLanguage;
 			var sRegion = oLocale.getRegion() || "";
 
-			if ( sRegion && jQuery.inArray(sLanguage + "_" + sRegion, A_RTL_LOCALES) >= 0 ) {
+			if ( sRegion && A_RTL_LOCALES.indexOf(sLanguage + "_" + sRegion) >= 0 ) {
 				return true;
 			}
-			return jQuery.inArray(sLanguage, A_RTL_LOCALES) >= 0;
+			return A_RTL_LOCALES.indexOf(sLanguage) >= 0;
 		};
 
 	return Locale;

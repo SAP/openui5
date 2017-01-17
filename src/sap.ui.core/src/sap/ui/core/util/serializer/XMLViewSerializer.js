@@ -45,14 +45,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Serializer',
 	XMLViewSerializer.prototype.serialize = function () {
 
 		// a function to memorize the control packages
-		var mPackages = [];
+		var aPackages = [];
 		var fnMemorizePackage = function (oControl, sPackage) {
 			if (!sPackage) {
 				var sType = (oControl) ? oControl.constructor : "?";
 				throw Error("Controls with empty package are currently not supported by the XML serializer: " + sType);
 			}
-			if (jQuery.inArray(sPackage, mPackages) === -1) {
-				mPackages.push(sPackage);
+			if (aPackages.indexOf(sPackage) === -1) {
+				aPackages.push(sPackage);
 			}
 		};
 		var that = this;
@@ -84,14 +84,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Serializer',
 		}
 
 		// write view namespaces ... after running serializer
-		if (jQuery.inArray('sap.ui.core.mvc', mPackages) === -1) {
-			mPackages.push('sap.ui.core.mvc');
+		if (aPackages.indexOf('sap.ui.core.mvc') === -1) {
+			aPackages.push('sap.ui.core.mvc');
 		}
-		for (var i = 0 ; i < mPackages.length ; i++) {
-			if (this._sDefaultNamespace && this._sDefaultNamespace === mPackages[i]) {
-				sView.push(' xmlns="' + mPackages[i] + '"');
+		for (var i = 0 ; i < aPackages.length ; i++) {
+			if (this._sDefaultNamespace && this._sDefaultNamespace === aPackages[i]) {
+				sView.push(' xmlns="' + aPackages[i] + '"');
 			} else {
-				sView.push(' xmlns:' + mPackages[i] + '="' + mPackages[i] + '"');
+				sView.push(' xmlns:' + aPackages[i] + '="' + aPackages[i] + '"');
 			}
 		}
 

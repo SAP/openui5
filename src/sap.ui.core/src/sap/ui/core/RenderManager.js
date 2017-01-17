@@ -248,8 +248,8 @@ sap.ui.define([
 			if (oStyle.aClasses || aCustomClasses) {
 				var aClasses = [].concat(oStyle.aClasses || [], aCustomClasses || []);
 				aClasses.sort();
-				aClasses = jQuery.map(aClasses, function(n, i){
-					return (i == 0 || n != aClasses[i - 1]) ? n : null;
+				aClasses = aClasses.filter(function(n, i) {
+					return i == 0 || n !== aClasses[i - 1];
 				});
 				this.write(" class=\"", aClasses.join(" "), "\" ");
 			}

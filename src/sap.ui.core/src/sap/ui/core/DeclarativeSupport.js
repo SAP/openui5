@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 		}
 
 		// add the controls
-		jQuery.each(aControls, function(vKey, oControl) {
+		aControls.forEach(function(oControl) {
 			if (oControl instanceof Control) {
 				if (oView && !isRecursive) {
 					oView.addContent(oControl);
@@ -250,11 +250,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 						if (oAssociation.multiple) {
 							// we support "," and " " to split between IDs
 							sValue = sValue.replace(/\s*,\s*|\s+/g, ","); // normalize strings: "id1  ,    id2    id3" to "id1,id2,id3"
-							var aId = sValue.split(","); // split array for all ","
-							jQuery.each(aId, function(iIndex, sId) {
-								aId[iIndex] = oView ? oView.createId(sId) : sId;
+							// split array for all ","
+							mSettings[sName] = sValue.split(",").map(function(sId) {
+								return oView ? oView.createId(sId) : sId;
 							});
-							mSettings[sName] = aId;
 						} else {
 							mSettings[sName] = oView ? oView.createId(sValue) : sValue; // use the value as ID
 						}

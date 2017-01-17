@@ -154,7 +154,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 			var sValue = oDomRef.getAttribute("aria-describedby");
 			var sIdsString = this.getId() + "-title " + this.getId() + "-txt";
 			if (sValue && sValue.indexOf(sIdsString) >= 0) {
-				if (jQuery.trim(sValue) == sIdsString) {
+				if (sValue.trim() == sIdsString) {
 					oDomRef.removeAttribute("aria-describedby");
 				} else  {
 					sValue = sValue.replace(sIdsString, "");
@@ -177,7 +177,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 	 * @private
 	 */
 	TooltipBase.prototype.isStandardTooltip = function(oTooltip) {
-		return  (typeof oTooltip === "string" &&  (jQuery.trim(oTooltip)) !== "");
+		return typeof oTooltip === "string"  &&  !!oTooltip.trim();
 	};
 
 	/**
@@ -296,7 +296,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 	};
 
 	TooltipBase.prototype.handleClosed = function(){
-		this._getPopup().detachClosed(jQuery.proxy(this.handleClosed, this));
+		this._getPopup().detachClosed(this.handleClosed, this);
 		this.fireClosed();
 	};
 

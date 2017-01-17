@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			var that = this,
 				aViewInfos = [];
 
-			if (!jQuery.isArray(vTargets)) {
+			if (!Array.isArray(vTargets)) {
 				vTargets = [vTargets];
 			}
 

@@ -234,7 +234,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 */
 	ItemNavigation.prototype.hasDisabledModifier = function(oEvent) {
 		var aDisabledKeys = this.oDisabledModifiers[oEvent.type.replace("modifiers", "")];
-		if (jQuery.isArray(aDisabledKeys)) {
+		if (Array.isArray(aDisabledKeys)) {
 			for (var i = 0; i < aDisabledKeys.length; i++) {
 				if (oEvent[aDisabledKeys[i] + "Key"]) {
 					return true;
@@ -297,6 +297,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @public
 	 */
 	ItemNavigation.prototype.setItemDomRefs = function(aItemDomRefs) {
+		jQuery.sap.assert(Array.isArray(aItemDomRefs), "aItemDomRefs must be an array of DOM elements");
 		this.aItemDomRefs = aItemDomRefs;
 
 		if (this.iFocusedIndex > aItemDomRefs.length - 1) {
@@ -903,7 +904,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 
 		// in the table mode we only react on events of the domrefs
-		if (this.bTableMode && jQuery.inArray(oEvent.target, this.aItemDomRefs) === -1) {
+		if (this.bTableMode && this.aItemDomRefs.indexOf(oEvent.target) === -1) {
 			return;
 		}
 
@@ -1036,7 +1037,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 
 		// in the table mode we only react on events of the domrefs
-		if (this.bTableMode && jQuery.inArray(oEvent.target, this.aItemDomRefs) === -1) {
+		if (this.bTableMode && this.aItemDomRefs.indexOf(oEvent.target) === -1) {
 			return;
 		}
 
@@ -1172,7 +1173,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 
 		// in the table mode we only react on events of the domrefs
-		if (this.bTableMode && jQuery.inArray(oEvent.target, this.aItemDomRefs) === -1) {
+		if (this.bTableMode && this.aItemDomRefs.indexOf(oEvent.target) === -1) {
 			return;
 		}
 
@@ -1235,7 +1236,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 
 		// in the table mode we only react on events of the domrefs
-		if (this.bTableMode && jQuery.inArray(oEvent.target, this.aItemDomRefs) === -1) {
+		if (this.bTableMode && this.aItemDomRefs.indexOf(oEvent.target) === -1) {
 			return;
 		}
 
@@ -1300,7 +1301,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 
 		// in the table mode we only react on events of the domrefs
-		if (this.bTableMode && jQuery.inArray(oEvent.target, this.aItemDomRefs) === -1) {
+		if (this.bTableMode && this.aItemDomRefs.indexOf(oEvent.target) === -1) {
 			return;
 		}
 
@@ -1374,7 +1375,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 
 		// in the table mode we only react on events of the domrefs
-		if (this.bTableMode && jQuery.inArray(oEvent.target, this.aItemDomRefs) === -1) {
+		if (this.bTableMode && this.aItemDomRefs.indexOf(oEvent.target) === -1) {
 			return;
 		}
 

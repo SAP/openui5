@@ -180,11 +180,11 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					config[sName] = sValue;
 					break;
 				case "string[]":
-					if ( jQuery.isArray(sValue) ) {
+					if ( Array.isArray(sValue) ) {
 						config[sName] = sValue;
 					} else if ( typeof sValue === "string" ) {
-						config[sName] = jQuery.map(sValue.split(/[ ,;]/), function($) {
-							return jQuery.trim($);
+						config[sName] = sValue.split(/[ ,;]/).map(function(s) {
+							return s.trim();
 						});
 					} else {
 						throw new Error("unsupported value");
@@ -265,8 +265,8 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 
 			// if libs are configured, convert them to modules and prepend them to the existing modules list
 			if ( oCfg.libs ) {
-				config.modules = jQuery.map(oCfg.libs.split(","), function($) {
-					return jQuery.trim($) + ".library";
+				config.modules = oCfg.libs.split(",").map(function(lib) {
+					return lib.trim() + ".library";
 				}).concat(config.modules);
 			}
 
@@ -465,12 +465,11 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				}
 				if ( aCSSLibs[0] === "*" ) {
 					// replace with configured libs
-					aCSSLibs.splice(0,1); // remove *
-					var pos = 0;
-					jQuery.each(config.modules, function(i,mod) {
+					aCSSLibs.shift(); // remove * (inplace)
+					config.modules.forEach(function(mod) {
 						var m = mod.match(/^(.*)\.library$/);
 						if ( m ) {
-							aCSSLibs.splice(pos,0,m[1]);
+							aCSSLibs.unshift(m[1]);
 						}
 					});
 				}
@@ -1747,7 +1746,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * @public
 		 */
 		setLegacyDateCalendarCustomizing : function(aMappings) {
-			check(jQuery.isArray(aMappings), "aMappings must be an Array");
+			check(Array.isArray(aMappings), "aMappings must be an Array");
 
 			var mChanges = this.oConfiguration._collect();
 			this.aLegacyDateCalendarCustomizing = mChanges.legacyDateCalendarCustomizing = aMappings;

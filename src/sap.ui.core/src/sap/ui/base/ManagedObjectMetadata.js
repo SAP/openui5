@@ -514,7 +514,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		// if there is a parent class, produce the flattened "all" views for the element specific metadata
 		// PERFOPT: this could be done lazily
 		var oParent = this.getParent();
-		if ( oParent && oParent instanceof ManagedObjectMetadata ) {
+		if ( oParent instanceof ManagedObjectMetadata ) {
 			this._mAllEvents = jQuery.extend({}, oParent._mAllEvents, this._mEvents);
 			this._mAllProperties = jQuery.extend({}, oParent._mAllProperties, this._mProperties);
 			this._mAllPrivateAggregations = jQuery.extend({}, oParent._mAllPrivateAggregations, this._mPrivateAggregations);

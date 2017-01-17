@@ -277,7 +277,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadat
 				var aModules = jQuery.sap.getAllDeclaredModules();
 
 				for (var i = 0; i < aModules.length; i++) {
-					if (jQuery.inArray(aModules[i], aClasses) > -1) {
+					if (aClasses.indexOf(aModules[i]) > -1) {
 						continue;
 					}
 

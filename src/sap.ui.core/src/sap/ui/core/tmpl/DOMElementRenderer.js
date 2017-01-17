@@ -34,21 +34,21 @@ sap.ui.define(['jquery.sap.global'],
 		oRM.writeControlData(oElement);
 
 		// add the attributes of the DOM element
-		jQuery.each(oElement.getAttributes(), function(iIndex, oAttribute) {
+		oElement.getAttributes().forEach(function(oAttribute) {
 			var sName = oAttribute.getName().toLowerCase();
 			if (sName === "class") {
-				// the class attribute will be splitted and added separately
+				// the class attribute will be split and added separately
 				var aClasses = oAttribute.getValue().split(" ");
-				jQuery.each(aClasses, function(iIndex, sClass) {
+				aClasses.forEach(function(sClass) {
 					var sClass = sClass.trim();
 					if (sClass) {
 						oRM.addClass(jQuery.sap.encodeHTML(sClass));
 					}
 				});
 			} else if (sName === "style") {
-				// the style attribute will be splitted and added separately
+				// the style attribute will be split and added separately
 				var aStyles = oAttribute.getValue().split(";");
-				jQuery.each(aStyles, function(iIndex, sStyle) {
+				aStyles.forEach(function(sStyle) {
 					var iIndex = sStyle.indexOf(":");
 					if (iIndex != -1) {
 						var sKey = sStyle.substring(0, iIndex).trim();
@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			// append the nested DOM elements
-			jQuery.each(aElements, function(iIndex, oChildElement) {
+			aElements.forEach(function(iIndex, oChildElement) {
 				oRM.renderControl(oChildElement);
 			});
 

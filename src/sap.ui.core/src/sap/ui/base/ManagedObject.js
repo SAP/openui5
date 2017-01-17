@@ -1102,7 +1102,7 @@ sap.ui.define([
 		oType = DataType.getType(oProperty.type);
 
 		// If property has an array type, clone the array to avoid modification of original data
-		if (oType instanceof DataType && oType.isArrayType() && jQuery.isArray(oValue)) {
+		if (oType instanceof DataType && oType.isArrayType() && Array.isArray(oValue)) {
 			oValue = oValue.slice(0);
 		}
 
@@ -1146,7 +1146,7 @@ sap.ui.define([
 		oType = DataType.getType(oProperty.type);
 
 		// If property has an array type, clone the array to avoid modification of original data
-		if (oType instanceof DataType && oType.isArrayType() && jQuery.isArray(oValue)) {
+		if (oType instanceof DataType && oType.isArrayType() && Array.isArray(oValue)) {
 			oValue = oValue.slice(0);
 		}
 
@@ -1165,7 +1165,7 @@ sap.ui.define([
 				if (typeof oValue == "string") {
 					oValue = [oValue];
 				}
-				if (!jQuery.isArray(oValue)) {
+				if (!Array.isArray(oValue)) {
 					throw new Error("\"" + oValue + "\" is of type " + typeof oValue + ", expected string[]" +
 							" for property \"" + sPropertyName + "\" of " + this);
 				}
@@ -1977,7 +1977,7 @@ sap.ui.define([
 			//fire aggregation lifecycle event on current parent as the control is removed, but not inserted to a a new parent
 			// FIXME DESTROY: no more need to fire event here when destroy ever should be fixed
 			this._fireModifyAggregation && this._fireModifyAggregation("remove", sAggregationName, aChildren);
-		} else if (jQuery.isArray(aChildren)) {
+		} else if (Array.isArray(aChildren)) {
 			for (i = aChildren.length - 1; i >= 0; i--) {
 				aChild = aChildren[i];
 				if (aChild) {
@@ -2812,7 +2812,7 @@ sap.ui.define([
 		// Only use context for bindings on the primary model
 		oContext = this.getBindingContext(oBindingInfo.model);
 
-		jQuery.each(oBindingInfo.parts, function(i, oPart) {
+		oBindingInfo.parts.forEach(function(oPart) {
 			// Only use context for bindings on the primary model
 			oContext = that.getBindingContext(oPart.model);
 			// Create binding object
@@ -4097,7 +4097,7 @@ sap.ui.define([
 		// if no local ID array has been passed, collect IDs of all aggregated objects to
 		// be able to properly adapt associations, which are within the cloned object hierarchy
 		if (!aLocalIds && bCloneChildren) {
-			aLocalIds = jQuery.map(this.findAggregatedObjects(true), function(oObject) {
+			aLocalIds = this.findAggregatedObjects(true).map(function(oObject) {
 				return oObject.getId();
 			});
 		}
@@ -4143,7 +4143,7 @@ sap.ui.define([
 				if (oMetadata.hasAggregation(sName) && !(this.isBound(sName) && bCloneBindings)) {
 					if (oAggregation instanceof ManagedObject) {
 						mSettings[sName] = oAggregation.clone(sIdSuffix, aLocalIds);
-					} else if (jQuery.isArray(oAggregation)) {
+					} else if (Array.isArray(oAggregation)) {
 						mSettings[sName] = [];
 						for (var i = 0; i < oAggregation.length; i++) {
 							mSettings[sName].push(oAggregation[i].clone(sIdSuffix, aLocalIds));
@@ -4168,14 +4168,14 @@ sap.ui.define([
 				var oAssociation = this.mAssociations[sName];
 				// Check every associated ID against the ID array, to make sure associations within
 				// the template are properly converted to associations within the clone
-				if (jQuery.isArray(oAssociation)) {
+				if (Array.isArray(oAssociation)) {
 					oAssociation = oAssociation.slice(0);
 					for (var i = 0; i < oAssociation.length; i++) {
-						if (jQuery.inArray(oAssociation[i], aLocalIds) >= 0) {
+						if ( aLocalIds.indexOf(oAssociation[i]) >= 0) {
 							oAssociation[i] += "-" + sIdSuffix;
 						}
 					}
-				} else if (jQuery.inArray(oAssociation, aLocalIds) >= 0) {
+				} else if ( aLocalIds.indexOf(oAssociation) >= 0) {
 					oAssociation += "-" + sIdSuffix;
 				}
 				mSettings[sName] = oAssociation;

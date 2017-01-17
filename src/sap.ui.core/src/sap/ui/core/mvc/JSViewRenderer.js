@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 
 		var content = oControl.getContent();
 		if (content) {
-			if (jQuery.isArray(content)) {
+			if (Array.isArray(content)) {
 				// looks like an Array
 				for (var i = 0; i < content.length; i++) {
 					rm.renderControl(content[i]);
