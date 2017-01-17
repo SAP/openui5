@@ -41,6 +41,9 @@ sap.ui.require([
 
 		// Create, modify and delete of an unsaved sales order
 		When.onTheMainPage.firstSalesOrderIsVisible();
+		if (!bRealOData) {
+			Then.onTheMainPage.checkSalesOrdersCount(10);
+		}
 		When.onTheMainPage.pressCreateSalesOrdersButton();
 		Then.onTheCreateNewSalesOrderDialog.checkNewBuyerId("0100000000");
 		Then.onTheCreateNewSalesOrderDialog.checkNewNote();
@@ -52,6 +55,9 @@ sap.ui.require([
 		Then.onTheCreateNewSalesOrderDialog.checkNewNote(sModifiedNote);
 		Then.onTheMainPage.checkNote(0, sModifiedNote);
 		When.onTheCreateNewSalesOrderDialog.confirmDialog();
+		if (!bRealOData) {
+			Then.onTheMainPage.checkSalesOrdersCount(10);
+		}
 		Then.onTheMainPage.checkID(0, "");
 		Then.onTheMainPage.checkSalesOrderSelected(0);
 		When.onTheMainPage.changeNote(0, sModifiedNote + "_2");
@@ -62,6 +68,9 @@ sap.ui.require([
 		When.onTheMainPage.deleteSelectedSalesOrder();
 		When.onTheSalesOrderDeletionConfirmation.confirm();
 		When.onTheSuccessInfo.confirm();
+		if (!bRealOData) {
+			Then.onTheMainPage.checkSalesOrdersCount(10);
+		}
 		Then.onTheMainPage.checkID(0);
 
 		// Create a sales order, save, modify again, save and delete
@@ -92,6 +101,9 @@ sap.ui.require([
 		Then.onTheMainPage.checkID(0, "");
 		When.onTheMainPage.pressSaveSalesOrdersButton();
 		When.onTheSuccessInfo.confirm();
+		if (!bRealOData) {
+			Then.onTheMainPage.checkSalesOrdersCount(11);
+		}
 		When.onTheMainPage.rememberCreatedSalesOrder();
 		When.onTheMainPage.pressRefreshSalesOrdersButton();
 		Then.onTheMainPage.checkID(0);
@@ -125,6 +137,9 @@ sap.ui.require([
 		When.onTheCreateNewSalesOrderDialog.confirmDialog();
 		When.onTheMainPage.pressCancelSalesOrdersChangesButton();
 		When.onTheMainPage.firstSalesOrderIsAtPos0();
+		if (!bRealOData) {
+			Then.onTheMainPage.checkSalesOrdersCount(10);
+		}
 		Then.onTheMainPage.checkID(0);
 
 		if (bRealOData) {

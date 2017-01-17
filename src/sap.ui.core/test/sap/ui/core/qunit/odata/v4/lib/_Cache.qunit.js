@@ -15,7 +15,7 @@ sap.ui.require([
 
 	var aTestData = "abcdefghijklmnopqrstuvwxyz".split("");
 
-	/*
+	/**
 	 * Simulates an OData server response.
 	 */
 	function createResult(iIndex, iLength, vCount) {
@@ -33,10 +33,14 @@ sap.ui.require([
 	}
 
 	function mockRequest(oRequestorMock, sUrl, iStart, iLength, fnSubmit, vCount) {
+		var oPromise = Promise.resolve(createResult(iStart, iLength, vCount));
+
 		oRequestorMock.expects("request")
 			.withExactArgs("GET", sUrl + "?$skip=" + iStart + "&$top=" + iLength,
 				/*sGroupId*/undefined, /*mHeaders*/undefined, /*oPayload*/undefined, fnSubmit)
-			.returns(Promise.resolve(createResult(iStart, iLength, vCount)));
+			.returns(oPromise);
+
+		return oPromise;
 	}
 
 	//*********************************************************************************************
@@ -210,11 +214,13 @@ sap.ui.require([
 			oData = [{
 				foo : {
 					bar : 42,
+					list : [],
 					"null" : null
 				}
 			}];
 
 		oCache.sResourcePath = "Employees?$select=foo";
+		oData[0].foo.list.$count = 10;
 
 		assert.strictEqual(oCache.drillDown(oData, ""), oData, "empty path");
 		assert.strictEqual(oCache.drillDown(oData, "0"), oData[0], "0");
@@ -222,6 +228,9 @@ sap.ui.require([
 		assert.strictEqual(oCache.drillDown(oData, "0/foo/bar"), oData[0].foo.bar, "0/foo/bar");
 		assert.strictEqual(oCache.drillDown(oData, "0/foo/null/invalid"), undefined,
 			"0/foo/null/invalid");
+		assert.strictEqual(oCache.drillDown(oData, "0/foo/list/$count"), oData[0].foo.list.$count,
+			"0/foo/list/$count");
+		assert.strictEqual(oCache.drillDown(oData, "$count"), undefined, "$count");
 
 		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into 0/foo/bar/invalid, invalid segment: invalid",
@@ -235,6 +244,18 @@ sap.ui.require([
 				oCache.toString(), "sap.ui.model.odata.v4.lib._Cache");
 
 		assert.strictEqual(oCache.drillDown(oData, "0/foo/baz"), undefined, "0/foo/baz");
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to drill-down into 0/foo/$count, invalid segment: $count",
+			oCache.toString(), "sap.ui.model.odata.v4.lib._Cache");
+
+		assert.strictEqual(oCache.drillDown(oData, "0/foo/$count"), undefined, "0/foo/$count");
+
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to drill-down into 0/foo/$count/bar, invalid segment: $count",
+			oCache.toString(), "sap.ui.model.odata.v4.lib._Cache");
+
+		assert.strictEqual(oCache.drillDown(oData, "0/foo/$count/bar"), undefined,
+			"0/foo/$count/bar");
 	});
 
 	//*********************************************************************************************
@@ -263,6 +284,7 @@ sap.ui.require([
 						oCacheMock.expects("checkActive");
 						return oMockResult;
 					}));
+			this.spy(_Helper, "updateCache");
 
 			// code under test
 			oPromise = oCache.read(oFixture.index, oFixture.length, "group");
@@ -275,6 +297,11 @@ sap.ui.require([
 						value : oFixture.result
 					};
 
+				if (oFixture.count) {
+					sinon.assert.calledWithExactly(_Helper.updateCache,
+						sinon.match.same(oCache.mChangeListeners), "",
+						sinon.match.same(oCache.aElements), {$count : oFixture.count});
+				}
 				oExpectedResult.value.$count = oFixture.count;
 				assert.deepEqual(aResult, oExpectedResult);
 			});
@@ -506,7 +533,8 @@ sap.ui.require([
 		var oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees",
 			oCache = _Cache.create(oRequestor, sResourcePath),
-			oRequestorMock = this.mock(oRequestor);
+			oRequestorMock = this.mock(oRequestor),
+			that = this;
 
 		oRequestorMock.expects("request").withArgs("GET")
 			.returns(Promise.resolve({
@@ -516,9 +544,13 @@ sap.ui.require([
 
 		return oCache.read(0, 5).then(function (oResult) {
 			oRequestorMock.expects("request").withArgs("DELETE").returns(Promise.resolve());
+			that.spy(_Helper, "updateCache");
 			return oCache._delete("group", "Employees('42')", "3", function () {})
 				.then(function () {
 					assert.strictEqual(oCache.read(0, 4).getResult().value.$count, 25);
+					sinon.assert.calledWithExactly(_Helper.updateCache,
+						sinon.match.same(oCache.mChangeListeners), "",
+						sinon.match.same(oCache.aElements), {$count : 25});
 				});
 		});
 	});
@@ -528,22 +560,28 @@ sap.ui.require([
 		var oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees",
 			oCache = _Cache.create(oRequestor, sResourcePath),
-			oRequestorMock = this.mock(oRequestor);
+			aList = [{}, {}, {}],
+			oRequestorMock = this.mock(oRequestor),
+			that = this;
 
 		oRequestorMock.expects("request").withArgs("GET")
 			.returns(Promise.resolve({
 				"value" : [{
-					"list" : [{}, {}, {}],
+					"list" : aList,
 					"list@odata.count" : "26"
 				}]
 			}));
 
 		return oCache.read(0, 5).then(function (oResult) {
 			oRequestorMock.expects("request").withArgs("DELETE").returns(Promise.resolve());
+			that.spy(_Helper, "updateCache");
 			return oCache._delete("group", "Employees('42')", "0/list/1", function () {})
 				.then(function () {
 					assert.strictEqual(
 						oCache.fetchValue("group", "0/list").getResult().$count, 25);
+					sinon.assert.calledWithExactly(_Helper.updateCache,
+						sinon.match.same(oCache.mChangeListeners), "0/list",
+						sinon.match.same(aList), {$count : 25});
 				});
 		});
 	});
@@ -1211,7 +1249,7 @@ sap.ui.require([
 			oDeletePromise,
 			oTransientElement;
 
-		sinon.spy(oRequestor, "request");
+		this.spy(oRequestor, "request");
 
 		oCache.create("updateGroup", "Employees", "", {}, fnCancelCallback)
 			.catch(function (oError) {
@@ -1223,7 +1261,8 @@ sap.ui.require([
 
 		sinon.assert.calledWithExactly(oRequestor.request, "POST", "Employees", "updateGroup", null,
 			sinon.match.object, sinon.match.func, sinon.match.func);
-		sinon.spy(oRequestor, "removePost");
+		this.spy(oRequestor, "removePost");
+		this.spy(_Helper, "updateCache");
 
 		// code under test
 		oDeletePromise = oCache._delete("$auto", "n/a", "-1", function () {
@@ -2288,6 +2327,7 @@ sap.ui.require([
 				.withExactArgs("GET", "Employees('42')?$expand=Equipments", "groupId", undefined,
 					undefined, undefined)
 				.returns(Promise.resolve(oData));
+			this.spy(_Helper, "updateCache");
 
 			return oCache.fetchValue("groupId").then(function () {
 				var fnCallback = sinon.spy(),
@@ -2315,6 +2355,9 @@ sap.ui.require([
 						assert.strictEqual(oData.Equipments.$count, 2);
 						sinon.assert.calledOnce(fnCallback);
 						sinon.assert.calledWithExactly(fnCallback, 1);
+						sinon.assert.calledWithExactly(_Helper.updateCache,
+							sinon.match.same(oCache.mChangeListeners), "Equipments",
+							sinon.match.same(oData.Equipments), {$count : 2});
 					}, function (oError0) {
 						assert.ok(iStatus === 500, JSON.stringify(oError0));
 						assert.strictEqual(oError0, oError);
@@ -2512,11 +2555,17 @@ sap.ui.require([
 				"null" : null
 			};
 
+		this.spy(_Helper, "updateCache");
+
+		// code under test
 		_Cache.computeCount(oResult);
 
+		sinon.assert.calledWithExactly(_Helper.updateCache, {}, "", oResult.list, {$count : 3});
 		assert.strictEqual(oResult.list.$count, 3);
+		sinon.assert.calledWithExactly(_Helper.updateCache, {}, "", oResult.list2, {$count : 12});
 		assert.strictEqual(oResult.list2.$count, 12);
-		assert.notOk("$count" in oResult.list3);
+		assert.ok("$count" in oResult.list3);
+		assert.strictEqual(oResult.list3.$count, undefined);
 		assert.strictEqual(oResult.list[2].nestedList.$count, 1);
 		assert.strictEqual(oResult.property.nestedList.$count, 1);
 	});

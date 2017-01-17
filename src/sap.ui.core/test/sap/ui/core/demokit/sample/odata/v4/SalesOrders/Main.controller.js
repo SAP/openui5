@@ -49,6 +49,16 @@ sap.ui.define([
 			oUIModel.setProperty("/bLineItemSelected", false);
 			oView.byId("SupplierContactData").setBindingContext(undefined);
 			oView.byId("SupplierDetailsForm").setBindingContext(undefined);
+			oView.byId("SalesOrderLineItemsTitle").setBindingContext(
+				oView.byId("SalesOrderLineItems").getBinding("items").getHeaderContext(),
+				"headerContext");
+		},
+
+		onBeforeRendering : function () {
+			var oView = this.getView();
+
+			oView.byId("SalesOrdersTitle").setBindingContext(
+				oView.byId("SalesOrders").getBinding("items").getHeaderContext());
 		},
 
 		onCancelSalesOrder : function (oEvent) {
