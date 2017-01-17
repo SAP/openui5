@@ -20,7 +20,6 @@
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<!-- Test functions -->
@@ -312,72 +311,6 @@
 				ok($Today.hasClass("sapUiCalDaySel"), "Today marked as selected");
 			});
 
-			module("Events", {
-				setup: function () {
-					var oCalMonth,
-						$CalendarRows,
-						$FirstRowDays;
-
-					bSelectFired = false;
-					oSelectedDate = undefined;
-					oCal1.destroyAggregation("selectedDates");
-					oCalMonth = oCal1.getAggregation('month')[0];
-					$CalendarRows = oCalMonth.$('days').children();
-					$FirstRowDays = $CalendarRows.eq(0).children();
-
-					this.$FirstDayOfFirstRow = $FirstRowDays.eq(0);
-				}
-			});
-
-			test("'mousedown' should not fire select event", function () {
-				//act
-				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mousedown', 5, 0, this.$FirstDayOfFirstRow.offset().left, this.$FirstDayOfFirstRow.offset().top, 0);
-				//assert
-				strictEqual(oCal1.getSelectedDates().length, 0, "Calendar 'getSelectedDates()' association should be empty");
-				strictEqual(oSelectedDate, undefined, "No date is selected");
-				ok(!bSelectFired, "'Month fireSelect()' should NOT be called");
-			});
-
-			test("'mousedown' + 'mouseup' with drag threshold equal or more than 5px (on x axis) should NOT fire 'select' event", function () {
-				//act
-				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mousedown', 5, 0, this.$FirstDayOfFirstRow.offset().left, this.$FirstDayOfFirstRow.offset().top, 0);
-				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mouseup', 5, 0, this.$FirstDayOfFirstRow.offset().left + 5, this.$FirstDayOfFirstRow.offset().top, 0);
-				//assert
-				strictEqual(oCal1.getSelectedDates().length, 0, "Calendar 'getSelectedDates()' association should be empty");
-				strictEqual(oSelectedDate, undefined, "No date is selected");
-				ok(!bSelectFired, "'Month fireSelect()' should NOT be called");
-			});
-
-			test("'mousedown' + 'mouseup' with drag threshold equal or more than 5px (on y axis) should NOT fire 'select' event", function () {
-				//act
-				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mousedown', 5, 0, this.$FirstDayOfFirstRow.offset().left, this.$FirstDayOfFirstRow.offset().top, 0);
-				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mouseup', 5, 0, this.$FirstDayOfFirstRow.offset().left, this.$FirstDayOfFirstRow.offset().top + 5, 0);
-				//assert
-				strictEqual(oCal1.getSelectedDates().length, 0, "Calendar 'getSelectedDates()' association should be empty");
-				strictEqual(oSelectedDate, undefined, "No date is selected");
-				ok(!bSelectFired, "'Month fireSelect()' should NOT be called");
-			});
-
-			test("'mousedown' + 'mouseup' with drag threshold less than 5px (on x axis) should fire 'select' event", function () {
-				//act
-				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mousedown', 5, 0, this.$FirstDayOfFirstRow.offset().left, this.$FirstDayOfFirstRow.offset().top, 0);
-				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mouseup', 5, 0, this.$FirstDayOfFirstRow.offset().left + 4, this.$FirstDayOfFirstRow.offset().top, 0);
-				//assert
-				strictEqual(oCal1.getSelectedDates().length, 1, "Calendar 'getSelectedDates()' association should be empty");
-				strictEqual(oCal1.getSelectedDates()[0].getStartDate().getTime(), oSelectedDate.getTime(), "The correct date is selected");
-				ok(bSelectFired, "'Month fireSelect()' should be called once");
-			});
-
-			test("'mousedown' + 'mouseup' with drag threshold less than 5px (on y axis) should fire 'select' event", function () {
-				//act
-				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mousedown', 5, 0, this.$FirstDayOfFirstRow.offset().left, this.$FirstDayOfFirstRow.offset().top, 0);
-				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mouseup', 5, 0, this.$FirstDayOfFirstRow.offset().left, this.$FirstDayOfFirstRow.offset().top + 4, 0);
-				//assert
-				strictEqual(oCal1.getSelectedDates().length, 1, "Calendar 'getSelectedDates()' association should be empty");
-				strictEqual(oCal1.getSelectedDates()[0].getStartDate().getTime(), oSelectedDate.getTime(), "The correct date is selected");
-				ok(bSelectFired, "'Month fireSelect()' should be called once");
-			});
-
 		</script>
 
 	</head>
@@ -393,7 +326,5 @@
 		<div id="uiArea2"></div>
 		<br>
 		<div id="uiArea3"></div>
-		<br>
-		<div id="uiArea4"></div>
 	</body>
 </html>
