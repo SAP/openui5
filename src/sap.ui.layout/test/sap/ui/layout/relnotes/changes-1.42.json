@@ -207,5 +207,16 @@
         "references": []
       }
     ]
+  },
+  "1.42.9": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "259d37edb92e1121ef7361b8acb01e05c12de279",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Scrollbar is now correctly displayed",
+        "references": []
+      }
+    ]
   }
 }

@@ -835,5 +835,16 @@
         "references": []
       }
     ]
+  },
+  "1.42.9": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "fc3f08f272649cffbb3205b3c25885ec3972afd1",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser: ignore \"HasStream\" property",
+        "references": []
+      }
+    ]
   }
 }

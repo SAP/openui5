@@ -489,5 +489,28 @@
         "references": []
       }
     ]
+  },
+  "1.40.15": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "395775778ea5d708b41d8f55ecb7159966317b2a",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Control no longer flickers",
+        "references": []
+      },
+      {
+        "id": "0154216955fb93388b242ca773b0d2f6a0d32edd",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Scrollbar is now correctly displayed",
+        "references": []
+      },
+      {
+        "id": "86eea085c3afb3cc6251675d5b636599d3afbf71",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Unwanted scrollbar is now removed",
+        "references": []
+      }
+    ]
   }
 }

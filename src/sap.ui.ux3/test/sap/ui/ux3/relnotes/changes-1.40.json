@@ -187,5 +187,16 @@
         "references": []
       }
     ]
+  },
+  "1.40.15": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "a5cad27cb2b8ccf8d5909a68b9097db193b03e0d",
+        "type": "FIX",
+        "text": " sap.ui.ux3.OverlayDialog: Corrected positioning values",
+        "references": []
+      }
+    ]
   }
 }

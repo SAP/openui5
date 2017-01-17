@@ -532,5 +532,22 @@
         "references": []
       }
     ]
+  },
+  "1.40.15": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "152f31419b1f7c28b88ba06d904772a0b47ae2d7",
+        "type": "FIX",
+        "text": " sap.ui.commons.RadioButton: Memory leak issue",
+        "references": []
+      },
+      {
+        "id": "575ae6896559cf30ac229c84ed300be82756bbd7",
+        "type": "FIX",
+        "text": " sap.ui.core.Popup: keep blocklayer when there\u0027s still modal popup open",
+        "references": []
+      }
+    ]
   }
 }

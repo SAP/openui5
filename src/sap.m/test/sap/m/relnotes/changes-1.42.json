@@ -1884,5 +1884,100 @@
         "references": []
       }
     ]
+  },
+  "1.42.9": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "9c5488f5263e21edd87349c3c01c3d2b25dfe881",
+        "type": "FIX",
+        "text": " sap.m.BarInPageEnabler: Memory leak fixed.",
+        "references": []
+      },
+      {
+        "id": "baecc22e88d44461b7f67741a1aad03f482e74d5",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Entering completely new value in the input is not possible",
+        "references": []
+      },
+      {
+        "id": "4fffdaea895f0afe0af2b382a6cc9c4f54852f39",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Keyboard issues are now ok",
+        "references": []
+      },
+      {
+        "id": "8df0fd0ca3ff853d56ca7bbd6890a880a7872e2a",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Correct color inside ColumnListItem",
+        "references": []
+      },
+      {
+        "id": "095a84c5ca5c013a687fd328c371acfd3a48dfa6",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Focus clear visible on IE",
+        "references": []
+      },
+      {
+        "id": "b66ec988f1c6644ca346106fc7449e5326a9711a",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Setters no longer modify RadioButtons\u0027 states",
+        "references": []
+      },
+      {
+        "id": "7268d0ac3000449918cdc03a1b4e5bcf730efdb2",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Focus contrast ratio in IE/Edge is now correct",
+        "references": []
+      },
+      {
+        "id": "6a76f556b95a69c8ffc8b8359f0452d6db279fdf",
+        "type": "FIX",
+        "text": " sap.m.Select: better fix for BCP: 1680168526",
+        "references": []
+      },
+      {
+        "id": "2bc8d90f4beab0bcd17eb0a4bc9f1439715d6766",
+        "type": "FIX",
+        "text": " sap.m.SlideTile: Focus out behavior corrected",
+        "references": []
+      },
+      {
+        "id": "74fbea21e7127461d354584a005ccfae3be112b2",
+        "type": "FIX",
+        "text": " sap.m.TabStrip: Focus corrected for IE",
+        "references": []
+      },
+      {
+        "id": "1e2dc21305bc9d00d9ad5161a7bd20c9dcc7dbb7",
+        "type": "FIX",
+        "text": " sap.m.Text: Spacing between paragraphs is now correct on iPhone",
+        "references": []
+      },
+      {
+        "id": "bddf665093a12e9194f4edc8307819f7ede00ec4",
+        "type": "FIX",
+        "text": " sap.m.Text: Text align under Vertical Layout fixed",
+        "references": []
+      },
+      {
+        "id": "b7bdc4d4bf63d40fe2a51bc5ddbfc613ac492490",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Scrolling not working properly in chrome now corrected",
+        "references": []
+      },
+      {
+        "id": "15747a8703ec7b9bbb28ef613cdfc05db35641aa",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog - calling method removeAllSortItems() does not throw an exception if no items exist.",
+        "references": []
+      },
+      {
+        "id": "1f432ecf0542e841b9336410ad59ad81d367e948",
+        "type": "FIX",
+        "text": " sap.m.Wizard - Removed most of the scrollLocks, fixed chaining of nextStep().nextStep() and previousStep().previousStep()",
+        "references": []
+      }
+    ]
   }
 }
