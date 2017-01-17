@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 			id: this.getId() + "-pause-play-icon",
 			src: "sap-icon://media-pause",
 			color: "#ffffff",
-			size: "0.95rem",
+			size: "1rem",
 			noTabStop: true
 		}), true);
 	};

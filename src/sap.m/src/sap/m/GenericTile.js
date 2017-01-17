@@ -173,6 +173,39 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this._oBusy.setBusyIndicatorDelay(0);
 
 		this._bTilePress = true;
+
+		this._bThemeApplied = true;
+		if (!sap.ui.getCore().isInitialized()) {
+			this._bThemeApplied = false;
+			sap.ui.getCore().attachInit(this._handleCoreInitialized.bind(this));
+		} else {
+			this._handleCoreInitialized();
+		}
+	};
+
+
+	/**
+	 * Handler for the core's init event. In order for the tile to adjust its rendering to the current theme,
+	 * we attach a theme check in here when everything is properly initialized and loaded.
+	 *
+	 * @private
+	 */
+	GenericTile.prototype._handleCoreInitialized = function() {
+		this._bThemeApplied = sap.ui.getCore().isThemeApplied();
+		if (!this._bThemeApplied) {
+			sap.ui.getCore().attachThemeChanged(this._handleThemeApplied, this);
+		}
+	};
+
+	/**
+	 * The tile recalculates its title's max-height when line-height could be loaded from CSS.
+	 *
+	 * @private
+	 */
+	GenericTile.prototype._handleThemeApplied = function() {
+		this._bThemeApplied = true;
+		this._oTitle.clampHeight();
+		sap.ui.getCore().detachThemeChanged(this._handleThemeApplied, this);
 	};
 
 	/**
@@ -275,7 +308,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this.$().bind("mouseleave", this._removeTooltipFromControl.bind(this));
 
 		this._bCompact = this._isCompact();
-		if (this.getMode() === library.GenericTileMode.LineMode && this._bCompact) {
+		var sMode = this.getMode();
+		if (sMode === library.GenericTileMode.LineMode && this._bCompact) {
 			// This class needs to be added in order to account for the paddings of the tile.
 			// As this LineMode tile is rendered with display: inline, we cannot apply padding to each line separately, but only the
 			// container can apply a padding for text containment. Thus, this class adds a preset padding-right to the tile's direct DOM parent.
@@ -287,18 +321,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 		// triggers update of all adjacent GenericTile LineMode siblings
 		// this is needed for their visual update if this tile's properties change causing it to expand or shrink
-		if (this.getMode() === library.GenericTileMode.LineMode && this._bUpdateLineTileSiblings) {
+		if (sMode === library.GenericTileMode.LineMode && this._bUpdateLineTileSiblings) {
 			this._updateLineTileSiblings();
 			this._bUpdateLineTileSiblings = false;
 		}
 
-		if (this.getMode() === library.GenericTileMode.LineMode) {
+		if (sMode === library.GenericTileMode.LineMode) {
 			// attach an interval timer in order to check the control's density mode and invalidate on change
 			sap.ui.getCore().attachIntervalTimer(this._checkContentDensity, this);
 		}
 
 		// Assign TileContent content again after rendering.
-		if (this.getMode() === library.GenericTileMode.HeaderMode && this._aTileContentContent) {
+		if (sMode === library.GenericTileMode.HeaderMode && this._aTileContentContent) {
 			var aTileContent = this.getTileContent();
 			for (var i = 0; i < aTileContent.length; i++) {
 				aTileContent[i].setAggregation("content", this._aTileContentContent[i], true);
