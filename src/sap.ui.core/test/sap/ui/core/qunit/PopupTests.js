@@ -1144,7 +1144,7 @@ QUnit.test("Open/close with IE and check BlindLayer", function(assert) {
 	sap.ui.require("sap.ui.Device");
 	var oDeviceStub = sinon.stub(sap.ui.Device);
 	oDeviceStub.browser.msie = true;
-	oDeviceStub.browser.version = 9;
+	oDeviceStub.browser.version = 11;
 	oDeviceStub.os.windows_phone = false;
 
 	var oSpyOpened = sinon.spy(this.oPopup, "_opened");

@@ -851,8 +851,8 @@ sap.ui.define([
 			});
 		}
 
-		// get (and 'show' i.e. activate) the BlindLayer
-		if (!!Device.browser.msie && Device.browser.version < 11 && !Device.os.windows_phone && Popup._activateBlindLayer) {
+		// get (and 'show' i.e. activate) the BlindLayer in IE (not Edge)
+		if (!!Device.browser.msie && !Device.os.windows_phone && Popup._activateBlindLayer) {
 			this._oBlindLayer = this.oBlindLayerPool.borrowObject($Ref, this._iZIndex - 1);
 		} // -1 = BlindLayer, -2 = BlockLayer
 
