@@ -908,6 +908,24 @@
 			start();
 		});
 
+		test("Empty binding should not cause exceptions", function() {
+			createTreeBindingAdapter("/nothing", [], null, {
+				displayRootNode: true,
+				numberOfExpandedLevels: 2,
+				rootLevel: 1
+			});
+
+			// Keep the binding empty, so that the adapter can't find any nodes
+
+			// The following function calls should fail but not throw an exception
+			oBinding.expand(999);
+			oBinding.collapse(999);
+			oBinding.toggleIndex(999);
+			oBinding.setNodeSelection({});
+
+			ok(true, "No exceptions thrown");
+		});
+
 		var oData2 = {
 			root: [{
 				name: "node_0",
