@@ -302,7 +302,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				var oUriParams = jQuery.sap.getUriParameters();
 
 				// map of SAP parameters (allows general access)
-				config.sapParam = config.sapParam || {};
+				config.sapparams = config.sapparams || {};
 
 				// first map SAP parameters, can be overwritten by "sap-ui-*" parameters
 
@@ -324,14 +324,14 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				}
 
 				// set the SAP logon language to the SAP params
-				config.sapParam['sap-language'] = this.getSAPLogonLanguage();
+				config.sapparams['sap-language'] = this.getSAPLogonLanguage();
 
 				// read the SAP parameters from URL or META tag
 				['sap-client', 'sap-server', 'sap-system'].forEach(function(sName) {
 					if ( oUriParams.get(sName) ) {
-						config.sapParam[sName] = oUriParams.get(sName);
+						config.sapparams[sName] = oUriParams.get(sName);
 					} else {
-						config.sapParam[sName] = getMetaTagValue(sName);
+						config.sapparams[sName] = getMetaTagValue(sName);
 					}
 				});
 
@@ -704,7 +704,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * @return {string} The SAP parameter value
 		 */
 		getSAPParam : function (sName) {
-			return this.sapParam && this.sapParam[sName];
+			return this.sapparams && this.sapparams[sName];
 		},
 
 		/**
