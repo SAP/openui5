@@ -1090,6 +1090,54 @@
 		assert.notOk($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
 	});
 
+	QUnit.test("Drop file in UploadCollection", function(assert) {
+		//Arrange
+		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
+		var oSpy = sinon.spy(this.oUploadCollection._getFileUploader(), "_sendFilesFromDragAndDrop");
+		var oEvent = jQuery.Event("drop", {
+			originalEvent: {
+				dataTransfer:{
+					files: []
+				}
+			}
+		});
+		this.oUploadCollection.$("drag-drop-area").removeClass("sapMUCDragDropOverlayHide");
+		//Act
+		$DragDropArea.trigger(oEvent);
+		//Assert
+		assert.ok($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag and drop overlay is hidden after drop");
+		assert.ok(oSpy.calledOnce, "The API method of FileUploader for UploadCollection was called");
+	});
+
+	QUnit.test("Drop file in UploadCollection (Pending mode)", function(assert) {
+		//Arrange
+		var oStubGetInstantUpload = sinon.stub(this.oUploadCollection, "getInstantUpload").returns(false);
+		this.oUploadCollection._oFormatDecimal = sap.ui.core.format.FileSizeFormat.getInstance({binaryFilesize: false, maxFractionDigits: 1, maxIntegerDigits: 3});
+		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
+		var oFileList = {
+			0: {
+				name: "file",
+				size: 1,
+				type: "type"
+			},
+			length: 1
+		};
+		var oEvent = jQuery.Event("drop", {
+			originalEvent: {
+				dataTransfer:{
+					files: oFileList
+				}
+			}
+		});
+		this.oUploadCollection.$("drag-drop-area").removeClass("sapMUCDragDropOverlayHide");
+		//Act
+		$DragDropArea.trigger(oEvent);
+		//Assert
+		assert.ok($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag and drop overlay is hidden after drop");
+		assert.equal(this.oUploadCollection._aFilesFromDragAndDropForPendingUpload.length, 1, "File is pended in the array");
+		oStubGetInstantUpload.restore();
+	});
+
 	QUnit.test("Drag drop icon is hidden when height of drag drop area smaller than 10rem", function(assert) {
 		//Arrange
 		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
