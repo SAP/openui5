@@ -22,6 +22,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			oDynamicPageHeader = oDynamicPage.getHeader(),
 			oDynamicPageFooter = oDynamicPage.getFooter(),
 			oDynamicPageContent = oDynamicPage.getContent(),
+			bHeaderExpanded = oDynamicPage.getHeaderExpanded(),
 			bShowFooter = oDynamicPage.getShowFooter(),
 			bPreserveHeaderStateOnScroll = oDynamicPage._preserveHeaderStateOnScroll();
 
@@ -45,6 +46,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		oRm.writeAttributeEscaped("id", oDynamicPage.getId() + "-header");
 		oRm.addClass("sapContrastPlus");
 		oRm.addClass("sapFDynamicPageTitleWrapper");
+		if (!bHeaderExpanded) {
+			oRm.addClass("sapFDynamicPageTitleSnapped");
+		}
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.renderControl(oDynamicPageTitle);
