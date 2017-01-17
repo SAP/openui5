@@ -2221,6 +2221,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var oTableCCnt = this.getDomRef("tableCCnt");
 		if (oTableCCnt) {
 			var iTop = oTableCCnt.offsetTop;
+
+			var oVSbBg = this.getDomRef("vsb-bg");
+			oVSbBg.style.top = iTop + "px";
+
 			var iFixedRows = this.getFixedRowCount();
 			if (iFixedRows > 0) {
 				iTop += this._iVsbTop;
