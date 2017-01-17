@@ -3,8 +3,8 @@
  */
 
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventProvider', 'sap/ui/core/routing/async/Target', 'sap/ui/core/routing/sync/Target'],
-	function(jQuery, Control, EventProvider, asyncTarget, syncTarget) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventProvider', 'sap/ui/core/mvc/View', 'sap/ui/core/routing/async/Target', 'sap/ui/core/routing/sync/Target'],
+	function(jQuery, Control, EventProvider, View, asyncTarget, syncTarget) {
 		"use strict";
 
 		/**
@@ -45,7 +45,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 
 				if (this._oOptions.title) {
 					this._oTitleProvider = new TitleProvider({
-						title: this._oOptions.title,
 						target: this
 					});
 				}
@@ -225,6 +224,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 				}
 
 				return sViewName;
+			},
+
+			_bindTitleInTitleProvider : function(oView) {
+				if (this._oTitleProvider && oView instanceof View) {
+					this._oTitleProvider.applySettings({
+						title: this._oOptions.title
+					}, oView.getController());
+				}
 			},
 
 			/**
