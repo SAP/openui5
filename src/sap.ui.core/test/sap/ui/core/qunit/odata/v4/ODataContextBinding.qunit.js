@@ -18,7 +18,7 @@ sap.ui.require([
 ], function (jQuery, ManagedObject, Binding, ChangeReason, ContextBinding, Context, _Cache, _Helper,
 		_SyncPromise, ODataContextBinding, ODataModel, asODataParentBinding, TestUtils) {
 	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0 */
+	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	var aAllowedBindingParameters = ["$$groupId", "$$updateGroupId"],
@@ -75,7 +75,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("c'tor calls applyParameters", function (assert) {
-		var mParameters = {},
+		var oBinding,
+			mParameters = {},
 			mParametersClone = {};
 
 		this.mock(jQuery).expects("extend").withExactArgs(true, {}, sinon.match.same(mParameters))
@@ -83,7 +84,9 @@ sap.ui.require([
 		this.mock(ODataContextBinding.prototype).expects("applyParameters")
 			.withExactArgs(sinon.match.same(mParametersClone));
 
-		new ODataContextBinding(this.oModel, "/EMPLOYEES", undefined, mParameters);
+		oBinding = new ODataContextBinding(this.oModel, "/EMPLOYEES", undefined, mParameters);
+
+		assert.strictEqual(oBinding.mParameters, undefined, "c'tor does not set mParameters");
 	});
 
 	//*********************************************************************************************
@@ -120,6 +123,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.sGroupId, sGroupId, "sGroupId");
 		assert.strictEqual(oBinding.sUpdateGroupId, sUpdateGroupId, "sUpdateGroupId");
 		assert.deepEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
+		assert.strictEqual(oBinding.mParameters, mParameters, "mParameters");
 	});
 
 	//*********************************************************************************************
@@ -184,11 +188,9 @@ sap.ui.require([
 		this.mock(oBinding).expects("checkUpdate");
 
 		//code under test
-		oBinding.applyParameters(mParameters, ChangeReason.Change);
+		oBinding.applyParameters(mParameters);
 
-		assert.strictEqual(oBinding.mParameters, mParameters,
-			"applyParameters set oBinding.mParameters if called via changeParameters with " +
-			"a change reason");
+		assert.strictEqual(oBinding.mParameters, mParameters);
 	});
 
 	//*********************************************************************************************
@@ -1858,7 +1860,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("makeCache: relative, cache created asynchronously", function (assert) {
-		var oBinding = this.oModel.bindContext("SO_2_BP", undefined, {}),
+		var oBinding = this.oModel.bindContext("SO_2_BP", undefined, {"$apply" : "foo"}),
 			sCanonicalPath = "/SalesOrderList('1')",
 			sCachePath = sCanonicalPath.slice(1) + "/SO_2_BP",
 			oContext = {
