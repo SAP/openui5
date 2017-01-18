@@ -178,7 +178,6 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 	box-sizing: border-box;
 	background-color: @sapUiButtonBackground;
 	color: @sapUiButtonIconColor;
-	box-shadow: @sapUiShadowLevel1;
 }
 
 .sapMCrslHudMiddle a {
@@ -450,8 +449,7 @@ html[data-sap-ui-animation='off'] {
 .sapMCrsl .sapMCrslHud a:hover,
 .sapMCrsl .sapMCrslHud a:focus {
 	background: @sapUiButtonBackground;
-	border: 1px solid @sapUiButtonBorderColor;
-	box-shadow: @sapUiShadowLevel1;
+
 	opacity: 1;
 	display: block;
 }
@@ -460,7 +458,6 @@ html[data-sap-ui-animation='off'] {
 	background-color: @sapUiButtonActiveBackground;
 	border-color: @sapUiButtonActiveBorderColor;
 	color: @sapUiButtonActiveTextColor;
-	box-shadow: @sapUiShadowLevel1;
 }
 
 .sapMCrsl .sapMCrslControls a:active {
@@ -525,4 +522,9 @@ html[data-sap-ui-animation='off'] {
 		border: 1px solid @sapUiButtonBorderColor;
 		color: @sapUiButtonIconColor;
 	}
+}
+
+.sapMCrsl:hover .sapMCrslHud a {
+	opacity: 1;
+	display: block;
 }
