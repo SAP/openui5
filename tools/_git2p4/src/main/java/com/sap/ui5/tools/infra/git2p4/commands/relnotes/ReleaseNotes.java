@@ -330,7 +330,7 @@ public class ReleaseNotes {
       boolean result = false;
       for (ReleaseNote note : libVersion1.notes) {
         for (ReleaseNote note2 : libVersion2.notes) {
-          if (note.id.equals(note2.id)){
+          if (note.id.equals(note2.id) || note.text.equals(note2.text)){
             libVersion2.notes.remove(note2);
             Log.println("Removed duplicated note: " + note2.id + " from " + version2);
             result = true;
