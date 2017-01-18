@@ -420,6 +420,38 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		});
 	});
 
+	QUnit.test("discardChanges (with array items deletion) with personalized only option shall delete the changes from the persistence and save the deletion only for USER layer", function() {
+		var aChanges = [];
+		for (var i = 0; i < 5 ; i++){
+			aChanges.push(new Change({
+				fileName: "Gizorillus" + i,
+				layer: "CUSTOMER",
+				fileType: "change",
+				changeType: "addField",
+				originalLanguage: "DE"
+			}));
+		}
+		aChanges[0]._oDefinition.layer = "USER";
+		aChanges[1]._oDefinition.layer = "USER";
+		aChanges[2]._oDefinition.layer = "PARTNER";
+		aChanges[3]._oDefinition.layer = "VENDOR";
+
+		var oChangePersistence = this.oFlexController._oChangePersistence = {
+				aChanges: aChanges,
+				deleteChange: function(oChange) {
+					var nIndexInMapElement = aChanges.indexOf(oChange);
+					if (nIndexInMapElement !== -1) {
+						aChanges.splice(nIndexInMapElement, 1);
+					}
+				},
+				saveDirtyChanges: sinon.stub().returns(Promise.resolve())
+			};
+
+		return this.oFlexController.discardChanges(aChanges, true).then(function() {
+			assert.equal(aChanges.length, 3);
+		});
+	});
+
 	QUnit.test("discardChangesForId without personalized only option shall delete the changes from the persistence and save the deletion only for CUSTOMER layer", function(assert) {
 		var aChangesForSomeId = [];
 		for (var i = 0; i < 5 ; i++) {
