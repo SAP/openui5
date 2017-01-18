@@ -694,6 +694,37 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			})
 		}.bind(this));
 	});
+	
+	QUnit.test("appdescr_smb_changeNamespace", function(assert) {
+		return DescriptorInlineChangeFactory.create_smb_changeNamespace({
+			"smartBusinessApp": {
+				"tile": {
+	        "tileConfiguration": "{\"TILE_PROPERTIES\":\" {\\\"id\\\":\\\"\\\",\\\"instanceId\\\":\\\"\\\",\\\"evaluationId\\\":\\\"\\\"," +
+	        		"\\\"navType\\\":\\\"0\\\",\\\"cacheMaxAge\\\":1,\\\"cacheMaxAgeUnit\\\":\\\"MIN\\\",\\\"tileSpecific\\\":{}}\"}"
+				},
+				"annotationFragments" : {
+					"selectionVariant" : "<entityTypeQualifiedName>/@com.sap.vocabularies.UI.v1.SelectionVariant#<qualifier>",
+					"dataPoint" : "<entityTypeQualifiedName>/@com.sap.vocabularies.UI.v1.DataPoint#<qualifier>",
+					"selectionField" : "<entityTypeQualifiedName>/@com.sap.vocabularies.UI.v1.SelectionFields#<qualifier>"
+				}
+			}
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+		});
+	});
+
+	QUnit.test("appdescr_smb_changeNamespace failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_smb_changeNamespace({
+				"smartBusinessAppId" : {}
+			})
+		}.bind(this));
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_smb_changeNamespace({
+				"smartBusinessApp" : "a.id"
+			})
+		}.bind(this));
+	});
 
 	QUnit.test("appdescr_ui_generic_app_setMainPage", function(assert) {
 		return DescriptorInlineChangeFactory.create_ui_generic_app_setMainPage({
