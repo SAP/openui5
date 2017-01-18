@@ -3,8 +3,8 @@
  */
 
 // Provides the base class for all controls and UI elements.
-sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', './ElementMetadata', 'jquery.sap.strings', 'jquery.sap.trace'],
-	function(jQuery, BaseObject, ManagedObject, ElementMetadata/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', './ElementMetadata', '../Device', 'jquery.sap.strings', 'jquery.sap.trace'],
+	function(jQuery, BaseObject, ManagedObject, ElementMetadata, Device/* , jQuerySap */) {
 	"use strict";
 
 	/**
@@ -100,7 +100,6 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 		renderer : null // Element has no renderer
 
 	}, /* Metadata constructor */ ElementMetadata);
-
 
 	/**
 	 * Creates metadata for an UI Element by extending the Object Metadata.
@@ -979,6 +978,139 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 
 		return aFieldGroupIds || [];
 
+	};
+
+	//*************** MEDIA REPLACEMENT ***********************//
+
+	/**
+	 * Returns the contextual width of an element, if set, or <code>undefined</code> otherwise
+	 * @returns {*}
+	 * @private
+	 * @sap-restricted
+	 */
+	Element.prototype._getMediaContainerWidth = function () {
+		if (typeof this._oContextualSettings === "undefined") {
+			return undefined;
+		}
+
+		return this._oContextualSettings.contextualWidth;
+	};
+
+	/**
+	 * Returns the current media range of the Device or the closest media container
+	 *
+	 * @param sName
+	 * @returns {map}
+	 * @private
+	 * @sap-restricted
+	 */
+	Element.prototype._getCurrentMediaContainerRange = function (sName) {
+		var iWidth = this._getMediaContainerWidth();
+
+		sName = sName || Device.media.RANGESETS.SAP_STANDARD;
+
+		if (typeof iWidth === "undefined") {
+			return Device.media.getCurrentRange(sName);
+		} else {
+			return Device.media.getCurrentRangeForWidth(sName, iWidth);
+		}
+	};
+
+	/**
+	 * Called whenever there is a change in contextual settings for the Element
+	 * @private
+	 */
+	Element.prototype._onContextualSettingsChanged = function () {
+		var iWidth = this._getMediaContainerWidth(),
+			bShouldUseContextualWidth = iWidth !== undefined,
+			bProviderChanged = bShouldUseContextualWidth ^ !!this._bUsingContextualWidth,// true, false or false, true (convert to bool in case of default undefined)
+			aListeners = this._aContextualWidthListeners || [];
+
+		if (bProviderChanged) {
+
+			if (bShouldUseContextualWidth) {
+				// Contextual width was set for an element that was already using Device.media => Stop using Device.media
+				aListeners.forEach(function (oL) {
+					Device.media.detachHandler(oL.callback, oL.listener, oL.name);
+				});
+			} else {
+				// Contextual width was unset for an element that had listeners => Start using Device.media
+				aListeners.forEach(function (oL) {
+					Device.media.attachHandler(oL.callback, oL.listener, oL.name);
+				});
+			}
+
+			this._bUsingContextualWidth = bShouldUseContextualWidth;
+		}
+
+		// Notify all listeners, for which a media breakpoint change occurred, based on their RangeSet
+		aListeners.forEach(function (oL) {
+			var oMedia = this._getCurrentMediaContainerRange(oL.name);
+			if (oMedia.from !== oL.media.from) {
+				oL.media = oMedia;
+				oL.callback.call(oL.listener || window, oMedia);
+			}
+		}, this);
+	};
+
+	/**
+	 * Registers the given event handler to change events of the screen width/closest media container width, based on the range set with the specified name.
+	 *
+	 * @param fnFunction
+	 * @param oListener
+	 * @param sName
+	 * @private
+	 * @sap-restricted
+	 */
+	Element.prototype._attachMediaContainerWidthChange = function (fnFunction, oListener, sName) {
+		sName = sName || Device.media.RANGESETS.SAP_STANDARD;
+
+		// Add the listener to the list (and optionally initialize the list first)
+		this._aContextualWidthListeners = this._aContextualWidthListeners || [];
+		this._aContextualWidthListeners.push({
+			callback: fnFunction,
+			listener: oListener,
+			name: sName,
+			media: this._getCurrentMediaContainerRange(sName)
+		});
+
+		// Register to Device.media, unless contextual width was set
+		if (!this._bUsingContextualWidth) {
+			Device.media.attachHandler(fnFunction, oListener, sName);
+		}
+	};
+
+	/**
+	 * Removes a previously attached event handler from the change events of the screen width/closest media container width.
+	 * @param fnFunction
+	 * @param oListener
+	 * @param sName
+	 * @private
+	 * @sap-restricted
+	 */
+	Element.prototype._detachMediaContainerWidthChange = function (fnFunction, oListener, sName) {
+		var oL;
+
+		sName = sName || Device.media.RANGESETS.SAP_STANDARD;
+
+		// Do nothing if the Element doesn't have any listeners
+		if (!this._aContextualWidthListeners) {
+			return;
+		}
+
+		for (var i = 0, iL = this._aContextualWidthListeners.length; i < iL; i++) {
+			oL = this._aContextualWidthListeners[i];
+			if (oL.callback === fnFunction && oL.listener === oListener && oL.name === sName) {
+
+				// De-register from Device.media, if using it
+				if (!this._bUsingContextualWidth) {
+					Device.media.detachHandler(fnFunction, oListener, sName);
+				}
+
+				this._aContextualWidthListeners.splice(i,1);
+				break;
+			}
+		}
 	};
 
 	return Element;

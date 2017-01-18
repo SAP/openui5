@@ -588,6 +588,19 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 	 */
 	UIComponent.prototype.setContainer = function(oContainer) {
 		this.oContainer = oContainer;
+		if (oContainer) {
+			this._applyContextualSettings(oContainer._getContextualSettings());
+		} else {
+			this._oContextualSettings = ManagedObject._defaultContextualSettings;
+			if (!this._bIsBeingDestroyed) {
+				setTimeout(function() {
+					// if object is being destroyed or container is set again (move) no propagation is needed
+					if (!this.oContainer) {
+						this._propagateContextualSettings();
+					}
+				}.bind(this), 0);
+			}
+		}
 		return this;
 	};
 

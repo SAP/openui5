@@ -1124,13 +1124,13 @@ if (typeof window.sap.ui !== "object") {
 		return info;
 	}
 
-	function checkQueries(name, infoOnly){
+	function checkQueries(name, infoOnly, fnMatches){
 		if (_querysets[name]) {
 			var aQueries = _querysets[name].queries;
 			var info = null;
 			for (var i = 0, len = aQueries.length; i < len; i++) {
 				var q = aQueries[i];
-				if ((q != _querysets[name].currentquery || infoOnly) && device.media.matches(q.from, q.to, _querysets[name].unit)) {
+				if ((q != _querysets[name].currentquery || infoOnly) && (fnMatches || device.media.matches)(q.from, q.to, _querysets[name].unit)) {
 					if (!infoOnly) {
 						_querysets[name].currentquery = q;
 					}
@@ -1190,14 +1190,18 @@ if (typeof window.sap.ui !== "object") {
 		return val;
 	}
 
-	function match_legacy(from, to, unit){
+	function match_legacy_by_size (from, to, unit, size) {
 		from = convertToPx(from, unit);
 		to = convertToPx(to, unit);
 
-		var width = windowSize()[0];
+		var width = size[0];
 		var a = from < 0 || from <= width;
 		var b = to < 0 || width <= to;
 		return a && b;
+	}
+
+	function match_legacy(from, to, unit){
+		return match_legacy_by_size(from, to, unit, windowSize());
 	}
 
 	function match(from, to, unit){
@@ -1389,6 +1393,28 @@ if (typeof window.sap.ui !== "object") {
 			return null;
 		}
 		return checkQueries(sName, true);
+	};
+
+	/**
+	 * Returns information about the range of the range set with the given name for a particular width value.
+	 *
+	 * @param {string} sName The name of the range set. The range set must be initialized beforehand ({@link sap.ui.Device.media.initRangeSet})
+	 * @param {int} iWidth The width, based on which the range set will be determined
+	 *
+	 * @name sap.ui.Device.media.getCurrentRangeForWidth
+	 * @return {map} Information about the matching interval of the range set. The returned map has the same structure as the argument of the event handlers ({link sap.ui.Device.media.attachHandler})
+	 * @function
+	 * @public
+	 */
+	device.media.getCurrentRangeForWidth = function(sName, iWidth){
+		if (!device.media.hasRangeSet(sName)) {
+			return null;
+		}
+		return checkQueries(sName, true, function () {
+			var args = Array.prototype.slice.call(arguments);
+			args.push([iWidth, 0]);
+			return match_legacy_by_size.apply(this, args);
+		});
 	};
 
 	/**
