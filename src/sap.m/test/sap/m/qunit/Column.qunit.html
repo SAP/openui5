@@ -16,8 +16,13 @@
 <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script>
+
+	sinon.config.useFakeTimers = true;
 
 	module("popin");
 
@@ -250,40 +255,73 @@
 
 	module("events");
 
-	asyncTest("ShouldNotifyOnResize", 3, function() {
+	test("Media handler should not be attached if the table is not rendered yet", function () {
+		var mediaAttachSpy = this.spy(sap.ui.Device.media, "attachHandler"),
+				sut = new sap.m.Column({
+					minScreenWidth : "phone"
+				}),
+				parent = new sap.m.Table({
+					columns : sut
+				});
+
+		ok(!mediaAttachSpy.called, "Media handler not attached initially");
+
+		parent.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		ok(mediaAttachSpy.called, "Media handler attached when table is rendered");
+
+		mediaAttachSpy.restore();
+		parent.destroy();
+	});
+
+	test("Media handler should be attached when adding a column to a rendered table", function () {
+		var mediaAttachSpy = this.spy(sap.ui.Device.media, "attachHandler"),
+				sut = new sap.m.Column({
+					minScreenWidth : "phone"
+				}),
+				parent = new sap.m.Table({});
+
+		parent.placeAt("qunit-fixture");
+		parent.addColumn(sut);
+		sap.ui.getCore().applyChanges();
+
+		ok(mediaAttachSpy.called, "Media handler called immediately");
+
+		mediaAttachSpy.restore();
+		parent.destroy();
+	});
+
+	test("ShouldNotifyOnResize", function() {
+
+		// need to bypass the lazy require stub for spies to work
+		jQuery.sap.require("sap/m/Table");
+
 		//System under Test + Arrange
-		var cresize,
+		var tableResizeSpy = this.spy(sap.m.Table.prototype, "onColumnResize"),
 			sut = new sap.m.Column({
-				minScreenWidth : "phone",
+				minScreenWidth : "phone"
 			}),
 			parent = new sap.m.Table({
 				columns : sut
 			});
 
-		cresize = parent.onColumnResize;
+		// The table needs to be rendered for the column media object to be initialized
+		parent.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
 
-		parent.onColumnResize = function(column) {
-			cresize.call(parent, column);
-			//Assert
-			strictEqual(sut, column, "Resize was called on the parent");
-			start();
-		};
+		sut._notifyResize({from: 240}); // this is the default value for minScreenWidth="phone"
+		this.clock.tick(1);
 
-		sap.ui.base.EventProvider.prototype.attachEvent.call(
-			sut,
-			"media",
-			undefined,
-			function(args) {
-				//Assert
-				strictEqual(args.sId, "media", "the event type is media");
-				strictEqual(sut, this, "the control who fires is column");
-			},
-			sut
-		);
+		ok(!tableResizeSpy.called, "Table resize not called, if media is the same");
 
-		//Act
-		sut.setMinScreenWidth("tablet");
-		sut._notifyResize({});
+		sut._notifyResize({from: 0});
+		this.clock.tick(1);
+
+		ok(tableResizeSpy.called, "Table resize called, if media is different");
+
+		tableResizeSpy.restore();
+		parent.destroy();
 	});
 
 
