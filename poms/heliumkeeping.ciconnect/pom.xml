@@ -1,0 +1,248 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Model Version Settings
+	***************************************************************************-->
+
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<!--************************************************************************
+	* POM SECTION: Parent POM Settings
+	************************************************************************ -->
+
+	<parent>
+		<groupId>com.sap.ui5</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.5</version>
+	</parent>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Settings
+	***************************************************************************-->
+
+	<groupId>com.sap.test</groupId>
+	<artifactId>ui5-heliumkeeping-war</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>war</packaging>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Project Settings
+	***************************************************************************-->
+
+	<name>Example Project for Automated HTML5 Deployment for SAPUI5 SDK</name>
+	<description>Example Project for Automated HTML5 Deployment for SAPUI5 SDK</description>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Profile Settings
+	***************************************************************************-->
+
+    <profiles>
+
+        <!--
+        
+        DOCUMENTATION:
+
+        1.) Install the web application with Maven command:
+        
+                mvn clean install
+
+        2.) Deploy the generated WAR as HTML5 application with Maven command:
+
+                mvn process-resources -P cloud-deployment -Dcloud.account=%account% -Dcloud.username=%userid% -Dcloud.password=%userpwd% -Dcloud.gitEmail=%useremail%
+
+        3.) Open your application in the browser:
+
+                https://ui5heliumkeepingwar-%account%.dispatcher.int.sap.hana.ondemand.com
+        
+        -->
+
+        <profile>
+            <id>cloud-deployment</id>
+
+            <properties>
+                <!-- Cloud settings -->
+                <cloud.landscape>dispatcher.int.sap.hana.ondemand.com</cloud.landscape>
+                <cloud.account></cloud.account>
+                <!-- cloud.account>fiori</cloud.account-->
+                <cloud.username>P1940810187</cloud.username>
+                <cloud.password>${env.CLOUD_PASS}</cloud.password>
+                <cloud.gitEmail>suite.mobile323@gmail.com</cloud.gitEmail>
+                <cloud.gitBranch>master</cloud.gitBranch>
+                <!-- <cloud.application></cloud.application> -->
+                <cloud.applicationVersion>${project.version}-${maven.build.timestamp}</cloud.applicationVersion>
+                <cloud.applicationVersionAlias></cloud.applicationVersionAlias>
+                <cloud.skipCreate>false</cloud.skipCreate>
+                <cloud.skipCreateVersion>false</cloud.skipCreateVersion>
+                <cloud.skipActivateVersion>false</cloud.skipActivateVersion>
+            </properties>
+
+            <build>
+
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.sap.ui5.tools.maven</groupId>
+                            <artifactId>nwcloud-maven-plugin</artifactId>
+                            <version>1.0.0-SNAPSHOT</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>cloud-set-application</id>
+                                <goals>
+                                    <goal>regex-property</goal>
+                                </goals>
+                                <configuration>
+                                    <name>cloud.application</name>
+                                    <value>${project.artifactId}</value>
+                                    <regex>[.-]</regex>
+                                    <replacement></replacement>
+                                    <failIfNoMatch>false</failIfNoMatch>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>com.sap.ui5.tools.maven</groupId>
+                        <artifactId>nwcloud-maven-plugin</artifactId>
+                        <executions>
+
+                            <!-- create the application -->
+                            <execution>
+                                <id>cloud-create</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>helium-create</goal>
+                                </goals>
+                                <configuration>
+                                    <application>${cloud.application}</application>
+                                    <skip>${cloud.skipCreate}</skip>
+                                </configuration>
+                            </execution>
+
+                            <!-- prepare the workspace in the target folder -->
+                            <execution>
+                                <id>cloud-prepare</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>helium-prepare</goal>
+                                </goals>
+                                <configuration>
+                                    <application>${cloud.application}</application>
+                                    <applicationVersion>${cloud.applicationVersion}</applicationVersion>
+                                    <applicationVersionAlias>${cloud.applicationVersionAlias}</applicationVersionAlias>
+                                </configuration>
+                            </execution>
+
+                            <!-- upload the new sources into the remote Git repository -->
+                            <execution>
+                                <id>cloud-upload</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>helium-upload</goal>
+                                </goals>
+                                <configuration>
+                                    <application>${cloud.application}</application>
+                                    <applicationVersion>${cloud.applicationVersion}</applicationVersion>
+                                    <applicationVersionAlias>${cloud.applicationVersionAlias}</applicationVersionAlias>
+                                </configuration>
+                            </execution>
+
+                            <!-- create the version of the application -->
+                            <execution>
+                                <id>cloud-create-version</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>helium-create-version</goal>
+                                </goals>
+                                <configuration>
+                                    <application>${cloud.application}</application>
+                                    <applicationVersion>${cloud.applicationVersion}</applicationVersion>
+                                    <applicationVersionAlias>${cloud.applicationVersionAlias}</applicationVersionAlias>
+                                    <skip>${cloud.skipCreateVersion}</skip>
+                                </configuration>
+                            </execution>
+
+                            <!-- activate the version of the application -->
+                            <execution>
+                                <id>cloud-activate-version</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>helium-activate-version</goal>
+                                    <goal>helium-stop</goal>
+                                    <goal>helium-start</goal>
+                                </goals>
+                                <configuration>
+                                    <application>${cloud.application}</application>
+                                    <applicationVersion>${cloud.applicationVersion}</applicationVersion>
+                                    <applicationVersionAlias>${cloud.applicationVersionAlias}</applicationVersionAlias>
+                                    <skip>${cloud.skipActivateVersion}</skip>
+                                </configuration>
+                            </execution>
+
+                        </executions>
+                        <configuration>
+                            <landscape>${cloud.landscape}</landscape>
+                            <account>${cloud.account}</account>
+                            <username>${cloud.username}</username>
+                            <password>${cloud.password}</password>
+                            <gitEmail>${cloud.gitEmail}</gitEmail>
+                            <gitBranch>${cloud.gitBranch}</gitBranch>
+                            <httpsProxyHost>proxy</httpsProxyHost>
+                            <httpsProxyPort>8080</httpsProxyPort>
+                            <httpsNonProxyHosts>localhost,*sap.corp</httpsNonProxyHosts>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack-archive</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <!-- Unpack the WAR of the current project! -->
+                                        <!-- Needs to be installed in local repo or deployed to central repo before!  -->
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>${project.artifactId}</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>${project.packaging}</type>
+                                            <excludes>META-INF/**,WEB-INF/**,OSGI-INF/**</excludes>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <outputDirectory>${project.build.directory}/${cloud.application}</outputDirectory>
+                                    <overWriteReleases>false</overWriteReleases>
+                                    <overWriteSnapshots>true</overWriteSnapshots>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+
+            </build>
+
+        </profile>
+
+    </profiles>
+
+</project>
