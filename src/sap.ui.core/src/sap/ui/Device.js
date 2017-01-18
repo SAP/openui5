@@ -1125,12 +1125,13 @@ if (typeof window.sap.ui !== "object") {
 	}
 
 	function checkQueries(name, infoOnly, fnMatches){
+		fnMatches = fnMatches || device.media.matches;
 		if (_querysets[name]) {
 			var aQueries = _querysets[name].queries;
 			var info = null;
 			for (var i = 0, len = aQueries.length; i < len; i++) {
 				var q = aQueries[i];
-				if ((q != _querysets[name].currentquery || infoOnly) && (fnMatches || device.media.matches)(q.from, q.to, _querysets[name].unit)) {
+				if ((q != _querysets[name].currentquery || infoOnly) && fnMatches(q.from, q.to, _querysets[name].unit)) {
 					if (!infoOnly) {
 						_querysets[name].currentquery = q;
 					}
@@ -1234,7 +1235,7 @@ if (typeof window.sap.ui !== "object") {
 	 * @param {object}
 	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
 	 *                        handler function). If it is not specified, the handler function is called in the context of the <code>window</code>.
-	 * @param {String}
+	 * @param {string}
 	 *            sName The name of the range set to listen to. The range set must be initialized beforehand
 	 *                  ({@link sap.ui.Device.media.initRangeSet}). If no name is provided, the
 	 *                  {@link sap.ui.Device.media.RANGESETS.SAP_STANDARD default range set} is used.
@@ -1257,7 +1258,7 @@ if (typeof window.sap.ui !== "object") {
 	 *            fnFunction The handler function to detach from the event
 	 * @param {object}
 	 *            [oListener] The object that wanted to be notified when the event occurred
-	 * @param {String}
+	 * @param {string}
 	 *             sName The name of the range set to listen to. If no name is provided, the
 	 *                   {@link sap.ui.Device.media.RANGESETS.SAP_STANDARD default range set} is used.
 	 *
@@ -1295,15 +1296,15 @@ if (typeof window.sap.ui !== "object") {
 	 * The range names are optional. If they are specified a CSS class (e.g. <code>sapUiMedia-MyRangeSet-Small</code>) is also
 	 * added to the document root depending on the current active range. This can be suppressed via parameter <code>bSuppressClasses</code>.
 	 *
-	 * @param {String}
+	 * @param {string}
 	 *             sName The name of the range set to be initialized - either a {@link sap.ui.Device.media.RANGESETS predefined} or custom one.
 	 *                   The name must be a valid id and consist only of letters and numeric digits.
 	 * @param {int[]}
 	 *             [aRangeBorders] The range borders
-	 * @param {String}
+	 * @param {string}
 	 *             [sUnit] The unit which should be used for the values given in <code>aRangeBorders</code>.
 	 *                     The allowed values are <code>"px"</code> (default), <code>"em"</code> or <code>"rem"</code>
-	 * @param {String[]}
+	 * @param {string[]}
 	 *             [aRangeNames] The names of the ranges. The names must be a valid id and consist only of letters and digits. If names
 	 *             are specified, CSS classes are also added to the document root as described above. This behavior can be
 	 *             switched off explicitly by using <code>bSuppressClasses</code>. <b>Note:</b> <code>aRangeBorders</code> with <code>n</code> entries
@@ -1381,46 +1382,31 @@ if (typeof window.sap.ui !== "object") {
 	/**
 	 * Returns information about the current active range of the range set with the given name.
 	 *
-	 * @param {String} sName The name of the range set. The range set must be initialized beforehand ({@link sap.ui.Device.media.initRangeSet})
-	 *
-	 * @name sap.ui.Device.media.getCurrentRange
-	 * @return {map} Information about the current active interval of the range set. The returned map has the same structure as the argument of the event handlers ({link sap.ui.Device.media.attachHandler})
-	 * @function
-	 * @public
-	 */
-	device.media.getCurrentRange = function(sName){
-		if (!device.media.hasRangeSet(sName)) {
-			return null;
-		}
-		return checkQueries(sName, true);
-	};
-
-	/**
-	 * Returns information about the range of the range set with the given name for a particular width value.
+	 * If the optional parameter <code>iWidth</iWidth> is given, the active range will be determined for that width,
+	 * otherwise it is determined for the current window size.
 	 *
 	 * @param {string} sName The name of the range set. The range set must be initialized beforehand ({@link sap.ui.Device.media.initRangeSet})
-	 * @param {int} iWidth The width, based on which the range set will be determined
+	 * @param {int} [iWidth] An optional width, based on which the range should be determined;
+	 *             If <code>iWidth</code> is not a number, the window size will be used.
+	 * @returns {map} Information about the current active interval of the range set. The returned map has the same structure as the argument of the event handlers ({@link sap.ui.Device.media.attachHandler})
 	 *
-	 * @name sap.ui.Device.media.getCurrentRangeForWidth
-	 * @return {map} Information about the matching interval of the range set. The returned map has the same structure as the argument of the event handlers ({link sap.ui.Device.media.attachHandler})
+	 * @name sap.ui.Device.media.getCurrentRange
 	 * @function
 	 * @public
 	 */
-	device.media.getCurrentRangeForWidth = function(sName, iWidth){
+	device.media.getCurrentRange = function(sName, iWidth){
 		if (!device.media.hasRangeSet(sName)) {
 			return null;
 		}
-		return checkQueries(sName, true, function () {
-			var args = Array.prototype.slice.call(arguments);
-			args.push([iWidth, 0]);
-			return match_legacy_by_size.apply(this, args);
+		return checkQueries(sName, true, isNaN(iWidth) ? null : function(from, to, unit) {
+			return match_legacy_by_size(from, to, unit, [iWidth, 0]);
 		});
 	};
 
 	/**
 	 * Returns <code>true</code> if a range set with the given name is already initialized.
 	 *
-	 * @param {String} sName The name of the range set.
+	 * @param {string} sName The name of the range set.
 	 *
 	 * @name sap.ui.Device.media.hasRangeSet
 	 * @return {boolean} Returns <code>true</code> if a range set with the given name is already initialized
@@ -1437,7 +1423,7 @@ if (typeof window.sap.ui !== "object") {
 	 * Only custom range sets can be removed via this function. Initialized predefined range sets
 	 * ({@link sap.ui.Device.media.RANGESETS}) cannot be removed.
 	 *
-	 * @param {String} sName The name of the range set which should be removed.
+	 * @param {string} sName The name of the range set which should be removed.
 	 *
 	 * @name sap.ui.Device.media.removeRangeSet
 	 * @function
