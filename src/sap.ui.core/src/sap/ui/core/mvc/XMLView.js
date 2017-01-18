@@ -392,7 +392,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 					_xContent = jQuery.sap.loadResource(sResourceName).documentElement;
 				}
 			} else if (mSettings.viewContent) {
-				_xContent = getxContent(this, mSettings);
+				if (mSettings.viewContent.nodeType === window.Node.DOCUMENT_NODE) { // Check for XML Document
+					_xContent = mSettings.viewContent.documentElement;
+				} else {
+					_xContent = getxContent(this, mSettings);
+				}
 			} else if (mSettings.xmlNode) {
 				_xContent = mSettings.xmlNode;
 			}
