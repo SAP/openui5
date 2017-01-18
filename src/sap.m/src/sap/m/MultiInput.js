@@ -703,6 +703,15 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		if ((oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.C || oEvent.which === jQuery.sap.KeyCodes.INSERT)) {
 			this._tokenizer._copy();
 		}
+
+		// ctr/meta + x OR Shift + Delete - Cut all selected Tokens if editable
+		if (((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.X) || (oEvent.shiftKey && oEvent.which === jQuery.sap.KeyCodes.DELETE)) {
+			if (this.getEditable()) {
+				this._tokenizer._cut();
+			} else {
+				this._tokenizer._copy();
+			}
+		}
 	};
 
 	/**
