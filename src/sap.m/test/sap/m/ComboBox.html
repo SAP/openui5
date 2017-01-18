@@ -7,7 +7,7 @@
 		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.m"
+				data-sap-ui-libs="sap.m, sap.ui.layout"
 				data-sap-ui-xx-bindingSyntax="complex">
 		</script>
 		<style type="text/css">
@@ -380,7 +380,94 @@
 					"key": "YE",
 					"text": "Yemen"
 				}
-		]};
+		],
+			"testItems": [
+				{
+					"key": "1234",
+					"text": "Test"
+				},
+
+				{
+					"key": "2341",
+					"text": "1Test"
+				},
+
+				{
+					"key": "T234",
+					"text": "Sonne"
+				},
+
+				{
+					"key": "3433",
+					"text": "Wolke"
+				},
+		],
+			"addText": [
+				{
+					"key": "1234",
+					"text": "Test",
+					"addText" : "1234"
+				},
+
+				{
+					"key": "2341",
+					"text": "1Test",
+					"addText" : "2341"
+				},
+
+				{
+					"key": "T234",
+					"text": "Sonne",
+					"addText" : ""
+				},
+
+				{
+					"key": "3433",
+					"text": "Wolke",
+					"addText" : ""
+				}
+			],
+			"special": [
+				{
+					"key": "1",
+					"text": "NoMatchText",
+					"addText" : "NoMatchAddText"
+				},
+				{
+					"key": "2",
+					"text": "NoMatchText",
+					"addText" : "MatchAddText"
+				},
+				{
+					"key": "3",
+					"text": "MatchText",
+					"addText" : "NoMatchAddText"
+				},
+				{
+					"key": "4",
+					"text": "MatchText",
+					"addText" : "MatchAddText"
+				},
+				{
+					"key": "5",
+					"text": "NoMatchText",
+					"addText" : "MatchAddText"
+				},
+				{
+					"key": "6",
+					"text": "NoMatchText",
+					"addText" : "NoMatchAddText"
+				},
+				{
+					"key": "7",
+					"text": "MatchText",
+					"addText" : "NoMatchAddText"
+				}
+			],
+			"selectedKey1" : "",
+			"value1" : "",
+			"selectedKey2" : ""
+		};
 
 		oModel.setData(mData);
 		sap.ui.getCore().setModel(oModel);
@@ -390,6 +477,26 @@
 			text: "{text}",
 			additionalText: "{key}"
 		});
+
+		var oItemTemplate2 = new sap.ui.core.ListItem({
+			key: "{key}",
+			text: "{text}",
+			additionalText: "{addText}"
+		});
+
+		var fnFormatter = function (text, key) {
+			var sText = "";
+
+			if (text !== undefined) {
+				sText += text + " ";
+			}
+
+			if (key !== undefined) {
+				sText += key;
+			}
+
+			return sText;
+		};
 
 		var oComboBox = new sap.m.ComboBox({
 
@@ -415,6 +522,109 @@
 			items: {
 				path: "/items",
 				template: oItemTemplate
+			}
+		});
+
+		var oComboBoxTwoColumnSearchBoth = new sap.m.ComboBox({
+			showSecondaryValues: true,
+			filterSecondaryValues: true,
+			value: "{/value1}",
+			selectedKey: "{/selectedKey1}",
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			},
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info('Event fired: "change" the value of the input change to ' + oControlEvent.getParameter("value") + " on", this);
+				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
+			},
+
+			selectionChange: function(oControlEvent) {
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+				oSelectedItem = oSelectedItem ? oSelectedItem.getText() : oSelectedItem;
+				jQuery.sap.log.info('Event fired: "selectionChange" selected item change to ' + oSelectedItem + " on", this);
+			}
+		});
+
+		var oComboBoxTwoColumnSearchBoth2 = new sap.m.ComboBox({
+			showSecondaryValues: true,
+			filterSecondaryValues: true,
+			selectedKey: "{/selectedKey2}",
+			items: {
+				path: "/testItems",
+				template: oItemTemplate
+			},
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info('Event fired: "change" the value of the input change to ' + oControlEvent.getParameter("value") + " on", this);
+				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
+			},
+
+			selectionChange: function(oControlEvent) {
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+				oSelectedItem = oSelectedItem ? oSelectedItem.getText() : oSelectedItem;
+				jQuery.sap.log.info('Event fired: "selectionChange" selected item change to ' + oSelectedItem + " on", this);
+			}
+		});
+
+		var oComboBoxTwoColumnSearchBoth3 = new sap.m.ComboBox({
+			showSecondaryValues: true,
+			filterSecondaryValues: true,
+			items: {
+				path: "/addText",
+				template: oItemTemplate2
+			},
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info('Event fired: "change" the value of the input change to ' + oControlEvent.getParameter("value") + " on", this);
+				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
+			},
+
+			selectionChange: function(oControlEvent) {
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+				oSelectedItem = oSelectedItem ? oSelectedItem.getText() : oSelectedItem;
+				jQuery.sap.log.info('Event fired: "selectionChange" selected item change to ' + oSelectedItem + " on", this);
+			}
+		});
+
+		var oComboBoxTwoColumnSearchBothShowOne = new sap.m.ComboBox({
+			showSecondaryValues: false,
+			filterSecondaryValues: true,
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			},
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info('Event fired: "change" the value of the input change to ' + oControlEvent.getParameter("value") + " on", this);
+				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
+			},
+
+			selectionChange: function(oControlEvent) {
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+				oSelectedItem = oSelectedItem ? oSelectedItem.getText() : oSelectedItem;
+				jQuery.sap.log.info('Event fired: "selectionChange" selected item change to ' + oSelectedItem + " on", this);
+			}
+		});
+
+		var oComboBoxTwoColumnSearchBothSpecial = new sap.m.ComboBox({
+			showSecondaryValues: true,
+			filterSecondaryValues: true,
+			items: {
+				path: "/special",
+				template: oItemTemplate2
+			},
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info('Event fired: "change" the value of the input change to ' + oControlEvent.getParameter("value") + " on", this);
+				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
+			},
+
+			selectionChange: function(oControlEvent) {
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+				oSelectedItem = oSelectedItem ? oSelectedItem.getText() : oSelectedItem;
+				jQuery.sap.log.info('Event fired: "selectionChange" selected item change to ' + oSelectedItem + " on", this);
 			}
 		});
 
@@ -499,6 +709,43 @@
 
 				new sap.ui.core.HTML({ content: "<h3>Two column layout</h3>" }),
 				oComboBoxTwoColumn,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Two column layout, search in both columns</h3>" }),
+				new sap.ui.core.HTML({ content: "<h4>Show both, search in both:</h4>" }),
+				new sap.ui.layout.HorizontalLayout({
+					content: [
+						oComboBoxTwoColumnSearchBoth,
+						new sap.m.Label({text: "Selected key:"}),
+						new sap.m.Text({text: "{/selectedKey1}"}),
+						new sap.m.Label({text: "Formatted pair:"}),
+						new sap.m.Text({text: {
+							parts: [
+								{path: "/value1"},
+								{path: "/selectedKey1"}
+							],
+							formatter: fnFormatter
+						}}),
+					]
+				}),
+				new sap.ui.core.HTML({ content: "<br>" }),
+				new sap.ui.core.HTML({ content: "<h4>Show both, search in both (test scenarios with binding shown):</h4>" }),
+				new sap.ui.layout.HorizontalLayout({
+						content: [
+							oComboBoxTwoColumnSearchBoth2,
+							new sap.m.Label({text: "Selected key:"}),
+							new sap.m.Text({text: "{/selectedKey2}"}),
+						]
+				}),
+				new sap.ui.core.HTML({ content: "<br>" }),
+				new sap.ui.core.HTML({ content: "<h4>Show both, search in both, not all items have additional text:</h4>" }),
+				oComboBoxTwoColumnSearchBoth3,
+				new sap.ui.core.HTML({ content: "<br>" }),
+				new sap.ui.core.HTML({ content: "<h4>Show single column, search in both columns:</h4>" }),
+				oComboBoxTwoColumnSearchBothShowOne,
+				new sap.ui.core.HTML({ content: "<br>" }),
+				new sap.ui.core.HTML({ content: "<h4>Special test case (test with letter \"m\"):</h4>" }),
+				oComboBoxTwoColumnSearchBothSpecial,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
 				new sap.ui.core.HTML({ content: "<h3>Placeholder</h3>" }),

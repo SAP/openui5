@@ -86,6 +86,17 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 						type: "boolean",
 						group: "Misc",
 						defaultValue: false
+					},
+
+					/**
+					 * Indicates whether the filter should check in both the <code>text</code> and the <code>additionalText</code> property of the
+					 * {@link sap.ui.core.ListItem} for the suggestion.
+					 * @since 1.46
+					 */
+					filterSecondaryValues: {
+						type: "boolean",
+						group: "Misc",
+						defaultValue: false
 					}
 				},
 				associations: {
@@ -138,6 +149,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 			if (oItem !== oSelectedItem) {
 				oControl.updateDomValue(oItem.getText());
+
 				this.setSelection(oItem);
 				this.fireSelectionChange({ selectedItem: oItem });
 
@@ -330,31 +342,53 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		};
 
 		ComboBox.prototype.filterItems = function(mOptions, aItems) {
-			var sProperty = mOptions.property,
+			var aProperties = mOptions.properties,
 				sValue = mOptions.value,
 				bEmptyValue = sValue === "",
 				bMatch = false,
-				sMutator = "get" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1),
+				bTextMatch = false,
+				aMutators = [],
 				aFilteredItems = [],
 				oItem = null;
+
+			this._oFirstItemTextMatched = null;
+
+			aProperties.forEach(function(property){
+				aMutators.push("get" + property.charAt(0).toUpperCase() + property.slice(1));
+			});
 
 			aItems = aItems || this.getItems();
 
 			for (var i = 0; i < aItems.length; i++) {
-
 				oItem = aItems[i];
 
 				// the item match with the value
-				bMatch = jQuery.sap.startsWithIgnoreCase(oItem[sMutator](), sValue) || bEmptyValue;
+				bMatch = bEmptyValue;
+				for (var j = 0; j < aMutators.length; j++) {
+					if (jQuery.sap.startsWithIgnoreCase(oItem[aMutators[j]](), sValue)) {
+						bMatch = true;
+						if (aMutators[j] === "getText") {
+							bTextMatch = true;
+						}
+					}
+				}
 
 				if (bMatch) {
 					aFilteredItems.push(oItem);
+				}
+
+				if (!this._oFirstItemTextMatched && bTextMatch) {
+					this._oFirstItemTextMatched = oItem;
 				}
 
 				this._setItemVisibility(oItem, bMatch);
 			}
 
 			return aFilteredItems;
+		};
+
+		ComboBox.prototype._getFilters = function () {
+			return this.getFilterSecondaryValues() ? ["text", "additionalText"] : ["text"];
 		};
 
 		/* =========================================================== */
@@ -368,6 +402,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 			// the last selected item before opening the picker
 			this._oSelectedItemBeforeOpen = null;
+
+			// the first item with matching text property if such exists
+			this._oFirstItemTextMatched = null;
 		};
 
 		ComboBox.prototype.onBeforeRendering = function() {
@@ -378,6 +415,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		ComboBox.prototype.exit = function () {
 			ComboBoxBase.prototype.exit.apply(this, arguments);
 			this._oSelectedItemBeforeOpen = null;
+			this._oFirstItemTextMatched = null;
 		};
 
 		ComboBox.prototype.onBeforeRenderingPicker = function() {
@@ -468,21 +506,36 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 					aVisibleItems = this.getItems();
 				} else {
 					aVisibleItems = this.filterItems({
-						property: "text",
+						properties: this._getFilters(),
 						value: sValue
 					});
 				}
 
 				var bItemsVisible = !!aVisibleItems.length;
 				var oFirstVisibleItem = aVisibleItems[0]; // first item that matches the value
+				var bTextMatched = (oFirstVisibleItem && jQuery.sap.startsWithIgnoreCase(oFirstVisibleItem.getText(), sValue));
+				var bSearchBoth = this.getFilterSecondaryValues();
 
 				if (!bEmptyValue && oFirstVisibleItem && oFirstVisibleItem.getEnabled()) {
 
 					if (oControl._bDoTypeAhead) {
-						oControl.updateDomValue(oFirstVisibleItem.getText());
-					}
 
-					this.setSelection(oFirstVisibleItem);
+						if (bSearchBoth && this._oFirstItemTextMatched) {
+							oControl.updateDomValue(this._oFirstItemTextMatched.getText() + " (" + this._oFirstItemTextMatched.getAdditionalText() + ")");
+							this.setSelection(this._oFirstItemTextMatched);
+						} else if (bSearchBoth) {
+							if (bTextMatched) {
+								oControl.updateDomValue(oFirstVisibleItem.getText() + " (" + oFirstVisibleItem.getAdditionalText() + ")");
+							} else {
+								oControl.updateDomValue(oFirstVisibleItem.getAdditionalText() + " (" + oFirstVisibleItem.getText() + ")");
+							}
+							this.setSelection(oFirstVisibleItem);
+						} else {
+							oControl.updateDomValue(oFirstVisibleItem.getText());
+							this.setSelection(oFirstVisibleItem);
+						}
+
+					}
 
 					if (oSelectedItem !== this.getSelectedItem()) {
 						this.fireSelectionChange({
@@ -557,8 +610,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype.onItemPress = function(oControlEvent) {
 			var oItem = oControlEvent.getParameter("item");
-			this.close();
+
 			this.updateDomValue(oItem.getText());
+
+			this.close();
+
 			this.setProperty("value", oItem.getText(), true);
 
 			// deselect the text and move the text cursor at the endmost position
@@ -610,7 +666,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 			if (this.getSelectedItem()) {
 				this.filterItems({
-					property: "text",
+					properties: this._getFilters(),
 					value: ""
 				});
 			}
@@ -756,7 +812,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		ComboBox.prototype.onsapenter = function(oEvent) {
-			var oControl = oEvent.srcControl;
+			var oControl = oEvent.srcControl,
+				oItem = oControl.getSelectedItem();
+
+			if (oItem && this.getFilterSecondaryValues()) {
+				oControl.updateDomValue(oItem.getText());
+			}
+
 			ComboBoxBase.prototype.onsapenter.apply(oControl, arguments);
 
 			// in case of a non-editable or disabled combo box, the selection cannot be modified
@@ -995,7 +1057,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype.onsapfocusleave = function(oEvent) {
 			var bTablet, oPicker,
-				oRelatedControl, oFocusDomRef, bNotCombi;
+				oRelatedControl, oFocusDomRef, bNotCombi,
+				oControl = oEvent.srcControl,
+				oItem = oControl.getSelectedItem();
+
+			if (oItem && this.getFilterSecondaryValues()) {
+				oControl.updateDomValue(oItem.getText());
+			}
 
 			ComboBoxBase.prototype.onsapfocusleave.apply(this, arguments);
 

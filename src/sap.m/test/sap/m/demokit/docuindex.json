@@ -212,7 +212,8 @@
 		  "samples": [
 		  	"sap.m.sample.ComboBox",
 			"sap.m.sample.ComboBox2Columns",
-            "sap.m.sample.ComboBoxLazyLoading"
+            "sap.m.sample.ComboBoxLazyLoading",
+			"sap.m.sample.ComboBoxSearchBoth"
           ]
 		},
 		{
@@ -1336,6 +1337,11 @@
           "name": "Combo box - Lazy loading",
           "description": "Use this feature to defer initialization of items until the point at which the items are needed. It can improve performance, reduce memory usage and unnecessary client/server round-trips."
         },
+		{
+		  "id": "sap.m.sample.ComboBoxSearchBoth",
+		  "name": "Combo box - Search in both columns",
+		  "description": "Combo box dropdown list with search functionality which checks both columns. When you need to display additional information on your options, like e.g. keys of countries or system abbreviations, and want to search in those as well."
+		},
 		{
 		  "id": "sap.m.sample.DateRangeSelection",
 		  "name": "Date Range Selection",
