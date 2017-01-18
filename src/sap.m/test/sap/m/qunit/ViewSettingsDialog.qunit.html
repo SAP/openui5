@@ -1059,6 +1059,19 @@
 				strictEqual(this.oVSD.$().length, 0, "There is no Domref for ViewSettingsDialog");
 			});
 
+			test("Remove all filter/sort/group items ViewSettingsDialog that has no filter/sort/group items", function () {
+				//prepare
+				var oVSD = new sap.m.ViewSettingsDialog();
+
+				//act
+				oVSD.removeAllFilterItems();
+				oVSD.removeAllGroupItems();
+				oVSD.removeAllSortItems();
+
+				//assert
+				ok("Filter/Group/Sort items should be removed without throwing an exception");
+			});
+
 			module ("Sort tab only checks", {
 				setup : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog({
