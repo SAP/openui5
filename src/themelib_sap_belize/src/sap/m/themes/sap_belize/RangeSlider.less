@@ -1,6 +1,10 @@
 /* ====================================================== */
 /* CSS for sap.m.RangeSlider control's Belize theme */
 /* ====================================================== */
+
+@_sap_m_Slider_HandleHoverBackground: fade(darken(@sapUiFieldBackground, 15), 60);
+@_sap_m_Slider_HandleBorderColor: darken(@sapUiFieldBorderColor, 15);
+
 /* pressed */
 
 .sapMSliderHandleTooltip {
@@ -42,6 +46,7 @@
   font-size: 0.75rem;
 }
 
+
 /* overlap */
 .sapMSliderHandle.sapMSliderHandleOverlap {
   background-color: @sapUiFieldActiveBorderColor;
@@ -52,4 +57,9 @@
 .sapMSliderInner > .sapMSliderHandle.sapMSliderHandlePressed {
   background: fade(@sapUiFieldActiveBorderColor, 30);
   border: 0.125rem solid @sapUiFieldActiveBorderColor;
+}
+
+.sapMSliderProgress:hover ~ .sapMSliderHandle {
+  background-color: @_sap_m_Slider_HandleHoverBackground;
+  border: 0.125rem solid @_sap_m_Slider_HandleBorderColor;
 }
