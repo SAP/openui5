@@ -43,7 +43,31 @@
 		<maven.compiler.source>1.6</maven.compiler.source>
 		<maven.compiler.target>1.6</maven.compiler.target>
 
+		<!-- define a custom build timestamp format -->
+		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+
+		<!-- custom properties for version.properties -->
+		<ui5.version>${project.version}</ui5.version>
+		<ui5.buildtime>${maven.build.timestamp}</ui5.buildtime>
+		<ui5.lastchange>${ldi.lastRevision}</ui5.lastchange>
+
 	</properties>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Build Settings
+	***************************************************************************-->
+
+	<build>
+	
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+	
+	</build>
 
 
 	<!--**************************************************************************
