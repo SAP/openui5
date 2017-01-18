@@ -316,14 +316,14 @@ sap.ui.require([
 				headers : {
 					"Content-Type" : "application/json"
 				},
-				body : {"TEAM_ID": "TEAM_03"}
+				body : {"TEAM_ID" : "TEAM_03"}
 			}, {
 				method : "PATCH",
 				url : "Employees('2')",
 				headers : {
 					"Content-Type" : "application/json"
 				},
-				body : '{"TEAM_ID": "TEAM_01"}'
+				body : {"TEAM_ID" : "TEAM_01"}
 			}
 		]],
 		body : "--batch_id-0123456789012-345\r\n" +
@@ -346,7 +346,7 @@ sap.ui.require([
 		"PATCH Employees('2') HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
-		'{"TEAM_ID": "TEAM_01"}\r\n' +
+		'{"TEAM_ID":"TEAM_01"}\r\n' +
 		"--changeset_id-9876543210987-654--\r\n" +
 		"--batch_id-0123456789012-345--\r\n",
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
@@ -371,14 +371,14 @@ sap.ui.require([
 					headers : {
 						"Content-Type" : "application/json"
 					},
-					body : '{"TEAM_ID": "TEAM_03"}'
+					body : {"TEAM_ID" : "TEAM_03"}
 				}, {
 					method : "PATCH",
 					url : "Employees('2')",
 					headers : {
 						"Content-Type" : "application/json"
 					},
-					body : '{"TEAM_ID": "TEAM_01"}'
+					body : {"TEAM_ID" : "TEAM_01"}
 				}
 			],
 			{
@@ -387,7 +387,7 @@ sap.ui.require([
 				headers : {
 					"Content-Type" : "application/json"
 				},
-				body : '{"TEAM_ID": "TEAM_01"}'
+				body : {"TEAM_ID" : "TEAM_01"}
 			},
 			[
 				{
@@ -396,14 +396,14 @@ sap.ui.require([
 					headers : {
 						"Content-Type" : "application/json"
 					},
-					body : '{"TEAM_ID": "TEAM_02"}'
+					body : {"TEAM_ID" : "TEAM_02"}
 				}, {
 					method : "PATCH",
 					url : "Employees('4')",
 					headers : {
 						"Content-Type" : "application/json"
 					},
-					body : '{"TEAM_ID": "TEAM_01"}'
+					body : {"TEAM_ID" : "TEAM_01"}
 				}
 			]
 		],
@@ -427,7 +427,7 @@ sap.ui.require([
 		"PATCH Employees('1') HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
-		'{"TEAM_ID": "TEAM_03"}\r\n' +
+		'{"TEAM_ID":"TEAM_03"}\r\n' +
 		"--changeset_id-9876543210987-654\r\n" +
 		"Content-Type:application/http\r\n" +
 		"Content-Transfer-Encoding:binary\r\n" +
@@ -436,7 +436,7 @@ sap.ui.require([
 		"PATCH Employees('2') HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
-		'{"TEAM_ID": "TEAM_01"}\r\n' +
+		'{"TEAM_ID":"TEAM_01"}\r\n' +
 		"--changeset_id-9876543210987-654--\r\n" +
 		"--batch_id-0123456789012-345\r\n" +
 		"Content-Type:application/http\r\n" +
@@ -445,7 +445,7 @@ sap.ui.require([
 		"PATCH Employees('3') HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
-		'{"TEAM_ID": "TEAM_01"}\r\n' +
+		'{"TEAM_ID":"TEAM_01"}\r\n' +
 		"--batch_id-0123456789012-345\r\n" +
 		"Content-Type: multipart/mixed;boundary=changeset_id-0123456789012-912\r\n" +
 		"\r\n" +
@@ -457,7 +457,7 @@ sap.ui.require([
 		"PATCH Employees('3') HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
-		'{"TEAM_ID": "TEAM_02"}\r\n' +
+		'{"TEAM_ID":"TEAM_02"}\r\n' +
 		"--changeset_id-0123456789012-912\r\n" +
 		"Content-Type:application/http\r\n" +
 		"Content-Transfer-Encoding:binary\r\n" +
@@ -466,7 +466,7 @@ sap.ui.require([
 		"PATCH Employees('4') HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
-		'{"TEAM_ID": "TEAM_01"}\r\n' +
+		'{"TEAM_ID":"TEAM_01"}\r\n' +
 		"--changeset_id-0123456789012-912--\r\n" +
 		"--batch_id-0123456789012-345--\r\n",
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
@@ -482,14 +482,14 @@ sap.ui.require([
 				headers : {
 					"Content-Type" : "application/json"
 				},
-				body : JSON.stringify(oNewTeamBody)
+				body : oNewTeamBody
 			}, {
 				method : "POST",
 				url : "$0/TEAM_2_EMPLOYEES",
 				headers : {
 					"Content-Type" : "application/json"
 				},
-				body : JSON.stringify(oNewEmployeeBody)
+				body : oNewEmployeeBody
 			}],
 			[{
 				method : "POST",
@@ -497,35 +497,35 @@ sap.ui.require([
 				headers : {
 					"Content-Type" : "application/json"
 				},
-				body : '{\
-"Team_Id": "TEAM_05",\
-"Name": "UI2 Services",\
-"MEMBER_COUNT": 9,\
-"MANAGER_ID": "1",\
-"BudgetCurrency": "EUR",\
-"Budget": 5555\
-}'
+				body : {
+					"Team_Id" : "TEAM_05",
+					"Name" : "UI2 Services",
+					"MEMBER_COUNT" : 9,
+					"MANAGER_ID" : "1",
+					"BudgetCurrency" : "EUR",
+					"Budget" : 5555
+				}
 			}, {
 				method : "POST",
 				url : "TEAMS",
 				headers : {
 					"Content-Type" : "application/json"
 				},
-				body : '{\
-"Team_Id": "TEAM_06",\
-"Name": "UI2 Services",\
-"MEMBER_COUNT": 9,\
-"MANAGER_ID": "1",\
-"BudgetCurrency": "EUR",\
-"Budget": 5555\
-}'
+				body : {
+					"Team_Id" : "TEAM_06",
+					"Name" : "UI2 Services",
+					"MEMBER_COUNT" : 9,
+					"MANAGER_ID" : "1",
+					"BudgetCurrency" : "EUR",
+					"Budget" : 5555
+				}
 			}, {
 				method : "POST",
 				url : "$1/TEAM_2_EMPLOYEES",
 				headers : {
 					"Content-Type" : "application/json"
 				},
-				body : JSON.stringify(oNewEmployeeBody)
+				body : oNewEmployeeBody
 			}]
 		],
 		body : "--batch_id-1450426018742-911\r\n" +
@@ -561,12 +561,12 @@ sap.ui.require([
 		"POST TEAMS HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
-		'{"Team_Id": "TEAM_05",'
-		+ '"Name": "UI2 Services",'
-		+ '"MEMBER_COUNT": 9,'
-		+ '"MANAGER_ID": "1",'
-		+ '"BudgetCurrency": "EUR",'
-		+ '"Budget": 5555}\r\n' +
+		'{"Team_Id":"TEAM_05",'
+		+ '"Name":"UI2 Services",'
+		+ '"MEMBER_COUNT":9,'
+		+ '"MANAGER_ID":"1",'
+		+ '"BudgetCurrency":"EUR",'
+		+ '"Budget":5555}\r\n' +
 		"--changeset_id-1450426018742-913\r\n" +
 		"Content-Type:application/http\r\n" +
 		"Content-Transfer-Encoding:binary\r\n" +
@@ -575,12 +575,12 @@ sap.ui.require([
 		"POST TEAMS HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
-		'{"Team_Id": "TEAM_06",'
-		+ '"Name": "UI2 Services",'
-		+ '"MEMBER_COUNT": 9,'
-		+ '"MANAGER_ID": "1",'
-		+ '"BudgetCurrency": "EUR",'
-		+ '"Budget": 5555}\r\n' +
+		'{"Team_Id":"TEAM_06",'
+		+ '"Name":"UI2 Services",'
+		+ '"MEMBER_COUNT":9,'
+		+ '"MANAGER_ID":"1",'
+		+ '"BudgetCurrency":"EUR",'
+		+ '"Budget":5555}\r\n' +
 		"--changeset_id-1450426018742-913\r\n" +
 		"Content-Type:application/http\r\n" +
 		"Content-Transfer-Encoding:binary\r\n" +
@@ -597,7 +597,8 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 			QUnit.test("serializeBatchRequest: " + oFixture.testTitle, function (assert) {
 				var oBatchRequest,
-					oMock = this.mock(jQuery.sap);
+					oMock = this.mock(jQuery.sap),
+					aRequests = JSON.parse(JSON.stringify(oFixture.requests));
 
 				if (oFixture.expectedBoundaryIDs) {
 					oFixture.expectedBoundaryIDs.forEach(function (oValue) {
@@ -607,15 +608,15 @@ sap.ui.require([
 					oMock.expects("uid").returns("id-0123456789012-345");
 				}
 
-				oBatchRequest = _Batch.serializeBatchRequest(oFixture.requests);
+				oBatchRequest = _Batch.serializeBatchRequest(aRequests);
 
+				assert.deepEqual(aRequests, oFixture.requests, "input remained unchanged");
 				assert.strictEqual(oBatchRequest.body, oFixture.body);
 				assert.strictEqual(oBatchRequest.headers["Content-Type"], oFixture["Content-Type"]);
 				assert.strictEqual(oBatchRequest.headers["MIME-Version"], oFixture["MIME-Version"]);
 			});
 		}
 	);
-	// TODO do we still need the case that aRequests contains a request body as string?
 
 	//*********************************************************************************************
 	[{
@@ -627,7 +628,7 @@ sap.ui.require([
 				headers : {
 					"Content-Type" : "application/json"
 				},
-				body : '{"TEAM_ID": "TEAM_03"}'
+				body : '{"TEAM_ID" : "TEAM_03"}'
 			},
 			[
 				{
@@ -636,7 +637,7 @@ sap.ui.require([
 					headers : {
 						"Content-Type" : "application/json"
 					},
-					body : '{"TEAM_ID": "TEAM_01"}'
+					body : '{"TEAM_ID" : "TEAM_01"}'
 				}
 			]]
 		],
@@ -650,14 +651,14 @@ sap.ui.require([
 				headers : {
 					"Content-Type" : "application/json"
 				},
-				body : '{"TEAM_ID": "TEAM_03"}'
+				body : '{"TEAM_ID" : "TEAM_03"}'
 			}, {
 				method : "GET",
 				url : "Employees('2')",
 				headers : {
 					"Content-Type" : "application/json"
 				},
-				body : '{"TEAM_ID": "TEAM_01"}'
+				body : '{"TEAM_ID" : "TEAM_01"}'
 			}]
 		],
 		errorMessage : "Invalid HTTP request method: GET. Change set must contain only POST, " +
@@ -1204,7 +1205,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				// with initial values for all properties as gateway strictly checks now that all
 				// properties are available
 				// -> we may reduce properties again if back-end provides defaulting
-				body : JSON.stringify({
+				body : {
 					"ID" : "7",
 					"Name" : "Egon",
 					"AGE" : 17,
@@ -1227,7 +1228,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"YEARLY_BONUS_AMOUNT" : 0.00,
 						"BONUS_CURR" : ""
 					}
-				})
+				}
 			}],
 			expectedResponses : [{
 				status : 200,
@@ -1301,14 +1302,14 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"Content-Type" : "application/json",
 						"If-Match" : "W/\"19770724000000.0000000\""
 					},
-					body : '{"TEAM_ID": "TEAM_03"}'
+					body : {"TEAM_ID" : "TEAM_03"}
 				}, {
 					method : "POST",
 					url : "Unknown",
 					headers : {
 						"Content-Type" : "application/json"
 					},
-					body : '{"bar": "bar"}'
+					body : {"bar" : "bar"}
 				}
 			],
 			{
@@ -1349,14 +1350,14 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 							"Content-Type" : "application/json",
 							"If-Match" : "W/\"19770724000000.0000000\""
 						},
-						body : '{"TEAM_ID": "TEAM_03"}'
+						body : {"TEAM_ID" : "TEAM_03"}
 					}, {
 						method : "POST",
 						url : "Unknown",
 						headers : {
 							"Content-Type" : "application/json"
 						},
-						body : '{"bar": "bar"}'
+						body : {"bar" : "bar"}
 					}
 				],
 				{
@@ -1434,7 +1435,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"Content-Type" : "application/json",
 						"If-Match" : "W/\"19770724000000.0000000\""
 					},
-					body : '{"TEAM_ID": "TEAM_03"}'
+					body : {"TEAM_ID" : "TEAM_03"}
 				}, {
 					method : "PATCH",
 					url : "EMPLOYEES('2')",
@@ -1442,7 +1443,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"Content-Type" : "application/json",
 						"If-Match" : "W/\"20030701000000.0000000\""
 					},
-					body : '{"TEAM_ID": "TEAM_01"}'
+					body : {"TEAM_ID" : "TEAM_01"}
 				}
 			],
 			{
@@ -1452,7 +1453,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					"Content-Type" : "application/json",
 					"If-Match" : "W/\"20010201000000.0000000\""
 				},
-				body : '{"TEAM_ID": "TEAM_01"}'
+				body : {"TEAM_ID" : "TEAM_01"}
 			},
 			[
 				{
@@ -1462,7 +1463,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"Content-Type" : "application/json",
 						"If-Match" : "W/\"19770724000000.0000000\""
 					},
-					body : '{"TEAM_ID": "TEAM_02"}'
+					body : {"TEAM_ID" : "TEAM_02"}
 				}, {
 					method : "PATCH",
 					url : "EMPLOYEES('4')",
@@ -1470,7 +1471,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"Content-Type" : "application/json",
 						"If-Match" : "W/\"20040912000000.0000000\""
 					},
-					body : '{"TEAM_ID": "TEAM_01"}'
+					body : {"TEAM_ID" : "TEAM_01"}
 				}
 			]],
 			expectedResponses : [{
