@@ -284,30 +284,18 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 
 			return oControl;
 		},
-		isPhoneScenario: function () {
+		isPhoneScenario: function (oRange) {
 			if (sap.ui.Device.system.phone) {
 				return true;
 			}
 
-			return sap.uxap.Utilities._isCurrentMediaSize("Phone");
+			return sap.uxap.Utilities._isCurrentMediaSize("Phone", oRange);
 		},
-		isTabletScenario: function () {
-
-			if (!sap.ui.Device.system.desktop && sap.ui.Device.system.tablet) {
-				return true;
-			}
-
-			return sap.uxap.Utilities._isCurrentMediaSize("Tablet");
+		isTabletScenario: function (oRange) {
+			return sap.uxap.Utilities._isCurrentMediaSize("Tablet", oRange);
 		},
-		_isCurrentMediaSize: function (sMedia) {
-			if (sap.ui.Device.media.hasRangeSet(sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED)) {
-				var oRange = sap.ui.Device.media.getCurrentRange(sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED);
-				if (oRange && oRange.name === sMedia) {
-					return true;
-				}
-			}
-
-			return jQuery("html").hasClass("sapUiMedia-Std-" + sMedia);
+		_isCurrentMediaSize: function (sMedia, oRange) {
+			return oRange && oRange.name === sMedia;
 		}
 	};
 

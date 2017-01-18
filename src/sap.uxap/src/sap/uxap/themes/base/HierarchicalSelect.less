@@ -67,7 +67,9 @@
 
 /* OVERVIEW BUTTON */
 .sapUiMedia-Std-Tablet .sapUxAPHierarchicalSelect.sapMSltIconOnly,
-.sapUiMedia-Std-Desktop .sapUxAPHierarchicalSelect.sapMSltIconOnly {
+.sapUiMedia-Std-Desktop .sapUxAPHierarchicalSelect.sapMSltIconOnly,
+html .sapUiContainer-Medium .sapUxAPHierarchicalSelect.sapMSltIconOnly,
+html .sapUiContainer-Wide .sapUxAPHierarchicalSelect.sapMSltIconOnly {
 	position: absolute;
 	right: 0;
 	top: 0;
@@ -109,7 +111,7 @@
 }
 
 /* styling needed to achieve underline of the select label on phone */
-.sapUiMedia-Std-Phone, .sap-phone {
+.sapUiMedia-Std-Phone, .sap-phone, html .sapUiContainer-Narrow {
 	.sapUxAPHierarchicalSelect .sapMSltLabel {
 		position: relative;
 		top: 0.05rem;

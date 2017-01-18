@@ -95,16 +95,15 @@ sap.ui.define([
 	ObjectPageSection.prototype.init = function () {
 		ObjectPageSectionBase.prototype.init.call(this);
 		this._sContainerSelector = ".sapUxAPObjectPageSectionContainer";
-		Device.media.attachHandler(this._updateImportance, this, ObjectPageSection.MEDIA_RANGE);
 	};
 
 	ObjectPageSection.prototype.exit = function () {
-		Device.media.detachHandler(this._updateImportance, this, ObjectPageSection.MEDIA_RANGE);
+		this._detachMediaContainerWidthChange(this._updateImportance, this);
 	};
 
 	ObjectPageSection.prototype._getImportanceLevelToHide = function (oCurrentMedia) {
 		var oObjectPage = this._getObjectPageLayout(),
-			oMedia = oCurrentMedia || Device.media.getCurrentRange(ObjectPageSection.MEDIA_RANGE),
+			oMedia = oCurrentMedia || this._getCurrentMediaContainerRange(),
 			bShowOnlyHighImportance = oObjectPage && oObjectPage.getShowOnlyHighImportance();
 
 		return this._determineTheLowestLevelOfImportanceToShow(oMedia.name, bShowOnlyHighImportance);
@@ -156,7 +155,13 @@ sap.ui.define([
 			this.setAggregation(sAriaLabeledBy, this._getAriaLabelledBy());
 		}
 
+		this._detachMediaContainerWidthChange(this._updateImportance, this);
+
 		this._updateImportance();
+	};
+
+	ObjectPageSection.prototype.onAfterRendering = function () {
+		this._attachMediaContainerWidthChange(this._updateImportance, this);
 	};
 
 	/**
