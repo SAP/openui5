@@ -12,7 +12,7 @@
 		growingTriggerText="Previous Products"
 		noDataText="No products available"
 		items="{
-			path: '/ProductSet',
+			path: '/ProductCollection',
 			sorter: {
 				path: 'Name',
 				descending: false,
