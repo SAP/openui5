@@ -30,6 +30,12 @@ sap.ui.define([],
 				actions : {
 					move : "moveControls"
 				}
+			},
+			vScroll : {
+				ignore: false,
+				domRef : function(oElement) {
+					return oElement.$("vertSB-sb").get(0);
+				}
 			}
 		},
 
