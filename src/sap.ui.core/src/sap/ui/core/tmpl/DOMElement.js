@@ -122,7 +122,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		var sTag = this.getTag().toLowerCase();
 		if (sTag === "input") {
 			var sValue = this.$().val();
-			jQuery.each(this.getAttributes(), function(iIndex, oAttribute) {
+			this.getAttributes().forEach(function(oAttribute) {
 				if (oAttribute.getName().toLowerCase() === "value") {
 					oAttribute.setValue(sValue);
 				}
@@ -159,7 +159,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		// lookup the attribute (required for the setter and the getter)
 		var aAttributes = this.getAttributes(),
 			oAttribute;
-		jQuery.each(aAttributes, function(iIndex, oValue) {
+		aAttributes.forEach(function(oValue) {
 			var sName = oValue.getName();
 			if (sName.toLowerCase() === sKey) {
 				oAttribute = oValue;

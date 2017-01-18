@@ -189,7 +189,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 					oValue = '(null)';
 				} else if ( oValue  instanceof Element ) {
 					sColor = 'color:#a5a5a5;';
-					if (jQuery.isArray(oValue)) {
+					if (Array.isArray(oValue)) {
 						// array type (copied from primitive values above and modified the value to string / comma separated)
 						oValue = oValue.join(", ");
 					} else {

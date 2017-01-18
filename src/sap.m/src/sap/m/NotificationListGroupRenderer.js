@@ -40,6 +40,7 @@ sap.ui.define([], function () {
 		if (oControl.getVisible()) {
 			var visibleItemsCount = oControl._getVisibleItemsCount();
 			var _bShowGroupHdrFooter = oControl.getShowEmptyGroup() || (visibleItemsCount > 0);
+
 			oRm.write('<li');
 			oRm.addClass(classNameItem);
 			oRm.addClass(classNameBase);
@@ -61,14 +62,16 @@ sap.ui.define([], function () {
 			oRm.writeControlData(oControl);
 			oRm.writeAttribute('tabindex', '0');
 			oRm.writeAccessibilityState(oControl, {
-				labelledby : oControl._getHeaderTitle().getId()
+				labelledby : oControl._ariaLabbeledByIds
 			});
 			oRm.write('>');
+
 			if (_bShowGroupHdrFooter) {
 				this.renderHeader(oRm, oControl);
 				this.renderSubHeader(oRm, oControl);
 				this.renderBody(oRm, oControl);
 			}
+
 			oRm.write('</li>');
 		} else {
 			this.renderInvisibleItem(oRm, oControl);
@@ -94,6 +97,7 @@ sap.ui.define([], function () {
 		oRm.writeClasses();
 		oRm.write('>');
 
+		this.renderInvisibleInfoText(oRm, oControl);
 		this.renderPriorityArea(oRm, oControl);
 		this.renderCloseButton(oRm, oControl);
 		this.renderTitle(oRm, oControl);
@@ -162,6 +166,10 @@ sap.ui.define([], function () {
 		oRm.write('</div></div>');
 	};
 
+	NotificationListGroupRenderer.renderInvisibleInfoText = function (oRm, oControl) {
+		oRm.renderControl(oControl.getAggregation('_ariaDetailsText'));
+	};
+
 	/**
 	 * Renders the name of the author of the notification group.
 	 *
@@ -186,8 +194,6 @@ sap.ui.define([], function () {
 	NotificationListGroupRenderer.renderSubHeader = function (oRm, oControl) {
 		/** @type {sap.m.Button[]} */
 		var buttons = oControl.getButtons();
-
-		//oRm.write('<div class=' + classNameFooter + '>');
 
 		oRm.write('<div');
 		oRm.addClass(classNameSubHeader);

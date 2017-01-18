@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './NotificationListBase'],
-	function (jQuery, library, Control, NotificationListBase ) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './NotificationListBase', 'sap/ui/core/InvisibleText', './ListItemBase'],
+	function (jQuery, library, Control, NotificationListBase, InvisibleText, ListItemBase) {
 
 	'use strict';
 
@@ -51,13 +51,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 				 */
 				enableCollapseButtonWhenEmpty: {type: 'boolean', group: 'Behavior', defaultValue: false}
 			},
-			defaultAggregation : "items",
+			defaultAggregation : 'items',
 			aggregations: {
 
 				/**
 				 * The NotificationListItems inside the group.
 				 */
-				items: {type: 'sap.m.NotificationListItem', multiple: true, singularName: 'item'}
+				items: {type: 'sap.m.NotificationListItem', multiple: true, singularName: 'item'},
+
+				/**
+				 * The details of the NotificationListGroup that will be used to implement the ARIA specification
+				 */
+				_ariaDetailsText: {type: 'sap.ui.core.InvisibleText', multiple: false, visibility: 'hidden'}
 			},
 			events: {
 				/**
@@ -69,7 +74,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 						/**
 						 * Indicates exact collapse direction
 						 */
-						collapsed: {type: "boolean"}
+						collapsed: {type: 'boolean'}
 					}
 				}
 			}
@@ -95,7 +100,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 			}.bind(this)
 		});
 
-		this.setAggregation("_closeButton", _closeButton, true);
+		this.setAggregation('_closeButton', _closeButton, true);
 
 		/**
 		 * @type {sap.m.Button}
@@ -108,8 +113,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 			}.bind(this)
 		});
 
-		this.setAggregation("_collapseButton", _collapseButton, true);
+		this.setAggregation('_collapseButton', _collapseButton, true);
 		this._maxNumberReached = false;
+		this._ariaLabbeledByIds = '';
+
+		this.setAggregation('_ariaDetailsText', new InvisibleText());
+
+		/**
+		 * Resource bundle used for translation
+		 * @private
+		 */
+		this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 	};
 
 	//================================================================================
@@ -151,9 +165,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 
 	NotificationListGroup.prototype.getUnread = function () {
 		/** @type {sap.m.NotificationListItem[]} */
-		var notifications = this.getAggregation('items');
+		var notifications = this.getItems();
 
-		if (notifications) {
+		if (notifications.length) {
 			return notifications.some(function (item) {
 				return item.getUnread();
 			});
@@ -169,19 +183,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		/** @type {sap.m.NotificationListItem[]} */
 		var notifications = this.getItems();
 		var notificationsCount = notifications.length;
-		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
-		var expandText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_EXPAND');
-		var collapseText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_COLLAPSE');
-		var collapseButtonText = this.getCollapsed() ? expandText : collapseText;
 		var collapseButton = this.getAggregation('_collapseButton');
+
 		this._maxNumberOfNotifications = sap.ui.Device.system.desktop ? 400 : 100;
-		this._maxNumberOfNotificationsTitle = resourceBundle.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_TITLE', notificationsCount - this._maxNumberOfNotifications);
-		this._maxNumberOfNotificationsBody = resourceBundle.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_BODY');
-
-		collapseButton.setText(collapseButtonText, true);
 		collapseButton.setEnabled(this._getCollapseButtonEnabled(), true);
-
 		this._maxNumberReached = notificationsCount > this._maxNumberOfNotifications;
+
+		notifications.forEach(function (item) {
+			item.addEventDelegate({onfocusin: this._notificationFocusHandler}, this);
+			item.addEventDelegate({onkeydown: this._notificationNavigationHandler}, this);
+		}.bind(this));
+
+		this._updateAccessibilityInfo();
+		this._updateCollapseButtonText(this.getCollapsed());
+
+		this._maxNumberOfNotificationsTitle = this._resourceBundle.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_TITLE', notificationsCount - this._maxNumberOfNotifications);
+		this._maxNumberOfNotificationsBody = this._resourceBundle.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_BODY');
 	};
 
 	NotificationListGroup.prototype.clone = function () {
@@ -233,11 +250,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 	NotificationListGroup.prototype._toggleCollapsed = function () {
 		/** @type {boolean} */
 		var newCollapsedState = !this.getCollapsed();
-		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
-		var expandText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_EXPAND');
-		var collapseText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_COLLAPSE');
-
-		this.getAggregation('_collapseButton').setText(newCollapsedState ? expandText : collapseText, true);
+		this._updateCollapseButtonText(newCollapsedState);
 
 		this.$().toggleClass('sapMNLG-Collapsed', newCollapsedState);
 		this.$().toggleClass('sapMNLG-NoNotifications', this._getVisibleItemsCount() <= 0);
@@ -273,6 +286,98 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		}
 
 		return this.getEnableCollapseButtonWhenEmpty();
+	};
+
+	/**
+	 * Focus handles for the NotificationListGroup's items
+	 * @param {jQuery.Event} event The passed event object
+	 * @private
+	 */
+	NotificationListGroup.prototype._notificationFocusHandler = function (event) {
+		ListItemBase.prototype.onfocusin.call(this, event);
+		var targetControl = event.srcControl;
+
+		if (targetControl.getMetadata().getName() != 'sap.m.NotificationListItem') {
+			return;
+		}
+
+		var notificationGroup = targetControl.getParent();
+		var groupIndex = notificationGroup.indexOfItem(targetControl);
+		var targetDomRef = targetControl.getDomRef();
+
+		targetDomRef.setAttribute('aria-posinset', groupIndex + 1);
+		targetDomRef.setAttribute('aria-setsize', notificationGroup.getItems().length);
+	};
+
+	/**
+	 * Event handler for keypressed
+	 * @param {jQuery.Event} event The passed event object
+	 * @private
+	 */
+	NotificationListGroup.prototype._notificationNavigationHandler = function (event) {
+		ListItemBase.prototype.onkeydown.call(this, event);
+		var targetControl = event.srcControl;
+
+		if (targetControl.getMetadata().getName() != 'sap.m.NotificationListItem') {
+			return;
+		}
+
+		var notificationGroup = targetControl.getParent();
+		var groupIndex = notificationGroup.indexOfItem(targetControl);
+
+		switch (event.which) {
+			case jQuery.sap.KeyCodes.ARROW_UP:
+				if (groupIndex == 0) {
+					return;
+				}
+
+				var previousIndex = groupIndex - 1;
+				notificationGroup.getItems()[previousIndex].focus();
+				break;
+			case jQuery.sap.KeyCodes.ARROW_DOWN:
+				var nextIndex = groupIndex + 1;
+				if (nextIndex == notificationGroup.getItems().length) {
+					return;
+				}
+
+				notificationGroup.getItems()[nextIndex].focus();
+				break;
+			default:
+				return;
+		}
+	};
+
+	/**
+	 * Updates all the text needed for accessibility
+	 * @private
+	 */
+	NotificationListGroup.prototype._updateAccessibilityInfo = function() {
+		var authorName = this.getAuthorName();
+		var infoText = this._resourceBundle.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY', [this.getDatetime(), this.getPriority()]);
+		var unreadText =  this.getUnread() ? this._resourceBundle.getText('NOTIFICATION_LIST_GROUP_UNREAD') : this._resourceBundle.getText('NOTIFICATION_LIST_GROUP_READ');
+		var ariaText = '';
+		var ariaDetailsText = this.getAggregation('_ariaDetailsText');
+
+		if (authorName) {
+			ariaText += this._resourceBundle.getText('NOTIFICATION_LIST_ITEM_CREATED_BY') + ' ' + authorName + ' ';
+		}
+
+		ariaText += infoText + ' ' + unreadText;
+
+		ariaDetailsText.setText(ariaText);
+		this._ariaLabbeledByIds = this._getHeaderTitle().getId() + ' ' + ariaDetailsText.getId();
+	};
+
+	/**
+	 * Updates the Collapse/Expand text according to the new passed state
+	 * @param {boolean} collapsed The new collapsed state
+	 * @private
+	 */
+	NotificationListGroup.prototype._updateCollapseButtonText = function(collapsed) {
+		var collapseButtonText = collapsed ? this._resourceBundle.getText('NOTIFICATION_LIST_GROUP_EXPAND') :
+			this._resourceBundle.getText('NOTIFICATION_LIST_GROUP_COLLAPSE');
+
+		this.getAggregation('_collapseButton').setText(collapseButtonText, true);
 	};
 
 	/**

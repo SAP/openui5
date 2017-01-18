@@ -33,6 +33,7 @@
 				refresh="onRefresh" />
 			<!-- This list shows the search results -->
 			<List
+				visible="false"
 				id="productList"
 				mode="{device>/listMode}"
 				select="onProductListSelect"

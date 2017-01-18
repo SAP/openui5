@@ -2,19 +2,13 @@
 	controllerName="sap.ui.demo.cart.controller.NotFound"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
-	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns="sap.m">
-	<!--  controllerName="views.notFound"-->
-	<Page
-		title="Not Found"
-		showNavButton="{device>/isPhone}"
-		navButtonPress="onNavBack"
-		enableScrolling="false"
-		class="titlesSpace" >
+	<Page title="{i18n>CATEGORY_NO_DATA}">
 		<content>
-			<core:HTML
-				id="msgHtml"
-				sanitizeContent="true" />
+			<MessagePage
+					showHeader="false"
+					text="{i18n>CATEGORY_NO_DATA}"
+					description=""/>
 		</content>
 	</Page>
 </mvc:View>

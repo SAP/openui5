@@ -26,7 +26,7 @@ sap.ui.define(['./MockServer','sap/ui/core/mvc/Controller','sap/ui/model/odata/O
 			});
 
 			// create and set ODATA Model
-			this.oProductModel = new ODataModel("/ProductSet/", true);
+			this.oProductModel = new ODataModel("/mockserver", true);
 			this.getView().setModel(this.oProductModel);
 		},
 

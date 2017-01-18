@@ -30,6 +30,7 @@
 				<lib name="ace" displayName="Ace (Ajax.org Cloud9 Editor)" homepage="https://ace.c9.io/">
 					<license url="https://github.com/ajaxorg/ace/blob/master/LICENSE" type="BSD License" file="js/ace/LICENSE.txt" />
 				</lib>
+		</thirdparty>
 		<!-- Demokit content -->
 		<documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
 				indexUrl="../../../../test-resources/sap/ui/codeeditor/demokit/docuindex.json"

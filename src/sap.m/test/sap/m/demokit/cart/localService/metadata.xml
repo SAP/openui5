@@ -11,9 +11,6 @@
 				<Key>
 					<PropertyRef Name="ProductId" />
 				</Key>
-				<Property Name="CategoryName" Type="Edm.String" Nullable="false"
-					MaxLength="255" sap:label="Cantegroy name" sap:creatable="false"
-					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
 				<Property Name="ProductId" Type="Edm.String" Nullable="false"
 					MaxLength="10" sap:label="Product ID" sap:creatable="false"
 					sap:updatable="false" />
@@ -26,18 +23,8 @@
 				<Property Name="ShortDescription" Type="Edm.String"
 					Nullable="false" MaxLength="255" sap:label="ShortDescription"
 					sap:creatable="false" sap:updatable="false" sap:sortable="false" />
-				<Property Name="LongDescription" Type="Edm.String"
-					Nullable="false" MaxLength="255" sap:label="LongDescription"
-					sap:creatable="false" sap:updatable="false" sap:sortable="false"
-					sap:filterable="false" />
-				<Property Name="SupplierId" Type="Edm.String" Nullable="false"
-					MaxLength="10" sap:label="Business Partner ID" sap:creatable="false"
-					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
 				<Property Name="SupplierName" Type="Edm.String" Nullable="false"
 					MaxLength="80" sap:label="Company Name" sap:creatable="false"
-					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
-				<Property Name="QuantityUnit" Type="Edm.String" Nullable="false"
-					MaxLength="3" sap:label="Quantity Unit" sap:creatable="false"
 					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
 				<Property Name="Weight" Type="Edm.Decimal" Nullable="false"
 					Precision="13" Scale="3" sap:label="Weight" sap:creatable="false"
@@ -84,12 +71,6 @@
 				<Property Name="CategoryName" Type="Edm.String" Nullable="false"
 					sap:creatable="false" sap:updatable="false" sap:sortable="false"
 					sap:filterable="false" />
-				<Property Name="MainCategory" Type="Edm.String" Nullable="false"
-					MaxLength="40" sap:creatable="false" sap:updatable="false"
-					sap:sortable="false" sap:filterable="false" />
-				<Property Name="MainCategoryName" Type="Edm.String"
-					Nullable="false" sap:creatable="false" sap:updatable="false"
-					sap:sortable="false" sap:filterable="false" />
 				<Property Name="NumberOfProducts" Type="Edm.Int32"
 					Nullable="false" sap:creatable="false" sap:updatable="false"
 					sap:sortable="false" sap:filterable="false" />

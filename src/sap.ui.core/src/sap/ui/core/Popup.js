@@ -1777,7 +1777,7 @@ sap.ui.define([
 	 */
 	Popup.prototype.setAutoCloseAreas = function(aAutoCloseAreas) {
 		//TODO: also handle the case when 'aAutoCloseAreas' is set with null
-		jQuery.sap.assert(jQuery.isArray(aAutoCloseAreas), "aAutoCloseAreas must be an array which contains either sap.ui.core.Element, DOM Element or an ID");
+		jQuery.sap.assert(Array.isArray(aAutoCloseAreas), "aAutoCloseAreas must be an array which contains either sap.ui.core.Element, DOM Element or an ID");
 
 		this._aAutoCloseAreas = [];
 
@@ -1820,7 +1820,7 @@ sap.ui.define([
 			oAreaRef.id = sId;
 			this._aAutoCloseAreas.push(oAreaRef);
 
-			if (jQuery.inArray(sId, this.getChildPopups()) === -1) {
+			if (this.getChildPopups().indexOf(sId) === -1) {
 				this.addChildPopup(sId);
 			}
 		}
@@ -2164,7 +2164,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._addFocusableArea = function(sChannel, sEvent, oEventData) {
-		if (jQuery.inArray(oEventData.id, this.getChildPopups()) === -1) {
+		if ( this.getChildPopups().indexOf(oEventData.id) === -1) {
 			this.addChildPopup(oEventData.id);
 		}
 	};

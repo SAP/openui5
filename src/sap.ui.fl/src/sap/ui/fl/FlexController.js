@@ -553,13 +553,24 @@ sap.ui.define([
 	 */
 	FlexController.prototype.discardChanges = function (aChanges, bDiscardPersonalization) {
 		var sActiveLayer = Utils.getCurrentLayer(!!bDiscardPersonalization);
+		var iIndex = 0;
+		var iLength;
+		var oChange;
 
-		aChanges.forEach(function (oChange) {
-			// only discard changes of the currently active layer (CUSTOMER vs PARTNER vs VENDOR)
+		iLength = aChanges.length;
+		while (iIndex < aChanges.length) {
+			oChange = aChanges[iIndex];
 			if (oChange && oChange.getLayer && oChange.getLayer() === sActiveLayer) {
 				this._oChangePersistence.deleteChange(oChange);
 			}
-		}.bind(this));
+			//the array may change during this loop, so if the length is the same, the index must increase
+			//otherwise the same index should be used (same index but different element in the array)
+			if (iLength === aChanges.length) {
+				iIndex++;
+			} else {
+				iLength = aChanges.length;
+			}
+		}
 
 		return this._oChangePersistence.saveDirtyChanges();
 	};

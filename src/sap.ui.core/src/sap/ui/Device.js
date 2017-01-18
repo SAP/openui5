@@ -438,7 +438,8 @@ if (typeof window.sap.ui !== "object") {
 	 * @public
 	 */
 	/**
-	 * If this flag is set to <code>true</code>, the mobile variant of the browser is used.
+	 * If this flag is set to <code>true</code>, the mobile variant of the browser is used or
+	 * a tablet or phone device is detected.
 	 *
 	 * <b>Note:</b> This information might not be available for all browsers.
 	 *
@@ -1467,6 +1468,16 @@ if (typeof window.sap.ui !== "object") {
 	 * If this flag is set to <code>true</code>, the device is recognized as a tablet.
 	 *
 	 * Furthermore, a CSS class <code>sap-tablet</code> is added to the document root element.
+	 *
+	 * <b>Note:</b> This flag is also true for some browsers on desktop devices running on Windows 8 or higher. Also see the
+	 * documentation for {@link sap.ui.Device.system.combi} devices.
+	 * You can use the following logic to ensure that the current device is a tablet device:
+	 *
+	 * <pre>
+	 * if(sap.ui.Device.system.tablet && !sap.ui.Device.system.desktop){
+	 *	...tablet related commands...
+	 * }
+	 * </pre>
 	 *
 	 * @name sap.ui.Device.system.tablet
 	 * @type boolean

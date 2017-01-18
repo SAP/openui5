@@ -6,6 +6,17 @@
 /* Carousel controls: HUD */
 .sapMCrslHud a {
 	opacity: 0.5;
+	box-shadow: @sapUiShadowLevel1;
+}
+
+.sapMCrsl .sapMCrslHud a:hover,
+.sapMCrsl .sapMCrslHud a:focus {
+	box-shadow: @sapUiShadowLevel1;
+	border: 1px solid @sapUiButtonBorderColor;
+}
+
+.sapMCrsl .sapMCrslHud a:active {
+	box-shadow: @sapUiShadowLevel1;
 }
 
 .sapMCrsl:focus {
@@ -37,11 +48,6 @@
 html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrsl:focus::after,
 html[data-sap-ui-browser^='ed'].sap-desktop .sapMCrsl:focus::after {
 	border: 1px dashed @sapUiContentContrastFocusColor;
-}
-
-
-.sapMCrsl:hover .sapMCrslHud a {
-	display: block;
 }
 
 .sapMCrslPrev:focus,

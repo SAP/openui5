@@ -280,7 +280,7 @@ sap.ui.define(['jquery.sap.global', './Control', './RenderManager'],
 		return Control.prototype.setTooltip.apply(this, arguments);
 	};
 
-	jQuery.each("hasStyleClass addStyleClass removeStyleClass toggleStyleClass".split(" "), function(method) {
+	"hasStyleClass addStyleClass removeStyleClass toggleStyleClass".split(" ").forEach(function(method) {
 		HTML.prototype[method] = function() {
 			jQuery.sap.log.warning("The sap.ui.core.HTML control doesn't support custom style classes. Manage custom CSS classes in the HTML content instead.");
 			return Control.prototype[method].apply(this, arguments);

@@ -200,7 +200,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 		//see sap.ui.base.EventProvider.prototype.fireEvent
 		var aEventListeners = EventProvider.getEventList(oChannel)[sEventId];
-		if (aEventListeners && jQuery.isArray(aEventListeners)) {
+		if (Array.isArray(aEventListeners)) {
 			// this ensures no 'concurrent modification exception' occurs (e.g. an event listener deregisters itself).
 			aEventListeners = aEventListeners.slice();
 			var oInfo;

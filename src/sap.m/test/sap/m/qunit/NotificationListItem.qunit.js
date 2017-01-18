@@ -835,20 +835,47 @@
 	QUnit.test('Checking the labelledby attribute', function(assert) {
 	    // arrange
 		var notificationDomRef = this.NotificationListItem.getDomRef();
+		var descibedByControls = this.NotificationListItem._getHeaderTitle().getId() + ' ' +
+			this.NotificationListItem._getDescriptionText().getId() + ' ' + this.NotificationListItem._ariaDetailsText.getId();
 		var labelledby = notificationDomRef.getAttribute('aria-labelledby');
 
 	    // assert
-	    assert.strictEqual(labelledby, this.NotificationListItem._getHeaderTitle().getId(), 'The labbeledby attribute should point to the title of the control');
+	    assert.strictEqual(labelledby, descibedByControls, 'The labbeledby attribute should point to the detailed invisible text, describing the control');
 	});
 
-	QUnit.test('Checking the describedby attribute', function(assert) {
+	QUnit.test('Checking the labelledby info text is set correctly', function(assert) {
 		// arrange
-		var notificationDomRef = this.NotificationListItem.getDomRef();
-		var describedby = notificationDomRef.getAttribute('aria-describedby');
-		var describedByString = this.NotificationListItem._getDescriptionText().getId() + ' ' +
-			this.NotificationListItem._ariaDetailsText.getId();
+		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+		var unreadText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_UNREAD');
+		var createdBy = resourceBundle.getText('NOTIFICATION_LIST_ITEM_CREATED_BY') + ' ' + 'John Smith';
+		var dueAndPriorityString = resourceBundle.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY',
+			['5 minutes', sap.ui.core.Priority.High]);
+		var infoText = unreadText + ' ' + createdBy + ' ' + dueAndPriorityString;
+
+		this.NotificationListItem.setUnread(true);
+		this.NotificationListItem.setPriority(sap.ui.core.Priority.High);
+		this.NotificationListItem.setAuthorName('John Smith');
+		this.NotificationListItem.setDatetime('5 minutes');
 
 		// assert
-		assert.strictEqual(describedby, describedByString, 'The describedby attribute should point to the description and hidden text of the control');
+		assert.strictEqual(this.NotificationListItem._ariaDetailsText.getText(), infoText,
+			'The info text should be set correctly with unread status, author, due date and priority');
+	});
+
+	QUnit.test('Checking the labelledby info text is set correctly without author name', function(assert) {
+		// arrange
+		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+		var unreadText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_UNREAD');
+		var dueAndPriorityString = resourceBundle.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY',
+			['5 minutes', sap.ui.core.Priority.High]);
+		var infoText = unreadText + ' ' + dueAndPriorityString;
+
+		this.NotificationListItem.setUnread(true);
+		this.NotificationListItem.setPriority(sap.ui.core.Priority.High);
+		this.NotificationListItem.setDatetime('5 minutes');
+
+		// assert
+		assert.strictEqual(this.NotificationListItem._ariaDetailsText.getText(), infoText,
+			'The info text should be set correctly with unread status, author, due date and priority');
 	});
 })();

@@ -970,7 +970,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 */
 	Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sThemeBaseUrl) {
 		jQuery.sap.assert(typeof sThemeName === "string", "sThemeName must be a string");
-		jQuery.sap.assert((jQuery.isArray(aLibraryNames) && typeof sThemeBaseUrl === "string") || (typeof aLibraryNames === "string" && sThemeBaseUrl === undefined), "either the second parameter must be a string (and the third is undefined), or it must be an array and the third parameter is a string");
+		jQuery.sap.assert((Array.isArray(aLibraryNames) && typeof sThemeBaseUrl === "string") || (typeof aLibraryNames === "string" && sThemeBaseUrl === undefined), "either the second parameter must be a string (and the third is undefined), or it must be an array and the third parameter is a string");
 
 		if (!this._mThemeRoots) {
 			this._mThemeRoots = {};
@@ -1161,8 +1161,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		if (aCallbacks && aCallbacks.length > 0) {
 			// execute the callbacks
 			log.info("Fire Loaded Event",null,METHOD);
-			jQuery.each(aCallbacks, function(i,f) {
-				f();
+			aCallbacks.forEach(function(fn) {
+				fn();
 			});
 		}
 	};
@@ -1929,7 +1929,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				// don't copy undefined values
 				if ( vValue !== undefined ) {
 
-					if ( jQuery.isArray(oLibrary[sKey]) ) {
+					if ( Array.isArray(oLibrary[sKey]) ) {
 						// concat array typed values
 						if ( oLibrary[sKey].length === 0 ) {
 							oLibrary[sKey] = vValue;
@@ -2805,7 +2805,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				}
 				for (var n in oControl.mAggregations) {
 					var a = oControl.mAggregations[n];
-					if ( jQuery.isArray(a) ) {
+					if ( Array.isArray(a) ) {
 						for (var i=0; i<a.length; i++) {
 							var r = _find(a[i]);
 							if ( r ) return r;

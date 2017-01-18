@@ -56,6 +56,12 @@ function checkLibrary(sLibraryName, bExpectLazyStubs, assert) {
 	// ensure that assert.* even works if a test page doesn't provide 'assert' as a param (e.g. pages outside openui5 repo)
 	assert = assert || window;
 
+	// skip the bootstrap library checks 
+	if (/[?&]sap-ui-skip(B|-b)ootstrap(T|-t)ests=(true|x|X)/.test(top.location.search)) {
+		assert.ok(true, "Skipped checkLibrary(\"" + sLibraryName + "\", " + bExpectLazyStubs + ") due to avilability of URL parameter!");
+		return;
+	}
+
 	ajaxCallsReset();
 
 	assert.ok(jQuery.sap.isDeclared(sLibraryName + ".library"), "module for library " + sLibraryName + " must have been declared");

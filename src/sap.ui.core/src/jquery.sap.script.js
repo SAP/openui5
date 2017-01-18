@@ -267,7 +267,7 @@ sap.ui.define(['jquery.sap.global'],
 		if (a === b) {
 			return true;
 		}
-		if (jQuery.isArray(a) && jQuery.isArray(b)) {
+		if (Array.isArray(a) && Array.isArray(b)) {
 			if (!contains) {
 				if (a.length != b.length) {
 					return false;
@@ -330,7 +330,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @since 1.11
 	 */
 	jQuery.sap.each = function(oObject, fnCallback) {
-		var isArray = jQuery.isArray(oObject),
+		var isArray = Array.isArray(oObject),
 			length, i;
 
 		if ( isArray ) {
@@ -1174,10 +1174,10 @@ sap.ui.define(['jquery.sap.global'],
 				}
 
 				// Recurse if we're merging plain objects or arrays
-				if ( deep && copy && ( jQuery.isPlainObject(copy) || (copyIsArray = jQuery.isArray(copy)) ) ) {
+				if ( deep && copy && ( jQuery.isPlainObject(copy) || (copyIsArray = Array.isArray(copy)) ) ) {
 					if ( copyIsArray ) {
 						copyIsArray = false;
-						clone = src && jQuery.isArray(src) ? src : [];
+						clone = Array.isArray(src) ? src : [];
 
 					} else {
 						clone = src && jQuery.isPlainObject(src) ? src : {};

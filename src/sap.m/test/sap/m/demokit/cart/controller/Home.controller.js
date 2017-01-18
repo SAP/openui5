@@ -44,18 +44,18 @@ sap.ui.define([
 			var oSearchField = oView.byId("searchField");
 
 			// switch visibility of lists
-			var bShowSearch = oSearchField.getValue().length !== 0;
-			oProductList.toggleStyleClass("invisible", !bShowSearch);
-			oCategoryList.toggleStyleClass("invisible", bShowSearch);
+			var bShowSearchResults = oSearchField.getValue().length !== 0;
+			oProductList.setVisible(bShowSearchResults);
+			oCategoryList.setVisible(!bShowSearchResults);
 
-			if (bShowSearch) {
+			if (bShowSearchResults) {
 				this._changeNoDataTextToIndicateLoading(oProductList);
 			}
 
 			// filter product list
 			var oBinding = oProductList.getBinding("items");
 			if (oBinding) {
-				if (bShowSearch) {
+				if (bShowSearchResults) {
 					var oFilter = new Filter("Name", FilterOperator.Contains, oSearchField.getValue());
 					oBinding.filter([oFilter]);
 				} else {

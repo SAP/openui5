@@ -318,7 +318,6 @@ sap.ui.define([
 
 		this._iREMSize = parseInt(jQuery("body").css("font-size"), 10);
 		this._iOffset = parseInt(0.25 * this._iREMSize, 10);
-		this._iScrollBarWidth = jQuery.position.scrollbarWidth();
 
 		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
 
@@ -343,12 +342,13 @@ sap.ui.define([
 
 		this._initializeScroller();
 
-		this._storeScrollLocation();
-
 		this._getHeaderContent().setContentDesign(this._getHeaderDesign());
 		this._oABHelper._getAnchorBar().setProperty("upperCase", this.getUpperCaseAnchorBar(), true);
 
 		this._applyUxRules();
+
+		// save the *valid* scroll location *after* the UX rules are applied => so that we know *which* sections will comprise the scrollable content
+		this._storeScrollLocation();
 
 		// If we are on the first true rendering : first time we render the page with section and blocks
 		if (!jQuery.isEmptyObject(this._oSectionInfo) && this._bFirstRendering) {
@@ -415,7 +415,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._onAfterRenderingDomReady = function () {
-		var oSectionToSelect = this._oStoredSection || sap.ui.getCore().byId(this.getSelectedSection()) || this._oFirstVisibleSection,
+		var oSectionToSelect = this._oStoredSection || this._oFirstVisibleSection,
 			sFirstVisibleSectionID, sSectionToSelectID;
 
 		this._bDomReady = true;
@@ -467,13 +467,15 @@ sap.ui.define([
 		var iHeaderOffset = 0,
 			sStyleAttribute = sap.ui.getCore().getConfiguration().getRTL() ? "left" : "right",
 			bHasVerticalScroll = this._hasVerticalScrollBar(),
-			iActionsOffset = this._iOffset;
+			iActionsOffset = this._iOffset,
+			iScrollbarWidth;
 
 		if (sap.ui.Device.system.desktop) {
-			iHeaderOffset = this._iScrollBarWidth;
+			iScrollbarWidth = jQuery.sap.scrollbarSize().width;
+			iHeaderOffset = iScrollbarWidth;
 			if (!bHasVerticalScroll) {
 				iHeaderOffset = 0;
-				iActionsOffset += this._iScrollBarWidth;
+				iActionsOffset += iScrollbarWidth;
 			}
 		}
 		return {"sStyleAttribute": sStyleAttribute, "iActionsOffset": iActionsOffset, "iMarginalsOffset": iHeaderOffset};
@@ -2216,7 +2218,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._storeScrollLocation = function () {
 		this._iStoredScrollPosition = this._oScroller.getScrollTop();
-		this._oStoredSection = this._oCurrentTabSubSection || this._oCurrentTabSection;
+		this._oStoredSection = this._oCurrentTabSubSection || this._oCurrentTabSection || sap.ui.getCore().byId(this.getSelectedSection());
 
 		// If there was a stored section, check if it still exists and if not - set it to null
 		// Note: not only sections, but subsections should be checked as well - hence this._aSectionBases is used

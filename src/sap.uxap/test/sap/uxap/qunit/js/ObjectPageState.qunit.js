@@ -238,10 +238,6 @@
 		});
 
 
-		/*
-		commented because of an uncovered problem,
-		which will be fixed in a separate gerrit change
-		to minimize the complexity of the code reviewed here
 		QUnit.test("Delete first section changes selection", function (assert) {
 			//setup
 			var oPage = this.oObjectPage,
@@ -251,7 +247,7 @@
 			var done = assert.async();
 			setTimeout(function() {
 				// act
-				oPage.removeSection(oFirstSection); /!* remove first section *!/
+				oPage.removeSection(oFirstSection);
 
 				setTimeout(function() {
 					var sSelectedBtnId = oAnchorBar.getSelectedButton(),
@@ -263,7 +259,7 @@
 				}, 1000); //scroll delay
 			}, 1000); //dom calc delay
 
-		});*/
+		});
 
 
 		QUnit.test("Hide first subSection preserves expanded state", function (assert) {

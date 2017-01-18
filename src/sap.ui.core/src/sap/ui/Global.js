@@ -314,7 +314,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 
 
 		// add stub methods to it
-		jQuery.each(aMethods, function (i,sMethod) {
+		aMethods.forEach( function(sMethod) {
 			// check whether method is already available
 			if (!oClass[sMethod]) {
 				oClass[sMethod] = function() {

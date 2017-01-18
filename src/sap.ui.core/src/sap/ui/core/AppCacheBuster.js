@@ -91,13 +91,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', 'sap/
 
 		// in case of an incoming array we register each base url on its own
 		// except in case of the batch mode => there we pass all URLs in a POST request.
-		if (jQuery.isArray(sBaseUrl) && !bBatch) {
+		if (Array.isArray(sBaseUrl) && !bBatch) {
 
-			jQuery.each(sBaseUrl, function(iIndex, sBaseUrlEntry) {
+			sBaseUrl.forEach(function(sBaseUrlEntry) {
 				fnRegister(sBaseUrlEntry, oSyncPoint);
 			});
 
-		} else if (jQuery.isArray(sBaseUrl) && bBatch) {
+		} else if (Array.isArray(sBaseUrl) && bBatch) {
 
 			// BATCH MODE: send all base urls via POST request to the server
 			//   -> server returns an JSON object for containing the index for
@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', 'sap/
 			jQuery.sap.log.debug("  --> normalized to: \"" + sAbsoluteRootUrl + "\"");
 
 			// create the list of absolute base urls
-			jQuery.each(sBaseUrl, function(iIndex, sUrlEntry) {
+			sBaseUrl.forEach(function(sUrlEntry) {
 				sUrl = fnEnsureTrailingSlash(sUrlEntry);
 				var sAbsoluteUrl = AppCacheBuster.normalizeURL(sUrl);
 				if (!mIndex[sAbsoluteBaseUrl]) {
@@ -535,7 +535,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', 'sap/
 	// check for pre-defined callback handlers and register the callbacks
 	var mHooks = oConfiguration.getAppCacheBusterHooks();
 	if (mHooks) {
-		jQuery.each(["handleURL", "onIndexLoad", "onIndexLoaded"], function(iIndex, sFunction) {
+		["handleURL", "onIndexLoad", "onIndexLoaded"].forEach(function(sFunction) {
 			if (typeof mHooks[sFunction] === "function") {
 				AppCacheBuster[sFunction] = mHooks[sFunction];
 			}

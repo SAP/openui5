@@ -270,7 +270,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	jQuery.sap.formatMessage = function formatMessage(sPattern, aValues) {
 		jQuery.sap.assert(typeof sPattern === "string" || sPattern instanceof String, "pattern must be string");
-		if (arguments.length > 2 || (aValues != null && !jQuery.isArray(aValues))) {
+		if (arguments.length > 2 || (aValues != null && !Array.isArray(aValues))) {
 			aValues = Array.prototype.slice.call(arguments,1);
 		}
 		aValues = aValues || [];

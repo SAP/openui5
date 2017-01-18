@@ -240,8 +240,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 			resourceBundle.getText('NOTIFICATION_LIST_ITEM_UNREAD') : resourceBundle.getText('NOTIFICATION_LIST_ITEM_READ');
 		var dueAndPriorityString = resourceBundle.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY',
 			[this.getDatetime(), this.getPriority()]);
+		var authorName = this.getAuthorName();
+		var ariaText = readUnreadText + ' ';
 
-		this._ariaDetailsText.setText(readUnreadText + ' ' + dueAndPriorityString);
+		if (authorName) {
+			ariaText += resourceBundle.getText('NOTIFICATION_LIST_ITEM_CREATED_BY') + ' ' + this.getAuthorName() + ' ';
+		}
+
+		ariaText += dueAndPriorityString;
+		this._ariaDetailsText.setText(ariaText);
 	};
 
 	/**
