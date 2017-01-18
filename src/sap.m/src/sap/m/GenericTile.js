@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 				/**
 				 * Changes the visualization in order to enable additional actions with the Generic Tile.
-				 * @experimental since 1.46.0
+				 * @since 1.46.0
 				 */
 				"scope": { type: "sap.m.GenericTileScope", group: "Misc", defaultValue: sap.m.GenericTileScope.Display }
 			},
@@ -106,21 +106,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 					parameters: {
 						/**
 						 * The current scope the GenericTile was in when the event occurred.
-						 * @experimental since 1.46.0
+						 * @since 1.46.0
 						 */
 						"scope": { type: "sap.m.GenericTileScope" },
 
 						/**
 						 * The action that was pressed on the tile. In the Actions scope, the available actions are Press and Remove.
 						 * In Display scope, the parameter value is only Press.
-						 * @experimental since 1.46.0
+						 * @since 1.46.0
 						 */
 						"action": { type: "string" },
 
 						/**
 						 * The Element's DOM Element. Points to GenericTile instance DOM Element in Display scope.
 						 * In Actions scope the domRef points to the DOM Element of the remove icon (if pressed) or the more icon.
-						 * @experimental since 1.46.0
+						 * @since 1.46.0
 						 */
 						"domRef" : { type: "any" }
 					}
@@ -137,8 +137,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	});
 
 	GenericTile._Action = {
-			Press : "Press",
-			Remove : "Remove"
+		Press : "Press",
+		Remove : "Remove"
 	};
 
 	/* --- Lifecycle Handling --- */
