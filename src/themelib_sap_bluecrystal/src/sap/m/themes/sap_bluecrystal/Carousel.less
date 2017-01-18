@@ -22,14 +22,21 @@
 /* Carousel controls: HUD */
 .sapMCrslHud a {
 	opacity: 0.5;
+	box-shadow: @sapUiShadowLevel1;
+}
+
+.sapMCrsl .sapMCrslHud a:hover,
+.sapMCrsl .sapMCrslHud a:focus {
+	box-shadow: @sapUiShadowLevel1;
+	border: 1px solid @sapUiButtonBorderColor;
+}
+
+.sapMCrsl .sapMCrslHud a:active {
+	box-shadow: @sapUiShadowLevel1;
 }
 
 .sapMCrsl:focus {
 	outline: 1px dotted @sapUiContentFocusColor;
-}
-
-.sapMCrsl:hover .sapMCrslHud a {
-	display: block;
 }
 
 .sapMCrslPrev:focus,

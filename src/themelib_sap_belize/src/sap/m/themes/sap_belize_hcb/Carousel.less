@@ -22,9 +22,14 @@
     border: 0.125rem dotted @sapUiContentFocusColor;
 }
 
-.sapMCrsl:hover .sapMCrslHud a {
-	opacity: 1;
-	display: block;
+.sapMCrsl .sapMCrslHud,
+.sapMCrsl .sapMCrslHud {
+	border: 3px solid @sapUiButtonBorderColor;
+}
+
+.sapMCrsl .sapMCrslHud a:hover,
+.sapMCrsl .sapMCrslHud a:focus {
+	background-color: @sapUiButtonActiveBackground;
 }
 
 /* extra bits */
@@ -40,9 +45,34 @@
 	border: 2px solid @sapUiButtonBorderColor;
 }
 
-.sapMCrslPrev:focus, .sapMCrslNext:focus {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
+.sapMCrslPrev:focus,
+.sapMCrslNext:focus,
+.sapMCrslPrev .sapUiIcon:focus,
+.sapMCrslNext .sapUiIcon:focus {
+	outline: none;
 }
-.sapMCrslHud a:focus {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
+
+html.sap-desktop .sapMCrslHud .sapMCrslPrev:focus,
+html.sap-desktop .sapMCrslHud .sapMCrslNext:focus {
+	&::before {
+		content: "";
+		position: absolute;
+		top: -0.25rem;
+		right: -0.25rem;
+		bottom: -0.25rem;
+		left: -0.25rem;
+		pointer-events: none;
+		border: 2px solid @sapUiContentContrastFocusColor;
+	}
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: -0.25rem;
+		right: -0.25rem;
+		bottom: -0.25rem;
+		left: -0.25rem;
+		pointer-events: none;
+		border: 2px dotted @sapUiContentFocusColor;
+	}
 }
