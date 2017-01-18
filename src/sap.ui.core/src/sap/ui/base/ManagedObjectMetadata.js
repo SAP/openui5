@@ -66,7 +66,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	};
 
 	// chain the prototypes
-	ManagedObjectMetadata.prototype = jQuery.sap.newObject(Metadata.prototype);
+	ManagedObjectMetadata.prototype = Object.create(Metadata.prototype);
 
 	var hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -1039,7 +1039,8 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 
 	ManagedObjectMetadata.prototype.createPropertyBag = function() {
 		if ( !this._fnPropertyBagFactory ) {
-			this._fnPropertyBagFactory = jQuery.sap.factory(this.getPropertyDefaults());
+			this._fnPropertyBagFactory = function PropertyBag() {};
+			this._fnPropertyBagFactory.prototype = this.getPropertyDefaults();
 		}
 		return new (this._fnPropertyBagFactory)();
 	};
