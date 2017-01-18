@@ -343,12 +343,13 @@ sap.ui.define([
 
 		this._initializeScroller();
 
-		this._storeScrollLocation();
-
 		this._getHeaderContent().setContentDesign(this._getHeaderDesign());
 		this._oABHelper._getAnchorBar().setProperty("upperCase", this.getUpperCaseAnchorBar(), true);
 
 		this._applyUxRules();
+
+		// save the *valid* scroll location *after* the UX rules are applied => so that we know *which* sections will comprise the scrollable content
+		this._storeScrollLocation();
 
 		// If we are on the first true rendering : first time we render the page with section and blocks
 		if (!jQuery.isEmptyObject(this._oSectionInfo) && this._bFirstRendering) {
@@ -415,7 +416,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._onAfterRenderingDomReady = function () {
-		var oSectionToSelect = this._oStoredSection || sap.ui.getCore().byId(this.getSelectedSection()) || this._oFirstVisibleSection,
+		var oSectionToSelect = this._oStoredSection || this._oFirstVisibleSection,
 			sFirstVisibleSectionID, sSectionToSelectID;
 
 		this._bDomReady = true;
@@ -2216,7 +2217,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._storeScrollLocation = function () {
 		this._iStoredScrollPosition = this._oScroller.getScrollTop();
-		this._oStoredSection = this._oCurrentTabSubSection || this._oCurrentTabSection;
+		this._oStoredSection = this._oCurrentTabSubSection || this._oCurrentTabSection || sap.ui.getCore().byId(this.getSelectedSection());
 
 		// If there was a stored section, check if it still exists and if not - set it to null
 		// Note: not only sections, but subsections should be checked as well - hence this._aSectionBases is used
