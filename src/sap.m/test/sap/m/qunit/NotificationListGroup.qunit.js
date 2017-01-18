@@ -300,7 +300,7 @@
 
         //assert
         assert.strictEqual(this.NotificationListGroup._maxNumberReached,  false, 'Max number of shown notifications should not be reached.');
-    });     
+    });
 
     //================================================================================
     // Notification List Group rendering methods
@@ -829,4 +829,191 @@
         // assert
         assert.strictEqual(this.NotificationListGroup.getButtons()[0].getEnabled(), true, 'Buttons are enabled');
     });
+
+	//================================================================================
+	// Notification List Group ARIA support
+	//================================================================================
+
+	QUnit.module('ARIA support', {
+		setup: function () {
+			this.NotificationListGroup = new sap.m.NotificationListGroup();
+
+			this.NotificationListGroup.placeAt(RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function () {
+			this.NotificationListGroup.destroy();
+		}
+	});
+
+	QUnit.test('Checking the labelledby ids are set correctly', function (assert) {
+		// arrange
+		var domRef = this.NotificationListGroup.getDomRef();
+		var labelledby = domRef.getAttribute('aria-labelledby');
+		var labelledByIds = this.NotificationListGroup._getHeaderTitle().getId() + ' ' +
+			this.NotificationListGroup.getAggregation('_ariaDetailsText').getId();
+
+		// assert
+		assert.strictEqual(labelledby, labelledByIds, 'The labbeledby attribute should point to the title and the detailed invisible text, describing the control');
+	});
+
+	QUnit.test('Checking the labelledby info text is set correctly', function (assert) {
+		// arrange
+		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+		var createdByText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_CREATED_BY') + ' ' + 'John Doe';
+		var infoText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY', ['5 minutes', sap.ui.core.Priority.Medium]);
+		var unreadText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_UNREAD');
+		var ariaText = createdByText + ' ' + infoText + ' ' + unreadText;
+
+		// act
+		this.NotificationListGroup.setTitle('Some title');
+		this.NotificationListGroup.setAutoPriority(false);
+		this.NotificationListGroup.setPriority(sap.ui.core.Priority.Medium);
+		this.NotificationListGroup.setDatetime('5 minutes');
+		this.NotificationListGroup.setAuthorName('John Doe');
+		this.NotificationListGroup.setUnread(true);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(this.NotificationListGroup.getAggregation('_ariaDetailsText').getText(), ariaText,
+			'The info text should be set correctly with unread status, author, due date and priority');
+	});
+
+	QUnit.test('Checking the labelledby info text is set correctly without author name', function (assert) {
+		// arrange
+		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+		var infoText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY', ['5 minutes', sap.ui.core.Priority.Medium]);
+		var unreadText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_UNREAD');
+		var ariaText = infoText + ' ' + unreadText;
+
+		// act
+		this.NotificationListGroup.setTitle('Some title');
+		this.NotificationListGroup.setAutoPriority(false);
+		this.NotificationListGroup.setPriority(sap.ui.core.Priority.Medium);
+		this.NotificationListGroup.setDatetime('5 minutes');
+		this.NotificationListGroup.setUnread(true);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(this.NotificationListGroup.getAggregation('_ariaDetailsText').getText(), ariaText,
+			'The info text should be set correctly with unread status, due date and priority');
+	});
+
+	QUnit.test('Focusing a notification inside the notification group', function (assert) {
+		// arrange
+		var firstNotification = new sap.m.NotificationListItem();
+		var secondNotification = new sap.m.NotificationListItem();
+		var thirdNotification = new sap.m.NotificationListItem();
+
+		this.NotificationListGroup.addItem(firstNotification);
+		this.NotificationListGroup.addItem(secondNotification);
+		this.NotificationListGroup.addItem(thirdNotification);
+
+		// act
+		sap.ui.getCore().applyChanges();
+		this.NotificationListGroup._notificationFocusHandler({srcControl: secondNotification});
+
+		var ariaPosinset = secondNotification.getDomRef().getAttribute('aria-posinset') * 1;
+		var ariaSetsize = secondNotification.getDomRef().getAttribute('aria-setsize') * 1;
+
+		// assert
+		assert.strictEqual(ariaPosinset, 2, 'Should update aria-posinset to its index in the group');
+		assert.strictEqual(ariaSetsize, 3, 'Should update aria-setsize to the group\'s lenght');
+
+		// act
+		this.NotificationListGroup._notificationFocusHandler({srcControl: firstNotification});
+
+		ariaPosinset = firstNotification.getDomRef().getAttribute('aria-posinset') * 1;
+		ariaSetsize = firstNotification.getDomRef().getAttribute('aria-setsize') * 1;
+
+		// assert
+		assert.strictEqual(ariaPosinset, 1, 'Should update aria-posinset to the newly focused notifications in the group');
+		assert.strictEqual(ariaSetsize, 3, 'Should update aria-setsize to the group\'s lenght');
+	});
+
+	//================================================================================
+	// Notification List Group ARIA support
+	//================================================================================
+
+	QUnit.module('Keyboard handling', {
+		setup: function () {
+			this.NotificationListGroup = new sap.m.NotificationListGroup({
+				items: [
+					new sap.m.NotificationListItem(),
+					new sap.m.NotificationListItem(),
+					new sap.m.NotificationListItem()
+				]
+			});
+
+			this.NotificationListGroup.placeAt(RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function () {
+			this.NotificationListGroup.destroy();
+		}
+	});
+
+	QUnit.test('Pressing the down key, when first item is accessed', function (assert) {
+		// arrange
+		var firstNotification = this.NotificationListGroup.getItems()[0];
+		var secondNotification = this.NotificationListGroup.getItems()[1];
+
+		// act
+		firstNotification.$().focus();
+		sap.ui.test.qunit.triggerKeydown(firstNotification.$(), jQuery.sap.KeyCodes.ARROW_DOWN);
+
+		// assert
+		assert.strictEqual(document.activeElement.id, secondNotification.getId(), 'Should focus the second item');
+	});
+
+
+	QUnit.test('Pressing the up key, when first item is accessed', function (assert) {
+		// arrange
+		var firstNotification = this.NotificationListGroup.getItems()[0];
+
+		// act
+		firstNotification.$().focus();
+		sap.ui.test.qunit.triggerKeydown(firstNotification.$(), jQuery.sap.KeyCodes.ARROW_UP);
+
+		// assert
+		assert.strictEqual(document.activeElement.id, firstNotification.getId(), 'Should not move the focus');
+	});
+
+	QUnit.test('Pressing the up key, when last item is accessed', function (assert) {
+		// arrange
+		var thirdNotification = this.NotificationListGroup.getItems()[2];
+		var secondNotification = this.NotificationListGroup.getItems()[1];
+
+		// act
+		thirdNotification.$().focus();
+		sap.ui.test.qunit.triggerKeydown(thirdNotification.$(), jQuery.sap.KeyCodes.ARROW_UP);
+
+		// assert
+		assert.strictEqual(document.activeElement.id, secondNotification.getId(), 'Should focus the second item');
+	});
+
+	QUnit.test('Pressing the down key, when last item is accessed', function (assert) {
+		// arrange
+		var thirdNotification = this.NotificationListGroup.getItems()[2];
+
+		// act
+		thirdNotification.$().focus();
+		sap.ui.test.qunit.triggerKeydown(thirdNotification.$(), jQuery.sap.KeyCodes.ARROW_DOWN);
+
+		// assert
+		assert.strictEqual(document.activeElement.id, thirdNotification.getId(), 'Should not move the focus');
+	});
+
+
+	QUnit.test('Pressing the left key, when last item is accessed', function (assert) {
+		// arrange
+		var thirdNotification = this.NotificationListGroup.getItems()[2];
+
+		// act
+		thirdNotification.$().focus();
+		sap.ui.test.qunit.triggerKeydown(thirdNotification.$(), jQuery.sap.KeyCodes.ARROW_LEFT);
+
+		// assert
+		assert.strictEqual(document.activeElement.id, thirdNotification.getId(), 'Should not move the focus');
+	});
 })();
