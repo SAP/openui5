@@ -55,13 +55,13 @@ sap.ui.define([
 			this._checkIfProductAvailable(sPath, oData.productId);
 		},
 
-		_checkIfProductAvailable: function(sPath, sId) {
+		_checkIfProductAvailable: function(sPath) {
 			var oModel = this.getView().getModel();
 			var oData = oModel.getData(sPath);
 
 			// show not found page
 			if (!oData) {
-				this._router.getTargets().display("notFound", sId);
+				this._router.getTargets().display("notFound");
 			}
 		},
 

@@ -21,7 +21,6 @@
 				tooltip="{i18n>TO_CART_BUTTON_TOOLTIP}"
 				press="onCartButtonPress">
 			</Button>
-
 		</headerContent>
 		<content>
 			<List
@@ -49,7 +48,7 @@
 							path : 'Price',
 							formatter : '.formatter.price'
 						}"
-						numberUnit="EUR"
+						numberUnit="{CurrencyCode}"
 						press="onProductListItemPress"
 						iconDensityAware="false" >
 						<attributes>

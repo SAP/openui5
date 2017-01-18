@@ -129,6 +129,7 @@
 		"../../../../../test-resources/sap/ui/demokit/explored/img/HT-9999.jpg",
 		"../../../../../test-resources/sap/ui/demokit/explored/img/PF-1000.jpg",
 		"index.html",
+		"manifest.json",
 		"localService/mockdata/Product.json",
 		"localService/mockdata/ProductCategory.json",
 		"localService/metadata.xml",
