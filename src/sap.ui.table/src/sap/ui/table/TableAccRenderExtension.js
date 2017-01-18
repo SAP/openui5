@@ -92,6 +92,8 @@ sap.ui.define(['jquery.sap.global', './TableExtension'],
 			_writeAccText(oRm, sTableId, "ariarowselected", oBundle.getText("TBL_ROW_DESC_SELECTED"));
 			// aria description for column menu
 			_writeAccText(oRm, sTableId, "ariacolmenu", oBundle.getText("TBL_COL_DESC_MENU"));
+			// aria description for column header span
+			_writeAccText(oRm, sTableId, "ariacolspan");
 			// aria description for a filtered column
 			_writeAccText(oRm, sTableId, "ariacolfiltered", oBundle.getText("TBL_COL_DESC_FILTERED"));
 			// aria description for a sorted column
