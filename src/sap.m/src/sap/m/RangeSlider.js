@@ -689,7 +689,7 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
             aRangeTemp = this._getNormalizedRange(this.getRange(), aInitialRange, aHandles);
             //check if the current range is equal to the new one
             bRangesEquality = aRange.every(function (fValue, iIndex) {return fValue === aRangeTemp[iIndex];});
-            bRangeInBoudaries = aRange.every(function (fValue, iIndex) {return (fValue > fMin && fValue < fMax );});
+            bRangeInBoudaries = aRange.every(function (fValue) {return (fValue > fMin && fValue < fMax );});
             bRangeOnBoudaries = aRangeTemp.indexOf(fMin) > -1 || aRangeTemp.indexOf(fMax) > -1;
             if (!bRangesEquality) {
                 //check the need to update the handle depending of number of the selected handles and the handles position
@@ -706,6 +706,7 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
          * Get the range normalized in the boundaries.
          * @param {Array} aRange range value
          * @param {Array} aInitialRange last range values
+         * @param {Array} aHandles
          * @private
          * @override
          */
@@ -850,7 +851,7 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
          * @override
          */
         RangeSlider.prototype.onsapincreasemodifiers = function (oEvent) {
-            if (["number", "text"].indexOf(oEvent.target.type) > -1) {
+            if (["number", "text"].indexOf(oEvent.target.type) > -1 || oEvent.altKey) {
                 return;
             }
 
@@ -912,7 +913,7 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
          * @override
          */
         RangeSlider.prototype.onsapdecreasemodifiers = function (oEvent) {
-            if (["number", "text"].indexOf(oEvent.target.type) > -1) {
+            if (["number", "text"].indexOf(oEvent.target.type) > -1 || oEvent.altKey) {
                 return;
             }
 
