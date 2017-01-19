@@ -21,6 +21,7 @@
 			}
 
 			sap.ui.fl.LrepConnector.prototype._aSentRequestListeners = [];
+			sap.ui.fl.LrepConnector.prototype._sRequestUrlPrefix = "";
 		}
 	});
 
@@ -44,6 +45,23 @@
 		assert.equal(this.oLrepConnector._resolveUrl(""), "/");
 		assert.equal(this.oLrepConnector._resolveUrl("index.html"), "/index.html");
 		assert.equal(this.oLrepConnector._resolveUrl("index.html?anyParam=value"), "/index.html?anyParam=value");
+	});
+	
+	QUnit.test("_resolveUrl with request url prefix", function(assert) {
+
+		sap.ui.fl.LrepConnector.prototype.setRequestUrlPrefix("/newprefix");
+
+		//Arrange
+		ok(this.oLrepConnector);
+
+		//Act & Assert
+		assert.equal(this.oLrepConnector._resolveUrl("/content/subfolder"), "/newprefix/content/subfolder");
+		assert.equal(this.oLrepConnector._resolveUrl("content/subfolder"), "/newprefix/content/subfolder");
+		assert.equal(this.oLrepConnector._resolveUrl("//content/subfolder"), "/newprefix//content/subfolder");
+		assert.equal(this.oLrepConnector._resolveUrl("/content//subfolder/"), "/newprefix/content//subfolder/");
+		assert.equal(this.oLrepConnector._resolveUrl(""), "/newprefix/");
+		assert.equal(this.oLrepConnector._resolveUrl("index.html"), "/newprefix/index.html");
+		assert.equal(this.oLrepConnector._resolveUrl("index.html?anyParam=value"), "/newprefix/index.html?anyParam=value");
 	});
 
 	QUnit.test("_getDefaultHeader", function(assert) {
