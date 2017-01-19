@@ -74,7 +74,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("c'tor calls applyParameters", function (assert) {
+	QUnit.test("c'tor initializes oCachePromise and calls applyParameters", function (assert) {
 		var oBinding,
 			mParameters = {},
 			mParametersClone = {};
@@ -87,6 +87,7 @@ sap.ui.require([
 		oBinding = new ODataContextBinding(this.oModel, "/EMPLOYEES", undefined, mParameters);
 
 		assert.strictEqual(oBinding.mParameters, undefined, "c'tor does not set mParameters");
+		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 	});
 
 	//*********************************************************************************************

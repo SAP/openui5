@@ -159,6 +159,18 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("c'tor initializes oCachePromise", function (assert) {
+		var oBinding,
+			oContext = {};
+		this.mock(ODataPropertyBinding.prototype).expects("makeCache")
+			.withExactArgs(sinon.match.same(oContext));
+
+		oBinding = new ODataPropertyBinding(this.oModel, "Name", oContext);
+
+		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("toString", function (assert) {
 		var oBinding = this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name"),
 			oContext = {

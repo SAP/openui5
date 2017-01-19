@@ -127,7 +127,7 @@ sap.ui.define([
 					throw new Error("Invalid path: " + sPath);
 				}
 
-				this.oCachePromise = _SyncPromise.resolve(undefined);
+				this.oCachePromise = _SyncPromise.resolve();
 				this.mCacheByContext = undefined;
 				this.sGroupId = undefined;
 				this.oOperation = undefined;
@@ -701,7 +701,7 @@ sap.ui.define([
 			oContext = undefined; // must be ignored for absolute bindings
 		} else if (!oContext || oContext.fetchCanonicalPath
 			&& !Object.keys(this.mParameters).length) {
-				return _SyncPromise.resolve(undefined); // no need for an own cache
+				return _SyncPromise.resolve(); // no need for an own cache
 		}
 		mQueryOptions = this.getQueryOptions(oContext);
 		vCanonicalPath = oContext && (oContext.fetchCanonicalPath
@@ -756,7 +756,7 @@ sap.ui.define([
 					this.oElementContext.destroy();
 					this.oElementContext = null;
 				}
-				this.oCachePromise = _SyncPromise.resolve(undefined);
+				this.oCachePromise = _SyncPromise.resolve();
 				if (oContext) {
 					this.oElementContext = Context.create(this.oModel, this,
 						this.oModel.resolve(this.sPath, oContext));

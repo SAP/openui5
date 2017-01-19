@@ -2013,7 +2013,7 @@ sap.ui.require([
 		oMetaModelMock.expects("getMetaContext").withExactArgs(sPath).returns(oContext);
 		oMetaModelMock.expects("fetchObject")
 			.withExactArgs("", sinon.match.same(oContext))
-			.returns(_SyncPromise.resolve(undefined));
+			.returns(_SyncPromise.resolve());
 
 		// code under test
 		assert.throws(function () {
@@ -2087,7 +2087,7 @@ sap.ui.require([
 			oMetaModelMock.expects("requestObject")
 				.withExactArgs("@com.sap.vocabularies.Common.v1.ValueListReference",
 					sinon.match.same(oMetaContext))
-				.returns(Promise.resolve(undefined));
+				.returns(Promise.resolve());
 
 			// code under test
 			return oModel.getMetaModel().requestValueListInfo(sPropertyPath).then(function () {

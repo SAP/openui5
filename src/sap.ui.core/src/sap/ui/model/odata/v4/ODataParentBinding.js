@@ -102,6 +102,7 @@ sap.ui.define([
 			oPromise,
 			that = this;
 
+		// no deactivation needed for not fulfilled cache promise because cache will not be created
 		if (this.oCachePromise && this.oCachePromise.isFulfilled()) {
 			oCurrentCache = this.oCachePromise.getResult();
 			if (oCurrentCache) {

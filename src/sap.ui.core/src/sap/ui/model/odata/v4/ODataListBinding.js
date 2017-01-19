@@ -111,6 +111,7 @@ sap.ui.define([
 				}
 
 				this.aApplicationFilters = _Helper.toArray(vFilters);
+				this.oCachePromise = _SyncPromise.resolve();
 				this.sChangeReason = undefined;
 				this.oDiff = undefined;
 				this.aFilters = [];
@@ -510,13 +511,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.deleteFromCache = function (sGroupId, sEditUrl, sPath, fnCallback) {
-		var oCache;
+		var oCache = this.oCachePromise.getResult();
 
 		if (!this.oCachePromise.isFulfilled()) {
 			throw new Error("DELETE request not allowed");
 		}
 
-		oCache = this.oCachePromise.getResult();
 		if (oCache) {
 			sGroupId = sGroupId || this.getUpdateGroupId();
 			if (sGroupId !== "$auto" && sGroupId !== "$direct") {
@@ -541,14 +541,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.deregisterChange = function (sPath, oListener, iIndex) {
-		var oCache;
+		var oCache = this.oCachePromise.getResult();
 
 		if (!this.oCachePromise.isFulfilled()) {
 			// Be prepared for late deregistrations by dependents of parked contexts
 			return;
 		}
-
-		oCache = this.oCachePromise.getResult();
 
 		if (oCache) {
 			oCache.deregisterChange(_Helper.buildPath(iIndex, sPath), oListener);
@@ -1202,8 +1200,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context instance to be used, may be omitted for absolute bindings
 	 * @returns {SyncPromise}
-	 *   A promise which resolves with a cache instance or <code>undefined</code> if no cache is
-	 *   needed
+	 *   A promise which resolves with a cache instance or with <code>undefined</code> if no cache
+	 *   is needed
 	 *
 	 * @private
 	 */
@@ -1227,7 +1225,7 @@ sap.ui.define([
 					&& !this.aSorters.length
 					&& !this.aFilters.length
 					&& !this.aApplicationFilters.length) {
-				return _SyncPromise.resolve(undefined); // no need for an own cache
+				return _SyncPromise.resolve(); // no need for an own cache
 			}
 		} else {
 			oContext = undefined; // must be ignored for absolute bindings
