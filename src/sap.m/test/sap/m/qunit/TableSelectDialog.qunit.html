@@ -354,6 +354,8 @@
 			oTableSelectDialog1.open();
 
 			equals(oTable.getSelectedItems().length, 0, "Selection after search should be reset nevertheless");
+
+			oTableSelectDialog1._onCancel();
 		});
 
 		module("Open and Close");

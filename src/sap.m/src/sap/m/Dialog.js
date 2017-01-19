@@ -440,8 +440,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			// The focus will be change after the dialog is opened;
 			oPopup.setInitialFocusId(this.getId());
 
-			if (oPopup.isOpen()) {
-				return this;
+			var oPopupOpenState = oPopup.getOpenState();
+
+			switch (oPopupOpenState) {
+				case sap.ui.core.OpenState.OPEN:
+				case sap.ui.core.OpenState.OPENING:
+					return this;
+				case sap.ui.core.OpenState.CLOSING:
+					this._bOpenAfterClose = true;
+					break;
+				default:
 			}
 
 			//reset the close trigger
@@ -470,6 +478,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Dialog.prototype.close = function () {
+			this._bOpenAfterClose = false;
+
 			this.$().removeClass('sapDialogDisableTransition');
 
 			this._deregisterResizeHandler();
@@ -544,6 +554,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 			InstanceManager.removeDialogInstance(this);
 			this.fireAfterClose({origin: this._oCloseTrigger});
+
+			if (this._bOpenAfterClose) {
+				this._bOpenAfterClose = false;
+				this.open();
+			}
 		};
 
 		/**
