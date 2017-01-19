@@ -823,6 +823,7 @@ sap.ui.define([
 
 			// For tablet and desktop - notify child controls to render with reduced container size, if they need to
 			if (!Device.system.phone) {
+				this._updateColumnContextualSettings(sColumn, iNewWidth);
 				this._updateColumnCSSClasses(sColumn, iNewWidth);
 			}
 
@@ -850,6 +851,31 @@ sap.ui.define([
 			this._$columns[aActiveColumns[aActiveColumns.length - 1]].addClass("sapFFCLColumnLastActive");
 		}
 	};
+
+	/**
+	 * Contextual settings should not be propagated to the nav containers. They only get contextual settings on resize.
+	 *
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._propagateContextualSettings = function () {};
+
+	FlexibleColumnLayout.prototype._updateColumnContextualSettings = function (sColumn, iWidth) {
+		var oColumn,
+			oContextualSettings;
+
+		oColumn = this.getAggregation("_" + sColumn + "ColumnNav");
+		if (!oColumn) {
+			return;
+		}
+
+		oContextualSettings = oColumn._getContextualSettings();
+		if (!oContextualSettings || oContextualSettings.contextualWidth !== iWidth) {
+			oColumn._applyContextualSettings({
+				contextualWidth: iWidth
+			});
+		}
+	};
+
 
 	FlexibleColumnLayout.prototype._updateColumnCSSClasses = function (sColumn, iWidth) {
 		var sNewClassName = "";
