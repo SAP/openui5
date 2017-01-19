@@ -3,6 +3,13 @@
 @sapUiDtSelectionColor : #35F;
 @sapUiDtCuttedColor : white;
 
+#overlay-container {
+	>.sapUiDtOverlay {
+		// prevents body from expanding if overlays are bigger, then dom
+		overflow: hidden !important;
+	}
+}
+
 .sapUiDtOverlay {
 	position: absolute;
 	outline: none;
