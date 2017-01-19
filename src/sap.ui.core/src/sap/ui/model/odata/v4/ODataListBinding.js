@@ -252,7 +252,7 @@ sap.ui.define([
 
 		this.mCacheByContext = undefined;
 		this.fetchCache(this.oContext);
-		this.reset(sChangeReason, true);
+		this.reset(sChangeReason);
 	};
 
 	/**
@@ -304,7 +304,7 @@ sap.ui.define([
 		var that = this;
 
 		function updateDependents() {
-			that._fireChange({reason: ChangeReason.Change});
+			// Do not fire a change event, there is no change in the list of contexts
 			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
 				oDependentBinding.checkUpdate();
 			});
@@ -900,7 +900,7 @@ sap.ui.define([
 		}
 		this.mCacheByContext = undefined;
 		this.fetchCache(this.oContext);
-		this.reset(ChangeReason.Filter, true);
+		this.reset(ChangeReason.Filter);
 
 		return this;
 	};
@@ -1333,7 +1333,11 @@ sap.ui.define([
 			that.reset(ChangeReason.Refresh);
 			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
 				if (!oDependentBinding.getContext().created()) {
-					oDependentBinding.refreshInternal(sGroupId);
+					// Property bindings should not check for updates yet, otherwise they will cause
+					// a "Failed to drill down..." when the row is no longer part of the collection.
+					// They get another update request in createContexts, when the context for the
+					// row is reused.
+					oDependentBinding.refreshInternal(sGroupId, false);
 				}
 			});
 		});
@@ -1341,18 +1345,15 @@ sap.ui.define([
 
 	/**
 	 * Resets the binding's contexts array and its members related to current contexts and length
-	 * calculation.
+	 * calculation. All bindings dependent to the header context are requested to check for updates.
 	 *
 	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
 	 *   A change reason; if given, a refresh event with this reason is fired and the next
 	 *   getContexts() fires a change event with this reason.
-	 * @param {boolean} [bUpdateHeaderContext]
-	 *   If <code>true</code>, all bindings dependent to the header context are requested to check
-	 *   for updates.
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.reset = function (sChangeReason, bUpdateHeaderContext) {
+	ODataListBinding.prototype.reset = function (sChangeReason) {
 		var that = this;
 
 		if (this.aContexts) {
@@ -1375,7 +1376,7 @@ sap.ui.define([
 			this._fireRefresh({reason : sChangeReason});
 		}
 		// Update after the refresh event, otherwise $count is fetched before the request
-		if (bUpdateHeaderContext && this.getHeaderContext()) {
+		if (this.getHeaderContext()) {
 			this.oModel.getDependentBindings(this.oHeaderContext).forEach(function (oBinding) {
 				oBinding.checkUpdate();
 			});
@@ -1459,7 +1460,7 @@ sap.ui.define([
 		this.aSorters = _Helper.toArray(vSorters);
 		this.mCacheByContext = undefined;
 		this.fetchCache(this.oContext);
-		this.reset(ChangeReason.Sort, true);
+		this.reset(ChangeReason.Sort);
 		return this;
 	};
 

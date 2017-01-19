@@ -723,14 +723,15 @@ sap.ui.define([
 					that.sRefreshGroupId = sGroupId;
 					that.fetchCache(that.oContext);
 					that.mCacheByContext = undefined;
-					that._fireChange({reason : ChangeReason.Refresh});
+					// Do not fire a change event, or else ManagedObject destroys and recreates the
+					// binding hierarchy causing a flood of events
 				} else if (!that.oOperation.bAction) {
 					// ignore returned promise, error handling takes place in execute
 					that.execute(sGroupId);
 				}
 			}
 			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
-				oDependentBinding.refreshInternal(sGroupId);
+				oDependentBinding.refreshInternal(sGroupId, true);
 			});
 		});
 	};

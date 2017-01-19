@@ -463,7 +463,6 @@ sap.ui.require([
 		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to read path /EMPLOYEES(ID='1')", sClassName, sinon.match({canceled : true}));
 		oBindingMock = this.mock(oBinding);
-		oBindingMock.expects("_fireChange");
 		oBindingMock.expects("fireDataReceived").withExactArgs(undefined);
 
 		// trigger read before refresh
@@ -1499,8 +1498,6 @@ sap.ui.require([
 
 		// code under test
 		oBinding.refreshInternal();
-
-		sinon.assert.calledOnce(fnOnRefresh);
 	});
 
 	//*********************************************************************************************
@@ -1520,12 +1517,11 @@ sap.ui.require([
 		});
 		oBinding = this.oModel.bindContext("EMPLOYEE_2_TEAM", oContext, {"foo" : "bar"});
 		oBinding.mCacheByContext = {};
-
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Refresh});
+		oBinding.setContext(oContext);
 		this.mock(this.oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oBinding)).returns([oChild0, oChild1]);
-		this.mock(oChild0).expects("refreshInternal").withExactArgs("myGroup");
-		this.mock(oChild1).expects("refreshInternal").withExactArgs("myGroup");
+		this.mock(oChild0).expects("refreshInternal").withExactArgs("myGroup", true);
+		this.mock(oChild1).expects("refreshInternal").withExactArgs("myGroup", true);
 
 		//code under test
 		oBinding.refreshInternal("myGroup");

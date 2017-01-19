@@ -390,9 +390,11 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
-	ODataPropertyBinding.prototype.refreshInternal = function (sGroupId) {
+	ODataPropertyBinding.prototype.refreshInternal = function (sGroupId, bCheckUpdate) {
 		this.fetchCache(this.oContext);
-		this.checkUpdate(true, ChangeReason.Refresh, sGroupId);
+		if (bCheckUpdate) {
+			this.checkUpdate(true, ChangeReason.Refresh, sGroupId);
+		}
 	};
 
 	/**
