@@ -1140,7 +1140,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * Defines the scopes of GenericTile enabling the developer to implement different "flavors" of tiles.
 	 *
 	 * @enum {string}
-	 * @experimental since 1.46.0
+	 * @since 1.46.0
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @public
 	 */
