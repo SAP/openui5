@@ -10,3 +10,35 @@
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
 .sapUiContainerContentPadding(~".sapUiVlt");
+
+/* add padding between cells as well */
+.sapUiVlt.sapUiContentPadding > .sapuiVltCell:not(:last-child) {
+	padding-bottom: 1rem;
+	box-sizing: border-box;
+}
+
+@media (max-width: 599px) {
+	.sapMSplitContainerHideMode > .sapMSplitContainerDetail .sapUiVlt.sapUiResponsiveContentPadding ,
+	.sapMSplitContainerPortrait > .sapMSplitContainerDetail .sapUiVlt.sapUiResponsiveContentPadding ,
+	.sapUiVlt.sapUiResponsiveContentPadding  > .sapuiVltCell:not(:last-child) {
+		padding: 0;
+	}
+}
+@media (min-width: 600px) and (max-width: 1023px) {
+	.sapMSplitContainerHideMode > .sapMSplitContainerDetail .sapUiVlt.sapUiResponsiveContentPadding ,
+	.sapUiVlt.sapUiResponsiveContentPadding  > .sapuiVltCell:not(:last-child) {
+		padding-bottom: 1rem;
+		box-sizing: border-box;
+	}
+}
+@media (min-width: 1024px) {
+	.sapMSplitContainerHideMode > .sapMSplitContainerDetail .sapUiVlt.sapUiResponsiveContentPadding ,
+	.sapUiVlt.sapUiResponsiveContentPadding  > .sapuiVltCell:not(:last-child) {
+		padding-bottom: 1rem;
+		box-sizing: border-box;
+	}
+}
+
+.sapMSplitContainerDetail .sapUiVlt.sapUiResponsiveContentPadding  > .sapuiVltCell:not(:last-child) {
+	padding-bottom: 1rem;
+}
