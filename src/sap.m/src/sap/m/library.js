@@ -322,10 +322,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"unhideControl": "default",
 					"moveControls": "default"
 				},
-				"sap.m.InputListItem": {
-					"hideControl": "default",
-					"unhideControl": "default"
-				},
+				"sap.m.InputListItem": "sap/m/flexibility/InputListItem",
 				"sap.m.DatePicker": {
 					"hideControl": "default",
 					"unhideControl": "default"

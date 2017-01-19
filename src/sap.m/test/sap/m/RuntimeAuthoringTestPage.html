@@ -74,8 +74,15 @@
 												]
 											}),
 											new sap.m.StandardListItem({id: "standardListItem1", title: "Item 1", description: "Standardlistitem description"}),
-											new sap.m.StandardListItem({id: "listItem2", title: "Item 2"}),
-											new sap.m.StandardListItem({id: "listItem3", title: "Item 3"})
+											new sap.m.InputListItem({
+												id: "listItem1",
+												label: "Item 1",
+												content: [
+													new sap.m.Switch({id: "inputInListItem2"})
+												]
+											}),
+											new sap.m.StandardListItem({id: "standardListItem2", title: "Item 2"}),
+											new sap.m.StandardListItem({id: "standardListItem3", title: "Item 3"})
 										]
 									}),
 									new sap.ui.layout.VerticalLayout({
