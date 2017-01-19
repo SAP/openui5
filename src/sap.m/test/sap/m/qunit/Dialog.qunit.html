@@ -1130,6 +1130,42 @@
 				// Clean up
 				oDialogError.destroy();
 			});
+
+			test("Check if header toolbar role is set correctly", function(assert) {
+			    // arrange
+                var oDialog = new sap.m.Dialog({
+                	title: "Some title",
+					beginButton: new sap.m.Button({text: 'button'})
+                });
+
+			    // act
+				oDialog.open();
+				this.clock.tick(500);
+
+			    // assert
+			    assert.strictEqual(oDialog.$('header').attr('role'), "heading", "The role of the header should be set to 'heading'");
+
+			    // cleanup
+				oDialog.destroy();
+			});
+
+			test("Check if footer toolbar role is set correctly", function(assert) {
+				// arrange
+				var oDialog = new sap.m.Dialog({
+					title: "Some title",
+					beginButton: new sap.m.Button({text: 'button'})
+				});
+
+				// act
+				oDialog.open();
+				this.clock.tick(500);
+
+				// assert
+				assert.strictEqual(oDialog.$('footer').attr('role'), "toolbar", "The role of the header should be set to 'heading'");
+
+				// cleanup
+				oDialog.destroy();
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
