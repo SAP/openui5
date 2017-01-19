@@ -27,7 +27,6 @@ sap.ui.define([
 		ODataMetaListBinding,
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
 		ODataMetaPropertyBinding,
-		ODataModel, // see ODataMetaModel#.setODataModel
 		// rest of segment after opening ( and segments that consist only of digits
 		rNotMetaContext = /\([^/]*|\/-?\d+/g,
 		rNumber = /^-?\d+$/,
@@ -79,6 +78,7 @@ sap.ui.define([
 			}
 		},
 		sValueListMapping = "@com.sap.vocabularies.Common.v1.ValueListMapping",
+		mValueListModelByUrl = {},
 		WARNING = jQuery.sap.log.Level.WARNING;
 
 	/**
@@ -188,6 +188,8 @@ sap.ui.define([
 	 * @param {string|string[]} [vAnnotationUri]
 	 *   The URL (or an array of URLs) from which the annotation metadata are loaded
 	 *   Supported since 1.41.0
+	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
+	 *   The model this meta model is related to
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataMetaModel
 	 * @author SAP SE
@@ -206,16 +208,16 @@ sap.ui.define([
 		/*
 		 * @param {sap.ui.model.odata.v4.lib._MetadataRequestor} oRequestor
 		 */
-		constructor : function (oRequestor, sUrl, vAnnotationUri) {
+		constructor : function (oRequestor, sUrl, vAnnotationUri, oModel) {
 			MetaModel.call(this);
 			this.aAnnotationUris = vAnnotationUri && !Array.isArray(vAnnotationUri)
 				? [vAnnotationUri] : vAnnotationUri;
 			this.sDefaultBindingMode = BindingMode.OneTime;
 			this.oMetadataPromise = null;
+			this.oModel = oModel;
 			this.oRequestor = oRequestor;
 			this.mSupportedBindingModes = {"OneTime" : true};
 			this.sUrl = sUrl;
-			this.mValueListModels = {};
 		}
 	});
 
@@ -1023,7 +1025,7 @@ sap.ui.define([
 	 * retrieves it from the cache upon further requests.
 	 *
 	 * @param {string} sMappingUrl
-	 *   The mapping URL
+	 *   The mapping URL, for example "../ValueListService/$metadata"
 	 * @returns {sap.ui.model.odata.v4.ODataModel}
 	 *   The value list model
 	 *
@@ -1036,18 +1038,17 @@ sap.ui.define([
 		// the MappingUrl references the metadata document, remove the filename part and make it
 		// absolute based on the data service URL to get rid of ".." segments
 		sValueListUrl = new URI(sMappingUrl).filename("").absoluteTo(this.sUrl).toString();
-		oValueListModel = this.mValueListModels[sValueListUrl];
+		oValueListModel = mValueListModelByUrl[sValueListUrl];
 		if (!oValueListModel) {
-			oValueListModel = new ODataModel({
-				groupId : "$direct",
+			oValueListModel = new this.oModel.constructor({
 				operationMode : OperationMode.Server,
 				serviceUrl : sValueListUrl,
 				synchronizationMode : "None"
 			});
 			oValueListModel.setDefaultBindingMode(BindingMode.OneWay);
-			this.mValueListModels[sValueListUrl] = oValueListModel;
-			// give the value list meta model a reference to its model
-			oValueListModel.getMetaModel().mValueListModels[sValueListUrl] = oValueListModel;
+			mValueListModelByUrl[sValueListUrl] = oValueListModel;
+			oValueListModel.oRequestor.mHeaders["X-CSRF-Token"]
+				= this.oModel.oRequestor.mHeaders["X-CSRF-Token"];
 		}
 		return oValueListModel;
 	};
@@ -1423,6 +1424,8 @@ sap.ui.define([
 
 		/*
 		 * Determines the namespace of the given qualified name.
+		 * @param {string} sName The qualified name
+		 * @returns {string} The namespace
 		 */
 		function namespace(sName) {
 			var iIndex = sName.indexOf("/");
@@ -1436,7 +1439,7 @@ sap.ui.define([
 		}
 
 		/*
-		 * Checks that the term it is a value list mapping term and determines the qualifier.
+		 * Checks that the term is a value list mapping term and determines the qualifier.
 		 * @param {string} sTerm The term
 		 * @returns {string} The key or undefined if the term does not specify a value list mapping
 		 */
@@ -1444,7 +1447,7 @@ sap.ui.define([
 			if (sTerm === sValueListMapping) {
 				return "";
 			}
-			if (sTerm.indexOf(sValueListMapping + "#") === 0) {
+			if (sTerm.indexOf(sValueListMapping) === 0 && sTerm[sValueListMapping.length] === "#") {
 				return sTerm.slice(sValueListMapping.length + 1);
 			}
 		}
@@ -1475,31 +1478,33 @@ sap.ui.define([
 			// target in the data service.
 			return oValueListModel.getMetaModel().fetchEntityContainer()
 				.then(function (oValueListMetadata) {
-					var oTargets = oValueListMetadata.$Annotations,
+					var mAnnotationMapForTarget = oValueListMetadata.$Annotations,
 						oValueListInfo = {};
 
-					Object.keys(oTargets).forEach(function (sTarget) {
-						var oTerms = oTargets[sTarget];
-
-						if (namespace(sTarget) !== sNamespace) {
-							// target is not in the namespace of the data service -> ignore
-							return;
-						}
-						if (that.getObject("/" + sTarget) !== oProperty) {
-							if (that === oValueListModel.getMetaModel()) {
-								return; // value list on value list
+					Object.keys(mAnnotationMapForTarget).filter(function (sTarget) {
+						// only relevant if the target is in the namespace of the data service
+						if (namespace(sTarget) === sNamespace) {
+							if (that.getObject("/" + sTarget) === oProperty) {
+								return true;
 							}
-							// target is not the property
-							throw new Error("Unexpected annotation target in value list metadata: "
-								+ sTarget);
+							if (that !== oValueListModel.getMetaModel()) {
+								// target is not the property
+								throw new Error(
+									"Unexpected annotation target in value list metadata: "
+										+ sTarget);
+							}
 						}
-						Object.keys(oTerms).forEach(function (sTerm) {
+						return false;
+					}).forEach(function (sTarget) {
+						var mAnnotationForTerm = mAnnotationMapForTarget[sTarget];
+
+						Object.keys(mAnnotationForTerm).forEach(function (sTerm) {
 							var sKey = getMappingKey(sTerm);
 
 							if (sKey !== undefined) {
 								oValueListInfo[sKey] = jQuery.extend(true, {
 									$model : oValueListModel
-								}, oTerms[sTerm]);
+								}, mAnnotationForTerm[sTerm]);
 							} else if (that !== oValueListModel.getMetaModel()) {
 								throw new Error(
 									"Unexpected annotation term in value list metadata: "
@@ -1594,20 +1599,6 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.toString = function () {
 		return sODataMetaModel + ": " + this.sUrl;
-	};
-
-	/**
-	 * Sets the constructor for ODataModel. We cannot import it via sap.ui.define because this would
-	 * lead to a cyclic dependency.
-	 *
-	 * @param {function} fnODataModel
-	 *   The constructor for ODataModel
-	 *
-	 * @private
-	 */
-	ODataMetaModel.setODataModel = function (fnODataModel) {
-		// save it globally
-		ODataModel = fnODataModel;
 	};
 
 	return ODataMetaModel;
