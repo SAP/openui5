@@ -5,6 +5,10 @@
 	box-shadow: 0rem 0rem 0rem 1px @sapHCStandardFG; /* Usage of px as aligned with designers. */
 }
 
+.sapMSTFocusDiv {
+	border-radius: 0.25rem;
+}
+
 html.sap-desktop .sapMST:hover,
 html.sap-tablet .sapMSTHvr:active,
 html.sap-phone .sapMSTHvr:active {
@@ -40,4 +44,8 @@ html.sap-desktop .sapMST:focus:not([tabindex]) {
 
 .sapMST .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
 	background-color: @sapUiHighlight;
+}
+
+.sapMST .sapMGT {
+	border-radius: 0px;
 }
