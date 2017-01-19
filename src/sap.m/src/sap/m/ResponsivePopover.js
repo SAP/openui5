@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ResponsivePopover.
-sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool'],
-	function(jQuery, Dialog, Popover, library, Control, IconPool) {
+sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/base/ManagedObject'],
+	function(jQuery, Dialog, Popover, library, Control, IconPool, ManagedObject) {
 	"use strict";
 
 
@@ -709,6 +709,14 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 				}
 			};
 	});
+
+	/**
+	 * Popup controls should not propagate contextual width
+	 * @private
+	 */
+	ResponsivePopover.prototype._applyContextualSettings = function () {
+		ManagedObject.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
+	};
 
 	return ResponsivePopover;
 

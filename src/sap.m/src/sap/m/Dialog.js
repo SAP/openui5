@@ -5,9 +5,9 @@
 // Provides control sap.m.Dialog.
 sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './AssociativeOverflowToolbar', './ToolbarSpacer',
 	'./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/delegate/ScrollEnablement',
-	'sap/ui/core/theming/Parameters', 'sap/ui/core/RenderManager', 'sap/ui/core/InvisibleText', 'sap/ui/core/ResizeHandler','sap/ui/Device'],
+	'sap/ui/core/theming/Parameters', 'sap/ui/core/RenderManager', 'sap/ui/core/InvisibleText', 'sap/ui/core/ResizeHandler','sap/ui/Device', 'sap/ui/base/ManagedObject'],
 	function (jQuery, Bar, InstanceManager, AssociativeOverflowToolbar, ToolbarSpacer, library, Control, IconPool,
-			  Popup, ScrollEnablement, Parameters, RenderManager, InvisibleText, ResizeHandler, Device) {
+			  Popup, ScrollEnablement, Parameters, RenderManager, InvisibleText, ResizeHandler, Device, ManagedObject) {
 		"use strict";
 
 
@@ -1727,6 +1727,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				e.stopPropagation();
 			};
 		}
+
+		/**
+		 * Popup controls should not propagate contextual width
+		 * @private
+		 */
+		Dialog.prototype._applyContextualSettings = function () {
+			ManagedObject.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
+		};
 
 		return Dialog;
 

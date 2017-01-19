@@ -3,8 +3,8 @@
 */
 
 // Provides control sap.m.ViewSettingsDialog.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', './Toolbar', './CheckBox', './SearchField', './List', './StandardListItem'],
-function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, List, StandardListItem) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', './Toolbar', './CheckBox', './SearchField', './List', './StandardListItem', 'sap/ui/base/ManagedObject'],
+function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, List, StandardListItem, ManagedObject) {
 	"use strict";
 
 	var LIST_ITEM_SUFFIX = "-list-item";
@@ -2958,6 +2958,14 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	/* =========================================================== */
 	/* end: event handlers */
 	/* =========================================================== */
+
+	/**
+	 * Popup controls should not propagate contextual width
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._applyContextualSettings = function () {
+		ManagedObject.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
+	};
 
 	/**
 	 * Handle the "content" aggregation of a custom tab, as the items in it might be transferred to the dialog page
