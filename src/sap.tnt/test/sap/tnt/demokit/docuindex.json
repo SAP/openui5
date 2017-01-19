@@ -1,92 +1,92 @@
 {
-  "demo": {
-    "text": "sap.tnt",
-    "links": [
-      {
-        "text": "Tool Page",
-        "ref": "test-resources/sap/tnt/demokit/toolpageapp/webapp/index.html",
-        "category": "Showcase",
-        "config": "test-resources/sap/tnt/demokit/toolpageapp/demoapp.json",
-        "icon": "wrench",
-        "desc": "This is where it all starts when developing admin tools with the sap.tnt.ToolPage",
-        "config": "test-resources/sap/tnt/demokit/toolpageapp/demoapp.json"
-      }
-    ]
-  },
-  "explored": {
-    "entitiesDefaults": {
-      "appComponent": "CA-UI5-CTR",
-      "formFactors": "ML"
-    },
-    "samplesRef": {
-      "namespace": "sap.tnt.sample",
-      "ref": "test-resources/sap/tnt/demokit/sample"
-    },
-    "entities": [
-      {
-        "id": "sap.tnt.NavigationList",
-        "name": "Navigation List",
-        "category": "Action",
-        "since": "1.34",
-        "samples": [
-          "sap.tnt.sample.NavigationList"
-        ]
-      },
-      {
-        "id": "sap.tnt.SideNavigation",
-        "name": "Side Navigation",
-        "category": "Action",
-        "since": "1.34",
-        "samples": [
-          "sap.tnt.sample.SideNavigation"
-        ]
-      },
-      {
-        "id": "sap.tnt.ToolHeader",
-        "name": "Tool Header",
-        "category": "Action",
-        "since": "1.34",
-        "samples": [
-          "sap.tnt.sample.ToolHeader",
-          "sap.tnt.sample.ToolHeaderControls"
-        ]
-      },
-      {
-        "id": "sap.tnt.ToolPage",
-        "name": "Tool Page Layout",
-        "category": "Layout",
-        "since": "1.34",
-        "samples": [
-          "sap.tnt.sample.ToolPage"
-        ]
-      }
-    ],
-    "samples": [
-      {
-        "id": "sap.tnt.sample.NavigationList",
-        "name": "Navigation List",
-        "description": "Navigation List in a Page"
-      },
-      {
-        "id": "sap.tnt.sample.SideNavigation",
-        "name": "Side Navigation",
-        "description": "SideNavigation in container with fixed width."
-      },
-      {
-        "id": "sap.tnt.sample.ToolHeader",
-        "name": "Tool Header",
-        "description": "Tool Header is useful for showing lists of action buttons"
-      },
-      {
-        "id": "sap.tnt.sample.ToolHeaderControls",
-        "name": "Tool Header Controls",
-        "description": "Tool Header can contain any controls"
-      },
-      {
-        "id": "sap.tnt.sample.ToolPage",
-        "name": "Tool Page",
-        "description": "A tool page layout combining ToolHeader, SideNavigation and content part"
-      }
-    ]
-  }
+	"demo": {
+		"text": "sap.tnt",
+		"links": [
+			{
+				"text": "Tool Page",
+				"ref": "test-resources/sap/tnt/demokit/toolpageapp/webapp/index.html",
+				"category": "Showcase",
+				"config": "test-resources/sap/tnt/demokit/toolpageapp/demoapp.json",
+				"icon": "wrench",
+				"desc": "This is where it all starts when developing admin tools with the sap.tnt.ToolPage",
+				"config": "test-resources/sap/tnt/demokit/toolpageapp/demoapp.json"
+			}
+		]
+	},
+	"explored": {
+		"entitiesDefaults": {
+			"appComponent": "CA-UI5-CTR",
+			"formFactors": "ML"
+		},
+		"samplesRef": {
+			"namespace": "sap.tnt.sample",
+			"ref": "test-resources/sap/tnt/demokit/sample"
+		},
+		"entities": [
+			{
+				"id": "sap.tnt.NavigationList",
+				"name": "Navigation List",
+				"category": "Action",
+				"since": "1.34",
+				"samples": [
+					"sap.tnt.sample.NavigationList"
+				]
+			},
+			{
+				"id": "sap.tnt.SideNavigation",
+				"name": "Side Navigation",
+				"category": "Action",
+				"since": "1.34",
+				"samples": [
+					"sap.tnt.sample.SideNavigation"
+				]
+			},
+			{
+				"id": "sap.tnt.ToolHeader",
+				"name": "Tool Header",
+				"category": "Action",
+				"since": "1.34",
+				"samples": [
+					"sap.tnt.sample.ToolHeader",
+					"sap.tnt.sample.ToolHeaderControls"
+				]
+			},
+			{
+				"id": "sap.tnt.ToolPage",
+				"name": "Tool Page Layout",
+				"category": "Layout",
+				"since": "1.34",
+				"samples": [
+					"sap.tnt.sample.ToolPage"
+				]
+			}
+		],
+		"samples": [
+			{
+				"id": "sap.tnt.sample.NavigationList",
+				"name": "Navigation List",
+				"description": "Navigation List in a Page"
+			},
+			{
+				"id": "sap.tnt.sample.SideNavigation",
+				"name": "Side Navigation",
+				"description": "SideNavigation in container with fixed width."
+			},
+			{
+				"id": "sap.tnt.sample.ToolHeader",
+				"name": "Tool Header",
+				"description": "Tool Header is useful for showing lists of action buttons"
+			},
+			{
+				"id": "sap.tnt.sample.ToolHeaderControls",
+				"name": "Tool Header Controls",
+				"description": "Tool Header can contain any controls"
+			},
+			{
+				"id": "sap.tnt.sample.ToolPage",
+				"name": "Tool Page",
+				"description": "A tool page layout combining ToolHeader, SideNavigation and content part"
+			}
+		]
+	}
 }
