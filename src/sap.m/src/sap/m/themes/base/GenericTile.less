@@ -510,9 +510,12 @@ html[dir=rtl] .sapMGTLineMode {
 	border-radius: 0.125rem;
 }
 
-.sapMGTFocusDiv {
+.sapMGT .sapMGTFocusDiv {
 	.sapMGTOverlayMixin(0px, 2);
 	border-radius: 0.25rem;
+}
+.sapMGT.sapMGTBackgroundImage .sapMGTFocusDiv {
+	.sapMGTOverlayMixin(1px, 2);
 }
 
 .sapMGTLineMode .sapMGTFocusDiv {
