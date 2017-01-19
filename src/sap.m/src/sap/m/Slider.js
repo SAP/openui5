@@ -861,7 +861,7 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		Slider.prototype.onsapincreasemodifiers = function(oEvent) {
-			if (["number", "text"].indexOf(oEvent.target.type) > -1) {
+			if (["number", "text"].indexOf(oEvent.target.type) > -1 || oEvent.altKey) {
 				return;
 			}
 
@@ -910,7 +910,7 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		Slider.prototype.onsapdecreasemodifiers = function(oEvent) {
-			if (["number", "text"].indexOf(oEvent.target.type) > -1) {
+			if (["number", "text"].indexOf(oEvent.target.type) > -1 || oEvent.altKey) {
 				return;
 			}
 			// note: prevent document scrolling when arrow keys are pressed
