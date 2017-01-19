@@ -318,6 +318,16 @@
 			text: "Enable / Disable Cell Filter",
 			action: function(oTable) {oTable.setEnableCellFilter(!oTable.getEnableCellFilter());}
 		},
+		AUTORESIZE: {
+			text: "Enable / Disable Column Auto-Resizing",
+			action: function(oTable) {
+				window._bEnableAutoResize = !window._bEnableAutoResize;
+				var aColumns = oTable.getColumns();
+				for (var i = 0; i < aColumns.length; i++) {
+					aColumns[i].setAutoResizable(window._bEnableAutoResize);
+				}
+			}
+		},
 		FIXEDCOLUMNS: {
 			text: "Fixed Columns",
 			input: true,
