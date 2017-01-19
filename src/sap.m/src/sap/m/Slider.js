@@ -960,7 +960,7 @@ sap.ui.define([
 		Slider.prototype.onsapincreasemodifiers = function(oEvent) {
 
 			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this) {
+			if (oEvent.srcControl !== this || oEvent.altKey) {
 				return;
 			}
 
@@ -1012,7 +1012,7 @@ sap.ui.define([
 		Slider.prototype.onsapdecreasemodifiers = function(oEvent) {
 
 			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this) {
+			if (oEvent.srcControl !== this || oEvent.altKey) {
 				return;
 			}
 
