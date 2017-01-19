@@ -1009,11 +1009,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 
 		sName = sName || Device.media.RANGESETS.SAP_STANDARD;
 
-		if (typeof iWidth === "undefined") {
-			return Device.media.getCurrentRange(sName);
-		} else {
-			return Device.media.getCurrentRangeForWidth(sName, iWidth);
-		}
+		return Device.media.getCurrentRange(sName, iWidth);
 	};
 
 	/**
