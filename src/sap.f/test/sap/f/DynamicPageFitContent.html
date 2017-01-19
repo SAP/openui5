@@ -1,0 +1,431 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.f.DynamicPage test page</title>
+
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.f">
+	</script>
+
+	<style>html, body, .container {height: 100%}</style>
+
+	<script id="info" type="sapui5/xmlview">
+		<mvc:View
+			height="100%"
+			xmlns:mvc="sap.ui.core.mvc"
+			xmlns:core="sap.ui.core"
+			xmlns="sap.m"
+			xmlns:f="sap.f">
+
+			<f:DynamicPage id="dynamicPageId">
+				<f:title>
+					<f:DynamicPageTitle>
+						<f:heading>
+							<Title text="Info Page"/>
+						</f:heading>
+					</f:DynamicPageTitle>
+				</f:title>
+
+				<f:content>
+					<VBox fitContainer="true">
+						<MessageStrip text="Add info for this page here"/>
+					</VBox>
+				</f:content>
+			</f:DynamicPage>
+		</mvc:View>
+	</script>
+
+	<script id="vbox" type="sapui5/xmlview">
+		<mvc:View
+			height="100%"
+			controllerName="vboxController"
+			xmlns:layout="sap.ui.layout"
+			xmlns:mvc="sap.ui.core.mvc"
+			xmlns:core="sap.ui.core"
+			xmlns="sap.m"
+			xmlns:f="sap.f">
+
+			<f:DynamicPage id="DPNormalContent" showFooter="true">
+				<f:title>
+					<f:DynamicPageTitle>
+						<f:heading>
+							<Title text="VBox "/>
+						</f:heading>
+					</f:DynamicPageTitle>
+				</f:title>
+
+				<f:header>
+					<f:DynamicPageHeader>
+						<f:content>
+							<layout:Grid defaultSpan="XL4 L6 M6 S12">
+								<layout:VerticalLayout>
+									<Label text="Content Management:"/>
+									<Button text="+" press="onAddContent"/>
+									<Button text="-" press="onRemoveContent"/>
+									<Button text="Clear Content" press="onClearContent"/>
+								</layout:VerticalLayout>
+								<layout:VerticalLayout>
+									<ToggleButton id="toggleBtn-dp-fitContent" text="DP FitContent property:" press="onFitContentChange"/>
+								</layout:VerticalLayout>
+								<layout:VerticalLayout>
+									<ToggleButton id="toggleBtn-vBox-fitContainer" text="VBox fitContainer" press="onVBoxFitContainerPress"/>
+								</layout:VerticalLayout>
+								<layout:VerticalLayout>
+									<ToggleButton id="toggleBtn-showFooter" text="Toggle Footer" press="onToggleFooterPress"/>
+								</layout:VerticalLayout>
+							</layout:Grid>
+						</f:content>
+					</f:DynamicPageHeader>
+				</f:header>
+
+				<f:content>
+					<VBox id="vbox-content">
+						<Button text="Simple Button"/>
+						<Button text="Simple Button"/>
+						<Button text="Simple Button"/>
+						<Button text="Simple Button"/>
+						<Button text="Simple Button"/>
+						<Button text="Simple Button"/>
+						<Button text="Simple Button"/>
+						<Button text="Simple Button"/>
+						<Button text="Simple Button"/>
+						<Button text="Simple Button"/>
+						<Button text="Simple Button"/>
+						<Button text="Simple Button"/>
+					</VBox>
+				</f:content>
+
+				<f:footer>
+					<OverflowToolbar>
+						<ToolbarSpacer/>
+						<Button type="Accept" text="Accept"/>
+						<Button type="Reject" text="Reject"/>
+					</OverflowToolbar>
+				</f:footer>
+			</f:DynamicPage>
+		</mvc:View>
+	</script>
+
+	<script id="analyticalTable" type="sapui5/xmlview">
+		<mvc:View
+			height="100%"
+			controllerName="analyticalTableController"
+			xmlns:layout="sap.ui.layout"
+			xmlns:mvc="sap.ui.core.mvc"
+			xmlns:core="sap.ui.core"
+			xmlns="sap.m"
+			xmlns:t="sap.ui.table"
+			xmlns:f="sap.f">
+
+			<f:DynamicPage id="dp">
+				<f:title>
+					<f:DynamicPageTitle>
+						<f:heading>
+							<Title text="Analytical Table"/>
+						</f:heading>
+					</f:DynamicPageTitle>
+				</f:title>
+				<f:header>
+					<f:DynamicPageHeader>
+						<f:content>
+							<layout:Grid defaultSpan="XL4 L6 M6 S12">
+								<layout:VerticalLayout>
+									<ToggleButton id="toggleBtn-dp-fitContent" text="DP FitContent property:" press="onFitContentChange"/>
+								</layout:VerticalLayout>
+								<layout:VerticalLayout>
+										<ToggleButton id="toggleBtn-showFooter" text="Toggle Footer" press="onToggleFooterPress"/>
+									</layout:VerticalLayout>
+							</layout:Grid>
+						</f:content>
+					</f:DynamicPageHeader>
+				</f:header>
+
+				<f:content>
+					<t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
+						<t:toolbar>
+							<OverflowToolbar>
+								<Title text="Title Bar Here"/>
+								<ToolbarSpacer/>
+								<SearchField width="12rem"/>
+								<SegmentedButton>
+									<buttons>
+										<Button icon="sap-icon://table-view"/>
+										<Button icon="sap-icon://bar-chart"/>
+									</buttons>
+								</SegmentedButton>
+								<Button icon="sap-icon://group-2" type="Transparent"/>
+								<Button icon="sap-icon://action-settings" type="Transparent"/>
+							</OverflowToolbar>
+						</t:toolbar>
+						<t:columns>
+							<t:AnalyticalColumn/>
+							<t:AnalyticalColumn/>
+							<t:AnalyticalColumn/>
+						</t:columns>
+						<t:layoutData>
+							<FlexItemData growFactor="1" baseSize="0%" styleClass="sapUiResponsiveContentPadding"/>
+						</t:layoutData>
+					</t:AnalyticalTable>
+				</f:content>
+
+				<f:footer>
+					<OverflowToolbar>
+						<ToolbarSpacer/>
+						<Button type="Accept" text="Accept"/>
+						<Button type="Reject" text="Reject"/>
+					</OverflowToolbar>
+				</f:footer>
+			</f:DynamicPage>
+		</mvc:View>
+	</script>
+	<script id="iconTabBarAnalyticalTable" type="sapui5/xmlview">
+		<mvc:View
+			height="100%"
+			controllerName="iconTabBarAnalyticalTableController"
+			xmlns:layout="sap.ui.layout"
+			xmlns:mvc="sap.ui.core.mvc"
+			xmlns:core="sap.ui.core"
+			xmlns:form="sap.ui.layout.form"
+			xmlns="sap.m"
+			xmlns:t="sap.ui.table"
+			xmlns:f="sap.f">
+
+			<f:DynamicPage id="dp">
+				<f:title>
+					<f:DynamicPageTitle>
+						<f:heading>
+							<Title text="Analytical Table"/>
+						</f:heading>
+					</f:DynamicPageTitle>
+				</f:title>
+
+				<f:header>
+					<f:DynamicPageHeader>
+						<f:content>
+							<layout:Grid defaultSpan="XL4 L6 M6 S12">
+								<layout:VerticalLayout>
+									<ToggleButton id="toggleBtn-dp-fitContent" text="DP FitContent property:" press="onFitContentChange"/>
+								</layout:VerticalLayout>
+								<layout:VerticalLayout>
+										<ToggleButton id="toggleBtn-showFooter" text="Toggle Footer" press="onToggleFooterPress"/>
+									</layout:VerticalLayout>
+							</layout:Grid>
+						</f:content>
+					</f:DynamicPageHeader>
+				</f:header>
+
+				<f:content>
+					<IconTabBar class="sapUiResponsiveContentPadding"  stretchContentHeight="true">
+                        <items>
+                            <IconTabFilter text="Table">
+                                <t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
+                                    <t:toolbar>
+                                        <OverflowToolbar>
+                                            <Title text="Title Bar Here"/>
+                                            <ToolbarSpacer/>
+                                            <SearchField width="12rem"/>
+                                            <SegmentedButton>
+                                                <buttons>
+                                                    <Button icon="sap-icon://table-view"/>
+                                                    <Button icon="sap-icon://bar-chart"/>
+                                                </buttons>
+                                            </SegmentedButton>
+                                            <Button icon="sap-icon://group-2" type="Transparent"/>
+                                            <Button icon="sap-icon://action-settings" type="Transparent"/>
+                                        </OverflowToolbar>
+                                    </t:toolbar>
+                                    <t:columns>
+                                        <t:AnalyticalColumn/>
+                                        <t:AnalyticalColumn/>
+                                        <t:AnalyticalColumn/>
+                                    </t:columns>
+                                    <t:layoutData>
+                                        <FlexItemData growFactor="1" baseSize="0%" styleClass="sapUiResponsiveContentPadding"/>
+                                    </t:layoutData>
+                                </t:AnalyticalTable>
+                            </IconTabFilter>
+                            <IconTabFilter text="Info">
+                                <form:SimpleForm
+                                    minWidth="1024"
+                                    maxContainerCols="2"
+                                    layout="ResponsiveGridLayout" >
+                                    <form:title>
+                                        <core:Title text="A Form" />
+                                    </form:title>
+                                    <Label text="Label"/>
+                                    <Text text="Value"/>
+                                </form:SimpleForm>
+                                <FeedInput />
+                                <FeedInput />
+                                <FeedInput />
+                                <FeedInput />
+                                <FeedInput />
+                                <FeedInput />
+                            </IconTabFilter>
+                            <IconTabFilter
+                                text="Attachments">
+                                <List headerText="A List" showSeparators="Inner" >
+                                </List>
+                            </IconTabFilter>
+                            <IconTabFilter
+                                text="Notes">
+                                <FeedInput />
+                            </IconTabFilter>
+                        </items>
+                    </IconTabBar>
+				</f:content>
+
+				<f:footer>
+					<OverflowToolbar>
+						<ToolbarSpacer/>
+						<Button type="Accept" text="Accept"/>
+						<Button type="Reject" text="Reject"/>
+					</OverflowToolbar>
+				</f:footer>
+			</f:DynamicPage>
+		</mvc:View>
+	</script>
+</head>
+
+<body id="body" class="sapUiBody">
+<script>
+	sap.ui.getCore().attachInit(function () {
+		// INFO VIEW
+
+		var infoPage = sap.ui.xmlview('info' ,{viewContent:jQuery('#info').html()});
+
+		sap.ui.controller("vboxController", {
+			onInit: function() {
+				var byId = function (id) {
+					return this.getView().byId(id);
+				}.bind(this);
+
+				this.vBoxContent = byId('vbox-content');
+				this.dp = byId('DPNormalContent');
+
+				byId("toggleBtn-dp-fitContent").setPressed(this.dp.getFitContent());
+				byId("toggleBtn-vBox-fitContainer").setPressed(this.vBoxContent.getFitContainer());
+				byId("toggleBtn-showFooter").setPressed(this.dp.getShowFooter());
+			},
+			onAddContent: function () {
+				this.vBoxContent.addItem(new sap.m.Button({ text: "Simple Button" }));
+			},
+			onRemoveContent: function () {
+				var itemsCount = this.vBoxContent.getItems().length;
+
+				this.vBoxContent.removeItem(itemsCount - 1);
+			},
+			onClearContent: function () {
+				this.vBoxContent.removeAllItems();
+			},
+			onFitContentChange: function (event) {
+				this.dp.setFitContent(event.getSource().getPressed());
+			},
+			onVBoxFitContainerPress: function (event) {
+				this.vBoxContent.setFitContainer(event.getSource().getPressed());
+			},
+			onToggleFooterPress: function (event) {
+				this.dp.setShowFooter(event.getSource().getPressed());
+			}
+		});
+		var vbox = sap.ui.xmlview('vbox', {viewContent:jQuery('#vbox').html()});
+
+		sap.ui.controller("analyticalTableController", {
+			onInit: function() {
+				var byId = function (id) {
+					return this.getView().byId(id);
+				}.bind(this);
+
+				this.dp = byId('dp');
+
+				byId("toggleBtn-dp-fitContent").setPressed(this.dp.getFitContent());
+				byId("toggleBtn-showFooter").setPressed(this.dp.getShowFooter());
+			},
+			onFitContentChange: function (event) {
+				this.dp.setFitContent(event.getSource().getPressed());
+			},
+			onToggleFooterPress: function (event) {
+				this.dp.setShowFooter(event.getSource().getPressed());
+			}
+		});
+		var analyticalTable = sap.ui.xmlview('analyticalTable', {viewContent:jQuery('#analyticalTable').html()});
+
+		sap.ui.controller("iconTabBarAnalyticalTableController", {
+			onInit: function() {
+				var byId = function (id) {
+					return this.getView().byId(id);
+				}.bind(this);
+
+				this.dp = byId('dp');
+
+				byId("toggleBtn-dp-fitContent").setPressed(this.dp.getFitContent());
+				byId("toggleBtn-showFooter").setPressed(this.dp.getShowFooter());
+			},
+			onFitContentChange: function (event) {
+				this.dp.setFitContent(event.getSource().getPressed());
+			},
+			onToggleFooterPress: function (event) {
+				this.dp.setShowFooter(event.getSource().getPressed());
+			}
+		});
+		var iconTabBarAnalyticalTable = sap.ui.xmlview('iconTabBarAnalyticalTable', {viewContent:jQuery('#iconTabBarAnalyticalTable').html()});
+
+		var masterPage = new sap.m.List({
+				itemPress: function(oEvent) {
+					var sToPageId = oEvent.getParameter("listItem").getCustomData()[0].getValue();
+
+					splitApp.toDetail(sToPageId);
+				},
+				items: [
+					new sap.m.StandardListItem({
+						title: "Info",
+						type: "Active",
+						customData: {
+							Type:"sap.ui.core.CustomData",
+							key:"to",
+							value:"info"
+						}
+					}),
+					new sap.m.StandardListItem({
+						title: "VBox",
+						type: "Active",
+						customData: {
+							Type:"sap.ui.core.CustomData",
+							key:"to",
+							value:"vbox"
+						}
+					}),
+					new sap.m.StandardListItem({
+						title: "Analytical Table",
+						type: "Active",
+						customData: {
+							Type:"sap.ui.core.CustomData",
+							key:"to",
+							value:"analyticalTable"
+						}
+					}),
+					new sap.m.StandardListItem({
+						title: "IconTabBar > Analytical Table",
+						type: "Active",
+						customData: {
+							Type:"sap.ui.core.CustomData",
+							key:"to",
+							value:"iconTabBarAnalyticalTable"
+						}
+					})
+				]
+			});
+
+		var splitApp = new sap.m.SplitApp({
+			detailPages: [infoPage, vbox, analyticalTable, iconTabBarAnalyticalTable],
+			masterPages: masterPage
+		});
+		splitApp.placeAt('content');
+	});
+</script>
+<div class="container" id="content"></div>
+</body>
+</html>
