@@ -45,6 +45,15 @@
 	</filter-mapping>
 
 	<servlet>
+		<servlet-name>VersionServlet</servlet-name>
+		<servlet-class>com.sap.openui5.VersionServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>VersionServlet</servlet-name>
+		<url-pattern>/resources/sap-ui-version.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>ResourceServlet</servlet-name>
 		<servlet-class>com.sap.openui5.ResourceServlet</servlet-class>
 	</servlet>
@@ -57,6 +66,10 @@
 		<url-pattern>/test-resources/*</url-pattern>
 	</servlet-mapping>
 
+	<listener>
+		<display-name>DiscoveryService</display-name>
+		<listener-class>com.sap.openui5.DiscoveryService</listener-class>
+	</listener>
 	<servlet>
 		<servlet-name>DiscoveryServlet</servlet-name>
 		<servlet-class>com.sap.openui5.DiscoveryServlet</servlet-class>
