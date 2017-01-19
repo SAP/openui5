@@ -174,16 +174,19 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 		 * @private
 		 */
 		_writeLandmarkInfo: function (oRm, oControl) {
-			var role;
+			var sRole;
+			var bIsDialogHeader = (sap.m.Dialog && oControl.getParent() instanceof sap.m.Dialog) &&
+				(oControl.getHTMLTag() == sap.m.IBarHTMLTag.Header);
 
 			if (oControl._bHasLandmarkInfo) {
 				PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, oControl.getParent(), oControl._sLandmarkContext);
 			} else {
 				// BCP: 1670153972
-				// Bar in Dialog has to have 'role' attr set to 'heading'
-				role = sap.m.Dialog && oControl.getParent() instanceof sap.m.Dialog ? "heading" : "toolbar";
+				// Bar in Dialog has to have 'role' attr set to 'heading' for the header
+				sRole = bIsDialogHeader ? "heading" : "toolbar";
+
 				oRm.writeAccessibilityState(oControl, {
-					role: role
+					role: sRole
 				});
 			}
 		},
