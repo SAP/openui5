@@ -103,7 +103,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				this._sContainerResizeListener = sap.ui.core.ResizeHandler.register(this, jQuery.proxy(this._onParentResize, this));
 				this._onParentResize();
 			} else {
-				sap.ui.Device.media.attachHandler(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED);
+				this._attachMediaContainerWidthChange(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED);
 			}
 		};
 
@@ -130,7 +130,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			}
 
 			// Device Media Change handler
-			sap.ui.Device.media.detachHandler(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED);
+			this._detachMediaContainerWidthChange(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED);
 		};
 
 		Grid.prototype._handleMediaChange  = function(oParams) {

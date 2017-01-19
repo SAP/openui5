@@ -34,7 +34,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapUiRespGrid");
 
-		var  sMedia = sap.ui.Device.media.getCurrentRange(sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED).name;
+		var  sMedia = oControl._getCurrentMediaContainerRange(sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED).name;
 		oRm.addClass("sapUiRespGridMedia-Std-" + sMedia);
 
 		var fHSpacing = oControl.getHSpacing();
