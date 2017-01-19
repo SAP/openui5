@@ -235,18 +235,14 @@ sap.ui.define([
 
 		/**
 		 * Error and success handler for the unlist action.
-		 * @param sProductId the product id for which this handler is called
-		 * @param bSuccess true in case of a success handler, else false (for error handler)
-		 * @param iRequestNumber the counter which specifies the position of this request
-		 * @param iTotalRequests the number of all requests sent
-		 * @param oData forwarded data object received from the remove/update OData API
-         * @param oResponse forwarded response object received from the remove/update OData API
-         * @private
-         */
-		_handleUnlistActionResult : function (sProductId, bSuccess, iRequestNumber, iTotalRequests, oData, oResponse){
-			// create a counter for successful and one for failed requests
-			// ...
-
+		 * @param {string} sProductId the product ID for which this handler is called
+		 * @param {boolean} bSuccess true in case of a success handler, else false (for error handler)
+		 * @param {number} iRequestNumber the counter which specifies the position of this request
+		 * @param {number} iTotalRequests the number of all requests sent
+		 * @private
+		 */
+		_handleUnlistActionResult : function (sProductId, bSuccess, iRequestNumber, iTotalRequests){
+			// we could create a counter for successful and one for failed requests
 			// however, we just assume that every single request was successful and display a success message once
 			if (iRequestNumber === iTotalRequests) {
 				MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockRemovedSuccessMsg", [iTotalRequests]));
@@ -255,18 +251,14 @@ sap.ui.define([
 
 		/**
 		 * Error and success handler for the reorder action.
-		 * @param sProductId the product id for which this handler is called
-		 * @param bSuccess true in case of a success handler, else false (for error handler)
-		 * @param iRequestNumber the counter which specifies the position of this request
-		 * @param iTotalRequests the number of all requests sent
-		 * @param oData forwarded data object received from the remove/update OData API
-		 * @param oResponse forwarded response object received from the remove/update OData API
+		 * @param {string} sProductId the product ID for which this handler is called
+		 * @param {boolean} bSuccess true in case of a success handler, else false (for error handler)
+		 * @param {number} iRequestNumber the counter which specifies the position of this request
+		 * @param {number} iTotalRequests the number of all requests sent
 		 * @private
 		 */
-		_handleReorderActionResult : function (sProductId, bSuccess, iRequestNumber, iTotalRequests, oData, oResponse){
-			// create a counter for successful and one for failed requests
-			// ...
-
+		_handleReorderActionResult : function (sProductId, bSuccess, iRequestNumber, iTotalRequests){
+			// we could create a counter for successful and one for failed requests
 			// however, we just assume that every single request was successful and display a success message once
 			if (iRequestNumber === iTotalRequests) {
 				MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockUpdatedSuccessMsg", [iTotalRequests]));

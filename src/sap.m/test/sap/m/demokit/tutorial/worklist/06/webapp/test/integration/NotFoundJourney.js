@@ -45,7 +45,7 @@ sap.ui.define([], function() {
 		and.iTeardownMyAppFrame();
 	});
 
-	opaTest("Should see the 'Object not found' page if an invalid object id has been called", function(Given, When, Then) {
+	opaTest("Should see the 'Object not found' page if an invalid object ID has been called", function(Given, When, Then) {
 		Given.iStartMyApp({
 			hash: "/Products/SomeInvalidObjectId"
 		});
