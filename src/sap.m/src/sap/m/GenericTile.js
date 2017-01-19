@@ -129,6 +129,38 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this._oBusy = new HTML(this.getId() + "-overlay");
 		this._oBusy.addStyleClass("sapMGenericTileLoading");
 		this._oBusy.setBusyIndicatorDelay(0);
+
+		this._bThemeApplied = true;
+		if (!sap.ui.getCore().isInitialized()) {
+			this._bThemeApplied = false;
+			sap.ui.getCore().attachInit(this._handleCoreInitialized.bind(this));
+		} else {
+			this._handleCoreInitialized();
+		}
+	};
+
+	/**
+	 * Handler for the core's init event. In order for the tile to adjust its rendering to the current theme,
+	 * we attach a theme check in here when everything is properly initialized and loaded.
+	 *
+	 * @private
+	 */
+	GenericTile.prototype._handleCoreInitialized = function() {
+		this._bThemeApplied = sap.ui.getCore().isThemeApplied();
+		if (!this._bThemeApplied) {
+			sap.ui.getCore().attachThemeChanged(this._handleThemeApplied, this);
+		}
+	};
+
+	/**
+	 * The tile recalculates its title's max-height when line-height could be loaded from CSS.
+	 *
+	 * @private
+	 */
+	GenericTile.prototype._handleThemeApplied = function() {
+		this._bThemeApplied = true;
+		this._oTitle.clampHeight();
+		sap.ui.getCore().detachThemeChanged(this._handleThemeApplied, this);
 	};
 
 	GenericTile.prototype.onBeforeRendering = function() {
