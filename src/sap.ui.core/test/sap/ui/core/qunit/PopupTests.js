@@ -1140,6 +1140,72 @@ QUnit.test("Stacked Modal Popups Should Change Z-Index of BlockLayer", function(
 	oPopup2.open();
 });
 
+QUnit.test("Open/close with IE and check BlindLayer", function(assert) {
+	var done = assert.async();
+
+	var oPopupDomRef = jQuery.sap.domById("popup");
+	this.oPopup = new sap.ui.core.Popup(oPopupDomRef, /*bModal*/ true);
+	this.$Ref = this.oPopup._$();
+
+	sap.ui.require("sap.ui.Device");
+	var oDeviceStub = sinon.stub(sap.ui.Device);
+	oDeviceStub.browser.msie = true;
+	oDeviceStub.browser.version = 11;
+	oDeviceStub.os.windows_phone = false;
+
+	var oSpyOpened = sinon.spy(this.oPopup, "_opened");
+	var oSpyClosed = sinon.spy(this.oPopup, "_closed");
+
+	var fnOpened = function() {
+		this.oPopup.detachOpened(fnOpened, this);
+		sap.ui.getCore().applyChanges();
+
+		var $BlockLayer = jQuery(jQuery(".sapUiBliLy"));
+		$BlockLayer.width();
+		assert.ok($BlockLayer.length, "BlockLayer rendered in DOM");
+
+		var oRectBlockLayer = $BlockLayer.rect();
+		var oRectPopup = this.$Ref.rect();
+
+		assert.equal(oRectBlockLayer.top, oRectPopup.top, "Top position is same of BlockLayer and Popup");
+		assert.equal(oRectBlockLayer.left, oRectPopup.left, "Left position is same of BlockLayer and Popup");
+		assert.equal(oRectBlockLayer.width, oRectPopup.width, "Width is same of BlockLayer and Popup");
+		assert.equal(oRectBlockLayer.height, oRectPopup.height, "Height is same of BlockLayer and Popup");
+
+		assert.ok(this.oPopup._resizeListenerId, "ResizeHandler was registered");
+
+		this.oPopup.close(0);
+	};
+	var fnClosed = function() {
+		this.oPopup.detachClosed(fnClosed, this);
+		sap.ui.getCore().applyChanges();
+
+		var $BlockLayer = jQuery(jQuery(".sapUiBliLy"));
+		assert.ok($BlockLayer.length, "BlockLayer still in DOM");
+
+		assert.ok(!this.oPopup._resizeListenerId, "ResizeHandler deregistered");
+		assert.ok(oSpyOpened.calledBefore(oSpyClosed), "Order of open and close correct");
+
+		this.oPopup.attachOpened(fnReopen, this);
+		this.oPopup.open(0);
+	};
+	var fnReopen = function() {
+		this.oPopup.detachOpened(fnReopen, this);
+
+		assert.equal(oSpyOpened.callCount, 2, "Now _opened called for the second time");
+		assert.equal(oSpyClosed.callCount, 1, "_closed called still only once");
+		assert.ok(oSpyOpened.calledBefore(oSpyClosed), "Oder of open and close correct");
+
+		this.oPopup.close(0);
+		this.oPopup.destroy();
+		done();
+	}
+
+	this.oPopup.attachOpened(fnOpened, this);
+	this.oPopup.attachClosed(fnClosed, this);
+	this.oPopup.open(0);
+});
+
 QUnit.module("ShieldLayer", {
 	beforeEach : function() {
 		this.bOldMouseEventDelayed = jQuery.sap.isMouseEventDelayed;
