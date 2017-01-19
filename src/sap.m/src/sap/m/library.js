@@ -304,7 +304,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		extensions: {
 			flChangeHandlers: {
 				"sap.m.Bar": {
-					"moveElements": "default"
+					"moveControls": "default"
 				},
 				"sap.m.ListItemBase": {
 					"hideControl": "default",
@@ -357,12 +357,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 				},
 				"sap.m.ScrollContainer": {
 					"hideControl": "default",
-					"moveElements": "default",
+					"moveControls": "default",
 					"unhideControl": "default"
 				},
 				"sap.m.Text": "sap/m/flexibility/Text",
 				"sap.m.Toolbar": {
-					"moveElements": "default"
+					"moveControls": "default"
 				}
 			}
 		}

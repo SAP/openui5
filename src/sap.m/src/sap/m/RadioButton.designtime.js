@@ -13,7 +13,7 @@ sap.ui.define([],
 					changeType: "hideControl"
 				},
 				rename: {
-					changeType: "renameRadioButton",
+					changeType: "rename",
 					domRef: function (oControl) {
 						return oControl.$().find(".sapMRbBLabel")[0];
 					}

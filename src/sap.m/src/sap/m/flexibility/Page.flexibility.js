@@ -8,10 +8,9 @@ sap.ui.define([
 	"use strict";
 
 	return {
-		"moveElements": "default",
-		"renameTitle": BaseRename.createRenameChangeHandler({
+		"moveControls": "default",
+		"rename": BaseRename.createRenameChangeHandler({
 			propertyName: "title",
-			changePropertyName: "pageTitle",
 			translationTextType: "XTIT"
 		})
 	};

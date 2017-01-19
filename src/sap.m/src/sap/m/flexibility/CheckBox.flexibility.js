@@ -9,9 +9,8 @@ sap.ui.define([
 
 	return {
             "hideControl": "default",
-            "renameCheckBox": BaseRename.createRenameChangeHandler({
+            "rename": BaseRename.createRenameChangeHandler({
                 propertyName: "text",
-                changePropertyName: "checkBoxText",
                 translationTextType: "XCKL"
             }),
             "unhideControl": "default"

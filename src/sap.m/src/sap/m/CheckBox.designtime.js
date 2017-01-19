@@ -13,7 +13,7 @@ sap.ui.define([],
 					changeType: "hideControl"
 				},
 				rename: {
-					changeType: "renameCheckBox",
+					changeType: "rename",
 					domRef: function (oControl) {
 						return oControl.$().find(".sapMCbLabel")[0];
 					}

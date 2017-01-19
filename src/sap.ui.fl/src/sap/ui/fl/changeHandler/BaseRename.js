@@ -21,12 +21,15 @@ sap.ui.define([
 			/**
 			 * Returns an instance of the rename change handler
 			 * @param  {object} mRenameSettings The settings required for the rename action
-			 *                  mRenameSettings.propertyName The property to be renamed (e.g. "label")
-			 *                  mRenameSettings.changePropertyName Property name in change (for LRep; e.g. "fieldLabel")
+			 *                  mRenameSettings.propertyName The property from the control to be renamed (e.g. "label")
+			 *                  mRenameSettings.changePropertyName Only use if you have to have migration changeHandler: Property name in change (for LRep; e.g. "fieldLabel")
 			 *                  mRenameSettings.translationTextType The translation text type in change (e.g. "XFLD")
 			 * @return {any} the rename change handler object
 			 */
 			createRenameChangeHandler: function(mRenameSettings) {
+
+				mRenameSettings.changePropertyName = mRenameSettings.changePropertyName || "newText";
+
 				return {
 
 					/**
@@ -65,14 +68,17 @@ sap.ui.define([
 					/**
 					 * Completes the change by adding change handler specific content
 					 *
-					 * @param {sap.ui.fl.Change} oChangeWrapper change wrapper object to be completed
+					 * @param {sap.ui.fl.Change} oChange change wrapper object to be completed
 					 * @param {object} mSpecificChangeInfo with attribute (e.g. textLabel) to be included in the change
 					 * @public
 					 */
-					completeChangeContent : function(oChangeWrapper, mSpecificChangeInfo) {
-						var oChangeDefinition = oChangeWrapper.getDefinition();
+					completeChangeContent : function(oChange, mSpecificChangeInfo, mPropertyBag) {
+						var oChangeDefinition = oChange.getDefinition();
 						var sChangePropertyName = mRenameSettings.changePropertyName;
 						var sTranslationTextType = mRenameSettings.translationTextType;
+
+						var oControlToBeRenamed = mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent);
+						oChangeDefinition.content.originalControlType = mPropertyBag.modifier.getControlType(oControlToBeRenamed);
 
 						if (typeof (mSpecificChangeInfo.value) === "string") {
 							Base.setTextInChange(oChangeDefinition, sChangePropertyName, mSpecificChangeInfo.value, sTranslationTextType);

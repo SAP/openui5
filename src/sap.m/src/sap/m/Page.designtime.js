@@ -16,7 +16,7 @@ sap.ui.define([],
 					}
 
 					return {
-						changeType: "renameTitle",
+						changeType: "rename",
 						domRef: function (oControl) {
 							return oControl.$("title-inner")[0];
 						}
@@ -36,7 +36,7 @@ sap.ui.define([],
 				content: {
 					domRef: ":sap-domref > section",
 					actions: {
-						move: "moveElements"
+						move: "moveControls"
 					}
 				},
 				footer: {

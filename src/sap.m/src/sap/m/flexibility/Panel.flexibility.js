@@ -9,10 +9,9 @@ sap.ui.define([
 
 	return {
 		"hideControl": "default",
-		"moveElements": "default",
-		"renamePanel": BaseRename.createRenameChangeHandler({
+		"moveControls": "default",
+		"rename": BaseRename.createRenameChangeHandler({
 			propertyName: "headerText",
-			changePropertyName: "panelHeaderText",
 			translationTextType: "XGRP"
 		}),
 		"unhideControl": "default"

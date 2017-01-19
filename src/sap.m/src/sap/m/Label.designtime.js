@@ -13,7 +13,7 @@ sap.ui.define([],
 					changeType: "hideControl"
 				},
 				rename: {
-					changeType: "renameLabel",
+					changeType: "rename",
 					domRef: function (oControl) {
 						return oControl.$()[0];
 					}

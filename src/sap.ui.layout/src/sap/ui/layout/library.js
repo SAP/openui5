@@ -71,12 +71,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			flChangeHandlers: {
 				"sap.ui.layout.form.SimpleForm": "sap/ui/layout/flexibility/SimpleForm",
 				"sap.ui.layout.HorizontalLayout": {
-					"moveElements": "default",
+					"moveControls": "default",
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
 				"sap.ui.layout.VerticalLayout": {
-					"moveElements": "default",
+					"moveControls": "default",
 					"hideControl": "default",
 					"unhideControl": "default"
 				}

@@ -9,9 +9,8 @@ sap.ui.define([
 
 	return {
 		"hideControl": "default",
-		"renameLabel": BaseRename.createRenameChangeHandler({
+		"rename": BaseRename.createRenameChangeHandler({
 			propertyName: "text",
-			changePropertyName: "labelText",
 			translationTextType: "XFLD"
 		}),
 		"unhideControl": "default"
