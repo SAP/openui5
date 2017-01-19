@@ -2076,14 +2076,13 @@ sap.ui.define([
 				} else {
 					this.removeAggregation(sAggregationName, iIndex, bSuppressInvalidate);
 				}
-			} //else {
-				// already removed!?
-				// this is the unexpected -1
-				// TODO: What would be better? Explicit removeCompositeChild callback on subclass?
-			//}
-			if (!this.isInvalidateSuppressed()) {
-				this.invalidate();
-			}
+			} /* else {
+				// item not found, this is unexpected; maybe mutator already removed it?
+				// we could at least invalidate this, but we are not aware of any changes that would justify this
+				if (!this.isInvalidateSuppressed()) {
+					this.invalidate();
+				}
+			}*/
 
 			// reset suppress invalidate flag
 			if (bSuppressInvalidate) {
