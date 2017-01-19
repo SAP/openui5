@@ -33,23 +33,24 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 		properties : {
 
 			/**
-			 * Component name, the package where the component is contained. The property can only be applied initially.
+			 * Component name, the package where the component is contained. This property can only be applied initially.
 			 */
 			name : {type : "string", defaultValue : null},
 
 			/**
-			 * The URL of the component. The property can only be applied initially.
+			 * The URL of the component. This property can only be applied initially.
 			 */
 			url : {type : "sap.ui.core.URI", defaultValue : null},
 
 			/**
 			 * Enable/disable validation handling by MessageManager for this component.
 			 * The resulting Messages will be propagated to the controls.
+			 * This property can only be applied initially.
 			 */
 			handleValidation : {type : "boolean", defaultValue : false},
 
 			/**
-			 * The settings object passed to the component when created. The property can only be applied initially.
+			 * The settings object passed to the component when created. This property can only be applied initially.
 			 */
 			settings : {type : "object", defaultValue : null},
 
