@@ -848,7 +848,7 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._updateScrollBarOffset = function () {
 		var sStyleAttribute = sap.ui.getCore().getConfiguration().getRTL() ? "left" : "right",
-			iOffsetWidth = this._needsVerticalScrollBar() ? jQuery.position.scrollbarWidth() + "px" : 0,
+			iOffsetWidth = this._needsVerticalScrollBar() ? jQuery.sap.scrollbarSize().width + "px" : 0,
 			oFooter = this.getFooter();
 
 		this.$titleArea.css("padding-" + sStyleAttribute, iOffsetWidth);
