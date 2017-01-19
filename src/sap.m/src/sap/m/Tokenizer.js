@@ -429,9 +429,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._changeAllTokensSelection(false);
 		}
 
-		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) { //metaKey for MAC command
+		// ctrl/meta + c OR ctrl/meta + A
+		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) {
 
-			//to check how many tokens are selected before Ctrl + A in MultiInput
+			//to check how many tokens are selected before Ctrl + A in Tokenizer
 			this._iSelectedToken = this.getSelectedTokens().length;
 
 			if (this.getTokens().length > 0) {
@@ -439,7 +440,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this._changeAllTokensSelection(true);
 				oEvent.preventDefault();
 			}
-
 		}
 
 		// ctrl/meta + c OR ctrl/meta + Insert
@@ -465,35 +465,35 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Tokenizer.prototype._copy = function() {
-		var self = this;
-		var copy = function(oEvent) {
-			var aSelectedTokens = self.getSelectedTokens(),
-				sSelectedText = "",
+		var self = this,
+			copyToClipboard = function(oEvent) {
+			var selectedTokens = self.getSelectedTokens(),
+				selectedText = "",
 				token;
 
-			for (var i = 0; i < aSelectedTokens.length; i++) {
-				token = aSelectedTokens[i];
-				sSelectedText += (i > 0 ? "\r\n" : "") + token.getText();
+			for (var i = 0; i < selectedTokens.length; i++) {
+				token = selectedTokens[i];
+				selectedText += (i > 0 ? "\r\n" : "") + token.getText();
 			}
 
-			if (!sSelectedText) {
+			if (!selectedText) {
 				return;
 			}
 
 			if (oEvent.clipboardData) {
-				oEvent.clipboardData.setData('text/plain', sSelectedText);
+				oEvent.clipboardData.setData('text/plain', selectedText);
 			} else {
-				oEvent.originalEvent.clipboardData.setData('text/plain', sSelectedText);
+				oEvent.originalEvent.clipboardData.setData('text/plain', selectedText);
 			}
 
 			oEvent.preventDefault();
 		};
 
-		document.addEventListener('copy', copy);
+		document.addEventListener('copy', copyToClipboard);
 
 		document.execCommand('copy');
 
-		document.removeEventListener('copy', copy);
+		document.removeEventListener('copy', copyToClipboard);
 	};
 
 	/**
@@ -505,46 +505,46 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Tokenizer.prototype._cut = function() {
 		var self = this;
-		var fnCut = function(oEvent) {
-			var aSelectedTokens = self.getSelectedTokens(),
-			sSelectedText = "",
-			aRemovedTokens = [],
+		var cutToClipboard = function(oEvent) {
+			var selectedTokens = self.getSelectedTokens(),
+			selectedText = "",
+			removedTokens = [],
 			token;
 
-		for (var i = 0; i < aSelectedTokens.length; i++) {
-			token = aSelectedTokens[i];
-			sSelectedText += (i > 0 ? "\r\n" : "") + token.getText();
+		for (var i = 0; i < selectedTokens.length; i++) {
+			token = selectedTokens[i];
+			selectedText += (i > 0 ? "\r\n" : "") + token.getText();
 			if (token.getEditable()) {
 				self.removeToken(token);
-				aRemovedTokens.push(token);
+				removedTokens.push(token);
 			}
 		}
 
-		if (aRemovedTokens.length > 0) {
+		if (removedTokens.length > 0) {
 			self.fireTokenUpdate({
 				addedTokens : [],
-				removedTokens : aRemovedTokens,
+				removedTokens : removedTokens,
 				type : Tokenizer.TokenUpdateType.Removed
 			});
 		}
 
-		if (!sSelectedText) {
+		if (!selectedText) {
 			return;
 		}
 
 		if (oEvent.clipboardData) {
-			oEvent.clipboardData.setData('text/plain', sSelectedText);
+			oEvent.clipboardData.setData('text/plain', selectedText);
 		} else {
-			oEvent.originalEvent.clipboardData.setData('text/plain', sSelectedText);
+			oEvent.originalEvent.clipboardData.setData('text/plain', selectedText);
 		}
 		oEvent.preventDefault();
 	};
 
-	document.addEventListener('cut', fnCut);
+	document.addEventListener('cut', cutToClipboard);
 
 	document.execCommand('cut');
 
-	document.removeEventListener('cut', fnCut);
+	document.removeEventListener('cut', cutToClipboard);
 	};
 
 	/**
