@@ -167,7 +167,8 @@
 
 				});
 				QUnit.test("getIconForMimeType", function(assert) {
-					assert.equal(IconPool.getIconForMimeType("image/png"), "sap-icon://attachment-photo", "Should return correct icon URI.");
+					assert.equal(IconPool.getIconForMimeType("image/png"), "sap-icon://attachment-photo", "Should return 'attachment-photo' icon URI for png files.");
+					assert.equal(IconPool.getIconForMimeType("application/vnd.ms-excel"), "sap-icon://excel-attachment", "Should return 'excel-attachment' icon URI for xls files.");
 					assert.equal(IconPool.getIconForMimeType("text/x-foo-bar"), "sap-icon://document", "Should return 'document' icon URI as fallback.");
 				});
 
