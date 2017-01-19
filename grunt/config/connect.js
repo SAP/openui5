@@ -61,16 +61,33 @@ module.exports = function(grunt, config) {
 						});
 					} ], [ '/' + testsuiteName + '/resources/sap-ui-version.json', function(req, res, next) {
 						fs.readFile(sapUiTestsuiteBasePath + '/src/main/webapp/resources/sap-ui-version.json', { encoding: 'utf-8' } , function(err, data) {
-							if (err) {
-								res.writeHead(404);
-								res.end();
-							} else {
-								res.writeHead(200, { 'Content-Type': 'application/json' });
-								data = data.replace(/(?:\$\{version\}|@version@)/g, grunt.config("package.version"));
-								data = data.replace(/(?:\$\{buildtimestamp\}|@buildtimestamp@)/g, sapUiBuildtime);
-								res.write(data);
-								res.end();
-							}
+
+							var version = grunt.config('package.version');
+
+							var sapUiVersionJson = {
+								name: testsuiteName,
+								version: version,
+								buildTimestamp: sapUiBuildtime,
+								scmRevision: '',
+								gav: 'com.sap.openui5:testsuite:' + version,
+								libraries: config.allLibraries.map(function(library) {
+									return {
+										name: library.name,
+										version: version,
+										buildTimestamp: sapUiBuildtime,
+										scmRevision: ''
+									};
+								})
+							};
+
+							var data = JSON.stringify(sapUiVersionJson, null, "\t");
+
+							res.writeHead(200, {
+								'Content-Type': 'application/json'
+							});
+							res.write(data);
+							res.end();
+
 						});
 					} ]);
 					return middlewares;
