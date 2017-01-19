@@ -838,7 +838,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageHeader.prototype._adaptActions = function (iAvailableSpaceForActions) {
-		var bMobileScenario = jQuery("html").hasClass("sapUiMedia-Std-Phone") || Device.system.phone,
+		var bMobileScenario = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange()) || Device.system.phone,
 			iVisibleActionsWidth = this._oOverflowButton.$().show().width(),
 			aActions = this.getActions(),
 			iActionsLength = aActions.length,

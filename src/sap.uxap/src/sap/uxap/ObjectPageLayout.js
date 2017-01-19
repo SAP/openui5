@@ -321,7 +321,6 @@ sap.ui.define([
 
 		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
 
-		this._oLazyLoading = new LazyLoading(this);
 		this._oABHelper = new ABHelper(this);
 	};
 
@@ -330,12 +329,16 @@ sap.ui.define([
 	 */
 
 	ObjectPageLayout.prototype.onBeforeRendering = function () {
+
+		// The lazy loading helper needs media information, hence instantiated on onBeforeRendering, where contextual width is available
+		this._oLazyLoading = new LazyLoading(this);
+
 		if (!this.getVisible()) {
 			return;
 		}
 
-		this._bMobileScenario = library.Utilities.isPhoneScenario();
-		this._bTabletScenario = library.Utilities.isTabletScenario();
+		this._bMobileScenario = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange());
+		this._bTabletScenario = library.Utilities.isTabletScenario(this._getCurrentMediaContainerRange());
 
 		// if we have Header Content on a desktop, check if it is always expanded
 		this._bHContentAlwaysExpanded = this._checkAlwaysShowContentHeader();
@@ -1651,8 +1654,8 @@ sap.ui.define([
 		this._oLazyLoading.setLazyLoadingParameters();
 
 		jQuery.sap.delayedCall(ObjectPageLayout.HEADER_CALC_DELAY, this, function () {
-			this._bMobileScenario = library.Utilities.isPhoneScenario();
-			this._bTabletScenario = library.Utilities.isTabletScenario();
+			this._bMobileScenario = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange());
+			this._bTabletScenario = library.Utilities.isTabletScenario(this._getCurrentMediaContainerRange());
 
 			if (this._bHContentAlwaysExpanded != this._checkAlwaysShowContentHeader()) {
 				this.invalidate();

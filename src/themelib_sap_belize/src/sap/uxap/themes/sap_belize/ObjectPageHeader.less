@@ -41,7 +41,8 @@
 	line-height:  1.25rem;
 }
 
-html.sapUiMedia-StdExt-LargeDesktop .sapUxAPObjectPageHeaderIdentifier {
+html.sapUiMedia-StdExt-LargeDesktop .sapUxAPObjectPageHeaderIdentifier,
+html .sapUiContainer-ExtraWide .sapUxAPObjectPageHeaderIdentifier {
 	.sapUxAPObjectPageHeaderIdentifierActions {
 		&.sapUxAPObjectPageHeaderIdentifierActionsForce, .sapUxAPObjectPageHeaderStickied & {
 			right: 2.25rem;
@@ -49,7 +50,8 @@ html.sapUiMedia-StdExt-LargeDesktop .sapUxAPObjectPageHeaderIdentifier {
 	}
 }
 
-html.sapUiMedia-Std-Tablet .sapUxAPObjectPageHeaderIdentifier {
+html.sapUiMedia-Std-Tablet .sapUxAPObjectPageHeaderIdentifier,
+html .sapUiContainer-Medium .sapUxAPObjectPageHeaderIdentifier {
 	.sapUxAPObjectPageHeaderIdentifierActions {
 		&.sapUxAPObjectPageHeaderIdentifierActionsForce, .sapUxAPObjectPageHeaderStickied & {
 			right: 1.25rem;
@@ -57,7 +59,8 @@ html.sapUiMedia-Std-Tablet .sapUxAPObjectPageHeaderIdentifier {
 	}
 }
 
-html.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifier {
+html.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifier,
+html .sapUiContainer-Narrow .sapUxAPObjectPageHeaderIdentifier {
 	.sapUxAPObjectPageHeaderIdentifierActions {
 		&.sapUxAPObjectPageHeaderIdentifierActionsForce, .sapUxAPObjectPageHeaderStickied & {
 			right: 0.5rem;
@@ -65,7 +68,8 @@ html.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifier {
 	}
 }
 
-html.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifierTitle {
+html.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifierTitle,
+html .sapUiContainer-Narrow .sapUxAPObjectPageHeaderIdentifierTitle {
 	font-size: @sapMFontHeader4Size;
 }
 
@@ -74,7 +78,9 @@ html.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifierTitle {
 }
 
 html.sapUiMedia-Std-Phone .sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn,
-html.sapUiMedia-Std-Phone .sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn {
+html.sapUiMedia-Std-Phone .sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn,
+html .sapUiContainer-Narrow .sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn,
+html .sapUiContainer-Narrow .sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn {
 	margin-top: -0.5rem;
 }
 

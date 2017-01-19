@@ -146,11 +146,15 @@ html[data-sap-ui-animation="off"] .sapUxAPObjectPageHeaderStickied & .sapUxAPObj
 
 .sapUiMedia-Std-Tablet .sapUxAPObjectPageHeaderIdentifier,
 .sapUiMedia-Std-Desktop .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageHeaderIdentifier,
-.sapUiMedia-Std-Tablet .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageHeaderIdentifier {
+.sapUiMedia-Std-Tablet .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageHeaderIdentifier,
+html .sapUiContainer-Medium .sapUxAPObjectPageHeaderIdentifier,
+html .sapUiContainer-Wide .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageHeaderIdentifier,
+html .sapUiContainer-Medium .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageHeaderIdentifier {
 	padding-left: 2rem;
 }
 
-.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifier {
+.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifier,
+html .sapUiContainer-Narrow .sapUxAPObjectPageHeaderIdentifier {
 	padding-left: 1rem;
 }
 
@@ -206,7 +210,8 @@ html[data-sap-ui-browser^=ie] .sapUxAPObjectPageHeaderObjectImageContainerSub > 
 	white-space: normal;
 }
 
-.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderTitleTextWrappable {
+.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderTitleTextWrappable,
+html .sapUiContainer-Narrow .sapUxAPObjectPageHeaderTitleTextWrappable {
 	word-break: break-all;
 }
 
@@ -286,7 +291,8 @@ html[dir=rtl] .sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectI
 	white-space: nowrap;
 }
 
-.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderNowrapMarkers {
+.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderNowrapMarkers,
+html .sapUiContainer-Narrow .sapUxAPObjectPageHeaderNowrapMarkers {
 	white-space: normal;
 	word-break: break-all;
 }
