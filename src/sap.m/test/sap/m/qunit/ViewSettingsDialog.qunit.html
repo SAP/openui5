@@ -593,7 +593,7 @@
 				setTimeout(function () {
 					equal(this.oVSD._navContainer.getCurrentPage().getId(), this.oVSD._getPage1().getId(), "NavContainer should be on the first page");
 					done();
-				}.bind(this), 1000);
+				}.bind(this), 1500);
 			});
 			module ("Events", {
 				setup : function () {
@@ -829,7 +829,7 @@
 				setTimeout(function() {
 					strictEqual(fnFireItemPressSpy.calledOnce, true, "filterDetailPageOpened event is fired when filter detial page is opened");
 					done();
-				}, 1000);
+				}, 1500);
 			});
 
 			test("Grouping items selection", function (assert) {
