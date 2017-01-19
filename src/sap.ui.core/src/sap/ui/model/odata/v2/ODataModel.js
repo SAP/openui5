@@ -1910,10 +1910,10 @@ sap.ui.define([
 
 
 	/**
-	 * Returns the key part from the given entry URI, model context or data object or
+	 * Returns the key part from the given the canonical entry URI, model context or data object or
 	 * <code>undefined</code> when the <code>vValue</code> can't be interpreted.
 	 *
-	 * @param {string|object|sap.ui.model.Context} vValue A string representation of an URI, the context or entry object
+	 * @param {string|object|sap.ui.model.Context} vValue The canonical entry URI, the context or entry object
 	 * @returns {string} Key of the entry
 	 * @private
 	 */
@@ -1925,17 +1925,16 @@ sap.ui.define([
 			sURI = vValue.__metadata.uri;
 			sKey = sURI.substr(sURI.lastIndexOf("/") + 1);
 		} else if (typeof vValue === 'string') {
-			vValue = vValue.split("?")[0];
 			sKey = vValue.substr(vValue.lastIndexOf("/") + 1);
 		}
 		return sKey && this._normalizeKey(sKey);
 	};
 
 	/**
-	 * Returns the key part for the given entry URI, model context or data object or
+	 * Returns the key part for the given the canonical entry URI, model context or data object or
 	 * <code>undefined</code> when the <code>vValue</code> can't be interpreted.
 	 *
-	 * @param {string|object|sap.ui.model.Context} vValue A string representation of an URI, the context or entry object
+	 * @param {string|object|sap.ui.model.Context} vValue The canonical entry URI, the context or entry object
 	 * @returns {string} Key of the entry or <code>undefined</code>
 	 * @public
 	 */
@@ -2910,14 +2909,23 @@ sap.ui.define([
 				for (var i = 0; i < aChangeSet.length; i++) {
 					if (aChangeSet[i].bRefreshAfterChange) {
 						var oRequest = aChangeSet[i].request,
-							sKey = that._getKey(oRequest.requestUri);
+							sPath = "/" + oRequest.requestUri.split("?")[0],
+							oObject, sKey;
 						if (oRequest.method === "POST" || oRequest.method === "DELETE") {
-							var oEntityMetadata = that.oMetadata._getEntityTypeByPath("/" + sKey);
+							var oEntityMetadata = that.oMetadata._getEntityTypeByPath(sPath);
 							if (oEntityMetadata) {
 								mEntityTypes[oEntityMetadata.entityType] = true;
 							}
 						} else {
-							mChangedEntities[sKey] = true;
+							oObject = that._getObject(sPath);
+							if (oObject) {
+								sKey = that._getKey(oObject);
+							} else if (sPath.lastIndexOf("/") === 0) {
+								sKey = that._getKey(sPath);
+							}
+							if (sKey) {
+								mChangedEntities[sKey] = true;
+							}
 						}
 					}
 				}
