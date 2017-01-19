@@ -37,6 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		],
 		interfaces: [],
 		controls: [
+			"sap.ui.layout.AlignedFlowLayout",
 			"sap.ui.layout.DynamicSideContent",
 			"sap.ui.layout.FixFlex",
 			"sap.ui.layout.Grid",
