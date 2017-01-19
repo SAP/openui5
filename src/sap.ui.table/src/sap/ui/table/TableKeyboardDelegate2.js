@@ -972,24 +972,114 @@ sap.ui.define([
 		}
 	};
 
-	TableKeyboardDelegate.prototype.onsapdown = function(oEvent) {
-		if (this._getKeyboardExtension().isInActionMode()) {
-			return;
+	//
+	// Helper functions for arrow key navigation
+	//
+
+	/**
+	 * Get extended information about the parent table cell of a DOM element and its row and column indexes.
+	 * @param {sap.ui.table.Table} oTable The table control.
+	 * @param {Object} oElement The DOM element.
+	 * @returns {Object} Extended cell information.
+	 */
+	function getCellInfoEx(oTable, oElement) {
+		var $cell = TableUtils.getCell(oTable, oElement);
+		if (!$cell) {
+			return {};
 		}
 
-		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
+		var cellInfo = TableUtils.getCellInfo($cell[0]) || {};
+		var oDataCellInfo;
+
+		if (cellInfo.type === CellType.ROWHEADER ||
+			cellInfo.type === CellType.ROWACTION) {
+			cellInfo.row = parseInt($cell.data("sap-ui-rowindex"), 10);
+		} else if (cellInfo.type === CellType.DATACELL) {
+			oDataCellInfo = TableUtils.getDataCellInfo(oTable, $cell);
+			cellInfo.row = oDataCellInfo.rowIndex;
+			cellInfo.col = oDataCellInfo.columnIndex;
+		} else if (cellInfo.type === CellType.COLUMNHEADER) {
+			cellInfo.col = parseInt($cell.data("sap-ui-colindex"), 10);
+			cellInfo.span = parseInt($cell.attr("colspan") || 1, 10);
+		}
+		return cellInfo;
+	}
+
+	/**
+	 * Focus the first interactive element in a table cell or the cell itself.
+	 * If there are no active elements, the cell is focused instead.
+	 * @param {sap.ui.table.Table} oTable The table control
+	 * @param {int} iRow Row index
+	 * @param {int} iCol Column index for data cells
+	 * @param {sap.ui.table.TableUtils.CELLTYPES} sCellType Cell type
+	 * @param {boolean} bActive if true, focus the first interactive element in a data cell
+	 */
+	function focusTableCell(oTable, iRow, iCol, sCellType, bActive) {
+		var $cell;
+		function focusCell() {
+			var cell = $cell && $cell[0];
+			if (cell) {
+				var interactiveElements = bActive ? TableKeyboardDelegate._getInteractiveElements(cell) || [] : [];
+				(interactiveElements[0] || cell).focus();
+			}
+		}
+		if (sCellType === CellType.ROWHEADER) {
+			oTable.$().find('.sapUiTableRowHdr[data-sap-ui-rowindex="' + iRow + '"]').focus();
+		} else if (sCellType === CellType.ROWACTION) {
+			$cell = oTable.$().find('.sapUiTableRowAction[data-sap-ui-rowindex="' + iRow + '"]');
+			focusCell();
+		} else if (sCellType === CellType.DATACELL) {
+			var oCol =  oTable.getColumns()[iCol];
+			$cell = oCol ? oTable.$().find('[data-sap-ui-rowindex="' + iRow + '"] [data-sap-ui-colid="' + oCol.getId() + '"]') : null;
+			focusCell();
+		}
+	}
+
+	function preventItemNavigation(oEvent, bPrevent) {
+		oEvent.setMarked("sapUiTableSkipItemNavigation", bPrevent !== false);
+	}
+
+	TableKeyboardDelegate.prototype.onsapdown = function(oEvent) {
+
+		if (oEvent.isMarked()) {
+			return; // Do not interfere with embedded controls that react on the down key
+		}
+
+		var oKeyboardExtension = this._getKeyboardExtension();
+		var bInActionMode = oKeyboardExtension.isInActionMode();
+		var oCellInfo = getCellInfoEx(this, oEvent.target);
+		var bScrolled = false;
+		var oTable = this;
+
+		// go into the action mode if the Ctrl key is pressed or if action mode is active
+		var bFocusActive = TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL) || bInActionMode;
 
 		if (oCellInfo.type === CellType.DATACELL ||
 			oCellInfo.type === CellType.ROWHEADER ||
 			oCellInfo.type === CellType.ROWACTION) {
 
-			if (TableUtils.isLastScrollableRow(this, oEvent.target)) {
-				var bScrolled = this._getScrollExtension().scroll(true, false, true);
-				if (bScrolled) {
-					oEvent.setMarked("sapUiTableSkipItemNavigation");
+			preventItemNavigation(oEvent);
+
+			// Scroll down if needed
+			if (TableUtils.isLastScrollableRow(this, oCellInfo.cell[0])) {
+				bScrolled = this._getScrollExtension().scroll(true, false, true);
+			}
+			if (bScrolled) {
+				if (bFocusActive) {
+					// Focus the first interactive element in the new table cell, if any
+					this.attachEventOnce("_rowsUpdated", function() {
+						setTimeout(function() {
+							focusTableCell(oTable, oCellInfo.row, oCellInfo.col, oCellInfo.type, true);
+						}, 0);
+					});
+				}
+			} else {
+				if (oCellInfo.row === oTable.getVisibleRowCount() - 1) {
+					oKeyboardExtension.setActionMode(false); // go out of the action mode on the bottom row
+				} else {
+					focusTableCell(oTable, oCellInfo.row + 1, oCellInfo.col, oCellInfo.type, bFocusActive);
 				}
 			}
-
 		} else if (oCellInfo.type === CellType.COLUMNHEADER ||
 				   oCellInfo.type === CellType.COLUMNROWHEADER) {
 
@@ -999,13 +1089,13 @@ sap.ui.define([
 				var oFocusInfo = TableUtils.getFocusedItemInfo(this);
 				if (oFocusInfo.row - iHeaderRowCount <= 1) { // We are in the last column header row
 					//Just prevent the navigation to the table content
-					oEvent.setMarked("sapUiTableSkipItemNavigation");
+					preventItemNavigation(oEvent);
 				}
 
 			} else if (oCellInfo.type === CellType.COLUMNROWHEADER && iHeaderRowCount > 1) {
 				// Special logic needed because if the column header has multiple rows,
 				// for the SelectAll cell multiple elements are added to the item navigation.
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 				// Focus the first row header.
 				TableUtils.focusItem(this, iHeaderRowCount * (TableUtils.getVisibleColumnCount(this) + 1/*Row Headers*/), oEvent);
 			}
@@ -1013,12 +1103,18 @@ sap.ui.define([
 	};
 
 	TableKeyboardDelegate.prototype.onsapdownmodifiers = function(oEvent) {
+
+		// Ctrl + down -> implemented in the onsapdown handler
+		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
+			return TableKeyboardDelegate.prototype.onsapdown.call(this, oEvent);
+		}
+
 		var oKeyboardExtension = this._getKeyboardExtension();
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.ALT) &&
 			TableKeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
 
-			oEvent.setMarked("sapUiTableSkipItemNavigation");
+			preventItemNavigation(oEvent);
 			TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target, true);
 			return;
 		}
@@ -1040,7 +1136,7 @@ sap.ui.define([
 
 				// Navigation should not be possible if we are not in range selection mode.
 				if (!this._oRangeSelection) {
-					oEvent.setMarked("sapUiTableSkipItemNavigation");
+					preventItemNavigation(oEvent);
 					return;
 				}
 
@@ -1055,7 +1151,7 @@ sap.ui.define([
 				if (TableUtils.isLastScrollableRow(this, oEvent.target)) {
 					var bScrolled = this._getScrollExtension().scroll(true, false, true);
 					if (bScrolled) {
-						oEvent.setMarked("sapUiTableSkipItemNavigation");
+						preventItemNavigation(oEvent);
 					}
 				}
 
@@ -1072,7 +1168,7 @@ sap.ui.define([
 				}
 
 			} else {
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 			}
 		}
 
@@ -1080,37 +1176,48 @@ sap.ui.define([
 			if (oCellInfo.type === CellType.DATACELL) {
 				oKeyboardExtension.setActionMode(true);
 			}
-			oEvent.setMarked("sapUiTableSkipItemNavigation");
+			preventItemNavigation(oEvent);
 		}
 	};
 
 	TableKeyboardDelegate.prototype.onsapup = function(oEvent) {
-		if (this._getKeyboardExtension().isInActionMode()) {
-			return;
+
+		if (oEvent.isMarked()) {
+			return; // Do not interfere with embedded controls that react on the up key
 		}
 
-		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
+		var oKeyboardExtension = this._getKeyboardExtension();
+		var bInActionMode = oKeyboardExtension.isInActionMode();
+		var oCellInfo = getCellInfoEx(this, oEvent.target);
+		var bScrolled = false;
+		var oTable = this;
+
+		// go into the action mode if the Ctrl key is pressed or if action mode is active
+		var bFocusActive = TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL) || bInActionMode;
 
 		if (oCellInfo.type === CellType.DATACELL ||
 			oCellInfo.type === CellType.ROWHEADER ||
 			oCellInfo.type === CellType.ROWACTION) {
 
-			if (TableUtils.isFirstScrollableRow(this, oEvent.target)) {
-				var bScrolled = this._getScrollExtension().scroll(false, false, true);
+			preventItemNavigation(oEvent); // default action, see one exception below
 
-				if (bScrolled) {
-					oEvent.setMarked("sapUiTableSkipItemNavigation");
-				}
+			if (TableUtils.isFirstScrollableRow(this, oCellInfo.cell[0])) {
+				bScrolled = this._getScrollExtension().scroll(false, false, true);
 			}
-
-			if (oCellInfo.type === CellType.ROWACTION) {
-				var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
-				var iFocusedRow = oFocusedItemInfo.row;
-
-				if (iFocusedRow === TableUtils.getHeaderRowCount(this)) {
-					// Do not navigate to the row actions column header cell.
-					oEvent.setMarked("sapUiTableSkipItemNavigation");
+			if (bScrolled) {
+				if (bFocusActive) {
+					this.attachEventOnce("_rowsUpdated", function() {
+						setTimeout(function() {
+							focusTableCell(oTable, oCellInfo.row, oCellInfo.col, oCellInfo.type, true);
+						}, 0);
+					});
 				}
+			} else if (oCellInfo.row === 0) {
+				// exit active mode; in case of the navigation mode, go to column header cells but not from row actions
+				oKeyboardExtension.setActionMode(false);
+				preventItemNavigation(oEvent, !!bFocusActive || oCellInfo.type === CellType.ROWACTION);
+			} else { // focus the data cell above the current one
+				focusTableCell(oTable, oCellInfo.row - 1, oCellInfo.col, oCellInfo.type, bFocusActive);
 			}
 		}
 	};
@@ -1118,10 +1225,15 @@ sap.ui.define([
 	TableKeyboardDelegate.prototype.onsapupmodifiers = function(oEvent) {
 		var oKeyboardExtension = this._getKeyboardExtension();
 
+		// Ctrl + up -> implemented in the onsapup handler
+		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
+			return TableKeyboardDelegate.prototype.onsapup.call(this, oEvent);
+		}
+
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.ALT) &&
 			TableKeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
 
-			oEvent.setMarked("sapUiTableSkipItemNavigation");
+			preventItemNavigation(oEvent);
 			TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target, false);
 			return;
 		}
@@ -1143,7 +1255,7 @@ sap.ui.define([
 
 				// Navigation should not be possible if we are not in range selection mode.
 				if (!this._oRangeSelection) {
-					oEvent.setMarked("sapUiTableSkipItemNavigation");
+					preventItemNavigation(oEvent);
 					return;
 				}
 
@@ -1152,14 +1264,14 @@ sap.ui.define([
 
 				// Do not move up to the header when performing a range selection.
 				if (iDataRowIndex === 0) {
-					oEvent.setMarked("sapUiTableSkipItemNavigation");
+					preventItemNavigation(oEvent);
 					return;
 				}
 
 				if (TableUtils.isFirstScrollableRow(this, oEvent.target)) {
 					var bScrolled = this._getScrollExtension().scroll(false, false, true);
 					if (bScrolled) {
-						oEvent.setMarked("sapUiTableSkipItemNavigation");
+						preventItemNavigation(oEvent);
 					}
 				}
 
@@ -1176,7 +1288,7 @@ sap.ui.define([
 				}
 
 			} else {
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 			}
 		}
 
@@ -1184,7 +1296,7 @@ sap.ui.define([
 			if (oCellInfo.type === CellType.DATACELL) {
 				oKeyboardExtension.setActionMode(true);
 			}
-			oEvent.setMarked("sapUiTableSkipItemNavigation");
+			preventItemNavigation(oEvent);
 		}
 	};
 
@@ -1203,7 +1315,7 @@ sap.ui.define([
 
 			if (TableUtils.hasRowActions(this) && iFocusedColumn === iColumnCount - 1) {
 				// Do not navigate to the row actions column header cell.
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 			}
 		}
 	};
@@ -1224,7 +1336,7 @@ sap.ui.define([
 			if (oCellInfo.type === CellType.DATACELL) {
 				// Navigation should not be possible if we are not in range selection mode.
 				if (!this._oRangeSelection) {
-					oEvent.setMarked("sapUiTableSkipItemNavigation");
+					preventItemNavigation(oEvent);
 					return;
 				}
 
@@ -1233,13 +1345,13 @@ sap.ui.define([
 
 				// If selection on row headers is not possible, then do not allow to move focus to them when performing a range selection.
 				if (bFocusOnFirstDataCell && !TableUtils.isRowSelectorSelectionAllowed(this)) {
-					oEvent.setMarked("sapUiTableSkipItemNavigation");
+					preventItemNavigation(oEvent);
 				}
 
 			} else if (oCellInfo.type === CellType.ROWACTION) {
 				// Navigation should not be possible if we are not in range selection mode.
 				if (!this._oRangeSelection) {
-					oEvent.setMarked("sapUiTableSkipItemNavigation");
+					preventItemNavigation(oEvent);
 				}
 
 			/* Range Selection: Required for RTL mode. */
@@ -1247,11 +1359,11 @@ sap.ui.define([
 			} else if (oCellInfo.type === CellType.ROWHEADER && bIsRTL) {
 				// If selection on rows is not possible, then do not allow to move focus to them when performing a range selection.
 				if (!TableUtils.isRowSelectionAllowed(this)) {
-					oEvent.setMarked("sapUiTableSkipItemNavigation");
+					preventItemNavigation(oEvent);
 				}
 
 			} else if (oCellInfo.type === CellType.COLUMNROWHEADER && bIsRTL) {
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 
 			/* Column Resizing */
 
@@ -1270,7 +1382,7 @@ sap.ui.define([
 
 				TableUtils.Column.resizeColumn(this, oColumnHeaderInfo.index, iColumnSpanWidth + iResizeDelta, true, oColumnHeaderInfo.span);
 
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 			}
 
 		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
@@ -1304,13 +1416,13 @@ sap.ui.define([
 			if (oCellInfo.type === CellType.DATACELL) {
 				// Navigation should not be possible if we are not in range selection mode.
 				if (!this._oRangeSelection) {
-					oEvent.setMarked("sapUiTableSkipItemNavigation");
+					preventItemNavigation(oEvent);
 				}
 
 			} else if (oCellInfo.type === CellType.ROWHEADER) {
 				// If selection on data cells is not possible, then do not allow to move focus to them when performing a range selection.
 				if (!TableUtils.isRowSelectionAllowed(this)) {
-					oEvent.setMarked("sapUiTableSkipItemNavigation");
+					preventItemNavigation(oEvent);
 				}
 
 			/* Range Selection: Required for RTL mode. */
@@ -1318,7 +1430,7 @@ sap.ui.define([
 			} else if (oCellInfo.type === CellType.ROWACTION && bIsRTL) {
 				// Navigation should not be possible if we are not in range selection mode.
 				if (!this._oRangeSelection) {
-					oEvent.setMarked("sapUiTableSkipItemNavigation");
+					preventItemNavigation(oEvent);
 				}
 
 			/* Column Resizing */
@@ -1338,10 +1450,10 @@ sap.ui.define([
 
 				TableUtils.Column.resizeColumn(this, oColumnHeaderInfo.index, iColumnSpanWidth + iResizeDelta, true, oColumnHeaderInfo.span);
 
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 
 			} else if (oCellInfo.type === CellType.COLUMNROWHEADER) {
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 			}
 
 		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
@@ -1366,7 +1478,7 @@ sap.ui.define([
 
 		// If focus is on a group header, do nothing.
 		if (TableUtils.Grouping.isInGroupingRow(oEvent.target)) {
-			oEvent.setMarked("sapUiTableSkipItemNavigation");
+			preventItemNavigation(oEvent);
 			return;
 		}
 
@@ -1386,13 +1498,13 @@ sap.ui.define([
 			if (TableUtils.hasFixedColumns(this) && iFocusedCellInRow > this.getFixedColumnCount() + iRowHeaderOffset) {
 				// If there is a fixed column area and the focus is to the right of the first cell in the non-fixed area,
 				// then set the focus to the first cell in the non-fixed area.
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 				TableUtils.focusItem(this, iFocusedIndex - iFocusedCellInRow + this.getFixedColumnCount() + iRowHeaderOffset, null);
 
 			} else if (bHasRowHeader && iFocusedCellInRow > 1) {
 				// If there is a row header column and the focus is after the first content column,
 				// then set the focus to the cell in the first content column.
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 				TableUtils.focusItem(this, iFocusedIndex - iFocusedCellInRow + iRowHeaderOffset, null);
 			}
 		}
@@ -1405,7 +1517,7 @@ sap.ui.define([
 
 		// If focus is on a group header, do nothing.
 		if (TableUtils.Grouping.isInGroupingRow(oEvent.target)) {
-			oEvent.setMarked("sapUiTableSkipItemNavigation");
+			preventItemNavigation(oEvent);
 			return;
 		}
 
@@ -1439,21 +1551,21 @@ sap.ui.define([
 			if (bHasRowHeader && iFocusedCellInRow === 0) {
 				// If there is a row header and it has the focus,
 				// then set the focus to the cell in the next column.
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 				TableUtils.focusItem(this, iFocusedIndex + 1, null);
 
 			} else if (TableUtils.hasFixedColumns(this) &&
 					   iFocusedCellInRow < this.getFixedColumnCount() - 1 + iRowHeaderOffset && !bIsColSpanAtFixedAreaEnd) {
 				// If there is a fixed column area and the focus is not on its last cell or column span,
 				// then set the focus to the last cell of the fixed column area.
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 				TableUtils.focusItem(this, iFocusedIndex + this.getFixedColumnCount() - iFocusedCellInRow, null);
 
 			} else if (TableUtils.hasRowActions(this) && oCellInfo.type === CellType.DATACELL && iFocusedCellInRow < iColumnCount - 2) {
 				// If the focus is on a data cell in the scrollable column area (except last cell),
 				// then set the focus to the row actions cell.
 				// Note: The END navigation from the last cell to the row action cell is handled by the item navigation.
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 				TableUtils.focusItem(this, iFocusedIndex - iFocusedCellInRow + iColumnCount - 2, null);
 			}
 
@@ -1474,7 +1586,7 @@ sap.ui.define([
 				oCellInfo.type === CellType.ROWACTION ||
 				oCellInfo.type === CellType.COLUMNHEADER) {
 
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 
 				var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
 				var iFocusedRow = oFocusedItemInfo.row;
@@ -1535,7 +1647,7 @@ sap.ui.define([
 				oCellInfo.type === CellType.COLUMNHEADER ||
 				oCellInfo.type === CellType.COLUMNROWHEADER) {
 
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 
 				var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
 				var iFocusedRow = oFocusedItemInfo.row;
@@ -1612,7 +1724,7 @@ sap.ui.define([
 
 			// Only do something if the focus is not in the column header area or the first row of the top fixed area.
 			if (this.getFixedRowCount() === 0 && iFocusedRow >= iHeaderRowCount || this.getFixedRowCount() > 0 && iFocusedRow > iHeaderRowCount) {
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 
 				var iFocusedIndex = oFocusedItemInfo.cell;
 				var iColumnCount = oFocusedItemInfo.columnCount;
@@ -1656,7 +1768,7 @@ sap.ui.define([
 
 			// If the focus is in the first row of the row action area, do nothing (row actions do not have a column header).
 			if (oCellInfo.type === CellType.ROWACTION && iFocusedRow === iHeaderRowCount && this.getFixedRowCount() > 0) {
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 			}
 		}
 	};
@@ -1674,7 +1786,7 @@ sap.ui.define([
 			oCellInfo.type === CellType.ROWACTION ||
 			oCellInfo.type === CellType.COLUMNROWHEADER) {
 
-			oEvent.setMarked("sapUiTableSkipItemNavigation");
+			preventItemNavigation(oEvent);
 
 			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
 			var iFocusedRow = oFocusedItemInfo.row;
@@ -1752,7 +1864,7 @@ sap.ui.define([
 				var iRowHeaderOffset = bHasRowHeader ? 1 : 0;
 				var iPageSize = HORIZONTAL_SCROLLING_PAGE_SIZE;
 
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 
 				if (bHasRowHeader && (TableUtils.Grouping.isInGroupingRow(oEvent.target) || iFocusedCellInRow === 1)) {
 					// If a row header exists and the focus is on a group header or the first cell,
@@ -1798,7 +1910,7 @@ sap.ui.define([
 				var iVisibleColumnCount = TableUtils.getVisibleColumnCount(this);
 				var iColSpan = parseInt(oCellInfo.cell.attr("colspan") || 1, 10);
 
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				preventItemNavigation(oEvent);
 
 				// Only do something, if the selected cell or span is not at the end of the table.
 				if (iFocusedCellInRow + iColSpan - iRowHeaderOffset < iVisibleColumnCount) {

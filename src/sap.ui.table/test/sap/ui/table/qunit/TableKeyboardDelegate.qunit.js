@@ -3507,7 +3507,7 @@ QUnit.test("Focus on cell content - Home & End & Arrow Keys", function(assert) {
 
 	// If the focus is on an element inside the cell,
 	// the focus should not be changed when pressing one of the following keys.
-	var aKeys = [Key.HOME, Key.END, Key.Arrow.LEFT, Key.Arrow.UP, Key.Arrow.RIGHT, Key.Arrow.DOWN];
+	var aKeys = [Key.HOME, Key.END, Key.Arrow.LEFT, Key.Arrow.RIGHT];
 
 	checkFocus(oElem, assert);
 	for (var i = 0; i < aKeys.length; i++) {
@@ -6058,4 +6058,103 @@ QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Empty Row Actions, Fix
 	this.setupGrouping();
 
 	_testActionModeTabNavigation(assert);
+});
+
+QUnit.module("TableKeyboardDelegate2 - Action Mode > Ctrl + Up/Down Keys", {
+	beforeEach: function() {
+		setupTest();
+	},
+	afterEach: function() {
+		teardownTest();
+	}
+});
+
+/**
+ * Navigates through the whole table with up and down keys, from the first to the last row in the specified column including scrolling.
+ *
+ * @param assert
+ * @param iCol Column number. Set -1 for the row headers and -2 for the row actions column
+ * @param bCtrlKey Set true if the Ctrl key should be used by navigation
+ * @private
+ */
+function goUpDownWithArrowKeys(assert, iCol, bCtrlKey) {
+
+	function getRowCell(iRow, bFocus, assert) {
+		switch (iCol) {
+			case -1: return getRowHeader(iRow, bFocus, assert);
+			case -2: return getRowAction(iRow, bFocus, assert);
+			default: return getCell(iRow, iCol, bFocus, assert);
+		}
+	}
+	var oElem;
+	var iVisibleRows = oTable.getVisibleRowCount();
+	var i;
+	var bActionMode = iCol !== -1; // Row headers behave the same with and without the Ctrl key
+	oElem = getRowCell(0, true, assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, true); // use ctrl to go into the action mode
+	oElem = checkFocus(getRowCell(1), assert, bActionMode);
+	// go to the bottom row
+	for (i = 2; i < iVisibleRows; i++) {
+		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, bCtrlKey);
+		oElem = checkFocus(getRowCell(i), assert, bActionMode);
+	}
+	// scroll to the bottom
+	for (i = iVisibleRows; i < iNumberOfRows; i++) {
+		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, bCtrlKey);
+		oElem = checkFocus(getRowCell(iVisibleRows - 1), assert, bActionMode);
+	}
+	// ctrl-down at the last row switches the action mode off
+	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, bCtrlKey);
+	oElem = checkFocus(getRowCell(iVisibleRows - 1), assert, false);
+	// go back with ctrl+up
+	for (i = iVisibleRows - 2; i >=0; i--) {
+		// at the last row, always press the ctrl key to switch to the action mode again
+		qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, i == iVisibleRows - 2 || bCtrlKey);
+		oElem = checkFocus(getRowCell(i), assert, bActionMode);
+	}
+	// scroll to the top
+	for (i = iVisibleRows; i < iNumberOfRows; i++) {
+		qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, bCtrlKey);
+		oElem = checkFocus(getRowCell(0), assert, bActionMode);
+	}
+	// ctrl-up on the first row switches the action mode off
+	qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, bCtrlKey);
+	oElem = checkFocus(getRowCell(0), assert, false);
+}
+
+QUnit.test("Navigate with Ctrl key", function(assert) {
+	goUpDownWithArrowKeys(assert, 0, true);
+});
+
+QUnit.test("Navigate without Ctrl key", function(assert) {
+	goUpDownWithArrowKeys(assert, 0, false);
+});
+
+QUnit.test("Navigate Row Actions", function(assert) {
+	initRowActions(oTable, 1, 1);
+	goUpDownWithArrowKeys(assert, -2, true);
+	goUpDownWithArrowKeys(assert, -2, false);
+});
+
+QUnit.test("Navigate Row Headers", function(assert) {
+	goUpDownWithArrowKeys(assert, -1, true);
+});
+
+QUnit.test("Navigate interchanging interactive and non-interactive cells", function(assert) {
+	var oElem;
+	getCell(1, 1).find("span").attr("tabindex", "-1"); // cell in the second row is non-interactive
+	oElem = getCell(0, 1, true, assert);
+	checkFocus(oElem, assert, false);
+	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, true);
+	oElem = getCell(1, 1);
+	checkFocus(oElem, assert, false); // the cell with non-interactive element should be focused
+	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, true);
+	oElem = getCell(2, 1);
+	checkFocus(oElem, assert, true); // the cells interactive element should be focused
+	qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, true);
+	oElem = getCell(1, 1);
+	checkFocus(oElem, assert, false); // the cell with non-interactive element should be focused
+	qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, true);
+	oElem = getCell(0, 1);
+	checkFocus(oElem, assert, true); // the cells interactive element should be focused
 });
