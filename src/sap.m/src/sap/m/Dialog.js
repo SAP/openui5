@@ -784,8 +784,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				$dialogContent = this.$('cont'),
 				sContentHeight = this.getContentHeight(),
 				iDialogHeight,
-				iDialogTopBorderHeight,
-				iDialogBottomBorderHeight;
+				BORDER_THICKNESS = 2; // solves Scrollbar issue in IE when Table is in Dialog
 
 			//if height is set by manually resizing return;
 			if (this._oManuallySetSize) {
@@ -799,10 +798,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				});
 
 				//set the newly calculated size by getting it from the browser rendered layout - by the max-height
-				iDialogHeight = parseFloat($dialog.height());
-				iDialogTopBorderHeight = parseFloat($dialog.css("border-top-width"));
-				iDialogBottomBorderHeight = parseFloat($dialog.css("border-bottom-width"));
-				$dialogContent.height(Math.round( iDialogHeight + iDialogTopBorderHeight + iDialogBottomBorderHeight));
+				iDialogHeight = parseFloat($dialog.height()) + BORDER_THICKNESS;
+				$dialogContent.height(Math.round( iDialogHeight));
 			}
 
 			if (!this.getStretch() && !this._oManuallySetSize && !this._bDisableRepositioning) {
