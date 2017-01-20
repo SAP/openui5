@@ -730,12 +730,23 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			jQuery.sap.log.error("Not a valid API call. 'instantUpload' should be set to 'false'.");
 		}
 		var iFileUploadersCounter = this._aFileUploadersForPendingUpload.length;
+		// upload files that are selected through popup
 		for (var i = 0; i < iFileUploadersCounter; i++) {
 			this._iUploadStartCallCounter = 0;
-			this._aFileUploadersForPendingUpload[i].upload();
+			// if the FU comes from drag and drop (without files), ignore it
+			if (this._aFileUploadersForPendingUpload[i].getValue()) {
+				this._aFileUploadersForPendingUpload[i].upload();
+			}
 		}
+		// upload files that are pushed through drag and drop
 		if (this._aFilesFromDragAndDropForPendingUpload.length > 0) {
-			this._getFileUploader()._sendFilesFromDragAndDrop(this._aFilesFromDragAndDropForPendingUpload);
+			var oFileUploader = this._getFileUploader();
+			// push the new created FU to the pending array so that the head list could be updated with the current FU
+			this._aFileUploadersForPendingUpload.push(oFileUploader);
+			// upload the files that are saved in the array
+			oFileUploader._sendFilesFromDragAndDrop(this._aFilesFromDragAndDropForPendingUpload);
+			// clean up the array
+			this._aFilesFromDragAndDropForPendingUpload = [];
 		}
 	};
 
@@ -850,8 +861,18 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	UploadCollection.prototype.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
+		var oFileFromDragDrop, iIndexOfFile;
 		if (!this.getInstantUpload() && sAggregationName === "items" && vObject) {
-			this._aDeletedItemForPendingUpload.push(vObject);
+			oFileFromDragDrop = vObject._internalFileIdWithinDragDropArray;
+			// if the deleted file is from drag and drop, removes it from the drag and drop array
+			if (oFileFromDragDrop) {
+				iIndexOfFile = this._aFilesFromDragAndDropForPendingUpload.indexOf(oFileFromDragDrop);
+				if (iIndexOfFile !== -1) {
+					this._aFilesFromDragAndDropForPendingUpload.splice(iIndexOfFile, 1);
+				}
+			} else {
+				this._aDeletedItemForPendingUpload.push(vObject);
+			}
 		}
 		if (Control.prototype.removeAggregation) {
 			return Control.prototype.removeAggregation.apply(this, arguments);
@@ -1158,10 +1179,14 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			var aFiles = event.originalEvent.dataTransfer.files;
 			var oFileUploader = this._getFileUploader();
 			if (!this.getInstantUpload()) {
-				oFileUploader.fireChange({
-					files: aFiles
-				});
-				this._aFilesFromDragAndDropForPendingUpload = this._aFilesFromDragAndDropForPendingUpload.concat(Array.prototype.slice.call(aFiles));
+				for (var i = 0; i < aFiles.length; i++) {
+					aFiles[i].id = Date.now();
+					oFileUploader.fireChange({
+						files: [aFiles[i]],
+						fromDragDrop: true
+					});
+					this._aFilesFromDragAndDropForPendingUpload.push(aFiles[i]);
+				}
 			} else {
 				oFileUploader._sendFilesFromDragAndDrop(aFiles);
 			}
@@ -2341,6 +2366,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					oItem = new Library.UploadCollectionItem({
 						fileName: oEvent.getParameter("files")[i].name
 					});
+					// attach the File object to the UC item, so that
+					// the item can be identified if it comes from drag and drop
+					if (oEvent.getParameter("fromDragDrop")) {
+						oItem._internalFileIdWithinDragDropArray = oEvent.getParameter("files")[i];
+					}
 					oItem._status = sStatus;
 					oItem._internalFileIndexWithinFileUploader = i + 1;
 					oItem._requestIdName = sRequestValue;
