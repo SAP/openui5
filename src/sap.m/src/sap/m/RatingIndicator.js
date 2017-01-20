@@ -140,10 +140,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._fHoverValue = 0;
 
 		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
-
-		if (RatingIndicator._pxCalculations === undefined) {
-			RatingIndicator._pxCalculations = [];
-		}
 	};
 
 	/**
@@ -298,24 +294,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		};
 
-		RatingIndicator.prototype._toPx = function (cssSize) {
-			cssSize = cssSize || 0;
-		var scopeVal = RatingIndicator._pxCalculations[cssSize],
+	RatingIndicator.prototype._toPx = function (cssSize) {
+		var scopeVal = Math.round(cssSize),
 			scopeTest;
 
-		if (scopeVal === undefined) {
-			if (cssSize) {
+		if (isNaN(scopeVal)) {
+			if (RegExp("^(auto|0)$|^[+-]?[0-9].?([0-9]+)?(px|em|rem|ex|%|in|cm|mm|pt|pc)$").test(cssSize)) {
 				scopeTest = jQuery('<div style="display: none; width: ' + cssSize + '; margin: 0; padding:0; height: auto; line-height: 1; font-size: 1; border:0; overflow: hidden">&nbsp;</div>').appendTo(sap.ui.getCore().getStaticAreaRef());
 				scopeVal = scopeTest.width();
+				scopeTest.remove();
 			} else {
-				scopeTest = jQuery('<div style="height: 1.375rem; overflow: hidden;">&nbsp;</div>').appendTo(sap.ui.getCore().getStaticAreaRef());
-				scopeVal = scopeTest.height();
+				return false;
 			}
-			scopeTest.remove();
 		}
-
-		RatingIndicator._pxCalculations[cssSize] = Math.round(scopeVal);
-		return RatingIndicator._pxCalculations[cssSize];
+		return Math.round(scopeVal);
 	};
 
 	/**
