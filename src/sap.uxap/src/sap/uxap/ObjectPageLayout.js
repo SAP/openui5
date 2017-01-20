@@ -1033,6 +1033,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resets the internal information of which subsections are in view and immediately
+	 * calls the layout calculation so that an event <code>subSectionEnteredViewPort</code> is fired
+	 * for the subsections that are actually in view. Use this method after a change in bindings
+	 * to the existing object, since it's layout might have changed and the app
+	 * needs to react to the new subsections in view.
+	 * @private
+	 * @sap-restricted
+	 */
+	ObjectPageLayout.prototype._triggerVisibleSubSectionsEvents = function () {
+		if (this.getEnableLazyLoading()) {
+			this._oLazyLoading._triggerVisibleSubSectionsEvents();
+		}
+	};
+
+	/**
 	 * Scrolls the Object page to the given Section.
 	 *
 	 * @param {string} sId The Section ID to scroll to
@@ -1177,6 +1192,12 @@ sap.ui.define([
 				//trouble animation and lazy loading on slow devices.
 				this._connectModelsForSections(aToLoad);
 			}
+
+			aToLoad.forEach(function (subSection) {
+				this.fireEvent("subSectionEnteredViewPort", {
+					subSection: subSection
+				});
+			}, this);
 		}
 	};
 

@@ -22,6 +22,7 @@ sap.ui.define(["jquery.sap.global",	"sap/ui/Device", "sap/ui/base/Metadata", "./
 				this._iPreviousScrollTimestamp = 0;         //Timestamp of the last scroll event
 				this._sLazyLoadingTimer = null;
 
+				this._oPrevSubSectionsInView = {};
 				this.setLazyLoadingParameters();
 			}
 		});
@@ -58,6 +59,18 @@ sap.ui.define(["jquery.sap.global",	"sap/ui/Device", "sap/ui/base/Metadata", "./
 			//Threshold beyond which we consider that user is scrolling fast and thus that lazy loading must be differed.
 			//(percentage of the pageheight).
 			this.LAZY_LOADING_FAST_SCROLLING_THRESHOLD = 5;
+		};
+
+		/**
+		 * Resets the internal information of which subsections are in view and immediately
+		 * calls the layout calculation so that an event is fired for the subsections
+		 * that are actually in view. Use this method after a change in bindings
+		 * to the existing object, since it's layout might have changed and the app
+		 * needs to react to the new subsections in view.
+		 */
+		LazyLoading.prototype._triggerVisibleSubSectionsEvents = function () {
+			this._oPrevSubSectionsInView = {};
+			this.doLazyLoading();
 		};
 
 		LazyLoading.prototype.lazyLoadDuringScroll = function (iScrollTop, timeStamp, iPageHeight) {
@@ -99,6 +112,7 @@ sap.ui.define(["jquery.sap.global",	"sap/ui/Device", "sap/ui/base/Metadata", "./
 				sExtraSubSectionId,
 				iExtraSubSectionTop = -1,
 				oSubSectionsToLoad = {},
+				oSubSectionsInView = {},
 				iTimeDifference,
 				bOnGoingScroll,
 				iShift;
@@ -141,7 +155,7 @@ sap.ui.define(["jquery.sap.global",	"sap/ui/Device", "sap/ui/base/Metadata", "./
 			//only consider subsections not yet loaded
 			jQuery.each(oSectionInfo, jQuery.proxy(function (sId, oInfo) {
 				// on desktop/tablet, find a section, not a subsection
-				if (!oInfo.isSection && !oInfo.loaded && oInfo.sectionReference.getParent() && oInfo.sectionReference.getParent().getVisible()) {
+				if (!oInfo.isSection && oInfo.sectionReference.getParent() && oInfo.sectionReference.getParent().getVisible()) {
 					// 1D segment intersection between visible page and current sub section
 					// C <= B and A <= D -> intersection
 					//    A-----B
@@ -150,11 +164,14 @@ sap.ui.define(["jquery.sap.global",	"sap/ui/Device", "sap/ui/base/Metadata", "./
 					//     C-D
 					// C-----------D
 					if (oInfo.positionTop <= iScrollPageBottom && iScrollTop < oInfo.positionBottom - 1) {
-						oSubSectionsToLoad[sId] = sId;
+						oSubSectionsInView[sId] = sId;
+						if (!oInfo.loaded) {
+							oSubSectionsToLoad[sId] = sId;
+						}
 						// Lazy loading will add an extra subsection :
 						//    the first (highest) subsection not yet visible (and not yet loaded)
 						//    top of this subsection must be close from page bottom (less than 0.5 page : LAZY_LOADING_EXTRA_PAGE_SIZE)
-					} else if (oInfo.positionTop > iScrollPageBottom &&
+					} else if (!oInfo.loaded && oInfo.positionTop > iScrollPageBottom &&
 						oInfo.positionTop < iScrollPageBottom + iPageHeight * this.LAZY_LOADING_EXTRA_PAGE_SIZE &&
 						(iExtraSubSectionTop == -1 || oInfo.positionTop < iExtraSubSectionTop)) {
 						iExtraSubSectionTop = oInfo.positionTop;
@@ -179,6 +196,18 @@ sap.ui.define(["jquery.sap.global",	"sap/ui/Device", "sap/ui/base/Metadata", "./
 				sap.ui.getCore().byId(sSectionId).connectToModels();
 				oSectionInfo[sSectionId].loaded = true;
 			}, this));
+
+			// fire event for sections scrolled in view (for app to resume binding)
+			jQuery.each(oSubSectionsInView, jQuery.proxy(function (idx, sSectionId) {
+				if (!this._oPrevSubSectionsInView[idx]) {
+					// newly scrolled in view
+					jQuery.sap.log.debug("ObjectPageLayout :: lazyLoading", "subSectionEnteredViewPort " + sSectionId);
+					this._oObjectPageLayout.fireEvent("subSectionEnteredViewPort", {
+						subSection: sap.ui.getCore().byId(sSectionId)
+					});
+				}
+			}, this));
+			this._oPrevSubSectionsInView = oSubSectionsInView;
 
 			if (bOnGoingScroll) {
 				//bOnGoingScroll is just a prediction, we can't be 100% sure as there's no end-of-scroll event
