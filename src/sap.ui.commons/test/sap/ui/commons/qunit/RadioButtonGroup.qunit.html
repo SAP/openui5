@@ -222,108 +222,53 @@
 			equal(jQuery("#RBG2").get(0), undefined, "Invisible");
 		});
 
-		test("Output of RadioButtons", function() {
+		test("Radio buttons rendered correctly", function () {
 			ok(jQuery("#RBG1-0").get(0), "RadioButton 0, expected defined");
 			ok(jQuery("#RBG1-1").get(0), "RadioButton 1, expected defined");
 			ok(jQuery("#RBG1-2").get(0), "RadioButton 2, expected defined");
 			ok(jQuery("#RBG1-3").get(0), "RadioButton 3, expected defined");
+		});
 
-			iOffsetLeft0 = jQuery("#RBG1-0").position().left;
-			iOffsetTop0 = jQuery("#RBG1-0").position().top;
-			iOffsetLeft1 = jQuery("#RBG1-1").position().left;
-			iOffsetTop1 = jQuery("#RBG1-1").position().top;
-			iOffsetLeft3 = jQuery("#RBG1-3").position().left;
-			iOffsetTop3 = jQuery("#RBG1-3").position().top;
+		test("Output of RadioButtons in first group", function () {
+			// arrange
+			var iOffsetLeft0 = jQuery("#RBG1-0").position().left;
+			var iOffsetTop0 = jQuery("#RBG1-0").position().top;
+			var iOffsetLeft1 = jQuery("#RBG1-1").position().left;
+			var iOffsetTop1 = jQuery("#RBG1-1").position().top;
+			var iOffsetLeft3 = jQuery("#RBG1-3").position().left;
+			var iOffsetTop3 = jQuery("#RBG1-3").position().top;
 
-			if(iOffsetLeft0 == iOffsetLeft1){
-				var bResult = true;
-			}else{
-				var bResult = false;
-			}
-			equal(bResult,true,"Group 1: Left Position Radiobutton 0 and 1 equal");
-			bResult = undefined;
+			// assert
+			equal(iOffsetLeft0 == iOffsetLeft1, true, "Group 1: Left Position Radiobutton 0 and 1 equal");
+			equal(iOffsetTop0 < iOffsetTop1, true, "Group 1: Top Position Radiobutton 0 less than 1");
+			equal(iOffsetLeft0 == iOffsetLeft3, true, "Group 1: Left Position Radiobutton 0 and 3 equal");
+			equal(iOffsetTop1 < iOffsetTop3, true, "Group 1: Top Position Radiobutton 1 less than 3");
+		});
 
-			if(iOffsetTop0 < iOffsetTop1){
-				var bResult = true;
-			}else{
-				var bResult = false;
-			}
-			equal(bResult,true,"Group 1: Top Position Radiobutton 0 less than 1");
-			bResult = undefined;
+		test("Output of RadioButtons in third group", function () {
+			// arrange
+			var iOffsetLeft0 = jQuery("#RBG3-0").position().left;
+			var iOffsetTop0 = jQuery("#RBG3-0").position().top;
+			var iOffsetLeft1 = jQuery("#RBG3-1").position().left;
+			var iOffsetTop1 = jQuery("#RBG3-1").position().top;
+			var iOffsetLeft3 = jQuery("#RBG3-3").position().left;
+			var iOffsetTop3 = jQuery("#RBG3-3").position().top;
 
-			if(iOffsetLeft0 == iOffsetLeft3){
-				var bResult = true;
-			}else{
-				var bResult = false;
-			}
-			equal(bResult,true,"Group 1: Left Position Radiobutton 0 and 3 equal");
+			// assert
+			equal(iOffsetLeft0 < iOffsetLeft1, true, "Group 3: Left Position Radiobutton 0 less than 1");
+			equal(iOffsetTop0 == iOffsetTop1, true, "Group 3: Top Position Radiobutton 0 equal 1");
+			equal(iOffsetLeft0 == iOffsetLeft3, true, "Group 3: Left Position Radiobutton 0 and 3 equal");
+			equal(iOffsetTop1 < iOffsetTop3, true, "Group 3: Top Position Radiobutton 0 less than 3");
+		});
 
-			if(iOffsetTop1 < iOffsetTop3){
-				var bResult = true;
-			}else{
-				var bResult = false;
-			}
-			equal(bResult,true,"Group 1: Top Position Radiobutton 1 less than 3");
-			bResult = undefined;
-
-			iOffsetLeft0 = jQuery("#RBG3-0").position().left;
-			iOffsetTop0 = jQuery("#RBG3-0").position().top;
-			iOffsetLeft1 = jQuery("#RBG3-1").position().left;
-			iOffsetTop1 = jQuery("#RBG3-1").position().top;
-			iOffsetLeft3 = jQuery("#RBG3-3").position().left;
-			iOffsetTop3 = jQuery("#RBG3-3").position().top;
-			if(iOffsetLeft0 < iOffsetLeft1){
-				var bResult = true;
-			}else{
-				var bResult = false;
-			}
-			equal(bResult,true,"Group 3: Left Position Radiobutton 0 less than 1");
-			bResult = undefined;
-
-			if(iOffsetTop0 == iOffsetTop1){
-				var bResult = true;
-			}else{
-				var bResult = false;
-			}
-			equal(bResult,true,"Group 3: Top Position Radiobutton 0 equal 1");
-			bResult = undefined;
-
-			if(iOffsetLeft0 == iOffsetLeft3){
-				var bResult = true;
-			}else{
-				var bResult = false;
-			}
-			equal(bResult,true,"Group 3: Left Position Radiobutton 0 and 3 equal");
-
-			if(iOffsetTop1 < iOffsetTop3){
-				var bResult = true;
-			}else{
-				var bResult = false;
-			}
-			equal(bResult,true,"Group 3: Top Position Radiobutton 0 less than 3");
-			bResult = undefined;
-
+		test("Output of RadioButtons in last group", function () {
 			iOffsetLeft0 = jQuery("#RBG4-0").position().left;
 			iOffsetTop0 = jQuery("#RBG4-0").position().top;
 			iOffsetLeft1 = jQuery("#RBG4-1").position().left;
 			iOffsetTop1 = jQuery("#RBG4-1").position().top;
 
-			if(iOffsetLeft0 < iOffsetLeft1){
-				var bResult = true;
-			}else{
-				var bResult = false;
-			}
-			equal(bResult,true,"Group 4: Left Position Radiobutton 0 less than 1");
-			bResult = undefined;
-
-			if(iOffsetTop0 == iOffsetTop1){
-				var bResult = true;
-			}else{
-				var bResult = false;
-			}
-			equal(bResult,true,"Group 4: Top Position Radiobutton 0 equal 1");
-			bResult = undefined;
-
+			equal(iOffsetLeft0 < iOffsetLeft1, true, "Group 4: Left Position Radiobutton 0 less than 1");
+			equal(iOffsetTop0 == iOffsetTop1, true, "Group 4: Top Position Radiobutton 0 equal 1");
 		});
 
 		test("ARIA", function() {
