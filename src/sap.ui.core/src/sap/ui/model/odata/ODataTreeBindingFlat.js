@@ -2133,11 +2133,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		if (sAbsolutePath) {
 			mParameters = mParameters || {};
 			mParameters.groupId = this._getCorrectChangeGroup(sAbsolutePath);
+			mParameters.refreshAfterChange = false;
 
-			var bOriginalAfterChange = this.oModel.getRefreshAfterChange();
-			this.oModel.setRefreshAfterChange(false);
 			oNewEntry = this.oModel.createEntry(sAbsolutePath, mParameters);
-			this.oModel.setRefreshAfterChange(bOriginalAfterChange);
 		} else {
 			jQuery.sap.log.warning("ODataTreeBindingFlat: createEntry failed, as the binding path could not be resolved.");
 		}
@@ -2209,10 +2207,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		};
 
 		// built the actual requests for the change-set
-		var bOriginalAfterChange = this.oModel.getRefreshAfterChange();
-		this.oModel.setRefreshAfterChange(false);
 		this._generateSubmitData();
-		this.oModel.setRefreshAfterChange(bOriginalAfterChange);
 
 		// relay submit call to the model
 		this.oModel.submitChanges(mParameters);
@@ -2354,7 +2349,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		} else {
 			var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
 			var oDeleteRequestHandle = this.oModel.remove(oContext.getPath(), {
-				groupId: this._getCorrectChangeGroup(sAbsolutePath)
+				groupId: this._getCorrectChangeGroup(sAbsolutePath),
+				refreshAfterChange: false
 			});
 			return oDeleteRequestHandle;
 		}
