@@ -92,6 +92,7 @@ sap.ui.define([
 				this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 				this.mQueryOptions = this.oModel.buildQueryOptions(this.oModel.mUriParameters,
 					mParameters);
+				this.oCachePromise = _SyncPromise.resolve();
 				this.makeCache(oContext);
 				this.oContext = oContext;
 				this.bInitial = true;
@@ -246,9 +247,8 @@ sap.ui.define([
 					bDataRequested = true;
 					that.fireDataRequested();
 				}, that);
-			} else {
-				return that.oContext.fetchValue(that.sPath, that);
 			}
+			return that.oContext.fetchValue(that.sPath, that);
 		});
 		aPromises.push(oReadPromise.then(function (vValue) {
 			if (vValue && typeof vValue === "object") {
@@ -294,15 +294,12 @@ sap.ui.define([
 	 */
 	// @override
 	ODataPropertyBinding.prototype.destroy = function () {
-		var oCache;
+		var oCache = this.oCachePromise.getResult(); // cache promise is always fulfilled
 
-		if (this.oCachePromise.isFulfilled()) { // cache is available
-			oCache = this.oCachePromise.getResult();
-			if (oCache) {
-				oCache.deregisterChange(undefined, this);
-			} else if (this.oContext) {
-				this.oContext.deregisterChange(this.sPath, this);
-			}
+		if (oCache) {
+			oCache.deregisterChange(undefined, this);
+		} else if (this.oContext) {
+			this.oContext.deregisterChange(this.sPath, this);
 		}
 		this.oModel.bindingDestroyed(this);
 		this.oCachePromise = undefined;
@@ -329,8 +326,8 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ValueListType}
 	 *   The value list type
 	 * @throws {Error}
-	 *   If the binding is not resolved yet, if the metadata is not loaded yet or if the property
-	 *   cannot be found in the metadata
+	 *   If the binding is relative and has no context, if the metadata is not loaded yet or if the
+	 *   property cannot be found in the metadata
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -357,15 +354,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.makeCache = function (oContext) {
-		var oCache,
-			oCurrentCache,
+		var oCache = this.oCachePromise.getResult(),
 			sResolvedPath = this.sPath;
 
-		if (this.oCachePromise && this.oCachePromise.isFulfilled()) {
-			oCurrentCache = this.oCachePromise.getResult();
-			if (oCurrentCache) {
-				oCurrentCache.setActive(false);
-			}
+		if (oCache) {
+			oCache.setActive(false);
 		}
 
 		if (oContext && !oContext.fetchValue) {
@@ -415,7 +408,7 @@ sap.ui.define([
 	 *   The promise is rejected with an error if there is no value list information available. Use
 	 *   {@link #getValueListType} to determine if value list information exists.
 	 * @throws {Error}
-	 *   If the binding is not resolved yet
+	 *   If the binding is relative and has no context
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -442,12 +435,9 @@ sap.ui.define([
 	 */
 	// @override
 	ODataPropertyBinding.prototype.setContext = function (oContext) {
-		var oCache;
+		var oCache = this.oCachePromise.getResult();
 
 		if (this.oContext !== oContext) {
-			if (this.oCachePromise.isFulfilled()) {
-				oCache = this.oCachePromise.getResult();
-			}
 			if (!oCache && this.oContext) {
 				this.oContext.deregisterChange(this.sPath, this);
 			}

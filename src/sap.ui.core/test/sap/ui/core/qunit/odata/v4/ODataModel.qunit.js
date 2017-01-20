@@ -325,16 +325,16 @@ sap.ui.require([
 			oModel = createModel(),
 			oModelMock = this.mock(oModel),
 			oBaseContext = oModel.createBindingContext("/TEAMS('42')"),
-			oContext = Context.create(oModel, undefined, "/TEAMS('42')"),
+			oContext = Context.create(oModel, undefined, "/TEAMS('43')"),
 			oListBinding = oModel.bindList("/TEAMS"),
 			oListBinding2 = oModel.bindList("/TEAMS"),
 			oListBinding3 = oModel.bindList("TEAM_2_EMPLOYEES"),
-			oRelativeContextBinding = oModel.bindContext("TEAM_2_MANAGER", undefined, {}),
+			oRelativeContextBinding = oModel.bindContext("TEAM_2_MANAGER", undefined,
+				{"$apply" : "foo"}),
 			oPropertyBinding = oModel.bindProperty("Name"),
 			oPropertyBinding2 = oModel.bindProperty("Team_Id");
 
 		// cache proxy for oRelativeContextBinding
-		this.mock(oContext).expects("getQueryOptions").returns(undefined);
 		this.mock(oContext).expects("fetchCanonicalPath").returns(_SyncPromise.resolve("~"));
 		oRelativeContextBinding.setContext(oContext);
 		oListBinding3.setContext(oBaseContext);
@@ -883,6 +883,7 @@ sap.ui.require([
 	}, {
 		mOptions : {
 			"$apply" : "apply",
+			"$count" : true,
 			"$filter" : "foo eq 42",
 			"$orderby" : "bar",
 			"$search" : '"foo bar" AND NOT foobar'

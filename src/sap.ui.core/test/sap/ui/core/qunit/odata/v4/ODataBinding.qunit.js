@@ -255,7 +255,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("hasPendingChangesForPath: without cache", function (assert) {
 		var oBinding = new ODataBinding({
-				oCachePromise : _SyncPromise.resolve(undefined),
+				oCachePromise : _SyncPromise.resolve(),
 				sPath : "relative"
 			}),
 			sBuildPath = "~/foo",
@@ -285,7 +285,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("hasPendingChangesForPath: without cache, base context", function (assert) {
 		var oBinding = new ODataBinding({
-				oCachePromise : _SyncPromise.resolve(undefined),
+				oCachePromise : _SyncPromise.resolve(),
 				oContext : {}
 			});
 		assert.strictEqual(oBinding.hasPendingChangesForPath("foo"), false);
@@ -316,7 +316,7 @@ sap.ui.require([
 				oCachePromise : _SyncPromise.resolve(oCache)
 			}),
 			oChild2 = new ODataBinding({
-				oCachePromise : _SyncPromise.resolve(undefined)
+				oCachePromise : _SyncPromise.resolve()
 			}),
 			oChild3 = new ODataBinding({
 				oCachePromise : _SyncPromise.resolve(Promise.resolve())
@@ -433,7 +433,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("resetChangesForPath: without cache", function (assert) {
 		var oBinding = new ODataBinding({
-				oCachePromise : _SyncPromise.resolve(undefined),
+				oCachePromise : _SyncPromise.resolve(),
 				sPath : "relative"
 			}),
 			sBuildPath = "~/foo",
@@ -461,7 +461,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("resetChangesForPath: without cache, base context", function (assert) {
 		new ODataBinding({
-			oCachePromise : _SyncPromise.resolve(undefined),
+			oCachePromise : _SyncPromise.resolve(),
 			oContext : {}
 		}).resetChangesForPath("foo");
 	});
@@ -475,10 +475,10 @@ sap.ui.require([
 				oCachePromise : _SyncPromise.resolve(oCache)
 			}),
 			oChild2 = new ODataBinding({
-				oCachePromise : _SyncPromise.resolve(undefined)
+				oCachePromise : _SyncPromise.resolve()
 			}),
 			oChild3 = new ODataBinding({
-				oCachePromise : _SyncPromise.resolve(Promise.resolve(undefined))
+				oCachePromise : _SyncPromise.resolve(Promise.resolve())
 			}),
 			oBinding = new ODataBinding({
 				oModel : {

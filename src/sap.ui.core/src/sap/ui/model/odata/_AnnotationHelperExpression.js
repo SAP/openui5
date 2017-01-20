@@ -704,7 +704,9 @@ sap.ui.define([
 		path : function (oInterface, oPathValue) {
 			var sBindingPath = oPathValue.value,
 				oConstraints = {},
+				oExclusiveAnnotation,
 				oIsDigitSequence,
+				oMinMaxAnnotation,
 				oModel = oInterface.getModel(),
 				oPathValueInterface = {
 					getModel : function () { return oModel; },
@@ -729,19 +731,36 @@ sap.ui.define([
 				case "Edm.Decimal":
 					oConstraints.precision = oProperty.precision;
 					oConstraints.scale = oProperty.scale;
+					oMinMaxAnnotation = oProperty["Org.OData.Validation.V1.Minimum"];
+					if (oMinMaxAnnotation && oMinMaxAnnotation.String) {
+						oConstraints.minimum = oMinMaxAnnotation.String;
+						oExclusiveAnnotation =
+							oMinMaxAnnotation["Org.OData.Validation.V1.Exclusive"];
+						if (oExclusiveAnnotation) {
+							oConstraints.minimumExclusive = oExclusiveAnnotation.Bool || "true";
+						}
+					}
+					oMinMaxAnnotation = oProperty["Org.OData.Validation.V1.Maximum"];
+					if (oMinMaxAnnotation && oMinMaxAnnotation.String) {
+						oConstraints.maximum = oMinMaxAnnotation.String;
+						oExclusiveAnnotation =
+							oMinMaxAnnotation["Org.OData.Validation.V1.Exclusive"];
+						if (oExclusiveAnnotation) {
+							oConstraints.maximumExclusive = oExclusiveAnnotation.Bool || "true";
+						}
+					}
 					break;
 				case "Edm.String":
 					oConstraints.maxLength = oProperty.maxLength;
 					oIsDigitSequence = oProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"];
 					if (oIsDigitSequence) {
-						oConstraints.isDigitSequence =
-							oIsDigitSequence.Bool ? oIsDigitSequence.Bool : "true";
+						oConstraints.isDigitSequence = oIsDigitSequence.Bool || "true";
 					}
 					break;
 				// no default
 				}
 				if (oProperty.nullable === "false") {
-					oConstraints.nullable = oProperty.nullable;
+					oConstraints.nullable = "false";
 				}
 				oResult.constraints = oConstraints;
 			} else {

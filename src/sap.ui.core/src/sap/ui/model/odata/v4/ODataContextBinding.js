@@ -43,9 +43,9 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *  <li> The $apply, $expand, $filter, $orderby, $search and $select
-	 *   "5.1 System Query Options"; OData V4 only allows $apply, $filter, $orderby, $search and
-	 *   $select inside resource paths that identify a collection.
+	 *  <li> The $apply, $count, $expand, $filter, $orderby, $search and $select
+	 *   "5.1 System Query Options"; OData V4 only allows $apply, $count, $filter, $orderby, $search
+	 *   and $select inside resource paths that identify a collection.
 	 *   In our case here, this means you can only use them inside $expand.
 	 *   </ul>
 	 *   All other query options lead to an error.
@@ -121,14 +121,13 @@ sap.ui.define([
 			constructor : function (oModel, sPath, oContext, mParameters) {
 				var iPos = sPath.indexOf("(...)");
 
-				ContextBinding.call(this, oModel, sPath, undefined /*context is set below*/,
-					mParameters);
+				ContextBinding.call(this, oModel, sPath);
 
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
 
-				this.oCachePromise = _SyncPromise.resolve(undefined);
+				this.oCachePromise = _SyncPromise.resolve();
 				this.mCacheByContext = undefined;
 				this.sGroupId = undefined;
 				this.oOperation = undefined;
@@ -244,12 +243,10 @@ sap.ui.define([
 	 *
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
-	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
-	 *   Change reason if called from {@link #changeParameters}
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
+	ODataContextBinding.prototype.applyParameters = function (mParameters) {
 		var oBindingParameters;
 
 		this.mQueryOptions = this.oModel.buildQueryOptions(undefined, mParameters, true);
@@ -258,9 +255,7 @@ sap.ui.define([
 			["$$groupId", "$$updateGroupId"]);
 		this.sGroupId = oBindingParameters.$$groupId;
 		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-		if (sChangeReason) { // set this.mParameters if called from changeParameters
-			this.mParameters = mParameters;
-		}
+		this.mParameters = mParameters;
 		if (!this.oOperation) {
 			this.oCachePromise = this.makeCache(this.oContext);
 			this.checkUpdate();
@@ -704,8 +699,9 @@ sap.ui.define([
 
 		if (!this.bRelative) {
 			oContext = undefined; // must be ignored for absolute bindings
-		} else if (!oContext || oContext.fetchCanonicalPath && !this.mParameters) {
-			return _SyncPromise.resolve(undefined); // no need for an own cache
+		} else if (!oContext || oContext.fetchCanonicalPath
+			&& !Object.keys(this.mParameters).length) {
+				return _SyncPromise.resolve(); // no need for an own cache
 		}
 		mQueryOptions = this.getQueryOptions(oContext);
 		vCanonicalPath = oContext && (oContext.fetchCanonicalPath
@@ -760,7 +756,7 @@ sap.ui.define([
 					this.oElementContext.destroy();
 					this.oElementContext = null;
 				}
-				this.oCachePromise = _SyncPromise.resolve(undefined);
+				this.oCachePromise = _SyncPromise.resolve();
 				if (oContext) {
 					this.oElementContext = Context.create(this.oModel, this,
 						this.oModel.resolve(this.sPath, oContext));

@@ -215,11 +215,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 		}
 		if (iValue < oRange.minimum) {
 			throw new ValidateException(
-				getText("EnterIntMin", [this.formatValue(oRange.minimum, "string")]));
+				getText("EnterNumberMin", [this.formatValue(oRange.minimum, "string")]));
 		}
 		if (iValue > oRange.maximum) {
 			throw new ValidateException(
-				getText("EnterIntMax", [this.formatValue(oRange.maximum, "string")]));
+				getText("EnterNumberMax", [this.formatValue(oRange.maximum, "string")]));
 		}
 	};
 

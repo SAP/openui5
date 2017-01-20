@@ -41,7 +41,8 @@
 				"files" : [
 					"Component.js",
 					"Main.controller.js",
-					"Main.view.xml"
+					"Main.view.xml",
+					"ValueHelp.js"
 				]
 			}
 		},

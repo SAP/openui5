@@ -97,10 +97,10 @@ sap.ui.require([
 			errorText :"Don't know how to format sap.ui.model.odata.type.Int64 to boolean"},
 		{test :"format to int with overflow error", value : "9007199254740992",
 			targetType : "int",
-			errorText :"EnterIntMax 9,007,199,254,740,991"},
+			errorText :"EnterNumberMax 9,007,199,254,740,991"},
 		{test :"format to int with overflow error", value : "-9007199254740992",
 			targetType : "int",
-			errorText :"EnterIntMin -9,007,199,254,740,991"}
+			errorText :"EnterNumberMin -9,007,199,254,740,991"}
 	].forEach(function (oFixture) {
 		QUnit.test(oFixture.test, function (assert) {
 			TestUtils.withNormalizedMessages(function () {
@@ -253,13 +253,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	[
 		{ test : "exceeds min by length", value : "-92233720368547758090",
-			message : "EnterIntMin -9,223,372,036,854,775,808"},
+			message : "EnterNumberMin -9,223,372,036,854,775,808"},
 		{ test : "exceeds max by length", value : "92233720368547758080" ,
-			message : "EnterIntMax 9,223,372,036,854,775,807"},
+			message : "EnterNumberMax 9,223,372,036,854,775,807"},
 		{ test : "exceeds min by 1", value : "-9223372036854775809" ,
-			message : "EnterIntMin -9,223,372,036,854,775,808"},
+			message : "EnterNumberMin -9,223,372,036,854,775,808"},
 		{ test : "exceeds max by 1", value : "9223372036854775808",
-			message : "EnterIntMax 9,223,372,036,854,775,807"}
+			message : "EnterNumberMax 9,223,372,036,854,775,807"}
 	].forEach(function (oFixture) {
 		QUnit.test("validate: error: range " + oFixture.test, function (assert) {
 			TestUtils.withNormalizedMessages(function () {

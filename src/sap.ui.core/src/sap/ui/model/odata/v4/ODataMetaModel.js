@@ -27,7 +27,6 @@ sap.ui.define([
 		ODataMetaListBinding,
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
 		ODataMetaPropertyBinding,
-		ODataModel, // see ODataMetaModel#.setODataModel
 		// rest of segment after opening ( and segments that consist only of digits
 		rNotMetaContext = /\([^/]*|\/-?\d+/g,
 		rNumber = /^-?\d+$/,
@@ -46,6 +45,12 @@ sap.ui.define([
 			},
 			"Edm.Decimal" : {
 				constraints : {
+					"@Org.OData.Validation.V1.Minimum" : "minimum",
+					"@Org.OData.Validation.V1.Minimum@Org.OData.Validation.V1.Exclusive" :
+						"minimumExclusive",
+					"@Org.OData.Validation.V1.Maximum" : "maximum",
+					"@Org.OData.Validation.V1.Maximum@Org.OData.Validation.V1.Exclusive" :
+						"maximumExclusive",
 					"$Precision" : "precision",
 					"$Scale" : "scale"
 				},
@@ -73,7 +78,30 @@ sap.ui.define([
 			}
 		},
 		sValueListMapping = "@com.sap.vocabularies.Common.v1.ValueListMapping",
+		mValueListModelByUrl = {},
+		sValueListReference = "@com.sap.vocabularies.Common.v1.ValueListReference",
+		sValueListWithFixedValues = "@com.sap.vocabularies.Common.v1.ValueListWithFixedValues",
 		WARNING = jQuery.sap.log.Level.WARNING;
+
+	/**
+	 * Checks that the term is the expected term and determines the qualifier.
+	 *
+	 * @param {string} sTerm
+	 *   The term
+	 * @param {string} sExpectedTerm
+	 *   The expected term
+	 * @returns {string}
+	 *   The qualifier or undefined if the term is not the expected term
+	 */
+	function getQualifier(sTerm, sExpectedTerm) {
+		if (sTerm === sExpectedTerm) {
+			return "";
+		}
+		if (sTerm.indexOf(sExpectedTerm) === 0 && sTerm[sExpectedTerm.length] === "#"
+				&& sTerm.lastIndexOf("@") < sExpectedTerm.length) {
+			return sTerm.slice(sExpectedTerm.length + 1);
+		}
+	}
 
 	/**
 	 * @class Context binding implementation for the OData metadata model.
@@ -182,6 +210,8 @@ sap.ui.define([
 	 * @param {string|string[]} [vAnnotationUri]
 	 *   The URL (or an array of URLs) from which the annotation metadata are loaded
 	 *   Supported since 1.41.0
+	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
+	 *   The model this meta model is related to
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataMetaModel
 	 * @author SAP SE
@@ -200,16 +230,16 @@ sap.ui.define([
 		/*
 		 * @param {sap.ui.model.odata.v4.lib._MetadataRequestor} oRequestor
 		 */
-		constructor : function (oRequestor, sUrl, vAnnotationUri) {
+		constructor : function (oRequestor, sUrl, vAnnotationUri, oModel) {
 			MetaModel.call(this);
 			this.aAnnotationUris = vAnnotationUri && !Array.isArray(vAnnotationUri)
 				? [vAnnotationUri] : vAnnotationUri;
 			this.sDefaultBindingMode = BindingMode.OneTime;
 			this.oMetadataPromise = null;
+			this.oModel = oModel;
 			this.oRequestor = oRequestor;
 			this.mSupportedBindingModes = {"OneTime" : true};
 			this.sUrl = sUrl;
-			this.mValueListModels = {};
 		}
 	});
 
@@ -1017,7 +1047,7 @@ sap.ui.define([
 	 * retrieves it from the cache upon further requests.
 	 *
 	 * @param {string} sMappingUrl
-	 *   The mapping URL
+	 *   The mapping URL, for example "../ValueListService/$metadata"
 	 * @returns {sap.ui.model.odata.v4.ODataModel}
 	 *   The value list model
 	 *
@@ -1027,21 +1057,20 @@ sap.ui.define([
 		var oValueListModel,
 			sValueListUrl;
 
-		// the MappingUrl references the metadata document, remove the filename part and make it
-		// absolute based on the data service URL to get rid of ".." segments
-		sValueListUrl = new URI(sMappingUrl).filename("").absoluteTo(this.sUrl).toString();
-		oValueListModel = this.mValueListModels[sValueListUrl];
+		// the MappingUrl references the metadata document, make it absolute based on the data
+		// service URL to get rid of ".." segments and remove the filename part
+		sValueListUrl = new URI(sMappingUrl).absoluteTo(this.sUrl).filename("").toString();
+		oValueListModel = mValueListModelByUrl[sValueListUrl];
 		if (!oValueListModel) {
-			oValueListModel = new ODataModel({
-				groupId : "$direct",
+			oValueListModel = new this.oModel.constructor({
 				operationMode : OperationMode.Server,
 				serviceUrl : sValueListUrl,
 				synchronizationMode : "None"
 			});
 			oValueListModel.setDefaultBindingMode(BindingMode.OneWay);
-			this.mValueListModels[sValueListUrl] = oValueListModel;
-			// give the value list meta model a reference to its model
-			oValueListModel.getMetaModel().mValueListModels[sValueListUrl] = oValueListModel;
+			mValueListModelByUrl[sValueListUrl] = oValueListModel;
+			oValueListModel.oRequestor.mHeaders["X-CSRF-Token"]
+				= this.oModel.oRequestor.mHeaders["X-CSRF-Token"];
 		}
 		return oValueListModel;
 	};
@@ -1135,16 +1164,20 @@ sap.ui.define([
 			that = this;
 
 		oPromise = this.fetchObject("", oContext).then(function (oProperty) {
+			var mAnnotationForTerm, sTerm;
+
 			if (!oProperty) {
 				throw new Error("No metadata for " + sPropertyPath);
 			}
 			// now we can use getObject() because the property's annotations are definitely loaded
-			if (that.getObject("@com.sap.vocabularies.Common.v1.ValueListWithFixedValues",
-					oContext)) {
+			mAnnotationForTerm = that.getObject("@", oContext);
+			if (mAnnotationForTerm[sValueListWithFixedValues]) {
 				return ValueListType.Fixed;
 			}
-			if (that.getObject("@com.sap.vocabularies.Common.v1.ValueListReference", oContext)) {
-				return ValueListType.Standard;
+			for (sTerm in mAnnotationForTerm) {
+				if (getQualifier(sTerm, sValueListReference) !== undefined) {
+					return ValueListType.Standard;
+				}
 			}
 			return ValueListType.None;
 		});
@@ -1417,6 +1450,8 @@ sap.ui.define([
 
 		/*
 		 * Determines the namespace of the given qualified name.
+		 * @param {string} sName The qualified name
+		 * @returns {string} The namespace
 		 */
 		function namespace(sName) {
 			var iIndex = sName.indexOf("/");
@@ -1429,81 +1464,91 @@ sap.ui.define([
 			return sName.slice(0, sName.lastIndexOf("."));
 		}
 
-		/*
-		 * Checks that the term it is a value list mapping term and determines the qualifier.
-		 * @param {string} sTerm The term
-		 * @returns {string} The key or undefined if the term does not specify a value list mapping
-		 */
-		function getMappingKey(sTerm) {
-			if (sTerm === sValueListMapping) {
-				return "";
-			}
-			if (sTerm.indexOf(sValueListMapping + "#") === 0) {
-				return sTerm.slice(sValueListMapping.length + 1);
-			}
-		}
-
 		return Promise.all([
-			this.requestObject("/$EntityContainer"),
-			this.requestObject("", oContext),
-			this.requestObject("@com.sap.vocabularies.Common.v1.ValueListReference", oContext)
+			this.requestObject("/$EntityContainer"), // the entity container's name
+			this.requestObject("", oContext), // the property itself
+			this.requestObject("@", oContext) // all annotations of the property
 		]).then(function (aResults) {
-			// the namespace of the container is the namespace of the service
-			var sNamespace = namespace(aResults[0]),
+			var mAnnotationForTerm = aResults[2],
+				mMappingUrlForKey = {},
+				// the namespace of the container is the namespace of the service
+				sNamespace = namespace(aResults[0]),
+				aPromises,
 				oProperty = aResults[1],
-				oValueListModel,
-				oValueListReference = aResults[2];
+				oValueListInfo = {};
 
 			if (!oProperty) {
 				throw new Error("No metadata for " + sPropertyPath);
 			}
-			if (!oValueListReference) {
-				throw new Error("No value list info for " + sPropertyPath);
-			}
-			oValueListModel = that.getOrCreateValueListModel(oValueListReference.MappingUrl);
 
-			// We cannot use fetchObject here for two reasons: We only have a property path and not
-			// necessarily the property's qualified name, and accessing a property annotation would
-			// fail because the value list service does not have the property. So we choose another
-			// way: We inspect all annotations in the value list service and try to resolve the
-			// target in the data service.
-			return oValueListModel.getMetaModel().fetchEntityContainer()
-				.then(function (oValueListMetadata) {
-					var oTargets = oValueListMetadata.$Annotations,
-						oValueListInfo = {};
+			// filter all reference annotations, for each create a promise to evaluate the mapping
+			aPromises = Object.keys(mAnnotationForTerm).filter(function (sTerm) {
+				return getQualifier(sTerm, sValueListReference) !== undefined;
+			}).map(function (sTerm) {
+				var oValueListReference = mAnnotationForTerm[sTerm],
+					oValueListModel =
+						that.getOrCreateValueListModel(oValueListReference.MappingUrl),
+					oValueListMetaModel = oValueListModel.getMetaModel();
 
-					Object.keys(oTargets).forEach(function (sTarget) {
-						var oTerms = oTargets[sTarget];
+				// We cannot use fetchObject here for two reasons: We only have a property path and
+				// not necessarily the property's qualified name, and accessing a property
+				// annotation would fail because the value list service does not have the property.
+				// So we choose another way: We inspect all annotations in the value list service
+				// and try to resolve the target in the data service.
+				return oValueListMetaModel.fetchEntityContainer()
+					.then(function (oValueListMetadata) {
+						var mAnnotationMapForTarget = oValueListMetadata.$Annotations;
 
-						if (namespace(sTarget) !== sNamespace) {
-							// target is not in the namespace of the data service -> ignore
-							return;
-						}
-						if (that.getObject("/" + sTarget) !== oProperty) {
-							if (that === oValueListModel.getMetaModel()) {
-								return; // value list on value list
+						Object.keys(mAnnotationMapForTarget).filter(function (sTarget) {
+							// only relevant if the target is in the namespace of the data service
+							if (namespace(sTarget) === sNamespace) {
+								if (that.getObject("/" + sTarget) === oProperty) {
+									return true;
+								}
+								if (that !== oValueListMetaModel) {
+									// target is not the property
+									throw new Error(
+										"Unexpected annotation target in value list metadata: "
+											+ sTarget);
+								}
 							}
-							// target is not the property
-							throw new Error("Unexpected annotation target in value list metadata: "
-								+ sTarget);
-						}
-						Object.keys(oTerms).forEach(function (sTerm) {
-							var sKey = getMappingKey(sTerm);
+							return false;
+						}).forEach(function (sTarget) {
+							var mAnnotationForTerm = mAnnotationMapForTarget[sTarget];
 
-							if (sKey !== undefined) {
-								oValueListInfo[sKey] = jQuery.extend(true, {
-									$model : oValueListModel
-								}, oTerms[sTerm]);
-							} else if (that !== oValueListModel.getMetaModel()) {
-								throw new Error(
-									"Unexpected annotation term in value list metadata: "
-									+ sTarget + sTerm);
-							}
+							Object.keys(mAnnotationForTerm).forEach(function (sTerm) {
+								var sKey = getQualifier(sTerm, sValueListMapping);
+
+								if (sKey !== undefined) {
+									if (oValueListInfo[sKey]) {
+										throw new Error("Duplicate qualifier '" + sKey + "' for "
+											+ sPropertyPath + " in " + mMappingUrlForKey[sKey]
+											+ " and " + oValueListReference.MappingUrl);
+									}
+									oValueListInfo[sKey] = jQuery.extend(true, {
+										$model : oValueListModel
+									}, mAnnotationForTerm[sTerm]);
+									mMappingUrlForKey[sKey] = oValueListReference.MappingUrl;
+								} else if (that !== oValueListMetaModel) {
+									// complain about the term only if data model and value help
+									// model are different
+									throw new Error(
+										"Unexpected annotation term in value list metadata: "
+										+ sTarget + sTerm);
+								}
+							});
 						});
 					});
+			});
 
-					return oValueListInfo;
-				});
+			if (!aPromises.length) {
+				throw new Error("No value list info for " + sPropertyPath);
+			}
+
+			// wait for all value list mappings to be evaluated
+			return Promise.all(aPromises).then(function () {
+				return oValueListInfo;
+			});
 		});
 	};
 
@@ -1588,20 +1633,6 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.toString = function () {
 		return sODataMetaModel + ": " + this.sUrl;
-	};
-
-	/**
-	 * Sets the constructor for ODataModel. We cannot import it via sap.ui.define because this would
-	 * lead to a cyclic dependency.
-	 *
-	 * @param {function} fnODataModel
-	 *   The constructor for ODataModel
-	 *
-	 * @private
-	 */
-	ODataMetaModel.setODataModel = function (fnODataModel) {
-		// save it globally
-		ODataModel = fnODataModel;
 	};
 
 	return ODataMetaModel;

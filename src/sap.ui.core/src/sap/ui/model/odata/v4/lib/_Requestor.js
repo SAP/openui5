@@ -10,7 +10,10 @@ sap.ui.define([
 ], function (jQuery, _Batch, _Helper) {
 	"use strict";
 
-	var mFinalHeaders = { // final (cannot be overridden) request headers for OData V4
+	var mBatchHeaders = { // headers for the $batch request
+			"Accept" : "multipart/mixed"
+		},
+		mFinalHeaders = { // final (cannot be overridden) request headers for OData V4
 			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 		},
 		mPredefinedPartHeaders = { // predefined request headers in $batch parts
@@ -600,7 +603,7 @@ sap.ui.define([
 		bHasChanges = aChangeSet.length > 0;
 		this.batchRequestSent(sGroupId, bHasChanges);
 
-		return this.request("POST", "$batch", undefined, undefined, aRequests)
+		return this.request("POST", "$batch", undefined, mBatchHeaders, aRequests)
 			.then(function (aResponses) {
 				that.batchResponseReceived(sGroupId, bHasChanges);
 				visit(aRequests, aResponses);

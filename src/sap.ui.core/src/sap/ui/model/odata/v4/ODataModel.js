@@ -47,7 +47,8 @@ sap.ui.define([
 			synchronizationMode : true,
 			updateGroupId : true
 		},
-		aSystemQueryOptions = ["$apply", "$expand", "$filter", "$orderby", "$search", "$select"];
+		aSystemQueryOptions = ["$apply", "$count", "$expand", "$filter", "$orderby", "$search",
+			"$select"];
 
 	/**
 	 * Constructor for a new ODataModel.
@@ -165,7 +166,7 @@ sap.ui.define([
 
 					this.oMetaModel = new ODataMetaModel(
 						_MetadataRequestor.create(mHeaders, this.mUriParameters),
-						this.sServiceUrl + "$metadata", mParameters.annotationURI);
+						this.sServiceUrl + "$metadata", mParameters.annotationURI, this);
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
 						this.mUriParameters, function (sGroupId) {
 							if (sGroupId === "$auto") {
@@ -236,10 +237,10 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $apply, $expand, $filter, $orderby, $search and $select
-	 *   "5.1 System Query Options"; OData V4 only allows $apply, $filter, $orderby and $search
-	 *   inside resource paths that identify a collection. In our case here, this means you can
-	 *   only use them inside $expand.
+	 *   <li> The $apply, $count, $expand, $filter, $orderby, $search and $select
+	 *   "5.1 System Query Options"; OData V4 only allows $apply, $count, $filter, $orderby and
+	 *   $search inside resource paths that identify a collection. In our case here, this means you
+	 *   can only use them inside $expand.
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
@@ -327,7 +328,7 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $apply, $expand, $filter, $orderby, $search, and $select
+	 *   <li> The $apply, $count, $expand, $filter, $orderby, $search, and $select
 	 *   "5.1 System Query Options"
 	 *   </ul>
 	 *   All other query options lead to an error.
@@ -1054,9 +1055,6 @@ sap.ui.define([
 	ODataModel.prototype.toString = function () {
 		return sClassName + ": " + this.sServiceUrl;
 	};
-
-	// pass this constructor to ODataMetaModel to avoid the cyclic dependency
-	ODataMetaModel.setODataModel(ODataModel);
 
 	return ODataModel;
 }, /* bExport= */ true);

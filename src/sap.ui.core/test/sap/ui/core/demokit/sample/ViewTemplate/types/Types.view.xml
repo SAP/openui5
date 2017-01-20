@@ -2,6 +2,7 @@
 	controllerName="sap.ui.core.sample.ViewTemplate.types.Types"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
+	xmlns:demokit="sap.ui.demokit"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
@@ -16,7 +17,8 @@
 		<Panel expandable="false" visible="{ui>/codeVisible}" headerText="Design-Time Source Code"
 			width="auto" class="sapUiResponsiveMargin">
 			<content>
-				<core:HTML content="{ui>/code}" preferDOM="false"/>
+				<demokit:CodeViewer class="sapUiExploredCodeViewer" source="{ui>/code}"
+					lineNumbering="true"/>
 			</content>
 		</Panel>
 		<form:SimpleForm id="simpleForm" layout="ResponsiveGridLayout" labelSpanL="12" labelSpanM="12" columnsM="2" columnsL="3">
@@ -109,6 +111,8 @@
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false}}"/>
 			<Label text="scale: &quot;variable&quot;, style: &quot;short&quot;, shortDecimals: 3"/>
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}, formatOptions: {style: 'short', shortDecimals: 3}}"/>
+			<Label text="precision: 10, scale: 3, minimum: 100 (exclusive), maximum: 1000"/>
+			<Input id="Decimal_ID" value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 10, scale: 3, minimum: '100', minimumExclusive: true, maximum: '1000'}}"/>
 
 			<core:Title text="sap.ui.model.odata.type.Double" />
 			<Label text="no constraints"/>
