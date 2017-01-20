@@ -206,6 +206,21 @@ html.sap-desktop .sapMGT:focus .sapMGTFocusDiv {
 	border: 1px dotted @sapUiContentFocusColor;
 }
 
+html.sap-desktop .sapMGT.sapMGTBackgroundImage:focus .sapMGTFocusDiv {
+	&:after {
+		content: "";
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		right: 0px;
+		bottom: 0px;
+		border-radius: 0.125rem;
+		margin: -1px;
+		border: 1px dotted @sapUiContentContrastFocusColor;
+		z-index: 0;
+	}
+}
+
 html.sap-desktop .sapMGT:focus:not([tabindex]) {
 	border-color: transparent;
 }
