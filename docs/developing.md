@@ -10,7 +10,7 @@ Setting up the UI5 development environment
 UI5 content is developed in an environment based on node.js, used as server, with a build process based on Grunt. To set up this environment follow these simple steps:
 
 1. Install node.js (get it from  [nodejs.org](http://nodejs.org/)); this includes npm, the node package manager.
-  * If working behind an HTTP proxy, you need to configure it properly: set the environment variables in the operating system settings or on the command line. The following example is for the Windows command line. You may have to adopt the settings according to your specific proxy configuration):
+  * If working behind an HTTP proxy, you need to configure it properly: set the environment variables in the operating system settings or on the command line. The following example is for the Windows command line. You may have to adapt the settings according to your specific proxy configuration):
   ```
 @SET HTTP_PROXY=http://proxy:8080
 @SET HTTPS_PROXY=http://proxy:8080
