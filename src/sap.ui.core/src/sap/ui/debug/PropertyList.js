@@ -337,7 +337,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 				var sUrl = this.oWindow.jQuery.sap.getModulePath(this.sCurrentHelpDoc, ".control");
 				var that = this;
 				jQuery.ajax({
-					async: true,
 					url : sUrl,
 					dataType : 'xml',
 					error : function(xhr,status) {

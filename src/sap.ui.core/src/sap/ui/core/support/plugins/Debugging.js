@@ -453,7 +453,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			for (var sUrl in mUrls) {
 				jQuery.ajax({
 					type: "HEAD",
-					async: true,
 					url: sUrl,
 					success: createAppendFunction(sUrl)
 				});
