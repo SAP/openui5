@@ -148,9 +148,16 @@
 			         new sap.ui.unified.CalendarLegendItem({text: "Type08", type: sap.ui.unified.CalendarDayType.Type08, tooltip: "Type 8"}),
 			         new sap.ui.unified.CalendarLegendItem({text: "no type 1", tooltip: "no type 1"}),
 			         new sap.ui.unified.CalendarLegendItem({text: "Type07", type: sap.ui.unified.CalendarDayType.Type07, tooltip: "Type 7"}),
-			         new sap.ui.unified.CalendarLegendItem({text: "no type 2", tooltip: "no type 2"}),
+			         new sap.ui.unified.CalendarLegendItem({text: "no type 2", tooltip: "no type 2"})
 			        ]
 		}).placeAt("sample7");
+
+    var oLeg8 = new sap.ui.unified.CalendarLegend("Leg8", {
+        items: [ new sap.ui.unified.CalendarLegendItem({text: "Red", color: "red", tooltip: "Red"}),
+            new sap.ui.unified.CalendarLegendItem({text: "Green", color: "green", tooltip: "Green"}),
+            new sap.ui.unified.CalendarLegendItem({text: "Blue", color: "blue", tooltip: "Blue"})
+        ]
+    }).placeAt("sample8");
 
 </script>
 
@@ -205,6 +212,11 @@
 	<br>
 	<div>
 		<div id="sample7"></div>
+	</div>
+	<div>Custom colors Legend example</div>
+	<br>
+	<div>
+		<div id="sample8"></div>
 	</div>
 	</body>
 </html>
