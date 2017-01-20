@@ -14,9 +14,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Row in the <code>PlanningCalendar</code>.
+	 * Row in the @link sap.m.PlanningCalendar}.
 	 *
-	 * This element holds the data of one row in the <code>PlanningCalendar</code>. Once the header information (e.g. person information)
+	 * This element holds the data of one row in the @link sap.m.PlanningCalendar}. Once the header information (e.g. person information)
 	 * is assigned, the appointments are assigned.
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
@@ -33,48 +33,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 		properties : {
 
 			/**
-			 * Title of the header (e.g. name of the person)
+			 * Defines the title of the header (for example, the name of the person).
 			 */
 			title : {type : "string", group : "Data"},
 
 			/**
-			 * Text of the header (e.g. department of the person)
+			 * Defines the text of the header (for example, the department of the person).
 			 */
 			text : {type : "string", group : "Data"},
 
 			/**
-			 * Icon of the header (e.g. picture of the person)
-			 *
-			 * URI of an image or an icon registered in sap.ui.core.IconPool.
+			 * Specifies the URI of an image or an icon registered in <code>sap.ui.core.IconPool</code>.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
 			/**
-			 * If set, the provided weekdays are displayed as non-working days.
-			 * Valid values inside the array are 0 to 6. (other values will just be ignored.)
-			 *
+			 * Determines whether the provided weekdays are displayed as non-working days.
+			 * Valid values inside the array are from 0 to 6 (other values are ignored).
 			 * If not set, the weekend defined in the locale settings is displayed as non-working days.
 			 *
-			 * <b>Note:</b> The non-working days are only visualized if <code>intervalType</code> is set to day.
+			 * <b>Note:</b> The non-working days are visualized if the <code>intervalType</code>
+			 * property of the {@link sap.m.PlanningCalendarView} is set to <code>Day</code>.
 			 */
 			nonWorkingDays : {type : "int[]", group : "Misc", defaultValue : null},
 
 			/**
-			 * If set, the provided hours are displayed as non-working hours.
-			 * Valid values inside the array are 0 to 23. (other values will just be ignored.)
+			 * Determines whether the provided hours are displayed as non-working hours.
+			 * Valid values inside the array are from 0 to 23 (other values are ignored).
 			 *
-			 * <b>Note:</b> The non-working hours are only visualized if <code>intervalType</code> is set to hour.
+			 * <b>Note:</b> The non-working hours are visualized if <code>intervalType</code>
+			 * property of the {@link sap.m.PlanningCalendarView} is set to <code>Hour</code>.
 			 */
 			nonWorkingHours : {type : "int[]", group : "Misc", defaultValue : null},
 
 			/**
 			 * Defines the selected state of the <code>PlanningCalendarRow</code>.
-			 * <b>Note:</b> Binding the <code>selected</code> property in single selection modes may cause unwanted results if you have more than one selected row in your binding.
+			 *
+			 * <b>Note:</b> Binding the <code>selected</code> property in single selection modes may
+			 * cause unwanted results if you have more than one selected row in your binding.
 			 */
 			selected : {type : "boolean", group : "Data", defaultValue : false},
 
 			/**
-			 * Can be used as an identifier of the row
+			 * Defines the identifier of the row.
 			 */
 			key : {type : "string", group : "Data", defaultValue : null}
 
@@ -82,21 +83,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 		aggregations : {
 
 			/**
-			 * Appointments to be displayed in the row. Appointments outside the visible time frame are not rendered.
+			 * The appointments to be displayed in the row. Appointments that outside the visible time frame are not rendered.
 			 *
-			 * <b>Note:</b> For performance reasons only appointments in the visible time range or nearby should be assigned.
+			 * <b>Note:</b> For performance reasons, only appointments in the visible time range or nearby should be assigned.
 			 */
 			appointments : {type : "sap.ui.unified.CalendarAppointment", multiple : true, singularName : "appointment"},
 
 			/**
-			 * Appointments to be displayed in the top of the intervals. The <code>intervalHeaders</code> are used to visualize
-			 * public holidays and similar things.
-			 *
+			 * The appointments to be displayed at the top of the intervals (for example, for public holidays).
 			 * Appointments outside the visible time frame are not rendered.
 			 *
-			 * The <code>intervalHeaders</code> always fill whole intervals. If they are shorter than one interval they are not displayed.
+			 * Keep in mind that the <code>intervalHeaders</code> should always fill whole intervals. If they are shorter or longer
+			 * than one interval, they are not displayed.
 			 *
-			 * <b>Note:</b> For performance reasons only appointments in the visible time range or nearby should be assigned.
+			 * <b>Note:</b> For performance reasons, only appointments in the visible time range or nearby should be assigned.
 			 */
 			intervalHeaders : {type : "sap.ui.unified.CalendarAppointment", multiple : true, singularName : "intervalHeader"}
 
@@ -320,7 +320,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 	};
 
 	/**
-	 * A <code>PlanningCalendarRow</code> is rendered inside a <code>sap.m.Table</code> as <code>sap.m.ColumnListItem</code>.
+	 * A <code>PlanningCalendarRow</code> is rendered inside a <code>sap.m.Table</code> as a <code>sap.m.ColumnListItem</code>.
 	 *
 	 * @returns {sap.m.ColumnListItem} <code>sap.m.ColumnListItem</code> that represents <code>PlanningCalendarRow</code> in the table.
 	 * @private
