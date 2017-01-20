@@ -126,7 +126,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 				return;
 			}
 
-			var oWeekNumber = UniversalDate.getWeekByDate(oFocusedDate.getCalendarType(), oFocusedDate.getFullYear(), oFocusedDate.getMonth(), oFocusedDate.getDate()),
+			var oWeekNumber = UniversalDate.getWeekByDate(oFocusedDate.getCalendarType(), oFocusedDate.getUTCFullYear(), oFocusedDate.getUTCMonth(), oFocusedDate.getUTCDate()),
 				oTempUniversalFocusedDate = new UniversalDate(oFocusedDate.getTime()),
 				oNewWeekNumber;
 
