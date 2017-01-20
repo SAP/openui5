@@ -1,0 +1,112 @@
+<mvc:View
+	id="view1"
+	height="100%"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:semantic="sap.f.semantic"
+	controllerName="sap.f.sample.SemanticPage.C">
+
+	<semantic:SemanticPage
+		id="mySemanticPage"
+		headerPinnable="true"
+		toggleHeaderOnTitleClick="true"
+		preserveHeaderStateOnScroll="false"
+		showFooter="{/showFooter}">
+
+		<!-- Title Heading-->
+		<semantic:titleHeading>
+			<Title text="{/title}" />
+		</semantic:titleHeading>
+
+		<!-- TitleExpanded content-->
+		<semantic:titleExpandedContent>
+			<Text text="{/titleExpandedContent/text}"/>
+			<ObjectStatus text="In Stock" state="{/titleExpandedContent/status}" />
+		</semantic:titleExpandedContent>
+
+		<!-- TitleExpanded content-->
+		<semantic:titleSnappedContent>
+			<Text text="{/titleSnappedContent/text}"/>
+			<ObjectStatus text="In Stock" state="{/titleSnappedContent/status}" />
+		</semantic:titleSnappedContent>
+
+		<!-- Header Content -->
+		<semantic:headerContent>
+			<FlexBox
+					alignItems="Start"
+					justifyContent="SpaceBetween">
+				<items>
+					<Panel backgroundDesign="Transparent">
+						<content>
+							<ObjectAttribute title="Functional Area" text="{/objectDescription/category}"/>
+							<ObjectAttribute title="Cost Center" text="{/objectDescription/center}"/>
+							<ObjectAttribute title="Email" text="{/objectDescription/email}"/>
+						</content>
+					</Panel>
+				</items>
+			</FlexBox>
+		</semantic:headerContent>
+
+		<!-- Content -->
+		<semantic:content>
+			<Table
+				id="idProductsTable"
+				inset="false"
+				items="{path:'/ProductCollection'}">
+
+				<columns>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="Name"/>
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="Category"/>
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="SupplierName"/>
+					</Column>
+				</columns>
+
+				<items>
+					<ColumnListItem vAlign="Middle">
+						<cells>
+							<ObjectIdentifier title="{Name}" text="{ProductId}"/>
+							<Text text="{Category}"/>
+							<Text text="{SupplierName}"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</semantic:content>
+
+		<semantic:titleMainAction>
+			<semantic:TitleMainAction id="editAction" text="Edit" press="onEdit"/>
+		</semantic:titleMainAction>
+
+		 <!--Semantic ShareMenu Buttons-->
+		<semantic:discussInJamAction>
+			<semantic:DiscussInJamAction />
+		</semantic:discussInJamAction>
+
+		<semantic:sendEmailAction>
+			<semantic:SendEmailAction />
+		</semantic:sendEmailAction>
+
+		<semantic:sendMessageAction>
+			<semantic:SendMessageAction />
+		</semantic:sendMessageAction>
+
+		<!-- Semantic Footer Buttons -->
+		<semantic:footerMainAction>
+			<semantic:FooterMainAction id="saveAction" press="onSave"/>
+		</semantic:footerMainAction>
+
+		<semantic:footerCustomActions>
+			<Button id="cancelAction" text="Cancel" press="onCancel"/>
+		</semantic:footerCustomActions>
+
+		<semantic:messagesIndicator>
+			<semantic:MessagesIndicator press="onMessagesButtonPress"/>
+		</semantic:messagesIndicator>
+
+	</semantic:SemanticPage>
+</mvc:View>
