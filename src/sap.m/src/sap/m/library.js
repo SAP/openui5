@@ -361,6 +361,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"unhideControl": "default"
 				},
 				"sap.m.Text": "sap/m/flexibility/Text",
+				"sap.m.Title": "sap/m/flexibility/Title",
 				"sap.m.Toolbar": {
 					"moveControls": "default"
 				}
