@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Button.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/Device'],
-	function(jQuery, library, Control, EnabledPropagator, IconPool, Device) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/Device', 'sap/ui/core/ContextMenuSupport'],
+	function(jQuery, library, Control, EnabledPropagator, IconPool, Device, ContextMenuSupport) {
 	"use strict";
 
 	/**
@@ -16,6 +16,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @class
 	 * Enables users to trigger actions. For the button UI, you can define some text or an icon, or both.
 	 * @extends sap.ui.core.Control
+	 * @mixes sap.ui.core.ContextMenuSupport
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -117,6 +118,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	//this._bExcludeFromTabChain
 
 	EnabledPropagator.call(Button.prototype);
+	ContextMenuSupport.apply(Button.prototype);
 
 	/**
 	 * Function is called when exiting the control.

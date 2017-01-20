@@ -19,6 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 	 * A menu is an interactive element which provides a choice of different actions to the user. These actions (items) can also be organized in submenus.
 	 * Like other dialog-like controls, the menu is not rendered within the control hierarchy. Instead it can be opened at a specified position via a function call.
 	 * @extends sap.ui.core.Control
+	 * @implements sap.ui.core.IContextMenu
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -30,7 +31,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) design time meta model
 	 */
 	var Menu = Control.extend("sap.ui.unified.Menu", /** @lends sap.ui.unified.Menu.prototype */ { metadata : {
-
+		interfaces: [
+			"sap.ui.core.IContextMenu"
+		],
 		library : "sap.ui.unified",
 		properties : {
 
@@ -330,6 +333,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 		}
 	};
 
+	/**
+	 * Opens the menu as a context menu.
+	 */
+	Menu.prototype.openAsContextMenu = function(oEvent, oOpenerRef) {
+		var x = oEvent.pageX - jQuery(oOpenerRef.getDomRef()).offset().left,
+			y = oEvent.pageY - jQuery(oOpenerRef.getDomRef()).offset().top,
+			eDock = sap.ui.core.Popup.Dock;
+
+		this.open(true, oOpenerRef, eDock.BeginTop, eDock.BeginTop, oOpenerRef, x + " " + y, 'flip');
+	};
 
 	/**
 	 * Closes the menu.
