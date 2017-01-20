@@ -15,18 +15,28 @@ sap.ui.require([
 
 	var aTestData = "abcdefghijklmnopqrstuvwxyz".split("");
 
-	function createResult(iIndex, iLength) {
-		return {
-			"@odata.context" : "$metadata#TEAMS",
-			value : aTestData.slice(iIndex, iIndex + iLength)
-		};
+	/*
+	 * Simulates an OData server response.
+	 */
+	function createResult(iIndex, iLength, vCount) {
+		var oResult = {
+				"@odata.context" : "$metadata#TEAMS",
+				value : aTestData.slice(iIndex, iIndex + iLength).map(function (s) {
+					return {key : s};
+				})
+			};
+
+		if (vCount !== undefined) {
+			oResult["@odata.count"] = vCount;
+		}
+		return oResult;
 	}
 
-	function mockRequest(oRequestorMock, sUrl, iStart, iLength, fnSubmit) {
+	function mockRequest(oRequestorMock, sUrl, iStart, iLength, fnSubmit, vCount) {
 		oRequestorMock.expects("request")
 			.withExactArgs("GET", sUrl + "?$skip=" + iStart + "&$top=" + iLength,
 				/*sGroupId*/undefined, /*mHeaders*/undefined, /*oPayload*/undefined, fnSubmit)
-			.returns(Promise.resolve(createResult(iStart, iLength)));
+			.returns(Promise.resolve(createResult(iStart, iLength, vCount)));
 	}
 
 	//*********************************************************************************************
@@ -229,10 +239,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{index : 1, length : 1, result : ["b"]},
-		{index : 0, length : 2, result : ["a", "b"]},
-		{index : 4, length : 5, result : []},
-		{index : 1, length : 5, result : ["b", "c"]}
+		{index : 1, length : 1, result : [{key : "b"}]},
+		{index : 0, length : 2, result : [{key : "a"}, {key : "b"}]},
+		{index : 4, length : 5, result : [], count : 4},
+		{index : 1, length : 5, result : [{key : "b"}, {key : "c"}], count : 3}
 	].forEach(function (oFixture) {
 		QUnit.test("read(" + oFixture.index + ", " + oFixture.length + ")", function (assert) {
 			var oRequestor = _Requestor.create("/~/"),
@@ -240,7 +250,7 @@ sap.ui.require([
 				oCache = _Cache.create(oRequestor, sResourcePath),
 				oCacheMock = this.mock(oCache),
 				oPromise,
-				aData = ["a", "b", "c"],
+				aData = [{key : "a"}, {key : "b"}, {key : "c"}],
 				oMockResult = {
 					"@odata.context" : "$metadata#TEAMS",
 					value : aData.slice(oFixture.index, oFixture.index + oFixture.length)
@@ -260,10 +270,13 @@ sap.ui.require([
 			assert.ok(!oPromise.isFulfilled());
 			assert.ok(!oPromise.isRejected());
 			return oPromise.then(function (aResult) {
-				assert.deepEqual(aResult, {
-					"@odata.context" : "$metadata#TEAMS",
-					value : oFixture.result
-				});
+				var oExpectedResult = {
+						"@odata.context" : "$metadata#TEAMS",
+						value : oFixture.result
+					};
+
+				oExpectedResult.value.$count = oFixture.count;
+				assert.deepEqual(aResult, oExpectedResult);
 			});
 		});
 	});
@@ -397,13 +410,14 @@ sap.ui.require([
 				oPromise = oPromise.then(function () {
 					return oCache.read(oRead.index, oRead.length, undefined, fnDataRequested)
 						.then(function (oResult) {
-							assert.deepEqual(oResult, createResult(oRead.index, oRead.length));
+							assert.deepEqual(oResult.value,
+								createResult(oRead.index, oRead.length).value);
 					});
 				});
 			});
 			return oPromise.then(function () {
 				sinon.assert.notCalled(fnDataRequested); // the requestor should call this
-				assert.strictEqual(oCache.iMaxElements, oFixture.expectedMaxElements || Infinity);
+				assert.strictEqual(oCache.aElements.$count, oFixture.expectedMaxElements);
 			});
 		});
 
@@ -423,15 +437,18 @@ sap.ui.require([
 			oFixture.reads.forEach(function (oRead) {
 				aPromises.push(oCache.read(oRead.index, oRead.length, undefined, fnDataRequested)
 					.then(function (oResult) {
-						assert.deepEqual(oResult, createResult(oRead.index, oRead.length));
+						assert.deepEqual(oResult.value,
+							createResult(oRead.index, oRead.length).value);
 				}));
 			});
 			return Promise.all(aPromises).then(function () {
 				sinon.assert.notCalled(fnDataRequested); // the requestor should call this
-				assert.strictEqual(oCache.iMaxElements, oFixture.expectedMaxElements || Infinity);
+				assert.strictEqual(oCache.aElements.$count, oFixture.expectedMaxElements);
 			});
 		});
 	});
+	//TODO short read delivers information about exact server-side count only in certain cases:
+	// if iResultLength > 0 or if no result was found just after a "last known good"
 
 	//*********************************************************************************************
 	QUnit.test("parallel reads beyond length", function (assert) {
@@ -445,14 +462,90 @@ sap.ui.require([
 
 		return Promise.all([
 			oCache.read(0, 30).then(function (oResult) {
-				assert.deepEqual(oResult, createResult(0, 26));
-				assert.strictEqual(oCache.iMaxElements, 26);
+				var oExpectedResult = createResult(0, 26);
+
+				oExpectedResult.value.$count = 26;
+				assert.deepEqual(oResult, oExpectedResult);
+				assert.strictEqual(oCache.aElements.$count, 26);
 			}),
 			oCache.read(30, 1).then(function (oResult) {
-				assert.deepEqual(oResult, createResult(0, 0));
-				assert.strictEqual(oCache.iMaxElements, 26);
+				var oExpectedResult = createResult(0, 0);
+
+				oExpectedResult.value.$count = 26;
+				assert.deepEqual(oResult, oExpectedResult);
+				assert.strictEqual(oCache.aElements.$count, 26);
 			})
 		]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read: $count & create", function (assert) {
+		var oRequestor = _Requestor.create("/~/"),
+			sResourcePath = "Employees",
+			oCache = _Cache.create(oRequestor, sResourcePath),
+			oRequestorMock = this.mock(oRequestor);
+
+		mockRequest(oRequestorMock, sResourcePath, 0, 10, undefined, "26");
+
+		return oCache.read(0, 10).then(function (oResult) {
+			assert.strictEqual(oCache.aElements.$count, 26);
+			assert.strictEqual(oResult.value.$count, 26);
+
+			oRequestorMock.expects("request").withExactArgs("POST", "Employees", "$direct", null,
+					sinon.match.object, sinon.match.func, sinon.match.func)
+				.returns(Promise.resolve({}));
+			return oCache.create("$direct", "Employees", "").then(function () {
+				assert.strictEqual(oCache.read(0, 10).getResult().value.$count, 27,
+					"now including the created element");
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read: $count & delete, top level", function (assert) {
+		var oRequestor = _Requestor.create("/~/"),
+			sResourcePath = "Employees",
+			oCache = _Cache.create(oRequestor, sResourcePath),
+			oRequestorMock = this.mock(oRequestor);
+
+		oRequestorMock.expects("request").withArgs("GET")
+			.returns(Promise.resolve({
+				"@odata.count" : "26",
+				"value" : [{}, {}, {}, {}, {}]
+			}));
+
+		return oCache.read(0, 5).then(function (oResult) {
+			oRequestorMock.expects("request").withArgs("DELETE").returns(Promise.resolve());
+			return oCache._delete("group", "Employees('42')", "3", function () {})
+				.then(function () {
+					assert.strictEqual(oCache.read(0, 4).getResult().value.$count, 25);
+				});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read: $count & delete, nested", function (assert) {
+		var oRequestor = _Requestor.create("/~/"),
+			sResourcePath = "Employees",
+			oCache = _Cache.create(oRequestor, sResourcePath),
+			oRequestorMock = this.mock(oRequestor);
+
+		oRequestorMock.expects("request").withArgs("GET")
+			.returns(Promise.resolve({
+				"value" : [{
+					"list" : [{}, {}, {}],
+					"list@odata.count" : "26"
+				}]
+			}));
+
+		return oCache.read(0, 5).then(function (oResult) {
+			oRequestorMock.expects("request").withArgs("DELETE").returns(Promise.resolve());
+			return oCache._delete("group", "Employees('42')", "0/list/1", function () {})
+				.then(function () {
+					assert.strictEqual(
+						oCache.fetchValue("group", "0/list").getResult().$count, 25);
+				});
+		});
 	});
 
 	//*********************************************************************************************
@@ -466,6 +559,7 @@ sap.ui.require([
 		assert.deepEqual(_Cache.convertQueryOptions({
 			foo : "bar",
 			$apply : "filter(Price gt 100)",
+			$count : true,
 			$expand : oExpand,
 			$filter : "BuyerName eq 'SAP'",
 			$orderby : "GrossAmount asc",
@@ -474,6 +568,7 @@ sap.ui.require([
 		}), {
 			foo : "bar",
 			$apply : "filter(Price gt 100)",
+			$count : true,
 			$expand : "expand",
 			$filter : "BuyerName eq 'SAP'",
 			$orderby : "GrossAmount asc",
@@ -485,6 +580,7 @@ sap.ui.require([
 			foo : "bar",
 			"sap-client" : "111",
 			$apply : "filter(Price gt 100)",
+			$count : true,
 			$expand : oExpand,
 			$filter : "BuyerName eq 'SAP'",
 			$orderby : "GrossAmount asc",
@@ -714,7 +810,7 @@ sap.ui.require([
 					.then(function (oResult) {
 						assert.ok(iStatus !== 500, "unexpected success");
 						assert.strictEqual(oResult, undefined);
-						assert.strictEqual(oCache.iMaxElements, iLength === 4 ? 2 : Infinity);
+						assert.strictEqual(oCache.aElements.$count, iLength === 4 ? 2 : undefined);
 						assert.deepEqual(oCache.aElements, [{
 							"@odata.etag" : "before"
 						}, {
@@ -827,6 +923,7 @@ sap.ui.require([
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
 			oEntityData = {name : "John Doe"},
+			oReadPromise,
 			oHelperMock = this.mock(_Helper),
 			oPatchPromise1,
 			oPatchPromise2,
@@ -867,6 +964,7 @@ sap.ui.require([
 		// code under test
 		oPatchPromise1 = oCache.update("updateGroup", "bar", "baz", "n/a", "-1");
 		oPatchPromise2 = oCache.update("anotherGroup", "bar", "qux", "n/a", "-1");
+		oReadPromise = oCache.read(-1, 1);
 
 		return Promise.all([
 			oPatchPromise1.then(), // check that update returned a promise
@@ -880,6 +978,9 @@ sap.ui.require([
 				assert.notOk("@$ui5.transient" in oCache.aElements[-1]);
 				assert.strictEqual(oCache.hasPendingChangesForPath(""), false,
 					"no more pending changes");
+			}),
+			oReadPromise.then(function (oResult) {
+				assert.notOk("@odata.count" in oResult);
 			})
 		]);
 	});
@@ -1186,7 +1287,8 @@ sap.ui.require([
 			oListener2 = {},
 			mQueryParams = {},
 			oRequestor = _Requestor.create("/~/"),
-			sResourcePath = "Employees('1')";
+			sResourcePath = "Employees('1')",
+			that = this;
 
 		this.mock(_Cache).expects("buildQueryString")
 			.withExactArgs(sinon.match.same(mQueryParams)).returns("?~");
@@ -1200,6 +1302,8 @@ sap.ui.require([
 			.withExactArgs("GET", sResourcePath + "?~", "group", undefined, undefined,
 				sinon.match.same(fnDataRequested1))
 			.returns(Promise.resolve(oExpectedResult).then(function () {
+					that.mock(_Cache).expects("computeCount")
+						.withExactArgs(sinon.match.same(oExpectedResult));
 					oCacheMock.expects("checkActive").twice();
 					oCacheMock.expects("drillDown")
 						.withExactArgs(sinon.match.same(oExpectedResult), undefined)
@@ -2208,6 +2312,7 @@ sap.ui.require([
 									"@odata.etag" : "after"
 							}]
 						});
+						assert.strictEqual(oData.Equipments.$count, 2);
 						sinon.assert.calledOnce(fnCallback);
 						sinon.assert.calledWithExactly(fnCallback, 1);
 					}, function (oError0) {
@@ -2387,6 +2492,57 @@ sap.ui.require([
 					assert.strictEqual(oResult, oExpectedResult);
 				})
 		]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("computeCount", function(assert) {
+		var oResult = {
+				"foo" : "bar",
+				"list" : [{}, {}, {
+					"nestedList" : [{}]
+				}],
+				"property" : {
+					"nestedList" : [{}]
+				},
+				"list2" : [{}, {}, {}],
+				"list2@odata.count" : "12",
+				"list2@odata.nextLink" : "List2?skip=3",
+				"list3" : [{}, {}, {}],
+				"list3@odata.nextLink" : "List3?skip=3",
+				"null" : null
+			};
+
+		_Cache.computeCount(oResult);
+
+		assert.strictEqual(oResult.list.$count, 3);
+		assert.strictEqual(oResult.list2.$count, 12);
+		assert.notOk("$count" in oResult.list3);
+		assert.strictEqual(oResult.list[2].nestedList.$count, 1);
+		assert.strictEqual(oResult.property.nestedList.$count, 1);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache.read uses computeCount", function(assert) {
+		var oRequestor = _Requestor.create("/~/"),
+			sResourcePath = "Employees",
+			oCache = _Cache.create(oRequestor, sResourcePath),
+			oValue0 = {},
+			oValue1 = {},
+			oData = {
+				value : [oValue0, oValue1]
+			};
+
+		this.mock(oRequestor).expects("request")
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=3", "group", undefined, undefined,
+				undefined)
+			.returns(Promise.resolve(oData));
+		this.mock(_Cache).expects("computeCount").withExactArgs(sinon.match.same(oData));
+
+		// code under test
+		return oCache.read(0, 3, "group").then(function () {
+			assert.strictEqual(oCache.aElements[0], oValue0);
+			assert.strictEqual(oCache.aElements[1], oValue1);
+		});
 	});
 });
 //TODO: resetCache if error in update?

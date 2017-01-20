@@ -883,6 +883,7 @@ sap.ui.require([
 	}, {
 		mOptions : {
 			"$apply" : "apply",
+			"$count" : true,
 			"$filter" : "foo eq 42",
 			"$orderby" : "bar",
 			"$search" : '"foo bar" AND NOT foobar'

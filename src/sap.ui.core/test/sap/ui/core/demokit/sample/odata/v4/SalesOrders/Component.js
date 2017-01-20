@@ -76,26 +76,20 @@ sap.ui.define([
 					"ProductList('HT-1000')/ProductID?custom-option=value" : {
 						source : "ProductListId.json"
 					},
-					"SalesOrderList?custom-option=value&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$skip=0&$top=5" : {
+					"SalesOrderList?custom-option=value&$count=true&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$skip=0&$top=5" : {
 						source : "SalesOrderList_skip0.json"
 					},
-					"SalesOrderList?custom-option=value&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$skip=5&$top=5" : {
+					"SalesOrderList?custom-option=value&$count=true&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$skip=5&$top=5" : {
 						source : "SalesOrderList_skip5.json"
 					},
-					"SalesOrderList?custom-option=value&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$skip=0&$top=10" : {
+					"SalesOrderList?custom-option=value&$count=true&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$skip=5&$top=4" : {
+						source : "SalesOrderList_skip5_top4.json"
+					},
+					"SalesOrderList?custom-option=value&$count=true&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$skip=0&$top=10" : {
 						source : "SalesOrderList_skip0_top10.json"
 					},
-					"SalesOrderList?custom-option=value&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$skip=0&$top=15" : {
-						source : "SalesOrderList_skip0_top10.json"
-					},
-					"SalesOrderList?custom-option=value&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$skip=10&$top=5" : {
-						source : "SalesOrderListNoMoreData.json"
-					},
-					"SalesOrderList?custom-option=value&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$skip=4&$top=1" : {
+					"SalesOrderList?custom-option=value&$count=true&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$skip=4&$top=1" : {
 						source : "SalesOrderListReplacementForDelete.json"
-					},
-					"SalesOrderList?custom-option=value&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$skip=9&$top=1" : {
-						source : "SalesOrderListNoMoreData.json"
 					},
 					"SalesOrderList('0500000000')?custom-option=value&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber,Address),SO_2_SCHDL($select=ScheduleKey,DeliveryDate)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_0.json"
@@ -159,12 +153,6 @@ sap.ui.define([
 					},
 					"SalesOrderList('0500000009')/SO_2_SOITEM?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
 						source : "SalesOrderItemsList_9.json"
-					},
-					"SalesOrderList('0500000099')?custom-option=value&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber,Address),SO_2_SCHDL($select=ScheduleKey,DeliveryDate)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
-						source : "SalesOrderList_99.json"
-					},
-					"SalesOrderList('0500000099')/SO_2_SOITEM?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
-						source : "SalesOrderItemsList_99.json"
 					},
 					"SalesOrderList('')?custom-option=value&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber,Address),SO_2_SCHDL($select=ScheduleKey,DeliveryDate)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_new.json"
