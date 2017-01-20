@@ -47,6 +47,7 @@
 				},
 
 				{
+					"id": "belgium",
 					"key": "BE",
 					"text": "Belgium"
 				},
@@ -498,7 +499,7 @@
 			return sText;
 		};
 
-		var oComboBox = new sap.m.ComboBox({
+		var oComboBox = new sap.m.ComboBox("box_default",{
 
 			items: {
 				path: "/items",
@@ -517,7 +518,7 @@
 			}
 		});
 
-		var oComboBoxTwoColumn = new sap.m.ComboBox({
+		var oComboBoxTwoColumn = new sap.m.ComboBox("box_two_column",{
 			showSecondaryValues: true,
 			items: {
 				path: "/items",
@@ -628,7 +629,7 @@
 			}
 		});
 
-		var oComboBoxDefault = new sap.m.ComboBox({
+		var oComboBoxDefault = new sap.m.ComboBox("box_label_placeholder",{
 			placeholder: "List of countries",
 			items: {
 				path: "/items",
@@ -641,7 +642,7 @@
 			labelFor: oComboBoxDefault
 		}).addStyleClass("customLabel");
 
-		var oComboBoxWithPlaceholder  = new sap.m.ComboBox({
+		var oComboBoxWithPlaceholder  = new sap.m.ComboBox("box_placeholder",{
 			placeholder: "Choose your country",
 
 			items: {
@@ -650,7 +651,7 @@
 			}
 		});
 
-		var oComboBoxDisabled  = new sap.m.ComboBox({
+		var oComboBoxDisabled  = new sap.m.ComboBox("box_disabled",{
 			enabled: false,
 			placeholder: "Choose your country",
 			items: {
@@ -659,7 +660,7 @@
 			}
 		});
 
-		var oComboBoxReadOnly  = new sap.m.ComboBox({
+		var oComboBoxReadOnly  = new sap.m.ComboBox("box_read_only",{
 			editable: false,
 			items: {
 				path: "/items",
@@ -668,7 +669,7 @@
 			selectedKey: "GER"
 		});
 
-		var oComboBoxSuccess = new sap.m.ComboBox({
+		var oComboBoxSuccess = new sap.m.ComboBox("box_success",{
 			valueState: sap.ui.core.ValueState.Success,
 			items: {
 				path: "/items",
@@ -676,7 +677,7 @@
 			}
 		});
 
-		var oComboBoxWarning = new sap.m.ComboBox({
+		var oComboBoxWarning = new sap.m.ComboBox("box_warning",{
 			placeholder: "List of countries",
 			valueState: sap.ui.core.ValueState.Warning,
 			valueStateText: "value state text",
@@ -691,7 +692,7 @@
 			labelFor: oComboBoxWarning
 		}).addStyleClass("customLabel");
 
-		var oComboBoxError = new sap.m.ComboBox({
+		var oComboBoxError = new sap.m.ComboBox("box_error",{
 			valueState: sap.ui.core.ValueState.Error,
 			valueStateText: "value state text",
 			items: {
@@ -753,8 +754,12 @@
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
 				new sap.ui.core.HTML({ content: "<h3>Label and placeholder</h3>" }),
-				oLabel,
-				oComboBoxDefault,
+				new sap.ui.layout.HorizontalLayout("layout_label_placeholder",{
+					content: [
+						oLabel,
+						oComboBoxDefault
+					]
+				}),
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
 				new sap.ui.core.HTML({ content: "<h3>Disabled</h3>" }),
@@ -766,8 +771,12 @@
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
 				new sap.ui.core.HTML({ content: "<h3>Warning state (with label and placeholder)</h3>" }),
-				oLabelWarning,
-				oComboBoxWarning,
+				new sap.ui.layout.HorizontalLayout("layout_warning",{
+					content: [
+						oLabelWarning,
+						oComboBoxWarning
+					]}
+				),
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
 				new sap.ui.core.HTML({ content: "<h3>Success state</h3>" }),
