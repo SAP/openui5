@@ -72,7 +72,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 
 					/**
 					 * The Element's DOM Element.
-					 * In Actions scope the domRef points to the DOM Element of the remove icon (if pressed) or the more icon.
+					 * In Actions scope the domRef points to the DOM Element of the remove button (if pressed) or the more icon.
 					 * @since 1.46.0
 					 */
 					"domRef" : { type: "any" }

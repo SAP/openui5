@@ -1250,8 +1250,20 @@
 		assert.ok(this.oGenericTile.getTileContent()[0].getContent() !== null, "The content aggregation in TileContent is kept.");
 	});
 
+	QUnit.test("ContentMode - Check if the TileContent's content visibility is changed", function(assert) {
+		//Arrange
+		this.oGenericTile.setMode(sap.m.GenericTileMode.HeaderMode);
+		sap.ui.getCore().applyChanges();
+		var oVisibilitySpy = sinon.spy(this.oGenericTile, "_changeTileContentContentVisibility");
+		this.oGenericTile.setMode(sap.m.GenericTileMode.ContentMode);
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(oVisibilitySpy.calledWith(true), "The visibility is changed to visible");
+	});
+
 	QUnit.test("GenericTile in HeaderMode", function(assert) {
-		this.oGenericTile.setMode("HeaderMode");
+		this.oGenericTile.setMode(sap.m.GenericTileMode.HeaderMode);
 		sap.ui.getCore().applyChanges();
 
 		// In HeaderMode, when the subheader available, the number of header lines should be 4
@@ -1263,25 +1275,21 @@
 		assert.equal(sap.ui.getCore().byId("generic-tile-title").getMaxLines(), 5, "The header has 5 lines when subheader unavailable");
 	});
 
-	QUnit.test("HeaderMode - Check if the content in TileContent is removed before rendering", function(assert) {
+	QUnit.test("HeaderMode - Check if the TileContent's content visibility is changed", function(assert) {
 		//Arrange
-		this.oGenericTile.setProperty("mode", "HeaderMode", true);
+		var oVisibilitySpy = sinon.spy(this.oGenericTile, "_changeTileContentContentVisibility");
+		this.oGenericTile.setMode(sap.m.GenericTileMode.HeaderMode);
 		//Act
-		this.oGenericTile.onBeforeRendering();
+		sap.ui.getCore().applyChanges();
 		//Assert
-		assert.equal(this.oGenericTile._aTileContentContent.length, 1, "TileContent content is saved during rendering");
-		assert.ok(this.oGenericTile._aTileContentContent[0].getParent() === null, "TileContent content has no parent");
-		assert.ok(this.oGenericTile.getTileContent()[0].getContent() === null, "The content aggregation in TileContent is removed during rendering");
+		assert.ok(oVisibilitySpy.calledWith(false), "The visibility is changed to not visible");
 	});
 
-	QUnit.test("HeaderMode - Check if the content in TileContent is added after rendering", function(assert) {
-		//Arrange
-		this.oGenericTile.setProperty("mode", "HeaderMode", true);
+	QUnit.test("Content visibility change of TileContent", function(assert) {
 		//Act
-		this.oGenericTile.onAfterRendering();
+		this.oGenericTile._changeTileContentContentVisibility(true);
 		//Assert
-		assert.ok(!this.oGenericTile._aTileContentContent, "TileContent content is no longer saved during rendering");
-		assert.ok(this.oGenericTile.getTileContent()[0].getContent(), "The content aggregation in TileContent is back after rendering.");
+		assert.ok(this.oGenericTile.getTileContent()[0].getContent().getVisible(), "The content in TileContent is visible");
 	});
 
 	QUnit.test("GenericTileLineModeRenderer called for LineMode", function(assert) {
@@ -1289,7 +1297,7 @@
 		var oSpy = sinon.spy(sap.m.GenericTileLineModeRenderer, "render");
 		this.oGenericTile.getParent().addStyleClass = function() {};
 		// Act
-		this.oGenericTile.setMode("LineMode");
+		this.oGenericTile.setMode(sap.m.GenericTileMode.LineMode);
 		sap.ui.getCore().applyChanges();
 		// Assert
 		assert.ok(oSpy.calledOnce, "GenericTileLineModeRenderer called");
@@ -1301,7 +1309,7 @@
 		// Arrange
 		var oSpy = sinon.spy(sap.m.GenericTileRenderer, "render");
 		// Act
-		this.oGenericTile.setMode("HeaderMode");
+		this.oGenericTile.setMode(sap.m.GenericTileMode.HeaderMode);
 		sap.ui.getCore().applyChanges();
 		// Assert
 		assert.ok(oSpy.calledOnce, "GenericTileRenderer called");
@@ -1843,7 +1851,7 @@
 			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
 				header : "header",
 				subheader : "subheader",
-				mode: "LineMode",
+				mode: sap.m.GenericTileMode.LineMode,
 				tileContent : [new sap.m.TileContent("tile-cont-1"), new sap.m.TileContent("tile-cont-2")]
 			});
 			// stub function _getAriaAndTooltipText of the content
