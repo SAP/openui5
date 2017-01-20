@@ -358,9 +358,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
+				"sap.m.RangeSlider": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
 				"sap.m.ScrollContainer": {
 					"hideControl": "default",
 					"moveControls": "default",
+					"unhideControl": "default"
+				},
+				"sap.m.Slider": {
+					"hideControl": "default",
 					"unhideControl": "default"
 				},
 				"sap.m.Text": "sap/m/flexibility/Text",

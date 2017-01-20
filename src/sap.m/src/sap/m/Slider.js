@@ -196,7 +196,8 @@ sap.ui.define([
 						value: { type: "float" }
 					}
 				}
-			}
+			},
+			designTime: true
 		}});
 
 		//Defines object which contains constants used by the control.
