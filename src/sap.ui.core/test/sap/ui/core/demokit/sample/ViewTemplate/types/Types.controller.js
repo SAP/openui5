@@ -103,9 +103,9 @@ sap.ui.define([
 		},
 
 		onSourceCode : function (oEvent) {
-			var sSource,
-				oView = this.getView(),
-				bVisible = oView.byId("toggleSourceCode").getPressed();
+			var oView = this.getView(),
+				bVisible = oView.byId("toggleSourceCode").getPressed(),
+				sSource;
 
 			oView.getModel("ui").setProperty("/codeVisible", bVisible);
 			if (bVisible) {
@@ -121,10 +121,7 @@ sap.ui.define([
 					.replace(/\t/g, "    ") // indent by just 4 spaces
 					.replace(/\n\s*\n/g, "\n");
 
-				oView.getModel("ui").setProperty("/code", "<div style='"
-					+ "font-family: monospace; white-space: pre-wrap;"
-					+ "margin: 1em 0; display: block;'>"
-					+ "<code>" + jQuery.sap.encodeHTML(sSource) + "</code></div>");
+				oView.getModel("ui").setProperty("/code", sSource);
 			}
 		},
 

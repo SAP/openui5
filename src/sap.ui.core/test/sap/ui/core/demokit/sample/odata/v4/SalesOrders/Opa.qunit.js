@@ -269,7 +269,7 @@ sap.ui.require([
 			if (aExpectedScheduleIds.length) {
 				Then.waitFor({
 					controlType : "sap.m.Text",
-					matchers : new BindingPath({path: "/SalesOrderList/3/SO_2_SCHDL/"
+					matchers : new BindingPath({path: "/SalesOrderList/2/SO_2_SCHDL/"
 						+ (aExpectedScheduleIds.length - 1 | "0")}),
 					success : function (oControl) {
 						var oCore = Opa5.getWindow().sap.ui.getCore(),
@@ -330,7 +330,7 @@ sap.ui.require([
 
 			// check that one SO is re-fetched
 			verifyVisibleSalesOrderIds(
-				["0500000000", "0500000001", "0500000003", "0500000004", "0500000099"], "4",
+				["0500000000", "0500000001", "0500000003", "0500000004", "0500000005"], "4",
 				"Sales Orders after delete as expected");
 			verifyMoreButton(true);
 
@@ -339,21 +339,20 @@ sap.ui.require([
 
 			// verify that we got 10 orders
 			verifyVisibleSalesOrderIds(
-				["0500000000", "0500000001", "0500000003", "0500000004", "0500000099",
-				"0500000005", "0500000006", "0500000007", "0500000008", "0500000009"], "9",
+				["0500000000", "0500000001", "0500000003", "0500000004", "0500000005",
+				"0500000006", "0500000007", "0500000008", "0500000009"], "8",
 				"Further Sales Orders visible");
-			// and the more button is still visible
-			verifyMoreButton(true);
+			// and the more button is gone
+			verifyMoreButton(false);
 
 			selectSalesOrderWithId("0500000003");
 			deleteSelectedSalesOrder();
 
 			// verify that we got 9 orders
 			verifyVisibleSalesOrderIds(
-				["0500000000", "0500000001", "0500000004", "0500000099", "0500000005",
-				"0500000006", "0500000007", "0500000008", "0500000009"], "8",
+				["0500000000", "0500000001", "0500000004", "0500000005",
+				"0500000006", "0500000007", "0500000008", "0500000009"], "7",
 				"No further Sales Orders");
-			// and the more button is gone (because refetch triggered from delete returned nothing)
 			verifyMoreButton(false);
 
 			selectSalesOrderWithId("0500000004");
@@ -361,9 +360,9 @@ sap.ui.require([
 
 			// verify that 8 orders are left
 			verifyVisibleSalesOrderIds(
-				["0500000000", "0500000001", "0500000099", "0500000005",
-				"0500000006", "0500000007", "0500000008", "0500000009"], "7",
-				"Only 8 Sales Orders left");
+				["0500000000", "0500000001", "0500000005",
+				"0500000006", "0500000007", "0500000008", "0500000009"], "6",
+				"Only 7 Sales Orders left");
 
 			//*****************************************************************************
 			// Multiple Deletion Journey within Schedules

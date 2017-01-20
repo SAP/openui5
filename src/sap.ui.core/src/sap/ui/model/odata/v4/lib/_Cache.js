@@ -11,6 +11,18 @@ sap.ui.define([
 	"use strict";
 
 	/**
+	 * Adds the given delta to the collection's $count if there is one.
+	 *
+	 * @param {array} aCollection The collection
+	 * @param {number} iDelta The delta
+	 */
+	function addToCount(aCollection, iDelta) {
+		if ("$count" in aCollection) {
+			aCollection.$count += iDelta;
+		}
+	}
+
+	/**
 	 * Converts the known OData system query options from map or array notation to a string. All
 	 * other parameters are simply passed through.
 	 *
@@ -33,6 +45,7 @@ sap.ui.define([
 					vValue = Cache.convertExpand(vValue);
 					break;
 				case "$apply":
+				case "$count":
 				case "$filter":
 				case "$orderby":
 				case "$search":
@@ -92,6 +105,16 @@ sap.ui.define([
 	}
 
 	/**
+	 * Returns the collection's $count.
+	 *
+	 * @param {array} aCollection The collection
+	 * @returns {number} The count or <code>Infinity</code> if the count is unknown
+	 */
+	function getCount(aCollection) {
+		return aCollection.$count !== undefined ? aCollection.$count : Infinity;
+	}
+
+	/**
 	 * Returns <code>true</code> if <code>sRequestPath</code> is a sub-path of <code>sPath</code>.
 	 *
 	 * @param {string} sRequestPath The request path
@@ -118,32 +141,55 @@ sap.ui.define([
 	 *   The function is called when the back end requests have been sent.
 	 */
 	function requestElements(oCache, iStart, iEnd, sGroupId, fnDataRequested) {
-		var aElements = oCache.aElements,
-			iExpectedLength = iEnd - iStart,
+		var iExpectedLength = iEnd - iStart,
 			oPromise,
 			sResourcePath = oCache.sResourcePath + "$skip=" + iStart + "&$top=" + iExpectedLength;
 
 		oPromise = oCache.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
 				fnDataRequested)
 			.then(function (oResult) {
-				var i, iResultLength = oResult.value.length;
+				var iCount,
+					sCount,
+					i,
+					iResultLength = oResult.value.length;
 
+				Cache.computeCount(oResult);
 				oCache.sContext = oResult["@odata.context"];
+				sCount = oResult["@odata.count"];
+				if (sCount) {
+					setCount(oCache.aElements, sCount);
+				}
 				for (i = 0; i < iResultLength; i++) {
 					oCache.aElements[iStart + i] = oResult.value[i];
 				}
 				if (iResultLength < iExpectedLength) {
-					oCache.iMaxElements = Math.min(oCache.iMaxElements, iStart + iResultLength);
-					oCache.aElements.length = oCache.iMaxElements;
+					iCount = Math.min(getCount(oCache.aElements), iStart + iResultLength);
+					setCount(oCache.aElements, iCount);
+					oCache.aElements.length = iCount;
 				}
 			})["catch"](function (oError) {
-				if (aElements === oCache.aElements) {
-					fill(oCache.aElements, undefined, iStart, iEnd);
-				}
+				fill(oCache.aElements, undefined, iStart, iEnd);
 				throw oError;
 			});
 
 		fill(oCache.aElements, oPromise, iStart, iEnd);
+	}
+
+	/**
+	 * Sets the collection's $count: a number representing the server-side element count, of course
+	 * not including transient entities. It may be <code>undefined</code>, but not
+	 * <code>Infinity</code>.
+	 *
+	 * @param {array} aCollection The collection
+	 * @param {string|number} vCount The count
+	 */
+	function setCount(aCollection, vCount) {
+		// Note: @odata.count is of type Edm.Int64, represented as a string in OData responses;
+		// $count should be a number and the loss of precision is acceptable
+		if (typeof vCount === "string") {
+			vCount = parseInt(vCount, 10);
+		}
+		aCollection.$count = vCount;
 	}
 
 	/**
@@ -468,7 +514,6 @@ sap.ui.define([
 
 		this.sContext = undefined;    // the "@odata.context" from the responses
 		this.aElements = [];          // the available elements
-		this.iMaxElements = Infinity; // the max. number of elements if known, Infinity otherwise
 
 		this.sResourcePath += this.sResourcePath.indexOf("?") >= 0 ? "&" : "?";
 	}
@@ -533,11 +578,8 @@ sap.ui.define([
 						delete oCacheData[-1];
 					} else {
 						oCacheData.splice(vDeleteProperty, 1);
-						if (oCacheData === that.aElements) {
-							// deleting at root level
-							that.iMaxElements -= 1; // this doesn't change Infinity
-						}
 					}
+					addToCount(oCacheData, -1);
 					fnCallback(Number(vDeleteProperty));
 				});
 		});
@@ -587,6 +629,8 @@ sap.ui.define([
 					setCreatePending, cleanUp)
 				.then(function (oResult) {
 					delete oEntityData["@$ui5.transient"];
+					// now the server has one more element
+					addToCount(that.aElements, 1);
 					// update the cache with the POST response
 					_Helper.updateCache(that.mChangeListeners, "-1", oEntityData, oResult);
 				}, function (oError) {
@@ -680,9 +724,11 @@ sap.ui.define([
 	 *   If no back end request is needed, the function is not called.
 	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the requested range given as an OData response object (with
-	 *   "@odata.context" and the rows as an array in the property <code>value</code>). If an HTTP
-	 *   request fails, the error from the _Requestor is returned and the requested range is reset
-	 *   to undefined.
+	 *   "@odata.context" and the rows as an array in the property <code>value</code>, enhanced
+	 *   with a number property <code>$count</code> representing the server-side element count, of
+	 *   course not including transient entities; <code>$count</code> may be <code>undefined</code>,
+	 *   but not <code>Infinity</code>). If an HTTP request fails, the error from the _Requestor is
+	 *   returned and the requested range is reset to <code>undefined</code>.
 	 *
 	 *   The promise is rejected if the cache is inactive (see @link {#setActive}) when the response
 	 *   arrives.
@@ -704,9 +750,7 @@ sap.ui.define([
 			throw new Error("Illegal length " + iLength + ", must be >= 0");
 		}
 
-		if (iEnd > this.iMaxElements) {
-			iEnd = this.iMaxElements;
-		}
+		iEnd = Math.min(iEnd, getCount(this.aElements));
 
 		for (i = iIndex; i < iEnd; i++) {
 			if (this.aElements[i] !== undefined) {
@@ -733,6 +777,7 @@ sap.ui.define([
 				"@odata.context" : that.sContext,
 				value : that.aElements.slice(iStart, iEnd)
 			};
+			oResult.value.$count = that.aElements.$count;
 			if (iIndex === -1) {
 				oResult.value.unshift(that.aElements[-1]); // Note: returns new length!
 			}
@@ -919,6 +964,7 @@ sap.ui.define([
 							vDeleteProperty = vCacheData.indexOf(oEntity);
 						}
 						vCacheData.splice(vDeleteProperty, 1);
+						addToCount(vCacheData, -1);
 						fnCallback(Number(vDeleteProperty));
 					} else {
 						if (vDeleteProperty) {
@@ -1007,7 +1053,11 @@ sap.ui.define([
 				throw new Error("Cannot fetch a value before the POST request");
 			}
 			this.oPromise = _SyncPromise.resolve(this.oRequestor.request("GET", sResourcePath,
-				sGroupId, undefined, undefined, fnDataRequested));
+					sGroupId, undefined, undefined, fnDataRequested))
+				.then(function (oResult) {
+					Cache.computeCount(oResult);
+					return oResult;
+				});
 		}
 		return this.oPromise.then(function (oResult) {
 			that.checkActive();
@@ -1168,7 +1218,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 */
-	Cache.create = function _create(oRequestor, sResourcePath, mQueryOptions) {
+	Cache.create = function (oRequestor, sResourcePath, mQueryOptions) {
 		return new CollectionCache(oRequestor, sResourcePath, mQueryOptions);
 	};
 
@@ -1190,7 +1240,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 */
-	Cache.createProperty = function _createProperty(oRequestor, sResourcePath, mQueryOptions) {
+	Cache.createProperty = function (oRequestor, sResourcePath, mQueryOptions) {
 		return new PropertyCache(oRequestor, sResourcePath, mQueryOptions);
 	};
 
@@ -1216,8 +1266,34 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 */
-	Cache.createSingle = function _createSingle(oRequestor, sResourcePath, mQueryOptions, bPost) {
+	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bPost) {
 		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bPost);
+	};
+
+	/**
+	 * Processes the result received from the server. All arrays are annotated by their length;
+	 * influenced by the annotations "@odata.count" and "@odata.nextLink".
+	 *
+	 * @param {object} oResult The result
+	 */
+	Cache.computeCount = function (oResult) {
+		Object.keys(oResult).forEach(function (sKey) {
+			var sCount,
+				vValue = oResult[sKey];
+
+			if (Array.isArray(vValue)) {
+				sCount = oResult[sKey + "@odata.count"];
+				if (sCount) {
+					setCount(vValue, sCount);
+				} else if (!oResult[sKey + "@odata.nextLink"]) {
+					// Note: This relies on the fact that $skip/$top is not used on nested lists.
+					setCount(vValue, vValue.length);
+				}
+				vValue.forEach(Cache.computeCount);
+			} else if (vValue && typeof vValue === "object") {
+				Cache.computeCount(vValue);
+			}
+		});
 	};
 
 	return Cache;

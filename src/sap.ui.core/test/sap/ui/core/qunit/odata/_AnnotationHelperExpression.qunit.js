@@ -197,6 +197,23 @@ sap.ui.require([
 		property : {type : "Edm.Decimal", precision : "10", scale : "variable"},
 		constraints : {precision : "10", scale : 'variable'}
 	}, {
+		//TODO: productive code always provides precision and scale, is this ok?
+		property : {
+			type : "Edm.Decimal",
+			"Org.OData.Validation.V1.Minimum" : {
+				"String" : "10", "Org.OData.Validation.V1.Exclusive" : { "Bool" : "true" }}
+		},
+		constraints : {precision : undefined, scale : undefined, minimum : "10",
+			minimumExclusive : "true"}
+	}, {
+		property : {
+			type : "Edm.Decimal",
+			"Org.OData.Validation.V1.Maximum" : {
+				"String" : "100", "Org.OData.Validation.V1.Exclusive" : {}}
+		},
+		constraints : {precision : undefined, scale : undefined, maximum : "100",
+			maximumExclusive : "true"}
+	}, {
 		property : {type : "Edm.String", maxLength : "30", nullable : "false"},
 		constraints : {maxLength : "30", nullable : "false"}
 	}, {

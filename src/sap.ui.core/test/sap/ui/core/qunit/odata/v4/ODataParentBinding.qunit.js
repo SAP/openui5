@@ -125,7 +125,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("updateValue: relative binding", function (assert) {
 		var oBinding = new ODataParentBinding({
-				oCachePromise : _SyncPromise.resolve(undefined),
+				oCachePromise : _SyncPromise.resolve(),
 				oContext : {
 					updateValue : function () {}
 				},

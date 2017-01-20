@@ -58,7 +58,8 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $apply, $expand, $filter, $orderby, $search and $select "5.1 System Query Options"
+	 *   <li> The $apply, $count, $expand, $filter, $orderby, $search and $select "5.1 System Query
+	 *     Options"
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
@@ -111,6 +112,7 @@ sap.ui.define([
 				}
 
 				this.aApplicationFilters = _Helper.toArray(vFilters);
+				this.oCachePromise = _SyncPromise.resolve();
 				this.sChangeReason = undefined;
 				this.oDiff = undefined;
 				this.aFilters = [];
@@ -174,8 +176,8 @@ sap.ui.define([
 						}
 					}
 					that.aContexts.pop();
-					that.iMaxLength -= 1; // this doesn't change Infinity
 				}
+				that.iMaxLength -= 1; // this doesn't change Infinity
 				that._fireChange({reason : ChangeReason.Remove});
 			});
 	};
@@ -410,15 +412,20 @@ sap.ui.define([
 		sCreatePath = sResolvedPath.slice(1);
 		oContext = Context.create(this.oModel, this, sResolvedPath + "/-1", -1,
 			oCache.create(this.getUpdateGroupId(), sCreatePath, "", oInitialData, function () {
+				// cancel callback
 				oContext.destroy();
 				delete that.aContexts[-1];
 				that._fireChange({reason : ChangeReason.Remove});
 			}, function (oError) {
+				// error callback
 				that.oModel.reportError("POST on '" + sCreatePath
 					+ "' failed; will be repeated automatically", sClassName, oError);
 			}));
 
 		this.aContexts[-1] = oContext;
+		oContext.created().then(function () {
+			that.iMaxLength += 1;
+		});
 		this._fireChange({reason : ChangeReason.Add});
 
 		return oContext;
@@ -432,16 +439,19 @@ sap.ui.define([
 	 *   The range as returned by {@link #getReadRange}
 	 * @param {number} iResultLength
 	 *   The number of OData entities read from the cache for the given range
+	 * @param {number} [iCount]
+	 *   The $count as reported from the cache: a number representing the server-side element count,
+	 *   of course not including transient entities.
 	 * @returns {boolean}
 	 *   <code>true</code>, if contexts have been created or <code>isLengthFinal</code> has changed
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.createContexts = function (oRange, iResultLength) {
+	ODataListBinding.prototype.createContexts = function (oRange, iResultLength, iCount) {
 		var bChanged = false,
 			oContext = this.oContext,
 			i,
-			bNewLengthFinal,
+			bLengthFinal = this.bLengthFinal,
 			oModel = this.oModel,
 			sPath = oModel.resolve(this.sPath, oContext),
 			sPathWithIndex,
@@ -469,18 +479,25 @@ sap.ui.define([
 				});
 			});
 		}
-		if (this.aContexts.length > this.iMaxLength) { // upper boundary obsolete: reset it
-			this.iMaxLength = Infinity;
-		}
-		if (iResultLength < oRange.length) {
-			this.iMaxLength = oRange.start + iResultLength;
-			if (this.aContexts.length > this.iMaxLength) {
-				this.aContexts.length = this.iMaxLength;
+		if (iCount !== undefined) {
+			if (this.aContexts.length > iCount) {
+				this.aContexts.length = iCount;
 			}
+			this.iMaxLength = iCount;
+			this.bLengthFinal = true;
+		} else {
+			if (this.aContexts.length > this.iMaxLength) { // upper boundary obsolete: reset it
+				this.iMaxLength = Infinity;
+			}
+			if (iResultLength < oRange.length) {
+				this.iMaxLength = oRange.start + iResultLength;
+				if (this.aContexts.length > this.iMaxLength) {
+					this.aContexts.length = this.iMaxLength;
+				}
+			}
+			this.bLengthFinal = this.aContexts.length === this.iMaxLength;
 		}
-		bNewLengthFinal = this.aContexts.length === this.iMaxLength;
-		if (this.bLengthFinal !== bNewLengthFinal) {
-			this.bLengthFinal = bNewLengthFinal;
+		if (this.bLengthFinal !== bLengthFinal) {
 			// bLengthFinal changed --> send change event even if no new data is available
 			bChanged = true;
 		}
@@ -510,13 +527,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.deleteFromCache = function (sGroupId, sEditUrl, sPath, fnCallback) {
-		var oCache;
+		var oCache = this.oCachePromise.getResult();
 
 		if (!this.oCachePromise.isFulfilled()) {
 			throw new Error("DELETE request not allowed");
 		}
 
-		oCache = this.oCachePromise.getResult();
 		if (oCache) {
 			sGroupId = sGroupId || this.getUpdateGroupId();
 			if (sGroupId !== "$auto" && sGroupId !== "$direct") {
@@ -541,14 +557,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.deregisterChange = function (sPath, oListener, iIndex) {
-		var oCache;
+		var oCache = this.oCachePromise.getResult();
 
 		if (!this.oCachePromise.isFulfilled()) {
 			// Be prepared for late deregistrations by dependents of parked contexts
 			return;
 		}
-
-		oCache = this.oCachePromise.getResult();
 
 		if (oCache) {
 			oCache.deregisterChange(_Helper.buildPath(iIndex, sPath), oListener);
@@ -955,10 +969,17 @@ sap.ui.define([
 					});
 				} else {
 					return oContext.fetchValue(that.sPath).then(function (aResult) {
+						var iCount;
+
 						// aResult may be undefined e.g. in case of a missing $expand in
 						// parent binding
-						return aResult
-							? aResult.slice(oRange.start, oRange.start + oRange.length) : [];
+						aResult = aResult || [];
+						iCount = aResult.$count;
+						aResult = aResult.slice(oRange.start, oRange.start + oRange.length);
+						aResult.$count = iCount;
+						return {
+							value : aResult
+						};
 					});
 				}
 			});
@@ -966,18 +987,17 @@ sap.ui.define([
 				// make sure "refresh" is followed by async "change"
 				oPromise = Promise.resolve(oPromise);
 			}
-			oPromise.then(function (vResult) {
-				var bContextsCreated,
-					aResult;
+			oPromise.then(function (oResult) {
+				var bContextsCreated;
 
 				// ensure that the result is still relevant
 				if (!that.bRelative || that.oContext === oContext) {
-					aResult = vResult && (Array.isArray(vResult) ? vResult : vResult.value);
-					bContextsCreated = that.createContexts(oRange, aResult.length);
+					bContextsCreated = that.createContexts(oRange, oResult.value.length,
+						oResult.value.$count);
 					if (that.bUseExtendedChangeDetection) {
 						that.oDiff = {
 							// aResult[0] corresponds to oRange.start = iStartInModel for E.C.D.
-							aDiff: that.getDiff(aResult, iStartInModel),
+							aDiff: that.getDiff(oResult.value, iStartInModel),
 							iLength : iLength
 						};
 					}
@@ -1050,7 +1070,6 @@ sap.ui.define([
 			aContexts = this.aContexts.slice(this.iCurrentBegin, this.iCurrentBegin + iLength);
 		}
 
-
 		while (aContexts.length < iLength) {
 			aContexts.push(undefined);
 		}
@@ -1118,13 +1137,10 @@ sap.ui.define([
 	 */
 	 // @override
 	ODataListBinding.prototype.getLength = function () {
-		var iLength = this.aContexts.length;
+		var iLength = this.bLengthFinal ? this.iMaxLength : this.aContexts.length + 10;
 
 		if (this.aContexts[-1]) {
-			iLength += 1;
-		}
-		if (!this.bLengthFinal) {
-			iLength += 10;
+			iLength += 1; // Note: non-transient created entities exist twice
 		}
 		return iLength;
 	};
@@ -1202,8 +1218,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context instance to be used, may be omitted for absolute bindings
 	 * @returns {SyncPromise}
-	 *   A promise which resolves with a cache instance or <code>undefined</code> if no cache is
-	 *   needed
+	 *   A promise which resolves with a cache instance or with <code>undefined</code> if no cache
+	 *   is needed
 	 *
 	 * @private
 	 */
@@ -1227,7 +1243,7 @@ sap.ui.define([
 					&& !this.aSorters.length
 					&& !this.aFilters.length
 					&& !this.aApplicationFilters.length) {
-				return _SyncPromise.resolve(undefined); // no need for an own cache
+				return _SyncPromise.resolve(); // no need for an own cache
 			}
 		} else {
 			oContext = undefined; // must be ignored for absolute bindings
@@ -1314,8 +1330,11 @@ sap.ui.define([
 		// the range for getCurrentContexts
 		this.iCurrentBegin = this.iCurrentEnd = 0;
 		// upper boundary for server-side list length (based on observations so far)
+		// Note: Non-transient created entities are included and exist twice: with index -1 and
+		// with some unknown (server-side) index i >= 0!
+		// Thus it is OK to compare this.aContexts.length and this.iMaxLength!
+		// BUT: the binding's length can be one greater than this.iMaxLength due to index -1!
 		this.iMaxLength = Infinity;
-		// this.bLengthFinal = this.aContexts.length === this.iMaxLength
 		this.bLengthFinal = false;
 		if (sChangeReason) {
 			this.sChangeReason = sChangeReason;

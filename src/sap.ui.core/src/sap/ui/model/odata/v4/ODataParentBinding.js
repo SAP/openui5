@@ -42,9 +42,9 @@ sap.ui.define([
 	 * @since 1.45.0
 	 */
 	ODataParentBinding.prototype.changeParameters = function (mParameters) {
-		var bChanged = false,
-			sKey,
-			mBindingParameters = jQuery.extend(true, {}, this.mParameters);
+		var mBindingParameters = jQuery.extend(true, {}, this.mParameters),
+			bChanged = false,
+			sKey;
 
 		if (!mParameters) {
 			throw new Error("Missing map of binding parameters");
@@ -55,10 +55,10 @@ sap.ui.define([
 				throw new Error("Unsupported parameter: " + sKey);
 			}
 			if (mParameters[sKey] === undefined && mBindingParameters[sKey] !== undefined) {
-					delete mBindingParameters[sKey];
-					bChanged = true;
+				delete mBindingParameters[sKey];
+				bChanged = true;
 			} else if (mBindingParameters[sKey] !== mParameters[sKey]) {
-				if (typeof mParameters[sKey] === 'object') {
+				if (typeof mParameters[sKey] === "object") {
 					mBindingParameters[sKey] = jQuery.extend(true, {}, mParameters[sKey]);
 				} else {
 					mBindingParameters[sKey] = mParameters[sKey];
@@ -102,6 +102,7 @@ sap.ui.define([
 			oPromise,
 			that = this;
 
+		// no deactivation needed for not fulfilled cache promise because cache will not be created
 		if (this.oCachePromise && this.oCachePromise.isFulfilled()) {
 			oCurrentCache = this.oCachePromise.getResult();
 			if (oCurrentCache) {
@@ -150,8 +151,8 @@ sap.ui.define([
 
 	/**
 	 * Returns the query options for the binding. Uses the options resulting from the binding
-	 * parameters or the options inherited from the parent binding by
-	 * using {@link #inheritQueryOptions}. Merges the model's query options.
+	 * parameters or the options inherited from the parent binding by using
+	 * {@link #inheritQueryOptions}. Merges the model's query options.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context that is used to compute the inherited query options
