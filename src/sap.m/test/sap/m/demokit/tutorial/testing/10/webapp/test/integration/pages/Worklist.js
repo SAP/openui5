@@ -38,7 +38,7 @@ sap.ui.require([
 								path: "/Posts('" + sId + "')"
 							}),
 							actions: new Press(),
-							errorMessage: "No list item with the id " + sId + " was found."
+							errorMessage: "No list item with the ID " + sId + " was found."
 						});
 					}
 				},
