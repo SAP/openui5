@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 		if (sOldId) {
 			aLabelsOfControl = CONTROL_TO_LABELS_MAPPING[sOldId];
 			if (aLabelsOfControl) {
-				aLabelsOfControl = jQuery.grep(aLabelsOfControl, function(sCurrentLabelId) {
+				aLabelsOfControl = aLabelsOfControl.filter(function(sCurrentLabelId) {
 					  return sCurrentLabelId != sLabelId;
 				});
 				if (aLabelsOfControl.length) {

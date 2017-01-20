@@ -662,7 +662,7 @@ sap.ui
 				switch (sODataFilterMethod) {
 					case "substringof":
 						return fnGetFilteredData(true, 0, 1, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
 									return (oMockData[sComplexType][sPropName].indexOf(sValue) !== -1);
 								}
@@ -671,7 +671,7 @@ sap.ui
 						});
 					case "startswith":
 						return fnGetFilteredData(true, 1, 0, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
 									return (oMockData[sComplexType][sPropName].indexOf(sValue) === 0);
 								}
@@ -680,7 +680,7 @@ sap.ui
 						});
 					case "endswith":
 						return fnGetFilteredData(true, 1, 0, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
 									return (oMockData[sComplexType][sPropName].indexOf(sValue) === (oMockData[sComplexType][sPropName].length - sValue.length));
 								}
@@ -689,7 +689,7 @@ sap.ui
 						});
 					case "eq":
 						return fnGetFilteredData(false, 2, 0, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
 									return (oMockData[sComplexType][sPropName] === sValue);
 								}
@@ -698,7 +698,7 @@ sap.ui
 						});
 					case "ne":
 						return fnGetFilteredData(false, 2, 0, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
 									return (oMockData[sComplexType][sPropName] !== sValue);
 								}
@@ -707,7 +707,7 @@ sap.ui
 						});
 					case "gt":
 						return fnGetFilteredData(false, 2, 0, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
 									return (oMockData[sComplexType][sPropName] > sValue);
 								}
@@ -716,7 +716,7 @@ sap.ui
 						});
 					case "lt":
 						return fnGetFilteredData(false, 2, 0, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
 									return (oMockData[sComplexType][sPropName] < sValue);
 								}
@@ -725,7 +725,7 @@ sap.ui
 						});
 					case "ge":
 						return fnGetFilteredData(false, 2, 0, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
 									return (oMockData[sComplexType][sPropName] >= sValue);
 								}
@@ -734,7 +734,7 @@ sap.ui
 						});
 					case "le":
 						return fnGetFilteredData(false, 2, 0, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
 									return (oMockData[sComplexType][sPropName] <= sValue);
 								}

@@ -2324,10 +2324,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 			var sUrlURI = URI(sUrl);
 			if (oFunctionMetadata.parameter != null) {
 				jQuery.each(oParameters, function (sParameterName, oParameterValue) {
-					var matchingParameters = jQuery.grep(oFunctionMetadata.parameter, function (oParameter) {
+					var matchingParameters = oFunctionMetadata.parameter.filter(function (oParameter) {
 						return oParameter.name == sParameterName && oParameter.mode == "In";
 					});
-					if (matchingParameters != null && matchingParameters.length > 0) {
+					if (matchingParameters.length > 0) {
 						var matchingParameter = matchingParameters[0];
 						oUrlParams[sParameterName] = ODataUtils.formatValue(oParameterValue, matchingParameter.type);
 					} else {
