@@ -241,7 +241,7 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 	 * @override
 	 */
 	ObjectMarker.prototype.onAfterRendering = function() {
-		sap.ui.Device.media.attachHandler(this._handleMediaChange, this, "DeviceSet");
+		this._attachMediaContainerWidthChange(this._handleMediaChange, this, "DeviceSet");
 	};
 
 	/**
@@ -252,6 +252,9 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 	ObjectMarker.prototype.onBeforeRendering = function() {
 		// Cleanup resize event registration before re-rendering
 		this._cleanup();
+
+		// Inner control can be determined here as all property values are known
+		this._adjustControl();
 	};
 
 	/**
@@ -309,54 +312,13 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 	};
 
 	/**
-	 * Intercepts <code>setVisibility</code> in order to adjust some control properties.
-	 *
-	 * @override
-	 * @param sVisibility value of the <code>sap.m.ObjectMarkerVisibility</code> enumeration
-	 * @returns {sap.m.ObjectMarker} <code>this</code> pointer for chaining
-	 */
-	ObjectMarker.prototype.setVisibility = function(sVisibility) {
-		this.setProperty("visibility", sVisibility);
-		this._adjustControl();
-
-		return this;
-	};
-
-	/**
-	 * Intercepts <code>setType</code> in order to adjust some control properties.
-	 *
-	 * @override
-	 * @param sType value of the <code>sap.m.ObjectMarkerType</code> enumeration
-	 * @returns {sap.m.ObjectMarker} <code>this</code> pointer for chaining
-	 */
-	ObjectMarker.prototype.setType = function(sType) {
-		this.setProperty("type", sType);
-		this._adjustControl();
-
-		return this;
-	};
-
-	/**
-	 * Intercepts <code>setAdditionalInfo</code> in order to adjust some control properties.
-	 *
-	 * @param {string} sText
-	 * @returns {sap.m.ObjectMarker} <code>this</code> pointer for chaining
-	 */
-	ObjectMarker.prototype.setAdditionalInfo = function(sText) {
-		this.setProperty("additionalInfo", sText);
-		this._adjustControl();
-
-		return this;
-	};
-
-	/**
 	 * Cleans up the control.
 	 *
 	 * @private
 	 */
 	ObjectMarker.prototype._cleanup = function() {
 		// Device Media Change handler
-		sap.ui.Device.media.detachHandler(this._handleMediaChange, this, "DeviceSet");
+		this._detachMediaContainerWidthChange(this._handleMediaChange, this, "DeviceSet");
 	};
 
 	/**
@@ -375,6 +337,7 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 	 * @private
 	 */
 	ObjectMarker.prototype._adjustControl  = function() {
+
 		var oType = ObjectMarker.M_PREDEFINED_TYPES[this.getType()],
 			oInnerControl = this._getInnerControl(),
 			sAdditionalInfo = this.getAdditionalInfo(),
@@ -472,7 +435,7 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 	 * @private
 	 */
 	ObjectMarker.prototype._getDeviceType = function () {
-		return sap.ui.Device.media.getCurrentRange("DeviceSet").name.toLowerCase();
+		return this._getCurrentMediaContainerRange("DeviceSet").name.toLowerCase();
 	};
 
 	/**
