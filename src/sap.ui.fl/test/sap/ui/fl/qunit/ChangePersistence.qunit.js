@@ -99,38 +99,170 @@ jQuery.sap.require("sap.m.Button");
 	QUnit.test("loadChangesMapForComponent shall return the a map of changes for the component", function(assert) {
 
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
-		    {
-		    	fileName:"change1",
-		    	fileType: "change",
-		    	selector: { id: "controlId" }
+			{
+				fileName:"change1",
+				fileType: "change",
+				selector: { id: "controlId" },
+				dependentSelector: []
 			},
 			{
 				fileName:"change2",
 				fileType: "change",
-				selector: { id: "controlId" }
+				selector: { id: "controlId" },
+				dependentSelector: []
 			},
 			{
 				fileName:"change3",
 				fileType: "change",
-				selector: { id: "anotherControlId" }
+				selector: { id: "anotherControlId" },
+				dependentSelector: []
 			}
 			]}}));
 
-		return this.oChangePersistence.loadChangesMapForComponent().then(function(fnGetChangesMap) {
+		return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
 
 			assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
-			var mChanges = fnGetChangesMap();
+			var mChanges = fnGetChangesMap().mChanges;
 			assert.ok(mChanges);
 			assert.ok(mChanges["controlId"]);
 			assert.ok(mChanges["anotherControlId"]);
-			assert.strictEqual(mChanges["controlId"].length, 2);
-			assert.strictEqual(mChanges["anotherControlId"].length, 1);
+			assert.equal(mChanges["controlId"].length, 2);
+			assert.equal(mChanges["anotherControlId"].length, 1);
 			assert.ok(mChanges["controlId"][0] instanceof Change, "Change is instanceof Change" );
 			assert.ok(mChanges["controlId"][1] instanceof Change, "Change is instanceof Change" );
 			assert.ok(mChanges["anotherControlId"][0] instanceof Change, "Change is instanceof Change" );
 			assert.ok(mChanges["controlId"].some(function(oChange){return oChange.getId() === "change1";}));
 			assert.ok(mChanges["controlId"].some(function(oChange){return oChange.getId() === "change2";}));
 			assert.ok(mChanges["anotherControlId"].some(function(oChange){return oChange.getId() === "change3";}));
+		});
+	});
+
+	QUnit.test("loadChangesMapForComponent returns a map with dependencies - test1", function(assert) {
+		var oChange1 = {
+			getKey: function () {
+				return "fileNameChange1" + "USER" + "namespace"
+			},
+			getSelector: function () {
+				return { id: "field3-2" };
+			},
+			getDependentIdList: function () {
+				return ["field3-2", "group3", "group2"];
+			}
+		};
+		var oChange2 = {
+			getKey: function () {
+				return "fileNameChange2" + "USER" + "namespace";
+			},
+			getSelector: function () {
+				return { id: "field3-2" };
+			},
+			getDependentIdList: function () {
+				return ["field3-2", "group2", "group1"];
+			}
+		};
+		var oChange3 = {
+			getKey: function () {
+				return "fileNameChange3" + "USER" + "namespace";
+			},
+			getSelector: function () {
+				return { id: "group1" };
+			},
+			getDependentIdList: function () {
+				return ["group1"];
+			}
+		};
+
+		var mExpectedChanges = {
+			mChanges: {
+				"field3-2": [oChange1, oChange2],
+				"group1": [oChange3]
+			},
+			mDependencies: {
+				"fileNameChange2USERnamespace": [oChange1],
+				"fileNameChange3USERnamespace": [oChange2]
+			},
+			mDependentChangesOnMe: {
+				"fileNameChange1USERnamespace": [oChange2],
+				"fileNameChange2USERnamespace": [oChange3]
+			}
+		};
+
+		this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
+			oChange1,
+			oChange2,
+			oChange3
+			]));
+
+		return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
+
+			assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
+			var mChanges = fnGetChangesMap();
+
+			assert.deepEqual(mChanges, mExpectedChanges);
+		});
+	});
+
+	QUnit.test("loadChangesMapForComponent returns a map with dependencies - test2", function(assert) {
+		var oChange0 = {
+			getKey: function () {
+				return "fileNameChange0" + "USER" + "namespace";
+			},
+			getSelector: function () {
+				return { id: "group1" };
+			},
+			getDependentIdList: function () {
+				return ["group1"];
+			}
+		};
+		var oChange1 = {
+			getKey: function () {
+				return "fileNameChange1" + "USER" + "namespace"
+			},
+			getSelector: function () {
+				return { id: "field3-2" };
+			},
+			getDependentIdList: function () {
+				return ["field3-2", "group3", "group2"];
+			}
+		};
+		var oChange2 = {
+			getKey: function () {
+				return "fileNameChange2" + "USER" + "namespace";
+			},
+			getSelector: function () {
+				return { id: "field3-2" };
+			},
+			getDependentIdList: function () {
+				return ["field3-2", "group2", "group1"];
+			}
+		};
+
+		var mExpectedChanges = {
+			mChanges: {
+				"field3-2": [oChange1, oChange2],
+				"group1": [oChange0]
+			},
+			mDependencies: {
+				"fileNameChange2USERnamespace": [oChange1, oChange0],
+			},
+			mDependentChangesOnMe: {
+				"fileNameChange0USERnamespace": [oChange2],
+				"fileNameChange1USERnamespace": [oChange2]
+			}
+		};
+
+		this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
+			oChange0,
+			oChange1,
+			oChange2
+			]));
+
+		return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
+
+			assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
+			var mChanges = fnGetChangesMap();
+
+			assert.deepEqual(mChanges, mExpectedChanges);
 		});
 	});
 
