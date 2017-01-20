@@ -1101,6 +1101,32 @@
 				]
 			});
 
+			var tbl = new sap.m.Table({
+				columns : [
+					new sap.m.Column({
+						//header : new sap.m.Label({ text : "Column 1"})
+					}),
+					new sap.m.Column({
+						//header : new sap.m.Label({ text : "Column 2"})
+					}),
+					new sap.m.Column({
+						header : new sap.m.Label({ text : "Column 3"})
+					})
+				],
+				items : [
+					new sap.m.ColumnListItem({
+						cells : [
+							new sap.m.Text({text : "Marin"}),
+							new sap.m.Select(),
+							new sap.m.Input()
+						]
+					})
+				]
+			});
+
+			var dialogWithTable = new sap.m.Dialog({
+				content : [ tbl ]
+			}).addStyleClass("sapUiSizeCompact");
 
 			//Added as result of Internal Incident 1570901570
 			var oDialogWithOUTSettedWidthInRTL = new sap.m.Dialog({
@@ -1556,6 +1582,14 @@
 						width: _buttonWidth,
 						press: function() {
 							dialogWithTwoSimpleForms.open();
+						}
+					}),
+
+					new sap.m.Button({
+						text : "Dialog with table IE issue",
+						width: _buttonWidth,
+						press : function() {
+							dialogWithTable.open();
 						}
 					})
 				]
