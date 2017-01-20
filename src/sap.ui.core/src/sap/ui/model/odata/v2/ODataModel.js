@@ -369,7 +369,8 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Fired, when the annotations document was successfully loaded.
+	 * Fired, when the annotations document was successfully loaded. If there are more than one annotation documents loaded then this
+	 * event is fired if at least one document was successfully loaded. Event is fired only once for all annotation documents.
 	 *
 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
 	 *
@@ -378,12 +379,12 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {sap.ui.base.EventProvider} oEvent.getSource
 	 * @param {object} oEvent.getParameters
-	 * @param {sap.ui.model.odata.v2.ODataAnnotations~Source[]} oEvent.getParameters.result One or several annotation source(s)
+	 * @param {sap.ui.model.odata.v2.ODataAnnotations.Source[]} oEvent.getParameters.result An array consisting of one or several annotation sources and/or errors containing a source property and error details.
 	 * @public
 	 */
 
 	/**
-	 * Fired, when the annotations document failed to loaded.
+	 * Fired, when the annotations document failed to loaded. Event is fired only once for all annotation documents.
 	 *
 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
 	 *
