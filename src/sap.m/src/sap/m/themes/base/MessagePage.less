@@ -9,6 +9,9 @@
 	height: 100%;
 	background: @sapUiGlobalBackgroundColor;
 }
+.sapMMessagePage > .sapMPage > section {
+	padding: 1rem;
+}
 
 /* MessagePage inner controls styles*/
 .sapMMessagePage > .sapMPage > section > .sapMText,
@@ -20,11 +23,19 @@
 	font-size: 1.5rem;
 	line-height: 2rem;
 	display: block;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .sapMMessagePage .sapMMessagePageDescription {
 	font-size: 1rem;
 	display: inline-block;
+}
+
+/* the inner controls should have limited width */
+.sapMMessagePage .sapMMessagePageMainText,
+.sapMMessagePage .sapMMessagePageDescription {
+	max-width: 30rem;
 }
 
 .sapMMessagePage > .sapMPage {
@@ -44,7 +55,7 @@
 
 .sapMMessagePage > .sapMPage > section > .sapUiIcon::before {
 	font-size: 6rem;
-	color: @sapUiContentNonInteractiveIconColor;	
+	color: @sapUiContentNonInteractiveIconColor;
 }
 
 .sapMMessagePage .sapMText.sapMMessagePageMainText {
