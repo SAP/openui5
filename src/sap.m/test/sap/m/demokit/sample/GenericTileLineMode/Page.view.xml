@@ -16,6 +16,7 @@
 		</customHeader>
 		<content>
 			<VBox fitContainer="true">
+				<MessageStrip showIcon="true" type="Information" text="Compare same content of Generic Tiles in regular and in line mode; no line mode equivalent for Slide Tile." class="sapUiTinyMargin"> </MessageStrip>
 				<l:HorizontalLayout
 					id="TileContainerExpanded"
 					allowWrapping="true"
@@ -28,7 +29,7 @@
 						press="press"
 						class="sapUiTinyMarginBegin sapUiTinyMarginTop">
 						<tileContent>
-							<TileContent footer="{footer}">
+							<TileContent unit="{unit}" footer="{footer}">
 								<content>
 									<NumericContent
 										value="{kpivalue}"
@@ -39,6 +40,59 @@
 							</TileContent>
 						</tileContent>
 					</GenericTile>
+				</l:HorizontalLayout>
+				<l:HorizontalLayout
+					id="SlideTileContainer"
+					allowWrapping="true">
+					<SlideTile
+						tiles="{/slideTile1}"
+						scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
+						tooltip="SlideTile 1"
+						press="pressSlideTile"
+						class="sapUiTinyMarginBegin sapUiTinyMarginTop slideTilesLayout">
+						<GenericTile
+							backgroundImage="{backgroundImage}"
+							state="{=${state} || 'Loaded'}"
+							tooltip="{tooltip}"
+							frameType="TwoByOne"
+							press="press">
+							<tileContent>
+								<TileContent footer="{footer}">
+									<content>
+										<NewsContent
+											contentText="{contentText}"
+											subheader="{subtitle}">
+										</NewsContent>
+									</content>
+								</TileContent>
+							</tileContent>
+						</GenericTile>
+					</SlideTile>
+					<SlideTile
+						tiles="{/slideTile2}"
+						scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
+						tooltip="SlideTile 2"
+						press="pressSlideTile"
+						transitionTime="250" displayTime="2500"
+						class="sapUiTinyMarginBegin sapUiTinyMarginTop slideTilesLayout">
+						<GenericTile
+							backgroundImage="{backgroundImage}"
+							state="{=${state} || 'Loaded'}"
+							tooltip="{tooltip}"
+							frameType="TwoByOne"
+							press="press">
+							<tileContent>
+								<TileContent footer="{footer}">
+									<content>
+										<NewsContent
+											contentText="{contentText}"
+											subheader="{subtitle}">
+										</NewsContent>
+									</content>
+								</TileContent>
+							</tileContent>
+						</GenericTile>
+					</SlideTile>
 				</l:HorizontalLayout>
 				<html:div class="sapUiTinyMarginBegin sapUiTinyMarginTop">
 					<l:HorizontalLayout
