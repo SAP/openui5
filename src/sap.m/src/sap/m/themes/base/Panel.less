@@ -45,7 +45,7 @@
 }
 
 .sapMPanelExpandableIcon {
-	position : absolute;
+	position: absolute;
 	width: 3rem;
 	line-height: 3rem;
 	font-size: 1rem;
@@ -66,6 +66,11 @@
 		right: 0.75rem;
 		bottom: 0.75rem;
 		left: 0.75rem;
+		border: 1px dotted @sapUiContentFocusColor;
+	}
+
+	html[data-sap-ui-browser^="ie"].sap-desktop &:focus::after {
+		border-style: dashed;
 	}
 }
 

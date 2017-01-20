@@ -34,9 +34,8 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 			expandFirstLevel : {type : "boolean", defaultValue : false},
 
 			/**
-			 * If group mode is enable nodes with subitems are rendered as if they were group headers.
+			 * If group mode is enabled nodes with subitems are rendered as if they were group headers.
 			 * This can be used to do the grouping for an OData service on the backend and visualize this in a table.
-			 * This mode only makes sense if the tree has a depth of exacly 1 (group headers and entries)
 			 */
 			useGroupMode : {type : "boolean", group : "Appearance", defaultValue : false},
 
@@ -336,7 +335,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	};
 
 	/**
-	 * Overriden from Table.js base class.
+	 * Overridden from Table.js base class.
 	 * In a TreeTable you can only select indices, which correspond to the currently visualized tree.
 	 * Invisible tree nodes (e.g. collapsed child nodes) can not be selected via Index, because they do not
 	 * correspond to a TreeTable row.
@@ -632,6 +631,21 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		return this;
 	};
 
+	/**
+	 * The property <code>enableGrouping</code> is not supported by the <code>TreeTable</code> control.
+	 *
+	 * @deprecated
+	 * @public
+	 * @name sap.ui.table.AnalyticalTable#getEnableGrouping
+	 * @function
+	 */
+
+	/**
+	 * The property <code>enableGrouping</code> is not supported by the <code>TreeTable</code> control.
+	 *
+	 * @deprecated
+	 * @public
+	 */
 	TreeTable.prototype.setEnableGrouping = function(bEnableGrouping) {
 		jQuery.sap.log.warning("The property enableGrouping is not supported by control sap.ui.table.TreeTable");
 		return this;

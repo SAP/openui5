@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 				/**
 				 * Changes the visualization in order to enable additional actions with the Generic Tile.
-				 * @experimental since 1.46.0
+				 * @since 1.46.0
 				 */
 				"scope": { type: "sap.m.GenericTileScope", group: "Misc", defaultValue: sap.m.GenericTileScope.Display }
 			},
@@ -106,21 +106,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 					parameters: {
 						/**
 						 * The current scope the GenericTile was in when the event occurred.
-						 * @experimental since 1.46.0
+						 * @since 1.46.0
 						 */
 						"scope": { type: "sap.m.GenericTileScope" },
 
 						/**
 						 * The action that was pressed on the tile. In the Actions scope, the available actions are Press and Remove.
 						 * In Display scope, the parameter value is only Press.
-						 * @experimental since 1.46.0
+						 * @since 1.46.0
 						 */
 						"action": { type: "string" },
 
 						/**
 						 * The Element's DOM Element. Points to GenericTile instance DOM Element in Display scope.
-						 * In Actions scope the domRef points to the DOM Element of the remove icon (if pressed) or the more icon.
-						 * @experimental since 1.46.0
+						 * In Actions scope the domRef points to the DOM Element of the remove button (if pressed) or the more icon.
+						 * @since 1.46.0
 						 */
 						"domRef" : { type: "any" }
 					}
@@ -137,8 +137,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	});
 
 	GenericTile._Action = {
-			Press : "Press",
-			Remove : "Remove"
+		Press : "Press",
+		Remove : "Remove"
 	};
 
 	/* --- Lifecycle Handling --- */
@@ -173,6 +173,39 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this._oBusy.setBusyIndicatorDelay(0);
 
 		this._bTilePress = true;
+
+		this._bThemeApplied = true;
+		if (!sap.ui.getCore().isInitialized()) {
+			this._bThemeApplied = false;
+			sap.ui.getCore().attachInit(this._handleCoreInitialized.bind(this));
+		} else {
+			this._handleCoreInitialized();
+		}
+	};
+
+
+	/**
+	 * Handler for the core's init event. In order for the tile to adjust its rendering to the current theme,
+	 * we attach a theme check in here when everything is properly initialized and loaded.
+	 *
+	 * @private
+	 */
+	GenericTile.prototype._handleCoreInitialized = function() {
+		this._bThemeApplied = sap.ui.getCore().isThemeApplied();
+		if (!this._bThemeApplied) {
+			sap.ui.getCore().attachThemeChanged(this._handleThemeApplied, this);
+		}
+	};
+
+	/**
+	 * The tile recalculates its title's max-height when line-height could be loaded from CSS.
+	 *
+	 * @private
+	 */
+	GenericTile.prototype._handleThemeApplied = function() {
+		this._bThemeApplied = true;
+		this._oTitle.clampHeight();
+		sap.ui.getCore().detachThemeChanged(this._handleThemeApplied, this);
 	};
 
 	/**
@@ -275,7 +308,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this.$().bind("mouseleave", this._removeTooltipFromControl.bind(this));
 
 		this._bCompact = this._isCompact();
-		if (this.getMode() === library.GenericTileMode.LineMode && this._bCompact) {
+		var sMode = this.getMode();
+		if (sMode === library.GenericTileMode.LineMode && this._bCompact) {
 			// This class needs to be added in order to account for the paddings of the tile.
 			// As this LineMode tile is rendered with display: inline, we cannot apply padding to each line separately, but only the
 			// container can apply a padding for text containment. Thus, this class adds a preset padding-right to the tile's direct DOM parent.
@@ -287,23 +321,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 		// triggers update of all adjacent GenericTile LineMode siblings
 		// this is needed for their visual update if this tile's properties change causing it to expand or shrink
-		if (this.getMode() === library.GenericTileMode.LineMode && this._bUpdateLineTileSiblings) {
+		if (sMode === library.GenericTileMode.LineMode && this._bUpdateLineTileSiblings) {
 			this._updateLineTileSiblings();
 			this._bUpdateLineTileSiblings = false;
 		}
 
-		if (this.getMode() === library.GenericTileMode.LineMode) {
+		if (sMode === library.GenericTileMode.LineMode) {
 			// attach an interval timer in order to check the control's density mode and invalidate on change
 			sap.ui.getCore().attachIntervalTimer(this._checkContentDensity, this);
-		}
-
-		// Assign TileContent content again after rendering.
-		if (this.getMode() === library.GenericTileMode.HeaderMode && this._aTileContentContent) {
-			var aTileContent = this.getTileContent();
-			for (var i = 0; i < aTileContent.length; i++) {
-				aTileContent[i].setAggregation("content", this._aTileContentContent[i], true);
-			}
-			delete this._aTileContentContent;
 		}
 	};
 
@@ -787,25 +812,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		} else {
 			this._oTitle.setMaxLines(5);
 		}
-		// Handles the tile content in a way that it is not rendered, but still existing and assigned
-		// if switching between HeaderMode or LineMode and ContentMode.
-		var aTileContent = this.getTileContent();
-		if (aTileContent.length > 0) {
-			this._aTileContentContent = [];
-			for (var i = 0; i < aTileContent.length; i++) {
-				if (aTileContent[i].getContent()) {
-					this._aTileContentContent[i] = aTileContent[i].removeAllAggregation("content", true);
-					// Parent needs to be set manually to null, because removeAllAggregation does not handle this.
-					this._aTileContentContent[i].setParent(null);
-				}
-			}
-		}
+
+		this._changeTileContentContentVisibility(false);
 	};
 
 	/**
 	 * Sets the ContentMode for GenericTile
 	 *
-	 * @param {boolean} bSubheader which indicates the existance of subheader
+	 * @param {boolean} bSubheader Indicates the existence of subheader
 	 */
 	GenericTile.prototype._applyContentMode = function (bSubheader) {
 		// when subheader is available, the header can have maximal 2 lines and the subheader can have 1 line
@@ -814,6 +828,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			this._oTitle.setMaxLines(2);
 		} else {
 			this._oTitle.setMaxLines(3);
+		}
+
+		this._changeTileContentContentVisibility(true);
+	};
+
+	/**
+	 * Changes the visibility of the TileContent's content
+	 *
+	 * @param {boolean} visible Determines if the content should be made visible or not
+	 * @private
+	 */
+	GenericTile.prototype._changeTileContentContentVisibility = function (visible) {
+		var aTileContent,
+			aTileContentContent;
+
+		aTileContent = this.getTileContent();
+		for (var i = 0; i < aTileContent.length; i++) {
+			aTileContentContent = aTileContent[i].getContent();
+			if (aTileContentContent) {
+				aTileContentContent.setProperty("visible", visible, true);
+			}
 		}
 	};
 

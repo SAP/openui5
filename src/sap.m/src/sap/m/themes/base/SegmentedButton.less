@@ -40,10 +40,9 @@
 		padding-left: 1rem;
 		padding-right: 1rem;
 	}
-}
-
-.sapMSegB .sapMSegBBtn:not(:last-child) {
-	border-right: 1px solid transparent;
+	&:not(.sapMSegBBtnMixed) .sapMBtnIcon {
+		margin-right: 0;
+	}
 }
 
 // Adding margin to be displayed correct in sap.m.Bar
@@ -93,6 +92,7 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 	cursor: default;
 	opacity: 0.5;
 }
+
 .sapMSegBBtn:not(.sapMSegBBtnDis) .sapUiIcon {
   cursor: pointer;
 }
@@ -188,7 +188,6 @@ html[data-sap-ui-os^="iOS"] {
 	.sapMSegBIcons:not(.sapMSegBBtnMixed) {
 		.sapMImg,
 		.sapUiIcon {
-			min-width: 2rem;
 			padding-left: 0.4375rem;
 			padding-right: 0.4375rem;
 		}

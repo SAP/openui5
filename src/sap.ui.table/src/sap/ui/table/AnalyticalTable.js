@@ -182,6 +182,21 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		return this;
 	};
 
+	/**
+	 * The property <code>enableGrouping</code> is not supported by the <code>AnalyticalTable</code> control.
+	 *
+	 * @deprecated
+	 * @public
+	 * @name sap.ui.table.AnalyticalTable#getEnableGrouping
+	 * @function
+	 */
+
+	/**
+	 * The property <code>enableGrouping</code> is not supported by the <code>AnalyticalTable</code> control.
+	 *
+	 * @deprecated
+	 * @public
+	 */
 	AnalyticalTable.prototype.setEnableGrouping = function(bEnableGrouping) {
 		jQuery.sap.log.error("The property enableGrouping is not supported by control sap.ui.table.AnalyticalTable!");
 		return this;

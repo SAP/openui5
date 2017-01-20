@@ -256,10 +256,16 @@ function setFocusOutsideOfTable(sId) {
 	return jQuery(oOuterElement);
 }
 
-function checkFocus(oCell, assert) {
-	assert.ok(oCell === document.activeElement || oCell.get && oCell.get(0) === document.activeElement,
-		"Focus is on: " + jQuery(document.activeElement).attr("id") + ", should be on: " + jQuery(oCell).attr("id"));
-	return jQuery(document.activeElement);
+function checkFocus(oCell, assert, bInside) {
+	var activeElement = document.activeElement || document;
+	var cell = oCell.get && oCell.get(0) || oCell;
+	if (bInside) {
+		assert.ok(cell !== activeElement && cell.contains(activeElement),
+			"Focus is inside of the expected cell: " + cell.id + " is parent of " + activeElement.id);
+	} else {
+		assert.ok(cell === activeElement, "Focus is on the expected position: " + cell.id + " == " + activeElement.id);
+	}
+	return jQuery(activeElement);
 }
 
 function fakeGroupRow(iRow) {

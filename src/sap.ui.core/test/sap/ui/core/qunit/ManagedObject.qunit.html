@@ -211,9 +211,9 @@
 			});
 
 			QUnit.test("Property default values", function(assert) {
-				var oMetadata = this.metadata; 
+				var oMetadata = this.metadata;
 				var obj = new (this.clazz)();
-				
+
 				// initial default values  (from default property bag)
 				assert.strictEqual(obj.getPropWithoutOwnDefault(), '', "a property without own default value should inherit the default value of the type");
 				assert.strictEqual(obj.getPropWithOwnDefault(), '42', "a property with own default value should have that default value");
@@ -256,7 +256,7 @@
 			QUnit.test("Set properties with different types", function(assert) {
 				var that = this;
 				var oDate = new Date();
-				var SAME = {}; // special unique value 
+				var SAME = {}; // special unique value
 				var ERROR = new Error(); // special unique value
 
 				function setAndTest(name, value, expected) {
@@ -301,7 +301,7 @@
 				setAndTest("floatValue", undefined, 0.0);
 				setAndTest("floatValue", "23", ERROR);
 				setAndTest("floatValue", true, ERROR);
-				
+
 				setAndTest("booleanValue", false, SAME);
 				setAndTest("booleanValue", true, SAME);
 				setAndTest("booleanValue", null, false);
@@ -309,7 +309,7 @@
 				setAndTest("booleanValue", 23.45, ERROR);
 				setAndTest("booleanValue", 23, ERROR);
 				setAndTest("booleanValue", "true", ERROR);
-				
+
 				setAndTest("objectValue", { a:1, b:'test', c:true}, SAME);
 				setAndTest("objectValue", function(){}, SAME); // function is allowed
 				setAndTest("objectValue", null, null);
@@ -318,7 +318,7 @@
 				setAndTest("objectValue", 23, ERROR);
 				setAndTest("objectValue", true, ERROR);
 				setAndTest("objectValue", "true", ERROR);
-				
+
 				setAndTest("enumValue", MyEnum.Better, SAME);
 				setAndTest("enumValue", 'Better', SAME);
 				setAndTest("enumValue", null, MyEnum.Good);
@@ -326,7 +326,7 @@
 				setAndTest("enumValue", 23.45, ERROR);
 				setAndTest("enumValue", 23, ERROR);
 				setAndTest("enumValue", "true", ERROR);
-				
+
 				setAndTest("stringArray", ["a", "b", "c"], SAME);
 				setAndTest("stringArray", [], SAME);
 				setAndTest("stringArray", ["a", 10, true], ["a", "10", "true"]);
@@ -336,7 +336,7 @@
 				setAndTest("stringArray", 23, ERROR);
 				setAndTest("stringArray", 23.45, ERROR);
 				setAndTest("stringArray", true, ERROR);
-				
+
 				setAndTest("intArray", [1, 2, 3], SAME);
 				setAndTest("intArray", [], SAME);
 				setAndTest("intArray", null, []);
@@ -347,7 +347,7 @@
 				setAndTest("intArray", 23, ERROR);
 				setAndTest("intArray", 23.45, ERROR);
 				setAndTest("intArray", true, ERROR);
-				
+
 				setAndTest("floatArray", [1.3, 2.5, 3.123], SAME);
 				setAndTest("floatArray", [1, 2, 3.5], SAME);
 				setAndTest("floatArray", [], SAME);
@@ -358,7 +358,7 @@
 				setAndTest("floatArray", 23, ERROR);
 				setAndTest("floatArray", 23.45, ERROR);
 				setAndTest("floatArray", true, ERROR);
-				
+
 				setAndTest("booleanArray", [true, false, true], SAME);
 				setAndTest("booleanArray", [], SAME);
 				setAndTest("booleanArray", [true, false, 0], ERROR);
@@ -369,7 +369,7 @@
 				setAndTest("booleanArray", 23, ERROR);
 				setAndTest("booleanArray", 23.45, ERROR);
 				setAndTest("booleanArray", true, ERROR);
-				
+
 				setAndTest("unknown", "testtest", ERROR);
 			});
 
@@ -730,11 +730,11 @@
 				this.obj.setAggregation("singleAggr", this.subObj2);
 				assert.equal(modifyEventDataEquals(), true, "detached - modifyAggregation event not called anymore");
 				this.obj._attachModifyAggregation("singleAggr", modifyAggregationHandler);
-				
+
 				//multi aggregation not attached not fired
 				this.obj.addAggregation("subObjects", this.subObj);
 				assert.equal(modifyEventDataEquals(), true, "not attached - modifyAggregation event not called");
-				
+
 				//destroy child
 				aExpected = [
 					{id: this.obj.getId(), type: "remove", name: "singleAggr", object: this.subObj2}
@@ -911,7 +911,7 @@
 					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj}
 				];
 				assert.equal(modifyEventDataEquals(), true, "not attached - modifyAggregation event called insert");
-				
+
 				//destroy child
 				aExpected = [
 					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj2}
@@ -920,7 +920,7 @@
 				this.subObj2.destroy();
 				assert.equal(modifyEventDataEquals(), true, "destroy - modifyAggregation event called remove");
 				assert.checkIfDestroyed(this.subObj2);
-				
+
 				//destroy aggregation
 				aExpected = [
 					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj3},
@@ -1865,6 +1865,103 @@
 				}
 
 				assert.ok(!sap.ui.getCore().byId("myId"), "object was deregistered");
+			});
+
+			QUnit.module("Contextual settings", {
+				beforeEach: function() {
+					this.obj1 = new sap.ui.core.TestManagedObject();
+					this.obj2 = new sap.ui.core.TestManagedObject();
+				},
+				afterEach: function() {
+					this.obj1.destroy();
+					this.obj2.destroy();
+				}
+			});
+
+			QUnit.test("Constructor and singleton", function(assert) {
+				assert.ok(this.obj1._oContextualSettings, "A managed object has contextual settings by default");
+				assert.equal(this.obj1._getContextualSettings(), sap.ui.base.ManagedObject._defaultContextualSettings, "The singleton object is used for the default contextual settings");
+			});
+
+			QUnit.test("Application of contextual settings", function(assert) {
+				var oCustomSettings = {mySetting: 1};
+
+				var oSpy = this.spy(sap.ui.base.ManagedObject.prototype, "_onContextualSettingsChanged");
+
+				assert.ok(jQuery.isEmptyObject(this.obj1._getContextualSettings()), "Initially the contextual settings object is empty");
+
+				this.obj1._applyContextualSettings(oCustomSettings);
+				var oReadSettings = this.obj1._getContextualSettings();
+
+				assert.ok(oReadSettings === oCustomSettings, "Applied contextual settings on an object are saved on it");
+				assert.ok(oSpy.calledOnce, "Hook method called");
+
+				oSpy.restore();
+			});
+
+			QUnit.test("Propagation for single aggregations", function(assert) {
+				var oCustomSettings = {mySetting: 1};
+
+				// First add children
+				this.obj1.setAggregation("singleAggr", this.obj2);
+
+				// Then apply settings to the parent
+				this.obj1._applyContextualSettings(oCustomSettings);
+
+				var oReadSettings = this.obj2._getContextualSettings();
+				assert.ok(oReadSettings === oCustomSettings, "Contextual settings are propagated to single aggregations");
+			});
+
+			QUnit.test("Propagation for multiple aggregations", function(assert) {
+				var oCustomSettings = {mySetting: 1};
+
+				// First add children
+				this.obj1.addAggregation("subObjects", this.obj2);
+
+				// Then apply settings to the parent
+				this.obj1._applyContextualSettings(oCustomSettings);
+
+				var oReadSettings = this.obj2._getContextualSettings();
+				assert.ok(oReadSettings === oCustomSettings, "Contextual settings are propagated to multiple aggregations");
+			});
+
+
+			QUnit.test("Children receive the contextual settings of parents", function(assert) {
+				var oCustomSettings = {mySetting: 1};
+
+				var oSpy = this.spy(sap.ui.base.ManagedObject.prototype, "_onContextualSettingsChanged");
+
+				// First apply settings
+				this.obj1._applyContextualSettings(oCustomSettings);
+
+				// Then add children
+				this.obj1.setAggregation("singleAggr", this.obj2);
+
+				var oReadSettings = this.obj2._getContextualSettings();
+
+				assert.equal(this.obj1._getContextualSettings(), this.obj2._getContextualSettings(), "Contextual settings for both managed objects are the same js object");
+				assert.equal(oSpy.callCount, 2, "Hook method called for both managed objects");
+
+				oSpy.restore();
+			});
+
+			QUnit.test("Removing a managed object from the tree restores the default contextual settings", function(assert) {
+				var oCustomSettings = {mySetting: 1};
+
+				// First apply settings
+				this.obj1._applyContextualSettings(oCustomSettings);
+
+				// Then add children
+				this.obj1.setAggregation("singleAggr", this.obj2);
+
+				var oReadSettings = this.obj2._getContextualSettings();
+
+				assert.ok(oReadSettings === oCustomSettings, "Initially the child has the parent's contextual settings");
+
+				this.obj1.setAggregation("singleAggr", null);
+
+				assert.ok(this.obj2._getContextualSettings() === sap.ui.base.ManagedObject._defaultContextualSettings, "Child now has the default contextual settings");
+
 			});
 		</script>
 	</head>

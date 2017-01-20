@@ -1007,6 +1007,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 	TableRenderer.renderVSb = function(rm, oTable) {
 
 		rm.write("<div");
+		rm.addClass("sapUiTableVSbBg");
+		rm.writeAttribute("id", oTable.getId() + "-vsb-bg");
+		rm.writeClasses();
+		rm.write("></div>");
+
+		rm.write("<div");
 		rm.addClass("sapUiTableVSb");
 		rm.writeClasses();
 		rm.writeAttribute("id", oTable.getId() + "-vsb");
@@ -1033,6 +1039,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 	};
 
 	TableRenderer.renderHSb = function(rm, oTable) {
+		rm.write("<div");
+		rm.addClass("sapUiTableHSbBg");
+		rm.writeAttribute("id", oTable.getId() + "-hsb-bg");
+		rm.writeClasses();
+		rm.write("></div>");
+
 		rm.write("<div");
 		rm.addClass("sapUiTableHSb");
 		rm.writeClasses();

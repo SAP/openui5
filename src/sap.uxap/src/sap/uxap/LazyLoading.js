@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global",	"sap/ui/Device", "sap/ui/base/Metadata", "./ObjectPageSubSection"],
-	function (jQuery, Device, Metadata, ObjectPageSubSection) {
+sap.ui.define(["jquery.sap.global",	"sap/ui/Device", "sap/ui/base/Metadata", "./ObjectPageSubSection", "./library"],
+	function (jQuery, Device, Metadata, ObjectPageSubSection, library) {
 		"use strict";
 
 		var LazyLoading = Metadata.createClass("sap.uxap._helpers.LazyLoading", {
@@ -240,7 +240,7 @@ sap.ui.define(["jquery.sap.global",	"sap/ui/Device", "sap/ui/base/Metadata", "./
 
 
 		LazyLoading.prototype._isPhone = function () {
-			return this._$html.hasClass("sapUiMedia-Std-Phone") || Device.system.phone;
+			return library.Utilities.isPhoneScenario(this._oObjectPageLayout._getCurrentMediaContainerRange());
 		};
 
 		LazyLoading.prototype._isTablet = function () {
@@ -248,7 +248,7 @@ sap.ui.define(["jquery.sap.global",	"sap/ui/Device", "sap/ui/base/Metadata", "./
 		};
 
 		LazyLoading.prototype._isTabletSize = function () {
-			return this._$html.hasClass("sapUiMedia-Std-Tablet");
+			return library.Utilities.isTabletScenario(this._oObjectPageLayout._getCurrentMediaContainerRange());
 		};
 
 		return LazyLoading;

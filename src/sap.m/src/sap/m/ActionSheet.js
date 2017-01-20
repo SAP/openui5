@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ActionSheet.
-sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/InvisibleText'],
-	function(jQuery, Dialog, Popover, library, Control, ItemNavigation, InvisibleText) {
+sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/InvisibleText', 'sap/ui/base/ManagedObject'],
+	function(jQuery, Dialog, Popover, library, Control, ItemNavigation, InvisibleText, ManagedObject) {
 	"use strict";
 
 
@@ -565,6 +565,14 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			}).toStatic().getId();
 		}
 		return sPopupHiddenLabelId;
+	};
+
+	/**
+	 * Popup controls should not propagate contextual width
+	 * @private
+	 */
+	ActionSheet.prototype._applyContextualSettings = function () {
+		ManagedObject.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
 	};
 
 	return ActionSheet;

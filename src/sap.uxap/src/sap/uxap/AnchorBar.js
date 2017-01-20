@@ -595,7 +595,7 @@ sap.ui.define([
 	AnchorBar.prototype._adjustSize = function () {
 
 		//size changed => check if switch in display-mode (phone-view vs. desktop-view) needed
-		var sNewMode = library.Utilities.isPhoneScenario() ?
+		var sNewMode = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange()) ?
 			AnchorBar._hierarchicalSelectModes.Text :
 			AnchorBar._hierarchicalSelectModes.Icon;
 

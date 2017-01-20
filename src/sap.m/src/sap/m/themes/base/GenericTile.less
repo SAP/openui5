@@ -122,19 +122,25 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 	background-color: @sapUiTileBackground;
 }
 
+.sapMGTOverlayMixin(@offset: 0px, @z-index: 0) {
+	position: absolute !important;
+	pointer-events: none;
+	left: @offset;
+	top: @offset;
+	right: @offset;
+	bottom: @offset;
+	z-index: @z-index;
+}
+
 .sapMGT.sapMGTScopeActions {
 
 	.sapMTileCntContent {
 		position: relative;
 
 		&:after {
-			position: absolute;
+			.sapMGTOverlayMixin();
 			display: block;
 			content: "";
-			top: 0rem;
-			bottom: 0rem;
-			left: 0rem;
-			right: 0rem;
 			background-color: fade(@sapUiTileBackground, 70);
 		}
 	}
@@ -199,11 +205,8 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 		/* The touch area has a different size and is slightly moved to the left and bottom */
 		&:before {
 			content: "";
-			position: absolute;
+			.sapMGTOverlayMixin(-0.6875rem);
 			top: -1px;
-			bottom: -0.6875rem;
-			left: -0.6875rem;
-			right: -0.0625rem;
 		}
 	}
 }
@@ -218,13 +221,9 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 
 	.sapMGTContent {
 		&:before {
-			position: absolute;
+			.sapMGTOverlayMixin();
 			display: block;
 			content: "";
-			top: 0rem;
-			bottom: 0rem;
-			left: 0rem;
-			right: 0rem;
 			background-color: fade(@sapUiTileBackground, 70);
 			border-radius: 0.125rem;
 		}
@@ -294,6 +293,7 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 .sapMGTLineMode .sapMGTSubHdrTxt {
 	display: inline-block;
 	max-width: 100%;
+	line-height: 1.375rem;
 }
 
 .sapMGTLineMode .sapMGTLineModeFailedIcon {
@@ -483,11 +483,7 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 		pointer-events: auto;
 
 		.sapMGTLineStyleHelperInner {
-			position: absolute;
-			top: 0px;
-			bottom: 0px;
-			left: 0px;
-			right: 0px;
+			.sapMGTOverlayMixin();
 		}
 
 		&:not(:last-child) {
@@ -508,28 +504,15 @@ html[dir=rtl] .sapMGTLineMode {
 }
 
 /******************* OVERLAYS AND HELPERS *******************/
-
 .sapMGTOverlay {
-	position: absolute !important;
-	pointer-events: none;
+	.sapMGTOverlayMixin();
 	opacity: 0.8;
-	z-index: 1;
-	top: 0px;
-	right: 0px;
-	left: 0px;
-	bottom: 0px;
 	border-radius: 0.125rem;
 }
 
 .sapMGTFocusDiv {
-	position: absolute;
-	pointer-events: none;
-	left: 0px;
-	top: 0px;
-	right: 0px;
-	bottom: 0px;
+	.sapMGTOverlayMixin(0px, 2);
 	border-radius: 0.25rem;
-	z-index: 2;
 }
 
 .sapMGTLineMode .sapMGTFocusDiv {
@@ -537,6 +520,7 @@ html[dir=rtl] .sapMGTLineMode {
 	right: 1px;
 	left: 1px;
 	bottom: 1px;
+	border-radius: 0.25rem;
 }
 
 .sapMGenericTileLoading {
@@ -545,8 +529,8 @@ html[dir=rtl] .sapMGTLineMode {
 
 .sapMGenericTileFtrFld {
 	left: 0.4375rem;
+	right: 0.4375rem;
 	bottom: 0.4375rem;
-	display: table;
 	position: absolute;
 }
 

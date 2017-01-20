@@ -686,40 +686,32 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 */
 	MultiInput.prototype.onkeydown = function (oEvent) {
 
-		if (oEvent.ctrlKey || oEvent.metaKey) {
-
-			if (oEvent.which === jQuery.sap.KeyCodes.A) {
-				var sValue = this.getValue();
-
-				if (document.activeElement === this._$input[0]) {
-
-					if (this._$input.getSelectedText() !== sValue) {
-
-						// if text are not selected, then selected all text
-						this.selectText(0, sValue.length);
-					} else if (this._tokenizer) {
-
-						// if text are selected, then selected all tokens
-						if (!sValue && this._tokenizer.getTokens().length) {
-							this._tokenizer.focus();
-						}
-						this._tokenizer.selectAllTokens(true);
-					}
-				} else if (document.activeElement === this._tokenizer.$()[0]) {
-
-					// if the tokens were not selected before select all in tokenizer was called, then let tokenizer select all tokens.
-					if (this._tokenizer._iSelectedToken === this._tokenizer.getTokens().length) {
-
-						// if tokens are all selected, then select all tokens
-						this.selectText(0, sValue.length);
-					}
-				}
-
-				oEvent.preventDefault();
-			}
-
+		if (oEvent.which === jQuery.sap.KeyCodes.TAB) {
+			Tokenizer._changeAllTokensSelection(false);
 		}
 
+		// ctrl/meta + A - Select all Tokens
+		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) {
+			if (this._tokenizer.getTokens().length > 0) {
+				this._tokenizer.focus();
+				this._tokenizer._changeAllTokensSelection(true);
+				oEvent.preventDefault();
+			}
+		}
+
+		// ctrl/meta + c OR ctrl/meta + Insert - Copy all selected Tokens
+		if ((oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.C || oEvent.which === jQuery.sap.KeyCodes.INSERT)) {
+			this._tokenizer._copy();
+		}
+
+		// ctr/meta + x OR Shift + Delete - Cut all selected Tokens if editable
+		if (((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.X) || (oEvent.shiftKey && oEvent.which === jQuery.sap.KeyCodes.DELETE)) {
+			if (this.getEditable()) {
+				this._tokenizer._cut();
+			} else {
+				this._tokenizer._copy();
+			}
+		}
 	};
 
 	/**

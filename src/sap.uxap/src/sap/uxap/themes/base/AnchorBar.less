@@ -14,7 +14,9 @@ Common Compact/Cozy
 
 /* M, L or splitview paddings */
 .sapUiMedia-Std-Tablet .sapUxAPAnchorBar.sapMTB,
-.sapUiMedia-Std-Desktop .sapMSplitContainerDetail .sapUxAPAnchorBar.sapMTB {
+.sapUiMedia-Std-Desktop .sapMSplitContainerDetail .sapUxAPAnchorBar.sapMTB,
+html .sapUiContainer-Medium .sapUxAPAnchorBar.sapMTB,
+html .sapUiContainer-Wide .sapMSplitContainerDetail .sapUxAPAnchorBar.sapMTB {
 	padding-left: 1rem;
 }
 
@@ -28,7 +30,9 @@ Common Compact/Cozy
 
 /* navigation arrows for desktop and tablet only */
 .sapUiMedia-Std-Desktop .sapUxAPAnchorBar,
-.sapUiMedia-Std-Tablet .sapUxAPAnchorBar {
+.sapUiMedia-Std-Tablet .sapUxAPAnchorBar,
+html .sapUiContainer-Wide .sapUxAPAnchorBar,
+html .sapUiContainer-Medium .sapUxAPAnchorBar {
 	position: relative;
 	width: 100%;
 	padding: 0;
@@ -36,13 +40,17 @@ Common Compact/Cozy
 
 /* leave space for the overflow button to the right */
 .sapUiMedia-Std-Tablet .sapUxAPAnchorBarOverflow,
-.sapUiMedia-Std-Desktop .sapUxAPAnchorBarOverflow {
+.sapUiMedia-Std-Desktop .sapUxAPAnchorBarOverflow,
+html .sapUiContainer-Medium .sapUxAPAnchorBarOverflow,
+html .sapUiContainer-Wide .sapUxAPAnchorBarOverflow {
 	padding-right: 4rem;
 }
 
 /* not display the select if the bar does not overflow */
 .sapUiMedia-Std-Tablet .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect,
-.sapUiMedia-Std-Desktop .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect {
+.sapUiMedia-Std-Desktop .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect,
+html .sapUiContainer-Medium .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect,
+html .sapUiContainer-Wide .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect {
 	display: none;
 }
 
@@ -99,7 +107,10 @@ Common Compact/Cozy
 // Not displayed on phone
 .sapUiMedia-Std-Phone .sapUxAPAnchorBar .anchorBarArrowLeft,
 .sapUiMedia-Std-Phone .sapUxAPAnchorBar .anchorBarArrowRight,
-.sapUiMedia-Std-Phone .sapUxAPAnchorBar .sapUxAPAnchorBarScrollContainer {
+.sapUiMedia-Std-Phone .sapUxAPAnchorBar .sapUxAPAnchorBarScrollContainer,
+html .sapUiContainer-Narrow .sapUxAPAnchorBar .anchorBarArrowLeft,
+html .sapUiContainer-Narrow .sapUxAPAnchorBar .anchorBarArrowRight,
+html .sapUiContainer-Narrow .sapUxAPAnchorBar .sapUxAPAnchorBarScrollContainer {
 	display: none;
 }
 
@@ -136,7 +147,8 @@ Common Compact/Cozy
 }
 
 // Tablet alignment
-.sapUiMedia-Std-Tablet .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
+.sapUiMedia-Std-Tablet .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
+html .sapUiContainer-Medium .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
 	left: 0;
 }
 

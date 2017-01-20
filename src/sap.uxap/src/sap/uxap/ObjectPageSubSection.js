@@ -207,9 +207,7 @@ sap.ui.define([
 			this._oSeeMoreButton = null;
 		}
 
-		Device.media.detachHandler(this._updateImportance, this, ObjectPageSubSection.MEDIA_RANGE);
-
-		Device.media.detachHandler(this._titleOnLeftSynchronizeLayouts, this, ObjectPageSubSection.MEDIA_RANGE);
+		this._detachMediaContainerWidthChange(this._titleOnLeftSynchronizeLayouts, this);
 
 		this._cleanProxiedAggregations();
 
@@ -230,9 +228,7 @@ sap.ui.define([
 		}
 
 		if (this._getUseTitleOnTheLeft()) {
-			Device.media.attachHandler(this._titleOnLeftSynchronizeLayouts, this, ObjectPageSubSection.MEDIA_RANGE);
-		} else {
-			Device.media.detachHandler(this._titleOnLeftSynchronizeLayouts, this, ObjectPageSubSection.MEDIA_RANGE);
+			this._attachMediaContainerWidthChange(this._titleOnLeftSynchronizeLayouts, this);
 		}
 
 		this._$spacer = jQuery.sap.byId(oObjectPageLayout.getId() + "-spacer");
@@ -242,6 +238,8 @@ sap.ui.define([
 		if (ObjectPageSectionBase.prototype.onBeforeRendering) {
 			ObjectPageSectionBase.prototype.onBeforeRendering.call(this);
 		}
+
+		this._detachMediaContainerWidthChange(this._titleOnLeftSynchronizeLayouts, this);
 
 		this._setAggregationProxy();
 		this._getGrid().removeAllContent();
@@ -506,7 +504,7 @@ sap.ui.define([
 	 ************************************************************************************/
 
 	ObjectPageSubSection.prototype._onDesktopMediaRange = function (oCurrentMedia) {
-		var oMedia = oCurrentMedia || Device.media.getCurrentRange(ObjectPageSubSection.MEDIA_RANGE);
+		var oMedia = oCurrentMedia || this._getCurrentMediaContainerRange();
 		return ["LargeDesktop", "Desktop"].indexOf(oMedia.name) > -1;
 	};
 

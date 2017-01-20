@@ -33,23 +33,24 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 		properties : {
 
 			/**
-			 * Component name, the package where the component is contained. The property can only be applied initially.
+			 * Component name, the package where the component is contained. This property can only be applied initially.
 			 */
 			name : {type : "string", defaultValue : null},
 
 			/**
-			 * The URL of the component. The property can only be applied initially.
+			 * The URL of the component. This property can only be applied initially.
 			 */
 			url : {type : "sap.ui.core.URI", defaultValue : null},
 
 			/**
 			 * Enable/disable validation handling by MessageManager for this component.
 			 * The resulting Messages will be propagated to the controls.
+			 * This property can only be applied initially.
 			 */
 			handleValidation : {type : "boolean", defaultValue : false},
 
 			/**
-			 * The settings object passed to the component when created. The property can only be applied initially.
+			 * The settings object passed to the component when created. This property can only be applied initially.
 			 */
 			settings : {type : "object", defaultValue : null},
 
@@ -218,6 +219,17 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 		if (oComponent && this.getPropagateModel()) {
 			this._propagateProperties(vName, oComponent);
 			Control.prototype.propagateProperties.apply(this, arguments);
+		}
+	};
+
+	/*
+	 * overridden to support contextual settings propagation to the associated component
+	 * no need to call the parent prototype method as there are no aggregations to propagate to
+	 */
+	ComponentContainer.prototype._propagateContextualSettings = function () {
+		var oComponent = this.getComponentInstance();
+		if (oComponent) {
+			oComponent._applyContextualSettings(this._getContextualSettings());
 		}
 	};
 

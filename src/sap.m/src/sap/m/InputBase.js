@@ -123,7 +123,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					value: { type: "string" }
 				}
 			}
-		}
+		},
+		designTime : true
 	}});
 
 	EnabledPropagator.call(InputBase.prototype);
@@ -347,15 +348,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Handles the <code>sapfocusleave</code> event of the input.
 	 *
 	 * @param {jQuery.Event} oEvent The event object.
-	 * @private
 	 */
 	InputBase.prototype.onsapfocusleave = function(oEvent) {
 
-		if (this.bFocusoutDueRendering) {
-			return;
+		if (!this.preventChangeOnFocusLeave(oEvent)) {
+			this.onChange(oEvent);
 		}
+	};
 
-		this.onChange(oEvent);
+	/**
+	 * Hook method to prevent the change event from being fired when the text input field loses focus.
+	 *
+	 * @param {jQuery.Event} [oEvent] The event object.
+	 * @returns {boolean} Whether or not the change event should be prevented.
+	 * @protected
+	 * @since 1.46
+	 */
+	InputBase.prototype.preventChangeOnFocusLeave = function(oEvent) {
+		return this.bFocusoutDueRendering;
 	};
 
 	/**

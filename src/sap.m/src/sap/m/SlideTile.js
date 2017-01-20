@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 			"transitionTime" : {type : "int", group : "Appearance", defaultValue : 500},
 			/**
 			 * Changes the visualization in order to enable additional actions with the SlideTile control.
-			 * @experimental since 1.46.0
+			 * @since 1.46.0
 			 */
 			"scope": { type: "sap.m.GenericTileScope", group: "Misc", defaultValue: sap.m.GenericTileScope.Display }
 		},
@@ -54,26 +54,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 		events : {
 			/**
 			 * The event is fired when the user chooses the tile. The event is available only in Actions scope.
-			 * @experimental since 1.46.0
+			 * @since 1.46.0
 			 */
 			"press" : {
 				parameters: {
 					/**
 					 * The current scope the SlideTile was in when the event occurred.
-					 * @experimental since 1.46.0
+					 * @since 1.46.0
 					 */
 					"scope": { type: "sap.m.GenericTileScope" },
 
 					/**
 					 * The action that was pressed on the tile. In the Actions scope, the available actions are Press and Remove.
-					 * @experimental since 1.46.0
+					 * @since 1.46.0
 					 */
 					"action": { type: "string" },
 
 					/**
 					 * The Element's DOM Element.
-					 * In Actions scope the domRef points to the DOM Element of the remove icon (if pressed) or the more icon.
-					 * @experimental since 1.46.0
+					 * In Actions scope the domRef points to the DOM Element of the remove button (if pressed) or the more icon.
+					 * @since 1.46.0
 					 */
 					"domRef" : { type: "any" }
 				}
@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 			id: this.getId() + "-pause-play-icon",
 			src: "sap-icon://media-pause",
 			color: "#ffffff",
-			size: "0.95rem",
+			size: "1rem",
 			noTabStop: true
 		}), true);
 	};

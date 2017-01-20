@@ -1,0 +1,4 @@
+/* For IE tests we need at least one dummy rule in a stylesheet due to the error check */
+.myDummyRule {
+	color: lightgoldenrodyellow;
+}

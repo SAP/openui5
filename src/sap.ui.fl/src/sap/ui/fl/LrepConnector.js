@@ -15,7 +15,8 @@ sap.ui.define([
 	 *        will be fetched from backend.
 	 * @constructor
 	 * @alias sap.ui.fl.LrepConnector
-	 * @experimental Since 1.25.0
+	 * @private
+	 * @sap-restricted
 	 * @author SAP SE
 	 * @version ${version}
 	 */
@@ -36,6 +37,7 @@ sap.ui.define([
 	Connector.prototype._sClient = undefined;
 	Connector.prototype._sLanguage = undefined;
 	Connector.prototype._aSentRequestListeners = [];
+	Connector.prototype._sRequestUrlPrefix = "";
 
 	/**
 	 * Registers a callback for a sent request to the backend. The callback is called for each change done one time! Each call is done with an object
@@ -90,6 +92,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Prefix for request url can be set in exceptional cases when consumer needs to add a prefix to the url
+	 *
+	 * @param {String} sRequestUrlPrefix - request url prefix which must start with a "/" and must not end
+	 * @private
+	 * @sap-restricted
+	 */
+	Connector.prototype.setRequestUrlPrefix = function(sRequestUrlPrefix) {
+		this._sRequestUrlPrefix = sRequestUrlPrefix;
+	};
+
+	/**
 	 * Resolve the complete url of a request by taking the backendUrl and the relative url from the request
 	 *
 	 * @param {String} sRelativeUrl - relative url of the current request
@@ -100,6 +113,7 @@ sap.ui.define([
 		if (!jQuery.sap.startsWith(sRelativeUrl, "/")) {
 			sRelativeUrl = "/" + sRelativeUrl;
 		}
+		sRelativeUrl = this._sRequestUrlPrefix + sRelativeUrl;
 		var oUri = uri(sRelativeUrl).absoluteTo("");
 		return oUri.toString();
 	};

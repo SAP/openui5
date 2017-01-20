@@ -331,7 +331,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"unhideControl": "default"
 				},
 				"sap.m.CheckBox": "sap/m/flexibility/CheckBox",
+				"sap.m.Input": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
+				"sap.m.InputBase": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
 				"sap.m.Label": "sap/m/flexibility/Label",
+				"sap.m.MultiInput": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
+				"sap.m.MaskInput": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
 				"sap.m.Page": "sap/m/flexibility/Page",
 				"sap.m.Panel": "sap/m/flexibility/Panel",
 				"sap.m.RadioButton": "sap/m/flexibility/RadioButton",
@@ -1140,7 +1156,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * Defines the scopes of GenericTile enabling the developer to implement different "flavors" of tiles.
 	 *
 	 * @enum {string}
-	 * @experimental since 1.46.0
+	 * @since 1.46.0
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @public
 	 */

@@ -79,18 +79,22 @@
 											new sap.m.CheckBox({id:"checkbox1", text: "CheckBox1"}),
 											new sap.m.RatingIndicator("ratingIndicator", { iconSize: "1rem", value: 2.5 }),
 											new sap.m.Button({id: "btn2", text: "Button2"}),
+											new sap.m.Label({id: "labelForInput", text: "Input", labelFor: "input1"}),
+											new sap.m.Input({id: "input1"}),
+											new sap.m.Label({id: "labelForMultiInput", text: "MultiInput", labelFor: "multiinput1"}),
+											new sap.m.MultiInput({id: "multiinput1"}),
 											new sap.ui.layout.VerticalLayout({
 												id: "verticalLayout2",
 												content: [
 													new sap.m.Button({id: "btn3", text: "V2Button3"}),
-													new sap.m.Button({id: "btn4", text: "V2Button4"}),
+													new sap.m.Button({id: "btn4", text: "V2Button4"})
 												]
 											}),
 											new sap.ui.layout.HorizontalLayout({
 												id: "verticalLayout3",
 												content: [
 													new sap.m.Button({id: "btn5", text: "HButton5"}),
-													new sap.m.Button({id: "btn6", text: "HButton6"}),
+													new sap.m.Button({id: "btn6", text: "HButton6"})
 												]
 											})
 										]
@@ -142,7 +146,7 @@
 												layoutData: new sap.m.OverflowToolbarLayoutData({
 													priority: sap.m.OverflowToolbarPriority.AlwaysOverflow
 												})
-											}),
+											})
 										]
 									}),
 									new sap.m.ScrollContainer({

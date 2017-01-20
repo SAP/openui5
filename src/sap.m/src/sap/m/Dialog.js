@@ -5,9 +5,9 @@
 // Provides control sap.m.Dialog.
 sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './AssociativeOverflowToolbar', './ToolbarSpacer',
 	'./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/delegate/ScrollEnablement',
-	'sap/ui/core/theming/Parameters', 'sap/ui/core/RenderManager', 'sap/ui/core/InvisibleText', 'sap/ui/core/ResizeHandler','sap/ui/Device'],
+	'sap/ui/core/theming/Parameters', 'sap/ui/core/RenderManager', 'sap/ui/core/InvisibleText', 'sap/ui/core/ResizeHandler','sap/ui/Device', 'sap/ui/base/ManagedObject'],
 	function (jQuery, Bar, InstanceManager, AssociativeOverflowToolbar, ToolbarSpacer, library, Control, IconPool,
-			  Popup, ScrollEnablement, Parameters, RenderManager, InvisibleText, ResizeHandler, Device) {
+			  Popup, ScrollEnablement, Parameters, RenderManager, InvisibleText, ResizeHandler, Device, ManagedObject) {
 		"use strict";
 
 
@@ -440,8 +440,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			// The focus will be change after the dialog is opened;
 			oPopup.setInitialFocusId(this.getId());
 
-			if (oPopup.isOpen()) {
-				return this;
+			var oPopupOpenState = oPopup.getOpenState();
+
+			switch (oPopupOpenState) {
+				case sap.ui.core.OpenState.OPEN:
+				case sap.ui.core.OpenState.OPENING:
+					return this;
+				case sap.ui.core.OpenState.CLOSING:
+					this._bOpenAfterClose = true;
+					break;
+				default:
 			}
 
 			//reset the close trigger
@@ -470,6 +478,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Dialog.prototype.close = function () {
+			this._bOpenAfterClose = false;
+
 			this.$().removeClass('sapDialogDisableTransition');
 
 			this._deregisterResizeHandler();
@@ -544,6 +554,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 			InstanceManager.removeDialogInstance(this);
 			this.fireAfterClose({origin: this._oCloseTrigger});
+
+			if (this._bOpenAfterClose) {
+				this._bOpenAfterClose = false;
+				this.open();
+			}
 		};
 
 		/**
@@ -769,8 +784,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				$dialogContent = this.$('cont'),
 				sContentHeight = this.getContentHeight(),
 				iDialogHeight,
-				iDialogTopBorderHeight,
-				iDialogBottomBorderHeight;
+				BORDER_THICKNESS = 2; // solves Scrollbar issue in IE when Table is in Dialog
 
 			//if height is set by manually resizing return;
 			if (this._oManuallySetSize) {
@@ -784,10 +798,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				});
 
 				//set the newly calculated size by getting it from the browser rendered layout - by the max-height
-				iDialogHeight = parseFloat($dialog.height());
-				iDialogTopBorderHeight = parseFloat($dialog.css("border-top-width"));
-				iDialogBottomBorderHeight = parseFloat($dialog.css("border-bottom-width"));
-				$dialogContent.height(Math.round( iDialogHeight + iDialogTopBorderHeight + iDialogBottomBorderHeight));
+				iDialogHeight = parseFloat($dialog.height()) + BORDER_THICKNESS;
+				$dialogContent.height(Math.round( iDialogHeight));
 			}
 
 			if (!this.getStretch() && !this._oManuallySetSize && !this._bDisableRepositioning) {
@@ -1715,6 +1727,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				e.stopPropagation();
 			};
 		}
+
+		/**
+		 * Popup controls should not propagate contextual width
+		 * @private
+		 */
+		Dialog.prototype._applyContextualSettings = function () {
+			ManagedObject.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
+		};
 
 		return Dialog;
 

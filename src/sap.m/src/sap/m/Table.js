@@ -79,7 +79,16 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 
 	Table.prototype.onBeforeRendering = function() {
 		ListBase.prototype.onBeforeRendering.call(this);
+		this._ensureColumnsMedia();
 		this._notifyColumns("ItemsRemoved");
+	};
+
+	Table.prototype._ensureColumnsMedia = function() {
+		this.getColumns().forEach(function (oColumn) {
+			if (oColumn._bShouldAddMedia) {
+				oColumn._addMedia();
+			}
+		});
 	};
 
 	Table.prototype.onAfterRendering = function() {
@@ -275,9 +284,9 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 			}
 		}
 
-		this._dirty = window.innerWidth;
+		this._dirty = this._getMediaContainerWidth() || window.innerWidth;
 		if (!this._mutex) {
-			var clean = window.innerWidth;
+			var clean = this._getMediaContainerWidth() || window.innerWidth;
 			this._mutex = true;
 			this.rerender();
 
