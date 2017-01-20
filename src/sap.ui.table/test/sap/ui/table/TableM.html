@@ -202,6 +202,7 @@ oModel.setData({modelData: TABLESETTINGS.listTestData});
 oTable.setModel(oModel);
 oTable.bindRows("/modelData");
 oTable.placeAt("content");
+(new sap.m.Button({text: "Just a Button after"})).placeAt("content");
 
 var oFlexModel = new sap.ui.model.json.JSONModel();
 oFlexModel.setData({flex: false});
@@ -211,7 +212,9 @@ function showFlexBoxColumns() {
 	oFlexModel.setProperty("/flex", true);
 }
 
-TABLESETTINGS.init(oTable);
+TABLESETTINGS.init(oTable, function(oButton) {
+	oTable.getToolbar().addContent(oButton);
+});
 
 </script>
 </head>

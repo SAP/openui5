@@ -26,6 +26,7 @@ var oTable = new sap.ui.table.AnalyticalTable({
 	selectionMode: sap.ui.table.SelectionMode.MultiToggle
 });
 oTable.placeAt("content");
+(new sap.m.Button({text: "Just a Button after"})).placeAt("content");
 
 oTable.setToolbar(new sap.m.Toolbar({content: [
 	new sap.m.Input("ServiceUrl", {
@@ -109,52 +110,71 @@ function updateModel() {
 
 updateModel();
 
-TABLESETTINGS.init(oTable, null, {
+TABLESETTINGS.init(oTable, function(oButton) {
+	oTable.getToolbar().addContent(oButton);
+}, {
 	GROUPING: {
 		hidden: true
 	},
-	SELECTIONMODE: {
-		sub: {
-			NONE: {
+	SELECTION: {
+		group: {
+			SELECTIONMODE: {
+				choice: {
+					NONE: {
+						disabled: true
+					}
+				}
+			},
+			SELECTIONBEHAVIOR: {
+				choice: {
+					ROWONLY: {
+						disabled: true
+					}
+				}
+			}
+		}
+	},
+	ANALYTICSETTINGS: {
+		text: "Analytical Settings",
+		group: {
+			GRANDTOTALS: {
+				text: "Grand Totals",
+				defaultValue: !!bProvideGrandTotals,
+				input: "boolean",
+				action: function(oTable, bValue) {
+					bProvideGrandTotals = bValue;
+					updateModel();
+				}
+			},
+			SUMONTOP: {
+				text: "Sum On Top",
+				defaultValue: !!bSumOnTop,
+				input: "boolean",
+				action: function(oTable, bValue) {
+					bSumOnTop = bValue;
+					updateModel();
+				}
+			}
+		}
+	},
+	AREAS: {
+		group: {
+			FIXEDROWS: {
 				disabled: true
-			}
-		}
-	},
-	SELECTIONBEHAVIOR: {
-		sub: {
-			ROWONLY: {
+			},
+			FIXEDBOTTOMROWS: {
 				disabled: true
+			},
+			NODATA: {
+				setData: function(oTable, bClear) {
+					if (bClear) {
+						oTable.unbindRows();
+					} else {
+						updateModel();
+					}
+				}
 			}
 		}
-	},
-	NODATA: {
-		setData: function(oTable, bClear) {
-			if (bClear) {
-				oTable.unbindRows();
-			} else {
-				updateModel();
-			}
-		}
-	},
-	GRANDTOTALS: {
-		text: "Switch Grand Totals",
-		action: function(){
-			bProvideGrandTotals = !bProvideGrandTotals;
-			updateModel();
-		}
-	},
-	SUMONTOP: {
-		text: "Switch Sum On Top",
-		action: function(){
-			bSumOnTop = !bSumOnTop;
-			updateModel();
-		}
-	},
-	FIXEDROWS: {
-		disabled: true
-	},
-	FIXEDBOTTOMROWS: {
-		disabled: true
 	}
 });
 

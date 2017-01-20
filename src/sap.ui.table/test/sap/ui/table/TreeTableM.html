@@ -69,8 +69,11 @@ oModel.setData(TABLESETTINGS.treeTestData);
 oTable.setModel(oModel);
 oTable.bindRows("/root");
 oTable.placeAt("content");
+(new sap.m.Button({text: "Just a Button after"})).placeAt("content");
 
-TABLESETTINGS.init(oTable);
+TABLESETTINGS.init(oTable, function(oButton) {
+	oTable.getToolbar().addContent(oButton);
+});
 
 </script>
 </head>
