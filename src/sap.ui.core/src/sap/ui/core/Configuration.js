@@ -106,6 +106,10 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
 
+					// Support tool configuration parameters; xx-support is there not to break some old link
+					"xx-support"            : { type : "string[]",  defaultValue : null },
+					"support"               : { type : "string[]",  defaultValue : null },
+
 					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
 					"xx-appCacheBusterMode" : { type : "string",   defaultValue : "sync" },
 					"xx-appCacheBusterHooks": { type : "object",   defaultValue : undefined, noUrl:true }, // e.g.: { handleURL: fn, onIndexLoad: fn, onIndexLoaded: fn }
@@ -128,8 +132,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"xx-cache-serialization": { type : "boolean",  defaultValue : false},
 					"xx-nosync"             : { type : "string",   defaultValue : "" },
 					"xx-waitForTheme"       : { type : "boolean",  defaultValue : false},
-					"statistics"            : { type : "boolean",  defaultValue : false },
-					"xx-support"            : { type : "string[]",  defaultValue : null }
+					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 
 			var M_COMPAT_FEATURES = {
@@ -1236,7 +1239,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * @experimental
 		 */
 		getSupportMode : function() {
-			return this["xx-support"];
+			return this["support"] || this["xx-support"];
 		},
 
 		_collect : function() {
