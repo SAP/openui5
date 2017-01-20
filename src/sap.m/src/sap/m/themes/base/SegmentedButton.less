@@ -202,6 +202,34 @@ html[data-sap-ui-os^="iOS"] {
 			}
 		}
 	}
+	
+	.sapMSegBBtn {
+		height: 1.625rem;
+		line-height: 1.5rem;
+		padding-left: 0.4375rem;
+		padding-right: 0.4375rem;
+	}
+
+	.sapMSegBBtn:first-child {
+		border-top-left-radius: 0.2rem;
+		border-bottom-left-radius: 0.2rem;
+	}
+
+	.sapMSegBBtn:last-child {
+		border-top-right-radius: 0.2rem;
+		border-bottom-right-radius: 0.2rem;
+	}
+
+	.sapMSegB {
+		.sapMBtnIconLeft {
+			margin-left: 0;
+		}
+		&.sapMSegBIcons .sapMSegBBtnMixed {
+			img {
+				padding: 0;
+			}
+		}
+	}
 }
 
 /* Android size compact fix */
