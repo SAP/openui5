@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.ComponentMetadata
-sap.ui.define(['jquery.sap.global', './ComponentMetadata', './library'],
-	function(jQuery, ComponentMetadata, library) {
+sap.ui.define(['./ComponentMetadata', './library'],
+	function(ComponentMetadata, library) {
 	"use strict";
 
 	// shortcut for enum(s)
@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata', './library'],
 	};
 
 	//chain the prototypes
-	UIComponentMetadata.prototype = jQuery.sap.newObject(ComponentMetadata.prototype);
+	UIComponentMetadata.prototype = Object.create(ComponentMetadata.prototype);
 
 	UIComponentMetadata.preprocessClassInfo = function(oClassInfo) {
 		// if the component is a string we convert this into a "_src" metadata entry

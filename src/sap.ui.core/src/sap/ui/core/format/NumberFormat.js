@@ -381,7 +381,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 	 * @private
 	 */
 	NumberFormat.createInstance = function(oFormatOptions, oLocale) {
-		var oFormat = jQuery.sap.newObject(this.prototype),
+		var oFormat = Object.create(this.prototype),
 			oPatternOptions;
 		if ( oFormatOptions instanceof Locale ) {
 			oLocale = oFormatOptions;

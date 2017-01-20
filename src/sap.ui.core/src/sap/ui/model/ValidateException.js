@@ -3,8 +3,8 @@
  */
 
 // Provides a filter for list bindings
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Exception'],
-	function(jQuery, Exception) {
+sap.ui.define(['sap/ui/base/Exception'],
+	function(Exception) {
 	"use strict";
 
 
@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Exception'],
 		this.message = message;
 		this.violatedConstraints = violatedConstraints;
 	};
-	ValidateException.prototype = jQuery.sap.newObject(Exception.prototype);
+	ValidateException.prototype = Object.create(Exception.prototype);
 
 
 	return ValidateException;

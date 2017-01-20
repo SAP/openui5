@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.date.UniversalDate
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleData'],
-	function(jQuery, BaseObject, LocaleData) {
+sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData'],
+	function(BaseObject, LocaleData) {
 	"use strict";
 
 
@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 			sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
 		}
 		clDate = UniversalDate.getClass(sCalendarType);
-		oInstance = jQuery.sap.newObject(clDate.prototype);
+		oInstance = Object.create(clDate.prototype);
 		oInstance.oDate = oDate;
 		oInstance.sCalendarType = sCalendarType;
 		return oInstance;
@@ -83,27 +83,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 	 * @public
 	 */
 	UniversalDate.getClass = function(sCalendarType) {
-		var sClassName, clDate;
 		if (!sCalendarType) {
 			sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
 		}
-		sClassName = "sap.ui.core.date." + sCalendarType;
-		jQuery.sap.require(sClassName);
-		clDate = jQuery.sap.getObject(sClassName);
-		return clDate;
+		return sap.ui.requireSync("sap/ui/core/date/" + sCalendarType);
 	};
 
 	/*
 	 * Loop through the Date class and create delegates of all Date API methods
 	 */
-	var aMethods = [
+	[
 		"getDate", "getMonth", "getFullYear", "getYear", "getDay", "getHours", "getMinutes", "getSeconds", "getMilliseconds",
 		"getUTCDate", "getUTCMonth", "getUTCFullYear", "getUTCDay", "getUTCHours", "getUTCMinutes", "getUTCSeconds", "getUTCMilliseconds",
 		"getTime", "valueOf", "getTimezoneOffset", "toString", "toDateString",
 		"setDate", "setFullYear", "setYear", "setMonth", "setHours", "setMinutes", "setSeconds", "setMilliseconds",
 		"setUTCDate", "setUTCFullYear", "setUTCMonth", "setUTCHours", "setUTCMinutes", "setUTCSeconds", "setUTCMilliseconds"
-    ];
-	jQuery.each(aMethods, function(iIndex, sName) {
+    ].forEach(function(sName) {
 		UniversalDate.prototype[sName] = function() {
 			return this.oDate[sName].apply(this.oDate, arguments);
 		};

@@ -82,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 	 * @private
 	 */
 	FileSizeFormat.createInstance = function(oFormatOptions, oLocale) {
-		var oFormat = jQuery.sap.newObject(this.prototype);
+		var oFormat = Object.create(this.prototype);
 		if ( oFormatOptions instanceof Locale ) {
 			oLocale = oFormatOptions;
 			oFormatOptions = undefined;

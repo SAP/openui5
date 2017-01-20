@@ -1478,12 +1478,20 @@
 	 * Returns a new constructor function that creates objects with
 	 * the given prototype.
 	 *
+	 * As of 1.45.0, this method has been deprecated. Use the following code pattern instead:
+	 * <pre>
+	 *   function MyFunction() {
+	 *   };
+	 *   MyFunction.prototype = oPrototype;
+	 * </pre>
 	 * @param {object} oPrototype Prototype to use for the new objects
 	 * @return {function} the newly created constructor function
 	 * @public
 	 * @static
+	 * @deprecated As of 1.45.0, define your own function and assign <code>oPrototype</code> to its <code>prototype</code> property instead.
 	 */
 	jQuery.sap.factory = function factory(oPrototype) {
+		jQuery.sap.assert(typeof oPrototype == "object", "oPrototype must be an object (incl. null)");
 		function Factory() {}
 		Factory.prototype = oPrototype;
 		return Factory;
@@ -1499,9 +1507,12 @@
 	 * @return {object} new object
 	 * @public
 	 * @static
+	 * @deprecated As of 1.45.0, use <code>Object.create(oPrototype)</code> instead.
 	 */
 	jQuery.sap.newObject = function newObject(oPrototype) {
-		return new (jQuery.sap.factory(oPrototype))();
+		jQuery.sap.assert(typeof oPrototype == "object", "oPrototype must be an object (incl. null)");
+		// explicitly fall back to null for best compatibility with old implementation
+		return Object.create(oPrototype || null);
 	};
 
 	/**

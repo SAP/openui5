@@ -190,7 +190,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 	 */
 	DateFormat.createInstance = function(oFormatOptions, oLocale, oInfo) {
 		// Create an instance of the DateFormat
-		var oFormat = jQuery.sap.newObject(this.prototype);
+		var oFormat = Object.create(this.prototype);
 
 		// Handle optional parameters
 		if ( oFormatOptions instanceof Locale ) {
