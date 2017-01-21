@@ -9,6 +9,15 @@
 	<display-name>testsuite</display-name>
 
 	<filter>
+		<filter-name>RewriteFilter</filter-name>
+		<filter-class>com.sap.openui5.RewriteFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>RewriteFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter>
 		<filter-name>CacheControlFilter</filter-name>
 		<filter-class>com.sap.openui5.CacheControlFilter</filter-class>
 	</filter>
