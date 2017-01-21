@@ -2,7 +2,6 @@ package com.sap.openui5;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -10,10 +9,7 @@ import java.net.URLConnection;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.jar.JarEntry;
@@ -24,8 +20,6 @@ import java.util.regex.Pattern;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-
-import org.apache.commons.io.IOUtils;
 
 
 /**
@@ -78,10 +72,6 @@ public final class DiscoveryService implements ServletContextListener {
   private ServletContext context;
 
 
-  /** version info map */
-  private Map<String, String> versionInfo = new HashMap<String, String>();
-
-
   /**
    * returns the instance of the <code>DiscoveryService</code> from the <code>ServletContext</code>
    * @param context the <code>ServletContext</code>
@@ -98,21 +88,6 @@ public final class DiscoveryService implements ServletContextListener {
   @Override
   public void contextInitialized(ServletContextEvent event) {
     this.context = event.getServletContext();
-
-    // the version information is read from the version.properties
-    InputStream is = null;
-    try {
-      is = this.getClass().getResource("version.properties").openStream();
-      Properties properties = new Properties();
-      properties.load(is);
-      for (java.util.Map.Entry<Object, Object> entry : properties.entrySet()) {
-        versionInfo.put((String) entry.getKey(), (String) entry.getValue());
-      }
-    } catch (IOException ex) {
-      this.log("The version information properties have not been found!");
-    } finally {
-      IOUtils.closeQuietly(is);
-    }
 
     long millis = System.currentTimeMillis();
 
@@ -234,9 +209,9 @@ public final class DiscoveryService implements ServletContextListener {
   public VersionInfo getVersionInfo() {
     List<Artifact> libraries = new ArrayList<DiscoveryService.Artifact>();
     for (Entry lib : this.getAllLibraries()) {
-      libraries.add(new Artifact(lib.entry.replace('/', '.'), versionInfo.get("version"), versionInfo.get("buildtime"), versionInfo.get("lastchange"), ""));
+      libraries.add(new Artifact(lib.entry.replace('/', '.'), "${version}", "${buildtime}", "${lastchange}", ""));
     }
-    return new VersionInfo(this.context.getContextPath().substring(1), versionInfo.get("version"), versionInfo.get("buildtime"), versionInfo.get("lastchange"), "", libraries);
+    return new VersionInfo(this.context.getContextPath().substring(1), "${version}", "${buildtime}", "${lastchange}", "", libraries);
   } // method: getVersionInfo
 
 
