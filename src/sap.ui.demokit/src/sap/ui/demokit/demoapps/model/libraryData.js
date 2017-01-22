@@ -23,7 +23,7 @@ sap.ui.define([
 		}
 
 		var oApp = {
-			lib : sLibNamespace,
+			lib : oDemoAppMetadata.namespace || sLibNamespace,
 			name : oDemoAppMetadata.text,
 			icon : oDemoAppMetadata.icon,
 			desc : oDemoAppMetadata.desc,
