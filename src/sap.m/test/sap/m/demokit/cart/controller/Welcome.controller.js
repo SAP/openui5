@@ -17,7 +17,6 @@ sap.ui.define([
 				Favorite: [new Filter("Type", "EQ", "Favorite")]
 			},
 
-
 		onInit: function () {
 			var oViewModel = new JSONModel({
 				welcomePictureUrl: 'img/Welcome.jpg',
@@ -28,6 +27,7 @@ sap.ui.define([
 			});
 			this.getView().setModel(oViewModel, "view");
 			this.getRouter().attachRouteMatched(this._onRouteMatched, this);
+			this.getRouter().getTarget("welcome").attachDisplay(this._onRouteMatched, this);
 		},
 
 		_onRouteMatched: function (oEvent) {
@@ -66,6 +66,13 @@ sap.ui.define([
 				id: sCategoryId,
 				productId: sProductId
 			});
+		},
+
+		/**
+		 * Navigates to the category page on phones
+		 */
+		onShowCategories: function () {
+			this.getRouter().navTo("categories");
 		},
 
 		/**

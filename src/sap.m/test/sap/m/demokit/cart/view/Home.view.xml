@@ -5,6 +5,8 @@
 	<Page
 		id="page"
 		title="{i18n>HOME_TITLE}"
+		showNavButton="{device>/isPhone}"
+		navButtonPress="onNavButtonPress"
 		showFooter="{device>/isNoPhone}" >
 		<headerContent>
 			<Button
