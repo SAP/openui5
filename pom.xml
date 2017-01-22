@@ -343,7 +343,7 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 				<property>
-					<name>workspace</name>
+					<name>ui5workspace</name>
 				</property>
 			</activation>
 
