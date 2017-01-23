@@ -187,7 +187,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 
 		var bFontFaceInserted = false;
 
-		var oCoreResourceBundle = core.getLibraryResourceBundle("sap.ui.core");
+		var oCoreResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
 
 		// lazy dependency, to avoid cycle
 		var Icon;
