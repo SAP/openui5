@@ -129,7 +129,9 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 	top: @offset;
 	right: @offset;
 	bottom: @offset;
-	z-index: @z-index;
+	& when not (@z-index = 0) {
+		z-index: @z-index;
+	}
 }
 
 .sapMGT.sapMGTScopeActions {
@@ -166,13 +168,10 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 		top: -0.5rem;
 		right: -0.5rem;
 		z-index: 3; // Remark: If increased, this will break FLP footer visualization.
-		overflow: hidden;
 		background-color: @sapUiButtonBackground;
 		border: 1px solid @sapUiButtonBorderColor;
 		color: @sapUiButtonTextColor;
-		&:before {
-			color: @sapUiButtonIconColor;
-		}
+		overflow: visible;
 
 		.sapMBtnFocusDiv {
 			display: none;
@@ -200,13 +199,18 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 
 		&:focus > .sapMFocusable {
 			outline: none;
+			border-radius: 50%;
 		}
 
 		/* The touch area has a different size and is slightly moved to the left and bottom */
 		&:before {
 			content: "";
-			.sapMGTOverlayMixin(-0.6875rem);
+			color: @sapUiButtonIconColor;
+			position: absolute;
 			top: -1px;
+			bottom: -0.6875rem;
+			left: -0.6875rem;
+			right: -0.0625rem;
 		}
 	}
 }
@@ -507,7 +511,6 @@ html[dir=rtl] .sapMGTLineMode {
 .sapMGTOverlay {
 	.sapMGTOverlayMixin();
 	opacity: 0.8;
-	border-radius: 0.125rem;
 }
 
 .sapMGT .sapMGTFocusDiv {
