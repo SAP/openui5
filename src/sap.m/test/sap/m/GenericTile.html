@@ -100,6 +100,21 @@
 		}
 	};
 
+	function setDefaultParameters(oData) {
+		var sName;
+		var oUriParameters = jQuery.sap.getUriParameters();
+
+		for (sName in oData) {
+			if (oData.hasOwnProperty(sName) && typeof oData[sName] === 'string') {
+				if (oUriParameters.get(sName) !== null) {
+					oData[sName] = oUriParameters.get(sName);
+				}
+			}
+		}
+	}
+
+	setDefaultParameters(oGenericTileData);
+
 	var oGenericTileModel = new sap.ui.model.json.JSONModel(oGenericTileData);
 
 	var oNVConfContS = new sap.m.NumericContent("numeric-cont-l", {
