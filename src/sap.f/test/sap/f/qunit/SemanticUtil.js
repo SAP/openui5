@@ -2,6 +2,7 @@ var SemanticUtil = (function (
 	SemanticPage,
 	DynamicPageTitle,
 	OverflowToolbar,
+	ActionSheet,
 	MessageStrip,
 	Button,
 	Title,
@@ -11,6 +12,7 @@ var SemanticUtil = (function (
 	jQuery.sap.require("sap.f.semantic.SemanticConfiguration");
 	jQuery.sap.require("sap.f.semantic.SemanticTitle");
 	jQuery.sap.require("sap.f.semantic.SemanticFooter");
+	jQuery.sap.require("sap.f.semantic.SemanticShareMenu");
 	jQuery.sap.require("sap.f.semantic.SemanticConfiguration");
 
 	var oCore = sap.ui.getCore(),
@@ -103,11 +105,17 @@ var SemanticUtil = (function (
 			getSemanticFooter : function(oContainer) {
 				return new sap.f.semantic.SemanticFooter(oContainer, null);
 			},
+			getSemanticShareMenu : function (oContainer) {
+				return new sap.f.semantic.SemanticShareMenu(oContainer, this.getSemanticPage());
+			},
 			getDynamicPageTitle : function() {
 				return new DynamicPageTitle();
 			},
 			getOverflowToolbar : function() {
 				return new OverflowToolbar();
+			},
+			getActionSheet : function() {
+				return new ActionSheet();
 			},
 			getAction: function () {
 				return new Button({
@@ -159,4 +167,4 @@ var SemanticUtil = (function (
 				}
 			}
 		}
-})(sap.f.semantic.SemanticPage, sap.f.DynamicPageTitle, sap.m.OverflowToolbar, sap.m.MessageStrip, sap.m.Button, sap.m.Title);
+})(sap.f.semantic.SemanticPage, sap.f.DynamicPageTitle, sap.m.OverflowToolbar, sap.m.ActionSheet, sap.m.MessageStrip, sap.m.Button, sap.m.Title);

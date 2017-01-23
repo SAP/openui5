@@ -56,16 +56,11 @@ sap.ui.define([
 		initial: "initial",
 
 		/**
-		* In <code>button</code> mode, the menu consists of a single button, that represents the only menu-item.
+		* In "menu" mode, the menu consists of:
+		* (1) an actionSheet containing all of the menu items and
+		* (2) a dedicated button that only opens the ShareMenu.
 		*/
-		button: "button",
-
-		/**
-		* In <code>actionSheet</code> mode, the menu consists of:
-		* (1) an <code>actionSheet</code> containing all of the menu items and
-		* (2) a dedicated button that only opens the <code>actionSheet</code>.
-		*/
-		actionSheet: "actionSheet"
+		menu: "menu"
 	};
 
 	/*
@@ -73,12 +68,7 @@ sap.ui.define([
 	*/
 
 	SemanticShareMenu.prototype.addCustomAction = function(oCustomControl) {
-		var bProceed = this._onControlAdded(oCustomControl);
-
-		if (!bProceed) {
-			this._aCustomShareActions.push(oCustomControl);
-			return this;
-		}
+		this._onControlAdded(oCustomControl);
 
 		this._callContainerAggregationMethod("insertButton", oCustomControl, this._getCustomActionInsertIndex());
 		this._aCustomShareActions.push(oCustomControl);
@@ -86,12 +76,7 @@ sap.ui.define([
 	};
 
 	SemanticShareMenu.prototype.insertCustomAction = function(oCustomControl, iIndex) {
-		var bProceed = this._onControlAdded(oCustomControl);
-
-		if (!bProceed) {
-			this._aCustomShareActions.splice(iIndex, 0, oCustomControl);
-			return this;
-		}
+		this._onControlAdded(oCustomControl);
 
 		this._callContainerAggregationMethod("insertButton", oCustomControl, this._getCustomActionInsertIndex(iIndex));
 		this._aCustomShareActions.splice(iIndex, 0, oCustomControl);
@@ -149,15 +134,10 @@ sap.ui.define([
 	* @returns {sap.f.semantic.SemanticShareMenu}
 	*/
 	SemanticShareMenu.prototype.addContent = function (oSemanticControl) {
-		var oControl = this._getControl(oSemanticControl),
-			bProceed = this._onControlAdded(oControl);
+		var oControl = this._getControl(oSemanticControl);
 
+		this._onControlAdded(oControl);
 		this._aShareMenuActions.push(oSemanticControl);
-
-		if (!bProceed) {
-			return this;
-		}
-
 		this._preProcessOverflowToolbarButton(oControl);
 		this._callContainerAggregationMethod("insertButton", oControl, this._getSemanticActionInsertIndex(oSemanticControl));
 		return this;
@@ -210,98 +190,38 @@ sap.ui.define([
 	 * Sets the <code>ShareMenu</code> mode - <code>initial</code>, <code>button</code> or <code>actionSheet</code>.
 	 *
 	 * @param {String} sMode
-	 * @param {sap.m.Button} oBaseButton
 	 * @returns {sap.f.semantic.SemanticShareMenu}
 	 */
-	SemanticShareMenu.prototype._setMode = function (sMode, oBaseButton) {
-		var oContainer = this._getContainer();
-
-		if (!SemanticShareMenu._Mode[sMode]) {
-			jQuery.sap.log.error("unknown shareMenu mode " + sMode, this);
-			return this;
-		}
-
+	SemanticShareMenu.prototype._setMode = function (sMode) {
 		if (this._getMode() === sMode) {
 			return this;
 		}
 
 		if (sMode === SemanticShareMenu._Mode.initial) {
-			this._setBaseButton(this._getShareMenuButton().applySettings({visible: false}));
+
+			if (this._getMode()) {
+				this._fireContentChanged(true); // the ShareMenu is empty.
+			}
+
 			this._mode = SemanticShareMenu._Mode.initial;
 			return this;
 		}
 
-		if (sMode === SemanticShareMenu._Mode.button) {
-			if (this._isInitialMode()) {
-				this._setBaseButton(oBaseButton);
-
-			} else if (this._isMenuMode()) {
-				var oFirstButton = oContainer.getButtons()[0];
-				oContainer.removeButton(oFirstButton);
-				this._postProcessOverflowToolbarButton(oFirstButton);
-				this._setBaseButton(oFirstButton);
-			}
-
-			this._mode = SemanticShareMenu._Mode.button;
-			return this;
-		}
-
-		if (sMode === SemanticShareMenu._Mode.actionSheet) {
-			var oOldBaseButton = this._oBaseButton;
-			this._setBaseButton(this._getShareMenuButton().applySettings({visible: true}));
-
-			if (oOldBaseButton) {
-				this._preProcessOverflowToolbarButton(oOldBaseButton);
-				oContainer.addButton(oOldBaseButton);
-			}
-			this._mode = SemanticShareMenu._Mode.actionSheet;
-		}
-
-		return this;
-	};
-
-
-	/*
-	* Sets the <code>ShareMenu</code> current base button.
-	*
-	* @param {sap.m.Button} oBaseButton
-	* @returns {sap.f.semantic.SemanticShareMenu}
-	*/
-	SemanticShareMenu.prototype._setBaseButton = function (oBaseButton) {
-		var oOldBaseButton;
-
-		if (this._oBaseButton === oBaseButton) {
-			return this;
-		}
-
-		oOldBaseButton = this._oBaseButton;
-		this._oBaseButton = oBaseButton;
-
-		if (oOldBaseButton) {
-			this._fireBaseBtnChanged(oOldBaseButton, this._oBaseButton);
+		if (sMode === SemanticShareMenu._Mode.menu) {
+			this._mode = SemanticShareMenu._Mode.menu;
+			this._fireContentChanged(false); // the ShareMenu is not empty anymore.
 		}
 
 		return this;
 	};
 
 	/*
-	* Returns the <code>ShareMenu</code> current base button.
-	*
-	* @returns {sap.m.Button}
-	*/
-	SemanticShareMenu.prototype.getBaseButton = function () {
-		return this._oBaseButton;
-	};
-
-	/*
-	* Fires an internal event to notify that the <code>ShareMenu</code> base button has been changed.
+	* Fires an internal event to notify that the <code>ShareMenu</code> content has been changed.
 	*
 	* @private
 	*/
-	SemanticShareMenu.prototype._fireBaseBtnChanged = function (oOldButton, oNewButton) {
-		EventProvider.prototype.fireEvent.call(this._getParent(), "_shareMenuBtnChanged", {
-			"oOldButton" : oOldButton, "oNewButton" : oNewButton
-		});
+	SemanticShareMenu.prototype._fireContentChanged = function (bEmpty) {
+		EventProvider.prototype.fireEvent.call(this._getParent(), "_shareMenuContentChanged", {"bEmpty" : bEmpty});
 	};
 
 
@@ -380,26 +300,14 @@ sap.ui.define([
 	 */
 	SemanticShareMenu.prototype._onControlAdded = function(oControl) {
 		if (this._isInitialMode()) {
-			this._setMode(SemanticShareMenu._Mode.button, oControl);
-			return false;
+			this._setMode(SemanticShareMenu._Mode.menu, oControl);
 		}
-
-		if (this._isButtonMode()) {
-			this._setMode(SemanticShareMenu._Mode.actionSheet);
-		}
-
-		return true;
 	};
 
 	/*
-	 * (1) If there are no more controls, the mode becomes <code>Initial</code> and
-	 * the base button is removed.
-	 *
-	 * (2) If a single control remains, the mode becomes <code>Button</code> and
-	 * the button is the new base button (either a custom or a semantic one).
-	 *
 	 * The method is called after a control has been removed
 	 * in order to update the <code>ShareMenu</code> mode.
+	 *
 	 *
 	 * @param {sap.f.semantic.SemanticControl} oControl
 	 * @returns {Boolean}
@@ -409,25 +317,15 @@ sap.ui.define([
 			iCustomActions = this._aCustomShareActions.length,
 			bEmpty = (iActions + iCustomActions) === 0;
 
-		if (this._isButtonMode() || bEmpty) {
+		if (this._isMenuMode() && bEmpty) {
 			this._setMode(SemanticShareMenu._Mode.initial);
-			return;
-		}
-
-		if (iActions === 1 && iCustomActions === 0){
-			this._setMode(SemanticShareMenu._Mode.button, this._aShareMenuActions[0]);
-			return;
-		}
-
-		if (iActions === 0 && iCustomActions === 1){
-			this._setMode(SemanticShareMenu._Mode.button, this._aCustomShareActions[0]);
 		}
 	};
 
 
 	/**
-	* If the button is an <code>OverflowToolbarButton</code>, it is made to show icon and text.
 	* Runs before adding a button to the action sheet.
+	* If the button is OverflowToolbarButton, it is made to show icon and text.
 	*
 	* @param oButton
 	* @private
@@ -439,8 +337,8 @@ sap.ui.define([
 	};
 
 	/**
-	* If the button is an <code>OverflowToolbarButton</code>, it is made to only show an icon only.
 	* Runs after a button has been removed from the action sheet.
+	* If the button is OverflowToolbarButton, it is made to only show an icon only.
 	*
 	* @param oButton
 	* @private
@@ -455,12 +353,8 @@ sap.ui.define([
 		return this._getMode() === SemanticShareMenu._Mode.initial;
 	};
 
-	SemanticShareMenu.prototype._isButtonMode = function() {
-		return this._getMode() === SemanticShareMenu._Mode.button;
-	};
-
 	SemanticShareMenu.prototype._isMenuMode = function() {
-		return this._getMode() === SemanticShareMenu._Mode.actionSheet;
+		return this._getMode() === SemanticShareMenu._Mode.menu;
 	};
 
 	return SemanticShareMenu;
