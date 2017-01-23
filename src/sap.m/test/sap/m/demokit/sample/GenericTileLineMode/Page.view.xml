@@ -49,7 +49,7 @@
 						scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
 						tooltip="SlideTile 1"
 						press="pressSlideTile"
-						class="sapUiTinyMarginBegin sapUiTinyMarginTop slideTilesLayout">
+						class="sapUiTinyMarginBegin sapUiTinyMarginTop">
 						<GenericTile
 							backgroundImage="{backgroundImage}"
 							state="{=${state} || 'Loaded'}"
@@ -74,7 +74,7 @@
 						tooltip="SlideTile 2"
 						press="pressSlideTile"
 						transitionTime="250" displayTime="2500"
-						class="sapUiTinyMarginBegin sapUiTinyMarginTop slideTilesLayout">
+						class="sapUiTinyMarginBegin sapUiTinyMarginTop">
 						<GenericTile
 							backgroundImage="{backgroundImage}"
 							state="{=${state} || 'Loaded'}"

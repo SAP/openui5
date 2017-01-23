@@ -1,7 +1,7 @@
 <core:View controllerName="sap.m.sample.SlideTile.Page"
 	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
-	<l:VerticalLayout class="slideTilesLayout">
-		<SlideTile class="sapUiTinyMarginTop">
+	<l:VerticalLayout>
+		<SlideTile class="sapUiTinyMarginBegin sapUiTinyMarginTop">
 			<tiles>
 				<GenericTile
 					backgroundImage="test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage2.png"
@@ -33,7 +33,7 @@
 				</GenericTile>
 			</tiles>
 		</SlideTile>
-		<SlideTile class="sapUiTinyMarginTop" transitionTime="250" displayTime="2500">
+		<SlideTile class="sapUiTinyMarginBegin sapUiTinyMarginTop" transitionTime="250" displayTime="2500">
 			<tiles>
 				<GenericTile
 					backgroundImage="test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage1.png"
