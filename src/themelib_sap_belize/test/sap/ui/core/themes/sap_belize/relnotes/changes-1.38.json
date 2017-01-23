@@ -441,5 +441,46 @@
         "references": []
       }
     ]
+  },
+  "1.38.17": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "fb3e56fad89bc5d66c2c896c36dc043a9b1b3887",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Focus with background image improved",
+        "references": []
+      },
+      {
+        "id": "c69d9835ee002d7be89c4f5ee3f473b8d05a3ece",
+        "type": "FIX",
+        "text": " sap.m.Link: Dashed focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "8783c17ddbb8b2bb540469a2dc00ac04c5242b76",
+        "type": "FIX",
+        "text": " sap.m.NotificationListGroup: Focus outline in IE corrected",
+        "references": []
+      },
+      {
+        "id": "5fb13507ea04648e92a9f6c578ac95e59e5171f9",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Focus clear visible on IE",
+        "references": []
+      },
+      {
+        "id": "df97af5bf2bf38ca3dce8a7154f2a6146c4a30a3",
+        "type": "FIX",
+        "text": " sap.m.Panel: Expandable icon contrast ratio fix",
+        "references": []
+      },
+      {
+        "id": "87967ebd2a19e6c5206f969453c22086421f6f6f",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: Focus contrast ratio in IE is now correct",
+        "references": []
+      }
+    ]
   }
 }
