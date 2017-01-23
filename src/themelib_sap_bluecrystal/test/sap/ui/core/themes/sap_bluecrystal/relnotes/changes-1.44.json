@@ -165,5 +165,69 @@
         "references": []
       }
     ]
+  },
+  "1.44.1": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "c728fbdb29342fc0e580985adc37ea4ab744e83b",
+        "type": "FIX",
+        "text": "sap.m.Input: Text selection on tablets is now correct",
+        "references": []
+      },
+      {
+        "id": "d9215394e7e17e25f39c29098c6f645b0bd41e6b",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: Correct aligned in table",
+        "references": []
+      }
+    ]
+  },
+  "1.44.5": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "f73ab38901d7682857d0760a19c35f8031e96b72",
+        "type": "FIX",
+        "text": " sap.m.Button: Emphasized button has correct contrast ratio",
+        "references": []
+      },
+      {
+        "id": "b2068a6d8a753d6d408ada5df3312c28284dcbae",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Focus outline corrected",
+        "references": []
+      },
+      {
+        "id": "478b3ee8b067e87c1241a9ae01d338edea677237",
+        "type": "FIX",
+        "text": " sap.m.Carousel: bluecrystal arrows in content fixed",
+        "references": []
+      },
+      {
+        "id": "cd0f532d4b568836182dacb13f5a35b920f14f28",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Line height increased to fit Devanagari script",
+        "references": []
+      },
+      {
+        "id": "4bd95c49ccca52c193b9c1b7943e2f68dd101cd0",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Layout no longer breaks on resize",
+        "references": []
+      },
+      {
+        "id": "e0b4d60b3629a7a88e1a6476fcb4a0de2f52e373",
+        "type": "FIX",
+        "text": " sap.m.Page: rendering performance",
+        "references": []
+      },
+      {
+        "id": "a2986dc362136020cf21e0e457fae2ece33e6426",
+        "type": "FIX",
+        "text": ": sap.m.ColumnListItem: focus outline workaround for IE",
+        "references": []
+      }
+    ]
   }
 }

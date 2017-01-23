@@ -537,5 +537,16 @@
         "references": []
       }
     ]
+  },
+  "1.46.1": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "96f24b5cdfcb69809cc01a6328bb1cfa29e02f96",
+        "type": "FIX",
+        "text": " sap.ui.core.IconPool: Use sap.ui.getCore() instead of AMD export",
+        "references": []
+      }
+    ]
   }
 }

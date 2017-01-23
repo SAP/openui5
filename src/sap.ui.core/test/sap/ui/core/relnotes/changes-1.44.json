@@ -465,5 +465,210 @@
         "references": []
       }
     ]
+  },
+  "1.44.1": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "0f9524df35fac410940028db066826559a9605b8",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter: Build tree for selection changes",
+        "references": []
+      },
+      {
+        "id": "d429acd85f44acb21b8819b2a5983ede2510a20e",
+        "type": "FIX",
+        "text": "LocaleData: Fixed getCombinedPattern for different calendar type",
+        "references": []
+      },
+      {
+        "id": "09671bdd33752e584bc9280482800d9549ba36b5",
+        "type": "FIX",
+        "text": "core/Router: always consider isHome title indicator",
+        "references": []
+      },
+      {
+        "id": "f4a5f3d18dbd08f5e68de8ffb01020ff5b76bb52",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: keep blocklayer when there\u0027s still modal popup open",
+        "references": []
+      },
+      {
+        "id": "b3b6c34a00b4331056f27d29eb913772171f03aa",
+        "type": "FIX",
+        "text": "sap.ui.test.action.Press Link default behavior is executed",
+        "references": []
+      },
+      {
+        "id": "84d5108894d183638bb5c3ef8199649dc13e3dd7",
+        "type": "FIX",
+        "text": "v2.ODataTreeBinding: Relative Binding",
+        "references": []
+      }
+    ]
+  },
+  "1.44.2": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "80df79aa884fe2131c2f2266319299eedb19e5d8",
+        "type": "FIX",
+        "text": " Configuration: improve locale and SAP language code handling",
+        "references": []
+      },
+      {
+        "id": "2dfed6d337e62fc645d2cf328e3a02d179207265",
+        "type": "FIX",
+        "text": " Device.js: Android orientation mode",
+        "references": []
+      },
+      {
+        "id": "f9f164178cab4b489e0c68f2880aef5f506daca4",
+        "type": "FIX",
+        "text": " Device.js: iOS 9 split view adaptions",
+        "references": []
+      },
+      {
+        "id": "657df33cdb4bb40d5a7c61164bdaec3f604c2520",
+        "type": "FIX",
+        "text": " ODataModel (v1/v2): documentation update",
+        "references": []
+      },
+      {
+        "id": "9eb63e347327f9f1db2953012daaa1856fd03079",
+        "type": "FIX",
+        "text": " v2.ODataModel: empty request - setProperty on complex type",
+        "references": []
+      }
+    ]
+  },
+  "1.44.3": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "9e3661d6707503eb2b4fc6065892070d97fd540e",
+        "type": "FIX",
+        "text": " v2.ODataModel: setProperty detect changes in __metadata",
+        "references": []
+      }
+    ]
+  },
+  "1.44.4": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "571645c40709c4b2db489e0cb7d1132c7e306ed3",
+        "type": "FIX",
+        "text": " Avoid unguarded access to window.localStorage during bootstrap",
+        "references": []
+      },
+      {
+        "id": "5de510d37e6b5ebe0eb667b041c3027ae80edd68",
+        "type": "FIX",
+        "text": " Device: Disables PointerEvent detection on Chrome 55+",
+        "references": []
+      },
+      {
+        "id": "7674c4f71087a77c75f3c7ef2a5fcb17a8fff5f8",
+        "type": "FIX",
+        "text": " XMLView: Prevent preserve of destroyed views DOM",
+        "references": []
+      },
+      {
+        "id": "63cdc9f941607e52c038f8510ee370c6acab1ba2",
+        "type": "FIX",
+        "text": " mvc/Controller: support controller extension in factory function",
+        "references": []
+      },
+      {
+        "id": "b7df6b12bdd4dab49f040a7de00d7c0386e8cf4c",
+        "type": "FIX",
+        "text": " v2.ODataModel: Don\u0027t try to reload created entities",
+        "references": []
+      }
+    ]
+  },
+  "1.44.5": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "0b487c57d684084a2a902b9178aece249fdb0dfd",
+        "type": "FIX",
+        "text": " BusyIndicator (Global): Fix missing wait cursor",
+        "references": []
+      },
+      {
+        "id": "867b37d637d5bd57d908494a7a09cc52934b4883",
+        "type": "FIX",
+        "text": " ScrollEnablement.js: adjustments for pointer events in Chrome 55",
+        "references": []
+      },
+      {
+        "id": "f645a68188d5d73372f2b16c89742a0aab30de0e",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: SelectAll",
+        "references": []
+      },
+      {
+        "id": "8013253c93a96cc2baa4c2b2db5df6f772feea6f",
+        "type": "FIX",
+        "text": " core.Popup: event handler should be moved to new DOM of autoclose area after rendering",
+        "references": []
+      },
+      {
+        "id": "c56e7528fc2c43a7c7fbe1351581e840014af37e",
+        "type": "FIX",
+        "text": " mvc/XMLView: fixed getPreprocessorInfo call",
+        "references": []
+      },
+      {
+        "id": "1f4c306076614b7820a18adf08bfbbd95af07075",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Mouse swipe now works correctly",
+        "references": []
+      },
+      {
+        "id": "ba70e86d0485e814af54cd513490f1511b848cbc",
+        "type": "FIX",
+        "text": " sap.m.Carousel: swipe now works correctly on combi devices",
+        "references": []
+      },
+      {
+        "id": "50d28cf1aa5cf8405707aa8643cdcefbcea42811",
+        "type": "FIX",
+        "text": " sap.ui.core.ScrollBar: invalidation while setting contentSize causes the user to lose track of the scrollbar handle",
+        "references": []
+      },
+      {
+        "id": "eed898933e2e702bb40000253840e00abc9e0101",
+        "type": "FIX",
+        "text": " sap.ui.core.util.ExportTypeCSV: Don\u0027t escape number only formulas",
+        "references": []
+      },
+      {
+        "id": "04b11142439a18c3663b9cce9ce2acb8df751038",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMetaModel: exception in destroy",
+        "references": []
+      },
+      {
+        "id": "6a1d4d3b3184c7f5bccdcf49c2a4b150a1117ef2",
+        "type": "FIX",
+        "text": " v2.ODataModel: Bindings fire no dataReceived event",
+        "references": []
+      },
+      {
+        "id": "a2a6f9907dd476f96151c8ee3f751b504cd831ae",
+        "type": "FIX",
+        "text": " v2.ODataModel: setting same value on created Entities - no changes",
+        "references": []
+      },
+      {
+        "id": "c2c4eb5c04d432334f14ec4cfc264f3d04a9bb3b",
+        "type": "FIX",
+        "text": " v2.ODataModel: wrong accept header for $batch",
+        "references": []
+      }
+    ]
   }
 }
