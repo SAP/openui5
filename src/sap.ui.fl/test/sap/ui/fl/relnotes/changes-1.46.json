@@ -1,0 +1,25 @@
+{
+  "1.46.0": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "35353b36fa6c5528b550544b5503f095c2c62883",
+        "type": "FEATURE",
+        "text": " changeHander registration can be done in one file per control",
+        "references": []
+      },
+      {
+        "id": "dae5d5b096956a52cb140d4e0cab22cc952a3c9d",
+        "type": "FEATURE",
+        "text": " sap.ui.fl provides a support panel to debug flexibility",
+        "references": []
+      },
+      {
+        "id": "dc5c9027c2b40da37630a687ad213679515148f9",
+        "type": "FEATURE",
+        "text": " sap.ui.fl: Shared configuration for test pages",
+        "references": []
+      }
+    ]
+  }
+}
