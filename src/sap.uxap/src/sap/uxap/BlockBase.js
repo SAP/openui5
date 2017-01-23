@@ -210,6 +210,7 @@ sap.ui.define([
 			} else {
 				this.getMappings().forEach(function (oMapping, iIndex) {
 					var oModel,
+						oBindingContext,
 						sInternalModelName = oMapping.getInternalModelName(),
 						sExternalPath = oMapping.getExternalPath(),
 						sExternalModelName = oMapping.getExternalModelName(),
@@ -220,20 +221,24 @@ sap.ui.define([
 							throw new Error("BlockBase :: incorrect mapping, one of the modelMapping property is empty");
 						}
 
+						oModel = this.getModel(sExternalModelName);
+						if (!oModel) { // model N/A yet
+							return;
+						}
+
+						//get absolute path (including the external binding context)
+						sPath = oModel.resolve(sExternalPath, this.getBindingContext(sExternalModelName));
+						oBindingContext = this.getBindingContext(sInternalModelName);
+
 						if (!this._isMappingApplied(sInternalModelName) /* check if mapping is set already */
-							|| (this.getModel(sInternalModelName) != this.getModel(sExternalModelName)) /* model changed, then we have to update internal model mapping */) {
+							|| (this.getModel(sInternalModelName) !== this.getModel(sExternalModelName)) /* model changed, then we have to update internal model mapping */
+							|| (oBindingContext && (oBindingContext.getPath() !== sPath)) /* sExternalPath changed, then we have to update internal model mapping */) {
 
 							jQuery.sap.log.info("BlockBase :: mapping external model " + sExternalModelName + " to " + sInternalModelName);
 
-							oModel = this.getModel(sExternalModelName);
-
-							if (oModel) {
-								sPath = oModel.resolve(sExternalPath, this.getBindingContext(sExternalModelName));
-
-								this._oMappingApplied[sInternalModelName] = true;
-								Control.prototype.setModel.call(this, oModel, sInternalModelName);
-								this.setBindingContext(new Context(oModel, sPath), sInternalModelName);
-							}
+							this._oMappingApplied[sInternalModelName] = true;
+							Control.prototype.setModel.call(this, oModel, sInternalModelName);
+							this.setBindingContext(new Context(oModel, sPath), sInternalModelName);
 						}
 					}
 				}, this);
