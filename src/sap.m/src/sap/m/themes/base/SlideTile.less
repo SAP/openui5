@@ -180,19 +180,17 @@ html.sap-desktop .sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMS
 }
 
 .sapMST .sapMSTIconNestedArea {
-	right: 1.35rem;
-	top: 1.2rem;
+	right: 0.75rem;
+	top: 0.75rem;
+	line-height: 2rem;
+	height: 2rem;
 	z-index: 1;
 	position: absolute;
 	outline: none;
-}
 
-.sapMST.sapMSTPauseIcon .sapMSTIconNestedArea {
-	right: 1.55rem;
-}
-/* Play icon in RTL */
-html[dir="rtl"] .sapMST:not(.sapMSTPauseIcon) .sapMSTIconNestedArea {
-	right: 1.5rem;
+	.sapUiIcon {
+		width: 2rem;
+	}
 }
 
 .sapMSTIconNestedArea :active {
@@ -227,17 +225,5 @@ html.sap-desktop .sapMST:not(:hover).sapMST:not(:focus) .sapMSTBulleted {
 
 	.sapMSTBulleted {
 		bottom: 0.188rem;
-	}
-
-	.sapMST .sapMSTIconNestedArea {
-		right: 1.35rem;
-
-		.sapMSTPauseIcon & {
-			right: 1.55rem;
-		}
-	}
-
-	html[dir="rtl"] .sapMST:not(.sapMSTPauseIcon) .sapMSTIconNestedArea {
-		right: 1.5rem;
 	}
 }
