@@ -344,7 +344,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 						preventDefault: false,
 						nonTouchScrolling: "scrollbar",
 						// In android stock browser, iScroll has to be used
-						// The scrolling layer using native scrolling is transparent 
+						// The scrolling layer using native scrolling is transparent
 						// for the browser to dispatch events
 						iscroll: sap.ui.Device.browser.name === "an" ? "force" : undefined
 					});
