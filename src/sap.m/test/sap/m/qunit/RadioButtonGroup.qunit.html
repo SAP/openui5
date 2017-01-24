@@ -104,7 +104,7 @@
 			oRBGroup.destroy();
 		});
 
-		QUnit.test("aria-posinset and aria-setsize when there is an invisible RB in the group", function(assert) {
+		test("aria-posinset and aria-setsize when there is an invisible RB in the group", function(assert) {
 			// arrange
 			var oRadioButton1 = new sap.m.RadioButton(),
 				oRadioButton2 = new sap.m.RadioButton({ visible: false }),
@@ -307,6 +307,66 @@
 
 			// cleanup
 			oRBGroup.destroy();
+		});
+
+		module("Setters", {
+			setup : function() {
+				this.rbg = new sap.m.RadioButtonGroup({
+					buttons : [
+						new sap.m.RadioButton({enabled : false, text : "Option 1"}),
+						new sap.m.RadioButton({editable : false, text : "Option 2"}),
+						new sap.m.RadioButton({text : "Option 3"}),
+					]
+				});
+
+				this.rbg.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function() {
+				this.rbg.destroy();
+			}
+		});
+
+		test("setEnabled doesn't modify RadioButton state", function() {
+			var aButtons = this.rbg.getButtons();
+
+			// act
+			this.rbg.setEnabled(false);
+
+			// assert
+			equal(aButtons[0].getEnabled(), false, "First RadioButton is disabled");
+			equal(aButtons[1].getEnabled(), false, "Second RadioButton is enabled due to EnabledPropagator");
+			equal(aButtons[1].getProperty("enabled"), true, "Second RadioButton keeps enabled=true in mProperties");
+			equal(aButtons[2].getEnabled(), false, "Third RadioButton is enabled due to EnabledPropagator");
+			equal(aButtons[1].getProperty("enabled"), true, "Third RadioButton keeps enabled=true in mProperties");
+
+			// act
+			this.rbg.setEnabled(true);
+
+			// assert
+			equal(aButtons[0].getEnabled(), false, "First RadioButton is disabled");
+			equal(aButtons[1].getEnabled(), true, "Second RadioButton is enabled");
+			equal(aButtons[2].getEnabled(), true, "Third RadioButton is enabled");
+		});
+
+		test("setEditable doesn't modify RadioButton state", function() {
+			var aButtons = this.rbg.getButtons();
+
+			// act
+			this.rbg.setEditable(false);
+
+			// assert
+			equal(aButtons[0].getEditable(), true, "First RadioButton is editable");
+			equal(aButtons[1].getEditable(), false, "Second RadioButton is read only");
+			equal(aButtons[2].getEditable(), true, "Third RadioButton is editable");
+
+			// act
+			this.rbg.setEditable(true);
+
+			// assert
+			equal(aButtons[0].getEditable(), true, "First RadioButton is editable");
+			equal(aButtons[1].getEditable(), false, "Second RadioButton is read only");
+			equal(aButtons[2].getEditable(), true, "Third RadioButton is editable");
 		});
 		</script>
 	</head>
