@@ -57,6 +57,17 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 				}
 			}
 
+			var bHasSelection = false;
+			if (window.getSelection) {
+				var oSelection = window.getSelection();
+				bHasSelection = oSelection.rangeCount ? !oSelection.getRangeAt(0).collapsed : false;
+			}
+
+			if (bHasSelection) {
+				jQuery.sap.log.debug("DOM Selection detected -> Click event on table skipped, Target: " + oEvent.target);
+				return true;
+			}
+
 			return false;
 		},
 

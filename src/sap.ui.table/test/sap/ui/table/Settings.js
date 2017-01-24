@@ -610,6 +610,26 @@
 					oTable.setEnableGrouping(bValue);
 				}
 			}
+		},
+		EVENTS: {
+			text: "Events",
+			group: {
+				CELLCLICK: {
+					text: "CellClick",
+					input: "boolean",
+					_cellClickHandler: function(oEvent) {
+						jQuery.sap.require("sap.m.MessageToast");
+						sap.m.MessageToast.show("Cell " + oEvent.getParameter("rowIndex") + "/" + oEvent.getParameter("columnIndex") + " clicked");
+					},
+					action: function(oTable, bValue) {
+						if (bValue) {
+							oTable.attachCellClick(TABLESETTINGS.actions.EVENTS.group.CELLCLICK._cellClickHandler);
+						} else {
+							oTable.detachCellClick(TABLESETTINGS.actions.EVENTS.group.CELLCLICK._cellClickHandler);
+						}
+					}
+				}
+			}
 		}
 	};
 
@@ -731,7 +751,7 @@
 				};
 			} else if (oAction.action) {
 				oClass = sap.m.Button;
-				mSettings.icon = "sap-icon://restart";
+				mSettings.icon = "sap-icon://edit";
 				mSettings.width = "3rem";
 				mSettings.press = function(oEvent) {
 					if (oEvent.getSource()._action) {
