@@ -11,9 +11,8 @@ sap.ui.define(['./SemanticButton'], function(SemanticButton) {
 	* @param {object} [mSettings] Custom initial settings for the new control
 	*
 	* @class
-	* An <code>MessagesIndicator</code> button has default semantic-specific properties
-	* and it`s placed in the <code>SemanticPage</code> footer.
-	* The <code>MessagesIndicator</code> is eligible for aggregation content of a {@link sap.f.semantic.SemanticPage}.
+	* A semantic-specific button, eligible for the <code>messagesIndicator</code> aggregation of the
+	* {@link sap.f.semantic.SemanticPage} to be placed in its footer.
 	*
 	* @extends <code>sap.f.semantic.SemanticButton</code>
 	*

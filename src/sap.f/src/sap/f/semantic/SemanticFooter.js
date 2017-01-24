@@ -3,7 +3,7 @@
  */
 
 /**
-* Provides a private class <code>sap.f.semantic.SemanticFooter</code>
+* Provides a private class <code>sap.f.semantic.SemanticFooter</code>.
 */
 sap.ui.define([
 	"jquery.sap.global",
@@ -19,7 +19,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	* Constructor for a sap.f.semantic.SemanticFooter.
+	* Constructor for a <code>sap.f.semantic.SemanticFooter</code>.
 	*
 	* @private
 	* @since 1.46.0
@@ -145,7 +145,7 @@ sap.ui.define([
 };
 
 	/*
-	* Inserts the <code>sap.f.semantic.SemanticControl</code> container`s "left" area.
+	* Inserts the <code>sap.f.semantic.SemanticControl</code> in the <code>footerLeft</code> area.
 	*
 	* @param {sap.f.semantic.SemanticControl} oSemanticControl
 	* @returns {sap.f.semantic.SemanticFooter}
@@ -163,7 +163,7 @@ sap.ui.define([
 	};
 
 	/*
-	* Inserts the <code>sap.f.semantic.SemanticControl</code> container`s "right" area.
+	* Inserts the <code>sap.f.semantic.SemanticControl</code> in the <code>footerRight</code> area.
 	*
 	* @param {sap.f.semantic.SemanticControl} oSemanticControl
 	* @returns {sap.f.semantic.SemanticFooter}
@@ -178,7 +178,7 @@ sap.ui.define([
 	};
 
 	/*
-	* Removes the <code>sap.f.semantic.SemanticControl</code> from container`s "left" area.
+	* Removes the <code>sap.f.semantic.SemanticControl</code> from the <code>footerLeft</code> area.
 	*
 	* @param {sap.f.semantic.SemanticControl} oSemanticControl
 	* @returns {sap.f.semantic.SemanticControl}
@@ -193,7 +193,7 @@ sap.ui.define([
 	};
 
 	/*
-	* Removes the <code>sap.f.semantic.SemanticControl</code> from container`s "right" area.
+	* Removes the <code>sap.f.semantic.SemanticControl</code> from the <code>footerRight</code> area.
 	*
 	* @param {sap.f.semantic.SemanticControl} oSemanticControl
 	* @returns {sap.f.semantic.SemanticControl}
@@ -209,7 +209,7 @@ sap.ui.define([
 
 	/*
 	* Determines the insert index of the content that is about to be added
-	* in the "footerLeft" area.
+	* in the <code>footerLeft</code> area.
 	*
 	* @returns {Number}
 	*/
@@ -219,7 +219,7 @@ sap.ui.define([
 
 	/*
 	* Determines the insert index of the content that is about to be added
-	* in the "footerRight" area.
+	* in the <code>footerRight</code> area.
 	*
 	* @returns {Number}
 	*/
@@ -230,7 +230,7 @@ sap.ui.define([
 
 	/*
 	* Determines the insert index of the content that is about to be added
-	* in the "customContent" area.
+	* in the <code>customContent</code> area.
 	*
 	* @returns {Number}
 	*/
@@ -239,8 +239,8 @@ sap.ui.define([
 	};
 
 	/*
-	* Inserts <code>sap.m.ToolbarSpacer<code>
-	* between the "footerLeft" and "footerRight" areas.
+	* Inserts a <code>sap.m.ToolbarSpacer<code>
+	* between the <code>footerLeft</code> and <code>footerRight</code> areas.
 	*
 	* @returns {sap.f.semantic.SemanticFooter}
 	*/
@@ -262,9 +262,9 @@ sap.ui.define([
 	};
 
 	/**
-	* Pre-processes a control, added or inserted to the container <code>aggregation</code>.
+	* Preprocesses a control, added or inserted to the container <code>aggregation</code>.
 	* The control would have the <code>SemanticPage</code> as its parent, rather than its real parent,
-	* which is the result after forwarding the control to <code>SemanticPage</code> internally aggregated controls.
+	* which is the result after forwarding the control to the <code>SemanticPage</code> internally aggregated controls.
 	* This is achieved by overriding the control <code>getParent</code> method.
 	*
 	* @param oControl
@@ -279,7 +279,7 @@ sap.ui.define([
 
 	/**
 	* Post-processes a control, removed from the container <code>aggregation</code>,
-	* so it returns its real parent by the restoring the core <code>getParent</code> method,
+	* so it returns its real parent by restoring the core <code>getParent</code> method,
 	* allowing proper processing by the framework.
 	*
 	* @param {sap}oControl

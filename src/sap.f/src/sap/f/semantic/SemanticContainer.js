@@ -3,7 +3,7 @@
  */
 
 /**
-* Provides a private class <code>sap.f.semantic.SemanticContainer</code>
+* Provides a private class <code>sap.f.semantic.SemanticContainer</code>.
 */
 sap.ui.define([
 	"jquery.sap.global",
@@ -15,10 +15,9 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	* Constructor for a sap.f.semantic.SemanticContainer.
+	* Constructor for a <code>sap.f.semantic.SemanticContainer</code>.
 	*
-	* The <code>sap.f.semantic.SemanticContainer</code> is the base class of the
-	* <code>sap.f.semantic.SemanticTitle</code> and  <code>sap.f.semantic.SemanticFooter</code>
+	* The base class for the <code>sap.f.semantic.SemanticTitle</code> and  <code>sap.f.semantic.SemanticFooter</code>.
 	*
 	* @private
 	* @since 1.46.0
@@ -67,9 +66,9 @@ sap.ui.define([
 	};
 
 	/**
-	* Returns the constrain of a <code>SemanticControl</code> instance,
+	* Returns the constraint of a <code>SemanticControl</code> instance,
 	* defined in <code>sap.f.semantic.SemanticConfiguration</code>.
-	* The constraints might be "IconOnly" and "Navigation".
+	* The constraints might be <code>IconOnly</code> and <code>Navigation</code>.
 	*
 	* @param {sap.f.semantic.SemanticControl | sap.m.Button} oControl
 	* @returns {String}
@@ -80,8 +79,9 @@ sap.ui.define([
 
 	/**
 	* Returns the internal control of a <code>SemanticControl</code> instance.
-	* Note: If the method is applied on none semantic control,
-	* the method will return the none semantic control itself.
+	*
+	* <b>Note:</b> If the method is applied on a non-semantic control,
+	* the method will return the non-semantic control itself.
 	*
 	* @param {sap.f.semantic.SemanticControl | sap.m.Button} oControl
 	* @returns {sap.f.semantic.SemanticControl | sap.m.Button}
@@ -100,8 +100,8 @@ sap.ui.define([
 	};
 
 	/**
-	* Determines if the <code>SemanticControl</code> is a "Navigation" action.
-	* Such as  <code>sap.f.semantic.FullScreenAction</code> and <code>sap.f.semantic.CloseAction</code>.
+	* Determines if the <code>SemanticControl</code> is a <code>Navigation</code> action,
+	* such as  <code>sap.f.semantic.FullScreenAction</code> and <code>sap.f.semantic.CloseAction</code>.
 	*
 	* @returns {Boolean}
 	*/
@@ -120,8 +120,8 @@ sap.ui.define([
 	};
 
 	/**
-	* Sorts <code>SemanticControl</code> by their "order",
-	* defined in <code>sap.f.semantic.SemanticConfiguration</code>.
+	* Sorts the <code>SemanticControl</code> instances by the order
+	* defined in the <code>sap.f.semantic.SemanticConfiguration</code>.
 	*
 	* @param {String} oControlA
 	* @param {String} oControlB
