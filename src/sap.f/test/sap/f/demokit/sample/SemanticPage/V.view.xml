@@ -19,15 +19,8 @@
 		</semantic:titleHeading>
 
 		<!-- TitleExpanded content-->
-		<semantic:titleExpandedContent>
-			<Text text="{/titleExpandedContent/text}"/>
-			<ObjectStatus text="In Stock" state="{/titleExpandedContent/status}" />
-		</semantic:titleExpandedContent>
-
-		<!-- TitleExpanded content-->
 		<semantic:titleSnappedContent>
 			<Text text="{/titleSnappedContent/text}"/>
-			<ObjectStatus text="In Stock" state="{/titleSnappedContent/status}" />
 		</semantic:titleSnappedContent>
 
 		<!-- Header Content -->
@@ -43,6 +36,7 @@
 							<ObjectAttribute title="Email" text="{/objectDescription/email}"/>
 						</content>
 					</Panel>
+					<ObjectStatus text="In Stock" state="{/objectDescription/status}" />
 				</items>
 			</FlexBox>
 		</semantic:headerContent>
@@ -96,17 +90,18 @@
 		</semantic:sendMessageAction>
 
 		<!-- Semantic Footer Buttons -->
-		<semantic:footerMainAction>
-			<semantic:FooterMainAction id="saveAction" press="onSave"/>
-		</semantic:footerMainAction>
-
 		<semantic:footerCustomActions>
+			<Button id="saveAction" text="Save" press="onSave"/>
 			<Button id="cancelAction" text="Cancel" press="onCancel"/>
 		</semantic:footerCustomActions>
 
 		<semantic:messagesIndicator>
 			<semantic:MessagesIndicator press="onMessagesButtonPress"/>
 		</semantic:messagesIndicator>
+
+		<semantic:draftIndicator>
+			<DraftIndicator state="Saved"/>
+		</semantic:draftIndicator>
 
 	</semantic:SemanticPage>
 </mvc:View>

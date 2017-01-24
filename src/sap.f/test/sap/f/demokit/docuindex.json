@@ -29,6 +29,13 @@
         "category": "Container",
         "since": "1.46",
         "samples": ["sap.f.sample.FlexibleColumnLayoutSimple"]
+      },
+      {
+        "id": "sap.f.semantic.SemanticPage",
+        "name": "Semantic Page 2.0",
+        "category": "Container",
+        "since": "1.46",
+        "samples": ["sap.f.sample.SemanticPage", "sap.f.sample.SemanticPageFreeStyle"]
       }
     ],
     "samples": [
@@ -57,14 +64,14 @@
         "description": "This sample demonstrates different combinations of types, shapes, and sizes of the Avatar."
       },
       {
-        "id": "sap.f.sample.SemanticPageFreeStyle",
-        "name": "SemanticPage Freestyle Sample",
-        "description": "SemanticPage 2.0 Freestyle Sample."
+        "id": "sap.f.sample.SemanticPage",
+        "name": "SemanticPage 2.0 using Draft Indicator",
+        "description": "This sample demonstrates the use of a DraftIndicator in the footer area."
       },
       {
-        "id": "sap.f.sample.SemanticPage",
-        "name": "SemanticPage 2.0 WorkList Floorplan",
-        "description": "SemanticPage 2.0 WorkList Floorplan sample."
+        "id": "sap.f.sample.SemanticPageFreeStyle",
+        "name": "Semantic Page 2.0 - Freestyle Sample",
+        "description": "This sample demonstrates a SemanticPage with all semantic-specific actions both in the title and in the footer areas."
       }
     ]
   }
