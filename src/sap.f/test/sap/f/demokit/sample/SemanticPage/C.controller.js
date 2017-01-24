@@ -15,10 +15,9 @@ sap.ui.define([
 				oMessageManager = sap.ui.getCore().getMessageManager();
 
 			this.oModel = new JSONModel();
-			this.oModel.loadData(jQuery.sap.getModulePath("sap.f.sample.DynamicPageListReport", "/model.json"), null, false);
+			this.oModel.loadData(jQuery.sap.getModulePath("sap.f.sample.SemanticPage", "/model.json"), null, false);
 			this.oSemanticPage = this.getView().byId("mySemanticPage");
 			this.oEditAction = this.getView().byId("editAction");
-			this.oSaveAction = this.getView().byId("saveAction");
 			this.oSemanticPage.setModel(this.oModel);
 
 			oMessageManager.registerMessageProcessor(oMessageProcessor);
@@ -53,13 +52,12 @@ sap.ui.define([
 		onEdit : function() {
 			this.showFooter(true);
 			this.oEditAction.setVisible(false);
-			MessageBox.alert("Edit mode!");
 		},
 
 		onSave: function() {
 			this.showFooter(false);
 			this.oEditAction.setVisible(true);
-			MessageBox.alert("Saved!");
+			MessageBox.alert("Successfully saved!");
 		},
 
 		onCancel: function() {
