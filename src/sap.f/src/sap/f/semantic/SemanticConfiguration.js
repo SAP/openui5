@@ -176,10 +176,8 @@ sap.ui.define([
 		oTypeConfigs["sap.f.semantic.AddAction"] = {
 			placement: SemanticConfiguration._Placement.titleText,
 			order: 1,
-			constraints: "IconOnly",
 			getSettings: function() {
 				return {
-					icon: IconPool.getIconURI("add"),
 					text: oBundle.getText("SEMANTIC_CONTROL_ADD"),
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_ADD"),
 					type: ButtonType.Transparent
