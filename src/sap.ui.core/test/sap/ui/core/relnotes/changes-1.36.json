@@ -914,12 +914,6 @@
         "references": []
       },
       {
-        "id": "696b5b9452c6880430847c63983ada4baf50ef67",
-        "type": "FIX",
-        "text": "ManagedObject: Propagate properties when setting parent to null",
-        "references": []
-      },
-      {
         "id": "ff4423d1616b10af66e29b836e3b8be3fe9f3923",
         "type": "FIX",
         "text": "jquery.sap.unicode: improved jQuery.sap.isStringNFC performance",
@@ -993,12 +987,6 @@
         "id": "2e3a503fec8546a4151d53d3a77314e6fbec7653",
         "type": "FIX",
         "text": "Fieldgroups might return undefined, leading to issues in UIArea",
-        "references": []
-      },
-      {
-        "id": "dc116daefc451ce79e7dd73624cd3c540b388aa7",
-        "type": "FIX",
-        "text": "ManagedObject: Propagate properties when setting parent to null",
         "references": []
       },
       {

@@ -184,14 +184,7 @@
   },
   "1.36.3": {
     "date": "February 2016",
-    "notes": [
-      {
-        "id": "511ce03ff25ea6de4872b5a7b46ac7037eba7577",
-        "type": "FIX",
-        "text": "sap.ui.table.Table: fixes requestCounter for changing bindings while request is still pending",
-        "references": []
-      }
-    ]
+    "notes": []
   },
   "1.36.4": {
     "date": "March 2016",

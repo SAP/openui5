@@ -548,5 +548,16 @@
         "references": []
       }
     ]
+  },
+  "1.46.2": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "cfeaf8471934fd1b66ed92fbae692791301c1d64",
+        "type": "FIX",
+        "text": " ThemeCheck: Fix Cross-Origin issues in Firefox",
+        "references": []
+      }
+    ]
   }
 }

@@ -1882,5 +1882,22 @@
         "references": []
       }
     ]
+  },
+  "1.38.18": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "7475394df3bc1ade75cafc6c63df9b40373152b7",
+        "type": "FIX",
+        "text": " ThemeCheck: Fix Cross-Origin issues in Firefox",
+        "references": []
+      },
+      {
+        "id": "b689a9fe98ba6a23edf599b2e596fd892445c067",
+        "type": "FIX",
+        "text": " sap.ui.core.Popup: blindlayer is also needed for IE11",
+        "references": []
+      }
+    ]
   }
 }

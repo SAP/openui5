@@ -3083,5 +3083,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.18": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "cb8ce52ae82fab637e77a47fb374913d0fdb4675",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxTextField: Screen Reader behavior improved",
+        "references": []
+      }
+    ]
   }
 }
