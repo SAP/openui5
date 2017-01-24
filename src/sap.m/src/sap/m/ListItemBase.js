@@ -784,6 +784,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// active feedback
 			this.setActive(true);
 
+			// even though the tabindex=-1, list items are not focusable on iPhone
+			if (sap.ui.Device.os.ios) {
+				this.focus();
+			}
+
 			jQuery.sap.delayedCall(180, this, function() {
 				this.setActive(false);
 			});
