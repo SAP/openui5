@@ -74,7 +74,10 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		oRm.write(">");
 		oRm.write("<div");
 		oRm.writeAttributeEscaped("id", oDynamicPage.getId() + "-contentFitContainer");
-		oRm.addClass("sapFDynamicPageContentFitContainer");
+		if (oDynamicPage.getFitContent()) {
+			oRm.addClass("sapFDynamicPageContentFitContainer");
+		}
+
 		if (oDynamicPageFooter && bShowFooter) {
 			oRm.addClass("sapFDynamicPageContentFitContainerFooterVisible");
 		}

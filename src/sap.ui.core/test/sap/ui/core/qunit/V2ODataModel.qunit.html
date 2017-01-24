@@ -3123,11 +3123,235 @@
 		}
 	});
 
+	var changeOperation = function(bGlobalRefreshAfterChange, bLocalRefreshAfterChange, success) {
+		oModel.setRefreshAfterChange(bGlobalRefreshAfterChange);
+
+		var bBatch = oModel.bUseBatch; // Convenience: fill correct group id param
+
+		oModel.update("/ProductSet('AD-1000')", {
+				Name: "Hello2"
+			}, {
+			success: success,
+			error: function(oError) {
+				start();
+				ok(false, "request failed");
+			},
+			merge: true,
+			eTag: "*",
+			batchGroupId: bBatch ? "myId1" : undefined,
+			groupId: !bBatch ? "myId1" : undefined,
+			refreshAfterChange: bLocalRefreshAfterChange
+		});
+	};
+
+	/*
+		deferred       | global flag   | function flag
+		----------------------------------------------------------
+		no             | on            | off
+		no             | off           | on
+		no             | on            | undefined
+		no             | off           | undefined
+
+		yes            | on            | off
+		yes            | off           | on
+		yes            | on            | undefined
+		yes            | off           | undefined
+
+		yes (batch)    | on            | off
+		yes (batch)    | off           | on
+		yes (batch)    | on            | undefined
+		yes (batch)    | off           | undefined
+	*/
+
+	/* === Not deferred === */
+	asyncTest("test oDataModel overrule bRefreshAfterChange not deferred - global on - local off", function() {
+		var oRefreshSpy = sinon.spy(oModel, "_refresh");
+		oModel.setUseBatch(false);
+
+		changeOperation(true, false, function(oData, oResponse) {
+			setTimeout(function() { // Because _refresh might get triggered *after*
+									// the success-callback is executed
+				start();
+				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+			});
+		});
+	});
+
+	asyncTest("test oDataModel overrule bRefreshAfterChange not deferred - global off - local on", function() {
+		var oRefreshSpy = sinon.spy(oModel, "_refresh");
+		oModel.setUseBatch(false);
+
+		changeOperation(false, true, function(oData, oResponse) {
+			setTimeout(function() { // Because _refresh might get triggered *after*
+									// the success-callback is executed
+				start();
+				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+			});
+		});
+	});
+
+	asyncTest("test oDataModel overrule bRefreshAfterChange not deferred - global on - local undefined", function() {
+		var oRefreshSpy = sinon.spy(oModel, "_refresh");
+		oModel.setUseBatch(false);
+
+		changeOperation(true, undefined, function(oData, oResponse) {
+			setTimeout(function() { // Because _refresh might get triggered *after*
+									// the success-callback is executed
+				start();
+				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+			});
+		});
+	});
+
+	asyncTest("test oDataModel overrule bRefreshAfterChange not deferred - global off - local undefined", function() {
+		var oRefreshSpy = sinon.spy(oModel, "_refresh");
+		oModel.setUseBatch(false);
+
+		changeOperation(false, undefined, function(oData, oResponse) {
+			setTimeout(function() { // Because _refresh might get triggered *after*
+									// the success-callback is executed
+				start();
+				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+			});
+		});
+	});
+
+	/* === Deferred === */
+	asyncTest("test oDataModel overrule bRefreshAfterChange deferred - global on - local off", function() {
+		var oRefreshSpy = sinon.spy(oModel, "_refresh");
+		oModel.setUseBatch(false);
+		oModel.setDeferredGroups(["myId1"]);
+
+		changeOperation(true, false, function(oData, oResponse) {
+			setTimeout(function() { // Because _refresh might get triggered *after*
+									// the success-callback is executed
+				start();
+				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+			});
+		});
+
+		oModel.submitChanges();
+	});
+
+	asyncTest("test oDataModel overrule bRefreshAfterChange deferred - global off - local on", function() {
+		var oRefreshSpy = sinon.spy(oModel, "_refresh");
+		oModel.setUseBatch(false);
+		oModel.setDeferredGroups(["myId1"]);
+
+		changeOperation(false, true, function(oData, oResponse) {
+			setTimeout(function() { // Because _refresh might get triggered *after*
+									// the success-callback is executed
+				start();
+				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+			});
+		});
+
+		oModel.submitChanges();
+	});
+
+	asyncTest("test oDataModel overrule bRefreshAfterChange deferred - global on - local undefined", function() {
+		var oRefreshSpy = sinon.spy(oModel, "_refresh");
+		oModel.setUseBatch(false);
+		oModel.setDeferredGroups(["myId1"]);
+
+		changeOperation(true, undefined, function(oData, oResponse) {
+			setTimeout(function() { // Because _refresh might get triggered *after*
+									// the success-callback is executed
+				start();
+				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+			});
+		});
+
+		oModel.submitChanges();
+	});
+
+	asyncTest("test oDataModel overrule bRefreshAfterChange deferred - global off - local undefined", function() {
+		var oRefreshSpy = sinon.spy(oModel, "_refresh");
+		oModel.setUseBatch(false);
+		oModel.setDeferredGroups(["myId1"]);
+
+		changeOperation(false, undefined, function(oData, oResponse) {
+			setTimeout(function() { // Because _refresh might get triggered *after*
+									// the success-callback is executed
+				start();
+				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+			});
+		});
+
+		oModel.submitChanges();
+	});
+
+	/* === Deferred batch === */
+	asyncTest("test oDataModel overrule bRefreshAfterChange deferred batch - global on - local off", function() {
+		var oRefreshSpy = sinon.spy(oModel, "_refresh");
+		oModel.setUseBatch(true);
+		oModel.setDeferredBatchGroups(["myId1"]);
+
+		changeOperation(true, false, function(oData, oResponse) {
+			setTimeout(function() { // Because _refresh might get triggered *after*
+									// the success-callback is executed
+				start();
+				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+			});
+		});
+
+		oModel.submitChanges();
+	});
+
+	asyncTest("test oDataModel overrule bRefreshAfterChange deferred batch - global off - local on", function() {
+		var oRefreshSpy = sinon.spy(oModel, "_refresh");
+		oModel.setUseBatch(true);
+		oModel.setDeferredBatchGroups(["myId1"]);
+
+		changeOperation(false, true, function(oData, oResponse) {
+			setTimeout(function() { // Because _refresh might get triggered *after*
+									// the success-callback is executed
+				start();
+				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+			});
+		});
+
+		oModel.submitChanges();
+	});
+
+	asyncTest("test oDataModel overrule bRefreshAfterChange deferred batch - global on - local undefined", function() {
+		var oRefreshSpy = sinon.spy(oModel, "_refresh");
+		oModel.setUseBatch(true);
+		oModel.setDeferredBatchGroups(["myId1"]);
+
+		changeOperation(true, undefined, function(oData, oResponse) {
+			setTimeout(function() { // Because _refresh might get triggered *after*
+									// the success-callback is executed
+				start();
+				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+			});
+		});
+
+		oModel.submitChanges();
+	});
+
+	asyncTest("test oDataModel overrule bRefreshAfterChange deferred batch - global off - local undefined", function() {
+		var oRefreshSpy = sinon.spy(oModel, "_refresh");
+		oModel.setUseBatch(true);
+		oModel.setDeferredBatchGroups(["myId1"]);
+
+		changeOperation(false, undefined, function(oData, oResponse) {
+			setTimeout(function() { // Because _refresh might get triggered *after*
+									// the success-callback is executed
+				start();
+				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+			});
+		});
+
+		oModel.submitChanges();
+	});
+
+
 	asyncTest("test oDataModel submitChanges remember bRefreshAfterChange flag in batch mode", function() {
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setDeferredBatchGroups([ "myId1" ]);
+		oModel.setRefreshAfterChange(true);
 
-		oModel.setRefreshAfterChange(false);
 		oModel.update("/ProductSet('AD-1000')", {
 				Name : "Hello2"
 			}, {
@@ -3141,9 +3365,9 @@
 			},
 			merge: true,
 			eTag: "*",
-			batchGroupId: "myId1"
+			batchGroupId: "myId1",
+			refreshAfterChange: false
 		});
-		oModel.setRefreshAfterChange(true);
 
 		oModel.submitChanges();
 	});
@@ -3152,8 +3376,8 @@
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 		oModel.setDeferredGroups([ "myId1" ]);
+		oModel.setRefreshAfterChange(true);
 
-		oModel.setRefreshAfterChange(false);
 		oModel.update("/ProductSet('AD-1000')", {
 				Name : "Hello2"
 			}, {
@@ -3170,9 +3394,9 @@
 			},
 			merge: true,
 			eTag: "*",
-			groupId: "myId1"
+			groupId: "myId1",
+			refreshAfterChange: false
 		});
-		oModel.setRefreshAfterChange(true);
 
 		oModel.submitChanges();
 	});
@@ -3181,8 +3405,8 @@
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 		oModel.setDeferredGroups([ "myId1" ]);
+		oModel.setRefreshAfterChange(true);
 
-		oModel.setRefreshAfterChange(false);
 		oModel.update("/ProductSet('AD-1000')", {
 				Name : "Hello2"
 			}, {
@@ -3192,9 +3416,9 @@
 			},
 			merge: true,
 			eTag: "*",
-			groupId: "myId1"
+			groupId: "myId1",
+			refreshAfterChange: false
 		});
-		oModel.setRefreshAfterChange(true);
 
 		oModel.update("/ProductSet('AD-1000')", {
 				Name : "Hello3"
@@ -3212,17 +3436,67 @@
 			},
 			merge: true,
 			eTag: "*",
-			groupId: "myId1"
+			groupId: "myId1",
+			refreshAfterChange: true
 		});
 
+		oModel.submitChanges();
+	});
+
+	asyncTest("test oDataModel create remember bRefreshAfterChange flag in batch mode", function() {
+		var oRefreshSpy = sinon.spy(oModel, "_refresh");
+		oModel.setUseBatch(true);
+		oModel.setDeferredGroups([ "myId1" ]);
+		oModel.setRefreshAfterChange(true);
+
+		oModel.create("/ProductSet", {
+				"ProductID": "AD-12345"
+			}, {
+			success : function(oData, oResponse) {
+				setTimeout(function() { // Because _refresh might get triggered *after*
+										// the success-callback is executed
+					start();
+					equals(oRefreshSpy.called, false, "Refresh should not have been called");
+				}, 0);
+			},
+			error : function(oError) {
+				start();
+				ok(false, "request failed");
+			},
+			groupId: "myId1",
+			refreshAfterChange: false
+		});
 		oModel.submitChanges();
 	});
 
 	asyncTest("test oDataModel create remember bRefreshAfterChange flag in non-batch mode", function() {
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
+		oModel.setRefreshAfterChange(true);
 
-		oModel.setRefreshAfterChange(false);
+		oModel.create("/ProductSet", {
+				"ProductID": "AD-12345"
+			}, {
+			success : function(oData, oResponse) {
+				setTimeout(function() { // Because _refresh might get triggered *after*
+										// the success-callback is executed
+					start();
+					equals(oRefreshSpy.called, false, "Refresh should not have been called");
+				}, 0);
+			},
+			error : function(oError) {
+				start();
+				ok(false, "request failed");
+			},
+			refreshAfterChange: false
+		});
+	});
+
+	asyncTest("test oDataModel createEntry remember bRefreshAfterChange flag in non-batch mode", function() {
+		var oRefreshSpy = sinon.spy(oModel, "_refresh");
+		oModel.setUseBatch(false);
+		oModel.setRefreshAfterChange(true);
+
 		oModel.createEntry("/ProductSet", {
 			properties: {
 				"ProductID": "AD-12345"
@@ -3240,16 +3514,16 @@
 			error : function(oError) {
 				start();
 				ok(false, "request failed");
-			}
+			},
+			refreshAfterChange: false
 		});
-		oModel.setRefreshAfterChange(true);
 	});
 
 	asyncTest("test oDataModel update remember bRefreshAfterChange flag in non-batch mode", function() {
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
+		oModel.setRefreshAfterChange(true);
 
-		oModel.setRefreshAfterChange(false);
 		oModel.update("/ProductSet('AD-1000')", {
 				Name : "Hello2"
 			}, {
@@ -3265,16 +3539,41 @@
 				ok(false, "request failed");
 			},
 			merge: true,
-			eTag: "*"
+			eTag: "*",
+			refreshAfterChange: false
 		});
-		oModel.setRefreshAfterChange(true);
+	});
+
+	asyncTest("test oDataModel update remember bRefreshAfterChange flag in non-batch mode", function() {
+		var oRefreshSpy = sinon.spy(oModel, "_refresh");
+		oModel.setUseBatch(false);
+		oModel.setRefreshAfterChange(false);
+
+		oModel.update("/ProductSet('AD-1000')", {
+				Name : "Hello2"
+			}, {
+			success : function(oData, oResponse) {
+				setTimeout(function() { // Because _refresh might get triggered *after*
+										// the success-callback is executed
+					start();
+					equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+				}, 0);
+			},
+			error : function(oError) {
+				start();
+				ok(false, "request failed");
+			},
+			merge: true,
+			eTag: "*",
+			refreshAfterChange: true
+		});
 	});
 
 	asyncTest("test oDataModel remove remember bRefreshAfterChange flag in non-batch mode", function() {
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
+		oModel.setRefreshAfterChange(true);
 
-		oModel.setRefreshAfterChange(false);
 		oModel.remove("/ProductSet('AD-1000')", {
 			success : function(oData, oResponse) {
 				setTimeout(function() { // Because _refresh might get triggered *after*
@@ -3286,9 +3585,51 @@
 			error : function(oError) {
 				start();
 				ok(false, "request failed");
+			},
+			refreshAfterChange: false
+		});
+	});
+
+	asyncTest("test oDataModel remove callFunction bRefreshAfterChange flag in non-batch mode", function() {
+		var oRefreshSpy = sinon.spy(oModel, "_refresh");
+		oModel.setUseBatch(false);
+		oModel.setRefreshAfterChange(true);
+
+		oModel.callFunction("/SalesOrder_InvoiceCreated", {
+			method: "POST",
+			urlParameters: {"SalesOrderID": "test"},
+			refreshAfterChange: false
+		});
+
+		oModel.attachRequestSent(this, function(oEventInfo) {
+			start();
+			equals(oRefreshSpy.called, false, "Refresh should not have been called");
+		});
+	});
+
+	asyncTest("test oDataModel setProperty NOT-remembering bRefreshAfterChange flag in batch mode", function() {
+		oModel.setUseBatch(true);
+
+		oModel.read("/ProductSet", {
+			success: function() {
+				window.setTimeout(function() {	// Because after our success callback
+												// the read still calls _refresh
+					var oRefreshSpy = sinon.spy(oModel, "_refresh");
+					oModel.setRefreshAfterChange(true);
+					oModel.setProperty("/ProductSet('AD-1000')/Name", "NewValue");
+
+					// setProperty does actually remember the refreshAfterChange state, but it shall get overwritten with the latest state in submitChanges()
+					oModel.setRefreshAfterChange(false);
+					oModel.submitChanges();
+
+					oModel.attachRequestCompleted(function(oEvent) {
+						start();
+						equals(oRefreshSpy.called, false, "Refresh should not have been called");
+					});
+				}, 0);
 			}
 		});
-		oModel.setRefreshAfterChange(true);
+
 	});
 
 	asyncTest("test oDataModel setProperty remember bRefreshAfterChange flag in non-batch mode", function() {

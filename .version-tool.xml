@@ -19,6 +19,7 @@
           "src/themelib_sap_belize/pom.xml": "1",
           "src/sap.tnt/pom.xml": "1",
           "src/sap.ui.suite/pom.xml": "1",
+          "src/sap.ui.codeeditor/pom.xml": "1",
           "pom.xml": "2",
           "src/testsuite/pom.xml": "1",
           "src/themelib_sap_goldreflection/pom.xml": "1",
@@ -26,7 +27,7 @@
           "src/testsuite-utils/pom.xml": "1"
         }
       },
-      "lastCommitId": "57841e9b08971d58909f7fa466c9c8876c2f1607"
+      "lastCommitId": "7838a3d09520721c2b8c6efbd56e143bc55ca41c"
     }
   }
 }

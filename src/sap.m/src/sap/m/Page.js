@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Page.
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/delegate/ScrollEnablement", "sap/m/Title", "sap/m/Button", "sap/m/Bar"],
-	function (jQuery, library, Control, ScrollEnablement, Title, Button, Bar) {
+sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/delegate/ScrollEnablement", "sap/m/Title", "sap/m/Button", "sap/m/Bar", 'sap/ui/core/ContextMenuSupport'],
+	function (jQuery, library, Control, ScrollEnablement, Title, Button, Bar, ContextMenuSupport) {
 		"use strict";
 
 
@@ -34,6 +34,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		 * <b>Note:</b> All accessibility information for the different areas and their corresponding ARIA roles is set in the aggregation <code>landmarkInfo</code> of type {@link sap.m.PageAccessibleLandmarkInfo}
 		 *
 		 * @extends sap.ui.core.Control
+		 * @mixes sap.ui.core.ContextMenuSupport
 		 * @author SAP SE
 		 * @version ${version}
 		 *
@@ -208,6 +209,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 				designTime: true
 			}
 		});
+
+		ContextMenuSupport.apply(Page.prototype);
 
 		Page.FOOTER_ANIMATION_DURATION = 350;
 

@@ -25,7 +25,7 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @private
+	 * @public
 	 * @since 1.28
 	 * @alias sap.m.OverflowToolbarButton
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel

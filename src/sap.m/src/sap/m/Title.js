@@ -76,7 +76,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', './l
 			 * The corresponding properties of the title control are ignored.
 			 */
 			title : {type : "sap.ui.core.Title", multiple : false}
-		}
+		},
+		designTime: true
 
 	}});
 

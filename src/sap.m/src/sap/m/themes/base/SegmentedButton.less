@@ -124,10 +124,6 @@ html.sap-desktop .sapMSegBBtnFocusable.sapMBtnActive:hover {
 
 .sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel {
 	border-right: 1px solid @sapUiSegmentedButtonSelectedHoverBorderColor;
-	// Hide next button left border
-	+ .sapMSegBBtn {
-		border-left: 1px solid transparent;
-	}
 }
 
 .sapMSegBBtn .sapUiIcon {
@@ -199,6 +195,34 @@ html[data-sap-ui-os^="iOS"] {
 			.sapUiIcon {
 				padding-left: 0;
 				padding-right: 0;
+			}
+		}
+	}
+	
+	.sapMSegBBtn {
+		height: 1.625rem;
+		line-height: 1.5rem;
+		padding-left: 0.4375rem;
+		padding-right: 0.4375rem;
+	}
+
+	.sapMSegBBtn:first-child {
+		border-top-left-radius: 0.2rem;
+		border-bottom-left-radius: 0.2rem;
+	}
+
+	.sapMSegBBtn:last-child {
+		border-top-right-radius: 0.2rem;
+		border-bottom-right-radius: 0.2rem;
+	}
+
+	.sapMSegB {
+		.sapMBtnIconLeft {
+			margin-left: 0;
+		}
+		&.sapMSegBIcons .sapMSegBBtnMixed {
+			img {
+				padding: 0;
 			}
 		}
 	}

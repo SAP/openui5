@@ -528,6 +528,17 @@
 				assert.equal(sCollapsedText, sCollapsedTextNew, "Empty html tags are removed for collapsed text");
 				assert.equal(sText, sFullText, "Full text remains the same");
 			});
+
+			QUnit.test("Treatment of newline character is backward compatible", function(assert) {
+				//Arrange
+				var sText = "Test with a \n newline";
+				//Act
+				this.oFeedListItem.setText(sText);
+				this.oFeedListItem.onBeforeRendering();
+				var sFullText = this.oFeedListItem._sFullText;
+				//Assert
+				assert.equal(sFullText, "Test with a <br> newline", "The \\n has been replaced with <br> tag");
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

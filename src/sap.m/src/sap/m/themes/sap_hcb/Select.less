@@ -154,3 +154,13 @@ html.sap-desktop .sapMSltIconOnly:focus:not(.sapMSltPressed) {
 	outline-offset: -0.125rem;
 	border-color: transparent;
 }
+
+/* hover: Select IconOnly in all contexts */
+
+html.sap-desktop .sapMHeader-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed):not(.sapMTSSlt),
+html.sap-desktop .sapMSubHeader-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed):not(.sapMTSSlt),
+html.sap-desktop .sapMFooter-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed):not(.sapMTSSlt),
+html.sap-desktop .sapMSltIconOnly:hover:not(.sapMSltPressed):not(.sapMTSSlt), {
+	color: @sapUiContentIconColor;
+	background-color: @sapUiButtonLiteHoverBackground;
+}

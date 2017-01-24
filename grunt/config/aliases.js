@@ -174,7 +174,11 @@ module.exports = function(grunt, config) {
 				aTasks.push('gitadd');
 				aTasks.push('gitcommit');
 				aTasks.push('gittag');
-				aTasks.push('gitpush');
+
+				// Do not push/publish changes if --dry-run option is used
+				if (!grunt.option('dry-run')) {
+					aTasks.push('gitpush');
+				}
 
 			}
 

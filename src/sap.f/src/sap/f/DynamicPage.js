@@ -108,7 +108,17 @@ sap.ui.define([
 				/**
 				 * Determines whether the footer is visible.
 				 */
-				showFooter: {type: "boolean", group: "Behavior", defaultValue: false}
+				showFooter: {type: "boolean", group: "Behavior", defaultValue: false},
+
+				/**
+				 * Optimizes <code>DynamicPage</code> responsiveness on small screens and behavior
+				 * when expanding/collapsing the <code>DynamicPageHeader</code>.
+				 *
+				 * <b>Note:</b> It is recommended to use this property when displaying content
+				 * of adaptive controls that stretch to fill the available space,
+				 * such as {@link sap.ui.table.Table} and  {@link sap.ui.table.AnalyticalTable}.
+				 */
+				fitContent: {type: "boolean", group: "Behavior", defaultValue: false}
 			},
 			aggregations: {
 				/**
@@ -265,6 +275,16 @@ sap.ui.define([
 		var vResult = this.setProperty("toggleHeaderOnTitleClick", bToggleHeaderOnTitleClick, true);
 
 		this.$().toggleClass("sapFDynamicPageTitleClickEnabled", bToggleHeaderOnTitleClick);
+
+		return vResult;
+	};
+
+	DynamicPage.prototype.setFitContent = function (bFitContent) {
+		var vResult = this.setProperty("fitContent", bFitContent, true);
+
+		if (exists(this.$())) {
+			this._updateFitContainer();
+		}
 
 		return vResult;
 	};
@@ -824,7 +844,9 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype._updateFitContainer = function (bNeedsVerticalScrollBar) {
-		var bToggleClass = typeof bNeedsVerticalScrollBar !== 'undefined' ? !bNeedsVerticalScrollBar : !this._needsVerticalScrollBar();
+		var bNoScrollBar = typeof bNeedsVerticalScrollBar !== 'undefined' ? !bNeedsVerticalScrollBar : !this._needsVerticalScrollBar(),
+			bFitContent = this.getFitContent(),
+			bToggleClass = bFitContent || bNoScrollBar;
 
 		this.$contentFitContainer.toggleClass("sapFDynamicPageContentFitContainer", bToggleClass);
 	};
@@ -837,7 +859,7 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._updateScrollBarOffset = function () {
 		var sStyleAttribute = sap.ui.getCore().getConfiguration().getRTL() ? "left" : "right",
-			iOffsetWidth = this._needsVerticalScrollBar() ? jQuery.position.scrollbarWidth() + "px" : 0,
+			iOffsetWidth = this._needsVerticalScrollBar() ? jQuery.sap.scrollbarSize().width + "px" : 0,
 			oFooter = this.getFooter();
 
 		this.$titleArea.css("padding-" + sStyleAttribute, iOffsetWidth);

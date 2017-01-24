@@ -927,8 +927,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	ObjectHeader.prototype.exit = function() {
-		if (sap.ui.Device.system.desktop) {
-			sap.ui.Device.media.detachHandler(this._rerenderOHR, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+		if (!sap.ui.Device.system.phone) {
+			this._detachMediaContainerWidthChange(this._rerenderOHR, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
 		}
 
 		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
@@ -984,8 +984,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
 			sap.ui.Device.orientation.detachHandler(this._onOrientationChange, this);
 		}
-		if (sap.ui.Device.system.desktop) {
-			sap.ui.Device.media.detachHandler(this._rerenderOHR, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+		if (!sap.ui.Device.system.phone) {
+			this._detachMediaContainerWidthChange(this._rerenderOHR, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
 		}
 
 		if (this._introText) {
@@ -1020,8 +1020,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			// When size of the browser window is changed and sap ui media query is changed rerender Responsive OH
-			if (sap.ui.Device.system.desktop) {
-				sap.ui.Device.media.attachHandler(this._rerenderOHR, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+			if (!sap.ui.Device.system.phone) {
+				this._attachMediaContainerWidthChange(this._rerenderOHR, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
 			}
 		} else {
 			var sTextAlign = bPageRTL ? sap.ui.core.TextAlign.Left : sap.ui.core.TextAlign.Right;
@@ -1057,7 +1057,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var $numberDiv = jQuery.sap.byId(sId + "-number");
 			var $titleDiv = jQuery.sap.byId(sId + "-titlediv");
 
-			if (sap.ui.Device.system.phone || (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Phone"))) {
+			if (this._isMediaSize("Phone")) {
 				if ($numberDiv.hasClass("sapMObjectNumberBelowTitle")) {
 					// change alignment to fit the design depending
 					oObjectNumber.setTextAlign(bPageRTL ? sap.ui.core.TextAlign.Left : sap.ui.core.TextAlign.Right);
@@ -1206,6 +1206,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		for (var i = 0; i < numbers.length; i++) {
 			numbers[i].setTextAlign(sTextAlign);
 		}
+	};
+
+	/**
+	 * Returns <code>true</code> if the name of the current media range of the control is <code>sRangeName</code>
+	 *
+	 * @param sRangeName - media range set
+	 * @returns {boolean}
+	 * @private
+	 */
+	ObjectHeader.prototype._isMediaSize = function (sRangeName) {
+		return this._getCurrentMediaContainerRange(sap.ui.Device.media.RANGESETS.SAP_STANDARD).name === sRangeName;
 	};
 
 	return ObjectHeader;

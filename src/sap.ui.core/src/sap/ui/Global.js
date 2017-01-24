@@ -288,7 +288,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 					}
 
 					// create a new instance and invoke the constructor
-					var oInstance = jQuery.sap.newObject(oRealClass.prototype);
+					var oInstance = Object.create(oRealClass.prototype);
 					var oResult = oRealClass.apply(oInstance, arguments);
 					if (oResult && (typeof oResult === "function" || typeof oResult === "object")) {
 						oInstance = oResult;

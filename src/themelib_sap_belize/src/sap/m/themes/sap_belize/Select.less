@@ -22,13 +22,18 @@ html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMS
 	outline: 1px dotted @sapUiContentFocusColor;
 }
 
-html.sap-desktop .sapMSltIconOnly:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState).sapMSltPressed:focus {
+html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltState:focus {
+	outline-offset: -4px;
+	outline: 1px dotted @sapUiContentFocusColor;
+}
+
+html.sap-desktop .sapMSltIconOnly:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltPressed:focus {
 	outline-color: @sapUiContentContrastFocusColor;
 }
 
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):focus {
+	.sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):focus {
 	  	outline: none;
 
 		&:before {

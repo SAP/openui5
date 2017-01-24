@@ -304,7 +304,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		extensions: {
 			flChangeHandlers: {
 				"sap.m.Bar": {
-					"moveElements": "default"
+					"moveControls": "default"
 				},
 				"sap.m.ListItemBase": {
 					"hideControl": "default",
@@ -348,6 +348,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
+				"sap.m.OverflowToolbar": {
+					"moveControls": "default"
+				},
 				"sap.m.Page": "sap/m/flexibility/Page",
 				"sap.m.Panel": "sap/m/flexibility/Panel",
 				"sap.m.RadioButton": "sap/m/flexibility/RadioButton",
@@ -355,14 +358,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
+				"sap.m.RangeSlider": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
 				"sap.m.ScrollContainer": {
 					"hideControl": "default",
-					"moveElements": "default",
+					"moveControls": "default",
+					"unhideControl": "default"
+				},
+				"sap.m.Slider": {
+					"hideControl": "default",
 					"unhideControl": "default"
 				},
 				"sap.m.Text": "sap/m/flexibility/Text",
+				"sap.m.Title": "sap/m/flexibility/Title",
 				"sap.m.Toolbar": {
-					"moveElements": "default"
+					"moveControls": "default"
 				}
 			}
 		}

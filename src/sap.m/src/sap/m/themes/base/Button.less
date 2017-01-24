@@ -446,12 +446,6 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner :not(.sapMBtnDisabled) {
 	border-color:     @sapUiButtonLiteBorderColor;
 }
 
-/* Background and text colors for different states */
-.sapMIBar-CTX .sapMBtnInner :not(.sapMBtnDisabled) {
-	color:            @sapUiButtonHeaderTextColor;
-	text-shadow:      0 1px 0 none;
-}
-
 .sapMIBar-CTX .sapMBtnTransparent :not(.sapMBtnDisabled) {
 	color:            @sapUiButtonLiteTextColor;
 	text-shadow:      none;
@@ -508,7 +502,7 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner :not(.sapMBtnDisabled) {
 	.sapMBtnInner {
 		text-shadow:      none;
 	}
-	.sapMBar-CTX .sapMBtnInner {
+	.sapMBar-CTX .sapMBtnInner:not(.sapMBtnDisabled) {
 		margin:           0;
 		border-color:     transparent;
 	}

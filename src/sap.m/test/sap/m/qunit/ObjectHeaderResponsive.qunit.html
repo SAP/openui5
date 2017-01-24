@@ -745,13 +745,11 @@
 
 			module("Desktop rendering resized to Tablet size", {
 				setup: function () {
-					jQuery("html").addClass("sap-desktop");
-					jQuery("html").removeClass("sapUiMedia-Std-Desktop");
-					jQuery("html").addClass("sapUiMedia-Std-Tablet");
+					this.oStub = sinon.stub(sap.m.ObjectHeader.prototype, "_isMediaSize");
+					this.oStub.withArgs("Desktop").returns(false).withArgs("Tablet").returns(true).withArgs("Phone").returns(false);
 				},
 				teardown: function () {
-					jQuery("html").removeClass("sapUiMedia-Std-Tablet");
-					jQuery("html").addClass("sapUiMedia-Std-Desktop");
+					this.oStub.restore();
 
 					oCore.byId(sControlId).destroy();
 				}
@@ -807,13 +805,11 @@
 
 			module("Desktop rendering resized to Phone size", {
 				setup: function () {
-					jQuery("html").addClass("sap-desktop");
-					jQuery("html").removeClass("sapUiMedia-Std-Desktop");
-					jQuery("html").addClass("sapUiMedia-Std-Phone");
+					this.oStub = sinon.stub(sap.m.ObjectHeader.prototype, "_isMediaSize");
+					this.oStub.withArgs("Desktop").returns(false).withArgs("Tablet").returns(false).withArgs("Phone").returns(true);
 				},
 				teardown: function () {
-					jQuery("html").removeClass("sapUiMedia-Std-Phone");
-					jQuery("html").addClass("sapUiMedia-Std-Desktop");
+					this.oStub.restore();
 
 					oCore.byId(sControlId).destroy();
 				}
@@ -835,16 +831,11 @@
 
 			module("Tablet rendering", {
 				setup: function () {
-					jQuery("html").removeClass("sap-desktop");
-					jQuery("html").removeClass("sapUiMedia-Std-Desktop");
-					jQuery("html").addClass("sap-tablet");
-					jQuery("html").addClass("sapUiMedia-Std-Tablet");
+					this.oStub = sinon.stub(sap.m.ObjectHeader.prototype, "_isMediaSize");
+					this.oStub.withArgs("Desktop").returns(false).withArgs("Tablet").returns(true).withArgs("Phone").returns(false);
 				},
 				teardown: function () {
-					jQuery("html").removeClass("sap-tablet");
-					jQuery("html").removeClass("sapUiMedia-Std-Tablet");
-					jQuery("html").addClass("sap-desktop");
-					jQuery("html").addClass("sapUiMedia-Std-Desktop");
+					this.oStub.restore();
 
 					oCore.byId(sControlId).destroy();
 				}
@@ -925,19 +916,14 @@
 
 		module("Phone rendering", {
 				setup: function () {
-					jQuery("html").removeClass("sap-desktop");
-					jQuery("html").removeClass("sapUiMedia-Std-Desktop");
-					jQuery("html").addClass("sap-phone");
-					jQuery("html").addClass("sapUiMedia-Std-Phone");
+					this.oStub = sinon.stub(sap.m.ObjectHeader.prototype, "_isMediaSize");
+					this.oStub.withArgs("Desktop").returns(false).withArgs("Tablet").returns(false).withArgs("Phone").returns(true);
 
 					sap.ui.Device.orientation.landscape = false;
 					sap.ui.Device.orientation.portrait = true;
 				},
 				teardown: function () {
-					jQuery("html").removeClass("sap-tablet");
-					jQuery("html").removeClass("sapUiMedia-Std-Desktop");
-					jQuery("html").addClass("sap-phone");
-					jQuery("html").addClass("sapUiMedia-Std-Phone");
+					this.oStub.restore();
 
 					sap.ui.Device.orientation.landscape = true;
 					sap.ui.Device.orientation.portrait = false;

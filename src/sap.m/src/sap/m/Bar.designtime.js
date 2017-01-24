@@ -12,19 +12,19 @@ sap.ui.define([],
 			contentLeft: {
 				domRef: ":sap-domref > .sapMBarLeft",
 				actions: {
-					move: "moveElements"
+					move: "moveControls"
 				}
 			},
 			contentMiddle: {
 				domRef: ":sap-domref > .sapMBarMiddle > .sapMBarPH",
 				actions: {
-					move: "moveElements"
+					move: "moveControls"
 				}
 			},
 			contentRight: {
 				domRef: ":sap-domref > .sapMBarRight",
 				actions: {
-					move: "moveElements"
+					move: "moveControls"
 				}
 			}
 		}

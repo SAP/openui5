@@ -1,0 +1,141 @@
+/*!
+ * ${copyright}
+ */
+
+/**
+* Provides a private class <code>sap.f.semantic.SemanticContainer</code>
+*/
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/base/Metadata",
+	"sap/ui/core/CustomData",
+	"sap/m/ToolbarSpacer",
+	"./SemanticConfiguration"
+], function(jQuery, Metadata, CustomData, ToolBarSpacer, SemanticConfiguration) {
+	"use strict";
+
+	/**
+	* Constructor for a sap.f.semantic.SemanticContainer.
+	*
+	* The <code>sap.f.semantic.SemanticContainer</code> is the base class of the
+	* <code>sap.f.semantic.SemanticTitle</code> and  <code>sap.f.semantic.SemanticFooter</code>
+	*
+	* @private
+	* @since 1.46.0
+	* @alias sap.f.semantic.SemanticContainer
+	* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	*/
+	var SemanticContainer = Metadata.createClass("sap.f.semantic.SemanticContainer", {
+		constructor : function(oContainer, oParent) {
+			if (!oContainer) {
+				jQuery.sap.log.error("SemanticContainer :: missing argument - container reference", this);
+				return;
+			}
+
+			this._oContainer = oContainer;
+			this._oParent = oParent;
+		}
+	});
+
+	/**
+	* Returns the container control, used to hold ui5 controls.
+	*
+	* @returns {sap.ui.core.Control}
+	*/
+	SemanticContainer.prototype._getContainer = function() {
+		return this._oContainer;
+	};
+
+	/**
+	 * Returns the parent control.
+	 *
+	 * @returns {sap.ui.core.Control}
+	 */
+	SemanticContainer.prototype._getParent = function() {
+		return this._oParent;
+	};
+
+	/**
+	* Returns the order of a <code>SemanticControl</code> instance,
+	* defined in <code>sap.f.semantic.SemanticConfiguration</code>.
+	*
+	* @param {sap.f.semantic.SemanticControl} oControl
+	* @returns {String}
+	*/
+	SemanticContainer.prototype._getControlOrder = function(oControl) {
+		return SemanticConfiguration.getOrder(oControl.getMetadata().getName());
+	};
+
+	/**
+	* Returns the constrain of a <code>SemanticControl</code> instance,
+	* defined in <code>sap.f.semantic.SemanticConfiguration</code>.
+	* The constraints might be "IconOnly" and "Navigation".
+	*
+	* @param {sap.f.semantic.SemanticControl | sap.m.Button} oControl
+	* @returns {String}
+	*/
+	SemanticContainer.prototype._getConstraints = function(oControl) {
+		return SemanticConfiguration.getConstraints(oControl.getMetadata().getName());
+	};
+
+	/**
+	* Returns the internal control of a <code>SemanticControl</code> instance.
+	* Note: If the method is applied on none semantic control,
+	* the method will return the none semantic control itself.
+	*
+	* @param {sap.f.semantic.SemanticControl | sap.m.Button} oControl
+	* @returns {sap.f.semantic.SemanticControl | sap.m.Button}
+	*/
+	SemanticContainer.prototype._getControl = function(oControl) {
+		return oControl._getControl ? oControl._getControl() : oControl;
+	};
+
+	/**
+	* Determines if the <code>SemanticControl</code> is a <code>sap.f.semantic.MainAction</code>.
+	*
+	* @returns {Boolean}
+	*/
+	SemanticContainer.prototype._isMainAction = function(oControl) {
+		return SemanticConfiguration.isMainAction(oControl.getMetadata().getName());
+	};
+
+	/**
+	* Determines if the <code>SemanticControl</code> is a "Navigation" action.
+	* Such as  <code>sap.f.semantic.FullScreenAction</code> and <code>sap.f.semantic.CloseAction</code>.
+	*
+	* @returns {Boolean}
+	*/
+	SemanticContainer.prototype._isNavigationAction = function(oControl) {
+		return SemanticConfiguration.isNavigationAction(oControl.getMetadata().getName());
+	};
+
+	/**
+	* Calls container`s method.
+	*
+	* @param {String} sMethod the method to be called
+	* @returns {Object | Array<T>}
+	*/
+	SemanticContainer.prototype._callContainerAggregationMethod = function(sMethod) {
+		return this._getContainer()[sMethod].apply(this._getContainer(), Array.prototype.slice.call(arguments).slice(1));
+	};
+
+	/**
+	* Sorts <code>SemanticControl</code> by their "order",
+	* defined in <code>sap.f.semantic.SemanticConfiguration</code>.
+	*
+	* @param {String} oControlA
+	* @param {String} oControlB
+	* @returns {Number}
+	*/
+	SemanticContainer.prototype._sortControlByOrder = function(oControlA, oControlB) {
+		return this._getControlOrder(oControlA) - this._getControlOrder(oControlB);
+	};
+
+	SemanticContainer.prototype.destroy = function() {
+		this._oParent = null;
+		this._oContainer = null;
+	};
+
+	return SemanticContainer;
+
+}, /* bExport= */ false);

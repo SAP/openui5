@@ -17,6 +17,14 @@ sap.ui.define([
 	 */
 	var HideForm = { };
 
+	var getFirstToolbarOrTitle = function(oControl) {
+		var oTitleOrToolbar = oControl.getAggregation("form").getFormContainers()[0].getTitle() || oControl.getAggregation("form").getFormContainers()[0].getToolbar();
+		if (!oTitleOrToolbar && oControl.getAggregation("form").getFormContainers()[1]) {
+			oTitleOrToolbar = oControl.getAggregation("form").getFormContainers()[1].getTitle() || oControl.getAggregation("form").getFormContainers()[1].getToolbar();
+		}
+		return oTitleOrToolbar;
+	};
+
 	/**
 	 * Hides a control.
 	 *
@@ -62,10 +70,20 @@ sap.ui.define([
 				}
 			});
 		} else if (oChangeDefinition.changeType === "removeSimpleFormGroup") {
-			var oTitle = oControl.getAggregation("form").getFormContainers()[0].getTitle();
+			var oTitleOrToolbar = getFirstToolbarOrTitle(oControl);
+			var bFirstContainerWithoutTitle = oTitleOrToolbar && !oRemovedElement;
 			aContent.some(function (oField, index) {
-				if (!oTitle) {
+				// if there is no Title/Toolbar, there is only the one FormContainer without Title/Toolbar.
+				// Therefor all Fields will be hidden.
+				if (!oTitleOrToolbar) {
 					oModifier.setVisible(oField, false);
+				} else if (bFirstContainerWithoutTitle) {
+					// if there is oTitleOrToolbar but no oRemovedElement the first FormContainer needs to be hidden.
+					// This FormContainer has no Title/Toolbar, but there are FormContainers with Title/Toolbar
+					// Therefor we have to set iStart to 0 and hide the first Field once
+					iStart = 0;
+					oModifier.setVisible(oField, false);
+					bFirstContainerWithoutTitle = false;
 				} else {
 					if (oField === oRemovedElement) {
 						iStart = index;
@@ -85,7 +103,9 @@ sap.ui.define([
 					}
 				}
 			});
-			oModifier.removeAggregation(oControl, "content", oRemovedElement, oView);
+			if (oRemovedElement) {
+				oModifier.removeAggregation(oControl, "content", oRemovedElement, oView);
+			}
 		}
 
 		return true;

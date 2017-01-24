@@ -39,7 +39,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			 * If not set the type is automatically determined from the order of the items in the CalendarLegend.
 			 * @since 1.28.9
 			 */
-			type : {type : "sap.ui.unified.CalendarDayType", group : "Appearance", defaultValue : sap.ui.unified.CalendarDayType.None}
+			type : {type : "sap.ui.unified.CalendarDayType", group : "Appearance", defaultValue : sap.ui.unified.CalendarDayType.None},
+
+			/**
+			 * Overrides the color derived from the <code>type</code> property.
+			 * @since 1.46.0
+			 */
+			color: {type : "sap.ui.core.CSSColor", group : "Appearance", defaultValue : null}
 		}
 	}});
 

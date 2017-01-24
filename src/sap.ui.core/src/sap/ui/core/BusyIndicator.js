@@ -15,15 +15,13 @@ sap.ui.define(['jquery.sap.global', '../base/EventProvider', './Popup', './Core'
 	 * @public
 	 * @alias sap.ui.core.BusyIndicator
 	 */
-	var BusyIndicator = jQuery.extend(jQuery.sap.newObject(EventProvider.prototype), {
+	var BusyIndicator = jQuery.extend( new EventProvider(), {
 		oPopup: null,
 		oDomRef: null,
 		bOpenRequested: false,
 		iDEFAULT_DELAY_MS: 1000,
 		sDOM_ID: "sapUiBusyIndicator"
 	});
-
-	EventProvider.apply(BusyIndicator);
 
 	BusyIndicator.M_EVENTS = {
 		Open: "Open",

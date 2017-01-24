@@ -5,6 +5,7 @@
 
 .sapMTabStrip {
 	border-bottom: 1px solid @sapUiPageHeaderBorderColor;
+	box-shadow: none;
 	/* This class can override the default border-top style */
 	&.sapMTabStripTopBorderVisible {
 		border-top: 1px solid @sapUiPageHeaderBorderColor;
@@ -16,6 +17,7 @@
 				&.sapMTabStripItemSelected {
 					background: @sapUiSegmentedButtonSelectedBackground;
 					border-right: 1px solid @sapUiPageHeaderBorderColor;
+					border-bottom: none;
 				}
 				&:hover {
 					background: @sapUiSegmentedButtonHoverBackground;

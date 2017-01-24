@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	};
 
 	//chain the prototypes
-	ElementMetadata.prototype = jQuery.sap.newObject(ManagedObjectMetadata.prototype);
+	ElementMetadata.prototype = Object.create(ManagedObjectMetadata.prototype);
 
 	/**
 	 * Calculates a new id based on a prefix.
@@ -118,7 +118,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 			if ( !oBaseRenderer ) {
 				oBaseRenderer = sap.ui.requireSync('sap/ui/core/Renderer');
 			}
-			var oRenderer = jQuery.sap.newObject(oBaseRenderer);
+			var oRenderer = Object.create(oBaseRenderer);
 			jQuery.extend(oRenderer, vRenderer);
 			jQuery.sap.setObject(this.getRendererName(), oRenderer);
 		}

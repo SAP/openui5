@@ -19,7 +19,7 @@ sap.ui.define([],
 				}
 
 				return {
-					changeType: "renamePanel",
+					changeType: "rename",
 					domRef: ".sapMPanelHdr"
 				};
 			},
@@ -41,7 +41,7 @@ sap.ui.define([],
 					this.setExpanded(true);
 				},
 				actions: {
-					move: "moveElements"
+					move: "moveControls"
 				}
 			}
 		},

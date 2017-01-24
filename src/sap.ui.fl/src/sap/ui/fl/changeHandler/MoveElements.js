@@ -97,76 +97,10 @@ sap.ui.define([
 		};
 
 		/**
-		 * Completes the change by adding change handler specific content
-		 *
-		 * @param {sap.ui.fl.Change} oChange change object to be completed
-		 * @param {object} mSpecificChangeInfo as an empty object since no additional attributes are required for this operation
-		 * @param {object} mPropertyBag - map of properties
-		 * @param {sap.ui.core.UiComponent} mPropertyBag.appComponent component in which the change should be applied
-		 * @public
-		 * @function
-		 * @name sap.ui.fl.changeHandler.MoveElements#completeChangeContent
+		 * @deprecated
 		 */
-		MoveElements.completeChangeContent = function(oChange, mSpecificChangeInfo, mPropertyBag) {
-			// build stable changeInfo
-			delete mSpecificChangeInfo.source.publicAggregation;
-			delete mSpecificChangeInfo.target.publicAggregation;
-
-			function checkCompleteChangeContentConditions() {
-				if (!mSpecificChangeInfo.movedElements) {
-					throw new Error("mSpecificChangeInfo.movedElements attribute required");
-				}
-				if (mSpecificChangeInfo.movedElements.length === 0) {
-					throw new Error("MovedElements array is empty");
-				}
-
-				mSpecificChangeInfo.movedElements.forEach(function (mElement) {
-					if (!mElement.id) {
-						throw new Error("MovedElements element has no id attribute");
-					}
-					if (typeof (mElement.sourceIndex) !== "number") {
-						throw new Error("SourceIndex attribute at MovedElements element is no number");
-					}
-					if (typeof (mElement.targetIndex) !== "number") {
-						throw new Error("TargetIndex attribute at MovedElements element is no number");
-					}
-				});
-			}
-
-			checkCompleteChangeContentConditions();
-
-			var oAppComponent = mPropertyBag.appComponent;
-
-			var mSpecificInfo = this.getSpecificChangeInfo(JsControlTreeModifier, mSpecificChangeInfo);
-			var mAdditionalSelectorInfo = {
-				aggregation: mSpecificInfo.source.aggregation,
-				type: mSpecificInfo.source.type
-			};
-			var mChangeData = oChange.getDefinition();
-			jQuery.extend(mChangeData.selector, mAdditionalSelectorInfo);
-
-			var mAdditionalTargetInfo = {
-				aggregation: mSpecificInfo.target.aggregation,
-				type: mSpecificInfo.target.type
-			};
-
-			mChangeData.changeType = MoveElements.CHANGE_TYPE;
-			mChangeData.content = {
-				movedElements : [],
-				target : {
-					selector :JsControlTreeModifier.getSelector(mSpecificInfo.target.id, oAppComponent, mAdditionalTargetInfo)
-				}
-			};
-
-			mSpecificInfo.movedElements.forEach(function(mElement) {
-				var oElement = mElement.element || JsControlTreeModifier.bySelector(mElement.id, oAppComponent);
-
-				mChangeData.content.movedElements.push({
-					selector: JsControlTreeModifier.getSelector(oElement, oAppComponent),
-					sourceIndex : mElement.sourceIndex,
-					targetIndex : mElement.targetIndex
-				});
-			});
+		MoveElements.completeChangeContent = function() {
+			throw new Error('Using deprecated change handler. Please consider of using \'MoveControls\' instead');
 		};
 
 		/**

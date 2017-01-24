@@ -122,37 +122,6 @@
 						}
 					}
 				}),
-				new sap.m.Button({
-					text:  "Fixed",
-					press: function() {
-						oTable.setVisibleRowCountMode("Fixed");
-					}
-				}),
-				new sap.m.Button({
-					text:  "Interactive",
-					press: function() {
-						oTable.setVisibleRowCountMode("Interactive");
-					}
-				}),
-				new sap.m.Button({
-					text:  "Auto",
-					press: function() {
-						oTable.setVisibleRowCountMode("Auto");
-					}
-				}),
-				new sap.m.Button({
-					text:  "Toggle Pixel-Based Scrolling",
-					press: function() {
-						oTable._bVariableRowHeightEnabled = !oTable._bVariableRowHeightEnabled;
-						oTable.invalidate();
-					}
-				}),
-				new sap.m.Button({
-					text:  "Toggle Large Data Scrolling",
-					press: function() {
-						oTable._bLargeDataScrolling = !oTable._bLargeDataScrolling;
-					}
-				}),
 				new sap.m.Label({
 					id:   "data-rows-label",
 					text: "Row Count"
@@ -308,7 +277,9 @@
 		oTable._bVariableRowHeightEnabled = true;
 		oTable.setVisibleRowCountMode("Auto");
 
-		TABLESETTINGS.init(oTable);
+		TABLESETTINGS.init(oTable, function(oButton) {
+			oTable.getToolbar().addContent(oButton);
+		});
 	</script>
 </head>
 

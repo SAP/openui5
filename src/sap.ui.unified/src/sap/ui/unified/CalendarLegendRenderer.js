@@ -35,41 +35,35 @@ sap.ui.define(['jquery.sap.global'],
 
 		// rendering standard days and colors
 		var iIdLength = oLeg.getId().length + 1;
-		for (i = 0; i < aStandardItems.length; i++) {
+		for (i = 0; i < aStandardItems.length; ++i) {
 			var sClass = "sapUiUnifiedLegend" + aStandardItems[i].getId().slice(iIdLength);
 			this.renderLegendItem(oRm, sClass, aStandardItems[i]);
 		}
+
 		// rendering special day and colors
 		if (aCustomItems && aCustomItems.length > 0) {
 			var oFreeTypes = jQuery.extend({}, sap.ui.unified.CalendarDayType);
 			delete oFreeTypes[sap.ui.unified.CalendarDayType.None];
-			var sType = "";
-			var iTypes = 0;
+			var sType;
+			var iTypes = Object.keys(oFreeTypes).length;
 
-			for (sType in oFreeTypes) {
-				iTypes++;
-			}
-
-			for (i = 0; i < aCustomItems.length; i++) {
+			// Remove types that are used
+			for (i = 0; i < aCustomItems.length; ++i) {
 				sType = aCustomItems[i].getType();
-				if (sType && sType != sap.ui.unified.CalendarDayType.None && oFreeTypes[sType]) {
+				if (oFreeTypes[sType]) {
 					delete oFreeTypes[sType];
 				}
 			}
 
-			var aFreeTypes = [];
-			for (sType in oFreeTypes) {
-				aFreeTypes.push(sType);
-			}
+			var aFreeTypes = Object.keys(oFreeTypes);
 
-			for (i = 0; i < aCustomItems.length; i++) {
+			for (i = 0; i < aCustomItems.length; ++i) {
 				sType = aCustomItems[i].getType();
-				if (!sType || sType == sap.ui.unified.CalendarDayType.None) {
+				if (!sType || sType === sap.ui.unified.CalendarDayType.None) {
 					if (aFreeTypes[0]) {
-						sType = aFreeTypes[0];
-						aFreeTypes.splice(0, 1);
+						sType = aFreeTypes.shift();
 					} else {
-						iTypes++;
+						++iTypes;
 						sType = "Type" + iTypes; // event type is not defined, maybe application styled it
 					}
 				}
@@ -91,6 +85,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		var sText = oItem.getText();
 		var sTooltip = oItem.getTooltip_AsString();
+		var sColor = oItem.getColor();
 
 		// new LegendItem
 		oRm.write("<div");
@@ -112,6 +107,10 @@ sap.ui.define(['jquery.sap.global'],
 		// draw the square color
 		oRm.write("<div");
 		oRm.addClass("sapUiUnifiedLegendSquareColor");
+		if (sColor) {
+			oRm.addStyle("background-color", sColor);
+            oRm.writeStyles();
+        }
 		oRm.writeClasses();
 		oRm.write("></div></div>"); // close color, background
 		// write description

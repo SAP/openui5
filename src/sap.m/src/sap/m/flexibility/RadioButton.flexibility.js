@@ -9,9 +9,8 @@ sap.ui.define([
 
 	return {
 		"hideControl": "default",
-		"renameRadioButton": BaseRename.createRenameChangeHandler({
+		"rename": BaseRename.createRenameChangeHandler({
 			propertyName: "text",
-			changePropertyName: "radioButtonText",
 			translationTextType: "XBUT"
 		}),
 		"unhideControl": "default"

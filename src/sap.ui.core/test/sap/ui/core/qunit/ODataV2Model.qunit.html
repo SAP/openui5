@@ -3475,6 +3475,101 @@
 		});
 	});
 
+	asyncTest("async test request events - auto refresh list binding for nav property create", function(){
+
+		removeSharedServicedata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: false,
+			useBatch: true
+		});
+		var oInfo = {}, oRequest, oBinding, fnHandler, oCount = 0;
+		fnHandler = attachRequestEvents(oModel, oInfo);
+		oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None"});
+		oBinding.attachChange(function(){});
+		oBinding.attachRefresh(function() {
+			this.getContexts();
+		});
+		oBinding.initialize();
+		oModel.attachBatchRequestCompleted(function() {
+			oCount++;
+			if (oCount == 1) { // Data loaded initially
+				setTimeout(function() {
+					equal(oInfo.requestSent, 1, "One requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 1, "One requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					detachRequestEvents(oModel, fnHandler);
+					oInfo = {};
+					fnHandler = attachRequestEvents(oModel, oInfo);
+					oRequest = oModel.create("/Products(1)/Category", {});
+				}, 0);
+			} else if (oCount == 2) { // Data updated and refreshed
+				setTimeout(function() {
+					equal(oInfo.requestSent, 2, "Two requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 2, "Two requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					start();
+				}, 0);
+			} else {
+				ok(false, "More than two batch requests sent!");
+			}
+		});
+	});
+
+	asyncTest("async test request events - auto refresh list binding for nav property update", function(){
+
+		removeSharedServicedata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: false,
+			useBatch: true
+		});
+		var oInfo = {}, oRequest, oBinding, fnHandler, oCount = 0;
+		fnHandler = attachRequestEvents(oModel, oInfo);
+		oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None"});
+		oBinding.attachChange(function(){});
+		oBinding.attachRefresh(function() {
+			this.getContexts();
+		});
+		oBinding.initialize();
+		oModel.read("/Products(3)", {urlParameters: {$expand: "Category"}});
+		oModel.attachBatchRequestCompleted(function() {
+			oCount++;
+			if (oCount == 1) { // Data loaded initially
+				setTimeout(function() {
+					equal(oInfo.requestSent, 2, "Two requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 2, "Two requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					detachRequestEvents(oModel, fnHandler);
+					oInfo = {};
+					fnHandler = attachRequestEvents(oModel, oInfo);
+					oRequest = oModel.update("/Products(3)/Category", {});
+				}, 0);
+			} else if (oCount == 2) { // Data updated and refreshed
+				setTimeout(function() {
+					equal(oInfo.requestSent, 2, "Two requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 2, "Two requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					start();
+				}, 0);
+			} else {
+				ok(false, "More than two batch requests sent!");
+			}
+		});
+	});
+
 	asyncTest("async test request events - auto refresh list binding also when deleting", function(){
 
 		removeSharedServicedata(sURI);

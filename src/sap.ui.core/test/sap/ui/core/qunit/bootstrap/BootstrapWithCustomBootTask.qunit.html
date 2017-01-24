@@ -38,7 +38,13 @@
 							testresults.bApplyThemeFails = true;
 						}
 					}
-					callback();
+
+					sap.ui.require([
+						"sap/ui/core/IconPool"
+					], function() {
+						callback();
+					});
+
 				}
 			};
 		</script>
@@ -68,6 +74,8 @@
 			assert.ok(testresults.$LinksBefore && testresults.$LinksBefore.size() == 0, "there should be no link tags for theme styles when the hook is called");
 			assert.ok(testresults.$LinksAfter && testresults.$LinksBefore.size() == 0, "there should be no link tags for theme styles after the hook has been called");
 			assert.ok(jQuery('head > link[id^="sap-ui-theme-"]').size() > 0, "there should be no link tags for theme styles after the hook has been called");
+			assert.ok(sap.ui.require("sap/ui/core/IconPool"), "IconPool module should have been loaded during bootTask");
+
 		});
 		</script>
 	</head>

@@ -12,7 +12,7 @@ sap.ui.define([],
 			content: {
 				domRef: ":sap-domref",
 				actions: {
-					move: "moveElements"
+					move: "moveControls"
 				}
 			}
 		}

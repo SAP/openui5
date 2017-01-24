@@ -414,8 +414,8 @@
 				"sap.m.sample.GenericTileAsKPITile",
 				"sap.m.sample.GenericTileAsFeedTile",
 				"sap.m.sample.SlideTile",
-				"sap.m.sample.GenericTileStates",
-				"sap.m.sample.GenericTileLineMode"
+				"sap.m.sample.GenericTileLineMode",
+				"sap.m.sample.GenericTileStates"
 			]
 		},
 		{
@@ -2534,11 +2534,11 @@
 		{
 		  "id": "sap.m.sample.SlideTile",
 		  "name": "Slide Tile",
-		  "description": "GenericTile controls with the 2x1 frame type are displayed as sliding tiles."
+		  "description": "Shows Generic Tile with the 2x1 frame type displayed as sliding tiles."
 		},
 		{
 		  "id": "sap.m.sample.GenericTileStates",
-		  "name": "Generic Tile Status",
+		  "name": "Tile Statuses",
 		  "description": "Shows the GenericTile while it is loading, if loading fails, and in disabled status."
 		},
 		{
@@ -2563,8 +2563,8 @@
 		},
 		{
 		  "id": "sap.m.sample.GenericTileLineMode",
-		  "name": "Generic Tile in Line Mode",
-		  "description": "Shows how Generic Tile is displayed in the Line Mode."
+		  "name": "Tile Modes and Scopes",
+		  "description": "Shows Generic Tile regular and in line mode, and you can switch between the display scope and actions scope for Generic Tiles on a web page."
 		},
 		{
 		  "id": "sap.m.sample.TileContent",

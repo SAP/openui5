@@ -1910,10 +1910,10 @@ sap.ui.define([
 
 
 	/**
-	 * Returns the key part from the given entry URI, model context or data object or
+	 * Returns the key part from the given the canonical entry URI, model context or data object or
 	 * <code>undefined</code> when the <code>vValue</code> can't be interpreted.
 	 *
-	 * @param {string|object|sap.ui.model.Context} vValue A string representation of an URI, the context or entry object
+	 * @param {string|object|sap.ui.model.Context} vValue The canonical entry URI, the context or entry object
 	 * @returns {string} Key of the entry
 	 * @private
 	 */
@@ -1925,17 +1925,16 @@ sap.ui.define([
 			sURI = vValue.__metadata.uri;
 			sKey = sURI.substr(sURI.lastIndexOf("/") + 1);
 		} else if (typeof vValue === 'string') {
-			vValue = vValue.split("?")[0];
 			sKey = vValue.substr(vValue.lastIndexOf("/") + 1);
 		}
 		return sKey && this._normalizeKey(sKey);
 	};
 
 	/**
-	 * Returns the key part for the given entry URI, model context or data object or
+	 * Returns the key part for the given the canonical entry URI, model context or data object or
 	 * <code>undefined</code> when the <code>vValue</code> can't be interpreted.
 	 *
-	 * @param {string|object|sap.ui.model.Context} vValue A string representation of an URI, the context or entry object
+	 * @param {string|object|sap.ui.model.Context} vValue The canonical entry URI, the context or entry object
 	 * @returns {string} Key of the entry or <code>undefined</code>
 	 * @public
 	 */
@@ -2565,11 +2564,10 @@ sap.ui.define([
 	 * Submit of a single request.
 	 *
 	 * @param {object} oRequest The request object
-	 * @param {boolean} [bRefreshAfterChange] Enable/Disable updates of all bindings if the given request is a change request
 	 * @returns {object} Handle for the request, providing at least an <code>abort</code> method
 	 * @private
 	 */
-	ODataModel.prototype._submitSingleRequest = function(oRequest, bRefreshAfterChange) {
+	ODataModel.prototype._submitSingleRequest = function(oRequest) {
 		var that = this,
 			oRequestHandle,
 			mChangeEntities = {},
@@ -2597,7 +2595,7 @@ sap.ui.define([
 				}
 				if (oRequest.request.requestUri.indexOf("$count") === -1) {
 					that.checkUpdate(false, false, mGetEntities);
-					if (bRefreshAfterChange){
+					if (oRequest.bRefreshAfterChange){
 						that._refresh(false, undefined, mChangeEntities, mEntityTypes);
 					}
 				}
@@ -2836,6 +2834,10 @@ sap.ui.define([
 			var oGroupEntry = oRequestGroup.map[sRequestKey];
 			var oStoredRequest = oGroupEntry.request;
 
+			if (oGroupEntry.bRefreshAfterChange === undefined) { // If not already defined, overwrite with new flag
+				oGroupEntry.bRefreshAfterChange = bRefreshAfterChange;
+			}
+
 			if (!oRequest.key) {
 				oGroupEntry.parts.push({
 					request:	oRequest,
@@ -2910,14 +2912,23 @@ sap.ui.define([
 				for (var i = 0; i < aChangeSet.length; i++) {
 					if (aChangeSet[i].bRefreshAfterChange) {
 						var oRequest = aChangeSet[i].request,
-							sKey = that._getKey(oRequest.requestUri);
+							sPath = "/" + oRequest.requestUri.split("?")[0],
+							oObject, sKey;
 						if (oRequest.method === "POST" || oRequest.method === "DELETE") {
-							var oEntityMetadata = that.oMetadata._getEntityTypeByPath("/" + sKey);
+							var oEntityMetadata = that.oMetadata._getEntityTypeByPath(sPath);
 							if (oEntityMetadata) {
 								mEntityTypes[oEntityMetadata.entityType] = true;
 							}
 						} else {
-							mChangedEntities[sKey] = true;
+							oObject = that._getObject(sPath);
+							if (oObject) {
+								sKey = that._getKey(oObject);
+							} else if (sPath.lastIndexOf("/") === 0) {
+								sKey = that._getKey(sPath);
+							}
+							if (sKey) {
+								mChangedEntities[sKey] = true;
+							}
 						}
 					}
 				}
@@ -3040,7 +3051,7 @@ sap.ui.define([
 								that.increaseLaundering(sPath, aChangeSet[i].request.data);
 								checkAbort(aChangeSet[i], oWrappedSingleRequestHandle);
 								if (aChangeSet[i].parts.length > 0) {
-									oWrappedSingleRequestHandle.oRequestHandle = that._submitSingleRequest(aChangeSet[i], aChangeSet[i].bRefreshAfterChange);
+									oWrappedSingleRequestHandle.oRequestHandle = that._submitSingleRequest(aChangeSet[i]);
 									aRequestHandles.push(oWrappedSingleRequestHandle.oRequestHandle);
 								}
 							}
@@ -3052,7 +3063,8 @@ sap.ui.define([
 							var oWrappedSingleRequestHandle = wrapRequestHandle();
 							checkAbort(aRequests[i], oWrappedSingleRequestHandle);
 							if (aRequests[i].parts.length > 0) {
-								oWrappedSingleRequestHandle.oRequestHandle = that._submitSingleRequest(aRequests[i]);
+								oWrappedSingleRequestHandle.oRequestHandle =
+									that._submitSingleRequest(aRequests[i]);
 								aRequestHandles.push(oWrappedSingleRequestHandle.oRequestHandle);
 							}
 						}
@@ -3705,6 +3717,8 @@ sap.ui.define([
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
 	 * @param {string} [mParameters.changeSetId] ID of the <code>ChangeSet</code> that this request should belong to
+	 * @param {string} [mParameters.refreshAfterChange] Defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
+	           If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
 	 *
 	 * @return {object} An object which has an <code>abort</code> function to abort the current request.
 	 *
@@ -3713,8 +3727,7 @@ sap.ui.define([
 	ODataModel.prototype.update = function(sPath, oData, mParameters) {
 		var fnSuccess, fnError, oRequest, sUrl, oContext, sETag,
 			aUrlParams, sGroupId, sChangeSetId,
-			mUrlParams, mHeaders, sMethod, mRequests,
-			bRefreshAfterChange = this.bRefreshAfterChange,
+			mUrlParams, mHeaders, sMethod, mRequests, bRefreshAfterChange,
 			that = this;
 
 		if (mParameters) {
@@ -3726,11 +3739,14 @@ sap.ui.define([
 			sETag     = mParameters.eTag;
 			mHeaders  = mParameters.headers;
 			mUrlParams = mParameters.urlParameters;
+			bRefreshAfterChange = mParameters.refreshAfterChange;
 			// ensure merge parameter backwards compatibility
 			if (mParameters.merge !== undefined) {
 				sMethod =  mParameters.merge ? "MERGE" : "PUT";
 			}
 		}
+
+		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
 
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 		mHeaders = this._getHeaders(mHeaders);
@@ -3774,6 +3790,8 @@ sap.ui.define([
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
 	 * @param {string} [mParameters.changeSetId] ID of the <code>ChangeSet</code> that this request should belong to
+	 * @param {string} [mParameters.refreshAfterChange] Defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
+	           If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
 	 * @return {object} An object which has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
@@ -3781,8 +3799,7 @@ sap.ui.define([
 	ODataModel.prototype.create = function(sPath, oData, mParameters) {
 		var oRequest, sUrl, oEntityMetadata,
 		oContext, fnSuccess, fnError, mUrlParams, mRequests,
-		mHeaders, aUrlParams, sEtag, sGroupId, sMethod, sChangeSetId,
-		bRefreshAfterChange = this.bRefreshAfterChange,
+		mHeaders, aUrlParams, sEtag, sGroupId, sMethod, sChangeSetId, bRefreshAfterChange,
 		that = this;
 
 		// The object parameter syntax has been used.
@@ -3795,7 +3812,9 @@ sap.ui.define([
 			sChangeSetId	= mParameters.changeSetId;
 			sEtag		= mParameters.eTag;
 			mHeaders	= mParameters.headers;
+			bRefreshAfterChange = mParameters.refreshAfterChange;
 		}
+		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
 
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 		mHeaders = this._getHeaders(mHeaders);
@@ -3839,6 +3858,8 @@ sap.ui.define([
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
 	 * @param {string} [mParameters.changeSetId] ID of the <code>ChangeSet</code> that this request should belong to
+	 * @param {string} [mParameters.refreshAfterChange] Defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
+	           If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
 	 *
 	 * @return {object} An object which has an <code>abort</code> function to abort the current request.
 	 *
@@ -3846,9 +3867,8 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.remove = function(sPath, mParameters) {
 		var oContext, sEntry, fnSuccess, fnError, oRequest, sUrl, sGroupId,
-		sChangeSetId, sETag,
+		sChangeSetId, sETag, bRefreshAfterChange,
 		mUrlParams, mHeaders, aUrlParams, sMethod, mRequests,
-		bRefreshAfterChange = this.bRefreshAfterChange,
 		that = this;
 
 		if (mParameters) {
@@ -3860,7 +3880,9 @@ sap.ui.define([
 			sETag     = mParameters.eTag;
 			mHeaders  = mParameters.headers;
 			mUrlParams = mParameters.urlParameters;
+			bRefreshAfterChange = mParameters.refreshAfterChange;
 		}
+		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
 
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 		mHeaders = this._getHeaders(mHeaders);
@@ -3917,6 +3939,8 @@ sap.ui.define([
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
 	 * @param {string} [mParameters.eTag] If the function import changes an entity, the ETag for this entity could be passed with this parameter
 	 * @param {string} [mParameters.changeSetId] ID of the <code>ChangeSet</code> that this request should belong to
+	 * @param {string} [mParameters.refreshAfterChange] Defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
+	           If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
 	 *
 	 * @return {object} An object which has a <code>contextCreated</code> function that returns a <code>Promise</code>.
 	 *         This resolves with the created {@link sap.ui.model.Context}.
@@ -3944,7 +3968,7 @@ sap.ui.define([
 			fnReject,
 			pContextCreated,
 			oRequestHandle,
-			bRefreshAfterChange = this.bRefreshAfterChange,
+			bRefreshAfterChange,
 			oData = {};
 
 		if (mParameters) {
@@ -3956,7 +3980,9 @@ sap.ui.define([
 			fnSuccess		= mParameters.success;
 			fnError			= mParameters.error;
 			mHeaders		= mParameters.headers;
+			bRefreshAfterChange = mParameters.refreshAfterChange;
 		}
+		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
 
 		if (!jQuery.sap.startsWith(sFunctionName, "/")) {
 			jQuery.sap.log.fatal(this + " callFunction: path '" + sFunctionName + "' must be absolute!");
@@ -4400,6 +4426,22 @@ sap.ui.define([
 				}
 			});
 
+			// Set undefined refreshAfterChange flags
+			// If undefined => overwrite with current global refreshAfterChange state
+			var sRequestGroupId, sChangeSetId, oRequestGroup, aChanges, oChange, i;
+			for (sRequestGroupId in that.mDeferredRequests) {
+				oRequestGroup = that.mDeferredRequests[sRequestGroupId];
+				for (sChangeSetId in oRequestGroup.changes) {
+					aChanges = oRequestGroup.changes[sChangeSetId];
+					for (i = aChanges.length - 1; i >= 0; i--) {
+						oChange = aChanges[i];
+						if (oChange.bRefreshAfterChange === undefined) {
+							oChange.bRefreshAfterChange = bRefreshAfterChange;
+						}
+					}
+				}
+			}
+
 			vRequestHandleInternal = that._processRequestQueue(that.mDeferredRequests, sGroupId, fnSuccess, fnError);
 			if (bAborted) {
 				oRequestHandle.abort();
@@ -4542,7 +4584,7 @@ sap.ui.define([
 
 		var oOriginalValue, sPropertyPath, mRequests, oRequest, oOriginalEntry, oEntry,
 			sResolvedPath, aParts,	sKey, oGroupInfo, oRequestHandle, oEntityMetadata,
-			mChangedEntities = {}, oEntityInfo = {}, mParams, oChangeObject,
+			mChangedEntities = {}, oEntityInfo = {}, mParams, oChangeObject, bRefreshAfterChange,
 			bFunction = false, that = this, bCreated;
 
 		function updateChangedEntities(oOriginalObject, oChangedObject) {
@@ -4631,8 +4673,8 @@ sap.ui.define([
 		//get params for created entries: could contain success/error handler
 		mParams = oChangeObject.__metadata && oChangeObject.__metadata.created ? oChangeObject.__metadata.created : {};
 
+		bRefreshAfterChange = this._getRefreshAfterChange(undefined, oGroupInfo.groupId);
 
-		var bRefreshAfterChange = this.bRefreshAfterChange;
 		this.oMetadata.loaded().then(function() {
 			oRequestHandle = {
 				abort: function() {
@@ -4874,17 +4916,18 @@ sap.ui.define([
 	 * @param {function} [mParameters.error] The error callback function
 	 * @param {map} [mParameters.headers] A map of headers
 	 * @param {map} [mParameters.urlParameters] A map of URL parameters
+	 * @param {string} [mParameters.refreshAfterChange] Defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
+	           If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
 	 *
 	 * @return {sap.ui.model.Context} A Context object that points to the new created entry.
 	 * @public
 	 */
 	ODataModel.prototype.createEntry = function(sPath, mParameters) {
 		var fnSuccess, fnError, oRequest, sUrl, sETag, oContext,
-			sKey, aUrlParams, sGroupId, sChangeSetId,
+			sKey, aUrlParams, sGroupId, sChangeSetId, bRefreshAfterChange,
 			mUrlParams, mHeaders, mRequests, vProperties, oEntity = {},
 			fnCreated,
 			sMethod = "POST",
-			bRefreshAfterChange = this.bRefreshAfterChange,
 			that = this;
 
 		if (mParameters) {
@@ -4898,7 +4941,9 @@ sap.ui.define([
 			sETag     = mParameters.eTag;
 			mHeaders  = mParameters.headers;
 			mUrlParams = mParameters.urlParameters;
+			bRefreshAfterChange = mParameters.refreshAfterChange;
 		}
+		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
 
 		sGroupId = sGroupId ? sGroupId : this.sDefaultChangeGroup;
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
@@ -5067,7 +5112,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Enable/Disable automatic updates of all bindings after change operations.
+	 * Defines whether all bindings are updated after a change operation.
+	 *
+	 * This flag can be overruled on request level by providing the <code>refreshAfterChange</code>
+	 * parameter to the corresponding function (for example {@link #update}).
+	 *
 	 * @param {boolean} bRefreshAfterChange Whether to automatically refresh after changes
 	 * @public
 	 * @since 1.16.3
@@ -5580,6 +5629,21 @@ sap.ui.define([
 		if (this.mLaunderingState[sPath] === 0) {
 			delete this.mLaunderingState[sPath];
 		}
+	};
+
+	/**
+	 * Returns bRefreshAfterChange value for a change operation based on refreshAfterChange parameter and global bRefreshAfterChange flag state
+	 *
+	 * @param {boolean} bRefreshAfterChange Value of the <code>refreshAfterChange</code> parameter of any change operation (for example {@link #update})
+	 * @param {string} sGroupId ID of the request group
+	 * @private
+	*/
+	ODataModel.prototype._getRefreshAfterChange = function(bRefreshAfterChange, sGroupId) {
+		// If no bRefreshAfterChange parameter is given given and the request group is not deferred, use the global flag
+		if (bRefreshAfterChange === undefined && !(sGroupId in this.mDeferredGroups)) {
+			return this.bRefreshAfterChange;
+		}
+		return bRefreshAfterChange;
 	};
 
 	return ODataModel;

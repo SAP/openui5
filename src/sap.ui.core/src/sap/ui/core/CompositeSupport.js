@@ -206,7 +206,7 @@ sap.ui.define(['jquery.sap.global', './Control', 'sap/ui/model/control/ControlMo
 					fnBaseClass.apply(this, arguments);
 				};
 				// properly chain the prototypes
-				fnCtor.prototype = jQuery.sap.newObject(fnBaseClass.prototype);
+				fnCtor.prototype = Object.create(fnBaseClass.prototype);
 				_extend(fnCtor.prototype, oMethods, /* bDefaults */ true);
 
 				fnCtor.customize = function(oMethods) {

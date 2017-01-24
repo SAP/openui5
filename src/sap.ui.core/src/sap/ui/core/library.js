@@ -61,7 +61,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"sap.ui.core.IShrinkable",
 			"sap.ui.core.Label",
 			"sap.ui.core.PopupInterface",
-			"sap.ui.core.Toolbar"
+			"sap.ui.core.Toolbar",
+			"sap.ui.core.IContextMenu"
 		],
 		controls: [
 			"sap.ui.core.ComponentContainer",
@@ -1393,6 +1394,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
+	/**
+	 * Marker interface for controls that can serve as a context menu.
+	 * Implementation of this interface should implement <li><code>openAsContextMenu</code></li> method.
+	 *
+	 * @name sap.ui.core.IContextMenu
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 * Opens the control by given opener ref.
+	 * @param {string} oEvent oncontextmenu event
+	 * @param {sap.ui.core.Element|DOMRef} oOpenerRef The element which will get the focus back again after the menu was closed.
+	 *
+	 * @function
+	 * @name sap.ui.core.IContextMenu.openAsContextMenu
+	 */
 
 	/**
 	 * @classdesc A string type that represents an RFC 3986 conformant URI.
