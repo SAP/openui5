@@ -186,6 +186,12 @@
 .sapMUC {
 	position: relative;
 
+	.sapMUCDragDropOverlay:not(.sapMUCDragDropOverlayHide) ~ .sapMList {
+		.sapMUCNoDataPage {
+			visibility: hidden;
+		}
+	}
+
 	.sapMUCDragDropOverlay {
 		position: absolute;
 		top: 3rem;
@@ -193,6 +199,7 @@
 		left: 0rem;
 		bottom: 0rem;
 		background-color: fade(@sapUiDragAndDropBackground, 80);
+		z-index: 1;
 
 		&.sapMUCDragDropOverlayHide {
 			display: none;

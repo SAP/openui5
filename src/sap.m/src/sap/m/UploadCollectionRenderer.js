@@ -25,8 +25,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/ListRenderer'
 		oRm.addClass("sapMUC");
 		oRm.writeClasses();
 		oRm.write(">");
-		ListRenderer.render.call(this, oRm, oControl._oList);
 		this.renderDragDropOverlay(oRm, oControl);
+		ListRenderer.render.call(this, oRm, oControl._oList);
 		oRm.write("</div>");
 	};
 
