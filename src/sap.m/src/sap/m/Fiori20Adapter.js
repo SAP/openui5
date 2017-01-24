@@ -452,7 +452,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			return [oControl.getComponentInstance()];
 		}
 
-		if (isInstanceOf(oControl, "sap/ui/core/Component")) {
+		if (isInstanceOf(oControl, "sap/ui/core/UIComponent")) {
 			return [oControl.getAggregation("rootControl")];
 		}
 
