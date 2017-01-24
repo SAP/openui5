@@ -4,8 +4,8 @@
 
 /* EXPERIMENTAL */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Core'],
-	function(jQuery, Device, Core) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Core', "sap/ui/core/format/DateFormat"],
+	function(jQuery, Device, Core, DateFormat) {
 	"use strict";
 
 
@@ -246,7 +246,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Core'],
 	PerformanceRecorder.getAllMeasurementsAsHAR = function() {
 		var origMeasurements = jQuery.sap.measure.getAllMeasurements();
 		var aMeasurements = [];
-		var DateFormat = sap.ui.requireSync("sap/ui/core/format/DateFormat");
 		var oFormat = DateFormat.getDateTimeInstance({
 			pattern: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 		});

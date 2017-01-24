@@ -3,13 +3,9 @@
  */
 
 // Provides class sap.ui.core.support.plugins.Trace (Trace support plugin)
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
-	function(jQuery, Plugin) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', "sap/ui/core/format/DateFormat"],
+	function(jQuery, Plugin, DateFormat) {
 	"use strict";
-
-
-
-
 
 		/**
 		 * Creates an instance of sap.ui.core.support.plugins.Trace.
@@ -31,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				if (this.runsAsToolPlugin()) {
 					this._aLogEntries = [];
 					this._iLogLevel = jQuery.sap.log.Level.ALL;
-					this._oDateFormat = sap.ui.requireSync('sap/ui/core/format/DateFormat').getDateTimeInstance();
+					this._oDateFormat = DateFormat.getDateTimeInstance();
 				} else {
 					var that = this;
 					this._oldLogLevel = jQuery.sap.log.getLevel();
