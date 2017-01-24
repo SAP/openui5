@@ -2,40 +2,39 @@
  * ${copyright}
  */
 
-/**
- * FlexibleColumnLayout semantic helper
- */
-
 sap.ui.define([
 	"jquery.sap.global",
 	"./library",
 	"./LayoutType",
-	"sap/ui/base/Metadata",
-	"sap/f/FlexibleColumnLayout"
-], function (jQuery, library, LT, Metadata, FlexibleColumnLayout) {
+	"./FlexibleColumnLayout"
+], function (jQuery, library, LT, FlexibleColumnLayout) {
 	"use strict";
 
-	var FlexibleColumnLayoutSemanticHelper = Metadata.createClass("sap.f.FlexibleColumnLayoutSemanticHelper", {
+	/**
+	 * Constructor for a sap.f.FlexibleColumnLayoutSemanticHelper.
+	 *
+	 * @class
+	 * Helps achieve the recommended UX behavior of a <code>sap.f.FlexibleColumnLayout</code>-based app.
+	 * Suggests what <code>layout</code> to set to the <code>sap.f.FlexibleColumnLayout</code> control on user interaction, based on the current and desired application state.
+	 *
+	 * @version ${version}
+	 * @param {sap.f.FlexibleColumnLayout} oFlexibleColumnLayout The <code>sap.f.FlexibleColumnLayout</code> object whose state will be manipulated
+	 * @param {object} oSettings Determines the rules that will be used by the helper
+	 * @param {sap.f.LayoutType} oSettings.defaultThreeColumnLayoutType Determines what three-column layout type will be suggested by default: <code>sap.f.LayoutType.ThreeColumnsMidExpanded</code> (default) or <code>sap.f.LayoutType.ThreeColumnsEndExpanded</code>
+	 * @public
+	 * @since 1.46.0
+	 * @alias sap.f.FlexibleColumnLayoutSemanticHelper
+	 */
+	var FlexibleColumnLayoutSemanticHelper = function (oFlexibleColumnLayout, oSettings) {
+		this._oFCL = oFlexibleColumnLayout;
+		this._mode = "Normal";
 
-		/**
-		 *
-		 * @param oFlexibleColumnLayout - an instance to the FlexibleColumnLayout object whose state will be queried
-		 * @param oSettings - settings, describing the exact UI rules to be used by the helper
-		 *  - oSettings.mode - Normal (3 columns max, default) or MasterDetail (2 columns max)
-		 *  - oSettings.defaultThreeColumnLayoutType - sap.f.LayoutType.ThreeColumnsMidExpanded (default) or sap.f.LayoutType.ThreeColumnsEndExpanded
-		 * @public
-		 */
-		constructor: function (oFlexibleColumnLayout, oSettings) {
-			this._oFCL = oFlexibleColumnLayout;
-			this._mode = ["Normal", "MasterDetail"].indexOf(oSettings.mode) !== -1 ? oSettings.mode : "Normal";
-
-			// Currently on the the 3-column type is configurable
-			this._defaultLayoutType = LT.OneColumn;
-			this._defaultTwoColumnLayoutType = LT.TwoColumnsBeginExpanded;
-			this._defaultThreeColumnLayoutType = [LT.ThreeColumnsMidExpanded, LT.ThreeColumnsEndExpanded].indexOf(oSettings.defaultThreeColumnLayoutType) !== -1 ?
-				oSettings.defaultThreeColumnLayoutType : LT.ThreeColumnsMidExpanded;
-		}
-	});
+		// Currently on the the 3-column type is configurable
+		this._defaultLayoutType = LT.OneColumn;
+		this._defaultTwoColumnLayoutType = LT.TwoColumnsBeginExpanded;
+		this._defaultThreeColumnLayoutType = [LT.ThreeColumnsMidExpanded, LT.ThreeColumnsEndExpanded].indexOf(oSettings.defaultThreeColumnLayoutType) !== -1 ?
+			oSettings.defaultThreeColumnLayoutType : LT.ThreeColumnsMidExpanded;
+	};
 
 	/**
 	 * Instances of the class per flexible column layout object
@@ -45,10 +44,13 @@ sap.ui.define([
 	FlexibleColumnLayoutSemanticHelper._oInstances = {};
 
 	/**
-	 * Returns (and stores for future calls) an instance of the sap.f.FlexibleColumnLayoutSemanticHelper for a given instance of sap.f.FlexibleColumnLayout.
-	 * @param oFlexibleColumnLayout
+	 * Returns an instance of the <code>sap.f.FlexibleColumnLayoutSemanticHelper</code> class for a given <code>sap.f.FlexibleColumnLayout</code> object.
+	 * @param {sap.f.FlexibleColumnLayout} oFlexibleColumnLayout The <code>sap.f.FlexibleColumnLayout</code> object got get a semantic helper instance for
+	 * @param {object} [oSettings] An optional settings object to be used when creating the instance.
+	 *   <br/><b>Note:</b> will be considered only for the first <code>getInstanceFor</code> call for the given <code>sap.f.FlexibleColumnLayout</code> object.
 	 * @public
-	 * @returns {*}
+	 * @static
+	 * @returns {sap.f.FlexibleColumnLayoutSemanticHelper}
 	 */
 	FlexibleColumnLayoutSemanticHelper.getInstanceFor = function (oFlexibleColumnLayout, oSettings) {
 
@@ -64,7 +66,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns information about the current state of the control
+	 * Returns an object, describing the current state of the control.
+	 * <br/><ul>The returned object has the following structure:
+	 * 	<li>layout - the value of the <code>layout</code> property</li>
+	 * 	<li>maxColumnsCount - the maximum number of columns that can be displayed at once based on the control width. See {@link sap.f.FlexibleColumnLayout#getMaxColumnsCount}</li>
+	 * 	<li>columnsSizes -  an object with fields <code>beginColumn, midColumn, endColumn</code>, representing the relative percentage sizes of the three columns as integers</li>
+	 * 	<li>columnsVisibility -  an object with fields <code>beginColumn, midColumn, endColumn</code>, representing the visibility of the three columns</li>
+	 * 	<li>isFullScreen - <code>true</code> if only one column is visible at the moment, <code>false</code> otherwise
+	 * 	<br/><b>Note:</b> This may be due to small screen size (phone) or due to a layout, for which a single column takes up the whole width</li>
+	 * 	<li>isLogicallyFullScreen - <code>true</code> if the current <code>layout</code> is one of the following: <code>sap.f.LayoutType.OneColumn, sap.f.LayoutType.MidColumnFullScreen, sap.f.LayoutType.EndColumnFullScreen</code>, <code>false</code> otherwise
+	 * 	<br/><b>Note:</b> While <code>isFullScreen</code> can be <code>true</code> for any layout, due to small screen size, <code>isLogicallyFullScreen</code> will only be <code>true</code> for the layout values, listed above.</li>
+	 * 	<li>actionButtonsInfo - an object with fields <code>midColumn, endColumn</code>, each containing an object, telling whether action buttons should be shown in the <code>mid</code> and <code>end</code> columns, and to what value of the <code>layout</code> property clicking these buttons should lead.
+	 * 	<br/>Each of these objects has the following fields: <code>closeColumn, fullScreen, exitFullScreen</code>. If <code>null</code>, then the respective action button should not be shown, otherwise provides the value of <code>layout</code> property that should be set when the action button is clicked.</li></ul>
 	 * @public
 	 * @returns {{layout: string, maxColumnsCount: number, columnsSizes: {beginColumn, midColumn, endColumn}, columnsVisibility: {beginColumn, midColumn, endColumn}, isFullScreen, isLogicallyFullScreen, actionButtonsInfo: {midColumn, endColumn}}}
 	 */
@@ -74,8 +87,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns information about the state that the control will have after navigating to a different logical level
-	 * @param iLevel - the logical level that should be displayed. 1 means master-detail, 2 - master-detail-detail, 3 and above - fullscreen pages that follow
+	 * Returns an object, describing the state that the control will have after navigating to a different logical level.
+	 * <br/>About the format of return value, see {@link sap.f.FlexibleColumnLayoutSemanticHelper#getCurrentUIState}
+	 * @param iLevel - the logical level that should be displayed. 0 means master only, 1 - master-detail, 2 - master-detail-detail, 3 and above - subsequent pages
 	 * @public
 	 * @returns {{layout: string, maxColumnsCount: number, columnsSizes: {beginColumn, midColumn, endColumn}, columnsVisibility: {beginColumn, midColumn, endColumn}, isFullScreen, isLogicallyFullScreen, actionButtonsInfo: {midColumn, endColumn}}}
 	 */
@@ -259,6 +273,10 @@ sap.ui.define([
 
 	/**
 	 * Returns the default layout types for the different numbers of columns
+	 * <br/><ul>The returned object has the following fields:
+	 * <li>defaultLayoutType - the default layout of the control</li>
+	 * <li>defaultTwoColumnLayoutType - the layout that will be suggested when 2 columns have to be shown side by side</li>
+	 * <li>defaultThreeColumnLayoutType - the layout that will be suggested when 3 columns have to be shown side by side</li></ul>
 	 * @public
 	 * @returns {{defaultLayoutType: string, defaultTwoColumnLayoutType: string, defaultThreeColumnLayoutType: string}}
 	 */
@@ -272,4 +290,4 @@ sap.ui.define([
 
 	return FlexibleColumnLayoutSemanticHelper;
 
-}, /* bExport= */ false);
+}, /* bExport= */ true);
