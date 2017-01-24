@@ -1,73 +1,17 @@
-/* ============================================== */
-/* CSS for control sap.tnt/NavigationList.control */
-/* ============================================== */
-
-.sapTntNavLIGroup {
-	background-color: @sapHCStandardBG;
-	border-bottom: 1px solid @sapHCStandardFG;
-	color: @sapHCStandardFG;
-
-	& > .sapUiIcon {
-		color: @sapHCStandardFG;
-	}
-}
-
-.sapTntNavLIGroup:not(.sapTntNavLIItemDisabled):hover {
-	background-color: @sapHCHighlightBG;
-	border-bottom: 1px solid @sapHCStandardFG;
-	color: @sapHCStandardFG;
-
-	& > .sapUiIcon {
-		color: @sapHCStandardFG;
-	}
-}
-
-.sapTntNavLIItemSelected .sapTntNavLIGroup {
-	background-color: @sapHCHighlightAltBG;
-	border-bottom: 1px solid @sapHCStandardFG;
-	color: @sapHCStandardFG;
-
-	& > .sapUiIcon {
-		color: @sapHCStandardFG;
-	}
-}
-
-.sapTntNavLIGroupItem {
-	background-color: @sapHCReducedBG;
-	border-bottom: 1px solid @sapHCStandardFG;
-	color: @sapHCStandardFG;
-}
-
-.sapTntNavLIGroupItem:not(.sapTntNavLIItemDisabled):hover {
-	background-color: @sapHCReducedAltBG;
-	border-bottom: 1px solid @sapHCStandardFG;
-	color: @sapHCStandardFG;
-}
-
-.sapTntNavLIItemSelected.sapTntNavLIGroupItem {
-	background-color: @sapHCHighlightAltBG;
-	border-bottom: 1px solid @sapHCStandardFG;
-	color: @sapHCStandardFG;
-
-	& > .sapUiIcon {
-		color: @sapHCStandardFG;
-	}
-}
-
-.sapTntNavLI li:focus,
-.sapTntNavLIItem:focus {
-	outline: none;
-}
+/* ======================================= */
+/* CSS for control sap.tnt/NavigationList  */
+/* High Contrast Black theme               */
+/* ======================================= */
 
 .sapTntNavLI li:focus::before,
 .sapTntNavLIItem:focus::before {
-	border: 0.125rem dotted @sapUiFocus;
-	position: absolute;
-	content: " ";
-	top: 1px;
-	right: 1px;
-	bottom: 1px;
-	left: 1px;
-	z-index: 2;
-	pointer-events: none;
+	border: 0.125rem dotted @sapUiContentFocusColor;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapTntNavLI li:focus::before,
+	.sapTntNavLIItem:focus::before {
+		border: 0.125rem dashed @sapUiContentFocusColor;
+	}
 }
