@@ -77,7 +77,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				bSheet = !!(oStyle && oStyle.sheet && oStyle.sheet.href === oStyle.href && oStyle.sheet.cssRules && oStyle.sheet.cssRules.length > 0);
 			} catch (e) {
 				// Firefox throws a SecurityError or InvalidAccessError if "oStyle.sheet.cssRules"
-				// is accessed on a stylesheet with 404 response code or is some other special cases.
+				// is accessed on a stylesheet with 404 response code or from a different origin (CORS).
 				// Only rethrow if the error is different
 				if (e.name !== 'SecurityError' && e.name !== 'InvalidAccessError') {
 					throw e;
@@ -300,8 +300,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		*/
 
 		var aRules;
-		if (cssFile.sheet && cssFile.sheet.cssRules) {
-			aRules = cssFile.sheet.cssRules;
+
+		try {
+			if (cssFile.sheet && cssFile.sheet.cssRules) {
+				aRules = cssFile.sheet.cssRules;
+			}
+		} catch (e) {
+			// Firefox throws a SecurityError or InvalidAccessError if "cssFile.sheet.cssRules"
+			// is accessed on a stylesheet with 404 response code or from a different origin (CORS).
+			// Only rethrow if the error is different
+			if (e.name !== 'SecurityError' && e.name !== 'InvalidAccessError') {
+				throw e;
+			}
 		}
 
 		if (!aRules || aRules.length == 0) {
