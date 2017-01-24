@@ -343,7 +343,7 @@
 					var iBusyDurationRequest = parseInt(spy.args[1][1].split(",")[14]);
 					assert.ok(iBusyDurationRequest+1 >= oMeasurement.busyDuration && iBusyDurationRequest-1 <= oMeasurement.busyDuration, "Request header contains global busy duration measurement");
 					done();
-				}, 50);
+				}, 100);
 			});
 
 			QUnit.module("component integration");
