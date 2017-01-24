@@ -1,5 +1,12 @@
-.sapFDynamicPageHeader {
-	background: @sapUiObjectHeaderBackground;
-	border-bottom: 0.125rem solid darken(@sapUiObjectHeaderBackground, 8);
-	box-shadow: @sapUiShadowHeader;
+/* ======================================== */
+/* CSS for control sap.f/DynamicPageHeader  */
+/* Belize theme                             */
+/* ======================================== */
+
+@_sap_f_DynamicPageHeader_Background: @sapUiObjectHeaderBackground;
+
+.sapUshellShell {
+	.sapFDynamicPageHeader {
+		background: @_sap_f_DynamicPageHeader_Background;
+	}
 }

@@ -1,11 +1,7 @@
-.sapUshellShell {
-	.sapFDynamicPageTitle {
-		background: fade(@sapUiObjectHeaderBackground, 60);
-		border-bottom: 0.125rem solid transparent; // dummy border to occupy the space for the snapped title border
-	}
-}
+/* ======================================= */
+/* CSS for control sap.f/DynamicPageTitle  */
+/* Belize Plus theme                       */
+/* ======================================= */
 
-.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
-	border-bottom: 0.125rem solid lighten(@sapUiObjectHeaderBackground, 8);
-	box-shadow: @sapUiShadowHeader;
-}
+@_sap_f_DynamicPageTitle_Background: fade(@sapUiObjectHeaderBackground, 60);
+@_sap_f_DynamicPageTitle_BorderColor: transparent; // dummy border to occupy the space for the snapped title border
