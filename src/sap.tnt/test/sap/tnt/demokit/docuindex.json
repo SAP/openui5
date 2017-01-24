@@ -3,12 +3,12 @@
 		"text": "sap.tnt",
 		"links": [
 			{
-				"text": "Tool Page",
+				"text": "Shop Administration",
 				"ref": "test-resources/sap/tnt/demokit/toolpageapp/webapp/index.html",
 				"category": "Showcase",
 				"config": "test-resources/sap/tnt/demokit/toolpageapp/demoapp.json",
 				"icon": "wrench",
-				"desc": "This is where it all starts when developing admin tools with the sap.tnt.ToolPage",
+				"desc": "Tool page for admins, built with the sap.tnt.ToolPage",
 				"config": "test-resources/sap/tnt/demokit/toolpageapp/demoapp.json"
 			}
 		]
