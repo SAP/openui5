@@ -4360,5 +4360,22 @@
         "references": []
       }
     ]
+  },
+  "1.28.42": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "607f449065d061795925d031378567cae975ec35",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: Screenreader support improved",
+        "references": []
+      },
+      {
+        "id": "b425f5d9c14fde62e63499aefda4097c15500fa1",
+        "type": "FIX",
+        "text": " sap.m.UploadCollectionItem: JSDoc for property enableDelete fixed",
+        "references": []
+      }
+    ]
   }
 }

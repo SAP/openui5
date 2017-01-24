@@ -1472,12 +1472,6 @@
     "date": "April 2016",
     "notes": [
       {
-        "id": "696b5b9452c6880430847c63983ada4baf50ef67",
-        "type": "FIX",
-        "text": "ManagedObject: Propagate properties when setting parent to null",
-        "references": []
-      },
-      {
         "id": "6ed98ad23673c3a8d29d6282d2d05863702171b0",
         "type": "FIX",
         "text": "m.IconTabBar: windows 10 rules added",
@@ -2031,6 +2025,17 @@
         "id": "9f6678728986068890c91efe954cb39042362b16",
         "type": "FIX",
         "text": "sap.m.WizardProgressNavigator: aria-disabled attribute should not be placed for previous active step",
+        "references": []
+      }
+    ]
+  },
+  "1.36.20": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "9ec2656febe6ced0a7a3b448c4b348777002b636",
+        "type": "FIX",
+        "text": " Edited comment for testing purposes",
         "references": []
       }
     ]

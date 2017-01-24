@@ -1056,6 +1056,12 @@
         "type": "FIX",
         "text": "sap.ui.commons.Paginator: onsapenter is now handled",
         "references": []
+      },
+      {
+        "id": "7492066f2443d4b32258974905594bcf0f680bf1",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropDownBox: Selection of the ListBox items work onclick.",
+        "references": []
       }
     ]
   }
