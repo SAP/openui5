@@ -516,7 +516,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 			var oTrigger = this._oTrigger,
 				oControl = this._oControl;
 
-			if (!oTrigger || !oControl) {
+			// If there are no visible columns then also hide the trigger.
+			if (!oTrigger || !oControl || !oControl.shouldRenderItems()) {
 				return;
 			}
 
