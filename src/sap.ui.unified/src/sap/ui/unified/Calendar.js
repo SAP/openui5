@@ -322,7 +322,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		} else if (this.getDomRef() && this._iMode == 0 && !this._sInvalidateMonth) {
 			// DateRange changed -> only rerender days
 			// do this only once if more DateRanges / Special days are changed
-			this._sInvalidateMonth = jQuery.sap.delayedCall(0, this, _invalidateMonth, [this]);
+			this._sInvalidateMonth = jQuery.sap.delayedCall(0, this, this._invalidateMonth, [this]);
 		}
 
 	};
@@ -1636,6 +1636,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	Calendar.prototype._invalidateMonth = function() {
+
+		this._sInvalidateMonth = undefined;
+
+		var aMonths = this.getAggregation("month");
+		if (aMonths) {
+			for (var i = 0; i < aMonths.length; i++) {
+				var oMonth = aMonths[i];
+				oMonth._bDateRangeChanged = true;
+				oMonth._bInvalidateSync = true;
+				if (aMonths.length > 1) {
+					oMonth._bNoFocus = true;
+				}
+				oMonth.invalidate();
+				oMonth._bInvalidateSync = undefined;
+			}
+
+			if (aMonths.length > 1) {
+				// restore focus
+				this._focusDate(this._getFocusedDate(), true, true);
+			}
+		}
+
+		this._bDateRangeChanged = undefined;
+
+	};
+
 	function _setHeaderText (oDate){
 
 		// sets the text for the month and the year button to the header
@@ -1858,30 +1885,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this._focusDate(oFocusedDate, true);
 
 		_hideYearPicker.call(this);
-
-	}
-
-	function _invalidateMonth(){
-
-		this._sInvalidateMonth = undefined;
-
-		var aMonths = this.getAggregation("month");
-		for (var i = 0; i < aMonths.length; i++) {
-			var oMonth = aMonths[i];
-			oMonth._bDateRangeChanged = true;
-			oMonth._bInvalidateSync = true;
-			if (aMonths.length > 1) {
-				oMonth._bNoFocus = true;
-			}
-			oMonth.invalidate();
-			oMonth._bInvalidateSync = undefined;
-		}
-
-		if (aMonths.length > 1) {
-			// restore focus
-			this._focusDate(this._getFocusedDate(), true, true);
-		}
-		this._bDateRangeChanged = undefined;
 
 	}
 
