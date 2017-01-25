@@ -286,7 +286,7 @@
 
 	QUnit.test("Should get the root control", function (assert) {
 		//Act
-		var oRootControl = this.oComponent.getAggregation("rootControl");
+		var oRootControl = this.oComponent.getRootControl();
 
 		//Assert
 		assert.strictEqual(this.oComponent._oViewWhileInit, oRootControl, "the root control is available in the init function");
