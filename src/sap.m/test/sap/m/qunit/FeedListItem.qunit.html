@@ -531,13 +531,13 @@
 
 			QUnit.test("Treatment of newline character is backward compatible", function(assert) {
 				//Arrange
-				var sText = "Test with a \n newline";
+				var sText = "Test\n with a \n \n newline\n";
 				//Act
 				this.oFeedListItem.setText(sText);
 				this.oFeedListItem.onBeforeRendering();
 				var sFullText = this.oFeedListItem._sFullText;
 				//Assert
-				assert.equal(sFullText, "Test with a <br> newline", "The \\n has been replaced with <br> tag");
+				assert.equal(sFullText, "Test<br> with a <br> <br> newline<br>", "The \\n has been replaced with <br> tag");
 			});
 		</script>
 	</head>
