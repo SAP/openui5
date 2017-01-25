@@ -59,6 +59,7 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 		        "appdescr_app_addNewInbound", "appdescr_app_changeInbound", "appdescr_app_removeInbound",
 		        "appdescr_app_addNewOutbound", "appdescr_app_changeOutbound", "appdescr_app_removeOutbound",
 		        "appdescr_app_addNewDataSource", "appdescr_app_changeDataSource", "appdescr_app_removeDataSource",
+		        "appdescr_app_addAnnotationsToOData",
 		        "appdescr_app_setTitle", "appdescr_app_setSubTitle", "appdescr_app_setDescription",
 		        "appdescr_app_setDestination", "appdescr_app_setKeywords", "appdescr_ui5_addNewModel",
 		        "appdescr_smb_addNamespace", "appdescr_smb_changeNamespace", "appdescr_ui_generic_app_setMainPage"];
@@ -319,6 +320,29 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 		return this._createDescriptorInlineChange('appdescr_app_changeDataSource', mParameters);
 
 	};
+
+	/**
+	 * Creates an inline change of change type appdescr_app_addAnnotationsToOData
+	 *
+	 * @param {object} mParameters parameters of the change type
+	 * @param {string} mParameters.dataSourceId the id of the data source to be changed by adding annotations from annotations parameter
+	 * @param {array} mParameters.annotations array with ids of data sources of type 'ODataAnnotation' that should be added to the data source to be changed
+	 * @param {enum} [mParameters.annotationsInsertPosition] position at which the annotations should be added to the annotations of the data source to be changed (BEGIN/END, default BEGIN)
+	 * @param {object} mParameters.dataSource one or several data sources of type 'ODataAnnotation' which should be added, all need to be contained in the annotations parameter
+	 *
+	 * @return {Promise} resolving when creating the descriptor inline change was successful (without backend access)
+	 *
+	 * @private
+	 * @sap-restricted
+	 */
+	DescriptorInlineChangeFactory.create_app_addAnnotationsToOData = function(mParameters) {
+		Utils.checkParameterAndType(mParameters, "dataSourceId", "string");
+		Utils.checkParameterAndType(mParameters, "annotations", "array");
+		Utils.checkParameterAndType(mParameters, "dataSource", "object");
+		return this._createDescriptorInlineChange('appdescr_app_addAnnotationsToOData', mParameters);
+
+	};
+
 
 	/**
 	 * Creates an inline change of change type appdescr_app_setTitle
