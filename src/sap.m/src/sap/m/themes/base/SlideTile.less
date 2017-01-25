@@ -43,13 +43,10 @@
 			top: -0.5rem;
 			right: -0.5rem;
 			z-index: 3;
-			overflow: hidden;
 			border: 1px solid @sapUiButtonBorderColor;
 			background-color: @sapUiButtonBackground;
 			color: @sapUiButtonTextColor;
-			&:before {
-				color: @sapUiButtonIconColor;
-			}
+			overflow: visible;
 
 			.sapMBtnFocusDiv {
 				display: none;
@@ -77,11 +74,13 @@
 
 			&:focus > .sapMFocusable {
 				outline: none;
+				border-radius: 50%;
 			}
 
 			/* The touch area has a different size and is slightly moved to the left and bottom */
 			&:before {
 				content: "";
+				color: @sapUiButtonIconColor;
 				position: absolute;
 				top: -1px;
 				bottom: -0.6875rem;
