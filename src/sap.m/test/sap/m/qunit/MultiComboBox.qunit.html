@@ -2549,7 +2549,7 @@
 	// ------------------------------ //
 	// Scenarios - specification      //
 	// ------------------------------ //
-	// 
+	//
 	QUnit.test("Enter completely new value should refilter the picker", function(assert) {
 		var oMultiComboBox = new sap.m.MultiComboBox({
 			items: [
@@ -2562,6 +2562,7 @@
 			target: {
 				value: "l"
 			},
+			setMarked: function () { },
 			srcControl: oMultiComboBox
 		};
 
@@ -4474,6 +4475,7 @@
 				target: {
 					value: "t"
 				},
+				setMarked: function () {},
 				srcControl: oMultiComboBox
 			};
 
@@ -4527,6 +4529,7 @@
 				target: {
 					value: "t"
 				},
+				setMarked: function () { },
 				srcControl: oMultiComboBox
 			};
 
