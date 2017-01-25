@@ -570,7 +570,7 @@
 			});
 
 			test("Multiple selection", function() {
-				
+
 				// ensure that tested date range is displayed in calendar
 				oCal4.displayDate(oCal4.getMinDate());
 				sap.ui.getCore().applyChanges();
@@ -582,8 +582,8 @@
 
 				$selectedDate.focus();
 				qutils.triggerKeydown($selectedDate, jQuery.sap.KeyCodes.ENTER);
-                ok($selectedDate.hasClass("sapUiCalItemSel"),
-                        "30th of November is selected in the calendar of November");
+				ok($selectedDate.hasClass("sapUiCalItemSel"),
+						"30th of November is selected in the calendar of November");
 				ok($selectedDateFromTheOtherMonth.hasClass("sapUiCalItemSel"),
 						"30th of November is also selected in the calendar of December");
 
@@ -591,8 +591,8 @@
 				$otherSelectedDateFromTheOtherMonth = jQuery("#Cal4--Month1-20161129");
 				$otherSelectedDate.focus();
 				qutils.triggerKeydown($otherSelectedDate, jQuery.sap.KeyCodes.ENTER);
-                ok($otherSelectedDate.hasClass("sapUiCalItemSel"),
-                        "29th of November is selected in the calendar of November");
+				ok($otherSelectedDate.hasClass("sapUiCalItemSel"),
+						"29th of November is selected in the calendar of November");
 				ok($otherSelectedDateFromTheOtherMonth.hasClass("sapUiCalItemSel"),
 						"29th of November is also selected in the calendar of December");
 
@@ -603,6 +603,39 @@
 
 			});
 
+		module("Misc");
+
+			test("Invalidate month ", function() {
+				var oCal5 = new sap.ui.unified.Calendar("Cal5",{
+					months: 2
+				});
+
+				oCal5.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var months = oCal5.getAggregation("month");
+
+				//act
+				try {
+					oCal5._invalidateMonth();
+					ok(true, "Invalidate month is executed correctly when we have months aggregation");
+				} catch (e) {
+					ok(false, "Something went wrong when we have months aggregation")
+				}
+
+				oCal5.destroyAggregation("month", true);
+
+				try {
+					oCal5._invalidateMonth();
+					ok(true, "Invalidate month is executed correctly after destroying months aggregation")
+				} catch (e) {
+					ok(false, "Something went wrong after destroying months aggregation")
+				}
+
+				// clean up
+				oCal5.destroy();
+			});
+
 		</script>
 
 	</head>
@@ -611,6 +644,7 @@
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
+		<div id="qunit-fixture"></div>
 		<ol id="qunit-tests"></ol>
 		<br>
 		<div id="uiArea1"></div>
