@@ -10631,6 +10631,47 @@
 
 			oCB.destroy();
 		});
+
+		QUnit.module("Tablet focus handling");
+
+		QUnit.test("it should focus the picker", function(assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				tablet: true,
+				phone: false
+			});
+
+			var oComboBox = new sap.m.ComboBox(),
+				oComboBoxPicker = oComboBox.getPicker();
+
+			assert.equal(oComboBoxPicker.getInitialFocus(), oComboBoxPicker.getId(), "Initial focus should be set to the picker");
+
+			oComboBox.destroy();
+		});
+
+		QUnit.test("it should not set the focus to the input", function(assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				tablet: true,
+				phone: false
+			});
+
+			var oComboBox = new sap.m.ComboBox(),
+				oComboBoxPicker = oComboBox.getPicker(),
+				oFakeEvent = null,
+				oFocusinStub = this.stub(oComboBox, "focus");
+
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oFakeEvent = { target: oComboBox.getDomRef("arrow") }
+
+			oComboBox.onfocusin(oFakeEvent);
+
+			assert.strictEqual(oFocusinStub.callCount, 0, "Focus should not be called");
+
+			oComboBox.destroy();
+		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
