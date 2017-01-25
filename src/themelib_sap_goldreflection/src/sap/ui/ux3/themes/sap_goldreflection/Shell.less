@@ -5,7 +5,9 @@
 .sapUiUx3ShellHeader {
 	text-shadow: 1px 1px 2px @sapUiDarkText;
 	color: @sapUiExtraLightBG;
+	background-image: -moz-linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom);
 	background-image: -webkit-linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom);
+	background-image: -ms-linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom); /* starting with IE10 this works in IE */
 	background-image: linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom);
 	background-position: left top;
 	padding: 9px 0 0 20px;
@@ -151,7 +153,9 @@
 }
 
 .sapUiUx3ShellBgImg {
+	background-image: -moz-linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom);
 	background-image: -webkit-linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom);
+	background-image: -ms-linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom); /* starting with IE10 this works in IE */
 	background-image: linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom);
 	background-size: 100% 100%;
 	background-position: left top;

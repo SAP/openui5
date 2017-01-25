@@ -3,14 +3,6 @@
 /* Belize High Contrast Black theme  */
 /* ================================= */
 
-html[data-sap-ui-browser='ie9'] .sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH {
-	/*
-		In IE 9, .sapMBarPH gets style width: 100% when there's content only in the contentMiddle.
-		This style pushes the popover to maximum width. Therefore this inline style has to be overwritten by important.
-	*/
-	width: auto !important;
-}
-
 .sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH > .sapMBtn {
 	width: 50%;
 	padding-left: 0.25rem;
@@ -115,70 +107,8 @@ html[data-sap-ui-browser='ie9'] .sapMPopoverSpecialFooter > .sapMBarMiddle > .sa
 	border-right-color: @sapUiHcStandardForeground;
 }
 
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverArrRight:after,
-.sapMPopoverArrLeft:after {
-	border-color: transparent;
-	border-right-color: @sapUiHcStandardForeground;
-	top: -16px;
-	left: -15px;
-}
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverArrLeft:after {
-	right: -15px;
-}
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverHeaderAlignArr.sapMPopoverArrRight:after,
-.sapMPopoverHeaderAlignArr.sapMPopoverArrLeft:after {
-	border-color: transparent;
-	border-right-color: @sapUiHcStandardForeground;
-}
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverCrossArr.sapMPopoverArrLeft:after,
-.sapMPopoverCrossArr.sapMPopoverArrLeft:after {
-	border-color: transparent;
-	border-right-color: @sapUiHcStandardForeground;
-}
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverFooterAlignArr.sapMPopoverArrRight:after,
-.sapMPopoverFooterAlignArr.sapMPopoverArrLeft:after {
-	border-color: transparent;
-	border-right-color: @sapUiHcStandardForeground;
-}
-
 /*Arrow Right*/
 .sapMPopoverArrRight {
-	border-color: transparent;
-	border-left-color: @sapUiHcStandardForeground;
-}
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverArrLeft:after,
-.sapMPopoverArrRight:after {
-	border-color: transparent;
-	border-left-color: @sapUiHcStandardForeground;
-	top: -16px;
-	left: -17px;
-}
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverArrRight:after {
-	left: auto;
-	right: -15px;
-}
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverHeaderAlignArr.sapMPopoverArrLeft:after,
-.sapMPopoverHeaderAlignArr.sapMPopoverArrRight:after {
-	border-color: transparent;
-	border-left-color: @sapUiHcStandardForeground;
-}
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverCrossArr.sapMPopoverArrLeft:after,
-.sapMPopoverCrossArr.sapMPopoverArrRight:after {
-	border-color: transparent;
-	border-left-color: @sapUiHcStandardForeground;
-	/* right: -16px; */
-}
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverFooterAlignArr.sapMPopoverArrLeft:after,
-.sapMPopoverFooterAlignArr.sapMPopoverArrRight:after {
 	border-color: transparent;
 	border-left-color: @sapUiHcStandardForeground;
 }

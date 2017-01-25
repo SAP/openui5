@@ -7,8 +7,10 @@
 	font-family: @sapUiDesktopFontFamily;
 	font-size: @sapUiDesktopFontSize;
 	-moz-box-shadow: 0 0 8px @sapUiContentShadowColor; // @sapUiDarkShadowTint = #000000
+	background-image: -moz-linear-gradient(top center, darken(@sapUiContentForegroundColor, 46), darken(@sapUiContentForegroundColor, 70)); // @sapUiDarkAltBG = #707376, @sapUiExtraDarkBG = #333333
 	background-image: -webkit-gradient(linear, left top, left bottom, from(darken(@sapUiContentForegroundColor, 46)), to(darken(@sapUiContentForegroundColor, 70))); // @sapUiDarkAltBG = #707376, @sapUiExtraDarkBG = #333333
 	background-image: -webkit-linear-gradient(top center, darken(@sapUiContentForegroundColor, 46), darken(@sapUiContentForegroundColor, 70)); // @sapUiDarkAltBG = #707376, @sapUiExtraDarkBG = #333333
+	background-image: -ms-linear-gradient(darken(@sapUiContentForegroundColor, 46), darken(@sapUiContentForegroundColor, 70)); /* starting with IE10 this works in IE */ // @sapUiDarkAltBG = #707376, @sapUiExtraDarkBG = #333333
 	background-image: linear-gradient(top center, darken(@sapUiContentForegroundColor, 46), darken(@sapUiContentForegroundColor, 70)); // @sapUiDarkAltBG = #707376, @sapUiExtraDarkBG = #333333
 	background-position: left top;
 	background-size: 100% 110px;
