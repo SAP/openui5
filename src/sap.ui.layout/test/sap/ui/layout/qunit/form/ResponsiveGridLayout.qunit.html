@@ -249,6 +249,39 @@
 					})]
 			}).placeAt("uiArea6");
 
+		// more fields than fit to line
+		var oLayout7 = new sap.ui.layout.form.ResponsiveGridLayout("Layout7");
+		var oForm7 = new sap.ui.layout.form.Form("F7",{
+			editable: true,
+			title: "Form7",
+			layout: oLayout7,
+			formContainers: [
+				new sap.ui.layout.form.FormContainer("F7C1",{
+						title: "Container 1",
+						formElements: [
+							new sap.ui.layout.form.FormElement("F7C1E1",{
+									label: "Label",
+									fields: [new sap.m.Input("F7C1E1_T1"),
+									         new sap.m.Input("F7C1E1_T2", {layoutData: new sap.ui.layout.GridData("F7C1E1_T2LD", {span: "XL3 L3 M3 S3"})}),
+									         new sap.m.Input("F7C1E1_T3"),
+									         new sap.m.Input("F7C1E1_T4"),
+									         new sap.m.Input("F7C1E1_T5"),
+									         new sap.m.Input("F7C1E1_T6"),
+									         new sap.m.Input("F7C1E1_T7"),
+									         new sap.m.Input("F7C1E1_T8"),
+									         new sap.m.Input("F7C1E1_T9")]
+								})]
+					}),
+				new sap.ui.layout.form.FormContainer("F7C2",{
+						title: "Container 2",
+						formElements: [
+							new sap.ui.layout.form.FormElement("F7C2E1",{
+									label: "Label",
+									fields: [new sap.m.Input("F7C2E1_T1")]
+								})]
+					})]
+			}).placeAt("uiArea7");
+
 		// test functions
 		qutils.delayTestStart();
 
@@ -332,7 +365,7 @@
 			oField = sap.ui.getCore().byId("F3C1E2_T1");
 			oLayoutData = oGrid._getLayoutDataForControl(oField);
 			equal(oLayoutData.getId(), "Layout3--Dummy", "Form3: Field3 must use calculated LayoutData");
-			equal(oLayoutData.getSpan(), "XL4 L5 M5 S12", "Form3: Field3 calculated LayoutData span correct");
+			equal(oLayoutData.getSpan(), "XL5 L5 M5 S12", "Form3: Field3 calculated LayoutData span correct");
 			equal(oLayoutData.getLinebreak(), false, "Form3: Field3 calculated LayoutData linebreak correct");
 
 			oField = sap.ui.getCore().byId("F3C1E2_T2");
@@ -370,6 +403,52 @@
 			equal(oLayoutData.getId(), "Layout5--Dummy", "Form5: Label1 must use calculated LayoutData");
 			equal(oLayoutData.getSpan(), "XL4 L4 M12 S12", "Form5: Label1 calculated LayoutData span correct");
 			equal(oLayoutData.getLinebreak(), true, "Form5: Label1 calculated LayoutData linebreak correct");
+
+			// more fields than fit in row
+			oElement = sap.ui.getCore().byId("F7C1E1");
+			oGrid = sap.ui.getCore().byId("F7C1--Grid");
+			oField = sap.ui.getCore().byId("F7C1E1_T1");
+			oLayoutData = oGrid._getLayoutDataForControl(oField);
+			equal(oLayoutData.getId(), "Layout7--Dummy", "Form7: Field1 must use calculated LayoutData");
+			equal(oLayoutData.getSpan(), "XL1 L1 M1 S12", "Form7: Field1 calculated LayoutData span correct");
+			equal(oLayoutData.getLinebreakXL(), false, "Form7: Field1 calculated LayoutData linebreakXL correct");
+
+			oField = sap.ui.getCore().byId("F7C1E1_T2");
+			oLayoutData = oGrid._getLayoutDataForControl(oField);
+			equal(oLayoutData.getId(), "F7C1E1_T2LD", "Form7: Field2 must use given LayoutData");
+
+			oField = sap.ui.getCore().byId("F7C1E1_T3");
+			oLayoutData = oGrid._getLayoutDataForControl(oField);
+			equal(oLayoutData.getId(), "Layout7--Dummy", "Form7: Field3 must use calculated LayoutData");
+			equal(oLayoutData.getSpan(), "XL1 L1 M1 S12", "Form7: Field3 calculated LayoutData span correct");
+			equal(oLayoutData.getLinebreakXL(), false, "Form7: Field3 calculated LayoutData linebreakXL correct");
+			equal(oLayoutData.getLinebreakL(), false, "Form7: Field3 calculated LayoutData linebreakL correct");
+			equal(oLayoutData.getLinebreakM(), false, "Form7: Field3 calculated LayoutData linebreakM correct");
+			equal(oLayoutData.getIndentXL(), 0, "Form7: Field3 calculated LayoutData indentXL correct");
+			equal(oLayoutData.getIndentL(), 0, "Form7: Field3 calculated LayoutData indentL correct");
+			equal(oLayoutData.getIndentM(), 0, "Form7: Field3 calculated LayoutData indentM correct");
+
+			oField = sap.ui.getCore().byId("F7C1E1_T7");
+			oLayoutData = oGrid._getLayoutDataForControl(oField);
+			equal(oLayoutData.getId(), "Layout7--Dummy", "Form7: Field7 must use calculated LayoutData");
+			equal(oLayoutData.getSpan(), "XL4 L4 M1 S12", "Form7: Field7 calculated LayoutData span correct");
+			equal(oLayoutData.getLinebreakXL(), true, "Form7: Field7 calculated LayoutData linebreakXL correct");
+			equal(oLayoutData.getLinebreakL(), true, "Form7: Field7 calculated LayoutData linebreakL correct");
+			equal(oLayoutData.getLinebreakM(), false, "Form7: Field7 calculated LayoutData linebreakM correct");
+			equal(oLayoutData.getIndentXL(), 4, "Form7: Field7 calculated LayoutData indentXL correct");
+			equal(oLayoutData.getIndentL(), 4, "Form7: Field7 calculated LayoutData indentL correct");
+			equal(oLayoutData.getIndentM(), 0, "Form7: Field7 calculated LayoutData indentM correct");
+
+			oField = sap.ui.getCore().byId("F7C1E1_T9");
+			oLayoutData = oGrid._getLayoutDataForControl(oField);
+			equal(oLayoutData.getId(), "Layout7--Dummy", "Form7: Field9 must use calculated LayoutData");
+			equal(oLayoutData.getSpan(), "XL2 L2 M10 S12", "Form7: Field9 calculated LayoutData span correct");
+			equal(oLayoutData.getLinebreakXL(), false, "Form7: Field9 calculated LayoutData linebreakXL correct");
+			equal(oLayoutData.getLinebreakL(), false, "Form7: Field9 calculated LayoutData linebreakL correct");
+			equal(oLayoutData.getLinebreakM(), true, "Form7: Field9 calculated LayoutData linebreakM correct");
+			equal(oLayoutData.getIndentXL(), 0, "Form7: Field9 calculated LayoutData indentXL correct");
+			equal(oLayoutData.getIndentL(), 0, "Form7: Field9 calculated LayoutData indentL correct");
+			equal(oLayoutData.getIndentM(), 2, "Form7: Field9 calculated LayoutData indentM correct");
 		});
 
 		test("DOM representation", function() {
@@ -641,6 +720,8 @@
 	<div id="uiArea5"></div>
 	<br>
 	<div id="uiArea6"></div>
+	<br>
+	<div id="uiArea7"></div>
 
 </body>
 </html>
