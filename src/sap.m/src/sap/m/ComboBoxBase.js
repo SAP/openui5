@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolbar', './Button', './Bar', './Text', './Title', './SelectList', './Popover', 'sap/ui/core/InvisibleText', 'sap/ui/core/IconPool', 'sap/ui/core/ValueStateSupport', './library'],
-	function(jQuery, Dialog, ComboBoxTextField, Toolbar, Button, Bar, Text, Title, SelectList, Popover, InvisibleText, IconPool, ValueStateSupport, library) {
+sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolbar', './Button', './Bar', './Text', './Title', './SelectList', './Popover', 'sap/ui/core/InvisibleText', 'sap/ui/core/IconPool', 'sap/ui/core/ValueStateSupport', './library', 'sap/ui/Device'],
+	function(jQuery, Dialog, ComboBoxTextField, Toolbar, Button, Bar, Text, Title, SelectList, Popover, InvisibleText, IconPool, ValueStateSupport, library, Device) {
 		"use strict";
 
 		/**
@@ -254,9 +254,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 			ComboBoxTextField.prototype.init.apply(this, arguments);
 
 			// sets the picker popup type
-			this.setPickerType(sap.ui.Device.system.phone ? "Dialog" : "Dropdown");
+			this.setPickerType(Device.system.phone ? "Dialog" : "Dropdown");
 
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				this.attachEvent("_change", this.onPropertyChange, this);
 			}
 
@@ -691,6 +691,20 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		 */
 		ComboBoxBase.prototype.isPickerDialog = function() {
 			return this.getPickerType() === "Dialog";
+		};
+
+		/*
+		 * Determines if the platform is a tablet.
+		 *
+		 * @returns {boolean}
+		 * @protected
+		 * @since 1.48
+		 */
+		ComboBoxBase.prototype.isPlatformTablet = function() {
+			var bNotCombi = !Device.system.combi,
+				bTablet = Device.system.tablet && bNotCombi;
+
+			return bTablet;
 		};
 
 		/*
