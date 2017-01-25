@@ -53,6 +53,7 @@ sap.ui.define([
 								var aStyles = x[j].selectorText.split(',');
 								for(var k in aStyles){
 									sStyles = aStyles[k].split('.')[1];
+									if (sStyles.trim() === "sapContrast" || sStyles.trim() === "sapContrastPlus") { continue; }
 									themeClasses.Styles.push({"stylingString" : sCssRule, "styleClass" : sStyles, "style" : x[j].style, 'border' : bBorder });
 								}
 							} else if (x[j].selectorText.split('.').length > 2){
@@ -61,9 +62,11 @@ sap.ui.define([
 									sStyles += aStyles[k];
 									sStyles += " ";
 								}
+								if (sStyles.trim() === "sapContrast" || sStyles.trim() === "sapContrastPlus") { continue; }
 								themeClasses.Styles.push({"stylingString" : sCssRule, "styleClass" : sStyles, "style" : x[j].style, 'border' : bBorder });
 							} else {
 								sStyles = x[j].selectorText.split('.')[1];
+								if (sStyles.trim() === "sapContrast" || sStyles.trim() === "sapContrastPlus") { continue; }
 								themeClasses.Styles.push({"stylingString" : sCssRule, "styleClass" : sStyles, "style" : x[j].style, 'border' : bBorder });
 							}
 						}
