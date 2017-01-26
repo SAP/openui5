@@ -244,7 +244,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.fetchValue = function (sPath, oListener) {
-		return this.oBinding.fetchValue(sPath, oListener, this.iIndex);
+		return this.oBinding.fetchValue(sPath || "", oListener, this.iIndex);
 	};
 
 	/**
