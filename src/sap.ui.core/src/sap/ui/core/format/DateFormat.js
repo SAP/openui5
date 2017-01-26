@@ -443,7 +443,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 			sWeekYear,
 			sWeek,
 			sHours,
-			sResult;
+			sResult,
+			iFirstDayOfWeek = this.oLocaleData.getFirstDayOfWeek(),
+			iDayNumberOfWeek;
 
 		for (var i = 0; i < this.aFormatArray.length; i++) {
 			oPart = this.aFormatArray[i];
@@ -477,7 +479,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 					}
 					break;
 				case "dayNumberOfWeek":
-					aBuffer.push(iDay || 7);
+					iDayNumberOfWeek = iDay - (iFirstDayOfWeek - 1);
+
+					if (iDayNumberOfWeek <= 0) {
+						iDayNumberOfWeek += 7;
+					}
+					aBuffer.push(iDayNumberOfWeek);
 					break;
 				case "month":
 					if (oPart.digits == 3) {
@@ -679,6 +686,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 			iYear = null,
 			iWeekYear = null,
 			iWeek = null,
+			iDayNumberOfWeek = null,
 			iEra = null,
 			iHours = null,
 			iMinutes = null,
@@ -791,6 +799,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 				case "dayNumberOfWeek":
 					sPart = findNumbers(oPart.digits);
 					iIndex += sPart.length;
+					iDayNumberOfWeek = parseInt(sPart, 10);
 					break;
 				case "month":
 				case "monthStandalone":
@@ -1061,6 +1070,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 							year: iWeekYear || iYear,
 							week: iWeek
 						});
+
+						if (iDayNumberOfWeek !== null) {
+							oDate.setUTCDate(oDate.getUTCDate() + iDayNumberOfWeek - 1);
+						}
 					}
 				}
 			} else {
@@ -1082,6 +1095,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 						year: iWeekYear || iYear,
 						week: iWeek
 					});
+
+					if (iDayNumberOfWeek !== null) {
+						oDate.setDate(oDate.getDate() + iDayNumberOfWeek - 1);
+					}
 				}
 			}
 
