@@ -1,10 +1,15 @@
+/* =================================== */
+/* CSS for control sap.uxap/AnchorBar  */
+/* BlueCrystal theme                   */
+/* =================================== */
+
 /**********************************
 Common compact/cozy
 **********************************/
 
 .sapUxAPAnchorBar.sapMTB {
 	border: none;
-	box-shadow: inset 0 -0.125rem @sapUiLightBorder;
+	box-shadow: inset 0 -0.125rem @sapUiObjectHeaderBorderColor;
 	background: mix(@sapUiAccent5, @sapUiWhite, 5);
 }
 
@@ -48,21 +53,21 @@ html.sapUiMedia-Std-Desktop .sapMSplitContainer.sapMSplitContainerHideMode .sapM
 }
 
 .sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected .sapMBtnContent {
-	border-bottom: 0.125rem solid darken(@sapUiExtraLightBorder, 20);
+	border-bottom: 0.125rem solid @sapUiSelected;
 }
 
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected .sapMBtnContent,
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected .sapMBtnIcon {
-	color: @sapUiDarkestBG;
+	color: darken(@sapUiBaseText, 20);
 }
 
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnActive .sapMBtnIcon {
-	color: @sapUiElement;
+	color: @sapUiContentIconColor;
 }
 
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnContent {
 	font-size: @sapMFontHeader6Size;
-	color: @sapUiLightText;
+	color: @sapUiGroupTitleTextColor;
 }
 
 // overriding to center the text of the popover buttons in compact mode
@@ -85,7 +90,8 @@ html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight
 	background: -webkit-gradient(linear, left top, right top, color-stop(0%, mix(@sapUiAccent5, @sapUiWhite, 5)), color-stop(75%, mix(@sapUiAccent5, @sapUiWhite, 5)), color-stop(100%, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0))); /* Chrome,Safari4+ */
 	background: -webkit-linear-gradient(left, mix(@sapUiAccent5, @sapUiWhite, 5) 0%, mix(@sapUiAccent5, @sapUiWhite, 5) 75%, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0) 100%); /* Chrome10+,Safari5.1+ */
 	background: linear-gradient(to right, mix(@sapUiAccent5, @sapUiWhite, 5) 0%, mix(@sapUiAccent5, @sapUiWhite, 5) 75%, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0) 100%); /* W3C */
-	box-shadow: inset 0 -0.125rem @sapUiLightBorder;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f2f8fc', endColorstr='#00f2f8fc', GradientType=1); /* IE6-9 */
+	box-shadow: inset 0 -0.125rem @sapUiObjectHeaderBorderColor;
 }
 
 .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight,
@@ -93,7 +99,8 @@ html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
 	background: -webkit-gradient(linear, left top, right top, color-stop(0%, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0)), color-stop(25%, mix(@sapUiAccent5, @sapUiWhite, 5)), color-stop(100%, mix(@sapUiAccent5, @sapUiWhite, 5))); /* Chrome,Safari4+ */
 	background: -webkit-linear-gradient(left, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0) 0%, mix(@sapUiAccent5, @sapUiWhite, 5) 25%, mix(@sapUiAccent5, @sapUiWhite, 5) 100%); /* Chrome10+,Safari5.1+ */
 	background: linear-gradient(to right, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0) 0%, mix(@sapUiAccent5, @sapUiWhite, 5) 25%, mix(@sapUiAccent5, @sapUiWhite, 5) 100%); /* W3C */
-	box-shadow: inset 0 -0.125rem @sapUiLightBorder;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00f2f8fc', endColorstr='#f2f8fc', GradientType=1); /* IE6-9 */
+	box-shadow: inset 0 -0.125rem @sapUiObjectHeaderBorderColor;
 }
 
 html[data-sap-ui-animation="on"] {
@@ -129,22 +136,21 @@ html[data-sap-ui-animation="off"] {
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnTransparent.sapMBtnHoverable:hover .sapMBtnContent,
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMBtn:hover > .sapMBtnHoverable .sapMBtnContent,
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMBtn:hover > .sapMBtnHoverable .sapMBtnIcon {
-	color: @sapUiDarkestBG;
+	color: darken(@sapUiBaseText, 20);
 }
 
 .sapMPopover.sapUxAPAnchorBarPopover .sapMBtn.sapUxAPAnchorBarButton:focus {
-	background-color: @sapUiSelectListActiveBG;
+	background-color: @sapUiListSelectionBackgroundColor;
 }
 
 .sapMPopover.sapUxAPAnchorBarPopover .sapMBtn.sapUxAPAnchorBarButton:hover {
-	background-color: @sapUiSelectListLightestBGHover;
+	background-color: @sapUiListSelectionHoverBackground;
 }
 
 .sapMPopover.sapUxAPAnchorBarPopover {
-	background-color: @sapUiSelectBG;
-	color: @sapUiSelectLabelTextColor;
-	box-shadow: 0 12px 20px 0 rgba(100, 100, 100, 0.06);
-	border-color: @sapUiMediumBorder;
+	background-color: @sapUiListBackground;
+	color: @sapUiListTextColor;
+	box-shadow: @sapUiShadowLevel1;
 }
 
 /* override active button */
