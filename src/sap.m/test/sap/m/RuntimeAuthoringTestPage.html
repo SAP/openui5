@@ -65,7 +65,13 @@
 									new sap.m.List({
 										id: "list",
 										items: [
-											new sap.m.StandardListItem({id: "listItem1", title: "Item 1"}),
+											new sap.m.CustomListItem({
+												id: "customListItem1",
+												content: [
+													new sap.m.Text({id:"textInListItem1", text:"Custom List Item"}),
+													new sap.m.Switch({id:"switchInListItem"})
+												]
+											}),
 											new sap.m.StandardListItem({id: "listItem2", title: "Item 2"}),
 											new sap.m.StandardListItem({id: "listItem3", title: "Item 3"})
 										]

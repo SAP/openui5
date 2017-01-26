@@ -320,7 +320,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 				},
 				"sap.m.CustomListItem": {
 					"hideControl": "default",
-					"unhideControl": "default"
+					"unhideControl": "default",
+					"moveControls": "default"
 				},
 				"sap.m.InputListItem": {
 					"hideControl": "default",
