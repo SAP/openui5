@@ -17,7 +17,6 @@
 	-webkit-flex-direction: row;
 	box-sizing: border-box;
 	background: @sapUiObjectHeaderBackground;
-	border-bottom: 0.125rem solid @sapUiObjectHeaderBorderColor;
 }
 
 .sapFDynamicPageTitleRightActions .sapFDynamicPageTitleOverflowToolbar {
@@ -25,8 +24,7 @@
 }
 
 .sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
-	border-bottom: 0.125rem solid @sapUiObjectHeaderBorderColor;
-	box-shadow: inset 0 -1px @sapUiObjectHeaderBackground;
+	box-shadow: inset 0 -0.125rem @sapUiObjectHeaderBorderColor, 0 0.125rem 0 0 @sapUiObjectHeaderBackground;
 	.sapFDynamicPageHeader {
 		border-bottom: none;
 	}
