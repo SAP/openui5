@@ -465,35 +465,35 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Tokenizer.prototype._copy = function() {
-		var self = this,
+		var selectedTokens = this.getSelectedTokens(),
+			selectedText = "",
+			token,
 			copyToClipboard = function(oEvent) {
-			var selectedTokens = self.getSelectedTokens(),
-				selectedText = "",
-				token;
+				if (oEvent.clipboardData) {
+					oEvent.clipboardData.setData('text/plain', selectedText);
+				} else {
+					oEvent.originalEvent.clipboardData.setData('text/plain', selectedText);
+				}
 
-			for (var i = 0; i < selectedTokens.length; i++) {
-				token = selectedTokens[i];
-				selectedText += (i > 0 ? "\r\n" : "") + token.getText();
-			}
+				oEvent.preventDefault();
+			};
 
-			if (!selectedText) {
-				return;
-			}
+		for (var i = 0; i < selectedTokens.length; i++) {
+			token = selectedTokens[i];
+			selectedText += (i > 0 ? "\r\n" : "") + token.getText();
+		}
 
-			if (oEvent.clipboardData) {
-				oEvent.clipboardData.setData('text/plain', selectedText);
-			} else {
-				oEvent.originalEvent.clipboardData.setData('text/plain', selectedText);
-			}
+		if (!selectedText) {
+			return;
+		}
 
-			oEvent.preventDefault();
-		};
-
-		document.addEventListener('copy', copyToClipboard);
-
-		document.execCommand('copy');
-
-		document.removeEventListener('copy', copyToClipboard);
+		if (Device.browser.msie && window.clipboardData) {
+			window.clipboardData.setData("text", selectedText);
+		} else {
+			document.addEventListener('copy', copyToClipboard);
+			document.execCommand('copy');
+			document.removeEventListener('copy', copyToClipboard);
+		}
 	};
 
 	/**

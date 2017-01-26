@@ -1026,7 +1026,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 */
 	MultiInput.prototype.ontap = function (oEvent) {
 		//deselect tokens when focus is on text field
-		if (document.activeElement === this._$input[0]) {
+		if (document.activeElement === this._$input[0]
+			|| document.activeElement === this._tokenizer.getDomRef()) {
 			this._tokenizer.selectAllTokens(false);
 		}
 
