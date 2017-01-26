@@ -473,9 +473,9 @@ public class MyReleaseButton {
       coreVersion = contributorsVersions.get(COM_SAP_UI5_CORE).toString();
       contributorsRange = (String)contributorsVersions.get("contributorsRange");
 
-      if (relOperation == ReleaseOperation.MilestoneDevelopment){
-    	  	fromJSONtoMap(oldVersion, jsonLocation);
-		}
+//      if (relOperation == ReleaseOperation.MilestoneDevelopment){//TODO Y2 puts the result from getSnapshotVersions.js into "contributorsJsonData" HashMap
+//    	  	fromJSONtoMap(oldVersion, jsonLocation);
+//		}
     }      
 
     // TODO What about target files?
@@ -556,17 +556,17 @@ public class MyReleaseButton {
       }
       
       s = CONTRIBUTOR_VERSION_PATTERN.matcher(s).replaceAll(replaceWith);
-      if (relOperation.equals(ReleaseOperation.MilestoneDevelopment)){
-      final String DOCU_UI5_VERSION = "com.sap.docu.ui5.version";
-    	  for (Map.Entry<String, UiLibrary> contributor : contributorsJsonData.entrySet()) {
-    		  UiLibrary library = contributorsJsonData.get(contributor.getKey());
-      	  	    		  
-      	  		PROPERTY_VERSION_PATTERN = Pattern.compile("(?<=" + library.getName() + ">)(.*)(?=</" + library.getName() + ">)");
-      	  	if(library.getName().equals(DOCU_UI5_VERSION) && library.hasSnapshot() || !library.getName().equals(DOCU_UI5_VERSION)){
-      	  	s = PROPERTY_VERSION_PATTERN.matcher(s).replaceFirst(contributorsRange);	
-      	  	};
-    	  }
-      }
+//      if (relOperation.equals(ReleaseOperation.MilestoneDevelopment)){//TODO Y3 replacement of the lower version in the version range in uilib coll.pom in dist layer 
+//      final String DOCU_UI5_VERSION = "com.sap.docu.ui5.version";
+//    	  for (Map.Entry<String, UiLibrary> contributor : contributorsJsonData.entrySet()) {
+//    		  UiLibrary library = contributorsJsonData.get(contributor.getKey());
+//      	  	    		  
+//      	  		PROPERTY_VERSION_PATTERN = Pattern.compile("(?<=" + library.getName() + ">)(.*)(?=</" + library.getName() + ">)");
+//      	  	if(library.getName().equals(DOCU_UI5_VERSION) && library.hasSnapshot() || !library.getName().equals(DOCU_UI5_VERSION)){
+//      	  	s = PROPERTY_VERSION_PATTERN.matcher(s).replaceFirst(contributorsRange);	
+//      	  	};
+//    	  }
+//      }
     
     } else {
       saveFile(file, encoding, (String) s);
