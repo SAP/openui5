@@ -1,5 +1,10 @@
+/* =================================== */
+/* CSS for control sap.uxap/AnchorBar  */
+/* High Contrast Black theme           */
+/* =================================== */
+
 .sapUxAPAnchorBar {
-	background-color: @sapHCStandardBG;
+	background-color: @sapUiObjectHeaderBackground;
 	border-bottom-width: 0.125rem;
 }
 
@@ -8,10 +13,6 @@
 	padding-top: 0;
 	padding-bottom: 0;
 	border: none;
-}
-
-.sapUxAPAnchorBar .sapUxAPAnchorBarButton:hover > .sapMBtnHoverable, .sapMBtnActive  {
-	background-color: @sapHCStandardBG;
 }
 
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner {
@@ -29,7 +30,7 @@
 	display: block;
 	content: "";
 	position: absolute;
-	background-color: @sapHCStandardFG;
+	background-color: @sapUiObjectHeaderBorderColor;
 	height: 0.25rem;
 	bottom: 0;
 	left: 1rem;
@@ -52,20 +53,22 @@
 // Gradient mask
 .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
 html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
-	background: -moz-linear-gradient(left, @sapHCStandardBG 0%, @sapHCStandardBG 75%, fade(@sapHCStandardBG, 0) 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, right top, color-stop(0%, @sapHCStandardBG), color-stop(75%, @sapHCStandardBG), color-stop(100%, fade(@sapHCStandardBG, 0))); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(left, @sapHCStandardBG 0%, @sapHCStandardBG 75%, fade(@sapHCStandardBG, 0) 100%); /* Chrome10+,Safari5.1+ */
-	background: -ms-linear-gradient(left, @sapHCStandardBG 0%, @sapHCStandardBG 75%, fade(@sapHCStandardBG, 0) 100%); /* IE10+ */
-	background: linear-gradient(to right, @sapHCStandardBG 0%, @sapHCStandardBG 75%, fade(@sapHCStandardBG, 0) 100%); /* W3C */
+	background: -moz-linear-gradient(left, @sapUiObjectHeaderBackground 0%, @sapUiObjectHeaderBackground 75%, fade(@sapUiObjectHeaderBackground, 0) 100%); /* FF3.6+ */
+	background: -ms-linear-gradient(left, @sapUiObjectHeaderBackground 0%, @sapUiObjectHeaderBackground 75%, fade(@sapUiObjectHeaderBackground, 0) 100%); /* IE10+ */
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%, @sapUiObjectHeaderBackground), color-stop(75%, @sapUiObjectHeaderBackground), color-stop(100%, fade(@sapUiObjectHeaderBackground, 0))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, @sapUiObjectHeaderBackground 0%, @sapUiObjectHeaderBackground 75%, fade(@sapUiObjectHeaderBackground, 0) 100%); /* Chrome10+,Safari5.1+ */
+	background: linear-gradient(to right, @sapUiObjectHeaderBackground 0%, @sapUiObjectHeaderBackground 75%, fade(@sapUiObjectHeaderBackground, 0) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#00000000', GradientType=1); /* IE6-9 */
 }
 
 .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight,
 html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
-	background: -moz-linear-gradient(left, fade(@sapHCStandardBG, 0) 0%, @sapHCStandardBG 25%, @sapHCStandardBG 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, right top, color-stop(0%, fade(@sapHCStandardBG, 0)), color-stop(25%, @sapHCStandardBG), color-stop(100%, @sapHCStandardBG)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(left, fade(@sapHCStandardBG, 0) 0%, @sapHCStandardBG 25%, @sapHCStandardBG 100%); /* Chrome10+,Safari5.1+ */
-	background: -ms-linear-gradient(left, fade(@sapHCStandardBG, 0) 0%, @sapHCStandardBG 25%, @sapHCStandardBG 100%); /* IE10+ */
-	background: linear-gradient(to right, fade(@sapHCStandardBG, 0) 0%, @sapHCStandardBG 25%, @sapHCStandardBG 100%); /* W3C */
+	background: -moz-linear-gradient(left, fade(@sapUiObjectHeaderBackground, 0) 0%, @sapUiObjectHeaderBackground 25%, @sapUiObjectHeaderBackground 100%); /* FF3.6+ */
+	background: -ms-linear-gradient(left, fade(@sapUiObjectHeaderBackground, 0) 0%, @sapUiObjectHeaderBackground 25%, @sapUiObjectHeaderBackground 100%); /* IE10+ */
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%, fade(@sapUiObjectHeaderBackground, 0)), color-stop(25%, @sapUiObjectHeaderBackground), color-stop(100%, @sapUiObjectHeaderBackground)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, fade(@sapUiObjectHeaderBackground, 0) 0%, @sapUiObjectHeaderBackground 25%, @sapUiObjectHeaderBackground 100%); /* Chrome10+,Safari5.1+ */
+	background: linear-gradient(to right, fade(@sapUiObjectHeaderBackground, 0) 0%, @sapUiObjectHeaderBackground 25%, @sapUiObjectHeaderBackground 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#000000', GradientType=1); /* IE6-9 */
 }
 
 /*********************/

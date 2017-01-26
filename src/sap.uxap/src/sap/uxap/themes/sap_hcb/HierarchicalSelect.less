@@ -1,3 +1,8 @@
+/* ============================================ */
+/* CSS for control sap.uxap/HierarchicalSelect  */
+/* High Contrast Black theme                    */
+/* ============================================ */
+
 .sapUxAPHierarchicalSelect {
 	border: none;
 
@@ -18,7 +23,7 @@
 				outline: none;
 
 				> .sapMSltIcon {
-					outline: 0.125rem dotted @sapHCStandardFG;
+					outline: 0.125rem dotted @sapUiContentFocusColor;
 					outline-offset: -0.125rem;
 					border-color: transparent;
 				}
@@ -26,7 +31,7 @@
 		}
 
 		> .sapMSltIcon:hover {
-			background: @sapHCHighlightBG;
+			background: @sapUiButtonHoverBackground;
 		}
 	}
 
@@ -38,7 +43,7 @@
 		}
 
 		> .sapMSltIcon {
-			background: @sapHCHighlightAltBG;
+			background: @sapUiButtonActiveBackground;
 		}
 	}
 }
@@ -46,7 +51,7 @@
 .sapUxAPHierarchicalSelect .sapMSltLabel,
 .sapUxAPHierarchicalSelect .sapMSltArrow,
 .sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem {
-	color: @sapUiTextTitle;
+	color: @sapUiListTextColor;
 }
 
 .sapUiMedia-Std-Phone .sapUxAPHierarchicalSelect .sapMSltArrow,
@@ -66,7 +71,7 @@
 
 .sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltIconOnly .sapMSltIcon {
 	box-sizing: border-box;
-	border: 1px solid @sapHCStandardFG;
+	border: 1px solid @sapUiButtonBorderColor;
 }
 
 .sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem,
@@ -75,12 +80,12 @@
 }
 
 .sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {
-	border-top: 1px solid @sapHCReducedAltFG;
+	border-top: 1px solid @sapUiListBorderColor;
 	padding-left: 2rem;
 }
 
 .sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem {
-	border-top: 2px solid @sapHCStandardFG;
+	border-top: 0.125rem solid @sapUiGroupContentBorderColor;
 }
 
 .sapMSelectList .sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {

@@ -3,35 +3,20 @@
 /* Belize theme                                */
 /* =========================================== */
 
+@_sap_uxap_ObjectPageSection_HeaderBorderColor: lighten(@sapUiListBorderColor, 5);
+@_sap_uxap_ObjectPageSection_TitleBorderColor: darken(@sapUiListBorderColor, 30);
+
 .sapUxAPObjectPageSectionHeader {
-	border-bottom: 0.125rem solid lighten(@sapUiListBorderColor, 5);
+	border-bottom: 0.125rem solid @_sap_uxap_ObjectPageSection_HeaderBorderColor;
 }
 
 .sapUxAPObjectPageSectionTitle {
 	color: @sapUiGroupTitleTextColor;
-	font-size: 1.375rem;
-	border-bottom: 0.125rem solid darken(@sapUiListBorderColor, 30);
+	font-size: @sapMFontHeader2Size;
+	border-bottom: 0.125rem solid @_sap_uxap_ObjectPageSection_TitleBorderColor;
 }
 
 .sapUxAPObjectPageSection:focus {
-	outline: 0.0625rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.0625rem;
-}
-
-
-/* IE does not support css outline-offset */
-html[data-sap-ui-browser^="ie"].sap-desktop .sapUxAPObjectPageSection:focus {
-	outline: none;
-	position: relative;
-}
-
-html[data-sap-ui-browser^="ie"].sap-desktop .sapUxAPObjectPageSection:focus:before {
-	content: "";
-	box-sizing: border-box;
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	left: 0;
-	top: 0;
-	border: 0.125rem dotted @sapUiContentFocusColor;
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
 }

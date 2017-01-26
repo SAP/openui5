@@ -1,32 +1,19 @@
+/* =========================================== */
+/* CSS for control sap.uxap/ObjectPageSection  */
+/* BlueCrystal theme                           */
+/* =========================================== */
+
 .sapUxAPObjectPageSectionHeader {
-	border-bottom: 2px solid lighten(@sapUiExtraLightBorder, 5);
+	border-bottom: 0.125rem solid lighten(@sapUiListBorderColor, 5);
 }
 
 .sapUxAPObjectPageSectionTitle {
-	color: @sapUiDarkText;
-	font-size: @sapMFontHeader6Size;
-	font-weight: bold;
-	border-bottom: 2px solid @sapUiExtraDarkBorder;
+	color: @sapUiGroupTitleTextColor;
+	font-size: @sapMFontHeader2Size;
+	border-bottom: 0.125rem solid darken(@sapUiListBorderColor, 30);
 }
 
 .sapUxAPObjectPageSection:focus {
-	outline: 0.0625rem dotted @sapUiFocus;
-	outline-offset: -0.0625rem;
-}
-
-/* IE does not support css outline-offset */
-html[data-sap-ui-browser^="ie"].sap-desktop .sapUxAPObjectPageSection:focus {
-	outline: none;
-	position: relative;
-}
-
-html[data-sap-ui-browser^="ie"].sap-desktop .sapUxAPObjectPageSection:focus:before {
-	content: "";
-	box-sizing: border-box;
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	left: 0;
-	top: 0;
-	border: 0.0625rem dotted @sapUiFocus;
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
 }

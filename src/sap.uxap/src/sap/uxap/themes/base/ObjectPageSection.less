@@ -1,3 +1,8 @@
+/* =========================================== */
+/* CSS for control sap.uxap/ObjectPageSection  */
+/* Base theme                                  */
+/* =========================================== */
+
 .sapUxAPObjectPageSection {
 	margin-left: 0;
 	margin-bottom: 0;
@@ -62,4 +67,21 @@ html .sapUiContainer-Narrow .sapUxAPObjectPageSectionHeader {
 .sapUiSizeCompact .sapUxAPObjectPageSectionHeader {
 	height: 2.5rem;
 	line-height: 2rem;
+}
+
+/* IE does not support css outline-offset */
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUxAPObjectPageSection:focus {
+	outline: none;
+	position: relative;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUxAPObjectPageSection:focus:before {
+	content: "";
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	border: 0.125rem dotted @sapUiContentFocusColor;
 }
