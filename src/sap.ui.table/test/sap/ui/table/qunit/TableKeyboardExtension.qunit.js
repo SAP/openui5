@@ -192,7 +192,7 @@ QUnit.test("Resize Bar", function(assert) {
 	};
 	oTable.addEventDelegate(oDelegate);
 	assert.expect(0);
-	jQuery.sap.domById(oTable.getId() + "-rsz").focus();
+	qutils.triggerMouseEvent(oTable.$("rsz"), "click");
 	oTable.removeEventDelegate(oDelegate);
 });
 
