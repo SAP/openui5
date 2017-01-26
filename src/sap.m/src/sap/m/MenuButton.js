@@ -173,8 +173,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		 * @private
 		 */
 		MenuButton.prototype._setInitialBtnWidth = function() {
+			var iInitialWidth;
 			if (this._isSplitButton() && !this._iInitialWidth) {
-				this._iInitialWidth = this.$().outerWidth() + 1; //for IE
+				iInitialWidth = this.$().outerWidth();
+				if (iInitialWidth) {
+					this._iInitialWidth = iInitialWidth + 1; //for IE
+				}
 			}
 		};
 

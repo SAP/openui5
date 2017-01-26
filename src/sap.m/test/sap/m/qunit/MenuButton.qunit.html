@@ -131,7 +131,7 @@
 			strictEqual(aAriaLabelledByDomElements[1].text(),
 					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_DESCRIPTION"),
 					'Referenced control in "aria-labelledby" shows that this is a split button');
-			
+
 			strictEqual(aAriaLabelledByDomElements[2].text(),
 					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"),
 					'Referenced control in "aria-labelledby" shows the keyboard handling hint');
@@ -517,6 +517,46 @@
 			//Assert
 			ok(!$SplitButtonArrow.hasClass("sapMSBActive"), "Arrow is not active");
 		});
+
+		test("rerendering in static area", function() {
+
+			var oMenuButton = new sap.m.MenuButton({
+				buttonMode: sap.m.MenuButtonMode.Split,
+				text: "Example",
+				menu: new sap.m.Menu({
+					items: [
+						new sap.m.MenuItem({ text:"Item1" }),
+						new sap.m.MenuItem({ text:"Item2" })
+					]
+				})
+			}),
+			oPopover = new sap.m.Popover({content: [
+				oMenuButton
+			]}),
+			oButton = new sap.m.Button({press: function() {
+				oPopover.openBy(oButton);
+			}});
+
+			oButton.placeAt('content'); // popover opens only if opening button is rendered
+			sap.ui.getCore().applyChanges();
+
+			oButton.firePress(); // press to open the popover
+			this.clock.tick(1000);
+
+			// check width after first rendering
+			ok(oMenuButton.$().width() > 1, "width is greater than 1");
+
+			//act
+			oPopover.rerender();
+			sap.ui.getCore().applyChanges();
+
+			// check width after rerendering
+			ok(oMenuButton.$().width() > 1, "width is still greater than 1 after rerendering");
+
+			oPopover.destroy();
+			oButton.destroy();
+		});
+
 
 		module("SplitButton alone", {
 			beforeEach: function() {
