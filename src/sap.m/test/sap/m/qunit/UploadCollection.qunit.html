@@ -355,6 +355,17 @@
 		oSpy.restore();
 	});
 
+	QUnit.test("No data rendering in upload disabled state", function(assert) {
+		//Arrange
+		this.oUploadCollection.unbindAggregation("items");
+		this.oUploadCollection.setUploadEnabled(false);
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(jQuery.sap.domById(this.oUploadCollection.getId() + "-no-data-text"), "No data text is rendered in upload disabled state");
+		assert.notOk(jQuery.sap.domById(this.oUploadCollection.getId() + "-no-data-description"), "No data description is not rendered in upload disabled state");
+	});
+
 	QUnit.test("No data rendering - with default text", function(assert) {
 		//Arrange
 		this.oUploadCollection.unbindAggregation("items");
@@ -1041,7 +1052,8 @@
 					path : "/items",
 					template : createItemTemplate(),
 					templateShareable : false
-				}
+				},
+				multiple : true
 			}).setModel(new sap.ui.model.json.JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -1106,11 +1118,22 @@
 		assert.notOk($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
 	});
 
+	QUnit.test("Drop file in UIArea", function(assert) {
+		//Arrange
+		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
+		this.oUploadCollection.$("drag-drop-area").removeClass("sapMUCDragDropOverlayHide");
+		//Act
+		this.oUploadCollection._$RootNode.trigger("drop");
+		//Assert
+		assert.ok(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is not visible");
+	});
+
 	QUnit.test("Drop file in UploadCollection", function(assert) {
 		//Arrange
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
-		var oSpyGetFileUploader = sinon.spy(this.oUploadCollection._getFileUploader(), "_sendFilesFromDragAndDrop");
+		var oSpySendFiles = sinon.spy(this.oUploadCollection._getFileUploader(), "_sendFilesFromDragAndDrop");
 		var oSpyOnChange = sinon.spy(this.oUploadCollection, "_onChange");
+		var oStubFilesAllowed = sinon.stub(this.oUploadCollection._getFileUploader(), "_areFilesAllowed").returns(true);
 		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		var oEvent = jQuery.Event("drop", {
 			originalEvent: {
@@ -1124,25 +1147,25 @@
 		$DragDropArea.trigger(oEvent);
 		//Assert
 		assert.ok($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag and drop overlay is hidden after drop");
-		assert.ok(oSpyGetFileUploader.calledOnce, "The API method of FileUploader for UploadCollection was called");
+		assert.ok(oSpySendFiles.calledOnce, "The API method of FileUploader for UploadCollection was called");
 		assert.ok(oSpyOnChange.calledOnce, "The _onchange event is triggered when file is dropped in UC");
+		assert.ok(oStubFilesAllowed.called, "The check for files from FileUploader has been performed");
 		assert.ok(oStubCheckForFiles.called, "The check for files has been performed");
 	});
 
-	QUnit.test("Drop file in UploadCollection (Pending mode)", function(assert) {
+	QUnit.test("Dropping more than one file is not allowed when multiple is false", function(assert) {
 		//Arrange
-		var oStubGetInstantUpload = sinon.stub(this.oUploadCollection, "getInstantUpload").returns(false);
+		this.oUploadCollection.setMultiple(false);
+		sap.ui.getCore().applyChanges();
 		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
-		this.oUploadCollection._oFormatDecimal = sap.ui.core.format.FileSizeFormat.getInstance({binaryFilesize: false, maxFractionDigits: 1, maxIntegerDigits: 3});
+		var oSpyOnChange = sinon.spy(this.oUploadCollection, "_onChange");
+		var oSpyMessageBox = sinon.spy(sap.m.MessageBox, "information");
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
-		var oFileList = {
-			0: {
-				name: "file",
-				size: 1,
-				type: "type"
-			},
-			length: 1
-		};
+		var oFileList = [{
+			name: "file1"
+		}, {
+			name: "file2"
+		}];
 		var oEvent = jQuery.Event("drop", {
 			originalEvent: {
 				dataTransfer:{
@@ -1150,12 +1173,14 @@
 				}
 			}
 		});
-		this.oUploadCollection.$("drag-drop-area").removeClass("sapMUCDragDropOverlayHide");
 		//Act
 		$DragDropArea.trigger(oEvent);
 		//Assert
-		assert.ok($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag and drop overlay is hidden after drop");
-		assert.equal(this.oUploadCollection._aFilesFromDragAndDropForPendingUpload.length, 1, "File is inserted in the array");
+		assert.ok(oSpyOnChange.notCalled, "Files are not dropped in UploadCollection");
+		assert.ok(oSpyMessageBox.calledOnce, "Information Messagebox is displayed");
+		//Restore
+		oSpyMessageBox.restore();
+		sap.ui.getCore().byId(this.oUploadCollection.getId() + "-multiple-false-messagebox").close();
 	});
 
 	QUnit.test("Drag drop icon is hidden when height of drag drop area smaller than 10rem", function(assert) {
