@@ -312,10 +312,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
-				"sap.m.StandardListItem": {
-					"hideControl": "default",
-					"unhideControl": "default"
-				},
+				"sap.m.StandardListItem":"sap/m/flexibility/StandardListItem",
 				"sap.m.ColumnListItem": {
 					"hideControl": "default",
 					"unhideControl": "default"
