@@ -258,14 +258,14 @@ public class Git2P4Main {
     	checkObjectIdsJsonVersion(fromVersion, context.objJson);
     }
     
-//    if(op.equals(ReleaseOperation.MilestoneDevelopment)){ //TODO Y1 extraction and execution of the getSnapshotVersion.js  
-//       Runtime p = Runtime.getRuntime();       
-//	   String jsLocation = extractSnapshotVersionJs().getParent();	   
-//	   MyReleaseButton.getFileOSLocation(jsLocation);	  
-//	   
-//	     //Execution of the getSnapshotVersion.js (which searches and takes data from NEXUS for contributors Snapshot versions)
-//	   p.exec("cmd.exe /c cd "+jsLocation+" & start cmd.exe /c" + "node getSnapshotVersion.js " + toVersion);	   
-//    }
+    if(op.equals(ReleaseOperation.MilestoneDevelopment)){
+       Runtime p = Runtime.getRuntime();
+	   String jsLocation = extractSnapshotVersionJs().getParent();
+	   MyReleaseButton.getFileOSLocation(jsLocation);
+
+	   //Execution of the getSnapshotVersion.js (which searches and takes data from NEXUS for contributors Snapshot versions)
+	   p.exec("cmd.exe /c cd "+jsLocation+" & start cmd.exe /c" + "node getSnapshotVersion.js " + toVersion);	   
+    }
     
     if ( guess && git2p4.interactive ) {
       int c;
