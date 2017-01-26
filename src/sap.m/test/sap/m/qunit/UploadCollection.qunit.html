@@ -1094,6 +1094,7 @@
 		//Arrange
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
 		var oSpy = sinon.spy(this.oUploadCollection._getFileUploader(), "_sendFilesFromDragAndDrop");
+		var oSpy1 = sinon.spy(this.oUploadCollection, "_onChange");
 		var oEvent = jQuery.Event("drop", {
 			originalEvent: {
 				dataTransfer:{
@@ -1107,6 +1108,10 @@
 		//Assert
 		assert.ok($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag and drop overlay is hidden after drop");
 		assert.ok(oSpy.calledOnce, "The API method of FileUploader for UploadCollection was called");
+		assert.ok(oSpy1.calledOnce, "The _onchange event is triggered when file is dropped in UC");
+		//Restore
+		oSpy.restore();
+		oSpy1.restore();
 	});
 
 	QUnit.test("Drop file in UploadCollection (Pending mode)", function(assert) {

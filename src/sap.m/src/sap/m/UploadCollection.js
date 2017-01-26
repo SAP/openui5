@@ -1188,6 +1188,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					this._aFilesFromDragAndDropForPendingUpload.push(aFiles[i]);
 				}
 			} else {
+				// fire the _onchange event so that the UC item could be created
+				oFileUploader.fireChange({
+					files: aFiles
+				});
 				oFileUploader._sendFilesFromDragAndDrop(aFiles);
 			}
 		}
