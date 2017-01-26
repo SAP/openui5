@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets', './Route'],
-	function(Router, TargetHandler, Targets, Route) {
+sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
+	function(Router, TargetHandler, Targets) {
 		"use strict";
 
 		/**
@@ -69,10 +69,6 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets', './
 				});
 			},
 
-			_createRoute : function (oRouter, oConfig, oParent) {
-				return new Route(oRouter, oConfig, oParent);
-			},
-
 			fireRouteMatched : function (mArguments) {
 				var oRoute = this.getRoute(mArguments.name),
 					oTargetConfig;
@@ -110,50 +106,7 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets', './
 				});
 
 				return Router.prototype.fireRoutePatternMatched.apply(this, arguments);
-			},
-
-			/**
-			 * Attach event-handler <code>fnFunction</code> to the 'beforeRouteMatched' event of this <code>sap.f.routing.Router</code>.<br/>
-			 *
-			 *
-			 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
-			 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
-			 *            oListener-instance (if present) or in a 'static way'.
-			 * @param {object} [oListener] Object on which to call the given function. If empty, this Model is used.
-			 *
-			 * @return {sap.f.routing.Router} <code>this</code> to allow method chaining
-			 * @public
-			 */
-			attachBeforeRouteMatched : function(oData, fnFunction, oListener) {
-				this.attachEvent("beforeRouteMatched", oData, fnFunction, oListener);
-				return this;
-			},
-
-			/**
-			 * Detach event-handler <code>fnFunction</code> from the 'beforeRouteMatched' event of this <code>sap.f.routing.Router</code>.<br/>
-			 *
-			 * The passed function and listener object must match the ones previously used for event registration.
-			 *
-			 * @param {function} fnFunction The function to call, when the event occurs.
-			 * @param {object} oListener Object on which the given function had to be called.
-			 * @return {sap.f.routing.Router} <code>this</code> to allow method chaining
-			 * @public
-			 */
-			detachBeforeRouteMatched : function(fnFunction, oListener) {
-				this.detachEvent("beforeRouteMatched", fnFunction, oListener);
-				return this;
-			},
-
-			/**
-			 * Fires the 'beforeRouteMatched' event of this <code>sap.f.routing.Router</code>.<br/>
-			 * @param mArguments
-			 * @returns {sap.f.routing.Router}
-			 */
-			fireBeforeRouteMatched : function (mArguments) {
-				this.fireEvent("beforeRouteMatched", mArguments);
-				return this;
 			}
-
 		});
 
 		return MobileRouter;

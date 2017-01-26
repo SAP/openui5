@@ -573,10 +573,14 @@
 
 			QUnit.test("Should go to a route", function() {
 				//Arrange
-				var callCount = 0,
+				var beforeCallCount = 0,
+					callCount = 0,
 					patternCallCount = 0,
 					aArguments = [],
 					bParentCallFirst = false,
+					beforeMatched = function(oEvent) {
+						beforeCallCount++;
+					},
 					matched = function(oEvent) {
 						callCount++;
 						if (oEvent.getParameter("name") === "name") {
@@ -611,6 +615,7 @@
 				});
 
 				router.initialize();
+				router.attachBeforeRouteMatched(beforeMatched);
 				router.attachRouteMatched(matched);
 				router.attachRoutePatternMatched(patternMatched);
 
@@ -628,6 +633,7 @@
 
 				return oChildRouteMatchedSpy.returnValues[0].then(function() {
 					//Assert
+					strictEqual(beforeCallCount, 2, "Did call the callback function twice");
 					strictEqual(callCount, 2, "Did call the callback function twice");
 					strictEqual(patternCallCount, 1, "Did call the patternMatched function once");
 					deepEqual(aArguments.foo, "foo", "Did pass foo as parameter it was: " + aArguments.foo);
