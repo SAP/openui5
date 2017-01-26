@@ -113,7 +113,7 @@
 				"yyMMddHHmmssZ": "010704120856+0700",
 				"yyyy-MM-dd'T'HH:mm:ss.SSSZ": "2001-07-04T12:08:56.235+0700",
 				"yyyy-MM-dd'T'HH:mm:ss.SSSXXX": "2001-07-04T12:08:56.235+07:00",
-				"YYYY-'W'ww-u": "2001-W27-3",
+				"YYYY-'W'ww-u": "2001-W27-4",
 				"'datetime'''yyyy-MM-dd'T'HH:mm:ss''": "datetime'2001-07-04T12:08:56'"
 			};
 
@@ -626,7 +626,32 @@
 
 		sap.ui.getCore().getConfiguration().setLanguage("en_US");
 	});
-	
+
+	test("format and parse weekInYear and dayNumberOfWeek", function() {
+		var oDate = new Date(2016, 10, 13); // 13th, November, 2016, Sunday
+		var sPattern = "Y/ww/u";
+
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: sPattern
+		});
+		var sFormatted = "2016/47/1";
+
+		equal(oDateFormat.format(oDate), sFormatted, "13th, November 2016 Sunday is the first day of week 46 in en-US");
+		equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
+
+		sap.ui.getCore().getConfiguration().setLanguage("de_DE");
+		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: sPattern
+		});
+		sFormatted = "2016/45/7";
+
+		equal(oDateFormat.format(oDate), sFormatted, "13th, November 2016 Sunday is the 7th day of week 45 in de-DE");
+		equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
+
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+	});
+
 	test("origin info", function() {
 		var oOriginDate = sap.ui.core.format.DateFormat.getInstance(), sValue = oOriginDate.format(oDateTime), oInfo = sValue.originInfo;
 		equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source")
