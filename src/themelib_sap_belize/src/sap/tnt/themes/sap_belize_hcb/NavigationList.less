@@ -1,0 +1,17 @@
+/* ======================================= */
+/* CSS for control sap.tnt/NavigationList  */
+/* Belize High Contrast Black theme        */
+/* ======================================= */
+
+.sapTntNavLI li:focus::before,
+.sapTntNavLIItem:focus::before {
+	border: 0.125rem dotted @sapUiContentFocusColor;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapTntNavLI li:focus::before,
+	.sapTntNavLIItem:focus::before {
+		border: 0.125rem dashed @sapUiContentFocusColor;
+	}
+}
