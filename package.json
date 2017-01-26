@@ -4,6 +4,7 @@
   "description": "OpenUI5 Core & Runtime",
   "private": true,
   "scripts": {
+    "start": "grunt serve",
     "test": "grunt lint"
   },
   "keywords": [
