@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/routing/Target', './async/Target'],
-	function(Target, asyncTarget) {
+sap.ui.define(['sap/ui/core/routing/Target', 'sap/f/FlexibleColumnLayout', './async/Target'],
+	function(Target, FCL, asyncTarget) {
 		"use strict";
 
 		/**
@@ -31,6 +31,16 @@ sap.ui.define(['sap/ui/core/routing/Target', './async/Target'],
 					this._super[fn] = this[fn];
 					this[fn] = TargetStub[fn];
 				}
+			},
+
+			_beforePlacingViewIntoContainer : function(mArguments) {
+				var oContainer = mArguments.container;
+				var oRouteConfig = mArguments.data && mArguments.data.routeConfig;
+				if (oContainer instanceof FCL && oRouteConfig && oRouteConfig.layout) {
+					// Apply the layout early, if it was specified explicitly for the route
+					oContainer.setLayout(oRouteConfig.layout);
+				}
+				Target.prototype._beforePlacingViewIntoContainer.apply(this, arguments);
 			}
 		});
 

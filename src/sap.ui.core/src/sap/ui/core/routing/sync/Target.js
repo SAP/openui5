@@ -98,6 +98,14 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				oView = this._oViews._getView(oViewOptions);
 			}
 
+			// adapt the container before placing the view into it to make the rendering occur together with the next
+			// aggregation modification.
+			this._beforePlacingViewIntoContainer({
+				container: oControl,
+				view: oView,
+				data: vData
+			});
+
 			this._bindTitleInTitleProvider(oView);
 
 			this._addTitleProviderAsDependent(oView);
