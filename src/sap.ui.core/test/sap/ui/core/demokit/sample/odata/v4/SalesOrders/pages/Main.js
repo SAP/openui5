@@ -368,6 +368,21 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
+				checkContextFetchValue : function () {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oSalesOrderTable) {
+							var oContext = oSalesOrderTable.getItems()[0].getBindingContext();
+
+							oContext.requestObject().then(function (oResult) {
+								Opa5.assert.ok("Note" in oResult, "Note property exists");
+								Opa5.assert.notOk("value" in oResult, "No .value[0]");
+							});
+						},
+						viewName : sViewName
+					});
+				},
 				checkDifferentID : function (iRow, sExpectedID) {
 					return this.waitFor({
 						controlType : "sap.m.Table",

@@ -141,6 +141,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchValue: no path", function (assert) {
+		var oBinding = {
+				fetchValue : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/foo", 42),
+			oResult = {};
+
+		this.mock(oBinding).expects("fetchValue")
+			.withExactArgs("", undefined, 42)
+			.returns(oResult);
+
+		assert.strictEqual(oContext.fetchValue(), oResult);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("fetchAbsoluteValue", function (assert) {
 		var oBinding = {
 				fetchAbsoluteValue : function () {}

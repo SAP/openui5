@@ -34,8 +34,10 @@ sap.ui.require([
 				// TestUtils.js does not support deletion via $batch
 				+ (bRealOData ? "" : "&$direct=true"));
 
-		// Create, modify and delete of an unsaved sales order
 		When.onTheMainPage.firstSalesOrderIsVisible();
+		Then.onTheMainPage.checkContextFetchValue();
+
+		// Create, modify and delete of an unsaved sales order
 		When.onTheMainPage.pressCreateSalesOrdersButton();
 		Then.onTheCreateNewSalesOrderDialog.checkNewBuyerId("0100000000");
 		Then.onTheCreateNewSalesOrderDialog.checkNewNote();
