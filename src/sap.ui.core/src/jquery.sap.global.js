@@ -3636,7 +3636,7 @@
 		 * @SecSink {1|PATH} Parameter is used for future HTTP requests
 		 */
 		jQuery.sap.registerModulePath = function registerModulePath(sModuleName, vUrlPrefix) {
-			jQuery.sap.assert(!/\//.test(sModuleName), "module path must not contain a slash.");
+			jQuery.sap.assert(!/\//.test(sModuleName), "module name must not contain a slash.");
 			sModuleName = sModuleName.replace(/\./g, "/");
 			// URL must not be empty
 			vUrlPrefix = vUrlPrefix || '.';
