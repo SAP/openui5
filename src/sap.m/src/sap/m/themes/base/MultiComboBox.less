@@ -1,6 +1,11 @@
-/* ============================================= */
-/* CSS for control sap.m/MultiComboBox.control   */
-/* ============================================= */
+/* ==================================== */
+/* CSS for control sap.m/MultiComboBox  */
+/* Base theme                           */
+/* ==================================== */
+
+.sapMMultiComboBox.sapMComboBoxTextFieldReadonly {
+	background-color: @sapUiFieldReadOnlyBackground;
+}
 
 li.sapMMultiComboBoxItem .sapMCbBg {
 	top: 0;
@@ -11,4 +16,46 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 /* Workaround for missing disabled state of sap.m.Tokenizer */
 .sapMMultiComboBox.sapMComboBoxBaseDisabled {
 	pointer-events: none;
+}
+
+html.sap-desktop .sapMMultiComboBoxBorder {
+	overflow: hidden;
+}
+
+.sapMMultiComboBoxBorder {
+	height: 100%;
+	display: flex;
+
+	&.sapMMultiComboBoxBorder .sapMTokenizer {
+		flex: 0 1 auto;
+		&:not(.sapMTokenizerEmpty) .sapMTokenizerScrollContainer {
+			padding-left: 0.375rem;
+		}
+	}
+}
+
+/* ------------------------------ */
+/*             InputDiv           */
+/* ------------------------------ */
+
+.sapMMultiComboBoxInputContainer {
+	flex: 1;
+	margin-right: 2.5rem;
+	min-width: 4.5rem;
+
+	& .sapMMultiComboBoxInputInner {
+		font-size: @sapMFontMediumSize;
+		font-family: @sapUiFontFamily;
+	}
+
+	& .sapMComboBoxTextFieldInnerWidthExtraPadding:not(.sapMComboBoxTextFieldInnerReadonly) {
+		padding-right: 0.75rem;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMMultiComboBoxInputContainer {
+		margin-right: 2rem;
+		min-width: 3.5rem;
+	}
 }

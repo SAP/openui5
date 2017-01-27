@@ -148,8 +148,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 			this.updateDomValue(this._oTraversalItem.getText());
 			this.selectText(0, this.getValue().length);
 		}
-
-		this._setContainerSizes();
 	};
 
 	/**
@@ -182,8 +180,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 			this.updateDomValue(this._oTraversalItem.getText());
 			this.selectText(0, this.getValue().length);
 		}
-
-		this._setContainerSizes();
 	};
 
 	/**
@@ -299,8 +295,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 				this.focus();
 			}
 		}
-
-		this._setContainerSizes();
 	};
 
 	/**
@@ -321,11 +315,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 		if (!this.isOpen()) {
 			this.openValueStateMessage();
 		}
-	};
-
-	MultiComboBox.prototype.onsapescape = function(oEvent) {
-		ComboBoxBase.prototype.onsapescape.apply(this, arguments);
-		this._setContainerSizes();
 	};
 
 	/**
@@ -497,8 +486,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 				oListItem.setVisible(bMatch);
 			}
 		}, this);
-
-		this._setContainerSizes();
 
 		// First do manipulations on list items and then let the list render
 		if ((!this.getValue() || !bVisibleItemFound) && !this.bOpenedByKeyboardOrButton)  {
@@ -989,37 +976,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	// --------------------------- End ------------------------------------
 
 	/**
-	 * Calculate available width for the tokenizer
-	 *
-	 * @private
-	 */
-	MultiComboBox.prototype._setContainerSizes = function() {
-		var $MultiComboBox = this.$();
-
-		if (!$MultiComboBox.length) {
-			return;
-		}
-
-		var DOT_CSS_CLASS_MULTICOMBOBOX = this.getRenderer().DOT_CSS_CLASS_MULTICOMBOBOX,
-			$InputContainer = $MultiComboBox.find(DOT_CSS_CLASS_MULTICOMBOBOX + "InputContainer"),
-			$ShadowDiv = $MultiComboBox.children(DOT_CSS_CLASS_MULTICOMBOBOX + "ShadowDiv"),
-			iAvailableWidth = this.$().find(".sapMMultiComboBoxBorder").width();
-
-		$ShadowDiv.text(this.getValue());
-
-		var iIconWidth = jQuery(this.getOpenArea()).outerWidth(true),
-			iInputWidthMinimalNeeded = $ShadowDiv.outerWidth() + iIconWidth,
-			iAvailableInnerSpace = iAvailableWidth - iInputWidthMinimalNeeded,
-			iIconWidth = jQuery(this.getOpenArea()).outerWidth(true),
-			sTokenizerScrollWidth = (this._oTokenizer.getScrollWidth() / parseFloat(sap.m.BaseFontSize)) + "rem",
-			sInputWidth = ((iAvailableInnerSpace > 0 ? iInputWidthMinimalNeeded : iAvailableWidth ) / parseFloat(sap.m.BaseFontSize)) + "rem";
-
-		this._oTokenizer.$().css("width","calc(100% - " + sInputWidth + ")");
-		$InputContainer.css("width", "calc(100% - " + sTokenizerScrollWidth + ")");
-		$InputContainer.css("min-width", sInputWidth);
-	};
-
-	/**
 	 * Get token instance for a specific item
 	 *
 	 * @param {sap.ui.core.Item} oItem
@@ -1469,10 +1425,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	/* =========================================================== */
 	/* Lifecycle methods */
 	/* =========================================================== */
-
-	MultiComboBox.prototype._onAfterRenderingTokenizer = function() {
-		this._setContainerSizes();
-	};
 
 	/**
 	 * Required adaptations after rendering of List.
