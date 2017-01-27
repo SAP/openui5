@@ -541,21 +541,35 @@ sap.ui.define([
 		var aDependentSelectors = [];
 		var aDependentIds = [];
 
-		Object.keys(this._oDefinition.dependentSelector).forEach(function (sPropertyName) {
-			aDependentSelectors.push(that._oDefinition.dependentSelector[sPropertyName]);
-		});
+		if (!this._aDependentIdList) {
+			Object.keys(this._oDefinition.dependentSelector).forEach(function (sPropertyName) {
+				aDependentSelectors.push(that._oDefinition.dependentSelector[sPropertyName]);
+			});
 
-		aDependentSelectors = [].concat.apply([], aDependentSelectors);
+			aDependentSelectors = [].concat.apply([], aDependentSelectors);
 
-		aDependentSelectors.forEach(function (oDependentSelector) {
-			sId = oDependentSelector.id;
-			if (oDependentSelector.idIsLocal) {
-				sId = oAppComponent.createId(oDependentSelector.id);
-			}
-			aDependentIds.push(sId);
-		});
+			aDependentSelectors.forEach(function (oDependentSelector) {
+				sId = oDependentSelector.id;
+				if (oDependentSelector.idIsLocal) {
+					sId = oAppComponent.createId(oDependentSelector.id);
+				}
+				aDependentIds.push(sId);
+			});
 
-		return aDependentIds;
+			this._aDependentIdList = aDependentIds;
+		}
+
+		return this._aDependentIdList;
+	};
+
+	/**
+	 * Returns the change key
+	 *
+	 * @returns {String} Change key of the file which is a unique concatenation of fileName, layer and namespace
+	 * @public
+	 */
+	Change.prototype.getKey = function () {
+		return this._oDefinition.fileName + this._oDefinition.layer + this._oDefinition.namespace;
 	};
 
 	/**
