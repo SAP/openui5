@@ -1,22 +1,8 @@
 {
   "title" : "Products List",
-  "titleExpandedContent" : {
-    "text": "I am Expanded Content",
-    "status" : "Warning"
-  },
   "showFooter" : false,
-  "titleSnappedContent" : {
-    "text": "Functional Area: Business",
-    "status" : "Success"
-  },
   "headerExpanded": true,
   "titleClickable": true,
-  "objectDescription" : {
-      "category" : "Business",
-      "center" : "PI Products Sofia",
-      "email" : "office@piproucts.com",
-      "status" : "Success"
-  },
   "ProductCollection": [
     {
       "ProductId": "1239102",
