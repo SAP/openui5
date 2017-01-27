@@ -151,7 +151,9 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
                 iRangeIndex = aAbsRange[0] > aAbsRange[1] ? 0 : 1,
                 bInputsAsTooltips = !!this.getInputsAsTooltips();
 
-            this._oRangeLabel = new InvisibleText({text: this._oResourceBundle.getText("RANGE_SLIDER_RANGE_HANDLE")});
+            if (!this._oRangeLabel) {
+                this._oRangeLabel = new InvisibleText({text: this._oResourceBundle.getText("RANGE_SLIDER_RANGE_HANDLE")});
+            }
 
             this._validateProperties();
 
@@ -811,7 +813,7 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
          * @override
          */
         RangeSlider.prototype.onsapincreasemodifiers = function (oEvent) {
-            if (["number", "text"].indexOf(oEvent.target.type) > -1) {
+            if (["number", "text"].indexOf(oEvent.target.type) > -1 || oEvent.altKey) {
                 return;
             }
 
@@ -873,7 +875,7 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
          * @override
          */
         RangeSlider.prototype.onsapdecreasemodifiers = function (oEvent) {
-            if (["number", "text"].indexOf(oEvent.target.type) > -1) {
+            if (["number", "text"].indexOf(oEvent.target.type) > -1 || oEvent.altKey) {
                 return;
             }
 
