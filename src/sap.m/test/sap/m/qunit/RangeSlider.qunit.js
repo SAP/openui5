@@ -297,6 +297,32 @@
         }
     });
 
+	QUnit.test("KH: Global ALT + Arrow", function (assert) {
+		var oMockEvent = {
+				target: {type: ""},
+				altKey: true,
+				preventDefault: function () {},
+				setMarked: function () {}
+			},
+			oRangeSlider = new sap.m.RangeSlider().placeAt(DOM_RENDER_LOCATION),
+			oEventSpyPreventDefault = this.spy(oMockEvent, "preventDefault"),
+			oEventSpySetMarked = this.spy(oMockEvent, "setMarked");
+
+		// Act
+		oRangeSlider.onsapincreasemodifiers(oMockEvent);
+
+		// Assert
+		assert.ok(oEventSpyPreventDefault.callCount === 0, "The method is skipped and the event went to the global KH");
+		assert.ok(oEventSpySetMarked.callCount === 0, "The method is skipped and the event went to the global KH");
+
+		// Act
+		oRangeSlider.onsapdecreasemodifiers(oMockEvent);
+
+		// Assert
+		assert.ok(oEventSpyPreventDefault.callCount === 0, "The method is skipped and the event went to the global KH");
+		assert.ok(oEventSpySetMarked.callCount === 0, "The method is skipped and the event went to the global KH");
+	});
+
 	QUnit.module("Overwritten methods");
 
 	QUnit.test("getRange", function (assert) {
