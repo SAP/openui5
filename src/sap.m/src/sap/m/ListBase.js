@@ -383,7 +383,9 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 					srcControl : {type : "sap.ui.core.Control"}
 				}
 			}
-		}
+		},
+		designTime : true
+
 	}});
 
 	ListBase.getInvisibleText = function() {
