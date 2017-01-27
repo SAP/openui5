@@ -4691,6 +4691,134 @@
 		oComboBox.destroy();
 	});
 
+	QUnit.module("Keyboard handling", {
+		setup: function(){
+			this.oFirstItem = new sap.ui.core.Item({key: "Item1", text: "Item1"});
+			this.oMultiComboBox = new sap.m.MultiComboBox({
+				items: [
+					this.oFirstItem,
+					new sap.ui.core.Item({key: "Item2", text: "Item2"}),
+					new sap.ui.core.Item({key: "Item3", text: "Item3"})
+				]
+			});
+			this.oTokenizer = this.oMultiComboBox._oTokenizer;
+			this.oMultiComboBox.placeAt("MultiComboBox-content");
+			sap.ui.getCore().applyChanges();
+		}, teardown: function() {
+			this.oMultiComboBox.destroy();
+		}
+	});
+
+	QUnit.test("onsapend should trigger Tokenizer's onsapend", function (assert) {
+		var oSapEndSpy = sinon.spy(sap.m.Tokenizer.prototype, "onsapend");
+
+		this.oMultiComboBox.onsapend();
+		this.clock.tick();
+
+		ok(oSapEndSpy.called, "onsapend of the Tokenizer should be called");
+		ok(oSapEndSpy.calledOn(this.oTokenizer), "onsapend should be called on the internal Tokenizer");
+	});
+
+	QUnit.test("onsaphome should trigger Tokenizer's onsaphome", function (assert) {
+		var oSapEndSpy = sinon.spy(sap.m.Tokenizer.prototype, "onsaphome");
+
+		this.oMultiComboBox.onsaphome();
+		this.clock.tick();
+
+		ok(oSapEndSpy.called, "onsaphome of the Tokenizer should be called");
+		ok(oSapEndSpy.calledOn(this.oTokenizer), "onsapend should be called on the internal Tokenizer");
+	});
+
+	QUnit.test("onsapdown should update input's value with first item's text", function (assert) {
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		this.clock.tick(100);
+
+		assert.strictEqual(this.oFirstItem.getText(), this.oMultiComboBox.getValue(), "Item's text should be the same as input's value");
+	});
+
+	QUnit.test("onsapup should update input's value with previous selectable item's text", function (assert) {
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		this.clock.tick(100);
+
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		this.clock.tick(100);
+
+		assert.strictEqual(this.oFirstItem.getText(), this.oMultiComboBox.getValue(), "Item's text should be the same as input's value");
+	});
+
+	QUnit.test("onsapenter should not trigger invalidation if value is empty", function(assert) {
+		// arrange
+		var oFakeEvent = {
+			setMarked: function() {}
+		}, oSelectItemStub = this.stub(this.oMultiComboBox, "_selectItemByKey");
+
+		// act
+		this.oMultiComboBox.onsapenter(oFakeEvent);
+
+		// assert
+		assert.notOk(oSelectItemStub.called, "selection should not be called");
+	});
+
+	QUnit.module("Mobile mode (dialog)");
+
+	QUnit.test("_getFilterSelectedButton()", function(assert) {
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			tablet: false,
+			phone: true
+		});
+
+		var oFirstItem = new sap.ui.core.Item({key: "Item1", text: "Item1"});
+		var oMultiComboBox = new sap.m.MultiComboBox({
+			items: [
+				oFirstItem,
+				new sap.ui.core.Item({key: "Item2", text: "Item2"}),
+				new sap.ui.core.Item({key: "Item3", text: "Item3"})
+			]
+		});
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		var oHeaderButton = oMultiComboBox.getPicker().getSubHeader().getContent()[1];
+
+		assert.equal(oHeaderButton, oMultiComboBox._getFilterSelectedButton(), "Header button should be the second element in subheader's content of the Dialog");
+
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("_filterSelectedItems()", function(assert) {
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			tablet: false,
+			phone: true
+		});
+
+		var oFirstItem = new sap.ui.core.Item({key: "Item1", text: "Item1"}),
+			oMultiComboBox = new sap.m.MultiComboBox({
+			items: [
+				oFirstItem,
+				new sap.ui.core.Item({key: "Item2", text: "Item2"}),
+				new sap.ui.core.Item({key: "Item3", text: "Item3"})
+			]
+		}), oSelectedButton = oMultiComboBox._getFilterSelectedButton();
+
+		oMultiComboBox.setSelectedItems([oFirstItem]);
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.open();
+		this.clock.tick(100);
+		oSelectedButton.setPressed(true);
+		oMultiComboBox._filterSelectedItems({"oSource": oSelectedButton});
+		this.clock.tick(100);
+
+		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 1, "Only one item should be visible");
+
+		oMultiComboBox.destroy();
+	});
 
 	QUnit.module("Integrations");
 
