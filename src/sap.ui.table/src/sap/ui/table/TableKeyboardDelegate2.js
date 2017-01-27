@@ -1019,8 +1019,11 @@ sap.ui.define([
 		function focusCell() {
 			var cell = $cell && $cell[0];
 			if (cell) {
-				var interactiveElements = bActive ? TableKeyboardDelegate._getInteractiveElements(cell) || [] : [];
-				(interactiveElements[0] || cell).focus();
+				var interactiveElement = (bActive ? TableKeyboardDelegate._getInteractiveElements(cell) || [] : [])[0];
+				var keyboardExtension = oTable._getKeyboardExtension();
+				// skip additional focus handling in KeyboardExtension:
+				keyboardExtension._actionMode = !!interactiveElement;
+				keyboardExtension._setSilentFocus(interactiveElement || cell);
 			}
 		}
 		if (sCellType === CellType.ROWHEADER) {
