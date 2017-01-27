@@ -2,7 +2,6 @@
 	height="100%"
 	controllerName="sap.m.sample.ObjectHeaderResponsiveVI.Page"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:l="sap.ui.layout"
 	xmlns="sap.m">
 	<ObjectHeader
 		id="oh1"

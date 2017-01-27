@@ -1,6 +1,5 @@
 <mvc:View
 	controllerName="sap.m.sample.ObjectListItem.List"
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<List

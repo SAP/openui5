@@ -1,7 +1,6 @@
 <mvc:View
 	height="100%"
 	controllerName="sap.m.sample.ObjectHeaderFavFlag.Page"
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Page
