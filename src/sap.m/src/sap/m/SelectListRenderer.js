@@ -176,7 +176,7 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
 		 */
 		SelectListRenderer.writeAccessibilityState = function(oRm, oList) {
-			oRm.writeAccessibilityState({
+			oRm.writeAccessibilityState(oList, {
 				role: "listbox"
 			});
 		};
