@@ -8,9 +8,8 @@
 sap.ui.define([
   "jquery.sap.global",
   "sap/ui/test/gherkin/StepDefinitions",
-  "sap/ui/test/Opa5",
   "sap/ui/test/gherkin/dataTableUtils"
-], function($, StepDefinitions, Opa5, dataTableUtils) {
+], function($, StepDefinitions, dataTableUtils) {
   "use strict";
 
   return StepDefinitions.extend("test.Steps", {

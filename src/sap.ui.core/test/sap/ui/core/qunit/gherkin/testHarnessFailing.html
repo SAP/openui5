@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>qUnitTestHarnessFailing</title>
+    <title>testHarnessFailing</title>
 
     <script
       id="sap-ui-bootstrap"
@@ -16,9 +16,18 @@
       sap.ui.require([
         "jquery.sap.global",
         "sap/ui/test/gherkin/qUnitTestHarness",
-        "test/qUnitTestHarnessFailing"
-      ], function($, qUnitTestHarness, Steps) {
+        "sap/ui/test/gherkin/opa5TestHarness",
+        "test/testHarnessFailingSteps"
+      ], function($, qUnitTestHarness, opa5TestHarness, Steps) {
         "use strict";
+
+        // Test with either qunit or opa5 test harness depending on how page is called
+        var sTestHarness = $.sap.getUriParameters().get("harness");
+        if ( (sTestHarness !== "qUnitTestHarness") && (sTestHarness !== "opa5TestHarness") ) {
+          throw new Error("Pass in URL parameter 'harness' with value 'qUnitTestHarness' or 'opa5TestHarness'");
+        }
+        var oTestHarness = (sTestHarness === "qUnitTestHarness") ? qUnitTestHarness : opa5TestHarness;
+        document.title += " " + sTestHarness;
 
         QUnit.done(function() {
           // This SAPUI5 control can be used by an external Opa5 script to know when the test is finished
@@ -26,13 +35,13 @@
           oText.placeAt("uiArea");
         });
 
-        qUnitTestHarness.test({
-          featurePath: "test/qUnitTestHarnessFailing2",
+        oTestHarness.test({
+          featurePath: "test/testHarnessFailing2",
           steps: Steps
         });
 
-        qUnitTestHarness.test({
-          featurePath: "test/qUnitTestHarnessFailing",
+        oTestHarness.test({
+          featurePath: "test/testHarnessFailing",
           steps: Steps
         });
       });
