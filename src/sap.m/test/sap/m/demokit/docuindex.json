@@ -238,14 +238,6 @@
 		  "samples": ["sap.m.sample.CustomListItem"]
 		},
 		{
-		  "id": "sap.m.CustomTile",
-		  "name": "Custom Tile",
-		  "category": "Tile",
-		  "since": "1.12",
-		  "formFactors": "L",
-		  "samples": []
-		},
-		{
 		  "id": "sap.m.DatePicker",
 		  "name": "Date Picker",
 		  "category": "User Input",
