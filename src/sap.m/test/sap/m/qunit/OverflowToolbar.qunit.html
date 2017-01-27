@@ -1570,6 +1570,8 @@
 			oOverflowTB.destroy();
 		});
 
+		module("Integration");
+
 		test("Sliders work inside an overflow toolbar", function () {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
@@ -1626,6 +1628,44 @@
 			// The overflow area should still be visible
 			var oPopover = oOverflowTB._getPopover();
 			strictEqual(oPopover.$().is(":visible"), true, "Even though the button was clicked, the overflow area is visible");
+
+			oOverflowTB.destroy();
+		});
+
+		test("Popover can listen to private interaction events from associative controls", function () {
+			var oOverflowTB = new sap.m.OverflowToolbar({width: 'auto'}),
+				oPopover = oOverflowTB._getPopover(),
+				oMenuItem = new sap.m.MenuItem({text:"Item1"}),
+				oMenu = new sap.m.Menu({items: [ oMenuItem ]}),
+				oBtn = new sap.m.MenuButton({
+					text: "Do not close",
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.AlwaysOverflow,
+						closeOverflowOnInteraction: true
+					}),
+					menu: oMenu
+				}),
+				spy;
+
+			oOverflowTB.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			spy = this.spy(oPopover, "_closeOnInteraction");
+
+			oOverflowTB.addContent(oBtn);
+			this.clock.tick(1000);
+
+			// Click the overflow button
+			var oOverflowButton = oOverflowTB._getOverflowButton();
+			oOverflowButton.firePress();
+			this.clock.tick(1000);
+
+			// Click the menu item
+			oMenu.fireItemSelected({item: oMenuItem});
+			this.clock.tick(1000);
+
+			// listener should be called
+			strictEqual(spy.called, true, "The listener for the private event is notified");
 
 			oOverflowTB.destroy();
 		});

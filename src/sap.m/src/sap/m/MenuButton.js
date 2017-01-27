@@ -332,6 +332,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 
 		MenuButton.prototype._menuItemSelected = function(oEvent) {
 			var oMenuItem = oEvent.getParameter("item");
+
+			this.fireEvent("_menuItemSelected", { item: oMenuItem }); // needed for controls that listen to interaction events from within the control (e.g. for sap.m.OverflowToolbar)
+
 			if (
 				!this._isSplitButton() ||
 				this.getUseDefaultActionOnly() ||
