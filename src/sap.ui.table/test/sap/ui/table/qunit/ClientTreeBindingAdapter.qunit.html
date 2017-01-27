@@ -884,6 +884,38 @@
 			oBinding.sort(new sap.ui.model.Sorter("name", true));
 		});
 
+		/**
+		 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
+		 * Data should already be present, since prebuildTree already requested a big set
+		 */
+		asyncTest("Clear selection", 4, function(){
+			createTreeBindingAdapter("/bing/root", [], null, {
+				collapseRecursive: false,
+				displayRootNode: true,
+				numberOfExpandedLevels: 2
+			});
+
+			oBinding.getContexts(0, 100);
+
+			oBinding.selectAll();
+
+			var oFirstSubgroup = oBinding.getNodeByIndex(1);
+			oBinding.setNodeSelection(oFirstSubgroup.nodeState, false); // Deselect the first subnode which groups more nodes underneath and therefore got a selectAllMode flag
+
+			oBinding.clearSelection(); // Should deselect all nodes AND clear all selectAllMode flags (even from not currently selected nodes)
+
+			var aSelectedIndices = oBinding.getSelectedIndices();
+			equal(aSelectedIndices.length, 0, "There should be no selection after clearSelection");
+
+			// check that selectAllMode is removed from all nodes
+			equal(oBinding._oRootNode.nodeState.selectAllMode, false, "selectAllMode of root node should be cleared");
+			equal(oFirstSubgroup.nodeState.selectAllMode, false, "selectAllMode of first subgroup node should be cleared");
+			var oSomeNode = oBinding.getNodeByIndex(2);
+			equal(oSomeNode.nodeState.selectAllMode, false, "selectAllMode of any other node should be cleared");
+
+			start();
+		});
+
 		asyncTest("Synchronous Expand", function(){
 
 			createTreeBindingAdapter("/bing/root", null,null, {
