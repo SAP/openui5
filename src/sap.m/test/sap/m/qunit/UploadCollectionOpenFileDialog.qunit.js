@@ -3,9 +3,11 @@ QUnit.module("openFileDialog method", {
 		this.oUploadCollection = new sap.m.UploadCollection({
 			items : {
 				path : "/items",
-				template : oItemTemplate
+				template : createItemTemplate(),
+				templateShareable : false
 			}
-		}).placeAt("qunit-fixture");
+		}).setModel(new sap.ui.model.json.JSONModel(oData));
+		this.oUploadCollection.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		sinon.stub(jQuery.prototype, "trigger");
 	},
@@ -89,9 +91,11 @@ QUnit.module("openFileDialog Integration", {
 		this.oUploadCollection = new sap.m.UploadCollection({
 			items : {
 				path : "/items",
-				template : oItemTemplate
+				template : createItemTemplate(),
+				templateShareable : false
 			}
-		}).placeAt("qunit-fixture");
+		}).setModel(new sap.ui.model.json.JSONModel(oData));
+		this.oUploadCollection.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		this.aFile = [{
 			name: "file",
