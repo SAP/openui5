@@ -41,7 +41,7 @@
 				"config": "test-resources/sap/m/demokit/worklist/demoapp.json"
 			},
 			{
-				"icon": "task",
+				"icon": "screen-split-one",
 				"text": "Master-Detail",
 				"desc": "Best-practice starting point for a master-detail app",
 				"ref": "test-resources/sap/m/demokit/master-detail/webapp/test/mockServer.html",
