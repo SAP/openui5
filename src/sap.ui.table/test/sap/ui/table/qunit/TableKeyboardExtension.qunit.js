@@ -297,6 +297,34 @@ QUnit.asyncTest("Overly / NoData focus handling", function(assert) {
 });
 
 
+QUnit.test("IEFocusOutlineWorkaround", function(assert) {
+	var bOriginalMSIE = sap.ui.Device.browser.msie;
+
+	sap.ui.Device.browser.msie = false;
+	var $Cell = getCell(0, 0);
+	assert.ok(!$Cell.attr("data-sap-ui-table-focus"), "'data-sap-ui-table-focus' attribute not set");
+	$Cell.focus();
+	assert.ok(!$Cell.attr("data-sap-ui-table-focus"), "'data-sap-ui-table-focus' attribute not set");
+	getCell(0, 1, true, assert); // Put focus somewhere else
+
+	sap.ui.Device.browser.msie = true;
+	$Cell = getCell(0, 0);
+	assert.ok(!$Cell.attr("data-sap-ui-table-focus"), "'data-sap-ui-table-focus' attribute not set");
+	$Cell.focus();
+	var sValue1 = $Cell.attr("data-sap-ui-table-focus");
+	assert.ok(!!sValue1, "'data-sap-ui-table-focus' attribute set");
+	getCell(0, 1, true, assert);
+	$Cell = getCell(0, 0);
+	$Cell.focus();
+	var sValue2 = $Cell.attr("data-sap-ui-table-focus");
+	assert.ok(!!sValue2, "'data-sap-ui-table-focus' attribute set");
+	assert.ok(sValue1 != sValue2, "'data-sap-ui-table-focus' attribute value changed");
+	assert.ok(jQuery("head").text().indexOf(".sapUiTableStatic[data-sap-ui-table-focus]") >= 0, "Style set");
+
+	sap.ui.Device.browser.msie = bOriginalMSIE;
+});
+
+
 QUnit.module("Destruction", {
 	setup: function() {
 		createTables();

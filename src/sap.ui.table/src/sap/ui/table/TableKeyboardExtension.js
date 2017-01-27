@@ -3,9 +3,38 @@
  */
 
 // Provides helper sap.ui.table.TableKeyboardExtension.
-sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/ItemNavigation', './TableUtils', './TableKeyboardDelegate2'],
-	function(jQuery, TableExtension, ItemNavigation, TableUtils, TableKeyboardDelegate) {
+sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/ItemNavigation', './TableUtils', './TableKeyboardDelegate2', 'sap/ui/Device'],
+	function(jQuery, TableExtension, ItemNavigation, TableUtils, TableKeyboardDelegate, Device) {
 	"use strict";
+
+	var bIEFocusOutlineWorkaroundApplied = false;
+	function applyIEFocusOutlineWorkaround(oElement) {
+		/*
+		 * In Internet Explorer there are problems with the focus outline on tables.
+		 * The following seems to help because it forces a repaint.
+		 *
+		 * The following conditions must be fullfilled:
+		 * - The function must be called after the item navigation has handled the focusin event (see below)
+		 * - An attribute (here data-sap-ui-table-focus) must be changed on focus
+		 * - And a CSS declaration (separate from CSS of table library) must be available with attribute selector
+		 *   (the prefix (here .sapUiTableStatic) doesn't matter)
+		 */
+		if (Device.browser.msie) {
+			if (!bIEFocusOutlineWorkaroundApplied) {
+				jQuery('head').append(
+					'<style type="text/css">' +
+						'/* Avoid focus outline problems in tables */\n' +
+						'.sapUiTableStatic[data-sap-ui-table-focus]{}' +
+					'</style>'
+				);
+				bIEFocusOutlineWorkaroundApplied = true;
+			}
+			var oCellInfo = TableUtils.getCellInfo(oElement) || {};
+			if (oCellInfo.type) {
+				oCellInfo.cell.attr("data-sap-ui-table-focus", Date.now());
+			}
+		}
+	}
 
 	/*
 	 * Wrapper for event handling of the item navigation.
@@ -21,7 +50,10 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 			}
 		},
 
-		onfocusin: 				function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onfocusin: function(oEvent) {
+			ItemNavigationDelegate._forward(this, oEvent);
+			applyIEFocusOutlineWorkaround(oEvent.target);
+		},
 		onsapfocusleave: 		function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
 		onmousedown: 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
 		onsapnext: 				function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
@@ -61,6 +93,8 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 				oEvent.preventDefault();
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 			}
+
+
 		}
 
 	};
