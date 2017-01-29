@@ -700,6 +700,8 @@
 			});
 
 			test("click on appointment", function() {
+				var sSelectedTextId = sap.ui.unified.CalendarRow._oStaticSelectedText.getId();
+				var sAriaLabel1, sAriaLabel2, sAriaLabel3;
 				// initialize Row1
 				initializeRow1();
 
@@ -708,6 +710,8 @@
 				ok(!bMultiSelect, "Appointment 1: no multiple selection");
 				ok(sap.ui.getCore().byId("App1").getSelected(), "Appointment1: selected property set");
 				ok(jQuery("#App1").hasClass("sapUiCalendarAppSel"), "Appointment1: selected rendered");
+				sAriaLabel1 = jQuery("#App1").attr("aria-labelledby");
+				ok(sAriaLabel1.indexOf(sSelectedTextId) > -1, "Appointment1: selected ARIA text is rendered");
 
 				qutils.triggerEvent("tap", "App2-Title");
 				ok(!sap.ui.getCore().byId("App1").getSelected(), "Appointment1: selected property not longer set");
@@ -716,14 +720,22 @@
 				ok(!bMultiSelect, "Appointment 2: no multiple selection");
 				ok(sap.ui.getCore().byId("App2").getSelected(), "Appointment2: selected property set");
 				ok(jQuery("#App2").hasClass("sapUiCalendarAppSel"), "Appointment2: selected rendered");
+				sAriaLabel2 = jQuery("#App2").attr("aria-labelledby");
+				ok(sAriaLabel2.indexOf(sSelectedTextId) > -1, "Appointment2: selected ARIA text is rendered");
+				sAriaLabel1 = jQuery("#App1").attr("aria-labelledby");
+				ok(sAriaLabel1.indexOf(sSelectedTextId) == -1, "Appointment1: selected ARIA text is removed");
 
 				qutils.triggerEvent("tap", "App3-Text", {ctrlKey: true});
 				ok(sap.ui.getCore().byId("App2").getSelected(), "Appointment2: selected still property set");
 				ok(jQuery("#App2").hasClass("sapUiCalendarAppSel"), "Appointment2: selected still rendered");
 				equal(sSelectedAppointmentId, "App3", "Appointment 3: click on text fires select event");
-				ok(bMultiSelect, "Appointment 1: multiple selection");
+				ok(bMultiSelect, "Appointment 3: multiple selection");
 				ok(sap.ui.getCore().byId("App3").getSelected(), "Appointment3: selected property set");
 				ok(jQuery("#App3").hasClass("sapUiCalendarAppSel"), "Appointment3: selected rendered");
+				sAriaLabel3 = jQuery("#App3").attr("aria-labelledby");
+				ok(sAriaLabel3.indexOf(sSelectedTextId) > -1, "Appointment3: selected ARIA text is rendered");
+				sAriaLabel2 = jQuery("#App2").attr("aria-labelledby");
+				ok(sAriaLabel2.indexOf(sSelectedTextId) > -1, "Appointment2: selected ARIA text is still rendered");
 			});
 
 			test("click on interval", function() {
