@@ -266,6 +266,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			CalendarRow._oStaticTentativeText.toStatic(); //Put to Static UiArea
 		}
 
+		if (!CalendarRow._oStaticSelectedText) {
+			CalendarRow._oStaticSelectedText = new sap.ui.core.InvisibleText({text: this._oRb.getText("APPOINTMENT_SELECTED")});
+			CalendarRow._oStaticSelectedText.toStatic(); //Put to Static UiArea
+		}
+
 		this._oFormatAria = sap.ui.core.format.DateFormat.getDateTimeInstance({style: "long/short"});
 
 		this._iHoursMinDelta = 1; // minutes - to position appointments in 1 minutes steps
@@ -1443,6 +1448,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		var i = 0;
 		var oOtherAppointment;
+		var sAriaLabel;
+		var sAriaLabelNotSelected;
+		var sAriaLabelSelected;
+		var sSelectedTextId = sap.ui.unified.CalendarRow._oStaticSelectedText.getId();
 
 		if (bRemoveOldSelection) {
 			var aAppointments = this.getAppointments();
@@ -1453,24 +1462,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				if (oOtherAppointment.getSelected()) {
 					oOtherAppointment.setProperty("selected", false, true); // do not invalidate CalendarRow
 					oOtherAppointment.$().removeClass("sapUiCalendarAppSel");
+					sAriaLabel = oOtherAppointment.$().attr("aria-labelledby");
+					sAriaLabelNotSelected = sAriaLabel ? sAriaLabel.replace(sSelectedTextId, "") : "";
+					oOtherAppointment.$().attr("aria-labelledby", sAriaLabelNotSelected);
 				}
 			}
 		}
 
 		oAppointment.setProperty("selected", true, true); // do not invalidate CalendarRow
 		oAppointment.$().addClass("sapUiCalendarAppSel");
+		sAriaLabelSelected = oAppointment.$().attr("aria-labelledby") + " " + sSelectedTextId;
+		oAppointment.$().attr("aria-labelledby", sAriaLabelSelected);
 
 		if (oAppointment._aAppointments) {
 			// it's a group Appointment
 			for (i = 0; i < oAppointment._aAppointments.length; i++) {
 				oOtherAppointment = oAppointment._aAppointments[i];
 				oOtherAppointment.setProperty("selected", true, true); // do not invalidate CalendarRow
+				sAriaLabelSelected = oOtherAppointment.$().attr("aria-labelledby") + " " + sSelectedTextId;
+				oOtherAppointment.$().attr("aria-labelledby", sAriaLabelSelected);
 			}
 			this.fireSelect({appointments: oAppointment._aAppointments, multiSelect: !bRemoveOldSelection});
 		}else {
 			this.fireSelect({appointment: oAppointment, multiSelect: !bRemoveOldSelection});
 		}
-
 
 	}
 
