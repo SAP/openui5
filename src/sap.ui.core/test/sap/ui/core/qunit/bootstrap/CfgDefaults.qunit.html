@@ -33,6 +33,10 @@
 			return navigator.language;
 		}
 
+		function toLower(str) {
+			return str == null ? str : String(str).toLowerCase();
+		}
+
 		QUnit.module("Configuration Defaults");
 
 		QUnit.test("Settings", function(assert) {
@@ -40,7 +44,7 @@
 
 			// compare values where possible
 			assert.equal(oCfg.theme, "base", "theme");
-			assert.equal(oCfg.language, (navigator.languages && navigator.languages[0]) || navigatorLanguage() || navigator.userLanguage || navigator.browserLanguage, "language");
+			assert.equal(toLower(oCfg.language), toLower((navigator.languages && navigator.languages[0]) || navigatorLanguage() || navigator.userLanguage || navigator.browserLanguage), "language");
 			assert.equal(oCfg.accessibility, true, "accessibility");
 			assert.equal(oCfg.animation, true, "animation");
 			assert.equal(oCfg.getRTL(), false, "rtl");
