@@ -220,7 +220,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 * Checks whether the given URL is a valid relative URL within the current app
 			 */
 			function isRelativeUrl(sUrl) {
-				return /^([a-zA-Z0-9-_]+\/)*[a-zA-Z0-9-_.]+\.html(#.*)?$/.test(sUrl);
+				return /^([a-zA-Z0-9-_]+\/)*[a-zA-Z0-9-_.]+\.(?:html|txt)(#.*)?$/.test(sUrl);
 			}
 
 			if (sHash) {
