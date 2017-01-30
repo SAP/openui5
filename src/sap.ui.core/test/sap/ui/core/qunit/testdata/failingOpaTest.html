@@ -3,7 +3,7 @@
 
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Tests that will fail intentionally to test error behaviour</title>
+	<title>qUnit Page for sap.ui.test.Opa</title>
 
 	<script src="../../shared-config.js"></script>
 	<script src="../../../../../../resources/sap-ui-core.js"
@@ -199,7 +199,6 @@
 					});
 
 					opaTest("Should enable autoWait when searching for a control", function (oOpa) {
-						var oFakeXHR, bLoaded = false;
 						Opa5.extendConfig({
 							autoWait: true
 						});
@@ -207,12 +206,8 @@
 						oOpa.waitFor({
 							viewName: "myView",
 							id: "myButton",
-							success: function () {
-								Opa5.getWindow().sap.ui.require(["sap/ui/thirdparty/sinon"], function (sinon) {
-									oFakeXHR = sinon.useFakeXMLHttpRequest();
-									Opa5.getJQuery().ajax({url: "/foo"});
-									bLoaded = true;
-								});
+							success: function (oButton) {
+								oButton.setBusy(true);
 							}
 						});
 
@@ -220,17 +215,10 @@
 							timeout: 2,
 							viewName: "myView",
 							id: "myButton",
-							check: function () {
-								return bLoaded;
-							},
 							success: function () {
 								ok(false, "Should not happen");
-							},
-							error: function () {
-								Opa5.resetConfig();
-								oFakeXHR.restore();
 							}
-						});
+						})
 					});
 
 					QUnit.start();

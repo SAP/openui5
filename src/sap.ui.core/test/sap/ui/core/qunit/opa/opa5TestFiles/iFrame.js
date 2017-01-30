@@ -726,8 +726,8 @@ sap.ui.define([
 				success: function (aMessages) {
 					var sOpaMessage = aMessages.eq(0).text();
 					QUnit.assert.contains(sOpaMessage, "Opa timeout");
-					QUnit.assert.contains(sOpaMessage, "There are '0' open XHRs and '1' open FakeXHRs.");
-					QUnit.assert.contains(sOpaMessage, "FakeXHR: URL: '/foo' Method: 'GET' -  sap.ui.test._XHRCounter");
+					QUnit.assert.contains(sOpaMessage, "The control Element sap.m.Button#__xmlview0--myButton is busy so it is filtered out -  sap.ui.test.matchers.Interactable");
+					QUnit.assert.contains(sOpaMessage, "all results were filtered out by the matchers - skipping the check -  sap.ui.test.pipelines.MatcherPipeline");
 					QUnit.assert.doesNotContain(sOpaMessage, "Should not happen");
 				}
 			});

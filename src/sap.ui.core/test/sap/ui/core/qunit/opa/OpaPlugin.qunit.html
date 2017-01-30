@@ -665,76 +665,40 @@ sap.ui.require([
 			this.oPlugin =  new OpaPlugin();
 			this.oButton = new Button("foo").placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			this.fnInteractableSpy = sinon.stub(Interactable.prototype, "isMatching").returns(true);
-			this.fnWaitSpy = sinon.stub(_autoWaiter, "hasToWait").returns(false);
 		},
 		afterEach: function () {
-			this.fnInteractableSpy.restore();
-			this.fnWaitSpy.restore();
 			this.oPlugin.destroy();
 			this.oButton.destroy();
 		}
 	});
 
-	QUnit.test("Should invoke the interactable matcher if an action is passed and a control is searched", function() {
+	QUnit.test("Should invoke the interactable matcher if interactable is true", function() {
+		// Arrange
+		var fnInteractableSpy = this.spy(Interactable.prototype, "isMatching"),
+			fnWaitSpy = this.spy(_autoWaiter, "hasToWait");
+
 		// Act
 		this.oPlugin.getFilterdControls({
 			id: "foo",
-			actions: $.noop
+			interactable: true
 		});
 
 		// Assert
-		sinon.assert.calledOnce(this.fnInteractableSpy);
-		sinon.assert.notCalled(this.fnWaitSpy);
+		sinon.assert.calledOnce(fnInteractableSpy);
+		sinon.assert.calledOnce(fnWaitSpy);
 	});
-
-	QUnit.test("Should not invoke interactable matcher if success is passed and autoWaitIs true", function() {
-		// Act
-		this.oPlugin.getFilterdControls({
-			id: "foo",
-			autoWait: true,
-			success: $.noop
-		});
-
-		// Assert
-		sinon.assert.notCalled(this.fnInteractableSpy);
-		sinon.assert.calledOnce(this.fnWaitSpy);
-	});
-
-	QUnit.test("Should not invoke the autowaiter if an action is passed and autoWait is true", function() {
-		// Act
-		this.oPlugin.getFilterdControls({
-			id: "foo",
-			autoWait: true,
-			actions: $.noop
-		});
-
-		// Assert
-		sinon.assert.calledOnce(this.fnInteractableSpy);
-		sinon.assert.notCalled(this.fnWaitSpy);
-	});
-
 
 	QUnit.test("Should invoke the autowaiter when autowait is true", function (assert) {
+		// Arrange
+		var fnWaitSpy = this.spy(_autoWaiter, "hasToWait");
+
 		// Act
 		this.oPlugin.getFilterdControls({
 			autoWait: true
 		});
 
 		// Assert
-		sinon.assert.calledOnce(this.fnWaitSpy);
-		sinon.assert.notCalled(this.fnInteractableSpy);
-	});
-
-	QUnit.test("Should not invoke the autowaiter when autowait is false", function (assert) {
-		// Act
-		this.oPlugin.getFilterdControls({
-			autoWait: false
-		});
-
-		// Assert
-		sinon.assert.notCalled(this.fnWaitSpy);
-		sinon.assert.notCalled(this.fnInteractableSpy);
+		sinon.assert.calledOnce(fnWaitSpy);
 	});
 
 	QUnit.test("Should not call the autoWaiter or interactable if visible is false", function (assert) {
@@ -827,22 +791,22 @@ sap.ui.require([
 
 	[{
 		viewNamespace: "",
-		viewName: "sample.viewNamespace.viewName"
+		viewName: "sample.viewNamespace.viewName",
 	},{
 		viewNamespace: "",
-		viewName: ".sample.viewNamespace.viewName"
+		viewName: ".sample.viewNamespace.viewName",
 	},{
 		viewNamespace: "sample.viewNamespace",
-		viewName: "viewName"
+		viewName: "viewName",
 	},{
 		viewNamespace: "sample.viewNamespace.",
-		viewName: "viewName"
+		viewName: "viewName",
 	},{
 		viewNamespace: "sample.viewNamespace",
-		viewName: ".viewName"
+		viewName: ".viewName",
 	},{
 		viewNamespace: "sample.viewNamespace.",
-		viewName: ".viewName"
+		viewName: ".viewName",
 	}].forEach(function (value) {
 		QUnit.test("Should find matching controls", function (assert) {
 			value.visible = false;
