@@ -131,7 +131,7 @@ sap.ui.define([
 		var	oMessage = vMessages;
 		if (!vMessages) {
 			return;
-		}else if (jQuery.isArray(vMessages)) {
+		}else if (Array.isArray(vMessages)) {
 			for (var i = 0; i < vMessages.length; i++) {
 				oMessage = vMessages[i];
 				this._importMessage(oMessage);
@@ -245,9 +245,9 @@ sap.ui.define([
 	 */
 	MessageManager.prototype._removeMessages = function(vMessages, bOnlyValidationMessages) {
 		var that = this;
-		if (!vMessages || (jQuery.isArray(vMessages) && vMessages.length == 0)) {
+		if (!vMessages || (Array.isArray(vMessages) && vMessages.length == 0)) {
 			return;
-		} else if (jQuery.isArray(vMessages)) {
+		} else if (Array.isArray(vMessages)) {
 			// We need to work on a copy since the messages reference is changed by _removeMessage()
 			var vOriginalMessages = vMessages.slice(0);
 			for (var i = 0; i < vOriginalMessages.length; i++) {

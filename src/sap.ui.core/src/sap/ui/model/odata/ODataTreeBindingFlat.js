@@ -303,7 +303,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 			if (oSubtreeHandle) {
 				// subtree is flat
-				if (jQuery.isArray(oSubtree)) {
+				if (Array.isArray(oSubtree)) {
 					if (oSubtreeHandle._oSubtreeRoot) {
 						// jump to a certain position in the flat structure and map the nodes
 						fnTraverseFlatSubtree(oSubtree, oSubtreeHandle._oSubtreeRoot.serverIndex, oSubtreeHandle._oSubtreeRoot, oSubtreeHandle._oSubtreeRoot.originalLevel || 0, oNode.level + 1);

@@ -253,7 +253,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	*/
 	XMLModel.prototype.getObject = function(sPath, oContext) {
 		var oObject = this._getObject(sPath, oContext);
-		if (jQuery.isArray(oObject)) {
+		if (Array.isArray(oObject)) {
 			oObject = oObject[0];
 		}
 		return oObject;

@@ -551,7 +551,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 	 * @public
 	 */
 	NumberFormat.prototype.format = function(oValue, sMeasure) {
-		if (jQuery.isArray(oValue)) {
+		if (Array.isArray(oValue)) {
 			sMeasure = oValue[1];
 			oValue = oValue[0];
 		}

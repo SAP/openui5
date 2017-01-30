@@ -67,7 +67,7 @@ sap.ui.define([
 			// TODO: what if nested list is not complete, because it was too large?
 			var oRef = this.oModel._getObject(this.sPath, this.oContext);
 			this.aExpandRefs = oRef;
-			if (jQuery.isArray(oRef) && !aSorters && !aFilters) {
+			if (Array.isArray(oRef) && !aSorters && !aFilters) {
 				this.aKeys = oRef;
 				this.iLength = oRef.length;
 				this.bLengthFinal = true;
@@ -316,7 +316,7 @@ sap.ui.define([
 					// TODO: what if nested list is not complete, because it was too large?
 					var oRef = this.oModel._getObject(this.sPath, this.oContext);
 					this.aExpandRefs = oRef;
-					if (jQuery.isArray(oRef) && !this.aSorters.length > 0 && !this.aFilters.length > 0) {
+					if (Array.isArray(oRef) && !this.aSorters.length > 0 && !this.aFilters.length > 0) {
 						this.aKeys = oRef;
 						this.iLength = oRef.length;
 						this.bLengthFinal = true;
@@ -659,7 +659,7 @@ sap.ui.define([
 			// - set the new keys if there are no sortes/filters set
 			// - trigger a refresh if there are sorters/filters set
 			oRef = this.oModel._getObject(this.sPath, this.oContext);
-			bRefChanged = jQuery.isArray(oRef) && !jQuery.sap.equal(oRef,this.aExpandRefs);
+			bRefChanged = Array.isArray(oRef) && !jQuery.sap.equal(oRef,this.aExpandRefs);
 			this.aExpandRefs = oRef;
 			if (bRefChanged) {
 				if (this.aSorters.length > 0 || this.aFilters.length > 0) {
@@ -822,11 +822,11 @@ sap.ui.define([
 			this.aFilters = aFilters;
 		}
 
-		if (!aFilters || !jQuery.isArray(aFilters) || aFilters.length == 0) {
+		if (!aFilters || !Array.isArray(aFilters) || aFilters.length == 0) {
 			this.aFilters = [];
 		}
 		//if no application-filters are present, or they are not in array form/empty array, init the filters with []
-		if (!this.aApplicationFilters || !jQuery.isArray(this.aApplicationFilters) || this.aApplicationFilters.length === 0) {
+		if (!this.aApplicationFilters || !Array.isArray(this.aApplicationFilters) || this.aApplicationFilters.length === 0) {
 			this.aApplicationFilters = [];
 		}
 

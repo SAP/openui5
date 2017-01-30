@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		if (this.oInputFormat) {
 			aValues = this.oInputFormat.parse(vValue);
 		}
-		if (!jQuery.isArray(aValues)) {
+		if (!Array.isArray(aValues)) {
 			throw new FormatException("Cannot format currency: " + vValue + " has the wrong format");
 		}
 		if (aValues[0] == undefined || aValues[0] == null) {
@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
 				vResult = this.oOutputFormat.parse(vValue);
-				if (!jQuery.isArray(vResult)) {
+				if (!Array.isArray(vResult)) {
 					oBundle = sap.ui.getCore().getLibraryResourceBundle();
 					throw new ParseException(oBundle.getText("Currency.Invalid", [vValue]));
 				}
