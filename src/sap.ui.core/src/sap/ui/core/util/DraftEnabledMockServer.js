@@ -153,7 +153,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 		_prepareDraftMetadata: function(mEntitySets) {
 			var that = this;
 			this._oDraftMetadata.draftNodes = [];
-			this._oDraftMetadata.draftRootKey = jQuery.grep(mEntitySets[this._oDraftMetadata.draftRootName].keys, function(x) {
+			this._oDraftMetadata.draftRootKey = mEntitySets[this._oDraftMetadata.draftRootName].keys.filter(function(x) {
 				return jQuery.inArray(x, that._calcSemanticKeys(that._oDraftMetadata.draftRootName, mEntitySets)) < 0;
 			})[0];
 			var oAnnotations = that._oDraftMetadata.annotations;
@@ -208,7 +208,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 			var oMockdata = this._oMockdata;
 			var aDraftRoot = oMockdata[this._oDraftMetadata.draftRootName];
 			var fnGrep = function(aContains, aContained) {
-				return jQuery.grep(aContains, function(x) {
+				return aContains.filter(function(x) {
 					return jQuery.inArray(x, aContained) < 0;
 				})[0];
 			};
@@ -341,7 +341,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 		_activate: function(oEntry) {
 			var oResponse;
 			var fnGrep = function(aContains, aContained) {
-				return jQuery.grep(aContains, function(x) {
+				return aContains.filter(function(x) {
 					return jQuery.inArray(x, aContained) < 0;
 				})[0];
 			};

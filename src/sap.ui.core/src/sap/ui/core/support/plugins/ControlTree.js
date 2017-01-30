@@ -1394,7 +1394,7 @@ sap.ui.define([
 							}
 
 							if (sName == '_sGetter' || sName == '_sMutator') {
-								mProperty["bp" + sName] = $.grep(mMethods, function(o) {
+								mProperty["bp" + sName] = mMethods.filter(function(o) {
 									return o.name === sValue && o.active;
 								}).length === 1;
 							}
@@ -1422,7 +1422,7 @@ sap.ui.define([
 								}
 
 								if (sName == '_sGetter' || sName == '_sMutator') {
-									mAggregation["bp" + sName] = $.grep(mMethods, function(o) {
+									mAggregation["bp" + sName] = mMethods.filter(function(o) {
 										return o.name === sValue && o.active;
 									}).length === 1;
 								}
