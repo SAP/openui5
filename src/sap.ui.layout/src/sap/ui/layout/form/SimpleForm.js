@@ -319,7 +319,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 		};
 		oForm._origInvalidate = oForm.invalidate;
 		oForm.invalidate = function(oOrigin) {
-			this._origInvalidate(oOrigin);
+			if (this.bOutput) {
+				// if Form is not rendered don't invalidate SimpleForm and parents
+				this._origInvalidate(oOrigin);
+			}
 			if (this._bIsBeingDestroyed) {
 				return;
 			}
