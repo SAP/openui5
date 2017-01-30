@@ -387,12 +387,14 @@ QUnit.test("Test Upload", function(assert) {
 		files: this.aFiles,
 		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
+	oFileUploader1.setValue("file1.txt");
 	var oFileUploader2 = this.oUploadCollection._getFileUploader();
 	var fnFUUpload2 = this.spy(oFileUploader2, "upload");
 	oFileUploader2.fireChange({
 		files: this.aFiles,
 		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
+	oFileUploader2.setValue("file2.txt");
 	this.oUploadCollection.upload();
 	assert.ok(fnFUUpload1.calledOnce, true, "'Upload' method of FileUploader should be called for each FU instance just once");
 	assert.ok(fnFUUpload2.calledOnce, true, "'Upload' method of FileUploader should be called for each FU instance just once");
@@ -664,6 +666,22 @@ QUnit.test("Check file list", function(assert) {
 	//check the deleted item by comparison of the number of list items before and after the deletion
 	var iLengthAfterDeletion = this.oUploadCollection.getItems().length;
 	assert.notEqual(iLengthBeforeDeletion, iLengthAfterDeletion, "Item was deleted, checked by different number of items!");
+});
+
+QUnit.test("Delete PendingUpload item which comes from drag and drop", function(assert) {
+	//Arrange
+	var oEvent = jQuery.Event("drop", {
+		originalEvent: {
+			dataTransfer:{
+				files: [{name: "file0.txt"}, {name: "file1.txt"}]
+			}
+		}
+	});
+	this.oUploadCollection.$("drag-drop-area").trigger(oEvent);
+	//Act
+	this.oUploadCollection.removeAggregation("items", this.oUploadCollection.getItems()[0]);
+	//Assert
+	assert.equal(this.oUploadCollection._aFilesFromDragAndDropForPendingUpload.length, 1, "File is deleted, only one file left after delete");
 });
 
 QUnit.module("Delete PendingUpload Item, multiple FileUploaderInstances", {
