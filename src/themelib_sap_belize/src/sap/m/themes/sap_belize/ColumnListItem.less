@@ -3,11 +3,6 @@
 /* Belize theme                          */
 /* ===================================== */
 
-html.sap-desktop .sapMListTblRow:focus{
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -1px;
-}
-
 .sapMListBGTransparent .sapMListTblSubRow {
 	background: fade(@sapUiListBackground, 0%);
 }
@@ -84,12 +79,6 @@ html.sap-desktop .sapMListTblRow:focus{
  /* separators */
  .sapMLIBShowSeparator > td {
 	border-top: 1px solid @sapUiListBorderColor;
-}
-
-/* set overlapped borders transparent to make focus outline more distinct */
-.sapMLIBShowSeparator:focus > td,
-.sapMLIBShowSeparator:focus + .sapMLIBShowSeparator > td {
-	border-top-color: transparent;
 }
 
 .sapMListShowSeparatorsNone .sapMLIBShowSeparator > td,
