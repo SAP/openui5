@@ -528,7 +528,7 @@ ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResp
 
 		aMessages.push(this._createMessage(oServerMessage, mRequestInfo));
 
-		if (oServerMessage.details && jQuery.isArray(oServerMessage.details)) {
+		if (Array.isArray(oServerMessage.details)) {
 			for (var i = 0; i < oServerMessage.details.length; ++i) {
 				aMessages.push(this._createMessage(oServerMessage.details[i], mRequestInfo));
 			}
@@ -655,10 +655,10 @@ ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oRe
 
 		// Check if more than one error has been returned from the back-end
 		var aFurtherErrors = null;
-		if (jQuery.isArray(oError.details)) {
+		if (Array.isArray(oError.details)) {
 			// V4 errors
 			aFurtherErrors = oError.details;
-		} else if (oError.innererror && jQuery.isArray(oError.innererror.errordetails)) {
+		} else if (oError.innererror && Array.isArray(oError.innererror.errordetails)) {
 			// V2 errors
 			aFurtherErrors = oError.innererror.errordetails;
 		} else {

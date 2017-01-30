@@ -965,6 +965,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		return this;
 	};
 
+	/**
+	 * Closes the suggestion list.
+	 * @public
+	 * @since 1.48
+	 */
+	Input.prototype.closeSuggestions = function() {
+		this._closeSuggestionPopup();
+	};
+
 	Input.prototype.setShowValueHelp = function(bShowValueHelp) {
 
 		this.setProperty("showValueHelp", bShowValueHelp);

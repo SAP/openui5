@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './ComboBoxRenderer', './Popover', './SelectList', './Dialog', './Toolbar', './Button', './library', 'sap/ui/Device'],
-	function(jQuery, ComboBoxTextField, ComboBoxBase, ComboBoxRenderer, Popover, SelectList, Dialog, Toolbar, Button, library, Device) {
+sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './ComboBoxRenderer', './Popover', './SelectList', './Dialog', './Toolbar', './Button', './library'],
+	function(jQuery, ComboBoxTextField, ComboBoxBase, ComboBoxRenderer, Popover, SelectList, Dialog, Toolbar, Button, library) {
 		"use strict";
 
 		/**
@@ -291,11 +291,12 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				placement: sap.m.PlacementType.VerticalPreferredBottom,
 				offsetX: 0,
 				offsetY: 0,
-				initialFocus: this,
 				bounce: false,
 				showArrow: false,
 				ariaLabelledBy: this.getPickerInvisibleTextId() || undefined
 			});
+
+			oPicker.setInitialFocus(this.isPlatformTablet() ? oPicker : this);
 
 			oPicker.open = function() {
 				return this.openBy(that);
@@ -524,17 +525,18 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 							oControl.updateDomValue(this._oFirstItemTextMatched.getText() + " (" + this._oFirstItemTextMatched.getAdditionalText() + ")");
 							this.setSelection(this._oFirstItemTextMatched);
 						} else if (bSearchBoth) {
+
 							if (bTextMatched) {
 								oControl.updateDomValue(oFirstVisibleItem.getText() + " (" + oFirstVisibleItem.getAdditionalText() + ")");
 							} else {
 								oControl.updateDomValue(oFirstVisibleItem.getAdditionalText() + " (" + oFirstVisibleItem.getText() + ")");
 							}
+
 							this.setSelection(oFirstVisibleItem);
 						} else {
 							oControl.updateDomValue(oFirstVisibleItem.getText());
 							this.setSelection(oFirstVisibleItem);
 						}
-
 					}
 
 					if (oSelectedItem !== this.getSelectedItem()) {
@@ -550,7 +552,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 					}
 				}
 
-				if (bEmptyValue || !bItemsVisible) {
+				if (bEmptyValue || !bItemsVisible ||
+					(!oControl._bDoTypeAhead && (this._getSelectedItemText() !== sValue))) {
 					this.setSelection(null);
 
 					if (oSelectedItem !== this.getSelectedItem()) {
@@ -1016,7 +1019,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				// avoid the text-editing mode popup to be open on mobile,
 				// text-editing mode disturbs the usability experience (it blocks the UI in some devices)
 				// note: This occurs only in some specific mobile devices
-				if (bDropdownPickerType) {
+				if (bDropdownPickerType && !this.isPlatformTablet()) {
 
 					// force the focus to stay in the input field
 					this.focus();
@@ -1057,7 +1060,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype.onsapfocusleave = function(oEvent) {
 			var bTablet, oPicker,
-				oRelatedControl, oFocusDomRef, bNotCombi,
+				oRelatedControl, oFocusDomRef,
 				oControl = oEvent.srcControl,
 				oItem = oControl.getSelectedItem();
 
@@ -1077,8 +1080,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				return;
 			}
 
-			bNotCombi = !Device.system.combi;
-			bTablet = Device.system.tablet && bNotCombi;
+			bTablet = this.isPlatformTablet();
 			oRelatedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 			oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
 

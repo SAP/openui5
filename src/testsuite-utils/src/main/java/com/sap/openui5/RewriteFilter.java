@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -116,8 +118,14 @@ public class RewriteFilter implements Filter {
   static class ResponseWrapper extends HttpServletResponseWrapper {
 
 
+    /** content types which could be rewritten */
     private final static List<String> REWRITE_CONTENT_TYPES = Arrays.asList(new String[] {
       "application/javascript", "application/json", "application/xml", "text/plain", "text/css", "text/html"
+    });
+
+    /** headers which are blocked for the response */
+    private final static List<String> BLOCKED_HEADERS = Arrays.asList(new String[] {
+      "content-length", "transfer-encoding"
     });
 
 
@@ -134,8 +142,8 @@ public class RewriteFilter implements Filter {
     /** set of cookies */
     private Set<Cookie> cookies = new HashSet<Cookie>();
 
-    /** set of headers */
-    private Map<String, Object> headers = new HashMap<String, Object>();
+    /** set of headers (case insensitive) */
+    private Map<String, List<Object>> headers = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
 
     /** the status code */
     private int statusCode;
@@ -241,14 +249,30 @@ public class RewriteFilter implements Filter {
       this.statusCode = sc;
     } // method: sendError
 
+    /**
+     * adds a header value to the <code>List</code> of values or creates a new
+     * one if it doesn't exist yet and put it into the headers <code>Map</code>.
+     * @param name header name
+     * @param value header value
+     * @param overwrite flag whether to overwrite the header values or not
+     */
+    private void addHeaderValue(String name, Object value, boolean overwrite) {
+      List<Object> headerValues = this.headers.get(name);
+      if (overwrite || headerValues == null) {
+        headerValues = new ArrayList<Object>();
+        this.headers.put(name, headerValues);
+      }
+      if (!headerValues.contains(value)) {
+        headerValues.add(value);
+      }
+    } // method: addHeaderValue
 
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServletResponseWrapper#addDateHeader(java.lang.String, long)
      */
     @Override
     public void addDateHeader(String name, long date) {
-      super.addDateHeader(name, date);
-      this.headers.put(name, date);
+      this.addHeaderValue(name, date, false);
     } // method: addDateHeader
 
 
@@ -257,12 +281,7 @@ public class RewriteFilter implements Filter {
      */
     @Override
     public void addHeader(String name, String value) {
-      if ("Content-Type".equalsIgnoreCase(name)) {
-        this.setContentType(value);
-      } else {
-        super.addHeader(name, value);
-        this.headers.put(name, value);
-      }
+      this.addHeaderValue(name, value, false);
     } // method:
 
 
@@ -271,8 +290,7 @@ public class RewriteFilter implements Filter {
      */
     @Override
     public void addIntHeader(String name, int value) {
-      super.addIntHeader(name, value);
-      this.headers.put(name, value);
+      this.addHeaderValue(name, value, false);
     } // method:
 
 
@@ -281,8 +299,7 @@ public class RewriteFilter implements Filter {
      */
     @Override
     public void setDateHeader(String name, long date) {
-      super.setDateHeader(name, date);
-      this.headers.put(name, date);
+      this.addHeaderValue(name, date, true);
     } // method: setDateHeader
 
 
@@ -291,12 +308,7 @@ public class RewriteFilter implements Filter {
      */
     @Override
     public void setHeader(String name, String value) {
-      if ("Content-Type".equalsIgnoreCase(name)) {
-        this.setContentType(value);
-      } else {
-        super.setHeader(name, value);
-        this.headers.put(name, value);
-      }
+      this.addHeaderValue(name, value, true);
     } // method: setHeader
 
 
@@ -305,8 +317,7 @@ public class RewriteFilter implements Filter {
      */
     @Override
     public void setIntHeader(String name, int value) {
-      super.setIntHeader(name, value);
-      this.headers.put(name, value);
+      this.addHeaderValue(name, value, true);
     } // method: setIntHeader
 
 
@@ -316,7 +327,7 @@ public class RewriteFilter implements Filter {
      */
     public long getLastModified() {
       if (this.headers.containsKey("Last-Modified")) {
-        return (Long) this.headers.get("Last-Modified");
+        return (Long) this.headers.get("Last-Modified").get(0);
       } else {
         return 0;
       }
@@ -412,17 +423,23 @@ public class RewriteFilter implements Filter {
         response.addCookie(cookie);
       }
 
-      // apply the headers (except of content-length)
-      for (Entry<String, Object> header : this.headers.entrySet()) {
-        String key = header.getKey();
-        if (!"content-length".equalsIgnoreCase(key)) {
-          Object value = header.getValue();
-          if (value instanceof Long) {
-            response.setDateHeader(key, (Long) value);
-          } else if (value instanceof Integer) {
-            response.setIntHeader(key, (Integer) value);
+      // apply the headers (except of BLOCKED_HEADERS)
+      for (Entry<String, List<Object>> header : this.headers.entrySet()) {
+        String name = header.getKey();
+        if (!BLOCKED_HEADERS.contains(name.toLowerCase())) {
+          List<Object> values = header.getValue();
+          if ("Content-Type".equalsIgnoreCase(name)) {
+            this.setContentType((String) values.get(0));
           } else {
-            response.setHeader(key, value.toString());
+            for (Object value : values) {
+              if (value instanceof Long) {
+                response.addDateHeader(name, (Long) value);
+              } else if (value instanceof Integer) {
+                response.addIntHeader(name, (Integer) value);
+              } else {
+                response.addHeader(name, value.toString());
+              }
+            }
           }
         }
       }
@@ -442,8 +459,13 @@ public class RewriteFilter implements Filter {
       // flush the buffers into the stream
       this.flushWriter();
 
-      // finally let's serve the content
-      if (REWRITE_CONTENT_TYPES.contains(this.getContentType())) {
+      // finally let's serve the content (but do not rewrite unknown content types
+      // and responses with a content encoding as they require a proper handler)
+      if (REWRITE_CONTENT_TYPES.contains(this.getContentType()) &&
+          !this.headers.containsKey("content-encoding")) {
+
+        // add indicator that response has been rewritten
+        response.addHeader("x-sap-RewriteFilter", "rewritten");
 
         // rewrite the content / replace placeholders with property values
         String content = new String(this.stream.getBytes(), characterEncoding);

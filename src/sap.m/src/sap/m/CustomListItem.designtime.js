@@ -10,7 +10,10 @@ sap.ui.define([],
 	return {
 		aggregations: {
 			content: {
-				domRef: ":sap-domref"
+				domRef: ":sap-domref > .sapMLIBContent",
+				actions: {
+					move: "moveControls"
+				}
 			}
 		}
 	};

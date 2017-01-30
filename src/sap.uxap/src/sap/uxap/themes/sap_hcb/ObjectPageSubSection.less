@@ -1,10 +1,11 @@
-.sapUxAPObjectPageSubSectionHeaderTitle {
-	font-size: @sapMFontHeader3Size;
-}
+/* ============================================== */
+/* CSS for control sap.uxap/ObjectPageSubSection  */
+/* High Contrast Black theme                      */
+/* ============================================== */
 
 .sapUxAPObjectPageSubSection:focus,
 .sapUxAPObjectPageSubSectionHeaderTitle:focus {
-	outline: 0.125rem dotted @sapHCStandardFG;
+	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.125rem;
 	border-color: transparent;
 	border-radius: 0;
@@ -12,19 +13,7 @@
 
 /* IE ignores outline-offset. Use an overlay: */
 html[data-sap-ui-browser^="ie"] .sapUxAPObjectPageSubSection, .sapUxAPObjectPageSubSectionHeaderTitle {
-	&:focus {
-		outline: none;
-		position: relative;
-	}
 	&:focus:before {
-		content: " ";
-		box-sizing: border-box;
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		left: 0;
-		top: 0;
-		border: 0.125rem dotted @sapHCStandardFG;
-		pointer-events: none;
+		border-width: 0.125rem;
 	}
 }

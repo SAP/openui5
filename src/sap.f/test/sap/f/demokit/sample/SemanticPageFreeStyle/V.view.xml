@@ -19,15 +19,8 @@
 		</semantic:titleHeading>
 
 		<!-- TitleExpanded content-->
-		<semantic:titleExpandedContent>
-			<Text text="{/titleExpandedContent/text}"/>
-			<ObjectStatus text="In Stock" state="{/titleExpandedContent/status}" />
-		</semantic:titleExpandedContent>
-
-		<!-- TitleExpanded content-->
 		<semantic:titleSnappedContent>
 			<Text text="{/titleSnappedContent/text}"/>
-			<ObjectStatus text="In Stock" state="{/titleSnappedContent/status}" />
 		</semantic:titleSnappedContent>
 
 		<!-- Header Content -->
@@ -83,6 +76,10 @@
 			<semantic:TitleMainAction text="Edit"/>
 		</semantic:titleMainAction>
 
+		<semantic:addAction>
+			<semantic:AddAction />
+		</semantic:addAction>
+
 		<semantic:deleteAction>
 			<semantic:DeleteAction />
 		</semantic:deleteAction>
@@ -110,13 +107,11 @@
 		<!-- Custom Title Text Content-->
 		<semantic:titleCustomTextActions>
 			<Button text="ToggleFooter" press="showFooter"/>
-			<Button text="T2" press="showFooter"/>
 		</semantic:titleCustomTextActions>
 
 		<!-- Custom Title Icon Content-->
 		<semantic:titleCustomIconActions>
 			<OverflowToolbarButton icon="sap-icon://cart" text="cart" />
-			<OverflowToolbarButton icon="sap-icon://history" text="history" />
 		</semantic:titleCustomIconActions>
 
 		 <!--Semantic ShareMenu Buttons-->
@@ -155,23 +150,14 @@
 			<semantic:NegativeAction />
 		</semantic:negativeAction>
 
-		<semantic:footerMainAction>
-			<semantic:FooterMainAction />
-		</semantic:footerMainAction>
-
 		<semantic:messagesIndicator>
 			<semantic:MessagesIndicator press="onMessagesButtonPress"/>
 		</semantic:messagesIndicator>
 
-		<semantic:draftIndicator>
-			<DraftIndicator state="Saved"/>
-		</semantic:draftIndicator>
-
 		<!-- Custom Footer Content-->
 		<semantic:footerCustomActions>
+			<Button text="Save" />
 			<Button text="Cancel" />
-			<Button text="Custom 2" />
-			<Button text="Custom 3" />
 		</semantic:footerCustomActions>
 
 	</semantic:SemanticPage>

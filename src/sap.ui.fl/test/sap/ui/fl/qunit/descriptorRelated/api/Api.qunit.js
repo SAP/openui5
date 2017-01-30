@@ -440,6 +440,54 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		}.bind(this));
 	});
 
+	
+	
+	QUnit.test("create_appdescr_app_addAnnotationsToOData", function(assert) {
+		return DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
+			"dataSourceId": "customer.existingDataSource",
+			"annotations" : [ "customer.anno1"],
+			"dataSource" : { }
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+		});
+	});
+
+	QUnit.test("create_appdescr_app_addAnnotationsToOData failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
+				"dataSourceId" : {}
+			})
+		}.bind(this));
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
+				"dataSourceId" : "a.id"
+			})
+		}.bind(this));
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
+				"dataSourceId": "customer.existingDataSource",
+				"dataSource" : { }
+			})
+		}.bind(this));
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
+				"dataSourceId": "customer.existingDataSource",
+				"annotations" : { },
+				"dataSource" : { }
+			})
+		}.bind(this));
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
+				"dataSourceId": "customer.existingDataSource",
+				"annotations" : [ "customer.anno1"],
+				"dataSource" : ""
+			})
+		}.bind(this));
+	});
+	
+	
+	
+	
 	QUnit.test("create_app_setTitle", function(assert) {
 		var _oDescriptorInlineChange;
 		var _oDescriptorVariant;

@@ -89,7 +89,8 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 							.then(function(oView) {
 								that._bindTitleInTitleProvider(oView);
 
-								oView.addDependent(that._oTitleProvider);
+								that._addTitleProviderAsDependent(oView);
+
 								return {
 									view: oView,
 									parentInfo: oParentInfo || {}

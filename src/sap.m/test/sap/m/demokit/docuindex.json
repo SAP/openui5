@@ -8,7 +8,9 @@
 				"desc": "The classic business process of finding & ordering products",
 				"ref": "test-resources/sap/m/demokit/cart/index.html",
 				"links": {
-					"Run Integration Tests": "test-resources/sap/m/demokit/cart/test/opaTestsWithGherkin.qunit.html"
+					"Run Integration Tests (OPA5)": "test-resources/sap/m/demokit/cart/test/integration/opaTestsWithComponent.qunit.html",
+					"Run Integration Tests (Gherkin)": "test-resources/sap/m/demokit/cart/test/integration/opaTestsWithGherkinAndComponent.qunit.html",
+					"Run Unit Tests": "test-resources/sap/m/demokit/cart/test/unit/unitTests.qunit.html"
 				},
 				"category": "Showcase",
 				"teaser": "test-resources/sap/m/demokit/cart/demoappteaser",
@@ -39,7 +41,7 @@
 				"config": "test-resources/sap/m/demokit/worklist/demoapp.json"
 			},
 			{
-				"icon": "task",
+				"icon": "screen-split-one",
 				"text": "Master-Detail",
 				"desc": "Best-practice starting point for a master-detail app",
 				"ref": "test-resources/sap/m/demokit/master-detail/webapp/test/mockServer.html",

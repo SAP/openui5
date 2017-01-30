@@ -1,16 +1,22 @@
+/* ======================================= */
+/* CSS for control sap.f/DynamicPageTitle  */
+/* Base theme                              */
+/* ======================================= */
+
 .sapFDynamicPageTitle {
 	z-index: 2;
 	min-height: 3rem;
+	height: 100%; /* fixes IE flexbox item centering issue BCP: 1680351222 */
 	position: relative;
 	padding: 0 2rem 0 3rem;
 	display: flex;
 	display: -webkit-flex;
 	align-items: center;
 	-webkit-align-items: center;
-
 	flex-direction: row;
 	-webkit-flex-direction: row;
 	box-sizing: border-box;
+	background: @sapUiObjectHeaderBackground;
 }
 
 .sapFDynamicPageTitleRightActions .sapFDynamicPageTitleOverflowToolbar {
@@ -18,6 +24,7 @@
 }
 
 .sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
+	box-shadow: inset 0 -0.125rem @sapUiObjectHeaderBorderColor, 0 0.125rem 0 0 @sapUiObjectHeaderBackground;
 	.sapFDynamicPageHeader {
 		border-bottom: none;
 	}
@@ -54,6 +61,7 @@
 			-webkit-flex: 1 1 10rem;
 			padding-right: 1rem;
 			font-size: 0.875rem;
+			color: @sapUiContentLabelColor;
 		}
 
 		.sapFDynamicPageTitleLeftSnappedExpandContent.sapFDynamicPageSnapContentVisible,

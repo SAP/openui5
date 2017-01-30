@@ -455,7 +455,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 
 		var sId = oControl.getId();
 		//check whether the control is already invalidated
-		if (/*jQuery.inArray(oControl, this.getContent()) || */oControl === this ) {
+		if ( oControl === this ) {
 			this.bRenderSelf = true; //everything in this UIArea
 			this.bNeedsRerendering = true;
 			this.mInvalidatedControls = {};
@@ -771,7 +771,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		var bGroupChanged = false;
 
 		// dispatch the event to the controls (callback methods: onXXX)
-		while (oElement && oElement instanceof Element && oElement.isActive() && !oEvent.isPropagationStopped()) {
+		while (oElement instanceof Element && oElement.isActive() && !oEvent.isPropagationStopped()) {
 
 			// for each event type call the callback method
 			// if the execution should be stopped immediately
@@ -886,7 +886,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	//		for (var evt in oPsEv) {
 	//				for (j = 0, js = oPsEv[evt].aTypes.length; j < js; j++) {
 	//					var type = oPsEv[evt].aTypes[j];
-	//					if (jQuery.inArray(type, aEvents) == -1) {
+	//					if (aEvents.indexOf(type) === -1) {
 	//						aEvents.push(type);
 	//					}
 	//				}
@@ -895,7 +895,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	//		// check for events and register them
 	//		for (var i = 0, is = aEv.length; i < is; i++) {
 	//			var type = aEv[i];
-	//				if (jQuery.inArray(type, aEvents) == -1) {
+	//				if (aEvents.indexOf(type) === -1) {
 	//					aEvents.push(type);
 	//				}
 	//		}

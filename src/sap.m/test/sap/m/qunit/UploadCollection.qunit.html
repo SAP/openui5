@@ -24,85 +24,87 @@
 <script>
 
 	var oData = {
-			"items" : [{
-				"contributor" : "Susan Baker",
-				"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
-				"fileName" : "Screenshot.jpg",
-				"fileSize" : 20,
-				"mimeType" : "image/jpg",
-				"thumbnailUrl" : "",
-				"uploadedDate" : "Date: 2014-07-30",
-				"ariaLabelForPicture" : "textForIconOfItemSusanBaker",
-				"markers" : [{
-					"type" : "Locked",
-					"visibility" : "IconAndText"
-				}]
-			},{
-				"contributor" : "John Smith",
-				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
-				"fileName" : "Notes.txt",
-				"fileSize" : 10,
-				"mimeType" : "text/plain",
-				"thumbnailUrl" : "",
-				"uploadedDate" : "2014-08-01",
-				"url" : "/pathToTheFile/Notes.txt",
-				"markers" : [{
-					"type" : "Locked",
-					"visibility" : "IconAndText"
-				}]
-			},{
-				"contributor" : "J Edgar Hoover",
-				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",
-				"enableEdit" : false,
-				"enableDelete" : false,
-				"fileName" : "Document.txt",
-				"fileSize" : 15,
-				"mimeType" : "text/plain",
-				"thumbnailUrl" : "",
-				"uploadedDate" : "2014-09-01",
-				"url" : "/pathToTheFile/Document.txt"
-			},{
-				"contributor" : "Kate Brown",
-				"documentId" : "b68a7065-cc2a-2140-922d-e7528cd32172",
-				"enableEdit" : false,
-				"enableDelete" : false,
-				"visibleEdit" : "{visibleEdit}",
-				"visibleDelete" : "{visibleDelete}",
-				"fileName" : "Picture of a woman.png",
-				"fileSize" : 70,
-				"mimeType" : "image/png",
-				"thumbnailUrl" : "../images/Woman_04.png",
-				"uploadedDate" : "2014-07-25",
-				"url" : "/pathToTheFile/Woman_04.png",
-				"ariaLabelForPicture" : "textForImageOfItemKateBrown",
+		"items" : [{
+			"contributor" : "Susan Baker",
+			"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+			"fileName" : "Screenshot.jpg",
+			"fileSize" : 20,
+			"mimeType" : "image/jpg",
+			"thumbnailUrl" : "",
+			"uploadedDate" : "Date: 2014-07-30",
+			"ariaLabelForPicture" : "textForIconOfItemSusanBaker",
+			"markers" : [{
+				"type" : "Locked",
+				"visibility" : "IconAndText"
 			}]
-		};
+		},{
+			"contributor" : "John Smith",
+			"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
+			"fileName" : "Notes.txt",
+			"fileSize" : 10,
+			"mimeType" : "text/plain",
+			"thumbnailUrl" : "",
+			"uploadedDate" : "2014-08-01",
+			"url" : "/pathToTheFile/Notes.txt",
+			"markers" : [{
+				"type" : "Locked",
+				"visibility" : "IconAndText"
+			}]
+		},{
+			"contributor" : "J Edgar Hoover",
+			"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",
+			"enableEdit" : false,
+			"enableDelete" : false,
+			"fileName" : "Document.txt",
+			"fileSize" : 15,
+			"mimeType" : "text/plain",
+			"thumbnailUrl" : "",
+			"uploadedDate" : "2014-09-01",
+			"url" : "/pathToTheFile/Document.txt"
+		},{
+			"contributor" : "Kate Brown",
+			"documentId" : "b68a7065-cc2a-2140-922d-e7528cd32172",
+			"enableEdit" : false,
+			"enableDelete" : false,
+			"visibleEdit" : "{visibleEdit}",
+			"visibleDelete" : "{visibleDelete}",
+			"fileName" : "Picture of a woman.png",
+			"fileSize" : 70,
+			"mimeType" : "image/png",
+			"thumbnailUrl" : "../images/Woman_04.png",
+			"uploadedDate" : "2014-07-25",
+			"url" : "/pathToTheFile/Woman_04.png",
+			"ariaLabelForPicture" : "textForImageOfItemKateBrown"
+		}]
+	};
 
-	var oMarkerTemplate = new sap.m.ObjectMarker({
-		type : "{type}",
-		visibility : "{visibility}"
-	});
+	function createItemTemplate() {
+		return new sap.m.UploadCollectionItem({
+			contributor : "{contributor}",
+			documentId : "{documentId}",
+			enableEdit : "{enableEdit}",
+			enableDelete : "{enableDelete}",
+			fileName : "{fileName}",
+			fileSize : "{fileSize}",
+			mimeType : "{mimeType}",
+			thumbnailUrl : "{thumbnailUrl}",
+			uploadedDate : "{uploadedDate}",
+			url : "{url}",
+			ariaLabelForPicture : "{ariaLabelForPicture}",
+			markers : {
+				path : "markers",
+				template : createMarkerTemplate(),
+				templateShareable : false
+			}
+		});
+	}
 
-	var oItemTemplate = new sap.m.UploadCollectionItem({
-		contributor : "{contributor}",
-		documentId : "{documentId}",
-		enableEdit : "{enableEdit}",
-		enableDelete : "{enableDelete}",
-		fileName : "{fileName}",
-		fileSize : "{fileSize}",
-		mimeType : "{mimeType}",
-		thumbnailUrl : "{thumbnailUrl}",
-		uploadedDate : "{uploadedDate}",
-		url : "{url}",
-		ariaLabelForPicture : "{ariaLabelForPicture}",
-		markers : {
-			path : "markers",
-			template : oMarkerTemplate
-		}
-	});
-
-	var oModel = new sap.ui.model.json.JSONModel(oData);
-	sap.ui.getCore().setModel(oModel);
+	function createMarkerTemplate() {
+		return	new sap.m.ObjectMarker({
+			type : "{type}",
+			visibility : "{visibility}"
+		});
+	}
 
 	/* --------------------------------------- */
 	/* Test properties                         */
@@ -112,9 +114,10 @@
 			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 				items : {
 					path : "/items",
-					template : oItemTemplate
+					template : createItemTemplate(),
+					templateShareable : false
 				}
-			});
+			}).setModel(new sap.ui.model.json.JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -397,6 +400,7 @@
 		},
 		afterEach : function() {
 			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
 		}
 	});
 
@@ -423,7 +427,8 @@
 			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 				items : {
 					path : "/items",
-					template : oItemTemplate
+					template : createItemTemplate(),
+					templateShareable : false
 				}
 			});
 			this.oUploadCollection.placeAt("qunit-fixture");
@@ -602,9 +607,10 @@
 			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 				items : {
 					path : "/items",
-					template : oItemTemplate
+					template : createItemTemplate(),
+					templateShareable : false
 				}
-			});
+			}).setModel(new sap.ui.model.json.JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -788,7 +794,8 @@
 		this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 			items : {
 				path : "/items",
-				template : oItemTemplate
+				template : createItemTemplate(),
+				templateShareable : false
 			},
 			mode : sap.m.ListMode.Delete
 		});
@@ -813,7 +820,8 @@
 		this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 			items : {
 				path : "/items",
-				template : oItemTemplate
+				template : createItemTemplate(),
+				templateShareable : false
 			},
 			mode : sap.m.ListMode.MultiSelect
 		});
@@ -829,7 +837,7 @@
 	QUnit.test("To download an item without URL fails.", function(assert) {
 		//Arrange
 		var oItem = this.oUploadCollection.getItems()[0];
-		oItem.setUrl(null)
+		oItem.setUrl(null);
 		//Act
 		var bIsDownloaded = this.oUploadCollection.downloadItem(oItem, false);
 		//Assert
@@ -940,10 +948,11 @@
 	/* --------------------------------------- */
 	QUnit.module("Upload progress rendering tests", {
 		beforeEach : function() {
-			this.oUploadCollection = new sap.m.UploadCollection({
+			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 				items : {
 					path : "/items",
-					template : oItemTemplate
+					template : createItemTemplate(),
+					templateShareable : false
 				}
 			});
 			// stub UploadCollection's attributes
@@ -973,7 +982,7 @@
 		//Act
 		oFileUploader.fireChange({
 			files : [{
-				name: "file1",
+				name: "file1"
 			}]
 		});
 		this.oUploadCollection.invalidate();
@@ -982,7 +991,7 @@
 		oFileUploader.fireUploadProgress({
 			fileName : "file1",
 			loaded: 50,
-			total: 100,
+			total: 100
 		});
 		sap.ui.getCore().applyChanges();
 
@@ -1004,7 +1013,7 @@
 		//Act
 		oFileUploader.fireChange({
 			files : [{
-				name: "file1",
+				name: "file1"
 			}]
 		});
 		this.oUploadCollection.invalidate();
@@ -1013,7 +1022,7 @@
 		oFileUploader.fireUploadProgress({
 			fileName : "file1",
 			loaded: 100,
-			total: 100,
+			total: 100
 		});
 		sap.ui.getCore().applyChanges();
 
@@ -1027,12 +1036,13 @@
 	/* --------------------------------------- */
 	QUnit.module("Drag and drop", {
 		beforeEach : function() {
-			this.oUploadCollection = new sap.m.UploadCollection({
+			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 				items : {
 					path : "/items",
-					template : oItemTemplate
+					template : createItemTemplate(),
+					templateShareable : false
 				}
-			});
+			}).setModel(new sap.ui.model.json.JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -1045,19 +1055,23 @@
 	QUnit.test("Drag file enter UIArea", function(assert) {
 		//Arrange
 		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
+		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		//Act
 		$RootNode.trigger("dragenter");
 		//Assert
 		assert.notOk(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
+		assert.ok(oStubCheckForFiles.called, "The check for files has been performed");
 	});
 
 	QUnit.test("Drag file over UIArea", function(assert) {
 		//Arrange
 		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
+		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		//Act
 		$RootNode.trigger("dragover");
 		//Assert
 		assert.notOk(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
+		assert.ok(oStubCheckForFiles.called, "The check for files has been performed");
 	});
 
 	QUnit.test("Drag file leave UIArea", function(assert) {
@@ -1074,10 +1088,12 @@
 	QUnit.test("Drag file enter UploadCollection", function(assert) {
 		//Arrange
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
+		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		//Act
 		$DragDropArea.trigger("dragenter");
 		//Assert
 		assert.notOk($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
+		assert.ok(oStubCheckForFiles.called, "The check for files has been performed");
 	});
 
 	QUnit.test("Drag file leave UploadCollection", function(assert) {
@@ -1093,7 +1109,9 @@
 	QUnit.test("Drop file in UploadCollection", function(assert) {
 		//Arrange
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
-		var oSpy = sinon.spy(this.oUploadCollection._getFileUploader(), "_sendFilesFromDragAndDrop");
+		var oSpyGetFileUploader = sinon.spy(this.oUploadCollection._getFileUploader(), "_sendFilesFromDragAndDrop");
+		var oSpyOnChange = sinon.spy(this.oUploadCollection, "_onChange");
+		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		var oEvent = jQuery.Event("drop", {
 			originalEvent: {
 				dataTransfer:{
@@ -1106,12 +1124,15 @@
 		$DragDropArea.trigger(oEvent);
 		//Assert
 		assert.ok($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag and drop overlay is hidden after drop");
-		assert.ok(oSpy.calledOnce, "The API method of FileUploader for UploadCollection was called");
+		assert.ok(oSpyGetFileUploader.calledOnce, "The API method of FileUploader for UploadCollection was called");
+		assert.ok(oSpyOnChange.calledOnce, "The _onchange event is triggered when file is dropped in UC");
+		assert.ok(oStubCheckForFiles.called, "The check for files has been performed");
 	});
 
 	QUnit.test("Drop file in UploadCollection (Pending mode)", function(assert) {
 		//Arrange
 		var oStubGetInstantUpload = sinon.stub(this.oUploadCollection, "getInstantUpload").returns(false);
+		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		this.oUploadCollection._oFormatDecimal = sap.ui.core.format.FileSizeFormat.getInstance({binaryFilesize: false, maxFractionDigits: 1, maxIntegerDigits: 3});
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
 		var oFileList = {
@@ -1134,12 +1155,12 @@
 		$DragDropArea.trigger(oEvent);
 		//Assert
 		assert.ok($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag and drop overlay is hidden after drop");
-		assert.equal(this.oUploadCollection._aFilesFromDragAndDropForPendingUpload.length, 1, "File is pended in the array");
-		oStubGetInstantUpload.restore();
+		assert.equal(this.oUploadCollection._aFilesFromDragAndDropForPendingUpload.length, 1, "File is inserted in the array");
 	});
 
 	QUnit.test("Drag drop icon is hidden when height of drag drop area smaller than 10rem", function(assert) {
 		//Arrange
+		sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
 		this.oUploadCollection.$("drag-drop-area").height(150);
 		//Act
@@ -1150,12 +1171,54 @@
 
 	QUnit.test("Drag drop icon is hidden when height of drag drop area smaller than 10rem", function(assert) {
 		//Arrange
+		sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
 		this.oUploadCollection.$("drag-drop-area").height(150);
 		//Act
 		$RootNode.trigger("dragenter");
 		//Assert
 		assert.ok(this.oUploadCollection.getAggregation("_dragDropIcon").$().is(':hidden'), "The drag and drop icon is hidden");
+	});
+
+	QUnit.test("Check for files with files", function(assert) {
+		var bActual,
+			oEvent;
+
+		//Arrange
+		oEvent = {
+			originalEvent : {
+				dataTransfer : {
+					types : [
+						"Files"
+					]
+				}
+			}
+		};
+		//Act
+		bActual = this.oUploadCollection._checkForFiles(oEvent);
+		//Assert
+		assert.ok(bActual, "The check successfully recognizes files in the event data");
+	});
+
+	QUnit.test("Check for files with other elements", function(assert) {
+		var bActual,
+			oEvent;
+
+		//Arrange
+		oEvent = {
+			originalEvent : {
+				dataTransfer : {
+					types : [
+						"text/plain",
+						"text/html"
+					]
+				}
+			}
+		};
+		//Act
+		bActual = this.oUploadCollection._checkForFiles(oEvent);
+		//Assert
+		assert.notOk(bActual, "The check successfully recognizes that there are no files in the event data");
 	});
 
 	QUnit.module("Event tests", {
@@ -1164,9 +1227,10 @@
 				maximumFilenameLength : 35,
 				items : {
 					path : "/items",
-					template : oItemTemplate
+					template : createItemTemplate(),
+					templateShareable : false
 				}
-			});
+			}).setModel(new sap.ui.model.json.JSONModel(oData));
 			this.oDataCopy = jQuery.extend(true, {}, oData);
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -1256,7 +1320,7 @@
 				assert.equal(oEvent.getParameters()["files"][0]["fileSize"], sFileSize, "Correct file size in fileSizeExceed event provided by oEvent.getParameters()['files'][0]['fileSize']");
 				assert.deepEqual(oEvent.getParameter("files")[0], oBigFile, "Correct file in fileSizeExceed event provided by oEvent.getParameter('files')[0]");
 			}
-		};
+		}
 		this.oUploadCollection.attachFileSizeExceed(fileSizeExceed);
 		this.oUploadCollection._onFileSizeExceed(new sap.ui.base.Event("fileSizeExceed", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
 	});
@@ -1331,7 +1395,7 @@
 		this.oUploadCollection._oItemForDelete = {
 				documentId : oFileDelete.getDocumentId(),
 				_iLineNumber : 1
-		}
+		};
 		this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
 	});
 
@@ -1475,9 +1539,10 @@
 				maximumFilenameLength : 35,
 				items : {
 					path : "/items",
-					template : oItemTemplate
-				},
-			});
+					template : createItemTemplate(),
+					templateShareable : false
+				}
+			}).setModel(new sap.ui.model.json.JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -1505,7 +1570,7 @@
 		oObj.oSource = {};
 		oObj.oSource.getId = function() {
 			return this.sId;
-		}
+		};
 		oObj.target.id =  this.oUploadCollection.aItems[1].sId + "-cancelButton";
 		oData.items[1].fileName = "NewDocument_toCancel";
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
@@ -1526,7 +1591,6 @@
 		oObj.target.id =  this.oUploadCollection.aItems[1].sId + "-cli";
 		oObj.oSource.sId = this.oUploadCollection.aItems[1].sId;
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
-		oModel.setData(oData);
 		sap.ui.getCore().applyChanges();
 		assert.equal(this.oUploadCollection.aItems[1]._status, "display", "Item 2 has status 'display' after 'ok'");
 
@@ -1609,9 +1673,10 @@
 				maximumFilenameLength : 35,
 				items : {
 					path : "/items",
-					template : oItemTemplate
-				},
-			});
+					template : createItemTemplate(),
+					templateShareable : false
+				}
+			}).setModel(new sap.ui.model.json.JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
@@ -1669,9 +1734,10 @@
 			this.oUploadCollection = new sap.m.UploadCollection({
 				items : {
 					path : "/items",
-					template : oItemTemplate
-				},
-			});
+					template : createItemTemplate(),
+					templateShareable : false
+				}
+			}).setModel(new sap.ui.model.json.JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -1875,7 +1941,8 @@
 			this.oUploadCollection = new sap.m.UploadCollection({
 				items : {
 					path : "/items",
-					template : oItemTemplate
+					template : createItemTemplate(),
+					templateShareable : false
 				}
 			}).setModel(this.oModel);
 			this.oUploadCollection.placeAt("qunit-fixture");
@@ -1943,9 +2010,10 @@
 			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 				items : {
 					path : "/items",
-					template : oItemTemplate
+					template : createItemTemplate(),
+					templateShareable : false
 				}
-			});
+			}).setModel(new sap.ui.model.json.JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -1984,9 +2052,10 @@
 			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 				items : {
 					path : "/items",
-					template : oItemTemplate
+					template : createItemTemplate(),
+					templateShareable : false
 				}
-			});
+			}).setModel(new sap.ui.model.json.JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},

@@ -5,7 +5,7 @@
 
 .sapUiUfdShellOvrlyHeadCntnt {
 	background-color: @sapUiShellBackground;
-	filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorStr='@{sapUiUfdShellHeadBGStartColor}', EndColorStr='@{sapUiUfdShellHeadBGEndColor}',GradientType=0)";
+	background: -ms-linear-gradient(top,@sapUiUfdShellHeadBGStartColor 0,@sapUiShellBackground 33%,@sapUiShellBackground 75%,@sapUiUfdShellHeadBGEndColor 100%);
 	background: -webkit-gradient(linear,left top,left bottom,color-stop(0,@sapUiUfdShellHeadBGStartColor),color-stop(0.33,@sapUiShellBackground),color-stop(0.75,@sapUiShellBackground),color-stop(1,@sapUiUfdShellHeadBGEndColor));
 	background-image: -webkit-linear-gradient(top,@sapUiUfdShellHeadBGStartColor 0,@sapUiShellBackground 33%,@sapUiShellBackground 75%,@sapUiUfdShellHeadBGEndColor 100%);
 	background: linear-gradient(top,@sapUiUfdShellHeadBGStartColor 0,@sapUiShellBackground 33%,@sapUiShellBackground 75%,@sapUiUfdShellHeadBGEndColor 100%);

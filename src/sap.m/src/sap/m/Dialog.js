@@ -15,24 +15,64 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		var isTheCurrentBrowserIENine = Device.browser.internet_explorer && (Device.browser.version < 10);
 
 		/**
-		 * Constructor for a new Dialog.
-		 *
-		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-		 * @param {object} [mSettings] Initial settings for the new control
-		 *
-		 * @class
-		 * The Dialog control is used to interrupt the current processing of an application to prompt the user for information or a response.
-		 * @extends sap.ui.core.Control
-		 * @implements sap.ui.core.PopupInterface
-		 *
-		 * @author SAP SE
-		 * @version ${version}
-		 *
-		 * @constructor
-		 * @public
-		 * @alias sap.m.Dialog
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
-		 */
+		* Constructor for a new Dialog.
+		*
+		* @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		* @param {object} [mSettings] Initial settings for the new control
+		*
+		* @class
+		* A popup that interrupts the current processing and prompts the user for an action or an input, in a modal mode.
+		* <h3>Overview</h3>
+		* The Dialog control is used to prompt the user for an action or a confirmation. It interrupts the current app processing as it is the only focused UI element and the main screen is dimmed/blocked.
+		* The content of the dialog is fully customizable.
+		* <h3>Structure</h3>
+		* A dialog consists of a title, optional subtitle, content area and a footer for action buttons.
+		* The dialog is usually displayed at the center of the screen. Its size and position can be changed by the user.
+		* To enable this, you need to set the properties <code>resizable</code> and <code>draggable</code> accordingly.
+		*
+		* There are other specialized types of dialogs:
+		* <ul>
+		* <li>{@link sap.m.P13nDialog Personalization dialog} - used for personalizing sorting, filtering and grouping in tables</li>
+		* <li>{@link sap.m.SelectDialog Select dialog} - used to select one or more items from a comprehensive list</li>
+		* <li>{@link sap.m.TableSelectDialog Table select dialog} - used to  make a selection from a comprehensive table containing multiple attributes or values</li>
+		* <li>{@link sap.ui.comp.valuehelpdialog.ValueHelpDialog Value help dialog} - used to help the user find and select single and multiple values</li>
+		* <li>{@link sap.m.ViewSettingsDialog View settings dialog}  - used to sort, filter, or group data within a (master) list or a table</li>
+		* <li>{@link sap.m.BusyDialog Busy dialog} - used to block the screen and inform the user about an ongoing operation</li>
+		* </ul>
+		* <h3>Usage</h3>
+		* <h4>When to use:</h4>
+		* <ul>
+		* <li>You want to display a system message.</li>
+		* <li>You want to interrupt the user’s action.</li>
+		* <li>You want to show a message with a short and a long description.</li>
+		* </ul>
+		* <h4>When not to use:</h4>
+		* <ul>
+		* <li>You just want to confirm a successful action.</li>
+		* </ul>
+		* <h3>Responsive Behavior</h3>
+		* <ul>
+		* <li>If the <code>stretch</code> property is set to true, the dialog displays on full screen.</li>
+		* <li>If the <code>contentWidth</code> and/or <code>contentHeight</code> properties are set, the dialog will try to fill those sizes.</li>
+		* <li>If there is no specific sizing, the dialog will try to adjust its size to its content.</li>
+		* </ul>
+		* <h4>Smartphones</h4>
+		* If the dialog has one or two actions they will cover the entire footer. If there are more actions, they will overflow.
+		* <h4>Tablets</h4>
+		* The action buttons in the toolbar are <b>right-aligned</b>. Use <b>cozy</b> mode on tablet devices.
+		* <h4>Desktop</h4>
+		* The action buttons in the toolbar are <b>right-aligned</b>. Use <b>compact</b> mode on desktop.
+		* @extends sap.ui.core.Control
+		*
+		* @implements sap.ui.core.PopupInterface
+		* @author SAP SE
+		* @version ${version}
+		*
+		* @constructor
+		* @public
+		* @alias sap.m.Dialog
+		* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+		*/
 		var Dialog = Control.extend("sap.m.Dialog", /** @lends sap.m.Dialog.prototype */ {
 			metadata: {
 				interfaces: [

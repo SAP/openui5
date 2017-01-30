@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadat
 			this._oStub.sendEvent(sCallbackEvent, {
 				methods: JSON.stringify(aMethods),
 				breakpointCount: JSON.stringify({
-					active: $.grep(aMethods, function(oMethod, i) {
+					active: aMethods.filter(function(oMethod, i) {
 						return oMethod.active;
 					}).length,
 					all: aMethods.length
@@ -97,7 +97,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadat
 			var mMethods = this.getInstanceMethods(data.controlId);
 
 			data.breakpointCount = JSON.stringify({
-				active: $.grep(mMethods, function(oMethod, i) {
+				active: mMethods.filter(function(oMethod) {
 					return oMethod.active;
 				}).length,
 				all: mMethods.length
@@ -127,7 +127,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadat
 			this._oStub.sendEvent(sCallbackEvent, {
 				methods: JSON.stringify(aMethods),
 				breakpointCount: JSON.stringify({
-					active: $.grep(aMethods, function(oMethod, i) {
+					active: aMethods.filter(function(oMethod, i) {
 						return oMethod.active;
 					}).length,
 					all: aMethods.length
@@ -154,7 +154,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadat
 			var mMethods = this.getClassMethods(data.className);
 
 			data.breakpointCount = JSON.stringify({
-				active: $.grep(mMethods, function(oMethod, i) {
+				active: mMethods.filter(function(oMethod, i) {
 					return oMethod.active;
 				}).length,
 				all: mMethods.length

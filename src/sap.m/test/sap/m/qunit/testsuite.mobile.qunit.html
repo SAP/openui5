@@ -190,6 +190,9 @@
 				// MessagePopover
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MessagePopover.qunit.html");
 
+				// MessageItem
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MessageItem.qunit.html");
+
 				// MessageStrip
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MessageStrip.qunit.html");
 
@@ -473,10 +476,12 @@
 				try {
 					sap.ui.getCore().loadLibrary("sap.ui.rta");
 					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Bar.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/CustomListItem.qunit.html");
 					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/CheckBox.qunit.html");
 					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/DatePicker.qunit.html");
 					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/InputBase.qunit.html");
 					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Label.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/ListBase.qunit.html");
 					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/ListItemBase.qunit.html");
 					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Page.qunit.html");
 					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Panel.qunit.html");

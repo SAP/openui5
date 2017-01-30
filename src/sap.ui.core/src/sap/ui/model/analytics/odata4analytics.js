@@ -3183,7 +3183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		 * @name sap.ui.model.analytics.odata4analytics.FilterExpression#addUI5FilterConditions
 		 */
 		addUI5FilterConditions : function(aUI5Filter) {
-			if (!jQuery.isArray(aUI5Filter)) {
+			if (!Array.isArray(aUI5Filter)) {
 				throw "Argument is not an array";
 			}
 			if (aUI5Filter.length == 0) {

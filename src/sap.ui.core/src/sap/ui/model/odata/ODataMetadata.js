@@ -956,17 +956,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	/**
 	 * Add metadata url: The response will be merged with the existing metadata object
 	 *
-	 * @param string | array vUrl Either one URL as string or an array or Uri strings
+	 * @param {string | string[]} vUrl Either one URL as string or an array of Uri strings
 	 * @returns Promise The Promise for metadata loading
 	 * @private
 	 */
 	ODataMetadata.prototype._addUrl = function(vUrl) {
-		var aUrls = [].concat(vUrl),
-			that = this;
+		var aUrls = [].concat(vUrl);
 
-		return Promise.all(jQuery.map(aUrls, function(sUrl) {
-			return that._loadMetadata(sUrl, true);
-		}));
+		return Promise.all(aUrls.map(function(sUrl) {
+			return this._loadMetadata(sUrl, true);
+		}, this));
 	};
 
 	/**

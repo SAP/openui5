@@ -3,6 +3,14 @@
 /* Belize theme                               */
 /* ========================================== */
 
+@_sap_uxap_ObjectPageHeader_Background: @sapUiObjectHeaderBackground;
+
+.sapUshellShell {
+	.sapUxAPObjectPageHeaderIdentifier {
+		background: @_sap_uxap_ObjectPageHeader_Background;
+	}
+}
+
 .sapUxAPObjectPageHeader {
 	.sapMBar {
 		background-color: @sapUiObjectHeaderBackground;
@@ -17,20 +25,16 @@
 }
 
 .sapUxAPObjectPageHeaderIdentifier {
-	background: @sapUiObjectHeaderBackground;
-
 	.sapUxAPObjectPageHeaderIdentifierTitle {
 		color: @sapUiGroupTitleTextColor;
 	}
 
 	.sapUxAPObjectPageHeaderIdentifierDescription {
-		font-size: @sapMFontMediumSize;
 		color: @sapUiContentLabelColor;
 	}
 
 	.sapUxAPObjectPageHeaderIdentifierActions {
 		&.sapUxAPObjectPageHeaderIdentifierActionsForce, .sapUxAPObjectPageHeaderStickied & {
-			display: inline-block;
 			right: 1.25rem;
 		}
 	}
@@ -68,11 +72,6 @@ html .sapUiContainer-Narrow .sapUxAPObjectPageHeaderIdentifier {
 	}
 }
 
-html.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifierTitle,
-html .sapUiContainer-Narrow .sapUxAPObjectPageHeaderIdentifierTitle {
-	font-size: @sapMFontHeader4Size;
-}
-
 .sapUxAPObjectPageHeaderChangesBtn .sapMBtnTransparent > .sapMBtnIcon {
 	color:  fade(@sapUiContentIconColor, 5);
 }
@@ -90,17 +89,13 @@ html .sapUiContainer-Narrow .sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sa
 }
 
 .sapUxAPObjectPageHeaderPlaceholder {
-	background-color: fade(@sapUiContentIconColor, 30);
+	background-color: @sapUiContentImagePlaceholderBackground;
 }
 
 .sapUxAPObjectPageHeaderPlaceholder > .sapUiIcon {
-	color: fade(@sapUiContentIconColor, 5);
+	color: @sapUiContentImagePlaceholderForegroundColor;
 }
 
 .sapUxAPObjectPageHeaderObjectImageContainer .sapUiIcon {
 	color: @sapUiContentIconColor;
-}
-
-.sapUxAPObjectPageHeaderSeparator {
-	background-color: @sapUiToolbarSeparatorColor;
 }

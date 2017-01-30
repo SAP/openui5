@@ -248,6 +248,7 @@
 		assert.ok(jQuery.sap.domById("numeric-cnt-value"), "Value was rendered successfully");
 		assert.ok(jQuery.sap.domById("numeric-cnt-scale"), "Scale was rendered successfully");
 		assert.ok(jQuery.sap.domById("numeric-cnt-icon-image"), "Icon was rendered successfully");
+		assert.ok(this.oGenericTile.$().hasClass("OneByOne"), "FrameType class has been added");
 	});
 
 	QUnit.test("GenericTile border rendered - blue crystal", function(assert) {
@@ -406,6 +407,39 @@
 
 			done();
 		}.bind(this));
+	});
+
+	QUnit.module("FrameType rendering tests", {
+		beforeEach: function() {
+			this.oGenericTile = new sap.m.GenericTile({
+				frameType : sap.m.FrameType.Auto,
+				header: "This is a header",
+				subheader: "This is a subheader"
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("FrameType is in OneByOne", function(assert) {
+		//Arrange
+		//Act
+		//Assert
+		assert.equal(this.oGenericTile.getFrameType(), sap.m.FrameType.OneByOne, "FrameType Auto set to OneByOne");
+	});
+
+	QUnit.test("FrameType is in TwoByOne", function(assert) {
+		//Arrange
+		this.oGenericTile.setFrameType(sap.m.FrameType.TwoByOne);
+
+		//Act
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oGenericTile.getFrameType(), sap.m.FrameType.TwoByOne, "FrameType Auto set to TwoByOne");
 	});
 
 	QUnit.module("Scope rendering tests", {

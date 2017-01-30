@@ -88,7 +88,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 		var i;
 
 		this.aIndices = [];
-		if (jQuery.isArray(this.oList)) {
+		if (Array.isArray(this.oList)) {
 			for (i = 0; i < this.oList.length; i++) {
 				this.aIndices.push(i);
 			}
@@ -106,7 +106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	JSONListBinding.prototype.update = function(){
 		var oList = this.oModel._getObject(this.sPath, this.oContext);
 		if (oList) {
-			if (jQuery.isArray(oList)) {
+			if (Array.isArray(oList)) {
 				if (this.bUseExtendedChangeDetection) {
 					this.oList = jQuery.extend(true, [], oList);
 				} else {

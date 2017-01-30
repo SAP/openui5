@@ -215,7 +215,8 @@ sap.ui.require([
 		    					generator: "Change.createInitialFileContent",
 		    					service: "",
 		    					user: ""
-		    				}
+		    				},
+		    				dependentSelector: {}
 		    			},
 		    			{
 		    				fileName: sGeneratedId,
@@ -240,7 +241,8 @@ sap.ui.require([
 		    					generator: "Change.createInitialFileContent",
 		    					service: "",
 		    					user: ""
-		    				}
+		    				},
+		    				dependentSelector: {}
 		    			}];
 
 		var oLrepConnectorCreateStub = this.stub(CodeExtManager._oLrepConnector, "create");

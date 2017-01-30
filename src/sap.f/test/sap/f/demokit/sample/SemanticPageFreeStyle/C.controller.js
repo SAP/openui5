@@ -11,7 +11,7 @@ sap.ui.define([
 	return Controller.extend("sap.f.sample.SemanticPageFreeStyle.C", {
 		onInit: function () {
 			this.oModel = new JSONModel();
-			this.oModel.loadData(jQuery.sap.getModulePath("sap.f.sample.DynamicPageListReport", "/model.json"), null, false);
+			this.oModel.loadData(jQuery.sap.getModulePath("sap.f.sample.SemanticPageFreeStyle", "/model.json"), null, false);
 			this.oSemanticPage = this.getView().byId("mySemanticPage");
 			this.oSemanticPage.setModel(this.oModel);
 

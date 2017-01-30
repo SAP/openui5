@@ -1,37 +1,6 @@
 /* =================================== */
 /* CSS for control sap.uxap/AnchorBar  */
-/* Belize plus theme                        */
+/* Belize Plus theme                   */
 /* =================================== */
 
-/**********************************
-Common compact/cozy
-**********************************/
-
-.sapContrastPlus .sapUxAPAnchorBar.sapMTB {
-	box-shadow: inset 0 -0.125rem lighten(@sapUiObjectHeaderBackground, 8), 0 0.125rem 0 0 @sapUiObjectHeaderBackground;
-}
-
-.sapUshellShell {
-	.sapContrastPlus .sapUxAPAnchorBar.sapMTB {
-		background: fade(@sapUiObjectHeaderBackground, 60);
-	}
-}
-
-// Gradient mask
-.sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
-html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
-	background: -webkit-gradient(linear, left top, right top, color-stop(0%, @sapUiObjectHeaderBackground), color-stop(75%, @sapUiObjectHeaderBackground), color-stop(100%, fade(@sapUiObjectHeaderBackground, 60))); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(left, @sapUiObjectHeaderBackground 0%, @sapUiObjectHeaderBackground 75%, fade(@sapUiObjectHeaderBackground, 60) 100%); /* Chrome10+,Safari5.1+ */
-	background: linear-gradient(to right, @sapUiObjectHeaderBackground 0%, @sapUiObjectHeaderBackground 75%, fade(@sapUiObjectHeaderBackground, 60) 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f2f8fc', endColorstr='#00f2f8fc', GradientType=1); /* IE6-9 */
-	box-shadow: inset 0 -0.125rem lighten(@sapUiObjectHeaderBackground, 8);
-}
-
-.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight,
-html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
-	background: -webkit-gradient(linear, left top, right top, color-stop(0%, @sapUiObjectHeaderBackground), color-stop(75%, @sapUiObjectHeaderBackground), color-stop(100%, fade(@sapUiObjectHeaderBackground, 60))); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(left, @sapUiObjectHeaderBackground 0%, @sapUiObjectHeaderBackground 75%, fade(@sapUiObjectHeaderBackground, 60) 100%); /* Chrome10+,Safari5.1+ */
-	background: linear-gradient(to right, @sapUiObjectHeaderBackground 0%, @sapUiObjectHeaderBackground 75%, fade(@sapUiObjectHeaderBackground, 60) 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f2f8fc', endColorstr='#00f2f8fc', GradientType=1); /* IE6-9 */
-	box-shadow: inset 0 -0.125rem lighten(@sapUiObjectHeaderBackground, 8);
-}
+@_sap_uxap_AnchorBar_Background: fade(@sapUiObjectHeaderBackground, 60);

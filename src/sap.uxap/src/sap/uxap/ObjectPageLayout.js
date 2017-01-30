@@ -1330,6 +1330,12 @@ sap.ui.define([
 			//therefore the most reliable calculation is to consider as a bottom, the top of the next section/subsection
 			//on mobile, each section and subsection is considered equally (a section is a very tiny subsection containing only a title)
 			if (this._bMobileScenario) {
+				// BCP 1680331690. Should skip subsections that are in a section with lower importance, which makes them hidden.
+				var sectionParent = sap.ui.getCore().byId(oSectionBase.getId()).getParent();
+				if (sectionParent instanceof ObjectPageSection && sectionParent._getIsHidden()) {
+					return;
+				}
+
 				if (sPreviousSectionId) {               //except for the very first section
 					this._oSectionInfo[sPreviousSectionId].positionBottom = oInfo.positionTop;
 				}
@@ -1805,7 +1811,11 @@ sap.ui.define([
 
 		jQuery.each(this._oSectionInfo, function (sId, oInfo) {
 			// on desktop/tablet, skip subsections
-			if (oInfo.isSection || this._bMobileScenario) {
+			// BCP 1680331690. Should skip subsections that are in a section with lower importance, which makes them hidden.
+			var sectionParent = sap.ui.getCore().byId(sId).getParent(),
+				isParentHiddenSection = sectionParent instanceof ObjectPageSection && sectionParent._getIsHidden();
+
+			if (oInfo.isSection || (this._bMobileScenario && !isParentHiddenSection)) {
 				//we need to set the sClosest to the first section for handling the scrollTop = 0
 				if (!sClosestId && (oInfo.sectionReference._getInternalVisible() === true)) {
 					sClosestId = sId;

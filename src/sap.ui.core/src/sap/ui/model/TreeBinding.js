@@ -36,19 +36,8 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 			Binding.call(this, oModel, sPath, oContext, mParameters);
 			this.aFilters = [];
 
-			this.aSorters = aSorters;
-			if (!jQuery.isArray(this.aSorters) && this.aSorters instanceof Sorter) {
-				this.aSorters = [this.aSorters];
-			} else if (!jQuery.isArray(this.aSorters)) {
-				this.aSorters = [];
-			}
-
-			this.aApplicationFilters = aFilters;
-			if (!jQuery.isArray(aFilters) && aFilters instanceof Filter) {
-				this.aApplicationFilters = [aFilters];
-			} else if (!jQuery.isArray(aFilters)) {
-				this.aApplicationFilters = [];
-			}
+			this.aSorters = makeArray(aSorters, Sorter);
+			this.aApplicationFilters = makeArray(aFilters, Filter);
 
 			this.bDisplayRootNode = mParameters && mParameters.displayRootNode === true;
 		},
@@ -62,6 +51,12 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 
 	});
 
+	function makeArray(a, FNClass) {
+		if ( Array.isArray(a) ) {
+			return a;
+		}
+		return a instanceof FNClass ? [a] : [];
+	}
 
 	// the 'abstract methods' to be implemented by child classes
 	/**

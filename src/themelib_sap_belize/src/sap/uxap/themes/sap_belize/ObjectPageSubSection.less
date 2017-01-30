@@ -3,18 +3,14 @@
 /* Belize theme                                   */
 /* ============================================== */
 
+@_sap_uxap_ObjectPageSubSection_BorderColor: lighten(@sapUiListBorderColor, 5);
+
 .sapUxAPObjectPageSubSection {
-	border-bottom: 0.125rem solid lighten(@sapUiListBorderColor, 5);
+	border-bottom: 0.125rem solid @_sap_uxap_ObjectPageSubSection_BorderColor;
 }
 
 .sapUxAPObjectPageSection .sapUxAPObjectPageSubSection:last-child {
 	border-bottom: none;
-}
-
-.sapUxAPObjectPageSubSectionHeaderTitle {
-	color: @sapUiGroupTitleTextColor;
-	font-size: @sapMFontHeader4Size;
-	font-weight: normal;
 }
 
 .sapUxAPObjectPageSubSectionHeaderTitleUppercase {
@@ -22,25 +18,6 @@
 }
 
 .sapUxAPObjectPageSubSection:focus, .sapUxAPObjectPageSubSectionHeaderTitle:focus {
-	outline: 0.0625rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.0625rem;
-}
-
-/* IE ignores outline-offset. Use an overlay: */
-html[data-sap-ui-browser^="ie"] .sapUxAPObjectPageSubSection, .sapUxAPObjectPageSubSectionHeaderTitle {
-	&:focus {
-		outline: none;
-		position: relative;
-	}
-	&:focus:before {
-		content: " ";
-		box-sizing: border-box;
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		left: 0;
-		top: 0;
-		border: 0.0625rem dotted @sapUiContentFocusColor;
-		pointer-events: none;
-	}
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
 }

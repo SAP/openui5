@@ -46,7 +46,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 					vertical: {type: "boolean", group: "Appearance", defaultValue: true},
 
 					/**
-					 * Determines whether the fixed-size area should be on the beginning/top ( if the value is "true") or beginning/bottom ( if the value is "false").
+					 * Determines whether the fixed-size area should be on the beginning/top ( if the value is "true") or end/bottom ( if the value is "false").
 					 */
 					fixFirst: {type: "boolean", group: "Misc", defaultValue: true},
 

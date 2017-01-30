@@ -49,7 +49,8 @@ QUnit.test("Check if property binding via model is still working", function(asse
 	oUploadCollection = new sap.m.UploadCollection({
 		instantUpload : false,
 		fileType : "{/fileTypes}"
-	}).setModel(new sap.ui.model.json.JSONModel(oData)).placeAt("qunit-fixture");
+	}).setModel(new sap.ui.model.json.JSONModel(oData));
+	oUploadCollection.placeAt("qunit-fixture");
 	sap.ui.getCore().applyChanges();
 	var aFileTypesExpected = oData.fileTypes.toString();
 	assert.equal(oUploadCollection.getFileType().toString(), aFileTypesExpected, "Binded fileType value is set correctly for instantUpload : false");
@@ -239,6 +240,7 @@ QUnit.module("Rendering of UploadCollection with instantUpload = false ", {
 	},
 	afterEach : function() {
 		this.oUploadCollection.destroy();
+		this.oUploadCollection = null;
 	}
 });
 
@@ -352,6 +354,7 @@ QUnit.module("Rendering of UploadCollection with instantUpload = false and uploa
 	},
 	afterEach : function() {
 		this.oUploadCollection.destroy();
+		this.oUploadCollection = null;
 	}
 });
 
@@ -377,6 +380,7 @@ QUnit.module("PendingUpload", {
 	},
 	afterEach : function() {
 		this.oUploadCollection.destroy();
+		this.oUploadCollection = null;
 	}
 });
 
@@ -387,12 +391,14 @@ QUnit.test("Test Upload", function(assert) {
 		files: this.aFiles,
 		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
+	oFileUploader1.setValue("file1.txt");
 	var oFileUploader2 = this.oUploadCollection._getFileUploader();
 	var fnFUUpload2 = this.spy(oFileUploader2, "upload");
 	oFileUploader2.fireChange({
 		files: this.aFiles,
 		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
+	oFileUploader2.setValue("file2.txt");
 	this.oUploadCollection.upload();
 	assert.ok(fnFUUpload1.calledOnce, true, "'Upload' method of FileUploader should be called for each FU instance just once");
 	assert.ok(fnFUUpload2.calledOnce, true, "'Upload' method of FileUploader should be called for each FU instance just once");
@@ -596,16 +602,16 @@ QUnit.module("Delete PendingUpload Item", {
 QUnit.test("Check file list", function(assert) {
 	assert.expect(4);
 	var oFile0 = {
-			name : "Screenshot.ico",
+			name : "Screenshot.ico"
 	};
 	var oFile1 = {
-			name : "Notes.txt",
+			name : "Notes.txt"
 	};
 	var oFile2 = {
-			name : "Document.txt",
+			name : "Document.txt"
 	};
 	var oFile3 = {
-			name : "Picture of a woman.png",
+			name : "Picture of a woman.png"
 	};
 	var aFiles = [oFile0];
 	var oFileUploader = this.oUploadCollection._oFileUploader;
@@ -651,9 +657,9 @@ QUnit.test("Check file list", function(assert) {
 	assert.equal(iLengthBeforeDeletion, 4, "4 list items available");
 
 	this.oUploadCollection._oItemForDelete = {
-			documentId : this.oUploadCollection.getItems()[0].getDocumentId(),
-			_iLineNumber : 0
-	}
+		documentId : this.oUploadCollection.getItems()[0].getDocumentId(),
+		_iLineNumber : 0
+	};
 	this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
 	sap.ui.getCore().applyChanges();
 
@@ -666,6 +672,23 @@ QUnit.test("Check file list", function(assert) {
 	assert.notEqual(iLengthBeforeDeletion, iLengthAfterDeletion, "Item was deleted, checked by different number of items!");
 });
 
+QUnit.test("Delete PendingUpload item which comes from drag and drop", function(assert) {
+	//Arrange
+	var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
+	var oEvent = jQuery.Event("drop", {
+		originalEvent: {
+			dataTransfer:{
+				files: [{name: "file0.txt"}, {name: "file1.txt"}]
+			}
+		}
+	});
+	this.oUploadCollection.$("drag-drop-area").trigger(oEvent);
+	//Act
+	this.oUploadCollection.removeAggregation("items", this.oUploadCollection.getItems()[0]);
+	//Assert
+	assert.equal(this.oUploadCollection._aFilesFromDragAndDropForPendingUpload.length, 1, "File is deleted, only one file left after delete");
+});
+
 QUnit.module("Delete PendingUpload Item, multiple FileUploaderInstances", {
 	beforeEach : function() {
 		this.oUploadCollection = new sap.m.UploadCollection("pendingUploads", {
@@ -674,19 +697,19 @@ QUnit.module("Delete PendingUpload Item, multiple FileUploaderInstances", {
 		this.oUploadCollection.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		this.oFile0 = {
-			name : "file0",
+			name : "file0"
 		};
 		this.oFile1 = {
-			name : "file1",
+			name : "file1"
 		};
 		this.oFile2 = {
-			name : "file2",
+			name : "file2"
 		};
 		this.oFile3 = {
-			name : "file3",
+			name : "file3"
 		};
 		this.oFile4 = {
-			name : "file4",
+			name : "file4"
 		};
 		this.simulateDeleteLastAddedItem = function (){
 			this.oUploadCollection._oItemForDelete = this.oUploadCollection.getItems()[0];

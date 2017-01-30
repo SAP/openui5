@@ -3,10 +3,9 @@
  */
 
 // Provides a filter for list bindings
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 'sap/ui/Device'],
-	function(jQuery, BaseObject, FilterOperator, Device) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator'],
+	function(jQuery, BaseObject, FilterOperator) {
 	"use strict";
-
 
 	/**
 	 * Constructor for Filter.
@@ -79,7 +78,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 's
 		constructor : function(vFilterInfo, vOperator, oValue1, oValue2){
 			//There are two different ways of specifying a filter
 			//It can be passed in only one object or defined with parameters
-			if (typeof vFilterInfo === "object" && !jQuery.isArray(vFilterInfo)) {
+			if (typeof vFilterInfo === "object" && !Array.isArray(vFilterInfo)) {
 				this.sPath = vFilterInfo.path;
 				this.sOperator = vFilterInfo.operator;
 				this.oValue1 = vFilterInfo.value1;
@@ -89,7 +88,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 's
 				this.fnTest = vFilterInfo.test;
 			} else {
 				//If parameters are used we have to check whether a regular or a multi filter is specified
-				if (jQuery.isArray(vFilterInfo)) {
+				if (Array.isArray(vFilterInfo)) {
 					this.aFilters = vFilterInfo;
 				} else {
 					this.sPath = vFilterInfo;
@@ -104,17 +103,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 's
 				this.oValue1 = oValue1;
 				this.oValue2 = oValue2;
 			}
-			// apply normalize polyfill to non mobile browsers when it is a string filter
-			if (!String.prototype.normalize && typeof this.oValue1 == "string" && !Device.browser.mobile) {
-				jQuery.sap.require("jquery.sap.unicode");
-			}
-			if (jQuery.isArray(this.aFilters) && !this.sPath && !this.sOperator && !this.oValue1 && !this.oValue2) {
+			if (Array.isArray(this.aFilters) && !this.sPath && !this.sOperator && !this.oValue1 && !this.oValue2) {
 				this._bMultiFilter = true;
-				jQuery.each(this.aFilters, function(iIndex, oFilter) {
-					if (!(oFilter instanceof Filter)) {
-						jQuery.sap.log.error("Filter in Aggregation of Multi filter has to be instance of sap.ui.model.Filter");
-					}
-				});
+				if ( !this.aFilters.every(isFilter) ) {
+					jQuery.sap.log.error("Filter in Aggregation of Multi filter has to be instance of sap.ui.model.Filter");
+				}
 			} else if (!this.aFilters && this.sPath !== undefined && ((this.sOperator && this.oValue1 !== undefined) || this.fnTest)) {
 				this._bMultiFilter = false;
 			} else {
@@ -123,6 +116,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 's
 		}
 
 	});
+
+	function isFilter(v) {
+		return v instanceof Filter;
+	}
 
 	return Filter;
 

@@ -43,13 +43,10 @@
 			top: -0.5rem;
 			right: -0.5rem;
 			z-index: 3;
-			overflow: hidden;
 			border: 1px solid @sapUiButtonBorderColor;
 			background-color: @sapUiButtonBackground;
 			color: @sapUiButtonTextColor;
-			&:before {
-				color: @sapUiButtonIconColor;
-			}
+			overflow: visible;
 
 			.sapMBtnFocusDiv {
 				display: none;
@@ -77,11 +74,13 @@
 
 			&:focus > .sapMFocusable {
 				outline: none;
+				border-radius: 50%;
 			}
 
 			/* The touch area has a different size and is slightly moved to the left and bottom */
 			&:before {
 				content: "";
+				color: @sapUiButtonIconColor;
 				position: absolute;
 				top: -1px;
 				bottom: -0.6875rem;
@@ -180,19 +179,17 @@ html.sap-desktop .sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMS
 }
 
 .sapMST .sapMSTIconNestedArea {
-	right: 1.35rem;
-	top: 1.2rem;
+	right: 0.75rem;
+	top: 0.75rem;
+	line-height: 2rem;
+	height: 2rem;
 	z-index: 1;
 	position: absolute;
 	outline: none;
-}
 
-.sapMST.sapMSTPauseIcon .sapMSTIconNestedArea {
-	right: 1.55rem;
-}
-/* Play icon in RTL */
-html[dir="rtl"] .sapMST:not(.sapMSTPauseIcon) .sapMSTIconNestedArea {
-	right: 1.5rem;
+	.sapUiIcon {
+		width: 2rem;
+	}
 }
 
 .sapMSTIconNestedArea :active {
@@ -227,17 +224,5 @@ html.sap-desktop .sapMST:not(:hover).sapMST:not(:focus) .sapMSTBulleted {
 
 	.sapMSTBulleted {
 		bottom: 0.188rem;
-	}
-
-	.sapMST .sapMSTIconNestedArea {
-		right: 1.35rem;
-
-		.sapMSTPauseIcon & {
-			right: 1.55rem;
-		}
-	}
-
-	html[dir="rtl"] .sapMST:not(.sapMSTPauseIcon) .sapMSTIconNestedArea {
-		right: 1.5rem;
 	}
 }

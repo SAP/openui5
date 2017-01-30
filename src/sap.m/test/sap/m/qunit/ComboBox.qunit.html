@@ -9061,6 +9061,43 @@
 			oComboBox.destroy();
 		});
 
+		// BCP 1680329042
+		QUnit.test("it should clear the selection when the backspace/delete keyboard key is pressed and the remaining text doesn't match any items", function(assert) {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				items: [
+					new sap.ui.core.Item({
+						text: "lorem ipsum"
+					})
+				]
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+			var oFocusDomRef = oComboBox.getFocusDomRef();
+
+			// act (type something in the text field input)
+			oFocusDomRef.value = "lo";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef, { value: "lo" });
+
+			// wait for the word completion feature
+			this.clock.tick(0);
+
+			// remove the autocompleted text ("rem ipsum" by pressing the backspace keyboard key
+			sap.ui.qunit.QUnitUtils.triggerKeydown(oFocusDomRef, jQuery.sap.KeyCodes.BACKSPACE);
+			oFocusDomRef.value = "lo";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef, { value: "lo" });
+
+			// assert
+			assert.ok(oComboBox.getSelectedItem() === null);
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
 		QUnit.module("onfocusin");
 
 		QUnit.test("onfocusin", function(assert) {
@@ -10630,6 +10667,47 @@
 			assert.ok(jQuery.sap.containsOrEquals(oCB.getDomRef(), document.activeElement), "Focus is still inside the ComboBox after open and close");
 
 			oCB.destroy();
+		});
+
+		QUnit.module("Tablet focus handling");
+
+		QUnit.test("it should focus the picker", function(assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				tablet: true,
+				phone: false
+			});
+
+			var oComboBox = new sap.m.ComboBox(),
+				oComboBoxPicker = oComboBox.getPicker();
+
+			assert.equal(oComboBoxPicker.getInitialFocus(), oComboBoxPicker.getId(), "Initial focus should be set to the picker");
+
+			oComboBox.destroy();
+		});
+
+		QUnit.test("it should not set the focus to the input", function(assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				tablet: true,
+				phone: false
+			});
+
+			var oComboBox = new sap.m.ComboBox(),
+				oComboBoxPicker = oComboBox.getPicker(),
+				oFakeEvent = null,
+				oFocusinStub = this.stub(oComboBox, "focus");
+
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oFakeEvent = { target: oComboBox.getDomRef("arrow") }
+
+			oComboBox.onfocusin(oFakeEvent);
+
+			assert.strictEqual(oFocusinStub.callCount, 0, "Focus should not be called");
+
+			oComboBox.destroy();
 		});
 		</script>
 	</head>

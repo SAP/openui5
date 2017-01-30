@@ -1,3 +1,8 @@
+/* ===================================== */
+/* CSS for control sap.uxap/BreadCrumbs  */
+/* Base theme                            */
+/* ===================================== */
+
 .sapUxAPBreadCrumbs {
 	margin: 0 0 0.5rem 0;
 	height: 1.25rem;
@@ -62,6 +67,23 @@
 
 	.sapUxAPInvisible {
 		visibility: hidden;
+	}
+	
+	.sapMText:focus {
+		outline: 0.0625rem dotted @sapUiContentFocusColor;
+		outline-offset: 0.2rem;
+	}
+
+	.sapMSlt {
+		background-color: transparent;
+
+		.sapMSltLabel {
+			color: @sapUiContentLabelColor;
+		}
+	}
+
+	.sapMSltPressed > .sapMSltArrow::before {
+		color: @sapUiContentIconColor;
 	}
 }
 

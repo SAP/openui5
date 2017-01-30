@@ -108,7 +108,7 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 			var vChangedValue = this.mChangedProperties[sProperty].value;
 
 			if (!jQuery.sap.equal(this.mProperties[sProperty], vChangedValue)) {
-				if (jQuery.isArray(vChangedValue)) {
+				if (Array.isArray(vChangedValue)) {
 					vChangedValue = vChangedValue.slice(0);
 				}
 				this.mProperties[sProperty] = vChangedValue;

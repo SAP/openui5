@@ -538,6 +538,26 @@
 			this.oTarget.display();
 		});
 
+		QUnit.test("move TitleProvider instance between views or within the same view shouldn't call invalidate", function(assert) {
+			var oInvalidateSpy = sinon.spy(this.oView, "invalidate");
+			this.oConfig.title = "myTitle";
+			this.oTarget = new sap.ui.core.routing.Target(this.oConfig, this.oViews);
+
+			var fnDisplayed = function() {
+				this.oTarget.detachDisplay(fnDisplayed);
+				this.oTarget.attachDisplay(fnDisplayedAgain);
+				this.oTarget.display();
+			}.bind(this);
+
+			var fnDisplayedAgain = function() {
+				assert.notOk(oInvalidateSpy.called, "oView shouldn't be invalidated");
+				oInvalidateSpy.restore();
+			};
+
+			this.oTarget.attachDisplay(fnDisplayed);
+			this.oTarget.display();
+		});
+
 		QUnit.module("destruction");
 
 		QUnit.test("Should destroy all dependencies", function (assert) {

@@ -138,7 +138,7 @@ sap.ui.define(['jquery.sap.global'],
 					if (!oElement.getComponentInstance()) {
 						return;
 					}
-					return oElement.getComponentInstance().getAggregation("rootControl");
+					return oElement.getComponentInstance().getRootControl();
 				} else {
 					return oElement;
 				}

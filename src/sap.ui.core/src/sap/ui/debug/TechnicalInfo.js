@@ -48,11 +48,11 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 			var ojQSData = this._ojQSData = callback() || {};
 
 			var bCT = false,bLV = false,bEmbedded = true;
-			var DebugEnv = sap.ui.require("sap/ui/debug/DebugEnv");
-			if ( DebugEnv ) {
-				bCT = DebugEnv.getInstance().isControlTreeShown();
-				bLV = DebugEnv.getInstance().isTraceWindowShown();
-				bEmbedded = DebugEnv.getInstance().isRunningEmbedded();
+			this._DebugEnv = sap.ui.require("sap/ui/debug/DebugEnv");
+			if ( this._DebugEnv ) {
+				bCT = this._DebugEnv.getInstance().isControlTreeShown();
+				bLV = this._DebugEnv.getInstance().isTraceWindowShown();
+				bEmbedded = this._DebugEnv.getInstance().isRunningEmbedded();
 			}
 			var sDCUrl = "/sapui5-internal/download/index.jsp";
 			var bDC = jQuery.sap.syncHead(sDCUrl);
@@ -240,55 +240,55 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 			$Form[0].submit();
 		},
 
-		ensureDebugEnv : function(bShowControls) {
-
-			if ( !this._DebugEnv ) {
+		ensureDebugEnv : function(bShowControls, fnCallback) {
 				try {
-					this._DebugEnv = sap.ui.requireSync("sap/ui/debug/DebugEnv");
-					// when sap-ui-debug is loaded, control tree and property list are shown by defualt
-					// so disable them again if they are not desired
-					if ( !bShowControls ) {
-						this._DebugEnv.getInstance().hideControlTree();
-						this._DebugEnv.getInstance().hidePropertyList();
-					}
+					sap.ui.require(["sap/ui/debug/DebugEnv"], function(DebugEnv) {
+						if (!this._DebugEnv){
+							this._DebugEnv = DebugEnv;
+						}
+						// when sap-ui-debug is loaded, control tree and property list are shown by defualt
+						// so disable them again if they are not desired
+						if (!bShowControls) {
+							this._DebugEnv.getInstance().hideControlTree();
+							this._DebugEnv.getInstance().hidePropertyList();
+						}
+						fnCallback();
+					});
 				} catch (e) {
 					// failed to load debug env (not installed?)
-					return false;
 				}
-			}
-			return true;
 		},
 
-		onShowControls : function(e) {
-			if ( e.target.readOnly ) {
-				e.preventDefault();
-				e.stopPropagation();
+		onShowControls: function(oEvent) {
+			if (oEvent.target.readOnly) {
+				oEvent.preventDefault();
+				oEvent.stopPropagation();
 				return;
 			}
-			if ( this.ensureDebugEnv(true) ) {
-				if ( e.target.checked ) {
+			this.ensureDebugEnv(true, function() {
+				if (oEvent.target.checked) {
 					this._DebugEnv.getInstance().showControlTree();
 					this._DebugEnv.getInstance().showPropertyList();
 				} else {
 					this._DebugEnv.getInstance().hideControlTree();
 					this._DebugEnv.getInstance().hidePropertyList();
 				}
-			}
+			});
 		},
 
-		onShowLogViewer : function(e) {
-			if ( e.target.readOnly ) {
-				e.preventDefault();
-				e.stopPropagation();
+		onShowLogViewer: function(oEvent) {
+			if (oEvent.target.readOnly) {
+				oEvent.preventDefault();
+				oEvent.stopPropagation();
 				return;
 			}
-			if ( this.ensureDebugEnv(false) ) {
-				if ( e.target.checked ) {
+			this.ensureDebugEnv(false, function() {
+				if (oEvent.target.checked) {
 					this._DebugEnv.getInstance().showTraceWindow();
 				} else {
 					this._DebugEnv.getInstance().hideTraceWindow();
 				}
-			}
+			});
 		},
 
 		onUseDbgSources : function(e) {

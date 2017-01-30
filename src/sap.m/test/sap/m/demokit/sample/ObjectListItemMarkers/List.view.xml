@@ -1,6 +1,5 @@
 <mvc:View
 	controllerName="sap.m.sample.ObjectListItemMarkers.List"
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<List

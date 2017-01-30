@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 
 			this._bindTitleInTitleProvider(oView);
 
-			oView.addDependent(this._oTitleProvider);
+			this._addTitleProviderAsDependent(oView);
 
 			if (oOptions.clearControlAggregation === true) {
 				oControl[oAggregationInfo._sRemoveAllMutator]();
