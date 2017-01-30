@@ -552,6 +552,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	CalloutBase.prototype.onmousedown = function(oEvent) {
 		if (jQuery(oEvent.target).control(0) === this._currentControl) {
 			this.close();
+
+			//removes the standard tooltip which appears after click
+			this.removeStandardTooltips();
 		}
 	};
 

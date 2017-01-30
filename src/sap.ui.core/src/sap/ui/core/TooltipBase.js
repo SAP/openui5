@@ -242,7 +242,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 		// Open the popup
 		if (this._currentControl === oEventSource || !this.isStandardTooltip(oEventSource.getTooltip())) {
 			// Set all standard tooltips to empty string
-			this.removeStandardTooltips(oEventSource);
+			this.removeStandardTooltips();
 			// Open with delay 0,5 sec.
 			if (TooltipBase.sOpenTimeout) {
 				jQuery.sap.clearDelayedCall(TooltipBase.sOpenTimeout);
@@ -336,7 +336,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 			oPopup.setPosition(this.getMyPosition(), this.getAtPosition(), oDomRef, this.getOffset(), this.getCollision());
 			oPopup.setDurations(this.getOpenDuration(), this.getCloseDuration());
 			oPopup.open();
-			this.removeStandardTooltips(this._currentControl);
+			this.removeStandardTooltips();
 		}
 	};
 
@@ -439,7 +439,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 				if (this._currentControl === oEventSource || !this.isStandardTooltip(oEventSource.getTooltip())) {
 
 					// Set all standard tooltips to empty string
-					this.removeStandardTooltips(oEventSource);
+					this.removeStandardTooltips();
 
 					// Open extended tooltip
 					this.openPopup( this._currentControl);
