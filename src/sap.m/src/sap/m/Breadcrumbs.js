@@ -302,7 +302,7 @@ sap.ui.define([
 			oControlsDistribution = this._getControlDistribution();
 
 		if (!this._bControlDistributionCached || bInvalidateDistribution) {
-			oSelect.removeAllItems();
+			oSelect.destroyItems();
 			aControlsForSelect = Device.system.phone ? this._getItemsForMobile() : oControlsDistribution.aControlsForSelect;
 			aControlsForSelect.map(this._createSelectItem).reverse().forEach(oSelect.insertItem, oSelect);
 			this._bControlDistributionCached = true;
