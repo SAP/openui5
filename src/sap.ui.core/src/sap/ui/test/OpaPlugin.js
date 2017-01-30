@@ -264,10 +264,9 @@ sap.ui.define(['jquery.sap.global',
 			 * @private
 			 */
 			getFilterdControls : function(oOptions) {
-				var bInteractable = !!oOptions.actions,
-					oPluginOptions = $.extend({}, oOptions, {
+				var oPluginOptions = $.extend({}, oOptions, {
 						// only pass interactable if there are actions for backwards compatibility or if the autoWait is set
-						interactable: bInteractable
+						interactable: !!oOptions.actions || oOptions.autoWait
 					}),
 					bPluginLooksForControls = this._isLookingForAControl(oPluginOptions);
 
@@ -275,13 +274,8 @@ sap.ui.define(['jquery.sap.global',
 					vResult = null;
 
 				if (bPluginLooksForControls) {
-					if (!bInteractable && oOptions.autoWait && _autoWaiter.hasToWait()) {
-						// if we look for a control but no action is triggered we don't want do wait
-						// for things like is the control enabled just wait for the usual XHRs/timeouts
-						return OpaPlugin.FILTER_FOUND_NO_CONTROLS;
-					}
-
 					// a range of controls or a single control
+					// this will also synchronize when autoWait is set to true
 					vControl = this.getMatchingControls(oPluginOptions);
 				} else if (oOptions.autoWait && _autoWaiter.hasToWait()) {
 					return OpaPlugin.FILTER_FOUND_NO_CONTROLS;
