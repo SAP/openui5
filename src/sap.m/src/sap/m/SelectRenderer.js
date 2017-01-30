@@ -263,7 +263,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 				labelledby: {
 					value: oSelect.getId() + "-label",
 					append: true
-				}
+				},
+				haspopup: (oSelect.getType() === sap.m.SelectType.IconOnly) ? true : undefined
 			});
 		};
 
