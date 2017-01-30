@@ -112,7 +112,7 @@ sap.ui.define(['jquery.sap.global'], function (jQuery) {
 	};
 
 	LightBoxRenderer.renderBusyState = function (oRm, oControl) {
-		oRm.renderControl(new sap.m.BusyIndicator());
+		oRm.renderControl(oControl._getBusyIndicator());
 	};
 
 	LightBoxRenderer.renderFooter = function(oRm, oControl, oImageContent) {

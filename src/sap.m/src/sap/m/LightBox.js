@@ -100,7 +100,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					 * Hidden text used for accessibility of the popup.
 					 * @private
 					 */
-					_invisiblePopupText: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"}
+					_invisiblePopupText: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"},
+					/**
+					 * BusyIndicator for loading state.
+					 * @private
+					 */
+					_busy: {type: "sap.m.BusyIndicator", multiple: false, visibility: "hidden"}
 				},
 				events: {},
 				defaultAggregation: 'imageContent'
@@ -294,6 +299,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		/**
+		 * Instantiates (if not defined) and returns the BusyIndicator for the LightBox.
+		 * @returns {sap.m.BusyIndicator} - the BusyIndicator
+		 * @private
+		 */
+		LightBox.prototype._getBusyIndicator = function () {
+			var oBusy = this.getAggregation("_busy");
+			if (!oBusy) {
+				oBusy = new sap.m.BusyIndicator();
+				this.setAggregation("_busy", oBusy, true);
+			}
+
+			return oBusy;
+		};
+
+		/**
 		 * Forces rerendering of the control when an image loads/fails to load.
 		 * @param {string} sNewState - the new state of the image possible values are "LOADING", "LOADED" and "ERROR"
 		 * @private
@@ -351,23 +371,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				errorMessageSubtitle = resourceBundle.getText('LIGHTBOX_IMAGE_ERROR_DETAILS');
 			}
 
-			var errorTitle = new Text({
-				text : errorMessageTitle,
-				textAlign : sap.ui.core.TextAlign.Center
-			}).addStyleClass("sapMLightBoxErrorTitle"),
-				errorSubtitle = new Text({
-					text : errorMessageSubtitle,
+			if (!this.getAggregation('_verticalLayout')) {
+				var errorTitle = new Text({
+					text : errorMessageTitle,
 					textAlign : sap.ui.core.TextAlign.Center
-				}).addStyleClass("sapMLightBoxErrorSubtitle"),
-				errorIcon = new Icon({
-					src : "sap-icon://picture"
-				}).addStyleClass("sapMLightBoxErrorIcon");
+				}).addStyleClass("sapMLightBoxErrorTitle"),
+					errorSubtitle = new Text({
+						text : errorMessageSubtitle,
+						textAlign : sap.ui.core.TextAlign.Center
+					}).addStyleClass("sapMLightBoxErrorSubtitle"),
+					errorIcon = new Icon({
+						src : "sap-icon://picture"
+					}).addStyleClass("sapMLightBoxErrorIcon");
 
-			this.setAggregation('_errorIcon', errorIcon);
-
-			this.setAggregation('_verticalLayout', new VerticalLayout({
-				content : [ errorIcon, errorTitle, errorSubtitle]
-			}).addStyleClass('sapMLightBoxVerticalLayout'));
+				this.setAggregation('_verticalLayout', new VerticalLayout({
+					content : [ errorIcon, errorTitle, errorSubtitle]
+				}).addStyleClass('sapMLightBoxVerticalLayout'));
+			}
 		};
 
 		/**
