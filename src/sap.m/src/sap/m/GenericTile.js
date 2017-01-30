@@ -182,15 +182,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	GenericTile.prototype.onAfterRendering = function() {
 		// attaches handler this._updateAriaAndTitle to the event mouseenter and removes attributes ARIA-label and title of all content elements
 		this.$().bind("mouseenter", this._updateAriaAndTitle.bind(this));
-
-		// Assign TileContent content again after rendering.
-		if (this.getMode() === library.GenericTileMode.HeaderMode && this._aTileContentContent) {
-			var aTileContent = this.getTileContent();
-			for (var i = 0; i < aTileContent.length; i++) {
-				aTileContent[i].setAggregation("content", this._aTileContentContent[i], true);
-			}
-			delete this._aTileContentContent;
-		}
 	};
 
 	GenericTile.prototype.exit = function() {
@@ -324,25 +315,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		} else {
 			this._oTitle.setMaxLines(5);
 		}
-		// Handles the tile content in a way that it is not rendered, but still existing and assigned
-		// if switching between HeaderMode or LineMode and ContentMode.
-		var aTileContent = this.getTileContent();
-		if (aTileContent.length > 0) {
-			this._aTileContentContent = [];
-			for (var i = 0; i < aTileContent.length; i++) {
-				if (aTileContent[i].getContent()) {
-					this._aTileContentContent[i] = aTileContent[i].removeAllAggregation("content", true);
-					// Parent needs to be set manually to null, because removeAllAggregation does not handle this.
-					this._aTileContentContent[i].setParent(null);
-				}
-			}
-		}
+
+		this._changeTileContentContentVisibility(false);
 	};
 
 	/**
 	 * Sets the ContentMode for GenericTile
 	 *
-	 * @param {boolean} bSubheader which indicates the existance of subheader
+	 * @param {boolean} bSubheader Indicates the existence of subheader
 	 */
 	GenericTile.prototype._applyContentMode = function (bSubheader) {
 		// when subheader is available, the header can have maximal 2 lines and the subheader can have 1 line
@@ -351,6 +331,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			this._oTitle.setMaxLines(2);
 		} else {
 			this._oTitle.setMaxLines(3);
+		}
+
+		this._changeTileContentContentVisibility(true);
+	};
+
+	/**
+	 * Changes the visibility of the TileContent's content
+	 *
+	 * @param {boolean} visible Determines if the content should be made visible or not
+	 * @private
+	 */
+	GenericTile.prototype._changeTileContentContentVisibility = function (visible) {
+		var aTileContent,
+			aTileContentContent;
+
+		aTileContent = this.getTileContent();
+		for (var i = 0; i < aTileContent.length; i++) {
+			aTileContentContent = aTileContent[i].getContent();
+			if (aTileContentContent) {
+				aTileContentContent.setProperty("visible", visible, true);
+			}
 		}
 	};
 	/**
