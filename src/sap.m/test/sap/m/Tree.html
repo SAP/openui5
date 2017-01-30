@@ -336,59 +336,6 @@ var oData = [
 	oTree.bindItems("/", oStandardTreeItem);
 	oTree.expandToLevel(3);
 
-	// ODATA with mock server
-/* 	jQuery.sap.require("sap.ui.core.util.MockServer");
-	sServiceUrl = "/odataTreeFake/";
-	if (!this.oMockServer) {
-		//Mock server for use with navigation properties
-		this.oMockServer = new sap.ui.core.util.MockServer({
-			rootUri: sServiceUrl
-		});
-		this.oMockServer.simulate("../../../test-resources/sap/ui/core/qunit/model/metadata_orgHierarchy.xml", "../../../test-resources/sap/ui/core/qunit/model/orgHierarchy");
-		this.oMockServer.start();
-
-		this.oODataModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, true);
-		this.oODataModel.setUseBatch(false);
-
-	    // set model on component
-	    oTree.setModel(this.oODataModel);
-	    var oTreeItemBase = new sap.m.StandardTreeItem({title: "{HIERARCHY_NODE}"});
-		oTree.bindItems("/orgHierarchy", oTreeItemBase);
-	}
-
-	jQuery.sap.require("sap.ui.core.util.MockServer");
-	jQuery.sap.require("sap.ui.model.odata.ODataModel");
-
-	var sServiceURI = "/service/" ;
-	var sMetaDataURI = "qunit/data/";
-
-	// configure respond to requests delay
-	sap.ui.core.util.MockServer.config({
-		autoRespond : true,
-		autoRespondAfter : 1000
-	});
-
-	// create mockserver
-	var oMockServer = new sap.ui.core.util.MockServer({
-		rootUri : sServiceURI
-	});
-
-	// start mockserver
-	oMockServer.simulate(sMetaDataURI + "metadata.xml", sMetaDataURI);
-	oMockServer.start();
-
-	// odata model
-	var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, true);
-	oTree.setModel(oModel, "product");
-
-	var oTemplate = new sap.m.StandardTreeItem({
-		title: "{product>Name}}"
-	});
-	oTree.bindItems({
-		path : "product>/Products",
-		template : oTemplate
-	}); */
-
 	// footer funxtions
 	function addSelectionMode(){
 		return new sap.m.Select({
