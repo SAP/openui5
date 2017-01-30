@@ -15,15 +15,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>PlanningCalendar</code> can display rows with appointments for different persons.
-	 * It is possible to define different views and switch between the views.
-	 * You can add your own buttons or other controls to the toolbar.
+	 * Displays rows with appointments for different entities (such as persons or teams) for the selected time interval.
+	 *
+	 * <h3>Overview</h3>
+	 *
+	 * You can use the <code>PlanningCalendar</code> to represent a calendar containing multiple rows with
+	 * appointments, where each row represents a different person.
+	 *
+	 * You can configure different time-interval views that the user can switch between, such as hours or days, and even
+	 * a whole week/month. The available navigation allows the user to select a specific interval using a picker, or
+	 * move to the previous/next interval using arrows.
 	 *
 	 * <b>Note:</b> The <code>PlanningCalendar</code> uses parts of the <code>sap.ui.unified</code> library.
-	 * If the <code>sap.ui.unified</code> library is not loaded before the <code>PlanningCalendar</code> is loaded,
-	 * it will be loaded after the <code>PlanningCalendar</code> is loaded.
+	 * If the <code>sap.ui.unified</code> library is not loaded before the <code>PlanningCalendar</code>
+	 * is loaded, it will be loaded after the <code>PlanningCalendar</code> is loaded.
 	 * This could lead to a waiting time before a <code>PlanningCalendar</code> is used for the first time.
-	 * To prevent this, applications using the <code>PlanningCalendar</code> should also load the <code>sap.ui.unified</code> library.
+	 * To prevent this, applications using the <code>PlanningCalendar</code> should also load the
+	 * <code>sap.ui.unified</code> library.
+	 *
+	 * <h3>Usage</h3>
+	 *
+	 * The <code>PlanningCalendar</code> has the following structure from top to bottom:
+	 *
+	 * <ul>
+	 * <li>A toolbar where you can add your own buttons or other controls using the <code>toolbarContent</code> aggregation.</li>
+	 * <li>A header containing a drop-down menu for selecting the {@link sap.m.PlanningCalendarView PlanningCalendarViews},
+	 * and navigation for moving through the intervals using arrows or selecting a specific interval with a picker.
+	 * Custom views can be configured using the <code>views</code> aggregation. If not configured, the following set of default
+	 * built-in views is available - Hours, Days, 1 Week, 1 Month, and Months. Setting a custom view(s) replaces the built-in ones.</li>
+	 * <li>The rows of the <code>PlanningCalendar</code> that contain the the assigned appointments.
+	 * They can be configured with the <code>rows</code> aggregation, which is of type
+	 * {@link sap.m.PlanningCalendarRow PlanningCalendarRow}.</li>
+	 * </ul>
+	 *
+	 * <h3>Responsive behavior</h3>
+	 *
+	 * You can define the number of displayed intervals based on the size of the <code>PlanningCalendar</code> using the
+	 * {@link sap.m.PlanningCalendarView PlanningCalendarView}'s properties.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -39,92 +68,95 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		properties : {
 
 			/**
-			 * Start date of the row, as JavaScript date object. As a default the current date is used.
+			 * Determines the start date of the row, as a JavaScript date object. The current date is used as default.
 			 */
 			startDate : {type : "object", group : "Data"},
 
 			/**
-			 * Key of the <code>PlanningCalendarView</code> used for the output. The default value uses a default view.
-			 * If you are using own views, the keys of these views must be used instead.
+			 * Defines the key of the <code>PlanningCalendarView</code> used for the output.
+			 *
+			 * <b>Note:</b> The default value is set <code>Hour</code>. If you are using your own views, the keys of these
+			 * views should be used instead.
 			 */
 			viewKey : {type : "string", group : "Appearance", defaultValue : sap.ui.unified.CalendarIntervalType.Hour},
 
 			/**
-			 * If set, only a single row can be selected
+			 * Determines whether only a single row can be selected.
 			 */
 			singleSelection : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
-			 * Width of the <code>PlanningCalendar</code>
+			 * Specifies the width of the <code>PlanningCalendar</code>.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * Height of the <code>PlanningCalendar</code>
+			 * Specifies the height of the <code>PlanningCalendar</code>.
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * If set, interval headers are shown like specified in <code>showEmptyIntervalHeaders</code>.
+			 * Determines whether the assigned interval headers are displayed. You can assign them using the
+			 * <code>intervalHeaders</code> aggregation of the {@link sap.m.PlanningCalendarRow PlanningCalendarRow}.
 			 *
-			 * If not set, no interval headers are shown even if <code>intervalHeaders</code> are assigned.
+			 * <b>Note:</b> If you set both <code>showIntervalHeaders</code> and <code>showEmptyIntervalHeaders</code>
+			 * properties to <code>true</code>, the space (at the top of the intervals) where the assigned interval
+			 * headers appear, will remain visible even if no interval headers are assigned.
 			 */
 			showIntervalHeaders : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * If set, interval headers are shown even if no <code>intervalHeaders</code> are assigned to the visible time frame.
+			 * Determines whether the space (at the top of the intervals), where the assigned interval headers appear, should remain
+			 * visible even when no interval headers are present in the visible time frame. If set to <code>false</code>, this
+			 * space would collapse/disappear when no interval headers are assigned.
 			 *
-			 * If not set, no interval headers are shown if no <code>intervalHeaders</code> are assigned.
-			 *
-			 * <b>Note:</b> This property is only used if <code>showIntervalHeaders</code> is set to <code>true</code>.
+			 * <b>Note:</b> This property takes effect, only if <code>showIntervalHeaders</code> is also set to <code>true</code>.
 			 * @since 1.38.0
 			 */
 			showEmptyIntervalHeaders : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * If set, headers of the <code>PlanningCalendarRows</code> are shown. This means the column with the headers is shown.
-			 *
-			 * If not set, the header column is not shown at all, even if header information is provided.
+			 * Determines whether the column containing the headers of the {@link sap.m.PlanningCalendarRow PlanningCalendarRows}
+			 * is displayed.
 			 */
 			showRowHeaders : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * This text is displayed when no rows are assigned.
+			 * Defines the text that is displayed when no {@link sap.m.PlanningCalendarRow PlanningCalendarRows} are assigned.
 			 */
 			noDataText : {type : "string", group : "Misc", defaultValue : null},
 
 			/**
-			 * If set the appointments without text (only title) are rendered with a smaller height.
+			 * Determines whether the appointments that have only title without text are rendered with smaller height.
 			 *
 			 * <b>Note:</b> On phone devices this property is ignored, appointments are always rendered in full height
-			 * to allow touching.
+			 * to facilitate touching.
 			 * @since 1.38.0
 			 */
 			appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false},
 
-
 			/**
-			 * Defines the visualization of the <code>CalendarAppoinment</code>
-			 *
-			 * <b>Note:</b> The real visualization depends on the used theme.
+			 * Determines how the appointments are visualized depending on the used theme.
 			 * @since 1.40.0
 			 */
 			appointmentsVisualization : {type : "sap.ui.unified.CalendarAppointmentVisualization", group : "Appearance", defaultValue : sap.ui.unified.CalendarAppointmentVisualization.Standard},
 
 			/**
-			 * Minimum date that can be shown and selected in the <code>PlanningCalendar</code>. This must be a JavaScript date object.
+			 * Defines the minimum date that can be displayed and selected in the <code>PlanningCalendar</code>.
+			 * This must be a JavaScript date object.
 			 *
-			 * <b>Note:</b> If the <code>minDate</code> is set to be after the <code>maxDate</code>,
-			 * the <code>maxDate</code> is set to the end of the month of the <code>minDate</code>.
+			 * <b>Note:</b> If the <code>minDate</code> is set to be after the current <code>maxDate</code>,
+			 * the <code>maxDate</code> is set to the last date of the month in which the <code>minDate</code> belongs.
 			 * @since 1.38.0
 			 */
 			minDate : {type : "object", group : "Misc", defaultValue : null},
 
 			/**
-			 * Maximum date that can be shown and selected in the <code>PlanningCalendar</code>. This must be a JavaScript date object.
+			 * Defines the maximum date that can be displayed and selected in the <code>PlanningCalendar</code>.
+			 * This must be a JavaScript date object.
 			 *
-			 * <b>Note:</b> If the <code>maxDate</code> is set to be before the <code>minDate</code>,
-			 * the <code>minDate</code> is set to the begin of the month of the <code>maxDate</code>.
+			 * <b>Note:</b> If the <code>maxDate</code> is set to be before the current <code>minDate</code>,
+			 * the <code>minDate</code> is set to the first date of the month in which the <code>maxDate</code> belongs.
 			 * @since 1.38.0
 			 */
 			maxDate : {type : "object", group : "Misc", defaultValue : null}
@@ -132,21 +164,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		aggregations : {
 
 			/**
-			 * rows of the <code>PlanningCalendar</code>
+			 * Rows of the <code>PlanningCalendar</code>.
 			 */
 			rows : {type : "sap.m.PlanningCalendarRow", multiple : true, singularName : "row"},
 
 			/**
 			 * Views of the <code>PlanningCalendar</code>.
 			 *
-			 * If not set, three default views are used to allow you to switch between hour, day and month granularity.
-			 * The default views have the keys defined in </code>sap.ui.unified.CalendarIntervalType</code>
+			 * <b>Note:</b> If not set, all the default views are available. Their keys are defined in
+			 * {@link sap.ui.unified.CalendarIntervalType}.
 			 */
 			views : {type : "sap.m.PlanningCalendarView", multiple : true, singularName : "view"},
 
 			/**
-			 * Date range along with a type to visualize special days in the header calendar.
-			 * If one day is assigned to more than one type, only the first one will be used.
+			 * Special days in the header calendar visualized as date range with a type.
+			 *
+			 * <b>Note:</b> If one day is assigned to more than one type, only the first type will be used.
 			 */
 			specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"},
 
@@ -172,7 +205,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * Association to the <code>CalendarLegend</code> explaining the colors of the <code>Appointments</code>.
 			 *
-			 * <b>Note</b> The legend does not have to be rendered but must exist, and all required types must be assigned.
+			 * <b>Note:</b> The legend does not have to be rendered but must exist, and all required types must be assigned.
 			 * @since 1.40.0
 			 */
 			legend: { type: "sap.ui.unified.CalendarLegend", multiple: false}
@@ -180,17 +213,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		events : {
 
 			/**
-			 * Fired if an appointment was selected
+			 * Fired if an appointment is selected.
 			 */
 			appointmentSelect : {
 				parameters : {
 					/**
-					 * Selected appointment
+					 * The selected appointment.
 					 */
 					appointment : {type : "sap.ui.unified.CalendarAppointment"},
 
 					/**
-					 * Selected appointments in case a group appointment is selected
+					 * The selected appointments in case a group appointment is selected.
 					 */
 					appointments : {type : "sap.ui.unified.CalendarAppointment[]"},
 
@@ -203,29 +236,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			},
 
 			/**
-			 * Fired if an interval was selected in the header calendar or in the row
+			 * Fired if an interval was selected in the calendar header or in the row.
 			 */
 			intervalSelect : {
 				parameters : {
 					/**
-					 * Start date of the selected interval, as JavaScript date object.
+					 * Start date of the selected interval, as a JavaScript date object.
 					 */
 					startDate : {type : "object"},
 
 					/**
-					 * Interval end date as JavaScript date object
+					 * Interval end date as a JavaScript date object.
 					 * @since 1.38.0
 					 */
 					endDate : {type : "object"},
 
 					/**
-					 * If set, the selected interval is a subinterval
+					 * If set, the selected interval is a subinterval.
 					 * @since 1.38.0
 					 */
 					subInterval : {type : "boolean"},
 
 					/**
-					 * Row of the selected interval
+					 * Row of the selected interval.
 					 * @since 1.38.0
 					 */
 					row : {type : "sap.m.PlanningCalendarRow"}
@@ -233,7 +266,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			},
 
 			/**
-			 * Fires when row selection is changed
+			 * Fires when row selection is changed.
 			 */
 			rowSelectionChange : {
 				parameters : {
@@ -246,12 +279,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			},
 
 			/**
-			 * <code>startDate</code> was changed while navigating in <code>PlanningCalendar</code>
+			 * <code>startDate</code> was changed while navigating in the <code>PlanningCalendar</code>.
+			 * The new value can be obtained using the <code>sap.m.PlanningCalendar#getStartDate()</code> method.
 			 */
 			startDateChange : {},
 
 			/**
-			 * <code>viewKey</code> was changed by user interaction
+			 * <code>viewKey</code> was changed by user interaction.
 			 */
 			viewChange : {},
 
@@ -480,8 +514,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	 * Handles the enabled/disabled state of the 'today' button
-	 * based on the visibility of the current date
+	 * Handles the enabled/disabled state of the Today button
+	 * based on the visibility of the current date.
 	 * @private
 	 */
 	PlanningCalendar.prototype._updateTodayButtonState = function() {
@@ -493,8 +527,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	 * Verifies if given date matches the range of currently visible intervals,
-	 * based on the visibility of the current date
+	 * Verifies if the given date matches the range of currently visible intervals,
+	 * based on the visibility of the current date.
 	 * @private
 	 */
 	PlanningCalendar.prototype._dateMatchesVisibleRange = function(oDate, sViewKey) {
@@ -525,7 +559,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 * Sets the given date as start date.
-	 * Depending on the current view the start date may be adjusted (e.g. week view shows always the first weekday
+	 * Depending on the current view the start date may be adjusted (for example, the week view shows always the first weekday
 	 * of the same week as the given date).
 	 * @param {Date} oStartDate the date to set as <code>sap.m.PlanningCalendar</code> <code>startDate</code>. May be changed(adjusted) if
 	 * property <code>startDate</code> is adjusted. See remark about week view above.
@@ -1360,7 +1394,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	/**
 	 * Selects or deselects all <code>PlanningCalendarRows</code>.
 	 *
-	 * <b>Note:</b> Selection only works if <code>singleSelection</code> is not set
+	 * <b>Note:</b> Selection only works if <code>singleSelection</code> is set to <code>false</code>.
 	 *
 	 * @param {boolean} bSelect Indicator showing whether <code>PlanningCalendarRows</code> should be selected or deselected
 	 * @returns {sap.m.PlanningCalendar} <code>this</code> to allow method chaining
@@ -1421,7 +1455,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	 * Gets the correct <code>PlanningCalendarView</code> interval depending on the screen size
+	 * Gets the correct <code>PlanningCalendarView</code> interval depending on the screen size.
 	 * @param {PlanningCalendarView} oView - Target view
 	 * @returns {number} Interval for the target view that corresponds to the screen size
 	 * @private
@@ -1448,7 +1482,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	 * Gets a <code>PlanningCalendarView</code> by a given view key
+	 * Gets a <code>PlanningCalendarView</code> by a given view key.
 	 * @param {string} sKey - <code>PlanningCalendarView</code> key
 	 * @param {boolean} bNoError
 	 * @returns {*}
@@ -1646,7 +1680,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * Compares the given month and the one from the <code>startDate</code>.
 	 *
 	 * @param {Date} oDate JavaScript date
-	 * @return {boolean} true if the given date's month is hronologycally after the one from the <code>startDate</code>
+	 * @return {boolean} true if the given date's month is chronologically after the one from the <code>startDate</code>
 	 * @private
 	 */
 	function _isNextMonth(oDate) {
