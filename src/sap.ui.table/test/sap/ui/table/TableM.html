@@ -166,7 +166,7 @@ oControl = new sap.m.HBox({width: "100%", items: [
 	new sap.m.Link({visible: "{checked}", href: "{href}", text: "{linkText}"}),
 	new sap.m.Text({text: "{linkText}", visible: {path: "checked", formatter: function(bChecked){return !bChecked;}}})
 ]});
-oColumn = new sap.ui.table.Column({visible: "{flex>/flex}", label: new sap.m.Label({text: "m.HBox"}), template: oControl, width: "200px"});
+oColumn = new sap.ui.table.Column({visible: "{flex>/flex}", label: new sap.m.Label({text: "m.HBox with Link and Text (partially hidden)"}), template: oControl, width: "200px"});
 oTable.addColumn(oColumn);
 
 //sap.m.HBox with sap.m.Link && sap.m.Text
@@ -174,7 +174,7 @@ oControl = new sap.m.HBox({width: "100%", items: [
 	new sap.m.Link({href: "{href}", text: "{href}"}),
 	new sap.m.Text({text: "{linkText}"})
 ]});
-oColumn = new sap.ui.table.Column({visible: "{flex>/flex}", label: new sap.m.Label({text: "m.HBox"}), template: oControl, width: "400px"});
+oColumn = new sap.ui.table.Column({visible: "{flex>/flex}", label: new sap.m.Label({text: "m.HBox with Link and Text"}), template: oControl, width: "400px"});
 oTable.addColumn(oColumn);
 
 //sap.m.HBox with 2 sap.m.Button
@@ -182,7 +182,7 @@ oControl = new sap.m.HBox({width: "100%", items: [
 	new sap.m.Button({text: "{gender}"}),
 	new sap.m.Button({text: "{gender}"})
 ]});
-oColumn = new sap.ui.table.Column({visible: "{flex>/flex}", label: new sap.m.Label({text: "m.HBox"}), template: oControl, width: "200px"});
+oColumn = new sap.ui.table.Column({visible: "{flex>/flex}", label: new sap.m.Label({text: "m.HBox with 2 Buttons"}), template: oControl, width: "200px"});
 oTable.addColumn(oColumn);
 
 //sap.m.HBox with 2 sap.m.Input
@@ -190,7 +190,7 @@ oControl = new sap.m.HBox({width: "100%", items: [
 	new sap.m.Input({value: "{name}"}),
 	new sap.m.Input({value: "{name}"})
 ]});
-oColumn = new sap.ui.table.Column({visible: "{flex>/flex}", label: new sap.m.Label({text: "m.HBox"}), template: oControl, width: "200px"});
+oColumn = new sap.ui.table.Column({visible: "{flex>/flex}", label: new sap.m.Label({text: "m.HBox with 2 Inputs"}), template: oControl, width: "200px"});
 oTable.addColumn(oColumn);
 
 
