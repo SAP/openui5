@@ -1,16 +1,14 @@
-.sapFDynamicPageTitle {
-	background: @sapUiObjectHeaderBackground;
-	border-bottom: 0.125rem solid @sapUiObjectHeaderBackground;
-}
+/* ======================================= */
+/* CSS for control sap.f/DynamicPageTitle  */
+/* Belize theme                            */
+/* ======================================= */
 
-.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
-	border-bottom: 0.125rem solid darken(@sapUiObjectHeaderBackground, 8);
-}
+@_sap_f_DynamicPageTitle_Background: @sapUiObjectHeaderBackground;
+@_sap_f_DynamicPageTitle_BorderColor: @sapUiObjectHeaderBorderColor;
 
-.sapFDynamicPageTitle > .sapFDynamicPageTitleLeft {
-	.sapFDynamicPageTitleLeftInner {
-		.sapFDynamicPageTitleLeftSnappedExpandContent {
-			color: @sapUiContentLabelColor;
-		}
+.sapUshellShell {
+	.sapFDynamicPageTitle {
+		background: @_sap_f_DynamicPageTitle_Background;
+		border-bottom: 0.125rem solid @_sap_f_DynamicPageTitle_BorderColor;
 	}
 }
