@@ -373,5 +373,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.17": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "0689060911822025e840caeeabf5620b59995ff8",
+        "type": "FIX",
+        "text": " sap.ui.commons.RadioButton: Memory leak issue",
+        "references": []
+      }
+    ]
   }
 }

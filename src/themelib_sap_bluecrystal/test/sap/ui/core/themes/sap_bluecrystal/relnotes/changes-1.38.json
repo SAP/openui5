@@ -705,5 +705,40 @@
         "references": []
       }
     ]
+  },
+  "1.38.17": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "c69d9835ee002d7be89c4f5ee3f473b8d05a3ece",
+        "type": "FIX",
+        "text": " sap.m.Link: Dashed focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "5fb13507ea04648e92a9f6c578ac95e59e5171f9",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Focus clear visible on IE",
+        "references": []
+      },
+      {
+        "id": "df97af5bf2bf38ca3dce8a7154f2a6146c4a30a3",
+        "type": "FIX",
+        "text": " sap.m.Panel: Expandable icon contrast ratio fix",
+        "references": []
+      },
+      {
+        "id": "3d2d4f4afbb0fa8f84dd8faf3fb477cf05b97ea0",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Setters no longer modify RadioButtons\u0027 states",
+        "references": []
+      },
+      {
+        "id": "aca8b9fe40afca94f6dc792c2e11dc8f27d122a3",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: RTL Mode Icons fixed",
+        "references": []
+      }
+    ]
   }
 }

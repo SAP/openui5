@@ -670,5 +670,40 @@
         "references": []
       }
     ]
+  },
+  "1.44.6": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "c728c16c160c4322dfb1fcb9609d49bb6c047f15",
+        "type": "FIX",
+        "text": " Firefox/Safari: Synchronous XHR and Promises",
+        "references": []
+      },
+      {
+        "id": "284273b5e4a55ce1ba2e5ae17cd8cebf0b2e4fed",
+        "type": "FIX",
+        "text": " ThemeCheck: Fix Cross-Origin issues in Firefox",
+        "references": []
+      },
+      {
+        "id": "7a55df3e2f0fa378038962f296f9eae3ef310777",
+        "type": "FIX",
+        "text": " ThemeCheck: Fix issues when switching theme / improve logging",
+        "references": []
+      },
+      {
+        "id": "e0e8b18059bf5f85ef00f2909afb31d543517ea3",
+        "type": "FIX",
+        "text": " odata.v4.Context: getObject(), requestObject() w/o parameter",
+        "references": []
+      },
+      {
+        "id": "e70a6cb6bbd8485295e1df390944d90d0d4e67ba",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser: ignore \"HasStream\" property",
+        "references": []
+      }
+    ]
   }
 }

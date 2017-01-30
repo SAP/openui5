@@ -485,5 +485,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.6": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "98e22d366a35ce9a3a14bd4470ba81d53b11eba0",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Accessibility - Improve labeling in multi header case",
+        "references": []
+      },
+      {
+        "id": "a68b2212a8e220ca7070885dacac44f0a89e3a97",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Always update the top position of the vertical scrollbar after rendering.",
+        "references": []
+      }
+    ]
   }
 }

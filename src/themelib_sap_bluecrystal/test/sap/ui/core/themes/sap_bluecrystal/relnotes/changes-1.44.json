@@ -229,5 +229,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.6": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "a87567375bda8f8454145dae161522be94cfd115",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Focus clear visible on IE",
+        "references": []
+      },
+      {
+        "id": "ef2c0d154497cd416588b96023a3b5cffb204632",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Setters no longer modify RadioButtons\u0027 states",
+        "references": []
+      }
+    ]
   }
 }
