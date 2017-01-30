@@ -118,8 +118,6 @@ html.sapUiMedia-Std-Desktop .sapUiBLy {
 
 	@_PRIVATE_sapUiBackgroundGradientStart: fade(@sapUiGlobalBackgroundGradientStartColor, 30);
 	@_PRIVATE_sapUiBackgroundGradientEnd: fade(@sapUiGlobalBackgroundGradientEndColor, 20);
-	@_PRIVATE_sapUiGlobalBackgroundGradientStartIE9: fade(@sapUiGlobalBackgroundGradientStartColor, 100%); /* no transparency in IE9 filter string */
-	@_PRIVATE_sapUiGlobalBackgroundGradientEndIE9: mix(white, @sapUiGlobalBackgroundGradientEndColor, 80%);
 
 	.sapGlobalBackgroundColorMixin() when not (@sapUiGlobalBackgroundColor = @sapUiGlobalBackgroundColorDefault) {
 		background-color: @sapUiGlobalBackgroundColor;
@@ -138,24 +136,10 @@ html.sapUiMedia-Std-Desktop .sapUiBLy {
 		background-image: @Image, linear-gradient(to bottom, @_PRIVATE_sapUiBackgroundGradientStart 0%,@_PRIVATE_sapUiBackgroundGradientEnd 100%);
 	}
 
-	.sapGlobalBackgroundColorMixinIE9() when not (@sapUiGlobalBackgroundColor = @sapUiGlobalBackgroundColorDefault) {
-		filter: none;
-	}
-
-	.sapGlobalBackgroundColorMixinIE9() when (@sapUiGlobalBackgroundColor = @sapUiGlobalBackgroundColorDefault) {
-		filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorStr='@{_PRIVATE_sapUiGlobalBackgroundGradientStartIE9}', EndColorStr='@{_PRIVATE_sapUiGlobalBackgroundGradientEndIE9}')";  /* IE8+9 */
-	}
-
 	.sapGlobalBackgroundColorStrongMixin() {
 	}
 
-	.sapGlobalBackgroundColorStrongMixinIE9() {
-	}
-
 	.sapMShellGlobalInnerBackgroundMixin() {
-	}
-
-	.sapMShellGlobalInnerBackgroundMixinIE9() {
 	}
 
 	.sapGlobalBackgroundColorStrongTextMixin() when not (iscolor(@sapUiGlobalStrongBackgroundTextContrastColor)) {
@@ -173,8 +157,6 @@ html.sapUiMedia-Std-Desktop .sapUiBLy {
 	@_PRIVATE_sapUiBackgroundGradientStart: mix(@sapUiGlobalBackgroundGradientStartColor, @sapUiWhite, 15);
 	@_PRIVATE_sapUiBackgroundGradientMiddle: mix(@sapUiGlobalBackgroundGradientMiddleColor, @sapUiWhite, 15);
 	@_PRIVATE_sapUiBackgroundGradientEnd: mix(@sapUiGlobalBackgroundGradientEndColor, @sapUiWhite, 15);
-	@_PRIVATE_sapUiGlobalBackgroundGradientStartIE9: mix(fade(@sapUiGlobalBackgroundGradientStartColor, 100%), @sapUiWhite, 15); /* no transparency in IE9 filter string */
-	@_PRIVATE_sapUiGlobalBackgroundGradientEndIE9: mix(fade(@sapUiGlobalBackgroundGradientEndColor, 100%), @sapUiWhite, 15);
 
 	.sapGlobalBackgroundColorMixin() when not (@sapUiGlobalBackgroundColor = @sapUiGlobalBackgroundColorDefault) {
 		background-color: @sapUiGlobalBackgroundColor;
@@ -193,32 +175,15 @@ html.sapUiMedia-Std-Desktop .sapUiBLy {
 		background-image: @Image, linear-gradient(to bottom, @_PRIVATE_sapUiBackgroundGradientStart 0%, @_PRIVATE_sapUiBackgroundGradientMiddle 50%, @_PRIVATE_sapUiBackgroundGradientEnd 100%);
 	}
 
-	.sapGlobalBackgroundColorMixinIE9() when not (@sapUiGlobalBackgroundColor = @sapUiGlobalBackgroundColorDefault) {
-		filter: none;
-	}
-
-	.sapGlobalBackgroundColorMixinIE9() when (@sapUiGlobalBackgroundColor = @sapUiGlobalBackgroundColorDefault) {
-		filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorStr='@{_PRIVATE_sapUiGlobalBackgroundGradientStartIE9}', EndColorStr='@{_PRIVATE_sapUiGlobalBackgroundGradientEndIE9}')";  /* IE8+9 */
-	}
-
 	.sapGlobalBackgroundColorStrongMixin() when (@sapUiGlobalBackgroundColor = @sapUiGlobalBackgroundColorDefault) {
 		background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,@sapUiGlobalBackgroundGradientStartColor), color-stop(50%,@sapUiGlobalBackgroundGradientMiddleColor), color-stop(100%,@sapUiGlobalBackgroundGradientEndColor));
 		background-image: -webkit-linear-gradient(top, @sapUiGlobalBackgroundGradientStartColor 0%, @sapUiGlobalBackgroundGradientMiddleColor 50%, @sapUiGlobalBackgroundGradientEndColor 100%);
 		background-image: linear-gradient(to bottom, @sapUiGlobalBackgroundGradientStartColor 0%, @sapUiGlobalBackgroundGradientMiddleColor 50%, @sapUiGlobalBackgroundGradientEndColor 100%);
 	}
 
-	.sapGlobalBackgroundColorStrongMixinIE9() when (@sapUiGlobalBackgroundColor = @sapUiGlobalBackgroundColorDefault) {
-		filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorStr='@{sapUiGlobalBackgroundGradientStartColor}', EndColorStr='@{sapUiGlobalBackgroundGradientEndColor}')";  /* IE8+9 */
-	}
-
 	.sapMShellGlobalInnerBackgroundMixin when (@sapUiGlobalBackgroundColor = @sapUiGlobalBackgroundColorDefault) {
 		.sapGlobalBackgroundColorMixin;
 	}
-
-	.sapMShellGlobalInnerBackgroundMixinIE9() when (@sapUiGlobalBackgroundColor = @sapUiGlobalBackgroundColorDefault) {
-		.sapGlobalBackgroundColorMixinIE9;
-	}
-
 
 	.sapGlobalBackgroundColorStrongTextMixin_Internal() when not (iscolor(@sapUiGlobalStrongBackgroundTextContrastColor)) {
 
