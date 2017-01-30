@@ -13,6 +13,10 @@
 	display: table-row;
 }
 
+html[data-sap-ui-browser='ie11'] .sapMListTbl {
+	padding: 1px; /* outline must be visible */
+}
+
 .sapMListTbl th:focus,
 .sapMListTbl td:focus{
 	outline: none;

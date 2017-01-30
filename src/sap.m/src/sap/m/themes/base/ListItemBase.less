@@ -35,6 +35,11 @@
 	user-select: none;
 }
 
+.sapMLIBFocusable:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
+}
+
 .sapMLIB:not(.sapMLIBFocusable):focus,
 .sapMListTblSubRow:focus {
 	outline: none;
