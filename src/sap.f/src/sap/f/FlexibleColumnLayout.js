@@ -18,14 +18,49 @@ sap.ui.define([
 
 
 	/**
-	 * Constructor for a new Flexible Column Layout.
+	 * Constructor for a new <code>sap.f.FlexibleColumnLayout</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The FlexibleColumnLayout control implements the master-detail-detail paradigm by allowing the user to display up to three pages at a time.
+	 * Implements the master-detail-detail paradigm by displaying up to three pages in separate columns.
 	 *
+	 * <h3>Overview</h3>
+	 *
+	 * The control is logically similar to {@link sap.m.SplitContainer} with the difference that it capable of handling
+	 * three columns (referred to as <code>Begin</code>, <code>Mid</code> and <code>End</code>) rather than two
+	 * (<code>Master</code>, <code>Detail</code>). The width of the three columns is variable.
+	 *
+	 * There are several possible layouts that can be changed either with the control's API, or by the user with the help of navigation arrows.
+	 *
+	 * Internally the control makes use of three instances of {@link sap.m.NavContainer}, thus forming the three columns.
+	 *
+	 * <h3>Usage</h3>
+	 *
+	 * Use this control for applications that need to display several logical levels of related information side by side (e.g. list of items, item, sub-item, etc.).
+	 * The control is flexible in a sense that the application can focus the user's attention on one particular column by making it larger or even fullscreen.
+	 *
+	 * The columns are accessible with the <code>beginColumnPages</code>, <code>midColumnPages</code> and <code>endColumnPages</code> aggregations.
+	 *
+	 * The relative sizes and the visibility of the three columns are determined based on the value of the {@link sap.f.LayoutType layout} property.
+	 *
+	 * Changes to the layout due to user interaction are communicated to the app with the <code>stateChange</code> event.
+	 *
+	 * <ul><b>Notes:</b>
+	 * <li>To easily implement the recommended UX design of a <code>sap.f.FlexibleColumnLayout</code>-based app,
+	 * you can use the <code>sap.f.FlexibleColumnLayoutSemanticHelper</code> class.</li>
+	 * <li>To facilitate the navigation and view loading, you can use the {@link sap.f.routing.Router} </li></ul>
+	 *
+	 * <h3>Responsive Behavior</h3>
+	 *
+	 * The control automatically displays the maximum possible number of columns based on the device size and current <code>layout</code>.
+	 * The app does not need to take into consideration the current device/screen size, but only to add content to the
+	 * columns and change the value of the <code>layout</code> property.
+	 *
+	 * For detailed information, see {@link sap.f.LayoutType LayoutType} enumeration.
+	 *
+	 * @extends sap.ui.core.Control
 	 * @author SAP SE
 	 * @version ${version}
 	 *
@@ -40,7 +75,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Determines the layout of the control - number of columns and their relative sizes
+				 * Determines the layout of the control - number of visible columns and their relative sizes
 				 */
 				layout: {type: "sap.f.LayoutType", defaultValue: sap.f.LayoutType.OneColumn},
 
