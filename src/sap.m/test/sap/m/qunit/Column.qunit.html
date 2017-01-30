@@ -271,7 +271,6 @@
 
 		ok(mediaAttachSpy.called, "Media handler attached when table is rendered");
 
-		mediaAttachSpy.restore();
 		parent.destroy();
 	});
 
@@ -288,7 +287,6 @@
 
 		ok(mediaAttachSpy.called, "Media handler called immediately");
 
-		mediaAttachSpy.restore();
 		parent.destroy();
 	});
 
@@ -320,8 +318,167 @@
 
 		ok(tableResizeSpy.called, "Table resize called, if media is different");
 
-		tableResizeSpy.restore();
 		parent.destroy();
+	});
+
+	test("Should not notify when contextual width is set to a parent container, but this width is in the same range as the device width (when initially rendered without contextual width)", function () {
+
+		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
+		var tableResizeSpy = this.spy(sap.m.Table.prototype, "onColumnResize"),
+				sut = new sap.m.Column({
+					minScreenWidth : "tablet"
+				}),
+				parent = new sap.m.Table({
+					columns : sut
+				}),
+				page = new sap.m.Page({
+					content: [parent]
+				});
+
+		// The table is rendered without contextual width, the Device.media API is used
+		page.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1);
+		ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
+
+		// Set contextual width to a parent (as for tablet or above) and wait 1 tick for onColumnResize
+		page._applyContextualSettings({contextualWidth: 600});
+		this.clock.tick(1);
+		equal(tableResizeSpy.callCount, 0, "After applying contextual width to a parent container, but this width is in the same range, onColumnResize is not called");
+
+		page.destroy();
+	});
+
+	test("Should notify when contextual width is set to a parent container, and this width is in a different range compared to device width (when initially rendered without contextual width)", function () {
+
+		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
+		var tableResizeSpy = this.spy(sap.m.Table.prototype, "onColumnResize"),
+				sut = new sap.m.Column({
+					minScreenWidth : "tablet"
+				}),
+				parent = new sap.m.Table({
+					columns : sut
+				}),
+				page = new sap.m.Page({
+					content: [parent]
+				});
+
+		// The table is rendered without contextual width, the Device.media API is used
+		page.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1);
+
+		ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
+
+		// Set contextual width to a parent (as for phone) and wait 1 tick for onColumnResize
+		page._applyContextualSettings({contextualWidth: 100});
+		this.clock.tick(1);
+		equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
+
+		// Now set contextual width that doesn't go beyond a breakpoint
+		page._applyContextualSettings({contextualWidth: 101});
+		this.clock.tick(1);
+		// callCount is still 1
+		equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, but this width isn't in a different range, onColumnResize is not called");
+
+		// Now set contextual width that goes beyond a breakpoint (tablet starts at 600)
+		page._applyContextualSettings({contextualWidth: 600});
+		this.clock.tick(1);
+		equal(tableResizeSpy.callCount, 2, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
+
+		page.destroy();
+	});
+
+	test("Should notify when contextual width changes beyond a breakpoint (when already rendered with contextual width)", function () {
+
+		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
+		var tableResizeSpy = this.spy(sap.m.Table.prototype, "onColumnResize"),
+				sut = new sap.m.Column({
+					minScreenWidth : "tablet"
+				}),
+				parent = new sap.m.Table({
+					columns : sut
+				}),
+				page = new sap.m.Page({}); // we want the page to be empty so we can insert the table later
+
+
+		page.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		page._applyContextualSettings({contextualWidth: 100});
+
+		// Place the table in a container that already has contextual settings
+		page.addContent(parent);
+		this.clock.tick(1);
+
+		ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for phone");
+
+		// Now change the contextual width significantly (tablet starts at 600) and wait 1 tick for onColumnResize
+		page._applyContextualSettings({contextualWidth: 600});
+		this.clock.tick(1);
+
+		equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
+
+		page.destroy();
+	});
+
+	test("Should notify when contextual width is removed from a parent, and this width was in a different range compared to device width", function () {
+
+		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
+		var tableResizeSpy = this.spy(sap.m.Table.prototype, "onColumnResize"),
+				sut = new sap.m.Column({
+					minScreenWidth : "tablet"
+				}),
+				parent = new sap.m.Table({
+					columns : sut
+				}),
+				page = new sap.m.Page({}); // we want the page to be empty so we can insert the table later
+
+
+		page.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		page._applyContextualSettings({contextualWidth: 100});
+
+		// Place the table in a container that already has contextual settings
+		page.addContent(parent);
+		this.clock.tick(1);
+		ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for phone");
+
+		// Now remove contextual settings - the table will be rerendered as for desktop
+		page._applyContextualSettings({});
+		this.clock.tick(1);
+		equal(tableResizeSpy.callCount, 1, "After removing contextual with from a parent container, and this width was in another range compared to the device size range, onColumnResize is called");
+
+		page.destroy();
+	});
+
+	test("Should not notify when contextual width is removed from a parent, but this width wasn't in a different range compared to device width", function () {
+
+		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
+		var tableResizeSpy = this.spy(sap.m.Table.prototype, "onColumnResize"),
+				sut = new sap.m.Column({
+					minScreenWidth : "tablet"
+				}),
+				parent = new sap.m.Table({
+					columns : sut
+				}),
+				page = new sap.m.Page({}); // we want the page to be empty so we can insert the table later
+
+
+		page.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		page._applyContextualSettings({contextualWidth: 1000});
+
+		// Place the table in a container that already has contextual settings
+		page.addContent(parent);
+		this.clock.tick(1);
+		ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for tablet since contextual width is 1000 already");
+
+		// Now remove contextual settings - the table will not be rerendered as it is already showing the column
+		page._applyContextualSettings({});
+		this.clock.tick(1);
+		equal(tableResizeSpy.callCount, 0, "After removing contextual width from a parent container, but this width was in the same range compared to the device width, onColumnResize is not called");
+
+		page.destroy();
 	});
 
 
