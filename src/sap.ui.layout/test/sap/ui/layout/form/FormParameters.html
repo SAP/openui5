@@ -1,0 +1,374 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+		<title>Form - sap.ui.layout.form</title>
+		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.layout.form.Form.gif">
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.ui.layout, sap.m"
+				src="../../../../../resources/sap-ui-core.js"></script>
+
+		<script>
+
+			var handleLayoutChange = function(oEvent){
+				var sKey = oEvent.getParameter("selectedItem").getKey();
+				var oLayout = oForm.getLayout();
+				var sOldKey = oLayout.getId();
+				var aContainers = oForm.getFormContainers();
+
+				oLayout.destroy();
+
+				// initialize LayoutData
+				for(var i = 0; i < aContainers.length; i++){
+					var oLD = aContainers[i].getLayoutData();
+					if(oLD){
+						oLD.destroy();
+					}
+				}
+
+				switch (sKey) {
+				case "RGL":
+					oLayout= new sap.ui.layout.form.ResponsiveGridLayout("RGL", {
+						labelSpanS: parseInt(sap.ui.getCore().byId("I-labelSpanS").getValue()),
+						labelSpanM: parseInt(sap.ui.getCore().byId("I-labelSpanM").getValue()),
+						labelSpanL: parseInt(sap.ui.getCore().byId("I-labelSpanL").getValue()),
+						labelSpanXL: parseInt(sap.ui.getCore().byId("I-labelSpanXL").getValue()),
+						adjustLabelSpan: sap.ui.getCore().byId("CB-adjustLabelSpan").getSelected(),
+						emptySpanS: parseInt(sap.ui.getCore().byId("I-emptySpanS").getValue()),
+						emptySpanM: parseInt(sap.ui.getCore().byId("I-emptySpanM").getValue()),
+						emptySpanL: parseInt(sap.ui.getCore().byId("I-emptySpanL").getValue()),
+						emptySpanXL: parseInt(sap.ui.getCore().byId("I-emptySpanXL").getValue()),
+						columnsM: parseInt(sap.ui.getCore().byId("I-columnsM").getValue()),
+						columnsL: parseInt(sap.ui.getCore().byId("I-columnsL").getValue()),
+						columnsXL: parseInt(sap.ui.getCore().byId("I-columnsXL").getValue()),
+						singleContainerFullSize: sap.ui.getCore().byId("CB-singleContainerFullSize").getSelected(),
+						breakpointM: parseInt(sap.ui.getCore().byId("I-breakpointM").getValue()),
+						breakpointL: parseInt(sap.ui.getCore().byId("I-breakpointL").getValue()),
+						breakpointXL: parseInt(sap.ui.getCore().byId("I-breakpointXL").getValue())
+					});
+					break;
+
+				case "RL":
+					oLayout= new sap.ui.layout.form.ResponsiveLayout("RL", {
+					});
+					break;
+
+				case "GL":
+					var bSingleColumn = sap.ui.getCore().byId("CB-singleColumn").getSelected();
+					oLayout= new sap.ui.layout.form.GridLayout("GL", {
+						singleColumn: bSingleColumn
+					});
+					var aContainers = oForm.getFormContainers();
+					for(var i = 0; i < aContainers.length; i++){
+						aContainers[i].setLayoutData(new sap.ui.layout.form.GridContainerData({halfGrid: true}));
+					}
+					break;
+
+				default:
+					oLayout = null;
+					break;
+				}
+
+				oForm.setLayout(oLayout);
+				sap.ui.getCore().byId("C-" + sOldKey).setVisible(false);
+				sap.ui.getCore().byId("C-" + sKey).setVisible(true);
+			};
+
+			var handleFieldsChange = function(oEvent){
+				var iFields = parseInt(oEvent.getParameter("value"));
+				var oElement = sap.ui.getCore().byId("E-Fields");
+				var aFields = oElement.getFields();
+
+				if(aFields.length > iFields) {
+					for(var i = iFields; i < aFields.length; i++){
+						aFields[i].destroy();
+					}
+				}else {
+					for(var i = aFields.length; i < iFields; i++){
+						var oControl = new sap.m.Input();
+						if(i == 1){
+							// for second field use LayoutData
+							oControl.setLayoutData(new sap.ui.core.VariantLayoutData({
+								multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "3"}),
+								                     new sap.ui.layout.GridData({span: "XL3 L3 M3 S3"}),
+								                     new sap.ui.layout.ResponsiveFlowLayoutData({weight: 3})]}));
+						}
+						oElement.addField(oControl);
+					}
+				}
+			};
+
+			var oForm = new sap.ui.layout.form.Form("F1",{
+				title: "Parameter Test",
+				editable: true,
+				layout: new sap.ui.layout.form.ResponsiveGridLayout("RGL"),
+				formContainers: [
+					new sap.ui.layout.form.FormContainer("C1",{
+						title: "Layout",
+						formElements: [
+							new sap.ui.layout.form.FormElement({
+								label: "Layout",
+								fields: [new sap.m.Select("Sel_Layout",{ selectedKey: "RGL",
+									items: [new sap.ui.core.ListItem({key: "RGL", text: "ResponsiveGridLayout"}),
+													new sap.ui.core.ListItem({key: "RL", text: "ResponsiveLayout"}),
+													new sap.ui.core.ListItem({key: "GL", text: "Grid"})],
+									change: handleLayoutChange
+								})]
+							}),
+							new sap.ui.layout.form.FormElement({
+								label: "Number of fields",
+								fields: [new sap.m.Input({value: "1", type: sap.m.InputType.Number, change: handleFieldsChange})]
+							})
+						]
+					}),
+					new sap.ui.layout.form.FormContainer("C-RGL",{
+						title: "Layout parameter",
+						visible: true,
+						formElements: [
+							new sap.ui.layout.form.FormElement({
+								label: "labelSpan (S, M, L, XL)",
+								fields: [new sap.m.Input("I-labelSpanS",{
+													value: sap.ui.getCore().byId("RGL").getLabelSpanS(),
+													type: sap.m.InputType.Number,
+													change: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("RGL");
+														var sValue = oEvent.getParameter("value");
+														oLayout.setLabelSpanS(parseInt(sValue));
+													}}),
+												 new sap.m.Input("I-labelSpanM",{
+													value: sap.ui.getCore().byId("RGL").getLabelSpanM(),
+													type: sap.m.InputType.Number,
+													change: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("RGL");
+														var sValue = oEvent.getParameter("value");
+														oLayout.setLabelSpanM(parseInt(sValue));
+													}}),
+												 new sap.m.Input("I-labelSpanL",{
+													value: sap.ui.getCore().byId("RGL").getLabelSpanL(),
+													type: sap.m.InputType.Number,
+													change: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("RGL");
+														var sValue = oEvent.getParameter("value");
+														oLayout.setLabelSpanL(parseInt(sValue));
+													}}),
+												 new sap.m.Input("I-labelSpanXL",{
+													value: sap.ui.getCore().byId("RGL").getLabelSpanXL(),
+													type: sap.m.InputType.Number,
+													change: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("RGL");
+														var sValue = oEvent.getParameter("value");
+														oLayout.setLabelSpanXL(parseInt(sValue));
+													}})]
+							}),
+							new sap.ui.layout.form.FormElement({
+								label: "adjustLabelSpan",
+								fields: [new sap.m.CheckBox("CB-adjustLabelSpan",{
+													selected: sap.ui.getCore().byId("RGL").getAdjustLabelSpan(),
+													select: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("RGL");
+														var bSelected = oEvent.getParameter("selected");
+														oLayout.setAdjustLabelSpan(bSelected);
+													}})]
+							}),
+							new sap.ui.layout.form.FormElement({
+								label: "emptySpan (S, M, L, XL)",
+								fields: [new sap.m.Input("I-emptySpanS",{
+													value: sap.ui.getCore().byId("RGL").getEmptySpanS(),
+													type: sap.m.InputType.Number,
+													change: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("RGL");
+														var sValue = oEvent.getParameter("value");
+														oLayout.setEmptySpanS(parseInt(sValue));
+													}}),
+												 new sap.m.Input("I-emptySpanM",{
+													value: sap.ui.getCore().byId("RGL").getEmptySpanM(),
+													type: sap.m.InputType.Number,
+													change: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("RGL");
+														var sValue = oEvent.getParameter("value");
+														oLayout.setEmptySpanM(parseInt(sValue));
+													}}),
+												 new sap.m.Input("I-emptySpanL",{
+													value: sap.ui.getCore().byId("RGL").getEmptySpanL(),
+													type: sap.m.InputType.Number,
+													change: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("RGL");
+														var sValue = oEvent.getParameter("value");
+														oLayout.setEmptySpanL(parseInt(sValue));
+													}}),
+												 new sap.m.Input("I-emptySpanXL",{
+													value: sap.ui.getCore().byId("RGL").getEmptySpanXL(),
+													type: sap.m.InputType.Number,
+													change: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("RGL");
+														var sValue = oEvent.getParameter("value");
+														oLayout.setEmptySpanXL(parseInt(sValue));
+													}})]
+							}),
+							new sap.ui.layout.form.FormElement({
+								label: "columns (M, L, XL)",
+								fields: [new sap.m.Input("I-columnsM",{
+													value: sap.ui.getCore().byId("RGL").getColumnsM(),
+													type: sap.m.InputType.Number,
+													change: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("RGL");
+														var sValue = oEvent.getParameter("value");
+														oLayout.setColumnsM(parseInt(sValue));
+													}}),
+												 new sap.m.Input("I-columnsL",{
+													value: sap.ui.getCore().byId("RGL").getColumnsL(),
+													type: sap.m.InputType.Number,
+													change: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("RGL");
+														var sValue = oEvent.getParameter("value");
+														oLayout.setColumnsL(parseInt(sValue));
+													}}),
+												 new sap.m.Input("I-columnsXL",{
+													value: sap.ui.getCore().byId("RGL").getColumnsXL(),
+													type: sap.m.InputType.Number,
+													change: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("RGL");
+														var sValue = oEvent.getParameter("value");
+														oLayout.setColumnsXL(parseInt(sValue));
+													}})]
+							}),
+							new sap.ui.layout.form.FormElement({
+								label: "singleContainerFullSize",
+								fields: [new sap.m.CheckBox("CB-singleContainerFullSize",{
+													selected: sap.ui.getCore().byId("RGL").getSingleContainerFullSize(),
+													select: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("RGL");
+														var bSelected = oEvent.getParameter("selected");
+														oLayout.setSingleContainerFullSize(bSelected);
+													}})]
+							}),
+							new sap.ui.layout.form.FormElement({
+								label: "breakpoint (M, L, XL)",
+								fields: [new sap.m.Input("I-breakpointM",{
+													value: sap.ui.getCore().byId("RGL").getBreakpointM(),
+													type: sap.m.InputType.Number,
+													change: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("RGL");
+														var sValue = oEvent.getParameter("value");
+														oLayout.setBreakpointM(parseInt(sValue));
+													}}),
+												 new sap.m.Input("I-breakpointL",{
+													value: sap.ui.getCore().byId("RGL").getBreakpointL(),
+													type: sap.m.InputType.Number,
+													change: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("RGL");
+														var sValue = oEvent.getParameter("value");
+														oLayout.setBreakpointL(parseInt(sValue));
+													}}),
+												 new sap.m.Input("I-breakpointXL",{
+													value: sap.ui.getCore().byId("RGL").getBreakpointXL(),
+													type: sap.m.InputType.Number,
+													change: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("RGL");
+														var sValue = oEvent.getParameter("value");
+														oLayout.setBreakpointXL(parseInt(sValue));
+													}})]
+							})
+						]
+					}),
+					new sap.ui.layout.form.FormContainer("C-RL",{
+						title: "Layout parameter",
+						visible: false,
+						formElements: [
+							new sap.ui.layout.form.FormElement({
+								label: "no properties",
+								fields: [new sap.m.Input({enabled: false,
+													change: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("RL");
+													}})]
+							})
+						]
+					}),
+					new sap.ui.layout.form.FormContainer("C-GL",{
+						title: "Layout parameter",
+						visible: false,
+						formElements: [
+							new sap.ui.layout.form.FormElement({
+								label: "singleColumn",
+								fields: [new sap.m.CheckBox("CB-singleColumn", {selected: false,
+													select: function(oEvent){
+														var oLayout = sap.ui.getCore().byId("GL");
+														var bSelected = oEvent.getParameter("selected");
+														oLayout.setSingleColumn(bSelected);
+													}})]
+							})
+						]
+					}),
+					new sap.ui.layout.form.FormContainer("C-Fields",{
+						title: "Fields",
+						formElements: [
+							new sap.ui.layout.form.FormElement({
+								label: "First element",
+								fields: [new sap.m.Input()]
+							}),
+							new sap.ui.layout.form.FormElement("E-Fields", {
+								label: "Dynamic element",
+								fields: [new sap.m.Input()]
+							}),
+							new sap.ui.layout.form.FormElement({
+								label: "Last element",
+								fields: [new sap.m.Input()]
+							})
+						]
+					}),
+					new sap.ui.layout.form.FormContainer("C-Dummy1",{
+						title: "Dummy1",
+						formElements: [
+							new sap.ui.layout.form.FormElement({
+								label: "Element1",
+								fields: [new sap.m.Input()]
+							}),
+							new sap.ui.layout.form.FormElement({
+								label: "Element2",
+								fields: [new sap.m.Input()]
+							})
+						]
+					}),
+					new sap.ui.layout.form.FormContainer("C-Dummy2",{
+						title: "Dummy2",
+						formElements: [
+							new sap.ui.layout.form.FormElement({
+								label: "Element1",
+								fields: [new sap.m.Input()]
+							}),
+							new sap.ui.layout.form.FormElement({
+								label: "Element2",
+								fields: [new sap.m.Input()]
+							})
+						]
+					}),
+					new sap.ui.layout.form.FormContainer("C-Dummy3",{
+						title: "Dummy3",
+						formElements: [
+							new sap.ui.layout.form.FormElement({
+								label: "Element1",
+								fields: [new sap.m.Input()]
+							}),
+							new sap.ui.layout.form.FormElement({
+								label: "Element2",
+								fields: [new sap.m.Input()]
+							})
+						]
+					})
+				]
+			}).placeAt("content");
+
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+
+		<h1 id="header">Test Page for <code>sap.ui.layout.form.Form</code></h1>
+
+		<div id="content"></div>
+		<br>
+	</body>
+</html>
