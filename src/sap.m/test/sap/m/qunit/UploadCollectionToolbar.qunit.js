@@ -96,12 +96,12 @@ QUnit.test("A correct Toolbar is provided", function(assert) {
 	assert.ok(aToolbarElements[7] instanceof sap.m.Button, "Eighth element is an instance of sap.m.Button");
 
 	//Checks that every element is in the right position
-	assert.deepEqual(aToolbarElements[0].getId(), "element1", "Element1 was placed in the right position")
-	assert.deepEqual(aToolbarElements[1].getId(), "element2", "Element2 was placed in the right position")
-	assert.deepEqual(aToolbarElements[3].getId(), "element3", "Element3 was placed in the right position")
-	assert.deepEqual(aToolbarElements[4].getId(), "element4", "Element4 was placed in the right position")
-	assert.deepEqual(aToolbarElements[5].getId(), "element5", "Element5 was placed in the right position")
-	assert.deepEqual(aToolbarElements[6].getId(), "element6", "Element6 was placed in the right position")
-	assert.deepEqual(aToolbarElements[7].getId(), "element7", "Element7 was placed in the right position")
+	assert.deepEqual(aToolbarElements[0].getId(), "element1", "Element1 was placed in the right position");
+	assert.deepEqual(aToolbarElements[1].getId(), "element2", "Element2 was placed in the right position");
+	assert.deepEqual(aToolbarElements[3].getId(), "element3", "Element3 was placed in the right position");
+	assert.deepEqual(aToolbarElements[4].getId(), "element4", "Element4 was placed in the right position");
+	assert.deepEqual(aToolbarElements[5].getId(), "element5", "Element5 was placed in the right position");
+	assert.deepEqual(aToolbarElements[6].getId(), "element6", "Element6 was placed in the right position");
+	assert.deepEqual(aToolbarElements[7].getId(), "element7", "Element7 was placed in the right position");
 
 });
