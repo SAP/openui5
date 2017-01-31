@@ -523,14 +523,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 		}
 
-		//to prevent bubbling into PlanningCalendar
+		//To prevent bubbling into PlanningCalendar.
+		//For appointments, this will prevent tap event on ColumnListItem, which in turn fires rowSelectionChange.
 		oEvent.stopPropagation();
 		oEvent.preventDefault();
 
 	};
 
-	CalendarRow.prototype.onclick = function(oEvent) {
-
+	CalendarRow.prototype.ontap = function(oEvent) {
 		var aIntervals = this.$("Apps").children(".sapUiCalendarRowAppsInt");
 		var iIndex = 0;
 		var bInterval = false;
