@@ -2702,7 +2702,13 @@
 					url : "/myservice/Order_Details?$filter=UnitPrice le 100M",
 					dataType : "json"
 				});
-				ok(oResponse);
+				ok(oResponse, "$filter=UnitPrice le 100M");
+
+				oResponse = jQuery.sap.sjax({
+					url : "/myservice/Order_Details?$filter=UnitPrice le 100m",
+					dataType : "json"
+				});
+				ok(oResponse, "$filter=UnitPrice le 100m");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/Products?$top=20&$filter=Category/CategoryName eq 'Beverages'",
