@@ -391,6 +391,7 @@ sap.ui.require([
 			= "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/",
 		oTeamData = mScope["tea_busi.TEAM"],
 		oTeamLineItem = mScope.$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
+		sTechServiceUrl = "/sap/opu/odata4/iwbep/tea/default/iwbep/tea_tech/0001/",
 		oWorkerData = mScope["tea_busi.Worker"];
 
 	/**
@@ -2006,6 +2007,25 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getOrCreateValueListModel: relative data service URL", function(assert) {
+		var sRelativePath = "../../../DataService/",
+			sAbsolutePath =
+				new URI(sRelativePath).absoluteTo(document.baseURL).pathname().toString(),
+			oModel = new ODataModel({
+				serviceUrl : sRelativePath,
+				synchronizationMode : "None"
+			}),
+			oValueListModel;
+
+		// code under test
+		oValueListModel = oModel.getMetaModel()
+			.getOrCreateValueListModel("../ValueListService/$metadata");
+
+		assert.strictEqual(oValueListModel.sServiceUrl,
+			new URI("../ValueListService/").absoluteTo(sAbsolutePath).toString());
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getValueListType: metadata not yet loaded", function (assert) {
 		var oContext = {},
 			oMetaModel = new ODataMetaModel(),
@@ -2061,6 +2081,12 @@ sap.ui.require([
 	}, {
 		mAnnotations : {
 			"@com.sap.vocabularies.Common.v1.ValueListReferences#foo" : [],
+			"@com.sap.vocabularies.Common.v1.ValueListWithFixedValues" : false
+		},
+		sValueListType : ValueListType.Standard
+	}, {
+		mAnnotations : {
+			"@com.sap.vocabularies.Common.v1.ValueListMapping#foo" : {},
 			"@com.sap.vocabularies.Common.v1.ValueListWithFixedValues" : false
 		},
 		sValueListType : ValueListType.Standard
@@ -2128,16 +2154,10 @@ sap.ui.require([
 		return oModel.getMetaModel()
 			.fetchValueListMappings(oValueListModel, "gw_sample_basic", oProperty)
 			.then(function (oValueListMappings) {
-				assert.strictEqual(oValueListMappings[""].$model, oValueListModel);
-				assert.strictEqual(oValueListMappings.foo.$model, oValueListModel);
-				delete oValueListMappings[""].$model;
-				delete oValueListMappings.foo.$model;
 				assert.deepEqual(oValueListMappings, {
 					"" : oDefaultMapping,
 					"foo" : oFooMapping
 				});
-				assert.notStrictEqual(oValueListMappings.foo.Parameters, oFooMapping.Parameters,
-					"result is a deep copy");
 			});
 	});
 
@@ -2237,8 +2257,6 @@ sap.ui.require([
 		return oModel.getMetaModel()
 			.fetchValueListMappings(oModel, "value_list", oProperty)
 			.then(function (oValueListMappings) {
-				assert.strictEqual(oValueListMappings[""].$model, oModel);
-				delete oValueListMappings[""].$model;
 				assert.deepEqual(oValueListMappings, {
 					"" : oMapping
 				});
@@ -2313,17 +2331,17 @@ sap.ui.require([
 					}
 				},
 				oValueListMappings1 = {
-					"" : {}
+					"" : {CollectionPath : ""}
 				},
 				oValueListMappings2 = {
-					"foo" : {}
+					"foo" : {CollectionPath : "foo"}
 				},
 				oValueListMappingsBar = {},
-				oValueListModel1 = {},
-				oValueListModel2 = {},
-				oValueListModelBar = {};
+				oValueListModel1 = {sServiceUrl : sMappingUrl1},
+				oValueListModel2 = {sServiceUrl : sMappingUrl2},
+				oValueListModelBar = {sServiceUrl : sMappingUrlBar};
 
-			oValueListMappingsBar[bDuplicate ? "" : "bar"] = {};
+			oValueListMappingsBar[bDuplicate ? "" : "bar"] = {CollectionPath : "bar"};
 			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(_SyncPromise.resolve(oMetadata));
 			oMetaModelMock.expects("getOrCreateValueListModel")
@@ -2354,13 +2372,19 @@ sap.ui.require([
 				.then(function (oResult) {
 					assert.ok(!bDuplicate);
 					assert.deepEqual(oResult, {
-						"" : oValueListMappings1[""],
-						"foo" : oValueListMappings2.foo,
-						"bar" : oValueListMappingsBar.bar
+						"" : {
+							$model : oValueListModel1,
+							CollectionPath : ""
+						},
+						"foo" : {
+							$model : oValueListModel2,
+							CollectionPath : "foo"
+						},
+						"bar" : {
+							$model : oValueListModelBar,
+							CollectionPath : "bar"
+						}
 					});
-					assert.strictEqual(oResult[""], oValueListMappings1[""]);
-					assert.strictEqual(oResult.foo, oValueListMappings2.foo);
-					assert.strictEqual(oResult.bar, oValueListMappingsBar.bar);
 				}, function (oError) {
 					assert.ok(bDuplicate);
 					assert.strictEqual(oError.message,
@@ -2368,6 +2392,113 @@ sap.ui.require([
 						+ "identical qualifier '' for property " + sPropertyPath
 						+ " in " + sMappingUrlBar + " and " + sMappingUrl1);
 				});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestValueListInfo: same model w/o reference", function(assert) {
+		var oProperty = {
+				"$kind" : "Property"
+			},
+			oValueListMappingFoo = {CollectionPath : "foo"},
+			oMetadata = {
+				"$EntityContainer" : "value_list.Container",
+				"value_list.Container" : {
+					"$kind" : "EntityContainer",
+					"VH_BusinessPartnerSet" : {
+						"$kind" : "EntitySet",
+						"$Type" : "value_list.VH_BusinessPartner"
+					}
+				},
+				"value_list.VH_BusinessPartner" : {
+					"$kind" : "Entity",
+					"Country" : oProperty
+				},
+				"$Annotations" : {
+					"value_list.VH_BusinessPartner/Country" : {
+						"@com.sap.vocabularies.Common.v1.ValueListMapping#foo" :
+							oValueListMappingFoo,
+						"@com.sap.vocabularies.Common.v1.ValueListMapping#bar" :
+							{CollectionPath : "bar"}
+					}
+				}
+			},
+			oModel = new ODataModel({
+				serviceUrl : "/Foo/ValueListService/",
+				synchronizationMode : "None"
+			}),
+			oMetaModelMock = this.mock(oModel.getMetaModel()),
+			sPropertyPath = "/VH_BusinessPartnerSet('0100000000')/Country";
+
+		oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+			.returns(_SyncPromise.resolve(oMetadata));
+
+		// code under test
+		return oModel.getMetaModel().requestValueListInfo(sPropertyPath).then(function (oResult) {
+			assert.strictEqual(oResult.foo.$model, oModel);
+			assert.strictEqual(oResult.bar.$model, oModel);
+			assert.notOk("$model" in oValueListMappingFoo);
+			delete oResult.foo.$model;
+			delete oResult.bar.$model;
+			assert.deepEqual(oResult, {
+				"foo" : {CollectionPath : "foo"},
+				"bar" : {CollectionPath : "bar"}
+			});
+		});
+	});
+
+	// *********************************************************************************************
+	QUnit.test("requestValueListInfo: same qualifier in reference and local", function(assert) {
+		var sMappingUrl = "../ValueListService/$metadata",
+			oProperty = {
+				"$kind" : "Property"
+			},
+			oMetadata = {
+				"$EntityContainer" : "gw_sample_basic.Container",
+				"gw_sample_basic.Container" : {
+					"$kind" : "EntityContainer",
+					"ProductList" : {
+						"$kind" : "EntitySet",
+						"$Type" : "gw_sample_basic.Product"
+					}
+				},
+				"gw_sample_basic.Product" : {
+					"$kind" : "Entity",
+					"Category" : oProperty
+				},
+				"$Annotations" : {
+					"gw_sample_basic.Product/Category" : {
+						"@com.sap.vocabularies.Common.v1.ValueListReferences" : [sMappingUrl],
+						"@com.sap.vocabularies.Common.v1.ValueListMapping#foo" : {}
+					}
+				}
+			},
+			oModel = new ODataModel({
+				serviceUrl : "/Foo/ValueListService/",
+				synchronizationMode : "None"
+			}),
+			oMetaModelMock = this.mock(oModel.getMetaModel()),
+			sPropertyPath = "/ProductList('HT-1000')/Category",
+			oValueListModel = {};
+
+		oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+			.returns(_SyncPromise.resolve(oMetadata));
+		oMetaModelMock.expects("getOrCreateValueListModel")
+			.withExactArgs(sMappingUrl)
+			.returns(oValueListModel);
+		oMetaModelMock.expects("fetchValueListMappings")
+			.withExactArgs(sinon.match.same(oValueListModel), "gw_sample_basic",
+				sinon.match.same(oProperty))
+			.returns(Promise.resolve({"foo" : {}}));
+
+		// code under test
+		return oModel.getMetaModel().requestValueListInfo(sPropertyPath).then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError.message,
+				"Annotations 'com.sap.vocabularies.Common.v1.ValueListMapping' with identical "
+				+ "qualifier 'foo' for property " + sPropertyPath + " in "
+				+ oModel.sServiceUrl + "$metadata and " + sMappingUrl);
 		});
 	});
 
@@ -2395,6 +2526,36 @@ sap.ui.require([
 					var oValueListInfo = oResult[""];
 					assert.strictEqual(oValueListInfo.CollectionPath, "H_EPM_PD_CATS_SH_SET");
 				});
+			});
+		});
+
+		//*****************************************************************************************
+		QUnit.test("requestValueListInfo: same model w/o reference, realOData", function (assert) {
+			var oModel = new ODataModel({
+					serviceUrl : TestUtils.proxy(sTechServiceUrl),
+					synchronizationMode : "None"
+				}),
+				oMetaModel = oModel.getMetaModel(),
+				sPropertyPath = "/SearchHelps/0/SELLER_ID",
+				oValueListMetaModel;
+
+			return oMetaModel.requestObject("/SearchHelps/").then(function () {
+				// value list in the data service
+				assert.strictEqual(oMetaModel.getValueListType(sPropertyPath),
+					ValueListType.Standard);
+				return oMetaModel.requestValueListInfo(sPropertyPath);
+			}).then(function (oValueListInfo) {
+				var sPropertyPath2 = "/_iwbep_C_V4_SEL_CH_SET/1/SELLER_ID";
+
+				// value list in the value list service
+				oValueListMetaModel = oValueListInfo[""].$model.getMetaModel();
+				assert.strictEqual(oValueListMetaModel.getValueListType(sPropertyPath2),
+					ValueListType.Standard);
+				assert.strictEqual(oValueListInfo[""].CollectionPath, "_iwbep_C_V4_SEL_CH_SET");
+				return oValueListMetaModel.requestValueListInfo(sPropertyPath2);
+			}).then(function (oValueListInfo) {
+				assert.strictEqual(oValueListInfo[""].$model.getMetaModel(), oValueListMetaModel);
+				assert.strictEqual(oValueListInfo[""].CollectionPath, "_iwbep_C_V4_SEL_CH_SET");
 			});
 		});
 	}
