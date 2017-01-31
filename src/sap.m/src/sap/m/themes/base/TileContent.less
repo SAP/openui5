@@ -7,28 +7,35 @@
 	display: inline-block;
 	box-sizing: border-box;
 	position: relative;
-}
-
-.sapMTileCnt.sapMFrameTypeAuto {
 	height: 6.375rem;
-	min-width: 10.875rem;
-	max-width: 22.5rem;
-}
 
-/* TwoByOne size */
-.sapMTileCnt.sapMFrameTypeTwoByOne {
-	height: 6.375rem;
-	width: 22.375rem;
+	/* FrameType: Auto */
+	&.sapMFrameTypeAuto {
+		min-width: 10.875rem;
+		max-width: 22.5rem;
+	}
 
-	&.News {
-		width: 22.5rem;
+	/* FrameType: TwoByOne */
+	&.sapMFrameTypeTwoByOne {
+		width: 22.375rem;
+
+		&.News {
+			width: 22.5rem; //2px more, because the tile's border is omitted
+		}
+	}
+
+	/* FrameType: OneByOne */
+	&.sapMFrameTypeOneByOne {
+		width: 10.875rem;
 	}
 }
 
-/* OneByOne size */
-.sapMTileCnt.sapMFrameTypeOneByOne {
-	height: 6.375rem;
-	width: 11rem;
+/* Improved behaviour for TileContent in GenericTile */
+.sapMGT .sapMTileCnt.sapMFrameTypeAuto:only-child {
+	width: 100%;
+}
+.sapMGT .sapMTileCnt.sapMFrameTypeAuto:not(:only-child) {
+	width: ~"calc(50% - 0.25rem)"; //0.5rem margin between the contents
 }
 
 /* Footer CSS */
@@ -102,29 +109,29 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 
 	.sapMTileCntContent > .sapMTcInnerMarker {
 		vertical-align: top;
-	}	
+	}
 }
 
 /* BREAKPOINT FOR SMALL PHONES */
 @media screen and (max-width: 374px) {
-	.sapMTileCnt.sapMFrameTypeAuto {
+	.sapMTileCnt {
 		height: 5.5rem;
-		min-width: 9.125rem;
-		max-width: 19rem;
-	}
 
-	.sapMTileCnt.sapMFrameTypeTwoByOne {
-		height: 5.5rem;
-		width: 18.875rem;
-
-		&.News {
-			width: 19rem;
+		&.sapMFrameTypeAuto {
+			min-width: 9.125rem;
+			max-width: 19rem;
 		}
-	}
 
-	.sapMTileCnt.sapMFrameTypeOneByOne {
-		height: 5.5rem;
-		width: 9.25rem;
+		&.sapMFrameTypeTwoByOne {
+			width: 18.875rem;
+
+			&.News {
+				width: 19rem;
+			}
+		}
+		&.sapMFrameTypeOneByOne {
+			width: 9.125rem;
+		}
 	}
 
 	.sapMTileCntFtrTxt {
