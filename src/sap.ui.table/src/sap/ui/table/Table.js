@@ -1259,8 +1259,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				if (TableUtils.isVariableWidth(colWidth) && !TableUtils.isFixedColumn(oTable, col.getIndex())) {
 					aColHeaders = oTableRef.querySelectorAll('th[data-sap-ui-colid="' + col.getId() + '"]');
 					colHeader = aColHeaders[bColumnHeaderVisible ? 0 : 1]; // if column headers have display:none, use data table
-					domWidth = colHeader && colHeader.offsetWidth;
-					if (domWidth) {
+					domWidth = colHeader ? colHeader.offsetWidth : null;
+					if (domWidth !== null) {
 						if (domWidth <= minWidth) {
 							return {headers : aColHeaders, newWidth: calcNewWidth(domWidth, minWidth)};
 						} else if (colHeader && colHeader.style.width != colWidth) {
