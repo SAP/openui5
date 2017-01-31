@@ -11,9 +11,8 @@ sap.ui.define(['sap/f/semantic/SemanticButton'], function(SemanticButton) {
 	* @param {object} [mSettings] Custom initial settings for the new control
 	*
 	* @class
-	* A <code>DiscussInJamAction</code> button has default semantic-specific properties
-	* and it`s placed in the <code>SemanticPage</code> share menu within the title.
-	* The <code>DiscussInJamAction</code> is eligible for aggregation content of a {@link sap.f.semantic.SemanticPage}.
+	* A semantic-specific button, eligible for the <code>discussInJamAction</code> aggregation of the
+	* {@link sap.f.semantic.SemanticPage} to be placed in the share menu within its title.
 	*
 	* @extends <code>sap.f.semantic.SemanticButton</code>
 	*

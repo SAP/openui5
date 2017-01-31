@@ -37,22 +37,53 @@ sap.ui.define([
 	* @param {object} [mSettings] Initial settings for the new control
 	*
 	* @class
-	* <strong><i>Overview</i></strong>
-	* <br><br>
+	* An enhanced {@link sap.f.DynamicPage}, that contains controls with semantic-specific meaning.
 	*
-	* <strong>Notes:</strong>
+	* <h3>Overview</h3>
 	*
-	* <strong><i>Structure</i></strong>
-	* <br><br>
+	* Content specified in the <code>sap.f.semantic.SemanticPage</code> aggregations is automatically
+	* positioned in dedicated sections of the title or the footer of the page, depending on
+	* the control's semantics.
 	*
-	* <strong><i>Usage</i></strong>
-	* <br><br>
+	* The actions in the <code>SemanticPage</code> title are grouped to text actions or icon actions.
+	* When an aggregation is set, the actions appear in the following predefined order (from left to right):
 	*
-	* <br><br>
-	* <strong><i>Responsive Behavior</i></strong>
-	* <br><br>
-	* The responsive behavior of the {@link sap.f.SemanticPage SemanticPage} depends on the
-	* behavior of the content that is displayed.
+	* <ul>Text actions:
+	* <li>The main semantic text action - <code>titleMainAction</code></li>
+	* <li>Any custom text actions - <code>titleCustomTextActions</code></li>
+	* <li>The semantic text actions - <code>addAction</code>, <code>deleteAction</code>, and <code>copyAction</code></li></ul>
+	*
+	* <ul>Icon actions:
+	* <li>Any custom icon actions - <code>titleCustomIconActions</code></li>
+	* <li>The simple semantic icon actions - <code>favoriteAction</code> and <code>flagAction</code></li>
+	* <li>The share menu semantic icon actions as a drop-down list with the following order:
+	* 	<ul><li><code>sendEmailAction</code></li>
+	* 	<li><code>discussInJamAction</code></li>
+	* 	<li><code>shareInJamAction</code></li>
+	* 	<li><code>sendMessageAction</code></li>
+	* 	<li><code>printAction</code></li>
+	* 	<li>Any <code>customShareActions</code></li></ul></li>
+	* <li>The navigation semantic actions - <code>fullScreenAction</code>, <code>exitFullScreenAction</code>,
+	* and <code>closeAction</li></code></ul>
+	*
+	* The actions in the <code>SemanticPage</code> footer are positioned either on its left or right area and have the following predefined order:
+	*
+	* <ul>Footer left area:
+	* <li>The semantic text action - <code>messagesIndicator</code></li>
+	* <li>The semantic label - <code>draftIndicator</code></li></ul>
+	*
+	* <ul>Footer right area:
+	* <li>The main semantic text action - <code>footerMainAction</code></li>
+	* <li>The semantic text actions - <code>positiveAction</code> and <code>negativeAction</code></li>
+	* <li>Any custom text actions - <code>footerCustomActions</code></li></ul>
+	*
+	* <h3>Usage</h3>
+	*
+	* Using the <code>SemanticPage</code> facilitates the implementation of the SAP Fiori 2.0 design guidelines.
+	*
+	* <h3>Responsive behavior</h3>
+	*
+	* The responsive behavior of the <code>SemanticPage</code> depends on the behavior of the content that is displayed.
 	*
 	* @extends sap.ui.core.Control
 	*
@@ -73,40 +104,42 @@ sap.ui.define([
 				/**
 				* Determines whether the header is expanded.
 				*
-				* The <code>Header</code> can be also expanded/collapsed by user interaction,
+				* The header can be also expanded/collapsed by user interaction,
 				* which requires the property to be internally mutated by the control to reflect the changed state.
 				*
-				* <b>Note:</b> Please be aware that initially collapsed header state is not supported,
+				* <b>Note:</b> Please be aware, that initially collapsed header state is not supported,
 				* so <code>headerExpanded</code> should not be set to <code>false</code> when initializing the control.
 				*/
 				headerExpanded: {type: "boolean", group: "Behavior", defaultValue: true},
 
 				/**
-				* Determines whether the <code>Header</code> is pinnable.
+				* Determines whether the header is pinnable.
 				*/
 				headerPinnable: {type: "boolean", group: "Behavior", defaultValue: true},
 
 				/**
-				* Preserves the current <code>Header</code> state when scrolling.
-				* For example, if the user expands the <code>Header</code> by clicking on the <code>Title</code>
-				* and then scrolls down the page, the <code>Header</code> will remain expanded.
-				* <br><b>Note:</b> Based on internal rules, the value of the property is not always taken into account - for example,
-				* when the control is rendered on tablet or mobile and the <code>Title</code> and <code>Header</code>
+				* Preserves the current header state when scrolling.
+				*
+				* For example, if the user expands the header by clicking on the title
+				* and then scrolls down the page, the header will remain expanded.
+				*
+				* <b>Note:</b> Based on internal rules, the value of the property is not always taken into account - for example,
+				* when the control is rendered on tablet or mobile and the title and the header
 				* are with height larger than a given threshold.
 				*/
 				preserveHeaderStateOnScroll: {type: "boolean", group: "Behavior", defaultValue: false},
 
 				/**
 				* Determines whether the the user can switch between the expanded/collapsed states of the
-				* <code>Header</code> by clicking on the <code>Title</code>.
+				* header by clicking on the title.
 				*
-				* If set to <code>false</code>, the Title is not clickable and the application
-				* must provide other means for expanding/collapsing the <code>Header</code>, if necessary.
+				* If set to <code>false</code>, the title is not clickable and the application
+				* must provide other means for expanding/collapsing the header, if necessary.
 				*/
 				toggleHeaderOnTitleClick: {type: "boolean", group: "Behavior", defaultValue: true},
 
 				/**
-				* Determines whether the <code>Footer</code> is visible.
+				* Determines whether the footer is visible.
 				*/
 				showFooter: {type: "boolean", group: "Behavior", defaultValue: false}
 			},
@@ -114,210 +147,165 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				* The <code>SemanticPage</code> <code>heading</code>.
+				* The <code>SemanticPage</code> heading.
+				*
 				* A typical usage is the <code>sap.m.Title</code> or any other UI5 control,
 				* that serves as a heading for an object.
 				*
-				* <b>Note:</b> The <code>control</code> will be placed in the <code>Title</code>
-				* left most area.
+				* <b>Note:</b> The control will be placed in the title`s leftmost area.
 				*/
 				titleHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null},
 
 				/**
-				* The content, displayed in the <code>Title</code>,
-				* when the <code>Header</code> is in collapsed state.
+				* The content, displayed in the title, when the header is in collapsed state.
 				*
-				* <b>Note:</b> The <code>controls</code> will be placed in the <code>Title</code>
-				* middle area
+				* <b>Note:</b> The controls will be placed in the title`s middle area.
 				*/
 				titleSnappedContent: {type: "sap.ui.core.Control", multiple: true},
 
 				/**
-				* The content,displayed in the <code>Title</code>,
-				* when the <code>Header</code> is in expanded state.
+				* The content,displayed in the title, when the header is in expanded state.
 				*
-				* <b>Note:</b> The <code>controls</code> will be placed in the <code>Title</code>
-				* middle area
+				* <b>Note:</b> The controls will be placed in the title`s middle area.
 				*/
 				titleExpandedContent: {type: "sap.ui.core.Control", multiple: true},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>TitleMainAction</code>.
-				* The <code>TitleMainAction</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Title</code> as first action.
+				* A semantic-specific button which is placed in the <code>SemanticPage</code> title as first action.
 				*/
 				titleMainAction: {type: "sap.f.semantic.TitleMainAction", multiple: false},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>AddAction</code>.
-				* A <code>AddAction</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Title</code> - the "TextActions" area.
+				* A semantic-specific button which is placed in the <code>TextActions</code> area of the <code>SemanticPage</code> title.
 				*/
 				addAction: {type: "sap.f.semantic.AddAction", multiple: false},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>DeleteAction</code>.
-				* A <code>DeleteAction</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Title</code> - the "TextActions" area.
+				* A semantic-specific button which is placed in the <code>TextActions</code> area of the <code>SemanticPage</code> title.
 				*/
 				deleteAction: {type: "sap.f.semantic.DeleteAction", multiple: false},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>CopyAction</code>.
-				* A <code>CopyAction</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Title</code> - the "TextActions" area.
+				* A semantic-specific button which is placed in the <code>TextActions</code> area of the <code>SemanticPage</code> title.
 				*/
 				copyAction: {type: "sap.f.semantic.CopyAction", multiple: false},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>FlagAction</code>.
-				* A <code>FlagAction</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Title</code> - the "IconActions" area.
+				* A semantic-specific button which is placed in the <code>IconActions</code> area of the <code>SemanticPage</code> title.
 				*/
 				flagAction: {type: "sap.f.semantic.FlagAction", multiple: false},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>FavoriteAction</code>.
-				* A <code>FavoriteAction</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Title</code> - the "IconActions" area.
+				* A semantic-specific button which is placed in the <code>IconActions</code> area of the <code>SemanticPage</code> title.
 				*/
 				favoriteAction: {type: "sap.f.semantic.FavoriteAction", multiple: false},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>FullScreenAction</code>.
-				* A <code>FullScreenAction</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Title</code> - the "IconActions" area.
+				* A semantic-specific button which is placed in the <code>IconActions</code> area of the <code>SemanticPage</code> title.
 				*/
 				fullScreenAction: {type: "sap.f.semantic.FullScreenAction", multiple: false},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>ExitFullScreenAction</code>.
-				* A <code>FavoriteAction</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Title</code> - the "IconActions" area.
+				* A semantic-specific button which is placed in the <code>IconActions</code> area of the <code>SemanticPage</code> title.
 				*/
 				exitFullScreenAction: {type: "sap.f.semantic.ExitFullScreenAction", multiple: false},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>CloseAction</code>.
-				* A <code>CloseAction</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Title</code> - the "IconActions" area.
+				* A semantic-specific button which is placed in the <code>IconActions</code> area of the <code>SemanticPage</code> title.
 				*/
 				closeAction: {type: "sap.f.semantic.CloseAction", multiple: false},
 
-
 				/**
-				* The <code>titleCustomTextActions</code> are placed in the <code>SemanticPage</code> <code>Title</code>
-				* - the "TextActions" area, right before the semantic text action.
+				* The <code>titleCustomTextActions</code> are placed in the <code>TextActions</code> area of the
+				* <code>SemanticPage</code> title, right before the semantic text action.
 				*/
 				titleCustomTextActions: {type: "sap.m.Button", multiple: true},
 
 				/**
-				* The <code>titleCustomIconActions</code> are placed in the <code>SemanticPage</code> <code>Title</code>
-				* - the "IconActions" area, right before the semantic icon action.
+				* The <code>titleCustomIconActions</code> are placed in the <code>IconActions</code> area of the
+				* <code>SemanticPage</code> title, right before the semantic icon action.
 				*/
 				titleCustomIconActions: {type: "sap.m.OverflowToolbarButton", multiple: true},
 
 				/**
-				* <code>Header</code> content
+				* The header content.
 				*/
 				headerContent: {type: "sap.ui.core.Control", multiple: true},
 
 				/**
-				* <code>SemanticPage</code> content
+				* The <code>SemanticPage</code> content.
 				*/
 				content: {type: "sap.ui.core.Control", multiple: false},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>FooterMainAction</code>.
-				* The <code>FooterMainAction</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Footer</code> - the "FooterRight" area
-				* as first action.
-				* It has default text value - "Save".
+				* A semantic-specific button which is placed in the <code>FooterRight</code> area of the <code>SemanticPage</code>
+				* footer with default text value set to <code>Save</code>.
 				*/
 				footerMainAction: {type: "sap.f.semantic.FooterMainAction", multiple: false},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>MessagesIndicator</code>.
-				* The <code>MessagesIndicator</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Footer</code> - the "FooterLeft" area
-				* as first action.
+				* A semantic-specific button which is placed in the <code>FooterLeft</code> area of the <code>SemanticPage</code>
+				* footer as a first action.
 				*/
 				messagesIndicator: {type: "sap.f.semantic.MessagesIndicator", multiple: false},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>DraftIndicator</code>.
-				* The <code>DraftIndicator</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Footer</code> - the "FooterLeft" area
-				* as second action.
+				* A semantic-specific button which is placed in the <code>FooterLeft</code> area of the <code>SemanticPage</code>
+				* footer as a second action.
 				*/
 				draftIndicator: {type: "sap.m.DraftIndicator", multiple: false},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>PositiveAction</code>.
-				* The <code>PositiveAction</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Footer</code> - the "FooterRight" area.
-				* It has default text value - "Accept".
+				* A semantic-specific button which is placed in the <code>FooterRight</code> area of the <code>SemanticPage</code>
+				* footer with default text value set to <code>Accept</code>.
 				*/
 				positiveAction: {type: "sap.f.semantic.PositiveAction", multiple: false},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>NegativeAction</code>.
-				* The <code>NegativeAction</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Footer</code> - the "FooterRight" area.
-				* It has default text value - "Reject".
+				* A semantic-specific button which is placed in the <code>FooterRight</code> area of the <code>SemanticPage</code>
+				* footer with default text value set to <code>Reject</code>.
 				*/
 				negativeAction: {type: "sap.f.semantic.NegativeAction", multiple: false},
 
 				/**
-				* The <code>footerCustomActions</code> are placed in the <code>SemanticPage</code> <code>Footer</code>
-				* "FooterRight" area, right after all the semantic footer actions.
+				* The <code>footerCustomActions</code> are placed in the <code>FooterRight</code> area of the
+				* <code>SemanticPage</code> footer, right after the semantic footer actions.
 				*/
 				footerCustomActions: {type: "sap.m.Button", multiple: true},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>DiscussInJamAction</code>.
-				* The <code>DiscussInJamAction</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Title</code> - the "ShareMenu" area.
+				* A semantic-specific button which is placed in the <code>ShareMenu</code> area of the <code>SemanticPage</code> title.
 				*/
 				discussInJamAction: {type: "sap.f.semantic.DiscussInJamAction", multiple: false},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>ShareInJamAction</code>.
-				* The <code>ShareInJamAction</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Title</code> - the "ShareMenu" area.
+				* A semantic-specific button which is placed in the <code>ShareMenu</code> area of the <code>SemanticPage</code> title.
 				*/
 				shareInJamAction: {type: "sap.f.semantic.ShareInJamAction", multiple: false},
 
-
 				/**
-				* The <code>aggregation</code> accepts a <code>SendMessageAction</code>.
-				* The <code>SendMessageAction</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Title</code> - the "ShareMenu" area.
+				* A semantic-specific button which is placed in the <code>ShareMenu</code> area of the <code>SemanticPage</code> title.
 				*/
 				sendMessageAction: {type: "sap.f.semantic.SendMessageAction", multiple: false},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>SendEmailAction</code>.
-				* The <code>SendEmailAction</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Title</code> - the "ShareMenu" area.
+				* A semantic-specific button which is placed in the <code>ShareMenu</code> area of the <code>SemanticPage</code> title.
 				*/
 				sendEmailAction: {type: "sap.f.semantic.SendEmailAction", multiple: false},
 
 				/**
-				* The <code>aggregation</code> accepts a <code>PrintAction</code>.
-				* The <code>PrintAction</code> has default semantic-specific properties
-				* and it`s placed in the <code>SemanticPage</code> <code>Title</code> - the "ShareMenu" area.
+				* A semantic-specific button which is placed in the <code>ShareMenu</code> area of the <code>SemanticPage</code> title.
 				*/
 				printAction: {type: "sap.f.semantic.PrintAction", multiple: false},
 
 				/**
-				* The <code>customShareActions</code> are placed in the <code>SemanticPage</code> <code>Footer</code>
-				* - the "ShareMenu" area, right after all the semantic actions.
+				* The <code>customShareActions</code> are placed in the <code>ShareMenu</code> area of the
+				* <code>SemanticPage</code> title, right after the the semantic actions.
 				*/
 				customShareActions: {type: "sap.m.Button", multiple: true},
 
 				/**
-				* The <code>aggregation</code> holds <code>DynamicPage</code>, used internally.
+				* The aggregation holds <code>DynamicPage</code>, used internally.
 				*/
 				_dynamicPage: {type: "sap.f.DynamicPage", multiple: false, visibility: "hidden"}
 			}
@@ -437,8 +425,8 @@ sap.ui.define([
 	};
 
 	/**
-	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>titleHeading</code> aggregation's methods
-	* to the <code>sap.f.DynamicPageTitle</code><code>heading</code>.
+	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>titleHeading</code> aggregation methods
+	* to the <code>sap.f.DynamicPageTitle</code> <code>heading</code> aggregation.
 	*
 	* @override
 	*/
@@ -454,7 +442,7 @@ sap.ui.define([
 
 	/**
 	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>titleExpandedContent</code>
-	* <code>aggregation</code> methods to <code>sap.f.DynamicPageTitle</code> <code>expandedContent</code>.
+	* aggregation methods to <code>sap.f.DynamicPageTitle</code> <code>expandedContent</code> aggregation.
 	*
 	* @override
 	*/
@@ -477,7 +465,7 @@ sap.ui.define([
 
 	/**
 	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>titleExpandedContent</code>
-	* <code>aggregation</code> methods to <code>sap.f.DynamicPageTitle</code> <code>snappedContent</code>.
+	* aggregation methods to <code>sap.f.DynamicPageTitle</code> <code>snappedContent</code> aggregation.
 	*
 	* @override
 	*/
@@ -500,7 +488,7 @@ sap.ui.define([
 
 	/**
 	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>headerContent</code>
-	* <code>aggregation</code> methods to <code>sap.f.DynamicPageHeader</code> <code>content</code>.
+	* aggregation methods to <code>sap.f.DynamicPageHeader</code> <code>content</code> aggregation.
 	*
 	* @override
 	*/
@@ -523,7 +511,7 @@ sap.ui.define([
 
 	/**
 	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>content</code>
-	* <code>aggregation</code> methods to the <code>sap.f.DynamicPage</code> content aggregation.
+	* aggregation methods to the <code>sap.f.DynamicPage</code> <code>content</code> aggregation.
 	*
 	* @override
 	*/
@@ -537,7 +525,7 @@ sap.ui.define([
 
 	/**
 	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>titleCustomTextActions</code>
-	* <code>aggregation</code> methods to the internal <code>sap.f.DynamicPageTitle</code>,
+	* aggregation methods to the internal <code>sap.f.DynamicPageTitle</code>,
 	* using the <code>sap.f.semantic.SemanticTitle</code> wrapper class.
 	*
 	* @override
@@ -562,7 +550,7 @@ sap.ui.define([
 
 	/**
 	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>titleCustomIconActions</code>
-	* <code>aggregation</code> methods to the internal <code>sap.f.DynamicPageTitle</code>,
+	* aggregation methods to the internal <code>sap.f.DynamicPageTitle</code>,
 	* using the <code>sap.f.semantic.SemanticTitle</code> wrapper class.
 	*
 	* @override
@@ -586,7 +574,7 @@ sap.ui.define([
 
 
 	/**
-	* Proxies the<code>sap.f.semantic.SemanticPage</code> <code>footerCustomActions</code> aggregation's methods
+	* Proxies the<code>sap.f.semantic.SemanticPage</code> <code>footerCustomActions</code> aggregation methods
 	* to <code>OverflowToolbar</code>, using the <code>sap.f.semantic.SemanticFooter</code> wrapper class.
 	*
 	* @override
@@ -610,7 +598,7 @@ sap.ui.define([
 
 
 	/**
-	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>customShareActions</code> aggregation's methods.
+	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>customShareActions</code> aggregation methods.
 	*
 	* @override
 	*/
@@ -634,7 +622,7 @@ sap.ui.define([
 
 	/*
 	* Attaches a handler to the <code>ShareMenu</code> base button change.
-	* When the ShareMenu base button changes,
+	* When the <code>ShareMenu</code> base button changes,
 	* the old base button should be replaced by the new one.
 	*
 	* @private
@@ -644,7 +632,7 @@ sap.ui.define([
 	};
 
 	/*
-	* Handles the SHARE_MENU_BTN_CHANGED event.
+	* Handles the <code>SHARE_MENU_BTN_CHANGED</code> event.
 	*
 	* @private
 	*/
@@ -683,7 +671,7 @@ sap.ui.define([
 	};
 
 	/**
-	* Initializes the internal <code>sap.f.DynamicPage</code> <code>aggregation</code>.
+	* Initializes the internal <code>sap.f.DynamicPage</code> aggregation.
 	*
 	* @returns {sap.f.semantic.SemanticPage}
 	* @private
@@ -698,7 +686,7 @@ sap.ui.define([
 
 	/**
 	* Retrieves a <code>sap.f.DynamicPageTitle</code> instance,
-	* used for the <code>title</code> <code>aggregation</code> of the <sap.f.DynamicPage</code>.
+	* used for the <code>title</code> aggregation of the <sap.f.DynamicPage</code>.
 	*
 	* @returns {sap.f.DynamicPageTitle}
 	* @private
@@ -713,7 +701,7 @@ sap.ui.define([
 
 	/**
 	* Retrieves a <code>sap.f.DynamicPageHeader</code> instance,
-	* used for the <code>header</code> <code>aggregation</code> of the <sap.f.DynamicPage</code>.
+	* used for the <code>header</code> aggregation of the <sap.f.DynamicPage</code>.
 	*
 	* @returns {sap.f.DynamicPageHeader}
 	* @private
@@ -727,7 +715,7 @@ sap.ui.define([
 
 	/**
 	* Retrieves a <code>sap.m.OverflowToolbar</code> instance,
-	* used for the <code>footer</code> <code>aggregation</code> of the <sap.f.DynamicPage</code>.
+	* used for the <code>footer</code> aggregation of the <sap.f.DynamicPage</code>.
 	*
 	* @returns {sap.m.OverflowToolbar}
 	* @private
@@ -741,7 +729,7 @@ sap.ui.define([
 	};
 
 	/**
-	* Retrieves a <code>sap.f.SemanticTitle</code> instance,
+	* Retrieves a <code>sap.f.SemanticTitle</code> instance.
 	*
 	* @returns {sap.f.SemanticTitle}
 	* @private
@@ -754,7 +742,7 @@ sap.ui.define([
 	};
 
 	/**
-	* Retrieves a <code>sap.f.SemanticShareMenu</code> instance,
+	* Retrieves a <code>sap.f.SemanticShareMenu</code> instance.
 	*
 	* @returns {sap.f.SemanticShareMenu}
 	* @private
@@ -767,7 +755,7 @@ sap.ui.define([
 	};
 
 	/**
-	* Retrieves a <code>sap.m.ActionSheet</code> instance,
+	* Retrieves a <code>sap.m.ActionSheet</code> instance.
 	*
 	* @returns {sap.m.ActionSheet}
 	* @private
@@ -780,7 +768,7 @@ sap.ui.define([
 	};
 
 	/**
-	* Retrieves a <code>sap.f.SemanticFooter</code> instance,
+	* Retrieves a <code>sap.f.SemanticFooter</code> instance.
 	*
 	* @returns {sap.f.SemanticFooter}
 	* @private
@@ -794,7 +782,7 @@ sap.ui.define([
 
 	/**
 	* Retrieves a <code>sap.m.OverflowToolbar</code> instance,
-	* used for <code>footer</code> <code>aggregation</code> of the <code>sap.f.DynamicPage</code>.
+	* used for <code>footer</code> aggregation of the <code>sap.f.DynamicPage</code>.
 	*
 	* @returns {sap.m.OverflowToolbar}
 	* @private
@@ -829,8 +817,7 @@ sap.ui.define([
 	};
 
 	/**
-	* Cleans references of the used objects
-	* and destroys them.
+	* Cleans references of the used objects and destroys them.
 	*
 	* @private
 	*/
