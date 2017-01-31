@@ -3,7 +3,7 @@
  */
 
 /**
- * Provides a private class <code>sap.f.semantic.SemanticShareMenu</code>
+ * Provides a private class <code>sap.f.semantic.SemanticShareMenu</code>.
  */
 sap.ui.define([
 	"jquery.sap.global",
@@ -28,7 +28,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	* Constructor for a sap.f.semantic.SemanticShareMenu.
+	* Constructor for a <code>sap.f.semantic.SemanticShareMenu</code>.
 	*
 	* @private
 	* @since 1.46.0
@@ -51,25 +51,25 @@ sap.ui.define([
 	*/
 	SemanticShareMenu._Mode = {
 		/**
-		* In "initial" mode, the menu is empty and hidden;
+		* In <code>initial</code> mode, the menu is empty and hidden.
 		*/
 		initial: "initial",
 
 		/**
-		* In "button" mode, the menu consists of a single button, that represents the only menu-item
+		* In <code>button</code> mode, the menu consists of a single button, that represents the only menu-item.
 		*/
 		button: "button",
 
 		/**
-		* In "actionSheet" mode, the menu consists of:
-		* (1) an actionSheet containing all of the menu items and
-		* (2) a dedicated button that only opens the actionSheet.
+		* In <code>actionSheet</code> mode, the menu consists of:
+		* (1) an <code>actionSheet</code> containing all of the menu items and
+		* (2) a dedicated button that only opens the <code>actionSheet</code>.
 		*/
 		actionSheet: "actionSheet"
 	};
 
 	/*
-	* CUSTOM SHARE ACTIONS aggregation methods
+	* CUSTOM SHARE ACTIONS aggregation methods.
 	*/
 
 	SemanticShareMenu.prototype.addCustomAction = function(oCustomControl) {
@@ -143,7 +143,7 @@ sap.ui.define([
 	*/
 
 	/*
-	* Adds <code>sap.f.semantic.SemanticControl</code> to the container.
+	* Adds a <code>sap.f.semantic.SemanticControl</code> to the container.
 	*
 	* @param {sap.f.semantic.SemanticControl} oSemanticControl
 	* @returns {sap.f.semantic.SemanticShareMenu}
@@ -197,7 +197,7 @@ sap.ui.define([
 	*/
 
 	/*
-	* Returns the current mode - "initial", "button" or "action sheet".
+	* Returns the current mode - <code>initial</code>, <code>button</code> or <code>actionSheet</code>.
 	*
 	* @returns {String}
 	*/
@@ -207,7 +207,7 @@ sap.ui.define([
 
 
 	/*
-	 * Sets the ShareMenu mode - "initial", "button" or "action sheet".
+	 * Sets the <code>ShareMenu</code> mode - <code>initial</code>, <code>button</code> or <code>actionSheet</code>.
 	 *
 	 * @param {String} sMode
 	 * @param {sap.m.Button} oBaseButton
@@ -367,13 +367,13 @@ sap.ui.define([
 	};
 
 	/*
+	 * Returns <code>false</code>, if the current mode is <code>Initial</code>,
+	 * indicating that the control will be added in the <code>SemanticTitle</code> as a base button
+	 * and preventing adding it to the container.
+	 * Otherwise, it returns <code>true</code>.
+	 *
 	 * The method is called after new control has been added
 	 * in order to update the <code>ShareMenu</code> mode.
-	 *
-	 * The method returns <code>false</code>, if the current mode is "Initial",
-	 * indicting that the control will be added in <code>SemanticTitle</code> as a base button
-	 * and preventing adding it to the container.
-	 * Otherwise, the method returns <code>true</code>.
 	 *
 	 * @param {sap.f.semantic.SemanticControl} oControl
 	 * @returns {Boolean}
@@ -392,13 +392,14 @@ sap.ui.define([
 	};
 
 	/*
+	 * (1) If there are no more controls, the mode becomes <code>Initial</code> and
+	 * the base button is removed.
+	 *
+	 * (2) If a single control remains, the mode becomes <code>Button</code> and
+	 * the button is the new base button (either a custom or a semantic one).
+	 *
 	 * The method is called after a control has been removed
 	 * in order to update the <code>ShareMenu</code> mode.
-	 *
-	 * (1) If there are no control any more - the mode becomes "Initial" and
-	 * the base button is removed.
-	 * (2) If a single control remains - the mode becomes "Button" and
-	 * the button is the new base button (either custom or semantic one).
 	 *
 	 * @param {sap.f.semantic.SemanticControl} oControl
 	 * @returns {Boolean}
@@ -425,7 +426,7 @@ sap.ui.define([
 
 
 	/**
-	* Runs before adding a button to the action sheet.
+	* If the button is an <code>OverflowToolbarButton</code>, it is made to show icon and text.
 	* If the button is OverflowToolbarButton, it is made to show icon and text.
 	*
 	* @param oButton
@@ -438,7 +439,7 @@ sap.ui.define([
 	};
 
 	/**
-	* Runs after a button has been removed from the action sheet.
+	* If the button is an <code>OverflowToolbarButton</code>, it is made to only show an icon only.
 	* If the button is OverflowToolbarButton, it is made to only show an icon only.
 	*
 	* @param oButton
