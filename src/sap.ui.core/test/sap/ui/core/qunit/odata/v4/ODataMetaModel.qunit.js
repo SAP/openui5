@@ -2049,18 +2049,18 @@ sap.ui.require([
 		sValueListType : ValueListType.None
 	}, {
 		mAnnotations : {
-			"@com.sap.vocabularies.Common.v1.ValueListReference" : {},
+			"@com.sap.vocabularies.Common.v1.ValueListReferences" : [],
 			"@com.sap.vocabularies.Common.v1.ValueListWithFixedValues" : true
 		},
 		sValueListType : ValueListType.Fixed
 	}, {
 		mAnnotations : {
-			"@com.sap.vocabularies.Common.v1.ValueListReference" : {}
+			"@com.sap.vocabularies.Common.v1.ValueListReferences" : []
 		},
 		sValueListType : ValueListType.Standard
 	}, {
 		mAnnotations : {
-			"@com.sap.vocabularies.Common.v1.ValueListReference#foo" : {},
+			"@com.sap.vocabularies.Common.v1.ValueListReferences#foo" : [],
 			"@com.sap.vocabularies.Common.v1.ValueListWithFixedValues" : false
 		},
 		sValueListType : ValueListType.Standard
@@ -2251,7 +2251,7 @@ sap.ui.require([
 		sExpectedError : "No metadata"
 	}, {
 		sPropertyPath : "/EMPLOYEES/AGE",
-		sExpectedError : "No annotation 'com.sap.vocabularies.Common.v1.ValueListReference'"
+		sExpectedError : "No annotation 'com.sap.vocabularies.Common.v1.ValueListReferences'"
 	}].forEach(function (oFixture) {
 		QUnit.test("requestValueListInfo: " + oFixture.sExpectedError, function (assert) {
 			var oModel = new ODataModel({
@@ -2276,7 +2276,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	[false, true].forEach(function (bDuplicate) {
 		QUnit.test("requestValueListInfo: duplicate=" + bDuplicate, function (assert) {
-			var sMappingUrl = "../ValueListService/$metadata",
+			var sMappingUrl1 = "../ValueListService1/$metadata",
+				sMappingUrl2 = "../ValueListService2/$metadata",
 				sMappingUrlBar = "../ValueListServiceBar/$metadata",
 				oModel = new ODataModel({
 					serviceUrl : "/Foo/DataService/",
@@ -2295,13 +2296,11 @@ sap.ui.require([
 					},
 					"$Annotations" : {
 						"gw_sample_basic.Product/Category" : {
-							"@com.sap.vocabularies.Common.v1.ValueListReference" : {
-								MappingUrl : sMappingUrl
-							},
-							"@com.sap.vocabularies.Common.v1.ValueListReference#bar" : {
-								MappingUrl : sMappingUrlBar
-							},
-							"@com.sap.vocabularies.Common.v1.ValueListReference#bar@some.Annotation"
+							"@com.sap.vocabularies.Common.v1.ValueListReferences" :
+								[sMappingUrl1, sMappingUrl2],
+							"@com.sap.vocabularies.Common.v1.ValueListReferences#bar" :
+								[sMappingUrlBar],
+							"@com.sap.vocabularies.Common.v1.ValueListReferences#bar@an.Annotation"
 								: true,
 							"@some.other.Annotation" : true
 						}
@@ -2313,27 +2312,40 @@ sap.ui.require([
 						}
 					}
 				},
-				oValueListMappings = {
+				oValueListMappings1 = {
 					"" : {}
 				},
+				oValueListMappings2 = {
+					"foo" : {}
+				},
 				oValueListMappingsBar = {},
-				oValueListModel = {},
+				oValueListModel1 = {},
+				oValueListModel2 = {},
 				oValueListModelBar = {};
 
 			oValueListMappingsBar[bDuplicate ? "" : "bar"] = {};
 			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(_SyncPromise.resolve(oMetadata));
 			oMetaModelMock.expects("getOrCreateValueListModel")
-				.withExactArgs(sMappingUrl)
-				.returns(oValueListModel);
+				.withExactArgs(sMappingUrl1)
+				.returns(oValueListModel1);
 			oMetaModelMock.expects("fetchValueListMappings")
-				.withExactArgs(sinon.match.same(oValueListModel), "gw_sample_basic", oProperty)
-				.returns(Promise.resolve(oValueListMappings));
+				.withExactArgs(sinon.match.same(oValueListModel1), "gw_sample_basic",
+					sinon.match.same(oProperty))
+				.returns(Promise.resolve(oValueListMappings1));
+			oMetaModelMock.expects("getOrCreateValueListModel")
+				.withExactArgs(sMappingUrl2)
+				.returns(oValueListModel2);
+			oMetaModelMock.expects("fetchValueListMappings")
+				.withExactArgs(sinon.match.same(oValueListModel2), "gw_sample_basic",
+					sinon.match.same(oProperty))
+				.returns(Promise.resolve(oValueListMappings2));
 			oMetaModelMock.expects("getOrCreateValueListModel")
 				.withExactArgs(sMappingUrlBar)
 				.returns(oValueListModelBar);
 			oMetaModelMock.expects("fetchValueListMappings")
-				.withExactArgs(sinon.match.same(oValueListModelBar), "gw_sample_basic", oProperty)
+				.withExactArgs(sinon.match.same(oValueListModelBar), "gw_sample_basic",
+					sinon.match.same(oProperty))
 				.returns(_SyncPromise.resolve(oValueListMappingsBar));
 
 			// code under test
@@ -2342,17 +2354,19 @@ sap.ui.require([
 				.then(function (oResult) {
 					assert.ok(!bDuplicate);
 					assert.deepEqual(oResult, {
-						"" : oValueListMappings[""],
+						"" : oValueListMappings1[""],
+						"foo" : oValueListMappings2.foo,
 						"bar" : oValueListMappingsBar.bar
 					});
-					assert.strictEqual(oResult[""], oValueListMappings[""]);
+					assert.strictEqual(oResult[""], oValueListMappings1[""]);
+					assert.strictEqual(oResult.foo, oValueListMappings2.foo);
 					assert.strictEqual(oResult.bar, oValueListMappingsBar.bar);
 				}, function (oError) {
 					assert.ok(bDuplicate);
 					assert.strictEqual(oError.message,
 						"Annotations 'com.sap.vocabularies.Common.v1.ValueListMapping' with "
 						+ "identical qualifier '' for property " + sPropertyPath
-						+ " in " + sMappingUrlBar + " and " + sMappingUrl);
+						+ " in " + sMappingUrlBar + " and " + sMappingUrl1);
 				});
 		});
 	});
