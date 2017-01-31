@@ -90,8 +90,11 @@
 		</semantic:sendMessageAction>
 
 		<!-- Semantic Footer Buttons -->
+		<semantic:footerMainAction>
+			<semantic:FooterMainAction text="Save" press="onSave"/>
+		</semantic:footerMainAction>
+
 		<semantic:footerCustomActions>
-			<Button id="saveAction" text="Save" press="onSave"/>
 			<Button id="cancelAction" text="Cancel" press="onCancel"/>
 		</semantic:footerCustomActions>
 
