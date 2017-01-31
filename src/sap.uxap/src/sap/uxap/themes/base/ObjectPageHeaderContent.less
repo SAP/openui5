@@ -1,6 +1,8 @@
-/*
-objectPageHeader Content
-*/
+/* ================================================= */
+/* CSS for control sap.uxap/ObjectPageHeaderContent  */
+/* Base theme                                        */
+/* ================================================= */
+
 .sapUxAPObjectPageHeaderContent {
 	position: relative;
 
@@ -25,7 +27,7 @@ objectPageHeader Content
 		margin-right: 4rem;
 		.sapUxAPObjectPageHeaderSeparatorBefore {
 			width: 1px;
-			background-color: @sapUiLightLine;
+			background-color: @sapUiToolbarSeparatorColor;
 			display: inline-block;
 			position: absolute;
 			top: 0;
@@ -35,7 +37,7 @@ objectPageHeader Content
 		}
 		.sapUxAPObjectPageHeaderSeparatorAfter {
 			width: 1px;
-			background-color: @sapUiLightLine;
+			background-color: @sapUiToolbarSeparatorColor;
 			display: inline-block;
 			position: absolute;
 			top: 0;
@@ -305,4 +307,9 @@ html .sapUiContainer-Medium .sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHe
 
 .sapUiLoSplitterH.sapUiLoSplitter .sapUxAPObjectPageHeaderContent {
 	white-space: normal;
+}
+
+.sapUxAPObjectPageHeaderContentDesign-Light,
+.sapUxAPObjectPageHeaderContentDesign-Dark {
+	background-color: @sapUiObjectHeaderBackground;
 }

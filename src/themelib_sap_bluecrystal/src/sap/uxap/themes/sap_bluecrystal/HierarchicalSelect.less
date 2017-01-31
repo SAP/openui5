@@ -1,3 +1,8 @@
+/* ============================================ */
+/* CSS for control sap.uxap/HierarchicalSelect  */
+/* BlueCrystal theme                            */
+/* ============================================ */
+
 .sapUxAPHierarchicalSelect {
 	border: none;
 	background-color: transparent;
@@ -29,7 +34,7 @@
 	.sapMSltLabel,
 	.sapMSltArrow {
 		font-size: @sapMFontHeader6Size;
-		color: @sapUiDarkText;
+		color: @sapUiGroupTitleTextColor;
 		background-color: mix(@sapUiAccent5, @sapUiWhite, 5); /* temporarily instead of fade(@sapUiLightestBG, 60%); */
 	}
 
@@ -47,19 +52,19 @@
 }
 
 .sapMSltPicker .sapUxAPHierarchicalSelect.sapMSltBar::after {
-	color: @sapUiSelectArrowColor;
+	color: @sapUiContentIconColor;
 }
 
 .sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem:not(:first-child) {
-	border-top: 0.0625rem solid @sapUiExtraLightBorder;
+	border-top: 0.0625rem solid @sapUiListBorderColor;
 }
 
 .sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem {
-	color: @sapUiDarkText;
+	color: @sapUiListTextColor;
 }
 
 .sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {
-	color: @sapUiLightText;
+	color: @sapUiContentLabelColor;
 }
 
 .sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem,
@@ -68,32 +73,32 @@
 }
 
 .sapUxAPHierarchicalSelect .sapMSltPicker-CTX .sapMSelectList {
-	border: 1px solid @sapUiDarkBorder;
+	border: 1px solid darken(@sapUiContentForegroundBorderColor, 15);
 }
 
 /* active */
 .sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem:active,
 .sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem:active {
-	color: @sapUiTextInverted;
+	color: @sapUiListActiveTextColor;
 }
 
 /* hover */
 .sapUxAPHierarchicalSelect .sapMSelectListItemSelected:hover {
-	background: @sapUiActiveBGHover;
+	background: @sapUiListSelectionHoverBackground;
 }
 
 /* styling needed to achieve underline of the select label on phone */
 html.sapUiMedia-Std-Phone, html.sap-phone {
 	.sapUxAPHierarchicalSelect .sapMSltLabel {
-		border-bottom: 0.125rem solid @sapUiExtraDarkBorder;
+		border-bottom: 0.125rem solid @sapUiSelected;
 	}
 
 	.sapUxAPHierarchicalSelect .sapMSltArrow {
-		box-shadow: inset 0 -0.125rem @sapUiLightBorder;
+		box-shadow: inset 0 -0.125rem @sapUiObjectHeaderBorderColor, 0 0.125rem 0 0 @sapUiObjectHeaderBackground;
 	}
 
 	.sapMSlt.sapUxAPHierarchicalSelect {
-		box-shadow: inset 0 -0.125rem @sapUiLightBorder;
+		box-shadow: inset 0 -0.125rem @sapUiObjectHeaderBorderColor, 0 0.125rem 0 0 @sapUiObjectHeaderBackground;
 	}
 }
 
@@ -101,8 +106,7 @@ html.sapUiMedia-Std-Phone, html.sap-phone {
 (this is specific for webview (Fiori client) and Chrome browser) */
 html[data-sap-ui-browser^="cr4"].sapUiMedia-Std-Phone,
 html[data-sap-ui-browser^="cr4"].sap-phone {
-
 	.sapUxAPHierarchicalSelect .sapMSltLabel {
-		box-shadow: inset 0 -0.125rem @sapUiExtraDarkBorder;
+		box-shadow: inset 0 -0.125rem @sapUiSelected;
 	}
 }

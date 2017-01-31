@@ -1,3 +1,55 @@
+/* ========================================== */
+/* CSS for control sap.uxap/ObjectPageHeader  */
+/* Base theme                                 */
+/* ========================================== */
+
+
+
+
+
+
+
+
+
+
+
+.sapUxAPObjectPageHeaderIdentifier {
+	background-color: @sapUiObjectHeaderBackground;
+	border-bottom: 1px solid @sapUiObjectHeaderBorderColor;
+
+	.sapUxAPObjectPageHeaderIdentifierContainer {
+		.sapUxAPObjectPageHeaderIdentifierDescription {
+			font-size: @sapMFontMediumSize;
+		}
+	}
+
+	.sapUxAPObjectPageHeaderIdentifierActions {
+		&.sapUxAPObjectPageHeaderIdentifierActionsForce, .sapUxAPObjectPageHeaderStickied & {
+			display: inline-block;
+		}
+	}
+}
+
+html.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifierTitle,
+html .sapUiContainer-Narrow .sapUxAPObjectPageHeaderIdentifierTitle {
+	font-size: @sapMFontHeader4Size;
+}
+
+.sapUxAPObjectPageHeaderSeparator {
+	background-color: @sapUiToolbarSeparatorColor;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 h1.sapUxAPObjectPageHeaderIdentifierTitle,
 h1.sapUxAPObjectPageHeaderIdentifierTitleForce {
 	margin: 0;
@@ -371,4 +423,3 @@ html[dir=rtl] .sapUxAPObjectPageHeaderMarks .sapMObjStatusMarker .sapUiIcon:firs
   background: transparent;
   box-shadow: none;
 }
-

@@ -1,3 +1,7 @@
+/* ================================================= */
+/* CSS for control sap.uxap/ObjectPageHeaderContent  */
+/* BlueCrystal theme                                 */
+/* ================================================= */
 
 .sapUxAPObjectPageHeaderContent .sapMObjStatus, .sapUxAPObjectPageContainer .sapMObjStatus {
 	font-size: @sapMFontMediumSize;
@@ -5,10 +9,10 @@
 
 html.sapUiMedia-Std-Desktop, html.sapUiMedia-Std-Tablet {
 	.sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderObjectImage-Circle .sapUxAPObjectPageHeaderObjectImage {
-		border-color: fade(@sapUiAccent7, 20%);
+		border-color: fade(@sapUiAccent7, 20);
 	}
 	.sapUxAPObjectPageHeaderDetailsDesign-Dark .sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderObjectImage-Circle .sapUxAPObjectPageHeaderObjectImage {
-		border-color: fade(@sapUiLightestBG, 20%);
+		border-color: fade(@sapUiGroupContentBackground, 20);
 	}
 }
 
@@ -29,7 +33,7 @@ html.sapUiMedia-Std-Desktop, html.sapUiMedia-Std-Tablet {
 }
 
 html.sap-desktop .sapUxAPObjectPageHeaderDetailsDesign-Dark .sapMBtn:focus > .sapMFocusable {
-	outline: 1px dotted @sapUiInvertedFocus;
+	outline: 1px dotted @sapUiContentContrastFocusColor;
 }
 
 html.sap-desktop .sapUxAPObjectPageHeaderDetailsDesign-Dark .sapMBtn:focus > .sapMFocusable.sapMIE {
@@ -37,5 +41,5 @@ html.sap-desktop .sapUxAPObjectPageHeaderDetailsDesign-Dark .sapMBtn:focus > .sa
 }
 
 html.sap-desktop .sapUxAPObjectPageHeaderDetailsDesign-Dark .sapMBtn:focus .sapMBtnFocusDiv {
-	border: 1px dashed @sapUiInvertedFocus;
+	border: 1px dashed @sapUiContentContrastFocusColor;
 }
