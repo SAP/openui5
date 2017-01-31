@@ -44,6 +44,10 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 						icon: "sap-icon://supplier"
 					},
 					{
+						name: "CUSTOMER_BASE",
+						icon: "sap-icon://customer-and-supplier"
+					},
+					{
 						name: "CUSTOMER",
 						icon: "sap-icon://customer"
 					},
