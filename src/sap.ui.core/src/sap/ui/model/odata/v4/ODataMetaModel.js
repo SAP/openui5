@@ -1036,10 +1036,12 @@ sap.ui.define([
 	 * @param {object} oProperty
 	 *   The property in the data service
 	 * @returns {SyncPromise}
-	 *   A promise that gets resolved with an object as described in {@link #requestValueListInfo}
-	 *   containing all "ValueListMapping" annotations in the metadata of the given model.
+	 *   A promise that gets resolved with a map containing all "ValueListMapping" annotations in
+	 *   the metadata of the given model by qualifier.
+	 *
 	 *   It is rejected with an error if the value list model contains annotation targets in the
-	 *   namespace of the data service that are not mappings for the given property.
+	 *   namespace of the data service that are not mappings for the given property, or if there are
+	 *   no mappings for the given property.
 	 *
 	 * @private
 	 */
@@ -1086,9 +1088,7 @@ sap.ui.define([
 				var sQualifier = getQualifier(sTerm, sValueListMapping);
 
 				if (sQualifier !== undefined) {
-					mValueListMappingByQualifier[sQualifier] = jQuery.extend(true, {
-						$model : oValueListModel
-					}, mAnnotationByTerm[sTerm]);
+					mValueListMappingByQualifier[sQualifier] = mAnnotationByTerm[sTerm];
 				} else if (!bValueListOnValueList) {
 					throw new Error("Unexpected annotation '" + sTerm.slice(1) +
 						"' for target '" + aTargets[0] + "' with namespace of data service in "
@@ -1129,12 +1129,15 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.prototype.getOrCreateValueListModel = function (sMappingUrl) {
-		var oValueListModel,
+		// Note: make the service URL absolute because URI#absoluteTo requires an absolute base URL
+		// (and it fails if the base URL starts with "..")
+		var sAbsoluteUrl = new URI(this.sUrl).absoluteTo(document.baseURI).pathname().toString(),
+			oValueListModel,
 			sValueListUrl;
 
 		// the MappingUrl references the metadata document, make it absolute based on the data
 		// service URL to get rid of ".." segments and remove the filename part
-		sValueListUrl = new URI(sMappingUrl).absoluteTo(this.sUrl).filename("").toString();
+		sValueListUrl = new URI(sMappingUrl).absoluteTo(sAbsoluteUrl).filename("").toString();
 		oValueListModel = mValueListModelByUrl[sValueListUrl];
 		if (!oValueListModel) {
 			oValueListModel = new this.oModel.constructor({
@@ -1250,7 +1253,8 @@ sap.ui.define([
 				return ValueListType.Fixed;
 			}
 			for (sTerm in mAnnotationByTerm) {
-				if (getQualifier(sTerm, sValueListReferences) !== undefined) {
+				if (getQualifier(sTerm, sValueListReferences) !== undefined
+						|| getQualifier(sTerm, sValueListMapping) !== undefined) {
 					return ValueListType.Standard;
 				}
 			}
@@ -1514,12 +1518,19 @@ sap.ui.define([
 	 *
 	 *   The promise is rejected with an error if there is no value list information available
 	 *   for the given property path. Use {@link #getValueListType} to determine if value list
-	 *   information exists.
+	 *   information exists. It is also rejected with an error if the value list metadata is
+	 *   inconsistent.
 	 *
-	 *   It is also rejected if the value list info is inconsistent, either because there is a
-	 *   reference, but the referenced service does not contain mappings for the property, or if a
-	 *   referenced service contains annotation targets in the namespace of the data service that
-	 *   are not mappings for the given property.
+	 *   An inconsistency can result from one of the following reasons:
+	 *   <ul>
+	 *    <li> There is a reference, but the referenced service does not contain mappings for the
+	 *     property.
+	 *    <li> The referenced service contains annotation targets in the namespace of the data
+	 *     service that are not mappings for the property.
+	 *    <li> Two different referenced services contain a mapping using the same qualifier.
+	 *    <li> A service is referenced twice.
+	 *    <li> No mappings have been found.
+	 *   </ul>
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -1540,9 +1551,39 @@ sap.ui.define([
 				oProperty = aResults[1],
 				oValueListInfo = {};
 
+			/*
+			 * Adds the given mapping to oValueListInfo.
+			 *
+			 * @param {object} mValueListMapping The mapping
+			 * @param {string} sQualifier The mapping qualifier
+			 * @param {string} sMappingUrl The mapping URL (for error messages)
+			 * @param {sap.ui.model.odata.v4.ODataModel} oModel The value list model
+			 * @throws {Error} If there is already a mapping for the given qualifier
+			 */
+			function addMapping(mValueListMapping, sQualifier, sMappingUrl, oModel) {
+				if (mMappingUrlByQualifier[sQualifier]) {
+					throw new Error("Annotations '" + sValueListMapping.slice(1)
+						+ "' with identical qualifier '" + sQualifier
+						+ "' for property " + sPropertyPath + " in "
+						+ mMappingUrlByQualifier[sQualifier] + " and " + sMappingUrl);
+				}
+				mMappingUrlByQualifier[sQualifier] = sMappingUrl;
+				oValueListInfo[sQualifier] = jQuery.extend(true, {
+					$model : oModel
+				}, mValueListMapping);
+			}
+
 			if (!oProperty) {
 				throw new Error("No metadata for " + sPropertyPath);
 			}
+
+			Object.keys(mAnnotationByTerm).filter(function (sTerm) {
+				return getQualifier(sTerm, sValueListMapping) !== undefined;
+			}).forEach(function (sTerm) {
+				addMapping(mAnnotationByTerm[sTerm], getQualifier(sTerm, sValueListMapping),
+					that.oModel.sServiceUrl + "$metadata", that.oModel);
+			});
+
 
 			// filter all reference annotations, for each create a promise to evaluate the mapping
 			// and wait for all of them to finish
@@ -1553,20 +1594,15 @@ sap.ui.define([
 
 				// fetch mappings for each entry and wait for all
 				return Promise.all(aMappingUrls.map(function (sMappingUrl) {
+					var oValueListModel = that.getOrCreateValueListModel(sMappingUrl);
 					// fetch the mappings for the given mapping URL
 					return that.fetchValueListMappings(
-						that.getOrCreateValueListModel(sMappingUrl), sNamespace, oProperty
+						oValueListModel, sNamespace, oProperty
 					).then(function (mValueListMappingByQualifier) {
 						// insert the returned mappings into oValueListInfo
 						Object.keys(mValueListMappingByQualifier).forEach(function (sQualifier) {
-							if (mMappingUrlByQualifier[sQualifier]) {
-								throw new Error("Annotations '" + sValueListMapping.slice(1)
-									+ "' with identical qualifier '" + sQualifier
-									+ "' for property " + sPropertyPath + " in "
-									+ mMappingUrlByQualifier[sQualifier] + " and " + sMappingUrl);
-							}
-							mMappingUrlByQualifier[sQualifier] = sMappingUrl;
-							oValueListInfo[sQualifier] = mValueListMappingByQualifier[sQualifier];
+							addMapping(mValueListMappingByQualifier[sQualifier], sQualifier,
+								sMappingUrl, oValueListModel);
 						});
 					});
 				}));
