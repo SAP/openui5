@@ -109,7 +109,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Event is fired when the user triggers the link control.
 			 */
 			press : {allowPreventDefault : true}
-		}
+		},
+		designTime: true
 	}});
 
 

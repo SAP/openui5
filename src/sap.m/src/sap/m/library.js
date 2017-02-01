@@ -353,6 +353,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 				"sap.m.OverflowToolbar": {
 					"moveControls": "default"
 				},
+				"sap.m.Link": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
 				"sap.m.List": {
 					"hideControl": "default",
 					"unhideControl": "default",
