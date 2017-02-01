@@ -63,8 +63,15 @@
 .sapMNLG .sapMNLG-SubHeader {
 	border-radius: 0 0 @notificationGroupBorderRadius @notificationGroupBorderRadius;
 }
+
 .sapMNLG-SubHeader {
   height: 3rem;
+}
+
+.sapMNLG-SubHeader {
+  .sapMBtn {
+    margin-left: 0.25rem;
+  }
 }
 
 .sapMNLG-SubHeader .sapMTB {
@@ -190,18 +197,18 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-SubHeader .sapMBtnInner {
       margin-top: 0;
       border-top: 1px solid @sapUiListBorderColor;
     }
-    //Focus Style ==================================================================================
-    &:focus&::after {
-      border: 1px dotted @sapUiContentFocusColor;
-      position: absolute;
-      content: " ";
-      top: 1px;
-      right: 1px;
-      bottom: 1px;
-      left: 1px;
-      z-index: 2;
-      pointer-events: none;
-    }
+}
+
+html.sap-desktop .sapMNLG:focus::before {
+    border: 1px dotted @sapUiContentFocusColor;
+    position: absolute;
+    content: " ";
+    top: 1px;
+    right: 1px;
+    bottom: 1px;
+    left: 1px;
+    z-index: 2;
+    pointer-events: none;
 }
 
 .sapMNLG.sapMNLG-Collapsed {
