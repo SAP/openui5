@@ -20,6 +20,7 @@
 					<core:Item key="None" text="sap.m.ListSeparators.None"/>
 				</Select>
 			</OverflowToolbar>
+			<MessageStrip showIcon="true" type="Information" text="To add files, you can also use drag &amp; drop on your desktop or tablet." class="sapUiTinyMargin"></MessageStrip>
 			<Label text="Notes"/>
 			<TextArea
 				id="TextArea"
