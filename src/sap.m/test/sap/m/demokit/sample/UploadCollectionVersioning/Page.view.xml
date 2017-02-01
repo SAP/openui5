@@ -16,6 +16,15 @@
 					change="onSelectChange" >
 					<core:Item key="{key}" text="{text}"/>
 				</Select>
+				<Label text="File types"></Label>
+				<MultiComboBox
+						id="fileTypesBox"
+						selectionChange="onFileTypeChange"
+						width="250px"
+						placeholder="Choose the valid file types"
+						items="{fileTypes>/items}">
+					<core:Item key="{fileTypes>key}" text="{fileTypes>text}" />
+				</MultiComboBox>
 			</OverflowToolbar>
 			<UploadCollection
 				id="UploadCollection"

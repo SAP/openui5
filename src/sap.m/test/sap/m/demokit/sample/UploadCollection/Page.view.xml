@@ -15,6 +15,15 @@
 				<Switch state="true" change="onSwitchUploaderChange" type="Transparent"></Switch>
 				<Label text="Multi-selection mode"></Label>
 				<Switch id="modeSwitch" state="false" change="onSwitchModeChange" type="Transparent"></Switch>
+				<Label text="File types"></Label>
+				<MultiComboBox
+					id="fileTypesBox"
+					selectionChange="onFileTypeChange"
+					width="250px"
+					placeholder="Choose the valid file types"
+					items="{fileTypes>/items}">
+					<core:Item key="{fileTypes>key}" text="{fileTypes>text}" />
+				</MultiComboBox>
 				<Select
 					id="tbSelect"
 					items="{/items}"
