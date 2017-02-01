@@ -405,6 +405,9 @@ sap.ui.define([
 	 *   additional property "$model" which is the {@link sap.ui.model.odata.v4.ODataModel} instance
 	 *   to read value list data via this mapping.
 	 *
+	 *   For fixed values, only one mapping is expected and the qualifier is ignored. The mapping
+	 *   is available with key "".
+	 *
 	 *   The promise is rejected with an error if there is no value list information available
 	 *   for this property. Use {@link #getValueListType} to determine if value list information
 	 *   exists. It is also rejected with an error if the value list metadata is inconsistent.

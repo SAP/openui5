@@ -2447,6 +2447,62 @@ sap.ui.require([
 		});
 	});
 
+	//*********************************************************************************************
+	[false, true].forEach(function (bDuplicate) {
+		QUnit.test("requestValueListInfo: fixed values: duplicate=" + bDuplicate, function(assert) {
+			var oValueListMapping = {CollectionPath : "foo"},
+				oAnnotations = {
+					"@com.sap.vocabularies.Common.v1.ValueListWithFixedValues" : true,
+					"@com.sap.vocabularies.Common.v1.ValueListMapping#foo" : oValueListMapping
+				},
+				oMetadata = {
+					"$EntityContainer" : "value_list.Container",
+					"value_list.Container" : {
+						"$kind" : "EntityContainer",
+						"VH_BusinessPartnerSet" : {
+							"$kind" : "EntitySet",
+							"$Type" : "value_list.VH_BusinessPartner"
+						}
+					},
+					"value_list.VH_BusinessPartner" : {
+						"$kind" : "Entity",
+						"Country" : {}
+					},
+					"$Annotations" : {
+						"value_list.VH_BusinessPartner/Country" : oAnnotations
+					}
+				},
+				oModel = new ODataModel({
+					serviceUrl : "/Foo/ValueListService/",
+					synchronizationMode : "None"
+				}),
+				sPropertyPath = "/VH_BusinessPartnerSet('42')/Country";
+
+			if (bDuplicate) {
+				oAnnotations["@com.sap.vocabularies.Common.v1.ValueListMapping#bar"] = {};
+			}
+			this.mock(oModel.getMetaModel()).expects("fetchEntityContainer").atLeast(1)
+				.returns(_SyncPromise.resolve(oMetadata));
+
+			// code under test
+			return oModel.getMetaModel().requestValueListInfo(sPropertyPath)
+				.then(function (oResult) {
+					assert.notOk(bDuplicate);
+					assert.strictEqual(oResult[""].$model, oModel);
+					delete oResult[""].$model;
+					assert.deepEqual(oResult, {
+						"" : {CollectionPath : "foo"}
+					});
+				}, function (oError) {
+					assert.ok(bDuplicate);
+					assert.strictEqual(oError.message, "Annotation "
+						+ "'com.sap.vocabularies.Common.v1.ValueListWithFixedValues' but multiple "
+						+ "'com.sap.vocabularies.Common.v1.ValueListMapping' for property "
+						+ sPropertyPath);
+				});
+		});
+	});
+
 	// *********************************************************************************************
 	QUnit.test("requestValueListInfo: same qualifier in reference and local", function(assert) {
 		var sMappingUrl = "../ValueListService/$metadata",
