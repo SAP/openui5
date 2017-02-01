@@ -166,6 +166,11 @@ sap.ui.define([
 		 * Destroy all content on wizard destroy
 		 */
 		Wizard.prototype.exit = function () {
+			var contentDomRef = this.getDomRef("step-container");
+			if (contentDomRef) {
+				contentDomRef.onscroll = null;
+			}
+
 			this._scroller.destroy();
 			this._scroller = null;
 			this._stepPath = null;
