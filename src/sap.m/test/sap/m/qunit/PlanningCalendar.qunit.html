@@ -872,7 +872,7 @@
 
 			test("appointmentSelect", function() {
 				oSelectedAppointment = undefined;
-				qutils.triggerEvent("click", "PC1-R1A1");
+				qutils.triggerEvent("tap", "PC1-R1A1");
 				equal(oSelectedAppointment.getId(), "PC1-R1A1", "appointmentSelect event fired and appointment returned");
 				ok(sap.ui.getCore().byId("PC1-R1A1").getSelected(), "Appointment is selected");
 				oSelectedAppointment = undefined;
@@ -1020,7 +1020,7 @@
 				oIntervalEndDate = undefined;
 				bSubInterval = undefined,
 				oIntervalRow = undefined,
-				qutils.triggerEvent("click", "PC1-Row1-CalRow-AppsInt3");
+				qutils.triggerEvent("tap", "PC1-Row1-CalRow-AppsInt3");
 				ok(bIntervalSelect, "intervalSelect fired");
 				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201501011100", "interval start date returned");
 				equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201501011159", "interval end date returned");

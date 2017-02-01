@@ -15,6 +15,7 @@
 		</script>
 
 		<script type="text/javascript">
+		jQuery.sap.require("sap.m.MessageBox");
 
 		var oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
 			items: [
@@ -43,6 +44,7 @@
 
 		var app = new sap.m.App("myApp");
 
+		var oEventLabel = new sap.m.Label({text: "Events log"});
 		function createFooter(){
 			return new sap.m.Bar({
 				contentMiddle: [new sap.m.Button({
@@ -50,7 +52,8 @@
 					press: function(){
 						app.to("page1");
 					}
-				})]
+				})],
+				contentRight: [oEventLabel]
 			});
 		};
 
@@ -67,6 +70,7 @@
 				}
 				oInput.setValue(sValue);
 			}
+			setEventLog("'appointmentSelect' for appointment: " + (oAppointment ? oAppointment.getTitle() : "<no app>"));
 		};
 
 		var handleAddRow = function(oEvent){
@@ -90,6 +94,8 @@
 			var aSelectedRows = oPC.getSelectedRows();
 			var iStartOffset = 3;
 			var iEndOffset = 3;
+
+			setEventLog("'intervalSelect': startDate=" + oEventStartDate + ", endDate=" + oEventEndDate);
 
 			if (oEventStartDate) {
 				// add appointment in selected interval
@@ -139,6 +145,24 @@
 			}
 
 		};
+
+		var handleStartDateChange = function(oEvent) {
+			var oDf = sap.ui.core.format.DateFormat.getTimeInstance("HH:mm:ss");
+			setEventLog("startDateChange event at " + oDf.format(new Date()) + " with params:"  + JSON.stringify(oEvent.mParameters));
+		};
+
+		var handleRowSelectionChange = function(oEvent) {
+			var oRows = oEvent.getParameter("rows"),
+					sValue = oRows.length + " row(s) selected";
+			setEventLog("rowSelectionChange:" + sValue);
+		};
+
+		//adds some event info to the event log label
+		function setEventLog(sMessage) {
+			oEventLabel.setText(sMessage);
+			oEventLabel.$().attr('style', "background-color: rgb(" + Math.ceil(Math.random()*255).toString() + "," + Math.ceil(Math.random()*255).toString() + "," + Math.ceil(Math.random()*255).toString() + ");");
+			sap.m.MessageBox.show(sMessage);
+		}
 
 		var handleLegend = function(oEvent){
 			oDialog.open();
@@ -587,8 +611,8 @@
 				        	                	tooltip: "None"
 				        	                })
 				        	]
-				        	})
-				],
+			        	})
+			       ],
 			specialDates: [ new sap.ui.unified.DateTypeRange({
 			                	startDate: new Date(2015, 0, 1, 12, 00),
 			                	endDate: new Date(2015, 0, 1, 14, 00),
@@ -622,7 +646,9 @@
 			                 oVisSelect],
 			legend: "Legend1",
 			appointmentSelect: handleAppointmentSelect,
-			intervalSelect: handleAddAppointment
+			intervalSelect: handleAddAppointment,
+			startDateChange: handleStartDateChange,
+			rowSelectionChange: handleRowSelectionChange
 		});
 
 		var oInput = new sap.m.Input("I1", {
