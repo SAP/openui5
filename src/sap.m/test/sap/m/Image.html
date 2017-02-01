@@ -87,9 +87,11 @@
 
 			oBigImage.placeAt("imageArea");
 
-			setTimeout(function(){
-				oImageInvalid.setSrc("images/action.png");
-			}, 3000);
+			sap.ui.getCore().attachInit(function () {
+				setTimeout(function () {
+					oImageInvalid.setSrc("images/action.png");
+				},3000);
+			});
 
 
 			var oDataImage = new sap.m.Image({
