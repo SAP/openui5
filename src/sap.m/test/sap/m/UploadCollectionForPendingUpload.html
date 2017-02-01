@@ -19,6 +19,7 @@
 	/* UploadCollection                                            */
 	/* =========================================================== */
 
+	// The upper and lower case letters are on purpose to prove that they don't matter
 	var aFileTypes = ["jPg", "tXT", "ppt", "doc", "xls", "pdf", "PNG"];
 	var iRequestCounter = 0, sFileName;
 	var oUploadButton = new sap.m.Button({
@@ -29,7 +30,9 @@
 		text : "Remove Selected Item",
 		press : fnRemove
 	});
+
 	var oUploadCollection = fnCreateUploadCollection();
+
 
 	/* =========================================================== */
 	/* Creates an instance of UploadCollection                     */
@@ -39,23 +42,30 @@
 			maximumFilenameLength : 55,
 			maximumFileSize : 50,
 			multiple : true,
-			fileType : aFileTypes,
 			sameFilenameAllowed : true,
 			instantUpload : false,
+			fileType : aFileTypes,
 			mode : "SingleSelectMaster",
 			toolbar : new sap.m.OverflowToolbar({
-				content : [new sap.m.Title("attachmentTitle"), new sap.m.ToolbarSpacer(), new sap.m.SearchField({
-					width : "10rem",
-					search : fnSearch
-				}), new sap.m.UploadCollectionToolbarPlaceholder(), new sap.m.Button({
-					icon : "sap-icon://money-bills",
-					enabled : false,
-					type : "Transparent"
-				}), new sap.m.Button({
-					text : "Details",
-					press : fnDetailsPress,
-					type : "Transparent"
-				})]
+				content : [
+					new sap.m.Title("attachmentTitle"),
+					new sap.m.ToolbarSpacer(),
+					new sap.m.SearchField({
+						width : "10rem",
+						search : fnSearch
+					}),
+					new sap.m.UploadCollectionToolbarPlaceholder(),
+					new sap.m.Button({
+						icon : "sap-icon://money-bills",
+						enabled : false,
+						type : "Transparent"
+					}),
+					new sap.m.Button({
+						text : "Details",
+						press : fnDetailsPress,
+						type : "Transparent"
+					})
+				]
 			}),
 			// events
 			change : fnChange,

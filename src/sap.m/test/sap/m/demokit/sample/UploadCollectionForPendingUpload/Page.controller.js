@@ -7,7 +7,6 @@ sap.ui.define([
 	"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.UploadCollectionForPendingUpload.Page", {
-
 		onChange : function(oEvent) {
 			var oUploadCollection = oEvent.getSource();
 			// Header Token
