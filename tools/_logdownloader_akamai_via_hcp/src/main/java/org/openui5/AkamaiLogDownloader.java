@@ -2,6 +2,7 @@ package org.openui5;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -438,9 +439,16 @@ public class AkamaiLogDownloader {
 				GZIPInputStream gzInputStream = new GZIPInputStream(in);
 				FileOutputStream out = new FileOutputStream(unzippedFile);
 				
-				int bytes_read;
-				while ((bytes_read = gzInputStream.read(buffer)) > 0) {
-					out.write(buffer, 0, bytes_read);
+				int bytes_read = 0;
+				try {
+					while ((bytes_read = gzInputStream.read(buffer)) > 0) {
+						out.write(buffer, 0, bytes_read);
+					}
+				} catch (EOFException e) {
+					// corrupted ZIP file?
+					warn("ERROR while unzipping " + gzFile.getName() + ": " + e.getMessage() + "  ##  still continuing, but the data is incomplete.");
+					File errorFile = new File(directory.getAbsolutePath() + File.separator + "ERROR_EOFException_after_" + bytes_read + "_of_" + gzFile.length() + "_in_" + gzFile.getName());
+					errorFile.createNewFile();
 				}
 				gzInputStream.close();
 				out.close();
