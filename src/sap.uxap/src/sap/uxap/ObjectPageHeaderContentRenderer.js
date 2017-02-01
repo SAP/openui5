@@ -95,8 +95,7 @@ sap.ui.define([
 		var bHasSeparatorBefore = false,
 			bHasSeparatorAfter = false,
 			oLayoutData = oControl._getLayoutDataForControl(oHeaderContent),
-			bIsFirstControl = iIndex === 0,
-			bIsLastControl = iIndex === (oControl.getContent().length - 1);
+			bIsFirstControl = iIndex === 0;
 
 		if (oLayoutData) {
 			bHasSeparatorBefore = oLayoutData.getShowSeparatorBefore();
@@ -147,7 +146,7 @@ sap.ui.define([
 			oRm.write("<span class=\"sapUxAPObjectPageHeaderSeparatorAfter\"/>");
 		}
 
-		if (oLayoutData || (bIsFirstControl && bRenderTitle) || bIsLastControl) {
+		if (oLayoutData || (bIsFirstControl && bRenderTitle)) {
 			oRm.write("</span>");
 		}
 	};
