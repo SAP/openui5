@@ -64,9 +64,7 @@ html[data-sap-ui-browser^="ie"] {
 .sapUiSizeCompact {
 	.sapMTPColumn:not(.sapMTimePickerSliderShort) {
 		.sapMTimePickerSlider {
-			box-sizing: border-box;
-			border-top: 1px solid @sapUiListBorderColor;
-			border-bottom: 1px solid @sapUiListBorderColor;
+			box-shadow: 0 0 0 1px @sapUiListBorderColor;
 		}
 	}
 }
@@ -93,8 +91,8 @@ html.sap-phone {
 				margin-left: -1px;
 			}
 		}
-	}	
-	
+	}
+
 	/* ======================================== */
 	/* TimePicker Dropdown                      */
 	/* ======================================== */
