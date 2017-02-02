@@ -48,7 +48,8 @@
 
     <!-- The version of this project is also the version of the UI5 dependencies -->
     <sap.ui5.version>1.33.0-SNAPSHOT</sap.ui5.version>
-
+    <sap.ui5.fullversion>1.33.0-SNAPSHOT</sap.ui5.fullversion>
+    
     <!-- REST API base URL for remote management of Tomcat 6.x and 7.x -->
     <tomcat.manager.url.v6>/manager</tomcat.manager.url.v6>
     <tomcat.manager.url.v7>/manager/text</tomcat.manager.url.v7>
@@ -61,6 +62,9 @@
 
     <!-- Sandbox Tomcat configuration for Visual tests -->
     <visual.tomcat.sandbox.url>http://veui5test:8081</visual.tomcat.sandbox.url>
+    
+    <!-- Stage url part name like .../sapui5-dist-candidate-1.46 -->
+    <stage>candidate</stage>
 
   </properties>
 
@@ -889,7 +893,144 @@
 
     </profile>
 
+    <!-- ******************************************************************* -->
+    <!-- HOUSEKEEPING: VEUI5INFRA, stage patch dev for old Release (Walldorf)      -->
+    <!-- ******************************************************************* -->
 
+    <profile>
+
+      <id>housekeeping-dist-stage</id>
+
+      <activation>
+        <property>
+          <name>sap.ui5.deployset</name>
+          <value>dist-stage</value>
+        </property>
+      </activation>
+
+      <properties>
+        <!-- set to empty classifier to disable installation of optimized versions -->
+        <sap.ui5.opt.classifier>opt</sap.ui5.opt.classifier>
+      </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.sap.ui5.tools.maven</groupId>
+            <artifactId>maven-tomcat-plugin</artifactId>
+            <configuration>
+              <skipDeploy>false</skipDeploy>
+              <skipUndeploy>false</skipUndeploy>
+              <deployables>
+		<deployable>
+                  <groupId>com.sap.ui5.dist</groupId>
+                  <artifactId>sapui5-dist</artifactId>
+                  <version>[${sap.ui5.fullversion}]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+		  <contextPath>sapui5-dist-${stage}-${sap.ui5.version}</contextPath>
+		</deployable>
+                <deployable>
+                  <groupId>com.sap.ui5.dist</groupId>
+                  <artifactId>sapui5-sdk-dist</artifactId>
+                  <version>[${sap.ui5.fullversion}]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+                  <contextPath>sapui5-sdk-dist-${stage}-${sap.ui5.version}</contextPath>
+                </deployable>
+		<deployable>
+                  <groupId>com.sap.ui5.dist</groupId>
+                  <artifactId>sapui5-sdk-internal</artifactId>
+                  <version>[${sap.ui5.fullversion}]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+		  <contextPath>sapui5-sdk-internal-${stage}-${sap.ui5.version}</contextPath>
+                </deployable>
+              </deployables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+	
+   <!-- ******************************************************************* -->
+    <!-- HOUSEKEEPING: VEUI5INFRA, stage patch runtime for old Release (Walldorf)      -->
+    <!-- ******************************************************************* -->
+
+    <profile>
+
+      <id>housekeeping-runtime-stage</id>
+
+      <activation>
+        <property>
+          <name>sap.ui5.releases-only</name>
+          <value>runtime-stage</value>
+        </property>
+      </activation>
+
+      <properties>
+        <!-- set to empty classifier to disable installation of optimized versions -->
+        <sap.ui5.opt.classifier>opt</sap.ui5.opt.classifier>
+      </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.sap.ui5.tools.maven</groupId>
+            <artifactId>maven-tomcat-plugin</artifactId>
+            <configuration>
+              <skipDeploy>false</skipDeploy>
+              <skipUndeploy>false</skipUndeploy>
+              <deployables>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>uilib-sample</artifactId>
+                  <version>[${sap.ui5.fullversion}]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+                  <contextPath>uilib-sample-${stage}-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>sapui5</artifactId>
+                  <fallbackArtifactId>phoenix-cdn</fallbackArtifactId>
+                  <version>[${sap.ui5.fullversion}]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+                  <contextPath>sapui5-${stage}-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>sapui5-internal</artifactId>
+                  <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
+                  <version>[${sap.ui5.fullversion}]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+                  <contextPath>sapui5-internal-${stage}-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>demokit</artifactId>
+                  <version>[${sap.ui5.fullversion}]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+                  <contextPath>demokit-${stage}-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5.test</groupId>
+                  <artifactId>databinding</artifactId>
+                  <version>[${sap.ui5.fullversion}]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+                  <contextPath>databinding-${stage}-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.uxap</groupId>
+                  <artifactId>uilib-sample</artifactId>
+                  <version>[${sap.ui5.fullversion}]</version>
+                  <contextPath>uxap-sample-${stage}-${sap.ui5.version}</contextPath>
+              </deployable>
+             </deployables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+	
     <!-- ******************************************************************* -->
     <!-- HOUSEKEEPING: VESAPUI5, old Release (Walldorf)                      -->
     <!-- ******************************************************************* -->
