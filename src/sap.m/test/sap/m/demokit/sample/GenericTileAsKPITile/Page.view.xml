@@ -1,5 +1,5 @@
-<core:View controllerName="sap.m.sample.GenericTileAsKPITile.Page"
-	xmlns="sap.m" xmlns:core="sap.ui.core">
+<mvc:View controllerName="sap.m.sample.GenericTileAsKPITile.Page"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Country-Specific Profit Margin" subheader="Expenses" press="press">
 		<tileContent>
 			<TileContent unit="EUR" footer="Current Quarter">
@@ -21,4 +21,4 @@
 			</TileContent>
 		</tileContent>
 	</GenericTile>
-</core:View>
+</mvc:View>

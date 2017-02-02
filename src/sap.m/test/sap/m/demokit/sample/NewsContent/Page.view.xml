@@ -1,5 +1,5 @@
-<core:View controllerName="sap.m.sample.NewsContent.Page"
-	xmlns="sap.m" xmlns:core="sap.ui.core">
+<mvc:View controllerName="sap.m.sample.NewsContent.Page"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
 	<TileContent class="sapUiSmallMargin">
 		<content>
 			<NewsContent
@@ -8,4 +8,4 @@
 			</NewsContent>
 		</content>
 	</TileContent>
-</core:View>
+</mvc:View>
