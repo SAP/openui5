@@ -54,4 +54,10 @@ public class TestLastRunInfo {
     LastRunInfo lastRunInfo = new LastRunInfo(new File("src/test/resources/input"), "master");
     assertEquals("d25b90d4432fd6765961bdd9620d65ea0ccca299", lastRunInfo.getLastCommitId());
   }
+  
+  @Test
+  public void testLastCommitPerPatchBranch() throws IOException {
+    LastRunInfo lastRunInfo = new LastRunInfo(new File("src/test/resources/input"), "rel-1.46.1");
+    assertEquals("d25b90d4432fd6765961bdd9620d65ea0ccca246", lastRunInfo.getLastCommitId());
+  }
 }

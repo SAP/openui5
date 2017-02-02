@@ -131,7 +131,7 @@ public class ReleaseNotes {
       return new Version(version.major,  version.minor + 1, 0, null);
     }
   }
-  
+
   private void gatherFromPreviousCodelines(File repoFile) throws IOException {
     previousChanges = new File (context.git.getRepository().getParentFile(), "PreviousChanges");
     if (previousChanges.exists()) {
@@ -139,12 +139,17 @@ public class ReleaseNotes {
     }
     //this will get the minor version from branch name
     //example rel-1.44 will take 44 
+    String branch = context.branch;
+    Version origin_version = version;
     int currentMinor = Integer.parseInt(context.branch.substring(6, 8));
     for (int i = context.lowestMinor; i < currentMinor; i += 2) {
       checkoutRel(i);
       scan(repoFile);
     }
-    checkoutRel(currentMinor);
+    //restore version and branch with the tool was executed
+    version = origin_version;
+    context.branch = branch;
+    context.git.checkout("origin/" + context.branch);
   }
 
   private void checkoutRel(int minor) throws IOException {
@@ -152,7 +157,7 @@ public class ReleaseNotes {
     context.branch = "rel-1." + minor;
     context.git.checkout("origin/" + context.branch);
   }
-  
+
   private void relNotesPerLibrary() throws IOException {
     for (Mapping repo : context.mappings) {
       currentRepository = repo;
