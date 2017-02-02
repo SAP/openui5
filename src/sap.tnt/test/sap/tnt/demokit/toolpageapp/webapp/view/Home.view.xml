@@ -18,9 +18,11 @@
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 
-			<l:BlockLayoutRow rowColorSet="ColorSet1">
+			<l:BlockLayoutRow
+				rowColorSet="ColorSet1"
+				class="shopAdministrationTitle">
 				<l:BlockLayoutCell
-					class="sapUiResponsiveContentPadding"
+					class="sapUiResponsiveContentPadding sapUiSmallMarginBegin"
 					title="{i18n>shopAdminTitle}"
 					titleAlignment="Left"/>
 			</l:BlockLayoutRow>

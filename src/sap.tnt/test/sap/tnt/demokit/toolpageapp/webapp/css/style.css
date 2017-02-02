@@ -1,0 +1,28 @@
+/* override of table cell background color
+	Use html:not indicator to avoid applying white background color for hcb(high Contrast black) theme
+	and hcw(high Contrast white)*/
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .sapUiDemoToolPage .customerTable {
+	background-color: #FFFFFF;
+}
+
+/* clear row after title on statistics page */
+.sapUiDemoToolPage .statsticsTitle {
+	display: block;
+}
+
+/* Overwrite of shop administration tool title background and padding
+   Use html:not indicator to avoid applying white background color for hcb(high Contrast black) theme
+   and hcw(high Contrast white)*/
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .sapUiDemoToolPage .shopAdministrationTitle {
+	background-color: #FFFFFF;
+	padding-bottom: 1rem;
+	padding-top: 1rem;
+}
+
+.sapUiSizeCompact .sapUiDemoToolPage .sapTntToolHeader.sapMTB {
+	height: 2rem;
+}
+
+.sapUiSizeCompact .sapUiDemoToolPage .sapTntToolPageHeader {
+	height: 2rem;
+}
