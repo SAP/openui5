@@ -337,6 +337,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
+				"sap.m.Image": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
 				"sap.m.InputBase": {
 					"hideControl": "default",
 					"unhideControl": "default"
