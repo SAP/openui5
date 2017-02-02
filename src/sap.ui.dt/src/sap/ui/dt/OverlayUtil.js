@@ -151,43 +151,82 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns first descendant of given ElementOverlay which fulfills
+	 * the given condition. Recursive function
 	 *
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Source overlay object
+	 * @param {function} fnCondition - condition to search
+	 * @returns {sap.ui.dt.ElementOverlay} overlay which fulfills the condition otherwise it returns 'undefined'
+	 * @private
 	 */
-	OverlayUtil.getFirstChildOverlay = function(oOverlay) {
-		if (!oOverlay) {
-			return;
+	OverlayUtil.getFirstDescendantByCondition = function(oOverlay, fnCondition) {
+		if (!fnCondition) {
+			throw new Error("expected condition is 'undefined' or not a function");
 		}
-
-		var aAggregationOverlays = oOverlay.getAggregationOverlays();
-		if (aAggregationOverlays.length > 0) {
-			for (var i = 0; i < aAggregationOverlays.length; i++) {
-				var oAggregationOverlay = aAggregationOverlays[i];
-				var aChildren = oAggregationOverlay.getChildren();
-				if (aChildren.length) {
-					return aChildren[0];
-				}
+		var aChildrenOverlays = OverlayUtil.getAllChildOverlays(oOverlay);
+		for (var i = 0, n = aChildrenOverlays.length; i < n; i++) {
+			var oChildOverlay = aChildrenOverlays[i];
+			if (fnCondition(oChildOverlay)) {
+				return oChildOverlay;
+			}
+			var oDescendantOverlay = this.getFirstDescendantByCondition(oChildOverlay, fnCondition);
+			if (oDescendantOverlay) {
+				return oDescendantOverlay;
 			}
 		}
+		return undefined;
 	};
 
 	/**
+	 * Returns all overlay children as ElementOverlay
 	 *
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Source overlay object
+	 * @returns {array} array of child overlays {sap.ui.dt.ElementOverlay}
+	 * @private
 	 */
-	OverlayUtil.getLastChildOverlay = function(oOverlay) {
+	OverlayUtil.getAllChildOverlays = function(oOverlay) {
+		var aChildOverlays = [], aChildren = [];
 		if (!oOverlay) {
-			return;
+			return aChildOverlays;
 		}
-
 		var aAggregationOverlays = oOverlay.getAggregationOverlays();
-		if (aAggregationOverlays.length > 0) {
-			for (var i = aAggregationOverlays.length - 1; i >= 0; i--) {
-				var oAggregationOverlay = aAggregationOverlays[i];
-				var aChildren = oAggregationOverlay.getChildren();
-				if (aChildren.length) {
-					return aChildren[aChildren.length - 1];
-				}
+		for (var i = 0; i < aAggregationOverlays.length; i++) {
+			aChildren = aAggregationOverlays[i].getChildren();
+			if (aChildren && aChildren.length > 0) {
+				aChildOverlays = aChildOverlays.concat(aChildren);
 			}
 		}
+		return aChildOverlays;
+	};
+
+	/**
+	 * Returns first child overlay
+	 *
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Source overlay object
+	 * @returns {sap.ui.dt.ElementOverlay} first child overlays
+	 * @private
+	 */
+	OverlayUtil.getFirstChildOverlay = function(oOverlay) {
+		var aChildren = this.getAllChildOverlays(oOverlay);
+		if (aChildren.length) {
+			return aChildren[0];
+		}
+		return undefined;
+	};
+
+	/**
+	 * Returns last child overlay
+	 *
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Source overlay object
+	 * @returns {sap.ui.dt.ElementOverlay} last child overlays
+	 * @private
+	 */
+	OverlayUtil.getLastChildOverlay = function(oOverlay) {
+		var aChildren = this.getAllChildOverlays(oOverlay);
+		if (aChildren.length) {
+			return aChildren[aChildren.length - 1];
+		}
+		return undefined;
 	};
 
 	/**
