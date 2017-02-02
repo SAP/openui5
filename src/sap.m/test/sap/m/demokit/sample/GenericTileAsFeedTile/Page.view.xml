@@ -1,5 +1,5 @@
-<core:View controllerName="sap.m.sample.GenericTileAsFeedTile.Page"
-	xmlns="sap.m" xmlns:core="sap.ui.core">
+<mvc:View controllerName="sap.m.sample.GenericTileAsFeedTile.Page"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Feed Tile that shows updates of the last feeds given to a specific topic:"
 		frameType="TwoByOne" press="press">
 		<tileContent>
@@ -45,4 +45,4 @@
 			</GenericTile>
 		</tiles>
 	</SlideTile>
-</core:View>
+</mvc:View>
