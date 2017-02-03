@@ -405,8 +405,20 @@ sap.ui.define([
 	 *   additional property "$model" which is the {@link sap.ui.model.odata.v4.ODataModel} instance
 	 *   to read value list data via this mapping.
 	 *
-	 *   The promise is rejected with an error if there is no value list information available. Use
-	 *   {@link #getValueListType} to determine if value list information exists.
+	 *   The promise is rejected with an error if there is no value list information available
+	 *   for this property. Use {@link #getValueListType} to determine if value list information
+	 *   exists. It is also rejected with an error if the value list metadata is inconsistent.
+	 *
+	 *   An inconsistency can result from one of the following reasons:
+	 *   <ul>
+	 *    <li> There is a reference, but the referenced service does not contain mappings for the
+	 *     property.
+	 *    <li> The referenced service contains annotation targets in the namespace of the data
+	 *     service that are not mappings for the property.
+	 *    <li> Two different referenced services contain a mapping using the same qualifier.
+	 *    <li> A service is referenced twice.
+	 *    <li> No mappings have been found.
+	 *   </ul>
 	 * @throws {Error}
 	 *   If the binding is relative and has no context
 	 *
