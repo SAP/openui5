@@ -92,9 +92,6 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon"], function (ObjectPageLa
 		if (oControl.getIsActionAreaAlwaysVisible()) {
 			oRm.addClass('sapUxAPObjectPageHeaderIdentifierActionsForce');
 		}
-		if (oControl._getActionsPaddingStatus()) {
-			oRm.addClass("sapUxAPObjectPageHeaderIdentifierActionsNoPadding");
-		}
 		oRm.writeClasses();
 		oRm.write(">");
 
