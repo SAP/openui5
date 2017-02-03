@@ -24,6 +24,31 @@
         }
       },
       "lastCommitId": "9ec2656febe6ced0a7a3b448c4b348777002b636"
+    },
+    "rel-1.36.20": {
+      "changes": {
+        "default": {
+          "src/sap.ui.demokit/pom.xml": "1",
+          "src/sap.ui.unified/pom.xml": "1",
+          "src/sap.ui.ux3/pom.xml": "1",
+          "src/sap.ui.core/pom.xml": "1",
+          "src/sap.uxap/pom.xml": "1",
+          "src/sap.m/pom.xml": "1",
+          "package.json": "1",
+          "src/sap.ui.table/pom.xml": "1",
+          "src/sap.ui.dt/pom.xml": "1",
+          "src/themelib_sap_bluecrystal/pom.xml": "1",
+          "src/sap.ui.layout/pom.xml": "1",
+          "src/sap.tnt/pom.xml": "1",
+          "src/sap.ui.suite/pom.xml": "1",
+          "pom.xml": "2",
+          "src/testsuite/pom.xml": "1",
+          "src/sap.ui.commons/pom.xml": "1",
+          "src/themelib_sap_goldreflection/pom.xml": "1",
+          "src/testsuite-utils/pom.xml": "1"
+        }
+      },
+      "lastCommitId": "10ee2f7187c7802fbe9e302c9be462a7736d3624"
     }
   }
 }

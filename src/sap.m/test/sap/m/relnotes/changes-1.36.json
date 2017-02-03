@@ -2043,6 +2043,12 @@
         "type": "FIX",
         "text": " Edited comment for testing purposes",
         "references": []
+      },
+      {
+        "id": "10ee2f7187c7802fbe9e302c9be462a7736d3624",
+        "type": "FIX",
+        "text": " Removing trailing white space and fixing the build",
+        "references": []
       }
     ]
   }
