@@ -74,12 +74,13 @@ sap.ui.define([
 			this.bOpen = false; // true exactly if the Popup is opening, open, or closing
 			this.eOpenState = sap.ui.core.OpenState.CLOSED;
 
-			this._mFocusEvents = {};
-			this._mFocusEvents["sap.ui.core.Popup.addFocusableContent-" + this._popupUID] = this._addFocusableArea;
-			this._mFocusEvents["sap.ui.core.Popup.removeFocusableContent-" + this._popupUID] = this._removeFocusableArea;
-			this._mFocusEvents["sap.ui.core.Popup.closePopup-" + this._popupUID] = this._closePopup;
-			this._mFocusEvents["sap.ui.core.Popup.onFocusEvent-" + this._popupUID] = this.onFocusEvent;
-			this._mFocusEvents["sap.ui.core.Popup.increaseZIndex-" + this._popupUID] = this._increaseMyZIndex;
+			this._mEvents = {};
+			this._mEvents["sap.ui.core.Popup.addFocusableContent-" + this._popupUID] = this._addFocusableArea;
+			this._mEvents["sap.ui.core.Popup.removeFocusableContent-" + this._popupUID] = this._removeFocusableArea;
+			this._mEvents["sap.ui.core.Popup.closePopup-" + this._popupUID] = this._closePopup;
+			this._mEvents["sap.ui.core.Popup.onFocusEvent-" + this._popupUID] = this.onFocusEvent;
+			this._mEvents["sap.ui.core.Popup.increaseZIndex-" + this._popupUID] = this._increaseMyZIndex;
+			this._mEvents["sap.ui.core.Popup.contains-" + this._popupUID] = this._containsEventBusWrapper;
 
 			if (oContent) {
 				this.setContent(oContent);
@@ -120,22 +121,7 @@ sap.ui.define([
 						return;
 					}
 
-					var oDomNode = oEvent.target,
-						oPopupDomNode = this._$().get(0),
-						bInsidePopup = jQuery.sap.containsOrEquals(oPopupDomNode, oDomNode);
-
-					if (!bInsidePopup) {
-						var aChildPopups = this.getChildPopups();
-						for (var i = 0, l = aChildPopups.length; i < l; i++) {
-							var oDomRef = jQuery.sap.domById(aChildPopups[i]);
-							if (jQuery.sap.containsOrEquals(oDomRef, oDomNode)) {
-								bInsidePopup = true;
-								break;
-							}
-						}
-					}
-
-					if (!bInsidePopup) {
+					if (!this._contains(oEvent.target)) {
 						this.close();
 					}
 				};
@@ -884,6 +870,52 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks whether the given DOM object is contained in the current popup or
+	 * one of the the children popups
+	 *
+	 * @param {DOMRef} the DOM object which will be checked against
+	 * @return {boolean} whether the given DOM object is contained
+	 */
+	Popup.prototype._contains = function(oDomRef) {
+		var oPopupDomRef = this._$().get(0);
+		if (!oPopupDomRef) {
+			return false;
+		}
+
+		var bContains = jQuery.sap.containsOrEquals(oPopupDomRef, oDomRef);
+		var aChildPopups;
+
+		if (!bContains) {
+			aChildPopups = this.getChildPopups();
+
+			bContains = aChildPopups.some(function(sChildID) {
+				// sChildID can either be the popup id or the DOM id
+				// therefore we need to try with jQuery.sap.domById to check the DOM id case first
+				// only when it doesn't contain the given DOM, we publish an event to the event bus
+				var oContainDomRef = jQuery.sap.domById(sChildID);
+				var bContains = jQuery.sap.containsOrEquals(oContainDomRef, oDomRef);
+				if (!bContains) {
+					var sEventId = "sap.ui.core.Popup.contains-" + sChildID;
+					var oData = {
+						domRef: oDomRef
+					};
+					sap.ui.getCore().getEventBus().publish("sap.ui", sEventId, oData);
+
+					bContains = oData.contains;
+				}
+				return bContains;
+			});
+		}
+
+		return bContains;
+	};
+
+	// Wrapper of _contains method for the event bus
+	Popup.prototype._containsEventBusWrapper = function(sChannel, sEvent, oData) {
+		oData.contains = this._contains(oData.domRef);
+	};
+
+	/**
 	 * Handles the focus/blur events.
 	 *
 	 * @param oBrowserEvent the browser event
@@ -901,22 +933,7 @@ sap.ui.define([
 		if (type == "focus") {
 			var oDomRef = this._$().get(0);
 			if (oDomRef) {
-				bContains = jQuery.sap.containsOrEquals(oDomRef, oEvent.target);
-
-				var aChildPopups = this.getChildPopups();
-				if (!bContains) {
-					for (var i = 0, l = aChildPopups.length; i < l; i++) {
-						// define a new variable to prevent any influence if focused element isn't a child of
-						// this Popup: oDomRef is reused below.
-						var oChildDomRef = jQuery.sap.domById(aChildPopups[i]);
-						if (oChildDomRef) {
-							bContains = jQuery.sap.containsOrEquals(oChildDomRef, oEvent.target);
-							if (bContains) {
-								break;
-							}
-						}
-					}
-				}
+				bContains = this._contains(oEvent.target);
 
 				jQuery.sap.log.debug("focus event on " + oEvent.target.id + ", contains: " + bContains);
 
@@ -2099,7 +2116,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Popup.prototype.exit = function() {
-		delete this._mFocusEvents;
+		delete this._mEvents;
 	};
 
 	/**
@@ -2187,7 +2204,7 @@ sap.ui.define([
 	Popup.prototype._registerEventBusEvents = function(sChannel, sEvent, oEventData) {
 		var that = this;
 
-		jQuery.each(that._mFocusEvents, function(sEventId, fnListener) {
+		jQuery.each(that._mEvents, function(sEventId, fnListener) {
 			sap.ui.getCore().getEventBus().subscribe("sap.ui", sEventId, fnListener, that);
 		});
 
@@ -2200,7 +2217,7 @@ sap.ui.define([
 	Popup.prototype._unregisterEventBusEvents = function(sChannel, sEvent, oEventData) {
 		var that = this;
 
-		jQuery.each(that._mFocusEvents, function(sEventId, fnListener) {
+		jQuery.each(that._mEvents, function(sEventId, fnListener) {
 			sap.ui.getCore().getEventBus().unsubscribe("sap.ui", sEventId, fnListener, that);
 		});
 
