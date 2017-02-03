@@ -559,13 +559,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			switch (sType) {
 				case TableAccExtension.ELEMENTTYPES.COLUMNROWHEADER:
 					mAttributes["aria-labelledby"] = [sTableId + "-ariacolrowheaderlabel"];
+
+					var bAddSelectAllLabel = false;
 					mAttributes["role"] = ["button"];
 					if (mParams && mParams.enabled) {
 						mAttributes["aria-pressed"] = mParams.checked ? "true" : "false";
 					} else {
-						mAttributes["aria-labelledby"].push(sTableId + "-ariaselectall");
+						bAddSelectAllLabel = true;
 						mAttributes["aria-disabled"] = "true";
 						mAttributes["aria-pressed"] = "false";
+					}
+					if (bAddSelectAllLabel || !oTable._getShowStandardTooltips()) {
+						mAttributes["aria-labelledby"].push(sTableId + "-ariaselectall");
 					}
 					break;
 
@@ -743,7 +748,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 							mAttributes["role"] = "button";
 							if (mParams && mParams.row) {
 								if (mParams.row._bHasChildren) {
-									mAttributes["title"] = oTable._oResBundle.getText(mParams.row._bIsExpanded ? "TBL_COLLAPSE" : "TBL_EXPAND");
+									var sText = oTable._oResBundle.getText(mParams.row._bIsExpanded ? "TBL_COLLAPSE" : "TBL_EXPAND");
+									if (oTable._getShowStandardTooltips()) {
+										mAttributes["title"] = sText;
+									} else {
+										mAttributes["aria-label"] = sText;
+									}
 									mAttributes["aria-expanded"] = "" + (!!mParams.row._bIsExpanded);
 								} else {
 									mAttributes["aria-label"] = oTable._oResBundle.getText("TBL_LEAF");
@@ -1095,6 +1105,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		}
 
 		var oResBundle = oTable._oResBundle;
+		var bShowTooltips = oTable._getShowStandardTooltips();
 		var mTooltipTexts = {
 			mouse: {
 				rowSelect: "",
@@ -1109,21 +1120,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		var iSelectedIndicesCount = oTable._getSelectedIndicesCount();
 
 		if (sSelectionMode === SelectionMode.Single) {
-			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
-			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
+			mTooltipTexts.mouse.rowSelect = bShowTooltips ? oResBundle.getText("TBL_ROW_SELECT") : "";
+			mTooltipTexts.mouse.rowDeselect = bShowTooltips ? oResBundle.getText("TBL_ROW_DESELECT") : "";
 			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
 			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
 		} else if (sSelectionMode === SelectionMode.MultiToggle) {
-			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_TOGGLE");
+			mTooltipTexts.mouse.rowSelect = bShowTooltips ? oResBundle.getText("TBL_ROW_SELECT_MULTI_TOGGLE") : "";
 			// text for de-select is the same like for single selection
-			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
+			mTooltipTexts.mouse.rowDeselect = bShowTooltips ? oResBundle.getText("TBL_ROW_DESELECT") : "";
 			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_TOGGLE_KEY");
 			// text for de-select is the same like for single selection
 			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
 
 			if (bConsiderSelectionState === true && iSelectedIndicesCount === 0) {
 				// if there is no row selected yet, the selection is like in single selection case
-				mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
+				mTooltipTexts.mouse.rowSelect = bShowTooltips ? oResBundle.getText("TBL_ROW_SELECT") : "";
 				mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
 			}
 		}

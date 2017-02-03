@@ -611,6 +611,17 @@
 				}
 			}
 		},
+		TOOLTIPS: {
+			text: "Standard Tooltips (private)",
+			defaultValue: function(oTable) {
+				return oTable._getShowStandardTooltips();
+			},
+			input: "boolean",
+			action: function(oTable, bValue) {
+				oTable._bHideStandardTooltips = !bValue;
+				oTable.invalidate();
+			}
+		},
 		EVENTS: {
 			text: "Events",
 			group: {
