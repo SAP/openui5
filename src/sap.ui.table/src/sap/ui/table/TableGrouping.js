@@ -327,7 +327,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 				jQuery.sap.byId(oRow.getId() + "-groupHeader")
 					.toggleClass("sapUiTableGroupIconOpen", bChildren && bExpanded)
 					.toggleClass("sapUiTableGroupIconClosed", bChildren && !bExpanded)
-					.attr("title", sGroupHeaderText || null)
+					.attr("title", oTable._getShowStandardTooltips() && sGroupHeaderText ? sGroupHeaderText : null)
 					.text(sGroupHeaderText || "");
 
 				TableGrouping._setIndent(oTable, $Row, $RowHdr, TableGrouping._calcGroupIndent(oTable, iLevel, bChildren));
