@@ -164,7 +164,7 @@ sap.ui.define([
 				var fn, sName = o[sProp];
 				if ( o[sProp][0] === "." ) {
 					fn = jQuery.sap.getObject(o[sProp].slice(1), undefined, oEnv.oContext);
-					o[sProp] = oEnv.bStaticContext ? fn : fn.bind(oEnv.oContext);
+					o[sProp] = oEnv.bStaticContext ? fn : (fn && fn.bind(oEnv.oContext));
 				} else {
 					o[sProp] = jQuery.sap.getObject(o[sProp]);
 				}
