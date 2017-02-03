@@ -1,15 +1,18 @@
 {
 	"cwd": "test-resources/sap/tnt/demokit/toolpageapp/webapp/",
 	"files": [
-		"Component.js",
+	"Component.js",
+		"control/D3Chart.js",
+		"control/D3ColumnChart.js",
+		"control/D3ComparisonChart.js",
+		"control/D3PieChart.js",
 		"controller/App.controller.js",
 		"controller/BaseController.js",
 		"controller/Home.controller.js",
 		"controller/settings/MasterSettings.controller.js",
-		"controller/Statistic.controller.js",
+		"controller/Statistics.controller.js",
 		"css/shopAdminTitleCss.css",
 		"i18n/i18n.properties",
-		"images/header.png",
 		"images/homeImage.png",
 		"index.html",
 		"manifest.json",
@@ -29,6 +32,8 @@
 		"view/settings/AppSettings.view.xml",
 		"view/settings/DetailSettings1.view.xml",
 		"view/settings/MasterSettings.view.xml",
-		"view/Statistic.view.xml"
+		"view/Statistics.view.xml",
+		"view/StatisticsD3.view.xml",
+		"view/StatisticsMicro.view.xml"
 	]
 }
