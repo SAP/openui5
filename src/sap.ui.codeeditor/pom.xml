@@ -44,7 +44,7 @@
 	<properties>
 
 		<!-- source paths for Sonar reporting -->
-		<sonar.sources>src,pom.xml</sonar.sources>
+		<sonar.sources>pom.xml</sonar.sources>
 
 		<!-- enable eslint validation -->
 		<sap.ui5.eslint.skip.validation>false</sap.ui5.eslint.skip.validation>
