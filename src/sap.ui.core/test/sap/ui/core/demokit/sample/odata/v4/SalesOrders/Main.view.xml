@@ -80,7 +80,9 @@
 								</Input>
 								<Label labelFor="NewNote" text="Note"/>
 								<Input id="NewNote" value="{Note}"/>
-								<demo:ValueHelp id="NewCurrencyCode" value="{CurrencyCode}"/>
+								<Label labelFor="NewCurrencyCode" text="Currency Code"/>
+								<demo:ValueHelp id="NewCurrencyCode" value="{CurrencyCode}"
+									valueHelpOnly="false"/>
 							</form:content>
 						</form:SimpleForm>
 					</content>
@@ -408,12 +410,10 @@
 							<Text text="{Product/ProductName}"/>
 						</cells>
 						<cells>
-							<demo:ValueHelp value="{SOITEM_2_PRODUCT/Category}"
-								valueHelpOnly="true"/>
+							<demo:ValueHelp value="{SOITEM_2_PRODUCT/Category}"/>
 						</cells>
 						<cells>
-							<demo:ValueHelp value="{SOITEM_2_PRODUCT/TypeCode}"
-								valueHelpOnly="true"/>
+							<demo:ValueHelp value="{SOITEM_2_PRODUCT/TypeCode}"/>
 						</cells>
 						<cells>
 							<Text text="{SOITEM_2_PRODUCT/SupplierName}"/>
