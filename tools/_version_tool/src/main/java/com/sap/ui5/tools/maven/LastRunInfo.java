@@ -17,6 +17,10 @@ import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.sound.midi.MidiChannel;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -94,9 +98,20 @@ public class LastRunInfo {
 
   private LastPerVersion getLastPerVersion() {
     if (!versionTool.lastPerVersion.containsKey(branch)) {
-      versionTool.lastPerVersion.put(this.branch, new LastPerVersion());
+      String minorBranch = getMinorBranch(branch);
+      versionTool.lastPerVersion.put(this.branch, 
+          versionTool.lastPerVersion.containsKey(minorBranch) ? 
+              versionTool.lastPerVersion.get(minorBranch) : new LastPerVersion());
     }
     return versionTool.lastPerVersion.get(branch);
+  }
+
+  private String getMinorBranch(String branch) {
+    Matcher m = Pattern.compile("rel-\\d+\\.\\d+").matcher(branch);
+    if (m.find()){
+      return m.group();
+    }
+    return null;
   }
 
   public String getLastCommitId() {
