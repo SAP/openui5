@@ -232,8 +232,9 @@ sap.ui.define([
 	 *   Map of binding parameters which can be OData query options as specified in
 	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
 	 *   and "$$updateGroupId".
-	 *   Note: If parameters are provided for a relative binding path, the binding accesses data
-	 *   with its own service requests instead of using its parent binding.
+	 *   Note: The binding creates its own data service request if it is absolute or if it has any
+	 *   parameters or if it is relative and has a context created via
+	 *   {@link ODataModel#createBindingContext}.
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
@@ -323,8 +324,9 @@ sap.ui.define([
 	 *   Map of binding parameters which can be OData query options as specified in
 	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
 	 *   and "$$updateGroupId".
-	 *   Note: If parameters are provided for a relative binding path, the binding accesses data
-	 *   with its own service requests instead of using its parent binding.
+	 *   Note: The binding creates its own data service request if it is absolute or if it has any
+	 *   parameters or if it is relative and has a context created via
+	 *   {@link ODataModel#createBindingContext} or if it has sorters or filters.
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
@@ -377,8 +379,9 @@ sap.ui.define([
 	 *   Map of binding parameters which can be OData query options as specified in
 	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
 	 *   and "$$updateGroupId".
-	 *   Note: Binding parameters may only be provided for absolute binding paths as only those
-	 *   lead to a data service request.
+	 *   Note: The binding creates its own data service request if it is absolute or if it has any
+	 *   parameters or if it is relative and has a context created via
+	 *   {@link ODataModel#createBindingContext}.
 	 *   All "5.2 Custom Query Options" are allowed except for those with a name starting with
 	 *   "sap-". All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.

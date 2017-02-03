@@ -91,7 +91,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("applyParameters: absolutePath", function (assert) {
+	QUnit.test("applyParameters", function (assert) {
 		var mBindingParameters = {
 				$$groupId : "foo",
 				$$updateGroupId : "update foo"
@@ -114,9 +114,10 @@ sap.ui.require([
 		oModelMock.expects("buildBindingParameters")
 			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
 			.returns(mBindingParameters);
-		this.mock(oBinding).expects("makeCache")
-			.withExactArgs(undefined)
-			.returns(_SyncPromise.resolve({}));
+		this.stub(ODataContextBinding.prototype, "fetchCache", function (oContext) {
+			assert.strictEqual(oContext, undefined);
+			this.oCachePromise = _SyncPromise.resolve({});
+		});
 
 		// code under test
 		oBinding.applyParameters(mParameters);
@@ -159,7 +160,7 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
 			.returns(mBindingParameters);
 		oBindingMock.expects("checkUpdate").never();
-		oBindingMock.expects("makeCache").never();
+		oBindingMock.expects("fetchCache").never();
 
 		// code under test
 		oBinding.applyParameters(mParameters);
@@ -185,7 +186,10 @@ sap.ui.require([
 		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(undefined, mParameters, true)
 			.returns({$filter : "bar"});
-		this.mock(oBinding).expects("makeCache").withExactArgs(sinon.match.same(oBinding.oContext));
+		this.stub(ODataContextBinding.prototype, "fetchCache", function (oContext0) {
+			assert.strictEqual(oContext0, oContext);
+			this.oCachePromise = _SyncPromise.resolve({});
+		});
 		this.mock(oBinding).expects("checkUpdate");
 
 		//code under test
@@ -303,9 +307,10 @@ sap.ui.require([
 			}
 
 			if (oFixture.sTarget === "base") {
-				this.mock(oBinding).expects("makeCache")
-					.withExactArgs(sinon.match.same(oTargetContext))
-					.returns(_SyncPromise.resolve(oTargetCache));
+				this.stub(ODataContextBinding.prototype, "fetchCache", function (oContext0) {
+					assert.strictEqual(oContext0, oTargetContext);
+					this.oCachePromise = _SyncPromise.resolve(oTargetCache);
+				});
 			}
 			if (oTargetContext) {
 				oModelMock.expects("resolve")
@@ -340,19 +345,23 @@ sap.ui.require([
 			oCache = {},
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
 
-		this.mock(oBinding).expects("makeCache")
-			.withExactArgs(sinon.match.same(oContext))
-			.returns(_SyncPromise.resolve(oCache));
+		this.stub(ODataContextBinding.prototype, "fetchCache", function (oContext0) {
+			assert.strictEqual(oContext0, oContext);
+			this.oCachePromise = _SyncPromise.resolve(oContext0 ? oCache : undefined);
+		});
 
 		//code under test
 		oBinding.setContext(oContext);
 
 		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 
-		// code under test
-		oBinding.setContext();
+		oCache = undefined;
+		oContext = undefined;
 
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+		// code under test
+		oBinding.setContext(oContext);
+
+		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 	});
 
 	//*********************************************************************************************
@@ -386,81 +395,34 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["/EMPLOYEES(ID='1')", "TEAM_2_MANAGER", ""].forEach(function (sPath) {
-		QUnit.test("bindContext w/o parameters, sPath = '" + sPath + "'", function (assert) {
-			var bAbsolute = sPath[0] === "/",
-				oCache = {},
-				oContext = Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
-				oBinding;
+	QUnit.test("bindContext w/o parameters", function (assert) {
+		var oCache = {},
+			oContext = Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
+			oBinding;
 
-			this.spy(ODataContextBinding.prototype, "makeCache");
-			this.mock(_Cache).expects("createSingle")
-				.exactly(bAbsolute ? 1 : 0)
-				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sPath.slice(1), {
-					"sap-client" : "111"
-				}).returns(oCache);
-
-			// code under test
-			oBinding = this.oModel.bindContext(sPath, oContext);
-
-			if (bAbsolute) {
-				sinon.assert.calledOnce(ODataContextBinding.prototype.makeCache);
-			}
-			assert.ok(oBinding instanceof ODataContextBinding);
-			assert.strictEqual(oBinding.getModel(), this.oModel);
-			assert.strictEqual(oBinding.getContext(), oContext);
-			assert.strictEqual(oBinding.getPath(), sPath);
-			assert.ok(oBinding.oCachePromise, "oCache is initialized");
-			assert.strictEqual(oBinding.oCachePromise.getResult(), bAbsolute ? oCache : undefined);
-			assert.strictEqual(oBinding.hasOwnProperty("mQueryOptions"), true);
-			assert.deepEqual(oBinding.mQueryOptions, {});
-			assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
-			assert.strictEqual(oBinding.sGroupId, undefined);
-			assert.strictEqual(oBinding.hasOwnProperty("sUpdateGroupId"), true);
-			assert.strictEqual(oBinding.sUpdateGroupId, undefined);
-			assert.strictEqual(oBinding.hasOwnProperty("mCacheByContext"), true);
-			assert.strictEqual(oBinding.mCacheByContext, undefined);
+		this.stub(ODataContextBinding.prototype, "fetchCache", function (oContext0) {
+			// context ignored for absolute binding
+			assert.strictEqual(oContext0, undefined);
+			this.oCachePromise = _SyncPromise.resolve(oCache);
 		});
-	});
 
-	//*********************************************************************************************
-	["/EMPLOYEES(ID='1')", "EMPLOYEE_2_TEAM(Team_Id='4711')"].forEach(function (sPath) {
-		QUnit.test("bindContext with parameters, path " + sPath, function (assert) {
-			var bAbsolute = sPath[0] === "/",
-				oBinding,
-				mBindingQueryOptions = {},
-				mParameters = {
-					$select : "ProductID",
-					$apply: "filter(Amount gt 5)"
-				},
-				mResultingQueryOptions = {};
+		// code under test
+		oBinding = this.oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
 
-			this.spy(ODataContextBinding.prototype, "makeCache");
-			this.mock(this.oModel).expects("buildQueryOptions")
-				.withExactArgs(undefined, mParameters, true)
-				.returns(mBindingQueryOptions);
-			this.mock(ODataContextBinding.prototype).expects("getQueryOptions")
-				.exactly(bAbsolute ? 1 : 0)
-				.withExactArgs(undefined)
-				.returns(mResultingQueryOptions);
-			this.mock(ODataModel.prototype).expects("buildBindingParameters")
-				.withExactArgs(mParameters, aAllowedBindingParameters)
-				.returns({$$groupId : "group", $$updateGroupId : "updateGroup"});
-			this.mock(_Cache).expects("createSingle")
-				.exactly((sPath[0] === "/") ? 1 : 0)
-				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sPath.slice(1),
-					sinon.match.same(mResultingQueryOptions));
-
-			// code under test
-			oBinding = this.oModel.bindContext(sPath, null, mParameters);
-
-			if (bAbsolute) {
-				sinon.assert.calledOnce(ODataContextBinding.prototype.makeCache);
-			}
-			assert.strictEqual(oBinding.mQueryOptions, mBindingQueryOptions);
-			assert.strictEqual(oBinding.sGroupId, "group");
-			assert.strictEqual(oBinding.sUpdateGroupId, "updateGroup");
-		});
+		assert.ok(oBinding instanceof ODataContextBinding);
+		assert.strictEqual(oBinding.getModel(), this.oModel);
+		assert.strictEqual(oBinding.getContext(), oContext);
+		assert.strictEqual(oBinding.getPath(), "/EMPLOYEES(ID='1')");
+		assert.ok(oBinding.oCachePromise, "oCache is initialized");
+		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
+		assert.strictEqual(oBinding.hasOwnProperty("mQueryOptions"), true);
+		assert.deepEqual(oBinding.mQueryOptions, {});
+		assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
+		assert.strictEqual(oBinding.sGroupId, undefined);
+		assert.strictEqual(oBinding.hasOwnProperty("sUpdateGroupId"), true);
+		assert.strictEqual(oBinding.sUpdateGroupId, undefined);
+		assert.strictEqual(oBinding.hasOwnProperty("mCacheByContext"), true);
+		assert.strictEqual(oBinding.mCacheByContext, undefined);
 	});
 
 	//*********************************************************************************************
@@ -697,14 +659,20 @@ sap.ui.require([
 	//*********************************************************************************************
 	["/SalesOrderList/1", "/SalesOrderList/1/SO_2_SCHDL_DIFF/bar"].forEach(function (sPath) {
 		QUnit.test("fetchAbsoluteValue: relative binding w/ cache: " + sPath, function (assert) {
-			var oBinding = this.oModel.bindContext("SO_2_SCHDL", undefined, {}),
+			var oBinding,
 				oCache = {},
 				oContext = Context.create(this.oModel, undefined, "/SalesOrderList/1"),
 				oContextMock = this.mock(oContext),
 				oResult = {};
 
-			this.mock(oBinding).expects("makeCache").returns(_SyncPromise.resolve(oCache));
-			oBinding.setContext(oContext);
+			this.stub(ODataContextBinding.prototype, "fetchCache", function (oContext0) {
+				// fetchCache is called once from applyParameters before oBinding.oContext is set
+				if (oContext0) {
+					assert.strictEqual(oContext0, oContext);
+				}
+				this.oCachePromise = _SyncPromise.resolve(oContext0 ? oCache : undefined);
+			});
+			oBinding = this.oModel.bindContext("SO_2_SCHDL", oContext, {});
 
 			oContextMock.expects("fetchAbsoluteValue").withExactArgs(sPath)
 				.returns(_SyncPromise.resolve(oResult));
@@ -724,16 +692,18 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchAbsoluteValue: relative binding w/ cache: " + oFixture.abs,
 			function (assert) {
-				var oBinding = this.oModel.bindContext("SO_2_SCHDL", undefined,
-						{$$groupId : "myGroup"}), // to prevent that the context is asked for the ID
+				var oBinding,
 					oCache = {
 						fetchValue : function () {}
 					},
 					oContext = Context.create(this.oModel, undefined, "/SalesOrderList/1"),
 					oResult = {};
 
-				this.mock(oBinding).expects("makeCache").returns(_SyncPromise.resolve(oCache));
-				oBinding.setContext(oContext);
+				this.stub(ODataContextBinding.prototype, "fetchCache", function (oContext0) {
+					this.oCachePromise = _SyncPromise.resolve(oContext0 ? oCache : undefined);
+				});
+				oBinding = this.oModel.bindContext("SO_2_SCHDL", oContext,
+					{$$groupId : "myGroup"}); // to prevent that the context is asked for the ID
 
 				this.mock(oCache).expects("fetchValue").withArgs("myGroup", oFixture.rel)
 					.returns(_SyncPromise.resolve(oResult));
@@ -995,6 +965,7 @@ sap.ui.require([
 				oExecutePromise,
 				oHelperMock = this.mock(_Helper),
 				sPath = (bBaseContext ? "" : "/") + "FunctionImport(...)",
+				jQueryMock = this.mock(jQuery),
 				oQueryOptions = {},
 				oSingleCache = {
 					hasPendingChangesForPath : function () {},
@@ -1027,8 +998,9 @@ sap.ui.require([
 			oHelperMock.expects("formatLiteral").withExactArgs("bãr'1", "Edm.String")
 				.returns("'bãr''1'");
 			oHelperMock.expects("formatLiteral").withExactArgs(42, "Edm.Int16").returns("42");
-			oBindingMock.expects("getQueryOptions")
-				.withExactArgs(sinon.match.same(oBinding.oContext))
+			jQueryMock.expects("extend")
+				.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
+					sinon.match.same(oBinding.mQueryOptions))
 				.returns(oQueryOptions);
 			oCacheMock.expects("createSingle")
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor),
@@ -1050,36 +1022,27 @@ sap.ui.require([
 						.withExactArgs("bãr'2", "Edm.String").returns("'bãr''2'");
 					oHelperMock.expects("formatLiteral")
 						.withExactArgs(42, "Edm.Int16").returns("42");
-					oBindingMock.expects("getQueryOptions")
-						.withExactArgs(sinon.match.same(oBinding.oContext))
+					jQueryMock.expects("extend")
+						.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
+							sinon.match.same(oBinding.mQueryOptions))
 						.returns(oQueryOptions);
 					oCacheMock.expects("createSingle")
 						.withExactArgs(sinon.match.same(that.oModel.oRequestor),
 							"FunctionImport(f%C3%B8%C3%B8='b%C3%A3r''2',p2=42)",
 							sinon.match.same(oQueryOptions))
 						.returns(oSingleCache);
-					oSingleCacheMock.expects("fetchValue").withExactArgs("myGroupId")
+					oSingleCacheMock.expects("fetchValue").withExactArgs("group")
 						.returns(_SyncPromise.resolve({}));
 					oBindingMock.expects("_fireChange")
 						.withExactArgs({reason : ChangeReason.Change});
 
 					// code under test
-					return oBinding.setParameter("føø", "bãr'2").execute("myGroupId")
-						.then(function () {
-						oBindingMock.expects("getQueryOptions")
-							.withExactArgs(
-								bBaseContext ? sinon.match.same(oBinding.oContext) : undefined)
-							.returns(oQueryOptions);
-						oCacheMock.expects("createSingle")
-							.withExactArgs(sinon.match.same(that.oModel.oRequestor),
-								"FunctionImport(f%C3%B8%C3%B8='b%C3%A3r''2',p2=42)",
-								sinon.match.same(oQueryOptions))
-						.returns(oSingleCache);
-							oBindingMock.expects("_fireChange")
-								.withExactArgs({reason : ChangeReason.Refresh});
+					return oBinding.setParameter("føø", "bãr'2").execute("group").then(function () {
+						oBindingMock.expects("execute").withExactArgs("refreshGroup");
 
-							oBinding.refresh();
-						});
+						// code under test: refresh operation binding
+						oBinding.refresh("refreshGroup");
+					});
 				});
 			assert.ok(oExecutePromise instanceof Promise, "a Promise, not a SyncPromise");
 			return oExecutePromise;
@@ -1106,8 +1069,10 @@ sap.ui.require([
 
 		oBindingMock.expects("_requestOperationMetadata").twice()
 			.returns(Promise.resolve({$kind : "Action"}));
-		oBindingMock.expects("getQueryOptions").twice()
-			.withExactArgs(undefined).returns(mQueryOptions);
+		this.mock(jQuery).expects("extend").twice()
+			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
+				sinon.match.same(oBinding.mQueryOptions))
+			.returns(mQueryOptions);
 		this.mock(_Cache).expects("createSingle").twice()
 			.withExactArgs(sinon.match.same(that.oModel.oRequestor), "ActionImport",
 				sinon.match.same(mQueryOptions), true)
@@ -1166,8 +1131,10 @@ sap.ui.require([
 
 		oBindingMock.expects("_requestOperationMetadata")
 			.returns(Promise.resolve({$kind : "Action"}));
-		oBindingMock.expects("getQueryOptions")
-			.withExactArgs(oBinding.oContext).returns(mQueryOptions);
+		this.mock(jQuery).expects("extend")
+			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
+				sinon.match.same(oBinding.mQueryOptions))
+			.returns(mQueryOptions);
 		oCacheMock.expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor),
 				"EntitySet(ID='1')/schema.Action", sinon.match.same(mQueryOptions), true)
@@ -1212,7 +1179,7 @@ sap.ui.require([
 						oParentContext2 = createContext(this.oModel,
 								"/EntitySet(ID='2')/navigation1"),
 						oPostResult = {},
-						mQueryOptions = {},
+						mQueryOptions = {"sap-client" : "111"},
 						oSingleCache = {
 							deregisterChange : function () {},
 							post : function () {},
@@ -1235,12 +1202,9 @@ sap.ui.require([
 							.withExactArgs(sPathPrefix)
 							.returns({"@odata.etag" : "etag"});
 					}
-					oBindingMock.expects("getQueryOptions")
-						.withExactArgs(oParentContext1).returns(mQueryOptions);
 					oCacheMock.expects("createSingle")
 						.withExactArgs(sinon.match.same(this.oModel.oRequestor),
-							"EntitySet(ID='1')/navigation1/" + sAction,
-							sinon.match.same(mQueryOptions), true)
+							"EntitySet(ID='1')/navigation1/" + sAction, mQueryOptions, true)
 						.returns(oSingleCache);
 					oSingleCacheMock.expects("post")
 						.withExactArgs("groupId", {}, bBaseContext ? undefined : "etag")
@@ -1264,12 +1228,9 @@ sap.ui.require([
 								.withExactArgs(sPathPrefix)
 								.returns({}); // no ETag
 						}
-						oBindingMock.expects("getQueryOptions")
-							.withExactArgs(oParentContext2).returns(mQueryOptions);
 						oCacheMock.expects("createSingle")
 							.withExactArgs(sinon.match.same(that.oModel.oRequestor),
-								"EntitySet(ID='2')/navigation1/" + sAction,
-								sinon.match.same(mQueryOptions), true)
+								"EntitySet(ID='2')/navigation1/" + sAction, mQueryOptions, true)
 							.returns(oSingleCache);
 						oSingleCacheMock.expects("post")
 							.withExactArgs("groupId", {"foo" : "bar"}, undefined)
@@ -1549,9 +1510,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refreshInternal", function (assert) {
 		var oCache = {},
-			oBinding = this.oModel.bindContext("EMPLOYEE_2_TEAM", undefined, {"foo" : "bar"}),
+			oBinding,
 			oContext = Context.create(this.oModel, {}, "/EMPLOYEE('42')"),
-			oBindingMock = this.mock(oBinding),
 			oChild0 = {
 				refreshInternal : function () {}
 			},
@@ -1559,10 +1519,13 @@ sap.ui.require([
 				refreshInternal : function () {}
 			};
 
-		oBindingMock.expects("makeCache").twice().returns(_SyncPromise.resolve(oCache));
+		this.stub(ODataContextBinding.prototype, "fetchCache", function (oContext0) {
+			this.oCachePromise = _SyncPromise.resolve(oContext0 ? oCache : undefined);
+		});
+		oBinding = this.oModel.bindContext("EMPLOYEE_2_TEAM", oContext, {"foo" : "bar"});
 		oBinding.mCacheByContext = {};
-		oBinding.setContext(oContext);
-		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Refresh});
+
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Refresh});
 		this.mock(this.oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oBinding)).returns([oChild0, oChild1]);
 		this.mock(oChild0).expects("refreshInternal").withExactArgs("myGroup");
@@ -1746,9 +1709,10 @@ sap.ui.require([
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1),
 			oPathPromise = Promise.resolve("/TEAMS('8192')/TEAM_2_MANAGER");
 
-		oBinding = this.oModel.bindContext("TEAM_2_MANAGER", undefined, {$select : "Name"});
-		this.mock(oBinding).expects("makeCache").returns(_SyncPromise.resolve(oCacheTeam1));
-		oBinding.setContext(oContext);
+		this.stub(ODataContextBinding.prototype, "fetchCache", function (oContext0) {
+			this.oCachePromise = _SyncPromise.resolve(oContext0 ? oCacheTeam1 : undefined);
+		});
+		oBinding = this.oModel.bindContext("TEAM_2_MANAGER", oContext, {$select : "Name"});
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(_SyncPromise.resolve(oPathPromise)); // data for path "/TEAMS/1" has changed
@@ -1771,9 +1735,10 @@ sap.ui.require([
 			oDependent1 = {checkUpdate : function () {}},
 			oPathPromise = Promise.resolve(sPath);
 
-		oBinding = this.oModel.bindContext("TEAM_2_MANAGER", undefined, {$select : "Name"});
-		this.mock(oBinding).expects("makeCache").returns(_SyncPromise.resolve(oCacheTeam1));
-		oBinding.setContext(oContext);
+		this.stub(ODataContextBinding.prototype, "fetchCache", function (oContext0) {
+			this.oCachePromise = _SyncPromise.resolve(oContext0 ? oCacheTeam1 : undefined);
+		});
+		oBinding = this.oModel.bindContext("TEAM_2_MANAGER", oContext, {$select : "Name"});
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(_SyncPromise.resolve(oPathPromise));
@@ -1782,7 +1747,6 @@ sap.ui.require([
 			.returns([oDependent0, oDependent1]);
 		this.mock(oDependent0).expects("checkUpdate").withExactArgs();
 		this.mock(oDependent1).expects("checkUpdate").withExactArgs();
-
 
 		// code under test
 		oBinding.checkUpdate();
@@ -1798,9 +1762,10 @@ sap.ui.require([
 			oError = {},
 			oPathPromise = Promise.reject(oError);
 
-		oBinding = this.oModel.bindContext("TEAM_2_MANAGER", undefined, {$select : "Name"});
-		this.mock(oBinding).expects("makeCache").returns(_SyncPromise.resolve(oCacheTeam1));
-		oBinding.setContext(oContext);
+		this.stub(ODataContextBinding.prototype, "fetchCache", function (oContext0) {
+			this.oCachePromise = _SyncPromise.resolve(oContext0 ? oCacheTeam1 : undefined);
+		});
+		oBinding = this.oModel.bindContext("TEAM_2_MANAGER", oContext, {$select : "Name"});
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(_SyncPromise.resolve(oPathPromise));
 		this.mock(this.oModel).expects("reportError")
@@ -1812,110 +1777,6 @@ sap.ui.require([
 		oBinding.checkUpdate();
 
 		return oPathPromise.then(undefined, function () {});
-	});
-	//*********************************************************************************************
-	QUnit.test("makeCache: absolute", function (assert) {
-		var oBinding = this.oModel.bindContext("/SalesOrderList('1')/SO_2_BP", undefined, {}),
-			oCache = {},
-			oContext = {},
-			mQueryOptions = {};
-
-		this.mock(oBinding).expects("getQueryOptions")
-			.withExactArgs(undefined)
-			.returns(mQueryOptions);
-		this.mock(_Helper).expects("buildPath").withExactArgs(undefined, oBinding.sPath)
-			.returns(oBinding.sPath);
-		this.mock(_Cache).expects("createSingle")
-			.withExactArgs(sinon.match.same(oBinding.oModel.oRequestor), oBinding.sPath.slice(1),
-				sinon.match.same(mQueryOptions))
-			.returns(oCache);
-
-		// code under test
-		assert.strictEqual(oBinding.makeCache(oContext).getResult(), oCache);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("makeCache: relative, unresolved", function (assert) {
-		var oBinding = this.oModel.bindContext("SO_2_BP");
-
-		this.mock(oBinding).expects("getQueryOptions").never();
-		this.mock(_Helper).expects("buildPath").never();
-		this.mock(_Cache).expects("createSingle").never();
-
-		// code under test
-		assert.strictEqual(oBinding.makeCache(undefined).getResult(), undefined);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("makeCache: relative, no query options", function (assert) {
-		var oBinding = this.oModel.bindContext("SO_2_BP"),
-			oContext = Context.create(this.oModel, {}, "/SalesOrderList('1')");
-
-		this.mock(oBinding).expects("getQueryOptions").never();
-		this.mock(_Helper).expects("buildPath").never();
-		this.mock(_Cache).expects("createSingle").never();
-
-		// code under test
-		assert.strictEqual(oBinding.makeCache(oContext).getResult(), undefined);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("makeCache: relative, cache created asynchronously", function (assert) {
-		var oBinding = this.oModel.bindContext("SO_2_BP", undefined, {"$apply" : "foo"}),
-			sCanonicalPath = "/SalesOrderList('1')",
-			sCachePath = sCanonicalPath.slice(1) + "/SO_2_BP",
-			oContext = {
-				fetchCanonicalPath : function () {}
-			},
-			oCache = {},
-			oPathPromise = Promise.resolve(sCanonicalPath),
-			mQueryOptions = {};
-
-		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oPathPromise);
-		this.mock(oBinding).expects("getQueryOptions")
-			.withExactArgs(sinon.match.same(oContext))
-			.returns(mQueryOptions);
-		this.mock(_Helper).expects("buildPath").withExactArgs(sCanonicalPath, oBinding.sPath)
-			.returns("/" + sCachePath);
-		this.mock(_Cache).expects("createSingle")
-			.withExactArgs(sinon.match.same(oBinding.oModel.oRequestor), sCachePath,
-				sinon.match.same(mQueryOptions))
-			.returns(oCache);
-
-		// code under test - caller of makeCache has to set oCachePromise at the binding
-		oBinding.oCachePromise = oBinding.makeCache(oContext);
-		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), false);
-
-		return oBinding.oCachePromise.then(function (oResolvedCache) {
-			assert.strictEqual(oResolvedCache, oCache);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("makeCache: base context", function (assert) {
-		var oBinding = this.oModel.bindContext("SO_2_BP", undefined, {}),
-			sCanonicalPath = "/SalesOrderList('1')",
-			sCachePath = sCanonicalPath.slice(1) + "/SO_2_BP",
-			oContext = {
-				getPath : function () { return sCanonicalPath; }
-			},
-			oCache = {},
-			mQueryOptions = {};
-
-		this.mock(oBinding).expects("getQueryOptions")
-			.withExactArgs(sinon.match.same(oContext))
-			.returns(mQueryOptions);
-		this.mock(_Helper).expects("buildPath").withExactArgs(sCanonicalPath, oBinding.sPath)
-			.returns("/" + sCachePath);
-		this.mock(_Cache).expects("createSingle")
-			.withExactArgs(sinon.match.same(oBinding.oModel.oRequestor), sCachePath,
-				sinon.match.same(mQueryOptions))
-			.returns(oCache);
-
-		// code under test
-		oBinding.oCachePromise = oBinding.makeCache(oContext);
-
-		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 	});
 
 	//*********************************************************************************************
@@ -1933,6 +1794,34 @@ sap.ui.require([
 
 		assert.ok(oBinding.oCachePromise.getResult() !== undefined,
 			"Binding gets cache after changeParamters");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doFetchQueryOptions", function (assert) {
+		var oBinding = this.oModel.bindContext("foo");
+
+		// code under test
+		assert.deepEqual(oBinding.doFetchQueryOptions().getResult(), {});
+
+		oBinding = this.oModel.bindContext("foo", undefined, {"$expand" : "bar"});
+
+		// code under test
+		assert.deepEqual(oBinding.doFetchQueryOptions().getResult(), {"$expand" : {"bar" : null}});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doCreateCache", function (assert) {
+		var oBinding = this.oModel.bindContext("/EMPLOYEES('1')"),
+			oCache = {},
+			mCacheQueryOptions = {};
+
+		this.mock(_Cache).expects("createSingle")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES('1')",
+				sinon.match.same(mCacheQueryOptions))
+			.returns(oCache);
+
+		// code under test
+		assert.strictEqual(oBinding.doCreateCache("EMPLOYEES('1')", mCacheQueryOptions), oCache);
 	});
 
 	//*********************************************************************************************

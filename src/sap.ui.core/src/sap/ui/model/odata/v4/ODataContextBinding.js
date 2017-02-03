@@ -38,8 +38,9 @@ sap.ui.define([
 	 *   Map of binding parameters which can be OData query options as specified in
 	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
 	 *   and "$$updateGroupId".
-	 *   Note: If parameters are provided for a relative binding path, the binding accesses data
-	 *   with its own service requests instead of using its parent binding.
+	 *   Note: The binding creates its own data service request if it is absolute or if it has any
+	 *   parameters or if it is relative and has a context created via
+	 *   {@link ODataModel#createBindingContext}.
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
@@ -257,7 +258,7 @@ sap.ui.define([
 		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 		this.mParameters = mParameters;
 		if (!this.oOperation) {
-			this.oCachePromise = this.makeCache(this.oContext);
+			this.fetchCache(this.oContext);
 			this.checkUpdate();
 		}
 	};
@@ -460,6 +461,36 @@ sap.ui.define([
 	};
 
 	/**
+	 * Hook method for {@link ODataBinding#fetchCache} to create a cache for this binding with the
+	 * given resource path and query options.
+	 *
+	 * @param {string} sResourcePath
+	 *   The resource path, for example "EMPLOYEES('1')"
+	 * @param {object} mQueryOptions
+	 *   The query options
+	 * @returns {sap.ui.model.odata.v4.lib._Cache}
+	 *   The new cache instance
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions) {
+		return _Cache.createSingle(this.oModel.oRequestor, sResourcePath, mQueryOptions);
+	};
+
+	/**
+	 * Hook method for {@link ODataBinding#fetchUseOwnCache} to determine the query options for
+	 * this binding.
+	 *
+	 * @returns {SyncPromise}
+	 *   A promise resolving with the binding's query options
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.doFetchQueryOptions = function () {
+		return _SyncPromise.resolve(this.mQueryOptions);
+	};
+
+	/**
 	 * Calls the OData operation that corresponds to this operation binding.
 	 *
 	 * Parameters for the operation must be set via {@link #setParameter} beforehand.
@@ -500,16 +531,17 @@ sap.ui.define([
 				sETag,
 				iIndex,
 				aOperationParameters,
+				sOperationPath,
 				aParameters,
-				oPromise;
+				oPromise,
+				mQueryOptions = jQuery.extend({}, that.oModel.mUriParameters, that.mQueryOptions);
 
 			sGroupId = sGroupId || that.getGroupId();
 			that.oOperation.bAction = oOperationMetadata.$kind === "Action";
 			if (that.oOperation.bAction) {
 				// Recreate the cache, because the query options might have changed
 				oCache = _Cache.createSingle(that.oModel.oRequestor,
-					(sPathPrefix + that.sPath).slice(1, -5),
-					that.getQueryOptions(that.oContext), true);
+					(sPathPrefix + that.sPath).slice(1, -5), mQueryOptions, true);
 				if (that.bRelative && that.oContext.getBinding) {
 					// @odata.etag is not added to path to avoid "failed to drill-down" in cache
 					// if no ETag is available
@@ -537,10 +569,9 @@ sap.ui.define([
 						}
 					});
 				}
-				that.oOperation.sResourcePath = that.sPath.replace("...", aParameters.join(','));
-				oCache = _Cache.createSingle(that.oModel.oRequestor,
-					(sPathPrefix + that.oOperation.sResourcePath).slice(1),
-					that.getQueryOptions(that.oContext));
+				sOperationPath = (sPathPrefix + that.sPath.replace("...", aParameters.join(',')))
+					.slice(1);
+				oCache = _Cache.createSingle(that.oModel.oRequestor, sOperationPath, mQueryOptions);
 				oPromise = oCache.fetchValue(sGroupId);
 			}
 			that.oCachePromise = _SyncPromise.resolve(oCache);
@@ -673,43 +704,6 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Creates a cache for the binding using the given context.
-	 *
-	 * The context is given as a parameter and this.oContext is unused because setContext calls
-	 * this method before calling the superclass to ensure that the cache is already created when
-	 * the events are fired.
-	 *
-	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context instance to be used, may be omitted for absolute bindings
-	 * @returns {SyncPromise}
-	 *   A promise which resolves with a cache instance or <code>undefined</code> if no cache is
-	 *   needed
-	 *
-	 * @private
-	 */
-	ODataContextBinding.prototype.makeCache = function (oContext) {
-		var vCanonicalPath, mQueryOptions, that = this;
-
-		function createCache(sPath) {
-			var sBindingPath = (that.oOperation && that.oOperation.sResourcePath) || that.sPath;
-
-			return _Cache.createSingle(that.oModel.oRequestor,
-				_Helper.buildPath(sPath, sBindingPath).slice(1), mQueryOptions);
-		}
-
-		if (!this.bRelative) {
-			oContext = undefined; // must be ignored for absolute bindings
-		} else if (!oContext || oContext.fetchCanonicalPath
-			&& !Object.keys(this.mParameters).length) {
-				return _SyncPromise.resolve(); // no need for an own cache
-		}
-		mQueryOptions = this.getQueryOptions(oContext);
-		vCanonicalPath = oContext && (oContext.fetchCanonicalPath
-			? oContext.fetchCanonicalPath() : oContext.getPath());
-		return this.createCache(createCache, vCanonicalPath);
-	};
-
-	/**
 	 * @override sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 * @inheritdoc
 	 */
@@ -725,11 +719,14 @@ sap.ui.define([
 				}
 			}
 			if (oCache) {
-				if (!that.oOperation || !that.oOperation.bAction) {
+				if (!that.oOperation) {
 					that.sRefreshGroupId = sGroupId;
-					that.oCachePromise = that.makeCache(that.oContext);
+					that.fetchCache(that.oContext);
 					that.mCacheByContext = undefined;
 					that._fireChange({reason : ChangeReason.Refresh});
+				} else if (!that.oOperation.bAction) {
+					// ignore returned promise, error handling takes place in execute
+					that.execute(sGroupId);
 				}
 			}
 			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
@@ -756,13 +753,10 @@ sap.ui.define([
 					this.oElementContext.destroy();
 					this.oElementContext = null;
 				}
-				this.oCachePromise = _SyncPromise.resolve();
+				this.fetchCache(oContext);
 				if (oContext) {
 					this.oElementContext = Context.create(this.oModel, this,
 						this.oModel.resolve(this.sPath, oContext));
-					if (!this.oOperation && (this.mParameters || !oContext.getBinding)) {
-						this.oCachePromise = this.makeCache(oContext);
-					}
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);

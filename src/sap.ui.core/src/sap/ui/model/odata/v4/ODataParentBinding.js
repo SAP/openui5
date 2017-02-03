@@ -73,138 +73,45 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a cache using the given function when the given SyncPromises are fulfilled.
-	 * If there is already a cache for the canonical path in the binding's
-	 * <code>mCacheByContext</code>, it is activated again and used, no cache is created.
+	 * Returns the query options for the given path relative to this binding. Uses the options
+	 * resulting from the binding parameters or the options inherited from the parent binding by
+	 * using {@link Context#getQueryOptionsForPath}.
 	 *
-	 * If there is already a cache for the binding, it is deactivated, so that pending read
-	 * requests do not deliver results to the binding any more.
-	 *
-	 * If the path promise or the filter promise fail, an error is reported to the model.
-	 *
-	 * @param {function} fnCreateCache
-	 *   Function to create the cache which is called with the canonical path and the $filter
-	 *   value as parameter and returns the cache.
-	 * @param {String|_SyncPromise} [vCanonicalPath]
-	 *   The canonical path for the cache or a promise resolving with it
-	 * @param {SyncPromise} [oFilterPromise]
-	 *   Promise which resolves with a value for the $filter query option to be used when
-	 *   creating the cache
-	 * @returns {SyncPromise}
-	 *   A promise which resolves with a cache instance or <code>undefined</code> if no cache is
-	 *   needed
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.createCache = function (fnCreateCache, vCanonicalPath,
-			oFilterPromise) {
-		var oCurrentCache,
-			oPromise,
-			that = this;
-
-		// no deactivation needed for not fulfilled cache promise because cache will not be created
-		if (this.oCachePromise && this.oCachePromise.isFulfilled()) {
-			oCurrentCache = this.oCachePromise.getResult();
-			if (oCurrentCache) {
-				oCurrentCache.setActive(false);
-			}
-		}
-
-		oPromise = _SyncPromise.all([vCanonicalPath, oFilterPromise]).then(function (aResult) {
-			var sCanonicalPath = aResult[0],
-				oCache,
-				oError;
-
-			// create cache only if oCachePromise has not been changed in the meantime
-			if (!oPromise || that.oCachePromise === oPromise) {
-				if (sCanonicalPath) {
-					//mCacheByContext has to be reset if parameters are changing
-					that.mCacheByContext = that.mCacheByContext || {};
-					oCache = that.mCacheByContext[sCanonicalPath];
-					if (oCache) {
-						oCache.setActive(true);
-					} else {
-						oCache = that.mCacheByContext[sCanonicalPath]
-							= fnCreateCache(sCanonicalPath, aResult[1]);
-						oCache.$canonicalPath = sCanonicalPath;
-					}
-				} else {
-					oCache = fnCreateCache(sCanonicalPath, aResult[1]);
-				}
-				return oCache;
-			} else {
-				oError = new Error("Cache discarded as a new cache has been created");
-				oError.canceled = true;
-				throw oError;
-			}
-		});
-
-		oPromise["catch"](function (oError) {
-			//Note: this may also happen if the promise to read data for the canonical path's
-			// key predicate is rejected with a canceled error
-			that.oModel.reportError("Failed to create cache for binding " + that,
-				"sap.ui.model.odata.v4.ODataParentBinding", oError);
-		});
-
-		return oPromise;
-	};
-
-	/**
-	 * Returns the query options for the binding. Uses the options resulting from the binding
-	 * parameters or the options inherited from the parent binding by using
-	 * {@link #inheritQueryOptions}. Merges the model's query options.
-	 *
+	 * @param {string} sPath
+	 *   The relative path for which the query options are requested
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context that is used to compute the inherited query options
+	 *   The context that is used to compute the inherited query options; only relevant for the
+	 *   call from ODataListBinding#doCreateCache as this.oContext might not yet be set
 	 * @returns {object}
 	 *   The computed query options
 	 *
 	 * @private
 	 */
-	ODataParentBinding.prototype.getQueryOptions = function (oContext) {
-		var mOwnQueryOptions = this.mQueryOptions;
+	ODataParentBinding.prototype.getQueryOptionsForPath = function (sPath, oContext) {
+		var mQueryOptions;
 
-		if (!Object.keys(mOwnQueryOptions).length) {
-			mOwnQueryOptions = this.inheritQueryOptions(oContext);
+		if (Object.keys(this.mParameters).length) {
+			// binding has parameters -> all query options need to be defined at the binding
+			mQueryOptions = this.mQueryOptions;
+			sPath.replace(rNotMetaContext, "") // transform path to metadata path
+				.split("/").some(function (sSegment) {
+					mQueryOptions = mQueryOptions.$expand && mQueryOptions.$expand[sSegment];
+					if (!mQueryOptions || mQueryOptions === true) {
+						mQueryOptions = {};
+						return true;
+					}
+				});
+			return jQuery.extend(true, {}, mQueryOptions);
 		}
 
-		return jQuery.extend({}, this.oModel.mUriParameters, mOwnQueryOptions);
-	};
-
-	/**
-	 * Returns the query options that are inherited from the parent binding. This is the case if
-	 * the parent binding has a <code>$expand</code> within the binding path.
-	 *
-	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context that is used to compute the inherited query options
-	 * @returns {object}
-	 *   The query options for the given path
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.inheritQueryOptions = function (oContext) {
-		var oResult;
-
-		if (!this.isRelative() || !oContext || !oContext.getQueryOptions) {
-			return undefined;
+		oContext = oContext || this.oContext;
+		// oContext is always set; as getQueryOptionsForPath is called only from ODLB#doCreateCache
+		// binding has no parameters -> no own query options
+		if (!this.bRelative || !oContext.getQueryOptionsForPath) {
+			// absolute or quasi-absolute -> no inheritance and no query options -> no options
+			return {};
 		}
-
-		oResult = oContext.getQueryOptions();
-		if (!oResult) {
-			return undefined;
-		}
-
-		this.sPath
-			.replace(rNotMetaContext, "") // transform path to metadata path
-			.split("/").some(function (sSegment) {
-				oResult = oResult.$expand && oResult.$expand[sSegment];
-				if (!oResult || oResult === true) {
-					oResult = undefined;
-					return true;
-				}
-			});
-
-		return oResult;
+		return oContext.getQueryOptionsForPath(_Helper.buildPath(this.sPath, sPath));
 	};
 
 	/**

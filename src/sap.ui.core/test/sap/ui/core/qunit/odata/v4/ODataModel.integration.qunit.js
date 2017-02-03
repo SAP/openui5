@@ -350,7 +350,7 @@ sap.ui.require([
 				"TEAMS(42)/TEAM_2_EMPLOYEES?$orderby=AGE&$select=Name&$filter=AGE%20gt%2042&$skip=0&$top=100" :
 					{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Peter Burke"}]}
 			};
-			mValueByControl["text"] = [undefined/*unchanged*/, "Peter Burke"];
+			mValueByControl.text = [undefined/*unchanged*/, "Peter Burke"];
 
 			return that.check(mResponseByRequest, mValueByControl, function () {
 				that.oView.byId("table").getBinding("items")
@@ -394,7 +394,7 @@ sap.ui.require([
 					]
 				}
 			};
-			mValueByControl["name"] = ["Frederic Fall", "Jonathan Smith"];
+			mValueByControl.name = ["Frederic Fall", "Jonathan Smith"];
 
 			return that.check(mResponseByRequest, mValueByControl, function () {
 				that.oView.byId("table").getBinding("items").sort(new Sorter("Name"));
@@ -402,8 +402,8 @@ sap.ui.require([
 		})
 		.then(function () {
 			mResponseByRequest = {};
-			mValueByControl["name"] = []; // no change expected
-			mValueByControl["id"] = "2";
+			mValueByControl.name = []; // no change expected
+			mValueByControl.id = "2";
 
 			return that.check(mResponseByRequest, mValueByControl, function () {
 				that.oView.byId("form").setBindingContext(
@@ -413,7 +413,7 @@ sap.ui.require([
 // TODO Why is formatter on property binding in form called twice for the below?
 //		.then(function () {
 //			mResponseByRequest = {};
-//			mValueByControl["id"] = "1";
+//			mValueByControl.id = "1";
 //
 //			return check(that, mResponseByRequest, mValueByControl, function () {
 //				that.oView.byId("form").setBindingContext(
@@ -459,7 +459,7 @@ sap.ui.require([
 				}
 			};
 			mValueByControl = {};
-//			mValueByControl["name"] = ["Frederic Fall", "Peter Burke"]; see test TODO
+//			mValueByControl.name = ["Frederic Fall", "Peter Burke"]; see test TODO
 
 			return that.check(mResponseByRequest, mValueByControl, function () {
 				that.oView.byId("table").getBinding("items").refresh();
@@ -482,7 +482,7 @@ sap.ui.require([
 		return this.viewStart(assert, sView, mResponseByRequest, mValueByControl).then(function () {
 			mResponseByRequest = {"EMPLOYEES('2')" : {"Name" : "Jonathan Schmidt"}};
 			mValueByControl = {};
-//			mValueByControl["text"] = "Jonathan Schmidt"; see test TODO
+//			mValueByControl.text = "Jonathan Schmidt"; see test TODO
 
 			return that.check(mResponseByRequest, mValueByControl, function () {
 				that.oView.byId("form").getObjectBinding().refresh();
@@ -499,7 +499,7 @@ sap.ui.require([
 
 		return this.viewStart(assert, sView, mResponseByRequest, mValueByControl).then(function () {
 			mResponseByRequest = {"EMPLOYEES('2')/Name" : {"value" : "Jonathan Schmidt"}};
-			mValueByControl["name"] = "Jonathan Schmidt";
+			mValueByControl.name = "Jonathan Schmidt";
 
 			return that.check(mResponseByRequest, mValueByControl, function () {
 				that.oView.byId("name").getBinding("text").refresh();
@@ -528,7 +528,7 @@ sap.ui.require([
 					}
 				}
 			};
-			mValueByControl["name"] = "Business Suite";
+			mValueByControl.name = "Business Suite";
 
 			return that.check(mResponseByRequest, mValueByControl, function () {
 				that.oView.byId("form").getObjectBinding()
@@ -568,7 +568,7 @@ sap.ui.require([
 					"value" : [{"ID": "2", "Name" : "Frederic Fall"}]
 				}
 			};
-			mValueByControl["name"] = ["Frederic Fall"];
+			mValueByControl.name = ["Frederic Fall"];
 
 			return that.check(mResponseByRequest, mValueByControl, function () {
 				that.oView.byId("table").getBinding("items").changeParameters({
@@ -589,7 +589,7 @@ sap.ui.require([
 
 		return this.viewStart(assert, sView, mResponseByRequest, mValueByControl).then(function () {
 			mResponseByRequest = {"EMPLOYEES('2')?$apply=foo" : {"Name" : "Jonathan Schmidt"}};
-			mValueByControl["text"] = "Jonathan Schmidt";
+			mValueByControl.text = "Jonathan Schmidt";
 
 			return that.check(mResponseByRequest, mValueByControl, function () {
 				that.oView.byId("form").getObjectBinding().changeParameters({

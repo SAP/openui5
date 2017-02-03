@@ -329,16 +329,12 @@ sap.ui.require([
 			oListBinding = oModel.bindList("/TEAMS"),
 			oListBinding2 = oModel.bindList("/TEAMS"),
 			oListBinding3 = oModel.bindList("TEAM_2_EMPLOYEES"),
-			oRelativeContextBinding = oModel.bindContext("TEAM_2_MANAGER", undefined,
-				{"$apply" : "foo"}),
+			oRelativeContextBinding = oModel.bindContext("TEAM_2_MANAGER", oContext, {}),
 			oPropertyBinding = oModel.bindProperty("Name"),
 			oPropertyBinding2 = oModel.bindProperty("Team_Id");
 
-		// cache proxy for oRelativeContextBinding
-		this.mock(oContext).expects("fetchCanonicalPath").returns(_SyncPromise.resolve("~"));
-		oRelativeContextBinding.setContext(oContext);
 		oListBinding3.setContext(oBaseContext);
-		this.mock(oPropertyBinding2).expects("makeCache");
+		this.mock(oPropertyBinding2).expects("fetchCache");
 		this.mock(oPropertyBinding2).expects("checkUpdate");
 		oPropertyBinding2.setContext(oBaseContext);
 
