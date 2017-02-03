@@ -1137,15 +1137,17 @@ QUnit.test("Stacked Modal Popups Should Change Z-Index of BlockLayer", function(
 QUnit.test("Open/close with IE and check BlindLayer", function(assert) {
 	var done = assert.async();
 
+	var sandbox = sinon.sandbox.create();
+
 	var oPopupDomRef = jQuery.sap.domById("popup");
 	this.oPopup = new sap.ui.core.Popup(oPopupDomRef, /*bModal*/ true);
 	this.$Ref = this.oPopup._$();
 
 	sap.ui.require("sap.ui.Device");
-	var oDeviceStub = sinon.stub(sap.ui.Device);
-	oDeviceStub.browser.msie = true;
-	oDeviceStub.browser.version = 11;
-	oDeviceStub.os.windows_phone = false;
+	sandbox.stub(sap.ui.Device, "browser", {
+		msie: true,
+		version: 11
+	});
 
 	var oSpyOpened = sinon.spy(this.oPopup, "_opened");
 	var oSpyClosed = sinon.spy(this.oPopup, "_closed");
@@ -1192,6 +1194,7 @@ QUnit.test("Open/close with IE and check BlindLayer", function(assert) {
 
 		this.oPopup.close(0);
 		this.oPopup.destroy();
+		sandbox.restore();
 		done();
 	}
 
@@ -1322,4 +1325,58 @@ QUnit.test("Open two modal popups and destroy the second one. Blocklayer should 
 	// act
 	this.oPopup.open();
 	oPopup2.open();
+});
+
+QUnit.test("Open wrapped autoclose popup from a modal popup", function(assert) {
+	var done = assert.async();
+
+	var sandbox = sinon.sandbox.create();
+	sandbox.stub(sap.ui.Device, 'system', {
+		desktop: true
+	});
+
+	var oModalPopup = new sap.ui.core.Popup(jQuery("<div id='modalPopup'><button id='modalButton'>open modal popup</button></div>")[0]);
+	oModalPopup.setModal(true);
+
+	var fnOpened = function() {
+		assert.ok(true, "the first modal popup is opened");
+		var oPopupDomRef = jQuery("<div id='autoclosePopup'><button id='autocloseButton'>open</button></div>")[0];
+		var oPopup = new sap.ui.core.Popup(oPopupDomRef);
+		oPopup.setAutoClose(true);
+		oPopup.setPosition(
+			sap.ui.core.Popup.Dock.BeginTop,
+			sap.ui.core.Popup.Dock.BeginBottom,
+			jQuery.sap.domById("modalButton")
+		);
+		var fnOpened1 = function() {
+			assert.ok(true, "the second popup is opened");
+			var oPopupDomRef = jQuery("<div id='autoclosePopup1'><button id='autocloseButton1'>open</button></div>")[0];
+			var oPopup1 = new sap.ui.core.Popup(oPopupDomRef);
+			oPopup1.setAutoClose(true);
+			oPopup1.setPosition(
+				sap.ui.core.Popup.Dock.BeginTop,
+				sap.ui.core.Popup.Dock.BeginBottom,
+				jQuery.sap.domById("autocloseButton")
+			);
+			oPopup1.attachOpened(function() {
+				assert.ok(true, "the third popup is finally opened");
+				// check whether the third popup is open after the focus is grabbed back to the modal popup
+				setTimeout(function(){
+					assert.ok(oPopup1.isOpen(), "the third popup should still be opened");
+					oPopup.destroy();
+					oPopup1.destroy();
+					oModalPopup.destroy();
+
+					sandbox.restore();
+					done();
+				}, 50);
+			});
+			oPopup1.open(0);
+		};
+		oPopup.attachOpened(fnOpened1);
+		oPopup.open(0);
+	};
+
+	oModalPopup.attachOpened(fnOpened);
+	oModalPopup.open(0);
 });
