@@ -145,28 +145,70 @@
 		}, 500);
 	});
 
-	QUnit.test("Test ARIA label for single content", function(assert) {
+	QUnit.test("Test ARIA label for single content in Display scope", function(assert) {
 		//Arrange
-		//Act
+		var sExpectedText = "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.equal(this.oSlideTile.$().attr("aria-label"), "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2", "SlideTile contains expected ARIA-label attribute");
+		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
 	});
 
-	QUnit.test("Test ARIA label for multiple content", function(assert) {
+	QUnit.test("Test ARIA label for single content in Actions scope", function(assert) {
 		//Arrange
-		//Act
-		var sAdditionalText = oResBundle.getText("SLIDETILE_TOGGLE_SLIDING");
+		var sExpectedText = this.oSlideTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + "\n" +
+			"Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
+		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
+		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
+		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
+		sap.ui.getCore().applyChanges();
+
 		//Assert
-		assert.equal(this.oSlideTile.$().attr("aria-label"), "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2\n" + sAdditionalText, "SlideTile contains expected ARIA-label attribute");
+		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
+	});
+
+	QUnit.test("Test ARIA label for multiple contents in Display scope, Tile is sliding", function(assert) {
+		//Arrange
+		var sExpectedText = "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+			this.oSlideTile._oRb.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
+			this.oSlideTile._oRb.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
+			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
+
+		//Assert
+		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
+	});
+
+	QUnit.test("Test ARIA label for multiple contents in Display scope, sliding is stopped", function(assert) {
+		//Arrange
+		var sExpectedText = "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+			this.oSlideTile._oRb.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
+			this.oSlideTile._oRb.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
+			this.oSlideTile._oRb.getText("SLIDETILE_SCROLL_BACK") + "\n" +
+			this.oSlideTile._oRb.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
+			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
+		this.oSlideTile._toggleAnimation();
+
+		//Assert
+		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
+	});
+
+	QUnit.test("Test ARIA label for multiple content in Actions scope", function(assert) {
+		//Arrange
+		var sExpectedText = this.oSlideTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + "\n" +
+			"Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
+		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
 	});
 
 	QUnit.test("Test sliding active per default", function(assert) {
-		//Arrange
-		//Act
 		//Assert
 		assert.ok(!this.oSlideTile._bAnimationPause, "Animation is active");
 	});
@@ -301,7 +343,19 @@
 			//Act
 			this.oSlideTile.$().trigger(oEvent);
 			//Assert
-			assert.ok(spy.calledOnce, "Backwards sliding by using key B works");
+			assert.ok(spy.calledOnce, "Backwards scrolling by using key B works");
+		});
+
+		QUnit.test("SlideTile keyboard button B test - no scrolling if the Tile is sliding", function(assert) {
+			//Arrange
+			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
+				oEvent = jQuery.Event("keyup");
+			oEvent.which = jQuery.sap.KeyCodes.B;
+			this.oSlideTile._bAnimationPause = false;
+			//Act
+			this.oSlideTile.$().trigger(oEvent);
+			//Assert
+			assert.ok(spy.notCalled, "No backward scrolling by using key B if the Tile is sliding");
 		});
 
 		QUnit.test("In Action Scope keyboard button B is ignored", function(assert) {
@@ -315,7 +369,7 @@
 			//Act
 			this.oSlideTile.$().trigger(oEvent);
 			//Assert
-			assert.ok(spy.notCalled, "Backwards sliding by using key B is not executed in Actions Scope");
+			assert.ok(spy.notCalled, "Backwards scrolling by using key B is not executed in Actions Scope");
 		});
 
 		QUnit.test("SlideTile keyboard button F test", function(assert) {
@@ -327,7 +381,19 @@
 			//Act
 			this.oSlideTile.$().trigger(oEvent);
 			//Assert
-			assert.ok(spy.calledOnce, "Forwards sliding by using key F works");
+			assert.ok(spy.calledOnce, "Forwards scrolling by using key F works");
+		});
+
+		QUnit.test("SlideTile keyboard button F test - no scrolling if the Tile is sliding", function(assert) {
+			//Arrange
+			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
+				oEvent = jQuery.Event("keyup");
+			oEvent.which = jQuery.sap.KeyCodes.F;
+			this.oSlideTile._bAnimationPause = false;
+			//Act
+			this.oSlideTile.$().trigger(oEvent);
+			//Assert
+			assert.ok(spy.notCalled, "No forward scrolling by using key F if the Tile is sliding");
 		});
 
 		QUnit.test("In Action Scope keyboard button F is ignored", function(assert) {
@@ -341,7 +407,7 @@
 			//Act
 			this.oSlideTile.$().trigger(oEvent);
 			//Assert
-			assert.ok(spy.notCalled, "Forwards sliding by using key F is not executed in Actions Scope");
+			assert.ok(spy.notCalled, "Forwards scrolling by using key F is not executed in Actions Scope");
 		});
 
 		QUnit.test("SlideTile mouse down handler test", function(assert) {
@@ -462,37 +528,54 @@
 
 	QUnit.test("Method _scrollToNextTile - option: scroll backward and stop the animation", function(assert) {
 		//Arrange
-		var sAdditionalText = oResBundle.getText("SLIDETILE_TOGGLE_SLIDING"),
-			sAriaLabel, $NextTile, $NextTileExpected,
+		var sAriaLabel,
+			sAdditionalText = oResBundle.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
+				oResBundle.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
+				oResBundle.getText("SLIDETILE_SCROLL_BACK") + "\n" +
+				oResBundle.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
+				oResBundle.getText("SLIDETILE_ACTIVATE"),
 			sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\n" + sAdditionalText;
+		this.oSlideTile._toggleAnimation();
 		//Act
 		this.oSlideTile._scrollToNextTile(true, true);
-		sAriaLabel = this.oSlideTile.$().attr("aria-label")
+		sAriaLabel = this.oSlideTile.$().attr("aria-label");
+
 		//Assert
 		assert.equal(sAriaLabel, sAriaLabelExpected, "Expected backward animation done");
 	});
 
 	QUnit.test("Method _scrollToNextTile - option: scroll forward and stop the animation", function(assert) {
 		//Arrange
-		var sAdditionalText = oResBundle.getText("SLIDETILE_TOGGLE_SLIDING"),
-			sAriaLabel, $NextTile, $NextTileExpected,
+		var sAriaLabel,
+            sAdditionalText = oResBundle.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
+				oResBundle.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
+				oResBundle.getText("SLIDETILE_SCROLL_BACK") + "\n" +
+				oResBundle.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
+				oResBundle.getText("SLIDETILE_ACTIVATE"),
 			sAriaLabelExpected = "Tile 2 30 Neutral Footer 3 40 Neutral Footer 4\n" + sAdditionalText;
+		this.oSlideTile._toggleAnimation();
 		//Act
 		this.oSlideTile._scrollToNextTile(true, false);
-		sAriaLabel = this.oSlideTile.$().attr("aria-label")
+		sAriaLabel = this.oSlideTile.$().attr("aria-label");
+
 		//Assert
 		assert.equal(sAriaLabel, sAriaLabelExpected, "Expected forward animation done");
 	});
 
 	QUnit.test("Method _scrollToNextTile - option: scroll forward twice and stop the animation", function(assert) {
 		//Arrange
-		var sAdditionalText = oResBundle.getText("SLIDETILE_TOGGLE_SLIDING"),
-			sAriaLabel, $NextTile, $NextTileExpected,
+		var sAriaLabel,
+            sAdditionalText = oResBundle.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
+				oResBundle.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
+				oResBundle.getText("SLIDETILE_SCROLL_BACK") + "\n" +
+				oResBundle.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
+				oResBundle.getText("SLIDETILE_ACTIVATE"),
 			sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\n" + sAdditionalText;
+		this.oSlideTile._toggleAnimation();
 		//Act
 		this.oSlideTile._scrollToNextTile(true, false);
 		this.oSlideTile._scrollToNextTile(true, false);
-		sAriaLabel = this.oSlideTile.$().attr("aria-label")
+		sAriaLabel = this.oSlideTile.$().attr("aria-label");
 		//Assert
 		assert.equal(sAriaLabel, sAriaLabelExpected, "Expected forward animation done");
 	});
