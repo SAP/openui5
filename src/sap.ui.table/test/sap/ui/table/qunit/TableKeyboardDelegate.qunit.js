@@ -5015,6 +5015,9 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 	var bTableIsInGroupMode = TableUtils.Grouping.isGroupMode(oTable);
 	var bTableHasRowHeader = bTableHasRowSelectors || bTableIsInGroupMode;
 	var oKeyboardExtension = oTable._getKeyboardExtension();
+	var iColumnCount = oTable.getColumns().filter(function(oColumn){
+		return oColumn.getVisible() || oColumn.getGrouped();
+	}).length;
 	var iRowCount = oTable._getRowCount();
 	var iDelayAfterInRowTabbing = 0;
 	var iDelayAfterScrollTabbing = 100;
@@ -5057,7 +5060,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 	// Tab to the last interactive control of the table. Then tab again to leave the action mode.
 	var sequence = Promise.resolve();
 	for (i = 0; i < iRowCount; i++) {
-		for (j = -1; j < iNumberOfCols; j++) {
+		for (j = -1; j < iColumnCount; j++) {
 			(function() {
 				var iAbsoluteRowIndex = i;
 				var iColumnIndex = j;
@@ -5107,7 +5110,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 							var $InteractiveElement = TableKeyboardDelegate2._getInteractiveElements($Cell);
 
 							if ($InteractiveElement === null) {
-								var bIsLastCellInGroupHeaderRow = iColumnIndex === iNumberOfCols - 1 && TableUtils.Grouping.isInGroupingRow(oElem);
+								var bIsLastCellInGroupHeaderRow = iColumnIndex === iColumnCount - 1 && TableUtils.Grouping.isInGroupingRow(oElem);
 
 								if (bShowInfo) {
 									assert.ok(true,
@@ -5132,15 +5135,15 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 
 						simulateTabEvent(document.activeElement);
 
-						var bScrolled = iColumnIndex === iNumberOfCols - 1 && TableUtils.isLastScrollableRow(oTable, TableUtils.getCell(oTable, oElem));
+						var bScrolled = iColumnIndex === iColumnCount - 1 && TableUtils.isLastScrollableRow(oTable, TableUtils.getCell(oTable, oElem));
 
 						if (bShowInfo) {
 							assert.ok(true, "[INFO] Scrolling will be performed: " + bScrolled);
 						}
 
 						setTimeout(function() {
-							if (iAbsoluteRowIndex === iRowCount - 1 && iColumnIndex === iNumberOfCols - 1) {
-								checkFocus(getCell(iVisibleRowCount - 1, iNumberOfCols - 1), assert);
+							if (iAbsoluteRowIndex === iRowCount - 1 && iColumnIndex === iColumnCount - 1) {
+								checkFocus(getCell(iVisibleRowCount - 1, iColumnCount - 1), assert);
 								assert.ok(!oKeyboardExtension.isInActionMode(), "Table is in Navigation Mode");
 							} else {
 								assert.ok(oKeyboardExtension.isInActionMode(), "Table is in Action Mode");
@@ -5166,7 +5169,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 
 	// Tab back to the first interactive control of the table. Then tab back again to leave the action mode.
 	for (i = iRowCount - 1; i >= 0; i--) {
-		for (j = iNumberOfCols - 1; j >= -1; j--) {
+		for (j = iColumnCount - 1; j >= -1; j--) {
 			(function() {
 				var iAbsoluteRowIndex = i;
 				var iColumnIndex = j;
@@ -5271,6 +5274,13 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 }
 
 QUnit.test("TAB & Shift+TAB - Default Test Table", function(assert) {
+	_testActionModeTabNavigation(assert);
+});
+
+QUnit.test("TAB & Shift+TAB - Invisible Columns", function(assert) {
+	oTable.getColumns()[1].setVisible(false);
+	sap.ui.getCore().applyChanges();
+
 	_testActionModeTabNavigation(assert);
 });
 
