@@ -197,6 +197,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			return;
 		}
 
+		if (!this.getDomRef()) {
+			// if control is not rendered don't do any dom related calculation
+			return;
+		}
+
 		this._bNamesLengthChecked = undefined;
 		var aMonths = this._oItemNavigation.getItemDomRefs();
 		this._bLongMonth = false;
