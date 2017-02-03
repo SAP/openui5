@@ -28,52 +28,52 @@ sap.ui.define([
 			oSettings.features = {
 				//addField is not listed so it remains always enabled for compatibility reasons, although currently only addFields is used
 				"addFields": [
-					"CUSTOMER", "VENDOR"
+					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
 				],
 				"addGroup": [
-					"CUSTOMER", "VENDOR"
+					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
 				],
 				"removeField": [
-					"CUSTOMER", "VENDOR"
+					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
 				],
 				"removeGroup": [
-					"CUSTOMER", "VENDOR"
+					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
 				],
 				"hideControl": [
-					"CUSTOMER", "VENDOR"
+					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
 				],
 				"unhideControl": [
-					"CUSTOMER", "VENDOR"
+					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
 				],
 				"stashControl": [
-				  "CUSTOMER", "VENDOR"
+				  "CUSTOMER", "CUSTOMER_BASE", "VENDOR"
 				],
 				"unstashControl": [
-				  "CUSTOMER", "VENDOR"
+				  "CUSTOMER", "CUSTOMER_BASE", "VENDOR"
 				],
 				"renameField": [
-					"CUSTOMER", "VENDOR"
+					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
 				],
 				"renameGroup": [
-					"CUSTOMER", "VENDOR"
+					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
 				],
 				"moveFields": [
-					"CUSTOMER", "VENDOR"
+					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
 				],
 				"moveGroups": [
-					"CUSTOMER", "VENDOR"
+					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
 				],
 				"moveElements": [
-					"CUSTOMER", "VENDOR"
+					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
 				],
 				"moveControls": [
-					"CUSTOMER", "VENDOR"
+					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
 				],
 				"propertyChange": [
-					"VENDOR"
+					 "CUSTOMER_BASE", "VENDOR"
 				],
 				"propertyBindingChange": [
-					"VENDOR"
+					 "CUSTOMER_BASE", "VENDOR"
 				]
 			};
 		}

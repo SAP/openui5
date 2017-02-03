@@ -592,7 +592,7 @@ sap.ui.define([
 	 *
 	 * @param {String} mParameters property bag
 	 * @param {String} mParameters.sChangeName - name of the change
-	 * @param {String} [mParameters.sLayer="USER"] - other possible layers: VENDOR,PARTNER,CUSTOMER
+	 * @param {String} [mParameters.sLayer="USER"] - other possible layers: VENDOR,PARTNER,CUSTOMER_BASE,CUSTOMER
 	 * @param {String} mParameters.sNamespace - the namespace of the change file
 	 * @param {String} mParameters.sChangelist - The transport ID.
 	 * @param {Boolean} bIsVariant - is it a variant?

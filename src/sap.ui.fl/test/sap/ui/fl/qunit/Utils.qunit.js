@@ -176,7 +176,7 @@ jQuery.sap.require("sap.m.Button");
 		getUriParametersStub.restore();
 	});
 
-	QUnit.test("doesSharedVariantRequirePackage", function (assert) {
+	QUnit.test("doesSharedVariantRequirePackageCustomer", function (assert) {
 		var bDoesSharedVariantRequirePackage;
 		this.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
 
@@ -184,6 +184,17 @@ jQuery.sap.require("sap.m.Button");
 		bDoesSharedVariantRequirePackage = Utils.doesSharedVariantRequirePackage();
 
 		assert.strictEqual(bDoesSharedVariantRequirePackage, false);
+		Utils.getCurrentLayer.restore();
+	});
+
+	QUnit.test("doesSharedVariantRequirePackageCustomerBase", function (assert) {
+		var bDoesSharedVariantRequirePackage;
+		this.stub(Utils, "getCurrentLayer").returns("CUSTOMER_BASE");
+
+		// Call CUT
+		bDoesSharedVariantRequirePackage = Utils.doesSharedVariantRequirePackage();
+
+		assert.strictEqual(bDoesSharedVariantRequirePackage, true);
 		Utils.getCurrentLayer.restore();
 	});
 
