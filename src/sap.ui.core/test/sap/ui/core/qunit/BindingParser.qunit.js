@@ -674,19 +674,19 @@ sap.ui.require([
 		//TODO "{parts:[{path:'/foo',formatter:'foo'},{path:'/bar',formatter:'bar'}]}"
 		//     formatters inside parts are not supported?!
 
-		var sBinding = "{path:'/foo',formatter:'foo'} {path:'/bar',formatter:'bar'}",
+		var sBinding = "{path:'/foo',formatter:'foo'} {path:'/bar',formatter:'.bar'}",
 			oBindingInfo;
 
 		// bTolerateFunctionsNotFound = false
 		this.oLogMock.expects("error").withExactArgs("formatter function foo not found!");
-		this.oLogMock.expects("error").withExactArgs("formatter function bar not found!");
+		this.oLogMock.expects("error").withExactArgs("formatter function .bar not found!");
 
 		parse(sBinding, null, true, /*bTolerateFunctionsNotFound*/false);
 
 		// bTolerateFunctionsNotFound = true
 		oBindingInfo = parse(sBinding, null, true, /*bTolerateFunctionsNotFound*/true);
 
-		assert.deepEqual(oBindingInfo.functionsNotFound, ["foo", "bar"]);
+		assert.deepEqual(oBindingInfo.functionsNotFound, ["foo", ".bar"]);
 	});
 
 	QUnit.test("Expression binding: usage in composite binding", function (assert) {
