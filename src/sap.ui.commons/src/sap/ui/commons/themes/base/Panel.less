@@ -21,11 +21,11 @@
 .sapUiPanelHdr {
 	border-radius: @sapUiPanelBorderRadius @sapUiPanelBorderRadius 0 0;
 	display: -webkit-box;
-	display: box;
+	display: flex;
 	-webkit-box-orient: horizontal;
 	-webkit-box-align: center;
-	box-orient: horizontal;
-	box-align: center;
+	flex-direction: row;
+	align-items: center;
 	box-sizing: border-box;
 	background-color: @sapUiExtraLightBG;
 	white-space: nowrap;
@@ -80,7 +80,7 @@
 	padding: 0;
 	font-size: 11px;
 	-webkit-box-flex: 1;
-	box-flex: 1;
+	flex-grow: 1;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	margin-right: 10px;
@@ -90,7 +90,7 @@
 
 .sapUiPanelTb {
 	-webkit-box-flex: 1000;
-	box-flex: 1000;
+	flex-grow: 1000;
 	min-width: 30px; /* the minimum width is also set to the width of the largest button through JS calculations */
 	margin: 2px 10px 0 10px;
 	white-space: normal;
