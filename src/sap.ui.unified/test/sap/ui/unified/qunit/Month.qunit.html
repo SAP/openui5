@@ -8,7 +8,7 @@
 		<script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-noConflict="true"
-			data-sap-ui-libs="sap.ui.unified"
+			data-sap-ui-libs="sap.m, sap.ui.unified"
 			data-sap-ui-language="en-US">
 		</script>
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
@@ -43,7 +43,7 @@
 
 				module("Rendering", {
 					beforeEach: function () {
-						this.oM = new sap.ui.unified.calendar.Month().placeAt("test");
+						this.oM = new sap.ui.unified.calendar.Month().placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 					},
 					afterEach: function () {
@@ -183,6 +183,82 @@
 					);
 				});
 
+				module("Rendering", {
+					beforeEach: function () {
+						this.oM = new sap.ui.unified.calendar.Month().placeAt("qunit-fixture");
+					},
+					afterEach: function () {
+						this.oM.destroy();
+						this.oM = null;
+					}
+				});
+
+				test("Adding special date should not move the focus to the month control", function (oAssert) {
+					// Arrange
+					var fnDone = oAssert.async(), // Async test
+						oSpecialDate = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.Type01,
+							startDate: createDate(2017, 1, 20)
+						}),
+						oButton = new sap.m.Button({text: "Btn"}).placeAt("qunit-fixture");
+
+					this.oM.setDate(createDate(2017, 1, 1));
+					sap.ui.getCore().applyChanges();
+
+					// Act - focus the button control and add a special date to the month
+					oButton.focus();
+					this.oM.addSpecialDate(oSpecialDate);
+
+					// Assert
+					setTimeout(function () {
+						var $Focus = jQuery(document.activeElement);
+
+						if($Focus.length === 0) {
+							oAssert.ok(false, "The focus should be on the browser tab on which this " +
+								"qUnit is executed. If not the test will fail!");
+							fnDone(); // Complete async test
+							return;
+						}
+
+						oAssert.strictEqual($Focus.control(0).getId(), oButton.getId(),
+							"Focus should remain on the button");
+
+						fnDone();
+					}, 0);
+
+				});
+
+				module("Internals", {
+					beforeEach: function () {
+						this.oM = new sap.ui.unified.calendar.Month();
+					},
+					afterEach: function () {
+						this.oM.destroy();
+						this.oM = null;
+					}
+				});
+
+				test("Invalidate from parent aggregation specialDates", function (oAssert) {
+					// Arrange
+					this.oM.getDomRef = function () {
+						return true; // Mock object getDomRef() method return
+					};
+					this.oM._bNoFocus = false; // Mock focus return boolean
+
+					// Act - invalidate without origin
+					this.oM.invalidate();
+
+					// Assert
+					oAssert.strictEqual(this.oM._bNoFocus, false, "When invalidating without origin focus should be returned");
+
+					// Act - invalidate with mock origin which is of type sap.ui.unified.DateRange with parent aggregation "specialDates"
+					this.oM.invalidate(new sap.ui.unified.DateRange().setParent(this.oM, "specialDates"));
+
+					// Assert
+					oAssert.strictEqual(this.oM._bNoFocus, true, "When invalidating with origin DateRange and parent " +
+						"aggregation 'specialDates' focus should not be returned");
+				});
+
 			})();
 
 		</script>
@@ -191,6 +267,5 @@
 	<body class="sapUiBody" role="application">
 		<h1 id="qunit-header">QUnit tests: sap.ui.unified.calendar.Month</h1>
 		<div id="qunit-fixture"></div>
-	<div id="test"></div>
 	</body>
 </html>
