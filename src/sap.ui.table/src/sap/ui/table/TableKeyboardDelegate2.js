@@ -187,6 +187,42 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the visible and grouped columns of a table.
+	 *
+	 * @param {sap.ui.table.Table} oTable Instance of the table.
+	 * @returns {sap.ui.table.Column[]} Returns the visible and grouped columns of a table.
+	 * @private
+	 */
+	TableKeyboardDelegate._getVisibleAndGroupedColumns = function(oTable) {
+		return oTable.getColumns().filter(function(oColumn){
+			return oColumn.getVisible() || oColumn.getGrouped();
+		});
+	};
+
+	/**
+	 * Returns the index of the column in the array of visible and grouped columns
+	 *
+	 * @param {sap.ui.table.Table} oTable Instance of the table.
+	 * @param {sap.ui.table.Column} oColumn Instance of the table column to get the index for.
+	 * @returns {int} Returns the index of the column in the list of visible and grouped columns.
+	 * 				  Returns -1 if the column is not in this list.
+	 * @private
+	 */
+	TableKeyboardDelegate._getColumnIndexInVisibleAndGroupedColumns = function(oTable, oColumn) {
+		var aVisibleAndGroupedColumns = TableKeyboardDelegate._getVisibleAndGroupedColumns(oTable);
+
+		for (var i = 0; i < aVisibleAndGroupedColumns.length; i++) {
+			var oVisibleOrGroupedColumn = aVisibleAndGroupedColumns[i];
+
+			if (oVisibleOrGroupedColumn === oColumn) {
+				return i;
+			}
+		}
+
+		return -1;
+	};
+
+	/**
 	 * Sets the focus to a row header cell of a table.
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
@@ -337,7 +373,9 @@ sap.ui.define([
 		}
 
 		// Search in the previous cells.
-		for (var i = oDataCellInfo.columnIndex - 1; i >= 0; i--) {
+		var oColumn = oTable.getColumns()[oDataCellInfo.columnIndex];
+		var iColumnIndexInCellsAggregation = TableKeyboardDelegate._getColumnIndexInVisibleAndGroupedColumns(oTable, oColumn);
+		for (var i = iColumnIndexInCellsAggregation - 1; i >= 0; i--) {
 			var oCellDomRef = aCells[i].getDomRef();
 			$Cell = TableUtils.getParentDataCell(oTable, oCellDomRef);
 			$InteractiveElements = this._getInteractiveElements($Cell);
@@ -381,7 +419,9 @@ sap.ui.define([
 		}
 
 		// Search in the next cells.
-		for (var i = oDataCellInfo.columnIndex + 1; i < aCells.length; i++) {
+		var oColumn = oTable.getColumns()[oDataCellInfo.columnIndex];
+		var iColumnIndexInCellsAggregation = TableKeyboardDelegate._getColumnIndexInVisibleAndGroupedColumns(oTable, oColumn);
+		for (var i = iColumnIndexInCellsAggregation + 1; i < aCells.length; i++) {
 			var oCellDomRef = aCells[i].getDomRef();
 			$Cell = TableUtils.getParentDataCell(oTable, oCellDomRef);
 			$InteractiveElements = this._getInteractiveElements($Cell);
