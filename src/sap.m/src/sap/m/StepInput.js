@@ -35,24 +35,25 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 					/**
 					 * Sets the minimum possible value of the defined range.
 					 */
-					min: {type: "Number", group: "Data"},
+					min: {type: "float", group: "Data"},
 					/**
 					 * Sets the maximum possible value of the defined range.
 					 */
-					max: {type: "Number", group: "Data"},
+					max: {type: "float", group: "Data"},
 					/**
 					 * Increases/decreases the value of the input.
+					 * <ul><b>Note:</b> <li>The value of the <code>step</code> property should not contain more digits after the decimal point than what is set to the <code>displayValuePrecision</code> property, as it may lead to an increase/decrease that is not visible for the user. For example, if the <code>value</code> is set to 1.22 and the <code>displayValuePrecision</code> is set to one digit after the decimal, the user will see 1.2. In this case, if the the <code>value</code> of the <code>step</code> property is set to 1.005 and the user selects <code>increase</code>, the resulting value will increase to 1.2261 but the displayed value will remain as 1.2 as it will be rounded to the first digit after the decimal point.</li> <li>Depending on what is set for the <code>value</code> and the <code>displayValuePrecision</code> properties, it is possible the displayed value to be rounded to a higher number, for example to 3.0 when the actual value is 2.99.</li></ul>
 					 */
-					step: {type: "Number", group: "Data", defaultValue: 1},
+					step: {type: "float", group: "Data", defaultValue: 1},
 					/**
 					 * TIncreases/decreases the value with a larger value than the set step only when using the PageUp/PageDown keys.
 					 * Default value is 2 times larger than the set step.
 					 */
-					largerStep: {type: "Number", group: "Data", defaultValue: 2},
+					largerStep: {type: "float", group: "Data", defaultValue: 2},
 					/**
 					 * Determines the value of the <code>StepInput</code> and can be set initially from the app developer.
 					 */
-					value: {type: "Number", group: "Data", defaultValue: 0},
+					value: {type: "float", group: "Data", defaultValue: 0},
 					/**
 					 * Defines the width of the control.
 					 */
@@ -70,7 +71,15 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 					 * Indicates whether the user can interact with the control or not.
 					 * <b>Note:</b> Disabled controls cannot be focused and they are out of the tab-chain.
 					 */
-					enabled: {type: "boolean", group: "Behavior", defaultValue: true}
+					enabled: {type: "boolean", group: "Behavior", defaultValue: true},
+					/**
+					 * Determines the number of digits after the decimal point.
+					 *
+					 * The value should be between 0 (default) and 20.
+					 * In case the value is not valid it will be set to the default value.
+					 * @since 1.46
+					 */
+					displayValuePrecision: {type: "int", group: "Data", defaultValue: 0}
 				},
 				aggregations: {
 					/**
@@ -126,6 +135,8 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		 * Initializes the control.
 		 */
 		StepInput.prototype.init = function () {
+			this._iRealPrecision = 0;
+
 			this._attachPressEvents();
 			this._attachLiveChange();
 			this._attachChange();
@@ -135,12 +146,13 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		 * Called before the control is rendered.
 		 */
 		StepInput.prototype.onBeforeRendering = function () {
+			var vMin = this.getMin(),
+				vMax = this.getMax(),
+				vValue = this.getValue();
 
-			var vMin = this._getIntOrFloat(this.getMin()),
-				vMax = this._getIntOrFloat(this.getMax()),
-				vValue = this._getIntOrFloat(this.getValue());
+			this._iRealPrecision = this._getRealValuePrecision();
 
-			this._getInput().setValue(vValue);
+			this._getInput().setValue(this._getFormatedValue(vValue));
 
 			if (isNumber(vMin) && (vMin > vValue)) {
 				this.setValue(vMin);
@@ -149,17 +161,6 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 				this.setValue(vMax);
 			}
 			this._disableButtons(vValue, vMax, vMin);
-		};
-
-		/**
-		 * Parses the number to the correct type.
-		 *
-		 * @param {Number} number Any number
-		 * @returns {Number} Any number in the corresponding type
-		 * @private
-		 */
-		StepInput.prototype._getIntOrFloat = function (number) {
-			return this.isInteger(number) ? parseInt(number, 10) : parseFloat(number, 10);
 		};
 
 		/**
@@ -188,7 +189,10 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
 		 */
 		StepInput.prototype.setMin = function (number) {
-			return this.setProperty("min", number, true);
+			var vValue = this.getValue(),
+				bSuppressInvalidate = (vValue !== 0 && !vValue);
+
+			return this.setProperty("min", number, bSuppressInvalidate);
 		};
 
 		/**
@@ -198,7 +202,31 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
 		 */
 		StepInput.prototype.setMax = function (number) {
-			return this.setProperty("max", number, true);
+			var vValue = this.getValue(),
+				bSuppressInvalidate = (vValue !== 0 && !vValue);
+
+			return this.setProperty("max", number, bSuppressInvalidate);
+		};
+
+		/**
+		 * Sets the <code>displayValuePrecision</code>.
+		 *
+		 * @param {Number} number
+		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
+		 */
+		StepInput.prototype.setDisplayValuePrecision = function (number) {
+			var vValuePrecision,
+				vValue = this.getValue(),
+				bSuppressInvalidate = (vValue !== 0 && !vValue);
+
+			if (isValidPrecisionValue(number)) {
+				vValuePrecision = parseInt(number, 10);
+			} else {
+				vValuePrecision = 0;
+				jQuery.sap.log.warning(this + ": ValuePrecision (" + number + ") is not correct. It should be a number between 0 and 20! Setting the default ValuePrecision:0.");
+			}
+
+			return this.setProperty("displayValuePrecision", vValuePrecision, bSuppressInvalidate);
 		};
 
 		/**
@@ -276,18 +304,17 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
 		 */
 		StepInput.prototype._handleButtonPress = function (isPlusButton) {
-			//debugger;
-			var vInputValue = this._calculateValue(1, isPlusButton),
-				vMin = this._getIntOrFloat(this.getMin()),
-				vMax = this._getIntOrFloat(this.getMax()),
+			var oNewValue = this._calculateValue(1, isPlusButton),
+				vMin = this.getMin(),
+				vMax = this.getMax(),
 				valueState = this._getInput().getValueState();
 
-			if (valueState == sap.ui.core.ValueState.Error && (vInputValue == vMin || vInputValue == vMax)) {
+			if (valueState == sap.ui.core.ValueState.Error && (oNewValue == vMin || oNewValue == vMax)) {
 				this.setValueState(sap.ui.core.ValueState.None);
 			}
 
-			this._disableButtons(this._getIntOrFloat(vInputValue));
-			this.setValue(vInputValue);
+			this._disableButtons(oNewValue.displayValue);
+			this.setValue(oNewValue.value);
 
 			if (this._iChangeEventTimer) {
 				jQuery.sap.clearDelayedCall(this._iChangeEventTimer);
@@ -353,9 +380,9 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		 *
 		 */
 		StepInput.prototype._handleIncorrectValues = function () {
-			var min = this._getIntOrFloat(this.getMin()),
-				max = this._getIntOrFloat(this.getMax()),
-				value = this._getIntOrFloat(this._getInput().getValue()),
+			var min = this.getMin(),
+				max = this.getMax(),
+				value = parseFloat(this._getInput().getValue()),
 				bIncrementEnabled = true,
 				bDecrementEnabled = true;
 
@@ -375,14 +402,74 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 			this._getDecrementButton().setEnabled(bDecrementEnabled);
 		};
 
+		/**
+		 * Sets the <code>value</code> by doing some rendering optimizations in case the first rendering was completed.
+		 * Otherwise the value is set in onBeforeRendering, where we have all needed parameters for obtaining correct value.
+		 *
+		 */
 		StepInput.prototype.setValue = function (oValue) {
-			var oResult;
+			if (oValue == undefined) {
+				oValue = 0;
+			}
 
 			this._sOldValue = this.getValue();
-			this._getInput().setValue(oValue);
-			oResult = this.setProperty("value", oValue, true);
 
-			return oResult;
+			this._getInput().setValue(this._getFormatedValue(oValue));
+
+			return this.setProperty("value", parseFloat(oValue), true);
+		};
+
+		/**
+		 * Formats the <code>vValue</code> accordingly to the <code>displayValuePrecision</code> property.
+		 * if vValue is undefined or null, the property <code>value</code> will be used.
+		 *
+		 * @returns formated value as a String
+		 * @private
+		 */
+		StepInput.prototype._getFormatedValue = function (vValue) {
+			var iPrecision = this.getDisplayValuePrecision(),
+				iValueLength,
+				sDigits;
+
+			if (vValue == undefined) {
+				vValue = this.getValue();
+			}
+
+			if (iPrecision > 0) {
+				sDigits = vValue.toString().split(".");
+
+				if (sDigits.length === 2) {
+					iValueLength = sDigits[1].length;
+					if (iValueLength > iPrecision) {
+						return parseFloat(vValue).toFixed(iPrecision);
+					}
+					return sDigits[0] + "." + this._calcDecimals(sDigits[1], iPrecision);
+				} else {
+					return vValue.toString() + "." + this._calcDecimals("0", iPrecision);
+				}
+			} else {
+				// return value without any decimals
+				return parseFloat(vValue).toFixed(0);
+			}
+		};
+
+		/**
+		 * Adds or removes decimals to the vValue according to the given iPrecision.
+		 *
+		 * @returns decimals as a String
+		 * @private
+		 */
+		StepInput.prototype._calcDecimals = function (vDecimals, iPrecision) {
+			var sDecimals = "",
+				iValueLength = vDecimals.length;
+
+		// add zeros
+			for (var i = iValueLength; i < iPrecision; i++) {
+				sDecimals = sDecimals + "0";
+			}
+			sDecimals = vDecimals + sDecimals;
+
+			return sDecimals;
 		};
 
 		/**
@@ -393,7 +480,7 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		 * @param {jQuery.Event} oEvent Event object
 		 */
 		StepInput.prototype.onsappageup = function (oEvent) {
-			this._applyValue(this._calculateValue(this.getLargerStep(), true));
+			this._applyValue(this._calculateValue(this.getLargerStep(), true).displayValue);
 			this._handleIncorrectValues();
 		};
 
@@ -403,7 +490,7 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		 * @param {jQuery.Event} oEvent Event object
 		 */
 		StepInput.prototype.onsappagedown = function (oEvent) {
-			this._applyValue(this._calculateValue(this.getLargerStep(), false));
+			this._applyValue(this._calculateValue(this.getLargerStep(), false).displayValue);
 			this._handleIncorrectValues();
 		};
 
@@ -440,7 +527,7 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		 */
 		StepInput.prototype.onsapup = function (oEvent) {
 			oEvent.preventDefault(); //prevents the value to increase by one (Chrome and Firefox default behavior)
-			this._applyValue(this._calculateValue(1, true));
+			this._applyValue(this._calculateValue(1, true).displayValue);
 			this._handleIncorrectValues();
 		};
 
@@ -451,7 +538,7 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		 */
 		StepInput.prototype.onsapdown = function (oEvent) {
 			oEvent.preventDefault(); //prevents the value to decrease by one (Chrome and Firefox default behavior)
-			this._applyValue(this._calculateValue(1, false));
+			this._applyValue(this._calculateValue(1, false).displayValue);
 			this._handleIncorrectValues();
 		};
 
@@ -472,11 +559,11 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 			}
 			if (oEvent.which === jQuery.sap.KeyCodes.ARROW_UP && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) { //shift+up
 				oEvent.preventDefault(); //preventing to be added both the minimum step (1) and the larger step
-				this._applyValue(this._calculateValue(this.getLargerStep(), true));
+				this._applyValue(this._calculateValue(this.getLargerStep(), true).displayValue);
 			}
 			if (oEvent.which === jQuery.sap.KeyCodes.ARROW_DOWN && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) { //shift+down
 				oEvent.preventDefault(); //preventing to be subtracted  both the minimum step (1) and the larger step
-				this._applyValue(this._calculateValue(this.getLargerStep(), false));
+				this._applyValue(this._calculateValue(this.getLargerStep(), false).displayValue);
 			}
 			this._handleIncorrectValues();
 		};
@@ -516,7 +603,7 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		 */
 		StepInput.prototype._change = function (oEvent) {
 			this._sOldValue = this.getValue();
-			this.setProperty("value", this._getInput().getValue(), true);
+			this.setValue(this._getInput().getValue());
 
 			if (this._iChangeEventTimer) {
 				jQuery.sap.clearDelayedCall(this._iChangeEventTimer);
@@ -532,6 +619,7 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 					this.fireChange({value: this.getValue()});
 				}
 			});
+
 		};
 
 		/**
@@ -546,47 +634,74 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 				return;
 			}
 
-			this.getAggregation("_input")._$input.val(fNewValue);
+			// the property Value is not changing because this is a live change where the final value is not yet confirmed by the user
+			this.getAggregation("_input")._$input.val(this._getFormatedValue(fNewValue));
 		};
 
 		/**
 		 * Makes calculations regarding the operation and the number type.
 		 *
-		 * @param {String} iStepMultiplier Holds the step multiplier
+		 * @param {Number} iStepMultiplier Holds the step multiplier
 		 * @param {Boolean} isPlusButton Holds the operation whether addition or subtraction
-		 * returns {Number}
+		 * returns {Object} value and the displayValue
 		 * @private
 		 */
 		StepInput.prototype._calculateValue = function (iStepMultiplier, isPlusButton) {
-			var bValuePlusStepBiggerThanMax,
+			var vMax = this.getMax(),
+				vMin = this.getMin(),
+				bValuePlusStepBiggerThanMax,
 				bValueMinusStepLowerThanMin,
+				vDisplayValuePlusStep,
 				vValuePlusStep,
-				isValueInt = this.isInteger(this.getValue()),
-				isStepInt = this.isInteger(this.getStep()),
-				vInputValue = this._getIntOrFloat(this._getInput().getValue()),
-				vStep = this._getIntOrFloat(this.getStep()),
-				vMultipliedStep = this._getIntOrFloat(this.getStep() * iStepMultiplier),
+				iPrecision = this.getDisplayValuePrecision(),
+				iCalc = Math.pow(10, iPrecision),
+				iCalcReal = Math.pow(10, this._iRealPrecision),
+				vInputValue = parseFloat(this._getInput().getValue()),
+				vRealValue = this.getValue(),
+				vStep = this.getStep(),
+				vMultipliedStep = this.getStep() * iStepMultiplier,
 				iSign = isPlusButton ? 1 : -1;
 
 			bValuePlusStepBiggerThanMax = vInputValue + vStep >= this.getMax();
 			bValueMinusStepLowerThanMin = vInputValue - vStep <= this.getMin();
-			vValuePlusStep = vInputValue + iSign * vMultipliedStep;
 
-			if (isPlusButton && isNumber(this.getMax()) && bValuePlusStepBiggerThanMax) {
-				return this.getMax();
-			}
-
-			if (!isPlusButton && isNumber(this.getMin()) && bValueMinusStepLowerThanMin) {
-				return this.getMin();
-			}
-
-			if (!isStepInt || !isValueInt) {
-				return vValuePlusStep.toFixed(1);
+			if (iPrecision > 0) {
+				vDisplayValuePlusStep = (parseInt((vInputValue * iCalc), 10) + (iSign * parseInt((vMultipliedStep * iCalc), 10))) / iCalc;
 			} else {
-				return vValuePlusStep;
+				vDisplayValuePlusStep = vInputValue + iSign * vMultipliedStep;
 			}
 
-			return this.getValue();
+			vValuePlusStep = (parseInt((vRealValue * iCalcReal), 10) + (iSign * parseInt((vMultipliedStep * iCalcReal), 10))) / iCalcReal;
+
+			if (isPlusButton && isNumber(vMax) && bValuePlusStepBiggerThanMax) {
+				vValuePlusStep = vMax;
+				vDisplayValuePlusStep = vMax;
+			}
+
+			if (!isPlusButton && isNumber(vMin) && bValueMinusStepLowerThanMin) {
+				vValuePlusStep = vMin;
+				vDisplayValuePlusStep = vMin;
+			}
+
+			return {value: vValuePlusStep, displayValue: vDisplayValuePlusStep};
+		};
+
+		/**
+		 * Returns the bigger value precision by comparing
+		 * the precision of the value and the precision of the step.
+		 *
+		 * @returns {integer} number of digits after the dot
+		 */
+		StepInput.prototype._getRealValuePrecision = function () {
+			var sDigitsValue = this.getValue().toString().split("."),
+				sDigitsStep = this.getStep().toString().split("."),
+				iDigitsValueL,
+				iDigitsStepL;
+
+			iDigitsValueL = (!sDigitsValue[1]) ? 0 : sDigitsValue[1].length;
+			iDigitsStepL = (!sDigitsStep[1]) ? 0 : sDigitsStep[1].length;
+
+			return (iDigitsValueL > iDigitsStepL) ? iDigitsValueL : iDigitsStepL;
 		};
 
 		/**
@@ -618,16 +733,6 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 			});
 
 			return this;
-		};
-
-		/**
-		 * Checks whether the value is integer.
-		 *
-		 * @params {number} vValue - Holds the value in the input
-		 * @returns {boolean}
-		 */
-		StepInput.prototype.isInteger = function (vValue) {
-			return vValue % 1 === 0;
 		};
 
 		/**
@@ -699,6 +804,14 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 				$input.setAttribute(oAria.aria, oAria.value);
 			});
 		};
+
+		/*
+		 * displayValuePrecision should be a number between 0 and 20
+		 * @retuns {boolean}
+		 */
+		function isValidPrecisionValue(value) {
+			return (typeof (value) === 'number') && !isNaN(value) && value >= 0 && value <= 20;
+		}
 
 		return StepInput;
 
