@@ -44,14 +44,25 @@ public class LastRunInfo {
       Map<String, LastPerVersion> lastPerVersion;
   }
   
-  private class LastPerVersion {
-      Map<String, Properties> changes;
-      String lastCommitId = null;
-      
-      public LastPerVersion() {
-        changes = new HashMap<String, Properties>();
+
+  private class LastPerVersion implements Cloneable {
+    Map<String, Properties> changes;
+    String lastCommitId = null;
+
+    public LastPerVersion() {
+      changes = new HashMap<String, Properties>();
+    }
+
+    @Override
+    public Object clone() {
+      try {
+        return super.clone();
+      } catch (CloneNotSupportedException e) {
+        return null;
+      }
     }
   }
+
   
   public LastRunInfo (File root, String branch) throws IOException {
     this(root, "default", branch);
@@ -59,7 +70,7 @@ public class LastRunInfo {
    
   public LastRunInfo(File root, String profile, String branch) throws IOException {
     this.profile = profile;
-    this.branch = branch;
+    this.setBranch(branch);
     lastVersionToolResultsFile = new File(root, ".version-tool.xml");
     if (lastVersionToolResultsFile.canRead()) {
       Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -97,13 +108,13 @@ public class LastRunInfo {
   }
 
   private LastPerVersion getLastPerVersion() {
-    if (!versionTool.lastPerVersion.containsKey(branch)) {
-      String minorBranch = getMinorBranch(branch);
-      versionTool.lastPerVersion.put(this.branch, 
-          versionTool.lastPerVersion.containsKey(minorBranch) ? 
-              versionTool.lastPerVersion.get(minorBranch) : new LastPerVersion());
+    if (!versionTool.lastPerVersion.containsKey(getBranch())) {
+      String minorBranch = getMinorBranch(getBranch());
+      versionTool.lastPerVersion.put(this.getBranch(), 
+          (LastPerVersion) (versionTool.lastPerVersion.containsKey(minorBranch) ? 
+              versionTool.lastPerVersion.get(minorBranch).clone() : new LastPerVersion()));
     }
-    return versionTool.lastPerVersion.get(branch);
+    return versionTool.lastPerVersion.get(getBranch());
   }
 
   private String getMinorBranch(String branch) {
@@ -120,5 +131,13 @@ public class LastRunInfo {
 
   public void setLastCommitId(String lastCommitId) {
     getLastPerVersion().lastCommitId = lastCommitId;
+  }
+
+  public String getBranch() {
+    return this.branch;
+  }
+
+  public void setBranch(String branch) {
+    this.branch = branch;
   }
 }
