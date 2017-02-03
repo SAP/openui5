@@ -5622,7 +5622,10 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 	var bTableHasRowActions = TableUtils.hasRowActions(oTable);
 	var oKeyboardExtension = oTable._getKeyboardExtension();
 	var iActionItemCount = bTableHasRowActions ? oTable.getRowActionTemplate()._iLen : 0;
-	var iLastColumnIndex = iNumberOfCols + Math.max(0, iActionItemCount - 1); // Action items are treated as columns in this test.
+	var iColumnCount = oTable.getColumns().filter(function(oColumn){
+		return oColumn.getVisible() || oColumn.getGrouped();
+	}).length;
+	var iLastColumnIndex = iColumnCount + Math.max(0, iActionItemCount - 1); // Action items are treated as columns in this test.
 	var iRowCount = oTable._getRowCount();
 	var iDelayAfterInRowTabbing = 0;
 	var iDelayAfterScrollTabbing = 100;
@@ -5714,7 +5717,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 								return;
 							}
 
-						} else if (iColumnIndex < iNumberOfCols) { // Data Cell
+						} else if (iColumnIndex < iColumnCount) { // Data Cell
 							$Cell = getCell(iRowIndex, iColumnIndex);
 							$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($Cell);
 
@@ -5730,7 +5733,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 								assert.strictEqual(document.activeElement, oElem,
 									"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Cell " + (iColumnIndex + 1) + ": Interactive element focused");
 
-								if (iColumnIndex === iNumberOfCols - 1 && iActionItemCount === 0) {
+								if (iColumnIndex === iColumnCount - 1 && iActionItemCount === 0) {
 									resolve();
 									return; // If there are no row action items, the TAB event will be simulated after the iteration over the columns has reached the end.
 								}
@@ -5762,7 +5765,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 										return;
 									}
 								} else {
-									var iActionItemIndex = iColumnIndex - iNumberOfCols;
+									var iActionItemIndex = iColumnIndex - iColumnCount;
 									var oActionItem = $InteractiveElements[iActionItemIndex];
 
 									if (oActionItem != null) {
@@ -5803,7 +5806,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 								if (bTableHasRowActions && TableKeyboardDelegate2._getInteractiveElements(oRowActionElementCell) !== null) {
 									checkFocus(oRowActionElementCell, assert);
 								} else {
-									checkFocus(getCell(iVisibleRowCount - 1, iNumberOfCols - 1), assert);
+									checkFocus(getCell(iVisibleRowCount - 1, iColumnCount - 1), assert);
 								}
 
 								assert.ok(!oKeyboardExtension.isInActionMode(), "Table is in Navigation Mode");
@@ -5858,7 +5861,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 						var $Cell;
 						var $InteractiveElements;
 
-						if (iColumnIndex >= iNumberOfCols) { // Row Action Cell
+						if (iColumnIndex >= iColumnCount) { // Row Action Cell
 							if (!bTableHasRowActions) {
 								if (bShowInfo) {
 									assert.ok(true,
@@ -5878,7 +5881,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 									resolve();
 									return;
 								} else {
-									var iActionItemIndex = iColumnIndex - iNumberOfCols;
+									var iActionItemIndex = iColumnIndex - iColumnCount;
 									var oActionItem = $InteractiveElements[iActionItemIndex];
 
 									if (oActionItem != null) {
@@ -5994,6 +5997,13 @@ QUnit.test("TAB & Shift+TAB", function(assert) {
 });
 
 QUnit.test("TAB & Shift+TAB - Row Headers", function(assert) {
+	_testActionModeTabNavigation(assert);
+});
+
+QUnit.test("TAB & Shift+TAB - Row Headers, Invisible Columns", function(assert) {
+	oTable.getColumns()[1].setVisible(false);
+	sap.ui.getCore().applyChanges();
+
 	_testActionModeTabNavigation(assert);
 });
 
