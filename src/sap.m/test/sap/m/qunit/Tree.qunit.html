@@ -55,7 +55,47 @@ var oData = [
   			},
   			{
   				text: "Node2",
-  				ref: "../images/action.png"
+  				ref: "../images/action.png",
+  				nodes: [
+							{
+								text: "Node2-1",
+								ref: "../images/action.png",
+								nodes: [
+		 								{
+		 									text: "Node2-1-1",
+		 									ref: "../images/action.png",
+		 									nodes: [
+		 			 								{
+		 			 									text: "Node2-1-1-1",
+		 			 									ref: "../images/action.png",
+		 			 									nodes: [
+		 			 			 								{
+		 			 			 									text: "Node2-1-1-1-1",
+		 			 			 									ref: "../images/action.png",
+		 			 			 									nodes: [
+		 			 			 			 								{
+		 			 			 			 									text: "Node2-1-1-1-1-1",
+		 			 			 			 									ref: "../images/action.png",
+			 			 			 			 								nodes: [
+			 			 			 			 	 								{
+			 			 			 			 	 									text: "Node2-1-1-1-1-1-1",
+			 			 			 			 	 									ref: "../images/action.png",
+				 			 			 			 	 								nodes: [
+				 			 			 			 	 	 								{
+				 			 			 			 	 	 									text: "Node2-1-1-1-1-1-1-1",
+				 			 			 			 	 	 									ref: "../images/action.png",
+					 			 			 			 	 	 								nodes: [
+					 			 			 			 	 	 	 								{
+					 			 			 			 	 	 	 									text: "Node2-1-1-1-1-1-1-1-1",
+					 			 			 			 	 	 	 									ref: "../images/action.png"
+					 			 			 			 	 	 	 								}]
+				 			 			 			 	 	 								}]
+			 			 			 			 	 								}]
+		 			 			 			 								}]
+		 			 			 								}]
+		 			 								}]
+		 								}]
+							}]
   			}
   		];
 
@@ -78,7 +118,7 @@ oTree.setModel(oModel);
 // set the data to the model
 oModel.setData(oData);
 oTree.bindItems("/", oTreeItem);
-
+//oTree.expandToLevel(6);
 oTree.placeAt("content");
 
 /*
@@ -86,11 +126,79 @@ oTree.placeAt("content");
 // qunit checks
 // ================================================================================
 */
+
 module("Initial Check");
 
 test("Overview rendered", function() {
 	ok(jQuery.sap.domById("__item0-__tree0-0"), "initial render of first node");
 	ok(jQuery.sap.domById("__item0-__tree0-1"), "initial render of second node");
+});
+
+module("Indentation");
+test("indentation1", function() {
+	this.clock.tick(100);
+	equals(oTree.getDeepestLevel(), 0, "deepestLevel");
+
+	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-1").$().find(".sapMTreeItemBaseExpander");
+	oArrowDomRef.trigger("click");
+	this.clock.tick(100);
+
+	equals(oTree.getDeepestLevel(), 1, "deepestLevel");
+	equals(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
+	equals(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "24px", "padding");
+	
+	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-2").$().find(".sapMTreeItemBaseExpander");
+	oArrowDomRef.trigger("click");
+	this.clock.tick(100);
+
+	equals(oTree.getDeepestLevel(), 2, "deepestLevel");
+	equals(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
+	equals(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "16px", "padding");
+	equals(sap.ui.getCore().byId("__item0-__tree0-3").$().css("padding-left"), "32px", "padding");
+
+	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-3").$().find(".sapMTreeItemBaseExpander");
+	oArrowDomRef.trigger("click");
+	this.clock.tick(100);
+
+	equals(oTree.getDeepestLevel(), 3, "deepestLevel");
+	equals(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
+	equals(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "8px", "padding");
+	equals(sap.ui.getCore().byId("__item0-__tree0-3").$().css("padding-left"), "16px", "padding");
+	equals(sap.ui.getCore().byId("__item0-__tree0-4").$().css("padding-left"), "24px", "padding");
+
+	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-4").$().find(".sapMTreeItemBaseExpander");
+	oArrowDomRef.trigger("click");
+	this.clock.tick(100);
+
+	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-5").$().find(".sapMTreeItemBaseExpander");
+	oArrowDomRef.trigger("click");
+	this.clock.tick(100);
+
+	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-6").$().find(".sapMTreeItemBaseExpander");
+	oArrowDomRef.trigger("click");
+	this.clock.tick(100);
+
+	equals(oTree.getDeepestLevel(), 6, "deepestLevel");
+	equals(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
+	equals(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "4px", "padding");
+	equals(sap.ui.getCore().byId("__item0-__tree0-3").$().css("padding-left"), "8px", "padding");
+	equals(sap.ui.getCore().byId("__item0-__tree0-4").$().css("padding-left"), "12px", "padding");
+	equals(sap.ui.getCore().byId("__item0-__tree0-5").$().css("padding-left"), "16px", "padding");
+	equals(sap.ui.getCore().byId("__item0-__tree0-6").$().css("padding-left"), "20px", "padding");
+
+	// collapse
+	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-2").$().find(".sapMTreeItemBaseExpander");
+	oArrowDomRef.trigger("click");
+	this.clock.tick(100);
+
+	//expand
+	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-2").$().find(".sapMTreeItemBaseExpander");
+	oArrowDomRef.trigger("click");
+	this.clock.tick(100);
+
+	equals(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "4px", "padding");
+
+	oTree.collapseAll();
 });
 
 module("Selection");
@@ -124,9 +232,7 @@ test("Expand", function() {
 
 	ok(oTree.getItems(), 4, "four nodes displayed after tree expanding");
 
-	equals(oTree.getItems()[0].getTitle(), "Node1", "first level node text");
 	equals(oTree.getItems()[0].getLevel(), 0, "first level node is in level 0");
-	equals(oTree.getItems()[1].getTitle(), "Node1-1", "second level node text");
 	equals(oTree.getItems()[1].getLevel(), 1, "second node is in level 1");
 });
 
@@ -211,7 +317,7 @@ module("Binding");
 test("data binding update", function() {
 	ok(oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"));
 
-	oModel.setProperty("/",oData2);
+	oModel.setProperty("/", oData2);
 	sap.ui.getCore().applyChanges();
 
 	ok(!oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"), "binding update successfully.");
