@@ -2437,10 +2437,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (TableUtils.isVariableRowHeightEnabled(this) && this._getRowCount() < this.getVisibleRowCount()) {
 			return 0;
 		} else {
+			// If there are 2 scrollable rows of 50 pixels height, the scrollbar should have a scroll range of 100 pixels. In zoomed in Chrome,
+			// the heights of elements can be slightly lower (below 1 pixel) than their original value, so the scroll range could be only 99.2 pixels.
+			// In this case the scrolling logic would not determine, that the rows should be scrolled to the end.
+			// Therefore we need to check if the scroll position is at its maximum by reading the DOM.
+			if (Device.browser.chrome && window.devicePixelRatio != 1) {
+				var oVSb = this._getScrollExtension().getVerticalScrollbar();
+				if (oVSb != null && oVSb.scrollTop >= oVSb.scrollHeight - oVSb.clientHeight) {
+					return this._getMaxRowIndex();
+				}
+			}
+
 			var iFirstVisibleRow = Math.floor(iScrollTop / this._getScrollingPixelsForRow());
 			return Math.min(this._getMaxRowIndex(), iFirstVisibleRow);
 		}
-		return 0;
 	};
 
 	/**
