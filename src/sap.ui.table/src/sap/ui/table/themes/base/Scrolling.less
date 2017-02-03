@@ -9,10 +9,10 @@
  * sapUiTableHScr   - display horizontal scrollbar
  */
 
-@_sapUiTableDefaultScrollBarSize: 1rem;
+@_sapUiTableDefaultScrollBarSize: 16px;
 @_sapUiTableScrollBarSizeIE: 18px;   /* scroll bar sizes do not depend on the base font size in IE */
 @_sapUiTableScrollBarSizeEDGE: 12px; /* scroll bar sizes do not depend on the base font size in Edge */
-@_sapUiTableScrollBarSizeMOBILE: 0.45rem;
+@_sapUiTableScrollBarSizeMOBILE: 8px;
 @_sapUiTableScrollBarBg: @sapUiListHeaderBackground;
 
 
@@ -66,10 +66,19 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVSbBg {
 
 }
 
+._sapUiTableVScrWithActionsInnerMixin_CalcMarginRight(@ScrollbarSize, @RowActionWidth) {
+	@_prefixWebKit: "-webkit-calc(";
+	@_prefix: "calc(";
+	@_operator: " + ";
+	@_suffix: ")";
+	margin-right: ~"@{_prefixWebKit}@{ScrollbarSize}@{_operator}@{RowActionWidth}@{_suffix}";
+	margin-right: ~"@{_prefix}@{ScrollbarSize}@{_operator}@{RowActionWidth}@{_suffix}";
+}
+
 ._sapUiTableVScrWithActionsInnerMixin(@ScrollbarSize, @RowHdrWidth, @Factor) {
 
 	.sapUiTableHSb, .sapUiTableCtrlScr, .sapUiTableColHdrScr {
-		margin-right: @ScrollbarSize + @Factor * @RowHdrWidth;
+		._sapUiTableVScrWithActionsInnerMixin_CalcMarginRight(@ScrollbarSize, @Factor * @RowHdrWidth);
 	}
 	
 	.sapUiTableRowActionHeader {
