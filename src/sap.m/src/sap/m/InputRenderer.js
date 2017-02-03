@@ -56,6 +56,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 			oRm.addStyle("text-align", "right");
 		}
 
+		if (oControl.getShowSuggestion()) {
+			oRm.writeAttribute("autocomplete", "off");
+		}
+
 		if ((!oControl.getEnabled() && oControl.getType() == "Password")
 				|| (oControl.getShowSuggestion() && oControl._bUseDialog)
 				|| (oControl.getValueHelpOnly() && oControl.getEnabled() && oControl.getEditable() && oControl.getShowValueHelp())) {
