@@ -297,9 +297,35 @@
 			this.clock.tick(1000);
 			strictEqual(this.oMITS.getList().$().find('.sapMTabStripSelectListItemCloseBtn').length, this.oMITS.getList().getItems().length, 'The number of close buttons in the DOM is the same as the number of items in the list instance.');
 			strictEqual(this.oMITS.getList().$().find('.sapMTabStripSelectListItemCloseBtnInvisible').length, 0, 'The number of invisible close buttons in the DOM is 0.');
-		}
+		};
 
-	</script>
+		module("Internal methods", {
+			beforeEach: function () {
+				this.oTSS = new sap.m.TabStripSelect();
+			},
+			afterEach: function () {
+				this.oTSS.destroy();
+				this.oTSS = null;
+			}
+		});
+
+		test("TabStripSelectRenderer.renderLabel and select with no selected item", function (oAssert) {
+			// Arrange
+			var oRenderer = this.oTSS.getRenderer(),
+				oRm = new sap.ui.core.RenderManager(), // Mock render manager
+				oSelect = new sap.m.Select(), // Mock select with no selected item
+				bThrown = false;
+
+			try {
+				oRenderer.renderLabel(oRm, oSelect);
+			} catch (oError) {
+				bThrown = true;
+			}
+			oAssert.ok(!bThrown, "No error should be thrown");
+		});
+
+
+    </script>
 </head>
 <body id="body" class="sapUiBody">
 	<h1 id="qunit-header">qUnit Page for sap.m.TabStripSelect</h1>
