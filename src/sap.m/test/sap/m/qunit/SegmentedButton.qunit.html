@@ -23,6 +23,7 @@
 	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 
 <!-- use the sinon faketimers for this test -->
 <script type="text/javascript">
@@ -1428,6 +1429,143 @@
 		strictEqual($LI.outerWidth(), 300, "Rendered li width must be equal the the new value");
 
 	});
+
+	module("API Items aggregation", {
+		beforeEach: function () {
+			this.oSB = new sap.m.SegmentedButton().placeAt("qunit-fixture");
+			this.applyChanges = sap.ui.getCore().applyChanges;
+		},
+		afterEach: function () {
+			this.oSB.destroy();
+			this.oSB = null;
+			this.applyChanges = null;
+		}
+	});
+
+	test("addItem", function (oAssert) {
+		// Arrange
+		var aItems,
+			aButtons;
+
+		// Act - add first item
+		this.oSB.addItem(new sap.m.SegmentedButtonItem({text: "Button 1"}));
+		aItems = this.oSB.getButtons();
+		aButtons = this.oSB.getButtons();
+		this.applyChanges();
+
+		// Assert
+		oAssert.strictEqual(aItems.length, 1, "There should be one item");
+		oAssert.strictEqual(aButtons.length, 1, "There should be one button created");
+		oAssert.strictEqual(aButtons[0].getText(), aItems[0].getText(), "The button text should equal the item test");
+		oAssert.strictEqual(this.oSB.getSelectedButton(), aButtons[0].getId(),
+			"The button created should be the selected button");
+
+		// Act - add second button and set selection to the newly added button
+		this.oSB.addItem(new sap.m.SegmentedButtonItem({text: "Button 2"}));
+		aButtons = this.oSB.getButtons();
+		this.oSB.setSelectedButton(aButtons[1]);
+		this.applyChanges();
+
+		// Assert
+		oAssert.strictEqual(this.oSB.getItems().length, 2, "There should be two items");
+		oAssert.strictEqual(aButtons.length, 2, "There should be two buttons created from items");
+		oAssert.strictEqual(this.oSB.getSelectedButton(), aButtons[1].getId(),
+			"The second button created should be selected");
+
+		// Act - add third item
+		this.oSB.addItem(new sap.m.SegmentedButtonItem({text: "Button 3"}));
+		aButtons = this.oSB.getButtons();
+		this.applyChanges();
+
+		// Assert
+		oAssert.strictEqual(this.oSB.getItems().length, 3, "There should be three items");
+		oAssert.strictEqual(aButtons.length, 3, "There should be three buttons");
+		oAssert.strictEqual(this.oSB.getSelectedButton(), aButtons[1].getId(),
+			"The second button should remain selected");
+	});
+
+	test("removeItem", function (oAssert) {
+		var aItems;
+
+		// Arrange
+		this.oSB.addItem(new sap.m.SegmentedButtonItem({key: "b1", text: "Button 1"}));
+		this.oSB.addItem(new sap.m.SegmentedButtonItem({key: "b2", text: "Button 2"}));
+		this.oSB.addItem(new sap.m.SegmentedButtonItem({key: "b3", text: "Button 3"}));
+		this.oSB.setSelectedKey("b3");
+		aItems = this.oSB.getItems();
+
+		// Act - remove Button 2
+		this.oSB.removeItem(aItems[1]);
+		this.applyChanges();
+
+		// Assert
+		oAssert.strictEqual(this.oSB.getItems().length, 2, "There are 2 items");
+		oAssert.strictEqual(this.oSB.getButtons().length, 2, "There are 2 buttons");
+		oAssert.strictEqual(this.oSB.$().find("li").length, 2, "There are 2 buttons rendered");
+		oAssert.strictEqual(this.oSB.getSelectedKey(), "b3", "Button with key 'b3' is selected");
+
+		// Act - remove Button 3
+		this.oSB.removeItem(aItems[2]);
+		this.applyChanges();
+
+		// Assert
+		oAssert.strictEqual(this.oSB.getButtons().length, 1, "There is one button");
+		oAssert.strictEqual(this.oSB.getSelectedKey(), "b1", "Button with key 'b1' is selected");
+
+		// Act - remove last button
+		this.oSB.removeItem(aItems[0]);
+		this.applyChanges();
+
+		// Assert
+		oAssert.strictEqual(this.oSB.getButtons().length, 0, "There are no buttons");
+		oAssert.strictEqual(this.oSB.getSelectedKey(), "", "There is no selected key");
+		oAssert.strictEqual(this.oSB.$().find("li").length, 0, "There are no buttons rendered");
+
+		// Act - adding an item after all ware removed
+		this.oSB.addItem(new sap.m.SegmentedButtonItem({key: "b4", text: "Button 4"}));
+		this.applyChanges();
+
+		// Assert
+		oAssert.strictEqual(this.oSB.$().find("li").length, 1, "There is one buttons rendered");
+		oAssert.strictEqual(this.oSB.getSelectedKey(), "b4", "Button with key 'b4' is selected");
+	});
+
+	test("insertItem", function (oAssert) {
+		// Arrange
+		this.oSB.addItem(new sap.m.SegmentedButtonItem({text: "Button 1"}));
+		this.oSB.addItem(new sap.m.SegmentedButtonItem({text: "Button 2"}));
+
+		// Act - insert item between Button 1 and 2
+		this.oSB.insertItem(new sap.m.SegmentedButtonItem({text: "Button 3"}), 1);
+		this.applyChanges();
+
+		// Assert
+		oAssert.strictEqual(this.oSB.getItems().length, 3, "There are 3 items");
+		oAssert.strictEqual(this.oSB.getButtons().length, 3, "There are 3 buttons");
+		oAssert.strictEqual(this.oSB.$().find("li").length, 3, "There are 3 buttons rendered");
+		oAssert.strictEqual(this.oSB.getButtons()[1].getText(), "Button 3",
+			"Button with text 'Button 3' should be the second button");
+	});
+
+	test("removeAllItems", function (oAssert) {
+		// Arrange
+		this.oSB.addItem(new sap.m.SegmentedButtonItem({key: "b1", text: "Button 1"}));
+		this.oSB.addItem(new sap.m.SegmentedButtonItem({key: "b2", text: "Button 2"}));
+		this.oSB.addItem(new sap.m.SegmentedButtonItem({key: "b3", text: "Button 3"}));
+		this.oSB.setSelectedKey("b2");
+
+		// Act
+		this.oSB.removeAllItems();
+		this.applyChanges();
+
+		// Assert
+		oAssert.strictEqual(this.oSB.getItems().length, 0, "There are 0 items");
+		oAssert.strictEqual(this.oSB.getButtons().length, 0, "There are 0 buttons");
+		oAssert.strictEqual(this.oSB.getSelectedKey(), "", "There is no selected key");
+		oAssert.strictEqual(this.oSB.getSelectedButton(), null, "There is no selected button");
+		oAssert.strictEqual(this.oSB.$().find("li").length, 0, "There are 0 buttons rendered");
+	});
+
 
 	/* =========================================================== */
 	/* API module                                                  */
