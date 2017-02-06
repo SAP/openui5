@@ -27,10 +27,32 @@
 			var oRouterStub = {
 				fireRouteMatched : function () {},
 				fireRoutePatternMatched : function () {},
+				fireBeforeRouteMatched : function() {},
 				_isAsync: function() {
 					return false;
 				}
 			};
+
+			QUnit.test("Should fired beforeMatched before matched", function(assert) {
+				var oRoute = new sap.ui.core.routing.Route(oRouterStub, { name : "testRoute" });
+				var fnBeforeMatchedSpy = this.spy(function() {
+						assert.notOk(fnMatchedSpy.called, "the matched event shouldn't be fired yet");
+					}),
+					fnMatchedSpy = this.spy();
+
+				oRoute.attachBeforeMatched(fnBeforeMatchedSpy);
+				oRoute.attachMatched(fnMatchedSpy);
+
+				// Act
+				oRoute._routeMatched({});
+
+				// Assert
+				assert.strictEqual(fnBeforeMatchedSpy.callCount, 1, "did fire the beforeMatched event");
+				assert.strictEqual(fnMatchedSpy.callCount, 1, "did fire the matched event");
+
+				// Cleanup
+				oRoute.destroy();
+			});
 
 			test("Should not call pattern matched only matched", function () {
 				// Arrange
@@ -78,6 +100,7 @@
 				});
 			}
 
+			fnRouteEventsTestCase("Should attach to the beforeMatched event", "BeforeMatched");
 			fnRouteEventsTestCase("Should attach to the matched event", "Matched");
 			fnRouteEventsTestCase("Should attach to the patternMatched event", "PatternMatched");
 
@@ -86,13 +109,7 @@
 					// Arrange
 					var sName = "testRoute",
 						fnRouteMatchedSpy = this.spy(),
-						oRoute = new sap.ui.core.routing.Route({
-							fireRouteMatched : fnRouteMatchedSpy,
-							fireRoutePatternMatched : fnRouteMatchedSpy,
-							_isAsync : function() {
-								return false;
-							}
-						}, { name : sName }),
+						oRoute = new sap.ui.core.routing.Route(oRouterStub, { name : sName }),
 						fnEventSpy = this.spy(),
 						oListener = {};
 
@@ -114,6 +131,7 @@
 				});
 			}
 
+			fnDetachRouteEventTestCase("Should detach the beforeMatched event", "BeforeMatched");
 			fnDetachRouteEventTestCase("Should detach the matched event", "Matched");
 			fnDetachRouteEventTestCase("Should detach the patternMatched event", "PatternMatched");
 
