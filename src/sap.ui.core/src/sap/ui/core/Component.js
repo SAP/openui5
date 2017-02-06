@@ -1459,10 +1459,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @public
 	 * @static
 	 * @since 1.15.0
-	 * @experimental Since 1.27.0. Support for asynchronous loading and the corresponding hints is still experimental
-	 *   and might be modified or removed completely again. It must not be used in productive code, except in code
-	 *   delivered by the UI5 teams. The synchronous usage of the API is not experimental and can be used without
-	 *   restrictions.
+	 * @experimental Since 1.27.0. Support for asyncHints is still experimental and might be modified or removed completely again.
+	 *   It must not be used in productive code, except in code delivered by the UI5 teams. The synchronous usage of the API is
+	 *   not experimental and can be used without restrictions.
 	 */
 	sap.ui.component = function(vConfig) {
 
@@ -1556,7 +1555,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	/**
 	 * Load a Component without instantiating it.
 	 *
-	 * Provides experimental support for loading Components asynchronously by setting
+	 * Provides support for loading Components asynchronously by setting
 	 * <code>oConfig.async</code> to true. In that case, the method returns a Javascript 6
 	 * Promise that will be fulfilled with the component class after loading.
 	 *
@@ -1568,7 +1567,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * When a manifest.json is referenced in oConfig this manifest is not used for the derived instances of the Component class.
 	 * The manifest/manifest url must be provided for every instance explicitly.
 	 *
-	 * When asynchronous loading is used, additional <code>hints</code> can be provided :
+	 * When asynchronous loading is used, additional <code>asyncHints</code> can be provided. The structure of these hints and how
+	 * they impact the loading of components, is still experimental. Code that wants to be safe wrt. version updates, should
+	 * not use the code>asyncHints</code> property.
 	 * <ul>
 	 * <li><code>oConfig.asyncHints.components : string[]</code>a list of components needed by the current component and its subcomponents
 	 *     The framework will try to preload these components (their Component-preload.js) asynchronously, errors will be ignored.
@@ -1601,10 +1602,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @since 1.16.3
 	 * @static
 	 * @public
-	 * @experimental Since 1.27.0. Support for asynchronous loading and the corresponding hints is still experimental
-	 *   and might be modified or removed completely again. It must not be used in productive code, except in code
-	 *   delivered by the UI5 teams. The synchronous usage of the API is not experimental and can be used without
-	 *   restrictions.
+	 * @experimental Since 1.27.0. Support for <code>asyncHints</code> is still experimental and might be modified or removed completely again.
+	 *   It must not be used in productive code, except in code delivered by the UI5 teams. The synchronous usage of the API is
+	 *   not experimental and can be used without restrictions.
 	 */
 	sap.ui.component.load = function(oConfig, bFailOnError) {
 		return loadComponent(oConfig, {
