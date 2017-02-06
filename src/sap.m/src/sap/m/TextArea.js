@@ -244,8 +244,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 	};
 
 	TextArea.prototype._adjustHeight = function(oTextArea) {
-		if (this.getValue()) {
-			oTextArea.style.height = oTextArea.scrollHeight + oTextArea.offsetHeight - oTextArea.clientHeight + "px";
+		var sHeight = oTextArea.scrollHeight + oTextArea.offsetHeight - oTextArea.clientHeight + "px";
+		if (this.getValue() && parseInt(sHeight, 10) !== 0) {
+			oTextArea.style.height = sHeight;
 			this._updateOverflow();
 		}
 	};
