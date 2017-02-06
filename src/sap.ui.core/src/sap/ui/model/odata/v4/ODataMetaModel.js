@@ -79,7 +79,7 @@ sap.ui.define([
 		},
 		sValueListMapping = "@com.sap.vocabularies.Common.v1.ValueListMapping",
 		mValueListModelByUrl = {},
-		sValueListReference = "@com.sap.vocabularies.Common.v1.ValueListReference",
+		sValueListReferences = "@com.sap.vocabularies.Common.v1.ValueListReferences",
 		sValueListWithFixedValues = "@com.sap.vocabularies.Common.v1.ValueListWithFixedValues",
 		WARNING = jQuery.sap.log.Level.WARNING;
 
@@ -1250,7 +1250,7 @@ sap.ui.define([
 				return ValueListType.Fixed;
 			}
 			for (sTerm in mAnnotationByTerm) {
-				if (getQualifier(sTerm, sValueListReference) !== undefined) {
+				if (getQualifier(sTerm, sValueListReferences) !== undefined) {
 					return ValueListType.Standard;
 				}
 			}
@@ -1537,7 +1537,6 @@ sap.ui.define([
 				mMappingUrlByQualifier = {},
 				// the namespace of the container is the namespace of the service
 				sNamespace = _Helper.namespace(aResults[0]),
-				aPromises,
 				oProperty = aResults[1],
 				oValueListInfo = {};
 
@@ -1546,34 +1545,39 @@ sap.ui.define([
 			}
 
 			// filter all reference annotations, for each create a promise to evaluate the mapping
-			aPromises = Object.keys(mAnnotationByTerm).filter(function (sTerm) {
-				return getQualifier(sTerm, sValueListReference) !== undefined;
+			// and wait for all of them to finish
+			return Promise.all(Object.keys(mAnnotationByTerm).filter(function (sTerm) {
+				return getQualifier(sTerm, sValueListReferences) !== undefined;
 			}).map(function (sTerm) {
-				var sMappingUrl = mAnnotationByTerm[sTerm].MappingUrl;
+				var aMappingUrls = mAnnotationByTerm[sTerm];
 
-				return that.fetchValueListMappings(
-					that.getOrCreateValueListModel(sMappingUrl), sNamespace, oProperty
-				).then(function (mValueListMappingByQualifier) {
-					Object.keys(mValueListMappingByQualifier).forEach(function (sQualifier) {
-						if (mMappingUrlByQualifier[sQualifier]) {
-							throw new Error("Annotations '" + sValueListMapping.slice(1)
-								+ "' with identical qualifier '" + sQualifier + "' for property "
-								+ sPropertyPath + " in " + mMappingUrlByQualifier[sQualifier]
-								+ " and " + sMappingUrl);
-						}
-						mMappingUrlByQualifier[sQualifier] = sMappingUrl;
-						oValueListInfo[sQualifier] = mValueListMappingByQualifier[sQualifier];
+				// fetch mappings for each entry and wait for all
+				return Promise.all(aMappingUrls.map(function (sMappingUrl) {
+					// fetch the mappings for the given mapping URL
+					return that.fetchValueListMappings(
+						that.getOrCreateValueListModel(sMappingUrl), sNamespace, oProperty
+					).then(function (mValueListMappingByQualifier) {
+						// insert the returned mappings into oValueListInfo
+						Object.keys(mValueListMappingByQualifier).forEach(function (sQualifier) {
+							if (mMappingUrlByQualifier[sQualifier]) {
+								throw new Error("Annotations '" + sValueListMapping.slice(1)
+									+ "' with identical qualifier '" + sQualifier
+									+ "' for property " + sPropertyPath + " in "
+									+ mMappingUrlByQualifier[sQualifier] + " and " + sMappingUrl);
+							}
+							mMappingUrlByQualifier[sQualifier] = sMappingUrl;
+							oValueListInfo[sQualifier] = mValueListMappingByQualifier[sQualifier];
+						});
 					});
-				});
-			});
+				}));
+			})).then(function () {
+				// Each reference must have contributed at least one qualifier. So if oValueListInfo
+				// is empty, there cannot have been a reference.
+				if (!Object.keys(oValueListInfo).length) {
+					throw new Error("No annotation '" + sValueListReferences.slice(1) + "' for " +
+						sPropertyPath);
+				}
 
-			if (!aPromises.length) {
-				throw new Error("No annotation '" + sValueListReference.slice(1) + "' for " +
-					sPropertyPath);
-			}
-
-			// wait for all value list mappings to be evaluated
-			return Promise.all(aPromises).then(function () {
 				return oValueListInfo;
 			});
 		});
