@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
-	function(jQuery, UniversalDate) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarRow'],
+	function(jQuery, UniversalDate, CalendarRow) {
 	"use strict";
 
 
@@ -403,7 +403,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 		var sText = oAppointment.getText();
 		var sIcon = oAppointment.getIcon();
 		var sId = oAppointment.getId();
-		var mAccProps = {labelledby: {value: sap.ui.unified.CalendarRow._oStaticAppointmentText.getId() + " " + sId + "-Descr", append: true}};
+		var mAccProps = {labelledby: {value: CalendarRow._oStaticAppointmentText.getId() + " " + sId + "-Descr", append: true}};
 		var aAriaLabels = oRow.getAriaLabelledBy();
 
 		if (aAriaLabels.length > 0) {
@@ -424,12 +424,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 
 		if (oAppointment.getSelected()) {
 			oRm.addClass("sapUiCalendarAppSel");
-			mAccProps["selected"] = true;
+			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + CalendarRow._oStaticSelectedText.getId();
 		}
 
 		if (oAppointment.getTentative()) {
 			oRm.addClass("sapUiCalendarAppTent");
-			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sap.ui.unified.CalendarRow._oStaticTentativeText.getId();
+			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + CalendarRow._oStaticTentativeText.getId();
 		}
 
 		if (!sText) {
