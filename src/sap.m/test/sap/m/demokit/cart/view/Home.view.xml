@@ -65,11 +65,11 @@
 						<firstStatus>
 							<ObjectStatus
 								text="{
-									path : 'status',
+									path : 'Status',
 									formatter : '.formatter.statusText'
 								}"
 								state="{
-									path : 'status',
+									path : 'Status',
 									formatter : '.formatter.statusState'
 								}" />
 						</firstStatus>
