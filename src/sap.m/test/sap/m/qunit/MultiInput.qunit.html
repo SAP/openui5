@@ -255,6 +255,56 @@
 		equals(this.multiInput1.getTokens()[0].getText(), "Arnold", "The data binding has been applied properly");
 	});
 
+	/*
+	 * When setTokens is used between MultiInput's model updates there should be proper token destroying.
+	 */
+	test("data binding when setTokens is used before a model update", function() {
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
+
+		// arrange
+		var data = {
+			names: [
+				{firstName: "Peter"},
+				{firstName: "Martin"},
+				{firstName: "Thomas"},
+				{firstName: "John"}
+			]
+		};
+		var newData = {
+			names: [
+				{firstName: "Arnold"},
+				{firstName: "Chuck"},
+				{firstName: "Silvester"},
+				{firstName: "Jason"}
+			]
+		}
+
+		// create a Model with the data above
+		var model = new sap.ui.model.json.JSONModel();
+		model.setData(data);
+
+		var oTokenTemplate = new sap.m.Token({text : "{firstName}"});
+
+		this.multiInput1.setModel(model);
+		this.multiInput1.bindAggregation("tokens", "/names", oTokenTemplate);
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		this.multiInput1.setTokens([
+			new sap.m.Token({text:'1'}),
+			new sap.m.Token({text:'2'}),
+			new sap.m.Token({text:'3'})
+		]);
+		model.setProperty('/names', newData.names);
+
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		equals(this.multiInput1.getTokens().length, 4, "MultiInput has 4 tokens");
+		equals(this.multiInput1.getTokens()[0].getText(), "Arnold", "The data binding has been applied properly");
+	});
+
 	test("tabindex of tokenizer in MultiInput", function() {
 		equals(!this.multiInput1.$().find(".sapMTokenizer").attr("tabindex"), true, "tokenizer has no tabindex if it is in MultiInput");
 	});
