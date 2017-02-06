@@ -15,12 +15,22 @@ sap.ui.define([
 		_oDialog: null,
 
 		onInit: function () {
+			var sPath,
+				oModel,
+				aDataCB,
+				oModelCB,
+				oSelect,
+				oFileTypesModel,
+				mFileTypesData,
+				oFileTypesBox,
+				oUploadCollection;
+
 			// set mock data
-			var sPath = jQuery.sap.getModulePath("sap.m.sample.UploadCollectionSortingFiltering", "/uploadCollection.json");
-			var oModel = new JSONModel(sPath);
+			sPath = jQuery.sap.getModulePath("sap.m.sample.UploadCollectionSortingFiltering", "/uploadCollection.json");
+			oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
 
-			var aDataCB = {
+			aDataCB = {
 				"items" : [{
 					"key" : "All",
 					"text" : "sap.m.ListSeparators.All"
@@ -31,14 +41,59 @@ sap.ui.define([
 				"selectedKey" : "All"
 			};
 
-			var oModelCB = new JSONModel();
+			oModelCB = new JSONModel();
 			oModelCB.setData(aDataCB);
 
-			var oSelect = this.getView().byId("tbSelect");
+			oSelect = this.getView().byId("tbSelect");
 			oSelect.setModel(oModelCB);
 
+			oFileTypesModel = new sap.ui.model.json.JSONModel();
+
+			mFileTypesData = {
+				"items": [
+					{
+						"key": "jpg",
+						"text": "jpg"
+					},
+					{
+						"key": "txt",
+						"text": "txt"
+					},
+					{
+						"key": "ppt",
+						"text": "ppt"
+					},
+					{
+						"key": "doc",
+						"text": "doc"
+					},
+					{
+						"key": "xls",
+						"text": "xls"
+					},
+					{
+						"key": "pdf",
+						"text": "pdf"
+					},
+					{
+						"key": "png",
+						"text": "png"
+					}
+				],
+				"selected" : ["jpg", "txt", "ppt", "doc", "xls", "pdf", "png"]
+			};
+
+			oFileTypesModel.setData(mFileTypesData);
+			this.getView().setModel(oFileTypesModel, "fileTypes");
+
+			oFileTypesBox = this.getView().byId("fileTypesBox");
+			oFileTypesBox.setSelectedItems(oFileTypesBox.getItems());
+
+			oUploadCollection = this.getView().byId("UploadCollection");
+			oUploadCollection.setFileType(oFileTypesBox.getSelectedKeys());
+
 			// Sets the text to the label
-			this.getView().byId("UploadCollection").addEventDelegate({
+			oUploadCollection.addEventDelegate({
 				onBeforeRendering : function () {
 					this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
 				}.bind(this)
@@ -129,6 +184,12 @@ sap.ui.define([
 		onSelectChange:  function(oEvent) {
 			var oUploadCollection = this.getView().byId("UploadCollection");
 			oUploadCollection.setShowSeparators(oEvent.getParameters().selectedItem.getProperty("key"));
+		},
+
+		onFileTypeChange: function(oEvent) {
+			var oUploadCollection = this.getView().byId("UploadCollection");
+			var oFileTypesMultiComboBox = this.getView().byId("fileTypesBox");
+			oUploadCollection.setFileType(oFileTypesMultiComboBox.getSelectedKeys());
 		},
 
 		getAttachmentTitleText: function(){
