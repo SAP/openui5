@@ -490,6 +490,53 @@
 			}
 		});
 
+		var oSpecialCharsModel = new sap.ui.model.json.JSONModel();
+		var mSpecialCharsData = {
+			"special": [
+				{"text" : "product", "pey" : "productId"},
+				{"text" : "näme", "key" : "name"},
+				{"text" : "categöry", "key" : "category"},
+				{"text" : "süppliername", "key" : "supplierName"},
+				{"text" : "description", "key" : "description"},
+
+				{"text" : "Абакан", "pey" : "productId"},
+				{"text" : "Архангельск", "key" : "name"},
+				{"text" : "Апатиты", "key" : "category"},
+				{"text" : "Барнаул", "key" : "supplierName"},
+				{"text" : "Белгород", "key" : "description"}
+			]
+
+		};
+
+		oSpecialCharsModel.setData(mSpecialCharsData);
+
+		var oSpecialCharsItemTemplate = new sap.ui.core.ListItem({
+			key: "{key}",
+			text: "{text}"
+		});
+
+		var oSpecialCharsComboBox = new sap.m.ComboBox({
+			items: {
+				path: "/special",
+				template: oSpecialCharsItemTemplate
+			},
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info('Event fired: "change" the value of the input change to ' + oControlEvent.getParameter("value") + " on", this);
+				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
+			},
+
+			selectionChange: function(oControlEvent) {
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+				oSelectedItem = oSelectedItem ? oSelectedItem.getText() : oSelectedItem;
+				jQuery.sap.log.info('Event fired: "selectionChange" selected item change to ' + oSelectedItem + " on", this);
+				oSpecialCharsComboBox.rerender();
+			}
+
+		});
+
+		oSpecialCharsComboBox.setModel(oSpecialCharsModel);
+
 		new sap.m.App().addPage(new sap.m.Page({
 			title: "sap.m.ComboBox",
 			content: [
@@ -529,7 +576,11 @@
 
 				new sap.ui.core.HTML({ content: "<h3>Error state</h3>" }),
 				oComboBoxError,
-				new sap.ui.core.HTML({ content: "<hr>" })
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>ComboBox with Accented characters</h3>" }),
+				oSpecialCharsComboBox,
+				new sap.ui.core.HTML({ content: "<hr>" }),
 			]
 		}).addStyleClass("sapUiContentPadding")).placeAt("body");
 		</script>
