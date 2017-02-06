@@ -542,7 +542,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks if a shared newly created variant requires an ABAP package
+		 * Checks if a shared newly created variant requires an ABAP package; this is relevant for the VENDOR, PARTNER and CUSTOMER_BASE layers,
+		 * whereas variants in the CUSTOMER layer are client-dependent content and can either be transported or stored as local objects ($TMP).
+		 * A variant in the CUSTOMER layer that will be transported must not be assigned to a package.
 		 *
 		 * @returns {boolean} - Indicates whether a new variant needs an ABAP package
 		 * @public
@@ -552,15 +554,8 @@ sap.ui.define([
 		doesSharedVariantRequirePackage: function () {
 			var sCurrentLayer;
 			sCurrentLayer = Utils.getCurrentLayer(false);
-			if ((sCurrentLayer === "VENDOR") || (sCurrentLayer === "PARTNER")) {
+			if ((sCurrentLayer === "VENDOR") || (sCurrentLayer === "PARTNER") || (sCurrentLayer === "CUSTOMER_BASE")) {
 				return true;
-			}
-			if (sCurrentLayer === "USER") {
-				return false;
-			}
-			if (sCurrentLayer === "CUSTOMER") {
-				return false; // Variants in CUSTOMER layer might either be transported or stored as local objects ($TMP) as they are client
-				// dependent content. A variant which will be transported must not be assigned to a package.
 			}
 
 			return false;
