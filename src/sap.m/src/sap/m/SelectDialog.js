@@ -14,17 +14,52 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 *
+	 * A dialog that enables users to select one or more items from a comprehensive list.
 	 * @class
-	 * A SelectDialog is a dialog containing a list, search functionality to filter it and a confirmation/cancel button. The control can be used when the user should select one or multiple items out of many.
-	 *
-	 * The list used in the SelectDialog is a growing list and can be filled with a any kind of list item. The search field triggers the events "search" and "liveChange" where a filter function can be applied to the list binding.
-	 *
-	 * After selecting an item in single selection mode or after confirming in multi selection mode, the dialog will be closed and the event "confirm" is fired with the items that have been selected. By default, the selection will also be reset to allow for a new selection when opening the dialog again.
-	 *
-	 * When cancelling the selection, the event "change" will be fired and the selection is restored to the state when the dialog was opened.
-	 *
-	 * NOTE: The growing functionality of the list does not support two-way Binding, so if you use this control with a JSON model make sure the binding mode is set to "OneWay" and that you update the selection model manually with the items passed in the "confirm" event.
+	 * <h3>Overview</h3>
+	 * A SelectDialog is a dialog containing a list, search functionality to filter it and a confirmation/cancel button.
+	 * The list used in the dialog is a growing list and can be filled with a any kind of list item.
+	 * <h3>Structure</h3>
+	 * <h4>Dialog structure</h4>
+	 * The select dialog has the following components:
+	 * <ul>
+	 * <li>Header - title of the dialog</li>
+	 * <li>Search field - input field to enter search terms</li>
+	 * <li>Info toolbar (only in multi-select) - displays the number of currently selected items</li>
+	 * <li>Content - {@link sap.m.StandardListItem  standard list items}, {@link sap.m.DisplayListItem
+	 * display list items} or {@link sap.m.FeedListItem feed list items}</li>
+	 * <li>Button toolbar - for confirmation/cancellation buttons </li>
+	 * </ul>
+	 * <h4>List structure & selection</h4>
+	 * <ul>
+	 * <li> The search field triggers the events <code>search</code> and <code>liveChange</code>
+	 * where a filter function can be applied to the list binding. </li>
+	 * <li> The growing functionality of the list does not support two-way Binding, so if you use this control with a JSON model
+	 * make sure the binding mode is set to <code>OneWay</code> and that you update the selection model manually with
+	 * the items passed in the <code>confirm<code> event. </li>
+	 * <li> In the multi-select mode of the select dialog, checkboxes are provided for choosing multiple entries. </li>
+	 * <li> You can set <code>rememberSelections</code> to true to store the current selection and load this state
+	 * when the dialog is opened again. </li>
+	 * <li> When cancelling the selection, the event <code>change</code> will be fired and the selection is restored
+	 * to the state when the dialog was opened. </li>
+	 * </ul>
+	 * <h3>Usage</h3>
+	 * <h4>When to use:</h4>
+	 * <ul>
+	 * <li>You  need to select one or more entries from a comprehensive list that contains multiple attributes or values. </li>
+	 * </ul>
+	 * <h4>When not to use:</h4>
+	 * <ul>
+	 * <li> You need to pick one item from a predefined set of options. Use {@link sap.m.Select select}
+	 * or {@link sap.m.ComboBox combobox} instead. </li>
+	 * <li> You need to select a range of item. Use {@link sap.ui.comp.valuehelpdialog.ValueHelpDialog value help dialog instead. </li>
+	 * <li> You need to be able to add your own values to an existing list. Use a {@link sap.m.Dialog dialog} instead. </li>
+	 * </ul>
+	 * <h3>Responsive Behavior</h3>
+	 * <ul>
+	 * <li> On phones, the select dialog takes up the whole screen. </li>
+	 * <li> On desktop and tablet devices, the select dialog appears as a popover. </li>
+	 * </ul>
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
