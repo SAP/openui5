@@ -1267,5 +1267,16 @@
         "references": []
       }
     ]
+  },
+  "1.40.17": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "c38093c67f74957d5e45e25285ada8a74c2c589a",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Always update the top position of the vertical scrollbar after rendering.",
+        "references": []
+      }
+    ]
   }
 }

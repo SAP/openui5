@@ -779,5 +779,16 @@
         "references": []
       }
     ]
+  },
+  "1.28.43": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "d74d6ba4f39fb0741865a0ff316b06fad0d39b7d",
+        "type": "FIX",
+        "text": " sap.m.DateTimeInput: Closes on Firefox",
+        "references": []
+      }
+    ]
   }
 }

@@ -998,12 +998,6 @@
         "references": []
       },
       {
-        "id": "b061bec5aded3bb7ec83db8bce2ff8db8a700779",
-        "type": "FIX",
-        "text": "ManagedObject: Propagate properties when setting parent to null",
-        "references": []
-      },
-      {
         "id": "0d74a938fed07a191adc85233ebcd9c88f12dc5e",
         "type": "FIX",
         "text": "Popup: Order of Functions During Opening Fixed",
@@ -1838,6 +1832,70 @@
         "id": "c6eced3ceb0e6a20b29ea6fc7115c101bfd0d848",
         "type": "FIX",
         "text": " v2.ODataModel: setProperty detect changes in __metadata",
+        "references": []
+      }
+    ]
+  },
+  "1.38.17": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "d904b3c4bde88b28e170d2d1ea06ad764f9e0ff3",
+        "type": "FIX",
+        "text": " ThemeCheck: Fix issues when switching theme / improve logging",
+        "references": []
+      },
+      {
+        "id": "d99c91ce1bf1665c43125b1cbe79fe536b22c23d",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Mouse swipe now works correctly",
+        "references": []
+      },
+      {
+        "id": "686825b5b99a40a04a88d22db546b476014c5529",
+        "type": "FIX",
+        "text": " sap.ui.core.util.ExportTypeCSV: Don\u0027t escape number only formulas",
+        "references": []
+      },
+      {
+        "id": "787fb02e726845f82d27f2da38ef9d062d73029d",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser: ignore \"HasStream\" property",
+        "references": []
+      },
+      {
+        "id": "b8ed52a5243538bca93bab2e8a6032e97d098713",
+        "type": "FIX",
+        "text": " v2.ODataModel: Bindings fire no dataReceived event",
+        "references": []
+      },
+      {
+        "id": "e86aa351282b65da6cbfc96f8cd1ca8744206173",
+        "type": "FIX",
+        "text": " v2.ODataModel: setting same value on created Entities - no changes",
+        "references": []
+      },
+      {
+        "id": "779efe8aaee46e3566a1e0285bcdd14f0666e867",
+        "type": "FIX",
+        "text": " v2.ODataModel: wrong accept header for $batch",
+        "references": []
+      }
+    ]
+  },
+  "1.38.18": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "7475394df3bc1ade75cafc6c63df9b40373152b7",
+        "type": "FIX",
+        "text": " ThemeCheck: Fix Cross-Origin issues in Firefox",
+        "references": []
+      },
+      {
+        "id": "b689a9fe98ba6a23edf599b2e596fd892445c067",
+        "type": "FIX",
+        "text": " sap.ui.core.Popup: blindlayer is also needed for IE11",
         "references": []
       }
     ]

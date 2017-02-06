@@ -19,8 +19,8 @@
           "src/sap.ui.suite/pom.xml": "1",
           "pom.xml": "2",
           "src/testsuite/pom.xml": "1",
-          "src/themelib_sap_goldreflection/pom.xml": "1",
           "src/sap.ui.commons/pom.xml": "1",
+          "src/themelib_sap_goldreflection/pom.xml": "1",
           "src/testsuite-utils/pom.xml": "1"
         }
       },
@@ -45,12 +45,12 @@
           "src/sap.ui.suite/pom.xml": "1",
           "pom.xml": "2",
           "src/testsuite/pom.xml": "1",
-          "src/themelib_sap_goldreflection/pom.xml": "1",
           "src/sap.ui.commons/pom.xml": "1",
+          "src/themelib_sap_goldreflection/pom.xml": "1",
           "src/testsuite-utils/pom.xml": "1"
         }
       },
-      "lastCommitId": "c46d1338443884c5cc485f57756dca7dbc848e37"
+      "lastCommitId": "bf724db326ea79fc51d4a06802ad2255233274f2"
     }
   }
 }
