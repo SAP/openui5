@@ -46,8 +46,10 @@
 			"sap/m/semantic/FullscreenPage",
 			"sap/m/semantic/DetailPage",
 			"sap/m/CheckBox",
+			"sap/m/ComboBox",
 			"sap/ui/test/opaQunit",
-			"sap/ui/thirdparty/hasher"
+			"sap/ui/thirdparty/hasher",
+			"sap/ui/test/matchers/AggregationLengthEquals"
 		],
 		function(Press,
 				 Button,
@@ -72,8 +74,10 @@
 				 FullscreenPage,
 				 DetailPage,
 				 CheckBox,
+				 ComboBox,
 				 opaTest,
-				 hasher){
+				 hasher,
+				 AggregationLengthEquals){
 			// stack contains controls to be destroyed
 			// and emptied after each test
 			var aControlsToClean = [];
@@ -182,7 +186,7 @@
 				new Press().executeOn(oLink);
 			});
 
-			QUnit.test("Should request focus and trigger a 'press' event on an sap.m.StandardListItem of type 'active'", function(assert) {
+			QUnit.test("Should request focus and trigger a 'press' event on an StandardListItem of type 'active'", function(assert) {
 				var done = assert.async();
 
 				// Arrange
@@ -421,19 +425,25 @@
 					}
 				].forEach(function (oTest) {
 					opaTest(oTest.name, function(oOpa) {
+						var done = assert.async();
+
 						oTest.createModel();
 						oList.setModel(oModel);
 
 						oOpa.waitFor({
 							id: oList.getId(),
-							actions: new Press()
+							actions: new Press(),
+							errorMessage: "Can't find ComboBox"
 						});
 
 						oOpa.waitFor({
 							id: oList.getId(),
-							actions: function () {
+							matchers: new AggregationLengthEquals({name: "items", length: 2}),
+							success: function () {
 								assert.equal(oList.getItems().length, 2, "Triggered growing");
-							}
+								done();
+							},
+							errorMessage: "Growth not triggered"
 						});
 					});
 				});
@@ -490,17 +500,17 @@
 				beforeEach: function() {
 					// system under test
 					sinon.config.useFakeTimers = true;
-					this.oComboBox =  new sap.m.ComboBox({
+					this.oComboBox =  new ComboBox({
 						items: [
-							new sap.ui.core.Item({
+							new Item({
 								key: "0",
 								text: "item 0"
 							}),
-							new sap.ui.core.Item({
+							new Item({
 								key: "1",
 								text: "item 1",
 							}),
-							new sap.ui.core.Item({
+							new Item({
 								key: "2",
 								text: "item 2"
 							})
@@ -518,14 +528,12 @@
 			});
 
 			QUnit.test("Should select an item", function (assert) {
-				var done = assert.async();
-
 				assert.strictEqual(this.oComboBox.getSelectedItem(), null, "By default the selected item of the ComboBox control is null");
 				assert.strictEqual(this.oComboBox.getValue(), "", "ComboBox's value is empty");
 				assert.strictEqual(this.oComboBox.getPicker().getDomRef(), null, "ComboBox's Popover does not exists in the DOM");
 				assert.ok(!this.oComboBox.getPicker().isOpen(), "ComboBox's Popover is closed");
 
-				var oPressArrow = new sap.ui.test.actions.Press();
+				var oPressArrow = new Press();
 				oPressArrow.executeOn(this.oComboBox);
 
 				this.clock.tick(500);
@@ -534,7 +542,7 @@
 				assert.equal(jQuery(this.oComboBox.getPicker().getDomRef()).css("visibility"), "visible", "Checking Popover's visibility css property");
 				assert.equal(jQuery(this.oComboBox.getPicker().getDomRef()).css("display"), "block", "Checking Popover's display css property");
 
-				var oPressItem = new sap.ui.test.actions.Press();
+				var oPressItem = new Press();
 				oPressItem.executeOn(this.oComboBox.getItems()[1]);
 
 				this.clock.tick(500);
@@ -543,8 +551,6 @@
 				assert.equal(jQuery(this.oComboBox.getPicker().getDomRef()).css("visibility"), "hidden", "Checking Popover's visibility css property");
 				assert.equal(jQuery(this.oComboBox.getPicker().getDomRef()).css("display"), "none", "Checking Popover's display css property");
 				assert.strictEqual(this.oComboBox.getValue(), "item 1", "Check selected item");
-
-				done();
 			});
 
 		});

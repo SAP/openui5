@@ -16,8 +16,7 @@ sap.ui.define([
 	* @param {object} [mSettings] Initial settings for the new control
 	*
 	* @class
-	* A <code>SemanticToggleButton</code> is eligible for aggregation content
-	* of a {@link sap.f.semantic.SemanticPage}.
+	* A base class for the {@link sap.f.semantic.FavoriteAction} and {@link sap.f.semantic.FlagAction}.
 	*
 	* @extends <code>sap.f.semantic.SemanticButton</code>
 	* @abstract
@@ -39,8 +38,8 @@ sap.ui.define([
 
 				/**
 				 * Defines the <code>SemanticToggleButton</code> pressed state.
-				 * The property is <code>true</code> when the control is toggled.
-				 * The default state of this property is <code>false</code>.
+				 *
+				 * The property is set to <code>true</code> when the control is toggled (default is <code>false</code>).
 				 */
 				pressed : {type : "boolean", group : "Data", defaultValue : false}
 			}
@@ -79,7 +78,7 @@ sap.ui.define([
 
 	/**
 	* Applies the property value according to semantic logic.
-	* Overrides to apply toggle-specific logic
+	* Overrides to apply toggle-specific logic.
 	*
 	* @override
 	* @private
@@ -93,8 +92,8 @@ sap.ui.define([
 	};
 
 	/**
-	* Sets the <code>pressed</code> property value.
-	* Can be overwritten in child classes to apply semantic-specific logic
+	* Sets the value of the <code>pressed</code> property.
+	* Can be overwritten in child classes to apply semantic-specific logic.
 	*
 	* @private
 	*/

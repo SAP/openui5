@@ -3,7 +3,7 @@
 /* Belize theme                                 */
 /* ============================================ */
 
-.sapUxAPHierarchicalSelect {
+html.sap-desktop .sapUxAPHierarchicalSelect {
 	border: none;
 	background-color: transparent;
 
@@ -12,6 +12,10 @@
 
 		&:hover {
 			background: transparent;
+		}
+
+		&.sapMSltIconOnly.sapMSlt:focus  {
+			outline: none;
 		}
 
 		&:not(.sapMSltPressed):hover > .sapMSltIcon {

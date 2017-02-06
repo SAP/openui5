@@ -327,7 +327,7 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 * @param {object} mParameters parameters of the change type
 	 * @param {string} mParameters.dataSourceId the id of the data source to be changed by adding annotations from annotations parameter
 	 * @param {array} mParameters.annotations array with ids of data sources of type 'ODataAnnotation' that should be added to the data source to be changed
-	 * @param {enum} [mParameters.annotationsInsertPosition] position at which the annotations should be added to the annotations of the data source to be changed (BEGIN/END, default BEGIN)
+	 * @param {enum} [mParameters.annotationsInsertPosition] position at which the annotations should be added to the annotations of the data source to be changed (BEGINNING/END, default BEGINNING)
 	 * @param {object} mParameters.dataSource one or several data sources of type 'ODataAnnotation' which should be added, all need to be contained in the annotations parameter
 	 *
 	 * @return {Promise} resolving when creating the descriptor inline change was successful (without backend access)

@@ -395,6 +395,10 @@ QUnit.test("Check if focus is set back to the opener after closing", function(as
 
 QUnit.test("Open two modal popups and close the second one, the focus should stay in the first popup after block layer gets focus", function(assert) {
 	var done = assert.async();
+	var sandbox = sinon.sandbox.create();
+	sandbox.stub(sap.ui.Device, "system", {
+		desktop: true
+	});
 	var oSecondPopup = new sap.ui.core.Popup(jQuery.sap.domById("popup1"));
 	var fnAfterSecondPopupOpen = function() {
 		oSecondPopup.detachOpened(fnAfterSecondPopupOpen);
@@ -415,6 +419,7 @@ QUnit.test("Open two modal popups and close the second one, the focus should sta
 			assert.ok(jQuery.sap.containsOrEquals(this.oPopup.getContent(), document.activeElement), "The focus is set back to the popup");
 
 			this.oPopup.attachClosed(function() {
+				sandbox.restore();
 				done();
 			});
 
@@ -1301,9 +1306,15 @@ QUnit.test("The DOM element of Autoclose area should be updated when it's rerend
 
 		this.oInput.invalidate();
 		sap.ui.getCore().applyChanges();
+
 		this.oInput.focus();
 
-		jQuery.sap.byId("focusableElement2").focus();
+		var oDOM = jQuery.sap.byId("focusableElement2");
+		if (this.oPopup.touchEnabled) {
+			sap.ui.qunit.QUnitUtils.triggerEvent("touchstart", oDOM);
+		} else {
+			oDOM.focus();
+		}
 	}.bind(this);
 
 	this.oPopup.attachOpened(fnOpened);

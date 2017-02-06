@@ -3,9 +3,14 @@
  */
 
 // Provides static class sap.ui.base.BindingParser
-sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingMode',
-		'jquery.sap.script'],
-	function(jQuery, ExpressionParser, BindingMode/* , jQuerySap */) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./ExpressionParser',
+	'sap/ui/model/BindingMode',
+	'sap/ui/model/Filter',
+	'sap/ui/model/Sorter',
+	'jquery.sap.script'],
+	function(jQuery, ExpressionParser, BindingMode, Filter, Sorter/* , jQuerySap */) {
 	"use strict";
 
 	/**
@@ -122,6 +127,7 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 		return oBindingInfo;
 	}
 
+
 	/**
 	 * Delegates to <code>BindingParser.mergeParts</code>, but stifles any errors.
 	 *
@@ -138,6 +144,162 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 				"sap.ui.base.BindingParser");
 			// rely on error in ManagedObject
 		}
+	}
+
+	function resolveBindingInfo(oEnv, oBindingInfo) {
+
+		/*
+		 * Resolves a function name to a function.
+		 *
+		 * Names can consist of multiple segments, separated by dots.
+		 *
+		 * If the name starts with a dot ('.'), lookup will start with the
+		 * given context, otherwise it will start with the global context (window).
+		 *
+		 * @param {object} o Object from which the property should be read and resolved
+		 * @param {string} sProp name of the property to resolve
+		 */
+		function resolveRef(o,sProp) {
+			if ( typeof o[sProp] === "string" ) {
+				var fn, sName = o[sProp];
+				if ( o[sProp][0] === "." ) {
+					fn = jQuery.sap.getObject(o[sProp].slice(1), undefined, oEnv.oContext);
+					o[sProp] = oEnv.bStaticContext ? fn : (fn && fn.bind(oEnv.oContext));
+				} else {
+					o[sProp] = jQuery.sap.getObject(o[sProp]);
+				}
+				if (typeof (o[sProp]) !== "function") {
+					if (oEnv.bTolerateFunctionsNotFound) {
+						oEnv.aFunctionsNotFound = oEnv.aFunctionsNotFound || [];
+						oEnv.aFunctionsNotFound.push(sName);
+					} else {
+						jQuery.sap.log.error(sProp + " function " + sName + " not found!");
+					}
+				}
+			}
+		}
+
+		/*
+		 * Resolves a data type name and configuration either to a type constructor or to a type instance.
+		 *
+		 * The name is resolved locally (against oEnv) if it starts with a '.', otherwise against
+		 * the global context (window).
+		 *
+		 * The resolution is done inplace. If the name resolves to a function, it is assumed to be the
+		 * constructor of a data type. A new instance will be created, using the values of the
+		 * properties 'constraints' and 'formatOptions' as parameters of the constructor.
+		 * Both properties will be removed from <code>o</code>.
+		 *
+		 * @param {object} o Object from which a property should be read and resolved
+		 */
+		function resolveType(o) {
+			var FNType;
+			if (typeof o.type === "string" ) {
+				if ( o.type[0] === "." ) {
+					FNType = jQuery.sap.getObject(o.type.slice(1), undefined, oEnv.oContext);
+				} else {
+					FNType = jQuery.sap.getObject(o.type);
+				}
+				// TODO find another solution for the type parameters?
+				if (typeof FNType === "function") {
+					o.type = new FNType(o.formatOptions, o.constraints);
+				} else {
+					o.type = FNType;
+				}
+				// TODO why are formatOptions and constraints also removed for an already instantiated type?
+				// TODO why is a value of type object not validated (instanceof Type)
+				delete o.formatOptions;
+				delete o.constraints;
+			}
+		}
+
+		/*
+		 * Resolves a map of event listeners, keyed by the event name.
+		 *
+		 * Each listener can be the name of a single function that will be resolved
+		 * in the given context (oEnv).
+		 */
+		function resolveEvents(oEvents) {
+			if ( oEvents != null && typeof oEvents === 'object' ) {
+				for ( var sName in oEvents ) {
+					resolveRef(oEvents, sName);
+				}
+			}
+		}
+
+		/*
+		 * Converts filter definitions to sap.ui.model.Filter instances.
+		 *
+		 * The value of the given property can either be a single filter definition object
+		 * which will be fed into the constructor of sap.ui.model.Filter.
+		 * Or it can be an array of such objects.
+		 *
+		 * If any of the filter definition objects contains a property named 'filters',
+		 * that property will be resolved as filters recursively.
+		 *
+		 * A property 'test' will be resolved as function in the given context.
+		 */
+		function resolveFilters(o, sProp) {
+			var v = o[sProp];
+
+			if ( Array.isArray(v) ) {
+				v.forEach(function(oObject, iIndex) {
+					resolveFilters(v, iIndex);
+				});
+				return;
+			}
+
+			if ( v && typeof v === 'object' ) {
+				resolveRef(v, "test");
+				resolveFilters(v, "filters");
+				o[sProp] = new Filter(v);
+			}
+		}
+
+		/*
+		 * Converts sorter definitions to sap.ui.model.Sorter instances.
+		 *
+		 * The value of the given property can either be a single sorter definition object
+		 * which then will be fed into the constructor of sap.ui.model.Sorter, or it can
+		 * be an array of such objects.
+		 *
+		 * Properties 'group' and 'comparator' in any of the sorter definitions
+		 * will be resolved as functions in the given context (oEnv).
+		 */
+		function resolveSorters(o, sProp) {
+			var v = o[sProp];
+
+			if ( Array.isArray(v) ) {
+				v.forEach(function(oObject, iIndex) {
+					resolveSorters(v, iIndex);
+				});
+				return;
+			}
+
+			if ( v && typeof v === 'object' ) {
+				resolveRef(v, "group");
+				resolveRef(v, "comparator");
+				o[sProp] = new Sorter(v);
+			}
+		}
+
+		if ( typeof oBindingInfo === 'object' ) {
+			// Note: this resolves deeply nested bindings although CompositeBinding doesn't support them
+			if ( Array.isArray(oBindingInfo.parts) ) {
+				oBindingInfo.parts.forEach(function(oPart) {
+					resolveBindingInfo(oEnv, oPart);
+				});
+			}
+			resolveType(oBindingInfo);
+			resolveFilters(oBindingInfo,'filters');
+			resolveSorters(oBindingInfo,'sorter');
+			resolveEvents(oBindingInfo.events);
+			resolveRef(oBindingInfo,'formatter');
+			resolveRef(oBindingInfo,'factory'); // list binding
+			resolveRef(oBindingInfo,'groupHeaderFactory'); // list binding
+		}
+
+		return oBindingInfo;
 	}
 
 	/**
@@ -169,88 +331,10 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 			oParseResult,
 			iEnd;
 
-		function resolveRef(o,sProp) {
-			if ( typeof o[sProp] === "string" ) {
-				var fn, sName = o[sProp];
-				if ( jQuery.sap.startsWith(o[sProp], ".") ) {
-					fn = jQuery.sap.getObject(o[sProp].slice(1), undefined, oEnv.oContext);
-					o[sProp] = oEnv.bStaticContext ? fn : jQuery.proxy(fn, oEnv.oContext);
-				} else {
-					o[sProp] = jQuery.sap.getObject(o[sProp]);
-				}
-				if (typeof (o[sProp]) !== "function") {
-					if (oEnv.bTolerateFunctionsNotFound) {
-						oEnv.aFunctionsNotFound = oEnv.aFunctionsNotFound || [];
-						oEnv.aFunctionsNotFound.push(sName);
-					} else {
-						jQuery.sap.log.error(sProp + " function " + sName + " not found!");
-					}
-				}
-			}
-		}
-
-		function resolveType(o,sProp) {
-			var FNType;
-			if (typeof o[sProp] === "string" ) {
-				if (jQuery.sap.startsWith(o[sProp], ".") ) {
-					FNType = jQuery.sap.getObject(o[sProp].slice(1), undefined, oEnv.oContext);
-				} else {
-					FNType = jQuery.sap.getObject(o[sProp]);
-				}
-				// TODO find another solution for the type parameters?
-				if (typeof FNType === "function") {
-					o[sProp] = new FNType(o.formatOptions, o.constraints);
-				} else {
-					o[sProp] = FNType;
-				}
-				delete o.formatOptions;
-				delete o.constraints;
-			}
-		}
-
-		function resolveEvents(o,sProp) {
-			if (!(jQuery.isPlainObject(o[sProp]))) {
-				return;
-			}
-			jQuery.each(o[sProp], function(sName, oObject) {
-				resolveRef(o[sProp], sName);
-			});
-		}
-
-		function resolveObject(o,sProp, sParentProp) {
-			var FNType;
-			if (!(typeof o[sProp] === "object" || jQuery.isArray(o[sProp]))) {
-				return;
-			}
-			if (jQuery.isArray(o[sProp])) {
-				jQuery.each(o[sProp], function(iIndex, oObject) {
-					resolveObject(o[sProp], iIndex, sProp);
-				});
-			} else {
-				if (sProp === "filters" || sParentProp === "filters") {
-					FNType = jQuery.sap.getObject("sap.ui.model.Filter");
-					resolveRef(o[sProp], "test");
-				} else if (sProp === "sorter" || sParentProp === "sorter") {
-					FNType = jQuery.sap.getObject("sap.ui.model.Sorter");
-					resolveRef(o[sProp], "group");
-					resolveRef(o[sProp], "comparator");
-				}
-				if (FNType) {
-					o[sProp] = new FNType(o[sProp]);
-				}
-			}
-		}
-
 		// an embedded binding: check for a property name that would indicate a complex object
 		if ( rObject.test(sInput.slice(iStart)) ) {
 			oParseResult = parseObject(sInput, iStart);
-			resolveType(oParseResult.result,'type');
-			resolveObject(oParseResult.result,'filters');
-			resolveObject(oParseResult.result,'sorter');
-			resolveEvents(oParseResult.result,'events');
-			resolveRef(oParseResult.result,'formatter');
-			resolveRef(oParseResult.result,'factory'); // list binding
-			resolveRef(oParseResult.result,'groupHeaderFactory');
+			resolveBindingInfo(oEnv, oParseResult.result);
 			return oParseResult;
 		}
 		// otherwise it must be a simple binding (path only)

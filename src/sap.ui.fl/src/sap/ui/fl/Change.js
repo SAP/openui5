@@ -472,6 +472,10 @@ sap.ui.define([
 			throw new Error("Parameter mPropertyBag is mandatory");
 		}
 
+		if (!this._oDefinition.dependentSelector) {
+			this._oDefinition.dependentSelector = {};
+		}
+
 		if (this._oDefinition.dependentSelector[sAlias]) {
 			throw new Error("Alias '" + sAlias + "' already exists in the change.");
 		}
@@ -488,6 +492,9 @@ sap.ui.define([
 		} else {
 			this._oDefinition.dependentSelector[sAlias] = oModifier.getSelector(vControl, oAppComponent, mAdditionalSelectorInformation);
 		}
+
+		//remove dependency list so that it will be created again in method getDependentIdList
+		delete this._aDependentIdList;
 	};
 
 	/**
@@ -515,6 +522,10 @@ sap.ui.define([
 		var oModifier = mPropertyBag.modifier;
 		var oAppComponent = mPropertyBag.appComponent;
 
+		if (!this._oDefinition.dependentSelector) {
+			return undefined;
+		}
+
 		oDependentSelector = this._oDefinition.dependentSelector[sAlias];
 		if (Array.isArray(oDependentSelector)) {
 			oDependentSelector.forEach(function (oSelector) {
@@ -541,21 +552,39 @@ sap.ui.define([
 		var aDependentSelectors = [];
 		var aDependentIds = [];
 
-		Object.keys(this._oDefinition.dependentSelector).forEach(function (sPropertyName) {
-			aDependentSelectors.push(that._oDefinition.dependentSelector[sPropertyName]);
-		});
+		if (!this._aDependentIdList) {
+			if (!this._oDefinition.dependentSelector) {
+				this._aDependentIdList = [];
+			} else {
+				Object.keys(this._oDefinition.dependentSelector).forEach(function (sPropertyName) {
+					aDependentSelectors.push(that._oDefinition.dependentSelector[sPropertyName]);
+				});
 
-		aDependentSelectors = [].concat.apply([], aDependentSelectors);
+				aDependentSelectors = [].concat.apply([], aDependentSelectors);
 
-		aDependentSelectors.forEach(function (oDependentSelector) {
-			sId = oDependentSelector.id;
-			if (oDependentSelector.idIsLocal) {
-				sId = oAppComponent.createId(oDependentSelector.id);
+				aDependentSelectors.forEach(function (oDependentSelector) {
+					sId = oDependentSelector.id;
+					if (oDependentSelector.idIsLocal) {
+						sId = oAppComponent.createId(oDependentSelector.id);
+					}
+					aDependentIds.push(sId);
+				});
+
+				this._aDependentIdList = aDependentIds;
 			}
-			aDependentIds.push(sId);
-		});
+		}
 
-		return aDependentIds;
+		return this._aDependentIdList;
+	};
+
+	/**
+	 * Returns the change key
+	 *
+	 * @returns {String} Change key of the file which is a unique concatenation of fileName, layer and namespace
+	 * @public
+	 */
+	Change.prototype.getKey = function () {
+		return this._oDefinition.fileName + this._oDefinition.layer + this._oDefinition.namespace;
 	};
 
 	/**
@@ -604,7 +633,8 @@ sap.ui.define([
 			support: {
 				generator: "Change.createInitialFileContent",
 				service: oPropertyBag.service || "",
-				user: ""
+				user: "",
+				sapui5Version: sap.ui.version
 			},
 			dependentSelector: oPropertyBag.dependentSelector || {}
 		};

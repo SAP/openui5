@@ -4,21 +4,17 @@
 /* ================================== */
 
 .sapMActionSheetDialog.sapMDialog {
-	position: fixed;
-	-webkit-transform: translate(0, 100%);
-	transform: translate(0, 100%);
-	top: auto !important;
-	bottom: 0 !important;
-	left: 0 !important;
+	-webkit-transform: translate(-50%, 0);
+	transform: translate(-50%, 0);
+	top: auto !important; // We need to overwrite the inline top style
+	bottom: 0;
 	width: 100%;
-	max-width: 100% !important;
-	max-height: 100% !important;
-	opacity: 1;
-	transform: translate(0, 0) !important;
-}
+	max-width: 20rem;
+	border-radius: 0.25rem 0.25rem 0 0;
 
-.sapMActionSheetDialog.sapMDialogOpen {
-	-webkit-transform: translate(0, 0);
+	&.sapMDialogPhone{
+		overflow: visible;
+	}
 }
 
 .sapMActionSheet:focus{
@@ -88,6 +84,19 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheetDialog > .sapMBar.sapMHea
 .sapMActionSheetDialog > .sapMBar.sapMHeader-CTX > .sapMBarMiddle > .sapMBarPH > .sapMDialogTitle {
 	color: contrast(fade(@sapUiBlockLayerBackground, 60), @sapUiGroupTitleTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 	font-size: @sapMFontMediumSize;
+}
+
+.sapMDialog.sapMActionSheetDialog > .sapMDialogSection {
+	box-shadow: @sapUiShadowLevel1;
+}
+
+.sapMDialog.sapMActionSheetDialog > section {
+	padding: 0.25rem 0.5rem;
+}
+
+.sapMActionSheetDialog.sapMDialogPhone > .sapMIBar.sapMHeader-CTX {
+	background: transparent;
+	box-shadow: none;
 }
 
 /* ====== BEGIN ====== */

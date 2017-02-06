@@ -96,6 +96,11 @@
 
 	-webkit-flex-direction: column;
 	flex-direction: column;
+
+	// Scroll anchoring adjusts the scroll position to prevent visible jumps (or "reflows"),
+	// when content changes above the viewport.
+	// See: https://github.com/WICG/ScrollAnchoring/blob/master/explainer.md
+	overflow-anchor: none;
 }
 
 .sapFDynamicPageSupressScroll {

@@ -158,7 +158,8 @@
 			beforeEach: function () {
 				this.stepInput = new sap.m.StepInput({
 					step: 1.1,
-					max: 2
+					max: 2,
+					displayValuePrecision: 1
 				});
 
 				this.stepInput.placeAt('qunit-fixture');
@@ -174,10 +175,10 @@
 			var oDecrementButton = this.stepInput.getAggregation("_decrementButton");
 
 			oIncrementButton.firePress();
-			strictEqual(this.stepInput.getValue(), "1.1",
+			strictEqual(this.stepInput.getValue(), 1.1,
 					"The value is successfuly incremented");
 			oDecrementButton.firePress();
-			strictEqual(this.stepInput.getValue(), "0.0",
+			strictEqual(this.stepInput.getValue(), 0,
 					"The value is successfuly decremented");
 
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
@@ -192,7 +193,213 @@
 			oIncrementButton.firePress();
 			strictEqual(this.stepInput.getValue(), 2,
 					"The value is successfully decremented");
+		});
 
+		test("working with floating point value precision set to 2", function () {
+			this.stepInput.setDisplayValuePrecision(2);
+			this.stepInput.setValue(431.15);
+			this.stepInput.setMin(410.00);
+			this.stepInput.setMax(440.00);
+			this.stepInput.setStep(0.05);
+			oCore.applyChanges();
+			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
+			var oDecrementButton = this.stepInput.getAggregation("_decrementButton");
+
+			oIncrementButton.firePress();
+			strictEqual(this.stepInput.getValue(), 431.2,
+					"The value is successfuly incremented");
+			oDecrementButton.firePress();
+			strictEqual(this.stepInput.getValue(), 431.15,
+					"The value is successfuly decremented");
+
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+			this.clock.tick(1000);
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "431.20",
+					"The input's value is successfully incremented");
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+			this.clock.tick(1000);
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "431.15",
+					"The input's value is successfully decremented");
+		});
+
+		test("working with floating point value precision set to 20", function () {
+			this.stepInput.setDisplayValuePrecision(20);
+			this.stepInput.setValue(0.01);
+			this.stepInput.setStep(0.06);
+			oCore.applyChanges();
+			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
+
+			oIncrementButton.firePress();
+			strictEqual(this.stepInput.getValue(), 0.07, "The value is successfuly incremented");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "0.07000000000000000000", "The input's value is successfully incremented");
+		});
+
+		test("working with floating point value precision set to 17", function () {
+			this.stepInput.setDisplayValuePrecision(17);
+			this.stepInput.setValue(0.01);
+			this.stepInput.setStep(0.02);
+			oCore.applyChanges();
+			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
+
+			oIncrementButton.firePress();
+			strictEqual(this.stepInput.getValue(), 0.03, "The value is successfuly incremented");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "0.03000000000000000", "The input's value is successfully incremented");
+		});
+
+		test("setting default displayValuePrecision when it is not correct", function () {
+			this.stepInput.setDisplayValuePrecision(25);
+			oCore.applyChanges();
+
+			strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
+		});
+
+		test("setting default displayValuePrecision when it is not correct and can't be converted to int", function () {
+			this.stepInput.setDisplayValuePrecision("test");
+			oCore.applyChanges();
+
+			strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
+		});
+
+		test("setting default displayValuePrecision when it is undefined", function () {
+			this.stepInput.setDisplayValuePrecision();
+			oCore.applyChanges();
+
+			strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
+		});
+
+		test("displayValuePrecision formating when digits after the dot are more then the value precision", function () {
+			this.stepInput.setDisplayValuePrecision(2);
+			this.stepInput.setValue(1.104);
+			oCore.applyChanges();
+
+			strictEqual(this.stepInput.getValue(), 1.104, "The value is formated correctly");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.10", "The input value is correctly formatted");
+		});
+
+		test("displayValuePrecision formating when digits after the dot are less then the value precision", function () {
+			this.stepInput.setDisplayValuePrecision(5);
+			this.stepInput.setValue(1.104);
+			oCore.applyChanges();
+
+			strictEqual(this.stepInput.getValue(), 1.104, "The value is formated correctly");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.10400", "The input value is correctly formatted");
+		});
+
+		test("displayValuePrecision formating when there are no digits after the dot and the value precision is bigger than 0", function () {
+			this.stepInput.setDisplayValuePrecision(5);
+			this.stepInput.setValue(0);
+			oCore.applyChanges();
+
+			strictEqual(this.stepInput.getValue(), 0, "The value is formated correctly");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "0.00000", "The input value is correctly formatted");
+		});
+
+		test("displayValuePrecision formating when there are digits after the dot and the value precision is 0", function () {
+			this.stepInput.setDisplayValuePrecision(0);
+			this.stepInput.setValue(1.325);
+			oCore.applyChanges();
+
+			strictEqual(this.stepInput.getValue(), 1.325, "The value is formated correctly");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1", "The input value is correctly formatted");
+		});
+
+		test("Formating when displayValuePrecision is equal to the step precision", function () {
+			this.stepInput.setDisplayValuePrecision(4);
+			this.stepInput.setStep(1.0035);
+			this.stepInput.setValue(0.325);
+			oCore.applyChanges();
+
+			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
+
+			oIncrementButton.firePress();
+
+			strictEqual(this.stepInput.getValue(), 1.3285, "The value is formated correctly");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.3285", "The input value is correctly formatted");
+		});
+
+		test("Formating when displayValuePrecision is smaller than the step precision", function () {
+			this.stepInput.setDisplayValuePrecision(2);
+			this.stepInput.setStep(1.0035);
+			this.stepInput.setValue(0.325);
+			oCore.applyChanges();
+
+			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
+
+			oIncrementButton.firePress();
+
+			strictEqual(this.stepInput.getValue(), 1.3285, "The value is formated correctly");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.33", "The input value is correctly formatted");
+		});
+
+		test("Formating when displayValuePrecision is bigger than the step precision", function () {
+			this.stepInput.setDisplayValuePrecision(6);
+			this.stepInput.setStep(1.0035);
+			this.stepInput.setValue(0.325);
+			oCore.applyChanges();
+
+			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
+
+			oIncrementButton.firePress();
+
+			strictEqual(this.stepInput.getValue(), 1.3285, "The value is formated correctly");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.328500", "The input value is correctly formatted");
+		});
+
+		test("Formating when displayValuePrecision is equal to the step precision, but the given value is with smaller precision than the displayValuePrecision", function () {
+			var oSI = new sap.m.StepInput({
+				value: 431.5,
+				min: 410.00,
+				max: 440.00,
+				step: 0.05,
+				displayValuePrecision: 2
+			});
+
+			oSI.placeAt('qunit-fixture');
+			oCore.applyChanges();
+
+			strictEqual(oSI.getValue(), 431.5, "The value is formated correctly");
+			strictEqual(oSI.getAggregation("_input")._getInputValue(), "431.50", "The input value is correctly formatted");
+
+			oSI.destroy();
+		});
+
+		test("Formating when we have two different controls with values with different precision, but which will be resolved to one and the same display value", function () {
+			var oSI = new sap.m.StepInput({
+				value: 1.3267,
+				step: 0.004999,
+				displayValuePrecision: 3
+			});
+
+			var oIncBtn = oSI.getAggregation("_incrementButton");
+
+			var oSI2 = new sap.m.StepInput({
+				value: 1.3266999999999999999,
+				step: 0.00499999999999,
+				displayValuePrecision: 3
+			});
+
+			var oIncBtn2 = oSI2.getAggregation("_incrementButton");
+
+			oSI.placeAt('qunit-fixture');
+			oSI2.placeAt('qunit-fixture');
+			oCore.applyChanges();
+
+			strictEqual(oSI.getValue(), 1.3267, "The value is formated correctly");
+			strictEqual(oSI.getAggregation("_input")._getInputValue(), "1.327", "The input value is rounded to the given displayValuePrecision");
+
+			strictEqual(oSI2.getValue(), 1.3266999999999999999, "The value is formated correctly");
+			strictEqual(oSI2.getAggregation("_input")._getInputValue(), "1.327", "The input value is rounded to the given displayValuePrecision");
+
+			oIncBtn.firePress();
+			oIncBtn2.firePress();
+
+			strictEqual(oSI.getValue(), 1.331699, "The value is formated correctly");
+			strictEqual(oSI.getAggregation("_input")._getInputValue(), "1.332", "The input value is correctly formatted");
+
+			strictEqual(oSI2.getValue(), 1.3316999999999899999, "The value is formated correctly");
+			strictEqual(oSI2.getAggregation("_input")._getInputValue(), "1.332", "The input value is correctly formatted");
+
+			oSI.destroy();
 		});
 
 		module("Keyboard Handling", {
@@ -235,25 +442,24 @@
 			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
 		});
 
-
 		test("Change event is fired only once when element is focused, changed and then + button is clicked", function() {
 			//prepare
 			var oInput = this.stepInput._getInput(),
-					oIncrementBtn = this.stepInput.getAggregation("_incrementButton");
-			//act
-			jQuery(this.stepInput).focus();
-			oInput.$("inner").val(7);
+			oIncrementBtn = this.stepInput.getAggregation("_incrementButton");
 
 			//assert
 			strictEqual(this.stepInput.getValue(), 4, "Value should not be changed because ENTER is not pressed yet"); //value not changed
 			equal(this.oChangeSpy.callCount, 0, "Change Event should not be called");
 
 			//act
-			oIncrementBtn.firePress();
+			oInput.$("inner").val(7);
+			//No way to simulate real click on the “+” button, so make sure the same event handlers are called in the same order
+			this.stepInput.onfocusout();
+			oInput.onChange();
+			jQuery(oIncrementBtn).tap();
 
 			//assert
 			equal(this.stepInput.getValue(), 8, "Value should be changed from 7 to 8 due to increment button pressed");
-			this.clock.tick(1000); //needed because the change event is fired inside a timeout callback
 			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
 		});
 
@@ -410,6 +616,112 @@
 			sap.ui.getCore().applyChanges();
 			strictEqual(this.stepInput.$("input-inner").attr("aria-disabled"), undefined, "To set it as editable");
 		});
+
+	module("binding", {
+		beforeEach: function () {
+			this.stepInput = new sap.m.StepInput({
+				value: {
+					path: "/vValue"
+				},
+				displayValuePrecision: {
+					path: "/vPrecision"
+				},
+				max: {
+					path: "/vMax"
+				},
+				min: {
+					path: "/vMin"
+				}
+			});
+
+			this.oModel = new sap.ui.model.json.JSONModel();
+
+			this.stepInput.placeAt('qunit-fixture');
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.stepInput.destroy();
+		}
+	});
+
+		test("When value set via binding is undefined", function () {
+			this.oModel.setData({});
+			this.stepInput.setModel(this.oModel);
+			oCore.applyChanges();
+
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 0, "The input is set correctly");
+			strictEqual(this.stepInput.getValue(), 0, "Value is set to the default one if it was undefined");
+		});
+
+		test("value set via binding", function () {
+			this.oModel.setData({
+				vValue: 6
+			});
+			this.stepInput.setModel(this.oModel);
+			oCore.applyChanges();
+
+			strictEqual(this.stepInput.getValue(), 6, "Value is set correctly");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), "6", "The input is set correctly");
+		});
+
+		test("value set via binding and has precision", function () {
+			this.oModel.setData({
+				vValue: 6,
+				vPrecision: 3
+			});
+			this.stepInput.setModel(this.oModel);
+			oCore.applyChanges();
+
+			strictEqual(this.stepInput.getValue(), 6, "Value is set correctly");
+			strictEqual(this.stepInput.getDisplayValuePrecision(), 3, "Value precision is set correctly");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "6.000", "The input is set and formated correctly");
+		});
+
+		test("less then Min value set via binding", function () {
+			this.oModel.setData({
+				vValue: 4,
+				vMin: 5
+			});
+			this.stepInput.setModel(this.oModel);
+			oCore.applyChanges();
+
+			strictEqual(this.stepInput.getValue(), 5, "Value is set correctly");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), "5", "The input is set correctly");
+		});
+
+		test("value 0 Min value set via binding", function () {
+			this.oModel.setData({
+				vValue: 0,
+				vMin: 5
+			});
+			this.stepInput.setModel(this.oModel);
+			oCore.applyChanges();
+
+			strictEqual(this.stepInput.getValue(), 5, "Value is set correctly");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), "5", "The input is set correctly");
+		});
+
+
+		module("calculate decimals", {
+			beforeEach: function () {
+				this.stepInput = new sap.m.StepInput();
+
+				this.stepInput.placeAt('qunit-fixture');
+				oCore.applyChanges();
+			},
+			afterEach: function () {
+				this.stepInput.destroy();
+			}
+		});
+
+		test("Adding additional zeros to reach the precision value", function () {
+			strictEqual(this.stepInput._calcDecimals("34", 5), "34000", "returns '34000'");
+		});
+
+		test("Adding zeros equal to precision value", function () {
+			strictEqual(this.stepInput._calcDecimals("0", 5), "00000", "returns '00000'");
+		});
+
 	</script>
 
 </head>

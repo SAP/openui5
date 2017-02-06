@@ -19,6 +19,7 @@
 							text="{label}"/>
 					<StepInput
 							value="{value}"
+							displayValuePrecision="{displayValuePrecision}"
 							min="{min}"
 							max="{max}"
 							width="{width}"

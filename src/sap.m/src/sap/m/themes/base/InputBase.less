@@ -65,6 +65,7 @@
 	padding: 0 0.75rem;
 }
 
+.sapMInputBaseState .sapMInputBaseInner.sapMInputBaseStateInner,
 .sapMInputBaseStateInner {
 	border-width: 2px;
 	padding: 0 0.6875rem;
@@ -253,4 +254,33 @@ html[data-sap-ui-browser^="cr"] {
 .sapMInputBaseSuccessInner {
 	background: @sapUiFieldSuccessBackground;
 	border-color: @sapUiFieldSuccessColor;
+}
+
+// When disabled or read-only hide placeholder by setting opacity to 0
+.sapMInputBaseDisabled {
+	.sapMInputBaseInner::-webkit-input-placeholder {
+		opacity: 0;
+	}
+
+	.sapMInputBaseInner::-moz-placeholder {
+		opacity: 0;
+	}
+
+	.sapMInputBaseInner:-ms-input-placeholder {
+		color: @sapUiFieldBackground;
+	}
+}
+
+.sapMInputBaseReadonly {
+	.sapMInputBaseInner::-webkit-input-placeholder {
+		opacity: 0;
+	}
+
+	.sapMInputBaseInner::-moz-placeholder {
+		opacity: 0;
+	}
+
+	.sapMInputBaseInner:-ms-input-placeholder {
+		color: @sapUiFieldReadOnlyBackground;
+	}
 }

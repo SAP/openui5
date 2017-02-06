@@ -1,5 +1,5 @@
-<core:View controllerName="sap.m.sample.NumericContentDifColors.Page"
-	xmlns="sap.m" xmlns:core="sap.ui.core">
+<mvc:View controllerName="sap.m.sample.NumericContentDifColors.Page"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
 	<NumericContent value="65.5" scale="MM"
 		valueColor="Neutral" indicator="None" state="Loaded" class="sapUiSmallMargin"
 		press="press" />
@@ -12,4 +12,4 @@
 	<NumericContent value="65.5" scale="MM"
 		valueColor="Error" indicator="Down" state="Loaded" class="sapUiSmallMargin"
 		press="press" />
-</core:View>
+</mvc:View>

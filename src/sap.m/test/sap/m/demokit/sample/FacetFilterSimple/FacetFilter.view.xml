@@ -20,7 +20,7 @@
 						title="{type}"
 						key="{key}"
 						mode="MultiSelect"
-						items="{values}" >
+						items="{path:'values', templateShareable: 'true'}" >
 						<items>
 							<FacetFilterItem
 								text="{text}"

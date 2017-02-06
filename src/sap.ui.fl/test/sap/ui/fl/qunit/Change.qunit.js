@@ -449,4 +449,85 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.equal(aDependentIdList.length, 9);
 	});
 
+	QUnit.test("Operations add and get dependent control do not break when working with old changes (without dependentSelector)", function(assert) {
+		var oChange = jQuery.extend({}, this.oChangeDef);
+		delete oChange.dependentSelector;
+		var oInstance = new Change(oChange);
+		var sControlId = "control1IdB";
+		var oControl = new sap.ui.core.Control("control2IdB");
+		var aControl = [
+			new sap.ui.core.Control("control3IdB"),
+			new sap.ui.core.Control("control4IdB"),
+			new sap.ui.core.Control("control5IdB")
+		];
+		var aControlId = ["control6IdB", "control7IdB"];
+		var sId;
+
+		var oJsControlTreeModifierGetSelectorStub = this.stub(JsControlTreeModifier, "getSelector");
+		oJsControlTreeModifierGetSelectorStub.onCall(0).returns({
+			id: "control1",
+			idIsLocal: true
+		});
+
+		oJsControlTreeModifierGetSelectorStub.onCall(1).returns({
+			id: "control2",
+			idIsLocal: true
+		});
+
+		oJsControlTreeModifierGetSelectorStub.onCall(2).returns({
+			id: "control3",
+			idIsLocal: true
+		});
+
+		oJsControlTreeModifierGetSelectorStub.onCall(3).returns({
+			id: "control4",
+			idIsLocal: true
+		});
+
+		oJsControlTreeModifierGetSelectorStub.onCall(4).returns({
+			id: "control5",
+			idIsLocal: true
+		});
+
+		oJsControlTreeModifierGetSelectorStub.onCall(5).returns({
+			id: "control6",
+			idIsLocal: true
+		});
+
+		oJsControlTreeModifierGetSelectorStub.onCall(6).returns({
+			id: "control7",
+			idIsLocal: true
+		});
+
+		var oReturnedControl = new sap.ui.core.Control("control1IdB");
+		var oJsControlTreeModifierBySelectorStub = this.stub(JsControlTreeModifier, "bySelector");
+		oJsControlTreeModifierBySelectorStub.onCall(0).returns(oReturnedControl);
+
+		oJsControlTreeModifierBySelectorStub.returns({});
+
+		var oDependentControl = oInstance.getDependentControl("source", {modifier: JsControlTreeModifier}, {});
+		assert.equal(oDependentControl, undefined);
+
+		var aDependentIdList = oInstance.getDependentIdList({});
+		assert.equal(aDependentIdList.length, 0);
+
+		oInstance.addDependentControl(sControlId, "element", {modifier: JsControlTreeModifier});
+		oInstance.addDependentControl(oControl, "anotherSource", {modifier: JsControlTreeModifier});
+		oInstance.addDependentControl(aControl, "anotherTarget", {modifier: JsControlTreeModifier});
+		oInstance.addDependentControl(aControlId, "anotherTargetWithId", {modifier: JsControlTreeModifier});
+
+		oDependentControl = oInstance.getDependentControl("source", {modifier: JsControlTreeModifier}, {});
+		sId = oDependentControl.getId();
+		assert.equal(sId, "control1IdB");
+
+		var aDependentControl = oInstance.getDependentControl("anotherTarget", {modifier: JsControlTreeModifier}, {});
+		assert.equal(aDependentControl.length, aControl.length);
+
+		var oAppComponent = {
+			createId: function () {return "id";}
+		};
+		aDependentIdList = oInstance.getDependentIdList(oAppComponent);
+		assert.equal(aDependentIdList.length, 7);
+	});
+
 }(sap.ui.fl.Change, sap.ui.fl.Utils, sap.ui.base.EventProvider, sap.ui.fl.registry.Settings, sap.ui.fl.changeHandler.JsControlTreeModifier));
