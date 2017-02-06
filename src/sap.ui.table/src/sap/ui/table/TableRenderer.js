@@ -343,7 +343,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		var bEnabled = false;
 		var bSelAll = false;
 		if ((oSelMode == "Multi" || oSelMode == "MultiToggle") && oTable.getEnableSelectAll()) {
-			rm.writeAttributeEscaped("title", oTable._oResBundle.getText("TBL_SELECT_ALL"));
+			if (oTable._getShowStandardTooltips()) {
+				rm.writeAttributeEscaped("title", oTable._oResBundle.getText("TBL_SELECT_ALL"));
+			}
 			if (!TableUtils.areAllRowsSelected(oTable)) {
 				rm.addClass("sapUiTableSelAll");
 			} else {

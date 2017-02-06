@@ -617,6 +617,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._bRowAggregationInvalid = true;
 		this._mTimeouts = {};
 
+		// TBD: Tooltips are not desired by Visual Design, discuss whether to switch it off by default
+		this._bHideStandardTooltips = false;
+
 		/**
 		 * Updates the row binding contexts and synchronizes the row heights. This function will be called by updateRows
 		 */
@@ -2938,10 +2941,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 			$SelAll.toggleClass("sapUiTableSelAll", bClearSelectAll);
 			this._getAccExtension().setSelectAllState(!bClearSelectAll);
-			if (bClearSelectAll) {
+			if (bClearSelectAll && this._getShowStandardTooltips()) {
 				this.$("selall").attr('title', this._oResBundle.getText("TBL_SELECT_ALL"));
 			}
 		}
+	};
+
+	/**
+	 * Returns <code>true</code>, if the standard tooltips (e.g. for selection should be shown).
+	 * @private
+	 */
+	Table.prototype._getShowStandardTooltips = function() {
+		return !this._bHideStandardTooltips;
 	};
 
 
@@ -3049,7 +3060,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
-			this.$("selall").attr('title', this._oResBundle.getText("TBL_DESELECT_ALL")).removeClass("sapUiTableSelAll");
+			var $SelAll = this.$("selall");
+			$SelAll.removeClass("sapUiTableSelAll");
+			if (this._getShowStandardTooltips()) {
+				$SelAll.attr('title', this._oResBundle.getText("TBL_DESELECT_ALL"));
+			}
 			this._getAccExtension().setSelectAllState(true);
 			this._oSelection.selectAll((oBinding.getLength() || 0) - 1);
 		}
