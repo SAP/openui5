@@ -33,15 +33,20 @@
 					return sut;
 				}
 
-				var page = new sap.m.Page("master"),
-					page2 = new sap.m.Page("master2");
+				var page = new sap.m.Page("master", {
+					title: 'Master 1 Page 1'
+				});
+
+				var page2 = new sap.m.Page("master2", {
+					title: 'Master 2 Page 2'
+				});
 
 				//master pages
 				sut.addMasterPage(page);
 				sut.addMasterPage(page2);
 
 				//details pages
-				page = new sap.m.Page("detail"),
+				page = new sap.m.Page("detail");
 				page2 = new sap.m.Page("detail2");
 
 				sut.addDetailPage(page);
@@ -806,6 +811,18 @@
 				oSplitContainer.destroy();
 			});
 
+			test("MasterButtonTooltip Property", function() {
+
+				var oTooltip = 'Custom Tooltip';
+
+				this.sut.setMasterButtonTooltip(oTooltip);
+
+				this.sut.placeAt('content');
+				sap.ui.getCore().applyChanges();
+
+				ok(this.sut._oShowMasterBtn.getTooltip() == oTooltip, 'Tooltip is correct');
+			});
+
 			module("SplitContainer Navigation test", {
 				setup : function () {
 					this.sut = splitContainerSetup();
@@ -913,6 +930,19 @@
 				this.sut.to("master2");
 				this.sut.backToTopMaster();
 				strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master");
+			});
+
+			test("Mater button tooltip updating", function() {
+
+				this.sut.placeAt('content');
+				sap.ui.getCore().applyChanges();
+
+				equal(this.sut._oShowMasterBtn.getTooltip(), 'Show Master 1 Page ', 'Initial tooltip is correct');
+
+				this.sut.to('master2', 'show');
+				sap.ui.getCore().applyChanges();
+
+				equal(this.sut._oShowMasterBtn.getTooltip(), 'Show Master 2 Page ', 'Initial tooltip is correct');
 			});
 
 			module("SplitContainer public API test", {
