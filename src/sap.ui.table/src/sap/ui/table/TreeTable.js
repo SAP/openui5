@@ -505,7 +505,11 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		//The OData TBA exposes a selectAll function
 		var oBinding = this.getBinding("rows");
 		if (oBinding.selectAll) {
-			this.$("selall").attr('title',this._oResBundle.getText("TBL_DESELECT_ALL")).removeClass("sapUiTableSelAll");
+			var $SelAll = this.$("selall");
+			$SelAll.removeClass("sapUiTableSelAll");
+			if (this._getShowStandardTooltips()) {
+				$SelAll.attr('title', this._oResBundle.getText("TBL_DESELECT_ALL"));
+			}
 			this._getAccExtension().setSelectAllState(true);
 			oBinding.selectAll();
 		} else {

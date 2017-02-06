@@ -807,6 +807,7 @@ QUnit.module("SelectAll", {
 	setup: function() {
 		createTables();
 		_modifyTables();
+		this._sAdditionalLabeling = oTable._getShowStandardTooltips() ? "" : (" " + oTable.getId() + "-ariaselectall");
 	},
 	teardown: function () {
 		destroyTables();
@@ -817,11 +818,11 @@ QUnit.asyncTest("aria-labelledby with Focus", function(assert) {
 	var sId = oTable.getId();
 	var $Cell = getSelectAll(true, assert);
 	assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-		"ARIALABELLEDBY " + sId + "-ariadesc " + sId + "-ariacount " + sId + "-ariacolrowheaderlabel" , "aria-labelledby of select all");
+		"ARIALABELLEDBY " + sId + "-ariadesc " + sId + "-ariacount " + sId + "-ariacolrowheaderlabel" + this._sAdditionalLabeling , "aria-labelledby of select all");
 	getRowHeader(0, true, assert); //set row header somewhere else on the table
 	$Cell = getSelectAll(true, assert);
 	assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-		sId + "-ariacolrowheaderlabel" , "aria-labelledby of select all");
+		sId + "-ariacolrowheaderlabel" + this._sAdditionalLabeling , "aria-labelledby of select all");
 	setFocusOutsideOfTable();
 	setTimeout(function() {
 		QUnit.start();
@@ -849,7 +850,7 @@ QUnit.test("aria-labelledby without Focus", function(assert) {
 	setFocusOutsideOfTable();
 	var $Cell = getSelectAll(false, assert);
 	assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-		oTable.getId() + "-ariacolrowheaderlabel" , "aria-labelledby of select all");
+		oTable.getId() + "-ariacolrowheaderlabel" + this._sAdditionalLabeling, "aria-labelledby of select all");
 	setFocusOutsideOfTable();
 });
 
@@ -1178,6 +1179,44 @@ QUnit.test("ExtensionHelper.getRelevantColumnHeaders", function(assert) {
 
 	oCol = oTable.getColumns()[4];
 	checkColumnHeaders(oTable, oCol, [oCol.getId(), oCol.getId() + "_1", oCol.getId() + "_2"]);
+});
+
+QUnit.test("Hidden Standard Tooltips", function(assert) {
+
+	function checkTooltips(bEnable, sSelectionBehavior, sSelectionMode, iExpected) {
+		oTable._bHideStandardTooltips = !bEnable;
+		oTable.setSelectionBehavior(sSelectionBehavior);
+		oTable.setSelectionMode(sSelectionMode);
+		oTable.invalidate();
+		sap.ui.getCore().applyChanges();
+		assert.equal(oTable.$().find("[title]").length, iExpected, "Tooltip enabled:" + bEnable + ", " + sSelectionBehavior + ", " + sSelectionMode);
+	}
+
+	var aColumns = oTable.getColumns();
+	for (var i = 0; i < aColumns.length; i++) {
+		aColumns[i].setTooltip(null);
+	}
+	var iRows = oTable.getRows().length;
+
+	checkTooltips(true, "Row", "MultiToggle", 1 /*SelAll*/ + iRows + iRows /*Fixed/Non-Fixed Rows*/ + iRows /*Row Selectors*/);
+	checkTooltips(true, "Row", "Single", iRows + iRows /*Fixed/Non-Fixed Rows*/ + iRows /*Row Selectors*/);
+	checkTooltips(true, "Row", "None", 0);
+	checkTooltips(true, "RowOnly", "MultiToggle", 1 /*SelAll*/ + iRows + iRows /*Fixed/Non-Fixed Rows*/ + iRows /*Row Selectors (rendered but not shown)*/);
+	checkTooltips(true, "RowOnly", "Single", iRows + iRows /*Fixed/Non-Fixed Rows*/ + iRows /*Row Selectors (rendered but not shown)*/);
+	checkTooltips(true, "RowOnly", "None", 0);
+	checkTooltips(true, "RowSelector", "MultiToggle", 1 /*SelAll*/ + iRows /*Row Selectors*/);
+	checkTooltips(true, "RowSelector", "Single", iRows /*Row Selectors*/);
+	checkTooltips(true, "RowSelector", "None", 0);
+
+	checkTooltips(false, "Row", "MultiToggle", 0);
+	checkTooltips(false, "Row", "Single", 0);
+	checkTooltips(false, "Row", "None", 0);
+	checkTooltips(false, "RowOnly", "MultiToggle", 0);
+	checkTooltips(false, "RowOnly", "Single", 0);
+	checkTooltips(false, "RowOnly", "None", 0);
+	checkTooltips(false, "RowSelector", "MultiToggle", 0);
+	checkTooltips(false, "RowSelector", "Single", 0);
+	checkTooltips(false, "RowSelector", "None", 0);
 });
 
 
