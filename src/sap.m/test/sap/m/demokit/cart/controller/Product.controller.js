@@ -2,11 +2,13 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/demo/cart/controller/BaseController',
 	'sap/ui/demo/cart/model/formatter',
+	'sap/ui/demo/cart/model/cart',
 	'sap/m/MessageToast',
 	'sap/m/MessageBox'
-], function ($, BaseController, formatter, MessageToast, MessageBox) {
+], function ($, BaseController, formatter, cart) {
 	return BaseController.extend("sap.ui.demo.cart.controller.Product", {
 		formatter : formatter,
+		cart: cart,
 
 		onInit : function () {
 			var oComponent = this.getOwnerComponent();
@@ -56,7 +58,7 @@ sap.ui.define([
 		},
 
 		_checkIfProductAvailable: function(sPath) {
-			var oModel = this.getView().getModel();
+			var oModel = this.getModel();
 			var oData = oModel.getData(sPath);
 
 			// show not found page
@@ -66,73 +68,10 @@ sap.ui.define([
 		},
 
 		onAddButtonPress : function () {
-			var oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
+			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 			var oProduct = this.getView().getBindingContext().getObject();
-			var sProdStatus = oProduct.status;
-			var that = this;
-
-			switch (sProdStatus) {
-				case "D":
-					//show message dialog
-					MessageBox.show(
-						oBundle.getText("PRODUCT_STATUS_DISCONTINUED_MSG"),{
-							icon: MessageBox.Icon.ERROR,
-							titles: oBundle.getText("PRODUCT_STATUS_DISCONTINUED_TITLE"),
-							actions: [MessageBox.Action.CLOSE]
-						});
-					break;
-				case "O":
-					// show message dialog
-					MessageBox.show(
-						oBundle.getText("PRODUCT_STATUS_OUT_OF_STOCK_MSG"), {
-							icon: MessageBox.Icon.QUESTION,
-							title: oBundle.getText("PRODUCT_STATUS_OUT_OF_STOCK_TITLE"),
-							actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-							onClose: function (oAction) {
-								// order
-								if (MessageBox.Action.OK === oAction) {
-									that._addProduct(oProduct);
-								}
-							}
-						});
-					break;
-				case "A":
-					this._addProduct(oProduct);
-					break;
-				default:
-					this._addProduct(oProduct);
-					break;
-			}
-		},
-
-		_addProduct: function(oProductToBeAdded) {
 			var oCartModel = this.getView().getModel("cartProducts");
-			var oCartData = oCartModel.getData();
-			var oCartEntries = oCartData.cartEntries;
-
-			// find existing entry for product
-			var sProductIdToBeAdded = oProductToBeAdded.ProductId;
-			var oCartEntry = oCartEntries[sProductIdToBeAdded];
-
-			if (oCartEntry === undefined) {
-				// create new entry
-				oCartEntry = $.extend({}, oProductToBeAdded);
-				oCartEntry.Quantity = 1;
-				oCartEntries[sProductIdToBeAdded] = oCartEntry;
-			} else {
-				// update existing entry
-				oCartEntry.Quantity += 1;
-			}
-
-			//if there is at least one entry, the edit button is shown
-			oCartData.showEditButton = true;
-			oCartData.showProceedButton = true;
-
-			// update model
-			oCartModel.refresh(true);
-
-			var oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
-			MessageToast.show(oBundle.getText("PRODUCT_MSG_ADDED_TO_CART"));
+			cart.addToCart(oResourceBundle, oProduct, oCartModel);
 		},
 
 		onCartButtonPress :  function () {
@@ -143,7 +82,7 @@ sap.ui.define([
 			this.getOwnerComponent().myNavBack();
 		},
 
-		onPicturePress: function (oEvent) {
+		onPicturePress: function () {
 			this.byId("lightBox").open();
 		}
 

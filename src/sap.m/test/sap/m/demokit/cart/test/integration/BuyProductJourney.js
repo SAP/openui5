@@ -48,7 +48,6 @@ sap.ui.define([
 	opaTest("Should keep the cart when reloading", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp();
-
 		// Actions
 		When.onHome.iPressOnTheSecondCategory();
 		When.onTheCategory.iGoToTheCartPage();
@@ -58,6 +57,7 @@ sap.ui.define([
 	});
 
 	opaTest("Should order the cart", function (Given, When, Then) {
+
 		// Actions
 		When.onTheCart.iPressOnTheProceedButton().and.
 			iFillTheForm().and.

@@ -85,11 +85,11 @@
 						<firstStatus>
 							<ObjectStatus
 								text="{
-									path : 'cartProducts>status',
+									path : 'cartProducts>Status',
 									formatter : '.formatter.statusText'
 								}"
 								state="{
-									path : 'cartProducts>status',
+									path : 'cartProducts>Status',
 									formatter : '.formatter.statusState'
 								}" />
 						</firstStatus>
@@ -133,11 +133,11 @@
 						<firstStatus>
 							<ObjectStatus
 								text="{
-									path : 'cartProducts>status',
+									path : 'cartProducts>Status',
 									formatter : '.formatter.statusText'
 								}"
 								state="{
-									path : 'cartProducts>status',
+									path : 'cartProducts>Status',
 									formatter : '.formatter.statusState'
 								}" />
 						</firstStatus>

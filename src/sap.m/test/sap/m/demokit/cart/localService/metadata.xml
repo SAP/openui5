@@ -35,6 +35,9 @@
 				<Property Name="Price" Type="Edm.Decimal" Nullable="false"
 					Precision="23" Scale="4" sap:label="Price" sap:creatable="false"
 					sap:updatable="false" sap:filterable="false" />
+				<Property Name="Status" Type="Edm.String" Nullable="false"
+					sap:label="Status" sap:creatable="false"
+					sap:updatable="false" sap:filterable="false" />
 				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false"
 					MaxLength="5" sap:label="Currency Code" sap:creatable="false"
 					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
@@ -77,6 +80,17 @@
 				<NavigationProperty Name="Products" Relationship="EPM_DEVELOPER_SCENARIO_SRV.FK_ProductCategory_Product" FromRole="ProductCategory" ToRole="Product" />
 			</EntityType>
 
+			<EntityType Name="FeaturedProduct" sap:content-version="1"
+				xmlns:sap="http://www.sap.com/Protocols/SAPData">
+				<Key>
+					<PropertyRef Name="ProductId" />
+				</Key>
+				<Property Name="Type" Type="Edm.String" Nullable="false"
+					MaxLength="255" sap:label="Featured Type" />
+				<NavigationProperty Name="Product" Relationship="EPM_DEVELOPER_SCENARIO_SRV.FK_FeaturedProduct_Product" FromRole="FeaturedProduct" ToRole="Product" />
+			</EntityType>
+
+
 			<Association Name="FK_ProductCategory_Product">
 				<End Role="Product" Type="EPM_DEVELOPER_SCENARIO_SRV.Product" Multiplicity="*" />
 				<End Role="ProductCategory" Type="EPM_DEVELOPER_SCENARIO_SRV.ProductCategory" Multiplicity="1" />
@@ -86,6 +100,19 @@
 					</Principal>
 					<Dependent Role="ProductCategory">
 						<PropertyRef Name="Category" />
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+
+			<Association Name="FK_FeaturedProduct_Product">
+				<End Role="Product" Type="EPM_DEVELOPER_SCENARIO_SRV.Product" Multiplicity="1" />
+				<End Role="FeaturedProduct" Type="EPM_DEVELOPER_SCENARIO_SRV.FeaturedProduct" Multiplicity="1" />
+				<ReferentialConstraint>
+					<Principal Role="Product">
+						<PropertyRef Name="ProductId" />
+					</Principal>
+					<Dependent Role="FeaturedProduct">
+						<PropertyRef Name="ProductId" />
 					</Dependent>
 				</ReferentialConstraint>
 			</Association>
@@ -101,10 +128,18 @@
 					sap:creatable="false" sap:updatable="false" sap:deletable="false"
 					sap:pageable="false" sap:content-version="1"
 					xmlns:sap="http://www.sap.com/Protocols/SAPData" />
+				<EntitySet Name="FeaturedProducts" EntityType="EPM_DEVELOPER_SCENARIO_SRV.FeaturedProduct"
+					sap:content-version="1"
+					xmlns:sap="http://www.sap.com/Protocols/SAPData" />
 				<AssociationSet Name="EPM_DEVELOPER_SCENARIO_SRV.FK_ProductCategory_Product"
-								Association="EPM_DEVELOPER_SCENARIO_SRV.FK_ProductCategory_Product">
+					Association="EPM_DEVELOPER_SCENARIO_SRV.FK_ProductCategory_Product">
 					<End Role="Product" EntitySet="Products" />
 					<End Role="ProductCategory" EntitySet="ProductCategories" />
+				</AssociationSet>
+				<AssociationSet Name="EPM_DEVELOPER_SCENARIO_SRV.FK_FeaturedProduct_Product"
+					Association="EPM_DEVELOPER_SCENARIO_SRV.FK_FeaturedProduct_Product">
+					<End Role="Product" EntitySet="Products" />
+					<End Role="FeaturedProduct" EntitySet="FeaturedProducts" />
 				</AssociationSet>
 			</EntityContainer>
 		</Schema>
