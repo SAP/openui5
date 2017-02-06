@@ -16,10 +16,22 @@
 
 .sapMPage > section {
   position: absolute;
+  overflow-y: hidden;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+}
+
+.sapMPage > section.sapMPageEnableScrolling {
+	overflow-y: auto;
+}
+
+html[data-sap-ui-os^="bb"],
+html[data-sap-ui-os^="iOS"] {
+  .sapMPage > section.sapMPageEnableScrolling {
+    overflow-y: scroll;
+  }
 }
 
 /* Fix for a ToolBar set as headerContent */
