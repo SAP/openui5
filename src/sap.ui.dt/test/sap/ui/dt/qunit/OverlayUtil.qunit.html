@@ -36,6 +36,16 @@
 
 			QUnit.module("Given that an Overlay is created for a control", {
 				beforeEach : function(assert) {
+
+					//	Layout2
+					//		Layout1
+					//			Layout0
+					//				Button01
+					//				Button02
+					//		Button21
+					//		Layout3
+					//			Button31
+
 					this.oButton01 = new sap.m.Button({
 						text : "Button01"
 					});
@@ -45,11 +55,16 @@
 					this.oLayout0 = new sap.ui.layout.VerticalLayout({content : [this.oButton01, this.oButton02]});
 
 					this.oLayout1 = new sap.ui.layout.VerticalLayout({content : [this.oLayout0]});
-
 					this.oButton21 = new sap.m.Button({
 						text : "Button21"
 					});
-					this.oLayout2 = new sap.ui.layout.VerticalLayout({content : [this.oLayout1, this.oButton21]});
+
+					this.oButton31 = new sap.m.Button({
+						text : "Button31"
+					});
+					this.oLayout3 = new sap.ui.layout.VerticalLayout({content : [this.oButton31]});
+
+					this.oLayout2 = new sap.ui.layout.VerticalLayout({content : [this.oLayout1, this.oButton21, this.oLayout3]});
 
 					this.oLayout2.placeAt("content");
 
@@ -80,6 +95,19 @@
 						element : this.oButton21
 					});
 					this.oButtonOverlay21.placeInOverlayContainer();
+
+					this.oLayoutOverlay3 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oLayout3
+					});
+					this.oLayoutOverlay3.placeInOverlayContainer();
+
+					this.oButtonOverlay31 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oButton31
+					});
+					this.oButtonOverlay31.placeInOverlayContainer();
+
 					this.oLayoutOverlay2 = new sap.ui.dt.ElementOverlay({
 						designTimeMetadata : {},
 						element : this.oLayout2
@@ -110,7 +138,13 @@
 				assert.strictEqual(oNextOverlay, this.oButtonOverlay21, "oButtonOverlay02 -> oButtonOverlay21");
 
 				oNextOverlay = sap.ui.dt.OverlayUtil.getNextOverlay(this.oButtonOverlay21);
-				assert.strictEqual(oNextOverlay, undefined, "oButtonOverlay21 -> undefined");
+				assert.strictEqual(oNextOverlay, this.oLayoutOverlay3, "oButtonOverlay21 -> oLayoutOverlay3");
+
+				oNextOverlay = sap.ui.dt.OverlayUtil.getNextOverlay(this.oLayoutOverlay3);
+				assert.strictEqual(oNextOverlay, this.oButtonOverlay31, "oLayoutOverlay3 -> oButtonOverlay31");
+
+				oNextOverlay = sap.ui.dt.OverlayUtil.getNextOverlay(this.oButtonOverlay31);
+				assert.strictEqual(oNextOverlay, undefined, "oButtonOverlay31 -> undefined");
 			});
 
 			QUnit.test("when Overlays are created and the getPreviousOverlay function is called", function(assert) {
@@ -131,6 +165,79 @@
 
 				oPreviousOverlay = sap.ui.dt.OverlayUtil.getPreviousOverlay(this.oLayoutOverlay2);
 				assert.strictEqual(oPreviousOverlay, undefined, "oLayoutOverlay2 -> undefined");
+			});
+
+			QUnit.test("when Overlays are created and the getAllChildOverlays function is called", function(assert) {
+				var aChildOverlays = sap.ui.dt.OverlayUtil.getAllChildOverlays(this.oLayoutOverlay0);
+				assert.strictEqual(aChildOverlays.length, 2, "oLayoutOverlay0 has 2 children");
+
+				aChildOverlays = sap.ui.dt.OverlayUtil.getAllChildOverlays(this.oLayoutOverlay1);
+				assert.strictEqual(aChildOverlays.length, 1, "oLayoutOverlay1 has 1 child");
+
+				aChildOverlays = sap.ui.dt.OverlayUtil.getAllChildOverlays(this.oButtonOverlay01);
+				assert.strictEqual(aChildOverlays.length, 0, "oButtonOverlay01 has no children");
+
+				aChildOverlays = sap.ui.dt.OverlayUtil.getAllChildOverlays(undefined);
+				assert.ok(Array.isArray(aChildOverlays), "undefined as function-parameter returns an empty array");
+				assert.strictEqual(aChildOverlays.length, 0, "undefined as function-parameter has no children");
+			});
+
+			QUnit.test("when Overlays are created and the getFirstChildOverlay function is called", function(assert) {
+				var oChildOverlay = sap.ui.dt.OverlayUtil.getFirstChildOverlay(this.oLayoutOverlay0);
+				assert.strictEqual(oChildOverlay, this.oButtonOverlay01, "oLayoutOverlay0 -> oButtonOverlay01 is the first child");
+
+				oChildOverlay = sap.ui.dt.OverlayUtil.getFirstChildOverlay(this.oLayoutOverlay1);
+				assert.strictEqual(oChildOverlay, this.oLayoutOverlay0, "oLayoutOverlay1 -> oLayoutOverlay0 is the first child");
+
+				oChildOverlay = sap.ui.dt.OverlayUtil.getFirstChildOverlay(this.oButtonOverlay01);
+				assert.strictEqual(oChildOverlay, undefined, "oButtonOverlay01 has no children and returns 'undefined'");
+
+				oChildOverlay = sap.ui.dt.OverlayUtil.getFirstChildOverlay(undefined);
+				assert.strictEqual(oChildOverlay, undefined, "undefined as function-parameter has no children and returns 'undefined'");
+			});
+
+			QUnit.test("when Overlays are created and the getLastChildOverlay function is called", function(assert) {
+				var oChildOverlay = sap.ui.dt.OverlayUtil.getLastChildOverlay(this.oLayoutOverlay0);
+				assert.strictEqual(oChildOverlay, this.oButtonOverlay02, "oLayoutOverlay0 -> oButtonOverlay02 is the last child");
+
+				oChildOverlay = sap.ui.dt.OverlayUtil.getLastChildOverlay(this.oLayoutOverlay1);
+				assert.strictEqual(oChildOverlay, this.oLayoutOverlay0, "oLayoutOverlay1 -> oLayoutOverlay0 is the last child");
+
+				oChildOverlay = sap.ui.dt.OverlayUtil.getLastChildOverlay(this.oButtonOverlay01);
+				assert.strictEqual(oChildOverlay, undefined, "oButtonOverlay01 has no children and returns 'undefined'");
+
+				oChildOverlay = sap.ui.dt.OverlayUtil.getLastChildOverlay(undefined);
+				assert.strictEqual(oChildOverlay, undefined, "undefined as function-parameter has no children and returns 'undefined'");
+			});
+
+			QUnit.test("when Overlays are created and the getFirstDescendantByCondition function is called", function(assert) {
+				var aSelectableOverlays = [
+					this.oButtonOverlay01,
+					this.oButtonOverlay02,
+					this.oButtonOverlay21
+				];
+				var fnCondition = function(oOverlay) {
+					return aSelectableOverlays.indexOf(oOverlay) >= 0;
+				};
+
+				var oChildOverlay = sap.ui.dt.OverlayUtil.getFirstDescendantByCondition(this.oLayoutOverlay0, fnCondition);
+				assert.strictEqual(oChildOverlay, this.oButtonOverlay01, "oLayoutOverlay0 -> oButtonOverlay01 is the first overlay which fulfill the condition");
+
+				oChildOverlay = sap.ui.dt.OverlayUtil.getFirstDescendantByCondition(this.oLayoutOverlay2, fnCondition);
+				assert.strictEqual(oChildOverlay, this.oButtonOverlay01, "oLayoutOverlay2 -> oButtonOverlay01 is the first overlay which fulfill the condition");
+
+				oChildOverlay = sap.ui.dt.OverlayUtil.getFirstDescendantByCondition(this.oButtonOverlay01, fnCondition);
+				assert.strictEqual(oChildOverlay, undefined, "oButtonOverlay01 has no children and returns 'undefined'");
+
+				oChildOverlay = sap.ui.dt.OverlayUtil.getFirstDescendantByCondition(this.oLayoutOverlay3, fnCondition);
+				assert.strictEqual(oChildOverlay, undefined, "oLayoutOverlay3 children do not fulfill the condition and returns 'undefined'");
+
+				oChildOverlay = sap.ui.dt.OverlayUtil.getFirstDescendantByCondition(undefined, fnCondition);
+				assert.strictEqual(oChildOverlay, undefined, "and overlay-parameter is 'undefined' -> returns 'undefined'");
+
+				assert.throws(function() { sap.ui.dt.OverlayUtil.getFirstDescendantByCondition(this.oLayoutOverlay0) },
+					/expected condition is 'undefined' or not a function/,
+					"and function-parameter is 'undefined' -> throws error");
 			});
 
 			QUnit.test("when Overlays are created and the getRootOverlay function is called", function(assert) {

@@ -23,6 +23,7 @@ sap.ui.define([
 			var oTable = oComp.getTable();
 			var oBindingInfo = oTable.getBindingInfo("items");
 			oBindingInfo.template.removeCell(0);
+			oBindingInfo.templateShareable = true;
 			oBindingInfo.template.insertCell(new ObjectIdentifier({
 				title: "{Name}",
 				text: "{Category}"

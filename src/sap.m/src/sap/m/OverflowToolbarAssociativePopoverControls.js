@@ -140,6 +140,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarBu
 				listenForEvents: ["press"],
 				noInvalidationProps: ["enabled", "type"]
 			},
+			"sap.m.MenuButton": {
+				canOverflow: true,
+				listenForEvents: ["defaultAction", "_menuItemSelected"],
+				noInvalidationProps: ["enabled", "text", "icon"]
+			},
 			"sap.m.OverflowToolbarButton": {
 				canOverflow: true,
 				listenForEvents: ["press"],

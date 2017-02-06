@@ -337,6 +337,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
+				"sap.m.Image": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
 				"sap.m.InputBase": {
 					"hideControl": "default",
 					"unhideControl": "default"
@@ -352,6 +356,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 				},
 				"sap.m.OverflowToolbar": {
 					"moveControls": "default"
+				},
+				"sap.m.Link": {
+					"hideControl": "default",
+					"unhideControl": "default"
 				},
 				"sap.m.List": {
 					"hideControl": "default",

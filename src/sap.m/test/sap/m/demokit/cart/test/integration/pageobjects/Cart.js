@@ -1,4 +1,4 @@
-sap.ui.define([
+	sap.ui.define([
 		'sap/ui/test/Opa5',
 		'sap/ui/test/matchers/AggregationFilled',
 		'sap/ui/test/matchers/AggregationEmpty',
@@ -208,7 +208,7 @@ sap.ui.define([
 								var bExist =  new AggregationContainsPropertyEqual({
 									aggregationName : "items",
 									propertyName : "title",
-									propertyValue : "Flat S"
+									propertyValue : "Bending Screen 21HD"
 								}).isMatching(oList);
 								return !bExist;
 							},

@@ -6,6 +6,7 @@ module.exports = [
 	"Breadcrumbs.spec.js",
 	"Carousel.spec.js",
 	"CheckBox.spec.js",
+	"ComboBox.spec.js",
 	"Dialog.spec.js",
 	"IconTabBar.spec.js",
 	"Image.spec.js",

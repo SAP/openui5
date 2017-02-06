@@ -43,8 +43,9 @@
 
 	var oComboBoxSR = new sap.m.Select({
 		items: {
-			path: "/items",
-			template: oListItemTemplate
+			path : "/items",
+			template : oListItemTemplate,
+			templateShareable : false
 		},
 		selectedKey: {
 			path: "/selected"
@@ -82,14 +83,13 @@
 
 	var oComboBox = new sap.m.Select({
 		items: {
-			path: "/items",
-			template: oListItemTemplate
+			path : "/items",
+			template : oListItemTemplate,
+			templateShareable : false
 		},
-
 		selectedKey: {
 			path: "/selected"
 		},
-
 		change : function(oControlEvent) {
 				var sSelected = oControlEvent.mParameters.selectedItem.getKey();
 				oUploadCollection.setShowSeparators(sSelected);
@@ -397,7 +397,7 @@
 				"mimeType" : "text/plain",
 				"thumbnailUrl" : "",
 				"uploadedDate" : "Date: 2014-09-01",
-				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Document.txt",
+				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Document.txt"
 			}, {
 				"contributor" : "Dr. Sean O'Connel",
 				"documentId" : "1700ead2-3dfb-5a94-6f5c-cf1da409e02a",
@@ -408,7 +408,7 @@
 				"mimeType" : "application/vnd.ms-powerpoint",
 				"thumbnailUrl" : "",
 				"uploadedDate" : "Date: 2014-07-29",
-				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Third Quarter Results.ppt",
+				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Third Quarter Results.ppt"
 			}, {
 				"contributor" : "Dr. Jane Burns",
 				"documentId" : "34e484e4-a523-6c50-685b-e5ae6606925a",
@@ -419,7 +419,7 @@
 				"mimeType" : "application/msword",
 				"thumbnailUrl" : "",
 				"uploadedDate" : "Date: 2014-07-28",
-				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Agenda.doc",
+				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Agenda.doc"
 			}, {
 				"contributor" : "Dr. John Black",
 				"documentId" : "bcc27c4d-a8ce-3ab6-e807-ec05119685aa",
@@ -430,7 +430,7 @@
 				"mimeType" : "application/msexcel",
 				"thumbnailUrl" : "",
 				"uploadedDate" : "Date: 2014-07-27",
-				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Topics.xls",
+				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Topics.xls"
 			}, {
 				"contributor" : "Dr. David Keane",
 				"documentId" : "6b6ccd2f-e5c2-15b7-3b67-19156485006a",
@@ -441,7 +441,7 @@
 				"mimeType" : "application/pdf",
 				"thumbnailUrl" : "",
 				"uploadedDate" : "Date: 2014-07-26",
-				"url" : "",
+				"url" : ""
 			}, {
 				"contributor" : "Dr. Kate Brown",
 				"documentId" : "b68a7065-cc2a-2140-922d-e7528cd3217a",
@@ -466,7 +466,66 @@
 	// set the model to the core
 	sap.ui.getCore().setModel(oModel);
 
-	var aFileTypes = ["jpg", "txt", "ppt", "doc", "xls", "pdf", "PNG"];
+	var oFileTypesModel = new sap.ui.model.json.JSONModel();
+
+	var mFileTypesData = {
+		"items": [
+			{
+				"key": "jpg",
+				"text": "jpg"
+			},
+			{
+				"key": "txt",
+				"text": "txt"
+			},
+			{
+				"key": "ppt",
+				"text": "ppt"
+			},
+			{
+				"key": "doc",
+				"text": "doc"
+			},
+			{
+				"key": "xls",
+				"text": "xls"
+			},
+			{
+				"key": "pdf",
+				"text": "pdf"
+			},
+			{
+				"key": "png",
+				"text": "png"
+			}
+		],
+		"selected" : ["jpg", "txt", "ppt", "doc", "xls", "pdf", "png"]
+	};
+
+	oFileTypesModel.setData(mFileTypesData);
+
+	var oFileTypesListItemTemplate = new sap.ui.core.Item({
+		key: "{key}",
+		text: "{text}"
+	});
+
+	var oFileTypesMultiComboBox = new sap.m.MultiComboBox({
+		items: {
+			path : "/items",
+			template : oFileTypesListItemTemplate,
+			templateShareable : false
+		},
+		selectedKeys: {
+			path: "/selected"
+		},
+		placeholder : "Choose the valid file types",
+		selectionChange : function(oControlEvent) {
+			oUploadCollection.setFileType(oFileTypesMultiComboBox.getSelectedKeys());
+		},
+		width : "250px"
+	});
+
+	oFileTypesMultiComboBox.setModel(oFileTypesModel);
 
 	/* =========================================================== */
 	/* Handle UploadCollection events                              */
@@ -480,7 +539,7 @@
 				oUploadCollection._onUploadComplete = function () {
 					return;
 				};
-			};
+			}
 			oUploadCollection.invalidate();
 		} else if (oUploadCompleteStub) {
 			oUploadCollection._onUploadComplete = oUploadCompleteStub;
@@ -494,7 +553,7 @@
 		jQuery.each(aItems, function(index) {
 			if (aItems[index] && aItems[index].documentId === sDocumentId) {
 				aItems.splice(index, 1);
-			};
+			}
 		});
 		oModel.setData({
 			"items" : aItems
@@ -504,7 +563,7 @@
 
 	var fnfilenameLengthExceed = function(oEvent) {
 		sap.m.MessageToast.show("FilenameLengthExceed event triggered.");
-	}
+	};
 
 	var fnFileRenamed = function(oEvent) {
 		var oData = oUploadCollection.getModel().getData();
@@ -513,7 +572,7 @@
 		jQuery.each(aItems, function(index) {
 			if (aItems[index] && aItems[index].documentId === sDocumentId) {
 				aItems[index].fileName = oEvent.getParameter("item").getFileName();
-			};
+			}
 		});
 		oModel.setData({
 			"items" : aItems
@@ -625,28 +684,31 @@
 		ariaLabelForPicture : "{ariaLabelForPicture}",
 		attributes : {
 			path : "attributes",
-			template : oAttributeTemplate
+			template : oAttributeTemplate,
+			templateShareable : false
 		},
 		statuses : {
 			path : "statuses",
-			template : oStatusTemplate
+			template : oStatusTemplate,
+			templateShareable : false
 		},
 		markers : {
 			path : "markers",
-			template : oMarkerTemplate
+			template : oMarkerTemplate,
+			templateShareable : false
 		}
 	});
 
-	// create instance of UploadCollection and set model
 	var oUploadCollection = new sap.m.UploadCollection({
 		maximumFilenameLength : 55,
 		multiple : true,
-		fileType : aFileTypes,
 		items : {
 			path : "/items/",
-			template : oItemTemplate
+			template : oItemTemplate,
+			templateShareable : false
 		},
 		sameFilenameAllowed : false,
+		fileType : oFileTypesMultiComboBox.getSelectedKeys(),
 		// events
 		change : fnChange,
 		fileDeleted : fnFileDeleted,
@@ -666,26 +728,35 @@
 	/* =========================================================== */
 	var oPage = new sap.m.Page("page", {
 		title : "Test Page for sap.m.UploadCollection",
-		headerContent : [
-			new sap.m.Button({
-				text : "Rerender UC",
-				press : function (oEvent) {
-					oUploadCollection.invalidate();
-				}
+		content : [
+			new sap.m.Toolbar({
+				content : [
+					new sap.m.Button({
+						text : "Rerender UC",
+						press : function (oEvent) {
+							oUploadCollection.invalidate();
+						}
+					}),
+					new sap.m.Label({
+						text : "Simulates a backend error:"
+					}),
+					oBackendErrorCheckBox,
+					new sap.m.Label({
+						text : "Simulates the uploading status for screen reader:"
+					}),
+					oComboBoxSR,
+					new sap.m.Label({
+						text : "File types:"
+					}),
+					oFileTypesMultiComboBox,
+					new sap.m.Label({
+						text : "Layout:"
+					}),
+					oComboBox
+				]
 			}),
-			new sap.m.Label({
-				text : "Simulates a backend error:"
-			}),
-			oBackendErrorCheckBox,
-			new sap.m.Label({
-				text : "Simulates the uploading status for screen reader:"
-			}),
-			oComboBoxSR,
-			new sap.m.Label({
-				text : "Layout:"
-			}),
-			oComboBox],
-		content : oUploadCollection
+			oUploadCollection
+		]
 	});
 
 	// create a mobile App embedding the page and place the App into the HTML document

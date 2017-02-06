@@ -3,7 +3,7 @@
 /* Belize High Contrast White theme             */
 /* ============================================ */
 
-.sapUxAPHierarchicalSelect {
+html.sap-desktop .sapUxAPHierarchicalSelect {
 	border: none;
 
 	&.sapMSltHoverable {
@@ -13,6 +13,10 @@
 
 			&:hover {
 				background: transparent;
+
+				> .sapMSltIcon {
+					background: @sapUiButtonHoverBackground;
+				}
 
 				&:focus {
 					background: transparent;
@@ -28,10 +32,6 @@
 					border-color: transparent;
 				}
 			}
-		}
-
-		> .sapMSltIcon:hover {
-			background: @sapUiButtonHoverBackground;
 		}
 	}
 
@@ -59,7 +59,7 @@
 	width: 3rem;
 }
 
-.sapUiMedia-Std-Phone .sapUxAPHierarchicalSelect > .sapMSltArrow {
+.sapUiMedia-Std-Phone .sapUxAPHierarchicalSelect.sapMSltHoverable > .sapMSltArrow {
 	border-left: none;
 }
 

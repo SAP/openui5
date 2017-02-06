@@ -345,6 +345,21 @@
 			strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapshow' event.");
 		});
 
+		test("_menuItemSelected is fired", function() {
+			var fnHandleMenuItemSelected = sinon.spy();
+			this.sut.attachEvent("_menuItemSelected", fnHandleMenuItemSelected);
+
+			this.sut.getMenu().fireItemSelected({item: this.sut.getMenu().getItems()[0]});
+			this.clock.tick(1000);
+			strictEqual(fnHandleMenuItemSelected.calledOnce, true, "_menuItemSelected handler is notified");
+
+
+			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
+			this.sut.getMenu().fireItemSelected({item: this.sut.getMenu().getItems()[0]});
+			this.clock.tick(1000);
+			strictEqual(fnHandleMenuItemSelected.calledTwice, true, "_menuItemSelected handler is notified in split Mode");
+		});
+
 		test('SplitButton mode', function () {
 			this.sut.destroy();
 			this.sut = null;

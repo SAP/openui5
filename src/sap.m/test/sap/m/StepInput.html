@@ -15,6 +15,15 @@
 		jQuery.sap.require("sap.m.StepInput");
 
 		var app = new sap.m.App("myApp", {initialPage: "page1"});
+		var oLabel9 = new sap.m.Label({
+			text: "value = 1.32567, displayValuePrecision = 3, input will show 1.326"
+		});
+		var oLabel8 = new sap.m.Label({
+			text: "value = 1.32, displayValuePrecision = 0, input will show 1"
+		});
+		var oLabel7 = new sap.m.Label({
+			text: "value = 1.32, displayValuePrecision = 3, step = 0.05, input will show 1.320"
+		});
 		var oLabelStep1Val6Min6Max15 = new sap.m.Label({
 			text: "Step = 1 (default behavior); value = 6, min = 5, max = 15"
 		});
@@ -60,6 +69,28 @@
 			title: "Input Types",
 			content: [new sap.m.VBox({
 				items: [
+					oLabel9,
+					new sap.m.StepInput({
+						value: 1.32567,
+						displayValuePrecision: 3,
+						width: "75%",
+						ariaLabelledBy: oLabel9
+					}),
+					oLabel8,
+					new sap.m.StepInput({
+						value: 1.32,
+						displayValuePrecision: 0,
+						width: "75%",
+						ariaLabelledBy: oLabel8
+					}),
+					oLabel7,
+					new sap.m.StepInput({
+						value: 1.32,
+						displayValuePrecision: 3,
+						step: 0.05,
+						width: "75%",
+						ariaLabelledBy: oLabel7
+					}),
 					oLabelStep1Val6Min6Max15,
 					new sap.m.StepInput("boundSI", {
 						min: 5,

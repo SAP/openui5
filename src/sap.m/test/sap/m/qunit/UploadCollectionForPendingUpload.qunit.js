@@ -585,10 +585,68 @@ QUnit.test("Event beforeUploadStarts", function(assert) {
 	assert.equal(sSecurityTokenValueBefore, sSecurityTokenValueAfter, "SecurityToken value is set correctly by the method 'addHeaderParameter' of the beforeUploadStarts event");
 });
 
+QUnit.test("Drop file in UploadCollection", function(assert) {
+	//Arrange
+	var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
+	var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
+	var oFileList = {
+		0: {
+			name: "file",
+			size: 1,
+			type: "type"
+		},
+		length: 1
+	};
+	var oEvent = jQuery.Event("drop", {
+		originalEvent: {
+			dataTransfer:{
+				files: oFileList
+			}
+		}
+	});
+	this.oUploadCollection.$("drag-drop-area").removeClass("sapMUCDragDropOverlayHide");
+	//Act
+	$DragDropArea.trigger(oEvent);
+	//Assert
+	assert.ok($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag and drop overlay is hidden after drop");
+	assert.equal(this.oUploadCollection._aFilesFromDragAndDropForPendingUpload.length, 1, "File is inserted in the array");
+});
+
+QUnit.test("Dropping more than one file is not allowed when multiple is false", function(assert) {
+	//Arrange
+	this.oUploadCollection.setMultiple(false);
+	sap.ui.getCore().applyChanges();
+	var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
+	var oSpyOnChange = sinon.spy(this.oUploadCollection, "_onChange");
+	var oSpyMessageBox = sinon.spy(sap.m.MessageBox, "information");
+	var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
+	var oFileList = [{
+		name: "file1"
+	}, {
+		name: "file2"
+	}];
+	var oEvent = jQuery.Event("drop", {
+		originalEvent: {
+			dataTransfer:{
+				files: oFileList
+			}
+		}
+	});
+	//Act
+	$DragDropArea.trigger(oEvent);
+	//Assert
+	assert.ok(oSpyOnChange.notCalled, "Files are not dropped in UploadCollection");
+	assert.ok(oSpyMessageBox.calledOnce, "Information messagebox is displayed");
+	//Restore
+	oSpyMessageBox.restore();
+	sap.ui.getCore().byId(this.oUploadCollection.getId() + "-multiple-false-messagebox").close();
+});
+
 QUnit.module("Delete PendingUpload Item", {
 	beforeEach : function() {
 		this.oUploadCollection = new sap.m.UploadCollection("pendingUploads", {
-			instantUpload : false
+			instantUpload : false,
+			multiple : true
 		});
 		this.oUploadCollection.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();

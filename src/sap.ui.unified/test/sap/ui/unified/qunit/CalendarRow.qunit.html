@@ -688,7 +688,8 @@
 			module("Interaction");
 
 			test("click on group-appointment", function() {
-				qutils.triggerEvent("click", "Row1-Group0");
+				qutils.triggerEvent("tap", "Row1-Group0");
+
 				equal(iSelectedGroupAppointments, 7, "Selected Appointments in group");
 				ok(sap.ui.getCore().byId("App1").getSelected(), "Appointment1: selected property set");
 				ok(sap.ui.getCore().byId("App2").getSelected(), "Appointment1: selected property set");
@@ -699,38 +700,50 @@
 			});
 
 			test("click on appointment", function() {
+				var sSelectedTextId = sap.ui.unified.CalendarRow._oStaticSelectedText.getId();
+				var sAriaLabel1, sAriaLabel2, sAriaLabel3;
 				// initialize Row1
 				initializeRow1();
 
-				qutils.triggerEvent("click", "App1");
+				qutils.triggerEvent("tap", "App1");
 				equal(sSelectedAppointmentId, "App1", "Appointment 1: click fires select event");
 				ok(!bMultiSelect, "Appointment 1: no multiple selection");
 				ok(sap.ui.getCore().byId("App1").getSelected(), "Appointment1: selected property set");
 				ok(jQuery("#App1").hasClass("sapUiCalendarAppSel"), "Appointment1: selected rendered");
+				sAriaLabel1 = jQuery("#App1").attr("aria-labelledby");
+				ok(sAriaLabel1.indexOf(sSelectedTextId) > -1, "Appointment1: selected ARIA text is rendered");
 
-				qutils.triggerEvent("click", "App2-Title");
+				qutils.triggerEvent("tap", "App2-Title");
 				ok(!sap.ui.getCore().byId("App1").getSelected(), "Appointment1: selected property not longer set");
 				ok(!jQuery("#App1").hasClass("sapUiCalendarAppSel"), "Appointment1: selected not longer rendered");
 				equal(sSelectedAppointmentId, "App2", "Appointment 2: click on title fires select event");
 				ok(!bMultiSelect, "Appointment 2: no multiple selection");
 				ok(sap.ui.getCore().byId("App2").getSelected(), "Appointment2: selected property set");
 				ok(jQuery("#App2").hasClass("sapUiCalendarAppSel"), "Appointment2: selected rendered");
+				sAriaLabel2 = jQuery("#App2").attr("aria-labelledby");
+				ok(sAriaLabel2.indexOf(sSelectedTextId) > -1, "Appointment2: selected ARIA text is rendered");
+				sAriaLabel1 = jQuery("#App1").attr("aria-labelledby");
+				ok(sAriaLabel1.indexOf(sSelectedTextId) == -1, "Appointment1: selected ARIA text is removed");
 
-				qutils.triggerEvent("click", "App3-Text", {ctrlKey: true});
+				qutils.triggerEvent("tap", "App3-Text", {ctrlKey: true});
 				ok(sap.ui.getCore().byId("App2").getSelected(), "Appointment2: selected still property set");
 				ok(jQuery("#App2").hasClass("sapUiCalendarAppSel"), "Appointment2: selected still rendered");
 				equal(sSelectedAppointmentId, "App3", "Appointment 3: click on text fires select event");
-				ok(bMultiSelect, "Appointment 1: multiple selection");
+				ok(bMultiSelect, "Appointment 3: multiple selection");
 				ok(sap.ui.getCore().byId("App3").getSelected(), "Appointment3: selected property set");
 				ok(jQuery("#App3").hasClass("sapUiCalendarAppSel"), "Appointment3: selected rendered");
+				sAriaLabel3 = jQuery("#App3").attr("aria-labelledby");
+				ok(sAriaLabel3.indexOf(sSelectedTextId) > -1, "Appointment3: selected ARIA text is rendered");
+				sAriaLabel2 = jQuery("#App2").attr("aria-labelledby");
+				ok(sAriaLabel2.indexOf(sSelectedTextId) > -1, "Appointment2: selected ARIA text is still rendered");
 			});
 
 			test("click on interval", function() {
 				oIntervalStartDate = undefined;
 				oIntervalEndDate = undefined;
 				bSubInterval = undefined;
-				qutils.triggerEvent("click", "Row1-AppsInt1");
-				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired")
+				qutils.triggerEvent("tap", "Row1-AppsInt1");
+				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired");
 				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201502011100", "StartDate set");
 				equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201502011159", "EndDate set");
 				ok(!bSubInterval, "No sub-interval clicked");
@@ -740,8 +753,8 @@
 				oIntervalStartDate = undefined;
 				oIntervalEndDate = undefined;
 				bSubInterval = undefined;
-				qutils.triggerEvent("click", "Row1-AppsInt1");
-				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired")
+				qutils.triggerEvent("tap", "Row1-AppsInt1");
+				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired");
 				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201502020000", "StartDate set");
 				equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201502022359", "EndDate set");
 				ok(!bSubInterval, "No sub-interval clicked");
@@ -751,8 +764,8 @@
 				oIntervalStartDate = undefined;
 				oIntervalEndDate = undefined;
 				bSubInterval = undefined;
-				qutils.triggerEvent("click", "Row1-AppsInt1");
-				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired")
+				qutils.triggerEvent("tap", "Row1-AppsInt1");
+				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired");
 				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201503010000", "StartDate set");
 				equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201503312359", "EndDate set");
 				ok(!bSubInterval, "No sub-interval clicked");
@@ -768,8 +781,8 @@
 				oIntervalStartDate = undefined;
 				oIntervalEndDate = undefined;
 				bSubInterval = undefined;
-				qutils.triggerEvent("click", aSubIntervals[1]);
-				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired")
+				qutils.triggerEvent("tap", aSubIntervals[1]);
+				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired");
 				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201502011115", "StartDate set");
 				equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201502011129", "EndDate set");
 				ok(bSubInterval, "sub-interval clicked");
@@ -780,8 +793,8 @@
 				oIntervalStartDate = undefined;
 				oIntervalEndDate = undefined;
 				bSubInterval = undefined;
-				qutils.triggerEvent("click", aSubIntervals[1]);
-				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired")
+				qutils.triggerEvent("tap", aSubIntervals[1]);
+				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired");
 				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201502020100", "StartDate set");
 				equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201502020159", "EndDate set");
 				ok(bSubInterval, "sub-interval clicked");
@@ -792,8 +805,8 @@
 				oIntervalStartDate = undefined;
 				oIntervalEndDate = undefined;
 				bSubInterval = undefined;
-				qutils.triggerEvent("click", aSubIntervals[1]);
-				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired")
+				qutils.triggerEvent("tap", aSubIntervals[1]);
+				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired");
 				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201503020000", "StartDate set");
 				equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201503022359", "EndDate set");
 				ok(bSubInterval, "sub-interval clicked");

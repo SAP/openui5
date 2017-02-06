@@ -18,7 +18,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 						stretch : true,
 						files: [
 							"DynamicPageListReport.view.xml",
-							"DynamicPageListReport.controller.js"
+							"DynamicPageListReport.controller.js",
+							"model.json"
 						]
 					}
 				}

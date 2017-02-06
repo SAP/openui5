@@ -5,7 +5,6 @@
 
 .sapUxAPAnchorBar {
 	background-color: @sapUiObjectHeaderBackground;
-	border-bottom-width: 0.125rem;
 }
 
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton,
@@ -17,6 +16,11 @@
 
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner {
 	border-radius: 0;
+}
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnTransparent.sapMBtnHoverable:hover,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMBtn:hover > .sapMBtnHoverable {
+	background: none;
 }
 
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnIcon,

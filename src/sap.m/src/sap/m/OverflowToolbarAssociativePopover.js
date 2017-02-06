@@ -95,7 +95,11 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 		// For each event that must close the popover, attach a handler
 		oCtrlConfig.listenForEvents.forEach(function(sEventType) {
 			sAttachFnName = "attach" + fnCapitalize(sEventType);
-			oControl[sAttachFnName](this._closeOnInteraction.bind(this, oControl));
+			if (oControl[sAttachFnName]) {
+				oControl[sAttachFnName](this._closeOnInteraction.bind(this, oControl));
+			} else {
+				oControl.attachEvent(sEventType, this._closeOnInteraction.bind(this, oControl));
+			}
 		}, this);
 
 		// Call preprocessor function, if any
@@ -127,7 +131,11 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 		// For each event that must close the popover, detach the handler
 		oCtrlConfig.listenForEvents.forEach(function(sEventType) {
 			sDetachFnName = "detach" + fnCapitalize(sEventType);
-			oControl[sDetachFnName](this._closeOnInteraction, this);
+			if (oControl[sDetachFnName]) {
+				oControl[sDetachFnName](this._closeOnInteraction, this);
+			} else {
+				oControl.detachEvent(sEventType, this._closeOnInteraction, this);
+			}
 		}, this);
 
 		// Call preprocessor function, if any

@@ -1,5 +1,5 @@
-<core:View controllerName="sap.m.sample.NumericContentIcon.Page"
-	xmlns="sap.m" xmlns:core="sap.ui.core">
+<mvc:View controllerName="sap.m.sample.NumericContentIcon.Page"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
 	<NumericContent value="65" scale="MM"
 		valueColor="Error" indicator="Down" state="Loaded" icon="sap-icon://travel-expense"
 		class="sapUiSmallMargin" press="press" />
@@ -7,4 +7,4 @@
 		valueColor="Critical" indicator="Up" state="Loaded"
 		icon="test-resources/sap/m/demokit/sample/NumericContentIcon/images/grass.jpg" class="sapUiSmallMargin"
 		press="press" />
-</core:View>
+</mvc:View>

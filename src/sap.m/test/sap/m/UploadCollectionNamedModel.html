@@ -43,8 +43,9 @@
 
 	var oComboBoxSR = new sap.m.Select({
 		items: {
-			path: "/items",
-			template: oListItemTemplate
+			path : "/items",
+			template : oListItemTemplate,
+			templateShareable : false
 		},
 		selectedKey: {
 			path: "/selected"
@@ -82,8 +83,9 @@
 
 	var oComboBox = new sap.m.Select({
 		items: {
-			path: "/items",
-			template: oListItemTemplate
+			path : "/items",
+			template : oListItemTemplate,
+			templateShareable : false
 		},
 
 		selectedKey: {
@@ -97,6 +99,67 @@
 	});
 
 	oComboBox.setModel(oModelCB);
+
+	var oFileTypesModel = new sap.ui.model.json.JSONModel();
+
+	var mFileTypesData = {
+		"items": [
+			{
+				"key": "jpg",
+				"text": "jpg"
+			},
+			{
+				"key": "txt",
+				"text": "txt"
+			},
+			{
+				"key": "ppt",
+				"text": "ppt"
+			},
+			{
+				"key": "doc",
+				"text": "doc"
+			},
+			{
+				"key": "xls",
+				"text": "xls"
+			},
+			{
+				"key": "pdf",
+				"text": "pdf"
+			},
+			{
+				"key": "png",
+				"text": "png"
+			}
+		],
+		"selected" : ["jpg", "txt", "ppt", "doc", "xls", "pdf", "png"]
+	};
+
+	oFileTypesModel.setData(mFileTypesData);
+
+	var oFileTypesListItemTemplate = new sap.ui.core.Item({
+		key: "{key}",
+		text: "{text}"
+	});
+
+	var oFileTypesMultiComboBox = new sap.m.MultiComboBox({
+		items: {
+			path : "/items",
+			template : oFileTypesListItemTemplate,
+			templateShareable : false
+		},
+		selectedKeys: {
+			path: "/selected"
+		},
+		placeholder : "Choose the valid file types",
+		selectionChange : function(oControlEvent) {
+			oUploadCollection.setFileType(oFileTypesMultiComboBox.getSelectedKeys());
+		},
+		width : "250px"
+	});
+
+	oFileTypesMultiComboBox.setModel(oFileTypesModel);
 
 	/* =========================================================== */
 	/* UploadCollection                                            */
@@ -441,7 +504,7 @@
 				"mimeType" : "application/pdf",
 				"thumbnailUrl" : "",
 				"uploadedDate" : "Date: 2014-07-26",
-				"url" : "",
+				"url" : ""
 			}, {
 				"contributor" : "Dr. Kate Brown",
 				"documentId" : "b68a7065-cc2a-2140-922d-e7528cd3217a",
@@ -480,7 +543,7 @@
 				oUploadCollection._onUploadComplete = function () {
 					return;
 				};
-			};
+			}
 			oUploadCollection.invalidate();
 		} else if (oUploadCompleteStub) {
 			oUploadCollection._onUploadComplete = oUploadCompleteStub;
@@ -494,7 +557,7 @@
 		jQuery.each(aItems, function(index) {
 			if (aItems[index] && aItems[index].documentId === sDocumentId) {
 				aItems.splice(index, 1);
-			};
+			}
 		});
 		oModel.setData({
 			"items" : aItems
@@ -504,7 +567,7 @@
 
 	var fnfilenameLengthExceed = function(oEvent) {
 		sap.m.MessageToast.show("FilenameLengthExceed event triggered.");
-	}
+	};
 
 	var fnFileRenamed = function(oEvent) {
 		var oData = oUploadCollection.getModel().getData();
@@ -513,7 +576,7 @@
 		jQuery.each(aItems, function(index) {
 			if (aItems[index] && aItems[index].documentId === sDocumentId) {
 				aItems[index].fileName = oEvent.getParameter("item").getFileName();
-			};
+			}
 		});
 		oModel.setData({
 			"items" : aItems
@@ -625,15 +688,18 @@
 		ariaLabelForPicture : "{data>ariaLabelForPicture}",
 		attributes : {
 			path : "data>attributes",
-			template : oAttributeTemplate
+			template : oAttributeTemplate,
+			templateShareable : false
 		},
 		statuses : {
 			path : "data>statuses",
-			template : oStatusTemplate
+			template : oStatusTemplate,
+			templateShareable : false
 		},
 		markers : {
 			path : "data>markers",
-			template : oMarkerTemplate
+			template : oMarkerTemplate,
+			templateShareable : false
 		}
 	});
 
@@ -641,10 +707,11 @@
 	var oUploadCollection = new sap.m.UploadCollection({
 		maximumFilenameLength : 55,
 		multiple : true,
-		fileType : aFileTypes,
+		fileType : oFileTypesMultiComboBox.getSelectedKeys(),
 		items : {
 			path : "data>/items/",
-			template : oItemTemplate
+			template : oItemTemplate,
+			templateShareable : false
 		},
 		sameFilenameAllowed : false,
 		// events
@@ -666,25 +733,29 @@
 	/* =========================================================== */
 	var oPage = new sap.m.Page("page", {
 		title : "Test Page for sap.m.UploadCollection",
-		headerContent : [
-			new sap.m.Button({
-				text : "Rerender UC",
-				press : function (oEvent) {
-					oUploadCollection.invalidate();
-				}
-			}),
-			new sap.m.Label({
-				text : "Simulates a backend error:"
-			}),
-			oBackendErrorCheckBox,
-			new sap.m.Label({
-				text : "Simulates the uploading status for screen reader:"
-			}),
-			oComboBoxSR,
-			new sap.m.Label({
-				text : "Layout:"
-			}),
-			oComboBox],
+		headerContent : new sap.m.Toolbar({
+			content: [
+				new sap.m.Button({
+					text: "Rerender UC",
+					press: function (oEvent) {
+						oUploadCollection.invalidate();
+					}
+				}),
+				new sap.m.Label({
+					text: "Simulates a backend error:"
+				}),
+				oBackendErrorCheckBox,
+				new sap.m.Label({
+					text: "Simulates the uploading status for screen reader:"
+				}),
+				oFileTypesMultiComboBox,
+				oComboBoxSR,
+				new sap.m.Label({
+					text: "Layout:"
+				}),
+				oComboBox
+			]
+		}),
 		content : oUploadCollection
 	});
 

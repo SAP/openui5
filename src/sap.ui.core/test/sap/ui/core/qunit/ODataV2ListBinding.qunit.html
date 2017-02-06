@@ -634,17 +634,26 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 	});
 
 	asyncTest("ListBinding filter aborted", function(){
+		var oRequestedSpy, oReceivedSpy;
+
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oEvent.oSource.getContexts();
 			equal(aContexts.length, 8, "EQ unfiltered content length");
 			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "EQ unfiltered content");
 			equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "EQ unfiltered content");
-
 			oBinding.detachChange(handler);
-			start();
+			setTimeout(handler2, 0);
 		};
+		var handler2 = function() {
+			// data requested and data received should only be called once
+			ok(oRequestedSpy.calledOnce, "fireDataRequested has only be called once");
+			ok(oReceivedSpy.calledOnce, "fireDataReceived has only be called once");
+			start();
+		}
 		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None"});
+		oRequestedSpy = sinon.spy(oBinding, "fireDataRequested");
+		oReceivedSpy = sinon.spy(oBinding, "fireDataReceived");
 		oBinding.initialize();
 		//check EQ
 		var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");

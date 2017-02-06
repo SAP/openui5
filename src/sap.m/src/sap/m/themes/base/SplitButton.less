@@ -60,3 +60,24 @@
 		padding-right: 2rem;
 	}
 }
+
+.sapMSB:focus .sapMSBInner::after {
+	top: 0.3125rem;
+	bottom: 0.3125rem;
+	left: 0.0625rem;
+	right: 0.0625rem;
+	border: 0.0625rem dotted @sapUiContentFocusColor;
+}
+
+.sapUiSizeCompact {
+	.sapMSB:focus .sapMSBInner::after {
+		top: 0.25rem;
+		bottom: 0.25rem;
+	}
+}
+
+html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
+	.sapMSB:focus .sapMSBInner::after {
+		border-style: dashed;
+	}
+}

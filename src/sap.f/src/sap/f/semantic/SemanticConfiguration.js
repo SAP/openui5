@@ -3,7 +3,7 @@
  */
 
 /**
-* Provides a private class <code>sap.f.semantic.SemanticConfiguration</code>
+* Provides a private class <code>sap.f.semantic.SemanticConfiguration</code>.
 */
 sap.ui.define([
 	"jquery.sap.global",
@@ -21,10 +21,10 @@ sap.ui.define([
 		"use strict";
 
 	/**
-	* Constructor for a sap.f.semantic.SemanticConfiguration.
+	* Constructor for a <code>sap.f.semantic.SemanticConfiguration</code>.
 	*
 	* @class
-	* Defines the visual properties and placement for each supported semantic type
+	* Defines the visual properties and placement for each supported semantic type.
 	*
 	* @version ${version}
 	* @private
@@ -138,8 +138,8 @@ sap.ui.define([
 	};
 
 	/**
-	* Determines if the <code>SemanticControl</code> is a "navigation" type of action,
-	* such as <code>FullScreen</code> and <code>CloseAction</code>.
+	* Determines if the <code>SemanticControl</code> is a <code>Navigation</code> type of action,
+	* such as <code>FullScreenAction</code> and <code>CloseAction</code>.
 	*
 	* @returns {Boolean}
 	*/

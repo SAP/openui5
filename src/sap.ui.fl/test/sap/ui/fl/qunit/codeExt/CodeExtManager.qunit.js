@@ -214,7 +214,8 @@ sap.ui.require([
 		    				support: {
 		    					generator: "Change.createInitialFileContent",
 		    					service: "",
-		    					user: ""
+		    					user: "",
+		    					sapui5Version: sap.ui.version
 		    				},
 		    				dependentSelector: {}
 		    			},
@@ -240,7 +241,8 @@ sap.ui.require([
 		    				support: {
 		    					generator: "Change.createInitialFileContent",
 		    					service: "",
-		    					user: ""
+		    					user: "",
+		    					sapui5Version: sap.ui.version
 		    				},
 		    				dependentSelector: {}
 		    			}];

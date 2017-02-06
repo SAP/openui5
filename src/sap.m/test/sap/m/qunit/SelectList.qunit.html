@@ -58,7 +58,8 @@
 						text: "item 2"
 					}),
 					new sap.ui.core.SeparatorItem()
-				]
+				],
+				ariaLabelledBy: "hiddenTextId"
 			});
 
 			// arrange
@@ -78,6 +79,7 @@
 			strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("role"), "option");
 			strictEqual(oSelectList.getLastItem().getDomRef().getAttribute("role"), "separator");
 			strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("aria-selected"), "false");
+			strictEqual(oSelectList.getDomRef().getAttribute("aria-labelledby"), "hiddenTextId");
 
 			// cleanup
 			oSelectList.destroy();

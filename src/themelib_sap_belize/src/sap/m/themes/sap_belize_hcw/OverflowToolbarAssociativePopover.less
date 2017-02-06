@@ -5,14 +5,13 @@
 
 html.sap-phone {
 	.sapMOTAPopover {
-
 		&.sapMOTAPopoverNoShadowTop {
-			box-shadow: 0 1rem 2.5rem 0.125rem fade(@sapUiContentShadowColor, 80);
+			border-radius: 0 0 0.25rem 0.25rem;
+			box-shadow: 0 0.25rem 2rem 0 fade(@sapUiContentContrastShadowColor, 60);
 		}
-
 		&.sapMOTAPopoverNoShadowBottom {
-			box-shadow: 0 -1rem 2.5rem 0.125rem fade(@sapUiContentShadowColor, 80);
+			border-radius: 0.25rem 0.25rem 0 0;
+			box-shadow: 0 -0.25rem 2rem 0 fade(@sapUiContentContrastShadowColor, 60);
 		}
-
 	}
 }
