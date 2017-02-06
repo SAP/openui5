@@ -30,7 +30,7 @@ sap.ui.define([
 
 		// Increase the wait timeout in debug mode, to allow debugging the waitFor without getting timeouts
 		if (window["sap-ui-debug"]){
-			oOptions.timeout = 300;
+			oOptions.timeout = oOptions.debugTimeout;
 		}
 
 		var startTime = new Date();
@@ -51,14 +51,9 @@ sap.ui.define([
 				return;
 			}
 
-			var timeDiff = new Date() - startTime;
+			var iPassedSeconds = (new Date() - startTime) / 1000;
 
-			// strip the milliseconds
-			timeDiff /= 1000;
-
-			var iPassedSeconds = Math.round(timeDiff % 60);
-
-			if (oOptions.timeout > iPassedSeconds) {
+			if (oOptions.timeout === 0 || oOptions.timeout > iPassedSeconds) {
 				timeout = setTimeout(fnCheck, oOptions.pollingInterval);
 				// timeout not yet reached
 				return;
@@ -177,8 +172,9 @@ sap.ui.define([
 	 * 		<li>arrangements: A new Opa instance</li>
 	 * 		<li>actions: A new Opa instance</li>
 	 * 		<li>assertions: A new Opa instance</li>
-	 * 		<li>timeout : 15 seconds, is increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true</li>
+	 * 		<li>timeout : 15 seconds, 0 for infinite timeout</li>
 	 * 		<li>pollingInterval: 400 milliseconds</li>
+	 * 		<li>debugTimeout: 0 seconds, infinite timeout by default. This will be used instead of timeout if running in debug mode.</li>
 	 * </ul>
 	 * You can either directly manipulate the config, or extend it using {@link sap.ui.test.Opa.extendConfig}
 	 * @public
@@ -298,8 +294,9 @@ sap.ui.define([
 	 * 		<li>arrangements: A new Opa instance</li>
 	 * 		<li>actions: A new Opa instance</li>
 	 * 		<li>assertions: A new Opa instance</li>
-	 * 		<li>timeout : 15 seconds, is increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true</li>
+	 * 		<li>timeout : 15 seconds, 0 for infinite timeout</li>
 	 * 		<li>pollingInterval: 400 milliseconds</li>
+	 * 		<li>debugTimeout: 0 seconds, infinite timeout by default. This will be used instead of timeout if running in debug mode.</li>
 	 * 		<li>
 	 * 			executionDelay: 0 or 50 (depending on the browser) or coming from an URL parameter opaExecutionDelay.
 	 * 			The URL parameter takes priority over the browser value. The value is a number representing milliseconds.
@@ -321,6 +318,7 @@ sap.ui.define([
 			executionDelay : iExecutionDelay,
 			timeout : 15,
 			pollingInterval : 400,
+			debugTimeout: 0,
 			_stackDropCount : 0 //Internal use. Specify numbers of additional stack frames to remove for logging
 		};
 	};
@@ -463,7 +461,8 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @param {object} options These contain check, success and error functions
-		 * @param {int} [options.timeout] default: 15 - (seconds) Specifies how long the waitFor function polls before it fails.
+		 * @param {int} [options.timeout] default: 15 - (seconds) Specifies how long the waitFor function polls before it fails.O means it will wait forever.
+		 * @param {int} [options.debugTimeout] default: 0 - (seconds) Specifies how long the waitFor function polls before it fails in debug mode.O means it will wait forever.
 		 * @param {int} [options.pollingInterval] default: 400 - (milliseconds) Specifies how often the waitFor function polls.
 		 * @param {function} [options.check] Will get invoked in every polling interval.
 		 * If it returns true, the check is successful and the polling will stop.
