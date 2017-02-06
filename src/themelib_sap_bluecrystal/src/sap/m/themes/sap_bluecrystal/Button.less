@@ -51,6 +51,12 @@ html.sap-desktop .sapMBtnTransparent > .sapMBtnIcon {
 	background: @sapUiButtonLiteBackground;
 }
 
+.sapMBar-CTX :not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive,
+.sapMBar-CTX :not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnTransparent.sapMBtnHoverable.sapMBtnActive {
+	color: @sapUiButtonActiveTextColor;
+	border-color: @sapUiButtonLiteActiveBorderColor;
+}
+
 .sapMIBar-CTX .sapMBtn:hover > .sapMBtnTransparent.sapMBtnHoverable {
 	background-color: @sapUiButtonLiteHoverBackground;
 	border-color:     transparent;
