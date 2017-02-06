@@ -4952,6 +4952,65 @@
 		oMultiCombo.destroy();
 		oModel.destroy();
 	});
+
+	QUnit.test("Data binding: update seelctedkeys after model's value is formatted", function (assert) {
+		// arrange
+		var oFlatArrayDatatype = sap.ui.model.SimpleType.extend("example.FlatArray", {
+			formatValue: function(vValue, sInternalType) {
+				return vValue ? vValue.split(",") : [];
+			},
+			parseValue: function(vValue, sInternalType) {
+				return vValue ? vValue.join(",") : null;
+			},
+			validateValue: function(vValue) {}
+		  });
+
+		var oMultiComboBox = new sap.m.MultiComboBox({
+			items: {
+				path: "/items",
+				template: new sap.ui.core.Item({
+					key: "{}",
+					text: "{}"
+				})
+			},
+			selectedKeys: {
+			path: "/selectedKeys",
+				type: new oFlatArrayDatatype()
+			}
+		});
+
+		var oModel = new sap.ui.model.json.JSONModel({
+				items: ["sap", "ui", "5"],
+				selectedKeys: ""
+		});
+
+		oMultiComboBox.setModel(oModel);
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		var oNewSelectedItem = oMultiComboBox.getItems()[0];
+
+		// act
+		var oFakeParams = {
+			item: oNewSelectedItem,
+			id: oNewSelectedItem.getId(),
+			key: oNewSelectedItem.getKey(),
+			fireChangeEvent: true,
+			suppressInvalidate: true,
+			listItemUpdated: true
+		};
+		
+		oMultiComboBox.setSelection(oFakeParams);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 1, 'Only one token should be shown');
+
+		// cleanup
+		oMultiComboBox.destroy();
+		oModel.destroy();
+	});
 </script>
 </head>
 <body id="body" class="sapUiBody">
