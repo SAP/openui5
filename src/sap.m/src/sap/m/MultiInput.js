@@ -687,7 +687,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	MultiInput.prototype.onkeydown = function (oEvent) {
 
 		if (oEvent.which === jQuery.sap.KeyCodes.TAB) {
-			Tokenizer._changeAllTokensSelection(false);
+			this._tokenizer._changeAllTokensSelection(false);
 		}
 
 		// ctrl/meta + A - Select all Tokens
