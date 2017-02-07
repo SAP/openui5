@@ -19,36 +19,34 @@ sap.ui.define([
 	var ValueHelp = Input.extend("sap.ui.core.sample.odata.v4.SalesOrders.ValueHelp", {
 			init : function () {
 				Input.prototype.init.call(this);
-				this.setEditable(false);
+				// Note: sap.m.Input must be editable to have the F4 button at all,
+				this.setEditable(true);
+				// as a workaround we control changeability via valueHelpOnly property
+				this.setValueHelpOnly(true);
 				this.setTooltip("No value help");
-				this.sValueListType = TestUtils.isRealOData() ? undefined : ValueListType.None;
+				this.attachValueHelpRequest(this._onValueHelp);
 			},
 
 			onBeforeRendering : function () {
-				var oBinding = this.getBinding("value");
+				var oBinding = this.getBinding("value"),
+					sValueListType = oBinding.getValueListType();
 
-				if (!this.sValueListType) {
-					this.sValueListType = oBinding.getValueListType();
-					if (this.sValueListType !== ValueListType.None) {
-						// Note: sap.m.Input must be editable to have the F4 button at all,
-						// as a workaround we control changeability via valueHelpOnly property
-						this.setEditable(true);
-						this.attachValueHelpRequest(this._onValueHelp.bind(this));
-						this.setShowValueHelp(true);
-					}
-					this.setTooltip("Value List Type: " + this.sValueListType);
+				if (sValueListType !== ValueListType.None) {
+					this.setShowValueHelp(true);
 				}
+				this.setTooltip("Value List Type: " + sValueListType);
 			},
 
 			renderer : "sap.m.InputRenderer",
 
 			_onValueHelp : function (oEvent) {
-				var oBinding = this.getBinding("value"),
-					that = this;
+				var oControl = oEvent.getSource(),
+					oBinding = oControl.getBinding("value");
 
 				oBinding.requestValueListInfo().then(function (mValueListInfo) {
 					var oButton = new Button({
 							icon : "sap-icon://decline",
+							id : "CloseValueHelp-" + new Date().getTime(),
 							tooltip : "Close"
 						}),
 						oColumnListItem = new ColumnListItem(),
@@ -99,13 +97,14 @@ sap.ui.define([
 						oTable.addColumn(new Column({header : new Text({text : sParameterPath})}));
 						oColumnListItem.addCell(sValueListType === ValueListType.None
 							? new Text({text : "{" + sParameterPath + "}"})
-							: new ValueHelp({value : "{" + sParameterPath + "}"}));
+							: new ValueHelp({id : "InnerValueHelp-" + new Date().getTime(),
+								value : "{" + sParameterPath + "}"}));
 					});
 					oTable.attachSelectionChange(onSelectionChange);
 					oButton.attachPress(onClose);
 					oPopover.addContent(oTable);
-					oPopover.data("openedBy", that);
-					oPopover.openBy(that);
+					oPopover.data("openedBy", oControl);
+					oPopover.openBy(oControl);
 
 				}, function (oError) {
 					jQuery.sap.log.error(oError, undefined,
