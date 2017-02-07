@@ -14,8 +14,6 @@
 /* selected */
 .sapMSelectListItemBaseSelected {
 	background: @sapUiListSelectionBackgroundColor;
-	outline: 0.125rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.188rem;
 }
 
 /* disabled */
@@ -33,7 +31,7 @@ html.sap-desktop li.sapMSelectListItemBase:focus {
 /* FIX: IE and Edge do not support css outline-offset */
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected::before {
+	.sapMSelectListItemBase:focus::before {
 		border: 0.125rem dashed @sapUiContentFocusColor;
 	}
 }
