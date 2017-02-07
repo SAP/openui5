@@ -4472,8 +4472,7 @@
 				srcControl: oMultiComboBox
 			};
 
-		var oHandleTokensStub = sinon.stub(sap.ui.base.Event.prototype, "getParameter"),
-			oFocusinStub = sinon.stub(sap.m.MultiComboBox.prototype, "onfocusin");
+		var oHandleTokensStub = sinon.stub(sap.ui.base.Event.prototype, "getParameter");
 
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
@@ -4496,13 +4495,11 @@
 		this.clock.tick(300);
 
 		assert.strictEqual(oMultiComboBox.isOpen(), false, "Picker should close after selection");
-		assert.strictEqual(oFocusinStub.called, true, "Focusin of the MCB should be called");
 		assert.strictEqual(oMultiComboBox.getValue(), "", "Value should be empty");
 
 		oFakeInput = null;
 		oMultiComboBox.destroy();
 		oHandleTokensStub.restore();
-		oFocusinStub.restore();
 	});
 
 	QUnit.test("Selecting an item checkbox should not close the picker", function(assert) {
