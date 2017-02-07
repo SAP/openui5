@@ -1516,6 +1516,9 @@ sap.ui.define([
 	 *   additional property "$model" which is the {@link sap.ui.model.odata.v4.ODataModel} instance
 	 *   to read value list data via this mapping.
 	 *
+	 *   For fixed values, only one mapping is expected and the qualifier is ignored. The mapping
+	 *   is available with key "".
+	 *
 	 *   The promise is rejected with an error if there is no value list information available
 	 *   for the given property path. Use {@link #getValueListType} to determine if value list
 	 *   information exists. It is also rejected with an error if the value list metadata is
@@ -1530,6 +1533,7 @@ sap.ui.define([
 	 *    <li> Two different referenced services contain a mapping using the same qualifier.
 	 *    <li> A service is referenced twice.
 	 *    <li> No mappings have been found.
+	 *    <li> There are multiple mappings for a fixed value list.
 	 *   </ul>
 	 *
 	 * @public
@@ -1542,9 +1546,11 @@ sap.ui.define([
 		return Promise.all([
 			this.requestObject("/$EntityContainer"), // the entity container's name
 			this.requestObject("", oContext),        // the property itself
-			this.requestObject("@", oContext)        // all annotations of the property
+			this.requestObject("@", oContext),       // all annotations of the property
+			this.requestObject(sValueListWithFixedValues, oContext) // flag for "fixed values"
 		]).then(function (aResults) {
 			var mAnnotationByTerm = aResults[2],
+				bFixedValues = aResults[3],
 				mMappingUrlByQualifier = {},
 				// the namespace of the container is the namespace of the service
 				sNamespace = _Helper.namespace(aResults[0]),
@@ -1567,8 +1573,13 @@ sap.ui.define([
 						+ "' for property " + sPropertyPath + " in "
 						+ mMappingUrlByQualifier[sQualifier] + " and " + sMappingUrl);
 				}
+				if (bFixedValues && oValueListInfo[""]) {
+					throw new Error("Annotation '" + sValueListWithFixedValues.slice(1)
+						+ "' but multiple '" + sValueListMapping.slice(1)
+						+ "' for property " + sPropertyPath);
+				}
 				mMappingUrlByQualifier[sQualifier] = sMappingUrl;
-				oValueListInfo[sQualifier] = jQuery.extend(true, {
+				oValueListInfo[bFixedValues ? "" : sQualifier] = jQuery.extend(true, {
 					$model : oModel
 				}, mValueListMapping);
 			}
