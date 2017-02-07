@@ -539,9 +539,6 @@
 @sapUiToggleButtonPressedTextColor: contrast(@sapUiToggleButtonPressedBackground, @sapUiButtonTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiToggleButtonPressedHoverBackground: darken(@sapUiToggleButtonPressedBackground, 5);
 @sapUiToggleButtonPressedHoverBorderColor: darken(@sapUiToggleButtonPressedBackground, 5);
-@sapUiToggleButtonPressedDisabledBackground: @sapUiToggleButtonPressedBackground;
-@sapUiToggleButtonPressedDisabledBorderColor: @sapUiToggleButtonPressedBorderColor;
-@sapUiToggleButtonPressedDisabledTextColor: mix(@sapUiButtonTextColor, #fff, 25);
 @sapUiSegmentedButtonBackground: lighten(@sapUiButtonBackground, 3);
 @sapUiSegmentedButtonBorderColor: lighten(@sapUiButtonBorderColor, 8);
 @sapUiSegmentedButtonTextColor: contrast(@sapUiSegmentedButtonBackground, @sapUiButtonTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
@@ -775,6 +772,9 @@
 @sapUiButtonAcceptDisabledBackground: @sapUiButtonAcceptBackground;
 @sapUiButtonRejectDisabledBorderColor: @sapUiButtonRejectBorderColor;
 @sapUiButtonRejectDisabledBackground: @sapUiButtonRejectBackground;
+@sapUiToggleButtonPressedDisabledBackground: @sapUiToggleButtonPressedBackground;
+@sapUiToggleButtonPressedDisabledBorderColor: @sapUiToggleButtonPressedBorderColor;
+@sapUiToggleButtonPressedDisabledTextColor: mix(@sapUiButtonTextColor, #fff, 25);
 
 // semantic colors
 @sapUiPositiveBG: @sapUiPositiveText; // no positive background defined by UX, but using text color as background may be confusing
