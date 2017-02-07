@@ -6,9 +6,8 @@
 
 <title>QUnit: HeaderContainer - sap.m</title>
 
-<base href="../../../../">
-
 <script src="../shared-config.js"></script>
+<base href="../../../../">
 <script id="sap-ui-bootstrap"
 	src="resources/sap-ui-core.js"
 	data-sap-ui-noConflict="true"
@@ -184,14 +183,16 @@ jQuery.sap.initMobile();
 		}
 	});
 
-	QUnit.test("Test shifting content to the left", function(assert) {
+	QUnit.test("Shifting content to the left", function(assert) {
 		var done = assert.async();
-		assert.equal(jQuery.sap.byId("headerContainer-scrl-prev-button").css("display"), "none", "The content was shifted to the left");
-		this.oHeaderContainer._scroll(200, 500);
 		setTimeout(function() {
-			assert.ok(jQuery.sap.byId("headerContainer-scrl-prev-button").css("visibility") !== "hidden", "Previous Button is visible after scrolling.");
-			done();
-		}, 1000);
+			assert.notOk(jQuery.sap.byId("headerContainer-prev-button-container").is(":visible"), "Previous Button is not visible before scrolling.");
+			this.oHeaderContainer._scroll(100, 0);
+			setTimeout(function() {
+				assert.ok(jQuery.sap.byId("headerContainer-prev-button-container").is(":visible"), "Previous Button is visible after scrolling.");
+				done();
+			}, 1000);
+		}.bind(this), 200);
 	});
 
 	QUnit.test("Test shifting content to the right", function(assert) {
@@ -367,75 +368,75 @@ jQuery.sap.initMobile();
 			assert.equal(this.oHeaderContainer._handleFocusAgain.called, true,  "FocusAgain Event of ItemNavigation is run on Edge.");
 		});
 
+		QUnit.module("General focus issues", {
+			beforeEach : function () {
+				this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
+					content : [
+						new sap.m.Button({text:"test", press: function(){}}),
+						new sap.m.Button({text:"test", press: function(){}}),
+						new sap.m.Button({text:"test", press: function(){}})
+					]
+				});
+				this.oHeaderContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function () {
+				this.oHeaderContainer.destroy();
+				this.oHeaderContainer = null;
+			}
+		});
+
+		QUnit.test("BeforeFocus Event of ItemNavigation", function(assert) {
+			//Arrange
+			//Act
+			//Assert
+			assert.ok(this.oHeaderContainer._oItemNavigation.hasListeners("BeforeFocus"), "Event handler for Event BeforeFocus has been attached.");
+		});
+
+		QUnit.test("Focus border after right button", function(assert) {
+			//Arrange
+			var oEvt = {
+				preventDefault: function(){},
+				target: this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0],
+				getParameter: function(){return { target: "" };}
+			};
+			var oStub = sinon.stub(jQuery.sap.PseudoEvents.sapnext, "fnCheck").returns(true);
+			//Act
+			this.oHeaderContainer._handleBeforeFocus(oEvt);
+			//Assert
+			assert.notEqual(this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0].style["border-color"], "transparent", "Headercontainer border is not transparent.");
+			oStub.restore();
+		});
+
+		QUnit.test("Focus border after left button", function(assert) {
+			//Arrange
+			var oEvt = {
+				preventDefault: function(){},
+				target: this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0],
+				getParameter: function(){return { target: "" };}
+			};
+			var oStub = sinon.stub(jQuery.sap.PseudoEvents.sapprevious, "fnCheck").returns(true);
+			//Act
+			this.oHeaderContainer._handleBeforeFocus(oEvt);
+			//Assert
+			assert.notEqual(this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0].style["border-color"], "transparent", "Headercontainer border is not transparent.");
+			oStub.restore();
+		});
+
+		QUnit.test("Focus border after leaving focus", function(assert) {
+			//Arrange
+			var oEvt = {
+				preventDefault: function(){},
+				target: jQuery("body"),
+				getParameter: function(){return { target: "" };}
+			};
+			//Act
+			this.oHeaderContainer._handleBeforeFocus(oEvt);
+			//Assert
+			assert.equal(this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0].style["border-color"], "transparent", "Headercontainer border is transparent.");
+		});
+
 	} //End of sap.ui.Device.system.desktop
-
-	QUnit.module("General focus issues", {
-		beforeEach : function () {
-			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
-				content : [
-					new sap.m.Button({text:"test", press: function(){}}),
-					new sap.m.Button({text:"test", press: function(){}}),
-					new sap.m.Button({text:"test", press: function(){}})
-				]
-			});
-			this.oHeaderContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach : function () {
-			this.oHeaderContainer.destroy();
-			this.oHeaderContainer = null;
-		}
-	});
-
-	QUnit.test("BeforeFocus Event of ItemNavigation", function(assert) {
-		//Arrange
-		//Act
-		//Assert
-		assert.ok(this.oHeaderContainer._oItemNavigation.hasListeners("BeforeFocus"), "Event handler for Event BeforeFocus has been attached.");
-	});
-
-	QUnit.test("Focus border after right button", function(assert) {
-		//Arrange
-		var oEvt = {
-			preventDefault: function(){},
-			target: this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0],
-			getParameter: function(){return { target: "" };}
-		};
-		var oStub = sinon.stub(jQuery.sap.PseudoEvents.sapnext, "fnCheck").returns(true);
-		//Act
-		this.oHeaderContainer._handleBeforeFocus(oEvt);
-		//Assert
-		assert.notEqual(this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0].style["border-color"], "transparent", "Headercontainer border is not transparent.");
-		oStub.restore();
-	});
-
-	QUnit.test("Focus border after left button", function(assert) {
-		//Arrange
-		var oEvt = {
-			preventDefault: function(){},
-			target: this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0],
-			getParameter: function(){return { target: "" };}
-		};
-		var oStub = sinon.stub(jQuery.sap.PseudoEvents.sapprevious, "fnCheck").returns(true);
-		//Act
-		this.oHeaderContainer._handleBeforeFocus(oEvt);
-		//Assert
-		assert.notEqual(this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0].style["border-color"], "transparent", "Headercontainer border is not transparent.");
-		oStub.restore();
-	});
-
-	QUnit.test("Focus border after leaving focus", function(assert) {
-		//Arrange
-		var oEvt = {
-			preventDefault: function(){},
-			target: jQuery("body"),
-			getParameter: function(){return { target: "" };}
-		};
-		//Act
-		this.oHeaderContainer._handleBeforeFocus(oEvt);
-		//Assert
-		assert.equal(this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0].style["border-color"], "transparent", "Headercontainer border is transparent.");
-	});
 
 	QUnit.module("Padding removed when scrolling to begin and end", {
 		beforeEach : function () {
