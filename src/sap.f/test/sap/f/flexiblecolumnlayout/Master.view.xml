@@ -1,5 +1,5 @@
 <View xmlns="sap.m" displayBlock="true" controllerName="flexiblecolumnlayout.Master" height="100%">
-	<Page id="masterPage" title="Master page" backgroundDesign="Transparent">
+	<Page id="masterPage" title="Master page">
 
 		<Table id="idProductsTable"
 			   inset="false"
