@@ -44,15 +44,12 @@
 									<FeedListItem
 											sender="{Author}"
 											icon="{AuthorPicUrl}"
-											senderPress="onPress"
-											iconPress="onPress"
 											iconDensityAware="false"
 											info="{Type}"
 											timestamp="{Date}"
 											text="{Text}" />
 								</List>
 								<FeedInput
-										post="onPost"
 										showIcon="true"
 										icon="http://upload.wikimedia.org/wikipedia/commons/2/25/George_Washington_as_CIC_of_the_Continental_Army_bust.jpg" />
 							</l:content>
