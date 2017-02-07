@@ -92,6 +92,7 @@ sap.ui.define(["sap/f/FlexibleColumnLayout", "sap/ui/Device"],
 
 		FCLRenderer.renderArrow = function (oRm, oArrow) {
 			if (!Device.system.phone) {
+				oArrow.addStyleClass("sapContrastPlus");
 				oRm.renderControl(oArrow);
 			}
 		};
