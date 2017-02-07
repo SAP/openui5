@@ -49,7 +49,6 @@ sap.ui.require([
 		Then.onTheCreateNewSalesOrderDialog.checkNewNote();
 		Then.onTheCreateNewSalesOrderDialog.checkCurrencyCodeIsValueHelp();
 		When.onTheCreateNewSalesOrderDialog.pressValueHelpOnCurrencyCode();
-		Then.onTheCreateNewSalesOrderDialog.checkInnerValueHelpExists();
 		Then.onTheMainPage.checkNote(0);
 		When.onTheCreateNewSalesOrderDialog.changeNote(sModifiedNote);
 		Then.onTheCreateNewSalesOrderDialog.checkNewNote(sModifiedNote);

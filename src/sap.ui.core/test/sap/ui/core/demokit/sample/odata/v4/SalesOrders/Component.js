@@ -178,7 +178,7 @@ sap.ui.define([
 					"/sap/opu/odata4/IWBEP/V4_SAMPLE/f4/sap/d_pr_type-fv/0001;ps=%27default-%2Aiwbep%2Av4_gw_sample_basic-0001%27;va=%27com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001-ET-PRODUCT~TYPE_CODE%27/$metadata" : {
 						source : "VH_ProductTypeCode.xml"
 					},
-					"/sap/opu/odata4/IWBEP/V4_SAMPLE/f4/sap/d_pr_type-fv/0001;ps=%27default-%2Aiwbep%2Av4_gw_sample_basic-0001%27;va=%27com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001-ET-PRODUCT~TYPE_CODE%27/D_PR_TYPE_FV_SET?$skip=0&$top=20" : {
+					"/sap/opu/odata4/IWBEP/V4_SAMPLE/f4/sap/d_pr_type-fv/0001;ps=%27default-%2Aiwbep%2Av4_gw_sample_basic-0001%27;va=%27com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001-ET-PRODUCT~TYPE_CODE%27/D_PR_TYPE_FV_SET?$skip=0&$top=100" : {
 						source : "VH_ProductTypeCode.json"
 					}
 }, "sap/ui/core/sample/odata/v4/SalesOrders/data",
