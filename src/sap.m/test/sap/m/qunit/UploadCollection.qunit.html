@@ -1142,15 +1142,18 @@
 				}
 			}
 		});
-		this.oUploadCollection.$("drag-drop-area").removeClass("sapMUCDragDropOverlayHide");
+		$DragDropArea.removeClass("sapMUCDragDropOverlayHide");
+		$DragDropArea.addClass("sapMUCDropIndicator");
 		//Act
 		$DragDropArea.trigger(oEvent);
 		//Assert
+		assert.notOk($DragDropArea.hasClass("sapMUCDropIndicator"), "The UploadCollection drop indicator is hidden after drop");
 		assert.ok($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag and drop overlay is hidden after drop");
 		assert.ok(oSpySendFiles.calledOnce, "The API method of FileUploader for UploadCollection was called");
 		assert.ok(oSpyOnChange.calledOnce, "The _onchange event is triggered when file is dropped in UC");
 		assert.ok(oStubFilesAllowed.called, "The check for files from FileUploader has been performed");
 		assert.ok(oStubCheckForFiles.called, "The check for files has been performed");
+		assert.equal(this.oUploadCollection.getAggregation("_dragDropText").getText(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_DRAG_FILE_INDICATOR"), "The drag indicator text is set back after drop");
 	});
 
 	QUnit.test("Dropping more than one file is not allowed when multiple is false", function(assert) {
@@ -1159,7 +1162,7 @@
 		sap.ui.getCore().applyChanges();
 		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		var oSpyOnChange = sinon.spy(this.oUploadCollection, "_onChange");
-		var oSpyMessageBox = sinon.spy(sap.m.MessageBox, "information");
+		var oStubMessageBox = sinon.stub(sap.m.MessageBox, "error");
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
 		var oFileList = [{
 			name: "file1"
@@ -1177,10 +1180,9 @@
 		$DragDropArea.trigger(oEvent);
 		//Assert
 		assert.ok(oSpyOnChange.notCalled, "Files are not dropped in UploadCollection");
-		assert.ok(oSpyMessageBox.calledOnce, "Information Messagebox is displayed");
+		assert.ok(oStubMessageBox.called, "Error Messagebox is displayed");
 		//Restore
-		oSpyMessageBox.restore();
-		sap.ui.getCore().byId(this.oUploadCollection.getId() + "-multiple-false-messagebox").close();
+		oStubMessageBox.restore();
 	});
 
 	QUnit.test("Drag drop icon is hidden when height of drag drop area smaller than 10rem", function(assert) {

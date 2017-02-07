@@ -2408,12 +2408,12 @@
 		{
 		  "id": "sap.m.sample.UploadCollection",
 		  "name": "Upload Collection - Instant Upload",
-		  "description": "This control allows users to upload single or multiple files from their devices (desktop PC, tablet, or smartphone) and attach them to the application immediately (drag and drop). The selection and upload process is completed in one step and is automatically triggered by the UploadCollection control."
+		  "description": "This control allows you to upload single or multiple files from their devices (desktop, tablet or smartphone) and attach them to the application immediately. The selection and upload process is completed in one step and is automatically triggered by the UploadCollection control."
 		},
 		{
 		  "id": "sap.m.sample.UploadCollectionForPendingUpload",
 		  "name": "Upload Collection - Upload Pending",
-		  "description": "You can use this UploadCollection scenario to select single or mutliple files and to add them to the upload list first (drag and drop). In a second step, the application can upload the selected files by calling the upload() function."
+		  "description": "You can use this UploadCollection scenario to select single or mutliple files and to add them to the upload list first. In a second step, the application can upload the selected files by calling the upload() function."
 		},
 		{
 		  "id": "sap.m.sample.UploadCollectionVersioning",
