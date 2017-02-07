@@ -198,3 +198,17 @@
 .sapMMsgPopoverCloseBtn .sapMBtnIcon {
 	color: @sapUiButtonIconColor;
 }
+
+// style links in the description as Link control
+.sapMMsgPopoverDescriptionText a {
+	text-decoration: none;
+	color: @sapUiLink;
+	&:hover {
+		text-decoration: underline;
+		color: @sapUiLinkHover;
+	}
+	&:visited {
+		text-decoration: none;
+		color: @sapUiLinkVisited;
+	}
+}
