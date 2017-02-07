@@ -1916,7 +1916,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					}
 				}
 
-				this._oSuggestionTable.invalidate();
+				oInput._oSuggestionTable.invalidate();
 			} else {
 				// filter standard items
 				var bListItem = (aItems[0] instanceof ListItem ? true : false);
