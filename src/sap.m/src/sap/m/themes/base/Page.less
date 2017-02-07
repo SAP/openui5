@@ -134,11 +134,16 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
   }
 }
 
-.sapMPageFloatingFooter.sapMPageWithFooter {
-    > section {
-    padding-bottom: 4rem;
+.sapMPageFloatingFooter.sapMPageWithFooter > section {
     bottom: 0;
-  }
+
+    &:after {
+        content: "";
+        display: block;
+        height: 0;
+        width: 100%;
+        margin-bottom: 4rem;
+    }
 }
 
 .sapUiSizeCompact .sapMPageWithFooter.sapMPageFloatingFooter > section {
