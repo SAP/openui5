@@ -25,6 +25,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 	 * @param {sap.ui.core.Control} oTable an object representation of the control that should be rendered
 	 */
 	TableRenderer.render = function(rm, oTable) {
+		// Clear cashed header row count
+		delete oTable._iHeaderRowCount;
+
 		// basic table div
 		rm.write("<div");
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROOT");
@@ -997,7 +1000,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 	};
 
 	TableRenderer.renderTableCellControl = function(rm, oTable, oCell, bIsFirstColumn) {
-		if (TableUtils.Grouping.isTreeMode(oTable) && bIsFirstColumn) {
+		if ( bIsFirstColumn && TableUtils.Grouping.isTreeMode(oTable)) {
 			var oRow = oCell.getParent();
 			rm.write("<span class='sapUiTableTreeIcon' tabindex='-1' id='" + oRow.getId() + "-treeicon'");
 			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TREEICON", {row: oRow});

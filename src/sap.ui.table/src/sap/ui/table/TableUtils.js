@@ -291,21 +291,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @private
 		 */
 		getHeaderRowCount : function(oTable) {
-			if (!oTable.getColumnHeaderVisible()) {
-				return 0;
-			}
 
-			var iHeaderRows = 1;
-			var aColumns = oTable.getColumns();
-			for (var i = 0; i < aColumns.length; i++) {
-				if (aColumns[i].shouldRender()) {
-					// only visible columns need to be considered. We don't invoke getVisibleColumns due to
-					// performance considerations. With several dozens of columns, it's quite costy to loop them twice.
-					iHeaderRows = Math.max(iHeaderRows,  aColumns[i].getMultiLabels().length);
+			if (oTable._iHeaderRowCount === undefined) {
+				if (!oTable.getColumnHeaderVisible()) {
+					oTable._iHeaderRowCount = 0;
+				} else {
+					var iHeaderRows = 1;
+					var aColumns = oTable.getColumns();
+					for (var i = 0; i < aColumns.length; i++) {
+						if (aColumns[i].shouldRender()) {
+							// only visible columns need to be considered. We don't invoke getVisibleColumns due to
+							// performance considerations. With several dozens of columns, it's quite costy to loop them twice.
+							iHeaderRows = Math.max(iHeaderRows, aColumns[i].getMultiLabels().length);
+						}
+					}
+					oTable._iHeaderRowCount = iHeaderRows;
 				}
 			}
-
-			return iHeaderRows;
+			return oTable._iHeaderRowCount;
 		},
 
 		/* *
