@@ -2840,6 +2840,11 @@
 				'sap/ui/demokit/js/esprima.js': {
 					amd: true,
 					exports: 'esprima'
+				},
+				'sap/ui/thirdparty/RequestRecorder.js': {
+					amd: true,
+					exports: 'RequestRecorder',
+					deps: ['sap/ui/thirdparty/URI', 'sap/ui/thirdparty/sinon.js']
 				}
 			},
 
