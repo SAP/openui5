@@ -923,7 +923,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	Tokenizer.prototype.setTokens = function(aTokens) {
 		var oldTokens = this.getTokens();
-		this.removeAllTokens(false);
+		this.destroyTokens();
 
 		var i;
 		for (i = 0; i < aTokens.length; i++) {
