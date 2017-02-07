@@ -32,7 +32,8 @@
 				<m:Title
 					text="{i18n>systemSettingsTitle}"
 					titleStyle="H2"
-					textAlign="Center"/>
+					textAlign="Center"
+					class="sapUiSmallMarginTop"/>
 				<m:Text
 					text="{i18n>systemSettingsDescriptionTitle}"
 					textAlign="Center"
@@ -145,6 +146,5 @@
 
 		</sections>
 	</ObjectPageLayout>
-
 
 </mvc:View>
