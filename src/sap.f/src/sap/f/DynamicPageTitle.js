@@ -96,7 +96,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	}
 
 	DynamicPageTitle.prototype.init = function () {
-		this._bShowAdditionalContent = false;
+		this._bShowSnappedContent = false;
+		this._bShowExpandContent = true;
 		this._fnActionSubstituteParentFunction = function () {
 			return this;
 		}.bind(this);
@@ -208,7 +209,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	 * @private
 	 */
 	DynamicPageTitle.prototype._setShowSnapContent = function (bValue) {
-		this._bShowAdditionalContent = bValue;
+		this._bShowSnappedContent = bValue;
 		this.$snappedWrapper.toggleClass("sapUiHidden", !bValue);
 		this.$snappedWrapper.parent().toggleClass("sapFDynamicPageSnapContentVisible", bValue);
 	};
@@ -219,7 +220,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	 * @private
 	 */
 	DynamicPageTitle.prototype._getShowSnapContent = function () {
-		return this._bShowAdditionalContent;
+		return this._bShowSnappedContent;
 	};
 
 	/**
