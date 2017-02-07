@@ -63,8 +63,8 @@ sap.ui.define(["sap/ui/core/format/NumberFormat"], function (NumberFormat) {
 		 * @param {string} status product status
 		 * @return {string} the state text
 		 */
-		statusState: function (status) {
-			return mStatusState[status] || "None";
+		statusState: function (sStatus) {
+			return mStatusState[sStatus] || "None";
 		},
 
 		/**

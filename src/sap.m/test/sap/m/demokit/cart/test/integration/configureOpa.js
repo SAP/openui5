@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/qunit/qunit-coverage",
 	// Page Objects
 	"sap/ui/demo/cart/test/pageobjects/Home",
+	"sap/ui/demo/cart/test/pageobjects/Welcome",
 	"sap/ui/demo/cart/test/pageobjects/Category",
 	"sap/ui/demo/cart/test/pageobjects/Product",
 	"sap/ui/demo/cart/test/pageobjects/Cart",

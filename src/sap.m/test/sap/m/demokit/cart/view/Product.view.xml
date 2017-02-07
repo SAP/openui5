@@ -44,16 +44,16 @@
 						text="{Weight} {WeightUnit}"/>
 					<ObjectAttribute
 						title="{i18n>PRODUCT_MEASURES_ATTRIBUTE_TEXT}"
-						text="{DimensionWidth} {DimensionUnit}, {DimensionDepth} {DimensionUnit}, {DimensionHeight} {DimensionUnit}"/>
+						text="{Width} {Unit}, {DimensionDepth} {Unit}, {DimensionHeight} {Unit}"/>
 				</attributes>
 				<firstStatus>
 					<ObjectStatus
 						text="{
-							path : 'status',
+							path : 'Status',
 							formatter : '.formatter.statusText'
 						}"
 						state="{
-							path : 'status',
+							path : 'Status',
 							formatter : '.formatter.statusState'
 						}" />
 				</firstStatus>
@@ -77,8 +77,8 @@
 			<LightBox id="lightBox">
 				<imageContent>
 					<LightBoxItem
-							imageSrc="{PictureUrl}"
-							title="{Name}"></LightBoxItem>
+						imageSrc="{PictureUrl}"
+						title="{Name}"/>
 				</imageContent>
 			</LightBox>
 		</dependents>
