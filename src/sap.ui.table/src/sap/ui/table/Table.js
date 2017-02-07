@@ -1969,6 +1969,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			if (sReason == ChangeReason.Filter || sReason == ChangeReason.Sort) {
 				sUpdateReason = "skipNoDataUpdate";
 				this.setFirstVisibleRow(0);
+			} else if (sReason == ChangeReason.Refresh) {
+				sUpdateReason = "skipNoDataUpdate";
 			}
 			this._updateBindingContexts(true, iRowsToDisplay, sUpdateReason);
 		}
