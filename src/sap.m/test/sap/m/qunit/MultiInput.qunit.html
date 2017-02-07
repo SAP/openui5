@@ -628,6 +628,22 @@
 		equal(this.multiInput1._$input.parents('.sapMMultiInputBorder').hasClass("sapMMultiInputMultiModeInputContainer"), false, "MultiInput closed and has no class sapMMultiInputMultiModeInputContainer");
 	});
 
+	test("open/close multi line mode using API functions", function() {
+		//arrange
+		this.multiInput1.setTokens([
+			new sap.m.Token({text : "Token 1"}),
+			new sap.m.Token({text : "Token 2"}),
+			new sap.m.Token({text : "Token 3"})
+		]);
+
+		//act
+		this.multiInput1.openMultiLine();
+		this.multiInput1.closeMultiLine();
+
+		//assert
+		equal(this.multiInput1.$().find('.sapMMultiInputIndicator').length, 1, "N More indicator is displayed");
+	});
+
 	test("open multi line mode on phone", function() {
 		//arrange
 		var oSystem = {
