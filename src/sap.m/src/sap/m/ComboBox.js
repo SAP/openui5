@@ -522,14 +522,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 					if (oControl._bDoTypeAhead) {
 
 						if (bSearchBoth && this._oFirstItemTextMatched) {
-							oControl.updateDomValue(this._oFirstItemTextMatched.getText() + " (" + this._oFirstItemTextMatched.getAdditionalText() + ")");
+							oControl.updateDomValue(this._oFirstItemTextMatched.getText());
 							this.setSelection(this._oFirstItemTextMatched);
 						} else if (bSearchBoth) {
-
 							if (bTextMatched) {
-								oControl.updateDomValue(oFirstVisibleItem.getText() + " (" + oFirstVisibleItem.getAdditionalText() + ")");
+								oControl.updateDomValue(oFirstVisibleItem.getText());
 							} else {
-								oControl.updateDomValue(oFirstVisibleItem.getAdditionalText() + " (" + oFirstVisibleItem.getText() + ")");
+								oControl.updateDomValue(oFirstVisibleItem.getAdditionalText());
 							}
 
 							this.setSelection(oFirstVisibleItem);
