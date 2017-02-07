@@ -125,7 +125,7 @@ objectPageHeader Title
 	.sapUxAPObjectPageHeaderIdentifierActions {
 		position: absolute;
 		top: 0;
-		padding-top: 0.75rem;
+		padding-top: 0.25rem;
 		right: 0.25rem;
 		display: inline-block;
 		float: right;
@@ -137,10 +137,6 @@ objectPageHeader Title
 		> *:first-child {
 			margin-left: 0;
 		}
-	}
-
-	.sapUxAPObjectPageHeaderIdentifierActions.sapUxAPObjectPageHeaderIdentifierActionsNoPadding {
-		padding-top: 0rem;
 	}
 
 	.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifierActions {
@@ -172,6 +168,10 @@ html[data-sap-ui-animation="off"] .sapUxAPObjectPageHeaderStickied & .sapUxAPObj
 
 .sapUiMedia-Std-Desktop .sapUxAPObjectPageHeaderIdentifier {
 	padding-left: 3rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageHeaderIdentifier {
+	min-height:2.5rem;
 }
 
 .sapUiMedia-Std-Tablet .sapUxAPObjectPageHeaderIdentifier,

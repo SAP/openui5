@@ -447,19 +447,13 @@ sap.ui.define([
 	ObjectPageHeader.prototype._shiftHeaderTitle = function () {
 
 		var oParent = this.getParent(),
-			oShiftOffsetParams,
-			$actions,
-			iActionsOffset;
+			oShiftOffsetParams;
 
 		if (!oParent || (typeof oParent._calculateShiftOffset !== "function")) {
 			return;
 		}
 
 		oShiftOffsetParams = oParent._calculateShiftOffset();
-		$actions = this.$().find(".sapUxAPObjectPageHeaderIdentifierActions");
-		iActionsOffset = parseInt($actions.css(oShiftOffsetParams.sStyleAttribute), 10);
-
-		$actions.css(oShiftOffsetParams.sStyleAttribute, iActionsOffset + "px");
 
 		if (typeof oParent._shiftHeader === "function") {
 			oParent._shiftHeader(oShiftOffsetParams.sStyleAttribute, oShiftOffsetParams.iMarginalsOffset + "px");
@@ -930,19 +924,6 @@ sap.ui.define([
 		if (oParent && typeof oParent._headerTitleChangeHandler === "function") {
 			oParent._headerTitleChangeHandler();
 		}
-	};
-
-	/**
-	 * check if the ActionBar has padding on top, if not in case of rerendering of the control it has to be removed
-	 * @returns {boolean}
-	 * @private
-	 */
-	ObjectPageHeader.prototype._getActionsPaddingStatus = function () {
-		return this.$("actions").hasClass("sapUxAPObjectPageHeaderIdentifierActionsNoPadding");
-	};
-
-	ObjectPageHeader.prototype._setActionsPaddingStatus = function (bShow) {
-		return this.$("actions").toggleClass("sapUxAPObjectPageHeaderIdentifierActionsNoPadding", bShow);
 	};
 
 	ObjectPageHeader.prototype.exit = function () {

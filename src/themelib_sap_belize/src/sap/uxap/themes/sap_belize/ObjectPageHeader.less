@@ -3,6 +3,11 @@
 /* Belize theme                               */
 /* ========================================== */
 
+
+.sapUiSizeCompact .sapUxAPObjectPageHeaderIdentifierActions {  // desktop requires different padding
+	padding-top: 0.75rem;
+}
+
 .sapUxAPObjectPageHeader {
 	.sapMBar {
 		background-color: @sapUiObjectHeaderBackground;
@@ -32,13 +37,17 @@
 	}
 }
 
+.sapUiSizeCompact .sapUxAPObjectPageHeaderIdentifierContainer /* desktop-specific padding */{
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+
 .sapUxAPObjectPageHeaderIdentifierContainer .sapMBreadcrumbs {
-	margin-top: 0.1875rem;
 	line-height:  1.25rem;
 }
 
-html.sapUiMedia-StdExt-LargeDesktop .sapUxAPObjectPageHeaderIdentifier,
-html .sapUiContainer-ExtraWide .sapUxAPObjectPageHeaderIdentifier {
+html.sapUiMedia-StdExt-LargeDesktop .sapUiSizeCompact .sapUxAPObjectPageHeaderIdentifier,
+html .sapUiSizeCompact .sapUiContainer-ExtraWide .sapUxAPObjectPageHeaderIdentifier {
 	.sapUxAPObjectPageHeaderIdentifierActions {
 		&.sapUxAPObjectPageHeaderIdentifierActionsForce, .sapUxAPObjectPageHeaderStickied & {
 			right: 2.25rem;
