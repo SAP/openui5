@@ -14,6 +14,32 @@
 	jQuery.sap.require("sap.ui.model.json.JSONModel");
 	jQuery.sap.require("sap.m.MessageToast");
 
+	function setDefaultParameters(oData) {
+		var sName, sValue;
+		var oUriParameters = jQuery.sap.getUriParameters();
+
+		for (sName in oData) {
+			sValue = oUriParameters.get(sName);
+			if (sValue !== null && oData.hasOwnProperty(sName)) {
+				switch (typeof oData[sName]) {
+					case "string":
+						break;
+					case "boolean":
+						sValue = (sValue === "true");
+						break;
+					case "number":
+						sValue = Number(sValue);
+					case "object":
+						if (jQuery.isArray(oData[sName])) {
+							sValue = oUriParameters.get(sName, true);
+						}
+						break;
+				}
+				oData[sName] = sValue;
+			}
+		}
+	}
+
 	/* =========================================================== */
 	/* ComboBox for simulation of uploading status                 */
 	/* =========================================================== */
@@ -31,8 +57,10 @@
 				"text": "true"
 			}
 		],
-		"selected": "false"
+		"simulateUploading": "false"
 	};
+
+	setDefaultParameters(mDataCBSR);
 
 	oModelCBSR.setData(mDataCBSR);
 
@@ -48,14 +76,16 @@
 			templateShareable : false
 		},
 		selectedKey: {
-			path: "/selected"
+			path: "/simulateUploading"
 		},
 		change : function(oControlEvent) {
 			bSimulateUploadingStatusSR = oControlEvent.mParameters.selectedItem.getKey();
 		}
 	});
 
-	var oBackendErrorCheckBox = new sap.m.CheckBox();
+	var oBackendErrorCheckBox = new sap.m.CheckBox({
+		"selected": "{/simulateBackendError}"
+	});
 
 	oComboBoxSR.setModel(oModelCBSR);
 
@@ -76,8 +106,10 @@
 			}
 		],
 
-		"selected": "All"
+		"listSeparators": "All"
 	};
+
+	setDefaultParameters(mDataCB);
 
 	oModelCB.setData(mDataCB);
 
@@ -88,7 +120,7 @@
 			templateShareable : false
 		},
 		selectedKey: {
-			path: "/selected"
+			path: "/listSeparators"
 		},
 		change : function(oControlEvent) {
 				var sSelected = oControlEvent.mParameters.selectedItem.getKey();
@@ -104,6 +136,10 @@
 	// create JSON sample data
 	// prefixes 'Dr.' & 'Date' stand for a deprecated property
 	var oData = {
+		"maximumFilenameLength" : 55,
+		"multiple" : true,
+		"sameFilenameAllowed" : false,
+		"simulateBackendError" : false,
 		"items" : [
 			{
 				// item contains deprecated properties and aggregations (attributes & statuses)
@@ -457,6 +493,8 @@
 		]
 	};
 
+	setDefaultParameters(oData);
+
 	// create JSON model instance
 	var oModel = new sap.ui.model.json.JSONModel();
 
@@ -499,8 +537,10 @@
 				"text": "png"
 			}
 		],
-		"selected" : ["jpg", "txt", "ppt", "doc", "xls", "pdf", "png"]
+		"fileTypes" : ["jpg", "txt", "ppt", "doc", "xls", "pdf", "png"]
 	};
+
+	setDefaultParameters(mFileTypesData);
 
 	oFileTypesModel.setData(mFileTypesData);
 
@@ -516,7 +556,7 @@
 			templateShareable : false
 		},
 		selectedKeys: {
-			path: "/selected"
+			path: "/fileTypes"
 		},
 		placeholder : "Choose the valid file types",
 		selectionChange : function(oControlEvent) {
@@ -700,14 +740,14 @@
 	});
 
 	var oUploadCollection = new sap.m.UploadCollection({
-		maximumFilenameLength : 55,
-		multiple : true,
+		maximumFilenameLength : "{/maximumFilenameLength}",
+		multiple : "{/multiple}",
 		items : {
 			path : "/items/",
 			template : oItemTemplate,
 			templateShareable : false
 		},
-		sameFilenameAllowed : false,
+		sameFilenameAllowed : "{/sameFilenameAllowed}",
 		fileType : oFileTypesMultiComboBox.getSelectedKeys(),
 		// events
 		change : fnChange,
