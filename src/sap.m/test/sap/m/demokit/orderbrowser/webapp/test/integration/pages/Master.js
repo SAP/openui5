@@ -117,13 +117,11 @@ sap.ui.define([
 					},
 
 					iSearchFor : function (sSearch){
-						var sFirstObjectCompanyName;
-
 						return this.waitFor({
 							id : "list",
 							viewName : sViewName,
 							matchers: new AggregationFilled({name : "items"}),
-							success : function (oList) {
+							success : function () {
 								return this.iSearchForValue(new EnterText({text: sSearch}), new Press());
 							},
 							errorMessage : "Did not find list items while trying to search for " + sSearch
@@ -239,7 +237,7 @@ sap.ui.define([
 									});
 								return bEveryItemContainsTheTitle;
 							},
-							success : function (oList) {
+							success : function () {
 								Opa5.assert.ok(true, "Every item did contain the title");
 							},
 							errorMessage : "The list did not have items"

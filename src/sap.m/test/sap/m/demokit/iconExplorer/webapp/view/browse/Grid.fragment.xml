@@ -1,0 +1,43 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core">
+	<l:VerticalLayout width="100%">
+		<Panel
+			id="results"
+			visible="{= ${view>/iconFilterCount} !== 0 }"
+			width="auto"
+			class="sapUiSmallMargin sapUiNoContentPadding"
+			content="{
+				path: '/groups/0/icons',
+				length: '50',
+				sorter: {
+					path: 'name',
+					descending: false
+				},
+				events: {
+					change: '.onUpdateFinished'
+				}
+			}">
+			<l:VerticalLayout
+				width="130px"
+				class="sapThemeBaseBG-asBackgroundColor sapUiSmallMarginEnd sapUiSmallMarginBottom gridLayoutCell sapMLIB sapMLIBFocusable sapMFocusable">
+				<core:Icon size="2.5rem" src="sap-icon://{name}" color="Default"/>
+				<Label design="Bold" text="{name}" textAlign="center" class="sapUiTinyMarginTopBottom"/>
+				<ToggleButton
+					icon="sap-icon://favorite"
+					press="onToggleFavorite"
+					pressed="{
+						path: 'name',
+						formatter: '.formatter.isFavorite'
+					}"/>
+			</l:VerticalLayout>
+		</Panel>
+		<Label
+			width="100%"
+			textAlign="Center"
+			class="sapUiSmallMarginTop"
+			text="{view>/overviewNoDataText}"
+			visible="{= ${view>/iconFilterCount} === 0 }"/>
+	</l:VerticalLayout>
+</core:FragmentDefinition>
