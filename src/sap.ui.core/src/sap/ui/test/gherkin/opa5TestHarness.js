@@ -22,7 +22,7 @@ sap.ui.define([
   "use strict";
 
   /**
-   * Dynamically generates Opa5 tests based on a Gherkin feature file and step definitions.
+   * Dynamically generates and executes Opa5 tests based on a Gherkin feature file and step definitions.
    *
    * Logs activity to Opa5, and some debug information to the console with the prefix "[GHERKIN]"
    *
@@ -81,15 +81,16 @@ sap.ui.define([
      * @param {string} args.featurePath - the path to the Gherkin feature file to parse, as a SAPUI5 module path. The
      *                                    ".feature" extension is assumed and should not be included. See
      *                                    {@link jQuery.sap.registerModulePath}
-     * @param {function} [args.steps] - the constructor function of type sap.ui.test.gherkin.StepDefinitions. If this
-     *                                  parameter is ommitted then args.generateMissingSteps must be explicitly set
-     *                                  to true.
+     * @param {function} [args.steps] - the constructor function of type {@link sap.ui.test.gherkin.StepDefinitions}.
+     *                                  If this parameter is ommitted then args.generateMissingSteps must be explicitly
+     *                                  set to true.
      * @param {boolean} [args.generateMissingSteps=false] - When true: if a Gherkin step cannot be matched to a step
      *                                                      definition then it will be assumed that the user wants to
      *                                                      convert the step into an Opa Page Object call.
+     * @public
+     * @throws {Error} if any parameters are invalid
      * @function
      * @static
-     * @public
      */
     test: function(args) {
 
