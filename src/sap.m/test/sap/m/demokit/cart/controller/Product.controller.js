@@ -67,6 +67,11 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * Called, when the add button of a product is pressed.
+		 * Saves the product, the i18n bundle, and the cart model and hands them to the <code>addToCart</code> function
+		 * @public
+		 */
 		onAddButtonPress : function () {
 			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 			var oProduct = this.getView().getBindingContext().getObject();
