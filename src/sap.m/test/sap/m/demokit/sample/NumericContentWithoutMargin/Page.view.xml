@@ -1,4 +1,4 @@
-<core:View xmlns="sap.m" xmlns:core="sap.ui.core">
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
 	<Label text="Numeric content with margins" />
 	<NumericContent value="65.5" scale="MM"
 		valueColor="Neutral" indicator="None" state="Loaded" class="sapUiSmallMargin"
@@ -26,4 +26,4 @@
 	<NumericContent value="65.5" scale="MM"
 		valueColor="Error" indicator="Down" state="Loaded" class="sapUiSmallMargin"
 		withMargin="false" />
-</core:View>
+</mvc:View>
