@@ -39,8 +39,8 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 		// when the URL parameter "coverage-report" is set to true or x
 		if (window["sap-ui-qunit-coverage"] !== "client" && /x|true/i.test(mParams.get("coverage-report"))) {
 			QUnit.done(function(failures, total) {
-				// only when coverage is available and modern browser (not IE8!)
-				if (window._$blanket && document.addEventListener) {
+				// only when coverage is available
+				if (window._$blanket) {
 					// we remove the QUnit object to avoid blanket to automatically
 					// trigger start on QUnit which leads to failures in qunit-reporter-junit
 					var QUnit = window.QUnit;
