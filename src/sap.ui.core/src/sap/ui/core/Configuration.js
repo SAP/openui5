@@ -105,9 +105,6 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // url/to/service
 					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
-
-					// Support tool configuration parameters; xx-support is there not to break some old link
-					"xx-support"            : { type : "string[]",  defaultValue : null },
 					"support"               : { type : "string[]",  defaultValue : null },
 
 					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
@@ -1239,7 +1236,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * @experimental
 		 */
 		getSupportMode : function() {
-			return this["support"] || this["xx-support"];
+			return this.support;
 		},
 
 		_collect : function() {
