@@ -795,7 +795,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			this._selectionOffset =  oSelectionFrameTopOffset - oSliderOffset.top;
 
 			if (!this.getIsCyclic()) {
-				$List = jQuery("#" + this.getId() + "-content");
+				$List = this.$("content");
 				iItemHeightInPx = this._getItemHeightInPx();
 				iListContainerHeight = this.$().height();
 
