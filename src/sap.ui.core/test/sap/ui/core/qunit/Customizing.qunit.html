@@ -185,6 +185,9 @@
 		var oControl = sap.ui.getCore().byId("theComponent---mainView--sub3View--customizableText");
 		strictEqual(oControl.getVisible(), false, "'visible' property should be customizable");
 		strictEqual(oControl.getEnabled(), true, "'enabled' property should not be customizable");
+
+		oControl = sap.ui.getCore().byId("theComponent---mainView--sub2View--btnToHide");
+		strictEqual(oControl.getVisible(), false, "'visible' property should be customizable");
 	});
 
 
