@@ -50,7 +50,7 @@
 									<ObjectAttribute title="Email" text="email@address.com"/>
 								</content>
 							</Panel>
-							<ObjectStatus text="In Stock" state="Error" />
+							<ObjectStatus text="In Stock" state="Success" />
 						</items>
 						</FlexBox>
 					</f:content>
