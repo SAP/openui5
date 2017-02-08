@@ -10,7 +10,7 @@ sap.ui.define([],
 		return {
 			aggregations: {
 				items: {
-					domRef: ":sap-domref > .sapMListUl",
+					domRef: ":sap-domref > .sapMListUl:not(.sapMGrowingList)",
 					actions: {
 						move: "moveControls"
 					}
