@@ -1,5 +1,5 @@
-<core:View controllerName="sap.m.sample.FeedContent.Page"
-	xmlns="sap.m" xmlns:core="sap.ui.core">
+<mvc:View controllerName="sap.m.sample.FeedContent.Page"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
 	<FeedContent
 		contentText="@@notify Great outcome of the Presentation today. The new functionality and the new design was well received."
 		subheader="about 1 minute ago in Computer Market"
@@ -10,4 +10,4 @@
 		subheader="about 1 minute ago in Computer Market" value="999"
 		class="sapUiSmallMargin" press="press">
 	</FeedContent>
-</core:View>
+</mvc:View>
