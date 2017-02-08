@@ -51,6 +51,7 @@ sap.ui.require([
     // dashes, underscores treated like spaces
     strictEqual(dtu.normalization.titleCase("Sold-To Party"), "Sold To Party", "Title Case dashes");
     strictEqual(dtu.normalization.titleCase("Sold_To Party"), "Sold To Party", "Title Case underscores");
+    strictEqual(dtu.normalization.titleCase("hello____world"), "Hello World", "Title Case multi-underscores");
     strictEqual(dtu.normalization.camelCase("Sold-To Party"), "soldToParty", "Camel Case dashes");
     strictEqual(dtu.normalization.camelCase("Sold_To Party"), "soldToParty", "Camel Case underscores");
     strictEqual(dtu.normalization.pascalCase("Sold-To Party"), "SoldToParty", "Pascal Case dashes");
