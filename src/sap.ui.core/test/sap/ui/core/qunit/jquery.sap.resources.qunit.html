@@ -5,16 +5,15 @@
 -->
 <html>
 	<head>
-		<title>Test Page for ResourceBunde class</title>
+		<title>Test Page for ResourceBundle class</title>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
 		<script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
-			data-sap-ui-language="en">
-		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+			data-sap-ui-language="en"></script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
 		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -261,7 +260,7 @@
 						}
 
 						// ask for a bundle with a well known name
-						var oBundle = new jQuery.sap.resources({ url : "dummy.properties", locale: sLocale});
+						var oBundle = jQuery.sap.resources({ url : "dummy.properties", locale: sLocale});
 						// and for a text in it
 						oBundle.getText("DUMMY_KEY");
 
@@ -299,20 +298,60 @@
 			QUnit.module("other");
 
 			QUnit.test("enhancement", function(assert){
-				var oBundle = new jQuery.sap.resources({ url : "testdata/messages.properties" });
+				var oBundle = jQuery.sap.resources({ url : "testdata/messages.properties" });
 				assert.equal(oBundle.getText("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
 				assert.equal(oBundle.getText("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
-				var oCustomBundle = new jQuery.sap.resources({ url : "testdata/messages_custom.properties" });
+				var oCustomBundle = jQuery.sap.resources({ url : "testdata/messages_custom.properties" });
 				oBundle._enhance(oCustomBundle);
 				assert.equal(oBundle.getText("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 				assert.equal(oBundle.getText("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 			});
 
-			QUnit.test("hasText", function(assert) {
-				var oBundle = new jQuery.sap.resources({ url : "testdata/messages.properties" });
-				assert.ok(oBundle.hasText("TEST_TEXT"), "TEST_TEXT is part of the messages.properties");
-				assert.notOk(oBundle.hasText("TEST_TEXT_NOT_AVAILABLE"), "TEST_TEXT_NOT_AVAILABLE is not part of the messages.properties");
+			QUnit.module("hasText", {
+				beforeEach: function() {
+					this.server = sinon.fakeServer.create();
+					this.server.respondWith(/fake(?:_en)?.properties/, function(xhr) {
+						xhr.respond(200, {}, "key=value");
+					});
+					this.server.autoRespond = true;
+				},
+				afterEach: function() {
+					this.server.restore();
+				}
 			});
+			
+			QUnit.test("hasText (sync)", function(assert) {
+				var oBundle = jQuery.sap.resources({url : "fake.properties", locale: 'en'});
+				assert.ok(oBundle.hasText("key"), "hasText should return true for key 'key'");
+				assert.notOk(oBundle.hasText("non_existing_key"), "hasText should return false for key 'non_existing_key'");
+				assert.deepEqual(oBundle.aLocales, ['en'], "only a single locale should have been loaded");
+			});
+
+			QUnit.test("hasText (async)", function(assert) {
+				var oPromise = jQuery.sap.resources({url : "fake.properties", locale: 'en', async: true});
+				return oPromise.then( function(oBundle) {
+					assert.ok(oBundle.hasText("key"), "hasText should return true for key 'key'");
+					assert.notOk(oBundle.hasText("non_existing_key"), "hasText should return false for key 'non_existing_key'");
+					assert.deepEqual(oBundle.aLocales, ['en'], "only a single locale should have been loaded");
+				});
+			});
+
+			QUnit.test("hasText (initial locale does not exist - sync)", function (assert) {
+				var oBundle = jQuery.sap.resources({url : "fake.properties", locale: 'en-US'});
+				assert.ok(oBundle.hasText("key"), "hasText should know about key 'key' even if no properties file for the initial locale exists");
+				assert.notOk(oBundle.hasText("non_existing_key"), "hasText should return false for key 'non_existing_key'");
+				assert.deepEqual(oBundle.aLocales, ['en'], "only a single locale should have been loaded");
+			});
+
+			QUnit.test("hasText (initial locale does not exist - async)", function (assert) {
+				var oPromise = jQuery.sap.resources({url : "fake.properties", locale: 'en-US', async: true});
+				return oPromise.then( function(oBundle) {
+					assert.ok(oBundle.hasText("key"), "hasText should return true for key 'key'");
+					assert.notOk(oBundle.hasText("non_existing_key"), "hasText should return false for key 'non_existing_key'");
+					assert.deepEqual(oBundle.aLocales, ['en'], "only a single locale should have been loaded");
+				});
+			});
+
 
 		</script>
 	</head>
