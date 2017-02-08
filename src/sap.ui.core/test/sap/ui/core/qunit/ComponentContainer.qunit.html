@@ -108,6 +108,36 @@
 				assert.strictEqual(oOwnerComponent.getId(), Component.getOwnerComponentFor(oComponentContainer.getComponentInstance()).getId(), "ComponentContainers Component created by owner Component");
 			});
 
+			QUnit.test("Should prefix Component ID when a ID preprocessor is defined", function (assert) {
+
+				// simulates the usage in a declarative view
+				var oComponentContainerNotPrefixed = new ComponentContainer({
+					name: "samples.components.button",
+					settings: { id: "componentId" },
+					lifecycle: ComponentLifecycle.Container
+				});
+				var oComponentContainerPrefixed = new ComponentContainer({
+					name: "samples.components.button",
+					settings: { id: "componentId" },
+					lifecycle: ComponentLifecycle.Container,
+					autoPrefixId: true
+				});
+
+				// simulate onBeforeRendering to force to create the component
+				oComponentContainerNotPrefixed.onBeforeRendering();
+				oComponentContainerPrefixed.onBeforeRendering();
+
+				var oComponentNotPrefixed = oComponentContainerNotPrefixed.getComponentInstance();
+				var oComponentPrefixed = oComponentContainerPrefixed.getComponentInstance();
+
+				assert.equal(oComponentNotPrefixed.getId(), "componentId", "Component ID is not prefixed!");
+				assert.equal(oComponentPrefixed.getId(), oComponentContainerPrefixed.getId() + "-componentId", "Component ID is prefixed!");
+
+				oComponentContainerNotPrefixed.destroy();
+				oComponentContainerPrefixed.destroy();
+
+			});
+
 			QUnit.test("Component Lifecycle: Legacy should destroy Component onExit but not when replaced", function (assert) {
 				var oComponentContainer = new ComponentContainer({
 					name: "samples.components.button"

@@ -75,7 +75,14 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 			 * takes care to destroy the Component once the ComponentContainer is destroyed
 			 * but not when a new Component is associated.
 			 */
-			lifecycle : {type : "sap.ui.core.ComponentLifecycle", defaultValue : ComponentLifecycle.Legacy}
+			lifecycle : {type : "sap.ui.core.ComponentLifecycle", defaultValue : ComponentLifecycle.Legacy},
+
+			/**
+			 * Flag, whether to autoprefix the id of the nested Component or not. If
+			 * this property is set to true the ID of the Component will be prefixed
+			 * with the ID of the ComponentContainer followed by a single dash.
+			 */
+			autoPrefixId : {type : "boolean", defaultValue: false}
 
 		},
 		associations : {
@@ -144,6 +151,17 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 		setContainerComponent(this, vComponent, bSuppressInvalidate,
 			this.getLifecycle() === ComponentLifecycle.Container);
 		return this;
+	};
+
+
+	/*
+	 * support the ID prefixing of the component
+	 */
+	ComponentContainer.prototype.applySettings = function(mSettings, oScope) {
+		if (mSettings && mSettings.autoPrefixId === true && mSettings.settings && mSettings.settings.id) {
+			mSettings.settings.id = this.getId() + "-" + mSettings.settings.id;
+		}
+		Control.prototype.applySettings.apply(this, arguments);
 	};
 
 
