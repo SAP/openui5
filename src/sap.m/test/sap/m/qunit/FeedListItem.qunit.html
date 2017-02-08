@@ -12,6 +12,8 @@
 
 		<!-- QUnit libraries -->
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
@@ -286,6 +288,15 @@
 				assert.ok(oFeedList.getItems()[8].$().find('*').hasClass("sapUiSelectable"), "Item should have class sapUiSelectable");
 			});
 
+			QUnit.test("The convertLinksToAnchorTags property is set by default to sap.m.LinkConversion.None", function(assert) {
+				assert.equal(oFeedList.getItems()[2].getConvertLinksToAnchorTags(), sap.m.LinkConversion.None, "The default value is sap.m.LinkConversion.None");
+			});
+
+			QUnit.test("The convertedLinksDefaultTarget property is set by default to _blank", function(assert) {
+				assert.equal(oFeedList.getItems()[2].getConvertedLinksDefaultTarget(), "_blank", "The default value is _blank");
+			});
+
+
 			QUnit.test("Sender inactive, Icon inactive", function(assert) {
 				assert.ok(oFeedList.getItems()[2]._oLinkControl.$().hasClass("sapMLnkDsbl"), " Sender Link inactive");
 			});
@@ -335,6 +346,66 @@
 				assert.ok(oFeedList.getItems()[10]._sShortText.length === 20, "the length of collapsed text without spaces equals to the property maxCharacters ");
 			});
 
+			QUnit.module("Check property combination", {
+				beforeEach : function() {
+					this.oFeedListItem = new sap.m.FeedListItem({
+						sender : null,
+						text : "Some text which is displayed.",
+						timestamp : "March 03 2013",
+						iconActive : true,
+						iconDensityAware: true,
+						showIcon : true,
+						senderActive : false
+					}).placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function () {
+					this.oFeedListItem.destroy();
+				}
+			});
+
+			QUnit.test("The links in the text are recognised", function(assert) {
+				//Arrange
+				var sOriginal = "sample text: www.sap.com to be surrounded by tags",
+					sTransformed = "sample text: <a href=\"//www.sap.com\" target=\"_self\" class=\"sapMLink\">www.sap.com</a> to be surrounded by tags",
+					sLinkTarget = "_self",
+					oSpy = sinon.spy(sap.m.FormattedText.prototype, "onAfterRendering");
+
+				this.oFeedListItem.setText(sOriginal);
+				this.oFeedListItem.setConvertLinksToAnchorTags(sap.m.LinkConversion.All);
+				this.oFeedListItem.setConvertedLinksDefaultTarget(sLinkTarget);
+				//Act
+				sap.ui.getCore().applyChanges();
+				//Assert
+				assert.equal(this.oFeedListItem.getAggregation("_text").getConvertLinksToAnchorTags(), sap.m.LinkConversion.All, "The convertLinksToAnchorTags property has been forwarded to sap.m.FormattedText");
+				assert.equal(this.oFeedListItem.getAggregation("_text").getConvertedLinksDefaultTarget(), sLinkTarget, "The ConvertedLinksDefaultTarget property has been forwarded to sap.m.FormattedText");
+				assert.equal(this.oFeedListItem._sFullText, sTransformed, "The anchor text has been added correctly");
+				assert.ok(oSpy.calledOnce, "The function onAfterRendering of sap.m.FormattedText has been called as part of the rendering cycle of FeedListItem");
+				//Restore
+				oSpy.restore();
+			});
+
+			QUnit.test("Correct setter is used if convertLinksToAnchorTags is set to sap.m.LinkConversion.None", function(assert) {
+				//Arrange
+				var oSpy = sinon.spy(this.oFeedListItem.getAggregation("_text"), "setHtmlText");
+				this.oFeedListItem.onBeforeRendering();
+				//Assert
+				assert.ok(oSpy.calledOnce, "setHtmlText has been used as a setter");
+				//Restore
+				oSpy.restore();
+			});
+
+			QUnit.test("Correct setter is used if convertLinksToAnchorTags is set to sap.m.LinkConversion.All", function(assert) {
+				//Arrange
+				var oSpy = sinon.spy(this.oFeedListItem.getAggregation("_text"), "setHtmlText");
+				this.oFeedListItem.setConvertLinksToAnchorTags(sap.m.LinkConversion.All);
+				//Act
+				this.oFeedListItem.onBeforeRendering();
+				//Assert
+				assert.ok(!oSpy.called, "setHtmlText has not been called");
+				//Restore
+				oSpy.restore();
+			});
 			QUnit.module("Events");
 
 			QUnit.test("Press Icon", function(assert) {
