@@ -1,5 +1,5 @@
-<core:View controllerName="sap.m.sample.GenericTileStates.Page"
-	xmlns="sap.m" xmlns:core="sap.ui.core">
+<mvc:View controllerName="sap.m.sample.GenericTileStates.Page"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Loaded - no press event"
 		subheader="Subheader">
 		<tileContent>
@@ -122,4 +122,4 @@
 			</TileContent>
 		</tileContent>
 	</GenericTile>
-	</core:View>
+</mvc:View>
