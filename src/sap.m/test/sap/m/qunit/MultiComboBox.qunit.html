@@ -3434,6 +3434,33 @@
 		this.clock.reset();
 	});
 
+	QUnit.test("setSelection should trigger Tokenizer's scrollToEnd", function (assert) {
+
+		var oFakeEvent = new sap.ui.base.Event;
+		var oItem = new sap.ui.core.Item();
+		var oMultiComboBox = new sap.m.MultiComboBox().placeAt("MultiComboBox-content");
+
+		var oSpy = this.spy(oMultiComboBox._oTokenizer, "scrollToEnd");
+		var oStubSetSelection = sinon.stub(sap.ui.base.Event.prototype, "getParameters");
+
+		sap.ui.getCore().applyChanges();
+
+		oStubSetSelection.withArgs("id").returns(oItem.getId());
+		oStubSetSelection.withArgs("item").returns(oItem);
+		oStubSetSelection.withArgs("listItemUpdated").returns(true);
+
+		oMultiComboBox.setSelection(oFakeEvent);
+
+		assert.ok(oSpy.called, "Tokenizer's scrollToEnd should be called when a new token is added");
+
+		// cleanup
+		oSpy.restore();
+		oFakeEvent.destroy();
+		oStubSetSelection.restore();
+		oMultiComboBox.destroy();
+
+	});
+
 	test("Clicking on token should not throw an exception", function() {
 		// system under test
 		var oItem = new sap.ui.core.Item({
@@ -4596,6 +4623,34 @@
 
 		oMultiComboBox.destroy();
 		oButton.destroy();
+	});
+
+	QUnit.test("Tokenizer should scroll to end when focus is outside MCB", function() {
+
+		var oFakeEvent = sap.ui.base.Event,
+			oMultiComboBox = new sap.m.MultiComboBox({
+				items: [
+					new sap.ui.core.Item({
+						text: "Example"
+					})
+				]
+			}).placeAt("MultiComboBox-content");
+
+		var oSpy = sinon.spy(oMultiComboBox._oTokenizer, "scrollToEnd");
+		oHandleFocusleaveStub = sinon.stub(sap.ui.base.Event.prototype, "getParameter");
+
+		sap.ui.getCore().applyChanges();
+
+		oHandleFocusleaveStub.withArgs("relatedControlId").returns(null);
+		oMultiComboBox.onsapfocusleave(oFakeEvent);
+
+		// assert
+		ok(oSpy.called, "Tokenizer's scrollToEnd should be called when focus is outside MCB");
+
+		// cleanup
+		oSpy.restore();
+		oHandleFocusleaveStub.restore();
+		oMultiComboBox.destroy();
 	});
 
 	QUnit.test('Endless focus loop should not be triggered when Dialog is opened on mobile', function(assert) {
