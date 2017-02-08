@@ -420,12 +420,11 @@ sap.ui.define([
 				// error callback
 				that.oModel.reportError("POST on '" + sCreatePath
 					+ "' failed; will be repeated automatically", sClassName, oError);
+			}).then(function () {
+				that.iMaxLength += 1;
 			}));
 
 		this.aContexts[-1] = oContext;
-		oContext.created().then(function () {
-			that.iMaxLength += 1;
-		});
 		this._fireChange({reason : ChangeReason.Add});
 
 		return oContext;
