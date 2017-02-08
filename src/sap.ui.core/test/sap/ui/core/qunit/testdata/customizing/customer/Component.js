@@ -90,6 +90,11 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 				},
 
 				"sap.ui.viewModifications": {
+					"testdata.customizing.sap.Sub2": {
+						"btnToHide": {
+							"visible": false
+						}
+					},
 					"testdata.customizing.sap.Sub3": {
 						"customizableText": {
 							"visible": false,
