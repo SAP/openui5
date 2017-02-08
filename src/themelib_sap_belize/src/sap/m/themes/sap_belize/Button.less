@@ -45,11 +45,12 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
 	border:           1px dashed @sapUiContentFocusColor;
 }
 
+html.sap-desktop .sapMFooter-CTX .sapMBtn:focus .sapMBtnFocusDiv,
 .sapMBtn:focus > .sapMBtnActive > .sapMBtnFocusDiv {
 	border-color:    @sapUiContentContrastFocusColor;
 }
 
-.sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv {
+html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv {
 	border-color:    @_sap_m_Button_EmphasizedFocusColor;
 }
 
@@ -70,19 +71,17 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
 	border-color:     transparent;
 }
 
-//html.sap-desktop .sapMHeader-CTX .sapMBtnInner.sapMBtnAccept,
 html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnAccept {
 	border-color: @sapUiButtonAcceptBorderColor;
 }
 
-//html.sap-desktop .sapMHeader-CTX .sapMBtnInner.sapMBtnReject,
 html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 	border-color: @sapUiButtonRejectBorderColor;
 }
 
 /* Background and text colors for different states */
 .sapMTB-Info-CTX > .sapUiIcon:focus {
-	outline: 1px dotted @sapUiContentContrastFocusColor
+	outline: 1px dotted @sapUiContentContrastFocusColor;
 }
 
 .sapMBar-CTX :not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnTransparent.sapMBtnActive > .sapMBtnContent {
