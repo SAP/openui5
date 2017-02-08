@@ -59,8 +59,7 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 			oRm.addClass("sapMPageBusyCoversAll");
 		}
 
-		var theme = sap.ui.getCore().getConfiguration().getTheme();
-		if (oPage.getFloatingFooter() && oPage.getShowFooter() && theme !== 'sap_hcb') {
+		if (oPage.getFloatingFooter() && oPage.getShowFooter()) {
 			oRm.addClass("sapMPageFloatingFooter");
 		}
 
