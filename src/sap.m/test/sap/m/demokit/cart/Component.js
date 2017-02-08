@@ -21,9 +21,7 @@ sap.ui.define([
 			//create and set cart model
 			var oCartModel = new LocalStorageModel("SHOPPING_CART", {
 				cartEntries: {},
-				savedForLaterEntries: {},
-				showEditButton: false,
-				showProceedButton: false
+				savedForLaterEntries: {}
 			});
 			this.setModel(oCartModel, "cartProducts");
 

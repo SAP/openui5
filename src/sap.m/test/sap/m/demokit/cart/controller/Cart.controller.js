@@ -71,7 +71,8 @@ sap.ui.define([
 			var oData = oCfgModel.getData();
 			var bDataNoSetYet = !oData.hasOwnProperty("inDelete");
 			var bInDelete = (bDataNoSetYet) ? true : oData.inDelete;
-			var oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
+
+			var oBundle = this.getResourceBundle();
 			oCfgModel.setData({
 				inDelete: !bInDelete,
 				notInDelete: bInDelete,
@@ -95,9 +96,6 @@ sap.ui.define([
 
 		/**
 		 * Called when the "save for later" link of a product in the cart is pressed.
-		 * Calls the private function <code>_changeList</code>, like the <code>onAddBackToBasket</code> function
-		 * and hands over the binding context of the product item.
-		 * If the cart is now empty, the "Proceed" button will be set to invisible.
 		 * @public
 		 * @param {sap.ui.base.Event} oEvent Event object
 		 */
@@ -105,16 +103,10 @@ sap.ui.define([
 			var oBindingContext = oEvent.getSource().getBindingContext(sCartModelName);
 			var oModel = oBindingContext.getModel();
 			this._changeList(sSavedForLaterEntries, sCartEntries, oBindingContext);
-
-			if (Object.keys(oModel.getData().cartEntries).length === 0) {
-				oModel.setProperty("/showProceedButton", false);
-			}
 		},
 
 		/**
 		 * Called when the "Add back to basket" link of a product in the saved for later list is pressed.
-		 * Calls the private function <code>_changeList</code>, like the <code>onSaveForLater</code> function and hands over the binding context
-		 * of the product item.
 		 * @public
 		 * @param {sap.ui.base.Event} oEvent Event object
 		 */
@@ -122,14 +114,10 @@ sap.ui.define([
 			var oBindingContext = oEvent.getSource().getBindingContext(sCartModelName);
 
 			this._changeList(sCartEntries, sSavedForLaterEntries, oBindingContext);
-
-			oBindingContext.getModel().setProperty("/showProceedButton", true);
 		},
 
 		/**
-		 * Called from both <code>onSaveForLater</code> and <code>onAddBackToBasket</code> functions.
-		 * Updates the <code>cart</code> model and the <code>saveForLater</code> model when product items are moved between them.
-		 * The product is added to the first list and then removed from the other list.
+		 * Moves a product from one list to another.
 		 * @private
 		 * @param {string} sListToAddItem Name of list, where item should be moved to
 		 * @param {string} sListToDeleteItem Name of list, where item should be removed from
@@ -209,10 +197,6 @@ sap.ui.define([
 
 						// update model
 						oCartModel.setProperty("/" + sCollection, $.extend({}, oCollectionEntries));
-						if (Object.keys(oModel.getData().cartEntries).length === 0) {
-							oModel.setProperty("/showProceedButton", false);
-							oModel.setProperty("/showEditButton", false);
-						}
 					}
 				}
 			);
@@ -229,7 +213,7 @@ sap.ui.define([
 			if (!this._orderDialog) {
 
 				// create busy dialog
-				var oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
+				var oBundle = this.getResourceBundle();
 				this._orderBusyDialog = new sap.m.BusyDialog({
 					title: oBundle.getText("CART_BUSY_DIALOG_TITLE"),
 					text: oBundle.getText("CART_BUSY_DIALOG_TEXT"),
@@ -290,14 +274,11 @@ sap.ui.define([
 		 */
 		_resetCart: function () {
 			var oCartModel = this.getView().getModel(sCartModelName);
-			var oCartModelData = oCartModel.getData();
 
 			//all relevant cart properties are set back to default. Content is deleted.
-			oCartModelData.cartEntries = {};
-			oCartModelData.totalPrice = "0";
-			oCartModelData.showEditButton = false;
-			oCartModelData.showProceedButton = false;
-			oCartModel.setData(oCartModelData);
+			oCartModel.setProperty("/cartEntries", {});
+			oCartModel.setProperty("/savedForLaterEntries", {});
+			oCartModel.setProperty("/totalPrice", "0");
 
 			//navigates back to home screen
 			this._router.navTo("home");
