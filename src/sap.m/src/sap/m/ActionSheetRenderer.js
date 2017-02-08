@@ -25,6 +25,7 @@ sap.ui.define(['jquery.sap.global'],
 			aInvisibleTexts = oControl.getAggregation("_invisibleAriaTexts"),
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m'),
 			iButtonsCount = aActionButtons.length,
+			bAccessibilityOn = sap.ui.getCore().getConfiguration().getAccessibility(),
 			iVisibleButtonCount = aActionButtons.filter(function (oButton) { return oButton.getVisible(); }).length,
 			i, bMixedButtons, oButton, iVisibleButtonTempCount = 1;
 
@@ -57,12 +58,11 @@ sap.ui.define(['jquery.sap.global'],
 		for (i = 0 ; i < iButtonsCount ; i++) {
 			oButton = aActionButtons[i];
 			oRm.renderControl(aActionButtons[i].addStyleClass("sapMActionSheetButton"));
-			if (oButton.getVisible() && sap.ui.getCore().getConfiguration().getAccessibility()) {
+
+			if (bAccessibilityOn && oButton.getVisible()) {
 				aInvisibleTexts[i].setText(oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [iVisibleButtonTempCount, iVisibleButtonCount]));
 				iVisibleButtonTempCount++;
 				oRm.renderControl(aInvisibleTexts[i]);
-			} else {
-				aInvisibleTexts[i].setText("");
 			}
 		}
 

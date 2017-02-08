@@ -558,7 +558,6 @@
 						aInvisibleTexts = oActionSheet.getAggregation("_invisibleAriaTexts");
 
 						strictEqual(aInvisibleTexts[0].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 1]), "Text should be the index of the button");
-						strictEqual(aInvisibleTexts[1].getText(), "", "There is no Aria information for not visible buttons");
 						start();
 						oActionSheet.close();
 						oButton.destroy();
@@ -567,7 +566,6 @@
 
 				}, 500);
 			});
-
 			asyncTest('Removing a button and adding it again should not add wrong labels', function() {
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
