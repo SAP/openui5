@@ -30,8 +30,12 @@
 	cursor: default;
 }
 
-.sapUiTfStd > .sapUiTfComboIcon:hover,
-.sapUiTfStd.sapUiTfFoc > .sapUiTfComboIcon{
+.sapUiTfStd > .sapUiTfComboIcon:hover {
 	border-left: 1px solid @sapUiFieldHoverBorderColor;
-	background-color: @sapUiFieldHoverHelpBackground;
+	background-color: @sapUiButtonLiteHoverBackground;
+}
+
+.sapUiTfStd.sapUiTfFoc > .sapUiTfComboIcon {
+	border-left: 1px solid @sapUiFieldHoverBorderColor;
+	background-color: @sapUiToggleButtonPressedBackground;
 }
