@@ -4701,7 +4701,7 @@
 					new sap.ui.core.Item({key: "Item2", text: "Item2"}),
 					new sap.ui.core.Item({key: "Item3", text: "Item3"})
 				]
-			})
+			});
 			this.oTokenizer = this.oMultiComboBox._oTokenizer;
 			this.oMultiComboBox.placeAt("MultiComboBox-content");
 			sap.ui.getCore().applyChanges();
@@ -4746,6 +4746,19 @@
 		this.clock.tick(100);
 
 		assert.strictEqual(this.oFirstItem.getText(), this.oMultiComboBox.getValue(), "Item's text should be the same as input's value");
+	});
+
+	QUnit.test("onsapenter should not trigger invalidation if value is empty", function(assert) {
+		// arrange
+		var oFakeEvent = {
+			setMarked: function() {}
+		}, oSelectItemStub = this.stub(this.oMultiComboBox, "_selectItemByKey");
+
+		// act
+		this.oMultiComboBox.onsapenter(oFakeEvent);
+
+		// assert
+		assert.notOk(oSelectItemStub.called, "selection should not be called");
 	});
 
 	QUnit.module("Mobile mode (dialog)");
