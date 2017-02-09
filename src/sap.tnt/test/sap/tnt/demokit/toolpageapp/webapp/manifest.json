@@ -111,7 +111,7 @@
 			  "parent": "appSettings"
 		  },
 		"statistics": {
-		  "viewName": "Statistic"
+		  "viewName": "Statistics"
 		}
 	  }
 	}

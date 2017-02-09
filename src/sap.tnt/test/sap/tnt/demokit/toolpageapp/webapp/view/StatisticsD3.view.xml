@@ -1,0 +1,114 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:tool="sap.ui.demo.toolpageapp.control">
+
+	<l:BlockLayout
+		id="statisticsBlockLayout"
+		busy="false"
+		background="Dashboard">
+		<l:BlockLayoutRow
+			rowColorSet="ColorSet2">
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>orderStatusTitle}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>orderStatusDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<tool:D3Chart type="Comparison"/>
+			</l:BlockLayoutCell>
+
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>customerRatingTitle}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>customerRatingDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<tool:D3Chart type="Column"/>
+			</l:BlockLayoutCell>
+
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>salesTrendTitle}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>salesTrendDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<tool:D3Chart type="Area"/>
+			</l:BlockLayoutCell>
+
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>canceledOrdersTitle}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>canceledOrdersDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<tool:D3Chart type="Radial"/>
+			</l:BlockLayoutCell>
+
+		</l:BlockLayoutRow>
+
+		<l:BlockLayoutRow
+			rowColorSet="ColorSet1">
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>netPromoterTitle}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>netPromoterDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<tool:D3Chart type="Bullet"/>
+			</l:BlockLayoutCell>
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>targetRevenueTitle}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>revenueDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<tool:D3Chart type="Harvey"/>
+			</l:BlockLayoutCell>
+
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>goalProgressTitle}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>goalProgressDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<tool:D3Chart type="Radial"/>
+			</l:BlockLayoutCell>
+
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>profitMarginTitle}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>profitMarginDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<tool:D3Chart type="Delta"/>
+			</l:BlockLayoutCell>
+
+		</l:BlockLayoutRow>
+	</l:BlockLayout>
+</mvc:View>
