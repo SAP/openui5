@@ -1,6 +1,7 @@
 <html>
 	<head>
 		<title>TestSuite for sap.ui.core: GTP testcase CORE/OPA</title>
+		<script src="../../../../../../resources/sap/ui/Device.js"></script>
 		<script src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
 		<script src="../../../../../../resources/sap-ui-core.js"></script>
 
@@ -33,7 +34,15 @@
 
 			// Actions
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/actions/Action.qunit.html");
-			addTestPage("/test-resources/sap/ui/core/qunit/opa/actions/Press.qunit.html");
+
+			if (sap.ui.Device.browser.msie) {
+				// The noglobals check is disabled because IE11 creates false negative from the blindlayer
+				// which is kept in the DOM as global variable
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/opa/actions/Press.qunit.html?sap-ui-animation=false");
+			} else {
+				addTestPage("/test-resources/sap/ui/core/qunit/opa/actions/Press.qunit.html");
+			}
+
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/actions/EnterText.qunit.html");
 
 			// OPA Launcher
