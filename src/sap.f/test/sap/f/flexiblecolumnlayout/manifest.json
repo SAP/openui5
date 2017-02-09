@@ -12,6 +12,10 @@
 			}
 		},
 
+		"config": {
+			"fullWidth": true
+		},
+
 		"routing": {
 			"config": {
 				"routerClass": "sap.f.routing.Router",
