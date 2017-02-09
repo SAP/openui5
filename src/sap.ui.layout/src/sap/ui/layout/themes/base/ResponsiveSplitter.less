@@ -1,11 +1,14 @@
 .sapUiResponsiveSplitter {
 	width: 100%;
 	height: 100%;
+	overflow: hidden;
 }
 
 .sapUiResponsiveSplitterPage {
 	width: 100%;
 	height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 
 .sapUiRSVisiblePaginator {
@@ -13,6 +16,7 @@
 		width: 100%;
 		display: flex;
 		justify-content: center;
+		box-sizing: border-box;
 		outline: none;
 		height: 2.5rem;
 		background-color: @sapUiExtraLightBG;
