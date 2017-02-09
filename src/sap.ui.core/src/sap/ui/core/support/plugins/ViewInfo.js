@@ -61,7 +61,7 @@ sap.ui.define([
 			}
 
 			if (typeof this.supportInfo !== "function") {
-				this.$().get(0).innerHTML = "View Info Support Tool is only available in Support Mode. Turn it on by adding 'sap-ui-xx-support=true' to the url or your application.";
+				this.$().get(0).innerHTML = "View Info Support Tool is only available in Support Mode. Turn it on by adding 'sap-ui-support=true' to the url or your application.";
 				return;
 			}
 			try {
