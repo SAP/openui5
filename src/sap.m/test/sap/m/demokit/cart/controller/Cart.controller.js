@@ -86,6 +86,14 @@ sap.ui.define([
 			this._showProduct(oEvent.getParameter("listItem"));
 		},
 
+		/**
+		 * Called when the "save for later" link of a product in the cart is pressed.
+		 * Calls the private function <code>_changeList</code>, like the <code>onAddBackToBasket</code> function
+		 * and hands over the binding context of the product item.
+		 * If the cart is now empty, the "Proceed" button will be set to invisible.
+		 * @public
+		 * @param {sap.ui.base.Event} oEvent Event object
+		 */
 		onSaveForLater: function (oEvent) {
 			var oBindingContext = oEvent.getSource().getBindingContext(sCartModelName);
 			var oModel = oBindingContext.getModel();
@@ -96,6 +104,13 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * Called when the "Add back to basket" link of a product in the saved for later list is pressed.
+		 * Calls the private function <code>_changeList</code>, like the <code>onSaveForLater</code> function and hands over the binding context
+		 * of the product item.
+		 * @public
+		 * @param {sap.ui.base.Event} oEvent Event object
+		 */
 		onAddBackToBasket: function (oEvent) {
 			var oBindingContext = oEvent.getSource().getBindingContext(sCartModelName);
 
@@ -104,6 +119,15 @@ sap.ui.define([
 			oBindingContext.getModel().setProperty("/showProceedButton", true);
 		},
 
+		/**
+		 * Called from both <code>onSaveForLater</code> and <code>onAddBackToBasket</code> functions.
+		 * Updates the <code>cart</code> model and the <code>saveForLater</code> model when product items are moved between them.
+		 * The product is added to the first list and then removed from the other list.
+		 * @private
+		 * @param {string} sListToAddItem Name of list, where item should be moved to
+		 * @param {string} sListToDeleteItem Name of list, where item should be removed from
+		 * @param {Object} oBindingContext Binding context of product
+		 */
 		_changeList: function (sListToAddItem, sListToDeleteItem, oBindingContext) {
 			var oCartModel = oBindingContext.getModel();
 			var oProduct = oBindingContext.getObject();
@@ -149,12 +173,20 @@ sap.ui.define([
 			this._deleteProduct(sSavedForLaterEntries, oEvent)
 		},
 
+		/**
+		 * Helper function for the deletion of items from <code>cart</code> or <code>savedForLater</code> list.
+		 * If the delete button is pressed, a message dialog will open.
+		 * @private
+		 * @param {string} sCollection
+		 * @param {sap.ui.base.Event} oEvent Event object
+		 */
 		_deleteProduct : function (sCollection, oEvent) {
 			var oBindingContext = oEvent.getParameter("listItem").getBindingContext(sCartModelName);
 			var sEntryId = oBindingContext.getObject().ProductId;
 			var oModel = oBindingContext.getModel();
+			var oBundle = this.getResourceBundle();
+
 			// show confirmation dialog
-			var oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 			MessageBox.show(
 				oBundle.getText("CART_DELETE_DIALOG_MSG"), {
 					title: oBundle.getText("CART_DELETE_DIALOG_TITLE"),
@@ -167,6 +199,7 @@ sap.ui.define([
 						var oCollectionEntries = $.extend({}, oCartModel.getData()[sCollection]);
 
 						delete oCollectionEntries[sEntryId];
+
 						// update model
 						oCartModel.setProperty("/" + sCollection, $.extend({}, oCollectionEntries));
 						if (Object.keys(oModel.getData().cartEntries).length === 0) {
@@ -178,6 +211,12 @@ sap.ui.define([
 			);
 		},
 
+		/**
+		 * Called when the proceed button in the cart is pressed.
+		 * An order dialog will open.
+		 * @public
+		 * @param {sap.ui.base.Event} oEvent Event object
+		 */
 		onProceedButtonPress: function (oEvent) {
 			var that = this;
 			if (!this._orderDialog) {
@@ -208,6 +247,7 @@ sap.ui.define([
 					content: [
 						oInputView
 					],
+					// Accept button
 					leftButton: new Button({
 						text: oBundle.getText("CART_ORDER_DIALOG_CONFIRM_ACTION"),
 						type: "Accept",
@@ -221,6 +261,7 @@ sap.ui.define([
 							}
 						}
 					}),
+					// Cancel button
 					rightButton: new Button({
 						text: oBundle.getText("DIALOG_CANCEL_ACTION"),
 						press: function () {
@@ -236,15 +277,22 @@ sap.ui.define([
 			this._orderDialog.open();
 		},
 
+		/**
+		 * Helper function to reset the cart model.
+		 * @private
+		 */
 		_resetCart: function () {
-			//delete cart content
-			var oCartProductsModel = this.getView().getModel(sCartModelName);
-			var oCartProductsModelData = oCartProductsModel.getData();
-			oCartProductsModelData.cartEntries = {};
-			oCartProductsModelData.totalPrice = "0";
-			oCartProductsModelData.showEditButton = false;
-			oCartProductsModelData.showProceedButton = false;
-			oCartProductsModel.setData(oCartProductsModelData);
+			var oCartModel = this.getView().getModel(sCartModelName);
+			var oCartModelData = oCartModel.getData();
+
+			//all relevant cart properties are set back to default. Content is deleted.
+			oCartModelData.cartEntries = {};
+			oCartModelData.totalPrice = "0";
+			oCartModelData.showEditButton = false;
+			oCartModelData.showProceedButton = false;
+			oCartModel.setData(oCartModelData);
+
+			//navigates back to home screen
 			this._router.navTo("home");
 			if (!Device.system.phone) {
 				this._router.getTargets().display("welcome");
