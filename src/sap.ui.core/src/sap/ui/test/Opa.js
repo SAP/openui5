@@ -462,7 +462,7 @@ sap.ui.define([
 		 * @public
 		 * @param {object} options These contain check, success and error functions
 		 * @param {int} [options.timeout] default: 15 - (seconds) Specifies how long the waitFor function polls before it fails.O means it will wait forever.
-		 * @param {int} [options.debugTimeout] default: 0 - (seconds) Specifies how long the waitFor function polls before it fails in debug mode.O means it will wait forever.
+		 * @param {int} [options.debugTimeout] @since 1.47 default: 0 - (seconds) Specifies how long the waitFor function polls before it fails in debug mode.O means it will wait forever.
 		 * @param {int} [options.pollingInterval] default: 400 - (milliseconds) Specifies how often the waitFor function polls.
 		 * @param {function} [options.check] Will get invoked in every polling interval.
 		 * If it returns true, the check is successful and the polling will stop.
