@@ -529,7 +529,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
-	CalendarRow.prototype.onclick = function(oEvent) {
+	CalendarRow.prototype.ontap = function(oEvent) {
 
 		var aIntervals = this.$("Apps").children(".sapUiCalendarRowAppsInt");
 		var iIndex = 0;

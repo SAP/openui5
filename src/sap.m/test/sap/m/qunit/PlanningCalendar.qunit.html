@@ -883,14 +883,14 @@
 
 		test("appointmentSelect", function() {
 			oSelectedAppointment = undefined;
-			qutils.triggerEvent("click", "PC1-R1A1");
+			qutils.triggerEvent("tap", "PC1-R1A1");
 			equal(oSelectedAppointment.getId(), "PC1-R1A1", "appointmentSelect event fired and appointment returned");
 			ok(sap.ui.getCore().byId("PC1-R1A1").getSelected(), "Appointment is selected");
 			oSelectedAppointment = undefined;
 		});
 
 		test("rowSelectionChange", function() {
-			equal(oPC1.getSelectedRows().length, 0, "No rows selected")
+			equal(oPC1.getSelectedRows().length, 0, "No rows selected");
 
 			bRowSelectionChange = false;
 			aChangedRows = undefined;
@@ -899,7 +899,7 @@
 			equal(aChangedRows.length, 1, "one row changed");
 			equal(aChangedRows[0].getId(), "PC1-Row1", "Row1 changed");
 			ok(sap.ui.getCore().byId("PC1-Row1").getSelected(), "Row1 is selected");
-			equal(oPC1.getSelectedRows().length, 1, "one row selected")
+			equal(oPC1.getSelectedRows().length, 1, "one row selected");
 
 			bRowSelectionChange = false;
 			aChangedRows = undefined;
@@ -911,7 +911,7 @@
 			equal(aChangedRows[1].getId(), "PC1-Row2", "Row2 changed");
 			ok(!sap.ui.getCore().byId("PC1-Row1").getSelected(), "Row1 is not selected");
 			ok(sap.ui.getCore().byId("PC1-Row2").getSelected(), "Row2 is selected");
-			equal(oPC1.getSelectedRows().length, 1, "one row selected")
+			equal(oPC1.getSelectedRows().length, 1, "one row selected");
 
 			bRowSelectionChange = false;
 			aChangedRows = undefined;
@@ -923,7 +923,7 @@
 			equal(aChangedRows[0].getId(), "PC1-Row1", "Row1 changed");
 			ok(sap.ui.getCore().byId("PC1-Row1").getSelected(), "Row1 is selected");
 			ok(sap.ui.getCore().byId("PC1-Row2").getSelected(), "Row2 is selected");
-			equal(oPC1.getSelectedRows().length, 2, "2 row selected")
+			equal(oPC1.getSelectedRows().length, 2, "2 row selected");
 
 			bRowSelectionChange = false;
 			aChangedRows = undefined;
@@ -932,7 +932,7 @@
 			ok(!bRowSelectionChange, "rowSelectionChange not fired");
 			ok(!sap.ui.getCore().byId("PC1-Row1").getSelected(), "Row1 is not selected");
 			ok(!sap.ui.getCore().byId("PC1-Row2").getSelected(), "Row2 is not selected");
-			equal(oPC1.getSelectedRows().length, 0, "No row selected")
+			equal(oPC1.getSelectedRows().length, 0, "No row selected");
 
 			bRowSelectionChange = false;
 			aChangedRows = undefined;
@@ -1047,7 +1047,7 @@
 			oIntervalEndDate = undefined;
 			bSubInterval = undefined,
 					oIntervalRow = undefined,
-					qutils.triggerEvent("click", "PC1-Row1-CalRow-AppsInt3");
+					qutils.triggerEvent("tap", "PC1-Row1-CalRow-AppsInt3");
 			ok(bIntervalSelect, "intervalSelect fired");
 			equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201501011100", "interval start date returned");
 			equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201501011159", "interval end date returned");
