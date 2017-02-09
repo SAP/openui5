@@ -80,8 +80,10 @@ sap.ui.define([
 			}
 			//if there is at least one entry, the edit button is shown
 			oCartModel.setData(oCartData);
-			oCartData.showEditButton = true;
-			oCartData.showProceedButton = true;
+			oCartModel.setProperty("/showEditButton", true);
+			oCartModel.setProperty("/showProceedButton", true);
+			// we need to update the binding to show the total price
+			oCartModel.updateBindings(true);
 			MessageToast.show(oBundle.getText("PRODUCT_MSG_ADDED_TO_CART", [oProductToBeAdded.Name] ));
 		}
 	};
