@@ -94,6 +94,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			 * Lets the user select multiple files from the same folder and then upload them.
 			 * Internet Explorer 8 and 9 do not support this property.
 			 * Please note that the various operating systems for mobile devices can react differently to the property so that fewer upload functions may be available in some cases.
+			 *
+			 * If multiple property is set to false, the control shows an error message if more than one file is chosen for drag & drop.
 			 */
 			multiple : {type : "boolean", group : "Behavior", defaultValue : false},
 
