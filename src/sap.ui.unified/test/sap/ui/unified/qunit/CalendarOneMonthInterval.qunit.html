@@ -164,54 +164,6 @@
 			}
 		});
 
-		test("'_handleFocus()' has correct output", function () {
-			//prepare
-			var oSut = this.oPC._oOneMonthInterval,
-					oDate = new Date(this.oPCStartDate.getTime() + 24 * 60 * 60 * 1000) /*2 Jan 2015(one day after startDate*/,
-					oSpyPrevious = this.spy(oSut, "_handlePrevious"),
-					oSpyNext = this.spy(oSut, "_handleNext"),
-					oStubIsLastDateOfMonth = this.stub(oSut, "_isDateLastInMonth", function () {
-						return true;
-					}),
-					oEvent;
-
-			this.stub(sap.ui.unified.CalendarDateInterval.prototype, "_handleFocus", function () {
-				console.log("Fake CalendarDateInterval._handleFocus");
-			});
-			this.stub(sap.ui.unified.calendar.CalendarUtils, "getFirstDateOfMonth", function () {
-				return new UniversalDate(Date.UTC(2015, 0, 1));
-			});
-
-			oEvent = prepareFakeEvent("focus", {_outsideBorder: true, date: oDate});
-
-			//act
-			oSut._handleFocus(oEvent);
-
-			//assert
-			equals(oSut._oFocusDateOneMonth.getJSDate().toString(), new Date(Date.UTC(2015, 0, 2)).toString(),
-					"If the focused date is last of the month, this._focusDateOneMonth is the same");
-			equals(oSpyNext.callCount, 1, "_handleNext() should be called, because the event date is after the startDate");
-			equals(oSpyPrevious.callCount, 0, "_handlePrevious() should not be called, because the event date is after the startDate");
-
-			//prepare
-			oSpyPrevious.reset();
-			oSpyNext.reset();
-			oStubIsLastDateOfMonth.restore();
-			oStubIsLastDateOfMonth = this.stub(oSut, "_isDateLastInMonth", function () {
-				return false;
-			});
-
-			oDate.setTime(this.oPCStartDate.getTime() - 24 * 60 * 60 * 1000); //31 Dec 2014 - one day before startDate
-
-			//act
-			oSut._handleFocus(oEvent);
-
-			//assert
-			equals(oSut._oFocusDateOneMonth.getJSDate().toString(), new Date(Date.UTC(2015, 0, 1)).toString(), "If the focused date is not last of the month, this._focusDateOneMonth is 1st of the month");
-			equals(oSpyNext.callCount, 0, "_handleNext() should not be called, because the event date is before the startDate");
-			equals(oSpyPrevious.callCount, 1, "_handlePrevious() should be called, because the event date is before the startDate");
-		});
-
 		test("_focusDateExtend sets correct focused dates", function() {
 			//prepare
 			var oSut = this.oPC._oOneMonthInterval,
@@ -232,17 +184,6 @@
 			"datesrow(call to DatesRow#.setDate)");
 			equal(oSpyDatesRow_setDate.getCall(0).args[0].toString(), new Date(2015, 0, 31).toString(),
 					"DatesRow#setDate should be called with certain date parameter");
-		});
-
-		test("'_isDateLastInMonth' checks if the corresponding date is last in a month depending on its parameter", function() {
-			//prepare
-			var oSut = this.oPC._oOneMonthInterval,
-				oLastDateInTheMonth = new UniversalDate(Date.UTC(2015, 0, 31)),
-				oNotLastDateInTheMonth = new UniversalDate(Date.UTC(2015, 0, 15));
-
-			//assert
-			ok(oSut._isDateLastInMonth(oLastDateInTheMonth), "Jan 31st is the last date of the month");
-			ok(!oSut._isDateLastInMonth(oNotLastDateInTheMonth), "Jan 15th is not the last date of the month");
 		});
 
 		test("'_shiftStartFocusDates' shifts startDate and focusedDate according to given amount of time", function() {

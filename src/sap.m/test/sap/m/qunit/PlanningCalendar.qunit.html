@@ -2458,7 +2458,7 @@
 
 		test('last days look different', function() {
 			//assert
-			this._assertIntervalHasClass(31, this.oPC, 'sapUiCalDayFromNextMonth');
+			this._assertIntervalHasClass(31, this.oPC, 'sapUiCalItemOtherMonth'); //check that Oct 1 is disabled
 		});
 
 		test('last days display appointments', function() {
@@ -2610,6 +2610,202 @@
 			equals(this.oPC.getStartDate().getMonth(), 8, 'month is the same');
 		});
 
+		module("OneMonth view (size S)", {
+			beforeEach: function () {
+				this._simulateMobileEnvironment();
+				this.o14Sep2016MidOfMonth = new Date(2016, 8, 14);
+			},
+			afterEach: function () {
+				this._restoreDesktopEnvironment();
+				this._destroyCalendar();
+				this.o14Sep2016MidOfMonth = undefined;
+			},
+			_simulateMobileEnvironment: function () {
+				this.oDeviceJsStub = sinon.sandbox.stub(sap.ui.Device, "system", {phone: true});
+				jQuery("html").addClass("sapUiMedia-Std-Phone sapUiMedia-StdExt-Phone");
+				jQuery("html").removeClass("sapUiMedia-Std-Desktop sapUiMedia-StdExt-Desktop");
+			},
+			_restoreDesktopEnvironment: function () {
+				this.oDeviceJsStub.restore();
+				jQuery("html").addClass("sapUiMedia-Std-Desktop sapUiMedia-StdExt-Desktop");
+				jQuery("html").removeClass("sapUiMedia-Std-Phone sapUiMedia-StdExt-Phone");
+			},
+			_createCalendar: function (oStartDate) {
+				this._oPC = createPlanningCalendar("_oPC", new sap.m.SearchField(), new sap.m.Button(), (oStartDate || this.o14Sep2016MidOfMonth), sap.ui.unified.CalendarIntervalType.OneMonth);
+				this._oPC.placeAt('uiArea3');
+				this._oPCOneMonthInterval = this._oPC.getAggregation('table').getAggregation('infoToolbar').getContent()[1];
+				sap.ui.getCore().applyChanges();
+			},
+			_destroyCalendar: function () {
+				if (this._oPC) {
+					this._oPC.destroy();
+					this._oPC = undefined;
+				}
+			}
+		});
+
+		test("'setViewKeys()' setter calls 'OneMonthInterval._setDisplayMode()' with correct 'iSize' parameter", function () {
+			//arrange
+			var oSetDisplayModeSpy = this.spy(sap.ui.unified.CalendarOneMonthInterval.prototype, "_setDisplayMode"),
+				iPhoneSize = 0;
+
+			this._createCalendar();
+			//assert
+			strictEqual(oSetDisplayModeSpy.callCount, 3, "'_setDisplayMode()' is called correct number of times"); //viewKey setter + onBeforeRendering + resizeHandler
+			strictEqual(oSetDisplayModeSpy.getCall(0).args[0], iPhoneSize, "The correct mode value is set");
+		});
+
+		test("'setViewKeys()' setter calls 'setStartDate()' setter with an auto switched to 1st day of the month date", function () {
+			//arrange
+			var oStartDateSetterSpy = this.spy(sap.m.PlanningCalendar.prototype, "setStartDate");
+			this._createCalendar();
+			//assert
+			strictEqual(oStartDateSetterSpy.callCount, 3, "'setStartDate()' setter is called correct number of times"); //init + startDate setter + OneMonth adjustment.
+			strictEqual(oStartDateSetterSpy.getCall(1).args[0].getTime(), this.o14Sep2016MidOfMonth.getTime(), "The correct date is auto adjusted for the first day of month");
+			strictEqual(oStartDateSetterSpy.getCall(2).args[0].getTime(), new Date(2016, 8, 1).getTime(), "The correct date is auto adjusted for the first day of month");
+		});
+
+		test("'setStartDate()' setter calls '_setRowsStartDate()' with correct date parameter", function () {
+			//arrange
+			this._createCalendar();
+			var oSetRowsStartDateSpy = this.spy(this._oPC, "_setRowsStartDate");
+
+			//act
+			this._oPC.setStartDate(new Date(2015, 3, 5));
+
+			//assert
+			strictEqual(oSetRowsStartDateSpy.callCount, 1, "'_setRowsStartDate()' is called only once");
+			strictEqual(oSetRowsStartDateSpy.getCall(0).args[0].getTime(), new Date(2015, 3, 1).getTime(), "'_setRowsStartDate()' is called with correct parameter");
+		});
+
+		test("_setRowsStartDate", function() {
+			var oTestDate = new Date(5, 5, 5);
+			this._createCalendar();
+			this._oPC._setRowsStartDate(oTestDate);
+			equal(this._oPC.getRows()[0].getCalendarRow().getStartDate().getTime(), oTestDate.getTime(), 'row 1 start date');
+			equal(this._oPC.getRows()[1].getCalendarRow().getStartDate().getTime(), oTestDate.getTime(), 'row 2 start date');
+		});
+
+		test("'_handleTodayPress()' event handler adjust the startDate to the 1st day of month", function () {
+			//arrange
+			var oHandleTodayPressSpy = this.spy(sap.m.PlanningCalendar.prototype, "_handleTodayPress"),
+				oSetStartDateSpy;
+
+			this._createCalendar();
+			//set date outside the current month
+			this._oPC.setStartDate(new Date(2000, 0, 1));
+			oSetStartDateSpy = this.spy(this._oPC, "setStartDate");
+			qutils.triggerEvent('tap', this._oPC._oTodayButton.getDomRef());
+			//assert
+			strictEqual(oHandleTodayPressSpy.callCount, 1, "'_handleTodayPress()' handler is called once");
+			strictEqual(oSetStartDateSpy.callCount, 1, "'setStartDate()' setter is called once");
+			//clear
+			oHandleTodayPressSpy.restore();
+			oSetStartDateSpy.restore();
+		});
+
+		test("'_handleCalendarSelect()' event handler adjust the startDate to the 1st day of month", function () {
+			//arrange
+			var oHandleCalendarSelectSpy = this.spy(sap.m.PlanningCalendar.prototype, "_handleCalendarSelect"),
+				oPCInterval,
+				oPCIntervalMonth;
+
+			this._createCalendar();
+			oPCInterval = this._oPC.getAggregation('table').getAggregation('infoToolbar').getContent()[1];
+			oPCIntervalMonth = oPCInterval.getAggregation('month')[0];
+			//Calendar selection is implemented on 'mouseup' event so to test this you have to simulate 'mousedown' + 'mouseup' event sequence
+			oPCIntervalMonth.$('days').children().eq(0).trigger('mousedown');
+			oPCIntervalMonth.$('days').children().eq(0).trigger('mouseup');
+			//assert
+			strictEqual(oHandleCalendarSelectSpy.callCount, 1, "'_handleStartDateChange()' event handler is called once");
+			//clean
+			oHandleCalendarSelectSpy.restore();
+		});
+
+		test("'CalendarOneMonthInterval._createMonth()'", function () {
+			//arrange
+			var oOneMonthIntervalCreateMonthSpy = this.spy(sap.ui.unified.CalendarOneMonthInterval.prototype, "_createMonth"),
+				oDateIntervalCreateMonthSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "_createMonth"),
+				fnGetFullMonthId = function (oPC) {
+					return oPC.getId() + "-" + _getIntervalId(oPC);
+				};
+
+			this._createCalendar();
+			//assert
+			strictEqual(oDateIntervalCreateMonthSpy.callCount, 0, "'CalendarDateInterval._createMonth()' method was NOT called");
+			strictEqual(oOneMonthIntervalCreateMonthSpy.callCount, 1, "'CalendarOneMonthInterval._createMonth()' method was overridden and called");
+			strictEqual(oOneMonthIntervalCreateMonthSpy.getCall(0).args[0], fnGetFullMonthId(this._oPC), "'CalendarOneMonthInterval._createMonth()' was called with correct parameters");
+			//clean
+			oOneMonthIntervalCreateMonthSpy.restore();
+		});
+
+		test("'OneMonthDatesRow.init()' calls its super class 'init()' and sets its internal private property 'iMode' to the default value '2'", function () {
+			//arrange
+			var oOneMonthDatesRow = sap.ui.unified.calendar.OneMonthDatesRow,
+				oOneMonthDatesRowSpy = this.spy(oOneMonthDatesRow.prototype, "init"),
+				oDatesRowSpy = this.spy(sap.ui.unified.calendar.DatesRow.prototype, "init");
+
+			this._createCalendar();
+			//assert
+			strictEqual(oOneMonthDatesRowSpy.callCount, 1, "'OneMonthDatesRow.init()' method was called once");
+			strictEqual(oDatesRowSpy.callCount, 1, "'OneMonthDatesRow.init()' method was called once");
+			ok(oOneMonthDatesRowSpy.calledBefore(oDatesRowSpy), "The call sequence is as expected");
+			strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 2, "'OneMonthDatesRow.init()' correctly set the internal 'iMode' property to its default value");
+			//clean
+			oOneMonthDatesRowSpy.restore();
+			oDatesRowSpy.restore();
+		});
+
+		test("'OneMonthDatesRow.setMode()' updates the iMode property", function () {
+			//arrange
+			this._createCalendar();
+			//assert
+			strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 2, "'OneMonthDatesRow.init()' correctly sets the internal 'iMode' property to its default value");
+			//arrange
+			this._oPCOneMonthInterval.getAggregation("month")[0].setMode(0);
+			//assert
+			strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 0, "'OneMonthDatesRow.setMode()' sets the internal 'iMode' property as expected");
+			//arrange
+			this._oPCOneMonthInterval.getAggregation("month")[0].setMode(1);
+			//assert
+			strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 1, "'OneMonthDatesRow.setMode()' sets the internal 'iMode' property as expected");
+		});
+
+		test("'OneMonthDatesRow.setDate()' setter with a date calls its super class 'setDate()' setter", function () {
+			//arrange
+			var oOneMonthDatesRowSpy = this.spy(sap.ui.unified.calendar.OneMonthDatesRow.prototype, "setDate"),
+				oDatesRowSpy = this.spy(sap.ui.unified.calendar.DatesRow.prototype, "setDate"),
+				oVisibleDate = new sap.ui.core.date.UniversalDate(2016, 8, 10),
+				oOutsideVisibleRangeDate = new sap.ui.core.date.UniversalDate(2015, 3, 20);
+
+			this._createCalendar();
+			this._oPCOneMonthInterval._bNoRangeCheck = false;
+			this._oPCOneMonthInterval._setStartDate(oVisibleDate, true, false);
+			//assert
+			strictEqual(oOneMonthDatesRowSpy.callCount, 1, "'OneMonthDatesRow.setDate()' method was called once");
+			strictEqual(oDatesRowSpy.callCount, 1, "'DatesRow.setDate()' method was called once");
+			//arrange
+			this._oPCOneMonthInterval._setStartDate(oOutsideVisibleRangeDate, true, false);
+			//assert
+			strictEqual(oOneMonthDatesRowSpy.callCount, 2, "'OneMonthDatesRow.setDate()' method was called once");
+			strictEqual(oDatesRowSpy.callCount, 2, "'DatesRow.setDate()' method was called once");
+			//clean
+			oOneMonthDatesRowSpy.restore();
+			oDatesRowSpy.restore();
+		});
+
+		test("'CalendarRow.Renderer' calls its 'renderSingleDayInterval()'", function () {
+			//arrange
+			var oCalendarRowRenderer = sap.ui.unified.CalendarRowRenderer,
+				oCalendarRowRendererSpy = this.spy(oCalendarRowRenderer, "renderSingleDayInterval");
+
+			this._createCalendar();
+			//assert
+			strictEqual(oCalendarRowRendererSpy.callCount, 2, "'renderSingleDayInterval()' is called as expected"); //Two rows
+			//clean
+			oCalendarRowRendererSpy.restore();
+		});
+
 		module("ARIA");
 
 		test("Week day and date aria", function() {
@@ -2665,6 +2861,93 @@
 					"select should not be visible");
 		});
 
+		test('_isNextMonth', function() {
+			this.oPC.setStartDate(new Date(2011, 10, 11));
+			ok(this.oPC._isNextMonth(new Date(2012, 10, 11)), 'month from the next year is some next month date');
+			ok(this.oPC._isNextMonth(new Date(2012, 9, 11)), 'previous month from the next year is some next month date');
+			ok(!this.oPC._isNextMonth(new Date(2011, 10, 30)), 'date from the same month is not a next month date');
+			ok(!this.oPC._isNextMonth(new Date(2011, 9, 30)), 'date from the prev month is not a next month date');
+		});
+
+		module('CalendarAppointment');
+
+		test('_getComparer', function() {
+			var aAppInfos = [
+				new sap.ui.unified.CalendarAppointment({
+					startDate: new Date(2015, 0, 2, 8, 0),
+					endDate: new Date(2015, 0, 2, 10, 0),
+					title: "3"
+				}),
+				new sap.ui.unified.CalendarAppointment({
+					startDate: new Date(2015, 0, 1, 8, 0),
+					endDate: new Date(2015, 0, 3, 10, 0),
+					title: "1"
+				}),
+				new sap.ui.unified.CalendarAppointment({
+					startDate: new Date(2014, 11, 31, 8, 0),
+					endDate: new Date(2015, 0, 2, 11, 0),
+					title: "2"
+				}),
+				new sap.ui.unified.CalendarAppointment({
+					startDate: new Date(2015, 0, 2, 9, 0),
+					endDate: new Date(2015, 0, 2, 12, 0),
+					title: "4"
+				}),
+				new sap.ui.unified.CalendarAppointment({
+					startDate: new Date(2015, 0, 1, 7, 0),
+					endDate: new Date(2015, 0, 3, 5, 0),
+					title: "0"
+				})
+			].map(function(appointment) {
+				return { appointment: appointment };
+			});
+
+			var aSortedInfos = aAppInfos.sort(sap.ui.unified.CalendarAppointment._getComparer(new Date(2015, 0, 2)));
+			equal(aSortedInfos[0].appointment.getTitle(), "0", 'item sorted correctly');
+			equal(aSortedInfos[1].appointment.getTitle(), "1", 'item sorted correctly');
+			equal(aSortedInfos[2].appointment.getTitle(), "2", 'item sorted correctly');
+			equal(aSortedInfos[3].appointment.getTitle(), "3", 'item sorted correctly');
+		});
+
+		test('_getDateRangeIntersectionText', function() {
+			var aAppInfos = [
+					new sap.ui.unified.CalendarAppointment({
+						startDate: new Date(2015, 0, 3, 8, 0),
+						endDate: new Date(2015, 0, 3, 10, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						startDate: new Date(2015, 0, 1, 8, 0),
+						endDate: new Date(2015, 0, 3, 10, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						startDate: new Date(2014, 11, 31, 8, 0),
+						endDate: new Date(2015, 0, 2, 11, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						startDate: new Date(2015, 0, 2, 9, 0),
+						endDate: new Date(2015, 0, 4, 12, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						startDate: new Date(2015, 0, 2, 7, 0),
+						endDate: new Date(2015, 0, 2, 15, 0)
+					})
+				],
+				oCurrentlyDisplayedDate = new Date(2015, 0, 2),
+				oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({pattern: 'HH:mm'}),
+				oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+			equal(aAppInfos[0]._getDateRangeIntersectionText(oCurrentlyDisplayedDate), '');
+			equal(aAppInfos[1]._getDateRangeIntersectionText(oCurrentlyDisplayedDate),
+				oResourceBundle.getText('PLANNINGCALENDAR_ALLDAY'));
+			equal(aAppInfos[2]._getDateRangeIntersectionText(oCurrentlyDisplayedDate),
+				oResourceBundle.getText('PLANNINGCALENDAR_UNTIL', [oTimeFormat.format(aAppInfos[2].getEndDate())]));
+			equal(aAppInfos[3]._getDateRangeIntersectionText(oCurrentlyDisplayedDate),
+				oTimeFormat.format(aAppInfos[3].getStartDate()));
+			equal(aAppInfos[4]._getDateRangeIntersectionText(oCurrentlyDisplayedDate),
+				oTimeFormat.format(aAppInfos[4].getStartDate()) + ' - ' + oTimeFormat.format(aAppInfos[4].getEndDate()));
+
+		});
+
 	</script>
 
 </head>
@@ -2677,5 +2960,6 @@
 <br>
 <div id="uiArea1"></div>
 <div id="uiArea2"></div>
+<div id="uiArea3"></div>
 </body>
 </html>
