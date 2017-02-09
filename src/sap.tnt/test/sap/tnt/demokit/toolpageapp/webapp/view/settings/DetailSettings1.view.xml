@@ -69,27 +69,60 @@
 								editable="true"
 								layout="ResponsiveGridLayout">
 								<f:content>
-									<core:Title text="{i18n>ownerAddress}" />
+									<core:Title text="{i18n>ownerAddress}"/>
 									<l:VerticalLayout>
 										<m:Label text="{i18n>ownerFirstName}"/>
-										<m:Input type="Text" width="100%" value="John"/>
-										<m:Label text="{i18n>ownerLastName}"/>
-										<m:Input type="Text" width="100%" value="Doe"/>
-										<m:Label text="{i18n>ownerStreet}"/>
-										<m:Input type="Text" width="100%" value="Midtown Street 23"/>
-										<m:Label text="{i18n>ownerZipCode}"/>
-										<m:Input type="Text" width="100%" value="12345 Newport"/>
-										<m:Label text="{i18n>ownerCountry}"/>
-										<m:Input type="Text" width="100%" value="England"/>
+										<m:Input
+											type="Text"
+											width="100%"
+											value="John"/>
+										<m:Label
+											class="sapUiTinyMarginTop"
+											text="{i18n>ownerLastName}"/>
+										<m:Input
+											type="Text"
+											width="100%"
+											value="Doe"/>
+										<m:Label
+											class="sapUiTinyMarginTop"
+											text="{i18n>ownerStreet}"/>
+										<m:Input
+											type="Text"
+											width="100%"
+											value="Midtown Street 23"/>
+										<m:Label
+											class="sapUiTinyMarginTop"
+											text="{i18n>ownerZipCode}"/>
+										<m:Input
+											type="Text"
+											width="100%"
+											value="12345 Newport"/>
+										<m:Label
+											class="sapUiTinyMarginTop"
+											text="{i18n>ownerCountry}"/>
+										<m:Input
+											type="Text"
+											width="100%"
+											value="England"/>
 									</l:VerticalLayout>
 
 									<core:Title text="{i18n>ownerContact}" />
 									<l:VerticalLayout>
 										<m:Label text="{i18n>ownerMobile}"/>
-										<m:Input type="Tel" width="100%" value="+1 234 / 56789"/>
-										<m:Label text="{i18n>ownerFax}"/>
-										<m:Input type="Tel" width="100%" value="+1 987 / 654321"/>
-										<m:Label text="{i18n>mail}"/>
+										<m:Input
+											type="Tel"
+											width="100%"
+											value="+1 234 / 56789"/>
+										<m:Label
+											class="sapUiTinyMarginTop"
+											text="{i18n>ownerFax}"/>
+										<m:Input
+											type="Tel"
+											width="100%"
+											value="+1 987 / 654321"/>
+										<m:Label
+											class="sapUiTinyMarginTop"
+											text="{i18n>mail}"/>
 										<m:Input type="Email" width="100%" value="john.doe@myshop.com"/>
 									</l:VerticalLayout>
 
@@ -119,20 +152,46 @@
 										<core:Title text="{i18n>storeSettings}" />
 										<l:VerticalLayout>
 											<m:Label text="{i18n>storeName}"/>
-											<m:Input type="Text" width="100%" value="My Shop"/>
-											<m:Label text="{i18n>storeDefaultLanguage}"/>
-											<m:Input type="Text" width="100%" value="English"/>
-											<m:Label text="{i18n>storeCode}"/>
-											<m:Input type="Text" width="100%" value="R2D2-C3P0"/>
+											<m:Input
+												type="Text"
+												width="100%"
+												value="My Shop"/>
+											<m:Label
+												class="sapUiTinyMarginTop"
+												text="{i18n>storeDefaultLanguage}"/>
+											<m:Input
+												type="Text"
+												width="100%"
+												value="English"/>
+											<m:Label
+												class="sapUiTinyMarginTop"
+												text="{i18n>storeCode}"/>
+											<m:Input
+												type="Text"
+												width="100%"
+												value="R2D2-C3P0"/>
 										</l:VerticalLayout>
 										<core:Title text="{i18n>StoreContact}" />
 										<l:VerticalLayout>
 											<m:Label text="{i18n>storeWebSite}"/>
-											<m:Input type="Url" width="100%" value="http://www.myshop.com"/>
-											<m:Label text="{i18n>storePhone}"/>
-											<m:Input type="Tel" width="100%" value="+1 2345/6789"/>
-											<m:Label text="{i18n>mail}"/>
-											<m:Input type="Email" width="100%" value="info@myshop.com"/>
+											<m:Input
+												type="Url"
+												width="100%"
+												value="http://www.myshop.com"/>
+											<m:Label
+												class="sapUiTinyMarginTop"
+												text="{i18n>storePhone}"/>
+											<m:Input
+												type="Tel"
+												width="100%"
+												value="+1 2345/6789"/>
+											<m:Label
+												class="sapUiTinyMarginTop"
+												text="{i18n>mail}"/>
+											<m:Input
+												type="Email"
+												width="100%"
+												value="info@myshop.com"/>
 										</l:VerticalLayout>
 									</f:content>
 								</f:SimpleForm>
