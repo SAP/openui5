@@ -37,6 +37,8 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 		renderer: SplitterRenderer
 	});
 
+	var SPLITTERBAR_PIXEL_SIZE = 4; // 0.25rem
+
 	AssociativeSplitter.prototype.init = function () {
 		Splitter.prototype.init.call(this);
 		// We need to have different step size than the existing in the Splitter
@@ -282,7 +284,11 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 		var aContentAreas, oLd1, oLd2, sSize1,
 			sSize2, $Cnt1, $Cnt2, iNewSize1, iNewSize2,
 			iMinSize1, iMinSize2, sOrientation, iSplitterSize,
-			sFinalSize1, sFinalSize2, iDiff;
+			sFinalSize1, sFinalSize2, iDiff,
+			sMoveContentSize1 = parseFloat(this._move.c1Size).toFixed(5),
+			sMoveContentSize2 = parseFloat(this._move.c2Size).toFixed(5),
+			fMoveC1Size = parseFloat(sMoveContentSize1),
+			fMoveC2Size = parseFloat(sMoveContentSize2);
 
 		if (isNaN(iPixels)) {
 			jQuery.sap.log.warning("Splitter: Received invalid resizing values - resize aborted.");
@@ -299,8 +305,8 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 		$Cnt1 = this.$("content-" + iLeftContent);
 		$Cnt2 = this.$("content-" + (iLeftContent + 1));
 
-		iNewSize1 = this._move.c1Size + iPixels;
-		iNewSize2 = this._move.c2Size - iPixels;
+		iNewSize1 = fMoveC1Size + iPixels;
+		iNewSize2 = fMoveC2Size - iPixels;
 		iMinSize1 = parseInt(oLd1.getMinSize(), 10);
 		iMinSize2 = parseInt(oLd2.getMinSize(), 10);
 
@@ -427,7 +433,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 			this._calculatedSizes[idx] = iColSize;
 			iRest -= iColSize;
 		}
-		iAvailableSize = iRest;
+		iAvailableSize = iRest - SPLITTERBAR_PIXEL_SIZE;
 
 		if (iAvailableSize < 0) { bWarnSize = true; iAvailableSize = 0; }
 
