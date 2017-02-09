@@ -246,7 +246,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 						if (!this._DebugEnv){
 							this._DebugEnv = DebugEnv;
 						}
-						// when sap-ui-debug is loaded, control tree and property list are shown by defualt
+						// when sap-ui-debug is loaded, control tree and property list are shown by default
 						// so disable them again if they are not desired
 						if (!bShowControls) {
 							this._DebugEnv.getInstance().hideControlTree();

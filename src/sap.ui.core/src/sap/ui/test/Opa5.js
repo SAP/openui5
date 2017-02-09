@@ -305,8 +305,8 @@ sap.ui.define([
 		 * </code>
 		 * @param {boolean} [options.searchOpenDialogs=false] If set to true, Opa5 will only look in open dialogs. All the other values except control type will be ignored
 		 * @param {boolean} [options.visible=true] If set to false, Opa5 will also look for unrendered and invisible controls.
-		 * @param {int} [options.timeout=15] (seconds) Specifies how long the waitFor function polls before it fails.
-		 * Timeout will increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true.
+		 * @param {int} [options.timeout=15] (seconds) Specifies how long the waitFor function polls before it fails.O means it will wait forever.
+		 * @param {int} [options.debugTimeout=0] (seconds) Specifies how long the waitFor function polls before it fails in debug mode.O means it will wait forever.
 		 * @param {int} [options.pollingInterval=400] (milliseconds) Specifies how often the waitFor function polls.
 		 * @param {function} [options.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
 		 * The first parameter passed into the function is the same value that gets passed to the success function.
@@ -675,8 +675,9 @@ sap.ui.define([
 		 * 	<li>actions: instance of OPA5</li>
 		 * 	<li>assertions: instance of OPA5</li>
 		 * 	<li>visible: true</li>
-		 * 	<li>timeout : 15 seconds, is increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true</li>
+		 * 	<li>timeout : 15 seconds, 0 for infinite timeout</li>
 		 * 	<li>pollingInterval: 400 milliseconds</li>
+		 * 	<li>debugTimeout: 0 seconds, infinite timeout by default. This will be used instead of timeout if running in debug mode.</li>
 		 * 	<li>autoWait: false - since 1.42</li>
 		 * </ul>
 		 * @public
