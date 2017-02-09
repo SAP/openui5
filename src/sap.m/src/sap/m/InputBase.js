@@ -748,6 +748,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// respect to max length
 		sValue = this._getInputValue(sValue);
 
+		//Ignore the input event which is raised by MS Internet Explorer when non-ASCII characters are typed in
+		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version > 9 && !/^[\x00-\x7F]*$/.test(sValue)){
+			this._bIgnoreNextInput = true;
+		}
+
 		// update the DOM value when necessary
 		// otherwise cursor can goto end of text unnecessarily
 		if (this._getInputValue() !== sValue) {
