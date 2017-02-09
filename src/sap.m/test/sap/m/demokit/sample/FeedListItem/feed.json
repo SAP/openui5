@@ -22,6 +22,6 @@
 		"AuthorPicUrl" : "test-resources/sap/m/images/george_washington.jpg",
 		"Type" : "Rejection",
 		"Date" : "March 07 2013",
-		"Text" : "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
+		"Text" : "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, www.sap.com sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
 	}]
 }
