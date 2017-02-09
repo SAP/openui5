@@ -32,6 +32,7 @@
 						this.oRouterStub = {
 							fireRouteMatched : function () {},
 							fireRoutePatternMatched : function () {},
+							fireBeforeRouteMatched : function () {},
 							_oTargets: new Targets({
 								targets: {
 									async1: {
@@ -87,6 +88,24 @@
 						this.oRoute1.destroy();
 					}
 				}));
+
+				QUnit.test("Should fired beforeMatched before matched", function(assert) {
+					var fnBeforeMatchedSpy = this.spy(function() {
+							assert.notOk(fnMatchedSpy.called, "the matched event shouldn't be fired yet");
+						}),
+						fnMatchedSpy = this.spy();
+
+					this.oRoute.attachBeforeMatched(fnBeforeMatchedSpy);
+					this.oRoute.attachMatched(fnMatchedSpy);
+
+					// Act
+					var oSequencePromise = this.oRoute._routeMatched({}, Promise.resolve());
+					return oSequencePromise.then(function() {
+						// Assert
+						assert.strictEqual(fnBeforeMatchedSpy.callCount, 1, "did fire the beforeMatched event");
+						assert.strictEqual(fnMatchedSpy.callCount, 1, "did fire the matched event");
+					});
+				});
 
 				QUnit.test("Should not call pattern matched only matched", function(assert) {
 					var fnMatchedSpy = this.spy(),
@@ -147,6 +166,7 @@
 					});
 				}
 
+				fnRouteEventsTestCase("Should attach to the beforeMatched event", "BeforeMatched");
 				fnRouteEventsTestCase("Should attach to the matched event", "Matched");
 				fnRouteEventsTestCase("Should attach to the patternMatched event", "PatternMatched");
 
@@ -160,7 +180,7 @@
 							oListener = {};
 
 						this.oRouterStub.fireRouteMatched = fnRouteMatchedSpy;
-						this.oRouterStub.fireRoutePatternMatched = fnRouteMatchedSpy
+						this.oRouterStub.fireRoutePatternMatched = fnRouteMatchedSpy;
 
 						var oRoute = new sap.ui.core.routing.Route(this.oRouterStub,
 							{ name : sName, target : aTargetNames });
@@ -183,6 +203,7 @@
 					});
 				}
 
+				fnDetachRouteEventTestCase("Should detach the beforeMatched event", "BeforeMatched");
 				fnDetachRouteEventTestCase("Should detach the matched event", "Matched");
 				fnDetachRouteEventTestCase("Should detach the patternMatched event", "PatternMatched");
 
