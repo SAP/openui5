@@ -108,7 +108,7 @@
 			<headerToolbar>
 				<Toolbar>
 					<content>
-						<Title text="Sales Orders" titleStyle="H2">
+						<Title id="SalesOrdersTitle" text="{$count} Sales Orders" titleStyle="H2">
 							<layoutData>
 								<ToolbarLayoutData shrinkable="false" />
 							</layoutData>
@@ -326,6 +326,7 @@
 						path : 'SO_2_SOITEM',
 						filters : {path: 'ItemPosition', operator: 'GT', value1: '0000000000'},
 						parameters : {
+							$count : true,
 							$expand : {
 								SOITEM_2_PRODUCT : {
 									$expand : {
@@ -353,7 +354,9 @@
 				<headerToolbar>
 					<Toolbar>
 						<content>
-							<Title text="Sales Order Line Items" titleStyle="H2"/>
+							<Title id="SalesOrderLineItemsTitle"
+								text="{headerContext>$count} Sales Order Line Items"
+								titleStyle="H2"/>
 							<ToolbarSpacer />
 							<SearchField
 								enabled="{ui>/bRealOData}"

@@ -230,6 +230,7 @@ sap.ui.require([
 		assert.ok(oBinding.hasOwnProperty("sChangeReason"));
 		assert.ok(oBinding.hasOwnProperty("aFilters"));
 		assert.ok(oBinding.hasOwnProperty("sGroupId"));
+		assert.ok(oBinding.hasOwnProperty("oHeaderContext"));
 		assert.ok(oBinding.hasOwnProperty("sOperationMode"));
 		assert.ok(oBinding.hasOwnProperty("mQueryOptions"));
 		assert.ok(oBinding.hasOwnProperty("sRefreshGroupId"));
@@ -369,6 +370,7 @@ sap.ui.require([
 		var oBinding = this.oModel.bindList("/EMPLOYEES"),
 			oV4Context = {
 				fetchCanonicalPath : function () {},
+				getPath : function () {return "/TEAMS(Team_ID='TEAM01')";},
 				toString : function () {return "/TEAMS(Team_ID='TEAM01')";}
 			},
 			oBaseContext = {
@@ -1003,14 +1005,32 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("setContext, relative path without parameters", function (assert) {
 		var oBinding = this.oModel.bindList("Suppliers"),
-			oContext = Context.create(this.oModel, {}, "/bar");
+			oBindingMock = this.mock(oBinding),
+			oContext = Context.create(this.oModel, {}, "/bar"),
+			oHeaderContext = Context.create(this.oModel, oBinding, "/bar/Suppliers");
 
-		this.mock(oBinding).expects("reset").withExactArgs();
-		this.mock(oBinding).expects("fetchCache").withExactArgs(oContext);
-		this.mock(oBinding).expects("_fireChange")
+		oBindingMock.expects("reset").twice().withExactArgs();
+		this.mock(Context).expects("create")
+			.withExactArgs(this.oModel, oBinding, "/bar/Suppliers")
+			.returns(oHeaderContext);
+		this.mock(this.oModel).expects("resolve")
+			.withExactArgs(oBinding.sPath, oContext)
+			.returns("/bar/Suppliers");
+		oBindingMock.expects("fetchCache").withExactArgs(oContext);
+		oBindingMock.expects("_fireChange").twice()
 			.withExactArgs({reason : ChangeReason.Context});
 
+		// code under test
 		oBinding.setContext(oContext);
+
+		assert.strictEqual(oBinding.getHeaderContext(), oHeaderContext);
+
+		this.mock(oBinding.getHeaderContext()).expects("destroy").withExactArgs();
+		oBindingMock.expects("fetchCache").withExactArgs(null);
+		// code under test
+		oBinding.setContext(null);
+
+		assert.strictEqual(oBinding.getHeaderContext(), null);
 	});
 
 	//*********************************************************************************************
@@ -2076,6 +2096,13 @@ sap.ui.require([
 			oTransientBindingContext = {destroy : function () {}},
 			oTransientBindingContextMock = this.mock(oTransientBindingContext);
 
+		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
+		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
+
+		// code under test
+		oBinding.destroy();
+
+		oBinding = this.oModel.bindList("relative");
 		oBinding.setContext(oContext);
 		oBinding.aContexts = [oBindingContext];
 		oBinding.aContexts[-1] = oTransientBindingContext;
@@ -2083,7 +2110,9 @@ sap.ui.require([
 		oTransientBindingContextMock.expects("destroy").withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
+		this.mock(oBinding.getHeaderContext()).expects("destroy").withExactArgs();
 
+		// code under test
 		oBinding.destroy();
 
 		assert.strictEqual(oBinding.oCachePromise, undefined);
@@ -2095,7 +2124,9 @@ sap.ui.require([
 		oTransientBindingContextMock.expects("destroy").withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
+		this.mock(oBinding.getHeaderContext()).expects("destroy").withExactArgs();
 
+		// code under test
 		oBinding.destroy();
 	});
 
@@ -3676,6 +3707,48 @@ sap.ui.require([
 					oFixture.mDynamicQueryOptionsWithModelOptions, oContext),
 				oCache);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("header context created in c'tor ", function (assert) {
+		var oBinding;
+
+		// code under text
+		oBinding = this.oModel.bindList("/EMPLOYEES");
+
+		assert.deepEqual(oBinding.getHeaderContext(),
+			Context.create(this.oModel, oBinding, "/EMPLOYEES"),
+			"Header contexts created in c'tor");
+
+		// code under test
+		oBinding = this.oModel.bindList("EMPLOYEES");
+
+		assert.ok(oBinding.getHeaderContext() === null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getHeaderContext", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oContext = Context.create(this.oModel, {}, "/TEAMS", 0),
+			oHeaderContext;
+
+		// code under test
+		oHeaderContext = oBinding.getHeaderContext();
+
+		assert.strictEqual(oHeaderContext.getBinding(), oBinding);
+		assert.strictEqual(oHeaderContext.getPath(), "/EMPLOYEES");
+
+		oBinding = this.oModel.bindList("EMPLOYEES");
+
+		// code under test
+		assert.ok(oBinding.getHeaderContext() === null);
+
+		oBinding.setContext(oContext);
+		oHeaderContext = oBinding.getHeaderContext();
+
+		assert.strictEqual(oHeaderContext.getBinding(), oBinding);
+		assert.strictEqual(oHeaderContext.getPath(), "/TEAMS/EMPLOYEES");
+		// TODO How do dependent bindings learn of the changed context?
 	});
 });
 
