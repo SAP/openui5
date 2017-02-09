@@ -879,6 +879,22 @@
 		assert.ok(!jQuery.sap.isMouseEventDelayed, "isMouseEventDelayed should be marked with false for safari (not a webview) iOS 8");
 	});
 
+	QUnit.test("Under Chrome (Samsung Device, version >= 32)", function(assert) {
+		this.stub(sap.ui.Device, "browser", {
+			chrome: true,
+			mobile: true,
+			version: 32
+		});
+
+		//mock samsung user agent
+		var oNavigatorObjectMock = {};
+		oNavigatorObjectMock.userAgent = "Mozilla/5.0(SAMSUNG SM-G900F/XXS1CPF1 Build/MMB29M) Chrome/44.0.2403.133";
+
+		jQuery.sap._refreshMouseEventDelayedFlag(oNavigatorObjectMock);
+
+		assert.ok(jQuery.sap.isMouseEventDelayed, "isMouseEventDelayed should be marked with true for Samsung devices with Chrome with version >= 32");
+	});
+
 	QUnit.test("Under Chrome (version >= 32)", function(assert) {
 		this.stub(sap.ui.Device, "browser", {
 			chrome: true,
@@ -886,7 +902,11 @@
 			version: 32
 		});
 
-		jQuery.sap._refreshMouseEventDelayedFlag();
+		//mock desktop chrome user agent
+		var oNavigatorObjectMock = {};
+		oNavigatorObjectMock.userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/55.0.2883.87";
+
+		jQuery.sap._refreshMouseEventDelayedFlag(oNavigatorObjectMock);
 
 		assert.ok(!jQuery.sap.isMouseEventDelayed, "isMouseEventDelayed should be marked with false for Chrome with version >= 32");
 	});
