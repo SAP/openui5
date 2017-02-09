@@ -98,11 +98,75 @@ jQuery.sap.require("sap.m.Button");
 		});
 	});
 
+	QUnit.test("getChangesForComponent shall return the changes for the component, filtering changes with the current layer (CUSTOMER)", function(assert) {
+
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+			{
+				layer: "VENDOR",
+				fileType: "change",
+				selector: {
+					id: "controlId"
+				}
+			},
+			{
+				layer: "CUSTOMER",
+				fileType: "change",
+				selector: {
+					id: "controlId1"
+				}
+			},
+			{
+				layer: "USER",
+				fileType: "change",
+				selector: {
+					id: "controlId2"
+				}
+			}
+		]}}));
+
+		return this.oChangePersistence.getChangesForComponent({currentLayer: "CUSTOMER"}).then(function(changes) {
+			assert.strictEqual(changes.length, 1, "1 change shall be returned");
+			assert.strictEqual(changes[0].getDefinition().layer, "CUSTOMER", "then it returns only current layer (CUSTOMER) changes");
+		});
+	});
+
+	QUnit.test("getChangesForComponent shall return the changes for the component, not filtering changes with the current layer", function(assert) {
+
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+			{
+				layer: "VENDOR",
+				fileType: "change",
+				selector: {
+					id: "controlId"
+				}
+			},
+			{
+				layer: "CUSTOMER",
+				fileType: "change",
+				selector: {
+					id: "controlId1"
+				}
+			},
+			{
+				layer: "USER",
+				fileType: "change",
+				selector: {
+					id: "controlId2"
+				}
+			}
+		]}}));
+
+		return this.oChangePersistence.getChangesForComponent().then(function(changes) {
+			assert.strictEqual(changes.length, 3, "all the 3 changes shall be returned");
+		});
+	});
+
 	QUnit.test("getChangesForComponent shall return the changes for the component, filtering default variant changes", function(assert) {
 
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [{
 			fileType: "change",
-			changeType: "defaultVariant"
+			changeType: "defaultVariant",
+			layer: "CUSTOMER"
 		}]}}));
 
 		return this.oChangePersistence.getChangesForComponent().then(function(changes) {
