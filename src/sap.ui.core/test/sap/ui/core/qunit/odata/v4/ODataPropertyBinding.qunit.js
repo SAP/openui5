@@ -152,6 +152,7 @@ sap.ui.require([
 			oMixin = {};
 
 		asODataBinding(oMixin);
+		delete oMixin.resetInvalidDataState; // because it is overridden
 
 		Object.keys(oMixin).forEach(function (sKey) {
 			assert.strictEqual(oBinding[sKey], oMixin[sKey]);
@@ -1444,6 +1445,23 @@ sap.ui.require([
 	//TODO discuss change in behavior for relative bindings:
 	//   $$groupId, $$updateGroupId, custom query option now leads to own
 	//   cache for property binding -> adapt jsdoc for ODPB ctor, ODModel#bindProperty (remove Note: ...)
+
+	//*********************************************************************************************
+	QUnit.test("resetInvalidDataState", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE"),
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("_fireChange").never();
+
+		// code under test
+		oBinding.resetInvalidDataState();
+
+		oBinding.getDataState().setInvalidValue("foo");
+		oBindingMock.expects("_fireChange").withExactArgs({reason: ChangeReason.Change});
+
+		// code under test
+		oBinding.resetInvalidDataState();
+	});
 
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {

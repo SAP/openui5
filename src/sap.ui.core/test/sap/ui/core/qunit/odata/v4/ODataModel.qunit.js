@@ -485,10 +485,18 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("resetChanges w/o group ID", function (assert) {
-		var oModel = createModel("", {updateGroupId : "updateGroupId"});
+		var oModel = createModel("", {updateGroupId : "updateGroupId"}),
+			oAgeBinding = oModel.bindProperty("/EMPLOYEES('1')/AGE"),
+			oNameBinding = oModel.bindProperty("/EMPLOYEES('1')/Name"),
+			oEntryDateBinding = oModel.bindProperty("/EMPLOYEES('1')/ENTRYDATE", undefined, {
+				$$updateGroupId : "anotherGroup"
+			});
 
 		this.mock(oModel).expects("checkGroupId").withExactArgs("updateGroupId", true);
 		this.mock(oModel.oRequestor).expects("cancelChanges").withExactArgs("updateGroupId");
+		this.mock(oAgeBinding).expects("resetInvalidDataState").withExactArgs();
+		this.mock(oNameBinding).expects("resetInvalidDataState").withExactArgs();
+		this.mock(oEntryDateBinding).expects("resetInvalidDataState").never();
 
 		// code under test
 		oModel.resetChanges();

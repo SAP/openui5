@@ -955,9 +955,10 @@ sap.ui.define([
 
 	/**
 	 * Resets all property changes and created entities associated with the given group ID which
-	 * have not been successfully submitted via {@link #submitBatch}. This function does not reset
-	 * the deletion of entities (see {@link sap.ui.model.odata.v4.Context#delete}) and the execution
-	 * of OData operations (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}).
+	 * have not been successfully submitted via {@link #submitBatch}. Resets also invalid user
+	 * input for the same group ID. This function does not reset the deletion of entities
+	 * (see {@link sap.ui.model.odata.v4.Context#delete}) and the execution of OData operations
+	 * (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}).
 	 *
 	 * @param {string} [sGroupId]
 	 *   The application group ID, which is a non-empty string consisting of alphanumeric
@@ -977,6 +978,11 @@ sap.ui.define([
 		this.checkGroupId(sGroupId, true);
 
 		this.oRequestor.cancelChanges(sGroupId);
+		this.aAllBindings.forEach(function (oBinding) {
+			if (sGroupId === oBinding.getUpdateGroupId()) {
+				oBinding.resetInvalidDataState();
+			}
+		});
 	};
 
 	/**

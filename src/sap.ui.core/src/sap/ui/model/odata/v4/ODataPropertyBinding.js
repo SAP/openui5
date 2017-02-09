@@ -462,6 +462,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * A method to reset invalid data state, to be called by
+	 * {@link sap.ui.model.odata.v4.ODataBinding#resetChanges}.
+	 * Fires a change event if the data state is invalid to ensure that invalid user input, having
+	 * not passed the validation, is also reset.
+	 *
+	 * @private
+	 */
+	ODataPropertyBinding.prototype.resetInvalidDataState = function () {
+		if (this.getDataState().isControlDirty()) {
+			this._fireChange({reason : ChangeReason.Change});
+		}
+	};
+
+	/**
 	 * Sets the (base) context if the binding path is relative. Triggers (@link #fetchCache) to
 	 * create a cache and {@link #checkUpdate} to check for the current value if the
 	 * context has changed. In case of absolute bindings nothing is done.
