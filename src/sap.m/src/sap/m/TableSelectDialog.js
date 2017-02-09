@@ -219,6 +219,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 			growing: true,
 			growingScrollToLoad: true,
 			mode: sap.m.ListMode.SingleSelectMaster,
+			modeAnimationOn: false,
 			infoToolbar: new sap.m.Toolbar({
 				visible: false,
 				active: false,
