@@ -294,7 +294,7 @@ sap.ui.define([
 			this._aSemanticNavIconActions.splice(iControlIndex, 1);
 		} else {
 			iControlIndex = this._aSemanticTextActions.indexOf(oSemanticControl);
-			this._aSemanticTextActions.splice(iControlIndex, 1);
+			this._aSemanticSimpleIconActions.splice(iControlIndex, 1);
 		}
 
 		this._callContainerAggregationMethod("removeAction", oControl);
