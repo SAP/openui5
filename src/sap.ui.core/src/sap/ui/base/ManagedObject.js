@@ -2501,11 +2501,12 @@ sap.ui.define([
 
 	/**
 	 * Returns the binding infos for the given property or aggregation. The binding info contains information about path, binding object, format options,
-	 * sorter, filter etc. for the property or aggregation.
+	 * sorter, filter etc. for the property or aggregation. As the binding object is only created when the model becomes available, the binding property may be
+	 * undefined.
 	 *
 	 * @param {string} sName the name of the property or aggregation
 	 *
-	 * @returns {object} the binding info object, containing at least a path property
+	 * @returns {object} the binding info object, containing at least a path or parts property
 	 *                   and, depending on the binding type, additional properties
 	 *
 	 * @protected
