@@ -306,7 +306,7 @@ sap.ui.define([
 		 * @param {boolean} [options.searchOpenDialogs=false] If set to true, Opa5 will only look in open dialogs. All the other values except control type will be ignored
 		 * @param {boolean} [options.visible=true] If set to false, Opa5 will also look for unrendered and invisible controls.
 		 * @param {int} [options.timeout=15] (seconds) Specifies how long the waitFor function polls before it fails.O means it will wait forever.
-		 * @param {int} [options.debugTimeout=0] (seconds) Specifies how long the waitFor function polls before it fails in debug mode.O means it will wait forever.
+		 * @param {int} [options.debugTimeout=0] @since 1.47 (seconds) Specifies how long the waitFor function polls before it fails in debug mode.O means it will wait forever.
 		 * @param {int} [options.pollingInterval=400] (milliseconds) Specifies how often the waitFor function polls.
 		 * @param {function} [options.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
 		 * The first parameter passed into the function is the same value that gets passed to the success function.
