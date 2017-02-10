@@ -2587,7 +2587,7 @@
 	"ProductCollectionStats": {
 		"Counts": {
 			"Total": 123,
-			"WeightMeasure": {
+			"Weight": {
 				"Ok": 53,
 				"Heavy": 51,
 				"Overweight": 19

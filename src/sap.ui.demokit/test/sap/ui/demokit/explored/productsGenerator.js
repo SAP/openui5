@@ -27,9 +27,9 @@ sap.ui.demokit.explored.resource.DataGenerator.gen = function (oData) {
 
 		// Weight-based
 		var weightCategory = "Ok";
-		if ( product.WeightMeasure > 2000 ) {
+		if ( product.WeightMeasure > 5 ) {
 			weightCategory = "Overweight";
-		} else if ( product.WeightMeasure > 1000 ) {
+		} else if ( product.WeightMeasure > 1) {
 			weightCategory = "Heavy";
 		}
 		oData.ProductCollectionStats.Counts.Weight[weightCategory]++;

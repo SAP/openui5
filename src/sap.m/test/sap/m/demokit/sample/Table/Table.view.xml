@@ -57,7 +57,10 @@
 						number="{WeightMeasure}"
 						unit="{WeightUnit}"
 						state="{
-							path: 'WeightMeasure',
+							parts: [
+								{path: 'WeightMeasure'},
+								{path: 'WeightUnit'}
+							],
 							formatter: 'sap.m.sample.Table.Formatter.weightState'
 						}" />
 					<ObjectNumber
