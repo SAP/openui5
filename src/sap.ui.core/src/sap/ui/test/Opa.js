@@ -583,6 +583,7 @@ sap.ui.define([
 	Opa._aConfigValuesForWaitFor = [
 		"errorMessage",
 		"timeout",
+		"debugTimeout",
 		"pollingInterval",
 		"_stackDropCount"
 	];
@@ -592,6 +593,7 @@ sap.ui.define([
 		check: "func",
 		success: "func",
 		timeout: "numeric",
+		debugTimeout: "numeric",
 		pollingInterval: "numeric",
 		_stackDropCount: "numeric",
 		errorMessage: "string"
