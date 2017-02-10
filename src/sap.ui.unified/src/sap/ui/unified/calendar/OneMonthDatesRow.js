@@ -1,10 +1,33 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/DatesRow', 'sap/ui/unified/library'],
-	function(jQuery, DatesRow, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/DatesRow', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/library'],
+	function(jQuery, DatesRow, CalendarUtils, library) {
 		"use strict";
 
+	/**
+	 * Constructor for a new <code>OneMonthDatesRow</code>.
+	 *
+	 * @param {string} [sID] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 *
+	 * @class
+	 * This control is a private and used internally for the purposes of the PlanningCalendar 1 month view. It supports
+	 * the following rendering depending on the parent's container width:
+	 * <ul>
+	 * <li>a calendar like rows for S & M sizes </li>
+	 * <li>a single row for all other sizes </li>
+	 * </ul>
+	 * Other usages are not supported.
+	 *
+	 * @extends sap.ui.core.Control
+	 * @version ${version}
+	 *
+	 * @constructor
+	 * @private
+	 * @since 1.44
+	 * @alias sap.ui.unified.calendar.OneMonthDatesRow
+	 */
 	var OneMonthDatesRow = DatesRow.extend("sap.ui.unified.calendar.OneMonthDatesRow", /** @lends sap.ui.unified.calendar.OneMonthDatesRow.prototype */ {
 		metadata : {
 			library : "sap.ui.unified"
@@ -72,6 +95,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/DatesRow', 'sap/ui/
 		return this;
 
 	};
+
+	/**
+	 * Hanldes [HOME] key to focus the 1st day of the month regardless any dates from other months
+	 * @param oEvent the event
+	 */
+	OneMonthDatesRow.prototype.onsaphome = function(oEvent) {
+		var oUniversalStartDate = CalendarUtils._createUniversalUTCDate(this.getStartDate());
+
+		//prevent item navigation to focus the 1st visible item, because this item may correspond to an item from other month
+		interruptEvent(oEvent);
+
+		this._setDate(oUniversalStartDate);//Can we reuse setDate (see checkDateFocusable that prevents setting the date).
+		this._focusDate(oUniversalStartDate);
+
+		this.fireFocus({date: this.getStartDate(), otherMonth: false});
+	};
+
+	/**
+	 * Hanldes [END] key to focus the last day of the month regardless any dates from other months
+	 * @param oEvent the event
+	 */
+	OneMonthDatesRow.prototype.onsapend = function (oEvent) {
+		var oStartDate = this.getStartDate(),
+			oLastDay = CalendarUtils._getLastDayInMonth(oStartDate),
+			oUniversalLastDay = CalendarUtils._createUniversalUTCDate(oLastDay);
+
+		//prevent item navigation to focus the last visible item, because this item may correspond to an item from other month
+		interruptEvent(oEvent);
+
+		this._setDate(oUniversalLastDay); //Can we reuse setDate (see checkDateFocusable that prevents setting the date).
+		this._focusDate(oUniversalLastDay);
+
+		this.fireFocus({date: oLastDay, otherMonth: false});
+	};
+
+	function interruptEvent(oEvent) {
+		oEvent.stopPropagation();
+		oEvent.preventDefault();
+		oEvent.stopImmediatePropagation(true);
+	}
 
 	return OneMonthDatesRow;
 
