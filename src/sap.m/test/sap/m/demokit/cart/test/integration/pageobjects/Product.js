@@ -4,9 +4,10 @@ sap.ui.define([
 		'sap/ui/test/actions/Press'
 	], function (Opa5, PropertyStrictEquals, Press) {
 
+		var sViewName= "Product";
 		Opa5.createPageObjects({
 			onTheProduct: {
-				viewName: "Product",
+
 				actions: {
 					iAddTheDisplayedProductToTheCart: function () {
 						return this.waitFor({
@@ -19,7 +20,7 @@ sap.ui.define([
 					iPressOnTheProductPicture: function () {
 						return this.waitFor({
 							id : "productImage",
-							viewName : "Product",
+							viewName : sViewName,
 							actions : new Press()
 						})
 					},
@@ -39,6 +40,15 @@ sap.ui.define([
 							actions : new Press(),
 							errorMessage : "Did not find the Close button"
 						});
+					},
+
+					iPressTheBackButton: function () {
+						return this.waitFor({
+							id: "page",
+							viewName: "Category",
+							actions: new Press(),
+							errorMessage: "The nav back button was not displayed"
+						});
 					}
 				},
 
@@ -46,13 +56,23 @@ sap.ui.define([
 
 					iShouldSeeALightBox: function () {
 						return this.waitFor({
-							viewName : "Product",
+							viewName : sViewName,
 							id : "lightBox",
 							success : function () {
 								Opa5.assert.ok(true, "Light Box is visible");
 							}
 						})
-					}
+					},
+
+					iShouldSeeTheProductPage: function () {
+						return this.waitFor({
+							viewName: sViewName,
+							success: function () {
+								Opa5.assert.ok(true, "The product Page was successfully displayed");
+							},
+							errorMessage: "The product page was not displayed"
+						});
+					},
 				}
 
 			}

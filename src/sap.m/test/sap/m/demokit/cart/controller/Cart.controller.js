@@ -43,6 +43,13 @@ sap.ui.define([
 		},
 
 		_routePatternMatched: function () {
+			var oCartModel = this.getModel("cartProducts");
+			var oCartEntries = oCartModel.getProperty("/cartEntries");
+			//enables the proceed and edit buttons if the cart has entries
+			if (!jQuery.isEmptyObject(oCartEntries)) {
+				oCartModel.setProperty("/showProceedButton", true);
+				oCartModel.setProperty("/showEditButton", true);
+			}
 			//set selection of list back
 			var oEntryList = this.getView().byId("entryList");
 			oEntryList.removeSelections();

@@ -2,5 +2,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	displayBlock="true">
-	<SplitApp id="splitApp"/>
+	<SplitApp
+		id="splitApp"
+		class="sapUiDemoCart"/>
 </mvc:View>
