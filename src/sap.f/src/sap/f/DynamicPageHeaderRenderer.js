@@ -19,7 +19,8 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oDynamicPageHeader An object representation of the control that should be rendered
 	 */
 	DynamicPageHeaderRenderer.render = function (oRm, oDynamicPageHeader) {
-		var aContent = oDynamicPageHeader.getContent();
+		var aContent = oDynamicPageHeader.getContent(),
+			bHeaderPinnable = oDynamicPageHeader.getPinnable();
 
 		// Dynamic Page Layout Header Root DOM Element.
 		oRm.write("<header");
@@ -29,6 +30,9 @@ sap.ui.define([], function () {
 		});
 		oRm.addClass("sapContrastPlus");
 		oRm.addClass("sapFDynamicPageHeader");
+		if (bHeaderPinnable) {
+			oRm.addClass("sapFDynamicPageHeaderPinnable");
+		}
 		oRm.writeClasses();
 		oRm.write(">");
 
@@ -41,7 +45,7 @@ sap.ui.define([], function () {
 			aContent.forEach(oRm.renderControl);
 			oRm.write("</div>");
 
-			if (oDynamicPageHeader.getPinnable() && !sap.ui.Device.system.phone) {
+			if (bHeaderPinnable && !sap.ui.Device.system.phone) {
 				DynamicPageHeaderRenderer._renderPinUnpinArea(oDynamicPageHeader, oRm);
 			}
 		}
