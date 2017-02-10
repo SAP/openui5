@@ -1353,6 +1353,31 @@
 				delete InputSubclass;
 			});
 
+			test("onChange should pass in extra parameters to the change event handler", function() {
+
+				// system under test
+				var oInput = new sap.m.InputBase();
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var fnFireChangeSpy = this.spy(oInput, "fireChange");
+				sap.ui.test.qunit.triggerCharacterInput(oInput.getFocusDomRef(), "bar");
+
+				// act
+				oInput.onChange(null, {
+					parameters: true,
+					otherParameter: false
+				});
+
+				// assertions
+				strictEqual(fnFireChangeSpy.args[0][0].parameters, true);
+				strictEqual(fnFireChangeSpy.args[0][0].otherParameter, false);
+
+				// cleanup
+				oInput.destroy();
+			});
+
 			test("onChange handler should fire the change event when last known and dom value are not same", function() {
 				// system under test
 				var sInitValue = "Test";
