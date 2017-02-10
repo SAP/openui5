@@ -1036,6 +1036,36 @@
 				strictEqual(this.sut.getMasterPages().length, 0, "Master pages now are 0");
 			});
 
+			module("Add master and detail pages");
+
+			test("Test pages order", function() {
+				//arrange
+				var oSystem = {
+					desktop: false,
+					phone: true,
+					tablet: false
+				};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+
+				this.sut = new sap.m.SplitContainer({
+					initialMaster : "master2",
+					detailPages : new sap.m.Page("detail", {
+						title : "detail"
+					}),
+					masterPages : [
+						new sap.m.Page("master1", { title : "master1"}),
+						new sap.m.Page("master2", { title : "master2"})
+					]
+				});
+
+				var oMasterPage1 = sap.ui.getCore().byId("master1");
+
+				//assert
+				strictEqual(this.sut._oMasterNav.getPages()[0].getId(), "master1", "First page should be master1");
+				strictEqual(this.sut._oDetailNav.getPages()[0].getId(), "master1", "First page should be master1");
+			});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

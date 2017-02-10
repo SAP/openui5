@@ -980,7 +980,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._oMasterNav === this._oDetailNav && jQuery.inArray(oPage, this._oDetailNav.getPages()) !== -1) {
 			this._removePageFromArray(this._aDetailPages, oPage);
 		}
-		this._oMasterNav.addPage(oPage);
+		this._oMasterNav.insertPage(oPage, this._aMasterPages.length);
 		this._aMasterPages.push(oPage);
 		return this;
 	};
