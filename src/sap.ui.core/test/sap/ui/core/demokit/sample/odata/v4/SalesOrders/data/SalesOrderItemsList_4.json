@@ -1,5 +1,6 @@
 {
 	"@odata.context" : "../$metadata#SOLineItemList(SOITEM_2_PRODUCT(PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber)))",
+	"@odata.count" : "6",
 	"value" : [
 		{
 			"SalesOrderID" : "0500000004",

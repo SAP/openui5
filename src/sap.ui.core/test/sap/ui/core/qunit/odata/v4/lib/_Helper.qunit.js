@@ -587,4 +587,13 @@ sap.ui.require([
 			_Helper.getKeyPredicate({$Key : ["ID"]}, undefined);
 		}, new Error("No instance to calculate key predicate"));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("namespace", function (assert) {
+		assert.strictEqual(_Helper.namespace("Products"), "");
+		assert.strictEqual(_Helper.namespace("GW_SAMPLE_BASIC.Products"), "GW_SAMPLE_BASIC");
+		assert.strictEqual(_Helper.namespace("GW_SAMPLE_BASIC.v1.Products"), "GW_SAMPLE_BASIC.v1");
+		assert.strictEqual(_Helper.namespace("GW_SAMPLE_BASIC.v1.Products/Category/type.cast"),
+			"GW_SAMPLE_BASIC.v1");
+	});
 });

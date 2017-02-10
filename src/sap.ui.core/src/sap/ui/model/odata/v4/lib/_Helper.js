@@ -299,6 +299,27 @@ sap.ui.define([
 		},
 
 		/**
+		 * Determines the namespace of the given qualified name.
+		 *
+		 * @param {string} sName
+		 *   The qualified name
+		 * @returns {string}
+		 *   The namespace
+		 */
+		namespace : function (sName) {
+			var iIndex = sName.indexOf("/");
+
+			if (iIndex >= 0) {
+				// consider only the first path segment
+				sName = sName.slice(0, iIndex);
+			}
+			// now we have a qualified name, drop the last segment (the name)
+			iIndex = sName.lastIndexOf(".");
+
+			return iIndex < 0 ? "" : sName.slice(0, iIndex);
+		},
+
+		/**
 		 * Converts given value to an array.
 		 * <code>null</code> and <code>undefined</code> are converted to the empty array, a
 		 * non-array value is wrapped with an array and an array is returned as it is.

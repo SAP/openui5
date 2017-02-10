@@ -63,11 +63,22 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						},
 						viewName : sViewName
 					});
+				},
+				pressValueHelpOnCurrencyCode : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.ui.core.sample.odata.v4.SalesOrders.ValueHelp",
+						matchers : new Interactable(),
+						id : "NewCurrencyCode",
+						success : function (oValueHelp) {
+							Opa5.assert.ok(true, "ValueHelp on CurrencyCode pressed");
+						},
+						viewName : sViewName
+					});
 				}
-
 			},
 			assertions : {
-				checkCurrencyCodeIsF4Help : function () {
+				checkCurrencyCodeIsValueHelp : function () {
 					return this.waitFor({
 						controlType : "sap.ui.core.sample.odata.v4.SalesOrders.ValueHelp",
 						matchers : new Interactable(),
@@ -75,6 +86,32 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						success : function (oValueHelp) {
 							Opa5.assert.ok(oValueHelp.getShowValueHelp(),
 								"CurrencyCode has value help");
+						},
+						viewName : sViewName
+					});
+				},
+				checkInnerValueHelpExists : function () {
+					return this.waitFor({
+						controlType : "sap.ui.core.sample.odata.v4.SalesOrders.ValueHelp",
+						searchOpenDialogs : true,
+						matchers : new Interactable(),
+						id : /-InnerValueHelp-/,
+						success : function (aValueHelps) {
+							Opa5.assert.ok(aValueHelps[0].getShowValueHelp(),
+								"Inner value help exists");
+							return this.waitFor({
+								controlType : "sap.m.Button",
+								searchOpenDialogs : true,
+								// TODO: why match doesn't work with regex via id:?
+								// id : /CloseValueHelp-/,
+								matchers : new Properties({
+									id: new RegExp("CloseValueHelp-", "i")
+								}),
+								success : function (aButtons) {
+									aButtons[0].$().tap();
+								},
+								viewName : sViewName
+							});
 						},
 						viewName : sViewName
 					});
@@ -600,6 +637,17 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						id : "Note",
 						success : function (oSONote) {
 							Opa5.assert.strictEqual(oSONote.getValue(), "");
+						},
+						viewName : sViewName
+					});
+				},
+				checkSalesOrdersCount : function (iExpectedCount) {
+					return this.waitFor({
+						controlType : "sap.m.Text",
+						id : "SalesOrdersTitle",
+						success : function (oText) {
+							Opa5.assert.strictEqual(oText.getText(),
+								iExpectedCount + " Sales Orders", iExpectedCount + " Sales Orders");
 						},
 						viewName : sViewName
 					});

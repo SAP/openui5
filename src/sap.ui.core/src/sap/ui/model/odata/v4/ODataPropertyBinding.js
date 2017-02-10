@@ -16,6 +16,7 @@ sap.ui.define([
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
+		oDoFetchQueryOptionsPromise = _SyncPromise.resolve({}),
 		mSupportedEvents = {
 			AggregatedDataStateChange : true,
 			change : true,
@@ -38,8 +39,9 @@ sap.ui.define([
 	 *   Map of binding parameters which can be OData query options as specified in
 	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
 	 *   and "$$updateGroupId".
-	 *   Note: Binding parameters may only be provided for absolute binding paths as only those
-	 *   lead to a data service request.
+	 *   Note: The binding creates its own data service request if it is absolute or if it has any
+	 *   parameters or if it is relative and has a context created via
+	 *   {@link ODataModel#createBindingContext}.
 	 *   All "5.2 Custom Query Options" are allowed except for those with a name starting with
 	 *   "sap-". All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
@@ -93,7 +95,7 @@ sap.ui.define([
 				this.mQueryOptions = this.oModel.buildQueryOptions(this.oModel.mUriParameters,
 					mParameters);
 				this.oCachePromise = _SyncPromise.resolve();
-				this.makeCache(oContext);
+				this.fetchCache(oContext);
 				this.oContext = oContext;
 				this.bInitial = true;
 				this.bRequestTypeFailed = false;
@@ -307,6 +309,36 @@ sap.ui.define([
 	};
 
 	/**
+	 * Hook method for {@link ODataBinding#fetchCache} to create a cache for this binding with the
+	 * given resource path and query options.
+	 *
+	 * @param {string} sResourcePath
+	 *   The resource path, for example "EMPLOYEES('1')/Name"
+	 * @param {object} mQueryOptions
+	 *   The query options
+	 * @returns {sap.ui.model.odata.v4.lib._Cache}
+	 *   The new cache instance
+	 *
+	 * @private
+	 */
+	ODataPropertyBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions) {
+		return _Cache.createProperty(this.oModel.oRequestor, sResourcePath, mQueryOptions);
+	};
+
+	/**
+	 * Hook method for {@link ODataBinding#fetchUseOwnCache} to determine the query options for
+	 * this binding.
+	 *
+	 * @returns {SyncPromise}
+	 *   A promise resolving with an empty map as a property binding has no query options
+	 *
+	 * @private
+	 */
+	ODataPropertyBinding.prototype.doFetchQueryOptions = function () {
+		return oDoFetchQueryOptionsPromise;
+	};
+
+	/**
 	 * Returns the current value.
 	 *
 	 * @returns {any}
@@ -342,38 +374,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates the cache for absolute bindings and bindings with a base context.
-	 *
-	 * The context is given as a parameter and this.oContext is unused because setContext may call
-	 * this method before calling the superclass to ensure that the cache is already created when
-	 * the events are fired.
-	 *
-	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context instance to be used, may be omitted for absolute bindings
-	 *
-	 * @private
-	 */
-	ODataPropertyBinding.prototype.makeCache = function (oContext) {
-		var oCache = this.oCachePromise.getResult(),
-			sResolvedPath = this.sPath;
-
-		if (oCache) {
-			oCache.setActive(false);
-		}
-
-		if (oContext && !oContext.fetchValue) {
-			sResolvedPath = this.oModel.resolve(this.sPath, oContext);
-		}
-		if (sResolvedPath[0] === "/") {
-			oCache = _Cache.createProperty(this.oModel.oRequestor, sResolvedPath.slice(1),
-				this.mQueryOptions);
-		} else {
-			oCache = undefined;
-		}
-		this.oCachePromise = _SyncPromise.resolve(oCache);
-	};
-
-	/**
 	 * Change handler for the cache. The cache calls this method when the value is changed.
 	 *
 	 * @param {any} vValue
@@ -391,7 +391,7 @@ sap.ui.define([
 	 * @inheritdoc
 	 */
 	ODataPropertyBinding.prototype.refreshInternal = function (sGroupId) {
-		this.makeCache(this.oContext);
+		this.fetchCache(this.oContext);
 		this.checkUpdate(true, ChangeReason.Refresh, sGroupId);
 	};
 
@@ -405,8 +405,23 @@ sap.ui.define([
 	 *   additional property "$model" which is the {@link sap.ui.model.odata.v4.ODataModel} instance
 	 *   to read value list data via this mapping.
 	 *
-	 *   The promise is rejected with an error if there is no value list information available. Use
-	 *   {@link #getValueListType} to determine if value list information exists.
+	 *   For fixed values, only one mapping is expected and the qualifier is ignored. The mapping
+	 *   is available with key "".
+	 *
+	 *   The promise is rejected with an error if there is no value list information available
+	 *   for this property. Use {@link #getValueListType} to determine if value list information
+	 *   exists. It is also rejected with an error if the value list metadata is inconsistent.
+	 *
+	 *   An inconsistency can result from one of the following reasons:
+	 *   <ul>
+	 *    <li> There is a reference, but the referenced service does not contain mappings for the
+	 *     property.
+	 *    <li> The referenced service contains annotation targets in the namespace of the data
+	 *     service that are not mappings for the property.
+	 *    <li> Two different referenced services contain a mapping using the same qualifier.
+	 *    <li> A service is referenced twice.
+	 *    <li> No mappings have been found.
+	 *   </ul>
 	 * @throws {Error}
 	 *   If the binding is relative and has no context
 	 *
@@ -423,8 +438,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the (base) context if the binding path is relative. Triggers (@link #makeCache) to check
-	 * if a cache needs to be created and {@link #checkUpdate} to check for the current value if the
+	 * Sets the (base) context if the binding path is relative. Triggers (@link #fetchCache) to
+	 * create a cache and {@link #checkUpdate} to check for the current value if the
 	 * context has changed. In case of absolute bindings nothing is done.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
@@ -443,7 +458,7 @@ sap.ui.define([
 			}
 			this.oContext = oContext;
 			if (this.bRelative) {
-				this.makeCache(this.oContext);
+				this.fetchCache(this.oContext);
 				this.checkUpdate(false, ChangeReason.Context);
 			}
 		}
