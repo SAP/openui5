@@ -25,6 +25,7 @@ module.exports = [
 	"OverflowToolbar.spec.js",
 	"Page.spec.js",
 	"Panel.spec.js",
+	"PlanningCalendar.spec.js",
 	"Popover.spec.js",
 	"ProgressIndicator.spec.js",
 	"QuickView.spec.js",
