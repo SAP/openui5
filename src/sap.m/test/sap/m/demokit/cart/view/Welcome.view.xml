@@ -54,7 +54,9 @@
 												formatter : '.formatter.statusState'}"/>
 									</l:VerticalLayout>
 								</FlexBox>
-								<l:VerticalLayout width="100%" class="centeredImage">
+								<FlexBox
+									renderType="Bare"
+									justifyContent="Center">
 									<Image
 										src="{
 											path: 'view>Product/PictureUrl',
@@ -62,8 +64,9 @@
 										}"
 										densityAware="false"
 										press="onPicturePress"
-										width="50%"/>
-								</l:VerticalLayout>
+										width="50%"
+										height="50%"/>
+								</FlexBox>
 								<Button
 									tooltip="{i18n>addToCart}"
 									type="Emphasized"
@@ -128,18 +131,19 @@
 												formatter : '.formatter.statusState'}"/>
 									</l:VerticalLayout>
 								</FlexBox>
-								<l:VerticalLayout
-									width="100%"
-									class="centeredImage">
+								<FlexBox
+									renderType="Bare"
+									justifyContent="Center">
 									<Image
 										src="{
 											path: 'view>Product/PictureUrl',
 											formatter : '.formatter.pictureUrl'
 										}"
-										press="onPicturePress"
 										densityAware="false"
-										width="75%"/>
-								</l:VerticalLayout>
+										press="onPicturePress"
+										width="100%"
+										height="100%"/>
+								</FlexBox>
 								<Button
 									tooltip="{i18n>addToCart}"
 									press="onAddButtonPress"
@@ -203,18 +207,19 @@
 												formatter : '.formatter.statusState'}"/>
 									</l:VerticalLayout>
 								</FlexBox>
-								<l:VerticalLayout
-									width="100%"
-									class="centeredImage">
+								<FlexBox
+									renderType="Bare"
+									justifyContent="Center">
 									<Image
 										src="{
 											path: 'view>Product/PictureUrl',
 											formatter : '.formatter.pictureUrl'
 										}"
-										press="onPicturePress"
 										densityAware="false"
-										width="75%"/>
-								</l:VerticalLayout>
+										press="onPicturePress"
+										width="100%"
+										height="100%"/>
+								</FlexBox>
 								<Button
 									tooltip="{i18n>addToCart}"
 									type="Emphasized"

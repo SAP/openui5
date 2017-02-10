@@ -9,7 +9,3 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .customBackground section
 	padding: 0;
 	border-bottom-width: 0;
 }
-
-.sapUiDemoCart .centeredImage > div {
-	text-align: center;
-}

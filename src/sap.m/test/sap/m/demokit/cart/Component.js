@@ -42,11 +42,6 @@ sap.ui.define([
 
 			this.getRouter().initialize();
 			this._router = this.getRouter();
-
-			//navigate to initial page for !phone
-			if (!sap.ui.Device.system.phone) {
-				this._router.getTargets().display("welcome");
-			}
 		},
 
 		myNavBack : function () {
