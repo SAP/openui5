@@ -975,72 +975,68 @@ sap.ui.require([
 				oSingleCacheMock = this.mock(oSingleCache),
 				that = this;
 
+			/*
+			 * Sets up the mocks necessary for a test of execute.
+			 * @param {string} sFooVar The variable part of the parameter "føø"
+			 * @param {string} [sGroupId] The group ID for execute
+			 */
+			function mockForExecute(sFooVar, sGroupId) {
+				oBindingMock.expects("_requestOperationMetadata")
+					.returns(Promise.resolve({
+						$kind : "Function",
+						$Parameter : [{
+							$Name : "føø",
+							$Type : "Edm.String"
+						}, {
+							$Name : "p2",
+							$Type : "Edm.Int16"
+						}, { // unused collection parameter must not lead to an error
+							$Name : "p3",
+							//$Nullable : true,
+							$IsCollection : true
+						}]
+					}));
+				oHelperMock.expects("formatLiteral")
+					.withExactArgs("bãr'" + sFooVar, "Edm.String")
+					.returns("'bãr''" + sFooVar + "'");
+				oHelperMock.expects("formatLiteral").withExactArgs(42, "Edm.Int16").returns("42");
+				jQueryMock.expects("extend")
+					.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
+						sinon.match.same(oBinding.mQueryOptions))
+					.returns(oQueryOptions);
+				oCacheMock.expects("createSingle")
+					.withExactArgs(sinon.match.same(that.oModel.oRequestor),
+						"FunctionImport(f%C3%B8%C3%B8='b%C3%A3r''" + sFooVar + "',p2=42)",
+						sinon.match.same(oQueryOptions))
+					.returns(oSingleCache);
+				if (!sGroupId) {
+					oBindingMock.expects("getGroupId").returns("foo");
+				}
+				oSingleCacheMock.expects("fetchValue")
+					.withExactArgs(sGroupId || "foo").returns(_SyncPromise.resolve({}));
+				oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+			}
+
 			oCacheMock.expects("createSingle").never();
 
 			oBinding = this.oModel.bindContext(sPath, oBaseContext);
 			oBindingMock = this.mock(oBinding);
 
-			oBindingMock.expects("_requestOperationMetadata").twice()
-				.returns(Promise.resolve({
-					$kind : "Function",
-					$Parameter : [{
-						$Name : "føø",
-						$Type : "Edm.String"
-					}, {
-						$Name : "p2",
-						$Type : "Edm.Int16"
-					}, { // unused collection parameter must not lead to an error
-						$Name : "p3",
-						//$Nullable : true,
-						$IsCollection : true
-					}]
-				}));
-			oHelperMock.expects("formatLiteral").withExactArgs("bãr'1", "Edm.String")
-				.returns("'bãr''1'");
-			oHelperMock.expects("formatLiteral").withExactArgs(42, "Edm.Int16").returns("42");
-			jQueryMock.expects("extend")
-				.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
-					sinon.match.same(oBinding.mQueryOptions))
-				.returns(oQueryOptions);
-			oCacheMock.expects("createSingle")
-				.withExactArgs(sinon.match.same(this.oModel.oRequestor),
-					"FunctionImport(f%C3%B8%C3%B8='b%C3%A3r''1',p2=42)",
-					sinon.match.same(oQueryOptions))
-				.returns(oSingleCache);
-			oBindingMock.expects("getGroupId").returns("foo");
-			oSingleCacheMock.expects("fetchValue")
-				.withExactArgs("foo").returns(_SyncPromise.resolve({}));
-			oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+			mockForExecute("1");
 
-			// code under test
+			// code under test - initial, no group ID
 			oExecutePromise = oBinding.setParameter("føø", "bãr'1").setParameter("p2", 42)
 				.execute().then(function (oResult) {
 					assert.strictEqual(oBinding.oCachePromise.getResult(), oSingleCache);
 					assert.strictEqual(oResult, undefined);
 
-					oHelperMock.expects("formatLiteral")
-						.withExactArgs("bãr'2", "Edm.String").returns("'bãr''2'");
-					oHelperMock.expects("formatLiteral")
-						.withExactArgs(42, "Edm.Int16").returns("42");
-					jQueryMock.expects("extend")
-						.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
-							sinon.match.same(oBinding.mQueryOptions))
-						.returns(oQueryOptions);
-					oCacheMock.expects("createSingle")
-						.withExactArgs(sinon.match.same(that.oModel.oRequestor),
-							"FunctionImport(f%C3%B8%C3%B8='b%C3%A3r''2',p2=42)",
-							sinon.match.same(oQueryOptions))
-						.returns(oSingleCache);
-					oSingleCacheMock.expects("fetchValue").withExactArgs("group")
-						.returns(_SyncPromise.resolve({}));
-					oBindingMock.expects("_fireChange")
-						.withExactArgs({reason : ChangeReason.Change});
+					mockForExecute("2", "group");
 
-					// code under test
+					// code under test - groupID given, execute creates new cache
 					return oBinding.setParameter("føø", "bãr'2").execute("group").then(function () {
 						oBindingMock.expects("execute").withExactArgs("refreshGroup");
 
-						// code under test: refresh operation binding
+						// code under test - refresh calls execute
 						oBinding.refresh("refreshGroup");
 					});
 				});
