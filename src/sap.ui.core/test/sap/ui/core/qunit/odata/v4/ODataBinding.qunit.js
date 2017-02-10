@@ -5,8 +5,9 @@ sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_SyncPromise",
+	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/ODataBinding"
-], function (jQuery, _Helper, _SyncPromise, asODataBinding) {
+], function (jQuery, _Helper, _SyncPromise, Context, asODataBinding) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -495,5 +496,439 @@ sap.ui.require([
 
 		// code under test
 		oBinding.resetChangesInDependents();
+	});
+
+	//*********************************************************************************************
+	[
+		{oTemplate : {sPath : "/absolute", bRelative : false}},
+		{
+			oTemplate : {sPath : "quasiAbsolute", bRelative : true},
+			oContext : {getPath : function () { return "/baseContext"; }}
+		},
+		{
+			oTemplate : {
+				sPath : "relativeWithParameters",
+				mParameters : {"$$groupId" : "myGroup"},
+				bRelative : true
+			},
+			oContext : Context.create({}, {}, "/v4Context")
+		}
+	].forEach(function (oFixture) {
+		QUnit.test("fetchQueryOptionsForOwnCache returns query options:" + oFixture.oTemplate.sPath,
+			function (assert) {
+				var oBinding = new ODataBinding(oFixture.oTemplate),
+					oBindingMock,
+					mQueryOptions = {};
+
+				oBinding.doFetchQueryOptions = function () {};
+				oBindingMock = this.mock(oBinding);
+				oBindingMock.expects("doFetchQueryOptions")
+					.withExactArgs(sinon.match.same(oFixture.oContext))
+					.returns(_SyncPromise.resolve(mQueryOptions));
+
+				// code under test
+				assert.strictEqual(
+					oBinding.fetchQueryOptionsForOwnCache(oFixture.oContext).getResult(),
+					mQueryOptions);
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		{sPath : "unresolvedRelative", bRelative : true},
+		{oOperation : {}, sPath : "operation"}
+	].forEach(function (oTemplate) {
+		QUnit.test("fetchQueryOptionsForOwnCache returns undefined: " + oTemplate.sPath,
+			function (assert) {
+				var oBinding = new ODataBinding(oTemplate);
+
+				// code under test
+				assert.strictEqual(oBinding.fetchQueryOptionsForOwnCache().getResult(),
+					undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		{
+			oTemplate : {sPath : "relativeWithEmptyParameters", mParameters : {}, bRelative : true},
+			oContext : Context.create({}, {}, "/v4Context")
+		},
+		{
+			oTemplate : {sPath : "relativeWithNoParameters", bRelative : true},
+			oContext : Context.create({}, {}, "/v4Context")
+		}
+	].forEach(function (oFixture) {
+		QUnit.test("fetchQueryOptionsForOwnCache returns undefined: " + oFixture.oTemplate.sPath,
+			function (assert) {
+				var oBinding = new ODataBinding(oFixture.oTemplate),
+					oBindingMock = this.mock(oBinding),
+					mQueryOptions = {"$filter" : "filterValue"};
+
+				oBinding.doFetchQueryOptions = function () {};
+				oBindingMock.expects("doFetchQueryOptions")
+					.withExactArgs(sinon.match.same(oFixture.oContext))
+					.returns(_SyncPromise.resolve({}));
+
+				// code under test
+				assert.strictEqual(
+					oBinding.fetchQueryOptionsForOwnCache(oFixture.oContext).getResult(),
+					undefined);
+
+				oBindingMock.expects("doFetchQueryOptions")
+					.withExactArgs(sinon.match.same(oFixture.oContext))
+					.returns(_SyncPromise.resolve(mQueryOptions));
+
+				// code under test
+				assert.deepEqual(
+					oBinding.fetchQueryOptionsForOwnCache(oFixture.oContext).getResult(),
+					mQueryOptions);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchCache: no own cache", function (assert) {
+		var oBinding = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(),
+				doCreateCache : function () {}
+			}),
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("fetchQueryOptionsForOwnCache").withExactArgs(undefined)
+			.returns(_SyncPromise.resolve(undefined));
+		oBindingMock.expects("doCreateCache").never();
+
+		// code under test
+		oBinding.fetchCache();
+
+		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchCache: absolute binding", function (assert) {
+		var oBinding = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(),
+				doCreateCache : function () {},
+				oModel : {
+					mUriParameters : {}
+				},
+				sPath : "/absolute",
+				bRelative : false
+			}),
+			oBindingMock = this.mock(oBinding),
+			oCache = {},
+			oContext = {},
+			mLocalQueryOptions = {},
+			mResultingQueryOptions = {};
+
+		oBindingMock.expects("fetchQueryOptionsForOwnCache").withExactArgs(undefined)
+			.returns(_SyncPromise.resolve(mLocalQueryOptions));
+		this.mock(jQuery).expects("extend")
+			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
+				sinon.match.same(mLocalQueryOptions))
+			.returns(mResultingQueryOptions);
+		oBindingMock.expects("doCreateCache")
+			.withExactArgs("absolute", sinon.match.same(mResultingQueryOptions), undefined)
+			.returns(oCache);
+
+		// code under test
+		oBinding.fetchCache(oContext);
+
+		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
+		assert.strictEqual(oCache.$canonicalPath, undefined);
+	});
+
+	//*********************************************************************************************
+	// fixture is [bQueryOptionsAsync, bCanonicalPathAsync]
+	[[false, false], [false, true], [true, false], [true, true]].forEach(function (aFixture) {
+		QUnit.test("fetchCache: relative binding with context, " + aFixture, function (assert) {
+			var oBinding = new ODataBinding({
+					oCachePromise : _SyncPromise.resolve(),
+					doCreateCache : function () {},
+					oModel : {
+						mUriParameters : {}
+					},
+					sPath : "relative",
+					bRelative : true
+				}),
+				oBindingMock = this.mock(oBinding),
+				oCache = {},
+				bCanonicalPathAsync = aFixture[1],
+				oCanonicalPathPromise = _SyncPromise.resolve(bCanonicalPathAsync
+					? Promise.resolve("/canonicalPath") : "/canonicalPath"),
+				oContext = {fetchCanonicalPath : function () {}},
+				mLocalQueryOptions = {},
+				bQueryOptionsAsync = aFixture[0],
+				oQueryOptionsPromise = _SyncPromise.resolve(bQueryOptionsAsync
+					? Promise.resolve(mLocalQueryOptions) : mLocalQueryOptions),
+				mResultingQueryOptions = {};
+
+			oBindingMock.expects("fetchQueryOptionsForOwnCache").withExactArgs(oContext)
+				.returns(oQueryOptionsPromise);
+			this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
+				.returns(oCanonicalPathPromise);
+			this.mock(jQuery).expects("extend")
+				.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
+					sinon.match.same(mLocalQueryOptions))
+				.returns(mResultingQueryOptions);
+			oBindingMock.expects("doCreateCache")
+				.withExactArgs("canonicalPath/relative", sinon.match.same(mResultingQueryOptions),
+					sinon.match.same(oContext))
+				.returns(oCache);
+
+			// code under test
+			oBinding.fetchCache(oContext);
+
+			assert.strictEqual(oBinding.oCachePromise.isFulfilled(),
+				!bQueryOptionsAsync && !bCanonicalPathAsync);
+			return oBinding.oCachePromise.then(function (oCache0) {
+				assert.strictEqual(oCache0, oCache);
+				assert.strictEqual(oCache0.$canonicalPath, "/canonicalPath");
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchCache: quasi-absolute binding", function (assert) {
+		var oBinding = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(),
+				doCreateCache : function () {},
+				oModel : {
+					mUriParameters : {}
+				},
+				sPath : "quasiAbsolute",
+				bRelative : true
+			}),
+			oBindingMock = this.mock(oBinding),
+			oCache = {},
+			oContext = {getPath : function () {}},
+			mLocalQueryOptions = {},
+			mResultingQueryOptions = {};
+
+		oBindingMock.expects("fetchQueryOptionsForOwnCache").withExactArgs(oContext)
+			.returns(_SyncPromise.resolve(mLocalQueryOptions));
+		this.mock(oContext).expects("getPath").withExactArgs()
+			.returns("/contextPath");
+		this.mock(jQuery).expects("extend")
+			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
+				sinon.match.same(mLocalQueryOptions))
+			.returns(mResultingQueryOptions);
+		oBindingMock.expects("doCreateCache")
+			.withExactArgs("contextPath/quasiAbsolute", sinon.match.same(mResultingQueryOptions),
+				sinon.match.same(oContext))
+			.returns(oCache);
+
+		// code under test
+		oBinding.fetchCache(oContext);
+
+		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
+		assert.strictEqual(oCache.$canonicalPath, "/contextPath");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchCache: operation binding", function (assert) {
+		var oCachePromise = {},
+			oBinding = new ODataBinding({
+				oCachePromise : oCachePromise,
+				oOperation : {}
+			});
+
+		// code under test
+		oBinding.fetchCache({/*oContext: not needed*/});
+
+		assert.strictEqual(oBinding.oCachePromise, oCachePromise,
+			"cache promise not changed for operation bindings");
+	});
+
+	//*********************************************************************************************
+	[
+		_SyncPromise.resolve(undefined),
+		_SyncPromise.resolve({ setActive : function () {} })
+	].forEach(function (oCachePromise, i) {
+		QUnit.test("fetchCache: deactivates previous cache, " + i, function (assert) {
+			var oBinding = new ODataBinding({
+					oCachePromise : oCachePromise,
+					fetchQueryOptionsForOwnCache : function () {
+						return _SyncPromise.resolve(undefined);
+					},
+					oModel : {
+						mUriParameters : {}
+					},
+					bRelative : true
+				}),
+				oCache = oCachePromise && oCachePromise.getResult();
+
+			if (oCache) {
+				this.mock(oCache).expects("setActive").withExactArgs(false);
+			}
+
+			// code under test
+			oBinding.fetchCache();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchCache: use same cache for same path", function (assert) {
+		var oBinding = new ODataBinding({
+			oCachePromise : _SyncPromise.resolve(),
+			doCreateCache : function () {},
+				oModel : {
+					mUriParameters : {}
+				},
+				bRelative : true
+			}),
+			oBindingMock = this.mock(oBinding),
+			oCache = {
+				setActive : function () {}
+			},
+			oCacheMock = this.mock(oCache),
+			oCanonicalPathPromise = _SyncPromise.resolve(Promise.resolve("/canonicalPath")),
+			oContext = {fetchCanonicalPath : function () {}};
+
+		oBindingMock.expects("fetchQueryOptionsForOwnCache").twice()
+			.returns(_SyncPromise.resolve({}));
+		this.mock(oContext).expects("fetchCanonicalPath").twice()
+			.returns(oCanonicalPathPromise);
+		oBindingMock.expects("doCreateCache").returns(oCache);
+
+		// code under test
+		oBinding.fetchCache(oContext);
+
+		return oBinding.oCachePromise.then(function (oCache0) {
+			oCacheMock.expects("setActive").withExactArgs(false);
+			oCacheMock.expects("setActive").withExactArgs(true);
+
+			// code under test
+			oBinding.fetchCache(oContext); // must not create new cache
+
+			return oBinding.oCachePromise.then(function (oCache1) {
+				assert.strictEqual(oCache1, oCache);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchCache: no cache reuse for absolute bindings", function (assert) {
+		var oBinding = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(),
+				doCreateCache : function () {},
+				oModel : {
+					mUriParameters : {}
+				},
+				sPath : "/EMPLOYEES",
+				bRelative : false
+			}),
+			oBindingMock = this.mock(oBinding),
+			oCache = {setActive : function () {}};
+
+		oBindingMock.expects("fetchQueryOptionsForOwnCache").twice()
+			.returns(_SyncPromise.resolve({}));
+		oBindingMock.expects("doCreateCache").twice().returns(oCache);
+		this.mock(oCache).expects("setActive").withExactArgs(false);
+
+		// code under test
+		oBinding.fetchCache();
+
+		// code under test
+		oBinding.fetchCache();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchCache: cache promise !== binding's cache promise", function (assert) {
+		var oBinding = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(),
+				doCreateCache : function () {},
+				oModel : {
+					reportError : function () {},
+					mUriParameters : {}
+				},
+				bRelative : true,
+				toString : function () {return "MyBinding";}
+			}),
+			oBindingMock = this.mock(oBinding),
+			oCache = {},
+			oContext0 = {fetchCanonicalPath : function () {}},
+			oContext1 = {fetchCanonicalPath : function () {}},
+			mLocalQueryOptions = {},
+			oPromise,
+			mResultingQueryOptions = {};
+
+		oBindingMock.expects("fetchQueryOptionsForOwnCache")
+			.withExactArgs(oContext0)
+			.returns(_SyncPromise.resolve({}));
+		oBindingMock.expects("fetchQueryOptionsForOwnCache")
+			.withExactArgs(oContext1)
+			.returns(_SyncPromise.resolve(mLocalQueryOptions));
+		this.mock(oContext0)
+			.expects("fetchCanonicalPath").withExactArgs()
+			.returns(_SyncPromise.resolve(Promise.resolve("/canonicalPath0")));
+		this.mock(oContext1)
+			.expects("fetchCanonicalPath").withExactArgs()
+			.returns(_SyncPromise.resolve(Promise.resolve("/canonicalPath1")));
+		this.mock(jQuery).expects("extend")
+			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
+				sinon.match.same(mLocalQueryOptions))
+			.returns(mResultingQueryOptions);
+		oBindingMock.expects("doCreateCache")
+			.withExactArgs("canonicalPath1", sinon.match.same(mResultingQueryOptions),
+				sinon.match.same(oContext1))
+			.returns(oCache);
+
+		oBinding.fetchCache(oContext0);
+		oPromise = oBinding.oCachePromise;
+
+		this.mock(oBinding.oModel).expects("reportError")
+			.withExactArgs("Failed to create cache for binding MyBinding",
+				"sap.ui.model.odata.v4.ODataBinding", sinon.match.instanceOf(Error));
+
+		// create new cache for this binding while other cache creation is pending
+		oBinding.fetchCache(oContext1);
+		return _SyncPromise.all([
+			oPromise.then(function () {
+				assert.ok(false, "Expected a rejected cache-promise");
+			}, function (oError) {
+				assert.strictEqual(oError.message,
+					"Cache discarded as a new cache has been created");
+				assert.strictEqual(oError.canceled, true);
+			}),
+			oBinding.oCachePromise.then(function (oCache0) {
+				assert.strictEqual(oCache0, oCache);
+			})
+		]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchCache: fetchCanonicalPath fails", function (assert) {
+		var oBinding = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(),
+				oModel : {
+					reportError : function () {},
+					mUriParameters : {}
+				},
+				bRelative : true,
+				toString : function () {return "MyBinding";}
+			}),
+			oBindingMock = this.mock(oBinding),
+			oContext = {fetchCanonicalPath : function () {}},
+			oError = new Error("canonical path failure");
+
+		oBindingMock.expects("fetchQueryOptionsForOwnCache").returns(_SyncPromise.resolve({}));
+		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
+			.returns(_SyncPromise.resolve(Promise.reject(oError)));
+		this.mock(oBinding.oModel).expects("reportError")
+			.withExactArgs("Failed to create cache for binding MyBinding",
+				"sap.ui.model.odata.v4.ODataBinding", sinon.match.same(oError));
+
+		// code under test
+		oBinding.fetchCache(oContext);
+
+		return oBinding.oCachePromise.then(
+			function () {
+				assert.ok(false, "unexpected success");
+			},
+			function (oError0) {
+				assert.strictEqual(oError0, oError);
+			}
+		);
 	});
 });

@@ -12,17 +12,20 @@ sap.ui.define([
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/odata/OperationMode",
+	"sap/ui/model/odata/type/Int64",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/thirdparty/URI",
 	"./lib/_Helper",
 	"./lib/_SyncPromise",
 	"./ValueListType"
 ], function (jQuery, BindingMode, ContextBinding, BaseContext, FilterProcessor, JSONListBinding,
-		MetaModel, OperationMode, PropertyBinding, URI, _Helper, _SyncPromise, ValueListType) {
+		MetaModel, OperationMode, Int64, PropertyBinding, URI, _Helper, _SyncPromise,
+		ValueListType) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
-	var DEBUG = jQuery.sap.log.Level.DEBUG,
+	var oCountType,
+		DEBUG = jQuery.sap.log.Level.DEBUG,
 		ODataMetaContextBinding,
 		ODataMetaListBinding,
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
@@ -79,7 +82,7 @@ sap.ui.define([
 		},
 		sValueListMapping = "@com.sap.vocabularies.Common.v1.ValueListMapping",
 		mValueListModelByUrl = {},
-		sValueListReference = "@com.sap.vocabularies.Common.v1.ValueListReference",
+		sValueListReferences = "@com.sap.vocabularies.Common.v1.ValueListReferences",
 		sValueListWithFixedValues = "@com.sap.vocabularies.Common.v1.ValueListWithFixedValues",
 		WARNING = jQuery.sap.log.Level.WARNING;
 
@@ -91,14 +94,14 @@ sap.ui.define([
 	 * @param {string} sExpectedTerm
 	 *   The expected term
 	 * @returns {string}
-	 *   The qualifier or undefined if the term is not the expected term
+	 *   The qualifier or undefined, if the term is not the expected term
 	 */
 	function getQualifier(sTerm, sExpectedTerm) {
 		if (sTerm === sExpectedTerm) {
 			return "";
 		}
 		if (sTerm.indexOf(sExpectedTerm) === 0 && sTerm[sExpectedTerm.length] === "#"
-				&& sTerm.lastIndexOf("@") < sExpectedTerm.length) {
+				&& sTerm.indexOf("@", sExpectedTerm.length) < 0) {
 			return sTerm.slice(sExpectedTerm.length + 1);
 		}
 	}
@@ -978,6 +981,10 @@ sap.ui.define([
 		var oMetaContext = this.getMetaContext(sPath),
 			that = this;
 
+		if (jQuery.sap.endsWith(sPath, "/$count")) {
+			oCountType = oCountType || new Int64();
+			return _SyncPromise.resolve(oCountType);
+		}
 		// Note: undefined is more efficient than "" here
 		return this.fetchObject(undefined, oMetaContext).then(function (oProperty) {
 			var mConstraints,
@@ -1026,6 +1033,81 @@ sap.ui.define([
 	};
 
 	/**
+	 * Fetches the value list mappings from the metadata of the given model.
+	 *
+	 * @param {sap.ui.model.odata.v4.ODataModel} oValueListModel
+	 *   The value list model containing the "ValueListMapping" annotations
+	 * @param {string} sNamespace
+	 *   The namespace of the property in the data service; only annotations for that namespace are
+	 *   observed
+	 * @param {object} oProperty
+	 *   The property in the data service
+	 * @returns {SyncPromise}
+	 *   A promise that gets resolved with a map containing all "ValueListMapping" annotations in
+	 *   the metadata of the given model by qualifier.
+	 *
+	 *   It is rejected with an error if the value list model contains annotation targets in the
+	 *   namespace of the data service that are not mappings for the given property, or if there are
+	 *   no mappings for the given property.
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.fetchValueListMappings = function (oValueListModel, sNamespace,
+			oProperty) {
+		var that = this,
+			oValueListMetaModel = oValueListModel.getMetaModel();
+
+		// We cannot use fetchObject here for two reasons: We only have a property path and not
+		// necessarily the property's qualified name, and accessing a property annotation would fail
+		// because the value list service does not necessarily have the property. So we choose
+		// another way: We inspect all annotations in the value list service and try to resolve the
+		// target in the data service.
+		return oValueListMetaModel.fetchEntityContainer().then(function (oValueListMetadata) {
+			var mAnnotationByTerm,
+				mAnnotationMapByTarget = oValueListMetadata.$Annotations,
+				mValueListMappingByQualifier = {},
+				bValueListOnValueList = that === oValueListMetaModel,
+				aTargets;
+
+			// Note: This filter iterates over all targets, but matches at most once
+			aTargets = Object.keys(mAnnotationMapByTarget).filter(function (sTarget) {
+				if (_Helper.namespace(sTarget) === sNamespace) {
+					if (that.getObject("/" + sTarget) === oProperty) {
+						// this is the target for the given property
+						return true;
+					}
+					if (!bValueListOnValueList) {
+						throw new Error("Unexpected annotation target '" + sTarget
+							+ "' with namespace of data service in "
+							+ oValueListModel.sServiceUrl);
+					}
+				}
+				return false;
+			});
+
+			if (!aTargets.length) {
+				throw new Error("No annotation '" + sValueListMapping.slice(1) + "' in " +
+					oValueListModel.sServiceUrl);
+			}
+
+			mAnnotationByTerm = mAnnotationMapByTarget[aTargets[0]];
+			Object.keys(mAnnotationByTerm).forEach(function (sTerm) {
+				var sQualifier = getQualifier(sTerm, sValueListMapping);
+
+				if (sQualifier !== undefined) {
+					mValueListMappingByQualifier[sQualifier] = mAnnotationByTerm[sTerm];
+				} else if (!bValueListOnValueList) {
+					throw new Error("Unexpected annotation '" + sTerm.slice(1) +
+						"' for target '" + aTargets[0] + "' with namespace of data service in "
+						+ oValueListModel.sServiceUrl);
+				}
+			});
+
+			return mValueListMappingByQualifier;
+		});
+	};
+
+	/**
 	 * Returns the OData metadata model context corresponding to the given OData data model path.
 	 *
 	 * @param {string} sPath
@@ -1054,12 +1136,15 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.prototype.getOrCreateValueListModel = function (sMappingUrl) {
-		var oValueListModel,
+		// Note: make the service URL absolute because URI#absoluteTo requires an absolute base URL
+		// (and it fails if the base URL starts with "..")
+		var sAbsoluteUrl = new URI(this.sUrl).absoluteTo(document.baseURI).pathname().toString(),
+			oValueListModel,
 			sValueListUrl;
 
 		// the MappingUrl references the metadata document, make it absolute based on the data
 		// service URL to get rid of ".." segments and remove the filename part
-		sValueListUrl = new URI(sMappingUrl).absoluteTo(this.sUrl).filename("").toString();
+		sValueListUrl = new URI(sMappingUrl).absoluteTo(sAbsoluteUrl).filename("").toString();
 		oValueListModel = mValueListModelByUrl[sValueListUrl];
 		if (!oValueListModel) {
 			oValueListModel = new this.oModel.constructor({
@@ -1164,18 +1249,19 @@ sap.ui.define([
 			that = this;
 
 		oPromise = this.fetchObject("", oContext).then(function (oProperty) {
-			var mAnnotationForTerm, sTerm;
+			var mAnnotationByTerm, sTerm;
 
 			if (!oProperty) {
 				throw new Error("No metadata for " + sPropertyPath);
 			}
 			// now we can use getObject() because the property's annotations are definitely loaded
-			mAnnotationForTerm = that.getObject("@", oContext);
-			if (mAnnotationForTerm[sValueListWithFixedValues]) {
+			mAnnotationByTerm = that.getObject("@", oContext);
+			if (mAnnotationByTerm[sValueListWithFixedValues]) {
 				return ValueListType.Fixed;
 			}
-			for (sTerm in mAnnotationForTerm) {
-				if (getQualifier(sTerm, sValueListReference) !== undefined) {
+			for (sTerm in mAnnotationByTerm) {
+				if (getQualifier(sTerm, sValueListReferences) !== undefined
+						|| getQualifier(sTerm, sValueListMapping) !== undefined) {
 					return ValueListType.Standard;
 				}
 			}
@@ -1437,9 +1523,25 @@ sap.ui.define([
 	 *   additional property "$model" which is the {@link sap.ui.model.odata.v4.ODataModel} instance
 	 *   to read value list data via this mapping.
 	 *
+	 *   For fixed values, only one mapping is expected and the qualifier is ignored. The mapping
+	 *   is available with key "".
+	 *
 	 *   The promise is rejected with an error if there is no value list information available
 	 *   for the given property path. Use {@link #getValueListType} to determine if value list
-	 *   information exists.
+	 *   information exists. It is also rejected with an error if the value list metadata is
+	 *   inconsistent.
+	 *
+	 *   An inconsistency can result from one of the following reasons:
+	 *   <ul>
+	 *    <li> There is a reference, but the referenced service does not contain mappings for the
+	 *     property.
+	 *    <li> The referenced service contains annotation targets in the namespace of the data
+	 *     service that are not mappings for the property.
+	 *    <li> Two different referenced services contain a mapping using the same qualifier.
+	 *    <li> A service is referenced twice.
+	 *    <li> No mappings have been found.
+	 *    <li> There are multiple mappings for a fixed value list.
+	 *   </ul>
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -1448,105 +1550,88 @@ sap.ui.define([
 		var oContext = this.getMetaContext(sPropertyPath),
 			that = this;
 
-		/*
-		 * Determines the namespace of the given qualified name.
-		 * @param {string} sName The qualified name
-		 * @returns {string} The namespace
-		 */
-		function namespace(sName) {
-			var iIndex = sName.indexOf("/");
-
-			if (iIndex >= 0) {
-				// consider only the first path segment
-				sName = sName.slice(0, iIndex);
-			}
-			// now we have a qualified name, drop the last segment (the name)
-			return sName.slice(0, sName.lastIndexOf("."));
-		}
-
 		return Promise.all([
 			this.requestObject("/$EntityContainer"), // the entity container's name
-			this.requestObject("", oContext), // the property itself
-			this.requestObject("@", oContext) // all annotations of the property
+			this.requestObject("", oContext),        // the property itself
+			this.requestObject("@", oContext),       // all annotations of the property
+			this.requestObject(sValueListWithFixedValues, oContext) // flag for "fixed values"
 		]).then(function (aResults) {
-			var mAnnotationForTerm = aResults[2],
-				mMappingUrlForKey = {},
+			var mAnnotationByTerm = aResults[2],
+				bFixedValues = aResults[3],
+				mMappingUrlByQualifier = {},
 				// the namespace of the container is the namespace of the service
-				sNamespace = namespace(aResults[0]),
-				aPromises,
+				sNamespace = _Helper.namespace(aResults[0]),
 				oProperty = aResults[1],
 				oValueListInfo = {};
+
+			/*
+			 * Adds the given mapping to oValueListInfo.
+			 *
+			 * @param {object} mValueListMapping The mapping
+			 * @param {string} sQualifier The mapping qualifier
+			 * @param {string} sMappingUrl The mapping URL (for error messages)
+			 * @param {sap.ui.model.odata.v4.ODataModel} oModel The value list model
+			 * @throws {Error} If there is already a mapping for the given qualifier
+			 */
+			function addMapping(mValueListMapping, sQualifier, sMappingUrl, oModel) {
+				if (mMappingUrlByQualifier[sQualifier]) {
+					throw new Error("Annotations '" + sValueListMapping.slice(1)
+						+ "' with identical qualifier '" + sQualifier
+						+ "' for property " + sPropertyPath + " in "
+						+ mMappingUrlByQualifier[sQualifier] + " and " + sMappingUrl);
+				}
+				if (bFixedValues && oValueListInfo[""]) {
+					throw new Error("Annotation '" + sValueListWithFixedValues.slice(1)
+						+ "' but multiple '" + sValueListMapping.slice(1)
+						+ "' for property " + sPropertyPath);
+				}
+				mMappingUrlByQualifier[sQualifier] = sMappingUrl;
+				oValueListInfo[bFixedValues ? "" : sQualifier] = jQuery.extend(true, {
+					$model : oModel
+				}, mValueListMapping);
+			}
 
 			if (!oProperty) {
 				throw new Error("No metadata for " + sPropertyPath);
 			}
 
-			// filter all reference annotations, for each create a promise to evaluate the mapping
-			aPromises = Object.keys(mAnnotationForTerm).filter(function (sTerm) {
-				return getQualifier(sTerm, sValueListReference) !== undefined;
-			}).map(function (sTerm) {
-				var oValueListReference = mAnnotationForTerm[sTerm],
-					oValueListModel =
-						that.getOrCreateValueListModel(oValueListReference.MappingUrl),
-					oValueListMetaModel = oValueListModel.getMetaModel();
-
-				// We cannot use fetchObject here for two reasons: We only have a property path and
-				// not necessarily the property's qualified name, and accessing a property
-				// annotation would fail because the value list service does not have the property.
-				// So we choose another way: We inspect all annotations in the value list service
-				// and try to resolve the target in the data service.
-				return oValueListMetaModel.fetchEntityContainer()
-					.then(function (oValueListMetadata) {
-						var mAnnotationMapForTarget = oValueListMetadata.$Annotations;
-
-						Object.keys(mAnnotationMapForTarget).filter(function (sTarget) {
-							// only relevant if the target is in the namespace of the data service
-							if (namespace(sTarget) === sNamespace) {
-								if (that.getObject("/" + sTarget) === oProperty) {
-									return true;
-								}
-								if (that !== oValueListMetaModel) {
-									// target is not the property
-									throw new Error(
-										"Unexpected annotation target in value list metadata: "
-											+ sTarget);
-								}
-							}
-							return false;
-						}).forEach(function (sTarget) {
-							var mAnnotationForTerm = mAnnotationMapForTarget[sTarget];
-
-							Object.keys(mAnnotationForTerm).forEach(function (sTerm) {
-								var sKey = getQualifier(sTerm, sValueListMapping);
-
-								if (sKey !== undefined) {
-									if (oValueListInfo[sKey]) {
-										throw new Error("Duplicate qualifier '" + sKey + "' for "
-											+ sPropertyPath + " in " + mMappingUrlForKey[sKey]
-											+ " and " + oValueListReference.MappingUrl);
-									}
-									oValueListInfo[sKey] = jQuery.extend(true, {
-										$model : oValueListModel
-									}, mAnnotationForTerm[sTerm]);
-									mMappingUrlForKey[sKey] = oValueListReference.MappingUrl;
-								} else if (that !== oValueListMetaModel) {
-									// complain about the term only if data model and value help
-									// model are different
-									throw new Error(
-										"Unexpected annotation term in value list metadata: "
-										+ sTarget + sTerm);
-								}
-							});
-						});
-					});
+			Object.keys(mAnnotationByTerm).filter(function (sTerm) {
+				return getQualifier(sTerm, sValueListMapping) !== undefined;
+			}).forEach(function (sTerm) {
+				addMapping(mAnnotationByTerm[sTerm], getQualifier(sTerm, sValueListMapping),
+					that.oModel.sServiceUrl + "$metadata", that.oModel);
 			});
 
-			if (!aPromises.length) {
-				throw new Error("No value list info for " + sPropertyPath);
-			}
 
-			// wait for all value list mappings to be evaluated
-			return Promise.all(aPromises).then(function () {
+			// filter all reference annotations, for each create a promise to evaluate the mapping
+			// and wait for all of them to finish
+			return Promise.all(Object.keys(mAnnotationByTerm).filter(function (sTerm) {
+				return getQualifier(sTerm, sValueListReferences) !== undefined;
+			}).map(function (sTerm) {
+				var aMappingUrls = mAnnotationByTerm[sTerm];
+
+				// fetch mappings for each entry and wait for all
+				return Promise.all(aMappingUrls.map(function (sMappingUrl) {
+					var oValueListModel = that.getOrCreateValueListModel(sMappingUrl);
+					// fetch the mappings for the given mapping URL
+					return that.fetchValueListMappings(
+						oValueListModel, sNamespace, oProperty
+					).then(function (mValueListMappingByQualifier) {
+						// insert the returned mappings into oValueListInfo
+						Object.keys(mValueListMappingByQualifier).forEach(function (sQualifier) {
+							addMapping(mValueListMappingByQualifier[sQualifier], sQualifier,
+								sMappingUrl, oValueListModel);
+						});
+					});
+				}));
+			})).then(function () {
+				// Each reference must have contributed at least one qualifier. So if oValueListInfo
+				// is empty, there cannot have been a reference.
+				if (!Object.keys(oValueListInfo).length) {
+					throw new Error("No annotation '" + sValueListReferences.slice(1) + "' for " +
+						sPropertyPath);
+				}
+
 				return oValueListInfo;
 			});
 		});
