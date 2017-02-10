@@ -113,6 +113,11 @@
 		  "target": ["home", "welcome"]
 		},
 		{
+		  "pattern": "categories",
+		  "name": "categories",
+		  "target": ["homeSlide"]
+		},
+		{
 		  "pattern": "category/{id}",
 		  "name": "category",
 		  "target": ["categoryView", "welcome"]
@@ -155,6 +160,11 @@
 		"home": {
 		  "viewName": "Home",
 		  "viewLevel": 1,
+		  "controlAggregation": "masterPages"
+		},
+		"homeSlide": {
+		  "viewName": "Home",
+		  "viewLevel": -1,
 		  "controlAggregation": "masterPages"
 		},
 		"cart": {

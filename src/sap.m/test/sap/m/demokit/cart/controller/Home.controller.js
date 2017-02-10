@@ -96,6 +96,10 @@ sap.ui.define([
 			this._router.navTo("cartProduct", {productId: sId}, !sap.ui.Device.system.phone);
 		},
 
+		onNavButtonPress : function () {
+			this.getOwnerComponent().myNavBack();
+		},
+
 		onCartButtonPress: function () {
 			this._router.navTo("cart");
 		}

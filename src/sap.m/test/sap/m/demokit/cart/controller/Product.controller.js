@@ -52,9 +52,16 @@ sap.ui.define([
 		},
 
 		fnUpdateProduct: function(sChannel, sEvent, oData) {
+			var fnCheck = function () {
+				this._checkIfProductAvailable(sPath, oData.productId);
+			};
 			var sPath = "/Products('" + oData.productId + "')";
-			this.getView().bindElement(sPath);
-			this._checkIfProductAvailable(sPath, oData.productId);
+			this.getView().bindElement({
+				path: sPath,
+				events: {
+					change: fnCheck.bind(this)
+				}
+			});
 		},
 
 		_checkIfProductAvailable: function(sPath) {

@@ -27,6 +27,7 @@
 		"manifest.json",
 		"model/formatter.js",
 		"model/LocalStorageModel.js",
+		"model/cart.js",
 		"test/integration/AllJourneys.js",
 		"test/integration/arrangement/component/Arrangement.js",
 		"test/integration/arrangement/iframe/Arrangement.js",
