@@ -29,9 +29,23 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		properties : {
 
 			/**
-			 * Flag to enable or disable expanding of first level.
+			 * Specifies whether the first level is expanded.
+			 * @deprecated As of version 1.46.3, replaced by the corresponding binding parameter <code>numberOfExpandedLevels</code>.
+			 *
+			 * Example:
+			 * <pre>
+			 *   oTable.bindRows({
+			 *      path: "...",
+			 *      parameters: {
+			 *         numberOfExpandedLevels: 1
+			 *      }
+			 *   });
+			 * </pre>
+			 *
+			 * The value of the property is only taken into account if no parameter <code>numberOfExpandedLevels</code> is given in the binding information.
+			 * Changes to this property after the table is bound do not have any effect unless an explicit (re-)bind of the <code>rows</code> aggregation is done.
 			 */
-			expandFirstLevel : {type : "boolean", defaultValue : false},
+			expandFirstLevel : {type : "boolean", defaultValue : false, deprecated: true},
 
 			/**
 			 * If group mode is enabled nodes with subitems are rendered as if they were group headers.
