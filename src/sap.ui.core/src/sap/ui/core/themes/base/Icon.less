@@ -38,3 +38,11 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
 		display: inline-block; /* pesudo element has display: inline by default and can't apply the transform css style for RTL mode*/
 	}
 }
+
+/**
+ * The Default color for Icon which always points to the variable across themes.
+ * Therefore it's defined in the base theme.
+ */
+.sapUiIconColorDefault {
+	color: @sapUiContentIconColor;
+}
