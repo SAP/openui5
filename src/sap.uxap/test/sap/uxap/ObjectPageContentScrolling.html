@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.uxap.ObjectPage</title>
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout">
+	</script>
+	<style>
+		html, body, #content {
+			height: 100%;
+		}
+	</style>
+	<script>
+		jQuery.sap.registerModulePath("view", "./qunit/view");
+		jQuery.sap.registerModulePath("sap.uxap.testblocks", "./qunit/blocks");
+		jQuery.sap.require("sap.uxap.ObjectPageSubSection");
+		jQuery.sap.require("sap.uxap.ObjectPageSection");
+		jQuery.sap.require("sap.uxap.ObjectPageSectionBase");
+
+		var oObjectPageContentScrollingView = sap.ui.xmlview("UxAP-objectPageContentScrolling", {
+			viewName: "view.UxAP-ObjectPageContentScrolling"
+		});
+		oObjectPageContentScrollingView.placeAt('content');
+		sap.ui.getCore().applyChanges();
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<div id="content"></div>
+</body>
+</html>
