@@ -17,15 +17,6 @@
 						<Button tooltip="View Settings" icon="sap-icon://drop-down-list" press="handleViewSettingsDialogButtonPressed" />
 					</Toolbar>
 				</headerToolbar>
-				<infoToolbar>
-					<Toolbar
-						id="vsdFilterBar"
-						active="true"
-						visible="false"
-						press="[handleViewSettingsDialogFilterBarPressed, views.control.tableViewSettingsDialog]">
-						<Label id="vsdFilterLabel" text="?" />
-					</Toolbar>
-				</infoToolbar>
 				<columns>
 					<Column width="12em"><Text text="Product" /></Column>
 					<Column minScreenWidth="Tablet" demandPopin="true"><Text text="Supplier" /></Column>
