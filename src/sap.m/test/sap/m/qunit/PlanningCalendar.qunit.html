@@ -1540,6 +1540,32 @@
 
 		});
 
+
+		test("keyboard navigation HOME & END for 1 Month view", function() {
+			_switchToView(sap.ui.unified.CalendarIntervalType.OneMonth, this.oPC2);
+			this.oPC2.setStartDate(this.o1Sep2016MidOfWeek);
+			this.oPC2.rerender();
+			var sMonthIdPrefix = this.oPC2.getId() + "-OneMonthInt--Month0-";
+
+			jQuery("#" +  sMonthIdPrefix + "20160901").focus();
+			equal(document.activeElement.id, sMonthIdPrefix + "20160901", "1st of September focused");
+
+			qutils.triggerKeydown(sMonthIdPrefix + "20160901", "END");
+			sap.ui.getCore().applyChanges();
+			equal(document.activeElement.id,  sMonthIdPrefix + "20160930", "30 of September focused");
+
+			qutils.triggerKeydown(sMonthIdPrefix + "20160930", "HOME");
+			sap.ui.getCore().applyChanges();
+			equal(document.activeElement.id, sMonthIdPrefix + "20160901", "1st of September focused");
+
+			jQuery("#" +  sMonthIdPrefix + "20160910").focus();
+			equal(document.activeElement.id, sMonthIdPrefix + "20160910", "10th of September focused");
+
+			qutils.triggerKeydown(sMonthIdPrefix + "20160910", "END");
+			sap.ui.getCore().applyChanges();
+			equal(document.activeElement.id,  sMonthIdPrefix + "20160930", "30 of September focused");
+		});
+
 		test("When start date is defined the planning calendar should shift to the first day of the week that includes the start date ", function() {
 			//assert initial state
 			_assertDatesAreVisible.call(this, [
