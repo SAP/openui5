@@ -40,6 +40,10 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 		},
 		onRouteMatched : function (oEvt) {
 
+			if (this._oRTA) {
+				this._oRTA.stop(true);
+			}
+
 			if (oEvt.getParameter("name") !== "sample") {
 				return;
 			}
