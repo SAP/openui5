@@ -100,6 +100,7 @@
 		"viewType": "XML",
 		"viewPath": "sap.ui.demo.cart.view",
 		"controlId": "splitApp",
+		"controlAggregation": "detailPages",
 		"transition": "slide",
 		"bypassed": {
 		  "target": ["home" , "notFound"]
@@ -114,7 +115,7 @@
 		{
 		  "pattern": "category/{id}",
 		  "name": "category",
-		  "target": "categoryView"
+		  "target": ["categoryView", "welcome"]
 		},
 		{
 		  "pattern": "category/{id}/product/{productId}",
@@ -124,7 +125,7 @@
 		{
 		  "pattern": "cart",
 		  "name": "cart",
-		  "target": "cart"
+		  "target": ["cart", "welcome"]
 		},
 		{
 		  "pattern": "product/{productId}",
@@ -136,8 +137,7 @@
 	  "targets": {
 		"productView": {
 		  "viewName": "Product",
-		  "viewLevel": 3,
-		  "controlAggregation": "detailPages"
+		  "viewLevel": 3
 		},
 		"categoryView": {
 		  "viewName": "Category",
@@ -146,13 +146,11 @@
 		},
 		"notFound": {
 		  "viewName": "NotFound",
-		  "viewLevel": 3,
-		  "controlAggregation": "detailPages"
+		  "viewLevel": 3
 		},
 		"welcome": {
 		  "viewName": "Welcome",
-		  "viewLevel": 0,
-		  "controlAggregation": "detailPages"
+		  "viewLevel": 0
 		},
 		"home": {
 		  "viewName": "Home",
