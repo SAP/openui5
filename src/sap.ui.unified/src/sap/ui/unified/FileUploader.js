@@ -1057,7 +1057,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	};
 
 	FileUploader.prototype.onclick = function(oEvent) {
-		if (this.getSameFilenameAllowed()) {
+		if (this.getSameFilenameAllowed() && this.getEnabled()) {
 			this.setValue("", true);
 		}
 		//refocus the Button, except bSupressFocus is set
