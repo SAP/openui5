@@ -1,6 +1,7 @@
 sap.ui.define([
-	"sap/ui/core/Control"
-], function (Control) {
+	"sap/ui/core/Control",
+	"sap/ui/thirdparty/d3"
+], function (Control, d3) {
 	"use strict";
 
 	return Control.extend("sap.ui.demo.toolpageapp.control.D3Chart", {
@@ -8,45 +9,66 @@ sap.ui.define([
 		metadata: {
 			properties: {
 				type: {type: "string", defaultValue: "Radial"}
-			}
+			},
+			aggregations: {
+				_html: {
+					type: "sap.ui.core.HTML",
+					multiple: false,
+					visibility: "hidden"
+				},
+				data: {
+					type: "sap.ui.base.ManagedObject",
+					multiple: true
+				}
+			},
+			defaultAggregation: "data"
 		},
 
+		_iHeight: null,
+		_sContainerId: null,
+		_sResizeHandlerId: null,
+
+		/**
+		 * Initialize hidden html aggregation
+		 */
 		init: function () {
-			// TODO: put 1-time initialization here
+			this._sContainerId = this.getId() + "--container";
+			this._iHeight = 130;
+			this.setAggregation("_html", new sap.ui.core.HTML(this._sContainerId, {
+				content: "<svg id=\"" + this._sContainerId + "\" width=\"100%\" height=\"130px\"></svg>"
+			}));
+		},
+
+		_onResize: function (oEvent) {
+			this._updateSVG(oEvent.size.width);
+		},
+
+		onBeforeRendering: function () {
+			sap.ui.core.ResizeHandler.deregister(this._sResizeHandlerId);
 		},
 
 		onAfterRendering: function () {
-			// TODO: hook in the D3 charts here
-			this._renderCharts();
-		},
+			this._sResizeHandlerId = sap.ui.core.ResizeHandler.register(this, jQuery.proxy(this._onResize, this));
 
-		_renderCharts: function () {
-			// TODO: set up the D3 charts once
-			var $this = this.$();
-			switch(this.getType()) {
-				case "Delta": break;
-				case "Bullet": break;
-				case "Harvey": break;
-				case "Area": break;
-				case "Column": break;
-				case "Comparison": break;
-				case "Radial":
-				default: // "Radial"
+			var $control = this.$();
+			if ($control.length > 0) {
+				this._updateSVG($control.rect().width);
 			}
-
-			// TODO: connect it to the dom node provided by the renderer
-			$this.html(this.getType());
 		},
 
+		/**
+		 * Renders the root div and the HTML aggregation
+		 * @param {sap.ui.core.RenderManger} oRM the render manager
+		 * @param {sap.ui.core.Control} oControl the control to be rendered
+		 */
 		renderer: function (oRM, oControl) {
-			// TODO: add dom as needed here
 			oRM.write("<div");
 			oRM.writeControlData(oControl);
 			oRM.addClass("customD3Chart");
 			oRM.writeClasses();
 			oRM.write(">");
+			oRM.renderControl(oControl.getAggregation("_html"));
 			oRM.write("</div>");
 		}
 	});
-
 });
