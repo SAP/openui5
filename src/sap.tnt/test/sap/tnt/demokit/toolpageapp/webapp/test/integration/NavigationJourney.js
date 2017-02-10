@@ -64,7 +64,8 @@ sap.ui.define([
 			//Actions
 			When.onTheAppPage.iPressTheStatisticsButton();
 			//Assertions
-			Then.onTheStatisticsPage.iShouldSeeTheStatisticsView();
+			Then.onTheStatisticsPage.iShouldSeeTheStatisticsView().
+				and.iShouldSeeTheCharts();
 		});
 
 		opaTest("should press the refresh button", function (Given, When, Then) {
