@@ -34,7 +34,13 @@
 
 				QUnit.module("iStartMyAppInAFrame");
 
-				opaTest("Should start and teardown an app in a frame", function (Given, When, Then) {
+				var sTestNameExt = "";
+
+				if (window["sap-ui-debug"]){
+					sTestNameExt = " when sap-ui-debug=true";
+				}
+
+				opaTest("Should start and teardown an app in a frame" + sTestNameExt, function (Given, When, Then) {
 
 					// Arrangements
 					Given.iStartMyAppInAFrame("applicationUnderTest/index.html").done(function(){
