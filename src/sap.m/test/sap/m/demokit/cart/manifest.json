@@ -113,9 +113,14 @@
 		  "target": ["home", "welcome"]
 		},
 		{
+		  "pattern": "categories",
+		  "name": "categories",
+		  "target": ["homeSlide"]
+		},
+		{
 		  "pattern": "category/{id}",
 		  "name": "category",
-		  "target": ["categoryView", "welcome"]
+		  "target": ["welcome", "categoryView"]
 		},
 		{
 		  "pattern": "category/{id}/product/{productId}",
@@ -125,7 +130,7 @@
 		{
 		  "pattern": "cart",
 		  "name": "cart",
-		  "target": ["cart", "welcome"]
+		  "target": ["cart"]
 		},
 		{
 		  "pattern": "product/{productId}",
@@ -155,6 +160,11 @@
 		"home": {
 		  "viewName": "Home",
 		  "viewLevel": 1,
+		  "controlAggregation": "masterPages"
+		},
+		"homeSlide": {
+		  "viewName": "Home",
+		  "viewLevel": -1,
 		  "controlAggregation": "masterPages"
 		},
 		"cart": {
