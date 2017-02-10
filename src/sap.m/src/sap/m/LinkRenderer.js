@@ -103,7 +103,11 @@
 		oRm.writeStyles();
 		oRm.write(">"); // opening <a> tag
 
-		this.renderText(oRm, oControl);
+		if (this.writeText) {
+			this.writeText(oRm, oControl);
+		} else {
+			this.renderText(oRm, oControl);
+		}
 
 		oRm.write("</a>");
 	};

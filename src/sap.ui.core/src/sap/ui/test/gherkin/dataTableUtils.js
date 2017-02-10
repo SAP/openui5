@@ -47,11 +47,11 @@ sap.ui.define(["jquery.sap.global"], function($) {
      * <ul>
      *   <li>Trim spaces off the string on both sides. For example: <code>" hello "</code> becomes
      *     <code>"hello"</code>.</li>
-     *   <li>Trim multiple spaces between words. For example: <code>"hello    world"</code> becomes
-     *     <code>"hello world"</code>.</li>
      *   <li>Assume that dashes and underscores are analogs for a space. For example: <code>"sold-to party"</code> and
      *     <code>"sold to party"</code> are equivalent, and would both convert to the camelCase
      *     <code>"soldToParty"</code>.</li>
+     *   <li>Trim multiple spaces between words. For example: <code>"hello____world"</code> becomes
+     *     <code>"hello world"</code>.</li>
      *   <li>Remove any characters that are not alphanumeric or whitespace. For example: <code>"(hello)"</code> becomes
      *     <code>"hello"</code>.</li>
      * </ul>

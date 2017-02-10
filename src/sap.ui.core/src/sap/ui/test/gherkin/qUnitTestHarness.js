@@ -40,9 +40,9 @@ sap.ui.define([
      * @param {string} args.featurePath - the path to the Gherkin feature file to parse, as a SAPUI5 module path. The
      *                                    ".feature" extension is assumed and should not be included. See
      *                                    {@link jQuery.sap.registerModulePath}
-     * @param {function} args.steps - the constructor function of type sap.ui.test.gherkin.StepDefinitions
+     * @param {function} args.steps - the constructor function of type {@link sap.ui.test.gherkin.StepDefinitions}
      * @public
-     * @throws {Error} for invalid parameters - parameter does not match the expected type
+     * @throws {Error} if any parameters are invalid
      * @function
      * @static
      */

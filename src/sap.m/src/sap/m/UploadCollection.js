@@ -13,9 +13,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * This control allows users to upload single or multiple files from their devices (desktop PC, tablet or phone) and attach them into the application.
+	 * This control allows you to upload single or multiple files from your devices (desktop, tablet or phone) and attach them to the application.
 	 *
-	 * The consumer is responsible for performing the consistency checks of the model during the upload of the file, e.g. the user is editing or deleting a file.
+	 * The consuming application needs to take into account that the consistency checks of the model during the upload of the file need to be performed, for example, if the user is editing or deleting a file.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -1182,7 +1182,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 */
 	UploadCollection.prototype._onDragLeaveUploadCollection = function(event) {
 		if (event.target === this._$DragDropArea[0]) {
-			this.$("drag-drop-area").removeClass("sapMUCDropIndicator");
+			this._$DragDropArea.removeClass("sapMUCDropIndicator");
 			this.getAggregation("_dragDropText").setText(this._oRb.getText("UPLOADCOLLECTION_DRAG_FILE_INDICATOR"));
 		}
 	};
@@ -1219,12 +1219,14 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		}
 		if (event.target === this._$DragDropArea[0]) {
 			event.preventDefault();
+			this._$DragDropArea.removeClass("sapMUCDropIndicator");
 			this._$DragDropArea.addClass("sapMUCDragDropOverlayHide");
+			this.getAggregation("_dragDropText").setText(this._oRb.getText("UPLOADCOLLECTION_DRAG_FILE_INDICATOR"));
 			var aFiles = event.originalEvent.dataTransfer.files;
 			// multiple files are not allowed to drop when multiple is false
 			if (aFiles.length > 1 && !this.getMultiple()) {
 				var sMessage = this._oRb.getText("UPLOADCOLLECTION_MULTIPLE_FALSE");
-				MessageBox.information(sMessage, {id: this.getId() + "-multiple-false-messagebox"});
+				MessageBox.error(sMessage);
 				return;
 			}
 			// files are not allowed to drop if they do not comply the FileUploader's restrictions

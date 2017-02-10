@@ -316,7 +316,7 @@ sap.ui.define([
 	* STATIC MEMBERS
 	*/
 	SemanticPage._EVENTS = {
-		SHARE_MENU_BTN_CHANGED : "_shareMenuBtnChanged"
+		SHARE_MENU_CONTENT_CHANGED : "_shareMenuContentChanged"
 	};
 
 	/*
@@ -628,20 +628,26 @@ sap.ui.define([
 	* @private
 	*/
 	SemanticPage.prototype._attachShareMenuButtonChange = function () {
-		this.attachEvent(SemanticPage._EVENTS.SHARE_MENU_BTN_CHANGED, this._onShareMenuBtnChanged, this);
+		this.attachEvent(SemanticPage._EVENTS.SHARE_MENU_CONTENT_CHANGED, this._onShareMenuContentChanged, this);
 	};
 
 	/*
-	* Handles the <code>SHARE_MENU_BTN_CHANGED</code> event.
+	* Handles the <code>SHARE_MENU_CONTENT_CHANGED</code> event.
 	*
 	* @private
 	*/
-	SemanticPage.prototype._onShareMenuBtnChanged = function (oEvent) {
-		var oNewButton = oEvent.getParameter("oNewButton"),
-			oOldButton = oEvent.getParameter("oOldButton");
+	SemanticPage.prototype._onShareMenuContentChanged = function (oEvent) {
+		var bShareMenuEmpty = oEvent.getParameter("bEmpty"),
+			oSemanticTitle = this._getSemanticTitle(),
+			oSemanticShareMenu = this._getShareMenu(),
+			oShareMenuButton = oSemanticShareMenu._getShareMenuButton();
 
-		this._getSemanticTitle().removeContent(oOldButton, "shareIcon");
-		this._getSemanticTitle().addContent(oNewButton, "shareIcon");
+		if (!oShareMenuButton.getParent()) {
+			oSemanticTitle.addContent(oShareMenuButton, "shareIcon");
+			return;
+		}
+
+		oShareMenuButton.setVisible(!bShareMenuEmpty);
 	};
 
 	/*

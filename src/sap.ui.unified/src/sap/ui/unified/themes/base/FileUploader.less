@@ -58,6 +58,12 @@
 	height: 1.625rem;
 }
 
+.sapUiCFUM .sapUiFupInputMask,
+.sapUiSizeCompact .sapUiCFUM .sapUiFupInputMask {
+	height: 1.5rem;
+	margin-top: 0;
+}
+
 .sapUiFupInputMask > input { /* the real, but hidden file input */
 	display: none;
 }
@@ -135,7 +141,8 @@ html[data-sap-ui-browser^="cr"] .sapUiFupInputMask > input {
 	border-color: @sapUiButtonLiteHoverBorderColor;
 }
 
-.sapMFooter-CTX .sapUiFup:hover .sapMBtnHoverable:not(.sapMBtnActive) {
+.sapMFooter-CTX .sapUiFup:hover .sapMBtnHoverable:not(.sapMBtnActive),
+.sapMTB-Transparent-CTX .sapUiFup:hover .sapMBtnInner.sapMBtnHoverable:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive) {
 	background-color: @sapUiButtonFooterHoverBackground;
 	color: @sapUiButtonActiveTextColor;
 	text-shadow: @sapUiShadowText;
@@ -157,7 +164,8 @@ html[data-sap-ui-browser^="cr"] .sapUiFupInputMask > input {
 }
 
 .sapUiFup:active .sapMBtnInner,
-.sapUiFup:active .sapMBtnTransparent.sapMBtnHoverable {
+.sapUiFup:active .sapMBtnTransparent.sapMBtnHoverable,
+.sapMTB-Transparent-CTX .sapUiFup:active .sapMBtnInner.sapMBtnTransparent.sapMBtnHoverable:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive) {
 	background-image: none;
 	background-color: @sapUiButtonActiveBackground;
 	border-color: @sapUiButtonActiveBorderColor;

@@ -3,74 +3,10 @@
 
 	sinon.config.useFakeTimers = false;
 
-	var core = sap.ui.getCore(),
-		TESTS_DOM_CONTAINER = "qunit-fixture",
-		oFactory = {
-			getSemanticPage: function () {
-				return new SemanticPage();
-			},
-			getSemanticAction: function (sType, oConfig) {
-				oConfig = oConfig || {};
-				return new sType(oConfig);
-			},
-
-			getFooter: function () {
-				return new sap.m.OverflowToolbar({
-					content: [
-						new sap.m.ToolbarSpacer(),
-						new sap.m.Button({
-							text: "Accept",
-							type: "Accept"
-						}),
-						new sap.m.Button({
-							text: "Reject",
-							type: "Reject"
-						})
-					]
-				})
-			},
-			getContent: function (iNumber) {
-				return new sap.ui.layout.Grid({
-					defaultSpan: "XL2 L3 M4 S6",
-					content: this.getMessageStrips(iNumber)
-				})
-			},
-			getMessageStrip: function (iNumber) {
-				return new sap.m.MessageStrip({
-					text: "Content " + ++iNumber
-				});
-			},
-			getMessageStrips: function (iNumber) {
-				var aMessageStrips = [];
-
-				for (var i = 0; i < iNumber; i++) {
-					aMessageStrips.push(this.getMessageStrip(i));
-				}
-				return aMessageStrips;
-			},
-			getAction: function () {
-				return new sap.m.Button({
-					text: "Action"
-				});
-			},
-			getTitle: function (sText) {
-				return new sap.m.Title({
-					text: sText || "Default Title"
-				});
-			},
-			getLabel: function (sText) {
-				return new sap.m.Label({
-					text: sText || "Default Label"
-				});
-			}
-		},
-		oUtil = {
-			renderObject: function (oObject) {
-				oObject.placeAt(TESTS_DOM_CONTAINER);
-				core.applyChanges();
-				return oObject;
-			}
-		};
+	var oFactory = SemanticUtil.oFactory,
+		oUtil = SemanticUtil.oUtil,
+		oSemanticConfiguration = oFactory.getSemanticConfiguration(),
+		aSemanticActionsMetadata = oFactory.getSemanticActionsMetadata();
 
 	/* --------------------------- SemanticPage API -------------------------------------- */
 	QUnit.module("SemanticPage - API ", {
@@ -132,7 +68,7 @@
 
 		// Assert
 		assert.equal(this.oSemanticPage.getHeaderExpanded(), true,
-			"SemanticPage headerExpanded set to true and retrieved successfully.")
+			"SemanticPage headerExpanded set to true and retrieved successfully.");
 	});
 
 
@@ -607,22 +543,32 @@
 		assert.ok(oFooter.bIsDestroyed, "SemanticPage page footer has been destroyed.");
 	});
 
-	QUnit.test("test DeleteAction", function (assert) {
-		var oSemanticAction = new sap.f.semantic.DeleteAction(), oInternalControl;
+	aSemanticActionsMetadata.forEach(function(oSemanticActionMetaData){
+		QUnit.test("test " + oSemanticActionMetaData.className, function (assert) {
+			var oSemanticClass = oSemanticActionMetaData.constructor,
+				sSemanticClassName = oSemanticActionMetaData.className,
+				oSemanticAction = new oSemanticClass(), oInternalControl;
 
-		this.oSemanticPage.setDeleteAction(oSemanticAction);
-		assert.equal(this.oSemanticPage.getDeleteAction(), oSemanticAction, "DeleteAction has been set");
+			// Act
+			this.oSemanticPage["set" + sSemanticClassName](oSemanticAction);
+			oInternalControl = oSemanticAction._getControl ? oSemanticAction._getControl() : oSemanticAction;
 
-		this.oSemanticPage.destroyDeleteAction();
-		oInternalControl = oSemanticAction._getControl();
+			// Assert
+			assert.equal(this.oSemanticPage["get" + sSemanticClassName](), oSemanticAction, sSemanticClassName + " has been set");
+			assert.ok(oInternalControl, sSemanticClassName + " internal control has been created.");
 
-		assert.equal(this.oSemanticPage.getDeleteAction(), null, "DeleteAction does not exist anymore");
-		assert.ok(oSemanticAction.bIsDestroyed, "DeleteAction has been destroyed.");
-		assert.ok(oInternalControl.bIsDestroyed, "DeleteAction internal control has been destroyed.");
+			// Act
+			this.oSemanticPage["destroy" + sSemanticClassName]();
+
+			// Assert
+			assert.equal(this.oSemanticPage["get" + sSemanticClassName](), null, sSemanticClassName + " does not exist anymore");
+			assert.ok(oSemanticAction.bIsDestroyed, sSemanticClassName + " has been destroyed.");
+			assert.ok(oInternalControl.bIsDestroyed, sSemanticClassName + " internal control has been destroyed.");
+		});
 	});
 
-	/* --------------------------- DynamicPage Rendering ---------------------------------- */
-	QUnit.module("DynamicPage - Rendering", {
+	/* --------------------------- SemanticPage Rendering ---------------------------------- */
+	QUnit.module("SemanticPage - Rendering", {
 		beforeEach: function () {
 			this.oSemanticPage = oFactory.getSemanticPage();
 			oUtil.renderObject(this.oSemanticPage);
@@ -643,4 +589,78 @@
 			"SemanticPage has the expected css class: " + this.$semanicPage.attr("class"));
 	});
 
+	/* --------------------------- Semantic Configuration  ---------------------------------- */
+	QUnit.module("SemanticConfiguration", {});
+
+	QUnit.test("test isKnownSemanticType method", function (assert) {
+		var sSemanticType = "sap.f.semantic.AddAction",
+			sInvalidSemanticType = "INVALID_TYPE";
+
+		// Assert
+		assert.equal(oSemanticConfiguration.isKnownSemanticType(sSemanticType), true,
+			sSemanticType + " is known Semantic Type");
+		assert.equal(oSemanticConfiguration.isKnownSemanticType(sInvalidSemanticType), false,
+			sInvalidSemanticType + " is not know Semantic Type");
+	});
+
+	QUnit.test("test getOrder method", function (assert) {
+		var sSemanticAddType = "sap.f.semantic.AddAction",
+			iSemanticAddTypeOrder = 1,
+			sSemanticDeleteType = "sap.f.semantic.DeleteAction",
+			iSemanticDeleteTypeOrder = 2;
+
+		// Assert
+		assert.equal(oSemanticConfiguration.getOrder(sSemanticAddType), iSemanticAddTypeOrder,
+			sSemanticAddType + " has the correct order: " + iSemanticAddTypeOrder);
+		assert.equal(oSemanticConfiguration.getOrder(sSemanticDeleteType), iSemanticDeleteTypeOrder,
+			sSemanticDeleteType + " has the correct order: " + iSemanticDeleteTypeOrder);
+	});
+
+	QUnit.test("test getPlacement method", function (assert) {
+		var sSemanticAddType = "sap.f.semantic.AddAction",
+			sSemanticAddTypePlacement = "titleText",
+			sSemanticMessagesIndicatorType = "sap.f.semantic.MessagesIndicator",
+			sSemanticMessagesIndicatorTypePlacement = "footerLeft";
+
+		// Assert
+		assert.equal(oSemanticConfiguration.getPlacement(sSemanticAddType), sSemanticAddTypePlacement,
+			sSemanticAddType + " has the correct placement: " + sSemanticAddTypePlacement);
+		assert.equal(oSemanticConfiguration.getPlacement(sSemanticMessagesIndicatorType), sSemanticMessagesIndicatorTypePlacement,
+			sSemanticMessagesIndicatorType + " has the correct placement: " + sSemanticMessagesIndicatorTypePlacement);
+	});
+
+	QUnit.test("test getConstraints method", function (assert) {
+		var sSemanticAddType = "sap.f.semantic.AddAction",
+			sSemanticCloseType = "sap.f.semantic.CloseAction",
+			sSemanticCloseConstraintType = "IconOnly";
+
+		// Assert
+		assert.equal(oSemanticConfiguration.getConstraints(sSemanticAddType), null,
+			sSemanticAddType + " has no Constraint");
+		assert.equal(oSemanticConfiguration.getConstraints(sSemanticCloseType), sSemanticCloseConstraintType,
+			sSemanticCloseType + " has the correct Constraint: " + sSemanticCloseConstraintType);
+	});
+
+
+	QUnit.test("test isMainAction method", function (assert) {
+		var sSemanticAddType = "sap.f.semantic.AddAction",
+			sSemanticTitleMainActionType = "sap.f.semantic.TitleMainAction";
+
+		// Assert
+		assert.equal(oSemanticConfiguration.isMainAction(sSemanticAddType), false,
+			sSemanticAddType + " is not a Main Action");
+		assert.equal(oSemanticConfiguration.isMainAction(sSemanticTitleMainActionType), true,
+			sSemanticTitleMainActionType + " is a Main Action");
+	});
+
+	QUnit.test("test isNavigationAction method", function (assert) {
+		var sSemanticAddType = "sap.f.semantic.AddAction",
+			sSemanticCloseType = "sap.f.semantic.CloseAction";
+
+		// Assert
+		assert.equal(oSemanticConfiguration.isNavigationAction(sSemanticAddType), false,
+			sSemanticAddType + " is not a Navigation Action");
+		assert.equal(oSemanticConfiguration.isNavigationAction(sSemanticCloseType), true,
+			sSemanticCloseType + " is a Navigation Action");
+	});
 })(jQuery, QUnit, sinon, sap.f.semantic.SemanticPage);

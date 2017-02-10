@@ -87,6 +87,18 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 			showIcon : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
+			 * Determines whether strings that appear to be links will be converted to HTML anchor tags, and what are the criteria for recognizing them.
+			 * @since 1.46.1
+			 */
+			convertLinksToAnchorTags : {type : "sap.m.LinkConversion", group : "Behavior", defaultValue : sap.m.LinkConversion.None},
+
+			/**
+			 * Determines the target attribute of the generated HTML anchor tags. Note: Applicable only if ConvertLinksToAnchorTags property is used with a value other than sap.m.LinkConversion.None. Options are the standard values for the target attribute of the HTML anchor tag: _self, _top, _blank, _parent, _search.
+			 * @since 1.46.1
+			 */
+			convertedLinksDefaultTarget : {type : "string", group : "Behavior", defaultValue : "_blank"},
+
+			/**
 			 * The expand and collapse feature is set by default and uses 300 characters on mobile devices and 500 characters on desktops as limits. Based on these values, the text of the FeedListItem is collapsed once text reaches these limits. In this case, only the specified number of characters is displayed. By clicking on the text link More, the entire text can be displayed. The text link Less collapses the text. The application is able to set the value to its needs.
 			 */
 			maxCharacters : {type : "int", group : "Behavior", defaultValue : null}
@@ -163,8 +175,17 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	};
 
 	FeedListItem.prototype.onBeforeRendering = function() {
-		this.getAggregation("_text").setHtmlText(this.getText());
-		this._sFullText = this.getAggregation("_text").getHtmlText().replace(/\n/g, "<br>");
+		this.$("realtext").find('a[target="_blank"]').off("click");
+
+		var oFormattedText = this.getAggregation("_text");
+		oFormattedText.setProperty("convertLinksToAnchorTags", this.getConvertLinksToAnchorTags(), true);
+		oFormattedText.setProperty("convertedLinksDefaultTarget", this.getConvertedLinksDefaultTarget(), true);
+		if (this.getConvertLinksToAnchorTags() === library.LinkConversion.None) {
+			oFormattedText.setHtmlText(this.getText());
+		} else {
+			oFormattedText.setProperty("htmlText", this.getText(), true);
+		}
+		this._sFullText = oFormattedText._getDisplayHtml().replace(/\n/g, "<br>");
 		this._sShortText = this._getCollapsedText();
 	};
 
@@ -177,9 +198,21 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 			} while (aRemoved.length > 0);
 			this._sShortText = jQuery(sId).html();
 		}
+		// Additional processing of the links takes place in the onAfterRendering function of sap.m.FormattedText, e.g. registration of the click event handlers.
+		// FeedListItem does not render sap.m.FormattedText control as part of its own DOM structure, therefore the onAfterRendering function of the FormattedText
+		// must be called manually with the correct context, providing access to the DOM elements that must be processed.
+		var $RealText = this.$("realtext");
+		FormattedText.prototype.onAfterRendering.apply({
+			$ : function () {
+				return $RealText;
+			}
+		});
 	};
 
 	FeedListItem.prototype.exit = function() {
+		// Should be done always, since the registration occurs independently of the properties that determine auto link recognition.
+		this.$("realtext").find('a[target="_blank"]').off("click");
+
 		// destroy link control if initialized
 		if (this._oLinkControl) {
 			this._oLinkControl.destroy();

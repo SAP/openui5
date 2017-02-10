@@ -111,28 +111,39 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag) {
-		var that = this;
-
 		return Cache.getChangesFillingCache(this._oConnector, this._sComponentName, mPropertyBag).then(function(oWrappedChangeFileContent) {
-			that._bHasLoadedChangesFromBackend = true;
+			this._bHasLoadedChangesFromBackend = true;
 
 			if (!oWrappedChangeFileContent.changes || !oWrappedChangeFileContent.changes.changes) {
 				return [];
 			}
 
 			var aChanges = oWrappedChangeFileContent.changes.changes;
+			var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
+
+			if (sCurrentLayer) {
+				var aCurrentLayerChanges = [];
+
+				aChanges.some(function(oChange){
+					if (oChange.layer === sCurrentLayer) {
+						aCurrentLayerChanges.push(oChange);
+					}
+				});
+
+				aChanges = aCurrentLayerChanges;
+			}
+
 			var aContextObjects = oWrappedChangeFileContent.changes.contexts || [];
 			return new Promise(function (resolve) {
 				ContextManager.getActiveContexts(aContextObjects).then(function (aActiveContexts) {
-					resolve(aChanges.filter(that._preconditionsFulfilled.bind(that, aActiveContexts)).map(createChange));
-				});
-			});
-		});
+					resolve(aChanges.filter(this._preconditionsFulfilled.bind(this, aActiveContexts)).map(createChange));
+				}.bind(this));
+			}.bind(this));
+		}.bind(this));
 
 		function createChange(oChangeContent) {
 			return new Change(oChangeContent);
 		}
-
 	};
 
 	/**

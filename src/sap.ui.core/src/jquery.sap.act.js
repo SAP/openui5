@@ -22,7 +22,6 @@ sap.ui.define(['jquery.sap.global'],
 		_active = true,
 		_deactivatetimer = null,
 		_I_MAX_IDLE_TIME = 10000, //max. idle time in ms
-		_deactivateSupported = !!window.addEventListener, //Just skip IE8
 		_aActivateListeners = [],
 		_activityDetected = false,
 		_domChangeObserver = null;
@@ -42,8 +41,7 @@ sap.ui.define(['jquery.sap.global'],
 
 	function _onActivate(){
 		// Never activate when document is not visible to the user
-		if (document.hidden === true) {
-			// In case of IE<10 document.visible is undefined, else it is either true or false
+		if (document.hidden) {
 			return;
 		}
 
@@ -113,15 +111,13 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Checks whether recently an activity was detected.
 	 *
-	 * Not supported for Internet Explorer 8.
-	 *
 	 * @return true if recently an activity was detected, false otherwise
 	 * @protected
 	 *
 	 * @function
 	 * @name jQuery.sap.act#isActive
 	 */
-	_act.isActive = !_deactivateSupported ? function(){ return true; } : function(){ return _active; };
+	_act.isActive = function(){ return _active; };
 
 	/**
 	 * Reports an activity.
@@ -131,49 +127,47 @@ sap.ui.define(['jquery.sap.global'],
 	 * @function
 	 * @name jQuery.sap.act#refresh
 	 */
-	_act.refresh = !_deactivateSupported ? function(){} : _onActivate;
+	_act.refresh =  _onActivate;
 
 
 	// Setup and registering handlers
 
-	if (_deactivateSupported) {
-		var aEvents = ["resize", "orientationchange", "mousemove", "mousedown", "mouseup", //"mouseout", "mouseover",
-					   "paste", "cut", "keydown", "keyup", "DOMMouseScroll", "mousewheel"];
+	var aEvents = ["resize", "orientationchange", "mousemove", "mousedown", "mouseup", //"mouseout", "mouseover",
+	               "paste", "cut", "keydown", "keyup", "DOMMouseScroll", "mousewheel"];
 
-		if (!!('ontouchstart' in window)) { //touch events supported
-			aEvents.push("touchstart", "touchmove", "touchend", "touchcancel");
-		}
-
-		for (var i = 0; i < aEvents.length; i++) {
-			window.addEventListener(aEvents[i], _act.refresh, true);
-		}
-
-		if (window.MutationObserver) {
-			_domChangeObserver = new window.MutationObserver(_act.refresh);
-			} else if (window.WebKitMutationObserver) {
-				_domChangeObserver = new window.WebKitMutationObserver(_act.refresh);
-			} else {
-				_domChangeObserver = {
-					observe : function(){
-						document.documentElement.addEventListener("DOMSubtreeModified", _act.refresh);
-					},
-					disconnect : function(){
-						document.documentElement.removeEventListener("DOMSubtreeModified", _act.refresh);
-					}
-				};
-			}
-
-		if (typeof (document.hidden) === "boolean") {
-			document.addEventListener("visibilitychange", function() {
-				// Only trigger refresh if document has changed to visible
-				if (document.hidden !== true) {
-					_act.refresh();
-				}
-			}, false);
-		}
-
-		_onActivate();
+	if ('ontouchstart' in window) { // touch events supported
+		aEvents.push("touchstart", "touchmove", "touchend", "touchcancel");
 	}
+
+	for (var i = 0; i < aEvents.length; i++) {
+		window.addEventListener(aEvents[i], _act.refresh, true);
+	}
+
+	if (window.MutationObserver) {
+		_domChangeObserver = new window.MutationObserver(_act.refresh);
+	} else if (window.WebKitMutationObserver) {
+		_domChangeObserver = new window.WebKitMutationObserver(_act.refresh);
+	} else {
+		_domChangeObserver = {
+			observe : function(){
+				document.documentElement.addEventListener("DOMSubtreeModified", _act.refresh);
+			},
+			disconnect : function(){
+				document.documentElement.removeEventListener("DOMSubtreeModified", _act.refresh);
+			}
+		};
+	}
+
+	if (typeof document.hidden === "boolean") {
+		document.addEventListener("visibilitychange", function() {
+			// Only trigger refresh if document has changed to visible
+			if (document.hidden !== true) {
+				_act.refresh();
+			}
+		}, false);
+	}
+
+	_onActivate();
 
 	jQuery.sap.act = _act;
 

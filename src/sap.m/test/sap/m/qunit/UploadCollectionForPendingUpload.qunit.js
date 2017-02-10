@@ -618,7 +618,7 @@ QUnit.test("Dropping more than one file is not allowed when multiple is false", 
 	sap.ui.getCore().applyChanges();
 	var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 	var oSpyOnChange = sinon.spy(this.oUploadCollection, "_onChange");
-	var oSpyMessageBox = sinon.spy(sap.m.MessageBox, "information");
+	var oStubMessageBox = sinon.stub(sap.m.MessageBox, "error");
 	var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
 	var oFileList = [{
 		name: "file1"
@@ -636,10 +636,9 @@ QUnit.test("Dropping more than one file is not allowed when multiple is false", 
 	$DragDropArea.trigger(oEvent);
 	//Assert
 	assert.ok(oSpyOnChange.notCalled, "Files are not dropped in UploadCollection");
-	assert.ok(oSpyMessageBox.calledOnce, "Information messagebox is displayed");
+	assert.ok(oStubMessageBox.called, "Error messagebox is displayed");
 	//Restore
-	oSpyMessageBox.restore();
-	sap.ui.getCore().byId(this.oUploadCollection.getId() + "-multiple-false-messagebox").close();
+	oStubMessageBox.restore();
 });
 
 QUnit.module("Delete PendingUpload Item", {

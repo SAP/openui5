@@ -1142,15 +1142,18 @@
 				}
 			}
 		});
-		this.oUploadCollection.$("drag-drop-area").removeClass("sapMUCDragDropOverlayHide");
+		$DragDropArea.removeClass("sapMUCDragDropOverlayHide");
+		$DragDropArea.addClass("sapMUCDropIndicator");
 		//Act
 		$DragDropArea.trigger(oEvent);
 		//Assert
+		assert.notOk($DragDropArea.hasClass("sapMUCDropIndicator"), "The UploadCollection drop indicator is hidden after drop");
 		assert.ok($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag and drop overlay is hidden after drop");
 		assert.ok(oSpySendFiles.calledOnce, "The API method of FileUploader for UploadCollection was called");
 		assert.ok(oSpyOnChange.calledOnce, "The _onchange event is triggered when file is dropped in UC");
 		assert.ok(oStubFilesAllowed.called, "The check for files from FileUploader has been performed");
 		assert.ok(oStubCheckForFiles.called, "The check for files has been performed");
+		assert.equal(this.oUploadCollection.getAggregation("_dragDropText").getText(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_DRAG_FILE_INDICATOR"), "The drag indicator text is set back after drop");
 	});
 
 	QUnit.test("Dropping more than one file is not allowed when multiple is false", function(assert) {
@@ -1159,7 +1162,7 @@
 		sap.ui.getCore().applyChanges();
 		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		var oSpyOnChange = sinon.spy(this.oUploadCollection, "_onChange");
-		var oSpyMessageBox = sinon.spy(sap.m.MessageBox, "information");
+		var oStubMessageBox = sinon.stub(sap.m.MessageBox, "error");
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
 		var oFileList = [{
 			name: "file1"
@@ -1177,10 +1180,9 @@
 		$DragDropArea.trigger(oEvent);
 		//Assert
 		assert.ok(oSpyOnChange.notCalled, "Files are not dropped in UploadCollection");
-		assert.ok(oSpyMessageBox.calledOnce, "Information Messagebox is displayed");
+		assert.ok(oStubMessageBox.called, "Error Messagebox is displayed");
 		//Restore
-		oSpyMessageBox.restore();
-		sap.ui.getCore().byId(this.oUploadCollection.getId() + "-multiple-false-messagebox").close();
+		oStubMessageBox.restore();
 	});
 
 	QUnit.test("Drag drop icon is hidden when height of drag drop area smaller than 10rem", function(assert) {
@@ -1755,7 +1757,6 @@
 
 	QUnit.module("Display tests", {
 		beforeEach : function() {
-			this.fnTriggerLink = sap.m.UploadCollection.prototype._triggerLink;
 			this.oUploadCollection = new sap.m.UploadCollection({
 				items : {
 					path : "/items",
@@ -1769,15 +1770,10 @@
 		afterEach : function() {
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
-			sap.m.UploadCollection.prototype._triggerLink = this.fnTriggerLink;
 		}
 	});
 
 	QUnit.test("Display", function(assert) {
-		sap.m.UploadCollection.prototype._triggerLink = function(oEvent, oContext) {
-			assert.ok(true, "Link is triggered");
-		};
-		assert.expect(8); // verifies the event handler was executed
 		//check status = "display"
 		var iLength = this.oUploadCollection.aItems.length;
 		for (var i = 0; i < iLength; i++) {
@@ -1790,12 +1786,38 @@
 		assert.equal(oEditButton.getEnabled(), true, "Edit button is enabled");
 		assert.equal(oDeleteButton.getEnabled(), true, "Delete button is enabled");
 		assert.equal(oFileName.getEnabled(), true, "File name is enabled");
+	});
 
-		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[1].sId + "-ia_iconHL");
+	QUnit.test("Link is triggered by icon press", function(assert) {
+		//Arrange
+		var oStub = sinon.stub(sap.m.UploadCollection.prototype, '_triggerLink');
+
+		//Act
+		// An event is triggered, because there is a url provided at item[1]
+		sap.ui.getCore().byId(this.oUploadCollection.getItems()[1].getId() + "-ia_iconHL").firePress();
 		sap.ui.getCore().applyChanges();
-		// No Event should be triggered, because there is no url provided at aItems[0] --> no change at expect(8)!
-		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
+
+		//Assert
+		assert.equal(sap.m.UploadCollection.prototype._triggerLink.callCount, 1, "Function _triggerLink has been called once");
+
+		//Cleanup
+		oStub.restore();
+	});
+
+	QUnit.test("Link is not triggered by icon press", function(assert) {
+		//Arrange
+		var oStub = sinon.stub(sap.m.UploadCollection.prototype, '_triggerLink');
+
+		//Act
+		// No event is triggered, because there is no url provided at item[0]
+		sap.ui.getCore().byId(this.oUploadCollection.getItems()[0].getId() + "-ia_iconHL").firePress();
 		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(sap.m.UploadCollection.prototype._triggerLink.callCount, 0, "Function _triggerLink has not been called");
+
+		//Cleanup
+		oStub.restore();
 	});
 
 	QUnit.module("Properties", {

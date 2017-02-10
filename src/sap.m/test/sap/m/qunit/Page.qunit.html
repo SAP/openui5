@@ -129,6 +129,8 @@
 								sap.ui.Device.browser.internet_explorer ||
 								sap.ui.Device.browser.edge) ? "transparent" : "rgba(0, 0, 0, 0)"
 				equal(jQuery.sap.byId("myFirstPage-cont").css("background-color"), transparentCssString, "Page content should be transparent");
+
+				equal(oPage.$("cont").hasClass("sapMPageEnableScrolling"), false, "In a page with scrolling disabled, no scroll-related class should be added")
 			});
 
 			test("Page 2 rendered", function() {

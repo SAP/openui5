@@ -144,6 +144,14 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 
 					}
 
+					// adapt the container before placing the view into it to make the rendering occur together with the next
+					// aggregation modification.
+					this._beforePlacingViewIntoContainer({
+						container: oControl,
+						view: oView,
+						data: vData
+					});
+
 					var oAggregationInfo = oControl.getMetadata().getJSONKeys()[oOptions.controlAggregation];
 
 					if (!oAggregationInfo) {

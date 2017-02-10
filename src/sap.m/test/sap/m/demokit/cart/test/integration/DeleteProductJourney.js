@@ -6,12 +6,7 @@
  */
 sap.ui.define([
 	'sap/ui/test/opaQunit',
-	'sap/ui/test/Opa5',
-	'sap/ui/demo/cart/test/pageobjects/Home',
-	'sap/ui/demo/cart/test/pageobjects/Category',
-	'sap/ui/demo/cart/test/pageobjects/Product',
-	'sap/ui/demo/cart/test/pageobjects/Cart',
-	'sap/ui/demo/cart/test/pageobjects/Dialog'
+	'sap/ui/test/Opa5'
 ], function (opaTest) {
 	"use strict";
 

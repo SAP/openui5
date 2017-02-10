@@ -18,7 +18,8 @@
 					iconDensityAware="false"
 					info="{Type}"
 					timestamp="{Date}"
-					text="{Text}" />
+					text="{Text}"
+					convertLinksToAnchorTags="All" />
 			</List>
 		</l:content>
 	</l:VerticalLayout>

@@ -617,6 +617,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._bRowAggregationInvalid = true;
 		this._mTimeouts = {};
 
+		// TBD: Tooltips are not desired by Visual Design, discuss whether to switch it off by default
+		this._bHideStandardTooltips = false;
+
 		/**
 		 * Updates the row binding contexts and synchronizes the row heights. This function will be called by updateRows
 		 */
@@ -957,6 +960,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (oSapUiTableCnt) {
 			oSizes.tableCntHeight = oSapUiTableCnt.clientHeight;
 			oSizes.tableCntWidth = oSapUiTableCnt.clientWidth;
+		}
+
+		var oTableCCnt = oDomRef.querySelector(".sapUiTableCCnt");
+		if (oTableCCnt) {
+			oSizes.tableCCntTop = oTableCCnt.offsetTop;
 		}
 
 		var oSapUiTableCtrlScroll = oDomRef.querySelector(".sapUiTableCtrlScroll:not(.sapUiTableCHT)");
@@ -1321,7 +1329,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		this._updateHSb(oTableSizes);
-		this._updateVSbTop();
+		this._updateVSbTop(oTableSizes);
 
 		var $this = this.$();
 
@@ -1966,6 +1974,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			if (sReason == ChangeReason.Filter || sReason == ChangeReason.Sort) {
 				sUpdateReason = "skipNoDataUpdate";
 				this.setFirstVisibleRow(0);
+			} else if (sReason == ChangeReason.Refresh) {
+				sUpdateReason = "skipNoDataUpdate";
 			}
 			this._updateBindingContexts(true, iRowsToDisplay, sUpdateReason);
 		}
@@ -2213,15 +2223,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * Update the vertical scrollbar position
 	 * @private
 	 */
-	Table.prototype._updateVSbTop = function() {
+	Table.prototype._updateVSbTop = function(oTableSizes) {
 		var oVSb = this._getScrollExtension().getVerticalScrollbar();
 		if (!oVSb) {
 			return;
 		}
 
-		var oTableCCnt = this.getDomRef("tableCCnt");
-		if (oTableCCnt) {
-			var iTop = oTableCCnt.offsetTop;
+		if (oTableSizes.tableCCntTop !== undefined) {
+			var iTop = oTableSizes.tableCCntTop;
 
 			var oVSbBg = this.getDomRef("vsb-bg");
 			oVSbBg.style.top = iTop + "px";
@@ -2235,16 +2244,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	Table.prototype._updateVSbScrollTop = function(iScrollTop) {
-		var oVSb = this._getScrollExtension().getVerticalScrollbar();
+		var oScrollExtension = this._getScrollExtension();
+		var oVSb = oScrollExtension.getVerticalScrollbar();
 		if (!oVSb) {
 			return;
 		}
-
+		if (!this._isVSbRequired()) {
+			return;
+		}
 		if (iScrollTop === undefined) {
 			iScrollTop = Math.ceil(this.getFirstVisibleRow() * this._getScrollingPixelsForRow());
 		}
 
-		oVSb.scrollTop = iScrollTop;
+		oScrollExtension._iVerticalScrollPosition = null;
+		window.requestAnimationFrame(function(){oVSb.scrollTop = iScrollTop;});
 	};
 
 	/**
@@ -2265,15 +2278,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._toggleVSb = function() {
-		var $this = this.$();
-		if (this.getDomRef()) {
-			// in case of Scrollbar Mode show/hide the scrollbar depending whether it is needed.
-			var isVSbRequired = this._isVSbRequired();
-			if (!isVSbRequired) {
-				// reset scroll position to zero when Scroll Bar disappe
-				this._updateVSbScrollTop(0);
+		var oDomRef = this.getDomRef();
+		if (oDomRef) {
+			if (this._isVSbRequired()) {
+				if (!oDomRef.classList.contains("sapUiTableVScr")) {
+					oDomRef.classList.add("sapUiTableVScr");
+					this._updateVSbScrollTop(0);
+				}
+			} else {
+				oDomRef.classList.remove("sapUiTableVScr");
 			}
-			$this.toggleClass("sapUiTableVScr", isVSbRequired);
 		}
 	};
 
@@ -2938,10 +2952,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 			$SelAll.toggleClass("sapUiTableSelAll", bClearSelectAll);
 			this._getAccExtension().setSelectAllState(!bClearSelectAll);
-			if (bClearSelectAll) {
+			if (bClearSelectAll && this._getShowStandardTooltips()) {
 				this.$("selall").attr('title', this._oResBundle.getText("TBL_SELECT_ALL"));
 			}
 		}
+	};
+
+	/**
+	 * Returns <code>true</code>, if the standard tooltips (e.g. for selection should be shown).
+	 * @private
+	 */
+	Table.prototype._getShowStandardTooltips = function() {
+		return !this._bHideStandardTooltips;
 	};
 
 
@@ -3049,7 +3071,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
-			this.$("selall").attr('title', this._oResBundle.getText("TBL_DESELECT_ALL")).removeClass("sapUiTableSelAll");
+			var $SelAll = this.$("selall");
+			$SelAll.removeClass("sapUiTableSelAll");
+			if (this._getShowStandardTooltips()) {
+				$SelAll.attr('title', this._oResBundle.getText("TBL_DESELECT_ALL"));
+			}
 			this._getAccExtension().setSelectAllState(true);
 			this._oSelection.selectAll((oBinding.getLength() || 0) - 1);
 		}

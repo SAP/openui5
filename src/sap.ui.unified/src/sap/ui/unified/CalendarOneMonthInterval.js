@@ -4,8 +4,8 @@
 
 //Provides control sap.ui.unified.CalendarOneMonthInterval.
 sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/UniversalDate', './library',
-		'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarDateIntervalRenderer'],
-	function (jQuery, CalendarUtils, UniversalDate, library, CalendarDateInterval, CalendarDateIntervalRenderer) {
+		'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarDateIntervalRenderer', 'sap/ui/unified/calendar/OneMonthDatesRow'],
+	function (jQuery, CalendarUtils, UniversalDate, library, CalendarDateInterval, CalendarDateIntervalRenderer, OneMonthDatesRow) {
 		"use strict";
 
 		/**
@@ -50,47 +50,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		};
 
 		/**
+		 * Creates a month instance.
+		 * @param {string }sId ID of the instance
+		 * @returns {sap.m.OneMonthDatesRow} A month instance used by the <code>OneMonth</code> view of a <code>sap.m.PlanningCalendar</code>
+		 * @private
+		 */
+		CalendarOneMonthInterval.prototype._createMonth = function(sId) {
+			return new OneMonthDatesRow(sId);
+		};
+
+		/**
 		* Handles focusing on a certain date.
 		* Special handling is needed if the navigation refers to date that is outside the visible area.
 		* @param oEvent
 		* @private
 		*/
 		CalendarOneMonthInterval.prototype._handleFocus = function (oEvent) {
-			var bOutsideBorder = !!oEvent.getParameter("_outsideBorder"),
-				oDate;
+			var bOutsideVisibleArea = !!oEvent.getParameter("_outsideBorder"),
+				oDate = oEvent.getParameter("date"),
+				oUniversalDate = CalendarUtils._createUniversalUTCDate(oDate),
+				bIsOtherMonth = CalendarUtils.monthsDiffer(oUniversalDate, CalendarUtils._createUniversalUTCDate(this.getStartDate())),
+				iDays,
+				oFocusedDate,
+				oStartDate;
 
-			if (bOutsideBorder) {
+
+			if (bOutsideVisibleArea || bIsOtherMonth) {
 				oDate = oEvent.getParameter("date");
-				//Before the new(previous/next) month is rendered, this date is outside visible area. Save it, so it can be
-				//focused after month rendering. See function _focusDateExtend.
-				var oUniversalDate = CalendarUtils._createUniversalUTCDate(oDate);
-
-				if (this._isDateLastInMonth(oUniversalDate)) {
+				//Before the new(previous/next) month is rendered, this date is outside visible area. The other scenario is keyboard navigation
+				//that will result in a day from next/previous month. For both cases we should save it, so it can be
+				//focused after (next/previous) month rendering. See function _focusDateExtend.
+				if (CalendarUtils.isDateLastInMonth(oUniversalDate)) {
 					this._oFocusDateOneMonth = oUniversalDate;
 				} else {
 					this._oFocusDateOneMonth = CalendarUtils.getFirstDateOfMonth(oUniversalDate);
 				}
 
-				if (oDate.getTime() < this.getStartDate().getTime()) {
-					this._handlePrevious();
-				} else {
-					this._handleNext();
-				}
+				//renders previous/next month (the method calls _setStartDate that does the magic)
+				iDays = oDate.getTime() < this.getStartDate().getTime() ?  -1 : 1;
+				oFocusedDate = this._newUniversalDate(this._getFocusedDate());
+				oStartDate = this._newUniversalDate(this._getStartDate());
+				CalendarDateInterval.prototype._shiftStartFocusDates.call(this, oFocusedDate, oStartDate, iDays);
 			}
 			return CalendarDateInterval.prototype._handleFocus.apply(this, arguments);
 		};
 
-		/**
-		 * Checks in UTC mode if the corresponding date is last in a month, needed for further navigation.
-		 * @param {UniversalDate}
-		 * @returns {boolean} checks if the next date is bigger or not regarding the selected one, needed for navigation
-		 * @private
-		 */
-		CalendarOneMonthInterval.prototype._isDateLastInMonth = function(oDate) {
-			var oNextDay = new Date(oDate.getTime() + 24 * 60 * 60 * 1000);
 
-			return oNextDay.getUTCDate() < oDate.getUTCDate();
-		};
 
 		/**
 		 * Overrides the Calendar#_focusDateExtend in order to handle focused date in a custom way.
@@ -107,21 +112,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		 * @private
 		 */
 		CalendarOneMonthInterval.prototype._focusDateExtend = function (oDate, bOtherMonth, bNoEvent) {
-			var oDatesRow, oLocalFocusDate;
+			var oOneMonthDatesRow, oLocalFocusDate;
 
 			if (!this._oFocusDateOneMonth) {
 				return CalendarDateInterval.prototype._focusDateExtend.apply(this, arguments);
 			}
 
-			oDatesRow = this.getAggregation("month")[0];
+			oOneMonthDatesRow = this.getAggregation("month")[0];
 			oLocalFocusDate = CalendarUtils._createLocalDate(this._oFocusDateOneMonth.getJSDate());
 
 			this._setFocusedDate(this._oFocusDateOneMonth);//just a setter
-			oDatesRow.setDate(oLocalFocusDate);//really focus the given date
+			oOneMonthDatesRow._bNoRangeCheck = true; //as we handle focused date by ourselves we know it is visible. So skip the checks for focusable date
+			oOneMonthDatesRow.setDate(oLocalFocusDate);//really focus the given date
+			oOneMonthDatesRow._bNoRangeCheck = false;
+
+			//we need this to notify the planning calendar to update its rows
+			if (this.getSelectedDates().length) {//renders the appointments for the selected date, not focused one
+				this._setRowsStartDate(this.getSelectedDates()[0].getStartDate());
+			}
 
 			this._oFocusDateOneMonth = null;
 
 			return !bNoEvent;
+		};
+
+		/**
+		 * Sets the display size to the month aggregation.
+		 * @param {int} iMode A size 0-2
+		 * @private
+		 */
+		CalendarOneMonthInterval.prototype._setDisplayMode = function(iMode) {
+			this.getAggregation("month")[0].setMode(iMode);
 		};
 
 		/**
@@ -136,10 +157,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		 * It's used only for determine the shift direction. Shift amount is always one month.
 		 * @private
 		 */
-
 		CalendarOneMonthInterval.prototype._shiftStartFocusDates = function (oStartDate, oFocusedDate, iDays) {
+			var iShiftAmount = iDays,
+				oOneMonthDateRow = this.getAggregation("month")[0];
 
-			var iShiftAmount = iDays;
 			if (iShiftAmount !== 0){
 				iShiftAmount = iShiftAmount > 0 ? 1 : -1;
 			}
@@ -148,6 +169,64 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			oFocusedDate.getJSDate().setTime(oStartDate.getTime());
 			this._setFocusedDate(oFocusedDate);
 			this._setStartDate(oStartDate, true);
+			oOneMonthDateRow.selectDate(oStartDate.getJSDate());
+		};
+
+		CalendarOneMonthInterval.prototype._adjustFocusedDateUponMonthChange = function(oFocusedDate, iMonth) {
+			oFocusedDate.setUTCMonth(iMonth);
+			if (iMonth != oFocusedDate.getUTCMonth()){
+				// day did not exist in this month (e.g. 31) -> go to last day of month
+				oFocusedDate.setUTCDate(0);
+			}
+
+			this._adjustSelectedDate(oFocusedDate, true);
+		};
+
+		CalendarOneMonthInterval.prototype._adjustFocusedDateUponYearChange = function(oFocusedDate, iYear) {
+			var oYearPicker = this.getAggregation("yearPicker"),
+				oDate = CalendarUtils._createUniversalUTCDate(oYearPicker.getDate(), this.getPrimaryCalendarType());
+
+			oDate.setUTCMonth(oFocusedDate.getUTCMonth(), oFocusedDate.getUTCDate()); // to keep day and month stable also for islamic date
+			oFocusedDate = oDate;
+
+			this._adjustSelectedDate(oFocusedDate, true);
+
+			return oFocusedDate;
+		};
+
+		/**
+		 * Sets the selection to match the focused date for size S and M.
+		 * @param {Date|sap.ui.core.date.UniversalDate} oDate The date to select unless bUseFirstOfMonth is used
+		 * @param bUseFirstOfMonth If specified the first month of the given date will be used
+		 * @private
+		 */
+		CalendarOneMonthInterval.prototype._adjustSelectedDate = function(oDate, bUseFirstOfMonth) {
+			var oMonth = this.getAggregation("month")[0],
+				oSelectDate;
+
+			oDate = oDate instanceof UniversalDate ? oDate.getJSDate() : oDate;
+			oSelectDate = bUseFirstOfMonth ? CalendarUtils.getFirstDateOfMonth(oDate) : oDate;
+
+			if (oMonth.getMode && oMonth.getMode() < 2) {
+				this._selectDate(oSelectDate);
+			}
+		};
+
+		/**
+		 * Sets the selection.
+		 * @param oDate JS date object
+		 * @private
+		 */
+		CalendarOneMonthInterval.prototype._selectDate = function(oDate) {
+			var oMonth = this.getAggregation("month")[0];
+
+			this.removeAllSelectedDates();
+			this.addSelectedDate(new sap.ui.unified.DateRange({startDate:oDate}));
+			oMonth.selectDate(oDate);
+		};
+
+		CalendarOneMonthInterval.prototype._dateMatchesVisibleRange = function(oDate) {
+			return !CalendarUtils.monthsDiffer(this.getStartDate(), oDate);
 		};
 
 		return CalendarOneMonthInterval;

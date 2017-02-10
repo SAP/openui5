@@ -255,6 +255,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 			return iNumberOfWeeksInYear;
 		};
 
+		/**
+		 * Determines if the given dates' months differ, including same months from different years.
+		 *
+		 * @param {Date} oDate1 JavaScript date
+		 * @param {Date} oDate2 JavaScript date
+		 * @return {boolean} true if the given dates' months differ
+		 * @public
+		 */
+		CalendarUtils.monthsDiffer = function(oDate1, oDate2) {
+			return (oDate1.getMonth() !== oDate2.getMonth() || oDate1.getFullYear() !== oDate2.getFullYear());
+		};
+
+		/**
+		 * Checks in UTC mode if the corresponding date is last in a month.
+		 * @param {UniversalDate} Date
+		 * @returns {boolean} true if the next date is bigger or not regarding the selected one.
+		 * @public
+		 */
+		CalendarUtils.isDateLastInMonth = function(oDate) {
+			var oNextDay = new Date(oDate.getTime() + 24 * 60 * 60 * 1000);
+			return oNextDay.getUTCDate() < oDate.getUTCDate();
+		};
+
 		return CalendarUtils;
 
 	}, /* bExport= */ true);

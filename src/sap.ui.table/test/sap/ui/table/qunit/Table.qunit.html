@@ -718,8 +718,12 @@
 
 		assert.equal(oTable.getFirstVisibleRow(), 1, "getFirstVisibleRow() should be 1");
 
-		assert.equal(oVsb.scrollTop, oTable._getDefaultRowHeight(), "ScrollTop can be set and read.");
-		assert.equal(oHsb.scrollLeft, 5, "ScrollLeft can be set and read.");
+		var done = assert.async();
+		window.setTimeout(function() {
+			assert.equal(oVsb.scrollTop, oTable._getDefaultRowHeight(), "ScrollTop can be set and read.");
+			assert.equal(oHsb.scrollLeft, 5, "ScrollLeft can be set and read.");
+			done();
+		}, 100);
 	});
 
 	QUnit.module("Variable Row Height", {
@@ -745,7 +749,12 @@
 		var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
 		assert.ok(oVsb);
 		var iDefaultHeight = oTable._getDefaultRowHeight();
-		assert.ok(oVsb.scrollTop > iDefaultHeight - 2 && oVsb.scrollTop < iDefaultHeight + 2, "ScrollTop is correct: " + oVsb.scrollTop);
+
+		var done = assert.async();
+		window.setTimeout(function(){
+			assert.ok(oVsb.scrollTop > iDefaultHeight - 2 && oVsb.scrollTop < iDefaultHeight + 2, "ScrollTop is correct: " + oVsb.scrollTop);
+			done();
+		}, 100)
 	});
 
 	QUnit.test("ScrollTop after scrolling to last row is as expected", function(assert) {
@@ -755,11 +764,15 @@
 		oTable.setFirstVisibleRow(200);
 		sap.ui.getCore().applyChanges();
 
-		var iVSbHeight = oVsb.clientHeight;
-		var oVSbScrollHeight = oVsb.scrollHeight;
+		var done = assert.async();
+		window.setTimeout(function(){
+			var iVSbHeight = oVsb.clientHeight;
+			var oVSbScrollHeight = oVsb.scrollHeight;
 
-		assert.equal(iVSbHeight, 10 * oTable._getDefaultRowHeight(), "iVSbHeight is correct");
-		assert.equal(oVsb.scrollTop, oVSbScrollHeight - iVSbHeight, "ScrollTop is correct");
+			assert.equal(iVSbHeight, 10 * oTable._getDefaultRowHeight(), "iVSbHeight is correct");
+			assert.equal(oVsb.scrollTop, oVSbScrollHeight - iVSbHeight, "ScrollTop is correct");
+			done();
+		}, 100)
 	});
 
 	QUnit.test("After scrolling to last row, the table correction is as expected", function(assert) {

@@ -57,6 +57,13 @@
 			"uri": "model/customers.json"
 		}
 	},
+	"resources": {
+		"css": [
+			{
+				"uri": "css/style.css"
+			}
+		]
+	},
 	"routing": {
 	  "config": {
 		"routerClass": "sap.m.routing.Router",
@@ -104,7 +111,7 @@
 			  "parent": "appSettings"
 		  },
 		"statistics": {
-		  "viewName": "Statistic"
+		  "viewName": "Statistics"
 		}
 	  }
 	}

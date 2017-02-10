@@ -4,16 +4,17 @@ sap.ui.define([
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
-		'sap/m/Popover',
+		'sap/m/ResponsivePopover',
 		'sap/m/MessagePopover',
 		'sap/m/Button',
 		'sap/m/Link',
 		'sap/m/Bar',
+		'sap/ui/layout/VerticalLayout',
 		'sap/m/NotificationListItem',
 		'sap/m/MessagePopoverItem',
 		'sap/ui/core/CustomData',
 		'sap/m/MessageToast'
-	], function (BaseController, jQuery, Fragment, Controller, JSONModel, Popover,MessagePopOver, Button, Link, Bar, NotificationListItem, MessagePopoverItem,CustomData, MessageToast) {
+	], function (BaseController, jQuery, Fragment, Controller, JSONModel, ResponsivePopover, MessagePopover, Button, Link, Bar, VerticalLayout, NotificationListItem, MessagePopoverItem,CustomData, MessageToast) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.toolpageapp.controller.App", {
@@ -48,6 +49,7 @@ sap.ui.define([
 			},
 
 			onUserNamePress: function(oEvent) {
+				var oBundle = this.getModel("i18n").getResourceBundle();
 				// close message popover
 				var oMessagePopover = this.getView().byId("errorMessagePopover");
 				if (oMessagePopover && oMessagePopover.isOpen()) {
@@ -56,36 +58,41 @@ sap.ui.define([
 				var fnHandleUserMenuItemPress = function (oEvent) {
 					MessageToast.show(oEvent.getSource().getText() + " was pressed");
 				};
-				var oPopover = new Popover(this.getView().createId("userMessagePopover"), {
-					showHeader: false,
+				var oPopover = new ResponsivePopover(this.getView().createId("userMessagePopover"), {
+					showHeader: sap.ui.Device.system.phone,
+					title: oBundle.getText("userHeaderTitle"),
 					placement: sap.m.PlacementType.Bottom,
 					content:[
-						new Button({
-							text: 'User Settings',
-							type: sap.m.ButtonType.Transparent,
-							press: fnHandleUserMenuItemPress
-						}),
-						new Button ({
-							text: "Online Guide",
-							type: sap.m.ButtonType.Transparent,
-							press: fnHandleUserMenuItemPress
-						}),
-						new Button({
-							text: 'Feedback',
-							type: sap.m.ButtonType.Transparent,
-							press: fnHandleUserMenuItemPress
-						}),
-						new Button({
-							text: 'Help',
-							type: sap.m.ButtonType.Transparent,
-							press: fnHandleUserMenuItemPress
-						}),
-						new Button({
-							text: 'Logout',
-							type: sap.m.ButtonType.Transparent,
-							press: fnHandleUserMenuItemPress
+						new VerticalLayout({
+							content: [
+								new Button({
+									text: 'User Settings',
+									type: sap.m.ButtonType.Transparent,
+									press: fnHandleUserMenuItemPress
+								}),
+								new Button ({
+									text: "Online Guide",
+									type: sap.m.ButtonType.Transparent,
+									press: fnHandleUserMenuItemPress
+								}),
+								new Button({
+									text: 'Feedback',
+									type: sap.m.ButtonType.Transparent,
+									press: fnHandleUserMenuItemPress
+								}),
+								new Button({
+									text: 'Help',
+									type: sap.m.ButtonType.Transparent,
+									press: fnHandleUserMenuItemPress
+								}),
+								new Button({
+									text: 'Logout',
+									type: sap.m.ButtonType.Transparent,
+									press: fnHandleUserMenuItemPress
+								})
+							]
 						})
-						],
+					],
 					afterClose: function () {
 						oPopover.destroy();
 					}
@@ -114,7 +121,7 @@ sap.ui.define([
 			// Errors Pressed
 			onMessagePopoverPress: function (oEvent) {
 				if (!this.getView().byId("errorMessagePopover")) {
-					var oMessagePopover = new MessagePopOver(this.getView().createId("errorMessagePopover"), {
+					var oMessagePopover = new MessagePopover(this.getView().createId("errorMessagePopover"), {
 						placement: sap.m.VerticalPlacementType.Bottom,
 						items: {
 							path: 'alerts>/alerts/errors',
@@ -137,23 +144,22 @@ sap.ui.define([
 			 * @public
 			 */
 			onNotificationPress: function (oEvent) {
+				var oBundle = this.getModel("i18n").getResourceBundle();
 				// close message popover
 				var oMessagePopover = this.getView().byId("errorMessagePopover");
 				if (oMessagePopover && oMessagePopover.isOpen()) {
 					oMessagePopover.destroy();
 				}
 				var oButton = new Button({
-					text: "Show all Notifications",
+					text: oBundle.getText("notificationButtonText"),
 					press: function () {
 						MessageToast.show("Show all Notifications was pressed");
 					}
 				});
-				var oNotificationPopover = new Popover(this.getView().createId("notificationMessagePopover"), {
-					title: "Notifications",
+				var oNotificationPopover = new ResponsivePopover(this.getView().createId("notificationMessagePopover"), {
+					title: oBundle.getText("notificationTitle"),
 					contentWidth: "300px",
-					footer: new Bar({
-						contentRight: oButton
-					}),
+					endButton : oButton,
 					placement: sap.m.PlacementType.Bottom,
 					content: {
 						path: 'alerts>/alerts/notifications',

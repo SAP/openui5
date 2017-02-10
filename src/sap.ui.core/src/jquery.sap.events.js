@@ -1783,23 +1783,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 	 *  1. iOS Safari in iOS 8 (except UIWebView / WKWebView).
 	 *  2. Chrome on Android from version 32 (exclude the Samsung stock browser which also uses Chrome kernel)
 	 *
+	 * @param {Navigator} oNavigator the window navigator object.
 	 * @private
 	 * @name jQuery.sap.isMouseEventDelayed
 	 * @since 1.30.0
 	 */
 
 	// expose the function for unit test to refresh the jQuery.sap.isMouseEventDelayed
-	jQuery.sap._refreshMouseEventDelayedFlag = function() {
+	jQuery.sap._refreshMouseEventDelayedFlag = function(oNavigator) {
+		oNavigator = oNavigator || navigator;
 		jQuery.sap.isMouseEventDelayed =
 			!!(Device.browser.mobile
 				&& !(
 					(Device.os.ios && Device.os.version >= 8 && Device.browser.safari && !Device.browser.webview)
-					|| (Device.browser.chrome && !/SAMSUNG/.test(navigator.userAgent) && Device.browser.version >= 32)
+					|| (Device.browser.chrome && !/SAMSUNG/.test(oNavigator.userAgent) && Device.browser.version >= 32)
 				)
 			);
 	};
 
-	jQuery.sap._refreshMouseEventDelayedFlag();
+	jQuery.sap._refreshMouseEventDelayedFlag(navigator);
 
 	/* ************************************************ */
 

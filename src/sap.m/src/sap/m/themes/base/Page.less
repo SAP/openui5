@@ -17,10 +17,22 @@
 
 .sapMPage > section {
   position: absolute;
+  overflow-y: hidden;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+}
+
+.sapMPage > section.sapMPageEnableScrolling {
+	overflow-y: auto;
+}
+
+html[data-sap-ui-os^="bb"],
+html[data-sap-ui-os^="iOS"] {
+  .sapMPage > section.sapMPageEnableScrolling {
+    overflow-y: scroll;
+  }
 }
 
 /* Fix for a ToolBar set as headerContent */
@@ -73,6 +85,10 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 .sapMPageFooter.sapMTB {
   right: 0;
   border-bottom-width: 0;
+}
+
+.sapMIBar-CTX.sapMFooter-CTX.sapMPageFooter.sapMTB {
+  border-top-width: 0;
 }
 
 .sapMPageSubHeader,
@@ -134,11 +150,16 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
   }
 }
 
-.sapMPageFloatingFooter.sapMPageWithFooter {
-    > section {
-    padding-bottom: 4rem;
+.sapMPageFloatingFooter.sapMPageWithFooter > section {
     bottom: 0;
-  }
+
+    &:after {
+        content: "";
+        display: block;
+        height: 0;
+        width: 100%;
+        margin-bottom: 4rem;
+    }
 }
 
 .sapUiSizeCompact .sapMPageWithFooter.sapMPageFloatingFooter > section {

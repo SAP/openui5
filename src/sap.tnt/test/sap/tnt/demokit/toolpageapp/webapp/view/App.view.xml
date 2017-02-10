@@ -9,26 +9,14 @@
 		class="sapUiDemoToolPage">
 		<tnt:header>
 			<tnt:ToolHeader>
-				<OverflowToolbar width="40%">
-					<Button id="sideNavigationToggleButton"
-							icon="sap-icon://menu2"
-							type="Transparent"
-							press="onSideNavButtonPress">
-						<layoutData>
-							<OverflowToolbarLayoutData priority="NeverOverflow"/>
-						</layoutData>
-					</Button>
-				</OverflowToolbar>
-				<OverflowToolbar width="20%">
+				<OverflowToolbar width="100%">
+					<Button
+						id="sideNavigationToggleButton"
+						icon="sap-icon://menu2"
+						type="Transparent"
+						press="onSideNavButtonPress"/>
 					<ToolbarSpacer/>
-					<Title text="{i18n>appTitle}">
-						<layoutData>
-							<OverflowToolbarLayoutData priority="Disappear"/>
-						</layoutData>
-					</Title>
-					<ToolbarSpacer/>
-				</OverflowToolbar>
-				<OverflowToolbar width="40%">
+					<Title text="{i18n>appTitle}"/>
 					<ToolbarSpacer/>
 					<Button
 						id="errorButton"
@@ -36,31 +24,20 @@
 						text="{= ${alerts>/alerts/errors}.length }"
 						visible="{= ${alerts>/alerts/errors}.length === 0 ? false : true }"
 						type="Transparent"
-						press="onMessagePopoverPress">
-						<layoutData>
-							<OverflowToolbarLayoutData priority="Low"/>
-						</layoutData>
-					</Button>
+						press="onMessagePopoverPress"/>
 					 <Button
 						id="notificationButton"
 						icon="sap-icon://ui-notifications"
 						text="{= ${alerts>/alerts/notifications}.length }"
 						visible="{= ${alerts>/alerts/notifications}.length === 0 ? false : true }"
 						type="Transparent"
-						press="onNotificationPress">
-						 <layoutData>
-							 <OverflowToolbarLayoutData priority="Low"/>
-						 </layoutData>
-					 </Button>
+						press="onNotificationPress"/>
 					 <Button
 						id="userButton"
 						text="{i18n>userName}"
 						type="Transparent"
-						press="onUserNamePress">
-						 <layoutData>
-							 <OverflowToolbarLayoutData priority="NeverOverflow"/>
-						 </layoutData>
-					 </Button>
+						press="onUserNamePress"/>
+
 				</OverflowToolbar>
 			</tnt:ToolHeader>
 		</tnt:header>

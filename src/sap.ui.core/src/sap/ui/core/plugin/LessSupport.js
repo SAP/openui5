@@ -528,20 +528,11 @@
 	//  - when available immediately define the LessSupport
 	//  - if not we delay the definition till the body is loaded
 	if (!(window.sap && window.sap.ui && window.sap.ui.define)) {
-		var fnHandler;
-		if (document.addEventListener) {
-			fnHandler = function() {
-				document.removeEventListener("DOMContentLoaded", fnHandler, false);
-				defineLessSupport();
-			};
-			document.addEventListener("DOMContentLoaded", fnHandler, false);
-		} else if (document.attachEvent) {
-			fnHandler = function() {
-				document.detachEvent("onreadystatechange", fnHandler);
-				defineLessSupport();
-			};
-			document.attachEvent("onreadystatechange", fnHandler);
-		}
+		var fnHandler = function() {
+			document.removeEventListener("DOMContentLoaded", fnHandler, false);
+			defineLessSupport();
+		};
+		document.addEventListener("DOMContentLoaded", fnHandler, false);
 	} else {
 		defineLessSupport();
 	}
