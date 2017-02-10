@@ -641,6 +641,17 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
+				checkSalesOrdersCount : function (iExpectedCount) {
+					return this.waitFor({
+						controlType : "sap.m.Text",
+						id : "SalesOrdersTitle",
+						success : function (oText) {
+							Opa5.assert.strictEqual(oText.getText(),
+								iExpectedCount + " Sales Orders", iExpectedCount + " Sales Orders");
+						},
+						viewName : sViewName
+					});
+				},
 				checkSalesOrderSelected : function (iRow) {
 					return this.waitFor({
 						controlType : "sap.m.Table",

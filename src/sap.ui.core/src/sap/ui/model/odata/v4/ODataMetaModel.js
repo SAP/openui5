@@ -12,17 +12,20 @@ sap.ui.define([
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/odata/OperationMode",
+	"sap/ui/model/odata/type/Int64",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/thirdparty/URI",
 	"./lib/_Helper",
 	"./lib/_SyncPromise",
 	"./ValueListType"
 ], function (jQuery, BindingMode, ContextBinding, BaseContext, FilterProcessor, JSONListBinding,
-		MetaModel, OperationMode, PropertyBinding, URI, _Helper, _SyncPromise, ValueListType) {
+		MetaModel, OperationMode, Int64, PropertyBinding, URI, _Helper, _SyncPromise,
+		ValueListType) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
-	var DEBUG = jQuery.sap.log.Level.DEBUG,
+	var oCountType,
+		DEBUG = jQuery.sap.log.Level.DEBUG,
 		ODataMetaContextBinding,
 		ODataMetaListBinding,
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
@@ -91,7 +94,7 @@ sap.ui.define([
 	 * @param {string} sExpectedTerm
 	 *   The expected term
 	 * @returns {string}
-	 *   The qualifier or undefined if the term is not the expected term
+	 *   The qualifier or undefined, if the term is not the expected term
 	 */
 	function getQualifier(sTerm, sExpectedTerm) {
 		if (sTerm === sExpectedTerm) {
@@ -978,6 +981,10 @@ sap.ui.define([
 		var oMetaContext = this.getMetaContext(sPath),
 			that = this;
 
+		if (jQuery.sap.endsWith(sPath, "/$count")) {
+			oCountType = oCountType || new Int64();
+			return _SyncPromise.resolve(oCountType);
+		}
 		// Note: undefined is more efficient than "" here
 		return this.fetchObject(undefined, oMetaContext).then(function (oProperty) {
 			var mConstraints,

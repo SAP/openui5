@@ -10,6 +10,7 @@ sap.ui.require([
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/odata/OperationMode",
+	"sap/ui/model/odata/type/Int64",
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_Helper",
@@ -21,8 +22,8 @@ sap.ui.require([
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
 ], function (jQuery, BindingMode, BaseContext, ContextBinding, FilterProcessor, JSONListBinding,
-		MetaModel, OperationMode, AnnotationHelper, Context, _Helper, _SyncPromise, ODataMetaModel,
-		ODataModel, ValueListType, PropertyBinding, TestUtils, URI) {
+		MetaModel, OperationMode, Int64, AnnotationHelper, Context, _Helper, _SyncPromise,
+		ODataMetaModel, ODataModel, ValueListType, PropertyBinding, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint no-loop-func: 0, no-warning-comments: 0 */
 	"use strict";
@@ -1309,6 +1310,18 @@ sap.ui.require([
 		});
 	});
 	//TODO later: support for facet DefaultValue?
+
+	//*********************************************************************************************
+	QUnit.test("fetchUI5Type: $count", function (assert) {
+		var sPath = "/T€AMS/$count",
+			oType;
+
+		// code under test
+		oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
+
+		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Int64");
+		assert.strictEqual(this.oMetaModel.getUI5Type(sPath), oType, "cached");
+	});
 
 	//*********************************************************************************************
 	QUnit.test("fetchUI5Type: collection", function (assert) {
