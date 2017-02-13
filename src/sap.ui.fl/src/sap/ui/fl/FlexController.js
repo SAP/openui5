@@ -589,7 +589,7 @@ sap.ui.define([
 		}
 
 		var oChangesMap = this._oChangePersistence.getChangesMapForComponent();
-		var aChanges = oChangesMap[sId] || [];
+		var aChanges = oChangesMap.mChanges[sId] || [];
 		return this.discardChanges(aChanges, bDiscardPersonalization);
 	};
 
