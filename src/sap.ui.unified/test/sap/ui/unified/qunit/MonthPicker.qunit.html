@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>MonthPicker - sap.ui.unified.calendar.MonthPicker</title>
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.unified"
+			data-sap-ui-language="en-US">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+
+		<script>
+
+			(function () {
+
+				module("Corner cases", {
+					beforeEach: function () {
+						this.oMP = new sap.ui.unified.calendar.MonthPicker();
+					},
+					afterEach: function () {
+						this.oMP.destroy();
+						this.oMP = null;
+					}
+				});
+
+				test("onThemeChanged is called before the control is rendered", function (oAssert) {
+					var bThrown = false;
+					try {
+						this.oMP.onThemeChanged();
+					} catch (oError) {
+						bThrown = true;
+					}
+					oAssert.ok(!bThrown, "No error should be thrown");
+				});
+
+			})();
+
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1 id="qunit-header">QUnit tests: sap.ui.unified.calendar.MonthPicker</h1>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>
