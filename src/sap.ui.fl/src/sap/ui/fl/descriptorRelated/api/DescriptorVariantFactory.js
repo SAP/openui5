@@ -175,7 +175,7 @@ sap.ui.define([
 			sRoute += '?changelist=ATO_NOTIFICATION';
 		}
 
-		var oLREPConnector = new LrepConnector();
+		var oLREPConnector = LrepConnector.createConnector();
 
 		return oLREPConnector.send(sRoute, sMethod, mMap);
 	};
@@ -226,7 +226,7 @@ sap.ui.define([
 
 	DescriptorVariantFactory._getDescriptorVariant = function(sId) {
 		var sRoute = '/sap/bc/lrep/appdescr_variants/' + sId;
-		var oLREPConnector = new LrepConnector();
+		var oLREPConnector = LrepConnector.createConnector();
 		return oLREPConnector.send(sRoute, 'GET');
 	};
 
