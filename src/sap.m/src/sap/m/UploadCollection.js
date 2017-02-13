@@ -1276,20 +1276,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}
 
 			oFileName = sap.ui.getCore().byId(sItemId + "-ta_filenameHL");
-			if (!oFileName) {
-				oFileName = new sap.m.Link(sItemId + "-ta_filenameHL", {
-					enabled : bEnabled,
-					press : function(oEvent) {
-						this._triggerLink(oEvent, that);
-					}.bind(this)
-				}).addStyleClass("sapMUCFileName");
-				oFileName.setModel(oItem.getModel());
-				oFileName.setText(sFileNameLong);
-			} else {
-					oFileName.setModel(oItem.getModel());
-					oFileName.setText(sFileNameLong);
-					oFileName.setEnabled(bEnabled);
+			if (oFileName) {
+				oFileName.destroy();
 			}
+			oFileName = new sap.m.Link(sItemId + "-ta_filenameHL", {
+				enabled : bEnabled,
+				press : [that, this._triggerLink, this]
+			}).addStyleClass("sapMUCFileName");
+			oFileName.setModel(oItem.getModel());
+			oFileName.setText(sFileNameLong);
 			return oFileName;
 		} else {
 			oFile = that._splitFilename(sFileNameLong);
