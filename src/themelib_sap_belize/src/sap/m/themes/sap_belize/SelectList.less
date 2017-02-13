@@ -6,6 +6,8 @@
 /* selected */
 .sapMSelectListItemBaseSelected {
 	background: @sapUiListSelectionBackgroundColor;
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -2px;
 }
 
 /* pressed */
@@ -26,7 +28,7 @@ html.sap-desktop .sapMSelectListItemBase:focus {
 
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMSelectListItemBase:focus::before {
+	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected::before {
 		border: 1px dashed @sapUiContentFocusColor;
 	}
 }
