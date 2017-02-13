@@ -162,6 +162,12 @@ sap.ui.define([
 		var oSecondRequestPromise = whenRequestDone(oXHR2);
 		var oFirstRequestDone = Promise.race([oFirstRequestPromise, oSecondRequestPromise]);
 		oFirstRequestDone.then(function () {
+			if (Device.browser.msie) {
+				// Promise race is behaving differently in IE 11:
+				// it gets resolved when the first request is done, but the second request arrives before the then of the promise is called
+				// since the polyfill we use seems to not completely work the same way...
+				return;
+			}
 			assert.ok(XHRCounter.hasPendingRequests(), "there are pending xhrs");
 		});
 		// both done
