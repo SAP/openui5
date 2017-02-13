@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
- sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
-	function(jQuery, Renderer) {
+ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/LabelEnablement'],
+	function(jQuery, Renderer, LabelEnablement) {
 	"use strict";
 
 
@@ -24,8 +24,12 @@
 	LinkRenderer.render = function(oRm, oControl) {
 		var sTextDir = oControl.getTextDirection(),
 			sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir),
+			bShouldHaveOwnLabelledBy = oControl.getAriaLabelledBy().length > 0 ||
+					LabelEnablement.getReferencingLabels(oControl).length > 0 ||
+					(oControl.getParent() && oControl.getParent().enhanceAccessibilityState),
 			oAccAttributes =  {
-				role: 'link'
+				role: 'link',
+				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined
 			};
 
 		// Link is rendered as a "<a>" element
