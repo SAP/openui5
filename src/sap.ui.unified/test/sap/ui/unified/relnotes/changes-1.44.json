@@ -138,5 +138,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.7": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "883c41171e0dfcd7991791fe2fbf90544a42e624",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": []
+      },
+      {
+        "id": "698e5ebaa5e7dc37790d937dd39927db1dd75c14",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Belize Deep theme fixed for 1.44",
+        "references": []
+      }
+    ]
   }
 }

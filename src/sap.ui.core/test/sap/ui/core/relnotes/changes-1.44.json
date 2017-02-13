@@ -705,5 +705,28 @@
         "references": []
       }
     ]
+  },
+  "1.44.7": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "f389ddc436e7ece13fdac9098cd25901a81a9963",
+        "type": "FIX",
+        "text": " jQuery.sap.resources: fix hasText in case of missing locale",
+        "references": []
+      },
+      {
+        "id": "f0549ec97bf12d9046820d6923dd34825ddd30e8",
+        "type": "FIX",
+        "text": " sap.ui.core.Icon: provide theme dependent color for IconColor.Default",
+        "references": []
+      },
+      {
+        "id": "eb586f700a7c8287b56fb83e28d560908cdebd17",
+        "type": "FIX",
+        "text": " sap.ui.core.routing: target title should be parsed by the binding parser",
+        "references": []
+      }
+    ]
   }
 }

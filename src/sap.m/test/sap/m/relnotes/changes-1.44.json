@@ -1593,5 +1593,100 @@
         "references": []
       }
     ]
+  },
+  "1.44.7": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "ea6ff0ba37a7f7e90a8bfddc0af91db2a221310d",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Prevent exception when control is used with ACC off",
+        "references": []
+      },
+      {
+        "id": "571d6ee2f6c4d24b42377a030b5026abbeb2e8ea",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Selection of items with accented chars corrected",
+        "references": []
+      },
+      {
+        "id": "fc97b87427d5e2ecc108d9c3d840b1c47bca013d",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Use of HTML control corrected",
+        "references": []
+      },
+      {
+        "id": "52e5c63f2ecfa80f89dd283ae2362ef502fd97e8",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer: Scroll to next button hidden properly in Chrome",
+        "references": []
+      },
+      {
+        "id": "db324f687ec270c1c3fed3eb29d04113c5b49a3b",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Focus fixed for Belize",
+        "references": []
+      },
+      {
+        "id": "9fb1370ab1132979f32eb2408004cfbd70a10a05",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Inner input height is wrong in Safari",
+        "references": []
+      },
+      {
+        "id": "267a5cfed563d0d41ec9afffa029de063a2653aa",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Pressing enter with an empty value no longer triggers validation",
+        "references": []
+      },
+      {
+        "id": "fef9a8430c71639d4ed5dde4cfcf83fd3f2ea2ab",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Issue with closing the multiline mode",
+        "references": []
+      },
+      {
+        "id": "097077134c278a9caa2380f8cef5a549122f98ff",
+        "type": "FIX",
+        "text": " sap.m.Page: Floating footer hides last elements of the content",
+        "references": []
+      },
+      {
+        "id": "883c41171e0dfcd7991791fe2fbf90544a42e624",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": []
+      },
+      {
+        "id": "27acfe8d66eea0a18481214e256dbce5512ee716",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Adjusting height after rendering fixed",
+        "references": []
+      },
+      {
+        "id": "71bc778b89d95679c3825e8a01f7ed4a3be3710a",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSlider: removed direct jQuery usage",
+        "references": []
+      },
+      {
+        "id": "a733e6453db8a7b68e139171e5698783308093ba",
+        "type": "FIX",
+        "text": " sap.m.Token: In \"delete\" event token is added again as parameter",
+        "references": []
+      },
+      {
+        "id": "6236a4cbed744b3db679825a9a5aa6215f219952",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: setTokens function now properly destroying overriden tokens",
+        "references": []
+      },
+      {
+        "id": "5892ed036026717157a0fe72c60e0bb9cab99fb1",
+        "type": "FIX",
+        "text": " sap.m: Use mvc namespace instead of core namespace in Explored page",
+        "references": []
+      }
+    ]
   }
 }

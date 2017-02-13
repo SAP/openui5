@@ -246,5 +246,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.7": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "db324f687ec270c1c3fed3eb29d04113c5b49a3b",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Focus fixed for Belize",
+        "references": []
+      },
+      {
+        "id": "883c41171e0dfcd7991791fe2fbf90544a42e624",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": []
+      }
+    ]
   }
 }

@@ -1273,5 +1273,16 @@
         "references": []
       }
     ]
+  },
+  "1.40.17": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "d9cd3bbb651a37dea090bd9421f3c03c96a55454",
+        "type": "FIX",
+        "text": " sap.m.Panel: Expandable icon contrast ratio fix",
+        "references": []
+      }
+    ]
   }
 }

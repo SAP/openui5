@@ -502,5 +502,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.7": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "74168b99bcdc4b8b08e546bf63a1f1817573f67b",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Scrolling to the last row when zoomed in/out in Chrome.",
+        "references": []
+      },
+      {
+        "id": "fa15b56ef418c95965020c75d667ebb4a6f56e39",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Tabbing in action mode when invisible columns exist.",
+        "references": []
+      }
+    ]
   }
 }
