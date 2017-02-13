@@ -46,6 +46,8 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 				sSortParam += oSorter.sPath;
 				sSortParam += oSorter.bDescending ? "%20desc" : "%20asc";
 				sSortParam += ",";
+			} else {
+				jQuery.sap.log.error("Trying to use " + oSorter + " as a Sorter, but it is a " + typeof oSorter);
 			}
 		}
 		//remove trailing comma
