@@ -390,9 +390,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @protected
 	 * @param {object} oEvent
+	 * @param {object} [mParameters] Event parameters.
 	 * @returns {true|undefined} true when change event is fired
 	 */
-	InputBase.prototype.onChange = function(oEvent) {
+	InputBase.prototype.onChange = function(oEvent, mParameters) {
 
 		// check the control is editable or not
 		if (!this.getEditable() || !this.getEnabled()) {
@@ -414,7 +415,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this._bIgnoreNextInputEventNonASCII = false;
 			}
 
-
 			// get the value back maybe formatted
 			sValue = this.getValue();
 
@@ -422,7 +422,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._lastValue = sValue;
 
 			// fire change event
-			this.fireChangeEvent(sValue);
+			this.fireChangeEvent(sValue, mParameters);
 
 			// inform change detection
 			return true;
