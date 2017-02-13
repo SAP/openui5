@@ -177,6 +177,41 @@ sap.ui.define([
       }.bind(this));
 
 
+      // //////////////////////////////////////////////////////////////////////////////////////////////////////
+      // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+      // //////////////////////////////////////////////////////////////////////////////////////////////////////
+      opaTest("Deep testing of duplicate step definition behaviour", function() {
+
+        // Unfortunately, the duplicate error bubbles up out of the frame, so we must ask QUnit to ignore it.
+        // Fortunately, setting ignoreGlobalErrors only affects the current test so no cleanup is required.
+        QUnit.config.current.ignoreGlobalErrors = true;
+
+        oOpa5.iStartMyAppInAFrame("testHarnessDuplicate.html?harness=" + this.sTestHarness);
+
+        oOpa5.waitFor({
+          id: "testing-done",
+          success: function() {
+
+            var oFrame$ = sap.ui.test.Opa5.getWindow().$;
+
+            var sTestResult = oFrame$("#qunit-testresult").text();
+            var rRegex = /\d+ assertions of (\d+) passed, (\d+) failed\./i;
+            var sResults = rRegex.exec(sTestResult);
+            var iFailedTests = parseInt(sResults[2], 10);
+            var iTotalTests = parseInt(sResults[1], 10);
+            Opa5.assert.strictEqual(iFailedTests, 1, "Verified failed tests");
+            Opa5.assert.strictEqual(iTotalTests, 1, "Verified total tests");
+
+            var oDupe = oFrame$('.test-message')
+              .filter(':contains("StepDefinitions.register: Duplicate step definition \'/^duplicate regex$/i\'")');
+            Opa5.assert.strictEqual(oDupe.length, 1, 'Verified found text "Duplicate step definition"');
+
+            oOpa5.iTeardownMyApp();
+          }
+        });
+      }.bind(this));
+
+
 
       // //////////////////////////////////////////////////////////////////////////////////////////////////////
       // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -224,6 +259,8 @@ sap.ui.define([
               .parent().parent().find('.test-message').last().text();
             Opa5.assert.ok(sNotFoundText.indexOf("expect(0)") === -1,
               'Verified that a (NOT FOUND) test step doesn\'t trigger an expect(0) error"');
+
+            oOpa5.iTeardownMyApp();
           }
         });
       }.bind(this));

@@ -44,9 +44,7 @@ sap.ui.define([
         },
 
         /**
-         * Registers the step definitions by calling the method "register". The order of the register calls is important.
-         * The first step definition whose regular expression matches the step text is the one that will be executed,
-         * however, the step definitions are checked in REVERSE ORDER (i.e. the last one you wrote is checked first).
+         * Registers the step definitions by calling the method "register".
          *
          * @see #register
          * @abstract
@@ -81,6 +79,7 @@ sap.ui.define([
          *                            specified in the regular expression. If a data table is specified for the step, it
          *                            will be passed as an additional final parameter. At execution time, all functions
          *                            within a particular scenario will execute within the same "this" context.
+         * @throws {Error} if any parameters are invalid, or if method is called twice with the same value for 'rRegex'
          * @public
          * @function
          * @static
@@ -92,7 +91,15 @@ sap.ui.define([
           if ($.type(fnFunc) !== "function") {
             throw new Error("StepDefinitions.register: parameter 'fnFunc' must be a valid Function");
           }
-          this._aDefinitions.unshift({ // stack registrations (last-in, first-checked)
+
+          this._aDefinitions.forEach(function(oStepDef) {
+            if (oStepDef.rRegex.source === rRegex.source) {
+              throw new Error("StepDefinitions.register: Duplicate step definition '" + rRegex + "'");
+            }
+          });
+
+          this._aDefinitions.push({
+            rRegex: rRegex,
             generateTestStep: function(oStep) {
               var aMatch = oStep.text.match(rRegex);
               if (!aMatch) { return {isMatch: false}; }
