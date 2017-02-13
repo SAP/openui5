@@ -1739,29 +1739,15 @@
 		assert.ok(oTable._iBindingLength < oTable.getVisibleRowCount(), "transformation applied for condition _iBindingLength < visibleRowCount");
 	});
 
-	QUnit.test("Test for refreshRows without binding", function(assert) {
-		oTable.unbindRows();
-		oTable.refreshRows();
-		assert.ok(oTable._bBusyIndicatorAllowed === undefined, "refreshRows called without binding, error must have been logged");
-	});
-
 	QUnit.test("Test for refreshRows with binding", function(assert) {
-		var oEvent1 = {
-			getParameter: function() {
-				return "refresh";
-			}
-		};
-		oTable.refreshRows(oEvent1);
-		assert.ok(oTable._bBusyIndicatorAllowed, "refreshRows() executed with ChangeReason.Refresh");
-
-		var oEvent2 = {
+		var oEvent = {
 			getParameter: function() {
 				return "filter";
 			}
 		};
 		oTable.bOutput = true;
 		oTable._mTimeouts.refreshRowsAdjustRows = true;
-		oTable.refreshRows(oEvent2);
+		oTable.refreshRows(oEvent);
 		assert.equal(oTable.getFirstVisibleRow(), 0, "refreshRows() executed with ChangeReason.Filter");
 	});
 
@@ -1824,28 +1810,164 @@
 	});
 
 	QUnit.test("test setBusy and _setBusy function", function(assert) {
-		oTable.setEnableBusyIndicator(true);
-		oTable._bBusyIndicatorAllowed = true;
-		oTable._iDataRequestedCounter = 10;
-		var mParameters1 = {
-			reason: "Expand",
-			contexts: [undefined],
-			changeReason: sap.ui.model.ChangeReason.Expand
+		var sBusyIndicatorParent = "sapUiTableCnt";
+		var sBusyIndicatorClass = ".sapUiLocalBusyIndicator";
+		var onBusyStateChangedEventHandler = function(oEvent) {
+			onBusyStateChangedEventHandler.callCount = this.callCount === undefined ? 1 : this.callCount + 1;
+			onBusyStateChangedEventHandler.parameters = oEvent.mParameters;
 		};
-		oTable._setBusy(mParameters1);
-		assert.ok(oTable.getBusy(), "Table is in busy state");
-		var mParameters2 = {
-			reason: "Expand",
-			contexts: ["test"],
-			changeReason: sap.ui.model.ChangeReason.Expand
+		onBusyStateChangedEventHandler.reset = function() {
+			onBusyStateChangedEventHandler.callCount = 0;
+			onBusyStateChangedEventHandler.parameters = null;
 		};
-		oTable._setBusy(mParameters2);
-		assert.ok(!oTable.getBusy(), "Table is not in busy state");
-	});
 
-	QUnit.test("test _attachDataRequestedListeners function", function(assert) {
-		oTable._attachDataRequestedListeners();
-		assert.equal(oTable._iDataRequestedCounter, 0, "function was called and data set appropriately");
+		oTable.attachEvent("busyStateChanged", onBusyStateChangedEventHandler);
+		oTable.setBusyIndicatorDelay(0);
+
+		function getMessage(sMessage, mParameters) {
+			var oBinding = oTable.getBinding("rows");
+
+			return sMessage +
+				   " (enableBusyIndicator: " + oTable.getEnableBusyIndicator() +
+				   ", _bDataRequested: " + oTable._bDataRequested +
+				   ", Binding: " + (oBinding == null ? "none" : "isInitial=" + oBinding.isInitial() + ", length=" + oBinding.getLength()) +
+				   ", Parameters: " + JSON.stringify(mParameters) + ")";
+		}
+
+		function test(mParameters, bBusyIndicatorVisibleBefore, bBusyIndicatorVisibleAfter) {
+			// Prepare for next test iteration.
+			oTable.setBusy(bBusyIndicatorVisibleBefore);
+			sap.ui.getCore().applyChanges();
+			onBusyStateChangedEventHandler.reset();
+
+			assert.strictEqual(oTable.getBusy(), bBusyIndicatorVisibleBefore, "Initial: The busy state of the table is: " + bBusyIndicatorVisibleBefore);
+			assert.strictEqual(oTable.getDomRef(sBusyIndicatorParent).querySelector(sBusyIndicatorClass) != null, bBusyIndicatorVisibleBefore,
+				"Initial: The busy indicator element exists in the DOM: " + bBusyIndicatorVisibleBefore);
+
+			// Perform next test iteration.
+			oTable._setBusy(mParameters);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(oTable.getBusy(), bBusyIndicatorVisibleAfter,
+				getMessage("Test: The busy state of the table is: " + bBusyIndicatorVisibleAfter, mParameters));
+			if (bBusyIndicatorVisibleBefore === bBusyIndicatorVisibleAfter) {
+				assert.ok(onBusyStateChangedEventHandler.callCount === 0,
+					getMessage("Test: BusyStateChanged event has not been fired", mParameters));
+			} else {
+				assert.ok(onBusyStateChangedEventHandler.callCount === 1,
+					getMessage("Test: BusyStateChanged event has been fired", mParameters));
+				if (onBusyStateChangedEventHandler.callCount === 1) {
+					assert.deepEqual(onBusyStateChangedEventHandler.parameters, { busy: bBusyIndicatorVisibleAfter, id: oTable.getId() },
+						getMessage("Test: BusyStateChanged event has been fired with the correct arguments", mParameters));
+				}
+			}
+			assert.strictEqual(oTable.getDomRef(sBusyIndicatorParent).querySelector(sBusyIndicatorClass) != null, bBusyIndicatorVisibleAfter,
+				getMessage("Test: The busy indicator element exists in the DOM: " + bBusyIndicatorVisibleAfter, mParameters));
+		}
+
+		// Busy indicator handling disabled: No busy state change.
+		oTable.setEnableBusyIndicator(false);
+		test(true, false, false);
+		test(false, false, false);
+		test(true, true, true);
+		test(false, true, true);
+
+		// No parameters passed: No busy state change.
+		oTable.setEnableBusyIndicator(true);
+		test(null, false, false);
+		test(null, true, true);
+
+		// No binding: No busy state change.
+		this.stub(oTable, "getBinding").withArgs("rows").returns(undefined);
+		test(true, false, false);
+		test(false, false, false);
+		test(true, true, true);
+		test(false, true, true);
+
+		// Boolean value as parameter: Set busy state to parameter value.
+		oTable.getBinding.restore();
+		test(true, false, true);
+		test(true, true, true);
+		test(false, false, false);
+		test(false, true, false);
+
+		// Binding is initial: Set busy state to true.
+		var oBinding = oTable.getBinding("rows");
+		var fBindingIsInitial = this.stub(oBinding, "isInitial").returns(true);
+		test({}, false, true);
+		test({}, true, true);
+
+		// Binding length is 0 and no data has been requested: Set busy state to false.
+		fBindingIsInitial.returns(false);
+		var fBindingLength = this.stub(oBinding, "getLength").returns(0);
+		oTable._bDataRequested = false;
+		test("not null and not boolean", false, false);
+		test("not null and not boolean", true, false);
+
+		// Binding length is 0 and data has been requested: Set busy state to true.
+		oTable._bDataRequested = true;
+		test("not null and not boolean", false, true);
+		test("not null and not boolean", true, true);
+
+		// When expanding a node does not trigger a request (data already loaded): Set busy state to false.
+		fBindingLength.returns(1);
+		oTable._bDataRequested = false;
+		test({ reason: sap.ui.model.ChangeReason.Expand }, false, false);
+		test({ reason: sap.ui.model.ChangeReason.Expand }, true, false);
+
+		// When expanding a node does trigger a request: Set busy state to true.
+		oTable._bDataRequested = true;
+		test({ reason: sap.ui.model.ChangeReason.Expand }, false, true);
+		test({ reason: sap.ui.model.ChangeReason.Expand }, true, true);
+
+		// Passed parameters object does not contain the required properties: Set busy state to false.
+		test({}, false, false);
+		test({}, true, false);
+
+		// No data received (has to be loaded): Set busy state to true.
+		test({ receivedLength: 0 }, false, true);
+		test({ receivedLength: 0 }, true, true);
+
+		fBindingLength.returns(10); // Available data = 10.
+
+		// Received less than requested and not all available data: Set busy state to true.
+		test({ receivedLength: 9, requestedLength: 10 }, false, true);
+		test({ receivedLength: 9, requestedLength: 10 }, true, true);
+
+		function testWithContexts(iReceivedLength, iRequestedLength) {
+			// No contexts passed: Set busy state to false.
+			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength }, false, false);
+			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength }, true, false);
+
+			// All contexts are defined: Set busy state to false.
+			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength, contexts: ["defined", "defined"] }, false, false);
+			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength, contexts: ["defined", "defined"] }, true, false);
+
+			// One context is undefined: Set busy state to true.
+			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength, contexts: ["defined", undefined] }, false, true);
+			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength, contexts: ["defined", undefined] }, true, true);
+
+			// All node contexts are defined: Set busy state to false.
+			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength, contexts: [{ context: "defined" }, { context: "defined" }] }, false, false);
+			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength, contexts: [{ context: "defined" }, { context: "defined" }] }, true, false);
+
+			// One node context is undefined: Set busy state to true.
+			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength, contexts: [{ context: "defined" }, { context: undefined}] }, false, true);
+			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength, contexts: [{ context: "defined" }, { context: undefined }] }, true, true);
+		}
+
+		// Received less than requested and all available data.
+		testWithContexts(10, 11);
+
+		// Received not less than requested and not all available data.
+		testWithContexts(9, 9);
+
+		// Received not less than requested and all available data.
+		testWithContexts(10, 10);
+
+		// Cleanup
+		fBindingIsInitial.restore();
+		oTable.detachEvent("busyStateChanged", onBusyStateChangedEventHandler);
 	});
 
 	QUnit.test("test setGroupBy function", function(assert) {
@@ -1904,11 +2026,6 @@
 		assert.equal(oTable._oSelection.aSelectedIndices.length, 0, "Selection interval is not set on the table");
 		oTable.setSelectionInterval(2, 6);
 		assert.equal(oTable._oSelection.aSelectedIndices.length, 5, "Selection invterval is set to 5 on the table");
-	});
-
-	QUnit.test("test _attachBindingLister function", function(assert) {
-		oTable._attachBindingListener();
-		assert.equal(oTable._iDataRequestedCounter, 0, "Function attached");
 	});
 
 	QUnit.test("test _setLargeDataScrolling function", function(assert) {

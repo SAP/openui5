@@ -227,9 +227,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			enableCustomFilter : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * Set this parameter to true to make the table handle the busy indicator by its own.
-			 * The table will switch to busy as soon as it scrolls into an unpaged area. This feature can only
-			 * be used when the navigation mode is set to scrolling.
+			 * If set to <code>true</code>, the table changes its busy state, resulting in showing or hiding the busy indicator.
+			 * The table will switch to busy as soon as data is retrieved to be displayed in the currently visible rows. This happens,
+			 * for example, during scrolling, filtering, or sorting. As soon as the data has been retrieved, the table switches back to not busy.
+			 * The busy state of the table can still be set manually by calling {@link sap.ui.core.Control#setBusy}.
 			 * @since 1.27.0
 			 */
 			enableBusyIndicator : {type : "boolean", group : "Behavior", defaultValue : false},
@@ -696,9 +697,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// text selection for column headers?
 		this._bAllowColumnHeaderTextSelection = false;
 
-		this._iDataRequestedCounter = 0;
-
+		this._bDataRequested = false;
 		this._iBindingLength = 0;
+
 		this._iTableRowContentHeight = 0;
 		this._bFirstRendering = true;
 
@@ -1785,7 +1786,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @returns {sap.ui.model.Context[]} Array of row contexts
 	 * @private
 	 */
-	Table.prototype._getRowContexts = function (iVisibleRows, bSkipSecondCall, sReason) {
+	Table.prototype._getRowContexts = function (iVisibleRows, bSecondCall, sReason) {
 		var bReceivedLessThanRequested;
 		var aContexts = [];
 		var oBinding = this.getBinding("rows");
@@ -1864,7 +1865,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			fnMergeArrays(aContexts, aTmpContexts, iMergeOffsetBottomRow);
 		}
 
-		if (bReceivedLessThanRequested && !bSkipSecondCall) {
+		if (bReceivedLessThanRequested && !bSecondCall) {
 			if (iBindingLength > 0) {
 				var iMaxRowIndex = this._getMaxRowIndex();
 
@@ -1879,18 +1880,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		}
 
-		if (!bSkipSecondCall) {
-			var that = this;
-			if (this._mTimeouts.getContextsSetBusy) {
-				window.clearTimeout(this._mTimeouts.getContextsSetBusy);
-			}
-			this._mTimeouts.getContextsSetBusy = window.setTimeout(function() {
-				that._setBusy({
-					requestedLength: iFixedRowCount + iLength + iFixedBottomRowCount,
-					receivedLength: iReceivedLength,
-					contexts: aContexts,
-					reason: sReason});
-			}, 0);
+		if (!bSecondCall) { // If it is the first call.
+			this._setBusy({
+				requestedLength: iFixedRowCount + iLength + iFixedBottomRowCount,
+				receivedLength: iReceivedLength,
+				contexts: aContexts,
+				reason: sReason
+			});
+			this._bDataRequested = false;
 		}
 
 		return aContexts;
@@ -1921,11 +1918,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._toggleVSb();
 		this._updateVSbRange();
 		this._bBindingLengthChanged = true;
-		// show or hide the no data container
-		if (sReason != "skipNoDataUpdate") {
-			// in order to have less UI updates, the NoData text should not be updated when the reason is refresh. When
-			// refreshRows was called, the table will request data and later get another change event. In that turn, the
-			// noData text gets updated.
+
+		if (sReason !== ChangeReason.Filter &&
+			sReason !== ChangeReason.Sort &&
+			sReason !== ChangeReason.Refresh) {
+
+			// In order to have less UI updates, the NoData text should not be updated when the reason is filter, sort or refresh.
+			// When refreshRows was called, the table will request data and later get another change event. In that turn, the
+			// NoData text gets updated.
 			this._updateNoData();
 		}
 	};
@@ -1946,7 +1946,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (sReason == ChangeReason.Refresh) {
 			this._attachBindingListener();
 		}
-		this._bBusyIndicatorAllowed = true;
 		// make getContexts call to force data load
 		var sVisibleRowCountMode = this.getVisibleRowCountMode();
 		if ((this.bOutput && sVisibleRowCountMode === VisibleRowCountMode.Auto) || sVisibleRowCountMode !== VisibleRowCountMode.Auto) {
@@ -1965,14 +1964,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				});
 			}
 			// request contexts from binding
-			var sUpdateReason;
 			if (sReason == ChangeReason.Filter || sReason == ChangeReason.Sort) {
-				sUpdateReason = "skipNoDataUpdate";
 				this.setFirstVisibleRow(0);
-			} else if (sReason == ChangeReason.Refresh) {
-				sUpdateReason = "skipNoDataUpdate";
 			}
-			this._updateBindingContexts(true, iRowsToDisplay, sUpdateReason);
+			this._updateBindingContexts(true, iRowsToDisplay, sReason);
 		}
 	};
 
@@ -1985,9 +1980,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (this._bExitCalled) {
 			return;
 		}
-
-		// update busy indicator state
-		this._setBusy(sReason ? {changeReason: sReason} : false);
 
 		// if the binding length has changed due to filter or sorter, it may happened that the noData text was not updated in order
 		// to avoid flickering of the table.
@@ -2147,11 +2139,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._cleanUpTimers = function() {
-
 		for (var sKey in this._mTimeouts) {
 			if (this._mTimeouts[sKey]) {
-				clearTimeout(this._mTimeouts[sKey]);
-				this._mTimeouts[sKey] = undefined;
+				window.clearTimeout(this._mTimeouts[sKey]);
+				delete this._mTimeouts[sKey];
 			}
 		}
 	};
@@ -2644,10 +2635,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var that = this;
 			var bReturn = !this._mTimeouts.handleRowCountModeAutoAdjustRows;
 			var iBusyIndicatorDelay = that.getBusyIndicatorDelay();
-			var bEnableBusyIndicator = this.getEnableBusyIndicator();
-			if (oBinding && bEnableBusyIndicator) {
+			if (oBinding) {
 				that.setBusyIndicatorDelay(0);
-				that.setBusy(true);
+				that._setBusy(true);
 			}
 
 			if (iTableAvailableSpace) {
@@ -2655,16 +2645,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 
 			this._mTimeouts.handleRowCountModeAutoAdjustRows = this._mTimeouts.handleRowCountModeAutoAdjustRows || window.setTimeout(function() {
-					if (!that._executeAdjustRows()) {
-						// table sizes were not updated by AdjustRows
-						that._updateTableSizes(false, true);
-					}
-					that._mTimeouts.handleRowCountModeAutoAdjustRows = undefined;
-					if (bEnableBusyIndicator) {
-						that.setBusy(false);
-						that.setBusyIndicatorDelay(iBusyIndicatorDelay);
-					}
-				}, 0);
+				if (!that._executeAdjustRows()) {
+					// table sizes were not updated by AdjustRows
+					that._updateTableSizes(false, true);
+				}
+				that._mTimeouts.handleRowCountModeAutoAdjustRows = undefined;
+				that._setBusy(false);
+				that.setBusyIndicatorDelay(iBusyIndicatorDelay);
+			}, 0);
 			return bReturn;
 		}
 	};
@@ -3174,49 +3162,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype.setGroupBy = function(vValue) {
 		// determine the group by column
-		var oGroupBy = vValue;
-		if (typeof oGroupBy === "string") {
-			oGroupBy = sap.ui.getCore().byId(oGroupBy);
+		var oGroupByColumn = vValue;
+		if (typeof oGroupByColumn === "string") {
+			oGroupByColumn = sap.ui.getCore().byId(oGroupByColumn);
 		}
 
 		// only for columns we do the full handling here - otherwise the method
 		// setAssociation will fail below with a specific fwk error message
 		var bReset = false;
-		if (oGroupBy && oGroupBy instanceof Column) {
+		if (oGroupByColumn && oGroupByColumn instanceof Column) {
 
 			// check for column being part of the columns aggregation
-			if (jQuery.inArray(oGroupBy, this.getColumns()) === -1) {
+			if (jQuery.inArray(oGroupByColumn, this.getColumns()) === -1) {
 				throw new Error("Column has to be part of the columns aggregation!");
 			}
 
 			// fire the event (to allow to cancel the event)
-			var bExecuteDefault = this.fireGroup({column: oGroupBy, groupedColumns: [oGroupBy.getId()], type: GroupEventType.group});
+			var bExecuteDefault = this.fireGroup({column: oGroupByColumn, groupedColumns: [oGroupByColumn.getId()], type: GroupEventType.group});
 
 			// first we reset the grouping indicator of the old column (will show the column)
-			var oOldGroupBy = sap.ui.getCore().byId(this.getGroupBy());
-			if (oOldGroupBy) {
-				oOldGroupBy.setGrouped(false);
+			var oOldGroupByColumn = sap.ui.getCore().byId(this.getGroupBy());
+			if (oOldGroupByColumn) {
+				oOldGroupByColumn.setGrouped(false);
 				bReset = true;
 			}
 
 			// then we set the grouping indicator of the new column (will hide the column)
 			// ==> only if the default behavior is not prevented
-			if (bExecuteDefault && oGroupBy instanceof Column) {
-				oGroupBy.setGrouped(true);
+			if (bExecuteDefault && oGroupByColumn instanceof Column) {
+				oGroupByColumn.setGrouped(true);
 			}
 
 		}
 
 		// reset the binding when no value is given or the binding needs to be reseted
 		// TODO: think about a better handling to recreate the group binding
-		if (!oGroupBy || bReset) {
+		if (!oGroupByColumn || bReset) {
 			var oBindingInfo = this.getBindingInfo("rows");
 			delete oBindingInfo.binding;
 			this._bindAggregation("rows", oBindingInfo);
 		}
 
 		// set the new group by column (TODO: undefined doesn't work!)
-		return this.setAssociation("groupBy", oGroupBy);
+		return this.setAssociation("groupBy", oGroupByColumn);
 	};
 
 	Table.prototype.getBinding = function(sName) {
@@ -3804,48 +3792,73 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	/**
 	 *
-	 * @param mParameters
+	 * @param {boolean|{requestedLength: int, receivedLength: int, contexts: Object[], reason: string}} mParameters
 	 * @private
 	 */
 	Table.prototype._setBusy = function (mParameters) {
-		var oBinding,
-			i,
-			bSetBusy;
-
-		if (!this.getEnableBusyIndicator() || !this._bBusyIndicatorAllowed) {
+		if (!this.getEnableBusyIndicator() || mParameters == null) {
 			return;
 		}
 
-		oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding("rows");
 		if (!oBinding) {
 			return;
 		}
 
-		this.setBusy(false);
-		if (mParameters && this._iDataRequestedCounter > 0) {
-			var sReason = mParameters.reason;
-			if (mParameters.contexts && mParameters.contexts.length !== undefined) {
-				// TreeBinding and AnalyticalBinding always return a contexts array with the
-				// requested length. Both put undefined in it for contexts which need to be loaded
-				// Check for undefined in the contexts array.
-				bSetBusy = false;
-				for (i = 0; i < mParameters.contexts.length; i++) {
-					if (mParameters.contexts[i] === undefined) {
+		var bSetBusy = false;
+		var iBindingLength = oBinding.getLength();
+
+		if (typeof mParameters === "boolean") {
+			bSetBusy = mParameters;
+
+		} else if (oBinding.isInitial()) {
+			bSetBusy = true;
+
+		} else if (iBindingLength === 0) {
+			// When the binding length is 0 there might be a request which has still to be processed, for example when filtering, sorting, or
+			// specifying that a column of an AnalyticalTable is summed.
+			bSetBusy = this._bDataRequested;
+
+		} else if (mParameters.reason === ChangeReason.Expand) {
+			// When expanding, if the child nodes of the expanded node are not yet loaded, another request will be issued by the binding. The
+			// returned contexts though are not undefined, but the ones which are currently displayed (the current state, before expanding).
+			// Because the required data can already be available, in which case no request will be issued, we need to check whether a request has
+			// actually been sent by the binding, by listening to its events.
+			bSetBusy = this._bDataRequested;
+
+		} else {
+			var iRequestedLength = isNaN(mParameters.requestedLength) ? -1 : mParameters.requestedLength;
+			var iReceivedLength = isNaN(mParameters.receivedLength) ? -1 : mParameters.receivedLength;
+			var aContexts = mParameters.contexts || [];
+			var bReceivedLessDataThanRequested = iReceivedLength < iRequestedLength;
+			var bReceivedAllData = iReceivedLength === iBindingLength;
+
+			// Determine whether all contexts have been loaded. If not, then another request will be issued by the binding.
+			// In this case we set the busy state of the table to true.
+
+			if (iReceivedLength === 0 || (bReceivedLessDataThanRequested && !bReceivedAllData)) {
+				bSetBusy = true;
+
+			} else {
+				// TreeBinding and AnalyticalBinding return either a contexts or a nodes array with the
+				// requested length. Both put undefined in it for contexts which need to be loaded.
+				// In case a contexts array is returned, check for undefined contexts.
+				// In case a nodes array is returned, check for nodes with an undefined context (node.context).
+
+				for (var i = 0; i < aContexts.length; i++) {
+					var oContext = aContexts[i];
+					var bIsUndefinedContext = oContext === undefined;
+					var bIsUndefinedContextOfNode = !bIsUndefinedContext && typeof oContext === "object" && "context" in oContext && oContext.context === undefined;
+
+					if (bIsUndefinedContext || bIsUndefinedContextOfNode){
 						bSetBusy = true;
 						break;
 					}
 				}
-			} else if (mParameters.changeReason === ChangeReason.Expand) {
-				this.setBusy(true);
-			}
-
-			var iLength = oBinding.getLength();
-			if ((sReason == ChangeReason.Expand && this._iDataRequestedCounter !== 0) || bSetBusy || (oBinding.isInitial()) || (mParameters.receivedLength === 0 && this._iDataRequestedCounter !== 0) ||
-				(mParameters.receivedLength < mParameters.requestedLength && mParameters.receivedLength !== iLength &&
-				 mParameters.receivedLength !== iLength - this.getFirstVisibleRow())) {
-				this.setBusy(true);
 			}
 		}
+
+		this.setBusy(bSetBusy);
 	};
 
 	Table.prototype.setBusy = function (bBusy, sBusySection) {
@@ -3872,14 +3885,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 *
 	 * @private
 	 */
+	Table.prototype._attachBindingListener = function() {
+		this._attachDataRequestedListeners();
+	};
+
+	/**
+	 *
+	 * @private
+	 */
 	Table.prototype._attachDataRequestedListeners = function () {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
-			oBinding.detachDataRequested(this._onBindingDataRequestedListener, this);
-			oBinding.detachDataReceived(this._onBindingDataReceivedListener, this);
-			this._iDataRequestedCounter = 0;
+			oBinding.detachDataRequested(this._onBindingDataRequestedListener);
 			oBinding.attachDataRequested(this._onBindingDataRequestedListener, this);
-			oBinding.attachDataReceived(this._onBindingDataReceivedListener, this);
 		}
 	};
 
@@ -3889,26 +3907,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype._onBindingDataRequestedListener = function (oEvent) {
 		if (oEvent.getSource() == this.getBinding("rows") && !oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
-			this._iDataRequestedCounter++;
+			this._bDataRequested = true;
 		}
-	};
-
-	/**
-	 *
-	 * @private
-	 */
-	Table.prototype._onBindingDataReceivedListener = function (oEvent) {
-		if (oEvent.getSource() == this.getBinding("rows") && !oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
-			this._iDataRequestedCounter--;
-		}
-	};
-
-	/**
-	 *
-	 * @private
-	 */
-	Table.prototype._attachBindingListener = function() {
-		this._attachDataRequestedListeners();
 	};
 
 	/**
