@@ -962,11 +962,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			oSizes.tableCntWidth = oSapUiTableCnt.clientWidth;
 		}
 
-		var oTableCCnt = oDomRef.querySelector(".sapUiTableCCnt");
-		if (oTableCCnt) {
-			oSizes.tableCCntTop = oTableCCnt.offsetTop;
-		}
-
 		var oSapUiTableCtrlScroll = oDomRef.querySelector(".sapUiTableCtrlScroll:not(.sapUiTableCHT)");
 		if (oSapUiTableCtrlScroll) {
 			oSizes.tableCtrlScrollWidth = oSapUiTableCtrlScroll.clientWidth;
@@ -1329,7 +1324,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		this._updateHSb(oTableSizes);
-		this._updateVSbTop(oTableSizes);
+		this._updateVSbTop();
 
 		var $this = this.$();
 
@@ -2223,15 +2218,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * Update the vertical scrollbar position
 	 * @private
 	 */
-	Table.prototype._updateVSbTop = function(oTableSizes) {
+	Table.prototype._updateVSbTop = function() {
 		var oVSb = this._getScrollExtension().getVerticalScrollbar();
 		if (!oVSb) {
 			return;
 		}
 
-		if (oTableSizes.tableCCntTop !== undefined) {
-			var iTop = oTableSizes.tableCCntTop;
-
+		var oTableCCnt = this.getDomRef("tableCCnt");
+		if (oTableCCnt) {
+			var iTop = oTableCCnt.offsetTop;
 			var oVSbBg = this.getDomRef("vsb-bg");
 			oVSbBg.style.top = iTop + "px";
 
