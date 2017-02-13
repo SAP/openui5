@@ -748,10 +748,10 @@
 
 		oSpecialCharsComboBox.setModel(oSpecialCharsModel);
 
-		new sap.m.App().addPage(new sap.m.Page({
+		new sap.m.App().addPage(new sap.m.Page("page",{
 			title: "sap.m.ComboBox",
 			content: [
-				new sap.ui.core.HTML({ content: "<h3>Default</h3>" }),
+				new sap.ui.core.HTML("title_default",{ content: "<h3>Default</h3>" }),
 				oComboBox,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
@@ -796,11 +796,11 @@
 				oComboBoxTwoColumnSearchBothSpecial,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Placeholder</h3>" }),
+				new sap.ui.core.HTML("title_placeholder",{ content: "<h3>Placeholder</h3>" }),
 				oComboBoxWithPlaceholder,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Label and placeholder</h3>" }),
+				new sap.ui.core.HTML("title_label_placeholder",{ content: "<h3>Label and placeholder</h3>" }),
 				new sap.ui.layout.HorizontalLayout("layout_label_placeholder",{
 					content: [
 						oLabel,
@@ -817,7 +817,7 @@
 				oComboBoxReadOnly,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Warning state (with label and placeholder)</h3>" }),
+				new sap.ui.core.HTML("title_warning",{ content: "<h3>Warning state (with label and placeholder)</h3>" }),
 				new sap.ui.layout.HorizontalLayout("layout_warning",{
 					content: [
 						oLabelWarning,
@@ -826,11 +826,11 @@
 				),
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Success state</h3>" }),
+				new sap.ui.core.HTML("title_success",{ content: "<h3>Success state</h3>" }),
 				oComboBoxSuccess,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Error state</h3>" }),
+				new sap.ui.core.HTML("title_error",{ content: "<h3>Error state</h3>" }),
 				oComboBoxError,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
