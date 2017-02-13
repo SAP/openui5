@@ -655,14 +655,34 @@
 		oReopenTimer = setTimeout(function() {oReopenTimer = null;}, 800);
 	}
 
+	function getValue(oAction, oControl) {
+		if (oControl == null) {
+			oControl = TABLESETTINGS.table;
+		}
+
+		if (typeof oAction.defaultValue === "function" || typeof oAction._defaultValue === "function") {
+			if (oAction._defaultValue == null) {
+				oAction._defaultValue = oAction.defaultValue;
+			}
+			return oAction._defaultValue(oControl);
+
+		} else if (typeof oAction.defaultKey === "function" || typeof oAction._defaultKey === "function") {
+				if (oAction._defaultKey == null) {
+					oAction._defaultKey = oAction.defaultKey;
+				}
+				return oAction._defaultKey(oControl);
+
+		} else {
+			return oAction.defaultKey;
+		}
+	}
+
 	function initMenu(mActions) {
 		var oMenu = new sap.ui.unified.Menu();
 		for (var item in mActions) {
 			var oItem;
 			if (mActions[item].input) {
-				if (typeof mActions[item].defaultValue == "function") {
-					mActions[item].defaultValue = mActions[item].defaultValue(TABLESETTINGS.table);
-				}
+				mActions[item].defaultValue = getValue(mActions[item]);
 				var bIsBoolean = mActions[item].input == "boolean";
 				var sValue = null;
 				if (bIsBoolean) {
@@ -718,9 +738,7 @@
 				oClass = sap.m.Select;
 				mSettings.items = [];
 				mSettings.forceSelection = false;
-				if (typeof oAction.defaultKey == "function") {
-					oAction.defaultKey = oAction.defaultKey(TABLESETTINGS.table);
-				}
+				oAction.defaultKey = getValue(oAction);
 				mSettings.selectedKey = oAction.defaultKey || null;
 				mSettings.change = function(oEvent) {
 					var oSelectedItem = oEvent.getParameter("selectedItem");
@@ -740,9 +758,7 @@
 				}
 			} else if (oAction.input === "boolean") {
 				oClass = sap.m.CheckBox;
-				if (typeof oAction.defaultValue == "function") {
-					oAction.defaultValue = oAction.defaultValue(TABLESETTINGS.table);
-				}
+				oAction.defaultValue = getValue(oAction);
 				mSettings.selected = oAction.defaultValue !== null && oAction.defaultValue !== undefined ? !!oAction.defaultValue : false;
 				mSettings.select = function(oEvent) {
 					if (oEvent.getSource()._action) {
@@ -752,7 +768,7 @@
 			} else if (oAction.input) {
 				oClass = sap.m.Input;
 				if (typeof oAction.defaultValue == "function") {
-					oAction.defaultValue = oAction.defaultValue(TABLESETTINGS.table);
+					oAction.defaultValue = getValue(oAction);
 				}
 				mSettings.value = oAction.defaultValue !== null && oAction.defaultValue !== undefined ? (oAction.defaultValue + "") : null;
 				mSettings.change = function(oEvent) {
@@ -790,7 +806,7 @@
 		return aResult;
 	}
 
-	function initDialog(mActions) {
+	function initForm(mActions) {
 		var oForm = new sap.ui.layout.form.SimpleForm({
 			editable: true,
 			layout: "ResponsiveGridLayout",
@@ -802,17 +818,141 @@
 			labelSpanM: 7,
 			labelSpanS: 7
 		});
-		var oDialog = new sap.m.Dialog({
-			title: "Table Settings",
-			resizable: true,
-			contentWidth: "1000px",
-			content: [oForm],
-			endButton: new sap.m.Button({
-				text: "Close", press: function () { oDialog.close(); }
-			})
+
+		var oSettingsSelector = new sap.m.Select({
+			width: "100%",
+			selectedKey: loadAppliedSettingsKey(),
+			items: (function() {
+				var aItems = [];
+
+				for (var key in TABLESETTINGS.storedSettings) {
+					aItems.push(new sap.ui.core.Item({
+						key: key,
+						text: key
+					}));
+				}
+
+				return aItems;
+			})(),
+			change: function(oEvent) {
+				var sSettingsKey = oEvent.getParameter("selectedItem").getKey();
+				var sSettingsSnapshot = TABLESETTINGS.storedSettings[sSettingsKey];
+				var oDialog = sap.ui.getCore().byId("settingsDialog");
+
+				applySettingsSnapshot(TABLESETTINGS.table, sSettingsSnapshot);
+				saveAppliedSettingsKey(sSettingsKey);
+				sap.ui.getCore().byId("settingsSelector").setSelectedKey(sSettingsKey); // Synchronize the select control on the main page.
+
+				oDialog.removeAllContent();
+				oDialog.addContent(initForm(mActions));
+			}
 		});
 
-		var aFormElements = [];
+		var oNewSettingsInput = new sap.m.Input({
+			placeholder: "Name"
+		});
+
+		var aFormElements = [
+			new sap.ui.core.Title({text: "Save/Load Settings"}),
+			new sap.m.VBox({
+				renderType: "Bare",
+				items: [
+					new sap.m.HBox({
+						renderType: "Bare",
+						items: [
+							oSettingsSelector,
+							new sap.m.Button({
+								icon: "sap-icon://delete",
+								text: "Delete",
+								press: function(oEvent) {
+									var sDeleteSettingsKey = oSettingsSelector.getSelectedKey();
+
+									deleteSettingsSnapshot(sDeleteSettingsKey);
+									TABLESETTINGS.storedSettings = loadSettingsSnapshots();
+
+									function createSelectItems() {
+										var aSelectItems = [];
+
+										for (var key in TABLESETTINGS.storedSettings) {
+											aSelectItems.push(new sap.ui.core.Item({
+												key: key,
+												text: key
+											}));
+										}
+
+										return aSelectItems;
+									}
+
+									var sSelects = [
+										sap.ui.getCore().byId("settingsSelector"),
+										oSettingsSelector
+									];
+
+									for (var i = 0; i < sSelects.length; i++) {
+										var oSelect = sSelects[i];
+										var aNewSelectItems = createSelectItems();
+
+										oSelect.removeAllItems();
+										for (var j = 0; j < aNewSelectItems.length; j++) {
+											oSelect.addItem(aNewSelectItems[j]);
+										}
+										oSelect.setSelectedKey("Default");
+									}
+
+									applySettingsSnapshot(TABLESETTINGS.table, TABLESETTINGS.storedSettings.Default);
+								}
+							})
+						]
+					}),
+					new sap.m.HBox({
+						renderType: "Bare",
+						items: [
+							oNewSettingsInput,
+							new sap.m.Button({
+								icon: "sap-icon://save",
+								text: "Save",
+								press: function(oEvent) {
+									var sNewSettingsKey = oNewSettingsInput.getValue();
+
+									saveSettingsSnapshot(sNewSettingsKey, createSettingsSnapshot(TABLESETTINGS.table));
+									TABLESETTINGS.storedSettings = loadSettingsSnapshots();
+
+									function createSelectItems() {
+										var aSelectItems = [];
+
+										for (var key in TABLESETTINGS.storedSettings) {
+											aSelectItems.push(new sap.ui.core.Item({
+												key: key,
+												text: key
+											}));
+										}
+
+										return aSelectItems;
+									}
+
+									var sSelects = [
+										sap.ui.getCore().byId("settingsSelector"),
+										oSettingsSelector
+									];
+
+									for (var i = 0; i < sSelects.length; i++) {
+										var oSelect = sSelects[i];
+										var aNewSelectItems = createSelectItems();
+
+										oSelect.removeAllItems();
+										for (var j = 0; j < aNewSelectItems.length; j++) {
+											oSelect.addItem(aNewSelectItems[j]);
+										}
+										oSelect.setSelectedKey(sNewSettingsKey);
+									}
+								}
+							})
+						]
+					})
+				]
+			})
+		];
+
 		var mUncategorizedActions = {};
 		var bHasUncategorizedActions = false;
 		for (var item in mActions) {
@@ -833,7 +973,118 @@
 			oForm.addContent(aFormElements[i]);
 		}
 
+		return oForm;
+	}
+
+	function initDialog(mActions) {
+		var oDialog = new sap.m.Dialog({
+			id: "settingsDialog",
+			title: "Table Settings",
+			resizable: true,
+			contentWidth: "1000px",
+			content: initForm(mActions),
+			endButton: new sap.m.Button({
+				text: "Close",
+				press: function() {
+					oDialog.close();
+				}
+			})
+		});
+
 		return oDialog;
+	}
+
+	function createSettingsSnapshot(oTable) {
+		var mTableSnapshot = {};
+
+		for (var sPublicPropertyName in oTable.mProperties) {
+			mTableSnapshot[sPublicPropertyName] = {};
+			mTableSnapshot[sPublicPropertyName].value = oTable.mProperties[sPublicPropertyName];
+			mTableSnapshot[sPublicPropertyName].isPublicProperty = true;
+			mTableSnapshot[sPublicPropertyName].isPrivateProperty = false;
+		}
+
+		var aPrivatePropertyNames = [
+			"_bLargeDataScrolling", "_bVariableRowHeightEnabled"
+		];
+
+		for (var i = 0; i < aPrivatePropertyNames.length; i++) {
+			var sPrivatePropertyName = aPrivatePropertyNames[i];
+
+			mTableSnapshot[sPrivatePropertyName] = {};
+			mTableSnapshot[sPrivatePropertyName].value = oTable[sPrivatePropertyName];
+			mTableSnapshot[sPublicPropertyName].isPublicProperty = false;
+			mTableSnapshot[sPrivatePropertyName].isPrivateProperty = true;
+		}
+
+		return JSON.stringify(mTableSnapshot);
+	}
+
+	function applySettingsSnapshot(oTable, sSnapshot) {
+		var mSettings;
+
+		try {
+			mSettings = JSON.parse(sSnapshot);
+		} catch (e) {
+			return;
+		}
+
+		for (var sPropertyName in mSettings) {
+			var oSettings = mSettings[sPropertyName];
+
+			if (oSettings.isPublicProperty) {
+				var sSetterName = "set" + sPropertyName.charAt(0).toUpperCase() + sPropertyName.slice(1);
+				oTable[sSetterName](oSettings.value);
+			} else if (oSettings.isPrivateProperty) {
+				oTable[sPropertyName] = oSettings.value;
+			}
+		}
+
+		oTable.invalidate(); // In case only private properties have been set, like _largeDataScrolling.
+	}
+
+	function saveSettingsSnapshot(sKey, sSnapshot) {
+		if (sKey == null || sKey === "" || sKey === "Default") {
+			return;
+		}
+
+		window.localStorage.setItem("TableSettings_" + sKey, sSnapshot);
+	}
+
+	function deleteSettingsSnapshot(sKey) {
+		if (sKey == null || sKey === "" || sKey === "Default") {
+			return;
+		}
+
+		window.localStorage.removeItem("TableSettings_" + sKey);
+	}
+
+	function loadSettingsSnapshots() {
+		var mSettings = [];
+
+		if (window.localStorage.getItem("TableSettings_Default") == null) {
+			window.localStorage.setItem("TableSettings_Default", createSettingsSnapshot(TABLESETTINGS.table));
+		}
+
+		for (var sKey in window.localStorage) {
+			if (sKey.startsWith("TableSettings_")) {
+				mSettings[sKey.replace("TableSettings_", "")] = window.localStorage.getItem(sKey);
+			}
+		}
+
+		return mSettings;
+	}
+
+	function saveAppliedSettingsKey(sKey) {
+		if (sKey == null || sKey === "") {
+			return
+		}
+
+		window.localStorage.setItem("TableSettingsAppliedKey", sKey);
+	}
+
+	function loadAppliedSettingsKey() {
+		return window.localStorage.getItem("TableSettingsAppliedKey") || "Default";
 	}
 
 	TABLESETTINGS.init = function(oTable, vPlacement, mCustomActions) {
@@ -854,18 +1105,54 @@
 		TABLESETTINGS.table = oTable;
 		TABLESETTINGS.model = oTable.getModel();
 		TABLESETTINGS.actions = jQuery.extend(true, {}, DEFAULTACTIONS, mCustomActions || {});
+		TABLESETTINGS.storedSettings = loadSettingsSnapshots();
+
+		var sAppliedSettingsKey = loadAppliedSettingsKey();
+
+		if (sAppliedSettingsKey !== "Default") {
+			applySettingsSnapshot(oTable, TABLESETTINGS.storedSettings[sAppliedSettingsKey]);
+		}
 
 		var oButton = new sap.m.Button({icon: "sap-icon://action-settings", tooltip: "Settings", press: function() {
-			if (!oSettingsMenu) {
+			if (oSettingsMenu == null) {
 				oSettingsMenu = initDialog(TABLESETTINGS.actions);
+			} else {
+				oSettingsMenu.removeAllContent();
+				oSettingsMenu.addContent(initForm(TABLESETTINGS.actions));
 			}
 			oSettingsMenu.open();
 		}});
 
+		var oSettingsSelector = new sap.m.Select({
+			id: "settingsSelector",
+			selectedKey: sAppliedSettingsKey,
+			items: (function() {
+				var aItems = [];
+
+				for (var key in TABLESETTINGS.storedSettings) {
+					aItems.push(new sap.ui.core.Item({
+						key: key,
+						text: key
+					}));
+				}
+
+				return aItems;
+			})(),
+			change: function(oEvent) {
+				var sSettingsKey = oEvent.getParameter("selectedItem").getKey();
+				var sSettingsSnapshot = TABLESETTINGS.storedSettings[sSettingsKey];
+
+				applySettingsSnapshot(oTable, sSettingsSnapshot);
+				saveAppliedSettingsKey(sSettingsKey);
+			}
+		});
+
 		if (typeof vPlacement == "function") {
 			vPlacement(oButton);
+			vPlacement(oSettingsSelector);
 		} else {
 			oButton.placeAt(vPlacement || "content");
+			oSettingsSelector.placeAt(vPlacement || "content");
 		}
 	};
 
@@ -903,7 +1190,7 @@
 				label: aColumns[i].getLabel() ? aColumns[i].getLabel().getText() : aColumns[i].getId()
 			};
 			for (var item in mConfig) {
-				oSetting[item] = typeof mConfig[item].defaultValue == "function" ? mConfig[item].defaultValue(aColumns[i]) : mConfig[item].defaultValue;
+				oSetting[item] = getValue(mConfig[item], aColumns[i]);
 			}
 			aData.push(oSetting);
 		}
