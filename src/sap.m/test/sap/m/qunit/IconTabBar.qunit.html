@@ -1319,7 +1319,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				strictEqual(iFlexChildHeight, $FlexChild.height(), "Height is not changed");
+				ok(Math.abs(iFlexChildHeight - $FlexChild.height()) <= 1, "Height is not changed");
 
 				// Cleanup
 				oIconTabBar.destroy();
@@ -1485,8 +1485,7 @@
 							icon: "sap-icon://manager",
 							key: "last"
 						})
-					],
-					selectedKey: "last"
+					]
 				});
 
 				// System under Test
@@ -1496,7 +1495,11 @@
 				sap.ui.getCore().applyChanges();
 
 				oResizeHandlerStub.callArg(1);
-				//if the selected item is outside the view a scrolling takes place after a timeout
+				// if the selected item is outside the view a scrolling takes place after a timeout
+				this.clock.tick(1000);
+
+				oIconTabBar.setSelectedKey("last");
+				sap.ui.getCore().applyChanges();
 				this.clock.tick(1000);
 
 				var $itbh = oIconTabBar.$("-header");
