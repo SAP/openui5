@@ -76,6 +76,12 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
 
             Slider.prototype.init.call(this, arguments);
 
+
+            // Do not execute "_adjustRangeValue" before all initial setters are finished.
+            // As max, min, range, value and value2 are dependent on each other,
+            // we should be sure that at the first run they are set  properly and then to be validated.
+            this._bInitialRangeChecks = true;
+
             this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
             // the initial focus range which should be used
@@ -149,7 +155,17 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
         RangeSlider.prototype.onBeforeRendering = function () {
             var aAbsRange = [Math.abs(this.getMin()), Math.abs(this.getMax())],
                 iRangeIndex = aAbsRange[0] > aAbsRange[1] ? 0 : 1,
-                bInputsAsTooltips = !!this.getInputsAsTooltips();
+                bInputsAsTooltips = !!this.getInputsAsTooltips(),
+                aRange = this.getRange();
+
+            // At this point it's certain that all setters are executed and values of
+            // min, max, value, value2 and range are set properly and are not using the Default values.
+            // It's important however to keep the slider values within the boundaries defined by min and max.
+            // Executing once again the range setter would adjust values accordingly. It should not matter if we do:
+            // this.setRange(aRange) OR this.setValue(fValue) && this.setValue2(fValue2).
+            // Note: this.getRange() is intended to have the same value as [this.getValue(), this.getValue2()]
+            this._bInitialRangeChecks = false;
+            this.setRange(aRange);
 
             if (!this._oRangeLabel) {
                 this._oRangeLabel = new InvisibleText({text: this._oResourceBundle.getText("RANGE_SLIDER_RANGE_HANDLE")});
@@ -565,6 +581,10 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
                 fMin = this.getMin(),
                 fStep = this.getStep(),
                 fModStepVal;
+
+            if (this._bInitialRangeChecks) {
+                return fValue;
+            }
 
             fModStepVal = Math.abs((fValue - fMin) % fStep);
             if (fModStepVal !== 0 /* division with remainder */) {
