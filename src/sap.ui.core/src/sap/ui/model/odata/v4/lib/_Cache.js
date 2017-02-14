@@ -690,7 +690,7 @@ sap.ui.define([
 	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the requested data.
 	 *
-	 *   The promise is rejected if the cache is inactive (see @link {#setActive}) when the response
+	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
 	 *   arrives.
 	 */
 	CollectionCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested, oListener) {
@@ -699,8 +699,9 @@ sap.ui.define([
 			aSegments,
 			that = this;
 
-		this.registerChange(sPath, oListener);
-		if (sPath) {
+		if (sPath === "$count") {
+			oPromise = _SyncPromise.all(this.aElements);
+		} else if (sPath) {
 			aSegments = sPath.split("/");
 			iIndex = parseInt(aSegments.shift(), 10);
 			oPromise = this.read(iIndex, 1, sGroupId, fnDataRequested);
@@ -709,6 +710,8 @@ sap.ui.define([
 		}
 		return oPromise.then(function () {
 			that.checkActive();
+			// register afterwards to avoid that updateCache fires updates before the first response
+			that.registerChange(sPath, oListener);
 			return that.drillDown(that.aElements, sPath);
 		});
 	};

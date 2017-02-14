@@ -282,7 +282,7 @@ sap.ui.require([
 		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(undefined, mParameters, true)
 			.returns(mQueryOptions);
-		this.mock(oBinding).expects("reset").withExactArgs(undefined);
+		this.mock(oBinding).expects("reset").withExactArgs(undefined, true);
 
 		//Stub is needed to test, if mCacheByContext is set to undefined before #makeCache is called
 		oBinding.mCacheByContext = {
@@ -334,7 +334,7 @@ sap.ui.require([
 		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(undefined, mParameters, true).returns(mQueryOptions);
 		this.mock(oBinding).expects("makeCache").withExactArgs(sinon.match.same(oBinding.oContext));
-		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Change);
+		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Change, true);
 
 		//code under test
 		oBinding.applyParameters(mParameters, ChangeReason.Change);
@@ -425,6 +425,19 @@ sap.ui.require([
 
 		// code under test
 		oBinding.reset(ChangeReason.Sort);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("reset with header context", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oCountBinding1 = this.oModel.bindProperty("$count", oBinding.getHeaderContext()),
+			oCountBinding2 = this.oModel.bindProperty("$count", oBinding.getHeaderContext());
+
+		this.mock(oCountBinding1).expects("checkUpdate").withExactArgs();
+		this.mock(oCountBinding2).expects("checkUpdate").withExactArgs();
+
+		// code under test
+		oBinding.reset(ChangeReason.Change, true);
 	});
 
 	//*********************************************************************************************
@@ -525,7 +538,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getPath(), "/EMPLOYEES");
 		assert.deepEqual(oBinding.mParameters, mParameters);
 		assert.strictEqual(oBinding.mQueryOptions, mQueryOptions);
-		assert.ok(ODataListBinding.prototype.reset.calledWithExactly(undefined));
+		assert.ok(ODataListBinding.prototype.reset.calledWithExactly(undefined, true));
 		assert.strictEqual(oBinding.hasOwnProperty("sChangeReason"), true);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
 		assert.deepEqual(oBinding.oDiff, undefined);
@@ -1088,11 +1101,37 @@ sap.ui.require([
 
 		assert.strictEqual(oBinding.getHeaderContext(), oHeaderContext);
 
-		this.mock(oBinding.getHeaderContext()).expects("destroy").withExactArgs();
 		// code under test
 		oBinding.setContext(null);
 
 		assert.strictEqual(oBinding.getHeaderContext(), null);
+
+		this.mock(oHeaderContext).expects("destroy").withExactArgs();
+
+		// code under test
+		oBinding.destroy();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("preserve headerContext when ManagedObject temporarily removes context",
+		function (assert) {
+		var oBinding = this.oModel.bindList("Suppliers"),
+			oBindingMock = this.mock(oBinding),
+			oContext = Context.create(this.oModel, {}, "/bar"),
+			oHeaderContext = Context.create(this.oModel, oBinding, "/bar/Suppliers");
+
+		this.mock(Context).expects("create")
+			.withExactArgs(this.oModel, oBinding, "/bar/Suppliers")
+			.returns(oHeaderContext);
+		oBinding.setContext(oContext);
+		assert.strictEqual(oBinding.getHeaderContext(), oHeaderContext);
+		this.mock(oBinding.getHeaderContext()).expects("destroy").never();
+
+		// code under test
+		oBinding.setContext(null);
+		oBinding.setContext(oContext);
+
+		assert.strictEqual(oBinding.getHeaderContext(), oHeaderContext);
 	});
 
 	//*********************************************************************************************
@@ -2008,7 +2047,7 @@ sap.ui.require([
 			assert.ok(_Helper.toArray.calledWithExactly(oFixture.vSorters));
 			assert.strictEqual(oBinding.mCacheByContext, undefined);
 			assert.ok(oBinding.reset.calledWithExactly(), "from setContext");
-			assert.ok(oBinding.reset.calledWithExactly(ChangeReason.Sort), "from sort");
+			assert.ok(oBinding.reset.calledWithExactly(ChangeReason.Sort, true), "from sort");
 		});
 	});
 
@@ -2081,7 +2120,7 @@ sap.ui.require([
 				oBindingMock.expects("makeCache").on(oBinding)
 					.withExactArgs(sinon.match.same(oContext))
 					.returns(_SyncPromise.resolve(oCache));
-				oBindingMock.expects("reset").on(oBinding).withExactArgs(ChangeReason.Filter);
+				oBindingMock.expects("reset").on(oBinding).withExactArgs(ChangeReason.Filter, true);
 
 				// Code under test
 				assert.strictEqual(oBinding.filter(oFilter, sFilterType), oBinding, "chaining");
