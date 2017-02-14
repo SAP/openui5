@@ -40,7 +40,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Use Enter or Space key to choose the control.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.m.ObjectHeaderContainer
-	 * @since 1.42.0
+	 * @since 1.44.0
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -216,6 +216,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 			}.bind(this)
 		});
+		sap.ui.getCore().attachIntervalTimer(this._checkOverflow, this);
 	};
 
 	HeaderContainer.prototype.onBeforeRendering = function() {
@@ -232,7 +233,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oArrowPrev.setSrc(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-left" : "sap-icon://slim-arrow-up");
 			this._oArrowNext.setSrc(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-right" : "sap-icon://slim-arrow-down");
 		}
-		sap.ui.getCore().attachIntervalTimer(this._checkOverflow, this);
 	};
 
 	HeaderContainer.prototype.exit = function() {
@@ -241,6 +241,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oItemNavigation.destroy();
 			this._oItemNavigation = null;
 		}
+		sap.ui.getCore().detachIntervalTimer(this._checkOverflow, this);
 	};
 
 	HeaderContainer.prototype.onsaptabnext = function(oEvt) {
@@ -429,7 +430,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	HeaderContainer.prototype._checkVOverflow = function() {
-		var oBarHead = this._oScrollCntr.getDomRef(), oOldScrollBack;
+		var oBarHead = this._oScrollCntr.getDomRef(), oOldScrollBack, $ButtonContainer;
 
 		if (oBarHead) {
 			// in Chrome the scrollTop and scrollLeft return decimal value (in IE and Firefox return integer)
@@ -454,29 +455,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				bScrollForward = true;
 			}
 
-			oOldScrollBack = this._oArrowPrev.$().is(":visible");
+			$ButtonContainer = this.$("prev-button-container");
+			oOldScrollBack = $ButtonContainer.is(":visible");
 			if (oOldScrollBack && !bScrollBack) {
-				this._oArrowPrev.$().hide();
+				$ButtonContainer.hide();
 				this.$().removeClass("sapMHrdrTopPadding");
 			}
 			if (!oOldScrollBack && bScrollBack) {
-				this._oArrowPrev.$().show();
+				$ButtonContainer.show();
 				this.$().addClass("sapMHrdrTopPadding");
 			}
-			var oOldScrollForward = this._oArrowNext.$().is(":visible");
+			$ButtonContainer = this.$("next-button-container");
+			var oOldScrollForward = $ButtonContainer.is(":visible");
 			if (oOldScrollForward && !bScrollForward) {
-				this._oArrowNext.$().hide();
+				$ButtonContainer.hide();
 				this.$().removeClass("sapMHrdrBottomPadding");
 			}
 			if (!oOldScrollForward && bScrollForward) {
-				this._oArrowNext.$().show();
+				$ButtonContainer.show();
 				this.$().addClass("sapMHrdrBottomPadding");
 			}
 		}
 	};
 
 	HeaderContainer.prototype._checkHOverflow = function() {
-		var oBarHead = this._oScrollCntr.getDomRef();
+		var oBarHead = this._oScrollCntr.getDomRef(), $ButtonContainer;
 
 		if (oBarHead) {
 			// in Chrome the scrollTop and scrollLeft return decimal value (in IE and Firefox return integer)
@@ -512,23 +515,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 			}
 
-			var oOldScrollBack = this._oArrowPrev.$().is(":visible");
+			$ButtonContainer = this.$("prev-button-container");
+			var oOldScrollBack = $ButtonContainer.is(":visible");
 			if (oOldScrollBack && !bScrollBack) {
-				this._oArrowPrev.$().hide();
+				$ButtonContainer.hide();
 				this.$().removeClass("sapMHrdrLeftPadding");
 			}
 			if (!oOldScrollBack && bScrollBack) {
-				this._oArrowPrev.$().show();
+				$ButtonContainer.show();
 				this.$().addClass("sapMHrdrLeftPadding");
 			}
 
-			var oOldScrollForward = this._oArrowNext.$().is(":visible");
+			$ButtonContainer = this.$("next-button-container");
+			var oOldScrollForward = $ButtonContainer.is(":visible");
 			if (oOldScrollForward && !bScrollForward) {
-				this._oArrowNext.$().hide();
+				$ButtonContainer.hide();
 				this.$().removeClass("sapMHrdrRightPadding");
 			}
 			if (!oOldScrollForward && bScrollForward) {
-				this._oArrowNext.$().show();
+				$ButtonContainer.show();
 				this.$().addClass("sapMHrdrRightPadding");
 			}
 		}
