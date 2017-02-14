@@ -1353,6 +1353,69 @@
 				delete InputSubclass;
 			});
 
+			test("onChange should pass in additional parameters to the change event handler", function() {
+
+				// system under test
+				var oInput = new sap.m.InputBase();
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oInput.focus();
+				var fnFireChangeSpy = this.spy(oInput, "fireChange");
+				sap.ui.test.qunit.triggerCharacterInput(oInput.getFocusDomRef(), "bar");
+
+				// act
+				oInput.onChange(null, {
+					parameter1: true,
+					parameter2: false
+				});
+
+				// assertions
+				strictEqual(fnFireChangeSpy.args[0][0].parameter1, true);
+				strictEqual(fnFireChangeSpy.args[0][0].parameter2, false);
+
+				// cleanup
+				oInput.destroy();
+			});
+
+			test("onChange should pass in additional parameters to the change event handle", function() {
+
+				// system under test
+				sap.m.InputBase.extend("InputSubclass", {
+					renderer: {}
+				});
+
+				InputSubclass.prototype.getChangeEventParams = function() {
+					return {
+						parameter1: false,
+						parameter2: true
+					};
+				};
+
+				var oInput = new InputSubclass();
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oInput.focus();
+				var fnFireChangeSpy = this.spy(oInput, "fireChange");
+				sap.ui.test.qunit.triggerCharacterInput(oInput.getFocusDomRef(), "a");
+
+				// act
+				oInput.getFocusDomRef().blur();
+				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
+
+				// assertions
+				strictEqual(fnFireChangeSpy.args[0][0].parameter1, false);
+				strictEqual(fnFireChangeSpy.args[0][0].parameter2, true);
+
+				// cleanup
+				oInput.destroy();
+				InputSubclass = null;
+				delete InputSubclass;
+			});
+
 			test("onChange handler should fire the change event when last known and dom value are not same", function() {
 				// system under test
 				var sInitValue = "Test";

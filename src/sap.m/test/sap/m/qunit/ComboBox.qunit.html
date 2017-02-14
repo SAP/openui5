@@ -7324,7 +7324,7 @@
 				items: [
 					new sap.ui.core.Item({
 						key: "0",
-						text: "item 0 is selected",
+						text: "item 0 is selected"
 					}),
 
 					new sap.ui.core.Item({
@@ -10267,7 +10267,7 @@
 						key: "DK",
 						text: "Denmark",
 						additionalText: "DK"
-					}),
+					})
 				]
 			});
 
@@ -10316,7 +10316,7 @@
 						key: "DK",
 						text: "Denmark",
 						additionalText: "DK"
-					}),
+					})
 				]
 			});
 
@@ -10372,6 +10372,39 @@
 
 			// cleanup
 			oComboBox.destroy();
+		});
+
+		QUnit.test('onSelectionChange should pass in the "itemPressed" parameter to the change event handle', function(assert) {
+
+			// system under test
+			var oItem;
+			var oComboBox = new sap.m.ComboBox({
+				items: [
+					oItem = new sap.ui.core.ListItem({
+						text: "lorem ipsum"
+					})
+				]
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+			var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
+			oComboBox.updateDomValue("change the value");
+			var oControlEvent = new sap.ui.base.Event("selectionChange", oComboBox.getList(), {
+				selectedItem: oItem
+			});
+
+			// act
+			oComboBox.onSelectionChange(oControlEvent);
+
+			// assert
+			assert.strictEqual(fnFireChangeSpy.args[0][0].itemPressed, true);
+
+			// cleanup
+			oComboBox.destroy();
+			oControlEvent.destroy();
 		});
 
 		QUnit.module("onPropertyChange");
