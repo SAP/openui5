@@ -118,13 +118,17 @@ html.sap-tablet .sapMQuickViewPage > section {
 	left: -1px;
 }
 
-.sapMQuickViewPage .sapMQuickViewThumbnail {
-	font-family: SAP-icons;
-	font-size: 2.5rem;
-	font-weight: normal;
-	width: 3rem;
-	height: 3rem;
-}
+.sapMQuickViewPage {
+	.sapMQuickViewThumbnail {
+		font-family: SAP-icons;
+		font-size: 2.5rem;
+		font-weight: normal;
+		width: 3rem;
+		height: 3rem;
+		background-color: @sapUiContentImagePlaceholderBackground;
+		color: @sapUiContentImagePlaceholderForegroundColor;
+	}	
+} 
 
 .sapMQuickViewPage .sapUiHLayout {
 	margin-bottom: 2rem;
@@ -240,11 +244,6 @@ html.sap-tablet .sapMQuickViewHeader {
 
 .sapMQuickViewPage .sapMFlexItem:last-child {
 	color: @sapUiContentIconColor;
-}
-
-.sapMQuickViewPage .sapMQuickViewThumbnail {
-	background-color: @sapUiContentImagePlaceholderBackground;
-	color: @sapUiContentImagePlaceholderForegroundColor;
 }
 
 .sapMQuickViewPage .sapUiIcon:focus,
