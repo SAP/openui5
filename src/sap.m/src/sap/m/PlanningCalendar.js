@@ -1738,7 +1738,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			|| oDate.getFullYear() > this.getStartDate().getFullYear();
 	};
 
+	PlanningCalendar.prototype._applyContextualSettings = function () {
+		return Control.prototype._applyContextualSettings.call(this, {contextualWidth: this.$().width()});
+	};
+
 	function _handleResize(oEvent, bNoRowResize){
+
+		this._applyContextualSettings();
 
 		if (oEvent.size.width <= 0) {
 			// only if visible at all
