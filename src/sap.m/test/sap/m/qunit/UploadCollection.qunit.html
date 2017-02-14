@@ -1114,19 +1114,21 @@
 
 	QUnit.test("Event fileDeleted", function (assert) {
 		var oFileDelete = this.oUploadCollection.getItems()[1];
-		function onDelete (oEvent) {
-			// deprecated
-			assert.equal(oEvent.getParameter("documentId"), "5082cc4d-da9f-2835-2c0a-8100ed47bcde", "Correct documentId in event delete");
-			// new
-			assert.equal(oEvent.getParameter("item"), oFileDelete, "Correct item in event delete");
-		}
-		assert.expect(2);
 		this.oUploadCollection.attachFileDeleted(onDelete);
 		this.oUploadCollection._oItemForDelete = {
 				documentId : oFileDelete.getDocumentId(),
 				_iLineNumber : 1
 		}
 		this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
+		// Assert
+		function onDelete(oEvent) {
+			// deprecated
+			assert.equal(oEvent.getParameter("documentId"), "5082cc4d-da9f-2835-2c0a-8100ed47bcde", "Correct documentId in event delete");
+			// new
+			assert.equal(oEvent.getParameter("item"), oFileDelete, "Correct item in event delete");
+		}
+		assert.notOk(this.oUploadCollection._oItemForDelete, "oItemForDelete is null");
+		assert.expect(3);
 	});
 
 	QUnit.test("Event filenameLengthExceed", function(assert) {
