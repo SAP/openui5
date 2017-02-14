@@ -16,9 +16,10 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/ActionSheet",
 	"sap/m/Image",
+	"./ObjectImageHelper",
 	"./library"
 ], function (Control, IconPool, CustomData, Icon, Device, Breadcrumbs, ObjectPageHeaderActionButton,
-			 ResizeHandler, Text, Button, ActionSheet, Image, library) {
+			 ResizeHandler, Text, Button, ActionSheet, Image, ObjectImageHelper, library) {
 	"use strict";
 
 	/**
@@ -180,6 +181,7 @@ sap.ui.define([
 				 * Icon for the identifier line.
 				 */
 				_objectImage: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
+				_placeholder: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"},
 				_lockIconCont: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
 				_lockIcon: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
 				_titleArrowIconCont: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
@@ -307,30 +309,8 @@ sap.ui.define([
 	};
 
 	ObjectPageHeader._internalAggregationFactory = {
-		"_objectImage": function (oParent) {
-			var oObjectImage,
-				sObjectImageURI = oParent.getObjectImageURI();
-
-			if (sObjectImageURI.indexOf("sap-icon://") == 0) {
-				oObjectImage = new Icon();
-				oObjectImage.addStyleClass("sapUxAPObjectPageHeaderObjectImageIcon");
-			} else {
-				oObjectImage = new Image({
-					densityAware: oParent.getObjectImageDensityAware(),
-					alt: oParent.getObjectImageAlt(),
-					decorative: false
-				});
-
-				oObjectImage.addStyleClass("sapUxAPObjectPageHeaderObjectImage");
-			}
-
-			oObjectImage.setSrc(sObjectImageURI);
-
-			if (oParent.getObjectImageAlt()) {
-				oObjectImage.setTooltip(oParent.getObjectImageAlt());
-			}
-			return oObjectImage;
-		},
+		"_objectImage": ObjectImageHelper.createObjectImage,
+		"_placeholder": ObjectImageHelper.createPlaceholder,
 		"_overflowActionSheet": function () {
 			return new ActionSheet({placement: sap.m.PlacementType.Bottom});
 		},
@@ -422,7 +402,7 @@ sap.ui.define([
 			this._destroyObjectImage();
 
 			if (!this._bFirstRendering) {
-				this._notifyParentOfChanges();
+				this._notifyParentOfChanges(true);
 			}
 		}
 
@@ -560,13 +540,6 @@ sap.ui.define([
 	};
 
 	ObjectPageHeader.prototype.onBeforeRendering = function () {
-		if (this.getShowPlaceholder()) {
-			this._oPlaceholder = IconPool.createControlByURI({
-				src: IconPool.getIconURI("picture"),
-				visible: true
-			});
-		}
-
 		var oSideBtn = this.getSideContentButton();
 		if (oSideBtn && !oSideBtn.getTooltip()) {
 			oSideBtn.setTooltip(this.oLibraryResourceBundleOP.getText("TOOLTIP_OP_SHOW_SIDE_CONTENT"));
@@ -916,13 +889,15 @@ sap.ui.define([
 
 	/**
 	 * Notifies the parent control, when <code>ObjectPageHeader> changes.
+	 * @param {boolean}
+	 *            bIsObjectImageChange - flag if an image-related property was changed
 	 * @private
 	 */
-	ObjectPageHeader.prototype._notifyParentOfChanges = function () {
+	ObjectPageHeader.prototype._notifyParentOfChanges = function (bIsObjectImageChange) {
 		var oParent = this.getParent();
 
 		if (oParent && typeof oParent._headerTitleChangeHandler === "function") {
-			oParent._headerTitleChangeHandler();
+			oParent._headerTitleChangeHandler(bIsObjectImageChange);
 		}
 	};
 
