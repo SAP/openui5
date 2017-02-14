@@ -1,0 +1,26 @@
+{
+	"InformationCollection" : [
+		{
+			"introText1" : "This Grid Layout sample application demonstrates the major features and capabilites of the Grid Layout. There are 3 Grid Layouts used in this application. In the first Grid Layout you can observe that when the screen size is reduced to 'Small' or 'Mobile', the image in the right is made invisible by using the property 'visibleOnSmall=false' of the GridData control. In the second Grid Layout, that is in the Products sections, you can observe that when the screen size is reduced to 'Medium' or 'Tablet', the images are swaped with each other by using properties 'moveForward' and 'moveBackwards' of the GridData control. There is also indentation applied the images when the screen sizes are 'Extra-large, Large and Medium'.",
+			"Description" : "In this Grid Layout, you can observe that when the screen size is 'Extra-large' or 'Large Desktop' then there are 2 Images and 1 Text controls rendered in 1 row. But when the screen is reduced to 'Large' or 'Smaller Desktop' then there is a line break for the image in the right and it is rendered in a new row. This is achieved by using the properties 'linebreakXL=false' and 'linebreakL=true' of the GridData control. When the screen is further reduced to 'Medium' or 'Tablet' then the image rendered in the new row is made invisible by using the property 'visibleOnMedium=false' of the GridData control.",
+			"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1111.jpg",
+			"ProductPicUrl2": "test-resources/sap/ui/demokit/explored/img/HT-1030.jpg"
+		},
+		{
+			"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-6100.jpg",
+			"ProductPicUrl2": "test-resources/sap/ui/demokit/explored/img/HT-1032.jpg"
+		},
+		{
+			"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1071.jpg",
+			"ProductPicUrl2": "test-resources/sap/ui/demokit/explored/img/HT-1138.jpg"
+		},
+		{
+			"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1072.jpg",
+			"ProductPicUrl2": "test-resources/sap/ui/demokit/explored/img/HT-1010.jpg"
+		},
+		{
+			"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1112.jpg",
+			"ProductPicUrl2": "test-resources/sap/ui/demokit/explored/img/HT-1063.jpg"
+		}
+	]
+}

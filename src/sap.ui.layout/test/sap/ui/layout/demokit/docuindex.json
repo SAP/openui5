@@ -78,7 +78,8 @@
 				"samples" : [
 					"sap.ui.layout.sample.GridInfo",
 					"sap.ui.layout.sample.GridTasks",
-					"sap.ui.layout.sample.GridTiles"
+					"sap.ui.layout.sample.GridTiles",
+					"sap.ui.layout.sample.GridXL"
 				]
 			},
 			{
@@ -287,6 +288,11 @@
 				"id": "sap.ui.layout.sample.GridTasks",
 				"name": "Grid - Task Display",
 				"description": "Using the Grid control, with appropriate values for the Large/Medium/Small span settings, you can set some elements to be fixed (like the Active, Inactive and Failed titles here) and some to flow."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridXL",
+				"name": "Grid - Features Demo",
+				"description": "This example demonstrates the major features of the Grid Layout. Features like indentation, making content visible/invisible based the screen size, moving content forward and backwards are demonstrated."
 			},
 			{
 				"id": "sap.ui.layout.sample.Splitter",
