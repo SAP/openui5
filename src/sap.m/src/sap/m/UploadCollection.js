@@ -1741,6 +1741,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					// new
 					item : oItemToBeDeleted
 				});
+				// do not save the item after the item is deleted in instant mode
+				this._oItemForDelete = null;
 			} else {
 				if (this.aItems.length === 1) {
 					this.sFocusId = this._oFileUploader.$().find(":button")[0].id;
