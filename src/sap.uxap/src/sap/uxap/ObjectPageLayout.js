@@ -2128,11 +2128,15 @@ sap.ui.define([
 	 * Re-renders the <code>ObjectPageHeaderContent</code> when <code>ObjectPageHeader</code> Title changes.
 	 * @private
 	 */
-	ObjectPageLayout.prototype._headerTitleChangeHandler = function () {
+	ObjectPageLayout.prototype._headerTitleChangeHandler = function (bIsObjectImageChange) {
 		var oRm;
 
 		if (!this.getShowTitleInHeaderContent()) {
 			return;
+		}
+
+		if (bIsObjectImageChange) {
+			this._getHeaderContent()._destroyObjectImage(true);
 		}
 
 		oRm = sap.ui.getCore().createRenderManager();
