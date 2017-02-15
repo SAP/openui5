@@ -12,7 +12,10 @@
 			<Button
 				id="editButton"
 				icon="sap-icon://edit"
-				enabled="{cartProducts>/showEditButton}"
+				enabled="{parts: [
+					{path: 'cartProducts>/cartEntries'},
+					{path: 'cartProducts>/savedForLaterEntries'}
+				 ], formatter : '.formatter.hasItems'}"
 				visible="{cfg>/notInDelete}"
 				press="onEditOrDoneButtonPress" />
 		</headerContent>
@@ -29,7 +32,10 @@
 					type="Accept"
 					text="{i18n>CART_PROCEED_BUTTON_TEXT}"
 					tooltip="{i18n>CART_PROCEED_BUTTON_TOOLTIP}"
-					enabled="{cartProducts>/showProceedButton}"
+					enabled="{
+						path: 'cartProducts>/cartEntries',
+						formatter: '.formatter.hasItems'
+					}"
 					visible="{cfg>/notInDelete}"
 					press="onProceedButtonPress" />
 				<Button

@@ -88,6 +88,16 @@ sap.ui.define(["sap/ui/core/format/NumberFormat"], function (NumberFormat) {
 				return "";
 			}
 			return oBundle.getText("CART_SAVED_FOR_LATER_FOOTER_TEXT");
+		},
+
+		/**
+		 * Checks if one of the collections contains items.
+		 * @param {object} oCollection1 First array or object to check
+		 * @param {object} oCollection2 Second array or object to check
+		 * @return {boolean} true if one of the collections is not empty, otherwise - false.
+		 */
+		hasItems: function (oCollection1, oCollection2) {
+			return !(jQuery.isEmptyObject(oCollection1) && jQuery.isEmptyObject(oCollection2));
 		}
 	};
 
