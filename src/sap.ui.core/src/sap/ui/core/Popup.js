@@ -1275,7 +1275,13 @@ sap.ui.define([
 			// not a SAPUI5 control... but if something has focus, save as much information about it as available
 			try {
 				var oElement = document.activeElement;
-				if (oElement) {
+
+				// IE returns an empty object in some cases when accessing document.activeElement from <iframe>
+				// Passing the empty object to jQuery.sap.focus causes syntax error because the empty object
+				// doesn't have 'focus' function.
+				// Save the previous focus only when document.activeElement is a valid DOM element by checking the
+				// 'nodeName' property
+				if (oElement && oElement.nodeName) {
 					_oPreviousFocus = {
 						'sFocusId' : oElement.id,
 						'oFocusedElement' : oElement,
