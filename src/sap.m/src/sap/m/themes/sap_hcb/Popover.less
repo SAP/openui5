@@ -3,6 +3,49 @@
 /* High Contrast Black theme      */
 /* ============================== */
 
+/* Forces the usage of compact arrow offset, because belize uses a compact arrow for all content densities. */
+@sapMPopoverForceCompactArrowOffset: false;
+
+.sapMPopover {
+	background-color: @sapHCStandardBG;
+	color: @sapHCStandardFG;
+	border: 0.125rem solid @sapHCStandardFG;
+	box-shadow: 0 0 2.5rem 0.125rem fade(@sapHCStandardFG, 80%);
+	border-radius: 0.125rem;
+}
+
+.sapMPopover .sapMPopoverCont {
+	background-color: transparent;
+	margin: 0;
+}
+
+/* padding for title in header is removed because of ticket 0120031469 0004432742 2013*/
+.sapMPopoverHeader > .sapMBarMiddle > .sapMBarPH {
+	box-sizing: border-box;
+}
+
+.sapMPopoverHeader > .sapMBarMiddle > .sapMBarPH > .sapMLabel {
+	display: inline-block;
+}
+
+/*for only two buttons in footer's contentMiddle aggregation*/
+.sapMPopoverSpecialFooter > .sapMBarMiddle {
+	display: block;
+	height: 100%;
+	padding: 0 0.25rem;
+	box-sizing: border-box;
+}
+
+.sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH {
+	display: block;
+	padding: 0;
+}
+
+.sapMPopoverSpecialFooter > .sapMBarLeft,
+.sapMPopoverSpecialFooter > .sapMBarRight {
+	display: none;
+}
+
 .sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH > .sapMBtn {
 	width: 50%;
 	padding-left: 0.25rem;
