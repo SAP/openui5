@@ -82,11 +82,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 
 		oRm.writeAttribute("rows", oControl.getRows());
 		oRm.writeAttribute("cols", oControl.getCols());
-
-		//Chrome doesn't set the width properly on this stage
-		if (oControl.getWidth()) {
-			oRm.addStyle("width", oControl.getWidth());
-		}
 	};
 
 	return TextAreaRenderer;
