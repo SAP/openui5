@@ -263,7 +263,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 							origin: {type: "sap.m.Button"}
 						}
 					}
-				}
+				},
+				designTime : true
 			}
 		});
 
