@@ -427,7 +427,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 			iMonth = bUTC ? oDate.getUTCMonth() : oDate.getMonth(),
 			iYear = bUTC ? oDate.getUTCFullYear() : oDate.getFullYear(),
 			iEra = bUTC ? oDate.getUTCEra() : oDate.getEra(),
-			iWeek = bUTC ? oDate.getUTCWeek() : oDate.getWeek(),
+			oWeek = bUTC ? oDate.getUTCWeek() : oDate.getWeek(),
+			iWeek = oWeek.week,
+			iWeekYear = oWeek.year,
 			iMilliseconds = bUTC ? oDate.getUTCMilliseconds() : oDate.getMilliseconds(),
 			iSeconds = bUTC ? oDate.getUTCSeconds() : oDate.getSeconds(),
 			iMinutes = bUTC ? oDate.getUTCMinutes() : oDate.getMinutes(),
@@ -438,9 +440,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 			iMinuteOffset = iTZOffset % 60,
 			iQuarter = Math.floor(iMonth / 3),
 			sYear,
+			sWeekYear,
 			sWeek,
 			sHours,
-			sResult;
+			sResult,
+			iFirstDayOfWeek = this.oLocaleData.getFirstDayOfWeek(),
+			iDayNumberOfWeek;
 
 		for (var i = 0; i < this.aFormatArray.length; i++) {
 			oPart = this.aFormatArray[i];
@@ -474,7 +479,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 					}
 					break;
 				case "dayNumberOfWeek":
-					aBuffer.push(iDay || 7);
+					iDayNumberOfWeek = iDay - (iFirstDayOfWeek - 1);
+
+					if (iDayNumberOfWeek <= 0) {
+						iDayNumberOfWeek += 7;
+					}
+					aBuffer.push(iDayNumberOfWeek);
 					break;
 				case "month":
 					if (oPart.digits == 3) {
@@ -530,7 +540,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 					}
 					break;
 				case "year":
-				case "weekYear":
 					sYear = "" + iYear;
 					if (oPart.digits == 2 && sYear.length > 2) {
 						sYear = sYear.substr(sYear.length - 2);
@@ -542,12 +551,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 					}
 					aBuffer.push(jQuery.sap.padLeft(sYear, "0", oPart.digits));
 					break;
-				case "weekInYear":
-					if (iWeek == undefined) {
-						//Date object doesn't support week calculation
-						break;
+				case "weekYear":
+					sWeekYear = "" + iWeekYear;
+					if (oPart.digits == 2 && sWeekYear.length > 2) {
+						sWeekYear = sWeekYear.substr(sWeekYear.length - 2);
 					}
-					sWeek = "" + iWeek;
+					// When parsing we assume dates less than 100 to be in the current/last century,
+					// so when formatting we have to make sure they are differentiable by prefixing with zeros
+					if (sCalendarType != CalendarType.Japanese && oPart.digits == 1 && iWeekYear < 100) {
+						sWeekYear = jQuery.sap.padLeft(sWeekYear, "0", 4);
+					}
+					aBuffer.push(jQuery.sap.padLeft(sWeekYear, "0", oPart.digits));
+					break;
+				case "weekInYear":
+					sWeek = String(iWeek + 1);
 					if (oPart.digits < 3) {
 						sWeek = jQuery.sap.padLeft(sWeek, "0", oPart.digits);
 					} else {
@@ -667,6 +684,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 			iDay = null,
 			iMonth = null,
 			iYear = null,
+			iWeekYear = null,
+			iWeek = null,
+			iDayNumberOfWeek = null,
 			iEra = null,
 			iHours = null,
 			iMinutes = null,
@@ -779,6 +799,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 				case "dayNumberOfWeek":
 					sPart = findNumbers(oPart.digits);
 					iIndex += sPart.length;
+					iDayNumberOfWeek = parseInt(sPart, 10);
 					break;
 				case "month":
 				case "monthStandalone":
@@ -828,7 +849,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 					}
 					break;
 				case "year":
-				case "weekYear":
 					if (oPart.digits == 1) {
 						sPart = findNumbers(4);
 					} else if (oPart.digits == 2) {
@@ -854,9 +874,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 						}
 					}
 					break;
+				case "weekYear":
+					if (oPart.digits == 1) {
+						sPart = findNumbers(4);
+					} else if (oPart.digits == 2) {
+						sPart = findNumbers(2);
+					} else {
+						sPart = findNumbers(oPart.digits);
+					}
+					iIndex += sPart.length;
+					checkValid(oPart.type, sPart === "");
+					iYear = parseInt(sPart, 10);
+					// Find the right century for two-digit years
+					if (sCalendarType != CalendarType.Japanese && sPart.length <= 2) {
+						var oCurrentDate = UniversalDate.getInstance(new Date(), sCalendarType),
+							iCurrentYear = oCurrentDate.getFullYear(),
+							iCurrentCentury = Math.floor(iCurrentYear / 100),
+							iYearDiff = iCurrentCentury * 100 + iWeekYear - iCurrentYear;
+						if (iYearDiff < -70) {
+							iWeekYear += (iCurrentCentury + 1) * 100;
+						} else if (iYearDiff < 30 ) {
+							iWeekYear += iCurrentCentury * 100;
+						} else {
+							iWeekYear += (iCurrentCentury - 1) * 100;
+						}
+					}
+					break;
 				case "weekInYear":
 					if (oPart.digits < 3) {
 						sPart = findNumbers(2);
+						iWeek = parseInt(sPart, 10) - 1;
 						iIndex += sPart.length;
 						checkValid(oPart.type, !sPart);
 					} else {
@@ -866,6 +913,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 							oResult = rWeekNumber.exec(oValue.substring(iIndex));
 						if (oResult) {
 							iIndex += oResult[0].length;
+							iWeek = parseInt(oResult[0], 10) - 1;
 						} else {
 							checkValid(oPart.type, true);
 						}
@@ -1012,9 +1060,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 					// check if valid date given - if invalid, day is not the same (31.Apr -> 1.May)
 					bValid = false;
 					oDate = undefined;
-				} else if (iTZDiff) {
-					// Set TZDiff after checking for valid day, as it may switch the day as well
-					oDate.setUTCMinutes((iMinutes || 0) + iTZDiff);
+				} else {
+					if (iTZDiff) {
+						// Set TZDiff after checking for valid day, as it may switch the day as well
+						oDate.setUTCMinutes((iMinutes || 0) + iTZDiff);
+					}
+					if (iWeek !== null) {
+						oDate.setUTCWeek({
+							year: iWeekYear || iYear,
+							week: iWeek
+						});
+
+						if (iDayNumberOfWeek !== null) {
+							oDate.setUTCDate(oDate.getUTCDate() + iDayNumberOfWeek - 1);
+						}
+					}
 				}
 			} else {
 				oDate = UniversalDate.getInstance(new Date(1970, 0, 1, 0, 0, 0), sCalendarType);
@@ -1030,6 +1090,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 					// check if valid date given - if invalid, day is not the same (31.Apr -> 1.May)
 					bValid = false;
 					oDate = undefined;
+				} else if (iWeek !== null) {
+					oDate.setWeek({
+						year: iWeekYear || iYear,
+						week: iWeek
+					});
+
+					if (iDayNumberOfWeek !== null) {
+						oDate.setDate(oDate.getDate() + iDayNumberOfWeek - 1);
+					}
 				}
 			}
 

@@ -144,10 +144,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 		// The default implementation does not support setting the era
 	};
 	UniversalDate.prototype.getWeek = function() {
-		// The default implementation does not support week
+		return UniversalDate.getWeekByDate(this.sCalendarType, this.getFullYear(), this.getMonth(), this.getDate());
+	};
+	UniversalDate.prototype.setWeek = function(oWeek) {
+		var oDate = UniversalDate.getFirstDateOfWeek(this.sCalendarType, oWeek.year || this.getFullYear(), oWeek.week);
+		this.setFullYear(oDate.year, oDate.month, oDate.day);
 	};
 	UniversalDate.prototype.getUTCWeek = function() {
-		// The default implementation does not support week
+		return UniversalDate.getWeekByDate(this.sCalendarType, this.getUTCFullYear(), this.getUTCMonth(), this.getUTCDate());
+	};
+	UniversalDate.prototype.setUTCWeek = function(oWeek) {
+		var oDate = UniversalDate.getFirstDateOfWeek(this.sCalendarType, oWeek.year || this.getFullYear(), oWeek.week);
+		this.setUTCFullYear(oDate.year, oDate.month, oDate.day);
 	};
 
 
@@ -163,6 +171,86 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 			return this.oDate.getTimezoneLong();
 		}
 	};
+
+	/*
+	 * Helper methods for week calculations
+	 */
+	var iMillisecondsInWeek = 7 * 24 * 60 * 60 * 1000;
+
+	UniversalDate.getWeekByDate = function(sCalendarType, iYear, iMonth, iDay) {
+		var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
+			clDate = this.getClass(sCalendarType),
+			oFirstDay = getFirstDayOfFirstWeek(clDate, iYear),
+			oDate = new clDate(clDate.UTC(iYear, iMonth, iDay)),
+			iWeek, iLastYear, iNextYear, oLastFirstDay, oNextFirstDay;
+		// If region is US, always calculate the week for the current year, otherwise
+		// the week might be the last week of the previous year or first week of next year
+		if (oLocale.getRegion() === "US") {
+			iWeek = calculateWeeks(oFirstDay, oDate);
+		} else {
+			iLastYear = iYear - 1;
+			iNextYear = iYear + 1;
+			oLastFirstDay = getFirstDayOfFirstWeek(clDate, iLastYear);
+			oNextFirstDay = getFirstDayOfFirstWeek(clDate, iNextYear);
+			if (oDate >= oNextFirstDay) {
+				iYear = iNextYear;
+				iWeek = 0;
+			} else if (oDate < oFirstDay) {
+				iYear = iLastYear;
+				iWeek = calculateWeeks(oLastFirstDay, oDate);
+			} else {
+				iWeek = calculateWeeks(oFirstDay, oDate);
+			}
+		}
+		return {
+			year: iYear,
+			week: iWeek
+		};
+	};
+
+	UniversalDate.getFirstDateOfWeek = function(sCalendarType, iYear, iWeek) {
+		var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
+			clDate = this.getClass(sCalendarType),
+			oFirstDay = getFirstDayOfFirstWeek(clDate, iYear),
+			oDate = new clDate(oFirstDay.valueOf() + iWeek * iMillisecondsInWeek);
+		//If first day of week is in last year and region is US, return the
+		//1st of January instead for symmetric behaviour
+		if (oLocale.getRegion() === "US" && iWeek === 0 && oFirstDay.getUTCFullYear() < iYear) {
+			return {
+				year: iYear,
+				month: 0,
+				day: 1
+			};
+		}
+		return {
+			year: oDate.getUTCFullYear(),
+			month: oDate.getUTCMonth(),
+			day: oDate.getUTCDate()
+		};
+	};
+
+	function getFirstDayOfFirstWeek(clDate, iYear) {
+		var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
+			oLocaleData = LocaleData.getInstance(oLocale),
+			iMinDays = oLocaleData.getMinimalDaysInFirstWeek(),
+			iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek(),
+			oFirstDay = new clDate(clDate.UTC(iYear, 0, 1)),
+			iDayCount = 7;
+		// Find the first day of the first week of the year
+		while (oFirstDay.getUTCDay() !== iFirstDayOfWeek) {
+			oFirstDay.setUTCDate(oFirstDay.getUTCDate() - 1);
+			iDayCount--;
+		}
+		// If less then min days are left, first week is one week later
+		if (iDayCount < iMinDays) {
+			oFirstDay.setUTCDate(oFirstDay.getUTCDate() + 7);
+		}
+		return oFirstDay;
+	}
+
+	function calculateWeeks(oFromDate, oToDate) {
+		return Math.floor((oToDate.valueOf() - oFromDate.valueOf()) / iMillisecondsInWeek);
+	}
 
 	/*
 	 * Helper methods for era calculations
@@ -201,12 +289,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 	};
 
 	function getEras(sCalendarType) {
-		var aEras = mEras[sCalendarType];
+		var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
+			oLocaleData = LocaleData.getInstance(oLocale),
+			aEras = mEras[sCalendarType];
 		if (!aEras) {
 			// Get eras from localedata, parse it and add it to the array
-			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
-				oLocaleData = LocaleData.getInstance(oLocale),
-				aEras = oLocaleData.getEraDates(sCalendarType);
+			var aEras = oLocaleData.getEraDates(sCalendarType);
 			if (!aEras[0]) {
 				aEras[0] = {_start: "1-1-1"};
 			}
