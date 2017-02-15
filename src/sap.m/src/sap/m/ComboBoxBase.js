@@ -15,6 +15,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		 * @class
 		 * An abstract class for combo boxes.
 		 * @extends sap.m.ComboBoxTextField
+		 * @abstract
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -28,6 +29,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		var ComboBoxBase = ComboBoxTextField.extend("sap.m.ComboBoxBase", /** @lends sap.m.ComboBoxBase.prototype */ {
 			metadata: {
 				library: "sap.m",
+				"abstract": true,
 				defaultAggregation: "items",
 				aggregations: {
 
