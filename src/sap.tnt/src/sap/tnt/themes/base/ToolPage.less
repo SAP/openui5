@@ -7,17 +7,17 @@
    Variables and mixins
    ========================================================================== */
 
-@sapTntToolPageAsideWidth : 15rem;
-@sapTntToolPageAsideWidthOnTablet : 3rem;
-@sapTntToolPageHeaderHeight : 3rem;
-@sapTntToolPageFooterHeight : 3rem;
+@_sap_tnt_ToolPage_AsideWidth : 15rem;
+@_sap_tnt_ToolPage_AsideWidthOnTablet : 3rem;
+@_sap_tnt_ToolPage_HeaderHeight : 3rem;
+@_sap_tnt_ToolPage_FooterHeight : 3rem;
 
-@sapTntToolPageCompactAsideWidth : 15rem;
-@sapTntToolPageCompactAsideWidthOnTablet : 2rem;
-@sapTntToolPageCompactHeaderHeight : 3rem;
-@sapTntToolPageCompactFooterHeight : 2rem;
+@_sap_tnt_ToolPage_CompactAsideWidth : 15rem;
+@_sap_tnt_ToolPage_CompactAsideWidthOnTablet : 2rem;
+@_sap_tnt_ToolPage_CompactHeaderHeight : 3rem;
+@_sap_tnt_ToolPage_CompactFooterHeight : 2rem;
 
-@sapTntToolPageAnimationDuration : 0.3s;
+@_sap_tnt_ToolPage_AnimationDuration : 0.3s;
 
 .display-flex() {
   display: -webkit-box;
@@ -59,7 +59,7 @@
    Header
    ========================================================================== */
 .sapTntToolPageHeader {
-  height: @sapTntToolPageHeaderHeight;
+  height: @_sap_tnt_ToolPage_HeaderHeight;
 }
 
 /* ==========================================================================
@@ -90,24 +90,24 @@
 }
 
 .sapTntToolPageAsideFooter {
-  height: @sapTntToolPageFooterHeight;
+  height: @_sap_tnt_ToolPage_FooterHeight;
   overflow: hidden;
 }
 
 html:not([data-sap-ui-animation='off']) .sapTntToolPageMain {
-  -webkit-transition: padding-left @sapTntToolPageAnimationDuration, -webkit-transform @sapTntToolPageAnimationDuration; /* Safari */
-  transition: padding-left @sapTntToolPageAnimationDuration, transform @sapTntToolPageAnimationDuration;
+  -webkit-transition: padding-left @_sap_tnt_ToolPage_AnimationDuration, -webkit-transform @_sap_tnt_ToolPage_AnimationDuration; /* Safari */
+  transition: padding-left @_sap_tnt_ToolPage_AnimationDuration, transform @_sap_tnt_ToolPage_AnimationDuration;
 }
 
 html:not([data-sap-ui-animation='off']) .sapTntToolPageAside {
-  -webkit-transition: -webkit-transform @sapTntToolPageAnimationDuration; /* Safari */
-  transition: transform @sapTntToolPageAnimationDuration;
+  -webkit-transition: -webkit-transform @_sap_tnt_ToolPage_AnimationDuration; /* Safari */
+  transition: transform @_sap_tnt_ToolPage_AnimationDuration;
 }
 
 .sap-desktop,
 .sap-tablet {
   .sapTntToolPageAside {
-    width: @sapTntToolPageAsideWidth;
+    width: @_sap_tnt_ToolPage_AsideWidth;
     position: absolute;
     left: 0;
     bottom: 0;
@@ -116,7 +116,7 @@ html:not([data-sap-ui-animation='off']) .sapTntToolPageAside {
   }
 
   .sapTntToolPageMain {
-    padding-left: @sapTntToolPageAsideWidth;
+    padding-left: @_sap_tnt_ToolPage_AsideWidth;
   }
 }
 
@@ -124,18 +124,18 @@ html:not([data-sap-ui-animation='off']) .sapTntToolPageAside {
 .sap-tablet {
   .sapTntToolPageAsideCollapsed {
     .sapTntToolPageAside {
-      width: @sapTntToolPageAsideWidthOnTablet;
+      width: @_sap_tnt_ToolPage_AsideWidthOnTablet;
     }
 
     .sapTntToolPageMain {
-      padding-left: @sapTntToolPageAsideWidthOnTablet;
+      padding-left: @_sap_tnt_ToolPage_AsideWidthOnTablet;
     }
   }
 }
 
 .sap-phone {
   .sapTntToolPageAside {
-    width: @sapTntToolPageAsideWidth;
+    width: @_sap_tnt_ToolPage_AsideWidth;
     position: absolute;
     left: 0;
     bottom: 0;
@@ -144,14 +144,14 @@ html:not([data-sap-ui-animation='off']) .sapTntToolPageAside {
   }
 
   .sapTntToolPageMain {
-    -webkit-transform: translateX(@sapTntToolPageAsideWidth);
-    transform: translateX(@sapTntToolPageAsideWidth);
+    -webkit-transform: translateX(@_sap_tnt_ToolPage_AsideWidth);
+    transform: translateX(@_sap_tnt_ToolPage_AsideWidth);
   }
 
   .sapTntToolPageAsideCollapsed {
     .sapTntToolPageAside {
-      -webkit-transform: translateX(-@sapTntToolPageAsideWidth);
-      transform: translateX(-@sapTntToolPageAsideWidth);
+      -webkit-transform: translateX(-@_sap_tnt_ToolPage_AsideWidth);
+      transform: translateX(-@_sap_tnt_ToolPage_AsideWidth);
     }
     .sapTntToolPageMain {
       -webkit-transform: translateX(0);
@@ -186,7 +186,7 @@ html:not([data-sap-ui-animation='off']) .sapTntToolPageAside {
 }
 
 .sapTntToolPageMainFooter {
-  height: @sapTntToolPageFooterHeight;
+  height: @_sap_tnt_ToolPage_FooterHeight;
   overflow: hidden;
 }
 
@@ -194,26 +194,26 @@ html:not([data-sap-ui-animation='off']) .sapTntToolPageAside {
 .sapUiSizeCompact {
 
   .sapTntToolPageHeader {
-    height: @sapTntToolPageCompactHeaderHeight;
+    height: @_sap_tnt_ToolPage_CompactHeaderHeight;
   }
 
   .sapTntToolPageAsideFooter {
-    height: @sapTntToolPageCompactFooterHeight;
+    height: @_sap_tnt_ToolPage_CompactFooterHeight;
   }
 
   .sapTntToolPageMainFooter {
-    height: @sapTntToolPageCompactFooterHeight;
+    height: @_sap_tnt_ToolPage_CompactFooterHeight;
   }
 }
 
 .sap-desktop .sapUiSizeCompact,
 .sap-tablet .sapUiSizeCompact {
   .sapTntToolPageAside {
-    width: @sapTntToolPageCompactAsideWidth;
+    width: @_sap_tnt_ToolPage_CompactAsideWidth;
   }
 
   .sapTntToolPageMain {
-    padding-left: @sapTntToolPageCompactAsideWidth;
+    padding-left: @_sap_tnt_ToolPage_CompactAsideWidth;
   }
 }
 
@@ -221,11 +221,11 @@ html:not([data-sap-ui-animation='off']) .sapTntToolPageAside {
 .sap-tablet .sapUiSizeCompact {
   .sapTntToolPageAsideCollapsed {
     .sapTntToolPageAside {
-      width: @sapTntToolPageCompactAsideWidthOnTablet;
+      width: @_sap_tnt_ToolPage_CompactAsideWidthOnTablet;
     }
 
     .sapTntToolPageMain {
-      padding-left: @sapTntToolPageCompactAsideWidthOnTablet;
+      padding-left: @_sap_tnt_ToolPage_CompactAsideWidthOnTablet;
     }
   }
 }
@@ -233,18 +233,18 @@ html:not([data-sap-ui-animation='off']) .sapTntToolPageAside {
 .sap-phone .sapUiSizeCompact {
 
   .sapTntToolPageAside {
-    width: @sapTntToolPageCompactAsideWidth;
+    width: @_sap_tnt_ToolPage_CompactAsideWidth;
   }
 
   .sapTntToolPageMain {
-    -webkit-transform: translateX(@sapTntToolPageCompactAsideWidth);
-    transform: translateX(@sapTntToolPageCompactAsideWidth);
+    -webkit-transform: translateX(@_sap_tnt_ToolPage_CompactAsideWidth);
+    transform: translateX(@_sap_tnt_ToolPage_CompactAsideWidth);
   }
 
   .sapTntToolPageAsideCollapsed {
     .sapTntToolPageAside {
-      -webkit-transform: translateX(-@sapTntToolPageCompactAsideWidth);
-      transform: translateX(-@sapTntToolPageCompactAsideWidth);
+      -webkit-transform: translateX(-@_sap_tnt_ToolPage_CompactAsideWidth);
+      transform: translateX(-@_sap_tnt_ToolPage_CompactAsideWidth);
     }
     .sapTntToolPageMain {
       -webkit-transform: translateX(0);
@@ -260,14 +260,14 @@ html:not([data-sap-ui-animation='off']) .sapTntToolPageAside {
 html[dir=rtl] {
   &.sap-phone {
     .sapTntToolPageMain {
-      -webkit-transform: translateX(-@sapTntToolPageAsideWidth);
-      transform: translateX(-@sapTntToolPageAsideWidth);
+      -webkit-transform: translateX(-@_sap_tnt_ToolPage_AsideWidth);
+      transform: translateX(-@_sap_tnt_ToolPage_AsideWidth);
     }
 
     .sapTntToolPageAsideCollapsed {
       .sapTntToolPageAside {
-        -webkit-transform: translateX(@sapTntToolPageAsideWidth);
-        transform: translateX(@sapTntToolPageAsideWidth);
+        -webkit-transform: translateX(@_sap_tnt_ToolPage_AsideWidth);
+        transform: translateX(@_sap_tnt_ToolPage_AsideWidth);
       }
       .sapTntToolPageMain {
         -webkit-transform: translateX(0);
@@ -278,14 +278,14 @@ html[dir=rtl] {
 
   &.sap-phone .sapUiSizeCompact {
     .sapTntToolPageMain {
-      -webkit-transform: translateX(-@sapTntToolPageCompactAsideWidth);
-      transform: translateX(-@sapTntToolPageCompactAsideWidth);
+      -webkit-transform: translateX(-@_sap_tnt_ToolPage_CompactAsideWidth);
+      transform: translateX(-@_sap_tnt_ToolPage_CompactAsideWidth);
     }
 
     .sapTntToolPageAsideCollapsed {
       .sapTntToolPageAside {
-        -webkit-transform: translateX(@sapTntToolPageCompactAsideWidth);
-        transform: translateX(@sapTntToolPageCompactAsideWidth);
+        -webkit-transform: translateX(@_sap_tnt_ToolPage_CompactAsideWidth);
+        transform: translateX(@_sap_tnt_ToolPage_CompactAsideWidth);
       }
       .sapTntToolPageMain {
         -webkit-transform: translateX(0);
