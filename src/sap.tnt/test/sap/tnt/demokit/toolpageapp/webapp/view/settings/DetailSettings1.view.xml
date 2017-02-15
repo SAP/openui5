@@ -11,15 +11,17 @@
 		id="objectPageLayout">
 
 		<headerTitle>
-			<ObjectPageHeader>
+			<ObjectPageHeader objectTitle="{i18n>shopTitle}">
 				<actions>
 					<ObjectPageHeaderActionButton
+						class="sapUiTinyMarginTop"
 						id="save"
 						text="{i18n>save}"
 						hideText="false"
 						press="onSavePressed"
 						type="Emphasized"/>
 					<ObjectPageHeaderActionButton
+						class="sapUiTinyMarginTop"
 						id="cancel"
 						text="{i18n>cancel}"
 						press="onCancelPressed"
