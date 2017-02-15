@@ -8,6 +8,12 @@ html.sap-desktop .sapMObjectAttributeActive:focus > .sapMText {
 	outline-offset: -1px;
 }
 
+html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
+	.sapMObjectAttributeActive:focus > .sapMText {
+		outline-style: dashed;
+	}
+}
+
 /*=========================================== */
 /* Custom design for Responsive Object Header */
 /*=========================================== */
