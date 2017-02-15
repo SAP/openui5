@@ -741,19 +741,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	 * @returns {sap.m.Popover}
 	 * @private
 	 */
-	MultiComboBox.prototype.createPopover = function() {
-		var oPopup = new Popover({
-			showArrow: false,
-			placement: sap.m.PlacementType.Vertical,
-			offsetX: 0,
-			offsetY: 0,
-			initialFocus: this,
-			bounce: false,
-			ariaLabelledBy: this.getPickerInvisibleTextId() || undefined
-		});
-
-		this._decoratePopover(oPopup);
-		return oPopup;
+	MultiComboBox.prototype.createDropdown = function() {
+		var oDropdown = new Popover(this.getDropdownSettings());
+		oDropdown.setInitialFocus(this);
+		this._decoratePopover(oDropdown);
+		return oDropdown;
 	};
 
 	MultiComboBox.prototype.createDialog = function () {
@@ -761,7 +753,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 			oSelectAllButton = this._createFilterSelectedButton();
 
 		oDialog.getSubHeader().addContent(oSelectAllButton);
-
 		return oDialog;
 	};
 
@@ -2386,7 +2377,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 
 		// determines if value of the combobox should be empty string after popup's close
 		this._bPreventValueRemove = false;
-		this.setPickerType(sap.ui.Device.system.phone ? "Dialog" : "Popover");
+		this.setPickerType(sap.ui.Device.system.phone ? "Dialog" : "Dropdown");
 		this._oTokenizer = this._createTokenizer();
 		this._aCustomerKeys = [];
 		this._aInitiallySelectedItems = [];

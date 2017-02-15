@@ -287,22 +287,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype.createDropdown = function() {
 			var that = this;
-			var oPicker = new Popover({
-				placement: sap.m.PlacementType.VerticalPreferredBottom,
-				offsetX: 0,
-				offsetY: 0,
-				bounce: false,
-				showArrow: false,
-				ariaLabelledBy: this.getPickerInvisibleTextId() || undefined
-			});
-
-			oPicker.setInitialFocus(this.isPlatformTablet() ? oPicker : this);
-
-			oPicker.open = function() {
+			var oDropdown = new Popover(this.getDropdownSettings());
+			oDropdown.setInitialFocus(this.isPlatformTablet() ? oDropdown : this);
+			oDropdown.open = function() {
 				return this.openBy(that);
 			};
 
-			return oPicker;
+			return oDropdown;
 		};
 
 		/**
