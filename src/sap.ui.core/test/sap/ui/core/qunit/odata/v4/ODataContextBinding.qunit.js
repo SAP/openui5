@@ -71,6 +71,8 @@ sap.ui.require([
 		assert.ok(oBinding.hasOwnProperty("mQueryOptions"));
 		assert.ok(oBinding.hasOwnProperty("sRefreshGroupId"));
 		assert.ok(oBinding.hasOwnProperty("sUpdateGroupId"));
+
+		assert.strictEqual(oBinding.aChildCanUseCachePromises.length, 0);
 	});
 
 	//*********************************************************************************************
@@ -1592,7 +1594,7 @@ sap.ui.require([
 		oBinding = this.oModel.bindContext("foo", undefined, {"$expand" : "bar"});
 
 		// code under test
-		assert.deepEqual(oBinding.doFetchQueryOptions().getResult(), {"$expand" : {"bar" : null}});
+		assert.deepEqual(oBinding.doFetchQueryOptions().getResult(), {"$expand" : {"bar" : {}}});
 	});
 
 	//*********************************************************************************************

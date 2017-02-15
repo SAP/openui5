@@ -524,8 +524,8 @@ sap.ui.define([
 	 * Hook method for {@link ODataBinding#fetchUseOwnCache} to determine the query options for
 	 * this binding.
 	 *
-	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context instance to be used, must be undefined for absolute bindings
+	 * @param {sap.ui.model.Context} oContext
+	 *   The context instance to be used
 	 * @returns {SyncPromise}
 	 *   A promise resolving with the binding's query options
 	 *

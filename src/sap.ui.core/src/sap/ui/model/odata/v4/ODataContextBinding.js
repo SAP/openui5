@@ -132,6 +132,9 @@ sap.ui.define([
 				this.mCacheByContext = undefined;
 				this.sGroupId = undefined;
 				this.oOperation = undefined;
+				// auto-$expand/$select: promises to wait until child bindings have provided
+				// their path and query options
+				this.aChildCanUseCachePromises = [];
 				this.sRefreshGroupId = undefined;
 				this.sUpdateGroupId = undefined;
 

@@ -1113,7 +1113,7 @@ sap.ui.require([
 	// Scenario: Enable autoExpandSelect mode for an ODataContextBinding with relative
 	// ODataPropertyBindings
 	// The SalesOrders application does not have such a scenario.
-	QUnit.test("Auto-mode: Absolute ODCB with relative ODPB", function (assert) {
+	QUnit.test("Auto-$expand/$select: Absolute ODCB with relative ODPB", function (assert) {
 		var sView = '\
 <form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE,ROOM_ID\'}}">\
 	<Text id="name" text="{Name}" />\
@@ -1137,7 +1137,7 @@ sap.ui.require([
 	// Scenario: Enable autoExpandSelect mode for an ODataContextBinding with relative
 	// ODataPropertyBindings. Refreshing the view is also working.
 	// The SalesOrders application does not have such a scenario.
-	QUnit.test("Auto-mode: Absolute ODCB, refresh", function (assert) {
+	QUnit.test("Auto-$expand/$select: Absolute ODCB, refresh", function (assert) {
 		var sView = '\
 <form:SimpleForm id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE\'}}">\
 	<Text id="name" text="{Name}" />\
@@ -1337,6 +1337,85 @@ sap.ui.require([
 				.setBindingContext(oModel.getContext("/Equipments/EQUIPMENT_2_PRODUCT"));
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Enable autoExpandSelect mode for an ODataContextBinding with relative
+	// ODataPropertyBindings where the paths of the relative bindings lead to a $expand
+	// The SalesOrders application does not have such a scenario.
+	QUnit.test("Auto-$expand/$select: Absolute ODCB with relative ODPB, $expand required",
+			function (assert) {
+		var sView = '\
+<form:SimpleForm id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\',\
+			parameters : {\
+				$expand : {\
+					EMPLOYEE_2_TEAM : {$select : \'Team_Id\'}\
+				},\
+				$select : \'AGE\'\
+			}\
+		}">\
+	<Text id="name" text="{EMPLOYEE_2_TEAM/Name}" />\
+	<Text id="TEAM_ID" text="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/TEAM_ID}" />\
+</form:SimpleForm>';
+
+		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_TEAM"
+					+ "($select=Team_Id,Name;$expand=TEAM_2_MANAGER($select=TEAM_ID))&$select=AGE",
+				{
+					"AGE": 32,
+					"EMPLOYEE_2_TEAM": {
+						"Name": "SAP NetWeaver Gateway Content",
+						"Team_Id": "TEAM_03",
+						"TEAM_2_MANAGER" : {
+							"TEAM_ID" : "TEAM_03"
+						}
+					}
+				})
+			.expectChange("name", "SAP NetWeaver Gateway Content")
+			.expectChange("TEAM_ID", "TEAM_03")
+// TODO unexpected changes
+			.expectChange("name", "SAP NetWeaver Gateway Content")
+			.expectChange("TEAM_ID", "TEAM_03");
+
+		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
+	});
+
+	//*********************************************************************************************
+	// Scenario: Enable autoExpandSelect mode for nested ODataContextBindings
+	// The SalesOrders application does not have such a scenario.
+	QUnit.test("Auto-$expand/$select: Nested ODCB",
+			function (assert) {
+		var sView = '\
+<form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\',\
+			parameters : {\
+				$expand : {\
+					EMPLOYEE_2_MANAGER : {$select : \'ID\'}\
+				},\
+				$select : \'AGE\'\
+			}\
+		}">\
+	<form:SimpleForm binding="{EMPLOYEE_2_TEAM}">\
+		<Text id="name" text="{Name}" />\
+	</form:SimpleForm>\
+</form:SimpleForm>';
+
+//TODO Check dependent binding's query options are considered:
+//  ...EMPLOYEE_2_TEAM... -> ...EMPLOYEE_2_TEAM($select=Name)...
+		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER"
+					+ "($select=ID),EMPLOYEE_2_TEAM&$select=AGE",
+				{
+					"AGE": 32,
+					"EMPLOYEE_2_MANAGER": {
+						"ID": "2"
+					},
+					"EMPLOYEE_2_TEAM": {
+						"Name": "SAP NetWeaver Gateway Content"
+					}
+				})
+			.expectChange("name", "SAP NetWeaver Gateway Content")
+// TODO unexpected changes
+			.expectChange("name", "SAP NetWeaver Gateway Content");
+
+		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
 	});
 	//TODO $batch?
 	//TODO test bound action

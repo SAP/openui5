@@ -921,12 +921,11 @@ sap.ui.require([
 		}, new Error("Unsupported value for binding parameter '$$updateGroupId': ~invalid"));
 	});
 
-	//*********************************************************************************************
 	[{
-		mOptions : {"$expand" : {"foo" : null}, "$select" : ["bar"], "custom" : "baz"},
+		mParameters : {"$expand" : {"foo" : {}}, "$select" : ["bar"], "custom" : "baz"},
 		bSystemQueryOptionsAllowed : true
 	}, {
-		mOptions : {
+		mParameters : {
 			"$apply" : "apply",
 			"$count" : true,
 			"$filter" : "foo eq 42",
@@ -935,22 +934,71 @@ sap.ui.require([
 		},
 		bSystemQueryOptionsAllowed : true
 	}, {
-		mOptions : {"custom" : "foo"}
+		mParameters : {"custom" : "foo"}
 	}, {
-		mOptions : undefined
+		mParameters : undefined
 	}, {
-		mOptions : {"sap-client" : "111"},
+		mParameters : {"sap-client" : "111"},
 		bSapAllowed : true
-	}].forEach(function (o) {
-		QUnit.test("buildQueryOptions success " + JSON.stringify(o), function (assert) {
+	},{
+		mParameters : {
+			$expand : { "TEAM_2_MANAGER" : {} },
+			$select : "bar"
+		},
+		bSystemQueryOptionsAllowed : true,
+		expected : {
+			$expand : { "TEAM_2_MANAGER" : {} },
+			$select : ["bar"]
+		}
+	}, {
+		mParameters : {
+			$expand : { "TEAM_2_MANAGER" : {
+				$expand : "TEAM_2_EMPLOYEES($select=Name)",
+				$select : "Team_Id"
+			}}
+		},
+		bSystemQueryOptionsAllowed : true,
+		expected : {
+			$expand : { "TEAM_2_MANAGER" : {
+				$expand : {
+					TEAM_2_EMPLOYEES : {
+						$select : ["Name"]
+					}
+				},
+				$select : ["Team_Id"]
+			}}
+		}
+	}, {
+		mParameters : {
+			$expand : {
+				"TEAM_2_MANAGER" : true,
+				"TEAM_2_EMPLOYEES" : null,
+				"FOO1" : 42,
+				"FOO2" : false
+//TODO undefined values are removed by jQuery.extend, but should also be normalized to {}
+				//"FOO3" : undefined
+			}
+		},
+		bSystemQueryOptionsAllowed : true,
+		expected : {
+			$expand : {
+				"TEAM_2_MANAGER" : {},
+				"TEAM_2_EMPLOYEES" : {},
+				"FOO1" : {},
+				"FOO2" : {}
+//				"FOO3" : {}
+			}
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("buildQueryOptions success " + JSON.stringify(oFixture), function (assert) {
 			var mOptions,
-				mOriginalOptions = clone(o.mOptions);
+				mOriginalParameters = clone(oFixture.mParameters);
 
-			mOptions = ODataModel.prototype.buildQueryOptions(o.mOptions,
-				o.bSystemQueryOptionsAllowed, o.bSapAllowed);
+			mOptions = ODataModel.prototype.buildQueryOptions(oFixture.mParameters,
+				oFixture.bSystemQueryOptionsAllowed, oFixture.bSapAllowed);
 
-			assert.deepEqual(mOptions, jQuery.extend({}, o.mOptions));
-			assert.deepEqual(o.mOptions, mOriginalOptions);
+			assert.deepEqual(mOptions, oFixture.expected || oFixture.mParameters || {});
+			assert.deepEqual(oFixture.mParameters, mOriginalParameters, "unchanged");
 		});
 	});
 
@@ -961,7 +1009,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("buildQueryOptions: parse system query options", function (assert) {
-		var oExpand = {"foo" : true},
+		var oExpand = {"foo" : null},
 			oParserMock = this.mock(_Parser),
 			aSelect = ["bar"];
 
