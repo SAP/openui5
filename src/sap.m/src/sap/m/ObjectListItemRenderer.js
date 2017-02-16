@@ -103,9 +103,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		};
 
 		ObjectListItemRenderer.renderLIContent = function(rm, oLI) {
-			var sTitleDir = oLI.getTitleTextDirection(),
-				sIntroDir = oLI.getIntroTextDirection(),
-				sNumberDir = oLI.getNumberTextDirection();
+			var oObjectNumberAggregation = oLI.getAggregation("_objectNumber"),
+				sTitleDir = oLI.getTitleTextDirection(),
+				sIntroDir = oLI.getIntroTextDirection();
 
 			// Introductory text at the top of the item, like "On behalf of Julie..."
 			if (oLI.getIntro()) {
@@ -149,31 +149,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.writeClasses();
 			rm.write(">");
 
-			if (oLI.getNumber()) {
-				rm.write("<div");
-				rm.writeAttribute("id", oLI.getId() + "-number");
-				rm.addClass("sapMObjLNumber");
-				rm.addClass("sapMObjLNumberState" + oLI.getNumberState());
-				rm.writeClasses();
-				//sets the dir attribute to "rtl" or "ltr" if a direction
-				//for the number text is provided explicitly
-				if (sNumberDir !== sap.ui.core.TextDirection.Inherit) {
-					rm.writeAttribute("dir", sNumberDir.toLowerCase());
-				}
-				rm.write(">");
-				rm.writeEscaped(oLI.getNumber());
-				rm.write("</div>");
-
-				if (oLI.getNumberUnit()) {
-					rm.write("<div");
-					rm.writeAttribute("id", oLI.getId() + "-numberUnit");
-					rm.addClass("sapMObjLNumberUnit");
-					rm.addClass("sapMObjLNumberState" + oLI.getNumberState());
-					rm.writeClasses();
-					rm.write(">");
-					rm.writeEscaped(oLI.getNumberUnit());
-					rm.write("</div>");
-				}
+			if (oObjectNumberAggregation) {
+				rm.renderControl(oObjectNumberAggregation);
 			}
 
 			rm.write("</div>"); // End Number/units container
@@ -255,11 +232,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			}
 
 			if (oLI.getNumber()) {
-				aLabelledByIds.push(oLI.getId() + "-number");
-			}
-
-			if (oLI.getNumberUnit()) {
-				aLabelledByIds.push(oLI.getId() + "-numberUnit");
+				aLabelledByIds.push(oLI.getId() + "-ObjectNumber");
 			}
 
 			if (oLI.getAttributes()) {
