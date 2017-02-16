@@ -66,7 +66,9 @@ sap.ui.define([
 						source : "GetEmployeeMaxAge.json"
 					},
 					"$metadata" : {source : "metadata.xml"},
-					"TEAMS?$expand=TEAM_2_EMPLOYEES($expand=EMPLOYEE_2_EQUIPMENTS;$orderby=LOCATION/City/CITYNAME),TEAM_2_MANAGER&$skip=0&$top=100" : {
+					"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata" : {source : "metadata_product.xml"},
+					"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_supplier/0001/$metadata" : {source : "metadata_supplier.xml"},
+					"TEAMS?$expand=TEAM_2_EMPLOYEES($expand=EMPLOYEE_2_EQUIPMENTS($expand=EQUIPMENT_2_PRODUCT($expand=PRODUCT_2_CATEGORY,PRODUCT_2_SUPPLIER));$orderby=LOCATION/City/CITYNAME),TEAM_2_MANAGER&$skip=0&$top=100" : {
 						source : "TEAMS.json"
 					},
 					"TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=0&$top=1" : {

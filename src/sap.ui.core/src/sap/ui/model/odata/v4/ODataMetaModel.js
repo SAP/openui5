@@ -496,7 +496,7 @@ sap.ui.define([
 			 * Fetches the key predicate for the absolute path from aSegments[0..iLength] using the
 			 * context.
 			 * @param {number} iLength The path length
-			 * @returns {SyncPromise} a Promise on the key predicate for that path
+			 * @returns {SyncPromise} A Promise on the key predicate for that path
 			 */
 			function fetchKeyPredicate(iLength) {
 				var sSubPath = aSegments.slice(0, iLength).join("/");
@@ -509,9 +509,9 @@ sap.ui.define([
 			/*
 			 * Calculates the key predicate using oEntityType and the given entity instance. Logs
 			 * an error if calculating the key predicate failed.
-			 * @param {object} oEntityInstance the entity instance
+			 * @param {object} oEntityInstance The entity instance
 			 * @param {string} [sPath] An optional path for error messages
-			 * @returns {string} the key predicate
+			 * @returns {string} The key predicate
 			 */
 			function keyPredicate(oEntityInstance, sPath) {
 				try {
@@ -725,6 +725,18 @@ sap.ui.define([
 			}
 
 			/*
+			 * Tells whether the given object is "thenable".
+			 *
+			 * @param {object} [o]
+			 *   Any object
+			 * @returns {boolean}
+			 *   <code>true</code> iff. an object is given which has a method called "then"
+			 */
+			function isThenable(o) {
+				return o && typeof o.then === "function";
+			}
+
+			/*
 			 * Outputs a log message for the given level. Leads to an <code>undefined</code> result.
 			 *
 			 * @param {jQuery.sap.log.Level} iLevel
@@ -762,10 +774,71 @@ sap.ui.define([
 			 *   Whether to continue after scope lookup
 			 */
 			function scopeLookup(sQualifiedName, sPropertyName) {
+				var aIncludes, // list of namespaces to include
+					sNamespace,
+					sReferenceUri,
+					sUrl;
+
+				/*
+				 * Include all schemas from the given referenced scope.
+				 *
+				 * @param {object} mReferencedScope
+				 *   The metadata "JSON"
+				 */
+				function include(mReferencedScope) {
+					var sKey;
+
+					// api.jquery.com/jquery.extend says
+					// "Arguments that are null or undefined are ignored."
+					jQuery.extend(mScope.$Reference, mReferencedScope.$Reference);
+
+					for (sKey in mReferencedScope) {
+						// $Version, $EntityContainer can be ignored
+						if (sKey[0] !== "$" && aIncludes.indexOf(namespace(sKey)) >= 0) {
+							mScope[sKey] = mReferencedScope[sKey];
+						}
+					}
+				}
+
+				/*
+				 * Returns the namespace of the given qualified name, including the trailing dot.
+				 *
+				 * @param {string} sQualifiedName
+				 *   A qualified name
+				 * @returns {string}
+				 *   The namespace
+				 */
+				function namespace(sQualifiedName) {
+					return sQualifiedName.slice(0, sQualifiedName.lastIndexOf(".") + 1);
+				}
+
 				if (!(sQualifiedName in mScope)) {
+					// unknown qualified name, maybe namespace is referenced and can be included?
+					// Note: namespace incl. trailing dot
+					sNamespace = namespace(sQualifiedName);
+					// Note: for-in tolerates undefined
+					for (sReferenceUri in mScope.$Reference) {
+						aIncludes = mScope.$Reference[sReferenceUri].$Include;
+						if (aIncludes.indexOf(sNamespace) >= 0) {
+							vResult = mScope.$Reference[sReferenceUri]["$ui5.read"];
+							if (!vResult) {
+								// interpret reference URI relative to metadata URL
+								sUrl = new URI(sReferenceUri).absoluteTo(that.sUrl).toString();
+								vResult = mScope.$Reference[sReferenceUri]["$ui5.read"]
+									= _SyncPromise.resolve(
+										that.oRequestor.read(sUrl).then(include));
+							} else if (vResult.isFulfilled()) {
+								log(WARNING, "'", sReferenceUri, "' does not contain '",
+									sQualifiedName, "'");
+							}
+							return false;
+						}
+					}
+
 					vLocation = vLocation || sTarget && sTarget + "/" + sPropertyName;
 					return log(WARNING, "Unknown qualified name '", sQualifiedName, "'");
 				}
+
 				sTarget = sName = sSchemaChildName = sQualifiedName;
 				vResult = oSchemaChild = mScope[sSchemaChildName];
 				return true;
@@ -958,6 +1031,12 @@ sap.ui.define([
 			}
 
 			steps(sResolvedPath.slice(1));
+
+			if (isThenable(vResult)) {
+				vResult = vResult.then(function () {
+					return that.fetchObject(sPath, oContext, mParameters);
+				});
+			}
 
 			return vResult;
 		});
