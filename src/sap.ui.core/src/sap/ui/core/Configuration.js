@@ -231,25 +231,6 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 			/* TODO: RETHINK server wide sapui5 configuration to make it optional
 					 currently it is forcing a request which is annoying customers :
 					   - Think about an option which enables loading of server wide config!
-			var sUrl = "/sap-ui-config.json";
-			var oResponse = jQuery.sap.sjax({url:sUrl});
-			if (oResponse.success) {
-				var oServerCfg = {};
-				if (typeof oResponse.data == "string") {
-					try {
-						oServerCfg = jQuery.parseJSON(oResponse.data);
-					} catch(ex) {
-						jQuery.sap.log.warning("Error when parsing the JSON configuration content from " + sUrl + " : " + ex);
-					}
-				} else {
-					oServerCfg = oResponse.data;
-				}
-				for (var n in M_SETTINGS) {
-					if (oServerCfg[n]) {
-						setValue(n, oServerCfg[n]);
-					}
-				}
-			}
 			 */
 
 			// 3.-5. apply settings from global config object (already merged with script tag attributes)

@@ -17,51 +17,44 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 				if (o && window.JSON) {
 					return window.JSON.stringify(o);
 				}
-				if ( o === "" ) {
+				if (o === "") {
 					return '""';
 				}
 				return "" + o + (o ? "???" : "");
 			}
 
-			function list(o,prefix) {
+			function list(o, prefix) {
 				prefix = prefix || '';
-				if ( !prefix ) {
+				if (!prefix) {
 					html.push("<table border='0' cellspacing='0' cellpadding='0'>");
 				}
-				jQuery.each(o, function(i,v) {
-					if ( !v || typeof v === 'string' || typeof v === 'number' || v instanceof Date ) {
+				jQuery.each(o, function(i, v) {
+					if (!v || typeof v === 'string' || typeof v === 'number' || v instanceof Date) {
 						html.push("<tr><td>", prefix, "<b>", jQuery.sap.encodeHTML(serialize(i)), "</b></td><td>", jQuery.sap.encodeHTML(serialize(v)), "</td></tr>");
 					} else {
 						html.push("<tr><td>", prefix, "<b>", jQuery.sap.encodeHTML(serialize(i)), "</b></td><td></td></tr>");
 						list(v, prefix + "&nbsp;&nbsp;");
 					}
 				});
-				if ( !prefix) {
+				if (!prefix) {
 					html.push("</table>");
 				}
 			}
 
-			if ( this._oPopup && this._oPopup.isOpen() ) {
+			if (this._oPopup && this._oPopup.isOpen()) {
 				return;
 			}
 
 			var ojQSData = this._ojQSData = callback() || {};
 
-			var bCT = false,bLV = false,bEmbedded = true;
+			var bCT = false, bLV = false, bEmbedded = true;
 			this._DebugEnv = sap.ui.require("sap/ui/debug/DebugEnv");
-			if ( this._DebugEnv ) {
+			if (this._DebugEnv) {
 				bCT = this._DebugEnv.getInstance().isControlTreeShown();
 				bLV = this._DebugEnv.getInstance().isTraceWindowShown();
 				bEmbedded = this._DebugEnv.getInstance().isRunningEmbedded();
 			}
-			var sDCUrl = "/sapui5-internal/download/index.jsp";
-			var bDC = jQuery.sap.syncHead(sDCUrl);
-			var sOUUrl = "/sapui5-sdk-dist/optimize-module-set";
-			var bOU = jQuery.sap.syncHead(sOUUrl);
-			if ( !bOU ) {
-				sOUUrl = "/demokit/optimize-module-set";
-				bOU = jQuery.sap.syncHead(sOUUrl);
-			}
+
 			var vDebugInfo = window["sap-ui-debug"];
 			var bUseStatistics = jQuery.sap.statistics();
 			var html = [];
@@ -83,54 +76,36 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 			html.push("<tr><td align='right' valign='top'><b>Loaded Modules</b></td><td><div id='sap-ui-techinfo-modules' class='sapUiTInfMList'>");
 			this._renderModules(html, 20);
 			html.push("</div></td></tr>");
-			if ( bDC ) {
-				html.push("<tr><td></td><td><a id=\"sap-ui-techinfo-customModule\" href=\"" + sDCUrl + "\">Create Custom Bootstrap Module</a></td></tr>");
-			}
-			if ( bOU ) {
-				html.push("<tr><td></td><td><a id=\"sap-ui-techinfo-optimizeModuleSet\" href=\"" + sOUUrl + "\">Calculate Optimized Module Set URL</a></td></tr>");
-			}
 
 			html.push("<tr><td align='right' valign='top' rowSpan='8'><b>Debug Tools</b></td>");
 			html.push("<td><input id='sap-ui-techinfo-useDbgSources' type='checkbox'",
-					vDebugInfo ? " checked='checked'" : "",
-					'>Use <span id="sap-ui-techinfo-cfgDbgSources" class="sapUiTInfPCfg" title="Click to select packages / modules with debug sources">Debug Sources</span> (requires page reload)</td></tr>');
+				vDebugInfo ? " checked='checked'" : "",
+				'>Use <span id="sap-ui-techinfo-cfgDbgSources" class="sapUiTInfPCfg" title="Click to select packages / modules with debug sources">Debug Sources</span> (requires page reload)</td></tr>');
 			html.push("<tr><td>Boot app with different UI5 version on next reload:</td></tr>");
 			html.push("<tr><td style='padding-left: 2rem'><select id='sap-ui-techinfo-reboot-select' style='width: 100%;'>",
-					"<option value='none'>Disabled (no custom reboot URL)</option>",
-					"<option value='other' id='sap-ui-techinfo-reboot-other'>Other (enter URL to sap-ui-core.js below):</option>",
-					"</select></td></tr>");
+				"<option value='none'>Disabled (no custom reboot URL)</option>",
+				"<option value='other' id='sap-ui-techinfo-reboot-other'>Other (enter URL to sap-ui-core.js below):</option>",
+				"</select></td></tr>");
 			html.push("<tr><td style='padding-left: 2rem'><input type='text' id='sap-ui-techinfo-reboot-input' style='width: 357px;' disabled='disabled'/>",
-					"<button id='sap-ui-techinfo-reboot'>Activate Reboot URL</button></td></tr>");
+				"<button id='sap-ui-techinfo-reboot'>Activate Reboot URL</button></td></tr>");
 			html.push("<tr><td><input id='sap-ui-techinfo-showControls' type='checkbox'",
-					bCT ? " checked='checked'" : "",
-					bEmbedded ? "" : " readonly='readonly'",
-					"/><span ",
-					bEmbedded ? "" : " style='color:grey'",
-					">Show UIAreas, Controls and Properties</span></td></tr>");
+				bCT ? " checked='checked'" : "",
+				bEmbedded ? "" : " readonly='readonly'",
+				"/><span ",
+				bEmbedded ? "" : " style='color:grey'",
+				">Show UIAreas, Controls and Properties</span></td></tr>");
 			html.push("<tr><td><input id='sap-ui-techinfo-showLogViewer' type='checkbox' ",
-					bLV ? " checked='checked'" : "",
-					bEmbedded ? "" : " readonly='readonly' style='color:grey'",
-					"/><span ",
-					bEmbedded ? "" : " style='color:grey'",
-					">Show Log Viewer</span></td></tr>");
+				bLV ? " checked='checked'" : "",
+				bEmbedded ? "" : " readonly='readonly' style='color:grey'",
+				"/><span ",
+				bEmbedded ? "" : " style='color:grey'",
+				">Show Log Viewer</span></td></tr>");
 			html.push("<tr><td><input id='sap-ui-techinfo-useStatistics' type='checkbox' ",
-					bUseStatistics ? " checked='checked'" : "",
-					"/><span ",
-					">Enable SAP-statistics for oData calls</span></td></tr>");
+				bUseStatistics ? " checked='checked'" : "",
+				"/><span ",
+				">Enable SAP-statistics for oData calls</span></td></tr>");
 			html.push("<tr><td colspan='2' align='center' valign='bottom' height='40'><button id='sap-ui-techinfo-close' class='sapUiBtn sapUiBtnS sapUiBtnNorm sapUiBtnStd'>Close</button></td></tr>");
 			html.push("</table>");
-			if ( bDC ) {
-				html.push("<form id=\"sap-ui-techinfo-submit\" target=\"_blank\" method=\"post\" action=\"" + sDCUrl + "\">");
-				html.push("<input type=\"hidden\" name=\"modules\"/>");
-				html.push("</form>");
-			}
-			if ( bOU ) {
-				html.push("<form id=\"sap-ui-techinfo-optimize-submit\" target=\"_blank\" method=\"post\" action=\"" + sOUUrl + "\">");
-				html.push("<input type=\"hidden\" name=\"version\"/>");
-				html.push("<input type=\"hidden\" name=\"libs\"/>");
-				html.push("<input type=\"hidden\" name=\"modules\"/>");
-				html.push("</form>");
-			}
 			html.push("</div>");
 			this._$Ref = jQuery(html.join(""));
 			this._$Ref.find('#sap-ui-techinfo-useDbgSources').click(this.onUseDbgSources.bind(this));
