@@ -3,10 +3,10 @@
 /* Base theme                                  */
 /* =========================================== */
 
-@sapUiUfdShellBrandHeight: 4px;
-@sapUiUfdShellHeaderBarHeight: 44px;
-@sapUiUfdShellHeadHeight: @sapUiUfdShellBrandHeight + @sapUiUfdShellHeaderBarHeight;
-@sapUiUfdShellAnimDuration: 500ms; /*Duration of the transitions (must be defined in ms)*/
+@_sap_ui_unified_ShellLayout_BrandHeight: 4px;
+@_sap_ui_unified_ShellLayout_HeaderBarHeight: 44px;
+@_sap_ui_unified_ShellLayout_HeadHeight: @_sap_ui_unified_ShellLayout_BrandHeight + @_sap_ui_unified_ShellLayout_HeaderBarHeight;
+@_sap_ui_unified_ShellLayout_AnimDuration: 500ms; /*Duration of the transitions (must be defined in ms)*/
 
 .sapUiUfdShellBG {
 	position: absolute;
@@ -49,8 +49,8 @@
 .sapUiUfdShellAnim .sapUiUfdShellHead > div,
 .sapUiUfdShellAnim .sapUiUfdShellCurtain,
 .sapUiUfdShellAnim .sapUiUfdShellCanvas {
-	-webkit-transition-duration: @sapUiUfdShellAnimDuration;
-	transition-duration: @sapUiUfdShellAnimDuration;
+	-webkit-transition-duration: @_sap_ui_unified_ShellLayout_AnimDuration;
+	transition-duration: @_sap_ui_unified_ShellLayout_AnimDuration;
 }
 
 .sapUiUfdShellAnim .sapUiUfdShellCanvas {
@@ -91,7 +91,7 @@
 .sapUiUfdShellBrand {
 	position: absolute;
 	top: 0;
-	height: @sapUiUfdShellBrandHeight;
+	height: @_sap_ui_unified_ShellLayout_BrandHeight;
 	left: 0;
 	right: 0;
 	border: medium none;
@@ -106,8 +106,8 @@
 
 .sapUiUfdShellHead {
 	position: absolute;
-	top: @sapUiUfdShellBrandHeight;
-	height: @sapUiUfdShellHeaderBarHeight;
+	top: @_sap_ui_unified_ShellLayout_BrandHeight;
+	height: @_sap_ui_unified_ShellLayout_HeaderBarHeight;
 	left: 0;
 	right: 0;
 	z-index: 3;
@@ -121,7 +121,7 @@
 .sapUiUfdShellHead > div {
 	position: absolute;
 	top: 0;
-	height: @sapUiUfdShellHeaderBarHeight;
+	height: @_sap_ui_unified_ShellLayout_HeaderBarHeight;
 	left: 0;
 	right: 0;
 	overflow: hidden;
@@ -129,14 +129,14 @@
 }
 
 .sapUiUfdShell.sapUiUfdShellHeadHidden .sapUiUfdShellHead {
-	top: -@sapUiUfdShellHeaderBarHeight;
+	top: -@_sap_ui_unified_ShellLayout_HeaderBarHeight;
 }
 
 
 /* Canvas / Curtain */
 
 .sapUiUfdShellCanvas {
-	top: @sapUiUfdShellHeadHeight;
+	top: @_sap_ui_unified_ShellLayout_HeadHeight;
 }
 
 .sapUiUfdShell.sapUiUfdShellNoHead > .sapUiUfdShellCanvas {
@@ -149,12 +149,12 @@
 }
 
 .sapUiUfdShell.sapUiUfdShellHeadHidden .sapUiUfdShellCanvas {
-	top: @sapUiUfdShellBrandHeight;
+	top: @_sap_ui_unified_ShellLayout_BrandHeight;
 }
 
 .sapUiUfdShellCurtain > .sapUiUfdShellCntnt {
 	overflow: auto;
-	top: @sapUiUfdShellHeadHeight;
+	top: @_sap_ui_unified_ShellLayout_HeadHeight;
 	-webkit-overflow-scrolling: touch;
 }
 
