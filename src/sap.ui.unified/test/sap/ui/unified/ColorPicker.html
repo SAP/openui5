@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>ColorPicker - sap.ui.unified</title>
+	<script src="shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-libs="sap.m, sap.ui.unified, sap.ui.layout"
+			src="../../../../resources/sap-ui-core.js">
+	</script>
+	<script>
+
+		sap.ui.getCore().attachInit(function () {
+
+			var oDialog,
+				oCP;
+
+			oDialog = new sap.m.Dialog({
+				title: "Pick a color",
+				content: [
+					new sap.ui.unified.ColorPicker({
+						colorString: "red",
+						mode: sap.ui.unified.ColorPickerMode.HSL
+					})
+				],
+				buttons: [
+					new sap.m.Button({
+						text: "Select",
+						press: function () {
+							oDialog.close();
+						}
+					}),
+					new sap.m.Button({
+						text: "Cancel",
+						press: function () {
+							oDialog.close();
+						}
+					})
+				]
+			});
+
+			new sap.m.Shell({
+				app: new sap.m.App({
+					pages: [
+						new sap.m.Page({
+							title: "sap.ui.unified.ColorPicker",
+							content: [
+								new sap.ui.layout.VerticalLayout({
+									width: "100%",
+									content: [
+										new sap.m.Label({text: "HSV:"}),
+										oCP = new sap.ui.unified.ColorPicker({
+											colorString: "white",
+											mode: sap.ui.unified.ColorPickerMode.HSV
+										}),
+										new sap.m.ToggleButton({
+											text: "Toggle HSV/HSL",
+											press: function () {
+												oCP.setMode(sap.ui.unified.ColorPickerMode[this.getPressed() ? 'HSL':'HSV']);
+											}
+										}),
+										new sap.ui.core.HTML({content: "<hr/>"}),
+										new sap.m.Label({text: "HSL:"}),
+										new sap.ui.unified.ColorPicker({
+											colorString: "green",
+											mode: sap.ui.unified.ColorPickerMode.HSL
+										}),
+										new sap.m.Button({
+											text: "Dialog example",
+											press: function () {
+												oDialog.open();
+											}
+										})
+									]
+								})
+							]
+						}).addStyleClass("sapUiResponsiveContentPadding")
+					]
+				})
+			}).placeAt("content");
+
+		});
+
+	</script>
+
+</head>
+
+<body class="sapUiBody">
+	<div id="content"></div>
+</body>
+</html>

@@ -3862,6 +3862,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		bFinal: true
 	});
 
+	// implements ColorPicker helper factory with common controls
+	jQuery.sap.setObject("sap.ui.unified.ColorPickerHelper", {
+		isResponsive: function () {
+			return true;
+		},
+		factory: {
+			createLabel: function (mConfig) {
+				return new sap.m.Label(mConfig);
+			},
+			createInput: function (mConfig) {
+				return new sap.m.InputBase(mConfig);
+			},
+			createSlider: function (mConfig) {
+				return new sap.m.Slider(mConfig);
+			},
+			createRadioButtonGroup: function (mConfig) {
+				return new sap.m.RadioButtonGroup(mConfig);
+			},
+			createRadioButtonItem: function (mConfig) {
+				return new sap.m.RadioButton(mConfig);
+			}
+		},
+		bFinal: true
+	});
+
 	//implement table helper factory with m controls
 	//possible is set before layout lib is loaded.
 	jQuery.sap.setObject("sap.ui.table.TableHelper", {

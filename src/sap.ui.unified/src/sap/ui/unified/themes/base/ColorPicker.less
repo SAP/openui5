@@ -3,6 +3,130 @@
 /* ============================================= */
 .sapUiColorPicker-ColorPickerMatrix {
 	background-color: @sapUiExtraLightBG;
+	padding-bottom: 0.2rem;
+	&.sapUiColorPickerHSL .hideForHSL {
+		display: none;
+	}
+	&:not(.sapUiColorPickerHSL) .hideForHSV {
+		display: none;
+	}
+	&:not(.sapUnifiedColorPicker) {
+		max-width: 300px;
+		min-width: 270px;
+		.sapUiVlt {
+			&:first-child,
+			&:last-child {
+				margin-left: 0.5rem;
+			}
+		}
+		.sapUiCPUnitLabel {
+			display: none;
+		}
+		.sapUiColorPicker-swatches {
+		  margin-left: 0.6rem;
+		}
+	}
+	&.sapUnifiedColorPicker {
+		max-width: 556px;
+		min-width: 200px;
+		.sapUiColorPicker-ColorPickerBox {
+			max-width: 240px;
+			max-height: 240px;
+			box-sizing: border-box;
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			// This is very important to help stretch the color picker box to 100% height and for it to remain responsive
+			&:after {
+				content: "";
+				display: block;
+				width: 100%;
+				padding-bottom: 100%;
+			}
+		}
+		.sapUiColorPicker-ColorPickerNewColor,
+		.sapUiColorPicker-ColorPickerOldColor {
+			width: 2rem;
+			height: 2rem;
+		}
+		.sapUiColorPicker-swatches {
+			margin: 0;
+		}
+		.sapUiColorPicker-ColorPickerHexField .sapMInputBaseInner {
+			width: ~"calc(100% - 3rem)";
+		}
+		.sapUiColorPicker-ColorPickerInputFieldsRight,
+		.sapUiColorPicker-ColorPickerInputFieldsLeft {
+			.sapMInputBaseInner {
+				width: 3.5rem;
+			}
+		}
+		.sapUiColorPicker-ColorPickerHexField {
+			margin-top: 5px;
+			margin-left: 2px;
+		}
+		// Make swatches and output type align center on phone screen size
+		&.sapUiRespGridMedia-Std-Phone .sapUiRespGridSpanS12 {
+			.sapUiColorPicker-RBRow,
+			.sapUiColorPicker-swatches {
+				text-align: center;
+				width: 100%;
+			}
+		}
+		// Black and white circle so it will be visible on top of all colors
+		.sapUiColorPicker-ColorPickerCircle {
+			position: absolute;
+			width: 6px;
+			height: 6px;
+			border: 1px solid @sapUiWhiteBorder;
+			border-radius: 6px;
+			pointer-events: none;
+			&:after {
+				content: '';
+				position: absolute;
+				width: 4px;
+				height: 4px;
+				border: 1px solid @sapUiBlackBorder;
+				border-radius: 4px;
+				pointer-events: none;
+			}
+		}
+		// Big circle
+		.sapUiColorPicker-ColorPickerBox:active .sapUiColorPicker-ColorPickerCircle:before {
+			content: '';
+			position: absolute;
+			margin-left: -0.83rem;
+			top: -0.83rem;
+			height: 1.75rem;
+			width: 1.75rem;
+			border: 0.125rem solid @sapUiWhiteBorder;
+			border-radius: 1rem;
+		}
+		// Sliders - border
+		.sapUiColorPicker-ColorPickerSlider,
+		.sapUiColorPicker-ColorPickerAlphaSlider {
+			.sapMSliderInner {
+				border: solid @sapUiBlackBorder 1px;
+			}
+		}
+		// HSL Alpha transparency helper for swatches
+		&.sapUiColorPickerHSL .sapUiColorPicker-swatches {
+			> div:first-child,
+			> div:last-child {
+				// Overwrite commons color picker Swatch background
+				background-image: url(img/ColorPicker/Unified_Swatch_BG.png);
+			}
+		}
+	}
+	&.sapUiRespGrid.sapUiRespGridHSpace1 {
+		padding: 0;
+	}
+	input {
+		&.sapUiColorPicker-ColorPickerInputFieldsRight,
+		&.sapUiColorPicker-ColorPickerInputFieldsLeft {
+			width: 3em;
+		}
+	}
 }
 
 .sapUiColorPicker-ColorPickerBox {
@@ -44,6 +168,7 @@
 	border-style: solid;
 	border-color: @sapUiWhiteBorder;
 	border-radius: 5px;
+	pointer-events: none;
 }
 
 .sapUiColorPicker-ColorPickerOldColor {
@@ -97,11 +222,7 @@
 
 .sapUiColorPicker-ColorPickerLabels {
 	margin-top: 5px;
-	width: 1em;
-}
-
-.sapUiColorPicker-ColorPickerHexField {
-/* */
+	width: 1.1em;
 }
 
 .sapUiColorPicker-ColorPickerHexField.sapUiTf:not(.sapUiTfInner) {
@@ -130,7 +251,8 @@
 	background-color: transparent;
 }
 
-.sapUiColorPicker-ColorPickerSlider.sapUiSliHori .sapUiSliBar {
+.sapUiColorPicker-ColorPickerSlider.sapUiSliHori .sapUiSliBar,
+.sapUnifiedColorPicker .sapUiColorPicker-ColorPickerSlider .sapMSliderInner {
 	height: 10px;
 	background-image: url(img/ColorPicker/ColorBar.png);
 	background-size: 100%;
@@ -143,10 +265,23 @@
 	background-image: linear-gradient(left, #FF0000, #FFFF00, #00FF00, #00FFFF, #0000FF,
 		#FF00FF, #FF0000);
 	background-color: none;
-	margin: 0px;
+	margin: 0;
 }
 
-.sapUiColorPicker-ColorPickerAlphaSlider.sapUiSliHori .sapUiSliBar {
+.sapUnifiedColorPicker {
+  .sapUiColorPicker-ColorPickerAlphaSlider,
+  .sapUiColorPicker-ColorPickerSlider {
+    .sapMSliderProgress {
+      background-color: transparent;
+    }
+    .sapMSliderHandle {
+      margin-top: 0.25rem;
+    }
+  }
+}
+
+.sapUiColorPicker-ColorPickerAlphaSlider.sapUiSliHori .sapUiSliBar,
+.sapUnifiedColorPicker .sapUiColorPicker-ColorPickerAlphaSlider .sapMSliderInner {
 	height: 10px;
 	background-image: url(img/ColorPicker/Alphaslider_BG.png);
 	background-repeat: repeat-x;
@@ -218,6 +353,6 @@
 }
 
 /* needed for the Theme Designer, to overwrite the current style "box-sizing: border-box;" of all div's */
-.sapUiColorPicker-ColorPickerMatrix div {
+.sapUiColorPicker-ColorPickerMatrix:not(.sapUnifiedColorPicker) div {
 	box-sizing: content-box;
 }

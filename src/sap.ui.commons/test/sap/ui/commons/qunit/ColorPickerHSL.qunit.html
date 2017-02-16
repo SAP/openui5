@@ -501,7 +501,7 @@
 			QUnit.test("New color string 'rgb(249,238,227)': ", function(assert) {
 				var oColorPicker = createColorPicker();
 
-				oColorPicker.placeAt("qunit-fixture");
+				oColorPicker.setColorString("rgb(249,238,227)").placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
 				oColorPicker.setColorString("rgb(249,238,227)");
@@ -517,7 +517,7 @@
 			QUnit.test("New color string 'rgba(249,238,227,0.5)': ", function(assert) {
 				var oColorPicker = createColorPicker();
 
-				oColorPicker.placeAt("qunit-fixture");
+				oColorPicker.setColorString("rgba(249,238,227,0.5)").placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
 				oColorPicker.setColorString("rgba(249,238,227,0.5)");
@@ -641,21 +641,50 @@
 
 			//Testcase 19: Mouse-Event of Colorpipcker-Box
 			QUnit.test("Mouse-Event: Click in ColorPicker-Box: ", function(assert) {
-				var oColorPicker = createColorPicker({id: "ColorPicker2", colorString: "hsl(120,100%,75%)"});
+				// Arrange
+				var oColorPicker = createColorPicker({id: "ColorPicker2", colorString: "hsl(120,100%,75%)"}),
+					oCPBox,
+					cpBoxOffset,
+					oCPBoxDomRef;
 
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				var cpBoxOffset = jQuery.sap.byId("ColorPicker2-cpBox").offset();
+				oCPBox = oColorPicker.oCPBox;
+				cpBoxOffset = oCPBox.$().offset();
+				oCPBoxDomRef = oCPBox.getDomRef();
 
+				// Assert
 				assert.equal(oColorPicker.oSatField.getValue(), "100" , "SATURATION (before mouse events): 100");
 				assert.equal(oColorPicker.oLitField.getValue(), "75" , "LIGHTNESS (before mouse events): 75");
-				qutils.triggerMouseEvent("ColorPicker2-cpBox", "mousedown", 0, 0, cpBoxOffset.left + 10, cpBoxOffset.top + 10 );
-				qutils.triggerMouseEvent("ColorPicker2-cpBox", "mouseup", 0, 0, cpBoxOffset.left + 10, cpBoxOffset.top + 10 );
+
+				// Act
+				sap.ui.test.qunit.triggerTouchEvent("touchstart", oCPBoxDomRef, {
+					targetTouches: {
+						0: {
+							pageX: cpBoxOffset.left + 10,
+							pageY: cpBoxOffset.top + 10
+						}
+					},
+					srcControl: oCPBox
+				});
+
+				// Assert
 				assert.equal(oColorPicker.oSatField.getValue(), "90" , "SATURATION (after mouse event 1): 90");
 				assert.equal(oColorPicker.oLitField.getValue(), "9" , "LIGHTNESS (after mouse event 1): 9");
-				qutils.triggerMouseEvent("ColorPicker2-cpBox", "mousedown", 0, 0, cpBoxOffset.left + 33, cpBoxOffset.top + 33 );
-				qutils.triggerMouseEvent("ColorPicker2-cpBox", "mouseup", 0, 0, cpBoxOffset.left + 33, cpBoxOffset.top + 33 );
+
+				// Act
+				sap.ui.test.qunit.triggerTouchEvent("touchstart", oCPBoxDomRef, {
+					targetTouches: {
+						0: {
+							pageX: cpBoxOffset.left + 33,
+							pageY: cpBoxOffset.top + 33
+						}
+					},
+					srcControl: oCPBox
+				});
+
+				// Assert
 				assert.equal(oColorPicker.oSatField.getValue(), "68" , "SATURATION (after mouse event 2): 68");
 				assert.equal(oColorPicker.oLitField.getValue(), "31" , "LIGHTNESS (after mouse event 2	): 31");
 
@@ -676,7 +705,7 @@
 
 				// Assert
 				oColorPicker.setColorString("#18a");
-				assert.strictEqual(oSpy.callCount, 1, "Chnage event was fired");
+				strictEqual(oSpy.callCount, 1, "Chnage event was fired");
 
 				// clean up
 				oColorPicker.destroy();
