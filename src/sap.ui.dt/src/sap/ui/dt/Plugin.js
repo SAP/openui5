@@ -113,15 +113,12 @@ function(ManagedObject) {
 		var oOldDesignTime = this.getDesignTime();
 		if (oOldDesignTime) {
 			this._deregisterOverlays(oOldDesignTime);
-			oOldDesignTime.detachEvent("elementOverlayCreated", this._onElementOverlayCreated, this);
 		}
 
 		this.setProperty("designTime", oDesignTime);
 
 		if (oDesignTime) {
 			this._registerOverlays(oDesignTime);
-
-			oDesignTime.attachEvent("elementOverlayCreated", this._onElementOverlayCreated, this);
 		}
 
 		return this;
@@ -134,7 +131,7 @@ function(ManagedObject) {
 	Plugin.prototype._registerOverlays = function(oDesignTime) {
 		if (this.registerElementOverlay || this.registerAggregationOverlay) {
 			var aElementOverlays = oDesignTime.getElementOverlays();
-			aElementOverlays.forEach(this._callElementOverlayRegistrationMethods.bind(this));
+			aElementOverlays.forEach(this.callElementOverlayRegistrationMethods.bind(this));
 		}
 	};
 
@@ -161,9 +158,9 @@ function(ManagedObject) {
 
 	/**
 	 * @param {sap.ui.dt.Overlay} oElementOverlay to call registration methods for
-	 * @private
+	 * @protected
 	 */
-	Plugin.prototype._callElementOverlayRegistrationMethods = function(oElementOverlay) {
+	Plugin.prototype.callElementOverlayRegistrationMethods = function(oElementOverlay) {
 		if (this.registerElementOverlay) {
 			this.registerElementOverlay(oElementOverlay);
 		}
@@ -193,7 +190,7 @@ function(ManagedObject) {
 	Plugin.prototype._onElementOverlayCreated = function(oEvent) {
 		var oOverlay = oEvent.getParameter("elementOverlay");
 
-		this._callElementOverlayRegistrationMethods(oOverlay);
+		this.callElementOverlayRegistrationMethods(oOverlay);
 	};
 
 	return Plugin;
