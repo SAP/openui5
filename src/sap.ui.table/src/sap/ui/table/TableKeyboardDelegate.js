@@ -157,8 +157,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 		var bEntered = false;
 
 		if ($Focusable.length > 0) {
-
-			var $Tabbables = $Focusable.filter(":sapTabbable");
+			var sFilter = oArgs.event && oArgs.event.type === "mouseup" ? ":sapFocusable" : ":sapTabbable";
+			var $Tabbables = $Focusable.filter(sFilter);
 			var oExtension = this._getKeyboardExtension();
 
 			if ($Tabbables.length > 0) { //If cell has no tabbable element, we don't do anything
