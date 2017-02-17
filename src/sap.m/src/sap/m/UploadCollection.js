@@ -2187,10 +2187,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			sNewFileName = oEditbox.value.replace(/^\s+/,"");
 		}
 
-		//prepare the Id of the UI element which will get the focus
-		var aSrcIdElements = oEvent.srcControl ? oEvent.srcControl.getId().split("-") : oEvent.oSource.getId().split("-");
-		aSrcIdElements = aSrcIdElements.slice(0, 5);
-		oContext.sFocusId = aSrcIdElements.join("-") + "-cli";
+		oContext.sFocusId = sSourceId + "-cli";
 
 		if (!sNewFileName || sNewFileName.length === 0) {
 			if (oEditbox !== null) {
