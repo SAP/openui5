@@ -3,19 +3,23 @@
  */
 
 // Provides a popup with technical informations about the running SAPUI5 core
-sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/core/Popup', 'jquery.sap.strings'],
+sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/core/Popup', 'jquery.sap.strings', 'jquery.sap.encoder'],
 	function(jQuery, Device, Global, Popup/* , jQuerySap */) {
 	"use strict";
 
 	/*global alert */
+
+	function encode(any) {
+		return any == null ? "" : jQuery.sap.encodeHTML(String(any));
+	}
 
 	var TechnicalInfo = {
 
 		open : function(callback) {
 
 			function serialize(o) {
-				if (o && window.JSON) {
-					return window.JSON.stringify(o);
+				if (o) {
+					return JSON.stringify(o);
 				}
 				if ( o === "" ) {
 					return '""';
@@ -28,11 +32,11 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 				if ( !prefix ) {
 					html.push("<table border='0' cellspacing='0' cellpadding='0'>");
 				}
-				jQuery.each(o, function(i,v) {
+				jQuery.each(o, function(i, v) {
 					if ( !v || typeof v === 'string' || typeof v === 'number' || v instanceof Date ) {
-						html.push("<tr><td>", prefix, "<b>", jQuery.sap.encodeHTML(serialize(i)), "</b></td><td>", jQuery.sap.encodeHTML(serialize(v)), "</td></tr>");
+						html.push("<tr><td>", prefix, "<b>", encode(serialize(i)), "</b></td><td>", encode(serialize(v)), "</td></tr>");
 					} else {
-						html.push("<tr><td>", prefix, "<b>", jQuery.sap.encodeHTML(serialize(i)), "</b></td><td></td></tr>");
+						html.push("<tr><td>", prefix, "<b>", encode(serialize(i)), "</b></td><td></td></tr>");
 						list(v, prefix + "&nbsp;&nbsp;");
 					}
 				});
@@ -67,16 +71,41 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 			var html = [];
 			html.push("<div id='sap-ui-techinfo' class='sapUiTInf sapUiDlg' style='width:800px; position: relative;'>");
 			html.push("<table border='0' cellpadding='3'>");
+
+			// version information
+			function formatBuildInfo(timestamp, scmRevision) {
+				var info = [];
+				if ( timestamp ) {
+					var match = /^(\d{4})(\d{2})(\d{2})-?(\d{2})(\d{2})$/.exec(timestamp);
+					if ( match ) {
+						timestamp = match[1] + '-' + match[2] + '-' + match[3] + 'T' + match[4] + ":" + match[5];
+					}
+					info.push("built at " + encode(timestamp));
+				}
+				if ( scmRevision ) {
+					info.push("last change " + encode(scmRevision));
+				}
+				return info.length === 0 ? "" : " (" + info.join(", ") + ")";
+			}
+			var sProductName = "SAPUI5";
+			var sVersionInfoEncoded = "not available";
 			try {
 				var oVersionInfo = Global.getVersionInfo();
-				var sVersion = "<a href='" + sap.ui.resource("", "sap-ui-version.json") + "' target='_blank' title='Open Version Info'>" + oVersionInfo.version + "</a>";
-				html.push("<tr><td align='right' valign='top'><b>SAPUI5 Version</b></td><td>", sVersion, " (built at ", oVersionInfo.buildTimestamp, ", last change ", oVersionInfo.scmRevision, ")</td></tr>");
+				sProductName = oVersionInfo.name;
+				sVersionInfoEncoded =
+					"<a href='" + sap.ui.resource("", "sap-ui-version.json") + "' target='_blank' title='Open Version Info'>" + encode(oVersionInfo.version) + "</a>" +
+					formatBuildInfo(oVersionInfo.buildTimestamp, oVersionInfo.scmRevision);
 			} catch (ex) {
-				html.push("<tr><td align='right' valign='top'><b>SAPUI5 Version</b></td><td>not available</td></tr>");
+				// ignore
 			}
-			html.push("<tr><td align='right' valign='top'><b>Core Version</b></td><td>", Global.version, " (built at ", Global.buildinfo.buildtime, ", last change ", Global.buildinfo.lastchange, ")</td></tr>");
+			html.push("<tr><td align='right' valign='top'><b>" + encode(sProductName) + "</b></td><td>" + sVersionInfoEncoded + "</td></tr>");
+			if ( !/openui5/i.test(sProductName) ) {
+				html.push("<tr><td align='right' valign='top'><b>OpenUI5 Version</b></td><td>", Global.version, formatBuildInfo(Global.buildinfo.buildtime, Global.buildinfo.lastchange), "</td></tr>");
+			}
 			html.push("<tr><td align='right' valign='top'><b>Loaded jQuery Version</b></td><td>", jQuery.fn.jquery, "</td></tr>");
-			html.push("<tr><td align='right' valign='top'><b>User Agent</b></td><td>", jQuery.sap.encodeHTML(navigator.userAgent), (document.documentMode ? ", Document Mode '" + document.documentMode + "'" : ""), "</td></tr>");
+			html.push("<tr><td align='right' valign='top'><b>User Agent</b></td><td>", encode(navigator.userAgent), (document.documentMode ? ", Document Mode '" + encode(document.documentMode) + "'" : ""), "</td></tr>");
+
+			// configuration
 			html.push("<tr><td align='right' valign='top'><b>Configuration</b></td><td><div class='sapUiTInfCfg'>");
 			list(ojQSData.config);
 			html.push("</div></td></tr>");
@@ -193,7 +222,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 			jQuery.each(modnames, function(i,v) {
 				var mod = modules[v];
 				html.push("<span",
-						" title='", mod.url ? jQuery.sap.encodeHTML(mod.url) : ("embedded in " + mod.parent), "'",
+						" title='", mod.url ? encode(mod.url) : ("embedded in " + mod.parent), "'",
 						" class='sapUiTInfM", CLASS_4_MOD_STATE[mod.state] || "", "'>", v, ",</span> ");
 			});
 			if ( iMore ) {
@@ -445,11 +474,11 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 					bChildren = aChildren.length;
 				}
 				sPackage = sName + (bChildren ? "/" : "");
-				html.push('<div class="', bChildren ? 'package' : 'module', get(sPackage) ? ' selected' : '', '" data-sap-ui-package="', jQuery.sap.encodeHTML(sPackage), '">');
+				html.push('<div class="', bChildren ? 'package' : 'module', get(sPackage) ? ' selected' : '', '" data-sap-ui-package="', encode(sPackage), '">');
 				if ( bChildren ) {
 					html.push('<span class="expander">&gt;</span>');
 				}
-				html.push('<span class="name">', jQuery.sap.encodeHTML(sBasename), '</span>');
+				html.push('<span class="name">', encode(sBasename), '</span>');
 				if ( bChildren ) {
 					html.push('<div class="children packages">');
 					aChildren.sort(function(a,b) {
@@ -476,7 +505,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 			renderNode('', '(all)', mNames);
 
 			html.push('</div>');
-			html.push('<div class="result"><strong>sap-ui-debug = </strong><span id="sap-ui-techinfo-packages-result">', jQuery.sap.encodeHTML(String(vDebugInfo || '')),'</span></div>');
+			html.push('<div class="result"><strong>sap-ui-debug = </strong><span id="sap-ui-techinfo-packages-result">', encode(vDebugInfo), '</span></div>');
 			html.push('<div class="footer">');
 			html.push("<button id='sap-ui-techinfo-pdiag-close' class='sapUiBtn sapUiBtnS sapUiBtnNorm sapUiBtnStd'>Ok</button>");
 			html.push("<button id='sap-ui-techinfo-pdiag-cancel' class='sapUiBtn sapUiBtnS sapUiBtnNorm sapUiBtnStd'>Cancel</button>");
@@ -578,7 +607,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 			for (var i in aUserUrls) {
 				var sUrl = aUserUrls[i];
 				if (!mUrls[sUrl]) {
-					mUrls[sUrl] = jQuery.sap.encodeHTML(sUrl);
+					mUrls[sUrl] = encode(sUrl);
 				}
 			}
 
