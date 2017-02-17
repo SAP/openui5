@@ -83,6 +83,17 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 			return oLrepConnector.loadChanges(sComponentName, mPropertyBag);
 		}
 
+		// in case of no changes present according to async hints
+		if (mPropertyBag && mPropertyBag.cacheKey === "<NO CHANGES>") {
+			return Promise.resolve({
+				changes: {
+					changes : [],
+					contexts : []
+				},
+				componentClassName: sComponentName
+			});
+		}
+
 		var oCacheEntry = Cache._entries[sComponentName];
 
 		if (!oCacheEntry) {

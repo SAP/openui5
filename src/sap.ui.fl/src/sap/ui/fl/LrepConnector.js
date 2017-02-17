@@ -358,16 +358,6 @@ sap.ui.define([
 		// fill header attribute: appDescriptor.id
 		if (mPropertyBag) {
 			var sCacheKey = mPropertyBag.cacheKey;
-			// in case of no changes present according to async hints
-			if (sCacheKey === "<NO CHANGES>") {
-				return Promise.resolve({
-					changes: {
-						changes : [],
-						contexts : []
-					},
-					componentClassName: sComponentClassName
-				});
-			}
 
 			if (sCacheKey) {
 				mOptions.cache = true;
