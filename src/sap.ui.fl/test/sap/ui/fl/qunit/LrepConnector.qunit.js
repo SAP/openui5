@@ -397,25 +397,6 @@
 		});
 	});
 
-	QUnit.test("loadChanges returns an empty list of changes without sending an request " +
-			"if the passed parameter contain already the information that there are no changes", function(assert) {
-		var sComponentClassName = "smartFilterBar.Component";
-		var mPropertyBag = {
-			cacheKey: "<NO CHANGES>"
-		};
-
-		var oSendStub = this.stub(this.oLrepConnector, "send");
-
-		return this.oLrepConnector.loadChanges(sComponentClassName, mPropertyBag).then(function(oResult) {
-			assert.ok(Array.isArray(oResult.changes.changes), "an array of changes was returned");
-			assert.ok(Array.isArray(oResult.changes.contexts), "an array of contexts was returned");
-			assert.equal(oResult.changes.changes.length, 0, "but no change is present");
-			assert.equal(oResult.changes.contexts.length, 0, "but no context is present");
-			assert.equal(oResult.componentClassName, sComponentClassName, "the component class name was returned correctly");
-			assert.equal(oSendStub.callCount, 0, "and no backend request was triggered");
-		});
-	});
-	
 	QUnit.test("loadChanges adds upToLayerType parameter to request when requested", function(assert) {
 		var sComponentClassName = "smartFilterBar.Component";
 		var mPropertyBag = {
