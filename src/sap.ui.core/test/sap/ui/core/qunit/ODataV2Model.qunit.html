@@ -1572,7 +1572,7 @@
 			equal(oModel.createKey("Products", {ProductID: 1}), "Products(1)", "Created product key");
 			equal(oModel.createKey("Order_Details", {OrderID: 1, ProductID :2}), "Order_Details(OrderID=1,ProductID=2)", "Expanded entity key");
 			equal(oModel.createKey("Customers", {CustomerID: "abc123"}), "Customers('abc123')", "String entity key");
-			equal(oModel.createKey("Customers", {CustomerID: "abc:/123"}), "Customers('abc%3a%2f123')", "String entity key with encoding");
+			equal(oModel.createKey("Customers", {CustomerID: "abc:/123"}), "Customers('abc%3A%2F123')", "String entity key with encoding");
 			start();
 		});
 	});
@@ -3633,7 +3633,7 @@
 		}
 		oLabel.bindElement( {path:"/Categories(1)", parameters: {custom: {Batch500:"fail"}}, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
-
+	
 	asyncTest("Event order (batch request): bindElement - batch fails --> refresh", function(){
 		expect(5);
 		cleanServiceDataCache();
@@ -3653,13 +3653,13 @@
 				bChanged = false;
 				bDataRequested = false;
 				bDataReceived = false;
-				start(); // resume normal testing
+				start(); // resume normal testing			
 			});
 			oLabel.getElementBinding().refresh();
 		}
 		oLabel.bindElement( {path:"/Categories(1)", parameters: {custom: {Batch500:"fail"}}, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
-
+	
 	asyncTest("Event order: bindElement", function(){
 		expect(4);
 		cleanServiceDataCache();
@@ -3721,7 +3721,7 @@
 		oLabel.setModel(oModel1);
 		oLabel.getElementBinding().attachDataReceived(handler);
 	});
-
+	
 	asyncTest("ContextBinding: Unresolved bindings must fire change with null context", function(){
 		expect(2);
 		cleanServiceDataCache();
@@ -5166,12 +5166,12 @@
 		var oModel = initModel(sURI);
 		equal(oModel._normalizeKey("Entity(123M)"), "Entity(123m)", "Number types normalized, single key");
 		equal(oModel._normalizeKey("Entity(a=123M,b=123F,c=123L,d=123D)"), "Entity(a=123m,b=123f,c=123l,d=123d)", "Number types normalized, mutiple keys");
-		equal(oModel._normalizeKey("Entity(':/?')"), "Entity('%3a%2f%3f')", "String encoding normalized, single key")
-		equal(oModel._normalizeKey("Entity(a=':/?',b='test',c=':/?',d='test')"), "Entity(a='%3a%2f%3f',b='test',c='%3a%2f%3f',d='test')", "String encoding normalized, multiple keys")
-		equal(oModel._normalizeKey("Entity(a='test',b=123F,c=':::',e=123D)"), "Entity(a='test',b=123f,c='%3a%3a%3a',e=123d)", "Number types and strings normalized, mixed keys");
-		equal(oModel._normalizeKey("Entity('Entity(a=123M,b=123F,c=123L,d=123D)')"), "Entity('Entity%28a%3d123M%2cb%3d123F%2cc%3d123L%2cd%3d123D%29')", "Number inside string not normalized");
-		equal(oModel._normalizeKey("Entity('%2FTEST%2FTEST')"), "Entity('%2fTEST%2fTEST')", "No double encoding");
-		equal(oModel._normalizeKey("Entity('%2FTEST%2FTEST=123M')"), "Entity('%2fTEST%2fTEST%3d123M')", "No double encoding");
+		equal(oModel._normalizeKey("Entity(':/?')"), "Entity('%3A%2F%3F')", "String encoding normalized, single key")
+		equal(oModel._normalizeKey("Entity(a=':/?',b='test',c=':/?',d='test')"), "Entity(a='%3A%2F%3F',b='test',c='%3A%2F%3F',d='test')", "String encoding normalized, multiple keys")
+		equal(oModel._normalizeKey("Entity(a='test',b=123F,c=':::',e=123D)"), "Entity(a='test',b=123f,c='%3A%3A%3A',e=123d)", "Number types and strings normalized, mixed keys");
+		equal(oModel._normalizeKey("Entity('Entity(a=123M,b=123F,c=123L,d=123D)')"), "Entity('Entity(a%3D123M%2Cb%3D123F%2Cc%3D123L%2Cd%3D123D)')", "Number inside string not normalized");
+		equal(oModel._normalizeKey("Entity('%2FTEST%2FTEST')"), "Entity('%2FTEST%2FTEST')", "No double encoding");
+		equal(oModel._normalizeKey("Entity('%2FTEST%2FTEST=123M')"), "Entity('%2FTEST%2FTEST%3D123M')", "No double encoding");
 		equal(oModel._normalizeKey("Entity(%2FTEST%2FTEST=123M)"), "Entity(%2FTEST%2FTEST=123m)", "No double encoding");
 	});
 
