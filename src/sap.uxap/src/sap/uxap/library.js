@@ -278,7 +278,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 		 */
 		getClosestOPL: function (oControl) {
 
-			while (oControl && oControl.getMetadata().getName() !== "sap.uxap.ObjectPageLayout") {
+			while (oControl && !(oControl instanceof sap.uxap.ObjectPageLayout)) {
 				oControl = oControl.getParent();
 			}
 
