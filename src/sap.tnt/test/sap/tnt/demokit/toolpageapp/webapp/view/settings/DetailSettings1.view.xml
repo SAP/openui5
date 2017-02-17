@@ -11,15 +11,19 @@
 		id="objectPageLayout">
 
 		<headerTitle>
-			<ObjectPageHeader>
+			<ObjectPageHeader
+				objectTitle="{i18n>systemSettingsTitle}"
+				objectSubtitle="{i18n>systemSettingsDescriptionTitle}">
 				<actions>
 					<ObjectPageHeaderActionButton
+						class="sapUiTinyMarginTop"
 						id="save"
 						text="{i18n>save}"
 						hideText="false"
 						press="onSavePressed"
 						type="Emphasized"/>
 					<ObjectPageHeaderActionButton
+						class="sapUiTinyMarginTop"
 						id="cancel"
 						text="{i18n>cancel}"
 						press="onCancelPressed"
@@ -28,30 +32,18 @@
 			</ObjectPageHeader>
 		</headerTitle>
 		<headerContent>
-			<l:VerticalLayout>
-				<m:Title
-					text="{i18n>systemSettingsTitle}"
-					titleStyle="H2"
-					textAlign="Center"
-					class="sapUiSmallMarginTop"/>
-				<m:Text
-					text="{i18n>systemSettingsDescriptionTitle}"
-					textAlign="Center"
-					class="sapUiSmallMarginBottom"/>
-				<m:MessageStrip
-						text="{
-							parts: [
-								'i18n>systemSettingsLastLoginTitle',
-								'view>/currentUser',
-								'view>/lastLogin'
-							],
-							formatter: 'jQuery.sap.formatMessage'
-						}"
-						type="Information"
-						showIcon="true">
-				</m:MessageStrip>
-
-			</l:VerticalLayout>
+			<m:MessageStrip
+				text="{
+					parts: [
+						'i18n>systemSettingsLastLoginTitle',
+						'view>/currentUser',
+						'view>/lastLogin'
+					],
+					formatter: 'jQuery.sap.formatMessage'
+					}"
+				type="Information"
+				showIcon="true">
+			</m:MessageStrip>
 		</headerContent>
 		<sections>
 			<ObjectPageSection>
