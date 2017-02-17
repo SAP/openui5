@@ -231,7 +231,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		} else if (this.getDomRef() && !this._sInvalidateMonth) {
 			// DateRange changed -> only rerender days
 			// do this only once if more DateRanges / Special days are changed
-			this._bNoFocus = true; // Don't restore focus if special days are added
+			if (oOrigin && oOrigin.sParentAggregationName === "specialDates") {
+				// Don't restore focus if special dates are added
+				this._bNoFocus = true;
+			}
 			if (this._bInvalidateSync) { // set if calendar already invalidates in delayed call
 				_invalidateMonth.call(this);
 			} else {
