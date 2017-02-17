@@ -292,7 +292,7 @@
 			{
 				"id": "sap.ui.layout.sample.GridXL",
 				"name": "Grid - Features Demo",
-				"description": "This example demonstrates the major features of the Grid Layout. Features like indentation, making content visible/invisible based the screen size, moving content forward and backwards are demonstrated."
+				"description": "The major layout features of the Grid control are shown in this example. Features like indentation, making content visible/invisible based on the screen size, moving content forward and backwards are demonstrated."
 			},
 			{
 				"id": "sap.ui.layout.sample.Splitter",

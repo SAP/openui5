@@ -6,7 +6,9 @@
 		<l:VerticalLayout class="sapUiTinyMarginEnd">
 			<Title level="H1" titleStyle="H1" text="Demo App"
 				class="sapUiMediumMarginBottom" />
-			<Text text="{0/introText1}" class="sapUiSmallMarginBottom" />
+			<Text text="{0/introText1}" class="sapUiTinyMarginBottom" />
+			<Text text="{0/introText2}" class="sapUiTinyMarginBottom" />
+			<Text text="{0/introText3}" class="sapUiTinyMarginBottom" />
 		</l:VerticalLayout>
 		<Image src="resources/sap/ui/demokit/demoapps/img/demoAppsTeaser.png"
 			densityAware="false" width="100%">
@@ -42,7 +44,10 @@
 				<l:GridData indent="XL1 L1 M1"/>
 			</layoutData>
 		</Image>
-		<Text text="{0/Description}" class="sapUiTinyMargin"></Text>
+		<l:VerticalLayout class="sapUiTinyMargin">
+			<Text text="{0/Description1}" class="sapUiTinyMarginBottom"/>
+			<Text text="{0/Description2}" />
+		</l:VerticalLayout>
 		<Image src="{1/ProductPicUrl2}" densityAware="false" width="100%">
 			<layoutData>
 				<l:GridData linebreakXL="false" linebreakL="true"
