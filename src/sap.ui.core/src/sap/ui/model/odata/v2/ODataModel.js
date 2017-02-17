@@ -1965,7 +1965,7 @@ sap.ui.define([
 			sName = oEntityType.key.propertyRef[0].name;
 			jQuery.sap.assert(sName in oKeyProperties, "Key property \"" + sName + "\" is missing in object!");
 			oProperty = this.oMetadata._getPropertyMetadata(oEntityType, sName);
-			sKey += ODataUtils.formatValue(oKeyProperties[sName], oProperty.type, true);
+			sKey += encodeURIComponent(ODataUtils.formatValue(oKeyProperties[sName], oProperty.type));
 		} else {
 			jQuery.each(oEntityType.key.propertyRef, function(i, oPropertyRef) {
 				if (i > 0) {
@@ -1976,7 +1976,7 @@ sap.ui.define([
 				oProperty = that.oMetadata._getPropertyMetadata(oEntityType, sName);
 				sKey += sName;
 				sKey += "=";
-				sKey += ODataUtils.formatValue(oKeyProperties[sName], oProperty.type, true);
+				sKey += encodeURIComponent(ODataUtils.formatValue(oKeyProperties[sName], oProperty.type));
 			});
 		}
 		sKey += ")";
@@ -1995,10 +1995,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._normalizeKey = function(sKey) {
-		var rString = /([(=,]')(.*?)('[,)])/g,
+		var rString = /([(=,])('.*?')([,)])/g,
 			rNumType = /[MLDF](?=[,)](?:[^']*'[^']*')*[^']*$)/g;
 		function normalizeEncoding(value, p1, p2, p3) {
-			return p1 + jQuery.sap.encodeURL(decodeURIComponent(p2)) + p3;
+			return p1 + encodeURIComponent(decodeURIComponent(p2)) + p3;
 		}
 		function normalizeCase(value) {
 			return value.toLowerCase();

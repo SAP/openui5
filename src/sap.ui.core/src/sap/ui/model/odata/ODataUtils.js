@@ -426,11 +426,10 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 *
 	 * @param {any} vValue the value to format
 	 * @param {string} sType the EDM type (e.g. Edm.Decimal)
-	 * @param {boolean} bURLEncode whether to apply URL encoding on the resulting value
 	 * @return {string} the formatted value
 	 * @public
 	 */
-	ODataUtils.formatValue = function(vValue, sType, bURLEncode) {
+	ODataUtils.formatValue = function(vValue, sType) {
 		// Lazy creation of format objects
 		if (!this.oDateTimeFormat) {
 			this.oDateTimeFormat = DateFormat.getDateInstance({
@@ -454,11 +453,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 		switch (sType) {
 			case "Edm.String":
 				// quote
-				sValue = String(vValue).replace(/'/g, "''");
-				if (bURLEncode) {
-					sValue = jQuery.sap.encodeURL(sValue);
-				}
-				sValue = "'" + sValue + "'";
+				sValue = "'" + String(vValue).replace(/'/g, "''") + "'";
 				break;
 			case "Edm.Time":
 				if (typeof vValue === "object") {
@@ -469,15 +464,9 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 				break;
 			case "Edm.DateTime":
 				sValue = this.oDateTimeFormat.format(new Date(vValue), true);
-				if (bURLEncode) {
-					sValue.replace(/:/g, "%3a");
-				}
 				break;
 			case "Edm.DateTimeOffset":
 				sValue = this.oDateTimeOffsetFormat.format(new Date(vValue), true);
-				if (bURLEncode) {
-					sValue.replace(/:/g, "%3a");
-				}
 				break;
 			case "Edm.Guid":
 				sValue = "guid'" + vValue + "'";
