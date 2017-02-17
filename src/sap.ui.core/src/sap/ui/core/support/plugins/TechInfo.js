@@ -56,18 +56,26 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 						"<a href='#' id='", that.getId(), "-Refresh' class='sapUiSupportLink'>Refresh</a>",
 						"<div><div class='sapUiSupportTechInfoCntnt'>",
 						"<table border='0' cellpadding='3'>"];
-			line(html, true, true, "SAPUI5 Version", function(buffer){
-				try {
-					var oVersionInfo = sap.ui.getVersionInfo();
-					var sVersion = "<a href='" + sap.ui.resource("", "sap-ui-version.json") + "' target='_blank' title='Open Version Info'>" + jQuery.sap.escapeHTML(oVersionInfo.version || "") + "</a>";
-					buffer.push(sVersion, " (built at ", jQuery.sap.escapeHTML(oVersionInfo.buildTimestamp || ""), ", last change ", jQuery.sap.escapeHTML(oVersionInfo.scmRevision || ""), ")");
-				} catch (ex) {
-					buffer.push("not available");
-				}
+
+			var sProductName = "SAPUI5 Version";
+			var sVersionInfoEncoded = "not available";
+			try {
+				var oVersionInfo = sap.ui.getVersionInfo();
+				sProductName = oVersionInfo.name;
+				sVersionInfoEncoded =
+					"<a href='" + sap.ui.resource("", "sap-ui-version.json") + "' target='_blank' title='Open Version Info'>" + encode(oVersionInfo.version) + "</a>" +
+					" (built at " + encode(oVersionInfo.buildTimestamp) + ", last change " + encode(oVersionInfo.scmRevision) + ")";
+			} catch (ex) {
+				// ignore
+			}
+			line(html, true, true, sProductName, function(buffer) {
+				buffer.push(sVersionInfoEncoded);
 			});
-			line(html, true, true, "Core Version", function(buffer){
-				return oData.version + " (built at " + oData.build + ", last change " + oData.change + ")";
-			});
+			if ( !/OpenUI5/.test(sProductName) ) {
+				line(html, true, true, "Core Version", function(buffer){
+					return oData.version + " (built at " + oData.build + ", last change " + oData.change + ")";
+				});
+			}
 			line(html, true, true, "Loaded jQuery Version", function(buffer){
 				return oData.jquery;
 			});
@@ -87,7 +95,7 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 			line(html, true, true, "Loaded Modules", function(buffer){
 				jQuery.each(oData.modules, function(i,v){
 					if (v.indexOf("sap.ui.core.support") < 0) {
-						buffer.push("<span>", jQuery.sap.escapeHTML(v || ""), "</span>");
+						buffer.push("<span>", encode(v), "</span>");
 						if (i < oData.modules.length - 1) {
 							buffer.push(", ");
 						}
@@ -261,14 +269,18 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 		}
 
 
+		function encode(any) {
+			return any == null ? "" : jQuery.sap.encodeHTML(String(any));
+		}
+
 		function line(buffer, right, border, label, content){
-			buffer.push("<tr><td ", right ? "align='right' " : "", "valign='top'>", "<label class='sapUiSupportLabel'>", jQuery.sap.escapeHTML(label || ""), "</label></td><td",
+			buffer.push("<tr><td ", right ? "align='right' " : "", "valign='top'>", "<label class='sapUiSupportLabel'>", encode(label), "</label></td><td",
 					border ? " class='sapUiSupportTechInfoBorder'" : "", ">");
 			var ctnt = content;
-			if (jQuery.isFunction(content)) {
+			if ( typeof content === 'function' ) {
 				ctnt = content(buffer);
 			}
-			buffer.push(jQuery.sap.escapeHTML(ctnt || ""));
+			buffer.push(encode(ctnt));
 			buffer.push("</td></tr>");
 		}
 
