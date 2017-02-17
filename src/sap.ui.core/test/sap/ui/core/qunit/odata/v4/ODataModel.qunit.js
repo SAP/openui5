@@ -217,6 +217,28 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Model construction with autoExpandSelect", function (assert) {
+		var oModel;
+
+		oModel = createModel();
+		assert.strictEqual(oModel.bAutoExpandSelect, false);
+
+		oModel = createModel("", {autoExpandSelect : true});
+		assert.strictEqual(oModel.bAutoExpandSelect, true);
+
+		oModel = createModel("", {autoExpandSelect : false});
+		assert.strictEqual(oModel.bAutoExpandSelect, false);
+
+		assert.throws(function () {
+			createModel("", {autoExpandSelect : ""});
+		}, new Error("Value for autoExpandSelect must be true or false"));
+
+		assert.throws(function () {
+			createModel("", {autoExpandSelect : "X"});
+		}, new Error("Value for autoExpandSelect must be true or false"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("Model creates _Requestor", function (assert) {
 		var oExpectedCreate = this.mock(_Requestor).expects("create"),
 			oModel,

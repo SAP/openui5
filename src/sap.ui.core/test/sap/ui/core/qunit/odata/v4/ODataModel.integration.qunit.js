@@ -15,16 +15,21 @@ sap.ui.require([
 
 	/**
 	 * Creates a V4 OData model for <code>TEA_BUSI</code>.
+	 * @param {object} [mModelParameters] Map of parameters for model construction which enhances
+	 *   and potentially overwrites the parameters groupId, operationMode, serviceUrl,
+	 *   synchronizationMode which are set by default
 	 * @returns {ODataModel} The model
 	 */
-	function createModel() {
-		return new ODataModel({
+	function createModel(mModelParameters) {
+		var mDefaultParameters = {
 			groupId : "$direct",
 			operationMode : OperationMode.Server,
 			serviceUrl :
 				TestUtils.proxy("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"),
 			synchronizationMode : "None"
-		});
+		};
+
+		return new ODataModel(jQuery.extend(mDefaultParameters, mModelParameters));
 	}
 
 	//*********************************************************************************************
@@ -101,8 +106,11 @@ sap.ui.require([
 		 * @param {object} mValueByControl Map of expected value for a control's text
 		 *   property by control id; in case the control is created via template in a list, the
 		 *   value is an array
+		 * @param {object} [mModelParameters] Map of parameters for model construction which
+		 *   enhances and potentially overwrites the parameters groupId, operationMode, serviceUrl,
+		 *   synchronizationMode which are set by default
 		 */
-		createViewAndModel : function (assert, sView, mValueByControl) {
+		createViewAndModel : function (assert, sView, mValueByControl, mModelParameters) {
 //			assert.ok(true, sView); // uncomment to see XML in output, e.g. in case of parse issues
 			var oView = sap.ui.xmlview({
 					viewContent : '<mvc:View xmlns="sap.m" xmlns:form="sap.ui.layout.form" '
@@ -125,13 +133,13 @@ sap.ui.require([
 					that.formatterCallCount -= 1;
 					if (that.formatterCallCount === 0) {
 						that.resolve();
-					} else if (that.formatterCallCount < 0) {
+					} else if (that.formatterCallCount < 0 && !that.bSloppy) {
 						assert.ok(false, "Unexpected call to formatter for control with ID '"
 							+ sControlId + "' with value '" + sValue + "'");
 					}
 				};
 			});
-			that.oModel = createModel();
+			that.oModel = createModel(mModelParameters);
 			that.oView = oView;
 		},
 
@@ -186,11 +194,18 @@ sap.ui.require([
 		 * @param {object} mValueByControl Map of expected value for a control's text
 		 *   property by control id; in case the control is created via template in a list, the
 		 *   value is an array
+		 * @param {object} [mModelParameters] Map of parameters for model construction which
+		 *   enhances and potentially overwrites the parameters groupId, operationMode, serviceUrl,
+		 *   synchronizationMode which are set by default
+		 * @param {boolean} [bSloppy] Whether the test does not check if values are only set once
+		 *   per control
 		 */
-		viewStart : function (assert, sView, mResponseByRequest, mValueByControl) {
+		viewStart : function (assert, sView, mResponseByRequest, mValueByControl,
+				mModelParameters, bSloppy) {
 			var that = this;
 
-			this.createViewAndModel(assert, sView, mValueByControl);
+			this.bSloppy = bSloppy;
+			this.createViewAndModel(assert, sView, mValueByControl, mModelParameters);
 			return this.check(mResponseByRequest, mValueByControl, function () {
 				that.oView.setModel(that.oModel);
 			});
@@ -200,10 +215,11 @@ sap.ui.require([
 	/*
 	 * Creates a test with the given title and executes viewStart with the given parameters.
 	 */
-	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl) {
+	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, mModelParameters,
+			bSloppy) {
 		QUnit.test(sTitle, function (assert) {
-			return this.viewStart(assert, sView, mResponseByRequest,
-				mValueByControl);
+			return this.viewStart(assert, sView, mResponseByRequest, mValueByControl,
+				mModelParameters, bSloppy);
 		});
 	}
 
@@ -597,6 +613,51 @@ sap.ui.require([
 			});
 		});
 	});
+
+	//*********************************************************************************************
+	testViewStart("Auto-mode: Absolute ODCB with relative ODPB", '\
+<form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE,ROOM_ID\'}}">\
+	<Text id="name" text="{Name}" />\
+	<Text id="city" text="{LOCATION/City/CITYNAME}" />\
+</form:SimpleForm>',
+		{"EMPLOYEES('2')?$select=AGE,ROOM_ID,Name,LOCATION/City/CITYNAME" : {
+			"Name" : "Frederic Fall",
+			"LOCATION" : {"City" : {"CITYNAME" : "Walldorf"}}
+		}},
+		{"name" : "Frederic Fall", "city" : "Walldorf"},
+		{autoExpandSelect : true},
+		true //TODO fix two calls to formatter
+	);
+
+
+	//*********************************************************************************************
+	//TODO requires enhancement of ODataModel.integration.qunit as refresh causes multiple calls
+	//  to formatters (first one with null value)
+	QUnit.skip("Auto-mode: Absolute ODCB, refresh", function (assert) {
+		var sView = '\
+<form:SimpleForm id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE\'}}">\
+	<Text id="name" text="{Name}" />\
+</form:SimpleForm>',
+			mResponseByRequest = {"EMPLOYEES('2')?$select=AGE,Name" : {
+			"Name" : "Jonathan Smith"
+		}},
+			mValueByControl = {"name" : "Jonathan Smith"},
+			that = this;
+
+		return this.viewStart(assert, sView, mResponseByRequest, mValueByControl,
+				{autoExpandSelect : true}, true)
+			.then(function () {
+				mResponseByRequest = {"EMPLOYEES('2')?$select=AGE,Name" : {
+					"Name" : "Jonathan Schmidt"
+				}};
+				mValueByControl.name = "Jonathan Schmidt";
+
+				return that.check(mResponseByRequest, mValueByControl, function () {
+					that.oView.byId("form").getObjectBinding().refresh();
+			});
+		});
+	});
+
 	//TODO $batch?
 	//TODO test bound action
 	//TODO test create
