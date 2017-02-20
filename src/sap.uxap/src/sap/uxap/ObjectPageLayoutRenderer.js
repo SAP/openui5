@@ -42,7 +42,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 
 			// Header
 			oRm.write("<header ");
-			oRm.writeAttribute("role", "header");
+			oRm.writeAttribute("role", "banner");
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-headerTitle");
 			oRm.addClass("sapUxAPObjectPageHeaderTitle");
 			oRm.addClass("sapContrastPlus");
