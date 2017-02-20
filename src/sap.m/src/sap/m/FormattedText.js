@@ -111,7 +111,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Forma
 		// rules for the allowed tags
 		_renderingRules.ELEMENTS = {
 			// Text Module Tags
-			'a' : {cssClass: 'sapMLink'},
+			'a' : {cssClass: 'sapMLnk'},
 			'abbr': 1,
 			'blockquote': 1,
 			'br': 1,
