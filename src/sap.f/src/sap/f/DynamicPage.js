@@ -55,7 +55,12 @@ sap.ui.define([
 	 * <code>false</code>.</li>
 	 * <li>If you are displaying a {@link sap.ui.table.Table}, keep in mind that it is
 	 * non-adaptive and may cause unpredicted behavior for the <code>DynamicPage</code>
-	 * on smaller screen sizes, such as mobile.</li></ul>
+	 * on smaller screen sizes, such as mobile.</li>
+	 * <li>Snapping of the {@link sap.f.DynamicPageTitle DynamicPageTitle} is not supported in the following case:
+	 * When the <code>DynamicPage</code> has a scroll bar, the control usually scrolls to the snapping point - the point,
+	 * where the {@link sap.f.DynamicPageHeader DynamicPageHeader} is scrolled out completely.
+	 * However, when there is a scroll bar, but not enough content to reach the snapping point,
+	 * the snapping is not possible using scrolling.</li></ul>
 	 *
 	 * <h3>Responsive Behavior</h3>
 	 *
