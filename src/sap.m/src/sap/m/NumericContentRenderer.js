@@ -45,7 +45,7 @@ sap.ui.define([],
 		}
 
 		oRm.writeAttributeEscaped("aria-label", sTooltip);
-		oRm.writeAttribute("role", "image");
+		oRm.writeAttribute("role", "img");
 
 		if (sState == sap.m.LoadState.Failed || sState == sap.m.LoadState.Loading) {
 			oRm.writeAttribute("aria-disabled", "true");
