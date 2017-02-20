@@ -1470,13 +1470,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var sText;
 		var oStartDate = _getStartDate.call(this);
 
-		oHeader.setTextButton0((oStartDate.getUTCDate()).toString());
-
 		var oLocaleData = this._getLocaleData();
 		var aMonthNames = [];
 		var aMonthNamesWide = [];
 		var sAriaLabel;
 		var bShort = false;
+		var aDay;
+
+		if (oLocaleData.oLocale.sLanguage === "ja" || oLocaleData.oLocale.sLanguage === "zh") {
+			// format the day to have the specific day symbol in Japanese and Chinese
+			aDay = sap.ui.core.format.DateFormat.getDateInstance({format: "d"}).format(oStartDate, true);
+		} else {
+			aDay = (oStartDate.getUTCDate()).toString();
+		}
+
+		oHeader.setTextButton0(aDay);
+
 		if (this._bLongMonth || !this._bNamesLengthChecked) {
 			aMonthNames = oLocaleData.getMonthsStandAlone("wide");
 		} else {
@@ -1492,6 +1501,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 
 		oHeader.setTextButton1(sText);
+
 		if (bShort) {
 			oHeader.setAriaLabelButton1(sAriaLabel);
 		}
