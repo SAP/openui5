@@ -63,7 +63,7 @@
     <!-- Sandbox Tomcat configuration for Visual tests -->
     <visual.tomcat.sandbox.url>http://veui5test:8081</visual.tomcat.sandbox.url>
     
-    <!-- Stage url part name like .../sapui5-dist-candidate-1.46 -->
+    <!-- Stage url part name like .../sapui5-dist-1.46-candidate -->
     <stage>candidate</stage>
 
   </properties>
@@ -922,26 +922,26 @@
               <skipDeploy>false</skipDeploy>
               <skipUndeploy>false</skipUndeploy>
               <deployables>
-		<deployable>
+                <deployable>
                   <groupId>com.sap.ui5.dist</groupId>
                   <artifactId>sapui5-dist</artifactId>
                   <version>[${sap.ui5.fullversion}]</version>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
-		  <contextPath>sapui5-dist-${stage}-${sap.ui5.version}</contextPath>
-		</deployable>
+                  <contextPath>sapui5-dist-${sap.ui5.version}-${stage}</contextPath>
+                </deployable>
                 <deployable>
                   <groupId>com.sap.ui5.dist</groupId>
                   <artifactId>sapui5-sdk-dist</artifactId>
                   <version>[${sap.ui5.fullversion}]</version>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
-                  <contextPath>sapui5-sdk-dist-${stage}-${sap.ui5.version}</contextPath>
+                  <contextPath>sapui5-sdk-dist-${sap.ui5.version}-${stage}</contextPath>
                 </deployable>
-		<deployable>
+                <deployable>
                   <groupId>com.sap.ui5.dist</groupId>
                   <artifactId>sapui5-sdk-internal</artifactId>
                   <version>[${sap.ui5.fullversion}]</version>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
-		  <contextPath>sapui5-sdk-internal-${stage}-${sap.ui5.version}</contextPath>
+                  <contextPath>sapui5-sdk-internal-${sap.ui5.version}-${stage}</contextPath>
                 </deployable>
               </deployables>
             </configuration>
@@ -985,7 +985,7 @@
                   <artifactId>uilib-sample</artifactId>
                   <version>[${sap.ui5.fullversion}]</version>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
-                  <contextPath>uilib-sample-${stage}-${sap.ui5.version}</contextPath>
+                  <contextPath>uilib-sample-${sap.ui5.version}-${stage}</contextPath>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
@@ -993,7 +993,7 @@
                   <fallbackArtifactId>phoenix-cdn</fallbackArtifactId>
                   <version>[${sap.ui5.fullversion}]</version>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
-                  <contextPath>sapui5-${stage}-${sap.ui5.version}</contextPath>
+                  <contextPath>sapui5-${sap.ui5.version}-${stage}</contextPath>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
@@ -1001,29 +1001,29 @@
                   <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
                   <version>[${sap.ui5.fullversion}]</version>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
-                  <contextPath>sapui5-internal-${stage}-${sap.ui5.version}</contextPath>
+                  <contextPath>sapui5-internal-${sap.ui5.version}-${stage}</contextPath>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>demokit</artifactId>
                   <version>[${sap.ui5.fullversion}]</version>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
-                  <contextPath>demokit-${stage}-${sap.ui5.version}</contextPath>
+                  <contextPath>demokit-${sap.ui5.version}-${stage}</contextPath>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5.test</groupId>
                   <artifactId>databinding</artifactId>
                   <version>[${sap.ui5.fullversion}]</version>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
-                  <contextPath>databinding-${stage}-${sap.ui5.version}</contextPath>
+                  <contextPath>databinding-${sap.ui5.version}-${stage}</contextPath>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.uxap</groupId>
                   <artifactId>uilib-sample</artifactId>
                   <version>[${sap.ui5.fullversion}]</version>
-                  <contextPath>uxap-sample-${stage}-${sap.ui5.version}</contextPath>
-              </deployable>
-             </deployables>
+                  <contextPath>uxap-sample-${sap.ui5.version}-${stage}</contextPath>
+                </deployable>
+              </deployables>
             </configuration>
           </plugin>
         </plugins>
