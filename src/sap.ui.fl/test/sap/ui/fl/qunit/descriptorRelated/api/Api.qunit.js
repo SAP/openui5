@@ -654,7 +654,6 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		}.bind(this));
 	});
 
-
 	QUnit.test("create_app_setDestination", function(assert) {
 		return DescriptorInlineChangeFactory.create_app_setDestination({
 			"destination": {
@@ -678,7 +677,48 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		}.bind(this));
 	});
 
-	
+	QUnit.test("create_appdescr_app_addTechnicalAttributes", function(assert) {
+		return DescriptorInlineChangeFactory.create_app_addTechnicalAttributes({
+			"technicalAttributes": [ "TAG1", "TAG2" ]
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+		});
+	});
+
+	QUnit.test("create_app_addTechnicalAttributes failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_addTechnicalAttributes({
+				"technicalAttributes" : {}
+			})
+		}.bind(this));
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_addTechnicalAttributes({
+				"technicalAttributes" : "TAG1"
+			})
+		}.bind(this));
+	});
+
+	QUnit.test("create_appdescr_app_removeTechnicalAttributes", function(assert) {
+		return DescriptorInlineChangeFactory.create_app_removeTechnicalAttributes({
+			"technicalAttributes": [ "TAG1" ]
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+		});
+	});
+
+	QUnit.test("create_app_removeTechnicalAttributes failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_removeTechnicalAttributes({
+				"technicalAttributes" : {}
+			})
+		}.bind(this));
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_removeTechnicalAttributes({
+				"technicalAttributes" : "TAG1"
+			})
+		}.bind(this));
+	});
+
 	QUnit.test("appdescr_ui5_addNewModel", function(assert) {
 		return DescriptorInlineChangeFactory.create_ui5_addNewModel({
 			"model" : {
