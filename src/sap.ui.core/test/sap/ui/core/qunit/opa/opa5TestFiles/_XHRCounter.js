@@ -149,46 +149,57 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Should return that there is an open xhr when 1 of 2 request are done", function (assert) {
-		var done = assert.async();
+	/*
+	On IE11 we use native promises polyfill that (seems) not to use microtasks. With native promises the then blocks are
+	scheduled in the microtask queue that has higher priority than the task queue.
+	So with properly working native promises, the first then block will be executed before the second response and so the code inside will
+	correctly detect there are pending requests.
+	But with pormise polyfill and if the responses are received in a very short interval and are scheduled in sequential ticks,
+	the promise then's are executed in sequential tickes, AFTER both responces are processed and there are no more pengind requests.
+	*/
+	if (!Device.browser.msie) {
+		QUnit.test("Should return that there is an open xhr when 1 of 2 request are done", function (assert) {
+			var done = assert.async();
 
-		assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs at test start");
+			assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs at test start");
 
-		var oXHR1 = createAndSendXHR("/foo");
-		var oXHR2 = createAndSendXHR("/bar");
+			var oXHR1 = createAndSendXHR("/foo");
+			var oXHR2 = createAndSendXHR("/bar");
 
-		assert.ok(XHRCounter.hasPendingRequests(), "there are pending xhrs");
+			assert.ok(XHRCounter.hasPendingRequests(), "there are pending xhrs");
 
-		sinon.assert.calledWith(this.oDebugSpy, "There are '2' open XHRs and '0' open FakeXHRs." +
-			"\nXHR: URL: '/foo' Method: 'GET'" +
-			"\nXHR: URL: '/bar' Method: 'GET'");
+			sinon.assert.calledWith(this.oDebugSpy, "There are '2' open XHRs and '0' open FakeXHRs." +
+				"\nXHR: URL: '/foo' Method: 'GET'" +
+				"\nXHR: URL: '/bar' Method: 'GET'");
 
-		var oFirstRequestPromise = whenRequestDone(oXHR1);
-		var oSecondRequestPromise = whenRequestDone(oXHR2);
-		var bFirstRequestPassed = false;
-		var bSecondRequestPassed = false;
-		var bHasPendingRequests = false;
+			var oFirstRequestPromise = whenRequestDone(oXHR1);
+			var oSecondRequestPromise = whenRequestDone(oXHR2);
 
-		oFirstRequestPromise.then(function () {
-			bFirstRequestPassed = true;
-			bHasPendingRequests = bHasPendingRequests || XHRCounter.hasPendingRequests();
-			assertPassedConditions();
-		});
+			var bFirstRequestPassed = false;
+			var bSecondRequestPassed = false;
+			var bHasPendingRequests = false;
 
-		oSecondRequestPromise.then(function () {
-			bSecondRequestPassed = true;
-			bHasPendingRequests = bHasPendingRequests || XHRCounter.hasPendingRequests();
-			assertPassedConditions();
-		});
+			oFirstRequestPromise.then(function () {
+				bFirstRequestPassed = true;
+				bHasPendingRequests = bHasPendingRequests || XHRCounter.hasPendingRequests();
+				assertPassedConditions();
+			});
 
-		function assertPassedConditions() {
-			if (bFirstRequestPassed && bSecondRequestPassed) {
-				assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs at test end");
-				assert.ok(bHasPendingRequests, "After the first request passed there were still pending requests");
-				done();
+			oSecondRequestPromise.then(function () {
+				bSecondRequestPassed = true;
+				bHasPendingRequests = bHasPendingRequests || XHRCounter.hasPendingRequests();
+				assertPassedConditions();
+			});
+
+			function assertPassedConditions() {
+				if (bFirstRequestPassed && bSecondRequestPassed) {
+					assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs at test end");
+					assert.ok(bHasPendingRequests, "After the first request passed there were still pending requests");
+					done();
+				}
 			}
-		}
-	});
+		});
+	}
 
 	QUnit.test("Should return that there is no open xhr when the request has been aborted", function () {
 		var oXHR = createAndSendXHR("actions.js");
