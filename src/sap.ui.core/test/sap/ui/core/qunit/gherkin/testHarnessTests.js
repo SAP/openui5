@@ -212,6 +212,41 @@ sap.ui.define([
       }.bind(this));
 
 
+      // //////////////////////////////////////////////////////////////////////////////////////////////////////
+      // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+      // //////////////////////////////////////////////////////////////////////////////////////////////////////
+      opaTest("Deep testing of ambiguous step definition behaviour", function() {
+
+        // Unfortunately, the ambiguous error bubbles up out of the frame, so we must ask QUnit to ignore it.
+        // Fortunately, setting ignoreGlobalErrors only affects the current test so no cleanup is required.
+        QUnit.config.current.ignoreGlobalErrors = true;
+
+        oOpa5.iStartMyAppInAFrame("testHarnessAmbiguous.html?harness=" + this.sTestHarness);
+
+        oOpa5.waitFor({
+          id: "testing-done",
+          success: function() {
+
+            var oFrame$ = sap.ui.test.Opa5.getWindow().$;
+
+            var sTestResult = oFrame$("#qunit-testresult").text();
+            var rRegex = /\d+ assertions of (\d+) passed, (\d+) failed\./i;
+            var sResults = rRegex.exec(sTestResult);
+            var iFailedTests = parseInt(sResults[2], 10);
+            var iTotalTests = parseInt(sResults[1], 10);
+            Opa5.assert.strictEqual(iFailedTests, 1, "Verified failed tests");
+            Opa5.assert.strictEqual(iTotalTests, 1, "Verified total tests");
+
+            var oAmbiguous = oFrame$('.test-message')
+              .filter(':contains("Ambiguous step definition error: 2 step definitions \'/^I should be served a coffee$/i\' and \'/^I should be served a .*$/i\' match the feature file step \'I should be served a coffee\'")');
+            Opa5.assert.strictEqual(oAmbiguous.length, 1, 'Verified found text "Ambiguous step definition"');
+
+            oOpa5.iTeardownMyApp();
+          }
+        });
+      }.bind(this));
+
+
 
       // //////////////////////////////////////////////////////////////////////////////////////////////////////
       // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
