@@ -493,7 +493,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 			return;
 		}
 
-		var duration = parseInt(Parameters.get("sapUiUfdShellAnimDuration"), 10);
+		var duration = parseInt(Parameters.get("_sap_ui_unified_ShellLayout_AnimDuration"), 10);
 		if (!this._animation || (Device.browser.internet_explorer && Device.browser.version < 10)) {
 			duration = 0;
 		}

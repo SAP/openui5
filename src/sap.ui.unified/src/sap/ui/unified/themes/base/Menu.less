@@ -3,10 +3,10 @@
 /* Base theme                           */
 /* ==================================== */
 
-@sapUiMnuItmHeight: 2rem;
-@sapUiMnuItmPadding: 0.5rem;
-@sapUiMnuItmHeightCozy: 3rem;
-@sapUiMnuItmPaddingCozy: 1rem;
+@_sap_ui_unified_Menu_ItmHeight: 2rem;
+@_sap_ui_unified_Menu_ItmPadding: 0.5rem;
+@_sap_ui_unified_Menu_ItmHeightCozy: 3rem;
+@_sap_ui_unified_Menu_ItmPaddingCozy: 1rem;
 
 .sapUiMnu {
 	/* initially hidden off the screen */
@@ -44,8 +44,8 @@
 
 .sapUiMnuItm {
 	display: block;
-	height: @sapUiMnuItmHeight;
-	line-height: @sapUiMnuItmHeight;
+	height: @_sap_ui_unified_Menu_ItmHeight;
+	line-height: @_sap_ui_unified_Menu_ItmHeight;
 	white-space: nowrap;
 	position: relative;
 }
@@ -91,7 +91,7 @@
 
 .sapUiMnuItmIco {
 	text-align: center;
-	width: @sapUiMnuItmHeight;
+	width: @_sap_ui_unified_Menu_ItmHeight;
 	color: @sapUiContentNonInteractiveIconColor;
 }
 
@@ -113,7 +113,7 @@
 
 .sapUiMnuItmTxt {
 	white-space: nowrap;
-	padding-right: @sapUiMnuItmHeight + @sapUiMnuItmPadding;
+	padding-right: @_sap_ui_unified_Menu_ItmHeight + @_sap_ui_unified_Menu_ItmPadding;
 }
 
 .sapUiMnuItm.sapUiMnuTfItm > .sapUiMnuItmTxt {
@@ -123,7 +123,7 @@
 .sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemLbl {
 	vertical-align: top;
 	margin-right: 5px;
-	line-height: @sapUiMnuItmHeight;
+	line-height: @_sap_ui_unified_Menu_ItmHeight;
 	display: inline-block;
 	white-space: nowrap;
 	overflow: hidden;
@@ -199,7 +199,7 @@
 
 .sapUiMnuItmSbMnu {
 	right: 0;
-	width: @sapUiMnuItmHeight;
+	width: @_sap_ui_unified_Menu_ItmHeight;
 	text-align: center;
 	font-size: 0.75rem;
 }
@@ -261,7 +261,7 @@
 }
 
 .sapUiMnu.sapUiMnuScroll .sapUiMnuItmR {
-	width: @sapUiMnuItmPadding + 1rem;
+	width: @_sap_ui_unified_Menu_ItmPadding + 1rem;
 }
 
 .sapUiMnuItm.sapUiMnuItmSubMnuOpen,
@@ -282,7 +282,7 @@
 
 .sapUiMnuItmR,
 .sapUiMnuNoIco .sapUiMnuItmL {
-	width: @sapUiMnuItmPadding;
+	width: @_sap_ui_unified_Menu_ItmPadding;
 }
 
 .sapUiMnuItm.sapUiMnuItmDsbl .sapUiMnuItmIco {
@@ -299,22 +299,22 @@
 
 .sapUiMnuItmIco > img {
 	padding-left: 0;
-	max-width: @sapUiMnuItmHeight / 2;
-	max-height: @sapUiMnuItmHeight / 2;
+	max-width: @_sap_ui_unified_Menu_ItmHeight / 2;
+	max-height: @_sap_ui_unified_Menu_ItmHeight / 2;
 }
 
 .sapUiMnu.sapUiMnuScroll .sapUiMnuItmTxt {
-	padding-right: @sapUiMnuItmHeight + @sapUiMnuItmPadding + 1rem;
+	padding-right: @_sap_ui_unified_Menu_ItmHeight + @_sap_ui_unified_Menu_ItmPadding + 1rem;
 }
 
 .sapUiMnuNoSbMnu > .sapUiMnuItm > .sapUiMnuItmTxt,
 .sapUiMnuItm.sapUiMnuTfItm > .sapUiMnuItmTxt {
-	padding-right: @sapUiMnuItmPadding;
+	padding-right: @_sap_ui_unified_Menu_ItmPadding;
 }
 
 .sapUiMnu.sapUiMnuScroll .sapUiMnuNoSbMnu > .sapUiMnuItm > .sapUiMnuItmTxt,
 .sapUiMnu.sapUiMnuScroll .sapUiMnuItm.sapUiMnuTfItm > .sapUiMnuItmTxt {
-	padding-right: @sapUiMnuItmPadding + 1rem;
+	padding-right: @_sap_ui_unified_Menu_ItmPadding + 1rem;
 }
 
 .sapUiMnuNoIco .sapUiMnuItmTxt {
@@ -322,7 +322,7 @@
 }
 
 .sapUiMnuItm.sapUiMnuTfItm > .sapUiMnuItmTxt > .sapUiMnuTfItemWrppr {
-	right: @sapUiMnuItmPadding;
+	right: @_sap_ui_unified_Menu_ItmPadding;
 }
 
 .sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemTf {
@@ -330,15 +330,15 @@
 	font-size: @sapMFontMediumSize;
 	padding: 0.125rem 0.3125rem 0.125rem 0.3125rem;
 	margin-top: 0.1875rem;
-	height: @sapUiMnuItmHeight - 0.375rem;
+	height: @_sap_ui_unified_Menu_ItmHeight - 0.375rem;
 }
 
 .sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemLbl {
-	line-height: @sapUiMnuItmHeight;
+	line-height: @_sap_ui_unified_Menu_ItmHeight;
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
 	color: @sapUiListTextColor;
-	margin-right: @sapUiMnuItmPadding;
+	margin-right: @_sap_ui_unified_Menu_ItmPadding;
 }
 
 .sapUiMnuItmSbMnu > div:after {
@@ -364,62 +364,62 @@
 .sapUiMnu.sapUiMnuCozySupport.sapUiSizeCozy {
 
 	&.sapUiMnuScroll .sapUiMnuItmR {
-		width: @sapUiMnuItmPaddingCozy + 1rem;
+		width: @_sap_ui_unified_Menu_ItmPaddingCozy + 1rem;
 	}
 
 	.sapUiMnuItm {
-		height: @sapUiMnuItmHeightCozy;
-		line-height: @sapUiMnuItmHeightCozy;
+		height: @_sap_ui_unified_Menu_ItmHeightCozy;
+		line-height: @_sap_ui_unified_Menu_ItmHeightCozy;
 	}
 
 	.sapUiMnuItmR,
 	.sapUiMnuNoIco .sapUiMnuItmL {
-		width: @sapUiMnuItmPaddingCozy;
+		width: @_sap_ui_unified_Menu_ItmPaddingCozy;
 	}
 
 	.sapUiMnuItmIco {
-		width: @sapUiMnuItmHeightCozy;
-		font-size: @sapUiMnuItmHeightCozy / 2 - 0.125rem;
+		width: @_sap_ui_unified_Menu_ItmHeightCozy;
+		font-size: @_sap_ui_unified_Menu_ItmHeightCozy / 2 - 0.125rem;
 	}
 
 	.sapUiMnuItmIco > img {
-		max-width: @sapUiMnuItmHeightCozy / 2 - 0.125rem;
-		max-height: @sapUiMnuItmHeightCozy / 2 - 0.125rem;
+		max-width: @_sap_ui_unified_Menu_ItmHeightCozy / 2 - 0.125rem;
+		max-height: @_sap_ui_unified_Menu_ItmHeightCozy / 2 - 0.125rem;
 	}
 
 	.sapUiMnuItmTxt {
-		padding-right: @sapUiMnuItmHeightCozy + @sapUiMnuItmPaddingCozy;
+		padding-right: @_sap_ui_unified_Menu_ItmHeightCozy + @_sap_ui_unified_Menu_ItmPaddingCozy;
 	}
 
 	&.sapUiMnuScroll .sapUiMnuItmTxt {
-		padding-right: @sapUiMnuItmHeightCozy + @sapUiMnuItmPaddingCozy + 1rem;
+		padding-right: @_sap_ui_unified_Menu_ItmHeightCozy + @_sap_ui_unified_Menu_ItmPaddingCozy + 1rem;
 	}
 
 	.sapUiMnuNoSbMnu > .sapUiMnuItm > .sapUiMnuItmTxt,
 	.sapUiMnuItm.sapUiMnuTfItm > .sapUiMnuItmTxt {
-		padding-right: @sapUiMnuItmPaddingCozy;
+		padding-right: @_sap_ui_unified_Menu_ItmPaddingCozy;
 	}
 
 	&.sapUiMnuScroll .sapUiMnuNoSbMnu > .sapUiMnuItm > .sapUiMnuItmTxt,
 	&.sapUiMnuScroll .sapUiMnuItm.sapUiMnuTfItm > .sapUiMnuItmTxt {
-		padding-right: @sapUiMnuItmPaddingCozy + 1rem;
+		padding-right: @_sap_ui_unified_Menu_ItmPaddingCozy + 1rem;
 	}
 
 	.sapUiMnuItm.sapUiMnuTfItm > .sapUiMnuItmTxt > .sapUiMnuTfItemWrppr {
-		right: @sapUiMnuItmPaddingCozy;
+		right: @_sap_ui_unified_Menu_ItmPaddingCozy;
 	}
 
 	.sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemTf {
-		height: @sapUiMnuItmHeightCozy - 0.375rem;
+		height: @_sap_ui_unified_Menu_ItmHeightCozy - 0.375rem;
 	}
 
 	.sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemLbl {
-		line-height: @sapUiMnuItmHeightCozy;
-		margin-right: @sapUiMnuItmPaddingCozy;
+		line-height: @_sap_ui_unified_Menu_ItmHeightCozy;
+		margin-right: @_sap_ui_unified_Menu_ItmPaddingCozy;
 	}
 
 	.sapUiMnuItmSbMnu {
-		width: @sapUiMnuItmHeightCozy;
+		width: @_sap_ui_unified_Menu_ItmHeightCozy;
 	}
 
 }
