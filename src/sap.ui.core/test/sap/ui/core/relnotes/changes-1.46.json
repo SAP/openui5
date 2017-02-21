@@ -559,5 +559,58 @@
         "references": []
       }
     ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "a1a3e25d5f82d07c1cd3ce130fc569593d2e0b7d",
+        "type": "FEATURE",
+        "text": " sap.ui.core.routing: \u0027beforeMatched\u0027 and \u0027beforeRouteMatched\u0027 events",
+        "references": []
+      },
+      {
+        "id": "a0ab4e2e6ad1f01fdff0d61be71058d969eb839c",
+        "type": "FIX",
+        "text": " Chart Color adaption for sap_hcb",
+        "references": []
+      },
+      {
+        "id": "b19907913d35759e92229b96ba501d48740c0826",
+        "type": "FIX",
+        "text": " Less Parameter Values for sequential chart parameters for sap_hcb",
+        "references": []
+      },
+      {
+        "id": "4fa8675d4c80f88d472f1c209cd7adeaa240152b",
+        "type": "FIX",
+        "text": " Support Edm.Decimal with lower case \u0027m\u0027. For example $filter\u003dUnitPrice le 100m",
+        "references": []
+      },
+      {
+        "id": "02884f0b3e9f31e271b92c1c3dd091b2364b5beb",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: Clear selectAllMode from all nodes on clearSelection()",
+        "references": []
+      },
+      {
+        "id": "7f9577f04223b3dda85c0d8dd6c056c43c898476",
+        "type": "FIX",
+        "text": " core.qunit.Popup: fix tests which fail on mobile device",
+        "references": []
+      },
+      {
+        "id": "a72f92b3dbb37ffa932899a96cc79db0296065ba",
+        "type": "FIX",
+        "text": " sap.ui.core.Icon: provide theme dependent color for IconColor.Default",
+        "references": []
+      },
+      {
+        "id": "71a32c16f8e2be033b91c2fe3c6d6c01c1288067",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Skip data evens for aborted requests",
+        "references": []
+      }
+    ]
   }
 }

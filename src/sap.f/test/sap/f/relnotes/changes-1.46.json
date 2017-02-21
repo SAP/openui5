@@ -33,5 +33,28 @@
         "references": []
       }
     ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "a1a3e25d5f82d07c1cd3ce130fc569593d2e0b7d",
+        "type": "FEATURE",
+        "text": " sap.ui.core.routing: \u0027beforeMatched\u0027 and \u0027beforeRouteMatched\u0027 events",
+        "references": []
+      },
+      {
+        "id": "7cd67012e1a69fbc1a7e50005691a48182577801",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle border-bottom fixed",
+        "references": []
+      },
+      {
+        "id": "4338ea14de30b2cbca125e5fe8a5ee30f7c53375",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Toolbar bottom border repaired",
+        "references": []
+      }
+    ]
   }
 }

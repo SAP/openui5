@@ -512,5 +512,16 @@
         "references": []
       }
     ]
+  },
+  "1.40.17": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "7d091b7b1024c15324ecaed14f0bf6635af5861b",
+        "type": "FIX",
+        "text": " sap.m.ResponsiveSplitter: Overlapping text and navigation CSS issue fixed",
+        "references": []
+      }
+    ]
   }
 }

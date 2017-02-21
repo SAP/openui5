@@ -128,5 +128,26 @@
         "references": []
       }
     ]
+  },
+  "1.44.6": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "710ca0259d141d9dfbb014a0d7bcd35968c1c6ce",
+        "type": "FIX",
+        "text": " sap.m.ResponsiveSplitter: Overlapping text and navigation CSS issue fixed",
+        "references": []
+      },
+      {
+        "id": "361f3ca6eb6acb76e83dea989f061f9935ad3683",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Scrollbar is now correctly displayed",
+        "references": []
+      }
+    ]
+  },
+  "1.44.7": {
+    "date": "February 2017",
+    "notes": []
   }
 }

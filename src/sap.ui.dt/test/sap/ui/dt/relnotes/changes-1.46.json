@@ -21,5 +21,16 @@
         "references": []
       }
     ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "83038641645b8e07470793f3df455cfb79f7987f",
+        "type": "FIX",
+        "text": " sap.ui.dt: new overlay-utils functionality",
+        "references": []
+      }
+    ]
   }
 }

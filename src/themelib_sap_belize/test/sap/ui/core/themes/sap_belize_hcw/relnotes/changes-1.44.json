@@ -373,5 +373,69 @@
         "references": []
       }
     ]
+  },
+  "1.44.6": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "6b964ccc303ce93e7518760a15571952c8cf08df",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Focus with background image improved",
+        "references": []
+      },
+      {
+        "id": "a87567375bda8f8454145dae161522be94cfd115",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Focus clear visible on IE",
+        "references": []
+      },
+      {
+        "id": "48ad0bfd98eb60e6c7202fbef9fc1d116e6a7d5a",
+        "type": "FIX",
+        "text": " sap.m.Panel: Expandable icon contrast ratio fix",
+        "references": []
+      },
+      {
+        "id": "3dfc0669f981d0e3ac488aecc84e4050282811cb",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Fixes progress line visual design",
+        "references": []
+      },
+      {
+        "id": "fa971c0afcd25d81e816742b617e4772c8aac958",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Focus contrast ratio in IE/Edge is now correct",
+        "references": []
+      },
+      {
+        "id": "aba02cc292af508617e288f9ef9b211b21982b1b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Focus has sufficient contrast ratio in IE",
+        "references": []
+      }
+    ]
+  },
+  "1.44.7": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "db324f687ec270c1c3fed3eb29d04113c5b49a3b",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Focus fixed for Belize",
+        "references": []
+      },
+      {
+        "id": "883c41171e0dfcd7991791fe2fbf90544a42e624",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": []
+      },
+      {
+        "id": "698e5ebaa5e7dc37790d937dd39927db1dd75c14",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Belize Deep theme fixed for 1.44",
+        "references": []
+      }
+    ]
   }
 }

@@ -121,5 +121,39 @@
         "references": []
       }
     ]
+  },
+  "1.44.6": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "fdab68e52390eb42cea962500ccf85a6a7493311",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar - switching year in week view for negative time zones is corrected.",
+        "references": []
+      },
+      {
+        "id": "ff413cb08fbf28d88b4d78f6b8fd27fed7e37f1f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Invalidate Months only if they exist",
+        "references": []
+      }
+    ]
+  },
+  "1.44.7": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "883c41171e0dfcd7991791fe2fbf90544a42e624",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": []
+      },
+      {
+        "id": "698e5ebaa5e7dc37790d937dd39927db1dd75c14",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Belize Deep theme fixed for 1.44",
+        "references": []
+      }
+    ]
   }
 }

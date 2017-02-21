@@ -303,5 +303,70 @@
         "references": []
       }
     ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "02884f0b3e9f31e271b92c1c3dd091b2364b5beb",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: Clear selectAllMode from all nodes on clearSelection()",
+        "references": []
+      },
+      {
+        "id": "5dde4f2645717df4c3d3e9c98be617c2539f310e",
+        "type": "FIX",
+        "text": " TreeTable: Property expandFirstLevel deprecated",
+        "references": []
+      },
+      {
+        "id": "37d6e8e211ac4a0ff3ff3824576fe30420d9e7c2",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Avoid focus outline issues in Internet Explorer",
+        "references": []
+      },
+      {
+        "id": "fd0c5a1477b84c6509ea238c77aa3128f53fd405",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Avoid no data visualization during refresh",
+        "references": []
+      },
+      {
+        "id": "c3374059ad22cc649c21290102cf1e8595587f1f",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Fix positioning of table content in IE/Edge in case of row actions",
+        "references": []
+      },
+      {
+        "id": "96d491d290cb0db7ecff820ef06721e9c08441bb",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Fix positioning of table content with row actions (no scrollbar case)",
+        "references": []
+      },
+      {
+        "id": "1afbea349af45e3e4c970a7b65538bff295fcd19",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Scrolling to the last row when zoomed in/out in Chrome.",
+        "references": []
+      },
+      {
+        "id": "f6552d0cce78fc587e8f7512c0baa2227a666f94",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Skip cellClick event in case of text selection",
+        "references": []
+      },
+      {
+        "id": "cdb3d4c7c5eba49fbdc879adbfe8fa0b822959c0",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Tabbing in action mode when invisible columns exist.",
+        "references": []
+      },
+      {
+        "id": "45399fadea6efb8c15282006e612fc8ca7dd782a",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: columns with minWidth disappear after window resize",
+        "references": []
+      }
+    ]
   }
 }

@@ -1371,5 +1371,238 @@
         "references": []
       }
     ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "8dbd9b6190c6bab8d8bd619d3e00a0fa467b4984",
+        "type": "FEATURE",
+        "text": " ComboBox: new \"itemPressed\" parameter added to the change event",
+        "references": []
+      },
+      {
+        "id": "4940b843e65f7fe785483193ce9839521c7dceb6",
+        "type": "FEATURE",
+        "text": " New landing page for shopping card demo app",
+        "references": []
+      },
+      {
+        "id": "b47adf83abcaba024cd36f25346e49f202a38c89",
+        "type": "FEATURE",
+        "text": " sap.m.BrowserShcrollbar: HCB and HCW scroll corner color",
+        "references": []
+      },
+      {
+        "id": "d7fce406c38a38f664737d638f30477ce6e426c4",
+        "type": "FEATURE",
+        "text": " sap.m.FeedListItem: Properties convertLinksToAnchorTags and convertedLinksDefaultTarget introduced",
+        "references": []
+      },
+      {
+        "id": "ab6e9fd9c730e64fb5850274e9eeb7adebecece8",
+        "type": "FEATURE",
+        "text": " sap.m.MessageItem - more generic message container",
+        "references": []
+      },
+      {
+        "id": "319e868f327e839a2e6f42a2ee4f7f8c8f30bbea",
+        "type": "FEATURE",
+        "text": " sap.m.MessageView - generic control implementation",
+        "references": []
+      },
+      {
+        "id": "89fc42ca8dd10cf3a2d8223689dd99c3514852fa",
+        "type": "FEATURE",
+        "text": " sap.m.Popover: HCW and HCB arrow styling based on Belize",
+        "references": []
+      },
+      {
+        "id": "5ee9dbfb282b1cd0815f701ddd2621e2ccbc2abf",
+        "type": "FEATURE",
+        "text": " sap.m.RatingIndicator belize hcb and hcw",
+        "references": []
+      },
+      {
+        "id": "f08aa4540bc7c8124ce3c309d93babca738f7304",
+        "type": "FIX",
+        "text": " sap.m.ActionListItem: hover fixed for hc themes",
+        "references": []
+      },
+      {
+        "id": "8170b6e5087157f59b53947df29e19e8eaa0b11d",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Prevent exception when control is used with ACC off",
+        "references": []
+      },
+      {
+        "id": "08438769c575a8920b3244b3e5315a8a3059e8e2",
+        "type": "FIX",
+        "text": " sap.m.Button: Text styling fixes for buttons in bars",
+        "references": []
+      },
+      {
+        "id": "26f2469d7d5ec370204c063951257f681febd673",
+        "type": "FIX",
+        "text": " sap.m.Button: Text styling fixes for buttons in bars.",
+        "references": []
+      },
+      {
+        "id": "bcea40478a3a5646c9ed7ffd5a8ad568d089db9d",
+        "type": "FIX",
+        "text": " sap.m.Button: styling fixes",
+        "references": []
+      },
+      {
+        "id": "3f3860cdd2bcd91a5a6f630b093cad339a87b8f7",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Prevent the soft keyboard to be opened when opening the dropdown list",
+        "references": []
+      },
+      {
+        "id": "084c91f0e7d6e63a6e295fa83803c823fe674093",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Selection of items with accented chars corrected",
+        "references": []
+      },
+      {
+        "id": "f2e6f9f7cd21c46a26d32cccfeeb90cd825c7f98",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: Rendering of line breaks improved",
+        "references": []
+      },
+      {
+        "id": "f58148363091fce3df60b7aba1a5aa0b6c2e73a0",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Use of HTML control corrected",
+        "references": []
+      },
+      {
+        "id": "87fb42d00c1ac25b559444921e209bda95a6c34c",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer: Scroll to next button hidden properly in Chrome",
+        "references": []
+      },
+      {
+        "id": "23adeaeb051290eabcad0470ff5623dc477c49b6",
+        "type": "FIX",
+        "text": " sap.m.Input: disabled, read-only and value states fixed",
+        "references": []
+      },
+      {
+        "id": "6b25852e3fc1ec3cfd87a100ee88ef49f4cf85ea",
+        "type": "FIX",
+        "text": " sap.m.ListItemBase: when user taps on list items they are not getting focused on iPhone even though tabindex\u003d-1",
+        "references": []
+      },
+      {
+        "id": "4ff7689e8e3b9f0d4bf9653f16cb6d387d4c9992",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Focus fixed for Belize",
+        "references": []
+      },
+      {
+        "id": "baa866bf8e1a131498871bdd6d786aab6d6dc030",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Inner input height is wrong in Safari",
+        "references": []
+      },
+      {
+        "id": "4ba318b1d7f87cbfa0251e3bd43f62c354b06648",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Pressing enter with an empty value no longer triggers validation",
+        "references": []
+      },
+      {
+        "id": "b8d84a30364a77ebded410d5d9463511713bcd7d",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Copying and deselection of tokens in IE fixed",
+        "references": []
+      },
+      {
+        "id": "35d89936e6784d9570c0127b9192a2429b08d4ce",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Issue with closing the multiline mode",
+        "references": []
+      },
+      {
+        "id": "66a17db0fe8e49fd52480e53ecd22e3b8a4dc0ae",
+        "type": "FIX",
+        "text": " sap.m.Page: Belize, HCB, HCW border style fixed",
+        "references": []
+      },
+      {
+        "id": "34691cde0d9f58e1cd9475060980502be8de6c4f",
+        "type": "FIX",
+        "text": " sap.m.Page: Floating footer hides last elements of the content",
+        "references": []
+      },
+      {
+        "id": "2d33c0812a255a89f35f18c75e50240e97d31381",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": []
+      },
+      {
+        "id": "4c7b6d0aa3cb29dec41658472ad06b7884b91f9e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: 1 month view for S and M sizes is usable now.",
+        "references": []
+      },
+      {
+        "id": "a96035eaef4e5cc204565137e11cb69025a85ef9",
+        "type": "FIX",
+        "text": " sap.m.Slider: Global keyboard handling interruption fixed",
+        "references": []
+      },
+      {
+        "id": "6548b88c0ce14446bab4663508a5793cb5974536",
+        "type": "FIX",
+        "text": " sap.m.SuggestionItem: Documentation \"extends\" information corrected",
+        "references": []
+      },
+      {
+        "id": "967dbf03bbebbd791f83a3d4129a97932811a852",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Adjusting height after rendering fixed",
+        "references": []
+      },
+      {
+        "id": "568c6fdc73fc24162a2fbb0ef48b19beef8ccc88",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSlider: removed direct jQuery usage",
+        "references": []
+      },
+      {
+        "id": "e3f45e0b1dae66b8d54be343cc80b48e3323e37b",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: disabled hc colors fixed",
+        "references": []
+      },
+      {
+        "id": "cab51e77c81c6eaf3afd62c803bcfeff6a8aced7",
+        "type": "FIX",
+        "text": " sap.m.Token: In \"delete\" event token is added again as parameter",
+        "references": []
+      },
+      {
+        "id": "5f0fcc8237b84636122584df9495297c3e78c569",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: setTokens function now properly destroying overriden tokens",
+        "references": []
+      },
+      {
+        "id": "dfbc49283d7f08701ad7875c62a2d907ad9675ef",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator - css border parameter for Belize fixed",
+        "references": []
+      },
+      {
+        "id": "6cda385023093e7d1311b95e11cadc17ddbaf519",
+        "type": "FIX",
+        "text": " sap.m: Use mvc namespace instead of core namespace in Explored page",
+        "references": []
+      }
+    ]
   }
 }

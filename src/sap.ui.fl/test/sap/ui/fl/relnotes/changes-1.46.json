@@ -21,5 +21,16 @@
         "references": []
       }
     ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "6d6f464434640e18e02d286dfba52cb9c1e894da",
+        "type": "FEATURE",
+        "text": " LRep CUSTOMER_BASE layer for flexibility",
+        "references": []
+      }
+    ]
   }
 }

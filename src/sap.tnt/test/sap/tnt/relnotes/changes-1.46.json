@@ -21,5 +21,16 @@
         "references": []
       }
     ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "6f4fcc1a823d6f870006d175fa26eb2c2367332c",
+        "type": "FIX",
+        "text": "  Add Improvements to Run sap.tnt.demokit.toolpageapp on Mobile Devices",
+        "references": []
+      }
+    ]
   }
 }

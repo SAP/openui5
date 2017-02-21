@@ -87,5 +87,28 @@
         "references": []
       }
     ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "39355cf8532b27c2d6aec88693babf1eabffa269",
+        "type": "FIX",
+        "text": " sap.ui.layout.form.Form: error with too many fields",
+        "references": []
+      },
+      {
+        "id": "e5a9bea0897a88c6131bd53d78f32942f2947ba0",
+        "type": "FIX",
+        "text": " sap.ui.layout.form.SimpleForm: renders twice",
+        "references": []
+      },
+      {
+        "id": "ab053e3ef506b8b1453c7fe9bc4a6781a7ac3b5a",
+        "type": "FIX",
+        "text": " sap.ui.layout: fixed changeHandler for HideSimpleForm",
+        "references": []
+      }
+    ]
   }
 }

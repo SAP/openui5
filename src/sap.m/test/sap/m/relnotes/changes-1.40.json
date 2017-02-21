@@ -5620,15 +5620,86 @@
         "references": []
       },
       {
-        "id": "5a821fb2ddc05e156818754fd5cdcad71e7db8be",
-        "type": "FIX",
-        "text": " sap.m.UploadCollection: Focus handling in Upload Pending scenario improved",
-        "references": []
-      },
-      {
         "id": "ce8fdf54d77a52b80a77c9c32d249e029053f606",
         "type": "FIX",
         "text": " sap.m.ViewSettingsDialog - calling method removeAllSortItems() does not throw an exception if no items exist.",
+        "references": []
+      }
+    ]
+  },
+  "1.40.17": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "552a262a4c31762ced59ab13114bd9568bc320fb",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Issue in open method",
+        "references": []
+      },
+      {
+        "id": "9c819005ab0ef80cdc6455423976f2a7a9a56ce1",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Focus with background image improved",
+        "references": []
+      },
+      {
+        "id": "e00bea6b65885df1fcbdf51a064cc1546f1fb209",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Visibility of content in Header Mode corrected",
+        "references": []
+      },
+      {
+        "id": "edcf7fbad589c549c8c79fb090fb356be9c27d88",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: The filter icon has been fixed",
+        "references": []
+      },
+      {
+        "id": "c9cc1f71c7ba642d2ded91637cb652205fa4b6e9",
+        "type": "FIX",
+        "text": " sap.m.InputBase: IE throws input event without real trigger",
+        "references": []
+      },
+      {
+        "id": "d9cd3bbb651a37dea090bd9421f3c03c96a55454",
+        "type": "FIX",
+        "text": " sap.m.Panel: Expandable icon contrast ratio fix",
+        "references": []
+      },
+      {
+        "id": "6f3eed2287133ee982f60e5b1936125bf3ae109d",
+        "type": "FIX",
+        "text": " sap.m.Slider: Global keyboard handling interruption fixed",
+        "references": []
+      },
+      {
+        "id": "b509ee5496e54b4e7f68125f1f833fb84d3a4055",
+        "type": "FIX",
+        "text": " sap.m.SuggestionItem: Documentation \"extends\" information corrected",
+        "references": []
+      },
+      {
+        "id": "3c185e4a5c7ee7ac0327adbca68177e5effd77eb",
+        "type": "FIX",
+        "text": " sap.m.Text: Text align under Vertical Layout fixed",
+        "references": []
+      },
+      {
+        "id": "7cb62d7611c2196f32dda04946dbab9aaaeecf3b",
+        "type": "FIX",
+        "text": " sap.m.TextArea: set the height correctly",
+        "references": []
+      },
+      {
+        "id": "bf724db326ea79fc51d4a06802ad2255233274f2",
+        "type": "FIX",
+        "text": " sap.m.Token: In \"delete\" event token is added again as parameter",
+        "references": []
+      },
+      {
+        "id": "d0212b102055167fc705ed028a4a2088a36aee7a",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Dialog appears always",
         "references": []
       }
     ]
