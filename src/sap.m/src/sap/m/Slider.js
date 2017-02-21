@@ -241,14 +241,20 @@ sap.ui.define([
 		 * @private
 		 */
 		Slider.prototype._recalculateStyles = function() {
-			var $Slider = this.$();
+			var $Slider = this.$(),
+				oHandle = this.$().find(".sapMSliderHandle").eq(0),
+				fHandleWidthTotal = parseFloat(oHandle.css("width")) + 2 * parseFloat(oHandle.css("border-width")),
+				fProgressParentWidth = parseFloat(this.$("progress").parent().css("width"));
 			this._fSliderWidth = $Slider.width();
 			this._fSliderPaddingLeft = parseFloat($Slider.css("padding-left"));
 			this._fSliderOffsetLeft = $Slider.offset().left;
 			this._fHandleWidth = this.$("handle").width();
 
 			this._fTooltipHalfWidthPercent =
-				((this._fSliderWidth - (this._fSliderWidth - (this._iLongestRangeTextWidth / 2 + this._CONSTANTS.CHARACTER_WIDTH_PX))) / this._fSliderWidth) * 100;
+					((this._fSliderWidth - (this._fSliderWidth - (this._iLongestRangeTextWidth / 2 + this._CONSTANTS.CHARACTER_WIDTH_PX))) / this._fSliderWidth) * 100;
+
+			this._fHandleWidthPercent = (fHandleWidthTotal / fProgressParentWidth * 100) / 2;
+
 		};
 
 		/**
@@ -498,10 +504,10 @@ sap.ui.define([
 		Slider.prototype._getTooltipPosition = function (sNewValue) {
 			var fPerValue = this._getPercentOfValue(+sNewValue);
 
-			if (fPerValue < this._fTooltipHalfWidthPercent) {
-				return 0 + "%";
-			} else if (fPerValue > 100 - this._fTooltipHalfWidthPercent) {
-				return (100 - this._fTooltipHalfWidthPercent * 2) + "%";
+			if (fPerValue < this._fHandleWidthPercent / 2) {
+				return -this._fHandleWidthPercent  + "%";
+			} else if (fPerValue > 100 - this._fTooltipHalfWidthPercent + this._fHandleWidthPercent) {
+				return (100 - this._fTooltipHalfWidthPercent * 2 + this._fHandleWidthPercent) + "%";
 			} else {
 				return fPerValue - this._fTooltipHalfWidthPercent + "%";
 			}
@@ -612,7 +618,7 @@ sap.ui.define([
 		Slider.prototype._handleInputChange = function (oInput, oEvent) {
 			var newValue = parseFloat(oEvent.getParameter("value"));
 
-			if (isNaN(newValue) || newValue < this.getMin() || newValue > this.getMax()) {
+			if (oEvent.getParameter("value") == "" || isNaN(newValue) || newValue < this.getMin() || newValue > this.getMax()) {
 				oInput.setValueState(this._CONSTANTS.INPUT_STATE_ERROR);
 				return;
 			}
@@ -642,6 +648,9 @@ sap.ui.define([
 
 			// half the width of the tooltip in percent of the total slider width
 			this._fTooltipHalfWidthPercent = 0;
+
+			// width of the handler in percent of the progress area width
+			this._fHandleWidthPercent = 0;
 
 			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		};
@@ -1243,7 +1252,6 @@ sap.ui.define([
 
 			// validate the new value before arithmetic calculations
 			if (typeof fNewValue !== "number" || !isFinite(fNewValue)) {
-				jQuery.sap.log.error("Error:", '"fNewValue" needs to be a finite number on ', this);
 				return this;
 			}
 

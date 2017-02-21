@@ -16,9 +16,7 @@
   content: "";
   display: block;
   position: absolute;
-  top: -2px;
   bottom: -2px;
-  left: -2px;
   right: -2px;
   pointer-events: none;
 }
@@ -36,6 +34,8 @@
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: space-between;
+  margin-left: -1.0625rem;
+  margin-right: -1.406rem;
 }
 
 .sapMSliderRangeLabel {
@@ -73,6 +73,16 @@
     padding-left: 0.5rem;
     padding-right: 0.5rem;
   }
+  .sapMInputBaseState .sapMInputBaseStateInner {
+    height: inherit;
+    font-size: 0.75rem;
+    position: relative;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .sapMInputBaseState .sapMInputBaseErrorInner {
+    visibility: visible;
+  }
 }
 
 .sapUiSizeCozy .sapMSliderTooltipContainer {
@@ -106,13 +116,13 @@
   visibility: visible;
 }
 
-.sapMSlider {
-  &:hover {
-    .sapMSliderHandleTooltip, .sapMSliderTooltipContainer {
-      visibility: visible;
-    }
-  }
+.sapMSliderHandle:hover ~ .sapMSliderTooltipContainer .sapMSliderHandleTooltip{
+  visibility: visible;
 }
+
+.sapMSliderProgress:hover ~ .sapMSliderTooltipContainer .sapMSliderHandleTooltip {
+        visibility: visible;
+      }
 
 .sapMSliderHandleTooltipsShow,
 .sapMSliderHandleTooltipsShow .sapMSliderHandleTooltip {

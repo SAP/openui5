@@ -418,28 +418,54 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
         };
 
         RangeSlider.prototype._adjustTooltipsContainer = function () {
-            var oTooltipsContainer = this.getDomRef("TooltipsContainer"),
+            var iCorrection,
+                oTooltipsContainer = this.getDomRef("TooltipsContainer"),
                 sAdjustPropertyStart = this._bRTL ? "right" : "left",
                 sAdjustPropertyEnd = this._bRTL ? "left" : "right",
                 aRange = this.getRange(),
                 fStartPct = this._getPercentOfValue(aRange[0] > aRange[1] ? aRange[1] : aRange[0]),
-                fEndPct = this._getPercentOfValue(aRange[0] > aRange[1] ? aRange[0] : aRange[1]);
+                fEndPct = this._getPercentOfValue(aRange[0] > aRange[1] ? aRange[0] : aRange[1]),
+                fTooltipMinPosition =  this._fHandleWidthPercent / 2,
+                fTooltipMaxPosition =  100 - 3 * this._fTooltipHalfWidthPercent + this._fHandleWidthPercent,
+                fCalculatedStartPosition = parseFloat(oTooltipsContainer.style[sAdjustPropertyStart]),
+                fCalculatedEndPosition = parseFloat(oTooltipsContainer.style[sAdjustPropertyEnd]);
 
-            //Left Tooltip
-            if (fStartPct <= this._fTooltipHalfWidthPercent) {
-                oTooltipsContainer.style[sAdjustPropertyStart] = 0 + "%";
-            } else if (fStartPct >= (100 - 3 * this._fTooltipHalfWidthPercent)) {
-                oTooltipsContainer.style[sAdjustPropertyStart] = (100 - 4 * this._fTooltipHalfWidthPercent) + "%";
+            //Start Tooltip
+            if (fStartPct <= fTooltipMinPosition) {
+                //below the min tooltip position
+                fCalculatedStartPosition = -1 * this._fHandleWidthPercent;
+            } else if (fStartPct >= fTooltipMaxPosition) {
+                //above the max tooltip position
+                if (fCalculatedEndPosition < -1 * this._fHandleWidthPercent) {
+                    //cover the case when the right end of the handler is out of the progress element
+                    fCalculatedStartPosition = 100 - 4 * this._fTooltipHalfWidthPercent;
+                } else {
+                    fCalculatedStartPosition = (100 - 4 * this._fTooltipHalfWidthPercent) + this._fHandleWidthPercent;
+                }
+
+            //the tooltip position is between min and max tooltip position
+            } else if ((fEndPct - fStartPct > this._fTooltipHalfWidthPercent * 2) && (fStartPct > -1 * this._fTooltipHalfWidthPercent)) {
+                //the both tooltips are not adjoined
+                fCalculatedStartPosition = fStartPct - this._fTooltipHalfWidthPercent;
             } else {
-                oTooltipsContainer.style[sAdjustPropertyStart] = fStartPct - this._fTooltipHalfWidthPercent + "%";
+                //the both tooltips are adjoined
+                iCorrection = fStartPct - this._fTooltipHalfWidthPercent - (this._fTooltipHalfWidthPercent * 2 - (fEndPct - fStartPct)) / 2;
+                if (iCorrection <= -1 * this._fHandleWidthPercent) {
+                    fCalculatedStartPosition = -1 * this._fHandleWidthPercent;
+                } else {
+                    fCalculatedStartPosition = iCorrection;
+                }
             }
 
-            //Right Tooltip
-            if (fEndPct >= (100 - this._fTooltipHalfWidthPercent)) {
-                oTooltipsContainer.style[sAdjustPropertyEnd] = 0 + "%";
+            //End Tooltip
+            if (fEndPct >= (100 - fTooltipMinPosition) || (100 - fEndPct - this._fTooltipHalfWidthPercent) < -this._fHandleWidthPercent) {
+                fCalculatedEndPosition = -1 * this._fHandleWidthPercent;
             } else {
-                oTooltipsContainer.style[sAdjustPropertyEnd] = (100 - fEndPct - this._fTooltipHalfWidthPercent) + "%";
+                fCalculatedEndPosition = 100 - fEndPct - this._fTooltipHalfWidthPercent;
             }
+
+            oTooltipsContainer.style[sAdjustPropertyStart] = fCalculatedStartPosition + "%";
+            oTooltipsContainer.style[sAdjustPropertyEnd] = fCalculatedEndPosition + "%";
 
             this._swapTooltips(aRange);
         };
@@ -456,7 +482,7 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
                 bTooltipsInitialPositionTouched = this._mHandleTooltip.bTooltipsSwapped,
                 newValue = Number(oEvent.getParameter("value"));
 
-            if (isNaN(newValue) || newValue < this.getMin() || newValue > this.getMax()) {
+            if (oEvent.getParameter("value") === "" || isNaN(newValue) || newValue < this.getMin() || newValue > this.getMax()) {
                 oInput.setValueState(_CONSTANTS.INPUT_STATE_ERROR);
                 return;
             }
@@ -511,6 +537,11 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
 
         RangeSlider.prototype.setValue = function (fValue) {
             var aRange = this.getRange();
+
+            // validate the new value before arithmetic calculations
+            if (typeof fValue !== "number" || !isFinite(fValue)) {
+                return this;
+            }
 
             fValue = this._adjustRangeValue(fValue);
             aRange[0] = fValue;
