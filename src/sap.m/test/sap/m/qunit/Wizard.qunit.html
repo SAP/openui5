@@ -127,6 +127,11 @@
 			assert.strictEqual(this.oSpies.error.calledOnce, true, "Wizard should log error when maximum allowed steps are exceeded.");
 		});
 
+		QUnit.test("DestroySteps() empties the steps aggregation", function (assert) {
+			this.oWizard.destroySteps();
+			assert.ok(this.oWizard.getSteps().length === 0, "Aggregation should be empty");
+		});
+
 		QUnit.test("validateStep(step) should validate the given step", function (assert) {
 			var step1 = this.oWizard._getStartingStep();
 			this.oWizard.validateStep(step1);
