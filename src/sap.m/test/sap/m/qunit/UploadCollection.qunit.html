@@ -397,6 +397,25 @@
 		}
 	});
 
+	QUnit.test("Function _getFileNameControl", function(assert) {
+		//Arrange
+		var oItem = new sap.m.UploadCollectionItem({
+			fileName : "anyFileName"
+		});
+		oItem._requestIdName = 0;
+		this.oUploadCollection.insertItem(oItem);
+		sap.ui.getCore().applyChanges();
+		var oFileName = this.oUploadCollection._getFileNameControl(oItem, this);
+		var oSpyDestroy = sinon.spy(oFileName, "destroy");
+		//Act
+		oFileName = this.oUploadCollection._getFileNameControl(oItem, this);
+		//Assert
+		assert.ok(oSpyDestroy.calledOnce, "Destroy on oFileName object was called once");
+		assert.equal(oFileName.mEventRegistry.press.length, 1, "One press handler attached in case the function is called more times");
+		//Restore
+		oSpyDestroy.restore();
+	});
+
 	QUnit.test("Set number of attachments title (default text)", function(assert) {
 		var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_ATTACHMENTS", [999]);
 		this.oUploadCollection._setNumberOfAttachmentsTitle(999);
