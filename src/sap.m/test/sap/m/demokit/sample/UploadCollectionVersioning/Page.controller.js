@@ -195,7 +195,7 @@ sap.ui.define([
 			var aItems = jQuery.extend(true, {}, oData).items;
 			// Adds the new metadata to the file which was updated.
 			for (var i = 0; i < aItems.length; i++) {
-				if (aItems[i].fileName === this.oItemToUpdate.getFileName()) {
+				if (aItems[i].documentId === this.oItemToUpdate.getDocumentId()) {
 					// Uploaded by
 					aItems[i].attributes[0].text = "You";
 					// Uploaded on
