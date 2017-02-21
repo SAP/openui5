@@ -81,7 +81,7 @@ sap.ui.define([
 					oSalesOrderContext),
 				that = this;
 
-			oAction.execute().then(
+			oAction.execute("actionGroup").then(
 				function () {
 					MessageToast.show("Sales order "
 						+ oSalesOrderContext.getProperty("SalesOrderID") + " confirmed");
@@ -94,6 +94,7 @@ sap.ui.define([
 						title : "Error"});
 				}
 			);
+			oModel.submitBatch("actionGroup");
 		},
 
 		onCloseSalesOrderDialog : function (oEvent) {
