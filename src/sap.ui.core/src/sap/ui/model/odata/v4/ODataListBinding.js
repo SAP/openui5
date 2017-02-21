@@ -1318,8 +1318,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @override sap.ui.model.odata.v4.ODataBinding#refreshInternal
-	 * @inheritdoc
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
 	ODataListBinding.prototype.refreshInternal = function (sGroupId) {
 		var that = this;
