@@ -9,7 +9,7 @@
 		TESTS_DOM_CONTAINER = "qunit-fixture",
 		oFactory = {
 			getResourceBundle: function () {
-				return sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				return sap.ui.getCore().getLibraryResourceBundle("sap.f");
 			},
 			getDynamicPage: function () {
 				return new DynamicPage({
