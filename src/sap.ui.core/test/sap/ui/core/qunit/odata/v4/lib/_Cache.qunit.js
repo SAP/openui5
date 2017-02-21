@@ -16,7 +16,11 @@ sap.ui.require([
 	var aTestData = "abcdefghijklmnopqrstuvwxyz".split("");
 
 	/**
-	 * Simulates an OData server response.
+	 * Simulates an OData server response, limited to 26 items.
+	 * @param {number} iIndex The index of the first item
+	 * @param {number} iLength The length of the response
+	 * @param {string|number} [vCount] The value for "@odata.count"
+	 * @returns {object} A server response object
 	 */
 	function createResult(iIndex, iLength, vCount) {
 		var oResult = {
@@ -27,11 +31,21 @@ sap.ui.require([
 			};
 
 		if (vCount !== undefined) {
-			oResult["@odata.count"] = vCount;
+			oResult["@odata.count"] = String(vCount);
 		}
 		return oResult;
 	}
 
+	/**
+	 * Mocks a server request for a CollectionCache. The response is limited to 26 items.
+	 * @param {object} oRequestorMock A mock for the requestor instance
+	 * @param {string} sUrl The service URL
+	 * @param {number} iStart The index of the first item of the response
+	 * @param {number} iLength The length of the request
+	 * @param {function} fnSubmit The submit function of the request call
+	 * @param {string|number} [vCount] The value for "@odata.count"
+	 * @returns {Promise} A promise on the server response object
+	 */
 	function mockRequest(oRequestorMock, sUrl, iStart, iLength, fnSubmit, vCount) {
 		var oPromise = Promise.resolve(createResult(iStart, iLength, vCount));
 
@@ -583,6 +597,30 @@ sap.ui.require([
 						sinon.match.same(oCache.mChangeListeners), "0/list",
 						sinon.match.same(aList), {$count : 25});
 				});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("$count before read is finished", function (assert) {
+		var oRequestor = _Requestor.create("/~/"),
+			sResourcePath = "Employees",
+			oCache = _Cache.create(oRequestor, sResourcePath),
+			oListener = {
+				onChange : function () {
+					assert.ok(false);
+				}
+			};
+
+		mockRequest(this.mock(oRequestor), sResourcePath, 0, 10, undefined, "26");
+
+		oCache.read(0, 10);
+
+		// code under test: wait until request is finished, do not fire to listener
+		return oCache.fetchValue("group", "$count", undefined, oListener).then(function (iCount) {
+			assert.strictEqual(iCount, 26);
+
+			// code under test: now it must be delivered synchronously
+			assert.strictEqual(oCache.fetchValue(undefined, "$count").getResult(), 26);
 		});
 	});
 
