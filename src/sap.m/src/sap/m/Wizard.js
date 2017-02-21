@@ -130,7 +130,7 @@ sap.ui.define([
 			this._saveInitialValidatedState();
 
 			var step = this._getStartingStep();
-			if (this._stepPath.indexOf(step) < 0) {
+			if (step && this._stepPath.indexOf(step) < 0) {
 				this._activateStep(step);
 				this._updateProgressNavigator();
 				this._setNextButtonPosition();
@@ -412,7 +412,7 @@ sap.ui.define([
 		Wizard.prototype.destroySteps = function () {
 			this._resetStepCount();
 			this._getProgressNavigator().setStepCount(this._getStepCount());
-			return this.destroyAggregations("steps");
+			return this.destroyAggregation("steps");
 		};
 
 		/**************************************** PRIVATE METHODS ***************************************/
@@ -857,10 +857,17 @@ sap.ui.define([
 				return;
 			}
 
+
+
 			var scrollTop = event.target.scrollTop,
 				progressNavigator = this._getProgressNavigator(),
-				currentStepDOM = this._stepPath[progressNavigator.getCurrentStep() - 1].getDomRef(),
-				stepHeight = currentStepDOM.clientHeight,
+				currentStepDOM = this._stepPath[progressNavigator.getCurrentStep() - 1].getDomRef();
+
+			if (!currentStepDOM) {
+				return;
+			}
+
+			var stepHeight = currentStepDOM.clientHeight,
 				stepOffset = currentStepDOM.offsetTop,
 				stepChangeThreshold = 100;
 
