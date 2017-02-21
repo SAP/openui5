@@ -821,6 +821,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 			jQuery.sap.assert(oToggledNode != undefined, "expand(" + vRowIndex + "): Node not found!");
 		}
 
+		if (oToggledNode.nodeState.expanded) {
+			return; // Nothing to do here
+		}
+
 		//expand
 		oToggledNode.nodeState.expanded = true;
 		oToggledNode.nodeState.collapsed = false;
@@ -885,6 +889,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 			oToggledNode = this.findNode(vRowIndex);
 			jQuery.sap.assert(oToggledNode != undefined, "expand(" + vRowIndex + "): Node not found!");
 		}
+
+		if (oToggledNode.nodeState.collapsed) {
+			return; // Nothing to do here
+		}
+
 		//collapse
 		oToggledNode.nodeState.expanded = false;
 		oToggledNode.nodeState.collapsed = true;
