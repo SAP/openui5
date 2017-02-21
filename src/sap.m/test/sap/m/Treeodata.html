@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>sap.m.Tree</title>
+
+<script src="shared-config.js"></script>
+<script src="../../../resources/sap-ui-core.js" data-sap-ui-xx-bindingSyntax="complex"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
+</script>
+
+<script>
+jQuery.sap.require("sap.ui.core.util.MockServer");
+jQuery.sap.require("sap.ui.model.odata.ODataModel");
+
+var sServiceURI = "/odataFake/";
+var sMetaDataURI = "mockdata/";
+
+// configure respond to requests delay
+sap.ui.core.util.MockServer.config({
+	autoRespond : true,
+	autoRespondAfter : 1000
+});
+
+// create mockserver
+var oMockServer = new sap.ui.core.util.MockServer({
+	rootUri : sServiceURI
+});
+
+// start mockserver
+oMockServer.simulate(sMetaDataURI + "treemetadata.xml", sMetaDataURI);
+oMockServer.start();
+
+var oTemplate = new sap.m.StandardTreeItem({
+	title: "{odata>Description}"
+});
+
+var oTree = new sap.m.Tree({
+	headerText: "OData in Tree Structure"
+});
+
+var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, true);
+oTree.setModel(oModel, "odata");
+
+oTree.bindItems({
+	path: "odata>/Nodes",
+	template: oTemplate,
+	parameters: {
+		countMode: 'Inline'
+	}
+});
+
+var oApp = new sap.m.App();
+var oLabel3 = new sap.m.Label({text:"*********************Tree*********************"});
+
+var oPage = new sap.m.Page("TreeTest", {
+	title : "Test Page for sap.m.Tree",
+	content : [oTree]
+});
+
+oApp.addPage(oPage).placeAt("body");
+</script>
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>
