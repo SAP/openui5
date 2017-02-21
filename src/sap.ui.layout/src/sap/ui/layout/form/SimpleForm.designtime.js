@@ -233,7 +233,7 @@ sap.ui.define([], function() {
 					},
 					reveal : function(oParentElement, sAggregationName) {
 						var sType = oParentElement.getMetadata().getName();
-						var bRevealableAggregation = sAggregationName ? ( sAggregationName === "formElements" ) : true;
+						var bRevealableAggregation = sAggregationName ? ( sAggregationName === "formElements" || sAggregationName === "formContainers") : true;
 						if (sType === "sap.ui.layout.form.FormContainer" && bRevealableAggregation) {
 							return {
 								changeType : "unhideSimpleFormField",
