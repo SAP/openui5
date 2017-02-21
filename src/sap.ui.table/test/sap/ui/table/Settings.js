@@ -202,25 +202,37 @@
 			group: {
 				RTL: {
 					text: "Right to Left",
-					defaultValue: sap.ui.getCore().getConfiguration().getRTL(),
+					value: function() {
+						return sap.ui.getCore().getConfiguration().getRTL();
+					},
 					input: "boolean",
-					action: function(oTable, bValue) {sap.ui.getCore().getConfiguration().setRTL(bValue);}
+					action: function(oTable, bValue) {
+						sap.ui.getCore().getConfiguration().setRTL(bValue);
+					}
 				},
 				LANG: {
 					text: "Language (table related localized texts only)",
-					defaultKey: sap.ui.getCore().getConfiguration().getLocale().getLanguage().toUpperCase(),
+					value: function() {
+						return sap.ui.getCore().getConfiguration().getLocale().getLanguage().toUpperCase();
+					},
 					choice: {
 						EN: {
 							text: "en",
-							action: function(oTable) {sap.ui.getCore().getConfiguration().setLanguage("en");}
+							action: function(oTable) {
+								sap.ui.getCore().getConfiguration().setLanguage("en");
+							}
 						},
 						DE: {
 							text: "de",
-							action: function(oTable) {sap.ui.getCore().getConfiguration().setLanguage("de");}
+							action: function(oTable) {
+								sap.ui.getCore().getConfiguration().setLanguage("de");
+							}
 						},
 						FR: {
 							text: "fr",
-							action: function(oTable) {sap.ui.getCore().getConfiguration().setLanguage("fr");}
+							action: function(oTable) {
+								sap.ui.getCore().getConfiguration().setLanguage("fr");
+							}
 						}
 					}
 				}
@@ -231,41 +243,53 @@
 			group: {
 				SELECTIONMODE: {
 					text: "Selection Mode",
-					defaultKey: function(oTable) {
+					value: function(oTable) {
 						return oTable.getSelectionMode().toUpperCase();
 					},
 					choice: {
 						NONE: {
 							text: "None",
-							action: function(oTable) {oTable.setSelectionMode("None");}
+							action: function(oTable) {
+								oTable.setSelectionMode("None");
+							}
 						},
 						SINGLE: {
 							text: "Single",
-							action: function(oTable) {oTable.setSelectionMode("Single");}
+							action: function(oTable) {
+								oTable.setSelectionMode("Single");
+							}
 						},
 						MULTITOGGLE: {
 							text: "MultiToggle",
-							action: function(oTable) {oTable.setSelectionMode("MultiToggle");}
+							action: function(oTable) {
+								oTable.setSelectionMode("MultiToggle");
+							}
 						}
 					}
 				},
 				SELECTIONBEHAVIOR: {
 					text: "Selection Behavior",
-					defaultKey: function(oTable) {
+					value: function(oTable) {
 						return oTable.getSelectionBehavior().toUpperCase();
 					},
 					choice: {
 						ROWSELECTOR: {
 							text: "RowSelector",
-							action: function(oTable) {oTable.setSelectionBehavior("RowSelector");}
+							action: function(oTable) {
+								oTable.setSelectionBehavior("RowSelector");
+							}
 						},
 						ROW: {
 							text: "Row",
-							action: function(oTable) {oTable.setSelectionBehavior("Row");}
+							action: function(oTable) {
+								oTable.setSelectionBehavior("Row");
+							}
 						},
 						ROWONLY: {
 							text: "RowOnly",
-							action: function(oTable) {oTable.setSelectionBehavior("RowOnly");}
+							action: function(oTable) {
+								oTable.setSelectionBehavior("RowOnly");
+							}
 						}
 					}
 				}
@@ -276,9 +300,9 @@
 			group: {
 				DENSITY: {
 					text: "Density",
-					defaultKey: function(oTable) {
+					value: function(oTable) {
 						var sDensity = sap.ui.table.TableUtils.getContentDensity(oTable);
-						if (!sDensity || !sDensity.indexOf("sapUiSize") == 0) {
+						if (!sDensity || sDensity.indexOf("sapUiSize") === -1) {
 							return null;
 						}
 						return sDensity.substring("sapUiSize".length, sDensity.length).toUpperCase();
@@ -286,45 +310,59 @@
 					choice: {
 						COZY: {
 							text: "Cozy",
-							action: function(oTable) {setDensity("sapUiSizeCozy", oTable);}
+							action: function(oTable) {
+								setDensity("sapUiSizeCozy", oTable);
+							}
 						},
 						COMPACT: {
 							text: "Compact",
-							action: function(oTable) {setDensity("sapUiSizeCompact", oTable);}
+							action: function(oTable) {
+								setDensity("sapUiSizeCompact", oTable);
+							}
 						},
 						CONDENSED: {
 							text: "Condensed",
-							action: function(oTable) {setDensity("sapUiSizeCondensed", oTable);}
+							action: function(oTable) {
+								setDensity("sapUiSizeCondensed", oTable);
+							}
 						}
 					}
 				},
 				ROWCOUNTMODE: {
 					text: "Visible Row Count Mode",
-					defaultKey: function(oTable) {
+					value: function(oTable) {
 						return oTable.getVisibleRowCountMode().toUpperCase();
 					},
 					choice: {
 						FIXED: {
 							text: "Fixed",
-							action: function(oTable) {oTable.setVisibleRowCountMode("Fixed");}
+							action: function(oTable) {
+								oTable.setVisibleRowCountMode("Fixed");
+							}
 						},
 						AUTO: {
 							text: "Auto",
-							action: function(oTable) {oTable.setVisibleRowCountMode("Auto");}
+							action: function(oTable) {
+								oTable.setVisibleRowCountMode("Auto");
+							}
 						},
 						INTERACTIVE: {
 							text: "Interactive",
-							action: function(oTable) {oTable.setVisibleRowCountMode("Interactive");}
+							action: function(oTable) {
+								oTable.setVisibleRowCountMode("Interactive");
+							}
 						}
 					}
 				},
 				VISIBLEROWCOUNT: {
 					text: "Visible Row Count",
 					input: true,
-					defaultValue: function(oTable) {
+					value: function(oTable) {
 						return oTable.getVisibleRowCount();
 					},
-					action: function(oTable, sValue) {oTable.setVisibleRowCount(parseInt(sValue, 10) || 0);}
+					action: function(oTable, sValue) {
+						oTable.setVisibleRowCount(parseInt(sValue, 10) || 0);
+					}
 				}
 			}
 		},
@@ -333,15 +371,17 @@
 			group: {
 				LARGEDATA: {
 					text:  "Large Data Scrolling",
-					defaultValue: function(oTable) {
+					value: function(oTable) {
 						return oTable._bLargeDataScrolling;
 					},
 					input: "boolean",
-					action: function(oTable, bValue) {oTable._bLargeDataScrolling = bValue;}
+					action: function(oTable, bValue) {
+						oTable._bLargeDataScrolling = bValue;
+					}
 				},
 				PIXELBASED: {
 					text:  "Pixel-Based Scrolling",
-					defaultValue: function(oTable) {
+					value: function(oTable) {
 						return oTable._bVariableRowHeightEnabled;
 					},
 					input: "boolean",
@@ -361,7 +401,7 @@
 				VISIBLE: {
 					text: "Visible",
 					input: "boolean",
-					defaultValue: function(oColumn) {
+					value: function(oColumn) {
 						return oColumn.getVisible();
 					},
 					action: function(oColumn, vValue) {
@@ -371,7 +411,7 @@
 				RESIZABLE: {
 					text: "Resizable",
 					input: "boolean",
-					defaultValue: function(oColumn) {
+					value: function(oColumn) {
 						return oColumn.getResizable();
 					},
 					action: function(oColumn, vValue) {
@@ -381,7 +421,7 @@
 				AUTORESIZABLE: {
 					text: "Auto Resizable",
 					input: "boolean",
-					defaultValue: function(oColumn) {
+					value: function(oColumn) {
 						return oColumn.getAutoResizable();
 					},
 					action: function(oColumn, vValue) {
@@ -391,7 +431,7 @@
 				WIDTH: {
 					text: "Width",
 					input: true,
-					defaultValue: function(oColumn) {
+					value: function(oColumn) {
 						return oColumn.getWidth();
 					},
 					action: function(oColumn, vValue) {
@@ -401,7 +441,7 @@
 				MINWIDTH: {
 					text: "Min-Width",
 					input: true,
-					defaultValue: function(oColumn) {
+					value: function(oColumn) {
 						return oColumn.getMinWidth();
 					},
 					action: function(oColumn, vValue) {
@@ -412,30 +452,49 @@
 		},
 		BUSY: {
 			text: "Busy",
-			defaultValue: function(oTable) {
+			value: function(oTable) {
 				return oTable.getBusy();
 			},
 			input: "boolean",
-			action: function(oTable, bValue) {oTable.setBusy(bValue);}
+			action: function(
+				oTable, bValue) {oTable.setBusy(bValue);
+			}
 		},
 		CELLFILTER: {
 			text: "Cell Filter",
-			defaultValue: function(oTable) {
+			value: function(oTable) {
 				return oTable.getEnableCellFilter();
 			},
 			input: "boolean",
-			action: function(oTable, bValue) {oTable.setEnableCellFilter(bValue);}
+			action: function(oTable, bValue) {
+				oTable.setEnableCellFilter(bValue);
+			}
 		},
 		AREAS: {
 			text: "Areas",
 			group: {
 				OVERLAY: {
 					text: "Overlay",
-					defaultValue: function(oTable) {
+					value: function(oTable) {
 						return oTable.getShowOverlay();
 					},
 					input: "boolean",
-					action: function(oTable, bValue) {oTable.setShowOverlay(bValue);}
+					action: function(oTable, bValue) {
+						oTable.setShowOverlay(bValue);
+						if (bValue) {
+							new sap.m.Button({
+								id: "HideOverlayButton",
+								text: "Hide overlay",
+								type: sap.m.ButtonType.Emphasized,
+								press: function(oEvent) {
+									oTable.setShowOverlay(false);
+									oEvent.getSource().destroy();
+								}
+							}).placeAt(oTable.getParent().getId(), "first");
+						} else {
+							sap.ui.getCore().byId("HideOverlayButton").destroy();
+						}
+					}
 				},
 				NODATA: {
 					text: "NoData State",
@@ -446,57 +505,82 @@
 							oTable.setModel(TABLESETTINGS.model);
 						}
 					},
-					defaultKey: "SHOWDATA",
+					value: function() {
+						return DEFAULTACTIONS.AREAS.group.NODATA.selectedKey;
+					},
+					selectedKey: "SHOWDATA",
 					choice: {
 						SHOWDATA: {
 							text: "Show Data",
-							action: function(oTable) {switchNoData(oTable, "SHOWDATA");}
+							action: function(oTable) {
+								DEFAULTACTIONS.AREAS.group.NODATA.selectedKey = "SHOWDATA";
+								switchNoData(oTable, "SHOWDATA");
+							}
 						},
 						TEXT: {
 							text: "Text Message",
-							action: function(oTable) {switchNoData(oTable, "TEXT");}
+							action: function(oTable) {
+								DEFAULTACTIONS.AREAS.group.NODATA.selectedKey = "TEXT";
+								switchNoData(oTable, "TEXT");
+							}
 						},
 						CUSTOM: {
 							text: "Custom Control Message",
-							action: function(oTable) {switchNoData(oTable, "CUSTOM");}
+							action: function(oTable) {
+								DEFAULTACTIONS.AREAS.group.NODATA.selectedKey = "CUSTOM";
+								switchNoData(oTable, "CUSTOM");
+							}
 						},
 						EMPTYCELLS: {
 							text: "Show Empty Cells",
-							action: function(oTable) {switchNoData(oTable, "EMPTYCELLS");}
+							action: function(oTable) {
+								DEFAULTACTIONS.AREAS.group.NODATA.selectedKey = "EMPTYCELLS";
+								switchNoData(oTable, "EMPTYCELLS");
+							}
 						}
 					}
 				},
 				FIXEDCOLUMNS: {
 					text: "Fixed Columns",
 					input: true,
-					defaultValue: function(oTable) {
+					value: function(oTable) {
 						return oTable.getFixedColumnCount();
 					},
-					action: function(oTable, sValue) {oTable.setFixedColumnCount(parseInt(sValue, 10) || 0);}
+					action: function(oTable, sValue) {
+						oTable.setFixedColumnCount(parseInt(sValue, 10) || 0);
+					}
 				},
 				FIXEDROWS: {
 					text: "Fixed Top Rows",
 					input: true,
-					defaultValue: function(oTable) {
+					value: function(oTable) {
 						return oTable.getFixedRowCount();
 					},
-					action: function(oTable, sValue) {oTable.setFixedRowCount(parseInt(sValue, 10) || 0);}
+					action: function(oTable, sValue) {
+						oTable.setFixedRowCount(parseInt(sValue, 10) || 0);
+					}
 				},
 				FIXEDBOTTOMROWS: {
 					text: "Fixed Bottom Rows",
 					input: true,
-					defaultValue: function(oTable) {
+					value: function(oTable) {
 						return oTable.getFixedBottomRowCount();
 					},
-					action: function(oTable, sValue) {oTable.setFixedBottomRowCount(parseInt(sValue, 10) || 0);}
+					action: function(oTable, sValue) {
+						oTable.setFixedBottomRowCount(parseInt(sValue, 10) || 0);
+					}
 				},
 				ROWACTIONS: {
 					text: "Row Actions",
-					defaultKey: "NONE",
+					value: function() {
+						return DEFAULTACTIONS.AREAS.group.ROWACTIONS.selectedKey;
+					},
+					selectedKey: "NONE",
 					choice: {
 						NAVIGATION : {
 							text: "Navigation",
 							action: function(oTable) {
+								DEFAULTACTIONS.AREAS.group.ROWACTIONS.selectedKey ="NAVIGATION";
 								var oTemplate = new sap.ui.table.RowAction({items: [
 									new sap.ui.table.RowActionItem({
 										type: "Navigation",
@@ -518,6 +602,7 @@
 						NAVIGATIONDELETE : {
 							text: "Navigation & Delete",
 							action: function(oTable) {
+								DEFAULTACTIONS.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATIONDELETE";
 								var oTemplate = new sap.ui.table.RowAction({items: [
 									new sap.ui.table.RowActionItem({
 										type: "Navigation",
@@ -540,6 +625,7 @@
 						NAVIGATIONCUSTOM : {
 							text: "Navigation & Custom",
 							action: function(oTable) {
+								DEFAULTACTIONS.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATIONCUSTOM";
 								var oTemplate = new sap.ui.table.RowAction({items: [
 									new sap.ui.table.RowActionItem({
 										type: "Navigation",
@@ -562,6 +648,7 @@
 						MULTI : {
 							text: "Multiple Actions",
 							action: function(oTable) {
+								DEFAULTACTIONS.AREAS.group.ROWACTIONS.selectedKey = "MULTI";
 								var oTemplate = new sap.ui.table.RowAction({items: [
 									new sap.ui.table.RowActionItem({icon: "sap-icon://attachment", text: "Attachment", press: fnRowActionPress}),
 									new sap.ui.table.RowActionItem({icon: "sap-icon://search", text: "Search", press: fnRowActionPress}),
@@ -574,6 +661,7 @@
 						MULTI_ONE : {
 							text: "Multiple Actions (1 Column)",
 							action: function(oTable) {
+								DEFAULTACTIONS.AREAS.group.ROWACTIONS.selectedKey = "MULTI_ONE";
 								var oTemplate = new sap.ui.table.RowAction({items: [
 									new sap.ui.table.RowActionItem({icon: "sap-icon://attachment", text: "Attachment", press: fnRowActionPress}),
 									new sap.ui.table.RowActionItem({icon: "sap-icon://search", text: "Search", press: fnRowActionPress}),
@@ -586,6 +674,7 @@
 						NONE : {
 							text: "No Actions",
 							action: function(oTable) {
+								DEFAULTACTIONS.AREAS.group.ROWACTIONS.selectedKey = "NONE";
 								switchRowActions(oTable, 0, null);
 							}
 						}
@@ -595,7 +684,7 @@
 		},
 		GROUPING: {
 			text: "Grouping",
-			defaultValue: function(oTable) {
+			value: function(oTable) {
 				if (sap.ui.table.TableUtils.isInstanceOf(oTable, "sap/ui/table/TreeTable")) {
 					return oTable.getUseGroupMode();
 				} else {
@@ -613,7 +702,7 @@
 		},
 		TOOLTIPS: {
 			text: "Standard Tooltips (private)",
-			defaultValue: function(oTable) {
+			value: function(oTable) {
 				return oTable._getShowStandardTooltips();
 			},
 			input: "boolean",
@@ -627,6 +716,9 @@
 			group: {
 				CELLCLICK: {
 					text: "CellClick",
+					value: function(oTable) {
+						return oTable.hasListeners("cellClick");
+					},
 					input: "boolean",
 					_cellClickHandler: function(oEvent) {
 						jQuery.sap.require("sap.m.MessageToast");
@@ -660,20 +752,10 @@
 			oControl = TABLESETTINGS.table;
 		}
 
-		if (typeof oAction.defaultValue === "function" || typeof oAction._defaultValue === "function") {
-			if (oAction._defaultValue == null) {
-				oAction._defaultValue = oAction.defaultValue;
-			}
-			return oAction._defaultValue(oControl);
-
-		} else if (typeof oAction.defaultKey === "function" || typeof oAction._defaultKey === "function") {
-				if (oAction._defaultKey == null) {
-					oAction._defaultKey = oAction.defaultKey;
-				}
-				return oAction._defaultKey(oControl);
-
+		if (typeof oAction.value === "function") {
+			return oAction.value(oControl);
 		} else {
-			return oAction.defaultKey;
+			return oAction.value;
 		}
 	}
 
@@ -682,13 +764,14 @@
 		for (var item in mActions) {
 			var oItem;
 			if (mActions[item].input) {
-				mActions[item].defaultValue = getValue(mActions[item]);
+				var oActionValue = getValue(mActions[item]);
 				var bIsBoolean = mActions[item].input == "boolean";
 				var sValue = null;
+
 				if (bIsBoolean) {
-					sValue = mActions[item].defaultValue ? "X" : null;
+					sValue = oActionValue ? "X" : null;
 				} else {
-					sValue = mActions[item].defaultValue !== null && mActions[item].defaultValue !== undefined ? (mActions[item].defaultValue + "") : null
+					sValue = oActionValue != null ? (oActionValue + "") : null
 				}
 				oItem = new sap.ui.unified.MenuTextFieldItem({value: sValue, label: mActions[item].text, visible: !mActions[item].hidden, enabled: !mActions[item].disabled});
 				oItem._action = mActions[item].action;
@@ -719,6 +802,7 @@
 		var aResult = [];
 
 		function addSettings(oAction) {
+			var oActionValue = getValue(oAction);
 			var oClass = null;
 			var mSettings = {
 				visible: !oAction.hidden,
@@ -738,8 +822,7 @@
 				oClass = sap.m.Select;
 				mSettings.items = [];
 				mSettings.forceSelection = false;
-				oAction.defaultKey = getValue(oAction);
-				mSettings.selectedKey = oAction.defaultKey || null;
+				mSettings.selectedKey = oActionValue || null;
 				mSettings.change = function(oEvent) {
 					var oSelectedItem = oEvent.getParameter("selectedItem");
 					if (oSelectedItem._action) {
@@ -758,8 +841,7 @@
 				}
 			} else if (oAction.input === "boolean") {
 				oClass = sap.m.CheckBox;
-				oAction.defaultValue = getValue(oAction);
-				mSettings.selected = oAction.defaultValue !== null && oAction.defaultValue !== undefined ? !!oAction.defaultValue : false;
+				mSettings.selected = oActionValue != null ? !!oActionValue : false;
 				mSettings.select = function(oEvent) {
 					if (oEvent.getSource()._action) {
 						oEvent.getSource()._action(TABLESETTINGS.table, !!oEvent.getParameter("selected"));
@@ -767,10 +849,7 @@
 				};
 			} else if (oAction.input) {
 				oClass = sap.m.Input;
-				if (typeof oAction.defaultValue == "function") {
-					oAction.defaultValue = getValue(oAction);
-				}
-				mSettings.value = oAction.defaultValue !== null && oAction.defaultValue !== undefined ? (oAction.defaultValue + "") : null;
+				mSettings.value = oActionValue != null ? (oActionValue + "") : null;
 				mSettings.change = function(oEvent) {
 					if (oEvent.getSource()._action) {
 						oEvent.getSource()._action(TABLESETTINGS.table, oEvent.getParameter("value"));
@@ -1067,7 +1146,7 @@
 		}
 
 		for (var sKey in window.localStorage) {
-			if (sKey.startsWith("TableSettings_")) {
+			if (sKey.substring(0, "TableSettings_".length) === "TableSettings_") {
 				mSettings[sKey.replace("TableSettings_", "")] = window.localStorage.getItem(sKey);
 			}
 		}
