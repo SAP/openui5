@@ -76,10 +76,11 @@
 	margin-top: -@containerPadding;
 	padding: @containerPadding 0 0;
 	position: absolute;
-	right: @closeButtonCompactPosition;
-	top: @closeButtonCompactPosition;
+	right: @closeButtonCozyPosition;
+	top: @closeButtonCozyPosition;
 	transition: opacity;
 	width: @closeButtonSize;
+	z-index: 2;
 
 	.sapMBtnInner {
 		min-width: @closeButtonSize;
@@ -117,8 +118,16 @@
 }
 
 .sapMNLB-AuthorPicture .sapUiIcon {
-	color: @sapUiLightText;
+	color: @sapUiContentIconColor;
 	font-size: 1.5rem;
+}
+
+/* ==========================================================================
+   Datetime text styles
+  ========================================================================== */
+
+.sapMLIB.sapMNLB .sapMText.sapMNLI-Datetime {
+	display: inline;
 }
 
 /* ==========================================================================
@@ -127,7 +136,7 @@
 
 .sapMNLB-Footer, .sapMNLB-SubHeader {
 	line-height: 3rem;
-	padding: 0.25rem;
+	padding: 0.25rem 0 0 1rem;
 	
 	.sapMTB {
 		border: none;
@@ -145,7 +154,7 @@
   ========================================================================== */
 
 .sapMNLB-Bullet {
-	color: @sapUiLightText;
+	color: @sapUiContentLabelColor;
 	margin-left: 0.5rem;
 	margin-right: 0.5rem;
 }
@@ -173,4 +182,10 @@
 .sapUiSizeCompact .sapMNLB-CloseButton .sapMBtnIcon {
 	font-size: 0.75rem;
 	margin: 0;
+}
+
+.sapUiSizeCompact {
+	.sapMNLB-Footer, .sapMNLB-SubHeader {
+		padding: 0.25rem;
+	}
 }
