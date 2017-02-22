@@ -863,19 +863,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Determines all needed table size at one dedicated point,
-	 * for avoiding layout thrashing through read/write UI operations.
+	 * Determines the space available for the rows.
+	 *
+	 * @return {int} The available space in pixels.
 	 * @private
 	 */
 	Table.prototype._determineAvailableSpace = function() {
 		var oDomRef = this.getDomRef();
+
 		if (oDomRef && oDomRef.parentNode) {
 			var oCCnt = oDomRef.querySelector(".sapUiTableCCnt");
+
 			if (oCCnt) {
 				var iUsedHeight = oDomRef.scrollHeight - oCCnt.clientHeight;
+
+				// For simplicity always add the default height of the horizontal scrollbar to the used height, even if it will not be visible.
+				iUsedHeight += 18;
+
 				return jQuery(oDomRef.parentNode).height() - iUsedHeight;
 			}
 		}
+
 		return 0;
 	};
 
