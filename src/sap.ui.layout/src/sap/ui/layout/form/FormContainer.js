@@ -247,13 +247,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 		var sIcon, sIconHovered, sText, sTooltip;
 
 		if (oContainer.getExpanded()) {
-			sIcon = Parameters._getThemeImage('sapUiFormContainerColImageURL');
-			sIconHovered = Parameters._getThemeImage('sapUiFormContainerColImageDownURL');
+			sIcon = Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerColImageURL');
+			sIconHovered = Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerColImageDownURL');
 			sText = "-";
 			sTooltip = oContainer._rb.getText("FORM_COLLAPSE");
 		} else {
-			sIcon = Parameters._getThemeImage('sapUiFormContainerExpImageURL');
-			sIconHovered = Parameters._getThemeImage('sapUiFormContainerExpImageDownURL');
+			sIcon = Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerExpImageURL');
+			sIconHovered = Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerExpImageDownURL');
 			sText = "+";
 			sTooltip = oContainer._rb.getText("FORM_EXPAND");
 		}
