@@ -33,15 +33,20 @@
 					return sut;
 				}
 
-				var page = new sap.m.Page("master"),
-					page2 = new sap.m.Page("master2");
+				var page = new sap.m.Page("master", {
+					title: 'Master 1 Page 1'
+				});
+
+				var page2 = new sap.m.Page("master2", {
+					title: 'Master 2 Page 2'
+				});
 
 				//master pages
 				sut.addMasterPage(page);
 				sut.addMasterPage(page2);
 
 				//details pages
-				page = new sap.m.Page("detail"),
+				page = new sap.m.Page("detail");
 				page2 = new sap.m.Page("detail2");
 
 				sut.addDetailPage(page);
@@ -806,6 +811,18 @@
 				oSplitContainer.destroy();
 			});
 
+			test("MasterButtonTooltip Property", function() {
+
+				var oTooltip = 'Custom Tooltip';
+
+				this.sut.setMasterButtonTooltip(oTooltip);
+
+				this.sut.placeAt('content');
+				sap.ui.getCore().applyChanges();
+
+				ok(this.sut._oShowMasterBtn.getTooltip() == oTooltip, 'Tooltip is correct');
+			});
+
 			module("SplitContainer Navigation test", {
 				setup : function () {
 					this.sut = splitContainerSetup();
@@ -913,6 +930,19 @@
 				this.sut.to("master2");
 				this.sut.backToTopMaster();
 				strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master");
+			});
+
+			test("Mater button tooltip updating", function() {
+
+				this.sut.placeAt('content');
+				sap.ui.getCore().applyChanges();
+
+				equal(this.sut._oShowMasterBtn.getTooltip(), 'Show Master 1 Page ', 'Initial tooltip is correct');
+
+				this.sut.to('master2', 'show');
+				sap.ui.getCore().applyChanges();
+
+				equal(this.sut._oShowMasterBtn.getTooltip(), 'Show Master 2 Page ', 'Initial tooltip is correct');
 			});
 
 			module("SplitContainer public API test", {
@@ -1034,6 +1064,36 @@
 				this.sut.removeAllMasterPages(false);
 				sap.ui.getCore().applyChanges();
 				strictEqual(this.sut.getMasterPages().length, 0, "Master pages now are 0");
+			});
+
+			module("Add master and detail pages");
+
+			test("Test pages order", function() {
+				//arrange
+				var oSystem = {
+					desktop: false,
+					phone: true,
+					tablet: false
+				};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+
+				this.sut = new sap.m.SplitContainer({
+					initialMaster : "master2",
+					detailPages : new sap.m.Page("detail", {
+						title : "detail"
+					}),
+					masterPages : [
+						new sap.m.Page("master1", { title : "master1"}),
+						new sap.m.Page("master2", { title : "master2"})
+					]
+				});
+
+				var oMasterPage1 = sap.ui.getCore().byId("master1");
+
+				//assert
+				strictEqual(this.sut._oMasterNav.getPages()[0].getId(), "master1", "First page should be master1");
+				strictEqual(this.sut._oDetailNav.getPages()[0].getId(), "master1", "First page should be master1");
 			});
 
 		</script>

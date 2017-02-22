@@ -37,11 +37,11 @@ sap.ui.require([
 
     var regex2 = /^goodbye world$/i;
     var function2 = function() {};
-    this.stepDefs.register(regex1, function1);
+    this.stepDefs.register(regex2, function2);
 
     var regex3 = /^water world$/i;
     var function3 = function() {};
-    this.stepDefs.register(regex1, function1);
+    this.stepDefs.register(regex3, function3);
 
     deepEqual(this.stepDefs._generateTestStep({text: "gas giant"}), {
       isMatch: false,
@@ -83,22 +83,18 @@ sap.ui.require([
     }, "Given two registered steps, can match one of them");
   });
 
-  QUnit.test("Given two identical steps, matches the last one", function() {
+  QUnit.test("Given two identical steps, then throws error", function() {
 
     var regex = /^hello world$/i;
-    var function1 = function() {};
-    this.stepDefs.register(regex, function1);
+    this.stepDefs.register(regex, function() {});
 
-    var function2 = function() {};
-    this.stepDefs.register(regex, function2);
-
-    deepEqual(this.stepDefs._generateTestStep({text: "hello world"}), {
-      isMatch: true,
-      text: "hello world",
-      regex: regex,
-      parameters: [],
-      func: function2
-    }, "Given two identical steps, matches the last one");
+    throws( function() {
+        this.stepDefs.register(regex, function() {});
+      }, function(error) {
+        return error.message === "StepDefinitions.register: Duplicate step definition '/^hello world$/i'";
+      },
+      "Duplicate step definition throws an error"
+    );
   });
 
   QUnit.test("Parameters without data", function() {

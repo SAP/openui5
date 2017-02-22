@@ -7,13 +7,16 @@
 	padding: 0;
 }
 
+.sapMInputVH .sapMInputBaseInner  {
+	padding-right: 2.375rem;
+}
 .sapMInputDescription {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
-.sapMInputDescription > span {
+.sapMInputDescription .sapMInputDivWrapper>span {
 	padding-left: 0.5rem;
 	font-family: @sapUiFontFamily;
 	font-style: normal;
@@ -66,11 +69,11 @@
 	line-height: 2.375rem;
 }
 
-.sapMInputVHO:hover > .sapMInputValHelp > .sapMInputValHelpInner {
+.sapMInputVHO:hover .sapMInputValHelp .sapMInputValHelpInner {
 	background-color: @sapUiButtonLiteHoverBackground;
 }
 
-.sapMInputVHO:active > .sapMInputValHelp > .sapMInputValHelpInner {
+.sapMInputVHO:active .sapMInputValHelp .sapMInputValHelpInner {
 	background-color: @sapUiButtonLiteActiveBackground;
 	color: @sapUiButtonActiveTextColor;
 }
@@ -111,10 +114,14 @@ html.sap-desktop .sapMInputVH:not(.sapMInputBaseReadonly) .sapMInputValHelp > .s
 	font-size: @sapMFontMediumSize;
 }
 
-.sapMInputDescription > span {
+.sapMInputDescription span {
 	font-size: @sapMFontMediumSize;
 	line-height: 2.5rem;
 	color: @sapUiFieldTextColor;
+}
+
+.sapMInputDescriptionText {
+	padding-left: 0.5rem;
 }
 
 .sapMInputHighlight {
@@ -148,7 +155,7 @@ html.sap-desktop .sapMInputVH:not(.sapMInputBaseReadonly) .sapMInputValHelp > .s
 		vertical-align: top;
 	}
 
-	.sapMInputDescription > span {
+	.sapMInputDescription span {
 		line-height: 1.625rem;
 	}
 }
@@ -156,7 +163,6 @@ html.sap-desktop .sapMInputVH:not(.sapMInputBaseReadonly) .sapMInputValHelp > .s
 /* Condensed size */
 .sapUiSizeCondensed {
 	.sapMInputValHelp {
-		top: 0.3125rem;
 		height: 1.375rem; /* + 2*1px padding = 1.5rem */
 	}
 

@@ -1260,6 +1260,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		oRM.write("<span"); // Start TitleArrow container
 		oRM.writeAttribute("id", oOH.getId() + "-title-arrow");
+		oRM.addStyle("display", "inline-block");
+		oRM.writeStyles();
 		oRM.write(">");
 		this._renderResponsiveTitleAndArrow(oRM, oOH, nCutLen);
 		oRM.write("</span>");

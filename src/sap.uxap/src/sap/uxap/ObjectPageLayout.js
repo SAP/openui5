@@ -1037,7 +1037,7 @@ sap.ui.define([
 	 * @sap-restricted
 	 */
 	ObjectPageLayout.prototype._triggerVisibleSubSectionsEvents = function () {
-		if (this.getEnableLazyLoading()) {
+		if (this.getEnableLazyLoading() && this._oLazyLoading) {
 			this._oLazyLoading._triggerVisibleSubSectionsEvents();
 		}
 	};

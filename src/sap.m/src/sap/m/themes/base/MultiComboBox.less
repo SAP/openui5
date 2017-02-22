@@ -58,20 +58,29 @@ html.sap-desktop .sapMMultiComboBoxBorder {
 
 	&.sapMMultiComboBoxBorder .sapMTokenizer {
 		flex: 0 1 auto;
-		&:not(.sapMTokenizerEmpty) .sapMTokenizerScrollContainer {
-			padding-left: 0.375rem;
+
+		& .sapMToken:first-child {
+			margin-left: 0.375rem;
 		}
 	}
 }
 
-/* ------------------------------ */
+.sapUiSizeCompact .sapMMultiComboBoxBorder .sapMTokenizer .sapMToken:first-child{
+		margin-left: 0.25rem;
+	}
+
+.sapMMultiComboBoxHasToken .sapMInputBaseInner {
+	padding-left: 0;
+}
+
+	/* ------------------------------ */
 /*             InputDiv           */
 /* ------------------------------ */
 
 .sapMMultiComboBoxInputContainer {
 	flex: 1;
 	margin-right: 2.5rem;
-	min-width: 4.5rem;
+	min-width: 3rem;
 	// in Safari height of the inner input calculated wrong
 	height: 100%;
 
@@ -88,7 +97,11 @@ html.sap-desktop .sapMMultiComboBoxBorder {
 .sapUiSizeCompact {
 	.sapMMultiComboBoxInputContainer {
 		margin-right: 2rem;
-		min-width: 3.5rem;
+		min-width: 2rem;
+	}
+
+	& .sapMComboBoxTextFieldInnerWidthExtraPadding:not(.sapMComboBoxTextFieldInnerReadonly) {
+		padding-right: 0.5rem;
 	}
 }
 
@@ -124,6 +137,11 @@ html.sap-desktop .sapMMultiComboBoxBorder {
 .sapMMultiComboBox .sapMComboBoxBaseArrow {
 	z-index: 2;
 }
+
+ .sapMMultiComboBox .sapMInputDivWrapper{
+		width:100% !important;
+	}
+
 
 /* ------------------------------ */
 /* InputInner                     */

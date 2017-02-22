@@ -24,6 +24,7 @@
 							max="{max}"
 							width="{width}"
 							step="{step}"
+							largerStep="{largerStep}"
 							valueState="{valueState}"
 							enabled="{enabled}"
 							editable="{editable}"

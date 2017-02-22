@@ -4,7 +4,8 @@
         xmlns:mvc="sap.ui.core.mvc"
         xmlns:m="sap.m"
         xmlns:u="sap.ui.unified"
-        xmlns:core="sap.ui.core">
+        xmlns:core="sap.ui.core"
+        height="100%">
     <m:Page
             showHeader="false"
             enableScrolling="false">

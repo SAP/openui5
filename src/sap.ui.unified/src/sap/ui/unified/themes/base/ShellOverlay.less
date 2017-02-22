@@ -3,25 +3,26 @@
 /* Base theme                                   */
 /* ============================================ */
 
-@sapUiUfdShellOvrlyAnimDuration: 525ms;
+@_sap_ui_unified_ShellOverlay_AnimDuration: 525ms;
 
-@sapUiUfdShellOvrlyCntntOpenAnimDuration: @sapUiUfdShellOvrlyAnimDuration / 1.5;
-@sapUiUfdShellOvrlyCntntOpenAnimDelay: 75ms;
-@sapUiUfdShellOvrlyCntntCloseAnimDuration: @sapUiUfdShellOvrlyAnimDuration / 1.5;
-@sapUiUfdShellOvrlyCntntInnerOpenAnimDuration: @sapUiUfdShellOvrlyAnimDuration / 3;
-@sapUiUfdShellOvrlyCntntInnerOpenAnimDelay: @sapUiUfdShellOvrlyCntntOpenAnimDuration / 1.5 + @sapUiUfdShellOvrlyCntntOpenAnimDelay;
-@sapUiUfdShellOvrlyCntntInnerCloseAnimDuration: @sapUiUfdShellOvrlyAnimDuration / 3;
-@sapUiUfdShellOvrlyCntntInnerCloseAnimDelay: 0;
-@sapUiUfdShellOvrlyCntntCloseAnimDelay: @sapUiUfdShellOvrlyCntntInnerCloseAnimDuration + @sapUiUfdShellOvrlyCntntInnerCloseAnimDelay;
-@sapUiUfdShellOvrlySearchOpenAnimDuration: @sapUiUfdShellOvrlyAnimDuration;
-@sapUiUfdShellOvrlySearchCloseAnimDuration: @sapUiUfdShellOvrlyAnimDuration;
-@sapUiUfdShellOvrlyBlockLayerAnimDuration: @sapUiUfdShellOvrlyAnimDuration / 2.5;
+@_sap_ui_unified_ShellOverlay_CntntOpenAnimDuration: @_sap_ui_unified_ShellOverlay_AnimDuration / 1.5;
+@_sap_ui_unified_ShellOverlay_CntntOpenAnimDelay: 75ms;
+@_sap_ui_unified_ShellOverlay_CntntCloseAnimDuration: @_sap_ui_unified_ShellOverlay_AnimDuration / 1.5;
+@_sap_ui_unified_ShellOverlay_CntntInnerOpenAnimDuration: @_sap_ui_unified_ShellOverlay_AnimDuration / 3;
+@_sap_ui_unified_ShellOverlay_CntntInnerOpenAnimDelay: @_sap_ui_unified_ShellOverlay_CntntOpenAnimDuration / 1.5 + @_sap_ui_unified_ShellOverlay_CntntOpenAnimDelay;
+@_sap_ui_unified_ShellOverlay_CntntInnerCloseAnimDuration: @_sap_ui_unified_ShellOverlay_AnimDuration / 3;
+@_sap_ui_unified_ShellOverlay_CntntInnerCloseAnimDelay: 0;
+@_sap_ui_unified_ShellOverlay_CntntCloseAnimDelay: @_sap_ui_unified_ShellOverlay_CntntInnerCloseAnimDuration + @_sap_ui_unified_ShellOverlay_CntntInnerCloseAnimDelay;
+@_sap_ui_unified_ShellOverlay_SearchOpenAnimDuration: @_sap_ui_unified_ShellOverlay_AnimDuration;
+@_sap_ui_unified_ShellOverlay_SearchCloseAnimDuration: @_sap_ui_unified_ShellOverlay_AnimDuration;
+@_sap_ui_unified_ShellOverlay_BlockLayerAnimDuration: @_sap_ui_unified_ShellOverlay_AnimDuration / 2.5;
 
-@sapUiUfdShellOvrlyOpenAnimOverAll: @sapUiUfdShellOvrlyCntntInnerOpenAnimDelay + @sapUiUfdShellOvrlyCntntInnerOpenAnimDuration;
-@sapUiUfdShellOvrlyCloseAnimOverAll: @sapUiUfdShellOvrlyCntntInnerCloseAnimDuration + @sapUiUfdShellOvrlyCntntInnerCloseAnimDelay + @sapUiUfdShellOvrlyCntntCloseAnimDuration;
+@_sap_ui_unified_ShellOverlay_OpenAnimOverAll: @_sap_ui_unified_ShellOverlay_CntntInnerOpenAnimDelay + @_sap_ui_unified_ShellOverlay_CntntInnerOpenAnimDuration;
+@_sap_ui_unified_ShellOverlay_CloseAnimOverAll: @_sap_ui_unified_ShellOverlay_CntntInnerCloseAnimDuration + @_sap_ui_unified_ShellOverlay_CntntInnerCloseAnimDelay + @_sap_ui_unified_ShellOverlay_CntntCloseAnimDuration;
 
-@sapUiUfdShellOvrlyHeadHeight: @sapUiUfdShellHeadHeight;
-@sapUiUfdShellOvrlyBrandHeight: @sapUiUfdShellBrandHeight;
+@_sap_ui_unified_ShellOverlay_HeaderBarHeight: 44px;
+@_sap_ui_unified_ShellOverlay_BrandHeight: 4px;
+@_sap_ui_unified_ShellOverlay_HeadHeight: @_sap_ui_unified_ShellOverlay_BrandHeight + @_sap_ui_unified_ShellOverlay_HeaderBarHeight;
 
 
 .sapUiUfdShellOvrly {
@@ -52,7 +53,7 @@ html.sapUiMedia-Std-Phone .sapUiUfdShellOvrly > div {
 }
 
 .sapUiUfdShellOvrlyHead {
-	height: @sapUiUfdShellOvrlyHeadHeight;
+	height: @_sap_ui_unified_ShellOverlay_HeadHeight;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -66,7 +67,7 @@ html.sapUiMedia-Std-Phone .sapUiUfdShellOvrly > div {
 	background-color: @sapUiBrand;
 	position: absolute;
 	top: 0;
-	height: @sapUiUfdShellOvrlyBrandHeight;
+	height: @_sap_ui_unified_ShellOverlay_BrandHeight;
 	left: 0;
 	right: 0;
 	border: medium none;
@@ -106,7 +107,7 @@ html.sapUiMedia-Std-Phone .sapUiUfdShellOvrly > div {
 	position: absolute;
 	width: 100%;
 	box-sizing: border-box;
-	border-top: @sapUiUfdShellOvrlyHeadHeight solid transparent;
+	border-top: @_sap_ui_unified_ShellOverlay_HeadHeight solid transparent;
 	box-shadow: 0 0 48px fade(@sapUiContentShadowColor, 30);
 }
 
@@ -138,7 +139,7 @@ html.sapUiMedia-Std-Phone .sapUiUfdShellOvrly > div {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	top: @sapUiUfdShellOvrlyBrandHeight;
+	top: @_sap_ui_unified_ShellOverlay_BrandHeight;
 }
 
 .sapUiUfdShellOvrlyHeadCenter {
@@ -160,7 +161,7 @@ html.sapUiMedia-Std-Phone .sapUiUfdShellOvrlyHeadCenter {
 	width: 95%;
 	max-width: 600px;
 	height: 100%;
-	line-height: @sapUiUfdShellHeaderBarHeight - @sapUiUfdShellHeaderBarHeight/10;
+	line-height: @_sap_ui_unified_ShellOverlay_HeaderBarHeight - @_sap_ui_unified_ShellOverlay_HeaderBarHeight/10;
 	box-sizing: border-box;
 	text-align: left;
 }
@@ -174,22 +175,22 @@ html.sapUiMedia-Std-Phone .sapUiUfdShellOvrlyHeadCenter {
 .sapUiUfdShellOvrlyAnim.sapUiUfdShellOvrly > div {
 	-webkit-transition-property: width;
 	transition-property: width;
-	-webkit-transition-duration: @sapUiUfdShellOvrlyAnimDuration / 3;
-	transition-duration: @sapUiUfdShellOvrlyAnimDuration / 3;
+	-webkit-transition-duration: @_sap_ui_unified_ShellOverlay_AnimDuration / 3;
+	transition-duration: @_sap_ui_unified_ShellOverlay_AnimDuration / 3;
 }
 
 .sapUiUfdShellOvrlyAnim.sapUiUfdShellOvrlyOpening .sapUiUfdShellOvrlyCntnt {
-	-webkit-transition-duration: @sapUiUfdShellOvrlyCntntOpenAnimDuration;
-	transition-duration: @sapUiUfdShellOvrlyCntntOpenAnimDuration;
-	-webkit-transition-delay: @sapUiUfdShellOvrlyCntntOpenAnimDelay;
-	transition-delay: @sapUiUfdShellOvrlyCntntOpenAnimDelay;
+	-webkit-transition-duration: @_sap_ui_unified_ShellOverlay_CntntOpenAnimDuration;
+	transition-duration: @_sap_ui_unified_ShellOverlay_CntntOpenAnimDuration;
+	-webkit-transition-delay: @_sap_ui_unified_ShellOverlay_CntntOpenAnimDelay;
+	transition-delay: @_sap_ui_unified_ShellOverlay_CntntOpenAnimDelay;
 }
 
 .sapUiUfdShellOvrlyAnim.sapUiUfdShellOvrlyClosing .sapUiUfdShellOvrlyCntnt {
-	-webkit-transition-duration: @sapUiUfdShellOvrlyCntntCloseAnimDuration;
-	transition-duration: @sapUiUfdShellOvrlyCntntCloseAnimDuration;
-	-webkit-transition-delay: @sapUiUfdShellOvrlyCntntCloseAnimDelay;
-	transition-delay: @sapUiUfdShellOvrlyCntntCloseAnimDelay;
+	-webkit-transition-duration: @_sap_ui_unified_ShellOverlay_CntntCloseAnimDuration;
+	transition-duration: @_sap_ui_unified_ShellOverlay_CntntCloseAnimDuration;
+	-webkit-transition-delay: @_sap_ui_unified_ShellOverlay_CntntCloseAnimDelay;
+	transition-delay: @_sap_ui_unified_ShellOverlay_CntntCloseAnimDelay;
 }
 
 .sapUiUfdShellOvrlyAnim.sapUiUfdShellOvrlyOpening .sapUiUfdShellOvrlyCntnt,
@@ -204,17 +205,17 @@ html.sapUiMedia-Std-Phone .sapUiUfdShellOvrlyHeadCenter {
 }
 
 .sapUiUfdShellOvrlyAnim.sapUiUfdShellOvrlyOpening .sapUiUfdShellOvrlyCntnt > div {
-	-webkit-transition-duration: @sapUiUfdShellOvrlyCntntInnerOpenAnimDuration;
-	transition-duration: @sapUiUfdShellOvrlyCntntInnerOpenAnimDuration;
-	-webkit-transition-delay: @sapUiUfdShellOvrlyCntntInnerOpenAnimDelay;
-	transition-delay: @sapUiUfdShellOvrlyCntntInnerOpenAnimDelay;
+	-webkit-transition-duration: @_sap_ui_unified_ShellOverlay_CntntInnerOpenAnimDuration;
+	transition-duration: @_sap_ui_unified_ShellOverlay_CntntInnerOpenAnimDuration;
+	-webkit-transition-delay: @_sap_ui_unified_ShellOverlay_CntntInnerOpenAnimDelay;
+	transition-delay: @_sap_ui_unified_ShellOverlay_CntntInnerOpenAnimDelay;
 }
 
 .sapUiUfdShellOvrlyAnim.sapUiUfdShellOvrlyClosing .sapUiUfdShellOvrlyCntnt > div {
-	-webkit-transition-duration: @sapUiUfdShellOvrlyCntntInnerCloseAnimDuration;
-	transition-duration: @sapUiUfdShellOvrlyCntntInnerCloseAnimDuration;
-	-webkit-transition-delay: @sapUiUfdShellOvrlyCntntInnerCloseAnimDelay;
-	transition-delay: @sapUiUfdShellOvrlyCntntInnerCloseAnimDelay;
+	-webkit-transition-duration: @_sap_ui_unified_ShellOverlay_CntntInnerCloseAnimDuration;
+	transition-duration: @_sap_ui_unified_ShellOverlay_CntntInnerCloseAnimDuration;
+	-webkit-transition-delay: @_sap_ui_unified_ShellOverlay_CntntInnerCloseAnimDelay;
+	transition-delay: @_sap_ui_unified_ShellOverlay_CntntInnerCloseAnimDelay;
 }
 
 .sapUiUfdShellOvrlyAnim .sapUiUfdShellOvrlyCntnt > div {
@@ -223,15 +224,15 @@ html.sapUiMedia-Std-Phone .sapUiUfdShellOvrlyHeadCenter {
 }
 
 .sapUiUfdShellOvrlyAnim.sapUiUfdShellOvrlyOpening .sapUiUfdShellOvrlySearch {
-	-webkit-transition-duration: @sapUiUfdShellOvrlySearchOpenAnimDuration;
-	transition-duration: @sapUiUfdShellOvrlySearchOpenAnimDuration;
+	-webkit-transition-duration: @_sap_ui_unified_ShellOverlay_SearchOpenAnimDuration;
+	transition-duration: @_sap_ui_unified_ShellOverlay_SearchOpenAnimDuration;
 	-webkit-transition-timing-function: ease-out;
 	transition-timing-function: ease-out;
 }
 
 .sapUiUfdShellOvrlyAnim.sapUiUfdShellOvrlyClosing .sapUiUfdShellOvrlySearch {
-	-webkit-transition-duration: @sapUiUfdShellOvrlySearchCloseAnimDuration;
-	transition-duration: @sapUiUfdShellOvrlySearchCloseAnimDuration;
+	-webkit-transition-duration: @_sap_ui_unified_ShellOverlay_SearchCloseAnimDuration;
+	transition-duration: @_sap_ui_unified_ShellOverlay_SearchCloseAnimDuration;
 }
 
 .sapUiUfdShellOvrlyAnim .sapUiUfdShellOvrlySearch {
@@ -242,15 +243,15 @@ html.sapUiMedia-Std-Phone .sapUiUfdShellOvrlyHeadCenter {
 .sapUiUfdShellOvrlyAnim .sapUiUfdShellOvrlyHeadClose {
 	-webkit-transition-property: opacity;
 	transition-property: opacity;
-	-webkit-transition-duration: @sapUiUfdShellOvrlyAnimDuration;
-	transition-duration: @sapUiUfdShellOvrlyAnimDuration;
+	-webkit-transition-duration: @_sap_ui_unified_ShellOverlay_AnimDuration;
+	transition-duration: @_sap_ui_unified_ShellOverlay_AnimDuration;
 }
 
 .sapUiBLy.sapUiUfdShellOvrlyBly {
 	-webkit-transition-property: all;
 	transition-property: all;
-	-webkit-transition-duration: @sapUiUfdShellOvrlyBlockLayerAnimDuration;
-	transition-duration: @sapUiUfdShellOvrlyBlockLayerAnimDuration;
+	-webkit-transition-duration: @_sap_ui_unified_ShellOverlay_BlockLayerAnimDuration;
+	transition-duration: @_sap_ui_unified_ShellOverlay_BlockLayerAnimDuration;
 }
 
 .sapUiBLy.sapUiUfdShellOvrlyBly.sapUiUfdShellOvrlyBlyTp {
@@ -259,7 +260,7 @@ html.sapUiMedia-Std-Phone .sapUiUfdShellOvrlyHeadCenter {
 
 .sapUiUfdShellOvrlyHeadClose {
 	right: 0;
-	height: @sapUiUfdShellHeaderBarHeight - 8px;
+	height: @_sap_ui_unified_ShellOverlay_HeaderBarHeight - 8px;
 	margin: 4px;
 	padding-top: 10px;
 	padding-left: 10px;

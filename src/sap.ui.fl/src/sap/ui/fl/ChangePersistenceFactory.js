@@ -85,11 +85,15 @@ sap.ui.define([
 	ChangePersistenceFactory._doLoadComponent = function (oConfig, oManifest) {
 		var oChangePersistenceWrapper = {oChangePersistence: {}, oRequestOptions: {}};
 		var sComponentName = Utils.getFlexReference(oManifest);
+		var sMaxLayer, oStartupParameters;
 
-		if (oConfig.componentData && oConfig.componentData.startupParameters
-				&& oConfig.componentData.startupParameters["sap-app-id"] && oConfig.componentData.startupParameters["sap-app-id"].length === 1) {
+		if (oConfig && oConfig.componentData && oConfig.componentData.startupParameters){
+			oStartupParameters = oConfig.componentData.startupParameters;
+		}
+
+		if (oStartupParameters && oStartupParameters["sap-app-id"] && oStartupParameters["sap-app-id"].length === 1) {
 			// deprecated app variant id support with no caching
-			sComponentName = oConfig.componentData.startupParameters["sap-app-id"][0];
+			sComponentName = oStartupParameters["sap-app-id"][0];
 		} else {
 			if (oConfig) {
 				var aAsyncHints = oConfig.asyncHints;
@@ -101,10 +105,15 @@ sap.ui.define([
 				}
 			}
 		}
+		//Checks startup parameter for sap-ui-fl-max-layer value
+		if (oStartupParameters && oStartupParameters["sap-ui-fl-max-layer"] && oStartupParameters["sap-ui-fl-max-layer"].length === 1) {
+			sMaxLayer = oStartupParameters["sap-ui-fl-max-layer"][0];
+		}
+		Utils.setMaxLayerParameter(sMaxLayer);
 
 		oChangePersistenceWrapper.oRequestOptions.siteId = Utils.getSiteIdByComponentData(oConfig.componentData);
-
 		oChangePersistenceWrapper.oChangePersistence = this.getChangePersistenceForComponent(sComponentName);
+
 		return oChangePersistenceWrapper;
 	};
 

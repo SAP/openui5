@@ -29,16 +29,34 @@ sap.ui.require([
 			// DesignTime metadata
 			this.oDTForElement = {
 				metaProp1: "1",
-				metaProp2: "2"
+				metaProp2: "2",
+				metaPropDeep: {
+					metaPropDeep1 : "deep1"
+				},
+				metaPropDeep2: {
+					metaPropDeep21 : "deep21"
+				}
 			};
 			this.oDTForElementChild = {
-				metaProp2: "2.1",
+				metaProp2: "2-overwritten",
 				metaProp3: "3",
-				metaProp4: "4"
+				metaProp4: "4",
+				metaPropDeep: {
+					metaPropDeep2 : "deep2",
+					metaPropDeep3 : "deep3"
+				},
+				metaPropDeep2: {
+					metaPropDeep21 : "deep21-overwritten"
+				}
 			};
 			this.oDTForElementChild3 = {
 				metaProp3: "3.1",
-				metaProp4: undefined
+				metaProp4: undefined,
+				metaPropDeep: {
+					metaPropDeep1 : "deep1-overwritten",
+					metaPropDeep3 : undefined
+				},
+				metaPropDeep2: undefined
 			};
 
 			// stub the DesignTime require calls (make sure the sap.ui.require callback is called asynchronously)
@@ -71,33 +89,47 @@ sap.ui.require([
 			assert.ok(oDesignTime, "DesignTime was passed");
 			assert.strictEqual(oDesignTime.metaProp1, "1", "DesignTime data was passed");
 			assert.strictEqual(oDesignTime.metaProp2, "2", "DesignTime data was passed");
+			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was passed");
+			assert.strictEqual(oDesignTime.metaPropDeep2.metaPropDeep21, "deep21", "DesignTime data was passed");
 		}.bind(this));
 	});
 
 	QUnit.test("loadDesignTime - with simple inheritance", function(assert) {
 		return DTElementChild.getMetadata().loadDesignTime().then(function(oDesignTime) {
 			assert.strictEqual(oDesignTime.metaProp1, "1", "DesignTime data was inherited");
-			assert.strictEqual(oDesignTime.metaProp2, "2.1", "DesignTime data was overwritten");
+			assert.strictEqual(oDesignTime.metaProp2, "2-overwritten", "DesignTime data was overwritten");
 			assert.strictEqual(oDesignTime.metaProp3, "3", "DesignTime data was passed");
 			assert.strictEqual(oDesignTime.metaProp4, "4", "DesignTime data was passed");
+			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was passed");
+			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was passed");
+			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was passed");
+			assert.strictEqual(oDesignTime.metaPropDeep2.metaPropDeep21, "deep21-overwritten", "DesignTime data was overwritten");
 		}.bind(this));
 	});
 
 	QUnit.test("loadDesignTime - with designtime only via inheritance", function(assert) {
 		return NoDTElementChild2.getMetadata().loadDesignTime().then(function(oDesignTime) {
 			assert.strictEqual(oDesignTime.metaProp1, "1", "DesignTime data was inherited");
-			assert.strictEqual(oDesignTime.metaProp2, "2.1", "DesignTime data was inherited");
+			assert.strictEqual(oDesignTime.metaProp2, "2-overwritten", "DesignTime data was inherited");
 			assert.strictEqual(oDesignTime.metaProp3, "3", "DesignTime data was inherited");
 			assert.strictEqual(oDesignTime.metaProp4, "4", "DesignTime data was inherited");
+			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was passed");
+			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was passed");
+			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was passed");
+			assert.strictEqual(oDesignTime.metaPropDeep2.metaPropDeep21, "deep21-overwritten", "DesignTime data was overwritten");
 		}.bind(this));
 	});
 
 	QUnit.test("loadDesignTime - with transitive inheritance", function(assert) {
 		return DTElementChild3.getMetadata().loadDesignTime().then(function(oDesignTime) {
 			assert.strictEqual(oDesignTime.metaProp1, "1", "DesignTime data was inherited");
-			assert.strictEqual(oDesignTime.metaProp2, "2.1", "DesignTime data was inherited");
+			assert.strictEqual(oDesignTime.metaProp2, "2-overwritten", "DesignTime data was inherited");
 			assert.strictEqual(oDesignTime.metaProp3, "3.1", "DesignTime data was overwritten");
-			assert.strictEqual(oDesignTime.metaProp4, undefined, "DesignTime data was overwritten");
+			assert.strictEqual(oDesignTime.metaProp4, undefined, "DesignTime data was removed");
+			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1-overwritten", "DesignTime data was overwritten");
+			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was passed");
+			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, undefined, "DesignTime data was removed");
+			assert.strictEqual(oDesignTime.metaPropDeep2, undefined, "DesignTime data was removed");
 		}.bind(this));
 	});
 
@@ -115,24 +147,38 @@ sap.ui.require([
 			var oDTElementDesignTime = aDesignTimes[0];
 			assert.strictEqual(oDTElementDesignTime.metaProp1, "1", "DesignTime data was passed");
 			assert.strictEqual(oDTElementDesignTime.metaProp2, "2", "DesignTime data was passed");
+			assert.strictEqual(oDTElementDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was passed");
+			assert.strictEqual(oDTElementDesignTime.metaPropDeep2.metaPropDeep21, "deep21", "DesignTime data was passed");
 
 			var oDTElementChildDesignTime = aDesignTimes[1];
 			assert.strictEqual(oDTElementChildDesignTime.metaProp1, "1", "DesignTime data was inherited");
-			assert.strictEqual(oDTElementChildDesignTime.metaProp2, "2.1", "DesignTime data was overwritten");
+			assert.strictEqual(oDTElementChildDesignTime.metaProp2, "2-overwritten", "DesignTime data was overwritten");
 			assert.strictEqual(oDTElementChildDesignTime.metaProp3, "3", "DesignTime data was passed");
 			assert.strictEqual(oDTElementChildDesignTime.metaProp4, "4", "DesignTime data was passed");
+			assert.strictEqual(oDTElementChildDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was passed");
+			assert.strictEqual(oDTElementChildDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was passed");
+			assert.strictEqual(oDTElementChildDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was passed");
+			assert.strictEqual(oDTElementChildDesignTime.metaPropDeep2.metaPropDeep21, "deep21-overwritten", "DesignTime data was overwritten");
 
 			var oNoDTElementChild2DesignTime = aDesignTimes[2];
 			assert.strictEqual(oNoDTElementChild2DesignTime.metaProp1, "1", "DesignTime data was inherited");
-			assert.strictEqual(oNoDTElementChild2DesignTime.metaProp2, "2.1", "DesignTime data was inherited");
+			assert.strictEqual(oNoDTElementChild2DesignTime.metaProp2, "2-overwritten", "DesignTime data was inherited");
 			assert.strictEqual(oNoDTElementChild2DesignTime.metaProp3, "3", "DesignTime data was inherited");
 			assert.strictEqual(oNoDTElementChild2DesignTime.metaProp4, "4", "DesignTime data was inherited");
+			assert.strictEqual(oNoDTElementChild2DesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was passed");
+			assert.strictEqual(oNoDTElementChild2DesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was passed");
+			assert.strictEqual(oNoDTElementChild2DesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was passed");
+			assert.strictEqual(oNoDTElementChild2DesignTime.metaPropDeep2.metaPropDeep21, "deep21-overwritten", "DesignTime data was overwritten");
 
 			var oDTElementChild3DesignTime = aDesignTimes[3];
 			assert.strictEqual(oDTElementChild3DesignTime.metaProp1, "1", "DesignTime data was inherited");
-			assert.strictEqual(oDTElementChild3DesignTime.metaProp2, "2.1", "DesignTime data was inherited");
+			assert.strictEqual(oDTElementChild3DesignTime.metaProp2, "2-overwritten", "DesignTime data was inherited");
 			assert.strictEqual(oDTElementChild3DesignTime.metaProp3, "3.1", "DesignTime data was overwritten");
-			assert.strictEqual(oDTElementChild3DesignTime.metaProp4, undefined, "DesignTime data was overwritten");
+			assert.strictEqual(oDTElementChild3DesignTime.metaProp4, undefined, "DesignTime data was removed");
+			assert.strictEqual(oDTElementChild3DesignTime.metaPropDeep.metaPropDeep1, "deep1-overwritten", "DesignTime data was overwritten");
+			assert.strictEqual(oDTElementChild3DesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was passed");
+			assert.strictEqual(oDTElementChild3DesignTime.metaPropDeep.metaPropDeep3, undefined, "DesignTime data was removed");
+			assert.strictEqual(oDTElementChild3DesignTime.metaPropDeep2, undefined, "DesignTime data was removed");
 
 		}.bind(this));
 	});

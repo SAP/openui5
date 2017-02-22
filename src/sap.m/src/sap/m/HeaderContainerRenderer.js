@@ -68,6 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Orientation'],
 		var oButton = oControl.getAggregation("_prevButton");
 		if (oButton) {
 			oRm.write("<div");
+			oRm.writeAttributeEscaped("id", oControl.getId() + "-prev-button-container");
 			oRm.addClass("sapMHdrCntrBtnCntr");
 			oRm.addClass("sapMHdrCntrLeft");
 			oRm.addClass(sOrientationClass);
@@ -80,6 +81,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Orientation'],
 		oButton = oControl.getAggregation("_nextButton");
 		if (oButton) {
 			oRm.write("<div");
+			oRm.writeAttributeEscaped("id", oControl.getId() + "-next-button-container");
 			oRm.addClass("sapMHdrCntrBtnCntr");
 			oRm.addClass("sapMHdrCntrRight");
 			oRm.addClass(sOrientationClass);

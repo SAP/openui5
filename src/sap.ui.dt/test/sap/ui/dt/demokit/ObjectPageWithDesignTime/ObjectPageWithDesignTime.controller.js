@@ -18,7 +18,7 @@ sap.ui.define([
 			});
 
 			var oView = this.getView();
-			new DesignTime({
+			this.oDesignTime = new DesignTime({
 				rootElements : [oView],
 				plugins : [
 				  oTabHandlingPlugin,

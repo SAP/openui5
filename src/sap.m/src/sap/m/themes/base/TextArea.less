@@ -11,13 +11,19 @@
 	resize: none;
 }
 
-.sapMTextArea > .sapMTextAreaInner{
+.sapMTextArea .sapMInputDivWrapper {
+
+	-webkit-overflow-scrolling: touch;
+	height: 100%;
+	width: 100%;
+}
+
+.sapMTextArea .sapMTextAreaInner {
 	-webkit-overflow-scrolling: touch;
 	line-height: 1.4;
 	height: 100%;
 	width: 100%;
 }
-
 .sapMTextAreaGrow {
 	/* should not grow more than screen size */
 	max-height: calc(~"100vh - 6rem");
@@ -30,13 +36,14 @@
 	min-height: 2.5rem;
 	margin: 0.25rem 0;
 
-	& > .sapMTextAreaInner {
+	.sapMTextAreaInner {
+		line-height: 1.4;
 		padding: 0.625rem 0.75rem;
 		-webkit-overflow-scrolling: touch; /* IOS only */
 	}
 }
 
-.sapMInputBase.sapMTextArea.sapMInputBaseState > .sapMTextAreaInner {
+.sapMInputBase.sapMTextArea.sapMInputBaseState .sapMTextAreaInner {
 	padding: 0.5625rem 0.6875rem;
 }
 
@@ -46,13 +53,13 @@
 		min-height: 1.625rem;
 		margin: 0.1875rem 0;
 
-		& > .sapMTextAreaInner {
+		.sapMTextAreaInner {
 			padding: 0.1875rem 0.5rem;
 			height: auto;
 		}
 	}
 }
 
-.sapUiSizeCompact .sapMInputBase.sapMTextArea.sapMInputBaseState > .sapMTextAreaInner {
+.sapUiSizeCompact .sapMInputBase.sapMTextArea.sapMInputBaseState .sapMTextAreaInner {
 	padding: 0.125rem 0.4375rem;
 }

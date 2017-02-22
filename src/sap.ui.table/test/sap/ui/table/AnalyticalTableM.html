@@ -12,7 +12,7 @@
 <script id="sap-ui-bootstrap"
 		data-sap-ui-libs="sap.m,sap.ui.table,sap.ui.unified"
 		src="../../../../resources/sap-ui-core.js"></script>
-		
+
 <script src="Settings.js"></script>
 <script>
 
@@ -139,7 +139,9 @@ TABLESETTINGS.init(oTable, function(oButton) {
 		group: {
 			GRANDTOTALS: {
 				text: "Grand Totals",
-				defaultValue: !!bProvideGrandTotals,
+				value: function() {
+					return !!bProvideGrandTotals;
+				},
 				input: "boolean",
 				action: function(oTable, bValue) {
 					bProvideGrandTotals = bValue;
@@ -148,7 +150,9 @@ TABLESETTINGS.init(oTable, function(oButton) {
 			},
 			SUMONTOP: {
 				text: "Sum On Top",
-				defaultValue: !!bSumOnTop,
+				value: function() {
+					return  !!bSumOnTop;
+				},
 				input: "boolean",
 				action: function(oTable, bValue) {
 					bSumOnTop = bValue;

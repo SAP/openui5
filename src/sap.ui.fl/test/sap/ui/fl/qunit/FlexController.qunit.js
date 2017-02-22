@@ -490,8 +490,10 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 			saveDirtyChanges: sinon.stub().returns(Promise.resolve()),
 			getChangesMapForComponent: function () {
 				return {
-					"someId": aChangesForSomeId,
-					"someOtherId": aChangesForSomeOtherId
+					mChanges: {
+						"someId": aChangesForSomeId,
+						"someOtherId": aChangesForSomeOtherId
+					}
 				};
 			}
 		};
@@ -542,8 +544,10 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 			saveDirtyChanges: sinon.stub().returns(Promise.resolve()),
 			getChangesMapForComponent: function () {
 				return {
-					"someId": aChangesForSomeId,
-					"someOtherId": aChangesForSomeOtherId
+					mChanges: {
+						"someId": aChangesForSomeId,
+						"someOtherId": aChangesForSomeOtherId
+					}
 				};
 			}
 		};

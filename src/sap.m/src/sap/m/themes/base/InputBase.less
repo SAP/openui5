@@ -9,6 +9,7 @@
 	position: relative;
 	display: inline-block;
 	vertical-align: top;
+    outline: none;
 }
 
 .sapMInputBaseWidthPadding {
@@ -20,21 +21,36 @@
 	background: @sapUiFieldBackground;
 	border: 1px solid @sapUiFieldBorderColor;
 	-webkit-appearance: none;
-	border-radius: 0;
-	vertical-align: top;
-	margin: 0;
+
 	-moz-appearance: textfield;
 	font-size: @sapMFontMediumSize;
 	font-family: @sapUiFontFamily;
 	line-height: normal;
-	height: 2.5rem;
+
 	padding: 0 0.75rem;
+	height: 100%;
+	box-sizing: border-box;
+}
+
+.sapMInputDivWrapper {
+	position: relative;
+	display: inline-block;
+	border-radius: 0;
+	vertical-align: top;
+	margin: 0;
+	height: 2.5rem;
+	width: 100%;
 }
 
 .sapMInputBase,
-.sapMInputBaseInner,
+.sapMInputDivWrapper,
 .sapMInputBasePlaceholder {
 	box-sizing: border-box;
+	line-height: 0;
+}
+
+.sapMInputBaseState .sapMInputDivWrapper .sapMInputValHelp{
+	top: 0.1rem;
 }
 
 .sapMInputBaseInner::-webkit-input-placeholder {
@@ -63,17 +79,15 @@
 	font-style: italic;
 	line-height: 2.5rem;
 	padding: 0 0.75rem;
+	-ms-user-select: none;
+	user-select: none;
+	z-index: 2;
+	pointer-events: none;
 }
 
 .sapMInputBaseState .sapMInputBaseInner.sapMInputBaseStateInner,
 .sapMInputBaseStateInner {
 	border-width: 2px;
-	padding: 0 0.6875rem;
-}
-
-.sapMInputBaseDisabled > .sapMInputBaseReadonly,
-.sapMInputBaseDisabled > .sapMInputBasePlaceholder {
-	cursor: default;
 }
 
 .sapMInputBaseInner,
@@ -144,14 +158,21 @@
 	border-color: @sapUiFieldFocusBorderColor;
 }
 
-.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMInputBaseDisabledInner):hover {
+.sapMInputDivWrapper:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMInputBaseDisabledInner):hover {
 	background: @sapUiFieldHoverBackground;
 	border-color: @sapUiFieldHoverBorderColor;
 }
 
-.sapMILI-CTX .sapMInputBaseInner {
+.sapMILI-CTX .sapMInputDivWrapper,
+.sapMILI-CTX .sapMInputBaseInner,
+.sapMILI-CTX .sapMInputBaseDisabled .sapMInputBaseInner,
+.sapMILI-CTX .sapMInputBaseReadonlyInner .sapMInputBaseInner {
 	text-align: right;
 	background: transparent;
+}
+
+html[dir=rtl] .sapMInputBase {
+	transform: translateZ(0);
 }
 
 html[dir=rtl] .sapMILI-CTX .sapMInputBaseInner,
@@ -175,13 +196,21 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 /* Compact size */
 .sapUiSizeCompact {
 
+	.sapMInputBase,
+	.sapMInputDivWrapper,
+	.sapMInputBasePlaceholder {
+		line-height: 1rem;
+	}
 	.sapMInputBase {
 		height: 2rem;
 	}
 
-	.sapMInputBaseInner {
+	.sapMInputDivWrapper {
 		height: 1.625rem;
-		padding: 0 0.5rem;
+	}
+
+	.sapMInputBaseInner {
+		padding: 0 0.5rem
 	}
 
 	.sapMInputBasePlaceholder {
@@ -209,12 +238,12 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 		border-color: transparent;
 	}
 
-	.sapMInputBaseInner {
+	.sapMInputDivWrapper {
 		height: 1.375rem;
 	}
 
 	.sapMInputBasePlaceholder,
-	.sapMInputDescription > span {
+	.sapMInputDescription  span {
 		line-height: 1.375rem;
 	}
 }

@@ -151,7 +151,13 @@
 			assert.strictEqual(oLastSubSection.$().find(".sapUxAPBlockBase .sapMImg").length > 0, true, "data of last connected blocks is loaded");
 			done();
 		}, iLoadingDelay);
-});
+	});
+
+	QUnit.test("triggering visible subsections calculations should not fail before rendering", function (assert) {
+		var oObjectPageLayout = new sap.uxap.ObjectPageLayout({enableLazyLoading: true});
+		oObjectPageLayout._triggerVisibleSubSectionsEvents();
+		assert.ok("passes before rendering (noop)");
+	});
 
 
 }(jQuery, QUnit));

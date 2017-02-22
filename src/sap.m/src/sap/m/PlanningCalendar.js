@@ -1682,7 +1682,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					this.setStartDate(oEvtSelectedStartDate);
 				}
 				this._setRowsStartDate(oFocusedDate);
-				this._oOneMonthInterval.getAggregation('month')[0].focusDate(oFocusedDate);
+				this._oOneMonthInterval.getAggregation('month')[0]._focusDate(CalendarUtils._createUniversalUTCDate(oFocusedDate), true);
 			} else if (this._isNextMonth(oEvtSelectedStartDate)) {
 				this._oOneMonthInterval._handleNext();
 				return;
@@ -1738,7 +1738,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			|| oDate.getFullYear() > this.getStartDate().getFullYear();
 	};
 
+	PlanningCalendar.prototype._applyContextualSettings = function () {
+		return Control.prototype._applyContextualSettings.call(this, {contextualWidth: this.$().width()});
+	};
+
 	function _handleResize(oEvent, bNoRowResize){
+
+		this._applyContextualSettings();
 
 		if (oEvent.size.width <= 0) {
 			// only if visible at all

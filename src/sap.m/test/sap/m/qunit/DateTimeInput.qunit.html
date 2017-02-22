@@ -160,9 +160,10 @@
 		bValid = true;
 		sId = "";
 		dti0.focus();
-		oDatePicker.$().children("input").val("33 May, 2012");
+		oDatePicker.$().children("div.sapMInputDivWrapper").children("input").val("33 May, 2012");
 		qutils.triggerKeyboardEvent("__input0-Picker-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		oDatePicker.$().children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		debugger;
+		oDatePicker.$().children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 		equal(sId, dti0.getId(), "Change event fired");
 		equal(sValue, "33 May, 2012", "Value of event has entered value if invalid");
 		ok(!bValid, "Value is not valid");
@@ -174,9 +175,9 @@
 		bValid = false;
 		sId = "";
 		dti0.focus();
-		oDatePicker.$().children("input").val("30 May, 2012");
+		oDatePicker.$().children("div.sapMInputDivWrapper").children("input").val("30 May, 2012");
 		qutils.triggerKeyboardEvent("__input0-Picker-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		oDatePicker.$().children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		oDatePicker.$().children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 		equal(sId, dti0.getId(), "Change event fired");
 		equal(sValue, "2012-05-30", "Value in internal format priovided");
 		ok(bValid, "Value is valid");

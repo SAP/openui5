@@ -260,11 +260,14 @@ sap.ui.define([
 			aChangeList = oFile.changes.changes;
 			len = aChangeList.length;
 			for (j = 0; j < len; j++) {
-				oChangeContent = aChangeList[j];
-				oSelector = oChangeContent.selector;
-				if (oSelector) {
-					// filter out only controls of the current
-					jQuery.each(oSelector, fAppendValidChanges);
+				//filter out user changes and variants when no personalization was triggered
+				if (!Utils.isOverMaxLayer(aChangeList[j].layer)){
+					oChangeContent = aChangeList[j];
+					oSelector = oChangeContent.selector;
+					if (oSelector) {
+						// filter out only controls of the current
+						jQuery.each(oSelector, fAppendValidChanges);
+					}
 				}
 			}
 		}

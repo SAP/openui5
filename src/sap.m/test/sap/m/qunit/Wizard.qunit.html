@@ -104,6 +104,19 @@
 			assert.strictEqual(text, sText, "Default text of finish button should be equal to '" + sText + "'");
 		});
 
+		QUnit.test("Scroll handler", function (assert) {
+			var tempWiz = new sap.m.Wizard({
+				steps: [ new sap.m.WizardStep(), new sap.m.WizardStep(), new sap.m.WizardStep() ]
+			});
+
+			tempWiz.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			var stepContainer = tempWiz.getDomRef("step-container");
+			tempWiz.nextStep();
+			tempWiz.destroy();
+			assert.equal(stepContainer.onscroll, null, " should be null when wizard is destroyed");
+		});
+
 		QUnit.test("setFinishLabel() should change the finish button text", function (assert) {
 			this.oWizard.setFinishButtonText("changed_finish");
 			this.oWizard.nextStep();

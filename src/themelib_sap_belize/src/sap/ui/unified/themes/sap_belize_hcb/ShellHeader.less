@@ -3,20 +3,20 @@
 /* Belize High Contrast Black theme            */
 /* =========================================== */
 
-@sapUiUfdShellHeadButtonBorderRadius: 6px;
-@sapUiUfdShellHeadButtonHeight: 40px;
-@sapUiUfdShellHeadButtonBorderWidth: 1px;
+@_sap_ui_unified_ShellHeader_ButtonBorderRadius: 6px;
+@_sap_ui_unified_ShellHeader_ButtonHeight: 40px;
+@_sap_ui_unified_ShellHeader_ButtonBorderWidth: 1px;
 
 .sapUiUfdShellHeadBegin .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSep:after {
-	border-left: @sapUiUfdShellHeadButtonBorderWidth solid @sapUiShellBorderColor;
-	right: -@sapUiUfdShellHeadButtonOuterSpace;
-	top: @sapUiUfdShellHeadButtonOuterSpace/2;
+	border-left: @_sap_ui_unified_ShellHeader_ButtonBorderWidth solid @sapUiShellBorderColor;
+	right: -@_sap_ui_unified_ShellHeader_ButtonOuterSpace;
+	top: @_sap_ui_unified_ShellHeader_ButtonOuterSpace/2;
 }
 
 .sapUiUfdShellHeadUsrItm:before,
 .sapUiUfdShellHeadEnd .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSep:before {
-	border-right: @sapUiUfdShellHeadButtonBorderWidth solid @sapUiShellBorderColor;
-	top: @sapUiUfdShellHeadButtonOuterSpace/2;
+	border-right: @_sap_ui_unified_ShellHeader_ButtonBorderWidth solid @sapUiShellBorderColor;
+	top: @_sap_ui_unified_ShellHeader_ButtonOuterSpace/2;
 }
 
 html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadItm:hover > span {
@@ -24,37 +24,37 @@ html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadItm:hover > span {
 }
 
 .sapUiUfdShellHeadItm {
-	margin-right: @sapUiUfdShellHeadButtonOuterSpace;
+	margin-right: @_sap_ui_unified_ShellHeader_ButtonOuterSpace;
 }
 
 .sapUiUfdShellHeadItm > span {
-	border: @sapUiUfdShellHeadButtonBorderWidth solid @sapUiShellBorderColor;
-	border-radius: @sapUiUfdShellHeadButtonBorderRadius;
+	border: @_sap_ui_unified_ShellHeader_ButtonBorderWidth solid @sapUiShellBorderColor;
+	border-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
 	color: @sapUiBaseText;
-	height: @sapUiUfdShellHeadButtonHeight;
-	line-height: @sapUiUfdShellHeadButtonHeight - 2*@sapUiUfdShellHeadButtonOutlineWidth;
-	margin-right: 2*@sapUiUfdShellHeadButtonOuterSpace;
+	height: @_sap_ui_unified_ShellHeader_ButtonHeight;
+	line-height: @_sap_ui_unified_ShellHeader_ButtonHeight - 2*@_sap_ui_unified_ShellHeader_ButtonOutlineWidth;
+	margin-right: 2*@_sap_ui_unified_ShellHeader_ButtonOuterSpace;
 	margin-top: 0;
-	padding: @sapUiUfdShellHeadButtonBorderWidth;
-	width: @sapUiUfdShellHeadButtonHeight;
+	padding: @_sap_ui_unified_ShellHeader_ButtonBorderWidth;
+	width: @_sap_ui_unified_ShellHeader_ButtonHeight;
 	-webkit-font-smoothing: antialiased;
 }
 
 .sapUiUfdShellHeadUsrItmImg,
 .sapUiUfdShellHeadUsrItmName,
 .sapUiUfdShellHeadUsrItmExp {
-	border: @sapUiUfdShellHeadButtonBorderWidth solid @sapUiShellBorderColor;
-	height: @sapUiUfdShellHeadButtonHeight;
-	line-height: @sapUiUfdShellHeadButtonHeight - 2*@sapUiUfdShellHeadButtonOutlineWidth;;
+	border: @_sap_ui_unified_ShellHeader_ButtonBorderWidth solid @sapUiShellBorderColor;
+	height: @_sap_ui_unified_ShellHeader_ButtonHeight;
+	line-height: @_sap_ui_unified_ShellHeader_ButtonHeight - 2*@_sap_ui_unified_ShellHeader_ButtonOutlineWidth;;
 	margin-top: 0;
-	padding-top: @sapUiUfdShellHeadButtonBorderWidth;
+	padding-top: @_sap_ui_unified_ShellHeader_ButtonBorderWidth;
 }
 
 html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadUsrItmImg,
 html.sapUiMedia-Std-Tablet .sapUiUfdShellHeadUsrItmImg {
-	border-bottom-left-radius: @sapUiUfdShellHeadButtonBorderRadius;
+	border-bottom-left-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
 	border-right: none;
-	border-top-left-radius: @sapUiUfdShellHeadButtonBorderRadius;
+	border-top-left-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
 }
 
 html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadUsrItmImg > img,
@@ -68,9 +68,9 @@ html.sapUiMedia-Std-Tablet .sapUiUfdShellHeadUsrItmImg > img {
 }
 
 .sapUiUfdShellHeadUsrItmExp {
-	border-bottom-right-radius: @sapUiUfdShellHeadButtonBorderRadius;
+	border-bottom-right-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
 	border-left: none;
-	border-top-right-radius: @sapUiUfdShellHeadButtonBorderRadius;
+	border-top-right-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
 }
 
 .sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmImg,
@@ -78,14 +78,14 @@ html.sapUiMedia-Std-Tablet .sapUiUfdShellHeadUsrItmImg > img {
 .sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmExp {
 	border-radius: 0;
 	border-style: dotted;
-	border-width: 2*@sapUiUfdShellHeadButtonBorderWidth;
+	border-width: 2*@_sap_ui_unified_ShellHeader_ButtonBorderWidth;
 	padding-top: 0;
 }
 
 .sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmImg {
 	border-right: none;
 	padding-bottom: 0;
-	padding-left: @sapUiUfdShellHeadButtonInnerSpace - @sapUiUfdShellHeadButtonBorderWidth;
+	padding-left: @_sap_ui_unified_ShellHeader_ButtonInnerSpace - @_sap_ui_unified_ShellHeader_ButtonBorderWidth;
 	padding-top: 0;
 }
 
@@ -97,25 +97,25 @@ html.sapUiMedia-Std-Tablet .sapUiUfdShellHeadUsrItmImg > img {
 .sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmExp {
 	border-left: none;
 	padding-bottom: 0;
-	padding-right: @sapUiUfdShellHeadButtonInnerSpace - @sapUiUfdShellHeadButtonBorderWidth;
+	padding-right: @_sap_ui_unified_ShellHeader_ButtonInnerSpace - @_sap_ui_unified_ShellHeader_ButtonBorderWidth;
 	padding-top: 0;
 }
 
 html.sapUiMedia-Std-Phone .sapUiUfdShellHeadUsrItmImg {
-	border-radius: @sapUiUfdShellHeadButtonBorderRadius;
+	border-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
 }
 
 html.sapUiMedia-Std-Phone .sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmImg {
-	border-right: 2*@sapUiUfdShellHeadButtonBorderWidth dotted @sapUiContentFocusColor;
-	padding-right: @sapUiUfdShellHeadButtonInnerSpace - @sapUiUfdShellHeadButtonBorderWidth;
+	border-right: 2*@_sap_ui_unified_ShellHeader_ButtonBorderWidth dotted @sapUiContentFocusColor;
+	padding-right: @_sap_ui_unified_ShellHeader_ButtonInnerSpace - @_sap_ui_unified_ShellHeader_ButtonBorderWidth;
 }
 
 .sapUiUfdShellHeadItm:focus > span {
-	border: 2*@sapUiUfdShellHeadButtonBorderWidth dotted @sapUiContentFocusColor;
+	border: 2*@_sap_ui_unified_ShellHeader_ButtonBorderWidth dotted @sapUiContentFocusColor;
 	border-radius: 0;
 	padding: 0;
 }
 
 .sapUiUfdShellHeadUsrItmWithoutPopup .sapUiUfdShellHeadUsrItmExp {
-	padding-right: @sapUiUfdShellHeadButtonBorderRadius;
+	padding-right: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
 }

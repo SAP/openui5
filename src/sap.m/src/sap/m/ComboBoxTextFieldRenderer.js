@@ -136,12 +136,12 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		};
 
 		/**
-		 * Renders the content, using the provided {@link sap.ui.core.RenderManager}.
+		 * Write the decorations of the input.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
-		ComboBoxTextFieldRenderer.writeInnerContent = function(oRm, oControl) {
+		ComboBoxTextFieldRenderer.writeDecorations = function(oRm, oControl) {
 			if (oControl.getShowButton()) {
 				this.renderButton(oRm, oControl);
 			}

@@ -564,7 +564,7 @@
 				title : "Master 1"
 			});
 
-			var oSpyAddPage = this.spy(oSplitApp._oMasterNav, "addPage");
+			var oSpyInsertPage = this.spy(oSplitApp._oMasterNav, "insertPage");
 			var oSpyRemovePage = this.spy(oSplitApp._oMasterNav, "removePage");
 
 			oSplitApp.addMasterPage(oNewMasterPage);
@@ -595,7 +595,7 @@
 			equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
 			equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
 
-			ok(oSpyAddPage.called, "Right delegate method was called");
+			ok(oSpyInsertPage.called, "Right delegate method was called");
 			ok(oSpyRemovePage.called, "Right delegate method was called");
 
 			oSplitApp.destroy();

@@ -312,10 +312,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
-				"sap.m.StandardListItem": {
-					"hideControl": "default",
-					"unhideControl": "default"
-				},
+				"sap.m.StandardListItem":"sap/m/flexibility/StandardListItem",
 				"sap.m.ColumnListItem": {
 					"hideControl": "default",
 					"unhideControl": "default"
@@ -325,10 +322,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"unhideControl": "default",
 					"moveControls": "default"
 				},
-				"sap.m.InputListItem": {
-					"hideControl": "default",
-					"unhideControl": "default"
-				},
+				"sap.m.InputListItem": "sap/m/flexibility/InputListItem",
 				"sap.m.DatePicker": {
 					"hideControl": "default",
 					"unhideControl": "default"
@@ -490,7 +484,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		Back : "Back",
 
 		/**
-		 * accept type (blue button)
+		 * accept type (green button)
 		 * @public
 		 */
 		Accept : "Accept",

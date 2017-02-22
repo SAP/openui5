@@ -112,6 +112,36 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				events: {
 
 					/**
+					 * This event is fired when the value in the text input field is changed in combination with one of
+					 * the following actions:
+					 *
+					 * <ul>
+					 * 	<li>The focus leaves the text input field</li>
+					 * 	<li>The <i>Enter</i> key is pressed</li>
+					 * </ul>
+					 *
+					 * In addition, this event is also fired when an item in the list is selected.
+					 */
+					change: {
+						parameters: {
+
+							/**
+							 * The new <code>value</code> of the <code>control</code>
+							 */
+							value: {
+								type: "string"
+							},
+
+							/**
+							 * Indicates whether the change event was caused by selecting an item in the list
+							 */
+							itemPressed: {
+								type: "boolean"
+							}
+						}
+					},
+
+					/**
 					 * This event is fired when the user types something that matches with an item in the list;
 					 * it is also fired when the user presses on a list item, or when navigating via keyboard.
 					 */
@@ -287,22 +317,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype.createDropdown = function() {
 			var that = this;
-			var oPicker = new Popover({
-				placement: sap.m.PlacementType.VerticalPreferredBottom,
-				offsetX: 0,
-				offsetY: 0,
-				bounce: false,
-				showArrow: false,
-				ariaLabelledBy: this.getPickerInvisibleTextId() || undefined
-			});
-
-			oPicker.setInitialFocus(this.isPlatformTablet() ? oPicker : this);
-
-			oPicker.open = function() {
+			var oDropdown = new Popover(this.getDropdownSettings());
+			oDropdown.setInitialFocus(this.isPlatformTablet() ? oDropdown : this);
+			oDropdown.open = function() {
 				return this.openBy(that);
 			};
 
-			return oPicker;
+			return oDropdown;
 		};
 
 		/**
@@ -522,14 +543,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 					if (oControl._bDoTypeAhead) {
 
 						if (bSearchBoth && this._oFirstItemTextMatched) {
-							oControl.updateDomValue(this._oFirstItemTextMatched.getText() + " (" + this._oFirstItemTextMatched.getAdditionalText() + ")");
+							oControl.updateDomValue(this._oFirstItemTextMatched.getText());
 							this.setSelection(this._oFirstItemTextMatched);
 						} else if (bSearchBoth) {
-
 							if (bTextMatched) {
-								oControl.updateDomValue(oFirstVisibleItem.getText() + " (" + oFirstVisibleItem.getAdditionalText() + ")");
+								oControl.updateDomValue(oFirstVisibleItem.getText());
 							} else {
-								oControl.updateDomValue(oFirstVisibleItem.getAdditionalText() + " (" + oFirstVisibleItem.getText() + ")");
+								oControl.updateDomValue(oFirstVisibleItem.getAdditionalText());
 							}
 
 							this.setSelection(oFirstVisibleItem);
@@ -595,14 +615,15 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 * @param {sap.ui.base.Event} oControlEvent
 		 */
 		ComboBox.prototype.onSelectionChange = function(oControlEvent) {
-			var oItem = oControlEvent.getParameter("selectedItem");
+			var oItem = oControlEvent.getParameter("selectedItem"),
+				mParam = this.getChangeEventParams();
 
 			this.setSelection(oItem);
 			this.fireSelectionChange({
 				selectedItem: this.getSelectedItem()
 			});
-
-			this.onChange();
+			mParam.itemPressed = true;
+			this.onChange(null, mParam);
 		};
 
 		/**
@@ -1272,6 +1293,12 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype.getDefaultSelectedItem = function() {
 			return null;
+		};
+
+		ComboBox.prototype.getChangeEventParams = function() {
+			return {
+				itemPressed: false
+			};
 		};
 
 		/*

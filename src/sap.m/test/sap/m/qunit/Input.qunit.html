@@ -2644,7 +2644,7 @@
 		oInputWithDes.setDescription("EUR");
 		oInputWithDes.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		equals(oInputWithDes.$().find("span").text(), "EUR", "Input description is EUR");
+		equals(oInputWithDes.$().find(".sapMInputDescriptionText").text(), "EUR", "Input description is EUR");
  		equals(oInputWithDes.$().find("input").outerWidth(), Math.round(oInputWithDes.$().width()*0.5), "input field has default width");
 
   		oInputWithDes.setFieldWidth("30%");

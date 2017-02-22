@@ -8,6 +8,12 @@ html.sap-desktop .sapMObjectAttributeActive:focus > .sapMText {
 	outline-offset: -0.125rem;
 }
 
+html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
+	.sapMObjectAttributeActive:focus > .sapMText {
+		outline-style: dashed;
+	}
+}
+
 .sapMObjectAttributeActive .sapMText {
 	color: @sapUiListActiveTextColor;
 	cursor: pointer;

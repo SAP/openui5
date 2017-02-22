@@ -94,6 +94,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			 * Lets the user select multiple files from the same folder and then upload them.
 			 * Internet Explorer 8 and 9 do not support this property.
 			 * Please note that the various operating systems for mobile devices can react differently to the property so that fewer upload functions may be available in some cases.
+			 *
+			 * If multiple property is set to false, the control shows an error message if more than one file is chosen for drag & drop.
 			 */
 			multiple : {type : "boolean", group : "Behavior", defaultValue : false},
 
@@ -1567,20 +1569,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}
 
 			oFileName = sap.ui.getCore().byId(sItemId + "-ta_filenameHL");
-			if (!oFileName) {
-				oFileName = new sap.m.Link(sItemId + "-ta_filenameHL", {
-					enabled : bEnabled,
-					press : function(oEvent) {
-						this._triggerLink(oEvent, that);
-					}.bind(this)
-				}).addStyleClass("sapMUCFileName");
-				oFileName.setModel(oItem.getModel());
-				oFileName.setText(sFileNameLong);
-			} else {
-					oFileName.setModel(oItem.getModel());
-					oFileName.setText(sFileNameLong);
-					oFileName.setEnabled(bEnabled);
+			if (oFileName) {
+				oFileName.destroy();
 			}
+			oFileName = new sap.m.Link(sItemId + "-ta_filenameHL", {
+				enabled : bEnabled,
+				press : [that, this._triggerLink, this]
+			}).addStyleClass("sapMUCFileName");
+			oFileName.setModel(oItem.getModel());
+			oFileName.setText(sFileNameLong);
 			return oFileName;
 		} else {
 			oFile = that._splitFilename(sFileNameLong);
@@ -2032,6 +2029,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					// new
 					item : oItemToBeDeleted
 				});
+				// do not save the item after the item is deleted in instant mode
+				this._oItemForDelete = null;
 			} else {
 				if (this.aItems.length === 1) {
 					this.sFocusId = this._oFileUploader.$().find(":button")[0].id;

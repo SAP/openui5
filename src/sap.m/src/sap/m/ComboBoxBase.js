@@ -15,6 +15,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		 * @class
 		 * An abstract class for combo boxes.
 		 * @extends sap.m.ComboBoxTextField
+		 * @abstract
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -28,6 +29,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		var ComboBoxBase = ComboBoxTextField.extend("sap.m.ComboBoxBase", /** @lends sap.m.ComboBoxBase.prototype */ {
 			metadata: {
 				library: "sap.m",
+				"abstract": true,
 				defaultAggregation: "items",
 				aggregations: {
 
@@ -625,7 +627,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 				sPickerTitleClass = this.getRenderer().CSS_CLASS_COMBOBOXBASE + "PickerTitle";
 
 			if (!oPicker) {
-				return;
+				return null;
 			}
 
 			if (oPicker.getCustomHeader()) {
@@ -634,7 +636,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 
 			oInternalTitle = new Title({ textAlign: "Left" }).addStyleClass(sPickerTitleClass);
 			oInternalHeader = new Bar({ visible: false, contentLeft: oInternalTitle });
-
 			oPicker.setCustomHeader(oInternalHeader);
 
 			return oInternalHeader;
@@ -705,6 +706,23 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 				bTablet = Device.system.tablet && bNotCombi;
 
 			return bTablet;
+		};
+
+		/*
+		 * Gets the dropdown default settings.
+		 * @returns {object} A map object with the default settings
+		 * @protected
+		 * @since 1.48
+		 */
+		ComboBoxBase.prototype.getDropdownSettings = function() {
+			return {
+				showArrow: false,
+				placement: sap.m.PlacementType.VerticalPreferredBottom,
+				offsetX: 0,
+				offsetY: 0,
+				bounce: false,
+				ariaLabelledBy: this.getPickerInvisibleTextId() || undefined
+			};
 		};
 
 		/*

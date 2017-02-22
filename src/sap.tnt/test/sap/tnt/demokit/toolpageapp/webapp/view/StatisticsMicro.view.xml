@@ -12,7 +12,7 @@
 			rowColorSet="ColorSet2">
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>orderStatusTitle}"
+					text="{i18n>sysResUsage}"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
@@ -25,27 +25,27 @@
 						<mc:data>
 							<mc:ComparisonMicroChartData
 								color="Good"
-								title="{i18n>salesTitle}"
+								title="{i18n>initCalls}"
 								displayValue="91"
 								value="91" />
 							<mc:ComparisonMicroChartData
 								color="Error"
-								title="{ordersTitle}"
+								title="{downtime}"
 								displayValue="-46"
 								value="-46" />
 							<mc:ComparisonMicroChartData
 								color="Critical"
-								title="{canceledOrdersTitle}"
+								title="{maintenance}"
 								displayValue="13"
 								value="6" />
 							<mc:ComparisonMicroChartData
 									color="Good"
-									title="{i18n>returnedOrdersTitle}"
+									title="{i18n>reLoads}"
 									displayValue="6"
 									value="6" />
 							<mc:ComparisonMicroChartData
 									color="Error"
-									title="{i18n>revenueTitle}"
+									title="{i18n>maxMemUsage}"
 									displayValue="18"
 									value="18" />
 						</mc:data>
@@ -55,7 +55,7 @@
 
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>customerRatingTitle}"
+					text="{i18n>ovSysUptime}"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
@@ -81,7 +81,7 @@
 
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>salesTrendTitle}"
+					text="{i18n>memTrendTitle}"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
@@ -165,7 +165,7 @@
 
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>canceledOrdersTitle}"
+					text="{i18n>maintCompl}"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
@@ -189,7 +189,7 @@
 			rowColorSet="ColorSet1">
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>netPromoterTitle}"
+					text="{i18n>costUpgStor}"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
@@ -255,7 +255,7 @@
 			</l:BlockLayoutCell>
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>targetRevenueTitle}"
+					text="{i18n>databaseUsage}"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
@@ -270,7 +270,7 @@
 
 					<mc:HarveyBallMicroChart
 						total="100"
-						totalScale="MU"
+						totalScale="Hz"
 						showFractions="true"
 						isResponsive="true">
 						<mc:items>
@@ -285,7 +285,7 @@
 
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>goalProgressTitle}"
+					text="{i18n>impCostCenter}"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
@@ -306,7 +306,7 @@
 
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>profitMarginTitle}"
+					text="{i18n>costUpgStor}"
 					titleStyle="H2"
 					width="100%"/>
 				<Title

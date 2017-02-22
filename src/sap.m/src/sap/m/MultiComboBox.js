@@ -294,6 +294,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 		// If focus target is outside of picker
 		if (!oPicker || !oPicker.getFocusDomRef() || !oFocusDomRef || !jQuery.contains(oPicker.getFocusDomRef(), oFocusDomRef)) {
 			this.setValue(null);
+			// If focus is outside of the MultiComboBox
+			if (!(oControl instanceof sap.m.Token)) {
+				this._oTokenizer.scrollToEnd();
+			}
 		}
 
 		if (oPicker && oFocusDomRef) {
@@ -303,6 +307,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 				this.focus();
 			}
 		}
+
 	};
 
 	/**
@@ -741,19 +746,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	 * @returns {sap.m.Popover}
 	 * @private
 	 */
-	MultiComboBox.prototype.createPopover = function() {
-		var oPopup = new Popover({
-			showArrow: false,
-			placement: sap.m.PlacementType.Vertical,
-			offsetX: 0,
-			offsetY: 0,
-			initialFocus: this,
-			bounce: false,
-			ariaLabelledBy: this.getPickerInvisibleTextId() || undefined
-		});
-
-		this._decoratePopover(oPopup);
-		return oPopup;
+	MultiComboBox.prototype.createDropdown = function() {
+		var oDropdown = new Popover(this.getDropdownSettings());
+		oDropdown.setInitialFocus(this);
+		this._decoratePopover(oDropdown);
+		return oDropdown;
 	};
 
 	MultiComboBox.prototype.createDialog = function () {
@@ -761,7 +758,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 			oSelectAllButton = this._createFilterSelectedButton();
 
 		oDialog.getSubHeader().addContent(oSelectAllButton);
-
 		return oDialog;
 	};
 
@@ -1429,6 +1425,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	 * @param {sap.ui.base.Event} oEvent
 	 * @private
 	 */
+
+	MultiComboBox.prototype._onAfterRenderingTokenizer = function() {
+		this._oTokenizer.scrollToEnd();
+	};
+
 	MultiComboBox.prototype._handleTokenChange = function(oEvent) {
 		var sType = oEvent.getParameter("type");
 		var oToken = oEvent.getParameter("token");
@@ -2386,7 +2387,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 
 		// determines if value of the combobox should be empty string after popup's close
 		this._bPreventValueRemove = false;
-		this.setPickerType(sap.ui.Device.system.phone ? "Dialog" : "Popover");
+		this.setPickerType(sap.ui.Device.system.phone ? "Dialog" : "Dropdown");
 		this._oTokenizer = this._createTokenizer();
 		this._aCustomerKeys = [];
 		this._aInitiallySelectedItems = [];

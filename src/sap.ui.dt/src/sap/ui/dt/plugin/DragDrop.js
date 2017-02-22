@@ -302,6 +302,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	    var fnDetachTouchHandlers = function() {
 			oTouchedOverlay.detachBrowserEvent("touchmove", fnTouchMoveHandler, this);
 			oTouchedOverlay.detachBrowserEvent("touchend", fnTouchEndHandler, this);
+			oTouchedOverlay.detachBrowserEvent("contextmenu", fnTouchEndHandler, this);
 	    };
 
 	    var fnGetMoveDistance = function(touchMoveX, touchMoveY) {
@@ -328,8 +329,8 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 		};
 
 		bPreventScrollOnTouch = true;
-
 		oEvent.stopPropagation();
+
 		oTouchedOverlay.attachBrowserEvent("touchmove", fnTouchMoveHandler, this);
 		oTouchedOverlay.attachBrowserEvent("contextmenu", fnTouchEndHandler, this);
 		oTouchedOverlay.attachBrowserEvent("touchend", fnTouchEndHandler, this);

@@ -62,6 +62,10 @@
 	});
 
 	test("format date with given style", function(){
+		var oDateTime = new Date("Tue Sep 11 08:46:13 2001");
+		// Overwrite getTimezoneOffset to get reproducible results independent of the
+		// timezone where the test is run in
+		oDateTime.getTimezoneOffset = function() { return -120; };
 		equal(sap.ui.core.format.DateFormat.getDateInstance({style: "short"}).format(oDateTime), "9/11/01", "short date");
 		equal(sap.ui.core.format.DateFormat.getDateInstance({style: "medium"}).format(oDateTime), "Sep 11, 2001", "medium date");
 		equal(sap.ui.core.format.DateFormat.getDateInstance({style: "long"}).format(oDateTime), "September 11, 2001", "long date");
@@ -663,6 +667,11 @@
 	module("Scaling: Relative Time Formater", {
 		setup: function() {
 			this.clock = sinon.useFakeTimers(1444724476000);
+			var oDate = new Date();
+			var oJan = new Date(oDate.getFullYear(), 0, 1);
+			var oJul = new Date(oDate.getFullYear(), 6, 1);
+			// check whether the Daylight Saving Time is used in the current timezone
+			this.dst = oJan.getTimezoneOffset() !== oJul.getTimezoneOffset();
 		},
 		teardown: function() {
 			this.clock.restore();
@@ -759,6 +768,8 @@
 					relativeScale: "auto"
 				});
 
+		var that = this;
+
 		var aStyles = [undefined, 'wide', 'short', 'narrow'],
 			aTestData = [{
 				scale: "auto",
@@ -775,8 +786,8 @@
 					{unit: "day", diff: -32, results: ["last month", "last month", "last mo.", "last mo."], description: "Today - 32 Days --> last month", parseDiff: -2*24*60*60*1000},
 					{unit: "month", diff: 1, results: ["next month", "next month", "next mo.", "next mo."], description: "Today + 1 Month --> next month"},
 					{unit: "month", diff: -1, results: ["last month", "last month", "last mo.", "last mo."], description: "Today - 1 Month --> last month"},
-					{unit: "month", diff: 15, results: ["next year", "next year", "next yr.", "next yr."], description: "Today + 15 Months --> next year", parseDiff: (92*24+1/* summer->winter switch */)*60*60*1000},
-					{unit: "month", diff: 28, results: ["in 2 years", "in 2 years", "in 2 yr.", "in 2 yr."], description: "Today + 28 Months --> in 2 years", parseDiff: (123*24+1/* summer->winter switch */)*60*60*1000},
+					{unit: "month", diff: 15, results: ["next year", "next year", "next yr.", "next yr."], description: "Today + 15 Months --> next year", parseDiff: (92 * 24 + (that.dst ? 1/* summer->winter switch */ : 0)) * 60 * 60 * 1000},
+					{unit: "month", diff: 28, results: ["in 2 years", "in 2 years", "in 2 yr.", "in 2 yr."], description: "Today + 28 Months --> in 2 years", parseDiff: (123 * 24 + (that.dst ? 1/* summer->winter switch */ : 0)) * 60 * 60 * 1000},
 					{unit: "day", diff: 90, results: ["next quarter", "next quarter", "next qtr.", "next qtr."], description: "Today + 90 Days", parseOnly: true, parseDiff: -2*24*60*60*1000},
 					{unit: "hour", diff: 24, results: ["in 24 hours", "in 24 hours", "in 24 hr.", "in 24 hr."], description: "Today + 1 Days", parseOnly: true},
 					{unit: "hour", diff: 72, results: ["in 72 hours", "in 72 hours", "in 72 hr.", "in 72 hr."], description: "Today + 3 Days", parseOnly: true},
@@ -804,6 +815,7 @@
 
 	test("DateTime relative: format and parse", function() {
 		var aStyles = [undefined, 'wide', 'short', 'narrow'],
+			that = this,
 			aTestData = [{
 				scale: "auto",
 				data: [
@@ -829,8 +841,8 @@
 					{unit: "day", diff: -32, results: ["last month", "last month", "last mo.", "last mo."], description: "Today - 32 Days --> last month", parseDiff: -2*24*60*60*1000},
 					{unit: "month", diff: 1, results: ["next month", "next month", "next mo.", "next mo."], description: "Today + 1 Month --> next month"},
 					{unit: "month", diff: -1, results: ["last month", "last month", "last mo.", "last mo."], description: "Today - 1 Month --> last month"},
-					{unit: "month", diff: 15, results: ["next year", "next year", "next yr.", "next yr."], description: "Today + 15 Months --> next year", parseDiff: (92*24+1/* summer->winter switch */)*60*60*1000},
-					{unit: "month", diff: 28, results: ["in 2 years", "in 2 years", "in 2 yr.", "in 2 yr."], description: "Today + 28 Months --> in 2 years", parseDiff: (123*24+1/* summer->winter switch */)*60*60*1000},
+					{unit: "month", diff: 15, results: ["next year", "next year", "next yr.", "next yr."], description: "Today + 15 Months --> next year", parseDiff: (92 * 24 + (that.dst ? 1/* summer->winter switch */ : 0)) * 60 * 60 * 1000},
+					{unit: "month", diff: 28, results: ["in 2 years", "in 2 years", "in 2 yr.", "in 2 yr."], description: "Today + 28 Months --> in 2 years", parseDiff: (123 * 24 + (that.dst ? 1/* summer->winter switch */ : 0)) * 60 * 60 * 1000},
 					{unit: "year", diff: 1, results: ["next year", "next year", "next yr.", "next yr."], description: "Today + 1 year --> next year"}
 				]
 			}];

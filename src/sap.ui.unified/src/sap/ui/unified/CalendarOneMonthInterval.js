@@ -205,7 +205,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 				oSelectDate;
 
 			oDate = oDate instanceof UniversalDate ? oDate.getJSDate() : oDate;
-			oSelectDate = bUseFirstOfMonth ? CalendarUtils.getFirstDateOfMonth(oDate) : oDate;
+			oSelectDate = bUseFirstOfMonth ? CalendarUtils.getFirstDateOfMonth(oDate).getJSDate() : oDate;
 
 			if (oMonth.getMode && oMonth.getMode() < 2) {
 				this._selectDate(oSelectDate);

@@ -33,7 +33,9 @@ sap.ui.define([
 							viewName: "App",
 							matchers: new PropertyStrictEquals({
 								name: "busy",
-								value: true
+								// we cannot mock loading the json files in the IconModel class.
+								// on browsers other than chrome it is too fast to make this check work
+								value : !!sap.ui.Device.browser.chrome
 							}),
 							success: function () {
 								// we set the view busy, so we need to query the parent of the app

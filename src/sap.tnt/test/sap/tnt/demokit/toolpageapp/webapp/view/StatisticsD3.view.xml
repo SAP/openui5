@@ -2,6 +2,7 @@
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:base="sap.ui.base"
 	xmlns:tool="sap.ui.demo.toolpageapp.control">
 
 	<l:BlockLayout
@@ -12,101 +13,88 @@
 			rowColorSet="ColorSet2">
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>orderStatusTitle}"
+					text="{i18n>ovSysUptime}"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>orderStatusDate}"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
-				<tool:D3Chart type="Comparison"/>
+				<tool:D3PieChart data="{view>/PieChartData}">
+					<base:ManagedObject/>
+				</tool:D3PieChart>
 			</l:BlockLayoutCell>
 
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>customerRatingTitle}"
+					text="{i18n>disUsersMonth}"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>customerRatingDate}"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
-				<tool:D3Chart type="Column"/>
+				<tool:D3ColumnChart data="{view>/ColumnChartData}">
+					<base:ManagedObject/>
+				</tool:D3ColumnChart>
 			</l:BlockLayoutCell>
 
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>salesTrendTitle}"
+					text="{i18n>costUpgStor}"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>salesTrendDate}"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
-				<tool:D3Chart type="Area"/>
+				<tool:D3ComparisonChart data="{view>/ComparisonChartData}">
+					<base:ManagedObject/>
+				</tool:D3ComparisonChart>
 			</l:BlockLayoutCell>
+
+		</l:BlockLayoutRow>
+		<l:BlockLayoutRow>
 
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>canceledOrdersTitle}"
+					text="{i18n>databaseUsage}"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>canceledOrdersDate}"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
-				<tool:D3Chart type="Radial"/>
+				<tool:D3ColumnChart data="{view>/ColumnChartData2}">
+					<base:ManagedObject/>
+				</tool:D3ColumnChart>
 			</l:BlockLayoutCell>
 
-		</l:BlockLayoutRow>
-
-		<l:BlockLayoutRow
-			rowColorSet="ColorSet1">
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>netPromoterTitle}"
+					text="{i18n>impCostCenter}"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>netPromoterDate}"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
-				<tool:D3Chart type="Bullet"/>
+				<tool:D3ComparisonChart data="{view>/ComparisonChartData2}">
+					<base:ManagedObject/>
+				</tool:D3ComparisonChart>
 			</l:BlockLayoutCell>
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>targetRevenueTitle}"
+					text="{i18n>maintCompl}"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>revenueDate}"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
-				<tool:D3Chart type="Harvey"/>
-			</l:BlockLayoutCell>
-
-			<l:BlockLayoutCell>
-				<Title
-					text="{i18n>goalProgressTitle}"
-					titleStyle="H2"
-					width="100%"/>
-				<Title
-					text="{i18n>goalProgressDate}"
-					width="100%"
-					class="sapUiSmallMarginBottom"/>
-				<tool:D3Chart type="Radial"/>
-			</l:BlockLayoutCell>
-
-			<l:BlockLayoutCell>
-				<Title
-					text="{i18n>profitMarginTitle}"
-					titleStyle="H2"
-					width="100%"/>
-				<Title
-					text="{i18n>profitMarginDate}"
-					width="100%"
-					class="sapUiSmallMarginBottom"/>
-				<tool:D3Chart type="Delta"/>
+				<tool:D3PieChart data="{view>/PieChartData2}">
+					<base:ManagedObject/>
+				</tool:D3PieChart>
 			</l:BlockLayoutCell>
 
 		</l:BlockLayoutRow>

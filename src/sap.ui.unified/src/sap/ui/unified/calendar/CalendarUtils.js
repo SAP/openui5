@@ -278,6 +278,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 			return oNextDay.getUTCDate() < oDate.getUTCDate();
 		};
 
+		/**
+		 * Returns the last day in a month
+		 * @param {Date} local date
+		 * @returns {Date } the JS Date corresponding to the last day for the given month
+		 * @private
+		 */
+		CalendarUtils._getLastDayInMonth = function(oDate) {
+			var oUniversalDate = this._createUniversalUTCDate(oDate);
+
+			oUniversalDate.setUTCMonth(oUniversalDate.getUTCMonth() + 1);
+			oUniversalDate.setUTCDate(0);
+
+			return this._createLocalDate(oUniversalDate);
+		};
+
 		return CalendarUtils;
 
 	}, /* bExport= */ true);

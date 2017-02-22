@@ -58,6 +58,51 @@ asyncTest("Manually expand a node", function(){
 	});
 });
 
+asyncTest("Manually expand and collapse a node multiple times", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+			ok(!oBinding.isExpanded(3), "The node which is going to be expanded is currently collapsed");
+
+			equal(oBinding.getLength(), 626, "Correct binding length");
+			oBinding.attachChange(handler2);
+			oBinding.expand(4, true);
+		}
+
+		function handler2 (oEvent) {
+			oBinding.detachChange(handler2);
+
+			oBinding.collapse(4, true);
+			oBinding.collapse(4, true);
+			oBinding.collapse(4, true);
+			oBinding.expand(4, true);
+			oBinding.expand(4, true);
+			oBinding.expand(4, true);
+			oBinding.expand(4, true);
+			oBinding.expand(4, true);
+
+			// idx 4 node expanded
+			equal(oBinding.getLength(), 634, "Correct binding length (no duplicate nodes)");
+
+			oBinding.collapse(4, true);
+			// idx 4 node collapsed again
+			equal(oBinding.getLength(), 626, "Correct binding length (no duplicate nodes)");
+
+			start();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 10, 10);
+	});
+});
+
 asyncTest("Manually expand two levels and collapse the parent", function(){
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {

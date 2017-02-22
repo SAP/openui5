@@ -163,14 +163,32 @@
 				new sap.m.Label({text: "Lazy loading of special dates DatePicker:", labelFor: "DP11"}),
 				new sap.m.DatePicker("DP11", {
 					navigate: function (oEvent) {
-						var oRange = oEvent.getParameter("dateRange");
+						var oRange = oEvent.getParameter("dateRange"),
+							oStartDate = oRange.getStartDate(),
+							oEndDate = oRange.getEndDate();
+
+						// Generate some random dates within range
+						oStartDate.setDate(oStartDate.getDate() + Math.floor(Math.random() * 15));
+						oEndDate.setDate(oEndDate.getDate() - Math.floor(Math.random() * 15));
 
 						// Clear existing aggregations
 						this.removeAllAggregation("specialDates");
 
-						// Add new days (in this case the first and the last visible day)
-						this.addSpecialDate(new sap.ui.unified.DateTypeRange({startDate: oRange.getStartDate(), type: "Type03"}));
-						this.addSpecialDate(new sap.ui.unified.DateTypeRange({startDate: oRange.getEndDate(), type: "Type04"}));
+						// Add the first date as a special date with a random type
+						this.addSpecialDate(
+							new sap.ui.unified.DateTypeRange({
+								startDate: oStartDate,
+								type: "Type0" + (Math.floor(Math.random() * 8) + 1)
+							})
+						);
+
+						// Add the second date as a special date with a random type
+						this.addSpecialDate(
+							new sap.ui.unified.DateTypeRange({
+								startDate: oEndDate,
+								type: "Type0" + (Math.floor(Math.random() * 8) + 1)
+							})
+						);
 
 						// Give feedback
 						sap.m.MessageToast.show("Navigate event fired and new special dates marked");

@@ -174,7 +174,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 			this._oDesignTimePromise = loadOwnDesignTime(this).then(function(oOwnDesignTime) {
 				return oWhenParentLoaded.then(function(oParentDesignTime) {
 					// we use jQuery.sap.extend to be able to also overwrite properties with null or undefined
-					return jQuery.sap.extend({}, oParentDesignTime, oOwnDesignTime);
+					// using deep extend to inherit full parent designtime, unwanted inherited properties have to be overwritten with undefined
+					return jQuery.sap.extend(true, {}, oParentDesignTime, oOwnDesignTime);
 				});
 			});
 		}

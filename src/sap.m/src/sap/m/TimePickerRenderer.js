@@ -38,12 +38,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		/**
 		 * Adds extra content to the input.
 		 *
-		 * See {@link sap.m.InputBaseRenderer#writeInnerContent}.
+		 * See {@link sap.m.InputBaseRenderer#writeDecorations}.
 		 * @override
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.m.TimePicker} oControl The control that should be rendered
 		 */
-		TimePickerRenderer.writeInnerContent = function(oRm, oControl) {
+		TimePickerRenderer.writeDecorations = function(oRm, oControl) {
 			var aClasses,
 				mAttributes,
 				oRb,

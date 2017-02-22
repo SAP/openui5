@@ -107,20 +107,20 @@
 			module("Rendering");
 
 			test("date format", function() {
-				ok(!jQuery("#DTP1").children("input").val(), "DTP1: empty date");
-				equal(jQuery("#DTP2").children("input").val(), "17+02+2016:10+11", "DTP2: defined output format used");
-				equal(jQuery("#DTP3").children("input").val(), "2/17/16, 10:11 AM", "DTP3: defined output format used");
-				equal(jQuery("#DTP4").children("input").val(), "Feb 17, 2016, 10:11:12 AM", "DTP4: defined output format from binding used");
+				ok(!jQuery("#DTP1").children("div.sapMInputDivWrapper").children("input").val(), "DTP1: empty date");
+				equal(jQuery("#DTP2").children("div.sapMInputDivWrapper").children("input").val(), "17+02+2016:10+11", "DTP2: defined output format used");
+				equal(jQuery("#DTP3").children("div.sapMInputDivWrapper").children("input").val(), "2/17/16, 10:11 AM", "DTP3: defined output format used");
+				equal(jQuery("#DTP4").children("div.sapMInputDivWrapper").children("input").val(), "Feb 17, 2016, 10:11:12 AM", "DTP4: defined output format from binding used");
 			});
 
 			test("placeholder", function() {
 				if(sap.ui.Device.support.input.placeholder) {
-					equal(jQuery("#DTP1").children("input").attr("placeholder"), "MMM d, y, h:mm:ss a" , "DTP1: placeholder");
-					equal(jQuery("#DTP2").children("input").attr("placeholder"), "dd+MM+yyyy:HH+mm", "DTP2: placeholder");
-					equal(jQuery("#DTP3").children("input").attr("placeholder"), "M/d/yy, h:mm a", "DTP3: placeholder");
-					equal(jQuery("#DTP4").children("input").attr("placeholder"), "MMM d, y, h:mm:ss a", "DTP4: placeholder from binding used");
+					equal(jQuery("#DTP1").children("div.sapMInputDivWrapper").children("input").attr("placeholder"), "MMM d, y, h:mm:ss a" , "DTP1: placeholder");
+					equal(jQuery("#DTP2").children("div.sapMInputDivWrapper").children("input").attr("placeholder"), "dd+MM+yyyy:HH+mm", "DTP2: placeholder");
+					equal(jQuery("#DTP3").children("div.sapMInputDivWrapper").children("input").attr("placeholder"), "M/d/yy, h:mm a", "DTP3: placeholder");
+					equal(jQuery("#DTP4").children("div.sapMInputDivWrapper").children("input").attr("placeholder"), "MMM d, y, h:mm:ss a", "DTP4: placeholder from binding used");
 				} else {
-					ok(!jQuery("#DTP1").children("input").attr("placeholder"), "No placeholder attribute");
+					ok(!jQuery("#DTP1").children("div.sapMInputDivWrapper").children("input").attr("placeholder"), "No placeholder attribute");
 				}
 			});
 
@@ -154,9 +154,9 @@
 				bValid = true;
 				sId = "";
 				oDTP2.focus();
-				jQuery("#DTP2").children("input").val("37+02+2016:10+11");
+				jQuery("#DTP2").children("div.sapMInputDivWrapper").children("input").val("37+02+2016:10+11");
 				qutils.triggerKeyboardEvent("DTP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-				jQuery("#DTP2").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+				jQuery("#DTP2").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 				equal(sId, "DTP2", "Change event fired");
 				equal(sValue, "37+02+2016:10+11", "Value of event has entered value if invalid");
 				ok(!bValid, "Value is not valid");
@@ -168,9 +168,9 @@
 				bValid = true;
 				sId = "";
 				oDTP2.focus();
-				jQuery("#DTP2").children("input").val("18+02+2016:10+30");
+				jQuery("#DTP2").children("div.sapMInputDivWrapper").children("input").val("18+02+2016:10+30");
 				qutils.triggerKeyboardEvent("DTP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-				jQuery("#DTP2").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+				jQuery("#DTP2").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 				equal(sId, "DTP2", "Change event fired");
 				equal(sValue, "2016-02-18,10-30-00", "Value of event has entered value if valid");
 				ok(bValid, "Value is valid");

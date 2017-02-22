@@ -219,7 +219,14 @@ function(jQuery) {
 				sContent = oSrc.getAttribute(sContent);
 			}
 
-			// pseudo elements can't be inserted via js, so we should create a real elements, which copy pseudo styling
+			// due to a firefox bug sContent can be null after oSrc.getAttribute
+			// sContent is requried for copy pseudo styling
+			if (sContent === null || sContent === undefined) {
+				sContent = "";
+			}
+
+			// pseudo elements can't be inserted via js, so we should create a real elements,
+			// which copy pseudo styling
 			var oAfterElement = jQuery("<span></span>");
 			if (sPseudoElement === ":after") {
 				oAfterElement.appendTo(oDest);

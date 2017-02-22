@@ -113,6 +113,7 @@
 					"sap.ui.core.sample.OpaAction",
 					"sap.ui.core.sample.gherkin.GherkinWithOPA5",
 					"sap.ui.core.sample.gherkin.GherkinWithPageObjects",
+					"sap.ui.core.sample.gherkin.GherkinWithUIComponent",
 					"sap.ui.comp.sample.smartfilterbartest"
 				]
 			},
@@ -136,7 +137,8 @@
 				"samples" : [
 					"sap.ui.core.sample.gherkin.GherkinWithQUnit",
 					"sap.ui.core.sample.gherkin.GherkinWithOPA5",
-					"sap.ui.core.sample.gherkin.GherkinWithPageObjects"
+					"sap.ui.core.sample.gherkin.GherkinWithPageObjects",
+					"sap.ui.core.sample.gherkin.GherkinWithUIComponent"
 				]
 			},
 			{
@@ -521,6 +523,11 @@
 				"id": "sap.ui.core.sample.gherkin.GherkinWithPageObjects",
 				"name": "Using Gherkin with OPA5 Page Objects",
 				"description": "How to combine Gherkin and OPA5 page objects to run behavior driven development tests"
+			},
+			{
+				"id": "sap.ui.core.sample.gherkin.GherkinWithUIComponent",
+				"name": "Using Gherkin to load and test a UIComponent",
+				"description": "How to use Gherkin and OPA5 to load a UIComponent and run behavior driven development tests on it"
 			},
 			{
 				"id" : "sap.ui.core.sample.ThemeCustomClasses",
