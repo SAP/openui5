@@ -230,7 +230,7 @@
 					assert.ok(iBusyDurationRequest+1 >= oMeasurement.busyDuration && iBusyDurationRequest-1 <= oMeasurement.busyDuration, "Request header contains global busy duration measurement");
 					spy.restore();
 					done();
-				}, 50);
+				}, 100);
 			});
 
 			QUnit.module("component integration");
