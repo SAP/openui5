@@ -367,7 +367,7 @@
 			QUnit.test("The links in the text are recognised", function(assert) {
 				//Arrange
 				var sOriginal = "sample text: www.sap.com to be surrounded by tags",
-					sTransformed = "sample text: <a href=\"//www.sap.com\" target=\"_self\" class=\"sapMLink\">www.sap.com</a> to be surrounded by tags",
+					sTransformed = "sample text: <a href=\"//www.sap.com\" target=\"_self\" class=\"sapMLnk\">www.sap.com</a> to be surrounded by tags",
 					sLinkTarget = "_self",
 					oSpy = sinon.spy(sap.m.FormattedText.prototype, "onAfterRendering");
 
