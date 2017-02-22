@@ -55,6 +55,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	* <li> You can select single tokens or a range of tokens and you can copy/cut/delete them.</
 	* <li> (Multi-line Mode) Previously added tokens are visible above the input field.</li>
 	* </ul>
+	* @extends sap.m.Input
+	*
 	* @author SAP SE
 	* @version ${version}
 	*
@@ -73,7 +75,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 				 * If set to true, the MultiInput will be displayed in multi-line display mode.
 				 * In multi-line display mode, all tokens can be fully viewed and easily edited in the MultiInput.
 				 * The default value is false.
-				 * <b>Note:</b> This property does not take effect on smartphones.
+				 * <b>Note:</b> This property does not take effect on smartphones or when the editable property is set to false.
 				 * @since 1.28
 				 */
 				enableMultiLineMode: {type: "boolean", group: "Behavior", defaultValue: false},
