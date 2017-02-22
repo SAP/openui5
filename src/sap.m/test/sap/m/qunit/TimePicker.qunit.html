@@ -1766,7 +1766,7 @@
 			fnCheckAriaAttribute = function (oTimePicker, aExpectedStrings, sAriaAttributeName, sScenario) {
 				var $innerInput, sAriaAttributeValue, aAriaAttributes, aRealStrings = [];
 
-				$innerInput = oTimePicker.$().children("input");
+				$innerInput = oTimePicker.$().children("div.sapMInputDivWrapper").children("input");
 				sAriaAttributeValue = $innerInput.attr(sAriaAttributeName);
 
 				if (aExpectedStrings.length == 0) {

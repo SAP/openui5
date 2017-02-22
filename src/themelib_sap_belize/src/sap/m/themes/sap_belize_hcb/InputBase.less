@@ -1,7 +1,7 @@
-/* ================================= */
-/* CSS for control sap.m/InputBase   */
-/* Belize High Contrast Black theme  */
-/* ================================= */
+/* ================================ */
+/* CSS for control sap.m/InputBase  */
+/* High Contrast Black theme        */
+/* ================================ */
 
 .sapMInputBaseInner {
 	font-style: normal;
@@ -11,12 +11,17 @@
 	opacity: 1;
 }
 
-.sapMInputBaseDisabledInner {
+.sapMInputBaseDisabledInner .sapMInputBaseInner{
 	background: @sapUiHcReducedBackground;
 	border-color: @sapUiHcReducedForeground;
 	color: @sapUiContentDisabledTextColor;
 	font-weight: normal;
 	-webkit-text-fill-color: @sapUiContentDisabledTextColor;
+}
+
+.sapMInputBaseReadonlyInner  .sapMInputBaseInner{
+	background: @sapUiFieldReadOnlyBackground;
+	border-color: @sapUiHcReducedForeground;
 }
 
 .sapMInputBaseInner::-webkit-input-placeholder {
@@ -51,6 +56,7 @@
 	font-style: italic;
 	font-weight: bold;
 }
+
 
 .sapMInputBaseStateInner {
 	border-width: 1px;
@@ -106,31 +112,17 @@
 	font-weight: bold;
 }
 
-/* focus on browsers except IE */
-.sapMInputBase .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.188rem;
-}
 
-/* focus in IE (workaround) */
-html[data-sap-ui-browser^="ie"] {
-	.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus,
-	.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):hover {
-		outline: none;
-	}
-
-	.sapMFocus.sapMInputBase:not(.sapMInputBaseReadonly):not(.sapMInputBaseDisabled) {
-		&::before {
-			content: "";
-			position: absolute;
-			top: 5px;
-			left: 1px;
-			right: 1px;
-			bottom:5px;
-			display: block;
-			border: 2px dotted @sapUiContentFocusColor;
-			box-sizing: border-box;
-			pointer-events: none;
-		}
+.sapMFocus .sapMInputDivWrapper:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseDisabledInner){
+	&::before {
+		content: " ";
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		right: 0px;
+		bottom: 0px;
+		border: 2px dotted @sapUiContentFocusColor;
+		pointer-events: none;
 	}
 }
+

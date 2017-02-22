@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.DatePicker} oDP an object representation of the control that should be rendered
 	 */
-	DatePickerRenderer.writeInnerContent = function(oRm, oDP) {
+	DatePickerRenderer.writeDecorations = function(oRm, oDP) {
 
 		if (oDP.getEnabled() && oDP.getEditable()) {
 			var aClasses = ["sapMInputValHelpInner"];

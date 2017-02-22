@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	InputRenderer.addInnerStyles = function(oRm, oControl) {
+	InputRenderer.addWrapperStyles = function(oRm, oControl) {
 
 		if (oControl.getDescription()) {
 			oRm.addStyle("width", oControl.getFieldWidth() || "50%");
@@ -91,12 +91,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	};
 
 	/**
-	 * add extra content to Input
+	 * Write the decorations of the input.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
-	InputRenderer.writeInnerContent = function(oRm, oControl) {
+	InputRenderer.writeDecorations = function(oRm, oControl) {
 
 		var id = oControl.getId(),
 			description = oControl.getDescription();
@@ -106,8 +106,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		} else {
 			oRm.write("<span id=\"" + oControl.getId() + "-Descr\">");
 			this.writeValueHelpIcon(oRm, oControl);
+			oRm.write('<span class="sapMInputDescriptionText">');
 			oRm.writeEscaped(description);
-			oRm.write("</span>");
+			oRm.write("</span></span>");
 		}
 
 		if (sap.ui.getCore().getConfiguration().getAccessibility()) {

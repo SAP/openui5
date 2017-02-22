@@ -3,15 +3,38 @@
 /* Belize theme                     */
 /* ================================ */
 
-html.sap-desktop .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -3px;
-}
-
-html.sap-desktop .sapMInputBaseStateInner:not(.sapMInputBaseReadonlyInner):focus {
-	outline-offset: -4px;
-}
-
-.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMInputBaseDisabledInner):active {
+.sapMInputDivWrapper:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMInputBaseDisabledInner):active {
   	border-color: @sapUiFieldBorderColor;
+}
+
+.sapMInputBaseReadonlyInner .sapMInputBaseInner {
+	border-color: @sapUiFieldReadOnlyBorderColor;
+	background: @sapUiFieldReadOnlyBackground;
+}
+
+.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner),
+.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner) {
+	outline: none;
+}
+
+.sapMFocus .sapMInputDivWrapper:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseDisabledInner) {
+	&::before {
+		content: "";
+		position: absolute;
+		top: 2px;
+		left: 2px;
+		right: 2px;
+		bottom: 2px;
+		border: 1px dotted @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+}
+
+.sapMFocus.sapMInputBaseState .sapMInputDivWrapper:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseDisabledInner) {
+	&::before {
+		top: 3px;
+		left: 3px;
+		right: 3px;
+		bottom: 3px;
+	}
 }

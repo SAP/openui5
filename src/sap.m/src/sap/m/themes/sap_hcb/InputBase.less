@@ -107,31 +107,16 @@
 	font-weight: bold;
 }
 
-/* focus on browsers except IE */
-.sapMInputBase .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.188rem;
-}
 
-/* focus in IE (workaround) */
-html[data-sap-ui-browser^="ie"] {
-	.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus,
-	.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):hover {
-		outline: none;
-	}
-
-	.sapMFocus.sapMInputBase:not(.sapMInputBaseReadonly):not(.sapMInputBaseDisabled) {
-		&::before {
-			content: "";
-			position: absolute;
-			top: 5px;
-			left: 1px;
-			right: 1px;
-			bottom:5px;
-			display: block;
-			border: 2px dotted @sapUiContentFocusColor;
-			box-sizing: border-box;
-			pointer-events: none;
-		}
+.sapMFocus .sapMInputDivWrapper:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseDisabledInner){
+	&::before {
+		content: " ";
+		position: absolute;
+		top: 5px;
+		left: 5px;
+		right: 5px;
+		bottom: 5px;
+		border: 2px dotted @sapUiContentFocusColor;
+		pointer-events: none;
 	}
 }
