@@ -114,6 +114,40 @@
 				router.destroy();
 			});
 
+			QUnit.test("Should parse the hash again when second initialize doesn't suppress hash parsing", function(assert) {
+				var router = fnCreateRouter();
+				var parseSpy = this.spy(router, "parse");
+
+				hasher.setHash("");
+
+				router.initialize();
+
+				assert.equal(parseSpy.callCount, 1, "did notify for initial hash");
+				router.stop();
+
+				router.initialize();
+				assert.equal(parseSpy.callCount, 2, "did notify when initialized with the same hash again");
+
+				router.destroy();
+			});
+
+			QUnit.test("Shouldn't parse the hash again when second initialize does suppress hash parsing", function(assert) {
+				var router = fnCreateRouter();
+				var parseSpy = this.spy(router, "parse");
+
+				hasher.setHash("");
+
+				router.initialize();
+
+				assert.equal(parseSpy.callCount, 1, "did notify for initial hash");
+				router.stop();
+
+				router.initialize(true /*suppress hash parsing*/);
+				assert.equal(parseSpy.callCount, 1, "did not notify when initialized with the same hash again");
+
+				router.destroy();
+			});
+
 			QUnit.test("Should destroy the router instance", function() {
 				//Arrange
 				var parseSpy,
