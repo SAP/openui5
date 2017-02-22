@@ -320,7 +320,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		} else if (this.getDomRef() && this._iMode == 0 && !this._sInvalidateMonth) {
 			// DateRange changed -> only rerender days
 			// do this only once if more DateRanges / Special days are changed
-			this._sInvalidateMonth = jQuery.sap.delayedCall(0, this, this._invalidateMonth, [this]);
+			this._sInvalidateMonth = jQuery.sap.delayedCall(0, this, this._invalidateMonth, [oOrigin]);
 		}
 
 	};
@@ -1644,8 +1644,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
-	Calendar.prototype._invalidateMonth = function() {
-
+	Calendar.prototype._invalidateMonth = function(oOrigin) {
 		this._sInvalidateMonth = undefined;
 
 		var aMonths = this.getAggregation("month");
@@ -1657,7 +1656,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				if (aMonths.length > 1) {
 					oMonth._bNoFocus = true;
 				}
-				oMonth.invalidate();
+				oMonth.invalidate(oOrigin);
 				oMonth._bInvalidateSync = undefined;
 			}
 
