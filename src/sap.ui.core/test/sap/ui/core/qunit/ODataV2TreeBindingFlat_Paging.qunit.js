@@ -106,6 +106,307 @@ asyncTest("Simple Paging", function(){
 	});
 });
 
+asyncTest("Succeeding _loadData() calls for same section only trigger one request", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			var spy = sinon.spy(oModel, "read");
+			oBinding.attachChange(handler2);
+			oBinding._loadData(10, 60, 0);
+			oBinding._loadData(10, 55, 0);
+			oBinding._loadData(10, 50, 0);
+			equal(spy.callCount, 1, "Three _loadData() calls trigger only one request");
+		};
+
+		function handler2 (oEvent) {
+			oBinding.detachChange(handler2);
+			start();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding._loadData(0, 10, 0);
+	});
+});
+
+asyncTest("Succeeding _loadData() calls for partially equal sections trigger delta requests", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		function getSkipFromCall(args) {
+			return parseInt(args[1].urlParameters[0].replace("$skip=", ""), 10);
+		}
+
+		function getTopFromCall(args) {
+			return parseInt(args[1].urlParameters[1].replace("$top=", ""), 10);
+		}
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			var spy = sinon.spy(oModel, "read");
+			oBinding.attachChange(handler2);
+			oBinding._loadData(10, 50, 0);
+			oBinding._loadData(10, 55, 0);
+			oBinding._loadData(10, 61, 0);
+
+			equal(spy.callCount, 3, "Three _loadData() calls trigger three requests");
+
+			// First call
+			equal(getSkipFromCall(spy.args[0]), 10, "First call: Skip equals 10");
+			equal(getTopFromCall(spy.args[0]), 50, "First call: Top equals 50");
+
+			// Second call
+			equal(getSkipFromCall(spy.args[1]), 60, "Second call: Skip equals 50");
+			equal(getTopFromCall(spy.args[1]), 5, "Second call: Top equals 5");
+
+			// Third call
+			equal(getSkipFromCall(spy.args[2]), 65, "Third call: Skip equals 55");
+			equal(getTopFromCall(spy.args[2]), 6, "Third call: Top equals 6");
+		};
+
+		var callCount = 0;
+		function handler2 (oEvent) {
+			if (++callCount === 3) {
+				oBinding.detachChange(handler2);
+				start();
+			}
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding._loadData(0, 10, 0);
+	});
+});
+
+asyncTest("Succeeding _loadData() calls for partially equal threshold-sections trigger threshold requests", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		function getSkipFromCall(args) {
+			return parseInt(args[1].urlParameters[0].replace("$skip=", ""), 10);
+		}
+
+		function getTopFromCall(args) {
+			return parseInt(args[1].urlParameters[1].replace("$top=", ""), 10);
+		}
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			var spy = sinon.spy(oModel, "read");
+			oBinding.attachChange(handler2);
+			oBinding._loadData(10, 50, 100); // $skip=10 $top=150 -> end-idx=160
+			oBinding._loadData(80, 50, 100); // $skip=80 $top=150 -> end-idx=330 -> partially covered by pending request -> threshold gets added again to end-idx
+
+			oBinding._loadData(200, 10, 0); // $skip=200 $top=10 -> end-idx=210 -> inside threshold of preceding request
+			oBinding._loadData(300, 10, 20); // $skip=300 $top=30 -> end-idx=330 -> inside threshold of preceding request
+
+			equal(spy.callCount, 2, "Two _loadData() calls trigger two requests");
+
+			// First call
+			equal(getSkipFromCall(spy.args[0]), 10, "First call: Skip equals 10");
+			equal(getTopFromCall(spy.args[0]), 150, "First call: Top (including threshold) equals 150");
+
+			// Second call
+			equal(getSkipFromCall(spy.args[1]), 160, "Second call: Skip equals 160");
+			equal(getTopFromCall(spy.args[1]), 170, "Second call: Top (delta of requested section + threshold) equals 170");
+		};
+
+		var callCount = 0;
+		function handler2 (oEvent) {
+			if (++callCount === 2) {
+				oBinding.detachChange(handler2);
+				start();
+			}
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding._loadData(0, 10, 0);
+	});
+});
+
+asyncTest("Succeeding _loadData() calls within threshold of each other trigger exactly one request", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			var spy = sinon.spy(oModel, "read");
+			oBinding.attachChange(handler2);
+			oBinding._loadData(10, 60, 100);
+			oBinding._loadData(10, 70, 0);
+			oBinding._loadData(10, 150, 0);
+			equal(spy.callCount, 1, "Three _loadData() calls trigger only one request");
+		};
+
+		function handler2 (oEvent) {
+			oBinding.detachChange(handler2);
+			start();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding._loadData(0, 10, 0);
+	});
+});
+
+asyncTest("Succeeding _loadChildren() calls for same section only trigger one request", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			var spy = sinon.spy(oModel, "read");
+			oBinding.attachChange(handler2);
+			oBinding._loadChildren(oBinding.getNodeByIndex(0), 10, 60);
+			oBinding._loadChildren(oBinding.getNodeByIndex(0), 10, 55);
+			oBinding._loadChildren(oBinding.getNodeByIndex(0), 10, 50);
+			equal(spy.callCount, 1, "Three _loadChildren() calls trigger only one request");
+		};
+
+		function handler2 (oEvent) {
+			oBinding.detachChange(handler2);
+			start();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding._loadData(0, 10, 0);
+	});
+});
+
+asyncTest("Succeeding _loadChildren() calls for partially equal sections trigger delta requests", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		function getSkipFromCall(args) {
+			return parseInt(args[1].urlParameters[0].replace("$skip=", ""), 10);
+		}
+
+		function getTopFromCall(args) {
+			return parseInt(args[1].urlParameters[1].replace("$top=", ""), 10);
+		}
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			var spy = sinon.spy(oModel, "read");
+			oBinding.attachChange(handler2);
+			oBinding._loadChildren(oBinding.getNodeByIndex(1), 10, 50);
+			oBinding._loadChildren(oBinding.getNodeByIndex(1), 10, 55);
+			oBinding._loadChildren(oBinding.getNodeByIndex(1), 10, 61);
+
+			equal(spy.callCount, 3, "Three _loadChildren() calls trigger three requests");
+
+			// First call
+			equal(getSkipFromCall(spy.args[0]), 10, "First call: Skip equals 10");
+			equal(getTopFromCall(spy.args[0]), 50, "First call: Top equals 50");
+
+			// Second call
+			equal(getSkipFromCall(spy.args[1]), 60, "Second call: Skip equals 60");
+			equal(getTopFromCall(spy.args[1]), 5, "Second call: Top equals 5");
+
+			// Third call
+			equal(getSkipFromCall(spy.args[2]), 65, "Third call: Skip equals 65");
+			equal(getTopFromCall(spy.args[2]), 6, "Third call: Top equals 6");
+		};
+
+		var callCount = 0;
+		function handler2 (oEvent) {
+			if (++callCount === 3) {
+				oBinding.detachChange(handler2);
+				start();
+			}
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding._loadData(0, 10, 0);
+	});
+});
+
+asyncTest("Succeeding _loadChildren() calls for separate parents trigger separate requests", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		function getSkipFromCall(args) {
+			return parseInt(args[1].urlParameters[0].replace("$skip=", ""), 10);
+		}
+
+		function getTopFromCall(args) {
+			return parseInt(args[1].urlParameters[1].replace("$top=", ""), 10);
+		}
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			var spy = sinon.spy(oModel, "read");
+			oBinding.attachChange(handler2);
+			oBinding._loadChildren(oBinding.getNodeByIndex(1), 10, 50);
+			oBinding._loadChildren(oBinding.getNodeByIndex(8), 10, 50);
+
+			equal(spy.callCount, 2, "Two _loadChildren() calls for different parents trigger Two requests");
+
+			// First call
+			equal(getSkipFromCall(spy.args[0]), 10, "First call: Skip equals 10");
+			equal(getTopFromCall(spy.args[0]), 50, "First call: Top equals 50");
+
+			// Second call
+			equal(getSkipFromCall(spy.args[1]), 10, "Second call: Skip equals 10");
+			equal(getTopFromCall(spy.args[1]), 50, "Second call: Top equals 50");
+		};
+
+		var callCount = 0;
+		function handler2 (oEvent) {
+			if (++callCount === 2) {
+				oBinding.detachChange(handler2);
+				start();
+			}
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding._loadData(0, 10, 0);
+	});
+});
+
 asyncTest("Advanced Paging", function(){
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
