@@ -3,18 +3,25 @@
 /* Belize theme                  */
 /* ============================= */
 
-/* ------------------------------ */
-/* field                          */
-/* ------------------------------ */
+/* IconOnly */
 
-/* hover and focus */
+.sapMSlt.sapMSltIconOnly:not(.sapMSltDisabled) {
+	border-color: @sapUiButtonLiteBorderColor;
+	background: @sapUiButtonLiteBackground;
+	border-radius: 0.2rem;
+}
 
-.sapMSltIconOnly.sapMSltHoverable:hover {
+/* IconOnly Hover */
+
+.sapMSltIconOnly.sapMSltHoverable:hover:not(.sapMSltState) {
+	border-color: @sapUiButtonLiteHoverBorderColor;
 	background: @sapUiButtonLiteHoverBackground;
 }
 
-.sapMSltIconOnly.sapMSltHoverable:not(.sapMSltState):hover {
-	border-color: @sapUiFieldHoverBorderColor;
+/*IconOnly Pressed */
+.sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
+	background: @sapUiToggleButtonPressedBackground;
+	border: 0.0625rem solid @sapUiToggleButtonPressedBorderColor;
 }
 
 html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):focus {
