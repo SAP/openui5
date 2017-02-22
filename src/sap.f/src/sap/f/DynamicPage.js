@@ -624,9 +624,9 @@ sap.ui.define([
 	DynamicPage.prototype._getScrollPosition = function () {
 		if (Device.system.desktop) {
 			return this._getScrollBar().getScrollPosition();
-		} else {
-			return this.$wrapper.scrollTop();
 		}
+
+		return exists(this.$wrapper) ? this.$wrapper.scrollTop() : 0;
 	};
 
 	/**
