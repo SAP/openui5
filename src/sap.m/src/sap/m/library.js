@@ -484,7 +484,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		Back : "Back",
 
 		/**
-		 * accept type (blue button)
+		 * accept type (green button)
 		 * @public
 		 */
 		Accept : "Accept",
