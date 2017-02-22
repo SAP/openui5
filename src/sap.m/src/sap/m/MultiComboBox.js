@@ -317,7 +317,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	 * @private
 	 */
 	MultiComboBox.prototype.onfocusin = function(oEvent) {
-		this.getEditable() && this.addStyleClass("sapMMultiComboBoxFocus");
+		if (oEvent.target === this.getFocusDomRef()) {
+			this.getEditable() && this.addStyleClass("sapMMultiComboBoxFocus");
+		}
 
 		if (oEvent.target === this.getOpenArea()) {
 			// force the focus to stay in the input field

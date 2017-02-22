@@ -4585,6 +4585,32 @@
 
 	module("Focus handling");
 
+	QUnit.test("Focusing a token inside the MCB should not add css focus indication to the MCB itself", function(assert) {
+		var oItem = new sap.ui.core.Item({ text: "test" }),
+			oFakeEvent = new sap.ui.base.Event,
+			oMultiComboBox = new sap.m.MultiComboBox({
+				items: [oItem]
+			}).placeAt("MultiComboBox-content");
+
+		var oHandleTokenFocusStub = sinon.stub(sap.ui.base.Event.prototype, "getParameter");
+
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.setSelectedItems([oItem]);
+
+		oHandleTokenFocusStub.withArgs("type", "focusin");
+		oHandleTokenFocusStub.withArgs("target", oMultiComboBox._oTokenizer.getTokens()[0].getDomRef());
+
+		oMultiComboBox.onfocusin(oFakeEvent);
+
+		assert.notOk(oMultiComboBox.$().hasClass("sapMMultiComboBoxFocus"), "The MCB must not have the css sapMMultiComboBoxFocus");
+
+		//cleanup
+		oFakeEvent.destroy();
+		oHandleTokenFocusStub.restore();
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.test("Invalidating MCB should not set the focus to it when the focus has been outside it", function(assert) {
 		// system under test
 		this.stub(sap.ui.Device, "system", {
