@@ -1622,6 +1622,42 @@
 			destroyTable();
 		}
 	});
+	
+	QUnit.test("getRowForCell", function(assert) {
+		oTable.getColumns()[1].setVisible(false);
+		sap.ui.getCore().applyChanges();
+		
+		var aRows = oTable.getRows();
+		var aCells;
+		for (var i = 0; i < aRows.length; i++) {
+			aCells = aRows[i].getCells();
+			for (var j = 0; j < aCells.length; j++) {
+				assert.ok(oTable.getRowForCell(aCells[j]) === aRows[i], "Correct output for row " + i + " and visible column " + j);
+			}
+		}
+		
+		assert.ok(!oTable.getRowForCell(), "No cell given");
+		assert.ok(!oTable.getRowForCell(oTable.getColumns()[0]), "Something wrong given");
+	});
+	
+	QUnit.test("getColumnForCell", function(assert) {
+		oTable.getColumns()[1].setVisible(false);
+		sap.ui.getCore().applyChanges();
+		
+		var aRows = oTable.getRows();
+		var aColumns = oTable.getColumns();
+		var aCells, iColumnIndex;
+		for (var i = 0; i < aRows.length; i++) {
+			aCells = aRows[i].getCells();
+			for (var j = 0; j < aCells.length; j++) {
+				iColumnIndex = j == 0 ? j : (j + 1);
+				assert.ok(oTable.getColumnForCell(aCells[j]) === aColumns[iColumnIndex], "Correct output for row " + i + " and visible column " + j);
+			}
+		}
+		
+		assert.ok(!oTable.getColumnForCell(), "No cell given");
+		assert.ok(!oTable.getColumnForCell(oTable.getColumns()[0]), "Something wrong given");
+	});
 
 	QUnit.test("test onBeforeRendering function with variableRowHeightEnabled=true", function(assert) {
 		var fnCalculateRowsToDisplay = sinon.spy(oTable, "_calculateRowsToDisplay");
