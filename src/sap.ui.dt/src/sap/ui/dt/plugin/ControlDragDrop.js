@@ -38,7 +38,7 @@ sap.ui.define(['sap/ui/dt/plugin/DragDrop', 'sap/ui/dt/plugin/ElementMover', 'sa
 					defaultValue : ["sap.ui.core.Element"]
 				},
 				elementMover : {
-					type : "sap.ui.dt.plugin.ElementMover"
+					type : "any" // "sap.ui.dt.plugin.ElementMover"
 				}
 			},
 			associations : {}

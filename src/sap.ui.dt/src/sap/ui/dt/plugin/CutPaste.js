@@ -38,7 +38,7 @@ sap.ui.define([
 					]
 				},
 				elementMover: {
-					type: "sap.ui.dt.plugin.ElementMover"
+					type: "any" // "sap.ui.dt.plugin.ElementMover"
 				}
 			},
 			associations: {}
