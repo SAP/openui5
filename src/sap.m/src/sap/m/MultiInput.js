@@ -1345,7 +1345,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		var oClone,
 			oTokenizerClone;
 
-		this._tokenizer.detachTokenChange(this._onTokenChange, this);
 		this.detachSuggestionItemSelected(this._onSuggestionItemSelected, this);
 		this.detachLiveChange(this._onLiveChange, this);
 
@@ -1355,7 +1354,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		oClone._tokenizer = oTokenizerClone;
 		oClone.setAggregation("tokenizer", oTokenizerClone, true);
 
-		this._tokenizer.attachTokenChange(this._onTokenChange, this);
 		this.attachSuggestionItemSelected(this._onSuggestionItemSelected, this);
 		this.attachLiveChange(this._onLiveChange, this);
 
