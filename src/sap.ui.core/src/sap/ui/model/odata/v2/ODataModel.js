@@ -3324,7 +3324,7 @@ sap.ui.define([
 		if (!jQuery.sap.startsWith(sUrl , "/")) {
 			sUrl = "/" + sUrl;
 		}
-		oEntry = this._getObject(sUrl);
+		oEntry = this._getObject(sUrl.split("?")[0]);
 		sETag = this._getHeader("etag", oResponse.headers);
 		if (oEntry && oEntry.__metadata && sETag){
 			oEntry.__metadata.etag = sETag;
