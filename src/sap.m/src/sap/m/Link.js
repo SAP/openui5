@@ -192,7 +192,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var $this = this.$();
 		this.setProperty("text", sText, true);
 		sText = this.getProperty("text");
-		$this.text(sText);
+		if (this.writeText) {
+			this.writeText(sText);
+		} else {
+			$this.text(sText);
+		}
 		if (sText) {
 			$this.attr("tabindex", "0");
 		} else {
