@@ -220,6 +220,79 @@
 				assert.equal(type.isValid("id "), false, "a partial match should not be valid");
 			});
 
+			QUnit.test("AbsoluteCSSSize", function(assert) {
+				var type = DataType.getType("sap.ui.core.AbsoluteCSSSize");
+				assert.ok(!!type, "type 'sap.ui.core.AbsoluteCSSSize' exists");
+				assert.ok(type instanceof DataType, "type is a DataType");
+				assert.equal(type.getName(), 'sap.ui.core.AbsoluteCSSSize', "type name");
+				assert.equal(type.getDefaultValue(), "", "default value");
+				assert.equal(type.getBaseType().getName(), "string", "base type is string");
+				assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+
+				assert.equal(type.isValid("0"), true, "accepted value 0");
+				assert.equal(type.isValid("10px"), true, "accepted value 10px");
+				assert.equal(type.isValid("-22pt"), true, "accepted value -22pt");
+				assert.equal(type.isValid("100%"), false, "percentage value must not be accepted");
+				assert.equal(type.isValid("auto"), false, "special value 'auto' must not be accepted");
+				assert.equal(type.isValid("inherit"), false, "special value 'inherit' must not be accepted");
+				assert.equal(type.isValid("1"), false, "value other than 0 without unit must not be accepted");
+				assert.equal(type.isValid(42), false, "number value must not be accepted");
+				assert.equal(type.isValid({}), false, "object value must not be accepted");
+				assert.equal(type.isValid(""), true, "empty string must be valid");
+				assert.equal(type.isValid(" 20px"), false, "a partial match must not be valid");
+				assert.equal(type.isValid("100% 20px"), false, "a partial match must not be valid");
+				assert.equal(type.isValid("100% "), false, "a partial match must not be valid");
+
+				assert.equal(type.isValid("calc(100px - 20rem)"), true, "can substract two arguments");
+				assert.equal(type.isValid("calc(100% - 20rem)"), false, "can not use percentages in calculations");
+				assert.equal(type.isValid("calc(100px - 20%)"), false, "can not use percentages in calculations");
+				assert.equal(type.isValid("calc(100rem- 20rem)"), false, "whitespace is mandatory around '-' operator");
+				assert.equal(type.isValid("calc(100rem -20rem)"), false, "whitespace is mandatory around '-' operator");
+				assert.equal(type.isValid("calc(100rem-20rem)"), false, "whitespace is mandatory around '-' operator");
+				assert.equal(type.isValid("calc(100rem + 20rem)"), true, "can add two arguments");
+				assert.equal(type.isValid("calc(100rem+ 20rem)"), false, "whitespace is mandatory around '+' operator");
+				assert.equal(type.isValid("calc(100rem +20rem)"), false, "whitespace is mandatory around '+' operator");
+				assert.equal(type.isValid("calc(100rem+20rem)"), false, "whitespace is mandatory around '+' operator");
+				assert.equal(type.isValid("calc(10 * 20rem)"), true, "can multiply two arguments");
+				assert.equal(type.isValid("calc(10* 20rem)"), true, "whitespace is optional around '*' operator");
+				assert.equal(type.isValid("calc(10rem *20)"), true, "whitespace is optional around '*' operator");
+				assert.equal(type.isValid("calc(10rem*20)"), true, "whitespace is optional around '*' operator");
+				assert.equal(type.isValid("calc(100rem / 20)"), true, "can divide two arguments");
+				assert.equal(type.isValid("calc(100rem/ 20)"), true, "whitespace is optional around '/' operator");
+				assert.equal(type.isValid("calc(100rem /20)"), true, "whitespace is optional around '/' operator");
+				assert.equal(type.isValid("calc(100rem/20)"), true, "whitespace is optional around '/' operator");
+				assert.equal(type.isValid("calc(2 * -20rem / 23)"), true, "arguments dont always need units");
+				assert.equal(type.isValid("calc(2 * (-20rem / 23))"), true, "parenthesis can be used for grouping (simple)");
+				assert.equal(type.isValid("calc(((2)) * (-20rem / (((14) + 23)))"), true, "parenthesis can be used for grouping (complex, no whitespace)");
+				assert.equal(type.isValid("calc( ( ( 2 ) ) * ( -20rem / ( ( ( 14 ) + 23 ) ) )"), true, "parenthesis can be used for grouping (complex, whitespace)");
+				assert.equal(type.isValid("calc(     2 ) ) * ( -20rem / ( ( ( 14 ) + 23     )"), true, "unbalanced parenthesis are not detected by the regexp");
+				assert.equal(type.isValid("calc(100px)"), true, "a single value is valid");
+				assert.equal(type.isValid("calc(10 3rem)"), false, "an operand is mandatory between values");  // this has a valid syntax but isn't a valid expression
+				assert.equal(type.isValid("calc(10 + 3rem)"), true, "a valid calc() expression must be valid");  // this has a valid syntax but isn't a valid expression
+				assert.equal(type.isValid("calc(100px-"), false, "can't substract undefined");
+				assert.equal(type.isValid("calc(* - 100px)"), false, "arguments need to have digits");
+			});
+
+			QUnit.test("AbsoluteCSSSize[]", function(assert) {
+				var type = DataType.getType("sap.ui.core.AbsoluteCSSSize[]");
+				assert.ok(!!type, "type 'sap.ui.core.AbsoluteCSSSize[]' exists");
+				assert.ok(type instanceof DataType, "type is a DataType");
+				assert.equal(type.getName(), 'sap.ui.core.AbsoluteCSSSize[]', "type name");
+				assert.equal(type.getDefaultValue(), null, "default value");
+				assert.equal(type.getBaseType().getName(), "array", "base type is array");
+				assert.equal(type.getPrimitiveType().getName(), "array", "primitive type is array");
+				assert.equal(type.getComponentType().getName(), "sap.ui.core.AbsoluteCSSSize", "primitive type is AbsoluteCSSSize");
+
+				assert.equal(type.isValid(["0"]), true, "accepted value 0");
+				assert.equal(type.isValid(["10px","20px"]), true, "accepted value 10px,20px");
+				assert.equal(type.isValid(["-22pt","10em","50px"]), true, "accepted value with percentage: -22pt,10em,50px");
+				assert.equal(type.isValid(["-22pt","10%","50px"]), false, "not accepted value -22pt,10%,50px");
+				assert.equal(type.isValid(["-22pt","calc(10rem / 2)","50px"]), true, "calc() expressions are allowed as element values");
+				assert.equal(type.isValid(["-22pt","calc(10% / 2)","50px"]), false, "calc() expressions are not allowed when they contain percentage values");
+				assert.equal(type.isValid("1"), false, "isValid('1')");
+				assert.equal(type.isValid([42]), false, "isValid([42])");
+			});
+
 			QUnit.test("CSSSize", function(assert) {
 				var type = DataType.getType("sap.ui.core.CSSSize");
 				assert.ok(!!type, "type 'sap.ui.core.CSSSize' exists");
@@ -248,19 +321,19 @@
 				assert.equal(type.isValid("calc(100%+ 20rem)"), false, "whitespace is mandatory around '+' operator");
 				assert.equal(type.isValid("calc(100% +20rem)"), false, "whitespace is mandatory around '+' operator");
 				assert.equal(type.isValid("calc(100%+20rem)"), false, "whitespace is mandatory around '+' operator");
-				assert.equal(type.isValid("calc(100% * 20rem)"), true, "can multiply two arguments");
-				assert.equal(type.isValid("calc(100%* 20rem)"), true, "whitespace is optional around '*' operator");
-				assert.equal(type.isValid("calc(100% *20rem)"), true, "whitespace is optional around '*' operator");
-				assert.equal(type.isValid("calc(100%*20rem)"), true, "whitespace is optional around '*' operator");
-				assert.equal(type.isValid("calc(100% / 20rem)"), true, "can divide two arguments");
-				assert.equal(type.isValid("calc(100%/ 20rem)"), true, "whitespace is optional around '/' operator");
-				assert.equal(type.isValid("calc(100% /20rem)"), true, "whitespace is optional around '/' operator");
-				assert.equal(type.isValid("calc(100%/20rem)"), true, "whitespace is optional around '/' operator");
+				assert.equal(type.isValid("calc(10 * 20rem)"), true, "can multiply two arguments");
+				assert.equal(type.isValid("calc(10* 20rem)"), true, "whitespace is optional around '*' operator");
+				assert.equal(type.isValid("calc(100% *2)"), true, "whitespace is optional around '*' operator");
+				assert.equal(type.isValid("calc(100%*2)"), true, "whitespace is optional around '*' operator");
+				assert.equal(type.isValid("calc(100% / 2)"), true, "can divide two arguments");
+				assert.equal(type.isValid("calc(100%/ 2)"), true, "whitespace is optional around '/' operator");
+				assert.equal(type.isValid("calc(100% /2)"), true, "whitespace is optional around '/' operator");
+				assert.equal(type.isValid("calc(100%/2)"), true, "whitespace is optional around '/' operator");
 				assert.equal(type.isValid("calc(2 * -20rem / 23)"), true, "arguments dont always need units");
 				assert.equal(type.isValid("calc(2 * (-20rem / 23))"), true, "parenthesis can be used for grouping (simple)");
-				assert.equal(type.isValid("calc(((2)) * (-20rem / (((14rem) + 23)))"), true, "parenthesis can be used for grouping (complex, no whitespace)");
-				assert.equal(type.isValid("calc( ( ( 2 ) ) * ( -20rem / ( ( ( 14rem ) + 23 ) ) )"), true, "parenthesis can be used for grouping (complex, whitespace)");
-				assert.equal(type.isValid("calc(     2 ) ) * ( -20rem / ( ( ( 14rem ) + 23     )"), true, "unbalanced parenthesis are not detected by the regexp");
+				assert.equal(type.isValid("calc(((2)) * (-20rem / (((14) + 23)))"), true, "parenthesis can be used for grouping (complex, no whitespace)");
+				assert.equal(type.isValid("calc( ( ( 2 ) ) * ( -20rem / ( ( ( 14 ) + 23 ) ) )"), true, "parenthesis can be used for grouping (complex, whitespace)");
+				assert.equal(type.isValid("calc(     2 ) ) * ( -20rem / ( ( ( 14 ) + 23     )"), true, "unbalanced parenthesis are not detected by the regexp");
 				assert.equal(type.isValid("calc(100%)"), true, "a single value is valid");
 				assert.equal(type.isValid("calc(10 3rem)"), false, "an operand is mandatory between values");  // this has a valid syntax but isn't a valid expression
 				assert.equal(type.isValid("calc(10 + 3rem)"), true, "a valid calc() expression must be valid");  // this has a valid syntax but isn't a valid expression
