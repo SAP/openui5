@@ -163,7 +163,7 @@ sap.ui.define([
 	};
 
 	Breadcrumbs.prototype.removeAllLinks = function () {
-		var aLinks = this.getAggregation("links");
+		var aLinks = this.getAggregation("links", []);
 		var vResult = this.removeAllAggregation.apply(this, fnConvertArguments("links", arguments));
 		aLinks.forEach(this._deregisterControlListener, this);
 		this._resetControl();
@@ -171,7 +171,7 @@ sap.ui.define([
 	};
 
 	Breadcrumbs.prototype.destroyLinks = function () {
-		var aLinks = this.getAggregation("links");
+		var aLinks = this.getAggregation("links", []);
 		var vResult = this.destroyAggregation.apply(this, fnConvertArguments("links", arguments));
 		aLinks.forEach(this._deregisterControlListener, this);
 		this._resetControl();
