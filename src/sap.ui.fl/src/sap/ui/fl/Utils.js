@@ -6,7 +6,19 @@ sap.ui.define([
 	"jquery.sap.global", "sap/ui/core/Component"
 ], function (jQuery, Component) {
 	"use strict";
-
+	//LREP layers stack
+	var aLayers = [
+			"VENDOR",
+			"PARTNER",
+			"CUSTOMER_BASE",
+			"CUSTOMER",
+			"USER"
+		];
+	//precalculates layers index
+	var mLayersIndex = {};
+	aLayers.forEach(function(sLayer, iIndex){
+		mLayersIndex[sLayer] = iIndex;
+	});
 	/**
 	 * Provides utility functions for the flexibility library
 	 *
@@ -18,6 +30,10 @@ sap.ui.define([
 	 */
 	var Utils = {
 
+		_aLayers : aLayers,
+		_mLayersIndex : mLayersIndex,
+		_sTopLayer : aLayers[aLayers.length - 1],
+		_sMaxLayer : aLayers[aLayers.length - 1],
 		/**
 		 * log object exposes available log functions
 		 *
@@ -264,6 +280,54 @@ sap.ui.define([
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 			var sComponentName = Utils._getComponentName(oAppComponent);
 			return sFlexReference !== sComponentName;
+		},
+
+		/**
+		 * Sets the top layer at which the changes should be applied
+		 * If there is no input max layer is given, the highest layer in layer stack is used
+		 * @param {string} sMaxLayer (optional) - name of the max layer
+		 * @public
+		 * @function
+		 * @name sap.ui.fl.Utils.setMaxLayerParameter
+		 */
+		setMaxLayerParameter: function(sMaxLayer) {
+			this._sMaxLayer = sMaxLayer || this._sTopLayer;
+		},
+
+		/**
+		 * Converts layer name into index
+		 * @param {string} sLayer - layer name
+		 * @returns {Integer} index of the layer
+		 * @function
+		 * @name sap.ui.fl.Utils.getLayerIndex
+		 */
+		getLayerIndex: function(sLayer) {
+			return this._mLayersIndex[sLayer];
+		},
+
+		/**
+		 * Determines if a layer is over the max layer
+		 *
+		 * @param {String} sLayer - layer name which needs to be evaluated
+		 * @returns {boolean} <code>true<code> if input layer is higher than max layer, otherwise <code>false<code>
+		 * @public
+		 * @function
+		 * @name sap.ui.fl.Utils.isOverMaxLayer
+		 */
+		isOverMaxLayer: function(sLayer) {
+			return (this.getLayerIndex(sLayer) > this.getLayerIndex(this._sMaxLayer));
+		},
+
+		/**
+		 * Determines if filtering of changes base on layer is required
+		 *
+		 * @returns {boolean} <code>true<code> if the top layer is also the max layer, otherwise <code>false<code>
+		 * @public
+		 * @function
+		 * @name sap.ui.fl.Utils.isLayerFilteringRequired
+		 */
+		isLayerFilteringRequired: function() {
+			return !(this._sTopLayer === this._sMaxLayer);
 		},
 
 		/**

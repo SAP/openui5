@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Helper object to access a change from the backend. Access helper object for each change (and variant) which was fetched from the backend
+	 * Helper object to access a change from the back end. Access helper object for each change (and variant) which was fetched from the back end
 	 *
 	 * @constructor
 	 * @author SAP SE
@@ -102,10 +102,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calls the backend asynchronously and fetches all changes for the component. If there are any new changes (dirty state) whoch are not yet saved to the backend, these changes will not be returned
-	 * @param {map} mPropertyBag - contains additional data that are needed for reading of changes
-	 * @param {object} mPropertyBag.appDescriotor - manifest that belongs to actual component
-	 * @param {string} mPropertyBag.siteId - id of the site that belongs to actual component
+	 * Calls the back end asynchronously and fetches all changes for the component
+	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
+	 * @param {map} mPropertyBag - Contains additional data needed for reading changes
+	 * @param {object} mPropertyBag.appDescriotor - Manifest that belongs to actual component
+	 * @param {string} mPropertyBag.siteId - ID of the site belonging to actual component
 	 * @see sap.ui.fl.Change
 	 * @returns {Promise} resolving with an array of changes
 	 * @public
@@ -119,17 +120,25 @@ sap.ui.define([
 			}
 
 			var aChanges = oWrappedChangeFileContent.changes.changes;
-			var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
+			//If layer filtering required, excludes changes in higher layer than the max layer
+			if (Utils.isLayerFilteringRequired()){
+				var aFilteredChanges = [];
+				aChanges.some(function (oChange){
+					if (!Utils.isOverMaxLayer(oChange.layer)){
+						aFilteredChanges.push(oChange);
+					}
+				});
+				aChanges = aFilteredChanges;
+			}
 
+			var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
 			if (sCurrentLayer) {
 				var aCurrentLayerChanges = [];
-
 				aChanges.some(function(oChange){
 					if (oChange.layer === sCurrentLayer) {
 						aCurrentLayerChanges.push(oChange);
 					}
 				});
-
 				aChanges = aCurrentLayerChanges;
 			}
 
@@ -183,22 +192,28 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calls the backend asynchronously and fetches all changes for the component. If there are any new changes (dirty state) which are not yet saved in the backend, these changes will not be returned
-	 * @param {object} oComponent Component instance, used to prepare the ids (local, etc)
-	 * @param {map} mPropertyBag - contains additional data that are needed for reading of changes
-	 * @param {object} mPropertyBag.appDescriotor - manifest that belongs to actual component
-	 * @param {string} mPropertyBag.siteId - id of the site that belongs to actual component
+	 * Calls the back end asynchronously and fetches all changes for the component
+	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
+	 * @param {object} oComponent - Component instance used to prepare the IDs (e.g. local)
+	 * @param {map} mPropertyBag - Contains additional data needed for reading changes
+	 * @param {object} mPropertyBag.appDescriotor - Manifest belonging to actual component
+	 * @param {string} mPropertyBag.siteId - ID of the site belonging to actual component
 	 * @see sap.ui.fl.Change
-	 * @returns {Promise} resolving with a getter for the changes map
+	 * @returns {Promise} Resolving with a getter for the changes map
 	 * @public
 	 */
 	ChangePersistence.prototype.loadChangesMapForComponent = function (oComponent, mPropertyBag) {
-
 		var that = this;
 
 		return this.getChangesForComponent(mPropertyBag).then(createChangeMap);
 
 		function createChangeMap(aChanges) {
+			//Since starting RTA does not recreate ChangePersistence instance, resets changes map is required to filter personalized changes
+			that._mChanges = {
+				mChanges: {},
+				mDependencies: {},
+				mDependentChangesOnMe: {}
+			};
 			aChanges.forEach(function (oChange, iIndex, aCopy) {
 				that._addChangeIntoMap(oComponent, oChange);
 
@@ -306,7 +321,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Saves all dirty changes by calling the appropriate backend method
+	 * Saves all dirty changes by calling the appropriate back end method
 	 * (create for new changes, deleteChange for deleted changes). The methods
 	 * are called sequentially to ensure order. After a change has been saved
 	 * successfully, the cache is updated and the changes is removed from the dirty
