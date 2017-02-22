@@ -839,15 +839,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @private
 	 */
 	GenericTile.prototype._changeTileContentContentVisibility = function (visible) {
-		var aTileContent,
-			aTileContentContent;
+		var aTileContent;
 
 		aTileContent = this.getTileContent();
 		for (var i = 0; i < aTileContent.length; i++) {
-			aTileContentContent = aTileContent[i].getContent();
-			if (aTileContentContent) {
-				aTileContentContent.setProperty("visible", visible, true);
-			}
+			aTileContent[i].setRenderContent(visible);
 		}
 	};
 
