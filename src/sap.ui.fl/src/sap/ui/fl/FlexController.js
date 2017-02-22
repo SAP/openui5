@@ -123,7 +123,7 @@ sap.ui.define([
 			creation: "",
 			from: ""
 		};
-
+		//TODO: Replacing long statement with an Utis function to get application version
 		if (oAppDescr && oAppDescr["sap.app"] && oAppDescr["sap.app"]["applicationVersion"]) {
 			oValidAppVersions.creation = oAppDescr["sap.app"]["applicationVersion"]["version"];
 			oValidAppVersions.from = oAppDescr["sap.app"]["applicationVersion"]["version"];
@@ -529,11 +529,16 @@ sap.ui.define([
 	 * Determines if an active personalization - user specific changes or variants - for the flexibility reference
 	 * of the controller instance (<code>this._sComponentName</code>) is in place.
 	 *
-	 * @returns {Promise} resolves with a boolean; true if a personalization that has been made via flexibility is active in the application
+	 * @param {map} [mPropertyBag] - Contains additional data needed for checking personalization
+	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that personalization shall be checked without layer filtering
+	 * @returns {Promise} Resolves with a boolean; true if a personalization change made using SAPUI5 flexibility services is active in the application
 	 * @public
 	 */
-	FlexController.prototype.isPersonalized = function () {
-		return this.getComponentChanges({}).then(function (aChanges) {
+	FlexController.prototype.isPersonalized = function (mPropertyBag) {
+		mPropertyBag = mPropertyBag || {};
+		//Always include smart variants when checking personalization
+		mPropertyBag.includeVariants = true;
+		return this.getComponentChanges(mPropertyBag).then(function (aChanges) {
 			var bIsPersonalized = aChanges.some(function (oChange) {
 				return oChange.isUserDependent();
 			});
