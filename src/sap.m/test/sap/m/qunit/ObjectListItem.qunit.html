@@ -168,9 +168,8 @@
 			var sSecondStatusId = oAttrsAndStatuseListItem.getSecondStatus().getId();
 
 			ok(sAriaLabelledByValue.indexOf(sListItemId + "-intro") !== -1, "ObjectListItem introId: '" + sListItemId + "-intro" + "' is added to aria-labelledby attribute");
-			ok(sAriaLabelledByValue.indexOf(sListItemId + "-number") !== -1, "ObjectListItem numberId: '" + sListItemId + "-number" + "' is added to 'aria-labelledby' attribute");
-			ok(sAriaLabelledByValue.indexOf(sListItemId + "-titleText") !== -1, "ObjectListItem titleId: '" + sListItemId + "-numberUnit" + "' is added to 'aria-labelledby' attribute");
-			ok(sAriaLabelledByValue.indexOf(sListItemId + "-numberUnit") !== -1, "ObjectListItem numberUnitId: '" + sListItemId + "-titleText" + "' is added to 'aria-labelledby' attribute");
+			ok(sAriaLabelledByValue.indexOf(sListItemId + "-titleText") !== -1, "ObjectListItem titleId: '" + sListItemId + "-titleText" + "' is added to 'aria-labelledby' attribute");
+			ok(sAriaLabelledByValue.indexOf(sListItemId + "-ObjectNumber") !== -1, "ObjectListItem numberId: '" + sListItemId + "-NumberObject" + "' is added to 'aria-labelledby' attribute");
 			ok(sAriaLabelledByValue.indexOf(sFirstStatusId) !== -1, "ObjectListItem firstStatusId: '" + sFirstStatusId + "' is added to 'aria-labelledby' attribute");
 			ok(sAriaLabelledByValue.indexOf(sSecondStatusId) !== -1, "ObjectListItem secondStatusId: '" + sSecondStatusId + "' is added to 'aria-labelledby' attribute");
 			ok(sAriaLabelledByValue.indexOf(sListItemId + "-flag-text") !== -1, "ObjectListItem flagId: '" + sListItemId + "-flag-text" + "' is added to aria-labelledby attribute");
@@ -201,7 +200,7 @@
         test("TitleNumberIntroTextDirection RTL rendering", function() {
             equal($('#showTextDir-intro>span').attr("dir"), undefined, "intro has no dir attribute");
             equal($('#showTextDir-titleText').attr("dir"), "rtl", "title has attribute dir=rtl");
-            equal($('#showTextDir-number').attr("dir"), "ltr", "number has attribute dir=ltr");
+            equal($('#showTextDir-ObjectNumber').attr("dir"), "ltr", "ObjectNumber has attribute dir=ltr");
 
             showTextDir.setIntroTextDirection(sap.ui.core.TextDirection.RTL);
             showTextDir.setTitleTextDirection(sap.ui.core.TextDirection.Inherit);
@@ -210,10 +209,19 @@
 
             equal($('#showTextDir-intro>span').attr("dir"), "rtl", "intro has attribute dir=rtl");
             equal($('#showTextDir-titleText').attr("dir"), undefined, "title has no dir attribute");
-            equal($('#showTextDir-number').attr("dir"), undefined, "number has no dir attribute");
+            equal($('#showTextDir-ObjectNumber').attr("dir"), undefined, "ObjectNumber has no dir attribute");
         });
 
-		/******************************************************************/
+	test("Number properties create a private sap.m.ObjectNumber control", function () {
+		var oObjectNumberAggregation = showTextDir.getAggregation("_objectNumber");
+		ok(oObjectNumberAggregation && oObjectNumberAggregation instanceof sap.m.ObjectNumber, "An instance of sap.m.ObjectNumber is created out of number, numberUnit, numberState, numberTextDirection properties");
+		strictEqual(oObjectNumberAggregation.getNumber(), showTextDir.getNumber(), "Both 'number' properties are in sync");
+		strictEqual(oObjectNumberAggregation.getNumberUnit(), showTextDir.getNumberUnit(), "Both 'numberUnit' properties are in sync");
+		strictEqual(oObjectNumberAggregation.getState(), showTextDir.getNumberState(), "Both 'ValueStates' properties are in sync");
+		strictEqual(oObjectNumberAggregation.getTextDirection(), showTextDir.getNumberTextDirection(), "Both 'ValueStates' properties are in sync");
+	});
+
+	/******************************************************************/
 	module("Rendering Markers aggregation");
 
 		test("Render Draft and Favorite", function() {

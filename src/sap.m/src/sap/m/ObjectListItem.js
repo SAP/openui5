@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ObjectListItem.
-sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/IconPool'],
-	function(jQuery, ListItemBase, library, IconPool) {
+sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/IconPool', 'sap/m/ObjectNumber'],
+	function(jQuery, ListItemBase, library, IconPool, ObjectNumber) {
 		"use strict";
 
 
@@ -153,10 +153,23 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 				 * List of markers (icon and/or text) that can be displayed for the <code>ObjectListItems</code>, such as favorite and flagged.<br><br>
 				 * <b>Note:</b> You should use either this aggregation or the already deprecated properties - <code>markFlagged</code>, <code>markFavorite</code>, and <code>markLocked</code>. Using both can lead to unexpected results.
 				 */
-				markers : {type : "sap.m.ObjectMarker", multiple : true, singularName : "marker"}
+				markers : {type : "sap.m.ObjectMarker", multiple : true, singularName : "marker"},
+
+				/**
+				 * Internal <code>sap.m.ObjectNumber</code> control which is created based on the <code>number</code>, <code>numberUnit</code>, <code>numberState</code>, <code>numberTextDirection</code>
+				 */
+				_objectNumber: {type: "sap.m.ObjectNumber", multiple: false, visibility: "hidden"}
 			},
 			designTime: true
 		}});
+
+		/**
+		 * Initializes the control.
+		 * @param oEvent
+		 */
+		ObjectListItem.prototype.init = function (oEvent) {
+			this._generateObjectNumber();
+		};
 
 		/**
 		 * @private
@@ -173,6 +186,24 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			}
 
 			ListItemBase.prototype.exit.apply(this);
+		};
+
+		/**
+		 * Initiates the <code>sap.m.ObjectNumber</code> aggregation based on the <code>number</code>, <code>numberUnit</code>, <code>numberState</code> and <code>numberTextDirection</code> properties.
+		 * @private
+		 */
+		ObjectListItem.prototype._generateObjectNumber = function () {
+			var sNumber = this.getNumber(),
+				sNumberUnit = this.getNumberUnit(),
+				oState = this.getNumberState(),
+				oTextDirection = this.getNumberTextDirection();
+
+			this.setAggregation("_objectNumber", new ObjectNumber(this.getId() + "-ObjectNumber", {
+				number: sNumber,
+				numberUnit: sNumberUnit,
+				state: oState,
+				textDirection: oTextDirection
+			}), true);
 		};
 
 		/**
@@ -302,6 +333,66 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			if (!!this._oImageControl) {
 				this._oImageControl.setSrc(sSrc);
 			}
+		};
+
+		/**
+		 * Sets the <code>number</code> property of the control.
+		 * @param sNumber {string} <code>Number</code> showed in <code>ObjectListItem</code>
+		 * @override
+		 * @returns {sap.m.ObjectListItem} this pointer for chaining
+		 */
+		ObjectListItem.prototype.setNumber = function (sNumber) {
+			//Do not rerender the whole control ObjectListItem control
+			this.setProperty('number', sNumber, true);
+			//Rerender only the ObjectNumber internal private field
+			this.getAggregation("_objectNumber").setNumber(sNumber);
+
+			return this;
+		};
+
+		/**
+		 * Sets the <code>numberUnit</code> property of the control.
+		 * @param sNumberUnit {string} <code>NumberUnit</code> showed in <code>ObjectListItem</code>
+		 * @override
+		 * @returns {sap.m.ObjectListItem} this pointer for chaining
+		 */
+		ObjectListItem.prototype.setNumberUnit = function (sNumberUnit) {
+			//Do not rerender the whole control but only ObjectNumber control
+			this.setProperty('numberUnit', sNumberUnit, true);
+			//Rerender only the ObjectNumber internal private field
+			this.getAggregation('_objectNumber').setNumberUnit(sNumberUnit);
+
+			return this;
+		};
+
+		/**
+		 * Sets the <code>numberTextDirection</code> property of the control.
+		 * @param oTextDirection {sap.ui.core.TextDirection} The text direction of the internal <code>ObjectNumber</code>
+		 * @override
+		 * @returns {sap.m.ObjectListItem} this pointer for chaining
+		 */
+		ObjectListItem.prototype.setNumberTextDirection = function (oTextDirection) {
+			//Do not rerender the whole control but only ObjectNumber control
+			this.setProperty('numberTextDirection', oTextDirection, true);
+			//Rerender only the ObjectNumber internal private field
+			this.getAggregation("_objectNumber").setTextDirection(oTextDirection);
+
+			return this;
+		};
+
+		/**
+		 * Sets the <code>numberState</code> property of the control.
+		 * @param oValueState {sap.ui.core.ValueState} The <code>valueState</code> of the internal <code>ObjectNumber</code>
+		 * @override
+		 * @returns {sap.m.ObjectListItem} this pointer for chaining
+		 */
+		ObjectListItem.prototype.setNumberState = function (oValueState) {
+			//Do not rerender the whole control but only ObjectNumber control
+			this.setProperty('numberState', oValueState, true);
+			//Rerender only the ObjectNumber internal private field
+			this.getAggregation("_objectNumber").setState(oValueState);
+
+			return this;
 		};
 
 		/**
