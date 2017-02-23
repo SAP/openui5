@@ -1389,7 +1389,28 @@
 		}
 	});
 
-
+	asyncTest("test getBindingContext", 4, function(){
+		cleanServiceDataCache();
+		var oODataModel = initModel(sURI, {json:false});
+		var oJSONModel = new sap.ui.model.json.JSONModel();
+		sap.ui.getCore().setModel(oODataModel);
+		var oTestContextOData = oODataModel.getContext("/Products(2)");
+		var oTestContextJSON = oJSONModel.getContext("/");
+		oPanel.setBindingContext(oTestContextJSON);
+		ok(!oPanel.getBindingContext(), "Model is type OData, Context is type JSON so no context should be returned")
+		oPanel.setBindingContext(oTestContextOData);
+		ok(oPanel.getBindingContext(), "Context and model are the same type. Context returned");
+		oLabel.bindElement("Category");
+		var fnHandler = function() {
+			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			oLabel.getElementBinding().detachChange(fnHandler);
+			oPanel.setBindingContext(oTestContextJSON);
+			ok(!oPanel.getBindingContext(), "Model is type OData, Context is type JSON so no context should be returned")
+			start();
+		}
+		oLabel.getElementBinding().attachChange(fnHandler);
+	});
+	
 	asyncTest("test data events for bindElement",3, function(){
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
