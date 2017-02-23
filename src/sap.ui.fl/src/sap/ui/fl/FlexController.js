@@ -116,12 +116,25 @@ sap.ui.define([
 		if (oAppDescr && oAppDescr["sap.app"]) {
 			oChangeSpecificData.componentName = oAppDescr["sap.app"].componentName || oAppDescr["sap.app"].id;
 		} else {
-			//fallback in case no appdescriptor is available (e.g. during unit testing)
+			//fallback in case no application descriptor is available (e.g. during unit testing)
 			oChangeSpecificData.componentName = sComponentName;
 		}
 		oChangeSpecificData.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
 
 		oChangeSpecificData.context = aCurrentDesignTimeContext.length === 1 ? aCurrentDesignTimeContext[0] : "";
+
+		//fallback in case no application descriptor is available (e.g. during unit testing)
+		var oValidAppVersions = {
+			creation: "",
+			from: ""
+		};
+
+		if (oAppDescr && oAppDescr["sap.app"] && oAppDescr["sap.app"]["applicationVersion"]) {
+			oValidAppVersions.creation = oAppDescr["sap.app"]["applicationVersion"]["version"];
+			oValidAppVersions.from = oAppDescr["sap.app"]["applicationVersion"]["version"];
+		}
+
+		oChangeSpecificData.validAppVersions = oValidAppVersions;
 
 		oChangeFileContent = Change.createInitialFileContent(oChangeSpecificData);
 		oChange = new Change(oChangeFileContent);

@@ -636,7 +636,8 @@ sap.ui.define([
 				user: "",
 				sapui5Version: sap.ui.version
 			},
-			dependentSelector: oPropertyBag.dependentSelector || {}
+			dependentSelector: oPropertyBag.dependentSelector || {},
+			validAppVersions: oPropertyBag.validAppVersions || {}
 		};
 
 		return oNewFile;

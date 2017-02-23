@@ -46,6 +46,10 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 						id: "controlTarget1",
 						idIsLocal: true
 					}
+				},
+				validAppVersions: {
+					creation: "1.0.0",
+					from: "1.0.0"
 				}
 			};
 
@@ -203,7 +207,21 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			isVariant: true,
 			packageName: "/UIF/LREP",
 			selector: {"persistenceKey": "control1"},
-			id: "0815_1"
+			id: "0815_1",
+			dependentSelector: {
+				source: {
+					id: "controlSource1",
+					idIsLocal: true
+				},
+				target: {
+					id: "controlTarget1",
+					idIsLocal: true
+				}
+			},
+			validAppVersions: {
+				creation: "1.0.0",
+				from: "1.0.0"
+			}
 		};
 
 		var oCreatedFile = Change.createInitialFileContent(oInfo);
@@ -217,6 +235,8 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.deepEqual(oCreatedFile.content, {something: "createNewVariant"});
 		assert.deepEqual(oCreatedFile.texts, {variantName: {value: "myVariantName", type: "myTextType"}});
 		assert.deepEqual(oCreatedFile.selector, {"persistenceKey": "control1"});
+		assert.deepEqual(oCreatedFile.dependentSelector, {source: {id: "controlSource1", idIsLocal: true}, target: {id: "controlTarget1", idIsLocal: true}});
+		assert.deepEqual(oCreatedFile.validAppVersions, {creation: "1.0.0", from: "1.0.0"});
 	});
 
 	QUnit.test("_isReadOnlyDueToOriginalLanguage shall compare the original language with the current language", function(assert) {
