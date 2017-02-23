@@ -46,7 +46,7 @@
 		assert.equal(this.oLrepConnector._resolveUrl("index.html"), "/index.html");
 		assert.equal(this.oLrepConnector._resolveUrl("index.html?anyParam=value"), "/index.html?anyParam=value");
 	});
-	
+
 	QUnit.test("_resolveUrl with request url prefix", function(assert) {
 
 		sap.ui.fl.LrepConnector.prototype.setRequestUrlPrefix("/newprefix");
@@ -360,14 +360,14 @@
 		var that = this;
 		sComponentClassName = "smartFilterBar.Component";
 		var oAppDescriptor = {
-		      			"sap.app": {
-		      				"id": "sap.ui.smartFormOData"
-		      			}
-		      		};
+						"sap.app": {
+							"id": "sap.ui.smartFormOData"
+						}
+					};
 
 		var mPropertyBag = {
-       			appDescriptor: oAppDescriptor
-     		};
+				appDescriptor: oAppDescriptor
+			};
 		return this.oLrepConnector.loadChanges(sComponentClassName, mPropertyBag).then(function(oResult) {
 			assert.equal(that.server.requests.length, 1, "Only one HTTP request shall be send for fetching changes via getChanges request)");
 			assert.ok(that.server.requests[0].requestHeaders, "Request for getChanges shall contain a request header");
@@ -387,8 +387,8 @@
 		var that = this;
 		sComponentClassName = "smartFilterBar.Component";
 		var mPropertyBag = {
-       			siteId: "dummyId4711"
-       		};
+				siteId: "dummyId4711"
+			};
 
 		return this.oLrepConnector.loadChanges(sComponentClassName, mPropertyBag).then(function(oResult) {
 			assert.equal(that.server.requests.length, 1, "Only one HTTP request shall be send for fetching changes via getChanges request)");
@@ -418,7 +418,7 @@
 			var aCallArguments = oCall.args;
 			assert.equal(aCallArguments[0], sExpectedCallUrl, "the call url was correctly build with the upToLayerType parameter");
 		});
-	});	
+	});
 
 	QUnit.test("loadChanges adds a cache key to the request if present and allows caching within the request", function(assert) {
 		var sComponentClassName = "smartFilterBar.Component";
@@ -463,6 +463,29 @@
 			var aCallArguments = oCall.args;
 			assert.equal(aCallArguments[0], sExpectedCallUrl, "the call url was correctly build without any cache key");
 			assert.equal(aCallArguments[3].cache, undefined, "caching is disabled for the call");
+		});
+	});
+
+	QUnit.test("when requested, loadChanges adds appVersion parameter to the request URL", function(assert) {
+		var sComponentClassName = "smartFilterBar.Component";
+		var mPropertyBag = {
+			appVersion: "1.2.3"
+		};
+
+		var sExpectedCallUrl = "/sap/bc/lrep/flex/data/" + sComponentClassName + "?appVersion=1.2.3";
+
+		var oFakeResponse = {
+			response: {}
+		};
+
+		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+
+		return this.oLrepConnector.loadChanges(sComponentClassName, mPropertyBag).then(function() {
+			assert.equal(oSendStub.callCount, 1, "the back-end request was triggered");
+
+			var oCall = oSendStub.getCall(0);
+			var aCallArguments = oCall.args;
+			assert.equal(aCallArguments[0], sExpectedCallUrl, "the request URL was correctly built and the appVersion parameter was included");
 		});
 	});
 
