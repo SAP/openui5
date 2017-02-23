@@ -826,11 +826,11 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * @param {boolean} bForceChange forces the binding to fire a change event
 	 * @protected
 	 */
-	AnalyticalTable.prototype.resumeUpdateAnalyticalInfo = function(bSupressRefresh, bForceChange) {
+	AnalyticalTable.prototype.resumeUpdateAnalyticalInfo = function(bSuppressRefresh, bForceChange) {
 		this._bSuspendUpdateAnalyticalInfo = false;
 		// the binding needs to fire a change event to force the table to request new contexts
 		// only if the callee explicitly don't request a change event, it can be omitted.
-		this._updateColumns(bSupressRefresh, (bForceChange === false ? false : true));
+		this._updateColumns(bSuppressRefresh, (bForceChange === false ? false : true));
 	};
 
 	AnalyticalTable.prototype.addColumn = function(vColumn, bSuppressInvalidate) {
@@ -918,10 +918,9 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 			this._updateTotalRow(bSupressRefresh);
 
-			if (bForceChange && this._bBusyIndicatorAllowed && this.getEnableBusyIndicator() == true) {
-				// a request will be issued by the binding. In order to correctly indicate that request, the table must
-				// switch to busy state.
-				this.setBusy(true);
+			if (bForceChange) {
+				// A request will be issued by the binding. In order to correctly indicate that request, the table must switch to busy state.
+				this._setBusy(true);
 			}
 		}
 	};
