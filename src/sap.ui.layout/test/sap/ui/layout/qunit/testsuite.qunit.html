@@ -16,6 +16,7 @@
 				var suite = new parent.jsUnitTestSuite(),
 					contextPath = "/" + window.location.pathname.split("/")[1];
 
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/AlignedFlowLayout.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/BlockLayout.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/DynamicSideContent.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/ExploredSamples.qunit.html");
@@ -28,8 +29,8 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/Grid.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/HorizontalLayout.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/ResponsiveFlowLayout.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/Splitter.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/ResponsiveSplitter.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/Splitter.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/VerticalLayout.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/changes/RenameSimpleForm.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/changes/HideSimpleForm.qunit.html");
