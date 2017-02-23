@@ -388,6 +388,20 @@
 			}
 		});
 
+		test("Removing filter detail items does not throw error", function() {
+			//prepare
+			var oVSP = new sap.m.ViewSettingsPopover();
+			try {
+				//act
+				oVSP.removeAllFilterDetailItems();
+				//assert
+				ok(true, "Should not throw an error");
+			} catch (e) {
+				ok(false, "Should not throw an error. Details:\n " + e.stack);
+			}
+			//cleanup
+			oVSP.destroy();
+		});
 		test("detail page opens and loads proper content", function() {
 			var oDetailsPage,
 				oPageToolbar,
@@ -1471,7 +1485,7 @@
 				sap.ui.getCore().applyChanges();
 			},
 			afterEach : function () {
-//				destroyControls.call(this);
+				destroyControls.call(this);
 			},
 			getFirstModelData: function() {
 				return {
