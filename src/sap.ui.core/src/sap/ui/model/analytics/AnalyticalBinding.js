@@ -4078,7 +4078,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		delete oMultiUnitEntry.__metadata["self"];
 		delete oMultiUnitEntry.__metadata["self_link_extensions"];
 		oMultiUnitEntry["^~volatile"] = true; // mark entry to distinguish it from others contained in the regular OData result
-		this.oModel._importData(oMultiUnitEntry, {});
+
+		// 3rd argument: empty response, needed by the ODataModel, but we do not have a response, as we did not perform any requests.
+		this.oModel._importData(oMultiUnitEntry, {}, {});
+
 		// mark the context for this entry as volatile to facilitate special treatment by consumers
 		var sMultiUnitEntryModelKey = this.oModel._getKey(oMultiUnitEntry);
 		this.oModel.getContext('/' + sMultiUnitEntryModelKey)["_volatile"] = true;
