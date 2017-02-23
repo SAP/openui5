@@ -1251,6 +1251,9 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				case 'filterItems':
 					oList = this._getFilterList();
 					break;
+				case 'filterDetailItems':
+					oList = this._getFilterDetailList();
+					break;
 			}
 
 			if (sFunctionName === 'destroyAggregation' && !oList) {
