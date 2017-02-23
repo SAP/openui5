@@ -1014,10 +1014,12 @@ sap.ui.define([
 	 *
 	 * If the value is not valid with regard to the declared data type of the property,
 	 * an Error is thrown. In case <code>null</code> or <code>undefined</code> is passed,
-	 * the default value for this property is used (see {@link #validateProperty}. If the validated and normalized
-	 * <code>oValue</code> equals the current value of the property, the internal state of
-	 * this object is not changed. If the value changes, it is stored internally and
-	 * the {@link #invalidate} method is called on this object. In the case of TwoWay
+	 * the default value for this property is used (see {@link #validateProperty}). To fully
+	 * reset the property to initial state, use {@link #resetProperty} instead.
+	 * If the validated and normalized <code>oValue</code> equals the current value of the property,
+	 * the internal state of this object is not changed (apart from the result of {@link #isPropertyInitial}).
+	 * If the value changes, it is stored internally
+	 * and the {@link #invalidate} method is called on this object. In the case of TwoWay
 	 * databinding, the bound model is informed about the property change.
 	 *
 	 * Note that ManagedObject only implements a single level of change tracking: if a first
@@ -1045,6 +1047,8 @@ sap.ui.define([
 		oValue = this.validateProperty(sPropertyName, oValue);
 
 		if (jQuery.sap.equal(oOldValue, oValue)) {
+			// ensure to set the own property explicitly to allow isPropertyInitial check (using hasOwnProperty on the map)
+			this.mProperties[sPropertyName] = oValue;
 			return this;
 		} // no change
 
@@ -1189,6 +1193,39 @@ sap.ui.define([
 		}
 
 		return oValue;
+	};
+
+	/**
+	 * Returns whether the given property value is initial and has not been explicitly set or bound.
+	 * Even after setting the default value or setting null/undefined (which also causes the default value to be set),
+	 * the property is no longer initial. A property can be reset to initial state by calling <code>resetProperty(sPropertyName)</code>.
+	 *
+	 * @param {string} sPropertyName the name of the property
+	 * @returns {boolean} true if the property is initial
+	 * @protected
+	 */
+	ManagedObject.prototype.isPropertyInitial = function(sPropertyName) {
+		return !Object.prototype.hasOwnProperty.call(this.mProperties, sPropertyName) && !this.isBound(sPropertyName);
+	};
+
+	/**
+	 * Resets the given property to the default value and also restores the "initial" state (like it has never been set).
+	 *
+	 * @param {string} sPropertyName the name of the property
+	 * @returns {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 * @protected
+	 */
+	ManagedObject.prototype.resetProperty = function(sPropertyName) {
+		if (this.mProperties.hasOwnProperty(sPropertyName)) {
+			var oPropertyInfo = this.getMetadata().getProperty(sPropertyName);
+			this[oPropertyInfo._sMutator](null); // let the control instance know the value is reset to default
+
+			// if control did no further effort to find and set an instance-specific default value, then go back to "initial" state (where the default value is served anyway)
+			if (this.mProperties[sPropertyName] === oPropertyInfo.getDefaultValue()) {
+				delete this.mProperties[sPropertyName];
+			}
+		}
+		return this;
 	};
 
 	/**
@@ -2961,8 +2998,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.unbindProperty = function(sName, bSuppressReset){
-		var oBindingInfo = this.mBindingInfos[sName],
-			oPropertyInfo = this.getMetadata().getPropertyLikeSetting(sName);
+		var oBindingInfo = this.mBindingInfos[sName];
 		if (oBindingInfo) {
 			if (oBindingInfo.binding) {
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
@@ -2974,7 +3010,7 @@ sap.ui.define([
 			}
 			delete this.mBindingInfos[sName];
 			if (!bSuppressReset) {
-				this[oPropertyInfo._sMutator](null);
+				this.resetProperty(sName);
 			}
 		}
 		return this;
@@ -3015,7 +3051,7 @@ sap.ui.define([
 					message: oException.message
 				}, false, true); // bAllowPreventDefault, bEnableEventBubbling
 				oBindingInfo.skipModelUpdate = true;
-				this[oPropertyInfo._sMutator](null);
+				this.resetProperty(sName);
 				oBindingInfo.skipModelUpdate = false;
 			} else {
 				throw oException;
