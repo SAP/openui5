@@ -73,6 +73,51 @@ sap.ui.define([
 	};
 
 	/**
+	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the
+	 * parent binding adjusting the path.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID to be used for the DELETE request
+	 * @param {string} sEditUrl
+	 *   The edit URL to be used for the DELETE request
+	 * @param {string} sPath
+	 *   The path of the entity relative to this binding
+	 * @param {function} fnCallback
+	 *   A function which is called after the entity has been deleted from the server and from the
+	 *   cache; the index of the entity is passed as parameter
+	 * @returns {SyncPromise}
+	 *   A promise which is resolved without a result in case of success, or rejected with an
+	 *   instance of <code>Error</code> in case of failure
+	 * @throws {Error}
+	 *   If this binding is a deferred operation binding, if the group ID is neither '$auto'
+	 *   nor '$direct' or if the cache promise for this binding is not yet fulfilled
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.deleteFromCache = function (sGroupId, sEditUrl, sPath,
+			fnCallback) {
+		var oCache = this.oCachePromise.getResult();
+
+		if (this.oOperation) {
+			throw new Error("Cannot delete a deferred operation");
+		}
+
+		if (!this.oCachePromise.isFulfilled()) {
+			throw new Error("DELETE request not allowed");
+		}
+
+		if (oCache) {
+			sGroupId = sGroupId || this.getUpdateGroupId();
+			if (sGroupId !== "$auto" && sGroupId !== "$direct") {
+				throw new Error("Illegal update group ID: " + sGroupId);
+			}
+			return oCache._delete(sGroupId, sEditUrl, sPath, fnCallback);
+		}
+		return this.oContext.getBinding().deleteFromCache(sGroupId, sEditUrl,
+			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), fnCallback);
+	};
+
+	/**
 	 * Determines whether a child binding with the given context, path and query options can
 	 * use the cache of this binding or one of its ancestor bindings.
 	 *
