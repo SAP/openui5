@@ -958,21 +958,31 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 	/**
 	 * Returns a column template clone. It either finds an unused clone or clones a new one from the column template.
 	 * @param {int} iIndex Index of the column in the column aggregation of the table
-	 * @param {string} [sIdSuffix=""] String suffix to be added to the clones ID
 	 * @returns {sap.ui.core.Control} Clone of the column template
 	 * @protected
 	 */
 	// for performance reasons, the index of the column in the column aggregation must
 	// be provided by the caller. Otherwise the columns aggregation would be looped over and over again to
 	// figure out the index.
-	Column.prototype.getTemplateClone = function(iIndex) {
+	Column.prototype.getTemplateClone = function(iIndex, iRowIndex) {
 		var oClone = this._getFreeTemplateClone(this._aTemplateClones);
+		var oTable = this.getParent();
 
 		if (!oClone) {
 			// no clone found, create a new one
 			var oTemplate = this.getTemplate();
 			if (oTemplate) {
-				oClone = oTemplate.clone();
+
+				// Legacy fallback to old cell id scheme for transition phase of visual tests (1.44 only!)
+				var sSuffix;
+				if (oTable && oTable._bUseLegacyCellIds && iRowIndex >= 0) {
+					var _sSuffix = "col" + iIndex + "-row" + iRowIndex;
+					if (!sap.ui.getCore().byId(oTemplate.getId() + "-" + _sSuffix)){
+						sSuffix = _sSuffix;
+					}
+				}
+
+				oClone = oTemplate.clone(sSuffix);
 			}
 		}
 
@@ -982,7 +992,6 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 			oClone.data("sap-ui-colid", this.getId());
 			this._aTemplateClones.push(oClone);
 
-			var oTable = this.getParent();
 			if (oTable) {
 				oTable._getAccExtension().addColumnHeaderLabel(this, oClone);
 			}
