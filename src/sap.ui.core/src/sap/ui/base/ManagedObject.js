@@ -64,6 +64,7 @@ sap.ui.define([
 	 *   Each entry with key <i>k</i> in this object has the same effect as a call <code>this.setBindingContext(bindingContexts[k], k);</code></li>
 	 * <li><code>objectBindings : <i>object</i></code>  a map of binding paths keyed by the corresponding model name.
 	 *   Each entry with key <i>k</i> in this object has the same effect as a call <code>this.bindObject(objectBindings[k], k);</code></li>
+	 * <li><code>metadataContexts : <i>object</i></code>  a map of binding paths keyed by the corresponding model name.</li>
 	 * </ul>
 	 *
 	 * @param {string} [sId] id for the new managed object; generated automatically if no non-empty id is given
@@ -349,6 +350,13 @@ sap.ui.define([
 				 * The models are keyed by their model name. For the default model, String(undefined) is expected.
 				 */
 				objectBindings : 'object',
+
+				/**
+				 * A map of model instances to which the object should be attached.
+				 * The models are keyed by their model name. For the default model, String(undefined) is expected.
+				 * The special setting is only for internal use.
+				 */
+				metadataContexts: 'object',
 
 				/**
 				 * Used by ManagedObject.create.
@@ -860,6 +868,12 @@ sap.ui.define([
 
 		// call the preprocessor if it has been defined
 		preprocessor && preprocessor.call(this, mSettings); // TODO: decide whether to call for empty settings as well?
+
+
+		//process metadataContext
+		if (mSettings.metadataContexts && this._processMetadataContexts) {
+			this._processMetadataContexts(mSettings.metadataContexts, mSettings);
+		}
 
 		// process models
 		if ( mSettings.models ) {
