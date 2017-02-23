@@ -86,7 +86,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			if (oToolbar) {
 				rm.renderControl(oToolbar);
 			} else {
-				var sSize = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:sapUiFormTitleSize');
+				var sSize = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize');
 				this.renderTitle(rm, oTitle, undefined, false, sSize, oForm.getId());
 			}
 			rm.write("</th></tr>");
