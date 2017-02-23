@@ -36,3 +36,7 @@ web.config
 
 # Ignore Visual Studio Code project and settings files
 .vscode/
+
+# Ignore yarn files
+yarn.lock
+*yarn
