@@ -73,6 +73,50 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines whether a child binding with the given context, path and query options can
+	 * use the cache of this binding or one of its ancestor bindings.
+	 *
+	 * @param {sap.ui.model.Context} oContext The child binding's context
+	 * @param {string} sPath The child binding's binding path
+	 * @param {object} mQueryOptions The child binding's query options merged with the query options
+	 *   of its dependent bindings
+	 * @returns {SyncPromise} A promise resolved with a truthy or falsy value indicating whether the
+	 *   child binding can use this binding's or an ancestor binding's cache.
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.fetchIfChildCanUseCache = function (oContext, sPath,
+			mQueryOptions) {
+		var bCanUseCache;
+
+		// Determines whether the given options contain sPath in their "$select" array.
+		function containsPathInSelect(mOptions) {
+			return mOptions && mOptions.$select && mOptions.$select.indexOf(sPath) >= 0;
+		}
+
+		if (this.oCachePromise.isFulfilled()) {
+			bCanUseCache = containsPathInSelect(this.mDependentQueryOptions);
+			if (!bCanUseCache) {
+				return this.fetchQueryOptionsForOwnCache(undefined)
+					.then(function (mOwnQueryOptions) {
+						return containsPathInSelect(mOwnQueryOptions);
+					});
+			}
+		} else {
+			// this.mDependentQueryOptions contains the aggregated query options of all child
+			// bindings which can use the cache of this binding or an ancestor binding
+			this.mDependentQueryOptions = this.mDependentQueryOptions || {};
+			this.mDependentQueryOptions.$select = this.mDependentQueryOptions.$select || [];
+			if (!containsPathInSelect(this.mDependentQueryOptions)) {
+				this.mDependentQueryOptions.$select.push(sPath);
+			}
+			bCanUseCache = true;
+		}
+
+		return _SyncPromise.resolve(bCanUseCache);
+	};
+
+	/**
 	 * Returns the query options for the given path relative to this binding. Uses the options
 	 * resulting from the binding parameters or the options inherited from the parent binding by
 	 * using {@link Context#getQueryOptionsForPath}.

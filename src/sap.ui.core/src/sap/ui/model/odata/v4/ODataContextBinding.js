@@ -195,12 +195,12 @@ sap.ui.define([
 	/**
 	 * Requests the metadata for this operation binding. Caches the result.
 	 *
-	 * @returns {Promise}
+	 * @returns {SyncPromise}
 	 *   A promise that is resolved with the operation metadata.
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype._requestOperationMetadata = function () {
+	ODataContextBinding.prototype._fetchOperationMetadata = function () {
 		var oMetaModel = this.oModel.getMetaModel(),
 			sOperationName,
 			iPos;
@@ -210,7 +210,7 @@ sap.ui.define([
 			// We do not need special code if there is no '/', because iPos + 1 === 0 then.
 			iPos = this.sPath.lastIndexOf("/");
 			sOperationName = this.sPath.slice(iPos + 1, -5);
-			this.oOperation.oMetadataPromise = oMetaModel.requestObject("/" + sOperationName)
+			this.oOperation.oMetadataPromise = oMetaModel.fetchObject("/" + sOperationName)
 				.then(function (vMetadata) {
 					if (!vMetadata) {
 						throw new Error("Unknown operation: " + sOperationName);
@@ -223,10 +223,10 @@ sap.ui.define([
 							+ sOperationName);
 					}
 					if (vMetadata.$kind === "ActionImport") {
-						return oMetaModel.requestObject("/" + vMetadata.$Action);
+						return oMetaModel.fetchObject("/" + vMetadata.$Action);
 					}
 					if (vMetadata.$kind === "FunctionImport") {
-						return oMetaModel.requestObject("/" + vMetadata.$Function);
+						return oMetaModel.fetchObject("/" + vMetadata.$Function);
 					}
 					throw new Error("Not an operation: " + sOperationName);
 				}).then(function (aOperationMetadata) {
@@ -595,13 +595,13 @@ sap.ui.define([
 					+ this.oModel.resolve(this.sPath, this.oContext));
 			}
 		}
-		return this._requestOperationMetadata().then(function (oOperationMetaData) {
+		return this._fetchOperationMetadata().then(function (oOperationMetaData) {
 			if (that.bRelative) {
 				if (!that.oContext.getBinding) {
 					return createCacheAndRequest(oOperationMetaData,
 						that.oContext.getPath() === "/" ? "/" : that.oContext.getPath() + "/");
 				}
-				return that.getContext().requestCanonicalPath().then(function (sPath) {
+				return that.getContext().fetchCanonicalPath().then(function (sPath) {
 					return createCacheAndRequest(oOperationMetaData, sPath + "/");
 				});
 			}
@@ -704,8 +704,8 @@ sap.ui.define([
 	 */
 
 	/**
-	 * @override sap.ui.model.odata.v4.ODataBinding#refreshInternal
-	 * @inheritdoc
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
 	ODataContextBinding.prototype.refreshInternal = function (sGroupId) {
 		var that = this;

@@ -478,4 +478,80 @@ sap.ui.require([
 
 		assert.strictEqual(oBinding.mParameters.$expand.SO_2_SOITEM.$orderby, "ItemPosition");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchIfChildCanUseCache: cache not yet created", function (assert) {
+		var oBinding = new ODataParentBinding({
+				bRelative : false,
+				// cache will be created, waiting for child bindings
+				oCachePromise : _SyncPromise.resolve(Promise.resolve())
+			}),
+			mQueryOptions = {},
+			oContext = {};
+
+		// code under test
+		oBinding.fetchIfChildCanUseCache(oContext, "Name", mQueryOptions)
+			.then(function (bUseCache) {
+				assert.strictEqual(bUseCache, true);
+				assert.deepEqual(oBinding.mDependentQueryOptions, {$select : ["Name"]});
+			});
+
+		// code under test
+		oBinding.fetchIfChildCanUseCache(oContext, "ID", mQueryOptions).then(function (bUseCache) {
+			assert.strictEqual(bUseCache, true);
+			assert.deepEqual(oBinding.mDependentQueryOptions, {$select : ["Name", "ID"]});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchIfChildCanUseCache: cache already created", function (assert) {
+		var oBinding = new ODataParentBinding({
+				bRelative : false,
+				// cache is already created
+				oCachePromise : _SyncPromise.resolve({})
+			}),
+			oBindingMock = this.mock(oBinding),
+			mQueryOptions = {},
+			oContext = {};
+
+		oBinding.mDependentQueryOptions = {$select : ["Name", "AGE"]};
+
+		oBindingMock.expects("fetchQueryOptionsForOwnCache").withExactArgs(undefined).twice()
+			.returns(_SyncPromise.resolve({$select : ["ID"]})); // parent binding has own cache
+
+		// code under test
+		oBinding.fetchIfChildCanUseCache(oContext, "Name", mQueryOptions)
+			.then(function (bUseCache) {
+				assert.strictEqual(bUseCache, true);
+				assert.deepEqual(oBinding.mDependentQueryOptions, {$select : ["Name", "AGE"]});
+			});
+
+		// code under test
+		oBinding.fetchIfChildCanUseCache(oContext, "ROOM_ID", mQueryOptions)
+			.then(function (bUseCache) {
+				assert.strictEqual(bUseCache, false);
+				assert.deepEqual(oBinding.mDependentQueryOptions, {$select : ["Name", "AGE"]});
+			});
+
+		// code under test
+		oBinding.fetchIfChildCanUseCache(oContext, "ID", mQueryOptions).then(function (bUseCache) {
+			assert.strictEqual(bUseCache, true);
+			assert.deepEqual(oBinding.mDependentQueryOptions, {$select : ["Name", "AGE"]});
+		});
+
+		// parent binding has own cache and no own query options
+		oBindingMock.expects("fetchQueryOptionsForOwnCache").withExactArgs(undefined)
+			.returns(_SyncPromise.resolve({}));
+
+		// code under test
+		oBinding.fetchIfChildCanUseCache(oContext, "TEAM_ID", mQueryOptions)
+			.then(function (bUseCache) {
+				assert.strictEqual(!!bUseCache, false);
+				assert.deepEqual(oBinding.mDependentQueryOptions, {$select : ["Name", "AGE"]});
+			}).catch(function (oError) { // ensure fetchIfChildCanUseCache has no script error
+				assert.ok(false, oError);
+			});
+	});
+//TODO propagate to parent binding in case the current binding does not have an own cache
+
 });
