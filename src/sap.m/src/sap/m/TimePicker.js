@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.TimePicker.
-sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRule', './ResponsivePopover', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/model/type/Time', './TimePickerSliders'],
-	function(jQuery, InputBase, MaskInput, MaskInputRule, ResponsivePopover, EnabledPropagator, IconPool, TimeModel, TimePickerSliders) {
+sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRule', './ResponsivePopover', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/model/type/Time', 'sap/ui/model/odata/type/Time', './TimePickerSliders'],
+	function(jQuery, InputBase, MaskInput, MaskInputRule, ResponsivePopover, EnabledPropagator, IconPool, TimeModel, TimeODataModel, TimePickerSliders) {
 		"use strict";
 
 		/**
@@ -93,8 +93,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					 *
 					 * The default value is the browser's medium time format locale setting
 					 * {@link sap.ui.core.LocaleData#getTimePattern}.
-					 * If data binding with type {@link sap.ui.model.type.Time} is used for the
-					 * <code>value</code> property, the <code>displayFormat</code> property
+					 * If data binding with type {@link sap.ui.model.type.Time} or {@link sap.ui.model.odata.type.Time}
+					 * is used for the <code>value</code> property, the <code>displayFormat</code> property
 					 * is ignored as the information is provided from the binding itself.
 					 */
 					displayFormat : {type : "string", group : "Appearance", defaultValue : null},
@@ -104,8 +104,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					 *
 					 * The default value is the browser's medium time format locale setting
 					 * {@link sap.ui.core.LocaleData#getTimePattern}.
-					 * If data binding with type {@link sap.ui.model.type.Time} is used for the
-					 * <code>value</code> property, the <code>valueFormat</code> property
+					 * If data binding with type {@link sap.ui.model.type.Time} or {@link sap.ui.model.odata.type.Time}
+					 * is used for the <code>value</code> property, the <code>valueFormat</code> property
 					 * is ignored as the information is provided from the binding itself.
 					 */
 					valueFormat : {type : "string", group : "Data", defaultValue : null},
@@ -1115,13 +1115,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @private
 		 */
 		TimePicker.prototype._getFormatter = function(bDisplayFormat) {
-			var sPattern = "",
+			var sPattern = this._getBoundValueTypePattern(),
 				bRelative = false,
 				oFormat,
 				oBinding = this.getBinding("value");
 
-			if (oBinding && oBinding.oType && (oBinding.oType instanceof TimeModel)) {
-				sPattern = oBinding.oType.getOutputPattern();
+			if (oBinding && oBinding.oType && oBinding.oType.oOutputFormat) {
 				bRelative = !!oBinding.oType.oOutputFormat.oFormatOptions.relative;
 			}
 
@@ -1517,13 +1516,22 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		}
 
 		TimePicker.prototype._getDisplayFormatPattern = function() {
-			var oBinding = this.getBinding("value");
+			return this._getBoundValueTypePattern() || this.getDisplayFormat();
+		};
 
-			if (oBinding && oBinding.oType && (oBinding.oType instanceof TimeModel)) {
-				return oBinding.oType.getOutputPattern();
+		TimePicker.prototype._getBoundValueTypePattern = function() {
+			var oBinding = this.getBinding("value"),
+				oBindingType = oBinding && oBinding.getType && oBinding.getType();
+
+			if (oBindingType instanceof TimeModel) {
+				return oBindingType.getOutputPattern();
 			}
 
-			return this.getDisplayFormat();
+			if (oBindingType instanceof TimeODataModel && oBindingType.oFormat) {
+				return oBindingType.oFormat.oFormatOptions.pattern;
+			}
+
+			return undefined;
 		};
 
 		/**
