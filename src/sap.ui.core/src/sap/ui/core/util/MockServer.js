@@ -277,9 +277,10 @@ sap.ui
 			 * @param {object} oFilteredData
 			 * @param {string} sQuery string in the form {query}={value}
 			 * @param {string} sEntitySetName the name of the entitySet the oFilteredData belongs to
+			 * @param {array} aUrlParamStrings all query string parts of the request (array of {query}={value})
 			 * @private
 			 */
-			MockServer.prototype._applyQueryOnCollection = function(oFilteredData, sQuery, sEntitySetName) {
+			MockServer.prototype._applyQueryOnCollection = function(oFilteredData, sQuery, sEntitySetName, aUrlParamStrings) {
 				var aQuery = sQuery.split('=');
 				var sODataQueryValue = aQuery[1];
 				if (sODataQueryValue === "") {
@@ -306,6 +307,20 @@ sap.ui
 						break;
 					case "$filter":
 						oFilteredData.results = this._recursiveOdataQueryFilter(oFilteredData.results, sODataQueryValue);
+						break;
+					case "search-focus":
+						// query parameter "search-focus" is evaluated together with parameter "search"
+						break;
+					case "search":
+						//Look for "search-focus" first...
+						var sSearchFocus = "";
+						for (var i = 0; i < aUrlParamStrings.length; i++ ) {
+							if ( aUrlParamStrings[i].indexOf("search-focus") != -1 ){
+								sSearchFocus = aUrlParamStrings[i].split('=')[1];
+								break;
+							}
+						}
+						oFilteredData.results = this._recursiveOdataQuerySearch( oFilteredData.results, sODataQueryValue, sSearchFocus, sEntitySetName );
 						break;
 					case "$select":
 						oFilteredData.results = this._getOdataQuerySelect(oFilteredData.results, sODataQueryValue, sEntitySetName);
@@ -744,6 +759,35 @@ sap.ui
 					default:
 						this._logAndThrowMockServerCustomError(400, that._oErrorMessages.INVALID_FILTER_OPERATOR, sODataFilterMethod);
 				}
+			};
+
+			/**
+			 * Processes the search operation:
+			 * Technically a filter is applied with "startswith" filter on the given property (given as
+			 * search-focus URL parameter).
+			 *
+			 * @param {object} aDataSet
+			 * @param {string} sODataQueryValue search string
+			 * @param {string} sODataSearchFocusValue A property name on which entries should be searched
+			 * @return {object} Changed result data set
+			 *
+			 * @private
+			 */
+			MockServer.prototype._recursiveOdataQuerySearch = function(aDataSet, sODataQueryValue, sODataSearchFocusValue, sEntitySetName) {
+				var sFilterString = "";
+
+				if ( sODataSearchFocusValue == "" || sODataSearchFocusValue == undefined ){
+					for ( var i = 0; i < this._mEntitySets[sEntitySetName].keys.length; i++ ) {
+						if (i != 0){
+							sFilterString = sFilterString + " or ";
+						}
+						sFilterString = sFilterString + "startswith(" + this._mEntitySets[sEntitySetName].keys[i] + ",'" + sODataQueryValue + "')";
+					}
+				} else {
+					sFilterString = "startswith(" + sODataSearchFocusValue + ",'" + sODataQueryValue + "')";
+				}
+
+				return this._recursiveOdataQueryFilter(aDataSet, sFilterString);
 			};
 
 			/**
@@ -2336,7 +2380,7 @@ sap.ui
 												}
 												jQuery.each(aUrlParams, function(iIndex, sQuery) {
 													that._applyQueryOnCollection(oFilteredData, sQuery,
-														sEntitySetName);
+														sEntitySetName, aUrlParams);
 												});
 											}
 
@@ -2410,10 +2454,9 @@ sap.ui
 													}
 													jQuery.each(aUrlParams, function(iIndex, sQuery) {
 														that._applyQueryOnCollection(oFilteredData, sQuery,
-															sEntitySetName);
+															sEntitySetName, aUrlParams);
 													});
 												}
-
 												//trigger the after callback funtion
 												that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
 													oXhr: oXhr,
@@ -2577,16 +2620,11 @@ sap.ui
 																}
 
 																if (sMultiplicity === "*") {
-																	jQuery
-																		.each(
-																			aUrlParams,
-																			function(iIndex, sQuery) {
-																				that
-																					._applyQueryOnCollection(
-																						oFilteredData,
-																						sQuery,
-																						that._mEntitySets[sEntitySetName].navprops[sNavProp].to.entitySet);
-																			});
+																	jQuery.each(aUrlParams, function(iIndex, sQuery) {
+																				that._applyQueryOnCollection(oFilteredData, sQuery,
+																						that._mEntitySets[sEntitySetName].navprops[sNavProp].to.entitySet,
+																						aUrlParams);
+																	});
 																} else {
 																	jQuery
 																		.each(
@@ -2693,16 +2731,13 @@ sap.ui
 																	}
 
 																	if (sMultiplicity === "*") {
-																		jQuery
-																			.each(
-																				aUrlParams,
-																				function(iIndex, sQuery) {
-																					that
-																						._applyQueryOnCollection(
-																							oFilteredData,
-																							sQuery,
-																							that._mEntitySets[sEntitySetName].navprops[sNavProp].to.entitySet);
-																				});
+																		jQuery.each(aUrlParams, function(iIndex, sQuery) {
+																			that._applyQueryOnCollection(
+																			oFilteredData,
+																			sQuery,
+																			that._mEntitySets[sEntitySetName].navprops[sNavProp].to.entitySet,
+																			aUrlParams);
+																		});
 																	} else {
 																		jQuery
 																			.each(
@@ -3104,7 +3139,7 @@ sap.ui
 			 * @private
 			 */
 			MockServer.prototype._orderQueryOptions = function(aUrlParams) {
-				var iFilterIndex, iInlinecountIndex, iSkipIndex, iTopIndex, iOrderbyIndex, iSelectindex, iExpandIndex, iFormatIndex, aOrderedUrlParams = [];
+				var iFilterIndex, iInlinecountIndex, iSkipIndex, iTopIndex, iOrderbyIndex, iSelectindex, iExpandIndex, iFormatIndex, iSearchIndex, iSearchFocusIndex, aOrderedUrlParams = [];
 				var that = this;
 				jQuery.each(aUrlParams, function(iIndex, sQuery) {
 					switch (sQuery.split('=')[0]) {
@@ -3132,6 +3167,12 @@ sap.ui
 						case "$format":
 							iFormatIndex = jQuery.inArray(sQuery, aUrlParams);
 							break;
+						case "search-focus":
+							iSearchFocusIndex = jQuery.inArray(sQuery, aUrlParams);
+							break;
+						case "search":
+							iSearchIndex = jQuery.inArray(sQuery, aUrlParams);
+							break;
 						default:
 							if (sQuery.split('=')[0].indexOf('$') === 0) {
 								that._logAndThrowMockServerCustomError(400, that._oErrorMessages.IS_NOT_A_VALID_SYSTEM_QUERY_OPTION, sQuery.split('=')[0]);
@@ -3143,6 +3184,12 @@ sap.ui
 				}
 				if (iFilterIndex >= 0) {
 					aOrderedUrlParams.push(aUrlParams[iFilterIndex]);
+				}
+				if (iSearchFocusIndex >= 0) {
+					aOrderedUrlParams.push(aUrlParams[iSearchFocusIndex]);
+				}
+				if (iSearchIndex >= 0) {
+					aOrderedUrlParams.push(aUrlParams[iSearchIndex]);
 				}
 				if (iInlinecountIndex >= 0) {
 					aOrderedUrlParams.push(aUrlParams[iInlinecountIndex]);

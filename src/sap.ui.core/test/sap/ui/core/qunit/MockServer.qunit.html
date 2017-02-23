@@ -2821,115 +2821,160 @@
 	});
 
 	test("test OData $expand",
-			function() {
-				var oMockServer = new sap.ui.core.util.MockServer({
-					rootUri : "/myservice/"
-				});
-				var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
-				oMockServer.simulate(sMetadataUrl);
-				oMockServer.start();
-				ok(oMockServer.isStarted(), "Mock server is started");
-
-				var oResponse = jQuery.sap.sjax({
-					url : "/myservice/CarrierCollection?$expand=carrierFlights",
-					dataType : "json"
-				});
-				ok(oResponse.success, "Mock server responded");
-				ok(oResponse.data.d.results[0].carrierFlights.results[0].CURRENCY, "expand with multiplicity many");
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/FlightCollection?$top=1&$expand=FlightCarrier",
-					dataType : "json"
-				});
-				ok(oResponse.success, "Mock server responded");
-				ok(oResponse.data.d.results[0].FlightCarrier.CARRNAME, "expand with multiplicity one");
-				equal(oResponse.data.d.results.length, 1, "expand and top");
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/FlightCollection?$top=1",
-					dataType : "json"
-				});
-				ok(oResponse.success, "Mock server responded");
-				ok(!oResponse.data.d.results[0].FlightCarrier.CARRNAME, "Expand didn't changed the data");
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/FlightCollection?$top=1&$expand=FlightCarrier, flightbooking",
-					dataType : "json"
-
-				});
-				ok(oResponse.success, "Mock server responded");
-				ok(oResponse.data.d.results[0].FlightCarrier.CARRNAME, "expand with 2 params,first ok");
-				ok(!oResponse.data.d.results[0].flightBooking, "expand with 2 params, second ok");
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/CarrierCollection?$expand=carrierFlights",
-					dataType : "json"
-				});
-				ok(oResponse.success, "Mock server responded");
-				ok(oResponse.data.d.results[0].carrierFlights.results[0].CURRENCY, "expand with multiplicity many");
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/CarrierCollection('carrid 1')/carrierFlights?$expand=flightbooking",
-					dataType : "json"
-				});
-				ok(oResponse.success, "Mock server responded");
-				equal(oResponse.data.d.results.length, 100, "Expand with nav- return 100 nav entries");
-				equal(oResponse.data.d.results[0].fldate, oResponse.data.d.results[0].flightbooking.fldate);
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/CarrierCollection?$expand=carrierFlights/flightbooking",
-					dataType : "json"
-				});
-				ok(oResponse.success, "Mock server responded");
-				equal(oResponse.data.d.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Carrier",
-						"Expand on carrier collection with deepDown, result of type carrier collection");
-				equal(oResponse.data.d.results[0].carrierFlights.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight",
-						"Expand deepDown first level, entry of type Flight");
-				ok(!jQuery.isEmptyObject(oResponse.data.d.results[0].carrierFlights.results[0].flightBookings),
-						"Expand deepDown second level, flightBookings not in expand, not empty");
-				ok(oResponse.data.d.results[0].carrierFlights.results[0].flightBookings.__deferred,
-						"Expand deepDown second level, flightBookings not in expand, not expanded");
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/CarrierCollection('carrid 1')?$expand=carrierFlights/flightbooking",
-					dataType : "json"
-				});
-				ok(oResponse.success, "Mock server responded");
-				equal(oResponse.data.d.__metadata.type, "RMTSAMPLEFLIGHT.Carrier",
-						"Expand on carrier entry with deepDown, result of type carrier ");
-				equal(oResponse.data.d.carrierFlights.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight",
-						"Expand deepDown first level, entry of type Flight");
-				ok(!jQuery.isEmptyObject(oResponse.data.d.carrierFlights.results[0].flightBookings),
-						"Expand deepDown second level, flightBookings not in expand, not empty");
-				ok(oResponse.data.d.carrierFlights.results[0].flightBookings.__deferred,
-						"Expand deepDown second level, flightBookings not in expand, not expanded");
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/FlightCollection?$top=1&$expand=FlightFood",
-					dataType : "json"
-				});
-				equal(oResponse.success, false, "Mock server responded");
-				equal(oResponse.statusCode, 404, "expand with false navigation property path");
-				oMockServer.destroy();
-				oMockServer = new sap.ui.core.util.MockServer({
-					rootUri : "/myservice/"
-				});
-				var sMetadataUrl = "testdata/metadata.xml";
-				oMockServer.simulate(sMetadataUrl);
-				oMockServer.start();
-				ok(oMockServer.isStarted(), "Mock server is started");
-
-				// deep multi navigation expand
-				var oResponse = jQuery.sap.sjax({
-					url : "/myservice/AccountCollection('accountID 1')?$expand=Contacts/Attachments,Contacts/Account",
-					dataType : "json"
-				});
-				ok(oResponse.success, "200");
-				equal(oResponse.data.d.Contacts.results[0].Attachments.results[0].name, "name 1", "Contacts/Attachments");
-				equal(oResponse.data.d.Contacts.results[0].Account.name1, "name1 1", "Contacts/Account");
-
-				oMockServer.destroy();
+		function() {
+			var oMockServer = new sap.ui.core.util.MockServer({
+				rootUri : "/myservice/"
 			});
+			var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+			oMockServer.simulate(sMetadataUrl);
+			oMockServer.start();
+			ok(oMockServer.isStarted(), "Mock server is started");
+
+			var oResponse = jQuery.sap.sjax({
+				url : "/myservice/CarrierCollection?$expand=carrierFlights",
+				dataType : "json"
+			});
+			ok(oResponse.success, "Mock server responded");
+			ok(oResponse.data.d.results[0].carrierFlights.results[0].CURRENCY, "expand with multiplicity many");
+
+			oResponse = jQuery.sap.sjax({
+				url : "/myservice/FlightCollection?$top=1&$expand=FlightCarrier",
+				dataType : "json"
+			});
+			ok(oResponse.success, "Mock server responded");
+			ok(oResponse.data.d.results[0].FlightCarrier.CARRNAME, "expand with multiplicity one");
+			equal(oResponse.data.d.results.length, 1, "expand and top");
+
+			oResponse = jQuery.sap.sjax({
+				url : "/myservice/FlightCollection?$top=1",
+				dataType : "json"
+			});
+			ok(oResponse.success, "Mock server responded");
+			ok(!oResponse.data.d.results[0].FlightCarrier.CARRNAME, "Expand didn't changed the data");
+
+			oResponse = jQuery.sap.sjax({
+				url : "/myservice/FlightCollection?$top=1&$expand=FlightCarrier, flightbooking",
+				dataType : "json"
+
+			});
+			ok(oResponse.success, "Mock server responded");
+			ok(oResponse.data.d.results[0].FlightCarrier.CARRNAME, "expand with 2 params,first ok");
+			ok(!oResponse.data.d.results[0].flightBooking, "expand with 2 params, second ok");
+
+			oResponse = jQuery.sap.sjax({
+				url : "/myservice/CarrierCollection?$expand=carrierFlights",
+				dataType : "json"
+			});
+			ok(oResponse.success, "Mock server responded");
+			ok(oResponse.data.d.results[0].carrierFlights.results[0].CURRENCY, "expand with multiplicity many");
+
+			oResponse = jQuery.sap.sjax({
+				url : "/myservice/CarrierCollection('carrid 1')/carrierFlights?$expand=flightbooking",
+				dataType : "json"
+			});
+			ok(oResponse.success, "Mock server responded");
+			equal(oResponse.data.d.results.length, 100, "Expand with nav- return 100 nav entries");
+			equal(oResponse.data.d.results[0].fldate, oResponse.data.d.results[0].flightbooking.fldate);
+
+			oResponse = jQuery.sap.sjax({
+				url : "/myservice/CarrierCollection?$expand=carrierFlights/flightbooking",
+				dataType : "json"
+			});
+			ok(oResponse.success, "Mock server responded");
+			equal(oResponse.data.d.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Carrier",
+					"Expand on carrier collection with deepDown, result of type carrier collection");
+			equal(oResponse.data.d.results[0].carrierFlights.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight",
+					"Expand deepDown first level, entry of type Flight");
+			ok(!jQuery.isEmptyObject(oResponse.data.d.results[0].carrierFlights.results[0].flightBookings),
+					"Expand deepDown second level, flightBookings not in expand, not empty");
+			ok(oResponse.data.d.results[0].carrierFlights.results[0].flightBookings.__deferred,
+					"Expand deepDown second level, flightBookings not in expand, not expanded");
+
+			oResponse = jQuery.sap.sjax({
+				url : "/myservice/CarrierCollection('carrid 1')?$expand=carrierFlights/flightbooking",
+				dataType : "json"
+			});
+			ok(oResponse.success, "Mock server responded");
+			equal(oResponse.data.d.__metadata.type, "RMTSAMPLEFLIGHT.Carrier",
+					"Expand on carrier entry with deepDown, result of type carrier ");
+			equal(oResponse.data.d.carrierFlights.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight",
+					"Expand deepDown first level, entry of type Flight");
+			ok(!jQuery.isEmptyObject(oResponse.data.d.carrierFlights.results[0].flightBookings),
+					"Expand deepDown second level, flightBookings not in expand, not empty");
+			ok(oResponse.data.d.carrierFlights.results[0].flightBookings.__deferred,
+					"Expand deepDown second level, flightBookings not in expand, not expanded");
+
+			oResponse = jQuery.sap.sjax({
+				url : "/myservice/FlightCollection?$top=1&$expand=FlightFood",
+				dataType : "json"
+			});
+			equal(oResponse.success, false, "Mock server responded");
+			equal(oResponse.statusCode, 404, "expand with false navigation property path");
+			oMockServer.destroy();
+			oMockServer = new sap.ui.core.util.MockServer({
+				rootUri : "/myservice/"
+			});
+			var sMetadataUrl = "testdata/metadata.xml";
+			oMockServer.simulate(sMetadataUrl);
+			oMockServer.start();
+			ok(oMockServer.isStarted(), "Mock server is started");
+
+			// deep multi navigation expand
+			var oResponse = jQuery.sap.sjax({
+				url : "/myservice/AccountCollection('accountID 1')?$expand=Contacts/Attachments,Contacts/Account",
+				dataType : "json"
+			});
+			ok(oResponse.success, "200");
+			equal(oResponse.data.d.Contacts.results[0].Attachments.results[0].name, "name 1", "Contacts/Attachments");
+			equal(oResponse.data.d.Contacts.results[0].Account.name1, "name1 1", "Contacts/Account");
+
+			oMockServer.destroy();
+		});
+
+	test("test OData search and search-focus URL parameter", function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+		//Search with search-focus on porperty employeeid
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?search=JSM&search-focus=employeeid",
+			dataType : "json"
+		});
+
+		ok(oResponse.success, "Mock server responded with success");
+		equal(oResponse.data.d.results.length, 3, "3 entries found with search and search-focus (key)");
+
+		//No search focus (=search on all key fields)
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?search=JSM",
+			dataType : "json"
+		});
+		ok(oResponse.success, "Mock server responded with success");
+		equal(oResponse.data.d.results.length, 3, "3 entries found without search-focus (only search)");
+
+		//Non-key search focus
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?search=53&search-focus=entitlement",
+			dataType : "json"
+		});
+		ok(oResponse.success, "Mock server responded with success");
+		equal(oResponse.data.d.results.length, 2, "2 entries found with search and non-key search-focus");
+
+		//Neagtive test: search with not existing value
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?search=HelloWorld",
+			dataType : "json"
+		});
+		ok(oResponse.success, "Mock server responded with success");
+		equal(oResponse.data.d.results.length, 0, "0 entries found with search for not existing value");
+
+		oMockServer.destroy();
+	});
 
 	//Expand and multi select
 	test("Test Expand & MultiSelect entries", function() {
