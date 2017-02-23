@@ -117,6 +117,14 @@ sap.ui.define([
 
 		/**
 		 * @returns {boolean}
+		 *   Whether this SyncPromise is still pending
+		 */
+		this.isPending = function () {
+			return vResult === this;
+		};
+
+		/**
+		 * @returns {boolean}
 		 *   Whether this SyncPromise is rejected
 		 */
 		this.isRejected = function () {
