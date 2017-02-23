@@ -193,8 +193,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 			}).setParent(this);
 			this.oToolsButton.attachEvent('itemSelected', this.handleLtoolsButtonSelected, this); // attach event this way to have the right this-reference in handler
 
-			var sIcon = sap.ui.core.theming.Parameters._getThemeImage('sapUiFeedToolsIconUrl');
-			var sIconHover = sap.ui.core.theming.Parameters._getThemeImage('sapUiFeedToolsIconHoverUrl');
+			var sIcon = sap.ui.core.theming.Parameters._getThemeImage('_sap_ui_ux3_Feed_ToolsIconUrl');
+			var sIconHover = sap.ui.core.theming.Parameters._getThemeImage('_sap_ui_ux3_Feed_ToolsIconHoverUrl');
 			if (sIcon) {
 				this.oToolsButton.setProperty('icon', sIcon, true);
 			}
