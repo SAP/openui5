@@ -17,6 +17,35 @@ sap.ui.define([
 	function ODataBinding() {}
 
 	/**
+	 * Creates the query options map to create the cache for this binding as a deep copy from the
+	 * model's parameters and the given binding's local query options. In auto-mode, the $select
+	 * array in the resulting map is extended from the $select option defined by dependent bindings.
+	 *
+	 * @param {object} mLocalQueryOptions The binding's local query options
+	 * @returns {object} The map of query options for cache creation
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.createCacheQueryOptions = function (mLocalQueryOptions) {
+		var mCacheQueryOptions = jQuery.extend(true, {}, this.oModel.mUriParameters,
+				mLocalQueryOptions),
+			aDependentSelect;
+
+		if (this.oModel.bAutoExpandSelect) {
+			aDependentSelect = this.mDependentQueryOptions && this.mDependentQueryOptions.$select;
+			if (aDependentSelect) {
+				mCacheQueryOptions.$select = mCacheQueryOptions.$select || [];
+				aDependentSelect.forEach(function (sPropertyName) {
+					if (mCacheQueryOptions.$select.indexOf(sPropertyName) < 0) {
+						mCacheQueryOptions.$select.push(sPropertyName);
+					}
+				});
+			}
+		}
+		return mCacheQueryOptions;
+	};
+
+	/**
 	 * Creates a cache for this binding if a cache is needed and updates <code>oCachePromise</code>.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
@@ -25,8 +54,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.fetchCache = function (oContext) {
-		var oCurrentCache,
-			oPromise,
+		var oCachePromise,
+			oCurrentCache,
+			aPromises,
 			that = this;
 
 		if (this.oOperation) { // operation binding manages its cache on its own
@@ -42,8 +72,15 @@ sap.ui.define([
 				oCurrentCache.setActive(false);
 			}
 		}
-		oPromise = this.fetchQueryOptionsForOwnCache(oContext).then(function (mLocalQueryOptions) {
-			var vCanonicalPath;
+		aPromises = [this.fetchQueryOptionsForOwnCache(oContext)];
+		// in auto-mode wait for query options of dependent bindings to be available; this is only
+		// done for parent bindings => this.fetchIfChildCanUseCache
+		if (this.oModel.bAutoExpandSelect && this.fetchIfChildCanUseCache) {
+			aPromises.push(Promise.resolve());
+		}
+		oCachePromise = _SyncPromise.all(aPromises).then(function (aResult) {
+			var vCanonicalPath,
+				mLocalQueryOptions = aResult[0];
 
 			if (mLocalQueryOptions) {
 				vCanonicalPath = _SyncPromise.resolve(oContext && (oContext.fetchCanonicalPath
@@ -54,9 +91,8 @@ sap.ui.define([
 						oError;
 
 					// create cache only if oCachePromise has not been changed in the meantime
-					if (!oPromise || that.oCachePromise === oPromise) {
-						mCacheQueryOptions = jQuery.extend({}, that.oModel.mUriParameters,
-							mLocalQueryOptions);
+					if (!oCachePromise || that.oCachePromise === oCachePromise) {
+						mCacheQueryOptions = that.createCacheQueryOptions(mLocalQueryOptions);
 						if (sCanonicalPath) { // quasi-absolute or relative binding
 							// mCacheByContext has to be reset if parameters are changing
 							that.mCacheByContext = that.mCacheByContext || {};
@@ -83,13 +119,13 @@ sap.ui.define([
 				});
 			}
 		});
-		oPromise["catch"](function (oError) {
+		oCachePromise["catch"](function (oError) {
 			//Note: this may also happen if the promise to read data for the canonical path's
 			// key predicate is rejected with a canceled error
 			that.oModel.reportError("Failed to create cache for binding " + that,
 				"sap.ui.model.odata.v4.ODataBinding", oError);
 		});
-		this.oCachePromise = oPromise;
+		this.oCachePromise = oCachePromise;
 	};
 
 	/**
@@ -115,10 +151,26 @@ sap.ui.define([
 		}
 
 		return this.doFetchQueryOptions(oContext).then(function (mQueryOptions) {
+			var bHasNonSystemQueryOptions;
+
 			if (!that.bRelative || oContext && !oContext.fetchValue) { // (quasi-)absolute
 				return mQueryOptions;
 			}
 
+			if (that.oModel.bAutoExpandSelect) {
+				bHasNonSystemQueryOptions = that.mParameters
+					&& Object.keys(that.mParameters).some(function (sKey) {
+						return sKey[0] !== "$" || sKey[1] == "$";
+					});
+				if (bHasNonSystemQueryOptions) {
+					return mQueryOptions;
+				}
+				return oContext.getBinding()
+					.fetchIfChildCanUseCache(oContext, that.sPath, mQueryOptions)
+					.then(function (bCanUseCache) {
+						return bCanUseCache ? undefined : mQueryOptions;
+					});
+			}
 			if (that.mParameters && Object.keys(that.mParameters).length) {
 				// relative with parameters
 				return mQueryOptions;

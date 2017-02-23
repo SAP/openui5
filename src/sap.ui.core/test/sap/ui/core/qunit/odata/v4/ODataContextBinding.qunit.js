@@ -888,7 +888,7 @@ sap.ui.require([
 		metadata1 : [{$kind : "Action"}, {}],
 		error : "Unsupported operation overloading: schema.OverloadedAction"
 	}].forEach(function (oFixture) {
-		QUnit.test("_requestOperationMetadata: " + oFixture.path, function (assert) {
+		QUnit.test("_fetchOperationMetadata: " + oFixture.path, function (assert) {
 			var oBinding = this.oModel.bindContext(oFixture.path),
 				oMetaModel = this.oModel.getMetaModel(),
 				oMetaModelMock = this.mock(oMetaModel),
@@ -901,20 +901,20 @@ sap.ui.require([
 				oParentBinding.initialize();
 				oBinding.setContext(oParentBinding.getBoundContext());
 			}
-			oMetaModelMock.expects("requestObject")
+			oMetaModelMock.expects("fetchObject")
 				.withExactArgs(oFixture.request1)
 				.returns(Promise.resolve(oFixture.metadata1));
 			if (oFixture.request2) {
-				oMetaModelMock.expects("requestObject")
+				oMetaModelMock.expects("fetchObject")
 					.withExactArgs(oFixture.request2)
 					.returns(Promise.resolve(oFixture.metadata2));
 				oResult = oFixture.metadata2;
 			}
 
 			// code under test
-			oPromise = oBinding._requestOperationMetadata();
+			oPromise = oBinding._fetchOperationMetadata();
 
-			assert.strictEqual(oBinding._requestOperationMetadata(), oPromise);
+			assert.strictEqual(oBinding._fetchOperationMetadata(), oPromise);
 
 			return oPromise.then(function (oMetadata) {
 				if (oFixture.error) {
@@ -981,7 +981,7 @@ sap.ui.require([
 			 * @param {string} [sGroupId] The group ID for execute
 			 */
 			function mockForExecute(sFooVar, sGroupId) {
-				oBindingMock.expects("_requestOperationMetadata")
+				oBindingMock.expects("_fetchOperationMetadata")
 					.returns(Promise.resolve({
 						$kind : "Function",
 						$Parameter : [{
@@ -1063,7 +1063,7 @@ sap.ui.require([
 		oBinding = this.oModel.bindContext(sPath, undefined, mParameters);
 		oBindingMock = this.mock(oBinding);
 
-		oBindingMock.expects("_requestOperationMetadata").twice()
+		oBindingMock.expects("_fetchOperationMetadata").twice()
 			.returns(Promise.resolve({$kind : "Action"}));
 		this.mock(jQuery).expects("extend").twice()
 			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
@@ -1125,7 +1125,7 @@ sap.ui.require([
 			},
 			oSingleCacheMock = this.mock(oSingleCache);
 
-		oBindingMock.expects("_requestOperationMetadata")
+		oBindingMock.expects("_fetchOperationMetadata")
 			.returns(Promise.resolve({$kind : "Action"}));
 		this.mock(jQuery).expects("extend")
 			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
@@ -1188,10 +1188,10 @@ sap.ui.require([
 						{$$groupId : "groupId"});
 					oBindingMock = this.mock(oBinding);
 
-					oBindingMock.expects("_requestOperationMetadata").twice()
+					oBindingMock.expects("_fetchOperationMetadata").twice()
 						.returns(Promise.resolve({$kind : "Action"}));
 					if (!bBaseContext) {
-						this.mock(oParentContext1).expects("requestCanonicalPath")
+						this.mock(oParentContext1).expects("fetchCanonicalPath")
 							.withExactArgs()
 							.returns(Promise.resolve("/EntitySet(ID='1')/navigation1"));
 						this.mock(oBinding.getContext()).expects("getObject")
@@ -1217,7 +1217,7 @@ sap.ui.require([
 						oBinding.setContext(oParentContext2);
 
 						if (!bBaseContext) {
-							that.mock(oParentContext2).expects("requestCanonicalPath")
+							that.mock(oParentContext2).expects("fetchCanonicalPath")
 								.withExactArgs()
 								.returns(Promise.resolve("/EntitySet(ID='2')/navigation1"));
 							that.mock(oBinding.getContext()).expects("getObject")
@@ -1251,7 +1251,7 @@ sap.ui.require([
 				post : function () {}
 			};
 
-		this.mock(oBinding).expects("_requestOperationMetadata")
+		this.mock(oBinding).expects("_fetchOperationMetadata")
 			.returns(Promise.resolve({$kind : "Action"}));
 		oCacheMock.expects("createSingle")
 			.withArgs(sinon.match.same(this.oModel.oRequestor), "ActionImport")
@@ -1285,7 +1285,7 @@ sap.ui.require([
 				}
 			};
 
-		this.mock(oBinding).expects("_requestOperationMetadata")
+		this.mock(oBinding).expects("_fetchOperationMetadata")
 			.returns(Promise.resolve({$kind : "Action"}));
 		oCacheMock.expects("createSingle")
 			.withArgs(sinon.match.same(this.oModel.oRequestor), "ActionImport")
@@ -1364,7 +1364,7 @@ sap.ui.require([
 			oBinding = this.oModel.bindContext(sPath),
 			sMessage = "Unsupported: collection parameter";
 
-		this.mock(oBinding).expects("_requestOperationMetadata")
+		this.mock(oBinding).expects("_fetchOperationMetadata")
 			.returns(Promise.resolve({$Parameter : [{$Name : "foo", $IsCollection : true}]}));
 		this.mock(_Cache).expects("createSingle").never();
 		this.mock(this.oModel).expects("reportError").withExactArgs(

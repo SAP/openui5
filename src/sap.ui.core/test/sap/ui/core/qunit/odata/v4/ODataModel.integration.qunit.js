@@ -11,20 +11,54 @@ sap.ui.require([
 	"sap/ui/test/TestUtils"
 ], function (jQuery, Filter, FilterOperator, OperationMode, ODataModel, Sorter, TestUtils) {
 	/*global QUnit, sinon */
+	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	/**
+	 * Creates a V4 OData model.
+	 *
+	 * @param {string} sServiceUrl The service URL
+	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
+	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
+	 *   synchronizationMode which are set by default
+	 * @returns {sap.ui.model.odata.v4.ODataModel} The model
+	 */
+	function createModel(sServiceUrl, mModelParameters) {
+		var mDefaultParameters = {
+				groupId : "$direct",
+				operationMode : OperationMode.Server,
+				serviceUrl : TestUtils.proxy(sServiceUrl),
+				synchronizationMode : "None"
+			};
+
+		return new ODataModel(jQuery.extend(mDefaultParameters, mModelParameters));
+	}
+
+	/**
 	 * Creates a V4 OData model for <code>TEA_BUSI</code>.
+	 *
+	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
+	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
+	 *   synchronizationMode which are set by default
+	 * @returns {sap.ui.model.odata.v4.ODataModel} The model
+	 */
+	function createTeaBusiModel(mModelParameters) {
+		return createModel("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
+			mModelParameters);
+	}
+
+	/**
+	 * Creates a V4 OData model for <code>GWSAMPLE_BASIC</code>.
+	 *
+	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
+	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
+	 *   synchronizationMode which are set by default
 	 * @returns {ODataModel} The model
 	 */
-	function createModel() {
-		return new ODataModel({
-			groupId : "$direct",
-			operationMode : OperationMode.Server,
-			serviceUrl :
-				TestUtils.proxy("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"),
-			synchronizationMode : "None"
-		});
+	function createSalesOrdersModel(mModelParameters) {
+		return createModel(
+			"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/",
+			mModelParameters);
 	}
 
 	//*********************************************************************************************
@@ -33,7 +67,9 @@ sap.ui.require([
 			this.oSandbox = sinon.sandbox.create();
 			TestUtils.setupODataV4Server(this.oSandbox, {
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
-					: {source : "metadata.xml"}
+					: {source : "metadata.xml"},
+				"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/$metadata"
+					: {source : "metadata_GW_SAMPLE_BASIC.xml"}
 			});
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
@@ -93,8 +129,7 @@ sap.ui.require([
 
 		/**
 		 * Creates a a view with the given content and adds check-formatter functions to Text
-		 * controls with the given IDs and creates a model. The view and the model are attached to
-		 * the given test.
+		 * controls with the given IDs. The view is attached to the given test.
 		 *
 		 * @param {object} assert The QUnit assert object
 		 * @param {string} sView View content as XML
@@ -102,7 +137,7 @@ sap.ui.require([
 		 *   property by control id; in case the control is created via template in a list, the
 		 *   value is an array
 		 */
-		createViewAndModel : function (assert, sView, mValueByControl) {
+		createView : function (assert, sView, mValueByControl) {
 //			assert.ok(true, sView); // uncomment to see XML in output, e.g. in case of parse issues
 			var oView = sap.ui.xmlview({
 					viewContent : '<mvc:View xmlns="sap.m" xmlns:form="sap.ui.layout.form" '
@@ -125,13 +160,12 @@ sap.ui.require([
 					that.formatterCallCount -= 1;
 					if (that.formatterCallCount === 0) {
 						that.resolve();
-					} else if (that.formatterCallCount < 0) {
+					} else if (that.formatterCallCount < 0 && !that.bSloppy) {
 						assert.ok(false, "Unexpected call to formatter for control with ID '"
 							+ sControlId + "' with value '" + sValue + "'");
 					}
 				};
 			});
-			that.oModel = createModel();
 			that.oView = oView;
 		},
 
@@ -143,9 +177,11 @@ sap.ui.require([
 		 *   Map of response objects keyed by request path.
 		 *   For sMethod "POST" the response object holds a map of objects with
 		 *   $requestHeaders, $requestPayload and $response keyed by request path.
+		 *   For sMethod "DELETE" the response object holds a map of objects with
+		 *   $requestHeaders keyed by request path.
 		 *   For sMethod "GET", a response object is the expected response; if the request path has
-		 *   the special value "POST", it is a map of "POST objects" as described before keyed by
-		 *   request path.
+		 *   the special value "POST" or "DELETE", it is a map of "POST/DELETE objects" as described
+		 *   above, keyed by request path.
 		 * @param {string} [sMethod="GET"] The expected request method
 		 */
 		expectRequests : function (mResponseByRequest, sMethod) {
@@ -162,16 +198,22 @@ sap.ui.require([
 					oPayload,
 					oResponse = mResponseByRequest[sRequest];
 
-				if (sRequest === "POST") {
-					that.expectRequests(mResponseByRequest["POST"], "POST");
+				if (sRequest === "POST" || sRequest === "DELETE") {
+					that.expectRequests(mResponseByRequest[sRequest], sRequest);
 					return;
 				}
 				mHeaders = mResponseByRequest[sRequest].$requestHeaders;
 				oPayload = mResponseByRequest[sRequest].$requestPayload;
 				oResponse = mResponseByRequest[sRequest].$response || mResponseByRequest[sRequest];
-				that.oRequestorMock.expects("request")
-					.withArgs(sMethod, sRequest, "$direct", mHeaders, oPayload)
-					.returns(Promise.resolve(oResponse));
+				if (sMethod === "DELETE") {
+					that.oRequestorMock.expects("request")
+						.withArgs(sMethod, sRequest, "$direct", mHeaders)
+						.returns(Promise.resolve());
+				} else {
+					that.oRequestorMock.expects("request")
+						.withArgs(sMethod, sRequest, "$direct", mHeaders, oPayload)
+						.returns(Promise.resolve(oResponse));
+				}
 			});
 		},
 
@@ -186,11 +228,20 @@ sap.ui.require([
 		 * @param {object} mValueByControl Map of expected value for a control's text
 		 *   property by control id; in case the control is created via template in a list, the
 		 *   value is an array
+		 * @param {sap.ui.model.odata.v4.ODataModel} [oModel] The model; it is attached to the view
+		 *   and to the test instance.
+		 *   If no model is given, the <code>TEA_BUSI</code> model is created and used.
+		 * @param {boolean} [bSloppy] Whether the test does not check if values are only set once
+		 *   per control
+		 * @returns {Promise} A promise that is resolved when the view is created and all change
+		 *   events have been fired
 		 */
-		viewStart : function (assert, sView, mResponseByRequest, mValueByControl) {
+		viewStart : function (assert, sView, mResponseByRequest, mValueByControl, oModel, bSloppy) {
 			var that = this;
 
-			this.createViewAndModel(assert, sView, mValueByControl);
+			this.bSloppy = bSloppy;
+			this.oModel = oModel || createTeaBusiModel();
+			this.createView(assert, sView, mValueByControl);
 			return this.check(mResponseByRequest, mValueByControl, function () {
 				that.oView.setModel(that.oModel);
 			});
@@ -200,10 +251,10 @@ sap.ui.require([
 	/*
 	 * Creates a test with the given title and executes viewStart with the given parameters.
 	 */
-	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl) {
+	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, oModel, bSloppy) {
 		QUnit.test(sTitle, function (assert) {
-			return this.viewStart(assert, sView, mResponseByRequest,
-				mValueByControl);
+			return this.viewStart(assert, sView, mResponseByRequest, mValueByControl, oModel,
+				bSloppy);
 		});
 	}
 
@@ -415,7 +466,7 @@ sap.ui.require([
 //			mResponseByRequest = {};
 //			mValueByControl.id = "1";
 //
-//			return check(that, mResponseByRequest, mValueByControl, function () {
+//			return that.check(that, mResponseByRequest, mValueByControl, function () {
 //				that.oView.byId("form").setBindingContext(
 //					that.oView.byId("table").getBinding("items").getCurrentContexts()[0]);
 //			});
@@ -597,6 +648,302 @@ sap.ui.require([
 			});
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: SalesOrders app
+	// * Select a sales order so that items are visible
+	// * Filter in the items, so that there are less
+	// * See that the count decreases
+	// The test simplifies it: It filters in the sales orders list directly
+	QUnit.test("ODLB: $count and filter()", function (assert) {
+		var sView = '\
+<Text id="count" text="{$count}"/>\
+<Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'SalesOrderID\'}}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="id" text="{SalesOrderID}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			mResponseByRequest = {
+				"SalesOrderList?$select=SalesOrderID&$skip=0&$top=100" : {
+					"value" : [
+						{"SalesOrderID" : "0500000001"},
+						{"SalesOrderID" : "0500000002"}
+					]
+				}
+			},
+			mValueByControl = {"count": undefined, "id" : ["0500000001", "0500000002"]},
+			that = this;
+
+		return this.viewStart(
+			assert, sView, mResponseByRequest, mValueByControl, createSalesOrdersModel()
+		).then(function () {
+			mValueByControl.count = "2";
+			delete mValueByControl.id;
+			return that.check({}, mValueByControl, function () {
+				// code under test
+				that.oView.byId("count").setBindingContext(
+					that.oView.byId("table").getBinding("items").getHeaderContext());
+			});
+		}).then(function () {
+
+			mResponseByRequest = {
+				"SalesOrderList?$select=SalesOrderID&$filter=SalesOrderID%20gt%20'0500000001'&$skip=0&$top=100" : {
+					"value" : [{"SalesOrderID" : "0500000002"}]
+				}
+			};
+			mValueByControl.count = "1";
+			mValueByControl.id = ["0500000002"];
+
+			return that.check(mResponseByRequest, mValueByControl, function () {
+				// code under test
+				that.oView.byId("table").getBinding("items")
+					.filter(new Filter("SalesOrderID", FilterOperator.GT, "0500000001"));
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: SalesOrders app
+	// * Sort the sales orders
+	// * Delete a sales order
+	// * See that the count decreases
+	// The delete is used to change the count (to see that it is still updated)
+	QUnit.test("ODLB: $count and sort()", function (assert) {
+		var sView = '\
+<Text id="count" text="{$count}"/>\
+<Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'SalesOrderID\'}}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="id" text="{SalesOrderID}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			mResponseByRequest = {
+				"SalesOrderList?$select=SalesOrderID&$skip=0&$top=100" : {
+					"value" : [
+						{"SalesOrderID" : "0500000001"},
+						{"SalesOrderID" : "0500000002"}
+					]
+				}
+			},
+			mValueByControl = {"count": undefined, "id" : ["0500000001", "0500000002"]},
+			that = this;
+
+		return this.viewStart(
+			assert, sView, mResponseByRequest, mValueByControl, createSalesOrdersModel()
+		).then(function () {
+			mValueByControl.count = "2";
+			delete mValueByControl.id;
+			return that.check({}, mValueByControl, function () {
+				// code under test
+				that.oView.byId("count").setBindingContext(
+					that.oView.byId("table").getBinding("items").getHeaderContext());
+			});
+		}).then(function () {
+			mResponseByRequest = {
+				"SalesOrderList?$select=SalesOrderID&$orderby=SalesOrderID%20desc&$skip=0&$top=100" : {
+					"value" : [
+						{"SalesOrderID" : "0500000002"},
+						{"SalesOrderID" : "0500000001"}
+					]
+				}
+			};
+			delete mValueByControl.count;
+			mValueByControl.id = ["0500000002", "0500000001"];
+
+			return that.check(mResponseByRequest, mValueByControl, function () {
+				// code under test
+				that.oView.byId("table").getBinding("items").sort(new Sorter("SalesOrderID", true));
+			});
+		}).then(function () {
+			mResponseByRequest = {
+				"DELETE" : {
+					"SalesOrderList('0500000002')" : {
+						$requestHeaders : {"If-Match" : undefined}
+					}
+				}
+			};
+			mValueByControl.count = "1";
+			mValueByControl.id = ["0500000001"];
+
+			return that.check(mResponseByRequest, mValueByControl, function () {
+				that.oView.byId("table").getItems()[0].getBindingContext().delete();
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: (not possible with the SalesOrders app)
+	// * Add a filter to the sales orders list using changeParameters(), so that there are less
+	// * See that the count decreases
+	QUnit.test("ODLB: $count and changeParameters()", function (assert) {
+		var sView = '\
+<Text id="count" text="{$count}"/>\
+<Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'SalesOrderID\'}}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="id" text="{SalesOrderID}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			mResponseByRequest = {
+				"SalesOrderList?$select=SalesOrderID&$skip=0&$top=100" : {
+					"value" : [
+						{"SalesOrderID" : "0500000001"},
+						{"SalesOrderID" : "0500000002"}
+					]
+				}
+			},
+			mValueByControl = {"count": undefined, "id" : ["0500000001", "0500000002"]},
+			that = this;
+
+		return this.viewStart(
+			assert, sView, mResponseByRequest, mValueByControl, createSalesOrdersModel()
+		).then(function () {
+			mValueByControl.count = "2";
+			delete mValueByControl.id;
+			return that.check({}, mValueByControl, function () {
+				// code under test
+				that.oView.byId("count").setBindingContext(
+					that.oView.byId("table").getBinding("items").getHeaderContext());
+			});
+		}).then(function () {
+
+			mResponseByRequest = {
+				"SalesOrderList?$select=SalesOrderID&$filter=SalesOrderID%20gt%20'0500000001'&$skip=0&$top=100" : {
+					"value" : [{"SalesOrderID" : "0500000002"}]
+				}
+			};
+			mValueByControl.count = "1";
+			mValueByControl.id = ["0500000002"];
+
+			return that.check(mResponseByRequest, mValueByControl, function () {
+				// code under test
+				that.oView.byId("table").getBinding("items")
+					.changeParameters({$filter : "SalesOrderID gt '0500000001'"});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: SalesOrders app
+	// * Select a sales order
+	// * Refresh the sales order list
+	// * See that the count of the items is still visible
+	// The key point is that the parent of the list is a ContextBinding.
+	QUnit.test("ODLB: refresh via parent context binding, shared cache", function (assert) {
+		var sView = '\
+<form:SimpleForm id="form" binding="{path :\'/SalesOrderList(\\\'0500000001\\\')\', parameters : {$expand : {SO_2_SOITEM : {$select : \'ItemPosition\'}}}}">\
+	<Text id="count" text="{headerContext>$count}"/>\
+	<Table id="table" items="{SO_2_SOITEM}">\
+		<items>\
+			<ColumnListItem>\
+				<cells>\
+					<Text id="item" text="{ItemPosition}" />\
+				</cells>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</form:SimpleForm>',
+			mResponseByRequest = {
+				"SalesOrderList('0500000001')?$expand=SO_2_SOITEM($select=ItemPosition)" : {
+					"SalesOrderID" : "0500000001",
+					"SO_2_SOITEM" : [
+						{"ItemPosition" : "0000000010"},
+						{"ItemPosition" : "0000000020"}
+					]
+				}
+			},
+			mValueByControl = {"count": undefined, "item" : ["0000000010", "0000000020"]},
+			that = this;
+
+		return this.viewStart(
+			assert, sView, mResponseByRequest, mValueByControl, createSalesOrdersModel()
+		).then(function () {
+			mValueByControl.count = "2";
+			delete mValueByControl.item;
+			return that.check({}, mValueByControl, function () {
+				var oCount = that.oView.byId("count");
+
+				// code under test
+				that.oView.setModel(that.oView.getModel(), "headerContext");
+				oCount.setBindingContext(
+					that.oView.byId("table").getBinding("items").getHeaderContext(),
+					"headerContext");
+			});
+		}).then(function () {
+			// Respond with one employee less to show that the refresh must destroy the bindings for
+			// the last row. Otherwise the property binding for that row will cause a "Failed to
+			// drill down".
+			mResponseByRequest = {
+				"SalesOrderList('0500000001')?$expand=SO_2_SOITEM($select=ItemPosition)" : {
+					"SalesOrderID" : "0500000001",
+					"SO_2_SOITEM" : [
+						{"ItemPosition" : "0000000010"}
+					]
+				}
+			};
+			mValueByControl.count = "1";
+			mValueByControl.item = ["0000000010"];
+
+			return that.check(mResponseByRequest, mValueByControl, function () {
+				// code under test
+				that.oView.byId("form").getObjectBinding().refresh();
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	testViewStart("Auto-mode: Absolute ODCB with relative ODPB", '\
+<form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE,ROOM_ID\'}}">\
+	<Text id="name" text="{Name}" />\
+	<Text id="city" text="{LOCATION/City/CITYNAME}" />\
+</form:SimpleForm>',
+		{"EMPLOYEES('2')?$select=AGE,ROOM_ID,Name,LOCATION/City/CITYNAME" : {
+			"Name" : "Frederic Fall",
+			"LOCATION" : {"City" : {"CITYNAME" : "Walldorf"}}
+		}},
+		{"name" : "Frederic Fall", "city" : "Walldorf"},
+		createTeaBusiModel({autoExpandSelect : true}),
+		true //TODO fix two calls to formatter
+	);
+
+	//*********************************************************************************************
+	//TODO requires enhancement of ODataModel.integration.qunit as refresh causes multiple calls
+	//  to formatters (first one with null value)
+	QUnit.skip("Auto-mode: Absolute ODCB, refresh", function (assert) {
+		var sView = '\
+<form:SimpleForm id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE\'}}">\
+	<Text id="name" text="{Name}" />\
+</form:SimpleForm>',
+			mResponseByRequest = {"EMPLOYEES('2')?$select=AGE,Name" : {
+			"Name" : "Jonathan Smith"
+		}},
+			mValueByControl = {"name" : "Jonathan Smith"},
+			that = this;
+
+		return this.viewStart(assert, sView, mResponseByRequest, mValueByControl,
+				createTeaBusiModel({autoExpandSelect : true}), true)
+			.then(function () {
+				mResponseByRequest = {"EMPLOYEES('2')?$select=AGE,Name" : {
+					"Name" : "Jonathan Schmidt"
+				}};
+				mValueByControl.name = "Jonathan Schmidt";
+
+				return that.check(mResponseByRequest, mValueByControl, function () {
+					that.oView.byId("form").getObjectBinding().refresh();
+			});
+		});
+	});
+
 	//TODO $batch?
 	//TODO test bound action
 	//TODO test create
