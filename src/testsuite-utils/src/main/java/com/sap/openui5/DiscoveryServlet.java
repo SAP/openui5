@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -240,7 +242,29 @@ public class DiscoveryServlet extends HttpServlet {
         // unlikely the FileURLConnection is not providing a public API
         // therefore we need to do some dirty tricks for the file listing
         connection.connect();
-        File file = (File) this.getDeclaredFieldValue(connection, "file");
+        Object value = this.getDeclaredFieldValue(connection, "file");
+        // hmm we are already dirty
+        if(!(value instanceof File)) {
+        	// So lets get even dirtier
+        	// see if it is a VirtualFile from JBoss and get the physical file
+        	// without introducing a dependency to JBoss classes
+        	Method getPhysicalFile;
+			try {
+				getPhysicalFile = value.getClass().getMethod("getPhysicalFile");
+				value = getPhysicalFile.invoke(value);
+			} catch (NoSuchMethodException e) {
+				throw new RuntimeException(e);
+			} catch (SecurityException e) {
+				throw new RuntimeException(e);
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException(e);
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException(e);
+			} catch (InvocationTargetException e) {
+				throw new RuntimeException(e);
+			}
+        }
+        File file = (File) value;
         if (file != null && file.exists()) {
           if (file.isDirectory()) {
             File[] files = file.listFiles();
