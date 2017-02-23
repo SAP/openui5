@@ -1,0 +1,231 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<title>sap.m.ObjectMarker</title>
+	<script id="sap-ui-bootstrap"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m">
+	</script>
+	<style>
+		#standalone-panel .sapMObjectMarker {
+			margin-right: 0.5rem;
+		}
+	</style>
+	<script>
+
+		var aData = [
+			{ id: 1, lastName: "Dente", name: "Al", type: sap.m.ObjectMarkerType.Draft},
+			{ id: 2, lastName: "Friese", name: "Andy", type: sap.m.ObjectMarkerType.Favorite},
+			{ id: 3, lastName: "Mann", name: "Anita", type: sap.m.ObjectMarkerType.Flagged},
+			{ id: 4, lastName: "Schutt", name: "Doris", type: sap.m.ObjectMarkerType.Locked},
+			{ id: 5, lastName: "Open", name: "Doris", type: sap.m.ObjectMarkerType.LockedBy},
+			{ id: 6, lastName: "Smith", name: "John", type: sap.m.ObjectMarkerType.Unsaved},
+			{ id: 7, lastName: "James", name: "Margaret", type: sap.m.ObjectMarkerType.UnsavedBy}
+		];
+		var aMarkerTypes = [
+			{type: sap.m.ObjectMarkerType.Draft},
+			{type: sap.m.ObjectMarkerType.Favorite},
+			{type: sap.m.ObjectMarkerType.Flagged},
+			{type: sap.m.ObjectMarkerType.Locked},
+			{type: sap.m.ObjectMarkerType.LockedBy},
+			{type: sap.m.ObjectMarkerType.Unsaved},
+			{type: sap.m.ObjectMarkerType.UnsavedBy}
+		];
+
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData({ exampleData: aData, markerTypes: aMarkerTypes });
+		sap.ui.getCore().setModel(oModel);
+
+		var oActiveMarkerHandler = function(oEvent) {
+			sap.m.MessageToast.show(oEvent.getParameter("type") + " marker pressed!");
+		};
+
+		var oList = new sap.m.List();
+		oList.bindItems("/exampleData", new sap.m.ObjectListItem({
+			title : "Example OLI",
+			number : "100",
+			numberUnit : "$",
+			intro : "OLI intro text",
+			icon : "sap-icon://action",
+			numberState : sap.ui.core.ValueState.Warning,
+			attributes : [
+				new sap.m.ObjectAttribute({
+					text: "First Object Attribute"
+				}),
+				new sap.m.ObjectAttribute({
+					text: "Second Object Attribute"
+				})
+			],
+			firstStatus : new sap.m.ObjectStatus({
+				text: "First Object Status",
+				state: sap.ui.core.ValueState.Success
+			}),
+			secondStatus : new sap.m.ObjectStatus({
+				text: "Second Object Status",
+				state: sap.ui.core.ValueState.Error
+			}),
+			markers: {
+				path: '/markerTypes',
+				template: new sap.m.ObjectMarker({
+					type: "{type}"
+				})
+			}
+		}));
+
+		var oActiveList = new sap.m.List();
+		oActiveList.bindItems("/exampleData", new sap.m.ObjectListItem({
+			title : "Example OLI",
+			number : "100",
+			numberUnit : "$",
+			intro : "OLI intro text",
+			icon : "sap-icon://action",
+			numberState : sap.ui.core.ValueState.Warning,
+			attributes : [
+				new sap.m.ObjectAttribute({
+					text: "First Object Attribute"
+				}),
+				new sap.m.ObjectAttribute({
+					text: "Second Object Attribute"
+				})
+			],
+			firstStatus : new sap.m.ObjectStatus({
+				text: "First Object Status",
+				state: sap.ui.core.ValueState.Success
+			}),
+			secondStatus : new sap.m.ObjectStatus({
+				text: "Second Object Status",
+				state: sap.ui.core.ValueState.Error
+			}),
+			markers: {
+				path: '/markerTypes',
+				template: new sap.m.ObjectMarker({
+					type: "{type}",
+					press: oActiveMarkerHandler
+				})
+			}
+		}));
+
+		var oTable = new sap.m.Table({
+			columns : [
+				new sap.m.Column({
+					header : new sap.m.Label({
+						text : "LastName"
+					})
+				}),
+				new sap.m.Column({
+					header : new sap.m.Label({
+						text : "FirstName"
+					})
+				}),
+				new sap.m.Column({
+					header : new sap.m.Label({
+						text : "Non-Interactive usage"
+					})
+				}),
+				new sap.m.Column({
+					header : new sap.m.Label({
+						text : "Interactive usage"
+					})
+				})
+			]
+		});
+
+		oTable.bindItems("/exampleData", new sap.m.ColumnListItem({
+			vAlign: "Middle",
+			cells : [
+				new sap.m.Text({
+					text : "{lastName}",
+					wrapping : false
+				}),
+				new sap.m.Text({
+					text : "{name}",
+					wrapping : false
+				}),
+				new sap.m.ObjectMarker({
+					type: "{type}"
+				}),
+				new sap.m.ObjectMarker({
+					type: "{type}",
+					press: oActiveMarkerHandler
+				})
+			]
+		}));
+
+		var oStandalonePanel = new sap.m.Panel("standalone-panel", {
+			headerText: "Standalone use case",
+			expandable: true,
+			expanded: false,
+			content: [
+				new sap.m.Panel({
+					headerText: "Non-interactive markers",
+					expandable: true,
+					expanded: false,
+					content: {
+						path: "/markerTypes",
+						template: new sap.m.ObjectMarker({
+							type: "{type}"
+						})
+					}
+				}),
+				new sap.m.Panel({
+					headerText: "Interactive markers",
+					expandable: true,
+					expanded: false,
+					content: {
+						path: "/markerTypes",
+						template: new sap.m.ObjectMarker({
+							type: "{type}",
+							press: oActiveMarkerHandler
+						})
+					}
+				})
+			]
+		});
+
+		var oObjectListItemPanel = new sap.m.Panel({
+			headerText: "In a ObjectListItem use case",
+			expandable: true,
+			expanded: false,
+			content: [
+				new sap.m.Panel({
+					headerText: "Non-Interactive Markers",
+					expandable: true,
+					expanded: false,
+					content: oList
+				}),
+				new sap.m.Panel({
+					headerText: "Interactive Markers",
+					expandable: true,
+					expanded: false,
+					content: oActiveList
+				})
+			]
+		});
+
+		var oTablePanel = new sap.m.Panel({
+			headerText: "In a Table use case",
+			expandable: true,
+			expanded: false,
+			content: oTable
+		});
+
+		var oPage = new sap.m.Page("page", {
+			title:"Object Marker",
+			content: [
+				oStandalonePanel,
+				oObjectListItemPanel,
+				oTablePanel
+			]
+		});
+
+		new sap.m.App({
+			initialPage: "page",
+			pages: oPage
+		}).placeAt("body");
+	</script>
+</head>
+<body id="body" class="sapUiBody" role="application">
+</body>
+</html>
