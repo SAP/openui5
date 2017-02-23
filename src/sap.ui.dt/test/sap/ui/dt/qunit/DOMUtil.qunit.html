@@ -18,6 +18,9 @@
 				content: "Nr.";
 				color: white;
 			}
+			#left-part .withBeforeElementAndAttrContent::before {
+				content: attr(data-sap-ui-icon-content);
+			}
 			.shrink {
 				transform: scale(0.1, 0.5);
 				-webkit-transform: scale(0.1, 0.5);
@@ -217,6 +220,64 @@
 			});
 
 			var hasScrollBar = sap.ui.dt.DOMUtil.hasScrollBar;
+
+			/**
+			 * Test copyComputedStyle
+			 */
+			QUnit.module("Given that some DOM element with and without styles is rendered...", {
+				beforeEach : function() {
+					this.oSrcDomElement = jQuery("<div class='child' id='first-child' " +
+						"style='background: #000; width: 200px; height: 200px;'" +
+						"></div>")
+						.appendTo("#content");
+					this.oDestDomElement = jQuery("<div class='child' id='second-child'></div>")
+						.appendTo("#content");
+
+					// jQuery("<div style='float: left; width: 50%; height: 100%;' id='left-part'></div>").appendTo("#content");
+					// jQuery("<div style='float: left; width: 50%; height: 100%;' id='right-part'></div>").appendTo("#content");
+
+					// this.oDomElement = jQuery("<div data-find='div' class='withBeforeElement' style='width:200px; height: 200px;'><span data-find='span' class='withAfterElement' style='color: rgb(255, 0, 0);'>Text</span></div>");
+					// this.oDomElement.appendTo("#left-part");
+				},
+				afterEach : function() {
+					this.oSrcDomElement.remove();
+					this.oDestDomElement.remove();
+					jQuery("#content").empty();
+				}
+			});
+
+			QUnit.test("when copyComputedStyle is called and css-attribute display is set to none", function(assert) {
+				this.oSrcDomElement.css({
+					"display": "none"
+				});
+				sap.ui.dt.DOMUtil.copyComputedStyle(this.oSrcDomElement, this.oDestDomElement);
+				var mSrcStyles = window.getComputedStyle(this.oSrcDomElement.get(0));
+				var mDestStyles = window.getComputedStyle(this.oDestDomElement.get(0));
+				assert.strictEqual(mDestStyles["display"], "none", "css-attribute display is copied to source dom element");
+				assert.notEqual(mDestStyles["background-color"], mSrcStyles["background-color"], 
+					"css-attribute background on source and dest Element are not equal");
+			});
+
+			QUnit.test("when copyComputedStyle is called without pseudoElements", function(assert) {
+				sap.ui.dt.DOMUtil.copyComputedStyle(this.oSrcDomElement, this.oDestDomElement);
+				var mSrcStyles = window.getComputedStyle(this.oSrcDomElement.get(0));
+				var mDestStyles = window.getComputedStyle(this.oDestDomElement.get(0));
+				assert.strictEqual(mDestStyles["background-color"], mSrcStyles["background-color"], 
+					"css styles of source and dest element are equal");
+			});
+
+			QUnit.test("when copyComputedStyle is called with pseudoElements", function(assert) {
+				jQuery("<div style='float: left; width: 50%; height: 100%;' id='left-part'></div>").appendTo("#content");
+				jQuery("<div style='float: left; width: 50%; height: 100%;' id='right-part'></div>").appendTo("#content");
+
+				var oDomElement = jQuery("<div data-find='div' class='withBeforeElementAndAttrContent' style='width:200px; height: 200px;'>" +
+					"<span data-find='span' class='withAfterElement' style='color: rgb(255, 0, 0);'>Text</span></div>");
+				oDomElement.appendTo("#left-part");
+
+				sap.ui.dt.DOMUtil.copyComputedStyle(oDomElement, this.oDestDomElement);
+				var oSpan = jQuery("#second-child").find("span");
+				assert.strictEqual(oSpan.length, 1, "oDestDomElement contains a span element as well as the source oDomElement");
+			});
 
 		</script>
 	</head>
