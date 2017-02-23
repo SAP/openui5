@@ -636,6 +636,52 @@
 				oCal5.destroy();
 			});
 
+			module("Focus", {
+				beforeEach: function () {
+					this.oCal = new sap.ui.unified.Calendar().placeAt("qunit-fixture");
+				},
+				afterEach: function () {
+					this.oCal.destroy();
+					this.oCal = null;
+				}
+			});
+
+			test("Adding special date should not move the focus to the calendar control", function (oAssert) {
+				// Arrange
+				var fnDone = oAssert.async(), // Async test
+					oSpecialDate = new sap.ui.unified.DateTypeRange({
+						type: sap.ui.unified.CalendarDayType.Type01,
+						startDate: new Date(2017, 1, 20)
+					}),
+					oHTMLButton = new sap.ui.core.HTML("persist_focus_target", {
+						content: "<button>Btn</button>"
+					}).placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+
+				// Act - focus the control and add a special date to the month
+				oHTMLButton.focus();
+				this.oCal.addSpecialDate(oSpecialDate);
+
+				// Assert
+				setTimeout(function () {
+					var $Focus = jQuery(document.activeElement);
+
+					if($Focus.length === 0) {
+						oAssert.ok(false, "The focus should be on the browser tab on which this " +
+							"qUnit is executed. If not the test will fail!");
+						fnDone(); // Complete async test
+						return;
+					}
+
+					oAssert.strictEqual($Focus.attr("id"), oHTMLButton.getId(),
+						"Focus should remain on the button");
+
+					fnDone();
+				}, 0);
+
+			});
+
 		</script>
 
 	</head>
