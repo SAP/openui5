@@ -83,7 +83,7 @@ sap.ui.require([
     }, "Given two registered steps, can match one of them");
   });
 
-  QUnit.test("Given two identical steps, then throws error", function() {
+  QUnit.test("When two step definitions are identical, then throws error", function() {
 
     var regex = /^hello world$/i;
     this.stepDefs.register(regex, function() {});
@@ -94,6 +94,20 @@ sap.ui.require([
         return error.message === "StepDefinitions.register: Duplicate step definition '/^hello world$/i'";
       },
       "Duplicate step definition throws an error"
+    );
+  });
+
+  QUnit.test("When two step definitions are ambiguous, then throws error", function() {
+
+    this.stepDefs.register(/^hello world$/i, function() {});
+    this.stepDefs.register(/.*/, function() {});
+
+    throws( function() {
+        this.stepDefs._generateTestStep({text: "Hello World", keyword: "Given" });
+      }, function(error) {
+        return error.message === "Ambiguous step definition error: 2 step definitions '/^hello world$/i' and '/.*/' match the feature file step 'Hello World'";
+      },
+      "Ambiguous step definitions throws an error"
     );
   });
 
