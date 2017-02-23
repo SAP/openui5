@@ -2363,7 +2363,13 @@ sap.ui.define([
 		});
 		$BlockRef.css({
 			"z-index" : this._iZIndex - 2,
-			"visibility" : "visible"
+			"visibility" : "visible",
+			// the top, bottom, left, and right are calculated base on the
+			// window scroll position
+			"top": window.scrollY + "px",
+			"bottom": -1 * window.scrollY + "px",
+			"left": window.scrollX + "px",
+			"right": -1 * window.scrollX + "px"
 		}).show();
 
 		// prevent HTML page from scrolling

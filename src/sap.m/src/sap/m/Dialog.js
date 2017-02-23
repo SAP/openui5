@@ -361,12 +361,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					oPosition.at.left = that._oManuallySetPosition.x;
 					oPosition.at.top = that._oManuallySetPosition.y;
 				} else {
-					oPosition.at.top = '50%';
+					// the top and left position need to be calculated with the
+					// window scroll position
+					oPosition.at.top = 'calc(50% + ' + window.scrollY + 'px)';
 
 					if (that._bRTL) {
 						oPosition.at.left = 'auto'; // RTL mode adds right 50% so we have to remove left 50%
 					} else {
-						oPosition.at.left = '50%';
+						oPosition.at.left = 'calc(50% + ' + window.scrollX + 'px)';
 					}
 				}
 
