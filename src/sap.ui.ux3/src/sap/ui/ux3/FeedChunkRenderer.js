@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write('<img id=' + sMyId + '-thumb');
 		var sThumbnail = oChunk.getThumbnailSrc();
 		if (!sThumbnail) {
-			sThumbnail = sap.ui.core.theming.Parameters._getThemeImage('sapUiFeedPersonPlaceholder');
+			sThumbnail = sap.ui.core.theming.Parameters._getThemeImage('_sap_ui_ux3_FeedChunk_PersonPlaceholder');
 		}
 		rm.writeAttributeEscaped('src', sThumbnail);
 		rm.writeAttributeEscaped('alt', oChunk.getSender());
