@@ -251,7 +251,7 @@ sap.ui.define([
 
 		this.mCacheByContext = undefined;
 		this.oCachePromise = this.makeCache(this.oContext);
-		this.reset(sChangeReason);
+		this.reset(sChangeReason, true);
 	};
 
 	/**
@@ -883,7 +883,7 @@ sap.ui.define([
 		}
 		this.mCacheByContext = undefined;
 		this.oCachePromise = this.makeCache(this.oContext);
-		this.reset(ChangeReason.Filter);
+		this.reset(ChangeReason.Filter, true);
 
 		return this;
 	};
@@ -1144,13 +1144,14 @@ sap.ui.define([
 	 * The <code>$count</code> is unknown, if the binding is relative, but has no context.
 	 *
 	 * @returns {sap.ui.model.odata.v4.Context}
-	 *   The header context
+	 *   The header context or <code>null</code> if the binding is relative and has no context
 	 *
 	 * @public
 	 * @since 1.45.0
 	 */
 	ODataListBinding.prototype.getHeaderContext = function () {
-		return this.oHeaderContext;
+		// Since we never throw the header context away, we may deliver it only when valid
+		return (this.bRelative && !this.oContext) ? null : this.oHeaderContext;
 	};
 
 	/**
@@ -1344,10 +1345,13 @@ sap.ui.define([
 	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
 	 *   A change reason; if given, a refresh event with this reason is fired and the next
 	 *   getContexts() fires a change event with this reason.
+	 * @param {boolean} [bUpdateHeaderContext]
+	 *   If <code>true</code>, all bindings dependent to the header context are requested to check
+	 *   for updates.
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.reset = function (sChangeReason) {
+	ODataListBinding.prototype.reset = function (sChangeReason, bUpdateHeaderContext) {
 		var that = this;
 
 		if (this.aContexts) {
@@ -1369,6 +1373,12 @@ sap.ui.define([
 			this.sChangeReason = sChangeReason;
 			this._fireRefresh({reason : sChangeReason});
 		}
+		// Update after the refresh event, otherwise $count is fetched before the request
+		if (bUpdateHeaderContext && this.getHeaderContext()) {
+			this.oModel.getDependentBindings(this.oHeaderContext).forEach(function (oBinding) {
+				oBinding.checkUpdate();
+			});
+		}
 	};
 
 	/**
@@ -1382,17 +1392,24 @@ sap.ui.define([
 	 */
 	// @override
 	ODataListBinding.prototype.setContext = function (oContext) {
+		var sResolvedPath;
+
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
+				// Keep the header context even if we lose the parent context, so that the header
+				// context remains unchanged if the parent context is temporarily dropped during a
+				// refresh.
 				this.reset();
-				if (this.oHeaderContext) {
-					this.oHeaderContext.destroy();
-					this.oHeaderContext = null;
-				}
 				this.oCachePromise = this.makeCache(oContext);
 				if (oContext) {
-					this.oHeaderContext = Context.create(this.oModel, this,
-						this.oModel.resolve(this.sPath, oContext));
+					sResolvedPath = this.oModel.resolve(this.sPath, oContext);
+					if (this.oHeaderContext && this.oHeaderContext.getPath() !== sResolvedPath) {
+						this.oHeaderContext.destroy();
+						this.oHeaderContext = null;
+					}
+					if (!this.oHeaderContext) {
+						this.oHeaderContext = Context.create(this.oModel, this, sResolvedPath);
+					}
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);
@@ -1441,7 +1458,7 @@ sap.ui.define([
 		this.aSorters = _Helper.toArray(vSorters);
 		this.mCacheByContext = undefined;
 		this.oCachePromise = this.makeCache(this.oContext);
-		this.reset(ChangeReason.Sort);
+		this.reset(ChangeReason.Sort, true);
 		return this;
 	};
 
