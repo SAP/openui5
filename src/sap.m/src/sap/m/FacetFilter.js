@@ -1494,6 +1494,10 @@ oPopover.setContentWidth("30%");
 			items: aFacetFilterLists
 		});
 
+		if (aFacetFilterLists.length > 100) {
+			oModel.setSizeLimit(aFacetFilterLists.length);
+		}
+
 		// Set up FacetFilterList press handler on each list item
 		// every time they are created (such as after facet list filtering).
 		var that = this;
