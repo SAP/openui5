@@ -78,7 +78,161 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache.addByPath", function (assert) {
+	[true, false].forEach(function (bCount) {
+		[200, 404, 500].forEach(function (iStatus) {
+			QUnit.test("_Cache#_delete: from collection, status: " + iStatus + ", bCount: "
+					+ bCount, function (assert) {
+				var sEtag = 'W/"19770724000000.0000000"',
+					aCacheData = [{
+						"@odata.etag" : "before"
+					}, {
+						"@odata.etag" : sEtag
+					}, {
+						"@odata.etag" : "after"
+					}],
+					fnCallback = sinon.spy(),
+					oError = new Error(""),
+					oPromise,
+					oRequestor = _Requestor.create("/~/"),
+					oCache = new _Cache(oRequestor, "EMPLOYEES('42')", {foo : "bar"});
+
+				aCacheData.$count = bCount ? 3 : undefined;
+				oCache.fetchValue = function () {};
+				// no need for different tests for top level or nested collections because
+				// fetchValue takes care to deliver corresponding elements
+				this.mock(oCache).expects("fetchValue")
+					.withExactArgs("groupId", "EMPLOYEE_2_EQUIPMENTS")
+					.returns(_SyncPromise.resolve(aCacheData));
+
+				this.spy(_Helper, "updateCache");
+				oError.status = iStatus;
+				this.mock(oRequestor).expects("request")
+					.withExactArgs("DELETE", "Equipments('1')?foo=bar", "groupId",
+						{"If-Match" : sEtag})
+					.returns(iStatus === 200 ? Promise.resolve({}) : Promise.reject(oError));
+
+				// code under test
+				oPromise = oCache._delete("groupId", "Equipments('1')", "EMPLOYEE_2_EQUIPMENTS/1",
+						fnCallback)
+					.then(function (oResult) {
+						assert.ok(iStatus !== 500, "unexpected success");
+						assert.strictEqual(oResult, undefined);
+						assert.strictEqual(aCacheData.$count, bCount ? 2 : undefined);
+						if (bCount) {
+							sinon.assert.calledWithExactly(_Helper.updateCache,
+								sinon.match.same(oCache.mChangeListeners), "EMPLOYEE_2_EQUIPMENTS",
+								sinon.match.same(aCacheData), {$count : 2});
+						} else {
+							sinon.assert.notCalled(_Helper.updateCache);
+						}
+						assert.deepEqual(aCacheData, [{
+							"@odata.etag" : "before"
+						}, {
+							"@odata.etag" : "after"
+						}]);
+						sinon.assert.calledOnce(fnCallback);
+						sinon.assert.calledWithExactly(fnCallback, 1);
+					}, function (oError0) {
+						assert.ok(iStatus === 500, JSON.stringify(oError0));
+						assert.strictEqual(aCacheData.$count, bCount ? 3 : undefined);
+						assert.strictEqual(oError0, oError);
+						assert.strictEqual(aCacheData[1]["@odata.etag"], sEtag);
+						assert.notOk("$ui5.deleting" in aCacheData[1]);
+						sinon.assert.notCalled(fnCallback);
+					});
+
+				assert.strictEqual(aCacheData[1]["$ui5.deleting"], true);
+
+				return oPromise;
+			});
+		});
+	});
+	//TODO adjust paths in mPatchRequests?
+	//TODO trigger update in case of isConcurrentModification?!
+	//TODO do it anyway? what and when to return, result of remove vs. re-read?
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#_delete: from collection, must not delete twice", function (assert) {
+		var oCache = new _Cache({/* requestor not relevant*/}, "EMPLOYEES"),
+			aCacheData = [{"$ui5.deleting" : true}];
+
+		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs("groupId", "1/EMPLOYEE_2_EQUIPMENTS")
+			.returns(_SyncPromise.resolve(aCacheData));
+
+		// code under test
+		oCache._delete("groupId", "Equipments('0')", "1/EMPLOYEE_2_EQUIPMENTS/0").then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.message, "Must not delete twice: Equipments('0')");
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#_delete: from collection, parallel delete", function (assert) {
+		var aCacheData = [],
+			fnCallback = sinon.spy(),
+			oRequestor = _Requestor.create("/~/"),
+			oCache = new _Cache(oRequestor, "EMPLOYEES"),
+			oSuccessor = {};
+
+		aCacheData[42] = {};
+		aCacheData[43] = oSuccessor;
+		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs("groupId", "")
+			.returns(_SyncPromise.resolve(aCacheData));
+
+		this.stub(oRequestor, "request", function () {
+			// simulate another delete while this one is waiting for its promise
+			aCacheData.splice(0, 1);
+			return Promise.resolve();
+		});
+
+		// code under test
+		return oCache._delete("groupId", "EMPLOYEES('42')", "42", fnCallback)
+			.then(function () {
+				assert.strictEqual(aCacheData[41], oSuccessor);
+				sinon.assert.calledWith(fnCallback, 41);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#_delete: nested entity", function (assert) {
+		var sEtag = 'W/"19770724000000.0000000"',
+			oCacheData = {
+				"EMPLOYEE_2_TEAM" : {
+					"@odata.etag" : sEtag
+				}
+			},
+			fnCallback = sinon.spy(),
+			oRequestor = _Requestor.create("/~/"),
+			oCache = new _Cache(oRequestor, "EMPLOYEES('42')",
+				{$expand : {EMPLOYEE_2_TEAM : true}});
+
+		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs("groupId", "")
+			.returns(_SyncPromise.resolve(oCacheData));
+		this.mock(oRequestor).expects("request")
+			.withExactArgs("DELETE", "TEAMS('23')", "groupId", {"If-Match" : sEtag})
+			.returns(Promise.resolve({}));
+
+		// code under test
+		return oCache._delete("groupId", "TEAMS('23')", "EMPLOYEE_2_TEAM", fnCallback)
+			.then(function (oResult) {
+				assert.strictEqual(oResult, undefined);
+				assert.deepEqual(oCacheData, {
+					"EMPLOYEE_2_TEAM" : null
+				});
+				sinon.assert.calledOnce(fnCallback);
+				sinon.assert.calledWithExactly(fnCallback);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#addByPath", function (assert) {
 		var oCache = new _Cache(),
 			mMap = {};
 
@@ -99,7 +253,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache.removeByPath", function (assert) {
+	QUnit.test("_Cache#removeByPath", function (assert) {
 		var oCache = new _Cache(),
 			mMap = {"path1": ["item1", "item2"]};
 
@@ -117,7 +271,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache.registerChange", function (assert) {
+	QUnit.test("_Cache#registerChange", function (assert) {
 		var oCache = new _Cache();
 
 		this.mock(oCache).expects("addByPath")
@@ -127,7 +281,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache.deregisterChange", function (assert) {
+	QUnit.test("_Cache#deregisterChange", function (assert) {
 		var oCache = new _Cache();
 
 		this.mock(oCache).expects("removeByPath")
@@ -137,7 +291,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache.hasPendingChangesForPath", function (assert) {
+	QUnit.test("_Cache#hasPendingChangesForPath", function (assert) {
 		var oCache = new _Cache();
 
 		oCache.mPatchRequests["foo/bar/baz"] = [{}];
@@ -155,7 +309,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache.resetChangesForPath", function (assert) {
+	QUnit.test("_Cache#resetChangesForPath", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = new _Cache(oRequestor),
 			oCall1,
@@ -222,7 +376,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache.drillDown", function (assert) {
+	QUnit.test("_Cache#drillDown", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = new _Cache(oRequestor),
 			oData = [{
@@ -279,7 +433,8 @@ sap.ui.require([
 		{index : 4, length : 5, result : [], count : 4},
 		{index : 1, length : 5, result : [{key : "b"}, {key : "c"}], count : 3}
 	].forEach(function (oFixture) {
-		QUnit.test("read(" + oFixture.index + ", " + oFixture.length + ")", function (assert) {
+		QUnit.test("CollectionCache#read(" + oFixture.index + ", " + oFixture.length + ")",
+				function (assert) {
 			var oRequestor = _Requestor.create("/~/"),
 				sResourcePath = "Employees",
 				oCache = _Cache.create(oRequestor, sResourcePath),
@@ -323,7 +478,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_CollectionCache#fetchValue", function (assert) {
+	QUnit.test("CollectionCache#fetchValue", function (assert) {
 		var oCache = _Cache.create(),
 			oCacheMock = this.mock(oCache),
 			fnDataRequested = {},
@@ -356,7 +511,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read(-1, 1) w/o create", function (assert) {
+	QUnit.test("CollectionCache#read(-1, 1) w/o create", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees",
 			oCache = _Cache.create(oRequestor, sResourcePath);
@@ -377,7 +532,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read(1, -1)", function (assert) {
+	QUnit.test("CollectionCache#read(1, -1)", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees",
 			oCache = _Cache.create(oRequestor, sResourcePath);
@@ -434,7 +589,8 @@ sap.ui.require([
 		reads : [{index : 2, length : 5}, {index : 0, length : 2}, {index : 1, length : 2}],
 		expectedRequests : [{skip : 2, top : 5}, {skip : 0, top : 2}]
 	}].forEach(function (oFixture) {
-		QUnit.test("multiple read, " + oFixture.title + " (sequentially)", function (assert) {
+		QUnit.test("CollectionCache: multiple read, " + oFixture.title + " (sequentially)",
+				function (assert) {
 			var fnDataRequested = sinon.spy(),
 				oRequestor = _Requestor.create("/~/"),
 				sResourcePath = "Employees",
@@ -462,7 +618,8 @@ sap.ui.require([
 			});
 		});
 
-		QUnit.test("multiple read, " + oFixture.title + " (parallel)", function (assert) {
+		QUnit.test("CollectionCache: multiple read, " + oFixture.title + " (parallel)",
+				function (assert) {
 			var fnDataRequested = sinon.spy(),
 				oRequestor = _Requestor.create("/~/"),
 				sResourcePath = "Employees",
@@ -492,7 +649,7 @@ sap.ui.require([
 	// if iResultLength > 0 or if no result was found just after a "last known good"
 
 	//*********************************************************************************************
-	QUnit.test("parallel reads beyond length", function (assert) {
+	QUnit.test("CollectionCache: parallel reads beyond length", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees",
 			oCache = _Cache.create(oRequestor, sResourcePath),
@@ -520,7 +677,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read: $count & create", function (assert) {
+	QUnit.test("CollectionCache#read: $count & create", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees",
 			oCache = _Cache.create(oRequestor, sResourcePath),
@@ -543,7 +700,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read: $count & delete, top level", function (assert) {
+	QUnit.test("CollectionCache#read: $count & delete, top level", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees",
 			oCache = _Cache.create(oRequestor, sResourcePath),
@@ -570,7 +727,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read: $count & delete, nested", function (assert) {
+	QUnit.test("CollectionCache#read: $count & delete, nested", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees",
 			oCache = _Cache.create(oRequestor, sResourcePath),
@@ -601,7 +758,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("$count before read is finished", function (assert) {
+	QUnit.test("CollectionCache: fetch $count before read is finished", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees",
 			oCache = _Cache.create(oRequestor, sResourcePath),
@@ -625,7 +782,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("convertQueryOptions", function (assert) {
+	QUnit.test("_Cache.convertQueryOptions", function (assert) {
 		var oCacheMock = this.mock(_Cache),
 			oExpand = {};
 
@@ -687,7 +844,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("convertExpandOptions", function (assert) {
+	QUnit.test("_Cache.convertExpandOptions", function (assert) {
 		var oCacheMock = this.mock(_Cache),
 			oExpand = {};
 
@@ -703,7 +860,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("convertExpand", function (assert) {
+	QUnit.test("_Cache.convertExpand", function (assert) {
 		var oOptions = {};
 
 		["Address", null].forEach(function (vValue) {
@@ -723,7 +880,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("buildQueryString", function (assert) {
+	QUnit.test("_Cache.buildQueryString", function (assert) {
 		var oCacheMock = this.mock(_Cache),
 			oConvertedQueryParams = {},
 			oQueryParams = {};
@@ -742,7 +899,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("buildQueryString examples", function (assert) {
+	QUnit.test("_Cache.buildQueryString examples", function (assert) {
 		[{
 			o : {foo : ["bar", "€"], $select : "IDÖ"},
 			s : "foo=bar&foo=%E2%82%AC&$select=ID%C3%96"
@@ -797,7 +954,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("query params", function (assert) {
+	QUnit.test("CollectionCache: query params", function (assert) {
 		var oCache,
 			mQueryParams = {},
 			sQueryParams = "?query",
@@ -822,7 +979,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("error handling", function (assert) {
+	QUnit.test("CollectionCache: error handling", function (assert) {
 		var oError = {},
 			oRequestor = _Requestor.create("/~/"),
 			oSuccess = createResult(0, 5),
@@ -849,153 +1006,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[200, 404, 500].forEach(function (iStatus) {
-		QUnit.test("CollectionCache#_delete: root entity, status: " + iStatus, function (assert) {
-			var sEtag = 'W/"19770724000000.0000000"',
-				oRequestor = _Requestor.create("/~/"),
-				oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
-				iLength = iStatus === 404 ? 3 : 4,
-				oRequestorMock = this.mock(oRequestor);
-
-			oRequestorMock.expects("request")
-				.withExactArgs("GET", "Employees?foo=bar&$skip=0&$top=" + iLength, "groupId",
-					undefined, undefined, undefined)
-				.returns(Promise.resolve({
-					value : [{
-						"@odata.etag" : "before"
-					}, {
-						"@odata.etag" : sEtag
-					}, {
-						"@odata.etag" : "after"
-					}]
-				}));
-
-			return oCache.read(0, iLength, "groupId").then(function () {
-				var fnCallback = sinon.spy(),
-					oError = new Error(""),
-					oPromise;
-
-				oError.status = iStatus;
-				oRequestorMock.expects("request")
-					.withExactArgs("DELETE", "Employees('1')?foo=bar", "groupId",
-						{"If-Match" : sEtag})
-					.returns(iStatus === 200 ? Promise.resolve({}) : Promise.reject(oError));
-
-				// code under test
-				oPromise = oCache._delete("groupId", "Employees('1')", "1", fnCallback)
-					.then(function (oResult) {
-						assert.ok(iStatus !== 500, "unexpected success");
-						assert.strictEqual(oResult, undefined);
-						assert.strictEqual(oCache.aElements.$count, iLength === 4 ? 2 : undefined);
-						assert.deepEqual(oCache.aElements, [{
-							"@odata.etag" : "before"
-						}, {
-							"@odata.etag" : "after"
-						}]);
-						sinon.assert.calledOnce(fnCallback);
-						sinon.assert.calledWithExactly(fnCallback, 1);
-					}, function (oError0) {
-						assert.ok(iStatus === 500, JSON.stringify(oError0));
-						assert.strictEqual(oError0, oError);
-						assert.strictEqual(oCache.aElements[1]["@odata.etag"], sEtag);
-						assert.notOk("$ui5.deleting" in oCache.aElements[1]);
-						sinon.assert.notCalled(fnCallback);
-					});
-
-				assert.strictEqual(oCache.aElements[1]["$ui5.deleting"], true);
-
-				return oPromise;
-			});
-		});
-	});
-	// TODO adjust paths in mPatchRequests?
-
-	//*********************************************************************************************
-	QUnit.test("CollectionCache#_delete: Must not delete twice", function (assert) {
-		var oCache = _Cache.create(null, "Employees");
-
-		oCache.aElements = [{"$ui5.deleting" : true}];
-
-		// code under test
-		oCache._delete("groupId", "Employees('0')", "0").then(function () {
-				assert.ok(false);
-			}, function (oError) {
-				assert.strictEqual(oError.message, "Must not delete twice: Employees('0')");
-			});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("CollectionCache#_delete: nested list", function (assert) {
-		var sEtag = 'W/"19770724000000.0000000"',
-			oRequestor = _Requestor.create("/~/"),
-			oCache = _Cache.create(oRequestor, "Employees", {$expand : {Equipments : true}}),
-			oRequestorMock = this.mock(oRequestor);
-
-		oRequestorMock.expects("request")
-			.withExactArgs("GET", "Employees?$expand=Equipments&$skip=0&$top=1", "groupId",
-				undefined, undefined, undefined)
-			.returns(Promise.resolve({
-				value : [{
-					"Equipments" : [{
-							"@odata.etag" : "before"
-						}, {
-							"@odata.etag" : sEtag
-						}, {
-							"@odata.etag" : "after"
-					}]
-				}]
-			}));
-
-		return oCache.read(0, 1, "groupId").then(function () {
-			var fnCallback = sinon.spy();
-
-			oRequestorMock.expects("request")
-				.withExactArgs("DELETE", "Equipments('1')", "groupId", {"If-Match" : sEtag})
-				.returns(Promise.resolve({/*must be ignored*/}));
-
-			// code under test
-			return oCache._delete("groupId", "Equipments('1')", "0/Equipments/1", fnCallback)
-				.then(function (oResult) {
-					assert.strictEqual(oResult, undefined);
-					assert.deepEqual(oCache.aElements, [{
-						"Equipments" : [{
-								"@odata.etag" : "before"
-							}, {
-								"@odata.etag" : "after"
-						}]
-					}]);
-					sinon.assert.calledOnce(fnCallback);
-					sinon.assert.calledWithExactly(fnCallback, 1);
-				});
-		});
-	});
-	//TODO trigger update in case of isConcurrentModification?!
-	//TODO do it anyway? what and when to return, result of remove vs. re-read?
-
-	//*********************************************************************************************
-	QUnit.test("_delete: parallel delete", function (assert) {
-		var fnCallback = sinon.spy(),
-			oRequestor = _Requestor.create("/~/"),
-			oCache = _Cache.create(oRequestor, "Employees", {$expand : {Equipments : true}}),
-			oSuccessor = {};
-
-		oCache.aElements[42] = {};
-		oCache.aElements[43] = oSuccessor;
-		this.stub(oRequestor, "request", function () {
-			// simulate another delete while this one is waiting for its promise
-			oCache.aElements.splice(0, 1);
-			return Promise.resolve();
-		});
-
-		// code under test
-		return oCache._delete("groupId", "Equipments('42')", "42", fnCallback).then(function () {
-			assert.strictEqual(oCache.aElements[41], oSuccessor);
-			sinon.assert.calledWith(fnCallback, 41);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("create entity and has pending changes", function (assert) {
+	QUnit.test("CollectionCache: create entity and has pending changes", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
 			oEntityData = {name : "John Doe"},
@@ -1062,7 +1073,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("pending create forces update/_delete to fail", function (assert) {
+	QUnit.test("CollectionCache: pending create forces update/_delete to fail", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees"),
 			oCreatePromise,
@@ -1156,7 +1167,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	["$direct", "$auto"].forEach(function (sUpdateGroupId) {
-		QUnit.test("create: relocate on failed POST for " + sUpdateGroupId, function (assert) {
+		QUnit.test("CollectionCache#create: relocate on failed POST for " + sUpdateGroupId,
+				function (assert) {
 			var oRequestor = _Requestor.create("/~/"),
 				oCache = _Cache.create(oRequestor, "Employees"),
 				oFailedPostPromise = Promise.reject(new Error()),
@@ -1202,7 +1214,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("create entity without initial data", function (assert) {
+	QUnit.test("CollectionCache: create entity without initial data", function (assert) {
 		var oCache = _Cache.create(_Requestor.create("/~/"), "Employees");
 
 		// code under test
@@ -1215,7 +1227,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("create entity, canceled", function (assert) {
+	QUnit.test("CollectionCache: create entity, canceled", function (assert) {
 		var bFnCancelCallbackCalled = false,
 			oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
@@ -1243,7 +1255,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read w/ transient context", function (assert) {
+	QUnit.test("CollectionCache: read w/ transient context", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
 			oEntityData = {name : "John Doe"},
@@ -1280,7 +1292,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("delete transient", function (assert) {
+	QUnit.test("CollectionCache: create and delete transient entry", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees"),
 			fnCancelCallback = sinon.spy(),
@@ -1319,7 +1331,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("delete created entity", function (assert) {
+	QUnit.test("CollectionCache: delete created entity", function (assert) {
 		var oCreatedPromise,
 			fnCallback = sinon.spy(),
 			oEntity = {EmployeeId: "4711", "@odata.etag" : "anyEtag"},
@@ -1354,7 +1366,7 @@ sap.ui.require([
 	//if (vDeleteProperty === -1) { // TODO might be string, might be result of failed indexOf
 
 	//**********************************************W***********************************************
-	QUnit.test("_SingleCache: fetchValue", function (assert) {
+	QUnit.test("SingleCache#fetchValue", function (assert) {
 		var oCache,
 			oCacheMock,
 			fnDataRequested1 = {},
@@ -1405,7 +1417,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("update", function (assert) {
+	QUnit.test("CollectionCache#update", function (assert) {
 		var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
 			sETag = 'W/"19700101000000.0000000"',
 			fnResolve,
@@ -1557,7 +1569,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bCancel) {
-		QUnit.test("update rejected: canceled=" + bCancel, function (assert) {
+		QUnit.test("CollectionCache: update rejected: canceled=" + bCancel, function (assert) {
 			var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
 				sETag = 'W/"19700101000000.0000000"',
 				fnReject,
@@ -1630,7 +1642,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("update: mPatchRequests", function (assert) {
+	QUnit.test("CollectionCache#update: mPatchRequests", function (assert) {
 		var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
 			oError = new Error(),
 			sETag = 'W/"19700101000000.0000000"',
@@ -1690,7 +1702,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("update, hasPendingChangesForPath and resetChangesForPath", function (assert) {
+	QUnit.test("CollectionCache#update, hasPendingChangesForPath and resetChangesForPath",
+			function (assert) {
 		var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
 			oError = new Error(),
 			sETag = 'W/"19700101000000.0000000"',
@@ -1764,7 +1777,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("update: invalid path", function (assert) {
+	QUnit.test("CollectionCache#update: invalid path", function (assert) {
 		var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
 			oReadResult = {
 				value : [{}]
@@ -1791,7 +1804,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache: resetChangesForPath - POST requests", function (assert) {
+	QUnit.test("CollectionCache#resetChangesForPath: POST requests", function (assert) {
 		var oEntity = {"@$ui5.transient" : "groupId"},
 			oRequestor = _Requestor.create("/"),
 			oCache = _Cache.create(oRequestor, "/SalesOrderList"),
@@ -1904,7 +1917,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
-		QUnit.test("read single employee (real OData)", function (assert) {
+		QUnit.test("SingleCache: read employee (real OData)", function (assert) {
 			var oExpectedResult = {
 					"@odata.context" : "$metadata#TEAMS/$entity",
 					"Team_Id" : "TEAM_01",
@@ -1926,7 +1939,7 @@ sap.ui.require([
 	}
 
 	//*********************************************************************************************
-	QUnit.test("_Cache.toString", function (assert) {
+	QUnit.test("_Cache#toString", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			mQueryParams = {$select : "ID"},
 			sResourcePath = "Employees",
@@ -1967,7 +1980,7 @@ sap.ui.require([
 		sSideEffectPath : "SO_2_SOITEM/0/SideEffect",
 		sUpdatePath : "SO_2_SOITEM/0"
 	}].forEach(function (o) {
-		QUnit.test("SingleCache.update: " + o.sResourcePath, function (assert) {
+		QUnit.test("SingleCache#update: " + o.sResourcePath, function (assert) {
 			var fnResolve,
 				oPatchPromise = new Promise(function (resolve, reject) {
 					fnResolve = resolve;
@@ -2061,7 +2074,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("SingleCache.update: property in complex type", function (assert) {
+	QUnit.test("SingleCache#update: property in complex type", function (assert) {
 		var sEditUrl = "BusinessPartnerList(BusinessPartnerID='0')",
 			oHelperMock = this.mock(_Helper),
 			oRequestor = _Requestor.create("/"),
@@ -2140,7 +2153,7 @@ sap.ui.require([
 		sUpdatePath : "SO_2_SOITEM/0"
 	}].forEach(function (o) {
 		[false, true].forEach(function (bCancel) {
-			QUnit.test("SingleCache.update: " + o.sResourcePath + " " + bCancel, function (assert) {
+			QUnit.test("SingleCache#update: " + o.sResourcePath + " " + bCancel, function (assert) {
 				var fnReject,
 					oPatchPromise = new Promise(function (resolve, reject) {
 						fnReject = reject;
@@ -2179,9 +2192,11 @@ sap.ui.require([
 									sinon.assert.calledWithExactly(oNameListener.onChange,
 										"MyName");
 								}
-								oCache.fetchValue(undefined, o.sUpdatePath).then(function (vResult0) {
-									assert.strictEqual(vResult0.Name, sName, "Name " + sComment);
-								});
+								oCache.fetchValue(undefined, o.sUpdatePath)
+									.then(function (vResult0) {
+										assert.strictEqual(vResult0.Name, sName,
+											"Name " + sComment);
+									});
 							});
 
 						// now it's time for the server's response
@@ -2321,7 +2336,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("SingleCache update: invalid path", function (assert) {
+	QUnit.test("SingleCache#update: invalid path", function (assert) {
 		var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
 			oReadResult = {},
 			oRequestor = _Requestor.create("/"),
@@ -2344,112 +2359,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[200, 404, 500].forEach(function (iStatus) {
-		QUnit.test("SingleCache#_delete: nested list, status: " + iStatus, function (assert) {
-			var sEtag = 'W/"19770724000000.0000000"',
-				oRequestor = _Requestor.create("/~/"),
-				oCache = _Cache.createSingle(oRequestor, "Employees('42')",
-					{$expand : {Equipments : true}}),
-				oData = {
-					"Equipments" : [{
-						"@odata.etag" : "before"
-					}, {
-						"@odata.etag" : sEtag
-					}, {
-						"@odata.etag" : "after"
-					}]
-				},
-				oRequestorMock = this.mock(oRequestor);
-
-			oRequestorMock.expects("request")
-				.withExactArgs("GET", "Employees('42')?$expand=Equipments", "groupId", undefined,
-					undefined, undefined)
-				.returns(Promise.resolve(oData));
-			this.spy(_Helper, "updateCache");
-
-			return oCache.fetchValue("groupId").then(function () {
-				var fnCallback = sinon.spy(),
-					oError = new Error(""),
-					oPromise;
-
-				oCache.mChangeListeners = {};
-				oError.status = iStatus;
-				oRequestorMock.expects("request")
-					.withExactArgs("DELETE", "Equipments('1')", "groupId", {"If-Match" : sEtag})
-					.returns(iStatus === 200 ? Promise.resolve({}) : Promise.reject(oError));
-
-				// code under test
-				oPromise = oCache._delete("groupId", "Equipments('1')", "Equipments/1", fnCallback)
-					.then(function (oDeleteResult) {
-						assert.ok(iStatus !== 500, "unexpected success");
-						assert.strictEqual(oDeleteResult, undefined);
-						assert.deepEqual(oData, {
-							"Equipments" : [{
-									"@odata.etag" : "before"
-								}, {
-									"@odata.etag" : "after"
-							}]
-						});
-						assert.strictEqual(oData.Equipments.$count, 2);
-						sinon.assert.calledOnce(fnCallback);
-						sinon.assert.calledWithExactly(fnCallback, 1);
-						sinon.assert.calledWithExactly(_Helper.updateCache,
-							sinon.match.same(oCache.mChangeListeners), "Equipments",
-							sinon.match.same(oData.Equipments), {$count : 2});
-					}, function (oError0) {
-						assert.ok(iStatus === 500, JSON.stringify(oError0));
-						assert.strictEqual(oError0, oError);
-						assert.strictEqual(oData.Equipments[1]["@odata.etag"], sEtag);
-						assert.notOk("$ui5.deleting" in oData.Equipments[1]);
-						sinon.assert.notCalled(fnCallback);
-					});
-
-				assert.strictEqual(oData.Equipments[1]["$ui5.deleting"], true);
-
-				return oPromise;
-			});
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("SingleCache#_delete: nested entity", function (assert) {
-		var sEtag = 'W/"19770724000000.0000000"',
-			oRequestor = _Requestor.create("/~/"),
-			oCache = _Cache.createSingle(oRequestor, "Employees('42')", {$expand : {Team : true}}),
-			oData = {
-				"Team" : {
-					"@odata.etag" : sEtag
-				}
-			},
-			oRequestorMock = this.mock(oRequestor);
-
-		oRequestorMock.expects("request")
-			.withExactArgs("GET", "Employees('42')?$expand=Team", "groupId", undefined, undefined,
-				undefined)
-			.returns(Promise.resolve(oData));
-
-		return oCache.fetchValue("groupId").then(function () {
-			var fnCallback = sinon.spy();
-
-			oRequestorMock.expects("request")
-				.withExactArgs("DELETE", "Teams('23')", "groupId", {"If-Match" : sEtag})
-				.returns(Promise.resolve({}));
-
-			// code under test
-			return oCache._delete("groupId", "Teams('23')", "Team", fnCallback)
-				.then(function (oResult) {
-					assert.strictEqual(oResult, undefined);
-					assert.deepEqual(oData, {
-						"Team" : null
-					});
-					sinon.assert.calledOnce(fnCallback);
-					sinon.assert.calledWithExactly(fnCallback);
-				});
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("SingleCache#_delete: root entity", function (assert) {
+	QUnit.test("SingleCache#_delete, followed by _fetchValue: root entity", function (assert) {
 		var sEtag = 'W/"19770724000000.0000000"',
 			oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.createSingle(oRequestor, "Employees('42')"),
@@ -2485,53 +2395,8 @@ sap.ui.require([
 		});
 	});
 
-	//*********************************************************************************************
-	QUnit.test("SingleCache#_delete: parallel delete", function (assert) {
-		var fnCallback = sinon.spy(),
-			oRequestor = _Requestor.create("/~/"),
-			oCache = _Cache.createSingle(oRequestor, "Employees('42')",
-				{$expand : {Equipments: true}}),
-			aEquipments = [{
-				"@odata.etag" : "parallel delete"
-			}, {
-				"@odata.etag" : "our delete"
-			}, {
-				"@odata.etag" : "successor"
-			}];
-
-		this.mock(oCache).expects("fetchValue").withExactArgs("groupId", "Equipments")
-			.returns(_SyncPromise.resolve(aEquipments));
-		this.stub(oRequestor, "request", function () {
-			// simulate another delete while this one is waiting for its promise
-			aEquipments.splice(0, 1);
-			return Promise.resolve();
-		});
-
-		// code under test
-		return oCache._delete("groupId", "Equipments('1')", "Equipments/1", fnCallback)
-			.then(function () {
-				assert.deepEqual(aEquipments, [{"@odata.etag" : "successor"}]);
-				sinon.assert.calledWith(fnCallback, 0);
-			});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("SingleCache#_delete: Must not delete twice", function (assert) {
-		var oCache = _Cache.createSingle(null, "Employees('42')", {$expand : {Equipments: true}});
-
-		this.mock(oCache).expects("fetchValue").withExactArgs("groupId", "Equipments")
-			.returns(_SyncPromise.resolve([{"$ui5.deleting" : true}]));
-
-		// code under test
-		oCache._delete("groupId", "Equipments('0')", "Equipments/0").then(function () {
-				assert.ok(false);
-			}, function (oError) {
-				assert.strictEqual(oError.message, "Must not delete twice: Equipments('0')");
-			});
-	});
-
 	//**********************************************W***********************************************
-	QUnit.test("PropertyCache: fetchValue", function (assert) {
+	QUnit.test("PropertyCache#fetchValue", function (assert) {
 		var oCache,
 			oCacheMock,
 			fnDataRequested1 = {},
@@ -2575,8 +2440,18 @@ sap.ui.require([
 		]);
 	});
 
+	//**********************************************W***********************************************
+	QUnit.test("PropertyCache#_delete", function (assert) {
+		var oCache = _Cache.createProperty({/*requestor*/}, "foo");
+
+		// code under test
+		assert.throws(function () {
+			oCache._delete();
+		}, new Error("Unsupported"));
+	});
+
 	//*********************************************************************************************
-	QUnit.test("computeCount", function(assert) {
+	QUnit.test("_Cache.computeCount", function(assert) {
 		var oResult = {
 				"foo" : "bar",
 				"list" : [{}, {}, {
@@ -2609,7 +2484,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache.read uses computeCount", function(assert) {
+	QUnit.test("CollectionCache#read uses computeCount", function(assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees",
 			oCache = _Cache.create(oRequestor, sResourcePath),
