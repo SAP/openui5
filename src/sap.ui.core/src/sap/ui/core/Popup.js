@@ -2347,7 +2347,9 @@ sap.ui.define([
 	 */
 	Popup.prototype._showBlockLayer = function() {
 		var $BlockRef = jQuery("#sap-ui-blocklayer-popup"),
-			sClassName = "sapUiBLy" + (this._sModalCSSClass ? " " + this._sModalCSSClass : "");
+			sClassName = "sapUiBLy" + (this._sModalCSSClass ? " " + this._sModalCSSClass : ""),
+			iWindowScrollX = window.scrollX === undefined ? window.pageXOffset : window.scrollX,
+			iWindowScrollY = window.scrollY === undefined ? window.pageYOffset : window.scrollY;
 
 		if ($BlockRef.length === 0) {
 			$BlockRef = jQuery('<div id="sap-ui-blocklayer-popup" tabindex="0" class="' + sClassName + '"></div>');
@@ -2366,10 +2368,10 @@ sap.ui.define([
 			"visibility" : "visible",
 			// the top, bottom, left, and right are calculated base on the
 			// window scroll position
-			"top": window.scrollY + "px",
-			"bottom": -1 * window.scrollY + "px",
-			"left": window.scrollX + "px",
-			"right": -1 * window.scrollX + "px"
+			"top": iWindowScrollY + "px",
+			"bottom": -1 * iWindowScrollY + "px",
+			"left": iWindowScrollX + "px",
+			"right": -1 * iWindowScrollX + "px"
 		}).show();
 
 		// prevent HTML page from scrolling
