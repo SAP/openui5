@@ -74,6 +74,17 @@ sap.ui.require([
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+
+			// {map<string, string[]>}
+			// this.mChanges["id"] is a list of expected changes for the property "text" of the
+			// control with ID "id"
+			this.mChanges = {};
+			// {map<string, string[][]>}
+			// this.mListChanges["id"][i] is a list of expected changes for the property "text" of
+			// the control with ID "id" in row i
+			this.mListChanges = {};
+			// A list of expected requests with the properties method, url, headers, response
+			this.aRequests = [];
 		},
 
 		afterEach : function () {
@@ -84,166 +95,225 @@ sap.ui.require([
 		},
 
 		/**
-		 * Executes the given action and checks
-		 * (1) if the requests given in "mResponseByRequest" are sent
-		 * (2) if the controls have the values given in "mValueByControl"
-		 *
-		 * @param {object} mResponseByRequest Map of response objects keyed by request path
-		 * @param {object} mValueByControl Map of expected value for a control's text
-		 *   property by control id; in case the control is created via template in a list, the
-		 *   value is an array
-		 * @param {function} fnAction The action to be executed
-		 * @returns {Promise} Promise resolving when all expected values for controls have been set
+		 * Finishes the test if no pending changes are left.
 		 */
-		check : function (mResponseByRequest, mValueByControl, fnAction) {
-			var that = this;
+		checkFinish : function () {
+			var sControlId, i;
 
-			return new Promise(function (resolve) {
-				var iFormatterCallCount = 0;
-
-				that.expectRequests(mResponseByRequest);
-
-				Object.keys(mValueByControl).forEach(function (sControlId) {
-					var vExpectedValues = mValueByControl[sControlId];
-
-					if (Array.isArray(vExpectedValues)) {
-						iFormatterCallCount += vExpectedValues.filter(function (sExpectedValue) {
-							return sExpectedValue !== undefined;
-						}).length;
-					} else if (vExpectedValues !== undefined) {
-						iFormatterCallCount += 1;
-					}
-				});
-
-				that.formatterCallCount = iFormatterCallCount;
-				that.resolve = resolve;
-
-				fnAction();
-
-				// no expected values => no formatter calls: need to resolve here
-				if (!iFormatterCallCount) {
-					resolve();
-				}
-			});
-		},
-
-		/**
-		 * Creates a a view with the given content and adds check-formatter functions to Text
-		 * controls with the given IDs. The view is attached to the given test.
-		 *
-		 * @param {object} assert The QUnit assert object
-		 * @param {string} sView View content as XML
-		 * @param {object} mValueByControl Map of expected value for a control's text
-		 *   property by control id; in case the control is created via template in a list, the
-		 *   value is an array
-		 */
-		createView : function (assert, sView, mValueByControl) {
-//			assert.ok(true, sView); // uncomment to see XML in output, e.g. in case of parse issues
-			var oView = sap.ui.xmlview({
-					viewContent : '<mvc:View xmlns="sap.m" xmlns:form="sap.ui.layout.form" '
-						+ 'xmlns:mvc="sap.ui.core.mvc">'
-						+ sView
-						+ '</mvc:View>'
-				}),
-				that = this;
-
-			Object.keys(mValueByControl).forEach(function (sControlId) {
-				var oControl = oView.byId(sControlId);
-
-				oControl.getBindingInfo("text").formatter = function (sValue) {
-					var vExpectedValues = mValueByControl[sControlId],
-						sExpectedValue = Array.isArray(vExpectedValues)
-							? vExpectedValues[this.getBindingContext().getIndex()]
-							: vExpectedValues;
-
-					assert.strictEqual(sValue, sExpectedValue, sControlId + ":" + sValue);
-					that.formatterCallCount -= 1;
-					if (that.formatterCallCount === 0) {
-						that.resolve();
-					} else if (that.formatterCallCount < 0 && !that.bSloppy) {
-						assert.ok(false, "Unexpected call to formatter for control with ID '"
-							+ sControlId + "' with value '" + sValue + "'");
-					}
-				};
-			});
-			that.oView = oView;
-		},
-
-		/**
-		 * Add expectations for the requests and responses from the given map with the given method
-		 * to the mock on this test's model.
-		 *
-		 * @param {object} mResponseByRequest
-		 *   Map of response objects keyed by request path.
-		 *   For sMethod "POST" the response object holds a map of objects with
-		 *   $requestHeaders, $requestPayload and $response keyed by request path.
-		 *   For sMethod "DELETE" the response object holds a map of objects with
-		 *   $requestHeaders keyed by request path.
-		 *   For sMethod "GET", a response object is the expected response; if the request path has
-		 *   the special value "POST" or "DELETE", it is a map of "POST/DELETE objects" as described
-		 *   above, keyed by request path.
-		 * @param {string} [sMethod="GET"] The expected request method
-		 */
-		expectRequests : function (mResponseByRequest, sMethod) {
-			var that = this;
-
-			if (!this.oRequestorMock) {
-				this.oRequestorMock = this.mock(this.oModel.oRequestor);
-				this.oRequestorMock.expects("request").never();
-			}
-
-			sMethod = sMethod || "GET";
-			Object.keys(mResponseByRequest).forEach(function (sRequest) {
-				var mHeaders,
-					oPayload,
-					oResponse = mResponseByRequest[sRequest];
-
-				if (sRequest === "POST" || sRequest === "DELETE") {
-					that.expectRequests(mResponseByRequest[sRequest], sRequest);
+			for (sControlId in this.mChanges) {
+				if (this.mChanges[sControlId].length) {
 					return;
 				}
-				mHeaders = mResponseByRequest[sRequest].$requestHeaders;
-				oPayload = mResponseByRequest[sRequest].$requestPayload;
-				oResponse = mResponseByRequest[sRequest].$response || mResponseByRequest[sRequest];
-				if (sMethod === "DELETE") {
-					that.oRequestorMock.expects("request")
-						.withArgs(sMethod, sRequest, "$direct", mHeaders)
-						.returns(Promise.resolve());
-				} else {
-					that.oRequestorMock.expects("request")
-						.withArgs(sMethod, sRequest, "$direct", mHeaders, oPayload)
-						.returns(Promise.resolve(oResponse));
+			}
+			for (sControlId in this.mListChanges) {
+				// Note: This may be a sparse array
+				for (i in this.mListChanges[sControlId]) {
+					if (this.mListChanges[sControlId][i].length) {
+						return;
+					}
 				}
-			});
+			}
+			if (this.resolve) {
+				this.resolve();
+			}
 		},
 
 		/**
-		 * Creates a view with the given content and checks
-		 * (1) if the requests given in "mResponseByRequest" are sent
-		 * (2) if the controls have the values given in "mValueByControl"
+		 * Creates the view and attaches it to the model. Checks that the expected requests (see
+		 * {@link #expectRequest} are fired and the controls got the expected changes (see
+		 * {@link #expectChange}).
 		 *
 		 * @param {object} assert The QUnit assert object
-		 * @param {string} sView View content as XML
-		 * @param {object} mResponseByRequest Map of response objects keyed by request path
-		 * @param {object} mValueByControl Map of expected value for a control's text
-		 *   property by control id; in case the control is created via template in a list, the
-		 *   value is an array
+		 * @param {string} sViewXML The view content as XML
 		 * @param {sap.ui.model.odata.v4.ODataModel} [oModel] The model; it is attached to the view
 		 *   and to the test instance.
 		 *   If no model is given, the <code>TEA_BUSI</code> model is created and used.
-		 * @param {boolean} [bSloppy] Whether the test does not check if values are only set once
-		 *   per control
-		 * @returns {Promise} A promise that is resolved when the view is created and all change
-		 *   events have been fired
+		 * @returns {Promise} A promise that is resolved when the view is created and all expected
+		 *   values for controls have been set
 		 */
-		viewStart : function (assert, sView, mResponseByRequest, mValueByControl, oModel, bSloppy) {
+		createView : function (assert, sViewXML, oModel) {
 			var that = this;
 
-			this.bSloppy = bSloppy;
+			/*
+			 * Stub function for _Requestor.request. Checks that the expected request arrived and
+			 * returns a promise for its response.
+			 */
+			function checkRequest(sMethod, sUrl, sGroupId, mHeaders, oPayload) {
+				var oActualRequest = {
+						method : sMethod,
+						url : sUrl,
+						headers : mHeaders,
+						payload : oPayload
+					},
+					oExpectedRequest = that.aRequests.shift(),
+					oResponse;
+
+				if (!oExpectedRequest) {
+					assert.ok(false, sMethod + " " + sUrl + " (unexpected)");
+				} else {
+					oResponse = oExpectedRequest.response;
+					delete oExpectedRequest.response;
+					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
+				}
+				return Promise.resolve(oResponse);
+			}
+
+			/*
+			 * Checks that the given value is the expected one for the control.
+			 */
+			function checkValue(sValue, sControlId, i) {
+				var aExpectedValues = i === undefined ? that.mChanges[sControlId]
+						: that.mListChanges[sControlId][i],
+					sVisibleId = i === undefined ? sControlId : sControlId + "[" + i + "]";
+
+				if (!aExpectedValues.length) {
+					assert.ok(false, sVisibleId + ": " + JSON.stringify(sValue) + " (unexpected)");
+				} else  {
+					assert.strictEqual(sValue, aExpectedValues.shift(),
+						sVisibleId + ": " + JSON.stringify(sValue));
+				}
+				that.checkFinish();
+			}
+
 			this.oModel = oModel || createTeaBusiModel();
-			this.createView(assert, sView, mValueByControl);
-			return this.check(mResponseByRequest, mValueByControl, function () {
-				that.oView.setModel(that.oModel);
+			this.stub(this.oModel.oRequestor, "request", checkRequest);
+			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
+			this.oView = sap.ui.xmlview({
+				viewContent : '<mvc:View xmlns="sap.m" xmlns:form="sap.ui.layout.form" '
+					+ 'xmlns:mvc="sap.ui.core.mvc">'
+					+ sViewXML
+					+ '</mvc:View>'
+			});
+			Object.keys(this.mChanges).forEach(function (sControlId) {
+				that.oView.byId(sControlId).getBindingInfo("text").formatter = function (sValue) {
+					checkValue(sValue, sControlId);
+				};
+			});
+			Object.keys(this.mListChanges).forEach(function (sControlId) {
+				that.oView.byId(sControlId).getBindingInfo("text").formatter = function (sValue) {
+					checkValue(sValue, sControlId, this.getBindingContext().getIndex());
+				};
+			});
+
+			this.oView.setModel(that.oModel);
+			return this.waitForChanges(assert);
+		},
+
+		/**
+		 * The following code (either {@link #createView} or anything before
+		 * {@link #waitForChanges}) is expected to set a value (or multiple values) at the property
+		 * "text" of the control with the given ID. <code>vValue</code> must be a list with expected
+		 * values for each row if the control is created via a template in a list.
+		 *
+		 * You must call the function before {@link #createView}, even if you do not expect a change
+		 * to the control's value initially. This is necessary because createView must attach a
+		 * formatter function to the binding info before the bindings are created in order to see
+		 * the change. If you do not expect a value initially, leave out the vValue parameter.
+		 *
+		 * Examples:
+		 * this.expectChange("foo", "bar"); // expect value "bar" for the control with id "foo"
+		 * this.expectChange("foo"); // listen to changes for the control with id "foo", but do not
+		 *                           // expect a change (in createView)
+		 * this.expectChange("foo", ["a", "b"]); // expect values for two rows of the control with
+		 *                                       // id "foo"
+		 * this.expectChange("foo", "c", 2); // expect value "c" for control with id "foo" in row 2
+		 * this.expectChange("foo", "bar").expectChange("foo", "baz"); // expect 2 changes for "foo"
+		 *
+		 * @param {string} sControlId The control ID
+		 * @param {string|string[]} [vValue] The expected value or a list of expected values
+		 * @param {number} [iRow] The row index in case that a change is expected for a single row
+		 *   of a list (in this case <code>vValue</code> must be a string)
+		 * @returns {object} The test instance for chaining
+		 */
+		expectChange : function (sControlId, vValue, iRow) {
+			var aExpectations, i;
+
+			// Ensures that oObject[vProperty] is an array and returns it
+			function array(oObject, vProperty) {
+				oObject[vProperty] = oObject[vProperty] || [];
+				return oObject[vProperty];
+			}
+
+			if (Array.isArray(vValue)) {
+				aExpectations = array(this.mListChanges, sControlId);
+				for (i = 0; i < vValue.length; i += 1) {
+					array(aExpectations, i).push(vValue[i]);
+				}
+			} else if (arguments.length === 3) {
+				// This may create a sparse array this.mListChanges[sControlId]
+				array(array(this.mListChanges, sControlId), iRow).push(vValue);
+			} else {
+				aExpectations = array(this.mChanges, sControlId);
+				if (arguments.length > 1) {
+					aExpectations.push(vValue);
+				}
+			}
+			return this;
+		},
+
+		/**
+		 * The following code (either {@link #createView} or anything before
+		 * {@link #waitForChanges}) is expected to perform the given request.
+		 *
+		 * @param {string|object} vRequest The request with the properties "method", "url" and
+		 *   "headers". A string is interpreted as URL with method "GET".
+		 * @param {object} [oResponse] The response message to be returned from the requestor.
+		 * @returns {object} The test instance for chaining
+		 */
+		expectRequest : function (vRequest, oResponse) {
+			if (typeof vRequest === "string") {
+				vRequest = {
+					method : "GET",
+					url : vRequest
+				};
+			}
+			// ensure that these properties are defined (required for deepEqual)
+			vRequest.headers = vRequest.headers || undefined;
+			vRequest.payload = vRequest.payload || undefined;
+			vRequest.response = oResponse;
+			this.aRequests.push(vRequest);
+			return this;
+		},
+
+		/**
+		 * Waits for the expected changes.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @returns {Promise} A promise that is resolved when all expected values for controls have
+		 *   been set
+		 */
+		waitForChanges : function (assert) {
+			var that = this;
+
+			return new Promise(function (resolve) {
+				that.resolve = resolve;
+				// After one second everything should have run through
+				// Resolve to have the missing requests and changes reported
+				window.setTimeout(resolve, 1000);
+				that.checkFinish();
+			}).then(function () {
+				var sControlId, i, j;
+
+				// Report missing requests
+				that.aRequests.forEach(function (oRequest) {
+					assert.ok(false, oRequest.method + " " + oRequest.url + " (not requested)");
+				});
+				// Report missing changes
+				for (sControlId in that.mChanges) {
+					for (i in that.mChanges[sControlId]) {
+						assert.ok(false, sControlId + ": " + that.mChanges[sControlId][i]
+							+ " (not set)");
+					}
+				}
+				for (sControlId in that.mListChanges) {
+					// Note: This may be a sparse array
+					for (i in that.mListChanges[sControlId]) {
+						for (j in that.mListChanges[sControlId][i]) {
+							assert.ok(false, sControlId + "[" + i + "]: "
+								+ that.mListChanges[sControlId][i][j] + " (not set)");
+						}
+					}
+				}
 			});
 		}
 	});
@@ -251,10 +321,18 @@ sap.ui.require([
 	/*
 	 * Creates a test with the given title and executes viewStart with the given parameters.
 	 */
-	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, oModel, bSloppy) {
+	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, oModel) {
+
 		QUnit.test(sTitle, function (assert) {
-			return this.viewStart(assert, sView, mResponseByRequest, mValueByControl, oModel,
-				bSloppy);
+			var sControlId, sRequest;
+
+			for (sRequest in mResponseByRequest) {
+				this.expectRequest(sRequest, mResponseByRequest[sRequest]);
+			}
+			for (sControlId in mValueByControl) {
+				this.expectChange(sControlId, mValueByControl[sControlId]);
+			}
+			return this.createView(assert, sView, oModel);
 		});
 	}
 
@@ -384,29 +462,27 @@ sap.ui.require([
 		</items>\
 	</Table>\
 </form:SimpleForm>',
-			mResponseByRequest = {
-				"TEAMS(42)?$expand=TEAM_2_EMPLOYEES($orderby=AGE;$select=Name)" : {
-					"TEAM_2_EMPLOYEES" : [
-						{"Name" : "Frederic Fall"},
-						{"Name" : "Jonathan Smith"},
-						{"Name" : "Peter Burke"}
-					]
-				}
-			},
-			mValueByControl = {"text" : ["Frederic Fall", "Jonathan Smith", "Peter Burke"]},
 			that = this;
 
-		return this.viewStart(assert, sView, mResponseByRequest, mValueByControl).then(function () {
-			mResponseByRequest = {
-				"TEAMS(42)/TEAM_2_EMPLOYEES?$orderby=AGE&$select=Name&$filter=AGE%20gt%2042&$skip=0&$top=100" :
-					{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Peter Burke"}]}
-			};
-			mValueByControl.text = [undefined/*unchanged*/, "Peter Burke"];
+		this.expectRequest("TEAMS(42)?$expand=TEAM_2_EMPLOYEES($orderby=AGE;$select=Name)", {
+				"TEAM_2_EMPLOYEES" : [
+					{"Name" : "Frederic Fall"},
+					{"Name" : "Jonathan Smith"},
+					{"Name" : "Peter Burke"}
+				]
+			})
+			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest(
+					"TEAMS(42)/TEAM_2_EMPLOYEES?$orderby=AGE&$select=Name&$filter=AGE%20gt%2042"
+						+ "&$skip=0&$top=100",
+					{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Peter Burke"}]})
+				.expectChange("text", "Peter Burke", 1);
 
-			return that.check(mResponseByRequest, mValueByControl, function () {
-				that.oView.byId("table").getBinding("items")
-					.filter(new Filter("AGE", FilterOperator.GT, 42));
-			});
+			// code under test
+			that.oView.byId("table").getBinding("items")
+				.filter(new Filter("AGE", FilterOperator.GT, 42));
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -425,58 +501,53 @@ sap.ui.require([
 <form:SimpleForm id="form" binding="{EMPLOYEE_2_MANAGER}">\
 	<Text id="id" text="{ID}" />\
 </form:SimpleForm>',
-			mResponseByRequest = {
-				"EMPLOYEES?$expand=EMPLOYEE_2_MANAGER&$skip=0&$top=100" : {
-					"value" : [
-						{"Name" : "Jonathan Smith", "EMPLOYEE_2_MANAGER" : {"ID" : "2"}},
-						{"Name" : "Frederic Fall", "EMPLOYEE_2_MANAGER" : {"ID" : "1"}}
-					]
-				}
-			},
-			mValueByControl = {"id": [], "name" : ["Jonathan Smith", "Frederic Fall"]},
 			that = this;
 
-		return this.viewStart(assert, sView, mResponseByRequest, mValueByControl).then(function () {
-			mResponseByRequest = {
-				"EMPLOYEES?$expand=EMPLOYEE_2_MANAGER&$orderby=Name&$skip=0&$top=100" : {
+		this.expectRequest("EMPLOYEES?$expand=EMPLOYEE_2_MANAGER&$skip=0&$top=100", {
+				"value" : [
+					{"Name" : "Jonathan Smith", "EMPLOYEE_2_MANAGER" : {"ID" : "2"}},
+					{"Name" : "Frederic Fall", "EMPLOYEE_2_MANAGER" : {"ID" : "1"}}
+				]
+			})
+			.expectChange("id")
+			.expectChange("name", ["Jonathan Smith", "Frederic Fall"]);
+
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest(
+				"EMPLOYEES?$expand=EMPLOYEE_2_MANAGER&$orderby=Name&$skip=0&$top=100", {
 					"value" : [
 						{"Name" : "Frederic Fall", "EMPLOYEE_2_MANAGER" : {"ID" : "1"}},
 						{"Name" : "Jonathan Smith", "EMPLOYEE_2_MANAGER" : {"ID" : "2"}}
 					]
-				}
-			};
-			mValueByControl.name = ["Frederic Fall", "Jonathan Smith"];
+				})
+				.expectChange("name", ["Frederic Fall", "Jonathan Smith"]);
 
-			return that.check(mResponseByRequest, mValueByControl, function () {
-				that.oView.byId("table").getBinding("items").sort(new Sorter("Name"));
-			});
-		})
-		.then(function () {
-			mResponseByRequest = {};
-			mValueByControl.name = []; // no change expected
-			mValueByControl.id = "2";
+			// code under test
+			that.oView.byId("table").getBinding("items").sort(new Sorter("Name"));
 
-			return that.check(mResponseByRequest, mValueByControl, function () {
-				that.oView.byId("form").setBindingContext(
-					that.oView.byId("table").getBinding("items").getCurrentContexts()[1]);
-			});
-		});
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("id", "2");
+
+			// code under test
+			that.oView.byId("form").setBindingContext(
+				that.oView.byId("table").getBinding("items").getCurrentContexts()[1]);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
 // TODO Why is formatter on property binding in form called twice for the below?
-//		.then(function () {
-//			mResponseByRequest = {};
-//			mValueByControl.id = "1";
-//
-//			return that.check(that, mResponseByRequest, mValueByControl, function () {
-//				that.oView.byId("form").setBindingContext(
-//					that.oView.byId("table").getBinding("items").getCurrentContexts()[0]);
-//			});
-//		});
+			that.expectChange("id", "1")
+				.expectChange("id", "1");
+
+			// code under test
+			that.oView.byId("form").setBindingContext(
+				that.oView.byId("table").getBinding("items").getCurrentContexts()[0]);
+
+			return that.waitForChanges(assert);
+		});
 	});
 
 	//*********************************************************************************************
-	//TODO property bindings fire *two* change events from ODPB#checkUpdate: One triggered by
-	// ODLB#createContexts, the second triggered by ODLB#refreshInternal where dependent bindings
-	// are refreshed
 	QUnit.test("Absolute ODLB refresh", function (assert) {
 		var sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
@@ -488,73 +559,77 @@ sap.ui.require([
 		</ColumnListItem>\
 	</items>\
 </Table>',
-			mResponseByRequest = {
-				"EMPLOYEES?$skip=0&$top=100" : {
-					"value" : [
-						{"Name" : "Jonathan Smith"},
-						{"Name" : "Frederic Fall"}
-					]
-				}
-			},
-			mValueByControl = {},
-//			mValueByControl = {"name" : ["Jonathan Smith", "Frederic Fall"]}, see test TODO
 			that = this;
 
-		return this.viewStart(assert, sView, mResponseByRequest, mValueByControl).then(function () {
-			mResponseByRequest = {
-				"EMPLOYEES?$skip=0&$top=100" : {
+		this.expectRequest("EMPLOYEES?$skip=0&$top=100", {
+				"value" : [
+					{"Name" : "Jonathan Smith"},
+					{"Name" : "Frederic Fall"}
+				]
+			})
+			.expectChange("name", ["Jonathan Smith", "Frederic Fall"]);
+
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest("EMPLOYEES?$skip=0&$top=100", {
 					"value" : [
 						{"Name" : "Frederic Fall"},
 						{"Name" : "Peter Burke"}
 					]
-				}
-			};
-			mValueByControl = {};
-//			mValueByControl.name = ["Frederic Fall", "Peter Burke"]; see test TODO
+				})
+				.expectChange("name", ["Frederic Fall", "Peter Burke"])
+//TODO property bindings fire *two* change events from ODPB#checkUpdate: One triggered by
+// ODLB#createContexts, the second triggered by ODLB#refreshInternal where dependent bindings
+// are refreshed
+				.expectChange("name", ["Frederic Fall", "Peter Burke"]);
 
-			return that.check(mResponseByRequest, mValueByControl, function () {
-				that.oView.byId("table").getBinding("items").refresh();
-			});
+			// code under test
+			that.oView.byId("table").getBinding("items").refresh();
+
+			return that.waitForChanges(assert);
 		});
 	});
 
 	//*********************************************************************************************
-	//TODO Analyze why property binding fires *three* change events
 	QUnit.test("Absolute ODCB refresh", function (assert) {
 		var sView = '\
 <form:SimpleForm id="form" binding="{/EMPLOYEES(\'2\')}">\
 	<Text id="text" text="{Name}" />\
 </form:SimpleForm>',
-			mResponseByRequest = {"EMPLOYEES('2')" : {"Name" : "Jonathan Smith"}},
-			mValueByControl = {},
-//			mValueByControl = {"text" : "Jonathan Smith"}, see test TODO
 			that = this;
 
-		return this.viewStart(assert, sView, mResponseByRequest, mValueByControl).then(function () {
-			mResponseByRequest = {"EMPLOYEES('2')" : {"Name" : "Jonathan Schmidt"}};
-			mValueByControl = {};
-//			mValueByControl.text = "Jonathan Schmidt"; see test TODO
+		this.expectRequest("EMPLOYEES('2')", {"Name" : "Jonathan Smith"})
+			.expectChange("text", "Jonathan Smith");
 
-			return that.check(mResponseByRequest, mValueByControl, function () {
-				that.oView.byId("form").getObjectBinding().refresh();
-			});
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest("EMPLOYEES('2')", {"Name" : "Jonathan Smith"})
+//TODO Analyze why the property binding fires *three* change events
+				.expectChange("text", null)
+				.expectChange("text", "Jonathan Smith")
+				.expectChange("text", "Jonathan Smith");
+
+			// code under test
+			that.oView.byId("form").getObjectBinding().refresh();
+
+			return that.waitForChanges(assert);
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("Absolute ODPB refresh", function (assert) {
 		var sView = '<Text id="name" text="{/EMPLOYEES(\'2\')/Name}" />',
-			mResponseByRequest = {"EMPLOYEES('2')/Name" : {"value" : "Jonathan Smith"}},
-			mValueByControl = {"name" : "Jonathan Smith"},
 			that = this;
 
-		return this.viewStart(assert, sView, mResponseByRequest, mValueByControl).then(function () {
-			mResponseByRequest = {"EMPLOYEES('2')/Name" : {"value" : "Jonathan Schmidt"}};
-			mValueByControl.name = "Jonathan Schmidt";
+		this.expectRequest("EMPLOYEES('2')/Name", {"value" : "Jonathan Smith"})
+			.expectChange("name", "Jonathan Smith");
 
-			return that.check(mResponseByRequest, mValueByControl, function () {
-				that.oView.byId("name").getBinding("text").refresh();
-			});
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest("EMPLOYEES('2')/Name", {"value" : "Jonathan Schmidt"})
+				.expectChange("name", "Jonathan Schmidt");
+
+			// code under test
+			that.oView.byId("name").getBinding("text").refresh();
+
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -564,29 +639,27 @@ sap.ui.require([
 <form:SimpleForm id="form" binding="{/ChangeTeamBudgetByID(...)}">\
 	<Text id="name" text="{Name}" />\
 </form:SimpleForm>',
-			mResponseByRequest = {},
-			//TODO Why is formatter called with null and not undefined?
-			mValueByControl = {"name" : null},
 			that = this;
 
-		return this.viewStart(assert, sView, mResponseByRequest, mValueByControl).then(function () {
-			mResponseByRequest = {
-				"POST" : {
-					"ChangeTeamBudgetByID" : {
-						$requestHeaders : {"If-Match" : undefined},
-						$requestPayload : {"Budget" : "1234.1234", "TeamID" : "TEAM_01"},
-						$response : {"Name" : "Business Suite"}
-					}
-				}
-			};
-			mValueByControl.name = "Business Suite";
+		//TODO Why is formatter called with null and not undefined?
+		this.expectChange("name", null);
 
-			return that.check(mResponseByRequest, mValueByControl, function () {
-				that.oView.byId("form").getObjectBinding()
-					.setParameter("TeamID", "TEAM_01")
-					.setParameter("Budget", "1234.1234")
-					.execute();
-			});
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "ChangeTeamBudgetByID",
+					headers : {"If-Match" : undefined},
+					payload : {"Budget" : "1234.1234", "TeamID" : "TEAM_01"}
+				}, {"Name" : "Business Suite"})
+				.expectChange("name", "Business Suite");
+
+			// code under test
+			that.oView.byId("form").getObjectBinding()
+				.setParameter("TeamID", "TEAM_01")
+				.setParameter("Budget", "1234.1234")
+				.execute();
+
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -602,29 +675,27 @@ sap.ui.require([
 		</ColumnListItem>\
 	</items>\
 </Table>',
-			mResponseByRequest = {
-				"EMPLOYEES?$select=Name&$skip=0&$top=100" : {
-					"value" : [
-						{"Name" : "Jonathan Smith"},
-						{"Name" : "Frederic Fall"}
-					]
-				}
-			},
-			mValueByControl = {"name" : ["Jonathan Smith", "Frederic Fall"]},
 			that = this;
 
-		return this.viewStart(assert, sView, mResponseByRequest, mValueByControl).then(function () {
-			mResponseByRequest = {
-				"EMPLOYEES?$select=ID,Name&$search=Fall&$skip=0&$top=100" : {
-					"value" : [{"ID": "2", "Name" : "Frederic Fall"}]
-				}
-			};
-			mValueByControl.name = ["Frederic Fall"];
+		this.expectRequest("EMPLOYEES?$select=Name&$skip=0&$top=100", {
+				"value" : [
+					{"Name" : "Jonathan Smith"},
+					{"Name" : "Frederic Fall"}
+				]
+			})
+			.expectChange("name", ["Jonathan Smith", "Frederic Fall"]);
 
-			return that.check(mResponseByRequest, mValueByControl, function () {
-				that.oView.byId("table").getBinding("items").changeParameters({
-					"$search" : "Fall", "$select" : "ID,Name"});
-			});
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest("EMPLOYEES?$select=ID,Name&$search=Fall&$skip=0&$top=100", {
+					"value" : [{"ID": "2", "Name" : "Frederic Fall"}]
+				})
+				.expectChange("name", ["Frederic Fall"]);
+
+			// code under test
+			that.oView.byId("table").getBinding("items").changeParameters({
+				"$search" : "Fall", "$select" : "ID,Name"});
+
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -634,18 +705,19 @@ sap.ui.require([
 <form:SimpleForm id="form" binding="{/EMPLOYEES(\'2\')}">\
 	<Text id="text" text="{Name}" />\
 </form:SimpleForm>',
-			mResponseByRequest = {"EMPLOYEES('2')" : {"Name" : "Jonathan Smith"}},
-			mValueByControl = {"text" : "Jonathan Smith"},
 			that = this;
 
-		return this.viewStart(assert, sView, mResponseByRequest, mValueByControl).then(function () {
-			mResponseByRequest = {"EMPLOYEES('2')?$apply=foo" : {"Name" : "Jonathan Schmidt"}};
-			mValueByControl.text = "Jonathan Schmidt";
+		that.expectRequest("EMPLOYEES('2')", {"Name" : "Jonathan Smith"})
+			.expectChange("text", "Jonathan Smith");
 
-			return that.check(mResponseByRequest, mValueByControl, function () {
-				that.oView.byId("form").getObjectBinding().changeParameters({
-					"$apply" : "foo"});
-			});
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest("EMPLOYEES('2')?$apply=foo", {"Name" : "Jonathan Schmidt"})
+				.expectChange("text", "Jonathan Schmidt");
+
+			// code under test
+			that.oView.byId("form").getObjectBinding().changeParameters({"$apply" : "foo"});
+
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -667,42 +739,38 @@ sap.ui.require([
 		</ColumnListItem>\
 	</items>\
 </Table>',
-			mResponseByRequest = {
-				"SalesOrderList?$select=SalesOrderID&$skip=0&$top=100" : {
-					"value" : [
-						{"SalesOrderID" : "0500000001"},
-						{"SalesOrderID" : "0500000002"}
-					]
-				}
-			},
-			mValueByControl = {"count": undefined, "id" : ["0500000001", "0500000002"]},
 			that = this;
 
-		return this.viewStart(
-			assert, sView, mResponseByRequest, mValueByControl, createSalesOrdersModel()
-		).then(function () {
-			mValueByControl.count = "2";
-			delete mValueByControl.id;
-			return that.check({}, mValueByControl, function () {
-				// code under test
-				that.oView.byId("count").setBindingContext(
-					that.oView.byId("table").getBinding("items").getHeaderContext());
-			});
+		that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+				"value" : [
+					{"SalesOrderID" : "0500000001"},
+					{"SalesOrderID" : "0500000002"}
+				]
+			})
+			.expectChange("count")
+			.expectChange("id", ["0500000001", "0500000002"]);
+
+		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+			that.expectChange("count", "2");
+
+			// code under test
+			that.oView.byId("count").setBindingContext(
+				that.oView.byId("table").getBinding("items").getHeaderContext());
+
+			return that.waitForChanges(assert);
 		}).then(function () {
+			that.expectRequest("SalesOrderList?$select=SalesOrderID&$filter=SalesOrderID%20gt"
+					+ "%20'0500000001'&$skip=0&$top=100",
+					{"value" : [{"SalesOrderID" : "0500000002"}]}
+				)
+				.expectChange("count", "1")
+				.expectChange("id", ["0500000002"]);
 
-			mResponseByRequest = {
-				"SalesOrderList?$select=SalesOrderID&$filter=SalesOrderID%20gt%20'0500000001'&$skip=0&$top=100" : {
-					"value" : [{"SalesOrderID" : "0500000002"}]
-				}
-			};
-			mValueByControl.count = "1";
-			mValueByControl.id = ["0500000002"];
+			// code under test
+			that.oView.byId("table").getBinding("items")
+				.filter(new Filter("SalesOrderID", FilterOperator.GT, "0500000001"));
 
-			return that.check(mResponseByRequest, mValueByControl, function () {
-				// code under test
-				that.oView.byId("table").getBinding("items")
-					.filter(new Filter("SalesOrderID", FilterOperator.GT, "0500000001"));
-			});
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -724,57 +792,53 @@ sap.ui.require([
 		</ColumnListItem>\
 	</items>\
 </Table>',
-			mResponseByRequest = {
-				"SalesOrderList?$select=SalesOrderID&$skip=0&$top=100" : {
-					"value" : [
-						{"SalesOrderID" : "0500000001"},
-						{"SalesOrderID" : "0500000002"}
-					]
-				}
-			},
-			mValueByControl = {"count": undefined, "id" : ["0500000001", "0500000002"]},
-			that = this;
+		that = this;
 
-		return this.viewStart(
-			assert, sView, mResponseByRequest, mValueByControl, createSalesOrdersModel()
-		).then(function () {
-			mValueByControl.count = "2";
-			delete mValueByControl.id;
-			return that.check({}, mValueByControl, function () {
-				// code under test
-				that.oView.byId("count").setBindingContext(
-					that.oView.byId("table").getBinding("items").getHeaderContext());
-			});
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+				"value" : [
+					{"SalesOrderID" : "0500000001"},
+					{"SalesOrderID" : "0500000002"}
+				]
+			})
+			.expectChange("count") // ensures that count is observed
+			.expectChange("id", ["0500000001", "0500000002"]);
+
+		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+			that.expectChange("count", "2");
+
+			// code under test
+			that.oView.byId("count").setBindingContext(
+				that.oView.byId("table").getBinding("items").getHeaderContext());
+
+			return that.waitForChanges(assert);
 		}).then(function () {
-			mResponseByRequest = {
-				"SalesOrderList?$select=SalesOrderID&$orderby=SalesOrderID%20desc&$skip=0&$top=100" : {
+			that.expectRequest(
+				"SalesOrderList?$select=SalesOrderID&$orderby=SalesOrderID%20desc&$skip=0&$top=100",
+				{
 					"value" : [
 						{"SalesOrderID" : "0500000002"},
 						{"SalesOrderID" : "0500000001"}
 					]
-				}
-			};
-			delete mValueByControl.count;
-			mValueByControl.id = ["0500000002", "0500000001"];
+				})
+				.expectChange("id", ["0500000002", "0500000001"]);
 
-			return that.check(mResponseByRequest, mValueByControl, function () {
-				// code under test
-				that.oView.byId("table").getBinding("items").sort(new Sorter("SalesOrderID", true));
-			});
+			// code under test
+			that.oView.byId("table").getBinding("items").sort(new Sorter("SalesOrderID", true));
+
+			return that.waitForChanges(assert);
 		}).then(function () {
-			mResponseByRequest = {
-				"DELETE" : {
-					"SalesOrderList('0500000002')" : {
-						$requestHeaders : {"If-Match" : undefined}
-					}
-				}
-			};
-			mValueByControl.count = "1";
-			mValueByControl.id = ["0500000001"];
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('0500000002')",
+					headers : {"If-Match" : undefined}
+				})
+				.expectChange("count", "1")
+				.expectChange("id", ["0500000001"]);
 
-			return that.check(mResponseByRequest, mValueByControl, function () {
-				that.oView.byId("table").getItems()[0].getBindingContext().delete();
-			});
+			// code under test
+			that.oView.byId("table").getItems()[0].getBindingContext().delete();
+
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -794,42 +858,39 @@ sap.ui.require([
 		</ColumnListItem>\
 	</items>\
 </Table>',
-			mResponseByRequest = {
-				"SalesOrderList?$select=SalesOrderID&$skip=0&$top=100" : {
-					"value" : [
-						{"SalesOrderID" : "0500000001"},
-						{"SalesOrderID" : "0500000002"}
-					]
-				}
-			},
-			mValueByControl = {"count": undefined, "id" : ["0500000001", "0500000002"]},
 			that = this;
 
-		return this.viewStart(
-			assert, sView, mResponseByRequest, mValueByControl, createSalesOrdersModel()
-		).then(function () {
-			mValueByControl.count = "2";
-			delete mValueByControl.id;
-			return that.check({}, mValueByControl, function () {
-				// code under test
-				that.oView.byId("count").setBindingContext(
-					that.oView.byId("table").getBinding("items").getHeaderContext());
-			});
+		that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+				"value" : [
+					{"SalesOrderID" : "0500000001"},
+					{"SalesOrderID" : "0500000002"}
+				]
+			})
+			.expectChange("count")
+			.expectChange("id", ["0500000001", "0500000002"]);
+
+		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+			that.expectChange("count", "2");
+
+			// code under test
+			that.oView.byId("count").setBindingContext(
+				that.oView.byId("table").getBinding("items").getHeaderContext());
+
+			return that.waitForChanges(assert);
 		}).then(function () {
+			that.expectRequest(
+					"SalesOrderList?$select=SalesOrderID&$filter=SalesOrderID%20gt%20'0500000001'&"
+						+ "$skip=0&$top=100",
+					{"value" : [{"SalesOrderID" : "0500000002"}]}
+				)
+				.expectChange("count", "1")
+				.expectChange("id", ["0500000002"]);
 
-			mResponseByRequest = {
-				"SalesOrderList?$select=SalesOrderID&$filter=SalesOrderID%20gt%20'0500000001'&$skip=0&$top=100" : {
-					"value" : [{"SalesOrderID" : "0500000002"}]
-				}
-			};
-			mValueByControl.count = "1";
-			mValueByControl.id = ["0500000002"];
+			// code under test
+			that.oView.byId("table").getBinding("items")
+				.changeParameters({$filter : "SalesOrderID gt '0500000001'"});
 
-			return that.check(mResponseByRequest, mValueByControl, function () {
-				// code under test
-				that.oView.byId("table").getBinding("items")
-					.changeParameters({$filter : "SalesOrderID gt '0500000001'"});
-			});
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -853,97 +914,106 @@ sap.ui.require([
 		</items>\
 	</Table>\
 </form:SimpleForm>',
-			mResponseByRequest = {
-				"SalesOrderList('0500000001')?$expand=SO_2_SOITEM($select=ItemPosition)" : {
-					"SalesOrderID" : "0500000001",
-					"SO_2_SOITEM" : [
-						{"ItemPosition" : "0000000010"},
-						{"ItemPosition" : "0000000020"}
-					]
-				}
-			},
-			mValueByControl = {"count": undefined, "item" : ["0000000010", "0000000020"]},
 			that = this;
 
-		return this.viewStart(
-			assert, sView, mResponseByRequest, mValueByControl, createSalesOrdersModel()
-		).then(function () {
-			mValueByControl.count = "2";
-			delete mValueByControl.item;
-			return that.check({}, mValueByControl, function () {
-				var oCount = that.oView.byId("count");
+		this.expectRequest("SalesOrderList('0500000001')?$expand=SO_2_SOITEM($select=ItemPosition)",
+			{
+				"SalesOrderID" : "0500000001",
+				"SO_2_SOITEM" : [
+					{"ItemPosition" : "0000000010"},
+					{"ItemPosition" : "0000000020"}
+				]
+			})
+			.expectChange("count")
+			.expectChange("item", ["0000000010", "0000000020"]);
 
-				// code under test
-				that.oView.setModel(that.oView.getModel(), "headerContext");
-				oCount.setBindingContext(
-					that.oView.byId("table").getBinding("items").getHeaderContext(),
+		return this.createView(assert, sView, createSalesOrdersModel()
+		).then(function () {
+			var oCount = that.oView.byId("count");
+
+			that.expectChange("count", "2");
+
+			// code under test
+			that.oView.setModel(that.oView.getModel(), "headerContext");
+			oCount.setBindingContext(
+				that.oView.byId("table").getBinding("items").getHeaderContext(),
 					"headerContext");
-			});
+
+			return that.waitForChanges(assert);
 		}).then(function () {
 			// Respond with one employee less to show that the refresh must destroy the bindings for
 			// the last row. Otherwise the property binding for that row will cause a "Failed to
 			// drill down".
-			mResponseByRequest = {
-				"SalesOrderList('0500000001')?$expand=SO_2_SOITEM($select=ItemPosition)" : {
-					"SalesOrderID" : "0500000001",
-					"SO_2_SOITEM" : [
-						{"ItemPosition" : "0000000010"}
-					]
-				}
-			};
-			mValueByControl.count = "1";
-			mValueByControl.item = ["0000000010"];
+			that.expectRequest(
+					"SalesOrderList('0500000001')?$expand=SO_2_SOITEM($select=ItemPosition)", {
+						"SalesOrderID" : "0500000001",
+						"SO_2_SOITEM" : [
+							{"ItemPosition" : "0000000010"}
+						]
+					})
+				.expectChange("count", "1")
+				.expectChange("item", ["0000000010"]);
 
-			return that.check(mResponseByRequest, mValueByControl, function () {
-				// code under test
-				that.oView.byId("form").getObjectBinding().refresh();
-			});
+			// code under test
+			that.oView.byId("form").getObjectBinding().refresh();
+
+			return that.waitForChanges(assert);
 		});
 	});
 
 	//*********************************************************************************************
-	testViewStart("Auto-mode: Absolute ODCB with relative ODPB", '\
+	QUnit.test("Auto-mode: Absolute ODCB with relative ODPB", function (assert) {
+		var sView = '\
 <form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE,ROOM_ID\'}}">\
 	<Text id="name" text="{Name}" />\
 	<Text id="city" text="{LOCATION/City/CITYNAME}" />\
-</form:SimpleForm>',
-		{"EMPLOYEES('2')?$select=AGE,ROOM_ID,Name,LOCATION/City/CITYNAME" : {
-			"Name" : "Frederic Fall",
-			"LOCATION" : {"City" : {"CITYNAME" : "Walldorf"}}
-		}},
-		{"name" : "Frederic Fall", "city" : "Walldorf"},
-		createTeaBusiModel({autoExpandSelect : true}),
-		true //TODO fix two calls to formatter
-	);
+</form:SimpleForm>';
+
+		this.expectRequest("EMPLOYEES('2')?$select=AGE,ROOM_ID,Name,LOCATION/City/CITYNAME", {
+				"Name" : "Frederic Fall",
+				"LOCATION" : {"City" : {"CITYNAME" : "Walldorf"}}
+			})
+			.expectChange("name", "Frederic Fall")
+			.expectChange("city", "Walldorf")
+// TODO unexpected changes
+			.expectChange("name", "Frederic Fall")
+			.expectChange("city", "Walldorf");
+
+		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
+	});
 
 	//*********************************************************************************************
-	//TODO requires enhancement of ODataModel.integration.qunit as refresh causes multiple calls
-	//  to formatters (first one with null value)
-	QUnit.skip("Auto-mode: Absolute ODCB, refresh", function (assert) {
+	QUnit.test("Auto-mode: Absolute ODCB, refresh", function (assert) {
 		var sView = '\
 <form:SimpleForm id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE\'}}">\
 	<Text id="name" text="{Name}" />\
 </form:SimpleForm>',
-			mResponseByRequest = {"EMPLOYEES('2')?$select=AGE,Name" : {
-			"Name" : "Jonathan Smith"
-		}},
-			mValueByControl = {"name" : "Jonathan Smith"},
 			that = this;
 
-		return this.viewStart(assert, sView, mResponseByRequest, mValueByControl,
-				createTeaBusiModel({autoExpandSelect : true}), true)
-			.then(function () {
-				mResponseByRequest = {"EMPLOYEES('2')?$select=AGE,Name" : {
-					"Name" : "Jonathan Schmidt"
-				}};
-				mValueByControl.name = "Jonathan Schmidt";
+		this.expectRequest("EMPLOYEES('2')?$select=AGE,Name", {
+				"Name" : "Jonathan Smith"
+			})
+// TODO unexpected change
+			.expectChange("name", "Jonathan Smith")
+			.expectChange("name", "Jonathan Smith");
 
-				return that.check(mResponseByRequest, mValueByControl, function () {
-					that.oView.byId("form").getObjectBinding().refresh();
-			});
+		return this.createView(
+			assert, sView, createTeaBusiModel({autoExpandSelect : true})
+		).then(function () {
+			that.expectRequest("EMPLOYEES('2')?$select=AGE,Name", {
+					"Name" : "Jonathan Schmidt"
+				})
+// TODO unexpected changes
+				.expectChange("name", null)
+				.expectChange("name", "Jonathan Schmidt")
+				.expectChange("name", "Jonathan Schmidt");
+
+			// code under test
+			that.oView.byId("form").getObjectBinding().refresh();
+
+			return that.waitForChanges(assert);
 		});
 	});
-
 	//TODO $batch?
 	//TODO test bound action
 	//TODO test create
