@@ -1,0 +1,248 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>QUnit Page for sap.ui.qunit.utils.ControlIterator</title>
+
+
+		<script id="sap-ui-bootstrap"
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-xx-supportedLanguages="en">
+		</script>
+
+
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+			QUnit.config.reorder = false; // make sure results are consistent/stable and the "statistics" test in the end is actually run in the end
+			QUnit.config.autostart = false;
+
+			sap.ui.getCore().attachInit(function(){
+				'use strict';
+
+				QUnit.module("ControlIterator", {
+					beforeEach: function() {
+						jQuery.sap.require("sap.ui.qunit.utils.ControlIterator");
+					}
+				});
+
+
+				QUnit.test("sap.ui.qunit.utils.ControlIterator exists", function(assert) {
+					jQuery.sap.require("sap.ui.qunit.utils.ControlIterator");
+
+					// assert
+					assert.ok(sap.ui.qunit.utils.ControlIterator, "sap.ui.qunit.utils.ControlIterator should be loaded");
+				});
+
+
+				QUnit.test("ControlIterator calls the callbacks; librariesToTest option (core only); do not test Elements by default", function(assert) {
+					var done = assert.async();
+
+					var bCoreIconTested = false,
+						bCoreElementTested = false,
+						countOfTestedControlsInCore = 0;
+
+					sap.ui.qunit.utils.ControlIterator.run(function(sControlName, oControlClass, oInfo) {
+						countOfTestedControlsInCore++;
+						console.log(sControlName);
+						assert.ok(true, "sap.ui.qunit.utils.ControlIterator should call the callback (" + sControlName + ")");
+
+						if (sControlName === "sap.ui.core.Icon") {
+							bCoreIconTested = true;
+							assert.strictEqual(oInfo.canRender, true, "sap.ui.core.Icon should be marked as renderable");
+						}
+
+						if (sControlName === "sap.ui.core.Element") {
+							bCoreElementTested = true;
+							assert.notOk(true, "sap.ui.core.Element should be tested");
+						}
+
+					}, {
+						librariesToTest: ["sap.ui.core"],
+						done: function(oResult) {
+							assert.ok(oResult.testedControlCount > 0, "sap.ui.qunit.utils.ControlIterator should call the done callback and report more than one control as being checked");
+
+							assert.strictEqual(oResult.testedControlCount, countOfTestedControlsInCore, "should call the done callback and report as many controls as have actually been checked (" + countOfTestedControlsInCore + ")");
+							assert.strictEqual(oResult.testedLibraryCount, 1, "should call the done callback and report one library as being checked");
+
+							assert.ok(bCoreIconTested, "sap.ui.core.Icon should be among the tested controls");
+
+							done();
+						}
+					});
+
+					assert.strictEqual(countOfTestedControlsInCore, 0, "ControlIterator should not synchronously call the callback (to be future-proof)");
+				});
+
+
+				var iTotalAvailableLibraries;
+
+				QUnit.test("ControlIterator finds at least core and some controls by default when started without a given library list", function(assert) {
+					var done = assert.async(),
+						count = 0;
+
+					// assert
+					sap.ui.qunit.utils.ControlIterator.run(function(sControlName, oControlClass, oInfo) {
+						count++;
+
+					}, {
+						done: function(oResult) {
+							iTotalAvailableLibraries = oResult.testedLibraryCount;
+
+							assert.ok(oResult.testedLibraryCount > 1, "should report more than one library as being checked (" + oResult.testedLibraryCount + ")");
+							assert.ok(oResult.testedControlCount > 1, "should report more than one control as being checked");
+							assert.strictEqual(oResult.testedControlCount, count, "should call the done callback and report as many controls as have actually been checked (" + count + ")");
+							done();
+						}
+					});
+				});
+
+
+				QUnit.test("ControlIterator excludedLibraries option", function(assert) {
+					var done = assert.async();
+
+					// assert
+					sap.ui.qunit.utils.ControlIterator.run(function(sControlName, oControlClass, oInfo) {
+
+					}, {
+						excludedLibraries: ["sap.ui.core"],
+						done: function(oResult) {
+							assert.ok(oResult.testedLibraryCount, iTotalAvailableLibraries-1, "should report one library less than before (" + oResult.testedLibraryCount + ")");
+							done();
+						}
+					});
+				});
+
+
+				QUnit.test("ControlIterator excludedControls option; also test Elements", function(assert) {
+					assert.expect(2);
+					var done = assert.async(),
+						bCoreItemTested = false;
+
+					sap.ui.qunit.utils.ControlIterator.run(function(sControlName, oControlClass, oInfo) {
+
+						if (sControlName === "sap.ui.core.Icon") {
+							assert.notOk(true, "sap.ui.core.Icon should NOT be tested when excluded");
+						}
+
+						if (sControlName === "sap.ui.core.Element") {
+							assert.notOk(true, "sap.ui.core.Element should NOT be tested (because it is marked as abstract)");
+						}
+
+						if (sControlName === "sap.ui.core.Item") {
+							bCoreItemTested = true;
+							assert.ok(true, "sap.ui.core.Item should be tested now");
+						}
+
+					}, {
+						librariesToTest: ["sap.ui.core"],
+						excludedControls: ["sap.ui.core.Icon"],
+						includeElements: true,
+						done: function() {
+							assert.ok(bCoreItemTested, "sap.ui.core.Item should be among the tested controls");
+							done();
+						}
+					});
+				});
+
+
+
+
+				QUnit.module("ControlIterator used with single inner tests; internal QUnit checks");
+
+				jQuery.sap.require("sap.ui.qunit.utils.ControlIterator");
+				sap.ui.qunit.utils.ControlIterator.run(function(sControlName, oControlClass, oInfo) {
+
+					QUnit.test("Testing control " + sControlName, function(assert) {
+						assert.ok(true, sControlName + " would be tested now");
+
+						assert.ok(oControlClass, "a control class should be given");
+
+						if (oInfo.canInstantiate) {
+							var oControl = new oControlClass();
+							assert.ok(oControl instanceof sap.ui.core.Control, "the control instance should be instanceof Control");
+							assert.strictEqual(oControl.getMetadata().getName(), sControlName, "the given control class should be what can be created from the given control name");
+						}
+					});
+
+				},{
+					librariesToTest: ["sap.ui.core"],
+					qunit: QUnit,
+					done: function() {
+						QUnit.start();
+					}
+				});
+
+
+
+
+				/*   DO NOT EXECUTE THIS by default - it would prevent controls from getting better
+
+				QUnit.module("ControlIterator not renderable controls");
+
+				QUnit.test("verify excluded controls can REALLY not be rendered", function(assert) {
+					jQuery.sap.require("sap.ui.qunit.utils.ControlIterator");
+					var aFailingControls = sap.ui.qunit.utils.ControlIterator._aControlsThatCannotBeRenderedGenerically;
+
+					sap.ui.getCore().loadLibrary("sap.ui.commons");
+
+					aFailingControls.forEach(function(sControlName) {
+						if (sap.ui.qunit.utils.ControlIterator.controlCanBeInstantiated(sControlName)) {
+							var oControlClass = jQuery.sap.getObject(sControlName);
+							var oControl = new oControlClass();
+
+							assert.throws(
+								function() {
+									var oRenderer = oControl.getMetadata().getRenderer();
+									oControl.placeAt("content");
+									sap.ui.getCore().applyChanges();
+								}, sControlName + " should not be able to render"
+							);
+						}
+					});
+				});
+
+				TODO: add lots of timeouts and try-catch around every single control and make it work reliably
+*/
+
+
+
+				QUnit.module("Verify all other controls can be rendered");
+
+				jQuery.sap.require("sap.ui.qunit.utils.ControlIterator");
+				sap.ui.qunit.utils.ControlIterator.run(function(sControlName, oControlClass, oInfo) {
+
+					if (oInfo.canInstantiate && oInfo.canRender) {
+						QUnit.test("Trying to render control " + sControlName, function(assert) {
+							var oControl = new oControlClass();
+							oControl.placeAt("content");
+							sap.ui.getCore().applyChanges();
+
+							// nope :-(    assert.ok(oControl.getDomRef(), sControlName + " should have rendered something");
+
+							oControl.destroy();
+							sap.ui.getCore().applyChanges();
+
+							assert.ok(true, sControlName + " seems to have rendered successfully");
+						});
+					}
+				},{
+					qunit: QUnit
+				});
+
+				// TODO: also get a list of tested and ignored controls, for plausibility checks
+
+			});
+
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+		<div id="content"></div>
+	</body>
+</html>
