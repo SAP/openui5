@@ -366,6 +366,11 @@
 				assert.equal(jQuery.sap.equal([1, 2], []), false, "[1, 2], []");
 				assert.equal(jQuery.sap.equal([], []), true, "[], []");
 				assert.equal(jQuery.sap.equal([1, 2], {1:1, 2:2, length:2}), false, "[1, 2], {1:1, 2:2, length:2}");
+				assert.equal(jQuery.sap.equal([undefined], [undefined]), true, "[undefined], [undefined]");
+
+
+				assert.equal(jQuery.sap.equal([1, 2], [1, 2, 3], true), true, "[1, 2], [1, 2, 3], true");
+				assert.equal(jQuery.sap.equal([1, 2, 3], [1, 2], true), false, "[1, 2, 3], [1, 2], true");
 			});
 
 			QUnit.test("object", function(assert) {
@@ -378,6 +383,10 @@
 				assert.equal(jQuery.sap.equal({}, {}), true, "{}, {}");
 				assert.equal(jQuery.sap.equal({1:1}, [1]), false, "{1:1}, [1]");
 				assert.equal(jQuery.sap.equal({}, null), false, "{}, null");
+				assert.equal(jQuery.sap.equal({a: undefined}, {a: undefined}), true, "{a: undefined}, {a: undefined}");
+
+				assert.equal(jQuery.sap.equal({a:1, b:2}, {a:1, b:2, c:3}, true), true, "{a:1, b:2}, {a:1, b:2, c:3}, true");
+				assert.equal(jQuery.sap.equal({a:1, b:2, c:3}, {a:1, b:2}, true), false, "{a:1, b:2, c:3}, {a:1, b:2}, true");
 			});
 
 			QUnit.test("recursion", function(assert) {

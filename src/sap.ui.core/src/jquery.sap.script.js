@@ -268,14 +268,11 @@ sap.ui.define(['jquery.sap.global'],
 			return true;
 		}
 		if (Array.isArray(a) && Array.isArray(b)) {
-			if (!contains) {
-				if (a.length != b.length) {
-					return false;
-				}
-			} else {
-				if (a.length > b.length) {
-					return false;
-				}
+			if (!contains && a.length !== b.length) {
+				return false;
+			}
+			if (a.length > b.length) {
+				return false;
 			}
 			for (var i = 0; i < a.length; i++) {
 				if (!jQuery.sap.equal(a[i], b[i], maxDepth, contains, depth + 1)) {
@@ -288,25 +285,21 @@ sap.ui.define(['jquery.sap.global'],
 			if (!a || !b) {
 				return false;
 			}
-			if (a.constructor != b.constructor) {
+			if (a.constructor !== b.constructor) {
+				return false;
+			}
+			if (!contains && Object.keys(a).length !== Object.keys(b).length) {
 				return false;
 			}
 			if (a.nodeName && b.nodeName && a.namespaceURI && b.namespaceURI) {
 				return jQuery.sap.isEqualNode(a,b);
 			}
 			if (a instanceof Date) {
-				return a.valueOf() == b.valueOf();
+				return a.valueOf() === b.valueOf();
 			}
 			for (var i in a) {
 				if (!jQuery.sap.equal(a[i], b[i], maxDepth, contains, depth + 1)) {
 					return false;
-				}
-			}
-			if (!contains) {
-				for (var i in b) {
-					if (a[i] === undefined) {
-						return false;
-					}
 				}
 			}
 			return true;
