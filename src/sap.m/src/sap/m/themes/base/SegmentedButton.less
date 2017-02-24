@@ -24,6 +24,12 @@
 	display: inline-block;
 }
 
+// Adding margin to be displayed correct in sap.m.Bar
+.sapMBar .sapMSegB {
+	margin-top: 0.250rem;
+	margin-bottom: 0.250rem;
+}
+
 .sapMSegBBtn:focus {
 	outline: none;
 }
@@ -126,5 +132,14 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 			height: calc(~'100% - 2px');
 			pointer-events: none;
 		}
+	}
+}
+
+/* Compact size */
+.sapUiSizeCompact {
+// Adding margin to be displayed correct in sap.m.Bar
+	.sapMBar .sapMSegB {
+		margin-top: 0.1875rem;
+		margin-bottom: 0.1875rem;
 	}
 }
