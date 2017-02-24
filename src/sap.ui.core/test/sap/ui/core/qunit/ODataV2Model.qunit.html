@@ -1,11 +1,12 @@
 <!DOCTYPE HTML>
 
 <!--
-  Tested sap.ui.model.odata.ODataModel
+  Tested sap.ui.model.odata.v2.ODataModel
 -->
 
 <html>
 <head>
+<meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- Initialization -->
 <script src="../shared-config.js"></script>
@@ -3633,7 +3634,7 @@
 		}
 		oLabel.bindElement( {path:"/Categories(1)", parameters: {custom: {Batch500:"fail"}}, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
-	
+
 	asyncTest("Event order (batch request): bindElement - batch fails --> refresh", function(){
 		expect(5);
 		cleanServiceDataCache();
@@ -3653,13 +3654,13 @@
 				bChanged = false;
 				bDataRequested = false;
 				bDataReceived = false;
-				start(); // resume normal testing			
+				start(); // resume normal testing
 			});
 			oLabel.getElementBinding().refresh();
 		}
 		oLabel.bindElement( {path:"/Categories(1)", parameters: {custom: {Batch500:"fail"}}, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
-	
+
 	asyncTest("Event order: bindElement", function(){
 		expect(4);
 		cleanServiceDataCache();
@@ -3721,7 +3722,7 @@
 		oLabel.setModel(oModel1);
 		oLabel.getElementBinding().attachDataReceived(handler);
 	});
-	
+
 	asyncTest("ContextBinding: Unresolved bindings must fire change with null context", function(){
 		expect(2);
 		cleanServiceDataCache();
@@ -5174,6 +5175,30 @@
 		equal(oModel._normalizeKey("Entity('%2FTEST%2FTEST=123M')"), "Entity('%2FTEST%2FTEST%3D123M')", "No double encoding");
 		equal(oModel._normalizeKey("Entity(%2FTEST%2FTEST=123M)"), "Entity(%2FTEST%2FTEST=123m)", "No double encoding");
 	});
+
+  asyncTest("Normalize key, model access", function() {
+		var oModel = initModel(sURI);
+		oModel.read("/Current_Product_Lists", {
+			success: function() {
+				var sURI;
+				ok(oModel.getObject("/Current_Product_Lists(ProductID=1,ProductName='Chai')"), "Entity is returned");
+				ok(oModel.getObject("/Current_Product_Lists(ProductID=3,ProductName='Aniseed%20Syrup')"), "Entity is returned");
+				ok(oModel.getObject("/Current_Product_Lists(ProductID=61,ProductName='Sirop%20d''%C3%A9rable')"), "Entity is returned");
+				ok(oModel.getObject("/Current_Product_Lists(ProductID=75,ProductName='Rh%C3%B6nbr%C3%A4u%20Klosterbier')"), "Entity is returned");
+
+				ok(oModel.getObject("/" + oModel.createKey("Current_Product_Lists", {ProductID: 75, ProductName: "Rhönbräu Klosterbier"})), "Entity is returned, createKey");
+				ok(oModel.getObject("/Current_Product_Lists(ProductID=75,ProductName='" + encodeURIComponent("Rhönbräu Klosterbier") + "')"), "Entity is returned, custom encoding");
+				ok(oModel.getObject("/Current_Product_Lists(ProductID=75,ProductName='" + jQuery.sap.encodeURL("Rhönbräu Klosterbier") + "')"), "Entity is returned, custom encoding");
+
+				equal(oModel.getProperty("/Current_Product_Lists(ProductID=1,ProductName='Chai')/ProductName"), "Chai", "Property is returned");
+				equal(oModel.getProperty("/Current_Product_Lists(ProductID=3,ProductName='Aniseed%20Syrup')/ProductName"), "Aniseed Syrup", "Property is returned");
+				equal(oModel.getProperty("/Current_Product_Lists(ProductID=61,ProductName='Sirop%20d''%C3%A9rable')/ProductName"), "Sirop d'érable", "Property is returned");
+				equal(oModel.getProperty("/Current_Product_Lists(ProductID=75,ProductName='Rh%C3%B6nbr%C3%A4u%20Klosterbier')/ProductName"), "Rhönbräu Klosterbier", "Property is returned");
+				start();
+			}
+		})
+	});
+
 
 	</script>
 
