@@ -145,6 +145,12 @@ module.exports = function(grunt) {
 
 	};
 
+	// Load config extension script to allow overrides to "grunt" and "gruntData"
+	var configExtensionFile = grunt.option("config-extension");
+	if (configExtensionFile) {
+		configExtensionFile.split(',').forEach(file => require(path.resolve(file))(grunt, gruntData));
+	}
+
 	// determine set of libraries to use (specified by --libs option)
 	gruntData.libraries = !libs ? gruntData.allLibraries : gruntData.allLibraries.filter(function(library) {
 		return libs.indexOf(library.name) > -1;
