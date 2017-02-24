@@ -1663,6 +1663,37 @@
 
 			oList.destroy();
 		});
+
+		module("Accessibility");
+
+		test("aria-labelledby association should be accessibility description", function() {
+			var oList = new sap.m.List().placeAt("content");
+			var oText1 = new sap.m.Text({
+				text: "text1"
+			}).placeAt("content");
+			var oText2 = new sap.m.Text({
+				text: "text2"
+			}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oList.addAriaLabelledBy(oText1);
+			ok(oList.getAccessibilityDescription().indexOf(oText1.getText()) > -1, "Accessibility info of text1 added to list.");
+
+			oList.addAriaLabelledBy(oText2.getId());
+			ok(oList.getAccessibilityDescription().indexOf(oText2.getText()) > -1, "Accessibility info of text2 added to list.");
+
+			ok(oList.getAccessibilityDescription().indexOf(oText1.getText() + " " + oText2.getText()) > -1, "both accessibility text found.");
+
+			oList.removeAriaLabelledBy(oText1);
+			ok(oList.getAccessibilityDescription().indexOf(oText1.getText()) == -1, "Accessibility info of text1 removed from list.");
+
+			oList.removeAriaLabelledBy(oText2.getId());
+			ok(oList.getAccessibilityDescription().indexOf(oText2.getText()) == -1, "Accessibility info of text2 removed from list.");
+
+			oList.destroy();
+			oText1.destroy();
+			oText2.destroy();
+		});
 </script>
 
 </head>
