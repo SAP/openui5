@@ -15,6 +15,7 @@
 <script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 
 <script>
 
@@ -78,8 +79,7 @@
 			this.oTileContent = new sap.m.TileContent("tileContent", {
 				footer : "Current Quarter",
 				unit : "EUR"
-			});
-			this.oTileContent.placeAt("qunit-fixture");
+			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach : function() {
@@ -87,31 +87,94 @@
 		}
 	});
 
-	QUnit.test("Default Value _bRenderFooter", function(assert) {
-		assert.ok(this.oTileContent._bRenderFooter, "_bRenderFooter is true");
+	QUnit.test("Default value of _bRenderFooter", function(assert) {
+		assert.equal(this.oTileContent._bRenderFooter, true, "Default value of _bRenderFooter is correct.");
 	});
 
-	QUnit.test("setRenderFooter change value and returns this", function(assert) {
-		var oReturn = this.oTileContent.setRenderFooter(false);
-		assert.ok(!this.oTileContent._bRenderFooter, "_bRenderFooter is false");
-		assert.deepEqual(oReturn, this.oTileContent, "this returned to allow mthoad chaining")
+	QUnit.test("Function setRenderFooter changes value and returns this", function(assert) {
+		//Arrange
+		var oReturnValue;
+
+		//Act
+		oReturnValue = this.oTileContent.setRenderFooter(false);
+
+		//Assert
+		assert.equal(this.oTileContent._bRenderFooter, false, "_bRenderFooter has been correctly updated.");
+		assert.deepEqual(oReturnValue, this.oTileContent,  "Function setRenderFooter has returned a reference to the Tile Content.")
 	});
 
-	QUnit.test("setRenderFooter does not mark the control as invalidated", function(assert) {
-		var bInvalidated = false;
-		this.oTileContent.invalidate = function () {
-			bInvalidated = true;
-		};
+	QUnit.test("Function setRenderFooter does not mark the control as invalidated", function(assert) {
+		//Arrange
+		sinon.spy(this.oTileContent, "invalidate");
+
+		//Act
 		this.oTileContent.setRenderFooter(false);
-		assert.ok(!bInvalidated, "invalidate was not called");
+
+		//Assert
+		assert.equal(this.oTileContent.invalidate.callCount, 0, "The control has not been invalidated.");
 	});
 
 	QUnit.test("Footer is not rendered in case _bRenderFooter is false", function(assert) {
-		assert.ok(jQuery.sap.domById("tileContent-footer-text"), "Footer was rendered successfully");
+		//Arrange
 		this.oTileContent.setRenderFooter(false);
+
+		//Act
 		this.oTileContent.invalidate();
 		sap.ui.getCore().applyChanges();
-		assert.ok(!jQuery.sap.domById("tileContent-footer-text"), "Footer was not rendered");
+
+		//Assert
+		assert.ok(!jQuery.sap.domById("tileContent-footer-text"), "No footer has been rendered.");
+	});
+
+	QUnit.module("Protected property _bRenderContent", {
+		beforeEach : function() {
+			this.oTileContent = new sap.m.TileContent("tileContent", {
+				content: new sap.ui.core.Control()
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oTileContent.destroy();
+		}
+	});
+
+	QUnit.test("Default value of _bRenderContent", function(assert) {
+		assert.equal(this.oTileContent._bRenderContent, true, "Default value of _bRenderContent is correct.");
+	});
+
+	QUnit.test("Function setRenderContent changes value and returns this", function(assert) {
+		//Arrange
+		var oReturnValue;
+
+		//Act
+		oReturnValue = this.oTileContent.setRenderContent(false);
+
+		//Assert
+		assert.equal(this.oTileContent._bRenderContent, false, "_bRenderContent has been correctly updated.");
+		assert.deepEqual(oReturnValue, this.oTileContent, "Function setRenderContent has returned a reference to the Tile Content.")
+	});
+
+	QUnit.test("Function setRenderContent does not mark the control as invalidated", function(assert) {
+		//Arrange
+		sinon.spy(this.oTileContent, "invalidate");
+
+		//Act
+		this.oTileContent.setRenderContent(false);
+
+		//Assert
+		assert.equal(this.oTileContent.invalidate.callCount, 0, "The control has not been invalidated.");
+	});
+
+	QUnit.test("Content is not rendered in case _bRenderContent is false", function(assert) {
+		//Arrange
+		this.oTileContent.setRenderContent(false);
+
+		//Act
+		this.oTileContent.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(!jQuery.sap.domById("tileContent-content"), "No content has been rendered.");
 	});
 </script>
 </head>
