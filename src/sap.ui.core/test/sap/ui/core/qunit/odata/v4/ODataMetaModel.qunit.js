@@ -444,7 +444,6 @@ sap.ui.require([
 		},
 		oTeamData = mScope["tea_busi.TEAM"],
 		oTeamLineItem = mScope.$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
-		sTechServiceUrl = "/sap/opu/odata4/iwbep/tea/default/iwbep/tea_tech/0001/",
 		oWorkerData = mScope["tea_busi.Worker"],
 		mXServiceScope = {
 			"$EntityContainer" : "tea_busi.v0001.DefaultContainer",
@@ -2900,7 +2899,7 @@ sap.ui.require([
 					ValueListType.Standard);
 				return oMetaModel.requestValueListInfo(sPropertyPath).then(function (oResult) {
 					var oValueListInfo = oResult[""];
-					assert.strictEqual(oValueListInfo.CollectionPath, "H_EPM_PD_CATS_SH_SET");
+					assert.strictEqual(oValueListInfo.CollectionPath, "H_EPM_PD_CATS_SH_Set");
 				});
 			});
 		});
@@ -2908,30 +2907,30 @@ sap.ui.require([
 		//*****************************************************************************************
 		QUnit.test("requestValueListInfo: same model w/o reference, realOData", function (assert) {
 			var oModel = new ODataModel({
-					serviceUrl : TestUtils.proxy(sTechServiceUrl),
+					serviceUrl : TestUtils.proxy(sSampleServiceUrl),
 					synchronizationMode : "None"
 				}),
 				oMetaModel = oModel.getMetaModel(),
-				sPropertyPath = "/SearchHelps/0/SELLER_ID",
+				sPropertyPath = "/ProductList/0/CurrencyCode",
 				oValueListMetaModel;
 
-			return oMetaModel.requestObject("/SearchHelps/").then(function () {
+			return oMetaModel.requestObject("/ProductList/").then(function () {
 				// value list in the data service
 				assert.strictEqual(oMetaModel.getValueListType(sPropertyPath),
 					ValueListType.Standard);
 				return oMetaModel.requestValueListInfo(sPropertyPath);
 			}).then(function (oValueListInfo) {
-				var sPropertyPath2 = "/_iwbep_C_V4_SEL_CH_SET/1/SELLER_ID";
+				var sPropertyPath2 = "/H_TCURC_SH_Set/1/WAERS";
 
 				// value list in the value list service
 				oValueListMetaModel = oValueListInfo[""].$model.getMetaModel();
 				assert.strictEqual(oValueListMetaModel.getValueListType(sPropertyPath2),
 					ValueListType.Standard);
-				assert.strictEqual(oValueListInfo[""].CollectionPath, "_iwbep_C_V4_SEL_CH_SET");
+				assert.strictEqual(oValueListInfo[""].CollectionPath, "H_TCURC_SH_Set");
 				return oValueListMetaModel.requestValueListInfo(sPropertyPath2);
 			}).then(function (oValueListInfo) {
 				assert.strictEqual(oValueListInfo[""].$model.getMetaModel(), oValueListMetaModel);
-				assert.strictEqual(oValueListInfo[""].CollectionPath, "_iwbep_C_V4_SEL_CH_SET");
+				assert.strictEqual(oValueListInfo[""].CollectionPath, "TCURC_CT_Set");
 			});
 		});
 	}

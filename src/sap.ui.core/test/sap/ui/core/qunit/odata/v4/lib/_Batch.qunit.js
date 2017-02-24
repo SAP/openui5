@@ -11,6 +11,7 @@ sap.ui.require([
 	"use strict";
 
 	var oEmployeesBody = {
+			"@odata.context": "$metadata#EMPLOYEES",
 			"value" : [{
 				"@odata.etag" : "W/\"19770724000000.0000000\"",
 				"ID" : "1",
@@ -34,7 +35,8 @@ sap.ui.require([
 					"BASIC_SALARY_CURR" : "EUR",
 					"YEARLY_BONUS_AMOUNT" : 5000.000,
 					"BONUS_CURR" : "KWD"
-				}
+				},
+				"STATUS": "Available"
 			}, {
 				"@odata.etag" : "W/\"20030701000000.0000000\"",
 				"ID" : "2",
@@ -58,7 +60,8 @@ sap.ui.require([
 					"BASIC_SALARY_CURR" : "EUR",
 					"YEARLY_BONUS_AMOUNT" : 10000.00,
 					"BONUS_CURR" : "EUR"
-				}
+				},
+				"STATUS": "Occupied"
 			}, {
 				"@odata.etag" : "W/\"19770724000000.0000000\"",
 				"ID" : "3",
@@ -82,7 +85,8 @@ sap.ui.require([
 					"BASIC_SALARY_CURR" : "EUR",
 					"YEARLY_BONUS_AMOUNT" : 10000.00,
 					"BONUS_CURR" : "EUR"
-				}
+				},
+				"STATUS": "Occupied"
 			}, {
 				"@odata.etag" : "W/\"20040912000000.0000000\"",
 				"ID" : "4",
@@ -106,7 +110,8 @@ sap.ui.require([
 					"BASIC_SALARY_CURR" : "GBP",
 					"YEARLY_BONUS_AMOUNT" : 15000.00,
 					"BONUS_CURR" : "USD"
-				}
+				},
+				"STATUS": "Available"
 			}, {
 				"@odata.etag" : "W/\"20010201000000.0000000\"",
 				"ID" : "5",
@@ -130,7 +135,8 @@ sap.ui.require([
 					"BASIC_SALARY_CURR" : "GBP",
 					"YEARLY_BONUS_AMOUNT" : 15000.00,
 					"BONUS_CURR" : "USD"
-				}
+				},
+				"STATUS": "Available"
 			}, {
 				"@odata.etag" : "W/\"20101201000000.0000000\"",
 				"ID" : "6",
@@ -154,7 +160,8 @@ sap.ui.require([
 					"BASIC_SALARY_CURR" : "GBP",
 					"YEARLY_BONUS_AMOUNT" : 15000.00,
 					"BONUS_CURR" : "USD"
-				}
+				},
+				"STATUS": "Occupied"
 			}]
 		},
 		oDepartmentsBody = {
@@ -1227,7 +1234,8 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"BASIC_SALARY_CURR" : "EUR",
 						"YEARLY_BONUS_AMOUNT" : 0.00,
 						"BONUS_CURR" : "EUR"
-					}
+					},
+					"STATUS" : "Available"
 				}
 			}],
 			expectedResponses : [{
