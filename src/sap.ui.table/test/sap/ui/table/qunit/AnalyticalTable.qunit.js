@@ -332,6 +332,61 @@ QUnit.module("AnalyticalTable with ODataModel v2", {
 	}
 });
 
+QUnit.asyncTest("getAnalyticalInfoOfRow", function (assert) {
+	this.oModel.attachMetadataLoaded(function() {
+		this.oTable = createTable.call(this);
+
+		var fnHandler1 = function() {
+			var oInfo = this.oTable.getAnalyticalInfoOfRow(this.oTable.getRows()[0]);
+			assert.equal(oInfo.grandTotal, false, "Group: grandTotal flag");
+			assert.equal(oInfo.group, true, "Group: group flag");
+			assert.equal(oInfo.groupTotal, false, "Group: groupTotal flag");
+			assert.equal(oInfo.level, 1, "Group: level");
+			assert.ok(oInfo.context === this.oTable.getRows()[0].getBindingContext(), "Group: context");
+			assert.equal(oInfo.groupedColumns.length, 1, "Group: groupedColumns");
+			assert.equal(oInfo.groupedColumns[0], this.oTable.getGroupedColumns()[0], "Group: groupedColumn");
+
+			oInfo = this.oTable.getAnalyticalInfoOfRow(this.oTable.getRows()[9]);
+			assert.equal(oInfo.grandTotal, true, "GrandTotal: grandTotal flag");
+			assert.equal(oInfo.group, false, "GrandTotal: group flag");
+			assert.equal(oInfo.groupTotal, false, "GrandTotal: groupTotal flag");
+			assert.equal(oInfo.level, 0, "GrandTotal: level");
+			assert.ok(oInfo.context === this.oTable.getRows()[9].getBindingContext(), "GrandTotal: context");
+			assert.equal(oInfo.groupedColumns.length, 0, "GrandTotal: groupedColumns");
+
+			oInfo = this.oTable.getAnalyticalInfoOfRow(this.oTable.getRows()[10]);
+			assert.ok(!oInfo, "Row has no context");
+
+			oInfo = this.oTable.getAnalyticalInfoOfRow(new sap.ui.table.Row());
+			assert.ok(!oInfo, "Row does not belong to the table");
+
+			attachEventHandler(this.oTable, 1, fnHandler2, this);
+			this.oTable.expand(0);
+		};
+
+		var fnHandler2 = function () {
+			var oInfo = this.oTable.getAnalyticalInfoOfRow(this.oTable.getRows()[13]);
+			assert.equal(oInfo.grandTotal, false, "GroupTotal: grandTotal flag");
+			assert.equal(oInfo.group, false, "GroupTotal: group flag");
+			assert.equal(oInfo.groupTotal, true, "GroupTotal: groupTotal flag");
+			assert.equal(oInfo.level, 1, "GroupTotal: level");
+			assert.ok(oInfo.context === this.oTable.getRows()[0].getBindingContext(), "GroupTotal: context");
+			assert.equal(oInfo.groupedColumns.length, 1, "GroupTotal: groupedColumns");
+			assert.equal(oInfo.groupedColumns[0], this.oTable.getGroupedColumns()[0], "Group: groupedColumn");
+
+			this.oTable.unbindRows();
+			oInfo = this.oTable.getAnalyticalInfoOfRow(this.oTable.getRows()[0]);
+			assert.ok(!oInfo, "Table has no binding");
+
+			start();
+		};
+
+		attachEventHandler(this.oTable, 1, fnHandler1, this);
+		this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
+
+	}, this);
+});
+
 QUnit.asyncTest("TreeAutoExpandMode", function (assert) {
 	jQuery.sap.require("sap.ui.model.TreeAutoExpandMode");
 	var oExpandMode = sap.ui.model.TreeAutoExpandMode;
