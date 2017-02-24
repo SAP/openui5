@@ -17,6 +17,9 @@ sap.ui.require([
 
   });
 
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("normalization works as expected", function() {
 
     // main test cases (tests multiple spaces between words and padding around string)
@@ -62,6 +65,9 @@ sap.ui.require([
     strictEqual(dtu.normalization.camelCase("__Sold__To Party__"), "soldToParty", "Camel Case underscores surround");
   });
 
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("Given no normalization, toTable changes 2D matrix into list of objects", function() {
 
     var data = [
@@ -99,6 +105,9 @@ sap.ui.require([
     );
   });
 
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("Given normalization, toTable normalizes attribute names", function() {
 
     var data = [
@@ -127,6 +136,40 @@ sap.ui.require([
     deepEqual(dtu.toTable(data, normalizationFunction), expected, "camelCase function");
   });
 
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("When we duplicate column headers then toTable throws an Error", function() {
+    // The Cucumber Java's reference implementation uses the first column and doesn't throw an Error
+    // We are deviating from the reference implementation because it seems like they didn't consider this edge case
+
+    throws( function(){
+      dtu.toTable([
+        ["Planet", "Planet"],
+        ["Mercury", "Jupiter"]
+      ]);
+    }, function(error) {
+      return error.message === "dataTableUtils.toTable: data table contains duplicate header: | Planet |";
+    },
+      "When we duplicate column headers then toTable throws an Error"
+    );
+
+    throws( function(){
+      dtu.toTable([
+        ["PLANET", "planet"],
+        ["Mercury", "Jupiter"]
+      ], "camelCase");
+    }, function(error) {
+      return error.message === "dataTableUtils.toTable: data table contains duplicate header: | planet |";
+    },
+      "When we duplicate column headers then toTable throws an Error - normalization creates collision"
+    );
+
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("Given no normalization, toObject converts raw data into an object", function() {
 
     var data = [
@@ -144,6 +187,9 @@ sap.ui.require([
     }, "toObject - no normalization");
   });
 
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("Given nested data, toObject converts raw data into an object with nested object", function() {
 
     var data = [
@@ -164,6 +210,107 @@ sap.ui.require([
 
   });
 
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("When we have duplicate keys then toObject throws Error", function() {
+    // The Cucumber Java's implementation of DataTable.asMap() keeps values from the last row and doesn't throw an Error
+    // We are deviating from the reference implementation because it seems like they didn't consider this edge case
+
+    throws( function() {
+      dtu.toObject([
+        ["Name", "135 lbs"],
+        ["Name", "Alice"],
+      ]);
+    }, function(error) {
+      return error.message === "dataTableUtils.toObject: data table row is being overwritten: | Name | 135 lbs |";
+    },
+      "When we duplicate column headers then toTable throws an Error - Simple Key"
+    );
+
+    throws( function() {
+      dtu.toObject([
+        ["Telephone Number", "555-777-8888"],
+        ["Telephone Number", "Home", "333-555-7777"],
+        ["Telephone Number", "Home", "123-456-7890"],
+      ]);
+    }, function(error) {
+      return error.message === "dataTableUtils.toObject: data table row is being overwritten: | Telephone Number | 555-777-8888 |";
+    },
+      "When we duplicate column headers then toTable throws an Error - Simple key replaced by nested key"
+    );
+
+    throws( function() {
+      dtu.toObject([
+        ["Address", "Street", "Grand Boulevard"],
+        ["Address", "5000 Hollywood Ave"],
+      ]);
+    }, function(error) {
+      return error.message === "dataTableUtils.toObject: data table row is being overwritten: | Address | Street | Grand Boulevard |";
+    },
+      "When we duplicate column headers then toTable throws an Error - Nested key replaced by simple key"
+    );
+
+    throws( function() {
+      dtu.toObject([
+        ["Address", "Street", "House", "Grand Boulevard"],
+        ["Address", "5000 Hollywood Ave"],
+      ]);
+    }, function(error) {
+      return error.message === "dataTableUtils.toObject: data table row is being overwritten: | Address | Street | House | Grand Boulevard |";
+    },
+      "When we duplicate column headers then toTable throws an Error - Deeply nested key replaced by simple key"
+    );
+
+    throws( function() {
+      dtu.toObject([
+        ["GPS", "Latitude", "Minutes", "30"],
+        ["GPS", "Latitude", "50"]
+      ]);
+    }, function(error) {
+      return error.message === "dataTableUtils.toObject: data table row is being overwritten: | GPS | Latitude | Minutes | 30 |";
+    },
+      "When we duplicate column headers then toTable throws an Error - Deeply nested key replaced by nested key"
+    );
+
+    throws( function() {
+      dtu.toObject([
+        ["GPS", "Latitude", "50"],
+        ["GPS", "Latitude", "Minutes", "30"]
+      ]);
+    }, function(error) {
+      return error.message === "dataTableUtils.toObject: data table row is being overwritten: | GPS | Latitude | 50 |";
+    },
+      "When we duplicate column headers then toTable throws an Error - Deeply nested key replaced by nested key 2"
+    );
+
+    throws( function() {
+      dtu.toObject([
+        ["GPS", "Latitude", "Minutes", "30"],
+        ["GPS", "Latitude", "Minutes", "50"]
+      ]);
+    }, function(error) {
+      return error.message === "dataTableUtils.toObject: data table row is being overwritten: | GPS | Latitude | Minutes | 30 |";
+    },
+      "When we duplicate column headers then toTable throws an Error - Deeply nested key"
+    );
+
+    throws( function() {
+      dtu.toObject([
+        ["HOME ADDRESS", "5000 Boulevard Rene-Levesque"],
+        ["home address", "8000 Hollywood Boulevard"]
+      ], "camelCase");
+    }, function(error) {
+      return error.message === "dataTableUtils.toObject: data table row is being overwritten: | HOME ADDRESS | 5000 Boulevard Rene-Levesque |";
+    },
+      "When we duplicate column headers then toTable throws an Error - Normalization creates collision"
+    );
+
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("Given normalization, toObject converts raw data into an object with normalized properties", function() {
 
     var data = [
@@ -188,7 +335,9 @@ sap.ui.require([
     deepEqual(dtu.toObject(data, normalizationFunction), expected, "hyphenated function");
   });
 
-
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("toTable Invalid data input", function() {
 
     var arrayError = "dataTableUtils.toTable: parameter 'aData' must be an Array of Array of Strings";
@@ -244,7 +393,9 @@ sap.ui.require([
 
   });
 
-
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("toObject invalid data input", function() {
 
     var arrayError = "dataTableUtils.toObject: parameter 'aData' must be an Array of Array of Strings";
@@ -300,7 +451,9 @@ sap.ui.require([
 
   });
 
-
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("Normalization functions: invalid data input", function() {
 
     // titleCase
