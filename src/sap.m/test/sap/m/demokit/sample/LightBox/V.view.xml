@@ -20,6 +20,10 @@
                             </LightBoxItem>
                         </LightBox>
                     </detailBox>
+                    <!-- Fixes Hbox layout on Android Stock Browser for Android 5.0 -->
+                    <layoutData>
+                        <FlexItemData growFactor="1" shrinkFactor="0"/>
+                    </layoutData>
                 </Image>
                 <VBox class="sapUiSmallMarginBegin">
                     <Title text="Beamer"/>
@@ -47,6 +51,10 @@
                             </LightBoxItem>
                         </LightBox>
                     </detailBox>
+                    <!-- Fixes Hbox layout on Android Stock Browser for Android 5.0 -->
+                    <layoutData>
+                        <FlexItemData growFactor="1" shrinkFactor="0"/>
+                    </layoutData>
                 </Image>
                 <VBox class="sapUiSmallMarginBegin">
                     <Title text="USB"/>
@@ -74,6 +82,10 @@
                             </LightBoxItem>
                         </LightBox>
                     </detailBox>
+                    <!-- Fixes Hbox layout on Android Stock Browser for Android 5.0 -->
+                    <layoutData>
+                        <FlexItemData growFactor="1" shrinkFactor="0"/>
+                    </layoutData>
                 </Image>
                 <VBox class="sapUiSmallMarginBegin">
                     <Title text="Speakers"/>
@@ -101,6 +113,10 @@
                             </LightBoxItem>
                         </LightBox>
                     </detailBox>
+                    <!-- Fixes Hbox layout on Android Stock Browser for Android 5.0 -->
+                    <layoutData>
+                        <FlexItemData growFactor="1" shrinkFactor="0"/>
+                    </layoutData>
                 </Image>
                 <VBox class="sapUiSmallMarginBegin">
                     <Title text="Nature image"/>
@@ -128,6 +144,10 @@
                             </LightBoxItem>
                         </LightBox>
                     </detailBox>
+                    <!-- Fixes Hbox layout on Android Stock Browser for Android 5.0 -->
+                    <layoutData>
+                        <FlexItemData growFactor="1" shrinkFactor="0"/>
+                    </layoutData>
                 </Image>
                 <VBox class="sapUiSmallMarginBegin">
                     <Title text="Nature image"/>
@@ -155,6 +175,10 @@
                             </LightBoxItem>
                         </LightBox>
                     </detailBox>
+                    <!-- Fixes Hbox layout on Android Stock Browser for Android 5.0 -->
+                    <layoutData>
+                        <FlexItemData growFactor="1" shrinkFactor="0"/>
+                    </layoutData>
                 </Image>
                 <VBox class="sapUiSmallMarginBegin">
                     <Title text="Nature image"/>
@@ -184,6 +208,10 @@
                             </imageContent>
                         </LightBox>
                     </detailBox>
+                    <!-- Fixes Hbox layout on Android Stock Browser for Android 5.0 -->
+                    <layoutData>
+                        <FlexItemData growFactor="1" shrinkFactor="0"/>
+                    </layoutData>
                 </Image>
                 <VBox class="sapUiSmallMarginBegin">
                     <Title text="Nature image"/>
