@@ -55,6 +55,42 @@
 		destroyFF(oFF);
 	});
 
+
+	test("Aggreations: list's items can be bound to a model with an arbitrary size limit", function(assert) {
+		//prepare
+		var oFF = new sap.m.FacetFilter({type: sap.m.FacetFilterType.Light}),
+				oModel = new sap.ui.model.json.JSONModel(),
+				aData = [],
+				fnDone = assert.async(),
+				oDialog;
+
+		oFF.bindAggregation("lists", {path: "/Filters", template: new sap.m.FacetFilterList({title: "{text}"})});
+		for (var i = 1; i <= 105; i++) {
+			aData.push({text: "List" + i});
+		}
+
+		oModel.setData({Filters: aData});
+		oModel.setSizeLimit(200);
+		oFF.setModel(oModel);
+
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		//act
+		oDialog = oFF._getFacetDialog();
+		oDialog.attachEventOnce("afterOpen", function() {
+
+			//test
+			equal(oFF.getLists().length, 105, "Expected 105 lists");
+			ok(jQuery("#__item0-__list1-104").size(), "There should be at element 105 rendered");
+
+			destroyFF(oFF);
+
+			fnDone();
+		});
+		oFF.getAggregation("summaryBar").firePress();
+	});
+
 	test("Default Property Values & Override", function() {
 
 		var oFF = new sap.m.FacetFilter();
