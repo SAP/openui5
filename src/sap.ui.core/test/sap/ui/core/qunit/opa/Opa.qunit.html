@@ -28,8 +28,9 @@ QUnit.config.reorder = false;
 sap.ui.require([
 	"jquery.sap.global",
 	"unitTests/utils/loggerInterceptor",
-	"sap/ui/Device"
-], function ($, loggerInterceptor, Device) {
+	"sap/ui/Device",
+	"sap/ui/thirdparty/URI"
+], function ($, loggerInterceptor, Device,URI) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -41,6 +42,7 @@ sap.ui.require([
 	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.Opa");
 	var Opa = sap.ui.test.Opa;
 
+	// save default execution delay for this specific browser
 	var iExecutionDelay = Opa.config.executionDelay;
 
 	QUnit.module("context");
@@ -704,37 +706,36 @@ sap.ui.require([
 		assert.notEqual(Opa.config.assertions, oOpa);
 	});
 
-	[{
-		uriParameter: 2000,
-		expected: 2000
-	},
-	{
-		uriParameter: "2000",
-		expected: 2000
-	},
-	{
-		uriParameter: "foo",
-		expected: iExecutionDelay
-	},
-	{
-		uriParameter: null,
-		expected: iExecutionDelay
-	}].forEach(function (oTestCase) {
-		QUnit.test("Should set the executionDelay if a URL parameter is " + JSON.stringify(oTestCase), function (assert) {
-			var fnDone = assert.async();
-			var oStub = sinon.stub($.sap, "getUriParameters", function () {
-				return {
-					get: function () {
-						return oTestCase.uriParameter
-					}
-				}
-			});
-			$.sap.unloadResources("sap/ui/test/Opa.js", false, true, true);
+	QUnit.test("Should read an opa config value from URL parameter", function (assert) {
+		var fnDone = assert.async();
+		var oStub = sinon.stub(URI.prototype, "search", function () {
+			return {
+				"opaKey": "value",			// should parse prefixed params
+				"opaExecutionDelay": "2000",// should override default value params
+				"another": "value",			// should not parse unprefixed params
+				"opaOverride": "value"		// should override already set params
+			};
+		});
+		$.sap.unloadResources("sap/ui/test/Opa.js", false, true, true);
 
+		sap.ui.require(["sap/ui/test/Opa"], function (Opa) {
+			assert.strictEqual(Opa.config.key, 'value');
+			assert.strictEqual(Opa.config.executionDelay, 2000);
+			assert.strictEqual(Opa.config.another, undefined);
+
+			Opa.extendConfig({
+				override: 'initialValue'
+			});
+			assert.strictEqual(Opa.config.override, "value");
+
+			// restore the stub and reload OPA5 so empty app params are loaded
+			oStub.restore();
+			$.sap.unloadResources("sap/ui/test/Opa.js", false, true, true);
 			sap.ui.require(["sap/ui/test/Opa"], function (Opa) {
-				assert.strictEqual(Opa.config.executionDelay, oTestCase.expected);
-				oStub.restore();
-				fnDone()
+				assert.strictEqual(Opa.config.key, undefined);
+				assert.strictEqual(Opa.config.executionDelay, iExecutionDelay);
+				assert.strictEqual(Opa.config.override, undefined);
+				fnDone();
 			});
 		});
 	});
