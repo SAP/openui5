@@ -5,7 +5,7 @@ sap.ui.define([
 
 		function getFrameUrl (sHash, sUrlParameters) {
 			var sUrl = jQuery.sap.getResourcePath("sap/ui/demo/iconexplorer/app", ".html");
-			sUrlParameters = sUrlParameters ? "?" + sUrlParameters: "";
+			sUrlParameters = sUrlParameters ? "?" + sUrlParameters : "";
 
 			if (sHash) {
 				sHash = "#" + sHash;

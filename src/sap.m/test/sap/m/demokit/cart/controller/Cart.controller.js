@@ -18,6 +18,8 @@ sap.ui.define([
 	Dialog,
 	Button,
 	History) {
+	"use strict";
+
 	var sCartModelName = "cartProducts";
 	var sSavedForLaterEntries = "savedForLaterEntries";
 	var sCartEntries = "cartEntries";
@@ -69,16 +71,25 @@ sap.ui.define([
 		_toggleCfgModel: function () {
 			var oCfgModel = this.getView().getModel("cfg");
 			var oData = oCfgModel.getData();
+			var oBundle = this.getResourceBundle();
 			var bDataNoSetYet = !oData.hasOwnProperty("inDelete");
 			var bInDelete = (bDataNoSetYet) ? true : oData.inDelete;
 
-			var oBundle = this.getResourceBundle();
+			var sListMode = "Delete";
+			if (bInDelete) {
+				sListMode = (Device.system.phone ? "None" : "SingleSelectMaster");
+			}
+			var sListItemType = "Inactive";
+			if (bInDelete) {
+				sListItemType = (Device.system.phone ? "Active" : "Inactive");
+			}
+
 			oCfgModel.setData({
 				inDelete: !bInDelete,
 				notInDelete: bInDelete,
-				listMode: bInDelete ? Device.system.phone ? "None" : "SingleSelectMaster" : "Delete",
-				listItemType: bInDelete ? Device.system.phone ? "Active" : "Inactive" : "Inactive",
-				pageTitle: (bInDelete) ? oBundle.getText("CART_TITLE_DISPLAY") : oBundle.getText("CART_TITLE_EDIT")
+				listMode: sListMode,
+				listItemType: sListItemType,
+				pageTitle: (bInDelete ? oBundle.getText("CART_TITLE_DISPLAY") : oBundle.getText("CART_TITLE_EDIT"))
 			});
 		},
 
@@ -161,18 +172,18 @@ sap.ui.define([
 		},
 
 		onCartEntriesDelete: function (oEvent) {
-			this._deleteProduct(sCartEntries, oEvent)
+			this._deleteProduct(sCartEntries, oEvent);
 		},
 
 		onSaveForLaterDelete: function (oEvent) {
-			this._deleteProduct(sSavedForLaterEntries, oEvent)
+			this._deleteProduct(sSavedForLaterEntries, oEvent);
 		},
 
 		/**
 		 * Helper function for the deletion of items from <code>cart</code> or <code>savedForLater</code> list.
 		 * If the delete button is pressed, a message dialog will open.
 		 * @private
-		 * @param {string} sCollection
+		 * @param {string} sCollection the collection name
 		 * @param {sap.ui.base.Event} oEvent Event object
 		 */
 		_deleteProduct : function (sCollection, oEvent) {
@@ -209,7 +220,6 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent Event object
 		 */
 		onProceedButtonPress: function (oEvent) {
-			var that = this;
 			if (!this._orderDialog) {
 
 				// create busy dialog
@@ -245,19 +255,19 @@ sap.ui.define([
 						press: function () {
 							var bInputValid = oInputView.getController()._checkInput();
 							if (bInputValid) {
-								that._orderDialog.close();
+								this._orderDialog.close();
 								var msg = "Your order was placed.";
-								that._resetCart();
+								this._resetCart();
 								MessageToast.show(msg, {});
 							}
-						}
+						}.bind(this)
 					}),
 					// Cancel button
 					rightButton: new Button({
 						text: oBundle.getText("DIALOG_CANCEL_ACTION"),
 						press: function () {
-							that._orderDialog.close();
-						}
+							this._orderDialog.close();
+						}.bind(this)
 					})
 				});
 

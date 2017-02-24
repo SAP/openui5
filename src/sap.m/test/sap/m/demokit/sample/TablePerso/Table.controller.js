@@ -23,7 +23,7 @@ sap.ui.define([
 				table: this.getView().byId("productsTable"),
 				//specify the first part of persistence ids e.g. 'demoApp-productsTable-dimensionsCol'
 				componentName: "demoApp",
-				persoService: DemoPersoService,
+				persoService: DemoPersoService
 			}).activate();
 		},
 

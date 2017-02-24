@@ -80,7 +80,7 @@ sap.ui.define([
 		 */
 		onUpdateFinished : function () {
 			function getRootControl(oEvent) {
-				return oEvent.srcControl.getMetadata().getName().search("VerticalLayout") >= 0 ? oEvent.srcControl: oEvent.srcControl.getParent();
+				return oEvent.srcControl.getMetadata().getName().search("VerticalLayout") >= 0 ? oEvent.srcControl : oEvent.srcControl.getParent();
 			}
 
 			// show total count of items
@@ -124,7 +124,7 @@ sap.ui.define([
 							}
 							oRoot.$().find(".sapUiVltCell > .sapUiIcon").control().forEach(function (oIcon) {
 								oIcon.setColor(sap.ui.core.theming.Parameters.get("sapUiTextInverted"));
-							}.bind(this));
+							});
 						}.bind(this),
 						// touchend: remove active class, reset icon color
 						ontouchend: function (oEvent) {
@@ -135,14 +135,14 @@ sap.ui.define([
 								oIcon.setColor(this._sNormalIconColor);
 							}.bind(this));
 						}.bind(this)
-					}
+					};
 				}
 
 				// there is no addEventDelegateOnce so we remove and add it for all items
 				this.byId("results").getAggregation(this._sAggregationName).forEach(function (oItem) {
 					oItem.removeEventDelegate(this._oPressLayoutCellDelegate);
 					oItem.addEventDelegate(this._oPressLayoutCellDelegate);
-				}.bind(this))
+				}.bind(this));
 			}
 		},
 
@@ -309,7 +309,9 @@ sap.ui.define([
 							var sAlphaColor = "rgba(" + sBackgroundColor.match(/rgb\((.+)\)/)[1] + ", 0.80)";
 
 							$control.css("background-color", sAlphaColor);
-						} catch (oException) {}
+						} catch (oException) {
+							// do nothing
+						}
 					}.bind(this)
 				});
 			}.bind(this);
@@ -325,7 +327,7 @@ sap.ui.define([
 			var fnUpdatePreviewSize = function () {
 				var iWidth = this.byId("previewCell").$().width();
 				if (iWidth) {
-					this.byId("previewIcon").setSize((iWidth/2) + "px");
+					this.byId("previewIcon").setSize((iWidth / 2) + "px");
 				}
 			}.bind(this);
 
@@ -333,7 +335,7 @@ sap.ui.define([
 			this.byId("previewIcon").addEventDelegate({
 				onAfterRendering: function () {
 					fnUpdatePreviewSize();
-				}.bind(this)
+				}
 			});
 
 			var fnDelayedResize = sap.ui.layout.Splitter.prototype._delayedResize;
@@ -355,7 +357,7 @@ sap.ui.define([
 				sap.m.Token.prototype.ontouchstart = function () {
 					arguments[0].setMarked();
 					fnOnTokenTouchstart.apply(this, arguments);
-				}
+				};
 			}
 		},
 
@@ -382,7 +384,7 @@ sap.ui.define([
 
 				// update unicode info
 				this.byId("unicodeInfo").setText(this.getModel().getUnicodeHTML(sIcon));
-			}.bind(this))
+			}.bind(this));
 		},
 
 		/**
@@ -395,7 +397,7 @@ sap.ui.define([
 				bInitial = false;
 
 			// set a default query object in case no has is defined
-			if(!oQuery) {
+			if (!oQuery) {
 				oQuery = {
 					tab: "grid"
 				};
@@ -535,7 +537,7 @@ sap.ui.define([
 			}
 
 			// explicit reset for tags and search when the all item was pressed
-			if(sKey === "reset") {
+			if (sKey === "reset") {
 				delete oQuery.tag;
 				delete oQuery.search;
 				delete oQuery.cat;
@@ -601,14 +603,14 @@ sap.ui.define([
 					}) : undefined);
 
 				// search for name
-				if(sSearchValue) {
+				if (sSearchValue) {
 					aFilters.push(oFilterSearchNameTags);
 				}
 				// search for tags
-				if(sTagValue) {
+				if (sTagValue) {
 					aFilters.push(oFilterTags);
 				}
-				if(aFilters.length <= 1) {
+				if (aFilters.length <= 1) {
 					// search or tag: just take the filter
 					this._vFilterSearch = aFilters;
 				} else {
@@ -660,7 +662,7 @@ sap.ui.define([
 
 		/**
 		 * updates the tags to the currently available binding contexts
-		 * @param oQuery
+		 * @param {Object} oQuery the current query state
 		 * @private
 		 */
 		_updateTags: function (oQuery) {
@@ -782,7 +784,7 @@ sap.ui.define([
 		 */
 		_loadMoreIcons: function () {
 			var oBindingInfo = this.byId("results").getBindingInfo(this._sAggregationName),
-				iOldLength = parseInt(oBindingInfo.length),
+				iOldLength = parseInt(oBindingInfo.length, 10),
 				iTotalLength = this.byId("results").getBinding("content").getLength();
 
 			// exit condition
@@ -802,7 +804,7 @@ sap.ui.define([
 					if (oLastItemFromOldLength.$()[0].scrollIntoView) {
 						oLastItemFromOldLength.$()[0].scrollIntoView(false);
 					} else {
-						this.byId("resultContainer").scrollToElement(olastItemFromOldLength);
+						this.byId("resultContainer").scrollToElement(oLastItemFromOldLength);
 					}
 					this.byId("results").removeEventDelegate(this._oScrollToLastResultPositionEventDelegate);
 				}.bind(this)

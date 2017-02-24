@@ -9,7 +9,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 			this.getView().byId("toolbar1").setWidth(sWidth);
 			this.getView().byId("toolbar2").setWidth(sWidth);
 			this.getView().byId("toolbar3").setWidth(sWidth);
-		},
+		}
 	});
 
 	return ToolbarController;

@@ -71,7 +71,7 @@ sap.ui.define([
 			sap.m.MessageToast.show("MultiSelect Pressed");
 		} else {
 			sap.m.MessageToast.show("MultiSelect Unpressed");
-		};
+		}
 	}
 });
 

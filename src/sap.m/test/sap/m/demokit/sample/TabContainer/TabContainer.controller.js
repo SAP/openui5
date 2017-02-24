@@ -1,8 +1,8 @@
-sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/m/MessageToast', 'sap/m/Dialog', 'sap/m/Button', 'sap/m/MessageBox',],
-	function (Controller, JSONModel, MessageToast, Dialog, Button, MessageBox) {
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/m/MessageToast', 'sap/m/TabContainerItem'],
+	function (Controller, JSONModel, MessageToast, TabContainerItem) {
 		"use strict";
 
-		var TCController = Controller.extend("sap.m.sample.TabContainer.TabContainer", {
+		return Controller.extend("sap.m.sample.TabContainer.TabContainer", {
 			onInit: function () {
 				var oModel = new JSONModel();
 				oModel.setData({
@@ -42,8 +42,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap
 					'Item ' + oItem.getName() + " was selected"
 				);
 			},
-			addNewButtonPressHandler : function(oEvent) {
-				var newEmployee = new sap.m.TabContainerItem({
+			addNewButtonPressHandler : function() {
+				var newEmployee = new TabContainerItem({
 					name: "New employee",
 					modified: false
 				});
@@ -77,5 +77,4 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap
 				});
 			}
 		});
-		return TCController;
 	});

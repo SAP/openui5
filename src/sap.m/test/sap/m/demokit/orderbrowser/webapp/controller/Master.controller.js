@@ -169,6 +169,7 @@ sap.ui.define([
 			 * of the master list.
 			 * Note: In addition, there can be another filter based on the search field.
 			 * Both optional filters are combined in _applyFilterSearch().
+			 * @param {sap.ui.base.Event} oEvent The change event
 			 */
 			onFilter : function(oEvent) {
 				var sKey = oEvent.getSource().getSelectedItem().getKey();
@@ -187,8 +188,7 @@ sap.ui.define([
 
 				if (oFilter) {
 					this._oListFilterState.aFilter = [ oFilter ];
-				}
-				else {
+				} else {
 					this._oListFilterState.aFilter = [];
 				}
 				this._applyFilterSearch();

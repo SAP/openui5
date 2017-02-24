@@ -11,13 +11,12 @@ sap.ui.define(function() {
 			var fAdjustedMeasure = parseFloat(fMeasure);
 
 			// if the value of fMeasure is not a number, no status will be set
-			if(isNaN(fAdjustedMeasure)) {
+			if (isNaN(fAdjustedMeasure)) {
 				return "None";
-			}
-			else {
+			} else {
 
-				if(sUnit === "G") {
-					fAdjustedMeasure = fMeasure/1000;
+				if (sUnit === "G") {
+					fAdjustedMeasure = fMeasure / 1000;
 				}
 
 				if (fAdjustedMeasure < 0) {
@@ -31,7 +30,7 @@ sap.ui.define(function() {
 				}
 			}
 		}
-	}
+	};
 
 	return Formatter;
 

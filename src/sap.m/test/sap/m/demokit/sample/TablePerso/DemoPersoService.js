@@ -119,7 +119,7 @@ sap.ui.define(['jquery.sap.global'],
 		},
 
 		getGroup : function(oColumn) {
-			if( oColumn.getId().indexOf('productCol') != -1 ||
+			if ( oColumn.getId().indexOf('productCol') != -1 ||
 					oColumn.getId().indexOf('supplierCol') != -1) {
 				return "Primary Group";
 			}

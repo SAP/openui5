@@ -33,13 +33,13 @@ sap.ui.define([
 	QUnit.module("Is Favorite", {
 		beforeEach : function () {
 			this.getModel = sinon.stub().returns({
-				isFavorite: function(sName) {
-					assert.ok (this.getModel.calledWith("fav"), "fav model has has been called");
-					assert.ok (true, "isFavorite method of the fav model has has been called");
+				isFavorite: function(assert) {
+					assert.ok(this.getModel.calledWith("fav"), "fav model has has been called");
+					assert.ok(true, "isFavorite method of the fav model has has been called");
 
-					return !!sName;
+					return true;
 				}.bind(this)
-			})
+			});
 		},
 		afterEach : function () {
 			this.getModel = undefined;
@@ -48,7 +48,7 @@ sap.ui.define([
 
 	QUnit.test("Should call the favorite model function", function (assert) {
 		// Assert (just make sure the right methods were called, functionality is tested in FavModel itself)
-		formatter.isFavorite.bind(this)();
+		formatter.isFavorite.bind(this)(assert);
 	});
 
 	QUnit.module("Uppercase first letter ");

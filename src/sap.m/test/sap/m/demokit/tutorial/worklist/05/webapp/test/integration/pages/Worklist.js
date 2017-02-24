@@ -52,7 +52,9 @@ sap.ui.define([
 			return;
 		}
 
+		/*eslint-disable new-cap */
 		var oEvent = jQuery.Event("touchend");
+		/*eslint-enable new-cap */
 		oEvent.originalEvent = {
 			query: oSearchParams.searchValue,
 			refreshButtonPressed: oSearchParams.refreshButtonPressed,

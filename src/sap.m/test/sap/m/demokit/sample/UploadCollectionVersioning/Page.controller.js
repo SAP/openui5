@@ -90,7 +90,7 @@ sap.ui.define([
 			// Sets the text to the label
 			oUploadCollection.addEventDelegate({
 				onBeforeRendering : function () {
-					this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText())
+					this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
 				}.bind(this)
 			});
 
@@ -184,7 +184,7 @@ sap.ui.define([
 		},
 
 		onSelectChange:  function(oEvent) {
-			var oUploadCollection= this.getView().byId("UploadCollection");
+			var oUploadCollection = this.getView().byId("UploadCollection");
 			oUploadCollection.setShowSeparators(oEvent.getParameters().selectedItem.getProperty("key"));
 		},
 
@@ -198,11 +198,13 @@ sap.ui.define([
 			MessageToast.show("BeforeUploadStarts event triggered.");
 		},
 
-		onUploadTerminated: function(oEvent) {
+		onUploadTerminated: function() {
+			/*
 			// get parameter file name
 			var sFileName = oEvent.getParameter("fileName");
 			// get a header parameter (in case no parameter specified, the callback function getHeaderParameter returns all request headers)
 			var oRequestHeaders = oEvent.getParameters().getHeaderParameter();
+			*/
 		},
 
 		getAttachmentTitleText: function(){
@@ -210,7 +212,7 @@ sap.ui.define([
 			return "Uploaded (" + aItems.length + ")";
 		},
 
-		onDownloadItem: function(oEvent){
+		onDownloadItem: function(){
 			var oUploadCollection = this.getView().byId("UploadCollection");
 			var aSelectedItems = oUploadCollection.getSelectedItems();
 			if (aSelectedItems){
@@ -222,14 +224,14 @@ sap.ui.define([
 			}
 		},
 
-		onVersion: function(oEvent){
+		onVersion: function(){
 			var oUploadCollection = this.getView().byId("UploadCollection");
 			this.bIsUploadVersion = true;
 			this.oItemToUpdate = oUploadCollection.getSelectedItem();
 			oUploadCollection.openFileDialog(this.oItemToUpdate);
 		},
 
-		onSelectionChange: function(oEvent){
+		onSelectionChange: function(){
 			var oUploadCollection = this.getView().byId("UploadCollection");
 			// If there's any item selected, sets download button enabled
 			if (oUploadCollection.getSelectedItems().length > 0) {
@@ -245,13 +247,13 @@ sap.ui.define([
 			}
 		},
 
-		onFileTypeChange: function(oEvent) {
+		onFileTypeChange: function() {
 			var oUploadCollection = this.getView().byId("UploadCollection");
 			var oFileTypesMultiComboBox = this.getView().byId("fileTypesBox");
 			oUploadCollection.setFileType(oFileTypesMultiComboBox.getSelectedKeys());
 		},
 
-		updateFile: function(oNewFileParameters){
+		updateFile: function(){
 			var oData = this.getView().byId("UploadCollection").getModel().getData();
 			var aItems = jQuery.extend(true, {}, oData).items;
 			// Adds the new metadata to the file which was updated.
@@ -262,7 +264,7 @@ sap.ui.define([
 					// Uploaded on
 					aItems[i].attributes[1].text = new Date(jQuery.now()).toLocaleDateString();
 					// Version
-					var iVersion = parseInt(aItems[i].attributes[3].text);
+					var iVersion = parseInt(aItems[i].attributes[3].text, 10);
 					iVersion++;
 					aItems[i].attributes[3].text = iVersion;
 				}

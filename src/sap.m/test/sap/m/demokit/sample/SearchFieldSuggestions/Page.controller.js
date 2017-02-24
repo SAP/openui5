@@ -27,14 +27,16 @@ sap.ui.define([
 			var value = event.getParameter("suggestValue");
 			var filters = [];
 			if (value) {
-				filters = [new sap.ui.model.Filter([
-		                                               new sap.ui.model.Filter("ProductId", function(sText) {
-			                                            	return (sText || "").toUpperCase().indexOf(value.toUpperCase()) > -1;
-			                                               }),
-			                                           new sap.ui.model.Filter("Name", function(sDes) {
-				                                            return (sDes || "").toUpperCase().indexOf(value.toUpperCase()) > -1;
-				                                           })
-		                                               ], false)];
+				filters = [
+					new sap.ui.model.Filter([
+						new sap.ui.model.Filter("ProductId", function(sText) {
+							return (sText || "").toUpperCase().indexOf(value.toUpperCase()) > -1;
+						}),
+						new sap.ui.model.Filter("Name", function(sDes) {
+							return (sDes || "").toUpperCase().indexOf(value.toUpperCase()) > -1;
+						})
+					], false)
+				];
 			}
 
 			this.oSF.getBinding("suggestionItems").filter(filters);

@@ -6,6 +6,8 @@ sap.ui.define([
 	'sap/m/MessageToast',
 	'sap/m/MessageBox'
 ], function ($, BaseController, formatter, cart) {
+	"use strict";
+
 	return BaseController.extend("sap.ui.demo.cart.controller.Product", {
 		formatter : formatter,
 		cart: cart,
@@ -52,10 +54,11 @@ sap.ui.define([
 		},
 
 		fnUpdateProduct: function(sChannel, sEvent, oData) {
-			var fnCheck = function () {
-				this._checkIfProductAvailable(sPath, oData.productId);
-			};
-			var sPath = "/Products('" + oData.productId + "')";
+			var sPath = "/Products('" + oData.productId + "')",
+				fnCheck = function () {
+					this._checkIfProductAvailable(sPath, oData.productId);
+				};
+
 			this.getView().bindElement({
 				path: sPath,
 				events: {

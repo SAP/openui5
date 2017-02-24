@@ -29,7 +29,7 @@ sap.ui.require(
 			When.onTheBrowser.iPressOnTheForwardButton();
 
 			// Assertions
-			Then.onThePostPage.theTitleShouldDisplayTheName("Jeans"),
+			Then.onThePostPage.theTitleShouldDisplayTheName("Jeans").
 				and.iTeardownMyAppFrame();
 		});
 	}

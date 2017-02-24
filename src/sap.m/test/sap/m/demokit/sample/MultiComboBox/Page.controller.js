@@ -21,7 +21,7 @@ sap.ui.define([
 
 			var state = "Selected";
 			if (!isSelected) {
-				state = "Deselected"
+				state = "Deselected";
 			}
 
 			MessageToast.show("Event 'selectionChange': " + state + " '" + changedItem.getText() + "'", {
@@ -35,7 +35,7 @@ sap.ui.define([
 
 			for (var i = 0; i < selectedItems.length; i++) {
 				messageText += "'" + selectedItems[i].getText() + "'";
-				if (i != selectedItems.length-1) {
+				if (i != selectedItems.length - 1) {
 					messageText += ",";
 				}
 			}

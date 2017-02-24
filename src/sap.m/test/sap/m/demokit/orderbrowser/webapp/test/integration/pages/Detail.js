@@ -30,7 +30,7 @@ sap.ui.define([
 							viewName: sViewName,
 							actions: new Press(),
 							errorMessage: "Did not find the processor tab on detail page"
-						})
+						});
 					}
 
 				},

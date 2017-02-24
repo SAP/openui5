@@ -22,7 +22,7 @@ sap.ui.define([
 		When.onTheOverviewPage.iPressOnMoreData();
 
 		// Assertions
-		Then.onTheOverviewPage.theTableShouldHaveTheDoubleAmountOfInitialEntries()
+		Then.onTheOverviewPage.theTableShouldHaveTheDoubleAmountOfInitialEntries();
 	});
 
 	opaTest("Marking an icon as a favorite should display a message toast", function (Given, When, Then) {

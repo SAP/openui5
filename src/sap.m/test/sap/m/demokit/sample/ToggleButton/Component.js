@@ -17,7 +17,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					files : [
 						"Page.view.xml",
 						"Page.controller.js"
-					],
+					]
 				}
 			}
 		}

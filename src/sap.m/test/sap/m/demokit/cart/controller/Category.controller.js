@@ -45,15 +45,14 @@ sap.ui.define([
 		},
 
 		fnDataReceived: function() {
-			var that = this,
-				oList = this.getView().byId("productList");
+			var oList = this.getView().byId("productList");
 			var aListItems = oList.getItems();
 			aListItems.some(function(oItem) {
-				if (oItem.getBindingContext().sPath === "/Products('" + that._sProductId + "')") {
+				if (oItem.getBindingContext().sPath === "/Products('" + this._sProductId + "')") {
 					oList.setSelectedItem(oItem);
 					return true;
 				}
-			});
+			}.bind(this));
 		},
 
 		/**
@@ -108,10 +107,9 @@ sap.ui.define([
 			var oBinding = oList.getBinding("items");
 			var oStatusFilter = new Filter("Status", FilterOperator.EQ, "A");
 
-			if(oEvent.getParameter("pressed")) {
+			if (oEvent.getParameter("pressed")) {
 				oBinding.filter([oStatusFilter]);
-			}
-			else {
+			} else {
 				oBinding.filter(null);
 			}
 		}

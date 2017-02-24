@@ -12,18 +12,19 @@ sap.ui.define(['sap/m/Token','sap/ui/core/mvc/Controller','sap/ui/model/json/JSO
 
 			var oMultiInput1 = oView.byId("multiInput1");
 			oMultiInput1.setTokens([
-			                        new Token({text: "Token 1", key: "0001"}),
-					   			    new Token({text: "Token 2", key: "0002"}),
-					   			    new Token({text: "Token 3", key: "0003"}),
-					   			    new Token({text: "Token 4", key: "0004"}),
-					   			    new Token({text: "Token 5", key: "0005"}),
-					   			    new Token({text: "Token 6", key: "0006"})
-					   			    ]);
+				new Token({text: "Token 1", key: "0001"}),
+				new Token({text: "Token 2", key: "0002"}),
+				new Token({text: "Token 3", key: "0003"}),
+				new Token({text: "Token 4", key: "0004"}),
+				new Token({text: "Token 5", key: "0005"}),
+				new Token({text: "Token 6", key: "0006"})
+			]);
 
 			//*** add checkbox validator
 			oMultiInput1.addValidator(function(args){
-					var text = args.text;
-					return new Token({key: text, text: text});
+				var text = args.text;
+
+				return new Token({key: text, text: text});
 			});
 
 
@@ -32,7 +33,7 @@ sap.ui.define(['sap/m/Token','sap/ui/core/mvc/Controller','sap/ui/model/json/JSO
 			oMultiInput2.addValidator(function(args){
 				if (args.suggestionObject){
 					var key = args.suggestionObject.getCells()[0].getText();
-					var text = key + "("+args.suggestionObject.getCells()[3].getText()+")";
+					var text = key + "(" + args.suggestionObject.getCells()[3].getText() + ")";
 
 					return new Token({key: key, text: text});
 				}

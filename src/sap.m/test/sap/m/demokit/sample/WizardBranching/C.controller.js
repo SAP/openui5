@@ -14,7 +14,6 @@ sap.ui.define([
 
 	var WizardController = Controller.extend("sap.m.sample.WizardBranching.C", {
 		onInit: function () {
-			var that = this;
 			this._wizard = this.getView().byId("ShoppingCartWizard");
 			this._oNavContainer = this.getView().byId("wizardNavContainer");
 			this._oWizardContentPage = this.getView().byId("wizardContentPage");
@@ -23,16 +22,16 @@ sap.ui.define([
 			this._oNavContainer.addPage(this._oWizardReviewPage);
 			this.model = new sap.ui.model.json.JSONModel();
 			this.model.attachRequestCompleted(null, function () {
-				that.model.getData().ProductCollection.splice(5,that.model.getData().ProductCollection.length);
-				that.model.setProperty("/selectedPayment", "Credit Card");
-				that.model.setProperty("/selectedDeliveryMethod", "Standard Delivery");
-				that.model.setProperty("/differentDeliveryAddress", false);
-				that.model.setProperty("/CashOnDelivery", {});
-				that.model.setProperty("/BillingAddress", {});
-				that.model.setProperty("/CreditCard", {});
-				that.calcTotal();
-				that.model.updateBindings();
-			});
+				this.model.getData().ProductCollection.splice(5,this.model.getData().ProductCollection.length);
+				this.model.setProperty("/selectedPayment", "Credit Card");
+				this.model.setProperty("/selectedDeliveryMethod", "Standard Delivery");
+				this.model.setProperty("/differentDeliveryAddress", false);
+				this.model.setProperty("/CashOnDelivery", {});
+				this.model.setProperty("/BillingAddress", {});
+				this.model.setProperty("/CreditCard", {});
+				this.calcTotal();
+				this.model.updateBindings();
+			}.bind(this));
 
 			this.model.loadData(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 			this.getView().setModel(this.model);
@@ -56,7 +55,7 @@ sap.ui.define([
 				return;
 			}
 
-			for (var i = 0 ; i < data.length; i++) {
+			for (var i = 0; i < data.length; i++) {
 				if (data[i].Name === listItem.getTitle()) {
 					data.splice(i, 1);
 					this.calcTotal();
@@ -76,6 +75,7 @@ sap.ui.define([
 					this.getView().byId("PaymentTypeStep").setNextStep(this.getView().byId("BankAccountStep"));
 					break;
 				case "Cash on Delivery" :
+					default:
 					this.getView().byId("PaymentTypeStep").setNextStep(this.getView().byId("CashOnDeliveryStep"));
 					break;
 			}
@@ -97,18 +97,17 @@ sap.ui.define([
 			});
 		},
 		setDiscardableProperty : function (params) {
-			var that = this;
 			if (this._wizard.getProgressStep() !== params.discardStep) {
 				MessageBox.warning(params.message, {
 					actions:[MessageBox.Action.YES, MessageBox.Action.NO],
 					onClose: function (oAction) {
 						if (oAction === MessageBox.Action.YES) {
-							that._wizard.discardProgress(params.discardStep);
-							history[params.historyPath] = that.model.getProperty(params.modelPath);
+							this._wizard.discardProgress(params.discardStep);
+							history[params.historyPath] = this.model.getProperty(params.modelPath);
 						} else {
-							that.model.setProperty(params.modelPath, history[params.historyPath]);
+							this.model.setProperty(params.modelPath, history[params.historyPath]);
 						}
-					}
+					}.bind(this)
 				});
 			} else {
 				history[params.historyPath] = this.model.getProperty(params.modelPath);
@@ -162,15 +161,14 @@ sap.ui.define([
 			this._oNavContainer.to(this._oWizardReviewPage);
 		},
 		_handleMessageBoxOpen : function (sMessage, sMessageBoxType) {
-			var that = this;
 			MessageBox[sMessageBoxType](sMessage, {
 				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
 				onClose: function (oAction) {
 					if (oAction === MessageBox.Action.YES) {
-						that._wizard.discardProgress(that._wizard.getSteps()[0]);
-						that._navBackToList();
+						this._wizard.discardProgress(this._wizard.getSteps()[0]);
+						this._navBackToList();
 					}
-				}
+				}.bind(this)
 			});
 		},
 		_navBackToList: function () {
@@ -192,12 +190,10 @@ sap.ui.define([
 			this._navBackToStep(this.getView().byId("DeliveryTypeStep"));
 		},
 		_navBackToStep: function (step) {
-			var that = this;
-
-			function fnAfterNavigate () {
-				that._wizard.goToStep(step);
-				that._oNavContainer.detachAfterNavigate(fnAfterNavigate);
-			}
+			var fnAfterNavigate = function () {
+				this._wizard.goToStep(step);
+				this._oNavContainer.detachAfterNavigate(fnAfterNavigate);
+			}.bind(this);
 
 			this._oNavContainer.attachAfterNavigate(fnAfterNavigate);
 			this._oNavContainer.to(this._oWizardContentPage);

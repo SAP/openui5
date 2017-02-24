@@ -52,7 +52,7 @@ sap.ui.define([
 			// check states of inputs
 			var canContinue = true;
 			jQuery.each(inputs, function (i, input) {
-				if ("Error" === input.getValueState()) {
+				if (input.getValueState() === "Error") {
 					canContinue = false;
 					return false;
 				}

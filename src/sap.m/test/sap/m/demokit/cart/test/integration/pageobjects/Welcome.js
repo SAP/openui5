@@ -4,6 +4,7 @@ sap.ui.define([
 	'sap/ui/test/matchers/BindingPath',
 	'sap/ui/test/matchers/AggregationLengthEquals'
 ], function (Opa5, Press, BindingPath, AggregationLengthEquals) {
+	"use strict";
 
 	var sViewName = "Welcome";
 	Opa5.createPageObjects({

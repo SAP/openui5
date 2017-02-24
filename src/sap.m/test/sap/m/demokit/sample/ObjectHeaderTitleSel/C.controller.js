@@ -22,7 +22,7 @@ sap.ui.define([
 		},
 
 		_getResponsivePopover: function () {
-			if (! this._oPopover) {
+			if (!this._oPopover) {
 				this._oPopover = sap.ui.xmlfragment("sap.m.sample.ObjectHeaderTitleSel.Popover", this);
 			}
 			return this._oPopover;

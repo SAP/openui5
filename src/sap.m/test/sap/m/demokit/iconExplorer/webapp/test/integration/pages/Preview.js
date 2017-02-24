@@ -50,13 +50,13 @@ sap.ui.require([
 					return this.waitFor({
 						id: sPreviewIconId,
 						viewName: sViewName,
-						matchers: Properties({
+						matchers: new Properties({
 							src: "sap-icon://" + sName
 						}),
 						success: function (oIcon) {
-							Opa5.assert.ok(true, "The icon \"" + sName +"\" is shown in the preview area");
+							Opa5.assert.ok(true, "The icon \"" + sName + "\" is shown in the preview area");
 						},
-						errorMessage: "Did not display the icon \"" + sName +"\" in the preview area"
+						errorMessage: "Did not display the icon \"" + sName + "\" in the preview area"
 					});
 				},
 
@@ -98,7 +98,7 @@ sap.ui.require([
 						id: sPreviewId,
 						viewName: sViewName,
 						visible: false,
-						matchers: Properties({
+						matchers: new Properties({
 							visible: false
 						}),
 						success: function () {

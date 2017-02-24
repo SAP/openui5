@@ -4,9 +4,9 @@ sap.ui.define([
 	"use strict";
 
 	return UI5Object.extend("sap.ui.demo.wt.controller.HelloDialog", {
-		
+
 		constructor : function (oView) {
-			this._oView = oView;	
+			this._oView = oView;
 		},
 
 		open : function () {
