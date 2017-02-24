@@ -279,6 +279,10 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				collectionName = String(collectionName);
 			}
 
+			// normalize "undefined" back to undefined because the default
+			// icon collection should have name undefined
+			collectionName = collectionName === 'undefined' ? undefined : collectionName;
+
 			if (!mRegistry[collectionName]) {
 				mRegistry[collectionName] = {};
 			}
@@ -288,7 +292,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				parts, sContent, sText, sKey;
 
 			if (icon) {
-				if (collectionName === "undefined") {
+				if (collectionName === undefined) {
 					jQuery.sap.log.warning("Icon with name '" + iconName + "' in built-in collection already exists and can not be overwritten.", "sap.ui.core.IconPool");
 					return;
 				} else if (!iconInfo.overWrite) {
@@ -299,8 +303,8 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 
 			parts = {
 				protocol: ICON_PROTOCOL,
-				hostname: collectionName !== "undefined" ? collectionName : iconName,
-				path: collectionName !== "undefined" ? iconName : undefined
+				hostname: collectionName || iconName,
+				path: collectionName ? iconName : undefined
 			};
 
 			if ( Array.isArray(iconInfo.content) ) {
