@@ -25,6 +25,9 @@ QUnit.module("Given that an ElementDesignTimeMetadata is created for a control",
 							},
 							action3 : function(oElement) {
 								return {changeType: oElement.name};
+							},
+							action4 : function(oElement, foo, bar) {
+								return {changeType: oElement.name + foo + bar};
 							}
 						},
 						childNames : {
@@ -119,6 +122,7 @@ QUnit.test("when getAggregationAction is called", function(assert) {
 	], "for string action, the correct object is returned");
 	assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action2"), [{changeType : "secondChangeType", aggregation : "testAggregation"}], "for object action, the correct object is returned");
 	assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action3", {name:"thirdChangeType"}), [{changeType : "thirdChangeType", aggregation : "testAggregation"}], "for function action, the correct object is returned");
+	assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action4", {name:"fourthChangeType"}, ["foo", "bar"]), [{changeType : "fourthChangeTypefoobar", aggregation : "testAggregation"}], "for function action with parameters , the correct object is returned");
 });
 
 QUnit.test("when getAggregationText is called", function(assert) {
