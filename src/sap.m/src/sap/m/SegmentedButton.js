@@ -399,30 +399,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return oButton;
 	};
 
-	/**
-	 * Private method to create a Button from an item.
-	 *
-	 * @param {sap.m.SegmentedButtonItem} oItem Item from the items aggregation
-	 * @private
-	 * @since 1.28
-	 */
-	SegmentedButton.prototype._createButtonFromItem = function (oItem) {
-		var oButton = new sap.m.Button(oItem.getId() + "-button", {
-			text: oItem.getText(),
-			icon: oItem.getIcon(),
-			enabled: oItem.getEnabled(),
-			textDirection: oItem.getTextDirection(),
-			width: oItem.getWidth(),
-			tooltip: oItem.getTooltip(),
-			visible: oItem.getVisible(),
-			press: function () {
-				oItem.firePress();
-			}
-		});
-		oItem.oButton = oButton;
-		this.addButton(oButton);
-	};
-
 	(function (){
 		SegmentedButton.prototype.addButton = function (oButton) {
 			if (oButton) {
@@ -467,50 +443,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	})();
 
 	/**
-	 * Creates all the buttons from the items aggregation or
-	 * replaces the current ones if the binding changes.
-	 *
-	 * Called whenever the binding of the items aggregation is changed.
-	 *
-	 * @param {sap.ui.model.ChangeReason} [sReason=undefined] Enumeration reason for the model update
-	 * @private
-	 * @override
-	 * @since 1.28.0
-	 */
-	SegmentedButton.prototype.updateItems = function(sReason) {
-		var aButtons = this.getButtons(),
-			aItems,
-			bUpdate,
-			i;
-
-		/* Update aggregation only if an update reason is available */
-		if (sReason !== undefined) {
-			this.updateAggregation("items");
-			// Update buttons after items aggregation update
-			aButtons = this.getButtons();
-		}
-
-		aItems = this.getAggregation("items");
-
-		/* If the buttons are already rendered and items are initiated destroy all created buttons */
-		if (aItems && aButtons.length !== 0) {
-			this.destroyAggregation("buttons", true);
-			bUpdate = true;
-		}
-
-		aItems = aItems || [];
-		/* Create buttons */
-		for (i = 0; i < aItems.length; i++) {
-			this._createButtonFromItem(aItems[i]);
-		}
-
-		// on update: recalculate width
-		if (bUpdate) {
-			this._updateWidth();
-		}
-	};
-
-	/**
 	 * Gets the selectedKey and is usable only when the control is initiated with the items aggregation.
 	 *
 	 * @return {string} Current selected key
@@ -551,13 +483,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (!sKey) {
 			this.setProperty("selectedKey", sKey, true);
 			return this;
-		}
-
-		if (aButtons.length === 0 && aItems.length > 0) {
-			this.updateItems();
-
-			//Keep buttons in sync
-			aButtons = this.getButtons();
 		}
 
 		if (aItems.length > 0 && aButtons.length > 0) {
@@ -609,7 +534,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	SegmentedButton.prototype.addItem = function (oItem, bSuppressInvalidate) {
 		this.addAggregation("items", oItem, bSuppressInvalidate);
-		this.updateItems();
+		this.addButton(oItem.oButton);
 	};
 
 	/**
@@ -620,6 +545,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @override
 	 */
 	SegmentedButton.prototype.removeItem = function (oItem, bSuppressInvalidate) {
+		this.removeAggregation("buttons", oItem.oButton, true);
 		this.removeAggregation("items", oItem, bSuppressInvalidate);
 		// Reset selected button if the removed button is the currently selected one
 		if (oItem && oItem instanceof sap.m.SegmentedButtonItem &&
@@ -627,7 +553,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.setSelectedKey("");
 			this.setSelectedButton("");
 		}
-		this.updateItems();
 	};
 
 	/**
@@ -640,7 +565,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	SegmentedButton.prototype.insertItem = function (oItem, iIndex, bSuppressInvalidate) {
 		this.insertAggregation("items", oItem, iIndex, bSuppressInvalidate);
-		this.updateItems();
+		this.insertButton(oItem.oButton, iIndex);
 	};
 
 	/**
