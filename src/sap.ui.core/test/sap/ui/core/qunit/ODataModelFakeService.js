@@ -96,6 +96,8 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sCategories7XML],
 			"Categories(7)?$expand=Products":
 				[200, oXMLHeaders, sCategories7ExpandXML],
+			"Categories(7)?$expand=Products&$select=Products%2fProductID":
+				[200, oXMLHeaders, sCategories7ExpandProductsSelect],
 			"Categories":
 				[200, oXMLHeaders, sCategoriesXML],
 			"Categories?hubel=dubel":
@@ -8441,3 +8443,102 @@ var sMetadataComplex = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
 				"		</m:properties>\n" +
 				"	</content>\n" +
 				"</entry>";
+    var sCategories7ExpandProductsSelect = '\
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
+<entry xml:base="http://services.odata.org/V2/Northwind/Northwind.svc/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">\
+  <id>http://services.odata.org/V2/Northwind/Northwind.svc/Categories(7)</id>\
+  <title type="text"></title>\
+  <updated>2017-02-03T12:56:28Z</updated>\
+  <author>\
+    <name />\
+  </author>\
+  <link rel="edit" title="Category" href="Categories(7)" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Products" type="application/atom+xml;type=feed" title="Products" href="Categories(7)/Products">\
+    <m:inline>\
+      <feed>\
+        <title type="text">Products</title>\
+        <id>http://services.odata.org/V2/Northwind/Northwind.svc/Categories(7)/Products</id>\
+        <updated>2017-02-03T12:56:28Z</updated>\
+        <link rel="self" title="Products" href="Categories(7)/Products" />\
+        <entry>\
+          <id>http://services.odata.org/V2/Northwind/Northwind.svc/Products(7)</id>\
+          <title type="text"></title>\
+          <updated>2017-02-03T12:56:28Z</updated>\
+          <author>\
+            <name />\
+          </author>\
+          <link rel="edit" title="Product" href="Products(7)" />\
+          <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+          <content type="application/xml">\
+            <m:properties>\
+              <d:ProductID m:type="Edm.Int32">7</d:ProductID>\
+            </m:properties>\
+          </content>\
+        </entry>\
+        <entry>\
+          <id>http://services.odata.org/V2/Northwind/Northwind.svc/Products(14)</id>\
+          <title type="text"></title>\
+          <updated>2017-02-03T12:56:28Z</updated>\
+          <author>\
+            <name />\
+          </author>\
+          <link rel="edit" title="Product" href="Products(14)" />\
+          <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+          <content type="application/xml">\
+            <m:properties>\
+              <d:ProductID m:type="Edm.Int32">14</d:ProductID>\
+            </m:properties>\
+          </content>\
+        </entry>\
+        <entry>\
+          <id>http://services.odata.org/V2/Northwind/Northwind.svc/Products(28)</id>\
+          <title type="text"></title>\
+          <updated>2017-02-03T12:56:28Z</updated>\
+          <author>\
+            <name />\
+          </author>\
+          <link rel="edit" title="Product" href="Products(28)" />\
+          <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+          <content type="application/xml">\
+            <m:properties>\
+              <d:ProductID m:type="Edm.Int32">28</d:ProductID>\
+            </m:properties>\
+          </content>\
+        </entry>\
+        <entry>\
+          <id>http://services.odata.org/V2/Northwind/Northwind.svc/Products(51)</id>\
+          <title type="text"></title>\
+          <updated>2017-02-03T12:56:28Z</updated>\
+          <author>\
+            <name />\
+          </author>\
+          <link rel="edit" title="Product" href="Products(51)" />\
+          <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+          <content type="application/xml">\
+            <m:properties>\
+              <d:ProductID m:type="Edm.Int32">51</d:ProductID>\
+            </m:properties>\
+          </content>\
+        </entry>\
+        <entry>\
+          <id>http://services.odata.org/V2/Northwind/Northwind.svc/Products(74)</id>\
+          <title type="text"></title>\
+          <updated>2017-02-03T12:56:28Z</updated>\
+          <author>\
+            <name />\
+          </author>\
+          <link rel="edit" title="Product" href="Products(74)" />\
+          <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+          <content type="application/xml">\
+            <m:properties>\
+              <d:ProductID m:type="Edm.Int32">74</d:ProductID>\
+            </m:properties>\
+          </content>\
+        </entry>\
+      </feed>\
+    </m:inline>\
+  </link>\
+  <category term="NorthwindModel.Category" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+  <content type="application/xml" />\
+</entry>\
+';
