@@ -1,0 +1,18 @@
+<mvc:View controllerName="sap.m.sample.CustomTreeItem.Page"
+	xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Tree id="Tree" items="{path: '/'}" mode="MultiSelect">
+		<CustomTreeItem>
+			<FlexBox alignItems="Start" width="100%">
+				<items>
+					<Button icon="{ref}" press="handleButtonPress" class="sapUiSmallMarginEnd" />
+					<Input value="{text}">
+						<layoutData>
+							<FlexItemData growFactor="1" />
+						</layoutData>
+					</Input>
+				</items>
+			</FlexBox>
+		</CustomTreeItem>
+	</Tree>
+</mvc:View>
