@@ -274,6 +274,11 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				};
 			}
 
+			if (typeof collectionName !== "string") {
+				// if collectionName isn't a string, convert it to string
+				collectionName = String(collectionName);
+			}
+
 			if (!mRegistry[collectionName]) {
 				mRegistry[collectionName] = {};
 			}
@@ -283,7 +288,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				parts, sContent, sText, sKey;
 
 			if (icon) {
-				if (collectionName === undefined) {
+				if (collectionName === "undefined") {
 					jQuery.sap.log.warning("Icon with name '" + iconName + "' in built-in collection already exists and can not be overwritten.", "sap.ui.core.IconPool");
 					return;
 				} else if (!iconInfo.overWrite) {
@@ -294,8 +299,8 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 
 			parts = {
 				protocol: ICON_PROTOCOL,
-				hostname: collectionName || iconName,
-				path: collectionName ? iconName : undefined
+				hostname: collectionName !== "undefined" ? collectionName : iconName,
+				path: collectionName !== "undefined" ? iconName : undefined
 			};
 
 			if ( Array.isArray(iconInfo.content) ) {

@@ -149,6 +149,20 @@
 					assert.equal(oIcon7, oIcon8, "Multi-Icons have correct content");
 
 				});
+				QUnit.test("addIcon: the default icons shouldn't be modified with collection name 'undefined'", function(assert) {
+					var oIconInfo = IconPool.getIconInfo("manager");
+
+					assert.equal(oIconInfo.uri, "sap-icon://manager", "The default collectionName doesn't appear in uri");
+
+					IconPool.addIcon("manager", "undefined", {
+						content: oIconInfo.content.charCodeAt(0) + 0x1000,
+						overWrite: true
+					});
+
+					var oNewIconInfo = IconPool.getIconInfo("manager");
+
+					assert.equal(oNewIconInfo.content, oIconInfo.content, "the defualt collection can't be overwritten");
+				});
 				QUnit.test("isIconURI", function(assert) {
 					assert.equal(IconPool.isIconURI(), false, "Should return 'false' when no URI is provided.");
 					assert.equal(IconPool.isIconURI("sap-icon://"), false, "Should return 'false' when no hostname is provided.");
