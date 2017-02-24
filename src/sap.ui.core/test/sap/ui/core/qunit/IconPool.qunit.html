@@ -149,10 +149,14 @@
 					assert.equal(oIcon7, oIcon8, "Multi-Icons have correct content");
 
 				});
-				QUnit.test("addIcon: the default icons shouldn't be modified with collection name 'undefined'", function(assert) {
+				QUnit.test("getIconInfo: icons under the undefined collection", function() {
 					var oIconInfo = IconPool.getIconInfo("manager");
 
+					assert.strictEqual(oIconInfo.collectionName, undefined, "The default collection name should be undefined");
 					assert.equal(oIconInfo.uri, "sap-icon://manager", "The default collectionName doesn't appear in uri");
+				});
+				QUnit.test("addIcon: the default icons shouldn't be modified with collection name 'undefined'", function(assert) {
+					var oIconInfo = IconPool.getIconInfo("manager");
 
 					IconPool.addIcon("manager", "undefined", {
 						content: oIconInfo.content.charCodeAt(0) + 0x1000,
