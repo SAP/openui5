@@ -185,4 +185,20 @@ jQuery.sap.require("sap.ui.fl.LrepConnector");
 
 	});
 
+	QUnit.test("getChangesFillingCache returns an empty list of changes without sending an request " +
+			"if the passed parameter contain already the information that there are no changes", function(assert) {
+		var sComponentName = "smartFilterBar.Component";
+		var mPropertyBag = {
+			cacheKey: "<NO CHANGES>"
+		};
+
+		return Cache.getChangesFillingCache(this.oLrepConnector, sComponentName, mPropertyBag).then(function(oResult) {
+			assert.ok(Array.isArray(oResult.changes.changes), "an array of changes was returned");
+			assert.ok(Array.isArray(oResult.changes.contexts), "an array of contexts was returned");
+			assert.equal(oResult.changes.changes.length, 0, "but no change is present");
+			assert.equal(oResult.changes.contexts.length, 0, "but no context is present");
+			assert.equal(oResult.componentClassName, sComponentName, "the component class name was returned correctly");
+		});
+	});
+
 }(QUnit, sinon, sap.ui.fl.Cache, sap.ui.fl.LrepConnector));
