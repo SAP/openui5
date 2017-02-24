@@ -19,7 +19,6 @@ sap.ui.define([
 	'sap/ui/demokit/explored/view/base.controller'
 ],
 function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Controller, History, JSONModel, mobileLibrary, Text, ToggleFullScreenHandler, data, Base) {
-
 	"use strict";
 
 	var SampleController = Base.extend("sap.ui.demokit.explored.view.sample", {

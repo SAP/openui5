@@ -9,7 +9,7 @@ sap.ui.define([
 
 	QUnit.test("Should format a link starting with # to current URL prepended with the link", function (assert) {
 		var sOriginalHash = document.location.hash;
-		document.location.hash="demoapps.html";
+		document.location.hash = "demoapps.html";
 		assert.ok(formatter.crossLink("#test123").search("#test123") > 0, "the link is appended at the end");
 		document.location.hash = sOriginalHash;
 	});
@@ -57,7 +57,7 @@ sap.ui.define([
 							"demoAppCategoryMisc": 4
 						});
 					}
-				}
+				};
 			}
 		};
 		var fnStubbedFormatter = formatter.categoryName.bind(oControllerStub);
