@@ -36,6 +36,9 @@
 	box-sizing: border-box;
 	left: 0;
 	overflow: hidden;
+	border-width: 0.125rem;
+	border-style: solid;
+	border-color: @sapUiFieldBackground; /* the background parameter is used for to ensure the border theme is aligned with the text area background */
 }
 
 .sapMFeedInImage {
@@ -49,11 +52,7 @@
 	color: @sapUiContentImagePlaceholderForegroundColor;
 }
 
-.sapMFeedInImage.sapUiIcon, .sapMFeedInImage.sapMImg {
-	border-width: 0.125rem;
-	border-style: solid;
-	border-color: @sapUiFieldBackground; /* the background parameter is used for to ensure the border theme is aligned with the text area background */
-}
+
 
 .sapMFeedIn .sapMFeedInContainer {
 	background-color: @sapUiFieldBackground;
