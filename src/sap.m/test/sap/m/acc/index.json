@@ -273,7 +273,7 @@
 		},
 		{
 			"control": "sap.m.ObjectMarker",
-			"url": "../ObjectMarker.html",
+			"url": "ObjectMarker.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
