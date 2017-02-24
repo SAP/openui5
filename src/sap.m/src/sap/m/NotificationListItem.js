@@ -273,9 +273,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 	NotificationListItem.prototype._showHideTruncateButton = function () {
 		var notificationDomRef = this.getDomRef();
 
-		if (this._canTruncate() && (!this.getHideShowMoreButton())) { // if the Notification has long text
-			// show the truncate button
-			this.getDomRef('expandCollapseButton').classList.remove('sapMNLI-CollapseButtonHide');
+		if (this._canTruncate()) { // if the Notification has long text
+
+			// toggle truncate button visibility
+			this.getDomRef('expandCollapseButton').classList.toggle('sapMNLI-CollapseButtonHide', this.getHideShowMoreButton());
 
 			// set the truncate button text && toggle 'collapse' class
 			if (this.getTruncate()) {
