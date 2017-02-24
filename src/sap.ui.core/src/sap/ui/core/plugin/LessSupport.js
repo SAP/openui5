@@ -94,15 +94,6 @@
 				this.oCore = oCore;
 				this.bActive = true;
 
-				// overwrite the toCSS method of the Color function to return "transparent" instead of rgba(0,0,0,0)
-				var fnToCSS = window.less.tree.Color.prototype.toCSS;
-				window.less.tree.Color.prototype.toCSS = function(){
-					if (this.alpha == 0 && this.rgb[0] == 0 && this.rgb[1] == 0 && this.rgb[2] == 0){
-						return "transparent";
-					}
-					return fnToCSS.apply(this, arguments);
-				};
-
 				// overwrite the includeLibraryTheme/applyTheme function to inject LESS
 				this.oCore.includeLibraryTheme = jQuery.proxy(this.includeLibraryTheme, this);
 				this.oCore.applyTheme = jQuery.proxy(this.applyTheme, this);
