@@ -757,6 +757,31 @@
 			oPopover.destroy();
 		});
 
+		test("Popover opened by a button, set focus to button shouldn't close the popover", function() {
+			var oButtonInPopover = new sap.m.Button();
+			var oButton = new sap.m.Button();
+			var oPopover = new sap.m.Popover({
+				content: oButtonInPopover
+			});
+
+			oButton.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oPopover.openBy(oButton);
+			this.clock.tick(500);
+
+			ok(oPopover.isOpen(), "Popover is open");
+			ok(jQuery.sap.containsOrEquals(oButtonInPopover.getDomRef(), document.activeElement), "focus is set to the button in popover");
+
+			oButton.focus();
+			this.clock.tick(500);
+
+			ok(oPopover.isOpen(), "Popover is still open");
+
+			oPopover.destroy();
+			oButton.destroy();
+		});
+
 		test("Autoclose after invalidate", function () {
 			var oSystem = {
 				desktop: true,
