@@ -146,5 +146,22 @@
         "references": []
       }
     ]
+  },
+  "1.46.4": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "bfca944b9779890636a30adbbb2b29663dd4a8e7",
+        "type": "FIX",
+        "text": " sap.m.Month - Adding special dates to the month does not move the focus from other elements on the page",
+        "references": []
+      },
+      {
+        "id": "a0e761b7b5c994552cf86a5b25c2e4c1a6c5f909",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar.MonthPicker - onThemeChanged before control is rendered was throwing an error",
+        "references": []
+      }
+    ]
   }
 }

@@ -1604,5 +1604,100 @@
         "references": []
       }
     ]
+  },
+  "1.46.4": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "9023bf75ab465b492609d074bd83bd86e44c3092",
+        "type": "FIX",
+        "text": " MultiInput: tokenChange event fires properly for cloned instances",
+        "references": []
+      },
+      {
+        "id": "40a86fe1ee666768562e0b88c79a25da07f2f19c",
+        "type": "FIX",
+        "text": " sap.m.CustomListItem: Inner control announcement is added.",
+        "references": []
+      },
+      {
+        "id": "44260fa99f002d9f472d999fda464770758ac5ba",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Tile content visibility independent of Generic Tile Mode",
+        "references": []
+      },
+      {
+        "id": "324591c27bb9c3119a9df98cf7fb9c646fac1cfc",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer: Focusable area of first and last content enhanced",
+        "references": []
+      },
+      {
+        "id": "650fc631557f7fc99761ad78ff8d2446b3b8591c",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Fixed double focus when a token is focused",
+        "references": []
+      },
+      {
+        "id": "bedcf48e9b2ee1e9445035a9446c20b4abc83a83",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Tokenizer behaviour adjusted",
+        "references": []
+      },
+      {
+        "id": "5edcaa088bc5b46aead5d809f542c023db31b6b3",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Title / arrow span focused correctly",
+        "references": []
+      },
+      {
+        "id": "86c082a225fffd12d887f0f5861fb9e4f671c92f",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Accessibility refactoring",
+        "references": []
+      },
+      {
+        "id": "fc082fe9e7e1b988d7862c3bb6106e9f8af96d6d",
+        "type": "FIX",
+        "text": " sap.m.Popover - Popover header css corrected",
+        "references": []
+      },
+      {
+        "id": "b355434d8a97843959840f4b839280477db55034",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton - items aggregation now works correct",
+        "references": []
+      },
+      {
+        "id": "00312be50f05b5b05b7a3dae80905e1e81b00ac5",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Now the control is displayed correctly in a Bar.",
+        "references": []
+      },
+      {
+        "id": "28532d58ef87cfbb8f051aa680e76004ac8e18a4",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: Now the corresponding hover state on a pressed toggleButton is applied in belize for IE",
+        "references": []
+      },
+      {
+        "id": "8f47f2c1104a81f75bb578e4f637d1b205eb96b4",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Fill list with deleted item improved",
+        "references": []
+      },
+      {
+        "id": "ded7b851febcb1345b7d3e5c2e18deb6f297d9a9",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Issue with incorrect document display fixed",
+        "references": []
+      },
+      {
+        "id": "d4803a629c308a59f0b0aa65e39d26bdd7475bec",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsPopover: removeAllFilterDetailItems does not throw error anymore.",
+        "references": []
+      }
+    ]
   }
 }
