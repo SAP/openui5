@@ -231,9 +231,10 @@ sap.ui.define([], function() {
 						}
 						return oCreateContainerMetadata;
 					},
-					reveal : function(oParentElement) {
+					reveal : function(oParentElement, sAggregationName) {
 						var sType = oParentElement.getMetadata().getName();
-						if (sType === "sap.ui.layout.form.FormContainer") {
+						var bRevealableAggregation = sAggregationName ? ( sAggregationName === "formElements" || sAggregationName === "formContainers") : true;
+						if (sType === "sap.ui.layout.form.FormContainer" && bRevealableAggregation) {
 							return {
 								changeType : "unhideSimpleFormField",
 								getInvisibleElements : function(oSimpleForm) {
