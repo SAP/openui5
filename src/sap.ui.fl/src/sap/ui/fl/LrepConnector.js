@@ -348,12 +348,14 @@ sap.ui.define([
 	 * Loads the changes for the given component class name.
 	 *
 	 * @see sap.ui.core.Component
-	 * @param {String} sComponentClassName - Component class name
-	 * @param {map} mPropertyBag - (optional) contains additional data that are needed for reading of changes
-	 *                           - appDescriptor that belongs to actual component
-	 *                           - siteId that belongs to actual component
-	 *                           - layer up to which changes shall be read (excluding the specified layer)
-	 * @returns {Promise} Returns a Promise with the changes (changes, contexts, optional messagebundle) and componentClassName
+	 * @param {string} sComponentClassName - Component class name
+	 * @param {map} [mPropertyBag] - Contains additional data needed for reading changes
+	 * @param {object} [mPropertyBag.appDescriptor] - Manifest that belongs to actual component
+	 * @param {string} [mPropertyBag.siteId] - <code>sideId<code> that belongs to actual component
+	 * @param {string} [mPropertyBag.layer] - Layer up to which changes shall be read (excluding the specified layer)
+	 * @param {string} [mPropertyBag.appVersion] - Version of application whose changes shall be read
+	 *
+	 * @returns {Promise} Returns a Promise with the changes (changes, contexts, optional messagebundle) and <code>componentClassName<code>
 	 * @public
 	 */
 	Connector.prototype.loadChanges = function(sComponentClassName, mPropertyBag) {
@@ -368,6 +370,7 @@ sap.ui.define([
 		sUri = "/sap/bc/lrep/flex/data/";
 
 		var sUpToLayer = "";
+		var sAppVersion = "";
 
 		// fill header attribute: appDescriptor.id
 		if (mPropertyBag) {
@@ -405,6 +408,11 @@ sap.ui.define([
 			if (mPropertyBag.layer) {
 				sUpToLayer = mPropertyBag.layer;
 			}
+
+			// specifies application version
+			if (mPropertyBag.appVersion) {
+				sAppVersion = mPropertyBag.appVersion;
+			}
 		}
 
 		if (sComponentClassName) {
@@ -415,6 +423,9 @@ sap.ui.define([
 		}
 		if (sUpToLayer) {
 			sUri += "&upToLayerType=" + sUpToLayer;
+		}
+		if (sAppVersion) {
+			sUri += "&appVersion=" + sAppVersion;
 		}
 
 		// Replace first & with ?
