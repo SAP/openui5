@@ -160,7 +160,9 @@ sap.ui.define([
 	 */
 	MutationObserver.prototype._fireDomChangeOnScroll = function(oEvent) {
 		var oTarget = oEvent.target;
-		if (!OverlayUtil.isInOverlayContainer(oTarget) && !OverlayUtil.getClosestOverlayForNode(oTarget)) {
+		if (!OverlayUtil.isInOverlayContainer(oTarget) &&
+			!OverlayUtil.getClosestOverlayForNode(oTarget) &&
+			oTarget !== document) {
 			this.fireDomChanged({
 				type : "scroll"
 			});
