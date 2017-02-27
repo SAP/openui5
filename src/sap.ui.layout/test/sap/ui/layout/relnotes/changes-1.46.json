@@ -110,5 +110,28 @@
         "references": []
       }
     ]
+  },
+  "1.46.4": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "6131ea3366a651d5c95baf139d4898d32e41bcf6",
+        "type": "FIX",
+        "text": " sap.ui.layout.form.SimpleForm: Docu fix",
+        "references": []
+      },
+      {
+        "id": "3dc8d1f6d5bbb0198751e558db6f3c45aa41bd1e",
+        "type": "FIX",
+        "text": ": RTA - simpleform fix editable titles (dt-part)",
+        "references": []
+      },
+      {
+        "id": "b5ffdef042ef77afd5dda641e4f18232137c54ad",
+        "type": "FIX",
+        "text": ": RTA - take into account invisible elements in simpleform group",
+        "references": []
+      }
+    ]
   }
 }
