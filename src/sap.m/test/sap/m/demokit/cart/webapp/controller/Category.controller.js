@@ -36,6 +36,7 @@ sap.ui.define([
 					expand: "Products"
 				}
 			});
+
 		},
 
 		_changeNoDataTextToIndicateLoading: function (oList) {

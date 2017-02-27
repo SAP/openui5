@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
-	<head>
-	<title>Shopping Cart</title>
-	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
-	<meta charset="utf-8">
+<head>
+    <title>Shopping Cart</title>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta charset="utf-8">
 
 	<script
 		id='sap-ui-bootstrap'
@@ -14,37 +14,36 @@
 		data-sap-ui-preload="async"
 		data-sap-ui-resourceroots='{
 			"sap.ui.demo.cart" : "./"
-		}' >
-	</script>
+		}'>
+    </script>
 
-	<script>
+    <script>
 		sap.ui.getCore().attachInit(function () {
-				sap.ui.require([
-					"sap/m/Shell",
-					"sap/ui/core/ComponentContainer",
-					"sap/ui/demo/cart/localService/mockserver"
-				], function (Shell, ComponentContainer, mockserver) {
-					mockserver.init();
+			sap.ui.require([
+				"sap/m/Shell",
+				"sap/ui/core/ComponentContainer",
+				"sap/ui/demo/cart/localService/mockserver"
+			], function (Shell, ComponentContainer, mockserver) {
+				mockserver.init();
 
-					new Shell("Shell", {
-						title : "Shopping Cart",
-						showLogout : false,
-						app : new ComponentContainer({
-							name : 'sap.ui.demo.cart'
-						}),
-						homeIcon : {
-							'phone' : 'img/57_iPhone_Desktop_Launch.png',
-							'phone@2' : 'img/114_iPhone-Retina_Web_Clip.png',
-							'tablet' : 'img/72_iPad_Desktop_Launch.png',
-							'tablet@2' : 'img/144_iPad_Retina_Web_Clip.png',
-							'favicon' : 'img/favicon.ico',
-							'precomposed': false
-						}
-					}).placeAt('content');
-				})
-			}
-		);
-	</script>
+				new Shell("Shell", {
+					title : "Shopping Cart",
+					showLogout : false,
+					app : new ComponentContainer({
+						name : 'sap.ui.demo.cart'
+					}),
+					homeIcon : {
+						'phone' : 'img/57_iPhone_Desktop_Launch.png',
+						'phone@2' : 'img/114_iPhone-Retina_Web_Clip.png',
+						'tablet' : 'img/72_iPad_Desktop_Launch.png',
+						'tablet@2' : 'img/144_iPad_Retina_Web_Clip.png',
+						'favicon' : 'img/favicon.ico',
+						'precomposed': false
+					}
+				}).placeAt('content');
+			})
+		});
+        </script>
 
 </head>
 <body class='sapUiBody' id='content'>
