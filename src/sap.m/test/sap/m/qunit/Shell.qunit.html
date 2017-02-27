@@ -84,6 +84,19 @@
 			equal(byIdSuffix("-logo").attr("alt"), "Logo", "Logo ALT should be 'Logo''");
 		});
 
+		test("Shell without title", function() {
+			var oShellNoTitle = new sap.m.Shell("myShellNotitle", {
+			});
+
+			oShellNoTitle.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			ok(!sap.ui.getCore().byId(oShellNoTitle.getId() + "-hdrText"), "No title should be rendered if no title is passed");
+
+			// clean up
+			oShellNoTitle.destroy();
+		});
 
 		// logout event
 		test("Shell logout event", function() {
@@ -314,5 +327,6 @@
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
 		<div id="content"></div>
+		<div id="qunit-fixture"></div>
 	</body>
 </html>
