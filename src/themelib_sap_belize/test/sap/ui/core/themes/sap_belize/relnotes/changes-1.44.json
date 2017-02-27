@@ -437,5 +437,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.8": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "629c228feb9f62d334d443c224b9d4e59c49163d",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Now the control is displayed correctly in a Bar.",
+        "references": []
+      },
+      {
+        "id": "81939abd6c15e2e0e6076e8562ef01d2fab6a1a3",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: Now the corresponding hover state on a pressed toggleButton is applied in belize for IE",
+        "references": []
+      }
+    ]
   }
 }
