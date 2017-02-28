@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>QUnit Test Page for sap.m.SelectionDetailsItem</title>
+
+<!-- UI5 Bootstrap -->
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-libs="sap.m"
+	data-sap-ui-language="en">
+</script>
+
+<!-- QUnit libraries -->
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script>
+
+	QUnit.module("Default values", {
+		beforeEach: function() {
+			this.oItem = new sap.m.SelectionDetailsItem();
+		},
+		afterEach: function() {
+			this.oItem.destroy();
+			this.oItem = null;
+		}
+	});
+
+	QUnit.test("Default value of property navigationEnabled", function(assert) {
+		assert.equal(this.oItem.getNavigationEnabled(), false, "Default value is correct.");
+	});
+
+	QUnit.module("Item lifecycle");
+
+	QUnit.test("ListItem is dependent of element", function(assert) {
+		//Arrange
+		var oItem = new sap.m.SelectionDetailsItem();
+		var oListItem = oItem._getListItem();
+		var aDependents = oItem.getDependents();
+
+		//Assert
+		assert.equal(aDependents.length, 1, "One object has been added to the element's dependents.");
+		assert.deepEqual(aDependents[0], oListItem, "The correct list item has been added as dependent.");
+
+		//Cleanup
+		oItem.destroy();
+	});
+
+	QUnit.test("ListItem is destroyed with element", function(assert) {
+		//Arrange
+		var oItem = new sap.m.SelectionDetailsItem();
+		var oListItem = oItem._getListItem();
+		sinon.stub(oListItem, "destroy");
+
+		//Act
+		oItem.destroy();
+
+		//Assert
+		assert.equal(oListItem.destroy.callCount, 1, "ListItem is destroyed with element.");
+
+		//Cleanup
+		oListItem.destroy.restore();
+		oListItem.destroy();
+	});
+
+	QUnit.module("Rendering", {
+		beforeEach: function() {
+			this.oItem = new sap.m.SelectionDetailsItem();
+			this.oListItem = this.oItem._getListItem();
+			this.oListItem.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oListItem = null;
+			this.oItem.destroy();
+			this.oItem = null;
+		}
+	});
+
+	QUnit.test("Item rendering", function(assert) {
+		assert.ok(this.oListItem.$().length > 0, "A list item is rendered.");
+	});
+</script>
+</head>
+
+<body id="body" class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>
