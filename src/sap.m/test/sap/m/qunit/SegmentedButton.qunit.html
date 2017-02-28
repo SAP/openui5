@@ -2066,11 +2066,6 @@
 		// Get the buttons prior to changing the model of the control.
 		aButtons = oSegmentedButton.getButtons();
 
-		// Spy on destroy method of the internal buttons
-		for (i = 0;i < aButtons.length;i++) {
-			sinon.spy(aButtons[i], "destroy");
-		}
-
 		// Act
 		oModel.setData(mDataSecond);
 		sap.ui.getCore().applyChanges();
@@ -2090,11 +2085,6 @@
 				"Button textDirection should be rendered to second Model textDirection");
 		strictEqual(oSegmentedButton.getButtons()[3].getIcon(), "sap-icon://home",
 				"Button icon should be equal to second Model icon");
-
-		for (i = 0;i < aButtons.length;i++) {
-			ok(aButtons[i].destroy.calledOnce, "Internally created button with index " + i + " from the old model should be destroyed ");
-			aButtons[i].destroy.restore();
-		}
 
 		// Cleanup
 		aButtons = null;
@@ -2702,6 +2692,188 @@
         // Cleanup
         oSegmentedButton.destroy();
     });
+
+	module("SegmentedButtonItem", {
+		beforeEach: function () {
+			this.oSBI = new sap.m.SegmentedButtonItem();
+		},
+		afterEach: function () {
+			this.oSBI.destroy();
+			this.oSBI = null;
+		}
+	});
+
+	test("Objects needed for CustomStyleClass sync between item and internal button", function (oAssert) {
+		// Arrange
+		var oB = this.oSBI.oButton,
+			oSBI = this.oSBI;
+
+		// Assert
+		oAssert.strictEqual(oB.aCustomStyleClasses, oSBI.aCustomStyleClasses, "This should be a reference to the same object");
+		oAssert.strictEqual(oB.mCustomStyleClassMap, oSBI.mCustomStyleClassMap, "This should be a reference to the same object");
+	});
+
+	test("CustomData sync", function (oAssert) {
+		// Arrange
+		var oCustomData = new sap.ui.core.CustomData({
+			key: "my",
+			value: "5"
+		});
+		this.oSBI.addCustomData(oCustomData);
+
+		// Assert
+		oAssert.strictEqual(this.oSBI.oButton.getCustomData()[0], oCustomData,
+			"The CustomData returned from the internal button should be a reference to the same CustomData added in the item");
+	});
+
+	test("LayoutData sync", function (oAssert) {
+		// Arrange
+		// Keep in mind that we are using sap.ui.core.LayoutData which is an abstract class and this usage is ok only for testing
+		var oLayoutData = new sap.ui.core.LayoutData();
+		this.oSBI.setLayoutData(oLayoutData);
+
+		// Assert
+		oAssert.strictEqual(this.oSBI.oButton.getLayoutData(), oLayoutData,
+			"The LayoutData returned from the internal button should be a reference to the same LayoutData set in the item");
+	});
+
+	test("Press event", function (oAssert) {
+		// Arrange
+		var oSB = new sap.m.SegmentedButton({
+			items: [
+				this.oSBI
+			]
+		}),
+		aButtons = oSB.getButtons();
+
+		this.oSBI.attachPress(function () {
+			// Assert
+			oAssert.ok(true, "Event attached to the item should be fired when the button event is fired");
+		});
+
+		// Act
+		aButtons[0].firePress();
+	});
+
+	test("Cleanup - standalone", function (oAssert) {
+		// Arrange
+		var oDestroySpy = this.spy(this.oSBI.oButton, "destroy");
+
+		// Act
+		this.oSBI.destroy();
+
+		// Internal created button should be destroyed
+		oAssert.strictEqual(oDestroySpy.callCount, 1, "Destroy method of the button should be called once");
+		oAssert.strictEqual(this.oSBI.oButton, null, "Internal button pointer should be null");
+
+		// Cleanup
+		oDestroySpy.restore();
+	});
+
+	test("Cleanup - sap.m.SegmentedButton", function (oAssert) {
+		// Arrange
+		var oSB = new sap.m.SegmentedButton({
+			items: [
+				this.oSBI
+			]
+		});
+
+		// Act - destroy the SegmentedButton
+		oSB.destroy();
+
+		// Assert
+		oAssert.strictEqual(this.oSBI.oButton.bIsDestroyed, true, "The internal button should be marked for destruction");
+	});
+
+	module("sap.ui.core.CustomData and 'items' aggregation", {
+		beforeEach: function () {
+			// Create the control
+			this.oSB = new sap.m.SegmentedButton({
+				items: [
+					new sap.m.SegmentedButtonItem({
+						text: "Btn1",
+						customData: {
+							key: "my",
+							value: "1",
+							writeToDom: true
+						}
+					}),
+					new sap.m.SegmentedButtonItem({
+						text: "Btn2",
+						customData: {
+							key: "my",
+							value: "2",
+							writeToDom: true
+						}
+					}),
+					new sap.m.SegmentedButtonItem({
+						text: "Btn3"
+					})
+				]
+			}).placeAt("qunit-fixture");
+
+			// Get custom data of the first item
+			this.oCD = this.oSB.getItems()[0].getCustomData()[0];
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oSB.destroy();
+			this.oSB = null;
+
+			this.oCD.destroy();
+			this.oCD = null;
+		}
+	});
+
+	test("CustomData is rendered correct in the dom", function (oAssert) {
+		// Arrange
+		var aBtn = this.oSB.getButtons();
+
+		// Assert
+		oAssert.strictEqual(aBtn[0].getCustomData()[0].getKey(), "my", "There is CustomData with key 'my' in the first button");
+		oAssert.strictEqual(aBtn[0].$().data("my"), 1, "There is CustomData attribute with value '1' rendered on the first button");
+		oAssert.strictEqual(aBtn[1].$().data("my"), 2, "There is CustomData attribute with value '2' rendered on the second button");
+		oAssert.strictEqual(aBtn[2].getCustomData().length, 0, "There is no CustomData on the third button");
+		oAssert.strictEqual(aBtn[2].$().data("my"), undefined, "There is no CustomData rendered on the third button");
+	});
+
+	test("Update of item's CustomData Value property must be reflected in the SegmentedButton", function (oAssert) {
+		// Act - change the CustomData value of the item
+		this.oCD.setValue("2222");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		oAssert.strictEqual(this.oSB.getButtons()[0].$().data("my"), 2222, "The rendered CustomData on the first button should be updated");
+	});
+
+	test("Update of item's CustomData Key property must be reflected in the SegmentedButton", function (oAssert) {
+		// Arrange
+		var oFirstButton;
+
+		// Act - change the CustomData key of the item
+		this.oCD.setKey("yours");
+		sap.ui.getCore().applyChanges();
+
+		// Get first button after update because it's regenerated
+		oFirstButton = this.oSB.getButtons()[0];
+
+		// Assert
+		oAssert.strictEqual(oFirstButton.$().data("my"), undefined,
+			"There should be no CustomData with key 'my' rendered on the first");
+		oAssert.strictEqual(oFirstButton.$().data("yours"), 1,
+			"There should be new CustomData with key 'yours' rendered on the first button");
+	});
+
+	test("Update of item's CustomData writeToDom property must be reflected in the SegmentedButton", function (oAssert) {
+		// Act - change the CustomData writeToDom property
+		this.oCD.setWriteToDom(false);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		oAssert.strictEqual(this.oSB.getButtons()[0].$().data(this.oCD.getKey()), undefined,
+			"There should be new CustomData with key 'yours' rendered on the first button");
+	});
 
 </script>
 </head>

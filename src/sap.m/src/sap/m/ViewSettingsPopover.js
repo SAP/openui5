@@ -1017,17 +1017,15 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 
 			switch (sType) {
 				case 'sort':
-					this._getSegmentedButton().insertAggregation('items', oNewButton, 0);
+					this._getSegmentedButton().insertItem(oNewButton, 0);
 					break;
 				case 'filter':
-					this._getSegmentedButton().insertAggregation('items', oNewButton, 1);
+					this._getSegmentedButton().insertItem(oNewButton, 1);
 					break;
 				case 'group':
 					this._getSegmentedButton().addItem(oNewButton);
 					break;
 			}
-
-			this._getSegmentedButton().updateItems();
 
 		};
 
