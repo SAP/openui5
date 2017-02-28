@@ -63,9 +63,11 @@
 		rm.write(ShellRenderer.getLogoImageHtml(oControl));
 
 		// header title
-		rm.write("<h1 id='" + oControl.getId() + "-hdrTxt' class='sapMShellHeaderText'>");
-		rm.writeEscaped(oControl.getTitle());
-		rm.write("</h1>");
+		if (oControl.getTitle()) {
+			rm.write("<h1 id='" + oControl.getId() + "-hdrTxt' class='sapMShellHeaderText'>");
+			rm.writeEscaped(oControl.getTitle());
+			rm.write("</h1>");
+		}
 
 		// header right area
 		rm.write("<span class='sapMShellHeaderRight'>");
