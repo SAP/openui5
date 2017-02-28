@@ -117,7 +117,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 					return undefined;
 				}
 			};
-			
+
 			sandbox.stub(utils,"getAppDescriptor").returns({
 				"sap.app":{
 					id: "myapp"
@@ -228,7 +228,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 		});
 
 	});
-	
+
 	QUnit.test("getExecuteOnSelect shall return null if there are no changes", function(assert) {
 
 		sandbox.stub(this.oPersistence, 'getChanges').returns(Promise.resolve({}));
@@ -238,7 +238,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 			assert.equal(bFlag, null);
 		});
 	});
-	
+
 	QUnit.test("getExecuteOnSelectSync shall return the execute on select flag synchronously", function(assert) {
 
 		var sampleChanges = {
@@ -277,7 +277,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 
 			assert.strictEqual(defaultExecuteOnSelectAfterChangesHaveBeenFetched, bExecuteOnDefault);
 		});
-	});		
+	});
 
 	QUnit.test("getDefaultVariantId shall return an empty string if there are no changes", function(assert) {
 
@@ -513,12 +513,12 @@ jQuery.sap.require("sap.ui.fl.Cache");
 
 	QUnit.test("shall read the data from sap.ui.fl.Cache only once", function(assert) {
 		var oPersistence = this.oPersistence;
-		assert.strictEqual(oPersistence._bHasLoadedChangesFromBackend, false);
+		assert.strictEqual(oPersistence._bHasLoadedChangesFromBackEnd, false);
 
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve([]));
 
 		return this.oPersistence.getChanges(true).then(function() {
-			assert.strictEqual(oPersistence._bHasLoadedChangesFromBackend, true);
+			assert.strictEqual(oPersistence._bHasLoadedChangesFromBackEnd, true);
 			return oPersistence.getChanges();
 		}).then(function() {
 			sinon.assert.calledOnce(Cache.getChangesFillingCache);
@@ -697,7 +697,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 	});
 
 	QUnit.test("getChanges does not check for message bundles if no message bundle is cached", function (assert) {
-		this.oPersistence._bHasLoadedChangesFromBackend = true;
+		this.oPersistence._bHasLoadedChangesFromBackEnd = true;
 		this.oPersistence._oMessagebundle = undefined;
 		var checkForMessagebundleBindingStub = sandbox.stub(this.oPersistence, "_checkForMessagebundleBinding");
 		sandbox.stub(this.oPersistence, "_fillRelevantChanges");
@@ -708,7 +708,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 	});
 
 	QUnit.test("getChanges checks for message bundles if a message bundle is cached", function (assert) {
-		this.oPersistence._bHasLoadedChangesFromBackend = true;
+		this.oPersistence._bHasLoadedChangesFromBackEnd = true;
 		this.oPersistence._oMessagebundle = {"i_123": "Hallo Welt!"};
 		var checkForMessagebundleBindingStub = sandbox.stub(this.oPersistence, "_checkForMessagebundleBinding");
 
