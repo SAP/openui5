@@ -644,9 +644,6 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 			icon = this.getStepIcons()[i];
 			title = this._cachedSteps[i].childNodes[0].getAttribute("title");
 
-			// show the step number if there is no icon
-			title = icon ? title : (i + 1) + ". " + title;
-
 			this._actionSheet.addButton(new sap.m.Button({
 				width: "200px",
 				text: title,
