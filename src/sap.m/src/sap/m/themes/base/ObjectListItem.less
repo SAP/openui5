@@ -58,30 +58,19 @@ html[data-sap-ui-browser="ie9"] .sapMText.sapMObjLTitle {
 	padding-left: 1rem;
 }
 
-.sapMObjLNumber {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	vertical-align: top;
-	text-align: right;
+.sapMObjLNumberDiv .sapMObjectNumber .sapMObjectNumberStatusNone {
+	color: @sapUiGroupTitleTextColor;
 }
 
-
-html[dir=rtl] .sapMObjLNumber {
-	text-align: left;
+.sapMObjLNumberDiv .sapMObjectNumber .sapMObjectNumberText {
+	font-family: @sapUiFontHeaderFamily;
+	font-size: 1.375rem;
+	font-weight: @sapUiFontHeaderWeight;
 }
 
-
-.sapMObjLNumberUnit {
-	font-weight: normal;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	text-align: right;
-}
-
-html[dir=rtl] .sapMObjLNumberUnit {
-	text-align: left;
+.sapMObjLNumberDiv .sapMObjectNumber .sapMObjectNumberUnit {
+	padding: 0;
+	display: block;
 }
 
 .sapMObjLBottomRow {

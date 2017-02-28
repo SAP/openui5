@@ -188,6 +188,16 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			ListItemBase.prototype.exit.apply(this);
 		};
 
+		ObjectListItem.prototype.onAfterRendering = function() {
+			var oObjectNumber = this.getAggregation("_objectNumber"),
+				bPageRTL = sap.ui.getCore().getConfiguration().getRTL(),
+				sTextAlign = bPageRTL ? sap.ui.core.TextAlign.Left : sap.ui.core.TextAlign.Right;
+
+			if (oObjectNumber && oObjectNumber.getNumber()) { // adjust alignment according the design specification
+				oObjectNumber.setTextAlign(sTextAlign);
+			}
+		};
+
 		/**
 		 * Initiates the <code>sap.m.ObjectNumber</code> aggregation based on the <code>number</code>, <code>numberUnit</code>, <code>numberState</code> and <code>numberTextDirection</code> properties.
 		 * @private
