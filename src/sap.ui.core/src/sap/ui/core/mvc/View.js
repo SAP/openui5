@@ -462,7 +462,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			}
 
 			if ( oController ) {
-				oController = Controller.extendIfRequired(oController, sName, oThis.oAsyncState);
+				oController = Controller.extendIfRequired(oController, sName, !!oThis.oAsyncState);
 				if (oController instanceof Promise) {
 					if (!oThis.oAsyncState) {
 						throw new Error("The view " + oThis.sViewName + " runs in sync mode and therefore cannot use async controller extensions!");
