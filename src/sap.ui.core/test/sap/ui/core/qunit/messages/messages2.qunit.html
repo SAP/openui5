@@ -103,7 +103,7 @@
 		spyDataState(oCompZip, function(sName, oDataState) {
 			ok(oDataState.getMessages().length == 1, 'Format Message created');
 			ok(oCompZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
-			ok(oCompZip.getValueStateText() === 'Enter a value with no more than 5 characters.', 'Input: ValueStateText set correctly')
+			ok(oCompZip.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly')
 		});
 		var oCoreValHandler = function(oEvent) {
 			ok(false,"should never be called");
