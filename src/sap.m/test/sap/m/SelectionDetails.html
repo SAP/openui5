@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8">
+
+<title>Test page: Example - sap.m.SelectionDetails</title>
+
+<script src="shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.m"
+	src="../../../resources/sap-ui-core.js">
+</script>
+
+<script type="text/javascript">
+	jQuery.sap.initMobile();
+
+	var oSelectionDetails = new sap.m.SelectionDetails();
+
+	/* new sap.m.Page("page", {
+		content: []
+	}).placeAt("content"); */
+	oSelectionDetails.placeAt("content");
+</script>
+</head>
+
+<body class="sapUiBody" role="application">
+	<div id="content"></div>
+</body>
+</html>

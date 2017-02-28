@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SelectionDetails.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/OverflowToolbarButton'],
+	function(jQuery, library, Control, OverflowToolbarButton) {
 	"use strict";
 
 	/**
@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * The text to be displayed in the button. The value of this property is a translatable resource. It will be appended by the number of items selected on the chart, for example Details (3) for three selected items on the chart.
 			 */
-			text : {type : "string", group : "Data", defaultValue : "Details"}
+			text : {type : "string", group : "Appearance", defaultValue : "Details"}
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -50,7 +50,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				 * Hidden aggregation which contains the button that opens the popover
 				 *
 				 */
-				"_button": {type : "sap.m.OverflowButton", multiple : false, visibility : "hidden"}
+				"_button": {type : "sap.m.OverflowToolbarButton", multiple : false, visibility : "hidden"}
 		},
 		events : {
 			/**
@@ -106,26 +106,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 					 */
 					item : {type : "sap.m.SelectionDetailsItem"}
 				}
-			},
-
-			/**
-			 * Event is fired when the group action is pressed on the popover.
-			 */
-			groupActionPress : {
-				parameters : {
-
-					/**
-					 * The group action that has to be processed once the action has been pressed
-					 */
-					action : {type : "sap.ui.core.Item"},
-
-					/**
-					 * The items in the aggregation at the moment of time when the press occured
-					 */
-					items : {type : "sap.m.SelectionDetailsItem"}
-				}
 			}
 		}
 	}});
+
+	SelectionDetails.prototype.init = function() {
+		this.setAggregation("_button", new OverflowToolbarButton(), true);
+	};
+
+	SelectionDetails.prototype.onBeforeRendering = function () {
+		this.getAggregation("_button").setProperty("text", this.getText(), true);
+	};
+
 	return SelectionDetails;
 });
