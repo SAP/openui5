@@ -62,8 +62,11 @@
 	padding-left: 1rem;
 }
 
-.sapMObjLNumberDiv .sapMObjectNumber .sapMObjectNumberText {
+.sapMObjLNumberDiv .sapMObjectNumber .sapMObjectNumberStatusNone {
 	color: @sapUiGroupTitleTextColor;
+}
+
+.sapMObjLNumberDiv .sapMObjectNumber .sapMObjectNumberText {
 	font-family: @sapUiFontHeaderFamily;
 	font-size: 1.375rem;
 	font-weight: @sapUiFontHeaderWeight;
@@ -222,20 +225,4 @@ html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
 
 .sapMObjLAttrDiv.sapMObjAttrWithMarker {
 	padding-top: .1875rem
-}
-
-.sapMObjLNumberStateNone {
-	color: @sapUiGroupTitleTextColor;
-}
-
-.sapMObjLNumberStateError {
-	color: @sapUiNegativeText;
-}
-
-.sapMObjLNumberStateWarning {
-	color: @sapUiCriticalText;
-}
-
-.sapMObjLNumberStateSuccess {
-	color: @sapUiPositiveText;
 }
