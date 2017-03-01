@@ -20,9 +20,11 @@
 
 <script>
 
-	QUnit.module("Basic Rendering", {
+	QUnit.module("Default values", {
 		beforeEach : function() {
-			this.oSelectionDetails = new sap.m.SelectionDetails()
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 		},
 		afterEach : function() {
 			this.oSelectionDetails.destroy();
@@ -30,9 +32,36 @@
 		}
 	});
 
-	QUnit.test("Composite Controls are rendered", function(assert) {
+	QUnit.test("Property 'text'", function(assert) {
 		//Assert
-		assert.equal(this.oSelectionDetails.getText(), "Details", "The default value for the text property is null");
+		assert.equal(this.oSelectionDetails.getText(), "Details", "The default value for property text is 'Details'");
+	});
+
+	QUnit.test("Internal aggregations created on init", function(assert) {
+		//Assert
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getMetadata().getName(), "sap.m.OverflowToolbarButton", "Private button created");
+	});
+
+	QUnit.module("Basic Rendering", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Control is rendered", function(assert) {
+		//Assert
+		assert.ok(this.oSelectionDetails.$(), "Minimal dom strcture is present");
+	});
+
+	QUnit.test("Internal button has got the value of property text", function(assert) {
+		//Assert
+		assert.equal(this.oSelectionDetails.getText(), this.oSelectionDetails.getAggregation("_button").getText(), "Property text is up to date");
 	});
 
 </script>
