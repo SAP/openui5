@@ -111,11 +111,39 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/O
 	}});
 
 	SelectionDetails.prototype.init = function() {
-		this.setAggregation("_button", new OverflowToolbarButton(), true);
+		this.setAggregation("_button", new OverflowToolbarButton({
+			press : [this._onToolbarButtonPress, this]
+		}), true);
 	};
 
 	SelectionDetails.prototype.onBeforeRendering = function () {
 		this.getAggregation("_button").setProperty("text", this.getText(), true);
+	};
+
+	SelectionDetails.prototype._handlePressLazy = function(NavContainer, ResponsivePopover, Page) {
+		var oPopover = this.getAggregation("_popover"),
+			oNavContainer;
+		if (!oPopover) {
+			oNavContainer = new NavContainer({
+				pages: [
+					new Page(this.getId() + "-initialPage", {
+						content: [
+						//first page content will come here in following pushes
+						]
+					})
+				]
+			});
+			oPopover = new ResponsivePopover({
+				placement: library.PlacementType.Bottom,
+				content : oNavContainer
+			});
+			this.setAggregation("_popover", oPopover, true);
+		}
+		oPopover.openBy(this.getAggregation("_button"));
+	};
+
+	SelectionDetails.prototype._onToolbarButtonPress = function() {
+		sap.ui.require(['sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page'], this._handlePressLazy.bind(this));
 	};
 
 	return SelectionDetails;
