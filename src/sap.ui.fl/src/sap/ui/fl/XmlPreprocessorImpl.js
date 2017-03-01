@@ -56,7 +56,8 @@ sap.ui.define([
 			}
 
 			var sFlexReference = Utils.getComponentClassName(oComponent);
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference);
+			var sAppVersion = Utils.getAppVersionFromManifest(oComponent.getManifest());
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference, sAppVersion);
 			var cacheKey = oChangePersistence.getCacheKey();
 
 			if (!cacheKey || cacheKey === ChangePersistence.NOTAG) {
@@ -65,7 +66,7 @@ sap.ui.define([
 				return Promise.resolve(oView);
 			}
 
-			var oFlexController = FlexControllerFactory.create(sFlexReference);
+			var oFlexController = FlexControllerFactory.create(sFlexReference, sAppVersion);
 			return oFlexController.processXmlView(oView, mProperties).then(function() {
 				jQuery.sap.log.debug("flex processing view " + mProperties.id + " finished");
 				return oView;
@@ -89,7 +90,8 @@ sap.ui.define([
 	XmlPreprocessorImpl.getCacheKey = function(mProperties) {
 		var oComponent = sap.ui.getCore().getComponent(mProperties.componentId);
 		var sFlexReference = Utils.getComponentClassName(oComponent);
-		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference);
+		var sAppVersion = Utils.getAppVersionFromManifest(oComponent.getManifest());
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference, sAppVersion);
 		return oChangePersistence.getCacheKey();
 	};
 

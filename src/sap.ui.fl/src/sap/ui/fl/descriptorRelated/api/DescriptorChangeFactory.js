@@ -105,7 +105,8 @@ sap.ui.define([
 	 */
 	DescriptorChange.prototype.submit = function() {
 		// create persistence
-		var sComponentName = this._mChangeFile.reference; //reference contains id of the referenced descriptor
+		var sComponentName = this._mChangeFile.reference;
+		//TODO: Add application version
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sComponentName);
 
 		//add change to persistence
@@ -184,7 +185,7 @@ sap.ui.define([
 		}
 
 		var mChangeFile = Change.createInitialFileContent(mPropertyBag );
-		//TODO: add a correct application component name
+		//TODO: add a correct application component name and app version
 		return Settings.getInstance("dummy").then(function(oSettings) {
 			return Promise.resolve( new DescriptorChange(mChangeFile, oInlineChange, oSettings) );
 		});

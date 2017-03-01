@@ -74,9 +74,19 @@ jQuery.sap.require("sap.ui.fl.Utils");
 				resolve(oFileContent);
 			}
 		);
-
+		var oComponent = {
+			getManifest: function () {
+				return {
+					"sap.app" : {
+						applicationVersion : {
+							version : "1.2.3"
+						}
+					}
+				};
+			}
+		};
 		sandbox.stub(Cache, "getChangesFillingCache").returns(oChangesFillingCachePromise);
-
+		sandbox.stub(sap.ui, "component").returns(oComponent);
 
 		// decode
 		var oExtensionProvider = new PreprocessorImpl();
@@ -160,8 +170,6 @@ jQuery.sap.require("sap.ui.fl.Utils");
 				resolve(oFileContent);
 			}
 		);
-
-		sandbox.stub(sap.ui, "component");
 		sandbox.stub(Cache, "getChangesFillingCache").returns(oChangesFillingCachePromise);
 
 		// view, controller and component definition
@@ -169,6 +177,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		var oComp = sap.ui.component({
 			name: "sap.ui.fl.PreprocessorImpl.testResources"
 		});
+        sandbox.stub(sap.ui, "component").returns(oComp);
 
 		var view1 = sap.ui.view({
 			viewName: "sap.ui.fl.PreprocessorImpl.testResources.view1",

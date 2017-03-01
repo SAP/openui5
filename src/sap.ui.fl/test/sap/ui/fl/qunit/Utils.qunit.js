@@ -999,4 +999,30 @@ jQuery.sap.require("sap.m.Button");
 		assert.equal(Utils.getFlexReference(oManifest), sAppId + ".Component");
 	});
 
+	QUnit.test("getAppVersionFromManifest returns the application version from manifest", function (assert) {
+
+		var sAppVersion = "1.2.3";
+		var oManifestJson = {
+			"sap.app": {
+				applicationVersion : {
+					version : sAppVersion
+				}
+			}
+		};
+		var oManifest = {
+			"sap.app": {
+				applicationVersion : {
+					version : sAppVersion
+				}
+			},
+			getEntry: function (key) {
+				return this[key];
+			}
+		};
+
+		assert.equal(Utils.getAppVersionFromManifest(oManifest), sAppVersion, "if the manifest object was passed");
+		assert.equal(Utils.getAppVersionFromManifest(oManifestJson), sAppVersion, "if the manifest json data was passed");
+		assert.equal(Utils.getAppVersionFromManifest(), "", "if nothing was passed, return empty string");
+	});
+
 }(sap.ui.fl.Utils, sap.ui.layout.HorizontalLayout, sap.ui.layout.VerticalLayout, sap.m.Button));
