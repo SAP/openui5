@@ -57,6 +57,76 @@
 
 	QUnit.module("Section/SubSection Importance");
 
+	QUnit.test("Section with title has button placeholders", function (assert) {
+
+		var oObjectPageLayout = new sap.uxap.ObjectPageLayout("page02", {
+			sections: new sap.uxap.ObjectPageSection({
+				subSections: [
+					new sap.uxap.ObjectPageSubSection({
+						title: "Title",
+						blocks: [new sap.m.Text({text: "test"})]
+					})
+				]
+			})
+		});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+
+		var $section = oObjectPageLayout.getSections()[0].$();
+		assert.strictEqual($section.find('.sapUxAPObjectPageSectionHeader .sapUiHiddenPlaceholder').length, 2, "subsection has 2 hidden placeholders");
+
+		oObjectPageLayout.destroy();
+	});
+
+	QUnit.test("Section without title has no button placeholders", function (assert) {
+
+		var oObjectPageLayout = new sap.uxap.ObjectPageLayout("page02", {
+			sections: new sap.uxap.ObjectPageSection({
+				showTitle: false,
+				subSections: [
+					new sap.uxap.ObjectPageSubSection({
+						title: "Title",
+						blocks: [new sap.m.Text({text: "test"})]
+					})
+				]
+			})
+		});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+
+		var $section = oObjectPageLayout.getSections()[0].$();
+		assert.strictEqual($section.find('.sapUxAPObjectPageSectionHeader .sapUiHiddenPlaceholder').length, 0, "subsection has no hidden placeholders");
+
+		oObjectPageLayout.destroy();
+	});
+
+	QUnit.test("Section with dynamically added title has button placeholders", function (assert) {
+
+		var oObjectPageLayout = new sap.uxap.ObjectPageLayout("page02", {
+			sections: new sap.uxap.ObjectPageSection({
+				showTitle: false,
+				subSections: [
+					new sap.uxap.ObjectPageSubSection({
+						title: "Title",
+						blocks: [new sap.m.Text({text: "test"})]
+					})
+				]
+			})
+		});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+
+		oObjectPageLayout.getSections()[0].setShowTitle(true);
+		sap.ui.getCore().applyChanges();
+
+		var $section = oObjectPageLayout.getSections()[0].$();
+		assert.strictEqual($section.find('.sapUxAPObjectPageSectionHeader .sapUiHiddenPlaceholder').length, 2, "subsection has hidden placeholders");
+
+		oObjectPageLayout.destroy();
+	});
+
 	QUnit.test("Default state for hiding/showing the content", function (assert) {
 		var oMockSection = {
 			getImportance: sinon.stub().returns(Importance.High)
