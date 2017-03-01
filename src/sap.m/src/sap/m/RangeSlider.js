@@ -784,6 +784,10 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
          * @override
          */
         RangeSlider.prototype.onfocusin = function (oEvent) {
+            var sCSSClass = this.getRenderer().CSS_CLASS;
+
+            this.$("TooltipsContainer").addClass(sCSSClass + "HandleTooltipsShow");
+
             // remember the initial focus range so when esc key is pressed we can return to it
             if (!this._hasFocus()) {
                 this._aInitialFocusRange = this.getRange();
@@ -873,7 +877,7 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
 
             // note: prevent document scrolling when arrow keys are pressed
             oEvent.preventDefault();
-
+            oEvent.stopPropagation();
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
 
@@ -935,7 +939,7 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
 
             // note: prevent document scrolling when arrow keys are pressed
             oEvent.preventDefault();
-
+            oEvent.stopPropagation();
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
 
@@ -961,8 +965,7 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
          */
         RangeSlider.prototype.onsaphome = function (oEvent) {
             var iHandleIndex = 0,
-                fDistanceToStart = 0;
-
+                fRangeValue, oHandle, fMin;
             if (["number", "text"].indexOf(oEvent.target.type) > -1) {
                 return;
             }
@@ -973,11 +976,13 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
             // note: prevent document scrolling when Home key is pressed
             oEvent.preventDefault();
 
-            if (this.getEnabled()) {
-                iHandleIndex = this._getIndexOfHandle(oEvent.target);
-                fDistanceToStart = this.getRange()[iHandleIndex] - this.getMin();
+            iHandleIndex = this._getIndexOfHandle(oEvent.target);
+            fRangeValue = this.getRange()[iHandleIndex];
+            fMin = this.getMin();
 
-                this._updateSliderValues(fDistanceToStart, oEvent.target);
+            if (this.getEnabled() && (fRangeValue !== fMin)) {
+                oHandle = (iHandleIndex === 1 ? this._mHandleTooltip.end : this._mHandleTooltip.start);
+                this._updateHandle(oHandle.handle, fMin);
                 this._fireChangeAndLiveChange({range: this.getRange()});
             }
         };
