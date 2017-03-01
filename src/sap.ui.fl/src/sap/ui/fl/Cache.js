@@ -6,8 +6,8 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	"use strict";
 
 	/**
-	 * Helper object to access a change from the backend.
-	 * Access helper object for each change (and variant) which was fetched from the backend
+	 * Helper object to access a change from the back end.
+	 * Access helper object for each change (and variant) fetched from the back end
 	 *
 	 * @namespace
 	 * @alias sap.ui.fl.Cache
@@ -76,7 +76,7 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	 * promise to resolve all calls in future event loop execution paths with
 	 * the same result. In case of an error, it will delete the initial promise
 	 * to give calls from future execution paths the chance to re-request the
-	 * changes from the backend.
+	 * changes from the back end.
 	 *
 	 * If the cache is not active, the method just delegates the call to the
 	 * loadChanges method of the given LrepConnector.
@@ -86,7 +86,7 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	 * @param {map} mPropertyBag - (optional) contains additional data that are needed for reading of changes
 	 * - appDescriptor that belongs to actual component
 	 * - siteId that belongs to actual component
-	 * @returns {Promise} resolves with the change file for the given component, either from cache or backend
+	 * @returns {Promise} resolves with the change file for the given component, either from cache or back end
 	 *
 	 * @public
 	 */

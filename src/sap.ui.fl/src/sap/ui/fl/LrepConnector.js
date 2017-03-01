@@ -11,8 +11,8 @@ sap.ui.define([
 	 * Provides the connectivity to the ABAP based LRep REST-service
 	 *
 	 * @param {object} [mParameters] - map of parameters, see below
-	 * @param {String} [mParameters.XsrfToken] - XSRF Token which can be reused for the backend connectivity. If no XSRF token is passed, a new one
-	 *        will be fetched from backend.
+	 * @param {String} [mParameters.XsrfToken] - XSRF token which can be reused for back-end connectivity. If no XSRF token is passed, a new one
+	 *        will be fetched from back end.
 	 * @constructor
 	 * @alias sap.ui.fl.LrepConnector
 	 * @private
@@ -40,8 +40,8 @@ sap.ui.define([
 	Connector.prototype._sRequestUrlPrefix = "";
 
 	/**
-	 * Registers a callback for a sent request to the backend. The callback is called for each change done one time! Each call is done with an object
-	 * similar to the resolve of the promises containing a <code>status</code> of the response from the backend i.e. <code>success</code>, a
+	 * Registers a callback for a sent request to the back end. The callback is only called once for each change. Each call is done with an object
+	 * similar to the resolve of the promises containing a <code>status</code> of the response from the back end i.e. <code>success</code>, a
 	 * <code>response</code> containing the change processed in this request
 	 *
 	 * @param {function} fCallback function called after all related promises are resolved
@@ -54,7 +54,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deregisters a callback for a sent request to the backend if the callback was registered
+	 * Deregisters a callback for a sent request to the back end if the callback was registered
 	 *
 	 * @param {function} fCallback function called after all related promises are resolved
 	 * @public
@@ -79,7 +79,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Extract the sap-language url parameter from current url
+	 * Extract the sap-language URL parameter from current URL
 	 *
 	 * @private
 	 */
@@ -92,9 +92,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Prefix for request url can be set in exceptional cases when consumer needs to add a prefix to the url
+	 * Prefix for request URL can be set in exceptional cases when consumer needs to add a prefix to the URL
 	 *
-	 * @param {String} sRequestUrlPrefix - request url prefix which must start with a "/" and must not end
+	 * @param {String} sRequestUrlPrefix - request URL prefix which must start with a (/) and must not end with a (/)
 	 * @private
 	 * @sap-restricted
 	 */
@@ -103,9 +103,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resolve the complete url of a request by taking the backendUrl and the relative url from the request
+	 * Resolves the complete URL of a request using the back-end URL and the relative URL from the request
 	 *
-	 * @param {String} sRelativeUrl - relative url of the current request
+	 * @param {String} sRelativeUrl - relative URL of the current request
 	 * @returns {sap.ui.core.URI} returns the complete uri for this request
 	 * @private
 	 */
@@ -181,9 +181,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Send a request to the backend
+	 * Send a request to the back end
 	 *
-	 * @param {String} sUri Relative url for this request
+	 * @param {String} sUri Relative URL for this request
 	 * @param {String} sMethod HTTP-method to be used by this request (default GET)
 	 * @param {Object} oData Payload of the request
 	 * @param {Object} mOptions Additional options which should be used in the request
@@ -209,7 +209,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Extracts the messages from the backend reponse
+	 * Extracts the messages from the back-end response
 	 *
 	 * @param {Object} oXHR - ajax request object
 	 * @returns {Array} Array of messages, for example <code>[ { "severity": "Error", "text": "content id must be non-initial" } ] </code>
@@ -237,7 +237,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {String} sUri - Complete request url
+	 * @param {String} sUri - Complete request URL
 	 * @param {Object} mOptions - Options to be used by the request
 	 * @returns {Promise} Returns a Promise with the status and response and messages
 	 * @private
@@ -500,9 +500,9 @@ sap.ui.define([
 		}
 
 		if (this._sLanguage) {
-			// Add mandatory "sap-language" url parameter.
-			// sap-language shall be used only if there is a sap-language parameter in the original url.
-			// If sap-language is not added, the browser language might be used as backend login language instead of sap-language.
+			// Add mandatory "sap-language" URL parameter.
+			// Only use sap-language if there is a sap-language parameter in the original URL.
+			// If sap-language is not added, the browser language might be used as back-end login language instead of sap-language.
 			aParams.push({
 				name: "sap-language",
 				value: this._sLanguage
@@ -526,7 +526,7 @@ sap.ui.define([
 	 * The URL prefix of the REST API for example /sap/bc/lrep/changes/.
 	 *
 	 * @param {Boolean} bIsVariant Flag whether the change is of type variant
-	 * @returns {String} url prefix
+	 * @returns {String} URL prefix
 	 * @private
 	 */
 	Connector.prototype._getUrlPrefix = function(bIsVariant) {
