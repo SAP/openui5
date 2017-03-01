@@ -45,13 +45,7 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiSizeCondensed .sapUiTableCell 
 html[data-sap-ui-browser^="ed"].sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl):before,
 html[data-sap-ui-browser^="ie"].sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl):before {
 	position: absolute;
-	top: 0.125rem;
-	left: 0.125rem;
-	right: 0.125rem;
-	bottom: 0.125rem;
-	border-width: 0.125rem;
-	border-style: dashed;
-	border-color: @sapUiContentFocusColor;
+	border: 0.125rem dashed @sapUiContentFocusColor;
 	content: "";
 	pointer-events: none;
 }
