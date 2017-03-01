@@ -527,7 +527,11 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 			"someOtherId": [oSomeOtherChange]
 		};
 		var fnGetChangesMap = function () {
-			return mChanges;
+			return {
+				"mChanges": mChanges,
+				"mDependencies": {},
+				"mDependentChangesOnMe": {}
+			};
 		};
 		var oAppComponent = {};
 
@@ -539,17 +543,41 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 	QUnit.test("applyChangesOnControl processes only those changes that belong to the control", function (assert) {
 		var oCheckTargetAndApplyChangeStub = this.stub(FlexController.prototype, "_checkTargetAndApplyChange");
 
-		var oChange0 = {};
-		var oChange1 = {};
-		var oChange2 = {};
-		var oChange3 = {};
-		var oSomeOtherChange = {};
+		var oChange0 = {
+			getKey: function () {
+				return "";
+			}
+		};
+		var oChange1 = {
+			getKey: function () {
+				return "";
+			}
+		};
+		var oChange2 = {
+			getKey: function () {
+				return "";
+			}
+		};
+		var oChange3 = {
+			getKey: function () {
+				return "";
+			}
+		};
+		var oSomeOtherChange = {
+			getKey: function () {
+				return "";
+			}
+		};
 		var mChanges = {
 			"someId": [oChange0, oChange1, oChange2, oChange3],
 			"someOtherId": [oSomeOtherChange]
 		};
 		var fnGetChangesMap = function () {
-			return mChanges;
+			return {
+				"mChanges": mChanges,
+				"mDependencies": {},
+				"mDependentChangesOnMe": {}
+			};
 		};
 		var oAppComponent = {};
 
@@ -560,6 +588,286 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		assert.equal(oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the second change was processed second");
 		assert.equal(oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange2, "the third change was processed third");
 		assert.equal(oCheckTargetAndApplyChangeStub.getCall(3).args[0], oChange3, "the fourth change was processed fourth");
+	});
+
+	QUnit.test("applyChangesOnControl dependency test 1", function (assert) {
+		var oCheckTargetAndApplyChangeStub = this.stub(FlexController.prototype, "_checkTargetAndApplyChange");
+
+		var oControlForm1 = new sap.ui.core.Control("form1-1");
+		var oControlGroup1 = new sap.ui.core.Control("group1-1");
+
+		var oChange0 = {
+			getKey: function () {
+				return "fileNameChange0" + "USER" + "namespace";
+			},
+			getDependentIdList: function () {
+				return ["group1-1"];
+			}
+		};
+		var oChange1 = {
+			getKey: function () {
+				return "fileNameChange1" + "USER" + "namespace"
+			},
+			getDependentIdList: function () {
+				return ["field3-2", "group3", "group2"];
+			}
+		};
+		var oChange2 = {
+			getKey: function () {
+				return "fileNameChange2" + "USER" + "namespace";
+			},
+			getDependentIdList: function () {
+				return ["field3-2", "group2", "group1-1"];
+			}
+		};
+
+		var mChanges = {
+			"form1-1": [oChange2, oChange1],
+			"group1-1": [oChange0]
+		};
+
+		var mDependencies = {
+			"fileNameChange2USERnamespace": {
+				"changeObject": oChange2,
+				"dependencies": ["fileNameChange0USERnamespace", "fileNameChange1USERnamespace"]
+			}
+		};
+
+		var mDependentChangesOnMe = {
+			"fileNameChange0USERnamespace": ["fileNameChange2USERnamespace"],
+			"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"]
+		};
+
+		var fnGetChangesMap = function () {
+			return {
+				"mChanges": mChanges,
+				"mDependencies": mDependencies,
+				"mDependentChangesOnMe": mDependentChangesOnMe
+			}
+		};
+		var oAppComponent = {};
+
+		FlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlGroup1);
+		FlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1);
+
+		assert.equal(oCheckTargetAndApplyChangeStub.callCount, 3, "all three changes for the control were processed");
+		assert.equal(oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange0, "the first change was processed first");
+		assert.equal(oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the second change was processed second");
+		assert.equal(oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange2, "the third change was processed third");
+	});
+
+	QUnit.test("applyChangesOnControl dependency test 2", function (assert) {
+		var oCheckTargetAndApplyChangeStub = this.stub(FlexController.prototype, "_checkTargetAndApplyChange");
+
+		var oControlForm1 = new sap.ui.core.Control("form2-1");
+		var oControlGroup1 = new sap.ui.core.Control("group2-1");
+
+		var oChange1 = {
+			getKey: function () {
+				return "fileNameChange1" + "USER" + "namespace"
+			},
+			getDependentIdList: function () {
+				return ["field3-2", "group3", "group2"];
+			}
+		};
+		var oChange2 = {
+			getKey: function () {
+				return "fileNameChange2" + "USER" + "namespace";
+			},
+			getDependentIdList: function () {
+				return ["field3-2", "group2", "group2-1"];
+			}
+		};
+		var oChange3 = {
+			getKey: function () {
+				return "fileNameChange3" + "USER" + "namespace";
+			},
+			getDependentIdList: function () {
+				return ["group2-1"];
+			}
+		};
+
+		var mChanges = {
+			"form2-1": [oChange2, oChange1],
+			"group2-1": [oChange3]
+		};
+
+		var mDependencies = {
+			"fileNameChange2USERnamespace": {
+				"changeObject": oChange2,
+				"dependencies": ["fileNameChange1USERnamespace"]
+			}
+		};
+
+		var mDependentChangesOnMe = {
+			"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"]
+		};
+
+		var fnGetChangesMap = function () {
+			return {
+				"mChanges": mChanges,
+				"mDependencies": mDependencies,
+				"mDependentChangesOnMe": mDependentChangesOnMe
+			}
+		};
+		var oAppComponent = {};
+
+		FlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlGroup1);
+		FlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1);
+
+		assert.equal(oCheckTargetAndApplyChangeStub.callCount, 3, "all three changes for the control were processed");
+		assert.equal(oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange3, "the third change was processed first");
+		assert.equal(oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the first change was processed second");
+		assert.equal(oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange2, "the second change was processed third");
+	});
+
+	QUnit.test("applyChangesOnControl dependency test 3", function (assert) {
+		var oCheckTargetAndApplyChangeStub = this.stub(FlexController.prototype, "_checkTargetAndApplyChange");
+
+		var oControlForm1 = new sap.ui.core.Control("mainform");
+		var oControlField1 = new sap.ui.core.Control("ReversalReasonName");
+		var oControlField2 = new sap.ui.core.Control("CompanyCode");
+
+		var oChange1 = {
+			getKey: function () {
+				return "fileNameChange1" + "USER" + "namespace"
+			},
+			getDependentIdList: function () {
+				return ["ReversalReasonName", "Reversal", "Dates"];
+			}
+		};
+		var oChange2 = {
+			getKey: function () {
+				return "fileNameChange2" + "USER" + "namespace";
+			},
+			getDependentIdList: function () {
+				return ["ReversalReasonName", "Dates", "GeneralLedgerDocument"];
+			}
+		};
+		var oChange3 = {
+			getKey: function () {
+				return "fileNameChange3" + "USER" + "namespace";
+			},
+			getDependentIdList: function () {
+				return ["ReversalReasonName"];
+			}
+		};
+		var oChange4 = {
+			getKey: function () {
+				return "fileNameChange4" + "USER" + "namespace";
+			},
+			getDependentIdList: function () {
+				return ["CompanyCode","ReversalReasonName"];
+			}
+		};
+		var oChange5 = {
+			getKey: function () {
+				return "fileNameChange5" + "USER" + "namespace";
+			},
+			getDependentIdList: function () {
+				return ["CompanyCode"];
+			}
+		};
+
+		var mChanges = {
+			"mainform": [oChange1, oChange2, oChange4],
+			"ReversalReasonName": [oChange3],
+			"CompanyCode": [oChange5]
+		};
+
+		var mDependencies = {
+			"fileNameChange2USERnamespace": {
+				"changeObject": oChange2,
+				"dependencies": ["fileNameChange1USERnamespace"]
+			},
+			"fileNameChange4USERnamespace": {
+				"changeObject": oChange4,
+				"dependencies": ["fileNameChange2USERnamespace"] //TODO: also dependency on first change?
+			},
+			"fileNameChange5USERnamespace": {
+				"changeObject": oChange5,
+				"dependencies": ["fileNameChange4USERnamespace"]
+			}
+		};
+
+		var mDependentChangesOnMe = {
+			"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"],
+			"fileNameChange2USERnamespace": ["fileNameChange4USERnamespace"],
+			"fileNameChange4USERnamespace": ["fileNameChange5USERnamespace"]
+		};
+
+		var fnGetChangesMap = function () {
+			return {
+				"mChanges": mChanges,
+				"mDependencies": mDependencies,
+				"mDependentChangesOnMe": mDependentChangesOnMe
+			}
+		};
+		var oAppComponent = {};
+
+		FlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlField2);
+		FlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlField1);
+		FlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1);
+
+		assert.equal(oCheckTargetAndApplyChangeStub.callCount, 5, "all five changes for the control were processed");
+		assert.equal(oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange3, "the third change was processed first");
+		assert.equal(oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the first change was processed second");
+		assert.equal(oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange2, "the second change was processed third");
+		assert.equal(oCheckTargetAndApplyChangeStub.getCall(3).args[0], oChange4, "the fourth change was processed third");
+		assert.equal(oCheckTargetAndApplyChangeStub.getCall(4).args[0], oChange5, "the fifth change was processed third");
+	});
+
+	QUnit.test("applyChangesOnControl dependency test 4", function (assert) {
+		var oCheckTargetAndApplyChangeStub = this.stub(FlexController.prototype, "_checkTargetAndApplyChange");
+
+		var oControlForm1 = new sap.ui.core.Control("form4");
+
+		var oChange1 = {
+			getKey: function () {
+				return "fileNameChange1" + "USER" + "namespace"
+			},
+			getDependentIdList: function () {
+				return ["field3-2", "group1", "group2"];
+			}
+		};
+		var oChange2 = {
+			getKey: function () {
+				return "fileNameChange2" + "USER" + "namespace";
+			},
+			getDependentIdList: function () {
+				return ["field3-2", "group2", "group3"];
+			}
+		};
+
+		var mChanges = {
+			"form4": [oChange1, oChange2]
+		};
+
+		var mDependencies = {
+			"fileNameChange2USERnamespace": {
+				"changeObject": oChange2,
+				"dependencies": ["fileNameChange1USERnamespace"]
+			}
+		};
+
+		var mDependentChangesOnMe = {
+			"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"]
+		};
+
+		var fnGetChangesMap = function () {
+			return {
+				"mChanges": mChanges,
+				"mDependencies": mDependencies,
+				"mDependentChangesOnMe": mDependentChangesOnMe
+			}
+		};
+		var oAppComponent = {};
+
+		FlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1);
+
+		assert.equal(oCheckTargetAndApplyChangeStub.callCount, 2, "all two changes for the control were processed");
+		assert.equal(oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange1, "the first change was processed first");
+		assert.equal(oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange2, "the second change was processed second");
 	});
 
 	QUnit.module("getChangesAndPropagate", {
@@ -610,8 +918,12 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 			this.sLabelId = labelChangeContent.selector.id;
 			this.oControl = new sap.m.Label(this.sLabelId);
 			this.oChange = new Change(labelChangeContent);
-			this.mChanges = {};
-			this.mChanges[this.sLabelId] = [this.oChange];
+			this.mChanges = {
+				"mChanges": {},
+				"mDependencies": {},
+				"mDependentChangesOnMe": {}
+			};
+			this.mChanges.mChanges[this.sLabelId] = [this.oChange];
 			this.fnGetChangesMap = function () {
 				return this.mChanges;
 			}.bind(this);
@@ -674,8 +986,12 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 			this.oControl = new sap.m.Label(this.sLabelId);
 			this.oChange = new Change(labelChangeContent);
 			this.oChange2 = new Change(labelChangeContent2);
-			this.mChanges = {};
-			this.mChanges[this.sLabelId] = [this.oChange, this.oChange2];
+			this.mChanges = {
+				"mChanges": {},
+				"mDependencies": {},
+				"mDependentChangesOnMe": {}
+			};
+			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2];
 			this.fnGetChangesMap = function () {
 				return this.mChanges;
 			}.bind(this);

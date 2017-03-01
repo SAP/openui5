@@ -19,7 +19,23 @@ sap.ui.define([
 	 */
 	var ChangePersistence = function(sComponentName, oLrepConnector) {
 		this._sComponentName = sComponentName;
-		this._mChanges = {};
+		//_mChanges contains:
+		// - mChanges: map of changes (selector id)
+		// - mDependencies: map of changes (change key) that need to be applied before any change. Used to check if a change can be applied. Format:
+		//		mDependencies: {
+		//			"fileNameChange2USERnamespace": [oChange1],
+		//			"fileNameChange3USERnamespace": [oChange2]
+		//		}
+		// - mDependentChangesOnMe: map of changes (change key) that cannot be applied before the change. Used to remove dependencies faster. Format:
+		//		mDependentChangesOnMe: {
+		//			"fileNameChange1USERnamespace": [oChange2],
+		//			"fileNameChange2USERnamespace": [oChange3]
+		//		}
+		this._mChanges = {
+			mChanges: {},
+			mDependencies: {},
+			mDependentChangesOnMe: {}
+		};
 
 		if (!this._sComponentName) {
 			Utils.log.error("The Control does not belong to a SAPUI5 component. Personalization and changes for this control might not work as expected.");
@@ -128,13 +144,25 @@ sap.ui.define([
 				sSelectorId = oComponent.createId(sSelectorId);
 			}
 
-			if (!this._mChanges[sSelectorId]) {
-				this._mChanges[sSelectorId] = [];
+			if (!this._mChanges.mChanges[sSelectorId]) {
+				this._mChanges.mChanges[sSelectorId] = [];
 			}
-			this._mChanges[sSelectorId].push(oChange);
+			this._mChanges.mChanges[sSelectorId].push(oChange);
 		}
 
 		return this._mChanges;
+	};
+
+	ChangePersistence.prototype._addDependency = function (oDependentChange, oChange) {
+		if (!this._mChanges.mDependencies[oDependentChange.getKey()]) {
+			this._mChanges.mDependencies[oDependentChange.getKey()] = [];
+		}
+		this._mChanges.mDependencies[oDependentChange.getKey()].push(oChange);
+
+		if (!this._mChanges.mDependentChangesOnMe[oChange.getKey()]) {
+			this._mChanges.mDependentChangesOnMe[oChange.getKey()] = [];
+		}
+		this._mChanges.mDependentChangesOnMe[oChange.getKey()].push(oDependentChange);
 	};
 
 	/**
@@ -154,8 +182,28 @@ sap.ui.define([
 		return this.getChangesForComponent(mPropertyBag).then(createChangeMap);
 
 		function createChangeMap(aChanges) {
-			aChanges.forEach(function (oChange) {
+			aChanges.forEach(function (oChange, iIndex, aCopy) {
 				that._addChangeIntoMap(oComponent, oChange);
+
+				//create dependencies map
+				var aDependentIdList = oChange.getDependentIdList(mPropertyBag.appComponent);
+				var oPreviousChange;
+				var aPreviousDependentIdList;
+				var iDependentIndex;
+				var bFound;
+
+				for (var i = iIndex - 1; i >= 0; i--) {//loop over the changes
+					oPreviousChange = aCopy[i];
+					aPreviousDependentIdList = aCopy[i].getDependentIdList(mPropertyBag.appComponent);
+					bFound = false;
+					for (var j = 0; j < aDependentIdList.length && !bFound; j++) {
+						iDependentIndex = aPreviousDependentIdList.indexOf(aDependentIdList[j]);
+						if (iDependentIndex > -1) {
+							that._addDependency(oChange, oPreviousChange);
+							bFound = true;
+						}
+					}
+				}
 			});
 
 			return that.getChangesMapForComponent.bind(that);

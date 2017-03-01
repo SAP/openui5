@@ -39,6 +39,7 @@ sap.ui.define([
 	};
 
 	FlexController.appliedChangesCustomDataKey = "sap.ui.fl:AppliedChanges";
+	FlexController.PENDING = "sap.ui.fl:PendingChange";
 
 	/**
 	 * Sets the component name of the FlexController
@@ -246,7 +247,7 @@ sap.ui.define([
 
 		var oGetFlexSettingsPromise = FlexSettings.getInstance(this.getComponentName(), mPropertyBag);
 		return oGetFlexSettingsPromise.then(
-			this._oChangePersistence.getChangesForView.bind(this, mPropertyBag.viewId, mPropertyBag),
+			this._oChangePersistence.getChangesForView.bind(this._oChangePersistence, mPropertyBag.viewId, mPropertyBag),
 			this._handlePromiseChainError.bind(this, mPropertyBag.view)
 		).then(
 			this._resolveGetChangesForView.bind(this, mPropertyBag)
@@ -575,11 +576,63 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.applyChangesOnControl = function (fnGetChangesMap, oAppComponent, oControl) {
-		var mChanges = fnGetChangesMap();
+		var mChangesMap = fnGetChangesMap();
+		var mChanges = mChangesMap.mChanges;
+		var mDependencies = mChangesMap.mDependencies;
+		var mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe;
 		var aChangesForControl = mChanges[oControl.getId()] || [];
 		aChangesForControl.forEach(function (oChange) {
-			FlexController.prototype._checkTargetAndApplyChange(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent});
+			if (!mDependencies[oChange.getKey()]) {
+				FlexController.prototype._checkTargetAndApplyChange(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent});
+				FlexController.prototype._updateDependencies(mDependencies, mDependentChangesOnMe, oChange.getKey());
+			} else {
+				//saves the information whether a change was already processed but not applied.
+				mDependencies[oChange.getKey()][FlexController.PENDING] =
+					FlexController.prototype._checkTargetAndApplyChange.bind(FlexController, oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent});
+			}
 		});
+
+		FlexController.prototype._processDependentQueue(mDependencies, mDependentChangesOnMe, oAppComponent);
+	};
+
+	FlexController.prototype._updateDependencies = function (mDependencies, mDependentChangesOnMe, sChangeKey) {
+		if (mDependentChangesOnMe[sChangeKey]) {
+			mDependentChangesOnMe[sChangeKey].forEach(function (sKey) {
+				var oDependency = mDependencies[sKey];
+				var iIndex = oDependency.dependencies.indexOf(sChangeKey);
+				if (iIndex > -1) {
+					oDependency.dependencies.splice(iIndex, 1);
+				}
+			});
+			delete mDependentChangesOnMe[sChangeKey];
+		}
+	};
+
+	FlexController.prototype._processDependentQueue = function (mDependencies, mDependentChangesOnMe, oAppComponent) {
+		var aAppliedChanges;
+		var aDependenciesToBeDeleted;
+
+		do {
+			aAppliedChanges = [];
+			aDependenciesToBeDeleted = [];
+			for (var i = 0; i < Object.keys(mDependencies).length; i++) {
+				var sDependencyKey = Object.keys(mDependencies)[i];
+				var oDependency = mDependencies[sDependencyKey];
+				if (oDependency.dependencies.length === 0 && oDependency[FlexController.PENDING]) {
+					oDependency[FlexController.PENDING]();
+					aDependenciesToBeDeleted.push(sDependencyKey);
+					aAppliedChanges.push(oDependency.changeObject.getKey());
+				}
+			}
+
+			for (var j = 0; j < aDependenciesToBeDeleted.length; j++) {
+				delete mDependencies[aDependenciesToBeDeleted[j]];
+			}
+
+			for (var k = 0; k < aAppliedChanges.length; k++) {
+				FlexController.prototype._updateDependencies(mDependencies, mDependentChangesOnMe, aAppliedChanges[k]);
+			}
+		} while (aAppliedChanges.length > 0);
 	};
 
 	/**
