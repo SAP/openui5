@@ -422,6 +422,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this.getEnabled() && oEvent.target.tagName == "FORM") {
 			this._inputElement.focus();
 		}
+
+		// if the input is on focus and user taps again on it
+		if (this.getEnabled() && oEvent.target.tagName == "INPUT" && document.activeElement === oEvent.target) {
+			this.onFocus(oEvent);
+		}
 	};
 
 	/**
