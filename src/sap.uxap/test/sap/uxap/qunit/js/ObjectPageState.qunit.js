@@ -1,7 +1,56 @@
 (function ($, QUnit, sinon, Importance) {
 
 	jQuery.sap.registerModulePath("view", "view");
-	
+
+	module("Invalidation");
+
+	QUnit.test("do not invalidate parent upon first rendering", function (assert) {
+
+		var oTextArea = new sap.m.TextArea({rows: 5, width: "100%", value: "12345678901234567890", growing: true}),
+			oPage = new sap.m.Page("page01", {content: [oTextArea]}),
+			oObjectPageLayout = new sap.uxap.ObjectPageLayout("page02", {
+				sections: new sap.uxap.ObjectPageSection({
+					subSections: [
+						new sap.uxap.ObjectPageSubSection({
+							blocks: [new sap.m.Text({text: "test"})]
+						})
+					]
+				})
+			}),
+			oApp = new sap.m.App({
+				pages: [
+					oPage, oObjectPageLayout
+				]
+			}),
+			done = assert.async();
+
+		sinon.spy(oApp, "invalidate");
+
+		oTextArea.addEventDelegate({
+			onAfterRendering: function(oEvent) {
+				assert.strictEqual(oTextArea.getDomRef().scrollHeight > 0, true, "textarea on after rendering has scrollHeight greater than 0");
+				assert.strictEqual(oApp.invalidate.called, false, "invalidate not called");
+			}
+		});
+
+		oApp.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+
+		var afterNavigatePage2 = function() {
+				oApp.detachAfterNavigate(afterNavigatePage2);
+				oApp.attachAfterNavigate(afterBackToPage1);
+				oApp.to("page01");
+			},
+			afterBackToPage1 = function() {
+				done();
+			};
+
+		oApp.attachAfterNavigate(afterNavigatePage2);
+
+		oApp.to("page02");
+	});
+
 	function runParameterizedTests (bUseIconTabBar) {
 
 		var sModulePrefix = bUseIconTabBar ? "IconTabBar": "AnchorBar"
