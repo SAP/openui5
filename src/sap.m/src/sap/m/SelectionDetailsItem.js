@@ -11,12 +11,21 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	 * @private
 	 */
 	var SelectionDetailsListItem = ListItemBase.extend("sap.m.SelectionDetailsListItem", {
-		renderer: "sap.m.SelectionDetailsItemRenderer",
-		metadata: {
-		}
+		renderer: "sap.m.SelectionDetailsItemRenderer"
 	});
 
-	/**
+	SelectionDetailsListItem.prototype.onBeforeRendering = function() {
+		var sType;
+		if (this._getData().getNavigationEnabled()) {
+			sType = library.ListType.Navigation;
+		} else {
+			sType = library.ListType.Inactive;
+		}
+		this.setProperty("type", sType, true);
+	};
+
+
+		/**
 	 * Constructor for a new SelectionDetailsItem.
 	 *
 	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
@@ -43,26 +52,24 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 			library : "sap.m",
 			properties : {
 				/**
-				 * Determines whether or not a navigation event is triggered on press.
+				 * Determines whether or not the item is active and a navigation event is triggered on press.
 				 */
 				navigationEnabled: { type: "boolean", defaultValue: false, group: "Behavior" }
 			},
 			aggregations: {
 				/**
-				 * Holds a record of information about, for example, measures and dimensions.
+				 * Contains a record of information about, for example, measures and dimensions.
 				 * These entries are usually obtained via selection in chart controls.
 				 */
 				fields: { type: "sap.m.SelectionDetailsItemField", multiple: true, bindable: "bindable" },
 
 				/**
-				 * Holds custom actions shown below the main content of the item.
+				 * Contains custom actions shown below the main content of the item.
 				 */
 				actions: { type: "sap.ui.core.Item", multiple: true }
 			}
 		}
 	});
-
-	SelectionDetailsItem.prototype.init = function() { };
 
 	/**
 	 * Builds or changes a SelectionDetailsListItem and returns it.
@@ -70,18 +77,15 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	 * @private
 	 */
 	SelectionDetailsItem.prototype._getListItem = function() {
-		var oListItem = this.getAggregation("_listItem") || new SelectionDetailsListItem();
+		if (!this._oListItem) {
+			this._oListItem = new SelectionDetailsListItem();
+			this._oListItem._getData = jQuery.sap.getter(this);
 
-		if (this.getNavigationEnabled()) {
-			oListItem.setProperty("type", library.ListType.Navigation, true);
-		} else {
-			oListItem.setProperty("type", library.ListType.Inactive, true);
+			this.addDependent(this._oListItem);
 		}
 
-		this.addDependent(oListItem);
-		return oListItem;
+		return this._oListItem;
 	};
 
 	return SelectionDetailsItem;
-
-}, /* bExport= */ true);
+});
