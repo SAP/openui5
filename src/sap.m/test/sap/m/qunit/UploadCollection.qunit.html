@@ -400,6 +400,17 @@
 		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-description").text(), "myNoDataDescription", "The no data description set by user is rendered");
 	});
 
+	QUnit.test("Reset renderNoData of the ListRenderer to the original function", function(assert) {
+		//Arrange
+		var oListRenderNoDataBefore = this.oUploadCollection._oList.getRenderer().renderNoData;
+		var oListRenderNoDataAfter;
+		//Act
+		this.oUploadCollection.rerender();
+		oListRenderNoDataAfter = this.oUploadCollection._oList.getRenderer().renderNoData;
+		//Assert
+		assert.equal(oListRenderNoDataAfter, oListRenderNoDataBefore, "Function renderNoData has been successfully reset to the original function");
+	});
+
 	QUnit.module("Rendering of UploadCollection with hideUploadButton = true", {
 
 		beforeEach : function() {
@@ -1699,9 +1710,9 @@
 
 	});
 
-	QUnit.test("Canceling the edit mode of an item while another item is being uploaded", function(assert) {
+	QUnit.test("Cancelling the edit mode of an item while another item is being uploaded", function(assert) {
 		//Arrange
-		oItem = new sap.m.UploadCollectionItem({
+		var oItem = new sap.m.UploadCollectionItem({
 			fileName: "File.jpg"
 		});
 		oItem._status = sap.m.UploadCollection._uploadingStatus;
