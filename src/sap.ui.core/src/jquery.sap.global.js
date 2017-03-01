@@ -4835,9 +4835,22 @@
 
 	// TODO should be in core, but then the 'callback' could not be implemented
 	if ( !(oCfgData.productive === true || oCfgData.productive === "true"  || oCfgData.productive === "x") ) {
+		// Check whether the left 'alt' key is used
+		// The TechnicalInfo should be shown only when left 'alt' key is used
+		// because the right 'alt' key is mapped to 'alt' + 'ctrl' on windows
+		// in some languages for example German or Polish which makes right
+		// 'alt' + 'shift' + S open the TechnicalInfo
+		var bLeftAlt = false;
+
 		document.addEventListener('keydown', function(e) {
 			try {
-				if ( e.shiftKey && e.altKey && e.ctrlKey ) {
+				if (e.keyCode === 18) { // 'alt' Key
+					bLeftAlt = (typeof e.location !== "number" /* location isn't supported */ || e.location === 1 /* left */);
+					return;
+				}
+
+				if (e.shiftKey && e.altKey && e.ctrlKey && bLeftAlt) {
+					// invariant: when e.altKey is true, there must have been a preceding keydown with keyCode === 18, so bLeftAlt is always up-to-date
 					if ( e.keyCode === 80 ) { // 'P'
 						sap.ui.require(['sap/ui/debug/TechnicalInfo'], function(TechnicalInfo) {
 							TechnicalInfo.open(function() {
