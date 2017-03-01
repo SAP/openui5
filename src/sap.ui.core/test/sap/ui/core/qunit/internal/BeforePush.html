@@ -11,139 +11,47 @@
 			"use strict";
 
 			var sBase = "../../../../../../",
+				sTestRunnerBase = "../../../../",
 				sTestPrefix = "test-resources/sap/ui/core/",
 				// The URLs are relative to sTestPrefix
-				aTests = [{
-					title : '1 Ring (with code-coverage check)',
-					url : 'qunit/internal/1Ring.qunit.html?sap-ui-debug=true&hidepassed&coverage&sap-ui-logLevel=ERROR',
-					steps : [
-						'Check the code coverage. Add appropriate tests if any module in'
-							+ ' <code>sap.ui.model.data.v4</code> has a coverage below 100%.',
-						'Check for errors and warnings in the console while running the tests, esp.'
-							+ ' for errors like "Uncaught (in promise)..."',
-						'There is one known error that you may ignore: <code>error in'
-							+ ' ODataMetaModel.loaded(): This call failed intentionally - '
-							+ ' sap.ui.model.odata.v2.ODataModel</code>'
-					]
-				}, {
-					title : '1 Ring (with realOData)',
-					url : 'qunit/internal/1Ring.qunit.html?sap-ui-debug=true&hidepassed&realOData=true',
-					steps : [
-						'Since we already ran it w/o server access, only the server-related tests'
-							+ ' are interesting. Check that everything runs through'
-					]
-				}, {
-					title : 'ListBinding demo app',
-					url : 'demokit/sample/common/index.html?component=odata.v4.ListBinding',
-					steps : [
-						'Check that it comes up with data to ensure that the mock data are still'
-							+ ' valid',
-						'You may change the team, select an employee and press the "Execute" button'
-							+ ' for Max. Employee Age'
-					]
-				}, {
-					title : 'ListBinding demo app (realOData)',
-					url : 'demokit/sample/common/index.html?component=odata.v4.ListBinding&realOData=true',
-					steps : [
-						'Press the "Budget" button and change the budget.',
-						'Press the "Manager" button and change the manager ID.',
-						'Change the sorting in the employee list.',
-						'Change the sorting in the equipment list and press "Refresh". Check that a'
-							+ ' request is sent, but the sorting remains.'
-					]
-				}, {
-					title : 'EPM Sales Orders demo app',
-					url : 'demokit/sample/common/index.html?component=odata.v4.SalesOrders',
-					steps : [
-						'Select various sales orders and open the schedules (using the calendar'
-							+ ' icon)',
-						'With sales order "0500000000" selected, select the first line item.',
-						'This basically verifies the mock data.'
-					]
-				}, {
-					title : 'EPM Sales Orders demo app (real OData)',
-					url : 'demokit/sample/common/index.html?component=odata.v4.SalesOrders&realOData=true',
-					steps : [
-						'Select a sales order and a line item. Press "Refresh all" and the Refresh'
-							+ ' icon in the sales orders. In both cases everything must be'
-							+ ' refreshed (using multiple batches because refreshing the object'
-							+ ' page requires recalculation of its URL which requires that the list'
-							+ ' already has data again).',
-						'Edit a note in the list and press "Cancel". The note must be reset to its'
-							+ ' previous value. Press "Save". No request may be sent.',
-						'Edit a note in the list and press "Save". Press "Refresh" or reload the'
-							+ ' page to check that the value has been sent to the server.',
-						'Do the same for a phone number in the object page and a note in the line'
-							+ ' items.',
-						'Enter a gross amount of 20,000 into the sales orders\' filter field. Check'
-							+ ' that all sales orders match the filter. Refresh. Clear the filter'
-							+ ' again.',
-						'Enter a product ID into the line items\' filter field. Check that all line'
-							+ ' items have that ID. Refresh. Clear the filter again.',
-						'Select a sales order and press "Delete" in the list. Confirm. The sales'
-							+ ' order must have disappeared from the list and the selection must be'
-							+ ' cleared. Select a sales order with higher ID and press "Delete"'
-							+ ' again. Check that the ID and gross amount in the confirmation'
-							+ ' dialog are correct.'
-					]
-				}, {
-					title : 'Sales Orders template demo app',
-					url : 'demokit/sample/common/index.html?component=odata.v4.SalesOrdersTemplate',
-					steps : []
-				}, {
-					title : 'Sales Orders template demo app (realOData)',
-					url : 'demokit/sample/common/index.html?component=odata.v4.SalesOrdersTemplate&realOData=true',
-					steps : []
-				}, {
-					title : 'OPA test for the List Binding demo app',
-					url : 'demokit/sample/odata/v4/ListBinding/Opa.qunit.html',
-					steps : ['It must not show an error']
-				}, {
-					title : 'OPA test for the List Binding demo app (realOData)',
-					url : 'demokit/sample/odata/v4/ListBinding/Opa.qunit.html?realOData=true',
-					steps : ['It must not show an error']
-				}, {
-					title : 'OPA test for the EPM Sales Orders demo app',
-					url : 'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html',
-					steps : ['It must not show an error']
-				}, {
-					title : 'OPA test for the EPM Sales Orders demo app (realOData)',
-					url : 'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html?realOData=true',
-					steps : ['It must not show an error']
-				}, {
-					title : 'OPA test for the Types demo app',
-					url : 'demokit/sample/ViewTemplate/types/Opa.qunit.html',
-					steps : ['It must not show an error']
-				}];
-
-			window.onload = function () {
-				var oListElement = document.getElementById("tests");
-				aTests.forEach(function (oTest) {
-					var oItemElement = document.createElement("li"),
-						oText = "<a href='" + sBase + sTestPrefix + oTest.url + "'>" + oTest.title
-							+ "</a><ul>";
-
-					oTest.steps.forEach(function (sStep) {
-						oText += "<li>" + sStep + "</li>";
-					});
-					oItemElement.innerHTML = oText + "</ul>";
-					oListElement.appendChild(oItemElement);
-				});
-			};
+				aTests = [
+					'qunit/internal/1Ring.qunit.html?sap-ui-debug=true&hidepassed&coverage&sap-ui-logLevel=ERROR&realOData=true',
+					'demokit/sample/odata/v4/ListBinding/Opa.qunit.html',
+					'demokit/sample/odata/v4/ListBinding/Opa.qunit.html?realOData=true',
+					'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html',
+					'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html?realOData=true',
+					'demokit/sample/ViewTemplate/types/Opa.qunit.html'
+				];
 
 			window.runTests = function () {
 				var oLoginRequest = new XMLHttpRequest();
 
-				// send a HEAD request to the service document from the v4 sample service to ensure
-				// that / the credentials are known before opening the other windows.
-				oLoginRequest.open("HEAD", sBase + "proxy/sap/opu/odata4/IWBEP/V4_SAMPLE/default/"
+				// send a request to the service document from the v4 sample service to ensure that
+				// the credentials are known before running the test suite.
+				oLoginRequest.open("GET", sBase + "proxy/sap/opu/odata4/IWBEP/V4_SAMPLE/default/"
 					+ "IWBEP/V4_GW_SAMPLE_BASIC/0001/");
-				oLoginRequest.addEventListener("load", function () {
-					aTests.forEach(function (oTest) {
-						window.open(sBase + sTestPrefix + oTest.url);
-					});
+				oLoginRequest.addEventListener("load", function (oEvent) {
+					if (oLoginRequest.status === 200) {
+						var oScriptElement = document.createElement("script");
+						oScriptElement.setAttribute("src",
+							sBase + "resources/sap/ui/qunit/qunit-redirect.js");
+						document.head.appendChild(oScriptElement);
+					} else {
+						alert("Could not access the real OData server: "
+							+ oLoginRequest.status + " " + oLoginRequest.statusText);
+					}
 				});
 				oLoginRequest.send();
+			}
+
+			window.addEventListener("load", runTests);
+
+			window.suite = function () {
+				var oSuite = new parent.jsUnitTestSuite();
+				aTests.forEach(function (sUrl) {
+					oSuite.addTestPage(sTestRunnerBase + sTestPrefix + sUrl);
+				});
+				return oSuite;
 			};
 		}());
 		</script>
@@ -152,12 +60,5 @@
 		<h1>UI Services Before Push Tests</h1>
 
 		<p><input type="button" value="Run" onclick="runTests()"></p>
-
-		<p>Note: This button uses JavaScript to open windows or tabs for all the tests listed below.
-		Many browsers have popup blockers that prevent this by default. If the tests do not appear,
-		adjust the settings of the popup blocker accordingly.</p>
-
-		<h2>The Tests</h2>
-		<ul id="tests"></ul>
 	</body>
 </html>

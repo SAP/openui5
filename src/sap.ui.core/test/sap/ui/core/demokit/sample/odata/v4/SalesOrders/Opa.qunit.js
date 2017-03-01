@@ -8,8 +8,9 @@ sap.ui.require([
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/test/matchers/Interactable",
-	"sap/ui/test/matchers/Properties"
-], function (jQuery, Opa5, opaTest, Press, BindingPath, Interactable, Properties) {
+	"sap/ui/test/matchers/Properties",
+	"sap/ui/test/TestUtils"
+], function (jQuery, Opa5, opaTest, Press, BindingPath, Interactable, Properties, TestUtils) {
 	/*global QUnit */
 	"use strict";
 
@@ -20,8 +21,6 @@ sap.ui.require([
 
 	//*****************************************************************************
 	opaTest("Type Determination, Delete Sales Orders", function (Given, When, Then) {
-		var vRealOData = jQuery.sap.getUriParameters().get("realOData"),
-			bRealOData = /direct|proxy|true/.test(vRealOData);
 
 		// check no warnings and errors
 		function checkLog() {
@@ -302,17 +301,15 @@ sap.ui.require([
 
 		Given.iStartMyAppInAFrame("../../../common/index.html?component=odata.v4.SalesOrders"
 			+ "&sap-language=en"
-			+ (bRealOData ? "&sap-server=test" : "")
-			+ "&realOData=" + encodeURIComponent(vRealOData)
-			// testUtils.js does not support deletion via $batch
-			+ "&$direct=true");
+			+ (TestUtils.isRealOData() ? "&sap-server=test" : "")
+			+ TestUtils.getRealOData());
 
 		//*****************************************************************************
 		// Check type determination
 
 		verifyTypeDetermination();
 
-		if (bRealOData) {
+		if (TestUtils.isRealOData()) {
 			Opa5.assert.ok(true, "Deletion test skipped because unstable real keys");
 		} else {
 

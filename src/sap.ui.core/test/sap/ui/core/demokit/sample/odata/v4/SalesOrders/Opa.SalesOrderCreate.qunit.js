@@ -3,14 +3,16 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/ui/Device",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties",
-	"sap/ui/Device"
-], function (jQuery, Opa5, opaTest, Press, BindingPath, Interactable, Properties, Device) {
+	"sap/ui/test/TestUtils"
+], function (jQuery, Device, Opa5, opaTest, Press, BindingPath, Interactable, Properties,
+		TestUtils) {
 	/*global QUnit */
 	"use strict";
 
@@ -29,15 +31,12 @@ sap.ui.require([
 				message : "Failed to drill-down into Note, invalid segment: Note"
 			},
 			sModifiedNote = "Modified by OPA",
-			vRealOData = jQuery.sap.getUriParameters().get("realOData"),
-			bRealOData = /direct|proxy|true/.test(vRealOData);
+			bRealOData = TestUtils.isRealOData();
 
 		Given.iStartMyAppInAFrame("../../../common/index.html?component=odata.v4.SalesOrders"
 				+ "&sap-language=en"
 				+ (bRealOData ? "&sap-server=test" : "")
-				+ "&realOData=" + encodeURIComponent(vRealOData)
-				// TestUtils.js does not support deletion via $batch
-				+ (bRealOData ? "" : "&$direct=true"));
+				+ TestUtils.getRealOData());
 
 		// Create, modify and delete of an unsaved sales order
 		When.onTheMainPage.firstSalesOrderIsVisible();
