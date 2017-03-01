@@ -6,6 +6,7 @@ sap.ui.define([
 ],
 function(Opa5, PropertyStrictEquals, Ancestor, Common) {
 	"use strict";
+
 	var sViewName = "master";
 
 	Opa5.createPageObjects({

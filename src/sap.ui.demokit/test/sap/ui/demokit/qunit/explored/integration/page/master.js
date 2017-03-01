@@ -36,7 +36,9 @@ sap.ui.define([
 							success: function (oSearchField) {
 								oSearchField.setValue(sSearchTerm);
 
+								/*eslint-disable new-cap */
 								var oEvent = jQuery.Event("touchend");
+								/*eslint-enable new-cap */
 								oEvent.originalEvent = {query: sSearchTerm, id: oSearchField.getId()};
 								oEvent.target = oSearchField;
 								oEvent.srcElement = oSearchField;

@@ -14,9 +14,6 @@ sap.ui.define([
 	var oLog = jQuery.sap.log.getLogger("SampleTester");
 
 	var SampleTester = function(sLibraryName, aExcludes) {
-
-		var that = this;
-
 		this._sLibraryName = sLibraryName;
 		this._aExcludes = aExcludes || [];
 		this._iTimeout = 200;
@@ -35,10 +32,10 @@ sap.ui.define([
 
 			// wait with test creation until all libs are loaded
 			sap.ui.getCore().attachInit(function() {
-				that._createTests(oData && oData.explored);
-			});
+				this._createTests(oData && oData.explored);
+			}.bind(this));
 
-		});
+		}.bind(this));
 
 	};
 
@@ -63,14 +60,14 @@ sap.ui.define([
 
 		QUnit.module(this._sLibraryName, {
 			afterEach : function(assert) {
-				if ( window.Flexie ) {
+				if (window.Flexie) {
 					oLog.info("destroy flexie instances");
-					Flexie.destroyInstance();
+					window.Flexie.destroyInstance();
 				}
 				// empty the page after each test, even in case of failures
 				oPage.setTitle("---");
 				oPage.destroyContent();
- 			}
+			}
 		});
 
 		function shorten(id) {
@@ -90,7 +87,7 @@ sap.ui.define([
 				var oComponent = sap.ui.component({
 					name: sampleConfig.id
 				});
-				
+
 				// load and create content
 				oPage.addContent(
 					new ComponentContainer({
@@ -107,8 +104,7 @@ sap.ui.define([
 
 				var oConfig = oComponent.getMetadata().getConfig();
 				if ( oConfig && oConfig.sample && oConfig.sample.files ) {
-					var sRef = jQuery.sap.getModulePath(sampleConfig.id);
-					for (var i = 0 ; i < oConfig.sample.files.length ; i++) {
+					for (var i = 0; i < oConfig.sample.files.length; i++) {
 						var sFile = oConfig.sample.files[i];
 						var sUrl = jQuery.sap.getModulePath(sampleConfig.id, '/' + oConfig.sample.files[i]);
 						assert.ok(jQuery.sap.syncHead(sUrl), "listed source file '" + sFile + "' should be downloadable");
@@ -155,9 +151,10 @@ sap.ui.define([
 		});
 
 		var aSamples = oExploredIndex && oExploredIndex.samples;
-		if ( aSamples ) {
 
-			var nTests = 0;
+		var nTests;
+		if (aSamples) {
+			nTests = 0;
 			for (var i = 0; i < aSamples.length; i++ ) {
 				if ( this._aExcludes.indexOf(aSamples[i].id) < 0 ) {
 					oLog.info("adding test for sample '" + aSamples[i].name + "'");
@@ -170,7 +167,7 @@ sap.ui.define([
 
 		}
 
-		if ( nTests == 0 ) {
+		if (nTests === 0) {
 			oLog.info("no samples found, adding dummy test");
 			QUnit.test("Dummy", function(assert) {
 				assert.ok(true);
