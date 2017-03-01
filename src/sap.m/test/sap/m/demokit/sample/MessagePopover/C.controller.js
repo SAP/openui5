@@ -1,13 +1,13 @@
 sap.ui.define([
-		'sap/m/MessagePopover',
-		'sap/m/MessagePopoverItem',
-		'sap/m/Link',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(MessagePopover, MessagePopoverItem, Link, Controller, JSONModel) {
+	'sap/m/MessagePopover',
+	'sap/m/MessagePopoverItem',
+	'sap/m/Link',
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/model/json/JSONModel'
+], function(MessagePopover, MessagePopoverItem, Link, Controller, JSONModel) {
+	"use strict";
 
-
-	oLink = new Link({
+	var oLink = new Link({
 		text: "Show more information",
 		href: "http://sap.com",
 		target: "_blank"
@@ -30,7 +30,7 @@ sap.ui.define([
 	});
 
 
-	var CController = Controller.extend("sap.m.sample.MessagePopover.C", {
+	return Controller.extend("sap.m.sample.MessagePopover.C", {
 		onInit: function () {
 			// create any data and a model and set it to the view
 
@@ -75,7 +75,7 @@ sap.ui.define([
 			var oModel = new JSONModel();
 			oModel.setData(aMockMessages);
 
-			var viewModel = new JSONModel()
+			var viewModel = new JSONModel();
 			viewModel.setData({
 				messagesLength: aMockMessages.length + ''
 			});
@@ -89,7 +89,5 @@ sap.ui.define([
 			oMessagePopover.openBy(oEvent.getSource());
 		}
 	});
-
-	return CController;
 
 });

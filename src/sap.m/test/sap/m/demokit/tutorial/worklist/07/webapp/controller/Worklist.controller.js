@@ -199,6 +199,7 @@ sap.ui.define([
 
 		/**
 		 * Internal helper method to apply both filter and search state together on the list binding
+		 * @param {array} oTableSearchState an array of filters for the search
 		 * @private
 		 */
 		_applySearch: function(oTableSearchState) {
@@ -280,8 +281,8 @@ sap.ui.define([
 					oProductId = oProduct.getBindingContext().getProperty("ProductID");
 					sPath = oProduct.getBindingContextPath();
 					this.getModel().remove(sPath, {
-						success : this._handleUnlistActionResult.bind(this, oProductId, true, i+1, aSelectedProducts.length),
-						error : this._handleUnlistActionResult.bind(this, oProductId, false, i+1, aSelectedProducts.length)
+						success : this._handleUnlistActionResult.bind(this, oProductId, true, i + 1, aSelectedProducts.length),
+						error : this._handleUnlistActionResult.bind(this, oProductId, false, i + 1, aSelectedProducts.length)
 					});
 				}
 			} else {
@@ -305,8 +306,8 @@ sap.ui.define([
 					oProductObject = aSelectedProducts[i].getBindingContext().getObject();
 					oProductObject.UnitsInStock += 10;
 					this.getModel().update(sPath, oProductObject, {
-						success : this._handleReorderActionResult.bind(this, oProductObject.ProductID, true, i+1, aSelectedProducts.length),
-						error : this._handleReorderActionResult.bind(this, oProductObject.ProductID, false, i+1, aSelectedProducts.length)
+						success : this._handleReorderActionResult.bind(this, oProductObject.ProductID, true, i + 1, aSelectedProducts.length),
+						error : this._handleReorderActionResult.bind(this, oProductObject.ProductID, false, i + 1, aSelectedProducts.length)
 					});
 				}
 			} else {

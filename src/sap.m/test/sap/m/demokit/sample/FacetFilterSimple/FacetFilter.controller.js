@@ -35,17 +35,15 @@ sap.ui.define([
 		_applyFilter: function(oFilter) {
 			// Get the table (last thing in the VBox) and apply the filter
 			var aVBoxItems = this.getView().byId("idVBox").getItems();
-			var oTable = aVBoxItems[aVBoxItems.length-1];
+			var oTable = aVBoxItems[aVBoxItems.length - 1];
 			oTable.getBinding("items").filter(oFilter);
 		},
 
 		handleFacetFilterReset: function(oEvent) {
 			var oFacetFilter = sap.ui.getCore().byId(oEvent.getParameter("id"));
 			var aFacetFilterLists = oFacetFilter.getLists();
-			for(var i=0; i < aFacetFilterLists.length; i++) {
-				for(var i=0; i < aFacetFilterLists.length; i++) {
-					aFacetFilterLists[i].setSelectedKeys();
-				}
+			for (var i = 0; i < aFacetFilterLists.length; i++) {
+				aFacetFilterLists[i].setSelectedKeys();
 			}
 			this._applyFilter([]);
 		},
@@ -68,7 +66,7 @@ sap.ui.define([
 				return oList.getSelectedItems().length;
 			});
 
-			if(mFacetFilterLists.length) {
+			if (mFacetFilterLists.length) {
 				// Build the nested filter with ORs between the values of each group and
 				// ANDs between each group
 				var oFilter = new Filter(mFacetFilterLists.map(function(oList) {

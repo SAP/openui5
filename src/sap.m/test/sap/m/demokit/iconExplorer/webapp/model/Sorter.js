@@ -4,8 +4,8 @@ sap.ui.define([], function() {
 	return {
 		/**
 		 * Sorts icons by icon name
-		 * @param oContext1 The first context
-		 * @param oContext2 The second context
+		 * @param {Object} oContext1 The first context
+		 * @param {Object} oContext2 The second context
 		 * @return {number} the sorting result (-1, 0, 1)
 		 */
 		sortByName : function(oContext1, oContext2) {

@@ -156,7 +156,7 @@ sap.ui.define([
 			this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
 		},
 
-		onFilenameLengthExceed : function(oEvent) {
+		onFilenameLengthExceed : function() {
 			MessageToast.show("FilenameLengthExceed event triggered.");
 		},
 
@@ -175,18 +175,18 @@ sap.ui.define([
 			MessageToast.show("FileRenamed event triggered.");
 		},
 
-		onFileSizeExceed : function(oEvent) {
+		onFileSizeExceed : function() {
 			MessageToast.show("FileSizeExceed event triggered.");
 		},
 
-		onTypeMissmatch : function(oEvent) {
+		onTypeMissmatch : function() {
 			MessageToast.show("TypeMissmatch event triggered.");
 		},
 
 		onUploadComplete: function(oEvent) {
 			var oData = this.getView().byId("UploadCollection").getModel().getData();
 			var aItems = jQuery.extend(true, {}, oData).items;
-			var oItem = {};
+			var oItem;
 			var sUploadedFile = oEvent.getParameter("files")[0].fileName;
 			// at the moment parameter fileName is not set in IE9
 			if (!sUploadedFile) {
@@ -218,7 +218,7 @@ sap.ui.define([
 			if (this.getView().byId("modeSwitch").getState()){
 				oItem.visibleEdit = false;
 				oItem.visibleDelete = false;
-			}else{
+			}else {
 				oItem.visibleEdit = true;
 				oItem.visibleDelete = true;
 			}
@@ -235,7 +235,7 @@ sap.ui.define([
 		},
 
 		onSeparatorsChange: function(oEvent) {
-			var oUploadCollection= this.getView().byId("UploadCollection");
+			var oUploadCollection = this.getView().byId("UploadCollection");
 			oUploadCollection.setShowSeparators(oEvent.getParameters().selectedItem.getProperty("key"));
 		},
 
@@ -249,14 +249,16 @@ sap.ui.define([
 			MessageToast.show("BeforeUploadStarts event triggered.");
 		},
 
-		onUploadTerminated: function(oEvent) {
+		onUploadTerminated: function() {
+			/*
 			// get parameter file name
 			var sFileName = oEvent.getParameter("fileName");
 			// get a header parameter (in case no parameter specified, the callback function getHeaderParameter returns all request headers)
 			var oRequestHeaders = oEvent.getParameters().getHeaderParameter();
+			*/
 		},
 
-		onFileTypeChange: function(oEvent) {
+		onFileTypeChange: function() {
 			var oUploadCollection = this.getView().byId("UploadCollection");
 			var oFileTypesMultiComboBox = this.getView().byId("fileTypesBox");
 			oUploadCollection.setFileType(oFileTypesMultiComboBox.getSelectedKeys());
@@ -305,13 +307,13 @@ sap.ui.define([
 			oUploadCollection.setUploadButtonInvisible(!bUploadButtonInvisible);
 		},
 
-		onSwitchModeChange: function(oEvent){
+		onSwitchModeChange: function(){
 			// Sets to MultiSelect
 			if (this.getView().byId("modeSwitch").getState()){
 				this.setVisibleEditAndDelete(false);
 				this.enableToolbarItems(true);
 				this.getView().byId("UploadCollection").setMode("MultiSelect");
-			}else{
+			}else {
 				// Sets to SingleSelectMaster
 				this.setVisibleEditAndDelete(true);
 				this.enableToolbarItems(false);
@@ -347,11 +349,11 @@ sap.ui.define([
 			MessageToast.show("Delete selected items button press.");
 		},
 
-		onSearch: function(oEvent){
+		onSearch: function(){
 			MessageToast.show("Search feature isn't available in this sample");
 		},
 
-		onSelectionChange: function(oEvent){
+		onSelectionChange: function(){
 			var oUploadCollection = this.getView().byId("UploadCollection");
 			// Only it is enabled if there is a selected item in multi-selection mode
 			if (oUploadCollection.getMode() === "MultiSelect"){

@@ -46,7 +46,7 @@ sap.ui.define([
 						text: text
 					};
 				}
-			}
+			};
 		},
 
 		onExit : function () {
@@ -74,15 +74,18 @@ sap.ui.define([
 
 			// apply sorter to binding
 			// (grouping comes before sorting)
+			var sPath;
+			var bDescending;
+			var vGroup;
 			var aSorters = [];
 			if (mParams.groupItem) {
-				var sPath = mParams.groupItem.getKey();
-				var bDescending = mParams.groupDescending;
-				var vGroup = this.mGroupFunctions[sPath];
+				sPath = mParams.groupItem.getKey();
+				bDescending = mParams.groupDescending;
+				vGroup = this.mGroupFunctions[sPath];
 				aSorters.push(new Sorter(sPath, bDescending, vGroup));
 			}
-			var sPath = mParams.sortItem.getKey();
-			var bDescending = mParams.sortDescending;
+			sPath = mParams.sortItem.getKey();
+			bDescending = mParams.sortDescending;
 			aSorters.push(new Sorter(sPath, bDescending));
 			oBinding.sort(aSorters);
 

@@ -15,8 +15,12 @@ sap.ui.define([
 
 		/**
 		 * Fetches the favorites from local storage and sets up the JSON model
-		 * @param oSettings
-		 * @return {sap.ui.demo.cart.model.CartModel}
+		 * By default the string "LOCALSTORAGE_MODEL" is used but it is recommended to set a custom key
+		 * to avoid name clashes with other apps or other instances of this model class
+
+		 * @param {string} sStorageKey storage key that will be used as an id for the local storage data
+		 * @param {Object} oSettings settings objec that is passed to the JSON model constructor
+		 * @return {sap.ui.demo.cart.model.LocalStorageModel} the local storage model instance
 		 */
 		constructor : function(sStorageKey, oSettings) {
 			// call super constructor with everything from the second argument
@@ -24,7 +28,7 @@ sap.ui.define([
 			this.setSizeLimit(1000000);
 
 			// override default storage key
-			if(sStorageKey) {
+			if (sStorageKey) {
 				this._STORAGE_KEY = sStorageKey;
 			}
 
@@ -40,7 +44,7 @@ sap.ui.define([
 		_loadData : function() {
 			var sJSON = this._storage.get(this._STORAGE_KEY);
 
-			if(sJSON) {
+			if (sJSON) {
 				this.setData(JSON.parse(sJSON));
 			}
 			this._bDataLoaded = true;

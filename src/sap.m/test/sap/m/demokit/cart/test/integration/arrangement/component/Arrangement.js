@@ -1,10 +1,12 @@
 sap.ui.define(['sap/ui/test/Opa5'], function (Opa5) {
-	function addSafeForLater() {
+	"use strict";
+
+	function addSaveForLater() {
 		var sStateToAdd;
 		if (window.location.search) {
 			sStateToAdd = "&";
 		} else {
-			sStateToAdd = "?"
+			sStateToAdd = "?";
 		}
 
 		sStateToAdd += "safeForLater=true";
@@ -25,7 +27,7 @@ sap.ui.define(['sap/ui/test/Opa5'], function (Opa5) {
 		// feature toggle tests
 		iStartMyAppSafeForLaterActivated: function () {
 			if (!jQuery.sap.getUriParameters().get("safeForLater")) {
-				addSafeForLater();
+				addSaveForLater();
 			}
 			return this.iStartMyApp();
 		}

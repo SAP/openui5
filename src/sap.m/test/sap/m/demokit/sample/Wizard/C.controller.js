@@ -41,15 +41,24 @@ sap.ui.define([
 		},
 		additionalInfoValidation : function () {
 			var name = this.getView().byId("ProductName").getValue();
-			var weight = parseInt(this.getView().byId("ProductWeight").getValue());
+			var weight = parseInt(this.getView().byId("ProductWeight").getValue(), 10);
 
-			isNaN(weight) ? this.model.setProperty("/productWeightState", "Error") : this.model.setProperty("/productWeightState", "None");
-			name.length<6 ?  this.model.setProperty("/productNameState", "Error") : this.model.setProperty("/productNameState", "None");
+			if (isNaN(weight)) {
+				this.model.setProperty("/productWeightState", "Error");
+			} else {
+				this.model.setProperty("/productWeightState", "None");
+			}
+			if (name.length < 6) {
+				this.model.setProperty("/productNameState", "Error");
+			} else {
+				this.model.setProperty("/productNameState", "None");
+			}
 
-			if (name.length < 6 || isNaN(weight))
+			if (name.length < 6 || isNaN(weight)) {
 				this._wizard.invalidateStep(this.getView().byId("ProductInfoStep"));
-			else
+			} else {
 				this._wizard.validateStep(this.getView().byId("ProductInfoStep"));
+			}
 		},
 		optionalStepActivation: function () {
 			MessageToast.show(
@@ -71,12 +80,14 @@ sap.ui.define([
 			this._wizard.goToStep(this.getView().byId("ProductInfoStep"));
 		},
 		goFrom4to3 : function () {
-			if (this._wizard.getProgressStep() === this.getView().byId("PricingStep"))
+			if (this._wizard.getProgressStep() === this.getView().byId("PricingStep")) {
 				this._wizard.previousStep();
+			}
 		},
 		goFrom4to5 : function () {
-			if (this._wizard.getProgressStep() === this.getView().byId("PricingStep"))
+			if (this._wizard.getProgressStep() === this.getView().byId("PricingStep")) {
 				this._wizard.nextStep();
+			}
 		},
 		wizardCompletedHandler : function () {
 			this._oNavContainer.to(this._oWizardReviewPage);
@@ -97,25 +108,23 @@ sap.ui.define([
 			this._handleNavigationToStep(3);
 		},
 		_handleNavigationToStep : function (iStepNumber) {
-			var that = this;
-			function fnAfterNavigate () {
-				that._wizard.goToStep(that._wizard.getSteps()[iStepNumber]);
-				that._oNavContainer.detachAfterNavigate(fnAfterNavigate);
-			}
+			var fnAfterNavigate = function () {
+				this._wizard.goToStep(this._wizard.getSteps()[iStepNumber]);
+				this._oNavContainer.detachAfterNavigate(fnAfterNavigate);
+			}.bind(this);
 
 			this._oNavContainer.attachAfterNavigate(fnAfterNavigate);
 			this.backToWizardContent();
 		},
 		_handleMessageBoxOpen : function (sMessage, sMessageBoxType) {
-			var that = this;
 			MessageBox[sMessageBoxType](sMessage, {
 				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
 				onClose: function (oAction) {
 					if (oAction === MessageBox.Action.YES) {
-						that._handleNavigationToStep(0);
-						that._wizard.discardProgress(that._wizard.getSteps()[0]);
+						this._handleNavigationToStep(0);
+						this._wizard.discardProgress(this._wizard.getSteps()[0]);
 					}
-				},
+				}.bind(this)
 			});
 		},
 		_setEmptyValue : function (sPath) {
@@ -134,7 +143,7 @@ sap.ui.define([
 			this._wizard.discardProgress(this.getView().byId("ProductTypeStep"));
 
 			var clearContent = function (content) {
-				for (var i = 0; i < content.length ; i++) {
+				for (var i = 0; i < content.length; i++) {
 					if (content[i].setValue) {
 						content[i].setValue("");
 					}
@@ -146,7 +155,7 @@ sap.ui.define([
 			};
 
 			this.model.setProperty("/productWeightState", "Error");
-			this.model.setProperty("/productNameState", "Error")
+			this.model.setProperty("/productNameState", "Error");
 			clearContent(this._wizard.getSteps());
 		}
 	});

@@ -1,6 +1,10 @@
-sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
-	function(Controller, JSONModel) {
-	"use strict";
+sap.ui.define([
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/model/json/JSONModel',
+		'sap/m/MessageBox'
+	],
+	function(Controller, JSONModel, MessageBox) {
+		"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.PlanningCalendarMinMax.Page", {
 
@@ -16,47 +20,47 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 									name: "Max Mustermann",
 									role: "team member",
 									appointments: [
-									               {
-									              	 start: new Date(2016, 2, 23, 9, 0),
-									              	 end: new Date(2016, 2, 23, 11, 0),
-									              	 title: "Team meeting",
-									              	 info: "room 1",
-									              	 type: "Type01",
-									              	 pic: "sap-icon://sap-ui5",
-									              	 tentative: false
-									               },
-									               {
-									              	 start: new Date(2016, 2, 23, 9, 30),
-									              	 end: new Date(2016, 2, 23, 11, 30),
-									              	 title: "Meeting 1",
-									              	 type: "Type02",
-									              	 pic: "sap-icon://sap-ui5",
-									              	 tentative: false
-									               },
-									               {
-									              	 start: new Date(2016, 2, 24, 9, 0),
-									              	 end: new Date(2016, 2, 24, 16, 0),
-									              	 title: "Busy",
-									              	 type: "Type08",
-									              	 tentative: false
-									               }
-									          ]
+										{
+											start: new Date(2016, 2, 23, 9, 0),
+											end: new Date(2016, 2, 23, 11, 0),
+											title: "Team meeting",
+											info: "room 1",
+											type: "Type01",
+											pic: "sap-icon://sap-ui5",
+											tentative: false
+										},
+										{
+											start: new Date(2016, 2, 23, 9, 30),
+											end: new Date(2016, 2, 23, 11, 30),
+											title: "Meeting 1",
+											type: "Type02",
+											pic: "sap-icon://sap-ui5",
+											tentative: false
+										},
+										{
+											start: new Date(2016, 2, 24, 9, 0),
+											end: new Date(2016, 2, 24, 16, 0),
+											title: "Busy",
+											type: "Type08",
+											tentative: false
+										}
+									]
 								},
 								{
 									pic: "test-resources/sap/ui/demokit/explored/img/johnDoe.png",
 									name: "John Doe",
 									role: "team member",
 									appointments: [
-									               {
-									              	 start: new Date(2016, 2, 23, 9, 0),
-									              	 end: new Date(2016, 2, 23, 11, 0),
-									              	 title: "Team meeting",
-									              	 info: "room 1",
-									              	 type: "Type01",
-									              	 pic: "sap-icon://sap-ui5",
-									              	 tentative: false
-									               }
-									          ]
+										{
+											start: new Date(2016, 2, 23, 9, 0),
+											end: new Date(2016, 2, 23, 11, 0),
+											title: "Team meeting",
+											info: "room 1",
+											type: "Type01",
+											pic: "sap-icon://sap-ui5",
+											tentative: false
+										}
+									]
 								}
 				]
 			});
@@ -67,11 +71,11 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 		handleAppointmentSelect: function (oEvent) {
 			var oAppointment = oEvent.getParameter("appointment");
 			if (oAppointment) {
-				alert("Appointment selected: " + oAppointment.getTitle());
+				MessageBox.show("Appointment selected: " + oAppointment.getTitle());
 			}else {
 				var aAppointments = oEvent.getParameter("appointments");
 				var sValue = aAppointments.length + " Appointments selected";
-				alert(sValue);
+				MessageBox.show(sValue);
 			}
 		}
 

@@ -20,7 +20,7 @@ sap.ui.require([
 							actions: new Press(),
 							errorMessage: "Did not find the nav button on object page"
 						});
-					},
+					}
 				},
 				assertions: {
 					theTitleShouldDisplayTheName: function (sName) {

@@ -60,14 +60,14 @@ sap.ui.define([
 	QUnit.test("Should multiply the price with the quantity for  1 product", function (assert) {
 		var oProducts = {
 			1: {Price: 123, Quantity: 2}
-		}
+		};
 		totalPriceTestCase.call(this, assert, oProducts, "Foo: 246,00");
 	});
 
 	QUnit.test("Should format a quantity of 0 to a total of zero for one product", function (assert) {
 		var oProducts = {
 			1: {Price: 123, Quantity: 0}
-		}
+		};
 		totalPriceTestCase.call(this, assert, oProducts, "Foo: 0,00");
 	});
 
@@ -75,7 +75,7 @@ sap.ui.define([
 		var oProducts = {
 			1: {Price: 123.45, Quantity: 1},
 			2: {Price: 456.78, Quantity: 2}
-		}
+		};
 		totalPriceTestCase.call(this, assert, oProducts, "Foo: 1.037,01");
 	});
 

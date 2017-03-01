@@ -16,10 +16,9 @@ sap.ui.define([
 			var sRange = Device.media.getCurrentRange("Std");
 			this._setRangeModel(sRange);
 
-			var that = this;
 			Device.media.attachHandler(function (mParams) {
-				that._setRangeModel(mParams.name);
-			}, null, "Std");
+				this._setRangeModel(mParams.name);
+			}.bind(this), null, "Std");
 		},
 
 		_setRangeModel : function (sRange) {

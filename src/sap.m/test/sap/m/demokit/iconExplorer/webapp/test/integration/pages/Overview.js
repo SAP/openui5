@@ -259,7 +259,7 @@ sap.ui.define([
 						viewName: sViewName,
 						actions: new Press(),
 						errorMessage: "Failed to find surprise me button field in overview view.'"
-					})
+					});
 				},
 
 				iSelectTheTagWithName: function (sName) {
@@ -281,7 +281,7 @@ sap.ui.define([
 						},
 						actions: new Press(),
 						errorMessage: "Failed to find the tag selection bar in overview view.'"
-					})
+					});
 				},
 
 				iSelectTheCategoryWithName: function (sName) {
@@ -296,7 +296,7 @@ sap.ui.define([
 								oControl.fireSelectionChange({ selectedItem: oControl.getSelectableItems()[0]});
 							}],
 						errorMessage: "Failed to find the category selection in overview view.'"
-					})
+					});
 
 				}
 
@@ -444,7 +444,7 @@ sap.ui.define([
 								}),
 								success: function (aTabFilters) {
 									var oTabFilter = aTabFilters[0];
-									Opa5.assert.strictEqual(parseInt(oTabFilter.getCount()), iObjectCount, "The icon tab fillter \"all\" shows the total number of icons " + iObjectCount);
+									Opa5.assert.strictEqual(parseInt(oTabFilter.getCount(), 10), iObjectCount, "The icon tab fillter \"all\" shows the total number of icons " + iObjectCount);
 								},
 								errorMessage: "The icon tab fillter \"all\" does not contain the number of items " + iObjectCount
 							});

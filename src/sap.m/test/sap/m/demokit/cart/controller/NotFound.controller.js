@@ -11,5 +11,5 @@ sap.ui.define([
 		onNavBack: function () {
 			this._router._myNavBack();
 		}
-	})
+	});
 });

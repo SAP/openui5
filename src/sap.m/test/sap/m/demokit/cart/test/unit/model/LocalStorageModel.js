@@ -29,7 +29,7 @@ sap.ui.define([
 				return {
 					get: jQuery.sap.storage.get,
 					put: jQuery.sap.storage.put
-				}
+				};
 			});
 			// initialize the model with parameters and inject the stub
 			this.oLocalStorageModel  = new LocalStorageModel("MY_KEY", {1: 2, 3: 4});

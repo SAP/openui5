@@ -26,7 +26,9 @@ sap.ui.define([
 
 			// debug code to show an alert for missing destination or CORS issues in the tutorial (see step 26 for details)
 			this.getModel("invoice").attachEventOnce("metadataFailed", function(oEvent) {
+				/*eslint-disable no-alert */
 				alert("Request to the OData remote service failed.\nRead the Walkthrough Tutorial Step 26 to understand why you don't see any data here.");
+				/*eslint-enable no-alert */
 			});
 
 			// set dialog

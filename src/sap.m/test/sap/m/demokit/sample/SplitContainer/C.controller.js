@@ -9,11 +9,11 @@ sap.ui.define([
 	var CController = Controller.extend("sap.m.sample.SplitContainer.C", {
 
 		onAfterRendering: function() {
-			var oSplitCont= this.getSplitContObj(),
+			var oSplitCont = this.getSplitContObj(),
 				ref = oSplitCont.getDomRef() && oSplitCont.getDomRef().parentNode;
 			// set all parent elements to 100% height, this should be done by app developer, but just in case
-			if (ref && !ref._sapui5_heightFixed) {
-				ref._sapui5_heightFixed = true;
+			if (ref && !ref._sapUI5HeightFixed) {
+				ref._sapUI5HeightFixed = true;
 				while (ref && ref !== document.documentElement) {
 					var $ref = jQuery(ref);
 					if ($ref.attr("data-sap-ui-root-content")) { // Shell as parent does this already
@@ -27,7 +27,7 @@ sap.ui.define([
 			}
 		},
 
-		onPressNavToDetail : function(oEvent) {
+		onPressNavToDetail : function() {
 			this.getSplitContObj().to(this.createId("detailDetail"));
 		},
 

@@ -144,7 +144,6 @@ sap.ui.define([
 		},
 
 		onViewSettingsConfirm : function (oEvent) {
-			var oView = this.getView();
 			var oUploadCollection = this.getView().byId("UploadCollection");
 			var oInfoToolbar = oUploadCollection.getInfoToolbar();
 			var oBindingItems = oUploadCollection.getBinding("items");

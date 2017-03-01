@@ -60,7 +60,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat"], function (NumberFormat) {
 
 		/**
 		 * Returns the product state based on the status
-		 * @param {string} status product status
+		 * @param {string} sStatus product status
 		 * @return {string} the state text
 		 */
 		statusState: function (sStatus) {

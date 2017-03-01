@@ -24,7 +24,7 @@ sap.ui.define([
 		handlePopoverPress: function (oEvent) {
 
 			// create popover
-			if (! this._oPopover) {
+			if (!this._oPopover) {
 				this._oPopover = sap.ui.xmlfragment("sap.m.sample.Popover.Popover", this);
 				this.getView().addDependent(this._oPopover);
 				this._oPopover.bindElement("/ProductCollection/0");

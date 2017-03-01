@@ -35,11 +35,10 @@ sap.ui.define([
 
 			// load product data
 			this._productCount = 0;
-			var that = this;
 			jQuery.getJSON(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), function (oData) {
-				that._productData = oData;
-				that._pushNewProduct();
-			});
+				this._productData = oData;
+				this._pushNewProduct();
+			}.bind(this));
 		},
 
 		// Simulates increasing collection of products.

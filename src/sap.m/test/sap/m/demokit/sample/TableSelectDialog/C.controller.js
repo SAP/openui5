@@ -24,7 +24,7 @@ sap.ui.define([
 		},
 
 		handleTableSelectDialogPress: function(oEvent) {
-			if (! this._oDialog) {
+			if (!this._oDialog) {
 				this._oDialog = sap.ui.xmlfragment("sap.m.sample.TableSelectDialog.Dialog", this);
 			}
 

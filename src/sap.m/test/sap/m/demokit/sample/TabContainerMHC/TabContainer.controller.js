@@ -48,6 +48,7 @@ sap.ui.define([
 
 		/**
 		 * Switches "Open items" button state
+		 * @param {sap.ui.base.Event} oEvent The table's selectionChange event
 		 */
 		function fnTableSelectionChange(oEvent) {
 			var bButtonState = oEvent.getSource().getSelectedItems().length > 0;
@@ -150,7 +151,7 @@ sap.ui.define([
 		};
 
 		TCController.prototype._handleTabContainerAddNewButtonPress = function () {
-			var i, aTableItems,
+			var aTableItems,
 				sProductId = "ProductId-" + Math.random(),
 				oTabContainer = this.oPageTabContainer.getContent()[0],
 				oTabContainerItemsBinding = oTabContainer.getBinding("items"),
