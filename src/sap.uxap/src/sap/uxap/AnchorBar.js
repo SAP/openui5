@@ -1047,7 +1047,7 @@ sap.ui.define([
 	AnchorBar.prototype._resetControl = function () {
 		this._destroyPopoverContent();
 		this.getContent().forEach(this._detachPopoverHandler, this);
-		this.destroyContent();
+        this.destroyAggregation('content', true);
 		return this;
 	};
 

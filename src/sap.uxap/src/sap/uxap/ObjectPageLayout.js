@@ -262,7 +262,7 @@ sap.ui.define([
 		this._storeScrollLocation();
 
 		this._getHeaderContent().setContentDesign(this._getHeaderDesign());
-		this._oABHelper._getAnchorBar().setUpperCase(this.getUpperCaseAnchorBar());
+		this._oABHelper._getAnchorBar().setProperty("upperCase", this.getUpperCaseAnchorBar(), true);
 
 		this._applyUxRules();
 
@@ -695,6 +695,11 @@ sap.ui.define([
 				this.invalidate();
 			}
 		}
+	};
+
+	ObjectPageLayout.prototype.setUpperCaseAnchorBar = function (bValue) {
+		this._oABHelper._getAnchorBar().setProperty("upperCase", bValue);
+		return this.setProperty("upperCaseAnchorBar", bValue, true /* don't re-render the whole objectPageLayout */);
 	};
 
 	ObjectPageLayout.prototype._adjustLayout = function (oEvent, bImmediate, bNeedLazyLoading) {
