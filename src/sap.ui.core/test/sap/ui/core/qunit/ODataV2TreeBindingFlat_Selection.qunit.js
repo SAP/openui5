@@ -256,6 +256,81 @@ asyncTest("getSelectedNodesCount without recursive collapse - read only", functi
 	});
 });
 
+asyncTest("getSelectedNodesCount with expand - read only", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		var handler1 = function () {
+			oBinding.detachChange(handler1);
+
+			oBinding.selectAll();
+			equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
+			equal(oBinding.getLength(), 626, "Correct binding length");
+
+			oBinding.attachChange(handler2);
+			oBinding.expand(3, true);
+
+		};
+
+		var handler2 = function() {
+			oBinding.detachChange(handler2);
+			equal(oBinding.getSelectedNodesCount(), 626, "After expand, no additional nodes get selected");
+			equal(oBinding.getLength(), 689, "Correct binding length");
+
+			start();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100);
+	});
+});
+
+asyncTest("getSelectedNodesCount with expand to level", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 1
+		});
+
+		var handler1 = function () {
+			oBinding.detachChange(handler1);
+
+			oBinding.selectAll();
+			equal(oBinding.getSelectedNodesCount(), 104, "Correct selected nodes count after selectAll call");
+			equal(oBinding.getLength(), 104, "Correct binding length");
+
+			oBinding.attachChange(handler2);
+			oBinding.setNumberOfExpandedLevels(2);
+
+		};
+
+		var handler2 = function() {
+			oBinding.detachChange(handler2);
+			oBinding.attachChange(handler3);
+				oBinding.getContexts(0, 100);
+		};
+		var handler3 = function() {
+			oBinding.detachChange(handler2);
+			equal(oBinding.getSelectedNodesCount(), 0, "After expand, nothing is selected (apparently)");	// TODO currently Flat binding looses all selections
+																											// when changing number of expanded levels
+																											// ODataTreeBinding is capable of this
+			equal(oBinding.getLength(), 626, "Correct binding length");
+
+			start();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100);
+	});
+});
+
 asyncTest("getSelectedNodesCount with paging - read only", function(){
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
