@@ -5,7 +5,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	function(jQuery, library, Control, Device, ScrollEnablement, ItemNavigation, Orientation, ManagedObject, Icon) {
 	"use strict";
 
-	var HeaderContainerItemContainer = Control.extend("HeaderContainerItemContainer", {
+	var HeaderContainerItemContainer = Control.extend("sap.m.HeaderContainerItemContainer", {
 		metadata : {
 			defaultAggregation : "item",
 			aggregations : {
