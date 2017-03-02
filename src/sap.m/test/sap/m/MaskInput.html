@@ -64,8 +64,8 @@
 													titleStyle: sap.ui.core.TitleLevel.H2
 												}),
 												addMask("Any character", "~~~~~~~~~~", "Enter text", "_", [ruleCollection[0].rule]),
-												addMask("Latin characters (case insensitive) and numbers", "aaaaaaaa", "Enter text", "_"),
-												addMask("Latin characters (case sensitive) and numbers", "CCCCCCCC", "Enter text", "_", [ruleCollection[4].rule]),
+												addMask("Latin characters (case insensitive)", "aaaaaaaa", "Enter text", "_"),
+												addMask("Latin characters (case sensitive, only capital letters allowed) and numbers", "CCCCCCCC", "Enter text", "_", [ruleCollection[4].rule]),
 												addMask("Numeric only", "999999", "Enter a six digit number", "_", [ruleCollection[2].rule])
 											]
 										})
