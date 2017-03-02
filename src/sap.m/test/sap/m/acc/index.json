@@ -439,7 +439,7 @@
 		},
 		{
 			"control": "sap.m.TimePicker",
-			"url": "TimePicker.html",
+			"url": "../TimePicker.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
