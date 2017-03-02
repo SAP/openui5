@@ -1725,19 +1725,30 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					// BCP: 1680048166 remove inline set height so that the content resizes together with the mouse pointer
 					that.$('cont').height('');
 
-					$w.on("mousemove.sapMDialog", function (e) {
+					var handleOffsetX = $target.width() - e.offsetX;
+					var handleOffsetY = $target.height() - e.offsetY;
+
+					$w.on("mousemove.sapMDialog", function (event) {
 						fnMouseMoveHandler(function () {
 							that._bDisableRepositioning = true;
 
+							if (event.pageY + handleOffsetY > windowHeight) {
+								event.pageY = windowHeight - handleOffsetY;
+							}
+
+							if (event.pageX + handleOffsetX > windowWidth) {
+								event.pageX = windowWidth - handleOffsetX;
+							}
+
 							that._oManuallySetSize = {
-								width: initial.width + e.pageX - initial.x,
-								height: initial.height + e.pageY - initial.y
+								width: initial.width + event.pageX - initial.x,
+								height: initial.height + event.pageY - initial.y
 							};
 
 							if (that._bRTL) {
-								styles.left = Math.min(Math.max(e.pageX, 0), maxLeftOffset);
+								styles.left = Math.min(Math.max(event.pageX, 0), maxLeftOffset);
 								styles.transform = "";
-								that._oManuallySetSize.width = initial.width + initial.x - Math.max(e.pageX, 0);
+								that._oManuallySetSize.width = initial.width + initial.x - Math.max(event.pageX, 0);
 							}
 
 							styles.width = that._oManuallySetSize.width;
@@ -1752,13 +1763,22 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 				$w.on("mouseup.sapMDialog", function () {
 					var $dialog = that.$(),
-						$dialogContent = that.$('cont');
+						$dialogContent = that.$('cont'),
+						dialogHeight,
+						dialogBordersHeight;
 
 					$w.off("mouseup.sapMDialog, mousemove.sapMDialog");
 
 					if (bResize) {
 						that._$dialog.removeClass('sapMDialogResizing');
-						$dialogContent.height(parseInt($dialog.height(), 10) + parseInt($dialog.css("border-top-width"), 10) + parseInt($dialog.css("border-bottom-width"), 10));
+
+						// Take the height from the styles attribute of the DOM element not from the calculated height.
+						// max-height is taken into account if we use calculated height and a wrong value is set for the dialog content's height.
+						// If no value is set for the height style fall back to calculated height.
+						// * Calculated height is the value taken by $dialog.height().
+						dialogHeight = parseInt($dialog[0].style.height, 10) || parseInt($dialog.height(), 10);
+						dialogBordersHeight = parseInt($dialog.css("border-top-width"), 10) + parseInt($dialog.css("border-bottom-width"), 10);
+						$dialogContent.height(dialogHeight + dialogBordersHeight);
 					}
 				});
 
