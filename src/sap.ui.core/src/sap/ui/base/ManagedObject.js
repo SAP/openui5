@@ -2897,7 +2897,7 @@ sap.ui.define([
 							oMessageManager.removeMessages(oControlMessages);
 						}
 					}
-					oDataState.setInvalidValue(null); //assume that the model always sends valid data
+					oDataState.setInvalidValue(undefined); //assume that the model always sends valid data
 				}
 				if (oBinding.getBindingMode() === BindingMode.OneTime && oBinding.isResolved()) {
 					// if binding is one time but not resolved yet we don't destroy it yet.
