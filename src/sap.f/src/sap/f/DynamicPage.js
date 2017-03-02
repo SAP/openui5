@@ -714,7 +714,7 @@ sap.ui.define([
 
 		if (exists(this.$wrapper)) {
 			$wrapperDom = this.$wrapper[0];
-			return $wrapperDom.scrollHeight - Math.ceil($wrapperDom.getBoundingClientRect().height);
+			return $wrapperDom.scrollHeight - $wrapperDom.clientHeight;
 		}
 		return 0;
 	};
@@ -725,7 +725,9 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._needsVerticalScrollBar = function () {
-		return this._getMaxScrollPosition() > 0;
+		var iThreshold = Device.browser.internet_explorer ? 1 : 0;  // Sometimes in IE clientHeight return results with 1px difference than scrollHeight. The reason is not defined.
+
+		return this._getMaxScrollPosition() > iThreshold;
 	};
 
 	/**
