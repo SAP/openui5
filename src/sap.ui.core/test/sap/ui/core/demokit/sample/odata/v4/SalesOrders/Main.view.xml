@@ -81,8 +81,7 @@
 								<Label labelFor="NewNote" text="Note"/>
 								<Input id="NewNote" value="{Note}"/>
 								<Label labelFor="NewCurrencyCode" text="Currency Code"/>
-								<demo:ValueHelp id="NewCurrencyCode" value="{CurrencyCode}"
-									valueHelpOnly="false"/>
+								<demo:ValueHelp id="NewCurrencyCode" value="{CurrencyCode}"/>
 							</form:content>
 						</form:SimpleForm>
 					</content>
