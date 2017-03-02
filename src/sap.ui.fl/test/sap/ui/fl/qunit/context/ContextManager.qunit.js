@@ -33,6 +33,10 @@ sap.ui.require(["sap/ui/fl/context/ContextManager", "sap/ui/fl/Change", "sap/ui/
 				support: {
 					generator: "Dallas beta 1",
 					user: "cookie monster"
+				},
+				validAppVersions: {
+					creation: "1.0.0",
+					from: "1.0.0"
 				}
 			};
 
@@ -467,7 +471,6 @@ sap.ui.require(["sap/ui/fl/context/ContextManager", "sap/ui/fl/Change", "sap/ui/
 		assert.ok(!!oCallArguments[2].id, "a ID was generated");
 	});
 
-
 	QUnit.test("createOrUpdateContextObject writes down the human entered values in the object", function (assert) {
 
 		var sTitle = "hello world";
@@ -495,6 +498,31 @@ sap.ui.require(["sap/ui/fl/context/ContextManager", "sap/ui/fl/Change", "sap/ui/
 		assert.equal(oPayLoad.title, sTitle, "the title was passed");
 		assert.equal(oPayLoad.description, sDescription, "the description was passed");
 		assert.equal(oPayLoad.parameters, aParameters, "the parameter were passed");
+
+	});
+
+	QUnit.test("createOrUpdateContextObject writes down the valid version information", function (assert) {
+
+		var sCreation = "1.1.0";
+		var sFrom = "1.1.1";
+
+		var oPropertyBag = {
+			reference: "sReference",
+			namespace: "apps/myAppReference/contexts/",
+			validAppVersions: {
+				creation: sCreation,
+				from: sFrom
+			}
+		};
+
+		var oLrepConnectorSendStub = this.stub(ContextManager._oLrepConnector, "send");
+
+		ContextManager.createOrUpdateContextObject(oPropertyBag);
+
+		assert.ok(oLrepConnectorSendStub.calledOnce, "the sending was initiated");
+		var oPayLoad = oLrepConnectorSendStub.getCall(0).args[2];
+		assert.equal(oPayLoad.validAppVersions.creation, sCreation, "the creation app version was passed");
+		assert.equal(oPayLoad.validAppVersions.from, sFrom, "the from app version was passed");
 
 	});
 });
