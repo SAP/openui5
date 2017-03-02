@@ -296,6 +296,20 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @public
 	 */
 	Overlay.prototype.applyStyles = function() {
+
+		var fnDeleteDummyContainer = function() {
+			if (this._oDummyScrollContainer) {
+				this._oDummyScrollContainer.remove();
+				delete this._oDummyScrollContainer;
+				if (this.getParent() && this.getParent().$) {
+					var $parent = this.getParent().$();
+					$parent.removeClass("sapUiDtOverlayWithScrollBar");
+					$parent.removeClass("sapUiDtOverlayWithScrollBarVertical");
+					$parent.removeClass("sapUiDtOverlayWithScrollBarHorizontal");
+				}
+			}
+		}.bind(this);
+
 		// invalidate cached geometry
 		delete this._mGeometry;
 
@@ -323,7 +337,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 			var mParentOffset = (oOverlayParent && oOverlayParent instanceof Overlay) ? oOverlayParent.$().offset() : null;
 			var mPosition = DOMUtil.getOffsetFromParent(oGeometry.position, mParentOffset, iParentScrollTop, iParentScrollLeft);
 
-
 			var mSize = oGeometry.size;
 
 			// OVERLAY SIZE
@@ -349,9 +362,19 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 					}
 					var iScrollHeight = oGeometry.domRef.scrollHeight;
 					var iScrollWidth = oGeometry.domRef.scrollWidth;
-					if (iScrollHeight > mSize.height || iScrollWidth > mSize.width) {
+					// Math.ceil is needed because iScrollHeight is an integer value, mSize not. To compare we should have an integer value for mSize too.
+					// example: iScrollHeight = 24px, mSize.height = 23.98375. Both should be the same.
+					if (iScrollHeight > Math.ceil(mSize.height) || iScrollWidth > Math.ceil(mSize.width)) {
 						if (!this._oDummyScrollContainer) {
 							this._oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer' style='height: " + iScrollHeight + "px; width: " + iScrollWidth + "px;'></div>");
+							if (iScrollHeight > mSize.height && oOverlayParent.$) {
+								oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBar");
+								oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBarVertical");
+							}
+							if (iScrollWidth > mSize.width && oOverlayParent.$) {
+								oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBar");
+								oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBarHorizontal");
+							}
 							this.$().append(this._oDummyScrollContainer);
 						} else {
 							this._oDummyScrollContainer.css({
@@ -359,9 +382,8 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 								"width" : iScrollWidth
 							});
 						}
-					} else if (this._oDummyScrollContainer) {
-						this._oDummyScrollContainer.remove();
-						delete this._oDummyScrollContainer;
+					} else {
+						fnDeleteDummyContainer();
 					}
 					this._attachDomRefScrollHandler();
 
@@ -376,6 +398,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 			});
 
 		} else {
+			fnDeleteDummyContainer();
 			this.$().css("display", "none");
 		}
 	};
