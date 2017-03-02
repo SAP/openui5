@@ -21,6 +21,8 @@
 
 	<script>
 		sinon.config.useFakeTimers = true;
+		//the SUT won't be destroyed when single test is run
+		var bSkipDestroy = !!jQuery.sap.getUriParameters().get("testId");
 		module("API", {
 			beforeEach: function () {
 				this.oMaskInput = new sap.m.MaskInput();
@@ -29,7 +31,9 @@
 				this.sandbox = sinon.sandbox;
 			},
 			afterEach: function () {
-				this.oMaskInput.destroy();
+				if (!bSkipDestroy) {
+					this.oMaskInput.destroy();
+				}
 				this.sandbox.restore();
 			}
 		});
@@ -98,31 +102,71 @@
 		});
 
 		test("setValue", function () {
-			var oControl = this.oMaskInput.setPlaceholderSymbol('_').setMask('aa-aa'),
-					oApplyRulesSpy = sinon.spy(this.oMaskInput, "_applyRules");
-
+			//Prepare
+			var oControl = this.oMaskInput.setPlaceholderSymbol('_').setMask('aa-aa');
+			//Act
 			oControl.setValue(null);
-			strictEqual(oApplyRulesSpy.callCount, 0, "'_applyRules' method is not called when passing 'falsy' value");
+			//Assert
 			strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
 			ok(!oControl._oTempValue.differsFromOriginal(), "When setting 'null' buffer is not modified");
+
+			//Act
 			oControl.setValue(undefined);
-			strictEqual(oApplyRulesSpy.callCount, 0, "'_applyRules' method is not called when passing 'falsy' value");
+			//Assert
 			strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
 			ok(!oControl._oTempValue.differsFromOriginal(), "When setting 'undefined' buffer is not modified");
+
+			//Act
 			oControl.setValue("");
-			strictEqual(oApplyRulesSpy.callCount, 0, "'_applyRules' method is not called when passing 'falsy' value");
+			//Assert
 			strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
 			ok(!oControl._oTempValue.differsFromOriginal(), "When setting empty string buffer is not modified");
 
+			//Act
 			oControl.setValue("bc-d9");
+			//Assert
 			strictEqual(oControl.getValue(), "bc-d9", "When setValue is called with mask incompatible string, the value it is not modified.");
 			strictEqual(getMaskInputDomValue(oControl), "bc-d9", "The value was updated successfully (EVEN NOT VALID)");
 			ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "bc-d_", "Buffer is successfully modified with the correct ALREADY VALIDATED value");
 
+			//Act
 			oControl.setValue("bc-de");
+			//Assert
 			strictEqual(oControl.getValue(), "bc-de", "When setValue is called with mask compatible string, the value is not modified.");
 			strictEqual(getMaskInputDomValue(oControl), "bc-de", "The value was updated successfully");
 			ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "bc-de", "Buffer is successfully modified");
+
+			//Prepare
+			oControl.setMask("ISBN99-99");
+			var oOtherControl = new sap.m.Input({value: "some other value"});
+			oOtherControl.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			//Act
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+			qutils.triggerKeypress(oControl.getDomRef(), "1");
+			qutils.triggerKeypress(oControl.getDomRef(), "2");
+			qutils.triggerKeypress(oControl.getDomRef(), "3");
+			this.clock.tick(1000);
+
+			jQuery(oOtherControl).focus();
+			this.clock.tick(1000);
+
+			oControl.setValue("");
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+			qutils.triggerKeypress(oControl.getDomRef(), "4");
+			//Assert
+			equal(getMaskInputDomValue(oControl), "ISBN4_-__", "After setValue('') and retyping in the mask, previous value should not retain in DOM");
+
+			//Act
+			jQuery(oOtherControl).focus();
+			this.clock.tick(1000);
+			//Assert
+			equal(oControl.getValue(), "ISBN4_-__",  "After setValue('') and retyping in the mask, previous value should not retain as 'value' property.")
+			//Cleanup
+			oOtherControl.destroy();
 		});
 
 		test("Placeholder symbol default value", function () {
@@ -224,7 +268,9 @@
 				this.oMaskInput = new sap.m.MaskInput();
 			},
 			afterEach: function () {
-				this.oMaskInput.destroy();
+				if (!bSkipDestroy) {
+					this.oMaskInput.destroy();
+				}
 			}
 		});
 
@@ -272,7 +318,9 @@
 				sap.ui.getCore().applyChanges();
 			},
 			afterEach: function () {
-				this.oMaskInput.destroy();
+				if (!bSkipDestroy) {
+					this.oMaskInput.destroy();
+				}
 			},
 			//sets certain properties, and deletes certain character
 			setAndDel: function (sKey, sMask, sValue, iCarretPosition, iCarretEndPosition, oControl ) {
@@ -340,8 +388,10 @@
 				sap.ui.getCore().applyChanges();
 			},
 			afterEach: function () {
-				this.oMaskSerialNumber.destroy();
-				this.oMaskPhoneNumber.destroy();
+				if (!bSkipDestroy) {
+					this.oMaskSerialNumber.destroy();
+					this.oMaskPhoneNumber.destroy();
+				}
 			}
 		});
 
@@ -369,7 +419,9 @@
 				this.sandbox = sinon.sandbox;
 			},
 			afterEach: function () {
-				this.oMaskInput.destroy();
+				if (!bSkipDestroy) {
+					this.oMaskInput.destroy();
+				}
 				this.sandbox.restore();
 			}
 		});
@@ -527,8 +579,10 @@
 
 			},
 			afterEach: function () {
-				this.oMaskInput.destroy();
-				this.oOtherControl.destroy();
+				if (!bSkipDestroy) {
+					this.oMaskInput.destroy();
+					this.oOtherControl.destroy();
+				}
 				this.sandbox.restore();
 			},
 			changeListener: function () {
@@ -636,8 +690,11 @@
 				},
 
 				afterEach: function () {
-					this.oMaskInputLatin.destroy();
-					this.oMaskInputHebrew.destroy();
+					if (!bSkipDestroy) {
+						this.oMaskInputLatin.destroy();
+						this.oMaskInputHebrew.destroy();
+					}
+
 					this.sandbox.restore();
 				},
 				testSelectedInputWithArrow: function(oControl, oClock, sArrowName, iExpectedPosition, sMessagePrefix) {
@@ -792,7 +849,9 @@
 				this.sandbox = sinon.sandbox;
 			},
 			afterEach: function () {
-				this.oMaskInput.destroy();
+				if (!bSkipDestroy) {
+					this.oMaskInput.destroy();
+				}
 				this.sandbox.restore();
 			},
 			sendAndValidate: function (iPos, sChar, sExpectedValue, oControl) {
@@ -993,7 +1052,9 @@
 				sap.ui.getCore().applyChanges();
 			},
 			afterEach: function () {
-				this.oMaskInput.destroy();
+				if (!bSkipDestroy) {
+					this.oMaskInput.destroy();
+				}
 			}
 		});
 
