@@ -64,6 +64,39 @@
 		assert.equal(this.oSelectionDetails.getText(), this.oSelectionDetails.getAggregation("_button").getText(), "Property text is up to date");
 	});
 
+	QUnit.module("Popover interaction", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Popover aggregation is filled when the Click processor is executed", function(assert) {
+		// Arrange
+		// Act
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page);
+		//Assert
+		assert.ok(this.oSelectionDetails.getAggregation("_popover"), "The aggregation is filled");
+	});
+
+	QUnit.test("Click handler opens the popover", function(assert) {
+		// Arrange
+		var oSpy = sinon.spy(sap.m.ResponsivePopover.prototype, "openBy");
+		// Act
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page);
+		//Assert
+		assert.ok(oSpy.calledOnce, "openBy function has been called");
+		// Restore
+		oSpy.restore();
+	});
+
+
+
 </script>
 </head>
 <body class="sapUiBody">
