@@ -970,7 +970,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 		}
 
-		if (sap.ui.Device.system.tablet || (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Tablet"))) {
+		if ((sap.ui.Device.system.tablet && !sap.ui.Device.system.desktop) || (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Tablet"))) {
 			if (!oOH.getFullScreenOptimized() || (sap.ui.Device.orientation.portrait && oOH.getFullScreenOptimized())) { // full screen portrait or master detail
 				iRenderCols = 2; //render two columns
 				sClassColCount = 'sapMOHRTwoCols';
