@@ -217,7 +217,7 @@
 		spyDataState(oZip, function(sName, oDataState) {
 			ok(oDataState.getMessages().length == 1, 'ParseError Message propagated to control');
 			ok(oZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
-			ok(oZip.getValueStateText() === 'Enter a valid number.', 'Input: ValueStateText set correctly')
+			ok(oZip.getValueStateText() === 'Enter a valid number', 'Input: ValueStateText set correctly')
 		});
 		oZip.setValue('bbb');
 		jQuery.sap.delayedCall(0, this, function() {
@@ -237,7 +237,7 @@
 		spyDataState(oStreet, function(sName, oDataState) {
 			ok(oDataState.getMessages().length == 1, 'Validation Message propagated to control');
 			ok(oStreet.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
-			ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters.', 'Input: ValueStateText set correctly')
+			ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly')
 		});
 		oStreet.setValue('am Busche');
 		jQuery.sap.delayedCall(0, this, function() {
@@ -256,7 +256,7 @@
 
 		spyDataState(oStreet, function(sName, oDataState) {
 			ok(oStreet.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
-			ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters.', 'Input: ValueStateText set correctly')
+			ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly')
 		});
 		oStreet.setValue('am Busche');
 
@@ -269,7 +269,7 @@
 			jQuery.sap.delayedCall(0, this, function() {
 				spyDataState(oStreet, function(sName, oDataState) {
 					ok(oStreet.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
-					ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters.', 'Input: ValueStateText set correctly');
+					ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly');
 				});
 				oStreet.setValue('am Busche');
 				jQuery.sap.delayedCall(0, this, function() {

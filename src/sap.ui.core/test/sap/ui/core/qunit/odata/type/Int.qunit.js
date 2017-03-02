@@ -183,7 +183,7 @@ sap.ui.require([
 				assert.ok(false, "Expected ValidateException not thrown");
 			} catch (e) {
 				assert.ok(e instanceof ValidateException);
-				assert.strictEqual(e.message, "Enter a number with no decimal places.");
+				assert.strictEqual(e.message, "Enter a number with no decimal places");
 			}
 		});
 
