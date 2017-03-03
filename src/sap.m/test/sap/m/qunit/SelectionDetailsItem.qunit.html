@@ -36,42 +36,71 @@
 		assert.equal(this.oItem.getNavigationEnabled(), false, "Default value is correct.");
 	});
 
-	QUnit.module("Item lifecycle");
 
-	QUnit.test("ListItem is dependent of element", function(assert) {
+	QUnit.module("Function _getListItem and list item life cycle", {
+		beforeEach: function() {
+			this.oItem = new sap.m.SelectionDetailsItem();
+		},
+		afterEach: function() {
+			if (this.oItem) {
+				this.oItem.destroy();
+			}
+			this.oItem = null;
+		}
+	});
+
+	QUnit.test("Creates new list item if it not yet exists", function(assert) {
 		//Arrange
-		var oItem = new sap.m.SelectionDetailsItem();
-		var oListItem = oItem._getListItem();
-		var aDependents = oItem.getDependents();
+		this.oItem._oListItem = null;
+
+		//Act
+		this.oItem._getListItem();
+
+		//Assert
+		assert.ok(this.oItem._oListItem, "Function _getListItem creates a new list item.");
+	});
+
+	QUnit.test("List item is dependent of element", function(assert) {
+		//Arrange
+		var oListItem = this.oItem._getListItem(),
+			aDependents = this.oItem.getDependents();
 
 		//Assert
 		assert.equal(aDependents.length, 1, "One object has been added to the element's dependents.");
 		assert.deepEqual(aDependents[0], oListItem, "The correct list item has been added as dependent.");
-
-		//Cleanup
-		oItem.destroy();
 	});
 
-	QUnit.test("ListItem is destroyed with element", function(assert) {
+	QUnit.test("List item is destroyed with element", function(assert) {
 		//Arrange
-		var oItem = new sap.m.SelectionDetailsItem();
-		var oListItem = oItem._getListItem();
-		sinon.stub(oListItem, "destroy");
+		var oListItem = this.oItem._getListItem();
+		sinon.spy(oListItem, "destroy");
 
 		//Act
-		oItem.destroy();
+		this.oItem.destroy();
 
 		//Assert
-		assert.equal(oListItem.destroy.callCount, 1, "ListItem is destroyed with element.");
-
-		//Cleanup
-		oListItem.destroy.restore();
-		oListItem.destroy();
+		assert.equal(oListItem.destroy.callCount, 1, "ListItem has been destroyed with element.");
 	});
 
 	QUnit.module("Rendering", {
 		beforeEach: function() {
-			this.oItem = new sap.m.SelectionDetailsItem();
+			this.oItem = new sap.m.SelectionDetailsItem({
+				fields: [
+					new sap.m.SelectionDetailsItemField({
+						label: "My Label",
+						value: "100"
+					}),
+					new sap.m.SelectionDetailsItemField({
+						label: "Fancy field",
+						value: "200",
+						unit: "Brötchen"
+					}),
+					new sap.m.SelectionDetailsItemField({
+						label: "Boring label",
+						displayValue: "20 K"
+					})
+				]
+			});
 			this.oListItem = this.oItem._getListItem();
 			this.oListItem.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -84,8 +113,26 @@
 	});
 
 	QUnit.test("Item rendering", function(assert) {
-		assert.ok(this.oListItem.$().length > 0, "A list item is rendered.");
+		//Arrange
+		var $ListItem = this.oListItem.$();
+
+		//Assert
+		assert.ok($ListItem.length > 0, "A list item is rendered.");
+		assert.ok($ListItem.hasClass("sapMSDItem"), "The correct class has been rendered.");
 	});
+
+	QUnit.test("Field rendering", function(assert) {
+		//Arrange
+		var $ListItem = this.oListItem.$();
+
+		//Assert
+		assert.equal($ListItem.find(".sapMSDItemField").length, 3, "The correct number of fields has been rendered.");
+		assert.equal($ListItem.find(".sapMSDItemFieldLabel").length, 3, "The correct number of labels has been rendered.");
+		assert.equal($ListItem.find(".sapMSDItemFieldValue").length, 3, "The correct number of values has been rendered.");
+		assert.equal($ListItem.find(".sapMSDItemFieldBold").length, 1, "The correct number of bold values has been rendered.");
+		assert.equal($ListItem.find(".sapMSDItemFieldUnit").length, 1, "The correct number of units has been rendered.");
+	});
+
 </script>
 </head>
 

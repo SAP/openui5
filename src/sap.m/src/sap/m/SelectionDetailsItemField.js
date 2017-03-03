@@ -34,12 +34,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element"],
 			library : "sap.m",
 			properties : {
 				/**
-				 * Determines whether or not a navigation event is triggered on press.
+				 * The label that is shown as the first part of the field.
+				 * It may contain the name of the currently selected dimension or measure.
 				 */
 				label: { type: "string", group: "Data" },
 
 				/**
-				 * The value of the field.
+				 * The value of the field, for example the value of the currently selected measure.
 				 */
 				value: { type: "string", group: "Data" },
 
@@ -57,5 +58,4 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element"],
 	});
 
 	return SelectionDetailsItemField;
-
 });
