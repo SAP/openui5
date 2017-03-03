@@ -438,7 +438,7 @@ sap.ui.define([
 		Wizard.prototype.destroySteps = function () {
 			this._resetStepCount();
 			this._getProgressNavigator().setStepCount(this._getStepCount());
-			return this.destroyAggregations("steps");
+			return this.destroyAggregation("steps");
 		};
 
 		/**************************************** PRIVATE METHODS ***************************************/
