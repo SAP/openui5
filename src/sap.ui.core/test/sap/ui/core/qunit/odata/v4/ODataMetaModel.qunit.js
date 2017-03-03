@@ -2345,7 +2345,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getValueListType: metadata not yet loaded", function (assert) {
+	QUnit.test("fetchValueListType: unknown property", function (assert) {
 		var oContext = {},
 			oMetaModel = new ODataMetaModel(),
 			oMetaModelMock = this.mock(oMetaModel),
@@ -2354,30 +2354,14 @@ sap.ui.require([
 		oMetaModelMock.expects("getMetaContext").withExactArgs(sPath).returns(oContext);
 		oMetaModelMock.expects("fetchObject")
 			.withExactArgs("", sinon.match.same(oContext))
-			.returns(_SyncPromise.resolve(Promise.resolve({})));
+			.returns(Promise.resolve());
 
-		assert.throws(function () {
-			// code under test
-			oMetaModel.getValueListType(sPath);
-		}, new Error("Metadata not yet loaded"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getValueListType: unknown property", function (assert) {
-		var oContext = {},
-			oMetaModel = new ODataMetaModel(),
-			oMetaModelMock = this.mock(oMetaModel),
-			sPath = "/Products('HT-1000')/Foo";
-
-		oMetaModelMock.expects("getMetaContext").withExactArgs(sPath).returns(oContext);
-		oMetaModelMock.expects("fetchObject")
-			.withExactArgs("", sinon.match.same(oContext))
-			.returns(_SyncPromise.resolve());
-
-		assert.throws(function () {
-			// code under test
-			oMetaModel.getValueListType(sPath);
-		}, new Error("No metadata for " + sPath));
+		// code under test
+		return oMetaModel.fetchValueListType(sPath).then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.ok(oError.message, "No metadata for " + sPath)
+		});
 	});
 
 	//*********************************************************************************************
@@ -2410,7 +2394,7 @@ sap.ui.require([
 		},
 		sValueListType : ValueListType.Standard
 	}].forEach(function (oFixture) {
-		QUnit.test("getValueListType: " + oFixture.sValueListType, function (assert) {
+		QUnit.test("fetchValueListType: " + oFixture.sValueListType, function (assert) {
 			var oContext = {},
 				oMetaModel = new ODataMetaModel(),
 				oMetaModelMock = this.mock(oMetaModel),
@@ -2426,8 +2410,15 @@ sap.ui.require([
 				.returns(oFixture.mAnnotations);
 
 			// code under test
-			assert.strictEqual(oMetaModel.getValueListType(sPropertyPath), oFixture.sValueListType);
+			oMetaModel.fetchValueListType(sPropertyPath).then(function (sValueListType) {
+				assert.strictEqual(sValueListType, oFixture.sValueListType);
+			});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getValueListType, requestValueListType", function (assert) {
+		return checkGetAndRequest(this, assert, "fetchValueListType", ["sPath"], true);
 	});
 
 	//*********************************************************************************************

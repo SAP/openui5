@@ -1187,6 +1187,42 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines which type of value list exists for the given property.
+	 *
+	 * @param {string} sPropertyPath
+	 *   An absolute path to an OData property within the OData data model
+	 * @returns {SyncPromise}
+	 *   A promise that is resolved with the type of the value list. It is rejected if the property
+	 *   cannot be found in the metadata.
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.fetchValueListType = function (sPropertyPath) {
+		var oContext = this.getMetaContext(sPropertyPath),
+			that = this;
+
+		return this.fetchObject("", oContext).then(function (oProperty) {
+			var mAnnotationByTerm, sTerm;
+
+			if (!oProperty) {
+				throw new Error("No metadata for " + sPropertyPath);
+			}
+			// now we can use getObject() because the property's annotations are definitely loaded
+			mAnnotationByTerm = that.getObject("@", oContext);
+			if (mAnnotationByTerm[sValueListWithFixedValues]) {
+				return ValueListType.Fixed;
+			}
+			for (sTerm in mAnnotationByTerm) {
+				if (getQualifier(sTerm, sValueListReferences) !== undefined
+						|| getQualifier(sTerm, sValueListMapping) !== undefined) {
+					return ValueListType.Standard;
+				}
+			}
+			return ValueListType.None;
+		});
+	};
+
+	/**
 	 * Returns the OData metadata model context corresponding to the given OData data model path.
 	 *
 	 * @param {string} sPath
@@ -1319,41 +1355,13 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If the metadata is not yet loaded or the property cannot be found in the metadata
 	 *
+	 * @function
 	 * @public
+	 * @see #requestValueListType
 	 * @since 1.45.0
 	 */
-	ODataMetaModel.prototype.getValueListType = function (sPropertyPath) {
-		var oContext = this.getMetaContext(sPropertyPath),
-			oPromise,
-			that = this;
-
-		oPromise = this.fetchObject("", oContext).then(function (oProperty) {
-			var mAnnotationByTerm, sTerm;
-
-			if (!oProperty) {
-				throw new Error("No metadata for " + sPropertyPath);
-			}
-			// now we can use getObject() because the property's annotations are definitely loaded
-			mAnnotationByTerm = that.getObject("@", oContext);
-			if (mAnnotationByTerm[sValueListWithFixedValues]) {
-				return ValueListType.Fixed;
-			}
-			for (sTerm in mAnnotationByTerm) {
-				if (getQualifier(sTerm, sValueListReferences) !== undefined
-						|| getQualifier(sTerm, sValueListMapping) !== undefined) {
-					return ValueListType.Standard;
-				}
-			}
-			return ValueListType.None;
-		});
-		if (oPromise.isRejected()) {
-			throw oPromise.getResult();
-		}
-		if (!oPromise.isFulfilled()) {
-			throw new Error("Metadata not yet loaded");
-		}
-		return oPromise.getResult();
-	};
+	ODataMetaModel.prototype.getValueListType
+		= _SyncPromise.createGetMethod("fetchValueListType", true);
 
 	/**
 	 * Method not supported
@@ -1588,6 +1596,24 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.requestUI5Type
 		= _SyncPromise.createRequestMethod("fetchUI5Type");
+
+	/**
+	 * Determines which type of value list exists for the given property.
+	 *
+	 * @param {string} sPropertyPath
+	 *   An absolute path to an OData property within the OData data model
+	 * @returns {Promise}
+	 *   A promise that is resolved with the type of the value list, a constant of the enumeration
+	 *   {@link sap.ui.model.odata.v4.ValueListType}. The promise is rejected if the property cannot
+	 *   be found in the metadata.
+	 *
+	 * @function
+	 * @public
+	 * @see #getValueListType
+	 * @since 1.47.0
+	 */
+	ODataMetaModel.prototype.requestValueListType
+		= _SyncPromise.createRequestMethod("fetchValueListType");
 
 	/**
 	 * Requests information to retrieve a value list for the property given by
