@@ -1,8 +1,7 @@
 {
-	"_version": "1.2.0",
+	"_version": "1.4.0",
 
 	"sap.app": {
-		"_version": "1.2.0",
 		"id": "sap.ui.demo.worklist",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
@@ -24,7 +23,6 @@
 	},
 
 	"sap.ui": {
-		"_version": "1.2.0",
 		"technology": "UI5",
 		"icons": {
 			"icon": "sap-icon://task",
@@ -46,7 +44,6 @@
 	},
 
 	"sap.ui5": {
-		"_version": "1.2.0",
 		"rootView": {
 			"viewName": "sap.ui.demo.worklist.view.App",
 			"type": "XML",
@@ -54,16 +51,13 @@
 		},
 
 		"dependencies": {
-			"minUI5Version": "1.36.0",
+			"minUI5Version": "1.42.0",
 			"libs": {
 				"sap.ui.core": {
-					"minVersion": "1.36.0"
+					"minVersion": "1.42.0"
 				},
 				"sap.m": {
-					"minVersion": "1.36.0"
-				},
-				"sap.ui.layout" : {
-					"minVersion": "1.36.0"
+					"minVersion": "1.42.0"
 				}
 			}
 		},
@@ -82,14 +76,9 @@
 			},
 			"" : {
 				"dataSource": "mainService",
-				"settings": {
-					"metadataUrlParams": {
-						"sap-documentation": "heading"
-					}
-				}
+				"preload": true
 			}
 		},
-
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
@@ -120,12 +109,14 @@
 				"worklist": {
 					"viewName": "Worklist",
 					"viewId": "worklist",
-					"viewLevel": 1
+					"viewLevel": 1,
+					"title": "{i18n>worklistViewTitle}"
 				},
 				"object": {
 					"viewName": "Object",
 					"viewId": "object",
-					"viewLevel": 2
+					"viewLevel": 2,
+					"title": "{i18n>objectViewTitle}"
 				},
 				"objectNotFound": {
 					"viewName": "ObjectNotFound",

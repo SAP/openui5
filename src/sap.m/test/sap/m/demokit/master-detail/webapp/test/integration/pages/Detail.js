@@ -20,9 +20,7 @@ sap.ui.define([
 						return this.waitFor({
 							id : "page",
 							viewName : sViewName,
-							actions : function (oPage) {
-								oPage.$("navButton").trigger("tap");
-							},
+							actions: new Press(),
 							errorMessage : "Did not find the nav button on detail page"
 						});
 					}

@@ -66,7 +66,7 @@ sap.ui.define([
 			Given.iStartMyAppOnADesktopToTestErrorHandler("metadataError=true");
 
 			// Assertions
-			Then.onTheAppPage.iShouldSeeTheMessageBox("metadataErrorMessageBox").
+			Then.onTheAppPage.iShouldSeeTheMessageBox().
 				and.iTeardownMyAppFrame();
 		});
 
@@ -75,7 +75,7 @@ sap.ui.define([
 			Given.iStartMyAppOnADesktopToTestErrorHandler("errorType=serverError");
 
 			// Assertions
-			Then.onTheAppPage.iShouldSeeTheMessageBox("serviceErrorMessageBox").
+			Then.onTheAppPage.iShouldSeeTheMessageBox().
 				and.iTeardownMyAppFrame();
 		});
 
