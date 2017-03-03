@@ -131,6 +131,9 @@ sap.ui.define(['jquery.sap.global', './ListBase', './TreeItemBase', './library',
 			} else {
 				this.getBinding("items").collapse(iIndex);
 			}
+			if (oItem.getExpanded() && (oItem.getLevel() + 1 > this.getDeepestLevel())) {
+				this._iDeepestLevel = oItem.getLevel() + 1;
+			}
 		}
 	};
 
@@ -209,6 +212,18 @@ sap.ui.define(['jquery.sap.global', './ListBase', './TreeItemBase', './library',
 		}
 
 		return this;
+	};
+
+	Tree.prototype.getNumberOfExpandedLevel = function() {
+		return this.getBinding("items").getNumberOfExpandedLevels();
+	};
+
+	Tree.prototype.getDeepestLevel = function() {
+		if (this._iDeepestLevel === undefined) {
+			this._iDeepestLevel = this.getNumberOfExpandedLevel();
+		}
+
+		return this._iDeepestLevel;
 	};
 
 	Tree.prototype.collapseAll = function () {
