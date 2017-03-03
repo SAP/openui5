@@ -1,4 +1,4 @@
-define("ace/mode/fortran_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/fortran_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -200,7 +200,7 @@ oop.inherits(FortranHighlightRules, TextHighlightRules);
 exports.FortranHighlightRules = FortranHighlightRules;
 });
 
-define("ace/mode/folding/cstyle",["require","exports","module","ace/lib/oop","ace/range","ace/mode/folding/fold_mode"], function(require, exports, module) {
+ace.define("ace/mode/folding/cstyle",["require","exports","module","ace/lib/oop","ace/range","ace/mode/folding/fold_mode"], function(require, exports, module) {
 "use strict";
 
 var oop = require("../../lib/oop");
@@ -340,7 +340,7 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 });
 
-define("ace/mode/fortran",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/fortran_highlight_rules","ace/mode/folding/cstyle","ace/range"], function(require, exports, module) {
+ace.define("ace/mode/fortran",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/fortran_highlight_rules","ace/mode/folding/cstyle","ace/range"], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -352,6 +352,7 @@ var Range = require("../range").Range;
 var Mode = function() {
     this.HighlightRules = FortranHighlightRules;
     this.foldingRules = new CStyleFoldMode();
+    this.$behaviour = this.$defaultBehaviour;
 };
 oop.inherits(Mode, TextMode);
 

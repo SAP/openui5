@@ -1,4 +1,4 @@
-define("ace/ext/modelist",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/ext/modelist",["require","exports","module"], function(require, exports, module) {
 "use strict";
 
 var modes = [];
@@ -44,6 +44,7 @@ var supportedModes = {
     Assembly_x86:["asm|a"],
     AutoHotKey:  ["ahk"],
     BatchFile:   ["bat|cmd"],
+    Bro:         ["bro"],
     C_Cpp:       ["cpp|c|cc|cxx|h|hh|hpp|ino"],
     C9Search:    ["c9search_results"],
     Cirru:       ["cirru|cr"],
@@ -82,13 +83,14 @@ var supportedModes = {
     Haskell:     ["hs"],
     Haskell_Cabal:     ["cabal"],
     haXe:        ["hx"],
+    Hjson:       ["hjson"],
     HTML:        ["html|htm|xhtml"],
     HTML_Elixir: ["eex|html.eex"],
     HTML_Ruby:   ["erb|rhtml|html.erb"],
     INI:         ["ini|conf|cfg|prefs"],
     Io:          ["io"],
     Jack:        ["jack"],
-    Jade:        ["jade"],
+    Jade:        ["jade|pug"],
     Java:        ["java"],
     JavaScript:  ["js|jsm|jsx"],
     JSON:        ["json"],
@@ -157,9 +159,9 @@ var supportedModes = {
     Text:        ["txt"],
     Textile:     ["textile"],
     Toml:        ["toml"],
+    TSX:         ["tsx"],
     Twig:        ["twig|swig"],
     Typescript:  ["ts|typescript|str"],
-    TSX:         ["tsx"],
     Vala:        ["vala"],
     VBScript:    ["vbs|vb"],
     Velocity:    ["vm"],
@@ -200,6 +202,6 @@ module.exports = {
 
 });
                 (function() {
-                    window.require(["ace/ext/modelist"], function() {});
+                    ace.require(["ace/ext/modelist"], function() {});
                 })();
             
