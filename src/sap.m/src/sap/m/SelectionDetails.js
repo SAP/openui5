@@ -179,5 +179,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/O
 		sap.ui.require(['sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page'], this._handlePressLazy.bind(this));
 	};
 
+	/**
+	 * @description Closes SelectionDetails if open.
+	 * @returns {sap.m.SelectionDetails} To ensure method chaining, return the SelectionDetails.
+	 * @public
+	 */
+	SelectionDetails.prototype.close = function() {
+		var oPopover = this.getAggregation("_popover");
+		if (oPopover) {
+			oPopover.close();
+		}
+		return this;
+	};
+
 	return SelectionDetails;
 });
