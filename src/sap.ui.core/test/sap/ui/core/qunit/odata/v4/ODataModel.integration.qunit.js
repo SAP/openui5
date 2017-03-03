@@ -715,6 +715,36 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario:
+	// A table uses the list binding with extended change detection, but not all key properties of
+	// the displayed entity are known on the client, so that the key predicate cannot be determined.
+	// In 1.44 this caused the problem that the table did not show any row. (Not reproducible with
+	// Gateway services, because they always deliver all key properties, selected or not.)
+	QUnit.test("Absolute ODLB with ECD, missing key column", function (assert) {
+		// Note: The key property of the EMPLOYEES set is 'ID'
+		var sView = '\
+<Table growing="true" items="{path : \'/EMPLOYEES\', parameters : {$select : \'Name\'}}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="name" text="{Name}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>';
+
+		this.expectRequest("EMPLOYEES?$select=Name&$skip=0&$top=20", {
+				"value" : [
+					{"Name" : "Jonathan Smith"},
+					{"Name" : "Frederic Fall"}
+				]
+			})
+			.expectChange("name", ["Jonathan Smith", "Frederic Fall"]);
+
+		return this.createView(assert, sView);
+	});
+
+	//*********************************************************************************************
 	// Scenario: SalesOrders app
 	// * Select a sales order so that items are visible
 	// * Filter in the items, so that there are less
