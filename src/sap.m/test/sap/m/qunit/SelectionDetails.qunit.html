@@ -64,6 +64,39 @@
 		assert.equal(this.oSelectionDetails.getText(), this.oSelectionDetails.getAggregation("_button").getText(), "Property text is up to date");
 	});
 
+	QUnit.module("API methods", {
+		beforeEach : function() {
+			this.oResponsivePopover = new sap.m.ResponsivePopover();
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.setAggregation("_popover", this.oResponsivePopover, true);
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Method isOpen returns false as default", function(assert) {
+		//Assert
+		assert.equal(this.oSelectionDetails.isOpen(), false, "Method isOpen returns false");
+	});
+
+	QUnit.test("Method isOpen returns true if SelectionDetails is open", function(assert) {
+		// Arrange
+		sinon.stub(this.oResponsivePopover, "isOpen").returns(true);
+		//Assert
+		assert.equal(this.oSelectionDetails.isOpen(), true, "Method isOpen returns true");
+	});
+
+	QUnit.test("Method isOpen returns false if SelectionDetails is closed", function(assert) {
+		//Arrange
+		sinon.stub(this.oResponsivePopover, "isOpen").returns(false);
+		//Assert
+		assert.equal(this.oSelectionDetails.isOpen(), false, "Method isOpen returns false");
+	});
+
 	QUnit.module("Popover interaction", {
 		beforeEach : function() {
 			this.oSelectionDetails = new sap.m.SelectionDetails();
@@ -94,8 +127,6 @@
 		// Restore
 		oSpy.restore();
 	});
-
-
 
 </script>
 </head>

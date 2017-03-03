@@ -110,8 +110,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/O
 		}
 	}});
 
+	/* =========================================================== */
+	/* Lifecycle methods                                           */
+	/* =========================================================== */
 	SelectionDetails.prototype.init = function() {
 		this.setAggregation("_button", new OverflowToolbarButton({
+			id : this.getId() + "-button",
 			press : [this._onToolbarButtonPress, this]
 		}), true);
 	};
@@ -120,6 +124,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/O
 		this.getAggregation("_button").setProperty("text", this.getText(), true);
 	};
 
+	/* =========================================================== */
+	/* API methods                                                 */
+	/* =========================================================== */
+	/**
+	 * @description Returns true if the SelectionDetails is open, otherwise false.
+	 * @returns {boolean} True if the SelectionDetails is open, otherwise false.
+	 * @public
+	 */
+	SelectionDetails.prototype.isOpen = function() {
+		var oPopover = this.getAggregation("_popover");
+		return oPopover ? oPopover.isOpen() : false;
+	};
+
+	/* =========================================================== */
+	/* Private methods                                             */
+	/* =========================================================== */
+	/**
+	 * Opens SelectionDetails as ResponsivePopover.
+	 * @private
+	 */
 	SelectionDetails.prototype._handlePressLazy = function(NavContainer, ResponsivePopover, Page) {
 		var oPopover = this.getAggregation("_popover"),
 			oNavContainer;
