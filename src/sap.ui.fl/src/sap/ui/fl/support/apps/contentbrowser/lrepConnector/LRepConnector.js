@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Provides the connectivity to the Layered Repository REST-service.
+	 * Provides the connectivity to the layered repository REST service.
 	 *
 	 * @constructor
 	 * @alias sap.ui.fl.support.apps.contentbrowser.lrepConnector.LRepConnector
@@ -22,14 +22,14 @@ sap.ui.define([
 	LrepConnector._sXcsrfToken = undefined;
 
 	/**
-	 * Gets content from Layered Repository.
+	 * Gets content from the layered repository.
 	 *
 	 * @param {String} sLayer - determines the layer for obtaining the content
 	 * @param {String} sContentSuffix - namespace plus filename and file type of content
 	 * @param {Boolean} bReadContextMetadata - read content plus metadata information
 	 * @param {Boolean} bReadRuntimeContext - gets the content in runtime instead of design time
 	 * @param {Boolean} bRequestAsText - gets content data as plain text
-	 * @returns {Promise} promise of sending content requests to the backend
+	 * @returns {Promise} Promise of GET content request to the back end
 	 * @public
 	 */
 	LrepConnector.getContent = function (sLayer, sContentSuffix, bReadContextMetadata, bReadRuntimeContext, bRequestAsText) {
@@ -48,14 +48,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Saves a file into Layered Repository.
+	 * Saves a file to the layered repository.
 	 *
 	 * @param {String} sLayer - determines the layer for saving the content
 	 * @param {String} sNamespace - namespace of the file
 	 * @param {String} sFilename - name of the file
 	 * @param {String} sFileType - type of the file
-	 * @param {String} sContent - content of the file that is saved into Layered Repository
-	 * @returns {Promise} promise of saving content request to the backend
+	 * @param {String} sContent - content of the file saved to the layered repository
+	 * @returns {Promise} Promise of the SAVE content request to the back end
 	 * @public
 	 */
 	LrepConnector.saveFile = function (sLayer, sNamespace, sFilename, sFileType, sContent) {
@@ -74,13 +74,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deletes a file from Layered Repository.
+	 * Deletes a file from the layered repository.
 	 *
 	 * @param {String} sLayer - determines the layer for deleting the content
 	 * @param {String} sNamespace - namespace of the file
 	 * @param {String} sFilename - name of the file
 	 * @param {String} sFileType - type of the file
-	 * @returns {Promise} promise of delete content request to the backend
+	 * @returns {Promise} Promise of DELETE content request to the back end
 	 * @public
 	 */
 	LrepConnector.deleteFile = function (sLayer, sNamespace, sFileName, sFileType) {
@@ -102,7 +102,7 @@ sap.ui.define([
 	 * Gets a XCSRF token for a REST request.
 	 *
 	 * @param {String} sUrl - URL that is required to get the token
-	 * @returns {Promise} promise of getting token HEAD request to backend
+	 * @returns {Promise} Promise of the GET token HEAD request to back end
 	 * @private
 	 */
 	LrepConnector._getXcsrfToken = function (sUrl) {
@@ -164,7 +164,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reports an error during backend request.
+	 * Reports an error during back-end request.
 	 *
 	 * @param {Object} oJqXHR - "jqXHR " object which is returned from ajax request
 	 * @param {String} sTextStatus - status text of the error
@@ -178,7 +178,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sends a GET request to backend for obtaining data.
+	 * Sends a GET content request to the back end.
 	 *
 	 * @param {String} sUrl - request URL
 	 * @param {Function} fnResolve - callback function if request was resolved
@@ -206,7 +206,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the token and sends the PUT request for updating data.
+	 * Gets the token and sends an updating request.
 	 *
 	 * @param {String} sUrl - request URL
 	 * @param {Object} oData - data for PUT request
@@ -223,7 +223,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sends PUT content request to the backend.
+	 * Sends PUT content request to the back end.
 	 *
 	 * @param {Object} oXcsrfToken - token object
 	 * @param {String} sUrl - request URL
@@ -252,7 +252,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets token and sends DELETE request to the backend for delete content.
+	 * Gets token and sends DELETE content request to the back end.
 	 *
 	 * @param {String} sUrl - request URL
 	 * @param {Function} fnResolve - callback function if request was resolved
@@ -267,7 +267,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sends DELETE request to the backend for delete content.
+	 * Sends DELETE request to the back end.
 	 *
 	 * @param {Object} oXcsrfToken - token object
 	 * @param {String} sUrl - request URL
