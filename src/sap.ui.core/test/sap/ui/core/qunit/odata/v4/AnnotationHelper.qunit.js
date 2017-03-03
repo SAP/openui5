@@ -329,4 +329,46 @@ sap.ui.require([
 			$Function : "odata.fillUriTemplate"
 		}, sUrl, oMetaModel, oModel);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getValueListType: property path", function (assert) {
+		var oMetaModel = {
+				getValueListType : function () {}
+			},
+			oDetails = {
+				context : {
+					getModel : function () { return oMetaModel; }
+				},
+				schemaChildName : "tea_busi.Worker"
+			},
+			oResult = {};
+
+		this.mock(oMetaModel).expects("getValueListType").withExactArgs("/tea_busi.Worker/ID")
+			.returns(oResult);
+
+		// code under test
+		assert.strictEqual(AnnotationHelper.getValueListType("ID", oDetails), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getValueListType: property object", function (assert) {
+		var oMetaModel = {
+				getValueListType : function () {}
+			},
+			oDetails = {
+				context : {
+					getModel : function () { return oMetaModel; },
+					getPath : function () { return "/tea_busi.Worker/ID"; }
+				}
+			},
+			oResult = {};
+
+		this.mock(oMetaModel).expects("getValueListType").withExactArgs("/tea_busi.Worker/ID")
+			.returns(oResult);
+
+		// code under test
+		assert.strictEqual(
+			AnnotationHelper.getValueListType(mScope["tea_busi.Worker"].ID, oDetails),
+			oResult);
+	});
 });

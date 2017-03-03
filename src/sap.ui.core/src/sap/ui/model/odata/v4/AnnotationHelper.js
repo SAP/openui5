@@ -100,6 +100,36 @@ sap.ui.define([
 			},
 
 			/**
+			 * Determines which type of value list exists for the given property.
+			 *
+			 * @param {any} vRawValue
+			 *   The raw value from the meta model; must be either a property or a path pointing to
+			 *   a property (relative to <code>oDetails.schemaChildName</code>)
+			 * @param {object} oDetails
+			 *   The details object
+			 * @param {sap.ui.model.Context} oDetails.context
+			 *   Points to the given path, that is
+			 *   <code>oDetails.context.getProperty("") === vRawValue</code>
+			 * @param {string} oDetails.schemaChildName
+			 *   The qualified name of the schema child where the computed annotation has been
+			 *   found, for example "name.space.EntityType"
+			 * @returns {sap.ui.model.odata.v4.ValueListType}
+			 *   The type of the value list
+			 * @throws {Error}
+			 *   If the property cannot be found in the metadata
+			 *
+			 * @public
+			 * @since 1.47.0
+			 */
+			getValueListType : function (vRawValue, oDetails) {
+				var sPath = typeof vRawValue === "string"
+						? "/" + oDetails.schemaChildName + "/" + vRawValue
+						: oDetails.context.getPath();
+
+				return oDetails.context.getModel().getValueListType(sPath);
+			},
+
+			/**
 			 * A function that helps to interpret OData V4 annotations. It knows about the syntax
 			 * of the path value used by the following dynamic expressions:
 			 * <ul>

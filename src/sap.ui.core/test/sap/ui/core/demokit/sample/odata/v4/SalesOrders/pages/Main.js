@@ -67,7 +67,7 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 				pressValueHelpOnCurrencyCode : function () {
 					return this.waitFor({
 						actions : new Press(),
-						controlType : "sap.ui.core.sample.odata.v4.SalesOrders.ValueHelp",
+						controlType : "sap.ui.core.sample.common.ValueHelp",
 						matchers : new Interactable(),
 						id : "NewCurrencyCode",
 						success : function (oValueHelp) {
@@ -80,7 +80,7 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 			assertions : {
 				checkCurrencyCodeIsValueHelp : function () {
 					return this.waitFor({
-						controlType : "sap.ui.core.sample.odata.v4.SalesOrders.ValueHelp",
+						controlType : "sap.ui.core.sample.common.ValueHelp",
 						matchers : new Interactable(),
 						id : "NewCurrencyCode",
 						success : function (oValueHelp) {

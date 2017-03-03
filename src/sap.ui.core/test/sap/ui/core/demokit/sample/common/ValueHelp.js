@@ -20,7 +20,7 @@ sap.ui.define([
 
 	var ValueHelp;
 
-	ValueHelp = Control.extend("sap.ui.core.sample.odata.v4.SalesOrders.ValueHelp", {
+	ValueHelp = Control.extend("sap.ui.core.sample.common.ValueHelp", {
 		metadata : {
 			properties : {
 				editable : {type: "boolean", defaultValue: true, bindable: "bindable"},
@@ -45,46 +45,44 @@ sap.ui.define([
 
 		init : function () {
 			this.attachModelContextChange(this.onModelContextChange);
-			this.setAggregation("field", new Input({
-				editable : this.getEditable(),
-				showValueHelp : false,
-				value : this.getValue()
-			}));
 		},
 
 		onModelContextChange : function (oEvent) {
 			var oBinding = this.getBinding("value"),
-				that = this;
+				oField;
 
 			if (oBinding && oBinding.isResolved()) {
-				oBinding.requestValueListType().then(function (sValueListType) {
-					var oField;
-
-					switch (sValueListType) {
-						case ValueListType.Standard:
-							oField = new Input({
-								editable : true,
-								showValueHelp : true,
-								value : that.getValue(),
-								valueHelpRequest : that.onValueHelp.bind(that)
-							});
-							break;
-						case ValueListType.Fixed:
-							oField = new ComboBox({
-								editable : true,
-								loadItems : that.onLoadItems.bind(that),
-								value : that.getValue()
-							});
-							break;
-						default:
-							oField = new Input({
-								editable : that.getEditable(),
-								showValueHelp : false,
-								value : that.getValue()
-							});
-					}
-					that.setAggregation("field", oField);
-				});
+				oField = this.getAggregation("field");
+				if (oField) {
+					oField.destroy();
+				}
+				switch (oBinding.getValueListType()) {
+					case ValueListType.Standard:
+						oField = new Input({
+							editable : true,
+							id : this.getId() + "-field",
+							showValueHelp : true,
+							value : this.getValue(),
+							valueHelpRequest : this.onValueHelp.bind(this)
+						});
+						break;
+					case ValueListType.Fixed:
+						oField = new ComboBox({
+							editable : true,
+							id : this.getId() + "-field",
+							loadItems : this.onLoadItems.bind(this),
+							value : this.getValue()
+						});
+						break;
+					default:
+						oField = new Input({
+							editable : this.getEditable(),
+							id : this.getId() + "-field",
+							showValueHelp : false,
+							value : this.getValue()
+						});
+				}
+				this.setAggregation("field", oField);
 			}
 		},
 

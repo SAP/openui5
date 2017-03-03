@@ -3,7 +3,7 @@
 	controllerName="sap.ui.core.sample.odata.v4.SalesOrders.Main"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
-	xmlns:demo="sap.ui.core.sample.odata.v4.SalesOrders"
+	xmlns:demo="sap.ui.core.sample.common"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc">
 	<VBox>
