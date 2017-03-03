@@ -43,7 +43,7 @@ function(jQuery, ManagedObject, ElementUtil, DOMUtil) {
 				 * Data to be used as DT metadata
 				 */
 				data : {
-					type : "object"
+					type : "any"
 				},
 				/**
 				* Name of the library the control belongs to

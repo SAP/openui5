@@ -28,8 +28,10 @@
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				sap.ui.getCore().applyChanges();
+				this.oButtonDTMetadata = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton).getDesignTimeMetadata();
+				this.oLayoutDTMetadata = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout).getDesignTimeMetadata();
 				done();
-			});
+			}.bind(this));
 
 			this.oPlugin = new sap.ui.dt.Plugin();
 			this.iregisterElementOverlayCalls = 0;
@@ -58,7 +60,21 @@
 	QUnit.test("when the plugin is added to designTime with two controls", function(assert) {
 		this.oDesignTime.addPlugin(this.oPlugin);
 		assert.strictEqual(this.iregisterElementOverlayCalls, 2, "register was called for two overlays");
-		var iAggregationCount = Object.keys(this.oLayout.getMetadata().getAllAggregations()).length + Object.keys(this.oButton.getMetadata().getAllAggregations()).length;
+		var iAggregationCount = 0;
+		var aLayoutAggregationNames = Object.keys(this.oLayout.getMetadata().getAllAggregations());
+		var aButtonAggregationNames = Object.keys(this.oButton.getMetadata().getAllAggregations());
+
+		aLayoutAggregationNames.forEach(function(sAggregationName) {
+			if(this.oLayoutDTMetadata.isAggregationIgnored(this.oLayout, sAggregationName) === false) {
+				iAggregationCount += 1;
+			}
+		}.bind(this));
+		aButtonAggregationNames.forEach(function(sAggregationName) {
+			if(this.oButtonDTMetadata.isAggregationIgnored(this.oButton, sAggregationName) === false) {
+				iAggregationCount += 1;
+			}
+		}.bind(this));
+
 		assert.strictEqual(this.iRegisterAggregationOverlayCalls, iAggregationCount, "register was called for all aggregation overlays");
 	});
 
@@ -78,8 +94,28 @@
 		sap.ui.getCore().applyChanges();
 
 		this.oDesignTime.attachEventOnce("synced", function() {
+			var iAggregationCount = 0;
+
+			var aLayoutAggregationNames = Object.keys(this.oLayout.getMetadata().getAllAggregations());
+			var aButtonAggregationNames = Object.keys(this.oButton.getMetadata().getAllAggregations());
+			var oButtonDTMetadata = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton).getDesignTimeMetadata();
+			var oLayoutDTMetadata = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout).getDesignTimeMetadata();
+			this.iLayoutAggregationCount = 0;
+			this.iButtonAggregationCount = 0;
+
+			aLayoutAggregationNames.forEach(function(sAggregationName) {
+				if(oLayoutDTMetadata.isAggregationIgnored(this.oLayout, sAggregationName) === false) {
+					this.iLayoutAggregationCount += 1;
+				}
+			}.bind(this));
+			aButtonAggregationNames.forEach(function(sAggregationName) {
+				if(oButtonDTMetadata.isAggregationIgnored(this.oButton, sAggregationName) === false) {
+					this.iButtonAggregationCount += 1;
+				}
+			}.bind(this));
+
 			assert.strictEqual(this.iregisterElementOverlayCalls, 2, "register was called for all new control");
-			assert.strictEqual(this.iRegisterAggregationOverlayCalls, Object.keys(oLayout.getMetadata().getAllAggregations()).length + Object.keys(oButton.getMetadata().getAllAggregations()).length , "register was called for all new aggregations");
+			assert.strictEqual(this.iRegisterAggregationOverlayCalls, this.iLayoutAggregationCount + this.iButtonAggregationCount, "register was called for all new aggregations");
 
 			doneSyncingNewRootControl();
 
@@ -89,7 +125,7 @@
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				assert.strictEqual(this.iregisterElementOverlayCalls, 1, "register was called for all new control");
-				assert.strictEqual(this.iRegisterAggregationOverlayCalls, Object.keys(oButton.getMetadata().getAllAggregations()).length , "register was called for all new aggregations");
+				assert.strictEqual(this.iRegisterAggregationOverlayCalls, this.iButtonAggregationCount, "register was called for all new aggregations");
 
 				doneSyncingNewControl();
 			}.bind(this));
