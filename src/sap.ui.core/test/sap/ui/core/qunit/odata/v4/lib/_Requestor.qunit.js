@@ -1427,6 +1427,16 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("request: $cached as groupId", function (assert) {
+		var oRequestor = _Requestor.create("/");
+
+		assert.throws(function(){
+			//code under test
+			oRequestor.request("GET", "/FOO", "$cached");
+		},  new Error("Unexpected request: GET /FOO"));
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		QUnit.test("request(...)/submitBatch (realOData) success", function (assert) {
 			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl)),

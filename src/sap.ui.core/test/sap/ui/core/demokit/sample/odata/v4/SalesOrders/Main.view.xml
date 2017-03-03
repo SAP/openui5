@@ -130,8 +130,9 @@
 							press="onRefreshSalesOrdersList" tooltip="Refresh sales orders"/>
 						<Button icon="sap-icon://save" id="saveSalesOrders"
 							press="onSaveSalesOrderList" tooltip="Save sales orders"/>
-						<Button id="cancelSalesOrdersChanges" icon="sap-icon://sys-cancel-2"
-							press="onCancelSalesOrderList" tooltip="Cancel sales orders changes"/>
+						<Button id="cancelSalesOrderListChanges" icon="sap-icon://sys-cancel-2"
+							press="onCancelSalesOrderListChanges"
+							tooltip="Cancel sales order list changes"/>
 						<ToolbarSpacer />
 						<SearchField id="filterGrossAmount"
 							placeholder="Filter by gross amount greater than"
@@ -228,9 +229,10 @@
 						press="onRefreshSalesOrderDetails"/-->
 					<Button icon="sap-icon://calendar" id="showSalesOrderSchedules"
 						press="onSalesOrderSchedules" tooltip="Show sales order schedules"/>
-					<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
-						press="onSaveSalesOrder" tooltip="Save sales order"/>
-					<Button icon="sap-icon://sys-cancel-2" press="onCancelSalesOrder"
+					<Button icon="sap-icon://save" id="saveSalesOrder" press="onSaveSalesOrder"
+						tooltip="Save sales order"/>
+					<Button id="cancelSalesOrderChanges" icon="sap-icon://sys-cancel-2"
+						press="onCancelSalesOrderChanges"
 						tooltip="Cancel sales order changes"/>
 				</content>
 				<dependents>
@@ -238,6 +240,12 @@
 							id="SalesOrderSchedulesDialog" title="Sales Order Schedules">
 						<Toolbar design="Transparent">
 							<content>
+								<Title id="SalesOrderSchedulesTitle"
+										text="{headerContext>$count} Schedules" titleStyle="H2">
+									<layoutData>
+										<ToolbarLayoutData shrinkable="false" />
+									</layoutData>
+								</Title>
 								<Button enabled="{ui>/bScheduleSelected}"
 									id="deleteSalesOrderSchedules"
 									icon="sap-icon://delete" press="onDeleteSalesOrderSchedules"
@@ -245,8 +253,8 @@
 							</content>
 						</Toolbar>
 						<buttons>
-							<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
-								press="onSaveSalesOrderSchedules" text="Save" type="Accept"/>
+							<Button icon="sap-icon://save" press="onSaveSalesOrderSchedules"
+								text="Save" type="Accept"/>
 							<Button icon="sap-icon://sys-cancel-2"
 								press="onCancelSalesOrderSchedules" text="Cancel" type="Reject"/>
 						</buttons>
@@ -268,8 +276,7 @@
 											<Text text="{ScheduleKey}"/>
 										</cells>
 										<cells>
-											<Input editable="{ui>/bRealOData}"
-												value="{DeliveryDate}"/>
+											<Text text="{DeliveryDate}"/>
 										</cells>
 									</ColumnListItem>
 								</items>
@@ -356,6 +363,13 @@
 							<Title id="SalesOrderLineItemsTitle"
 								text="{headerContext>$count} Sales Order Line Items"
 								titleStyle="H2"/>
+							<Button icon="sap-icon://add" id="createSalesOrderLineItem"
+								press="onCreateSalesOrderLineItem"
+								tooltip="Create sales order line item"/>
+							<Button
+								enabled="{ui>/bLineItemSelected}" icon="sap-icon://delete"
+								id="deleteSalesOrderLineItem" press="onDeleteSalesOrderLineItem"
+								tooltip="Delete sales order line item"/>
 							<ToolbarSpacer />
 							<SearchField
 								enabled="{ui>/bRealOData}"

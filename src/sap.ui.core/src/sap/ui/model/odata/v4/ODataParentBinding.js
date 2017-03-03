@@ -83,7 +83,10 @@ sap.ui.define([
 
 		function updateDependents() {
 			// Do not fire a change event in ListBinding, there is no change in the list of contexts
-			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+			// Skip bindings that have been created via ODataListBinding#create: context with index
+			// -1 does not exist any more after a refresh and updates via cache directly notify the
+			// bindings
+			that.oModel.getDependentBindings(that, true).forEach(function (oDependentBinding) {
 				oDependentBinding.checkUpdate();
 			});
 		}
@@ -108,6 +111,46 @@ sap.ui.define([
 			} else {
 				updateDependents();
 			}
+		});
+	};
+
+	/**
+	 * Creates the entity in the cache. If the binding doesn't have a cache, it forwards to the
+	 * parent binding adjusting <code>sPathInCache</code>.
+	 *
+	 * @param {string} sUpdateGroupId
+	 *   The group ID to be used for the POST request
+	 * @param {string|SyncPromise} vCreatePath
+	 *   The path for the POST request or a SyncPromise that resolves with that path
+	 * @param {string} sPathInCache
+	 *   The path within the cache where to create the entity
+	 * @param {object} oInitialData
+	 *   The initial data for the created entity
+	 * @param {function} fnCancelCallback
+	 *   A function which is called after a transient entity has been canceled from the cache
+	 * @returns {SyncPromise}
+	 *   The create Promise which is resolved without data when the POST request has been
+	 *   successfully sent and the entity has been marked as non-transient
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.createInCache = function (sUpdateGroupId, vCreatePath,
+			sPathInCache, oInitialData, fnCancelCallback) {
+		var that = this;
+
+		return this.oCachePromise.then(function (oCache) {
+			if (oCache) {
+				return oCache.create(sUpdateGroupId, vCreatePath, sPathInCache, oInitialData,
+					fnCancelCallback, function (oError) {
+						// error callback
+						that.oModel.reportError("POST on '" + vCreatePath
+								+ "' failed; will be repeated automatically",
+							"sap.ui.model.odata.v4.ODataParentBinding", oError);
+				});
+			}
+			return that.oContext.getBinding().createInCache(sUpdateGroupId, vCreatePath,
+				_Helper.buildPath(that.oContext.iIndex, that.sPath, sPathInCache), oInitialData,
+				fnCancelCallback);
 		});
 	};
 
