@@ -38,8 +38,12 @@
 			jQuery.sap.require("sap.m.Page");
 			jQuery.sap.require("sap.ui.layout.VerticalLayout");
 			jQuery.sap.require("sap.ui.layout.form.SimpleForm");
+			jQuery.sap.require("sap.ui.core.ElementMetadata");
 			jQuery.sap.require("sap.ui.dt.ElementDesignTimeMetadata");
+			jQuery.sap.require("sap.ui.dt.AggregationDesignTimeMetadata");
+			jQuery.sap.require("sap.ui.dt.DesignTime");
 
+			var sandbox = sinon.sandbox.create();
 
 			QUnit.module("Given that an Overlay Container is created", {
 				beforeEach : function() {
@@ -881,6 +885,454 @@
 					assert.deepEqual(that.oOverlay.$().offset(), that.oButton.$().offset(), "overlay has same position as a control");
 					done();
 				}, 0);
+			});
+
+			function _buildMetadataObject(vContent)  {
+				return {
+					data: {
+						aggregations: {
+							content: vContent
+						}
+					}
+				};
+			}
+
+			function _createNewDesigntimeMetadataInstance(oData) {
+				return new sap.ui.dt.AggregationDesignTimeMetadata({
+						data: oData || {}
+				});
+			};
+
+			QUnit.module("Given that an Overlay is created with 'propagateRelevantContainer' as boolean in the designtime Metadata without parent", {
+				beforeEach : function(assert) {
+					var oPropObject = { propagateRelevantContainer: true };
+					this.oMetadata = _buildMetadataObject(oPropObject);
+					this.oDesigntimeMetadata = _createNewDesigntimeMetadataInstance(oPropObject);
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata(this.oMetadata)
+					});
+					this.oOverlay.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oDesigntimeMetadata.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when '_handlePropagationOfRelevantContainer' is called", function(assert) {
+				var fnPropagateRelevantContainerSpy = sinon.spy(this.oOverlay, "_propagateRelevantContainerObj");
+				this.oOverlay._handlePropagationOfRelevantContainer(this.oDesigntimeMetadata);
+				assert.strictEqual(fnPropagateRelevantContainerSpy.callCount, 1,
+					"then '_propagateRelevantContainerObj' called once");
+				var oSpyArgs = fnPropagateRelevantContainerSpy.args[0];
+				assert.ok(oSpyArgs[1],
+					"then '_propagateRelevantContainerObj' called with new propagateRelevantContainer object");
+				assert.notOk(oSpyArgs[2],
+					"then '_propagateRelevantContainerObj' called without propagatedRelevantContainer object from parent");
+			});
+
+			QUnit.module("Given that an Overlay is created with 'propagateRelevantContainer' as function in the designtime Metadata", {
+				beforeEach : function(assert) {
+					this.fnPropagateRelevantContainer = function() {
+						return true;
+					};
+					var oPropObject = { propagateRelevantContainer: this.fnPropagateRelevantContainer };
+					this.oMetadata = _buildMetadataObject(oPropObject);
+					this.oDesigntimeMetadata = _createNewDesigntimeMetadataInstance(oPropObject);
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata(this.oMetadata)
+					});
+					this.oOverlay.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oDesigntimeMetadata.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when '_handlePropagationOfRelevantContainer' is called with valid sAggregations property",
+			function(assert) {
+				var fnPropagateRelevantContainerSpy = sinon.spy(this.oOverlay, "_propagateRelevantContainerObj");
+				this.oOverlay._handlePropagationOfRelevantContainer(this.oDesigntimeMetadata);
+				assert.strictEqual(fnPropagateRelevantContainerSpy.callCount, 1,
+					"then '_propagateRelevantContainerObj' called once");
+				var oSpyArgs = fnPropagateRelevantContainerSpy.args[0];
+				assert.strictEqual(oSpyArgs[1].propagationFunction, this.fnPropagateRelevantContainer,
+					"then '_propagateRelevantContainerObj' called with propagatedRelevantContainer object")
+				assert.notOk(oSpyArgs[2],
+					"then '_propagateRelevantContainerObj' called without propagatedRelevantContainer object from parent");
+			});
+
+			QUnit.module("Given that an Overlay is created with 'propagateRelevantContainer' as object in the designtime Metadata", {
+				beforeEach : function(assert) {
+					var oPropObject = { propagateRelevantContainer: {} };
+					this.oMetadata = _buildMetadataObject(oPropObject);
+					this.oDesigntimeMetadata = _createNewDesigntimeMetadataInstance(oPropObject);
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata(this.oMetadata)
+					});
+					this.oOverlay.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oDesigntimeMetadata.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when '_handlePropagationOfRelevantContainer' is called",
+			function(assert) {
+				assert.throws(function() {
+					this.oOverlay._handlePropagationOfRelevantContainer(this.oDesigntimeMetadata);
+				}, /wrong type: it should be either a function or a boolean value/,"then '_propagateRelevantContainerObj' should throw an exception");
+			});
+
+			QUnit.module("Given that an Overlay is created without 'propagateRelevantContainer' in the designtime Metadata and without parent", {
+				beforeEach : function(assert) {
+					this.oMetadata = _buildMetadataObject({});
+					this.oDesigntimeMetadata = _createNewDesigntimeMetadataInstance({});
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata(this.oMetadata)
+					});
+					this.oOverlay.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oDesigntimeMetadata.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when '_handlePropagationOfRelevantContainer' is called",
+			function(assert) {
+				var fnPropagateRelevantContainerSpy = sinon.spy(this.oOverlay, "_propagateRelevantContainerObj");
+				this.oOverlay._handlePropagationOfRelevantContainer(this.oDesigntimeMetadata);
+				assert.strictEqual(fnPropagateRelevantContainerSpy.withArgs({}, null).callCount, 0,
+					"then '_propagateRelevantContainerObj' shouldn't be called");
+			});
+
+			function _createRelevantContainerObject(vPropagateFunction, oRelevantContainerElement) {
+				return {
+						propagationFunction : vPropagateFunction,
+						propagateRelevantContainerElement : oRelevantContainerElement
+					};
+			};
+
+			QUnit.module("Given that an Overlay and designtime Metadata for aggregation have been created", {
+				beforeEach : function(assert) {
+					this.oButton = new sap.m.Button();
+					this.oPage = new sap.m.Page();
+					this.oDesigntimeMetadata = _createNewDesigntimeMetadataInstance();
+					this.oOverlay = new sap.ui.dt.ElementOverlay({});
+					this.oOverlay.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oButton.destroy();
+					this.oPage.destroy();
+					this.oDesigntimeMetadata.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when '_propagateRelevantContainerObj' is called without attributes",
+			function(assert) {
+				assert.strictEqual(this.oOverlay._propagateRelevantContainerObj(), false,
+					"then '_propagateRelevantContainerObj' should return false");
+			});
+
+			QUnit.test("when '_propagateRelevantContainerObj' is called with new relevantContainerPropagation object and without parentPropagation object",
+			function(assert) {
+				var oNewRelevantContainerPropagation = _createRelevantContainerObject(true, this.oButton);
+				assert.strictEqual(this.oDesigntimeMetadata.getData().propagateRelevantContainer, undefined,
+					"then before '_propagateRelevantContainerObj' is called, data of designtime metadata is undefined");
+				assert.strictEqual(this.oOverlay._propagateRelevantContainerObj(this.oDesigntimeMetadata, oNewRelevantContainerPropagation, undefined), true,
+					"then '_propagateRelevantContainerObj' should return true");
+				assert.deepEqual(this.oDesigntimeMetadata.getData().propagateRelevantContainer[0], oNewRelevantContainerPropagation,
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains relevantContainer propagation object");
+			});
+
+			QUnit.test("when '_propagateRelevantContainerObj' is called with new relevantContainerPropagation object and with parentPropagation object",
+			function(assert) {
+				var aParentRelevantContainerPropagation = [ _createRelevantContainerObject(true, this.oPage) ];
+				var oNewRelevantContainerPropagation = _createRelevantContainerObject(true, this.oButton);
+				assert.strictEqual(this.oDesigntimeMetadata.getData().propagateRelevantContainer, undefined,
+					"then before '_propagateRelevantContainerObj' is called, data of designtime metadata is undefined");
+				assert.strictEqual(this.oOverlay._propagateRelevantContainerObj(this.oDesigntimeMetadata, oNewRelevantContainerPropagation, aParentRelevantContainerPropagation),
+					true,
+					"then '_propagateRelevantContainerObj' should return true");
+				assert.deepEqual(this.oDesigntimeMetadata.getData().propagateRelevantContainer.length, 2,
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains 2 objects");
+				assert.deepEqual(this.oDesigntimeMetadata.getData().propagateRelevantContainer[0], aParentRelevantContainerPropagation[0],
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains the parentRelevantContainer object");
+				assert.deepEqual(this.oDesigntimeMetadata.getData().propagateRelevantContainer[1], oNewRelevantContainerPropagation,
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains also the oNewRelevantContainerPropagation object");
+			});
+
+			QUnit.test("when '_propagateRelevantContainerObj' is called without new relevantContainerPropagation object and with parentPropagation object",
+			function(assert) {
+				var aParentRelevantContainerPropagation = [ _createRelevantContainerObject(true, this.oPage) ];
+				assert.strictEqual(this.oOverlay._propagateRelevantContainerObj(this.oDesigntimeMetadata, null, aParentRelevantContainerPropagation),
+					true,
+					"then '_propagateRelevantContainerObj' should return true");
+				assert.deepEqual(this.oDesigntimeMetadata.getData().propagateRelevantContainer.length, 1,
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains 1 objects");
+				assert.deepEqual(this.oDesigntimeMetadata.getData().propagateRelevantContainer[0], aParentRelevantContainerPropagation[0],
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains only the parentRelevantContainer object");
+			});
+
+			QUnit.module("Given that an Overlay is created with 'propagateRelevantContainer' as function in the designtime Metadata", {
+				beforeEach : function(assert) {
+					this.fnPropagateRelevantContainer = function() {
+						return true;
+					};
+					this.oMetadata = _buildMetadataObject({ propagateRelevantContainer: this.fnPropagateRelevantContainer });
+					this.oPage = new sap.m.Page();
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata(this.oMetadata),
+						element: this.oPage
+					});
+					this.oOverlay.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when overlay is created and without parent overlay",
+			function(assert) {
+				var oContentAggregation = this.oOverlay.getAggregationOverlay("content");
+				var oContentDesignTimeMetadata = oContentAggregation.getDesignTimeMetadata();
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer.length, 1,
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains 1 objects");
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer[0].propagationFunction, this.fnPropagateRelevantContainer,
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains relevantContainer propagation function");
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer[0].propagateRelevantContainerElement, this.oPage,
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains relevantContainer propagation element");
+			});
+
+			QUnit.module("Given that an 'Overlay' and parent overlay is created", {
+				beforeEach : function(assert) {
+					this.oAggOverlay = new sap.ui.dt.AggregationOverlay({
+						aggregationName: "content",
+						designTimeMetadata : new sap.ui.dt.AggregationDesignTimeMetadata({})
+					});
+
+					this.oVerticalLayout = new sap.ui.layout.VerticalLayout("layout1");
+
+					this.oElemOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata: new sap.ui.dt.ElementDesignTimeMetadata({})
+					});
+				},
+				afterEach : function() {
+					this.oAggOverlay.destroy();
+					this.oVerticalLayout.destroy();
+					this.oElemOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when '_addRelevantContainerElement' is called without related parent overlay", function(assert) {
+				this.oElemOverlay.setParent(this.oVerticalLayout);
+				assert.strictEqual(this.oElemOverlay._addRelevantContainerElement({}), false,
+					"then no relevant container added to the element");
+			});
+
+			QUnit.test("when '_addRelevantContainerElement' is called having parent without designTime", function(assert) {
+				this.oElemOverlay.setParent(this.oVerticalLayout);
+				assert.strictEqual(this.oElemOverlay._addRelevantContainerElement({}), false,
+					"then no relevant container added to the element");
+			});
+
+			QUnit.test("when '_addRelevantContainerElement' is called having parent without propagationContainer in designTime", function(assert) {
+				this.oElemOverlay.setParent(this.oAggOverlay);
+				var oDesigntimeMetadata = this.oElemOverlay.getDesignTimeMetadata();
+				assert.strictEqual(this.oElemOverlay._addRelevantContainerElement(oDesigntimeMetadata), false,
+					"then 'false' should return");
+				assert.strictEqual(oDesigntimeMetadata.getData().relevantContainer, undefined,
+					"then no 'relevant container' should be set");
+			});
+
+			QUnit.module("Given that an 'Overlay' and parent overlay with valid propagation container information is created ", {
+				beforeEach : function(assert) {
+					this.oVerticalLayout = new sap.ui.layout.VerticalLayout("layout1");
+					var mData = {
+						propagateRelevantContainer: [
+							{
+								propagateRelevantContainerElement: this.oVerticalLayout,
+								propagationFunction: function (oElement) {
+									return true;
+								}
+							}
+						]
+					};
+					this.oAggOverlay = new sap.ui.dt.AggregationOverlay({
+						aggregationName: "content",
+						designTimeMetadata: new sap.ui.dt.AggregationDesignTimeMetadata({ data: mData }),
+						element: this.oVerticalLayout
+					});
+
+					this.oElemOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata: new sap.ui.dt.ElementDesignTimeMetadata({})
+					});
+					
+					this.oElemOverlay.setParent(this.oAggOverlay);
+				},
+				afterEach : function() {
+					this.oAggOverlay.destroy();
+					this.oVerticalLayout.destroy();
+					this.oElemOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when '_addRelevantContainerElement' is called", function(assert) {
+				var oDesigntimeMetadata = this.oElemOverlay.getDesignTimeMetadata();
+				assert.strictEqual(this.oElemOverlay._addRelevantContainerElement(oDesigntimeMetadata), true,
+					"then 'true' should be returned");
+				assert.strictEqual(oDesigntimeMetadata.getData().relevantContainer, this.oVerticalLayout,
+					"then related 'relevant container' should be set");
+			});
+
+			QUnit.test("when '_addRelevantContainerElement' with incomplete relevant container information is called", function(assert) {
+				var oDesigntimeMetadata = this.oElemOverlay.getDesignTimeMetadata();
+				var oRelevantContainer = this.oAggOverlay.getDesignTimeMetadata().getData().propagateRelevantContainer;
+				delete oRelevantContainer[0].propagationFunction;
+				assert.strictEqual(this.oElemOverlay._addRelevantContainerElement(oDesigntimeMetadata), false,
+					"then 'false' should be returned");
+				assert.strictEqual(oDesigntimeMetadata.getData().relevantContainer, undefined,
+					"then related 'relevant container' should be set");
+			});
+
+			function _createRelevantContainerMetadata(sInstanceOf) {
+				return {
+					propagateRelevantContainer: function (oElement) {
+						var sType = oElement.getMetadata().getName();
+						if (sType === sInstanceOf) {
+							return true;
+						}
+						return false;
+					}
+				}
+			}
+
+			QUnit.module("Given that an complex text have been created with different relevant container propagations in the designtime Metadata", {
+				beforeEach : function(assert) {
+					this.oMetadataForToolbar = _createRelevantContainerMetadata("sap.m.Toolbar");
+					this.oMetadataForButton = _createRelevantContainerMetadata("sap.m.Button");
+					
+					var oPageMetadata = _buildMetadataObject(this.oMetadataForToolbar);
+					var oVerticalLayoutMetadata = _buildMetadataObject(this.oMetadataForButton);
+					var oEmptyMetadata = _buildMetadataObject({});
+
+					this.oButton1 = new sap.m.Button("button1");
+					this.oButton2 = new sap.m.Button("button2");
+					this.oText = new sap.m.Text("text1");
+					this.oToolbar = new sap.m.Toolbar("toolbar1", {
+						content: [this.oButton1, this.oText]
+					});
+					this.oVerticalLayout = new sap.ui.layout.VerticalLayout("layout", {
+						content: [this.oToolbar, this.oButton2]
+					});
+					this.oPage = new sap.m.Page({
+						content: [this.oVerticalLayout]
+					}).placeAt("content");
+
+					sap.ui.getCore().applyChanges();
+
+					var fnLoadDtMetadataStub = sandbox.stub(sap.ui.dt.ElementUtil, "loadDesignTimeMetadata");
+					fnLoadDtMetadataStub.withArgs(this.oPage).returns(Promise.resolve(oPageMetadata.data));
+					fnLoadDtMetadataStub.withArgs(this.oVerticalLayout).returns(Promise.resolve(oVerticalLayoutMetadata.data));
+					fnLoadDtMetadataStub.withArgs(this.oToolbar).returns(Promise.resolve(oEmptyMetadata.data));
+					fnLoadDtMetadataStub.withArgs(this.oText).returns(Promise.resolve(oEmptyMetadata.data));
+					fnLoadDtMetadataStub.withArgs(this.oButton1).returns(Promise.resolve(oEmptyMetadata.data));
+					fnLoadDtMetadataStub.withArgs(this.oButton2).returns(Promise.resolve(oEmptyMetadata.data));
+
+					this.oDesignTime = new sap.ui.dt.DesignTime({
+						rootElements : [this.oPage]
+					});
+
+					var done = assert.async();
+
+					this.oDesignTime.attachEventOnce("synced", function() {
+						this.oPageOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oPage);
+						this.oVerticalLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oVerticalLayout);
+						this.oTextOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oText);
+						this.oToolbarOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oToolbar);
+						this.oButton1Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1);
+						this.oButton2Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton2);
+						done();
+					}.bind(this));
+				},
+				afterEach : function() {
+					this.oButton1Overlay.destroy();
+					this.oButton2Overlay.destroy();
+					this.oTextOverlay.destroy();
+					this.oToolbarOverlay.destroy();
+					this.oVerticalLayoutOverlay.destroy();
+					this.oPage.destroy();
+					this.oDesignTime.destroy();
+					sandbox.restore();
+				}
+			});
+
+			QUnit.test("when page overlay is created",
+			function(assert) {
+				var oContentAggregationOverlay = this.oPageOverlay.getAggregationOverlay("content");
+				var oContentDesignTimeMetadata = oContentAggregationOverlay.getDesignTimeMetadata();
+				var oElementDesignTimeMetadata = this.oPageOverlay.getDesignTimeMetadata();
+				assert.deepEqual(oElementDesignTimeMetadata.getData().relevantContainer, undefined,
+					"then there is no propagated relevantContainer");
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer.length, 2,
+					"then the 'content' aggregation overlay contains one propagateRelevantContainer");
+			});
+
+			QUnit.test("when verticalLayout overlay is created",
+			function(assert) {
+				var oContentAggregationOverlay = this.oVerticalLayoutOverlay.getAggregationOverlay("content");
+				var oContentDesignTimeMetadata = oContentAggregationOverlay.getDesignTimeMetadata();
+				var oElementDesignTimeMetadata = this.oVerticalLayoutOverlay.getDesignTimeMetadata();
+				assert.deepEqual(oElementDesignTimeMetadata.getData().relevantContainer, undefined,
+					"then there is no propagated relevantContainer");
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer.length, 2,
+					"then the 'content' aggregation overlay contains two propagateRelevantContainer");
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer[0].propagationFunction,
+					this.oMetadataForToolbar.propagateRelevantContainer,
+					"then the 'content' aggregation overlay first propagateRelevantContainer contains the correct function");
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer[1].propagationFunction,
+					this.oMetadataForButton.propagateRelevantContainer,
+					"then the 'content' aggregation overlay second propagateRelevantContainer contains the correct function");
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer[0].propagateRelevantContainerElement,
+					this.oPage,
+					"then the 'contetn' aggregation overlay first propagateRelevantContainer contains the correct element");
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer[1].propagateRelevantContainerElement,
+					this.oVerticalLayout,
+					"then the 'contetn' aggregation overlay second propagateRelevantContainer contains the correct element");
+			});
+
+			QUnit.test("when toolbar overlay is created",
+			function(assert) {
+				var oElementDesignTimeMetadata = this.oToolbarOverlay.getDesignTimeMetadata();
+				assert.deepEqual(oElementDesignTimeMetadata.getData().relevantContainer, this.oPage,
+					"then it contains the correct element");
+			});
+
+			QUnit.test("when text overlay is created",
+			function(assert) {
+				var oContentDesignTimeMetadata = this.oTextOverlay.getDesignTimeMetadata();
+				assert.deepEqual(oContentDesignTimeMetadata.getData().relevantContainer, undefined,
+					"then there is no propagated relevantContainer");
+			});
+
+			QUnit.test("when button overlays are created",
+			function(assert) {
+				var oElementDesignTimeMetadata = this.oButton1Overlay.getDesignTimeMetadata();
+				assert.deepEqual(oElementDesignTimeMetadata.getData().relevantContainer, this.oVerticalLayout,
+					"then the button1 contains the correct element");
+				oElementDesignTimeMetadata = this.oButton2Overlay.getDesignTimeMetadata();
+				assert.deepEqual(oElementDesignTimeMetadata.getData().relevantContainer, this.oVerticalLayout,
+					"then the button2 contains the correct element");
 			});
 
 		</script>

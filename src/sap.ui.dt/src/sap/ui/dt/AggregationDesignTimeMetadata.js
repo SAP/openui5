@@ -50,5 +50,21 @@ function (jQuery, DesignTimeMetadata) {
 		}
 	};
 
+	AggregationDesignTimeMetadata.prototype.getRelevantContainerForPropagation = function(oElement) {
+		var mData = this.getData();
+		var vRelevantContainerElement = false;
+		if (!mData.propagateRelevantContainer) {
+			return false;
+		}
+		mData.propagateRelevantContainer.some(function(oPropagatedObj){
+			if (oPropagatedObj.propagationFunction &&
+				oPropagatedObj.propagationFunction(oElement)) {
+				vRelevantContainerElement = oPropagatedObj.propagateRelevantContainerElement;
+				return true;
+			}
+		});
+		return vRelevantContainerElement;
+	};
+
 	return AggregationDesignTimeMetadata;
 }, /* bExport= */ true);
