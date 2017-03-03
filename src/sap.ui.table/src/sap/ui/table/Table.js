@@ -1919,8 +1919,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._updateVSbRange();
 		this._bBindingLengthChanged = true;
 
-		if (sReason !== ChangeReason.Filter &&
-			sReason !== ChangeReason.Sort &&
+		if (sReason !== ChangeReason.Sort &&
 			sReason !== ChangeReason.Refresh) {
 
 			// In order to have less UI updates, the NoData text should not be updated when the reason is filter, sort or refresh.
@@ -3898,6 +3897,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (oBinding) {
 			oBinding.detachDataRequested(this._onBindingDataRequestedListener);
 			oBinding.attachDataRequested(this._onBindingDataRequestedListener, this);
+			oBinding.detachDataReceived(this._onBindingDataReceivedListener);
+			oBinding.attachDataReceived(this._onBindingDataReceivedListener, this);
 		}
 	};
 
@@ -3908,6 +3909,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._onBindingDataRequestedListener = function (oEvent) {
 		if (oEvent.getSource() == this.getBinding("rows") && !oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
 			this._bDataRequested = true;
+		}
+	};
+
+	/**
+	 *
+	 * @private
+	 */
+	Table.prototype._onBindingDataReceivedListener = function (oEvent) {
+		if (oEvent.getSource() == this.getBinding("rows") && !oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
+			this._bDataRequested = false;
 		}
 	};
 
