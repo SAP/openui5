@@ -1,8 +1,10 @@
-﻿sinon.config.useFakeTimers = false;
+﻿/*globals QUnit*/
+sinon.config.useFakeTimers = false;
 jQuery.sap.require("sap.ui.fl.registry.Settings");
 jQuery.sap.require("sap.ui.fl.Cache");
 
 (function(Settings, Cache) {
+	"use strict";
 
 	var bPresetFlexChangeMode, bFlexibilityAdaptationButtonAllowed;
 
@@ -116,7 +118,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 				"sap-ui-fl-changeMode": ["true"]
 			}
 		};
-		var getUriParametersStub = this.stub(jQuery.sap, "getUriParameters").returns(oUriParams);
+		this.stub(jQuery.sap, "getUriParameters").returns(oUriParams);
 		bFlexChangeMode = Settings._isFlexChangeModeFromUrl();
 		QUnit.equal(bFlexChangeMode, true);
 		oUriParams.mParams["sap-ui-fl-changeMode"] = ["false"];
@@ -224,19 +226,6 @@ jQuery.sap.require("sap.ui.fl.Cache");
 		sap.ui.fl.registry.Settings.setFlexibilityAdaptationButtonAllowed(true);
 		Settings.attachEvent(sap.ui.fl.registry.Settings.events.flexibilityAdaptationButtonAllowedChanged, fOnChangeModeUpdated.bind(this));
 		sap.ui.fl.registry.Settings.setFlexibilityAdaptationButtonAllowed(false);
-	});
-
-	QUnit.test("isChangeTypeEnabled", function(assert) {
-		QUnit.equal(this.cut.isChangeTypeEnabled("addField", "CUSTOMER"), true);
-		QUnit.equal(this.cut.isChangeTypeEnabled("addField", "VENDOR"), true);
-		QUnit.equal(this.cut.isChangeTypeEnabled("addField", "USER"), false);
-		QUnit.equal(this.cut.isChangeTypeEnabled("unknownChangeType", "CUSTOMER"), true);
-		QUnit.equal(this.cut.isChangeTypeEnabled("changeTypeOnlyForUser", "USER"), true);
-		QUnit.equal(this.cut.isChangeTypeEnabled("changeTypeOnlyForUser", "VENDOR"), false);
-		QUnit.equal(this.cut.isChangeTypeEnabled("completelyDisabledChangeType", "VENDOR"), false);
-		QUnit.equal(this.cut.isChangeTypeEnabled("completelyDisabledChangeType", "CUSTOMER"), false);
-		QUnit.equal(this.cut.isChangeTypeEnabled("completelyDisabledChangeType", "USER"), false);
-		QUnit.equal(this.cut.isChangeTypeEnabled("changeTypeOnlyForUser"), true);
 	});
 
 }(sap.ui.fl.registry.Settings, sap.ui.fl.Cache));
