@@ -33,7 +33,6 @@
 				multiple="true"
 				sameFilenameAllowed="true"
 				instantUpload="false"
-				showSeparators="All"
 				change="onChange"
 				fileDeleted="onFileDeleted"
 				filenameLengthExceed="onFilenameLengthExceed"

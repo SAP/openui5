@@ -14,7 +14,7 @@
 		<NumericContent size="S" scale="M" value="0.21" valueColor="Error" indicator="Down" press="press" />
 	</HeaderContainer>
 
-	<HeaderContainer scrollStep="200" scrollTime="500" orientation="Vertical" height="400px">
+	<HeaderContainer scrollStep="200" orientation="Vertical" height="400px">
 		<TileContent unit="EUR" footer="Current Quarter">
 			<content>
 				<NumericContent value="1.96" valueColor="Error" indicator="Down" press="press"/>

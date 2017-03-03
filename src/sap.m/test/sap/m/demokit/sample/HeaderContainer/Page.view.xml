@@ -3,7 +3,7 @@
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc">
-	<HeaderContainer scrollStep="200" scrollTime="500" showDividers="true">
+	<HeaderContainer scrollStep="200">
 		<NumericContent size="S" scale="M" value="1.75" valueColor="Good" indicator="Up" press="press" />
 		<NumericContent size="S" scale="M" value="0.57" valueColor="Error" indicator="Down" press="press" />
 		<NumericContent value="1762" icon="sap-icon://line-charts"/>
@@ -14,7 +14,7 @@
 		<NumericContent size="S" scale="M" value="0.73" valueColor="Error" indicator="Down" press="press" />
 	</HeaderContainer>
 
-	<HeaderContainer scrollStep="200" scrollTime="500" showDividers="true">
+	<HeaderContainer scrollStep="200">
 		<TileContent unit="EUR" footer="Current Quarter">
 			<content>
 				<NumericContent value="1.96" valueColor="Error" indicator="Down" press="press"/>

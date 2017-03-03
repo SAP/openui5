@@ -28,7 +28,6 @@
 			</OverflowToolbar>
 			<UploadCollection
 				id="UploadCollection"
-				showSeparators="All"
 				items="{path : '/items', templateShareable : 'true'}">
 				<toolbar>
 					<OverflowToolbar id="myId">
