@@ -463,7 +463,7 @@ sap.ui.require(["sap/ui/fl/context/ContextManager", "sap/ui/fl/Change", "sap/ui/
 
 		ContextManager.createOrUpdateContextObject(oPropertyBag);
 
-		assert.ok(oLrepConnectorSendStub.calledOnce, "the sending was initiated");
+		assert.ok(oLrepConnectorSendStub.calledOnce, "sending was initiated");
 		var oCallArguments = oLrepConnectorSendStub.getCall(0).args;
 		assert.equal(oCallArguments[0], sExpectedUrl, "the url was build correct");
 		assert.equal(oCallArguments[1], "PUT", "the backend operation should be a writing");
@@ -493,7 +493,7 @@ sap.ui.require(["sap/ui/fl/context/ContextManager", "sap/ui/fl/Change", "sap/ui/
 
 		ContextManager.createOrUpdateContextObject(oPropertyBag);
 
-		assert.ok(oLrepConnectorSendStub.calledOnce, "the sending was initiated");
+		assert.ok(oLrepConnectorSendStub.calledOnce, "sending was initiated");
 		var oPayLoad = oLrepConnectorSendStub.getCall(0).args[2];
 		assert.equal(oPayLoad.title, sTitle, "the title was passed");
 		assert.equal(oPayLoad.description, sDescription, "the description was passed");
@@ -519,7 +519,7 @@ sap.ui.require(["sap/ui/fl/context/ContextManager", "sap/ui/fl/Change", "sap/ui/
 
 		ContextManager.createOrUpdateContextObject(oPropertyBag);
 
-		assert.ok(oLrepConnectorSendStub.calledOnce, "the sending was initiated");
+		assert.ok(oLrepConnectorSendStub.calledOnce, "sending was initiated");
 		var oPayLoad = oLrepConnectorSendStub.getCall(0).args[2];
 		assert.equal(oPayLoad.validAppVersions.creation, sCreation, "the creation app version was passed");
 		assert.equal(oPayLoad.validAppVersions.from, sFrom, "the from app version was passed");
