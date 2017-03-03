@@ -304,7 +304,7 @@ sap.ui.require([
 		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(undefined, mParameters, true)
 			.returns(mQueryOptions);
-		this.mock(oBinding).expects("reset").withExactArgs(undefined, true);
+		this.mock(oBinding).expects("reset").withExactArgs(undefined);
 
 		//Stub is needed to test, if mCacheByContext is set to undefined before fetchCache is called
 		oBinding.mCacheByContext = {
@@ -357,7 +357,7 @@ sap.ui.require([
 			.withExactArgs(undefined, mParameters, true).returns(mQueryOptions);
 		this.mock(oBinding).expects("fetchCache")
 			.withExactArgs(sinon.match.same(oBinding.oContext));
-		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Change, true);
+		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Change);
 
 		//code under test
 		oBinding.applyParameters(mParameters, ChangeReason.Change);
@@ -460,7 +460,7 @@ sap.ui.require([
 		this.mock(oCountBinding2).expects("checkUpdate").withExactArgs();
 
 		// code under test
-		oBinding.reset(ChangeReason.Change, true);
+		oBinding.reset(ChangeReason.Change);
 	});
 
 	//*********************************************************************************************
@@ -561,7 +561,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getPath(), "/EMPLOYEES");
 		assert.deepEqual(oBinding.mParameters, mParameters);
 		assert.strictEqual(oBinding.mQueryOptions, mQueryOptions);
-		assert.ok(ODataListBinding.prototype.reset.calledWithExactly(undefined, true));
+		assert.ok(ODataListBinding.prototype.reset.calledWithExactly(undefined));
 		assert.strictEqual(oBinding.hasOwnProperty("sChangeReason"), true);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
 		assert.deepEqual(oBinding.oDiff, undefined);
@@ -1493,7 +1493,7 @@ sap.ui.require([
 			that.mock(that.oModel).expects("getDependentBindings")
 				.withExactArgs(sinon.match.same(oBinding))
 				.returns([oChild0, oChild1]);
-			that.mock(oChild0).expects("refreshInternal").withExactArgs("myGroup");
+			that.mock(oChild0).expects("refreshInternal").withExactArgs("myGroup", false);
 			that.mock(oChild1).expects("refreshInternal").never();
 
 			//code under test
@@ -2012,7 +2012,7 @@ sap.ui.require([
 			assert.ok(_Helper.toArray.calledWithExactly(oFixture.vSorters));
 			assert.strictEqual(oBinding.mCacheByContext, undefined);
 			assert.ok(oBinding.reset.calledWithExactly(), "from setContext");
-			assert.ok(oBinding.reset.calledWithExactly(ChangeReason.Sort, true), "from sort");
+			assert.ok(oBinding.reset.calledWithExactly(ChangeReason.Sort), "from sort");
 		});
 	});
 
@@ -2077,7 +2077,7 @@ sap.ui.require([
 			oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
 			this.mock(_Helper).expects("toArray").withExactArgs(sinon.match.same(oFilter))
 				.returns(aFilters);
-			oBindingMock.expects("reset").on(oBinding).withExactArgs(ChangeReason.Filter, true);
+			oBindingMock.expects("reset").on(oBinding).withExactArgs(ChangeReason.Filter);
 
 			// Code under test
 			assert.strictEqual(oBinding.filter(oFilter, sFilterType), oBinding, "chaining");
@@ -2902,8 +2902,6 @@ sap.ui.require([
 					oDependent0 = {checkUpdate : function () {}},
 					oDependent1 = {checkUpdate : function () {}};
 
-				this.mock(oBinding).expects("_fireChange")
-					.withExactArgs({reason: ChangeReason.Change});
 				this.mock(oBinding.oModel).expects("getDependentBindings")
 					.withExactArgs(sinon.match.same(oBinding))
 					.returns([oDependent0, oDependent1]);
@@ -2932,8 +2930,6 @@ sap.ui.require([
 			oDependent0 = {checkUpdate : function () {}},
 			oDependent1 = {checkUpdate : function () {}};
 
-		this.mock(oBinding).expects("_fireChange")
-			.withExactArgs({reason: ChangeReason.Change});
 		this.mock(oBinding.oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oBinding))
 			.returns([oDependent0, oDependent1]);

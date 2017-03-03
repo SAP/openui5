@@ -148,7 +148,7 @@ sap.ui.require([
 		this.mock(oBinding).expects("isRefreshable").withExactArgs().returns(true);
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
 		this.mock(oBinding.oModel).expects("checkGroupId");
-		this.mock(oBinding).expects("refreshInternal").withExactArgs("groupId");
+		this.mock(oBinding).expects("refreshInternal").withExactArgs("groupId", true);
 
 		oBinding.refresh("groupId");
 	});

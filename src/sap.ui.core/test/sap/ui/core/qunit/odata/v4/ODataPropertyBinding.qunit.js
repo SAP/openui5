@@ -1321,9 +1321,12 @@ sap.ui.require([
 		oBindingMock.expects("checkUpdate").withExactArgs(true, ChangeReason.Refresh, "myGroup");
 
 		// code under test
-		oBinding.refreshInternal("myGroup");
+		oBinding.refreshInternal("myGroup", true);
 
-		assert.strictEqual(ODataPropertyBinding.prototype.fetchCache.callCount, 2);
+		// code under test
+		oBinding.refreshInternal("myGroup", false);
+
+		assert.strictEqual(ODataPropertyBinding.prototype.fetchCache.callCount, 3);
 	});
 
 	//*********************************************************************************************

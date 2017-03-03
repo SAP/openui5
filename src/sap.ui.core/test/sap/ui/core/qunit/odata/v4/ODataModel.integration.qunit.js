@@ -576,10 +576,6 @@ sap.ui.require([
 						{"Name" : "Peter Burke"}
 					]
 				})
-				.expectChange("name", ["Frederic Fall", "Peter Burke"])
-//TODO property bindings fire *two* change events from ODPB#checkUpdate: One triggered by
-// ODLB#createContexts, the second triggered by ODLB#refreshInternal where dependent bindings
-// are refreshed
 				.expectChange("name", ["Frederic Fall", "Peter Burke"]);
 
 			// code under test
@@ -602,9 +598,6 @@ sap.ui.require([
 
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest("EMPLOYEES('2')", {"Name" : "Jonathan Smith"})
-//TODO Analyze why the property binding fires *three* change events
-				.expectChange("text", null)
-				.expectChange("text", "Jonathan Smith")
 				.expectChange("text", "Jonathan Smith");
 
 			// code under test
@@ -921,17 +914,18 @@ sap.ui.require([
 				"SalesOrderID" : "0500000001",
 				"SO_2_SOITEM" : [
 					{"ItemPosition" : "0000000010"},
-					{"ItemPosition" : "0000000020"}
+					{"ItemPosition" : "0000000020"},
+					{"ItemPosition" : "0000000030"}
 				]
 			})
 			.expectChange("count")
-			.expectChange("item", ["0000000010", "0000000020"]);
+			.expectChange("item", ["0000000010", "0000000020", "0000000030"]);
 
 		return this.createView(assert, sView, createSalesOrdersModel()
 		).then(function () {
 			var oCount = that.oView.byId("count");
 
-			that.expectChange("count", "2");
+			that.expectChange("count", "3");
 
 			// code under test
 			that.oView.setModel(that.oView.getModel(), "headerContext");
@@ -948,11 +942,12 @@ sap.ui.require([
 					"SalesOrderList('0500000001')?$expand=SO_2_SOITEM($select=ItemPosition)", {
 						"SalesOrderID" : "0500000001",
 						"SO_2_SOITEM" : [
-							{"ItemPosition" : "0000000010"}
+							{"ItemPosition" : "0000000010"},
+							{"ItemPosition" : "0000000030"}
 						]
 					})
-				.expectChange("count", "1")
-				.expectChange("item", ["0000000010"]);
+				.expectChange("count", "2")
+				.expectChange("item", "0000000030", 1);
 
 			// code under test
 			that.oView.byId("form").getObjectBinding().refresh();
@@ -1003,9 +998,6 @@ sap.ui.require([
 			that.expectRequest("EMPLOYEES('2')?$select=AGE,Name", {
 					"Name" : "Jonathan Schmidt"
 				})
-// TODO unexpected changes
-				.expectChange("name", null)
-				.expectChange("name", "Jonathan Schmidt")
 				.expectChange("name", "Jonathan Schmidt");
 
 			// code under test
