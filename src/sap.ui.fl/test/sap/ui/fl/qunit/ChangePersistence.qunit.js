@@ -5,11 +5,9 @@ jQuery.sap.require("sap.ui.fl.Change");
 jQuery.sap.require("sap.ui.fl.LrepConnector");
 jQuery.sap.require("sap.ui.core.Control");
 jQuery.sap.require("sap.ui.fl.Cache");
-jQuery.sap.require("sap.ui.layout.VerticalLayout");
-jQuery.sap.require("sap.ui.layout.HorizontalLayout");
-jQuery.sap.require("sap.m.Button");
+jQuery.sap.require("sap.ui.fl.registry.Settings");
 
-(function (utils, ChangePersistence, Control, Change, LrepConnector, Cache, VerticalLayout, Button, HorizontalLayout) {
+(function (Utils, ChangePersistence, Control, Change, LrepConnector, Cache, Settings) {
 	"use strict";
 	sinon.config.useFakeTimers = false;
 
@@ -174,24 +172,42 @@ jQuery.sap.require("sap.m.Button");
 		});
 	});
 
-	QUnit.test("loadChangesMapForComponent shall return the a map of changes for the component", function(assert) {
+	QUnit.test("getChangesForComponent shall also pass the returned data to the fl.Settings", function(assert) {
+		var sComponentName = this.sComponentName;
+		var oFileContent = {};
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFileContent));
+		var oSettingsStoreInstanceStub = this.stub(Settings, "_storeInstance");
+
+
+		return this.oChangePersistence.getChangesForComponent().then(function() {
+			assert.ok(oSettingsStoreInstanceStub.calledOnce, "the _storeInstance function of the fl.Settings was called.");
+			var aPassedArguments = oSettingsStoreInstanceStub.getCall(0).args;
+			assert.equal(aPassedArguments[0], sComponentName, "the component name was passed to the function");
+			assert.equal(aPassedArguments[1], oFileContent, "the file content was passed to the function");
+		});
+	});
+
+	QUnit.test("loadChangesMapForComponent shall return a map of changes for the component", function(assert) {
 
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 			{
 				fileName:"change1",
 				fileType: "change",
+				layer: "USER",
 				selector: { id: "controlId" },
 				dependentSelector: []
 			},
 			{
 				fileName:"change2",
 				fileType: "change",
+				layer: "VENDOR",
 				selector: { id: "controlId" },
 				dependentSelector: []
 			},
 			{
 				fileName:"change3",
 				fileType: "change",
+				layer: "CUSTOMER",
 				selector: { id: "anotherControlId" },
 				dependentSelector: []
 			}
@@ -696,4 +712,4 @@ jQuery.sap.require("sap.m.Button");
 		}.bind(this));
 	});
 
-}(sap.ui.fl.Utils, sap.ui.fl.ChangePersistence, sap.ui.core.Control, sap.ui.fl.Change, sap.ui.fl.LrepConnector, sap.ui.fl.Cache, sap.ui.layout.VerticalLayout, sap.m.Button, sap.ui.layout.HorizontalLayout));
+}(sap.ui.fl.Utils, sap.ui.fl.ChangePersistence, sap.ui.core.Control, sap.ui.fl.Change, sap.ui.fl.LrepConnector, sap.ui.fl.Cache, sap.ui.fl.registry.Settings));

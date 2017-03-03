@@ -12,7 +12,9 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 
 	QUnit.module("sap.ui.fl.Change", {
 		beforeEach: function() {
+			this.ushellStore = sap.ushell; // removes the lib for a pure OpenUI5 testing
 			this.oControl = {};
+			this.sUserId = "cookieMonster";
 			this.oChangeDef = {
 				fileName: "0815_1",
 				namespace: "apps/smartFilterBar/changes/",
@@ -35,7 +37,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 				originalLanguage: "DE",
 				support: {
 					generator: "Dallas beta 1",
-					user: "cookie monster"
+					user: this.sUserId
 				},
 				dependentSelector: {
 					source: {
@@ -52,6 +54,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			sandbox.stub(Utils, "getCurrentLayer").returns("VENDOR");
 		},
 		afterEach: function() {
+			 sap.ushell = this.ushellStore;
 			sandbox.restore();
 		}
 	});
@@ -252,7 +255,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			conditions: {},
 			support: {
 				generator: "Dallas beta 1",
-				user: "cookie monster"
+				user: this.sUserId
 			}
 		};
 
@@ -342,14 +345,14 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.strictEqual(oChange._isReadOnlyWhenNotKeyUser(), true);
 	});
 
-	QUnit.test("_isReadOnlyWhenNotKeyUser shall return false, if key user", function(assert) {
+	QUnit.test("_isReadOnlyWhenNotKeyUser shall return false if key user", function(assert) {
 		var oChange = new Change(this.oChangeDef); //shared change
 
 		sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({isKeyUser: true}));
 		assert.strictEqual(oChange._isReadOnlyWhenNotKeyUser(), false);
 	});
 
-	QUnit.test("_isReadOnlyWhenNotKeyUser shall return false, if not key user but user dependant", function(assert) {
+	QUnit.test("_isReadOnlyWhenNotKeyUser shall return false if not key user but user dependent", function(assert) {
 		var oChange = new Change(this.oChangeDef); //shared change
 
 		//make change user dependent. In this case the method should never return true
@@ -359,7 +362,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.strictEqual(oChange._isReadOnlyWhenNotKeyUser(), false);
 	});
 
-	QUnit.test("_isReadOnlyWhenNotKeyUser shall return false, if key user and user dependant", function(assert) {
+	QUnit.test("_isReadOnlyWhenNotKeyUser shall return false if key user and user dependent", function(assert) {
 		var oChange = new Change(this.oChangeDef); //shared change
 
 		//make change user dependent. In this case the method should never return true
@@ -367,6 +370,16 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 
 		sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({isKeyUser: true}));
 		assert.strictEqual(oChange._isReadOnlyWhenNotKeyUser(), false);
+	});
+
+	QUnit.test("_isReadOnlyWhenNotKeyUser shall return true if the user id cannot be determined", function(assert) {
+		var oChange = new Change(this.oChangeDef); //shared change
+
+		//make change user dependent. In this case the method should never return true
+		sandbox.stub(oChange, 'isUserDependent').returns(false);
+		sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({isKeyUser: false}));
+
+		assert.strictEqual(oChange._isReadOnlyWhenNotKeyUser(), true);
 	});
 
 	QUnit.test("addDependentControl raises error when alias already exists", function(assert) {
