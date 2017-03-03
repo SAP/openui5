@@ -10,13 +10,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	/**
 	 * @private
 	 */
-	var SelectionDetailsListItem = ListItemBase.extend("sap.m.SelectionDetailsListItem", {
-		renderer: "sap.m.SelectionDetailsItemRenderer"
-	});
+	var SelectionDetailsListItem = ListItemBase.extend("sap.m.SelectionDetailsListItem");
 
 	SelectionDetailsListItem.prototype.onBeforeRendering = function() {
 		var sType;
-		if (this._getData().getNavigationEnabled()) {
+		if (this._getData().getEnableNav()) {
 			sType = library.ListType.Navigation;
 		} else {
 			sType = library.ListType.Inactive;
@@ -25,7 +23,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	};
 
 
-		/**
+	/**
 	 * Constructor for a new SelectionDetailsItem.
 	 *
 	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
@@ -33,7 +31,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	 *
 	 * @class
 	 * This Element provides an item for {@link sap.m.SelectionDetails} that is shown inside a list.
-	 * The item includes SelectionDetailsItemField as its fields that are displayed in one block above the optional actions.
+	 * The item includes SelectionDetailsItemLine as its lines that are displayed in one block above the optional actions.
 	 * It is intended to be used only in the sap.m.SelectionDetails control.
 	 *
 	 * @extends sap.ui.core.Element
@@ -42,7 +40,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
 	 * @alias sap.m.SelectionDetailsItem
 	 * @experimental Since 1.48 This control is still under development and might change at any point in time.
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -54,14 +52,14 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 				/**
 				 * Determines whether or not the item is active and a navigation event is triggered on press.
 				 */
-				navigationEnabled: { type: "boolean", defaultValue: false, group: "Behavior" }
+				enableNav: { type: "boolean", defaultValue: false, group: "Behavior" }
 			},
 			aggregations: {
 				/**
 				 * Contains a record of information about, for example, measures and dimensions.
 				 * These entries are usually obtained via selection in chart controls.
 				 */
-				fields: { type: "sap.m.SelectionDetailsItemField", multiple: true, bindable: "bindable" },
+				lines: { type: "sap.m.SelectionDetailsItemLine", multiple: true, bindable: "bindable" },
 
 				/**
 				 * Contains custom actions shown below the main content of the item.

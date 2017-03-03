@@ -33,7 +33,7 @@
 	});
 
 	QUnit.test("Default value of property navigationEnabled", function(assert) {
-		assert.equal(this.oItem.getNavigationEnabled(), false, "Default value is correct.");
+		assert.equal(this.oItem.getEnableNav(), false, "Default value is correct.");
 	});
 
 
@@ -85,17 +85,17 @@
 	QUnit.module("Rendering", {
 		beforeEach: function() {
 			this.oItem = new sap.m.SelectionDetailsItem({
-				fields: [
-					new sap.m.SelectionDetailsItemField({
+				lines: [
+					new sap.m.SelectionDetailsItemLine({
 						label: "My Label",
 						value: "100"
 					}),
-					new sap.m.SelectionDetailsItemField({
-						label: "Fancy field",
+					new sap.m.SelectionDetailsItemLine({
+						label: "Fancy line",
 						value: "200",
 						unit: "Brötchen"
 					}),
-					new sap.m.SelectionDetailsItemField({
+					new sap.m.SelectionDetailsItemLine({
 						label: "Boring label",
 						displayValue: "20 K"
 					})
@@ -119,18 +119,19 @@
 		//Assert
 		assert.ok($ListItem.length > 0, "A list item is rendered.");
 		assert.ok($ListItem.hasClass("sapMSDItem"), "The correct class has been rendered.");
+		assert.equal($ListItem.find(".sapMSDItemActions").length, 1, "The correct number of action containers has been rendered.");
 	});
 
-	QUnit.test("Field rendering", function(assert) {
+	QUnit.test("Line rendering", function(assert) {
 		//Arrange
 		var $ListItem = this.oListItem.$();
 
 		//Assert
-		assert.equal($ListItem.find(".sapMSDItemField").length, 3, "The correct number of fields has been rendered.");
-		assert.equal($ListItem.find(".sapMSDItemFieldLabel").length, 3, "The correct number of labels has been rendered.");
-		assert.equal($ListItem.find(".sapMSDItemFieldValue").length, 3, "The correct number of values has been rendered.");
-		assert.equal($ListItem.find(".sapMSDItemFieldBold").length, 1, "The correct number of bold values has been rendered.");
-		assert.equal($ListItem.find(".sapMSDItemFieldUnit").length, 1, "The correct number of units has been rendered.");
+		assert.equal($ListItem.find(".sapMSDItemLine").length, 3, "The correct number of lines has been rendered.");
+		assert.equal($ListItem.find(".sapMSDItemLineLabel").length, 3, "The correct number of labels has been rendered.");
+		assert.equal($ListItem.find(".sapMSDItemLineValue").length, 3, "The correct number of values has been rendered.");
+		assert.equal($ListItem.find(".sapMSDItemLineBold").length, 1, "The correct number of bold values has been rendered.");
+		assert.equal($ListItem.find(".sapMSDItemLineUnit").length, 1, "The correct number of units has been rendered.");
 	});
 
 </script>

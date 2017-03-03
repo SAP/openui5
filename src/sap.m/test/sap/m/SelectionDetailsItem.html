@@ -10,8 +10,8 @@
         data-sap-ui-libs="sap.m">
 </script>
 <script>
-	var fnCreateField = function(id, context) {
-		return new sap.m.SelectionDetailsItemField(id, {
+	var fnCreateLine = function(id, context) {
+		return new sap.m.SelectionDetailsItemLine(id, {
 			label: "{label}",
 			value: "{value}",
 			displayValue: "{displayValue}",
@@ -21,39 +21,45 @@
 
 	var aItems = [
 		new sap.m.SelectionDetailsItem({
-			fields: {
-				path: "/fields/0",
-				factory: fnCreateField
+			lines: {
+				path: "/lines/0",
+				factory: fnCreateLine
 			},
-			navigationEnabled: true
+			enableNav: true
 		}),
 		new sap.m.SelectionDetailsItem({
-			fields: {
-				path: "/fields/1",
-				factory: fnCreateField
+			lines: {
+				path: "/lines/1",
+				factory: fnCreateLine
 			},
-			navigationEnabled: false
+			enableNav: false
 		})
 	];
 
 	var oModel = new sap.ui.model.json.JSONModel({
-		fields: [
+		lines: [
 			[
 				{
-					label: "My Cabbages",
-					value: "100"
+					label: "Company Name",
+					value: "Cabbage Corp"
 				}, {
-					label: "Cabbage Corp",
-					displayValue: "2000 M"
+					label: "Product Category",
+					value: "Cabbages"
+				}, {
+					label: "Date",
+					displayValue: new Date().toLocaleString()
 				}
 			], [
 				{
-					label: "Bla",
-					value: "10"
+					label: "Company Name",
+					value: "Future Industries"
 				}, {
-					label: "Bla2",
-					value: "50",
-					unit: "€"
+					label: "Product Category",
+					value: "Satomobiles"
+				}, {
+					label: "Price",
+					value: "10,000.00",
+					unit: "Yuons"
 				}
 			]
 		]
