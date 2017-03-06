@@ -521,7 +521,8 @@ sap.ui.define([
 								text: oAvailableRoleType.text
 							});
 						}
-					}
+					},
+					change: jQuery.proxy(that.notifyChange, that)
 				})
 			],
 			visible: "{visible}",

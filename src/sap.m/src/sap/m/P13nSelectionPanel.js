@@ -619,7 +619,7 @@ sap.ui.define([
 		this._updateCounts(oData);
 		oModel.refresh();
 
-		this._notifyChange();
+		this.notifyChange();
 	};
 
 	/**
@@ -1199,9 +1199,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * @private
+	 * @protected
 	 */
-	P13nSelectionPanel.prototype._notifyChange = function() {
+	P13nSelectionPanel.prototype.notifyChange = function() {
 		var fListener = this.getChangeNotifier();
 		if (fListener) {
 			fListener(this);
