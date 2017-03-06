@@ -764,10 +764,6 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
          * @override
          */
         RangeSlider.prototype.onfocusin = function (oEvent) {
-            var sCSSClass = this.getRenderer().CSS_CLASS;
-
-            this.$("TooltipsContainer").addClass(sCSSClass + "HandleTooltipsShow");
-
             // remember the initial focus range so when esc key is pressed we can return to it
             if (!this._hasFocus()) {
                 this._aInitialFocusRange = this.getRange();
