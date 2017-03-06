@@ -102,7 +102,11 @@ sap.ui.define(['jquery.sap.global'],
 
 		// hidden pure input type file (surrounded by a div which is responsible for giving the input the correct size)
 		var sName = oFileUploader.getName() || oFileUploader.getId();
-		oRm.write('<div class="sapUiFupInputMask">');
+		oRm.write('<div class="sapUiFupInputMask"');
+		if (sTooltip.length) {
+			oRm.writeEscaped('title="' + sTooltip + '"');
+		}
+		oRm.write('>');
 		oRm.write('<input type="hidden" name="_charset_" aria-hidden="true">');
 		oRm.write('<input type="hidden" id="' + oFileUploader.getId() + '-fu_data" aria-hidden="true"');
 		oRm.writeAttributeEscaped('name', sName + '-data');
