@@ -417,5 +417,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.19": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "ed95163ff671aa0e514730f672478f20344bd15f",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": []
+      }
+    ]
   }
 }

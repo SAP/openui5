@@ -925,5 +925,22 @@
         "references": []
       }
     ]
+  },
+  "1.38.19": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "cd098f439f1c2b0b571c6badcebb84a781c83795",
+        "type": "FIX",
+        "text": " Consider a horizontal scroll bar for available height calculation",
+        "references": []
+      },
+      {
+        "id": "217fb44e95dec71e0e2e45b368d1a852fe31150a",
+        "type": "FIX",
+        "text": " Enter action mode when clicking on a focusable control in a cell",
+        "references": []
+      }
+    ]
   }
 }

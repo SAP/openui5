@@ -48,5 +48,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.19": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "ebd220c9b45affe652117aa25cb5cd7eda0e3c1c",
+        "type": "FIX",
+        "text": " SDK: accept hash for LICENSE.txt",
+        "references": []
+      }
+    ]
   }
 }

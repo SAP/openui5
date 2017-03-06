@@ -146,8 +146,15 @@
       }
     ]
   },
-  "1.44.7": {
+  "1.44.8": {
     "date": "February 2017",
-    "notes": []
+    "notes": [
+      {
+        "id": "6f7cffd2e523bd5c8163c9ca84cc4019f6862a65",
+        "type": "FIX",
+        "text": " sap.ui.layout.form.SimpleForm: Docu fix",
+        "references": []
+      }
+    ]
   }
 }
