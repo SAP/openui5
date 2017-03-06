@@ -516,10 +516,10 @@
 
 		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.pdf"), 'sap-icon://pdf-attachment', "Correct icon for file type .pdf determined");
 
-		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.jpg"), 'sap-icon://camera', "Correct icon for file type .jpg determined");
-		assert.equal(this.oUploadCollection._getIconFromFilename("complexFileName.JPEG"), 'sap-icon://camera', "Correct icon for file type 'JPEG' determined");
-		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.png"), 'sap-icon://camera', "Correct icon for file type .png determined");
-		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.bmp"), 'sap-icon://camera', "Correct icon for file type .bmp determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.jpg"), 'sap-icon://card', "Correct icon for file type .jpg determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("complexFileName.JPEG"), 'sap-icon://card', "Correct icon for file type 'JPEG' determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.png"), 'sap-icon://card', "Correct icon for file type .png determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.bmp"), 'sap-icon://card', "Correct icon for file type .bmp determined");
 
 		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.txt"), 'sap-icon://document-text', "Correct icon for file type .txt determined");
 

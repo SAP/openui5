@@ -504,7 +504,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	UploadCollection._displayStatus = "display";
 	UploadCollection._toBeDeletedStatus = "toBeDeleted";
 	UploadCollection._pendingUploadStatus = "pendingUploadStatus"; // UploadCollectionItem has this status only if UploadCollection is used with the property 'instantUpload' = false
-	UploadCollection._placeholderCamera = 'sap-icon://camera';
+	UploadCollection._placeholderCamera = 'sap-icon://card';
 	UploadCollection._markerMargin = 8; // the left margin for each marker in px
 
 	if (Device.system.phone) {
