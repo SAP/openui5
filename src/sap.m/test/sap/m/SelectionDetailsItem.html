@@ -19,11 +19,21 @@
 		});
 	};
 
+	var fnCreateAction = function(id, context) {
+		return new sap.ui.core.Item({
+			text: "{text}"
+		});
+	};
+
 	var aItems = [
 		new sap.m.SelectionDetailsItem({
 			lines: {
 				path: "/lines/0",
 				factory: fnCreateLine
+			},
+			actions: {
+				path: "/actions/0",
+				factory: fnCreateAction
 			},
 			enableNav: true
 		}),
@@ -31,6 +41,10 @@
 			lines: {
 				path: "/lines/1",
 				factory: fnCreateLine
+			},
+			actions: {
+				path: "/actions/1",
+				factory: fnCreateAction
 			},
 			enableNav: false
 		})
@@ -62,7 +76,19 @@
 					unit: "Yuons"
 				}
 			]
-		]
+		],
+		actions: [[{
+			text: "Item action 1"
+		}, {
+			text: "Item action 2"
+		}],
+		[{
+			text: "Item action 1"
+		}, {
+			text: "Item action 2"
+		}, {
+			text: "Item action 3"
+		}]]
 	});
 
 	var oNavContainer;
@@ -73,7 +99,9 @@
 	var fnNavigateBack = function() {
 		oNavContainer.back();
 	};
-
+	var fn_actionPress = function(oEvent) {
+		sap.m.MessageToast.show(oEvent.getParameter("action").getText() + "\n is pressed on " + oEvent.getParameter("items")[0].getId());
+	};
 
 	var oList = new sap.m.List(),
 		oListItem;
@@ -81,6 +109,7 @@
 		oListItem = aItems[i].setModel(oModel)._getListItem();
 
 		oListItem.attachPress(fnNavigateToDetails);
+		oListItem._getParentElement().attachEvent("_actionPress", fn_actionPress, this);
 
 		oList.addItem(oListItem);
 	}
