@@ -1697,6 +1697,18 @@
         "type": "FIX",
         "text": " sap.m.ViewSettingsPopover: removeAllFilterDetailItems does not throw error anymore.",
         "references": []
+      },
+      {
+        "id": "40c508f77e1880c15f125378c394995a98f62ddd",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: model with non-default sizeLimit is now supported.",
+        "references": []
+      },
+      {
+        "id": "54339600f89914efa8c5d57e1f228c31606532f4",
+        "type": "FIX",
+        "text": " sap.ui.dt : Dialog handling",
+        "references": []
       }
     ]
   }

@@ -645,6 +645,12 @@
         "type": "FIX",
         "text": " v2.ODataModel: eTag not updated correctly",
         "references": []
+      },
+      {
+        "id": "301d418a4912f395af5833465c26819c80cb599d",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: Harmonize selection behavior when expanding nodes using setNumberOfExpandedLevels()",
+        "references": []
       }
     ]
   }

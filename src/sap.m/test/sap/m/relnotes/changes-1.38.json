@@ -3094,5 +3094,88 @@
         "references": []
       }
     ]
+  },
+  "1.38.19": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "574a726a16b8065bd54d1064d0116756b20286ba",
+        "type": "FIX",
+        "text": " MultiInput: tokenChange event fires properly for cloned instances",
+        "references": []
+      },
+      {
+        "id": "209fe1b46cb02ee5fb7b3768083109b108e645f4",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Prevent exception when control is used with ACC off",
+        "references": []
+      },
+      {
+        "id": "fd5c41f33e37658f2b220f38bfadc7f1d9dbc917",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Selection of items with accented chars corrected",
+        "references": []
+      },
+      {
+        "id": "ba71365b5b07dfaabca8224d013635c092368fe3",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Use of HTML control corrected",
+        "references": []
+      },
+      {
+        "id": "6e7c0a3e93549a020a435a183df89cdd73f8cc32",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Visibility of content in Header Mode corrected",
+        "references": []
+      },
+      {
+        "id": "5c8d156c5d241c5ae25c330cddfdd29650416986",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Rendering optimization",
+        "references": []
+      },
+      {
+        "id": "ed95163ff671aa0e514730f672478f20344bd15f",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": []
+      },
+      {
+        "id": "f5b134038e67ac259a90f816d2ded14ec5bce029",
+        "type": "FIX",
+        "text": " sap.m.Slider: Global keyboard handling interruption fixed",
+        "references": []
+      },
+      {
+        "id": "1e85823f32e6b9dad86e6de00ed406cac500b262",
+        "type": "FIX",
+        "text": " sap.m.SuggestionItem: Documentation \"extends\" information corrected",
+        "references": []
+      },
+      {
+        "id": "6db4d6fdce6e38ff8aadfc0533974b0a88f2f6ca",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Adjusting height after rendering fixed",
+        "references": []
+      },
+      {
+        "id": "7fcf724f84fc2a6516722310cd969a55295b6401",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Fill list with deleted item improved",
+        "references": []
+      },
+      {
+        "id": "9861980190af4bf2858c66143a782300ee9b5e5d",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Issue with incorrect document display fixed",
+        "references": []
+      },
+      {
+        "id": "f3a81a0e1132a763393d62025ba5564f2de5db32",
+        "type": "FIX",
+        "text": " sap.m: Use mvc namespace instead of core namespace in Explored page",
+        "references": []
+      }
+    ]
   }
 }

@@ -1688,5 +1688,76 @@
         "references": []
       }
     ]
+  },
+  "1.44.8": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "2c1e543f10f9eede66ded639f635d1afb669fa9d",
+        "type": "FIX",
+        "text": " MultiInput: tokenChange event fires properly for cloned instances",
+        "references": []
+      },
+      {
+        "id": "4693d1f75dba8a4abe2a11a72f40e2063bd55a5a",
+        "type": "FIX",
+        "text": " sap.m.CustomListItem: Inner control announcement is added.",
+        "references": []
+      },
+      {
+        "id": "74a81052b25cbd0ef7b3244f62eaa7477688c7d7",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer: Focusable area of first and last content enhanced",
+        "references": []
+      },
+      {
+        "id": "c83ccda97e5d57d337e71ffa782d5efa02cd3bfe",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Tokenizer behaviour adjusted",
+        "references": []
+      },
+      {
+        "id": "2d5414ca3a98f17bfa89acb52b4f7755791b1104",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Corrected height in IE",
+        "references": []
+      },
+      {
+        "id": "512107ade15a621b5b2b2338c3c274d5c88c85df",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Accessibility refactoring",
+        "references": []
+      },
+      {
+        "id": "ee52eb7375a19e750012b9f0ff4107e3521e26fc",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton - items aggregation now works correct",
+        "references": []
+      },
+      {
+        "id": "629c228feb9f62d334d443c224b9d4e59c49163d",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Now the control is displayed correctly in a Bar.",
+        "references": []
+      },
+      {
+        "id": "b0069689060f2a0bd5da445393f430617f68e672",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: sapContrast removed",
+        "references": []
+      },
+      {
+        "id": "0d51572f74696608b5180ef301b359fd979c3a3a",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Fill list with deleted item improved",
+        "references": []
+      },
+      {
+        "id": "4319fd72935f2dbd9e8fa8b108f9bd2ecb1cb2ee",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Issue with incorrect document display fixed",
+        "references": []
+      }
+    ]
   }
 }
