@@ -12,7 +12,7 @@ import net.sf.uadetector.service.UADetectorServiceFactory;
 
 /**
  * Represents one HTTP log file line, but an anonymized one (not containing any IP address, but just a number instead)
- * 
+ *
  * @author d046011
  *
  */
@@ -65,16 +65,17 @@ public class AnonymousLogLine {
 	 */
 	private static Pattern ANON_LOGLINE_PATTERN, VERSIONED_CORE_LOGLINE_PATTERN;
 	private static Pattern VERSIONED_CORE_CHECK_PATTERN;
-	
+
 	private static final Pattern RUNTIME_PATTERN = Pattern.compile("^/downloads/openui5-runtime-1.(\\d+).(\\d+(-SNAPSHOT)?).zip$");
 	private static final Pattern MOBILE_PATTERN = Pattern.compile("^/downloads/openui5-runtime-mobile-1.(\\d+).(\\d+(-SNAPSHOT)?).zip$");
 	private static final Pattern SDK_PATTERN = Pattern.compile("^/downloads/openui5-sdk-1.(\\d+).(\\d+(-SNAPSHOT)?).zip$");
 	private static final Pattern VERSIONED_CORE_PATTERN = Pattern.compile("^/(\\d+\\.\\d+\\.\\d+)/resources/sap-ui-core.js$");
-	
+
 	private static final String GITHUB_PAGE_STRING = "/resources/sap/ui/core/themes/base/img/1x1.gif?page=index";
 	private static final String BLOG_PAGE_STRING = "/resources/sap/ui/core/themes/base/img/1x1.gif?page=blog";
 	private static final String REFERENCES_PAGE_STRING = "/resources/sap/ui/core/themes/base/img/1x1.gif?page=whoUsesUI5";
 	private static final String FEATURES_PAGE_STRING = "/resources/sap/ui/core/themes/base/img/1x1.gif?page=features";
+	private static final String UI5CON_PAGE_STRING = "/resources/sap/ui/core/themes/base/img/1x1.gif?page=ui5con";
 	private static final String GETSTARTED_PAGE_STRING = "/resources/sap/ui/core/themes/base/img/1x1.gif?page=getstarted";
 	private static final String CORE_STRING = "/resources/sap-ui-core.js";
 	private static final String DEMOKIT_PAGE_STRING = "/";
@@ -95,18 +96,17 @@ public class AnonymousLogLine {
 	private int secondNumber;
 	private int oneNumber;
 	private String referrer;
-	private Region region;
 	private String userAgent;
 	private String csvUserAgent; // a specially formatted and enriched user-agent string with browser information; only set when isBotLine was called (performance)
 
 	public static void initializeClass(String applicationName) {
-		//                                         2016-12-23                         22:07:53                              
+		//                                         2016-12-23                         22:07:53
 		ANON_LOGLINE_PATTERN = Pattern.compile("^((\\d{4})-([01]\\d)-([0-3]\\d))	(([0-9]+):([0-5][0-9]):([0-5][0-9]))	([\\d\\.]+)	(\\w+)	(/" + applicationName + "\\.(ui5origin).akadns.net(/(d+\\.\\d+\\.\\d+))?(/[^\\s]*))	(\\d+)	(\\d+)	(\\d+)	\"(([^\"]+))\"	\"([^\"]+)\"	.*$");
 		VERSIONED_CORE_CHECK_PATTERN = Pattern.compile(".*GET\\t/" + applicationName + "\\.ui5origin.akadns.net/\\d+\\.\\d+\\.\\d+/resources/sap-ui-core\\.js.*");
 		VERSIONED_CORE_LOGLINE_PATTERN = Pattern.compile("^((\\d{4})-([01]\\d)-([0-3]\\d))	(([0-9]+):([0-5][0-9]):([0-5][0-9]))	(\\d+)	(\\w+)	(/" + applicationName + "\\.(ui5origin).akadns.net((/([\\d\\.]+))/resources/sap-ui-core.js[^\\s]*))	(\\d+)	(\\d+)	(\\d+)	\"(([^\"]+)|[-])\"	\"([^\"]+)\"	.*$");
 	}
-	
-	
+
+
 	private AnonymousLogLine(Date date, String ipCounter, Resource type, int code, String url, String versionedCoreVersion, int firstNumber, int secondNumber, String referrer, Region region, String userAgent) {
 		super();
 		this.date = date;
@@ -118,7 +118,6 @@ public class AnonymousLogLine {
 		this.firstNumber = firstNumber;
 		this.secondNumber = secondNumber;
 		this.referrer = referrer;
-		this.region = region;
 		this.userAgent = userAgent;
 	}
 
@@ -134,7 +133,7 @@ public class AnonymousLogLine {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the counter number assigned to the IP address this log line originally had
 	 */
 	public String getIpCounter() {
@@ -164,7 +163,7 @@ public class AnonymousLogLine {
 	public int getOneNumber() {
 		return oneNumber;
 	}
-	
+
 	public String getReferrer() {
 		return referrer;
 	}
@@ -174,18 +173,18 @@ public class AnonymousLogLine {
 		return region;
 	}
 	*/
-	
+
 	public String getUserAgent() {
 		return userAgent;
 	}
-	
+
 	/*
 	 * Enriched user-agent info with multiple columns in CSV format; only available after isBotLine has been called (to do user-agent analysis only once)
 	 */
 	public String getCsvUserAgent() {
 		return csvUserAgent;
 	}
-	
+
 	/**
 	 * Returns an empty string if this line does not represent a request to a specific version of the UI5 core
 	 * @return
@@ -200,7 +199,7 @@ public class AnonymousLogLine {
 
 		Matcher m;
 		String version, url;
-		
+
 		// RegEx gets too unhandy, so use two different ones for versioned and nonversioned ressources, but they have the same groups
 		if (VERSIONED_CORE_CHECK_PATTERN.matcher(line).matches()) { // check whether this is a versioned URL
 			m = VERSIONED_CORE_LOGLINE_PATTERN.matcher(line);
@@ -216,11 +215,11 @@ public class AnonymousLogLine {
 				if (!line.equals("") &&
 						!(line.indexOf("GET /\"\" window") > -1) &&
 						!(line.indexOf("GET /\"\" s \"/\"") > -1) &&
-						!(line.indexOf("GET /\"\";w =this.oCon") > -1) 
+						!(line.indexOf("GET /\"\";w =this.oCon") > -1)
 						) {
 					System.out.println("WARNING: no match: " + line);
 				}
-				
+
 				return null;
 			}
 			url = m.group(15);
@@ -237,7 +236,7 @@ public class AnonymousLogLine {
 			return null; // not found, not modified
 		}
 
-		
+
 		Resource type = getResourceType(url);
 		if (type == null) {
 			if (line.indexOf("openui5-runtime") > -1 || line.indexOf("openui5-sdk") > -1) {
@@ -245,23 +244,22 @@ public class AnonymousLogLine {
 			}
 			return null; // none of the interesting resources
 		}
-		
+
 		String referrer = m.group(20);
-		if (type == Resource.GITHUB_PAGE
-			|| type == Resource.BLOG_PAGE
-			|| type == Resource.REFERENCES_PAGE
-			|| type == Resource.FEATURES_PAGE
-			|| type == Resource.GETSTARTED_PAGE) {
-			int pos = url.lastIndexOf("&ref=");
-			if (pos > -1 && pos < url.length() - 7) {
-				referrer = URLDecoder.decode(url.substring(pos + 5));
+		for (Resource res : Resource.values()) { // if any of the known resource types
+			if (type == res) {
+				int pos = url.lastIndexOf("&ref=");
+				if (pos > -1 && pos < url.length() - 7) {
+					referrer = URLDecoder.decode(url.substring(pos + 5));
+				}
+				break;
 			}
 		}
 
 		// now the line seems to be one of the interesting resources
 
 		String ipCounter = m.group(9);
-		
+
 		/*
 		Region region = Region.EU;
 		String regionString = m.group(12);
@@ -295,7 +293,7 @@ public class AnonymousLogLine {
 						m.group(21) // user-agent
 				);
 		return logLine;
-		
+
 	}
 
 	private static Resource getResourceType(String url) {
@@ -310,6 +308,9 @@ public class AnonymousLogLine {
 		}
 		if (url.startsWith(FEATURES_PAGE_STRING)) {
 			return Resource.FEATURES_PAGE;
+		}
+		if (url.startsWith(UI5CON_PAGE_STRING)) {
+			return Resource.UI5CON_PAGE;
 		}
 		if (url.startsWith(GETSTARTED_PAGE_STRING)) {
 			return Resource.GETSTARTED_PAGE;
@@ -339,27 +340,27 @@ public class AnonymousLogLine {
 	public static String zeroPad(int length, int number) {
 		String numberString = String.valueOf(number);
 		int actualLength = numberString.length();
-		
+
 		while (actualLength < length) {
 			numberString = "0" + numberString;
 			actualLength++;
 		}
-		
+
 		return numberString;
 	}
 
 	public boolean isBotLine(UserAgentStringParser parser) {
-		
+
 		// filter by user-agent
 		String ua = this.getUserAgent();
 		if (parser == null) {
 			parser = UADetectorServiceFactory.getResourceModuleParser();
 		}
 		ReadableUserAgent agent = parser.parse(ua);
-		
+
 		// remember some more user agent information, while we are at it...
 		this.csvUserAgent = "\"" + this.userAgent + "\";" + agent.getName() + ";" + agent.getVersionNumber().getMajor() + ";" + agent.getOperatingSystem().getName() + ";" + agent.getDeviceCategory().getName();
-		
+
 		UserAgentType type = agent.getType();
 		if (type.equals(UserAgentType.ROBOT) || containsBotFragment(ua) || isUptimeChecker(ua)) {
 			//System.out.println("ROBOT:\t" + ua);
@@ -369,7 +370,7 @@ public class AnonymousLogLine {
 			return false;
 		}
 	}
-	
+
 	private boolean isUptimeChecker(String ua) {
 		return ua.indexOf("uptimerobot") > -1 || ua.indexOf("uptimedoctor") > -1;
 	}
@@ -386,7 +387,7 @@ public class AnonymousLogLine {
 
 	public String getReferrerIfInteresting() {
 		String ref = this.referrer;
-		
+
 		if (ref == null || ref.equals("-")
 				|| ref.startsWith("http://openui5.org")
 				|| ref.startsWith("http://sap.github.io")
@@ -399,10 +400,10 @@ public class AnonymousLogLine {
 				|| ref.startsWith("")) {
 			return null;
 		}
-		
-		
+
+
 		ref = ref.replaceAll("(?i)id=[^&]+", "id=x");
-		
+
 		return ref;
 	}
 }

@@ -23,6 +23,7 @@ class LogFileData {
 	int githubHits;
 	int blogHits;
 	int featuresHits;
+	int ui5conHits;
 	int getstartedHits;
 	int demokitHits;
 	int coreHits;
@@ -32,7 +33,7 @@ class LogFileData {
 
 	public LogFileData(Date date, int runtimeDownloads,
 			int mobileDownloads, int sdkDownloads, int githubHits,
-			int blogHits, int referencesHits, int featuresHits, int getstartedHits, int demokitHits, int coreHits, int versionedCoreHits, int ipCounter, Map<String,Integer> coreVersions) {
+			int blogHits, int referencesHits, int featuresHits, int ui5conHits, int getstartedHits, int demokitHits, int coreHits, int versionedCoreHits, int ipCounter, Map<String,Integer> coreVersions) {
 		super();
 
 		int day = date.getDate();
@@ -50,6 +51,7 @@ class LogFileData {
 		this.blogHits = blogHits;
 		this.referencesHits = referencesHits;
 		this.featuresHits = featuresHits;
+		this.ui5conHits = ui5conHits;
 		this.getstartedHits = getstartedHits;
 		this.demokitHits = demokitHits;
 		this.coreHits = coreHits;
@@ -71,34 +73,39 @@ class LogFileData {
 		String dateText = dayPad + day + "." + monthPad + month + "." + year; // padding for single-digit days to ease sorting in the end
 		return dateText;
 	}
-	
+
 	public static LogFileData fromJson(JSONObject obj) {
 		String yyyymmddWithDashes = obj.getString("date");
 		String[] dateParts = yyyymmddWithDashes.split("-");
 		int year = Integer.parseInt(dateParts[0]);
 		int month = Integer.parseInt(dateParts[1]);
 		int day = Integer.parseInt(dateParts[2]);
-		
+
 		Map<String,Integer> coreVersions = new TreeMap<String,Integer>(new VersionStringComparator());
 		if (obj.has("coreVersions")) {
 			JSONObject coreVersionsObj = obj.getJSONObject("coreVersions");
-			
+
 			Iterator<String> versions = coreVersionsObj.keys();
 			while(versions.hasNext()) {
 				String version = versions.next();
 				coreVersions.put(version, coreVersionsObj.getInt(version));
 			}
 		}
-		
+
+		int ui5conHits = 0;
+		if (obj.has("ui5conHits")) {
+			ui5conHits = obj.getInt("ui5conHits");
+		}
 		LogFileData data = new LogFileData(
 				new Date(year-1900, month-1, day),
-				obj.getInt("runtime"), 
-				obj.getInt("mobile"), 
-				obj.getInt("sdk"), 
-				obj.getInt("githubHits"), 
+				obj.getInt("runtime"),
+				obj.getInt("mobile"),
+				obj.getInt("sdk"),
+				obj.getInt("githubHits"),
 				obj.getInt("blogHits"),
 				obj.getInt("referencesHits"),
 				obj.getInt("featuresHits"),
+				ui5conHits,
 				obj.getInt("getstartedHits"),
 				obj.getInt("demokitHits"),
 				obj.getInt("coreHits"),
@@ -133,6 +140,9 @@ class LogFileData {
 	public int getFeaturesHits() {
 		return featuresHits;
 	}
+	public int getUi5conHits() {
+		return ui5conHits;
+	}
 	public int getGetstartedHits() {
 		return getstartedHits;
 	}
@@ -148,7 +158,7 @@ class LogFileData {
 	public int getIpCounter() {
 		return ipCounter;
 	}
-	
+
 	public Map<String, Integer> getCoreVersions() {
 		return coreVersions;
 	}
@@ -157,20 +167,20 @@ class LogFileData {
 	public String toString() {
 		// the result string for a line in the CSV file
 		String coreVersionsString = stringifyMap(coreVersions);
-		String csvText = getDDMMYYYY_WithDots() + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits + ";" + featuresHits + ";" + getstartedHits + ";" + coreHits + ";" + versionedCoreHits + ";" + coreVersionsString;
+		String csvText = getDDMMYYYY_WithDots() + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits + ";" + featuresHits + ";" + ui5conHits + ";" + getstartedHits + ";" + coreHits + ";" + versionedCoreHits + ";" + coreVersionsString;
 		return csvText;
 	}
-	
+
 	static String stringifyMap(Map<String, Integer> map) {
 		String result = "{";
-		
+
 		boolean comma = false;
 		for (String version : map.keySet()) {
 			if (comma) result += ",";
 			result += "\"" + version + "\":" + map.get(version);
 			comma = true;
 		}
-		
+
 		return result + "}";
 	}
 
@@ -186,12 +196,13 @@ class LogFileData {
 		this.blogHits += other.blogHits;
 		this.referencesHits += other.referencesHits;
 		this.featuresHits += other.featuresHits;
+		this.ui5conHits += other.ui5conHits;
 		this.getstartedHits += other.getstartedHits;
 		this.demokitHits += other.demokitHits;
 		this.coreHits += other.coreHits;
 		this.versionedCoreHits += other.versionedCoreHits;
 		this.ipCounter = Math.max(this.ipCounter, other.ipCounter);
-		
+
 		Map<String,Integer> otherCoreVersions = other.getCoreVersions(); // merge and sum up version maps
 		for (String version : otherCoreVersions.keySet()) {
 			int otherCount = otherCoreVersions.get(version);
