@@ -18,33 +18,27 @@
 		<script>
 
 		jQuery.sap.require("sap.m.MessageBox");
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
 
 		//*******************************
-		var oSearchProvider = new sap.ui.core.search.OpenSearchProvider({
-			suggestUrl: "../../../proxy/http/en.wikipedia.org/w/api.php?action=opensearch&namespace=0&search={searchTerms}",
-			suggestType: "json"
-		});
+		var jsonModel = new sap.ui.model.json.JSONModel();
+
+		function loadData(oEvent) {
+			jsonModel.loadData('http://northwind.servicestack.net/query/customers.json?CompanyNameStartsWith=' + oEvent.getParameter("suggestValue"));
+		}
 
 		var oSuggestInput1 = new sap.m.Input("suginput1", {
-			placeholder: "Suggest starts with 2 letters",
+			placeholder: "Suggest with suggestions from service",
 			showSuggestion: true,
-			startSuggestion: 2,
 			suggestionItemSelected: function(oEvent){
 				var oItem = oEvent.getParameter("selectedItem");
 				jQuery.sap.log.info("sap.m.Input id " + this.getId() + " with suggestion: selected item text is " + oItem.getText());
 			},
-			suggest: function(oEvent){
-				var that = this;
-				oSearchProvider.suggest(oEvent.getParameter("suggestValue"), function(sValue, aSuggestions){
-					if(sValue === that.getValue()){
-						that.destroySuggestionItems();
-						for(var i=0; i<aSuggestions.length; i++){
-							that.addSuggestionItem(new sap.ui.core.Item({text: aSuggestions[i]}));
-						}
-					}
-				});
-			}
-		});
+			suggest: loadData
+		}).setModel(jsonModel);
+
+		var oSuggestionItemTemplate1 = new sap.ui.core.ListItem({text: "{CompanyName}"});
+		oSuggestInput1.bindAggregation("suggestionItems", "/Results", oSuggestionItemTemplate1);
 
 		var oSuggestInput5 = new sap.m.Input("suginput5", {
 			placeholder: "Two-value Suggest",
@@ -53,18 +47,11 @@
 				var oItem = oEvent.getParameter("selectedItem");
 				jQuery.sap.log.info("sap.m.Input id " + this.getId() + " with suggestion: selected item text is " + oItem.getText());
 			},
-			suggest: function(oEvent){
-				var that = this;
-				oSearchProvider.suggest(oEvent.getParameter("suggestValue"), function(sValue, aSuggestions){
-					if(sValue === that.getValue()){
-						that.destroySuggestionItems();
-						for(var i=0; i<aSuggestions.length; i++){
-							that.addSuggestionItem(new sap.ui.core.ListItem({text: aSuggestions[i], additionalText: " No." + i }));
-						}
-					}
-				});
-			}
-		});
+			suggest: loadData
+		}).setModel(jsonModel);
+
+		var oSuggestionItemTemplate5 = new sap.ui.core.ListItem({text: "{CompanyName}", additionalText: "{City}"});
+		oSuggestInput5.bindAggregation("suggestionItems", "/Results", oSuggestionItemTemplate5);
 
 		var aData = [
 					{name: "Dente, Al", userid: "U01"},
@@ -90,7 +77,6 @@
 				];
 
 		//*******************************
-		jQuery.sap.require("sap.ui.model.json.JSONModel");
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(aData);
 
@@ -256,45 +242,13 @@
 				var oItem = oEvent.getParameter("selectedRow");
 				jQuery.sap.log.info("sap.m.Input id " + this.getId() + " with suggestion: selected item text is " + oItem.getCells()[0].getText());
 			},
-			suggest: function(oEvent){
-				var that = this,
-					oSuggestionItem,
-					iMin,
-					iMax,
-					iRandomAmount,
-					iRandomLimit,
-					iRandomPrice;
-
-				oSearchProvider.suggest(oEvent.getParameter("suggestValue"), function(sValue, aSuggestions){
-					if(sValue === that.getValue()){
-						that.destroySuggestionRows();
-						for(var i=0; i<aSuggestions.length; i++){
-							oSuggestionRow = oTableItemTemplate.clone();
-							oSuggestionRow.getCells()[0].setText(aSuggestions[i]);
-							// the search provider only returns 1 field, add some random data for the others
-							iMin = 1
-							iMax = 20,
-							iRandomAmount = Math.floor(Math.random() * (iMax - iMin + 1) + iMin);
-							oSuggestionRow.getCells()[1].setText(iRandomAmount + " EA");
-							iMin = 1;
-							iMax = 1000;
-							iRandomLimit = Math.floor(Math.random() * (iMax - iMin + 1) + iMin);
-							oSuggestionRow.getCells()[2].setText(iRandomLimit + ".00 EUR");
-							iMin = 1;
-							iMax = iRandomLimit;
-							iRandomPrice = Math.floor(Math.random() * (iMax - iMin + 1) + iMin);
-							oSuggestionRow.getCells()[3].setText(iRandomPrice + ".00 EUR");
-							that.addSuggestionRow(oSuggestionRow);
-						}
-					}
-				});
-			},
+			suggest: loadData,
 			suggestionColumns: [
 				new sap.m.Column({
 					styleClass: "name",
 					hAlign: "Begin",
 					header: new sap.m.Label({
-						text: "{i18n>/Name}"
+						text: "Company"
 					})
 				}),
 				new sap.m.Column({
@@ -302,7 +256,7 @@
 					styleClass : "qty",
 					popinDisplay : "Inline",
 					header : new sap.m.Label({
-						text : "{i18n>/Qty}"
+						text : "City"
 					}),
 					minScreenWidth : "Tablet",
 					demandPopin : true
@@ -312,7 +266,7 @@
 					styleClass : "limit",
 					width : "30%",
 					header : new sap.m.Label({
-						text : "{i18n>/Value}"
+						text : "Address"
 					}),
 					minScreenWidth : "XXSmall",
 					demandPopin : true
@@ -323,13 +277,31 @@
 					width : "30%",
 					popinDisplay : "Inline",
 					header : new sap.m.Label({
-						text : "{i18n>/Price}"
+						text : "Phone"
 					}),
 					minScreenWidth : "400px",
 					demandPopin : true
 				})
 			]
+		}).setModel(jsonModel);
+
+		var oSuggestionRowTemplate = new sap.m.ColumnListItem({
+			type : "Active",
+			vAlign : "Middle",
+			cells : [
+				new sap.m.Label({
+					text : "{CompanyName}"
+				}),
+				new sap.m.Label({
+					text: "{City}"
+				}), new sap.m.Label({
+					text: "{Address}"
+				}), new sap.m.Label({
+					text : "{Phone}"
+				})
+			]
 		});
+		oSuggestTableInput1.bindAggregation("suggestionRows", "/Results", oSuggestionRowTemplate);
 
 		//*******************************
 
