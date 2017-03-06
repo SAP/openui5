@@ -866,7 +866,7 @@ sap.ui.define([
 
 			this._scrollLocked = true;
 
-			if (scrollTop + stepChangeThreshold >= stepOffset + stepHeight) {
+			if (scrollTop + stepChangeThreshold >= stepOffset + stepHeight && progressNavigator._isActiveStep(progressNavigator._currentStep + 1)) {
 				progressNavigator.nextStep();
 			}
 
