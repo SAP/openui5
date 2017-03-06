@@ -890,7 +890,7 @@ sap.ui.define([
 				stepOffset = currentStepDOM.offsetTop,
 				stepChangeThreshold = 100;
 
-			if (scrollTop + stepChangeThreshold >= stepOffset + stepHeight) {
+			if (scrollTop + stepChangeThreshold >= stepOffset + stepHeight && progressNavigator._isActiveStep(progressNavigator._currentStep + 1)) {
 				progressNavigator.nextStep(true);
 			}
 
