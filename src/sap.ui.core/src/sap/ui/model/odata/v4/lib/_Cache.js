@@ -317,6 +317,80 @@ sap.ui.define([
 	}
 
 	/**
+	 * Deletes an entity on the server and in the cached data.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {string} sEditUrl
+	 *   The entity's edit URL
+	 * @param {string} sPath
+	 *   The entity's path within the cache
+	 * @param {function} fnCallback
+	 *   A function which is called after a transient entity has been deleted from the cache or
+	 *   after the entity has been deleted from the server and from the cache; the index of the
+	 *   entity is passed as parameter
+	 * @returns {Promise}
+	 *   A promise for the DELETE request
+	 */
+	Cache.prototype._delete = function (sGroupId, sEditUrl, sPath, fnCallback) {
+		var aSegments = sPath.split("/"),
+			vDeleteProperty = aSegments.pop(),
+			sParentPath = aSegments.join("/"),
+			that = this;
+
+		return this.fetchValue(sGroupId, sParentPath).then(function (vCacheData) {
+			var oEntity = vDeleteProperty
+					? vCacheData[vDeleteProperty]
+					: vCacheData, // deleting at root level
+				mHeaders,
+				sTransientGroup = oEntity["@$ui5.transient"];
+
+			if (sTransientGroup === true) {
+				throw new Error("No 'delete' allowed while waiting for server response");
+			}
+			if (sTransientGroup) {
+				that.oRequestor.removePost(sTransientGroup, oEntity);
+				return Promise.resolve();
+			}
+			if (oEntity["$ui5.deleting"]) {
+				throw new Error("Must not delete twice: " + sEditUrl);
+			}
+			oEntity["$ui5.deleting"] = true;
+			mHeaders = {"If-Match" : oEntity["@odata.etag"]};
+			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
+			return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
+				["catch"](function (oError) {
+					if (oError.status !== 404) {
+						delete oEntity["$ui5.deleting"];
+						throw oError;
+					} // else: map 404 to 200
+				})
+				.then(function () {
+					if (Array.isArray(vCacheData)) {
+						if (vCacheData[vDeleteProperty] !== oEntity) {
+							// oEntity might have moved due to parallel insert/delete
+							vDeleteProperty = vCacheData.indexOf(oEntity);
+						}
+						if (vDeleteProperty === "-1") {
+							delete vCacheData[-1];
+						} else {
+							vCacheData.splice(vDeleteProperty, 1);
+						}
+						addToCount(that.mChangeListeners, sParentPath, vCacheData, -1);
+						fnCallback(Number(vDeleteProperty));
+					} else {
+						if (vDeleteProperty) {
+							vCacheData[vDeleteProperty] = null;
+						} else { // deleting at root level
+							oEntity["$ui5.deleted"] = true;
+						}
+						fnCallback();
+					}
+				});
+		});
+	};
+
+	/**
 	 * Adds an item to the given map by path.
 	 *
 	 * @param {object} mMap
@@ -535,71 +609,6 @@ sap.ui.define([
 
 	// make CollectionCache a Cache
 	CollectionCache.prototype = Object.create(Cache.prototype);
-
-	/**
-	 * Deletes an entity on the server and in the cached data.
-	 *
-	 * @param {string} sGroupId
-	 *   The group ID
-	 * @param {string} sEditUrl
-	 *   The entity's edit URL
-	 * @param {string} sPath
-	 *   The entity's path within the cache
-	 * @param {function} fnCallback
-	 *   A function which is called after a transient entity has been deleted from the cache or
-	 *   after the entity has been deleted from the server and from the cache; the index of the
-	 *   entity is passed as parameter
-	 * @returns {Promise}
-	 *   A promise for the DELETE request
-	 */
-	CollectionCache.prototype._delete = function (sGroupId, sEditUrl, sPath, fnCallback) {
-		var aSegments = sPath.split("/"),
-			vDeleteProperty = aSegments.pop(),
-			sParentPath = aSegments.join("/"),
-			that = this;
-
-		return this.fetchValue(sGroupId, sParentPath).then(function (oCacheData) {
-			var oEntity,
-				mHeaders,
-				sTransientGroup;
-
-			oEntity = oCacheData[vDeleteProperty];
-			sTransientGroup = oEntity["@$ui5.transient"];
-			if (sTransientGroup === true) {
-				throw new Error("No 'delete' allowed while waiting for server response");
-			}
-			if (sTransientGroup) {
-				that.oRequestor.removePost(sTransientGroup, oEntity);
-				return Promise.resolve();
-			}
-			if (oEntity["$ui5.deleting"]) {
-				throw new Error("Must not delete twice: " + sEditUrl);
-			}
-			oEntity["$ui5.deleting"] = true;
-			mHeaders = {"If-Match" : oEntity["@odata.etag"]};
-			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
-			return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
-				["catch"](function (oError) {
-					if (oError.status !== 404) {
-						delete oEntity["$ui5.deleting"];
-						throw oError;
-					} // else: map 404 to 200
-				})
-				.then(function () {
-					if (oCacheData[vDeleteProperty] !== oEntity) {
-						// oEntity might have moved due to parallel insert/delete
-						vDeleteProperty = oCacheData.indexOf(oEntity);
-					}
-					if (vDeleteProperty === "-1") {
-						delete oCacheData[-1];
-					} else {
-						oCacheData.splice(vDeleteProperty, 1);
-					}
-					addToCount(that.mChangeListeners, sParentPath, oCacheData, -1);
-					fnCallback(Number(vDeleteProperty));
-				});
-		});
-	};
 
 	/**
 	 * Creates a transient entity with index -1 in the list and adds a POST request to the batch
@@ -874,6 +883,16 @@ sap.ui.define([
 	PropertyCache.prototype = Object.create(Cache.prototype);
 
 	/**
+	 * Not supported.
+	 *
+	 * @throws {Error}
+	 *   Deletion of a property is not supported.
+	 */
+	PropertyCache.prototype._delete = function () {
+		throw new Error("Unsupported");
+	};
+
+	/**
 	 * Returns a promise to be resolved with an OData object for the requested data.
 	 *
 	 * @param {string} [sGroupId]
@@ -936,66 +955,6 @@ sap.ui.define([
 
 	// make SingleCache a Cache
 	SingleCache.prototype = Object.create(Cache.prototype);
-
-	/**
-	 * Deletes an entity on the server and in the cached data.
-	 *
-	 * @param {string} sGroupId
-	 *   The group ID
-	 * @param {string} sEditUrl
-	 *   The entity's edit URL
-	 * @param {string} sPath
-	 *   The entity's path within the cache
-	 * @param {function} fnCallback
-	 *   A function which is called after the entity has been deleted from the server and from the
-	 *   cache; the index of the entity is passed as parameter
-	 * @returns {Promise}
-	 *   A promise for the DELETE request
-	 */
-	SingleCache.prototype._delete = function (sGroupId, sEditUrl, sPath, fnCallback) {
-		var aSegments = sPath.split("/"),
-			vDeleteProperty = aSegments.pop(),
-			sParentPath = aSegments.join("/"),
-			that = this;
-
-		return this.fetchValue(sGroupId, sParentPath).then(function (vCacheData) {
-			var oEntity = vDeleteProperty
-					? vCacheData[vDeleteProperty]
-					: vCacheData, // deleting at root level
-				mHeaders = {"If-Match" : oEntity["@odata.etag"]};
-
-			if (oEntity["$ui5.deleting"]) {
-				throw new Error("Must not delete twice: " + sEditUrl);
-			}
-			oEntity["$ui5.deleting"] = true;
-			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
-			return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
-				["catch"](function (oError) {
-					if (oError.status !== 404) {
-						delete oEntity["$ui5.deleting"];
-						throw oError;
-					} // else: map 404 to 200
-				})
-				.then(function () {
-					if (Array.isArray(vCacheData)) {
-						if (vCacheData[vDeleteProperty] !== oEntity) {
-							// oEntity might have moved due to parallel insert/delete
-							vDeleteProperty = vCacheData.indexOf(oEntity);
-						}
-						vCacheData.splice(vDeleteProperty, 1);
-						addToCount(that.mChangeListeners, sParentPath, vCacheData, -1);
-						fnCallback(Number(vDeleteProperty));
-					} else {
-						if (vDeleteProperty) {
-							vCacheData[vDeleteProperty] = null;
-						} else { // deleting at root level
-							oEntity["$ui5.deleted"] = true;
-						}
-						fnCallback();
-					}
-				});
-		});
-	};
 
 	/**
 	 * Returns a promise to be resolved with an OData object for a POST request with the given data.
