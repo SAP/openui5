@@ -1,0 +1,20 @@
+<mvc:View
+		controllerName="sap.m.sample.MessageViewWithGrouping.C"
+		height="100%"
+		xmlns:l="sap.ui.layout"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+	<Page
+			showHeader="false">
+		<content>
+
+		</content>
+		<footer>
+			<Toolbar>
+				<Button icon="sap-icon://message-popup" text="{/messagesLength}" type="Emphasized"
+						press="handleMessageViewPress"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</footer>
+	</Page>
+</mvc:View>

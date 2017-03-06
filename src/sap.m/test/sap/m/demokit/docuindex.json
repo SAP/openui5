@@ -635,7 +635,8 @@
 		  "samples": [
 			  "sap.m.sample.MessageViewInsidePopover",
 			  "sap.m.sample.MessageViewInsideResponsivePopover",
-			  "sap.m.sample.MessageViewInsideDialog"
+			  "sap.m.sample.MessageViewInsideDialog",
+			  "sap.m.sample.MessageViewWithGrouping"
 		  ]
 		 },
 		{
@@ -2354,6 +2355,11 @@
 		  "name": "Message View inside ResponsivePopover",
 		  "description": "A sample with Message View inside a ResponsivePopover."
 		 },
+		{
+		 "id": "sap.m.sample.MessageViewWithGrouping",
+		  "name": "Message View with Grouping",
+		  "description": "A sample with Message View and inside a Dialog and grouping of items"
+		},
 		{
 		  "id": "sap.m.sample.MessageStrip",
 		  "name": "Message Strip",
