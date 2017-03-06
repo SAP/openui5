@@ -792,6 +792,30 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
+	 * Gets the labels referencing this control.
+	 *
+	 * @returns {sap.m.Label[]} Array of objects which are the current targets of the <code>ariaLabelledBy</code>
+	 * association and the labels referencing this control.
+	 * @since 1.48
+	 * @protected
+	 */
+	InputBase.prototype.getLabels = function() {
+		var aLabelIDs = this.getAriaLabelledBy().map(function(sLabelID) {
+			return sap.ui.getCore().byId(sLabelID);
+		});
+
+		var oLabelEnablement = sap.ui.require("sap/ui/core/LabelEnablement");
+
+		if (oLabelEnablement) {
+			aLabelIDs = aLabelIDs.concat(oLabelEnablement.getReferencingLabels(this).map(function(sLabelID) {
+				return sap.ui.getCore().byId(sLabelID);
+			}));
+		}
+
+		return aLabelIDs;
+	};
+
+	/**
 	 * Open value state message popup.
 	 *
 	 * @since 1.26
