@@ -1,0 +1,10 @@
+<mvc:View height="100%" controllerName="sap.m.sample.MessageViewInsideDialog.MessageView"
+					 xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core"
+					 xmlns:mvc="sap.ui.core.mvc"
+					 xmlns="sap.m">
+<Page>
+	<content>
+		<Button text="Delete" class="sapUiLargeMarginBegin sapUiLargeMarginTop" press="handleDialogPress"/>
+	</content>
+</Page>
+</mvc:View>

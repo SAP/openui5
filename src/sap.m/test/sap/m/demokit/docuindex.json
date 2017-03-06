@@ -628,6 +628,17 @@
 		  "samples": ["sap.m.sample.MessagePopover"]
 		},
 		{
+		  "id": "sap.m.MessageView",
+		  "name": "Message View",
+		  "category": "Container",
+		  "since": "1.46",
+		  "samples": [
+			  "sap.m.sample.MessageViewInsidePopover",
+			  "sap.m.sample.MessageViewInsideResponsivePopover",
+			  "sap.m.sample.MessageViewInsideDialog"
+		  ]
+		 },
+		{
 			"id" : "sap.m.NumericContent",
 			"name" : "Numeric Content",
 			"category" : "Tile",
@@ -2322,6 +2333,21 @@
 		  "name": "MessagePopover",
 		  "description": "MessagePopover is a control that displays a summarized list of different types of messages (errors, warnings, success and information). It provides a handy and systemized way to navigate and explore details for every message."
 		},
+		{
+		  "id": "sap.m.sample.MessageViewInsideDialog",
+		  "name": "Message View inside Dialog",
+		  "description": "A sample with Message View placed inside a Dialog."
+		},
+		{
+		  "id": "sap.m.sample.MessageViewInsidePopover",
+		  "name": "Message View inside Popover",
+		  "description": "A sample with Message View inside a Popover."
+		},
+		 {
+		  "id": "sap.m.sample.MessageViewInsideResponsivePopover",
+		  "name": "Message View inside ResponsivePopover",
+		  "description": "A sample with Message View inside a ResponsivePopover."
+		 },
 		{
 		  "id": "sap.m.sample.MessageStrip",
 		  "name": "Message Strip",
