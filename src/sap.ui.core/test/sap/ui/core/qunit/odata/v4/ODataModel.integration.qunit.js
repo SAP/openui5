@@ -337,6 +337,8 @@ sap.ui.require([
 	}
 
 	//*********************************************************************************************
+	// Scenario: Minimal test for an absolute ODataPropertyBinding. This scenario is comparable with
+	// "FavoriteProduct" in the SalesOrders application.
 	testViewStart("Absolute ODPB",
 		'<Text id="text" text="{/EMPLOYEES(\'2\')/Name}" />',
 		{"EMPLOYEES('2')/Name" : {"value" : "Frederic Fall"}},
@@ -344,6 +346,8 @@ sap.ui.require([
 	);
 
 	//*********************************************************************************************
+	// Scenario: Minimal test for an absolute ODataContextBinding without own parameters containing
+	// a relative ODataPropertyBinding. The SalesOrders application does not have such a scenario.
 	testViewStart("Absolute ODCB w/o parameters with relative ODPB", '\
 <form:SimpleForm binding="{/EMPLOYEES(\'2\')}">\
 	<Text id="text" text="{Name}" />\
@@ -353,6 +357,8 @@ sap.ui.require([
 	);
 
 	//*********************************************************************************************
+	// Scenario: Minimal test for an absolute ODataContextBinding with own parameters containing
+	// a relative ODataPropertyBinding. The SalesOrders application does not have such a scenario.
 	testViewStart("Absolute ODCB with parameters and relative ODPB", '\
 <form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'Name\'}}">\
 	<Text id="text" text="{Name}" />\
@@ -362,6 +368,11 @@ sap.ui.require([
 	);
 
 	//*********************************************************************************************
+	// Scenario: Minimal test for an absolute ODataListBinding without own parameters containing
+	// a relative ODataPropertyBinding. This scenario is comparable with the suggestion list for
+	// the "Buyer ID" while creating a new sales order in the SalesOrders application.
+	// * Start the application and click on "Create sales order" button.
+	// * Open the suggestion list for the "Buyer ID"
 	testViewStart("Absolute ODLB w/o parameters and relative ODPB", '\
 <Table items="{/EMPLOYEES}">\
 	<items>\
@@ -378,6 +389,9 @@ sap.ui.require([
 	);
 
 	//*********************************************************************************************
+	// Scenario: Minimal test for an absolute ODataListBinding with own parameters containing
+	// a relative ODataPropertyBinding. This scenario is comparable with the "Sales Orders" list in
+	// the SalesOrders application.
 	testViewStart("Absolute ODLB with parameters and relative ODPB", '\
 <Table items="{path : \'/EMPLOYEES\', parameters : {$select : \'Name\'}}">\
 	<items>\
@@ -394,6 +408,13 @@ sap.ui.require([
 	);
 
 	//*********************************************************************************************
+	// Scenario: Static and dynamic filters and sorters at absolute ODataListBindings influence
+	// the query. This scenario is comparable with the "Sales Orders" list in the SalesOrders
+	// application.
+	// * Static filters ($filter system query option) are and-combined with dynamic filters (filter
+	//   parameter)
+	// * Static sorters ($orderby system query option) are appended to dynamic sorters (sorter
+	//   parameter)
 	testViewStart("Absolute ODLB with Filters and Sorters with relative ODPB", '\
 <Table items="{path : \'/EMPLOYEES\', parameters : {\
 			$select : \'Name\',\
@@ -417,6 +438,8 @@ sap.ui.require([
 	);
 
 	//*********************************************************************************************
+	// Scenario: Nested list binding with own parameters causes a second request.
+	// This scenario is similar to the "Sales Order Line Items" in the SalesOrders application.
 	testViewStart("Absolute ODCB with parameters and relative ODLB with parameters", '\
 <form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'Name\'}}">\
 	<Text id="name" text="{Name}" />\
@@ -439,6 +462,10 @@ sap.ui.require([
 	);
 
 	//*********************************************************************************************
+	// Scenario: Function import.
+	// This scenario is similar to the "Favorite product ID" in the SalesOrders application. In the
+	// SalesOrders application the binding context is set programmatically. This example directly
+	// triggers the function import.
 	testViewStart("FunctionImport", '\
 <form:SimpleForm binding="{/GetEmployeeByID(EmployeeID=\'2\')}">\
 	<Text id="text" text="{Name}" />\
@@ -448,6 +475,15 @@ sap.ui.require([
 	);
 
 	//*********************************************************************************************
+	// Scenario: inherit query options (see ListBinding sample application)
+	// If there is a relative binding without an own cache and the parent binding defines $orderby
+	// or $filter for that binding, then these values need to be considered if that binding gets
+	// dynamic filters or sorters.
+	// See ListBinding sample application:
+	// * Start the application; the employee list of the team is initially sorted by "City"
+	// * Sort by any other column (e.g. "Employee Name" or "Age") and check that the "City" is taken
+	//   as a secondary sort criterion
+	// In this test dynamic filters are used instead of dynamic sorters
 	QUnit.test("Relative ODLB inherits parent OBCB's query options on filter", function (assert) {
 		var sView = '\
 <form:SimpleForm binding="{path : \'/TEAMS(42)\',\
@@ -487,6 +523,13 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Sort a list and select a list entry to see details
+	// See SalesOrders application:
+	// * Start the application with realOData=true so that sorting by "Gross Amount" is enabled
+	// * Sort by "Gross Amount"
+	// * Select a sales order and see that sales order details are fitting to the selected sales
+	//   order
+	// This test is a simplification of that scenario with a different service.
 	QUnit.test("Absolute ODLB with sort, relative ODCB resolved on selection", function (assert) {
 		var sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$expand : \'EMPLOYEE_2_MANAGER\'}}">\
@@ -548,6 +591,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Refresh an ODataListBinding
+	// See SalesOrders application:
+	// * Start the application
+	// * Click on "Refresh sales orders" button
+	// This test is a simplification of that scenario with a different service.
 	QUnit.test("Absolute ODLB refresh", function (assert) {
 		var sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
@@ -586,6 +634,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Refresh an ODataContextBinding
+	// The SalesOrders application does not have such a scenario.
 	QUnit.test("Absolute ODCB refresh", function (assert) {
 		var sView = '\
 <form:SimpleForm id="form" binding="{/EMPLOYEES(\'2\')}">\
@@ -608,6 +658,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Refresh an ODataPropertyBinding
+	// See SalesOrders application:
+	// * Start the application
+	// * Click on "Refresh favorite product" button
+	// This test is a simplification of that scenario with a different service.
 	QUnit.test("Absolute ODPB refresh", function (assert) {
 		var sView = '<Text id="name" text="{/EMPLOYEES(\'2\')/Name}" />',
 			that = this;
@@ -627,6 +682,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Action Imports
+	// See ListBinding application:
+	// * Start the application
+	// * Click on "Budget" button
+	// * In the "Change Team Budget" dialog enter a "Budget" and press "Change" button
 	QUnit.test("ActionImport", function (assert) {
 		var sView = '\
 <form:SimpleForm id="form" binding="{/ChangeTeamBudgetByID(...)}">\
@@ -657,6 +717,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Changing the binding parameters causes a refresh of the table
+	// The SalesOrders application does not have such a scenario.
 	QUnit.test("Absolute ODLB changing parameters", function (assert) {
 		var sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$select : \'Name\'}}">\
@@ -693,6 +755,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Changing the binding parameters causes a refresh of the form
+	// The SalesOrders application does not have such a scenario.
 	QUnit.test("Absolute ODCB changing parameters", function (assert) {
 		var sView = '\
 <form:SimpleForm id="form" binding="{/EMPLOYEES(\'2\')}">\
@@ -987,6 +1051,9 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Enable autoExpandSelect mode for an ODataContextBinding with relative
+	// ODataPropertyBindings
+	// The SalesOrders application does not have such a scenario.
 	QUnit.test("Auto-mode: Absolute ODCB with relative ODPB", function (assert) {
 		var sView = '\
 <form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE,ROOM_ID\'}}">\
@@ -1008,6 +1075,9 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Enable autoExpandSelect mode for an ODataContextBinding with relative
+	// ODataPropertyBindings. Refreshing the view is also working.
+	// The SalesOrders application does not have such a scenario.
 	QUnit.test("Auto-mode: Absolute ODCB, refresh", function (assert) {
 		var sView = '\
 <form:SimpleForm id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE\'}}">\
