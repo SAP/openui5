@@ -228,11 +228,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Enable post button depending on the current value
 	 */
 	FeedInput.prototype._enablePostButton = function () {
-		var sValue = this.getProperty("value");
-		var bInputEnabled = this.getProperty("enabled");
-		var bPostButtonEnabled = (bInputEnabled && !!sValue && sValue.trim().length > 0);
+		var bPostButtonEnabled = this._isControlEnabled();
 		var oButton = this._getPostButton();
 		oButton.setEnabled(bPostButtonEnabled);
+	};
+
+	/**
+	 * Verifies if the control is enabled or not
+	 */
+	FeedInput.prototype._isControlEnabled = function() {
+		var sValue = this.getValue();
+		return this.getEnabled() && jQuery.type(sValue) === "string" && sValue.trim().length > 0;
 	};
 
 	/**
