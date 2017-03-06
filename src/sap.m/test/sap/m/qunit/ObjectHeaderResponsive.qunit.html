@@ -742,6 +742,78 @@
 					notEqual(count, 3, "States aren't rendered in 3 columns.");
 				});
 
+			module("Desktop on Combi device (e.g. both system Desktop and Tablet return true) - master detail rendering", {
+				setup: function () {
+					this.bSystemDesktop = sap.ui.Device.system.desktop,
+					this.bSystemTablet = sap.ui.Device.system.tablet;
+
+					sap.ui.Device.system.desktop = true;
+					sap.ui.Device.system.tablet = true;
+
+					var oObjectHeader = createObjectHeader();
+					oObjectHeader.placeAt("qunit-fixture");
+				},
+				teardown: function () {
+					sap.ui.Device.system.desktop = this.bSystemDesktop;
+					sap.ui.Device.system.tablet = this.bSystemTablet;
+					oCore.byId(sControlId).destroy();
+				}
+			});
+
+				test("3 states rendered in 2 columns", function () {
+					var count = getColsCountAfterAddingStates(1, 2, ".sapMOHRTwoCols");
+
+					// Assert
+					equal(count, 2, "States are rendered in 2 columns.");
+					notEqual(count, 3, "States aren't rendered in 3 columns.");
+				});
+
+				test("5 states rendered in 3 columns", function () {
+					var count = getColsCountAfterAddingStates(2, 3, ".sapMOHRThreeCols");
+
+					// Assert
+					equal(count, 3, "States are rendered in 3 columns.");
+					notEqual(count, 2, "States aren't rendered in 2 columns.");
+				});
+
+			module("Desktop on Combi device (e.g. both system Desktop and Tablet return true) - fullScreenOptimized should be rendered as on a 'normal' device", {
+				setup: function () {
+					this.bSystemDesktop = sap.ui.Device.system.desktop,
+					this.bSystemTablet = sap.ui.Device.system.tablet;
+
+					sap.ui.Device.system.desktop = true;
+					sap.ui.Device.system.tablet = true;
+
+					var oObjectHeader = createObjectHeader({
+						fullScreenOptimized: true
+					});
+
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+				},
+				teardown: function () {
+					sap.ui.Device.system.desktop = this.bSystemDesktop;
+					sap.ui.Device.system.tablet = this.bSystemTablet;
+					oCore.byId(sControlId).destroy();
+				}
+			});
+
+				test("2 states rendered next to title block", function () {
+					var count = getColsCountAfterAddingStates(1, 1, ".sapMOHRStatesOneOrThree .sapMOHROneCols");
+					var count2 = getColsCountAfterAddingStates(1, 1, "sapMOHRTwoCols");
+
+					// Assert
+					equal(count, 1, "2 states are rendered next to title block");
+					equal(count2, 0, "2 states aren't rendered below the title block in two columns");
+				});
+
+				test("5 states rendered in 4 columns", function () {
+					var count = getColsCountAfterAddingStates(3, 2, ".sapMOHRFourCols");
+
+					// Assert
+					equal(count, 4, "5 states are rendered in 4 columns");
+					notEqual(count, 3, "States aren't rendered in 3 columns.");
+				});
 
 			module("Desktop rendering resized to Tablet size", {
 				setup: function () {
