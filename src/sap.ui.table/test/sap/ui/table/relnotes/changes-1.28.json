@@ -204,12 +204,6 @@
         "references": []
       },
       {
-        "id": "68801195400e4e348102f19e23197e56b6476b0c",
-        "type": "FIX",
-        "text": "sap.ui.table.*: SHIFT+TAB w/o column header now works correctly",
-        "references": []
-      },
-      {
         "id": "dc37c26d9f18fc51834eb221f144e8f9e95d81ca",
         "type": "FIX",
         "text": "sap.ui.table.AnalyticalTable: Fix row selection when grouped columns are invisible",

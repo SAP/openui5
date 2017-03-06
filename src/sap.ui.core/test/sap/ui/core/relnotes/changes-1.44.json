@@ -728,5 +728,46 @@
         "references": []
       }
     ]
+  },
+  "1.44.8": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "086ee009481dd9042c809598a4c5c4a4a7d22fef",
+        "type": "FIX",
+        "text": " core.format.DateFormat: format and parse the DayNumberOfWeek",
+        "references": []
+      },
+      {
+        "id": "9ee684516c6ac5e0916a36bd82ebd9edf99f9397",
+        "type": "FIX",
+        "text": " core.testsuite.opa.qunit: remove noglobals from the Press.qunit.html",
+        "references": []
+      },
+      {
+        "id": "4fdb559175f6657a2caec536a7e1969802d79bcf",
+        "type": "FIX",
+        "text": " jquery.sap.interaction: dealing with incomplete requests",
+        "references": []
+      },
+      {
+        "id": "bb5a0d660010851dc8f9cc30e7e0b57e994ffb2b",
+        "type": "FIX",
+        "text": " sap.ui.core.Popup: check the validity of document.activeElement",
+        "references": []
+      },
+      {
+        "id": "27ede23e650a0ec3960db405af69b9a02797ecdf",
+        "type": "FIX",
+        "text": " sap.ui.core.Popup: fix the check for multi level wrapped popups",
+        "references": []
+      },
+      {
+        "id": "7ed87c3b745ac9636ebaf5b2260adcfc2cf83eca",
+        "type": "FIX",
+        "text": " v2.ODataModel: eTag not updated correctly",
+        "references": []
+      }
+    ]
   }
 }

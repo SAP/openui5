@@ -578,5 +578,16 @@
         "references": []
       }
     ]
+  },
+  "1.46.4": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "edd65423c37b8944659c0739d4938c335a26b333",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Cursor over separator grip fixed",
+        "references": []
+      }
+    ]
   }
 }
