@@ -347,7 +347,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			}
 		} else if (bActionMode &&
 			oEvent.keyCode == jQuery.sap.KeyCodes.F2) {
-			this._getKeyboardExtension().setActionMode(false);
+			this._getKeyboardExtension().setActionMode(false, {event: oEvent});
 		} else if (oEvent.keyCode == jQuery.sap.KeyCodes.TAB && bActionMode) {
 			//Set tabindex to second table if fixed columns are used
 			if (this.getFixedColumnCount() > 0) {
@@ -428,7 +428,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			var bPreviousItemIsLeafTreeIcon = $Target.prev().hasClass("sapUiTableTreeIconLeaf");
 
 			if (!bCellHasTreeIcon || bPreviousItemIsLeafTreeIcon || bTargetIsTreeIcon) {
-				this._getKeyboardExtension().setActionMode(false);
+				this._getKeyboardExtension().setActionMode(false, {event: oEvent});
 				oEvent.preventDefault();
 			}
 		} else {
@@ -477,7 +477,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			var bCellHasElements = $Target.parent().find(":visible").length > 1;
 
 			if (!bTargetIsTreeIcon || !bCellHasElements) {
-				this._getKeyboardExtension().setActionMode(false);
+				this._getKeyboardExtension().setActionMode(false, {event: oEvent});
 				oEvent.preventDefault();
 			}
 		} else {
