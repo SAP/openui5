@@ -97,6 +97,18 @@
 		assert.equal(this.oSelectionDetails.isOpen(), false, "Method isOpen returns false");
 	});
 
+	QUnit.test("Method isEnabled, aggregation 'items' is empty", function(assert) {
+		//Assert
+		assert.equal(this.oSelectionDetails.isEnabled(), false, "Method isEnabled returns false if the aggregation 'items' is empty");
+	});
+
+	QUnit.test("Method isEnabled, aggregation 'items' contains items", function(assert) {
+		// Arrange
+		sinon.stub(this.oSelectionDetails, "getAggregation").returns([new sap.m.SelectionDetailsItem()]);
+		//Assert
+		assert.equal(this.oSelectionDetails.isEnabled(), true, "Method isEnabled returns true if the aggregation 'items' contains items");
+	});
+
 	QUnit.module("Popover interaction", {
 		beforeEach : function() {
 			this.oSelectionDetails = new sap.m.SelectionDetails();

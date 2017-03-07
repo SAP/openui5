@@ -128,13 +128,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/O
 	/* API methods                                                 */
 	/* =========================================================== */
 	/**
-	 * @description Returns true if the SelectionDetails is open, otherwise false.
+	 * Returns true if the SelectionDetails is open, otherwise false.
 	 * @returns {boolean} True if the SelectionDetails is open, otherwise false.
 	 * @public
 	 */
 	SelectionDetails.prototype.isOpen = function() {
 		var oPopover = this.getAggregation("_popover");
 		return oPopover ? oPopover.isOpen() : false;
+	};
+
+	/**
+	 * Returns true if the SelectionDetails is enabled, otherwise false.
+	 * @returns {boolean} True if the SelectionDetails contains items, otherwise false.
+	 * @public
+	 */
+	SelectionDetails.prototype.isEnabled = function() {
+		return this.getItems().length > 0;
 	};
 
 	/* =========================================================== */
