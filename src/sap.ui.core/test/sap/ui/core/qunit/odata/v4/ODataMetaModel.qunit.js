@@ -25,7 +25,7 @@ sap.ui.require([
 		MetaModel, OperationMode, Int64, AnnotationHelper, Context, _Helper, _SyncPromise,
 		ODataMetaModel, ODataModel, ValueListType, PropertyBinding, TestUtils, URI) {
 	/*global QUnit, sinon */
-	/*eslint no-loop-func: 0, no-warning-comments: 0 */
+	/*eslint max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0 */
 	"use strict";
 
 	// Common := com.sap.vocabularies.Common.v1
@@ -35,6 +35,7 @@ sap.ui.require([
 	// UI := com.sap.vocabularies.UI.v1
 	var mMostlyEmptyScope = {
 			"$EntityContainer" : "empty.DefaultContainer",
+			"$Version" : "4.0",
 			"empty." : {
 				"$kind" : "Schema"
 			},
@@ -431,6 +432,7 @@ sap.ui.require([
 		},
 		oContainerData = mScope["tea_busi.DefaultContainer"],
 		mSupplierScope = {
+			"$Version" : "4.0",
 			"tea_busi_supplier.v0001." : {
 				"$kind" : "Schema"
 			},
@@ -606,6 +608,12 @@ sap.ui.require([
 		// remember copy to ensure test isolation
 		mOriginalScopes : clone(aAllScopes),
 
+		afterEach : function (assert) {
+			this.oLogMock.verify();
+
+			assert.deepEqual(aAllScopes, this.mOriginalScopes, "metadata unchanged");
+		},
+
 		beforeEach : function () {
 			var oMetadataRequestor = {
 					read : function () { throw new Error(); }
@@ -619,10 +627,33 @@ sap.ui.require([
 			this.oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl);
 		},
 
-		afterEach : function (assert) {
-			this.oLogMock.verify();
+		/*
+		 * Expect the given debug message with the given path, but only if debug level is on.
+		 */
+		expectDebug : function (bDebug, sMessage, sPath) {
+			this.oLogMock.expects("isLoggable")
+				.withExactArgs(jQuery.sap.log.Level.DEBUG, sODataMetaModel).returns(bDebug);
+			this.oLogMock.expects("debug").exactly(bDebug ? 1 : 0)
+				.withExactArgs(sMessage, sPath, sODataMetaModel);
+		},
 
-			assert.deepEqual(aAllScopes, this.mOriginalScopes, "metadata unchanged");
+		/*
+		 * Allow warnings if told to; always suppress debug messages.
+		 */
+		allowWarnings : function (assert, bWarn) {
+			this.stub(jQuery.sap.log, "isLoggable", function (iLogLevel, sComponent) {
+				assert.strictEqual(sComponent, sODataMetaModel);
+				switch (iLogLevel) {
+					case jQuery.sap.log.Level.DEBUG:
+						return false;
+
+					case jQuery.sap.log.Level.WARNING:
+						return bWarn;
+
+					default:
+						return true;
+				}
+			});
 		}
 	});
 
@@ -1099,32 +1130,33 @@ sap.ui.require([
 			"//$Foo" : "Invalid empty segment",
 			"/tea_busi./$Annotations" : "Invalid segment: $Annotations", // entrance forbidden!
 			// Unknown ... ------------------------------------------------------------------------
-			"/not.Found" : "Unknown qualified name 'not.Found'",
-			"/not.Found@missing" : "Unknown qualified name 'not.Found'",
-			"/." : "Unknown child '.' of 'tea_busi.DefaultContainer'",
-			"/Foo" : "Unknown child 'Foo' of 'tea_busi.DefaultContainer'",
-			"/$EntityContainer/$kind/" : "Unknown child 'EntityContainer'"
-				+ " of 'tea_busi.DefaultContainer' at /$EntityContainer/$kind",
+			"/not.Found" : "Unknown qualified name not.Found",
+			"/Me/not.Found" : "Unknown qualified name not.Found", // no "at /.../undefined"!
+			"/not.Found@missing" : "Unknown qualified name not.Found",
+			"/." : "Unknown child . of tea_busi.DefaultContainer",
+			"/Foo" : "Unknown child Foo of tea_busi.DefaultContainer",
+			"/$EntityContainer/$kind/" : "Unknown child EntityContainer"
+				+ " of tea_busi.DefaultContainer at /$EntityContainer/$kind",
 			// implicit $Action, $Function, $Type insertion
-			"/name.space.BadContainer/DanglingActionImport/" : "Unknown qualified name 'not.Found'"
+			"/name.space.BadContainer/DanglingActionImport/" : "Unknown qualified name not.Found"
 				+ " at /name.space.BadContainer/DanglingActionImport/$Action",
 			"/name.space.BadContainer/DanglingFunctionImport/" :
-				"Unknown qualified name 'not.Found'"
+				"Unknown qualified name not.Found"
 				+ " at /name.space.BadContainer/DanglingFunctionImport/$Function",
 			"/name.space.Broken/" :
-				"Unknown qualified name 'not.Found' at /name.space.Broken/$Type",
-			"/name.space.BrokenFunction/" : "Unknown qualified name 'not.Found'"
+				"Unknown qualified name not.Found at /name.space.Broken/$Type",
+			"/name.space.BrokenFunction/" : "Unknown qualified name not.Found"
 				+ " at /name.space.BrokenFunction/0/$ReturnType/$Type",
 			//TODO align with "/GetEmployeeMaxAge/" : "Edm.Int16"
-			"/GetEmployeeMaxAge/@sapui.name" : "Unknown qualified name 'Edm.Int16'"
+			"/GetEmployeeMaxAge/@sapui.name" : "Unknown qualified name Edm.Int16"
 				+ " at /tea_busi.FuGetEmployeeMaxAge/0/$ReturnType/$Type",
-			"/GetEmployeeMaxAge/value/@sapui.name" : "Unknown qualified name 'Edm.Int16'"
+			"/GetEmployeeMaxAge/value/@sapui.name" : "Unknown qualified name Edm.Int16"
 				+ " at /tea_busi.FuGetEmployeeMaxAge/0/$ReturnType/$Type",
 			// implicit scope lookup
 			"/name.space.Broken/$Type/" :
-				"Unknown qualified name 'not.Found' at /name.space.Broken/$Type",
-			"/tea_busi.DefaultContainer/$kind/@sapui.name" : "Unknown child 'EntityContainer'"
-				+ " of 'tea_busi.DefaultContainer' at /tea_busi.DefaultContainer/$kind",
+				"Unknown qualified name not.Found at /name.space.Broken/$Type",
+			"/tea_busi.DefaultContainer/$kind/@sapui.name" : "Unknown child EntityContainer"
+				+ " of tea_busi.DefaultContainer at /tea_busi.DefaultContainer/$kind",
 			// Unsupported path before @sapui.name ------------------------------------------------
 			"/$EntityContainer@sapui.name" : "Unsupported path before @sapui.name",
 			"/tea_busi.FuGetEmployeeMaxAge/0@sapui.name" : "Unsupported path before @sapui.name",
@@ -1310,70 +1342,114 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchObject: cross-service reference", function (assert) {
-		var mClonedProductScope = clone(mProductScope),
-			oRequestorMock = this.mock(this.oMetaModel.oRequestor);
+	[false, true].forEach(function (bDebug) {
+		QUnit.test("fetchObject: cross-service reference, bDebug = " + bDebug, function (assert) {
+			var mClonedProductScope = clone(mProductScope),
+				aPromises = [],
+				oRequestorMock = this.mock(this.oMetaModel.oRequestor),
+				that = this;
 
-		this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
-			.returns(_SyncPromise.resolve(clone(mXServiceScope)));
-		oRequestorMock.expects("read")
-			.withExactArgs("/a/default/iwbep/tea_busi_product/0001/$metadata")
-			.returns(Promise.resolve(mClonedProductScope));
-		oRequestorMock.expects("read")
-			.withExactArgs("/a/default/iwbep/tea_busi_supplier/0001/$metadata")
-			.returns(Promise.resolve(mSupplierScope));
-		oRequestorMock.expects("read")
-			.withExactArgs("/empty/$metadata")
-			.returns(Promise.resolve(mMostlyEmptyScope));
+			/*
+			 * Expect the given debug message with the given path.
+			 */
+			function expectDebug(sMessage, sPath) {
+				that.expectDebug(bDebug, sMessage, sPath);
+			}
 
-		return Promise.all([
-			// code under test
-			this.oMetaModel.fetchObject("/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/Name")
-				.then(function (vResult) {
-					assert.strictEqual(vResult,
-						mClonedProductScope["tea_busi_product.v0001.Product"].Name);
-				}),
-			// code under test
-			this.oMetaModel.fetchObject(
-					"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY/CategoryName")
-				.then(function (vResult) {
-					assert.strictEqual(vResult,
-						mClonedProductScope["tea_busi_product.v0001.Category"].CategoryName);
-				}),
-			// code under test
-			this.oMetaModel.fetchObject("/tea_busi_product.v0001.Category/CategoryName")
-				.then(function (vResult) {
-					assert.strictEqual(vResult,
-						mClonedProductScope["tea_busi_product.v0001.Category"].CategoryName);
-				}),
-			// code under test
-			this.oMetaModel.fetchObject(
-					"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name")
-				.then(function (vResult) {
-					assert.strictEqual(vResult,
-						mSupplierScope["tea_busi_supplier.v0001.Supplier"].Supplier_Name);
-				}),
-			// code under test
-			this.oMetaModel.fetchObject("/empty.DefaultContainer")
-				.then(function (vResult) {
-					assert.strictEqual(vResult, mMostlyEmptyScope["empty.DefaultContainer"]);
-				})
-		]);
+			/*
+			 * Code under test: ODataMetaModel#fetchObject with the given path should yield the
+			 * given expected result.
+			 */
+			function codeUnderTest(sPath, vExpectedResult) {
+				aPromises.push(that.oMetaModel.fetchObject(sPath).then(function (vResult) {
+					assert.strictEqual(vResult, vExpectedResult);
+				}));
+			}
+
+			this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
+				.returns(_SyncPromise.resolve(clone(mXServiceScope)));
+			oRequestorMock.expects("read")
+				.withExactArgs("/a/default/iwbep/tea_busi_product/0001/$metadata")
+				.returns(Promise.resolve(mClonedProductScope));
+			oRequestorMock.expects("read")
+				.withExactArgs("/a/default/iwbep/tea_busi_supplier/0001/$metadata")
+				.returns(Promise.resolve(mSupplierScope));
+			oRequestorMock.expects("read")
+				.withExactArgs("/empty/$metadata")
+				.returns(Promise.resolve(mMostlyEmptyScope));
+
+			expectDebug("Namespace tea_busi_product.v0001. found in $Include"
+				+ " of ../../../../default/iwbep/tea_busi_product/0001/$metadata"
+				+ " at /tea_busi.v0001.EQUIPMENT/EQUIPMENT_2_PRODUCT/$Type",
+				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/Name");
+			expectDebug("Reading ../../../../default/iwbep/tea_busi_product/0001/$metadata"
+				+ " from /a/default/iwbep/tea_busi_product/0001/$metadata"
+				+ " at /tea_busi.v0001.EQUIPMENT/EQUIPMENT_2_PRODUCT/$Type",
+				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/Name");
+			expectDebug("Waiting for tea_busi_product.v0001."
+				+ " at /tea_busi.v0001.EQUIPMENT/EQUIPMENT_2_PRODUCT/$Type",
+				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/Name");
+			codeUnderTest("/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/Name",
+				mClonedProductScope["tea_busi_product.v0001.Product"].Name);
+
+			expectDebug("Waiting for tea_busi_product.v0001."
+				+ " at /tea_busi.v0001.EQUIPMENT/EQUIPMENT_2_PRODUCT/$Type",
+				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY/CategoryName");
+			codeUnderTest("/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY/CategoryName",
+				mClonedProductScope["tea_busi_product.v0001.Category"].CategoryName);
+
+			expectDebug("Waiting for tea_busi_product.v0001.",
+				"/tea_busi_product.v0001.Category/CategoryName");
+			codeUnderTest("/tea_busi_product.v0001.Category/CategoryName",
+				mClonedProductScope["tea_busi_product.v0001.Category"].CategoryName);
+
+			expectDebug("Waiting for tea_busi_product.v0001."
+				+ " at /tea_busi.v0001.EQUIPMENT/EQUIPMENT_2_PRODUCT/$Type",
+				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name");
+			codeUnderTest("/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name",
+				mSupplierScope["tea_busi_supplier.v0001.Supplier"].Supplier_Name);
+
+			expectDebug("Namespace empty. found in $Include of /empty/$metadata",
+				"/empty.DefaultContainer");
+			expectDebug("Reading /empty/$metadata from /empty/$metadata",
+				"/empty.DefaultContainer");
+			expectDebug("Waiting for empty.",
+				"/empty.DefaultContainer");
+			codeUnderTest("/empty.DefaultContainer", mMostlyEmptyScope["empty.DefaultContainer"]);
+
+			// Note: these are logged asynchronously!
+			expectDebug("Including tea_busi_product.v0001."
+				+ " from ../../../../default/iwbep/tea_busi_product/0001/$metadata"
+				+ " at /tea_busi.v0001.EQUIPMENT/EQUIPMENT_2_PRODUCT/$Type",
+				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/Name");
+			expectDebug("Including empty. from /empty/$metadata",
+				"/empty.DefaultContainer");
+			expectDebug("Namespace tea_busi_supplier.v0001. found in $Include"
+				+ " of ../../../../default/iwbep/tea_busi_supplier/0001/$metadata"
+				+ " at /tea_busi_product.v0001.Product/PRODUCT_2_SUPPLIER/$Type",
+				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name");
+			expectDebug("Reading ../../../../default/iwbep/tea_busi_supplier/0001/$metadata"
+				+ " from /a/default/iwbep/tea_busi_supplier/0001/$metadata"
+				+ " at /tea_busi_product.v0001.Product/PRODUCT_2_SUPPLIER/$Type",
+				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name");
+			expectDebug("Waiting for tea_busi_supplier.v0001."
+				+ " at /tea_busi_product.v0001.Product/PRODUCT_2_SUPPLIER/$Type",
+				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name");
+			expectDebug("Including tea_busi_supplier.v0001."
+				+ " from ../../../../default/iwbep/tea_busi_supplier/0001/$metadata"
+				+ " at /tea_busi_product.v0001.Product/PRODUCT_2_SUPPLIER/$Type",
+				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name");
+
+			return Promise.all(aPromises);
+		});
 	});
-	//TODO check $Version === "4.0" inside include()
-	//TODO forbid overwriting inside include()!
-	//TODO take care not to overwrite references and their "$ui5.read" promise by a simple
-	//     jQuery.extend(mScope.$Reference, mReferencedScope.$Reference);
-	//     Implement consistency checks that the same namespace is always included from the same
-	//     reference URI, no matter which referencing document.
 	//TODO edmx:Reference w/o edmx:Include
 	//     --> cannot happen once edmx:IncludeAnnotations is forbidden!
 
-	//TODO error handling!
-	//TODO debug log!
-
 	//TODO Decision: It is an error if a namespace is referenced multiple times with different URIs.
 	//     This should be checked even when load-on-demand is used.
+	//     (It should not even be included multiple times with the same URI!)
+	//TODO Check that no namespace is included which is already present!
 	//TODO We scan each included metadata document for edmx:IncludeAnnotation references and reject
 	//     with an error if found. This is incompatible. We do so because it could make a difference
 	//     whether such annotations are included a priori or not, and we make no attempt to detect
@@ -1396,7 +1472,7 @@ sap.ui.require([
 			this.oLogMock.expects("isLoggable")
 				.withExactArgs(jQuery.sap.log.Level.WARNING, sODataMetaModel).returns(bWarn);
 			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
-				.withExactArgs("Unknown qualified name 'not.found'", sPath, sODataMetaModel);
+				.withExactArgs("Unknown qualified name not.found", sPath, sODataMetaModel);
 
 			// code under test
 			oSyncPromise = this.oMetaModel.fetchObject(sPath);
@@ -1413,18 +1489,20 @@ sap.ui.require([
 
 		QUnit.test(sTitle, function (assert) {
 			var sSchemaName = "I.still.haven't.found.what.I'm.looking.for.",
-				sPath = "/" + sSchemaName;
+				sQualifiedName = sSchemaName + "Child",
+				sPath = "/" + sQualifiedName;
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
 				.returns(_SyncPromise.resolve(clone(mXServiceScope)));
 			this.mock(this.oMetaModel.oRequestor).expects("read")
 				.withExactArgs("/empty/$metadata")
 				.returns(Promise.resolve(mMostlyEmptyScope));
-			this.oLogMock.expects("isLoggable")
-				.withExactArgs(jQuery.sap.log.Level.WARNING, sODataMetaModel).returns(bWarn);
+			this.allowWarnings(assert, bWarn);
 			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
-				.withExactArgs("'/empty/$metadata' does not contain '" + sSchemaName + "'", sPath,
+				.withExactArgs("/empty/$metadata does not contain " + sSchemaName, sPath,
 					sODataMetaModel);
+			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+				.withExactArgs("Unknown qualified name " + sQualifiedName, sPath, sODataMetaModel);
 
 			// code under test
 			return this.oMetaModel.fetchObject(sPath).then(function (vResult) {
@@ -1434,65 +1512,167 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchObject: cross-service reference, respect $Include", function (assert) {
-		var mReferencedScope = {
-				"must.not.be.included." : {
-					"$kind" : "Schema"
-				},
-				"tea_busi_product.v0001." : {
-					"$kind" : "Schema"
-				},
-				"tea_busi_supplier.v0001." : {
-					"$kind" : "Schema"
-				}
-			},
-			oRequestorMock = this.mock(this.oMetaModel.oRequestor),
-			that = this;
+	[false, true].forEach(function (bWarn) {
+		var sTitle = "fetchObject: cross-service reference, respect $Include; bWarn = " + bWarn;
 
-		this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
-			.returns(_SyncPromise.resolve({
+		QUnit.test(sTitle, function (assert) {
+			var mReferencedScope = {
+					"$Version" : "4.0",
+					"must.not.be.included." : {
+						"$kind" : "Schema"
+					},
+					"tea_busi_product.v0001." : {
+						"$kind" : "Schema"
+					},
+					"tea_busi_supplier.v0001." : {
+						"$kind" : "Schema"
+					}
+				},
+				oRequestorMock = this.mock(this.oMetaModel.oRequestor),
+				that = this;
+
+			this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
+				.returns(_SyncPromise.resolve({
+					"$Reference" : {
+						"../../../../default/iwbep/tea_busi_product/0001/$metadata" : {
+							"$Include" : [
+								"not.found.",
+								"tea_busi_product.v0001.",
+								"tea_busi_supplier.v0001."
+							]
+						}
+					}
+				}));
+			oRequestorMock.expects("read")
+				.withExactArgs("/a/default/iwbep/tea_busi_product/0001/$metadata")
+				.returns(Promise.resolve(mReferencedScope));
+			this.allowWarnings(assert, bWarn);
+
+			// code under test
+			return this.oMetaModel.fetchObject("/tea_busi_product.v0001.")
+				.then(function (vResult) {
+					var oSyncPromise;
+
+					assert.strictEqual(vResult, mReferencedScope["tea_busi_product.v0001."]);
+
+					that.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+						.withExactArgs("Unknown qualified name must.not.be.included.",
+							"/must.not.be.included.", sODataMetaModel);
+					assert.strictEqual(that.oMetaModel.getObject("/must.not.be.included."),
+						undefined,
+						"must not include schemata which are not mentioned in edmx:Include");
+
+					assert.strictEqual(that.oMetaModel.getObject("/tea_busi_supplier.v0001."),
+						mReferencedScope["tea_busi_supplier.v0001."]);
+
+					// now check that "not.found." does not trigger another read(),
+					// does finish synchronously and logs a warning
+					that.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+						.withExactArgs("../../../../default/iwbep/tea_busi_product/0001/$metadata"
+							+ " does not contain not.found.",
+							"/not.found.", sODataMetaModel);
+					that.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+						.withExactArgs("Unknown qualified name not.found.",
+							"/not.found.", sODataMetaModel);
+
+					// code under test
+					oSyncPromise = that.oMetaModel.fetchObject("/not.found.");
+
+					assert.strictEqual(oSyncPromise.isFulfilled(), true);
+					assert.strictEqual(oSyncPromise.getResult(), undefined);
+				});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchObject: cross-service reference - unsupported $Version", function (assert) {
+		var sMessage = "Unsupported OData version: 4.01",
+			sUrl = "/a/default/iwbep/tea_busi_product/0001/$metadata";
+
+		this.mock(this.oMetaModel).expects("fetchEntityContainer")
+			.returns(_SyncPromise.resolve(clone(mXServiceScope)));
+		this.mock(this.oMetaModel.oRequestor).expects("read").withExactArgs(sUrl)
+			.returns(Promise.resolve({
+				"$Version" : "4.01"
+			}));
+		this.oLogMock.expects("error").withExactArgs(sMessage, sUrl, sODataMetaModel);
+
+		return this.oMetaModel.fetchObject("/tea_busi_product.v0001.Product").then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.message, sMessage);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchObject: cross-service reference - duplicate include", function (assert) {
+		var oRequestorMock = this.mock(this.oMetaModel.oRequestor),
+			// root service includes both A and B, A also includes B
+			mScope0 = {
 				"$Reference" : {
-					"../../../../default/iwbep/tea_busi_product/0001/$metadata" : {
+					"/A/$metadata" : {
 						"$Include" : [
-							"not.found.",
-							"tea_busi_product.v0001.",
-							"tea_busi_supplier.v0001."
+							"A."
+						]
+					},
+					"/B/$metadata" : {
+						"$Include" : [
+							"B."
 						]
 					}
 				}
-			}));
-		oRequestorMock.expects("read")
-			.withExactArgs("/a/default/iwbep/tea_busi_product/0001/$metadata")
-			.returns(Promise.resolve(mReferencedScope));
-		// ignore Unknown qualified name 'must.not.be.included.'
-		this.oLogMock.expects("isLoggable")
-			.withExactArgs(jQuery.sap.log.Level.WARNING, sODataMetaModel).returns(false);
+			},
+			mScopeA = {
+				"$Reference" : {
+					"/B/$metadata" : {
+						"$Include" : [
+							"B.",
+							"B.B." // includes additional namespace from already read document
+						]
+					}
+				},
+				"$Version" : "4.0",
+				"A." : {
+					"$kind" : "Schema"
+				}
+			},
+			mScopeB = {
+				"$Version" : "4.0",
+				"B." : {
+					"$kind" : "Schema"
+				},
+				"B.B." : {
+					"$kind" : "Schema"
+				}
+			},
+			that = this;
 
-		// code under test
-		return this.oMetaModel.fetchObject("/tea_busi_product.v0001.")
+		this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
+			.returns(_SyncPromise.resolve(mScope0));
+		oRequestorMock.expects("read").withExactArgs("/A/$metadata")
+			.returns(Promise.resolve(mScopeA));
+		oRequestorMock.expects("read").withExactArgs("/B/$metadata")
+			.returns(Promise.resolve(mScopeB));
+
+		return this.oMetaModel.fetchObject("/B.")
 			.then(function (vResult) {
-				var oSyncPromise;
+				assert.strictEqual(vResult, mScopeB["B."]);
 
-				assert.strictEqual(that.oMetaModel.getObject("/must.not.be.included."), undefined,
-					"must not include schemata which are not mentioned in edmx:Include");
-				assert.strictEqual(that.oMetaModel.getObject("/tea_busi_supplier.v0001."),
-					mReferencedScope["tea_busi_supplier.v0001."]);
+				// code under test - we must not overwrite our "$ui5.read" promise!
+				return that.oMetaModel.fetchObject("/A.")
+					.then(function (vResult) {
+						assert.strictEqual(vResult, mScopeA["A."]);
 
-				// now check that "not.found." does not trigger another read(),
-				// does finish synchronously and logs a warning
-				that.oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING, sODataMetaModel).returns(true);
-				that.oLogMock.expects("warning")
-					.withExactArgs("'../../../../default/iwbep/tea_busi_product/0001/$metadata'"
-						+ " does not contain 'not.found.'", "/not.found.", sODataMetaModel);
-
-				// code under test
-				oSyncPromise = that.oMetaModel.fetchObject("/not.found.");
-
-				assert.strictEqual(oSyncPromise.isFulfilled(), true);
-				assert.strictEqual(oSyncPromise.getResult(), undefined);
+						// Note: must not trigger read() again!
+						return that.oMetaModel.fetchObject("/B.B.")
+							.then(function (vResult) {
+								assert.strictEqual(vResult, mScopeB["B.B."]);
+							});
+					});
 			});
 	});
+	//TODO Implement consistency checks that the same namespace is always included from the same
+	//     reference URI, no matter which referencing document.
 
 	//*********************************************************************************************
 	QUnit.test("getObject, requestObject", function (assert) {

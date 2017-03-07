@@ -87,6 +87,116 @@ sap.ui.define([
 		WARNING = jQuery.sap.log.Level.WARNING;
 
 	/**
+	 * Returns the schema with the given namespace, or a promise which is resolved as soon as the
+	 * schema has been included, or <code>undefined</code> in case the schema is neither present nor
+	 * referenced.
+	 *
+	 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel
+	 *   The OData metadata model
+	 * @param {object} mScope
+	 *   The $metadata "JSON" of the root service
+	 * @param {string} sNamespace
+	 *   A namespace, for example "foo.bar.", of a schema.
+	 * @param {function} fnLog
+	 *   The log function
+	 * @returns {object|SyncPromise}
+	 *   The schema, or a promise which is resolved without details or rejected with an error, or
+	 *   <code>undefined</code>.
+	 */
+	function getOrFetchSchema(oMetaModel, mScope, sNamespace, fnLog) {
+		var oPromise,
+			oReference,
+			sReferenceUri,
+			sUrl;
+
+		/**
+		 * Include references from the given referenced scope.
+		 *
+		 * @param {object} mReferencedScope
+		 *   The $metadata "JSON"
+		 * @returns {object}
+		 *   <code>mReferencedScope</code> to allow chaining
+		 * @throws {Error}
+		 *   If the given $metadata "JSON" is unsupported
+		 */
+		function includeReferences(mReferencedScope) {
+			var sMessage,
+				sReferenceUri;
+
+			if (mReferencedScope.$Version !== "4.0") {
+				sMessage = "Unsupported OData version: " + mReferencedScope.$Version;
+				jQuery.sap.log.error(sMessage, sUrl, sODataMetaModel);
+				throw new Error(sMessage);
+			}
+
+			// Note: for-in tolerates undefined
+			for (sReferenceUri in mReferencedScope.$Reference) {
+				if (!(sReferenceUri in mScope.$Reference)) { // add new reference
+					mScope.$Reference[sReferenceUri] = mReferencedScope.$Reference[sReferenceUri];
+				} else { // add potentially new includes
+					// Note: it's OK to create duplicates here
+					Array.prototype.push.apply(mScope.$Reference[sReferenceUri].$Include,
+						mReferencedScope.$Reference[sReferenceUri].$Include);
+				}
+			}
+
+			return mReferencedScope;
+		}
+
+		/**
+		 * Include the schema (and all of its children) with namespace <code>sNamespace</code> from
+		 * the given referenced scope.
+		 *
+		 * @param {object} mReferencedScope
+		 *   The $metadata "JSON"
+		 */
+		function includeSchema(mReferencedScope) {
+			var sKey;
+
+			if (!(sNamespace in mReferencedScope)) {
+				fnLog(WARNING, sReferenceUri, " does not contain ", sNamespace);
+				return;
+			}
+
+			fnLog(DEBUG, "Including ", sNamespace, " from ", sReferenceUri);
+			for (sKey in mReferencedScope) {
+				// $EntityContainer can be ignored; $Reference, $Version is handled above
+				if (sKey[0] !== "$" && namespace(sKey) === sNamespace) {
+					mScope[sKey] = mReferencedScope[sKey];
+				}
+			}
+		}
+
+		if (sNamespace in mScope) {
+			return mScope[sNamespace];
+		}
+
+		// Note: for-in tolerates undefined
+		for (sReferenceUri in mScope.$Reference) {
+			oReference = mScope.$Reference[sReferenceUri];
+			if (oReference.$Include.indexOf(sNamespace) >= 0) {
+				fnLog(DEBUG, "Namespace ", sNamespace, " found in $Include of ", sReferenceUri);
+				oPromise = oReference["$ui5.read"];
+				if (!oPromise) {
+					// interpret reference URI relative to metadata URL
+					sUrl = new URI(sReferenceUri).absoluteTo(oMetaModel.sUrl).toString();
+					fnLog(DEBUG, "Reading ", sReferenceUri, " from ", sUrl);
+					oPromise = oReference["$ui5.read"]
+						= _SyncPromise.resolve(oMetaModel.oRequestor.read(sUrl))
+							.then(includeReferences);
+				}
+				oPromise = oPromise.then(includeSchema);
+				// BEWARE: oPromise may already be resolved, then includeSchema() is done now
+				if (sNamespace in mScope) {
+					return mScope[sNamespace];
+				}
+				mScope[sNamespace] = oPromise;
+				return oPromise;
+			}
+		}
+	}
+
+	/**
 	 * Checks that the term is the expected term and determines the qualifier.
 	 *
 	 * @param {string} sTerm
@@ -104,6 +214,18 @@ sap.ui.define([
 				&& sTerm.indexOf("@", sExpectedTerm.length) < 0) {
 			return sTerm.slice(sExpectedTerm.length + 1);
 		}
+	}
+
+	/**
+	 * Returns the namespace of the given qualified name, including the trailing dot.
+	 *
+	 * @param {string} sQualifiedName
+	 *   A qualified name
+	 * @returns {string}
+	 *   The namespace
+	 */
+	function namespace(sQualifiedName) {
+		return sQualifiedName.slice(0, sQualifiedName.lastIndexOf(".") + 1);
 	}
 
 	/**
@@ -617,13 +739,13 @@ sap.ui.define([
 
 	/**
 	 * Requests the single entity container for this metadata model's service by reading the
-	 * $metadata document via the metadata requestor. The resulting $metadata JSON object is a map
+	 * $metadata document via the metadata requestor. The resulting $metadata "JSON" object is a map
 	 * of qualified names to their corresponding metadata, with the special key "$EntityContainer"
 	 * mapped to the entity container's qualified name as a starting point.
 	 *
 	 * @returns {SyncPromise}
-	 *   A promise which is resolved with the $metadata JSON object as soon as the entity container
-	 *   is fully available, or rejected with an error.
+	 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
+	 *   container is fully available, or rejected with an error.
 	 *
 	 * @private
 	 */
@@ -737,7 +859,8 @@ sap.ui.define([
 			}
 
 			/*
-			 * Outputs a log message for the given level. Leads to an <code>undefined</code> result.
+			 * Outputs a log message for the given level. Leads to an <code>undefined</code> result
+			 * in case of a WARNING.
 			 *
 			 * @param {jQuery.sap.log.Level} iLevel
 			 *   A log level, either DEBUG or WARNING
@@ -759,7 +882,9 @@ sap.ui.define([
 						+ (sLocation ? " at /" + sLocation : ""),
 						sResolvedPath, sODataMetaModel);
 				}
-				vResult = undefined;
+				if (iLevel === WARNING) {
+					vResult = undefined;
+				}
 				return false;
 			}
 
@@ -774,74 +899,37 @@ sap.ui.define([
 			 *   Whether to continue after scope lookup
 			 */
 			function scopeLookup(sQualifiedName, sPropertyName) {
-				var aIncludes, // list of namespaces to include
-					sNamespace,
-					sReferenceUri,
-					sUrl;
+				var sNamespace;
 
 				/*
-				 * Include all schemas from the given referenced scope.
-				 *
-				 * @param {object} mReferencedScope
-				 *   The metadata "JSON"
+				 * Sets <code>vLocation</code> and delegates to {@link log}.
 				 */
-				function include(mReferencedScope) {
-					var sKey;
-
-					// api.jquery.com/jquery.extend says
-					// "Arguments that are null or undefined are ignored."
-					jQuery.extend(mScope.$Reference, mReferencedScope.$Reference);
-
-					for (sKey in mReferencedScope) {
-						// $Version, $EntityContainer can be ignored
-						if (sKey[0] !== "$" && aIncludes.indexOf(namespace(sKey)) >= 0) {
-							mScope[sKey] = mReferencedScope[sKey];
-						}
-					}
-				}
-
-				/*
-				 * Returns the namespace of the given qualified name, including the trailing dot.
-				 *
-				 * @param {string} sQualifiedName
-				 *   A qualified name
-				 * @returns {string}
-				 *   The namespace
-				 */
-				function namespace(sQualifiedName) {
-					return sQualifiedName.slice(0, sQualifiedName.lastIndexOf(".") + 1);
+				function logWithLocation() {
+					vLocation = vLocation
+						|| sTarget && sPropertyName && sTarget + "/" + sPropertyName;
+					return log.apply(this, arguments);
 				}
 
 				if (!(sQualifiedName in mScope)) {
-					// unknown qualified name, maybe namespace is referenced and can be included?
-					// Note: namespace incl. trailing dot
+					// unknown qualified name: maybe schema is referenced and can be included?
 					sNamespace = namespace(sQualifiedName);
-					// Note: for-in tolerates undefined
-					for (sReferenceUri in mScope.$Reference) {
-						aIncludes = mScope.$Reference[sReferenceUri].$Include;
-						if (aIncludes.indexOf(sNamespace) >= 0) {
-							vResult = mScope.$Reference[sReferenceUri]["$ui5.read"];
-							if (!vResult) {
-								// interpret reference URI relative to metadata URL
-								sUrl = new URI(sReferenceUri).absoluteTo(that.sUrl).toString();
-								vResult = mScope.$Reference[sReferenceUri]["$ui5.read"]
-									= _SyncPromise.resolve(
-										that.oRequestor.read(sUrl).then(include));
-							} else if (vResult.isFulfilled()) {
-								log(WARNING, "'", sReferenceUri, "' does not contain '",
-									sQualifiedName, "'");
-							}
-							return false;
-						}
-					}
-
-					vLocation = vLocation || sTarget && sTarget + "/" + sPropertyName;
-					return log(WARNING, "Unknown qualified name '", sQualifiedName, "'");
+					vResult = getOrFetchSchema(that, mScope, sNamespace, logWithLocation);
 				}
 
-				sTarget = sName = sSchemaChildName = sQualifiedName;
-				vResult = oSchemaChild = mScope[sSchemaChildName];
-				return true;
+				if (sQualifiedName in mScope) {
+					sTarget = sName = sSchemaChildName = sQualifiedName;
+					vResult = oSchemaChild = mScope[sSchemaChildName];
+					if (!isThenable(vResult)) {
+						return true; // qualified name found, steps may continue
+					}
+				}
+
+				if (isThenable(vResult) && vResult.isPending()) {
+					// load on demand still pending
+					return logWithLocation(DEBUG, "Waiting for ", sNamespace);
+				}
+
+				return logWithLocation(WARNING, "Unknown qualified name ", sQualifiedName);
 			}
 
 			/*
@@ -931,8 +1019,8 @@ sap.ui.define([
 								vResult = oSchemaChild = oSchemaChild || mScope[sSchemaChildName];
 								if (sSegment && sSegment[0] !== "@"
 									&& !(sSegment in oSchemaChild)) {
-									return log(WARNING, "Unknown child '", sSegment,
-										"' of '", sSchemaChildName, "'");
+									return log(WARNING, "Unknown child ", sSegment, " of ",
+										sSchemaChildName);
 								}
 							}
 							if (Array.isArray(vResult)) { // overloads of Action or Function
@@ -982,6 +1070,7 @@ sap.ui.define([
 					}
 					if (!vResult || typeof vResult !== "object") {
 						// Note: even an OData path cannot continue here (e.g. by type cast)
+						vResult = undefined;
 						return log(DEBUG, "Invalid segment: ", sSegment);
 					}
 					if (bODataMode && sSegment[0] === "@") {
