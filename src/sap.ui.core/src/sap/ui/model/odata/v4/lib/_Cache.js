@@ -46,21 +46,13 @@ sap.ui.define([
 				case "$expand":
 					vValue = Cache.convertExpand(vValue);
 					break;
-				case "$apply":
-				case "$count":
-				case "$filter":
-				case "$orderby":
-				case "$search":
-					break;
 				case "$select":
 					if (Array.isArray(vValue)) {
 						vValue = vValue.join(",");
 					}
 					break;
 				default:
-					if (sKey[0] === '$') {
-						throw new Error("Unsupported system query option " + sKey);
-					}
+					// nothing to do
 			}
 			fnResultHandler(sKey, vValue);
 		});
