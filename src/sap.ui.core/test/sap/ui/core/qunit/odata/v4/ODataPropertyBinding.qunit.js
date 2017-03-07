@@ -1383,7 +1383,9 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["getValueListType", "requestValueListInfo"].forEach(function (sFunctionName) {
+	[
+		"getValueListType", "requestValueListType", "requestValueListInfo"
+	].forEach(function (sFunctionName) {
 		QUnit.test(sFunctionName + ": forward", function(assert) {
 			var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),
 				oPropertyBinding = this.oModel.bindProperty("Category", oContext),

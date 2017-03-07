@@ -45,37 +45,46 @@ sap.ui.define([
 
 		init : function () {
 			this.attachModelContextChange(this.onModelContextChange);
+			this.setAggregation("field", new Input({
+				editable : this.getEditable(),
+				showValueHelp : false,
+				value : this.getValue()
+			}));
 		},
 
 		onModelContextChange : function (oEvent) {
 			var oBinding = this.getBinding("value"),
-				oField;
+				that = this;
 
 			if (oBinding && oBinding.isResolved()) {
-				switch (oBinding.getValueListType()) {
-					case ValueListType.Standard:
-						oField = new Input({
-							editable : true,
-							showValueHelp : true,
-							value : this.getValue(),
-							valueHelpRequest : this.onValueHelp.bind(this)
-						});
-						break;
-					case ValueListType.Fixed:
-						oField = new ComboBox({
-							editable : true,
-							loadItems : this.onLoadItems.bind(this),
-							value : this.getValue()
-						});
-						break;
-					default:
-						oField = new Input({
-							editable : this.getEditable(),
-							showValueHelp : false,
-							value : this.getValue()
-						});
-				}
-				this.setAggregation("field", oField);
+				oBinding.requestValueListType().then(function (sValueListType) {
+					var oField;
+
+					switch (sValueListType) {
+						case ValueListType.Standard:
+							oField = new Input({
+								editable : true,
+								showValueHelp : true,
+								value : that.getValue(),
+								valueHelpRequest : that.onValueHelp.bind(that)
+							});
+							break;
+						case ValueListType.Fixed:
+							oField = new ComboBox({
+								editable : true,
+								loadItems : that.onLoadItems.bind(that),
+								value : that.getValue()
+							});
+							break;
+						default:
+							oField = new Input({
+								editable : that.getEditable(),
+								showValueHelp : false,
+								value : that.getValue()
+							});
+					}
+					that.setAggregation("field", oField);
+				});
 			}
 		},
 

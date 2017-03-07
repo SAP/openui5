@@ -440,6 +440,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines which type of value list exists for this property.
+	 *
+	 * @returns {Promise}
+	 *   A promise that is resolved with the type of the value list. It is rejected if the property
+	 *   cannot be found in the metadata.
+	 * @throws {Error}
+	 *   If the binding is relative and has no context
+	 *
+	 * @public
+	 * @since 1.47.0
+	 */
+	ODataPropertyBinding.prototype.requestValueListType = function () {
+		var sResolvedPath = this.getModel().resolve(this.sPath, this.oContext);
+
+		if (!sResolvedPath) {
+			throw new Error(this + " is not resolved yet");
+		}
+		return this.getModel().getMetaModel().requestValueListType(sResolvedPath);
+	};
+
+	/**
 	 * Sets the (base) context if the binding path is relative. Triggers (@link #fetchCache) to
 	 * create a cache and {@link #checkUpdate} to check for the current value if the
 	 * context has changed. In case of absolute bindings nothing is done.
