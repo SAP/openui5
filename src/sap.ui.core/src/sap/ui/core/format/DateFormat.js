@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 	var CalendarType = library.CalendarType;
 
 	/**
-	 * Constructor for DateFormat - must not be used: To get a DateFormat instance, please use getInstance, getDateTimeInstance or getTimeInstance.
+	 * Constructor for DateFormat - must not be used: To get a DateFormat instance, please use getDateInstance, getDateTimeInstance or getTimeInstance.
 	 *
 	 * @class
 	 * The DateFormat is a static class for formatting and parsing date and time values according
@@ -701,6 +701,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 			oPart,
 			sPart,
 			iTZDiff = null,
+
 			bValid = true,
 			oFound,
 			bFound,
