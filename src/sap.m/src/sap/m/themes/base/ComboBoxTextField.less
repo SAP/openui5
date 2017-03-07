@@ -31,6 +31,15 @@ input.sapMComboBoxTextFieldInner {
 	padding-right: 3rem;
 }
 
+// removes additional icon in safari
+html[data-sap-ui-browser^="sf"] {
+	.sapMComboBoxTextFieldInner::-webkit-contacts-auto-fill-button {
+		visibility: hidden;
+		pointer-events: none;
+		position: absolute;
+	}
+}
+
 /* ------------------------------ */
 /* arrow                          */
 /* ------------------------------ */
