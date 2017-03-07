@@ -301,8 +301,7 @@ sap.ui.require([
 		oModelMock.expects("buildBindingParameters")
 			.withExactArgs(mParameters, ["$$groupId", "$$operationMode", "$$updateGroupId"])
 			.returns(mBindingParameters);
-		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(undefined, mParameters, true)
+		oModelMock.expects("buildQueryOptions").withExactArgs(mParameters, true)
 			.returns(mQueryOptions);
 		this.mock(oBinding).expects("reset").withExactArgs(undefined);
 
@@ -354,7 +353,7 @@ sap.ui.require([
 			.withExactArgs(mParameters, ["$$groupId", "$$operationMode", "$$updateGroupId"])
 			.returns({$$operationMode : OperationMode.Server});
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(undefined, mParameters, true).returns(mQueryOptions);
+			.withExactArgs(mParameters, true).returns(mQueryOptions);
 		this.mock(oBinding).expects("fetchCache")
 			.withExactArgs(sinon.match.same(oBinding.oContext));
 		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Change);
@@ -540,7 +539,7 @@ sap.ui.require([
 
 		// absolute binding and binding with base context result in the same cache
 		oModelMock.expects("buildQueryOptions").thrice()
-			.withExactArgs(undefined, mParameters, true)
+			.withExactArgs(mParameters, true)
 			.returns(mQueryOptions);
 		this.mock(ODataListBinding.prototype).expects("getOrderby").twice()
 			.withExactArgs(mQueryOptions.$orderby)

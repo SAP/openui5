@@ -137,8 +137,7 @@ sap.ui.require([
 		oMetaModel = oModel.getMetaModel();
 
 		this.mock(ODataModel.prototype).expects("buildQueryOptions")
-			.withExactArgs(null, {}, false, true)
-			.returns(mModelOptions);
+			.withExactArgs({}, false, true).returns(mModelOptions);
 		this.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, sinon.match.same(mModelOptions))
 			.returns(oMetadataRequestor);
@@ -167,7 +166,7 @@ sap.ui.require([
 			mModelOptions = {};
 
 		this.mock(ODataModel.prototype).expects("buildQueryOptions")
-			.withExactArgs(null, {"sap-client" : "111"}, false, true)
+			.withExactArgs({"sap-client" : "111"}, false, true)
 			.returns(mModelOptions);
 
 		// code under test
@@ -895,7 +894,6 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		mModelOptions : {"sap-client" : "111"},
 		mOptions : {"$expand" : {"foo" : null}, "$select" : ["bar"], "custom" : "baz"},
 		bSystemQueryOptionsAllowed : true
 	}, {
@@ -908,33 +906,28 @@ sap.ui.require([
 		},
 		bSystemQueryOptionsAllowed : true
 	}, {
-		mModelOptions : {"custom" : "bar"},
 		mOptions : {"custom" : "foo"}
 	}, {
-		mModelOptions : undefined,
 		mOptions : undefined
 	}, {
-		mModelOptions : null,
 		mOptions : {"sap-client" : "111"},
 		bSapAllowed : true
 	}].forEach(function (o) {
 		QUnit.test("buildQueryOptions success " + JSON.stringify(o), function (assert) {
 			var mOptions,
-				mOriginalModelOptions = clone(o.mModelOptions),
 				mOriginalOptions = clone(o.mOptions);
 
-			mOptions = ODataModel.prototype.buildQueryOptions(o.mModelOptions, o.mOptions,
+			mOptions = ODataModel.prototype.buildQueryOptions(o.mOptions,
 				o.bSystemQueryOptionsAllowed, o.bSapAllowed);
 
-			assert.deepEqual(mOptions, jQuery.extend({}, o.mModelOptions, o.mOptions));
-			assert.deepEqual(o.mModelOptions, mOriginalModelOptions);
+			assert.deepEqual(mOptions, jQuery.extend({}, o.mOptions));
 			assert.deepEqual(o.mOptions, mOriginalOptions);
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("buildQueryOptions with $$ options", function (assert) {
-		assert.deepEqual(ODataModel.prototype.buildQueryOptions({}, {$$groupId : "$direct"}), {});
+		assert.deepEqual(ODataModel.prototype.buildQueryOptions({$$groupId : "$direct"}), {});
 	});
 
 	//*********************************************************************************************
@@ -948,7 +941,7 @@ sap.ui.require([
 		oParserMock.expects("parseSystemQueryOption")
 			.withExactArgs("$select=bar").returns({"$select" : aSelect});
 
-		assert.deepEqual(ODataModel.prototype.buildQueryOptions({}, {
+		assert.deepEqual(ODataModel.prototype.buildQueryOptions({
 			$expand : "foo",
 			$select : "bar"
 		}, true), {
@@ -959,38 +952,31 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		mModelOptions : {},
 		mOptions : {"$foo" : "foo"},
 		bSystemQueryOptionsAllowed : true,
 		error : "System query option $foo is not supported"
 	}, {
-		mModelOptions : {},
 		mOptions : {"@alias" : "alias"},
 		bSystemQueryOptionsAllowed : true,
 		error : "Parameter @alias is not supported"
 	}, {
-		mModelOptions : undefined,
 		mOptions : {"$expand" : {"foo" : true}},
 		error : "System query option $expand is not supported"
 	}, {
-		mModelOptions : undefined,
 		mOptions : {"$expand" : {"foo" : {"$unknown" : "bar"}}},
 		bSystemQueryOptionsAllowed : true,
 		error : "System query option $unknown is not supported"
 	}, {
-		mModelOptions : undefined,
 		mOptions : {"$expand" : {"foo" : {"select" : "bar"}}},
 		bSystemQueryOptionsAllowed : true,
 		error : "System query option select is not supported"
 	}, {
-		mModelOptions : undefined,
 		mOptions : {"sap-foo" : "300"},
 		error : "Custom query option sap-foo is not supported"
 	}].forEach(function (o) {
 		QUnit.test("buildQueryOptions error " + JSON.stringify(o), function (assert) {
 			assert.throws(function () {
-				ODataModel.prototype.buildQueryOptions(o.mModelOptions, o.mOptions,
-					o.bSystemQueryOptionsAllowed);
+				ODataModel.prototype.buildQueryOptions(o.mOptions, o.bSystemQueryOptionsAllowed);
 			}, new Error(o.error));
 		});
 	});

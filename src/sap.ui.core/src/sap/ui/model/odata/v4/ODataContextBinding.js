@@ -250,7 +250,7 @@ sap.ui.define([
 	ODataContextBinding.prototype.applyParameters = function (mParameters) {
 		var oBindingParameters;
 
-		this.mQueryOptions = this.oModel.buildQueryOptions(undefined, mParameters, true);
+		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
 
 		oBindingParameters = this.oModel.buildBindingParameters(mParameters,
 			["$$groupId", "$$updateGroupId"]);
