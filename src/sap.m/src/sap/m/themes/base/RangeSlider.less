@@ -30,8 +30,8 @@
 
 //----- RangeSlider Labels------------
 .sapMSliderLabels {
-  position: relative;
-  top: 1rem;
+  margin: 0.875rem -0.875rem 0 -0.875rem;
+  height: 1rem;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -39,8 +39,11 @@
 }
 
 .sapMSliderRangeLabel {
+  display: block;
+  width: 1.75rem;
   font-size: 0.75rem;
   align-self: flex-end;
+  text-align: center;
 }
 
 .sapMSliderTooltipContainer {
@@ -116,10 +119,6 @@
   visibility: visible;
 }
 
-.sapMSliderLabels {
-  height: 1rem;
-}
-
 /* overlap */
 .sapMSliderHandle.sapMSliderHandleOverlap {
   background-color: @sapUiFieldActiveBorderColor;
@@ -130,4 +129,18 @@
 .sapMSliderInner > .sapMSliderHandle.sapMSliderHandlePressed {
   background: @sapUiHighlight;
   border: 0.125rem solid @sapUiFieldActiveBorderColor;
+}
+
+
+/* ============ */
+/* compact size */
+/* ============ */
+.sapUiSizeCompact {
+  .sapMSliderLabels {
+    margin: 0.5rem -0.6875rem 0 -0.6875rem;
+  }
+
+  .sapMSliderRangeLabel {
+    width: 1.375rem;
+  }
 }
