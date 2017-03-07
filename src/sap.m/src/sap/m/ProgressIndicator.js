@@ -89,10 +89,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (!isValidPercentValue(fPercentValue)) {
 			fPercentValue = 0;
 			jQuery.sap.log.warning(this + ": percentValue (" + fPercentValue + ") is not correct! Setting the default percentValue:0.");
-			fPercentDiff = this.getPercentValue() - fPercentValue;
 		}
 
 		if (this.getPercentValue() !== fPercentValue) {
+			fPercentDiff = this.getPercentValue() - fPercentValue;
 			this.setProperty("percentValue", fPercentValue, true);
 
 			if (!$progressIndicator.length) {
