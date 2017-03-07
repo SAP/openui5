@@ -43,12 +43,11 @@
 								<FlexBox
 									height="3.5rem">
 									<l:VerticalLayout>
-										<Link
-											text="{view>Product/Name}"
-											emphasized="true"
-											press="onSelectProduct"
-											class="sapUiTinyMarginBottom">
-										</Link>
+										<ObjectIdentifier
+											title="{view>Product/Name}"
+											titleActive="true"
+											titlePress="onSelectProduct"
+											class="sapUiTinyMarginBottom"/>
 										<ObjectStatus
 											text="{
 												path : 'view>Product/Status',
@@ -120,12 +119,11 @@
 								hSpacing="0">
 								<FlexBox height="3.5rem">
 									<l:VerticalLayout>
-										<Link
-											text="{view>Product/Name}"
-											emphasized="true"
-											press="onSelectProduct"
-											class="sapUiTinyMarginTopBottom ">
-										</Link>
+										<ObjectIdentifier
+											title="{view>Product/Name}"
+											titleActive="true"
+											titlePress="onSelectProduct"
+											class="sapUiTinyMarginBottom"/>
 										<ObjectStatus
 											text="{
 												path : 'view>Product/Status',
@@ -196,12 +194,11 @@
 								hSpacing="0">
 								<FlexBox height="3.5rem">
 									<l:VerticalLayout>
-										<Link
-											text="{view>Product/Name}"
-											emphasized="true"
-											press="onSelectProduct"
-											class="sapUiTinyMarginTopBottom">
-										</Link>
+										<ObjectIdentifier
+											title="{view>Product/Name}"
+											titleActive="true"
+											titlePress="onSelectProduct"
+											class="sapUiTinyMarginBottom"/>
 										<ObjectStatus
 											text="{
 												path : 'view>Product/Status',
