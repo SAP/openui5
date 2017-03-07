@@ -403,7 +403,7 @@ sap.ui.require([
 		assert.ok(ODataListBinding.prototype.reset.calledWithExactly());
 		assert.strictEqual(oBinding.hasOwnProperty("sChangeReason"), true);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
-		assert.deepEqual(oBinding.oDiff, undefined);
+		assert.deepEqual(oBinding.oDiff, {}, "UNKNOWN");
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
 		assert.deepEqual(oBinding.aPreviousData, []);
 
@@ -419,7 +419,7 @@ sap.ui.require([
 		assert.ok(ODataListBinding.prototype.reset.calledWithExactly());
 		assert.strictEqual(oBinding.hasOwnProperty("sChangeReason"), true);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
-		assert.deepEqual(oBinding.oDiff, undefined);
+		assert.deepEqual(oBinding.oDiff, {}, "UNKNOWN");
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
 		assert.deepEqual(oBinding.aPreviousData, []);
 
@@ -2482,7 +2482,7 @@ sap.ui.require([
 
 		assert.strictEqual(aContexts.dataRequested, false);
 		assert.strictEqual(aContexts.diff, oPreviousDiff.aDiff);
-		assert.strictEqual(oBinding.oDiff, undefined);
+		assert.deepEqual(oBinding.oDiff, {}, "UNKNOWN");
 	});
 
 	//*********************************************************************************************
