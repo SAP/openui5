@@ -2,13 +2,13 @@
  * ${copyright}
  */
 
-// Provides control sap.m.SelectionDetailsItemField.
+// Provides control sap.m.SelectionDetailsItemLine.
 sap.ui.define(["jquery.sap.global", "sap/ui/core/Element"],
 	function(jQuery, Element) {
 	"use strict";
 
 	/**
-	 * Constructor for a new SelectionDetailsItemField.
+	 * Constructor for a new SelectionDetailsItemLine.
 	 *
 	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] Initial settings for the new control
@@ -24,38 +24,39 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element"],
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
-	 * @alias sap.m.SelectionDetailsItemField
+	 * @private
+	 * @alias sap.m.SelectionDetailsItemLine
 	 * @experimental Since 1.48 This control is still under development and might change at any point in time.
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var SelectionDetailsItemField = Element.extend("sap.m.SelectionDetailsItemField", /** @lends sap.m.SelectionDetailsItemField.prototype */ {
+	var SelectionDetailsItemLine = Element.extend("sap.m.SelectionDetailsItemLine", /** @lends sap.m.SelectionDetailsItemLine.prototype */ {
 		metadata : {
 			library : "sap.m",
 			properties : {
 				/**
-				 * The label that is shown as the first part of the field.
+				 * The label that is shown as the first part of the line.
 				 * It may contain the name of the currently selected dimension or measure.
 				 */
 				label: { type: "string", group: "Data" },
 
 				/**
-				 * The value of the field, for example the value of the currently selected measure.
+				 * The value of the line, for example the value of the currently selected measure.
 				 */
 				value: { type: "string", group: "Data" },
 
 				/**
-				 * The display value of the field. If this property is set, it overrides the value property and is displayed as is.
+				 * The display value of the line. If this property is set, it overrides the value property and is displayed as is.
 				 */
 				displayValue: { type: "string", defaultValue: null, group: "Data" },
 
 				/**
-				 * The unit of the given value. If this unit is given, the field is displayed bold.
+				 * The unit of the given value. If this unit is given, the line is displayed bold.
 				 */
 				unit: { type: "string", defaultValue: null, group: "Data" }
+
 			}
 		}
 	});
 
-	return SelectionDetailsItemField;
+	return SelectionDetailsItemLine;
 });
