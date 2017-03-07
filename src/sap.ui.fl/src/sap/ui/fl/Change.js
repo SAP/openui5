@@ -599,7 +599,6 @@ sap.ui.define([
 	 *
 	 * @param {Object}  [oPropertyBag] property bag
 	 * @param {String}  [oPropertyBag.service] name of the OData service
-	 * @param {String}  [oPropertyBag.componentName] name of the component
 	 * @param {String}  [oPropertyBag.changeType] type of the change
 	 * @param {Object}  [oPropertyBag.texts] map object with all referenced texts within the file
 	 *                                      these texts will be connected to the translation process

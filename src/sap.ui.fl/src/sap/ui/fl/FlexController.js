@@ -113,12 +113,7 @@ sap.ui.define([
 		var oAppDescr = Utils.getAppDescriptor(oAppComponent);
 		var sComponentName = this.getComponentName();
 		oChangeSpecificData.reference = sComponentName; //in this case the component name can also be the value of sap-app-id
-		if (oAppDescr && oAppDescr["sap.app"]) {
-			oChangeSpecificData.componentName = oAppDescr["sap.app"].componentName || oAppDescr["sap.app"].id;
-		} else {
-			//fallback in case no application descriptor is available (e.g. during unit testing)
-			oChangeSpecificData.componentName = sComponentName;
-		}
+
 		oChangeSpecificData.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
 
 		oChangeSpecificData.context = aCurrentDesignTimeContext.length === 1 ? aCurrentDesignTimeContext[0] : "";
