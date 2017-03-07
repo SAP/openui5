@@ -8,7 +8,8 @@
         <script src="shared-config.js"></script>
         <script id="sap-ui-bootstrap"
                 data-sap-ui-libs="sap.m, sap.ui.layout"
-                src="../../../resources/sap-ui-core.js">
+                src="../../../resources/sap-ui-core.js"
+                data-sap-ui-compatVersion="1.16">
         </script>
 
         <script>
@@ -134,9 +135,11 @@
                 }
             });
 
+            // Dialog will have no padding because of compatVersion setting on main script
             var oDialog1 = new sap.m.Dialog({
-                title: "Dialog with MessageView",
+//                title: "Dialog with MessageView",
                 content: oMessageViewDialog,
+                showHeader: false,
                 beginButton: new sap.m.Button({
                     press: function () {
                         oDialog1.close();
