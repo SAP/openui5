@@ -335,20 +335,27 @@ sap.ui.define([
 		}
 
 		var oAppDescr = Utils.getAppDescriptor(this._oControl);
-		var sComponentName = this._sComponentName; //only used in case ui core provides no app descriptor e.g. during unit tests
-		if ( oAppDescr && oAppDescr["sap.app"] ){
-			sComponentName = oAppDescr["sap.app"].componentName || oAppDescr["sap.app"].id;
+
+		var oValidAppVersions = {
+			creation: "",
+			from: ""
+		};
+
+		if (oAppDescr && oAppDescr["sap.app"] && oAppDescr["sap.app"]["applicationVersion"]) { //TODO: Replace with method in Utils when available
+			oValidAppVersions.creation = oAppDescr["sap.app"]["applicationVersion"]["version"];
+			oValidAppVersions.from = oAppDescr["sap.app"]["applicationVersion"]["version"];
 		}
+
 		oInfo = {
 			changeType: mParameters.type,
 			service: mParameters.ODataService,
 			texts: mInternalTexts,
 			content: mParameters.content,
 			reference: this._sComponentName, //in this case the component name can also be the value of sap-app-id
-			componentName: sComponentName,
 			isVariant: mParameters.isVariant,
 			packageName: mParameters.packageName,
-			isUserDependent: mParameters.isUserDependent
+			isUserDependent: mParameters.isUserDependent,
+			validAppVersions: oValidAppVersions
 		};
 
 		oInfo.selector = this._getSelector();

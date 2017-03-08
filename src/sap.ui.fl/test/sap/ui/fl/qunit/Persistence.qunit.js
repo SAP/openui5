@@ -120,7 +120,10 @@ jQuery.sap.require("sap.ui.fl.Cache");
 
 			sandbox.stub(utils,"getAppDescriptor").returns({
 				"sap.app":{
-					id: "myapp"
+					id: "myapp",
+					applicationVersion: {
+						version: "1.0.0"
+					}
 				}
 			});
 
@@ -208,7 +211,11 @@ jQuery.sap.require("sap.ui.fl.Cache");
 				content: {myContent: "something"},
 				isVariant: true,
 				packageName: "",
-				isUserDependend: true
+				isUserDependend: true,
+				validAppVersions: {
+					creation: "1.0.0",
+					from: "1.0.0"
+				}
 			};
 			var sChangeId = that.oPersistence.addChange(mParameters);
 
@@ -225,6 +232,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 			assert.equal(oNewChange.getPendingAction(), "NEW");
 			assert.equal(oNewChange.getText("variantName"), "myVariantName");
 			assert.equal(oNewChange.isVariant(), true);
+			assert.deepEqual(oNewChange._oDefinition.validAppVersions, {creation: "1.0.0", from: "1.0.0"});
 		});
 
 	});
