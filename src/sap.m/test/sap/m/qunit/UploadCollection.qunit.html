@@ -588,6 +588,16 @@
 		}
 	});
 
+	QUnit.test("Event 'selectionChange' is attached once", function(assert) {
+		//Arrange
+		nListeners = this.oUploadCollection._oList.mEventRegistry.selectionChange.length;
+		//Act
+		this.oUploadCollection.invalidate();
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(this.oUploadCollection._oList.mEventRegistry.selectionChange.length, nListeners, "Event 'selectionChange' is attached once");
+	});
+
 	QUnit.test("Set and get selected items in Multiple Mode", function(assert) {
 		//Arrange
 		var aAllItems = this.oUploadCollection.getItems();
