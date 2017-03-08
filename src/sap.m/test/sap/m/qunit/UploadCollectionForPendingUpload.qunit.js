@@ -56,6 +56,8 @@ QUnit.test("Check if property binding via model is still working", function(asse
 	assert.equal(oUploadCollection.getFileType().toString(), aFileTypesExpected, "Binded fileType value is set correctly for instantUpload : false");
 	oUploadCollection.setFileType([]);
 	assert.equal(oUploadCollection.getFileType().toString(), aFileTypesExpected, "Binded fileType value is set correctly for instantUpload : false");
+	oUploadCollection.destroy();
+	oUploadCollection = null;
 });
 
 QUnit.test("API method 'upload' exists and reacts depending on usages.", function(assert) {
@@ -72,6 +74,8 @@ QUnit.test("API method 'upload' exists and reacts depending on usages.", functio
 	sap.ui.getCore().applyChanges();
 	oUploadCollection.upload();
 	assert.ok(jQuery.sap.log.error.calledOnce, "No error should be logged, because of valid API call.");
+	oUploadCollection.destroy();
+	oUploadCollection = null;
 	jQuery.sap.log.error.restore();
 });
 
@@ -121,6 +125,8 @@ QUnit.test("Test for method _onChange for instantUpload = false", function(asser
 	assert.deepEqual(oFileUploader, oUploadCollection._aFileUploadersForPendingUpload[0], "Array _aFileUploadersForPendingUpload should contain the FileUploader instance on which Change Event was fired");
 	assert.deepEqual(oFileUploader, sap.ui.getCore().byId(oUploadCollection.getItems()[0].getAssociation("fileUploader")), "Association fileUploader should contain the FileUploader instance with which the Change event was fired");
 	assert.equal(oUploadCollection.getItems()[0]._status, sap.m.UploadCollection._pendingUploadStatus, "Item should have the 'pendingUploadStatus'");
+	oUploadCollection.destroy();
+	oUploadCollection = null;
 });
 
 QUnit.module("PendingUpload: test setters", {
