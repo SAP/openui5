@@ -48,12 +48,15 @@ public class MyReleaseButton {
   private static ReleaseOperation relOperation;
   private static  String jsonLocation;
   private static Map<String, UiLibrary> contributorsJsonData = new HashMap<String, UiLibrary>();
+  public static MvnClient mvn = new MvnClient();
+  public static JSONtoMap jsonToMap;
+  public static ContributorsVersions contribVersions = new ContributorsVersions();
   
   public static void setRelOperation(ReleaseOperation relOp){
 		relOperation = relOp;
  }
   
-  public static void getFileOSLocation(String libDatajsonLocation){
+  public static void setFileOSLocation(String libDatajsonLocation){
 	  jsonLocation = libDatajsonLocation;
   }
 
@@ -64,29 +67,32 @@ public class MyReleaseButton {
   public static void setFile(File receivedF){
 	  receivedFile = receivedF;
   }
-  //puts the result from getSnapshotVersions.js into "contributorsJsonData" HashMap
-  public static void fromJSONtoMap(String fileName, String filePath) throws FileNotFoundException{	  
-	  String fName = filePath + File.separator + fileName + "_uilibCollectionData.json";
-	  
-	  JsonObject result = convertFileToJSON(fName);
+  
+  public class JSONtoMap {
 
-	  Set<Map.Entry<String, JsonElement>> entries = result.entrySet();
-	  
-	  for (Map.Entry<String, JsonElement> entry : entries) {
-
-		    JsonObject lib= (JsonObject) result.get(entry.getKey());
-		    String groupIdPatt = lib.get("version").toString().replaceAll("[\\[\\](){}$\"]", "");
-
-		    String hasSnapshotStr = lib.get("hasSnapshot").toString();
-		    Boolean hasSnapshot = true;
-		    
-		    if (hasSnapshotStr.equals("false")){
-		    	hasSnapshot = false;
-		    }
-		    
-		    contributorsJsonData.put(entry.getKey(), new UiLibrary(groupIdPatt, hasSnapshot));	    
-		}
+    public void fromJSONtoMap(String fileName, String filePath) throws FileNotFoundException{    
+      String fName = filePath + File.separator + fileName + "_uilibCollectionData.json";
+      JsonObject result = contribVersions.convertFileToJSON(fName);
+      
+      Set<Map.Entry<String, JsonElement>> entries = result.entrySet();
+      
+      for (Map.Entry<String, JsonElement> entry : entries) {
+        
+        JsonObject lib= (JsonObject) result.get(entry.getKey());
+        String groupIdPatt = lib.get("version").toString().replaceAll("[\\[\\](){}$\"]", "");
+        
+        String hasSnapshotStr = lib.get("hasSnapshot").toString();
+        Boolean hasSnapshot = true;
+        
+        if (hasSnapshotStr.equals("false")){
+          hasSnapshot = false;
+        }
+        
+        contributorsJsonData.put(entry.getKey(), new UiLibrary(groupIdPatt, hasSnapshot));      
+      }
+    }
   }
+    
   
    private static Writer createFileWriter(File target, boolean append,
       String encoding, int bufferSize) throws IOException {
@@ -141,16 +147,6 @@ public class MyReleaseButton {
     Writer out = createFileWriter(file, false, encoding, -1);
     out.write(str);
     out.close();
-  }
-
-  public static JsonObject convertFileToJSON (String fileName) throws FileNotFoundException{
-
-      // Read from File to String
-      JsonObject jsonObject = new JsonObject();     
-      JsonParser parser = new JsonParser();
-      JsonElement jsonElement = parser.parse(new FileReader(fileName));
-      jsonObject = jsonElement.getAsJsonObject();        
-      return jsonObject;
   }
   
   private static class CharBuffer extends CharArrayWriter implements CharSequence {
@@ -475,7 +471,8 @@ public class MyReleaseButton {
       contributorsRange = (String)contributorsVersions.get("contributorsRange");
 
       if (relOperation == ReleaseOperation.MilestoneDevelopment){
-        fromJSONtoMap(oldVersion, jsonLocation);
+        jsonToMap = new MyReleaseButton().new JSONtoMap();
+        jsonToMap.fromJSONtoMap(oldVersion, jsonLocation);
       }
     }
 
@@ -574,7 +571,7 @@ public class MyReleaseButton {
 
     } else {
       saveFile(file, encoding, (String) s);
-      MvnClient.execute(file.getParentFile(), "versions:resolve-ranges", "-U", "-DgenerateBackupPoms=false");
+      mvn.execute(file.getParentFile(), "versions:resolve-ranges", "-U", "-DgenerateBackupPoms=false");
       s = readFile(file, encoding);
     }
     return s;

@@ -33,7 +33,7 @@ public class GitClient {
   boolean verbose = false;
   boolean noCheckout = false;
   private int lastExitValue;
-  private List<String> lastOutput;
+  List<String> lastOutput;
   private Map<String,GitClient.Commit> lastCommits;
 
   GitClient(){

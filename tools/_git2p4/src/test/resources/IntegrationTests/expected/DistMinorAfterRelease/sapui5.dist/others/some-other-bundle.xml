@@ -1,0 +1,20 @@
+<Module>
+  <ModulePrefs
+    name="com.streamwork.brinkmd.phx4streamwork.demo"
+    title="An updated example for Phoenix in streamwork"
+    description="Demonstrates how to use version 1.47.0-SNAPSHOT of the Phoenix rendering in the Streamwork environment. This is the dev version using some local development server."
+    author="Daniel Brinkmann"
+    author_email="daniel.brinkmann@sap.com"
+    thumbnail="http://wdfd00225465a.dhcp.wdf.sap.corp:8180/streamwork-sample/img/phoenix_icon.gif">  
+      <Category name="Test methods"/>
+      <Require javascript="http://wdfd00225465a.dhcp.wdf.sap.corp:8180/streamwork-sample/javascript/phoenix4streamwork"/>
+      <!--Require javascript="http://wdfd00225465a.dhcp.wdf.sap.corp:8180/streamwork-sample/resources/sap-ui-core"/-->
+      <Require javascript="http://wdfd00225465a.dhcp.wdf.sap.corp:8180/streamwork-sample/resources/sap-ui-core-nojQuery"/>
+      <Require stylesheet="http://wdfd00225465a.dhcp.wdf.sap.corp:8180/streamwork-sample/stylesheets/phoenix4streamwork"/>
+      <User email="daniel.brinkmann@sap.com"/>    
+      <User email="frank.weigel@sap.com"/>    
+      <Icon>http://wdfd00225465a.dhcp.wdf.sap.corp:8180/streamwork-sample/img/phoenix_icon.gif</Icon>
+      <InitialData>{"myData":"Hello Phoenix-World!","myVersion":"1.47.0-SNAPSHOT", "server":{"name":"wdfd00225465a","port":"8180"}}</InitialData>
+      <IndexableTerms></IndexableTerms>
+  </ModulePrefs>
+</Module>

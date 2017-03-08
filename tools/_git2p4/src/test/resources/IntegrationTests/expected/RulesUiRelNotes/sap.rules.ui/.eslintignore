@@ -1,0 +1,4 @@
+# UI
+# ignore generated files
+**/ui/parser/**
+**/ui/codemirror/**

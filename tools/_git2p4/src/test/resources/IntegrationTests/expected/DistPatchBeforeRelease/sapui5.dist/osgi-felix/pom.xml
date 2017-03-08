@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.sap.ui5</groupId>
+    <artifactId>maven-jlib-pom</artifactId>
+    <version>1.44.3</version>
+    <relativePath>../maven/poms/jlib/pom.xml</relativePath>
+  </parent>
+  <artifactId>resource</artifactId>
+  <packaging>jar</packaging>
+  <name>${project.artifactId}</name>
+  <description>SAPUI5 - Resource Handler</description>
+  <properties>
+    <sap.ui5.osgi.version>1.44.3</sap.ui5.osgi.version>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>2.1.0</version>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+            <Bundle-Version>${sap.ui5.osgi.version}</Bundle-Version>
+			<Export-Package>com.sap.phx.resource.*;version="${sap.ui5.osgi.version}"</Export-Package>
+			<Import-Package>!com.sap.phx.resource.*,*</Import-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <version>1.44.3</version>
+    </dependency>
+  </dependencies>
+</project>

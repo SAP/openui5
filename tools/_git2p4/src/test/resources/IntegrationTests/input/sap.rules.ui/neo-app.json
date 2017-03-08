@@ -1,0 +1,65 @@
+{
+  "welcomeFile": "index.html",
+  "routes": [
+    {
+      "path": "/resources/sap/rules/ui",
+      "target": {
+        "type": "application",
+        "name": "saprulesui"
+      },
+      "description": "dgqw"
+    },
+    {
+      "path": "/test-resources",
+      "target": {
+        "type": "application",
+        "name": "saprulesui",
+        "entryPath": "test"
+      },
+      "description": "dgqw"
+    },
+    {
+      "path": "/resources",
+      "target": {
+        "type": "service",
+        "name": "sapui5",
+        "entryPath": "/resources"
+      },
+      "description": "SAPUI5 Resources"
+    },
+    {
+      "path": "/test-resources",
+      "target": {
+        "type": "service",
+        "name": "sapui5",
+        "entryPath": "/test-resources"
+      },
+      "description": "SAPUI5 Test Resources"
+    },
+    {
+      "path": "/sap/opu/odata",
+      "target": {
+        "type": "destination",
+        "name": "uia",
+        "entryPath": "/sap/opu/odata"
+      },
+      "description": "uia000"
+    }
+  ],
+  "cacheControl": [
+    {
+      "directive": "private",
+      "maxAge": 0,
+      "path": "**.html"
+    },
+    {
+      "directive": "private",
+      "maxAge": 0,
+      "path": "sap-ui-cachebuster-info.json"
+    },
+    {
+      "directive": "public",
+      "maxAge": 31536000
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.6"?>
+
+<target name="consumer">
+	<locations>
+		<location includeAllPlatforms="false" includeMode="planner" type="InstallableUnit">
+			<!--
+				use all bundles included with the web profile distribution as a
+				basis
+			-->
+			<unit id="feature.equinox.3.6.feature.group" version="0.0.0" />
+			<unit id="feature.osgi.webcontainer.feature.group" version="0.0.0" />
+			<repository location="http://nexus:8081/nexus/content/repositories/build.milestones.unzip/com/sap/core/distro/javaweb/com.sap.core.distro.javaweb/0.1.0/com.sap.core.distro.javaweb-0.1.0-assembly.zip-unzip/" />
+		</location>
+		<location includeAllPlatforms="false" includeMode="planner" type="InstallableUnit">
+			<!--
+				use all bundles included with the Phoenix distribution as a basis
+			-->
+			<unit id="com.sap.ui.phoenix.phx-runtime-feature.feature.group" version="0.0.0" />
+			<unit id="com.sap.ui.phoenix.phx-uilib-feature.feature.group" version="0.0.0" />
+			<repository location="http://nexus:8081/nexus/content/repositories/build.milestones.unzip/com/sap/ui/phoenix/phx-update-site/1.44.2/phx-update-site-1.44.2-assembly.zip-unzip/" />
+		</location>
+	</locations>
+</target>

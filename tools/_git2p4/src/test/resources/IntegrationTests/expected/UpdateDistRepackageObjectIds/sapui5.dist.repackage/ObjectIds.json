@@ -1,0 +1,19 @@
+{
+"version":"1.44.19",
+"files":[
+{ "url":"/SAP/PUBLIC/BC/UI5/APPLICATIONS/demokit/1.34", "loio":"FM_FOLDER  00505692697B1EE5A58B6E75377F5412", "phio":"", "folder":"X" },
+{ "url":"/SAP/PUBLIC/BC/UI5/APPLICATIONS/demokit/1.34/META-INF", "loio":"FM_FOLDER  005056BA33831ED5A5A160CEAA7F80E2", "phio":"", "folder":"X" },
+{ "url":"/SAP/PUBLIC/BC/UI5/APPLICATIONS/demokit/1.34/META-INF/MANIFEST.MF", "loio":"LM_APP_L   005056BA33831ED5A5A160CEAA7FA0E2", "phio":"PM_APP_P   005056BA33831EE5BB832AD0E9701559", "folder":"" },
+{ "url":"/SAP/PUBLIC/BC/UI5/APPLICATIONS/demokit/1.34/content", "loio":"FM_FOLDER  00505692697B1EE5A58B6EB93F0A3412", "phio":"", "folder":"X" },
+{ "url":"/SAP/PUBLIC/BC/UI5/APPLICATIONS/demokit/1.34/content/Controls", "loio":"FM_FOLDER  00505692697B1EE5A58B6EFF17683412", "phio":"", "folder":"X" },
+{ "url":"/SAP/PUBLIC/BC/UI5/APPLICATIONS/demokit/1.34/content/Controls/Complex", "loio":"FM_FOLDER  00505692697B1EE5A58B6F250E0CF412", "phio":"", "folder":"X" },
+{ "url":"/SAP/PUBLIC/BC/UI5/APPLICATIONS/demokit/1.34/content/Controls/Complex/index.html", "loio":"LM_TEXT_L  00505692697B1EE5A58B6F250E0D1412", "phio":"PM_TEXT_P  00505692697B1EE5A58B6F250E0D3412", "folder":"" },
+{ "url":"/SAP/PUBLIC/BC/UI5/APPLICATIONS/demokit/1.34/content/Controls/Dialogs", "loio":"FM_FOLDER  00505692697B1EE5A58B6EFF1768B412", "phio":"", "folder":"X" },
+{ "url":"/SAP/PUBLIC/BC/UI5/APPLICATIONS/demokit/1.34/content/Controls/Dialogs/index.html", "loio":"LM_TEXT_L  00505692697B1EE5A58B6F250E0C5412", "phio":"PM_TEXT_P  00505692697B1EE5A58B6F250E0C7412", "folder":"" },
+{ "url":"/SAP/PUBLIC/BC/UI5/APPLICATIONS/demokit/1.34/content/Controls/Layout", "loio":"FM_FOLDER  00505692697B1EE5A58B6EFF17685412", "phio":"", "folder":"X" },
+{ "url":"/SAP/PUBLIC/BC/UI5/APPLICATIONS/demokit/1.34/content/Controls/Layout/index.html", "loio":"LM_TEXT_L  00505692697B1EE5A58B6EFF17687412", "phio":"PM_TEXT_P  00505692697B1EE5A58B6EFF17689412", "folder":"" },
+{ "url":"/SAP/PUBLIC/BC/UI5/APPLICATIONS/demokit/1.34/content/Controls/Others", "loio":"FM_FOLDER  00505692697B1EE5A58B6F4EA594B412", "phio":"", "folder":"X" },
+{ "url":"/SAP/PUBLIC/BC/UI5/APPLICATIONS/demokit/1.34/content/Controls/Others/index.html", "loio":"LM_TEXT_L  00505692697B1EE5A58B6F73109D5412", "phio":"PM_TEXT_P  00505692697B1EE5A58B6F73109D7412", "folder":"" },
+{ "url":"/SAP/PUBLIC/BC/UI5/APPLICATIONS/demokit/1.34/content/Controls/SimpleControls", "loio":"FM_FOLDER  00505692697B1EE5A58B6F250E0C9412", "phio":"", "folder":"X" },
+{ "url":"/SAP/PUBLIC/BC/UI5/APPLICATIONS/demokit/1.34/content/Controls/SimpleControls/index.html", "loio":"LM_TEXT_L  00505692697B1EE5A58B6F250E0CB412", "phio":"PM_TEXT_P  00505692697B1EE5A58B6F250E0CD412", "folder":"" }]
+}

@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Model Version Settings
+	***************************************************************************-->
+
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Parent POM Settings
+	***************************************************************************-->
+
+	<parent>
+		<groupId>com.sap.ui5.dist</groupId>
+		<artifactId>reactor</artifactId>
+		<version>1.44.3</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Settings
+	***************************************************************************-->
+
+	<artifactId>uilib-collection</artifactId>
+	<packaging>pom</packaging>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Project Settings
+	***************************************************************************-->
+
+	<name>${project.artifactId}</name>
+	<description>SAPUI5 Distribution - Libraries Collection</description>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Properties Settings
+	***************************************************************************-->
+
+	<properties>
+		<!-- property pattern is: <groupId>.version -->
+		<!-- the result should be 1.44.3, but due to problems with the mocking of mvn.execute,the version is hardcoded below -->
+		<com.sap.suite.version>[1.44.2,1.45.0-SNAPSHOT)</com.sap.suite.version>
+		<com.sap.portal.ui5.version>[1.44.2,1.45.0-SNAPSHOT)</com.sap.portal.ui5.version>
+		<com.sap.ushell.version>[1.44.2,1.45.0-SNAPSHOT)</com.sap.ushell.version>
+		<com.sap.ui5.vbm.version>[1.44.2,1.45.0-SNAPSHOT)</com.sap.ui5.vbm.version>
+		<com.sap.ui5.vizkit.version>[1.44.2,1.45.0-SNAPSHOT)</com.sap.ui5.vizkit.version>
+		<com.sap.collaboration.version>[1.44.2,1.45.0-SNAPSHOT)</com.sap.collaboration.version>
+		<com.sap.ca.version>[1.44.2,1.45.0-SNAPSHOT)</com.sap.ca.version>
+		<com.sap.apf.version>[1.44.2,1.45.0-SNAPSHOT)</com.sap.apf.version>
+		<com.sap.lm.uiext.landvisz.version>[1.44.2,1.45.0-SNAPSHOT)</com.sap.lm.uiext.landvisz.version>
+		<com.sap.suite.ui.generic.template.version>[1.44.2,1.45.0-SNAPSHOT)</com.sap.suite.ui.generic.template.version>
+		<com.sap.ovp.version>[1.44.2,1.45.0-SNAPSHOT)</com.sap.ovp.version>
+		<com.sap.gantt.version>[1.44.2,1.45.0-SNAPSHOT)</com.sap.gantt.version>
+		<com.sap.rules.version>[1.44.2,1.45.0-SNAPSHOT)</com.sap.rules.version>
+		<com.sap.ip.bi.zen.rt.phx.version>[1.44.2,1.45.0-SNAPSHOT)</com.sap.ip.bi.zen.rt.phx.version>
+		<com.sap.ip.bi.zen.rt.version>[1.44.2,1.45.0-SNAPSHOT)</com.sap.ip.bi.zen.rt.version>
+		<com.sap.docu.ui5.version>[1.44.2,1.45.0-SNAPSHOT)</com.sap.docu.ui5.version>
+	</properties>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Dependency Management Settings
+	***************************************************************************-->
+
+	<dependencyManagement>
+
+		<dependencies>
+
+			<!--
+				Add references to all UI5 libraries here which should be part of the SAPUI5 distribution
+			-->
+
+			<!--
+				UI5 Core Libraries (https://projectportal.neo.ondemand.com/projects/sapui5.runtime)
+				-->
+			<dependency>
+				<groupId>com.sap.ui5</groupId>
+				<artifactId>uilib-collection</artifactId>
+				<version>${sap.ui5.core.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!--
+				Demokit documentation
+				-->
+			<dependency>
+				<groupId>com.sap.docu.ui5</groupId>
+				<artifactId>sap.ui5.developerguide.dhtml</artifactId>
+				<version>${com.sap.docu.ui5.version}</version>
+				<type>zip</type>
+			</dependency>
+
+			<!--
+				Suite Commons: sap.suite.ui.commons (https://projectportal.neo.ondemand.com/projects/sapui5.suite)
+				-->
+			<dependency>
+				<groupId>com.sap.suite</groupId>
+				<artifactId>suite-ui-commons</artifactId>
+				<version>${com.sap.suite.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.suite</groupId>
+				<artifactId>suite-ui-commons</artifactId>
+				<version>${com.sap.suite.version}</version>
+				<classifier>testresources</classifier>
+			</dependency>
+
+			<!--
+				Unified Client: sap.portal.ui5 (https://projectportal.neo.ondemand.com/projects/unified.client)
+				-->
+			<dependency>
+				<groupId>com.sap.portal.ui5</groupId>
+				<artifactId>portal-ui5-ext</artifactId>
+				<version>${com.sap.portal.ui5.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.portal.ui5</groupId>
+				<artifactId>portal-ui5-ext</artifactId>
+				<version>${com.sap.portal.ui5.version}</version>
+				<classifier>testresources</classifier>
+			</dependency>
+
+			<!--
+				Unified Shell: sap.ushell (https://projectportal.neo.ondemand.com/projects/unified.shell)
+				-->
+			<dependency>
+				<groupId>com.sap.ushell</groupId>
+				<artifactId>ushell-lib</artifactId>
+				<version>${com.sap.ushell.version}</version>
+			</dependency>
+			<!-- necessary for OSGi delivery incl. Launch Pad testenv -->
+			<dependency>
+				<groupId>com.sap.ushell</groupId>
+				<artifactId>ushell-lib</artifactId>
+				<version>${com.sap.ushell.version}</version>
+				<classifier>testresources</classifier>
+			</dependency>
+			<!-- necessary for ABAP delivery -->
+			<dependency>
+				<groupId>com.sap.ushell</groupId>
+				<artifactId>ushell_abap</artifactId>
+				<version>${com.sap.ushell.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.sap.ui2.srvc</groupId>
+						<artifactId>tools</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<!--
+				Visual Business: sap.vbm (https://projectportal.neo.ondemand.com/projects/sapui5.vizbiz)
+				-->
+			<dependency>
+				<groupId>com.sap.ui5</groupId>
+				<artifactId>vbm</artifactId>
+				<version>${com.sap.ui5.vbm.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-codec</groupId>
+						<artifactId>commons-codec</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.googlecode.json-simple</groupId>
+						<artifactId>json-simple</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.ui5</groupId>
+				<artifactId>vbm</artifactId>
+				<version>${com.sap.ui5.vbm.version}</version>
+				<classifier>testresources</classifier>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-codec</groupId>
+						<artifactId>commons-codec</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.googlecode.json-simple</groupId>
+						<artifactId>json-simple</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<!--
+				SAPUI5 Visualization Toolkit: sap.ui.vk (https://projectportal.neo.ondemand.com/projects/sapui5.vizkit)
+				-->
+			<dependency>
+				<groupId>com.sap.ui5.vizkit</groupId>
+				<artifactId>sap.ui.vk</artifactId>
+				<version>${com.sap.ui5.vizkit.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.ui5.vizkit</groupId>
+				<artifactId>sap.ui.vk</artifactId>
+				<version>${com.sap.ui5.vizkit.version}</version>
+				<classifier>testresources</classifier>
+			</dependency>
+
+			<!--
+				Business Collaboration: sap.collaboration (https://projectportal.neo.ondemand.com/projects/sapui5.collaboration)
+				-->
+			<dependency>
+				<groupId>com.sap.collaboration</groupId>
+				<artifactId>collaboration-commons</artifactId>
+				<version>${com.sap.collaboration.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.collaboration</groupId>
+				<artifactId>collaboration-commons</artifactId>
+				<version>${com.sap.collaboration.version}</version>
+				<classifier>testresources</classifier>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.collaboration</groupId>
+				<artifactId>collaboration-commons</artifactId>
+				<version>${com.sap.collaboration.version}</version>
+				<classifier>internal-testresources</classifier>
+			</dependency>
+
+			<!--
+				Fiori Cross Application: sap.ca (https://projectportal.neo.ondemand.com/projects/sap.ca)
+				-->
+			<dependency>
+				<groupId>com.sap.ca</groupId>
+				<artifactId>ui</artifactId>
+				<version>${com.sap.ca.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.ca</groupId>
+				<artifactId>ui</artifactId>
+				<version>${com.sap.ca.version}</version>
+				<classifier>testresources</classifier>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.ca</groupId>
+				<artifactId>scfld.md</artifactId>
+				<version>${com.sap.ca.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.ca</groupId>
+				<artifactId>scfld.md</artifactId>
+				<version>${com.sap.ca.version}</version>
+				<classifier>testresources</classifier>
+			</dependency>
+
+			<!--
+				Analysis Path Framework: sap.apf (https://projectportal.neo.ondemand.com/projects/sap.apf)
+				-->
+			<dependency>
+				<groupId>com.sap.apf</groupId>
+				<artifactId>apf-lib</artifactId>
+				<version>${com.sap.apf.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.apf</groupId>
+				<artifactId>apf-lib</artifactId>
+				<version>${com.sap.apf.version}</version>
+				<classifier>testresources</classifier>
+			</dependency>
+
+			<!--
+				Landscape Viewer (https://projectportal.neo.ondemand.com/projects/landscapeviewer)
+				 -->
+			<dependency>
+				<groupId>com.sap.lm.uiext.landvisz</groupId>
+				<artifactId>sap.landvisz</artifactId>
+				<version>${com.sap.lm.uiext.landvisz.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.lm.uiext.landvisz</groupId>
+				<artifactId>sap.landvisz</artifactId>
+				<version>${com.sap.lm.uiext.landvisz.version}</version>
+				<classifier>testresources</classifier>
+			</dependency>
+
+			<!--
+				Suite UI Smart Templates (https://projectportal.neo.ondemand.com/projects/sap.suite.ui.generic.template)
+				 -->
+			<dependency>
+				<groupId>com.sap.suite.ui.generic.template</groupId>
+				<artifactId>sap.suite.ui.generic.template</artifactId>
+				<version>${com.sap.suite.ui.generic.template.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.suite.ui.generic.template</groupId>
+				<artifactId>sap.suite.ui.generic.template</artifactId>
+				<version>${com.sap.suite.ui.generic.template.version}</version>
+				<classifier>testresources</classifier>
+			</dependency>
+
+			<!--
+				Overview Page (https://projectportal.neo.ondemand.com/projects/ovp)
+				 -->
+			<dependency>
+				<groupId>com.sap.ovp</groupId>
+				<artifactId>ovp-lib</artifactId>
+				<version>${com.sap.ovp.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.ovp</groupId>
+				<artifactId>ovp-lib</artifactId>
+				<version>${com.sap.ovp.version}</version>
+				<classifier>testresources</classifier>
+			</dependency>
+
+			<!--
+				Gantt Chart (https://projectportal.neo.ondemand.com/projects/sap.gantt)
+				 -->
+			<dependency>
+				<groupId>com.sap.gantt</groupId>
+				<artifactId>gantt.lib</artifactId>
+				<version>${com.sap.gantt.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.gantt</groupId>
+				<artifactId>gantt.lib</artifactId>
+				<version>${com.sap.gantt.version}</version>
+				<classifier>testresources</classifier>
+			</dependency>
+
+			<!--
+				Rules UI Library (https://github.wdf.sap.corp/RulesDevOps/sap.rules.ui)
+				 -->
+			<dependency>
+				<groupId>com.sap.rules</groupId>
+				<artifactId>sap.rules.ui</artifactId>
+				<version>${com.sap.rules.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.rules</groupId>
+				<artifactId>sap.rules.ui</artifactId>
+				<classifier>testresources</classifier>
+				<version>${com.sap.rules.version}</version>
+			</dependency>
+
+			<!--
+				BI ZEN (https://projectportal.neo.ondemand.com/projects/bi-zen)
+				 -->
+			<!-- Library: sap.zen.crosstab - DesignStudio Crosstab -->
+			<dependency>
+				<groupId>com.sap.ip.bi.zen.rt.phx</groupId>
+				<artifactId>com.sap.ip.bi.zen.rt.components.crosstab.phx</artifactId>
+				<version>${com.sap.ip.bi.zen.rt.phx.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.sap.ui5</groupId>
+						<artifactId>themelib_sap_platinum</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.ip.bi.zen.rt.phx</groupId>
+				<artifactId>com.sap.ip.bi.zen.rt.components.crosstab.phx</artifactId>
+				<classifier>testresources</classifier>
+				<version>${com.sap.ip.bi.zen.rt.phx.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.sap.ui5</groupId>
+						<artifactId>themelib_sap_platinum</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<!-- Library: sap.zen.commons - Copy of AbsoluteLayout, MatrixLayout -->
+			<dependency>
+				<groupId>com.sap.ip.bi.zen.rt.phx</groupId>
+				<artifactId>com.sap.ip.bi.zen.rt.zencopy.phx</artifactId>
+				<version>${com.sap.ip.bi.zen.rt.phx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.ip.bi.zen.rt.phx</groupId>
+				<artifactId>com.sap.ip.bi.zen.rt.zencopy.phx</artifactId>
+				<classifier>testresources</classifier>
+				<version>${com.sap.ip.bi.zen.rt.phx.version}</version>
+			</dependency>
+
+
+			<!-- Library: sap.zen.dsh - DesignStudio Runtime -->
+			<dependency>
+				<groupId>com.sap.ip.bi.zen.rt</groupId>
+				<artifactId>com.sap.ip.bi.zen.rt.dsh.phx</artifactId>
+				<version>${com.sap.ip.bi.zen.rt.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.sap.ip.bi.zen.rt.appl</groupId>
+						<artifactId>com.sap.ip.bi.zen.rt.firefly</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.sap.ip.bi.zen.rt.phx</groupId>
+						<artifactId>com.sap.ip.bi.zen.rt.themelib.phx</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>com.sap.ip.bi.zen.rt</groupId>
+				<artifactId>com.sap.ip.bi.zen.rt.dsh.phx</artifactId>
+				<classifier>testresources</classifier>
+				<version>${com.sap.ip.bi.zen.rt.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.sap.ip.bi.zen.rt.appl</groupId>
+						<artifactId>com.sap.ip.bi.zen.rt.firefly</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.sap.ip.bi.zen.rt.phx</groupId>
+						<artifactId>com.sap.ip.bi.zen.rt.themelib.phx</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+		</dependencies>
+
+	</dependencyManagement>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Dependency Settings
+	***************************************************************************-->
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.sap.ui5</groupId>
+			<artifactId>uilib-collection</artifactId>
+			<version>${sap.ui5.core.version}</version>
+			<type>pom</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sap.suite</groupId>
+			<artifactId>suite-ui-commons</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.portal.ui5</groupId>
+			<artifactId>portal-ui5-ext</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ushell</groupId>
+			<artifactId>ushell-lib</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ui5</groupId>
+			<artifactId>vbm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ui5.vizkit</groupId>
+			<artifactId>sap.ui.vk</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.collaboration</groupId>
+			<artifactId>collaboration-commons</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ca</groupId>
+			<artifactId>ui</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ca</groupId>
+			<artifactId>scfld.md</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.apf</groupId>
+			<artifactId>apf-lib</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.lm.uiext.landvisz</groupId>
+			<artifactId>sap.landvisz</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.suite.ui.generic.template</groupId>
+			<artifactId>sap.suite.ui.generic.template</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ovp</groupId>
+			<artifactId>ovp-lib</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.gantt</groupId>
+			<artifactId>gantt.lib</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.rules</groupId>
+			<artifactId>sap.rules.ui</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ip.bi.zen.rt.phx</groupId>
+			<artifactId>com.sap.ip.bi.zen.rt.components.crosstab.phx</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ip.bi.zen.rt.phx</groupId>
+			<artifactId>com.sap.ip.bi.zen.rt.zencopy.phx</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ip.bi.zen.rt</groupId>
+			<artifactId>com.sap.ip.bi.zen.rt.dsh.phx</artifactId>
+		</dependency>
+
+	</dependencies>
+
+
+</project>
