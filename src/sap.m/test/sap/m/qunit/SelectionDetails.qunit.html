@@ -78,23 +78,23 @@
 		}
 	});
 
-	QUnit.test("Method isOpen returns false as default", function(assert) {
+	QUnit.test("Method 'isOpen' returns false as default", function(assert) {
 		//Assert
-		assert.equal(this.oSelectionDetails.isOpen(), false, "Method isOpen returns false");
+		assert.equal(this.oSelectionDetails.isOpen(), false, "Method 'isOpen' returns false");
 	});
 
-	QUnit.test("Method isOpen returns true if SelectionDetails is open", function(assert) {
+	QUnit.test("Method 'isOpen' returns true if SelectionDetails is open", function(assert) {
 		// Arrange
 		sinon.stub(this.oResponsivePopover, "isOpen").returns(true);
 		//Assert
-		assert.equal(this.oSelectionDetails.isOpen(), true, "Method isOpen returns true");
+		assert.equal(this.oSelectionDetails.isOpen(), true, "Method 'isOpen' returns true");
 	});
 
-	QUnit.test("Method isOpen returns false if SelectionDetails is closed", function(assert) {
+	QUnit.test("Method 'isOpen' returns false if SelectionDetails is closed", function(assert) {
 		//Arrange
 		sinon.stub(this.oResponsivePopover, "isOpen").returns(false);
 		//Assert
-		assert.equal(this.oSelectionDetails.isOpen(), false, "Method isOpen returns false");
+		assert.equal(this.oSelectionDetails.isOpen(), false, "Method 'isOpen' returns false");
 	});
 
 	QUnit.test("Method isEnabled, aggregation 'items' is empty", function(assert) {
@@ -135,9 +135,20 @@
 		// Act
 		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page);
 		//Assert
-		assert.ok(oSpy.calledOnce, "openBy function has been called");
+		assert.ok(oSpy.calledOnce, "The 'openBy' function was called");
 		// Restore
 		oSpy.restore();
+	});
+
+	QUnit.test("Method close", function(assert) {
+		// Arrange
+		var oSpy = sinon.spy(sap.m.ResponsivePopover.prototype, "close");
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page);
+		// Act
+		var oReturnedSelectionDetails = this.oSelectionDetails.close();
+		//Assert
+		assert.ok(oSpy.called, "The 'close' method was called");
+		assert.ok(oReturnedSelectionDetails instanceof sap.m.SelectionDetails, "Returned value is SelectionDetails control");
 	});
 
 </script>
