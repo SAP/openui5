@@ -30,6 +30,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	var SegmentedButton = Control.extend("sap.m.SegmentedButton", /** @lends sap.m.SegmentedButton.prototype */ { metadata : {
 
 		library : "sap.m",
+		publicMethods : ["createButton"],
 		properties : {
 
 			/**
