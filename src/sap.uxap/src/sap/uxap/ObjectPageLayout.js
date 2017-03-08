@@ -1511,7 +1511,12 @@ sap.ui.define([
 	ObjectPageLayout.prototype._computeSpacerHeight = function(oLastVisibleSubSection, iLastVisibleHeight, bStickyMode) {
 
 		var iSpacerHeight,
-			iScrollableViewportHeight;
+			iScrollableViewportHeight,
+			iFooterHeight;
+
+		if (this.getFooter() && this.getShowFooter()) {
+			iFooterHeight = this.$("footerWrapper").outerHeight();
+		}
 
 		iScrollableViewportHeight = this._getScrollableViewportHeight(bStickyMode);
 
@@ -1534,6 +1539,11 @@ sap.ui.define([
 		} else {
 			iSpacerHeight = 0;
 		}
+
+		if (iFooterHeight > iSpacerHeight) {
+			iSpacerHeight += iFooterHeight;
+		}
+
 		return iSpacerHeight;
 	};
 
@@ -2305,6 +2315,8 @@ sap.ui.define([
 				oFooter.removeStyleClass("sapUxAPObjectPageFloatingFooterShow");
 			});
 		}
+
+		this._requestAdjustLayout();
 	};
 
 	/**
