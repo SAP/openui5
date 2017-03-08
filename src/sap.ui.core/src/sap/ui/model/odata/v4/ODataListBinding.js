@@ -247,7 +247,7 @@ sap.ui.define([
 
 		this.sGroupId = oBindingParameters.$$groupId;
 		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-		this.mQueryOptions = this.oModel.buildQueryOptions(undefined, mParameters, true);
+		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
 		this.mParameters = mParameters; // store mParameters at binding after validation
 
 		this.mCacheByContext = undefined;

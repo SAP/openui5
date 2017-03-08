@@ -92,8 +92,9 @@ sap.ui.define([
 					["$$groupId", "$$updateGroupId"]);
 				this.sGroupId = oBindingParameters.$$groupId;
 				this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-				this.mQueryOptions = this.oModel.buildQueryOptions(this.oModel.mUriParameters,
-					mParameters);
+				// Note: no system query options supported at property binding
+				this.mQueryOptions = this.oModel.buildQueryOptions(mParameters,
+					/*bSystemQueryOptionsAllowed*/false);
 				this.oCachePromise = _SyncPromise.resolve();
 				this.fetchCache(oContext);
 				this.oContext = oContext;

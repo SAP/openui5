@@ -264,9 +264,7 @@ sap.ui.require([
 			mQueryOptions = {};
 
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
-				sinon.match.same(mParameters))
-			.returns(mQueryOptions);
+			.withExactArgs(sinon.match.same(mParameters), false).returns(mQueryOptions);
 		this.stub(ODataPropertyBinding.prototype, "fetchCache", function (oContext) {
 			assert.strictEqual(oContext, null);
 			this.oCachePromise = _SyncPromise.resolve();

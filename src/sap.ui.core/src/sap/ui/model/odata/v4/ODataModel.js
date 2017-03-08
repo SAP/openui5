@@ -156,8 +156,7 @@ sap.ui.define([
 					}
 					this.sOperationMode = mParameters.operationMode;
 					// Note: strict checking for model's URI parameters, but "sap-*" is allowed
-					this.mUriParameters
-						= this.buildQueryOptions(null, oUri.query(true), false, true);
+					this.mUriParameters = this.buildQueryOptions(oUri.query(true), false, true);
 					this.sServiceUrl = oUri.query("").toString();
 					this.sGroupId = mParameters.groupId;
 					if (this.sGroupId === undefined) {
@@ -487,26 +486,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * Constructs a map of query options from the given options <code>mOptions</code> and
-	 * model options <code>mModelOptions</code>; an option overwrites a model option with the
-	 * same key. Options in <code>mOptions</code> starting with '$$' indicate binding-specific
-	 * parameters, which must not be part of a back end query; they are ignored and
-	 * not added to the map.
-	 * The following query options are disallowed:
+	 * Constructs a map of query options from the given options. Options starting with '$$' indicate
+	 * binding-specific parameters, which must not be part of a back end query; they are ignored and
+	 * not added to the map. The following query options are disallowed:
 	 * <ul>
-	 * <li> System query options (key starts with "$") except those specified in
-	 *   <code>aAllowed</code>
+	 * <li> System query options (key starts with "$"), unless
+	 * <code>bSystemQueryOptionsAllowed</code> is set
 	 * <li> Parameter aliases (key starts with "@")
 	 * <li> Custom query options starting with "sap-", unless <code>bSapAllowed</code> is set
 	 * </ul>
-	 * @param {object} [mModelOptions={}]
-	 *   Map of query options specified for the model
+
+	 *
 	 * @param {object} [mOptions={}]
 	 *   Map of query options
 	 * @param {boolean} [bSystemQueryOptionsAllowed=false]
 	 *   Whether system query options are allowed
 	 * @param {boolean} [bSapAllowed=false]
-	 *   Whether Custom query options starting with "sap-" are allowed
+	 *   Whether custom query options starting with "sap-" are allowed
 	 * @throws {Error}
 	 *   If disallowed OData query options are provided
 	 * @returns {object}
@@ -514,9 +510,9 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.buildQueryOptions = function (mModelOptions, mOptions,
-			bSystemQueryOptionsAllowed, bSapAllowed) {
-		var mResult = JSON.parse(JSON.stringify(mModelOptions || {}));
+	ODataModel.prototype.buildQueryOptions = function (mOptions, bSystemQueryOptionsAllowed,
+			bSapAllowed) {
+		var mResult = {};
 
 		/**
 		 * Validates an expand item.

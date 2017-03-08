@@ -110,7 +110,7 @@ sap.ui.require([
 			sUpdateGroupId = "update foo";
 
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(undefined, mParameters, true).returns(mQueryOptions);
+			.withExactArgs(mParameters, true).returns(mQueryOptions);
 		oModelMock.expects("buildBindingParameters")
 			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
 			.returns(mBindingParameters);
@@ -155,7 +155,7 @@ sap.ui.require([
 		};
 
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(undefined, mParameters, true).returns(mQueryOptions);
+			.withExactArgs(mParameters, true).returns(mQueryOptions);
 		oModelMock.expects("buildBindingParameters")
 			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
 			.returns(mBindingParameters);
@@ -184,7 +184,7 @@ sap.ui.require([
 			.withExactArgs(mParameters, ["$$groupId", "$$updateGroupId"])
 			.returns({});
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(undefined, mParameters, true)
+			.withExactArgs(mParameters, true)
 			.returns({$filter : "bar"});
 		this.stub(ODataContextBinding.prototype, "fetchCache", function (oContext0) {
 			assert.strictEqual(oContext0, oContext);
