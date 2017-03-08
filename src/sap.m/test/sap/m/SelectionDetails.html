@@ -12,15 +12,91 @@
 	src="../../../resources/sap-ui-core.js">
 </script>
 
-<script type="text/javascript">
-	jQuery.sap.initMobile();
+<script>
+	var fnCreateLine = function(id, context) {
+		return new sap.m.SelectionDetailsItemLine(id, {
+			label: "{label}",
+			value: "{value}",
+			displayValue: "{displayValue}",
+			unit: "{unit}"
+		});
+	};
 
-	var oSelectionDetails = new sap.m.SelectionDetails();
+	var aItems = [
+		new sap.m.SelectionDetailsItem({
+			lines: {
+				path: "/lines/0",
+				factory: fnCreateLine
+			},
+			enableNav: true
+		}),
+		new sap.m.SelectionDetailsItem({
+			lines: {
+				path: "/lines/1",
+				factory: fnCreateLine
+			},
+			enableNav: false
+		})
+	];
 
-	/* new sap.m.Page("page", {
-		content: []
-	}).placeAt("content"); */
-	oSelectionDetails.placeAt("content");
+	var aActions = [
+		new sap.ui.core.Item("first_action",{
+			key: "1",
+			text: "action 1"
+		}),
+		new sap.ui.core.Item("second_action", {
+			key: "2",
+			text: "action 2"
+		})
+	];
+
+	var oModel = new sap.ui.model.json.JSONModel({
+		lines: [
+			[
+				{
+					label: "Company Name",
+					value: "Cabbage Corp"
+				}, {
+					label: "Product Category",
+					value: "Cabbages"
+				}, {
+					label: "Date",
+					displayValue: new Date().toLocaleString()
+				}
+			], [
+				{
+					label: "Company Name",
+					value: "Future Industries"
+				}, {
+					label: "Product Category",
+					value: "Satomobiles"
+				}, {
+					label: "Price",
+					value: "10,000.00",
+					unit: "Yuons"
+				}
+			]
+		]
+	});
+
+	// set the model to the core
+	sap.ui.getCore().setModel(oModel);
+
+	var oSelectionDetails = new sap.m.SelectionDetails("selectionDetails", {
+		items: aItems,
+		actions: aActions,
+		actionPress: function(oEvent) {
+			sap.m.MessageToast.show(oEvent.getParameter("action").getText() + " is pressed" + "\n item is " + oEvent.getParameter("item"));
+		}
+	});
+
+	var oApp = new sap.m.App({
+		pages: new sap.m.Page({
+			title: "Selection Details",
+			content: [ oSelectionDetails ]
+		})
+	});
+	oApp.placeAt("content");
 </script>
 </head>
 
