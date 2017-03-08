@@ -1070,18 +1070,34 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		if (!this._bDragDropEnabled) {
 			return;
 		}
-		if (this.getUIArea()) {
-			this._$RootNode = jQuery(this.getUIArea().getRootNode());
-			this._$RootNode.bind("dragenter", this._onDragEnterUIArea.bind(this));
-			this._$RootNode.bind("dragleave", this._onDragLeaveUIArea.bind(this));
-			this._$RootNode.bind("dragover", this._onDragOverUIArea.bind(this));
-			this._$RootNode.bind("drop", this._onDropOnUIArea.bind(this));
+
+		// handlers need to be saved intermediately in order to unbind successfully
+		if (!this._oDragDropHandler) {
+			this._oDragDropHandler = {
+				dragEnterUIArea: this._onDragEnterUIArea.bind(this),
+				dragLeaveUIArea: this._onDragLeaveUIArea.bind(this),
+				dragOverUIArea: this._onDragOverUIArea.bind(this),
+				dropOnUIArea: this._onDropOnUIArea.bind(this),
+				dragEnterUploadCollection: this._onDragEnterUploadCollection.bind(this),
+				dragLeaveUploadCollection: this._onDragLeaveUploadCollection.bind(this),
+				dragOverUploadCollection: this._onDragOverUploadCollection.bind(this),
+				dropOnUploadCollection: this._onDropOnUploadCollection.bind(this)
+			};
 		}
+
+		// bind events on body element
+		this._$RootNode = jQuery(document.body);
+		this._$RootNode.bind("dragenter", this._oDragDropHandler.dragEnterUIArea);
+		this._$RootNode.bind("dragleave", this._oDragDropHandler.dragLeaveUIArea);
+		this._$RootNode.bind("dragover", this._oDragDropHandler.dragOverUIArea);
+		this._$RootNode.bind("drop", this._oDragDropHandler.dropOnUIArea);
+
+		// bind events on UploadCollection
 		this._$DragDropArea = this.$("drag-drop-area");
-		this.$().bind("dragenter", this._onDragEnterUploadCollection.bind(this));
-		this.$().bind("dragleave", this._onDragLeaveUploadCollection.bind(this));
-		this.$().bind("dragover", this._onDragOverUploadCollection.bind(this));
-		this.$().bind("drop", this._onDropOnUploadCollection.bind(this));
+		this.$().bind("dragenter", this._oDragDropHandler.dragEnterUploadCollection);
+		this.$().bind("dragleave", this._oDragDropHandler.dragLeaveUploadCollection);
+		this.$().bind("dragover", this._oDragDropHandler.dragOverUploadCollection);
+		this.$().bind("drop", this._oDragDropHandler.dropOnUploadCollection);
 	};
 
 	/**
@@ -1090,19 +1106,19 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._unbindDragEnterLeave = function() {
-		if (!this._bDragDropEnabled) {
+		if (!this._bDragDropEnabled && !this._oDragDropHandler) {
 			return;
 		}
 		if (this._$RootNode) {
-			this._$RootNode.unbind("dragenter");
-			this._$RootNode.unbind("dragleave");
-			this._$RootNode.unbind("dragover");
-			this._$RootNode.unbind("drop");
+			this._$RootNode.unbind("dragenter", this._oDragDropHandler.dragEnterUIArea);
+			this._$RootNode.unbind("dragleave", this._oDragDropHandler.dragLeaveUIArea);
+			this._$RootNode.unbind("dragover", this._oDragDropHandler.dragOverUIArea);
+			this._$RootNode.unbind("drop", this._oDragDropHandler.dropOnUIArea);
 		}
-		this.$().unbind("dragenter");
-		this.$().unbind("dragleave");
-		this.$().unbind("dragover");
-		this.$().unbind("drop");
+		this.$().unbind("dragenter", this._oDragDropHandler.dragEnterUploadCollection);
+		this.$().unbind("dragleave", this._oDragDropHandler.dragLeaveUploadCollection);
+		this.$().unbind("dragover", this._oDragDropHandler.dragOverUploadCollection);
+		this.$().unbind("drop", this._oDragDropHandler.dropOnUploadCollection);
 	};
 
 	/**
