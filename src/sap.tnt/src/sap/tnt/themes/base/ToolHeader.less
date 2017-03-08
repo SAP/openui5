@@ -11,3 +11,42 @@
 .sapTntToolHeader.sapMTB {
 	height: 3rem;
 }
+
+.sapTntToolHeader .sapMITH {
+	height: 3rem;
+	box-shadow: none;
+
+	.sapMITBHead {
+		margin: 0;
+		padding: 0 1px;
+
+		.sapMITBText  {
+			font-size: @sapMFontLargeSize;
+		}
+
+		.sapMITBFilter .sapMITBText + .sapMITBContentArrow  {
+			height: 0.75rem;
+		}
+	}
+
+	.sapMITBScrollContainer {
+		margin: 0 3.25rem 0 0.75rem;
+	}
+
+	.sapMITBArrowScroll {
+		padding: 0;
+		visibility: hidden;
+	}
+
+	.sapMBtnInline {
+		top: 0;
+	}
+}
+
+.sapUiSizeCompact .sapTntToolHeader .sapMITH .sapMBtnInline {
+	top: 0.5rem;
+}
+
+.sap-phone .sapTntToolHeader .sapMITH .sapMITBHead .sapMITBFilter .sapMITBText + .sapMITBContentArrow  {
+	height: 0.825rem;
+}
