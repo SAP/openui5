@@ -574,6 +574,17 @@ QUnit.test("isNoDataVisible", function(assert) {
 	testNoDataVisibility(false, 0, true, true, false);
 });
 
+QUnit.test("hasPendingRequest", function(assert) {
+	assert.ok(!TableUtils.hasPendingRequest(), "No parameters passed: Returned false");
+	assert.ok(!TableUtils.hasPendingRequest(null), "Passed 'null': Returned false");
+	oTable._bPendingRequest = 0;
+	assert.ok(!TableUtils.hasPendingRequest(oTable), "The pending request flag has an invalid value: Returned false");
+	oTable._bPendingRequest = false;
+	assert.ok(!TableUtils.hasPendingRequest(oTable), "The binding of the table has no pending request: Returned false");
+	oTable._bPendingRequest = true;
+	assert.ok(TableUtils.hasPendingRequest(oTable), "The binding of the table has a pending request: Returned true");
+});
+
 QUnit.test("isInstanceOf", function(assert) {
 	function checkLoaded(oObj) {
 		if (!oObj || !oObj.prototype || !oObj.prototype.destroy) {

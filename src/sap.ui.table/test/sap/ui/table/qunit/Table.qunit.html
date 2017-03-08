@@ -1622,11 +1622,11 @@
 			destroyTable();
 		}
 	});
-	
+
 	QUnit.test("getRowForCell", function(assert) {
 		oTable.getColumns()[1].setVisible(false);
 		sap.ui.getCore().applyChanges();
-		
+
 		var aRows = oTable.getRows();
 		var aCells;
 		for (var i = 0; i < aRows.length; i++) {
@@ -1635,15 +1635,15 @@
 				assert.ok(oTable.getRowForCell(aCells[j]) === aRows[i], "Correct output for row " + i + " and visible column " + j);
 			}
 		}
-		
+
 		assert.ok(!oTable.getRowForCell(), "No cell given");
 		assert.ok(!oTable.getRowForCell(oTable.getColumns()[0]), "Something wrong given");
 	});
-	
+
 	QUnit.test("getColumnForCell", function(assert) {
 		oTable.getColumns()[1].setVisible(false);
 		sap.ui.getCore().applyChanges();
-		
+
 		var aRows = oTable.getRows();
 		var aColumns = oTable.getColumns();
 		var aCells, iColumnIndex;
@@ -1654,7 +1654,7 @@
 				assert.ok(oTable.getColumnForCell(aCells[j]) === aColumns[iColumnIndex], "Correct output for row " + i + " and visible column " + j);
 			}
 		}
-		
+
 		assert.ok(!oTable.getColumnForCell(), "No cell given");
 		assert.ok(!oTable.getColumnForCell(oTable.getColumns()[0]), "Something wrong given");
 	});
@@ -1845,9 +1845,9 @@
 		assert.equal(oColumn.getSortOrder(), "Ascending", "Ascending order applied");
 	});
 
-	QUnit.test("test setBusy and _setBusy function", function(assert) {
+	QUnit.test("BusyIndicator handling", function(assert) {
 		var sBusyIndicatorParent = "sapUiTableCnt";
-		var sBusyIndicatorClass = ".sapUiLocalBusyIndicator";
+		var sBusyIndicatorClass = "sapUiLocalBusyIndicator";
 		var onBusyStateChangedEventHandler = function(oEvent) {
 			onBusyStateChangedEventHandler.callCount = this.callCount === undefined ? 1 : this.callCount + 1;
 			onBusyStateChangedEventHandler.parameters = oEvent.mParameters;
@@ -1856,154 +1856,186 @@
 			onBusyStateChangedEventHandler.callCount = 0;
 			onBusyStateChangedEventHandler.parameters = null;
 		};
+		var oEvent = {};
+		var oBinding = oTable.getBinding("rows");
+		oEvent.getSource = function() {
+			return oBinding;
+		};
+		oEvent.getParameter = function() {
+			return false;
+		};
+		var clock = sinon.useFakeTimers();
 
 		oTable.attachEvent("busyStateChanged", onBusyStateChangedEventHandler);
 		oTable.setBusyIndicatorDelay(0);
 
-		function getMessage(sMessage, mParameters) {
-			var oBinding = oTable.getBinding("rows");
-
-			return sMessage +
-				   " (enableBusyIndicator: " + oTable.getEnableBusyIndicator() +
-				   ", _bDataRequested: " + oTable._bDataRequested +
-				   ", Binding: " + (oBinding == null ? "none" : "isInitial=" + oBinding.isInitial() + ", length=" + oBinding.getLength()) +
-				   ", Parameters: " + JSON.stringify(mParameters) + ")";
-		}
-
-		function test(mParameters, bBusyIndicatorVisibleBefore, bBusyIndicatorVisibleAfter) {
+		function test(bBusyIndicatorVisibleBefore, bBusyIndicatorVisibleAfter, bDataRequestedListener, bPendingRequest) {
 			// Prepare for next test iteration.
 			oTable.setBusy(bBusyIndicatorVisibleBefore);
 			sap.ui.getCore().applyChanges();
 			onBusyStateChangedEventHandler.reset();
 
 			assert.strictEqual(oTable.getBusy(), bBusyIndicatorVisibleBefore, "Initial: The busy state of the table is: " + bBusyIndicatorVisibleBefore);
-			assert.strictEqual(oTable.getDomRef(sBusyIndicatorParent).querySelector(sBusyIndicatorClass) != null, bBusyIndicatorVisibleBefore,
+			assert.strictEqual(oTable.getDomRef(sBusyIndicatorParent).querySelector("." + sBusyIndicatorClass) != null, bBusyIndicatorVisibleBefore,
 				"Initial: The busy indicator element exists in the DOM: " + bBusyIndicatorVisibleBefore);
 
 			// Perform next test iteration.
-			oTable._setBusy(mParameters);
+			oTable._bPendingRequest = !bDataRequestedListener;
+			if (bDataRequestedListener) {
+				oTable._onBindingDataRequestedListener.call(oTable, oEvent);
+			} else {
+				oTable._onBindingDataReceivedListener.call(oTable, oEvent);
+				clock.tick(1);
+			}
 			sap.ui.getCore().applyChanges();
 
-			assert.strictEqual(oTable.getBusy(), bBusyIndicatorVisibleAfter,
-				getMessage("Test: The busy state of the table is: " + bBusyIndicatorVisibleAfter, mParameters));
+			assert.strictEqual(oTable.getBusy(), bBusyIndicatorVisibleAfter, "Test: The busy state of the table is: " + bBusyIndicatorVisibleAfter);
+
 			if (bBusyIndicatorVisibleBefore === bBusyIndicatorVisibleAfter) {
-				assert.ok(onBusyStateChangedEventHandler.callCount === 0,
-					getMessage("Test: BusyStateChanged event has not been fired", mParameters));
+				assert.ok(onBusyStateChangedEventHandler.callCount === 0, "Test: BusyStateChanged event has not been fired");
 			} else {
-				assert.ok(onBusyStateChangedEventHandler.callCount === 1,
-					getMessage("Test: BusyStateChanged event has been fired", mParameters));
+				assert.ok(onBusyStateChangedEventHandler.callCount === 1, "Test: BusyStateChanged event has been fired");
+
 				if (onBusyStateChangedEventHandler.callCount === 1) {
 					assert.deepEqual(onBusyStateChangedEventHandler.parameters, { busy: bBusyIndicatorVisibleAfter, id: oTable.getId() },
-						getMessage("Test: BusyStateChanged event has been fired with the correct arguments", mParameters));
+						"Test: BusyStateChanged event has been fired with the correct arguments");
 				}
 			}
-			assert.strictEqual(oTable.getDomRef(sBusyIndicatorParent).querySelector(sBusyIndicatorClass) != null, bBusyIndicatorVisibleAfter,
-				getMessage("Test: The busy indicator element exists in the DOM: " + bBusyIndicatorVisibleAfter, mParameters));
+
+			assert.strictEqual(oTable.getDomRef(sBusyIndicatorParent).querySelector("." + sBusyIndicatorClass) != null, bBusyIndicatorVisibleAfter,
+				"Test: The busy indicator element exists in the DOM: " + bBusyIndicatorVisibleAfter);
+
+			assert.strictEqual(oTable._bPendingRequest, bPendingRequest, "Test: The pending request flag is correctly set");
 		}
+
+		/* Data requested */
 
 		// Busy indicator handling disabled: No busy state change.
 		oTable.setEnableBusyIndicator(false);
-		test(true, false, false);
-		test(false, false, false);
-		test(true, true, true);
-		test(false, true, true);
-
-		// No parameters passed: No busy state change.
-		oTable.setEnableBusyIndicator(true);
-		test(null, false, false);
-		test(null, true, true);
+		test(false, false, true, true);
+		test(true, true, true, true);
 
 		// No binding: No busy state change.
+		oTable.setEnableBusyIndicator(true);
 		this.stub(oTable, "getBinding").withArgs("rows").returns(undefined);
-		test(true, false, false);
-		test(false, false, false);
-		test(true, true, true);
-		test(false, true, true);
+		test(false, false, true, false);
+		test(true, true, true, false);
 
-		// Boolean value as parameter: Set busy state to parameter value.
+		// Simulated asynchronous analytical binding request: No busy state change.
 		oTable.getBinding.restore();
-		test(true, false, true);
-		test(true, true, true);
-		test(false, false, false);
-		test(false, true, false);
+		oEvent.getParameter = function() {
+			return true;
+		};
+		test(false, false, true, false);
+		test(true, true, true, false);
 
-		// Binding is initial: Set busy state to true.
-		var oBinding = oTable.getBinding("rows");
-		var fBindingIsInitial = this.stub(oBinding, "isInitial").returns(true);
-		test({}, false, true);
-		test({}, true, true);
+		// Data requested: Set busy state to true.
+		oEvent.getParameter = function() {
+			return false;
+		};
+		test(false, true, true, true);
+		test(true, true, true, true);
 
-		// Binding length is 0 and no data has been requested: Set busy state to false.
-		fBindingIsInitial.returns(false);
-		var fBindingLength = this.stub(oBinding, "getLength").returns(0);
-		oTable._bDataRequested = false;
-		test("not null and not boolean", false, false);
-		test("not null and not boolean", true, false);
+		/* Data received */
 
-		// Binding length is 0 and data has been requested: Set busy state to true.
-		oTable._bDataRequested = true;
-		test("not null and not boolean", false, true);
-		test("not null and not boolean", true, true);
+		// Busy indicator handling disabled: No busy state change.
+		oTable.setEnableBusyIndicator(false);
+		test(false, false, false, false);
+		test(true, true, false, false);
 
-		// When expanding a node does not trigger a request (data already loaded): Set busy state to false.
-		fBindingLength.returns(1);
-		oTable._bDataRequested = false;
-		test({ reason: sap.ui.model.ChangeReason.Expand }, false, false);
-		test({ reason: sap.ui.model.ChangeReason.Expand }, true, false);
+		// No binding: No busy state change.
+		oTable.setEnableBusyIndicator(true);
+		this.stub(oTable, "getBinding").withArgs("rows").returns(undefined);
+		test(false, false, false, true);
+		test(true, true, false, true);
 
-		// When expanding a node does trigger a request: Set busy state to true.
-		oTable._bDataRequested = true;
-		test({ reason: sap.ui.model.ChangeReason.Expand }, false, true);
-		test({ reason: sap.ui.model.ChangeReason.Expand }, true, true);
+		// Simulated asynchronous analytical binding request: No busy state change.
+		oTable.getBinding.restore();
+		oEvent.getParameter = function() {
+			return true;
+		};
+		test(false, false, false, true);
+		test(true, true, false, true);
 
-		// Passed parameters object does not contain the required properties: Set busy state to false.
-		test({}, false, false);
-		test({}, true, false);
-
-		// No data received (has to be loaded): Set busy state to true.
-		test({ receivedLength: 0 }, false, true);
-		test({ receivedLength: 0 }, true, true);
-
-		fBindingLength.returns(10); // Available data = 10.
-
-		// Received less than requested and not all available data: Set busy state to true.
-		test({ receivedLength: 9, requestedLength: 10 }, false, true);
-		test({ receivedLength: 9, requestedLength: 10 }, true, true);
-
-		function testWithContexts(iReceivedLength, iRequestedLength) {
-			// No contexts passed: Set busy state to false.
-			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength }, false, false);
-			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength }, true, false);
-
-			// All contexts are defined: Set busy state to false.
-			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength, contexts: ["defined", "defined"] }, false, false);
-			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength, contexts: ["defined", "defined"] }, true, false);
-
-			// One context is undefined: Set busy state to true.
-			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength, contexts: ["defined", undefined] }, false, true);
-			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength, contexts: ["defined", undefined] }, true, true);
-
-			// All node contexts are defined: Set busy state to false.
-			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength, contexts: [{ context: "defined" }, { context: "defined" }] }, false, false);
-			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength, contexts: [{ context: "defined" }, { context: "defined" }] }, true, false);
-
-			// One node context is undefined: Set busy state to true.
-			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength, contexts: [{ context: "defined" }, { context: undefined}] }, false, true);
-			test({ receivedLength: iReceivedLength, requestedLength: iRequestedLength, contexts: [{ context: "defined" }, { context: undefined }] }, true, true);
-		}
-
-		// Received less than requested and all available data.
-		testWithContexts(10, 11);
-
-		// Received not less than requested and not all available data.
-		testWithContexts(9, 9);
-
-		// Received not less than requested and all available data.
-		testWithContexts(10, 10);
+		// Data received: Set busy state to false.
+		oEvent.getParameter = function() {
+			return false;
+		};
+		test(false, false, false, false);
+		test(true, false, false, false);
 
 		// Cleanup
-		fBindingIsInitial.restore();
 		oTable.detachEvent("busyStateChanged", onBusyStateChangedEventHandler);
+		clock.restore();
+	});
+
+	QUnit.test("NoData handling", function(assert) {
+		var sNoDataClassOfTable = "sapUiTableEmpty";
+		var oEvent = {};
+		var oBinding = oTable.getBinding("rows");
+		oEvent.getSource = function() {
+			return oBinding;
+		};
+		oEvent.getParameter = function() {
+			return false;
+		};
+		var clock = sinon.useFakeTimers();
+
+		function testDataReceivedListener(bNoDataVisible) {
+			oTable._onBindingDataReceivedListener.call(oTable, oEvent);
+			clock.tick(1);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), bNoDataVisible,
+				"Test: The table has the NoData class assigned: " + bNoDataVisible);
+
+			assert.strictEqual(sap.ui.table.TableUtils.isNoDataVisible(oTable), bNoDataVisible, "Test: NoData is visible: " + bNoDataVisible);
+		}
+
+		function testBindingLengthChanged(bNoDataVisible) {
+			oTable._onBindingLengthChange.call(oTable);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), bNoDataVisible,
+				"Test: The table has the NoData class assigned: " + bNoDataVisible);
+
+			assert.strictEqual(sap.ui.table.TableUtils.isNoDataVisible(oTable), bNoDataVisible,
+				"Test: NoData is visible: " + bNoDataVisible);
+		}
+
+		oTable.setShowNoData(true);
+
+		// Data available: NoData area is not visible.
+		assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), false,
+			"Test: The table has the NoData class assigned: false");
+		assert.strictEqual(sap.ui.table.TableUtils.isNoDataVisible(oTable), false, "Test: NoData is visible: false");
+
+		// No data received: NoData area becomes visible.
+		oTable._iBindingLength = 0;
+		testDataReceivedListener(true);
+
+		// Data received: NoData area will be hidden.
+		oTable._iBindingLength = 1;
+		testDataReceivedListener(false);
+
+		// Client Binding without data: NoData area becomes visible.
+		this.stub(sap.ui.table.TableUtils, "isInstanceOf").withArgs(oBinding, "sap/ui/model/ClientListBinding").returns(true);
+		oTable._iBindingLength = 0;
+		testBindingLengthChanged(true);
+
+		// Client Binding with data: NoData area will be hidden.
+		sap.ui.table.TableUtils.isInstanceOf.restore();
+		this.stub(sap.ui.table.TableUtils, "isInstanceOf").withArgs(oBinding, "sap/ui/model/ClientTreeBinding").returns(true);
+		oTable._iBindingLength = 1;
+		testBindingLengthChanged(false);
+
+		// Binding removed: NoData area becomes visible.
+		sap.ui.table.TableUtils.isInstanceOf.restore();
+		oTable.unbindRows();
+		testBindingLengthChanged(true);
+
+		// Cleanup
+		clock.restore();
 	});
 
 	QUnit.test("test setGroupBy function", function(assert) {
