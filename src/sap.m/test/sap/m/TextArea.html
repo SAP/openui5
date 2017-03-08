@@ -1,66 +1,84 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>sap.m.TextArea</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.m.TextArea</title>
 
-<script src="../../../resources/sap-ui-core.js"
-	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
-</script>
+	<script src="shared-config.js"></script>
 
-<script>
-	/* Possible TextArea options
-	new sap.m.TextArea({
-		rows : 10,
-		cols : 50,
-		width : "300px",
-		height : "100px",
-		value : "TextArea",
-		enabled : true,
-		visible : true,
-		maxLength : 100,
-		valueState : "None",
-		placeholder : "TextArea",
-		wrapping : "None"
-	})
-	*/
-	var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";
+	<script
+			id='sap-ui-bootstrap'
+			src='../../../resources/sap-ui-core.js'
+			data-sap-ui-theme='sap_belize'
+			data-sap-ui-libs='sap.m'
+			data-sap-ui-compatVersion="edge"
+	>
+	</script>
 
-	var dialog = new sap.m.Dialog({
-		title : "Approve",
-		content : [taComment = new sap.m.TextArea({
-			placeholder : "Please add your comment",
-			rows : 6,
-			growing: true,
-			value: lorem,
-			width: "100%"
-		})],
-		leftButton : new sap.m.Button({
-			text : "Reject",
-			type : sap.m.ButtonType.Reject,
-			press : function() {
-				dialog.close();
-			}
-		}),
-		rightButton : new sap.m.Button({
-			text : "Accept",
-			type : sap.m.ButtonType.Accept,
-			press : function() {
-				dialog.close();
-			}
-		})
-	});
+	<script>
+		sap.ui.getCore().attachInit(function () {
+			sap.ui.require([
+				"sap/m/Dialog",
+				"sap/m/Button",
+				"sap/m/TextArea"
+			], function (Shell, ComponentContainer) {
+				/* Possible TextArea options
+				 new sap.m.TextArea({
+				 rows : 10,
+				 cols : 50,
+				 width : "300px",
+				 height : "100px",
+				 value : "TextArea",
+				 enabled : true,
+				 visible : true,
+				 maxLength : 100,
+				 valueState : "None",
+				 placeholder : "TextArea",
+				 wrapping : "None"
+				 })
+				 */
+				var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";
 
-	var page = new sap.m.Page({
-		title : "TextArea Controls",
-		enableScrolling : true,
-		headerContent : new sap.m.Button({
-			text : "Approve",
-			press : function() {
-				dialog.open();
-			}
-		}),
-		content : [
+				var dialog = new sap.m.Dialog({
+					title: "Approve",
+					content: [taComment = new sap.m.TextArea({
+						placeholder: "Please add your comment",
+						rows: 6,
+						growing: true,
+						value: lorem,
+						width: "100%"
+					})],
+					leftButton: new sap.m.Button({
+						text: "Reject",
+						type: sap.m.ButtonType.Reject,
+						press: function () {
+							dialog.close();
+						}
+					}),
+					rightButton: new sap.m.Button({
+						text: "Accept",
+						type: sap.m.ButtonType.Accept,
+						press: function () {
+							dialog.close();
+						}
+					})
+				});
+
+				var page = new sap.m.Page({
+					title: "TextArea Controls",
+					enableScrolling: true,
+					headerContent: new sap.m.Button({
+						text: "Approve",
+						press: function () {
+							dialog.open();
+						}
+					}),
+					content: [
+						ta00 = new sap.m.TextArea({
+				value : "%50 width TextArea:\n\n" + lorem + lorem,
+				width : "50%",
+				rows : 4
+			}),
 			ta0 = new sap.m.TextArea({
 				value : "Default textarea rows: 2, cols: 20",
 				valueState : "Warning"
@@ -107,10 +125,9 @@
 				rows : 2
 			}),
 			ta8 = new sap.m.TextArea({
-				value : "Growing TextArea:\n\n" + lorem + lorem,
-				width : "100%",
-				growing : true,
-				//growingMaxLines : 5
+				value: "Growing TextArea:\n\n" + lorem + lorem,
+				width: "100%",
+				growing: true,
 			}),
 			ta9 = new sap.m.TextArea({
 				value: new Array(1000).join("text "),
@@ -126,12 +143,14 @@
 				growing: true,
 				width: "100%"
 			})
-		]
-	});
+					]
+				});
 
-	new sap.m.App().addPage(page).placeAt("body");
-
-</script>
+				new sap.m.App().addPage(page).placeAt("body");
+			})
+				}
+		);
+	</script>
 </head>
 <body id="body" class="sapUiBody">
 </body>
