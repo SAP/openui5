@@ -108,7 +108,7 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 		AlignedFlowLayout.prototype._onResize = function(oEvent) {
 
 			// called by resize handler, but only the height changed, so there is nothing to do; this is required to avoid a resizing loop
-			if (oEvent && (oEvent.size.width === oEvent.oldSize.width)) {
+			if ((oEvent && (oEvent.size.width === oEvent.oldSize.width)) || (this.getContent().length === 0)) {
 				return;
 			}
 
