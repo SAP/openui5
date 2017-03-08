@@ -247,6 +247,44 @@
 											new sap.m.Text({id: "text52", text: "text27"}),
 											new sap.m.Button({id: "btn11", text: "Btn11"})
 										]
+									}),
+									new sap.m.Table({
+										id: "table1",
+										inset: false,
+										columns: [
+											new sap.m.Column({
+												id: "column1",
+												header: new sap.m.Text({id: "text53", text: "Header 1"})
+											}),
+											new sap.m.Column({
+												id: "column2",
+												minScreenWidth: "Desktop",
+												header: new sap.m.Text({id: "text54", text: "Header 2"}),
+												demandPopin: true
+											}),
+											new sap.m.Column({
+												id: "column3",
+												header: new sap.m.Text({id: "text55", text: "Header 3"})
+											})
+										],
+										items: [
+											new sap.m.ColumnListItem({
+												id: "columnListItem1",
+												cells: [
+													new sap.m.Text({id: "text56", text: "text11"}),
+													new sap.m.Text({id: "text57", text: "text12"}),
+													new sap.m.Text({id: "text58", text: "text13"})
+												]
+											}),
+											new sap.m.ColumnListItem({
+												id: "columnListItem2",
+												cells: [
+													new sap.m.Text({id: "text59", text: "text21"}),
+													new sap.m.Text({id: "text60", text: "text22"}),
+													new sap.m.Text({id: "text61", text: "text23"}),
+												]
+											})
+										]
 									})
 								],
 								footer: new sap.m.Bar({
