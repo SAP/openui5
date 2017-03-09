@@ -55,8 +55,7 @@
 .sapMFeedIn .sapMFeedInContainer {
 	background-color: @sapUiFieldBackground;
 	width: 100%;
-	min-height: 4rem;
-	max-height: 20rem;
+	height: 4rem;
 	position: relative;
 }
 
@@ -121,4 +120,7 @@ html[data-sap-ui-browser*='ie'] .sapMFeedIn .sapMBtnInner {
 /* Compact size */
 .sapUiSizeCompact .sapMFeedIn .sapMBtnIcon {
 	margin-left: 0;
+}
+.sapUiSizeCompact .sapMFeedIn >.sapMFeedInContainer >.sapMInputBase {
+	margin: 0;
 }
