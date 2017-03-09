@@ -45,44 +45,53 @@ sap.ui.define([
 
 		init : function () {
 			this.attachModelContextChange(this.onModelContextChange);
+			this.setAggregation("field", new Input({
+				editable : this.getEditable(),
+				id : this.getId() + "-field",
+				showValueHelp : false,
+				value : this.getValue()
+			}));
 		},
 
 		onModelContextChange : function (oEvent) {
 			var oBinding = this.getBinding("value"),
-				oField;
+				that = this;
 
 			if (oBinding && oBinding.isResolved()) {
-				oField = this.getAggregation("field");
-				if (oField) {
-					oField.destroy();
-				}
-				switch (oBinding.getValueListType()) {
-					case ValueListType.Standard:
-						oField = new Input({
-							editable : true,
-							id : this.getId() + "-field",
-							showValueHelp : true,
-							value : this.getValue(),
-							valueHelpRequest : this.onValueHelp.bind(this)
-						});
-						break;
-					case ValueListType.Fixed:
-						oField = new ComboBox({
-							editable : true,
-							id : this.getId() + "-field",
-							loadItems : this.onLoadItems.bind(this),
-							value : this.getValue()
-						});
-						break;
-					default:
-						oField = new Input({
-							editable : this.getEditable(),
-							id : this.getId() + "-field",
-							showValueHelp : false,
-							value : this.getValue()
-						});
-				}
-				this.setAggregation("field", oField);
+				oBinding.requestValueListType().then(function (sValueListType) {
+					var oField = that.getAggregation("field");
+
+					if (oField) {
+						oField.destroy();
+					}
+					switch (sValueListType) {
+						case ValueListType.Standard:
+							oField = new Input({
+								editable : true,
+								id : that.getId() + "-field",
+								showValueHelp : true,
+								value : that.getValue(),
+								valueHelpRequest : that.onValueHelp.bind(that)
+							});
+							break;
+						case ValueListType.Fixed:
+							oField = new ComboBox({
+								editable : true,
+								id : that.getId() + "-field",
+								loadItems : that.onLoadItems.bind(that),
+								value : that.getValue()
+							});
+							break;
+						default:
+							oField = new Input({
+								editable : that.getEditable(),
+								id : that.getId() + "-field",
+								showValueHelp : false,
+								value : that.getValue()
+							});
+					}
+					that.setAggregation("field", oField);
+				});
 			}
 		},
 
