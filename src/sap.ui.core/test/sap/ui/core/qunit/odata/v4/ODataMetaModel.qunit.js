@@ -1675,6 +1675,39 @@ sap.ui.require([
 	//     reference URI, no matter which referencing document.
 
 	//*********************************************************************************************
+	[undefined, false, true].forEach(function (bSupportReferences) {
+		var sTitle = "fetchObject: cross-service reference - supportReferences: "
+				+ bSupportReferences;
+
+		QUnit.test(sTitle, function (assert) {
+			var oModel = new ODataModel({
+					serviceUrl : "/a/b/c/d/e/",
+					supportReferences : bSupportReferences,
+					synchronizationMode : "None"
+				}),
+				oMetaModel = oModel.getMetaModel(),
+				sPath = "/tea_busi_product.v0001.Product",
+				sUrl = "/a/default/iwbep/tea_busi_product/0001/$metadata";
+
+			bSupportReferences = bSupportReferences !== false; // default is true!
+			this.mock(oMetaModel).expects("fetchEntityContainer").atLeast(1)
+				.returns(_SyncPromise.resolve(clone(mXServiceScope)));
+			this.mock(oMetaModel.oRequestor).expects("read").exactly(bSupportReferences ? 1 : 0)
+				.withExactArgs(sUrl)
+				.returns(Promise.resolve(mProductScope));
+			this.allowWarnings(assert, true);
+			this.oLogMock.expects("warning").exactly(bSupportReferences ? 0 : 1)
+				.withExactArgs("Unknown qualified name " + sPath.slice(1), sPath, sODataMetaModel);
+
+			return oMetaModel.fetchObject(sPath).then(function (vResult) {
+				assert.strictEqual(vResult, bSupportReferences
+					? mProductScope["tea_busi_product.v0001.Product"]
+					: undefined);
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getObject, requestObject", function (assert) {
 		return checkGetAndRequest(this, assert, "fetchObject", ["sPath", {/*oContext*/}]);
 	});
@@ -2540,7 +2573,7 @@ sap.ui.require([
 		return oMetaModel.fetchValueListType(sPath).then(function () {
 			assert.ok(false);
 		}, function (oError) {
-			assert.ok(oError.message, "No metadata for " + sPath)
+			assert.ok(oError.message, "No metadata for " + sPath);
 		});
 	});
 

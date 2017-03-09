@@ -337,6 +337,10 @@ sap.ui.define([
 	 *   Supported since 1.41.0
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 	 *   The model this meta model is related to
+	 * @param {boolean} [bSupportReferences=true]
+	 *   Whether <code>&lt;edmx:Reference></code> and <code>&lt;edmx:Include></code> directives are
+	 *   supported in order to load schemas on demand from other $metadata documents and include
+	 *   them into the current service ("cross-service references").
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataMetaModel
 	 * @author SAP SE
@@ -355,7 +359,7 @@ sap.ui.define([
 		/*
 		 * @param {sap.ui.model.odata.v4.lib._MetadataRequestor} oRequestor
 		 */
-		constructor : function (oRequestor, sUrl, vAnnotationUri, oModel) {
+		constructor : function (oRequestor, sUrl, vAnnotationUri, oModel, bSupportReferences) {
 			MetaModel.call(this);
 			this.aAnnotationUris = vAnnotationUri && !Array.isArray(vAnnotationUri)
 				? [vAnnotationUri] : vAnnotationUri;
@@ -364,6 +368,7 @@ sap.ui.define([
 			this.oModel = oModel;
 			this.oRequestor = oRequestor;
 			this.mSupportedBindingModes = {"OneTime" : true};
+			this.bSupportReferences = bSupportReferences !== false; // default is true
 			this.sUrl = sUrl;
 		}
 	});
@@ -910,7 +915,7 @@ sap.ui.define([
 					return log.apply(this, arguments);
 				}
 
-				if (!(sQualifiedName in mScope)) {
+				if (that.bSupportReferences && !(sQualifiedName in mScope)) {
 					// unknown qualified name: maybe schema is referenced and can be included?
 					sNamespace = namespace(sQualifiedName);
 					vResult = getOrFetchSchema(that, mScope, sNamespace, logWithLocation);
