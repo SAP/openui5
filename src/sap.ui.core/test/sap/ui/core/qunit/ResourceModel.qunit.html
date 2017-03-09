@@ -39,7 +39,7 @@
 	sap.ui.localResources("testdata");
 	var oModel;
 
-	module("Resource Model: Resources bundle loaded via name", {
+	QUnit.module("Resource Model: Resources bundle loaded via name", {
 		setup : function() {
 			oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages"});
 			sap.ui.getCore().setModel(oModel);
@@ -82,7 +82,7 @@
 		oLabel.destroy();
 	});
 
-	module("Resource Model: Resources bundle loaded via name / set Model with alias", {
+	QUnit.module("Resource Model: Resources bundle loaded via name / set Model with alias", {
 		setup : function() {
 			oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages"});
 			sap.ui.getCore().setModel(oModel,"i18n");
@@ -125,7 +125,7 @@
 		oLabel.destroy();
 	});
 
-	module("Resource Model: Resources bundle loaded via url", {
+	QUnit.module("Resource Model: Resources bundle loaded via url", {
 		setup : function() {
 			oModel = new sap.ui.model.resource.ResourceModel({bundleUrl:"./testdata/messages.properties"});
 			sap.ui.getCore().setModel(oModel,"i18n");
@@ -224,7 +224,7 @@
 		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 	});
 
-	module("Resource Model: Async", {
+	QUnit.module("Resource Model: Async", {
 		setup : function() {
 			oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{async>TEST_TEXT}"});
 			oLabel.placeAt("target1");

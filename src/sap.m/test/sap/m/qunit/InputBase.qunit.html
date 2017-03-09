@@ -41,7 +41,7 @@
 			/* API module                                                  */
 			/* =========================================================== */
 
-			module("API");
+			QUnit.module("API");
 
 			/* ------------------------------ */
 			/* tests for default values       */
@@ -1287,7 +1287,7 @@
 			/* Text direction module                                       */
 			/* =========================================================== */
 
-			module("Text direction");
+			QUnit.module("Text direction");
 
 			test("textDirection set to RTL", function() {
 
@@ -1365,7 +1365,7 @@
 			/* Events module                                               */
 			/* =========================================================== */
 
-			module("Events");
+			QUnit.module("Events");
 
 			test("method: change() event", function() {
 
@@ -1632,7 +1632,7 @@
 			/* =========================================================== */
 			/* Focus And Cursor Position Module                            */
 			/* =========================================================== */
-			module("FocusAndCursorPosition");
+			QUnit.module("FocusAndCursorPosition");
 
 			test("getFocusDomRef should point the input field", function() {
 				// system under test
@@ -1772,7 +1772,7 @@
 				oInput.destroy();
 			});
 
-			module("TwowayBindingAndFormatters");
+			QUnit.module("TwowayBindingAndFormatters");
 			test("formatters should be applied for two-way binding formatters", function() {
 				// custom formatter
 				function smile(sValue) {
@@ -1831,7 +1831,7 @@
 				oInput.destroy();
 			});
 
-			module("Accessibility");
+			QUnit.module("Accessibility");
 			test("DOM aria properties", function() {
 
 				var oInput = new sap.m.InputBase().placeAt("content");
@@ -2193,7 +2193,7 @@
 			});
 
 
-		module("invalid input event");
+		QUnit.module("invalid input event");
 		test("iE10+ should mark event invalid when an input field with a native placeholder is focused", function() {
 			this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", false);
 			var fnOnInputSpy = this.spy(sap.m.InputBase.prototype, "oninput");
@@ -2243,7 +2243,7 @@
 			oInput.destroy();
 		});
 
-		module("Renderer hooks");
+		QUnit.module("Renderer hooks");
 		test("writeInnerId() is called", function() {
 			var oInputBase = new sap.m.InputBase({}),
 				oRenderer = oInputBase.getRenderer();

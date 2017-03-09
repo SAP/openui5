@@ -60,7 +60,7 @@
 				ok(true, "Environment: system [" + JSON.stringify(sap.ui.Device.system) + "],  browser: " + JSON.stringify(sap.ui.Device.browser));
 			});
 		} else {
-			module("Instantiation", {
+			QUnit.module("Instantiation", {
 				beforeEach: function () {
 					this.sandbox = sinon.sandbox.create();
 					this.oBrowserBackup = {};
@@ -151,7 +151,7 @@
 
 
 			//Testing mainly _callInstanceMethod method
-			module("Proxy: each API call is being forwarded to the real implementation", {
+			QUnit.module("Proxy: each API call is being forwarded to the real implementation", {
 				beforeEach: function () {
 					this.sandbox = sinon.sandbox.create();
 					if (oCache._instance == null) {
@@ -233,7 +233,7 @@
 				}.bind(this));
 			});
 
-			module("Switching on/off", {
+			QUnit.module("Switching on/off", {
 				afterEach: function () {
 					return deleteDatabaseEntries();
 				}

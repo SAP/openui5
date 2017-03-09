@@ -664,7 +664,7 @@
 		equal(oInfo.pattern, "MMM d, y", "Origin Info: pattern")
 	});
 
-	module("Scaling: Relative Time Formater", {
+	QUnit.module("Scaling: Relative Time Formater", {
 		setup: function() {
 			this.clock = sinon.useFakeTimers(1444724476000);
 			var oDate = new Date();
@@ -865,7 +865,7 @@
 		});
 	 });
 
-	module("Islamic Date in locale en");
+	QUnit.module("Islamic Date in locale en");
 
 	var oDate = new Date("Wed Jul 4 2001");
 
@@ -908,7 +908,7 @@
 		"12 ברביע ב׳ 1422 שנת היג׳רה"
 	];
 
-	module("Islamic Date in other locales", {
+	QUnit.module("Islamic Date in other locales", {
 		setup: function() {
 			sap.ui.getCore().getConfiguration().setCalendarType(sap.ui.core.CalendarType.Islamic);
 		},
@@ -946,7 +946,7 @@
 		});
 	});
 
-	module("Japanese Date");
+	QUnit.module("Japanese Date");
 
 	var oDate = new Date("Wed Jul 4 2001");
 
@@ -982,7 +982,7 @@
 		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "style long, range [1, 5], en with calendar type Japanese");
 	});
 
-	module("Japanese Date in locale en");
+	QUnit.module("Japanese Date in locale en");
 
 	var oDate = new Date("Wed Jul 4 2001");
 
@@ -1018,7 +1018,7 @@
 		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Japanese}, "en", "style long, range [1, 5], en with calendar type Japanese");
 	});
 
-	module("Persian Date");
+	QUnit.module("Persian Date");
 
 	var oDate = new Date("Wed Jul 4 2001");
 
@@ -1054,7 +1054,7 @@
 		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "style long, range [1, 5], en with calendar type Persian");
 	});
 
-	module("Persian Date in locale en");
+	QUnit.module("Persian Date in locale en");
 
 	var oDate = new Date("Wed Jul 4 2001");
 

@@ -186,7 +186,7 @@
             oControl.bindAggregation("items", "/items", template);
         }
 
-        module('[PHONE] Basics', {
+        QUnit.module('[PHONE] Basics', {
             beforeEach: function () {
                 prepareMobilePlatform.call(this);
                 initMenu.call(this);
@@ -235,7 +235,7 @@
             fnSetBackButtonTooltipForPageWithParentSpy.restore();
         });
 
-        module('Basics', {
+        QUnit.module('Basics', {
             beforeEach: function () {
                 initMenu.call(this);
             },
@@ -317,7 +317,7 @@
             fnFireItemSelectedSpy.restore();
         });
 
-        module("[PHONE] Custom mutators", {
+        QUnit.module("[PHONE] Custom mutators", {
             beforeEach: function() {
                 prepareMobilePlatform.call(this);
                 initMenu.call(this)
@@ -461,7 +461,7 @@
             sut = null;
         });
 
-        module("Data binding", {
+        QUnit.module("Data binding", {
             beforeEach : function () {
                 this.sut = new sap.m.Menu();
                 this.oButton = new sap.m.Button();
@@ -567,7 +567,7 @@
 			ok(!sap.ui.getCore().byId(oItemId), 'The item that does not fit in the filter is destroyed');
 		});
 
-        module("[PHONE] Data binding", {
+        QUnit.module("[PHONE] Data binding", {
             beforeEach : function () {
                 prepareMobilePlatform.call(this);
 
@@ -636,7 +636,7 @@
             strictEqual(jQuery(sTitleSelector).length, 3, 'Item was successfully added.');
         });
 
-        module('MenuItem', {
+        QUnit.module('MenuItem', {
             beforeEach: function () {
                 this.sut = new sap.m.MenuItem({
                     text: "mi",
@@ -781,7 +781,7 @@
             ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
         });
 
-        module('MenuListItem', {
+        QUnit.module('MenuListItem', {
             beforeEach: function () {
                 this.menuItem = new sap.m.MenuItem({
                     text: "mi",

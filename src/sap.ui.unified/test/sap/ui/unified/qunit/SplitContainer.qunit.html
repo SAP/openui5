@@ -88,7 +88,7 @@
 		qutils.delayTestStart();
 
 
-		module("API");
+		QUnit.module("API");
 
 		test("Properties - Default Values", function() {
 			equal(oSC.getShowSecondaryContent(), false, "Default 'showSecondaryContent'");
@@ -109,7 +109,7 @@
 		});
 
 
-		module("Rendering");
+		QUnit.module("Rendering");
 
 		test("Content", function() {
 			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("sc-canvas"), jQuery.sap.domById("_ctnt")), "Content rendered correctly");
@@ -125,7 +125,7 @@
 		});
 
 
-		module("Behavior");
+		QUnit.module("Behavior");
 
 		asyncTest("Open/Close Secondary Content", function() {
 			function checkVisibility(){

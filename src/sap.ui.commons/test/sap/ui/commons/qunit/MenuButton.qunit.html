@@ -50,7 +50,7 @@
 
 			qutils.delayTestStart();
 
-			module("Basic");
+			QUnit.module("Basic");
 
 			test("Initial Rendering", function(){
 				notEqual(jQuery.sap.domById(oMenuButton1.getId()), null, "MenuButton HTML Element should be rendered");
@@ -80,7 +80,7 @@
 			 });
 
 
-			module("Menu Open / Close Tests");
+			QUnit.module("Menu Open / Close Tests");
 
 			test("Test Open/Close via Mouse", function(){
 				oMenuButton1.focus();
@@ -103,7 +103,7 @@
 				ok(jQuery.sap.byId(oMenu1.getId()).length == 0, "Menu is hidden after SPACE is pressed on a menuitem and DOM is removed");
 			});
 
-			module("Events");
+			QUnit.module("Events");
 
 			asyncTest("Test Press Event", function(){
 				oMenuButton1.focus();

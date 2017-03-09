@@ -67,7 +67,7 @@
 	/**
 	 * Test Public Interface
 	 */
-	module("public interface");
+	QUnit.module("public interface");
 
 	test("Test enabled property - setter/getter", function () {
 		var oFileUploader = createFileUploader(),
@@ -208,7 +208,7 @@
 		oFileUploader.destroy();
 	});
 
-	module("File validation");
+	QUnit.module("File validation");
 	test("Test file type validation - handlechange()", function (){
 		//setup
 		var oFileUploader = createFileUploader({
@@ -354,7 +354,7 @@
 	/**
 	 * Test private functions
 	 */
-	module("private functions");
+	QUnit.module("private functions");
 	test("Testing sending passed files with XHR", function () {
 		var oFileUploader = createFileUploader(),
 			aFiles = {

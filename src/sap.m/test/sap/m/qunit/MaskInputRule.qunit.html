@@ -22,7 +22,7 @@
 	<script>
 		sinon.config.useFakeTimers = true;
 
-		module("API", {
+		QUnit.module("API", {
 			beforeEach: function () {
 				this.oMaskInputRule = new sap.m.MaskInputRule();
 				this.oMaskInput = new sap.m.MaskInput({rules: [this.oMaskInputRule]});

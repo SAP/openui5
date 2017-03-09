@@ -114,7 +114,7 @@
 		return oList;
 	}
 
-	module("BusyIndicator");
+	QUnit.module("BusyIndicator");
 	testOData("List should show busy indicator during the binding update", function() {
 		var oMockServer = startMockServer(0),
 			oList = createList({
@@ -333,7 +333,7 @@
 		});
 	});
 
-	module("Abort");
+	QUnit.module("Abort");
 	testOData("List should abort multiple requests and runs only the last one", function() {
 
 		// arrange
@@ -379,7 +379,7 @@
 		});
 	});
 
-	module("CountMode");
+	QUnit.module("CountMode");
 	testOData("CountMode.None should show growing indicator when list is not complete yet", function() {
 		var iThreshold = 10,
 			oMockServer = startMockServer(),
@@ -433,7 +433,7 @@
 		});
 	});
 
-	module("NonAbsoluteAndUnresolveable Binding Path")
+	QUnit.module("NonAbsoluteAndUnresolveable Binding Path")
 	test("Should not fire update started if a binding cannot be resolved", function() {
 		var oMockServer = startMockServer(),
 			oList = createList({
@@ -451,7 +451,7 @@
 		oList.destroy();
 	});
 
-	module("FocusAfterBindingUpdate");
+	QUnit.module("FocusAfterBindingUpdate");
 	document.hasFocus() && testOData("Focus should be retained after binding update", function() {
 		var sFocusedControlId,
 			oMockServer = startMockServer(),
@@ -522,7 +522,7 @@
 		});
 	});
 
-	module("Upwards Growing Direction");
+	QUnit.module("Upwards Growing Direction");
 	testOData("Should fetch the data and render in reverse order", function() {
 		var iThreshold = 5,
 			oDeferred = jQuery.Deferred(),
@@ -567,7 +567,7 @@
 		});
 	});
 
-	module("TwoWayBinding And Growing");
+	QUnit.module("TwoWayBinding And Growing");
 	testOData("Property changes updates the list binding when growing feature is enabled", function() {
 		// arrange
 		var fnUpdateStartedSpy = this.spy(),

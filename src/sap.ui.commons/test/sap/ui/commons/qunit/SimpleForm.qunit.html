@@ -102,7 +102,7 @@
 	// test functions
 		qutils.delayTestStart();
 
-		module("Setter/Getter");
+		QUnit.module("Setter/Getter");
 
 		test("used Layout", function() {
 			var oForm = oSimpleForm.getAggregation("form");
@@ -438,7 +438,7 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		module("Content changing");
+		QUnit.module("Content changing");
 
 		test("toggle visibility", function() {
 

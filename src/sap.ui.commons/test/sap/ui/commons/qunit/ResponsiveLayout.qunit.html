@@ -143,7 +143,7 @@
 		// test functions
 		qutils.delayTestStart();
 
-		module("functions");
+		QUnit.module("functions");
 
 		test("Getter", function() {
 			// overwritten getter must return data of corresponding objects
@@ -180,7 +180,7 @@
 
 		});
 
- 		module("Rendering");
+ 		QUnit.module("Rendering");
 
 		test("Container rendering", function() {
 			ok(jQuery.sap.domById("F1"), "Form1 is rendered");
@@ -231,7 +231,7 @@
 			ok(!jQuery.sap.domById("F3C5E1_T1"), "Form3: invisible Container - TextField not rendered");
 		});
 
-		module("Interaction");
+		QUnit.module("Interaction");
 
  		test("add container", function() {
 			oForm3.addFormContainer(

@@ -10,7 +10,7 @@
 	jQuery.sap.require("sap.uxap.ObjectPageSection");
 	jQuery.sap.require("sap.uxap.ObjectPageHeader");
 
-	module("aat_UxAP-ManageDisplay", {
+	QUnit.module("aat_UxAP-ManageDisplay", {
     	beforeEach: function () {
     		//aat_UxAP-331_ObjectPageRules1
     		this.objectPageSampleView1 = sap.ui.xmlview("UxAP-331_ObjectPageRules1", {
@@ -73,7 +73,7 @@
 		assert.strictEqual(objectPageTitle331, false, "SubSection is visible by override");
 	});
 
-	module("Single section", {
+	QUnit.module("Single section", {
     	beforeEach: function () {
     		//aat_UxAP-331_ObjectPageRules2
     		this.objectPageSampleView2 = sap.ui.xmlview("UxAP-331_ObjectPageRules2", {

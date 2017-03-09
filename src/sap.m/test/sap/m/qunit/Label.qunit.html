@@ -66,7 +66,7 @@
 
 		var l1, l2;
 
-		module("Basic", {
+		QUnit.module("Basic", {
 			setup : function() {
 				l1 = sap.ui.getCore().getControl("l1");
 				l2 = sap.ui.getCore().getControl("l2");
@@ -126,7 +126,7 @@
 			ok(!sut.$().hasClass("sapMLabelMaxWidth"), "Label has width and does not have max width restriction.");
 		});
 
-		module("tooltip");
+		QUnit.module("tooltip");
 
 		test("Should render a tooltip", function() {
 			// System under Test + Act
@@ -213,8 +213,8 @@
 
 		});
 
-		module("Accessibility");
-		
+		QUnit.module("Accessibility");
+
 		test("getAccessibilityInfo", function() {
 			var oControl = new sap.m.Label({text: "Text"});
 			ok(!!oControl.getAccessibilityInfo, "Label has a getAccessibilityInfo function");

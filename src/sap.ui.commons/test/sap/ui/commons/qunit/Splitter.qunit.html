@@ -6,7 +6,7 @@
 
     <script src="../shared-config.js"></script>
     <script id="sap-ui-bootstrap"
-     
+
       src="../../../../../resources/sap-ui-core.js"
       data-sap-ui-theme="sap_bluecrystal"
       data-sap-ui-noConflict="true"
@@ -76,7 +76,7 @@
     <script>
 
         qutils.delayTestStart();
-        module("Splitter");
+        QUnit.module("Splitter");
         oSplitter = sap.ui.getCore().getControl("mySplitter");
         oSplitter1 = sap.ui.getCore().getControl("mySplitter2");
         test("basic splitter examples", function() {

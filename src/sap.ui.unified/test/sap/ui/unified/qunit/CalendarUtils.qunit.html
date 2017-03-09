@@ -32,7 +32,7 @@
 			UniversalDate = sap.ui.core.date.UniversalDate;
 
 
-		module("getFirstDateOfWeek for week Sunday-Saturday (en_US locale)", {
+		QUnit.module("getFirstDateOfWeek for week Sunday-Saturday (en_US locale)", {
 			beforeEach: function () {
 				this.oStub = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
 					return new sap.ui.core.Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
@@ -73,7 +73,7 @@
 				"12 Jun 2016 -> 1 Jun 2016");
 		});
 
-		module("getFirstDateOfWeek for week Monday-Sunday (en_GB locale)", {
+		QUnit.module("getFirstDateOfWeek for week Monday-Sunday (en_GB locale)", {
 			beforeEach: function () {
 				this.oStub = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
 					return new sap.ui.core.Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
@@ -109,7 +109,7 @@
 					"1 Dec 2016->25 Nov 2016");
 		});
 
-		module("getNumberOfWeeksForAYear()", {
+		QUnit.module("getNumberOfWeeksForAYear()", {
 			beforeEach: function () {
 				this._oUI5Core = sap.ui.getCore();
 				this._oBigYears = {"en-US": [1972, 1977, 1983, 1988, 1994, 2000, 2005, 2011, 2016], "en-GB": [1970, 1976, 1981, 1987, 1992, 1998, 2004, 2009, 2015]};
@@ -154,7 +154,7 @@
 			}, this);
 		});
 
-		module("Calculate week number");
+		QUnit.module("Calculate week number");
 
 		test("Week number when locale is valid en-US", function() {
 			// prepare

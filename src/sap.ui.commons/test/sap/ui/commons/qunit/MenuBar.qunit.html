@@ -92,7 +92,7 @@
 
 	qutils.delayTestStart();
 
-	module("Properties and Aggregations");
+	QUnit.module("Properties and Aggregations");
 
 	test("Properties - Default Values", function() {
 		equals(oMenuBar1.getDesign(), "Standard", "Default 'design'");
@@ -119,7 +119,7 @@
 		equals(oMenuBar3.getItems().length, 0, "# Items after destroy");
 	});
 
-	module("Appearance");
+	QUnit.module("Appearance");
 
 	test("Visibility", function() {
 		equals(jQuery("#menubar1").length, 1, "Visible MenuBar is rendered");
@@ -165,7 +165,7 @@
 		equals(oMenuBar5.oOvrFlwMnu.getItems().length, 4, "# Items in overflow menu");
 	});
 
-	module("Interaction - Mouse");
+	QUnit.module("Interaction - Mouse");
 
 	test("Click on item", function() {
 		qutils.triggerEvent("click", "menubar1_item5", {});
@@ -187,7 +187,7 @@
 		checkMenuOpenedAndClosed(oMenuBar6, "ovrflw", false, "click");
 	});
 
-	module("Interaction - Keyboard");
+	QUnit.module("Interaction - Keyboard");
 
 	asyncTest("Item navigation", function() {
 		jQuery("#menubar1").get(0).focus();

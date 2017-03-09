@@ -31,7 +31,7 @@
 
 		sap.ui.core.routing.HashChanger.getInstance().init();
 
-		module("history management", {
+		QUnit.module("history management", {
 			setup : function() {
 				sap.ui.core.routing.HashChanger.getInstance().replaceHash(""); //since the initial hash will be parsed, we want it to be empty on every test
 			}

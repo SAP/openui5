@@ -184,7 +184,7 @@
 
 		qutils.delayTestStart();
 
-		module("Core API");
+		QUnit.module("Core API");
 
 		test("RenderManager.getConfiguration", function() {
 			var rm = new sap.ui.core.RenderManager();
@@ -197,7 +197,7 @@
 			ok(c.createRenderManager() != c.createRenderManager(), "Core.createRenderManager always returns a new RenderManager instance");
 		});
 
-		module("Interfaces");
+		QUnit.module("Interfaces");
 
 		var aCommonFunctions = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData", "writeInvisiblePlaceholderData",
 			   	              "writeElementData", "writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses",
@@ -226,7 +226,7 @@
 		});
 
 
-		module("Writer API");
+		QUnit.module("Writer API");
 
 		//No checks due to deprecation for
 		//translate, writeAcceleratorKey, writeAccessibilityState, getHTML
@@ -441,7 +441,7 @@
 			checkACCOutput(sOutput, "aria-labelledby=\"" + sText + "\"");
 		});
 
-		module("Non Renderer Functions");
+		QUnit.module("Non Renderer Functions");
 
 		test("RenderManager.destroy", function() {
 			var rm = new sap.ui.core.RenderManager();

@@ -25,7 +25,7 @@
 
 		var oCore = sap.ui.getCore();
 
-		module("API", {
+		QUnit.module("API", {
 			beforeEach: function () {
 				this.stepInput = new sap.m.StepInput();
 
@@ -90,7 +90,7 @@
 
 		});
 
-		module("Operations", {
+		QUnit.module("Operations", {
 			beforeEach: function () {
 				this.stepInput = new sap.m.StepInput({
 							value: 3,
@@ -154,7 +154,7 @@
 		});
 
 
-		module("Floating point", {
+		QUnit.module("Floating point", {
 			beforeEach: function () {
 				this.stepInput = new sap.m.StepInput({
 					step: 1.1,
@@ -402,7 +402,7 @@
 			oSI.destroy();
 		});
 
-		module("Keyboard Handling", {
+		QUnit.module("Keyboard Handling", {
 			beforeEach: function () {
 				this.oChangeSpy = sinon.spy();
 				this.stepInput = new sap.m.StepInput({
@@ -566,7 +566,7 @@
 					"The input's  value is set to min after page down");
 		});
 
-		module("Accessibility", {
+		QUnit.module("Accessibility", {
 			beforeEach: function () {
 				this.stepInput = new sap.m.StepInput({
 					value: 4,
@@ -617,7 +617,7 @@
 			strictEqual(this.stepInput.$("input-inner").attr("aria-disabled"), undefined, "To set it as editable");
 		});
 
-	module("binding", {
+	QUnit.module("binding", {
 		beforeEach: function () {
 			this.stepInput = new sap.m.StepInput({
 				value: {
@@ -702,7 +702,7 @@
 		});
 
 
-		module("calculate decimals", {
+		QUnit.module("calculate decimals", {
 			beforeEach: function () {
 				this.stepInput = new sap.m.StepInput();
 

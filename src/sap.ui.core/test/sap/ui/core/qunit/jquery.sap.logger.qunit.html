@@ -24,7 +24,7 @@
 
 		var iListenedMessages;
 		var oLastEntry;
-		module("Test", {
+		QUnit.module("Test", {
 			setup : function() {
 				iListenedMessages = 0;
 				oLastEntry = null;
@@ -167,7 +167,7 @@
 			strictEqual(log, jQuery.sap.log, "The log instance should always be returned");
 		});
 
-		module("ComponentLoggers");
+		QUnit.module("ComponentLoggers");
 
 		test("Basic Methods", function () {
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ALL);

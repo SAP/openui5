@@ -198,7 +198,7 @@
 		// test functions
 		qutils.delayTestStart();
 
-		module("functions");
+		QUnit.module("functions");
 
 		test("Getter", function() {
 			// overwritten getter must return data of corresponding objects
@@ -251,7 +251,7 @@
 			ok(!oElement.getRenderedDomRef(), "Form3: invisible Containers Element no DOM representation");
 		});
 
-		module("Rendering");
+		QUnit.module("Rendering");
 
 		test("BackgroundDesign", function() {
 			ok(jQuery("#Layout1").hasClass("sapUiFormBackgrTranslucent"), "Form1: translucent design per default");
@@ -331,7 +331,7 @@
 			ok(jQuery.sap.domById("F4-TB3"), "Form6: Toolbar of Container2 rendered");
 		});
 
-		module("Interaction");
+		QUnit.module("Interaction");
 
 		test("add container", function() {
 			oForm3.addFormContainer(

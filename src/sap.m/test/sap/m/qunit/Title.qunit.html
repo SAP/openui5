@@ -20,7 +20,7 @@
 
 		<script>
 
-		module("Basics", {
+		QUnit.module("Basics", {
 			setup : function() {
 				this.title1 = new sap.m.Title();
 				this.title2 = new sap.m.Title({
@@ -69,7 +69,7 @@
 		});
 
 
-		module("Rendering", {
+		QUnit.module("Rendering", {
 			setup : function() {
 				this.title = new sap.m.Title({
 					text : "Hello",
@@ -147,7 +147,7 @@
 			}
 		});
 
-		module("Title Association", {
+		QUnit.module("Title Association", {
 			setup : function() {
 				this.coreTitle = new sap.ui.core.Title({
 					text: "Hello2",
@@ -212,8 +212,8 @@
 			}
 		});
 
-		module("Accessibility");
-		
+		QUnit.module("Accessibility");
+
 		test("getAccessibilityInfo", function() {
 			var oTitle = new sap.m.Title({text: "Text"});
 			ok(!!oTitle.getAccessibilityInfo, "Title has a getAccessibilityInfo function");

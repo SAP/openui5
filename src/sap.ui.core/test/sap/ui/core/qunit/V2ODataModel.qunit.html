@@ -61,7 +61,7 @@
 	function initModel(mParameters) {
 		return new sap.ui.model.odata.v2.ODataModel(sServiceUri, mParameters);
 	}
-	
+
 	var bChanged = false, bDataRequested = false, bDataReceived = false;
 
 	var fnChange = function(oEvent) {
@@ -78,7 +78,7 @@
 		bDataReceived = true;
 		ok(bChanged && bDataRequested,"dataRecieved fired");
 	};
-	
+
 	/**
 	 * Removes all shared Metadata
 	 */
@@ -86,7 +86,7 @@
 		sap.ui.model.odata.v2.ODataModel.mServiceData = {};
 	}
 
-	module("ODataModelV2 XML", {
+	QUnit.module("ODataModelV2 XML", {
 		setup : function() {
 			initServer();
 			oModel = initModel({json: false});
@@ -114,7 +114,7 @@
 		});
 	});
 
-	module("ODataModelV2 JSON", {
+	QUnit.module("ODataModelV2 JSON", {
 		setup : function() {
 			initServer();
 			oModel = initModel();
@@ -155,7 +155,7 @@
 			}
 		});
 	});
-	
+
 	asyncTest("test $batch: check accept header", function() {
 		oSpy = sinon.spy(oModel, "_submitBatchRequest");
 		oModel.read("/ProductSet", {
@@ -1037,7 +1037,7 @@
 		});
 	});
 
-	module("ODataModelV2 write", {
+	QUnit.module("ODataModelV2 write", {
 		setup : function() {
 			initServer();
 			oModel = initModel();
@@ -1230,7 +1230,7 @@
 			}
 		});
 	});
-	
+
 	asyncTest("test oDataModel setProperty - Response object", function() {
 		var iCount = 0;
 		oModel.setDefaultBindingMode("TwoWay");
@@ -1238,7 +1238,7 @@
 		var oInput = new sap.m.Input({value: "{Name}"});
 		oInput.setModel(oModel);
 		oInput.bindElement("/ProductSet('AD-1000')");
-		
+
 		var fnHandler = function() {
 			oInput.getElementBinding().detachDataReceived(fnHandler);
 			oInput.setValue("test");
@@ -1255,7 +1255,7 @@
 		};
 		oInput.getElementBinding().attachDataReceived(fnHandler);
 	});
-	
+
 	asyncTest("test oDataModel create", function() {
 		var iCount = 0;
 		var bCreate = false;
@@ -3110,7 +3110,7 @@
 		});
 	});
 
-	module("ODataModelV2 refresh after change", {
+	QUnit.module("ODataModelV2 refresh after change", {
 		setup : function() {
 			initServer();
 			oModel = initModel();
@@ -3655,7 +3655,7 @@
 
 	});
 
-	module("ODataModelV2 Eventing", {
+	QUnit.module("ODataModelV2 Eventing", {
 		setup : function() {
 			initServer();
 			oModel = initModel();
@@ -3684,13 +3684,13 @@
 				bChanged = false;
 				bDataRequested = false;
 				bDataReceived = false;
-				start(); // resume normal testing			
+				start(); // resume normal testing
 			});
 			oLabel.getElementBinding().refresh();
 		}
 		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
-	
+
 	asyncTest("Event order (single request): bindElement fails", function(){
 		expect(3);
 		oModel.setUseBatch(false);
@@ -3706,7 +3706,7 @@
 		}
 		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
-	
+
 	asyncTest("Event order (batch request): bindElement fails --> refresh", function(){
 		expect(5);
 		oLabel = new sap.ui.commons.Label();
@@ -3723,13 +3723,13 @@
 				bChanged = false;
 				bDataRequested = false;
 				bDataReceived = false;
-				start(); // resume normal testing			
+				start(); // resume normal testing
 			});
 			oLabel.getElementBinding().refresh();
 		}
 		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
-	
+
 	asyncTest("Event order (batch request): bindElement fails", function(){
 		expect(3);
 		oLabel = new sap.ui.commons.Label();
@@ -3744,7 +3744,7 @@
 		}
 		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
-	
+
 	asyncTest("test eventing when using read with batch on", function() {
 		var bSuccess = false;
 		var iReqComp = 0;
@@ -4968,7 +4968,7 @@
 		});
 	});
 
-	module("ODataModelV2 abort requests", {
+	QUnit.module("ODataModelV2 abort requests", {
 		setup : function() {
 			initServer();
 			oModel = initModel();
@@ -6194,7 +6194,7 @@
 		oInput.getElementBinding().attachChange(fnHandler);
 	});
 
-	module("ODataModelV2 single request with groupId", {
+	QUnit.module("ODataModelV2 single request with groupId", {
 		setup : function() {
 			initServer();
 			oModel = initModel({json: true, useBatch: false, defaultCountMode: 'None'});

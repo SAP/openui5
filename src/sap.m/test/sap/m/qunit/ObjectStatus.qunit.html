@@ -41,7 +41,7 @@
 	os2.placeAt("objectStatuses");
 	os3.placeAt("objectStatuses");
 
-	module("Rendering All Fields");
+	QUnit.module("Rendering All Fields");
 
 	test("StatusRendered", function() {
 
@@ -52,7 +52,7 @@
 
 	/******************************************************************/
 
-	module("Internal API");
+	QUnit.module("Internal API");
 
 
 	var os4 = new sap.m.ObjectStatus("os4",{
@@ -85,7 +85,7 @@
 		ok(os7.$().length == 0, "Object Status #7 is not rendered");
 	});
 
-	module("Supressed invalidation");
+	QUnit.module("Supressed invalidation");
 
 	test("Should not rerender the ObjectStatus if the text is changed", function() {
 		// Arrange
@@ -426,7 +426,7 @@
 		oObjectStatus.destroy();
 	});
 
-	module("Screen reader ARIA support");
+	QUnit.module("Screen reader ARIA support");
 
 	test("Has the appropriate ARIA attributes", function () {
 		//Arange
@@ -460,7 +460,7 @@
 		oControl.destroy();
 	});
 
-	module("textDirection");
+	QUnit.module("textDirection");
 
 	test("Title has dir set to LTR when Inherit", function () {
 		//Arange

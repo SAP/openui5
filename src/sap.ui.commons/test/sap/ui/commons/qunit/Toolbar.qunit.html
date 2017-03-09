@@ -13,7 +13,7 @@
 
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-		     
+
 		      src="../../../../../resources/sap-ui-core.js"
 		      data-sap-ui-theme="sap_bluecrystal"
 		      data-sap-ui-noConflict="true"
@@ -53,7 +53,7 @@
 			oCtrl.destroyItems();// because the same control is used again instead of creating a new Toolbar for each test
 			sap.ui.getCore().applyChanges();
 		}
-		module("Basic", {
+		QUnit.module("Basic", {
 
 			setup: function() {
 				oCtrl = sap.ui.getCore().getControl("Toolbar");
@@ -239,7 +239,7 @@
 		// async1_addItems
 		// ==================================================
 
-		module("Overflow by addItems", {
+		QUnit.module("Overflow by addItems", {
 			setup: function() {
 				oCtrl = sap.ui.getCore().getControl("Toolbar");
 				notStrictEqual(oCtrl, null, "oCtrl must exist");
@@ -326,7 +326,7 @@
 		// async2_resize
 		// ==================================================
 
-		module("Overflow due to resizing", {
+		QUnit.module("Overflow due to resizing", {
 			setup: function() {
 				oCtrl = sap.ui.getCore().getControl("Toolbar");
 				notStrictEqual(oCtrl, null, "oCtrl must exist");
@@ -441,7 +441,7 @@
 		// async3_outerWidth
 		// ==================================================
 
-		module("outerWidth", {
+		QUnit.module("outerWidth", {
 			setup: function () {
 				oCtrl = sap.ui.getCore().getControl("Toolbar");
 				notStrictEqual(oCtrl, null, "oCtrl must exist");
@@ -501,7 +501,7 @@
 		// async5_overflowMenu
 		// ==================================================
 
-		module("Overflow Menu", {
+		QUnit.module("Overflow Menu", {
 			setup: function () {
 				oCtrl = sap.ui.getCore().getControl("Toolbar");
 				notStrictEqual(oCtrl, null, "oCtrl must exist");

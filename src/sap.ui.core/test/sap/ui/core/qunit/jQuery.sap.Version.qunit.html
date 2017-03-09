@@ -67,7 +67,7 @@
 			return ret === undefined ? obj : ret;
 		}
 
-		module("Core Versions");
+		QUnit.module("Core Versions");
 
 		test("Core Version", function() {
 			equal(config.getVersion().toString(), sap.ui.version, "Used UI5 Core version");
@@ -105,7 +105,7 @@
 		});
 
 
-		module("jQuery.sap.Version - Create");
+		QUnit.module("jQuery.sap.Version - Create");
 
 		if (!Object.create) { //Object.create polyfill for IE8
 		    Object.create = (function(){
@@ -145,7 +145,7 @@
 		});
 
 
-		module("jQuery.sap.Version - Getter");
+		QUnit.module("jQuery.sap.Version - Getter");
 
 		var getter = ["toString", "getMajor", "getMinor", "getPatch", "getSuffix"];
 
@@ -165,7 +165,7 @@
 		}
 
 
-		module("jQuery.sap.Version - Compare");
+		QUnit.module("jQuery.sap.Version - Compare");
 
 		test("Equals", function() {
 			var vOk, vWrong, argsOk, argsWrong, text;

@@ -37,7 +37,7 @@
 			sap.ui.getCore().applyChanges();
 		}
 
-		module("Test the basic functions");
+		QUnit.module("Test the basic functions");
 
 		test("parameters", function() {
 			oFT.setWidth("100%").setHeight("auto");
@@ -99,7 +99,7 @@
 			strictEqual($a.attr("class"), "sapMLnk abc", "a::class is rendered correctly");
 		});
 
-		module("Clean up");
+		QUnit.module("Clean up");
 		test("cleanup", function(){
 			oFT.destroy();
 			this.clock.tick(1000);

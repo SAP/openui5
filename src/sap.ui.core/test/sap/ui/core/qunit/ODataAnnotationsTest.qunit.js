@@ -373,7 +373,7 @@ function runODataAnnotationTests() {
 
 	sap.ui.test.qunit.delayTestStart();
 
-	module("Synchronous loading");
+	QUnit.module("Synchronous loading");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
 		return function() {
@@ -435,7 +435,7 @@ function runODataAnnotationTests() {
 		}
 	}
 
-	module("Asynchronous loading");
+	QUnit.module("Asynchronous loading");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
 		return function() {
@@ -580,7 +580,7 @@ function runODataAnnotationTests() {
 		}
 	}
 
-	module("V2: Asynchronous loading");
+	QUnit.module("V2: Asynchronous loading");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
 		return function() {
@@ -726,7 +726,7 @@ function runODataAnnotationTests() {
 	}
 
 
-	module("Asynchronous loading (joined events)");
+	QUnit.module("Asynchronous loading (joined events)");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
 		return function() {
@@ -879,7 +879,7 @@ function runODataAnnotationTests() {
 	}
 
 
-	module("V2: Asynchronous loading (joined events)");
+	QUnit.module("V2: Asynchronous loading (joined events)");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
 		return function() {
@@ -1035,7 +1035,7 @@ function runODataAnnotationTests() {
 	}
 
 
-	module("V1 only: Synchronous loading and MetaModel");
+	QUnit.module("V1 only: Synchronous loading and MetaModel");
 
 	var fnTestSynchronousLoading = function(mTest) {
 		expect(5);
@@ -1100,7 +1100,7 @@ function runODataAnnotationTests() {
 	}
 
 
-	module("Multiple Annotation Sources Merged");
+	QUnit.module("Multiple Annotation Sources Merged");
 
 	asyncTest("Asynchronous loading", function() {
 		expect(12);
@@ -1200,7 +1200,7 @@ function runODataAnnotationTests() {
 		}
 	});
 
-	module("V2: Multiple Annotation Sources Merged");
+	QUnit.module("V2: Multiple Annotation Sources Merged");
 
 	asyncTest("Asynchronous loading", function() {
 		expect(6);
@@ -1264,7 +1264,7 @@ function runODataAnnotationTests() {
 
 	});
 
-	module("Additional tests for fixed bugs");
+	QUnit.module("Additional tests for fixed bugs");
 
 
 	test("Apply Function", function() {

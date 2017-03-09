@@ -8,7 +8,7 @@
 	var ANCHORBAR_CLASS_SELECTOR = ".sapUxAPAnchorBar";
 	var HIERARCHICAL_CLASS_SELECTOR = ".sapUxAPHierarchicalSelect";
 
-    module("properties", {
+    QUnit.module("properties", {
     	beforeEach: function () {
     		this.anchorBarView = sap.ui.xmlview("UxAP-69_anchorBar", {
                 viewName: "view.UxAP-69_AnchorBar"
@@ -111,7 +111,7 @@
 		objectCount: 1
 	});
 
-	module("simple binding", {
+	QUnit.module("simple binding", {
 		beforeEach: function () {
 			this.anchorBarView = sap.ui.xmlview("UxAP-69_anchorBarBinding", {
 				viewName: "view.UxAP-69_AnchorBarBinding"
@@ -212,7 +212,7 @@
 		assert.equal(oSectionButton.getProperty("text"), "newvalue", "New model value must not be reflected");
 	});
 
-	module("complex binding", {
+	QUnit.module("complex binding", {
 		beforeEach: function () {
 			this.anchorBarView = sap.ui.xmlview("UxAP-69_anchorBarBinding", {
 				viewName: "view.UxAP-69_AnchorBarBinding"

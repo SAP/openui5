@@ -29,7 +29,7 @@
 
 		<script>
 
-			module("default values");
+			QUnit.module("default values");
 
 			test("IconTabBar", function() {
 
@@ -79,7 +79,7 @@
 		    	oIconTabSeparator.destroy();
 			});
 
-		    module("overwritten Aggregation methods");
+		    QUnit.module("overwritten Aggregation methods");
 
 		    test("addAggregation()", function() {
 
@@ -208,7 +208,7 @@
 				oIconTabBar.destroy();
 			});
 
-		    module("overwritten getter/setter methods");
+		    QUnit.module("overwritten getter/setter methods");
 
 		    test("getSelectedKey()", function() {
 
@@ -357,7 +357,7 @@
 		   		oIconTabBar.destroy();
 		   	});
 
-			module("item aggregation methods");
+			QUnit.module("item aggregation methods");
 
 			test("add IconTabFilter", function() {
 
@@ -413,7 +413,7 @@
 				oIconTabBar.destroy();
 			});
 
-		    module("rendering");
+		    QUnit.module("rendering");
 
 			test("basic rendering", function() {
 
@@ -723,7 +723,7 @@
 			});
 
 
-			module("icon color");
+			QUnit.module("icon color");
 
 			test("Default", function() {
 
@@ -868,7 +868,7 @@
 				oIconTabBar.destroy();
 			});
 
-			module("rerendering");
+			QUnit.module("rerendering");
 
 			test("filter text changing", function() {
 
@@ -974,7 +974,7 @@
 				oIconTabBar.destroy();
 			});
 
-			module("public methods");
+			QUnit.module("public methods");
 
 			test("expandable set to false", function() {
 
@@ -1106,7 +1106,7 @@
 				oIconTabBar.destroy();
 			});
 
-			module("layout");
+			QUnit.module("layout");
 
 			test("vertical / horizontal", function() {
 
@@ -1325,7 +1325,7 @@
 				oIconTabBar.destroy();
 			});
 
-			module("scrolling");
+			QUnit.module("scrolling");
 
 			test("initial scrolling - scrollable", function() {
 
@@ -1621,7 +1621,7 @@
 				oIconTabBar.destroy();
 			});
 
-			module("preserve dom");
+			QUnit.module("preserve dom");
 
 			// test case for: [openui5] sap.m.IconTabBar doesn't support PreserveContent functionality (#26)
 			test("preserve dom", function() {
@@ -1672,7 +1672,7 @@
 				oIconTabBar.destroy();
 			});
 
-			module("events");
+			QUnit.module("events");
 
 			test("select", function() {
 
@@ -1788,7 +1788,7 @@
 				oIconTabBar.destroy();
 			});
 
-			module("keyboard");
+			QUnit.module("keyboard");
 
 			 function createIconTabBar() {
 				return new sap.m.IconTabBar({
@@ -1966,7 +1966,7 @@
 				oIconTabBar.destroy();
 			});
 
-			module("updating data");
+			QUnit.module("updating data");
 
 			test("keep the selected tab", function() {
 
@@ -2203,7 +2203,7 @@
 				oIconTabBar.destroy();
 			});
 
-			module("tabs");
+			QUnit.module("tabs");
 
 			test("remove selected tab", function() {
 
@@ -2328,7 +2328,7 @@
 				return oIconTabBarOverflowSelectList;
 			}
 
-			module("Overflow Select List",{
+			QUnit.module("Overflow Select List",{
 				setup: function () {
 					this.oIconTabBar = getIconTabBarWithOverflowList();
 					this.oIconTabBar.placeAt('qunit-fixture');
@@ -2372,7 +2372,7 @@
 				assert.strictEqual(this.oIconTabBar.getSelectedKey(), '10', 'Correct tab filter is selected');
 			});
 
-			module("padding");
+			QUnit.module("padding");
 
 			test("Container Padding Classes", function () {
 				// System under Test + Act

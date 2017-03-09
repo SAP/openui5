@@ -114,7 +114,7 @@
 	// test functions
 		qutils.delayTestStart();
 
-		module("Setter/Getter");
+		QUnit.module("Setter/Getter");
 
 		test("width", function() {
 			ok(/width:/.test(oSimpleForm.$().attr("style")) && /100%/.test(oSimpleForm.$().attr("style")), "SimpleForm1: width set");
@@ -528,7 +528,7 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		module("Content changing");
+		QUnit.module("Content changing");
 
 		test("toggle visibility", function() {
 
@@ -552,7 +552,7 @@
 		});
 
 
-		module("ARIA");
+		QUnit.module("ARIA");
 
 		test("aria-labelledby", function() {
 			var oForm = oSimpleForm.getAggregation("form");

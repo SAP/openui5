@@ -3,7 +3,7 @@
 	jQuery.sap.registerModulePath("view", "view");
     jQuery.sap.registerModulePath("sap.uxap.sample", "../demokit/sample");
     jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
-    module("aat_UxAP-330");
+    QUnit.module("aat_UxAP-330");
 
     jQuery.sap.registerModulePath("view", "view");
     jQuery.sap.require("sap.uxap.ObjectPageLayout");

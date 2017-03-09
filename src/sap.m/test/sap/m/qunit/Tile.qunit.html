@@ -20,7 +20,7 @@
 
 		var core = sap.ui.getCore();
 
-		module("Dimensions");
+		QUnit.module("Dimensions");
 
 
 		test("ShouldRoundDimensionsToFloor", function() {
@@ -85,7 +85,7 @@
 		});
 
 
-		module("Properties");
+		QUnit.module("Properties");
 
 
 		test("ShouldSetRemoveable", function() {
@@ -141,7 +141,7 @@
 
 
 
-		module("Events");
+		QUnit.module("Events");
 
 		test("ShouldReactOnTouchstart", function() {
 			// SUT
@@ -216,7 +216,7 @@
 			container.destroy();
 		});
 
-        module("Keyboard handling");
+        QUnit.module("Keyboard handling");
 
         test("ShouldFirePressOnEnterOrSpace", function() {
             //Arrange

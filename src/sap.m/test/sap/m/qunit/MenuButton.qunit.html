@@ -36,7 +36,7 @@
 		}
 
 
-		module("Basic", {
+		QUnit.module("Basic", {
 			beforeEach: function () {
 				this.sut = new sap.m.MenuButton("menuButton1");
 				this.sut.setText("Menu Button");
@@ -77,7 +77,7 @@
 			equals(this.sut.getText(), "Menu Button", "Custom 'title':");
 		});
 
-		module("Accessibility (ARIA)", {
+		QUnit.module("Accessibility (ARIA)", {
 			beforeEach: function () {
 				this.sut = new sap.m.MenuButton("menuButton1", {
 					menu: new sap.m.Menu("menuButton1Menu", {
@@ -284,7 +284,7 @@
 			strictEqual(oInnerButton.$().attr('title'), sTooltip, "The icon tooltip is successfully set");
 		});
 
-		module("Pressing", {
+		QUnit.module("Pressing", {
 			beforeEach: function () {
 				this.sut = new sap.m.MenuButton("menuButton1");
 				this.sut.setText("Menu Button");
@@ -418,7 +418,7 @@
 			strictEqual(jQuery('.sapMMenuBtnSplit').length, 1, 'Split button rendered');
 		});
 
-		module("SplitButton integration", {
+		QUnit.module("SplitButton integration", {
 			beforeEach: function () {
 				this.sut = new sap.m.MenuButton({
 					buttonMode: sap.m.MenuButtonMode.Split,
@@ -573,7 +573,7 @@
 		});
 
 
-		module("SplitButton alone", {
+		QUnit.module("SplitButton alone", {
 			beforeEach: function() {
 				this.sut = new sap.m.SplitButton();
 			},

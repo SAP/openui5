@@ -163,7 +163,7 @@
 
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");
 
-		module("Appearance");
+		QUnit.module("Appearance");
 
 		test("FeedChunk styles", function() {
 			//without comments
@@ -244,7 +244,7 @@
 
 		});
 
-		module("Behaviour");
+		QUnit.module("Behaviour");
 
 		test("delete function", function() {
 			qutils.triggerMouseEvent("commentChunk2-delete", "click");

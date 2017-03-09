@@ -32,7 +32,7 @@
 		//the SUT won't be destroyed when single test is run
 		var bSkipDestroy = !!jQuery.sap.getUriParameters().get("testId");
 
-		module("Events", {
+		QUnit.module("Events", {
 			beforeEach: function () {
 				this.oPCStartDate = new Date(2015, 0, 1, 8, 0, 0);
 				this.oPC = new sap.m.PlanningCalendar('pc1', {

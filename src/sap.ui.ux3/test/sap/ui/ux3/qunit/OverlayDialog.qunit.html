@@ -59,7 +59,7 @@
 		<!-- Test functions -->
 		<script>
 
-			module("Appearance");
+			QUnit.module("Appearance");
 
 			test("OverlayDialog exists", function () {
 				var oDomRef = jQuery.sap.domById(oOverlayDialog.getId());
@@ -71,7 +71,7 @@
 				ok(!oDomRef, "close button should not be rendered");
 			});
 
-			module("Behaviour");
+			QUnit.module("Behaviour");
 
 			asyncTest("Open Method", function () {
 				expect(4);

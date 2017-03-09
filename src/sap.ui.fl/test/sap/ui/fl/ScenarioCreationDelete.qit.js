@@ -31,7 +31,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 	var oChangeDefinition;
 
-	module("sap.ui.fl Creation & Deletion", {
+	QUnit.module("sap.ui.fl Creation & Deletion", {
 		setup: function() {
 			Cache.setActive(false);
 			Cache._entries = {};

@@ -13,7 +13,7 @@
 
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-		     
+
 		      src="../../../../../resources/sap-ui-core.js"
 		      data-sap-ui-noConflict="true">
 	</script>
@@ -195,7 +195,7 @@
 			equal(sCamelCase, "thisIsAn1amelCaseÜtring", "CamelCase function returns the right value for numeric and umlauts chars");
 		});
 
-		module("formatMessage");
+		QUnit.module("formatMessage");
 
 		test("simple case", function() {
 			equal(jQuery.sap.formatMessage("Say {0}", ["Hello"]), "Say Hello", "should replace unqouted placeholder0");

@@ -40,7 +40,7 @@
 	}
 
 	// boolean type tests
-	module("boolean type");
+	QUnit.module("boolean type");
 
 	test("boolean formatValue", function(){
 		var boolType = new sap.ui.model.type.Boolean();
@@ -74,7 +74,7 @@
 	});
 
 	// string type tests
-		module("string type");
+		QUnit.module("string type");
 
 		test("string formatValue", function(){
 		var stringType = new sap.ui.model.type.String();
@@ -165,7 +165,7 @@
 	});
 
 	// integer type tests
-	module("integer type");
+	QUnit.module("integer type");
 
 	test("integer formatValue", function(){
 		var intType = new sap.ui.model.type.Integer();
@@ -275,7 +275,7 @@
 
 
 	// float type tests
-	module("float type");
+	QUnit.module("float type");
 
 	test("float formatValue", function(){
 		var floatType = new sap.ui.model.type.Float();
@@ -401,7 +401,7 @@
 	});
 
 	// currency type tests
-	module("currency type");
+	QUnit.module("currency type");
 
 	test("currency formatValue", function(){
 		var currencyType = new sap.ui.model.type.Currency();
@@ -513,7 +513,7 @@
 	});
 
 	// date type tests
-		module("date type");
+		QUnit.module("date type");
 
 		test("date formatValue", function(){
 			// as date object is locale dependend fill it manually
@@ -603,7 +603,7 @@
 		});
 
 		// time type tests
-		module("time type");
+		QUnit.module("time type");
 
 		test("time formatValue", function(){
 			var timeType  = new sap.ui.model.type.Time();
@@ -667,7 +667,7 @@
 		});
 
 		// dateTime type tests
-		module("dateTime type");
+		QUnit.module("dateTime type");
 
 		test("dateTime formatValue", function(){
 			// as date object is locale dependend fill it manually
@@ -733,7 +733,7 @@
 
 
 		// filesize type tests
-		module("filesize type");
+		QUnit.module("filesize type");
 
 		test("filesize formatValue", function(){
 			var filesizeType = new sap.ui.model.type.FileSize();

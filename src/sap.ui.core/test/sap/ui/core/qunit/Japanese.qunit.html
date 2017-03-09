@@ -46,7 +46,7 @@
 
 
 		//1. Instance related
-		module("Constructor");
+		QUnit.module("Constructor");
 
 		test("with no arguments", function () {
 			var clock = sinon.useFakeTimers(); // 1, January 1970 = 1, January 45 Showa
@@ -180,7 +180,7 @@
 			verifyDate("new Japanese([235, 23], 10, 2) msut be equal to 02.11.23H", oJapaneseDate, 235, 23, 10, 2)
 		});
 
-		module("Overflow/underflow");
+		QUnit.module("Overflow/underflow");
 
 		test("Overflow/underflow of date values", function () {
 			var oTestDate = aTestData[1],
@@ -259,7 +259,7 @@
 			verifyDate("day 7 in the constructor must underflow to previous era", oJapaneseDate, 234, 64, 0, 7);
 		});
 
-		module("Setters/Getters");
+		QUnit.module("Setters/Getters");
 
 		test("Set/Get Era", function () {
 			var oTestDate = aTestData[0],
@@ -300,7 +300,7 @@
 			verifyDate("setYear", oJapaneseDate, 234, 5, 0, 1);
 		});
 
-		module("Others");
+		QUnit.module("Others");
 
 		test("Setters have to return the time since 1.1.1970", function () {
 			var oDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, 8, 10, 15, 119);

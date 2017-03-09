@@ -9,7 +9,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 	sinon.config.useFakeTimers = false;
 
-	module("sap.ui.fl REST API's", {
+	QUnit.module("sap.ui.fl REST API's", {
 		setup: function() {
 
 			this.stubs = [];

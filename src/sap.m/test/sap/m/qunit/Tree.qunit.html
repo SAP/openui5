@@ -127,14 +127,14 @@ oTree.placeAt("content");
 // ================================================================================
 */
 
-module("Initial Check");
+QUnit.module("Initial Check");
 
 test("Overview rendered", function() {
 	ok(jQuery.sap.domById("__item0-__tree0-0"), "initial render of first node");
 	ok(jQuery.sap.domById("__item0-__tree0-1"), "initial render of second node");
 });
 
-module("Indentation");
+QUnit.module("Indentation");
 test("indentation1", function() {
 	this.clock.tick(100);
 	equals(oTree.getDeepestLevel(), 0, "deepestLevel");
@@ -146,7 +146,7 @@ test("indentation1", function() {
 	equals(oTree.getDeepestLevel(), 1, "deepestLevel");
 	equals(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
 	equals(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "24px", "padding");
-	
+
 	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-2").$().find(".sapMTreeItemBaseExpander");
 	oArrowDomRef.trigger("click");
 	this.clock.tick(100);
@@ -201,7 +201,7 @@ test("indentation1", function() {
 	oTree.collapseAll();
 });
 
-module("Selection");
+QUnit.module("Selection");
 
 test("Single selection", function() {
 	oTree.setMode(sap.m.ListMode.SingleSelect);
@@ -220,7 +220,7 @@ test("Multi selection", function() {
 	ok(oTree.getItems()[1].getItemNodeContext().nodeState.selected, "item context is selected");
 });
 
-module("Expand/Collapse");
+QUnit.module("Expand/Collapse");
 
 test("Expand", function() {
 	//initial state
@@ -259,7 +259,7 @@ test("Collapse all", function() {
 	equals(oTree.getItems().length, 2, "node is collapsed");
 });
 
-module("Node structure");
+QUnit.module("Node structure");
 
 test("ParentNode", function() {
 	oTree.focus();
@@ -287,7 +287,7 @@ test("Expanded", function() {
 	ok(!oTree.getItems()[1].getExpanded(), "second node is not expanded");
 });
 
-module("Keyboard Handling");
+QUnit.module("Keyboard Handling");
 
 test("Right + Left key", function() {
 	ok(!oTree.getItems()[0].getExpanded(), "first node is not expanded");
@@ -304,7 +304,7 @@ test("Right + Left key", function() {
 
 });
 
-module("Icon");
+QUnit.module("Icon");
 test("tree item with icon", function() {
 	ok(jQuery.sap.domById("__item0-__tree0-0-icon"), "icon is rendered");
 
@@ -312,7 +312,7 @@ test("tree item with icon", function() {
 	strictEqual(oImage.getSrc(), "../images/action.png", "icon source is correct");
 });
 
-module("Binding");
+QUnit.module("Binding");
 
 test("data binding update", function() {
 	ok(oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"));
@@ -324,7 +324,7 @@ test("data binding update", function() {
 	oTree.destroy();
 });
 
-module("Aggregation");
+QUnit.module("Aggregation");
 
 test("Validate aggregation", function() {
 

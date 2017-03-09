@@ -12,7 +12,7 @@
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 		src="../../../../../resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_bluecrystal"	
+		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.unified">
 	</script>
@@ -216,7 +216,7 @@
 
 		qutils.delayTestStart();
 
-		module("Properties an Aggregations");
+		QUnit.module("Properties an Aggregations");
 
 		test("Item - Default Values", function() {
 			var oItem = oMenuItems["item1"];
@@ -275,7 +275,7 @@
 			}, 100);
 		});
 
-		module("Keyboard");
+		QUnit.module("Keyboard");
 
 		/* if menu is opened from keyboard, the first enabled item sould be hovered */
 		test("Check Hover State upon Menu.open", function() {
@@ -563,7 +563,7 @@
 			closeAllMenusAndCheck();
 		});
 
-		module("Mouse");
+		QUnit.module("Mouse");
 
 		sap.ui.unified.Menu._DELAY_SUBMENU_TIMER = 10;
 		sap.ui.unified.Menu._DELAY_SUBMENU_TIMER_EXT = 10;
@@ -719,7 +719,7 @@
 		});
 
 
-		module("Auto-Close");
+		QUnit.module("Auto-Close");
 
 		test("Focusleave", function() {
 			openRootMenu();
@@ -761,7 +761,7 @@
 			closeAllMenusAndCheck();
 		});
 
-		module("TextField Item");
+		QUnit.module("TextField Item");
 
 		test("Properties - Default Values", function() {
 			var oItem = new sap.ui.unified.MenuTextFieldItem();
@@ -912,7 +912,7 @@
 			ok(!lastSelectedItemId, "No Event triggered on Escape");
 		});
 
-		module("Aria");
+		QUnit.module("Aria");
 
 		test("Aria-level is not used anymore", function() {
 			//Act
@@ -921,7 +921,7 @@
 			equal(oRootMenu.$().attr("aria-level"), undefined, "There must be no any aria-level attribute");
 		});
 
-		module("Misc");
+		QUnit.module("Misc");
 
 		test("Destruction", function() {
 			var sId = oRootMenu.getId();

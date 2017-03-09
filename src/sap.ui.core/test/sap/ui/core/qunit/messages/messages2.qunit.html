@@ -85,7 +85,7 @@
 		}
 		sap.ui.getCore().setModel(oModel);
 	}
-	module("MessageManager components", {
+	QUnit.module("MessageManager components", {
 		setup : function() {
 			initModel("json");
 		},
@@ -160,7 +160,7 @@
 		ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
 	});
 
-	module("Component: handleValidation / registerObject");
+	QUnit.module("Component: handleValidation / registerObject");
 
 	test("Metadata: n/a, instance: n/a", function() {
 		var sComponentName = "sap.ui.test.handlevalidation.na.na";
@@ -357,7 +357,7 @@
 		oModel.mMessages = mMessages
 		oModel.setMessages(mMessages);
 		equals(oCheckMessagesSpy.callCount, 0, "No changes detected - Skip check messages");
-		
+
 		oModel.setMessages({"foo": {"key2": "value2"}});
 		equals(oCheckMessagesSpy.callCount, 1, "Changes detected - Check messages");
 

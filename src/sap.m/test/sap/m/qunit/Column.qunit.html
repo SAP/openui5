@@ -24,7 +24,7 @@
 
 	sinon.config.useFakeTimers = true;
 
-	module("popin");
+	QUnit.module("popin");
 
 	test("ShouldSetDemandPopin", function() {
 		var fnTestCase = function(initialValue, valueToSet,bShouldInvalidate, expectedValidateToBeCalled){
@@ -113,7 +113,7 @@
 		fnTestCase(true, true, true, false);
 	});
 
-	module("size and visibility")
+	QUnit.module("size and visibility")
 
 	test("ShouldKnowIfItIsHidden", function() {
 		var fnTestCase = function( expectedResult, hasMedia, hasMatchingMedia, hasScreen, minWidth){
@@ -213,7 +213,7 @@
 		sut.destroy();
 	});
 
-	module("media");
+	QUnit.module("media");
 
 	test("ShouldAddMedia", function() {
 
@@ -253,7 +253,7 @@
 		sut.destroy();
 	});
 
-	module("events");
+	QUnit.module("events");
 
 	test("Media handler should not be attached if the table is not rendered yet", function () {
 		var mediaAttachSpy = this.spy(sap.ui.Device.media, "attachHandler"),
@@ -482,7 +482,7 @@
 	});
 
 
-	module("display and style");
+	QUnit.module("display and style");
 
 	test("ShouldSetDisplay", function() {
 		//System under Test + Arrange

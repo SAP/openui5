@@ -1,4 +1,4 @@
-module("ODataTreeBinding - AutoExpand", {
+QUnit.module("ODataTreeBinding - AutoExpand", {
 	setup: function() {
 		fnSetupNewMockServer();
 		oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, {useBatch:false});

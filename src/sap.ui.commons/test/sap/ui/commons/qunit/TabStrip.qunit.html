@@ -94,7 +94,7 @@
 		// TEST functions
 		qutils.delayTestStart();
 
-		module("Appearance");
+		QUnit.module("Appearance");
 
 		test("Visibility", function() {
 			var firstTabId = "#" + oTabStrip1.getTabs()[0].getId();
@@ -174,7 +174,7 @@
 			equal(jQuery(firstTabId + "-panel").attr("aria-labelledby"), oTabStrip1.getTabs()[0].getId(), "ARIA-LABELLEDBY of content area");
 		});
 
-		module("Behaviour");
+		QUnit.module("Behaviour");
 
 		test("mouse interaction", function() {
 			var firstTabId = "#" + oTabStrip1.getTabs()[0].getId();
@@ -530,7 +530,7 @@
 
 		oTabStrip.placeAt("uiArea3");
 
-		module("scrolling");
+		QUnit.module("scrolling");
 
 		test("size changing", function() {
 

@@ -87,7 +87,7 @@
 
 			qutils.delayTestStart();
 
-			module("Rendering");
+			QUnit.module("Rendering");
 
 			test("rendered days", function() {
 				var $DatesRow = sap.ui.getCore().byId("Cal1").getAggregation("month")[0].$();
@@ -122,7 +122,7 @@
 				equal(jQuery("#Cal2").css("width"), "1000px", "Calendar2: width set");
 			});
 
-			module("change date via API");
+			QUnit.module("change date via API");
 			test("setStartDate", function() {
 				iStartDateChanged = 0;
 				oCal1.setStartDate(new Date("2015", "2", "10"));
@@ -149,7 +149,7 @@
 				equal(iStartDateChanged, 0, "no startDateChangeEvent fired by API change");
 			});
 
-			module("change date via navigation");
+			QUnit.module("change date via navigation");
 			test("next/prev days", function() {
 				iStartDateChanged = 0;
 				qutils.triggerEvent("click", "Cal1--Head-next");
@@ -169,7 +169,7 @@
 				equal(jQuery(aDays[1]).attr("tabindex"), "0", "Calendar1: second day still has focus");
 			});
 
-			module("MonthPicker");
+			QUnit.module("MonthPicker");
 			test("displayed months", function() {
 				qutils.triggerEvent("click", "Cal1--Head-B1");
 				var $MonthPicker = sap.ui.getCore().byId("Cal1").getAggregation("monthPicker").$();
@@ -225,7 +225,7 @@
 				qutils.triggerEvent("click", "Cal2--Head-B1");
 			});
 
-			module("YearPicker");
+			QUnit.module("YearPicker");
 			test("displayed years", function() {
 				qutils.triggerEvent("click", "Cal1--Head-B2");
 				var $YearPicker = sap.ui.getCore().byId("Cal1").getAggregation("yearPicker").$();
@@ -312,7 +312,7 @@
 				oCal2.setStartDate(new Date(2015, 1, 2));
 			});
 
-			module("Focus private API");
+			QUnit.module("Focus private API");
 			test("_getFocusedDate()", function() {
 				var oOldFocusedDate = oCal4._oFocusedDate;
 

@@ -62,7 +62,7 @@
 
 		var l1, l2;
 
-		module("Basic", {
+		QUnit.module("Basic", {
 			setup : function() {
 				l1 = sap.ui.getCore().getControl("l1");
 				l2 = sap.ui.getCore().getControl("l2");
@@ -217,7 +217,7 @@
 
 		// test methods
 
-		module("Methods", {
+		QUnit.module("Methods", {
 			setup: function () {
 				this.oLabel3 = new sap.ui.commons.Label('label3', {text: 'Label 3'});
 				ok(this.oLabel3, "oLabel3 should not be null");

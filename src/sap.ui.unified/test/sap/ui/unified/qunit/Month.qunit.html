@@ -41,7 +41,7 @@
 					return oDate;
 				};
 
-				module("Rendering", {
+				QUnit.module("Rendering", {
 					beforeEach: function () {
 						this.oM = new sap.ui.unified.calendar.Month().placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
@@ -81,7 +81,7 @@
 					strictEqual($LastDay.text(), "31", "The last rendered day should contain the string 31");
 				});
 
-				module("_getVisibleDays", {
+				QUnit.module("_getVisibleDays", {
 					beforeEach: function () {
 						this.oM = new sap.ui.unified.calendar.Month();
 					},
@@ -183,7 +183,7 @@
 					);
 				});
 
-				module("Rendering", {
+				QUnit.module("Rendering", {
 					beforeEach: function () {
 						this.oM = new sap.ui.unified.calendar.Month().placeAt("qunit-fixture");
 					},
@@ -228,7 +228,7 @@
 
 				});
 
-				module("Internals", {
+				QUnit.module("Internals", {
 					beforeEach: function () {
 						this.oM = new sap.ui.unified.calendar.Month();
 					},

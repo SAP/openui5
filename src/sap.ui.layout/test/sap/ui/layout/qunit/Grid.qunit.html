@@ -87,7 +87,7 @@
 			});
 			oGrid.placeAt('content');
 			if (jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-				module("CSS class presence check");
+				QUnit.module("CSS class presence check");
 				//check if all css classes are there as required
 				test("marginsOK", function(){
 					ok(!!jQuery("#grid1.sapUiGrid.sapUiGridHSpace1.sapUiGridVSpace1"), "CSS classes at root div of grid");
@@ -109,7 +109,7 @@
 					ok(!!jQuery("#tf4").parent(".sapUiGridHiddenM.sapUiGridHiddenL"), "CSS class for hidden on large and medium screens");
 				});
 
-				module("Accessibility");
+				QUnit.module("Accessibility");
 
 				test("getAccessibilityInfo", function() {
 					var oLayout = new sap.ui.layout.Grid({

@@ -22,7 +22,7 @@
 	<script>
 		sinon.config.useFakeTimers = false;
 
-		module("Initial Check");
+		QUnit.module("Initial Check");
 
 		test("Initialization on desktop", function() {
 			var oSystem = {
@@ -62,7 +62,7 @@
 			oSplitApp.destroy();
 		});
 
-		module("Modes Check on desktop");
+		QUnit.module("Modes Check on desktop");
 		asyncTest("PopoverMode_portrait", function(){
 			var oSystem = {
 					desktop: true,
@@ -400,7 +400,7 @@
 			oSplitApp.destroy();
 		});
 
-		module("Public Methods");
+		QUnit.module("Public Methods");
 		asyncTest("ShowMaster", function(){
 			var oSystem = {
 					desktop: true,
@@ -491,7 +491,7 @@
 		});
 
 		// Tests for all modes
-		module("Master / Detail page aggregation");
+		QUnit.module("Master / Detail page aggregation");
 		test("Master / Detail page aggregation returns the right pages in the right order", function() {
 			var oMasterPage = new sap.m.Page("master",{
 				title : "Master 1",

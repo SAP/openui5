@@ -83,7 +83,7 @@
 		oBinding = oModel.bindTree(sPath, oContext, aFilters, mParameters, aSorters).initialize();
 	};
 
-	module("ODataTreeBinding with navigation properties", {
+	QUnit.module("ODataTreeBinding with navigation properties", {
 		setup: function() {
 			oNavPropMockServer.start();
 			oModel = new sap.ui.model.odata.v2.ODataModel('/navprop/', {useBatch:false});
@@ -798,7 +798,7 @@
 		});
 	});
 
-	module("ODataTreeBinding with annotations", {
+	QUnit.module("ODataTreeBinding with annotations", {
 		setup: function() {
 			oAnnotationMockServer.start();
 			oModel = new sap.ui.model.odata.v2.ODataModel('/metadata/', {useBatch:false});
@@ -2055,7 +2055,7 @@
 
 	// Test if MockServer supports filtering on properties of type Edm.Guid!
 	// Was broken previously.
-	module("ODataTreeBinding with annotations - Edm Type support", {
+	QUnit.module("ODataTreeBinding with annotations - Edm Type support", {
 		setup: function() {
 			oAnnotationMockServerGUID.start();
 			oModel = new sap.ui.model.odata.v2.ODataModel('/metadata_guid/', {useBatch:false});
@@ -2182,7 +2182,7 @@
 		});
 	});
 
-	module("ODataTreeBinding - General Databinding", {
+	QUnit.module("ODataTreeBinding - General Databinding", {
 		setup: function() {
 			oAnnotationMockServer.start();
 			oModel = new sap.ui.model.odata.v2.ODataModel('/metadata/', {useBatch:false});

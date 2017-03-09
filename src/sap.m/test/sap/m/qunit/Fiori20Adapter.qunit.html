@@ -230,7 +230,7 @@
 				QUnit.start();
 			});
 
-            module("Fiori2 adaptation of page header", {
+            QUnit.module("Fiori2 adaptation of page header", {
                 beforeEach: function () {
                     this.oPage = new sap.m.Page("myPage");
                     this.oPage.placeAt("content");
@@ -363,7 +363,7 @@
             });
 
 
-            module("Fiori2 post adaptation of page header", {
+            QUnit.module("Fiori2 post adaptation of page header", {
                 beforeEach: function () {
                     this.oApp = new sap.m.App();
                     this.oPage = new sap.m.Page("myPage");
@@ -541,7 +541,7 @@
             });
 
 
-            module("Fiori2 adaptation of navigable views", {
+            QUnit.module("Fiori2 adaptation of navigable views", {
                 beforeEach: function () {
                     this.oNavContainer = new sap.m.NavContainer("myNc");
                     this.oNavContainer.addPage(new sap.m.Page("page1", {title: "Test", showNavButton: true}));
@@ -617,7 +617,7 @@
             });
 
 
-            module("Fiori2 adaptation of navContainer first page", {
+            QUnit.module("Fiori2 adaptation of navContainer first page", {
                 beforeEach: function () {
                     this.oNavContainer = new sap.m.NavContainer("myNc");
                     this.oNavContainer.placeAt("content");
@@ -657,7 +657,7 @@
             });
 
 
-            module("Fiori2 adaptation of nested navContainer", {
+            QUnit.module("Fiori2 adaptation of nested navContainer", {
                 beforeEach: function () {
                     this.oNavContainer = new sap.m.NavContainer("myNc");
                     this.oNavContainer.placeAt("content");
@@ -703,7 +703,7 @@
                 Fiori20Adapter.detachViewChange(oSpy);
             });
 
-            module("Fiori2 adaptation of split container", {
+            QUnit.module("Fiori2 adaptation of split container", {
                 beforeEach: function () {
                     this.oSplitContainer = new sap.m.SplitContainer("mySc");
                     this.oSplitContainer.addMasterPage(new sap.m.Page("masterPage1", {title: "Master1", showNavButton: true}));
@@ -900,7 +900,7 @@
             });
 
 
-            module("Fiori2 adaptation of split container on phone", {
+            QUnit.module("Fiori2 adaptation of split container on phone", {
                 beforeEach: function () {
                     sap.ui.Device.system.phone = true;
                     this.oSplitContainer = new sap.m.SplitContainer("mySc");
@@ -1003,7 +1003,7 @@
             });
 
 
-            module("Fiori2 adaptation of ObjectPage header", {
+            QUnit.module("Fiori2 adaptation of ObjectPage header", {
                 beforeEach: function () {
                     this.oPage = sap.ui.xmlview("oplView", {viewContent:jQuery('#objectPageView').html()});
                     this.oPage.placeAt("content");
@@ -1093,7 +1093,7 @@
                 Fiori20Adapter.detachViewChange(fnTitleListener);
             });
 
-            module("Adaptable header criteria", {
+            QUnit.module("Adaptable header criteria", {
                 beforeEach: function () {
                     this.oApp = new sap.m.App();
                     this.oApp.placeAt("content");

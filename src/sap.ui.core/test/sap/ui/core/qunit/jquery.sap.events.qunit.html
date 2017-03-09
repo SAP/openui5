@@ -289,7 +289,7 @@
 	<script>
 
 	//***************************************
-	module("Initialization");
+	QUnit.module("Initialization");
 
 	test("Control Events", function() {
 		var aBrowserEvents = [].concat(aBasicBrowserEvents);
@@ -334,7 +334,7 @@
 
 
 	//***************************************
-	module("Basic Browser Events");
+	QUnit.module("Basic Browser Events");
 
 	for(var i=0; i<aBasicBrowserEvents.length; i++){
 		doTestCtrlEvent(aBasicBrowserEvents[i]);
@@ -342,13 +342,13 @@
 
 
 	//***************************************
-	module("Basic Browser Events - Negative check");
+	QUnit.module("Basic Browser Events - Negative check");
 
 	doTestCtrlEvent("hurlipuu", null, null, null, true);
 
 
 	//***************************************
-	module("Basic Pseudo Events");
+	QUnit.module("Basic Pseudo Events");
 
 	for(var i=0; i<aPseudoKeyEvents.length; i++){
 		doTestPseudoEvent("keydown", aPseudoKeyEvents[i].sName, aPseudoKeyEvents[i].iTrigger, aPseudoKeyEvents[i].oParams);
@@ -435,7 +435,7 @@
 
 	if(sap.ui.Device.support.touch){
 		//***************************************
-		module("Mobile Browser Events");
+		QUnit.module("Mobile Browser Events");
 
 		for(var i=0; i<aMobileBrowserEvents.length; i++){
 			doTestCtrlEvent(aMobileBrowserEvents[i], null, /*Satisfy jQuery Mobile*/{touches:[{pageX:0, pageY:0}], targetTouches: [{pageX:0, pageY:0}], changedTouches: [{pageX:0, pageY:0}]});
@@ -443,13 +443,13 @@
 
 
 		//***************************************
-		module("Mobile Pseudo Events");
+		QUnit.module("Mobile Pseudo Events");
 
 		doTestPseudoEvent(bRtl ? "swiperight" : "swipeleft", "swipebegin", 1);
 		doTestPseudoEvent(!bRtl ? "swiperight" : "swipeleft", "swipeend", 1);
 	}
 
-	module("Private extensions of jQuery event object");
+	QUnit.module("Private extensions of jQuery event object");
 
 	/* ------------------------------ */
 	/* setMarked() + isMarked         */
@@ -560,7 +560,7 @@
 		value: "some-value"
 	});
 
-	module("");
+	QUnit.module("");
 
 	/* ------------------------------ */
 	/* jQuery.sap.isSpecialKey()      */

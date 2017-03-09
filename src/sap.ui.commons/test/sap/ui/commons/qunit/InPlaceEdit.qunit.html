@@ -126,7 +126,7 @@
 
 	qutils.delayTestStart();
 
-	module("Rendering");
+	QUnit.module("Rendering");
 
 	test("Visual appearance", function() {
 		equal(jQuery("#IPE1").get(0).offsetWidth, 200, "TextField: Width of the control");
@@ -182,13 +182,13 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	module("Functions");
+	QUnit.module("Functions");
 
 	test("Properties", function() {
 		equal(oIPE1.getRequired(), true, "getRequired");
 	 });
 
-	module("Edit mode");
+	QUnit.module("Edit mode");
 
 	test("Visual appearance", function() {
 		oIPE1.focus();
@@ -253,7 +253,7 @@
 		}, 300);
 	});
 
-	module("Display mode");
+	QUnit.module("Display mode");
 
 	asyncTest("Visual appearance", function() {
 		oIPE4.focus(); // to toggle in display mode
@@ -305,7 +305,7 @@
 		}, 300);
 	});
 
-	module("Cleanup");
+	QUnit.module("Cleanup");
 
 	test("internal controls deleted", function() {
 		oIPE6.destroy();

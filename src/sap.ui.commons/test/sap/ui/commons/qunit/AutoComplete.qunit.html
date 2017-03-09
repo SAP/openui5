@@ -76,7 +76,7 @@
 
 		qutils.delayTestStart();
 
-		module("Control API", {
+		QUnit.module("Control API", {
 			setup : function() {
 				this.oAuto0 = new sap.ui.commons.AutoComplete();
 			},
@@ -116,7 +116,7 @@
 			ok(oCustomLB != this.oAuto0._getListBox(), "Deprecated aggregation 'listBox'");
 		});
 
-		module("Suggestion - Static Items", {
+		QUnit.module("Suggestion - Static Items", {
 			setup : function() {
 				this.oAuto1 = new sap.ui.commons.AutoComplete({
 					maxPopupItems: 3
@@ -201,7 +201,7 @@
 			}, 10);
 		});
 
-		module("Suggestion - Dynamic Items", {
+		QUnit.module("Suggestion - Dynamic Items", {
 			setup : function() {
 				this.oAuto2 = new sap.ui.commons.AutoComplete();
 				this.oAuto2.placeAt("uiArea2");
@@ -251,7 +251,7 @@
 			}, 500);
 		});
 
-		module("Closing Popup", {
+		QUnit.module("Closing Popup", {
 			setup : function() {
 				this.oAuto1 = new sap.ui.commons.AutoComplete({
 					maxPopupItems: 3
@@ -328,7 +328,7 @@
 			});
 		});
 
-		module("ARIA", {
+		QUnit.module("ARIA", {
 			setup : function() {
 				this.oAuto1 = new sap.ui.commons.AutoComplete({
 					maxPopupItems: 3

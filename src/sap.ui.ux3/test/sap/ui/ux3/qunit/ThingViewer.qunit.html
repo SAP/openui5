@@ -144,7 +144,7 @@
 
 	<!-- Test functions -->
 	<script>
-		module("Appearance");
+		QUnit.module("Appearance");
 
 		var action;
 		var facet;
@@ -181,7 +181,7 @@
 			oThingViewer.setActionBar(oActionBar);
 		});
 
-		module("Behaviour");
+		QUnit.module("Behaviour");
 
 		asyncTest("FacetSelected Event", function() {
 			expect(3);

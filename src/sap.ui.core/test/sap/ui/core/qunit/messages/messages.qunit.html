@@ -113,7 +113,7 @@
 		createControls();
 	};
 
-	module("MessageManager", {
+	QUnit.module("MessageManager", {
 		setup : function() {
 			initModel("json");
 		},
@@ -319,7 +319,7 @@
 		oMessageManager.addMessages(oMessage);
 	});
 
-	module("Bugfixes");
+	QUnit.module("Bugfixes");
 
 	asyncTest("MessageManager: Message sorting", function() {
 		var MessageType = sap.ui.core.MessageType;

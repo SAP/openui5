@@ -359,7 +359,7 @@
 		oTA.destroy();
 	});
 
-	module("Accessibility");
+	QUnit.module("Accessibility");
 	test("DOM aria properties", function() {
 		var oTA = new sap.m.TextArea().placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -371,7 +371,7 @@
 		oTA.destroy();
 	});
 
-	module("Encoding");
+	QUnit.module("Encoding");
 	test("carriage return should be converted correctly during rendering", function() {
 		var sValue = " \ntest\ntest\n\n";
 		var oTA = new sap.m.TextArea({
@@ -385,7 +385,7 @@
 	});
 
 
-	module("Growing");
+	QUnit.module("Growing");
 	test("after rendering whole content should be visible", function() {
 		var sLongText = new Array(1000).join("text ");
 		var oTA = new sap.m.TextArea({
@@ -416,7 +416,7 @@
 		oTA.destroy();
 	});
 
-	module("Input and Live change events in IE10+ when textarea html element is used");
+	QUnit.module("Input and Live change events in IE10+ when textarea html element is used");
 	test("iE10+ Input event should not be fired on focus for textarea html element with a native placeholder", function() {
 		this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", false);
 		var fnOnInputSpy = this.spy(sap.m.TextArea.prototype, "oninput");

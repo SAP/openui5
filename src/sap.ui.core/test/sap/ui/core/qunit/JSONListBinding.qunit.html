@@ -112,7 +112,7 @@
 		ok(true,"ChangeEvent fired");
 	};
 
-	module("Listbinding getContexts", {
+	QUnit.module("Listbinding getContexts", {
 		beforeEach: function() {
 			setup();
 			createListBinding("/teamMembers", "");
@@ -224,7 +224,7 @@
 		equal(newContexts.diff.length, 2, "Delta information is available");
 	});
 
-	module("Listbinding refresh", {
+	QUnit.module("Listbinding refresh", {
 		beforeEach: function() {
 			setup();
 			createListBinding("/teamMembers", "");
@@ -290,7 +290,7 @@
 		equal(this.oBinding.getLength(), 8, "ListBinding returns changed length");
 	});
 
-	module("Listbinding sort", {
+	QUnit.module("Listbinding sort", {
 		beforeEach: function() {
 			setup();
 		}
@@ -563,7 +563,7 @@
 		ok(attach, "change event fired with sorter");
 	});
 
-	module("Listbinding filter", {
+	QUnit.module("Listbinding filter", {
 		beforeEach: function() {
 			setup();
 			createListBinding("/teamMembers", "");
@@ -797,7 +797,7 @@
 		});
 	}
 
-	module("Listbinding general", {
+	QUnit.module("Listbinding general", {
 		beforeEach: function() {
 			setup();
 		}
@@ -936,7 +936,7 @@
 		listBinding.getModel().setData(newData, false);
 	});
 
-	module("Listbinding diff calculation", {
+	QUnit.module("Listbinding diff calculation", {
 		beforeEach: function() {
 			setup();
 			this.oModel = new sap.ui.model.json.JSONModel(testData.teamMembers);
@@ -1018,7 +1018,7 @@
 	});
 
 
-	module("Listbinding suspend/resume", {
+	QUnit.module("Listbinding suspend/resume", {
 		beforeEach: function() {
 			setup();
 			this.oData = testData.teamMembers.slice(0);

@@ -55,7 +55,7 @@
 
 	qutils.delayTestStart();
 
-	module("Parent-Properties");
+	QUnit.module("Parent-Properties");
 
 	test("Custom Values", function() {
 		equal(oLayout.getRtl()		 , false, "Custom 'rtl': ");
@@ -65,7 +65,7 @@
 		equal(oLayoutInner.getRtl()      , false, "Default 'rtl': ");
 	});
 
-	module("Area-Properties");
+	QUnit.module("Area-Properties");
 
 	test("Custom Area Values", function() {
 		var oData;
@@ -163,7 +163,7 @@
 		equal(oData.visible, true, "Inner Bottom Custom 'visible': ");
 	});
 
-	module("BorderLayout Helper Methods");
+	QUnit.module("BorderLayout Helper Methods");
 	var oLink1;
 	test("Adding Content", function() {
 		//Add one Control

@@ -40,7 +40,7 @@
 			/* HTML module                                                 */
 			/* =========================================================== */
 
-			module("HTML");
+			QUnit.module("HTML");
 
 			test("rendering", function() {
 
@@ -69,7 +69,7 @@
 			/* API module                                                  */
 			/* =========================================================== */
 
-			module("Validate options");
+			QUnit.module("Validate options");
 
 			/* ------------------------------ */
 			/* duration                       */
@@ -366,7 +366,7 @@
 			/* Events module                                               */
 			/* =========================================================== */
 
-			module("Events");
+			QUnit.module("Events");
 
 			var hasEventListeners = function(oDomRef, sEventType, b) {
 				test("Listeners", function() {

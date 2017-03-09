@@ -85,7 +85,7 @@
 			oSelectList.destroy();
 		});
 
-		module("rendering");
+		QUnit.module("rendering");
 
 		test("rendering", function() {
 
@@ -131,7 +131,7 @@
 			oSelectList.destroy();
 		});
 
-		module("getVisible");
+		QUnit.module("getVisible");
 
 		fnTestControlProperty({
 			control: new sap.m.SelectList({
@@ -155,7 +155,7 @@
 			description: "The control is visible"
 		});
 
-		module("getEnabled");
+		QUnit.module("getEnabled");
 
 		fnTestControlProperty({
 			control: new sap.m.SelectList(),
@@ -173,7 +173,7 @@
 			description: "The control is disabled"
 		});
 
-		module("getWidth()");
+		QUnit.module("getWidth()");
 
 		fnTestControlProperty({
 			control: new sap.m.SelectList({
@@ -245,7 +245,7 @@
 			description: 'The "width" is "125pt"'
 		});
 
-		module("getMaxWidth()");
+		QUnit.module("getMaxWidth()");
 
 		fnTestControlProperty({
 			control: new sap.m.SelectList({
@@ -317,7 +317,7 @@
 			description: 'The "maxWidth" is "125pt"'
 		});
 
-		module("getSelectedItem()");
+		QUnit.module("getSelectedItem()");
 
 		test("getSelectedItem()", function() {
 
@@ -558,7 +558,7 @@
 			oSelectList.destroy();
 		});
 
-		module("getSelectedKey()");
+		QUnit.module("getSelectedKey()");
 
 		test("getSelectedKey()", function() {
 
@@ -924,7 +924,7 @@
 			oSelectList.destroy();
 		});
 
-		module("getSelectedItemId()");
+		QUnit.module("getSelectedItemId()");
 
 		test("getSelectedItemId()", function() {
 
@@ -1281,7 +1281,7 @@
 			oSelectList.destroy();
 		});
 
-		module("setWidth()");
+		QUnit.module("setWidth()");
 
 		test("setWidth()", function() {
 
@@ -1310,7 +1310,7 @@
 			oSelectList.destroy();
 		});
 
-		module("setEnabled()");
+		QUnit.module("setEnabled()");
 
 		test("setEnabled()", function() {
 
@@ -1339,7 +1339,7 @@
 			oSelectList.destroy();
 		});
 
-		module("addItem()");
+		QUnit.module("addItem()");
 
 		test("addItem()", function() {
 
@@ -1388,7 +1388,7 @@
 			oSelectList.destroy();
 		});
 
-		module("insertItem()");
+		QUnit.module("insertItem()");
 
 		test("insertItem()", function() {
 
@@ -1415,7 +1415,7 @@
 			oSelectList.destroy();
 		});
 
-		module("setSelectedItem()");
+		QUnit.module("setSelectedItem()");
 
 		test("setSelectedItem()", function() {
 
@@ -1626,7 +1626,7 @@
 			oSelectList.destroy();
 		});
 
-		module("setSelectedItemId()");
+		QUnit.module("setSelectedItemId()");
 
 		test("setSelectedItemId()", function() {
 
@@ -1775,7 +1775,7 @@
 			oSelectList.destroy();
 		});
 
-		module("setSelectedKey()");
+		QUnit.module("setSelectedKey()");
 
 		test("setSelectedKey() first rendering", function() {
 
@@ -1946,7 +1946,7 @@
 			oSelectList.destroy();
 		});
 
-		module("keyboard navigation mode");
+		QUnit.module("keyboard navigation mode");
 
 		test("it should not enable the item navigation (initial rendering)", function() {
 
@@ -1998,7 +1998,7 @@
 			oSelectList.destroy();
 		});
 
-		module("removeItem()");
+		QUnit.module("removeItem()");
 
 		test("it should give a warning when called with faulty parameter", function() {
 
@@ -2213,7 +2213,7 @@
 			oSelectList.destroy();
 		});
 
-		module("removeAllItems()");
+		QUnit.module("removeAllItems()");
 
 		test("removeAllItems()", function() {
 
@@ -2260,7 +2260,7 @@
 			oSelectList.destroy();
 		});
 
-		module("destroyItems()");
+		QUnit.module("destroyItems()");
 
 		test("destroyItems()", function() {
 
@@ -2326,7 +2326,7 @@
 			oSelectList.destroy();
 		});
 
-		module("findFirstEnabledItem()");
+		QUnit.module("findFirstEnabledItem()");
 
 		test("findFirstEnabledItem()", function() {
 
@@ -2428,7 +2428,7 @@
 			oSelectList.destroy();
 		});
 
-		module("findLastEnabledItem()");
+		QUnit.module("findLastEnabledItem()");
 
 		test("findLastEnabledItem()", function() {
 
@@ -2531,7 +2531,7 @@
 			oSelectList.destroy();
 		});
 
-		module("setSelectedIndex()");
+		QUnit.module("setSelectedIndex()");
 
 		var setSelectedIndexTestCase = function(sTestName, mOptions) {
 			test("setSelectedIndex()", function() {
@@ -2624,7 +2624,7 @@
 			});
 		}());
 
-		module("getItemAt()");
+		QUnit.module("getItemAt()");
 
 		test("getItemAt()", function() {
 
@@ -2669,7 +2669,7 @@
 			oSelectList.destroy();
 		});
 
-		module("getFirstItem()");
+		QUnit.module("getFirstItem()");
 
 		test("getFirstItem()", function() {
 
@@ -2729,7 +2729,7 @@
 			oSelectList.destroy();
 		});
 
-		module("getLastItem()");
+		QUnit.module("getLastItem()");
 
 		test("getLastItem()", function() {
 
@@ -2789,7 +2789,7 @@
 			oSelectList.destroy();
 		});
 
-		module("getItemByKey()");
+		QUnit.module("getItemByKey()");
 
 		test("getItemByKey()", function() {
 
@@ -2838,7 +2838,7 @@
 			oSelectList.destroy();
 		});
 
-		module("getEnabledItems()");
+		QUnit.module("getEnabledItems()");
 
 		test("getEnabledItems()", function() {
 
@@ -2868,7 +2868,7 @@
 			oSelectList.destroy();
 		});
 
-		module("updateAggregation()");
+		QUnit.module("updateAggregation()");
 
 		// unit test for CSN 0120061532 0001266189 2014
 		//
@@ -3007,7 +3007,7 @@
 			oModel.destroy();
 		});
 
-		module("destroy()");
+		QUnit.module("destroy()");
 
 		test("destroy()", function() {
 
@@ -3048,7 +3048,7 @@
 			oSelectList.destroy();
 		});
 
-		module("_queryEnabledItemsDomRefs()");
+		QUnit.module("_queryEnabledItemsDomRefs()");
 
 		test("_queryEnabledItemsDomRefs()", function() {
 
@@ -3086,7 +3086,7 @@
 			oSelectList.destroy();
 		});
 
-		module("rendering");
+		QUnit.module("rendering");
 
 		test("list", function() {
 
@@ -3278,7 +3278,7 @@
 			oSelectList.destroy();
 		});
 
-		module("touchstart");
+		QUnit.module("touchstart");
 
 		test("it should set the active state", function() {
 
@@ -3459,7 +3459,7 @@
 			oSelectList.destroy();
 		});
 
-		module("touchend");
+		QUnit.module("touchend");
 
 		test("it should set and remove the active state (no movement)", function() {
 
@@ -3533,7 +3533,7 @@
 			oSelectList.destroy();
 		});
 
-		module("tap");
+		QUnit.module("tap");
 
 		test("it should fire the press and selectionChange events", function() {
 
@@ -3628,7 +3628,7 @@
 			oSelectList.destroy();
 		});
 
-		module("onsapselect");
+		QUnit.module("onsapselect");
 
 		test("onsapselect activates a item", function() {
 

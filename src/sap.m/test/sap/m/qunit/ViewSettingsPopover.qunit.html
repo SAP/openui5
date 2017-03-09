@@ -133,7 +133,7 @@
 			this.sandbox = null;
 		}
 
-		module("Basics one page", {
+		QUnit.module("Basics one page", {
 			beforeEach: function () {
 				createControls.call(this, [PAGE_KEYS.Sort]);
 			},
@@ -245,7 +245,7 @@
 			strictEqual(oSegmentedButtonItems[0].getKey(), PAGE_KEYS.Sort, "the right button is removed");
 		});
 
-		module("Basics two pages", {
+		QUnit.module("Basics two pages", {
 			beforeEach: function () {
 				createControls.call(this, [PAGE_KEYS.Sort, PAGE_KEYS.Filter]);
 			},
@@ -369,7 +369,7 @@
 			ok(this.sut._getFilterList().getDomRef(), "filter list is rendered");
 		});
 
-		module("Details page", {
+		QUnit.module("Details page", {
 			beforeEach: function () {
 				createControls.call(this, [PAGE_KEYS.Sort, PAGE_KEYS.Filter]);
 			},
@@ -738,7 +738,7 @@
 			strictEqual(oSpyFireFilterSelected.args[0][0].items[0].getId(), aFirstFilterItemSubItems[1].getId(), "arg contains the right items");
 		});
 
-		module("Phone", {
+		QUnit.module("Phone", {
 			beforeEach: function () {
 				prepareMobilePlatform.call(this);
 				createControls.call(this, [PAGE_KEYS.Sort, PAGE_KEYS.Filter]);
@@ -799,7 +799,7 @@
 //			ok(oPopover.getEndButton() && oPopover.getEndButton().getDomRef(), "cancel button exists");
 //		});
 
-		module("Data binding", {
+		QUnit.module("Data binding", {
 			beforeEach : function () {
 				this.sut = new sap.m.ViewSettingsPopover();
 				this.bindAggregations(this.sut);
@@ -1130,7 +1130,7 @@
 			strictEqual(this.sut._getGroupList().getItems().length, 3, 'item was successfully inserted');
 		});
 
-		module("Accessibility", {
+		QUnit.module("Accessibility", {
 			setup: function () {
 				sinon.config.useFakeTimers = false;
 
@@ -1224,7 +1224,7 @@
 
 
 
-		module("Single Data Point", {
+		QUnit.module("Single Data Point", {
 			beforeEach : function () {
 				this.sut = new sap.m.ViewSettingsPopover();
 				this.bindAggregations();
@@ -1360,7 +1360,7 @@
 
 
 
-		module("Single Tab", {
+		QUnit.module("Single Tab", {
 			beforeEach : function () {
 				this.sut = new sap.m.ViewSettingsPopover();
 				this.bindAggregations();
@@ -1474,7 +1474,7 @@
 		});
 
 
-		module("Remove Filter", {
+		QUnit.module("Remove Filter", {
 			beforeEach : function () {
 				this.sut = new sap.m.ViewSettingsPopover('removefilter');
 				this.bindAggregations();
@@ -1656,7 +1656,7 @@
 			strictEqual(oLastListItem.getTitle(), 'Filter text B', 'Last item is not "Remove Filter"');
 		});
 
-		module("Miscellaneous");
+		QUnit.module("Miscellaneous");
 
 		test("Setting any property does not prevent internal popover to be destroyed ", function(){
 			var oVSP = new sap.m.ViewSettingsPopover({tooltip: "Hello"});

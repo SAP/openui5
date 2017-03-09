@@ -59,7 +59,7 @@
 		<!-- Test functions -->
 		<script>
 
-			module("Appearance");
+			QUnit.module("Appearance");
 
 			test("OverlayContainer exists", function () {
 				equals(true, true, "...");
@@ -68,7 +68,7 @@
 				equal(oDomRef.className, "sapUiUx3OC sapUiUx3Overlay", "Rendered OverlayContainer should have the classes 'sapUiUx3OC' and 'sapUiUx3Overlay'");
 			});
 
-			module("Behaviour");
+			QUnit.module("Behaviour");
 
 			test("OpenNew Event", function () {
 				expect(1);

@@ -146,7 +146,7 @@
 		// test functions
 		qutils.delayTestStart();
 
-		module("Contol functions");
+		QUnit.module("Contol functions");
 
 		test("Form", function() {
 			var oForm = sap.ui.getCore().byId("F1");
@@ -179,7 +179,7 @@
 			equal(oElement.getRenderedDomRef().id, oElement.getId(), "DOM for FormElement rendered");
 		});
 
-		module("Rendering");
+		QUnit.module("Rendering");
 
 		test("Form", function() {
 			ok(jQuery.sap.domById("F1"), "Form is rendered");
@@ -245,7 +245,7 @@
 			ok(!jQuery("#C4").attr("aria-labelledby"), "Container4: aria-labelledby not set");
 		});
 
-		module("Interaction");
+		QUnit.module("Interaction");
 
 		test("Container", function() {
 			//expander function

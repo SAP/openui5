@@ -20,7 +20,7 @@
 
 		jQuery.sap.measure.setActive(true);
 
-		module("Performance");
+		QUnit.module("Performance");
 
 		asyncTest("Simple Measurement", 10, function() {
 			jQuery.sap.measure.clear();
@@ -157,7 +157,7 @@
 			equal(aMeasurements.length, 0, "Number of measurements after clear");
 		});
 
-		module("test measure rendering");
+		QUnit.module("test measure rendering");
 
 		test("render Button", 7, function() {
 			var oButton = new sap.ui.commons.Button("B1",{text:"Test"}).placeAt("target1");
@@ -337,7 +337,7 @@
 
 		});
 
-		module("Interaction", {
+		QUnit.module("Interaction", {
 			setup: function() {
 				this.oButton = new sap.ui.commons.Button();
 				jQuery.sap.measure.endInteraction(true);

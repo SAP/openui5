@@ -50,7 +50,7 @@
 		// =========
 
 		qutils.delayTestStart();
-		module("Properties");
+		QUnit.module("Properties");
 		var oCore = sap.ui.getCore();
 		var oDom;
 
@@ -62,7 +62,7 @@
 			equals(t1.getWidth(), "", "width");
 		});
 
-		module("Appearance");
+		QUnit.module("Appearance");
 
 		test("Visibility", function() {
 			// test if visible
@@ -235,7 +235,7 @@
 			strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
 		});
 
-		module("Accessibility");
+		QUnit.module("Accessibility");
 
 		test("getAccessibilityInfo", function() {
 			var oControl = new sap.m.Text({text: "Text"});

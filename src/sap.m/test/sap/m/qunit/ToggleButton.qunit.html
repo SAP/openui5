@@ -46,7 +46,7 @@
 	});
 	oToggleButton3.placeAt("uiArea3");
 
-	module("pressed state");
+	QUnit.module("pressed state");
 
 	test("TestGetPressedStateOK", function() {
 		equal(oToggleButton1.getPressed(), true, "getPressedState for testToggleButton_1");
@@ -147,7 +147,7 @@
 	});
 
 
-	module("Integration tests");
+	QUnit.module("Integration tests");
 
 	test("Should not change the pressed state on a tap Event if the toggle button is in a disabled Toolbar", function() {
 		//Arrange
@@ -177,7 +177,7 @@
 		strictEqual(oTapSpy.callCount, 1, "tap was fired");
 	});
 
-	module("Accessibility");
+	QUnit.module("Accessibility");
 
 	test("getAccessibilityInfo", function() {
 		var oButton = new sap.m.ToggleButton({tooltip: "Tooltip"});

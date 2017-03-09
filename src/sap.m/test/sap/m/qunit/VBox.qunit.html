@@ -116,7 +116,7 @@
 			}
 
 			if(jQuery.support.newFlexBoxLayout) { // Browsers that should support the final spec
-				module('Final spec property tests');
+				QUnit.module('Final spec property tests');
 				test("display", function(){
 					equal(jQuery("#vbox1").css('display'), sVendorPrefix + "flex", "VBox display property should be set correctly in standard-compatible browsers");
 					equal(jQuery("#vbox2").css('display'), sVendorPrefix + "inline-flex", "VBox display property should be set correctly in standard-compatible browsers");
@@ -145,7 +145,7 @@
 			}
 
 			if(!jQuery.support.newFlexBoxLayout && jQuery.support.flexBoxLayout) { // Browsers that should support the old spec but not the final one
-				module('Old spec property tests');
+				QUnit.module('Old spec property tests');
 				test("display", function(){
 					equal(jQuery("#vbox1").css('display'), sVendorPrefix + "box", "VBox display property should be set correctly in standard-compatible browsers");
 					equal(jQuery("#vbox2").css('display'), sVendorPrefix + "inline-box", "VBox display property should be set correctly in standard-compatible browsers");

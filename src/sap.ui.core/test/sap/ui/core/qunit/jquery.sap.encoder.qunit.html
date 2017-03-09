@@ -30,7 +30,7 @@
 <!-- Output encodings should follow the guide  -->
 <!-- <SAPWIKI>/wiki/download/attachments/867713114/XSS_Char_Table.pdf -->
 
-module("HTML context");
+QUnit.module("HTML context");
 test("encode HTML", function(){
 	equal(jQuery.sap.encodeHTML("+"), "&#x2b;", "Plus");
 	equal(jQuery.sap.encodeHTML("<>&\""), "&lt;&gt;&amp;&quot;", "<>&\"");
@@ -63,7 +63,7 @@ test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 a
 	equal(jQuery.sap.encodeHTML(String.fromCharCode(0x2029)),  "&#x2029;", "(0x2029)");
 });
 
-module("JS context");
+QUnit.module("JS context");
 test("encode JS", function(){
 	equal(jQuery.sap.encodeJS("\""), "\\x22", "Quote");
 	equal(jQuery.sap.encodeJS("\'"), "\\x27", "Apostrophe");
@@ -83,7 +83,7 @@ test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 a
 	equal(jQuery.sap.encodeJS(String.fromCharCode(0x2029)),  "\\u2029", "(0x2029)");
 });
 
-module("URL context");
+QUnit.module("URL context");
 test("encode URL", function(){
 	equal(jQuery.sap.encodeURL("*"), "%2a", "Asterisk");
 	equal(jQuery.sap.encodeURL("+"), "%2b", "Plus");
@@ -109,7 +109,7 @@ test("characters above (>) 255 (0xff) should be encoded always", function(){
 	equal(jQuery.sap.encodeURL(String.fromCharCode(257)),  "%c4%81", "ā (0x101)");
 });
 
-module("CSS context");
+QUnit.module("CSS context");
 test("encode CSS", function(){
 	equal(jQuery.sap.encodeCSS("+"), "\\2b", "Plus");
 	equal(jQuery.sap.encodeCSS("~7"), "\\7e 7", "~7");
@@ -132,7 +132,7 @@ test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 a
 	equal(jQuery.sap.encodeCSS(String.fromCharCode(0x2029)),  "\\2029", "(0x2029)");
 });
 
-module("URL validation");
+QUnit.module("URL validation");
 test("HTTP urls", function() {
 	equal(jQuery.sap.validateUrl("http://host"), true, "http://host");
 	equal(jQuery.sap.validateUrl("http://host/path"), true, "http://host/path");
@@ -147,7 +147,7 @@ test("HTTP urls", function() {
 	equal(jQuery.sap.validateUrl("http://www.host.com/path?invalid>value"), false, "Invalid character in query without equal sign");
 	equal(jQuery.sap.validateUrl("http://www.host.com/path#invalid#hash"), false, "Invalid character in hash");
 	equal(jQuery.sap.validateUrl("http://www.host.com/invalid%path"), false, "Invalid percent encoding");
-	
+
 });
 
 test("mailto urls", function() {
@@ -323,7 +323,7 @@ test("Whitelist", function() {
 	jQuery.sap.clearUrlWhitelist();
 });
 
-module("Sanitize check");
+QUnit.module("Sanitize check");
 
 test("valid HTML5", function() {
 

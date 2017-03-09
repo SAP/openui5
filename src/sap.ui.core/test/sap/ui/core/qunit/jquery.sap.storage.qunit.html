@@ -214,7 +214,7 @@
 
 		qutils.delayTestStart();
 
-		module("Basic");
+		QUnit.module("Basic");
 
 		test("Default Storage", function(){
 			testStorage(null, null, sap.ui.Device.os.ios ? SUPPORTED_CHECK_INACTIVE : SUPPORTED_CHECK_EXPECT_SUPPORT);

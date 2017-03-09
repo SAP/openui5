@@ -309,7 +309,7 @@
 		oApp.addPage(oPage).placeAt("content");
 
 		/********************************************************************************/
-		module("Basic Control API checks");
+		QUnit.module("Basic Control API checks");
 		/********************************************************************************/
 
 
@@ -389,7 +389,7 @@
 		});
 
 		/********************************************************************************/
-		module("Initialization");
+		QUnit.module("Initialization");
 		/********************************************************************************/
 
 		test("Constructor behaviour", function() {
@@ -443,7 +443,7 @@
 		});
 
 		/********************************************************************************/
-		module("Destruction");
+		QUnit.module("Destruction");
 		/********************************************************************************/
 
 		test("Destructor behaviour", function() {
@@ -476,7 +476,7 @@
 		});
 
 		/********************************************************************************/
-		module("Rendering");
+		QUnit.module("Rendering");
 		/********************************************************************************/
 
 		test("HTML Tags & CSS Classes for a list with default values and no items", function() {
@@ -514,7 +514,7 @@
 		});
 
 		/********************************************************************************/
-		module("Getter/Setter methods");
+		QUnit.module("Getter/Setter methods");
 		/********************************************************************************/
 
 		/* setter */
@@ -1166,11 +1166,11 @@
 		});
 
 		/********************************************************************************/
-		module("Other API methods");
+		QUnit.module("Other API methods");
 		/********************************************************************************/
 
 		/********************************************************************************/
-		module("Internal methods");
+		QUnit.module("Internal methods");
 		/********************************************************************************/
 
 		test("_isColumnsIncompatible", function() {
@@ -1188,7 +1188,7 @@
 			oList.destroy();
 		});
 
-		module("KeyboardHandling");
+		QUnit.module("KeyboardHandling");
 		test("Basics", function () {
 			var fnDetailPressSpy = this.spy(),
 				fnItemPressSpy = this.spy(),
@@ -1207,7 +1207,7 @@
 				}),
 				oList = new sap.m.List({
 					mode: "MultiSelect",
-					delete: fnDeleteSpy, 
+					delete: fnDeleteSpy,
 					itemPress: fnItemPressSpy,
 					selectionChange: fnSelectionChangeSpy
 				}).addItem(oListItem1).addItem(oListItem2);
@@ -1283,7 +1283,7 @@
 			oInput.focus();
 			sap.ui.test.qunit.triggerKeydown(document.activeElement, "SPACE");
 			strictEqual(fnSelectionChangeSpy.callCount, 0, "SelectionChange event is not fired when space is pressed while focus is not at the item");
-			
+
 			sap.ui.test.qunit.triggerKeydown(document.activeElement, "ENTER");
 			this.clock.tick(0);
 			strictEqual(fnItemPressSpy.callCount, 0, "ItemPress event is not fired when enter is pressed while focus is not at the item");
@@ -1611,7 +1611,7 @@
 
 		});
 
-		module("Highlight");
+		QUnit.module("Highlight");
 		test("Highlight should be rendered", function () {
 			var oLI = new sap.m.StandardListItem({
 				highlight: "Error",
@@ -1664,7 +1664,7 @@
 			oList.destroy();
 		});
 
-		module("Accessibility");
+		QUnit.module("Accessibility");
 
 		test("aria-labelledby association should be accessibility description", function() {
 			var oList = new sap.m.List().placeAt("content");

@@ -81,7 +81,7 @@
 		}
 	}
 
-	module("Basic checks", {
+	QUnit.module("Basic checks", {
 		teardown: destroyController
 	});
 
@@ -181,7 +181,7 @@
 		equal(getPersDataCalls, 2, "getPersData of service should be called 2 times.");
 	});
 
-	module("Personalization interations", {
+	QUnit.module("Personalization interations", {
 		teardown: destroyController
 	});
 
@@ -420,7 +420,7 @@
 
 	});
 
-	module("Personalization via CustomDataKey", {
+	QUnit.module("Personalization via CustomDataKey", {
 		teardown: destroyController
 	});
 

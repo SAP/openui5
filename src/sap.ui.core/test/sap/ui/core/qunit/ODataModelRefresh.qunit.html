@@ -81,7 +81,7 @@
 
 	function readTests(bJSON, bUseBatch) {
 
-		module("After read, " + (bJSON ? "JSON" : "XML") + ", " + (bUseBatch ? "w/" : "w/o") + " $batch");
+		QUnit.module("After read, " + (bJSON ? "JSON" : "XML") + ", " + (bUseBatch ? "w/" : "w/o") + " $batch");
 
 		asyncTest("Context & Context", function() {
 			var bChanged2, bChanged3,
@@ -186,7 +186,7 @@
 	readTests(false, true);
 	readTests(false, false);
 
-	module("After write");
+	QUnit.module("After write");
 
 	asyncTest("Create", function() {
 		var bChanged1, bChanged2,

@@ -150,7 +150,7 @@
 		// TEST functions
 		qutils.delayTestStart();
 
-		module("Properties");
+		QUnit.module("Properties");
 
 		test("Default Values", function() {
 			equal(oRBGroup1.getEditable(), true, "Editable");
@@ -214,7 +214,7 @@
 			equal(jQuery("#RBG1-3").attr("tabindex"), -1, "RadioButton 3 - Tabindex = -1");
 		});
 
-		module("Appearance");
+		QUnit.module("Appearance");
 
 		test("Visibility", function() {
 			// Visible
@@ -279,7 +279,7 @@
 
 		});
 
-		module("Behaviour");
+		QUnit.module("Behaviour");
 
 		test("Change Selection", function() {
 			// via method - index

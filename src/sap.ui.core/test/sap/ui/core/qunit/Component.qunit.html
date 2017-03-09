@@ -90,7 +90,7 @@
 	//******************************************************
 
 
- 	module("Basic Components");
+ 	QUnit.module("Basic Components");
 
 	test("Simple Component Instance", function(){
 		ok(document.getElementById("CompCont1"));
@@ -167,7 +167,7 @@
 		equal(oComponent.getComponentData().foo, "bar", "Component data is correct");
 	});
 
- 	module("Creation Context");
+ 	QUnit.module("Creation Context");
 
 	test("Basic Test", function(){
 		// check that the layout has the reference to the component
@@ -247,7 +247,7 @@
 		assert.ok(oTargets.bIsDestroyed, "Targets got destroyed when the component is destroyed");
 	});
 
-	module("Routing", {
+	QUnit.module("Routing", {
 		setup : function () {
 			// System under test
 			this.oComponent = sap.ui.getCore().createComponent({

@@ -30,7 +30,7 @@
 
 		<script>
 
-			module("Spies");
+			QUnit.module("Spies");
 
 			test("Basic", 2, function() {
 
@@ -83,7 +83,7 @@
 			});
 
 
-			module("Stubs");
+			QUnit.module("Stubs");
 
 			test("Basic", 1, function() {
 				sinon.stub(jQuery, "ajax").yieldsTo("success", [1, 2, 3]);
@@ -98,7 +98,7 @@
 			});
 
 
-			module("Mocks");
+			QUnit.module("Mocks");
 
 			test("Basic", 2, function() {
 				var myAPI = { method: function () {} };
@@ -115,7 +115,7 @@
 			    mock.restore();
 			});
 
-			module("Faked Timers");
+			QUnit.module("Faked Timers");
 
 			test("Basic", 1, function() {
 				var oClock = sinon.useFakeTimers();
@@ -127,7 +127,7 @@
 			});
 
 
-			module("Faked XHR", {
+			QUnit.module("Faked XHR", {
 				setup : function() {
 					this.xhr = sinon.useFakeXMLHttpRequest();
 			        var requests = this.requests = [];

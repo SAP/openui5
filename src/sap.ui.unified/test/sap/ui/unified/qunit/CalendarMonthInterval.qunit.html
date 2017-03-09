@@ -94,7 +94,7 @@
 
 			qutils.delayTestStart();
 
-			module("Rendering");
+			QUnit.module("Rendering");
 
 			test("rendered months", function() {
 				var $MonthsRow = sap.ui.getCore().byId("Cal1").getAggregation("monthsRow").$();
@@ -149,7 +149,7 @@
 				equal(jQuery("#Cal2--MonthsRow-20151101").attr("aria-label"), "November 2015; Type 2", "201511 has special days tooltip");
 			});
 
-			module("change date via API");
+			QUnit.module("change date via API");
 			test("setStartDate", function() {
 				oCal1.setStartDate(new Date("2015", "2", "10"));
 				var $MonthsRow = sap.ui.getCore().byId("Cal1").getAggregation("monthsRow").$();
@@ -174,7 +174,7 @@
 				equal(jQuery(aMonths[1]).attr("tabindex"), "0", "Calendar2: second month still has focus");
 			});
 
-			module("change date via navigation");
+			QUnit.module("change date via navigation");
 			test("next/prev months", function() {
 				bStartDateChanged = false;
 				qutils.triggerEvent("click", "Cal2--Head-next");
@@ -196,7 +196,7 @@
 				equal(jQuery(aMonths[1]).attr("tabindex"), "0", "Calendar2: second month still has focus");
 			});
 
-			module("YearPicker");
+			QUnit.module("YearPicker");
 			test("displayed years", function() {
 				ok(!jQuery("#Cal1--YP").get(0), "Calendar1: Year picker not initial rendered");
 				qutils.triggerEvent("click", "Cal1--Head-B2");
@@ -241,7 +241,7 @@
 				ok(!jQuery(jQuery("#Cal2--YP").get(0)).is(":visible"), "Calendar2: Year picker not visible after closing");
 			});
 
-			module("Interaction");
+			QUnit.module("Interaction");
 			test("year switch", function() {
 				bStartDateChanged = false;
 				qutils.triggerEvent("click", "Cal1--Head-B2");

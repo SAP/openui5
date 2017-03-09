@@ -3955,7 +3955,7 @@
 
 	});*/
 
-	module("ODataModel.read", {
+	QUnit.module("ODataModel.read", {
 		setup: function() {
 			this.oModel = initModel(sURI, {json:false});
 		},
@@ -4167,7 +4167,7 @@
 		});
 	});
 
-	module("CSRF Token handling", {
+	QUnit.module("CSRF Token handling", {
 		setup: function() {
 			window.odataFakeServiceData.forbidHeadRequest = false;
 			window.odataFakeServiceData.csrfRequests = [];
@@ -4325,7 +4325,7 @@
 		});
 	});
 
-	module("Soft State Header Support");
+	QUnit.module("Soft State Header Support");
 
 	asyncTest("Soft State Support for CSRF-, Single- and Batchrequests", 9, function(){
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
@@ -4364,7 +4364,7 @@
 		}.bind(this));
 	});
 
-	module("Metamodel binding", {
+	QUnit.module("Metamodel binding", {
 		setup: function() {
 			this.oModel = initModel(sURI, {json: false});
 		},
@@ -4440,7 +4440,7 @@
 		}.bind(this));
 	});
 
-	module("Model: createEntry", {
+	QUnit.module("Model: createEntry", {
 		setup: function() {
 			this.oModel = initModel(sURI);
 		},
@@ -4922,7 +4922,7 @@
 		}.bind(this))
 	});
 
-	module("Model: SAML");
+	QUnit.module("Model: SAML");
 
 	asyncTest("SAML redirect - without batch", function(){
 
@@ -4968,7 +4968,7 @@
 		});
 	});
 
-	module("Model: includeExpandEntries");
+	QUnit.module("Model: includeExpandEntries");
 
 	asyncTest("test getProperty with includeExpandEntries __ref", function(){
 		removeSharedServicedata(sURI);

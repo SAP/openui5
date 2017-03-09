@@ -446,7 +446,7 @@
 
 		qutils.delayTestStart();
 
-		module("internal controls");
+		QUnit.module("internal controls");
 
 		test("PlanningCalendarRow", function() {
 			var oRow = sap.ui.getCore().byId("PC1-Row1");
@@ -498,7 +498,7 @@
 			equal(oHeaderToolbar.getContent()[1].getId(), "PC1-Today", "Calendar head Toolbar: today button exist");
 		});
 
-		module("rendering");
+		QUnit.module("rendering");
 
 		test("table", function() {
 			var oTable = sap.ui.getCore().byId("PC1-Table");
@@ -565,7 +565,7 @@
 			_checkColor(oBorderColor, {R: 255, G:0, B: 0}, "Row2: IntervalHeader1 has the right custom border color");
 		});
 
-		module("Setters");
+		QUnit.module("Setters");
 
 		test("startDate", function() {
 			var oExpectedDate = new Date("2015", "0", "1", "08", "00");
@@ -1129,7 +1129,7 @@
 			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
 		});
 
-		module("events");
+		QUnit.module("events");
 
 		test("appointmentSelect", function() {
 			oSelectedAppointment = undefined;
@@ -1331,7 +1331,7 @@
 			oPC1.detachEvent("rowHeaderClick", oSpy);
 		});
 
-		module("Proxy calls", {
+		QUnit.module("Proxy calls", {
 			beforeEach: function () {
 				this.sut = createPlanningCalendar("invalidationExample", new sap.m.SearchField(), new sap.m.Button(), new Date(2015, 0, 7), sap.ui.unified.CalendarIntervalType.Week);
 				this.sutInterval = this.sut.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
@@ -1441,7 +1441,7 @@
 			equal(iCalledWithMonth, oMonthPicker.getMonth(), "'_adjustFocusedDateUponMonthChange()' was called with the correct parameters iMonth");
 		});
 
-		module("Private API", {
+		QUnit.module("Private API", {
 			beforeEach: function () {
 				this.sut = createPlanningCalendar("invalidationExample", new sap.m.SearchField(), new sap.m.Button(), new Date(Date.UTC(2015, 0, 7)), sap.ui.unified.CalendarIntervalType.Week);
 				this.sutInterval = this.sut.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
@@ -1509,7 +1509,7 @@
 			strictEqual(oWeekView.getIntervalsL(), 7, "Correct number (7) intervals for L screen sizes");
 		});
 
-		module("Interaction", {
+		QUnit.module("Interaction", {
 			beforeEach: function() {
 				var oSearchField = new sap.m.SearchField(),
 						oButton = new sap.m.Button();
@@ -2385,7 +2385,7 @@
 					this.oPC2, "Initial week should not be changed");
 		});
 
-		module("OneMonth view", {
+		QUnit.module("OneMonth view", {
 			beforeEach: function() {
 				var oSearchField = new sap.m.SearchField(),
 						oButton = new sap.m.Button();
@@ -2650,7 +2650,7 @@
 			equals(this.oPC.getStartDate().getMonth(), 8, 'month is the same');
 		});
 
-		module("OneMonth view (size S)", {
+		QUnit.module("OneMonth view (size S)", {
 			beforeEach: function () {
 				this._simulateMobileEnvironment();
 				this.o14Sep2016MidOfMonth = new Date(2016, 8, 14);
@@ -2846,7 +2846,7 @@
 			oCalendarRowRendererSpy.restore();
 		});
 
-		module("ARIA");
+		QUnit.module("ARIA");
 
 		test("Week day and date aria", function() {
 			oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
@@ -2862,7 +2862,7 @@
 			strictEqual(jQuery("#PC1-DateInt--Month0-20150102").attr("aria-label"), sExpectedAria, "Correct week day and date aria are written");
 		});
 
-		module("views", {
+		QUnit.module("views", {
 			beforeEach: function () {
 				this.oPC = new sap.m.PlanningCalendar();
 			},
@@ -2909,7 +2909,7 @@
 			ok(!this.oPC._isNextMonth(new Date(2011, 9, 30)), 'date from the prev month is not a next month date');
 		});
 
-		module('CalendarAppointment');
+		QUnit.module('CalendarAppointment');
 
 		test('_getComparer', function() {
 			var aAppInfos = [

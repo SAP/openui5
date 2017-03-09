@@ -374,7 +374,7 @@
 	 * TEST CODE: Component Metadata v1
 	 */
 
-	module("Component Metadata v1", {
+	QUnit.module("Component Metadata v1", {
 		setup: function() {
 			moduleSetup.call(this, "v1", 1);
 			// fix the specials in the metadata for the v1
@@ -403,7 +403,7 @@
 	 * TEST CODE: Component Metadata v2
 	 */
 
-	module("Component Metadata v2", {
+	QUnit.module("Component Metadata v2", {
 		setup: function() {
 			moduleSetup.call(this, "v2", 2);
 		},
@@ -419,7 +419,7 @@
 	 * TEST CODE: Component Metadata v2
 	 */
 
-	module("Component Metadata v2 (manifest first)", {
+	QUnit.module("Component Metadata v2 (manifest first)", {
 		setup: function() {
 			moduleSetup.call(this, "v2", 2, true);
 			// fix the specials in the metadata for the v2 manifest first
@@ -440,7 +440,7 @@
 	 * TEST CODE: Component Metadata v2
 	 */
 
-	module("Component Metadata v2 (manifest first with component name)", {
+	QUnit.module("Component Metadata v2 (manifest first with component name)", {
 		setup: function() {
 			moduleSetup.call(this, "v2", 2, true, true);
 			// fix the specials in the metadata for the v2 manifest first
@@ -461,7 +461,7 @@
 	 * TEST CODE: Component Metadata v1 (inline)
 	 */
 
-	module("Component Metadata v1 (inline)", {
+	QUnit.module("Component Metadata v1 (inline)", {
 		setup: function() {
 			moduleSetup.call(this, "v1inline", 1);
 			// fix the specials in the metadata for the v1
@@ -490,7 +490,7 @@
 	 * TEST CODE: Component Metadata v2 (inline)
 	 */
 
-	module("Component Metadata v2 (inline)", {
+	QUnit.module("Component Metadata v2 (inline)", {
 		setup: function() {
 			moduleSetup.call(this, "v2inline", 2);
 		},
@@ -506,7 +506,7 @@
 	 * TEST CODE: Component Metadata v1 (valdidate empty metadata)
 	 */
 
-	module("Component Metadata v1 (empty)", {
+	QUnit.module("Component Metadata v1 (empty)", {
 		setup: function() {
 			moduleSetup.call(this, "v1empty", 1);
 		},
@@ -526,7 +526,7 @@
 	 * TEST CODE: Component Metadata v2 (valdidate empty manifest)
 	 */
 
-	module("Component Metadata v2 (empty)", {
+	QUnit.module("Component Metadata v2 (empty)", {
 		setup: function() {
 			moduleSetup.call(this, "v2empty", 2);
 		},
@@ -546,7 +546,7 @@
 	 * TEST CODE: Component Metadata v1 (valdidate missing metadata)
 	 */
 
-	module("Component Metadata v1 (missing)", {
+	QUnit.module("Component Metadata v1 (missing)", {
 		setup: function() {
 			moduleSetup.call(this, "v1missing", 1);
 		},
@@ -566,7 +566,7 @@
 	 * TEST CODE: Component Metadata v2 (validate missing manifest)
 	 */
 
-	module("Component Metadata v2 (missing)", {
+	QUnit.module("Component Metadata v2 (missing)", {
 		setup: function() {
 			moduleSetup.call(this, "v2missing", 2);
 		},
@@ -587,7 +587,7 @@
 	 * TEST CODE: Component Metadata v1 & v2 (mixed)
 	 */
 
-	module("Component Metadata v1 & v2 (mixed)", {
+	QUnit.module("Component Metadata v1 & v2 (mixed)", {
 		setup: function() {
 			moduleSetup.call(this, "mixed", 2);
 		},
@@ -649,7 +649,7 @@
 	 * TEST CODE: Component Metadata v1 & v2 (mixed/inheritance)
 	 */
 
-	module("Component Metadata v1 & v2 (mixed/inheritance)", {
+	QUnit.module("Component Metadata v1 & v2 (mixed/inheritance)", {
 		setup: function() {
 			moduleSetup.call(this, "inherit", 2);
 			// fix the specials in the metadata for the v1 & v2 mixed/inheritance
@@ -736,7 +736,7 @@
 	 * TEST CODE: Component Metadata URI resolution
 	 */
 
-	module("Component Metadata: Resolve URI", {
+	QUnit.module("Component Metadata: Resolve URI", {
 		assertResolvedUri: function(sInput, sBase, sExpected) {
 			var sActual = sap.ui.core.Manifest._resolveUriRelativeTo(new URI(sInput), new URI(sBase)).toString();
 			assert.equal(sActual, sExpected, "Resolved URI is correct!");
@@ -776,7 +776,7 @@
 	 * TEST CODE: Version Check
 	 */
 
-	module("Component Metadata: Version Check", {
+	QUnit.module("Component Metadata: Version Check", {
 		setup: function() {
 			this.fnGetVersionInfo = sap.ui.getVersionInfo;
 			try {

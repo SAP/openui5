@@ -25,7 +25,7 @@
 	var key = "testKey";
 	var text = "testText";
 
-	module("Init", {
+	QUnit.module("Init", {
 		setup : function() {
 			tokenizer = new sap.m.Tokenizer();
 		},
@@ -38,7 +38,7 @@
 		strictEqual(tokenizer.getScrollWidth(), 0, 'Scroll width should be 0 when control is not rendered');
 	});
 
-	module("Basic", {
+	QUnit.module("Basic", {
 		setup : function() {
 			tokenizer1 = new sap.m.Tokenizer("t1");
 			tokenizer1.placeAt("content");

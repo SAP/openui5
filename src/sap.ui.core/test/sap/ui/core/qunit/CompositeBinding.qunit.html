@@ -53,7 +53,7 @@ function myCalculator(a, b, c) {
 	return a + b + c;
 }
 
-module("Basic functionality", {
+QUnit.module("Basic functionality", {
 		setup: function() {
 			this.model = new sap.ui.model.json.JSONModel({
 				a: 1,
@@ -146,7 +146,7 @@ asyncTest("suspend/resume", function() {
 	this.composite.resume();
 });
 
-module("With inner types/formatters", {
+QUnit.module("With inner types/formatters", {
 	setup: function() {
 		this.model = new sap.ui.model.json.JSONModel({
 			a: 1,
@@ -221,7 +221,7 @@ test("with bUseRawValues and formatter", function() {
 });
 
 
-module("Unresolved inner bindings", {
+QUnit.module("Unresolved inner bindings", {
 	setup: function() {
 		this.model = new sap.ui.model.json.JSONModel({
 			a: 1,

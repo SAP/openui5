@@ -241,7 +241,7 @@
 
 		}
 
-		module("id");
+		QUnit.module("id");
 
 		test("semantic control can be retrieved by Id", function () {
 			// Arrange
@@ -259,7 +259,7 @@
 			oEditButton.destroy();
 		});
 
-		module("init values");
+		QUnit.module("init values");
 
 		testPropertyInitValue(sap.m.semantic.AddAction, "enabled", true);
 		testPropertyInitValue(sap.m.semantic.AddAction, "visible", true);
@@ -268,7 +268,7 @@
 		testAggregationInitValue(sap.m.semantic.EditAction, "tooltip", null);
 
 
-		module("modifiers");
+		QUnit.module("modifiers");
 
 		testSetProperty(sap.m.semantic.AddAction, "enabled", false);
 		testSetProperty(sap.m.semantic.AddAction, "visible", false);
@@ -279,7 +279,7 @@
 		testAggregationModifier(sap.m.semantic.EditAction, "tooltip", "newTooltip");
 
 
-		module("data binding");
+		QUnit.module("data binding");
 
 		testDataBinding(sap.m.semantic.AddAction, "enabled", false);
 		testDataBindingAfterUnbind(sap.m.semantic.AddAction, "enabled", false, true);
@@ -293,7 +293,7 @@
 		testDataBinding(sap.m.semantic.MultiSelectAction, "pressed", true);
 		testDataBindingAfterUnbind(sap.m.semantic.MultiSelectAction, "pressed", true, false);
 
-		module("inaccessible properties");
+		QUnit.module("inaccessible properties");
 
 		test("Semantic buttons should not allow setting icon value to them", function () {
 			// Arrange
@@ -366,7 +366,7 @@
 			oFlagAction.destroy();
 		});
 
-		module("domRef available");
+		QUnit.module("domRef available");
 
  		test("Popover can be opened by a semantic button", function() {
 
@@ -427,7 +427,7 @@
 
 		});
 
-		module("multiSelectAction");
+		QUnit.module("multiSelectAction");
 
 		test("MultiSelectAction has correct default value", function() {
 
@@ -574,7 +574,7 @@
 			oSemanticPage.destroy();
 		});
 
-		module("eventDelegate");
+		QUnit.module("eventDelegate");
 
 		test("add callback", function() {
 

@@ -108,7 +108,7 @@
 
 			qutils.delayTestStart();
 
-			module("Rendering");
+			QUnit.module("Rendering");
 
 			test("rendered times", function() {
 				var $TimesRow = sap.ui.getCore().byId("Cal1").getAggregation("timesRow").$();
@@ -215,7 +215,7 @@
 				ok(!jQuery("#Cal3--TimesRow-201508131000").hasClass("sapUiCalItemType02"), "20150813-1000 is not special month of Type02");
 			});
 
-			module("change date via API");
+			QUnit.module("change date via API");
 			test("setStartDate", function() {
 				oCal1.setStartDate(new Date("2015", "2", "10", "10", "10"));
 				var $TimesRow = sap.ui.getCore().byId("Cal1").getAggregation("timesRow").$();
@@ -247,7 +247,7 @@
 				equal(jQuery("#Cal2--Head-B2").text(), "2015", "Calendar2: year 2015 shown");
 			});
 
-			module("change time via navigation");
+			QUnit.module("change time via navigation");
 			test("next/prev items", function() {
 				bStartDateChanged = false;
 				qutils.triggerEvent("click", "Cal2--Head-next");
@@ -269,7 +269,7 @@
 				equal(jQuery(aItems[1]).attr("tabindex"), "0", "Calendar2: second item still has focus");
 			});
 
-			module("Day Picker");
+			QUnit.module("Day Picker");
 			test("displayed days", function() {
 				ok(!jQuery("#Cal1--DatesRow").get(0), "Calendar1: Day picker not initial rendered");
 				qutils.triggerEvent("click", "Cal1--Head-B0");
@@ -351,7 +351,7 @@
 				ok(bStartDateChanged, "Calendar2: startDateChangeEvent fired");
 			});
 
-			module("Month Picker");
+			QUnit.module("Month Picker");
 			test("displayed months", function() {
 				ok(!jQuery("#Cal1--MP").get(0), "Calendar1: Month picker not initial rendered");
 				qutils.triggerEvent("click", "Cal1--Head-B1");
@@ -425,7 +425,7 @@
 				ok(bStartDateChanged, "Calendar2: startDateChangeEvent fired");
 			});
 
-			module("YearPicker");
+			QUnit.module("YearPicker");
 			test("displayed years", function() {
 				ok(!jQuery("#Cal1--YP").get(0), "Calendar1: Year picker not initial rendered");
 				qutils.triggerEvent("click", "Cal1--Head-B2");
@@ -494,7 +494,7 @@
 				ok(bStartDateChanged, "Calendar2: startDateChangeEvent fired");
 			});
 
-			module("other");
+			QUnit.module("other");
 			test("Min/Max", function() {
 				oCal2.setStartDate(new Date(9999, 11, 29));
 				ok(!jQuery("#Cal2--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled");
@@ -523,7 +523,7 @@
 				oCal2.setStartDate(new Date(2022, 1, 4, 8, 0));
 			});
 
-			module("select time");
+			QUnit.module("select time");
 			test("single selection", function() {
 				var $selectItem1 = jQuery("#Cal1--TimesRow-201503101300");
 				bSelectFired = false;

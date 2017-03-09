@@ -187,7 +187,7 @@
 
 		qutils.delayTestStart();
 
-		module("Properties and Aggregations");
+		QUnit.module("Properties and Aggregations");
 
 		test("Default Values", function() {
 			equals(oSearch1.getEnableListSuggest(), true, "Default 'enableListSuggest'");
@@ -255,7 +255,7 @@
 
 
 		//***********************************
-		module("Appearance");
+		QUnit.module("Appearance");
 
 		test("Visibility", function() {
 			oSearch1.setVisible(false);
@@ -310,7 +310,7 @@
 
 
 		//***********************************
-		module("Trigger Search", {
+		QUnit.module("Trigger Search", {
 			setup: function(){
 				oSearch4.clearHistory();
 			},
@@ -353,7 +353,7 @@
 
 
 		//***********************************
-		module("Clear", {
+		QUnit.module("Clear", {
 			setup: function(){
 				oSearch5.clearHistory();
 			},
@@ -396,7 +396,7 @@
 
 
 		//***********************************
-		module("List Handling");
+		QUnit.module("List Handling");
 
 		test("Open List with F4 - No List Expander", function() {
 			oSearch6.clearHistory();
@@ -458,7 +458,7 @@
 
 
 		//***********************************
-		module("Suggestion");
+		QUnit.module("Suggestion");
 
 		var getProviderTest = function(oSearchControl){
 			return function(){
@@ -492,7 +492,7 @@
 
 
 		//***********************************
-		module("Filter Mode");
+		QUnit.module("Filter Mode");
 
 		function testFilterMode(bClick, sVal) {
 			function trigger(bClick) {

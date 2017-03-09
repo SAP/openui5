@@ -108,7 +108,7 @@
 		});
 
 
-		module("Basic", {
+		QUnit.module("Basic", {
 			setup : function() {
 				rb1 = sap.ui.getCore().getControl("rb1");
 				rb2 = sap.ui.getCore().getControl("rb2");
@@ -276,7 +276,7 @@
 			ok(sClasses.indexOf("sapUiRbRo") > -1, "rb1 className is missing 'sapUiRbRo'");
 		});
 
-			module("GroupName");
+			QUnit.module("GroupName");
 
 			test("_groupNames clean-up", function() {
 				this.oRadioButton = new sap.ui.commons.RadioButton();

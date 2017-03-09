@@ -122,7 +122,7 @@
 	// TEST functions
 	qutils.delayTestStart();
 
-	module("Appearance");
+	QUnit.module("Appearance");
 
 	test("Assignment of elements", function() {
 		// Tooltip
@@ -134,7 +134,7 @@
 		return jQuery("#QuickView").filter(":visible").size() > 0;
 	}
 
-	module("QuickView: open and close");
+	QUnit.module("QuickView: open and close");
 	asyncTest("Open QuickView", function() {
 		ok(true, "A-sync OK start");
 		qutils.triggerMouseEvent("QVButton", "mouseover");
@@ -161,7 +161,7 @@
 		}, 700);
 	});
 
-	module("QuickView: navigation event");
+	QUnit.module("QuickView: navigation event");
 	asyncTest("Click on a link", function() {
 		oButton.focus();
 		ok(document.activeElement.id == "QVButton", "Focus the button initially");
@@ -192,7 +192,7 @@
 		}, 500);
 	});
 
-	module("QuickView: content");
+	QUnit.module("QuickView: content");
 
 	asyncTest("Icons", function() {
 		ok(true, "A-sync close() start");

@@ -145,7 +145,7 @@
 		// test functions
 		qutils.delayTestStart();
 
-		module("Contol functions");
+		QUnit.module("Contol functions");
 
 		test("Form", function() {
 			var oForm = sap.ui.getCore().byId("F1");
@@ -174,7 +174,7 @@
 			equal(oElement.getLabel(), oElement.getLabelControl(), "getLabel(): Label as control entered must be the same in getLabelControl");
 		});
 
-		module("Rendering");
+		QUnit.module("Rendering");
 
 		test("Form", function() {
 			ok(jQuery.sap.domById("F1"), "Form is rendered");
@@ -227,7 +227,7 @@
 			ok(!jQuery.sap.domById("C5e1T1"), "Content of invisible Container is not rendered");
 		});
 
-		module("Interaction");
+		QUnit.module("Interaction");
 
 //		test("Form", 0, function() {
 //

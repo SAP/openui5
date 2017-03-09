@@ -55,7 +55,7 @@
 				return sut;
 			};
 
-			module("SplitContainer API and default values", {
+			QUnit.module("SplitContainer API and default values", {
 				setup : function () {
 					this.sut = splitContainerSetup();
 //					sap.ui.getCore().applyChanges();
@@ -823,7 +823,7 @@
 				ok(this.sut._oShowMasterBtn.getTooltip() == oTooltip, 'Tooltip is correct');
 			});
 
-			module("SplitContainer Navigation test", {
+			QUnit.module("SplitContainer Navigation test", {
 				setup : function () {
 					this.sut = splitContainerSetup();
 					sap.ui.getCore().applyChanges();
@@ -945,7 +945,7 @@
 				equal(this.sut._oShowMasterBtn.getTooltip(), 'Show Master 2 Page ', 'Initial tooltip is correct');
 			});
 
-			module("SplitContainer public API test", {
+			QUnit.module("SplitContainer public API test", {
 				setup : function () {
 					this.sut = splitContainerSetup();
 					sap.ui.getCore().applyChanges();
@@ -1023,7 +1023,7 @@
 
 
 
-			module("Remove All pages API test", {
+			QUnit.module("Remove All pages API test", {
 				setup : function () {
 					this.sut = splitContainerSetup(true);
 					sap.ui.getCore().applyChanges();
@@ -1066,7 +1066,7 @@
 				strictEqual(this.sut.getMasterPages().length, 0, "Master pages now are 0");
 			});
 
-			module("Add master and detail pages");
+			QUnit.module("Add master and detail pages");
 
 			test("Test pages order", function() {
 				//arrange

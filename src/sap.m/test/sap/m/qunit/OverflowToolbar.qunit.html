@@ -111,7 +111,7 @@
 			}
 		}
 
-		module("DOM Rendering");
+		QUnit.module("DOM Rendering");
 		test("Creating a toolbar should add it in DOM", function () {
 			var oOverflowTB = createOverflowToolbar();
 
@@ -121,7 +121,7 @@
 		});
 
 
-		module("Calculations");
+		QUnit.module("Calculations");
 
 
 		function testAllFlexBoxModes(sName, fnTest) {
@@ -316,7 +316,7 @@
 			oOverflowTB.destroy();
 		});
 
-		module("Priority");
+		QUnit.module("Priority");
 
 		testAllFlexBoxModes("Buttons with layout to stay in overflow never go to the toolbar", function () {
 
@@ -830,7 +830,7 @@
 			oOverflowTB.destroy();
 		});
 
-		module("Grouping");
+		QUnit.module("Grouping");
 
 		test("Buttons in a group should overflow together", function () {
 			// Create a toolbar 500px and 5 buttons x 100px
@@ -1026,7 +1026,7 @@
 			oOverflowTB.destroy();
 		});
 
-		module("Data - aggregations and bindings");
+		QUnit.module("Data - aggregations and bindings");
 
 		test("[getContent] The content aggregation should contain the proper number of elements", function () {
 			var aContent = getDefaultContent(),
@@ -1336,7 +1336,7 @@
 			oOverflowTB.destroy();
 		});
 
-		module("Layout");
+		QUnit.module("Layout");
 		test("Changing a control property that affects control size(visibility) forces a recalculation of the layout", function () {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
@@ -1484,7 +1484,7 @@
 			oOverflowTB.destroy();
 		});
 
-		module("Resize handling");
+		QUnit.module("Resize handling");
 
 		test("Handling of resizes that don't move elements around", function () {
 
@@ -1570,7 +1570,7 @@
 			oOverflowTB.destroy();
 		});
 
-		module("Integration");
+		QUnit.module("Integration");
 
 		test("Sliders work inside an overflow toolbar", function () {
 			var aContent = getDefaultContent(),
@@ -1670,7 +1670,7 @@
 			oOverflowTB.destroy();
 		});
 
-		module("Control size measurement");
+		QUnit.module("Control size measurement");
 
 		test("Size of a visible control reported correctly", function () {
 			var oTestButton = new sap.m.Button({width: "200px"});

@@ -64,7 +64,7 @@
 				});
 
 			});
-			module("Basic", {
+			QUnit.module("Basic", {
 				beforeEach: function () {
 					this.sandbox = sinon.sandbox.create();
 				},
@@ -256,7 +256,7 @@
 				});
 			});
 
-			module("Index", {
+			QUnit.module("Index", {
 				beforeEach: function () {
 					this.sandbox = sinon.sandbox.create();
 				},
@@ -322,7 +322,7 @@
 			 * can't run in parallel with that "readwrite" transaction.
 			 *
 			 */
-			module("Transactions", {
+			QUnit.module("Transactions", {
 				beforeEach: function () {
 					this.sandbox = sinon.sandbox.create();
 					this.o1MB = get1MbEntry();
@@ -419,7 +419,7 @@
 				});
 			});
 
-			module("LRU", {
+			QUnit.module("LRU", {
 				beforeEach: function () {
 					this.sandbox = sinon.sandbox.create();
 					return deleteDatabaseEntries();

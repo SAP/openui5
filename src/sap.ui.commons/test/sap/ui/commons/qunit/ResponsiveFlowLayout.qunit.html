@@ -63,7 +63,7 @@
 
 <!-- Do the tests -->
 <script>
-	module("Basics", {
+	QUnit.module("Basics", {
 		setup : function() {
 			oBtn1.getLayoutData().setLinebreak(false);
 			oBtn2.getLayoutData().setLinebreak(false);
@@ -105,7 +105,7 @@
 		ok(bTest, "LayoutDataChanged event catched by Layout");
 	});
 
-	module("Resize", {
+	QUnit.module("Resize", {
 		setup : function() {
 			oBtn1.getLayoutData().setLinebreak(false);
 			oBtn2.getLayoutData().setLinebreak(false);

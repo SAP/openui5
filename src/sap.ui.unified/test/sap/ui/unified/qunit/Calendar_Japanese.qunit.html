@@ -132,7 +132,7 @@
 
 			qutils.delayTestStart();
 
-			module("Dates");
+			QUnit.module("Dates");
 
 			test("20150701", function() {
 				checkDate("20150701", 1, 7, 27, 235, "Heisei", 31, 3, 3, 1);
@@ -147,7 +147,7 @@
 			});
 
 
-			module("Navigation to next/previous Month");
+			QUnit.module("Navigation to next/previous Month");
 
 			test("20150701 -> next", function() {
 				checkMonthNavigation("20150701", 7, "27 Heisei", true);
@@ -161,7 +161,7 @@
 				checkMonthNavigation("19890102", 1, "1 Heisei", true);
 			});
 
-			module("Yearpicker");
+			QUnit.module("Yearpicker");
 
 			test("20150701 Yearpicker", function() {
 				checkYearPicker("20150701", "17 Heisei", "36 Heisei", "27 Heisei" );

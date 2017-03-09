@@ -94,7 +94,7 @@
 	oa3.placeAt("objectAttributes");
 	oTable.placeAt("objectAttributes");
 
-	module("Rendering All Fields");
+	QUnit.module("Rendering All Fields");
 
 	test("AttributesRendered", function() {
 
@@ -123,7 +123,7 @@
 
 	});
 
-	module("Attributes Wrapping");
+	QUnit.module("Attributes Wrapping");
 
 	test("Attributes Wrapping in ObjectHeader", function() {
 
@@ -200,7 +200,7 @@
 	});
 	/******************************************************************/
 
-	module("Aggregation customContent");
+	QUnit.module("Aggregation customContent");
 
 	test("Aggregation sap.m.Link", function() {
 
@@ -223,7 +223,7 @@
 	});
 	/******************************************************************/
 
-	module("Internal API");
+	QUnit.module("Internal API");
 
 	test ("TestIsEmpty", function() {
 
@@ -237,7 +237,7 @@
 
 	/******************************************************************/
 
-	module("Events");
+	QUnit.module("Events");
 
 	test("TestTap", function() {
 		expect(3);
@@ -264,7 +264,7 @@
 		}, 500);
 	});
 
-	module("Keyboard handling");
+	QUnit.module("Keyboard handling");
 
 	test("Enter", function() {
 
@@ -312,7 +312,7 @@
 		oObjectAttribute.destroy();
 	});
 
-    module("rtl support");
+    QUnit.module("rtl support");
     test("Render text with the opposite direction", function() {
         // Arrange
         var oObjectAttribute = new sap.m.ObjectAttribute({

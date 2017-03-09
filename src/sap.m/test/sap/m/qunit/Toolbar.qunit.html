@@ -49,7 +49,7 @@
 		return oTB;
 	}
 
-	module("Rendering");
+	QUnit.module("Rendering");
 	test("test rendering and visible property", function() {
 		var oTB = createToolbar({
 			Toolbar : {},
@@ -158,7 +158,7 @@
 		oTB.destroy();
 	});
 
-	module("ARIA");
+	QUnit.module("ARIA");
 
     test("Default ARIA attributes", function() {
         // Arrange + System under Test
@@ -233,7 +233,7 @@
 		oTB.destroy();
 	});
 
-	module("Properties");
+	QUnit.module("Properties");
 
 	test("Should be able to add/remove undefined controls", function() {
 		// System under Test
@@ -250,7 +250,7 @@
 		oToolbar.destroy();
 	})
 
-	module("Statics");
+	QUnit.module("Statics");
 
 	test("controls shoulds return correct original and initial width", function() {
 		var isRelativeWidth = sap.m.Toolbar.isRelativeWidth;
@@ -341,7 +341,7 @@
 		});
 	});
 
-	module("Behaviour");
+	QUnit.module("Behaviour");
 	test("content property change handler should be registered correctly", function() {
 		var oLabel = new sap.m.Label({text : "text"});
 		var oTB = createToolbar();
@@ -457,7 +457,7 @@
 		oTB.destroy();
 	});
 
-	module("Events");
+	QUnit.module("Events");
 	test("active toolbar should fire press event", function() {
 		var oLabel = new sap.m.Label({text : "text"});
 		var fnPressSpy = this.spy();
@@ -533,7 +533,7 @@
 		oTB.destroy();
 	});
 
-	module("Shrinkables");
+	QUnit.module("Shrinkables");
 	test("Toolbar should not overflow with shrinkable items", function() {
 		var sLongText = new Array(1000).join("text ");
 
@@ -580,7 +580,7 @@
 
 	});
 
-	module("LayoutData");
+	QUnit.module("LayoutData");
 	test("should reapply layout data styles after content is rerendered", function() {
 		var sMinWidth = "100px";
 		var oBtn = new sap.m.Button({
@@ -672,7 +672,7 @@
 		oTB.destroy();
 	});
 
-	module("Element Margins");
+	QUnit.module("Element Margins");
 	test("Should add margins to elements in a Toolbar", function() {
 		// Arrange
 		var oFirstButton = new sap.m.Button("first"),

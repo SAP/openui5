@@ -24,14 +24,14 @@
 
 		<script>
 
-	  		module("JSON Native Support basics");
+	  		QUnit.module("JSON Native Support basics");
 	  			test("JSON object", function() {
 	  				ok( JSON, "JSON object exists");
 	  				ok( JSON.stringify, "JSON.stringify is defined");
 	  				ok( JSON.parse, "JSON.parse is defined");
 	  			});
 
-	  		module("JSON Stringify/Parse");
+	  		QUnit.module("JSON Stringify/Parse");
 	  			test("JSON Stringification", function() {
 						s = JSON.stringify(['e', {pluribus: 'unum'}]);
 						result = '["e",{"pluribus":"unum"}]';
@@ -88,7 +88,7 @@
 						deepEqual( o, result, "Piped stringify/parse");
 	  			});
 
-  			module("JSON toJSON method");
+  			QUnit.module("JSON toJSON method");
   				test("JSON toJSON method", function() {
 						o = new Object();
 						o.att1 = "public"; /* only public attribute */
@@ -104,7 +104,7 @@
 						equal(s, '{"att1":"public"}', "Stringify on an object having toJSON()");
 
   				});
-  			module("JSON on SAPUI5 Control");
+  			QUnit.module("JSON on SAPUI5 Control");
   				test("JSON Button", function() {
 					var sText = "Hello",
 					sTooltip = "abc",

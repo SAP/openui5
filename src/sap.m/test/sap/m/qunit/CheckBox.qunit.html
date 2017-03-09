@@ -21,7 +21,7 @@
 jQuery.sap.require("sap.m.CheckBox");
 jQuery.sap.require("sap.ui.core.ValueState");
 
-	module("Properties");
+	QUnit.module("Properties");
 
 	/* --------------------------------------- */
 	/* Test: Default Values                    */
@@ -515,7 +515,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 
 
 
-	module("Basic CSS classes");
+	QUnit.module("Basic CSS classes");
 
 	/* ----------------------------------------------- */
 	/* Test: Existence                                 */
@@ -585,7 +585,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 
 
 
-	module("Events");
+	QUnit.module("Events");
 
 	/* ----------------------------------------------- */
 	/* Test: tap                                       */
@@ -706,7 +706,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		expectedMessageAria: "Property 'aria-checked' should be 'false'"
 	});
 
-	module("Accessibility");
+	QUnit.module("Accessibility");
 
 	test("getAccessibilityInfo", function() {
 		var oControl = new sap.m.CheckBox({text: "Text"});

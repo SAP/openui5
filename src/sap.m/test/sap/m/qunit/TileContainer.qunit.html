@@ -329,7 +329,7 @@
 			}.bind(this), delay);
 		});
 
-		module("Tile common dimension calculation", {
+		QUnit.module("Tile common dimension calculation", {
 			beforeEach: function () {
 				this.prepare();
 			},
@@ -424,7 +424,7 @@
 			this.callAndTest(sap.ui.getCore().applyTheme, ["sap_hcb"], assert);
 		});
 
-		module("Accessability attributes", {
+		QUnit.module("Accessability attributes", {
 			getAriaPosInSetValues: function() {
 				return this.sut.getTiles().map(function (tile) {
 					return tile.$().attr('aria-posinset');
@@ -529,7 +529,7 @@
 			deepEqual(this.getAriaPosInSetValues(), this.getExpectedAriaPositionInSetValues(), "Checking the 'aria-posinset' for exact values");
 		});
 
-		module("Data Binding", {
+		QUnit.module("Data Binding", {
 			beforeEach: function () {
 				this.sandbox = sinon.sandbox;
 				sap.ui.getCore().setModel(new sap.ui.model.json.JSONModel({

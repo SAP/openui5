@@ -15,7 +15,7 @@
 
 	<script>
 
-		module("Rendering");
+		QUnit.module("Rendering");
 
 		test("test rendering", function() {
 			var oDLI = sap.m.DisplayListItem({
@@ -32,7 +32,7 @@
 			oDLI.destroy();
 		});
 
-		module("Right to left support");
+		QUnit.module("Right to left support");
 
 		test("Value text direction set to RTL", function() {
 			var sDisplayListItem = new sap.m.DisplayListItem({

@@ -77,7 +77,7 @@
 
 				jQuery.sap.require("sap.m.ios7");
 
-				module("initialization");
+				QUnit.module("initialization");
 
 				test("Should do nothing when not in ios 7", function () {
 					//System under Test + Act
@@ -107,7 +107,7 @@
 					sut.destroy();
 				});
 
-				module("events", {
+				QUnit.module("events", {
 					setup : function() {
 						simulateKeyboardClose();
 					}

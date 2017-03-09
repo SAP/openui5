@@ -59,7 +59,7 @@
 
 
 	// TESTS
-	module("CustomizingConfiguration");
+	QUnit.module("CustomizingConfiguration");
 
 	test("sap.ui.core.CustomizingConfiguration available", function() {
 		expect(1);
@@ -202,7 +202,7 @@
 		ok(sap.ui.getCore().byId("iHaveCausedDestruction"), "JS Extension Point 45 Content has been correctly replaced");
 	});
 
-	module("Controller Customizing via Hook", {
+	QUnit.module("Controller Customizing via Hook", {
 
 		setup: function() {
 

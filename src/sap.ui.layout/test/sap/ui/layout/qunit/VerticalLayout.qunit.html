@@ -44,7 +44,7 @@
 
 	qutils.delayTestStart();
 
-	module("Properties");
+	QUnit.module("Properties");
 
 	test("Default Values", function() {
 		equals(oLayout1.getWidth(), "", "Default 'Width':");
@@ -54,7 +54,7 @@
 		equals(oLayout2.getWidth(), "200px", "Custom 'Width':");
 	});
 
-	module("Visual Appearence");
+	QUnit.module("Visual Appearence");
 
 	test("Visibility", function() {
 		// controls must be one below the other -> same X coordinate, nut higher Y coordinate
@@ -127,7 +127,7 @@
 		oContainer.destroy();
 	});
 
-	module("Accessibility");
+	QUnit.module("Accessibility");
 
 	test("getAccessibilityInfo", function() {
 		var oLayout = new sap.ui.layout.VerticalLayout({

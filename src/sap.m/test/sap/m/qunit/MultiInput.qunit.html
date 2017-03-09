@@ -27,7 +27,7 @@
 
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-	module("Basic", {
+	QUnit.module("Basic", {
 		setup : function() {
 			this.multiInput1 = new sap.m.MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
@@ -355,7 +355,7 @@
 		equals(aTokens[0].getText(), testTokenText, "Token text == " + testTokenText);
 	});
 
-	module("Validation", {
+	QUnit.module("Validation", {
 		setup: function() {
 			this.multiInput1 = new sap.m.MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
@@ -450,7 +450,7 @@
 		equals(this.multiInput1.getTokens().length, 3, "MultiInput contains 3 tokens");
 	});
 
-	module("KeyboardEvents", {
+	QUnit.module("KeyboardEvents", {
 		setup : function() {
 			this.multiInput1 = new sap.m.MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
@@ -569,7 +569,7 @@
 		equals(this.multiInput1._$input.getSelectedText(), "", "texts get unselected");
 	});
 
-	module("MultiLineMode", {
+	QUnit.module("MultiLineMode", {
 		setup: function() {
 			this.multiInput1 = new sap.m.MultiInput({
 				enableMultiLineMode : true
@@ -675,7 +675,7 @@
 		oMIMultiLineMode.destroy();
 	});
 
-	module("Events", {
+	QUnit.module("Events", {
 		setup: function() {
 			this.multiInput1 = new sap.m.MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
@@ -755,7 +755,7 @@
 		equals(aTokens[0].getText(), testTokenText, "Token text == " + testTokenText);
 	});
 
-	module("Accessibility", {
+	QUnit.module("Accessibility", {
 		setup : function() {
 			this.multiInput1 = new sap.m.MultiInput({
 				value: "Value",

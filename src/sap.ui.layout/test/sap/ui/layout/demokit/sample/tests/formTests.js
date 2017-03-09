@@ -2,7 +2,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 	function(Opa5) {
 	"use strict";
 
-	module("EditSave");
+	QUnit.module("EditSave");
 
 	opaTest("Should go to the edit page", function(Given, When, Then) {
 
@@ -27,7 +27,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 			and.iTeardownMyAppFrame();
 	});
 
-	module("EditCancel");
+	QUnit.module("EditCancel");
 
 	opaTest("Should go to the edit page", function(Given, When, Then) {
 

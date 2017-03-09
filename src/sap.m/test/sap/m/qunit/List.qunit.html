@@ -944,7 +944,7 @@
 	// qunit checks
 	// ================================================================================
 	*/
-	module("Initial Check");
+	QUnit.module("Initial Check");
 
 	test("Overview rendered", function() {
 		ok(jQuery.sap.domById("sapMList001-listUl"), "Overview should be rendered");
@@ -1510,7 +1510,7 @@
 	});
 
 
-	module("Properties", {
+	QUnit.module("Properties", {
 		setup: function() {
 			sinon.config.useFakeTimers = true;
 		},
@@ -1583,7 +1583,7 @@
 		strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon is changed with the previous state after active handling");
 	});
 
-	module("StandartListItem RTL attributes");
+	QUnit.module("StandartListItem RTL attributes");
 
 	test("setter / getter titleTextDirection", function() {
 		var oStdLI = new sap.m.StandardListItem({
@@ -1665,7 +1665,7 @@
 		oList.destroy();
 	});
 
-	module("ListItemBase");
+	QUnit.module("ListItemBase");
 
 	test("ListItemBase RenderOulineClass", function() {
 		var oMsieStub = this.stub(sap.ui.Device, "browser", {"msie": true});

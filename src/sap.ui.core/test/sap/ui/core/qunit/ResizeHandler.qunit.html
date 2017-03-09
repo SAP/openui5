@@ -97,7 +97,7 @@
 
 		qutils.delayTestStart();
 
-		module("Basic");
+		QUnit.module("Basic");
 
 		test("Check ResizeHandler initialized", function() {
 			ok(oResizeHandler, "ResizeHandler initialized");
@@ -123,7 +123,7 @@
 		});
 
 
-		module("DOM Element Resize");
+		QUnit.module("DOM Element Resize");
 
 		asyncTest("Check DOM Resize", function() {
 			expect(2);
@@ -276,7 +276,7 @@
 		});
 
 
-		module("Control Resize");
+		QUnit.module("Control Resize");
 
 		asyncTest("Check Control Resize - With Rerendering", function() {
 			expect(3);

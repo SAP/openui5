@@ -57,7 +57,7 @@
 		function cleanup() {
 			this.sandbox.restore();
 		}
-		module("Constructor", {
+		QUnit.module("Constructor", {
 			beforeEach: function () {
 				prepare.call(this);
 			},
@@ -287,7 +287,7 @@
 			}
 		});
 
-		module("Other", {
+		QUnit.module("Other", {
 			beforeEach: function () {
 				prepare.call(this);
 			},

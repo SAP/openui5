@@ -103,7 +103,7 @@
 
 
 
-			module("Control Test - sap.ui.commons.Carousel API", {
+			QUnit.module("Control Test - sap.ui.commons.Carousel API", {
 				setup : function () {
 					this.oCarousel1 = createCarousel("vertical");
 					this.oCarousel2 = createCarousel2();
@@ -198,7 +198,7 @@
 			});
 
 
-			module("sap.ui.commons.Carousel Events testing", {
+			QUnit.module("sap.ui.commons.Carousel Events testing", {
 				setup : function () {
 					this.oCarousel1 = createCarousel("vertical");
 					sap.ui.getCore().applyChanges();
@@ -263,7 +263,7 @@
 						}, this.oCarousel1.getAnimationDuration() + 750);
 			});
 
-			module("sap.ui.commons.Carousel Keyboard handling", {
+			QUnit.module("sap.ui.commons.Carousel Keyboard handling", {
 				setup : function () {
 					this.oCarousel1 = createCarousel("vertical");
 					this.oCarousel1.placeAt("qunit-fixture");

@@ -76,7 +76,7 @@
 	sap.ui.setRoot("uiArea1", oPanel1);
 
 	// TEST functions
-	module("Appearance");
+	QUnit.module("Appearance");
 	//Test social action
 	test("Set thing icon", function() {
 		oActionBar1.setThingIconURI("../images/Account_48.png");
@@ -85,7 +85,7 @@
 
 
 	// TEST functions
-	module("Social Actions");
+	QUnit.module("Social Actions");
 	//Test social action
 	test("Count visible social actions", function() {
 		var iVisibleChildCount = jQuery("#ActionBar0001-socialActions").children(":visible").size();
@@ -266,7 +266,7 @@
 
 
 
-	module("Business Actions");
+	QUnit.module("Business Actions");
 
 	//Test business action events
 	test("Test business action events", function() {

@@ -12,7 +12,7 @@
 <!-- Initialization -->
 <script src="../shared-config.js"></script>
 <script id="sap-ui-bootstrap"
-       
+
         src="../../../../../resources/sap-ui-core.js">
 </script>
 
@@ -54,7 +54,7 @@
 	var sTimestampComp1 = sTimestamp;
 	var sTimestampComp2 = "0987654321";
 
-	module("intercept", {
+	QUnit.module("intercept", {
 		setup : function() {
 		},
 		teardown : function() {
@@ -85,7 +85,7 @@
 	});
 
 
-	module("local scenario", {
+	QUnit.module("local scenario", {
 		setup : function() {
 
 			// fake the XHR server
@@ -210,7 +210,7 @@
 
 	});
 
-	module("remote scenario", {
+	QUnit.module("remote scenario", {
 		setup : function() {
 
 			// fake the XHR server
@@ -316,7 +316,7 @@
 
 	});
 
-	module("hook scenario", {
+	QUnit.module("hook scenario", {
 		setup : function() {
 
 			// count the amount of requests

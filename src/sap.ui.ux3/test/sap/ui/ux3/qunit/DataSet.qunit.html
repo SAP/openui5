@@ -129,7 +129,7 @@ sap.ui.ux3.DataSetSimpleView</title>
 				"sap.ui.ux3.DataSetSimpleView must be defined");
 	});
 
-	module("DataSetItem");
+	QUnit.module("DataSetItem");
 
 	test("Instantiation", 2, function() {
 		ok(oDataSetItem, "oDataSetItem must exist after creation");
@@ -137,7 +137,7 @@ sap.ui.ux3.DataSetSimpleView</title>
 				"oDataSetItem must be instance of sap.ui.ux3.DataSetItem");
 	});
 
-	module("DataSetSimpleView");
+	QUnit.module("DataSetSimpleView");
 
 	test(
 			"Instantiation",
@@ -149,7 +149,7 @@ sap.ui.ux3.DataSetSimpleView</title>
 						"oDataSetSimpleView must be instance of sap.ui.ux3.DataSetSimpleView");
 			});
 
-	module("DataSet");
+	QUnit.module("DataSet");
 
 	test("Instantiation", 2, function() {
 		ok(oDataSet, "oDataSet must exist after creation");
@@ -276,7 +276,7 @@ sap.ui.ux3.DataSetSimpleView</title>
 		ok(!jQuery('#'+oButton.getId()).length,"Custom Toolbaritem removed");
 	});
 
-	module("DataSetSimpleView");
+	QUnit.module("DataSetSimpleView");
 
 	test("selection", 4, function() {
 		ok(jQuery.sap.byId(oDataSet.getItems()[3].getId()).hasClass("sapUiUx3DSSVSelected"),"class selected of item 1 is set");

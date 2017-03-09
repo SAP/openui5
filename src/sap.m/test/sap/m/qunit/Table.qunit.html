@@ -72,7 +72,7 @@
 		}
 
 
-		module("Display");
+		QUnit.module("Display");
 
 		test("Basic Properties", function() {
 			var sut = createSUT('idBasicPropertiesTable');
@@ -184,7 +184,7 @@
 			sut.destroy()
 		});
 
-		module("Modes");
+		QUnit.module("Modes");
 
 		test("MultiSelect", function() {
 			var sut = createSUT('idMultiSelectTable', true, true, "MultiSelect");
@@ -254,7 +254,7 @@
 			oContainer.destroy();
 		});
 
-		module("TypeColumn");
+		QUnit.module("TypeColumn");
 
 		test("TypeColumn visibility should updated correctly", function() {
 			var oTable = createSUT('idTypeTable', true);

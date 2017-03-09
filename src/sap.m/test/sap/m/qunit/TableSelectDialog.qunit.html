@@ -298,7 +298,7 @@
 
 		app.addPage(page).placeAt("content");
 
-		module("Initial Check");
+		QUnit.module("Initial Check");
 
 		test("Initialization", function() {
 			ok(!jQuery.sap.domById("oTableSelectDialog"), "TableSelectDialog is not rendered before it's ever opened.");
@@ -325,14 +325,14 @@
 			strictEqual(oTableSelectDialog.getBusyIndicatorDelay(), iDelay, 'The delay value should be ' + iDelay);
 		});
 
-		module("Bindings Check");
+		QUnit.module("Bindings Check");
 
 		test("Bindings", function() {
 			strictEqual(oTableSelectDialog.getBinding("items").iLength, 5 , 'TableSelectDialog should have 5 items bound');
 			strictEqual(oTableSelectDialog1.getBinding("items").iLength, 5 , 'TableSelectDialog1 should have 5 items bound');
 		});
 
-		module("MultiSelect proper selection reset");
+		QUnit.module("MultiSelect proper selection reset");
 
 		test("TableSelectDialog1 proper selection reset", function() {
 			oTableSelectDialog1.setMultiSelect(true);
@@ -358,7 +358,7 @@
 			oTableSelectDialog1._onCancel();
 		});
 
-		module("Open and Close");
+		QUnit.module("Open and Close");
 
 		test("Open TableSelectDialog", function(){
 			oButton.firePress();
@@ -394,7 +394,7 @@
 			}, 10);
 		});
 
-		module("Test Dialog Search");
+		QUnit.module("Test Dialog Search");
 
 		asyncTest("TableSelectDialog1 SearchField Set Value 'Mo'", function(){
 			expect(0);
@@ -444,7 +444,7 @@
 			}, 10);
 		});
 
-		module("Test Dialog Live Change");
+		QUnit.module("Test Dialog Live Change");
 
 		asyncTest("TableSelectDialog1 SearchField Simulate Live Chnage Clear Text", function(){
 			expect(0);
@@ -464,7 +464,7 @@
 			}, 10);
 		});
 
-		module("Test Dialog Change to Single Select");
+		QUnit.module("Test Dialog Change to Single Select");
 
 		test("TableSelectDialog1 Change to Single Select", function() {
 			oTableSelectDialog1.setMultiSelect(false);
@@ -481,7 +481,7 @@
 			}, 50);
 		});
 
-		module("Test Dialog Single Select Item");
+		QUnit.module("Test Dialog Single Select Item");
 
 		test("TableSelectDialog1 singleSelection Item 2", function() {
 			var oTable = sap.ui.getCore().byId("oTableSelectDialog1-table");
@@ -553,7 +553,7 @@
 		});
 
 		/********************************************************************************/
-			module("Keyboard Handling");
+			QUnit.module("Keyboard Handling");
 		/********************************************************************************/
 
 		asyncTest("Initialfocus when there are no rows in the TableSelectDialog's table", function () {
@@ -647,7 +647,7 @@
 		});
 
 		/********************************************************************************/
-		module("Accessibility");
+		QUnit.module("Accessibility");
 		/********************************************************************************/
 
 		test("Aria-live attribute of the InfoToolBar should be set to 'polite'", function() {

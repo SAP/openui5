@@ -189,7 +189,7 @@
 			}
 		};
 
-		module("ClientBindingAdapter", {
+		QUnit.module("ClientBindingAdapter", {
 			setup: function() {
 				oModel = new sap.ui.model.json.JSONModel();
 				oModel.setData(jQuery.extend({}, oData));
@@ -974,7 +974,7 @@
 			}]
 		};
 
-		module("ClientBindingAdapter - Model Data 2", {
+		QUnit.module("ClientBindingAdapter - Model Data 2", {
 			setup: function() {
 				oModel = new sap.ui.model.json.JSONModel();
 				oModel.setData(jQuery.extend({}, oData2));

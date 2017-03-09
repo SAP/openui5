@@ -69,7 +69,7 @@
 
 			qutils.delayTestStart();
 
-			module("initialization");
+			QUnit.module("initialization");
 
 			test("Date formatter", function() {
 				ok(!oDRS1.getValue(), "DRS1: no value");
@@ -86,7 +86,7 @@
 				ok(!oDRS1._oPopup, "DRS1: no popup exists");
 			});
 
-			module("Rendering");
+			QUnit.module("Rendering");
 
 			test("Styling", function() {
 				equal(jQuery("#DRS1").css("width"), jQuery("body").css("width"), "Default width is 100%");
@@ -101,7 +101,7 @@
 				equal(jQuery("#DRS3").children("div.sapMInputDivWrapper").children("input").val(), "April 1, 2014 - April 3, 2014", "DRS3: defined output format used");
 			});
 
-			module("interaction");
+			QUnit.module("interaction");
 
 			test("min/max", function() {
 				var oNewMinDate = new Date(2014,0,1);
@@ -188,7 +188,7 @@
 				strictEqual(oDRS1.$().length + oDRS2.$().length + oDRS3.$().length, 0, "DateRangeSelection is destroyed");
 			});
 
-			module("Accessibility");
+			QUnit.module("Accessibility");
 
 			test("getAccessibilityInfo", function() {
 				var oInput = new sap.m.DateRangeSelection({

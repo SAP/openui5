@@ -54,7 +54,7 @@
 
 		qutils.delayTestStart();
 
-		module("Properties");
+		QUnit.module("Properties");
 
 		test("Default Values", function() {
 			var oDivider = oDividers["oDivider1"];
@@ -72,7 +72,7 @@
 			equals(oDivider.getType(), "Page", "Custom 'type':");
 		 });
 
-		module("Visual Appearence");
+		QUnit.module("Visual Appearence");
 
 		test("Visibility", function() {
 			equals(jQuery("#oDivider2").get(0), undefined, "Invisible:");

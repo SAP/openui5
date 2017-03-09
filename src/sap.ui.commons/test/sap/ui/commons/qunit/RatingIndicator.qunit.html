@@ -82,7 +82,7 @@
 
 	qutils.delayTestStart();
 
-	module("Properties");
+	QUnit.module("Properties");
 
 	test("Default Values", function() {
 		var oRating = oRatings["oRating1"];
@@ -112,7 +112,7 @@
 	});
 
 
-	module("Interaction");
+	QUnit.module("Interaction");
 
 	test("Keyboard", function() {
 		var oRating = oRatings["oRating1"];
@@ -203,7 +203,7 @@
 	});
 
 
-	module("Visual Appearence");
+	QUnit.module("Visual Appearence");
 
 	test("Visibility", function() {
 		equals(jQuery("#oRating3").get(0), undefined, "Invisible:");

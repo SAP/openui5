@@ -4,7 +4,7 @@
 
      <script src="../shared-config.js"></script>
      <script id="sap-ui-bootstrap"
-         
+
           src="../../../../../resources/sap-ui-core.js"
           data-sap-ui-theme="sap_bluecrystal"
           data-sap-ui-noConflict="true"
@@ -70,7 +70,7 @@
 
 	   		qutils.delayTestStart();
 
-			module("Accordion API and Properties", {
+			QUnit.module("Accordion API and Properties", {
 				setup : function () {
 					this.oAccordion1 = createAccordion();
 					sap.ui.getCore().applyChanges();
@@ -135,7 +135,7 @@
 			});
 
 
-			module("Accordion API and Properties, no any section added", {
+			QUnit.module("Accordion API and Properties, no any section added", {
 				setup : function () {
 					this.oAccordion1 = createAccordion(true);
 				},
@@ -161,7 +161,7 @@
 				strictEqual(this.oAccordion1.getAggregation("sections"), null, "No any section exist");
 			});
 
-			module("AccordionSection API and Properties", {
+			QUnit.module("AccordionSection API and Properties", {
 				setup : function () {
 					this.oAccordion1 = createAccordion();
 					sap.ui.getCore().applyChanges();
@@ -202,7 +202,7 @@
 			});
 
 
-			module("Accordion Open/Close sections",{
+			QUnit.module("Accordion Open/Close sections",{
 				setup : function () {
 					this.oAccordion1 = createAccordion();
 					sap.ui.getCore().applyChanges();
@@ -233,7 +233,7 @@
 
 			});
 
-			module("Accordion Keyboard Handling Test",{
+			QUnit.module("Accordion Keyboard Handling Test",{
 				setup : function () {
 					this.oAccordion1 = createAccordion();
 					sap.ui.getCore().applyChanges();

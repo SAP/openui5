@@ -27,7 +27,7 @@
 		sap.ui.require(["sap/ui/core/routing/Targets", "sap/ui/core/routing/Views", "qunit/routing/AsyncViewModuleHook"],
 			function(Targets, Views, ModuleHook){
 
-				module("getTarget and target names", {
+				QUnit.module("getTarget and target names", {
 					setup: function () {
 						// System under test + Arrange
 						this.oViews = new Views();
@@ -121,7 +121,7 @@
 					sinon.assert.calledWith(oStub, sinon.match(/myParent/), sinon.match(this.oTargets));
 				});
 
-				module("config - defaults and additional values", {
+				QUnit.module("config - defaults and additional values", {
 					setup: function () {
 						var oTargetConfig = {
 							controlAggregation: "foo",
@@ -164,7 +164,7 @@
 					assert.strictEqual(oOptions.rootView, "changed", "Did pass one of the routing api values from the config");
 				});
 
-				module("config - invalid parent", {
+				QUnit.module("config - invalid parent", {
 					teardown: function () {
 						this.oTargets.destroy();
 					}
@@ -188,7 +188,7 @@
 					sinon.assert.calledWith(oErrorStub, sinon.match(/was not found/), sinon.match(this.oTargets));
 				});
 
-				module("display", {
+				QUnit.module("display", {
 					setup: function () {
 						// System under test + Arrange
 						this.oTargets = new Targets({
@@ -763,7 +763,7 @@
 					});
 				});
 
-				module("destruction");
+				QUnit.module("destruction");
 
 				test("Should destroy all dependencies", function () {
 					// Arrange

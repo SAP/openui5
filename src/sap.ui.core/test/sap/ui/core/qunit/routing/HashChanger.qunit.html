@@ -286,7 +286,7 @@
 				assert.strictEqual(oHistoryChangeStub.callCount, 2, "History is disconnected from the first hashchanger");
 			});
 
-			module("Synchronous hash setting");
+			QUnit.module("Synchronous hash setting");
 
 			asyncTest("Should not omit a history entry when hash is set again in a handler", function () {
 				//Arrange

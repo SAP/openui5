@@ -2,7 +2,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeTypeMetadata");
 
 (function(ChangeTypeMetadata) {
 
-	module("sap.ui.fl.registry.ChangeTypeMetadata", {
+	QUnit.module("sap.ui.fl.registry.ChangeTypeMetadata", {
 		setup: function() {
 		},
 		teardown: function() {

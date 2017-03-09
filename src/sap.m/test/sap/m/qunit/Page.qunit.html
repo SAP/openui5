@@ -90,7 +90,7 @@
 				QUnit.start();
 			});
 
-			module("Initial Check");
+			QUnit.module("Initial Check");
 
 			test("Page rendered", function() {
 				ok(jQuery.sap.domById("myFirstPage"), "Page should be rendered");
@@ -221,7 +221,7 @@
 				oPage = null;
 			});
 
-			module("Properties Check");
+			QUnit.module("Properties Check");
 
 			test("showSubHeader", function() {
 				var oSubHeader = sap.ui.getCore().byId("mySubHeader");
@@ -305,7 +305,7 @@
 			if (sap.ui.Device.browser.mozilla || sap.ui.Device.browser.safari || sap.ui.Device.browser.chrome
 					|| (sap.ui.Device.browser.msie && sap.ui.Device.browser.version >= 9)) {
 
-				module("Scrolling");
+				QUnit.module("Scrolling");
 
 				function getScrollPos(sPageId) {
 					var fScrollLeft, scrollEnablement = sap.ui.getCore().byId(sPageId).getScrollDelegate();

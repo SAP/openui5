@@ -51,7 +51,7 @@ sap.ui.core.mvc.Controller</title>
 		return sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 	}, true);
 
-	module("Custom Tests");
+	QUnit.module("Custom Tests");
 
 	test("Embedded HTML", 13, function() {
 		var oView = sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});

@@ -214,13 +214,13 @@
 			type: sap.m.ButtonType.Accept
 		});
 
-		module("Initial Check");
+		QUnit.module("Initial Check");
 
 		test("Initialization", function () {
 			ok(!jQuery.sap.domById("popover"), "Popover is not rendered in the beginning.");
 		});
 
-		module("Open and Close", {
+		QUnit.module("Open and Close", {
 			setup: function () {
 				this.oButton = new sap.m.Button().addStyleClass("positioned");
 				this.oPopover = new sap.m.Popover({
@@ -392,7 +392,7 @@
 			assert.strictEqual(this.oPopover.getDomRef("cont").offsetWidth, 50);
 		});
 
-		module("Position calculation");
+		QUnit.module("Position calculation");
 
 		test("vertical calculation of Popover positioning should be correct", function () {
 			var testCase = function (offset, outerHeight, height, placement, expectedPlace) {
@@ -617,7 +617,7 @@
 			testCase(100, 150, 50, 50, 200, 200, sap.m.PlacementType.Top);
 		});
 
-		module("Property Setter");
+		QUnit.module("Property Setter");
 
 		test("Set modal to true or false", function () {
 			oButton.firePress();
@@ -1403,7 +1403,7 @@
 		});
 
 
-		module("Internal methods");
+		QUnit.module("Internal methods");
 
 		test("_applyPosition should be called with two parameters from check docking", function () {
 			var oPopover = new sap.m.Popover(),
@@ -1817,7 +1817,7 @@
 			oPopover.destroy();
 		});
 
-		module("Screen Reader");
+		QUnit.module("Screen Reader");
 
 		test("ARIA role", function () {
 			var oButton = new sap.m.Button({

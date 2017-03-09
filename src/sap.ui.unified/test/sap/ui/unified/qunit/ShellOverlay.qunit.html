@@ -120,7 +120,7 @@
 		qutils.delayTestStart();
 
 
-		module("API");
+		QUnit.module("API");
 
 		test("Aggregation 'content'", function() {
 			testMultiAggregation("content", oShellOverlay0);
@@ -135,7 +135,7 @@
 		});
 
 
-		module("Behavior");
+		QUnit.module("Behavior");
 
 		asyncTest("Open Overlay", function() {
 			ok(!checkVisibility(), "Overlay initially hidden");

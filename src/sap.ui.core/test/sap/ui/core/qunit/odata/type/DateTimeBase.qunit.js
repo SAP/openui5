@@ -71,7 +71,7 @@ sap.ui.require([
 	 * @param {string} sTitle
 	 *   The module's title
 	 */
-	function module(sTitle) {
+	function initModule(sTitle) {
 		QUnit.module(sTitle, {
 			beforeEach : function () {
 				this.oLogMock = sinon.mock(jQuery.sap.log);
@@ -260,7 +260,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	//*********************************************************************************************
-	module("sap.ui.model.odata.type.DateTime");
+	initModule("sap.ui.model.odata.type.DateTime");
 
 	dateTime("sap.ui.model.odata.type.DateTime");
 
@@ -347,7 +347,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	//*********************************************************************************************
-	module("sap.ui.model.odata.type.DateTimeOffset");
+	initModule("sap.ui.model.odata.type.DateTimeOffset");
 
 	dateTime("sap.ui.model.odata.type.DateTimeOffset");
 

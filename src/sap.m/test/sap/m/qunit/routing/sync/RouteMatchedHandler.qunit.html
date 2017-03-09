@@ -245,7 +245,7 @@
 					assert.strictEqual(oNavigateSpy.callCount, 1, "did call navigate");
 				});
 
-				module("Dialog closing", {
+				QUnit.module("Dialog closing", {
 					setup: function () {
 						var oPageToNavigateTo = new Page();
 						this.oNavContainer = new NavContainer({
@@ -313,7 +313,7 @@
 				});
 
 
-				module("Routing with targets", {
+				QUnit.module("Routing with targets", {
 					setup: function () {
 						this.oDummyMaster = createViewAndController("DummyMaster");
 						this.oDummyDetail = createViewAndController("DummyDetail");
@@ -429,7 +429,7 @@
 				///////////////////////////////////////////////////////
 				/// Integation test
 				///////////////////////////////////////////////////////
-				module("Integration tests");
+				QUnit.module("Integration tests");
 
 				QUnit.test("Should pass some data to the navContainer", function (assert) {
 					//Arrange

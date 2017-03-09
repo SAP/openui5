@@ -67,7 +67,7 @@
 
 <!-- Do the tests -->
 <script language="javascript">
-	module("Basics", {
+	QUnit.module("Basics", {
 		setup : function() {
 			oBtn1.getLayoutData().setLinebreak(false);
 			oBtn2.getLayoutData().setLinebreak(false);
@@ -116,7 +116,7 @@
 		ok(bTest, "Buttons put in separate rows with correct IDs");
 	});
 
-	module("Resize", {
+	QUnit.module("Resize", {
 		setup : function() {
 			oBtn1.getLayoutData().setLinebreak(false);
 			oBtn2.getLayoutData().setLinebreak(false);
@@ -177,7 +177,7 @@
 		}, 100);
 	});
 
-	module("Private functions");
+	QUnit.module("Private functions");
 	test("_getElementRect", function () {
 		//prepare
 		jQuery("#qunit-fixture").append("<div id='myDiv' style='width:25.1412399px;height:30.321564px'/>");
@@ -212,7 +212,7 @@
 		oResponsiveFlowLayout.destroy();
 	});
 
-	module("destroy on exit");
+	QUnit.module("destroy on exit");
 	test("Render manager is not created when control is not visible therefore it is not destroyed on exit", function() {
 		var oResponsiveFlowLayout = new rfl({visible: false});
 		var oExitSpy = sinon.spy(sap.ui.layout.ResponsiveFlowLayout.prototype, "exit");

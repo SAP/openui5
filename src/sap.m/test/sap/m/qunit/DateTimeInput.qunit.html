@@ -92,7 +92,7 @@
 
 	qutils.delayTestStart();
 
-	module("Properties");
+	QUnit.module("Properties");
 
 	test("Set and Get Date Value ", function() {
 
@@ -150,7 +150,7 @@
 		strictEqual(dti2.getDateValue(), null, "dateValue after invalid value set : " + dti2.getDateValue());
 	});
 
-	module("Interaction");
+	QUnit.module("Interaction");
 
 	test("Change event", function() {
 		var oDateValue2 = oFormatter.parse(sDateValue2);
@@ -202,7 +202,7 @@
 		ok(!oPicker._oValueStateMessage._oPopup.isOpen(), "error message is closed");
 	});
 
-	module("Accessibility");
+	QUnit.module("Accessibility");
 
 	test("getAccessibilityInfo", function() {
 		var oInput = new sap.m.DateTimeInput();

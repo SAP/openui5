@@ -23,7 +23,7 @@
 		sinon.config.useFakeTimers = true;
 		//the SUT won't be destroyed when single test is run
 		var bSkipDestroy = !!jQuery.sap.getUriParameters().get("testId");
-		module("API", {
+		QUnit.module("API", {
 			beforeEach: function () {
 				this.oMaskInput = new sap.m.MaskInput();
 				this.oMaskInput.placeAt("content");
@@ -263,7 +263,7 @@
 					"escape character");
 		});
 
-		module("Helper functionality", {
+		QUnit.module("Helper functionality", {
 			beforeEach: function () {
 				this.oMaskInput = new sap.m.MaskInput();
 			},
@@ -311,7 +311,7 @@
 
 		});
 
-		module("Deletion", {
+		QUnit.module("Deletion", {
 			beforeEach: function () {
 				this.oMaskInput = new sap.m.MaskInput();
 				this.oMaskInput.placeAt("content");
@@ -364,7 +364,7 @@
 			strictEqual(this.setAndDel('backspace', '99/9', '12/3', 2, 4), "12/_", "Delete selection with immutable characters");
 		});
 
-		module("Paste", {
+		QUnit.module("Paste", {
 			beforeEach: function () {
 				this.oMaskSerialNumber = new sap.m.MaskInput({
 					mask: "ZXYI-9999-9999-9999",
@@ -411,7 +411,7 @@
 			" '(02)-***-***'");
 		});
 
-		module("Focusing", {
+		QUnit.module("Focusing", {
 			beforeEach: function () {
 				this.oMaskInput = new sap.m.MaskInput();
 				this.oMaskInput.placeAt("content");
@@ -562,7 +562,7 @@
 			strictEqual(getMaskInputDomValue(oControl), '#a-bc');
 		});
 
-		module("Events", {
+		QUnit.module("Events", {
 			beforeEach: function () {
 				this.oMaskInput = new sap.m.MaskInput();
 				this.oMaskInput.setMask("999");
@@ -656,7 +656,7 @@
 
 		// Disabling for phantomJS browser only because keyboard handling does not work - remove this check when resolved
 		if (!sap.ui.Device.browser.phantomJS) {
-			module("RTL support", {
+			QUnit.module("RTL support", {
 				beforeEach: function () {
 					this.sTestLatinValue = "abcd";
 					this.sTestHebrewValue = "אני רוצה";//"I want" in Hebrew
@@ -841,7 +841,7 @@
 		}
 
 
-		module("Others", {
+		QUnit.module("Others", {
 			beforeEach: function () {
 				this.oMaskInput = new sap.m.MaskInput();
 				this.oMaskInput.placeAt("content");
@@ -1041,7 +1041,7 @@
 			equals(oSpyDestroyOldRule.callCount, 1, "The old rule is destroyed");
 		});
 
-		module("ARIA", {
+		QUnit.module("ARIA", {
 			beforeEach: function () {
 				this.oMaskInput = new sap.m.MaskInput({
 					mask: "993-99-999",

@@ -7,7 +7,7 @@ sap.ui.define([
 
 	var iExecutionDelay = Opa.config.executionDelay;
 
-	module("matchers without fake time");
+	QUnit.module("matchers without fake time");
 
 	QUnit.test("Should find a control by id without matchers", function(assert) {
 		// Arrange

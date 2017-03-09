@@ -90,7 +90,7 @@
 
 	qutils.delayTestStart();
 
-	module("SAPUI5 Button - test property accessor methods", {
+	QUnit.module("SAPUI5 Button - test property accessor methods", {
 		setup: function() {
 	 		b1 = sap.ui.getCore().getControl("b1");
 	 		b2 = sap.ui.getCore().getControl("b2");
@@ -138,7 +138,7 @@
 		equals(b2.getHelpId(),sHelpId,"HelpId for button2 is correct using 'equals()'!");
 	 });
 
- 	module("SAPUI5 Button - test event handlers", {
+ 	QUnit.module("SAPUI5 Button - test event handlers", {
 		setup: function() {
 	 		b1 = sap.ui.getCore().getControl("b1");
 	 		b2 = sap.ui.getCore().getControl("b2");
@@ -195,7 +195,7 @@
 			b1.attachPress(pressEventHandler1);
 		});
 
-	 	module("SAPUI5 Button - test methods", {
+	 	QUnit.module("SAPUI5 Button - test methods", {
 			setup: function() {
 		 		b1 = sap.ui.getCore().getControl("b1");
 		 		b2 = sap.ui.getCore().getControl("b2");

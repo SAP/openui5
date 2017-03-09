@@ -85,7 +85,7 @@
 
 	qutils.delayTestStart();
 
-	module("Basic", {
+	QUnit.module("Basic", {
 		setup : function() {
 			i1 = sap.ui.getCore().getControl("i1");
 			i2 = sap.ui.getCore().getControl("i2");
@@ -537,7 +537,7 @@
 		strictEqual(spy.callCount, 1, "The value help was requested by pressing Enter or Space");
 	});
 
-	module("Destroy");
+	QUnit.module("Destroy");
 
 	test("Destroy DOM", function() {
 		var oInput = new sap.m.Input({
@@ -624,7 +624,7 @@
 		ok(oInput._oSuggestionPopup === null || oInput._oSuggestionPopup === undefined, "The internal popup is destroyed");
 	});
 
-	module("Suggestions");
+	QUnit.module("Suggestions");
 
 	test("Suggestions deactivated and aggregations are not filled - list and popup should not be initialized", function(){
 		var oInput = new sap.m.Input({
@@ -2329,7 +2329,7 @@
 		oInput.destroy();
 	});
 
-	module("Key and Value");
+	QUnit.module("Key and Value");
 
 	function createInputWithSuggestions () {
 
@@ -2635,7 +2635,7 @@
 		oInput.destroy();
 	});
 
-	module("Input Description");
+	QUnit.module("Input Description");
 
 	test("Input description", function() {
 		var oInputWithDes = new sap.m.Input({
@@ -2658,7 +2658,7 @@
   		oInputWithDes.destroy();
 	});
 
-	module("Accessibility");
+	QUnit.module("Accessibility");
 
 	test("getAccessibilityInfo", function() {
 		var oInput = new sap.m.Input({value: "Value", tooltip: "Tooltip", placeholder: "Placeholder"});

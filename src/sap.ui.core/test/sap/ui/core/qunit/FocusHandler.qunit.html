@@ -51,7 +51,7 @@
 
 		qutils.delayTestStart();
 
-		module("Basic");
+		QUnit.module("Basic");
 
 		test("Check FocusHandler initialized", function() {
 			ok(oFocusHandler, "FocusHandler initialized");
@@ -69,7 +69,7 @@
 			jQuery("#customInput").get(0).focus(); //Reset for next test
 		});
 
-		module("Focus Tracking");
+		QUnit.module("Focus Tracking");
 
 		test("Check Focus Tracking", function() {
 			equal(oFocusHandler.oCurrent, null, "Initial Value 'Current':");

@@ -43,7 +43,7 @@
 		}
 
 	/* tests */
-	module("Basic rendering");
+	QUnit.module("Basic rendering");
 
 		test("Image is rendered when it's visible", function() {
 			// Arrange
@@ -82,7 +82,7 @@
 		});
 
 
-	module("Rendering decorative image");
+	QUnit.module("Rendering decorative image");
 
 		test("Alt text and tooltip", function() {
 			// Arrange
@@ -147,7 +147,7 @@
 		});
 
 
-	module("Rendering non decorative image");
+	QUnit.module("Rendering non decorative image");
 
 		test("Alt text and tooltip", function() {
 			// Arrange
@@ -238,7 +238,7 @@
 		});
 
 
-	module("Mode property");
+	QUnit.module("Mode property");
 
 		test("Default mode property", function() {
 			var oImage = createImage();
@@ -281,7 +281,7 @@
 		});
 
 
-	module("Dimensions");
+	QUnit.module("Dimensions");
 
 		test("Default Offset Dimensions", function() {
 			var oImage = createImage();
@@ -370,7 +370,7 @@
 		});
 
 
-	module("Density Aware");
+	QUnit.module("Density Aware");
 
 		if (window.devicePixelRatio > 1) {
 			asyncTest("Density Aware deafult value (true)", function() {
@@ -467,7 +467,7 @@
 		});
 
 
-	module("Src and ActiveSrc properties");
+	QUnit.module("Src and ActiveSrc properties");
 
 		if (window.devicePixelRatio === 1) {
 			asyncTest("Active Source Changed when pressed", function() {
@@ -560,7 +560,7 @@
 			oCore.applyChanges();
 		});
 
-	module("Tabindex");
+	QUnit.module("Tabindex");
 
 		test("Existence of attribute tabindex", function() {
 			var fn1 = function() {},
@@ -605,7 +605,7 @@
 			oImage.destroy();
 		});
 
-		module("Accessibility");
+		QUnit.module("Accessibility");
 
 		test("getAccessibilityInfo", function() {
 			var oImage = new sap.m.Image({alt: "Alt", tooltip: "Tooltip"});
@@ -630,7 +630,7 @@
 			oImage.destroy();
 		});
 
-	module("Bug fixes");
+	QUnit.module("Bug fixes");
 
 		asyncTest("Image with valid src under densityAware turned off", function() {
 			var oLoadSpy = sinon.spy(function() {

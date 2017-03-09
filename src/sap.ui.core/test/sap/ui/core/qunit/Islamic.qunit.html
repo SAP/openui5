@@ -183,7 +183,7 @@
 		'"gregorian":{"year":2015,"month":9, "date":15, "day" : 4, "hours":23, "minutes":16, "seconds":10, "milliseconds":118}}');
 
 		//1. Instance related
-		module("Constructor", {
+		QUnit.module("Constructor", {
 			beforeEach: function () {
 				prepare.call(this);
 			},
@@ -302,7 +302,7 @@
 			verifyDate("new Islamic(1430, 10, 2, 1, 22, 30) must be equal to 02.11.1430 (wednesday), 01:00:00.00 AM", oIslamicDate, 1430, 10, 2, 3, 1, 22, 30, 0);
 		});
 
-		module("Parameter values outside allowed ranges adjust the adjacent value as well", {
+		QUnit.module("Parameter values outside allowed ranges adjust the adjacent value as well", {
 			beforeEach: function () {
 				prepare.call(this);
 			},
@@ -517,7 +517,7 @@
 					oExpectedId.year, oExpectedId.month, oExpectedId.date, oExpectedId.day, oExpectedId.hours, oExpectedId.minutes, 9, 999);
 		});
 
-		module("Setters/Getters", {
+		QUnit.module("Setters/Getters", {
 			beforeEach: function () {
 				prepare.call(this);
 			},
@@ -759,7 +759,7 @@
 			equal(oIslamicDate.getTime(), date.timestamp - iTimezoneOffset, "Get time should return the UTC offset from 1.1.1970 UTC");
 		});
 
-		module("Others", {
+		QUnit.module("Others", {
 			beforeEach: function () {
 				prepare.call(this);
 			},
@@ -813,7 +813,7 @@
 			testIslamic2GregorianWithTestDataSet(oCivilTestData);
 		});
 
-		module("Customization", {
+		QUnit.module("Customization", {
 			beforeEach: function () {
 				prepare.call(this)
 			},

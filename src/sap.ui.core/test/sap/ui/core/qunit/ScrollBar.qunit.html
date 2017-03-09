@@ -51,7 +51,7 @@
 	qutils.delayTestStart();
 
 
-	module("Initial check");
+	QUnit.module("Initial check");
 
 
 	test("Controls Check", function() {
@@ -77,7 +77,7 @@
 	});
 
 
-	module("Properties");
+	QUnit.module("Properties");
 
 
 	test("Orientation", function() {
@@ -106,7 +106,7 @@
 	});
 
 
-	module("Event handler");
+	QUnit.module("Event handler");
 
 	asyncTest("Rerender scrollbars", function() {
 		equal(vSB.getScrollPosition(), 5, "1scroll position should be 5");
@@ -171,7 +171,7 @@
 
 
 	// Touch support
-	module("Touch Support", {
+	QUnit.module("Touch Support", {
 		setup : function() {
 			// Remember original touch event mode
 			this.touchEventMode = jQuery.sap.touchEventMode;

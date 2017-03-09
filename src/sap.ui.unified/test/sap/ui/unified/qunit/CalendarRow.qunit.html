@@ -232,7 +232,7 @@
 
 			qutils.delayTestStart();
 
-			module("Properties");
+			QUnit.module("Properties");
 
 			test("Appointment", function() {
 				var oAppointment = sap.ui.getCore().byId("App0");
@@ -244,7 +244,7 @@
 				equal(oAppointment.getSelected(), false, "Appointment: selected not set");
 			});
 
-			module("Rendering");
+			QUnit.module("Rendering");
 
 			test("Row", function() {
 				ok(!jQuery("#Row1").attr("style"), "Row1: no width and heigh set");
@@ -685,7 +685,7 @@
 				ok(jQuery("#Row1-Group0").get(0), "Group appointment rendered");
 			});
 
-			module("Interaction");
+			QUnit.module("Interaction");
 
 			test("click on group-appointment", function() {
 				qutils.triggerEvent("tap", "Row1-Group0");
@@ -915,7 +915,7 @@
 				equal(sType, "sapend", "LeaveRow event 'type' parameter set");
 			});
 
-			module("functions");
+			QUnit.module("functions");
 
 			test("focusAppointment", function() {
 				oRow1.focusAppointment(sap.ui.getCore().byId("App2"));
@@ -942,7 +942,7 @@
 				equal(oRow2._getVisibleAppointments().length, 1, "The number of visible appointments is as expected");
 			});
 
-		module("RTL", {
+		QUnit.module("RTL", {
 				beforeEach: function () {
 					//Arrange
 					this.bOriginalRTLMode = sap.ui.getCore().getConfiguration().getRTL();

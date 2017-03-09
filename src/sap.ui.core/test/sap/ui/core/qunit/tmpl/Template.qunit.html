@@ -30,7 +30,7 @@
 
 		<script>
 
-			module("Basic Template Tests");
+			QUnit.module("Basic Template Tests");
 
 			test("Basic Lookup", 9, function() {
 
@@ -88,7 +88,7 @@
 				ok(theEx !== undefined, "Unknown template type not found. Exception was raised!");
 			});
 
-			module("Binding Template Tests");
+			QUnit.module("Binding Template Tests");
 
 			asyncTest("Binding Path in Template", 1, function() {
 				var sTitle = "Test123";

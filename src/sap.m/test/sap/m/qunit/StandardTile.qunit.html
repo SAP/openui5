@@ -76,7 +76,7 @@
 
 		tc.placeAt("tiles");
 
-		module("Rendering All Fields");
+		QUnit.module("Rendering All Fields");
 
 		test("ControlRendered", function() {
 			notEqual(jQuery.sap.domById(tileBasicId), null, "tileBasic should be rendered.");
@@ -153,7 +153,7 @@
 
 
 
-		module("Not Rendering Optional Fields");
+		QUnit.module("Not Rendering Optional Fields");
 
 		test("IconNotRendered", function() {
 			equal(jQuery.sap.domById(tileNoIconId + "-img"), null, "tileNoIcon icon should not be rendered.");
@@ -164,7 +164,7 @@
 		});
 
 
-		module("Events", {
+		QUnit.module("Events", {
 			setup : function() {
 				tileBasic = sap.ui.getCore().getControl(tileBasicId);
 			},

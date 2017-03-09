@@ -123,14 +123,14 @@
 
 			app.addPage(page).placeAt("content");
 
-			module("Initial Check");
+			QUnit.module("Initial Check");
 
 			test("Initialization", function () {
 				ok(!jQuery.sap.domById("dialog"), "Dialog is not rendered before it's ever opened.");
 				equal(oDialog.oPopup._sF6NavMode, "SCOPE", "Dialog's popup navigation mode is set to SCOPE.")
 			});
 
-			module("Content preservation");
+			QUnit.module("Content preservation");
 
 			asyncTest("Preserve Dialog Content", function() {
 				this.clock.restore();
@@ -192,7 +192,7 @@
 				oDialog.open();
 			});
 
-			module("Open and Close");
+			QUnit.module("Open and Close");
 
 			test("Open Dialog", function () {
 				oButton.firePress();
@@ -251,7 +251,7 @@
 				oDialog.destroy();
 			});
 
-			module("set properties");
+			QUnit.module("set properties");
 
 			test("Set vertical/horizontal scrolling to false", function () {
 				var oDialog = new sap.m.Dialog({
@@ -736,7 +736,7 @@
 				oDialog.destroy();
 			});
 
-			module("Initial focus");
+			QUnit.module("Initial focus");
 
 			test("Association initialFocus", function () {
 				// Arrange
@@ -1070,7 +1070,7 @@
 				jQuery('html').css('overflow', 'auto');
 			}, 1000);
 
-			module("Accessibility");
+			QUnit.module("Accessibility");
 
 			test("Check if ValueState is present", function () {
 				// Arrange

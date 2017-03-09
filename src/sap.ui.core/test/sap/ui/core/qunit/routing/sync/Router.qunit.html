@@ -39,7 +39,7 @@
 		jQuery.sap.require("sap.ui.thirdparty.hasher");
 		jQuery.sap.require("sap.ui.core.routing.Router");
 
-		module("initialization");
+		QUnit.module("initialization");
 
 		test("Should initialize the router instance", function() {
 			//Arrange
@@ -200,7 +200,7 @@
 			oFirstRouter.destroy();
 		});
 
-		module("config", {
+		QUnit.module("config", {
 			setup : function() {
 				//make sure to start with an empty hash
 				hasher.setHash("");
@@ -363,7 +363,7 @@
 			oRouter.destroy();
 		});
 
-		module("greedy");
+		QUnit.module("greedy");
 
 		test("Should create a greedy route", function () {
 			// Arrange + System under test
@@ -448,7 +448,7 @@
 			oRouter.destroy();
 		});
 
-		module("routing", {
+		QUnit.module("routing", {
 			setup : function() {
 				//make sure to start with an empty hash
 				hasher.setHash("");
@@ -625,7 +625,7 @@
 			router.destroy();
 		});
 
-		module("hrefGeneration");
+		QUnit.module("hrefGeneration");
 
 		test("Should create an URL for a route", function() {
 			//Arrange
@@ -650,7 +650,7 @@
 			router.destroy();
 		});
 
-		module("navTo", {
+		QUnit.module("navTo", {
 			setup: function () {
 				this.oRouter = new sap.ui.core.routing.Router();
 				this.oRouter.oHashChanger = {
@@ -670,7 +670,7 @@
 			strictEqual(oReturnValue, this.oRouter, "able to chain navTo");
 		});
 
-		module("View generation");
+		QUnit.module("View generation");
 
 		test("View initialization", function() {
 
@@ -1014,7 +1014,7 @@
 			oShell.destroy();
 		});
 
-		module("View events");
+		QUnit.module("View events");
 
 		function createXmlView () {
 			var sXmlViewContent = [
@@ -1030,7 +1030,7 @@
 			return sap.ui.view(oViewOptions);
 		}
 
-		module("views - creation and caching", {
+		QUnit.module("views - creation and caching", {
 			setup: function () {
 				// System under test + Arrange
 				this.oRouter = new sap.ui.core.routing.Router();
@@ -1079,7 +1079,7 @@
 		});
 
 
-		module("created event", {
+		QUnit.module("created event", {
 			setup: function () {
 				// System under test + Arrange
 				this.oRouter = new sap.ui.core.routing.Router();
@@ -1987,7 +1987,7 @@
 			this.oRouter.initialize();
 		});
 
-		module("component");
+		QUnit.module("component");
 
 		test("Should create a view with an component", function () {
 			// Arrange
@@ -2010,7 +2010,7 @@
 			oRouter.destroy();
 		});
 
-		module("targets", {
+		QUnit.module("targets", {
 				setup: function () {
 					this.oShell = new sap.ui.ux3.Shell();
 					this.oChildShell = new sap.ui.ux3.Shell();
@@ -2141,7 +2141,7 @@
 			strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the shell");
 		});
 
-		module("getTargets");
+		QUnit.module("getTargets");
 
 		test("Should get the created targets instance", function () {
 			// System under test + arrange

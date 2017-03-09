@@ -84,7 +84,7 @@
 
 		sap.ui.getCore().applyChanges();
 
-		module("Absolute Area Sizes");
+		QUnit.module("Absolute Area Sizes");
 
 		test("Absolute Horizontal sizing", function() {
 			oSplitter.setOrientation(sap.ui.core.Orientation.Horizontal);
@@ -191,7 +191,7 @@
 			oSplitter.destroy();
 		});
 
-		module("Automatic Area Sizes");
+		QUnit.module("Automatic Area Sizes");
 
 		test("Automatic horizontal sizing ", function() {
 			oSplitter.setOrientation(sap.ui.core.Orientation.Horizontal);
@@ -238,7 +238,7 @@
 		});
 
 
-		module("Mixed Area Sizes");
+		QUnit.module("Mixed Area Sizes");
 
 		test("Mixed horizontal sizing", function() {
 			oSplitter.setOrientation(sap.ui.core.Orientation.Horizontal);
@@ -292,7 +292,7 @@
 			oSplitter.rerender();
 		});
 
-		module("General tests");
+		QUnit.module("General tests");
 		test("Events and Rerendering", function() {
 			ok(iResizes === 3, "Number of resize-events fired (" + iResizes + ") is correct.");
 			ok(iRenderings === 7, "Number of rerenderings (" + iRenderings + ") is correct.");

@@ -66,7 +66,7 @@
 
 		list.placeAt("list");
 
-		module("Rendering");
+		QUnit.module("Rendering");
 
 		test("ControlRendered", function() {
 			ok(jQuery.sap.domById("test_list"), "List should be rendered.");
@@ -222,7 +222,7 @@
 	});
 
 	/******************************************************************/
-	module("Rendering Markers aggregation");
+	QUnit.module("Rendering Markers aggregation");
 
 		test("Render Draft and Favorite", function() {
 			var markersOlI = new sap.m.ObjectListItem({
@@ -268,7 +268,7 @@
 			markersOlI.destroy();
 		});
 
-		module("Rendering Markers aggregation");
+		QUnit.module("Rendering Markers aggregation");
 
 		test("Removing marker", function() {
 			var markersOlI = new sap.m.ObjectListItem({
@@ -308,7 +308,7 @@
 		});
 		list.addItem(imageOLI1);
 
-		module("Active state");
+		QUnit.module("Active state");
 
 		test("TestActiveIcon", function() {
 			imageOLI1.setActive(true);
@@ -320,7 +320,7 @@
 			strictEqual(imageSrc, imageOLI1.getIcon(), "The icon should be inactive");
 		});
 
-		module("Icon / Image ratio");
+		QUnit.module("Icon / Image ratio");
 
 		asyncTest("Icon has equal width and height", function() {
 			var imageOLIIcon = new sap.m.ObjectListItem("imageOLIIcon", {
@@ -366,7 +366,7 @@
 
 		/******************************************************************/
 
-		module("Events", {
+		QUnit.module("Events", {
 				setup : function() {
 				pressed = undefined;
 			}
@@ -382,7 +382,7 @@
 
 		/******************************************************************/
 
-		module("Whitespace Handling");
+		QUnit.module("Whitespace Handling");
 
 		var liEmptyStatus1 = new sap.m.ObjectListItem({
 			title: "Empty first status",
@@ -446,7 +446,7 @@
 		});
 		list.addItem(markerOli);
 
-		module("Dynamic Marker States");
+		QUnit.module("Dynamic Marker States");
 
 		asyncTest("Flag Marker Set", function() {
 
@@ -516,7 +516,7 @@
 		imageOLI.placeAt("destroy-list");
 		titleOLI.placeAt("destroy-list");
 
-		module("Exiting");
+		QUnit.module("Exiting");
 
 		test("TestIconExit", function() {
 

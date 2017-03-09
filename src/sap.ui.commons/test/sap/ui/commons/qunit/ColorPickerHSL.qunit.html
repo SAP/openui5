@@ -45,7 +45,7 @@
 			* QUINIT TESTS MODULE 'INITIALIZATION'
 			*****************************************************/
 			// Set a Test Module for module "Initialization"
-			module("Initialization");
+			QUnit.module("Initialization");
 
 			//Testcase 1: Initialize and immediately destroy
 			test("Initialize and immediately destroy", function() {
@@ -84,7 +84,7 @@
 			* QUINIT TESTS MODULE 'PROPERTIES'
 			*****************************************************/
 			// Set a Test Module for module "Properties"
-			module("Properties");
+			QUnit.module("Properties");
 
 			//Testcase 1: Default values
 			test("Default Input Parameters: ", function() {
@@ -216,7 +216,7 @@
 			* QUINIT TESTS MODULE 'DATA-INPUT'
 			*****************************************************/
 			// Set a Test Module for module "Data-Changes"
-			module("Data-Changes");
+			QUnit.module("Data-Changes");
 
 			//Testcase: Lightness changed
 			test("Lightness changed => values calculated: ", function() {
@@ -260,7 +260,7 @@
 				oColorPicker.destroy();
 			});
 
-			
+
 			//Testcase 9: Saturation changed
 			test("default hsl(120,100%,75%), SATURATION changed => R, G, B and HEX calculated: ", function() {
 				var oColorPicker = createColorPicker({colorString: "hsl(120,100%,75%)"});
@@ -534,7 +534,7 @@
 			* QUINIT TESTS MODULE 'RESULTS'
 			*****************************************************/
 			// Set a Test Module for module "Results"
-		module("Results");
+		QUnit.module("Results");
 
 			//Testcase 15: Results of named parameter
 			test("Result of Input Parameter 'lime': ", function() {
@@ -589,7 +589,7 @@
 			* QUINIT TESTS MODULE 'EVENTS'
 			*****************************************************/
 			// Set a Test Module for module "Events"
-			module("Events");
+			QUnit.module("Events");
 
 			//Testcase 17: Mouse-Event of Slider
 			test("Mouse-Event: Click on Slider: ", function() {
@@ -642,7 +642,7 @@
 			//Testcase 19: Mouse-Event of Colorpipcker-Box
 			test("Mouse-Event: Click in ColorPicker-Box: ", function() {
 				var oColorPicker = createColorPicker({id: "ColorPicker2", colorString: "hsl(120,100%,75%)"});
-				
+
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
@@ -712,10 +712,10 @@
 				var oColorPicker = createColorPicker();
 					oColorPicker.attachChange(handleColorPickerChange);
 					oColorPicker.setColorString("red");
-	
+
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
-	
+
 				equal(oColorPicker.oRedField.getValue(), colors.r.toString(), "Value of RED: 255");
 				equal(oColorPicker.oGreenField.getValue(), colors.g.toString(), "Value of GREEN: 0");
 				equal(oColorPicker.oBlueField.getValue(), colors.b.toString(), "Value of BLUE: 0");
@@ -723,10 +723,10 @@
 				equal(oColorPicker.oSatField.getValue(), colors.s.toString(), "Value of SATURATION: 100");
 				equal(oColorPicker.oLitField.getValue(), colors.l.toString(), "Value of LIGHTNESS: 50");
 				equal(oColorPicker.Color.hex, colors.hex , "Value of HEX: #ff0000");
-	
+
 				oColorPicker.setColorString("lime");
 				sap.ui.getCore().applyChanges();
-	
+
 				equal(oColorPicker.oRedField.getValue(), colors.r.toString(), "Value of RED: 0");
 				equal(oColorPicker.oGreenField.getValue(), colors.g.toString(), "Value of GREEN: 255");
 				equal(oColorPicker.oBlueField.getValue(), colors.b.toString(), "Value of BLUE: 0");
@@ -740,7 +740,7 @@
 			});
 
 
-		module("test isColor function e.g. test _parseColorString with bCheckOnly parameter set to true");
+		QUnit.module("test isColor function e.g. test _parseColorString with bCheckOnly parameter set to true");
 
 		test("isColor test with named color parameter 'aquamarine'", function() {
 			//Arrange

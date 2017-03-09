@@ -108,7 +108,7 @@
 
 			qutils.delayTestStart();
 
-			module("initialization");
+			QUnit.module("initialization");
 
 			test("Date formatter", function() {
 				ok(!oDP1.getValue(), "DP1: no value");
@@ -131,7 +131,7 @@
 				ok(!oDP1._oPopup, "DP1: no popup exists");
 			});
 
-			module("Rendering");
+			QUnit.module("Rendering");
 
 			test("styling", function() {
 				equal(jQuery("#DP1").css("width"), jQuery("body").css("width"), "Default width is 100%"); // comparision with 100% will not work, because with is returned in px
@@ -149,7 +149,7 @@
 				equal(jQuery("#DP7").children("div.sapMInputDivWrapper").children("input").val(), "2/10/1437 AH", "DP7: defined islamic output format from binding used");
 			});
 
-			module("interaction");
+			QUnit.module("interaction");
 
 			test("change date by typing", function() {
 				bChange = false;
@@ -655,7 +655,7 @@
 				oDP.destroy();
 			});
 
-			module("ARIA");
+			QUnit.module("ARIA");
 			test("Tooltip and date annoncement should be set correctly at the described by", function() {
 				var sTooltip = "tooltip";
 				var sPlaceholder = "placeholder";
@@ -729,7 +729,7 @@
 				strictEqual(sAriaText, sExpectedAria, "Aria contains text for the secondary calendar type");
 			});
 
-			module("Events", {
+			QUnit.module("Events", {
 				beforeEach: function () {
 					this.oDP = new sap.m.DatePicker("EDP").placeAt("uiArea6");
 					sap.ui.getCore().applyChanges();
@@ -761,7 +761,7 @@
 				strictEqual(this.oSpy.callCount, 2, "Event handler should be called second time after navigating in calendar");
 			});
 
-			module("SpecialDates - lazy loading", {
+			QUnit.module("SpecialDates - lazy loading", {
 				beforeEach: function () {
 					this.oDP = new sap.m.DatePicker("SDP", {
 						dateValue: new Date(2016, 0, 1),
@@ -900,7 +900,7 @@
 				}, 0);
 			});
 
-			module("Private methods", {
+			QUnit.module("Private methods", {
 				beforeEach: function () {
 					this.oDP = new sap.m.DatePicker();
 				},

@@ -58,7 +58,7 @@
 		<!-- Test functions -->
 		<script>
 
-			module("Appearance");
+			QUnit.module("Appearance");
 
 			test("Overlay exists", function () {
 				equals(true, true, "...");
@@ -67,7 +67,7 @@
 				equal(oDomRef.className, "sapUiUx3Overlay", "Rendered Overlay should have the class 'sapUiUx3TI'");
 			});
 
-			module("Behaviour");
+			QUnit.module("Behaviour");
 
 			test("OpenNew Event", function () {
 				expect(1);

@@ -28,7 +28,7 @@
 			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 			sinon.config.useFakeTimers = true;
 
-			module("rendering");
+			QUnit.module("rendering");
 
 			function renderingTest (fnAssertions) {
 
@@ -424,7 +424,7 @@
 				return;
 			}
 
-			module("positioning");
+			QUnit.module("positioning");
 
 			function getJqueryObjectsForBar (oBar) {
 				var sBarId = oBar.getId();
@@ -822,7 +822,7 @@
 			});
 
 
-			module("resizing");
+			QUnit.module("resizing");
 
 			test("Should attach to the resize handlers", function() {
 				//Arrange + System under Test + Act

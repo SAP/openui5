@@ -29,7 +29,7 @@
 			var CalendarUtils = sap.ui.unified.calendar.CalendarUtils,
 				UniversalDate = sap.ui.core.date.UniversalDate;
 
-			module("Events", {
+			QUnit.module("Events", {
 				beforeEach: function () {
 					this.oPC = new sap.m.PlanningCalendar('pc1', {
 						startDate: new Date(2015, 0, 1, 8, 0, 0),

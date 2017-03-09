@@ -8,7 +8,7 @@
 <script id="sap-ui-bootstrap" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"
 	data-sap-ui-resourceroots='{ "resourceroot": "./" }'>
-	
+
 </script>
 
 <link rel="stylesheet"
@@ -33,7 +33,7 @@
 		jQuery.sap.require("sap.m.P13nDialog");
 		jQuery.sap.require("sap.m.P13nPanel");
 
-		module("Properties", {
+		QUnit.module("Properties", {
 			setup: function() {
 			},
 			teardown: function() {
@@ -559,7 +559,7 @@
 			// assertions
 			ok(!oDialog);
 
-			// cleanup			
+			// cleanup
 			oP13nDialog.destroy();
 		});
 
@@ -619,7 +619,7 @@
 				}
 			]);
 
-			// cleanup			
+			// cleanup
 			oP13nDialog.destroy();
 		});
 

@@ -31,7 +31,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 	var oChangeDefinition;
 
-	module('sap.ui.fl DefaultVariants', {
+	QUnit.module('sap.ui.fl DefaultVariants', {
 		setup: function() {
 			Cache.setActive(false);
 

@@ -99,7 +99,7 @@
 			// TESTS
 
 
-			module("External Fragments");
+			QUnit.module("External Fragments");
 
 			var oDummyController = {
 				doSomething: function(){
@@ -306,7 +306,7 @@
 			});
 
 
-			module("Inline Fragments");
+			QUnit.module("Inline Fragments");
 
 			var oViewWithFragments;
 
@@ -353,7 +353,7 @@
 
 
 
-			module("Fragments referenced from XMLViews");
+			QUnit.module("Fragments referenced from XMLViews");
 
 			var oXmlView, oXmlFragmentInXmlView, oXmlFragmentWithIdInXmlView, oHtmlFragmentInXmlView,
 				oHtmlFragmentWithIdInXmlView, oJsFragmentInXmlView, oJsFragmentWithIdInXmlView;
@@ -522,7 +522,7 @@
 
 
 
-			module("Dialog Fragments");
+			QUnit.module("Dialog Fragments");
 
 			var DATABOUND_TEXT_IN_DIALOG = "Text from Databinding in Dialog";
 
@@ -619,7 +619,7 @@
 
 
 
-			module("Fragments with no Controller");
+			QUnit.module("Fragments with no Controller");
 
 			test("XML Fragment loaded from file", function() {
 				expect(2);
@@ -663,7 +663,7 @@
 				equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
 			});
 
-			module("DataBinding", {
+			QUnit.module("DataBinding", {
 				beforeEach : function() {
 					jQuery.sap.registerModulePath("my", "./fragment");
 				},

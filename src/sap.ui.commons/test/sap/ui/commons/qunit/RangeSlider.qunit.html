@@ -76,7 +76,7 @@
 <script>
 	qutils.delayTestStart();
 
-	module("Horizontal: Properties");
+	QUnit.module("Horizontal: Properties");
 
 	test("Default Values", function() {
 		var oSli = oSlis["oSli1"];
@@ -156,7 +156,7 @@
 		equal(oGrip.offsetLeft, 135, "Grip position after Set Value without Step-wide: ");
 	});
 
-	module("Horizontal: Interaction");
+	QUnit.module("Horizontal: Interaction");
 
 	test("Keyboard with Step", function() {
 		var oSli = oSlis["oSli2"];
@@ -829,7 +829,7 @@
 
 	});
 
-	module("Horizontal: Visual Appearence");
+	QUnit.module("Horizontal: Visual Appearence");
 
 	test("Visibility", function() {
 		ok(jQuery("#oSli3").get(0), "Visible: expected defined");
@@ -870,7 +870,7 @@
 		ok(oText, "right text visible: expected defined");
 	});
 
-	module("Vertical: Properties");
+	QUnit.module("Vertical: Properties");
 
 	test("Set Value", function() {
 		var oSli = oSlis["oSli7"];
@@ -910,7 +910,7 @@
 		equal(oGrip.offsetTop, 355, "Grip position after Set Value without Step-wide: ");
 	});
 
-	module("Vertical: Interaction");
+	QUnit.module("Vertical: Interaction");
 
 	test("Keyboard with Step", function() {
 		var oSli = oSlis["oSli7"];
@@ -1426,7 +1426,7 @@
 		oSli.detachChange();
 	});
 
-	module("Vertical: Visual Appearence");
+	QUnit.module("Vertical: Visual Appearence");
 
 	test("Visibility", function() {
 		ok(jQuery("#oSli8").get(0), "Visible: expected defined");
@@ -1467,7 +1467,7 @@
 		ok(oText, "right text visible: expected defined");
 	});
 
-	module("Events");
+	QUnit.module("Events");
 
 	asyncTest("Change Event", function() {
 		// Randomize number of repetitions

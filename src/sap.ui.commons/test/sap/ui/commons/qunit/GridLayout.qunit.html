@@ -394,7 +394,7 @@
 		// test functions
 		qutils.delayTestStart();
 
-		module("Rendering");
+		QUnit.module("Rendering");
 
 		test("Grid", function() {
 			ok(jQuery.sap.domById("F1"), "Form1 is rendered");
@@ -522,7 +522,7 @@
 			ok(!jQuery.sap.domById("C6E3_T1"), "Content of invisible Element is not rendered");
 		});
 
-		module("Interaction");
+		QUnit.module("Interaction");
 
 		test("Container expander", function() {
 			//expander function
@@ -621,7 +621,7 @@
 			equal(jQuery.sap.byId("C1E6_T1").is(":focus"), true, "Arrow Left: Container 1, Element 6, Field 1 - Selected");
 		});
 
-		module("Error handling");
+		QUnit.module("Error handling");
 
 		test("too much fields", function() {
 			var aLogEntries = jQuery.sap.log.getLogEntries();

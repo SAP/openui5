@@ -51,7 +51,7 @@
 		var tcb1 = sap.ui.getCore().getControl("tcb1");
  		var tcb2 = sap.ui.getCore().getControl("tcb2");
 
-		module("Basic");
+		QUnit.module("Basic");
 
 		test("TextOk", function() {
 			strictEqual(tcb1.getText(), sText, "tcb1.getText() returns wrong result");

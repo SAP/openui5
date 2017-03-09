@@ -29,7 +29,7 @@
 			var sSupportTitle = "Technical Information";
 
 
-			module("Open API");
+			QUnit.module("Open API");
 			test("Test main control functionality", function() {
 				sap.m.Support.open();
 
@@ -45,7 +45,7 @@
 				oSupport.destroy();
 			});
 
-			module("On and Off API");
+			QUnit.module("On and Off API");
 			test("Register/Unregister event", function() {
 
 				var sEventName = "ontouchstart";

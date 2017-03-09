@@ -90,7 +90,7 @@
 		oDropdown5.bindProperty("selectedKey", "/key");
 		oDropdown5.bindAggregation("items", "/items", oItemTemplate);
 
-		module("Control Test - sap.ui.commons.DropdownBox", {
+		QUnit.module("Control Test - sap.ui.commons.DropdownBox", {
 			setup: function(){
 				oDropdown.setValue(sCheckText);
 				oDropdown.focus();
@@ -140,7 +140,7 @@
 			equal(oDropdown.getSelectedItemId(), "fi", "setValue: selectedId");
 		});
 
-		module("Autocomplete Tests - sap.ui.commons.DropdownBox", {
+		QUnit.module("Autocomplete Tests - sap.ui.commons.DropdownBox", {
 			setup: function(){
 				resetBeforeTest();
 				oDropdown.focus();
@@ -178,7 +178,7 @@
 			equal(oDropdown.getInputDomRef().value, "third item", "DropdownBox' value should have changed in HTML.");
 		});
 
-		module("Arrow Control Tests - sap.ui.commons.DropdownBox", {
+		QUnit.module("Arrow Control Tests - sap.ui.commons.DropdownBox", {
 			setup: function(){
 				oDropdown.focus();
 			}
@@ -238,7 +238,7 @@
 
 		});
 
-		module("Misc. Keys Control Tests - sap.ui.commons.DropdownBox", {
+		QUnit.module("Misc. Keys Control Tests - sap.ui.commons.DropdownBox", {
 			setup: function(){
 				oDropdown.focus();
 			},
@@ -284,7 +284,7 @@
 			equal(oDropdown.getSelectedItemId(), "ti", "selectedItemId should not have changed");
 		});
 
-		module("Open / Close Tests - sap.ui.commons.DropdownBox", {
+		QUnit.module("Open / Close Tests - sap.ui.commons.DropdownBox", {
 			setup: function(){
 				oDropdown.focus();
 			},
@@ -322,7 +322,7 @@
 		});
 
 
-		module("Mouse Handling Tests - sap.ui.commons.DropdownBox", {
+		QUnit.module("Mouse Handling Tests - sap.ui.commons.DropdownBox", {
 			setup: function(){
 				resetBeforeTest();
 				oDropdown.focus();
@@ -361,7 +361,7 @@
 		});
 
 
-		module("Misc. Keys Control Tests with open Listbox - sap.ui.commons.DropdownBox", {
+		QUnit.module("Misc. Keys Control Tests with open Listbox - sap.ui.commons.DropdownBox", {
 			setup: function(){
 				oDropdown.focus();
 
@@ -424,7 +424,7 @@
 			equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should not have changed in HTML.");
 		});
 
-		module("Event Tests - sap.ui.commons.DropdownBox", {
+		QUnit.module("Event Tests - sap.ui.commons.DropdownBox", {
 			setup: function(){
 				//resetBeforeTest();
 				oDropdown.focus();
@@ -554,7 +554,7 @@
 			equal(oDropdown.getInputDomRef().value, sNew, "'DropdownBox' value should have changed in HTML.");
 		}
 
-		module("SearchHelp");
+		QUnit.module("SearchHelp");
 
 		asyncTest("Serch help item", function() {
 			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
@@ -606,7 +606,7 @@
 			},100);
 		});
 
-		module("Other");
+		QUnit.module("Other");
 
 		test("Change items while open", function() {
 			var oListBox = sap.ui.getCore().byId("ddb4-lb")
@@ -654,7 +654,7 @@
 			qutils.triggerEvent("click", "ddb4-icon");
 		});
 
-		module("DataBinding");
+		QUnit.module("DataBinding");
 		test("initial binding", function(){
 			// even if selectedKey is set before items it must be used after items are added
 			equal(oDropdown5.getValue(), "Item 2", "Text of second item must be set");

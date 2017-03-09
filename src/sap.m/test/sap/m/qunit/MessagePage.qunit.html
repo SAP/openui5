@@ -41,7 +41,7 @@
 			});
 		}
 
-		module("Basic rendering");
+		QUnit.module("Basic rendering");
 
 		test("The control should be rendered", function(){
 			// Arrange`
@@ -175,7 +175,7 @@
 			oMessagePage.destroy();
 		});
 
-		module("Api tests");
+		QUnit.module("Api tests");
 
 		test("The control setTitle should render the correct value", function(){
 			// Arrange
@@ -319,7 +319,7 @@
 			oMessagePage.destroy();
 		});
 
-		module("Destroying");
+		QUnit.module("Destroying");
 
 		test("The control destroy should destroy the control and all the inner containers", function(){
 			// Arrange
@@ -353,7 +353,7 @@
 			ok(!iActualResult, "The messagePage is destroyed");
 		});
 
-		module("Custom aggregation");
+		QUnit.module("Custom aggregation");
 
 		test("The control is set with customText", function(){
 			// Arrange

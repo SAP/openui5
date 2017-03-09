@@ -61,7 +61,7 @@
 	// TEST functions
 	qutils.delayTestStart();
 
-	module("Appearance");
+	QUnit.module("Appearance");
 
 	test("Assignment of elements", function() {
 		// Tooltip
@@ -73,7 +73,7 @@
 		return jQuery("#callout").filter(":visible").size() > 0;
 	}
 
-	module("Callout: open and close");
+	QUnit.module("Callout: open and close");
 	asyncTest("Open Callout", function() {
 		ok(true, "A-sync OK start");
 		qutils.triggerMouseEvent("CButton", "mouseover");
@@ -187,7 +187,7 @@
 	});
 
 
-	module("Callout: keyboard navigation");
+	QUnit.module("Callout: keyboard navigation");
 	asyncTest("Initial Focus", function() {
 		oButton.focus();
 		ok(document.activeElement.id == "CButton", "Focus the button initially");

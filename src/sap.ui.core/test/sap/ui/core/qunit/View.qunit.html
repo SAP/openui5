@@ -30,7 +30,7 @@
 	jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
 	jQuery.sap.require("sap.ui.core.mvc.XMLView");
 
-	module("sap.ui.core.mvc.View");
+	QUnit.module("sap.ui.core.mvc.View");
 
 	test("ID handling", 5, function () {
 
@@ -46,7 +46,7 @@
 		oView.destroy();
 	});
 
-	module("sap.ui.core.mvc.View#runPreprocessor(sync)", {
+	QUnit.module("sap.ui.core.mvc.View#runPreprocessor(sync)", {
 		setup: function() {
 			mock = sinon.mock(sap.ui.core.util.XMLPreprocessor);
 			expectProcess = mock.expects("process");
@@ -233,7 +233,7 @@
 		sinon.assert.notCalled(expectProcess);
 	});
 
-	module("sap.ui.core.mvc.View#runPreprocessor (async)", {
+	QUnit.module("sap.ui.core.mvc.View#runPreprocessor (async)", {
 		setup: function() {
 			mock = sinon.mock(sap.ui.core.util.XMLPreprocessor);
 			expectProcess = mock.expects("process");
@@ -421,7 +421,7 @@
 		});
 	});
 
-	module("sap.ui.core.mvc.View#registerPreprocessor", {
+	QUnit.module("sap.ui.core.mvc.View#registerPreprocessor", {
 		setup: function() {
 			_mPreprocessors = jQuery.extend(true, {}, sap.ui.core.mvc.View._mPreprocessors);
 			this.sViewContent = [
@@ -692,7 +692,7 @@
 		});
 	});
 
-	module("sap.ui.core.mvc.View#loaded");
+	QUnit.module("sap.ui.core.mvc.View#loaded");
 
 	asyncTest("Retrieve promise for view generally", 2, function() {
 		var oView = new sap.ui.core.mvc.View({});

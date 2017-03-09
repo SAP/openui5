@@ -43,7 +43,7 @@
 
 		qutils.delayTestStart();
 
-		module("API");
+		QUnit.module("API");
 
 		test("Default Values", function() {
 			equals(oExact1.getResultText(), "", "Default 'resultText':");
@@ -74,7 +74,7 @@
 		});
 
 
-		module("Interaction Flow");
+		QUnit.module("Interaction Flow");
 
 		test("Initial State", function() {
 			equals(oSearchTextField.getValue(), "", "Initial text State of Search TextField:");

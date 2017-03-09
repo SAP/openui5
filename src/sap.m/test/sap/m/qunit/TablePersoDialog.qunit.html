@@ -176,7 +176,7 @@
 		var oTablePersoDialog1 = null;
 
 
-		module("Initial Check");
+		QUnit.module("Initial Check");
 
 		test("Initialization", function() {
 			oTablePersoDialog = oTPC.getAggregation("_tablePersoDialog");
@@ -189,7 +189,7 @@
 		});
 
 
-		module("Open, 'Reset All'-, 'Select All' Visibility");
+		QUnit.module("Open, 'Reset All'-, 'Select All' Visibility");
 
 		test("Open Dialog", function() {
 			oTPC.setShowResetAll(false);
@@ -215,7 +215,7 @@
 		});
 
 
-		module("Personalizations");
+		QUnit.module("Personalizations");
 
 		test("Initial Column Info", function() {
 			var oPersData = oTablePersoDialog.retrievePersonalizations();
@@ -306,7 +306,7 @@
 			strictEqual(oPersData.aColumns[2].text, "Modified Color", "Column 2 (Number) is now 1");
 		});
 
-		module("Many columns");
+		QUnit.module("Many columns");
 		test("Table has more than 100 columns", function(){
 			//Arrange
 			var oData2 = {
@@ -422,7 +422,7 @@
 			oTable3.destroy();
 		});
 
-		module("Reset All");
+		QUnit.module("Reset All");
 
 		test("Check column captions after Reset All", function(){
 			//Arrange
@@ -490,7 +490,7 @@
 
 
 
-		module("Close");
+		QUnit.module("Close");
 
 		test("Destroy TablePersoDialog", function(){
 			var oTablePersoDialog = new sap.m.TablePersoDialog({
@@ -503,7 +503,7 @@
 			strictEqual(oTablePersoDialog._oP13nModel, null, "Model bundle is nulled");
 		});
 
-		module("Keyboard handling");
+		QUnit.module("Keyboard handling");
 
 		test("Test Initial focus", function () {
 			// arrange

@@ -57,7 +57,7 @@
 		sap.ui.model.odata.v2.ODataModel.mServiceData = {};
 	}
 
-	/*module("ODataModelV2 XML", {
+	/*QUnit.module("ODataModelV2 XML", {
 		setup : function() {
 			initServer();
 			oModel = initModel(false);
@@ -88,7 +88,7 @@
 		oModel.attachMetadataLoaded(this, fnTest);
 	});*/
 
-	module("ODataModelV2 JSON", {
+	QUnit.module("ODataModelV2 JSON", {
 		setup : function() {
 			initServer();
 		},
@@ -970,7 +970,7 @@
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
-	module("ODataModelV2 write", {
+	QUnit.module("ODataModelV2 write", {
 		setup : function() {
 			initServer();
 		},
@@ -2825,7 +2825,7 @@
 		});
 	});
 
-	module("ODataModelV2 Eventing", {
+	QUnit.module("ODataModelV2 Eventing", {
 		setup : function() {
 			initServer();
 			oModel = initModel();
@@ -3444,7 +3444,7 @@
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
-	module("ODataModelV2 abort requests", {
+	QUnit.module("ODataModelV2 abort requests", {
 		setup : function() {
 			initServer();
 			oModel = initModel();
@@ -3842,7 +3842,7 @@
 
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
-	
+
 	asyncTest("test oDataModel callFunction: Parameter without mode", function() {
 		oModel = initModel();
 		var fnTest = function(){
@@ -3904,7 +3904,7 @@
 			fnTest();
 		});
 	});
-	
+
 	asyncTest("test oDataModel callFunction: additional parameters", function() {
 		var mUrlParams = {
 			"SalesOrderID": "test",
@@ -3924,12 +3924,12 @@
 			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'&$expand=ToBusinessPartner&sap-some=sapTest", "Valid parameter is added to URL");
 			start();
 		});
-		
+
 		oModel.attachMetadataLoaded(this, function() {
 			fnTest();
 		});
 	});
-	
+
 	asyncTest("test oDataModel binding function import parameters deferred", function() {
 		var iCount = 0;
 		var oContext;
@@ -4054,7 +4054,7 @@
 
 	});
 
-	module("ODataModelV2 refresh", {
+	QUnit.module("ODataModelV2 refresh", {
 		setup : function() {
 			initServer();
 			oModel = initModel();

@@ -121,7 +121,7 @@
 
 		//** START OF TESTS ***
 
-		module("Initial");
+		QUnit.module("Initial");
 
 		test("NavContainer rendered", function() {
 
@@ -153,7 +153,7 @@
 			ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
-		module("AutoFocus tests", {
+		QUnit.module("AutoFocus tests", {
 			setup: function () {
 				this.sinon = sinon.sandbox.create();
 				this.spy = this.sinon.spy(sap.m.NavContainer, "_applyAutoFocusTo");
@@ -230,7 +230,7 @@
 			assert.ok(oNavContainer._isInsideAPopup(), "NavContainer detects that it's nested inside a popup");
 		});
 
-		module("Page change");
+		QUnit.module("Page change");
 
 		asyncTest("to page 2", function() {
 			expect(64); // including the "navigate" event
@@ -1552,7 +1552,7 @@
 		});
 
 
-		module("Event data");
+		QUnit.module("Event data");
 
 		function beforeRenderingTestCase (sTestName, sEventName) {
 			asyncTest(sTestName, function() {
@@ -1630,7 +1630,7 @@
 			oNavContainer.backToPage(oInitialPage.getId(), oBackData);
 		});
 
-		module("Lifecycle");
+		QUnit.module("Lifecycle");
 
 		asyncTest("Exit/Destruction", function() {
 			var page1 = new sap.m.Page({

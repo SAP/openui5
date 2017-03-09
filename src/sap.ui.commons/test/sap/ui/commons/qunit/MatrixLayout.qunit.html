@@ -158,7 +158,7 @@
 
 	qutils.delayTestStart();
 
-	module("Properties");
+	QUnit.module("Properties");
 
 	test("Default Values", function() {
 		equal(oML1.getVisible(), true, "Default 'Visible':");
@@ -181,7 +181,7 @@
 		deepEqual(oML3_clone.getWidths(), oML3.getWidths(), "clone must have same widths");
 	})
 
-	module("Visual Appearence");
+	QUnit.module("Visual Appearence");
 
 	test("Visibility", function() {
 		var oMLDom = jQuery.sap.domById('Matrix1');

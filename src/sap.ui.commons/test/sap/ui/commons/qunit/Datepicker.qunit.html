@@ -88,7 +88,7 @@
 			}
 
 			qutils.delayTestStart();
-			module("Date Picker");
+			QUnit.module("Date Picker");
 			test("DomRef test", function() {
 				equal( oPicker.getFocusDomRef().id, inputId, "FocusDomRef on input tag" );
 				equal( oPicker.getInputDomRef().id, inputId, "InputDomRef on input tag" );

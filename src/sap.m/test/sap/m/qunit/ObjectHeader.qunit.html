@@ -189,7 +189,7 @@
 	});
 	ohAttributeAndFlag2.placeAt("objectHeaders");
 
-	module("Rendering All Fields");
+	QUnit.module("Rendering All Fields");
 
 	test("ControlRendered", function() {
 
@@ -406,7 +406,7 @@
 
 	/******************************************************************/
 
-	module("Rendering condensed Object Header");
+	QUnit.module("Rendering condensed Object Header");
 
 	var ohCondensedId = "ohc1";
 	var ohCondensed = new sap.m.ObjectHeader(ohCondensedId, {
@@ -465,7 +465,7 @@
 
 	/******************************************************************/
 
-	module("Internal API");
+	QUnit.module("Internal API");
 
 	var ohEmptyStatus1Id = "ohes1";
 	var ohEmptyStatus2Id = "ohes2";
@@ -760,7 +760,7 @@
 	});
 	ohe.placeAt("objectHeaders");
 
-	module("Events");
+	QUnit.module("Events");
 
 	test("Title color is blue", function() {
 
@@ -876,7 +876,7 @@
 
 	oTitleArrowOH.placeAt("titleArrowOH-oh");
 
-	module("TitleArrow");
+	QUnit.module("TitleArrow");
 
 	asyncTest("TestTitleArrowResetToFalse", function() {
 
@@ -891,7 +891,7 @@
 	});
 
 	/******************************************************************/
-	module("OH Screen Reader support");
+	QUnit.module("OH Screen Reader support");
 
 	test("OH has aria-labelledby", function(){
 		ok(jQuery("#" + ohBasicId).attr("aria-labelledby"), "OH has attribute aria-labelledby");
@@ -920,7 +920,7 @@
 		ok(jQuery(".sapMOHIcon.sapMPointer").attr("aria-haspopup"), "ActiveIcon has attribute aria-haspopup");
 		equal(jQuery(".sapMOHIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
 	});
-	
+
 	test("Title has level H1", function(){
 		// Arrange
 		var oObjectHeader = new sap.m.ObjectHeader({
@@ -1022,7 +1022,7 @@
 	iconOH.placeAt("destroy-oh");
 	imageOH.placeAt("destroy-oh");
 
-	module("Exiting");
+	QUnit.module("Exiting");
 
 	test("TestIconExit", function() {
 
@@ -1066,7 +1066,7 @@
 		oObjectHeader.destroy();
 	});
 
-	module("AdditionalNumbers aggregations rendering");
+	QUnit.module("AdditionalNumbers aggregations rendering");
 
 		test("additionalNumbers should be rendered", function () {
 			// Arrange
@@ -1343,7 +1343,7 @@
 			oObjectHeader.destroy();
 		});
 
-		module("Contrast container in Belize")
+		QUnit.module("Contrast container in Belize")
 
 		test("Contrast container should be set when Background is not transparent", function () {
 			// Arrange
@@ -1408,7 +1408,7 @@
 			oObjectHeader.destroy();
 		});
 
-		module("Rendering Markers aggregation");
+		QUnit.module("Rendering Markers aggregation");
 
 		test("Render Draft and Unsaved", function() {
 			var oObjectHeader = new sap.m.ObjectHeader({

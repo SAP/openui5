@@ -23,7 +23,7 @@
 		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<!-- Test functions -->
 		<script>
-			module("Control API", {
+			QUnit.module("Control API", {
 				beforeEach : function () {
 					//Currency with default values
 					this.sut = new sap.ui.unified.Currency();
@@ -150,7 +150,7 @@
 				strictEqual(this.fnGetRenderedValue(), "123.23\u2007", "Value is rendered when currency is other than *");
 			});
 
-			module("Control API - helper methods", {
+			QUnit.module("Control API - helper methods", {
 				beforeEach : function () {
 					this.oCurrency = new sap.ui.unified.Currency();
 				},
@@ -216,7 +216,7 @@
 				strictEqual(this.oCurrency.getFormattedValue(), "0", "For undefined value we expect 0 as a result");
 			});
 
-			module("Data binding", {
+			QUnit.module("Data binding", {
 				beforeEach: function () {
 					this.oData = {
 						currencyCollection: [{
@@ -277,7 +277,7 @@
 				}
 			});
 
-			module("Visibility with undefined value", {
+			QUnit.module("Visibility with undefined value", {
 				beforeEach: function () {
 					var oData = {
 						currencyCollection: [
@@ -376,7 +376,7 @@
 				oCurrency.destroy();
 			});
 
-			module("Control live update", {
+			QUnit.module("Control live update", {
 				beforeEach : function () {
 					this.sandbox = sinon.sandbox;
 					this.oCurrency = new sap.ui.unified.Currency({
@@ -493,7 +493,7 @@
 						"BGN from EUR currency's decimals should remain unchanged");
 			});
 
-			module("Currency '*' special case", {
+			QUnit.module("Currency '*' special case", {
 				beforeEach: function () {
 					this.oData = {
 						currencyCollection: [{
@@ -527,7 +527,7 @@
 				strictEqual(this.aControls[1].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control should not have the class 'sapUiUfdCurrencyNoVal' applied");
 			});
 
-			module("Accessibility");
+			QUnit.module("Accessibility");
 
 			test("getAccessibilityInfo", function() {
 				var oControl = new sap.ui.unified.Currency({value: 100, currency: "EUR", maxPrecision: 2});
@@ -543,7 +543,7 @@
 				oControl.destroy();
 			});
 
-			module("Currency value text direction");
+			QUnit.module("Currency value text direction");
 
 			test("Currency value dir in LTR", function() {
 				var dirText,

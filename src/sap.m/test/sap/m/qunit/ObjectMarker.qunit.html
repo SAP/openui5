@@ -22,7 +22,7 @@
 	<script>
 		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-		module("Rendering");
+		QUnit.module("Rendering");
 
 		test("Creating control should add it in the DOM", function () {
 			// Arrange
@@ -92,7 +92,7 @@
 			oMarker.destroy();
 		});
 
-		module("Default rendering of different types");
+		QUnit.module("Default rendering of different types");
 
 		test("Flagged", function () {
 			// Arrange
@@ -220,7 +220,7 @@
 			oMarker.destroy();
 		});
 
-		module("Visibility");
+		QUnit.module("Visibility");
 
 		test("Resize control to change the device size", function() {
 			// Arrange
@@ -318,7 +318,7 @@
 			oMarker.destroy();
 		});
 
-		module("Eventing");
+		QUnit.module("Eventing");
 
 		test("Fire 'press' event when an inner link control is clicked", function() {
 			// Arrange
@@ -342,7 +342,7 @@
 			oMarker.destroy();
 		});
 
-		module("Binding");
+		QUnit.module("Binding");
 
 		test("Binding - standalone", function() {
 			// Arrange
@@ -417,7 +417,7 @@
 			oTable.destroy();
 		});
 
-		module("Helper methods");
+		QUnit.module("Helper methods");
 
 		test("_getInnerControl private method", function () {
 			// Arrange
@@ -444,7 +444,7 @@
 					"it's properties");
 		});
 
-		module("AdditionalInfo");
+		QUnit.module("AdditionalInfo");
 
 		test("Setter and getter", function () {
 			// Arrange

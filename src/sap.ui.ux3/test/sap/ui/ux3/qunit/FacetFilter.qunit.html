@@ -85,7 +85,7 @@
 
 		sap.ui.test.qunit.delayTestStart();
 
-		module("Public API");
+		QUnit.module("Public API");
 
 		test("Title", function() {
 			equals(oFFL1.getTitle(), "Car Brand", "Title is correct:");
@@ -99,7 +99,7 @@
 			equals(oFFL3.getMultiSelect(), true, "Multiselection");
 		});
 
-		module("Visual appearence");
+		QUnit.module("Visual appearence");
 
 		test("Visiblity", function() {
 			ok(oFacetFilter.getDomRef(), "Control is visible");

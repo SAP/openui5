@@ -99,7 +99,7 @@
 
 <!-- Test functions -->
 <script>
-	module("Sidebar");
+	QUnit.module("Sidebar");
 
 	asyncTest("Show/Hide sidebar", function() {
 		qutils.triggerMouseEvent(jQuery.sap.byId(oCollectionInspector.getId()
@@ -119,7 +119,7 @@
 		}, 600);
 	});
 
-	module("Top Navigation");
+	QUnit.module("Top Navigation");
 
 	asyncTest("Show collection two", function() {
 		qutils.triggerMouseEvent(jQuery.sap.byId("__button2"), "click", 1, 1, 1, 1);
@@ -141,7 +141,7 @@
 				equal(oCollectionInspector.getSelectedCollection(), oCollection3.getId());
 			});
 
-	module("Sidebar Navigation");
+	QUnit.module("Sidebar Navigation");
 	test("Select items", function() {
 		qutils.triggerMouseEvent(jQuery.sap.byId("__button1"), "click", 1, 1, 1, 1);
 		var oSelectedCollection = sap.ui.getCore().byId(oCollectionInspector.getSelectedCollection());
@@ -176,7 +176,7 @@
 		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(3)').hasClass("sapUiUx3CICollectionListItemSelected"), false);
 	});
 
-	module("Setter");
+	QUnit.module("Setter");
 	test(
 			"Set methods",
 			function() {
@@ -213,7 +213,7 @@
 				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar > button').length, 1);
 			});
 
-	module("Collection Operation");
+	QUnit.module("Collection Operation");
 	test(
 			"Insert collection",
 			function() {
@@ -306,7 +306,7 @@
 
 			});
 
-	module("Content Operations");
+	QUnit.module("Content Operations");
 	test(
 			"Add content",
 			function() {

@@ -105,7 +105,7 @@
 
 			qutils.delayTestStart();
 
-			module("Rendering");
+			QUnit.module("Rendering");
 
 			test("width", function() {
 				var sStyle = jQuery("#Cal1").attr("style");
@@ -337,7 +337,7 @@
 			});
 
 
-			module("Interaction");
+			QUnit.module("Interaction");
 
 			test("month switch", function() {
 				iStartDateChangeFired = 0;
@@ -603,7 +603,7 @@
 
 			});
 
-		module("Misc");
+		QUnit.module("Misc");
 
 			test("Invalidate month ", function() {
 				var oCal5 = new sap.ui.unified.Calendar("Cal5",{
@@ -636,7 +636,7 @@
 				oCal5.destroy();
 			});
 
-			module("Focus", {
+			QUnit.module("Focus", {
 				beforeEach: function () {
 					this.oCal = new sap.ui.unified.Calendar().placeAt("qunit-fixture");
 				},

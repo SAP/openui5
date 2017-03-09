@@ -115,7 +115,7 @@
 		return oTable;
 	}
 
-	module("TreeTable with Annotations, starting level 1", {
+	QUnit.module("TreeTable with Annotations, starting level 1", {
 		setup: function() {
 			oAnnotationMockServer.start();
 			this.oModel = new sap.ui.model.odata.v2.ODataModel('/metadata/', {useBatch:true});
@@ -627,20 +627,20 @@
 			};
 
 			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
-			
+
 			// relative binding
 			this.oTable.bindRows("Result");
-			
+
 			// check if binding is available
 			var oBinding = this.oTable.getBinding();
 			equal(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, true, "Binding is created");
-			
+
 			// set the binding context for the table to make it absolute --> everything else should be handled by the tree binding
 			var sContextPath = "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')";
 			oBinding.oModel.createBindingContext(sContextPath, null, function (oCreatedContext) {
 				this.oTable.setBindingContext(oCreatedContext);
 			}.bind(this));
-			
+
 		}, this);
 	});
 

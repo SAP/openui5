@@ -54,7 +54,7 @@
 			placeholderText: sPlaceholderTextXSS
 			}).placeAt("uiArea3");
 
-		module("Appearance");
+		QUnit.module("Appearance");
 
 		test("Feeder styles", function() {
 
@@ -90,7 +90,7 @@
 
 		});
 
-		module("Behaviour");
+		QUnit.module("Behaviour");
 
 		asyncTest("Focus handling1", function() {
 			// click in empty text - placeholder must disapear

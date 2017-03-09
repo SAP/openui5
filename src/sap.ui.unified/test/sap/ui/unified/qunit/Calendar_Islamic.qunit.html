@@ -148,7 +148,7 @@
 
 			qutils.delayTestStart();
 
-			module("Dates");
+			QUnit.module("Dates");
 
 			test("20150701", function() {
 				checkDate("20150701", 14, 9, 1436, 4, 1);
@@ -162,7 +162,7 @@
 				checkDate("20150805", 19, 10, 1436, 6, 0);
 			});
 
-			module("Navigation to next/previous Month");
+			QUnit.module("Navigation to next/previous Month");
 
 			test("20150701 -> next", function() {
 				checkMonthNavigation("20150701", 9, true);
@@ -172,7 +172,7 @@
 				checkMonthNavigation("20150701", 9, false);
 			});
 
-			module("Monthpicker");
+			QUnit.module("Monthpicker");
 
 			test("20150701 Monthpicker", function() {
 				checkMonthPicker("20150701", 9);

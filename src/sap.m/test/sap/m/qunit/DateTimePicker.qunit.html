@@ -91,7 +91,7 @@
 
 			qutils.delayTestStart();
 
-			module("initialization");
+			QUnit.module("initialization");
 
 			test("Date formatter", function() {
 				ok(!oDTP1.getValue(), "DTP1: no value");
@@ -104,7 +104,7 @@
 				equal(oDTP4.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP4: DateValue set");
 			});
 
-			module("Rendering");
+			QUnit.module("Rendering");
 
 			test("date format", function() {
 				ok(!jQuery("#DTP1").children("div.sapMInputDivWrapper").children("input").val(), "DTP1: empty date");
@@ -146,7 +146,7 @@
 				}, 400);
 			});
 
-			module("interaction");
+			QUnit.module("interaction");
 
 			test("change date by typing", function() {
 				bChange = false;
@@ -240,7 +240,7 @@
 				}, 400);
 			});
 
-			module("Accessibility");
+			QUnit.module("Accessibility");
 
 			test("getAccessibilityInfo", function() {
 				var oInput = new sap.m.DateTimePicker({
@@ -277,7 +277,7 @@
 				strictEqual(oInfo.description, "2014-03-26-10-32-30 Placeholder Date and Time Tooltip", "Description");
 				oInput.destroy();
 			});
-			module("Calendar and TimePicker");
+			QUnit.module("Calendar and TimePicker");
 
 			test("When the popover is initially opened and there is a tap on the hours slider it should gain focus", function() {
 				//Prepare

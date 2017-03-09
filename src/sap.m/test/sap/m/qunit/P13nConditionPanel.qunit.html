@@ -24,7 +24,7 @@
 (function() {
 	jQuery.sap.require("sap.m.P13nConditionPanel");
 
-	module("Properties", {
+	QUnit.module("Properties", {
 		setup: function() {
 		},
 		teardown: function() {
@@ -64,7 +64,7 @@
 
 	};
 
-	
+
 	test("Default Values", function(qUnit){
 
 		var nItems= 0;
@@ -324,7 +324,7 @@
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
-	
+
 	test("test AlwaysShowAddIcon", function(qUnit){
 
  		// system under test
@@ -345,7 +345,7 @@
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
-	
+
 	test("test layoutMode", function(qUnit){
 
  		// system under test
@@ -366,7 +366,7 @@
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
-	
+
 	test("new GroupCondition showIfGrouped must be true", function(qUnit){
 		var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "CompanyCode", "value1": "", "value2": "", showIfGrouped: true};
 		var oCondition2= { "key": "i2", "text": "", "operation": sap.m.P13nConditionOperation.GroupDescending, "keyField": "CompanyName", "value1": "", "value2": "", showIfGrouped: false};
@@ -391,7 +391,7 @@
 
 		oP13nConditionPanel._handleAddCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[1]);
 		oP13nConditionPanel._oConditionsGrid.getContent()[2].keyField.setSelectedKey("group3");
-		
+
 		nItems= 3;
 		qUnit.strictEqual(oP13nConditionPanel._oConditionsGrid.getContent().length, nItems, "# Condition grids should should be '" + nItems + "' after an Add.");
 		qUnit.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
@@ -415,14 +415,14 @@
 
 		var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
 		oConditionGrid.value1.onpaste( {});
-		
+
 		// assertions
 		//strictEqual(oP13nConditionPanel.getLayoutMode(), "Desktop", "LayoutMode must be Desktop!");
 
 		// cleanup
 		oP13nConditionPanel.destroy();
 	}); */
-	
+
 	test("testing maxLength of KeyField", function(qUnit){
  		// system under test
 		var oP13nConditionPanel = new sap.m.P13nConditionPanel({
@@ -437,7 +437,7 @@
 
 		var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[2];
 		//oConditionGrid.value1.onpaste();
-		
+
 		// assertions
 		qUnit.strictEqual(oConditionGrid.value1.getMaxLength(), 20, "maxLength must be 20!");
 
@@ -460,9 +460,9 @@
 		var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
 		// make the between condition invalid
 		oConditionGrid.value1.setValue("");
-		
+
 		oP13nConditionPanel.validateConditions();
-		
+
 		// assertions
 		qUnit.strictEqual(oConditionGrid.value1.getValueState(), sap.ui.core.ValueState.Warning, "ValueState must be Warning!");
 
@@ -473,7 +473,7 @@
 		oP13nConditionPanel.removeInvalidConditions();
 		var nItems = 2;
 		qUnit.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
-		
+
 
 		// cleanup
 		oP13nConditionPanel.destroy();
@@ -493,7 +493,7 @@
 
 		// assertions
 		qUnit.strictEqual(!!oP13nConditionPanel._bPaginatorButtonsVisible, false, "Paginator buttons are not shown!");
-		
+
  		var oCondition0= { "key": "i0", "text": "", "operation": sap.m.P13nConditionOperation.BT, "keyField": "Date", "value1": "1", "value2": "10"};
  		var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyCode", "value1": "a", "value2": ""};
  		var oCondition2= { "key": "i2", "text": "", "operation": sap.m.P13nConditionOperation.LT, "keyField": "CompanyName", "value1": "g", "value2": ""};
@@ -544,7 +544,7 @@
 		// assertions
 		var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
 		qUnit.strictEqual(oConditionGrid.value1.getValue(), "foo", "value1 of condition 0  must be foo!");
-		
+
 		oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[1];
 		var d= new Date(0);
 		qUnit.strictEqual(oConditionGrid.value1.getDateValue().toDateString(), d.toDateString(),  "value1 of condition 1 must be date!");

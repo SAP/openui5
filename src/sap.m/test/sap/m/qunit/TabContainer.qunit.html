@@ -91,7 +91,7 @@
 			}
 		};
 
-		module("Deletion", {
+		QUnit.module("Deletion", {
 			beforeEach: function () {
 				this.oTabContainer = new sap.m.TabContainer({
 					items: {
@@ -154,7 +154,7 @@
 			equal(jQuery( "span." + sap.m.TabStripItem.CSS_CLASS_LABEL + ":contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
 		});
 
-		module("Misc", {
+		QUnit.module("Misc", {
 			beforeEach: function () {
 				this.oTabContainer = new sap.m.TabContainer({
 					items: {
@@ -235,7 +235,7 @@
 			oTabContainer2 = null;
 		});
 
-		module("Focus", {
+		QUnit.module("Focus", {
 			beforeEach: function () {
 				this.oTabContainer = new sap.m.TabContainer({
 					items: {
@@ -355,7 +355,7 @@
 					"The add button is get");
 		});
 
-		module("Items synchronization", {
+		QUnit.module("Items synchronization", {
 			beforeEach: function () {
 				this.oTabContainer = new sap.m.TabContainer({
 				});
@@ -442,7 +442,7 @@
 			equal(this.oTabStrip.getItems()[0].getModified(), oTabContainerItem.getModified(), "TabContainerItem.modified should be propagated to TabStripItem.modified");
 		});
 
-		module("Constructing with array of items", {
+		QUnit.module("Constructing with array of items", {
 			beforeEach: function () {
 				this.item = new sap.m.TabContainerItem({
 					id: 'test2',

@@ -19,7 +19,7 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 
 	var view;
 
-	module(sCaption);
+	QUnit.module(sCaption);
 
 	test("View Instantiation: default controller instantiation", 7, function() {
 		// define View and place it onto the page

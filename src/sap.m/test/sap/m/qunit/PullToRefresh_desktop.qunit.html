@@ -80,7 +80,7 @@
 
 			// TEST functions
 
-			module("Properties");
+			QUnit.module("Properties");
 			test("Default values", 3, function() {
 				strictEqual(oP2R.getShowIcon(), false, "Default value for showIcon");
 				strictEqual(oP2R.getDescription(), sDescription, "Description value");
@@ -92,7 +92,7 @@
 				ok(!oP2RHidden._oBusyIndicator, "Hidden PullToRefresh does not have a BusyIndicator");
 			});
 
-			module("Check HTML");
+			QUnit.module("Check HTML");
 
 			test("HTML", function() {
 				var $P2R = oP2R.$();
@@ -105,7 +105,7 @@
 			});
 
 			// Test pull to refresh functionality
-			module("Behavior");
+			QUnit.module("Behavior");
 
 			asyncTest("Refresh", function() {
 				var $P2R = oP2R.$();

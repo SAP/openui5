@@ -37,7 +37,7 @@
 	// API module                                                  //
 	// =========================================================== //
 
-	module("API");
+	QUnit.module("API");
 
 	// ------------------------------ //
 	// tests for default values       //
@@ -4583,7 +4583,7 @@
 		oFocusinStub.restore();
 	});
 
-	module("Focus handling");
+	QUnit.module("Focus handling");
 
 	QUnit.test("Focusing a token inside the MCB should not add css focus indication to the MCB itself", function(assert) {
 		var oItem = new sap.ui.core.Item({ text: "test" }),
@@ -4731,7 +4731,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	module("Accessibility");
+	QUnit.module("Accessibility");
 
 	test("getAccessibilityInfo", function() {
 		var oComboBox = new sap.m.MultiComboBox({

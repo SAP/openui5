@@ -3,7 +3,7 @@ jQuery.sap.require("sap.ui.core.mvc.JSView");
 jQuery.sap.require("sap.ui.core.mvc.XMLView");
 jQuery.sap.require("sap.ui.core.mvc.HTMLView");
 
-module("Start-up");
+QUnit.module("Start-up");
 
 test("Check dependencies", 4, function() {
 	ok(sap.ui.core.mvc.JSONView, "sap.ui.core.mvc.JSONView must be defined");
@@ -51,7 +51,7 @@ function asyncTestsuite(sCaption, oConfig) {
 		};
 	};
 
-	module(sCaption, {
+	QUnit.module(sCaption, {
 		beforeEach : function() {
 			this.oAfterInitSpy = sinon.spy(sap.ui.core.mvc.View.prototype, "fireAfterInit");
 			this.oView;

@@ -97,7 +97,7 @@
 
 	qutils.delayTestStart();
 
-	module("Basic checks", {
+	QUnit.module("Basic checks", {
 		setup: function() {
 			this.clock = sinon.useFakeTimers();
 			this.table = createTable();

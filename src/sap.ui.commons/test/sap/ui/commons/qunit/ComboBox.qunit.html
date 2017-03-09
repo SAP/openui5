@@ -22,7 +22,7 @@
 		Documentation can be found at http://docs.jquery.com/QUnit
 
 		Example:
-		   module("Module A");
+		   QUnit.module("Module A");
 		     test("1. a basic test example", function() {
 		     ok( true, "this test is fine" );
 		     var value = "hello1";
@@ -73,7 +73,7 @@
 		var oCombo5 = new sap.ui.commons.ComboBox(sComboId + "5");
 		oCombo5.placeAt("uiArea5");
 
-		module("Control Test - sap.ui.commons.ComboBox", {
+		QUnit.module("Control Test - sap.ui.commons.ComboBox", {
 			setup: function(){
 				oCombo.setValue(sCheckText);
 				oCombo.focus();
@@ -151,7 +151,7 @@
 
 		var oSharedListBox1, oSharedListBox2, oComboBox1, oComboBox2;
 
-		module("Shared listBox");
+		QUnit.module("Shared listBox");
 
 		test("SetUp", function() {
 			oComboBox1 = new sap.ui.commons.ComboBox({
@@ -202,7 +202,7 @@
 			oSharedListBox2 = null;
 		});
 
-		module("Autocomplete Tests - sap.ui.commons.ComboBox", {
+		QUnit.module("Autocomplete Tests - sap.ui.commons.ComboBox", {
 			setup: function(){
 				oCombo.focus();
 			}
@@ -270,7 +270,7 @@
 			equal(oCombo.getSelectedItemId(), "ti", "selectedItemId should not have changed");
 		});
 
-		module("Arrow Control Tests - sap.ui.commons.ComboBox", {
+		QUnit.module("Arrow Control Tests - sap.ui.commons.ComboBox", {
 			setup: function(){
 				oCombo.focus();
 			}
@@ -336,7 +336,7 @@
 			equal(oCombo.getSelectedItemId(), "fi", "selectedItemId should fit to the selected item");
 		});
 
-		module("Misc. Keys Control Tests - sap.ui.commons.ComboBox", {
+		QUnit.module("Misc. Keys Control Tests - sap.ui.commons.ComboBox", {
 			setup: function(){
 				oCombo.focus();
 			}
@@ -371,7 +371,7 @@
 		});
 
 
-		module("Open / Close Tests - sap.ui.commons.ComboBox", {
+		QUnit.module("Open / Close Tests - sap.ui.commons.ComboBox", {
 			setup: function(){
 				oCombo.focus();
 			}
@@ -420,7 +420,7 @@
 
 		});
 
-		module("Mouse Handling Tests - sap.ui.commons.ComboBox", {
+		QUnit.module("Mouse Handling Tests - sap.ui.commons.ComboBox", {
 			setup: function(){
 				resetBeforeTest();
 				oCombo.focus();
@@ -466,7 +466,7 @@
 		});
 
 
-		module("Misc. Keys Control Tests with open Listbox - sap.ui.commons.ComboBox", {
+		QUnit.module("Misc. Keys Control Tests with open Listbox - sap.ui.commons.ComboBox", {
 			setup: function(){
 				oCombo.focus();
 			}
@@ -543,7 +543,7 @@
 			}, 10);
 		});
 
-		module("Event Tests - sap.ui.commons.ComboBox", {
+		QUnit.module("Event Tests - sap.ui.commons.ComboBox", {
 			setup: function(){
 				oCombo.focus();
 				oCombo.attachChange(this.handleChange);
@@ -689,7 +689,7 @@
 			});
 		};*/
 
-		module("DataBinding");
+		QUnit.module("DataBinding");
 		test("initial binding", function(){
 			// even if selectedKey is set before items it must be used after items are added
 			equal(oCombo4.getValue(), "Item 2", "Text of second item must be set");

@@ -137,7 +137,7 @@ var oModel = new sap.ui.model.json.JSONModel({
 
 
 
-module("ManagedObject Model", {
+QUnit.module("ManagedObject Model", {
 	setup: function() {
 		this.obj = new sap.ui.test.TestElement("myObject");
 		this.subObj = new sap.ui.test.TestElement();

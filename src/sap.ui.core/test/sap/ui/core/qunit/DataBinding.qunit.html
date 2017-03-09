@@ -70,9 +70,9 @@
     	data: ["0","1","2"]
     });
     var oModel5 = new sap.ui.model.odata.v2.ODataModel(sUri);
-    
+
     var uiArea,ctrl,child;
-    module("Propagation listener", {
+    QUnit.module("Propagation listener", {
 		setup : function() {
 			var oDiv = jQuery("<div></div>").appendTo("#uiAreas");
 			uiArea = sap.ui.getCore().createUIArea(oDiv[0]);
@@ -106,7 +106,7 @@
 			sap.ui.getCore().setModel();
 		}
 	});
-    
+
     test("add Propagation Listener", function() {
     	fnPropListener = function(data, object) {
 			ok(data, "data passed");
@@ -124,7 +124,7 @@
     	ok(spy.callCount === 4, "Propagation listener called for new control and its child");
     	fnPropListener.restore();
     });
-    
+
     test("remove Propagation Listener", function() {
     	fnPropListener = function(data, object) {
     		ok(data, "data passed");
@@ -143,7 +143,7 @@
     	ok(spy.callCount === 0, "Propagation listener not called");
     	fnPropListener.restore();
     });
-    
+
     test("propagation Listener and models/bindings", function() {
     	fnPropListener = function(data, object) {
 		}.bind(null,{myData:"myData"});
@@ -157,8 +157,8 @@
     	ok(spy.callCount === 0, "Propagation listener not called on bindElement");
     	fnPropListener.restore();
     });
-    
-	module("Model propagation", {
+
+	QUnit.module("Model propagation", {
 		setup : function() {
 			var oDiv = jQuery("<div></div>").appendTo("#uiAreas");
 			uiArea = sap.ui.getCore().createUIArea(oDiv[0]);
@@ -572,8 +572,8 @@
 			}, 0);
 		}, 0);
 	});
-	
-	module("More Complex Updates", {
+
+	QUnit.module("More Complex Updates", {
 		setup : function() {
 			sap.ui.getCore().setModel(oModel1);
 			uiArea = sap.ui.getCore().createUIArea("content");
@@ -686,7 +686,7 @@
 		ok(child.oPropagatedProperties !== ctrl.oPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
 	});
 
-	module("Context Binding", {
+	QUnit.module("Context Binding", {
 		setup : function() {
 			mPropagationInfo = {};
 			fnChange = function(oEvent) {
@@ -716,13 +716,13 @@
 			child = null;
 		}
 	});
-/*	
+/*
 	asyncTest("Binding/Model types", function() {
 		oModel5.metadataLoaded().then(function(){
 			var child = new sap.ui.core.TestControl({
 				objectBindings: "Suppliers(1)",
 				value: "{CompanyName}"
-				
+
 			});
 			var ctrl = new sap.ui.core.TestControl({
 				children : [child]
@@ -738,7 +738,7 @@
 			start();
 		});
 	});
-*/	
+*/
 	asyncTest("Binding/Model types 2", function() {
 		oModel5.metadataLoaded().then(function(){
 			var ctrl3 = new sap.ui.core.TestControl({
@@ -752,7 +752,7 @@
 			var ctrl = new sap.ui.core.TestControl({
 				children : [ctrl2]
 			});
-			
+
 			var spy = sinon.spy(oModel5, "read");
 			ctrl.setModel(oModel4);
 			ok(!ctrl3.getValue(), "Value should not be resolved");
@@ -763,7 +763,7 @@
 			start();
 		});
 	});
-	
+
 	test("Context binding instance", function() {
 		mPropagationInfo = {};
 		ctrl.bindElement("/data");
@@ -809,7 +809,7 @@
 		ctrl.unbindElement();
 		ok(!child.getValue(), "Value should be cleared");
 	});
-	
+
 	</script>
 
 </head>

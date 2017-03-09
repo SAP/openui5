@@ -95,7 +95,7 @@
 
 		qutils.delayTestStart();
 
-		module("sap.ui.core.Control.placeAt");
+		QUnit.module("sap.ui.core.Control.placeAt");
 
 		test("Deferred call", function() {
 			doCheckPlaceAtResult(["myPanel", sap.ui.getCore().getUIArea("uiArea1")], 1, 0, "deferred call");
@@ -117,7 +117,7 @@
 			doTestPlaceAt("myPanel", "myPanel", false);
 		});
 
-		module("sap.ui.core.Core.setRoot");
+		QUnit.module("sap.ui.core.Core.setRoot");
 
 		test("Deferred call", function() {
 			doCheckSetRootResult(["myPanel2", sap.ui.getCore().getUIArea("uiArea3")]);

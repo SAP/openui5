@@ -81,7 +81,7 @@
 		opener : oBtn1
 	});
 
-	module("Open / Close with defaults");
+	QUnit.module("Open / Close with defaults");
 	asyncTest("Open default (right from button)", function() {
 		expect(4);
 
@@ -302,7 +302,7 @@
 
 	});
 
-	module("Open with 'setPosition'");
+	QUnit.module("Open with 'setPosition'");
 	asyncTest("Open above (set Position)", function() {
 		expect(6);
 
@@ -360,7 +360,7 @@
 
 	});
 
-	module("Collision detection");
+	QUnit.module("Collision detection");
 	asyncTest("fit", function() {
 		oWindowRect = jQuery(window).rect();
 		oWindowRect.width = $Window.width();
@@ -494,7 +494,7 @@
 	});
 
 	var oTPFocus;
-	module("Focus handling", {
+	QUnit.module("Focus handling", {
 		setup : function() {
 			oTPFocus = new sap.ui.ux3.ToolPopup("focusPopup", {
 				content : [ new sap.ui.commons.FormattedTextView("FormattedTextView1",{
@@ -809,7 +809,7 @@
 	});
 
 	var oTPMaxHeight;
-	module("Size of the ToolPopup", {
+	QUnit.module("Size of the ToolPopup", {
 		setup : function() {
 			oTPMaxHeight = new sap.ui.ux3.ToolPopup("focusPopup", {
 				content : [ new sap.ui.commons.Button({
@@ -942,7 +942,7 @@
 
 	var oButtonContent;
 	var oTPContent;
-	module("Changing content", {
+	QUnit.module("Changing content", {
 		setup : function() {
 			oButtonContent = new sap.ui.commons.Button({
 				text : "Open"

@@ -71,7 +71,7 @@
 
 	qutils.delayTestStart();
 
-	module("Rendering", {
+	QUnit.module("Rendering", {
 		setup: function() {
 			oStandardTree = createStandardTree();
 			oStandardTree.placeAt("target1");
@@ -90,7 +90,7 @@
 			notEqual(jQuery.sap.domById("tree" + "-TreeCont"),	null, "Tree content is there");
 		});
 
-	module("Selection Mode 'Single'", {
+	QUnit.module("Selection Mode 'Single'", {
 		setup: function() {
 			oStandardTree = createStandardTree();
 			oStandardTree.placeAt("target1");
@@ -128,7 +128,7 @@
 		ok(node11.getIsSelected(), "Node 1.1 is selected");
 	});
 
-	module("Selection Mode 'Multi'", {
+	QUnit.module("Selection Mode 'Multi'", {
 		setup: function() {
 			oStandardTree = createStandardTree();
 			oStandardTree.placeAt("target1");
@@ -169,7 +169,7 @@
 		ok(node11.getIsSelected(), "Node 1.1 is selected");
 	});
 
-	module("Multiselect interactions", {
+	QUnit.module("Multiselect interactions", {
 		setup: function () {
 			var oData = {
 				"children": [

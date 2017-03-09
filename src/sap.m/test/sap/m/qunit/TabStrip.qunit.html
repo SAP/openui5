@@ -25,7 +25,7 @@
 
 		var oCore = sap.ui.getCore();
 
-		module("API", {
+		QUnit.module("API", {
 			beforeEach: function () {
 				this.sut = new sap.m.TabStrip({
 					items: [
@@ -291,7 +291,7 @@
 		});
 
 
-		module("Keyboard Handling", {
+		QUnit.module("Keyboard Handling", {
 			beforeEach: function () {
 				this.items = [
 					new sap.m.TabStripItem({
@@ -408,7 +408,7 @@
 			strictEqual(document.activeElement.id, oTabStripItemToBeFocused.getId(), "Focus is applied to the right item");
 		});
 
-		module("Scrolling", {
+		QUnit.module("Scrolling", {
 			beforeEach: function () {
 				this.sut = new sap.m.TabStrip({
 					items: [
@@ -506,7 +506,7 @@
 //			strictEqual(this.sut._oRightArrowButton.$().css("visibility"), "hidden", "Right scroll button is hidden when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
 		});
 
-		module("ARIA", {
+		QUnit.module("ARIA", {
 			beforeEach: function () {
 				var _aItems = this._aItems = [
 					new sap.m.TabStripItem({
@@ -571,7 +571,7 @@
 		});
 
 
-		module("TabSelect PHONE", {
+		QUnit.module("TabSelect PHONE", {
 			afterEach: function () {
 				this.oTS.destroy();
 				this.oTS = null;
@@ -616,7 +616,7 @@
 			return stubs;
 		}
 
-		module("Selection", {
+		QUnit.module("Selection", {
 			beforeEach: function () {
 				this.selectedItem = new sap.m.TabStripItem({
 					text: "Initially selected tab"
@@ -688,7 +688,7 @@
 			stubs.forEach(function(item){item.restore()}); // restore stubs
 		});
 
-		module("Tablet platform tests", {
+		QUnit.module("Tablet platform tests", {
 			beforeEach: function () {
 				this.oOriginalSysInfo = this.getSystemInfo();
 				this.prepareSystem();

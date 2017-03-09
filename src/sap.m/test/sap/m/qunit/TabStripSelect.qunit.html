@@ -57,7 +57,7 @@
 			this.oMITS = null;
 		}
 
-		module("TabSelect", {
+		QUnit.module("TabSelect", {
 			beforeEach: function () {
 				beforeEachQUnitTest.call(this);
 			},
@@ -115,7 +115,7 @@
 		});
 
 
-		module("Close Button", {
+		QUnit.module("Close Button", {
 			beforeEach: function () {
 				beforeEachQUnitTest.call(this);
 			},
@@ -194,7 +194,7 @@
 		});
 
 
-		module("Default selected item", {
+		QUnit.module("Default selected item", {
 			beforeEach: function () {
 				beforeEachQUnitTest.call(this);
 			},
@@ -216,7 +216,7 @@
 
 
 
-		module("Modified state and title correctness", {
+		QUnit.module("Modified state and title correctness", {
 			beforeEach: function () {
 			},
 			afterEach: function () {
@@ -299,7 +299,7 @@
 			strictEqual(this.oMITS.getList().$().find('.sapMTabStripSelectListItemCloseBtnInvisible').length, 0, 'The number of invisible close buttons in the DOM is 0.');
 		};
 
-		module("Internal methods", {
+		QUnit.module("Internal methods", {
 			beforeEach: function () {
 				this.oTSS = new sap.m.TabStripSelect();
 			},

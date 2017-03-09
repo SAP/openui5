@@ -55,7 +55,7 @@
 
 		/**************** TESTS ********************/
 
-		module("Properties", {
+		QUnit.module("Properties", {
 			setup: function(){
 				oCtrl.removeAllItems();
 				oCtrl.addItem(oItem0);
@@ -268,7 +268,7 @@
 		//    test control methods
 		//==================================================
 
-		module("Selected Indices", {
+		QUnit.module("Selected Indices", {
 			setup: function(){
 				oCtrl.removeAllItems();
 				oCtrl.addItem(oItem0);
@@ -379,7 +379,7 @@
 
 
 
-		module("Keys", {
+		QUnit.module("Keys", {
 			setup: function(){
 				oCtrl.removeAllItems();
 				oCtrl.addItem(oItem0);
@@ -414,7 +414,7 @@
 
 
 
-		module("Items", {
+		QUnit.module("Items", {
 			setup: function(){
 				oCtrl.removeAllItems();
 				oCtrl.addItem(oItem0);
@@ -535,7 +535,7 @@
 
 
 
-		module("Height in Items", {
+		QUnit.module("Height in Items", {
 			setup: function(){
 				oCtrl.removeAllItems();
 				// add more items to allow scrolling
@@ -554,7 +554,7 @@
 	  //          test event handlers
 	  // ==================================================
 
-		 module("Events");
+		 QUnit.module("Events");
 
 	  /**
 	   * Tests event handling for event select of control ListBox.

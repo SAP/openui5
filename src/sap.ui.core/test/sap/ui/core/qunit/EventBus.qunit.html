@@ -51,13 +51,13 @@
 
 		qutils.delayTestStart();
 
-		module("Basics");
+		QUnit.module("Basics");
 
 		test("EventBus initialized", function() {
 			ok(!!oBus, "Event Bus initialized");
 		});
 
-		module("(Un-)subscribe");
+		QUnit.module("(Un-)subscribe");
 
 		test("Default channel", 5, function() {
 			var sEventId = "Test1";
@@ -93,7 +93,7 @@
 			ok(!oBus._mChannels[sChannelId], "Unused Channel is cleaned up.");
 		});
 
-		module("SubscribeOnce");
+		QUnit.module("SubscribeOnce");
 
 		test("Default channel", 12, function(){
 			var sEventId = "Test3";
@@ -148,7 +148,7 @@
 
 		var oObj11, oObj13, oObj21, oObj23, fHandler11, fHandler12, fHandler13, fHandler14, fHandler21, fHandler22, fHandler23, fHandler24;
 
-		module("Publish", {
+		QUnit.module("Publish", {
 			setup : function(){
 				oObj11 = {id: "Obj11"};
 				oObj13 = {id: "Obj13"};

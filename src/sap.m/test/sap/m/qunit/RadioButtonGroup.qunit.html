@@ -23,7 +23,7 @@
 		jQuery.sap.require("sap.ui.thirdparty.jquery-mobile-custom");
 		jQuery.sap.initMobile();
 
-		module("Rendering");
+		QUnit.module("Rendering");
 
 
 		/* --------------------------------------- */
@@ -308,7 +308,7 @@
 			oRBGroup.destroy();
 		});
 
-		module("Setters", {
+		QUnit.module("Setters", {
 			setup : function() {
 				this.rbg = new sap.m.RadioButtonGroup({
 					buttons : [

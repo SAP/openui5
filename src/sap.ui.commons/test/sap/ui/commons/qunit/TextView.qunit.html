@@ -43,7 +43,7 @@
 		// TEST functions
 		qutils.delayTestStart();
 
-		module("Properties");
+		QUnit.module("Properties");
 
 		test("Default Values", function() {
 			equals(oTV1.getEnabled(), true, "Enabled");
@@ -53,7 +53,7 @@
 			equals(oTV1.getWidth(), "", "Width");
 		});
 
-		module("Appearance");
+		QUnit.module("Appearance");
 
 		test("Visibility", function() {
 			// Visible

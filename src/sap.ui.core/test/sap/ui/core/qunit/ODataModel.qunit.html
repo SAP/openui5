@@ -1269,7 +1269,7 @@
 
 	});
 
-	module("ODataModel.read", {
+	QUnit.module("ODataModel.read", {
 		setup: function() {
 			this.oModel = initModel(sURI, true);
 		},
@@ -1473,7 +1473,7 @@
 		});
 	});
 
-	module("CSRF Token handling", {
+	QUnit.module("CSRF Token handling", {
 		setup: function() {
 			this.oModel = initModel(sURI, true);
 			updateCsrfToken();
@@ -1548,7 +1548,7 @@
 		}.bind(this));
 	});
 
-	module("Metamodel binding", {
+	QUnit.module("Metamodel binding", {
 		setup: function() {
 			this.oModel = initModel(sURI, false);
 		},
@@ -1626,7 +1626,7 @@
 
 
 
-	module("Annotation Loading", {
+	QUnit.module("Annotation Loading", {
 		setup: function() {},
 		teardown: function() {}
 	});

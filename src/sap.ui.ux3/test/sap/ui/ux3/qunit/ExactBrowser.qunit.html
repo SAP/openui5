@@ -110,7 +110,7 @@
 
 		//sap.ui.test.qunit.delayTestStart();
 
-		module("API");
+		QUnit.module("API");
 
 		test("Default Values", function() {
 			equal(oExactBrowser2.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3").getText("EXACT_BRWSR_LST_TITLE"), "Default 'title':");
@@ -161,7 +161,7 @@
 			equals(oExactBrowser2.getAttributes().length, 0, "Number of attributes after removeAll");
 		});
 
-		module("Visual appearence");
+		QUnit.module("Visual appearence");
 
 		test("Visiblity", function() {
 			ok(oExactBrowser1.getDomRef(), "Visible Control rendered");
@@ -191,7 +191,7 @@
 			ok(Math.abs(jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-lst").width()-200) < 5, "Custom List Width");
 		});
 
-		module("List Interaction");
+		QUnit.module("List Interaction");
 
 		test("Initial State", function() {
 			equals(oExactBrowser1.getAttributes().length, 4, "Number of top level attributes:");
@@ -432,7 +432,7 @@
 		});
 
 
-		module("Keyboard Navigation");
+		QUnit.module("Keyboard Navigation");
 
 		function checkNav(oList){
 			ok(jQuery.sap.containsOrEquals(oList.getFocusDomRef(), document.activeElement) && !jQuery.sap.containsOrEquals(jQuery.sap.domById(oList.getId()+"-cntnt"), document.activeElement), oList.getId() + " has focus.");
@@ -501,7 +501,7 @@
 		});
 
 
-		module("List Order");
+		QUnit.module("List Order");
 
 		asyncTest("Fixed", function() {
 			var aItemRefs = getListItemRefs(oExactBrowser3._rootList._lb);
@@ -530,7 +530,7 @@
 		});
 
 
-		module("Hidden Top List", {
+		QUnit.module("Hidden Top List", {
 			setup: function() {
 				oExactBrowser3.setShowTopList(false);
 				sap.ui.getCore().applyChanges();
@@ -549,7 +549,7 @@
 		});
 
 
-		module("Lifecycle");
+		QUnit.module("Lifecycle");
 
 		test("Destroy", function() {
 			oExactBrowser1.destroy();

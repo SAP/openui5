@@ -91,7 +91,7 @@
 		}).placeAt("uiArea1");
 
 
-		module("Appearance");
+		QUnit.module("Appearance");
 
 		test("Output of elements", function() {
 			// feeder
@@ -132,7 +132,7 @@
 			setTimeout(delayedCall, 0);
 		});
 
-		module("Behaviour");
+		QUnit.module("Behaviour");
 
 		test("live button", function() {
 			qutils.triggerMouseEvent("Feed1-liveButton", "click");

@@ -49,7 +49,7 @@
 		oBinding = oModel.bindTree(sPath, oContext, aFilters, mParameters);
 	};
 
-	module("ODataTreeBinding with navigation properties", {
+	QUnit.module("ODataTreeBinding with navigation properties", {
 		setup: function() {
 			oNavPropMockServer.start();
 			oModel = new sap.ui.model.odata.ODataModel('/navprop/', true);
@@ -595,7 +595,7 @@
 		oBinding.getRootContexts(1, 4);
 	});
 
-	module("ODataTreeBinding with annotations", {
+	QUnit.module("ODataTreeBinding with annotations", {
 		setup: function() {
 			oAnnotationMockServer.start();
 			oModel = new sap.ui.model.odata.ODataModel('/metadata/', true);

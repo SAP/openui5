@@ -6,7 +6,7 @@
     	assert.strictEqual($elment.attr(sRoleAttribute), sRole, sMessage);
     }
 
-    module("Screen reader support - Section/SubSection", {
+    QUnit.module("Screen reader support - Section/SubSection", {
     	beforeEach: function () {
     		this.objectPageView = sap.ui.xmlview("UxAP-71_ObjectPageScreenReaderSupport", {
                 viewName: "view.UxAP-71_ObjectPageScreenReaderSupport"

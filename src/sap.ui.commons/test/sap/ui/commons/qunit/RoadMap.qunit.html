@@ -104,7 +104,7 @@
 
 	qutils.delayTestStart();
 
-	module("Properties and Aggregations");
+	QUnit.module("Properties and Aggregations");
 
 	test("Properties - Default Values", function() {
 		ok(!oRoadMap2.getSelectedStep(), "Default 'selectedStep'");
@@ -147,7 +147,7 @@
 	});
 
 
-	module("Appearance");
+	QUnit.module("Appearance");
 
 	test("Visibility", function() {
 		equals(jQuery("#rm1").length, 1, "Visible Roadmap is rendered");
@@ -203,7 +203,7 @@
 	});
 
 
-	module("Interaction - Mouse");
+	QUnit.module("Interaction - Mouse");
 
 	asyncTest("Click on step", function() {
 		var handler = function(oControlEvent){
@@ -324,7 +324,7 @@
 	});
 
 
-	module("Interaction - Keyboard");
+	QUnit.module("Interaction - Keyboard");
 
 	asyncTest("SPACE key on step", function() {
 		var handler = function(oControlEvent){

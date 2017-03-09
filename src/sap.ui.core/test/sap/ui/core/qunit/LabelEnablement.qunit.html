@@ -87,7 +87,7 @@
 		});
 
 
-		module("LabelEnablement", {
+		QUnit.module("LabelEnablement", {
 			setup : function () {
 				this.oLabel = new TestLabel("testLabel");
 				this.oControl1 = new TestControl("testControl1", {ariaLabelledBy: "someLabelFromApplication"});
@@ -196,7 +196,7 @@
 			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
 		});
 
-		module("Required Propagation", {
+		QUnit.module("Required Propagation", {
 			setup : function () {
 				this.oLabel = new TestLabel("testLabel");
 				this.oControl = new TestControl("testControl");

@@ -28,7 +28,7 @@
 jQuery.sap.require("sap.ui.core.util.MockServer");
 
 
-module('GIVEN data and complex filter features in MockServer', {
+QUnit.module('GIVEN data and complex filter features in MockServer', {
     setup: function () {
     	this.oMockServer = new sap.ui.core.util.MockServer({
    	   	 rootUri: "/myService/"
@@ -271,7 +271,7 @@ test("POST table", function () {
     ok(response.data.d !== undefined, "match");
 });
 
-	 module('MockServer URI ', {
+	 QUnit.module('MockServer URI ', {
 	        setup: function () {
 
         		this.simpleXML = 'testdata/apfapp/tMockServerFeatureTestingMetadata.xml';
@@ -332,7 +332,7 @@ test("POST table", function () {
 	        stubbedServer.destroy();
 	    });
 */
-	    module('MockServer requests', {
+	    QUnit.module('MockServer requests', {
 	        setup: function () {
 	        	this.oMockServer = new sap.ui.core.util.MockServer({
 	        	   	 rootUri: "/myService/"
@@ -516,7 +516,7 @@ test("POST table", function () {
 	    });
 
 /*
-	    module('MockServer metadata included requests', {
+	    QUnit.module('MockServer metadata included requests', {
 	        setup: function () {
 	            var that = this;
 
@@ -557,7 +557,7 @@ test("POST table", function () {
 	        ok(this.stubPutMessage.calledOnce);
 	    });
 
-	    module('MockServer batch requests', {
+	    QUnit.module('MockServer batch requests', {
 	        setup: function () {
 	            var that = this,
 	                result;

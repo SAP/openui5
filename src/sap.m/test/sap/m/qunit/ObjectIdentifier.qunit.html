@@ -29,7 +29,7 @@
 
 <script>
 	/***********************************************************************************************************************/
-	module("Control Lifecycle");
+	QUnit.module("Control Lifecycle");
 
 	test("Render", function() {
 
@@ -127,7 +127,7 @@
 	});
 
 	/***********************************************************************************************************************/
-	module("Internals");
+	QUnit.module("Internals");
 
 	test("Icon Getters", function() {
 
@@ -399,7 +399,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	module("API");
+	QUnit.module("API");
 
 	test("default values", function() {
 
@@ -484,7 +484,7 @@
 	});
 
 
-	module("Keyboard handling");
+	QUnit.module("Keyboard handling");
 
 	function checkKeyboardEventhandling(sTestName, oOptions) {
 		test(sTestName, function() {
@@ -520,7 +520,7 @@
 		keyCode : jQuery.sap.KeyCodes.SPACE
 	});
 
-	module("Event testing");
+	QUnit.module("Event testing");
 
 	test("ObjectIdentifier titlePress Event", function() {
 
@@ -552,7 +552,7 @@
 	});
 
 	/***********************************************************************************************************************/
-	module("Styles");
+	QUnit.module("Styles");
 
 	test("Should add separator class if title added at runtime", function() {
 
@@ -664,7 +664,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	module("Databinding");
+	QUnit.module("Databinding");
 
 	test("Model sets titleActive = true", function() {
 

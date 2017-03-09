@@ -105,7 +105,7 @@
 		qutils.delayTestStart();
 
 
-		module("API");
+		QUnit.module("API");
 
 		test("Properties - Default Values", function() {
 			equal(oShell.getShowPane(), false, "Default 'showPane'");
@@ -148,7 +148,7 @@
 		});
 
 
-		module("Rendering");
+		QUnit.module("Rendering");
 
 		test("Content", function() {
 			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-hdrcntnt"), jQuery.sap.domById("_header")), "Header rendered correctly");
@@ -158,7 +158,7 @@
 			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-container-pane"), jQuery.sap.domById("_pane_ctnt")), "Pane Content rendered correctly");
 		});
 
-		module("Behavior");
+		QUnit.module("Behavior");
 
 		asyncTest("Open/Close Pane", function() {
 			function checkVisibility(){

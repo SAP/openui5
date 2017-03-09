@@ -133,7 +133,7 @@
 		$HoveredDiv = oRating.$("hov");
 	};
 
-	module("Properties");
+	QUnit.module("Properties");
 
 	// check all properties
 	test("default Values", function() {
@@ -148,7 +148,7 @@
 		strictEqual(oRating0.getVisualMode(), "Half", "By default the visual mode is \"Half\" on " + oRating0);
 	});
 
-	module("HTML");
+	QUnit.module("HTML");
 
 	// check existence of all rendered divs
 	test("rendering", function() {
@@ -185,7 +185,7 @@
 		}
 	});
 
-	module("CSS and DOM");
+	QUnit.module("CSS and DOM");
 
 	test("css class and attributes", function() {
 		var i = 0;
@@ -209,7 +209,7 @@
 	});
 
 
-	module("Methods");
+	QUnit.module("Methods");
 
 	test("getter / setter", function() {
 		sap.ui.getCore().applyChanges();
@@ -291,7 +291,7 @@
 		oRating.destroy();
 	});
 
-	module("Events");
+	QUnit.module("Events");
 
 	test("Firing events", function() {
 		expect(6);
@@ -523,7 +523,7 @@
 		oRating.destroy();
 	});
 
-	module("Accessibility");
+	QUnit.module("Accessibility");
 
 	test("getAccessibilityInfo", function() {
 		var oControl = new sap.m.RatingIndicator({value: 5, maxValue: 10});

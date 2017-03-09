@@ -67,7 +67,7 @@
 	oView.placeAt('content');
 	sap.ui.getCore().applyChanges();
 
-	module("ObjectPageConfig");
+	QUnit.module("ObjectPageConfig");
 
 	QUnit
 		.test(

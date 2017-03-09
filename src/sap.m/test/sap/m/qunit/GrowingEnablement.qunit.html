@@ -29,7 +29,7 @@
 			jQuery.sap.require("sap.m.List");
 			jQuery.sap.require("sap.m.GrowingEnablement");
 
-			module("trigger");
+			QUnit.module("trigger");
 			asyncTest("Should update the trigger state correctly", function() {
 				//Arrange
 				var data = { items: [ {},{}] };
@@ -125,7 +125,7 @@
 				}, 0);
 			});
 
-			module("Integration tests");
+			QUnit.module("Integration tests");
 			test("Should determine if the list is scrollable", function() {
 				//Arrange
 				var data = { items: [ {},{}] };
@@ -206,7 +206,7 @@
 				}, 0);
 			});
 
-			module("Odata");
+			QUnit.module("Odata");
 			sinon.config.useFakeTimers = false;
 
 			function startMockServer() {

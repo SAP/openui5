@@ -1,4 +1,4 @@
-module("Remove and reinsert", {
+QUnit.module("Remove and reinsert", {
 	setup: function() {
 		fnSetupNewMockServer();
 		oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, {useBatch:false});
@@ -102,7 +102,7 @@ asyncTest("Move manually expanded nodes", function(){
 
 			oBinding.expand(oN1639, true);
 			equal(oBinding.getLength(), 700, "The length of binding is correct after expanding subtree");
-			
+
 			oBinding.collapse(oN1004);
 			equal(oBinding.getLength(), 638, "The length of binding is correct after the old parent is collapsed");
 
@@ -776,7 +776,7 @@ asyncTest("Length calculation - Move Node from upper Subtree to a lower Subtree 
 	});
 });
 
-module("create new node", {
+QUnit.module("create new node", {
 	setup: function() {
 		oMockServer.start();
 		oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, {useBatch:false});

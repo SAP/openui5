@@ -68,7 +68,7 @@
 		return oQueryResultRequest;
 	}
 
-	module("Instantiation");
+	QUnit.module("Instantiation");
 
 	test("Create Model-Instance", function() {
 		var oModel = getModelInstance();
@@ -76,7 +76,7 @@
 		ok(oModel, "OData Model should be wrapped.");
 	});
 
-	module("Results");
+	QUnit.module("Results");
 
 	test("Get names of all query results offered by the service", function() {
 		var oModel = getModelInstance(),
@@ -103,7 +103,7 @@
 		deepEqual(oQueryResult, mQueryResults["ActualPlannedCostsResults"], "Query Result 'ActualPlannedCostsResults' was fetched by name.");
 	});
 
-	module("Introspection");
+	QUnit.module("Introspection");
 
 	test("Get all parameter names", function() {
 		var oModel = getModelInstance(),
@@ -290,7 +290,7 @@
 
 	});
 
-	module("Parametrization");
+	QUnit.module("Parametrization");
 
 	test("Create request for query parameterization", function() {
 		var oModel = getModelInstance(), oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"), oParamRequest = new odata4analytics.ParameterizationRequest(oQueryResult.getParameterization());
@@ -323,7 +323,7 @@
 		ok(jQuery.isEmptyObject(aMeasNames), "No measues selected.");
 	});
 
-	module("Requesting")
+	QUnit.module("Requesting")
 
 	test("Create request for query results", function() {
 		var oQueryResultRequest = getQueryResultRequest();
@@ -584,7 +584,7 @@
 		strictEqual(sSetURI, sRefBaseURI + sRefCountURI, "QueryResultEntries URI correctly constructed without PageBoundaries.");
 	});
 
-	module("UI5 Multi Filters")
+	QUnit.module("UI5 Multi Filters")
 
 	test("Combining with some simple condition", function() {
 		var oQueryResultRequest = getQueryResultRequest();
