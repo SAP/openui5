@@ -3,7 +3,7 @@
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc">
-	<HeaderContainer scrollStep="200" scrollTime="500" showDividers="false">
+	<HeaderContainer scrollStep="200" showDividers="false">
 		<NumericContent size="S" scale="M" value="1.75" valueColor="Good" indicator="Up" press="press" />
 		<NumericContent size="S" scale="M" value="0.57" valueColor="Error" indicator="Down" press="press" />
 		<NumericContent size="S" scale="M" value="1.04" valueColor="Normal" indicator="Up" press="press" />

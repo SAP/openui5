@@ -38,7 +38,6 @@
 				maximumFilenameLength="55"
 				maximumFileSize="10"
 				multiple="true"
-				showSeparators="All"
 				change="onChange"
 				fileDeleted="onFileDeleted"
 				filenameLengthExceed="onFilenameLengthExceed"

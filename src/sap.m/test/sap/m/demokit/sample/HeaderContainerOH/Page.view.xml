@@ -29,7 +29,7 @@
 				state="Warning"/>
 		</statuses>
 		<headerContainer>
-			<HeaderContainer scrollStep="200" scrollTime="500" id="headerContainer">
+			<HeaderContainer scrollStep="200" id="headerContainer">
 				<NumericContent size="S" scale="M" value="1.75" valueColor="Good" indicator="Up" press="press" />
 				<NumericContent size="S" scale="M" value="0.57" valueColor="Error" indicator="Down" press="press" />
 				<NumericContent size="S" scale="M" value="1.04" valueColor="Normal" indicator="Up" press="press" />
