@@ -57,7 +57,8 @@
 				}
 			});
 
-			QUnit.asyncTest("Should create a view", function (assert) {
+			QUnit.test("Should create a view", function (assert) {
+				var done = assert.async();
 				var fnStub = this.stub(sap.ui, "view", function () {
 						return this.oView;
 					}.bind(this));
@@ -69,12 +70,13 @@
 				oReturnValue.then(function (oView) {
 					assert.strictEqual(oView, this.oView, "the view was created");
 					assert.strictEqual(fnStub.callCount, 1, "the stub was invoked");
-					QUnit.start();
+					done();
 				}.bind(this));
 			});
 
 
-			QUnit.asyncTest("Should set a view to the cache", function (assert) {
+			QUnit.test("Should set a view to the cache", function (assert) {
+				var done = assert.async();
 				var that = this,
 						oReturnValue,
 						fnStub = this.stub(sap.ui, "view", function () {
@@ -90,7 +92,7 @@
 					assert.strictEqual(oView, this.oView, "the view was returned");
 					assert.strictEqual(oReturnValue, this.oViews, "able to chain this function");
 					assert.strictEqual(fnStub.callCount, 0, "the stub not invoked - view was loaded from the cache");
-					QUnit.start();
+					done();
 				}.bind(this));
 			});
 
@@ -260,7 +262,8 @@
 				assert.strictEqual(oFireReturnValue, this.oViews, "did return this for chaining for fire");
 			});
 
-			QUnit.asyncTest("Should fire the view created event if a view is created", function (assert) {
+			QUnit.test("Should fire the view created event if a view is created", function (assert) {
+				var done = assert.async();
 				// Arrange
 				var oView = createXmlView(),
 						fnStub = this.stub(sap.ui, "view", function () {
@@ -285,7 +288,7 @@
 					assert.strictEqual(fnEventSpy.callCount, 1, "The view created event was fired");
 					assert.strictEqual(oParameters.view, oView, "Did pass the view to the event parameters");
 					assert.strictEqual(oParameters.viewOptions, oViewOptions, "Did pass the name to the event parameters");
-					QUnit.start();
+					done();
 				});
 			});
 		});

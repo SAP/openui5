@@ -63,7 +63,8 @@
 		});
 
 		QUnit.module("Modes Check on desktop");
-		asyncTest("PopoverMode_portrait", function(){
+		QUnit.test("PopoverMode_portrait", function(assert){
+			var done = assert.async();
 			var oSystem = {
 					desktop: true,
 					tablet: false,
@@ -111,12 +112,13 @@
 				equal(oSplitApp.$().children().length,2, "SplitApp should only contain the detail nav container.");
 				equal(oSplitApp._oMasterNav.getParent().getId(), "splitapp-Popover", "Parent of Master Nav container page should be Popover.");
 				oSplitApp.destroy();
-				start();
+				done();
 			});
 			oSplitApp._oPopOver.openBy(oSplitApp._oShowMasterBtn);
 		});
 
-		asyncTest("ShowHideMode_portrait", function(){
+		QUnit.test("ShowHideMode_portrait", function(assert){
+			var done = assert.async();
 			var oSystem = {
 					desktop: true,
 					tablet: false,
@@ -166,7 +168,7 @@
 			setTimeout(function(){
 				equal(oSplitApp.isMasterShown(), true, "Master area is shown");
 				oSplitApp.destroy();
-				start();
+				done();
 			}, 400);
 		});
 
@@ -401,7 +403,8 @@
 		});
 
 		QUnit.module("Public Methods");
-		asyncTest("ShowMaster", function(){
+		QUnit.test("ShowMaster", function(assert){
+			var done = assert.async();
 			var oSystem = {
 					desktop: true,
 					tablet: false,
@@ -449,7 +452,7 @@
 				ok(!jQuery("#splitapp-Master").is(":hidden"),"Master should not be hidden.");
 				equal(jQuery("#splitapp-Master").outerWidth(), 320, "Master width should be 320px.");
 				oSplitApp.destroy();
-				start();
+				done();
 			}, 500);
 		});
 
@@ -742,7 +745,8 @@
 			oSplitApp.destroy();
 		});
 
-		asyncTest("keyboard handling with showMasterButton", function(){
+		QUnit.test("keyboard handling with showMasterButton", function(assert){
+			var done = assert.async();
 			var oSystem = {
 					desktop: true,
 					phone: false,
@@ -773,7 +777,7 @@
 			setTimeout(function(){
 				ok(oSplitApp1.isMasterShown(), "Master should be opened");
 				oSplitApp1.destroy();
-				start();
+				done();
 			}, 500);
 		});
 	</script>

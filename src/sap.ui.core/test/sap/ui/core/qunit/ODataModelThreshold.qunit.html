@@ -54,25 +54,27 @@
 
 	QUnit.module("Model thresholding");
 
-	asyncTest("test threshold 100; get data from 0..10", function(){
+	QUnit.test("test threshold 100; get data from 0..10", function(assert){
+		var done = assert.async();
 		fnChange = function() {
 			aContexts = oBinding.getContexts(0,10,100);
 			equal(aContexts.length,10, "we should have 10 contexts");
 			equal(oBinding.aKeys.length,110, "we should have 110 keys");
 			oBinding.oModel.detachRequestCompleted(fnChange);
-			start();
+			done();
 		}
 		oBinding.oModel.attachRequestCompleted(fnChange);
 		var aContexts = oBinding.getContexts(0,10,100);
 	});
 
-	asyncTest("test threshold 100; simulate paging", function(){
+	QUnit.test("test threshold 100; simulate paging", function(assert){
+		var done = assert.async();
 		fnChange = function() {
 			aContexts = oBinding.getContexts(120,10,100);
 			equal(aContexts.length,10, "we should have 10 contexts");
 			equal(oBinding.aKeys.length,210, "we should have 210 keys");
 			oBinding.oModel.detachRequestCompleted(fnChange);
-			start();
+			done();
 		}
 		oBinding.oModel.attachRequestCompleted(fnChange);
 		var aContexts = oBinding.getContexts(0,10,100);
@@ -88,47 +90,51 @@
 		equal(oBinding.getContexts(100,10,100).length,10, "we should have 10 contexts");
 	});
 
-	asyncTest("test threshold 100; get next page", function(){
+	QUnit.test("test threshold 100; get next page", function(assert){
+		var done = assert.async();
 		fnChange = function() {
 			aContexts = oBinding.getContexts(120,10,100);
 			equal(aContexts.length,10, "we should have 10 contexts");
 			equal(oBinding.aKeys.length,310, "we should have 310 keys");
 			oBinding.oModel.detachRequestCompleted(fnChange);
-			start();
+			done();
 		}
 		oBinding.oModel.attachRequestCompleted(fnChange);
 		equal(oBinding.getContexts(110,10,100).length,10, "we should have 10 contexts");
 		equal(oBinding.getContexts(120,10,100).length,10, "we should have 10 contexts");
 	});
 
-	asyncTest("test threshold 100; jumpt to 751", function(){
+	QUnit.test("test threshold 100; jumpt to 751", function(assert){
+		var done = assert.async();
 		fnChange = function() {
 			aContexts = oBinding.getContexts(751,10,100);
 			equal(aContexts.length,10, "we should have 10 contexts");
 			equal(oBinding.aKeys.length,830, "we should have 830 keys");
 			equal(oBinding.sRangeParams,"$skip=651&$top=179", "we should read 179 entries");
 			oBinding.oModel.detachRequestCompleted(fnChange);
-			start();
+			done();
 		}
 		oBinding.oModel.attachRequestCompleted(fnChange);
 		equal(oBinding.getContexts(751,10,100).length,0, "contexts not loaded yet");
 	});
 
-	asyncTest("test threshold 100; page/scroll back", function(){
+	QUnit.test("test threshold 100; page/scroll back", function(assert){
+		var done = assert.async();
 		fnChange = function() {
 			equal(oBinding.sRangeParams,"$skip=551&$top=100", "we should read next 100 entries");
 			oBinding.oModel.detachRequestCompleted(fnChange);
-			start();
+			done();
 		}
 		oBinding.oModel.attachRequestCompleted(fnChange);
 		equal(oBinding.getContexts(741,10,100).length,10, "we should have 10 contexts");
 	});
-	asyncTest("test threshold 100; page/scroll back", function(){
+	QUnit.test("test threshold 100; page/scroll back", function(assert){
+		var done = assert.async();
 		fnChange = function() {
 			equal(oBinding.sRangeParams,"$skip=451&$top=100", "we should read next 100 entries");
 			equal(oBinding.getContexts(541,10,100).length,10, "we should have 10 contexts");
 			oBinding.oModel.detachRequestCompleted(fnChange);
-			start();
+			done();
 		}
 		oBinding.oModel.attachRequestCompleted(fnChange);
 		equal(oBinding.getContexts(731,10,100).length,10, "we should have 10 contexts");

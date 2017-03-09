@@ -137,7 +137,8 @@ jQuery.sap.require('sap.ui.fl.Cache');
 	}
 	;
 
-	asyncTest('Create a user dependant variant in the user layer, read it and delete it afterwards', function() {
+	QUnit.test('Create a user dependant variant in the user layer, read it and delete it afterwards', function(assert) {
+		var done = assert.async();
 		var that = this;
 		var connector = LrepConnector.createConnector();
 
@@ -156,7 +157,8 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 	});
 
-	asyncTest('Create a non-user dependant variant, it should be created in the current layer setting; delete it afterwards', function() {
+	QUnit.test('Create a non-user dependant variant, it should be created in the current layer setting; delete it afterwards', function(assert) {
+		var done = assert.async();
 		var expectedLayer = "VENDOR";
 		this.oChangeJson.layer = expectedLayer;
 		var fileName = this.baseFileName + "_" + expectedLayer;
@@ -179,7 +181,8 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		});
 	});
 
-	asyncTest('Create a non-user dependant variant, then update the texts, save it and delete it afterwards', function() {
+	QUnit.test('Create a non-user dependant variant, then update the texts, save it and delete it afterwards', function(assert) {
+		var done = assert.async();
 		var expectedLayer = "VENDOR";
 		this.oChangeJson.layer = expectedLayer;
 		var fileName = this.baseFileName + "_" + expectedLayer;

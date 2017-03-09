@@ -150,7 +150,8 @@
 	});
 
 	// test the "reset" button
-	asyncTest("ResetButton", function() {
+	QUnit.test("ResetButton", function(assert) {
+		var done = assert.async();
 		ok(true, "Test for reset button started");
 		sQuery = "test";
 		aEvents = [];
@@ -167,11 +168,12 @@
 			// check events: both search and liveChange should be fired
 			ok(aEvents.length >= 2, "there should be at least 2 events in the log");
 			aEvents = [];
-			start();
+			done();
 			}, 200);
 	});
 
-	asyncTest("Focused SearchField", function() {
+	QUnit.test("Focused SearchField", function(assert) {
+		var done = assert.async();
 		ok(true, "Test for focused search field started");
 		// touch the search field
 		doTouchEnd("sf3-reset");
@@ -183,7 +185,7 @@
 			document.activeElement.blur();
 			setTimeout( function(){
 				ok(/\uE00A/.test(getIconId(sf3, "search")), "Defocused search field icon is synchronize");
-				start();
+				done();
 			}, 350)
 		}, 200);
 

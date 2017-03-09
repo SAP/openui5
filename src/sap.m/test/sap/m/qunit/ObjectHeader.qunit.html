@@ -303,7 +303,8 @@
 		ok(jQuery("#" + ohBasicId + "-number").hasClass("sapMObjectNumberStatusSuccess"), "Number color uses value state success color.");
 	});
 
-	asyncTest("Placeholders for invisible attributes", function() {
+	QUnit.test("Placeholders for invisible attributes", function(assert) {
+		var done = assert.async();
 
 		var oH = new sap.m.ObjectHeader({
 			title : "Invisible attribute issue",
@@ -318,11 +319,12 @@
 
 			ok(jQuery('#' + oH.getId() + ' > .sapMOHBottomRow > .sapMOHAttrRow').length === 0, "The attribute row should not be rendered");
 			oH.destroy();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("Placeholders for invisible status", function() {
+	QUnit.test("Placeholders for invisible status", function(assert) {
+		var done = assert.async();
 
 		var oH = new sap.m.ObjectHeader({
 			title : "Invisible status issue",
@@ -338,11 +340,12 @@
 
 			ok(jQuery('#' + oH.getId() + ' > .sapMOHBottomRow > .sapMOHAttrRow > .sapMOHStatusFixedWidth').length === 0, "The status should not be rendered");
 			oH.destroy();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("Placeholders for invisible attribute with visible status", function() {
+	QUnit.test("Placeholders for invisible attribute with visible status", function(assert) {
+		var done = assert.async();
 
 		var oH = new sap.m.ObjectHeader({
 			title : "Reserved space for invisible attribute issue",
@@ -367,11 +370,12 @@
 
 			ok(jQuery('#' + oH.getId() + ' > .sapMOHBottomRow > .sapMOHAttrRow').length === 1, "Invisible attribute should not cause new row.");
 			oH.destroy();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("Placeholders for invisible status with visible attribute", function() {
+	QUnit.test("Placeholders for invisible status with visible attribute", function(assert) {
+		var done = assert.async();
 
 		var oH = new sap.m.ObjectHeader({
 			title : "Reserved space for invisible status issue",
@@ -400,7 +404,7 @@
 
 			ok(jQuery('#' + oH.getId() + ' > .sapMOHBottomRow > .sapMOHAttrRow').length === 1, "Invisible status should not cause new row.");
 			oH.destroy();
-			start();
+			done();
 		});
 	});
 
@@ -878,14 +882,14 @@
 
 	QUnit.module("TitleArrow");
 
-	asyncTest("TestTitleArrowResetToFalse", function() {
+	QUnit.test("TestTitleArrowResetToFalse", function(assert) {
+		var done = assert.async();
 
 		oTitleArrowOH.setShowTitleSelector(false);
 
 		setTimeout(function() {
-
-			start();
 			equal(jQuery.sap.byId("titleArrowOH-titleArrow").length, 0, " The titleArrowOH showTitleSelector is set to false and is not rendered.");
+			done();
 		}, 100);
 
 	});

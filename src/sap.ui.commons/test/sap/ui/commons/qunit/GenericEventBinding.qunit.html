@@ -101,26 +101,29 @@
     		equal(oBtn.aBindParameters[0].fnHandler, myHandler1, "oBtn.aBindParameters[0] handler should be myHandler1");
     	});
 
-    	asyncTest("Execution of a Handler", 1, function() {
+    	QUnit.test("Execution of a Handler", 1, function(assert) {
+    		var done = assert.async();
     		oBtn.getDomRef().focus();
     		oBtn2.getDomRef().focus();
 
     		setTimeout(function() {
-    			start();
+    			done();
 				}, 1);
     	});
 
-    	asyncTest("Execution of multiple Handlers", 3, function() {
+    	QUnit.test("Execution of multiple Handlers", 3, function(assert) {
+    		var done = assert.async();
     		oBtn.attachBrowserEvent("blur", myHandler2);
     		oBtn.getDomRef().focus();
     		oBtn2.getDomRef().focus();
 
     		setTimeout(function() {
-    			start();
+    			done();
 				}, 1);
     	});
 
-    	asyncTest("Execution of Handlers (no handlers, all removed)", 1, function() {
+    	QUnit.test("Execution of Handlers (no handlers, all removed)", 1, function(assert) {
+    		var done = assert.async();
     		oBtn.detachBrowserEvent("blur", myHandler1);
     		oBtn.detachBrowserEvent("blur", myHandler2);
     		oBtn.getDomRef().focus();
@@ -129,11 +132,12 @@
     		ok (true, "Test without success message is boring. There should not be any check after this one.");
 
     		setTimeout(function() {
-    			start();
+    			done();
 				}, 1);
     	});
 
-    	asyncTest("Execution of a Handler after re-rendering", function() {
+    	QUnit.test("Execution of a Handler after re-rendering", function(assert) {
+    		var done = assert.async();
     		oBtn2.getDomRef().focus();
 
     		// register handler first
@@ -152,12 +156,13 @@
 
     		setTimeout(function() {
     			oBtn.detachBrowserEvent("blur", myHandler1);
-    			start();
+    			done();
 				}, 1);
     	});
 
     	var oBtn3;
-    	asyncTest("Event Binding Before Rendering", 1, function() {
+    	QUnit.test("Event Binding Before Rendering", 1, function(assert) {
+    		var done = assert.async();
     		// create third button and bind event
     		oBtn3 = new sap.ui.commons.Button("btn3", {text:"Button 3"});
     		oBtn3.attachBrowserEvent("blur", myHandler1);
@@ -171,7 +176,7 @@
     		oBtn.getDomRef().focus();
 
 	   		setTimeout(function() {
-    			start();
+    			done();
 				}, 1);
     	});
 
@@ -266,7 +271,8 @@
     	/*
     	 * TODO: jQuery.proxy is not supported yet
 
-    	asyncTest("Removing Handlers wrapped with jQuery.proxy()", 2, function() {
+    	QUnit.test("Removing Handlers wrapped with jQuery.proxy()", 2, function(assert) {
+    		var done = assert.async();
     		equal(oBtn3.aBindParameters.length, 1, "oBtn3.aBindParameters should have one entry");
 
     		// remove the event, but the handler is wrapped with proxy()
@@ -292,7 +298,7 @@
 
     			// wait and check whether handler is called
     			setTimeout(function() {
-      			start();
+      			done();
   				}, 1);
 				}, 1);
     	});

@@ -145,7 +145,8 @@
 
 
 			/*
-			asyncTest("Scrolling - delayed", function() {
+			QUnit.test("Scrolling - delayed", function(assert) {
+				var done = assert.async();
 				expect(3);
 
 				oSC2.scrollTo(50, 0, 300);
@@ -154,7 +155,7 @@
 				 intEqual(getScrollPos(), -50, "ScrollContainer 2 should be scrolled to position 50");
 				 intEqual(oSC2._oScroller._scrollX, 50, "Internally stored x scrolling position should be 50"); // TODO: this only checks iScroll's internal state; the ScrollContainer may have a different value, but this does not hurt
 				 intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
-					start();
+					done();
 				}, 350);
 			});
 			*/
@@ -183,7 +184,8 @@
 			});
 
 
-			asyncTest("Scroll to end", function() {
+			QUnit.test("Scroll to end", function(assert) {
+				var done = assert.async();
 				expect(3);
 
 				oSC2.scrollTo(9999,0,0); // try to scroll way beyond the end of the content
@@ -193,11 +195,12 @@
 					intEqual(oSC2._oScroller._scrollX, 650, "Internally stored x scrolling position should be 650");
 					intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
 
-					start();
+					done();
 				}, 510); // need to wait because iscroll has a snap-back animation to go to the real end of the content
 			});
 
-			asyncTest("Scrolling after resize", function() {
+			QUnit.test("Scrolling after resize", function(assert) {
+				var done = assert.async();
 				expect(3);
 
 				jQuery.sap.byId("sc2-scroll").width("1100px"); // resize the content
@@ -211,7 +214,7 @@
 						intEqual(oSC2._oScroller._scrollX, 750, "Internally stored x scrolling position should be 750");
 						intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
 
-						start();
+						done();
 					}, 510); // need to wait because iscroll has a snap-back animation to go to the real end of the content
 				}, 300);
 			});

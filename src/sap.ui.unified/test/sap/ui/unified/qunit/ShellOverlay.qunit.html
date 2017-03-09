@@ -72,7 +72,7 @@
 			oShellOverlay1.detachClosed(onClosed);
 			ok(!checkVisibility(), "Overlay initially hidden");
 			ok(!!eventFired, "Closed event was fired");
-			start();
+		QUnit.start();
 		}
 
 		function onClosed(){
@@ -137,21 +137,24 @@
 
 		QUnit.module("Behavior");
 
-		asyncTest("Open Overlay", function() {
+		QUnit.test("Open Overlay", function(assert) {
+			var done = assert.async();
 			ok(!checkVisibility(), "Overlay initially hidden");
 			oShellOverlay1.open();
 
 			setTimeout(function(){
 				ok(checkVisibility(), "Overlay visible");
-				start();
+				done();
 			}, 600);
 		});
 
-		asyncTest("Close Overlay (via function call)", function() {
+		QUnit.test("Close Overlay (via function call)", function(assert) {
+			var done = assert.async();
 			testCloseOverlay(true);
 		});
 
-		asyncTest("Rendering", function() {
+		QUnit.test("Rendering", function(assert) {
+			var done = assert.async();
 			ok(!checkVisibility(), "Overlay initially hidden");
 			oShellOverlay1.open();
 
@@ -159,11 +162,12 @@
 				ok(checkVisibility(), "Overlay visible");
 				ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("overlay1-hdr-center"), jQuery.sap.domById("search1")), "Search rendered correctly");
 				ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("overlay1-cntnt"), jQuery.sap.domById("content")), "Content rendered correctly");
-				start();
+				done();
 			}, 600);
 		});
 
-		asyncTest("Close Overlay (via click)", function() {
+		QUnit.test("Close Overlay (via click)", function(assert) {
+			var done = assert.async();
 			testCloseOverlay(false);
 		});
 

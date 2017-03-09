@@ -50,7 +50,8 @@
 		return oModel;
 	}
 
-	asyncTest("test oDataModel - oMetadata shared across models", function(){
+	QUnit.test("test oDataModel - oMetadata shared across models", function(assert){
+		var done = assert.async();
 		expect(1);
 		var clock = this.clock;
 		var mOptions = {
@@ -88,17 +89,18 @@
 			clock.tick(1);
 			jQuery.when(metadataDfd).done(function(e){
 					ok(true, 'Metadata loaded fired at model only');
-					start();
+					done();
 				}).fail(function(e){
 					jQuery.sap.log.debug("metadata promise failed");
 					ok(false, 'Metadata loaded fired at metadata object')
-					start();
+					done();
 				});
 		});
 		clock.tick(1);
 	});
 
-	asyncTest("metadata check", function(){
+	QUnit.test("metadata check", function(assert){
+		var done = assert.async();
 		expect(7);
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
@@ -114,7 +116,7 @@
 			equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		oBinding.attachChange(handler);
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
@@ -122,7 +124,8 @@
 		this.clock.tick(1);
 	});
 
-	asyncTest("metadata get entity type check", function(){
+	QUnit.test("metadata get entity type check", function(assert){
+		var done = assert.async();
 		expect(11);
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
@@ -161,7 +164,7 @@
 			equal(oResult.name, "Category", "entity type name check");
 			oResult = {};
 			oBinding.detachChange(handler);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		oBinding.attachChange(handler);
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
@@ -169,7 +172,8 @@
 		this.clock.tick(1);
 	});
 
-	asyncTest("metadata get entity type check with context", function(){
+	QUnit.test("metadata get entity type check with context", function(assert){
+		var done = assert.async();
 		expect(1);
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("Products", new sap.ui.model.Context(oModel, "/Categories(7)"));
@@ -178,7 +182,7 @@
 			equal(oResult.name, "Product", "entity type name check");
 			oResult = {};
 			oBinding.detachChange(handler);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		oBinding.attachChange(handler);
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
@@ -186,7 +190,8 @@
 		this.clock.tick(1);
 	});
 
-	asyncTest("metadata get property metadata", function(){
+	QUnit.test("metadata get property metadata", function(assert){
+		var done = assert.async();
 		expect(6);
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
@@ -206,7 +211,7 @@
 			equal(oResult.type, "Edm.String", "Nav Property type name check");
 
 			oBinding.detachChange(handler);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		oBinding.attachChange(handler);
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
@@ -215,7 +220,8 @@
 	});
 
 
-	asyncTest("async metadata request check", function(){
+	QUnit.test("async metadata request check", function(assert){
+		var done = assert.async();
 		expect(2);
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
 			json: true,
@@ -226,14 +232,15 @@
 			ok(true, "Metadata callback handler called");
 			oModel.detachMetadataLoaded(handler);
 			ok(oModel.getServiceMetadata(), "get metadata check");
-			start();
+			done();
 		}
 		oModel.attachMetadataLoaded(handler);
 		this.clock.tick(30);
 	});
 
 
-	asyncTest("async metadata request check with bindings", function(){
+	QUnit.test("async metadata request check with bindings", function(assert){
+		var done = assert.async();
 		expect(9);
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
 			json: true,
@@ -257,7 +264,7 @@
 				equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 				oBinding.detachChange(handler2);
-				start();          // resume normal testing
+				done();          // resume normal testing
 			};
 			oBinding.attachChange(handler2);
 			oBinding.attachRefresh(handler2);
@@ -267,7 +274,8 @@
 		this.clock.tick(30);
 	});
 
-	asyncTest("async metadata request check with bindings die zwote", function(){
+	QUnit.test("async metadata request check with bindings die zwote", function(assert){
+		var done = assert.async();
 		expect(7);
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
 			json: true,
@@ -288,7 +296,7 @@
 			equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		oBinding.attachChange(handler);
 		oBinding.attachRefresh(handler);

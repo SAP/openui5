@@ -93,27 +93,30 @@
 			equal( oRowRepeater.isBound(), true , "now it is bound");
 		});
 
-		asyncTest("Test ShowMore Feature (1)", function() {
+		QUnit.test("Test ShowMore Feature (1)", function(assert) {
+			var done = assert.async();
 			equals( oRowRepeater.getNumberOfRows(), 10, "10 rows are expected to be visible at the start" );
 			ok( oRowRepeater.setShowMoreSteps(0), "setting ShowMoreSteps to zero" );
 			ok( oRowRepeater.triggerShowMore(), "triggering show more" );
 			ok( oRowRepeater.setShowMoreSteps(3), "setting ShowMoreSteps to 3" );
 			setTimeout(function() {
-				start();
+				done();
 			}, 1500);
 		});
 
-		asyncTest("Test ShowMore Feature (2)", function() {
+		QUnit.test("Test ShowMore Feature (2)", function(assert) {
+			var done = assert.async();
 			ok( oRowRepeater.triggerShowMore(), "triggering show more" );
 			ok( oRowRepeater.triggerShowMore(), "triggering show more" );
 			ok( oRowRepeater.triggerShowMore(), "triggering show more" );
 			setTimeout(function() {
-				start();
 				equals(oRowRepeater.getNumberOfRows(), 19, "19 rows are expected to be visible at the end");
+				done();
 			}, 1500);
 		});
 
-		asyncTest("Test Resize Feature", function() {
+		QUnit.test("Test Resize Feature", function(assert) {
+			var done = assert.async();
 			equals( oRowRepeater.getNumberOfRows(), 19, "19 rows are expected to be visible at the start" );
 			ok( oRowRepeater.setShowMoreSteps(0), "setting ShowMoreSteps to zero" );
 			ok( oRowRepeater.resize(5), "resize to 5 with ShowMoreSteps set to zero" );
@@ -123,12 +126,13 @@
 			ok( oRowRepeater.resize(20), "resize to 20" );
 			ok( oRowRepeater.resize(7), "resize to 7" );
 			setTimeout(function() {
-				start();
 				equals(oRowRepeater.getNumberOfRows(), 7, "7 rows are expected to be visible at the end");
+				done();
 			}, 1500);
 		});
 
-		asyncTest("Test Paging Behaviour", function() {
+		QUnit.test("Test Paging Behaviour", function(assert) {
+			var done = assert.async();
 			ok( oRowRepeater.gotoPage(5), "try to go to page 5, which should not work" );
 			equals( oRowRepeater.getCurrentPage(), 1, "we should still be on page 1" );
 			ok( oRowRepeater.setShowMoreSteps(0), "setting ShowMoreSteps to zero" );
@@ -143,8 +147,8 @@
 			ok( oRowRepeater.previousPage(), "go to previous page" );
 			ok( oRowRepeater.previousPage(), "go to previous page" );
 			setTimeout(function() {
-				start();
 				equals(oRowRepeater.getCurrentPage(), 1, "we should again be on page 1");
+				done();
 			}, 4000);
 		});
 
@@ -186,7 +190,8 @@
 			equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
 		});
 
-		asyncTest("Test Thresholding", function(){
+		QUnit.test("Test Thresholding", function(assert){
+			var done = assert.async();
 		    jQuery.sap.require("sap.ui.model.json.JSONModel");
 		    jQuery.sap.require("sap.ui.model.json.JSONListBinding");
 			sap.ui.model.json.JSONModel.extend("FWsJSONModel", {
@@ -247,10 +252,10 @@
 		    ok( oRowRepeater2.gotoPage(6), "go to page 6" ); // should trigger a reload
 		    ok( oRowRepeater2.lastPage(), "go to last page" ); // should trigger a reload
 			setTimeout(function() {
-				start();
 				ok(iCount >= 4, "iCount test");
 				equal(iReloadCount, 2, "iReloadCount test");
 				equal(iMaxLoadedContexts, 440 , "iLoadedData test");
+				done();
 			}, 3000);
 
 		});

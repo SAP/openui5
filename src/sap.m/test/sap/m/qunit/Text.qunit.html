@@ -157,7 +157,8 @@
 			strictEqual(t4.$().css("word-wrap"), "normal", "Text has correct word-wrap style for non-wrapping");
 		});
 
-		asyncTest("non-native max lines", function() {
+		QUnit.test("non-native max lines", function(assert) {
+			var done = assert.async();
 
 			t5.addEventDelegate({
 				onAfterRendering : function() {
@@ -193,7 +194,7 @@
 					strictEqual(t5.$().css("white-space"), "nowrap", "Text has correct style for 1 MaxLine");
 
 					strictEqual(t5.hasOwnProperty("_sResizeListenerId"), false, "Everything must be clean we do not have resize handler anymore");
-					start();
+					done();
 				}, 400);
 
 			}, 200);

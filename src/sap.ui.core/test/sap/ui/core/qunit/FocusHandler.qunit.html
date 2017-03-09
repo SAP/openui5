@@ -112,7 +112,8 @@
 			ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
 		});
 
-		asyncTest("Check sapfocusleave Event - Focus lost", function() {
+		QUnit.test("Check sapfocusleave Event - Focus lost", function(assert) {
+			var done = assert.async();
 			oControls["oControl1"].focus();
 			var bHandlerCalled = false;
 			oControls["oControl1"].onsapfocusleave = function(oEvent){
@@ -129,12 +130,13 @@
 
 			var checker = {};
 			checker.check = function(){
-				start();
 				ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
 
 				//Revert the temporary changes
 				oFocusHandler.onfocusEvent = onfocusEvent_ORIG;
 				jQuery("#customInput").get(0).focus();
+
+				done();
 			}
 
 			jQuery.sap.delayedCall(100, checker, "check");

@@ -101,7 +101,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 				return deletionPersistence.saveAll();
 			}).then(finalSteps)['catch'](function(err) {
 				ok(false, err);
-				start();
+				done();
 			});
 
 			function finalSteps() {
@@ -109,13 +109,14 @@ jQuery.sap.require('sap.ui.fl.Cache');
 					stub.restore();
 				});
 				Cache.setActive(true);
-				start();
+				done();
 			}
 
 		}
 	});
 
-	asyncTest('Create two variants, set one default', function() {
+	QUnit.test('Create two variants, set one default', function(assert) {
+		var done = assert.async();
 
 		// Create different persistence to avoid caching, before every getChanges a new persistence is required
 		var creationPersistence = createPersistence();
@@ -130,7 +131,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 		creationPersistence.saveAll().then(checkCreationAndSetDefaultVariantId).then(saveDefaultVariantChange).then(checkSaveAndGetDefaultVariantId).then(checkDefaultVariantId)['catch'](function(err) {
 			ok(false, err);
-			start();
+			done();
 		});
 
 		/*********************************************************************************************************/
@@ -155,11 +156,12 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 		function checkDefaultVariantId(defaultVariantId) {
 			strictEqual(defaultVariantId, secondChangeId, 'DefaultVariantId successfully set');
-			start();
+			done();
 		}
 	});
 
-	asyncTest('Create two variants, create two default variant changes. The newest should be used and the older one deleted automatically', function() {
+	QUnit.test('Create two variants, create two default variant changes. The newest should be used and the older one deleted automatically', function(assert) {
+		var done = assert.async();
 
 		// Create different persistence to avoid caching, before every getChanges a new persistence is required
 		var creationPersistence = createPersistence();
@@ -176,7 +178,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 		creationPersistence.saveAll().then(checkCreationAndSetDefaultVariantId).then(saveDefaultVariantChange).then(checkSaveThenCreateAndSaveSecondDefaultVariantChange).then(checkSaveAndGetChanges).then(checkDefaultVariantChangesAndSave).then(checkDeletionAndGetChangesAgain).then(checkNumberOfDefaultVariantChanges)['catch'](function(err) {
 			ok(false, err);
-			start();
+			done();
 		});
 
 		/*********************************************************************************************************/
@@ -228,7 +230,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		function checkNumberOfDefaultVariantChanges(changes) {
 			var defaultVarChanges = defaultVariant.getDefaultVariantChanges(changes);
 			strictEqual(defaultVarChanges.length, 1, 'One default variant changes found');
-			start();
+			done();
 		}
 	});
 

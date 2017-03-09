@@ -173,7 +173,8 @@
 		oObjectHeader.destroy();
 	});
 
-	asyncTest("Attributes Wrapping in ObjectListItem", function() {
+	QUnit.test("Attributes Wrapping in ObjectListItem", function(assert) {
+		var done = assert.async();
 
 		// arrange
 		var oAttr = new sap.m.ObjectAttribute("oOA3", {text:"Responsive ObjectListItem wrapping test"});
@@ -195,7 +196,7 @@
 		oObjectListItem.destroy();
 
 		setTimeout( function() {
-			start();
+			done();
 		}, 500);
 	});
 	/******************************************************************/
@@ -255,12 +256,13 @@
 		qutils.triggerEvent("tap", "table-item");
 	});
 
-	asyncTest("Test table row is clickable when ObjectAttribute is not active", function() {
+	QUnit.test("Test table row is clickable when ObjectAttribute is not active", function(assert) {
+		var done = assert.async();
 		expect(3);
 		oa7.setActive(false);
 		qutils.triggerEvent("tap", oa7.$().children()[0]);
 		setTimeout( function() {
-			start();
+			done();
 		}, 500);
 	});
 

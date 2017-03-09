@@ -104,7 +104,8 @@
 
 	});
 
-	asyncTest("Set Value", function() {
+	QUnit.test("Set Value", function(assert) {
+		var done = assert.async();
 		var oTA = oTAs["oTA2"];
 		oTA.setValue("This is a test");
 		equal(oTA.getValue(), "This is a test", "Set Value:");
@@ -117,18 +118,19 @@
 		oTADom.focus();
 		// async because of IE9 and focus() with jQuery < 1.6.2
 		var delayedCall = function(){
-				start();
-				oTA.setCursorPos(5);
+			oTA.setCursorPos(5);
 
-				equal(jQuery(oTADom).cursorPos(), 5, "Cursor Position:");
-			};
+			equal(jQuery(oTADom).cursorPos(), 5, "Cursor Position:");
+			done();
+		};
 		setTimeout(delayedCall, 0);
 
 	});
 
 	QUnit.module("Visual Appearence");
 
-	asyncTest("Visibility", function() {
+	QUnit.test("Visibility", function(assert) {
+		var done = assert.async();
 		ok(jQuery("#oTA2").get(0), "Visible: expected defined");
 
 		var oTA = oTAs["oTA2"];
@@ -165,9 +167,9 @@
 		ok(jQuery(oTADom).hasClass("sapUiTfErr"), "Visible: Error Class");
 		// async because of IE9 with focus() and jQuery < 1.6.2
 		var delayedCall = function(){
-				start();
-				ok(jQuery(oTADom).hasClass("sapUiTfFoc"), "Visible: Focus Class");
-			};
+			ok(jQuery(oTADom).hasClass("sapUiTfFoc"), "Visible: Focus Class");
+			done();
+		};
 		setTimeout(delayedCall, 0);
 
 	});
@@ -197,7 +199,8 @@
 	QUnit.module("Behaviour");
 
 	// async because of IE9 focus issue
-	asyncTest("Typing", function() {
+	QUnit.test("Typing", function(assert) {
+		var done = assert.async();
 		var oTA = oTAs["oTA1"];
 		var bChange = false;
 		var bLiveChange = false;
@@ -260,7 +263,7 @@
 
 			oTA.detachChange(handleChange);
 			oTA.detachLiveChange(handleLiveChange);
-			start();
+			done();
 		}, 10);
 });
 

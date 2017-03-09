@@ -61,10 +61,10 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		}
 
 		if (sap.ui.Device.browser.safari) {
-			stop();
+			var done = assert.async();
 			setTimeout(function() {
-				start();
 				doCheck();
+				done();
 			}, 1000);
 		} else {
 			doCheck();
@@ -116,11 +116,12 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		equal(oLabel.getLabelFor(), oXMLView.createId("Button1"), "Association has been adapted");
 	});
 
-	asyncTest("Eventhandling", 4, function() {
+	QUnit.test("Eventhandling", 4, function(assert) {
+		var done = assert.async();
 		qutils.triggerMouseEvent(jQuery.sap.byId(view.createId("Button1")), "click", 1, 1, 1, 1);
 		qutils.triggerMouseEvent(jQuery.sap.byId(view.createId("ButtonX")), "click", 1, 1, 1, 1);
 		setTimeout(function() {
-			start();
+			done();
 		}, 500);
 
 	});
@@ -139,10 +140,10 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		}
 
 		if (sap.ui.Device.browser.safari) {
-			stop();
+			var done = assert.async();
 			setTimeout(function() {
-				start();
 				doCheck();
+				done();
 			}, 1000);
 		} else {
 			doCheck();
@@ -221,7 +222,8 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 	});
 
 
-	// asyncTest("Async View Instantiation: loaded() method", function() {
+	// QUnit.test("Async View Instantiation: loaded() method", function(assert) {
+	// 	var done = assert.async();
 	// 	// define View and place it onto the page
 	// 	window.onInitCalled = false;
 	// 	view = fnViewFactory({async: true});

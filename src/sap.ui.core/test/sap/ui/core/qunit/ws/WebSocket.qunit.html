@@ -132,14 +132,15 @@
 
 			// Excluded tests which require a WebSocket connection (no server running yet)
 			/*
-			asyncTest("readyState", function() {
+			QUnit.test("readyState", function(assert) {
+				var done = assert.async();
 
 				if (sap.ui.Device.support.websocket) {
 					expect(5);
 				} else {
 					// skip test if browser doesn't support WebSockets
 					expect(0);
-					start();
+					done();
 					return;
 				}
 
@@ -162,19 +163,20 @@
 				ws.attachClose(function() {
 					equals(ws.getReadyState(), sap.ui.core.ws.ReadyState.CLOSED, "readyState is CLOSED");
 
-					start();
+					done();
 				});
 
 			});
 
-			asyncTest("Send queued message", function() {
+			QUnit.test("Send queued message", function(assert) {
+				var done = assert.async();
 
 				if (sap.ui.Device.support.websocket) {
 					expect(1);
 				} else {
 					// skip test if browser doesn't support WebSockets
 					expect(0);
-					start();
+					done();
 					return;
 				}
 
@@ -187,19 +189,20 @@
 					equals(oEvent.getParameter("data"), "foo", "Correct message received.");
 
 					ws.close();
-					start();
+					done();
 				});
 
 			});
 
-			asyncTest("Close event", function() {
+			QUnit.test("Close event", function(assert) {
+				var done = assert.async();
 
 				if (sap.ui.Device.support.websocket) {
 					expect(4);
 				} else {
 					// skip test if browser doesn't support WebSockets
 					expect(0);
-					start();
+					done();
 					return;
 				}
 
@@ -217,19 +220,20 @@
 					equals(oEvent.getParameter("reason"), "closed from server", "Correct error reason");
 					equals(oEvent.getParameter("wasClean"), true, "Correct wasClean flag");
 
-					start();
+					done();
 				});
 
 			});
 
-			asyncTest("Protocols", function() {
+			QUnit.test("Protocols", function(assert) {
+				var done = assert.async();
 
 				if (sap.ui.Device.support.websocket) {
 					expect(1);
 				} else {
 					// skip test if browser doesn't support WebSockets
 					expect(0);
-					start();
+					done();
 					return;
 				}
 
@@ -237,7 +241,7 @@
 
 				ws.attachOpen(function(oEvent) {
 					equals(ws.getProtocol(), "my-protocol", "protocol is correct");
-					start();
+					done();
 				});
 
 			});

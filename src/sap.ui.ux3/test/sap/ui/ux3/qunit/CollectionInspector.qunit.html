@@ -101,31 +101,34 @@
 <script>
 	QUnit.module("Sidebar");
 
-	asyncTest("Show/Hide sidebar", function() {
+	QUnit.test("Show/Hide sidebar", function(assert) {
+		var done = assert.async();
 		qutils.triggerMouseEvent(jQuery.sap.byId(oCollectionInspector.getId()
 				+ "-toggleButton"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
 			equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').width(), 150, "Sidebar is visible.");
-			start();
+			done();
 		}, 600);
 	});
 
-	asyncTest("Hide sidebar", function() {
+	QUnit.test("Hide sidebar", function(assert) {
+		var done = assert.async();
 		qutils.triggerMouseEvent(jQuery.sap.byId(oCollectionInspector.getId()
 				+ "-toggleButton"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
 			equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').width(), 0, "Sidebar is invisible.");
-			start();
+			done();
 		}, 600);
 	});
 
 	QUnit.module("Top Navigation");
 
-	asyncTest("Show collection two", function() {
+	QUnit.test("Show collection two", function(assert) {
+		var done = assert.async();
 		qutils.triggerMouseEvent(jQuery.sap.byId("__button2"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
 			equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').width(), 150, "Sidebar is visible.");
-			start();
+			done();
 		}, 600);
 	});
 	test("Content",

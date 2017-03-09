@@ -133,7 +133,8 @@
 		equal(oMessageModel.getObject('/').length, 0, 'No Messages');
 	});
 
-	asyncTest("addMessage", function() {
+	QUnit.test("addMessage", function(assert) {
+		var done = assert.async();
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
 		var oMessage = createMessage();
@@ -141,7 +142,7 @@
 				ok(oDataState.getMessages().length == 1, 'Message propagated to control');
 				ok(oInput1.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
 				ok(oInput1.getValueStateText() === 'test message', 'Input: ValueStateText set correctly')
-				start();
+				done();
 			}
 		);
 
@@ -151,7 +152,8 @@
 		ok(oMessageModel.getObject('/')[0] === oMessage, 'MessageModel: message instance ok');
 	});
 
-	asyncTest("removeMessage", function() {
+	QUnit.test("removeMessage", function(assert) {
+		var done = assert.async();
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
 		var oMessage = createMessage();
@@ -160,14 +162,15 @@
 				ok(!oDataState.getMessages() || oDataState.getMessages().length == 0, 'Message propagated to control - remove');
 				ok(oInput1.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
 				ok(oInput1.getValueStateText() === '', 'Input: ValueStateText set correctly')
-			start();
+			done();
 			}
 		);
 		oMessageManager.removeMessages(oMessage);
 		ok(oMessageModel.getObject('/').length == 0, 'No Messages in Model');
 	});
 
-	asyncTest("removeAllMessages", function() {
+	QUnit.test("removeAllMessages", function(assert) {
+		var done = assert.async();
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
 		var oMessage = createMessage('mt1','/form/lastname');
@@ -206,14 +209,15 @@
 				ok(!oDataState.getMessages() || oDataState.getMessages().length == 0, 'Message propagated to control - remove');
 				ok(oInput2.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
 				ok(oInput2.getValueStateText() === '', 'Input: ValueStateText set correctly')
-				start();
+				done();
 			});
 			oMessageManager.removeAllMessages();
 			ok(oMessageModel.getObject('/').length == 0, 'No Messages in Model');
 		});
 	});
 
-	asyncTest("parseError", function() {
+	QUnit.test("parseError", function(assert) {
+		var done = assert.async();
 		spyDataState(oZip, function(sName, oDataState) {
 			ok(oDataState.getMessages().length == 1, 'ParseError Message propagated to control');
 			ok(oZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
@@ -225,13 +229,14 @@
 				ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
 				ok(oZip.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
 				ok(oZip.getValueStateText() === '', 'Input: ValueStateText set correctly')
-				start();
+				done();
 			});
 			oZip.setValue('123');
 		})
 	});
 
-	asyncTest("validationError", function() {
+	QUnit.test("validationError", function(assert) {
+		var done = assert.async();
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 
 		spyDataState(oStreet, function(sName, oDataState) {
@@ -245,13 +250,14 @@
 				ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
 				ok(oStreet.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
 				ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly')
-				start();
+				done();
 			});
 			oStreet.setValue('Busch');
 		});
 	});
 
-	asyncTest("validationError - multiple input", function() {
+	QUnit.test("validationError - multiple input", function(assert) {
+		var done = assert.async();
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 
 		spyDataState(oStreet, function(sName, oDataState) {
@@ -276,7 +282,7 @@
 					spyDataState(oStreet, function(sName, oDataState) {
 						ok(oStreet.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
 						ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly')
-						start();
+						done();
 					});
 					oStreet.setValue('Busch');
 				});
@@ -284,7 +290,8 @@
 		});
 	});
 
-	asyncTest("AdditionalText property on message for different labels", function() {
+	QUnit.test("AdditionalText property on message for different labels", function(assert) {
+		var done = assert.async();
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessage = createMessage();
 
@@ -293,13 +300,14 @@
 			ok(aMessages[0].additionalText, "AdditionalText was added.");
 			// InputBase takes
 			equal(aMessages[0].additionalText, "First name", "AdditionalText is set correctly.");
-			start();
+			done();
 		});
 
 		oMessageManager.addMessages(oMessage);
 	});
 
-	asyncTest("AdditionalText property on message for more than one input field", function() {
+	QUnit.test("AdditionalText property on message for more than one input field", function(assert) {
+		var done = assert.async();
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessage = createMessage();
 
@@ -313,7 +321,7 @@
 			equal(aMessages[0].additionalText, "Nickname", "AdditionalText is set correctly.");
 
 			oLabel3.destroy();
-			start();
+			done();
 		});
 
 		oMessageManager.addMessages(oMessage);
@@ -321,7 +329,8 @@
 
 	QUnit.module("Bugfixes");
 
-	asyncTest("MessageManager: Message sorting", function() {
+	QUnit.test("MessageManager: Message sorting", function(assert) {
+		var done = assert.async();
 		var MessageType = sap.ui.core.MessageType;
 		var aCorrectOrder = [ MessageType.Error, MessageType.Error, MessageType.Warning, MessageType.Success, MessageType.Information ];
 
@@ -386,7 +395,7 @@
 
 		setTimeout(function() {
 			ok(bCorrectOrder, "Messages have been propagated asynchronously and are correctly sorted");
-			start();
+			done();
 		}, 50);
 	});
 

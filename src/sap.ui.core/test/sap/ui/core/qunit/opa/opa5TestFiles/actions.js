@@ -25,7 +25,7 @@ sap.ui.define([
 		// Arrange
 		var oOpa5 = new Opa5(),
 			fnActionSpy = this.spy(),
-			start = assert.async();
+			done = assert.async();
 
 		// Act
 		oOpa5.waitFor({
@@ -36,7 +36,7 @@ sap.ui.define([
 		oOpa5.emptyQueue().done(function () {
 			// Assert
 			sinon.assert.calledOnce(fnActionSpy);
-			start();
+			done();
 		});
 
 		// empty the queue
@@ -47,7 +47,7 @@ sap.ui.define([
 		// Arrange
 		var oOpa5 = new Opa5(),
 			fnActionSpy = this.spy(),
-			start = assert.async();
+			done = assert.async();
 
 		this.oButton.setBusy(true);
 
@@ -62,7 +62,7 @@ sap.ui.define([
 		oOpa5.emptyQueue().fail(function () {
 			// Assert
 			sinon.assert.notCalled(fnActionSpy);
-			start();
+			done();
 		});
 
 		// empty the queue
@@ -75,7 +75,7 @@ sap.ui.define([
 			fnCheckStub = this.stub().returns(true),
 			fnActionSpy = this.spy(),
 			fnSuccessSpy = this.spy(),
-			start = assert.async();
+			done = assert.async();
 
 		// Act
 		oOpa5.waitFor({
@@ -88,7 +88,7 @@ sap.ui.define([
 		oOpa5.emptyQueue().done(function () {
 			// Assert
 			sinon.assert.callOrder(fnCheckStub, fnActionSpy, fnSuccessSpy);
-			start();
+			done();
 		});
 
 		// empty the queue
@@ -100,7 +100,7 @@ sap.ui.define([
 		var oOpa5 = new Opa5(),
 			bCheckReturnValue = false,
 			fnActionSpy = this.spy(),
-			start = assert.async();
+			done = assert.async();
 
 		// Act
 		oOpa5.waitFor({
@@ -116,7 +116,7 @@ sap.ui.define([
 		oOpa5.emptyQueue().done(function () {
 			// Assert
 			sinon.assert.calledOnce(fnActionSpy);
-			start();
+			done();
 		});
 
 

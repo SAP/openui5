@@ -30,7 +30,8 @@
 			jQuery.sap.require("sap.m.GrowingEnablement");
 
 			QUnit.module("trigger");
-			asyncTest("Should update the trigger state correctly", function() {
+			QUnit.test("Should update the trigger state correctly", function(assert) {
+				var done = assert.async();
 				//Arrange
 				var data = { items: [ {},{}] };
 
@@ -117,7 +118,7 @@
 							ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible everything is loaded");
 							oPage.destroy();
 							oModel.destroy();
-							start();
+							done();
 						}, 0);
 
 					}, 0);
@@ -183,7 +184,8 @@
 				oList.destroy();
 			});
 
-			asyncTest("List without model", function() {
+			QUnit.test("List without model", function(assert) {
+				var done = assert.async();
 				//Arrange
 				var oList = new sap.m.List({
 					growing : true,
@@ -202,7 +204,7 @@
 
 				window.setTimeout(function() {
 					oList.destroy();
-					start();
+					done();
 				}, 0);
 			});
 
@@ -253,7 +255,8 @@
 				]);
 			}
 
-			asyncTest("Should group and ungroup a List", function () {
+			QUnit.test("Should group and ungroup a List", function (assert) {
+				var done = assert.async();
 				//Arrange
 				var iInitialItemCount,
 					oMockServer = startMockServer(),
@@ -289,7 +292,7 @@
 				//Assert + Cleanup
 				jQuery.when(oAfterUnGroupingDeferred).then(function () {
 					strictEqual(iInitialItemCount, oList.getItems().length, "The list did contain the same number of items");
-					start();
+					done();
 
 					oList.destroy();
 					oMockServer.stop();
@@ -299,7 +302,8 @@
 				setODataModelAndBindItems(oList);
 			});
 
-			asyncTest("Should grow by the treshold", function () {
+			QUnit.test("Should grow by the treshold", function (assert) {
+				var done = assert.async();
 				//Arrange
 				var oMockServer = startMockServer(),
 					iInitialThreshold = 2,
@@ -347,7 +351,7 @@
 					//Cleanup
 					oList.destroy();
 					oMockServer.stop();
-					start();
+					done();
 				});
 
 				//Act

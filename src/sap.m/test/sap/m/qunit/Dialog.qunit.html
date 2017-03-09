@@ -132,7 +132,8 @@
 
 			QUnit.module("Content preservation");
 
-			asyncTest("Preserve Dialog Content", function() {
+			QUnit.test("Preserve Dialog Content", function(assert) {
+				var done = assert.async();
 				this.clock.restore();
 
 				var bRendered = false;

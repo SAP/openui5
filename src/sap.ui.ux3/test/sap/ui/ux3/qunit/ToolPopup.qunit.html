@@ -82,7 +82,8 @@
 	});
 
 	QUnit.module("Open / Close with defaults");
-	asyncTest("Open default (right from button)", function() {
+	QUnit.test("Open default (right from button)", function(assert) {
+		var done = assert.async();
 		expect(4);
 
 		oBtn1.press = function() {
@@ -93,7 +94,6 @@
 
 		var fnOpened = function() {
 			oTP1.detachOpened(fnOpened);
-			start();
 
 			oBtnRect = oBtn1.$().rect();
 			oTPRect = oTP1.$().rect();
@@ -115,6 +115,7 @@
 			// if just one second passed
 			bTest = iStart + 1000 <= iEnd;
 			ok(bTest, "Open animation duration min 1 second (start: " + oTP1.startTime.toLocaleTimeString() + " end: " + oTP1.endTime.toLocaleTimeString() + ")");
+			done();
 		};
 
 		oTP1.setOpenDuration(1000);
@@ -123,7 +124,8 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	asyncTest("Close with close button", function() {
+	QUnit.test("Close with close button", function(assert) {
+		var done = assert.async();
 		expect(2);
 
 		oTP1.setCloseDuration(1000);
@@ -136,8 +138,6 @@
 		var fnClosed = function() {
 			oTP1.detachClosed(fnClosed);
 
-			start();
-
 			bTest = oTP1.isOpen();
 			ok(!bTest, "ToolPopup was closed over close button in ToolPopup");
 
@@ -147,6 +147,7 @@
 			// if just one second passed
 			bTest = iStart + 1000 <= iEnd;
 			ok(bTest, "Close animation duration min 1 second (start: " + oTP1.startTime.toLocaleTimeString() + " end: " + oTP1.endTime.toLocaleTimeString() + ")");
+			done();
 		};
 
 		oTP1.attachClosed(fnClosed);
@@ -154,7 +155,8 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	asyncTest("Open below", function() {
+	QUnit.test("Open below", function(assert) {
+		var done = assert.async();
 		expect(3);
 
 		jQuery("#Placeholder")[0].focus();
@@ -170,8 +172,6 @@
 
 		var fnOpened = function() {
 			oTP1.detachOpened(fnOpened);
-
-			start();
 
 			oBtnRect = oBtn1.$().rect();
 			oTPRect = oTP1.$().rect();
@@ -191,6 +191,7 @@
 						&& (oArrowRect.top + oArrowRect.height + oTP1.iArrowWidth >= oTPRect.top);
 			}
 			ok(bTest, "Arrow opened between button and ToolPopup");
+			done();
 		};
 
 		oTP1.attachOpened(fnOpened);
@@ -198,14 +199,15 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	asyncTest("Open left (default)", function() {
+	QUnit.test("Open left (default)", function(assert) {
+		var done = assert.async();
 		oWindowRect = jQuery(window).rect();
 		oWindowRect.width = $Window.width();
 		oWindowRect.height = $Window.height();
 
 		if (oWindowRect.width === 0) {
 			expect(1);
-			start();
+			done();
 			ok(true, "Test skipped since window is too small");
 		}
 
@@ -227,7 +229,6 @@
 
 		var fnOpened = function() {
 			oTP1.detachOpened(fnOpened);
-			start();
 
 			oBtnRect = oBtn1.$().rect();
 			oTPRect = oTP1.$().rect();
@@ -250,6 +251,7 @@
 				bTest = (oTPRect.left + oTPRect.width - iBorderWidth - 1 <= oArrowRect.left) && (oArrowRect.left + oTP1.iArrowWidth <= oBtnRect.left);
 			}
 			ok(bTest, "Arrow opened between button and ToolPopup");
+			done();
 		};
 
 		oTP1.attachClosed(fnClosed);
@@ -258,7 +260,8 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	asyncTest("Open above (default)", function() {
+	QUnit.test("Open above (default)", function(assert) {
+		var done = assert.async();
 		expect(3);
 		oTP1.close();
 		sap.ui.getCore().applyChanges();
@@ -271,7 +274,6 @@
 
 		var fnOpened = function() {
 			oTP1.detachOpened(fnOpened);
-			start();
 
 			oBtnRect = oBtn1.$().rect();
 			oTPRect = oTP1.$().rect();
@@ -294,6 +296,7 @@
 						&& (oArrowRect.top - oArrowRect.height + oTP1.iArrowWidth <= oBtnRect.top);
 			}
 			ok(bTest, "Arrow opened between button and ToolPopup");
+			done();
 		};
 
 		oTP1.attachOpened(fnOpened);
@@ -303,7 +306,8 @@
 	});
 
 	QUnit.module("Open with 'setPosition'");
-	asyncTest("Open above (set Position)", function() {
+	QUnit.test("Open above (set Position)", function(assert) {
+		var done = assert.async();
 		expect(6);
 
 		oTP1.close();
@@ -322,8 +326,6 @@
 
 		var fnOpened = function() {
 			oTP1.detachOpened(fnOpened);
-			start();
-
 			bTest = oTP1.isOpen();
 			if (bTest) {
 				oBtnRect = oBtn1.$().rect();
@@ -352,6 +354,7 @@
 				oTP1.close();
 				sap.ui.getCore().applyChanges();
 			}
+			done();
 		};
 
 		oTP1.attachOpened(fnOpened);
@@ -361,15 +364,16 @@
 	});
 
 	QUnit.module("Collision detection");
-	asyncTest("fit", function() {
+	QUnit.test("fit", function(assert) {
+		var done = assert.async();
 		oWindowRect = jQuery(window).rect();
 		oWindowRect.width = $Window.width();
 		oWindowRect.height = $Window.height();
 
 		if (oWindowRect.width > 1175) {
 			expect(1);
-			start();
 			ok(true, "Fit-test not possible because window is too big");
+			done();
 			return;
 		}
 		expect(2);
@@ -396,8 +400,6 @@
 		var fnOpened = function() {
 			oTP2.detachOpened(fnOpened);
 
-			start();
-
 			bTest = oTP2.isOpen();
 			ok(bTest, "ToolPopup opened");
 
@@ -417,6 +419,7 @@
 
 			oTP2.close();
 			sap.ui.getCore().applyChanges();
+			done();
 		};
 
 		oTP2.attachOpened(fnOpened);
@@ -424,7 +427,8 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	asyncTest("flip", function() {
+	QUnit.test("flip", function(assert) {
+		var done = assert.async();
 		oWindowRect = jQuery(window).rect();
 		oWindowRect.width = $Window.width();
 		oWindowRect.height = $Window.height();
@@ -434,8 +438,8 @@
 		});
 		if (oWindowRect.width < 350) {
 			expect(1);
-			start();
 			ok(true, "Flip-test not possible because window is too small");
+			done();
 			return;
 		}
 		expect(3);
@@ -460,8 +464,6 @@
 		var fnOpened = function() {
 			oTP3.detachOpened(fnOpened);
 
-			start();
-
 			bTest = oTP3.isOpen();
 			ok(bTest, "ToolPopup opened");
 
@@ -485,6 +487,7 @@
 			ok(bTest, "Arrow positioned accordingly to flipped ToolPopup");
 
 			oTP3.destroy();
+			done();
 		};
 
 		oTP3.attachOpened(fnOpened);
@@ -520,40 +523,43 @@
 			oTPFocus.destroy();
 		}
 	});
-	asyncTest("Initial Focus (default)", function() {
+	QUnit.test("Initial Focus (default)", function(assert) {
+		var done = assert.async();
 		expect(1);
 
 		var fnOpened = function() {
 			oTPFocus.detachOpened(fnOpened);
-
-			start();
 
 			bTest = document.activeElement.id === "focusBtn1";
+
 			ok(bTest, "First button was focused per default")
+			done();
 		};
 
 		oTPFocus.attachOpened(fnOpened);
 		oBtn1.press();
 		sap.ui.getCore().applyChanges();
 	});
-	asyncTest("default button is focused by default", function() {
+	QUnit.test("default button is focused by default", function(assert) {
+		var done = assert.async();
 		expect(1);
 
 		oTPFocus.setDefaultButton("defaultBtn1");
 
 		var fnOpened = function() {
 			oTPFocus.detachOpened(fnOpened);
-
-			start();
 
 			bTest = document.activeElement.id === "defaultBtn1";
+
 			ok(bTest, "Default button was focused by default");
+			done();
 		};
 		oTPFocus.attachOpened(fnOpened);
 		oBtn1.press();
 		sap.ui.getCore().applyChanges();
 	});
-	asyncTest("Determines the focus DOM reference", function() {
+	QUnit.test("Determines the focus DOM reference", function(assert) {
+		var done = assert.async();
 		expect(1);
 
 		oTPFocus.setDefaultButton("defaultBtn1");
@@ -561,16 +567,17 @@
 		var fnOpened = function() {
 			oTPFocus.detachOpened(fnOpened);
 
-			start();
-
 			bTest = typeof oTPFocus.getFocusDomRef() === 'object' ;
+
 			ok(bTest, "getFocusDomRef returns object");
+			done();
 		};
 		oTPFocus.attachOpened(fnOpened);
 		oBtn1.press();
 		sap.ui.getCore().applyChanges();
 	});
-	asyncTest("default button is focused by pressEnter", function() {
+	QUnit.test("default button is focused by pressEnter", function(assert) {
+		var done = assert.async();
 		expect(1);
 
 		oTPFocus.setInitialFocus("focusBtn2");
@@ -583,17 +590,18 @@
 			var oDomRef = sap.ui.getCore().byId("FormattedTextView1").getDomRef();
 			sap.ui.test.qunit.triggerKeydown(oDomRef, sKeyEnter);
 
-			start();
-
 			bTest = document.activeElement.id === "defaultBtn1";
+
 			ok(bTest, "Default button was focused by pressEnter");
+			done();
 		};
 
 		oTPFocus.attachOpened(fnOpened);
 		oBtn1.press();
 		sap.ui.getCore().applyChanges();
 	});
-	asyncTest("Initial Focus (previsouly set)", function() {
+	QUnit.test("Initial Focus (previsouly set)", function(assert) {
+		var done = assert.async();
 		expect(1);
 
 		oTPFocus.setInitialFocus("focusBtn2");
@@ -601,10 +609,10 @@
 		var fnOpened = function() {
 			oTPFocus.detachOpened(fnOpened);
 
-			start();
-
 			bTest = document.activeElement.id === "focusBtn2";
+
 			ok(bTest, "Second button was focused");
+			done();
 		};
 
 		oTPFocus.attachOpened(fnOpened);
@@ -612,7 +620,8 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	asyncTest("Autoclose", function() {
+	QUnit.test("Autoclose", function(assert) {
+		var done = assert.async();
 		expect(1);
 
 		var oTF = new sap.ui.commons.TextField().placeAt("uiArea1");
@@ -636,10 +645,10 @@
 		};
 		var fnClosed = function() {
 			oTPFocus.detachClosed(fnClosed);
-			start();
 			oTF.destroy();
-
 			ok(true, "ToolPopup was closed when focusing Textfield")
+
+			done();
 		};
 		oTPFocus.attachOpened(fnOpened);
 		oTPFocus.attachClosed(fnClosed);
@@ -674,7 +683,8 @@
 		oValue = null;
 	});
 
-	asyncTest("Autoclose add focusable area", function() {
+	QUnit.test("Autoclose add focusable area", function(assert) {
+		var done = assert.async();
 		expect(1);
 
 		var oTF = new sap.ui.commons.TextField().placeAt("uiArea1");
@@ -713,10 +723,10 @@
 		};
 		var fnClosed = function() {
 			oTPFocus.detachClosed(fnClosed);
-			start();
 			oTF.destroy();
-
 			ok(bCloseOnMyCommand, "ToolPopup was closed when focusing Textfield")
+
+			done();
 		};
 		oTPFocus.attachOpened(fnOpened);
 		oTPFocus.attachClosed(fnClosed);
@@ -726,7 +736,8 @@
 		};
 	});
 
-	asyncTest("Autoclose remove focusable area", function() {
+	QUnit.test("Autoclose remove focusable area", function(assert) {
+		var done = assert.async();
 		expect(1);
 
 		var oTF = new sap.ui.commons.TextField().placeAt("uiArea1");
@@ -769,10 +780,10 @@
 		};
 		var fnClosed = function() {
 			oTPFocus.detachClosed(fnClosed);
-			start();
 			oTF.destroy();
-
 			ok(bCloseOnMyCommand, "ToolPopup was closed when focusing Textfield");
+
+			done();
 		};
 
 		oTPFocus.attachOpened(fnOpened);
@@ -783,7 +794,8 @@
 		};
 	});
 
-	asyncTest("Autoclose on opener removal", function() {
+	QUnit.test("Autoclose on opener removal", function(assert) {
+		var done = assert.async();
 		expect(2);
 
 		oTPFocus.setCloseDuration(0).close();
@@ -796,7 +808,7 @@
 			oTPFocus.attachClosed(function() {
 				// Yay, it closed...
 				ok(true, "ToolPopup closed itself after opener removal");
-				start();
+				done();
 			});
 
 
@@ -849,17 +861,18 @@
 		}
 	});
 
-	asyncTest("Max height of '200px'", function() {
+	QUnit.test("Max height of '200px'", function(assert) {
+		var done = assert.async();
 		expect(1);
 
 		var fnOpened = function() {
 			oTPMaxHeight.detachOpened(fnOpened);
 
-			start();
-
 			oTPRect = oTPMaxHeight.$().rect();
+
 			bTest = Math.round(oTPRect.height) <= 200;
 			ok(bTest, "ToolPopup not higher than 200px");
+			done();
 		};
 
 		oTPMaxHeight.setMaxHeight("200px");
@@ -868,17 +881,18 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	asyncTest("Max width of 120px", function() {
+	QUnit.test("Max width of 120px", function(assert) {
+		var done = assert.async();
 		expect(1);
 
 		var fnOpened = function() {
 			oTPMaxHeight.detachOpened(fnOpened);
-			start();
-
 			oTPRect = oTPMaxHeight.$().rect();
+
 			// IE10, 11 are adding some fractions to the calculation in some cases
 			bTest = Math.round(oTPRect.width) <= 120;
 			ok(bTest, "ToolPopup's width of 120px");
+			done();
 		};
 
 		oTPMaxHeight.setMaxWidth("120px");
@@ -887,7 +901,8 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	asyncTest("Check Resize Handler Registration", function() {
+	QUnit.test("Check Resize Handler Registration", function(assert) {
+		var done = assert.async();
 		expect(3);
 
 		var fnOpened = function() {
@@ -902,7 +917,7 @@
 
 			ok(!!!oTPMaxHeight._sResizeID, "Resize handler deregistered again");
 
-			start();
+			done();
 		}
 
 		oTPMaxHeight.attachOpened(fnOpened);
@@ -913,7 +928,8 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	asyncTest("Check if ToolPopup exceeds window", function() {
+	QUnit.test("Check if ToolPopup exceeds window", function(assert) {
+		var done = assert.async();
 		var fnOpened = function() {
 			oTPMaxHeight.detachOpened(fnOpened);
 
@@ -925,7 +941,7 @@
 			oRect = oTPMaxHeight.$("content").rect();
 			ok(oRect.top + oRect.height < iWinHeight, "Content properly shrinked to ToolPopup size and not bigger than window");
 
-			start();
+			done();
 		};
 
 		oTPMaxHeight.setMaxHeight("0px");
@@ -963,7 +979,8 @@
 		}
 	});
 
-	asyncTest("Change Content", function(){
+	QUnit.test("Change Content", function(assert){
+		var done = assert.async();
 		expect(2);
 		var that = this;
 
@@ -1006,7 +1023,6 @@
 
 		fnOpened = function() {
 			oTPContent.detachOpened(fnOpened);
-			start();
 
 			var fnApplyPosition = sinon.spy(oTPContent.oPopup, "_applyPosition");
 
@@ -1032,13 +1048,15 @@
 
 			ok(iNewHeight > iOldHeight, "Content was added when Popup was open");
 			ok(fnApplyPosition.calledOnce, "Position of Popup was updated");
+			done();
 		};
 
 		oTPContent.attachOpened(fnOpened);
 		oButtonContent.press();
 	});
 
-	asyncTest("Preserve Dialog Content", function() {
+	QUnit.test("Preserve Dialog Content", function(assert) {
+		var done = assert.async();
 		var bRendered = false;
 		var oHtml = new sap.ui.core.HTML({
 			content: "<div id='htmlControl'>test</div>",

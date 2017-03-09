@@ -138,7 +138,8 @@
 			equal(info(2).text, "Adelheid", "Third item should be titled 'Adelheid'");
 		});
 
-		asyncTest("Grow Tap", function(){
+		QUnit.test("Grow Tap", function(assert){
+			var done = assert.async();
 			expect(5); // no rerendering
 			gl._oGrowingDelegate.requestNewPage(); // this context should be the trigger list item
 			window.setTimeout(function(){
@@ -149,11 +150,12 @@
 				equal(info(7).header, false, "Seventh item should not be a header");
 				equal(info(7).text, "Bernd", "Seventh item should be titled 'Bernd'");
 
-				start();
+				done();
 			}, 0);
 		});
 
-		asyncTest("change data property", function(){
+		QUnit.test("change data property", function(assert){
+			var done = assert.async();
 			expect(5);
 			model.setProperty("name", "Adx", gl.getItems()[1].getBindingContext())
 
@@ -165,7 +167,7 @@
 				equal(info(2).header, false, "Third item should not be a header");
 				equal(info(2).text, "Adx", "Third item should be titled 'Adx'");
 
-				start();
+				done();
 			}, 0);
 		});
 

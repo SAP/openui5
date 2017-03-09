@@ -80,14 +80,15 @@
 
 			// Excluded tests which require a WebSocket connection (no server running yet)
 			/*
-			asyncTest("Protocol", function() {
+			QUnit.test("Protocol", function(assert) {
+				var done = assert.async();
 
 				if (sap.ui.Device.support.websocket) {
 					expect(1);
 				} else {
 					// skip test if browser doesn't support WebSockets
 					expect(0);
-					start();
+					done();
 					return;
 				}
 
@@ -95,19 +96,20 @@
 
 				ws.attachOpen(function(oEvent) {
 					equals(ws.getProtocol(), sap.ui.core.ws.SapPcpWebSocket.SUPPORTED_PROTOCOLS.v10, "protocol is correct");
-					start();
+					done();
 				});
 
 			});
 
-			asyncTest("Wrong protocol", function() {
+			QUnit.test("Wrong protocol", function(assert) {
+				var done = assert.async();
 
 				if (sap.ui.Device.support.websocket) {
 					expect(2);
 				} else {
 					// skip test if browser doesn't support WebSockets
 					expect(0);
-					start();
+					done();
 					return;
 				}
 
@@ -116,7 +118,7 @@
 				ws.attachClose(function(oEvent) {
 					equals(oEvent.getParameter("reason"), "", "close reason is correct");
 					equals(oEvent.getParameter("code"), 1000, "close code is correct");
-					start();
+					done();
 				});
 
 			});

@@ -35,7 +35,7 @@
 		sap.ui.getCore().applyChanges();
 	};
 
-	function minimize(oNBar, sFrom, sTo) {
+	function minimize(oNBar, sFrom, sTo, done) {
 		oNBar.setVisibleStatus(sFrom);
 		sap.ui.getCore().applyChanges();
 
@@ -49,6 +49,10 @@
 		var bTest = (iBefore > iAfter) ? true : false;
 
 		ok(bTest, sMessage);
+
+		if (done) {
+			done();
+		}
 	};
 
 	function maximize(oNBar, sFrom, sTo) {
@@ -256,21 +260,18 @@
 	/*
 	 * Testing whether the resize event is fired
 	 */
-	asyncTest("Resize event", function() {
+	QUnit.test("Resize event", function(assert) {
+		var done = assert.async();
 		expect(2);
-
-		var bEventFired = false;
 
 		var fnResizeHandler = function() {
 			oNotiBar.detachResize(fnResizeHandler);
-
-			start();
 			ok(true, "Resize event was fired by the NotificationBar");
 		};
 
 		oNotiBar.attachResize(fnResizeHandler);
 
-		minimize(oNotiBar, "Max", "Default");
+		minimize(oNotiBar, "Max", "Default", done);
 	});
 
 	/*
@@ -284,7 +285,8 @@
 			jQuery.fx.off = fx;
 		}
 	});
-	asyncTest("Open it", function() {
+	QUnit.test("Open it", function(assert) {
+		var done = assert.async();
 		expect(1);
 
 		var oNotifier = new sap.ui.ux3.Notifier({
@@ -303,13 +305,13 @@
 		$notifier.trigger(oEvt);
 
 		oNotifier._oCallout.attachOpened(function() {
-			start();
 			var $message = jQuery(".sapUiNotifierMessage");
 			var $child = jQuery($message.children()[0]);
-
 			var sHtml = $child.html();
+
 			var bTest = !!(sHtml === "Lorem Ipsum");
 			ok(bTest, "Notifier opened and message displayed");
+			done();
 		});
 	});
 
@@ -325,7 +327,8 @@
 			oNotiBar.setVisibleStatus(sap.ui.ux3.NotificationBarStatus.None);
 		}
 	});
-	asyncTest("Navigate through Notifiers (minimized)", function() {
+	QUnit.test("Navigate through Notifiers (minimized)", function(assert) {
+		var done = assert.async();
 		expect(2);
 
 		var sKeyLeft = jQuery.sap.KeyCodes.ARROW_LEFT;
@@ -361,19 +364,20 @@
 			ok(bTest, "Moved from Notifier to MessageNotifier");
 
 			setTimeout(function() {
-				start();
-
 				sap.ui.test.qunit.triggerKeydown(oMN.$(), sKeyLeft);
 
 				var after = document.activeElement;
 
 				var bTest = before.id === after.id;
+
 				ok(bTest, "Moved back to Notifier");
+				done();
 			}, 100);
 		}, 1000);
 	});
 
-	asyncTest("Navigate through messages (maximized)", function() {
+	QUnit.test("Navigate through messages (maximized)", function(assert) {
+		var done = assert.async();
 		expect(5);
 
 		var sKeyLeft = jQuery.sap.KeyCodes.ARROW_LEFT;
@@ -437,14 +441,14 @@
 					sap.ui.test.qunit.triggerKeydown(oDomRef, sKeyRight);
 
 					setTimeout(function() {
-						start();
 						after = document.activeElement;
-
 						bTest = before.id !== after.id;
-						ok(bTest, "Moved to message of common notifier");
 
+						ok(bTest, "Moved to message of common notifier");
 						bTest = after.id === "messageNotifier-messageNotifierView-messageView-messageMaximized2";
+
 						ok(bTest, "Cycled through all messages and first one is focused again");
+						done();
 					}, 100);
 				}, 100);
 			}, 100);

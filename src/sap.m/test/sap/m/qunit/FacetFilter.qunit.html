@@ -61,7 +61,7 @@
 		var oFF = new sap.m.FacetFilter({type: sap.m.FacetFilterType.Light}),
 				oModel = new sap.ui.model.json.JSONModel(),
 				aData = [],
-				fnDone = assert.async(),
+				done = assert.async(),
 				oDialog;
 
 		oFF.bindAggregation("lists", {path: "/Filters", template: new sap.m.FacetFilterList({title: "{text}"})});
@@ -86,7 +86,7 @@
 
 			destroyFF(oFF);
 
-			fnDone();
+			done();
 		});
 		oFF.getAggregation("summaryBar").firePress();
 	});
@@ -174,7 +174,8 @@
 	});
 
 	if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
-		asyncTest("FacetFilter._openPopover", function() {
+		QUnit.test("FacetFilter._openPopover", function(assert) {
+			var done = assert.async();
 
 			var oFF = new sap.m.FacetFilter();
 			var oFFL = new sap.m.FacetFilterList();
@@ -187,12 +188,11 @@
 
 			var oPopover = oFF._getPopover();
 			oPopover.attachEventOnce("afterOpen", function() {
-
-				start();
 				ok(oPopover.isOpen(), "Popover should be open");
 				ok(oPopover.getContentWidth("30%"),"Popover width should be 30% if wordwrap is set to true");
 
 				destroyFF(oFF);
+				done();
 			});
 
 			var oButton = oFF._getButtonForList(oFFL);
@@ -204,7 +204,8 @@
 	}
 
 	if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
-		asyncTest("FacetFilter._closePopover", function() {
+		QUnit.test("FacetFilter._closePopover", function(assert) {
+			var done = assert.async();
 
 			var oFF = new sap.m.FacetFilter();
 			var oFFL = new sap.m.FacetFilterList();
@@ -216,14 +217,13 @@
 			oPopover.attachEventOnce("afterOpen", function() {
 
 				oPopover.attachEventOnce("afterClose", function() {
-
-					start();
 					ok(!oPopover.isOpen(), "Popover should be closed");
 					if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
 						ok(!oPopover.getSubHeader(), "Popover subheader should be destroyed");
 					}
 					equal(oPopover.getContent().length, 0, "Popover content should be destroyed");
 					destroyFF(oFF);
+					done();
 				});
 				oFF._closePopover();
 			});
@@ -308,7 +308,8 @@
 		oFF.destroy();
 	});
 
-	asyncTest("FacetFilter._closeDialog", function() {
+	QUnit.test("FacetFilter._closeDialog", function(assert) {
+		var done = assert.async();
 
 		var oListCloseEvent = null;
 		var oFF = new sap.m.FacetFilter();
@@ -329,13 +330,11 @@
 		oNavContainer.attachEventOnce("afterNavigate", function(oEvent) {
 
 			oDialog.attachEventOnce("afterClose", function(oEvent) {
-
-				start();
 				ok(oListCloseEvent, "List close event should have been fired");
 				ok(!oDialog.isOpen(), "Dialog should be closed");
 				equal(oDialog.getContent().length, 0, "Dialog nav container should be destroyed");
-
 				destroyFF(oFF);
+				done();
 			});
 			oFF._closeDialog();
 		});
@@ -486,7 +485,8 @@
 	});
 
 
-	asyncTest("FacetFilter._navToFilterItemsPage", function() {
+	QUnit.test("FacetFilter._navToFilterItemsPage", function(assert) {
+		var done = assert.async();
 
 		var sList1Title = "List1", sList2Title = "List2", sItem1 = "List1 Val1", sItem2 = "List2 Val1";
 
@@ -508,8 +508,6 @@
 		var oFacetListItem1 = oFacetList.getItems()[0];
 
 		oNavContainer.attachEventOnce("afterNavigate", function() {
-
-			start();
 			var oFacetFilterListPage = oNavContainer.getPages()[1];
 			var oCurrentPage = oNavContainer.getCurrentPage();
 			strictEqual(oFacetFilterListPage, oCurrentPage, "The current page should be the facet filter item page");
@@ -525,11 +523,13 @@
 			ok(oFFL1.getItems()[0].getDomRef(), "Facet filter item should be rendered");
 
 			destroyFF(oFF);
+			done();
 		});
 		oFF._navToFilterItemsPage(oFacetListItem1);
 	});
 
-	asyncTest("FacetFilter._navToFilterItemsPage after search", function() {
+	QUnit.test("FacetFilter._navToFilterItemsPage after search", function(assert) {
+		var done = assert.async();
 
 		var sList1Title = "List1", sList2Title = "List2", sItem1 = "List1 Val1", sItem2 = "List2 Val1";
 
@@ -553,8 +553,6 @@
 		oSearchField.attachLiveChange(function(oEvent) {
 
 			oNavContainer.attachEventOnce("afterNavigate", function() {
-
-				start();
 				var oFacetFilterListPage = oNavContainer.getPages()[1];
 				var oCurrentPage = oNavContainer.getCurrentPage();
 				strictEqual(oFacetFilterListPage, oCurrentPage, "The current page should be the facet filter item page");
@@ -562,6 +560,7 @@
 				ok(oFFL2.getItems()[0].getDomRef(), "Facet filter item should be rendered");
 
 				destroyFF(oFF);
+				done();
 			});
 
 			var oFacetList = oFacetPage.getContent()[0];
@@ -574,7 +573,8 @@
 		});
 	});
 
-	asyncTest("FacetFilter._navFromFilterItemsPage", function() {
+	QUnit.test("FacetFilter._navFromFilterItemsPage", function(assert) {
+		var done = assert.async();
 
 		var iAllCount = 54;
 		var oFF = new sap.m.FacetFilter();
@@ -594,8 +594,6 @@
 		oNavContainer.attachEventOnce("afterNavigate", function() {
 
 			oNavContainer.attachEventOnce("afterNavigate", function() {
-
-				start();
 				var oCurrentPage = oNavContainer.getCurrentPage();
 				strictEqual(oFacetPage, oCurrentPage, "The current page should be the facet page");
 
@@ -606,6 +604,7 @@
 				equal(oFacetList.getItems()[0].getCounter(), iAllCount, "Facet allCount should be set");
 
 				destroyFF(oFF);
+				done();
 			});
 			oFFL.setAllCount(iAllCount);
 
@@ -741,7 +740,8 @@
 		destroyFF(oFF);
 	});
 
-	asyncTest("FacetFilter._displayRemoveIcon", function() {
+	QUnit.test("FacetFilter._displayRemoveIcon", function(assert) {
+		var done = assert.async();
 
 		var oFF = new sap.m.FacetFilter({
 			showPersonalization: true
@@ -754,20 +754,19 @@
 		var oPopover = oFF._getPopover();
 
 		oPopover.attachEventOnce("afterOpen", function(oEvent) {
-
-			start();
-
 			oFF._displayRemoveIcon(false, oFFL);
 			ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should not be displayed.");
 			oFF._displayRemoveIcon(true, oFFL);
 			ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLVisibleRemoveIcon"), "The remove icon should be displayed.");
 
 			destroyFF(oFF);
+			done();
 		});
 		openPopover(oFF, 0);
 	});
 
-	asyncTest("FacetFilter._displayRemoveIcon should be visible until the user releases the mouse (touchend)", function() {
+	QUnit.test("FacetFilter._displayRemoveIcon should be visible until the user releases the mouse (touchend)", function(assert) {
+		var done = assert.async();
 
 		var oFF = new sap.m.FacetFilter({
 			showPersonalization: true
@@ -798,14 +797,15 @@
 			oIcon.firePress();
 			notOk(oIcon._bPress, "A flag indicated press on icon " + oIcon.getId() + " should exist");
 			ok(oIcon.$().hasClass("sapMFFLHiddenRemoveIcon"),"The 'remove icon ' should not be visible");
-			start();
 			destroyFF(oFF);
+			done();
 		});
 
 		openPopover(oFF, 0);
 	});
 
-  asyncTest("FacetFilter RemoveIcon should be displayed", function() {
+  QUnit.test("FacetFilter RemoveIcon should be displayed", function(assert) {
+  	var done = assert.async();
 		 var oFF = new sap.m.FacetFilter({
 		 showPersonalization: true
 		 });
@@ -815,14 +815,15 @@
 		 sap.ui.getCore().applyChanges();
 		 var oPopover = oFF._getPopover();
 		 oPopover.attachEventOnce("afterOpen", function(oEvent) {
-			 start();
 			 ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLVisibleRemoveIcon"), "The remove icon should  be displayed.");
 			 destroyFF(oFF);
+			 done();
 		 });
 		 openPopover(oFF, 0);
   });
 
-	asyncTest("FacetFilter RemoveIcon should not be displayed", function() {
+	QUnit.test("FacetFilter RemoveIcon should not be displayed", function(assert) {
+		var done = assert.async();
 		 var oFF = new sap.m.FacetFilter({
 		 showPersonalization: true
 		 });
@@ -832,9 +833,9 @@
 		 sap.ui.getCore().applyChanges();
 		 var oPopover = oFF._getPopover();
 		 oPopover.attachEventOnce("afterOpen", function(oEvent) {
-			 start();
 			 ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should not be displayed.");
 			 destroyFF(oFF);
+			 done();
 		 });
 		 openPopover(oFF, 0);
   });
@@ -1022,7 +1023,8 @@
 		oFFL.destroy();
 	});
 
-	asyncTest("FacetFilterList._updateActiveState for initially non-active lists", function() {
+	QUnit.test("FacetFilterList._updateActiveState for initially non-active lists", function(assert) {
+		var done = assert.async();
 
 		var oFF = new sap.m.FacetFilter();
 		var oFFL1 = new sap.m.FacetFilterList({
@@ -1103,9 +1105,6 @@
 
 							var oFacetListItem = getDialogFacetList(oFF).getItems()[2];
 							oNavContainer.attachEventOnce("afterNavigate", function(oEvent) {
-
-								start();
-
 								// Verify active state when the selected item is filtered from the list
 								var oList = getDialogFilterItemsList(oFF);
 								strictEqual(oList.isBound("items"), true, "Items should be bound when test requires filtering");
@@ -1117,6 +1116,7 @@
 								strictEqual(oList.getActive(), true, "List should be active after filtering out selected item");
 
 								destroyFF(oFF);
+								done();
 							});
 
 							// Navigate to the third list
@@ -1137,7 +1137,8 @@
 		oFF.openFilterDialog();
 	});
 
-	asyncTest("FacetFilterList._updateActiveState for initially active lists", function() {
+	QUnit.test("FacetFilterList._updateActiveState for initially active lists", function(assert) {
+		var done = assert.async();
 		//prepare
 		var oFF = new sap.m.FacetFilter(),
 		oFFL1 = new sap.m.FacetFilterList({
@@ -1173,8 +1174,8 @@
 				strictEqual(oList.getActive(), true, "List should not remain active after deselecting last item");
 
 				//cleanup
-				start();
 				destroyFF(oFF);
+				done();
 			});
 
 			// Navigate to the list
@@ -1216,7 +1217,8 @@
 	});
 
 
-	asyncTest("FacetFilterList._updateSelectAllCheckBox", function() {
+	QUnit.test("FacetFilterList._updateSelectAllCheckBox", function(assert) {
+		var done = assert.async();
 
 			var aValues = [{key : 'k1',text : "a"}, {key : 'k2',text : "ba"}, {key : 'k3',text : "c"}];
 			oModel = new sap.ui.model.json.JSONModel({
@@ -1315,8 +1317,8 @@
 								simulateUserSearch("This item surely not exist");
 
 								strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because no result is found");
-								start();
 								destroyFF(oFF);
+								done();
 							}, 1000);
 						}, 1000);
 					}, 1000);
@@ -1769,7 +1771,8 @@
 			equals(oFacetFilterList._getSearchValue(), sPredefinedSearchValue, "sets the correct _searchValue");
 		});
 
-		asyncTest("_searchValue is reset before popover opens", function() {
+		QUnit.test("_searchValue is reset before popover opens", function(assert) {
+			var done = assert.async();
 			var oFacetFilter = new sap.m.FacetFilter(),
 				oFacetFilterList = new sap.m.FacetFilterList({
 					items: [
@@ -1797,12 +1800,11 @@
 			oPopover = oFacetFilter._getPopover();
 
 			oPopover.attachEventOnce("afterOpen", function(oEvent) {
-				start();
-
 				//Assert
 				ok(oResetSearchSpy.calledWith(""), "Search value is reset");
 				oFacetFilterList._setSearchValue.restore();
 				destroyFF(oFacetFilter);
+				done();
 			});
 
 			openPopover(oFacetFilter, 0);
@@ -1899,17 +1901,17 @@
 			}
 		});
 
-		asyncTest("FacetFilterList.listOpen", function() {
+		QUnit.test("FacetFilterList.listOpen", function(assert) {
+			var done = assert.async();
 			var oListOpenEvent = null;
 			var oFF = new sap.m.FacetFilter();
 			var oFFL = new sap.m.FacetFilterList({
 				title : "List"
 			});
 			oFFL.attachEventOnce("listOpen", function(oEvent) {
-
-				start();
 				ok(oEvent, "List open event should exist");
 				oFF._closePopover();
+				done();
 			});
 			oFF.addList(oFFL);
 			oFF.placeAt("content");
@@ -1924,15 +1926,14 @@
 			openPopover(oFF, 0);
 		});
 
-		asyncTest("FacetFilterList.listClose - none selected", function() {
+		QUnit.test("FacetFilterList.listClose - none selected", function(assert) {
+			var done = assert.async();
 
 			var oFF = new sap.m.FacetFilter();
 			var oFFL = new sap.m.FacetFilterList({
 				title : "List"
 			});
 			oFFL.attachListClose(function(oEvent) {
-
-				start();
 				ok(oEvent, "Event should exist");
 				var aSelectedItems = oEvent.getParameter("selectedItems");
 				equal(aSelectedItems.length, 0, "No items should be selected");
@@ -1941,6 +1942,7 @@
 				var bAllSelected = oEvent.getParameter("allSelected");
 				equal(bAllSelected, true, "allSelected parameter should be true");
 				destroyFF(oFF);
+				done();
 			});
 			oFFL.addItem(new sap.m.FacetFilterItem({
 				selected : false
@@ -1963,15 +1965,14 @@
 			openPopover(oFF, 0);
 		});
 
-		asyncTest("FacetFilterList.listClose - some selected", function() {
+		QUnit.test("FacetFilterList.listClose - some selected", function(assert) {
+			var done = assert.async();
 
 			var oFF = new sap.m.FacetFilter();
 			var oFFL = new sap.m.FacetFilterList({
 				title : "List"
 			});
 			oFFL.attachListClose(function(oEvent) {
-
-				start();
 				ok(oEvent, "Event should exist");
 				var aSelectedItems = oEvent.getParameter("selectedItems");
 				equal(aSelectedItems.length, 2, "Two items should be selected");
@@ -1987,6 +1988,7 @@
 				strictEqual(bAllSelected, false, "allSelected parameter should be false");
 
 				destroyFF(oFF);
+				done();
 			});
 			oFFL.addItem(new sap.m.FacetFilterItem({
 				selected : true,
@@ -2015,15 +2017,14 @@
 			openPopover(oFF, 0);
 		});
 
-		asyncTest("FacetFilterList.listClose - all selected", function() {
+		QUnit.test("FacetFilterList.listClose - all selected", function(assert) {
+			var done = assert.async();
 
 			var oFF = new sap.m.FacetFilter();
 			var oFFL = new sap.m.FacetFilterList({
 				title : "List"
 			});
 			oFFL.attachListClose(function(oEvent) {
-
-				start();
 				ok(oEvent, "Event should exist");
 				var aSelectedItems = oEvent.getParameter("selectedItems");
 				equal(aSelectedItems.length, 3, "All items should be selected");
@@ -2037,6 +2038,7 @@
 				strictEqual(bAllSelected, false, "allSelected parameter should be false");
 
 				destroyFF(oFF);
+				done();
 			});
 			oFFL.addItem(new sap.m.FacetFilterItem({
 				key: "1",
@@ -2069,18 +2071,19 @@
 		 * c) click, hold delete icon, but release elsewhere - icon touchstart, popover afterClose, elsewhere touchend
 		 **/
 
-		asyncTest("FacetFilterList.listClose - called only once(scenario a)", function () {
+		QUnit.test("FacetFilterList.listClose - called only once(scenario a)", function (assert) {
 			testListCloseCalledOnce.call(this, "Icon.touchstart->Icon.touchend->Icon.press->Popover.afterClose", "a");
 		});
-		asyncTest("FacetFilterList.listClose - called only once(scenario b)", function () {
+		QUnit.test("FacetFilterList.listClose - called only once(scenario b)", function (assert) {
 			testListCloseCalledOnce.call(this, "Icon.touchstart->Popover.afterClose->Icon.touchend->Icon.press", "b");
 		});
 
-		asyncTest("FacetFilterList.listClose - called only once(scenario c)", function () {
+		QUnit.test("FacetFilterList.listClose - called only once(scenario c)", function (assert) {
 			testListCloseCalledOnce.call(this, "Icon.touchstart->Popover.afterClose->Icon.touchend(outside the icon)-> no icon.press", "c");
 		});
 
 		function testListCloseCalledOnce(sSubtestName, sScenario) {
+			var done = assert.async();
 			var oFF = this.oFacetFilter;
 			var oFFL = oFF.getLists()[0];
 
@@ -2116,18 +2119,19 @@
 						ok(false, "Invalid parameter test scenario: " + sScenario);
 				}
 				setTimeout(function () {
-					start();
 					equal(oListCloseSpy.callCount, 1, sSubtestName + "# calls");
 					equal(this.parent.getId(), oFF.getId(), "listClose handler should be provided with the instance of FacetFilter as event's source parent");
 					equal(this.parent.getMetadata().getName(), oFF.getMetadata().getName(), "listClose handler should be provided with FacetFilter as event's source parent");
 					destroyFF(oFF);
+					done();
 				}.bind(this), 500)
 			}.bind(this));
 
 			openPopover(oFF, 0);
 		}
 
-		asyncTest("FacetFilter.reset (no summary bar)", function() {
+		QUnit.test("FacetFilter.reset (no summary bar)", function(assert) {
+			var done = assert.async();
 
 			var oResetEvent = null;
 			var oFF = new sap.m.FacetFilter();
@@ -2136,19 +2140,18 @@
 			sap.ui.getCore().applyChanges();
 
 			oFF.attachEventOnce("reset", function(oEvent) {
-
-				start();
 				ok(oEvent, "Filter reset event triggered");
 				destroyFF(oFF);
+				done();
 			});
 
 			var oResetButton = oFF.getAggregation("resetButton");
 			oResetButton.firePress();
 		});
 
-		asyncTest("FacetFilter.reset (summary bar)", function() {
+		QUnit.test("FacetFilter.reset (summary bar)", function(assert) {
+			var done = assert.async();
 
-			var oResetEvent = null;
 			var oFF = new sap.m.FacetFilter({
 				showSummaryBar : true
 			});
@@ -2157,10 +2160,9 @@
 			sap.ui.getCore().applyChanges();
 
 			oFF.attachEventOnce("reset", function(oEvent) {
-
-				start();
 				ok(oEvent, "Filter reset event triggered");
 				destroyFF(oFF);
+				done();
 			});
 
 			var oSummaryBar = oFF.getAggregation("summaryBar");
@@ -2169,7 +2171,8 @@
 		});
 
 		if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
-			asyncTest("FacetFilter click another button when popover is opened", function() {
+			QUnit.test("FacetFilter click another button when popover is opened", function(assert) {
+				var done = assert.async();
 				var oFFL1ListCloseEvent = null, oFFL2ListOpenEvent=null;
 				var oFF = new sap.m.FacetFilter();
 				var oFFL1 = new sap.m.FacetFilterList({
@@ -2200,8 +2203,8 @@
 					// fail if the oFFL2.listOpen was called before
 					ok(!oFFL2ListOpenEvent, 'oFFL2.listOpen should not be called before oFFL1.listClose');
 					if (oFFL2ListOpenEvent) {
-						start();
 						destroyFF(oFF);
+						done();
 					} else {
 						oFFL1ListCloseEvent = oEvent;
 					}
@@ -2214,8 +2217,8 @@
 					if (oFFL1ListCloseEvent) {
 						var oPopover = oFF._getPopover();
 						oPopover.attachEventOnce("afterOpen", function(oEvent) {
-							start();
 							destroyFF(oFF);
+							done();
 						});
 					} else {
 						oFFL2ListOpenEvent = oEvent;
@@ -2273,7 +2276,8 @@
 			strictEqual(fnConfirmSpy.callCount, 1, "Confirm event was fired");
 		});
 
-		asyncTest("FacetFilter CONFIRM event - popover close (with OK button)", function () {
+		QUnit.test("FacetFilter CONFIRM event - popover close (with OK button)", function (assert) {
+			var done = assert.async();
 			//Arrange
 			var fnConfirmSpy = sinon.spy(),
 				fnListOpenSpy = sinon.spy(),
@@ -2299,10 +2303,10 @@
 			oPopoverOKButton.firePress({});
 			sap.ui.getCore().applyChanges();
 			setTimeout(function() {
-				start();
 				//Assert
 				strictEqual(fnListCloseSpy.callCount, 1, "ListClose is called once");
 				strictEqual(fnConfirmSpy.callCount, 1, "Confirm event was fired");
+				done();
 			},500);
 		});
 
@@ -2332,7 +2336,8 @@
 
 		QUnit.module("List Container Rendering");
 
-		asyncTest("Popover rendering", function() {
+		QUnit.test("Popover rendering", function(assert) {
+			var done = assert.async();
 
 			var oFF = new sap.m.FacetFilter({
 				showPopoverOKButton : true
@@ -2350,7 +2355,6 @@
 
 			var oPopover = oFF._getPopover();
 			oPopover.attachEventOnce("afterOpen", function(oEvent) {
-				start();
 				ok(oPopover.getDomRef(), "Popover should be rendered");
 				ok(oPopover.$().hasClass("sapMFFPop"), "Popover is rendered with the correct CSS class");
 
@@ -2372,11 +2376,13 @@
 				// Popover ok button
 				ok(oPopover.getFooter().getDomRef(), "Popover OK button should be rendered");
 				destroyFF(oFF);
+				done();
 			});
 			openPopover(oFF, 0);
 		});
 
-		asyncTest("Dialog rendering", function() {
+		QUnit.test("Dialog rendering", function(assert) {
+			var done = assert.async();
 
 			var oFF = new sap.m.FacetFilter({
 				showPersonalization : true
@@ -2394,9 +2400,6 @@
 
 			var oDialog = oFF._getFacetDialog();
 			oDialog.attachEventOnce("afterOpen", function(oEvent) {
-
-				start();
-
 				ok(oDialog.getDomRef(), "Dialog should be rendered");
 				ok(oDialog.$().hasClass("sapMFFDialog"), "Dialog is rendered with the correct CSS class");
 
@@ -2434,6 +2437,7 @@
 				ok(oFilterItemsList.getItems()[0].getDomRef(), "Filter item is rendered");
 
 				destroyFF(oFF);
+				done();
 			});
 			openDialogFromAddFacet(oFF);
 		});
@@ -2504,7 +2508,8 @@
 		});
 
 
-		asyncTest("FacetFilter.showPersonalization", function() {
+		QUnit.test("FacetFilter.showPersonalization", function(assert) {
+			var done = assert.async();
 
 			var oFF = new sap.m.FacetFilter();
 			var oFFL = new sap.m.FacetFilterList();
@@ -2523,14 +2528,13 @@
 
 			var oPopover = oFF._getPopover();
 			oPopover.attachEventOnce("afterOpen", function(oEvent) {
-
-				start();
 				ok(getRemoveIconCtrl(oFF, 0).getDomRef(), "Facet filter remove icon should be rendered");
 				equal(getRemoveIconCtrl(oFF, 0).$().attr("data-sap-ui-icon-content").charCodeAt(0), 57799,
 						"The remove icon should be the sys-cancel icon font.");
 				ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLVisibleRemoveIcon"), "The remove icon should be displayed.");
 
 				destroyFF(oFF);
+				done();
 			});
 
 			openPopover(oFF, 0);
@@ -2666,7 +2670,8 @@
 		});
 
 
-		asyncTest("FacetFilter.type interval timer", function() {
+		QUnit.test("FacetFilter.type interval timer", function(assert) {
+			var done = assert.async();
 			var oFFLight = new sap.m.FacetFilter({
 				type : sap.m.FacetFilterType.Light
 			});
@@ -2679,14 +2684,15 @@
 				strictEqual(fnCheckOverflowSpy.callCount, 0, 'No _checkOverflow should be registered to the central timer in light mode.');
 
 				fnCheckOverflowSpy.restore();
-				start();
+				done();
 			}.bind(this), 1000)
 
 			oFFLight.destroy();
 			oFFLight = null;
 		});
 
-		asyncTest("FacetFilter.liveSearch", function() {
+		QUnit.test("FacetFilter.liveSearch", function(assert) {
+			var done = assert.async();
 
 			var oFF = new sap.m.FacetFilter();
 			var oFFL = new sap.m.FacetFilterList({
@@ -2734,10 +2740,9 @@
 					ok(oFF.setLiveSearch(false), "setLiveSearch should support method chaining");
 
 					oFFL.attachEventOnce("updateFinished", function(oEvent) {
-
-						start();
 						ok(false, "Live search should not have triggered a search");
 						destroyFF(oFF);
+						done();
 					});
 
 					oSearchField.fireLiveChange({
@@ -2746,8 +2751,8 @@
 
 					setTimeout(function() {
 						// Start the test runner and destroy the FF after the search has completed
-						start();
 						destroyFF(oFF);
+						done();
 					});
 				});
 
@@ -2926,7 +2931,8 @@
 
 		QUnit.module("Selection Text Update");
 
-		asyncTest("Selection button text updated after popover close", function() {
+		QUnit.test("Selection button text updated after popover close", function(assert) {
+			var done = assert.async();
 
 			var sItem1Text = "Val1";
 			var oFF = new sap.m.FacetFilter();
@@ -2954,20 +2960,20 @@
 				oList.getItems()[0].setSelected(true);
 
 				oPopover.attachEventOnce("afterClose", function(oEvent) {
-
-					start();
 					sap.ui.getCore().applyChanges();
 					// var oButton = getButtonCtrl(oFF, 0);
 					var oButton = oFF._getButtonForList(oFFL);
 					ok(oButton.getText().indexOf(sItem1Text) !== -1, "Button text should be updated with the selected value");
 					destroyFF(oFF);
+					done();
 				});
 				oFF._closePopover();
 			});
 			openPopover(oFF, 0);
 		});
 
-		asyncTest("Selection button text updated after dialog close", function() {
+		QUnit.test("Selection button text updated after dialog close", function(assert) {
+			var done = assert.async();
 
 			var sItem1Text = "Val1";
 			var oFF = new sap.m.FacetFilter();
@@ -2998,14 +3004,13 @@
 					oList.getItems()[0].setSelected(true);
 
 					oDialog.attachEventOnce("afterClose", function(oEvent) {
-
-						start();
 						sap.ui.getCore().applyChanges();
 						var oButton = getButtonCtrl(oFF, 0);
 						ok(oButton.getText().indexOf(sItem1Text) !== -1, "Button text should be updated with the selected value");
 						ok(oButton.getTooltip().indexOf(sItem1Text) !== -1,
 								"Button tooltip should be updated with the selected value");
 						destroyFF(oFF);
+						done();
 					});
 
 					oFF._closeDialog();
@@ -3618,7 +3623,8 @@
 			destroyFF(oFF);
 		});
 
-		asyncTest("Preselected items on growing list", function() {
+		QUnit.test("Preselected items on growing list", function(assert) {
+			var done = assert.async();
 			var oFF = oSCHelper.createFFWithModel();
 			var oFFL = oFF.getLists()[0];
 
@@ -3628,12 +3634,11 @@
 			equal(oFFL.getItems().length, 3, "There are only three items in the list");
 
 			oFFL.attachEventOnce("updateFinished", function(oEvent) {
-
-				start();
 				equal(oFFL.getItems().length, 6, "There are six items in the list");
 				strictEqual(oFFL.getItems()[3].getSelected(), true, "Item in the growing part was selected");
 
 				destroyFF(oFF);
+				done();
 			});
 			//TODO change this to actually display the popover
 			oFFL._oGrowingDelegate.requestNewPage();
@@ -3727,7 +3732,8 @@
 			destroyFF(oFF);
 		});
 
-		asyncTest("'All' checkbox to be unchecked when items are preselected and model is assigned later", function() {
+		QUnit.test("'All' checkbox to be unchecked when items are preselected and model is assigned later", function(assert) {
+			var done = assert.async();
 			var oFF = oSCHelper.createFFWithBinding();
 			var oFFL = oFF.getLists()[0];
 
@@ -3754,7 +3760,7 @@
 			});
 			setTimeout(function () {
 				strictEqual(oFFL.getItems().filter(function (oItem) {return oItem.getSelected()}).length, 0, "Visible selected keys should be cleared by selecting 'All' checkbox");
-				start();
+				done();
 			}, 1000);
 
 
@@ -3783,7 +3789,8 @@
 			oFF.destroy();
 		});
 
-		asyncTest("The selected keys are cleared when the list is made inactive", function() {
+		QUnit.test("The selected keys are cleared when the list is made inactive", function(assert) {
+			var done = assert.async();
 			var oFF = oSCHelper.createFFWithModel();
 			var oFFL = oFF.getLists()[0];
 			oFF.placeAt("content");
@@ -3799,10 +3806,10 @@
 				selected : true
 			});
 			setTimeout(function() {
-				start();
 				ok(!Object.getOwnPropertyNames(oFFL.getSelectedKeys()).length,
 						"Selected keys should be cleared by making list inactive");
 				destroyFF(oFF);
+				done();
 			}, 500);
 		});
 
@@ -3849,15 +3856,14 @@
 			}
 		});
 
-		asyncTest("if _updateSelectAllCheckBox is checked, all items must be selected, but not the headers", function() {
+		QUnit.test("if _updateSelectAllCheckBox is checked, all items must be selected, but not the headers", function(assert) {
+			var done = assert.async();
 			//prepare
 			var oPopover, oCheckbox, oSpy;
 
 			//act
 			oPopover = oFF._getPopover();
 			oPopover.attachEventOnce("afterOpen", function(oEvent) {
-
-				start();
 				oCheckbox = getPopoverSelectAllCheckBox(oPopover);
 				//assert
 				ok(!oCheckbox.getSelected(), "Select all checkbox should be unchecked");
@@ -3882,6 +3888,7 @@
 				//assert
 				equal(oSpy.calledWith(true), true,
 						"oCheckbox is called with setSelected(true) because the selected items = items.length");
+				done();
 			});
 			openPopover(oFF, 0);
 		});

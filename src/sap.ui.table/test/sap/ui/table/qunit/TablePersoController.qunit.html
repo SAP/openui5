@@ -185,7 +185,8 @@
 		afterEach: destroyController
 	});
 
-	asyncTest("Column visibility (autoSave)", 16, function() {
+	QUnit.test("Column visibility (autoSave)", 16, function(assert) {
+		var done = assert.async();
 		var getPersDataCalls = 0;
 		createController({
 			persoService: {
@@ -259,12 +260,13 @@
 			equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
 			equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
 
-			start();
+			done();
 		}, 0);
 
 	});
 
-	asyncTest("Column visibility (no autoSave)", 19, function() {
+	QUnit.test("Column visibility (no autoSave)", 19, function(assert) {
+		var done = assert.async();
 		var getPersDataCalls = 0;
 		createController({
 			autoSave: false,
@@ -347,7 +349,7 @@
 			equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
 			equal(oNumberColumn.getVisible(), true, "Number column should be visible.");
 
-			start();
+			done();
 		}, 0);
 
 	});

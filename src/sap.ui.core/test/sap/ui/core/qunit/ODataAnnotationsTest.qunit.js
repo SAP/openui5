@@ -438,7 +438,8 @@ function runODataAnnotationTests() {
 	QUnit.module("Asynchronous loading");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
-		return function() {
+		return function(assert) {
+			var done = assert.async();
 			if (!bSharedMetadata){
 				cleanOdataCache();
 			}
@@ -463,14 +464,14 @@ function runODataAnnotationTests() {
 					case "Both":
 						ok(bMetadataLoaded && bAnnotationsLoaded, "Check: Annotations and Metadata loaded");
 						jQuery.sap.log.debug("check for both");
-						start();
+						done();
 					break;
 
 					case "MetadataFailed":
 						// Nothing should be loaded
 						ok(!bServiceValid && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
 						jQuery.sap.log.debug("check for none");
-						start();
+						done();
 					break;
 
 					case "AnnotationsFailed":
@@ -482,7 +483,7 @@ function runODataAnnotationTests() {
 						}
 						jQuery.sap.log.debug("check for no annotations");
 						oModel.destroy();
-						start();
+						done();
 					break;
 
 					default:
@@ -573,7 +574,7 @@ function runODataAnnotationTests() {
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
 		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
-			asyncTest(
+			QUnit.test(
 				"Asynchronous loading - " + sTestType,
 				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
 			);
@@ -583,7 +584,8 @@ function runODataAnnotationTests() {
 	QUnit.module("V2: Asynchronous loading");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
-		return function() {
+		return function(assert) {
+			var done = assert.async();
 			if (!bSharedMetadata){
 				sap.ui.model.odata.v2.ODataModel.mServiceData = {};
 			}
@@ -608,14 +610,14 @@ function runODataAnnotationTests() {
 					case "Both":
 						ok(bMetadataLoaded && bAnnotationsLoaded, "Check: Annotations and Metadata loaded");
 						jQuery.sap.log.debug("check for both");
-						start();
+						done();
 					break;
 
 					case "MetadataFailed":
 						// Nothing should be loaded
 						ok(!bServiceValid && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
 						jQuery.sap.log.debug("check for none");
-						start();
+						done();
 					break;
 
 					case "AnnotationsFailed":
@@ -627,7 +629,7 @@ function runODataAnnotationTests() {
 						}
 						jQuery.sap.log.debug("check for no annotations");
 						oModel.destroy();
-						start();
+						done();
 					break;
 
 					default:
@@ -718,7 +720,7 @@ function runODataAnnotationTests() {
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
 		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
-			asyncTest(
+			QUnit.test(
 				"Asynchronous loading - " + sTestType,
 				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
 			);
@@ -729,7 +731,8 @@ function runODataAnnotationTests() {
 	QUnit.module("Asynchronous loading (joined events)");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
-		return function() {
+		return function(assert) {
+			var done = assert.async();
 			if (!bSharedMetadata){
 				cleanOdataCache();
 			}
@@ -755,14 +758,14 @@ function runODataAnnotationTests() {
 					case "Both":
 						ok(bMetadataLoaded && bAnnotationsLoaded, "Check: Annotations and Metadata loaded");
 						jQuery.sap.log.debug("check for both");
-						start();
+						done();
 					break;
 
 					case "MetadataFailed":
 						// Nothing should be loaded
 						ok(!bInternalMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
 						jQuery.sap.log.debug("check for none");
-						start();
+						done();
 					break;
 
 					case "AnnotationsFailed":
@@ -774,7 +777,7 @@ function runODataAnnotationTests() {
 						// Metadata should be loaded, but no annotations
 						jQuery.sap.log.debug("check for no annotations");
 						oModel.destroy();
-						start();
+						done();
 					break;
 
 					default:
@@ -871,7 +874,7 @@ function runODataAnnotationTests() {
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
 		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
-			asyncTest(
+			QUnit.test(
 				"Asynchronous loading (joined events) - " + sTestType,
 				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
 			);
@@ -882,7 +885,8 @@ function runODataAnnotationTests() {
 	QUnit.module("V2: Asynchronous loading (joined events)");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
-		return function() {
+		return function(assert) {
+			var done = assert.async();
 			if (!bSharedMetadata){
 				sap.ui.model.odata.v2.ODataModel.mServiceData = {};
 			}
@@ -908,14 +912,14 @@ function runODataAnnotationTests() {
 					case "Both":
 						ok(bMetadataLoaded && bAnnotationsLoaded, "Check: Annotations and Metadata loaded");
 						jQuery.sap.log.debug("check for both");
-						start();
+						done();
 					break;
 
 					case "MetadataFailed":
 						// Nothing should be loaded
 						ok(!bInternalMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
 						jQuery.sap.log.debug("check for none");
-						start();
+						done();
 					break;
 
 					case "AnnotationsFailed":
@@ -927,7 +931,7 @@ function runODataAnnotationTests() {
 						// Metadata should be loaded, but no annotations
 						jQuery.sap.log.debug("check for no annotations");
 						oModel.destroy();
-						start();
+						done();
 					break;
 
 					default:
@@ -1027,7 +1031,7 @@ function runODataAnnotationTests() {
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
 		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
-			asyncTest(
+			QUnit.test(
 				"Asynchronous loading (joined events) - " + sTestType,
 				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
 			);
@@ -1102,7 +1106,8 @@ function runODataAnnotationTests() {
 
 	QUnit.module("Multiple Annotation Sources Merged");
 
-	asyncTest("Asynchronous loading", function() {
+	QUnit.test("Asynchronous loading", function(assert) {
+		var done = assert.async();
 		expect(12);
 		var asyncStartsExpected = 2; // The number of asynchronous starts expected before the real start is triggered
 
@@ -1195,14 +1200,15 @@ function runODataAnnotationTests() {
 				oModel2.destroy();
 				oModel3.destroy();
 				oModel4.destroy();
-				start();
+				done();
 			});
 		}
 	});
 
 	QUnit.module("V2: Multiple Annotation Sources Merged");
 
-	asyncTest("Asynchronous loading", function() {
+	QUnit.test("Asynchronous loading", function(assert) {
+		var done = assert.async();
 		expect(6);
 		var asyncStartsExpected = 2; // The number of asynchronous starts expected before the real start is triggered
 
@@ -1224,7 +1230,7 @@ function runODataAnnotationTests() {
 			ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
 			var sMerged = oAnnotations.UnitTest["Test.Merged"][0].Value.Path;
 			ok(sMerged === "Metadata" || sMerged === "Annotations", "Merged annotations filled");
-			asyncStart();
+			asyncStart(done);
 		});
 
 		var oModel4 = new sap.ui.model.odata.v2.ODataModel(
@@ -1245,11 +1251,11 @@ function runODataAnnotationTests() {
 			ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
 			var sMerged = oAnnotations.UnitTest["Test.Merged"][0].Value.Path;
 			ok(sMerged === "Metadata" || sMerged === "Annotations", "Merged annotations filled");
-			asyncStart();
+			asyncStart(done);
 		});
 
 
-		function asyncStart() {
+		function asyncStart(done) {
 			if (asyncStart.num === undefined) {
 				asyncStart.num = 0;
 			}
@@ -1258,7 +1264,7 @@ function runODataAnnotationTests() {
 				oModel3.destroy();
 				oModel4.destroy();
 
-				start();
+				done();
 			}
 		}
 
@@ -1360,7 +1366,8 @@ function runODataAnnotationTests() {
 		oModel.destroy();
 	});
 
-	asyncTest("V2: Apply Function", function() {
+	QUnit.test("V2: Apply Function", function(assert) {
+		var done = assert.async();
 		expect(12);
 
 		var mTest = mAdditionalTestsServices["Apply Function"];
@@ -1453,7 +1460,7 @@ function runODataAnnotationTests() {
 			deepEqual(mNamespace["Value"], mCorrectValue, "Value has correct value");
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
@@ -1553,7 +1560,8 @@ function runODataAnnotationTests() {
 	});
 
 
-	asyncTest("V2: Multiple Property Annotations", function() {
+	QUnit.test("V2: Multiple Property Annotations", function(assert) {
+		var done = assert.async();
 		expect(11);
 
 		var mTest = mAdditionalTestsServices["Multiple Property Annotations"];
@@ -1646,7 +1654,7 @@ function runODataAnnotationTests() {
 			);
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
@@ -1717,7 +1725,8 @@ function runODataAnnotationTests() {
 
 	});
 
-	asyncTest("V2: Qualifiers in Property Annotations", function() {
+	QUnit.test("V2: Qualifiers in Property Annotations", function(assert) {
+		var done = assert.async();
 		expect(8);
 
 		var mTest = mAdditionalTestsServices["Property Annotation Qualifiers"];
@@ -1781,7 +1790,7 @@ function runODataAnnotationTests() {
 				"Target value with Qualifier value has correct content"
 			);
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
@@ -1849,7 +1858,8 @@ function runODataAnnotationTests() {
 		);
 	});
 
-	asyncTest("V2: Other Property Values", function() {
+	QUnit.test("V2: Other Property Values", function(assert) {
+		var done = assert.async();
 		expect(8);
 
 		var mTest = mAdditionalTestsServices["Other Property Values"];
@@ -1912,7 +1922,7 @@ function runODataAnnotationTests() {
 				"Target value with Qualifier value has correct content"
 			);
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
@@ -1982,7 +1992,8 @@ function runODataAnnotationTests() {
 		oModel.destroy();
 	});
 
-	asyncTest("V2: Aliases in Namespaces", function() {
+	QUnit.test("V2: Aliases in Namespaces", function(assert) {
+		var done = assert.async();
 		expect(8);
 
 		var mTest = mAdditionalTestsServices["Aliases in Namespaces"];
@@ -2046,7 +2057,7 @@ function runODataAnnotationTests() {
 				"Target value String value has correct content"
 			);
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
@@ -2253,7 +2264,8 @@ function runODataAnnotationTests() {
 		oModel.destroy();
 	});
 
-	asyncTest("V2: Namespaces in Other Property Values", function() {
+	QUnit.test("V2: Namespaces in Other Property Values", function(assert) {
+		var done = assert.async();
 		expect(22);
 
 		var mTest = mAdditionalTestsServices["Namespaces in Other Property Values"];
@@ -2455,7 +2467,7 @@ function runODataAnnotationTests() {
 				"Target value's namespace has been correctly replaced"
 			);
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
@@ -2535,7 +2547,8 @@ function runODataAnnotationTests() {
 		oModel.destroy();
 	});
 
-	asyncTest("V2: Text Properties", function() {
+	QUnit.test("V2: Text Properties", function(assert) {
+		var done = assert.async();
 		expect(14);
 
 		var mTest = mAdditionalTestsServices["Text Properties"];
@@ -2610,7 +2623,7 @@ function runODataAnnotationTests() {
 				"Name3 with replaced alias exists and has Invalid child node that only contains an empy object"
 			);
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
@@ -2831,7 +2844,8 @@ function runODataAnnotationTests() {
 		oModel.destroy();
 	});
 
-	asyncTest("V2: Entity Containers", function() {
+	QUnit.test("V2: Entity Containers", function(assert) {
+		var done = assert.async();
 		expect(30);
 
 		var mTest = mAdditionalTestsServices["Entity Containers"];
@@ -3047,7 +3061,7 @@ function runODataAnnotationTests() {
 				"Entity in namespace exists"
 			);
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
@@ -3080,7 +3094,8 @@ function runODataAnnotationTests() {
 
 	});
 
-	asyncTest("V2: Simple Values", function() {
+	QUnit.test("V2: Simple Values", function(assert) {
+		var done = assert.async();
 		expect(3);
 
 		var mTest = mAdditionalTestsServices["Simple Values"];
@@ -3107,7 +3122,7 @@ function runODataAnnotationTests() {
 				"Simple value attributes have the meaning as child elements"
 			);
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
@@ -3145,7 +3160,8 @@ function runODataAnnotationTests() {
 		oModel.destroy();
 	});
 
-	asyncTest("V2: Collection with Namespace", function() {
+	QUnit.test("V2: Collection with Namespace", function(assert) {
+		var done = assert.async();
 		expect(6);
 
 		var mTest = mAdditionalTestsServices["Collection with Namespace"];
@@ -3177,7 +3193,7 @@ function runODataAnnotationTests() {
 				"Collection with and without namespace have the same values"
 			);
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
@@ -3277,7 +3293,8 @@ function runODataAnnotationTests() {
 	});
 
 
-	asyncTest("V2: UrlRef", function() {
+	QUnit.test("V2: UrlRef", function(assert) {
+		var done = assert.async();
 		expect(78);
 
 		var mTest = mAdditionalTestsServices["UrlRef"];
@@ -3371,12 +3388,13 @@ function runODataAnnotationTests() {
 			ok(!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Name"], "Name is not set for labeled element Value");
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
 
-	asyncTest("V2 only: Delayed Loading", function() {
+	QUnit.test("V2 only: Delayed Loading", function(assert) {
+		var done = assert.async();
 		expect(22);
 
 		var mTest = mAdditionalTestsServices["Delayed Loading"];
@@ -3437,7 +3455,7 @@ function runODataAnnotationTests() {
 					equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"]["String"], "Third", "FromFirst annotation filled from Second source");
 
 					oModel.destroy();
-					start();
+					done();
 
 				}).catch(function(mResults) {
 					ok(false, "Third Annotations could not be loaded...")
@@ -3448,7 +3466,8 @@ function runODataAnnotationTests() {
 		});
 	});
 
-	asyncTest("V2 only: Delayed Parsing", function() {
+	QUnit.test("V2 only: Delayed Parsing", function(assert) {
+		var done = assert.async();
 		expect(26);
 
 		var mTest = mAdditionalTestsServices["Delayed Loading"];
@@ -3522,27 +3541,27 @@ function runODataAnnotationTests() {
 						equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"]["String"], "Third", "FromFirst annotation filled from Second source");
 
 						oModel.destroy();
-						start();
+						done();
 
 					}).catch(function(mResults) {
 						ok(false, "Third Annotations could not be parsed...")
 						oModel.destroy();
-						start();
+						done();
 					})
 				}).catch(function(mResults) {
 					ok(false, "Second Annotations could not be parsed...")
 					oModel.destroy();
-					start();
+					done();
 				})
 			}).catch(function(mResults) {
 				ok(false, "First Annotations could not be parsed...")
 				oModel.destroy();
-				start();
+				done();
 			});
 		}).catch(function() {
 			ok(false, "Metadata could not be loaded...")
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
@@ -3754,7 +3773,8 @@ function runODataAnnotationTests() {
 	});
 
 
-	asyncTest("If in Apply", function() {
+	QUnit.test("If in Apply", function(assert) {
+		var done = assert.async();
 		expect(57);
 		var mTest = mAdditionalTestsServices["If in Apply"];
 		var sServiceURI = mTest.service;
@@ -3818,13 +3838,14 @@ function runODataAnnotationTests() {
 			);
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
 
 
-	asyncTest("Other Elements in LabeledElement", function() {
+	QUnit.test("Other Elements in LabeledElement", function(assert) {
+		var done = assert.async();
 		expect(97);
 		var mTest = mAdditionalTestsServices["Other Elements in LabeledElement"];
 		var sServiceURI = mTest.service;
@@ -3924,11 +3945,12 @@ function runODataAnnotationTests() {
 			);
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("V2 only: Annotated Metadata - Automated Parsing", function() {
+	QUnit.test("V2 only: Annotated Metadata - Automated Parsing", function(assert) {
+		var done = assert.async();
 		expect(26);
 
 		var mTestsDone = {
@@ -3953,7 +3975,7 @@ function runODataAnnotationTests() {
 				oModel2.destroy();
 				oModel3.destroy();
 				oModel4.destroy();
-				window.setTimeout(start, 500);
+				window.setTimeout(done, 500);
 			}
 		}
 
@@ -4043,7 +4065,8 @@ function runODataAnnotationTests() {
 		});
 	});
 
-	asyncTest("Apply in If", function() {
+	QUnit.test("Apply in If", function(assert) {
+		var done = assert.async();
 		expect(71);
 
 		var mTest = mAdditionalTestsServices["Apply in If"];
@@ -4120,11 +4143,12 @@ function runODataAnnotationTests() {
 			);
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("V2: Apply in If", function() {
+	QUnit.test("V2: Apply in If", function(assert) {
+		var done = assert.async();
 		expect(71);
 
 		var mTest = mAdditionalTestsServices["Apply in If"];
@@ -4202,13 +4226,14 @@ function runODataAnnotationTests() {
 			);
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
 
 
-	asyncTest("V2: Joined Loading with automated $metadata parsing", function() {
+	QUnit.test("V2: Joined Loading with automated $metadata parsing", function(assert) {
+		var done = assert.async();
 		expect(16);
 
 		var mTest = mAdditionalTestsServices["Joined Loading with automated $metadata parsing"];
@@ -4248,7 +4273,7 @@ function runODataAnnotationTests() {
 				// Make sure no additional events are fired afterwards
 				oModel.destroy();
 				oModel2.destroy();
-				setTimeout(start, 500);
+				setTimeout(done, 500);
 			} else if(iCount > 2) {
 				ok(false, "Too many events have been fired");
 			}
@@ -4260,6 +4285,7 @@ function runODataAnnotationTests() {
 
 
 	var fnTestAnnotationInRecord = function(iModelVersion) {
+		var done = assert.async();
 		expect(54);
 
 		var mTest = mAdditionalTestsServices["Default Annotated Service"];
@@ -4330,17 +4356,18 @@ function runODataAnnotationTests() {
 			}, "Case 3 has correct values");
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	}
 
-	asyncTest("V1: Annotation in Record", fnTestAnnotationInRecord.bind(this, 1));
-	asyncTest("V2: Annotation in Record", fnTestAnnotationInRecord.bind(this, 2));
+	QUnit.test("V1: Annotation in Record", fnTestAnnotationInRecord.bind(this, 1));
+	QUnit.test("V2: Annotation in Record", fnTestAnnotationInRecord.bind(this, 2));
 
 
 
 
 	var fnTestEmptyCollection = function(iModelVersion) {
+		var done = assert.async();
 		expect(15);
 
 		var mTest = mAdditionalTestsServices["Empty collection"];
@@ -4367,15 +4394,16 @@ function runODataAnnotationTests() {
 			);
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	};
 
-	asyncTest("V1: Empty collection", fnTestEmptyCollection.bind(this, 1));
-	asyncTest("V2: Empty collection", fnTestEmptyCollection.bind(this, 2));
+	QUnit.test("V1: Empty collection", fnTestEmptyCollection.bind(this, 1));
+	QUnit.test("V2: Empty collection", fnTestEmptyCollection.bind(this, 2));
 
 
 	var fnTestEmptyCollection = function(iModelVersion) {
+		var done = assert.async();
 		expect(10);
 
 		var mTest = mAdditionalTestsServices["Multiple Enums"];
@@ -4406,16 +4434,17 @@ function runODataAnnotationTests() {
 			);
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	};
 
-	asyncTest("V1: Multiple Enums", fnTestEmptyCollection.bind(this, 1));
-	asyncTest("V2: Multiple Enums", fnTestEmptyCollection.bind(this, 2));
+	QUnit.test("V1: Multiple Enums", fnTestEmptyCollection.bind(this, 1));
+	QUnit.test("V2: Multiple Enums", fnTestEmptyCollection.bind(this, 2));
 
 
 
 	var fnTestCachedValueLists = function(iModelVersion) {
+		var done = assert.async();
 		expect(40);
 
 		var mTest = mAdditionalTestsServices["Cached Value Lists"];
@@ -4536,18 +4565,19 @@ function runODataAnnotationTests() {
 				);
 
 				oModel2.destroy();
-				start();
+				done();
 			});
 
 		};
 
 	};
 
-	asyncTest("V1: Cached Value Lists", fnTestCachedValueLists.bind(this, 1));
-	asyncTest("V2: Cached Value Lists", fnTestCachedValueLists.bind(this, 2));
+	QUnit.test("V1: Cached Value Lists", fnTestCachedValueLists.bind(this, 1));
+	QUnit.test("V2: Cached Value Lists", fnTestCachedValueLists.bind(this, 2));
 
 
 	var fnTestCachedMetadataValueLists = function(iModelVersion) {
+		var done = assert.async();
 		expect(14);
 
 		var mTest = mAdditionalTestsServices["Cached Value Lists"];
@@ -4598,17 +4628,18 @@ function runODataAnnotationTests() {
 
 				oModel.destroy();
 				oModel2.destroy();
-				start();
+				done();
 
 			});
 
 		});
 	};
 
-	asyncTest("V1: Cached Value Lists with Service-URL-Parameters", fnTestCachedMetadataValueLists.bind(this, 1));
-	asyncTest("V2: Cached Value Lists with Service-URL-Parameters", fnTestCachedMetadataValueLists.bind(this, 2));
+	QUnit.test("V1: Cached Value Lists with Service-URL-Parameters", fnTestCachedMetadataValueLists.bind(this, 1));
+	QUnit.test("V2: Cached Value Lists with Service-URL-Parameters", fnTestCachedMetadataValueLists.bind(this, 2));
 
 	var fnTestCachedMetadataValueListsAdditionParameters = function(iModelVersion) {
+		var done = assert.async();
 		expect(14);
 
 		var mTest = mAdditionalTestsServices["Cached Value Lists"];
@@ -4667,19 +4698,20 @@ function runODataAnnotationTests() {
 
 				oModel.destroy();
 				oModel2.destroy();
-				start();
+				done();
 
 			});
 
 		});
 	};
 
-	asyncTest("V1: Cached Value Lists with additional Metadata Parameters", fnTestCachedMetadataValueListsAdditionParameters.bind(this, 1));
-	asyncTest("V2: Cached Value Lists with additional Metadata Parameters", fnTestCachedMetadataValueListsAdditionParameters.bind(this, 2));
+	QUnit.test("V1: Cached Value Lists with additional Metadata Parameters", fnTestCachedMetadataValueListsAdditionParameters.bind(this, 1));
+	QUnit.test("V2: Cached Value Lists with additional Metadata Parameters", fnTestCachedMetadataValueListsAdditionParameters.bind(this, 2));
 
 
 
 	var fnTestOverwritingOnTermLevel = function(iModelVersion) {
+		var done = assert.async();
 		expect(3);
 
 		cleanOdataCache();
@@ -4761,17 +4793,18 @@ function runODataAnnotationTests() {
 			);
 
 			oModel.destroy();
-			start();
+			done();
 		});
 
 	}
 
-	asyncTest("V1: Overwrite on Term Level", fnTestOverwritingOnTermLevel.bind(this, 1));
-	asyncTest("V2: Overwrite on Term Level", fnTestOverwritingOnTermLevel.bind(this, 2));
+	QUnit.test("V1: Overwrite on Term Level", fnTestOverwritingOnTermLevel.bind(this, 1));
+	QUnit.test("V2: Overwrite on Term Level", fnTestOverwritingOnTermLevel.bind(this, 2));
 
 
 
 	var fnTestOverwritingOnTermLevel2 = function(iModelVersion) {
+		var done = assert.async();
 		expect(6);
 
 		var mTest = mAdditionalTestsServices["Overwrite on Term Level"];
@@ -4917,15 +4950,16 @@ function runODataAnnotationTests() {
 				);
 
 				oModel.destroy();
-				start();
+				done();
 			});
 		});
 	};
 
-	asyncTest("V1: Overwrite on Term Level 2", fnTestOverwritingOnTermLevel2.bind(this, 1));
-	asyncTest("V2: Overwrite on Term Level 2", fnTestOverwritingOnTermLevel2.bind(this, 2));
+	QUnit.test("V1: Overwrite on Term Level 2", fnTestOverwritingOnTermLevel2.bind(this, 1));
+	QUnit.test("V2: Overwrite on Term Level 2", fnTestOverwritingOnTermLevel2.bind(this, 2));
 
 	var fnTestAceptHeader = function(iModelVersion) {
+		var done = assert.async();
 		expect(12);
 		var oModel = fnCreateModel(iModelVersion, "fakeService://testdata/odata/northwind/");
 		var oModel2 = fnCreateModel(iModelVersion, "fakeService://testdata/odata/northwind/");
@@ -4998,16 +5032,16 @@ function runODataAnnotationTests() {
 			oModel3.destroy();
 
 			sap.ui.getCore().applyChanges();
-			start();
+			done();
 		});
 	};
 
-	asyncTest("V1: Send Accept-Language Header", fnTestAceptHeader.bind(this, 1));
-	asyncTest("V2: Send Accept-Language Header", fnTestAceptHeader.bind(this, 2));
+	QUnit.test("V1: Send Accept-Language Header", fnTestAceptHeader.bind(this, 1));
+	QUnit.test("V2: Send Accept-Language Header", fnTestAceptHeader.bind(this, 2));
 
 
 	var fnTestEdmTypeForNavigationProperties = function(iModelVersion) {
-
+		var done = assert.async();
 		cleanOdataCache();
 		var mTest = mAdditionalTestsServices["EDMType for NavigationProperties"];
 		var oModel = fnCreateModel(iModelVersion, mTest.service);
@@ -5101,16 +5135,17 @@ function runODataAnnotationTests() {
 				}, "Product EDM types are correctly set");
 
 				oModel.destroy();
-				start();
+				done();
 			});
 		});
 	};
 
-	asyncTest("V1: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 1));
-	asyncTest("V2: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 2));
+	QUnit.test("V1: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 1));
+	QUnit.test("V2: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 2));
 
 
 	var fnTestNestedAnnotations = function(iModelVersion) {
+		var done = assert.async();
 		expect(150);
 
 		cleanOdataCache();
@@ -5264,11 +5299,11 @@ function runODataAnnotationTests() {
 
 
 
-				start();
+				done();
 			});
 		});
 	};
 
-	asyncTest("V1: Nested Annotations", fnTestNestedAnnotations.bind(this, 1));
-	asyncTest("V2: Nested Annotations", fnTestNestedAnnotations.bind(this, 2));
+	QUnit.test("V1: Nested Annotations", fnTestNestedAnnotations.bind(this, 1));
+	QUnit.test("V2: Nested Annotations", fnTestNestedAnnotations.bind(this, 2));
 }

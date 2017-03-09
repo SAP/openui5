@@ -951,7 +951,8 @@
 		ok(jQuery.sap.domById("sapMList001-listUl").childNodes[0], "Overview ListItem should be rendered");
 	});
 
-	asyncTest("standardListThumb rendered - navigate from listitem no 1 to detail page", function() {
+	QUnit.test("standardListThumb rendered - navigate from listitem no 1 to detail page", function(assert) {
+		var done = assert.async();
 		app.to("standardListThumb", "show");
 		sap.ui.getCore().applyChanges();
 		ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
@@ -965,11 +966,12 @@
 		setTimeout(function(){
 			sap.ui.getCore().applyChanges();
 			ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
-			start();
+			done();
 		},50);
 	});
 
-	asyncTest("standardListThumb rendered - navigate from listitem no 2 to detail page", function() {
+	QUnit.test("standardListThumb rendered - navigate from listitem no 2 to detail page", function(assert) {
+		var done = assert.async();
 		app.back();
 		sap.ui.getCore().applyChanges();
 		ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
@@ -983,11 +985,12 @@
 		setTimeout(function(){
 			sap.ui.getCore().applyChanges();
 			ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
-			start();
+			done();
 		},50);
 	});
 
-	asyncTest("standardListThumb rendered - navigate from listitem no 3 to detail page", function() {
+	QUnit.test("standardListThumb rendered - navigate from listitem no 3 to detail page", function(assert) {
+		var done = assert.async();
 		app.back();
 		sap.ui.getCore().applyChanges();
 		ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
@@ -1001,11 +1004,12 @@
 		setTimeout(function(){
 			sap.ui.getCore().applyChanges();
 			ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
-			start();
+			done();
 		},50);
 	});
 
-	asyncTest("standardListThumb rendered - navigate from listitem no 4 to detail page", function() {
+	QUnit.test("standardListThumb rendered - navigate from listitem no 4 to detail page", function(assert) {
+		var done = assert.async();
 		app.back();
 		sap.ui.getCore().applyChanges();
 		ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
@@ -1019,11 +1023,12 @@
 		setTimeout(function(){
 			sap.ui.getCore().applyChanges();
 			ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
-			start();
+			done();
 		},50);
 	});
 
-	asyncTest("standardListThumb rendered - navigate from listitem no 5 to detail page", function() {
+	QUnit.test("standardListThumb rendered - navigate from listitem no 5 to detail page", function(assert) {
+		var done = assert.async();
 		app.back();
 		sap.ui.getCore().applyChanges();
 		ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
@@ -1037,7 +1042,7 @@
 		setTimeout(function(){
 			sap.ui.getCore().applyChanges();
 			ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
-			start();
+			done();
 		},50);
 	});
 
@@ -1122,7 +1127,8 @@
 	});
 
 	if (jQuery.support.touch) {
-		asyncTest("swipe action", function() {
+		QUnit.test("swipe action", function(assert) {
+			var done = assert.async();
 			app.back();
 			app.to("swipeContentPage", "show");
 			sap.ui.getCore().applyChanges();
@@ -1142,7 +1148,7 @@
 					var oContainer = jQuery.sap.domById(swipeContentList.getId() + "-swp");
 					equals(oContainer, null, "Swipe Content is removed");
 					swipeContentList.setSwipeContent(swpcnt.setText("Disapprove").setType("Reject"));
-					start();
+					done();
 				});
 			}, 1000);
 		});
@@ -1198,7 +1204,8 @@
 		equals(checkSingleSelectionItem5(), true, "SingleSelection: Item 5 should be selected");
 	});
 
-	asyncTest("selectionList singleSelection item check by tap event on Item 1", function() {
+	QUnit.test("selectionList singleSelection item check by tap event on Item 1", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1214,11 +1221,12 @@
 			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
 
-			start();
+			done();
 		}, 0);
 	});
 
-	asyncTest("selectionList singleSelection item check by tap event on Item 2", function() {
+	QUnit.test("selectionList singleSelection item check by tap event on Item 2", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1233,11 +1241,12 @@
 			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
-			start();
+			done();
 		}, 0);
 	});
 
-	asyncTest("selectionList singleSelection item check by tap event on Item 3", function() {
+	QUnit.test("selectionList singleSelection item check by tap event on Item 3", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1252,11 +1261,12 @@
 			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), true, "SingleSelection: Item 3 should be checked");
 			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
-			start();
+			done();
 		}, 0);
 	});
 
-	asyncTest("selectionList singleSelection item check by tap event on Item 4", function() {
+	QUnit.test("selectionList singleSelection item check by tap event on Item 4", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1271,11 +1281,12 @@
 			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), true, "SingleSelection: Item 4 should be checked");
 			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
-			start();
+			done();
 		}, 0);
 	});
 
-	asyncTest("selectionList singleSelection item check by tap event on Item 5", function() {
+	QUnit.test("selectionList singleSelection item check by tap event on Item 5", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1290,7 +1301,7 @@
 			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), true, "SingleSelection: Item 5 should be checked");
-			start();
+			done();
 		}, 0);
 	});
 
@@ -1346,7 +1357,8 @@
 		equals(checkSingleSelectionItem5(), true, "SingleSelectionLeft: Item 5 should be selected");
 	});
 
-	asyncTest("selectionList SingleSelectionLeft item check by tap event on Item 1", function() {
+	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 1", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1362,11 +1374,12 @@
 			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
 
-			start();
+			done();
 		}, 0)
 	});
 
-	asyncTest("selectionList SingleSelectionLeft item check by tap event on Item 2", function() {
+	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 2", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1381,11 +1394,12 @@
 			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
-			start();
+			done();
 		}, 0)
 	});
 
-	asyncTest("selectionList SingleSelectionLeft item check by tap event on Item 3", function() {
+	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 3", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1400,11 +1414,12 @@
 			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), true, "SingleSelectionLeft: Item 3 should be checked");
 			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
-			start();
+			done();
 		}, 0)
 	});
 
-	asyncTest("selectionList SingleSelectionLeft item check by tap event on Item 4", function() {
+	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 4", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1419,11 +1434,12 @@
 			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), true, "SingleSelectionLeft: Item 4 should be checked");
 			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
-			start();
+			done();
 		}, 0)
 	});
 
-	asyncTest("selectionList SingleSelectionLeft item check by tap event on Item 5", function() {
+	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 5", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1438,7 +1454,7 @@
 			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), true, "SingleSelectionLeft: Item 5 should be checked");
-		start();
+		done();
 		}, 0)
 	});
 

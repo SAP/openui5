@@ -49,7 +49,8 @@
 			ok(oDomRef, "NavBar root element should exist in the page");
 		});
 
-		asyncTest("Swiping", function() {
+		QUnit.test("Swiping", function(assert) {
+			var done = assert.async();
 			var oList = jQuery.sap.domById("n1-list");
 			var iTouchPosX = 400;
 
@@ -87,7 +88,7 @@
 							// verify that inertia scrolling has stopped
 							equal(oList.scrollLeft, finalScrollLeft, "list should be scrolled no further than before (inertia scrolling must have ended)");
 
-							start();
+							done();
 						}, 500);
 					}, 1000);
 				}, 200);

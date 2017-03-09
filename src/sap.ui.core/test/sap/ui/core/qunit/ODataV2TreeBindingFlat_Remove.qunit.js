@@ -9,7 +9,9 @@ QUnit.module("Remove and reinsert", {
 	}
 });
 
-asyncTest("Move serverIndex node and collapse old parent", function(){
+QUnit.test("Move serverIndex node and collapse old parent", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -35,7 +37,7 @@ asyncTest("Move serverIndex node and collapse old parent", function(){
 			oBinding.collapse(0, true);
 			equal(oBinding.getLength(), 606, "The length of binding is correct after collapse the old parent");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -43,7 +45,9 @@ asyncTest("Move serverIndex node and collapse old parent", function(){
 	});
 });
 
-asyncTest("Move manually expanded nodes", function(){
+QUnit.test("Move manually expanded nodes", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -109,7 +113,7 @@ asyncTest("Move manually expanded nodes", function(){
 			oBinding.collapse(oN1005);
 			equal(oBinding.getLength(), 619, "The length of binding is correct after the new parent is collapsed");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -117,7 +121,9 @@ asyncTest("Move manually expanded nodes", function(){
 	});
 });
 
-asyncTest("Length calculation - remove/reinsert - Simple 1", function(){
+QUnit.test("Length calculation - remove/reinsert - Simple 1", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -147,7 +153,7 @@ asyncTest("Length calculation - remove/reinsert - Simple 1", function(){
 			oBinding.collapse(1);
 			equal(oBinding.getLength(), 599, "Length after collapse(1) is correct");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -155,7 +161,9 @@ asyncTest("Length calculation - remove/reinsert - Simple 1", function(){
 	});
 });
 
-asyncTest("Length calculation - remove/reinsert - Simple 2", function(){
+QUnit.test("Length calculation - remove/reinsert - Simple 2", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -189,7 +197,7 @@ asyncTest("Length calculation - remove/reinsert - Simple 2", function(){
 			oBinding.collapse(1);
 			equal(oBinding.getLength(), 599, "Length after collapse(1) is correct");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -197,7 +205,9 @@ asyncTest("Length calculation - remove/reinsert - Simple 2", function(){
 	});
 });
 
-asyncTest("Length calculation - remove/reinsert - Simple 3", function(){
+QUnit.test("Length calculation - remove/reinsert - Simple 3", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -236,7 +246,7 @@ asyncTest("Length calculation - remove/reinsert - Simple 3", function(){
 
 			equal(oBinding.getLength(), 689, "Length after remove(0) is correct");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -244,7 +254,9 @@ asyncTest("Length calculation - remove/reinsert - Simple 3", function(){
 	});
 });
 
-asyncTest("Length calculation - remove deep node @ original position AND add in server-indexed parent node", function(){
+QUnit.test("Length calculation - remove deep node @ original position AND add in server-indexed parent node", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -312,7 +324,7 @@ asyncTest("Length calculation - remove deep node @ original position AND add in 
 			oBinding.expand(oN1630, true);
 			equal(oBinding.getLength(), 630, "Length after expand(1630) is correct");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -320,7 +332,9 @@ asyncTest("Length calculation - remove deep node @ original position AND add in 
 	});
 });
 
-asyncTest("Length calculation - remove initially collapsed node, re-insert @ server-indexed parent - magnitude propagation", function(){
+QUnit.test("Length calculation - remove initially collapsed node, re-insert @ server-indexed parent - magnitude propagation", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -374,7 +388,7 @@ asyncTest("Length calculation - remove initially collapsed node, re-insert @ ser
 
 			equal(oNextAfter1029.key, oN1051.key, "Follow-Up node after 1029 is correct (key = 1051 expected)");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -382,7 +396,9 @@ asyncTest("Length calculation - remove initially collapsed node, re-insert @ ser
 	});
 });
 
-asyncTest("Length calculation - cut/paste complex operations", function(){
+QUnit.test("Length calculation - cut/paste complex operations", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -462,7 +478,7 @@ asyncTest("Length calculation - cut/paste complex operations", function(){
 			oBinding.collapse(oN1029, true);
 			equal(oBinding.getLength(), 577, "Length after collapse(1029) is correct (577)");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -470,7 +486,9 @@ asyncTest("Length calculation - cut/paste complex operations", function(){
 	});
 });
 
-asyncTest("Length calculation - expand & remove initially collapsed node - no re-insert", function(){
+QUnit.test("Length calculation - expand & remove initially collapsed node - no re-insert", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -509,7 +527,7 @@ asyncTest("Length calculation - expand & remove initially collapsed node - no re
 			oN1004Subtree = oBinding.removeContext(oN1004.context);
 			equal(oBinding.getLength(), 625);
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -517,7 +535,9 @@ asyncTest("Length calculation - expand & remove initially collapsed node - no re
 	});
 });
 
-asyncTest("Length calculation - remove collapsed node - remove old parent - insert in initially collapsed node", function(){
+QUnit.test("Length calculation - remove collapsed node - remove old parent - insert in initially collapsed node", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -586,7 +606,7 @@ asyncTest("Length calculation - remove collapsed node - remove old parent - inse
 			oBinding.collapse(oN1002, true);
 			equal(oBinding.getLength(), 684, "Length after collapse(1002) -> 1002 is the old parent of 1004 -> 1002 is now a child of 1004");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -594,7 +614,9 @@ asyncTest("Length calculation - remove collapsed node - remove old parent - inse
 	});
 });
 
-asyncTest("Length calculation - remove node A - insert in initially collapsed node B - remove node C - insert in first node A - remove node B", function(){
+QUnit.test("Length calculation - remove node A - insert in initially collapsed node B - remove node C - insert in first node A - remove node B", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -704,7 +726,7 @@ asyncTest("Length calculation - remove node A - insert in initially collapsed no
 			oBinding.addContexts(oN1001.context, oN1004Subtree);
 			equal(oBinding.getLength(), 700, "Length after re-insert 1004 in 1001 is correct -> 632 + 68 = 700 again");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -712,7 +734,9 @@ asyncTest("Length calculation - remove node A - insert in initially collapsed no
 	});
 });
 
-asyncTest("Length calculation - Move Node from upper Subtree to a lower Subtree (index-wise) - remove old parent of moved node", function(){
+QUnit.test("Length calculation - Move Node from upper Subtree to a lower Subtree (index-wise) - remove old parent of moved node", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -768,7 +792,7 @@ asyncTest("Length calculation - Move Node from upper Subtree to a lower Subtree 
 			oBinding.collapse(oN1001, true);
 			equal(oBinding.getLength(), 599, "Length after collapse 1001 is correct, 1001 is the outer parent of 1002 and 1004");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -797,7 +821,9 @@ function createContext(iNodeId) {
 	return oContext;
 }
 
-asyncTest("Create new node and added to a node which already has children", function() {
+QUnit.test("Create new node and added to a node which already has children", function(assert) {
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -819,7 +845,7 @@ asyncTest("Create new node and added to a node which already has children", func
 			strictEqual(oN1001.addedSubtrees[0]._getSubtree()[0].context, oContext, "The node is correctly added");
 			equal(oBinding.getLength(), 627, "The length is increased by 1 after added a new node");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -827,7 +853,9 @@ asyncTest("Create new node and added to a node which already has children", func
 	});
 });
 
-asyncTest("Create new node and added to a leaf node", function() {
+QUnit.test("Create new node and added to a leaf node", function(assert) {
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -858,7 +886,7 @@ asyncTest("Create new node and added to a leaf node", function() {
 			oBinding.expand(oN1017);
 			equal(oBinding.getLength(), 627, "The length is increased by 1 after the parent of added new node is expanded");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -866,7 +894,9 @@ asyncTest("Create new node and added to a leaf node", function() {
 	});
 });
 
-asyncTest("Create a new node under a parent and move to another parent", function() {
+QUnit.test("Create a new node under a parent and move to another parent", function(assert) {
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -904,7 +934,7 @@ asyncTest("Create a new node under a parent and move to another parent", functio
 			oBinding.collapse(oN1002);
 			equal(oBinding.getLength(), 620, "The length is correct after collapse the parent");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -912,7 +942,9 @@ asyncTest("Create a new node under a parent and move to another parent", functio
 	});
 });
 
-asyncTest("Create a new node, add to a parent, move some node to the new node, and finally collapse the top parent", function() {
+QUnit.test("Create a new node, add to a parent, move some node to the new node, and finally collapse the top parent", function(assert) {
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -944,7 +976,7 @@ asyncTest("Create a new node, add to a parent, move some node to the new node, a
 			oBinding.collapse(oN1001);
 			equal(oBinding.getLength(), 599, "There are now 599 items after collapse the top parent");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -952,7 +984,9 @@ asyncTest("Create a new node, add to a parent, move some node to the new node, a
 	});
 });
 
-asyncTest("Nested newly created nodes", function() {
+QUnit.test("Nested newly created nodes", function(assert) {
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -980,7 +1014,7 @@ asyncTest("Nested newly created nodes", function() {
 			oBinding.expand(oNode.node);
 			equal(oBinding.getLength(), 628, "There are now 628 items in total");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -988,7 +1022,9 @@ asyncTest("Nested newly created nodes", function() {
 	});
 });
 
-asyncTest("Remove & Selection Index Calculation", function() {
+QUnit.test("Remove & Selection Index Calculation", function(assert) {
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -1020,7 +1056,7 @@ asyncTest("Remove & Selection Index Calculation", function() {
 
 			equal(oBinding.getSelectedIndex(), 2, "Selecting re-inserted node works");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);

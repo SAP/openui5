@@ -99,13 +99,14 @@
 		}
 	});
 
-	asyncTest("read XML", function() {
+	QUnit.test("read XML", function(assert) {
+		var done = assert.async();
 		oModel.read("/ProductSet", {
 			success : function() {
 				equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Flyer", "absolute path without context");
 				oModel.createBindingContext("/ProductSet('AD-1000')", null, function(newContext) {
 					equal(newContext.getProperty("Name"), "Flyer", "relative path with context");
-					start(); // resume normal testing
+					done(); // resume normal testing
 				});
 			},
 			error : function(oError) {
@@ -132,22 +133,24 @@
 		ok(oMockServer.isStarted(), "Mock server is started");
 	});
 
-	asyncTest("test init Model", function() {
+	QUnit.test("test init Model", function(assert) {
+		var done = assert.async();
 		oModel = initModel();
 		var fnTest = function() {
 			ok(true, "metadataloaded");
-			start();
+			done();
 		}
 		oModel.attachMetadataLoaded(fnTest, this);
 	});
 
-	asyncTest("read JSON", function() {
+	QUnit.test("read JSON", function(assert) {
+		var done = assert.async();
 		oModel.read("/ProductSet", {
 			success : function() {
 				equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Flyer", "absolute path without context");
 				oModel.createBindingContext("/ProductSet('AD-1000')", null, function(newContext) {
 					equal(newContext.getProperty("Name"), "Flyer", "relative path with context");
-					start(); // resume normal testing
+					done(); // resume normal testing
 				});
 			},
 			error : function(oError) {
@@ -156,7 +159,8 @@
 		});
 	});
 
-	asyncTest("test $batch: check accept header", function() {
+	QUnit.test("test $batch: check accept header", function(assert) {
+		var done = assert.async();
 		oSpy = sinon.spy(oModel, "_submitBatchRequest");
 		oModel.read("/ProductSet", {
 			success : function() {
@@ -165,7 +169,7 @@
 					equal(newContext.getProperty("Name"), "Flyer", "relative path with context");
 					ok(oSpy.args[0][0].headers["Accept"] === "multipart/mixed", "Accept header set to 'multipart/mixed'");
 					oSpy.restore();
-					start(); // resume normal testing
+					done(); // resume normal testing
 				});
 			},
 			error : function(oError) {
@@ -174,7 +178,8 @@
 		});
 	});
 
-	asyncTest("test oDataModel read with URLParams and headers JSON", function() {
+	QUnit.test("test oDataModel read with URLParams and headers JSON", function(assert) {
+		var done = assert.async();
 		oModel.read("/ProductSet", {
 			urlParameters : {
 				"$top" : "1",
@@ -190,7 +195,7 @@
 				ok(oP, "one entry loaded");
 				ok(oP.Name === "Notebook Basic 15",
 						"one entry loaded");
-				start();
+				done();
 			},
 			error : function(oError) {
 				ok(false, "request failed");
@@ -198,20 +203,22 @@
 		});
 	});
 
-	asyncTest("test metadata promise", function() {
+	QUnit.test("test metadata promise", function(assert) {
+		var done = assert.async();
 		oModel = initModel();
 
 		var oPromise = oModel.metadataLoaded();
 		ok(oPromise, "promise exists");
-		oPromise.then(function(result){
+		oPromise.then(function(){
 			ok(true, "Promise resolved");
-			start();
+			done();
 		}, function(){
 			ok(false, "Promise rejected");
 		});
 	});
 
-	asyncTest("test metadata promise and refresh", function() {
+	QUnit.test("test metadata promise and refresh", function(assert) {
+		var done = assert.async();
 		oModel = initModel();
 
 		var oPromise = oModel.metadataLoaded();
@@ -234,13 +241,14 @@
 		})
 		.then(function(result){
 			ok(true, "oNewP2 Promise resolved");
-			start();
+			done();
 		}, function(){
 			ok(false, "oNewP2 Promise rejected");
 		});
 	});
 
-	asyncTest("test metadata promise rejected refresh", function() {
+	QUnit.test("test metadata promise rejected refresh", function(assert) {
+		var done = assert.async();
 
 		var sTempService = sServiceUri;
 		sServiceUri = "/doesnotWork/";
@@ -261,12 +269,13 @@
 			ok(true, "oNewP Promise rejected");
 			cleanServiceDataCache();
 			sServiceUri = sTempService;
-			start();
+			done();
 		});
 
 	});
 
-	asyncTest("test metadata promise rejected refresh and resolve", function() {
+	QUnit.test("test metadata promise rejected refresh and resolve", function(assert) {
+		var done = assert.async();
 		cleanServiceDataCache();
 
 		var sTempService = sServiceUri;
@@ -277,6 +286,7 @@
 		ok(oPromise, "promise exists");
 		oPromise.then(function(result){
 			ok(true, "Promise resolved after metadata url is fixed");
+			done();
 		}, function(){
 			ok(false, "Promise rejected which should never happen");
 		});
@@ -297,14 +307,14 @@
 			ok(true, "oNewP2 Promise resolved");
 			cleanServiceDataCache();
 			sServiceUri = sTempService;
-			start();
 		}, function(){
 			ok(false, "oNewP2 Promise rejected");
 		});
 
 	});
 
-	asyncTest("test metadata promise ok then refresh failed", function() {
+	QUnit.test("test metadata promise ok then refresh failed", function(assert) {
+		var done = assert.async();
 
 		oModel = initModel();
 
@@ -327,11 +337,12 @@
 			ok(true, "oNewP Promise rejected");
 			cleanServiceDataCache();
 			sServiceUri = sTempService;
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test metadata promise ok then refresh failed then refresh ok", function() {
+	QUnit.test("test metadata promise ok then refresh failed then refresh ok", function(assert) {
+		var done = assert.async();
 
 		oModel = initModel();
 
@@ -362,14 +373,15 @@
 			ok(true, "oNewP2 Promise resolved");
 			cleanServiceDataCache();
 			sServiceUri = sTempService;
-			start();
+			done();
 		}, function(){
 			ok(false, "oNewP2 Promise rejected");
 		});
 
 	});
 
-	asyncTest("test metadata isMetadataLoadingFailed", function() {
+	QUnit.test("test metadata isMetadataLoadingFailed", function(assert) {
+		var done = assert.async();
 
 		oModel = initModel();
 		ok(!oModel.isMetadataLoadingFailed(), "check metadata loaded");
@@ -400,14 +412,15 @@
 			ok(!oModel.isMetadataLoadingFailed(), "check metadata loaded");
 			cleanServiceDataCache();
 			sServiceUri = sTempService;
-			start();
+			done();
 		}, function(){
 			ok(false, "oNewP2 Promise rejected");
 		});
 
 	});
 
-	asyncTest("test oDataModel read filter test", function() {
+	QUnit.test("test oDataModel read filter test", function(assert) {
+		var done = assert.async();
 		oModel.read("/ProductSet", {
 			filters : [ new sap.ui.model.Filter("ProductID", "EQ",
 					"HT-1000") ],
@@ -416,7 +429,7 @@
 				var oP = oModel.getProperty("/ProductSet('HT-1000')");
 				ok(oP, "one entry loaded");
 				ok(oP.Name === "Notebook Basic 15", "one entry loaded");
-				start();
+				done();
 			},
 			error : function(oError) {
 				ok(false, "request failed");
@@ -424,13 +437,14 @@
 		});
 	});
 
-	asyncTest("test oDataModel read count request with filter test", function() {
+	QUnit.test("test oDataModel read count request with filter test", function(assert) {
+		var done = assert.async();
 		oModel.read("/ProductSet/$count", {
 			filters : [ new sap.ui.model.Filter("ProductID", "EQ",
 					"HT-1000") ],
 			success : function(oData, oResponse) {
 				ok(oData === "1", "length check");
-				start();
+				done();
 			},
 			error : function(oError) {
 				ok(false, "request failed");
@@ -438,7 +452,8 @@
 		});
 	});
 
-	asyncTest("test oDataModel read sort test", function() {
+	QUnit.test("test oDataModel read sort test", function(assert) {
+		var done = assert.async();
 		oModel.read("/ProductSet", {
 			sorters : [ new sap.ui.model.Sorter("ProductID", true) ],
 			filters : [ new sap.ui.model.Filter("ProductID", "EQ", "HT-1000"),
@@ -450,7 +465,7 @@
 				ok(oData.results[1].ProductID === "HT-1000", "sort check");
 				ok(oData.results[2].ProductID === "AD-1000", "sort check");
 
-				start();
+				done();
 			},
 			error : function(oError) {
 				ok(false, "request failed");
@@ -459,7 +474,8 @@
 
 	});
 
-	asyncTest("test oDataModel read error test", function() {
+	QUnit.test("test oDataModel read error test", function(assert) {
+		var done = assert.async();
 		oModel.read("/ProductXYSet", {
 			success : function(oData, oResponse) {
 				ok(false, "request succeeded...error expected");
@@ -467,24 +483,26 @@
 			error : function(oError) {
 				ok(oError.statusCode === "404", "error code");
 				ok(true, "request failed");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel remove error test", function() {
+	QUnit.test("test oDataModel remove error test", function(assert) {
+		var done = assert.async();
 		oModel.remove("/ProductSet('Error')", {
 			success : function(oData, oResponse) {
 				ok(false, "request succeeded...error expected");
 			},
 			error : function(oError) {
 				ok(oError, "error succeeded");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel remove error test batch off", function() {
+	QUnit.test("test oDataModel remove error test batch off", function(assert) {
+		var done = assert.async();
 		oModel.setUseBatch(false);
 		oModel.remove("/ProductSet('Error')", {
 			success : function(oData, oResponse) {
@@ -492,13 +510,14 @@
 			},
 			error : function(oError) {
 				ok(oError, "error succeeded");
-				start();
+				done();
 			}
 		});
 	});
 
 
-	asyncTest("test oDataModel read with no batchgroup ids", function() {
+	QUnit.test("test oDataModel read with no batchgroup ids", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
@@ -526,12 +545,13 @@
 			iCount++;
 			if (iCount === 1 && bRead1 && bRead2) {
 				ok(true, "requests with no ids should should be combined in a single batch request");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel read with different batchgroup ids", function() {
+	QUnit.test("test oDataModel read with different batchgroup ids", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
@@ -561,12 +581,13 @@
 			iCount++;
 			if (iCount === 2 && bRead1 && bRead2) {
 				ok(true, "requests with different ids should be in separate batch requests");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel read with same batchGroupIds", function() {
+	QUnit.test("test oDataModel read with same batchGroupIds", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
@@ -597,18 +618,19 @@
 				iCount++;
 				if (iCount === 1 && bRead1 && bRead2) {
 					ok(true, "requests with same id should be combined in a batch request");
-					start();
+					done();
 				}
 			});
 	});
 
-	asyncTest("test oDataModel read deferred with batchGroupId", function() {
+	QUnit.test("test oDataModel read deferred with batchGroupId", function(assert) {
+		var done = assert.async();
 		oModel.setDeferredBatchGroups([ "myId" ]);
 		oModel.read("/ProductSet", {
 			batchGroupId : "myId",
 			success : function(oData, oResponse) {
 				ok(true, "request succeeded");
-				start();
+				done();
 			},
 			error : function(oError) {
 				ok(false, "request failed");
@@ -618,7 +640,8 @@
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel read deferred with default batchGroupIds", function() {
+	QUnit.test("test oDataModel read deferred with default batchGroupIds", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
@@ -648,13 +671,14 @@
 			iCount++;
 			if (iCount === 1 && bRead1 && bRead2) {
 				ok(true, "requests with same default id should be combined in a batch request");
-				start();
+				done();
 			}
 		});
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel read deferred with same batchGroupIds", function() {
+	QUnit.test("test oDataModel read deferred with same batchGroupIds", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
@@ -686,13 +710,14 @@
 			iCount++;
 			if (iCount === 1 && bRead1 && bRead2) {
 				ok(true, "requests with same id should be combined in a batch request");
-				start();
+				done();
 			}
 		});
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel read deferred with different batchGroupIds", function() {
+	QUnit.test("test oDataModel read deferred with different batchGroupIds", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
@@ -724,7 +749,7 @@
 				iCount++;
 				if (iCount === 2 && bRead1 && bRead2) {
 					ok(true, "requests with different ids should be in separate batch requests");
-					start();
+					done();
 				}
 			});
 		oModel.submitChanges();
@@ -732,7 +757,8 @@
 
 
 
-	asyncTest("test oDataModel read deferred with batchGroupId and submitChanges callback handler test", function() {
+	QUnit.test("test oDataModel read deferred with batchGroupId and submitChanges callback handler test", function(assert) {
+		var done = assert.async();
 		var bSuccess = false;
 		oModel.setDeferredBatchGroups([ "myId" ]);
 		oModel.read("/ProductSet", {
@@ -750,7 +776,7 @@
 			success : function(oData, oResponse) {
 				ok(true, "request succeeded");
 				ok(bSuccess, "callback handler of internal request should have been called")
-				start();
+				done();
 			},
 			error : function(oError) {
 				ok(false, "request failed");
@@ -758,7 +784,8 @@
 		});
 	});
 
-	asyncTest("test oDataModel bind Object", function() {
+	QUnit.test("test oDataModel bind Object", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var oTxt = new sap.ui.commons.TextField({
 			value : "{Category}"
@@ -773,12 +800,13 @@
 			equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 			oTxt.destroy();
 			oModel.detachBatchRequestCompleted(fnCheck, this);
-			start();
+			done();
 		}
 		oModel.attachBatchRequestCompleted(fnCheck, this);
 	});
 
-	asyncTest("test oDataModel read and bind Object", function() {
+	QUnit.test("test oDataModel read and bind Object", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var oTxt = new sap.ui.commons.TextField({
 			value : "{Category}"
@@ -803,7 +831,7 @@
 					}
 					oTxt.destroy();
 					oModel.detachBatchRequestCompleted(fnCheck);
-					start();
+					done();
 				}
 				oModel.attachBatchRequestCompleted(
 					fnCheck
@@ -829,7 +857,8 @@
 		return oTable;
 	}
 
-	asyncTest("test oDataModel listbinding with table", function() {
+	QUnit.test("test oDataModel listbinding with table", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 
 		var mEntities = {
@@ -863,13 +892,14 @@
 					"Category size check");
 			oTable.destroy();
 			oModel.detachBatchRequestCompleted(fnCheck);
-			start();
+			done();
 
 		}
 		oModel.attachBatchRequestCompleted(fnCheck);
 	});
 
-	asyncTest("test oDataModel listbinding with aggregation binding and read in default batch group", function() {
+	QUnit.test("test oDataModel listbinding with aggregation binding and read in default batch group", function(assert) {
+		var done = assert.async();
 		var iCallCount = 0;
 		var bRead1 = false;
 		var mEntities = {
@@ -906,13 +936,14 @@
 				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
 				oModel.detachBatchRequestCompleted(fnCheck);
-				start();
+				done();
 			}
 		}
 		oModel.attachBatchRequestCompleted(fnCheck);
 	});
 
-	asyncTest("test oDataModel listbinding with aggregation binding and read in different batch groups", function() {
+	QUnit.test("test oDataModel listbinding with aggregation binding and read in different batch groups", function(assert) {
+		var done = assert.async();
 		var iCallCount = 0;
 		var bRead1 = false;
 		var mEntities = {
@@ -951,13 +982,14 @@
 				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
 				oModel.detachBatchRequestCompleted(fnCheck);
-				start();
+				done();
 			}
 		}
 		oModel.attachBatchRequestCompleted(fnCheck);
 	});
 
-	asyncTest("test oDataModel listbinding with aggregation binding and read in different deferred batch groups", function() {
+	QUnit.test("test oDataModel listbinding with aggregation binding and read in different deferred batch groups", function(assert) {
+		var done = assert.async();
 		var iCallCount = 0;
 		var bRead1 = false;
 		var mEntities = {
@@ -995,14 +1027,15 @@
 				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
 				oModel.detachBatchRequestCompleted(fnCheck);
-				start();
+				done();
 			}
 		}
 		oModel.attachBatchRequestCompleted(fnCheck);
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel use batch off option", function() {
+	QUnit.test("test oDataModel use batch off option", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
@@ -1012,7 +1045,7 @@
 			iCount++;
 			if (iCount === 2 && bRead1 && bRead2) {
 				ok(true, "requests with same default id should be in 2 non batch requests");
-				start();
+				done();
 			}
 		});
 
@@ -1051,7 +1084,8 @@
 		}
 	});
 
-	asyncTest("test oDataModel update", function() {
+	QUnit.test("test oDataModel update", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 
 		oModel.update("/ProductSet('AD-1000')", {
@@ -1060,18 +1094,19 @@
 			success : function(oData, oResponse) {
 				ok(true, "request succeeded");
 				iCount++;
-				start();
+				done();
 			},
 			error : function(oError) {
 				ok(false, "request failed");
-				start();
+				done();
 			},
 			merge : true,
 			eTag : "*"
 		});
 	});
 
-	asyncTest("test oDataModel update Reagroupbatchgroup", function() {
+	QUnit.test("test oDataModel update Reagroupbatchgroup", function(assert) {
+		var done = assert.async();
 		var bUpdate = false;
 		var bRead = false;
 
@@ -1084,7 +1119,7 @@
 			},
 			error : function(oError) {
 				ok(false, "request failed");
-				start();
+				done();
 			},
 			merge : true,
 			eTag : "*"
@@ -1098,19 +1133,20 @@
 			},
 			error : function(oError) {
 				ok(false, "request failed");
-				start();
+				done();
 			}
 		});
 
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			if (bRead && bUpdate) {
 				ok(true, "requests with same default id should be in 1 batch requests");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel update and read in different batchgroups",function() {
+	QUnit.test("test oDataModel update and read in different batchgroups",function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bUpdate = false;
 		var bRead = false;
@@ -1145,12 +1181,13 @@
 			iCount++;
 			if (iCount === 2 && bRead && bUpdate) {
 					ok(true, "requests with same default id should be in 1 batch requests");
-					start();
+					done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel update and 2 read in different deferred and non deferred batchgroups", function() {
+	QUnit.test("test oDataModel update and 2 read in different deferred and non deferred batchgroups", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bUpdate = false;
 		var bRead = false;
@@ -1200,12 +1237,13 @@
 
 			if (iCount === 3 && bRead && bUpdate && bRead2) {
 					ok(true, "requests with same default id should be in 1 batch requests");
-					start();
+					done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel setProperty - hasPendingChanges", function() {
+	QUnit.test("test oDataModel setProperty - hasPendingChanges", function(assert) {
+		var done = assert.async();
 		oModel.setDefaultBindingMode("TwoWay");
 		var oDateType = new sap.ui.model.type.DateTime();
 		var oInput = new sap.m.DateTimeInput({type: "DateTime", value: {path:"/ProductSet('AD-1000')/CreatedAt", type: oDateType, formatOptions: { style: 'medium', strictParsing: true}}});
@@ -1223,7 +1261,7 @@
 				oInput.setValue(vDate);
 				ok(!oModel.hasPendingChanges(), "model should not have pending changes");
 				oInput.destroy();
-				start();
+				done();
 			},
 			error: function() {
 				ok(false, "reqauest failed");
@@ -1231,7 +1269,8 @@
 		});
 	});
 
-	asyncTest("test oDataModel setProperty - Response object", function() {
+	QUnit.test("test oDataModel setProperty - Response object", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		oModel.setDefaultBindingMode("TwoWay");
 		oModel.setRefreshAfterChange(true);
@@ -1249,14 +1288,15 @@
 					ok(oInfo.mParameters.requests[0].response.statusCode == 204, "MERGE response ok");
 					ok(oInfo.mParameters.requests[1].response.statusCode == 200, "GET response ok");
 					ok(oInfo.mParameters.requests.length == 2, "MERGE and GET request sent")
-					start();
+					done();
 				}
 			});
 		};
 		oInput.getElementBinding().attachDataReceived(fnHandler);
 	});
 
-	asyncTest("test oDataModel create", function() {
+	QUnit.test("test oDataModel create", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bCreate = false;
 
@@ -1299,12 +1339,13 @@
 
 			if (iCount === 1 && bCreate) {
 					ok(true, "requests with same default id should be in 1 batch requests");
-					start();
+					done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel delete", function() {
+	QUnit.test("test oDataModel delete", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRemove = false;
 
@@ -1325,12 +1366,13 @@
 
 			if (iCount === 1 && bRemove) {
 					ok(true, "requests with same default id should be in 1 batch requests");
-					start();
+					done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel delete $links", function() {
+	QUnit.test("test oDataModel delete $links", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRemove = false;
 
@@ -1357,12 +1399,13 @@
 
 			if (iCount === 2 && bRemove) {
 					ok(true, "after second request the remove should have happened");
-					start();
+					done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel READ and delete in different batch groups, DELETE deferred", function() {
+	QUnit.test("test oDataModel READ and delete in different batch groups, DELETE deferred", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
 		var bRemove = false;
@@ -1399,12 +1442,13 @@
 
 			if (iCount === 2 && bRemove && bRead) {
 					ok(true, "requests with same default id should be in 1 batch requests");
-					start();
+					done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel Two Way", function() {
+	QUnit.test("test oDataModel Two Way", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bMetadataLoaded = false;
 		var bsetProp = false;
@@ -1440,12 +1484,13 @@
 			if (iCount === 2 && bSetProp) {
 				equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
 				oTable.destroy();
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel Two Way deferred with using changeBatchGroups", function() {
+	QUnit.test("test oDataModel Two Way deferred with using changeBatchGroups", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bMetadataLoaded = false;
 		var bsetProp = false;
@@ -1482,13 +1527,14 @@
 					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oTable.destroy();
-					start();
+					done();
 				}});
 			}
 		});
 	});
 
-	asyncTest("test oDataModel Two Way 2 changes deferred with using changeBatchGroups and single=true (= 2 changesets)", function() {
+	QUnit.test("test oDataModel Two Way 2 changes deferred with using changeBatchGroups and single=true (= 2 changesets)", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bMetadataLoaded = false;
 		var bsetProp = false;
@@ -1537,13 +1583,14 @@
 
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oTable.destroy();
-					start();
+					done();
 				}});
 			}
 		});
 	});
 
-	asyncTest("test oDataModel Two Way 2 changes deferred with using changeBatchGroups and single=false (= 1 changeset)", function() {
+	QUnit.test("test oDataModel Two Way 2 changes deferred with using changeBatchGroups and single=false (= 1 changeset)", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bMetadataLoaded = false;
 		var bsetProp = false;
@@ -1590,13 +1637,14 @@
 
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oTable.destroy();
-					start();
+					done();
 				}});
 			}
 		});
 	});
 
-	asyncTest("test oDataModel read and setProperty deferred and setProperty again with same data", function() {
+	QUnit.test("test oDataModel read and setProperty deferred and setProperty again with same data", function(assert) {
+		var done = assert.async();
 		oModel.setDefaultBindingMode("TwoWay");
 		var spy;
 		var mEntities = {
@@ -1634,7 +1682,7 @@
 									jQuery.sap.delayedCall(0,this, function() {
 										ok(oSpy.callCount == 0, "No request sent");
 										oSpy.restore();
-										start();
+										done();
 									});
 								},
 								error: function() {
@@ -1656,7 +1704,8 @@
 		});
 	});
 
-	asyncTest("test oDataModel setProperty: reset change if property is set back to original value", function() {
+	QUnit.test("test oDataModel setProperty: reset change if property is set back to original value", function(assert) {
+		var done = assert.async();
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
 				var sName = oModel.getProperty("/ProductSet('AD-1000')/Name");
@@ -1664,16 +1713,17 @@
 				ok(oModel.hasPendingChanges(), "model has pending changes");
 				oModel.setProperty("/ProductSet('AD-1000')/Name", sName);
 				ok(!oModel.hasPendingChanges(), "model should not have pending changes");
-				start();
+				done();
 			},
 			error: function() {
 				ok(false, "reqauest failed");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel setProperty to undefined/null/''/0/false", function() {
+	QUnit.test("test oDataModel setProperty to undefined/null/''/0/false", function(assert) {
+		var done = assert.async();
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
 				var sName = oModel.getProperty("/ProductSet('AD-1000')/Name");
@@ -1712,16 +1762,17 @@
 				ok(oModel.hasPendingChanges(), "model should have pending changes");
 				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") == "test", "property ok");
 
-				start();
+				done();
 			},
 			error: function() {
 				ok(false, "reqauest failed");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel setProperty: reset change if property is set back to original value 2", function() {
+	QUnit.test("test oDataModel setProperty: reset change if property is set back to original value 2", function(assert) {
+		var done = assert.async();
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
 				var sName = oModel.getProperty("/ProductSet('AD-1000')/Name");
@@ -1732,16 +1783,17 @@
 				ok(oModel.hasPendingChanges(), "model has pending changes");
 				oModel.setProperty("/ProductSet('AD-1000')/NameLanguage", "E");
 				ok(!oModel.hasPendingChanges(), "model should not have pending changes");
-				start();
+				done();
 			},
 			error: function() {
 				ok(false, "reqauest failed");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel setProperty: reset change if property is set back to original value - request should be aborted", function() {
+	QUnit.test("test oDataModel setProperty: reset change if property is set back to original value - request should be aborted", function(assert) {
+		var done = assert.async();
 		var oSpy;
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
@@ -1760,12 +1812,13 @@
 			},
 			error: function() {
 				ok(false, "reqauest failed");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel setProperty: resetChanges - request should be aborted", function() {
+	QUnit.test("test oDataModel setProperty: resetChanges - request should be aborted", function(assert) {
+		var done = assert.async();
 		var oSpy;
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
@@ -1796,12 +1849,13 @@
 			},
 			error: function() {
 				ok(false, "reqauest failed");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel setProperty: resetChanges - request should be aborted", function() {
+	QUnit.test("test oDataModel setProperty: resetChanges - request should be aborted", function(assert) {
+		var done = assert.async();
 		var oSpy;
 		oModel.read("/ProductSet('HT-1000')");
 		oModel.read("/ProductSet('AD-1000')", {
@@ -1821,12 +1875,13 @@
 			},
 			error: function() {
 				ok(false, "reqauest failed");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel setProperty : resetChanges twice - request should be aborted", function() {
+	QUnit.test("test oDataModel setProperty : resetChanges twice - request should be aborted", function(assert) {
+		var done = assert.async();
 		var oSpy;
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
@@ -1859,7 +1914,7 @@
 								ok(!oModel.hasPendingChanges(), "model has pending changes");
 								ok(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].parts.length == 1, "one request");
 								ok(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].parts[0].request._aborted, "check request should be marked as aborted");
-								start();
+								done();
 							});
 						});
 					});
@@ -1867,12 +1922,13 @@
 			},
 			error: function() {
 				ok(false, "request failed");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel list binding", function() {
+	QUnit.test("test oDataModel list binding", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bMetadataLoaded = false;
 		oModel.setDefaultBindingMode("TwoWay");
@@ -1900,13 +1956,14 @@
 				ok(oBinding.getContexts(), "context check");
 				ok(oBinding.sCountMode, "Request", "count mode check");
 				oTable.destroy();
-				start();
+				done();
 			}
 
 		});
 	});
 
-	asyncTest("test oDataModel setProperty with non deferred requests", function() {
+	QUnit.test("test oDataModel setProperty with non deferred requests", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
@@ -1933,12 +1990,13 @@
 			if (iCount === 2 && bSetProp && bRead) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel setProperty without batch", function() {
+	QUnit.test("test oDataModel setProperty without batch", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
@@ -1966,12 +2024,13 @@
 			if (iCount === 2 && bSetProp && bRead) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel setProperty deferred", function() {
+	QUnit.test("test oDataModel setProperty deferred", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
@@ -2008,12 +2067,13 @@
 			if (iCount === 2 && bSetProp && bRead && bSuccess) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel setProperty aka MERGE and GET in same batch deferred", function() {
+	QUnit.test("test oDataModel setProperty aka MERGE and GET in same batch deferred", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
 		var bRead2 = false;
@@ -2065,12 +2125,13 @@
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
 				equal(oModel.getProperty("/ProductSet('HT-1000')/TypeCode"), "PR", "check typecode");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel two Way MERGE delta change batch on", function() {
+	QUnit.test("test oDataModel two Way MERGE delta change batch on", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
 		var bRead2 = false;
@@ -2141,13 +2202,14 @@
 				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
 				equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "4445.6", "check price");
 				spy.restore();
-				start();
+				done();
 			}
 		});
 
 	});
 
-	asyncTest("test oDataModel two Way MERGE delta change batch on with sap:unit modified", function() {
+	QUnit.test("test oDataModel two Way MERGE delta change batch on with sap:unit modified", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
 		var bRead2 = false;
@@ -2219,13 +2281,14 @@
 				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
 				equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "4445.6", "check price");
 				spy.restore();
-				start();
+				done();
 			}
 		});
 
 	});
 
-	asyncTest("test oDataModel two Way MERGE delta change batch off", function() {
+	QUnit.test("test oDataModel two Way MERGE delta change batch off", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
@@ -2278,13 +2341,14 @@
 				});
 				equal(iCount2, 4, "request payload number of properties");
 				spy.restore();
-				start();
+				done();
 			}
 		});
 
 	});
 
-	asyncTest("test oDataModel two Way submitChanges with PUT option and batch on", function() {
+	QUnit.test("test oDataModel two Way submitChanges with PUT option and batch on", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
 		var bRead2 = false;
@@ -2358,12 +2422,13 @@
 				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
 				equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "4445.6", "check price");
 				spy.restore();
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel two Way submitChanges with defaultUpdateMethod= PUT option and batch on", function() {
+	QUnit.test("test oDataModel two Way submitChanges with defaultUpdateMethod= PUT option and batch on", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
 		var bRead2 = false;
@@ -2438,12 +2503,13 @@
 				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
 				equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "4445.6", "check price");
 				spy.restore();
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel two Way submitChanges with PUT option and batch off", function() {
+	QUnit.test("test oDataModel two Way submitChanges with PUT option and batch off", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
@@ -2497,12 +2563,13 @@
 				});
 				equal(iCount2, 22, "request payload number of properties ");
 				spy.restore();
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel two Way submitChanges with defaultUpdateMethod = PUT option and batch off", function() {
+	QUnit.test("test oDataModel two Way submitChanges with defaultUpdateMethod = PUT option and batch off", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
@@ -2556,12 +2623,13 @@
 				});
 				equal(iCount2, 22, "request payload number of properties ");
 				spy.restore();
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel update with defaultUpdateMethod= MERGE option and batch on", function() {
+	QUnit.test("test oDataModel update with defaultUpdateMethod= MERGE option and batch on", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
 		var bRead2 = false;
@@ -2642,12 +2710,13 @@
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Test", "check changed name");
 				spy.restore();
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel update with defaultUpdateMethod= PUT option and batch on", function() {
+	QUnit.test("test oDataModel update with defaultUpdateMethod= PUT option and batch on", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
 		var bRead2 = false;
@@ -2727,12 +2796,13 @@
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Test", "check changed name");
 				spy.restore();
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel update with defaultUpdateMethod = MERGE option and batch off", function() {
+	QUnit.test("test oDataModel update with defaultUpdateMethod = MERGE option and batch off", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
 		var bSuccess = false;
@@ -2784,12 +2854,13 @@
 				});
 				equal(iCount2, 1, "request payload number of properties ");
 				spy.restore();
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel update with defaultUpdateMethod = PUT option and batch off", function() {
+	QUnit.test("test oDataModel update with defaultUpdateMethod = PUT option and batch off", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
@@ -2841,12 +2912,13 @@
 				});
 				equal(iCount2, 1, "request payload number of properties ");
 				spy.restore();
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel createEntry and setProperty deferred", function() {
+	QUnit.test("test oDataModel createEntry and setProperty deferred", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bSuccess1 = false;
 		var bSuccess2 = false;
@@ -2911,7 +2983,7 @@
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bSuccess1 && bSuccess2) {
-				start();
+				done();
 			}
 		});
 		oModel.attachMetadataLoaded(this, function() {
@@ -2919,7 +2991,8 @@
 		});
 	});
 
-	asyncTest("test oDataModel createEntry", function() {
+	QUnit.test("test oDataModel createEntry", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var oContext;
 
@@ -2962,7 +3035,7 @@
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 1) {
-				start();
+				done();
 			}
 		});
 		oModel.attachMetadataLoaded(this, function() {
@@ -2970,7 +3043,8 @@
 		});
 	});
 
-	asyncTest("test oDataModel createEntry and deleteCreatedEntry", function() {
+	QUnit.test("test oDataModel createEntry and deleteCreatedEntry", function(assert) {
+		var done = assert.async();
 		var oContext;
 
 		oModel.setDeferredBatchGroups(["myId"]);
@@ -3016,7 +3090,7 @@
 			});
 			jQuery.sap.delayedCall(500, this, function() {
 				ok(true, 'no request sent');
-				start();
+				done();
 			});
 		};
 		oModel.attachBatchRequestCompleted(this, function(test) {
@@ -3027,7 +3101,8 @@
 		});
 	});
 
-	asyncTest("test oDataModel 2 times createEntry and one deleteCreatedEntry", function() {
+	QUnit.test("test oDataModel 2 times createEntry and one deleteCreatedEntry", function(assert) {
+		var done = assert.async();
 		var oContext, oContext2;
 
 		oModel.setDeferredBatchGroups(["myId"]);
@@ -3103,7 +3178,7 @@
 			equal(aRequests[0].success, true, "request successful");
 			equal(aRequests[0].url, "ProductSet", "request successful");
 			equal(aRequests[0].response.statusCode, "201", "response code");
-			start();
+			done();
 		});
 		oModel.attachMetadataLoaded(this, function() {
 			fnTest();
@@ -3133,7 +3208,7 @@
 			}, {
 			success: success,
 			error: function(oError) {
-				start();
+				done();
 				ok(false, "request failed");
 			},
 			merge: true,
@@ -3164,60 +3239,65 @@
 	*/
 
 	/* === Not deferred === */
-	asyncTest("test oDataModel overrule bRefreshAfterChange not deferred - global on - local off", function() {
+	QUnit.test("test oDataModel overrule bRefreshAfterChange not deferred - global on - local off", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 
 		changeOperation(true, false, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				start();
 				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+				done();
 			});
 		});
 	});
 
-	asyncTest("test oDataModel overrule bRefreshAfterChange not deferred - global off - local on", function() {
+	QUnit.test("test oDataModel overrule bRefreshAfterChange not deferred - global off - local on", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 
 		changeOperation(false, true, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				start();
 				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+				done();
 			});
 		});
 	});
 
-	asyncTest("test oDataModel overrule bRefreshAfterChange not deferred - global on - local undefined", function() {
+	QUnit.test("test oDataModel overrule bRefreshAfterChange not deferred - global on - local undefined", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 
 		changeOperation(true, undefined, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				start();
 				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+				done();
 			});
 		});
 	});
 
-	asyncTest("test oDataModel overrule bRefreshAfterChange not deferred - global off - local undefined", function() {
+	QUnit.test("test oDataModel overrule bRefreshAfterChange not deferred - global off - local undefined", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 
 		changeOperation(false, undefined, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				start();
 				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+				done();
 			});
 		});
 	});
 
 	/* === Deferred === */
-	asyncTest("test oDataModel overrule bRefreshAfterChange deferred - global on - local off", function() {
+	QUnit.test("test oDataModel overrule bRefreshAfterChange deferred - global on - local off", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 		oModel.setDeferredGroups(["myId1"]);
@@ -3225,15 +3305,16 @@
 		changeOperation(true, false, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				start();
 				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+				done();
 			});
 		});
 
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel overrule bRefreshAfterChange deferred - global off - local on", function() {
+	QUnit.test("test oDataModel overrule bRefreshAfterChange deferred - global off - local on", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 		oModel.setDeferredGroups(["myId1"]);
@@ -3241,15 +3322,16 @@
 		changeOperation(false, true, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				start();
 				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+				done();
 			});
 		});
 
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel overrule bRefreshAfterChange deferred - global on - local undefined", function() {
+	QUnit.test("test oDataModel overrule bRefreshAfterChange deferred - global on - local undefined", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 		oModel.setDeferredGroups(["myId1"]);
@@ -3257,15 +3339,16 @@
 		changeOperation(true, undefined, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				start();
 				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+				done();
 			});
 		});
 
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel overrule bRefreshAfterChange deferred - global off - local undefined", function() {
+	QUnit.test("test oDataModel overrule bRefreshAfterChange deferred - global off - local undefined", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 		oModel.setDeferredGroups(["myId1"]);
@@ -3273,8 +3356,8 @@
 		changeOperation(false, undefined, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				start();
 				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+				done();
 			});
 		});
 
@@ -3282,7 +3365,8 @@
 	});
 
 	/* === Deferred batch === */
-	asyncTest("test oDataModel overrule bRefreshAfterChange deferred batch - global on - local off", function() {
+	QUnit.test("test oDataModel overrule bRefreshAfterChange deferred batch - global on - local off", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(true);
 		oModel.setDeferredBatchGroups(["myId1"]);
@@ -3290,15 +3374,16 @@
 		changeOperation(true, false, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				start();
 				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+				done();
 			});
 		});
 
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel overrule bRefreshAfterChange deferred batch - global off - local on", function() {
+	QUnit.test("test oDataModel overrule bRefreshAfterChange deferred batch - global off - local on", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(true);
 		oModel.setDeferredBatchGroups(["myId1"]);
@@ -3306,15 +3391,16 @@
 		changeOperation(false, true, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				start();
 				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+				done();
 			});
 		});
 
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel overrule bRefreshAfterChange deferred batch - global on - local undefined", function() {
+	QUnit.test("test oDataModel overrule bRefreshAfterChange deferred batch - global on - local undefined", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(true);
 		oModel.setDeferredBatchGroups(["myId1"]);
@@ -3322,15 +3408,16 @@
 		changeOperation(true, undefined, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				start();
 				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+				done();
 			});
 		});
 
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel overrule bRefreshAfterChange deferred batch - global off - local undefined", function() {
+	QUnit.test("test oDataModel overrule bRefreshAfterChange deferred batch - global off - local undefined", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(true);
 		oModel.setDeferredBatchGroups(["myId1"]);
@@ -3338,8 +3425,8 @@
 		changeOperation(false, undefined, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				start();
 				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+				done();
 			});
 		});
 
@@ -3347,7 +3434,8 @@
 	});
 
 
-	asyncTest("test oDataModel submitChanges remember bRefreshAfterChange flag in batch mode", function() {
+	QUnit.test("test oDataModel submitChanges remember bRefreshAfterChange flag in batch mode", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setDeferredBatchGroups([ "myId1" ]);
 		oModel.setRefreshAfterChange(true);
@@ -3356,12 +3444,12 @@
 				Name : "Hello2"
 			}, {
 			success : function(oData, oResponse) {
-				start();
 				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+				done();
 			},
 			error : function(oError) {
-				start();
 				ok(false, "request failed");
+				done();
 			},
 			merge: true,
 			eTag: "*",
@@ -3372,7 +3460,8 @@
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel submitChanges remember bRefreshAfterChange flag in non-batch mode", function() {
+	QUnit.test("test oDataModel submitChanges remember bRefreshAfterChange flag in non-batch mode", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 		oModel.setDeferredGroups([ "myId1" ]);
@@ -3384,13 +3473,13 @@
 			success : function(oData, oResponse) {
 				setTimeout(function() { // Because _refresh might get triggered *after*
 										// the success-callback is executed
-					start();
 					equals(oRefreshSpy.called, false, "Refresh should not have been called");
+					done();
 				}, 0);
 			},
 			error : function(oError) {
-				start();
 				ok(false, "request failed");
+				done();
 			},
 			merge: true,
 			eTag: "*",
@@ -3401,7 +3490,8 @@
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel submitChanges remember bRefreshAfterChange flag in non-batch mode after multiple updates", function() {
+	QUnit.test("test oDataModel submitChanges remember bRefreshAfterChange flag in non-batch mode after multiple updates", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 		oModel.setDeferredGroups([ "myId1" ]);
@@ -3411,8 +3501,8 @@
 				Name : "Hello2"
 			}, {
 			error : function(oError) {
-				start();
 				ok(false, "request failed");
+				done();
 			},
 			merge: true,
 			eTag: "*",
@@ -3426,13 +3516,13 @@
 			success : function(oData, oResponse) {
 				setTimeout(function() { // Because _refresh might get triggered *after*
 										// the success-callback is executed
-					start();
 					equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+					done();
 				}, 0);
 			},
 			error : function(oError) {
-				start();
 				ok(false, "request failed");
+				done();
 			},
 			merge: true,
 			eTag: "*",
@@ -3443,7 +3533,8 @@
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel create remember bRefreshAfterChange flag in batch mode", function() {
+	QUnit.test("test oDataModel create remember bRefreshAfterChange flag in batch mode", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(true);
 		oModel.setDeferredGroups([ "myId1" ]);
@@ -3455,13 +3546,13 @@
 			success : function(oData, oResponse) {
 				setTimeout(function() { // Because _refresh might get triggered *after*
 										// the success-callback is executed
-					start();
 					equals(oRefreshSpy.called, false, "Refresh should not have been called");
+					done();
 				}, 0);
 			},
 			error : function(oError) {
-				start();
 				ok(false, "request failed");
+				done();
 			},
 			groupId: "myId1",
 			refreshAfterChange: false
@@ -3469,7 +3560,8 @@
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel create remember bRefreshAfterChange flag in non-batch mode", function() {
+	QUnit.test("test oDataModel create remember bRefreshAfterChange flag in non-batch mode", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 		oModel.setRefreshAfterChange(true);
@@ -3480,19 +3572,20 @@
 			success : function(oData, oResponse) {
 				setTimeout(function() { // Because _refresh might get triggered *after*
 										// the success-callback is executed
-					start();
 					equals(oRefreshSpy.called, false, "Refresh should not have been called");
+					done();
 				}, 0);
 			},
 			error : function(oError) {
-				start();
 				ok(false, "request failed");
+				done();
 			},
 			refreshAfterChange: false
 		});
 	});
 
-	asyncTest("test oDataModel createEntry remember bRefreshAfterChange flag in non-batch mode", function() {
+	QUnit.test("test oDataModel createEntry remember bRefreshAfterChange flag in non-batch mode", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 		oModel.setRefreshAfterChange(true);
@@ -3507,19 +3600,20 @@
 			success : function(oData, oResponse) {
 				setTimeout(function() { // Because _refresh might get triggered *after*
 										// the success-callback is executed
-					start();
 					equals(oRefreshSpy.called, false, "Refresh should not have been called");
+					done();
 				}, 0);
 			},
 			error : function(oError) {
-				start();
 				ok(false, "request failed");
+				done();
 			},
 			refreshAfterChange: false
 		});
 	});
 
-	asyncTest("test oDataModel update remember bRefreshAfterChange flag in non-batch mode", function() {
+	QUnit.test("test oDataModel update remember bRefreshAfterChange flag in non-batch mode", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 		oModel.setRefreshAfterChange(true);
@@ -3530,13 +3624,13 @@
 			success : function(oData, oResponse) {
 				setTimeout(function() { // Because _refresh might get triggered *after*
 										// the success-callback is executed
-					start();
 					equals(oRefreshSpy.called, false, "Refresh should not have been called");
+					done();
 				}, 0);
 			},
 			error : function(oError) {
-				start();
 				ok(false, "request failed");
+				done();
 			},
 			merge: true,
 			eTag: "*",
@@ -3544,7 +3638,8 @@
 		});
 	});
 
-	asyncTest("test oDataModel update remember bRefreshAfterChange flag in non-batch mode", function() {
+	QUnit.test("test oDataModel update remember bRefreshAfterChange flag in non-batch mode", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 		oModel.setRefreshAfterChange(false);
@@ -3555,13 +3650,13 @@
 			success : function(oData, oResponse) {
 				setTimeout(function() { // Because _refresh might get triggered *after*
 										// the success-callback is executed
-					start();
 					equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+					done();
 				}, 0);
 			},
 			error : function(oError) {
-				start();
 				ok(false, "request failed");
+				done();
 			},
 			merge: true,
 			eTag: "*",
@@ -3569,7 +3664,8 @@
 		});
 	});
 
-	asyncTest("test oDataModel remove remember bRefreshAfterChange flag in non-batch mode", function() {
+	QUnit.test("test oDataModel remove remember bRefreshAfterChange flag in non-batch mode", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 		oModel.setRefreshAfterChange(true);
@@ -3578,19 +3674,20 @@
 			success : function(oData, oResponse) {
 				setTimeout(function() { // Because _refresh might get triggered *after*
 										// the success-callback is executed
-					start();
 					equals(oRefreshSpy.called, false, "Refresh should not have been called");
+					done();
 				}, 0);
 			},
 			error : function(oError) {
-				start();
 				ok(false, "request failed");
+				done();
 			},
 			refreshAfterChange: false
 		});
 	});
 
-	asyncTest("test oDataModel remove callFunction bRefreshAfterChange flag in non-batch mode", function() {
+	QUnit.test("test oDataModel remove callFunction bRefreshAfterChange flag in non-batch mode", function(assert) {
+		var done = assert.async();
 		var oRefreshSpy = sinon.spy(oModel, "_refresh");
 		oModel.setUseBatch(false);
 		oModel.setRefreshAfterChange(true);
@@ -3602,12 +3699,13 @@
 		});
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
-			start();
 			equals(oRefreshSpy.called, false, "Refresh should not have been called");
+			done();
 		});
 	});
 
-	asyncTest("test oDataModel setProperty NOT-remembering bRefreshAfterChange flag in batch mode", function() {
+	QUnit.test("test oDataModel setProperty NOT-remembering bRefreshAfterChange flag in batch mode", function(assert) {
+		var done = assert.async();
 		oModel.setUseBatch(true);
 
 		oModel.read("/ProductSet", {
@@ -3623,8 +3721,8 @@
 					oModel.submitChanges();
 
 					oModel.attachRequestCompleted(function(oEvent) {
-						start();
 						equals(oRefreshSpy.called, false, "Refresh should not have been called");
+						done();
 					});
 				}, 0);
 			}
@@ -3632,7 +3730,8 @@
 
 	});
 
-	asyncTest("test oDataModel setProperty remember bRefreshAfterChange flag in non-batch mode", function() {
+	QUnit.test("test oDataModel setProperty remember bRefreshAfterChange flag in non-batch mode", function(assert) {
+		var done = assert.async();
 		oModel.setUseBatch(false);
 		oModel.setChangeGroups({}); // Clear defaults so that setProperty triggers the change synchronously
 
@@ -3646,8 +3745,8 @@
 					oModel.setRefreshAfterChange(true);
 
 					oModel.attachRequestCompleted(function(oEvent) {
-						start();
 						equals(oRefreshSpy.called, false, "Refresh should not have been called");
+						done();
 					});
 				}, 0);
 			}
@@ -3667,7 +3766,8 @@
 			stopServer();
 		}
 	});
-	asyncTest("Event order (single request): bindElement fails --> refresh", function(){
+	QUnit.test("Event order (single request): bindElement fails --> refresh", function(assert){
+		var done = assert.async();
 		expect(5);
 		oModel.setUseBatch(false);
 		oLabel = new sap.ui.commons.Label();
@@ -3684,14 +3784,15 @@
 				bChanged = false;
 				bDataRequested = false;
 				bDataReceived = false;
-				start(); // resume normal testing
+				done(); // resume normal testing
 			});
 			oLabel.getElementBinding().refresh();
 		}
 		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
 
-	asyncTest("Event order (single request): bindElement fails", function(){
+	QUnit.test("Event order (single request): bindElement fails", function(assert){
+		var done = assert.async();
 		expect(3);
 		oModel.setUseBatch(false);
 		oLabel = new sap.ui.commons.Label();
@@ -3702,12 +3803,13 @@
 			bChanged = false;
 			bDataRequested = false;
 			bDataReceived = false;
-			start(); // resume normal testing
+			done(); // resume normal testing
 		}
 		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
 
-	asyncTest("Event order (batch request): bindElement fails --> refresh", function(){
+	QUnit.test("Event order (batch request): bindElement fails --> refresh", function(assert){
+		var done = assert.async();
 		expect(5);
 		oLabel = new sap.ui.commons.Label();
 		oLabel.setModel(oModel);
@@ -3723,14 +3825,15 @@
 				bChanged = false;
 				bDataRequested = false;
 				bDataReceived = false;
-				start(); // resume normal testing
+				done(); // resume normal testing
 			});
 			oLabel.getElementBinding().refresh();
 		}
 		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
 
-	asyncTest("Event order (batch request): bindElement fails", function(){
+	QUnit.test("Event order (batch request): bindElement fails", function(assert){
+		var done = assert.async();
 		expect(3);
 		oLabel = new sap.ui.commons.Label();
 		oLabel.setModel(oModel);
@@ -3740,12 +3843,13 @@
 			bChanged = false;
 			bDataRequested = false;
 			bDataReceived = false;
-			start(); // resume normal testing
+			done(); // resume normal testing
 		}
 		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
 
-	asyncTest("test eventing when using read with batch on", function() {
+	QUnit.test("test eventing when using read with batch on", function(assert) {
+		var done = assert.async();
 		var bSuccess = false;
 		var iReqComp = 0;
 		var iReqSent = 0;
@@ -3810,12 +3914,13 @@
 
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test eventing when using read with batch on: 2 equal requests", function() {
+	QUnit.test("test eventing when using read with batch on: 2 equal requests", function(assert) {
+		var done = assert.async();
 		var iSuccess = 0;
 		var iReqComp = 0;
 		var iReqSent = 0;
@@ -3887,12 +3992,13 @@
 
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test eventing when using read and internal error with batch on", function() {
+	QUnit.test("test eventing when using read and internal error with batch on", function(assert) {
+		var done = assert.async();
 		var iReqComp = 0;
 		var iReqSent = 0;
 		var iReqFailed = 0;
@@ -3955,11 +4061,12 @@
 
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
-				start();
+				done();
 			}
 		});
 	});
-	asyncTest("test eventing when using read and internal error with batch on: 2 equal requests", function() {
+	QUnit.test("test eventing when using read and internal error with batch on: 2 equal requests", function(assert) {
+		var done = assert.async();
 		var iError = 0;
 		var iReqComp = 0;
 		var iReqSent = 0;
@@ -4032,12 +4139,13 @@
 
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test eventing when using read and error with batch on", function() {
+	QUnit.test("test eventing when using read and error with batch on", function(assert) {
+		var done = assert.async();
 		var iReqComp = 0;
 		var iReqSent = 0;
 		var iReqFailed = 0;
@@ -4072,7 +4180,7 @@
 				equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 				equal(aRequests[0].response, undefined, "internal response not there");
 
-				start();
+				done();
 			}
 		});
 
@@ -4118,7 +4226,8 @@
 		});
 	});
 
-	asyncTest("test eventing when using read and error with batch on: 2 equal requests", function() {
+	QUnit.test("test eventing when using read and error with batch on: 2 equal requests", function(assert) {
+		var done = assert.async();
 		var iError = 0;
 		var iReqComp = 0;
 		var iReqSent = 0;
@@ -4165,7 +4274,7 @@
 				equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 				equal(aRequests[0].response, undefined, "internal response not there");
 
-				start();
+				done();
 			}
 		});
 
@@ -4210,7 +4319,8 @@
 		});
 	});
 
-	asyncTest("test eventing when using read with batch off", function() {
+	QUnit.test("test eventing when using read with batch off", function(assert) {
+		var done = assert.async();
 		var bSuccess = false;
 		var iReqComp = 0;
 		var iReqSent = 0;
@@ -4258,12 +4368,13 @@
 
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test eventing when using read with batch off: 2 equal requests", function() {
+	QUnit.test("test eventing when using read with batch off: 2 equal requests", function(assert) {
+		var done = assert.async();
 		var iSuccess = 0;
 		var iReqComp = 0;
 		var iReqSent = 0;
@@ -4318,12 +4429,13 @@
 				equal(oResponse.statusText, "OK", "oResponse Param check: statusCode");
 
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test eventing when using read and error batch off", function() {
+	QUnit.test("test eventing when using read and error batch off", function(assert) {
+		var done = assert.async();
 		var iError = 0;
 		var iReqComp = 0;
 		var iReqSent = 0;
@@ -4366,7 +4478,7 @@
 				equal(oResponse.statusCode, 404, "oResponse Param check: statusCode");
 				equal(oResponse.statusText, "Not Found", "oResponse Param check: statusCode");
 
-				start();
+				done();
 			}
 		});
 
@@ -4407,7 +4519,8 @@
 		});
 	});
 
-	asyncTest("test eventing when using multiple requests with batch on", function() {
+	QUnit.test("test eventing when using multiple requests with batch on", function(assert) {
+		var done = assert.async();
 		var bSuccess = false;
 		var iReqComp = 0;
 		var iReqSent = 0;
@@ -4518,12 +4631,13 @@
 
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test eventing when using multiple requests with batch on: equal requests", function() {
+	QUnit.test("test eventing when using multiple requests with batch on: equal requests", function(assert) {
+		var done = assert.async();
 		var iSuccess = 0;
 		var iReqComp = 0;
 		var iReqSent = 0;
@@ -4672,12 +4786,13 @@
 
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test eventing when using multiple requests with batch off", function() {
+	QUnit.test("test eventing when using multiple requests with batch off", function(assert) {
+		var done = assert.async();
 		var bSuccess = false;
 		var sReqId1 = null;
 		var sReqId2 = null;
@@ -4794,13 +4909,14 @@
 
 
 			if (iCount2 == 3) {
-				start();
+				done();
 				oSpy.restore();
 			}
 		});
 	});
 
-	asyncTest("test eventing when using multiple requests with batch off: equal requests", function() {
+	QUnit.test("test eventing when using multiple requests with batch off: equal requests", function(assert) {
+		var done = assert.async();
 		var iSuccess = 0;
 		var sReqId1 = null;
 		var sReqId2 = null;
@@ -4962,7 +5078,7 @@
 			}
 
 			if (iCount2 == 4 && iSuccess === 5) {
-				start();
+				done();
 				oSpy.restore();
 			}
 		});
@@ -4981,7 +5097,8 @@
 		}
 	});
 
-	asyncTest("test abort of batch request before Sending", function() {
+	QUnit.test("test abort of batch request before Sending", function(assert) {
+		var done = assert.async();
 		var bSuccess = false;
 		var oAbort = {};
 		oModel.read("/ProductSet('HT-1001')", {
@@ -5013,11 +5130,12 @@
 			ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
 			ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
 			ok(!bSuccess, "Success handler should not be called");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test abort of batch request after Sending", function() {
+	QUnit.test("test abort of batch request after Sending", function(assert) {
+		var done = assert.async();
 		var bSuccess = false;
 		var oAbort = {};
 		oModel.read("/ProductSet('HT-1001')", {
@@ -5050,11 +5168,12 @@
 			ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
 			ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
 			ok(!bSuccess, "Success handler should not be called");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test abort of batch request: equal requests", function() {
+	QUnit.test("test abort of batch request: equal requests", function(assert) {
+		var done = assert.async();
 		var bSuccess = false;
 		var iAbort = 0;
 		var oAbort = {};
@@ -5102,11 +5221,12 @@
 			ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
 			ok(!bSuccess, "Success handler should not be called");
 			ok(iAbort === 3, "3 aborted inner requests");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test abort of request in batch request", function() {
+	QUnit.test("test abort of request in batch request", function(assert) {
+		var done = assert.async();
 		var bSuccess = false;
 		var oAbort = {};
 		oModel.read("/ProductSet('HT-1001')", {
@@ -5132,16 +5252,17 @@
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			equal(oEvent.getParameter('requests').length, 1, "number of requests check");
 			equal(oEvent.getParameter('requests')[0].url, "ProductSet('HT-1001')" , "Param check: url");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test abort of all requests in batch request", function() {
+	QUnit.test("test abort of all requests in batch request", function(assert) {
+		var done = assert.async();
 		expect(4);
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
 			ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
-			start();
+			done();
 		});
 
 		oModel.attachBatchRequestSent(this, function(oEvent) {
@@ -5172,7 +5293,8 @@
 		});
 	});
 
-	asyncTest("test abort of all requests in batch request of one group", function() {
+	QUnit.test("test abort of all requests in batch request of one group", function(assert) {
+		var done = assert.async();
 		expect(8);
 		var iCounterBatch = 0;
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
@@ -5183,7 +5305,7 @@
 			} else {
 				ok(oEvent.getParameter('response').statusCode !== 0, "status code not 0");
 				ok(oEvent.getParameter('response').statusText !== 'abort', "status text not 'abort'");
-				start();
+				done();
 			}
 		});
 		var iCounter = 0;
@@ -5239,15 +5361,16 @@
 		});
 	});
 
-	asyncTest("test abort of all requests in batch request of all groups", function() {
+	QUnit.test("test abort of all requests in batch request of all groups", function(assert) {
+		var done = assert.async();
 		expect(8);
 		var iCounterBatch = 0;
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			iCounterBatch++;
 			ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
 			ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
-			if(iCounterBatch === 2){
-				start();
+			if(iCounterBatch === 3){
+				done();
 			}
 		});
 		var iCounter = 0;
@@ -5305,7 +5428,8 @@
 		});
 	});
 
-	asyncTest("test abort of requests in batch request with mixed groups and changesets", function() {
+	QUnit.test("test abort of requests in batch request with mixed groups and changesets", function(assert) {
+		var done = assert.async();
 		expect(9);
 
 		var iBatchCompletedCount = 0;
@@ -5317,7 +5441,7 @@
 			} else if (iBatchCompletedCount === 2) {
 				ok(oEvent.getParameter('response').statusCode !== 0, "status code not 0");
 				ok(oEvent.getParameter('response').statusText !== 'abort', "status text not 'abort'");
-				start();
+				done();
 			}
 		});
 		var iBatchSentCount = 0;
@@ -5388,7 +5512,8 @@
 		});
 	});
 
-	asyncTest("test abort of request in batch request: equal requests", function() {
+	QUnit.test("test abort of request in batch request: equal requests", function(assert) {
+		var done = assert.async();
 		var iSuccess = 0;
 		var iAbort = 0;
 		var oAbort = {};
@@ -5427,12 +5552,13 @@
 			equal(oEvent.getParameter('requests')[0].url, "ProductSet('HT-1001')" , "Param check: url");
 			equal(oEvent.getParameter('requests')[1].url, "ProductSet('AD-1000')" , "Param check: url");
 			if (iAbort === 1 && iSuccess === 2) {
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test abort of deferred batch request", function() {
+	QUnit.test("test abort of deferred batch request", function(assert) {
+		var done = assert.async();
 		var bSuccess = false;
 		var oAbort = {};
 		oModel.setDeferredBatchGroups([ "myId1" ]);
@@ -5464,11 +5590,12 @@
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			ok(true, "request should be aborted");
 			equal(oEvent.getParameter('success'), false, "request completed with success false");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test abort of deferred batch request: equal reqests", function() {
+	QUnit.test("test abort of deferred batch request: equal reqests", function(assert) {
+		var done = assert.async();
 		var iSuccess = 0;
 		var iAbort = 0;
 		var iBatchComp = 0;
@@ -5516,12 +5643,13 @@
 			ok(true, "request should be aborted");
 			equal(oEvent.getParameter('success'), false, "request completed with success false");
 			if (iBatchComp === 1 && iAbort === 3 && iSuccess === 0) {
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test abort of request in non batch request", function() {
+	QUnit.test("test abort of request in non batch request", function(assert) {
+		var done = assert.async();
 		var bSuccess = false;
 		var oAbort = {};
 		oModel.setUseBatch(false);
@@ -5550,12 +5678,13 @@
 				ok(false, "aborted request should have never been sent");
 			}
 			if (bSuccess){
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test abort of request in non batch request: euqal requests", function() {
+	QUnit.test("test abort of request in non batch request: euqal requests", function(assert) {
+		var done = assert.async();
 		var iSuccess = 0;
 		var iAbort = 0;
 		var oAbort = {};
@@ -5595,14 +5724,15 @@
 				ok(false, "aborted request should have never been sent");
 			}
 			if (iSuccess === 2 && iAbort === 1){
-				start();
+				done();
 			}
 		});
 	});
 
 
 
-	asyncTest("XMLHttpRequest abort of batch requests with ODataModel internal", function() {
+	QUnit.test("XMLHttpRequest abort of batch requests with ODataModel internal", function(assert) {
+		var done = assert.async();
 		expect(3);
 		var that = this;
 		var iEventCounter = 0;
@@ -5622,7 +5752,7 @@
 				ok(!bSuccess2, "RequestHandle 2 was flagged aborted in the ODataModel");
 				ok(!bSuccess3, "RequestHandle 3 was flagged aborted in the ODataModel");
 		//		ok(that.aRequests[2].status === 0, "XHR was aborted");
-				start();
+				done();
 			}
 		});
 
@@ -5661,7 +5791,8 @@
 
 	});
 
-	asyncTest("test oDataModel checkupdate/dataReceived event order", function() {
+	QUnit.test("test oDataModel checkupdate/dataReceived event order", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var iChange = 0;
 		var iReceived = 0;
@@ -5694,12 +5825,13 @@
 				ok(true, "batch request completed");
 				oInput1.destroy();
 				oInput2.destroy();
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel checkupdate/dataReceived event order: equal requests", function() {
+	QUnit.test("test oDataModel checkupdate/dataReceived event order: equal requests", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var iChange = 0;
 		var iReceived = 0;
@@ -5736,12 +5868,13 @@
 				oInput1.destroy();
 				oInput2.destroy();
 				oInput3.destroy();
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel checkupdate/dataReceived event order - data already loaded", function() {
+	QUnit.test("test oDataModel checkupdate/dataReceived event order - data already loaded", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var iChange = 0;
 		var iReceived = 0;
@@ -5758,7 +5891,7 @@
 				ok(true, "checkupdate done");
 				oInput1.destroy();
 				oInput2.destroy();
-				start();
+				done();
 			}
 		}
 		var fnDataReceived = function(oEvent) {
@@ -5801,7 +5934,8 @@
 		});
 	});
 
-	asyncTest("test oDataModel dataReceived event count", function() {
+	QUnit.test("test oDataModel dataReceived event count", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var oInput1;
 
@@ -5818,7 +5952,7 @@
 							ok(iCount == 0, "dataReceived called once");
 							iCount++;
 							oInput1.destroy();
-							start();
+							done();
 						}
 					}
 				}
@@ -5827,7 +5961,8 @@
 		})
 	});
 
-	asyncTest("test oDataModel listbinding with table - event order change/dataReceived", function() {
+	QUnit.test("test oDataModel listbinding with table - event order change/dataReceived", function(assert) {
+		var done = assert.async();
 		var iCount = 0,
 			iChange = 0,
 			iReceived = 0;
@@ -5859,12 +5994,13 @@
 		var fnCheck = function() {
 			ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 			oTable.destroy();
-			start();
+			done();
 		}
 		oModel.attachBatchRequestCompleted(this, fnCheck);
 	});
 
-	asyncTest("test oDataModel listbinding with table - event order change/dataReceived - data already loaded", function() {
+	QUnit.test("test oDataModel listbinding with table - event order change/dataReceived - data already loaded", function(assert) {
+		var done = assert.async();
 		var iCount = 0,
 			iChange = 0,
 			iReceived = 0;
@@ -5890,7 +6026,6 @@
 			if (iReceived == 1) {
 				ok(true, "dataReceived after checkUpdate");
 				oTable.destroy();
-				start();
 			}
 		}
 
@@ -5899,6 +6034,7 @@
 			iCount++;
 			if (iCount <= 2) {
 				ok(true, "request completed");
+				done();
 			} else {
 				ok(false, "too many requests");
 			}
@@ -5917,7 +6053,8 @@
 			});
 		};
 	});
-	asyncTest("test oDataModel createEntry, submit fails, change again and submit", function() {
+	QUnit.test("test oDataModel createEntry, submit fails, change again and submit", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var oContext;
 
@@ -5954,7 +6091,7 @@
 					ok(oData.__batchResponses.length === 1, "One response found");
 					if (!oData.__batchResponses[0].message) {
 						ok(true, "creation successful");
-						start();
+						done();
 					}
 				},
 				error : function(oError) {
@@ -5988,7 +6125,8 @@
 		oModel.metadataLoaded().then(fnTest);
 	});
 
-	asyncTest("test oDataModel callFunction: Parameter without mode", function() {
+	QUnit.test("test oDataModel callFunction: Parameter without mode", function(assert) {
+		var done = assert.async();
 		oModel.callFunction("/SalesOrder_InvoiceCreated", {
 			method: "POST",
 			urlParameters: {"SalesOrderID": "test"}
@@ -5996,11 +6134,12 @@
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
 			ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='test'", "Valid parameter is added to URL");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test oDataModel callFunction: Parameter with mode", function() {
+	QUnit.test("test oDataModel callFunction: Parameter with mode", function(assert) {
+		var done = assert.async();
 		oModel.callFunction("/SalesOrder_Confirm",{
 			method: "POST",
 			urlParameters: {"SalesOrderID": "test"}
@@ -6008,11 +6147,12 @@
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
 			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'", "Valid parameter is added to URL");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test oDataModel callFunction: parameters are preserved", function() {
+	QUnit.test("test oDataModel callFunction: parameters are preserved", function(assert) {
+		var done = assert.async();
 		var mUrlParams = {
 			"SalesOrderID": "test"
 		}
@@ -6025,11 +6165,12 @@
 		oModel.attachRequestSent(this, function(oEventInfo) {
 			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'", "Valid parameter is added to URL");
 			equal(mUrlParams["SalesOrderID"], "test", "Parameter still exists after sending function import");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test oDataModel callFunction: additional parameters", function() {
+	QUnit.test("test oDataModel callFunction: additional parameters", function(assert) {
+		var done = assert.async();
 		var mUrlParams = {
 			"SalesOrderID": "test",
 			"$expand": "ToBusinessPartner",
@@ -6043,11 +6184,12 @@
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
 			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'&$expand=ToBusinessPartner&sap-some=sapTest", "Valid parameter is added to URL");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test oDataModel binding function import parameters deferred", function() {
+	QUnit.test("test oDataModel binding function import parameters deferred", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var oContext;
 		oModel.setDefaultBindingMode("TwoWay");
@@ -6074,11 +6216,12 @@
 		});
 		oModel.attachRequestSent(this, function(oEventInfo) {
 			ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='Blubb'");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test oDataModel binding function import parameters not deferred", function() {
+	QUnit.test("test oDataModel binding function import parameters not deferred", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var oContext;
 		var oHandle;
@@ -6112,12 +6255,13 @@
 		var handler2 = function(oEventInfo) {
 			oModel.detachRequestSent(handler2);
 			ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='Blubb'");
-			start();
+			done();
 		};
 		oModel.attachRequestSent(this, handler1);
 	});
 
-	asyncTest("test oDataModel binding function import parameters result check error", function() {
+	QUnit.test("test oDataModel binding function import parameters result check error", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var oContext;
 		oModel.setDefaultBindingMode("TwoWay");
@@ -6145,12 +6289,13 @@
 
 		oModel.attachRequestCompleted(this, function(oEventInfo) {
 			ok(!oEventInfo.getParameter("success"), "request should have failed!");
-			start();
+			done();
 		});
 
 	});
 
-	asyncTest("test oDataModel binding function import with empty parameter deferred", function() {
+	QUnit.test("test oDataModel binding function import with empty parameter deferred", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var oContext;
 		oModel.setDefaultBindingMode("TwoWay");
@@ -6171,11 +6316,12 @@
 		});
 		oModel.attachRequestSent(this, function(oEventInfo) {
 			ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID=''");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test getETag", 3, function(){
+	QUnit.test("test getETag", 3, function(assert){
+		var done = assert.async();
 		oInput = new sap.m.Input();
 		oInput.setModel(oModel);
 		oInput.bindElement("/ProductSet('AD-1000')");
@@ -6189,7 +6335,7 @@
 			oInput.getElementBinding().detachChange(fnHandler);
 			oInput.unbindElement();
 			oInput.setBindingContext(null);
-			start();
+			done();
 		}
 		oInput.getElementBinding().attachChange(fnHandler);
 	});
@@ -6207,7 +6353,8 @@
 		}
 	});
 
-	asyncTest("test oDataModel read with no group id", function() {
+	QUnit.test("test oDataModel read with no group id", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
@@ -6235,12 +6382,13 @@
 			iCount++;
 			if (iCount === 2 && bRead1 && bRead2) {
 				ok(true, "requests with no ids should should be combined in a single batch request");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel read with different group ids", function() {
+	QUnit.test("test oDataModel read with different group ids", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
@@ -6270,12 +6418,13 @@
 			iCount++;
 			if (iCount === 2 && bRead1 && bRead2) {
 				ok(true, "requests with different ids should be in separate batch requests");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test oDataModel read with same groupIds", function() {
+	QUnit.test("test oDataModel read with same groupIds", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
@@ -6306,18 +6455,19 @@
 				iCount++;
 				if (iCount === 2 && bRead1 && bRead2) {
 					ok(true, "requests with same id should be combined in a batch request");
-					start();
+					done();
 				}
 			});
 	});
 
-	asyncTest("test oDataModel read deferred with groupId", function() {
+	QUnit.test("test oDataModel read deferred with groupId", function(assert) {
+		var done = assert.async();
 		oModel.setDeferredGroups([ "myId" ]);
 		oModel.read("/ProductSet", {
 			groupId : "myId",
 			success : function(oData, oResponse) {
 				ok(true, "request succeeded");
-				start();
+				done();
 			},
 			error : function(oError) {
 				ok(false, "request failed");
@@ -6327,7 +6477,8 @@
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel read deferred with default groupIds", function() {
+	QUnit.test("test oDataModel read deferred with default groupIds", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
@@ -6357,13 +6508,14 @@
 			iCount++;
 			if (iCount === 2 && bRead1 && bRead2) {
 				ok(true, "requests with same default id should be combined in a batch request");
-				start();
+				done();
 			}
 		});
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel read deferred with same groupIds", function() {
+	QUnit.test("test oDataModel read deferred with same groupIds", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
@@ -6395,13 +6547,14 @@
 			iCount++;
 			if (iCount === 2 && bRead1 && bRead2) {
 				ok(true, "requests with same id should be combined in a batch request");
-				start();
+				done();
 			}
 		});
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel read deferred with different groupIds", function() {
+	QUnit.test("test oDataModel read deferred with different groupIds", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
@@ -6433,13 +6586,14 @@
 				iCount++;
 				if (iCount === 2 && bRead1 && bRead2) {
 					ok(true, "requests with different ids should be in separate batch requests");
-					start();
+					done();
 				}
 			});
 		oModel.submitChanges();
 	});
 
-	asyncTest("test oDataModel Two Way", function() {
+	QUnit.test("test oDataModel Two Way", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bsetProp = false;
 		oModel.setDefaultBindingMode("TwoWay");
@@ -6474,13 +6628,14 @@
 				if (iCount === 2 && bSetProp) {
 					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
 					oTable.destroy();
-					start();
+					done();
 				}
 			});
 		});
 	});
 
-	asyncTest("test oDataModel Two Way deferred with using changeGroups", function() {
+	QUnit.test("test oDataModel Two Way deferred with using changeGroups", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bsetProp = false;
 		oModel.setDefaultBindingMode("TwoWay");
@@ -6520,14 +6675,15 @@
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oModel.detachRequestCompleted(fnHandler);
 					oTable.destroy();
-					start();
+					done();
 				}
 			};
 			oModel.attachRequestCompleted(this, fnHandler);
 		});
 	});
 
-	asyncTest("test oDataModel Two Way 2 changes deferred with using changeGroups", function() {
+	QUnit.test("test oDataModel Two Way 2 changes deferred with using changeGroups", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bsetProp = false;
 		var bsetProp2 = false;
@@ -6573,14 +6729,15 @@
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oModel.detachRequestCompleted(this, fnHandler);
 					oTable.destroy();
-					start();
+					done();
 				}
 			}
 			oModel.attachRequestCompleted(this, fnHandler);
 		});
 	});
 
-	asyncTest("test oDataModel Two Way 2 changes deferred with using changeGroups", function() {
+	QUnit.test("test oDataModel Two Way 2 changes deferred with using changeGroups", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var bsetProp = false;
 		var bsetProp2 = false;
@@ -6624,14 +6781,15 @@
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oModel.detachRequestCompleted(this, fnHandler);
 					oTable.destroy();
-					start();
+					done();
 				}
 			}
 			oModel.attachRequestCompleted(this, fnHandler);
 		});
 	});
 
-	asyncTest("test oDataModel OneTime bindings with bindObject and resolve checks", function() {
+	QUnit.test("test oDataModel OneTime bindings with bindObject and resolve checks", function(assert) {
+		var done = assert.async();
 		var iCount = 0;
 		var oTxt = new sap.ui.commons.TextField();
 		oTxt.bindValue({path: "Category", mode: 'OneTime'});
@@ -6653,12 +6811,13 @@
 			equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 			oTxt.destroy();
 			oModel.detachBatchRequestCompleted(fnCheck);
-			start();
+			done();
 		}
 		oTxt.bindObject("/VH_CategorySet('Headsets')");
 		oModel.attachBatchRequestCompleted(this, fnCheck);
 	});
-	asyncTest("test oDataModel setProperty after submitChanges(): request/order", function() {
+	QUnit.test("test oDataModel setProperty after submitChanges(): request/order", function(assert) {
+		var done = assert.async();
 		oModel.setUseBatch(true);
 		spy = sinon.spy(oModel, "_processChange");
 		var oRequest;
@@ -6695,14 +6854,15 @@
 				setTimeout(function() {
 					oModel.submitChanges({success: function() {
 						ok(requestCount == 4, '4 requests sent');
-						start();
+						done();
 					}});
 				},300);
 			},300);
 		}
 		oModel.read("/ProductSet('AD-1000')",{success: fnSuc});
 	});
-	asyncTest("test oDataModel setProperty after submitChanges(): request/order", function() {
+	QUnit.test("test oDataModel setProperty after submitChanges(): request/order", function(assert) {
+		var done = assert.async();
 		oModel.setUseBatch(true);
 		spy = sinon.spy(oModel, "_processChange");
 		var oRequest;
@@ -6734,7 +6894,7 @@
 				setTimeout(function() {
 					oModel.submitChanges({success: function() {
 						ok(requestCount == 3, '3 requests sent');
-						start();
+						done();
 					}});
 				},300);
 			},300);
@@ -6743,7 +6903,8 @@
 	});
 
 
-	asyncTest("ListBinding gets correct change reason", function() {
+	QUnit.test("ListBinding gets correct change reason", function(assert) {
+		var done = assert.async();
 		jQuery.sap.require("sap.m.List");
 		jQuery.sap.require("sap.m.StandardListItem");
 
@@ -6807,7 +6968,7 @@
 							equals(iListBindingCounter[sap.ui.model.ChangeReason.Context], 2, "Correct number of context-changes");
 							equals(Object.keys(iListBindingCounter).length, 1, "No other changes were fired");
 							oList.destroy();
-							start();
+							done();
 					}
 				});
 

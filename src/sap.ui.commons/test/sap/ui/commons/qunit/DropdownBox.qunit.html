@@ -476,7 +476,8 @@
 			oDropdown2.focus();
 		});
 
-		asyncTest("TestChangeOnFocusLostAfterTextInputOK_check", function(){
+		QUnit.test("TestChangeOnFocusLostAfterTextInputOK_check", function(assert){
+			var done = assert.async();
 			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
 			// expect(1); // 1 check
@@ -484,7 +485,7 @@
 				equal(oDropdown.getValue(), sText, "DropdownBox should provide new value via getter method.");
 
 				oDropdown.detachChange(oTest1);
-				start();
+				done();
 			}, 100);
 		});
 
@@ -515,7 +516,8 @@
 			oDropdown2.focus();
 		});
 
-		asyncTest("TestChangeOnFocusLostAfterUpDownOK_check", function(){
+		QUnit.test("TestChangeOnFocusLostAfterUpDownOK_check", function(assert){
+			var done = assert.async();
 			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
 			// expect(2); // two checks
@@ -524,7 +526,7 @@
 				equal(oDropdown.getInputDomRef().value, "third item", "ComobBox' selected value should be shown in HTML.");
 
 				oDropdown.detachChange(oTest3);
-				start();
+				done();
 			},100);
 		});
 
@@ -556,7 +558,8 @@
 
 		QUnit.module("SearchHelp");
 
-		asyncTest("Serch help item", function() {
+		QUnit.test("Serch help item", function(assert) {
+			var done = assert.async();
 			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 			var oListBox = sap.ui.getCore().byId("ddb4-lb")
 			oDropdown4.focus();
@@ -583,13 +586,14 @@
 					equal(oListBox.getItems()[0].getIcon(), sap.ui.resource("sap.ui.core", "mimes/logo/txtonly_16x16.ico"), "Seach help item default icon");
 					// close list box
 					qutils.triggerEvent("click", "ddb4-icon");
-					start();
+					done();
 				},100);
 			},100);
 
 		});
 
-		asyncTest("Serch help event", function() {
+		QUnit.test("Serch help event", function(assert) {
+			var done = assert.async();
 			// open list box to see search help item
 			oDropdown4.focus();
 			qutils.triggerEvent("click", "ddb4-icon");
@@ -602,7 +606,7 @@
 				qutils.triggerKeyboardEvent("ddb4-input", jQuery.sap.KeyCodes.F4, false, false, false);
 				ok(bSearchHelpFired, "F4 on input field - serachHelp event fired");
 				bSearchHelpFired = false;
-				start();
+				done();
 			},100);
 		});
 
@@ -662,7 +666,8 @@
 			equal(oDropdown5.getSelectedKey(), "I2", "Key of second item must be selected");
 		});
 
-		asyncTest("update binding with key", function(){
+		QUnit.test("update binding with key", function(assert){
+			var done = assert.async();
 			// even if selectedKey is set before items it must be used after items are added
    			oModel.setProperty("/key", "IC");
 			oModel.oData.items = [{text: "Item A", key: "IA"},
@@ -673,7 +678,7 @@
    				equal(oDropdown5.getValue(), "Item C", "Text of third item must be set");
 				equal(jQuery.sap.domById(oDropdown5.getId()+"-input").value, "Item C", "Text of third item must be set in the HTML.");
 				equal(oDropdown5.getSelectedKey(), "IC", "Key of third item must be selected");
-				start();
+				done();
 			},0);
 		});
 

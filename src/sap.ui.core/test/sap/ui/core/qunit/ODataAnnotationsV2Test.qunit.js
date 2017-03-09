@@ -337,6 +337,8 @@ function runODataAnnotationsV2Tests() {
 	QUnit.module("Standard Tests for All Annotation Cases")
 
 	var fnTestLoading = function(mService) {
+		var done = assert.async();
+
 		var oMetadata = new sap.ui.model.odata.ODataMetadata(mService.service + "$metadata", { asnc: true });
 
 		var oAnnotationsLoader = new sap.ui.model.odata.v2.ODataAnnotations(oMetadata, {
@@ -362,7 +364,7 @@ function runODataAnnotationsV2Tests() {
 		function endTest() {
 			oMetadata.destroy();
 			oAnnotationsLoader.destroy();
-			start();
+			done();
 		}
 
 		pLoaded.then(function(aResults) {
@@ -393,12 +395,14 @@ function runODataAnnotationsV2Tests() {
 
 	for (var i = 0; i < aServices.length; ++i) {
 		if (aServices[i].serviceValid && aServices[i].annotationsValid !== "some") {
-			asyncTest("External Annotation Loading - Service Case: " + aServices[i].name, fnTestLoading.bind(undefined, aServices[i]));
+			QUnit.test("External Annotation Loading - Service Case: " + aServices[i].name, fnTestLoading.bind(undefined, aServices[i]));
 		}
 	}
 
 
 	var fnTestEventsAllSome = function(mService, bSkipMetadata) {
+		var done = assert.async();
+
 		var oMetadata = new sap.ui.model.odata.ODataMetadata(mService.service + "$metadata", { asnc: true });
 
 		var oAnnotationsLoader = new sap.ui.model.odata.v2.ODataAnnotations(oMetadata, {
@@ -474,7 +478,7 @@ function runODataAnnotationsV2Tests() {
 		var fnEndTest = function() {
 			oMetadata.destroy();
 			oAnnotationsLoader.destroy();
-			start()
+			done()
 		};
 
 		pLoaded.then(function() {
@@ -492,17 +496,19 @@ function runODataAnnotationsV2Tests() {
 	for (var i = 0; i < aServices.length; ++i) {
 		if (aServices[i].serviceValid) {
 			// Test all valid services - parse metadata for annotations
-			asyncTest("Event (All/Some) Parameter Checks with Metadata - Service Case: " + aServices[i].name, fnTestEventsAllSome.bind(undefined, aServices[i], false));
+			QUnit.test("Event (All/Some) Parameter Checks with Metadata - Service Case: " + aServices[i].name, fnTestEventsAllSome.bind(undefined, aServices[i], false));
 		}
 		if (aServices[i].serviceValid && aServices[i].annotations) {
 			// Test all valid services - DO NOT parse metadata for annotations
-			asyncTest("Event (All/Some) Parameter Checks without Metadata - Service Case: " + aServices[i].name, fnTestEventsAllSome.bind(undefined, aServices[i], true));
+			QUnit.test("Event (All/Some) Parameter Checks without Metadata - Service Case: " + aServices[i].name, fnTestEventsAllSome.bind(undefined, aServices[i], true));
 		}
 	}
 
 
 
 	var fnTestEvents = function(mService, bSkipMetadata) {
+		var done = assert.async();
+
 		var oMetadata = new sap.ui.model.odata.ODataMetadata(mService.service + "$metadata", { asnc: true });
 
 		var oAnnotationsLoader = new sap.ui.model.odata.v2.ODataAnnotations(oMetadata, {
@@ -578,7 +584,7 @@ function runODataAnnotationsV2Tests() {
 		var fnEndTest = function() {
 			oMetadata.destroy();
 			oAnnotationsLoader.destroy();
-			start()
+			done()
 		};
 
 		pLoaded.catch(function() {}).then(function() {
@@ -590,11 +596,11 @@ function runODataAnnotationsV2Tests() {
 	for (var i = 0; i < aServices.length; ++i) {
 		if (aServices[i].serviceValid) {
 			// Test all valid services - parse metadata for annotations
-			asyncTest("Event Parameter Checks with Metadata - Service Case: " + aServices[i].name, fnTestEvents.bind(undefined, aServices[i], false));
+			QUnit.test("Event Parameter Checks with Metadata - Service Case: " + aServices[i].name, fnTestEvents.bind(undefined, aServices[i], false));
 		}
 		if (aServices[i].serviceValid && aServices[i].annotations) {
 			// Test all valid services - DO NOT parse metadata for annotations
-			asyncTest("Event Parameter Checks without Metadata - Service Case: " + aServices[i].name, fnTestEvents.bind(undefined, aServices[i], true));
+			QUnit.test("Event Parameter Checks without Metadata - Service Case: " + aServices[i].name, fnTestEvents.bind(undefined, aServices[i], true));
 		}
 	}
 
@@ -602,6 +608,8 @@ function runODataAnnotationsV2Tests() {
 	QUnit.module("v2.ODataModel Integration Test")
 
 	var fnTestModelLoading = function(mService) {
+		var done = assert.async();
+
 		// sap.ui.model.odata.v2.ODataModel.mServiceData = {};
 		var oModel = new sap.ui.model.odata.v2.ODataModel(mService.service, {
 			annotationURI: mService.annotations,
@@ -611,7 +619,7 @@ function runODataAnnotationsV2Tests() {
 
 		function endTest() {
 			oModel.destroy();
-			start();
+			done();
 		}
 
 		var bAnnotationsLoaded = false;
@@ -650,7 +658,7 @@ function runODataAnnotationsV2Tests() {
 			// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 			//  ==> PhantomJS doesn't fail when loading malformed XML!
 			if (!sap.ui.Device.browser.phantomJS || (aServices[i].serviceValid && aServices[i].annotationsValid !== "none")) {
-				asyncTest("Annotations - Service Case: " + aServices[i].name, fnTestModelLoading.bind(undefined, aServices[i]));
+				QUnit.test("Annotations - Service Case: " + aServices[i].name, fnTestModelLoading.bind(undefined, aServices[i]));
 			}
 		}
 	}
@@ -658,6 +666,8 @@ function runODataAnnotationsV2Tests() {
 
 
 	var fnTestModelMetadataLoading = function(mService) {
+		var done = assert.async();
+
 		// sap.ui.model.odata.v2.ODataModel.mServiceData = {};
 		var oModel = new sap.ui.model.odata.v2.ODataModel(mService.service, {
 			annotationURI: mService.annotations,
@@ -666,7 +676,7 @@ function runODataAnnotationsV2Tests() {
 
 		function endTest() {
 			oModel.destroy();
-			start();
+			done();
 		}
 
 		var bAnnotationsLoaded = false;
@@ -694,13 +704,14 @@ function runODataAnnotationsV2Tests() {
 
 	for (var i = 0; i < aServices.length; ++i) {
 		if (aServices[i].serviceValid) {
-			asyncTest("Annotations and metadata - Service Case: " + aServices[i].name, fnTestModelMetadataLoading.bind(undefined, aServices[i]));
+			QUnit.test("Annotations and metadata - Service Case: " + aServices[i].name, fnTestModelMetadataLoading.bind(undefined, aServices[i]));
 		}
 	}
 
 	QUnit.module("Misc Test to increase test coverage");
 
 	var fnTestMisc1 = function() {
+		var done = assert.async();
 
 		var mService = mAdditionalTestsServices["LastModified Header"];
 
@@ -816,7 +827,7 @@ function runODataAnnotationsV2Tests() {
 									oAnnotationsFromMetadata.destroy();
 									oAnnotations.destroy();
 
-									start();
+									done();
 								});
 							});
 						});
@@ -832,7 +843,7 @@ function runODataAnnotationsV2Tests() {
 
 	};
 
-	asyncTest("Loading and accessing annotations", fnTestMisc1);
+	QUnit.test("Loading and accessing annotations", fnTestMisc1);
 
 
 
@@ -840,6 +851,8 @@ function runODataAnnotationsV2Tests() {
 
 
 	var fnTestLastModified = function() {
+		var done = assert.async();
+
 		expect(4);
 
 		var mService = mAdditionalTestsServices["LastModified Header"];
@@ -857,13 +870,11 @@ function runODataAnnotationsV2Tests() {
 			equals(Date.parse(aAnnotations[2].lastModified), iLastModified, "LastModified header exists for third annotation document");
 			equals(Date.parse(aAnnotations[3].lastModified), iLastModified, "LastModified header exists for fourth annotation document");
 
-			start();
+			done();
 		});
 
 	};
 
-	asyncTest("Access to lastModified header", fnTestLastModified);
-
-
+	QUnit.test("Access to lastModified header", fnTestLastModified);
 
 }

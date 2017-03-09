@@ -212,7 +212,8 @@
 			resetBeforeTest();
 			qutils.triggerCharacterInput(sComboInputId, "s");
 		});
-		asyncTest("TestInputAutocompleteOK", function(){
+		QUnit.test("TestInputAutocompleteOK", function(assert){
+			var done = assert.async();
 			setTimeout(function(){
 				equal(oCombo.getValue(), "", "ComboBox' value should not have been autocompleted, yet.");
 				equal(oCombo.getFocusDomRef().value, "second item", "ComobBox' value should have changed in HTML.");
@@ -225,7 +226,7 @@
 				equal(oCombo.getFocusDomRef().value, "second item", "ComobBox' value should not change after autocomplete in HTML.");
 				equal(oCombo.getSelectedKey(), "key2", "selectedKey should fit to the selected item");
 				equal(oCombo.getSelectedItemId(), "si", "selectedItemId should fit to the selected item");
-				start();
+				done();
 			}, 500);
 		});
 
@@ -235,7 +236,8 @@
 				qutils.triggerCharacterInput(sComboInputId, val);
 			});
 		});
-		asyncTest("TestMultipleInputAutocompleteOK", function(){
+		QUnit.test("TestMultipleInputAutocompleteOK", function(assert){
+			var done = assert.async();
 			setTimeout(function(){
 				equal(oCombo.getValue(), "", "ComboBox' value should not have been autocompleted, yet.");
 				equal(oCombo.getFocusDomRef().value, "third item", "ComobBox' value should have changed in HTML.");
@@ -249,7 +251,7 @@
 				equal(oCombo.getSelectedKey(), "key3", "selectedKey should fit to the selected item");
 				equal(oCombo.getSelectedItemId(), "ti", "selectedItemId should fit to the selected item");
 
-				start();
+				done();
 			}, 500);
 		});
 
@@ -377,7 +379,8 @@
 			}
 		});
 
-		asyncTest("TestOpenCloseViaKeyboardF4OK", function(){
+		QUnit.test("TestOpenCloseViaKeyboardF4OK", function(assert){
+			var done = assert.async();
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
@@ -387,12 +390,13 @@
 
 				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
 				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after second F4 press");
-				start();
+				done();
 			}, 10);
 
 		});
 
-		asyncTest("TestOpenCloseViaKeyboardARROWOK", function(){
+		QUnit.test("TestOpenCloseViaKeyboardARROWOK", function(assert){
+			var done = assert.async();
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, true, false);
 			setTimeout( function(){
 				// as Popup calls fireOpended for IE9 async
@@ -400,12 +404,13 @@
 
 				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
 				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after Alt + Arrow Up press");
-				start();
+				done();
 			}, 10);
 
 		});
 
-		asyncTest("TestOpenCloseViaMouseOK", function(){
+		QUnit.test("TestOpenCloseViaMouseOK", function(assert){
+			var done = assert.async();
 			resetBeforeTest();
 
 			qutils.triggerEvent("click", sComboIconId);
@@ -415,7 +420,7 @@
 
 				qutils.triggerEvent("click", sComboIconId);
 				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after second click on F4 help button");
-				start();
+				done();
 			}, 10);
 
 		});
@@ -435,7 +440,8 @@
 			}
 		});
 
-		asyncTest("TestSelectItemFromListOK", function(){
+		QUnit.test("TestSelectItemFromListOK", function(assert){
+			var done = assert.async();
 			expect(16); // two from reset, 12 from this method and 2 from the event handler (initiated via click events)
 
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
@@ -461,7 +467,7 @@
 				equal(oCombo.getSelectedItemId(), "li", "selectedItemId should fit to the selected item");
 
 				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after item selection");
-				start();
+				done();
 			}, 10);
 		});
 
@@ -472,7 +478,8 @@
 			}
 		});
 
-		asyncTest("TestEndWhenOpenedOK", function(){
+		QUnit.test("TestEndWhenOpenedOK", function(assert){
+			var done = assert.async();
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
@@ -507,11 +514,12 @@
 				equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should not have changed in HTML.");
 				equal(oCombo.getSelectedKey(), "key4", "selectedKey should fit to the selected item");
 				equal(oCombo.getSelectedItemId(), "li", "selectedItemId should fit to the selected item");
-				start();
+				done();
 			}, 10);
 		});
 
-		asyncTest("TestHomeWhenOpenedOK", function(){
+		QUnit.test("TestHomeWhenOpenedOK", function(assert){
+			var done = assert.async();
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
 			setTimeout( function(){
 				// as Popup calls fireOpended for IE9 async
@@ -539,7 +547,7 @@
 				equal(oCombo.getFocusDomRef().value, "first item", "ComobBox' value should not have changed in HTML.");
 				equal(oCombo.getSelectedKey(), "key1", "selectedKey should fit to the selected item");
 				equal(oCombo.getSelectedItemId(), "fi", "selectedItemId should fit to the selected item");
-				start();
+				done();
 			}, 10);
 		});
 
@@ -596,7 +604,8 @@
 			oCombo2.focus();
 		});
 
-		asyncTest("TestChangeOnFocusLostAfterTextInputOK_check", function(){
+		QUnit.test("TestChangeOnFocusLostAfterTextInputOK_check", function(assert){
+			var done = assert.async();
 			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
 			// expect(1); // 1 check
@@ -604,7 +613,7 @@
 				equal(oCombo.getValue(), sText, "ComboBox should provide new value via getter method.");
 
 				oCombo.detachChange(oTest1);
-				start();
+				done();
 			}, 100);
 		});
 
@@ -648,7 +657,8 @@
 			oCombo2.focus();
 		});
 
-		asyncTest("TestChangeOnFocusLostAfterUpDownOK_check", function(){
+		QUnit.test("TestChangeOnFocusLostAfterUpDownOK_check", function(assert){
+			var done = assert.async();
 			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
 			// expect(2); // two checks
@@ -659,7 +669,7 @@
 				equal(oCombo.getSelectedItemId(), "ti", "selectedItemId should fit to the selected item");
 
 				oCombo.detachChange(oTest3);
-				start();
+				done();
 			},100);
 		});
 
@@ -697,7 +707,8 @@
 			equal(oCombo4.getSelectedKey(), "I2", "Key of second item must be selected");
 		});
 
-		asyncTest("update binding with key", function(){
+		QUnit.test("update binding with key", function(assert){
+			var done = assert.async();
 			// even if selectedKey is set before items it must be used after items are added
 			oModel.setProperty("/key", "IC");
 			oModel.oData.items = [{text: "Item A", key: "IA"},
@@ -708,11 +719,12 @@
 				equal(oCombo4.getValue(), "Item C", "Text of third item must be set");
 				equal(jQuery.sap.domById(oCombo4.getId()+"-input").value, "Item C", "Text of third item must be set in the HTML.");
 				equal(oCombo4.getSelectedKey(), "IC", "Key of third item must be selected");
-				start();
+				done();
 			},0);
 		});
 
-		asyncTest("update binding without key", function(){
+		QUnit.test("update binding without key", function(assert){
+			var done = assert.async();
 			// selectd key not changed and item still exist, so it should be still selected.
 			oModel.oData.items = [{text: "Item C", key: "IC"},
 			                      {text: "Item D", key: "ID"},
@@ -722,7 +734,7 @@
 				equal(oCombo4.getValue(), "Item C", "Text must not be changed");
 				equal(jQuery.sap.domById(oCombo4.getId()+"-input").value, "Item C", "Text of third item must not be changed in the HTML.");
 				equal(oCombo4.getSelectedKey(), "IC", "Key must not be changed");
-				start();
+				done();
 			},0);
 		});
 

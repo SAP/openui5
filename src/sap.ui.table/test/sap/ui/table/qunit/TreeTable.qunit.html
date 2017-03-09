@@ -327,7 +327,8 @@
 		oTable.setSelectedIndex(0);
 	});
 
-	QUnit.asyncTest("Select All on Binding Change", 4, function(assert) {
+	QUnit.test("Select All on Binding Change", 4, function(assert) {
+		var done = assert.async();
 		var oModel;
 		var oTable = this.table;
 
@@ -339,7 +340,7 @@
 
 				oTable.attachEventOnce("_rowsUpdated", function() {
 					assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
-					start();
+					done();
 				});
 
 				oModel.setData(getData());

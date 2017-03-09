@@ -183,15 +183,16 @@
 
 		QUnit.module("Behaviour");
 
-		asyncTest("FacetSelected Event", function() {
+		QUnit.test("FacetSelected Event", function(assert) {
+			var done = assert.async();
 			expect(3);
 			facet = "activities";
 			qutils.triggerMouseEvent(jQuery.sap.domById("activities"), "click", 1, 1, 1, 1);
 			setTimeout(
 					function() {
-						start();
 						ok(jQuery.sap.domById(oThingViewer.getId() + facet + "FacetButton"), "Rendered Facet Content for facet " + facet
 						+ " should exist in the page");
+						done();
 					}, 500);
 		});
 

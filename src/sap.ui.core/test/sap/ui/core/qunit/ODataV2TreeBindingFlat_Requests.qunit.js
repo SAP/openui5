@@ -71,7 +71,9 @@ var fnCountRequestType = function (aRequests, sMethod) {
 	return iTypeCount;
 };
 
-asyncTest("Request Creation - CREATE & UPDATE", function(){
+QUnit.test("Request Creation - CREATE & UPDATE", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -164,7 +166,7 @@ asyncTest("Request Creation - CREATE & UPDATE", function(){
 				equals(aRequests[4].data["PARENT_NODE"], aNewNodeIds[2], "1st UPDATED node parent is correct"); //child of 3rd newly created node
 				equals(aRequests[5].data["PARENT_NODE"], aNewNodeIds[3], "1st UPDATED node parent is correct"); //child of 4th newly created node
 
-				start();
+				done();
 			}, {suppressRequest: true});
 
 			oBinding.submitChanges();
@@ -175,7 +177,9 @@ asyncTest("Request Creation - CREATE & UPDATE", function(){
 	});
 });
 
-asyncTest("Request Creation - CREATE & UPDATE & DELETE", function(){
+QUnit.test("Request Creation - CREATE & UPDATE & DELETE", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -235,7 +239,7 @@ asyncTest("Request Creation - CREATE & UPDATE & DELETE", function(){
 				equals(aRequests[0].requestUri, "orgHierarchy('1002')", "First deleted node is 1002.");
 				equals(aRequests[1].requestUri, "orgHierarchy('1029')", "Second deleted node is 1029.");
 
-				start();
+				done();
 			}, {suppressRequest: true});
 
 			oBinding.submitChanges();
@@ -246,7 +250,9 @@ asyncTest("Request Creation - CREATE & UPDATE & DELETE", function(){
 	});
 });
 
-asyncTest("Request Creation - DELETE - 1", function(){
+QUnit.test("Request Creation - DELETE - 1", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -284,7 +290,7 @@ asyncTest("Request Creation - DELETE - 1", function(){
 				// Note: the order of the delete requests is important. This should always be ensured in tests!
 				equals(aRequests[0].requestUri, "orgHierarchy('1001')", "First deleted node is 1001.");
 
-				start();
+				done();
 			}, {suppressRequest: true});
 
 			oBinding.submitChanges();
@@ -295,7 +301,9 @@ asyncTest("Request Creation - DELETE - 1", function(){
 	});
 });
 
-asyncTest("Request Creation - DELETE - 2", function(){
+QUnit.test("Request Creation - DELETE - 2", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -342,7 +350,7 @@ asyncTest("Request Creation - DELETE - 2", function(){
 				// Note: the order of the delete requests is important. This should always be ensured in tests!
 				equals(aRequests[0].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
 
-				start();
+				done();
 			}, {suppressRequest: true});
 
 			oBinding.submitChanges();
@@ -353,7 +361,9 @@ asyncTest("Request Creation - DELETE - 2", function(){
 	});
 });
 
-asyncTest("Request Creation - DELETE - 3 - deep to initially collapsed", function(){
+QUnit.test("Request Creation - DELETE - 3 - deep to initially collapsed", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -397,7 +407,7 @@ asyncTest("Request Creation - DELETE - 3 - deep to initially collapsed", functio
 				equals(aRequests[0].requestUri, "orgHierarchy('1633')", "First deleted node is 1633.");
 				equals(aRequests[1].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
 
-				start();
+				done();
 			}, {suppressRequest: true});
 
 			oBinding.submitChanges();
@@ -409,7 +419,10 @@ asyncTest("Request Creation - DELETE - 3 - deep to initially collapsed", functio
 });
 
 
-asyncTest("Request Creation - DELETE - 3 - in to deep", function(){
+QUnit.test("Request Creation - DELETE - 3 - in to deep", function(assert){
+
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -463,7 +476,7 @@ asyncTest("Request Creation - DELETE - 3 - in to deep", function(){
 				equals(aRequests[0].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
 				equals(aRequests[1].requestUri, "orgHierarchy('1642')", "First deleted node is 1642.");
 
-				start();
+				done();
 			}, {suppressRequest: true});
 
 			oBinding.submitChanges();
@@ -474,7 +487,9 @@ asyncTest("Request Creation - DELETE - 3 - in to deep", function(){
 	});
 });
 
-asyncTest("Request Creation - Refresh after Success - Event-Timing", function(){
+QUnit.test("Request Creation - Refresh after Success - Event-Timing", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -543,7 +558,7 @@ asyncTest("Request Creation - Refresh after Success - Event-Timing", function(){
 			//    2. when the batch returns with successfully performed changes (refresh triggered by the binding)
 			oBinding.attachRefresh(function () {
 				ok(bSuccessBeforeRefresh, "Refresh fired after successful submitChanges.");
-				start();
+				done();
 			});
 
 			// check the application's success handler call
@@ -563,7 +578,9 @@ asyncTest("Request Creation - Refresh after Success - Event-Timing", function(){
 	});
 });
 
-asyncTest("Request Creation - No Refresh after Error - Event-Timing", function(){
+QUnit.test("Request Creation - No Refresh after Error - Event-Timing", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -627,7 +644,7 @@ asyncTest("Request Creation - No Refresh after Error - Event-Timing", function()
 					equals(oBatchResponse.__batchResponses[0].response.statusCode, "404", "Error returned by the MockServer");
 
 					ok(bNoRefresh, "No Refresh was fired after a broken change-request");
-					start();
+					done();
 				}
 			});
 		}
@@ -637,7 +654,9 @@ asyncTest("Request Creation - No Refresh after Error - Event-Timing", function()
 	});
 });
 
-asyncTest("addContexts() & removeContext() API - Array Arguments and Requests", function(){
+QUnit.test("addContexts() & removeContext() API - Array Arguments and Requests", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -674,7 +693,7 @@ asyncTest("addContexts() & removeContext() API - Array Arguments and Requests", 
 			equals(oBinding.getContextByIndex(10), oCtxB, "3rd added context is correct.");
 			equals(oBinding.getContextByIndex(11), oN1009.context, "4th added context is correct.");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);

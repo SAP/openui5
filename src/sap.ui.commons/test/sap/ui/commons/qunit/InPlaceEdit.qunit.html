@@ -214,7 +214,8 @@
 		ok(!jQuery("#IPE6--Edit").get(0), "Edit mode: no edit button rendered");
 	});
 
-	asyncTest("Typing with undo", function() {
+	QUnit.test("Typing with undo", function(assert) {
+		var done = assert.async();
 		oIPE1.focus();
 		sap.ui.getCore().applyChanges();
 		setTimeout(function(){
@@ -224,11 +225,12 @@
 			qutils.triggerKeyup("TF1", jQuery.sap.KeyCodes.A, true, false, false);
 			equal(jQuery("#TF1").val(), sStartText + "A", "Displayed text");
 			equal(jQuery("#IPE1--X").css("visibility"), "visible", "Undo button visible");
-		start();
+		done();
 		}, 300);
 	});
 
-	asyncTest("Typing without undo", function() {
+	QUnit.test("Typing without undo", function(assert) {
+		var done = assert.async();
 		oIPE7.focus();
 		sap.ui.getCore().applyChanges();
 		setTimeout(function(){
@@ -237,11 +239,12 @@
 			qutils.triggerKeyup("TF4", jQuery.sap.KeyCodes.A, true, false, false);
 			equal(jQuery("#TF4").val(), sStartText + "A", "Displayed text");
 			ok(!jQuery("#IPE7--X").get(0), "no Undo button rendered");
-		start();
+		done();
 		}, 300);
 	});
 
-	asyncTest("open ComboBox", function() {
+	QUnit.test("open ComboBox", function(assert) {
+		var done = assert.async();
 		oIPE4.focus();
 		sap.ui.getCore().applyChanges();
 		setTimeout(function(){
@@ -249,13 +252,14 @@
 			ok(jQuery.sap.domById("CB1-lb-list"), "ListBox rendered")
 			qutils.triggerEvent("click", "Day7");
 			equal(jQuery("#CB1-input").val(), "Sunday", "Displayed text");
-		start();
+		done();
 		}, 300);
 	});
 
 	QUnit.module("Display mode");
 
-	asyncTest("Visual appearance", function() {
+	QUnit.test("Visual appearance", function(assert) {
+		var done = assert.async();
 		oIPE4.focus(); // to toggle in display mode
 		sap.ui.getCore().applyChanges();
 
@@ -265,11 +269,12 @@
 			ok(jQuery("#IPE1").hasClass("sapUiIpeUndo"), "Undo CSS-class rendered");
 			ok(jQuery("#IPE1").find("button").get(0), "Undo Button rendered")
 			equal(oTextField1.getValue(), sStartText + "A", "Value of TextField1");
-			start();
+			done();
 		}, 300);
 	});
 
-	asyncTest("Undo text change", function() {
+	QUnit.test("Undo text change", function(assert) {
+		var done = assert.async();
 		oIPE1.focus(); // to toggle in display mode
 		sap.ui.getCore().applyChanges();
 
@@ -282,12 +287,13 @@
 					ok(!jQuery("#IPE1").hasClass("sapUiIpeUndo"), "Undo CSS-class not longer rendered");
 					ok(!jQuery("#IPE1").find("button").get(0), "Undo Button not longer rendered")
 					equal(oTextField1.getValue(), sStartText, "Value of TextField1 after undo");
-					start();
+					done();
 			}, 300);
 		}, 300);
 	});
 
-	asyncTest("clearOldText", function() {
+	QUnit.test("clearOldText", function(assert) {
+		var done = assert.async();
 		oIPE1.focus();
 		qutils.triggerCharacterInput("TF1", "A");
 		qutils.triggerKeyup("TF1", jQuery.sap.KeyCodes.A, true, false, false);
@@ -301,7 +307,7 @@
 			equal(jQuery("#IPE1").find("span").text(), sStartText + "A", "Displayed text after clearOldText");
 			ok(!jQuery("#IPE1").find("button").get(0), "Undo Button not longer rendered")
 			equal(oTextField1.getValue(), sStartText + "A", "Value of TextField1 after clearOldText");
-			start();
+			done();
 		}, 300);
 	});
 

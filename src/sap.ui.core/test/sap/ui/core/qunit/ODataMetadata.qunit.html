@@ -62,13 +62,15 @@
 		ok(oModel.getServiceMetadata(),"Metadata loaded");
 	});
 
-	asyncTest("metadata failed handling", function(){
+	QUnit.test("metadata failed handling", function(assert){
+		var done = assert.async();
 		var that = this;
  		var oModel = initModel(sServiceUri3);
  		var oModel2 = {};
  		var handleFailed1 = function(){
 			ok(!oModel2.getServiceMetadata(), "Metadata on second model failed correctly");
 			oModel2.detachMetadataFailed(handleFailed1);
+			done();
 		};
  		var handleFailed2 = function(){
 			ok(!oModel.getServiceMetadata(), "Metadata failed correctly");
@@ -76,7 +78,6 @@
 			oModel2 = initModel(sServiceUri3);
 			oModel2.attachMetadataFailed(handleFailed1);
 			oModel.detachMetadataFailed(handleFailed2);
-			start();
  		};
 		oModel.attachMetadataFailed(handleFailed2);
 	});
@@ -171,8 +172,8 @@
 
 		// Begin test methods
 
-		"_getEntitySetByType method": function(oModel) {
-			expect(4);
+		"_getEntitySetByType method": function(oModel, assert, done) {
+			assert.expect(4);
 			var oMetadata = oModel.oMetadata;
 
 			var mEntityType = oMetadata._getEntityTypeByName(this.flightEntity.fullName)
@@ -182,12 +183,11 @@
 			var mEntitySet = oMetadata._getEntitySetByType(mEntityType);
 			equals(mEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
 			equals(mEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
-
-			start();
+			done();
 		},
 
-		"_getEntityTypeByName method": function(oModel) {
-			expect(3);
+		"_getEntityTypeByName method": function(oModel, assert, done) {
+			assert.expect(3);
 			var oMetadata = oModel.oMetadata;
 
 			// The rest is tested in testcase "_getEntitySetByType method" already
@@ -200,11 +200,11 @@
 			oInvalidMetadata.destroy();
 			equals(oInvalidMetadata.oMetadata, undefined, "Internal metadata object deleted");
 
-			start();
+			done();
 		},
 
-		"_getEntitySetByPath method": function(oModel) {
-			expect(4);
+		"_getEntitySetByPath method": function(oModel, assert, done) {
+			assert.expect(4);
 			var oMetadata = oModel.oMetadata;
 
 			var mEntitySet = oMetadata._getEntitySetByPath(this.flightEntity.path);
@@ -215,11 +215,11 @@
 			equals(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
 			equals(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
 
-			start();
+			done();
 		},
 
-		"_getEntityTypeByPath method": function(oModel) {
-			expect(15);
+		"_getEntityTypeByPath method": function(oModel, assert, done) {
+			assert.expect(15);
 			var oMetadata = oModel.oMetadata;
 
 			var mEntityType = oMetadata._getEntityTypeByPath(this.flightEntity.path);
@@ -256,11 +256,11 @@
 			equals(mFunctionEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
 			equals(mFunctionEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
 
-			start();
+			done();
 		},
 
-		"_getFunctionImportMetadata method": function(oModel) {
-			expect(this.functionImports.length * (6 + /* numValidateParams: */ 3 * 3));
+		"_getFunctionImportMetadata method": function(oModel, assert, done) {
+			assert.expect(this.functionImports.length * (6 + /* numValidateParams: */ 3 * 3));
 
 			var oMetadata = oModel.oMetadata;
 			var fnGetEntityType = function(mFunctionInfo) {
@@ -310,7 +310,7 @@
 				equals(mEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
 			}
 
-			start();
+			done();
 		}
 	}
 
@@ -325,11 +325,16 @@
 	var oModelV2 = initModelV2(sServiceUri);
 
 
-	var fnWrapMetadataReady = function(fnRealTest) {
+	var fnWrapMetadataReady = function(fnRealTest, assert) {
+		var done = assert.async();
 		if (oModel instanceof sap.ui.model.odata.v2.ODataModel) {
-			oModel.metadataLoaded().then(fnRealTest);
+			oModel.metadataLoaded().then(function () {
+				fnRealTest.apply(this, [assert, done].concat([].slice.call(arguments)));
+			});
 		} else {
-			pModelV1MetadataLoaded.then(fnRealTest);
+			pModelV1MetadataLoaded.then(function () {
+				fnRealTest.apply(this, [assert, done].concat([].slice.call(arguments)));
+			});
 		}
 	};
 
@@ -339,15 +344,15 @@
 			continue;
 		}
 
-		asyncTest("V1: " + sTest, fnWrapMetadataReady.bind(this, mInternalTests[sTest].bind(mInternalTests, oModelV1)));
-		asyncTest("V2: " + sTest, fnWrapMetadataReady.bind(this, mInternalTests[sTest].bind(mInternalTests, oModelV2)));
+		QUnit.test("V1: " + sTest, fnWrapMetadataReady.bind(this, mInternalTests[sTest].bind(mInternalTests, oModelV1)));
+		QUnit.test("V2: " + sTest, fnWrapMetadataReady.bind(this, mInternalTests[sTest].bind(mInternalTests, oModelV2)));
 	}
 
 
 
 
-	var fnTestAnnotations = function(oModel) {
-		expect(12);
+	var fnTestAnnotations = function(oModel, assert, done) {
+		assert.expect(12);
 		var oMetadata = oModel.oMetadata;
 
 		equals(
@@ -403,18 +408,11 @@
 			"Label Annotation correctly resolved"
 		);
 
-		start()
+		done();
 	};
 
-	asyncTest("V1: _getAnnotation method", fnWrapMetadataReady.bind(this, fnTestAnnotations.bind(this, oModelV1)));
-	asyncTest("V2: _getAnnotation method", fnWrapMetadataReady.bind(this, fnTestAnnotations.bind(this, oModelV1)));
-
-
-
-
-
-
-
+	QUnit.test("V1: _getAnnotation method", fnWrapMetadataReady.bind(this, fnTestAnnotations.bind(this, oModelV1)));
+	QUnit.test("V2: _getAnnotation method", fnWrapMetadataReady.bind(this, fnTestAnnotations.bind(this, oModelV1)));
 
 	</script>
 

@@ -69,7 +69,8 @@
 		ok(oBinding instanceof sap.ui.model.odata.ODataTreeBinding, "treeBinding class check");
 	});
 
-	asyncTest("getRootContexts getNodeContexts", function(){
+	QUnit.test("getRootContexts getNodeContexts", function(assert){
+		var done = assert.async();
 		createTreeBinding("/Employees(2)", null, [], {
 			navigation: {
 				Employees: "Employees1",
@@ -133,14 +134,15 @@
 			equal(oModel.getProperty("LastName", oContext), "Dodsworth", "TreeBinding node content");
 
 			oBinding.detachChange(handler2);
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts();
 	});
 
-	asyncTest("Display root node", function(){
+	QUnit.test("Display root node", function(assert){
+		var done = assert.async();
 		createTreeBinding("/Employees(2)", null, [], {
 			navigation: {
 				Employees: "Employees1",
@@ -186,14 +188,15 @@
 			equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
 
 			oBinding.detachChange(handler1);
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts();
 	});
 
-	asyncTest("Number of expanded levels", function(){
+	QUnit.test("Number of expanded levels", function(assert){
+		var done = assert.async();
 		createTreeBinding("/Employees(2)", null, [], {
 			navigation: {
 				Employees: "Employees1",
@@ -246,14 +249,15 @@
 			equal(oModel.getProperty("FirstName", oContext), "Anne", "TreeBinding root content");
 			equal(oModel.getProperty("LastName", oContext), "Dodsworth", "TreeBinding root content");
 
-			start();
+			done();
 		};
 
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts();
 	});
 
-	asyncTest("Has Children", function(){
+	QUnit.test("Has Children", function(assert){
+		var done = assert.async();
 		createTreeBinding("/Employees(2)", null, [], {
 			navigation: {
 				Employees: "Employees1",
@@ -281,14 +285,15 @@
 			aSubContexts = oBinding.getNodeContexts(aContexts[3]);
 			ok(oBinding.hasChildren(aContexts[3]), " node context should have children");
 
-			start();
+			done();
 		};
 
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts();
 	});
 
-	asyncTest("Bind an aggregation", function(){
+	QUnit.test("Bind an aggregation", function(assert){
+		var done = assert.async();
 		createTreeBinding("/Employees", null, [], {
 			navigation: {
 				Employees: "Employees1",
@@ -367,14 +372,15 @@
 			equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
 
 			oBinding.detachChange(handler1);
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts();
 	});
 
-	asyncTest("Refresh", function(){
+	QUnit.test("Refresh", function(assert){
+		var done = assert.async();
 		createTreeBinding("/Employees(2)", null, [], {
 			navigation: {
 				Employees: "Employees1",
@@ -489,7 +495,7 @@
 			}, "FinalLengths object has value for root");
 
 			oBinding.detachChange(handler3);
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -532,7 +538,8 @@
 		equal(sMessage, "Filtering is currently not possible in the ODataTreeBinding", "Check warning message");
 	});
 
-	asyncTest("Paging", function() {
+	QUnit.test("Paging", function(assert) {
+		var done = assert.async();
 		createTreeBinding("/Employees", null, [], {
 			navigation: {
 				Employees: "Employees1",
@@ -588,7 +595,7 @@
 			equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
 
 			oBinding.detachChange(handler1);
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -616,7 +623,8 @@
 		equal(oBinding.bHasTreeAnnotations, true, "TreeBinding Metadata should be available");
 	});
 
-	asyncTest("TreeBinding getRootContexts getNodeContexts", function(){
+	QUnit.test("TreeBinding getRootContexts getNodeContexts", function(assert){
+		var done = assert.async();
 		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
 
 		var oContext;
@@ -652,7 +660,7 @@
 
 				oBinding.detachChange(handler1);
 
-				start();
+				done();
 			}
 		};
 
@@ -660,7 +668,8 @@
 		oBinding.getRootContexts();
 	});
 
-	asyncTest("Display root node", function(){
+	QUnit.test("Display root node", function(assert){
+		var done = assert.async();
 		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
 			displayRootNode: true
 		});
@@ -713,14 +722,15 @@
 			equal(oModel.getProperty("FinancialStatementItem", oContext), "1", "TreeBinding node content");
 
 			oBinding.detachChange(handler2);
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts();
 	});
 
-	asyncTest("Number of expanded levels", function(){
+	QUnit.test("Number of expanded levels", function(assert){
+		var done = assert.async();
 		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
 			displayRootNode: true,
 			numberOfExpandedLevels: 2
@@ -778,14 +788,15 @@
 			aSubContexts = oBinding.getNodeContexts(oContext);
 			equal(aSubContexts.length, 0, "TreeBinding nodeContexts length - no children anymore");
 
-			start();
+			done();
 		};
 
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts();
 	});
 
-	asyncTest("Paging", function() {
+	QUnit.test("Paging", function(assert) {
+		var done = assert.async();
 		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
 
 		var oContext;
@@ -860,7 +871,7 @@
 			equal(oModel.getProperty("FinancialStatementItem", oContext), "2050000", "TreeBinding node content");
 
 			oBinding.detachChange(handler2);
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);

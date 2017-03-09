@@ -126,7 +126,8 @@
 		}
 	});
 
-	asyncTest("Initial Test", function () {
+	QUnit.test("Initial Test", function (assert) {
+		var done = assert.async();
 		this.oModel.attachMetadataLoaded(function() {
 			this.oTable = createTable.call(this, {rootLevel: 1});
 
@@ -151,7 +152,7 @@
 				}
 
 				equal(iCountContexts, 1, "Only one row should have a context");
-				start();
+				done();
 			};
 
 			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
@@ -160,7 +161,8 @@
 		}, this);
 	});
 
-	asyncTest("Expand and Collapse", function () {
+	QUnit.test("Expand and Collapse", function (assert) {
+		var done = assert.async();
 		this.oModel.attachMetadataLoaded(function() {
 			this.oTable = createTable.call(this, {
 				rootLevel: 1,
@@ -332,7 +334,7 @@
 				ok(!this.oTable.isExpanded(31), "Node 001114 NOT expanded");
 				ok(this.oTable.isExpanded(32), "Node 001131 expanded");
 				ok(!this.oTable.isExpanded(33), "Node 001132 NOT expanded");
-				start();
+				done();
 			};
 
 			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
@@ -341,7 +343,8 @@
 		}, this);
 	});
 
-	asyncTest("Expand First Level", function () {
+	QUnit.test("Expand First Level", function (assert) {
+		var done = assert.async();
 		this.oModel.attachMetadataLoaded(function() {
 			this.oTable = createTable.call(this, {rootLevel: 1, expandFirstLevel: true, visibleRowCount:15});
 
@@ -376,7 +379,7 @@
 				equal(this.oTable.getContextByIndex(1).getProperty("HierarchyNode"), "000002", "First child of Root Node is 000002");
 				equal(this.oTable.getContextByIndex(9).getProperty("HierarchyNode"), "001180", "Last child of Root Node is 001180");
 
-				start();
+				done();
 
 			};
 
@@ -385,7 +388,8 @@
 		}, this);
 	});
 
-	asyncTest("Root Level 2", function () {
+	QUnit.test("Root Level 2", function (assert) {
+		var done = assert.async();
 		this.oModel.attachMetadataLoaded(function() {
 			this.oTable = createTable.call(this, {rootLevel: 2});
 			var oBinding;
@@ -415,7 +419,7 @@
 				equal(this.oTable.getContextByIndex(8).getProperty("HierarchyNode"), "001180", "Last  Root Node is 001180");
 				equal(this.oTable.getContextByIndex(9), undefined, "There should only be 9 Rows");
 
-				start();
+				done();
 
 			};
 			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
@@ -423,7 +427,8 @@
 		}, this);
 	});
 
-	asyncTest("Selection", function () {
+	QUnit.test("Selection", function (assert) {
+		var done = assert.async();
 		this.oModel.attachMetadataLoaded(function() {
 			this.oTable = createTable.call(this, {rootLevel: 1, expandFirstLevel: true, visibleRowCount:15});
 			var oBinding;
@@ -535,7 +540,7 @@
 				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 0, "No row selected");
 				equal(this.oTable.$().find(".sapUiTableRowSel").length, 0, "No Row and RowHeader should be selected");
 
-				start();
+				done();
 			}
 
 			attachEventHandler(this.oTable, 1, fnHandler1, this);
@@ -543,7 +548,8 @@
 		}, this);
 	});
 
-	asyncTest("SelectAll with scrolling and paging", function () {
+	QUnit.test("SelectAll with scrolling and paging", function (assert) {
+		var done = assert.async();
 		this.oModel.attachMetadataLoaded(function() {
 			this.oTable = createTable.call(this, {rootLevel: 2, expandFirstLevel:true});
 			var oBinding;
@@ -566,7 +572,7 @@
 						this.oTable.detachEvent("_rowsUpdated", fnVisibleRowHandler);
 						equal(this.oTable.getSelectedIndices().length, 55, "55 Nodes in Tree, all selected");
 						i = 99999;
-						start();
+						done();
 					}
 				};
 
@@ -579,7 +585,8 @@
 		}, this);
 	});
 
-	asyncTest("Change rootLevel", function () {
+	QUnit.test("Change rootLevel", function (assert) {
+		var done = assert.async();
 		this.oModel.attachMetadataLoaded(function() {
 			this.oTable = createTable.call(this, {rootLevel: 2});
 			var oBinding;
@@ -595,7 +602,7 @@
 			var fnHandler2 = function() {
 				equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
 				equal(this.oTable.getRootLevel(), 1, "Root Level is 0");
-				start();
+				done();
 			};
 
 			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
@@ -603,7 +610,8 @@
 		}, this);
 	});
 
-	asyncTest("Relative Binding", function () {
+	QUnit.test("Relative Binding", function (assert) {
+		var done = assert.async();
 		this.oModel.attachMetadataLoaded(function() {
 			this.oTable = createTable.call(this, {rootLevel: 2});
 			var oBinding;
@@ -623,7 +631,7 @@
 			var fnHandler2 = function() {
 				equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
 				equal(this.oTable.getRootLevel(), 1, "Root Level is 0");
-				start();
+				done();
 			};
 
 			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);

@@ -219,10 +219,10 @@ sap.ui.ux3.DataSetSimpleView</title>
 						"selectedView: view2 selected");
 			});
 
-	asyncTest("rendering",4, function() {
+	QUnit.test("rendering",4, function(assert) {
+		var done = assert.async();
 		oDataSet.placeAt("content");
 		setTimeout(function() {
-			start();
 			ok(jQuery.sap.domById(oDataSet.getId()),
 					"dataset should exist in the page");
 			ok(jQuery.sap.domById(oDataSet.getId() + "-searchValue"),
@@ -231,6 +231,7 @@ sap.ui.ux3.DataSetSimpleView</title>
 					"view button 1 should exist in the page");
 			ok(jQuery.sap.domById(oDataSet.getId() + "-view-"+ oDataSet.getViews()[1].getId()),
 					"view button 2 should exist in the page");
+			done();
 		}, 1000);
 	});
 
@@ -253,13 +254,14 @@ sap.ui.ux3.DataSetSimpleView</title>
 				"click", 1, 1, 1, 1);
 	});
 
-	asyncTest("switch views", 2, function() {
+	QUnit.test("switch views", 2, function(assert) {
+		var done = assert.async();
 		ok(oDataSetSimpleView2.getDomRef(),"view 2 must be rendered");
 		qutils.triggerMouseEvent(jQuery.sap.byId(oDataSet.getId() + "-view-"+ oDataSet.getViews()[0].getId()),
 				"click", 1, 1, 1, 1);
 		setTimeout(function() {
-			start();
 			ok(oDataSetSimpleView.getDomRef(),"view 1 must be rendered");
+			done();
 		},500);
 	});
 

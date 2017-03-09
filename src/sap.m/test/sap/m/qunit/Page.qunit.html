@@ -247,7 +247,8 @@
 			if (sap.ui.Device.browser.chrome) {
 				if (sap.ui.Device.os.ios) {
 
-					asyncTest("NavButton", function() {
+					QUnit.test("NavButton", function(assert) {
+						var done = assert.async();
 						ok(jQuery.sap.byId("myFirstPage-navButton").hasClass("sapMBtnBack"), "back button should be rendered");
 						equal(jQuery.sap.domById("mySecondPage-navButton"), undefined, "up button should not be rendered");
 						oPage.setShowNavButton(false);
@@ -255,7 +256,7 @@
 						setTimeout(function() {
 							equal(jQuery.sap.domById("myFirstPage-navButton"), undefined, "back button should not be rendered");
 							ok(jQuery.sap.domById("mySecondPage-navButton"), "up button should be rendered");
-							start();
+							done();
 						}, 10);
 					});
 
@@ -265,13 +266,14 @@
 
 				} else if (sap.ui.Device.os.android) {
 
-					asyncTest("NavButton", function() {
+					QUnit.test("NavButton", function(assert) {
+						var done = assert.async();
 						ok(jQuery.sap.byId("myFirstPage-navButton").hasClass("sapMBtnUp"), "up button should be rendered");
 						equal(jQuery.sap.domById("mySecondPage-navButton"), undefined, "up button should not be rendered");
 						oPage2.setShowNavButton(true);
 						setTimeout(function() {
 							ok(jQuery.sap.domById("mySecondPage-navButton"), "up button should be rendered");
-							start();
+							done();
 						}, 10);
 					});
 
@@ -284,7 +286,8 @@
 						}
 					});
 
-					asyncTest("Icon", function() {
+					QUnit.test("Icon", function(assert) {
+						var done = assert.async();
 						ok(jQuery.sap.byId("myFirstPage-navButton").children("myFirstPage-navButton-img"), "up button should be rendered with the icon");
 						equal(jQuery.sap.domById("myFirstPage-icon"), undefined, "app Icon should not be rendered");
 						oPage.setShowNavButton(false);
@@ -294,7 +297,7 @@
 							} else {
 								equal(jQuery.sap.domById("myFirstPage-icon"), undefined, "app Icon should not be rendered");
 							}
-							start();
+							done();
 						}, 10);
 					});
 
@@ -438,7 +441,8 @@
 				}
 			});
 
-			QUnit.asyncTest("Busy Indication within Page (only content area)", function(assert){
+			QUnit.test("Busy Indication within Page (only content area)", function(assert){
+				var done = assert.async();
 				var sDesiredZIndex = "3";
 
 				oPage.setBusy(true);
@@ -448,11 +452,12 @@
 					var sZIndex = jQuery('.sapUiLocalBusyIndicator').css('z-index');
 					assert.strictEqual(sZIndex, sDesiredZIndex, "z-index of the BusyIndicator is set correctly for Page with header/footer also covered");
 
-					start();
+					done();
 				});
 			});
 
-			QUnit.asyncTest("Busy Indication within Page (also covering header/footer)", function(assert){
+			QUnit.test("Busy Indication within Page (also covering header/footer)", function(assert){
+				var done = assert.async();
 				var sDesiredZIndex = "auto";
 
 				oPage.setContentOnlyBusy(true);
@@ -464,7 +469,7 @@
 
 					assert.strictEqual(sZIndex, sDesiredZIndex, "z-index of the BusyIndicator is set correctly for Page with only content covered");
 
-					start();
+					done();
 				});
 			});
 

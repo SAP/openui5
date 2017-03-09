@@ -248,24 +248,26 @@
 		equal(oLabel.getText(), "rat", "new text value from model");
 	});
 
-	asyncTest("test XMLModel loadData",function(){
+	QUnit.test("test XMLModel loadData",function(assert){
+		var done = assert.async();
 		var testModel = new sap.ui.model.xml.XMLModel();
 		testModel.loadData("testdata.xml");
 		testModel.attachRequestCompleted(function() {
 			equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
 			equal(testModel.getProperty("/bar"), "ABCDEFG");
 			equal(testModel.getProperty("/baz"), "[52, 97]");
-			start();          // resume normal testing
+			done();          // resume normal testing
 		});
 	});
 
-	asyncTest("test XMLModel loadData constructor",function(){
+	QUnit.test("test XMLModel loadData constructor",function(assert){
+		var done = assert.async();
 		var testModel = new sap.ui.model.xml.XMLModel("testdata.xml");
 		testModel.attachRequestCompleted(function() {
 			equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
 			equal(testModel.getProperty("/bar"), "ABCDEFG");
 			equal(testModel.getProperty("/baz"), "[52, 97]");
-			start();          // resume normal testing
+			done();          // resume normal testing
 		});
 	});
 

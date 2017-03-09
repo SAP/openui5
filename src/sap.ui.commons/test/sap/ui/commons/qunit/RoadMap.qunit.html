@@ -205,14 +205,15 @@
 
 	QUnit.module("Interaction - Mouse");
 
-	asyncTest("Click on step", function() {
+	QUnit.test("Click on step", function(assert) {
+		var done = assert.async();
 		var handler = function(oControlEvent){
 			equals(oControlEvent.getParameter("stepId"), "s5a", "Selected item in event after mouse click:");
 			ok(jQuery("#s5a").hasClass("sapUiRoadMapSelected"), "Selected Step has special CSS class");
 			ok(!jQuery("#s4").hasClass("sapUiRoadMapSelected"), "Previous selected Step has no special CSS class anymore");
 			setTimeout(function(){
-				start();
 				checkFocus("s5a-box", "Focus on clicked step");
+				done();
 			}, 0);
 			oRoadMap1.detachStepSelected(handler);
 		};
@@ -220,25 +221,27 @@
 		qutils.triggerEvent("click", "s5a", {}); //Focus is set automatically by the step when selected
 	});
 
-	asyncTest("Click on disabled step", function() {
+	QUnit.test("Click on disabled step", function(assert) {
+		var done = assert.async();
 		var handler = function(oControlEvent){
-			start();
 			ok(false, "Event must not be triggered!!");
 			oRoadMap1.detachStepSelected(handler);
+			done();
 		};
 		oRoadMap1.attachStepSelected(handler);
 		qutils.triggerEvent("click", "s2", {});
 		jQuery("#s2-box").get(0).focus(); //Focus must be set manually to get the "real" behavior
 		setTimeout(function(){
-			start();
 			ok(jQuery("#s5a").hasClass("sapUiRoadMapSelected"), "Selected Step has still special CSS class");
 			ok(!jQuery("#s2").hasClass("sapUiRoadMapSelected"), "Clicked Step has no special CSS class");
 			checkFocus("s2-box", "Focus on clicked step");
 			oRoadMap1.detachStepSelected(handler);
+			done();
 		}, 500);
 	});
 
-	asyncTest("Click on expandable step (not expanded)", function() {
+	QUnit.test("Click on expandable step (not expanded)", function(assert) {
+		var done = assert.async();
 		var bExpandEventFired = false;
 		var handler = function(oControlEvent){
 			equals(oControlEvent.getParameter("stepId"), "s3", "Selected item in select event after mouse click:");
@@ -247,8 +250,8 @@
 			ok(bExpandEventFired, "Expand event was fired");
 			checkExpandState(3, true);
 			setTimeout(function(){
-				start();
 				checkFocus("s3-box", "Focus on clicked step");
+				done();
 			}, 0);
 			oRoadMap1.detachStepSelected(handler);
 		};
@@ -264,7 +267,8 @@
 		qutils.triggerEvent("click", "s3", {}); //Focus is set automatically by the step when selected
 	});
 
-	asyncTest("Click on expandable step (expanded)", function() {
+	QUnit.test("Click on expandable step (expanded)", function(assert) {
+		var done = assert.async();
 		var bExpandEventFired = false;
 		ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
 
@@ -280,12 +284,12 @@
 		};
 
 		setTimeout(function(){
-			start();
 			ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
 			checkExpandState(3, false);
 			checkFocus("s3-box", "Focus on clicked step");
 			ok(bExpandEventFired, "Expand event was fired");
 			oRoadMap1.detachStepSelected(handler);
+			done();
 		}, 1000);
 
 		oRoadMap1.attachStepSelected(handler);
@@ -293,32 +297,35 @@
 		qutils.triggerEvent("click", "s3", {}); //Focus is set automatically by the step when selected
 	});
 
-	asyncTest("Click on left scroll overflow", function() {
+	QUnit.test("Click on left scroll overflow", function(assert) {
+		var done = assert.async();
 		setTimeout(function(){
-			start();
 			ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
 			equals(jQuery("#rm1-steparea").scrollLeft(), 0, "Area scrolled to 1. step");
 			checkFocus("s3-box", "Focus still on previously clicked step");
+			done();
 		}, 1500);
 		qutils.triggerEvent("click", "rm1-Start", {}); //Focus is set automatically by the step when selected
 	});
 
-	asyncTest("Click on left scroll overflow (disabled)", function() {
+	QUnit.test("Click on left scroll overflow (disabled)", function(assert) {
+		var done = assert.async();
 		setTimeout(function(){
-			start();
 			ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
 			equals(jQuery("#rm1-steparea").scrollLeft(), 0, "Area scrolled to 1. step");
 			checkFocus("s3-box", "Focus still on previously clicked step");
+			done();
 		}, 1500);
 		qutils.triggerEvent("click", "rm1-Start", {}); //Focus is set automatically by the step when selected
 	});
 
-	asyncTest("Click on right scroll overflow", function() {
+	QUnit.test("Click on right scroll overflow", function(assert) {
+		var done = assert.async();
 		setTimeout(function(){
-			start();
 			ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
 			equals(jQuery("#rm1-steparea").scrollLeft(), jQuery("#s1").width(), "Area scrolled to 2. step");
 			checkFocus("s3-box", "Focus still on previously clicked step");
+			done();
 		}, 1500);
 		qutils.triggerEvent("click", "rm1-End", {}); //Focus is set automatically by the step when selected
 	});
@@ -326,67 +333,72 @@
 
 	QUnit.module("Interaction - Keyboard");
 
-	asyncTest("SPACE key on step", function() {
+	QUnit.test("SPACE key on step", function(assert) {
+		var done = assert.async();
 		var handler = function(oControlEvent){
 			equals(oControlEvent.getParameter("stepId"), "s5a", "Selected item in event after SPACE:");
 			ok(jQuery("#s5a").hasClass("sapUiRoadMapSelected"), "Selected Step has special CSS class");
 			ok(!jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Previous selected Step has no special CSS class anymore");
-			start();
 			oRoadMap1.detachStepSelected(handler);
+			done();
 		};
 		oRoadMap1.attachStepSelected(handler);
 		jQuery("#s5a-box").get(0).focus();
 		qutils.triggerKeyboardEvent("s5a", "SPACE");
 	});
 
-	asyncTest("ENTER key on step", function() {
+	QUnit.test("ENTER key on step", function(assert) {
+		var done = assert.async();
 		var handler = function(oControlEvent){
 			equals(oControlEvent.getParameter("stepId"), "s4", "Selected item in event after ENTER:");
 			ok(jQuery("#s4").hasClass("sapUiRoadMapSelected"), "Selected Step has special CSS class");
 			ok(!jQuery("#s5a").hasClass("sapUiRoadMapSelected"), "Previous selected Step has no special CSS class anymore");
-			start();
 			oRoadMap1.detachStepSelected(handler);
+			done();
 		};
 		oRoadMap1.attachStepSelected(handler);
 		jQuery("#s4-box").get(0).focus();
 		qutils.triggerKeyboardEvent("s4", "ENTER");
 	});
 
-	asyncTest("SPACE key on disabled step", function() {
+	QUnit.test("SPACE key on disabled step", function(assert) {
+		var done = assert.async();
 		var handler = function(oControlEvent){
-			start();
 			ok(false, "Event must not be triggered!!");
 			oRoadMap1.detachStepSelected(handler);
+			done();
 		};
 		oRoadMap1.attachStepSelected(handler);
 		jQuery("#s2-box").get(0).focus();
 		qutils.triggerKeyboardEvent("s2", "SPACE");
 		setTimeout(function(){
-			start();
 			ok(jQuery("#s4").hasClass("sapUiRoadMapSelected"), "Selected Step has still special CSS class");
 			ok(!jQuery("#s2").hasClass("sapUiRoadMapSelected"), "Current Step has no special CSS class");
 			oRoadMap1.detachStepSelected(handler);
+			done();
 		}, 500);
 	});
 
-	asyncTest("ENTER key on disabled step", function() {
+	QUnit.test("ENTER key on disabled step", function(assert) {
+		var done = assert.async();
 		var handler = function(oControlEvent){
-			start();
 			ok(false, "Event must not be triggered!!");
 			oRoadMap1.detachStepSelected(handler);
+			done();
 		};
 		oRoadMap1.attachStepSelected(handler);
 		jQuery("#s2-box").get(0).focus();
 		qutils.triggerKeyboardEvent("s2", "ENTER");
 		setTimeout(function(){
-			start();
 			ok(jQuery("#s4").hasClass("sapUiRoadMapSelected"), "Selected Step has still special CSS class");
 			ok(!jQuery("#s2").hasClass("sapUiRoadMapSelected"), "Current Step has no special CSS class");
 			oRoadMap1.detachStepSelected(handler);
+			done();
 		}, 500);
 	});
 
-	asyncTest("SPACE key expandable step (not expanded)", function() {
+	QUnit.test("SPACE key expandable step (not expanded)", function(assert) {
+		var done = assert.async();
 		var bExpandEventFired = false;
 		var handler = function(oControlEvent){
 			equals(oControlEvent.getParameter("stepId"), "s3", "Selected item in event after SPACE:");
@@ -394,8 +406,8 @@
 			ok(!jQuery("#4").hasClass("sapUiRoadMapSelected"), "Previous selected Step has no special CSS class anymore");
 			ok(bExpandEventFired, "Expand event was fired");
 			checkExpandState(3, true);
-			start();
 			oRoadMap1.detachStepSelected(handler);
+			done();
 		};
 		var handler2 = function(oControlEvent){
 			var oStep = sap.ui.getCore().byId(oControlEvent.getParameter("stepId"));
@@ -411,7 +423,8 @@
 		qutils.triggerKeyboardEvent("s3", "SPACE");
 	});
 
-	asyncTest("SPACE key expandable step (expanded)", function() {
+	QUnit.test("SPACE key expandable step (expanded)", function(assert) {
+		var done = assert.async();
 		var bExpandEventFired = false;
 		ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
 
@@ -427,12 +440,12 @@
 		};
 
 		setTimeout(function(){
-			start();
 			ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
 			checkExpandState(3, false);
 			checkFocus("s3-box", "Focus on selected step");
 			ok(bExpandEventFired, "Expand event was fired");
 			oRoadMap1.detachStepSelected(handler);
+			done();
 		}, 1000);
 
 		oRoadMap1.attachStepSelected(handler);
@@ -440,7 +453,8 @@
 		qutils.triggerKeyboardEvent("s3", "SPACE");
 	});
 
-	asyncTest("ENTER key expandable step (not expanded)", function() {
+	QUnit.test("ENTER key expandable step (not expanded)", function(assert) {
+		var done = assert.async();
 		var bExpandEventFired = false;
 		ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
 
@@ -456,12 +470,12 @@
 		};
 
 		setTimeout(function(){
-			start();
 			ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
 			checkExpandState(3, true);
 			checkFocus("s3-box", "Focus on selected step");
 			ok(bExpandEventFired, "Expand event was fired");
 			oRoadMap1.detachStepSelected(handler);
+			done();
 		}, 1000);
 
 		oRoadMap1.attachStepSelected(handler);
@@ -469,7 +483,8 @@
 		qutils.triggerKeyboardEvent("s3", "ENTER");
 	});
 
-	asyncTest("ENTER key expandable step (expanded)", function() {
+	QUnit.test("ENTER key expandable step (expanded)", function(assert) {
+		var done = assert.async();
 		var bExpandEventFired = false;
 		ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
 
@@ -485,12 +500,12 @@
 		};
 
 		setTimeout(function(){
-			start();
 			ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
 			checkExpandState(3, false);
 			checkFocus("s3-box", "Focus on selected step");
 			ok(bExpandEventFired, "Expand event was fired");
 			oRoadMap1.detachStepSelected(handler);
+			done();
 		}, 1000);
 
 		oRoadMap1.attachStepSelected(handler);
@@ -498,7 +513,8 @@
 		qutils.triggerKeyboardEvent("s3", "ENTER");
 	});
 
-	asyncTest("Item navigation", function() {
+	QUnit.test("Item navigation", function(assert) {
+		var done = assert.async();
 		jQuery("#rm1").get(0).focus();
 		setTimeout(function(){
 			checkFocus("s2-box", "First visible step is focused when entering the Roadmap");
@@ -530,7 +546,7 @@
 											setTimeout(function(){
 												checkFocus("s5a-box", "Step 5a has focus after ARROW_DOWN");
 												equals(jQuery("#rm1-steparea").scrollLeft(), jQuery("#s1").width(), "Area scrolled to 2. step");
-												start();
+												done();
 											}, 500);
 										}, 500);
 									}, 500);
@@ -543,7 +559,8 @@
 		}, 0);
 	});
 
-	asyncTest("Item navigation - HOME / END", function() {
+	QUnit.test("Item navigation - HOME / END", function(assert) {
+		var done = assert.async();
 		jQuery("#rm1").get(0).focus();
 		setTimeout(function(){
 			checkFocus("s2-box", "First visible step is focused when entering the Roadmap");
@@ -555,7 +572,7 @@
 				setTimeout(function(){
 					checkFocus("s1-box", "Step 1 has focus after HOME");
 					equals(jQuery("#rm1-steparea").scrollLeft(), 0, "Area scrolled to step 1");
-					start();
+					done();
 				}, 1200);
 			}, 1200);
 		}, 0);

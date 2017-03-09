@@ -244,7 +244,8 @@
 
 	//we can't run this test in firefox properly as then is called synchronously in firefox
 	if (!sap.ui.Device.browser.firefox) {
-		asyncTest("Test async mode", function(){
+		QUnit.test("Test async mode", function(assert){
+			var done = assert.async();
 			expect(13);
 			ok(oModel, "model must exist after creation");
 			ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
@@ -265,11 +266,12 @@
 				equal(oLabel.getText(), "A text en", "Texts available after async load");
 				equal(oModel.getProperty("TEST_TEXT"), "A text en", "getProperty returns text after async load");
 				ok(oBundle == oModel._oResourceBundle, "A text en", "Bundle available after async load");
-				start();
+				done();
 			});
 		});
 	}
-	asyncTest("Enhancement after load", function(){
+	QUnit.test("Enhancement after load", function(assert){
+		var done = assert.async();
 		equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
 		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
 
@@ -280,12 +282,13 @@
 			oPromise.then(function(){
 				equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 				equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
-				start();
+				done();
 			});
 		});
 	});
 
-	asyncTest("Enhancement after load (with bundle)", function(){
+	QUnit.test("Enhancement after load (with bundle)", function(assert){
+		var done = assert.async();
 		equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
 		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
 
@@ -297,12 +300,13 @@
 			oPromise.then(function(){
 				equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 				equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
-				start();
+				done();
 			});
 		});
 	});
 
-	asyncTest("Enhancement before load", function(){
+	QUnit.test("Enhancement before load", function(assert){
+		var done = assert.async();
 		equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
 		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
 		var oPromise = oModel.enhance({bundleUrl:"./testdata/messages_custom.properties"});
@@ -312,13 +316,14 @@
 		Promise.all([oModel.getResourceBundle(), oPromise]).then(function(args){
 			equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct after async load");
 			equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct after async load");
-			start();
+			done();
 		});
 	});
 
 	//we can't run this test in firefox properly as then is called synchronously in firefox
 	if (!sap.ui.Device.browser.firefox) {
-		asyncTest("Enhancement before load (with bundle)", function(){
+		QUnit.test("Enhancement before load (with bundle)", function(assert){
+			var done = assert.async();
 			equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
 			equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
 			var oBundle = jQuery.sap.resources({url: "./testdata/messages_custom.properties"});
@@ -329,12 +334,13 @@
 			Promise.all([oModel.getResourceBundle(), oPromise]).then(function(args){
 				equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct after async load");
 				equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct after async load");
-				start();
+				done();
 			});
 		});
 	}
 
-	asyncTest("Events", function(){
+	QUnit.test("Events", function(assert){
+		var done = assert.async();
 		equal(oLabel2.getText(), "", "Initially no texts available");
 		equal(oModel.getProperty("TEST_TEXT"), null, "Initially getProperty returns null");
 
@@ -345,12 +351,13 @@
 		oModel.attachRequestCompleted(function(){
 			equal(oLabel2.getText(), "A text en", "RequestCompleted: Texts available after async load");
 			equal(oModel.getProperty("TEST_TEXT"), "A text en", "RequestCompleted: getProperty returns text after async load");
-			start();
+			done();
 		});
 	});
 
 
-	asyncTest("OneWay Binding and Language Change (Asynchronous)", function() {
+	QUnit.test("OneWay Binding and Language Change (Asynchronous)", function(assert) {
+		var done = assert.async();
 		expect(2);
 		var oBtn = new sap.ui.testlib.TestButton({
 			text: "{async5>TEST_TEXT}"
@@ -374,7 +381,7 @@
 
 				oBtn.destroy();
 				oAsyncModel.destroy();
-				start();
+				done();
 			}
 		});
 

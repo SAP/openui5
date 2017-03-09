@@ -142,7 +142,8 @@
   		ok(!$pages.children(":eq(3)").hasClass("sapUiPagCurrentPage"), "second to last page link should not be current");
 		});
 
-		asyncTest("Trigger Back (mouse)", function() {
+		QUnit.test("Trigger Back (mouse)", function(assert) {
+			var done = assert.async();
 			expect(16); // including event handlers
 
 			// click back multiple times
@@ -173,11 +174,12 @@
 	  		ok(!$pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should not be current");
 	  		ok($pages.children(":eq(2)").hasClass("sapUiPagCurrentPage"), "middle page link should be current");
 	  		ok(!$pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should not be current");
-	  		start();
+	  		done();
 			}, 600);
 		});
 
-		asyncTest("Trigger First (mouse)", function() {
+		QUnit.test("Trigger First (mouse)", function(assert) {
+			var done = assert.async();
 			expect(12); // including event handler
 
 			// click "Page 1"
@@ -200,7 +202,7 @@
 	  		ok($pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should be current");
 	  		ok(!$pages.children(":eq(1)").hasClass("sapUiPagCurrentPage"), "second page link should not be current");
 	  		ok(!$pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should not be current");
-	  		start();
+	  		done();
 			}, 600);
 		});
 

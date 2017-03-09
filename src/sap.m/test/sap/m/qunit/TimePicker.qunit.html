@@ -1327,7 +1327,8 @@
 			tp.destroy();
 		});
 
-		asyncTest("data binding with OData", function() {
+		QUnit.test("data binding with OData", function(assert) {
+			var done = assert.async();
 			sap.ui.controller("my.own.controller", {
 				onInit: function() {
 					this.getView().bindObject("/EdmTypesCollection(ID='1')");
@@ -1358,7 +1359,7 @@
 				equals(view.byId("tp2")._$input.val(), "11:33:55 AM", "TP2 has coorect value!");
 				equals(view.byId("tp3")._$input.val(), "11:33 AM", "TP3 has coorect value!");
 				equals(view.byId("tp4")._$input.val(), "11:33", "TP4 has coorect value!");
-				start();
+				done();
 			});
 		});
 

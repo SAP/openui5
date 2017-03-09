@@ -152,12 +152,13 @@
 		equals(oRating.getValue(), 3, "Value after click:");
 	});
 
-	asyncTest("Change Event - Keyboard SPACE", function() {
+	QUnit.test("Change Event - Keyboard SPACE", function(assert) {
+		var done = assert.async();
 		var oRating = oRatings["oRating1"];
 		var handler = function(oControlEvent){
-			start();
 			equals(oControlEvent.getParameter("value"), 4, "Value of change event after keyboard SPACE:");
 			oRating.detachChange(handler);
+			done();
 		};
 		oRating.attachChange(handler);
 		qutils.triggerKeyboardEvent("oRating1", "ARROW_UP");
@@ -165,12 +166,13 @@
 		qutils.triggerKeyboardEvent("oRating1", "SPACE");
 	});
 
-	asyncTest("Change Event - Keyboard BLUR", function() {
+	QUnit.test("Change Event - Keyboard BLUR", function(assert) {
+		var done = assert.async();
 		var oRating = oRatings["oRating1"];
 		var handler = function(oControlEvent){
-			start();
 			equals(oControlEvent.getParameter("value"), 3, "Value of change event after keyboard BLUR:");
 			oRating.detachChange(handler);
+			done();
 		};
 		oRating.attachChange(handler);
 		qutils.triggerKeyboardEvent("oRating1", "ARROW_DOWN");
@@ -180,24 +182,24 @@
 		oRating.onfocusout(oEvent);
 	});
 
-	asyncTest("Change Event - Click (Value changed)", function() {
+	QUnit.test("Change Event - Click (Value changed)", function(assert) {
+		var done = assert.async();
 		var oRating = oRatings["oRating1"];
 		var handler = function(oControlEvent){
-			start();
 			equals(oControlEvent.getParameter("value"), 4, "Value of change event after click:");
 			oRating.detachChange(handler);
+			done();
 		};
 		oRating.attachChange(handler);
 		qutils.triggerEvent("click", "oRating1-itm-4");
 	});
 
-	asyncTest("Change Event - Click (Value not changed)", function() {
+	QUnit.test("Change Event - Click (Value not changed)", function(assert) {
 		var oRating = oRatings["oRating1"];
 		var handlerCalled = false;
 		oRating.attachChange(function(oControlEvent){
 			handlerCalled = true;
 		});
-		start();
 		qutils.triggerEvent("click", "oRating1-itm-4");
 		ok(!handlerCalled, "Event should not be triggered.");
 	});

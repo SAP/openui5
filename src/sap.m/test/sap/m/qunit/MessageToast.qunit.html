@@ -379,7 +379,8 @@
 				});
 			};
 
-			QUnit.asyncTest("Mousedown on SVG element should not throw exception", function (assert) {
+			QUnit.test("Mousedown on SVG element should not throw exception", function (assert) {
+				var done = assert.async();
 				var oSvgCircle = new sap.ui.core.HTML({
 					content: '<svg id="svg-circle" height="100" width="100">' +
 								'<circle cx="50" cy="50" r="40" fill="red"></circle>' +
@@ -392,7 +393,7 @@
 				sap.m.MessageToast.show("test", {
 					onClose: function () {
 						assert.ok(true, "Message toast closed with no error thrown");
-						QUnit.start();
+						done();
 					}
 				});
 
@@ -403,7 +404,8 @@
 				oSvgCircle.destroy();
 			});
 
-			asyncTest("Callback", function() {
+			QUnit.test("Callback", function(assert) {
+				var done = assert.async();
 				setTimeout(function() {
 
 					// arrange
@@ -425,7 +427,7 @@
 						hasEventListeners(document, "touchstart", false);
 
 						// start the test
-						start();
+						done();
 					}, 7000);
 				}, 0);
 			});

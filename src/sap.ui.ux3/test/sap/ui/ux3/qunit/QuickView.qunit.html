@@ -135,7 +135,8 @@
 	}
 
 	QUnit.module("QuickView: open and close");
-	asyncTest("Open QuickView", function() {
+	QUnit.test("Open QuickView", function(assert) {
+		var done = assert.async();
 		ok(true, "A-sync OK start");
 		qutils.triggerMouseEvent("QVButton", "mouseover");
 		setTimeout(function() {
@@ -143,12 +144,13 @@
 			qutils.triggerMouseEvent("QuickView", "mouseout");
 			setTimeout(function() {
 				ok(isQuickViewVisible()==false, "QuickView is not visible after mouseout");
-				start();
+				done();
 			}, 600);
 		}, 900);
 	});
 
-	asyncTest("Close using close method", function() {
+	QUnit.test("Close using close method", function(assert) {
+		var done = assert.async();
 		ok(true, "A-sync close() start");
 		qutils.triggerMouseEvent("QVButton", "mouseover");
 		setTimeout(function() {
@@ -156,13 +158,14 @@
 			oQuickView.close();
 			setTimeout(function() {
 				ok(isQuickViewVisible()==false, "QuickView is not visible after close()");
-				start();
+				done();
 			}, 500);
 		}, 700);
 	});
 
 	QUnit.module("QuickView: navigation event");
-	asyncTest("Click on a link", function() {
+	QUnit.test("Click on a link", function(assert) {
+		var done = assert.async();
 		oButton.focus();
 		ok(document.activeElement.id == "QVButton", "Focus the button initially");
 		qutils.triggerKeyboardEvent("QVButton", jQuery.sap.KeyCodes.I, false, false, true);
@@ -173,12 +176,13 @@
 			setTimeout(function(){
 				ok(isQuickViewVisible()==false, "QuickView is not visible after navigate event");
 				equal(document.activeElement.id, "QVButton", "The parent element should be focused after the focused QuickView is closed");
-				start();
+				done();
 			}, 1000); // CLOSE
 		}, 1000); // OPEN
 	});
 
-	asyncTest("Toolbar Actions", function() {
+	QUnit.test("Toolbar Actions", function(assert) {
+		var done = assert.async();
 		ok(true, "A-sync close() start");
 		qutils.triggerMouseEvent("QVButton", "mouseover");
 		setTimeout(function() {
@@ -187,14 +191,15 @@
 			setTimeout(function() {
 				ok(oActionParams.id !== undefined, "Action id is available after click on action");
 				oQuickView.close();
-				start();
+				done();
 			}, 400);
 		}, 500);
 	});
 
 	QUnit.module("QuickView: content");
 
-	asyncTest("Icons", function() {
+	QUnit.test("Icons", function(assert) {
+		var done = assert.async();
 		ok(true, "A-sync close() start");
 		qutils.triggerMouseEvent("QVButton", "mouseover");
 		setTimeout(function() {
@@ -204,7 +209,7 @@
 				ok(!jQuery('#QuickView img.sapUiUx3QVIcon').length, "QV-Icon with icon font not rendered as img");
 				ok(jQuery('#QuickView span.sapUiUx3QVIcon').length, "QV-Icon with icon font rendered as span");
 				oQuickView.close();
-				start();
+				done();
 			}, 400);
 		}, 500);
 	});

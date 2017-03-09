@@ -137,7 +137,8 @@
 			equals(oDomRef.offsetHeight, 100, "imageNoSource has the right height of 100px");
 		});
 
-		asyncTest("Dimension Changes", function() {
+		QUnit.test("Dimension Changes", function(assert) {
+			var done = assert.async();
 			// test changed dimensions
 			i2.setWidth("292px");
 			i2.setHeight("292px");
@@ -146,11 +147,12 @@
 				oDomRef = window.document.getElementById("i2");
 				equals(oDomRef.offsetWidth, 292, "i2.offsetWidth should equal 292");
 				equals(oDomRef.offsetHeight, 292, "i2.offsetHeight should equal 292");
-				start();
+				done();
 			}, 10);
 		});
 
-		asyncTest("Aspect Ratio", function() {
+		QUnit.test("Aspect Ratio", function(assert) {
+			var done = assert.async();
 			// test aspect ratio after changed dimensions
 			i2.setWidth("292px");
 			i2.setHeight("");
@@ -159,11 +161,12 @@
 				oDomRef = window.document.getElementById("i2");
 				equals(oDomRef.offsetWidth, 292, "i2.offsetWidth should equal 292");
 				equals(oDomRef.offsetHeight, 144, "i2.offsetHeight should equal 144");
-				start();
+				done();
 			}, 10);
 		});
 
-		asyncTest("Original Width", function() {
+		QUnit.test("Original Width", function(assert) {
+			var done = assert.async();
 			// test original width
 			i2.setWidth("");
 			i2.setHeight("");
@@ -172,7 +175,7 @@
 				oDomRef = window.document.getElementById("i2");
 				equals(oDomRef.offsetWidth, 73, "i2.offsetWidth should equal 73");
 				equals(oDomRef.offsetHeight, 36, "i2.offsetHeight should equal 36");
-				start();
+				done();
 			}, 10);
 		});
 

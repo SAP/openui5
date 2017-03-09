@@ -91,7 +91,8 @@
 // Test pull to refresh functionality
 	QUnit.module("Behavior");
 
-	asyncTest("Pull Down", function() {
+	QUnit.test("Pull Down", function(assert) {
+		var done = assert.async();
 		var iScroller = oPage1.getScrollDelegate()._scroller;
 
 		if (iScroller) { // this is executed when iScroll is used
@@ -144,14 +145,14 @@
 						strictEqual($P2R.children(".sapMPullDownInfo").text(), sDescription, "Initial description is restored");
 						ok($P2R.position().top + $P2R.height() - jQuery("#page1-intHeader").height() <= 0, "Control is hidden over the top of the parent container");
 						ok(!($P2R.hasClass("sapMFlip")), "Arrow is not rotated");
-						start();
+						done();
 					}, 1000);
 				}, 1000);
 			}, 1000);
 
 		} else { // this is executed when iScroll is not used (= in mouse environments)  TODO: implement test once control is implemented
 			expect(0);
-			start();
+			done();
 		}
 	});
 

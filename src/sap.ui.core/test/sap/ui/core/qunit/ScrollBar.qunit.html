@@ -108,7 +108,8 @@
 
 	QUnit.module("Event handler");
 
-	asyncTest("Rerender scrollbars", function() {
+	QUnit.test("Rerender scrollbars", function(assert) {
+		var done = assert.async();
 		equal(vSB.getScrollPosition(), 5, "1scroll position should be 5");
 		equal(hSB.getScrollPosition(), 38, "1scroll position is 38");
 		vSB.rerender();
@@ -116,12 +117,13 @@
 		window.setTimeout(function(){
 			equal(vSB.getScrollPosition(), 5, "2scroll position should be 5");
 			equal(hSB.getScrollPosition(), 38, "2scroll position is 38");
-		start();
+			done();
 		}, 100);
 	});
 
 
-	asyncTest("Scroll Event", 3, function() {
+	QUnit.test("Scroll Event", 3, function(assert) {
+		var done = assert.async();
 
 		var bScrolled = false;
 		hSB.attachScroll( function() {bScrolled = true;});
@@ -133,38 +135,36 @@
 		}
 
 	 	setTimeout(function() {
-
-			start();
 	 		equal(bScrolled, true, "Scroll event was fired");
-	 		equal(jQuery("#horiSB-sb").scrollLeft(), 15, "New scroll position of horizontal scrollbar is 15 px");
-	 	}, 100);
+			equal(jQuery("#horiSB-sb").scrollLeft(), 15, "New scroll position of horizontal scrollbar is 15 px");
+			done();
+		}, 100);
 	});
 
-	asyncTest("Scroll Scrollbars", 1, function() {
+	QUnit.test("Scroll Scrollbars", 1, function(assert) {
+		var done = assert.async();
 		vSB.setScrollPosition(8);
 		jQuery("#horiSB-sb").scrollLeft(155);
 
 		setTimeout(function() {
-
-			start();
 			equal(vSB.getScrollPosition(), "8", "scroll position is 8 step");
 			// TODO: this is quite often failing! Check why! Maybe we increase the timeout!
 			//equal(hSB.getScrollPosition(), "155", "scroll position is 155 px");
-
+			done();
 		}, 10);
 
 	});
 
 
-	asyncTest("Scroll Huge Scrollbars", 1, function() {
+	QUnit.test("Scroll Huge Scrollbars", 1, function(assert) {
+		var done = assert.async();
 		// Suport of Huge number of steps
 		vSB.setSteps(1000000); //8000000px in Chrom
 		vSB.setScrollPosition(300000);
 		vSB.rerender();
 		setTimeout(function() {
-
-			start();
 			equal(vSB.getScrollPosition(), "300000", "scroll position is 300000 step");
+			done();
 		}, 500);
 
 	});
@@ -203,15 +203,16 @@
 		}
 	});
 
-	asyncTest("Touch Scrolling", 2, function() {
+	QUnit.test("Touch Scrolling", 2, function(assert) {
+		var done = assert.async();
 		this.oVSB._handleTouchScroll(0,192);
 		this.oHSB._handleTouchScroll(155,0);
 
 		var self = this;
 		setTimeout(function() {
-			start();
 			equal(self.oVSB.getScrollPosition(), "8", "scroll position is 8 step");
 			equal(self.oHSB.getScrollPosition(), "155", "scroll position is 155 px");
+			done();
 		}, 10);
 	});
 

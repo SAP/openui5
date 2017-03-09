@@ -519,7 +519,8 @@
 						"fireChange is fired everytime when needed and _lastValue is in sync with the selected date");
 			});
 
-			asyncTest("specialDates", function() {
+			QUnit.test("specialDates", function(assert) {
+				var done = assert.async();
 				var oDate = new Date(2016, 5, 29);
 				oDP3.setDateValue(oDate);
 				oDate = new Date(2016, 5, 1);
@@ -571,12 +572,13 @@
 
 					oDP3.focus();
 					qutils.triggerEvent("click", "DP3-icon");
-					start();
+					done();
 				}, 1);
 
 			});
 
-			asyncTest("specialDates2", function() {
+			QUnit.test("specialDates2", function(assert) {
+				var done = assert.async();
 				oDP3.focus();
 				qutils.triggerEvent("click", "DP3-icon");
 
@@ -594,12 +596,13 @@
 
 					oDP3.focus();
 					qutils.triggerEvent("click", "DP3-icon");
-					start();
+					done();
 				}, 1);
 
 			});
 
-			asyncTest("specialDates3", function() {
+			QUnit.test("specialDates3", function(assert) {
+				var done = assert.async();
 				var oDate = new Date(2016, 5, 5);
 				var oSpecialDate = new sap.ui.unified.DateTypeRange("SD1", {startDate: oDate, type: "Type04"});
 				oDP3.addSpecialDate(oSpecialDate);
@@ -622,7 +625,7 @@
 
 					oDP3.focus();
 					qutils.triggerEvent("click", "DP3-icon");
-					start();
+					done();
 				}, 1);
 
 			});

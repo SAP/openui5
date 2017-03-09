@@ -310,7 +310,8 @@
 		});
 
 
-		asyncTest("Event handler methods (on...)", function() {
+		QUnit.test("Event handler methods (on...)", function(assert) {
+			var done = assert.async();
 			expect(2);
 			equal(myControl._state, "initial", "control state should be initialized");
 
@@ -320,7 +321,7 @@
 			// wait for focus to actually happen and event to be processed
 			setTimeout(function(){
 				equal(myControl._state, "hadFocus", "control state should reflect the fact that its onfocusin handler should have been executed");
-				start();
+				done();
 			}, 30);
 		});
 

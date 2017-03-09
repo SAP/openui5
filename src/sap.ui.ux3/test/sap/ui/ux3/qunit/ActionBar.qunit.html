@@ -92,7 +92,8 @@
 		ok(iVisibleChildCount == 5, iVisibleChildCount + " social actions visible");
 	});
 
-	asyncTest("Open Feed and close it again", function() {
+	QUnit.test("Open Feed and close it again", function(assert) {
+		var done = assert.async();
 		expect(2);
 		qutils.triggerMouseEvent(qutils.triggerMouseEvent("ActionBar0001-Update", "click"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
@@ -100,14 +101,15 @@
 				"Rendered update popup should be available in the page");
 			oActionBar1.closePopups();
 			setTimeout(function() {
-				start();
 				equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").length, 0,
 				"Rendered update popup should have been removed from the page");
+				done();
 			}, 500);
 		}, 500);
 	});
 
-	asyncTest("Press \"Create an Update\" (Feed)", function() {
+	QUnit.test("Press \"Create an Update\" (Feed)", function(assert) {
+		var done = assert.async();
 		expect(4);
 		qutils.triggerMouseEvent(qutils.triggerMouseEvent("ActionBar0001-Update", "click"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
@@ -121,9 +123,9 @@
 						//click on feed submit button should hide comment popup
 						qutils.triggerMouseEvent(jQuery('#'+oActionBar1.getId()+'-Feeder-send')[0], "click", 1, 1, 1, 1);
 						setTimeout(function() {
-							start();
 							equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").length, 0,
 								"Rendered update popup should have been removed from the page");
+							done();
 						}, 500);
 					}, 500);
 				}, 500);
@@ -140,7 +142,8 @@
 	}
 
 
-	asyncTest("Press \"Follow Toggle\" ", function() {
+	QUnit.test("Press \"Follow Toggle\" ", function(assert) {
+		var done = assert.async();
 		expect(14);
 		equal(oActionBar1.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
 		action = "follow";
@@ -175,7 +178,6 @@
 						equal(oActionBar1.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
 
 						setTimeout(function() {
-							start();
 							// menu entries with hold, unhold and unfollow must not exist only follow
 							ok(!jQuery.sap.domById(oActionBar1.getId() + "-holdState"),
 									"Rendered Follow Action menu with holdState should not exist in the page");
@@ -183,6 +185,7 @@
 									"Rendered Follow Action menu with unholdState should not exist in the page");
 							ok(!jQuery.sap.domById(oActionBar1.getId() + "-unfollowState"),
 									"Rendered Follow Action menu with unfollowState should not exist in the page");
+							done();
 						}, iTimeOut);
 					}, iTimeOut);
 		}, iTimeOut);
@@ -246,7 +249,8 @@
 		ok(iVisibleChildCount == 5, iVisibleChildCount + " social actions visible");
 	});
 
-	asyncTest("Press social actions programmatically using setter function", function() {
+	QUnit.test("Press social actions programmatically using setter function", function(assert) {
+		var done = assert.async();
 		expect(3);
 		oActionBar1.setFollowState(sap.ui.ux3.FollowActionState.Follow);
 		oActionBar1.setFlagState(true);
@@ -254,13 +258,13 @@
 
 
 		setTimeout(function() {
-			start();
 			ok(jQuery.sap.byId("ActionBar0001-Follow").hasClass("Follow"),
 					"Follow Icon is set");
 			ok(jQuery.sap.byId("ActionBar0001-Flag").hasClass("Selected"),
 				"Flag Icon is set");
 			ok(jQuery.sap.byId("ActionBar0001-Favorite").hasClass("Selected"),
 				"Favorite Icon is set");
+			done();
 		}, iTimeOut);
 	});
 
@@ -284,27 +288,29 @@
 
 	});
 
-	asyncTest("Disable a business action in \"More\" menu", function() {
+	QUnit.test("Disable a business action in \"More\" menu", function(assert) {
+		var done = assert.async();
 		expect(1);
 		oCreateAction.setEnabled(false);
 		setTimeout(function() {
-			start();
 			qutils.triggerMouseEvent("ActionBar0001-MoreMenuButton", "click");
 			var bIsDisabled = jQuery("#ActionBar0001-MoreMenu-MenuItem-create").hasClass("sapUiMnuItmDsbl");
 			ok(bIsDisabled, "Create action is disabled");
+			done();
 		}, 500);
 	});
 
 
 
 
-	asyncTest("Show business action buttons in \"action bar\"", function() {
+	QUnit.test("Show business action buttons in \"action bar\"", function(assert) {
+		var done = assert.async();
 		expect(1);
 		oActionBar1.setAlwaysShowMoreMenu(false);
 		setTimeout(function() {
-			start();
 			var iVisibleChildCount = jQuery("#ActionBar0001-businessActions").children(":visible").size();
 			ok(iVisibleChildCount == 3, iVisibleChildCount + " business action buttons visible");
+			done();
 		}, 500);
 	});
 
@@ -332,37 +338,40 @@
 	});
 
 
-	asyncTest("Disable a business action in toolbar", function() {
+	QUnit.test("Disable a business action in toolbar", function(assert) {
+		var done = assert.async();
 		expect(1);
 		oDeleteAction.setEnabled(false);
 		setTimeout(function() {
-			start();
 			var bIsDisabled = jQuery("#ActionBar0001-deleteButton").hasClass("sapUiBtnDsbl");
 			ok(bIsDisabled, "Delete action is disabled");
+			done();
 		}, 500);
 	});
 
 
-	asyncTest("Hide business action buttons from \"action bar\"", function() {
+	QUnit.test("Hide business action buttons from \"action bar\"", function(assert) {
+		var done = assert.async();
 		expect(2);
 		oActionBar1.setAlwaysShowMoreMenu(true);
 		setTimeout(function() {
-			start();
 			var iVisibleChildCount = jQuery("#ActionBar0001-businessActions").children(":visible").size();
 			ok(iVisibleChildCount == 1, iVisibleChildCount + " business action buttons visible");
 			var bVisible = jQuery("#ActionBar0001-MoreMenuButton").is(":visible");
 			ok(bVisible, "More Menu Button is visible");
+			done();
 		}, 500);
 	});
 
-	asyncTest("Show business action's buttons on \"action bar\" again and destroy them afterwards", function() {
+	QUnit.test("Show business action's buttons on \"action bar\" again and destroy them afterwards", function(assert) {
+		var done = assert.async();
 		expect(1);
 		oActionBar1.setAlwaysShowMoreMenu(false);
 		oActionBar1.destroyBusinessActions();
 		setTimeout(function() {
-			start();
 			var iVisibleChildCount = jQuery("#ActionBar0001-businessActions").children(":visible").size();
 			ok(iVisibleChildCount == 0, iVisibleChildCount + " business action buttons visible");
+			done();
 		}, 500);
 	});
 

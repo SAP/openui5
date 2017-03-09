@@ -286,7 +286,8 @@
 
 	});
 
-	asyncTest("Register ExtensionProvider (sync)", 21, function() {
+	QUnit.test("Register ExtensionProvider (sync)", 21, function(assert) {
+		var done = assert.async();
 
 		// Extension Provider module - used for sap.ui.mvc.Controller ExtensionProvider Tests
 		var that = this;
@@ -313,7 +314,8 @@
 
 	});
 
-	asyncTest("Register ExtensionProvider (async)", 21, function() {
+	QUnit.test("Register ExtensionProvider (async)", 21, function(assert) {
+		var done = assert.async();
 
 		// make all views async
 		var fnOrg = sap.ui.core.mvc.View.prototype._initCompositeSupport;

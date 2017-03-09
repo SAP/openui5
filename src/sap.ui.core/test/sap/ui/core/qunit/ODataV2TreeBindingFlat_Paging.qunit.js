@@ -9,7 +9,9 @@ QUnit.module("ODataTreeBinding - AutoExpand", {
 	}
 });
 
-asyncTest("Initialize & Adapter check", function(){
+QUnit.test("Initialize & Adapter check", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -29,11 +31,13 @@ asyncTest("Initialize & Adapter check", function(){
 		// $select validation
 		equal(oBinding.mParameters.select, "LEVEL,DRILLDOWN_STATE,PARENT_NODE,HIERARCHY_NODE,MAGNITUDE", "$select is complete incl. Magnitude");
 
-		start();
+		done();
 	});
 });
 
-asyncTest("Initial getContexts and Thresholding", function(){
+QUnit.test("Initial getContexts and Thresholding", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -64,7 +68,7 @@ asyncTest("Initial getContexts and Thresholding", function(){
 			var aContexts = oBinding.getContexts(10, 10, 0);
 			equal(aContexts.length, 10, "second page is loaded via thresholding");
 
-			start();
+			done();
 		};
 
 		oBinding.attachChange(handler1);
@@ -72,7 +76,9 @@ asyncTest("Initial getContexts and Thresholding", function(){
 	});
 });
 
-asyncTest("Simple Paging", function(){
+QUnit.test("Simple Paging", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -98,7 +104,7 @@ asyncTest("Simple Paging", function(){
 			var aContexts = oBinding.getContexts(60, 10, 0);
 			equal(aContexts.length, 10, "Second page starting at 60 is loaded");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -106,7 +112,9 @@ asyncTest("Simple Paging", function(){
 	});
 });
 
-asyncTest("Advanced Paging", function(){
+QUnit.test("Advanced Paging", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 0,
@@ -195,7 +203,7 @@ asyncTest("Advanced Paging", function(){
 
 			equal(aContexts.length, 70, "Everything from 0 to 70 is loaded");
 
-			start();
+			done();
 		}
 
 		function notCalledHandler () {
@@ -207,7 +215,9 @@ asyncTest("Advanced Paging", function(){
 	});
 });
 
-asyncTest("Paging when collapsing nodes", function(){
+QUnit.test("Paging when collapsing nodes", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 0,
@@ -298,7 +308,7 @@ asyncTest("Paging when collapsing nodes", function(){
 
 			//oBinding.collapse()
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -306,7 +316,9 @@ asyncTest("Paging when collapsing nodes", function(){
 	});
 });
 
-asyncTest("Application Filters are sent", function(){
+QUnit.test("Application Filters are sent", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null,
 			[new sap.ui.model.Filter("DESCRIPTION", "Contains", "x")],
@@ -386,7 +398,7 @@ asyncTest("Application Filters are sent", function(){
 			equal(aContexts[5].getProperty("HIERARCHY_NODE"), "2000", "Node Test is ok - 2nd time filtered");
 			equal(aContexts[7].getProperty("HIERARCHY_NODE"), "2002", "Node Test is ok - 2nd time filtered");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(changeHandler1);

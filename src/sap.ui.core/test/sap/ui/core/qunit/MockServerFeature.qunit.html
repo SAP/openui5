@@ -607,7 +607,8 @@ QUnit.test("POST table", function (assert) {
 	    });
 
 	// GIVEN request with $select=ID, no filter WHEN $batch GET THEN response has all data
-	    asyncTest("batch get request via sap.apf.core.request & selected ID", function () {
+	    QUnit.test("batch get request via sap.apf.core.request & selected ID", function (assert) {
+	    	var done = assert.async();
 	        expect(4);
 	        var that = this;
 	        this.oRequest = new sap.apf.core.Request(this.oInject, this.requestConfig);
@@ -617,11 +618,12 @@ QUnit.test("POST table", function (assert) {
 	            ok(result.data !== undefined, "data returned");
 	            equal(result.data.length, 53); // join on client 777
 	            ok(that.stubPutMessage.called);
-	            start();
+	            done();
 	        });
 	    });
 
-	    asyncTest("batch get & selected ID & full select", function () {
+	    QUnit.test("batch get & selected ID & full select", function (assert) {
+	    	var done = assert.async();
 	        expect(3);
 	        var that = this;
 	        this.requestConfig.selectProperties = [ 'ID', 'Currency_E', 'SAPClient' ];
@@ -631,11 +633,12 @@ QUnit.test("POST table", function (assert) {
 	            ok(result !== undefined, "Response not undefined");
 	            ok(result.data !== undefined, "data returned");
 	            equal(result.data.length, 53);  // join on client 777
-	            start();
+	            done();
 	        });
 	    });
 
-	    asyncTest("batch get & many selected & filter on SAPClient", function () {
+	    QUnit.test("batch get & many selected & filter on SAPClient", function (assert) {
+	    	var done = assert.async();
 	        expect(4);
 	        var that = this;
 
@@ -653,7 +656,7 @@ QUnit.test("POST table", function (assert) {
 	            ok(result.data !== undefined, "data returned");
 	            equal(result.data.length, 1);
 	            equal(result.data[0].ID, "ID_53");
-	            start();
+	            done();
 	        });
 	    });
 

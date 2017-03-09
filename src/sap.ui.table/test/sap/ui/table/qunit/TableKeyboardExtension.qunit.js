@@ -264,7 +264,8 @@ QUnit.test("Table Type", function(assert) {
 });
 
 
-QUnit.asyncTest("Overly / NoData focus handling", function(assert) {
+QUnit.test("Overly / NoData focus handling", function(assert) {
+	var done = assert.async();
 	function containsOrHasFocus(sIdSuffix) {
 		return jQuery.sap.containsOrEquals(oTable.getDomRef(sIdSuffix), document.activeElement);
 	}
@@ -284,7 +285,7 @@ QUnit.asyncTest("Overly / NoData focus handling", function(assert) {
 		oTable.detachEvent("_rowsUpdated", doAfterNoDataIsHidden);
 		var oElem = getColumnHeader(0);
 		assert.ok(oElem.length && oElem.get(0) === document.activeElement, "focus is on first column header after no Data dissappeared");
-		QUnit.start();
+		done();
 	}
 
 	assert.ok(!containsOrHasFocus(), "focus is not on the table before setShowOverlay");

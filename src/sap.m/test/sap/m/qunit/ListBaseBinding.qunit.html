@@ -32,11 +32,12 @@
 	sinon.config.useFakeTimers = false;
 
 	function testOData(sMessage, fnTest) {
-		asyncTest("ODATA: " + sMessage, fnTest);
+		QUnit.test("ODATA: " + sMessage, fnTest);
 
 		// stub odata constructor with the new odata version 2
 		sinon.stub(sap.ui.model.odata, "ODataModel", sap.ui.model.odata.v2.ODataModel);
-		asyncTest("ODATAV2: " + sMessage, fnTest);
+		QUnit.test("ODATAV2: " + sMessage, fnTest);
+
 		sap.ui.model.odata.ODataModel.restore();
 	}
 
@@ -116,6 +117,7 @@
 
 	QUnit.module("BusyIndicator");
 	testOData("List should show busy indicator during the binding update", function() {
+		var done = assert.async();
 		var oMockServer = startMockServer(0),
 			oList = createList({
 				busyIndicatorDelay : 0,
@@ -133,11 +135,12 @@
 		oList.done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
 	testOData("List should show busy indicator during the binding update when growing is true", function() {
+		var done = assert.async();
 		var oMockServer = startMockServer(),
 			oList = createList({
 				growing : true,
@@ -158,11 +161,12 @@
 		oList.done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
 	testOData("List should show busy indicator when there is no data found", function() {
+		var done = assert.async();
 		var oMockServer = startMockServer(),
 			oList = createList({
 				busyIndicatorDelay : 0,
@@ -183,11 +187,12 @@
 		oList.done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
 	testOData("List should respect busyIndicatorDelay property to show busy indicator.", function() {
+		var done = assert.async();
 		var iRespondDelay = 10,
 			oMockServer = startMockServer(iRespondDelay),
 			oList = createList({
@@ -202,11 +207,12 @@
 		oList.done(function() {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
 	testOData("List should respect enableBusyIndicator property to show busy indicator.", function() {
+		var done = assert.async();
 		var oMockServer = startMockServer(),
 			oList = createList({
 				enableBusyIndicator : false,
@@ -220,11 +226,12 @@
 		oList.done(function() {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
 	testOData("List should clear busy state when binding error has occured", function() {
+		var done = assert.async();
 		var oMockServer = startMockServer(),
 			oList = createList({
 				busyIndicatorDelay : 0,
@@ -247,11 +254,12 @@
 		oList.done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
 	testOData("Growing List should clear busy state and all data when binding error has occured", function() {
+		var done = assert.async();
 		var oMockServer = startMockServer(),
 			oDeferred = jQuery.Deferred(),
 			oList = createList({
@@ -284,7 +292,7 @@
 		jQuery.when(oDeferred).done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
@@ -308,6 +316,7 @@
 	});
 
 	testOData("Should not have a static after busy", function() {
+		var done = assert.async();
 		// Arrange
 		var oMockServer = startMockServer(),
 			oDeferred = jQuery.Deferred();
@@ -329,12 +338,13 @@
 			oMockServer.stop();
 			oList.destroy();
 
-			start();
+			done();
 		});
 	});
 
 	QUnit.module("Abort");
 	testOData("List should abort multiple requests and runs only the last one", function() {
+		var done = assert.async();
 
 		// arrange
 		var fnUpdateStartedSpy = this.spy(),
@@ -375,12 +385,13 @@
 			// clean up
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
 	QUnit.module("CountMode");
 	testOData("CountMode.None should show growing indicator when list is not complete yet", function() {
+		var done = assert.async();
 		var iThreshold = 10,
 			oMockServer = startMockServer(),
 			oList = createList({
@@ -403,12 +414,13 @@
 			setTimeout(function() {
 				oMockServer.stop();
 				oList.destroy();
-				start();
+				done();
 			}, 0);
 		});
 	});
 
 	testOData("CountMode.None should not show growing indicator when all items are shown", function() {
+		var done = assert.async();
 		var iThreshold = 20,
 			oMockServer = startMockServer(),
 			oList = createList({
@@ -429,7 +441,7 @@
 		oList.done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
@@ -453,6 +465,7 @@
 
 	QUnit.module("FocusAfterBindingUpdate");
 	document.hasFocus() && testOData("Focus should be retained after binding update", function() {
+		var done = assert.async();
 		var sFocusedControlId,
 			oMockServer = startMockServer(),
 			oDeferred = jQuery.Deferred(),
@@ -496,11 +509,12 @@
 		jQuery.when(oDeferred).done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
 	testOData("Last setGrowingThreshold should be respected before data fetching", function() {
+		var done = assert.async();
 		var iInitThreshold = 5,
 			iLastThreshold = 10,
 			oMockServer = startMockServer(),
@@ -518,12 +532,13 @@
 		oList.done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
 	QUnit.module("Upwards Growing Direction");
 	testOData("Should fetch the data and render in reverse order", function() {
+		var done = assert.async();
 		var iThreshold = 5,
 			oDeferred = jQuery.Deferred(),
 			oMockServer = startMockServer(),
@@ -563,12 +578,13 @@
 		jQuery.when(oDeferred).done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
 	QUnit.module("TwoWayBinding And Growing");
 	testOData("Property changes updates the list binding when growing feature is enabled", function() {
+		var done = assert.async();
 		// arrange
 		var fnUpdateStartedSpy = this.spy(),
 			oMockServer = startMockServer(),
@@ -587,11 +603,12 @@
 			// clean up
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
 	testOData("Property changes should not update the list binding when unique key is defined", function() {
+		var done = assert.async();
 		// arrange
 		var fnUpdateStartedSpy = this.spy(),
 			oMockServer = startMockServer(),
@@ -612,7 +629,7 @@
 			// clean up
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 

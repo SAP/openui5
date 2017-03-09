@@ -120,7 +120,7 @@ sap.ui.define([
 		var oOpa5 = new Opa5(),
 			fnMatcherStub = this.stub().returns("foo"),
 			fnActionSpy = this.spy(),
-			start = assert.async();
+			done = assert.async();
 
 		// give some common defaults to see if they interfere and the plugin thinks we are looking for a control
 		Opa5.extendConfig({
@@ -137,7 +137,7 @@ sap.ui.define([
 			// Assert
 			sinon.assert.calledOnce(fnMatcherStub);
 			sinon.assert.calledWith(fnActionSpy, "foo");
-			start();
+			done();
 		});
 		this.clock.tick(1000);
 	});

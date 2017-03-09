@@ -232,7 +232,8 @@
 
 		QUnit.module("Page change");
 
-		asyncTest("to page 2", function() {
+		QUnit.test("to page 2", function(assert) {
+			var done = assert.async();
 			expect(64); // including the "navigate" event
 
 			equal(nc.currentPageIsTopPage(), true, "current page should be considered the top page");
@@ -314,12 +315,13 @@
 					ok(nc._bNavigating === false, "NavContainer should not be navigating");
 					ok(!page1.$().hasClass("sapMNavItemSliding"), "Page 1 classes should be cleaned up");
 					ok(!page2.$().hasClass("sapMNavItemSliding"), "Page 2 classes should be cleaned up");
-					start();
+					done();
 				}, 600);
 			}, 100);
 		});
 
-		asyncTest("to page 3", function() {
+		QUnit.test("to page 3", function(assert) {
+			var done = assert.async();
 			expect(30); // including the "navigate" event
 
 			ok(nc._bNavigating === false, "NavContainer should not be navigating");
@@ -357,13 +359,14 @@
 
 					ok(!page3.$().hasClass("sapMNavItemFading"), "Page 3 classes should be cleaned up");
 					ok(!page2.$().hasClass("sapMNavItemFading"), "Page 2 classes should be cleaned up");
-					start();
+					done();
 				}, 600);
 			}, 100);
 		});
 
 
-		asyncTest("navigate back 2", function() {
+		QUnit.test("navigate back 2", function(assert) {
+			var done = assert.async();
 			expect(62); // including the "navigate" event
 
 			resetEventLog(window.mPage1EventLog);
@@ -439,7 +442,7 @@
 					ok(nc._bNavigating === false, "NavContainer should not be navigating");
 					ok(!page3.$().hasClass("sapMNavItemFading"), "Page 3 classes should be cleaned up");
 					ok(!page2.$().hasClass("sapMNavItemFading"), "Page 2 classes should be cleaned up");
-					start();
+					done();
 				}, 600);
 			}, 100);
 		});
@@ -682,7 +685,8 @@
 		});
 
 
-		asyncTest("Page rerendering during transitions", function() {
+		QUnit.test("Page rerendering during transitions", function(assert) {
+			var done = assert.async();
 			expect(8);
 
 			equal(nc._aQueue.length, 0, "transition queue length should be 0");
@@ -703,13 +707,14 @@
 					sap.m.PageRenderer.render = realPageRender; // restore original renderer
 					equal(nc._aQueue.length, 0, "transition queue length should be 0");
 					ok(nc._bNavigating === false, "NavContainer should not be navigating");
-					start();
+					done();
 				}, 1600);
 			}, 1600);
 		});
 
 
-		asyncTest("Flip transition", function() {
+		QUnit.test("Flip transition", function(assert) {
+			var done = assert.async();
 			if (jQuery.support.cssTransitions) {
 				equal(nc._aQueue.length, 0, "transition queue length should be 0");
 				ok(nc._bNavigating === false, "NavContainer should not be navigating");
@@ -759,7 +764,7 @@
 									equal(nc._aQueue.length, 0, "transition queue length should be 0");
 									ok(nc._bNavigating === false, "NavContainer should not be navigating");
 
-									start();
+									done();
 								}, 600);
 							}, 100);
 						}, 600);
@@ -770,14 +775,15 @@
 				expect(0);
 				nc.backToPage("page1");
 				setTimeout(function(){
-					start();
+					done();
 				}, 500);
 			}
 		});
 
 
 		if (jQuery.support.cssTransitions) {
-			asyncTest("Slide back to page 1", function() {
+			QUnit.test("Slide back to page 1", function(assert) {
+				var done = assert.async();
 				nc.backToPage("page1");
 
 				var $page1 = jQuery("#page1");
@@ -805,13 +811,14 @@
 						ok(!$page2.hasClass("sapMNavItemRight"), "Page 1 classes should be cleaned up");
 						ok(!$page2.hasClass("sapMNavItemLeft"), "Page 1 classes should be cleaned up");
 
-						start();
+						done();
 					}, 600);
 				}, 100);
 			});
 		}
 
-		asyncTest("Should Build a navigation stack", function() {
+		QUnit.test("Should Build a navigation stack", function(assert) {
+			var done = assert.async();
 			//Arrange
 			var calls = [],
 				//System under test
@@ -859,12 +866,13 @@
 
 				//cleanup
 				oNavContainer.destroy();
-				start();
+				done();
 			});
 		});
 
 
-		asyncTest("Focus management", function() {
+		QUnit.test("Focus management", function(assert) {
+			var done = assert.async();
 			//Arrange
 			var //System under test
 				oNavContainer = new sap.m.NavContainer({
@@ -918,7 +926,7 @@
 
 							//cleanup
 							oNavContainer.destroy();
-							start();
+							done();
 						}
 						if (sPageId === "secondPage") {
 							var oButtonPage2FocusDom = sap.ui.getCore().byId("secondPage-navButton").getFocusDomRef();
@@ -941,7 +949,8 @@
 		});
 
 
-		asyncTest("Navigation interrupted by rerendering of NavContainer - SLIDE", function() {
+		QUnit.test("Navigation interrupted by rerendering of NavContainer - SLIDE", function(assert) {
+			var done = assert.async();
 			//Arrange
 			var calls = [],
 				afterNavigate = function(evt) {
@@ -987,7 +996,7 @@
 												//cleanup
 												nc.detachAfterNavigate(afterNavigate);
 
-												start();
+												done();
 											}, 1000);
 										}, 100);
 									}, 100);
@@ -1001,7 +1010,8 @@
 		});
 
 
-		asyncTest("Navigation interrupted by rerendering of child controls - SLIDE", function() {
+		QUnit.test("Navigation interrupted by rerendering of child controls - SLIDE", function(assert) {
+			var done = assert.async();
 			jQuery.sap.log.warning("## START - Navigation interrupted by rerendering of child controls");
 			//Arrange
 			var calls = [],
@@ -1050,7 +1060,7 @@
 												//cleanup
 												nc.detachAfterNavigate(afterNavigate);
 
-												start();
+												done();
 											}, 1000);
 										}, 100);
 									}, 100);
@@ -1064,7 +1074,8 @@
 		});
 
 
-		asyncTest("Navigation interrupted by rerendering of NavContainer - FADE", function() {
+		QUnit.test("Navigation interrupted by rerendering of NavContainer - FADE", function(assert) {
+			var done = assert.async();
 			//Arrange
 			var calls = [],
 				afterNavigate = function(evt) {
@@ -1110,7 +1121,7 @@
 												//cleanup
 												nc.detachAfterNavigate(afterNavigate);
 
-												start();
+												done();
 											}, 1000);
 										}, 100);
 									}, 100);
@@ -1124,7 +1135,8 @@
 		});
 
 
-		asyncTest("Navigation interrupted by rerendering of child controls - FADE", function() {
+		QUnit.test("Navigation interrupted by rerendering of child controls - FADE", function(assert) {
+			var done = assert.async();
 			jQuery.sap.log.warning("## START - Navigation interrupted by rerendering of child controls");
 			//Arrange
 			var calls = [],
@@ -1173,7 +1185,7 @@
 												//cleanup
 												nc.detachAfterNavigate(afterNavigate);
 
-												start();
+												done();
 											}, 1000);
 										}, 100);
 									}, 100);
@@ -1187,7 +1199,8 @@
 		});
 
 
-		asyncTest("Navigation interrupted by rerendering of NavContainer - FLIP", function() {
+		QUnit.test("Navigation interrupted by rerendering of NavContainer - FLIP", function(assert) {
+			var done = assert.async();
 			//Arrange
 			var calls = [],
 				afterNavigate = function(evt) {
@@ -1233,7 +1246,7 @@
 												//cleanup
 												nc.detachAfterNavigate(afterNavigate);
 
-												start();
+												done();
 											}, 3000);
 										}, 100);
 									}, 100);
@@ -1247,7 +1260,8 @@
 		});
 
 
-		asyncTest("Navigation interrupted by rerendering of child controls - FLIP", function() {
+		QUnit.test("Navigation interrupted by rerendering of child controls - FLIP", function(assert) {
+			var done = assert.async();
 			jQuery.sap.log.warning("## START - Navigation interrupted by rerendering of child controls");
 			//Arrange
 			var calls = [],
@@ -1296,7 +1310,7 @@
 												//cleanup
 												nc.detachAfterNavigate(afterNavigate);
 
-												start();
+												done();
 											}, 3000);
 										}, 100);
 									}, 100);
@@ -1310,7 +1324,8 @@
 		});
 
 		/*
-		asyncTest("Navigation interrupted by rerendering of NavContainer - DOOR", function() {
+		QUnit.test("Navigation interrupted by rerendering of NavContainer - DOOR", function(assert) {
+			var done = assert.async();
 			//Arrange
 			var calls = [],
 				afterNavigate = function(evt) {
@@ -1356,7 +1371,7 @@
 												//cleanup
 												nc.detachAfterNavigate(afterNavigate);
 
-												start();
+												done();
 											}, 1000);
 										}, 100);
 									}, 100);
@@ -1370,7 +1385,8 @@
 		});
 
 
-		asyncTest("Navigation interrupted by rerendering of child controls - DOOR", function() {
+		QUnit.test("Navigation interrupted by rerendering of child controls - DOOR", function(assert) {
+			var done = assert.async();
 			jQuery.sap.log.warning("## START - Navigation interrupted by rerendering of child controls");
 			//Arrange
 			var calls = [],
@@ -1419,7 +1435,7 @@
 												//cleanup
 												nc.detachAfterNavigate(afterNavigate);
 
-												start();
+												done();
 											}, 1000);
 										}, 100);
 									}, 100);
@@ -1433,7 +1449,8 @@
 		});
 		*/
 
-		asyncTest("Should build a navigation stack if the page is the same", function() {
+		QUnit.test("Should build a navigation stack if the page is the same", function(assert) {
+			var done = assert.async();
 			//Arrange
 			var calls = [],
 				afterNavigate = function(evt) {
@@ -1463,7 +1480,7 @@
 
 					//cleanup
 					nc.detachAfterNavigate(afterNavigate);
-					start();
+					done();
 					//show first page again to see the test result
 					nc.back();
 					nc.back();
@@ -1473,7 +1490,8 @@
 		});
 
 
-		asyncTest("Should build a navigation stack if there is no page at the moment", function() {
+		QUnit.test("Should build a navigation stack if there is no page at the moment", function(assert) {
+			var done = assert.async();
 			var page1 = new sap.m.Page({
 				title: "Other Page 1"
 				}),
@@ -1512,7 +1530,7 @@
 
 				//cleanup
 				localNc.detachAfterNavigate(afterNavigate);
-				start();
+				done();
 				localNc.destroy();
 			}, 2000);
 		});
@@ -1555,7 +1573,8 @@
 		QUnit.module("Event data");
 
 		function beforeRenderingTestCase (sTestName, sEventName) {
-			asyncTest(sTestName, function() {
+			QUnit.test(sTestName, function(assert) {
+				var done = assert.async();
 				// Arrange
 				var oInitialPage = new sap.m.Page(),
 					oNavContainer = new sap.m.NavContainer({
@@ -1576,7 +1595,7 @@
 
 					//Cleanup
 					oNavContainer.destroy();
-					start();
+					done();
 				};
 
 				oInitialPage.addEventDelegate(oEventDelegate);
@@ -1597,7 +1616,8 @@
 		beforeRenderingTestCase("Should pass to data to the page's onBeforeFirstShow when called before rendering", "onBeforeFirstShow");
 		beforeRenderingTestCase("Should pass to daa to the page's onAfterShow when called before rendering", "onAfterShow");
 
-		asyncTest("Event data on initial page", function() {
+		QUnit.test("Event data on initial page", function(assert) {
+			var done = assert.async();
 			var oInitialPage = new sap.m.Page(),
 				oSecondPage = new sap.m.Page(),
 				oNavContainer = new sap.m.NavContainer({
@@ -1624,7 +1644,7 @@
 					strictEqual(oEvent.backData, oBackData, "The back navigation data is passed");
 
 					oNavContainer.destroy();
-					start();
+					done();
 				}
 			});
 			oNavContainer.backToPage(oInitialPage.getId(), oBackData);
@@ -1632,7 +1652,8 @@
 
 		QUnit.module("Lifecycle");
 
-		asyncTest("Exit/Destruction", function() {
+		QUnit.test("Exit/Destruction", function(assert) {
+			var done = assert.async();
 			var page1 = new sap.m.Page({
 				title: "Page 1"
 				}),
@@ -1655,7 +1676,7 @@
 				localNc.destroy();
 				strictEqual(localNc._mFocusObject, null, "_mFocusObject should be nulled after destroy()"); // this is nulled for memory reasons
 				// this also checks whether the NavContainer can handle being destroyed within the afterNavigate (because there is further code in afterNavigate, which may not access destroyed parts)
-				start();
+				done();
 			};
 
 			// Act

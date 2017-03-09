@@ -92,29 +92,32 @@
 
 		QUnit.module("Behaviour");
 
-		asyncTest("Focus handling1", function() {
+		QUnit.test("Focus handling1", function(assert) {
+			var done = assert.async();
 			// click in empty text - placeholder must disapear
 			jQuery.sap.domById("Feeder1-input").focus();
 			var delayedCall = function() {
 				ok(!jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0), "After Focus in Input area no text placeholder rendered");
-			start();
+			done();
 			};
 			setTimeout(delayedCall, 0);
 
 		});
 
-		asyncTest("Focus handling2", function() {
+		QUnit.test("Focus handling2", function(assert) {
+			var done = assert.async();
 			// click in empty text - placeholder must disapear
 			jQuery.sap.domById("Feeder3-input").focus();
 			var delayedCall = function() {
 				ok(jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0), "After focus out of Input area no text placeholder rendered");
-			start();
+			done();
 			};
 			setTimeout(delayedCall, 0);
 
 		});
 
-		asyncTest("Mouse navigation", function() {
+		QUnit.test("Mouse navigation", function(assert) {
+			var done = assert.async();
 			// click on button must submit text
 			qutils.triggerMouseEvent("Feeder2-send", "click");
 			var delayedCall = function() {
@@ -124,7 +127,7 @@
 				ok(jQuery.sap.byId("Feeder2-input").find(".sapUiFeederEmptyText").get(0),"Text placeholder rendered after submit");
 				sSubmitId = "";
 				sSubmitText = "";
-				start();
+				done();
 			};
 			setTimeout(delayedCall, 0);
 
@@ -133,7 +136,8 @@
 
 		});
 
-		asyncTest("Keyboard Navigation", function() {
+		QUnit.test("Keyboard Navigation", function(assert) {
+			var done = assert.async();
 			// by typing text button must be enabled
 			jQuery.sap.domById("Feeder1-input").focus();
 			jQuery.sap.byId("Feeder1-input").text("A");
@@ -151,7 +155,7 @@
 				qutils.triggerKeyup("Feeder1-input", jQuery.sap.KeyCodes.BACKSPACE, false, false, false);
 				var delayedCall2 = function() {
 					ok(jQuery.sap.byId("Feeder1-send").hasClass('sapUiBtnDsbl'), "After text is deleted button must be disabled");
-					start();
+					done();
 				};
 				setTimeout(delayedCall2, 0);
 			};

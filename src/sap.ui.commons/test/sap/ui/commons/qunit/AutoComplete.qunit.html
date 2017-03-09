@@ -63,13 +63,13 @@
 				sap.ui.test.qunit.triggerEvent("input", oAuto.getFocusDomRef());
 				sap.ui.test.qunit.triggerKeyup(oAuto.getFocusDomRef(), sChar);
 				setTimeout(function(){
-					start();
 					checkSuggestion(oAuto, aTexts);
 					if(fCleanup){
 						fCleanup(oAuto);
 					}else{
 						clear(oAuto);
 					}
+					QUnit.start();
 				}, iCheckTimer || 200);
 			}, 10);
 		}
@@ -142,21 +142,24 @@
 			}
 		});
 
-		asyncTest("Scrolling enabled", function() {
+		QUnit.test("Scrolling enabled", function(assert) {
+			var done = assert.async();
 			this.oAuto1.onfocusin();
 
 			checkStaticSuggestion(this.oAuto1, "a", ["A0", "A1", "A2", "A3"]);
 
 		});
 
-		asyncTest("Scrolling disabled", function() {
+		QUnit.test("Scrolling disabled", function(assert) {
+			var done = assert.async();
 			this.oAuto1.setEnableScrolling(false);
 			this.oAuto1.onfocusin();
 
 			checkStaticSuggestion(this.oAuto1, "a", ["A0", "A1", "A2"]);
 		});
 
-		asyncTest("Custom Filter", function() {
+		QUnit.test("Custom Filter", function(assert) {
+			var done = assert.async();
 			this.oAuto1.onfocusin();
 
 			this.oAuto1.setFilterFunction(function(sValue, oItem){
@@ -166,7 +169,8 @@
 			checkStaticSuggestion(this.oAuto1, "0", ["A0", "B0", "C0"]);
 		});
 
-		asyncTest("Change Items (No Focus)", function() {
+		QUnit.test("Change Items (No Focus)", function(assert) {
+			var done = assert.async();
 			jQuery("#focusDummy").focus();
 			this.oAuto1.setValue("c");
 			sap.ui.getCore().applyChanges();
@@ -177,13 +181,14 @@
 				checkPopup(that.oAuto1, false);
 				that.oAuto1.addItem(new sap.ui.core.ListItem({text: "C4"}));
 				setTimeout(function(){
-					start();
 					checkPopup(that.oAuto1, false);
+					done();
 				}, 200);
 			}, 10);
 		});
 
-		asyncTest("Change Items (Focus)", function() {
+		QUnit.test("Change Items (Focus)", function(assert) {
+			var done = assert.async();
 			this.oAuto1.setValue("a");
 			sap.ui.getCore().applyChanges();
 			this.oAuto1.onfocusin();
@@ -195,8 +200,8 @@
 				that.oAuto1.addItem(new sap.ui.core.ListItem({text: "A4"}));
 				that.oAuto1.removeItem(that.oAuto1.getItems()[0]);
 				setTimeout(function(){
-					start();
 					checkSuggestion(that.oAuto1, ["A1", "A2", "A3", "A4"]);
+					done();
 				}, 200);
 			}, 10);
 		});
@@ -225,7 +230,8 @@
 			}, iDelay);
 		};
 
-		asyncTest("Dynamic Items (sync)", function() {
+		QUnit.test("Dynamic Items (sync)", function(assert) {
+			var done = assert.async();
 			this.oAuto2.onfocusin();
 			var that = this;
 
@@ -237,7 +243,8 @@
 			}, 200);
 		});
 
-		asyncTest("Dynamic Items (async)", function() {
+		QUnit.test("Dynamic Items (async)", function(assert) {
+			var done = assert.async();
 			this.oAuto2.onfocusin();
 			var that = this;
 
@@ -290,8 +297,8 @@
 					checkPopup(oAuto1, true);
 
 					oAuto1.oPopup.attachClosed(function(){
-						start();
 						checkPopup(oAuto1, false);
+						QUnit.start();
 					});
 
 					fAction(oAuto1);
@@ -299,14 +306,16 @@
 			}, 10);
 		};
 
-		asyncTest("Focusout", function() {
+		QUnit.test("Focusout", function(assert) {
+			var done = assert.async();
 			expect(3);
 			popupClosingTest(this.oAuto1, function(oAuto){
 				jQuery("#focusDummy").focus();
 			});
 		});
 
-		asyncTest("Empty AutoComplete", function() {
+		QUnit.test("Empty AutoComplete", function(assert) {
+			var done = assert.async();
 			popupClosingTest(this.oAuto1, function(oAuto){
 				jQuery(oAuto.getInputDomRef()).val("");
 				sap.ui.test.qunit.triggerEvent("input", oAuto.getFocusDomRef());
@@ -314,13 +323,15 @@
 			});
 		});
 
-		asyncTest("Enter", function() {
+		QUnit.test("Enter", function(assert) {
+			var done = assert.async();
 			popupClosingTest(this.oAuto1, function(oAuto){
 				sap.ui.test.qunit.triggerKeydown(oAuto.getFocusDomRef(), "ENTER");
 			});
 		});
 
-		asyncTest("Escape", function() {
+		QUnit.test("Escape", function(assert) {
+			var done = assert.async();
 			popupClosingTest(this.oAuto1, function(oAuto){
 				sap.ui.test.qunit.triggerKeydown(oAuto.getFocusDomRef(), "ESCAPE");
 				sap.ui.test.qunit.triggerKeypress(oAuto.getFocusDomRef(), "ESCAPE");
@@ -391,7 +402,8 @@
 			equals(jQuery(oAuto1.getDomRef()).attr("role"), "textbox", "role attribute set "+sAdditionalText);
 		}
 
-		asyncTest("Attributes", function() {
+		QUnit.test("Attributes", function(assert) {
+			var done = assert.async();
 			this.oAuto1.focus();
 			this.oAuto1.onfocusin();
 			var that = this;
@@ -411,8 +423,8 @@
 							checkAriaAttributes(that.oAuto1, 2, 4, true, "when popup is open and list item 2 selected");
 							that.oAuto1._close();
 							setTimeout(function(){
-								start();
 								checkAriaAttributes(that.oAuto1, -1, -1, false, "when popup is closed");
+								done();
 							}, 200);
 						}, 200);
 					}, 200);
