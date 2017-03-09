@@ -15,7 +15,7 @@ sap.ui.define([
 		},
 
 		handleOpenDialog: function (oEvent) {
-			if (! this._oDialog) {
+			if (!this._oDialog) {
 				this._oDialog = sap.ui.xmlfragment("sap.m.sample.SegmentedButtonVSD.Dialog", this);
 			}
 			this._oDialog.setModel(this.getView().getModel());

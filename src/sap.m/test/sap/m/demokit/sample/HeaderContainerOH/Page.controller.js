@@ -11,7 +11,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/m/MessageToast', 'sap/ui/core/mvc/Cont
 		press: function (evt) {
 			jQuery.sap.require("sap.m.MessageBox");
 			sap.m.MessageBox.alert("Link was clicked!");
-		},
+		}
 	});
 
 	return PageController;

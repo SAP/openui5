@@ -505,6 +505,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		if (this.oFileUpload) {
 			if (typeof oTooltip  === "string") {
 				jQuery(this.oFileUpload).attr("title", jQuery.sap.encodeHTML(oTooltip));
+				this.$().find(".sapUiFupInputMask").attr("title", jQuery.sap.encodeHTML(oTooltip));
 			}
 		}
 		return this;
@@ -688,14 +689,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	};
 
 	FileUploader.prototype.setEnabled = function(bEnabled){
+		var $oFileUpload = jQuery(this.oFileUpload);
+
 		this.setProperty("enabled", bEnabled, true);
 		this.oFilePath.setEnabled(bEnabled);
 		this.oBrowse.setEnabled(bEnabled);
-		if (bEnabled) {
-			jQuery(this.oFileUpload).removeAttr('disabled');
-		} else {
-			jQuery(this.oFileUpload).attr('disabled', 'disabled');
-		}
+		bEnabled ? $oFileUpload.removeAttr('disabled') : $oFileUpload.attr('disabled', 'disabled');
+		this.$().toggleClass("sapUiFupDisabled", !bEnabled);
+
 		return this;
 	};
 
@@ -834,7 +835,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	};
 
 	FileUploader.prototype.ontap = function () {
-		this.FUEl.click();
+		if (this.getEnabled() && this.getVisible()) {
+			this.FUEl.click();
+		}
 	};
 
 	FileUploader.prototype.onmousedown = function(oEvent) {

@@ -47,7 +47,7 @@ sap.ui.define([
 				minScreenWidth: "Tablet",
 				styleClass: "cellBorderRight"
 			}
-		],
+		]
 	});
 
 	return TableController;

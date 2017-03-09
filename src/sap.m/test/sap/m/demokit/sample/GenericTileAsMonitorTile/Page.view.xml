@@ -1,7 +1,6 @@
 <mvc:View controllerName="sap.m.sample.GenericTileAsMonitorTile.Page"
 	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals" subheader="Expenses" frameType="OneByOne"
-		press="press">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals" subheader="Expenses" press="press">
 		<tileContent>
 			<TileContent unit="Unit" footer="Footer Text">
 				<content>
@@ -11,8 +10,7 @@
 		</tileContent>
 	</GenericTile>
 
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals" subheader="Expenses" frameType="OneByOne"
-		press="press">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals" subheader="Expenses" press="press">
 		<tileContent>
 			<TileContent unit="Unit" footer="Footer Text">
 				<content>

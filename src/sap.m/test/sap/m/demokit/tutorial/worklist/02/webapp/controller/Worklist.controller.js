@@ -152,6 +152,7 @@ sap.ui.define([
 
 		/**
 		 * Internal helper method to apply both filter and search state together on the list binding
+		 * @param {array} oTableSearchState an array of filters for the search
 		 * @private
 		 */
 		_applySearch: function(oTableSearchState) {

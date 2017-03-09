@@ -62,34 +62,19 @@
 	padding-left: 1rem;
 }
 
-.sapMObjLNumber {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	vertical-align: top;
-	text-align: right;
-	font-family: @sapUiFontHeaderFamily;
-	font-size: 1.375rem;
-	font-weight: @sapUiFontHeaderWeight;
+.sapMObjLNumberDiv .sapMObjectNumber.sapMObjectNumberStatusNone {
 	color: @sapUiGroupTitleTextColor;
 }
 
-html[dir=rtl] .sapMObjLNumber {
-	text-align: left;
+.sapMObjLNumberDiv .sapMObjectNumber .sapMObjectNumberText {
+	font-family: @sapUiFontHeaderFamily;
+	font-size: 1.375rem;
+	font-weight: @sapUiFontHeaderWeight;
 }
 
-.sapMObjLNumberUnit {
-	font-weight: normal;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	text-align: right;
-	font-family: @sapUiFontFamily;
-	font-size: @sapMFontSmallSize;
-}
-
-html[dir=rtl] .sapMObjLNumberUnit {
-	text-align: left;
+.sapMObjLNumberDiv .sapMObjectNumber .sapMObjectNumberUnit {
+	padding: 0;
+	display: block;
 }
 
 .sapMObjLBottomRow {
@@ -240,20 +225,4 @@ html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
 
 .sapMObjLAttrDiv.sapMObjAttrWithMarker {
 	padding-top: .1875rem
-}
-
-.sapMObjLNumberStateNone {
-	color: @sapUiGroupTitleTextColor;
-}
-
-.sapMObjLNumberStateError {
-	color: @sapUiNegativeText;
-}
-
-.sapMObjLNumberStateWarning {
-	color: @sapUiCriticalText;
-}
-
-.sapMObjLNumberStateSuccess {
-	color: @sapUiPositiveText;
 }

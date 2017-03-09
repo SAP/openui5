@@ -23,7 +23,7 @@ sap.ui.define([
 		},
 
 		handleSelectDialogPress: function (oEvent) {
-			if (! this._oDialog) {
+			if (!this._oDialog) {
 				this._oDialog = sap.ui.xmlfragment("sap.m.sample.SelectDialog.Dialog", this);
 				this._oDialog.setModel(this.getView().getModel());
 			}

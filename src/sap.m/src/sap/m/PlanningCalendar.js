@@ -815,8 +815,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			if (oOldStartDate.getTime() !== this.getStartDate().getTime()) {
 				this.fireStartDateChange();
 			}
-		} else {
-			this._updateTodayButtonState(); //"Today" button should be handled (in this case always enabled)
 		}
 
 		var oStartDate = this.getStartDate();
@@ -956,6 +954,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				this.setStartDate(oSelectedDate);
 			}
 		}
+
+		this._updateTodayButtonState();
 
 		return this;
 

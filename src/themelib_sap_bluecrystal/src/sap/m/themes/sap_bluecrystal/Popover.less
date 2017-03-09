@@ -5,6 +5,11 @@
 
 @sapMPopoverForceCompactArrowOffset: false;
 
+.sapMPopover {
+	border: 1px @sapUiContentForegroundBorderColor solid;
+	box-shadow: 0px 0px 30px 2px fade(@sapUiDarkShadowTint, 15);
+}
+
 .sapMPopover .sapMPopoverCont {
 	background-color: transparent;
 	margin: 0;
@@ -63,6 +68,7 @@
 	position: absolute;
 	width: 0;
 	height: 0;
+	overflow: visible;
 }
 
 .sapMPopoverArr:after {
@@ -73,6 +79,50 @@
 	height: 0;
 	border-style: solid;
 	border-width: 16px;
+	-webkit-transform: none;
+	transform: none;
+	background-color: transparent;
+	border-color: transparent;
+	margin: 0;
+	box-shadow: none;
+}
+
+.sapMPopoverArrUp:after {
+	border-bottom-color: @sapUiGroupContentBackground;
+	bottom: -17px;
+	left: -16px;
+}
+
+.sapMPopoverArrLeft:after {
+	border-right-color: @sapUiGroupContentBackground;
+	top: -16px;
+	left: -15px;
+}
+
+.sapMPopoverArrDown:after {
+	border-top-color: @sapUiGroupContentBackground;
+	bottom: -15px;
+	left: -16px;
+	margin: 0;
+}
+
+
+.sapMPopoverArrRight:after {
+	border-left-color: @sapUiGroupContentBackground;
+	top: -16px;
+	left: -17px;
+}
+
+.sapMPopoverCrossArr.sapMPopoverArrLeft:after {
+	border-color: transparent;
+	border-right-color: @sapUiContentForegroundBorderColor;
+	/* 	left: -16px; */
+}
+
+.sapMPopoverCrossArr.sapMPopoverArrLeft:after {
+	border-color: transparent;
+	border-right-color: @sapUiContentForegroundBorderColor;
+	/* 	left: -16px; */
 }
 
 /* pointing downward arrow */
@@ -162,6 +212,10 @@ html.sap-desktop .sapMPopoverWithFooter > .sapMPopoverArrDown:after {
 .sapMPopoverArrRight {
 	border-color: transparent;
 	border-left-color: @sapUiContentForegroundBorderColor;
+}
+
+.sapMPopup-CTX .sapMIBar.sapMHeader-CTX.sapMPopoverHeader {
+	background-color: @sapUiPageHeaderBackground;
 }
 
 /* Compact size */

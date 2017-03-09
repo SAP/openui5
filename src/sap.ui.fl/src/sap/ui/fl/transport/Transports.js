@@ -20,7 +20,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reads the transports of the current user from the backend.
+	 * Reads the transports of the current user from the back end.
 	 * The "locked" attribute indicates that the provided file (package/name/type) is already locked on this transport.
 	 *
 	 * @param {object} mParameters map of parameters, see below
@@ -75,7 +75,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reads the transports of the current user from the backend.
+	 * Reads the transports of the current user from the back end.
 	 * The "locked" attribute indicates that the provided file (package/name/type) is already locked on this transport.
 	 *
 	 * @param {object} mParameters map of parameters, see below

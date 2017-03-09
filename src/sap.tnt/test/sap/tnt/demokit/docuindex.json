@@ -50,7 +50,8 @@
 				"since": "1.34",
 				"samples": [
 					"sap.tnt.sample.ToolHeader",
-					"sap.tnt.sample.ToolHeaderControls"
+					"sap.tnt.sample.ToolHeaderControls",
+					"sap.tnt.sample.ToolHeaderIconTabHeader"
 				]
 			},
 			{
@@ -76,13 +77,18 @@
 			},
 			{
 				"id": "sap.tnt.sample.ToolHeader",
-				"name": "Tool Header",
-				"description": "Tool Header is useful for showing lists of action buttons"
+				"name": "ToolHeader",
+				"description": "ToolHeader is useful for showing lists of action buttons"
 			},
 			{
 				"id": "sap.tnt.sample.ToolHeaderControls",
-				"name": "Tool Header Controls",
-				"description": "Tool Header can contain any controls"
+				"name": "ToolHeader Controls",
+				"description": "ToolHeader can contain any controls"
+			},
+			{
+				"id": "sap.tnt.sample.ToolHeaderIconTabHeader",
+				"name": "ToolHeader with IconTabHeader",
+				"description": "ToolHeader can contain IconTabHeader. When both controls are combined, the IconTabHeader supports only inline text. No icons can be used."
 			},
 			{
 				"id": "sap.tnt.sample.ToolPage",

@@ -1319,4 +1319,39 @@ sap.ui.require([
       "Given nested variables, Scenario Outline should re-write multiple times");
   });
 
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Ambiguous Step Definitions Error", function() {
+
+    var text = [
+      "Feature: Serve expensive coffee",
+      "",
+      "  Scenario: Buy first coffee",
+      "    Then I should be served a coffee"
+    ].join("\n");
+
+    var feature = this.parser.parse(text);
+
+    var steps = StepDefinitions.extend("sap.ui.test.gherkin.StepDefinitionsTest", {
+      init: function() {
+        // The .feature file text "I should be served a coffee" is matched by ALL THREE regular expressions!
+        this.register(/^I should be served a coffee$/i, function() {});
+        this.register(/^I should.*/i, function() {});
+        this.register(/^.*/i, function() {});
+      }
+    });
+
+    var testGenerator = new GherkinTestGenerator(feature, steps);
+
+    throws( function(){
+      testGenerator.generate();
+    }, function(error) {
+      return error.message === "Ambiguous step definition error: 3 step definitions '/^I should be served a coffee$/i', '/^I should.*/i' and '/^.*/i' match the feature file step 'I should be served a coffee'";
+    },
+      "ambiguous step definition error"
+    );
+
+  });
+
 });

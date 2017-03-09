@@ -1,8 +1,6 @@
 (function ($, QUnit) {
 	"use strict";
 
-	sinon.config.useFakeTimers = true;
-
 	jQuery.sap.registerModulePath("view", "view");
 
 	sap.ui.controller("viewController", {});
@@ -32,7 +30,7 @@
 	});
 
 	QUnit.test("Title rendering", function (assert) {
-		assert.ok($title.find("sapUxAPObjectPageHeaderTitleTextWrappable"), "Title is rendered");
+		assert.ok($title.find(".sapUxAPObjectPageHeaderTitleTextWrappable"), "Title is rendered");
 	});
 
 	QUnit.test("Markers rendering", function (assert) {
@@ -69,10 +67,70 @@
 	});
 
 	QUnit.test("Actions rendering", function (assert) {
-		assert.ok($title.find("sapUxAPObjectPageHeaderIdentifierActions"), "Action buttons are rendered");
+		assert.ok($title.find(".sapUxAPObjectPageHeaderIdentifierActions"), "Action buttons are rendered");
 	});
 	QUnit.test("Placeholder rendering", function (assert) {
-		assert.ok(oHeaderView.$().find("sapUxAPObjectPageHeaderPlaceholder"), "placeholder rendered");
+		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderPlaceholder"), "placeholder rendered");
+	});
+
+	QUnit.module("image rendering", {
+		beforeEach: function () {
+			this._oPage = oHeaderView.byId("ObjectPageLayout");
+			this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
+		}, afterEach: function() {
+			this._oPage = null;
+			this._oHeader = null;
+		}
+	});
+	QUnit.test("Image is in DOM if image URI", function (assert) {
+
+		assert.strictEqual(oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage").length, 1, "image is in DOM");
+	});
+	QUnit.test("Placeholder is hidden if image URI", function (assert) {
+
+		assert.strictEqual(oHeaderView.$().find(".sapUxAPHidePlaceholder.sapUxAPObjectPageHeaderObjectImage").length, 1, "hidden placeholder is in DOM");
+	});
+	QUnit.test("Two different images in DOM if showTitleInHeaderContent===true", function (assert) {
+		//act
+		this._oPage.getHeaderTitle().setObjectImageURI("./img/HugeHeaderPicture.png");
+		this._oPage.setShowTitleInHeaderContent(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage").length, 2, "two images in DOM");
+
+		var img1 = oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[0],
+			img2 = oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[1];
+
+		assert.notEqual(img1.id, img2.id, "two different images in DOM");
+	});
+    QUnit.test("Images in DOM updated on URI change", function (assert) {
+    	var sUpdatedSrc = "./img/imageID_273624.png";
+        //act
+        this._oPage.getHeaderTitle().setObjectImageURI(sUpdatedSrc);
+        this._oPage.setShowTitleInHeaderContent(true);
+        sap.ui.getCore().applyChanges();
+
+        assert.strictEqual(oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage").length, 2, "two images in DOM");
+
+        var img1 = oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[0],
+            img2 = oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[1];
+
+        assert.strictEqual($(img1).control()[0].getSrc(), sUpdatedSrc, "image1 is updated");
+        assert.strictEqual($(img2).control()[0].getSrc(), sUpdatedSrc, "image2 is updated");
+    });
+	QUnit.test("Two different placeholders in DOM if showTitleInHeaderContent===true", function (assert) {
+		//act
+		this._oPage.getHeaderTitle().setObjectImageURI("");
+		this._oPage.getHeaderTitle().setShowPlaceholder(true);
+		this._oPage.setShowTitleInHeaderContent(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oHeaderView.$().find(".sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon").length, 2, "two placeholders in DOM");
+
+		var oPlaceholder1 = oHeaderView.$().find(".sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon")[0],
+			oPlaceholder2 = oHeaderView.$().find(".sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon")[1];
+
+		 assert.notEqual(oPlaceholder1.id, oPlaceholder2.id, "two different placeholders in DOM");
 	});
 
 	QUnit.module("Breadcrumb links API", {

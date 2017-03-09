@@ -4,6 +4,7 @@ sap.ui.require(
 		"sap/ui/core/Locale"
 	],
 	function(DateFormatter, Locale) {
+		"use strict";
 
 		var oFormatter = null;
 

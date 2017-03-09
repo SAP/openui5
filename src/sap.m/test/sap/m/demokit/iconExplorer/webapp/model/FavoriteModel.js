@@ -12,8 +12,8 @@ sap.ui.define([
 
 		/**
 		 * Fetches the favorites from local storage and sets up the JSON model
-		 * @param oSettings
-		 * @return {sap.ui.demo.iconexplorer.model.FavoriteModel}
+		 * @param {Object} oSettings a settings object passed to the JSON model
+		 * @return {sap.ui.demo.iconexplorer.model.FavoriteModel} the new model instance
 		 */
 		constructor : function(oSettings) {
 			// call super constructor
@@ -27,7 +27,7 @@ sap.ui.define([
 
 			try {
 				oData = JSON.parse(sJSON);
-			} catch(oException) {
+			} catch (oException) {
 				jQuery.sap.log.warning("FavoriteModel: Could not parse the data read from local storage");
 			}
 
@@ -42,13 +42,13 @@ sap.ui.define([
 			// set data
 			this.setData(oData);
 
-			return this
+			return this;
 		},
 
 		/**
 		 * Checks if a given icon is a favorite
-		 * @param sName
-		 * @return {boolean}
+		 * @param {string} sName the icon name
+		 * @return {boolean} the favorite state of the icon
 		 */
 		isFavorite : function(sName) {
 			var oData = this.getData();
@@ -61,7 +61,7 @@ sap.ui.define([
 		/**
 		 * Toogles the favorite state of a given icon
 		 * @param {sap.ui.model.Context} oBindingContext the binding context of the icon to be toggled
-		 * @return {boolean}
+		 * @return {boolean} the new favorite state of the icon
 		 */
 		toggleFavorite : function(oBindingContext) {
 			var sName = oBindingContext.getProperty("name"),

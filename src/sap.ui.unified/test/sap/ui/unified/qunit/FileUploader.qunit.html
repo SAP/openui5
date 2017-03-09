@@ -69,6 +69,37 @@
 	 */
 	module("public interface");
 
+	test("Test enabled property - setter/getter", function () {
+		var oFileUploader = createFileUploader(),
+				$fileUploader,
+				sDisabledClassName = "sapUiFupDisabled",
+				fnTestDisabledClass = function(fileUploader, bExpected) {
+					equal(fileUploader.hasClass(sDisabledClassName), bExpected,
+							"The FUploader should " + (bExpected ? "" : "not") + " have the " + sDisabledClassName + " class.");
+				};
+
+		//Set up
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		$fileUploader = oFileUploader.$();
+
+		// assert default
+		fnTestDisabledClass($fileUploader, false);
+
+		// act
+		oFileUploader.setEnabled(false);
+		// assert
+		fnTestDisabledClass($fileUploader, true);
+
+		// act
+		oFileUploader.setEnabled(true);
+		// assert
+		fnTestDisabledClass($fileUploader, false);
+
+		//cleanup
+		oFileUploader.destroy();
+	});
+
 	test("Test fileType property - setter/getter - compatibility cases", function () {
 		//Setup
 		var oFileUploader = createFileUploader({

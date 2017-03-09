@@ -1,4 +1,5 @@
 sap.ui.require([], function () {
+	"use strict";
 
 	QUnit.module("Download");
 

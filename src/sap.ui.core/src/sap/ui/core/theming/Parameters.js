@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 						try {
 							sParams = decodeURI(sParams);
 						} catch (ex) {
-							jQuery.sap.log.warning("Could not decode theme parameters URI from " + sUrl);
+							jQuery.sap.log.warning("Could not decode theme parameters URI from " + sStyleSheetUrl);
 						}
 					}
 					try {
@@ -141,7 +141,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 						mergeParameters(oParams, sThemeBaseUrl);
 						return;
 					} catch (ex) {
-						jQuery.sap.log.warning("Could not parse theme parameters from " + sUrl + ". Loading library-parameters.json as fallback solution.");
+						jQuery.sap.log.warning("Could not parse theme parameters from " + sStyleSheetUrl + ". Loading library-parameters.json as fallback solution.");
 					}
 				}
 			}

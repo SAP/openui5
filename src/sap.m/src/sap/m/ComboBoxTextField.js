@@ -165,29 +165,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/core/Inv
 		};
 
 		/**
-		 * Gets the labels referencing this control.
-		 *
-		 * @returns {sap.m.Label[]} Array of objects which are the current targets of the <code>ariaLabelledBy</code>
-		 * association and the labels referencing this control.
-		 * @since 1.38
-		 */
-		ComboBoxTextField.prototype.getLabels = function() {
-			var aLabelIDs = this.getAriaLabelledBy().map(function(sLabelID) {
-				return sap.ui.getCore().byId(sLabelID);
-			});
-
-			var oLabelEnablement = sap.ui.require("sap/ui/core/LabelEnablement");
-
-			if (oLabelEnablement) {
-				aLabelIDs = aLabelIDs.concat(oLabelEnablement.getReferencingLabels(this).map(function(sLabelID) {
-					return sap.ui.getCore().byId(sLabelID);
-				}));
-			}
-
-			return aLabelIDs;
-		};
-
-		/**
 		 * Gets the DOM element reference where the message popup is attached.
 		 *
 		 * @returns {object} The DOM element reference where the message popup is attached

@@ -618,6 +618,62 @@
 		assert.strictEqual(buttonClassList.contains('sapMNLI-CollapseButtonHide'), true, 'The "Show More" button should be hidden.');
 	});
 
+	QUnit.test('Notifications truncate and hideShowMoreButton properties test', function(assert) {
+		//arrange
+		var title = "this is my Title",
+			description = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+
+		var oItem1 = new sap.m.NotificationListItem({
+			title: title,
+			description: description,
+			truncate: false,
+			hideShowMoreButton: false
+		});
+
+		var oItem2 = new sap.m.NotificationListItem({
+			title: title,
+			description: description,
+			truncate: false,
+			hideShowMoreButton: true
+		});
+
+		var oItem3 = new sap.m.NotificationListItem({
+			title: title,
+			description: description,
+			truncate: true,
+			hideShowMoreButton: false
+		});
+
+		var oItem4 = new sap.m.NotificationListItem({
+			title: title,
+			description: description,
+			truncate: true,
+			hideShowMoreButton: true
+		});
+
+		var oList = new sap.m.List({
+			items: [oItem1, oItem2, oItem3, oItem4]
+		});
+
+		oList.placeAt(RENDER_LOCATION);
+
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.ok(!oItem1.$('expandCollapseButton').hasClass('sapMNLI-CollapseButtonHide'), 'Notification\'s Show More button is visible');
+		assert.ok(oItem2.$('expandCollapseButton').hasClass('sapMNLI-CollapseButtonHide'), 'Notification\'s Show More button is not visible');
+		assert.ok(!oItem3.$('expandCollapseButton').hasClass('sapMNLI-CollapseButtonHide'), 'Notification\'s Show More button is visible');
+		assert.ok(oItem4.$('expandCollapseButton').hasClass('sapMNLI-CollapseButtonHide'), 'Notification\'s Show More button is not visible');
+
+		assert.ok(oItem1.$().find('.sapMNLI-TextWrapper').hasClass('sapMNLI-TextWrapper--is-expanded'), 'Notification is expanded');
+		assert.ok(oItem2.$().find('.sapMNLI-TextWrapper').hasClass('sapMNLI-TextWrapper--is-expanded'), 'Notification is expanded');
+		assert.ok(!oItem3.$().find('.sapMNLI-TextWrapper').hasClass('sapMNLI-TextWrapper--is-expanded'), 'Notification is not expanded');
+		assert.ok(!oItem4.$().find('.sapMNLI-TextWrapper').hasClass('sapMNLI-TextWrapper--is-expanded'), 'Notification is not expanded');
+
+
+
+	});
+
 	QUnit.test('Notifications on L size (bigger than 640px) should position footer differently', function(assert) {
 	    // arrange
 		var lSizeClass = 'sapMNLI-LSize';

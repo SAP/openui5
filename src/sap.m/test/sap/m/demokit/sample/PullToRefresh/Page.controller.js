@@ -16,11 +16,10 @@ sap.ui.define([
 
 			// load product data
 			this._productCount = 0;
-			var that = this;
 			jQuery.getJSON(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), function (oData) {
-					that._productData = oData;
-					that._pushNewProduct();
-			});
+				this._productData = oData;
+				this._pushNewProduct();
+			}.bind(this));
 		},
 
 		// Simulates increasing collection of products.
@@ -37,11 +36,10 @@ sap.ui.define([
 
 		// simulate a refresh of the date that lasts 2 secs
 		handleRefresh : function (evt) {
-			var that = this;
 			setTimeout(function () {
-				that.getView().byId("pullToRefresh").hide();
-				that._pushNewProduct();
-			}, 1000);
+				this.getView().byId("pullToRefresh").hide();
+				this._pushNewProduct();
+			}.bind(this), 1000);
 		}
 	});
 

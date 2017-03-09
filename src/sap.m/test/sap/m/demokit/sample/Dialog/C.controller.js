@@ -9,7 +9,7 @@ sap.ui.define([
 	], function(jQuery, Button, Dialog, List, StandardListItem, Controller, JSONModel) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.Dialog.C", {
+	return Controller.extend("sap.m.sample.Dialog.C", {
 
 		onInit: function () {
 			// set explored app's demo model on this sample
@@ -23,10 +23,9 @@ sap.ui.define([
 		draggableDialog: null,
 		escapePreventDialog: null,
 		confirmEscapePreventDialog: null,
-		onDialogPress: function (oEvent) {
-			var that = this;
-			if (!that.pressDialog) {
-				that.pressDialog = new Dialog({
+		onDialogPress: function () {
+			if (!this.pressDialog) {
+				this.pressDialog = new Dialog({
 					title: 'Available Products',
 					content: new List({
 						items: {
@@ -40,22 +39,21 @@ sap.ui.define([
 					beginButton: new Button({
 						text: 'Close',
 						press: function () {
-							that.pressDialog.close();
-						}
+							this.pressDialog.close();
+						}.bind(this)
 					})
 				});
 
 				//to get access to the global model
-				this.getView().addDependent(that.pressDialog);
+				this.getView().addDependent(this.pressDialog);
 			}
 
-			that.pressDialog.open();
+			this.pressDialog.open();
 		},
 
-		onResizableDialog: function (oEvent) {
-			var that = this;
-			if (!that.resizableDialog) {
-				that.resizableDialog = new Dialog({
+		onResizableDialog: function () {
+			if (!this.resizableDialog) {
+				this.resizableDialog = new Dialog({
 					title: 'Resizable Available Products',
 					contentWidth: "550px",
 					contentHeight: "300px",
@@ -72,22 +70,21 @@ sap.ui.define([
 					beginButton: new Button({
 						text: 'Close',
 						press: function () {
-							that.resizableDialog.close();
-						}
+							this.resizableDialog.close();
+						}.bind(this)
 					})
 				});
 
 				//to get access to the global model
-				this.getView().addDependent(that.resizableDialog);
+				this.getView().addDependent(this.resizableDialog);
 			}
 
-			that.resizableDialog.open();
+			this.resizableDialog.open();
 		},
 
-		onDraggableDialog: function (oEvent) {
-			var that = this;
-			if (!that.draggableDialog) {
-				that.draggableDialog = new Dialog({
+		onDraggableDialog: function () {
+			if (!this.draggableDialog) {
+				this.draggableDialog = new Dialog({
 					title: 'Draggable Available Products',
 					contentWidth: "550px",
 					contentHeight: "300px",
@@ -104,22 +101,21 @@ sap.ui.define([
 					beginButton: new Button({
 						text: 'Close',
 						press: function () {
-							that.draggableDialog.close();
-						}
+							this.draggableDialog.close();
+						}.bind(this)
 					})
 				});
 
 				//to get access to the global model
-				this.getView().addDependent(that.draggableDialog);
+				this.getView().addDependent(this.draggableDialog);
 			}
 
-			that.draggableDialog.open();
+			this.draggableDialog.open();
 		},
 
 		onDialogWithSizePress: function (oEvent) {
-			var that = this;
-			if (!that.fixedSizeDialog) {
-				that.fixedSizeDialog = new Dialog({
+			if (!this.fixedSizeDialog) {
+				this.fixedSizeDialog = new Dialog({
 					title: 'Available Products',
 					contentWidth: "550px",
 					contentHeight: "300px",
@@ -135,34 +131,33 @@ sap.ui.define([
 					beginButton: new Button({
 						text: 'Close',
 						press: function () {
-							that.fixedSizeDialog.close();
-						}
+							this.fixedSizeDialog.close();
+						}.bind(this)
 					})
 				});
 
 				//to get access to the global model
-				this.getView().addDependent(that.fixedSizeDialog);
+				this.getView().addDependent(this.fixedSizeDialog);
 			}
 
-			that.fixedSizeDialog.open();
+			this.fixedSizeDialog.open();
 		},
 
-		onEscapePreventDialog: function(oEvent) {
-			var that = this;
-			if (!that.escapePreventDialog) {
-				that.escapePreventDialog = new sap.m.Dialog({
+		onEscapePreventDialog: function() {
+			if (!this.escapePreventDialog) {
+				this.escapePreventDialog = new sap.m.Dialog({
 					title: 'Try closing me with ESCAPE',
 					buttons: [
 						new sap.m.Button({
 							text : "Simply close",
 							press : function() {
-								that.escapePreventDialog.close();
-							}
+								this.escapePreventDialog.close();
+							}.bind(this)
 						})
 					],
 					escapeHandler: function(oPromise) {
-						if (!that.confirmEscapePreventDialog) {
-							that.confirmEscapePreventDialog = new sap.m.Dialog({
+						if (!this.confirmEscapePreventDialog) {
+							this.confirmEscapePreventDialog = new sap.m.Dialog({
 								icon : sap.ui.core.IconPool.getIconURI("message-information"),
 								title : "Are you sure?",
 								content : [
@@ -175,31 +170,27 @@ sap.ui.define([
 									new sap.m.Button({
 										text : "Yes",
 										press : function() {
-											that.confirmEscapePreventDialog.close();
+											this.confirmEscapePreventDialog.close();
 											oPromise.resolve();
-										}
+										}.bind(this)
 									}),
 									new sap.m.Button({
 										text : "No",
 										press : function() {
-											that.confirmEscapePreventDialog.close();
+											this.confirmEscapePreventDialog.close();
 											oPromise.reject();
-										}
+										}.bind(this)
 									})
 								]
 							});
 						}
 
-						that.confirmEscapePreventDialog.open();
-					}
-				})
+						this.confirmEscapePreventDialog.open();
+					}.bind(this)
+				});
 			}
 
-			that.escapePreventDialog.open();
+			this.escapePreventDialog.open();
 		}
 	});
-
-
-	return CController;
-
 });

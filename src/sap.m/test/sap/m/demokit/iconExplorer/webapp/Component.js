@@ -51,14 +51,14 @@ sap.ui.define([
 
 		/**
 		 * Wrapper for the iconModel promise as the controller is instantiated earlier than the model
-		 * @return {Promise|*}
+		 * @return {Promise|*} the icons loaded promise
 		 */
 		iconsLoaded: function () {
 			if (!this._oIconsLoadedPromise) {
 				this._oIconsLoadedPromise = new Promise(function (fnResolve, fnReject) {
 					this._fnIconsLoadedResolve = fnResolve;
 					this._fnIconsLoadedReject = fnReject;
-				}.bind(this))
+				}.bind(this));
 			}
 			return this._oIconsLoadedPromise;
 		},

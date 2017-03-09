@@ -5,6 +5,10 @@
 
 .sapUiFup {
 	display: inline-block;
+
+	&.sapUiFupDisabled {
+		pointer-events: none;
+	}
 }
 
 .sapUiFupInp .sapUiFUM {
@@ -52,6 +56,10 @@
 	cursor: pointer;
 	height: 2.5rem;
 	margin-top: 0.25rem;
+}
+
+.sapUiFup.sapUiFupDisabled .sapUiFupInputMask {
+	cursor: default;
 }
 
 .sapUiSizeCompact .sapUiFupInputMask {

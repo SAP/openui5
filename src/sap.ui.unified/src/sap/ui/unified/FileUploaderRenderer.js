@@ -18,52 +18,53 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 	 * @param {sap.ui.core.Control} oFileUploader An object representation of the control that should be rendered.
 	 */
-	FileUploaderRenderer.render = function(oRenderManager, oFileUploader) {
+	FileUploaderRenderer.render = function(oRm, oFileUploader) {
+		var accessibility = sap.ui.getCore().getConfiguration().getAccessibility(),
+			bEnabled = oFileUploader.getEnabled();
 
-		var rm = oRenderManager;
-		var accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
-
-		rm.write('<div');
-		rm.writeControlData(oFileUploader);
-		rm.addClass("sapUiFup");
+		oRm.write('<div');
+		oRm.writeControlData(oFileUploader);
+		oRm.addClass("sapUiFup");
 
 		var sClass = sap.ui.unified.FileUploaderHelper.addFormClass();
 		if (sClass) {
-			rm.addClass(sClass);
+			oRm.addClass(sClass);
 		}
-
-		rm.writeClasses();
-		rm.write('>');
+		if (!bEnabled) {
+			oRm.addClass("sapUiFupDisabled");
+		}
+		oRm.writeClasses();
+		oRm.write('>');
 
 		// form
-		rm.write('<form style="display:inline-block" encType="multipart/form-data" method="post"');
-		rm.writeAttribute('id', oFileUploader.getId() + '-fu_form');
-		rm.writeAttributeEscaped('action', oFileUploader.getUploadUrl());
-		rm.writeAttribute('target', oFileUploader.getId() + '-frame');
-		rm.write('>');
+		oRm.write('<form style="display:inline-block" encType="multipart/form-data" method="post"');
+		oRm.writeAttribute('id', oFileUploader.getId() + '-fu_form');
+		oRm.writeAttributeEscaped('action', oFileUploader.getUploadUrl());
+		oRm.writeAttribute('target', oFileUploader.getId() + '-frame');
+		oRm.write('>');
 
 		// the SAPUI5 TextField and Button
-		rm.write('<div ');
+		oRm.write('<div ');
 		if (!oFileUploader.bMobileLib) {
-			rm.write('class="sapUiFupInp"');
+			oRm.write('class="sapUiFupInp"');
 		}
 		if (accessibility) {
-			rm.writeAttribute("role", "textbox");
-			rm.writeAttribute("aria-readonly", "true");
+			oRm.writeAttribute("role", "textbox");
+			oRm.writeAttribute("aria-readonly", "true");
 		}
-		rm.write('>');
+		oRm.write('>');
 
 		if (!oFileUploader.getButtonOnly()) {
-			rm.write('<div class="sapUiFupGroup" border="0" cellPadding="0" cellSpacing="0"><div><div>');
+			oRm.write('<div class="sapUiFupGroup" border="0" cellPadding="0" cellSpacing="0"><div><div>');
 		} else {
-			rm.write('<div class="sapUiFupGroup" border="0" cellPadding="0" cellSpacing="0"><div><div style="display:none">');
+			oRm.write('<div class="sapUiFupGroup" border="0" cellPadding="0" cellSpacing="0"><div><div style="display:none">');
 		}
-		rm.renderControl(oFileUploader.oFilePath);
-		rm.write('</div><div>');  //-> per style margin
-		rm.renderControl(oFileUploader.oBrowse);
+		oRm.renderControl(oFileUploader.oFilePath);
+		oRm.write('</div><div>');  //-> per style margin
+		oRm.renderControl(oFileUploader.oBrowse);
 
 		var sAriaText;
 		var sTooltip = "";
@@ -94,30 +95,34 @@ sap.ui.define(['jquery.sap.global'],
 			sAriaText = sTooltip + " " + sValue + " " + sButtonText;
 		}
 
-		rm.write('<span id="' + oFileUploader.getId() + '-AccDescr" class="sapUiInvisibleText" aria-hidden="true">');
-		rm.writeEscaped(sAriaText + " " + oFileUploader._sAccText);
-		rm.write('</span>');
-		rm.write('</div></div></div>');
+		oRm.write('<span id="' + oFileUploader.getId() + '-AccDescr" class="sapUiInvisibleText" aria-hidden="true">');
+		oRm.writeEscaped(sAriaText + " " + oFileUploader._sAccText);
+		oRm.write('</span>');
+		oRm.write('</div></div></div>');
 
 		// hidden pure input type file (surrounded by a div which is responsible for giving the input the correct size)
 		var sName = oFileUploader.getName() || oFileUploader.getId();
-		rm.write('<div class="sapUiFupInputMask">');
-		rm.write('<input type="hidden" name="_charset_" aria-hidden="true">');
-		rm.write('<input type="hidden" id="' + oFileUploader.getId() + '-fu_data" aria-hidden="true"');
-		rm.writeAttributeEscaped('name', sName + '-data');
-		rm.writeAttributeEscaped('value', oFileUploader.getAdditionalData() || "");
-		rm.write('>');
+		oRm.write('<div class="sapUiFupInputMask"');
+		if (sTooltip.length) {
+			oRm.writeEscaped('title="' + sTooltip + '"');
+		}
+		oRm.write('>');
+		oRm.write('<input type="hidden" name="_charset_" aria-hidden="true">');
+		oRm.write('<input type="hidden" id="' + oFileUploader.getId() + '-fu_data" aria-hidden="true"');
+		oRm.writeAttributeEscaped('name', sName + '-data');
+		oRm.writeAttributeEscaped('value', oFileUploader.getAdditionalData() || "");
+		oRm.write('>');
 		jQuery.each(oFileUploader.getParameters(), function(iIndex, oParam) {
-			rm.write('<input type="hidden" aria-hidden="true" ');
-			rm.writeAttributeEscaped('name', oParam.getName() || "");
-			rm.writeAttributeEscaped('value', oParam.getValue() || "");
-			rm.write('>');
+			oRm.write('<input type="hidden" aria-hidden="true" ');
+			oRm.writeAttributeEscaped('name', oParam.getName() || "");
+			oRm.writeAttributeEscaped('value', oParam.getValue() || "");
+			oRm.write('>');
 		});
-		rm.write('</div>');
+		oRm.write('</div>');
 
-		rm.write('</div>');
-		rm.write('</form>');
-		rm.write('</div>');
+		oRm.write('</div>');
+		oRm.write('</form>');
+		oRm.write('</div>');
 	};
 
 	return FileUploaderRenderer;

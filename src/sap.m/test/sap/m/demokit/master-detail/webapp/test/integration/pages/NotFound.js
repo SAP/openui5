@@ -19,11 +19,9 @@ sap.ui.define([
 					iPressTheBackButton : function (sViewName) {
 						return this.waitFor({
 							viewName : sViewName,
-							controlType: "sap.m.Button",
+							controlType : "sap.m.Button",
 							matchers: new PropertyStrictEquals({name : "type", value : "Back"}),
-							actions : function (oButton) {
-								oButton.$().trigger("tap");
-							},
+							actions : new Press(),
 							errorMessage : "Did not find the back button"
 						});
 					}

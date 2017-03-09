@@ -9,13 +9,14 @@
 	<!-- Bootstrapping UI5 -->
 	<script id="sap-ui-bootstrap"
 			src="../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m, sap.ui.layout"
+			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.core"
 			data-sap-ui-theme="sap_belize"
 			data-sap-ui-compatVersion="edge"
+			data-sap-ui-preload="async"
 			data-sap-ui-resourceroots='{"sap.ui.demo.iconexplorer": "."}'
-			data-sap-ui-frameOptions="trusted">
+			data-sap-ui-frameOptions="trusted"
+			data-sap-ui-preload="async">
 	</script>
-
 	<script>
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
@@ -23,15 +24,15 @@
 				"sap/ui/core/ComponentContainer"
 			], function (Shell, ComponentContainer) {
 				// initialize the UI component
-				new ComponentContainer({
+				new Shell({
+					app: new ComponentContainer({
 						height : "100%",
 						name : "sap.ui.demo.iconexplorer"
 					})
-				.placeAt("content");
+				}).placeAt("content");
 			});
 		});
 	</script>
-
 </head>
 
 <!-- UI Content -->

@@ -22,16 +22,10 @@ describe('sap.m.QuickView', function() {
 
 	// return to page 1
 	it('should return to page 1', function () {
-	 element(by.id('__button3-iconBtn')).click();
-	 var qv1 = element(by.id('QV1-quickView-popover'));
-	 expect(takeScreenshot(qv1)).toLookAs('3_return_to_page_1');
+		element(by.id('__button3-iconBtn')).click();
+		var qv1 = element(by.id('QV1-quickView-popover'));
+		expect(takeScreenshot(qv1)).toLookAs('3_return_to_page_1');
 	 });
-
-	// empty QuickView
-	it('should open empty QuickView', function () {
-		element(by.id('EmptyQVButton')).click();
-		expect(takeScreenshot()).toLookAs('4_empty');
-	});
 
 	// single page
 	it('should visualize QuickView with single page', function () {

@@ -949,6 +949,31 @@
 		oTestPage.addContent(oFF);
 	}
 
+	var fnModelSizeLimit = function () {
+		var oFFWithModelOfArbitrarySizeLimit = new sap.m.FacetFilter({type: sap.m.FacetFilterType.Light}),
+				oModel = new sap.ui.model.json.JSONModel(),
+				aData = createListValues(105);
+
+		oModel.setData({Filters: aData});
+		oModel.setSizeLimit(110);
+		oFFWithModelOfArbitrarySizeLimit.setModel(oModel);
+		oFFWithModelOfArbitrarySizeLimit.bindAggregation("lists", {
+			path: "/Filters",
+			template: new sap.m.FacetFilterList({title: "{text}"})
+		});
+
+
+		oTestPage.addContent(new sap.m.Bar({
+			contentLeft: new sap.m.Text({
+				text: "{" + oFFWithModelOfArbitrarySizeLimit.getId() + "} FF with lists bound to a model with arbitrary sizeLimit"
+			}),
+
+		}));
+		var oToolbar = new sap.m.Toolbar({content: [oFFWithModelOfArbitrarySizeLimit]});
+
+		oTestPage.addContent(oToolbar);
+	}
+
 	////////////////////////////
 	//fnVariantNoListOpen();
 	//fnVariantListOpen();
@@ -956,6 +981,7 @@
 	fnFacetFilterListProperties();
 	fnFacetFilterProperties();
 	fnDependentFacets();
+	fnModelSizeLimit();
 </script>
 
 </head>

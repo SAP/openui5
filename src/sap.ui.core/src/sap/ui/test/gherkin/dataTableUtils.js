@@ -2,6 +2,8 @@
  * ${copyright}
  */
 
+/* eslint-disable no-loop-func */
+
 sap.ui.define(["jquery.sap.global"], function($) {
   "use strict";
 
@@ -163,6 +165,7 @@ sap.ui.define(["jquery.sap.global"], function($) {
      *                                             names. Can also be a String with values "titleCase", "pascalCase",
      *                                             "camelCase", "hyphenated" or "none".
      * @returns {object[]} - an array of objects equivalent to the input data, with property names normalized
+     * @throws {Error} if the inputed array aData contains duplicate values in the header row
      * @public
      * @function
      * @static
@@ -173,13 +176,27 @@ sap.ui.define(["jquery.sap.global"], function($) {
       var fnNorm = this._getNormalizationFunction(vNorm, "toTable");
 
       // first row are the object's keys (table column headers)
-      var aKeyStore = aData[0].map(fnNorm);
+      var aKeys = aData[0].map(fnNorm);
+
+      // transform the remaining rows
       return aData.slice(1).map(function(aRow) {
-        var oGeneratedObject = {};
-        for (var i = 0; i < aKeyStore.length; ++i) {
-          oGeneratedObject[aKeyStore[i]] = aRow[i];
+        var oGenerated = {};
+
+        // for each key
+        for (var i = 0; i < aKeys.length; ++i) {
+          var sCurrentKey = aKeys[i];
+
+          // if this is the first time the key is being used
+          if (oGenerated.hasOwnProperty(sCurrentKey) === false) {
+            // then add the new key and its associated value to the generated object
+            oGenerated[sCurrentKey] = aRow[i];
+
+          // else if this is a repeat use of the key
+          } else {
+            throw new Error("dataTableUtils.toTable: data table contains duplicate header: | " + sCurrentKey + " |");
+          }
         }
-        return oGeneratedObject;
+        return oGenerated;
       });
     },
 
@@ -212,6 +229,7 @@ sap.ui.define(["jquery.sap.global"], function($) {
      *                                             names. Can also be a string with values "titleCase", "pascalCase",
      *                                             "camelCase", "hyphenated" or "none".
      * @returns {object} - an object equivalent to the input data, with property names normalized
+     * @throws {Error} if the inputed array aData contains duplicate keys such that a row would be overwritten
      * @public
      * @function
      * @static
@@ -219,46 +237,87 @@ sap.ui.define(["jquery.sap.global"], function($) {
     toObject : function(aData, vNorm) {
 
       this._testArrayInput(aData, "toObject");
-      vNorm = this._getNormalizationFunction(vNorm, "toObject");
-
+      var fnNorm = this._getNormalizationFunction(vNorm, "toObject");
+      this._detectDuplicateKeys(aData, fnNorm);
       var oResult = {};
-      for (var i = 0; i < aData.length; ++i) {
-        var aRow = aData[i];
-        var sKey = aRow[0];
-        var sValue = aRow.slice(1);
-        if (sValue.length === 1) {
-          sValue = sValue[0];
+
+      // for each row in the inputed data
+      aData.forEach(function(aRow) {
+
+        var sKey = fnNorm(aRow[0]);
+        var vValue = aRow.slice(1); // vValue starts as an array and becomes a string or object
+
+        // if the value is an array with a single string
+        if (vValue.length === 1) {
+          // then transform vValue into a string
+          vValue = vValue[0];
+
+        // else if the value array contains multiple strings
         } else {
-          sValue = this.toObject([sValue], vNorm); // recurse on array data
+          // then transform vValue into an object (might be a nested object)
+
+          // this function transforms the array into a nested object, e.g. ["A", "B", "C"] => {A: {B: "C"}}
+          vValue = vValue.reduceRight(function(i,j) {var o = {}; o[fnNorm(j)] = i; return o;});
         }
-        if (oResult[sKey]) {
-          $.extend(oResult[sKey], sValue);
+
+        // if this is a new key
+        if (!oResult.hasOwnProperty(sKey)) {
+          // then just add the new string/object directly
+          oResult[sKey] = vValue;
+
+        // else if we are adding an object for a key that already contains an object
         } else {
-          oResult[sKey] = sValue;
+          // then merge the new object with the existing one
+          $.extend(oResult[sKey], vValue);
         }
-      }
-      return this._normalizeKeys(oResult, vNorm);
+
+      });
+
+      return oResult;
     },
 
     /**
-     * Normalizes all of the property names in the given object
+     * Detects errors in aData due to duplicate keys, and throws an Error if an issue was found
      *
-     * @param {object} oObject - the object whose properties we want to normalize
-     * @param {function} fnNormalization - the normalization function to execute
-     * @returns {string} the normalized string
+     * @param {string[]} aData - a 2D array of strings
+     * @param {function} fnNorm - the normalization function to use to normalize keys
+     * @throws {Error} if the inputed array aData contains duplicate keys such that a row would be overwritten
      * @private
      */
-    _normalizeKeys : function(oObject, fnNormalization) {
-      for (var sProperty in oObject) {
-        if (oObject.hasOwnProperty(sProperty)) {
-          var sNewKey = fnNormalization.call(this.normalization, sProperty);
-          if (!oObject.hasOwnProperty(sNewKey)) {
-            oObject[sNewKey] = oObject[sProperty];
-            delete oObject[sProperty];
+    _detectDuplicateKeys: function(aData, fnNorm) {
+
+      var oRowSet = {}; // used to help us identify duplicate keys
+
+      // for each row in the inputed data
+      aData.forEach(function(aRow) {
+        var aKeys = aRow.slice(0, (aRow.length - 1)).map(fnNorm);
+
+        // for each hierarchical level of the keys
+        // e.g. when aKeys = ['A', 'B', 'C'], then sKeys will have the values 'A-B-C', 'A-B' and 'A', in that order
+        for (var i = aKeys.length; i > 0; --i) {
+          var sKeys = aKeys.slice(0, i).join('-');
+
+          // if this set of keys is unique so far
+          if (!oRowSet[sKeys]) {
+            // then take note of it for next time
+            oRowSet[sKeys] = aRow;
+
+          // else if this set of keys is NOT unique
+          } else {
+
+            var aOldRow = oRowSet[sKeys];
+            var aOldKeys = aOldRow.slice(0, (aOldRow.length - 1)).map(fnNorm);
+
+            // if the new row would overwrite the old one
+            if ( (aOldRow.length !== aRow.length) ||
+                 (aOldKeys.every(function(str, index) {return aKeys[index] === str;})) ) {
+
+              var sOutput = "| " + aOldRow.join(" | ") + " |";
+              throw new Error("dataTableUtils.toObject: data table row is being overwritten: " + sOutput);
+            }
           }
         }
-      }
-      return oObject;
+      });
     },
 
     /**

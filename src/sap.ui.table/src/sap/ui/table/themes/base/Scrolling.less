@@ -80,7 +80,7 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVSbBg {
 	.sapUiTableHSb, .sapUiTableCtrlScr, .sapUiTableColHdrScr {
 		._sapUiTableVScrWithActionsInnerMixin_CalcMarginRight(@ScrollbarSize, @Factor * @RowHdrWidth);
 	}
-	
+
 	.sapUiTableRowActionHeader {
 		width: @Factor * @RowHdrWidth;
 		margin-right: @ScrollbarSize;
@@ -197,6 +197,7 @@ html[data-sap-ui-browser^="ed"] {
 	position: relative;
 	overflow-x: scroll;
 	overflow-y: hidden;
+	border-right: 1px solid transparent; /* Simulates the right border of the table cells in the content area */
 	background-color: @sapUiListBackground;
 }
 
@@ -230,19 +231,19 @@ html[data-sap-ui-browser^="ed"] .sapUiTableHSbBg {
 }
 
 .sapUiTableHScr {
-	
+
 	.sapUiTableHSb, .sapUiTableHSbBg {
 		display: block;
 	}
-	
+
 	.sapUiTableFtr {
 		border-top: 1px solid @sapUiListHeaderBorderColor;
 	}
-	
+
 	.sapUiTableColReorderIndicator, .sapUiTableColRsz {
 		bottom: @_sapUiTableDefaultScrollBarSize;
 	}
-	
+
 }
 
 html[data-sap-ui-browser^="ie"] .sapUiTableHScr {
@@ -287,14 +288,14 @@ html.sap-tablet:not(.sap-desktop), html.sap-phone {
 
 	.sapUiTableVSb,
 	.sapUiTableHSb {
-		
+
 		&::-webkit-scrollbar {
 			-webkit-appearence: none;
 			width: @_sapUiTableScrollBarSizeMOBILE;
 			height: @_sapUiTableScrollBarSizeMOBILE;
 			background-color: @sapUiScrollBarTrackColor;
 		}
-		
+
 		&::-webkit-scrollbar-thumb {
 			background-color: @sapUiScrollBarFaceColor;
 			border-top: 0.125rem solid @sapUiScrollBarBorderColor;
@@ -320,11 +321,11 @@ html.sap-tablet:not(.sap-desktop), html.sap-phone {
 			margin-right: @_sapUiTableScrollBarSizeMOBILE;
 		}
 	}
-	
+
 	.sapUiTableHScr {
 		.sapUiTableColReorderIndicator, .sapUiTableColRsz {
 			bottom: @_sapUiTableScrollBarSizeMOBILE;
 		}
 	}
-	
+
 }

@@ -93,6 +93,40 @@
 			router.destroy();
 		});
 
+		QUnit.test("Should parse the hash when initialize doesn't suppress the hash parsing", function(assert) {
+			var router = new sap.ui.core.routing.Router();
+			var parseSpy = this.spy(router, "parse");
+
+			hasher.setHash("");
+
+			router.initialize();
+
+			assert.equal(parseSpy.callCount, 1, "did notify for initial hash");
+			router.stop();
+
+			router.initialize();
+			assert.equal(parseSpy.callCount, 2, "did notify when initialized with the same hash again");
+
+			router.destroy();
+		});
+
+		QUnit.test("Should not parse the hash when initialize does suppress the hash parsing", function(assert) {
+			var router = new sap.ui.core.routing.Router();
+			var parseSpy = this.spy(router, "parse");
+
+			hasher.setHash("");
+
+			router.initialize();
+
+			assert.equal(parseSpy.callCount, 1, "did notify for initial hash");
+			router.stop();
+
+			router.initialize(true /* suppress hash parsing */);
+			assert.equal(parseSpy.callCount, 1, "did not notify when initialized with the same hash again");
+
+			router.destroy();
+		});
+
 		test("Should destroy the router instance", function() {
 			//Arrange
 			var parseSpy,

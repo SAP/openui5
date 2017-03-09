@@ -2,6 +2,8 @@ sap.ui.define([
 	"jquery.sap.global",
 	"codeUnterTest/view/sample.controller"
 ], function ($, Controller) {
+	"use strict";
+
 	var MODULE_PATH = "modulePathForTesting";
 	var URL_PREFIX = "./";
 	$.sap.registerResourcePath(MODULE_PATH, URL_PREFIX);
@@ -36,6 +38,6 @@ sap.ui.define([
 			var sCreatedUrl = Controller._createIFrameURL(oTest.sIFrameUrl, MODULE_PATH);
 			assert.strictEqual(sCreatedUrl, URL_PREFIX + oTest.sExpectedUrl);
 		});
-	})
+	});
 
 });

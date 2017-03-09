@@ -233,7 +233,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 			this._setupMaskVariables();
 		}
 		// We don't need to validate the initial MaskInput placeholder value because this will break setting it to empty value on focusout
-		if (this._oTempValue._aInitial.join('') !== sValue && sValue.length) {
+		if (this._oTempValue._aInitial.join('') !== sValue) {// sValue is never null/undefined here
 			this._applyRules(sValue);
 		}
 

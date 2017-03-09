@@ -15,7 +15,7 @@ sap.ui.define([
 		},
 
 		onOpenDialog: function (oEvent) {
-			if (! this._oDialog) {
+			if (!this._oDialog) {
 				this._oDialog = sap.ui.xmlfragment("sap.m.sample.DialogSearch.Dialog", this);
 				this.getView().addDependent(this._oDialog);
 			}

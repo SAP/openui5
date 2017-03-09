@@ -90,9 +90,7 @@ sap.ui.define([
 							searchOpenDialogs : true,
 							controlType : "sap.m.StandardListItem",
 							matchers :  new Opa5.matchers.PropertyStrictEquals({name : "title", value : sListItemTitle}),
-							success : function (aListItems) {
-								aListItems[0].$().trigger("tap");
-							},
+							actions: new Press(),
 							errorMessage : "Did not find list item with title " + sListItemTitle + " in View Settings Dialog."
 						});
 					},
@@ -316,12 +314,11 @@ sap.ui.define([
 							id : "page",
 							matchers : new PropertyStrictEquals({name : "title", value : "Objects (0)"}),
 							success : function () {
-								Opa5.assert.ok(true, "The list header displays 'Objects (0)'");
+								Opa5.assert.ok(true, "The list header displays zero hits");
 							},
-							errorMessage : "The list still has items"
+							errorMessage : "The list header still has items"
 						});
 					},
-
 
 					theListHasEntries : function () {
 						return this.waitFor({

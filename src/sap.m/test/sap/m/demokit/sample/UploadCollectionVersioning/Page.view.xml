@@ -31,7 +31,6 @@
 				maximumFilenameLength="55"
 				maximumFileSize="10"
 				multiple="false"
-				showSeparators="All"
 				change="onChange"
 				fileSizeExceed="onFileSizeExceed"
 				selectionChange="onSelectionChange"

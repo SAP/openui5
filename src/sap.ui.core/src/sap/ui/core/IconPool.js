@@ -274,6 +274,15 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				};
 			}
 
+			if (typeof collectionName !== "string") {
+				// if collectionName isn't a string, convert it to string
+				collectionName = String(collectionName);
+			}
+
+			// normalize "undefined" back to undefined because the default
+			// icon collection should have name undefined
+			collectionName = collectionName === 'undefined' ? undefined : collectionName;
+
 			if (!mRegistry[collectionName]) {
 				mRegistry[collectionName] = {};
 			}

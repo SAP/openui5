@@ -18,15 +18,15 @@ sap.ui.define([
 			this.oPersonalizationDialog.close();
 		},
 
-		handleReset: function(oEvent) {
+		handleReset: function() {
 			this.bIsReseted = true;
 			MessageToast.show("Reset button has been clicked", {
 				width: "auto"
 			});
 		},
 
-		onPersonalizationDialogPress: function(oEvent) {
-			var oPersonalizationDialog = this._getDialog();
+		onPersonalizationDialogPress: function() {
+			this._getDialog();
 
 			this.oPersonalizationDialog.setShowResetEnabled(this.bShowResetEnabled);
 			this.bIsReseted = false;
@@ -34,13 +34,13 @@ sap.ui.define([
 			this.oPersonalizationDialog.open();
 		},
 
-		onAddColumnsItem: function(oEvent) {
+		onAddColumnsItem: function() {
 			MessageToast.show("Event 'addColumnsItem' fired in order to move the selected column item", {
 				width: "auto"
 			});
 		},
 
-		onChangeColumnsItem: function(oEvent) {
+		onChangeColumnsItem: function() {
 			MessageToast.show("Event 'changeColumnsItem' fired in order to move the selected column item", {
 				width: "auto"
 			});

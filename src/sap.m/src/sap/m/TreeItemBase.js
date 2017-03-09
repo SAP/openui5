@@ -238,8 +238,27 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	 * @private
 	 * @since 1.42.0
 	 */
-	TreeItemBase.prototype._getLevelIndentCSS = function() {
-		return this.getLevel();
+	TreeItemBase.prototype._getPadding = function() {
+		var oTree = this.getTree(),
+		iNodeLevel = this.getLevel(),
+		iIndentation = 0,
+		iDeepestLevel;
+
+		if (oTree) {
+			iDeepestLevel = oTree.getDeepestLevel();
+		}
+
+		if (iDeepestLevel < 2) {
+			iIndentation = iNodeLevel * 1.5;
+		} else if (iDeepestLevel === 2) {
+			iIndentation = iNodeLevel * 1;
+		} else if (iDeepestLevel < 6) {
+			iIndentation = iNodeLevel * 0.5;
+		} else {
+			iIndentation = iNodeLevel * 0.25;
+		}
+
+		return iIndentation;
 	};
 
 	/**

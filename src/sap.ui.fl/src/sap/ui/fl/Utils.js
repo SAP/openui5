@@ -189,7 +189,7 @@ sap.ui.define([
 				// determine siteId from ComponentData
 				if (oComponent) {
 
-					//Workaround for backend check: isApplicationPermitted
+					//Workaround for back-end check: isApplicationPermitted
 					//As long as FLP does not know about appDescriptorId we have to pass siteID and applicationID.
 					//With startUpParameter hcpApplicationId we will get a concatenation of “siteId:applicationId”
 
@@ -626,7 +626,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the tenant number for the communication with the ABAP backend.
+		 * Returns the tenant number for the communication with the ABAP back end.
 		 *
 		 * @public
 		 * @function

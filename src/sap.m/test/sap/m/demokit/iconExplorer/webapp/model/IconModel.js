@@ -280,15 +280,17 @@ sap.ui.define([
 		_calculateTagsPerGroup: function () {
 			var i = 0,
 				j = 0;
-			for (i = 0 ; i < this._oTempGroupData.groups.length ; i++) {
+			for (i = 0; i < this._oTempGroupData.groups.length; i++) {
 				var oTagOccurrences = {};
-				for (j = 0 ; j < this._oTempGroupData.groups[i].icons.length ; j++) {
+				for (j = 0; j < this._oTempGroupData.groups[i].icons.length; j++) {
 					var oTags = this._oTempGroupData.groups[i].icons[j].tags;
 
 					if (!oTags) {
+						/* eslint-disable no-loop-func */
 						var aIcons = this._oTempGroupData.groups[0].icons.filter(function (oIcon) {
 							return oIcon.name === this._oTempGroupData.groups[i].icons[j].name;
 						}.bind(this));
+						/* eslint-enable no-alert */
 						if (aIcons) {
 							// copy over tags from all section
 							this._oTempGroupData.groups[i].icons[j].tags = aIcons[0].tags;
@@ -296,8 +298,8 @@ sap.ui.define([
 							oTags = aIcons[0].tags;
 						}
 					}
-					if(oTags) {
-						for (var k = 0 ; k < oTags.length ; k++) {
+					if (oTags) {
+						for (var k = 0; k < oTags.length; k++) {
 							if (!oTagOccurrences[oTags[k].name]) {
 								oTagOccurrences[oTags[k].name] = 1;
 							} else {
@@ -306,6 +308,7 @@ sap.ui.define([
 						}
 					}
 				}
+				/* eslint-disable no-loop-func */
 				var aSortedTagsByRelevance = Object.keys(oTagOccurrences).sort(function (sKey1, sKey2) {
 					if (oTagOccurrences[sKey1] === oTagOccurrences[sKey2]) {
 						return 0;
@@ -315,9 +318,10 @@ sap.ui.define([
 						return -1;
 					}
 				});
+				/* eslint-enable no-loop-func */
 
 				this._oTempGroupData.groups[i].tags = [];
-				for (j = 0 ; j < aSortedTagsByRelevance.length; j++) {
+				for (j = 0; j < aSortedTagsByRelevance.length; j++) {
 					this._oTempGroupData.groups[i].tags.push({ "name" : aSortedTagsByRelevance[j]});
 				}
 			}

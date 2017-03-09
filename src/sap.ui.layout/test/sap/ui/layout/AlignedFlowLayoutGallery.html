@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>sap.ui.layout.AlignedFlowLayout</title>
+		<script id="sap-ui-bootstrap"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.ui.layout, sap.m"
+				data-sap-ui-xx-bindingSyntax="complex"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-theme="sap_belize">
+		</script>
+		<script>
+			sap.ui.getCore().attachInit(function () {
+				oAlignedFlowLayout = new sap.ui.layout.AlignedFlowLayout({
+					content: [
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan", size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						}),
+						new sap.ui.core.Icon({
+							src:"sap-icon://loan",
+							size: "5rem"
+						})
+					],
+					minItemWidth: "8rem",
+					maxItemWidth: "20rem"
+				});
+
+				new sap.m.App({
+					pages: new sap.m.Page({
+						title: "AlignedFlowLayout Test Page",
+						content: [
+							new sap.m.Text({
+								text: "A sort of Gallery"
+							}),
+							oAlignedFlowLayout
+						]
+					})
+				}).placeAt("content");
+			});
+		</script>
+	</head>
+	<body id="content" class="sapUiBody" role="application">
+	</body>
+</html>

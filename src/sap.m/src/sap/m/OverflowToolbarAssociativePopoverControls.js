@@ -215,6 +215,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarBu
 				listenForEvents: [],
 				noInvalidationProps: ["enabled", "value"]
 			},
+			"sap.m.IconTabHeader": {
+				canOverflow: false,
+				listenForEvents: [],
+				noInvalidationProps: ["selectedKey"]
+			},
 			"sap.ui.comp.smartfield.SmartField": {
 				canOverflow: true,
 				listenForEvents: ["change"],

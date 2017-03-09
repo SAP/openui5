@@ -9,12 +9,11 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/util/MockServer'],
 
 				// use explored app's demo data
 				this._productCount = 0;
-				var that = this;
 				jQuery.ajax(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), {
 					async: false,
 					success: function (data) {
-						that._productData = data;
-					}
+						this._productData = data;
+					}.bind(this)
 				});
 
 				// init server
@@ -25,16 +24,16 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/util/MockServer'],
 							method: "GET",
 							path: "/:term",
 							response: function (oXhr, sTerm) {
-								var aResults = that._productData.ProductCollection
+								var aResults = this._productData.ProductCollection
 									.filter(function (mProduct) {
 										return mProduct.Name.match(new RegExp('^' + sTerm, 'i'));
 									})
 									.map(function (mProduct) {
-										return mProduct.Name
+										return mProduct.Name;
 									});
 								oXhr.respondJSON(200, null, [sTerm, aResults]);
 								return true;
-							}
+							}.bind(this)
 						}
 					]
 				});

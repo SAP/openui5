@@ -8,6 +8,7 @@
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-language="en-US"
+			data-sap-ui-xx-bindingSyntax="complex"
 			data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
 	</script>
 
@@ -22,12 +23,51 @@
 	<script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
-	<script>
-		sinon.config.useFakeTimers = true;
+	<script id="myxml" type="text/xmldata">
+	<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="my.own.controller">
+		<VBox>
+			<TimePicker id="tp1"
+				value="{
+					path: 'Time',
+					type: 'sap.ui.model.odata.type.Time'
+				}"
+				displayFormat= "HH:mm"
+			/>
+			<TimePicker id="tp2"
+				valueFormat= "HH:mm"
+				value="{
+					path: 'Time',
+					type: 'sap.ui.model.odata.type.Time',
+					constraints: { nullable: false }
+				}"
+			/>
+			<TimePicker id="tp3"
+				displayFormat= "HH:mm:ss"
+				value="{
+					path: 'Time',
+					type: 'sap.ui.model.odata.type.Time',
+					formatOptions: {
+						style: 'short'
+					}
+				}"
+				valueFormat= "h:mm:ss a"
+			/>
+			<TimePicker id="tp4"
+				value="{
+					path: 'Time',
+					type: 'sap.ui.model.odata.type.Time',
+					formatOptions: {
+						pattern: 'HH:mm'
+					}
+				}"
+			/>
+		</VBox>
+	</mvc:View>
 	</script>
 
 	<script>
 		jQuery.sap.require("sap.ui.core.format.DateFormat");
+		jQuery.sap.require("sap.ui.test.TestUtils");
 		jQuery.sap.require("sap.m.TimePickerSliders");
 		jQuery.sap.require("sap.m.TimePickerSlider");
 		jQuery.sap.require("sap.m.VisibleItem");
@@ -173,6 +213,7 @@
 
 		module("slider select value by typing", {
 			beforeEach: function() {
+				this.clock = sinon.useFakeTimers();
 				//SUT
 				this.oSlider = new sap.m.TimePickerSlider({
 					items: [
@@ -187,6 +228,7 @@
 				this.iNowTimeStamp = 50501234;
 			},
 			afterEach: function() {
+				this.clock.restore();
 				this.oSpy.restore();
 				this.oSlider.destroy();
 				this.oSlider = null;
@@ -234,11 +276,13 @@
 
 		module("API", {
 			setup : function() {
+				this.clock = sinon.useFakeTimers();
 				this.oTimePicker = new sap.m.TimePicker("t1");
 				this.oTimePicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
 			teardown : function() {
+				this.clock.restore();
 				this.oTimePicker.destroy();
 			}
 		});
@@ -590,7 +634,15 @@
 			oTP.destroy();
 		});
 
-		module("Keyboard handling of picker");
+		module("Keyboard handling of picker", {
+			beforeEach: function() {
+				this.clock = sinon.useFakeTimers();
+
+			},
+			afterEach: function() {
+				this.clock.restore();
+			}
+		});
 
 		test("initial focus", function() {
 			var tp = new sap.m.TimePicker();
@@ -1267,13 +1319,47 @@
 
 			//act
 			tp._openPicker();
-			this.clock.tick(1);
 
 			//assert
 			equal(tp._getSliders().getAggregation("_columns").length, 3, "the picker should display 3 sliders");
 
 			//cleanup
 			tp.destroy();
+		});
+
+		asyncTest("data binding with OData", function() {
+			sap.ui.controller("my.own.controller", {
+				onInit: function() {
+					this.getView().bindObject("/EdmTypesCollection(ID='1')");
+				}
+			});
+
+			sap.ui.test.TestUtils.useFakeServer(sinon.sandbox.create(),
+				"sap/ui/core/demokit/sample/ViewTemplate/types/data", {
+					"/sap/opu/odata/sap/ZUI5_EDM_TYPES/$metadata" : {
+						source : "metadataV2.xml"
+					},
+					"/sap/opu/odata/sap/ZUI5_EDM_TYPES/EdmTypesCollection(ID='1')" : {
+						source : "EdmTypesV2.json"
+					}
+				});
+
+			var oModelV2 = new sap.ui.model.odata.v2.ODataModel({
+				serviceUrl : "/sap/opu/odata/sap/ZUI5_EDM_TYPES/",
+				useBatch : false
+			});
+
+			var view = sap.ui.view({ viewContent: document.scripts.myxml.innerText, type: sap.ui.core.mvc.ViewType.XML })
+				.setModel(oModelV2)
+				.placeAt("qunit-fixture");
+
+			oModelV2.attachRequestCompleted(function () {
+				equals(view.byId("tp1")._$input.val(), "11:33:55 AM", "TP1 has coorect value!");
+				equals(view.byId("tp2")._$input.val(), "11:33:55 AM", "TP2 has coorect value!");
+				equals(view.byId("tp3")._$input.val(), "11:33 AM", "TP3 has coorect value!");
+				equals(view.byId("tp4")._$input.val(), "11:33", "TP4 has coorect value!");
+				start();
+			});
 		});
 
 		module("slider interactions", {
@@ -1286,6 +1372,13 @@
 				oEvent.stopPropagation = function() {};
 
 				return oEvent;
+			},
+			beforeEach: function() {
+				this.clock = sinon.useFakeTimers();
+
+			},
+			afterEach: function() {
+				this.clock.restore();
 			}
 		});
 
@@ -1702,6 +1795,7 @@
 		});
 
 		test("Dynamic selection change announcement", function () {
+			this.clock = sinon.useFakeTimers();
 			//arrange
 			var oSliders, aColumns;
 			this.oTP.setValue("13:15");
@@ -1723,6 +1817,7 @@
 					this.fnAriaSelectionChangeTest(oColumn, iIndex);
 				}, this);
 			}
+			this.clock.restore();
 		});
 
 		test("_hasLabelReferencing", function() {
@@ -2091,6 +2186,8 @@
 		});
 
 		test("on enter '07:-- --', autocomplete to '07:00 AM'", function() {
+			this.clock = sinon.useFakeTimers();
+
 			//system under test
 			var oTp = new sap.m.TimePicker({
 				displayFormat: "HH:mm a"
@@ -2111,6 +2208,7 @@
 
 			//cleanup
 			oTp.destroy();
+			this.clock.restore();
 		});
 
 		test("am match start - then autocomplete on any letter", function() {
@@ -2418,6 +2516,8 @@
 
 		module("events and event handlers", {
 			beforeEach: function () {
+				this.clock = sinon.useFakeTimers();
+
 				//system under test
 				this.oTp = new sap.m.TimePicker({
 					valueFormat: "hh mm",
@@ -2431,6 +2531,7 @@
 				sap.ui.getCore().applyChanges();
 			},
 			afterEach: function() {
+				this.clock.restore();
 				this.oTp.destroy();
 				this.oSpy = null;
 			}

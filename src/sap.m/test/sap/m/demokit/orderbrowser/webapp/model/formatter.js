@@ -42,7 +42,7 @@ sap.ui.define([
 		 * @returns {string} formatted string with image metadata based on the input or a default image when the input is empty
 		 */
 		handleBinaryContent: function(vData){
-			if(vData) {
+			if (vData) {
 				var sMetaData1 = 'data:image/jpeg;base64,';
 				var sMetaData2 = vData.substr(104); // stripping the first 104 bytes from the binary data when using base64 encoding.
 				return sMetaData1 + sMetaData2;

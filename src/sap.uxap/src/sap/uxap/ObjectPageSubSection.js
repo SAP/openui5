@@ -123,7 +123,7 @@ sap.ui.define([
 				vSpacing: 1,
 				width: "100%",
 				containerQuery: true
-			}));
+			}), true); // this is always called onBeforeRendering so suppress invalidate
 		}
 
 		return this.getAggregation("_grid");
@@ -271,7 +271,7 @@ sap.ui.define([
 		try {
 			aVisibleBlocks.forEach(function (oBlock) {
 				this._setBlockMode(oBlock, sCurrentMode);
-				oGrid.addContent(oBlock);
+				oGrid.addAggregation("content", oBlock, true); // this is always called onBeforeRendering so suppress invalidate
 			}, this);
 		} catch (sError) {
 			jQuery.sap.log.error("ObjectPageSubSection :: error while building layout " + sLayout + ": " + sError);

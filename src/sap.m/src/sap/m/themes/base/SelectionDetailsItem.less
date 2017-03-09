@@ -1,0 +1,61 @@
+/* ========================================== */
+/* CSS for control sap.m/SelectionDetailsItem */
+/* Base theme                                 */
+/* ========================================== */
+
+.sapMSDItem {
+	flex-wrap: wrap;
+}
+
+.sapMLIBContent {
+	padding: 0.5rem;
+	box-sizing: border-box;
+}
+
+.sapMSDItemActions {
+	flex: 0 0 ~"calc(100% - 1rem)";
+}
+.sapMSDItem:not(.sapMLIBTypeNavigation) {
+	padding-right: 3rem;
+
+	.sapMSDItemActions {
+		flex-basis: ~"calc(100% + 2rem)";
+	}
+}
+
+.sapMSDItem .sapMLIBImgNav {
+	cursor: pointer;
+}
+
+.sapMSDItemLine {
+	display:  flex;
+}
+
+
+.sapMSDItemLineLabel,
+.sapMSDItemLineValue {
+	flex: 1 1;
+
+	padding: 0.25rem;
+	box-sizing: border-box;
+
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.sapMSDItemLineLabel {
+	margin-right: 1rem;
+	color: @sapUiContentLabelColor;
+}
+
+.sapMSDItemLineValue {
+	color: @sapUiListTextColor;
+
+	&.sapMSDItemLineBold {
+		font-weight: bold;
+	}
+}
+.sapMSDItemLineUnit {
+	font-weight: normal;
+}

@@ -293,7 +293,10 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 
 		this.stub(Utils,"getAppDescriptor").returns({
 			"sap.app":{
-				id: "testScenarioComponent"
+				id: "testScenarioComponent",
+				applicationVersion: {
+					version: "1.0.0"
+				}
 			}
 		});
 
@@ -311,6 +314,46 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		assert.strictEqual(aDirtyChanges[0].getComponent(), 'testScenarioComponent');
 	});
 
+	QUnit.test("addChange shall add a change and contain the applicationVersion in the connector", function(assert) {
+		var oControl = new Control();
+
+		this.stub(Utils, "getAppComponentForControl").returns(oComponent);
+
+		var fChangeHandler = sinon.stub();
+		fChangeHandler.applyChange = sinon.stub();
+		fChangeHandler.completeChangeContent = sinon.stub();
+		sinon.stub(this.oFlexController, "_getChangeHandler").returns(fChangeHandler);
+
+		this.stub(Utils,"getAppDescriptor").returns({
+			"sap.app":{
+				id: "testScenarioComponent",
+				applicationVersion: {
+					version: "1.0.0"
+				}
+			}
+		});
+
+		//Call CUT
+		var oChange = this.oFlexController.addChange({}, oControl);
+		assert.ok(oChange);
+
+
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName());
+		var oCreateStub = sinon.stub();
+		oCreateStub.returns(Promise.resolve());
+		var oLrepConnectorMock = {
+			create: oCreateStub
+		};
+		oChangePersistence._oConnector = oLrepConnectorMock;
+
+		sinon.stub(oChangePersistence, "_massUpdateCacheAndDirtyState").returns(undefined);
+
+		oChangePersistence.saveDirtyChanges();
+
+		assert.equal(oCreateStub.getCall(0).args[0][0].validAppVersions.creation, "1.0.0");
+		assert.equal(oCreateStub.getCall(0).args[0][0].validAppVersions.from, "1.0.0");
+	});
+
 	QUnit.test("addChange shall add a change using the local id with respect to the root component as selector", function(assert) {
 		var oControl = new Control("testComponent---Id1");
 
@@ -323,7 +366,10 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 
 		this.stub(Utils,"getAppDescriptor").returns({
 			"sap.app":{
-				id: "testScenarioComponent"
+				id: "testScenarioComponent",
+				applicationVersion: {
+					version: "1.0.0"
+				}
 			}
 		});
 
@@ -352,7 +398,10 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		sinon.stub(this.oFlexController, "_getChangeHandler").returns(fChangeHandler);
 		this.stub(Utils,"getAppDescriptor").returns({
 			"sap.app":{
-				id: "myComponent"
+				id: "myComponent",
+				applicationVersion: {
+					version: "1.0.0"
+				}
 			}
 		});
 		this.stub(Utils, "getAppComponentForControl").returns(oComponent);
@@ -593,6 +642,14 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 				completeChangeContent: function () {}
 		};
 		var getChangeHandlerStub = this.stub(this.oFlexController, "_getChangeHandler").returns(oDummyChangeHandler);
+		this.stub(Utils,"getAppDescriptor").returns({
+			"sap.app":{
+				id: "myComponent",
+				applicationVersion: {
+					version: "1.0.0"
+				}
+			}
+		});
 
 		this.oFlexController.createChange({}, new sap.ui.core.Control());
 
@@ -624,6 +681,14 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 			completeChangeContent: function () {}
 		};
 		this.stub(this.oFlexController, "_getChangeHandler").returns(oDummyChangeHandler);
+		this.stub(Utils,"getAppDescriptor").returns({
+			"sap.app":{
+				id: "myComponent",
+				applicationVersion: {
+					version: "1.0.0"
+				}
+			}
+		});
 
 		var oChange = this.oFlexController.createChange({}, new sap.ui.core.Control());
 
@@ -639,6 +704,14 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 			completeChangeContent: function () {}
 		};
 		this.stub(this.oFlexController, "_getChangeHandler").returns(oDummyChangeHandler);
+		this.stub(Utils,"getAppDescriptor").returns({
+			"sap.app":{
+				id: "myComponent",
+				applicationVersion: {
+					version: "1.0.0"
+				}
+			}
+		});
 
 		var oChange = this.oFlexController.createChange({}, mControl);
 

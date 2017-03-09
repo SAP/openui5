@@ -1254,6 +1254,87 @@
 		});
 	});
 
+	asyncTest("getSelectedNodesCount expand", function(){
+		oModel.attachMetadataLoaded(function() {
+			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+				displayRootNode: true,
+				numberOfExpandedLevels: 0,
+				rootLevel: 1
+			});
+
+			var handler1 = function () {
+				oBinding.detachChange(handler1);
+				oBinding.getContexts(0, 100);
+
+				oBinding.selectAll();
+				equal(oBinding.getSelectedNodesCount(), 1, "After select all, exactly one node (the only one) is selected");
+				equal(oBinding.getLength(), 1, "Correct binding length");
+
+				oBinding.attachChange(handler2);
+				oBinding.expand(0);
+
+			};
+
+			var handler2 = function() {
+				oBinding.detachChange(handler2);
+				oBinding.attachChange(handler3);
+				oBinding.getContexts(0, 100);
+			};
+
+			var handler3 = function() {
+				oBinding.detachChange(handler3);
+				oBinding.getContexts(0, 100);
+				equal(oBinding.getSelectedNodesCount(), 1, "After expand, no additional nodes get selected");
+				equal(oBinding.getLength(), 10, "Correct binding length");
+
+				start();
+			};
+
+			oBinding.attachChange(handler1);
+			oBinding.getContexts(0, 100);
+		});
+	});
+
+	asyncTest("getSelectedNodesCount expand to level", function(){
+		oModel.attachMetadataLoaded(function() {
+			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+				displayRootNode: true,
+				numberOfExpandedLevels: 0,
+				rootLevel: 1
+			});
+
+			var handler1 = function () {
+				oBinding.detachChange(handler1);
+				oBinding.getContexts(0, 100);
+
+				oBinding.selectAll();
+				equal(oBinding.getSelectedNodesCount(), 1, "After select all, exactly one node (the only one) is selected");
+				equal(oBinding.getLength(), 1, "Correct binding length");
+
+				oBinding.attachChange(handler2);
+				oBinding.setNumberOfExpandedLevels(1);
+			};
+
+			var handler2 = function() {
+				oBinding.detachChange(handler2);
+				oBinding.attachChange(handler3);
+				oBinding.getContexts(0, 100);
+			};
+
+			var handler3 = function() {
+				oBinding.detachChange(handler3);
+				oBinding.getContexts(0, 100);
+				equal(oBinding.getSelectedNodesCount(), 1, "After expand, no additional nodes get selected");
+				equal(oBinding.getLength(), 10, "Correct binding length");
+
+				start();
+			};
+
+			oBinding.attachChange(handler1);
+			oBinding.getContexts(0, 100);
+		});
+	});
+
 	asyncTest("getSelectedNodesCount with paging", function(){
 		oModel.attachMetadataLoaded(function() {
 			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
@@ -1276,7 +1357,6 @@
 			oBinding.getContexts(0, 2);
 		});
 	});
-
 	/**
 	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 	 * Data should already be present, since prebuildTree already requested a big set

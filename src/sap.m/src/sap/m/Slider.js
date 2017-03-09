@@ -307,14 +307,12 @@ sap.ui.define([
 		 * @returns {number}
 		 * @private
 		 */
-		Slider.prototype._getValueOfPercent = function (fPercent) {
-			var fMin = this.getMin();
-			var fValue = (fPercent * (this.getMax() - fMin) / 100) + fMin;
-			var valuePrecision = ("" + this.getStep()).split(".")[1];
+		Slider.prototype._getValueOfPercent = function(fPercent) {
+			var fMin = this.getMin(),
+				fValue = (fPercent * (this.getMax() - fMin) / 100) + fMin,
+				sNewValueFixedPoint = this.toFixed(fValue, this.getDecimalPrecisionOfNumber(this.getStep()));
 
-			valuePrecision = valuePrecision ? valuePrecision.length : 0;
-
-			return Number(fValue.toFixed(valuePrecision));
+			return Number(sNewValueFixedPoint);
 		};
 
 		/**

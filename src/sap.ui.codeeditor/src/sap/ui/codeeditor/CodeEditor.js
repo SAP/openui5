@@ -310,6 +310,9 @@ sap.ui.define([
 		}, 1000);
 
 		this.getDomRef().appendChild(this._oEditorDomRef);
+
+		// force text update
+		this._oEditor.renderer.updateText();
 	};
 
 	/**

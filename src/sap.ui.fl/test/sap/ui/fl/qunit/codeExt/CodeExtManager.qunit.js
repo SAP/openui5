@@ -217,7 +217,8 @@ sap.ui.require([
 		    					user: "",
 		    					sapui5Version: sap.ui.version
 		    				},
-		    				dependentSelector: {}
+		    				dependentSelector: {},
+		    				validAppVersions: {}
 		    			},
 		    			{
 		    				fileName: sGeneratedId,
@@ -244,7 +245,8 @@ sap.ui.require([
 		    					user: "",
 		    					sapui5Version: sap.ui.version
 		    				},
-		    				dependentSelector: {}
+		    				dependentSelector: {},
+		    				validAppVersions: {}
 		    			}];
 
 		var oLrepConnectorCreateStub = this.stub(CodeExtManager._oLrepConnector, "create");

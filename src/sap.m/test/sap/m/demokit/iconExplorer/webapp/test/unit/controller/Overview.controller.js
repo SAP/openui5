@@ -113,24 +113,24 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should reset tag if category was changed", function () {
-		this.oOverviewController._oCurrentQueryContext.tag= "test";
-		this.oOverviewController._oCurrentQueryContext.cat= "test";
+		this.oOverviewController._oCurrentQueryContext.tag = "test";
+		this.oOverviewController._oCurrentQueryContext.cat = "test";
 
 		this.oOverviewController._updateHash("cat", "new");
 		sinon.assert.calledWith(this.oRouterStub.navTo, "overview", {query: {cat: "new"}});
 	});
 
 	QUnit.test("Should reset tag if category was changed to favorites", function () {
-		this.oOverviewController._oCurrentQueryContext.tag= "test";
-		this.oOverviewController._oCurrentQueryContext.tab= "details";
+		this.oOverviewController._oCurrentQueryContext.tag = "test";
+		this.oOverviewController._oCurrentQueryContext.tab = "details";
 
 		this.oOverviewController._updateHash("tab", "favorites");
 		sinon.assert.calledWith(this.oRouterStub.navTo, "overview", {query: {tab: "favorites"}});
 	});
 
 	QUnit.test("Should reset tag if category was changed from favorites", function () {
-		this.oOverviewController._oCurrentQueryContext.tag= "test";
-		this.oOverviewController._oCurrentQueryContext.tab= "favorites";
+		this.oOverviewController._oCurrentQueryContext.tag = "test";
+		this.oOverviewController._oCurrentQueryContext.tab = "favorites";
 
 		this.oOverviewController._updateHash("tab", "details");
 		sinon.assert.calledWith(this.oRouterStub.navTo, "overview", {query: {tab: "details"}});

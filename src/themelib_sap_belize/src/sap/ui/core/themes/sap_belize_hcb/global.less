@@ -563,9 +563,9 @@
 @sapUiButtonHeaderDisabledTextColor: @sapUiContentDisabledTextColor;
 @sapUiButtonFooterTextColor: contrast(@sapUiPageFooterBackground, @sapUiButtonTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiButtonFooterHoverBackground: @sapUiButtonLiteHoverBackground;
-@sapUiButtonActionSelectBackground: @sapUiPageFooterBackground;
-@sapUiButtonActionSelectBorderColor: @sapUiButtonBorderColor;
-@sapUiButtonLiteActionSelectHoverBackground: @sapUiButtonHoverBackground;
+@sapUiButtonActionSelectBackground: @sapUiListBackground;
+@sapUiButtonActionSelectBorderColor: @sapUiListBorderColor;
+@sapUiButtonLiteActionSelectHoverBackground: @sapUiListHoverBackground;
 @sapUiToggleButtonPressedBackground: @sapUiSelected;
 @sapUiToggleButtonPressedBorderColor:  @sapUiButtonBorderColor;
 @sapUiToggleButtonPressedTextColor: contrast(@sapUiToggleButtonPressedBackground, @sapUiButtonTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
@@ -629,6 +629,7 @@
 @sapUiShadowLevel2: 0 0.25rem 2rem 0 fade(@sapUiContentContrastShadowColor, 60), 0 0 0 2px @sapUiContentShadowColor;
 @sapUiShadowLevel3: 0 0.625rem 4rem 0 fade(@sapUiContentContrastShadowColor, 80), 0 0 0 2px @sapUiContentShadowColor;
 @sapUiShadowText: none;
+@sapUiShadowHeader: inset 0 -0.125rem @sapUiObjectHeaderBorderColor, 0 0.125rem 0 0 @sapUiObjectHeaderBackground;
 
 //images for shell
 @sapUiUx3ShellHeaderImageURL: ~"";

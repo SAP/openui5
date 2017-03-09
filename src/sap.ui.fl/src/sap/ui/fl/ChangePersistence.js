@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Change", "sap/ui/fl/Utils", "jquery.sap.global", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/changeHandler/JsControlTreeModifier"
-], function(Change, Utils, $, LRepConnector, Cache, ContextManager, JsControlTreeModifier) {
+	"sap/ui/fl/Change", "sap/ui/fl/Utils", "jquery.sap.global", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/registry/Settings"
+], function(Change, Utils, $, LRepConnector, Cache, ContextManager, Settings) {
 	"use strict";
 
 	/**
@@ -113,7 +113,9 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag) {
 		return Cache.getChangesFillingCache(this._oConnector, this._sComponentName, mPropertyBag).then(function(oWrappedChangeFileContent) {
-			this._bHasLoadedChangesFromBackend = true;
+			this._bHasLoadedChangesFromBackEnd = true;
+
+			Settings._storeInstance(this._sComponentName, oWrappedChangeFileContent);
 
 			if (!oWrappedChangeFileContent.changes || !oWrappedChangeFileContent.changes.changes) {
 				return [];
@@ -121,10 +123,10 @@ sap.ui.define([
 
 			var aChanges = oWrappedChangeFileContent.changes.changes;
 			//If layer filtering required, excludes changes in higher layer than the max layer
-			if (Utils.isLayerFilteringRequired()){
+			if (Utils.isLayerFilteringRequired()) {
 				var aFilteredChanges = [];
-				aChanges.some(function (oChange){
-					if (!Utils.isOverMaxLayer(oChange.layer)){
+				aChanges.forEach(function (oChange) {
+					if (!Utils.isOverMaxLayer(oChange.layer)) {
 						aFilteredChanges.push(oChange);
 					}
 				});
@@ -134,7 +136,7 @@ sap.ui.define([
 			var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
 			if (sCurrentLayer) {
 				var aCurrentLayerChanges = [];
-				aChanges.some(function(oChange){
+				aChanges.forEach(function (oChange) {
 					if (oChange.layer === sCurrentLayer) {
 						aCurrentLayerChanges.push(oChange);
 					}
@@ -148,6 +150,7 @@ sap.ui.define([
 					resolve(aChanges.filter(this._preconditionsFulfilled.bind(this, aActiveContexts)).map(createChange));
 				}.bind(this));
 			}.bind(this));
+
 		}.bind(this));
 
 		function createChange(oChangeContent) {
@@ -321,7 +324,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Saves all dirty changes by calling the appropriate back end method
+	 * Saves all dirty changes by calling the appropriate back-end method
 	 * (create for new changes, deleteChange for deleted changes). The methods
 	 * are called sequentially to ensure order. After a change has been saved
 	 * successfully, the cache is updated and the changes is removed from the dirty

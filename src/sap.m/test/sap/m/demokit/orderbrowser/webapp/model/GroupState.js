@@ -79,6 +79,7 @@ sap.ui.define([
 
 		/**
 		 * Groups the orders by the name of the ordering company.
+		 * @param {Object} oContext The binding context of the current object
 		 * @returns {Object} the properties needed to display the group for the passed order,
 		 * 			see also {@link sap.ui.demo.orderbrowser.controller.Master#createGroupHeader()}
 		 */
@@ -92,6 +93,7 @@ sap.ui.define([
 
 		/**
 		 * Groups the orders by month (+ year) when it was created.
+		 * @param {Object} oContext The binding context of the current object
 		 * @returns {Object} the properties needed to display the group for the passed order,
 		 * 			see also {@link sap.ui.demo.orderbrowser.controller.Master#createGroupHeader()}
 		 */
@@ -110,6 +112,7 @@ sap.ui.define([
 		/**
 		 * Groups the orders by month (+ year) when the ordered products have been shipped.
 		 * There will be one group covering all orders which still need to be shipped.
+		 * @param {Object} oContext The binding context of the current object
 		 * @returns {Object} the properties needed to display the group for the passed order,
 		 * 			see also {@link sap.ui.demo.orderbrowser.controller.Master#createGroupHeader()}
 		 */
@@ -125,8 +128,7 @@ sap.ui.define([
 					key: iYear + "-" + iMonth,
 					text: this._oResourceBundle.getText("masterGroupTitleShippedInPeriod", [ sMonthName, iYear ])
 				};
-			}
-			else {
+			} else {
 				return {
 					key: 0,
 					text: this._oResourceBundle.getText("masterGroupTitleNotShippedYet")

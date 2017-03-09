@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/ListRenderer'
 	* UploadCollection renderer.
 	* @namespace
 	*/
-	var UploadCollectionRenderer = Renderer.extend(ListRenderer);
+	var UploadCollectionRenderer = {};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/ListRenderer'
 		oRm.writeClasses();
 		oRm.write(">");
 		this.renderDragDropOverlay(oRm, oControl);
-		ListRenderer.render.call(this, oRm, oControl._oList);
+		this.renderList(oRm, oControl);
 		oRm.write("</div>");
 	};
 
@@ -76,6 +76,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/ListRenderer'
 		oRm.renderControl(oControl.getAggregation("_dragDropText"));
 		oRm.write("</div>");
 		oRm.write("</div>");
+	};
+
+	UploadCollectionRenderer.renderList = function(oRm, oControl) {
+		var fnOriginal = oControl._oList.getRenderer().renderNoData;
+		oControl._oList.getRenderer().renderNoData = this.renderNoData;
+		oRm.renderControl(oControl._oList);
+		oControl._oList.getRenderer().renderNoData = fnOriginal;
 	};
 
 	return UploadCollectionRenderer;

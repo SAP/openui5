@@ -35,7 +35,7 @@ sap.ui.define([
 							}), new TextArea({
 								placeholder: "What do you think about this item?",
 								rows: 5,
-								cols: 30,
+								cols: 30
 							})
 						]
 					})

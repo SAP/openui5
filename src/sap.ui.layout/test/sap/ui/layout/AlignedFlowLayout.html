@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>sap.ui.layout.AlignedFlowLayout</title>
+		<script id="sap-ui-bootstrap"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.ui.layout, sap.m"
+				data-sap-ui-xx-bindingSyntax="complex"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-theme="sap_belize">
+		</script>
+		<script>
+			sap.ui.getCore().attachInit(function () {
+				oAlignedFlowLayout1 = new sap.ui.layout.AlignedFlowLayout({
+					content: [
+						new sap.m.Input(),
+						new sap.m.Input(),
+						new sap.m.Input(),
+						new sap.m.Input(),
+						new sap.m.Input(),
+						new sap.m.Input()
+					],
+					endContent: new sap.m.Button({
+						text: "Search"
+					})
+					// minItemWidth: "30rem"
+				});
+
+				oAlignedFlowLayout2 = new sap.ui.layout.AlignedFlowLayout({
+					content: [
+						new sap.m.Input(),
+						new sap.m.Input()
+					],
+					endContent: new sap.m.Button({
+						text: "Search"
+					})
+				});
+
+				oAlignedFlowLayout3 = new sap.ui.layout.AlignedFlowLayout({
+					content: [
+						new sap.m.Input(),
+						new sap.m.Input(),
+						new sap.m.Input(),
+						new sap.m.Input(),
+						new sap.m.Input(),
+						new sap.m.Input(),
+						new sap.m.Input()
+					],
+					endContent: new sap.m.Button({
+						text: "Searrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrch"
+					})
+				});
+
+				oAlignedFlowLayout4 = new sap.ui.layout.AlignedFlowLayout({
+					content: [
+						new sap.m.Input(),
+						new sap.m.Input(),
+						new sap.m.Input(),
+						new sap.m.Input(),
+						new sap.m.Input(),
+						new sap.m.Input(),
+						new sap.m.Input(),
+						new sap.m.Input()
+					],
+					endContent: new sap.m.Button({
+						text: "Searrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrch"
+					})
+				});
+
+				oAlignedFlowLayout5 = new sap.ui.layout.AlignedFlowLayout({
+					content: [
+						new sap.m.Input(),
+						new sap.m.Input(),
+						new sap.m.Input()
+					]
+				});
+
+				oAlignedFlowLayout6 = new sap.ui.layout.AlignedFlowLayout({
+					content: [
+						new sap.m.TextArea({
+							height: "8rem",
+							width: "100%"}),
+						new sap.m.TextArea({
+							height: "8rem",
+							width: "100%"
+						}),
+						new sap.m.TextArea({
+							height: "8rem",
+							width: "100%"
+						}),
+						new sap.m.TextArea({
+							height: "8rem",
+							width: "100%"
+						})
+					],
+					endContent: new sap.m.TextArea({
+						height: "18rem"
+					})
+				});
+
+				new sap.m.App({
+					pages: new sap.m.Page({
+						title: "AlignedFlowLayout Test Page",
+						content: [
+							new sap.m.Text({
+								text: "A FilterBar-like Layout"
+							}),
+							oAlignedFlowLayout1,
+							new sap.m.Text({
+								text: "Alternative content to test behavior with few items"
+							}),
+							oAlignedFlowLayout2,
+							new sap.m.Text({
+								text: "Alternative content to test behavior with wide buttons"
+							}),
+							oAlignedFlowLayout3,
+							new sap.m.Text({
+								text: "Alternative content to test behavior with wide buttons"
+							}),
+							oAlignedFlowLayout4,
+							new sap.m.Text({
+								text: "Alternative content to test behavior with no buttons"
+							}),
+							oAlignedFlowLayout5,
+							new sap.m.Text({
+								text: "Alternative content to test height behavior"
+							}),
+							oAlignedFlowLayout6
+						]
+					})
+				}).placeAt("content");
+			});
+		</script>
+	</head>
+	<body id="content" class="sapUiBody" role="application">
+	</body>
+</html>

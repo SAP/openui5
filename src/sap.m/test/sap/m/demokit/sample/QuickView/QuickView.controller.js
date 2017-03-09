@@ -194,7 +194,7 @@ sap.ui.define([
 						]
 					}
 				]
-			}
+			};
 
 			// set the data for the model
 			this.oCompanyModel.setData(mCompanyData);

@@ -17,9 +17,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 		if (!oLI.isTopLevel()) {
 			rm.addClass("sapMTreeItemBaseChildren");
-
 		}
-		var iIndentation = oLI._getLevelIndentCSS();
+
+		var iIndentation = oLI._getPadding();
 		if (sap.ui.getCore().getConfiguration().getRTL()){
 			rm.addStyle("padding-right", iIndentation + "rem");
 		} else {

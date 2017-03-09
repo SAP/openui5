@@ -1,15 +1,14 @@
 <mvc:View controllerName="sap.m.sample.NumericContentDifColors.Page"
 	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
-	<NumericContent value="65.5" scale="MM"
-		valueColor="Neutral" indicator="None" state="Loaded" class="sapUiSmallMargin"
+	<NumericContent value="65.5" scale="MM" class="sapUiSmallMargin"
 		press="press" />
 	<NumericContent value="65.5" scale="MM"
-		valueColor="Good" indicator="Up" state="Loaded" class="sapUiSmallMargin"
+		valueColor="Good" indicator="Up" class="sapUiSmallMargin"
 		press="press" />
 	<NumericContent value="6666" scale="MM"
-		valueColor="Critical" indicator="Up" state="Loaded" class="sapUiSmallMargin"
+		valueColor="Critical" indicator="Up" class="sapUiSmallMargin"
 		press="press" />
 	<NumericContent value="65.5" scale="MM"
-		valueColor="Error" indicator="Down" state="Loaded" class="sapUiSmallMargin"
+		valueColor="Error" indicator="Down" class="sapUiSmallMargin"
 		press="press" />
 </mvc:View>

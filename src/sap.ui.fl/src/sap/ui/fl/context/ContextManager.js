@@ -214,10 +214,13 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils", "sap/ui/fl/context/
 		 * @param {string} oPropertyBag.reference - reference (app variant id or componentName.Component" in which the context is present
 		 * @param {string} oPropertyBag.title - human readable title of the context
 		 * @param {string} oPropertyBag.description - human readable description of the context
-		 * @param {Object[]} oPropertyBag.parameters - runtime context parameters required to match for the context beeing active
+		 * @param {Object[]} oPropertyBag.parameters - Runtime context parameters required to match the active context
 		 * @param {string} oPropertyBag.parameters.selector - runtime context name
-		 * @param {string} oPropertyBag.parameters.operator - comparision method
-		 * @param {Object} oPropertyBag.parameters.value - value passed to the comparision
+		 * @param {string} oPropertyBag.parameters.operator - Comparison method
+		 * @param {Object} oPropertyBag.parameters.value - Value passed to the comparison
+		 * @param {Object} oPropertyBag.validAppVersions - Application versions (format: major.minor.patch) where the context is active
+		 * @param {String} oPropertyBad.validAppVersions.creation - application version when it was created
+		 * @param {String} oPropertyBad.validAppVersions.from - Minimum application version
 		 */
 		createOrUpdateContextObject: function (oPropertyBag) {
 			if (!oPropertyBag.reference) {
@@ -247,7 +250,8 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils", "sap/ui/fl/context/
 					generator: "",
 					service: "",
 					user: ""
-				}
+				},
+				validAppVersions: oPropertyBag.validAppVersions || {}
 			};
 
 			var sUri = "/sap/bc/lrep/content/" + oPropertyBag.namespace + oPropertyBag.fileName + ".context";

@@ -96,6 +96,7 @@
                 <module>sap/m/InputListItem</module>
                 <module>sap/m/StandardListItem</module>
                 <module>sap/m/CustomListItem</module>
+                <module>sap/m/CustomTreeItem</module>
                 <module>sap/m/GrowingList</module>
                 <module>sap/m/Column</module>
                 <module>sap/m/ColumnListItem</module>

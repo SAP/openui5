@@ -94,7 +94,7 @@
 .sapUiSizeCompact {
 	.sapMRb:focus:before {
 		top: .4375rem;
-		bottom: .3125rem;
+		bottom: .4375rem;
 		left: .4375rem;
 		right: .325rem;
 	}
@@ -111,11 +111,6 @@
 .sapMRbHoverable:hover {
 	border-color: @sapUiFieldHoverBorderColor;
 	background-color: @sapUiFieldHoverBackground;
-}
-
-/* IE cannot handle more than 2 decimal places, and therefore the radio button dot is misaligned when using em */
-html[data-sap-ui-browser^="ie"] .sapMRbB .sapMRbBInn {
-	margin: 3px;
 }
 
 .sapMRbSel .sapMRbBInn {
@@ -157,7 +152,7 @@ html[data-sap-ui-browser^="ie"] .sapMRbB .sapMRbBInn {
 	.sapMRbB .sapMRbBInn {
 		height: 0.25rem;
 		width: 0.25rem;
-		margin: 0.150rem;
+		margin: 0.15rem;
 	}
 
 	.sapMRbBLabel {
