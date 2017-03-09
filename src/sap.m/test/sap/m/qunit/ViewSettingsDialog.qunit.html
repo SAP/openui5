@@ -265,13 +265,13 @@
 
 
 			QUnit.module("Initial Check", {
-				setup : function () {
+				beforeEach : function () {
 					this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 					this.oVSD = new sap.m.ViewSettingsDialog();
 					this.oVSD.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oVSD.destroy();
 					this.oVSD = null;
 				}
@@ -288,12 +288,12 @@
 			});
 
 			QUnit.module("States", {
-				setup : function () {
+				beforeEach : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog();
 					this.oVSD.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oVSD.destroy();
 					this.oVSD = null;
 				}
@@ -322,7 +322,7 @@
 			});
 
 			module ("getter/setter", {
-				setup : function () {
+				beforeEach : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog();
 					this.oFilterState = {
 						"name1": true,
@@ -347,7 +347,7 @@
 					this.oVSD.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oVSD.destroy();
 					this.oVSD = null;
 				}
@@ -450,7 +450,7 @@
 			});
 
 			QUnit.module("Performance", {
-				setup : function () {
+				beforeEach : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog();
 					this.oFilterState = {
 						"name1": true,
@@ -475,7 +475,7 @@
 					this.oVSD.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oVSD.destroy();
 					this.oVSD = null;
 				}
@@ -502,7 +502,7 @@
 			});
 
 			QUnit.module("Open and Close", {
-				setup : function () {
+				beforeEach : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog();
 
 					oVsdConfig.addSortItems(this.oVSD);
@@ -512,7 +512,7 @@
 					this.oVSD.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oVSD.destroy();
 					this.oVSD = null;
 				}
@@ -594,8 +594,8 @@
 					done();
 				}.bind(this), 1500);
 			});
-			module ("Events", {
-				setup : function () {
+			QUnit.module ("Events", {
+				beforeEach : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog();
 					this.oFilterState = {
 						"name1": true,
@@ -620,7 +620,7 @@
 					this.oVSD.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oVSD.destroy();
 					this.oVSD = null;
 				}
@@ -867,7 +867,7 @@
 			});
 
 			module ("Construction/Destruction", {
-				setup : function () {
+				beforeEach : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog();
 					this.oFilterState = {
 						"name1": true,
@@ -892,7 +892,7 @@
 					this.oVSD.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oVSD.destroy();
 					this.oVSD = null;
 				}
@@ -1071,8 +1071,8 @@
 				ok("Filter/Group/Sort items should be removed without throwing an exception");
 			});
 
-			module ("Sort tab only checks", {
-				setup : function () {
+			QUnit.module ("Sort tab only checks", {
+				beforeEach : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog({
 						sortItems: [
 							new sap.m.ViewSettingsItem({
@@ -1100,7 +1100,7 @@
 					this.oVSD.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oVSD.destroy();
 					this.oVSD = null;
 				}
@@ -1125,8 +1125,8 @@
 				ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
 		});
 
-		module ("Group tab only checks", {
-				setup : function () {
+		QUnit.module ("Group tab only checks", {
+				beforeEach : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog({
 						groupItems: [
 							new sap.m.ViewSettingsItem({
@@ -1154,7 +1154,7 @@
 					this.oVSD.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oVSD.destroy();
 					this.oVSD = null;
 				}
@@ -1179,8 +1179,8 @@
 			ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
 		});
 
-		module ("Preset Filter only checks", {
-			setup : function () {
+		QUnit.module ("Preset Filter only checks", {
+			beforeEach : function () {
 				this.oVSD = new sap.m.ViewSettingsDialog({
 					presetFilterItems: [
 						new sap.m.ViewSettingsItem({
@@ -1203,7 +1203,7 @@
 				this.oVSD.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oVSD.destroy();
 				this.oVSD = null;
 			}
@@ -1222,8 +1222,8 @@
 			ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
 		});
 
-		module ("Filter details rendering", {
-			setup : function () {
+		QUnit.module ("Filter details rendering", {
+			beforeEach : function () {
 				this.oVSD = new sap.m.ViewSettingsDialog();
 
 				this.oFilterState = {
@@ -1242,7 +1242,7 @@
 				this.oVSD.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oVSD.destroy();
 				this.oVSD = null;
 			}
@@ -1597,8 +1597,8 @@
 			}, 1000);
 		});
 
-		module ("Filter only checks", {
-			setup : function () {
+		QUnit.module ("Filter only checks", {
+			beforeEach : function () {
 				this.oVSD = new sap.m.ViewSettingsDialog();
 
 				this.oFilterState = {
@@ -1615,7 +1615,7 @@
 				this.oVSD.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oVSD.destroy();
 				this.oVSD = null;
 			}
@@ -1687,7 +1687,7 @@
 		});
 
 		QUnit.module("Re-rendering after changing selections", {
-			setup : function () {
+			beforeEach : function () {
 				this.oVSD = new sap.m.ViewSettingsDialog();
 
 				this.oVSD.addSortItem(new sap.m.ViewSettingsItem({
@@ -1770,13 +1770,13 @@
 		});
 
 		QUnit.module("Changing items after open", {
-			setup : function () {
+			beforeEach : function () {
 				this.oVSD = new sap.m.ViewSettingsDialog();
 
 				this.oVSD.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oVSD.destroy();
 				this.oVSD = null;
 			},
@@ -2081,7 +2081,7 @@
 		});
 
 		QUnit.module("Data binding", {
-			setup : function () {
+			beforeEach : function () {
 				this.oVSD = new sap.m.ViewSettingsDialog();
 				this.bindAggregations(this.oVSD);
 
@@ -2089,7 +2089,7 @@
 				sap.ui.getCore().applyChanges();
 
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oVSD.destroy();
 				this.oVSD = null;
 			},
@@ -2423,14 +2423,14 @@
 		});
 
 		QUnit.module("Accessibility", {
-			setup : function () {
+			beforeEach : function () {
 				this.oVSD = new sap.m.ViewSettingsDialog();
 				this.bindAggregations(this.oVSD);
 
 				this.oVSD.placeAt("content");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oVSD.destroy();
 				this.oVSD = null;
 			},

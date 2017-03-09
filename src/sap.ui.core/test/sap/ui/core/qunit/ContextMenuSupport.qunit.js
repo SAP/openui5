@@ -11,7 +11,7 @@
 	jQuery.sap.require("sap.ui.core.ContextMenuSupport");
 
 	QUnit.module("ContextMenuSupport", {
-		setup: function() {
+		beforeEach: function() {
 			sap.ui.core.Control.extend("my.lib.MyControl", {
 				metadata : {
 					aggregations: { content: {type: "sap.ui.core.Control", multiple: false} }
@@ -48,7 +48,7 @@
 			this.myControl.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.myControl.destroy();
 			this.myMenuControl.destroy();
 		}

@@ -114,11 +114,11 @@
 	};
 
 	QUnit.module("MessageManager", {
-		setup : function() {
+		beforeEach : function() {
 			initModel("json");
 		},
 
-		teardown : function() {
+		afterEach : function() {
 			destroyControls();
 			oModel.destroy();
 			oModel = undefined;

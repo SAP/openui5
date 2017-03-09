@@ -496,7 +496,7 @@
 			});
 
 			QUnit.module("routing", {
-				setup : function() {
+				beforeEach : function() {
 					//make sure to start with an empty hash
 					hasher.setHash("");
 				}
@@ -1260,7 +1260,7 @@
 			});
 
 			QUnit.module("titleChanged event", {
-				setup: function() {
+				beforeEach: function() {
 					sap.ui.core.routing.HashChanger.getInstance().setHash("");
 					this.oApp = new sap.m.App();
 					this.sPattern = "anything";
@@ -1280,7 +1280,7 @@
 					};
 
 				},
-				teardown: function() {
+				afterEach: function() {
 					this.fnStub.restore();
 					this.oRouter.destroy();
 				}
@@ -1477,7 +1477,7 @@
 			});
 
 			QUnit.module("title history", {
-				setup: function() {
+				beforeEach: function() {
 					// reset hash
 					sap.ui.core.routing.HashChanger.getInstance().setHash("");
 
@@ -1502,7 +1502,7 @@
 					};
 
 				},
-				teardown: function() {
+				afterEach: function() {
 					this.fnStub.restore();
 					this.oRouter.destroy();
 					for (var sKey in this.oRouteMatchedSpies) {

@@ -11,7 +11,7 @@ sap.ui.require([
 
   QUnit.module("Simple Gherkin Parser Tests", {
 
-    setup: function() {
+    beforeEach: function() {
       QUnit.dump.maxDepth = 15;
       this.parser = simpleGherkinParser;
     }

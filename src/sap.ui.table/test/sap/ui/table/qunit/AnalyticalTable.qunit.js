@@ -133,12 +133,12 @@ function createTable(mSettings) {
 //************** Test Code **************
 
 QUnit.module("Properties & Functions", {
-	setup: function() {
+	beforeEach: function() {
 		this.oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, {useBatch:true});
 		this.oTable = createTable.call(this);
 		sap.ui.getCore().applyChanges();
 	},
-	teardown: function() {
+	afterEach: function() {
 		this.oTable.destroy();
 	}
 });
@@ -275,12 +275,12 @@ QUnit.test("BindRows", function(assert) {
 
 
 QUnit.module("GroupHeaderMenu", {
-	setup: function() {
+	beforeEach: function() {
 		this.oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, {useBatch:true});
 		this.oTable = createTable.call(this);
 		sap.ui.getCore().applyChanges();
 	},
-	teardown: function() {
+	afterEach: function() {
 		this.oTable.destroy();
 	}
 });
@@ -324,10 +324,10 @@ QUnit.asyncTest("Localization", function (assert) {
 
 
 QUnit.module("AnalyticalTable with ODataModel v2", {
-	setup: function() {
+	beforeEach: function() {
 		this.oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, {useBatch:true});
 	},
-	teardown: function() {
+	afterEach: function() {
 		this.oTable.destroy();
 	}
 });
@@ -546,10 +546,10 @@ QUnit.asyncTest("ProvideGrandTotals = false: No Sum row available", function (as
 
 
 QUnit.module("AnalyticalColumn", {
-	setup: function() {
+	beforeEach: function() {
 		this.oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, {useBatch:true});
 	},
-	teardown: function() {
+	afterEach: function() {
 		this.oTable.destroy();
 	}
 });
@@ -574,7 +574,7 @@ QUnit.asyncTest("getTooltip_AsString", function (assert) {
 
 
 QUnit.module("AnalyticalColumn - Column Menu", {
-	setup: function() {
+	beforeEach: function() {
 		this._oTable = new sap.ui.table.AnalyticalTable();
 
 		this._oTable.removeColumn = function(oColumn) {
@@ -622,7 +622,7 @@ QUnit.module("AnalyticalColumn - Column Menu", {
 		};
 		this._oColumn = new sap.ui.table.AnalyticalColumn();
 	},
-	teardown: function() {
+	afterEach: function() {
 		this._oColumn.destroy();
 		this._oTable.destroy();
 	}

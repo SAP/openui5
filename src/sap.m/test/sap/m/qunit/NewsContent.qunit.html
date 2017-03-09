@@ -52,13 +52,13 @@
 	});
 
 	QUnit.module("Functional tests - sap.m.NewsContent", {
-		setup : function() {
+		beforeEach : function() {
 			this.oNewsContent = new sap.m.NewsContent({
 				size : sap.m.Size.M,
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function () {
+		afterEach : function () {
 			this.oNewsContent.destroy();
 			this.oNewsContent = null;
 		}
@@ -114,7 +114,7 @@
 	 * See 'Hooks stack on nested modules' sample at https://api.qunitjs.com/QUnit.module/ */
 	(function() {
 		QUnit.module("Events test", {
-			setup : function() {
+			beforeEach : function() {
 				this.oNewsContent = new sap.m.NewsContent({
 					size : sap.m.Size.M,
 					contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
@@ -123,7 +123,7 @@
 				}).placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function() {
+			afterEach : function() {
 				this.oNewsContent.destroy();
 				this.oNewsContent = null;
 			}

@@ -98,10 +98,10 @@
 	});
 
 	QUnit.module("Messages", {
-		setup : function() {
+		beforeEach : function() {
 			jQuery.fx.off = true;
 		},
-		teardown : function() {
+		afterEach : function() {
 			jQuery.fx.off = fx;
 		}
 	});
@@ -211,10 +211,10 @@
 	 * Testing from None
 	 */
 	QUnit.module("Resizing", {
-		setup : function() {
+		beforeEach : function() {
 			jQuery.fx.off = true;
 		},
-		teardown : function() {
+		afterEach : function() {
 			jQuery.fx.off = fx;
 		}
 	});
@@ -277,10 +277,10 @@
 	 * Testing if a Callout opens and the message is displayed
 	 */
 	QUnit.module("Open Callouts", {
-		setup : function() {
+		beforeEach : function() {
 			jQuery.fx.off = true;
 		},
-		teardown : function() {
+		afterEach : function() {
 			jQuery.fx.off = fx;
 		}
 	});
@@ -314,10 +314,10 @@
 	});
 
 	QUnit.module("Testing ItemNavigation", {
-		setup : function() {
+		beforeEach : function() {
 			jQuery.fx.off = true;
 		},
-		teardown : function() {
+		afterEach : function() {
 			jQuery.fx.off = fx;
 
 			oNotiBar.destroyMessageNotifier()

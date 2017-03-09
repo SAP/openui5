@@ -5,9 +5,9 @@ jQuery.sap.require("sap.ui.fl.registry.SimpleChanges");
 	'use strict';
 
 	QUnit.module("sap.ui.fl.registry.SimpleChanges", {
-		setup: function() {
+		beforeEach: function() {
 		},
-		teardown: function() {
+		afterEach: function() {
 		}
 	});
 

@@ -64,7 +64,7 @@
 <!-- Do the tests -->
 <script>
 	QUnit.module("Basics", {
-		setup : function() {
+		beforeEach : function() {
 			oBtn1.getLayoutData().setLinebreak(false);
 			oBtn2.getLayoutData().setLinebreak(false);
 
@@ -106,7 +106,7 @@
 	});
 
 	QUnit.module("Resize", {
-		setup : function() {
+		beforeEach : function() {
 			oBtn1.getLayoutData().setLinebreak(false);
 			oBtn2.getLayoutData().setLinebreak(false);
 

@@ -56,11 +56,11 @@
 			};
 
 			QUnit.module("SplitContainer API and default values", {
-				setup : function () {
+				beforeEach : function () {
 					this.sut = splitContainerSetup();
 //					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.sut.destroy();
 					this.sut = null;
 				}
@@ -824,11 +824,11 @@
 			});
 
 			QUnit.module("SplitContainer Navigation test", {
-				setup : function () {
+				beforeEach : function () {
 					this.sut = splitContainerSetup();
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.sut.destroy();
 					this.sut = null;
 				}
@@ -946,11 +946,11 @@
 			});
 
 			QUnit.module("SplitContainer public API test", {
-				setup : function () {
+				beforeEach : function () {
 					this.sut = splitContainerSetup();
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.sut.destroy();
 					this.sut = null;
 				}
@@ -1024,11 +1024,11 @@
 
 
 			QUnit.module("Remove All pages API test", {
-				setup : function () {
+				beforeEach : function () {
 					this.sut = splitContainerSetup(true);
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.sut.destroy();
 					this.sut = null;
 				}

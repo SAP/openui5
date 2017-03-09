@@ -178,13 +178,13 @@
 	});
 
 	QUnit.module("Css Classes", {
-		setup: function () {
+		beforeEach: function () {
 			this.progressIndicator = new sap.ui.commons.ProgressIndicator();
 
 			this.progressIndicator.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.progressIndicator.destroy();
 			this.progressIndicator = null;
 		}

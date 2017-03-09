@@ -134,7 +134,7 @@
 	});
 
 	QUnit.module("Breadcrumb links API", {
-		setup: function () {
+		beforeEach: function () {
 			this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
 		}
 	});
@@ -204,7 +204,7 @@
 	});
 
 	QUnit.module("Action buttons", {
-		setup: function () {
+		beforeEach: function () {
 			this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
 		}
 	});

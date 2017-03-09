@@ -20,7 +20,7 @@
 		<script>
 
 		QUnit.module("default", {
-			setup: function() {
+			beforeEach: function() {
 				this.oComboBox = new sap.ui.commons.ComboBox({
 					items: new sap.ui.core.ListItem({
 						text: "A"
@@ -30,7 +30,7 @@
 					content: this.oComboBox
 				});
 			},
-			teardown: function() {
+			afterEach: function() {
 				this.oComboBox.destroy();
 				this.oDialog.destroy();
 			}

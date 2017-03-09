@@ -338,13 +338,13 @@
 		});
 
 		QUnit.module("Interaction", {
-			setup: function() {
+			beforeEach: function() {
 				this.oButton = new sap.ui.commons.Button();
 				jQuery.sap.measure.endInteraction(true);
 				jQuery.sap.measure.clearInteractionMeasurements();
 				jQuery.sap.measure.clear();
 			},
-			teardown: function() {
+			afterEach: function() {
 				this.oButton.destroy();
 				jQuery.sap.measure.endInteraction(true);
 				jQuery.sap.measure.clearInteractionMeasurements();

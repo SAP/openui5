@@ -485,13 +485,13 @@
 		}
 
 		QUnit.module("API and Rendering", {
-			setup: function () {
+			beforeEach: function () {
 				this.toolPage = getToolPage();
 				oPage.addContent(this.toolPage);
 
 				sap.ui.getCore().applyChanges();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.toolPage.destroy();
 				this.toolPage = null;
 			}
@@ -548,13 +548,13 @@
 		});
 
 		QUnit.module("Media handling", {
-			setup: function () {
+			beforeEach: function () {
 				this.toolPage = getToolPage();
 				oPage.addContent(this.toolPage);
 
 				sap.ui.getCore().applyChanges();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.toolPage.destroy();
 				this.toolPage = null;
 			}

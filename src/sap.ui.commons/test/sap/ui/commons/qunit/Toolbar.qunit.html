@@ -54,14 +54,13 @@
 			sap.ui.getCore().applyChanges();
 		}
 		QUnit.module("Basic", {
-
-			setup: function() {
+			beforeEach: function() {
 				oCtrl = sap.ui.getCore().getControl("Toolbar");
 				ok(oCtrl);
 				ok(jQuery.sap.domById("Toolbar"));
 				initToolbar();
 			},
-			teardown: function() {
+			afterEach: function() {
 				oCtrl = null;
 			}
 		});
@@ -240,13 +239,13 @@
 		// ==================================================
 
 		QUnit.module("Overflow by addItems", {
-			setup: function() {
+			beforeEach: function() {
 				oCtrl = sap.ui.getCore().getControl("Toolbar");
 				notStrictEqual(oCtrl, null, "oCtrl must exist");
 				notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");
 				initToolbar();
 			},
-			teardown: function() {
+			afterEach: function() {
 				oCtrl = null;
 			}
 		});
@@ -327,13 +326,13 @@
 		// ==================================================
 
 		QUnit.module("Overflow due to resizing", {
-			setup: function() {
+			beforeEach: function() {
 				oCtrl = sap.ui.getCore().getControl("Toolbar");
 				notStrictEqual(oCtrl, null, "oCtrl must exist");
 				notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");
 				initToolbar();
 			},
-			teardown: function() {
+			afterEach: function() {
 				oCtrl = null;
 			}
 		});
@@ -442,13 +441,13 @@
 		// ==================================================
 
 		QUnit.module("outerWidth", {
-			setup: function () {
+			beforeEach: function () {
 				oCtrl = sap.ui.getCore().getControl("Toolbar");
 				notStrictEqual(oCtrl, null, "oCtrl must exist");
 				notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");
 				initToolbar();
 			},
-			teardown: function () {
+			afterEach: function () {
 				oCtrl = null;
 			}
 		});
@@ -502,13 +501,13 @@
 		// ==================================================
 
 		QUnit.module("Overflow Menu", {
-			setup: function () {
+			beforeEach: function () {
 				oCtrl = sap.ui.getCore().getControl("Toolbar");
 				notStrictEqual(oCtrl, null, "oCtrl must exist");
 				notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");
 				initToolbar();
 			},
-			teardown: function () {
+			afterEach: function () {
 				oCtrl = null;
 			}
 		});

@@ -128,7 +128,7 @@
 
 
 			QUnit.module("Faked XHR", {
-				setup : function() {
+				beforeEach : function() {
 					this.xhr = sinon.useFakeXMLHttpRequest();
 			        var requests = this.requests = [];
 
@@ -137,7 +137,7 @@
 			        };
 				},
 
-				teardown : function() {
+				afterEach : function() {
 					this.xhr.restore();
 				}
 			});

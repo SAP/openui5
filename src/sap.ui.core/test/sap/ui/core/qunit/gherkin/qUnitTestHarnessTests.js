@@ -16,7 +16,7 @@ sap.ui.require([
 
   QUnit.module("QUnit Test Harness Tests", {
 
-    setup : function() {
+    beforeEach : function() {
 
       // mocks the test harness's QUnit executions (use this carefully, only for a very limited scope)
       var fMockQUnitSetup = function() {
@@ -39,7 +39,7 @@ sap.ui.require([
       testHarnessTests.setup(fMockQUnitSetup, fMockQUnitTeardown, qUnitTestHarness);
     },
 
-    teardown: function() {
+    afterEach: function() {
       testHarnessTests.teardown();
     }
 

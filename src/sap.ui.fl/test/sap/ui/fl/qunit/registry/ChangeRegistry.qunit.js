@@ -9,14 +9,14 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 	"use strict";
 
 	QUnit.module("sap.ui.fl.registry.ChangeRegistry", {
-		setup: function () {
+		beforeEach: function () {
 			this.stubs = [];
 
 			// create new instance of ChangeRegistry
 			this.instance = new ChangeRegistry();
 
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.stubs.forEach(function (stub) {
 				stub.restore();
 			});

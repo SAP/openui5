@@ -1131,7 +1131,7 @@
 		});
 
 		QUnit.module("Accessibility", {
-			setup: function () {
+			beforeEach: function () {
 				sinon.config.useFakeTimers = false;
 
 				this.sut = new sap.m.ViewSettingsPopover({
@@ -1172,7 +1172,7 @@
 
 				this.sut.openBy(this.oBtn);
 			},
-			teardown: function () {
+			afterEach: function () {
 				sinon.config.useFakeTimers = true;
 				this.oBtn.destroy();
 				this.sut.destroy();

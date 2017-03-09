@@ -375,7 +375,7 @@
 	 */
 
 	QUnit.module("Component Metadata v1", {
-		setup: function() {
+		beforeEach: function() {
 			moduleSetup.call(this, "v1", 1);
 			// fix the specials in the metadata for the v1
 				[
@@ -391,7 +391,7 @@
 					delete oManifest["foo.bar"];
 				});
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -404,10 +404,10 @@
 	 */
 
 	QUnit.module("Component Metadata v2", {
-		setup: function() {
+		beforeEach: function() {
 			moduleSetup.call(this, "v2", 2);
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -420,7 +420,7 @@
 	 */
 
 	QUnit.module("Component Metadata v2 (manifest first)", {
-		setup: function() {
+		beforeEach: function() {
 			moduleSetup.call(this, "v2", 2, true);
 			// fix the specials in the metadata for the v2 manifest first
 			this.oExpectedManifest["sap.app"]["description"] = this.oExpectedRawManifest["sap.app"]["description"];
@@ -428,7 +428,7 @@
 			this.oExpectedManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"] = this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"];
 			this.oExpectedManifest["sap.ui5"]["rootView"] = this.oExpectedRawManifest["sap.ui5"]["rootView"]["viewName"];
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -441,7 +441,7 @@
 	 */
 
 	QUnit.module("Component Metadata v2 (manifest first with component name)", {
-		setup: function() {
+		beforeEach: function() {
 			moduleSetup.call(this, "v2", 2, true, true);
 			// fix the specials in the metadata for the v2 manifest first
 			this.oExpectedManifest["sap.app"]["description"] = this.oExpectedRawManifest["sap.app"]["description"];
@@ -449,7 +449,7 @@
 			this.oExpectedManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"] = this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"];
 			this.oExpectedManifest["sap.ui5"]["rootView"] = this.oExpectedRawManifest["sap.ui5"]["rootView"]["viewName"];
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -462,7 +462,7 @@
 	 */
 
 	QUnit.module("Component Metadata v1 (inline)", {
-		setup: function() {
+		beforeEach: function() {
 			moduleSetup.call(this, "v1inline", 1);
 			// fix the specials in the metadata for the v1
 			[
@@ -478,7 +478,7 @@
 				delete oManifest["foo.bar"];
 			});
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -491,10 +491,10 @@
 	 */
 
 	QUnit.module("Component Metadata v2 (inline)", {
-		setup: function() {
+		beforeEach: function() {
 			moduleSetup.call(this, "v2inline", 2);
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -507,10 +507,10 @@
 	 */
 
 	QUnit.module("Component Metadata v1 (empty)", {
-		setup: function() {
+		beforeEach: function() {
 			moduleSetup.call(this, "v1empty", 1);
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -527,10 +527,10 @@
 	 */
 
 	QUnit.module("Component Metadata v2 (empty)", {
-		setup: function() {
+		beforeEach: function() {
 			moduleSetup.call(this, "v2empty", 2);
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -547,10 +547,10 @@
 	 */
 
 	QUnit.module("Component Metadata v1 (missing)", {
-		setup: function() {
+		beforeEach: function() {
 			moduleSetup.call(this, "v1missing", 1);
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -567,10 +567,10 @@
 	 */
 
 	QUnit.module("Component Metadata v2 (missing)", {
-		setup: function() {
+		beforeEach: function() {
 			moduleSetup.call(this, "v2missing", 2);
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -588,10 +588,10 @@
 	 */
 
 	QUnit.module("Component Metadata v1 & v2 (mixed)", {
-		setup: function() {
+		beforeEach: function() {
 			moduleSetup.call(this, "mixed", 2);
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -650,7 +650,7 @@
 	 */
 
 	QUnit.module("Component Metadata v1 & v2 (mixed/inheritance)", {
-		setup: function() {
+		beforeEach: function() {
 			moduleSetup.call(this, "inherit", 2);
 			// fix the specials in the metadata for the v1 & v2 mixed/inheritance
 			this.oExpectedMetadata.config.any9 = this.oExpectedMetadata.config.any3;
@@ -676,7 +676,7 @@
 
 			});
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -777,7 +777,7 @@
 	 */
 
 	QUnit.module("Component Metadata: Version Check", {
-		setup: function() {
+		beforeEach: function() {
 			this.fnGetVersionInfo = sap.ui.getVersionInfo;
 			try {
 				this.oVersionInfo = this.fnGetVersionInfo();
@@ -797,7 +797,7 @@
 			}.bind(this);
 			sinon.spy(jQuery.sap.log, "warning");
 		},
-		teardown: function() {
+		afterEach: function() {
 			jQuery.sap.log.warning.restore();
 			sap.ui.getVersionInfo = this.fnGetVersionInfo;
 		}

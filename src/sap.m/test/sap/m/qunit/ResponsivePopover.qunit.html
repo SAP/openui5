@@ -93,7 +93,7 @@
 			}
 
 		QUnit.module("API", {
-			setup: function() {
+			beforeEach: function() {
 
 				// Arrange
 				this.oList = new sap.m.List();
@@ -135,7 +135,7 @@
 				sap.ui.getCore().applyChanges();
 
 			},
-			teardown: function() {
+			afterEach: function() {
 
 				if (this.oResponsivePopover && this.oResponsivePopover.isOpen()) {
 					this.oResponsivePopover.close();

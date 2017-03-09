@@ -406,7 +406,7 @@
 
 
 			QUnit.module("Basic aggregations rendering", {
-				teardown: function () {
+				afterEach: function () {
 					oCore.byId(sControlId).destroy();
 				}
 			});
@@ -686,11 +686,11 @@
 				});
 
 			QUnit.module("Desktop master detail rendering", {
-				setup: function () {
+				beforeEach: function () {
 					var oObjectHeader = createObjectHeader();
 					oObjectHeader.placeAt("qunit-fixture");
 				},
-				teardown: function () {
+				afterEach: function () {
 					oCore.byId(sControlId).destroy();
 				}
 			});
@@ -712,7 +712,7 @@
 				});
 
 			QUnit.module("Desktop fullScreenOptimized rendering", {
-				setup: function () {
+				beforeEach: function () {
 					var oObjectHeader = createObjectHeader({
 						fullScreenOptimized: true
 					});
@@ -720,7 +720,7 @@
 					oObjectHeader.placeAt("qunit-fixture");
 					oCore.applyChanges();
 				},
-				teardown: function () {
+				afterEach: function () {
 					oCore.byId(sControlId).destroy();
 				}
 			});
@@ -743,7 +743,7 @@
 				});
 
 			QUnit.module("Desktop on Combi device (e.g. both system Desktop and Tablet return true) - master detail rendering", {
-				setup: function () {
+				beforeEach: function () {
 					this.bSystemDesktop = sap.ui.Device.system.desktop,
 					this.bSystemTablet = sap.ui.Device.system.tablet;
 
@@ -753,7 +753,7 @@
 					var oObjectHeader = createObjectHeader();
 					oObjectHeader.placeAt("qunit-fixture");
 				},
-				teardown: function () {
+				afterEach: function () {
 					sap.ui.Device.system.desktop = this.bSystemDesktop;
 					sap.ui.Device.system.tablet = this.bSystemTablet;
 					oCore.byId(sControlId).destroy();
@@ -777,7 +777,7 @@
 				});
 
 			QUnit.module("Desktop on Combi device (e.g. both system Desktop and Tablet return true) - fullScreenOptimized should be rendered as on a 'normal' device", {
-				setup: function () {
+				beforeEach: function () {
 					this.bSystemDesktop = sap.ui.Device.system.desktop,
 					this.bSystemTablet = sap.ui.Device.system.tablet;
 
@@ -791,7 +791,7 @@
 					oObjectHeader.placeAt("qunit-fixture");
 					oCore.applyChanges();
 				},
-				teardown: function () {
+				afterEach: function () {
 					sap.ui.Device.system.desktop = this.bSystemDesktop;
 					sap.ui.Device.system.tablet = this.bSystemTablet;
 					oCore.byId(sControlId).destroy();
@@ -816,11 +816,11 @@
 				});
 
 			QUnit.module("Desktop rendering resized to Tablet size", {
-				setup: function () {
+				beforeEach: function () {
 					this.oStub = sinon.stub(sap.m.ObjectHeader.prototype, "_isMediaSize");
 					this.oStub.withArgs("Desktop").returns(false).withArgs("Tablet").returns(true).withArgs("Phone").returns(false);
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.oStub.restore();
 
 					oCore.byId(sControlId).destroy();
@@ -876,11 +876,11 @@
 			});
 
 			QUnit.module("Desktop rendering resized to Phone size", {
-				setup: function () {
+				beforeEach: function () {
 					this.oStub = sinon.stub(sap.m.ObjectHeader.prototype, "_isMediaSize");
 					this.oStub.withArgs("Desktop").returns(false).withArgs("Tablet").returns(false).withArgs("Phone").returns(true);
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.oStub.restore();
 
 					oCore.byId(sControlId).destroy();
@@ -902,11 +902,11 @@
 
 
 			QUnit.module("Tablet rendering", {
-				setup: function () {
+				beforeEach: function () {
 					this.oStub = sinon.stub(sap.m.ObjectHeader.prototype, "_isMediaSize");
 					this.oStub.withArgs("Desktop").returns(false).withArgs("Tablet").returns(true).withArgs("Phone").returns(false);
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.oStub.restore();
 
 					oCore.byId(sControlId).destroy();
@@ -987,14 +987,14 @@
 
 
 		QUnit.module("Phone rendering", {
-				setup: function () {
+				beforeEach: function () {
 					this.oStub = sinon.stub(sap.m.ObjectHeader.prototype, "_isMediaSize");
 					this.oStub.withArgs("Desktop").returns(false).withArgs("Tablet").returns(false).withArgs("Phone").returns(true);
 
 					sap.ui.Device.orientation.landscape = false;
 					sap.ui.Device.orientation.portrait = true;
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.oStub.restore();
 
 					sap.ui.Device.orientation.landscape = true;
@@ -1020,7 +1020,7 @@
 
 				/******************************************************************/
 		QUnit.module("OH Screen Reader support", {
-			teardown: function () {
+			afterEach: function () {
 				oCore.byId(sControlId).destroy();
 			}
 		});

@@ -223,7 +223,7 @@
 			});
 
 			QUnit.module("ARIA Support", {
-				setup: function () {
+				beforeEach: function () {
 					this.sIconName = "add";
 					this.sTooltip = "tooltip";
 					this.sAlt = "alt";
@@ -234,7 +234,7 @@
 					this.oAriaIcon.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.oAriaIcon.destroy();
 					this.oAriaIcon = null;
 				}
@@ -371,7 +371,7 @@
 					this.oIcon = new sap.ui.core.Icon(mSettings).placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown: function() {
+				afterEach: function() {
 					if (this.oIcon) {
 						this.oIcon.destroy();
 						this.oIcon = null;

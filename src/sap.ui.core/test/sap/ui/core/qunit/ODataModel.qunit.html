@@ -1270,10 +1270,10 @@
 	});
 
 	QUnit.module("ODataModel.read", {
-		setup: function() {
+		beforeEach: function() {
 			this.oModel = initModel(sURI, true);
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oModel.destroy();
 			delete this.oModel;
 		}
@@ -1474,11 +1474,11 @@
 	});
 
 	QUnit.module("CSRF Token handling", {
-		setup: function() {
+		beforeEach: function() {
 			this.oModel = initModel(sURI, true);
 			updateCsrfToken();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oModel.destroy();
 			cleanServiceDataCache();
 			delete this.oModel;
@@ -1549,10 +1549,10 @@
 	});
 
 	QUnit.module("Metamodel binding", {
-		setup: function() {
+		beforeEach: function() {
 			this.oModel = initModel(sURI, false);
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oModel.destroy();
 			delete this.oModel;
 		}
@@ -1627,8 +1627,8 @@
 
 
 	QUnit.module("Annotation Loading", {
-		setup: function() {},
-		teardown: function() {}
+		beforeEach: function() {},
+		afterEach: function() {}
 	});
 
 

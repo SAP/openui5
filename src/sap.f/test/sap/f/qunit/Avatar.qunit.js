@@ -32,12 +32,12 @@
 
 	/* tests */
 	QUnit.module("Basic rendering", {
-		setup: function () {
+		beforeEach: function () {
 			this.oAvatar = createAvatar({press: function () {}});
 			this.oAvatar.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
-		teardown: teardownFunction
+		afterEach: teardownFunction
 	});
 
 	QUnit.test("Avatar with press event only", function () {
@@ -53,8 +53,8 @@
 	});
 
 	QUnit.module("Rendering different sizes", {
-		setup: setupFunction,
-		teardown: teardownFunction
+		beforeEach: setupFunction,
+		afterEach: teardownFunction
 	});
 
 	QUnit.test("Avatar with displaySize set to 'XS'", function () {
@@ -106,8 +106,8 @@
 	});
 
 	QUnit.module("Rendering different shapes", {
-		setup: setupFunction,
-		teardown: teardownFunction
+		beforeEach: setupFunction,
+		afterEach: teardownFunction
 	});
 
 	QUnit.test("Avatar with displayShape set to 'Circle'", function () {
@@ -127,8 +127,8 @@
 	});
 
 	QUnit.module("Rendering different types", {
-		setup: setupFunction,
-		teardown: teardownFunction
+		beforeEach: setupFunction,
+		afterEach: teardownFunction
 	});
 
 	QUnit.test("Avatar with src leading to an icon", function () {
@@ -180,8 +180,8 @@
 	});
 
 	QUnit.module("Rendering different fit types", {
-		setup: setupFunction,
-		teardown: teardownFunction
+		beforeEach: setupFunction,
+		afterEach: teardownFunction
 	});
 
 	QUnit.test("Avatar with imageFitType set to 'Cover'", function () {

@@ -275,13 +275,13 @@
 		});
 
 		QUnit.module("API", {
-			setup : function() {
+			beforeEach : function() {
 				this.clock = sinon.useFakeTimers();
 				this.oTimePicker = new sap.m.TimePicker("t1");
 				this.oTimePicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function() {
+			afterEach : function() {
 				this.clock.restore();
 				this.oTimePicker.destroy();
 			}
@@ -1642,13 +1642,13 @@
 		});
 
 		QUnit.module("Time picker has same behaviour on mobile like on desktop", {
-			setup: function () {
+			beforeEach: function () {
 				jQuery("html").removeClass("sap-desktop");
 				jQuery("html").removeClass("sapUiMedia-Std-Desktop");
 				jQuery("html").addClass("sap-phone");
 				jQuery("html").addClass("sapUiMedia-Std-Phone");
 			},
-			teardown: function () {
+			afterEach: function () {
 				jQuery("html").removeClass("sap-phone");
 				jQuery("html").removeClass("sapUiMedia-Std-Phone");
 				jQuery("html").addClass("sap-desktop");

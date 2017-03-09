@@ -84,11 +84,11 @@
 	};
 
 	QUnit.module("ODataTreeBinding with navigation properties", {
-		setup: function() {
+		beforeEach: function() {
 			oNavPropMockServer.start();
 			oModel = new sap.ui.model.odata.v2.ODataModel('/navprop/', {useBatch:false});
 		},
-		teardown: function() {
+		afterEach: function() {
 			oNavPropMockServer.stop();
 			delete oModel;
 		}
@@ -799,11 +799,11 @@
 	});
 
 	QUnit.module("ODataTreeBinding with annotations", {
-		setup: function() {
+		beforeEach: function() {
 			oAnnotationMockServer.start();
 			oModel = new sap.ui.model.odata.v2.ODataModel('/metadata/', {useBatch:false});
 		},
-		teardown: function() {
+		afterEach: function() {
 			oAnnotationMockServer.stop();
 			delete oModel;
 		}
@@ -2056,11 +2056,11 @@
 	// Test if MockServer supports filtering on properties of type Edm.Guid!
 	// Was broken previously.
 	QUnit.module("ODataTreeBinding with annotations - Edm Type support", {
-		setup: function() {
+		beforeEach: function() {
 			oAnnotationMockServerGUID.start();
 			oModel = new sap.ui.model.odata.v2.ODataModel('/metadata_guid/', {useBatch:false});
 		},
-		teardown: function() {
+		afterEach: function() {
 			oAnnotationMockServerGUID.stop();
 			delete oModel;
 		}
@@ -2183,11 +2183,11 @@
 	});
 
 	QUnit.module("ODataTreeBinding - General Databinding", {
-		setup: function() {
+		beforeEach: function() {
 			oAnnotationMockServer.start();
 			oModel = new sap.ui.model.odata.v2.ODataModel('/metadata/', {useBatch:false});
 		},
-		teardown: function() {
+		afterEach: function() {
 			oAnnotationMockServer.stop();
 			delete oModel;
 		}

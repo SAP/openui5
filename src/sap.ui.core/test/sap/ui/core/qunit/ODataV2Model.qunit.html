@@ -1411,7 +1411,7 @@
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
-	
+
 	asyncTest("test data events for bindElement",3, function(){
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
@@ -3956,10 +3956,10 @@
 	});*/
 
 	QUnit.module("ODataModel.read", {
-		setup: function() {
+		beforeEach: function() {
 			this.oModel = initModel(sURI, {json:false});
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oModel.destroy();
 			delete this.oModel;
 		}
@@ -4168,13 +4168,13 @@
 	});
 
 	QUnit.module("CSRF Token handling", {
-		setup: function() {
+		beforeEach: function() {
 			window.odataFakeServiceData.forbidHeadRequest = false;
 			window.odataFakeServiceData.csrfRequests = [];
 			this.oModel = initModel(sURI, true);
 			updateCsrfToken();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oModel.destroy();
 			cleanServiceDataCache();
 			delete this.oModel;
@@ -4365,10 +4365,10 @@
 	});
 
 	QUnit.module("Metamodel binding", {
-		setup: function() {
+		beforeEach: function() {
 			this.oModel = initModel(sURI, {json: false});
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oModel.destroy();
 			delete this.oModel;
 		}
@@ -4441,10 +4441,10 @@
 	});
 
 	QUnit.module("Model: createEntry", {
-		setup: function() {
+		beforeEach: function() {
 			this.oModel = initModel(sURI);
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oModel.destroy();
 			delete this.oModel;
 		}

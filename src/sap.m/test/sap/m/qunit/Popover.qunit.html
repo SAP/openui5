@@ -221,7 +221,7 @@
 		});
 
 		QUnit.module("Open and Close", {
-			setup: function () {
+			beforeEach: function () {
 				this.oButton = new sap.m.Button().addStyleClass("positioned");
 				this.oPopover = new sap.m.Popover({
 					contentWidth: "400px",
@@ -230,7 +230,7 @@
 				page.addContent(this.oButton);
 				sap.ui.getCore().applyChanges();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oPopover.destroy();
 				this.oButton.destroy();
 			}

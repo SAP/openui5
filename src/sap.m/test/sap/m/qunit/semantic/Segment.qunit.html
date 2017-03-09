@@ -23,11 +23,11 @@
 		//jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 		QUnit.module("Segment", {
-			setUp: function () {
+			beforeEach: function () {
 
 			},
 
-			tearDown: function () {
+			afterEach: function () {
 				jQuery("#qunit-fixture-visible").html("");
 			}
 		});

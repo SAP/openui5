@@ -21,7 +21,7 @@
 		<script>
 
 		QUnit.module("Basics", {
-			setup : function() {
+			beforeEach : function() {
 				this.title1 = new sap.m.Title();
 				this.title2 = new sap.m.Title({
 					text : "Hello",
@@ -33,7 +33,7 @@
 					tooltip : "Tooltip"
 				});
 			},
-			teardown : function() {
+			afterEach : function() {
 				this.title1.destroy();
 				this.title2.destroy();
 				this.title1 = null;
@@ -70,7 +70,7 @@
 
 
 		QUnit.module("Rendering", {
-			setup : function() {
+			beforeEach : function() {
 				this.title = new sap.m.Title({
 					text : "Hello",
 					tooltip : "Tooltip"
@@ -78,7 +78,7 @@
 				this.title.placeAt("uiArea");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function() {
+			afterEach : function() {
 				this.title.destroy();
 				this.title = null;
 			}
@@ -148,7 +148,7 @@
 		});
 
 		QUnit.module("Title Association", {
-			setup : function() {
+			beforeEach : function() {
 				this.coreTitle = new sap.ui.core.Title({
 					text: "Hello2",
 					tooltip : "Tooltip2"
@@ -161,7 +161,7 @@
 				this.title.placeAt("uiArea");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function() {
+			afterEach : function() {
 				this.title.destroy();
 				this.title = null;
 				if (this.coreTitle) {
@@ -213,7 +213,6 @@
 		});
 
 		QUnit.module("Accessibility");
-
 		test("getAccessibilityInfo", function() {
 			var oTitle = new sap.m.Title({text: "Text"});
 			ok(!!oTitle.getAccessibilityInfo, "Title has a getAccessibilityInfo function");

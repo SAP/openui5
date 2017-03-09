@@ -205,13 +205,13 @@
 		}
 
 		QUnit.module("API and Rendering", {
-			setup: function () {
+			beforeEach: function () {
 				this.navigationList = getNavigationList();
 				oPage.addContent(this.navigationList);
 
 				sap.ui.getCore().applyChanges();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.navigationList.destroy();
 				this.navigationList = null;
 			}
@@ -253,13 +253,13 @@
 
 
 		QUnit.module("Interaction", {
-			setup: function () {
+			beforeEach: function () {
 				this.navigationList = getNavigationList();
 				oPage.addContent(this.navigationList);
 
 				sap.ui.getCore().applyChanges();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.navigationList.destroy();
 				this.navigationList = null;
 			}

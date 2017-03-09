@@ -67,7 +67,7 @@
 		var l1, l2;
 
 		QUnit.module("Basic", {
-			setup : function() {
+			beforeEach : function() {
 				l1 = sap.ui.getCore().getControl("l1");
 				l2 = sap.ui.getCore().getControl("l2");
 
@@ -82,7 +82,7 @@
 				ok(l2, "l2 should not be null");
 				ok(!jQuery.sap.domById("l3"), "l3 should not be rendered");
 			},
-			teardown : function() {
+			afterEach : function() {
 				l1 = null;
 				l2 = null;
 			}
@@ -214,7 +214,6 @@
 		});
 
 		QUnit.module("Accessibility");
-
 		test("getAccessibilityInfo", function() {
 			var oControl = new sap.m.Label({text: "Text"});
 			ok(!!oControl.getAccessibilityInfo, "Label has a getAccessibilityInfo function");

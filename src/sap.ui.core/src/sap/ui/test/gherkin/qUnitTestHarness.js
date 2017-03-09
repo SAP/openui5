@@ -64,10 +64,10 @@ sap.ui.define([
       var oFeatureTest = oTestGenerator.generate();
 
       QUnit.module(oFeatureTest.name, {
-        setup: function() {
+        beforeEach: function() {
           oTestGenerator.setUp();
         },
-        teardown: function() {
+        afterEach: function() {
           oTestGenerator.tearDown();
         }
       });

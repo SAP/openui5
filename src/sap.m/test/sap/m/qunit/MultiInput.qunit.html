@@ -28,13 +28,13 @@
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	QUnit.module("Basic", {
-		setup : function() {
+		beforeEach : function() {
 			this.multiInput1 = new sap.m.MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
 
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.multiInput1.destroy();
 		}
 	});
@@ -356,13 +356,13 @@
 	});
 
 	QUnit.module("Validation", {
-		setup: function() {
+		beforeEach: function() {
 			this.multiInput1 = new sap.m.MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
 
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.multiInput1.destroy();
 		}
 	});
@@ -451,7 +451,7 @@
 	});
 
 	QUnit.module("KeyboardEvents", {
-		setup : function() {
+		beforeEach : function() {
 			this.multiInput1 = new sap.m.MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
 
@@ -459,7 +459,7 @@
 
 			this.multiInput1.$().focus();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.multiInput1.destroy();
 		}
 	});
@@ -570,7 +570,7 @@
 	});
 
 	QUnit.module("MultiLineMode", {
-		setup: function() {
+		beforeEach: function() {
 			this.multiInput1 = new sap.m.MultiInput({
 				enableMultiLineMode : true
 			});
@@ -579,7 +579,7 @@
 
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.multiInput1.destroy();
 		}
 	});
@@ -676,13 +676,13 @@
 	});
 
 	QUnit.module("Events", {
-		setup: function() {
+		beforeEach: function() {
 			this.multiInput1 = new sap.m.MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
 
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.multiInput1.destroy();
 		}
 	});
@@ -756,7 +756,7 @@
 	});
 
 	QUnit.module("Accessibility", {
-		setup : function() {
+		beforeEach : function() {
 			this.multiInput1 = new sap.m.MultiInput({
 				value: "Value",
 				tooltip: "Tooltip",
@@ -766,7 +766,7 @@
 
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.multiInput1.destroy();
 		}
 	});

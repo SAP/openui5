@@ -495,7 +495,7 @@
 
 	var oTPFocus;
 	QUnit.module("Focus handling", {
-		setup : function() {
+		beforeEach : function() {
 			oTPFocus = new sap.ui.ux3.ToolPopup("focusPopup", {
 				content : [ new sap.ui.commons.FormattedTextView("FormattedTextView1",{
 					htmlText : "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
@@ -516,7 +516,7 @@
 				oTPFocus.open();
 			};
 		},
-		teardown : function() {
+		afterEach : function() {
 			oTPFocus.destroy();
 		}
 	});
@@ -810,7 +810,7 @@
 
 	var oTPMaxHeight;
 	QUnit.module("Size of the ToolPopup", {
-		setup : function() {
+		beforeEach : function() {
 			oTPMaxHeight = new sap.ui.ux3.ToolPopup("focusPopup", {
 				content : [ new sap.ui.commons.Button({
 					text : "button1"
@@ -844,7 +844,7 @@
 
 			oBtn1.placeAt("uiArea1");
 		},
-		teardown : function() {
+		afterEach : function() {
 			oTPMaxHeight.destroy();
 		}
 	});
@@ -943,7 +943,7 @@
 	var oButtonContent;
 	var oTPContent;
 	QUnit.module("Changing content", {
-		setup : function() {
+		beforeEach : function() {
 			oButtonContent = new sap.ui.commons.Button({
 				text : "Open"
 			}).placeAt("uiArea1");
@@ -957,7 +957,7 @@
 			});
 		},
 
-		teardown : function() {
+		afterEach : function() {
 			oTPContent.destroy();
 			oButtonContent.destroy();
 		}

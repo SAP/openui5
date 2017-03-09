@@ -58,11 +58,11 @@
 	}
 
 	/*QUnit.module("ODataModelV2 XML", {
-		setup : function() {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel(false);
 		},
-		teardown : function() {
+		afterEach : function() {
 			cleanServiceDataCache();
 			oModel.destroy();
 			oModel = undefined;
@@ -89,10 +89,10 @@
 	});*/
 
 	QUnit.module("ODataModelV2 JSON", {
-		setup : function() {
+		beforeEach : function() {
 			initServer();
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanServiceDataCache();
@@ -971,10 +971,10 @@
 	});
 
 	QUnit.module("ODataModelV2 write", {
-		setup : function() {
+		beforeEach : function() {
 			initServer();
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanServiceDataCache();
@@ -2826,11 +2826,11 @@
 	});
 
 	QUnit.module("ODataModelV2 Eventing", {
-		setup : function() {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel();
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanServiceDataCache();
@@ -3445,11 +3445,11 @@
 	});
 
 	QUnit.module("ODataModelV2 abort requests", {
-		setup : function() {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel();
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanServiceDataCache();
@@ -4055,11 +4055,11 @@
 	});
 
 	QUnit.module("ODataModelV2 refresh", {
-		setup : function() {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel();
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanServiceDataCache();

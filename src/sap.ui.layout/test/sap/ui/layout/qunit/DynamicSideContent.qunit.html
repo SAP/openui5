@@ -40,7 +40,7 @@
 					SIDE_CONTENT_LABEL = "SIDE_CONTENT_LABEL";
 
 				QUnit.module("Public API", {
-					setup : function () {
+					beforeEach : function () {
 						// Replacing jQuery width method to report stable browser screen resolution for the test
 						var that = this;
 						this._ojQueryWidthMethod = jQuery.fn.width;
@@ -55,7 +55,7 @@
 						this._oDSC.placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 					},
-					teardown : function () {
+					afterEach : function () {
 						this._oDSC.destroy();
 						this._oDSC = null;
 
@@ -263,7 +263,7 @@
 				});
 
 				QUnit.module("Helper functionality", {
-					setup : function () {
+					beforeEach : function () {
 						// Replacing jQuery width method to report stable browser screen resolution for the test
 						var that = this;
 						this._ojQueryWidthMethod = jQuery.fn.width;
@@ -279,7 +279,7 @@
 
 						sap.ui.getCore().applyChanges();
 					},
-					teardown : function () {
+					afterEach : function () {
 						this._oDSC.destroy();
 						this._oDSC = null;
 
@@ -610,7 +610,7 @@
 				});
 
 				QUnit.module("Content Query", {
-					setup : function () {
+					beforeEach : function () {
 						this._oDSC = new sap.ui.layout.DynamicSideContent({
 							containerQuery: true
 						});
@@ -619,7 +619,7 @@
 						this._oDSC.placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 					},
-					teardown : function () {
+					afterEach : function () {
 						$("#qunit-fixture").width(1000); // Reset qunit fixture size to original (1000px);
 						this._oDSC._adjustToScreenSize.restore();
 						this._oDSC.destroy();
@@ -633,12 +633,12 @@
 				});
 
 				QUnit.module("Construction / Destruction", {
-					setup : function () {
+					beforeEach : function () {
 						this._oDSC = new sap.ui.layout.DynamicSideContent();
 						this._oDSC.placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 					},
-					teardown : function () {
+					afterEach : function () {
 						this._oDSC = null;
 					}
 				});
@@ -673,12 +673,12 @@
 				});
 
 				QUnit.module("Interaction", {
-					setup : function () {
+					beforeEach : function () {
 						this._oDSC = new sap.ui.layout.DynamicSideContent();
 						this._oDSC.placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 					},
-					teardown : function () {
+					afterEach : function () {
 						this._oDSC.destroy();
 						this._oDSC = null;
 					}
@@ -726,12 +726,12 @@
 				});
 
 				QUnit.module("Listeners", {
-					setup : function () {
+					beforeEach : function () {
 						this._oDSC = new sap.ui.layout.DynamicSideContent({containerQuery: true});
 						this._oDSC.placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 					},
-					teardown : function () {
+					afterEach : function () {
 						this._oDSC = null;
 					}
 				});
@@ -743,12 +743,12 @@
 				});
 
 				QUnit.module("Screen reader", {
-					setup : function () {
+					beforeEach : function () {
 						this._oDSC = new sap.ui.layout.DynamicSideContent({containerQuery: true});
 						this._oDSC.placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 					},
-					teardown : function () {
+					afterEach : function () {
 						this._oDSC = null;
 					}
 				});
@@ -765,12 +765,12 @@
 				});
 
 				QUnit.module("Invalidation", {
-					setup : function () {
+					beforeEach : function () {
 						this._oDSC = new sap.ui.layout.DynamicSideContent({showSideContent: false, containerQuery: true});
 						this._oDSC.placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 					},
-					teardown : function () {
+					afterEach : function () {
 						this._oDSC = null;
 					}
 				});

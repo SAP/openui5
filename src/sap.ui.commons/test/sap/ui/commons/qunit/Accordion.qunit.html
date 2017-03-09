@@ -71,11 +71,11 @@
 	   		qutils.delayTestStart();
 
 			QUnit.module("Accordion API and Properties", {
-				setup : function () {
+				beforeEach : function () {
 					this.oAccordion1 = createAccordion();
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oAccordion1.destroy();
 					this.oAccordion1 = null;
 				}
@@ -136,10 +136,10 @@
 
 
 			QUnit.module("Accordion API and Properties, no any section added", {
-				setup : function () {
+				beforeEach : function () {
 					this.oAccordion1 = createAccordion(true);
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oAccordion1.destroy();
 					this.oAccordion1 = null;
 				}
@@ -162,11 +162,11 @@
 			});
 
 			QUnit.module("AccordionSection API and Properties", {
-				setup : function () {
+				beforeEach : function () {
 					this.oAccordion1 = createAccordion();
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oAccordion1.destroy();
 					this.oAccordion1 = null;
 				}
@@ -203,11 +203,11 @@
 
 
 			QUnit.module("Accordion Open/Close sections",{
-				setup : function () {
+				beforeEach : function () {
 					this.oAccordion1 = createAccordion();
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oAccordion1.destroy();
 					this.oAccordion1 = null;
 				}
@@ -234,11 +234,11 @@
 			});
 
 			QUnit.module("Accordion Keyboard Handling Test",{
-				setup : function () {
+				beforeEach : function () {
 					this.oAccordion1 = createAccordion();
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oAccordion1.destroy();
 					this.oAccordion1 = null;
 				}

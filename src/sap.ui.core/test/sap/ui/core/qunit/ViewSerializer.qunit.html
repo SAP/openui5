@@ -54,7 +54,7 @@
 			};
 
 			QUnit.module("ViewSerializer", {
-				setup : function () {
+				beforeEach : function () {
 					sap.ui.localResources("view");
 					this.oHtmlView = sap.ui.htmlview("MyTestHtmlView", "serializer.view.TestHtml");
 					this.oHtmlView.placeAt("htmlViewArea");
@@ -63,7 +63,7 @@
 					this.oXmlViewWithoutController = sap.ui.xmlview("MyTestXmlViewWithoutController", "serializer.view.TestViewWithoutController");
 					this.oXmlViewWithoutController.placeAt("xmlViewWithoutControllerArea");
 				},
-				teardown : function () {
+				afterEach : function () {
 					if (this.oHtmlView) {
 						this.oHtmlView.destroy();
 					}

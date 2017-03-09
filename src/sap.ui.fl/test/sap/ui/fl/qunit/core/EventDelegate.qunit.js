@@ -4,9 +4,9 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 (function(EventDelegate, ChangeRegistry) {
 
 	QUnit.module("sap.ui.fl.core.EventDelegate", {
-		setup: function() {
+		beforeEach: function() {
 		},
-		teardown: function() {
+		afterEach: function() {
 		}
 	});
 

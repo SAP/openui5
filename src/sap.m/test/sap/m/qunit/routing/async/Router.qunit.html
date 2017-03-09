@@ -101,7 +101,7 @@
 							});
 
 							QUnit.module("add and execute navigations", {
-								setup: function () {
+								beforeEach: function () {
 									var that = this;
 									this.oStartPage = new Page();
 									this.oNavContainer = new NavContainer({
@@ -137,7 +137,7 @@
 										}
 									}
 								},
-								teardown: function () {
+								afterEach: function () {
 									this.oNavContainer.destroy();
 									this.oToPage.destroy();
 									this.oStartPage.destroy();
@@ -460,7 +460,7 @@
 							});
 
 							QUnit.module("Routes using targets mixed with old routes", {
-								setup: function () {
+								beforeEach: function () {
 									this.oMasterDummy = new Page();
 									this.oDetailDummy = new Page();
 									this.oSplitContainer = new SplitContainer({
@@ -503,7 +503,7 @@
 									this.oRouter.getViews().setView("Detail", this.oDetailView);
 									this.oRouter.getViews().setView("Master", this.oMasterView);
 								},
-								teardown: function () {
+								afterEach: function () {
 									this.oSplitContainer.destroy();
 									this.oRouter.destroy();
 								}
@@ -524,7 +524,7 @@
 
 
 							integrationTests.start({
-								setup: function (oConfig) {
+								beforeEach: function (oConfig) {
 									var oRouter = fnCreateRouter(oConfig);
 									this.oGetViewStub = sinon.stub(oRouter._oViews, "_getViewWithGlobalId", helpers.createViewMock);
 
@@ -541,7 +541,7 @@
 									oRouteMatchedSpy.restore();
 									return oPromise;
 								},
-								teardown: function () {
+								afterEach: function () {
 									this.oGetViewStub.restore();
 									this.oRouter.destroy();
 								}

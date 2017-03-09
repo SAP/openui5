@@ -32,7 +32,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 	var oChangeDefinition;
 
 	QUnit.module('sap.ui.fl DefaultVariants', {
-		setup: function() {
+		beforeEach: function() {
 			Cache.setActive(false);
 
 			this.stubs = [];
@@ -88,7 +88,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 				isUserDependend: true
 			};
 		},
-		teardown: function() {
+		afterEach: function() {
 			stop();
 
 			var stubs = this.stubs;

@@ -221,12 +221,12 @@
 
 		/******* qUnit Tests *******/
 		QUnit.module("Tree", {
-		  setup: function() {
+		  beforeEach: function() {
 
 			  oStandardTree.focus();
 
 		  },
-		  teardown: function() {
+		  afterEach: function() {
 		  	//this.oStandardTree = null;
 		  }
 		});

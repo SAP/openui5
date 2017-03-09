@@ -72,12 +72,12 @@
 	qutils.delayTestStart();
 
 	QUnit.module("Rendering", {
-		setup: function() {
+		beforeEach: function() {
 			oStandardTree = createStandardTree();
 			oStandardTree.placeAt("target1");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			oStandardTree.destroy();
 			oStandardTree = null;
 		}
@@ -91,12 +91,12 @@
 		});
 
 	QUnit.module("Selection Mode 'Single'", {
-		setup: function() {
+		beforeEach: function() {
 			oStandardTree = createStandardTree();
 			oStandardTree.placeAt("target1");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			oStandardTree.destroy();
 			oStandardTree = null;
 		}
@@ -129,12 +129,12 @@
 	});
 
 	QUnit.module("Selection Mode 'Multi'", {
-		setup: function() {
+		beforeEach: function() {
 			oStandardTree = createStandardTree();
 			oStandardTree.placeAt("target1");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			oStandardTree.destroy();
 			oStandardTree = null;
 		}
@@ -170,7 +170,7 @@
 	});
 
 	QUnit.module("Multiselect interactions", {
-		setup: function () {
+		beforeEach: function () {
 			var oData = {
 				"children": [
 					{"NAME": "A"},
@@ -224,7 +224,7 @@
 			oStandardTree.placeAt("target1");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			oStandardTree.destroy();
 			oStandardTree = null;
 		}

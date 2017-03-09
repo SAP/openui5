@@ -61,7 +61,7 @@ var oTable = {
 
 QUnit.module("TableRendererUtils", {
 	setup: initOutput,
-	teardown: function () {
+	afterEach: function () {
 		oOutput = null;
 	}
 });

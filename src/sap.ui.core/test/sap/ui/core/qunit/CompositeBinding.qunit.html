@@ -54,7 +54,7 @@ function myCalculator(a, b, c) {
 }
 
 QUnit.module("Basic functionality", {
-		setup: function() {
+		beforeEach: function() {
 			this.model = new sap.ui.model.json.JSONModel({
 				a: 1,
 				b: 2,
@@ -70,7 +70,7 @@ QUnit.module("Basic functionality", {
 			this.binding3 = this.model.bindProperty("/c");
 			this.composite = new sap.ui.model.CompositeBinding([this.binding1, this.binding2, this.binding3]);
 		},
-		tearDown: function() {
+		afterEach: function() {
 			this.model = null;
 			this.binding1 = null;
 			this.binding2 = null;
@@ -147,7 +147,7 @@ asyncTest("suspend/resume", function() {
 });
 
 QUnit.module("With inner types/formatters", {
-	setup: function() {
+	beforeEach: function() {
 		this.model = new sap.ui.model.json.JSONModel({
 			a: 1,
 			b: 2,
@@ -161,7 +161,7 @@ QUnit.module("With inner types/formatters", {
 		this.composite = new sap.ui.model.CompositeBinding([this.binding1, this.binding2, this.binding3]);
 		this.compositeraw = new sap.ui.model.CompositeBinding([this.binding1, this.binding2, this.binding3], true);
 	},
-	tearDown: function() {
+	afterEach: function() {
 		this.model = null;
 		this.binding1 = null;
 		this.binding2 = null;
@@ -222,7 +222,7 @@ test("with bUseRawValues and formatter", function() {
 
 
 QUnit.module("Unresolved inner bindings", {
-	setup: function() {
+	beforeEach: function() {
 		this.model = new sap.ui.model.json.JSONModel({
 			a: 1,
 			obj: {
@@ -235,7 +235,7 @@ QUnit.module("Unresolved inner bindings", {
 		this.binding3 = this.model.bindProperty("c");
 		this.composite = new sap.ui.model.CompositeBinding([this.binding1, this.binding2, this.binding3]);
 	},
-	tearDown: function() {
+	afterEach: function() {
 		this.model = null;
 		this.binding1 = null;
 		this.binding2 = null;

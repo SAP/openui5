@@ -531,7 +531,7 @@
 
 
 		QUnit.module("Hidden Top List", {
-			setup: function() {
+			beforeEach: function() {
 				oExactBrowser3.setShowTopList(false);
 				sap.ui.getCore().applyChanges();
 			}

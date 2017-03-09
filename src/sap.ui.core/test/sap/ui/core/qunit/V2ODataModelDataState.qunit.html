@@ -67,13 +67,13 @@
 		sap.ui.model.odata.v2.ODataModel.mServiceData = {};
 	}
 	QUnit.module("ODataModelV2DataState ", {
-		setup : function() {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
 			oModel.setUseBatch(true);
 
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
@@ -519,13 +519,13 @@
 
 
 	QUnit.module("New DataState Tests", {
-		setup : function() {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
 			oModel.setUseBatch(true);
 
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
@@ -785,13 +785,13 @@
 
 
 	QUnit.module("Other Old DataState Tests", {
-		setup : function() {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
 			oModel.setUseBatch(true);
 
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();

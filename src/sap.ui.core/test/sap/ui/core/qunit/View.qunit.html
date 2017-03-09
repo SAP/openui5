@@ -47,13 +47,13 @@
 	});
 
 	QUnit.module("sap.ui.core.mvc.View#runPreprocessor(sync)", {
-		setup: function() {
+		beforeEach: function() {
 			mock = sinon.mock(sap.ui.core.util.XMLPreprocessor);
 			expectProcess = mock.expects("process");
 			_mPreprocessors = jQuery.extend(true, {}, sap.ui.core.mvc.View._mPreprocessors);
 			sap.ui.core.mvc.View.PreprocessorType = {"Foo":"foo"};
 		},
-		teardown: function() {
+		afterEach: function() {
 			// restore the sinon spy to original state
 			mock.restore();
 			// remove existing global preprocessors
@@ -234,13 +234,13 @@
 	});
 
 	QUnit.module("sap.ui.core.mvc.View#runPreprocessor (async)", {
-		setup: function() {
+		beforeEach: function() {
 			mock = sinon.mock(sap.ui.core.util.XMLPreprocessor);
 			expectProcess = mock.expects("process");
 			_mPreprocessors = jQuery.extend(true, {}, sap.ui.core.mvc.View._mPreprocessors);
 			sap.ui.core.mvc.View.PreprocessorType = {"Foo":"foo"};
 		},
-		teardown: function() {
+		afterEach: function() {
 			// restore the sinon spy to original state
 			mock.restore();
 			// remove existing global preprocessors
@@ -422,7 +422,7 @@
 	});
 
 	QUnit.module("sap.ui.core.mvc.View#registerPreprocessor", {
-		setup: function() {
+		beforeEach: function() {
 			_mPreprocessors = jQuery.extend(true, {}, sap.ui.core.mvc.View._mPreprocessors);
 			this.sViewContent = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
@@ -439,7 +439,7 @@
 			},
 			spy = sinon.spy(sap.ui.core.mvc.View.prototype, "runPreprocessor");
 		},
-		teardown: function() {
+		afterEach: function() {
 			// restore the sinon spy to original state
 			sap.ui.core.mvc.View.prototype.runPreprocessor.restore();
 			// remove existing global preprocessors

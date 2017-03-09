@@ -104,12 +104,12 @@
 
 
 			QUnit.module("Control Test - sap.ui.commons.Carousel API", {
-				setup : function () {
+				beforeEach : function () {
 					this.oCarousel1 = createCarousel("vertical");
 					this.oCarousel2 = createCarousel2();
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oCarousel1.destroy();
 					this.oCarousel1 = null;
 					this.oCarousel2.destroy();
@@ -199,11 +199,11 @@
 
 
 			QUnit.module("sap.ui.commons.Carousel Events testing", {
-				setup : function () {
+				beforeEach : function () {
 					this.oCarousel1 = createCarousel("vertical");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oCarousel1.destroy();
 					this.oCarousel1 = null;
 				}
@@ -264,12 +264,12 @@
 			});
 
 			QUnit.module("sap.ui.commons.Carousel Keyboard handling", {
-				setup : function () {
+				beforeEach : function () {
 					this.oCarousel1 = createCarousel("vertical");
 					this.oCarousel1.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oCarousel1.destroy();
 					this.oCarousel1 = null;
 				}

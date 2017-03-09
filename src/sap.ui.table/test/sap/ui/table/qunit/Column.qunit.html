@@ -11,7 +11,7 @@
 	<script src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.m,sap.ui.core,sap.ui.commons,sap.ui.table">
 	</script>
-	
+
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
@@ -30,11 +30,11 @@
 			var Column = sap.ui.table.Column;
 
 			QUnit.module("Column Menu Items", {
-				setup: function() {
+				beforeEach: function() {
 					this._oTable = new Table();
 					this._oColumn = new Column();
 				},
-				teardown: function() {
+				afterEach: function() {
 					this._oColumn.destroy();
 					this._oTable.destroy();
 				}
@@ -141,7 +141,7 @@
 			});
 
 			QUnit.module("Column Menu", {
-				setup: function() {
+				beforeEach: function() {
 					var oModel = new sap.ui.model.json.JSONModel();
 					oModel.setData([{myProp: "someValue", myOtherProp: "someOtherValue"}]);
 					this._oTable = new Table();
@@ -164,7 +164,7 @@
 					this._oTable.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown: function() {
+				afterEach: function() {
 					this._oColumnWithColumnMenu.destroy();
 					this._oColumnWithUnifiedMenu.destroy();
 					this._oTable.destroy();
@@ -197,7 +197,7 @@
 				var oColumnMenu = this._oColumnWithColumnMenu.getMenu();
 				var oSpyColumnMenu = this.spy(oColumnMenu, "_updateResourceBundle");
 				this._oColumnWithColumnMenu._openMenu();
-				
+
 				assert.ok(!oColumnMenu._bInvalidated, "ColumnMenu not invalidated");
 				this._oTable._invalidateColumnMenus(true);
 				assert.ok(oSpyColumnMenu.calledOnce, "Bundle updated");

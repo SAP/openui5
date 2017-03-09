@@ -91,11 +91,11 @@
 		oDropdown5.bindAggregation("items", "/items", oItemTemplate);
 
 		QUnit.module("Control Test - sap.ui.commons.DropdownBox", {
-			setup: function(){
+			beforeEach: function(){
 				oDropdown.setValue(sCheckText);
 				oDropdown.focus();
 			}//,
-			//teardown: function(){
+			//afterEach: function(){
 			//	qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 			//}
 		});
@@ -141,11 +141,11 @@
 		});
 
 		QUnit.module("Autocomplete Tests - sap.ui.commons.DropdownBox", {
-			setup: function(){
+			beforeEach: function(){
 				resetBeforeTest();
 				oDropdown.focus();
 			}//,
-			//teardown: function(){
+			//afterEach: function(){
 			//	qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 			//}
 		});
@@ -179,7 +179,7 @@
 		});
 
 		QUnit.module("Arrow Control Tests - sap.ui.commons.DropdownBox", {
-			setup: function(){
+			beforeEach: function(){
 				oDropdown.focus();
 			}
 		});
@@ -239,10 +239,10 @@
 		});
 
 		QUnit.module("Misc. Keys Control Tests - sap.ui.commons.DropdownBox", {
-			setup: function(){
+			beforeEach: function(){
 				oDropdown.focus();
 			},
-			teardown: function(){
+			afterEach: function(){
 				qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 			}
 		});
@@ -285,10 +285,10 @@
 		});
 
 		QUnit.module("Open / Close Tests - sap.ui.commons.DropdownBox", {
-			setup: function(){
+			beforeEach: function(){
 				oDropdown.focus();
 			},
-			teardown: function(){
+			afterEach: function(){
 				qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 			}
 		});
@@ -323,12 +323,12 @@
 
 
 		QUnit.module("Mouse Handling Tests - sap.ui.commons.DropdownBox", {
-			setup: function(){
+			beforeEach: function(){
 				resetBeforeTest();
 				oDropdown.focus();
 				oDropdown.attachChange(this.handleChange);
 			},
-			teardown: function(){
+			afterEach: function(){
 				oDropdown.detachChange(this.handleChange);
 			},
 			// next function does not belong to qUnit but allows setting and removing some event handler to the DropdownBox
@@ -362,7 +362,7 @@
 
 
 		QUnit.module("Misc. Keys Control Tests with open Listbox - sap.ui.commons.DropdownBox", {
-			setup: function(){
+			beforeEach: function(){
 				oDropdown.focus();
 
 				// ensure the "first item" is really the first item in the list (also including the history feature)
@@ -425,12 +425,12 @@
 		});
 
 		QUnit.module("Event Tests - sap.ui.commons.DropdownBox", {
-			setup: function(){
+			beforeEach: function(){
 				//resetBeforeTest();
 				oDropdown.focus();
 				oDropdown.attachChange(this.handleChange);
 			},
-			teardown: function(){
+			afterEach: function(){
 				oDropdown.detachChange(this.handleChange);
 				//qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 			},

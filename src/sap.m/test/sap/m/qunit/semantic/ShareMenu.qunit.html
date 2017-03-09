@@ -24,13 +24,13 @@
 		jQuery.sap.require("sap.m.semantic.ShareMenu");
 
 		QUnit.module("ShareMenu Control", {
-			setup: function () {
+			beforeEach: function () {
 				this.oActionSheet = new sap.m.ActionSheet();
 				// Action sheet needs a parent to create the button correctly
 				this.oSemanticPage = new sap.m.semantic.SemanticPage();
 				this.oSemanticPage.addDependent(this.oActionSheet);
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oSemanticPage.destroy();
 				jQuery("#qunit-fixture-visible").html("");
 			}

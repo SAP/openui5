@@ -165,10 +165,10 @@
 
 
 		QUnit.module("Events", {
-			setup : function() {
+			beforeEach : function() {
 				tileBasic = sap.ui.getCore().getControl(tileBasicId);
 			},
-			teardown : function() {
+			afterEach : function() {
 				tileBasic = null;
 			}
 		});

@@ -31,10 +31,10 @@
 					"use strict";
 
 					QUnit.module("add and execute navigations", {
-						setup: function () {
+						beforeEach: function () {
 							this.oTargets = new TargetHandler();
 						},
-						teardown: function () {
+						afterEach: function () {
 							this.oTargets.destroy();
 						}
 					});
@@ -259,7 +259,7 @@
 					});
 
 					QUnit.module("Dialog closing", {
-						setup: function () {
+						beforeEach: function () {
 							this.oStartPage = new Page();
 							this.oNavContainer = new NavContainer({
 								pages: [
@@ -271,7 +271,7 @@
 							});
 							this.oTargetHandler = new TargetHandler();
 						},
-						teardown: function () {
+						afterEach: function () {
 							this.oNavContainer.destroy();
 							this.oTargetHandler.destroy();
 							this.oStub.restore();
@@ -334,10 +334,10 @@
 
 
 					QUnit.module("Direction determinator",{
-						setup: function () {
+						beforeEach: function () {
 							this.oTargetHandler = new TargetHandler();
 						},
-						teardown: function () {
+						afterEach: function () {
 							this.oTargetHandler.destroy();
 						}
 					});

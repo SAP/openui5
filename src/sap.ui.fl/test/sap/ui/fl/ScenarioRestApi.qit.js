@@ -10,7 +10,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 	sinon.config.useFakeTimers = false;
 
 	QUnit.module("sap.ui.fl REST API's", {
-		setup: function() {
+		beforeEach: function() {
 
 			this.stubs = [];
 			this.componentName = "integrationTestingFlRest.Component";
@@ -81,7 +81,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 				}
 			};
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.stubs.forEach(function(stub) {
 				stub.restore();
 			});

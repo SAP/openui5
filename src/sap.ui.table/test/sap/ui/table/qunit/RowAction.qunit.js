@@ -9,7 +9,7 @@ var NAVICON = "sap-icon://navigation-right-arrow";
 var DELICON = "sap-icon://sys-cancel"
 
 QUnit.module("Rendering", {
-	setup: function() {
+	beforeEach: function() {
 		this.rowAction = new sap.ui.table.RowAction();
 		this.rowAction.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -28,7 +28,7 @@ QUnit.module("Rendering", {
 			aIcons[i].addEventDelegate(oDelegate);
 		}
 	},
-	teardown: function () {
+	afterEach: function () {
 		this.rowAction.destroy();
 		this.rowAction = null;
 	}
@@ -241,7 +241,7 @@ QUnit.test("Fixed Column Layout", function(assert) {
 
 
 QUnit.module("Behavior", {
-	setup: function() {
+	beforeEach: function() {
 		var that = this;
 		this.rowAction = new sap.ui.table.RowAction();
 		this.rowAction.addItem(new sap.ui.table.RowActionItem({icon: "sap-icon://search", text: "A"}));
@@ -255,7 +255,7 @@ QUnit.module("Behavior", {
 
 		this.aInnerIcons = this.rowAction.getAggregation("_icons");
 	},
-	teardown: function () {
+	afterEach: function () {
 		this.rowAction.destroy();
 		this.rowAction = null;
 	}
@@ -416,14 +416,14 @@ QUnit.test("Item._getText", function(assert) {
 
 
 QUnit.module("ACC", {
-	setup: function() {
+	beforeEach: function() {
 		this.rowAction = new sap.ui.table.RowAction();
 		this.rowAction.addItem(new sap.ui.table.RowActionItem({icon: "sap-icon://search", text: "A"}));
 		this.rowAction.addItem(new sap.ui.table.RowActionItem({icon: "sap-icon://delete", tooltip: "B"}));
 		this.rowAction.placeAt("content");
 		sap.ui.getCore().applyChanges();
 	},
-	teardown: function () {
+	afterEach: function () {
 		this.rowAction.destroy();
 		this.rowAction = null;
 	}

@@ -56,11 +56,11 @@
 		}
 
 		QUnit.module("Initial check", {
-			setUp: function () {
+			beforeEach: function () {
 
 			},
 
-			tearDown: function () {
+			afterEach: function () {
 
 				jQuery("#qunit-fixture-visible").html("");
 			}
@@ -251,11 +251,11 @@
 		});
 
 		QUnit.module("Aggregations", {
-			setUp: function () {
+			beforeEach: function () {
 
 			},
 
-			tearDown: function () {
+			afterEach: function () {
 				jQuery("#qunit-fixture-visible").html("");
 			}
 		});
@@ -1175,10 +1175,10 @@
 		}); */
 
 		QUnit.module("Semantic Share Button should behave correctly", {
-			setUp: function () {
+			beforeEach: function () {
 			},
 
-			tearDown: function () {
+			afterEach: function () {
 				jQuery("#qunit-fixture-visible").html("");
 			}
 		});
@@ -1240,10 +1240,10 @@
 		});
 
 		QUnit.module("Using custom content in the footer should preserve its correct state", {
-			setUp: function () {
+			beforeEach: function () {
 			},
 
-			tearDown: function () {
+			afterEach: function () {
 				jQuery("#qunit-fixture-visible").html("");
 			}
 		});
@@ -1421,11 +1421,11 @@
 		});*/
 
 		QUnit.module("Construction/Destruction", {
-			setUp: function () {
+			beforeEach: function () {
 
 			},
 
-			tearDown: function () {
+			afterEach: function () {
 				jQuery("#qunit-fixture-visible").html("");
 			}
 		});

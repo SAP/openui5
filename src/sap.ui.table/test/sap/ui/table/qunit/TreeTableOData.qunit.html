@@ -116,11 +116,11 @@
 	}
 
 	QUnit.module("TreeTable with Annotations, starting level 1", {
-		setup: function() {
+		beforeEach: function() {
 			oAnnotationMockServer.start();
 			this.oModel = new sap.ui.model.odata.v2.ODataModel('/metadata/', {useBatch:true});
 		},
-		teardown: function() {
+		afterEach: function() {
 			oAnnotationMockServer.stop();
 			this.oTable.destroy();
 		}

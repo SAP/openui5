@@ -309,7 +309,7 @@
 		});
 
 		QUnit.module("Setters", {
-			setup : function() {
+			beforeEach : function() {
 				this.rbg = new sap.m.RadioButtonGroup({
 					buttons : [
 						new sap.m.RadioButton({enabled : false, text : "Option 1"}),
@@ -321,7 +321,7 @@
 				this.rbg.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function() {
+			afterEach : function() {
 				this.rbg.destroy();
 			}
 		});

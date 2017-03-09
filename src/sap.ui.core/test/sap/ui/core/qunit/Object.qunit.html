@@ -76,7 +76,7 @@
 		};
 
 		QUnit.module("Base", {
-			setup : function() {
+			beforeEach : function() {
 				oObject = new sap.ui.base.Object();
 				oNewClassInstance = new sap.test.NewClass(42);
 				oNewSubClassInstance = new sap.test.NewSubClass();

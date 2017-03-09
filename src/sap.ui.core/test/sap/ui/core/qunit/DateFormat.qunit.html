@@ -665,7 +665,7 @@
 	});
 
 	QUnit.module("Scaling: Relative Time Formater", {
-		setup: function() {
+		beforeEach: function() {
 			this.clock = sinon.useFakeTimers(1444724476000);
 			var oDate = new Date();
 			var oJan = new Date(oDate.getFullYear(), 0, 1);
@@ -673,7 +673,7 @@
 			// check whether the Daylight Saving Time is used in the current timezone
 			this.dst = oJan.getTimezoneOffset() !== oJul.getTimezoneOffset();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.clock.restore();
 		}
 	})
@@ -909,10 +909,10 @@
 	];
 
 	QUnit.module("Islamic Date in other locales", {
-		setup: function() {
+		beforeEach: function() {
 			sap.ui.getCore().getConfiguration().setCalendarType(sap.ui.core.CalendarType.Islamic);
 		},
-		teardown: function() {
+		afterEach: function() {
 			sap.ui.getCore().getConfiguration().setCalendarType(null);
 		}
 	});

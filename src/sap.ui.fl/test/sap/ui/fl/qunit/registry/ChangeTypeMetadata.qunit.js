@@ -3,9 +3,9 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeTypeMetadata");
 (function(ChangeTypeMetadata) {
 
 	QUnit.module("sap.ui.fl.registry.ChangeTypeMetadata", {
-		setup: function() {
+		beforeEach: function() {
 		},
-		teardown: function() {
+		afterEach: function() {
 		}
 	});
 

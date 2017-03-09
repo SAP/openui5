@@ -32,7 +32,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 	var oChangeDefinition;
 
 	QUnit.module("sap.ui.fl Creation & Deletion", {
-		setup: function() {
+		beforeEach: function() {
 			Cache.setActive(false);
 			Cache._entries = {};
 
@@ -89,7 +89,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 				isUserDependend: true
 			};
 		},
-		teardown: function() {
+		afterEach: function() {
 			stop();
 
 			var stubs = this.stubs;

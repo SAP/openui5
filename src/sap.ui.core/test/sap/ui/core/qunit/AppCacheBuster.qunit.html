@@ -55,9 +55,9 @@
 	var sTimestampComp2 = "0987654321";
 
 	QUnit.module("intercept", {
-		setup : function() {
+		beforeEach : function() {
 		},
-		teardown : function() {
+		afterEach : function() {
 		}
 	});
 
@@ -86,7 +86,7 @@
 
 
 	QUnit.module("local scenario", {
-		setup : function() {
+		beforeEach : function() {
 
 			// fake the XHR server
 			this.server = sinon.fakeServer.create();
@@ -117,7 +117,7 @@
 			sap.ui.core.AppCacheBuster.register("./comp2/");
 
 		},
-		teardown : function() {
+		afterEach : function() {
 
 			// exits the cachebuster
 			sap.ui.core.AppCacheBuster.exit();
@@ -211,7 +211,7 @@
 	});
 
 	QUnit.module("remote scenario", {
-		setup : function() {
+		beforeEach : function() {
 
 			// fake the XHR server
 			this.server = sinon.fakeServer.create();
@@ -231,7 +231,7 @@
 			sap.ui.core.AppCacheBuster.register("http://anyserver:4711/anyapp/");
 
 		},
-		teardown : function() {
+		afterEach : function() {
 
 			// exits the cachebuster
 			sap.ui.core.AppCacheBuster.exit();
@@ -317,7 +317,7 @@
 	});
 
 	QUnit.module("hook scenario", {
-		setup : function() {
+		beforeEach : function() {
 
 			// count the amount of requests
 			var that = this;
@@ -345,7 +345,7 @@
 			sap.ui.core.AppCacheBuster.init();
 
 		},
-		teardown : function() {
+		afterEach : function() {
 
 			// exits the cachebuster
 			sap.ui.core.AppCacheBuster.exit();

@@ -468,14 +468,14 @@
 				oShell.destroy();
 			});
 		QUnit.module("Aggregation overrides", {
-			setup : function () {
+			beforeEach : function () {
 				this.oTI = new sap.ui.ux3.ThingInspector({
 
 				});
 				this.oTI.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oTI.destroy();
 				this.oTI = null;
 			}
