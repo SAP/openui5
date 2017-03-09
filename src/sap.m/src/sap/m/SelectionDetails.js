@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SelectionDetails.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/OverflowToolbarButton'],
-	function(jQuery, library, Control, OverflowToolbarButton) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Button'],
+	function(jQuery, library, Control, Button) {
 	"use strict";
 
 	/**
@@ -60,7 +60,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/O
 				 * Hidden aggregation which contains the button that opens the popover
 				 *
 				 */
-				"_button": {type : "sap.m.OverflowToolbarButton", multiple : false, visibility : "hidden"}
+				"_button": {type : "sap.m.Button", multiple : false, visibility : "hidden"}
 		},
 		events : {
 			/**
@@ -124,8 +124,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/O
 	/* Lifecycle methods                                           */
 	/* =========================================================== */
 	SelectionDetails.prototype.init = function() {
-		this.setAggregation("_button", new OverflowToolbarButton({
+		this.setAggregation("_button", new Button({
 			id : this.getId() + "-button",
+			type : library.ButtonType.Transparent,
 			press : [this._onToolbarButtonPress, this]
 		}), true);
 	};
@@ -208,7 +209,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/O
 	 */
 	SelectionDetails.prototype._onToolbarButtonPress = function() {
 		sap.ui.require(['sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page',
-		'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarButton', 'sap/m/List'], this._handlePressLazy.bind(this));
+		'sap/m/OverflowToolbar', 'sap/m/Button', 'sap/m/List'], this._handlePressLazy.bind(this));
 	};
 
 	/**
