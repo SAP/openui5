@@ -49,6 +49,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			unread : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
+			 * Whether the control should be enabled. If set to false, the item is rendered as disabled.
+			 */
+			enabled : {type : "boolean", group : "Appearance", defaultValue : true},
+
+			/**
 			 * Defines the selected state of the list items.
 			 * <b>Note:</b> Binding the <code>selected</code> property in single selection modes may cause unwanted results if you have more than one selected items in your binding.
 			 */
@@ -471,7 +476,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			id : this.getId() + "-selectSingle",
 			groupName : this.getListProperty("id") + "_selectGroup",
 			activeHandling : false,
-			selected : this.getSelected()
+			selected : this.getSelected(),
+			enabled : this.getEnabled()
 		}).setParent(this, null, true).setTabIndex(-1).attachSelect(function(oEvent) {
 			var bSelected = oEvent.getParameter("selected");
 			this.setSelected(bSelected);
@@ -495,7 +501,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oMultiSelectControl = new sap.m.CheckBox({
 			id : this.getId() + "-selectMulti",
 			activeHandling : false,
-			selected : this.getSelected()
+			selected : this.getSelected(),
+			enabled : this.getEnabled()
 		}).setParent(this, null, true).setTabIndex(-1).attachSelect(function(oEvent) {
 			var bSelected = oEvent.getParameter("selected");
 			this.setSelected(bSelected);
