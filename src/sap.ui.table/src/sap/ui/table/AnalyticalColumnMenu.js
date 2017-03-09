@@ -62,15 +62,20 @@ sap.ui.define(['jquery.sap.global', './ColumnMenu', './library'],
 				"group",
 				"TBL_GROUP",
 				oColumn.getGrouped() ? "accept" : null,
-				jQuery.proxy(function(oEvent) {
-					var oMenuItem = oEvent.getSource(),
-						bGrouped = oColumn.getGrouped();
+				function(oEvent) {
+					var oMenuItem = oEvent.getSource();
+					var bGrouped = oColumn.getGrouped();
+					var oBinding = oTable.getBinding("rows");
+
+					// Relaying the ungrouping to the AnalyticalBinding.
+					// The numberOfExpandedLevels must be reset through the AnalyticalTreeBindingAdapter.
+					oBinding.setNumberOfExpandedLevels(0);
 
 					oColumn.setGrouped(!bGrouped);
 					oTable.fireGroup({column: oColumn, groupedColumns: oTable._aGroupedColumns, type: GroupEventType.group});
 					oMenuItem.setIcon(!bGrouped ? "sap-icon://accept" : null);
 					oTable._getRowContexts();
-				}, this)
+				}
 			);
 			this.addItem(this._oGroupIcon);
 		}
