@@ -45,7 +45,7 @@
 		]
  	});
 
-	test("clone", function() {
+	QUnit.test("clone", function(assert) {
 		var oButton = new sap.ui.testlib.TestButton({
 			text : "a text text",
 			tooltip : "a tooltip text"
@@ -56,7 +56,7 @@
 		equal(oDolly.getTooltip(), oButton.getTooltip(), "property tooltip must have equal values");
 	});
 
-	test("bind property via settings", function(){
+	QUnit.test("bind property via settings", function(assert) {
 		var oButton = new sap.ui.testlib.TestButton({
 			text : "{firstName}",
 			tooltip : "{lastName}"
@@ -69,7 +69,7 @@
 		oButton.destroy();
 	});
 
-	test("bind property via bind...", function(){
+	QUnit.test("bind property via bind...", function(assert) {
 		var oButton = new sap.ui.testlib.TestButton({
 		});
 		oButton.setModel(oModel);

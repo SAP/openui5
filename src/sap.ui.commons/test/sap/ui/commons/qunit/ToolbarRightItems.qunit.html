@@ -18,7 +18,7 @@
 
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-			     
+
 			      src="../../../../../resources/sap-ui-core.js"
 			      data-sap-ui-theme="sap_bluecrystal"
 			      data-sap-ui-noConflict="true"
@@ -126,7 +126,7 @@
 		// ========================================================
 		// test number of toolbar items on right and left sides
 		// ========================================================
-		test("VisibleItems calculation with images involved", function(assert) {
+		QUnit.test("VisibleItems calculation with images involved", function(assert) {
 			var done = assert.async();
 			expect(3);
 			setTimeout(function(){ // give the Toolbar some time to recognize the change
@@ -145,18 +145,18 @@
 		/**
 		 * Tests accessor method for property visible of the whole Toolbar.
 		 */
-		test("VisibleOk", function() {
+		QUnit.test("VisibleOk", function(assert) {
 			strictEqual(oCtrl.getVisible(), true);
 		});
 
 		/**
 		 * Tests accessor method for property width of the whole Toolbar.
 		 */
-		test("WidthOk", function() {
+		QUnit.test("WidthOk", function(assert) {
 			strictEqual(oCtrl.getWidth(), "490px");
 		});
 
-		test("VisibleItems calculation with item size change", function(assert) {
+		QUnit.test("VisibleItems calculation with item size change", function(assert) {
 			var done = assert.async();
 			expect(3);
 			strictEqual(oCtrl.getWidth(), "490px");
@@ -169,7 +169,7 @@
 			}, 500);
 		});
 
-		test("WidthOk after resize", function() {
+		QUnit.test("WidthOk after resize", function(assert) {
 			strictEqual(sap.ui.getCore().byId("Toolbar").getWidth(), "350px");
 		});
 

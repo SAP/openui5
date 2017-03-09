@@ -105,7 +105,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa5', 'sap/ui/core/routing/Has
 		});
 	});
 
-	QUnit.test("Should set the hash to 'test' if 'test' is specified", function(assert){
+	QUnit.test("Should set the hash to 'test' if 'test' is specified", function(assert) {
 		//test for value hash equal value hash
 		componentHashTestCase.call(this, {
 			hashValues : {

@@ -351,7 +351,7 @@
 		});
 	});
 
-	QUnit.test("GenericTile does not expand on focus - theme hcb", function(assert){
+	QUnit.test("GenericTile does not expand on focus - theme hcb", function(assert) {
 		var $tile = this.oGenericTile.$();
 
 		var done = assert.async();
@@ -380,7 +380,7 @@
 		});
 	});
 
-	QUnit.test("GenericTile does not expand on focus - theme bluecrystal", function(assert){
+	QUnit.test("GenericTile does not expand on focus - theme bluecrystal", function(assert) {
 		var $tile = this.oGenericTile.$();
 
 		var done = assert.async();
@@ -1587,7 +1587,7 @@
 		assert.equal(sAriaText, "someTooltipText", "Expected text for ARIA-label generated in case an explicite tooltip is set");
 	});
 
-	QUnit.test("Internal method _getAriaText for actions scope", function() {
+	QUnit.test("Internal method _getAriaText for actions scope", function(assert) {
 		//Arrange
 		this.oGenericTile.setScope("Actions");
 		this.oGenericTile._getAriaAndTooltipText = function() {

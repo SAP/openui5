@@ -94,7 +94,7 @@
 					sinon.assert.calledWith(fnSpy, "all results were filtered out by the matchers - skipping the check");
 				});
 
-				QUnit.test("Should pass nothing to the first matcher if undefined is given as control", function () {
+				QUnit.test("Should pass nothing to the first matcher if undefined is given as control", function (assert) {
 
 					// Act
 					var oResult = this.oPipeline.process({

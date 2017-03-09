@@ -122,11 +122,11 @@
 
 		QUnit.module("API");
 
-		test("Aggregation 'content'", function() {
+		QUnit.test("Aggregation 'content'", function(assert) {
 			testMultiAggregation("content", oShellOverlay0);
 		});
 
-		test("Aggregation 'search'", function() {
+		QUnit.test("Aggregation 'search'", function(assert) {
 			ok(!oShellOverlay0.getSearch(), "Initially no search control");
 			oShellOverlay0.setSearch(new my.Test());
 			ok(!!oShellOverlay0.getSearch(), "Search control available after set");
@@ -167,7 +167,7 @@
 			testCloseOverlay(false);
 		});
 
-		test("Clear UI", 0, function(){
+		QUnit.test("Clear UI", 0, function(assert) {
 			jQuery("#uiArea1").remove();
 		});
 

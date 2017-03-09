@@ -288,7 +288,7 @@
 		});
 	});
 
-	test("Update events should not be fired when metadata is not loaded", function() {
+	QUnit.test("Update events should not be fired when metadata is not loaded", function(assert) {
 		var oMockServer = startMockServer(),
 			oModel = createODataModel("/there/is/no/such/service"),
 			fnUpdateFinishedSpy = this.spy(),
@@ -434,7 +434,7 @@
 	});
 
 	QUnit.module("NonAbsoluteAndUnresolveable Binding Path")
-	test("Should not fire update started if a binding cannot be resolved", function() {
+	QUnit.test("Should not fire update started if a binding cannot be resolved", function(assert) {
 		var oMockServer = startMockServer(),
 			oList = createList({
 				updateStarted : function () {

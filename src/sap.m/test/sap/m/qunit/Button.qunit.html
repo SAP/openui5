@@ -189,11 +189,11 @@
 
 
 	// test property accessor methods
-	test("TextOk", function() {
+	QUnit.test("TextOk", function(assert) {
 		equals(b1.getText(), sText, "Text - button1 is correct using 'equals()'!");
 	});
 
-	test("TypeOk", function() {
+	QUnit.test("TypeOk", function(assert) {
 		equals(b1.getType(), sButtonTypeDefault, "Button Type: Default - button1 is correct using 'equals()'!");
 		equals(b2.getType(), sButtonTypeBack, "Button Type: Back - button2 is correct using 'equals()'!");
 		equals(b4.getType(), sButtonTypeAccept, "Button Type: Accept - button4 is correct using 'equals()'!");
@@ -203,7 +203,7 @@
 		equals(b11.getType(), sButtonTypeUnstyled, "Button Type: Uunstyle - button11 is correct using 'equals()'!");
 	});
 
-	test("ButtonEnabledOk", function() {
+	QUnit.test("ButtonEnabledOk", function(assert) {
 		equals(b1.getEnabled(), bEnabled, "Button is enabled - button1 is correct using 'equals()'!");
 		equals(b2.getEnabled(), bEnabled, "Button is enabled - button2 is correct using 'equals()'!");
 		equals(b4.getEnabled(), bEnabled, "Button is enabled - button4 is correct using 'equals()'!");
@@ -215,25 +215,25 @@
 		equals(b10.getEnabled(), bEnabled, "Button is enabled - button10 is correct using 'equals()'!");
 	});
 
-	test("ButtonWidthOk", function() {
+	QUnit.test("ButtonWidthOk", function(assert) {
 		equals(b7.getWidth(), sWidth, "Button width - button7 is correct using 'equals()'!");
 	});
 
-	test("IconOk", function() {
+	QUnit.test("IconOk", function(assert) {
 		equals(b9.getIcon(), sIcon, "Icon for button9 is correct using 'equals()'!");
 	});
 
-	test("TextDirectionRtlOk", function() {
+	QUnit.test("TextDirectionRtlOk", function(assert) {
 		var $btnText = jQuery(b13.getDomRef()).find('.sapMBtnContent');
 		equals($btnText.attr("dir"), "rtl", "Control text has 'dir' property set to right-to-left");
 	});
 
-	test("TextDirectionLtrOk", function() {
+	QUnit.test("TextDirectionLtrOk", function(assert) {
 		var $btnText = jQuery(b14.getDomRef()).find('.sapMBtnContent');
 		equals($btnText.attr("dir"), "ltr", "Control text has 'dir' property set to left-to-right");
 	});
 
-	test("PressOk", function() {
+	QUnit.test("PressOk", function(assert) {
 		try {
 			b1.firePress();
 			ok(false,"Exception should have been thrown!");
@@ -258,7 +258,7 @@
 		equals(msg, sPressMessage, "Button7 - Event was fired correctly!!");
 	});
 
-	test("Visibility", function(){
+	QUnit.test("Visibility", function(assert) {
 		ok(!jQuery.sap.domById("b12"), "Button12 should not be rendered");
 	});
 
@@ -280,7 +280,7 @@
 		strictEqual(oButton.$("inner").hasClass("sapMBtnHoverable"), oTestDescription.shouldHaveCssClass, "The button determined wether is should be hoverable");
 	}
 
-	test("Should be hoverable if the button is enabled and in desktop", function() {
+	QUnit.test("Should be hoverable if the button is enabled and in desktop", function(assert) {
 		hoverableTestCase.call(this, {
 			enabled : true,
 			desktop : true,
@@ -289,7 +289,7 @@
 		});
 	});
 
-	test("Should not be hoverable if the button is disabled and in desktop", function() {
+	QUnit.test("Should not be hoverable if the button is disabled and in desktop", function(assert) {
 		hoverableTestCase.call(this, {
 			enabled : false,
 			desktop : true,
@@ -298,7 +298,7 @@
 		});
 	});
 
-	test("Should not be hoverable if the button is enabled and not desktop", function() {
+	QUnit.test("Should not be hoverable if the button is enabled and not desktop", function(assert) {
 		hoverableTestCase.call(this, {
 			enabled : true,
 			desktop : false,
@@ -307,7 +307,7 @@
 		});
 	});
 
-	test("Should not be hoverable if the button is disabled and not desktop", function() {
+	QUnit.test("Should not be hoverable if the button is disabled and not desktop", function(assert) {
 		hoverableTestCase.call(this, {
 			enabled : false,
 			desktop : false,
@@ -316,7 +316,7 @@
 		});
 	});
 
-	test("Should not re-render the button if the text is changed", function() {
+	QUnit.test("Should not re-render the button if the text is changed", function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
 			oRenderSpy,
@@ -344,7 +344,7 @@
 	});
 
 
-	test("Tap event should not be fired when the button is set to invisible", function() {
+	QUnit.test("Tap event should not be fired when the button is set to invisible", function(assert) {
 		// Arrange
 		var oRenderSpy,
 			oConstructor = { visible : false };
@@ -364,7 +364,7 @@
 		oButton.destroy();
 	});
 
-	test("For safari the button should gain explicitly focus on touch start", function() {
+	QUnit.test("For safari the button should gain explicitly focus on touch start", function(assert) {
 		// Arrange
 		// stub the browser to be only safari
 		this.stub(sap.ui.Device, "browser", {
@@ -387,7 +387,7 @@
 	});
 
 
-	test("Check type conversation if text property is changed (non-string value)", function() {
+	QUnit.test("Check type conversation if text property is changed (non-string value)", function(assert) {
 		// Arrange
 		var oRenderSpy,
 			oConstructor = { text : "Check type conversation (text)", enabled : true};
@@ -410,7 +410,7 @@
 	});
 
 
-	test("Should not re-render the button if icon property is changed", function() {
+	QUnit.test("Should not re-render the button if icon property is changed", function(assert) {
 		// Arrange
 		var oRenderSpy,
 			oConstructor = { text : "Re-render Check (icon)", enabled : true, icon : sap.ui.core.IconPool.getIconURI("employee") , iconFirst : true};
@@ -433,7 +433,7 @@
 	});
 
 
-	test("Tooltip is recognized", function() {
+	QUnit.test("Tooltip is recognized", function(assert) {
 
 		// Arrange
 		var oButton = new sap.m.Button({text: "MyText",
@@ -452,7 +452,7 @@
 	});
 
 
-	test("Tooltip is derived for icon-only buttons", function() {
+	QUnit.test("Tooltip is derived for icon-only buttons", function(assert) {
 
 		// Arrange
 		var oButton = new sap.m.Button({tooltip: "MyTooltip",
@@ -471,7 +471,7 @@
 	});
 
 
-	test("getAccessibilityInfo", function() {
+	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oButton = new sap.m.Button({tooltip: "Tooltip"});
 		ok(!!oButton.getAccessibilityInfo, "Button has a getAccessibilityInfo function");
 		var oInfo = oButton.getAccessibilityInfo();
@@ -496,7 +496,7 @@
 		oButton.destroy();
 	});
 
-	test("AriaLabeledBy when the Button is associated with Label", function() {
+	QUnit.test("AriaLabeledBy when the Button is associated with Label", function(assert) {
 		var oLabel = new sap.m.Label("L1", {
 			text:'Label'
 		});
@@ -515,7 +515,7 @@
 		oButton.destroy();
 	});
 
-	test("_activeButton _inactiveButton", function() {
+	QUnit.test("_activeButton _inactiveButton", function(assert) {
 		//sut
 		var sIconURI = 'sap-icon://slim-arrow-down',
 			sActiveIconURI = 'sap-icon://slim-arrow-up',
@@ -545,7 +545,7 @@
 		oButton.destroy();
 	});
 
-	test("tabindex", function() {
+	QUnit.test("tabindex", function(assert) {
 		equal(b1.$().attr("tabindex"), undefined, "By default the button(root) should have no tabindex");
 		equal(b1.$("inner").attr("tabindex"), undefined, "By default the button(inner) should have no tabindex");
 

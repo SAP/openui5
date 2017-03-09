@@ -1,7 +1,7 @@
 /*
  * an initial check to be executed before other MVC tests start
  */
-test("InitialCheck", 6, function() {
+QUnit.test("InitialCheck", 6, function(assert) {
 	jQuery.sap.require("sap.ui.core.mvc.Controller");
 	jQuery.sap.require("sap.ui.core.mvc.JSONView");
 	jQuery.sap.require("sap.ui.core.mvc.JSView");
@@ -21,7 +21,7 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 
 	QUnit.module(sCaption);
 
-	test("View Instantiation: default controller instantiation", 7, function() {
+	QUnit.test("View Instantiation: default controller instantiation", 7, function(assert) {
 		// define View and place it onto the page
 		window.onInitCalled = false;
 		view = fnViewFactory();
@@ -30,7 +30,7 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		ok(view instanceof fnClass, "view must be instance of " + oConfig.viewClassName);
 	});
 
-	test("View Instantiation: default controller instantiation - async", 7, function() {
+	QUnit.test("View Instantiation: default controller instantiation - async", 7, function(assert) {
 		// define View and place it onto the page
 		window.onInitCalled = false;
 		view = fnViewFactory({async: true});
@@ -39,18 +39,18 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		ok(view instanceof fnClass, "view must be instance of " + oConfig.viewClassName);
 	});
 
-	test("Controller Instantiation", 2, function() {
+	QUnit.test("Controller Instantiation", 2, function(assert) {
 		var controller = view.getController();
 		ok(controller, "controller must exist after creation");
 		ok(controller instanceof sap.ui.core.mvc.Controller, "controller must be instanceof sap.ui.core.mvc.Controller");
 	});
 
-	test("Lifecycle: onInit", 1, function() {
+	QUnit.test("Lifecycle: onInit", 1, function(assert) {
 		ok(window.onInitCalled, "controller.onInit should be called by now");
 		window.onInitCalled = false;
 	});
 
-	test("Lifecycle: onAfterRendering", 6, function() {
+	QUnit.test("Lifecycle: onAfterRendering", 6, function(assert) {
 		window.onAfterRenderingCalled = false;
 		view.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -71,20 +71,20 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		}
 	});
 
-	test("SAPUI5 Rendering", oConfig.idsToBeChecked.length, function() {
+	QUnit.test("SAPUI5 Rendering", oConfig.idsToBeChecked.length, function(assert) {
 		for(var i=0; i<oConfig.idsToBeChecked.length; i++) {
 			var $ = jQuery.sap.byId(view.createId(oConfig.idsToBeChecked[i]));
 			equal($.length, 1,  "Element " + oConfig.idsToBeChecked[i] + " rendered");
 		}
 	});
 
-	test("Aggregation", 1, function() {
+	QUnit.test("Aggregation", 1, function(assert) {
 		expect(1);
 		$button = jQuery.sap.byId(view.createId("Button2"));
 		equal($button.length, 1,  "SAPUI5 Button rendered in aggregation");
 	});
 
-	test("Child Views exists", 3, function() {
+	QUnit.test("Child Views exists", 3, function(assert) {
 		$JSONView = jQuery.sap.byId(view.createId("MyJSONView"));
 		equal($JSONView.length, 1, "Child View (JSONView) should be rendered");
 		$JSView = jQuery.sap.byId(view.createId("MyJSView"));
@@ -93,7 +93,7 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		equal($XMLView.length, 1, "Child View (XMLView) should be rendered");
 	});
 
-	test("Child Views content rendered", 9, function() {
+	QUnit.test("Child Views content rendered", 9, function(assert) {
 		var oJSONView = view.byId("MyJSONView");
 		$button = jQuery.sap.byId(oJSONView.createId("Button1"));
 		equal($button.length, 1, "Content of Child View (JSONView) should be rendered");
@@ -125,7 +125,7 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 
 	});
 
-	test("Re-Rendering", 5+oConfig.idsToBeChecked.length, function() {
+	QUnit.test("Re-Rendering", 5+oConfig.idsToBeChecked.length, function(assert) {
 		window.onBeforeRenderingCalled = false;
 		window.onAfterRenderingCalled = false;
 		view.invalidate();
@@ -149,19 +149,19 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		}
 	});
 
-	test("Lifecycle: onBeforeRendering", 1, function() {
+	QUnit.test("Lifecycle: onBeforeRendering", 1, function(assert) {
 		ok(window.onBeforeRenderingCalled, "controller.onBeforeRendering should be called by now");
 		window.onBeforeRenderingCalled = false;
 	});
 
-	test("Lifecycle: onAfterRendering (re-rendering)", 1, function() {
+	QUnit.test("Lifecycle: onAfterRendering (re-rendering)", 1, function(assert) {
 		ok(window.onAfterRenderingCalled, "controller.onAfterRendering should be called again by now");
 		window.onAfterRenderingCalled = false;
 	});
 
 	// execute additional tests, when specified
 	if ( bCheckViewData ) {
-		test("View Data available in controller hooks", 4, function() {
+		QUnit.test("View Data available in controller hooks", 4, function(assert) {
 			equal(window.dataOnInit, "testdata", "View Data should be available in onInit of controller");
 			window.dataOnInit = null;
 			equal(window.dataAfterRendering, "testdata", "View Data should be available in onAfterRendering of controller");
@@ -173,31 +173,31 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		});
 	}
 
-	test("Lifecycle: onExit", 1, function() {
+	QUnit.test("Lifecycle: onExit", 1, function(assert) {
 		window.onExitCalled = false;
 		view.destroy();
 		ok(window.onExitCalled, "onExit should have been called");
 		window.onExitCalled = false;
 	});
 
-	test("Lifecycle: NO onBeforeRendering when exiting", 1, function() {
+	QUnit.test("Lifecycle: NO onBeforeRendering when exiting", 1, function(assert) {
 		ok(!window.onBeforeRenderingCalled, "controller.onBeforeRendering should not be called when exiting");
 		window.onBeforeRenderingCalled = false;
 	});
 
-	test("Lifecycle: NO onAfterRendering when exiting", 1, function() {
+	QUnit.test("Lifecycle: NO onAfterRendering when exiting", 1, function(assert) {
 		ok(!window.onAfterRenderingCalled, "controller.onAfterRendering should not be called again");
 		window.onAfterRenderingCalled = false;
 	});
 
-	test("Lifecycle: NO content after destroy()", oConfig.idsToBeChecked.length, function() {
+	QUnit.test("Lifecycle: NO content after destroy()", oConfig.idsToBeChecked.length, function(assert) {
 		for(var i=0; i<oConfig.idsToBeChecked.length; i++) {
 			var $ = jQuery.sap.byId(view.createId(oConfig.idsToBeChecked[i]));
 			equal($.length, 0, "Content " + oConfig.idsToBeChecked[i] + " should no longer be there");
 		}
 	});
 
-	test("Cloning: Event listeners are called on the correct controller instance", 12, function() {
+	QUnit.test("Cloning: Event listeners are called on the correct controller instance", 12, function(assert) {
 		var oTmpl, oClone;
 		oTmpl = fnViewFactory();
 		if (!oTmpl.sViewName) {

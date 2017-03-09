@@ -108,11 +108,11 @@
 		}
 	});
 
-	test("InitialOk", 1, function() {
+	QUnit.test("InitialOk", 1, function(assert) {
 		equal(this.table.getBinding("rows").getLength(), 3,	"Row count is correct!");
 	});
 
-	test("ExpandFirstLevelOk", 2, function() {
+	QUnit.test("ExpandFirstLevelOk", 2, function(assert) {
 		// check the behavior of the expand first level property (only used intially)
 		this.table.setExpandFirstLevel(true);
 		this.table.unbindRows().bindRows("/root");
@@ -122,19 +122,19 @@
 		equal(this.table.getBinding("rows").getLength(), 3,	"Row count is correct!");
 	});
 
-	test("ExpandRow", 2, function() {
+	QUnit.test("ExpandRow", 2, function(assert) {
 		this.table.expand(0);
 		equal(this.table.getBinding("rows").getLength(), 5, "Row count is correct!");
 		equal(this.table.isExpanded(0), true, "Expanded state is correct!");
 	});
 
-	test("CollapseRow", 2, function() {
+	QUnit.test("CollapseRow", 2, function(assert) {
 		this.table.collapse(0);
 		equal(this.table.getBinding("rows").getLength(), 3, "Row count is correct!");
 		equal(this.table.isExpanded(0), false, "Expanded state is correct!");
 	});
 
-	test("InsertRow", 1, function() {
+	QUnit.test("InsertRow", 1, function(assert) {
 		var oData = this.table.getModel().getData();
 		jQuery.extend(oData.root, {
 			3: {
@@ -146,14 +146,14 @@
 		equal(this.table.getBinding("rows").getLength(), 4, "Row count is correct!");
 	});
 
-	test("RemoveRow", 1, function() {
+	QUnit.test("RemoveRow", 1, function(assert) {
 		var oData = this.table.getModel().getData();
 		delete oData.root[3];
 		this.table.getModel().setData(oData);
 		equal(this.table.getBinding("rows").getLength(), 3, "Row count is correct!");
 	});
 
-	test("InsertChildRow", 3, function() {
+	QUnit.test("InsertChildRow", 3, function(assert) {
 		var oData = this.table.getModel().getData();
 		jQuery.extend(oData.root[2], {
 			0: {
@@ -168,7 +168,7 @@
 		equal(this.table.isExpanded(2), true, "Expanded state is correct!");
 	});
 
-	test("ApplyFilter", 1, function() {
+	QUnit.test("ApplyFilter", 1, function(assert) {
 		var oData = this.table.getModel().getData();
 		jQuery.extend(oData.root[2], {
 			0: {
@@ -183,7 +183,7 @@
 		equal(this.table.getBinding("rows").getLength(), 2, "Row count is correct!");
 	});
 
-	test("RemoveFilter", 1, function() {
+	QUnit.test("RemoveFilter", 1, function(assert) {
 		var oData = this.table.getModel().getData();
 		jQuery.extend(oData.root[2], {
 			0: {
@@ -200,7 +200,7 @@
 		equal(this.table.getBinding("rows").getLength(), 4, "Row count is correct!");
 	});
 
-	test("FilterSaveExpandedState", 3, function() {
+	QUnit.test("FilterSaveExpandedState", 3, function(assert) {
 		var oData = this.table.getModel().getData();
 		jQuery.extend(oData.root[2], {
 			0: {

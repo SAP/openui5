@@ -41,7 +41,7 @@
 			}
 		});
 
-		test("API Properties", function() {
+		QUnit.test("API Properties", function(assert){
 			ok(!this.title1.getText(), "Default property 'text'");
 			strictEqual(this.title2.getText(), "Hello", "Custom property 'text'");
 
@@ -64,7 +64,7 @@
 			ok(!this.title2.getVisible(), "Custom property 'visible'");
 		});
 
-		test("Title should be shrinkable", function() {
+		QUnit.test("Title should be shrinkable", function(assert){
 			ok(this.title1.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Title control implements IShrinkable interface");
 		});
 
@@ -85,30 +85,30 @@
 		});
 
 
-		test("When width is not set max-width should apply to control", function() {
+		QUnit.test("When width is not set max-width should apply to control", function(assert){
 			ok(this.title.$().hasClass("sapMTitleMaxWidth"), "Title has max width restriction for the trunctation.");
 			this.title.setWidth("100%");
 			sap.ui.getCore().applyChanges();
 			ok(!this.title.$().hasClass("sapMTitleMaxWidth"), "Title has width and does not have max width restriction.");
 		});
 
-		test("Should render a text", function() {
+		QUnit.test("Should render a text", function(assert){
 			strictEqual(this.title.$().text(), "Hello", "Text got rendered");
 		});
 
-		test("Should render a tooltip", function() {
+		QUnit.test("Should render a tooltip", function(assert){
 			strictEqual(this.title.$().attr("title"), "Tooltip", "Tooltip got rendered");
 		});
 
-		test("Should be selectable", function() {
+		QUnit.test("Should be selectable", function(assert){
 			ok(this.title.$().hasClass("sapUiSelectable"), "Title has class sapUiSelectable.");
 		});
 
-		test("Should not be wrapable", function() {
+		QUnit.test("Should not be wrapable", function(assert){
 			ok(this.title.$().hasClass("sapMTitleNoWrap"), "Title has class sapMTitleNoWrap.");
 		});
 
-		test("TitleStyle correct", function() {
+		QUnit.test("TitleStyle correct", function(assert){
 			for (var level in sap.ui.core.TitleLevel) {
 				this.title.setTitleStyle(level);
 				sap.ui.getCore().applyChanges();
@@ -116,7 +116,7 @@
 			}
 		});
 
-		test("Alignment correct", function() {
+		QUnit.test("Alignment correct", function(assert){
 			for (var align in sap.ui.core.TextAlign) {
 				this.title.setTextAlign(align);
 				sap.ui.getCore().applyChanges();
@@ -128,7 +128,7 @@
 			}
 		});
 
-		test("Semantic level correct", function() {
+		QUnit.test("Semantic level correct", function(assert){
 			var sExpectedTag;
 
 			for (var level in sap.ui.core.TitleLevel) {
@@ -171,7 +171,7 @@
 			}
 		});
 
-		test("Should render a text", function() {
+		QUnit.test("Should render a text", function(assert){
 			strictEqual(this.title.$().text(), "Hello2", "Text got rendered");
 			this.coreTitle.setText("Hello3");
 			sap.ui.getCore().applyChanges();
@@ -182,7 +182,7 @@
 			strictEqual(this.title.$().text(), "Hello", "Text got rendered");
 		});
 
-		test("Should render a tooltip", function() {
+		QUnit.test("Should render a tooltip", function(assert){
 			strictEqual(this.title.$().attr("title"), "Tooltip2", "Tooltip got rendered");
 			this.coreTitle.setTooltip("Tooltip3");
 			sap.ui.getCore().applyChanges();
@@ -193,7 +193,7 @@
 			strictEqual(this.title.$().attr("title"), "Tooltip", "Tooltip got rendered");
 		});
 
-		test("Semantic level correct", function() {
+		QUnit.test("Semantic level correct", function(assert){
 			var sExpectedTag;
 
 			for (var level in sap.ui.core.TitleLevel) {
@@ -213,7 +213,7 @@
 		});
 
 		QUnit.module("Accessibility");
-		test("getAccessibilityInfo", function() {
+		QUnit.test("getAccessibilityInfo", function(assert){
 			var oTitle = new sap.m.Title({text: "Text"});
 			ok(!!oTitle.getAccessibilityInfo, "Title has a getAccessibilityInfo function");
 			var oInfo = oTitle.getAccessibilityInfo();

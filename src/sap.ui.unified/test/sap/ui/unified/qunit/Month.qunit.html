@@ -52,12 +52,12 @@
 					}
 				});
 
-				test("Control is rendered", function () {
+				QUnit.test("Control is rendered", function (assert) {
 					// Assert
 					ok(this.oM.getDomRef(), "Control is rendered");
 				});
 
-				test("Corner case for January 0001", function () {
+				QUnit.test("Corner case for January 0001", function (assert) {
 					// Act
 					this.oM.setDate(createDate(1, 0, 1));
 
@@ -69,7 +69,7 @@
 					strictEqual($FirstDay.find(".sapUiCalItemText").text(), "", "The day from year 0000 should not have a visible text");
 				});
 
-				test("Corner case for December 9999", function () {
+				QUnit.test("Corner case for December 9999", function (assert) {
 					// Act
 					this.oM.setDate(createDate(9999, 11, 1));
 
@@ -112,7 +112,7 @@
 					}
 				});
 
-				test("Days in front and in back of the month should be added", function () {
+				QUnit.test("Days in front and in back of the month should be added", function (assert) {
 					this.assertByDate(
 						createDate(2016, 10, 1, true),
 						createDate(2016, 9, 30, true),
@@ -122,7 +122,7 @@
 					);
 				});
 
-				test("Days in front of the month should be added", function () {
+				QUnit.test("Days in front of the month should be added", function (assert) {
 					this.assertByDate(
 						createDate(2016, 11, 1, true),
 						createDate(2016, 10, 27, true),
@@ -132,7 +132,7 @@
 					);
 				});
 
-				test("Days in back of the month should be added", function () {
+				QUnit.test("Days in back of the month should be added", function (assert) {
 					this.assertByDate(
 						createDate(2017, 0, 1, true),
 						createDate(2017, 0, 1, true),
@@ -142,7 +142,7 @@
 					);
 				});
 
-				test("Only days corresponding to the current month", function () {
+				QUnit.test("Only days corresponding to the current month", function (assert) {
 					this.assertByDate(
 						createDate(2015, 1, 1, true),
 						createDate(2015, 1, 1, true),
@@ -152,7 +152,7 @@
 					);
 				});
 
-				test("Corner case for January year 0001", function () {
+				QUnit.test("Corner case for January year 0001", function (assert) {
 					this.assertByDate(
 						createDate(1, 0, 1, true),
 						createDate(1, 0, 1, true),
@@ -162,7 +162,7 @@
 					);
 				});
 
-				test("Corner case for January year 0001 called with parameter for rendering", function () {
+				QUnit.test("Corner case for January year 0001 called with parameter for rendering", function (assert) {
 					this.assertByDate(
 						createDate(1, 0, 1, true),
 						createDate(0, 11, 31, true),
@@ -173,7 +173,7 @@
 					);
 				});
 
-				test("Corner case December year 9999 there should be no day returned from year 10000", function () {
+				QUnit.test("Corner case December year 9999 there should be no day returned from year 10000", function (assert) {
 					this.assertByDate(
 						createDate(9999, 11, 1, true),
 						createDate(9999, 10, 28, true),
@@ -193,7 +193,7 @@
 					}
 				});
 
-				test("Adding special date should not move the focus to the month control", function (oAssert) {
+				QUnit.test("Adding special date should not move the focus to the month control", function (oAssert) {
 					// Arrange
 					var fnDone = oAssert.async(), // Async test
 						oSpecialDate = new sap.ui.unified.DateTypeRange({
@@ -238,7 +238,7 @@
 					}
 				});
 
-				test("Invalidate from parent aggregation specialDates", function (oAssert) {
+				QUnit.test("Invalidate from parent aggregation specialDates", function (oAssert) {
 					// Arrange
 					this.oM.getDomRef = function () {
 						return true; // Mock object getDomRef() method return

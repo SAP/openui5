@@ -184,7 +184,7 @@
 				assert.ok(obj.getId() != obj2.getId(), "second generated ID must be different from the first one");
 			});
 
-			QUnit.test("Object Creation (ID given)", function() {
+			QUnit.test("Object Creation (ID given)", function(assert) {
 				var obj = new sap.ui.core.TestManagedObject("myObject");
 				assert.equal(obj.getId(), "myObject", "ID must be 'myObject'");
 			});
@@ -660,7 +660,7 @@
 				assert.equal(this.obj.invalidate.callCount, 1, "set calls invalidate only called once");
 				this.obj.invalidate.reset();
 
-				// set to null 
+				// set to null
 				this.obj.setSingleAggr( null );
 				assert.equal(this.obj.invalidate.callCount, 1, "set to null calls invalidate only once");
 				this.obj.invalidate.reset();
@@ -684,7 +684,7 @@
 				new sap.ui.core.TestManagedObject().addSubObj( this.subObj );
 				assert.equal(this.obj.invalidate.callCount, 1, "moving child elsehwere calls invalidate only once");
 				this.obj.invalidate.reset();
-				
+
 				this.obj.invalidate.restore();
 			});
 
@@ -826,19 +826,19 @@
 
 			QUnit.test("invalidation of multiple aggregation", function(assert) {
 				var obj;
-				
+
 				sinon.spy(this.obj, "invalidate");
-				
+
 				// add
 				this.obj.addSubObj( this.subObj );
 				assert.equal(this.obj.invalidate.callCount, 1, "add calls invalidate only called once");
 				this.obj.invalidate.reset();
-				
-				// insert 
+
+				// insert
 				this.obj.insertSubObj(this.subObj2, 0);
 				assert.equal(this.obj.invalidate.callCount, 1, "insert calls invalidate only once");
 				this.obj.invalidate.reset();
-				
+
 				// remove
 				this.obj.removeSubObj( this.subObj );
 				assert.equal(this.obj.invalidate.callCount, 1, "remove calls invalidate only once");
@@ -848,7 +848,7 @@
 				this.subObj2.destroy();
 				assert.equal(this.obj.invalidate.callCount, 1, "destroy of child calls invalidate only once");
 				this.obj.invalidate.reset();
- 
+
 				// adding an object a second time
 				this.obj.addSubObj( this.subObj );
 				this.obj.invalidate.reset();
@@ -861,7 +861,7 @@
 				new sap.ui.core.TestManagedObject().addSubObj( this.subObj );
 				assert.equal(this.obj.invalidate.callCount, 1, "moving child elsehwere calls invalidate only once");
 				this.obj.invalidate.reset();
-				
+
 				this.obj.invalidate.restore();
 			});
 

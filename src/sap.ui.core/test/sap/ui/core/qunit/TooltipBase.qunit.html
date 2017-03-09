@@ -225,7 +225,7 @@
       assert.equal(this.oTooltip1.getCloseDelay(), 100, "Tooltip1 has default close delay of 100");
     });
 
-    QUnit.test("Remove HTML-title from DOM-element", function(assert){
+    QUnit.test("Remove HTML-title from DOM-element", function(assert) {
       var done = assert.async();
 
       // needed to wait for rendering the icons
@@ -630,7 +630,7 @@
       this.oTooltip1.attachClosed(fnTT1Closed, this);
     });
 
-    QUnit.test("Open Tooltip1 And Move Mouse Between Button1 And Tooltip1", function() {
+    QUnit.test("Open Tooltip1 And Move Mouse Between Button1 And Tooltip1", function(assert) {
       var done = assert.async();
 
       // needed to wait for rendering the icons
@@ -666,7 +666,7 @@
       }.bind(this), 150);
     });
 
-    QUnit.test("Open/Close Tooltip1 Via Keyboad-Support", function() {
+    QUnit.test("Open/Close Tooltip1 Via Keyboad-Support", function(assert) {
       var done = assert.async();
 
       // needed to wait for rendering the icons

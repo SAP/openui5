@@ -52,7 +52,7 @@
 
 		if (!bSupportedEnv) {
 			QUnit.start();
-			test("All tests are skipped, as the CacheManager is not supported on the underlying environment (see assert)", function () {
+			QUnit.test("All tests are skipped, as the CacheManager is not supported on the underlying environment (see assert)", function (assert) {
 				ok(true, "Environment: system [" + JSON.stringify(sap.ui.Device.system) + "],  browser: " + JSON.stringify(sap.ui.Device.browser));
 			});
 		} else {
@@ -74,7 +74,7 @@
 				}
 			});
 
-			test("Test store of an object with circular references", function () {
+			QUnit.test("Test store of an object with circular references", function (assert) {
 				var child = {value: 5};
 				var parent = {children: [child], value: 9};
 				child.parent = parent; // creates a cycle, objects no longer form a tree
@@ -94,7 +94,7 @@
 						});
 			});
 
-			test("What is given to set() is available with get()", function () {
+			QUnit.test("What is given to set() is available with get()", function (assert) {
 				return oCache.set("key", "value")
 						.then(function () {
 							return verifyCacheEntries({key: "value"}, "nonexisting");
@@ -114,7 +114,7 @@
 						});
 			});
 
-			test("Set complex object", function (assert) {
+			QUnit.test("Set complex object", function (assert) {
 				var oValue = {
 					firstName: "Peter",
 					lastName: "Dou",
@@ -128,7 +128,7 @@
 						});
 			});
 
-			test("Deleting entries", function (assert) {
+			QUnit.test("Deleting entries", function (assert) {
 				return oCache.set("key", "value")
 						.then(function () {
 							return oCache.del("key");
@@ -138,7 +138,7 @@
 						});
 			});
 
-			test("Overwriting existing values", function (assert) {
+			QUnit.test("Overwriting existing values", function (assert) {
 				return oCache.set("key1", "value1")
 						.then(function () {
 							return oCache.set("key2", "value2")
@@ -165,7 +165,7 @@
 						});
 			});
 
-			test("Testing if has() returns the correct value", function (assert) {
+			QUnit.test("Testing if has() returns the correct value", function (assert) {
 				return oCache.has("key").then(function (result) {
 					assert.strictEqual(result, false, "The key should not exist before being set");
 
@@ -177,7 +177,7 @@
 				});
 			});
 
-			test("Inserting multiple values and then deleting several", function () {
+			QUnit.test("Inserting multiple values and then deleting several", function (assert) {
 				var valuesToBeInserted = [
 					{key: "key1", value: "value1"},
 					{key: "key2", value: "value2"},
@@ -243,7 +243,7 @@
 				});
 			});
 
-			test("Loading metadata to memory", function () {
+			QUnit.test("Loading metadata to memory", function (assert) {
 				return oCache.set("key1", "value1").then(function () {
 					return oCache.set("key2", "value2");
 				}).then(function () {
@@ -266,7 +266,7 @@
 				}
 			});
 
-			test("Entries have ui5 version index equal to current ui5 version", function () {
+			QUnit.test("Entries have ui5 version index equal to current ui5 version", function (assert) {
 				this.sandbox.stub(sap.ui, "version", "1.36.1");
 
 				return oCache.set("key1_1.36.1", "myValue").then(function () {
@@ -287,7 +287,7 @@
 				});
 			});
 
-			test("Entries with different ui5 version than current does not exist", function (assert) {
+			QUnit.test("Entries with different ui5 version than current does not exist", function (assert) {
 				var that = this,
 						stub = this.sandbox.stub(sap.ui, "version", "1.36.1");
 
@@ -333,7 +333,7 @@
 				}
 			});
 
-			test("Get Item (ro) -> Del Item (rw)", function (assert) {
+			QUnit.test("Get Item (ro) -> Del Item (rw)", function (assert) {
 				var done = assert.async();
 				//arrange
 				oCache.set("key1", "smallValue").then(function () {
@@ -348,7 +348,7 @@
 				});
 			});
 
-			test("Del Item (rw) -> Get Item (ro)", function (assert) {
+			QUnit.test("Del Item (rw) -> Get Item (ro)", function (assert) {
 				var done = assert.async();
 				oCache.set("key1", this.o1MB).then(function () {
 					//act
@@ -361,7 +361,7 @@
 				});
 			});
 
-			test("Get Item (ro) -> Set Item (rw)", function (assert) {
+			QUnit.test("Get Item (ro) -> Set Item (rw)", function (assert) {
 				var done = assert.async();
 				//act
 				oCache.get("key1").then(function (value) {
@@ -374,7 +374,7 @@
 				});
 			});
 
-			test("Get Item (ro) -> Update Item (rw) ", function (assert) {
+			QUnit.test("Get Item (ro) -> Update Item (rw) ", function (assert) {
 				var done = assert.async();
 
 				//arrange
@@ -391,7 +391,7 @@
 				});
 			});
 
-			test("Set Item (rw) -> Get Item (ro) ", function (assert) {
+			QUnit.test("Set Item (rw) -> Get Item (ro) ", function (assert) {
 				var done = assert.async(),
 						that = this;
 
@@ -404,7 +404,7 @@
 				});
 			});
 
-			test("Update Item (rw) -> Get Item (ro)", function (assert) {
+			QUnit.test("Update Item (rw) -> Get Item (ro)", function (assert) {
 				var done = assert.async();
 
 				//arrange
@@ -569,7 +569,7 @@
 				}
 			});
 
-			test("Least recently used is deleted when space cleanup even if it is the only item inside the cache.", function () {
+			QUnit.test("Least recently used is deleted when space cleanup even if it is the only item inside the cache.", function (assert) {
 				var self = this;
 				this.mockPutWithNoFreeSpaceScenario("password2");
 				return oCache.set("password1", "secret").then(function () {
@@ -585,10 +585,10 @@
 				});
 			});
 
-			//        test("LRU&MRU counters are enough to handle many items", function () {
+			//        QUnit.test("LRU&MRU counters are enough to handle many items", function (assert) {
 			//        });
 
-			test("Failed put will keep metadata as before it failed", function () {
+			QUnit.test("Failed put will keep metadata as before it failed", function (assert) {
 				var self = this, metadata, lru, mru;
 
 				this.mockPutWithError("password2");
@@ -611,7 +611,7 @@
 				});
 			});
 
-			test("Failed delete will keep metadata as before it failed", function () {
+			QUnit.test("Failed delete will keep metadata as before it failed", function (assert) {
 				var self = this, metadata, lru, mru;
 
 				this.mockDelete("password2");
@@ -634,7 +634,7 @@
 				});
 			});
 
-			test("Getting most used item does not change its usage index(mru)", function () {
+			QUnit.test("Getting most used item does not change its usage index(mru)", function (assert) {
 				var self = this, metadata, lru, mru;
 
 				return this.putItems([{"password1": "mysecret"}, {"password2": "mysecret"}]).then(function () {
@@ -649,7 +649,7 @@
 				})
 			});
 
-			test("Recently gotten item is not being deleted when space cleanup", function () {
+			QUnit.test("Recently gotten item is not being deleted when space cleanup", function (assert) {
 				var that = this;
 				this.mockPutWithNoFreeSpaceScenario("d", 1, 1); //the first try to set "d" will fail, the rest will succeed
 
@@ -702,7 +702,7 @@
 						})
 			});
 
-			test("Recently gotten item actually changes it's lru index", function () {
+			QUnit.test("Recently gotten item actually changes it's lru index", function (assert) {
 				var that = this;
 				// Input        Operation               Result
 				//----------------------------------------------------
@@ -727,7 +727,7 @@
 							that.assertCounters(1, 5);
 						});
 			});
-			test("Loading LRU to memory", function (assert) {
+			QUnit.test("Loading LRU to memory", function (assert) {
 				var that = this;
 				return this.putItems([{"key1": "value1"}, {"key2": "value2"}, {"key3": "value3"}])
 						.then(function () {

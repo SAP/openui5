@@ -141,7 +141,7 @@
 
 
 				function fnRouteEventsTestCase (sTestName, sEventName) {
-					QUnit.test(sTestName, function() {
+					QUnit.test(sTestName, function(assert) {
 						// Arrange
 						var sName = "testRoute",
 							aTargetNames = ["async1", "async2", "async3"],
@@ -171,7 +171,7 @@
 				fnRouteEventsTestCase("Should attach to the patternMatched event", "PatternMatched");
 
 				function fnDetachRouteEventTestCase(sTestName, sEventName) {
-					QUnit.test(sTestName, function() {
+					QUnit.test(sTestName, function(assert) {
 						// Arrange
 						var sName = "testRoute",
 							aTargetNames = ["async1", "async2", "async3"],
@@ -289,13 +289,13 @@
 					}
 				});
 
-				test("Route with prefixed pattern is added to router", function(assert) {
+				QUnit.test("Route with prefixed pattern is added to router", function(assert) {
 					assert.strictEqual(this.oSpy.callCount, 2, "Two patterns are added to the router");
 					assert.strictEqual(this.oSpy.args[0][0], "parent", "Pattern of parent route is added to router");
 					assert.strictEqual(this.oSpy.args[1][0], "parent/child", "Pattern of child route is prefixed with the parent route and added to router");
 				});
 
-				test("Route with prefixed pattern matches for nested components", function(assert) {
+				QUnit.test("Route with prefixed pattern matches for nested components", function(assert) {
 					var oParentRouter = this.oParentComponent.getRouter();
 					assert.strictEqual(this.oGetParentRouteSpy.callCount, 1, "getParentRoute is called once on the child route");
 					assert.strictEqual(this.oGetParentRouteSpy.args[0][0], "parent.component:category", "parameter is correctly given");

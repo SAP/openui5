@@ -119,7 +119,7 @@
 		}
 	});
 
-	test("method", function(){
+	QUnit.test("method", function(assert) {
 		equal(bindings.length, 1, "amount of ListBindings");
 		var listBinding = bindings[0];
 		equal(listBinding.getPath(), "/teamMembers", "ListBinding path");
@@ -133,7 +133,7 @@
 
 	});
 
-	test("wrong path", function(){
+	QUnit.test("wrong path", function(assert) {
 		createListBinding("/xyz", "");
 		ok(bindings);
 		equal(bindings.length, 1, "amount of ListBindings");
@@ -144,7 +144,7 @@
 		equal(listBinding.getContexts().length, 0, "ListBinding get Contexts with wrong path");
 	});
 
-	test("wrong path and checkUpdate", function(){
+	QUnit.test("wrong path and checkUpdate", function(assert) {
 		createListBinding("teamMembers", "");
 
 		equal(bindings.length, 1, "amount of ListBindings");
@@ -161,7 +161,7 @@
 		});
 	});
 
-	test("getCurrentContexts", function(){
+	QUnit.test("getCurrentContexts", function(assert) {
 		var listBinding = bindings[0],
 			contexts = listBinding.getContexts(0,5),
 			currentContexts = listBinding.getCurrentContexts();
@@ -172,7 +172,7 @@
 		});
 	});
 
-	test("extended change detection", function(){
+	QUnit.test("extended change detection", function(assert) {
 		var listBinding = bindings[0];
 		listBinding.enableExtendedChangeDetection();
 
@@ -197,7 +197,7 @@
 		equal(contexts.diff.length, 2, "Delta information is available");
 	});
 
-	test("extended change detection with grouping", function(){
+	QUnit.test("extended change detection with grouping", function(assert) {
 		var listBinding = bindings[0];
 		listBinding.sort([
 			new sap.ui.model.Sorter("gender", false, true),
@@ -236,7 +236,7 @@
 		}
 	});
 
-	test("method", 3, function() {
+	QUnit.test("method", 3, function(assert) {
 		equal(this.oBinding.getLength(), 7, "ListBinding returns correct length");
 		this.oBinding.attachChange(function() {
 			ok(true, "ListBinding fires change event when changed");
@@ -246,7 +246,7 @@
 		equal(this.oBinding.getLength(), 8, "ListBinding returns changed length");
 	});
 
-	test("getContexts", 1, function() {
+	QUnit.test("getContexts", 1, function(assert) {
 		var aContexts = this.oBinding.getContexts(0,5);
 		equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
 		this.oBinding.attachChange(function() {
@@ -256,7 +256,7 @@
 		this.oBinding.refresh();
 	});
 
-	test("extended change detection and getContexts", 1, function() {
+	QUnit.test("extended change detection and getContexts", 1, function(assert) {
 		this.oBinding.enableExtendedChangeDetection();
 		var aContexts = this.oBinding.getContexts(0,5);
 		equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
@@ -267,7 +267,7 @@
 		this.oBinding.refresh();
 	});
 
-	test("getContexts und length change", 3, function() {
+	QUnit.test("getContexts und length change", 3, function(assert) {
 		var aContexts = this.oBinding.getContexts(0,5);
 		equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
 		this.oBinding.attachChange(function() {
@@ -278,7 +278,7 @@
 		equal(this.oBinding.getLength(), 8, "ListBinding returns changed length");
 	});
 
-	test("extended change detection, getContexts und length change", 3, function() {
+	QUnit.test("extended change detection, getContexts und length change", 3, function(assert) {
 		this.oBinding.enableExtendedChangeDetection();
 		var aContexts = this.oBinding.getContexts(0,5);
 		equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
@@ -297,7 +297,7 @@
 	});
 
 	// should also work with other ListBinding implementations
-	test("method", function(){
+	QUnit.test("method", function(assert) {
 		createListBinding("/teamMembers");
 
 		var listBinding = bindings[0];
@@ -346,7 +346,7 @@
 
 	});
 
-	test("invalid binding", function(){
+	QUnit.test("invalid binding", function(assert) {
 		createListBinding("/unknown");
 
 		var listBinding = bindings[0];
@@ -355,7 +355,7 @@
 	});
 
 	// should also work with other ListBinding implementations
-	test("locale sort", function(){
+	QUnit.test("locale sort", function(assert) {
 		createListBinding("/sortData");
 
 		var listBinding = bindings[0];
@@ -385,7 +385,7 @@
 
 	});
 
-	test("multi sort", function(){
+	QUnit.test("multi sort", function(assert) {
 		createListBinding("/teamMembersNew");
 
 		var listBinding = bindings[0];
@@ -509,7 +509,7 @@
 	});
 
 	// test for custom compare function
-	test("custom sort", function(){
+	QUnit.test("custom sort", function(assert) {
 		createListBinding("/teamMembers");
 
 		var listBinding = bindings[0];
@@ -541,7 +541,7 @@
 		equal(sorted[6], "Steave", "ListBinding after sort");
 	});
 
-	test("change event test", function(){
+	QUnit.test("change event test", function(assert) {
 		createListBinding("/teamMembers");
 
 		var listBinding = bindings[0];
@@ -570,7 +570,7 @@
 		}
 	});
 
-	test("method", function(){
+	QUnit.test("method", function(assert) {
 		createListBinding("/teamMembers");
 
 		var listBinding = bindings[0];
@@ -626,7 +626,7 @@
 
 	});
 
-	test("invalid binding", function(){
+	QUnit.test("invalid binding", function(assert) {
 		createListBinding("/unknown");
 
 		var listBinding = bindings[0];
@@ -634,7 +634,7 @@
 		expect(0);
 	});
 
-	test("without array", function(){
+	QUnit.test("without array", function(assert) {
 		createListBinding("/teamMembers");
 
 		var listBinding = bindings[0];
@@ -664,7 +664,7 @@
 
 	});
 
-	test("complex filters", function(){
+	QUnit.test("complex filters", function(assert) {
 		createListBinding("/teamMembers");
 
 		var listBinding = bindings[0];
@@ -696,7 +696,7 @@
 
 	});
 
-	test("multi filters", function(){
+	QUnit.test("multi filters", function(assert) {
 		createListBinding("/teamMembers");
 
 		var listBinding = bindings[0];
@@ -730,7 +730,7 @@
 		equal(listBinding.getContexts().length, 0, "empty OR multifilter should match no entry");
 	});
 
-	test("test function", function() {
+	QUnit.test("test function", function(assert) {
 		createListBinding("/teamMembers");
 
 		var listBinding = bindings[0];
@@ -749,7 +749,7 @@
 		equal(filtered[0].firstName, "Gina", "ListBinding filter value");
 	});
 
-	test("change event", function(){
+	QUnit.test("change event", function(assert) {
 		createListBinding("/teamMembers");
 
 		var listBinding = bindings[0];
@@ -774,7 +774,7 @@
 
 	// only relevant for browsers supporting this
 	if (String.prototype.normalize) {
-		test("normalization", function() {
+		QUnit.test("normalization", function(assert) {
 			createListBinding("/filterData");
 
 			var mFilters = {}, listBinding = bindings[0];
@@ -803,7 +803,7 @@
 		}
 	});
 
-	test("with map, not array", function(){
+	QUnit.test("with map, not array", function(assert) {
 		var aKeysInMap = ["first", "second", "third"];
 		createListBinding("/map");
 
@@ -820,7 +820,7 @@
 
 	});
 
-	test("nested array structure", function(){
+	QUnit.test("nested array structure", function(assert) {
 		createListBinding("/root");
 		var binding = bindings[0];
 		var contexts = binding.getContexts();
@@ -835,7 +835,7 @@
 		equal(oModel.getProperty("nodes/0",contexts[1]).name, "subitem3");
 	});
 
-	test("nested array structure", function(){
+	QUnit.test("nested array structure", function(assert) {
 		bindings[0] = oModel.bindList("/root");
 		bindings[1] = oModel.bindList("/root/0/nodes");
 		bindings[2] = oModel.bindList("/root/1/nodes");
@@ -862,7 +862,7 @@
 		ok(jQuery.sap.equal(bindings[0].oList[1].nodes[0], bindings[2].oList[0]));
 	});
 
-	test("getDistinctValues", function(){
+	QUnit.test("getDistinctValues", function(assert) {
 		createListBinding("/teamMembers");
 		var binding = bindings[0],
 			distinctValues;
@@ -882,7 +882,7 @@
 
 	});
 
-	test("setSizeLimit", function(){
+	QUnit.test("setSizeLimit", function(assert) {
 		var aManyItems = [];
 		for (var i = 0; i < 200; i++) {
 			aManyItems.push(i);
@@ -899,7 +899,7 @@
 		equal(aContext.length, 150, "Custom size limit 150");
 	});
 
-	test("getLength", function(){
+	QUnit.test("getLength", function(assert) {
 		createListBinding("/teamMembers");
 
 		equal(bindings.length, 1, "amount of ListBindings");
@@ -911,7 +911,7 @@
 
 	});
 
-	test("set new data with no merge and check update and getContexts test", function(){
+	QUnit.test("set new data with no merge and check update and getContexts test", function(assert) {
 		createListBinding("/teamMembers", "");
 
 		equal(bindings.length, 1, "amount of ListBindings");
@@ -948,7 +948,7 @@
 		}
 	});
 
-	test("setData delta", function() {
+	QUnit.test("setData delta", function(assert) {
 		this.oListBinding.enableExtendedChangeDetection();
 		var aContexts = this.oListBinding.getContexts(0, 10);
 		this.oModel.setData(testData.teamMembersNew);
@@ -961,7 +961,7 @@
 		], "Replace new data");
 	});
 
-	test("setProperty delta", function() {
+	QUnit.test("setProperty delta", function(assert) {
 		this.oListBinding.enableExtendedChangeDetection();
 		var aContexts = this.oListBinding.getContexts(0, 10);
 		this.oModel.setProperty("/4/firstName", "Paul");
@@ -984,7 +984,7 @@
 		deepEqual(aContexts.diff, [], "Nothing changed");
 	});
 
-	test("setProperty delta with cyclic references", function() {
+	QUnit.test("setProperty delta with cyclic references", function(assert) {
 		this.oListBinding.enableExtendedChangeDetection();
 		var aContexts = this.oListBinding.getContexts(0, 10);
 
@@ -997,7 +997,7 @@
 		this.oModel.setProperty("/4/firstName", "Peter");
 	});
 
-	test("setProperty delta with key", function() {
+	QUnit.test("setProperty delta with key", function(assert) {
 		this.oListBinding.enableExtendedChangeDetection(false, "lastName");
 		var aContexts = this.oListBinding.getContexts(0, 10);
 		this.oModel.setProperty("/4/firstName", "Paul");
@@ -1032,7 +1032,7 @@
 		}
 	});
 
-	test("suspend/resume", function() {
+	QUnit.test("suspend/resume", function(assert) {
 		var oLB = this.oListBinding;
 		equal(oLB.getContexts().length, 7, "Binding has length 7 initially");
 		this.oData.push({firstName:"Peter", lastName:"Franklin", gender:"male"});
@@ -1046,7 +1046,7 @@
 		equal(oLB.getContexts().length, 9, "Binding has length 9 after calling resume");
 	});
 
-	test("suspend/resume with filter/sort", function() {
+	QUnit.test("suspend/resume with filter/sort", function(assert) {
 		var oLB = this.oListBinding;
 		equal(oLB.getContexts().length, 7, "Binding has length 7 initially");
 		this.oData.push({firstName:"Peter", lastName:"Franklin", gender:"male"});
@@ -1067,7 +1067,7 @@
 		equal(oLB.getContexts().length, 3, "Binding still has length 3 after calling resume");
 	});
 
-	test("suspend/resume with refresh", function() {
+	QUnit.test("suspend/resume with refresh", function(assert) {
 		var oLB = this.oListBinding;
 		equal(oLB.getContexts().length, 7, "Binding has length 7 initially");
 		this.oData.push({firstName:"Peter", lastName:"Franklin", gender:"male"});

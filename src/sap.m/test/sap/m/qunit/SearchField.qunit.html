@@ -117,7 +117,7 @@
 	});
 
 	// test properties
-	test("Properties", function() {
+	QUnit.test("Properties", function(assert) {
 		equal(sf1.getValue(), sValue, "Value property, UI5");
 		equal(sf1Dom.value, sValue, "Value property, DOM");
 		equal(sf2.getPlaceholder(), sPlaceholder, "Placeholder property, UI5");
@@ -139,7 +139,7 @@
 		strictEqual(rightOffset, "0px", "Reset button is right aligned if showSearchButton == false");
 	});
 
-	test("Screen Reader", function() {
+	QUnit.test("Screen Reader", function(assert) {
 		var describedById = sf3Dom.getAttribute("aria-describedby");
 		var aLabels = describedById.split(' ');
 		var bLabelsExist = aLabels.every(function(id){

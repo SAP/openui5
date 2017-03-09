@@ -314,7 +314,7 @@
 
 
 
-		test("Properties", function() {
+		QUnit.test("Properties", function(assert) {
 			var oList = new sap.m.List({}),
 				oProperties = oList.getMetadata().getAllProperties();
 
@@ -341,7 +341,7 @@
 			oList.destroy();
 		});
 
-		test("Events", function() {
+		QUnit.test("Events", function(assert) {
 			var oList = new sap.m.List({}),
 				oEvents = oList.getMetadata().getAllEvents();
 
@@ -358,7 +358,7 @@
 			oList.destroy();
 		});
 
-		test("Aggregations", function() {
+		QUnit.test("Aggregations", function(assert) {
 			var oList = new sap.m.List({}),
 				oAggregations = oList.getMetadata().getAllAggregations();
 
@@ -371,7 +371,7 @@
 			oList.destroy();
 		});
 
-		test("Methods", function() {
+		QUnit.test("Methods", function(assert) {
 			var oList = new sap.m.List({});
 
 			ok(oList.getSelectedItem, 'Method "getSelectedItem" exists');
@@ -392,7 +392,7 @@
 		QUnit.module("Initialization");
 		/********************************************************************************/
 
-		test("Constructor behaviour", function() {
+		QUnit.test("Constructor behaviour", function(assert) {
 			var oList = new sap.m.List({});
 
 			// TODO: decide if check on internal variables is needed (Cahit)
@@ -402,7 +402,7 @@
 			oList.destroy();
 		});
 
-		test("Default values", function() {
+		QUnit.test("Default values", function(assert) {
 			var sAddText = " (state: before rendering)",
 				oList = new sap.m.List({}),
 				fAssertions = function(sAddText) {
@@ -446,7 +446,7 @@
 		QUnit.module("Destruction");
 		/********************************************************************************/
 
-		test("Destructor behaviour", function() {
+		QUnit.test("Destructor behaviour", function(assert) {
 			var oList = new sap.m.List({});
 
 			// add item to page & render
@@ -479,7 +479,7 @@
 		QUnit.module("Rendering");
 		/********************************************************************************/
 
-		test("HTML Tags & CSS Classes for a list with default values and no items", function() {
+		QUnit.test("HTML Tags & CSS Classes for a list with default values and no items", function(assert) {
 			var oList = new sap.m.List({}),
 				$list,
 				$listUl,
@@ -519,7 +519,7 @@
 
 		/* setter */
 
-		test("setInset", function() {
+		QUnit.test("setInset", function(assert) {
 			var sAddText = " (state: before rendering)",
 				oList = new sap.m.List({ inset: false}),
 				oRenderSpy = this.spy(oList.getRenderer(), "render"),
@@ -562,7 +562,7 @@
 			oList.destroy();
 		});
 
-		test("setMode", function() {
+		QUnit.test("setMode", function(assert) {
 			var oListItem = createListItem().setSelected(true),
 				oList = new sap.m.List({
 					mode: sap.m.ListMode.None,
@@ -613,7 +613,7 @@
 			oList.destroy();
 		});
 
-		test("setWidth", function() {
+		QUnit.test("setWidth", function(assert) {
 			var oList = new sap.m.List(),
 				$list,
 				oRenderSpy = this.spy(oList.getRenderer(), "render"),
@@ -706,7 +706,7 @@
 			oList.destroy();
 		});
 
-		test("setNoDataText", function() {
+		QUnit.test("setNoDataText", function(assert) {
 			var oList = new sap.m.List(),
 				oRenderSpy = this.spy(oList.getRenderer(), "render"),
 				sText;
@@ -733,7 +733,7 @@
 			oList.destroy();
 		});
 
-		test("setGrowing", function() {
+		QUnit.test("setGrowing", function(assert) {
 			var oList = new sap.m.List({
 					growing: true,
 					growingThreshold: 5
@@ -787,7 +787,7 @@
 			oList.destroy();
 		});
 
-		test("setGrowingThreshold", function() {
+		QUnit.test("setGrowingThreshold", function(assert) {
 			var oList = new sap.m.List({
 					growing: true,
 					growingThreshold: 5
@@ -828,7 +828,7 @@
 			oList.destroy();
 		});
 
-		test("setGrowingTriggerText", function() {
+		QUnit.test("setGrowingTriggerText", function(assert) {
 			var oList = new sap.m.List({
 					growing: true,
 					growingThreshold: 5
@@ -867,7 +867,7 @@
 			oList.destroy();
 		});
 
-		test("setEnableBusyIndicator", function() {
+		QUnit.test("setEnableBusyIndicator", function(assert) {
 			var oList = new sap.m.List;
 			oList.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -882,7 +882,7 @@
 			oList.destroy();
 		});
 
-		test("setBackgroundDesign", function() {
+		QUnit.test("setBackgroundDesign", function(assert) {
 			var oListItem = createListItem(),
 				oList = new sap.m.List({
 					backgroundDesign: sap.m.BackgroundDesign.Solid,
@@ -932,7 +932,7 @@
 			oList.destroy();
 		});
 
-		test("setShowSeparators", function() {
+		QUnit.test("setShowSeparators", function(assert) {
 			var oListItem = createListItem().setSelected(true),
 				oList = new sap.m.List({
 					showSeparators: sap.m.ListSeparators.All,
@@ -982,7 +982,7 @@
 			oList.destroy();
 		});
 
-		test("setIncludeItemInSelection", function() {
+		QUnit.test("setIncludeItemInSelection", function(assert) {
 			var oListItemTemplate = createListItem(),
 				oList = new sap.m.List({
 					includeItemInSelection: false,
@@ -1044,7 +1044,7 @@
 
 
 
-		test("setRememberSelectionsForMultiSelect", function() {
+		QUnit.test("setRememberSelectionsForMultiSelect", function(assert) {
 			var oListItemTemplate = createListItem().setSelected(true),
 				oList = new sap.m.List({
 					includeItemInSelection: false,
@@ -1058,7 +1058,7 @@
 			testRemeberSelections(oList, oRenderSpy);
 		});
 
-		test("setRememberSelectionsForSingleSelect", function() {
+		QUnit.test("setRememberSelectionsForSingleSelect", function(assert) {
 			var oListItemTemplate = createListItem().setSelected(true),
 				oList = new sap.m.List({
 					includeItemInSelection: false,
@@ -1076,7 +1076,7 @@
 
 		/* getter */
 
-		test("getId", function() {
+		QUnit.test("getId", function(assert) {
 			var id = "testId",
 				suffix = "testSuffix",
 				oList = new sap.m.List(id, {}),
@@ -1091,7 +1091,7 @@
 			strictEqual(oRenderSpy.callCount, 0, "The list should not be rerendered in this method");
 		});
 
-		test("getNoDataText", function() {
+		QUnit.test("getNoDataText", function(assert) {
 			var oList = new sap.m.List({
 					noDataText: "",
 				}),
@@ -1117,7 +1117,7 @@
 			oList.destroy();
 		});
 
-		test("getMaxItemsCount", function() {
+		QUnit.test("getMaxItemsCount", function(assert) {
 			var oList = new sap.m.List({
 					mode: sap.m.ListMode.None,
 				}),
@@ -1173,7 +1173,7 @@
 		QUnit.module("Internal methods");
 		/********************************************************************************/
 
-		test("_isColumnsIncompatible", function() {
+		QUnit.test("_isColumnsIncompatible", function(assert) {
 			var oList = new sap.m.List();
 
 			// add item to page & render
@@ -1189,7 +1189,7 @@
 		});
 
 		QUnit.module("KeyboardHandling");
-		test("Basics", function () {
+		QUnit.test("Basics", function (assert) {
 			var fnDetailPressSpy = this.spy(),
 				fnItemPressSpy = this.spy(),
 				fnDeleteSpy = this.spy(),
@@ -1296,7 +1296,7 @@
 			oList.destroy();
 		});
 
-		test("Test Tab/ShiftTab/F6/ShiftF6 handling", function() {
+		QUnit.test("Test Tab/ShiftTab/F6/ShiftF6 handling", function(assert) {
 			var fnSpy = this.spy();
 			var oPage = new sap.m.Page();
 			var oBeforeList = new sap.m.Input();
@@ -1371,7 +1371,7 @@
 			oList.destroy();
 		});
 
-		test("Item visible changes should inform the List", function() {
+		QUnit.test("Item visible changes should inform the List", function(assert) {
 			var fnSpy = this.spy();
 			var oListItem = new sap.m.StandardListItem({
 				title: "Title"
@@ -1412,7 +1412,7 @@
 			oList.destroy();
 		});
 
-		test("ListItem visibility change should not rerender the list", function() {
+		QUnit.test("ListItem visibility change should not rerender the list", function(assert) {
 			var oListItem1 = new sap.m.StandardListItem({
 					title: "Title1"
 				}),
@@ -1458,7 +1458,7 @@
 			oList.destroy();
 		});
 
-		test("Container Padding Classes", function () {
+		QUnit.test("Container Padding Classes", function (assert) {
 			// System under Test + Act
 			var oContainer = new sap.m.List(),
 				sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px")),
@@ -1612,7 +1612,7 @@
 		});
 
 		QUnit.module("Highlight");
-		test("Highlight should be rendered", function () {
+		QUnit.test("Highlight should be rendered", function (assert) {
 			var oLI = new sap.m.StandardListItem({
 				highlight: "Error",
 				title: "Error"
@@ -1623,7 +1623,7 @@
 			ok(oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlightError"), true, "Error Highlight is rendered");
 		});
 
-		test("List should respect highlight changes", function () {
+		QUnit.test("List should respect highlight changes", function (assert) {
 
 			var oListItem1 = new sap.m.StandardListItem({
 					title: "oListItem1",
@@ -1666,7 +1666,7 @@
 
 		QUnit.module("Accessibility");
 
-		test("aria-labelledby association should be accessibility description", function() {
+		QUnit.test("aria-labelledby association should be accessibility description", function(assert) {
 			var oList = new sap.m.List().placeAt("content");
 			var oText1 = new sap.m.Text({
 				text: "text1"

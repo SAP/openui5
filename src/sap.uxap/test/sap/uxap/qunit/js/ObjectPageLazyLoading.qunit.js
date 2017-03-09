@@ -136,7 +136,7 @@
 
 		var oDataModel = new sap.ui.model.json.JSONModel();
 		oDataModel.loadData("model/HRData.json", {}, false);
-		
+
 		oView.setModel(oDataModel, "objectPageData");
 
 		sap.ui.getCore().applyChanges();

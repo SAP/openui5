@@ -66,7 +66,7 @@
 			}
 		});
 
-		test("Semantic page and all its internal controls are rendered", function () {
+		QUnit.test("Semantic page and all its internal controls are rendered", function (assert) {
 
 			var oConfig = {
 						title: "This is a title",
@@ -82,7 +82,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("Detail page share menu is rendered", function () {
+		QUnit.test("Detail page share menu is rendered", function (assert) {
 
 			var oConfig = {
 						customShareMenuContent: [
@@ -98,7 +98,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("Fullscreen page share menu is rendered", function () {
+		QUnit.test("Fullscreen page share menu is rendered", function (assert) {
 
 			var oConfig = {
 						customShareMenuContent: [
@@ -113,7 +113,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("Semantic page has correct header and footer components", function () {
+		QUnit.test("Semantic page has correct header and footer components", function (assert) {
 			var oConfig = {
 						customFooterContent: [
 							new sap.m.Button({text: "button1"})
@@ -128,7 +128,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("Detail page has correct header and footer components", function () {
+		QUnit.test("Detail page has correct header and footer components", function (assert) {
 			var oConfig = {
 						customFooterContent: [
 							new sap.m.Button({text: "button1"})
@@ -143,7 +143,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("Fullscreen page has correct header and footer components", function () {
+		QUnit.test("Fullscreen page has correct header and footer components", function (assert) {
 			var oConfig = {
 						customFooterContent: [
 							new sap.m.Button({text: "button1"})
@@ -158,7 +158,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("Header hidden when no header content", function () {
+		QUnit.test("Header hidden when no header content", function (assert) {
 			var oConfig = {},
 				oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.fullscreen, oConfig);
 
@@ -167,7 +167,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("Header shown when there is header content", function () {
+		QUnit.test("Header shown when there is header content", function (assert) {
 			var oConfig = {
 						title: "Test"
 					},
@@ -180,7 +180,7 @@
 
 		QUnit.module("Properties");
 
-		test("Semantic page properties have correct default values", function () {
+		QUnit.test("Semantic page properties have correct default values", function (assert) {
 
 			var oSemanticPage = createSemanticPageFactory(),
 					oMasterPage = createSemanticPageFactory(_SemanticPageTypes.master, null),
@@ -194,7 +194,7 @@
 			oDetailPage.destroy();
 		});
 
-		test("title is set correctly", function () {
+		QUnit.test("title is set correctly", function (assert) {
 			var oConfig = {
 						title: "This is a title"
 					},
@@ -219,7 +219,7 @@
 			oSemanticPage2.destroy();
 		});
 
-		test("showNavButton is set correctly", function () {
+		QUnit.test("showNavButton is set correctly", function (assert) {
 			var oConfig = {
 						showNavButton: true
 					},
@@ -234,7 +234,7 @@
 			oSemanticPage2.destroy();
 		});
 
-		test("floatingFooter is set correctly", function () {
+		QUnit.test("floatingFooter is set correctly", function (assert) {
 
 			var oConfig = {
 						title: "This is a title",
@@ -260,7 +260,7 @@
 			}
 		});
 
-		test("Subheader", function () {
+		QUnit.test("Subheader", function (assert) {
 			var oSemanticPage = createSemanticPageFactory(),
 					oBar = new sap.m.Bar(),
 					oTitle = new sap.m.Title();
@@ -287,7 +287,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("Content", function () {
+		QUnit.test("Content", function (assert) {
 
 			var oButton1 = new sap.m.Button(),
 					oButton2 = new sap.m.Button(),
@@ -339,7 +339,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("Content binding", function () {
+		QUnit.test("Content binding", function (assert) {
 			// Arrange
 			var oModel = new sap.ui.model.json.JSONModel({
 				data: [{
@@ -379,7 +379,7 @@
 			oPage.destroy();
 		});
 
-		test("CustomHeaderContent", function () {
+		QUnit.test("CustomHeaderContent", function (assert) {
 
 			var oButton1 = new sap.m.Button(),
 					oButton2 = new sap.m.Button(),
@@ -433,7 +433,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("CustomHeaderContent binding", function () {
+		QUnit.test("CustomHeaderContent binding", function (assert) {
 			// Arrange
 			var oModel = new sap.ui.model.json.JSONModel({
 				data: [{
@@ -475,7 +475,7 @@
 			oPage.destroy();
 		});
 
-		test("CustomHeaderContent with paging action", function () {
+		QUnit.test("CustomHeaderContent with paging action", function (assert) {
 
 			var oButton1 = new sap.m.Button(),
 					oButton2 = new sap.m.Button(),
@@ -530,7 +530,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("CustomHeaderContent with multiSelect action", function () {
+		QUnit.test("CustomHeaderContent with multiSelect action", function (assert) {
 
 			var oButton1 = new sap.m.Button(),
 					oButton2 = new sap.m.Button(),
@@ -585,7 +585,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("CustomHeaderContent binding for page with pagingAction", function () {
+		QUnit.test("CustomHeaderContent binding for page with pagingAction", function (assert) {
 			// Arrange
 			var oModel = new sap.ui.model.json.JSONModel({
 				data: [{
@@ -628,7 +628,7 @@
 			oPage.destroy();
 		});
 
-		test("CustomHeaderContent binding for page with multiSelectAction", function () {
+		QUnit.test("CustomHeaderContent binding for page with multiSelectAction", function (assert) {
 			// Arrange
 			var oModel = new sap.ui.model.json.JSONModel({
 				data: [{
@@ -671,7 +671,7 @@
 			oPage.destroy();
 		});
 
-		test("CustomFooterContent", function () {
+		QUnit.test("CustomFooterContent", function (assert) {
 
 			var oButton1 = new sap.m.Button(),
 					oButton2 = new sap.m.Button(),
@@ -725,7 +725,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("CustomFooterContent binding", function () {
+		QUnit.test("CustomFooterContent binding", function (assert) {
 			// Arrange
 			var oModel = new sap.ui.model.json.JSONModel({
 				data: [{
@@ -767,7 +767,7 @@
 			oPage.destroy();
 		});
 
-		test("CustomShareMenuContent", function () {
+		QUnit.test("CustomShareMenuContent", function (assert) {
 
 			var oButton1 = new sap.m.Button({text: "button1"}),
 					oButton2 = new sap.m.Button({text: "button2"}),
@@ -820,7 +820,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("CustomShareMenuContent binding", function () {
+		QUnit.test("CustomShareMenuContent binding", function (assert) {
 			// Arrange
 			var oModel = new sap.ui.model.json.JSONModel({
 				data: [{
@@ -873,7 +873,7 @@
 			oPage.destroy();
 		});
 
-		test("set positiveAction", function () {
+		QUnit.test("set positiveAction", function (assert) {
 
 			//setup
 			var oPage = new sap.m.semantic.DetailPage();
@@ -891,7 +891,7 @@
 			oPage.destroy();
 		});
 
-		test("replace positiveAction", function () {
+		QUnit.test("replace positiveAction", function (assert) {
 
 			//setup
 			var oPage = new sap.m.semantic.DetailPage();
@@ -910,7 +910,7 @@
 			oPage.destroy();
 		});
 
-		test("remove positiveAction via set to null", function () {
+		QUnit.test("remove positiveAction via set to null", function (assert) {
 
 			//setup
 			var oPage = new sap.m.semantic.DetailPage();
@@ -932,7 +932,7 @@
 			oPage.destroy();
 		});
 
-		test("remove positiveAction via set to undefined", function () {
+		QUnit.test("remove positiveAction via set to undefined", function (assert) {
 
 			//setup
 			var oPage = new sap.m.semantic.DetailPage();
@@ -954,7 +954,7 @@
 			oPage.destroy();
 		});
 
-		test("destroy positiveAction", function () {
+		QUnit.test("destroy positiveAction", function (assert) {
 
 			//setup
 			var oPage = new sap.m.semantic.DetailPage();
@@ -978,7 +978,7 @@
 			oPage.destroy();
 		});
 
-		test("set saveAsTileAction", function () {
+		QUnit.test("set saveAsTileAction", function (assert) {
 
 			//setup
 			var oPage = new sap.m.semantic.DetailPage();
@@ -998,7 +998,7 @@
 			oPage.destroy();
 		});
 
-		test("remove saveAsTileAction by setting it to null", function () {
+		QUnit.test("remove saveAsTileAction by setting it to null", function (assert) {
 
 			//setup
 			var oPage = new sap.m.semantic.DetailPage();
@@ -1019,7 +1019,7 @@
 			oPage.destroy();
 		});
 
-		test("remove saveAsTileAction by setting it to undefined", function () {
+		QUnit.test("remove saveAsTileAction by setting it to undefined", function (assert) {
 
 			//setup
 			var oPage = new sap.m.semantic.DetailPage();
@@ -1040,7 +1040,7 @@
 			oPage.destroy();
 		});
 
-		test("destroy saveAsTileAction", function () {
+		QUnit.test("destroy saveAsTileAction", function (assert) {
 
 			//setup
 			var oPage = new sap.m.semantic.DetailPage();
@@ -1062,7 +1062,7 @@
 			oPage.destroy();
 		});
 
-		test("set paging action", function () {
+		QUnit.test("set paging action", function (assert) {
 
 			//setup
 			var oPage = new sap.m.semantic.DetailPage();
@@ -1080,7 +1080,7 @@
 			oPage.destroy();
 		});
 
-		test("remove paging action by setting it to null", function () {
+		QUnit.test("remove paging action by setting it to null", function (assert) {
 
 			//setup
 			var oPage = new sap.m.semantic.DetailPage();
@@ -1098,7 +1098,7 @@
 			oPage.destroy();
 		});
 
-		test("remove paging action by setting it to undefined", function () {
+		QUnit.test("remove paging action by setting it to undefined", function (assert) {
 
 			//setup
 			var oPage = new sap.m.semantic.DetailPage();
@@ -1116,7 +1116,7 @@
 			oPage.destroy();
 		});
 
-		test("destroy paging action", function () {
+		QUnit.test("destroy paging action", function (assert) {
 
 			//setup
 			var oPage = new sap.m.semantic.DetailPage();
@@ -1138,7 +1138,7 @@
 		/*
 		//TODO: verify this test is probably not relevant anymore because we do not have multiple element semantic aggregations anymore
 
-		test("SemanticControls binding", function () {
+		QUnit.test("SemanticControls binding", function (assert) {
 			// Arrange
 			var oModel = new sap.ui.model.json.JSONModel({
 				data: [{
@@ -1183,7 +1183,7 @@
 			}
 		});
 
-		test("Semantic share button should be always at the rightmost position", function () {
+		QUnit.test("Semantic share button should be always at the rightmost position", function (assert) {
 			// Arrange
 			var oDetailPage = createSemanticPageFactory(_SemanticPageTypes.detail, {
 						customShareMenuContent: [new sap.m.Button("customBtnId", {text: "custom"})]
@@ -1220,7 +1220,7 @@
 			oFavorite.destroy();
 		});
 
-		test("Share button's should not go into overflow", function () {
+		QUnit.test("Share button's should not go into overflow", function (assert) {
 			// Arrange
 			var oDetailPage = createSemanticPageFactory(_SemanticPageTypes.detail, {
 						customShareMenuContent: [
@@ -1248,7 +1248,7 @@
 			}
 		});
 
-		test('Footer custom right section should hold correct content', function () {
+		QUnit.test('Footer custom right section should hold correct content', function (assert) {
 			var oLabel = new sap.m.Label({text: "CustomLblRight"}),
 					oSecondLabel = new sap.m.Label({text: "CustomLbl2"}),
 					oButton = new sap.m.Button({text: "CustomBtnRight"}),
@@ -1336,7 +1336,7 @@
 			oPage.destroy();
 		});
 
-		test("SemanticControls are positioned in correct sequence order", function () {
+		QUnit.test("SemanticControls are positioned in correct sequence order", function (assert) {
 			// Arrange
 			var oModel = new sap.ui.model.json.JSONModel({
 				data: [{ type: sap.m.semantic.SemanticType.Group },
@@ -1430,7 +1430,7 @@
 			}
 		});
 
-		test("Semantic page and its internal controls are destroyed successfully", function () {
+		QUnit.test("Semantic page and its internal controls are destroyed successfully", function (assert) {
 
 			var oConfig = {
 						title: "This is a title",
@@ -1453,7 +1453,7 @@
 			strictEqual(oSemanticPage._oWrappedFooter, null, "footer is null");
 		});
 
-		test("Detail page and its internal controls are destroyed successfully", function () {
+		QUnit.test("Detail page and its internal controls are destroyed successfully", function (assert) {
 
 			var oConfig = {
 						title: "This is a title",

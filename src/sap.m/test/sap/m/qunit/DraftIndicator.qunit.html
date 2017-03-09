@@ -34,7 +34,7 @@
 
 	QUnit.module("id");
 
-	test("semantic control can be retrieved by Id", function () {
+	QUnit.test("semantic control can be retrieved by Id", function (assert) {
 		// Arrange
 		var oDraftIndi = new sap.m.DraftIndicator("draftId");
 
@@ -53,7 +53,7 @@
 
 	QUnit.module("states");
 
-	test("set 'Saving draft' and 'Clear Draft' state", function () {
+	QUnit.test("set 'Saving draft' and 'Clear Draft' state", function (assert) {
 		// Arrange
 		var oDraftIndi = new sap.m.DraftIndicator();
 
@@ -78,7 +78,7 @@
 		oDraftIndi.destroy();
 	});
 
-	test("set Draft Saved state and check that it is not cleared after default timeout", function () {
+	QUnit.test("set Draft Saved state and check that it is not cleared after default timeout", function (assert) {
 		// Arrange
 		var oDraftIndi = new sap.m.DraftIndicator();
 
@@ -101,7 +101,7 @@
 		oDraftIndi.destroy();
 	});
 
-	test("set Draft Saving state and check that if it is cleared after default timeout", function () {
+	QUnit.test("set Draft Saving state and check that if it is cleared after default timeout", function (assert) {
 		// Arrange
 		var oDraftIndi = new sap.m.DraftIndicator();
 

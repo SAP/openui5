@@ -123,7 +123,7 @@
 
 		QUnit.module("Initial");
 
-		test("NavContainer rendered", function() {
+		QUnit.test("NavContainer rendered", function(assert) {
 
 			equal(window.mPage1EventLog.beforeFirstShow, 1, "Lifecycle event invocation count page1 beforeFirstShow should be correct");
 			equal(window.mPage1EventLog.beforeShow, 1, "Lifecycle event invocation count page1 beforeShow should be correct");
@@ -444,7 +444,7 @@
 			}, 100);
 		});
 
-		test("Custom Transition Definition (on instance)", function() {
+		QUnit.test("Custom Transition Definition (on instance)", function(assert) {
 			expect(4);
 
 			equal(!!sap.m.NavContainer.transitions["c_testTrans"], false, "custom animation should not be defined yet");
@@ -469,7 +469,7 @@
 			ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
-		test("Custom Transition Definition (static)", function() {
+		QUnit.test("Custom Transition Definition (static)", function(assert) {
 			expect(4);
 
 			equal(!!sap.m.NavContainer.transitions["c_testTrans2"], false, "custom animation should not be defined yet");
@@ -494,7 +494,7 @@
 			ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
-		test("Custom Transition To", function() {
+		QUnit.test("Custom Transition To", function(assert) {
 			expect(20); // including the "navigate" event
 
 			window.expectedNav = {
@@ -514,7 +514,7 @@
 			ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
-		test("Custom Transition Back", function() {
+		QUnit.test("Custom Transition Back", function(assert) {
 			expect(20); // including the "navigate" event
 
 			window.expectedNav = {
@@ -535,7 +535,7 @@
 		});
 
 
-		test("backToTop", function() {
+		QUnit.test("backToTop", function(assert) {
 			expect(56); // including the "navigate" event
 
 			window.expectedNav = {
@@ -590,7 +590,7 @@
 		});
 
 
-		test("Dimensions", function() {
+		QUnit.test("Dimensions", function(assert) {
 			nc.setWidth("100px");
 			nc.setHeight("100px");
 			sap.ui.getCore().applyChanges();
@@ -611,7 +611,7 @@
 		});
 
 
-		test("backToPage", function() {
+		QUnit.test("backToPage", function(assert) {
 			expect(15);
 
 			equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
@@ -657,7 +657,7 @@
 
 		var pageRenderCounter = 0;
 		var realPageRender;
-		test("Page rerendering", function() {
+		QUnit.test("Page rerendering", function(assert) {
 			realPageRender = sap.m.PageRenderer.render;
 			sap.m.PageRenderer.render = function() {
 				pageRenderCounter++;

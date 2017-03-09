@@ -69,7 +69,7 @@
 	// require the mock server before testing
 	jQuery.sap.require("sap.ui.core.util.MockServer");
 
-	test("Basic", 11, function() {
+	QUnit.test("Basic", 11, function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -135,7 +135,7 @@
 		oMockServer.destroy();
 	});
 
-	test("Test entity read with boolean key property (invalid)", 3, function() {
+	QUnit.test("Test entity read with boolean key property (invalid)", 3, function(assert) {
 
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -161,7 +161,7 @@
 		oMockServer.destroy();
 	});
 
-	test("Test entity read with boolean key property (true)", 4, function() {
+	QUnit.test("Test entity read with boolean key property (true)", 4, function(assert) {
 
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -188,7 +188,7 @@
 		oMockServer.destroy();
 	});
 
-	test("Test entity read with boolean key property (false)", 4, function() {
+	QUnit.test("Test entity read with boolean key property (false)", 4, function(assert) {
 
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -215,7 +215,7 @@
 		oMockServer.destroy();
 	});
 
-	test("Test URL parameters with ampersand in value", 3, function() {
+	QUnit.test("Test URL parameters with ampersand in value", 3, function(assert) {
 
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -243,7 +243,7 @@
 
 
 
-	test("Path with RegExp Pattern", 3, function() {
+	QUnit.test("Path with RegExp Pattern", 3, function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -270,7 +270,7 @@
 		oMockServer.destroy();
 	});
 
-	test("Path with placeholder", 3, function() {
+	QUnit.test("Path with placeholder", 3, function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -297,7 +297,7 @@
 		oMockServer.destroy();
 	});
 
-	test("Test assertion: Missing method", 1, function() {
+	QUnit.test("Test assertion: Missing method", 1, function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -316,7 +316,7 @@
 		oMockServer.destroy();
 	});
 
-	test("Test assertion: Missing path", 1, function() {
+	QUnit.test("Test assertion: Missing path", 1, function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -335,7 +335,7 @@
 		oMockServer.destroy();
 	});
 
-	test("Test assertion: Missing response", 1, function() {
+	QUnit.test("Test assertion: Missing response", 1, function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -350,7 +350,7 @@
 		oMockServer.destroy();
 	});
 
-	test("Two server", 10, function() {
+	QUnit.test("Two server", 10, function(assert) {
 		var oMockServer1 = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -423,7 +423,7 @@
 		oMockServer2.destroy();
 	});
 
-	test("Clean up", 15, function() {
+	QUnit.test("Clean up", 15, function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -482,7 +482,7 @@
 		equal(jQuery.inArray(oMockServer, sap.ui.core.util.MockServer._aServers), -1, "Mock server is not registered anymore");
 	});
 
-	test("Start / Stop / Destroy all", 8, function() {
+	QUnit.test("Start / Stop / Destroy all", 8, function(assert) {
 		var oMockServer1 = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -615,7 +615,7 @@
 		}, 1000);
 	});
 
-	test("xhr.respondJSON", 3, function() {
+	QUnit.test("xhr.respondJSON", 3, function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -644,7 +644,7 @@
 		return oXmlNode.textContent || oXmlNode.text;
 	};
 
-	test("xhr.respondXML", 3, function() {
+	QUnit.test("xhr.respondXML", 3, function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -669,7 +669,7 @@
 		oMockServer.destroy();
 	});
 
-	test("xhr.respondFile", 5, function() {
+	QUnit.test("xhr.respondFile", 5, function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -712,7 +712,7 @@
 	var iTesterPre = 0;
 	var iTesterPost = 0;
 
-	test("test Callbacks - example - use of callbacks in rest API", function() {
+	QUnit.test("test Callbacks - example - use of callbacks in rest API", function(assert) {
 
 
 		var oMockServer = new sap.ui.core.util.MockServer({
@@ -767,7 +767,7 @@
 	});
 
 
-	test("test Callbacks Get entity set count", function() {
+	QUnit.test("test Callbacks Get entity set count", function(assert) {
 
 		iTesterPre = 0;
 		iTesterPost = 0;
@@ -817,7 +817,7 @@
 	});
 
 
-	test("test Callbacks Get entity set - calls to two entity sets", function() {
+	QUnit.test("test Callbacks Get entity set - calls to two entity sets", function(assert) {
 
 		iTesterPre = 0;
 		iTesterPost = 0;
@@ -887,7 +887,7 @@
 	});
 
 
-	test("test Callbacks Get entity set query option - get data", function() {
+	QUnit.test("test Callbacks Get entity set query option - get data", function(assert) {
 
 	   iTesterPre = 0;
 	   iTesterPost = 0;
@@ -938,7 +938,7 @@
 
 
 
-	test("test Callbacks Get entity set query option - single entry", function() {
+	QUnit.test("test Callbacks Get entity set query option - single entry", function(assert) {
 
 	   iTesterPre = 0;
 	   iTesterPost = 0;
@@ -988,7 +988,7 @@
 	});
 
 
-	test("test Callbacks Get navigation property-count", function() {
+	QUnit.test("test Callbacks Get navigation property-count", function(assert) {
 
 	   iTesterPre = 0;
 	   iTesterPost = 0;
@@ -1038,7 +1038,7 @@
 	});
 
 
-	test("test Callbacks Get entity set navigation property - query option", function() {
+	QUnit.test("test Callbacks Get entity set navigation property - query option", function(assert) {
 
 	   iTesterPre = 0;
 	   iTesterPost = 0;
@@ -1088,7 +1088,7 @@
 	});
 
 
-	test("test Callbacks Post", function() {
+	QUnit.test("test Callbacks Post", function(assert) {
 
 		iTesterPre = 0;
 		iTesterPost = 0;
@@ -1143,7 +1143,7 @@
 	});
 
 
-	test("test Callbacks Put", function() {
+	QUnit.test("test Callbacks Put", function(assert) {
 
 		iTesterPre = 0;
 		iTesterPost = 0;
@@ -1199,7 +1199,7 @@
 	});
 
 
-		test("test Callbacks Merge", function() {
+		QUnit.test("test Callbacks Merge", function(assert) {
 			if (sap.ui.Device.browser.msie) {
 				ok(true, "IE does not support HTTP MERGE");
 				return;
@@ -1259,7 +1259,7 @@
 	});
 
 
-	test("test Callbacks Patch", function() {
+	QUnit.test("test Callbacks Patch", function(assert) {
 		if (sap.ui.Device.browser.msie) {
 			ok(true, "IE does not support HTTP PATCH");
 			return;
@@ -1319,7 +1319,7 @@
 	});
 
 
-	test("test Callbacks Delete", function() {
+	QUnit.test("test Callbacks Delete", function(assert) {
 
 	   iTesterPre = 0;
 	   iTesterPost = 0;
@@ -1373,7 +1373,7 @@
 
 
 
-	test("test XSRF fetch request", function() {
+	QUnit.test("test XSRF fetch request", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -1401,7 +1401,7 @@
 
 	});
 
-	test("test undefined key", function() {
+	QUnit.test("test undefined key", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -1423,7 +1423,7 @@
 
 	});
 
-	test("test partial and mixed json mockdata", function() {
+	QUnit.test("test partial and mixed json mockdata", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -1543,7 +1543,7 @@
 		oMockServer.destroy();
 	});
 
-	test("test Custom Query Options", function() {
+	QUnit.test("test Custom Query Options", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -1599,7 +1599,7 @@
 
 	});
 
-		test("test orderby on expended property", function() {
+		QUnit.test("test orderby on expended property", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -1619,7 +1619,7 @@
 
 	});
 
-	test("test request to service uri", function() {
+	QUnit.test("test request to service uri", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -1647,7 +1647,7 @@
 
 	});
 
-	test("test get/set entity set data", function() {
+	QUnit.test("test get/set entity set data", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -1687,7 +1687,7 @@
 
 	});
 
-	test("test deep insert!", function() {
+	QUnit.test("test deep insert!", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -1748,7 +1748,7 @@
 
 	});
 
-	test("test mockdata linkage to entityset", function() {
+	QUnit.test("test mockdata linkage to entityset", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -1776,7 +1776,7 @@
 
 	});
 
-	test("test ignore missing properties", function() {
+	QUnit.test("test ignore missing properties", function(assert) {
 
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -1802,7 +1802,7 @@
 
 	});
 
-	test("test Relationship name with multiple dots", function() {
+	QUnit.test("test Relationship name with multiple dots", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -1821,7 +1821,7 @@
 
 	});
 
-	test("test load json mockdata from list of entity sets names", function() {
+	QUnit.test("test load json mockdata from list of entity sets names", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -1954,7 +1954,7 @@
 
 	});
 
-	test("test EDM.Binary", function() {
+	QUnit.test("test EDM.Binary", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -1990,7 +1990,7 @@
 		oMockServer.destroy();
 	});
 
-	test("test $format", function() {
+	QUnit.test("test $format", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -2097,7 +2097,7 @@
 				oMockServer.destroy();
 			});
 
-	test("test Draft-enabled OData", function() {
+	QUnit.test("test Draft-enabled OData", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -2116,7 +2116,7 @@
 		oMockServer.destroy();
 	});
 
-	test("test OData get entity set", function() {
+	QUnit.test("test OData get entity set", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -2176,7 +2176,7 @@
 		oMockServer.destroy();
 	});
 
-	test("test OData navigation properties", function() {
+	QUnit.test("test OData navigation properties", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -2257,7 +2257,7 @@
 		oMockServer.destroy();
 	});
 
-	test("test OData paging top and skip", function() {
+	QUnit.test("test OData paging top and skip", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -2315,7 +2315,7 @@
 	});
 
 
-	test("test OData orderby", function() {
+	QUnit.test("test OData orderby", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -2728,7 +2728,7 @@
 
 			});
 
-	test("test OData $select", function() {
+	QUnit.test("test OData $select", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -2779,7 +2779,7 @@
 		oMockServer.destroy();
 	});
 
-	test("test OData $inlinecount", function() {
+	QUnit.test("test OData $inlinecount", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -2931,7 +2931,7 @@
 			oMockServer.destroy();
 		});
 
-	test("test OData search and search-focus URL parameter", function() {
+	QUnit.test("test OData search and search-focus URL parameter", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -2977,7 +2977,7 @@
 	});
 
 	//Expand and multi select
-	test("Test Expand & MultiSelect entries", function() {
+	QUnit.test("Test Expand & MultiSelect entries", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -2996,7 +2996,7 @@
 		oMockServer.destroy();
 	});
 
-	test("test Entity keys order", function() {
+	QUnit.test("test Entity keys order", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -3051,7 +3051,7 @@
 		oMockServer.destroy();
 	});
 
-	test("test quoted key values", function() {
+	QUnit.test("test quoted key values", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -3106,7 +3106,7 @@
 	});
 
 
-	test("test CRUD simple data model", function() {
+	QUnit.test("test CRUD simple data model", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -3183,7 +3183,7 @@
 
 	});
 
-	test("test CRUD rmtsampleflight", function() {
+	QUnit.test("test CRUD rmtsampleflight", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -3697,7 +3697,7 @@
 				oMockServer.destroy();
 			});
 
-	test("$batch GET Operation not succeed", function() {
+	QUnit.test("$batch GET Operation not succeed", function(assert) {
 		var sUri = "/mock/";
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : sUri
@@ -4011,7 +4011,7 @@
 		oMockServer.destroy();
 	});
 
-	test("test filter on complex type properties", function() {
+	QUnit.test("test filter on complex type properties", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -4030,7 +4030,7 @@
 		oMockServer.destroy();
 	});
 
-	test("test GW JSON format", function() {
+	QUnit.test("test GW JSON format", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -4057,7 +4057,7 @@
 		oMockServer.destroy();
 	});
 
-	test("test error messages on invalid operations", function() {
+	QUnit.test("test error messages on invalid operations", function(assert) {
 		sURI = "/myservice/";
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : sURI
@@ -4253,7 +4253,7 @@
 		oMockServer.destroy();
 });
 
-test("test navigation properties with mocked data", function() {
+QUnit.test("test navigation properties with mocked data", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});

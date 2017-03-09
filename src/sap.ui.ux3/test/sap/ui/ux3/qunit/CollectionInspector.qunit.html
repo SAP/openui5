@@ -142,7 +142,7 @@
 			});
 
 	QUnit.module("Sidebar Navigation");
-	test("Select items", function() {
+	QUnit.test("Select items", function(assert) {
 		qutils.triggerMouseEvent(jQuery.sap.byId("__button1"), "click", 1, 1, 1, 1);
 		var oSelectedCollection = sap.ui.getCore().byId(oCollectionInspector.getSelectedCollection());
 		oSelectedCollection.addSelectedItem(oSelectedCollection.getItems()[0]);

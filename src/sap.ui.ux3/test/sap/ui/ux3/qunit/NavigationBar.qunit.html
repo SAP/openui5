@@ -37,7 +37,7 @@
 		oCtrl.placeAt("uiArea1");
 
 
-		test("Initial Check", function() {
+		QUnit.test("Initial Check", function(assert) {
 			ok(oCtrl, "NavBar should exist after creating");
 			var oDomRef = jQuery.sap.domById("n1");
 			ok(oDomRef, "NavBar root element should exist in the page");
@@ -48,7 +48,7 @@
 		var item2 = new sap.ui.ux3.NavigationItem({text:"Item 2", href:"http://item2.org/"});
 		var item3 = new sap.ui.ux3.NavigationItem({text:"Item 3"});
 
-		test("Add Items", function() {
+		QUnit.test("Add Items", function(assert) {
 			oCtrl.addItem(item1);
 			oCtrl.addItem(item2);
 			oCtrl.addItem(item3);
@@ -69,7 +69,7 @@
 			equal($items[3].getAttribute("href"), "#", "item 3 should have no URL set as href");
 		});
 
-		test("Select Item", function() {
+		QUnit.test("Select Item", function(assert) {
 			oCtrl.setSelectedItem(item2);
 			equal(oCtrl.getSelectedItem(), item2.getId(), "item 2 should be selected");
 
@@ -141,7 +141,7 @@
 			}, 600);
 		});
 
-		test("Render With Association", function() {
+		QUnit.test("Render With Association", function(assert) {
 			oCtrl.removeAllItems();
 			sap.ui.getCore().applyChanges();
 			var $list = jQuery.sap.byId(oCtrl.getId() + "-list");
@@ -161,7 +161,7 @@
 			equal($list.children(":eq(3)").text(), "Item 3", "The text of the third item should be rendered inside the NavigationBar");
 		});
 
-		test("isSelectedItemValid", function() {
+		QUnit.test("isSelectedItemValid", function(assert) {
 			oCtrl.setSelectedItem(item1);
 			var valid = oCtrl.isSelectedItemValid();
 			equal(valid, true, "item1 is a valid selection");
@@ -175,7 +175,7 @@
 			equal(valid, true, "the ID 'item1' is a valid selection");
 		});
 
-		test("enabaling the overflowItemsToUppercase", function (){
+		QUnit.test("enabaling the overflowItemsToUppercase", function (assert) {
 			var oOverflowMenu = oCtrl._getOverflowMenu();
 
 			strictEqual(oCtrl.getOverflowItemsToUpperCase(), false, "the property is disabled by default");

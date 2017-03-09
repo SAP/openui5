@@ -25,7 +25,7 @@
 
 
 			// NEEDS TO BE THE FIRST TEST - tests the initial state of a global singleton in a closure
-			test("Should always overwrite the hashchanger", function () {
+			QUnit.test("Should always overwrite the hashchanger", function (assert) {
 				// this function must not be called before this test is executed so it acutally tests something
 				// sap.ui.core.routing.HashChanger.getInstance()
 
@@ -39,7 +39,7 @@
 				strictEqual(oHashChanger, sap.ui.core.routing.HashChanger.getInstance(), "did change the hashCHanger");
 			});
 
-			test("ShouldInitAndDestroyCorrectly", function () {
+			QUnit.test("ShouldInitAndDestroyCorrectly", function (assert) {
 				//Arrange
 				var calls = [],
 						hashChanged = function (evt) {
@@ -62,7 +62,7 @@
 				strictEqual(calls.length, 1, "only dipatched the initial event");
 			});
 
-			test("Should not init hasher twice", function () {
+			QUnit.test("Should not init hasher twice", function (assert) {
 				//Arrange
 				var calls = [],
 						initSpy = this.spy(hasher, "init"),
@@ -88,7 +88,7 @@
 				sut.destroy();
 			});
 
-			test("Should not init hasher twice when init is called in hashChange event", function() {
+			QUnit.test("Should not init hasher twice when init is called in hashChange event", function(assert) {
 				// System under test
 				var sut = new sap.ui.core.routing.HashChanger();
 
@@ -111,7 +111,7 @@
 				sut.destroy();
 			});
 
-			test("Should set the Hash", function () {
+			QUnit.test("Should set the Hash", function (assert) {
 				//Arrange
 				var aCalls = [],
 						fmHashChanged = function (evt) {
@@ -140,7 +140,7 @@
 				oHashChanger.destroy();
 			});
 
-			test("Should replace the Hash", function () {
+			QUnit.test("Should replace the Hash", function (assert) {
 				//Arrange
 				var aCalls = [],
 						fnHashChanged = function (evt) {
@@ -169,7 +169,7 @@
 				oHashChanger.destroy();
 			});
 
-			test("Should use a Singleton ", function () {
+			QUnit.test("Should use a Singleton ", function (assert) {
 				//System under Test + Act
 
 				//Since this is the first call it should work
@@ -183,7 +183,7 @@
 			});
 
 
-			test("Should replace the Singleton and add all events to the new one", function () {
+			QUnit.test("Should replace the Singleton and add all events to the new one", function (assert) {
 				//System under Test + Act
 				var firstInstance = sap.ui.core.routing.HashChanger.getInstance(),
 						hashChanged = this.spy();
@@ -209,7 +209,7 @@
 				strictEqual(hashChanged.callCount, 2, "did not add calls");
 			});
 
-			test("Should copy events correctly", function () {
+			QUnit.test("Should copy events correctly", function (assert) {
 				// System under Test
 				var oFirstHashCHanger = sap.ui.core.routing.HashChanger.getInstance(),
 					fnHashChanged = this.spy();
@@ -230,7 +230,7 @@
 
 			});
 
-			test("Should not overwrite deleted events", function () {
+			QUnit.test("Should not overwrite deleted events", function (assert) {
 				// System under Test
 				var oFirstHashCHanger = sap.ui.core.routing.HashChanger.getInstance(),
 						fnHashChanged = this.spy();
@@ -259,7 +259,7 @@
 				strictEqual(fnHashChanged.callCount, 1, "did add a call");
 			});
 
-			test("Should not duplicate History events", function (assert) {
+			QUnit.test("Should not duplicate History events", function (assert) {
 				jQuery.sap.require("sap.ui.core.routing.History");
 				// Arrange
 				var oHistory = sap.ui.core.routing.History.getInstance(),

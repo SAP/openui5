@@ -36,7 +36,7 @@
 			}
 		});
 
-		test("Mask Format Symbol setter", function () {
+		QUnit.test("Mask Format Symbol setter", function (assert) {
 			var oRule = this.oMaskInputRule,
 					maskFormatSymbol1 = 'a',
 					maskFormatSymbol2 = '9';
@@ -47,7 +47,7 @@
 			strictEqual(oRule.getMaskFormatSymbol(), maskFormatSymbol2, "The mask format symbol has the same value as the last set one");
 		});
 
-		test("Setting an invalid Mask Format Symbol is not accepted", function () {
+		QUnit.test("Setting an invalid Mask Format Symbol is not accepted", function (assert) {
 
 			var oRule = this.oMaskInputRule,
 					oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error'),
@@ -71,11 +71,11 @@
 			}
 		});
 
-		test("Mask Format Symbol default value", function () {
+		QUnit.test("Mask Format Symbol default value", function (assert) {
 			equal(this.oMaskInputRule.getMaskFormatSymbol(), "*", "Default value");
 		});
 
-		test("Regex setter", function () {
+		QUnit.test("Regex setter", function (assert) {
 			var oRule = this.oMaskInputRule,
 					regex1 = 'a-z',
 					regex2 = '0-9';
@@ -86,11 +86,11 @@
 			strictEqual(oRule.getRegex(), regex2, "The regex has the same value as the last set one");
 		});
 
-		test("Regex default value", function () {
+		QUnit.test("Regex default value", function (assert) {
 			equal(this.oMaskInputRule.getRegex(), "[a-zA-Z0-9]", "Default value");
 		});
 
-		test("Setting an invalid regex is not accepted", function () {
+		QUnit.test("Setting an invalid regex is not accepted", function (assert) {
 			var oRule = this.oMaskInputRule,
 					oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error'),
 					oSetterSpy = this.sandbox.spy(oRule, 'setProperty');

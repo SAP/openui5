@@ -241,7 +241,7 @@ sap.ui.define(
 					});
 				});
 
-				QUnit.test("Test multiple views to be diplayed in the same order as they are requested", function() {
+				QUnit.test("Test multiple views to be diplayed in the same order as they are requested", function(assert) {
 					//Arrange
 					var oNavContainer = new NavContainer();
 					fnSetup.call(this, {

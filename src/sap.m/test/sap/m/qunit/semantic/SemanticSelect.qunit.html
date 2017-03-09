@@ -32,7 +32,7 @@
 			}
 		});
 
-		test("has valid behavior", function () {
+		QUnit.test("has valid behavior", function (assert) {
 			// Arrange
 			var oModel = new sap.ui.model.json.JSONModel(),
 					aSampleData = [
@@ -113,7 +113,7 @@
 			oSemanticSelect.destroy();
 		});
 
-		test("selectedKey databinding", function () {
+		QUnit.test("selectedKey databinding", function (assert) {
 			// Arrange
 			var oModel = new sap.ui.model.json.JSONModel(),
 					aSampleData = {

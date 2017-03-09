@@ -58,32 +58,32 @@
 	oLabel.setText("testText");
 	oLabel.placeAt("target1");
 
-	test("test model getProperty with context", function(){
+	QUnit.test("test model getProperty with context", function(assert) {
 		var oContext = oModel.createBindingContext("/member/6");
 		var value = oModel.getProperty("@lastName", oContext); // relative path when using context
 		equal(value, "Wallace", "model value");
 	});
 
 
-	test("test model getProperty", function(){
+	QUnit.test("test model getProperty", function(assert) {
 		var value = oModel.getProperty("/member/6/@lastName");
 		equal(value, "Wallace", "model value");
 	});
 
-	test("test model setProperty", function(){
+	QUnit.test("test model setProperty", function(assert) {
 		oModel.setProperty("/member/4/@lastName", "Jackson");
 		var value = oModel.getProperty("/member/4/@lastName");
 		equal(value, "Jackson", "model value");
 	});
 
-	test("test getProperty on label", function(){
+	QUnit.test("test getProperty on label", function(assert) {
 		equal(oLabel.getText(),"testText", "old text value");
 		oLabel.bindProperty("text", "/member/4/@firstName");
 		equal(oLabel.getText(), "Michael", "text value from model");
 		oLabel.unbindProperty("text");
 	});
 
-	test("test model setProperty onlabel", function(){
+	QUnit.test("test model setProperty onlabel", function(assert) {
 		oLabel.setText("test");
 		equal(oLabel.getText(),"test", "old text value");
 		oLabel.bindProperty("text", "/member/1/@firstName");
@@ -93,13 +93,13 @@
 		equal(oLabel.getText(), "Petre", "new text value from model");
 	});
 
-	test("test model setProperty with invalid bindingContext and relative path", function(){
+	QUnit.test("test model setProperty with invalid bindingContext and relative path", function(assert) {
 		var oContext = oModel.createBindingContext("/member/HorstDerGrosse");
 		oModel.setProperty("@firstName", "Petre", oContext);
 		expect(0);
 	});
 
-	test("test model setProperty onlabel with bindingContext and relative path", function(){
+	QUnit.test("test model setProperty onlabel with bindingContext and relative path", function(assert) {
 		var oContext = oModel.createBindingContext("/member");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "1/@firstName");
@@ -109,7 +109,7 @@
 		equal(oLabel.getText(), "Petri", "new text value from model");
 	});
 
-	test("test model setProperty onlabel with bindingContext and absolute path", function(){
+	QUnit.test("test model setProperty onlabel with bindingContext and absolute path", function(assert) {
 		var oContext = oModel.createBindingContext("/member/HorstDerGrosse");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "/member/1/@firstName");
@@ -120,7 +120,7 @@
 		oLabel.setBindingContext(undefined);
 	});
 
-	test("test model setProperty onlabel without bindingContext and relative path (legacySyntax = true)", function(){
+	QUnit.test("test model setProperty onlabel without bindingContext and relative path (legacySyntax = true)", function(assert) {
 		oModel.setLegacySyntax(true);
 		oLabel.bindProperty("text", "member/1/@firstName");
 		equal(oLabel.getText(), "Petre", "text value from model");
@@ -130,7 +130,7 @@
 		oModel.setLegacySyntax(false);
 	});
 
-	test("test model setProperty onlabel with bindingContext and relative path (legacySyntax = true)", function(){
+	QUnit.test("test model setProperty onlabel with bindingContext and relative path (legacySyntax = true)", function(assert) {
 		oModel.setLegacySyntax(true);
 		var oContext = oModel.createBindingContext("/member");
 		oLabel.setBindingContext(oContext);
@@ -142,7 +142,7 @@
 		oModel.setLegacySyntax(false);
 	});
 
-	test("test model setProperty onlabel with bindingContext and absolute path (legacySyntax = true)", function(){
+	QUnit.test("test model setProperty onlabel with bindingContext and absolute path (legacySyntax = true)", function(assert) {
 		oModel.setLegacySyntax(true);
 		var oContext = oModel.createBindingContext("/member/HorstDerGrosse");
 		oLabel.setBindingContext(oContext);
@@ -154,12 +154,12 @@
 		oModel.setLegacySyntax(false);
 	});
 
-	test("test model getProperty with bindingContext and path = null", function(){
+	QUnit.test("test model getProperty with bindingContext and path = null", function(assert) {
 		var oContext = oModel.createBindingContext("/member");
 		equal(oModel.getProperty(null, oContext).length, 0 , "array of teammembers");
 	});
 
-	test("test createBindingContext with two models", function(){
+	QUnit.test("test createBindingContext with two models", function(assert) {
 		var oContext = oModel.createBindingContext("/member");
 		oLayout.addContent(oLabel);
 		oLayout.setModel(oModel);
@@ -175,7 +175,7 @@
 	var oItemTemplate = new sap.ui.core.ListItem();
 	oLB.placeAt("target2");
 
-	test("test model bindAggregation on Listbox", function(){
+	QUnit.test("test model bindAggregation on Listbox", function(assert) {
 
 		oItemTemplate.bindProperty("text", "@firstName").bindProperty("additionalText", "@lastName");
 		oLB.bindAggregation("items", "/member", oItemTemplate);
@@ -194,7 +194,7 @@
 
 	});
 
-	test("test XMLModel XML constructor", function(){
+	QUnit.test("test XMLModel XML constructor", function(assert) {
 
 		var testModel = new sap.ui.model.xml.XMLModel(
 
@@ -210,7 +210,7 @@
 
 	});
 
-	test("test create binding context", function(){
+	QUnit.test("test create binding context", function(assert) {
 		var oContext = oModel.createBindingContext("/root/test/subtest/name");
 		equal(oContext.getPath(), "/root/test/subtest/name", "newContext returnValue");
 
@@ -231,7 +231,7 @@
 		});
 	});
 
-	test("test inheritance of context", function(){
+	QUnit.test("test inheritance of context", function(assert) {
 		var oContext;
 		oLabel.setBindingContext(undefined);
 		oContext = oModel.createBindingContext("/member");
@@ -270,7 +270,7 @@
 	});
 
 
-	test("test XML setXML error", function() {
+	QUnit.test("test XML setXML error", function(assert) {
 		var oModel = new sap.ui.model.xml.XMLModel();
 		var sXML = "<?xml version=\"1.0\"><teamMembers>" +
 		"<member firstName=\"Andreas\" lastName=\"Klark\"></member>" +
@@ -291,7 +291,7 @@
 
 	});
 
-	test("test XML getXML", function() {
+	QUnit.test("test XML getXML", function(assert) {
 		var oModel = new sap.ui.model.xml.XMLModel();
 		var sXML = "<root>" +
 				"<foo>The quick brown fox jumps over the lazy dog.</foo>" +
@@ -302,7 +302,7 @@
 		equal(jQuery.trim(oModel.getXML()), jQuery.trim(sXML), "get XML test");
 	});
 
-	test("test XML getData", function() {
+	QUnit.test("test XML getData", function(assert) {
 		var oModel = new sap.ui.model.xml.XMLModel();
 		var sXML = "<root>" +
 		"<foo>The quick brown fox jumps over the lazy dog.</foo>" +
@@ -313,7 +313,7 @@
 		equal(oModel.getData().getElementsByTagName("bar")[0].textContent, "ABCDEFG", "get XML test");
 	});
 
-	test("test XML compatible syntax", function() {
+	QUnit.test("test XML compatible syntax", function(assert) {
 		var oModel = new sap.ui.model.xml.XMLModel();
 		oModel.setLegacySyntax(true);
 		oModel.setXML(testdata);
@@ -327,7 +327,7 @@
 		equal(value, "Wallace", "model value");
 	});
 
-	test("test XML compatible syntax fail", function() {
+	QUnit.test("test XML compatible syntax fail", function(assert) {
 		var oModel = new sap.ui.model.xml.XMLModel();
 		oModel.setLegacySyntax(false);
 		oModel.setXML(testdata);
@@ -343,7 +343,7 @@
 		equal(oContext, undefined, "model value");
 	});
 
-	test("text XML getObject", function() {
+	QUnit.test("text XML getObject", function(assert) {
 		var oModel = new sap.ui.model.xml.XMLModel();
 		oModel.setXML(testdata);
 		var oNode = oModel.getObject("/member/4/@lastName"); // direkt attribute access
@@ -355,7 +355,7 @@
 		equal(oNode.getAttribute('firstName'), "Michael", "node attribute value");
 	});
 
-	test("test XMLModel destroy", function(){
+	QUnit.test("test XMLModel destroy", function(assert) {
 		var testModel = new sap.ui.model.xml.XMLModel();
 		testModel.attachRequestCompleted(function() {
 			ok(false, "Request should be aborted!");
@@ -373,7 +373,7 @@
 	});
 
 
-	test("test XMLModel loadData after destroy", function(){
+	QUnit.test("test XMLModel loadData after destroy", function(assert) {
 		//var server = this.sandbox.useFakeServer();
 		//server.respondWith("data.json", function(xhr, id) {
 			//ok(false, "Request should not be sent after calling destroy!");

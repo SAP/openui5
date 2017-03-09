@@ -53,11 +53,11 @@
 
 	sap.ui.getCore().getEventBus().subscribe("fastnav", "screenready", function(){
 
-		test("Page initialized", function() {
+		QUnit.test("Page initialized", function(assert) {
 			ok(jQuery("#content").children().length > 0, "Page initialized");
 		});
 
-		test("Forward Navigation", function() {
+		QUnit.test("Forward Navigation", function(assert) {
 			var aFields = [95, 98, 131, 136, 139, 142, 144, 145, 147, 92];
 
 			for(var i=0; i<aFields.length-1; i++){
@@ -66,7 +66,7 @@
 			}
 		});
 
-		test("Backward Navigation", function() {
+		QUnit.test("Backward Navigation", function(assert) {
 			var aFields = [95, 147, 145, 144, 142, 139, 136, 131, 98, 92];
 
 			for(var i=0; i<aFields.length-1; i++){
@@ -75,7 +75,7 @@
 			}
 		});
 
-		test("Non-Modal Popup - Nav Mode NONE", function() {
+		QUnit.test("Non-Modal Popup - Nav Mode NONE", function(assert) {
 			_FocusedId = "dummy";
 			sap.ui.test.qunit.triggerEvent("click", "openPopup1");
 
@@ -88,7 +88,7 @@
 			oPopup1.close(0);
 		});
 
-		test("Non-Modal Popup - Nav Mode DOCK", function() {
+		QUnit.test("Non-Modal Popup - Nav Mode DOCK", function(assert) {
 			sap.ui.test.qunit.triggerEvent("click", "openPopup2");
 
 			triggerTestEvent("id14", true);
@@ -99,7 +99,7 @@
 			oPopup2.close(0);
 		});
 
-		test("Non-Modal Popup - Nav Mode SCOPE", function() {
+		QUnit.test("Non-Modal Popup - Nav Mode SCOPE", function(assert) {
 			sap.ui.test.qunit.triggerEvent("click", "openPopup3");
 
 			triggerTestEvent("id27", true);
@@ -114,7 +114,7 @@
 			oPopup3.close(0);
 		});
 
-		test("Modal Popup - Nav Mode NONE", function() {
+		QUnit.test("Modal Popup - Nav Mode NONE", function(assert) {
 			_FocusedId = "dummy";
 			sap.ui.test.qunit.triggerEvent("click", "openPopup4");
 
@@ -127,7 +127,7 @@
 			oPopup4.close(0);
 		});
 
-		test("Modal Popup - Nav Mode SCOPE", function() {
+		QUnit.test("Modal Popup - Nav Mode SCOPE", function(assert) {
 			sap.ui.test.qunit.triggerEvent("click", "openPopup5");
 
 			triggerTestEvent("id53", true);
@@ -142,7 +142,7 @@
 			oPopup5.close(0);
 		});
 
-		test("Modal Popup - Nav Mode SCOPE and inner non-modal popup with Nav Mode DOCK", function() {
+		QUnit.test("Modal Popup - Nav Mode SCOPE and inner non-modal popup with Nav Mode DOCK", function(assert) {
 			sap.ui.test.qunit.triggerEvent("click", "openPopup6");
 			sap.ui.test.qunit.triggerEvent("click", "openPopup7");
 

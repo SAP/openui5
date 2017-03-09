@@ -43,7 +43,7 @@
 
 	QUnit.module("Rendering All Fields");
 
-	test("StatusRendered", function() {
+	QUnit.test("StatusRendered", function(assert) {
 
 		notEqual(jQuery.sap.domById("os1"), null, "Object Status #1 should be rendered.");
 		notEqual(jQuery.sap.domById("os2"), null, "Object Status #2 should be rendered.");
@@ -87,7 +87,7 @@
 
 	QUnit.module("Supressed invalidation");
 
-	test("Should not rerender the ObjectStatus if the text is changed", function() {
+	QUnit.test("Should not rerender the ObjectStatus if the text is changed", function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
 			oRenderSpy,
@@ -114,7 +114,7 @@
 		oObjectStatus.destroy();
 	});
 
-	test("Should not rerender the ObjectStatus if the text is a number", function() {
+	QUnit.test("Should not rerender the ObjectStatus if the text is a number", function(assert) {
 		// Arrange
 		var iNumberToSet = 5,
 			sTextToExpect = "5",
@@ -141,7 +141,7 @@
 		oObjectStatus.destroy();
 	});
 
-	test("Should not rerender the ObjectStatus if the title is changed", function() {
+	QUnit.test("Should not rerender the ObjectStatus if the title is changed", function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
 			oRenderSpy,
@@ -172,7 +172,7 @@
 		oObjectStatus.destroy();
 	});
 
-	test("Should not rerender the ObjectStatus if the title is a number", function() {
+	QUnit.test("Should not rerender the ObjectStatus if the title is a number", function(assert) {
 		// Arrange
 		var iNumberToSet = 5,
 			sTitleToExpect = "5",
@@ -201,7 +201,7 @@
 		oObjectStatus.destroy();
 	});
 
-	test("Should rerender if the new text is empty", function() {
+	QUnit.test("Should rerender if the new text is empty", function(assert) {
 		// Arrange
 		var sTextToSet = "  ",
 			oRenderSpy,
@@ -227,7 +227,7 @@
 		oObjectStatus.destroy();
 	});
 
-	test("Should rerender if the new title is empty", function() {
+	QUnit.test("Should rerender if the new title is empty", function(assert) {
 		// Arrange
 		var sTitleToSet = "  ",
 			oRenderSpy,
@@ -253,7 +253,7 @@
 		oObjectStatus.destroy();
 	});
 
-	test("Should rerender if the new text is undefined", function() {
+	QUnit.test("Should rerender if the new text is undefined", function(assert) {
 		// Arrange
 		var sTextToSet = undefined,
 			oRenderSpy,
@@ -279,7 +279,7 @@
 		oObjectStatus.destroy();
 	});
 
-	test("Should rerender if the new title is undefined", function() {
+	QUnit.test("Should rerender if the new title is undefined", function(assert) {
 		// Arrange
 		var sTitleToSet = undefined,
 			oRenderSpy,
@@ -305,7 +305,7 @@
 		oObjectStatus.destroy();
 	});
 
-	test("Should rerender if the text was empty before", function() {
+	QUnit.test("Should rerender if the text was empty before", function(assert) {
 		// Arrange
 		var sTextToSet = "not empty text",
 			oRenderSpy,
@@ -331,7 +331,7 @@
 		oObjectStatus.destroy();
 	});
 
-	test("Should rerender if the title was empty before", function() {
+	QUnit.test("Should rerender if the title was empty before", function(assert) {
 		// Arrange
 		var sTitleToSet = "not empty text",
 			oRenderSpy,
@@ -357,7 +357,7 @@
 		oObjectStatus.destroy();
 	});
 
-	test("Should display titles with special characters correctly", function() {
+	QUnit.test("Should display titles with special characters correctly", function(assert) {
 		// Arrange
 		var sTitleToSet = "Account blocked - Blocked for payment",
 			oRenderSpy,
@@ -380,7 +380,7 @@
 		oObjectStatus.destroy();
 	});
 
-	test("Should display texts with special characters correctly", function() {
+	QUnit.test("Should display texts with special characters correctly", function(assert) {
 		// Arrange
 		var sTextToSet = "Account blocked - Blocked for payment",
 			oRenderSpy,
@@ -403,7 +403,7 @@
 		oObjectStatus.destroy();
 	});
 
-	test("Should display titles with special characters correctly", function() {
+	QUnit.test("Should display titles with special characters correctly", function(assert) {
 		// Arrange
 		var sTitleToSet = "Account blocked - Blocked for payment",
 			oRenderSpy,
@@ -428,7 +428,7 @@
 
 	QUnit.module("Screen reader ARIA support");
 
-	test("Has the appropriate ARIA attributes", function () {
+	QUnit.test("Has the appropriate ARIA attributes", function (assert) {
 		//Arange
 		var oObjectStatus = new sap.m.ObjectStatus({text: "Success object status", state: sap.ui.core.ValueState.SUCCESS});
 		oObjectStatus.placeAt("qunit-fixture");
@@ -442,7 +442,7 @@
 		oObjectStatus.destroy();
 	});
 
-	test("getAccessibilityInfo", function() {
+	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oControl = new sap.m.ObjectStatus({text: "Text", title: "Title"});
 		ok(!!oControl.getAccessibilityInfo, "ObjectStatus has a getAccessibilityInfo function");
 		var oInfo = oControl.getAccessibilityInfo();
@@ -462,7 +462,7 @@
 
 	QUnit.module("textDirection");
 
-	test("Title has dir set to LTR when Inherit", function () {
+	QUnit.test("Title has dir set to LTR when Inherit", function (assert) {
 		//Arange
 		var oObjectStatus = new sap.m.ObjectStatus({title: "Staus", text: "Success object"});
 		oObjectStatus.placeAt("qunit-fixture");
@@ -475,7 +475,7 @@
 		oObjectStatus.destroy();
 	});
 
-	test("Title has dir set to RTL when textDirection=RTL", function () {
+	QUnit.test("Title has dir set to RTL when textDirection=RTL", function (assert) {
 		//Arange
 		var oObjectStatus = new sap.m.ObjectStatus({title: "Staus", text: "Success object", textDirection: sap.ui.core.TextDirection.RTL});
 		oObjectStatus.placeAt("qunit-fixture");

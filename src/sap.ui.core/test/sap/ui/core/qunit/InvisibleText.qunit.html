@@ -29,7 +29,7 @@
 		QUnit.start();
 	});
 
-	test("Hidden Text is really hidden", function(){
+	QUnit.test("Hidden Text is really hidden", function(assert) {
 		var iWidth = jQuery.sap.byId("content").width();
 		var iHeight = jQuery.sap.byId("content").height();
 
@@ -42,14 +42,14 @@
 		ok(text.$().parent().attr("id") == "content", "Invisible Text was rendered.");
 	});
 
-	test("Render to static area", function(){
+	QUnit.test("Render to static area", function(assert) {
 		var text = new sap.ui.core.InvisibleText({text: "Hello"});
 		text.toStatic();
 		sap.ui.getCore().applyChanges();
 		ok(text.$().parent().attr("id") == "sap-ui-static", "Invisible Text was rendered to static area");
 	});
 
-	test("Rendering", function(){
+	QUnit.test("Rendering", function(assert) {
 		var text = new sap.ui.core.InvisibleText({text: "Hello"});
 		text.toStatic();
 		sap.ui.getCore().applyChanges();

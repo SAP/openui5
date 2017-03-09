@@ -248,7 +248,7 @@
                 assert.strictEqual(iInterListItemCounter, iMPItemCounter, "Internal listItem's counter should be the same as MessageItems's counter");
             });
 
-            QUnit.test("No navigation arrow should be shown if there is no description", function () {
+            QUnit.test("No navigation arrow should be shown if there is no description", function (assert) {
                 var oStandardListItem = this.oMessageView._oLists.all.getItems()[1];
 
                 assert.strictEqual(oStandardListItem.getType(), "Inactive", "The type of the ListItem should be Inactive");

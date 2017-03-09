@@ -112,7 +112,7 @@
 
 		QUnit.module("API");
 
-		test("Default Values", function() {
+		QUnit.test("Default Values", function(assert) {
 			equal(oExactBrowser2.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3").getText("EXACT_BRWSR_LST_TITLE"), "Default 'title':");
 			equal(oExactBrowser2.getOptionsMenu(), null, "Default 'optionsMenu':");
 			equal(oExactBrowser2.getTooltip(), null, "Default 'tooltip':");
@@ -127,7 +127,7 @@
 			equal(oExactBrowser2.getShowTopList(), true, "Default 'showTopList':");
 		});
 
-		test("Custom Values", function() {
+		QUnit.test("Custom Values", function(assert) {
 			oExactBrowser2.setShowTopList(false);
 
 			equal(oExactBrowser1.getTitle(), "Hello", "Custom 'title':");
@@ -144,7 +144,7 @@
 			equal(oExactBrowser2.getShowTopList(), false, "Custom 'showTopList':");
 		});
 
-		test("Aggregation 'attributes'", function() {
+		QUnit.test("Aggregation 'attributes'", function(assert) {
 			equals(oExactBrowser2.getAttributes().length, 0, "Initial number of attributes");
 			oExactBrowser2.addAttribute(new sap.ui.ux3.ExactAttribute("aggtest1"));
 			equals(oExactBrowser2.getAttributes().length, 1, "Number of attributes after add");
@@ -163,19 +163,19 @@
 
 		QUnit.module("Visual appearence");
 
-		test("Visiblity", function() {
+		QUnit.test("Visiblity", function(assert) {
 			ok(oExactBrowser1.getDomRef(), "Visible Control rendered");
 			ok(!oExactBrowser2.getDomRef(), "Invisible Control not rendered");
 		});
 
-		test("Options Menu", function() {
+		QUnit.test("Options Menu", function(assert) {
 			ok(oExactBrowser1._rootList.$().hasClass("sapUiUx3ExactLstTopActive"), "Header menu visible");
 			oExactBrowser1.destroyOptionsMenu();
 			sap.ui.getCore().applyChanges();
 			ok(!oExactBrowser1._rootList.$().hasClass("sapUiUx3ExactLstTopActive"), "Header menu not visible");
 		});
 
-		test("Level", 4, function() {
+		QUnit.test("Level", 4, function(assert) {
 			function checkLevel(oList, iLevel){
 				equal(oList._iLevel, iLevel, "Level ("+iLevel+") of List "+oList.getId());
 				var aLists = oList.getSubLists();
@@ -186,14 +186,14 @@
 			checkLevel(oExactBrowser3._rootList, 0);
 		});
 
-		test("Width", function() {
+		QUnit.test("Width", function(assert) {
 			ok(Math.abs(jQuery.sap.byId(oExactBrowser1._rootList.getId()+"-lst").width()-168) < 5, "Default List Width");
 			ok(Math.abs(jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-lst").width()-200) < 5, "Custom List Width");
 		});
 
 		QUnit.module("List Interaction");
 
-		test("Initial State", function() {
+		QUnit.test("Initial State", function(assert) {
 			equals(oExactBrowser1.getAttributes().length, 4, "Number of top level attributes:");
 			var aSubLists = oExactBrowser1._rootList.getSubLists();
 			equals(aSubLists.length, 2, "Number of visible 1st level lists:");
@@ -537,13 +537,13 @@
 			}
 		});
 
-		test("Hidden Elements", function() {
+		QUnit.test("Hidden Elements", function(assert) {
 			ok(!jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-lst").is(":visible"), "Listbox is not visible.");
 			ok(!jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-rsz").is(":visible"), "ResizeHandle is not visible.");
 			ok(!jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-head").is(":visible"), "Header is not visible.");
 		});
 
-		test("Visible Elements", function() {
+		QUnit.test("Visible Elements", function(assert) {
 			ok(jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-cntnt").is(":visible"), "Content Area is visible.");
 			ok(jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-foc").length == 1, "Focus Handle exists.");
 		});
@@ -551,7 +551,7 @@
 
 		QUnit.module("Lifecycle");
 
-		test("Destroy", function() {
+		QUnit.test("Destroy", function(assert) {
 			oExactBrowser1.destroy();
 			oExactBrowser2.destroy();
 			oExactBrowser3.destroy();

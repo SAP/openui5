@@ -19,7 +19,7 @@
 
 	<script>
 
-		test("ShouldRenderObjectNumber", function() {
+		QUnit.test("ShouldRenderObjectNumber", function(assert) {
 			//SUT
 			var sNumber = "5",
 				sNumberUnit ="Euro",
@@ -44,7 +44,7 @@
 			sut.destroy();
 		});
 
-		test("ShouldRenderUnit", function() {
+		QUnit.test("ShouldRenderUnit", function(assert) {
 			//SUT
 			var sUnit = "Dollar";
 			sut = new sap.m.ObjectNumber("unit", {
@@ -64,7 +64,7 @@
 			sut.destroy();
 		});
 
-		test("Non-emphasized ObjectNumber", function() {
+		QUnit.test("Non-emphasized ObjectNumber", function(assert) {
 			//SUT
 
 			var sNumber = "5",
@@ -91,7 +91,7 @@
 			sut.destroy();
 		});
 
-		test("ValueState of ObjectNumber", function() {
+		QUnit.test("ValueState of ObjectNumber", function(assert) {
 			//SUT
 
 			var sNumber = "5",
@@ -134,7 +134,7 @@
 			sut.destroy();
 		});
 
-		test("RTL ObjectNumber", function() {
+		QUnit.test("RTL ObjectNumber", function(assert) {
 			//SUT
 			var on4 = new sap.m.ObjectNumber("on4", {
 				number: "1.50",
@@ -205,23 +205,23 @@
 
 		QUnit.module("Screen reader support");
 
-		test("Basic rendering - state: None", function() {
+		QUnit.test("Basic rendering - state: None", function(assert) {
 			ariaLabelSetCorrectly(sap.ui.core.ValueState.None);
 		});
 
-		test("Basic rendering - state: Success", function() {
+		QUnit.test("Basic rendering - state: Success", function(assert) {
 			ariaLabelSetCorrectly(sap.ui.core.ValueState.Success);
 		});
 
-		test("Basic rendering - state: Warning", function() {
+		QUnit.test("Basic rendering - state: Warning", function(assert) {
 			ariaLabelSetCorrectly(sap.ui.core.ValueState.Warning);
 		});
 
-		test("Basic rendering - state: Error", function() {
+		QUnit.test("Basic rendering - state: Error", function(assert) {
 			ariaLabelSetCorrectly(sap.ui.core.ValueState.Error);
 		});
 
-		test("Value state None (default)", function() {
+		QUnit.test("Value state None (default)", function(assert) {
 
 			// System under test
 			var oObjectNumber = new sap.m.ObjectNumber({
@@ -239,7 +239,7 @@
 			oObjectNumber.destroy();
 		});
 
-		test("Value state Success", function() {
+		QUnit.test("Value state Success", function(assert) {
 
 			// System under test
 			var oObjectNumber = new sap.m.ObjectNumber({
@@ -265,7 +265,7 @@
 			oObjectNumber.destroy();
 		});
 
-		test("Value state Warning", function() {
+		QUnit.test("Value state Warning", function(assert) {
 
 			// System under test
 			var oObjectNumber = new sap.m.ObjectNumber({
@@ -291,7 +291,7 @@
 			oObjectNumber.destroy();
 		});
 
-		test("Value state Error", function() {
+		QUnit.test("Value state Error", function(assert) {
 
 			var oObjectNumber = new sap.m.ObjectNumber({
 				number: 256,

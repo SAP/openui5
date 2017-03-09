@@ -9,7 +9,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistryItem");
 		}
 	});
 
-	test("constructor - required params and their getter", function() {
+	QUnit.test("constructor - required params and their getter", function(assert) {
 		//Arrange
 		var oMetadataObject = {name: "myChangeTypeMetadata"};
 		var mParam = {
@@ -26,7 +26,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistryItem");
 
 	});
 
-	test("constructor - exception on required params missing", function() {
+	QUnit.test("constructor - exception on required params missing", function(assert) {
 		//Arrange
 		var errorLogSpy = sinon.spy(jQuery.sap.log, "error");
 
@@ -38,7 +38,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistryItem");
 
 	});
 
-	test("constructor - all params and their getter", function() {
+	QUnit.test("constructor - all params and their getter", function(assert) {
 		//Arrange
 		var mParam = {
 			changeTypeMetadata: {name: "myChangeTypeMetadata"},

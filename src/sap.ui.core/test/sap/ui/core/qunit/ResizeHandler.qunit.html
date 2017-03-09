@@ -99,11 +99,11 @@
 
 		QUnit.module("Basic");
 
-		test("Check ResizeHandler initialized", function() {
+		QUnit.test("Check ResizeHandler initialized", function(assert) {
 			ok(oResizeHandler, "ResizeHandler initialized");
 		});
 
-		test("Check Register/Deregister", function() {
+		QUnit.test("Check Register/Deregister", function(assert) {
 			var oDomRef = jQuery("#resizeArea").get(0);
 			var currentNumberOfEventListeners = oResizeHandler.aResizeListeners.length;
 			var sResizeListenerId = sap.ui.core.ResizeHandler.register(oDomRef, doOnResize);
@@ -308,7 +308,7 @@
 			}, 300);
 		});
 
-		test("Check Control Resize - Destroy", function() {
+		QUnit.test("Check Control Resize - Destroy", function(assert) {
 			expect(3);
 			ok(oResizeHandler.aResizeListeners.length == 0, "Number of Handlers before registration");
 			var sResizeListenerId = _register(control);

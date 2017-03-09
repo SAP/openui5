@@ -136,7 +136,7 @@
 
 		QUnit.module("Migration");
 
-		test("Column order as in historic settings", function() {
+		QUnit.test("Column order as in historic settings", function(assert) {
 
 			var aColumns = sap.ui.getCore().byId("__xmlview0").byId("myTable").getColumns();
 			equal(aColumns[0].getHeader().getText(), "Name", "Column 1 is Number");
@@ -145,7 +145,7 @@
 
 		});
 
-		test("Column visibility as in historic settings", function() {
+		QUnit.test("Column visibility as in historic settings", function(assert) {
 
 			var aColumns = sap.ui.getCore().byId("__xmlview0").byId("myTable").getColumns();
 			equal(aColumns[0].getVisible(), false, "Column 1 (Name) is not visible");

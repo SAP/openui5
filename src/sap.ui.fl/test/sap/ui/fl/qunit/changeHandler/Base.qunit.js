@@ -24,7 +24,7 @@ jQuery.sap.require("sap.ui.core.LayoutData");
 	});
 
 
-	QUnit.test('setTextInChange', function () {
+	QUnit.test('setTextInChange', function (assert) {
 		var oChange = {
 			"selector": {
 				"id": "QUnit.testkey"

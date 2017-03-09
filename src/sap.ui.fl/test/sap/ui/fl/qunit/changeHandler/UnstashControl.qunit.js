@@ -61,28 +61,28 @@
 			}
 		});
 
-		QUnit.test('applyChange on a js control tree', function() {
+		QUnit.test('applyChange on a js control tree', function(assert) {
 			assert.ok(this.oChangeHandler.applyChange(this.oChange, this.oObjectPageSection3, {modifier: JsControlTreeModifier}));
 			assert.equal(this.oObjectPageSection3.getVisible(), true, "unstashed ObjectPageSection is visible");
 			assert.equal(this.oObjectPageSection3.getStashed(), undefined, "getStashed() for unstashed ObjectPageSection is undefined");
 			assert.deepEqual(this.oObjectPageLayout.getAggregation("sections")[0], this.oObjectPageSection3, "unstashed ObjectPageSection is at first position");
 		});
 
-		QUnit.test('applyChange on a xml tree', function() {
+		QUnit.test('applyChange on a xml tree', function(assert) {
 			assert.ok(this.oChangeHandler.applyChange(this.oChange, this.oXmlObjectPageSection3, {modifier: XmlTreeModifier, view: this.oXmlView}));
 			assert.equal(this.oXmlObjectPageSection3.getAttribute("stashed"), "false", "xml stashed node has the stashed attribute added and set to false");
 			assert.deepEqual(this.oXmlLayout.childNodes[0].childNodes[0], this.oXmlObjectPageSection3, "unstashed ObjectPageSection is at first position");
 		});
 
 
-		QUnit.test('no move - applyChange on a js control tree', function() {
+		QUnit.test('no move - applyChange on a js control tree', function(assert) {
 			assert.ok(this.oChangeHandler.applyChange(this.oNonMoveChange, this.oObjectPageSection3, {modifier: JsControlTreeModifier}));
 			assert.equal(this.oObjectPageSection3.getVisible(), true, "unstashed ObjectPageSection is visible");
 			assert.equal(this.oObjectPageSection3.getStashed(), undefined, "getStashed() for unstashed ObjectPageSection is undefined");
 			assert.deepEqual(this.oObjectPageLayout.getAggregation("sections")[2], this.oObjectPageSection3, "unstashed ObjectPageSection is still at 3. position");
 		});
 
-		QUnit.test('no move - applyChange on a xml tree', function() {
+		QUnit.test('no move - applyChange on a xml tree', function(assert) {
 			assert.ok(this.oChangeHandler.applyChange(this.oNonMoveChange, this.oXmlObjectPageSection3, {modifier: XmlTreeModifier, view: this.oXmlView}));
 			assert.equal(this.oXmlObjectPageSection3.getAttribute("stashed"), "false", "xml stashed node has the stashed attribute added and set to false");
 			assert.deepEqual(this.oXmlLayout.childNodes[0].childNodes[2], this.oXmlObjectPageSection3, "unstashed ObjectPageSection is still at 3. position");

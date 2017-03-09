@@ -42,7 +42,7 @@
 
 		QUnit.module("Test initMobile");
 
-		test("Test initMobile with default settings", function () {
+		QUnit.test("Test initMobile with default settings", function (assert) {
 			jQuery.sap.initMobile();
 
 			// check viewport:  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -72,7 +72,7 @@
 		});
 
 
-		test("Test setWebAppCapable ", function(){
+		QUnit.test("Test setWebAppCapable ", function(assert) {
 			var oSystem = {
 				tablet: true
 			};

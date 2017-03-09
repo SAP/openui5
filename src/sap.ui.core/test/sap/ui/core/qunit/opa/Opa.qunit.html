@@ -351,7 +351,7 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("Should display a warning if 'stopQueue' is called without calling 'emptyQueue'", function() {
+	QUnit.test("Should display a warning if 'stopQueue' is called without calling 'emptyQueue'", function(assert) {
 		// System under Test
 		var fnSpy = this.spy(oLogger, "warning");
 		Opa.stopQueue();
@@ -383,7 +383,7 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.test("Should stop a Queue while polling", function () {
+	QUnit.test("Should stop a Queue while polling", function (assert) {
 		var oOpa = new Opa(),
 			fnDone = assert.async(),
 			fnSuccess = sinon.spy(),
@@ -748,7 +748,7 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("Should throw an exception if EmptyQueue function is called twice", function(assert){
+	QUnit.test("Should throw an exception if EmptyQueue function is called twice", function(assert) {
 		// System under Test
 		var oOpa = new Opa();
 

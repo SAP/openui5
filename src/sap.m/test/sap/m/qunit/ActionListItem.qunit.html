@@ -46,7 +46,7 @@
 
 		var testTitle = "Selection on key=" + sKey + ", includeItemInSelection=" + bIncludeItemInSelection + ", mode=" + sListMode;
 
-		test(testTitle, function() {
+		QUnit.test(testTitle, function(assert) {
 			var oSpy = this.spy();
 			var oList = new sap.m.List("list1", {
 				items : [ new sap.m.ActionListItem("item1", {
@@ -73,7 +73,7 @@
 <script>
 	QUnit.module("Events");
 
-	test("tap", function(assert) {
+	QUnit.test("tap", function(assert) {
 
 		var oSpy = this.spy();
 
@@ -90,7 +90,7 @@
 		oList.destroy();// Clean up
 	});
 
-	test("Press event on [ENTER]", function() {
+	QUnit.test("Press event on [ENTER]", function(assert) {
 
 		var oSpy = this.spy();
 
@@ -107,7 +107,7 @@
 		oList.destroy();// Clean up
 	});
 
-	test("Press event on [SPACE]", function() {
+	QUnit.test("Press event on [SPACE]", function(assert) {
 
 		var oSpy = this.spy();
 

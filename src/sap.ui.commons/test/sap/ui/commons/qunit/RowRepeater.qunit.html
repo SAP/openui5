@@ -23,7 +23,7 @@
 
 		Example:
 		   QUnit.module("Module A");
-		     test("1. a basic test example", function() {
+		     QUnit.test("1. a basic test example", function(assert) {
 		     ok( true, "this test is fine" );
 		     var value = "hello1";
 		     equal( value, "hello1", "We expect value to be hello" );
@@ -72,7 +72,7 @@
 		sap.ui.getCore().setModel(oModel);
 
 
-		test("Test Creation, Getters and Setter", function(){
+		QUnit.test("Test Creation, Getters and Setter", function(assert){
 			ok( oRowRepeater != null, "RowRepeater created");
 			equal( oRowRepeater.getVisible(), true , "visible property correct");
 			equal( oRowRepeater.getNumberOfRows(), 5 , "numberOfRows property correct");
@@ -87,7 +87,7 @@
 			ok( oRowRepeater.setTitle(new sap.ui.core.Title({text:"RowRepeater"})), "setting a title" );
 		});
 
-		test("Test Aggregation Binding", function() {
+		QUnit.test("Test Aggregation Binding", function(assert) {
 			equal( oRowRepeater.isBound(), false , "not bound yet");
 			ok( oRowRepeater.bindRows("/data",oRowTemplate));
 			equal( oRowRepeater.isBound(), true , "now it is bound");
@@ -148,7 +148,7 @@
 			}, 4000);
 		});
 
-		test("Test Filter Aggregation", function() {
+		QUnit.test("Test Filter Aggregation", function(assert) {
 			equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
 			ok( oRowRepeater.addFilter(new sap.ui.commons.RowRepeaterFilter("test_filter_1",{text:"Test",filters:[new sap.ui.model.Filter("index", "NE", "Test")],tooltip:"Test"})), "filter added");
 			equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
@@ -167,7 +167,7 @@
 			equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
 		});
 
-		test("Test Sorter Aggregation", function() {
+		QUnit.test("Test Sorter Aggregation", function(assert) {
 			equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
 			ok( oRowRepeater.addSorter(new sap.ui.commons.RowRepeaterSorter("test_sorter_1",{text:"Test",sorter:new sap.ui.model.Sorter("index",false),tooltip:"Test"})), "sorter added");
 			equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");

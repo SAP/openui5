@@ -63,7 +63,7 @@
 		detach = false;
 	};
 
-	test("Binding getPath", function(){
+	QUnit.test("Binding getPath", function(assert) {
 		setup();
 		createPropertyBindings("/teamMembers/member", "@firstName");
 
@@ -74,7 +74,7 @@
 
 	});
 
-	test("Binding getModel", function(){
+	QUnit.test("Binding getModel", function(assert) {
 		setup();
 		createPropertyBindings("/teamMembers/member", "@lastName");
 
@@ -85,7 +85,7 @@
 
 	});
 
-	test("Binding set/getContext", function(){
+	QUnit.test("Binding set/getContext", function(assert) {
 		setup();
 		createPropertyBindings("/teamMembers/member", "@lastName", "context");
 
@@ -97,7 +97,7 @@
 		});
 	});
 
-	test("Binding isResolved", function(){
+	QUnit.test("Binding isResolved", function(assert) {
 		setup();
 		var oNewContext = oModel.getContext("/teamMembers/member/0");
 
@@ -113,7 +113,7 @@
 		ok(oBinding.isResolved(), "Binding should be resolved!");
 	});
 
-	test("Binding changeEvent", function(){
+	QUnit.test("Binding changeEvent", function(assert) {
 		setup();
 		createPropertyBindings("/teamMembers/member", "@firstName");
 

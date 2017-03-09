@@ -66,50 +66,50 @@
 			}
 		});
 
-		test("with no arguments", function () {
+		QUnit.test("with no arguments", function (assert) {
 			new sap.ui.core.date.UniversalDate();
 			ok(this.dateSpy.calledOnce, "InnerDate must be instantiated just ones");
 			equal(this.dateSpy.firstCall.args.length, 0, "InnerDate must be instantiated with no arguments");
 		});
 
-		test("with value parameter (timestamp)", function () {
+		QUnit.test("with value parameter (timestamp)", function (assert) {
 			new sap.ui.core.date.UniversalDate(1000);
 			ok(this.dateSpy.calledOnce, "InnerDate must be instantiated just ones");
 			equal(this.dateSpy.firstCall.args.length, 1, "Wrapped date must be instantiated with just one argument");
 			equal(this.dateSpy.firstCall.args[0], 1000, "Wrapped date must be instantiated with singe argument with particular value");
 		});
 
-		test("with all 7 parameters", function () {
+		QUnit.test("with all 7 parameters", function (assert) {
 			new sap.ui.core.date.UniversalDate(year, month, date, hours, minutes, seconds, milliseconds);
 			check.call(this, 7);
 		});
 
-		test("with 6 parameters", function () {
+		QUnit.test("with 6 parameters", function (assert) {
 			new sap.ui.core.date.UniversalDate(year, month, date, hours, minutes, seconds);
 			check.call(this, 6);
 		});
 
-		test("with 5 parameters", function () {
+		QUnit.test("with 5 parameters", function (assert) {
 			new sap.ui.core.date.UniversalDate(year, month, date, hours, minutes);
 			check.call(this, 5);
 		});
 
-		test("with 4 parameters", function () {
+		QUnit.test("with 4 parameters", function (assert) {
 			new sap.ui.core.date.UniversalDate(year, month, date, hours);
 			check.call(this, 4);
 		});
 
-		test("with 3 parameters", function () {
+		QUnit.test("with 3 parameters", function (assert) {
 			new sap.ui.core.date.UniversalDate(year, month, date);
 			check.call(this, 3);
 		});
 
-		test("with 2 parameters", function () {
+		QUnit.test("with 2 parameters", function (assert) {
 			new sap.ui.core.date.UniversalDate(year, month);
 			check.call(this, 2);
 		});
 
-		test("getClass", function() {
+		QUnit.test("getClass", function(assert) {
 			var oClass;
 
 			oClass = sap.ui.core.date.UniversalDate.getClass(sap.ui.core.CalendarType.Gregorian);
@@ -122,7 +122,7 @@
 			equal(oClass, sap.ui.core.date.Japanese, "getClass returns correct class object");
 		});
 
-		test("getInstance", function() {
+		QUnit.test("getInstance", function(assert) {
 			var oDate, oGregorian, oJSDate = new Date();
 
 			// Explicit calendar type
@@ -155,7 +155,7 @@
 
 		});
 
-		test("determineType with Gregorian calendar", function () {
+		QUnit.test("determineType with Gregorian calendar", function (assert) {
 			this.oStubCalendarType.returns(sap.ui.core.CalendarType.Gregorian);
 			var spy = this.sandbox.spy(sap.ui.core.date, 'Gregorian');
 			var oUniversalDate = new sap.ui.core.date.UniversalDate();
@@ -164,7 +164,7 @@
 			equal(oUniversalDate.getCalendarType(), sap.ui.core.CalendarType.Gregorian, "Universal date must report correct calendarType");
 		});
 
-		test("determineType with Islamic calendar", function () {
+		QUnit.test("determineType with Islamic calendar", function (assert) {
 			this.oStubCalendarType.returns(sap.ui.core.CalendarType.Islamic);
 			var spy = this.sandbox.spy(sap.ui.core.date, 'Islamic');
 			var oUniversalDate = new sap.ui.core.date.UniversalDate();
@@ -173,7 +173,7 @@
 			equal(oUniversalDate.getCalendarType(), sap.ui.core.CalendarType.Islamic, "Universal date must report correct calendarType");
 		});
 
-		test("determineType with Japanese calendar", function () {
+		QUnit.test("determineType with Japanese calendar", function (assert) {
 			this.oStubCalendarType.returns(sap.ui.core.CalendarType.Japanese);
 			var spy = this.sandbox.spy(sap.ui.core.date, 'Japanese');
 			var oUniversalDate = new sap.ui.core.date.UniversalDate();
@@ -182,7 +182,7 @@
 			equal(oUniversalDate.getCalendarType(), sap.ui.core.CalendarType.Japanese, "Universal date must report correct calendarType");
 		});
 
-		test("Method calls are forwarded to the inner instance", function () {
+		QUnit.test("Method calls are forwarded to the inner instance", function (assert) {
 			this.dateSpy.restore();
 
 			var returnValue = 111,
@@ -239,7 +239,7 @@
 			}
 		});
 
-		test("Static methods call is forwarded to inner instance", function () {
+		QUnit.test("Static methods call is forwarded to inner instance", function (assert) {
 			this.dateSpy.restore();
 			var aStaticMethods = [
 						{name: "UTC", hasArgs: true},
@@ -295,7 +295,7 @@
 				cleanup.call(this);
 			}
 		});
-		test("Universal objects do not interfere", function () {
+		QUnit.test("Universal objects do not interfere", function (assert) {
 			this.dateSpy.restore();
 			var ud1 = new sap.ui.core.date.UniversalDate(2015, 0);
 			var ud2 = new sap.ui.core.date.UniversalDate();

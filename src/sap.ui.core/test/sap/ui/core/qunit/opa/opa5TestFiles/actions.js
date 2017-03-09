@@ -173,7 +173,7 @@ sap.ui.define([
 	});
 
 	[true, false].forEach(function (bAutoWait) {
-		QUnit.test("Should autowait again when a success gets delayed after an waitFor added by an action for autowait:" + bAutoWait, function () {
+		QUnit.test("Should autowait again when a success gets delayed after an waitFor added by an action for autowait:" + bAutoWait, function (assert) {
 			var oStub, fnDone = assert.async(), oOpa = new Opa5();
 			oOpa.waitFor({
 				actions: function () {

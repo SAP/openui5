@@ -97,45 +97,45 @@
 
 		QUnit.module("sap.ui.core.Control.placeAt");
 
-		test("Deferred call", function() {
+		QUnit.test("Deferred call", function(assert) {
 			doCheckPlaceAtResult(["myPanel", sap.ui.getCore().getUIArea("uiArea1")], 1, 0, "deferred call");
 		});
 
-		test("UIArea via ID", function() {
+		QUnit.test("UIArea via ID", function(assert) {
 			doTestPlaceAt("uiArea2", "uiArea2", true);
 		});
 
-		test("UIArea via DomRef", function() {
+		QUnit.test("UIArea via DomRef", function(assert) {
 			doTestPlaceAt(jQuery("#uiArea2")[0], "uiArea2", true);
 		});
 
-		test("Container Control via Control reference", function() {
+		QUnit.test("Container Control via Control reference", function(assert) {
 			doTestPlaceAt(oPanel, "myPanel", false);
 		});
 
-		test("Container Control via ID", function() {
+		QUnit.test("Container Control via ID", function(assert) {
 			doTestPlaceAt("myPanel", "myPanel", false);
 		});
 
 		QUnit.module("sap.ui.core.Core.setRoot");
 
-		test("Deferred call", function() {
+		QUnit.test("Deferred call", function(assert) {
 			doCheckSetRootResult(["myPanel2", sap.ui.getCore().getUIArea("uiArea3")]);
 		});
 
-		test("UIArea via ID", function() {
+		QUnit.test("UIArea via ID", function(assert) {
 			doTestSetRoot("uiArea4", "uiArea4", true);
 		});
 
-		test("UIArea via DomRef", function() {
+		QUnit.test("UIArea via DomRef", function(assert) {
 			doTestSetRoot(jQuery("#uiArea4")[0], "uiArea4", true);
 		});
 
-		test("Container Control via Control reference", function() {
+		QUnit.test("Container Control via Control reference", function(assert) {
 			doTestSetRoot(oPanel2, "myPanel2", false);
 		});
 
-		test("Container Control via ID", function() {
+		QUnit.test("Container Control via ID", function(assert) {
 			doTestSetRoot("myPanel2", "myPanel2", false);
 		});
 

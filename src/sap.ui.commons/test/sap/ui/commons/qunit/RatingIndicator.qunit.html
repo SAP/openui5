@@ -84,7 +84,7 @@
 
 	QUnit.module("Properties");
 
-	test("Default Values", function() {
+	QUnit.test("Default Values", function(assert) {
 		var oRating = oRatings["oRating1"];
 		equals(oRating.getValue(), 0, "Default 'value':");
 		equals(oRating.getAverageValue(), 0, "Default 'averageValue':");
@@ -98,7 +98,7 @@
 		equals(oRating.getTooltip(), null, "Default 'tooltip':");
 	 });
 
-	test("Custom Values", function() {
+	QUnit.test("Custom Values", function(assert) {
 		var oRating = oRatings["oRating2"];
 		equals(oRating.getValue(), 3, "Custom 'value':");
 		equals(oRating.getMaxValue(), 6, "Custom 'maxValue':");
@@ -114,7 +114,7 @@
 
 	QUnit.module("Interaction");
 
-	test("Keyboard", function() {
+	QUnit.test("Keyboard", function(assert) {
 		var oRating = oRatings["oRating1"];
 		jQuery("#oRating1").focus();
 		qutils.triggerKeyboardEvent("oRating1", "ARROW_RIGHT");
@@ -146,7 +146,7 @@
 		equals(oRating.getValue(), 2, "Value after saved keyboard input:");
 	});
 
-	test("Click", function() {
+	QUnit.test("Click", function(assert) {
 		var oRating = oRatings["oRating1"];
 		qutils.triggerEvent("click", "oRating1-itm-3");
 		equals(oRating.getValue(), 3, "Value after click:");
@@ -205,24 +205,24 @@
 
 	QUnit.module("Visual Appearence");
 
-	test("Visibility", function() {
+	QUnit.test("Visibility", function(assert) {
 		equals(jQuery("#oRating3").get(0), undefined, "Invisible:");
 		ok(jQuery("#oRating1").get(0), "Visible: expected defined");
 	});
 
-	test("#Symbols", function() {
+	QUnit.test("#Symbols", function(assert) {
 		equals(jQuery("#oRating1").children().size(), 5, "#Symbols:");
 		equals(jQuery("#oRating2").children().size(), oRatings["oRating2"].getMaxValue(), "#Symbols:");
 	});
 
-	test("ItemValue Properties", function() {
+	QUnit.test("ItemValue Properties", function(assert) {
 		var oSymbols = jQuery("#oRating1").children();
 		oSymbols.each(function(index){
 			equals(jQuery(this).attr("itemvalue"), ""+(index+1), "Item Value of item "+(index+1)+":");
 		});
 	});
 
-	test("Visualization FULL", function() {
+	QUnit.test("Visualization FULL", function(assert) {
 		var oSymbols = jQuery("#oRating4").children();
 		oSymbols.each(function(index){
 			var oChilds = jQuery(this).children();
@@ -235,7 +235,7 @@
 		});
 	});
 
-	test("Visualization HALF", function() {
+	QUnit.test("Visualization HALF", function(assert) {
 		var oSymbols = jQuery("#oRating5").children();
 		oSymbols.each(function(index){
 			var oChilds = jQuery(this).children();
@@ -248,7 +248,7 @@
 		});
 	});
 
-	test("Visualization CONT", function() {
+	QUnit.test("Visualization CONT", function(assert) {
 		var oSymbols = jQuery("#oRating6").children();
 		oSymbols.each(function(index){
 			var oChilds = jQuery(this).children();
@@ -261,7 +261,7 @@
 		});
 	});
 
-	test("Hover Effect", function() {
+	QUnit.test("Hover Effect", function(assert) {
 		qutils.triggerEvent("mouseover", "oRating1-itm-4");
 		var oSymbols = jQuery("#oRating1").children();
 		oSymbols.each(function(index){
@@ -275,7 +275,7 @@
 		});
 	});
 
-	test("Custom Symbols", function() {
+	QUnit.test("Custom Symbols", function(assert) {
 		var oSymbols = jQuery("#oRating6").children();
 		oSymbols.each(function(index){
 			var oSymbol = jQuery(this);
@@ -290,7 +290,7 @@
 		qutils.triggerEvent("mouseout", "oRating6-itm-1");
 	});
 
-	test("Tooltip", function() {
+	QUnit.test("Tooltip", function(assert) {
 		var attr = function($Obj, sAtt) { //see changes of jQuery.attr under http://api.jquery.com/attr/
 			var sValue = $Obj.attr(sAtt);
 			return !sValue ? "" : sValue;
@@ -311,7 +311,7 @@
 
 
 
-	test("Average Value", function() {
+	QUnit.test("Average Value", function(assert) {
 
 		fnTestAverage(oRatings["oRating7"]);
 		fnTestAverage(oRatings["oRating8"]);

@@ -165,7 +165,7 @@
 
 		QUnit.module("Appearance");
 
-		test("FeedChunk styles", function() {
+		QUnit.test("FeedChunk styles", function(assert) {
 			//without comments
 			ok(!jQuery.sap.byId("Chunk1").children("section").get(0), "No comment section found for Chunk without comments");
 
@@ -184,11 +184,11 @@
 
 		});
 
-		test("Output of Attribute", function() {
+		QUnit.test("Output of Attribute", function(assert) {
 			// expand button if long text
 			oChunk2.addDelegate({
 				onAfterRendering: function () {
-					test("Expand button rendering", function () {
+					QUnit.test("Expand button rendering", function (assert) {
 						ok(jQuery.sap.byId("Chunk2-exp").get(0), "Expand button rendered when the text is long");
 					});
 				}
@@ -246,7 +246,7 @@
 
 		QUnit.module("Behaviour");
 
-		test("delete function", function() {
+		QUnit.test("delete function", function(assert) {
 			qutils.triggerMouseEvent("commentChunk2-delete", "click");
 			equal(sEvent, "DELETED", "Delete event fired on press on comments delete button");
 			equal(sEventSourceId, "commentChunk2", "Delete event on right ID");
@@ -260,7 +260,7 @@
 			sEventSourceId = "";
 		});
 
-		test("Click on sender", function() {
+		QUnit.test("Click on sender", function(assert) {
 			qutils.triggerMouseEvent("Chunk1-sender", "click");
 			equal(sEvent, "SenderClicked", "senderClicked event on chunk");
 			equal(sEventSourceId, "Chunk1", "Event on right ID");
@@ -273,7 +273,7 @@
 			sEventSourceId = "";
 		});
 
-		test("Click on @-reference", function() {
+		QUnit.test("Click on @-reference", function(assert) {
 			qutils.triggerMouseEvent("Chunk2-Ref0", "click");
 			equal(sEvent, "ReferenceClicked", "@-reference clicked event on chunk");
 			equal(sEventSourceId, "Chunk2", "Event on right ID");
@@ -413,7 +413,7 @@
 			setTimeout(delayedCall, 0);
 		});
 
-		test("expand/collapse text", function() {
+		QUnit.test("expand/collapse text", function(assert) {
 
 			ok(jQuery.sap.byId("Chunk2").children(".sapUiFeedChunkText").get(0).scrollHeight > jQuery.sap.byId("Chunk2").children(".sapUiFeedChunkText").get(0).clientHeight, "initially text ist cut");
 			qutils.triggerMouseEvent("Chunk2-exp", "click");

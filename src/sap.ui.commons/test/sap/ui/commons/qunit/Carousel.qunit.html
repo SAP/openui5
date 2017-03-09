@@ -149,14 +149,14 @@
 					}, Math.max(this.oCarousel1.getAnimationDuration(), this.oCarousel2.getAnimationDuration()) + 750);
 			});
 
-			test("Navigation ByID - test showElementWithId()", function() {
+			QUnit.test("Navigation ByID - test showElementWithId()", function(assert) {
 				this.oCarousel1.showElementWithId('IMG4');
 				strictEqual(jQuery.sap.byId(this.oCarousel1.getId() + '-scrolllist').find('li:first')[0], jQuery.sap.byId(this.oCarousel1.getId() + '-item-IMG4')[0], "Image 4 should be at first position.");
 				this.oCarousel2.showElementWithId('IMG10');
 				strictEqual(jQuery.sap.byId(this.oCarousel2.getId() + '-scrolllist').find('li:first')[0], jQuery.sap.byId(this.oCarousel2.getId() + '-item-IMG10')[0], "Image 10 should be at first position.");
 			});
 
-			test("Test properties defaults as they are like a contract and part of API", function() {
+			QUnit.test("Test properties defaults as they are like a contract and part of API", function(assert) {
 				var oCarousel = new sap.ui.commons.Carousel();
 				strictEqual(oCarousel.getOrientation(), sap.ui.commons.enums.Orientation.horizontal, "Default orientation should be horizontal.");
 				strictEqual(oCarousel.getWidth(), "", "Default Width should be null.");
@@ -173,7 +173,7 @@
 
 			});
 
-			test("Test setFirstVisibleIndex ", function() {
+			QUnit.test("Test setFirstVisibleIndex ", function(assert) {
 
 				this.oCarousel1.setFirstVisibleIndex(7);  // invalid value
 				sap.ui.getCore().applyChanges();
@@ -186,7 +186,7 @@
 
 			});
 
-			test("Test Navigation with empty list ", function() {
+			QUnit.test("Test Navigation with empty list ", function(assert) {
 				this.oCarousel1.destroyAggregation("content");
 				sap.ui.getCore().applyChanges();
 				strictEqual(this.oCarousel1.getContent().length, 0, "Content size should be 0");

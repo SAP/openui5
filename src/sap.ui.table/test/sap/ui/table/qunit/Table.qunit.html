@@ -1035,7 +1035,7 @@
 		afterEach: destroyTable
 	});
 
-	QUnit.test("After initialization", function(assert){
+	QUnit.test("After initialization", function(assert) {
 		var $table = oTable.$();
 		$button = $table.find('.sapUiTableExt').find('#extensionButton');
 		assert.equal(oTable.getExtension().length, 1, "Table has 1 extension");

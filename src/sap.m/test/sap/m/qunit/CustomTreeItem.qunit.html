@@ -98,7 +98,7 @@
 		afterEach: destroyMTree
 	});
 
-	test("CustomTreeItem rendered", function() {
+	QUnit.test("CustomTreeItem rendered", function(assert) {
 		var $CustomTreeItem0 = sap.ui.getCore().byId("__item0-__tree0-0").$();
 		var $CustomTreeItem1 = sap.ui.getCore().byId("__item0-__tree0-1").$();
 		ok($CustomTreeItem0.hasClass("sapMCTI"), "First CustomTreeItem rendered correctly.");

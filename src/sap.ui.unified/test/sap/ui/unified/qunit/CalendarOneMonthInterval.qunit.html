@@ -164,7 +164,7 @@
 			}
 		});
 
-		test("_focusDateExtend sets correct focused dates", function() {
+		QUnit.test("_focusDateExtend sets correct focused dates", function(assert) {
 			//prepare
 			var oSut = this.oPC._oOneMonthInterval,
 					oSpyDatesRow_setDate = this.spy(this.sutMonth, "setDate"),
@@ -186,7 +186,7 @@
 					"DatesRow#setDate should be called with certain date parameter");
 		});
 
-		test("'_shiftStartFocusDates' shifts startDate and focusedDate according to given amount of time", function() {
+		QUnit.test("'_shiftStartFocusDates' shifts startDate and focusedDate according to given amount of time", function(assert) {
 			//prepare
 			var oSut = this.oPC._oOneMonthInterval,
 				oSpy_setFocusedDate = this.spy(oSut, "_setFocusedDate"),

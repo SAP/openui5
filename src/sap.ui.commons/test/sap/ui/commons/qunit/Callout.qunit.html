@@ -63,7 +63,7 @@
 
 	QUnit.module("Appearance");
 
-	test("Assignment of elements", function() {
+	QUnit.test("Assignment of elements", function(assert) {
 		// Tooltip
 		equal(sap.ui.getCore().getControl("CButton").getTooltip().getId(),
 				"callout", "Callou is assigned as a tooltip to a button");

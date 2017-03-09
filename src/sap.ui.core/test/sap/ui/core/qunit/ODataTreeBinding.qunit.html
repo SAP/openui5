@@ -60,7 +60,7 @@
 		}
 	});
 
-	test("Properties", function(){
+	QUnit.test("Properties", function(assert){
 		createTreeBinding("/Employees(2)", null, [], {
 			navigation: {}
 		});
@@ -496,7 +496,7 @@
 		oBinding.getRootContexts();
 	});
 
-	test("No navigation object specified", function() {
+	QUnit.test("No navigation object specified", function(assert) {
 
 		var iErrorCount = 0,
 			sErrorMessage = "";
@@ -512,7 +512,7 @@
 		equal(sErrorMessage, "A navigation paths parameter object has to be defined", "TreeBinding navigation error was thrown");
 	});
 
-	test("Tried filtering", function() {
+	QUnit.test("Tried filtering", function(assert) {
 
 		var iWarningCount = 0,
 			sMessage = "";
@@ -606,7 +606,7 @@
 		}
 	});
 
-	test("Properties", function(){
+	QUnit.test("Properties", function(assert){
 		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
 			navigation: {}
 		});
@@ -867,7 +867,7 @@
 		oBinding.getRootContexts(1, 4);
 	});
 
-	test("Tried filtering", function() {
+	QUnit.test("Tried filtering", function(assert) {
 
 		var iWarningCount = 0,
 			sMessage = "";

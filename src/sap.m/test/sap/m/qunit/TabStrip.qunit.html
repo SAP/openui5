@@ -48,14 +48,14 @@
 			}
 		});
 
-		test("Initialization without parameters", function () {
+		QUnit.test("Initialization without parameters", function (assert) {
 			var oTabStrip = new sap.m.TabStrip();
 			strictEqual(typeof oTabStrip === 'object', true, 'Sucessfully initialized.');
 			oTabStrip.destroy();
 			oTabStrip = null;
 		});
 
-		test("Set default selected item", function () {
+		QUnit.test("Set default selected item", function (assert) {
 			var oItem2 = new sap.m.TabStripItem({
 				text: "Tab 2"
 			});
@@ -81,12 +81,12 @@
 			oTS.destroy();
 		});
 
-		test("DOM", function () {
+		QUnit.test("DOM", function (assert) {
 			//assert
 			ok(this.sut.$().length > 0, "The control was successfully rendered");
 		});
 
-		test("Control defaults", function () {
+		QUnit.test("Control defaults", function (assert) {
 			//assert
 			ok(!this.sut.getHasSelect(), "Correct default hasSelect property value");
 			strictEqual(this.sut.$("touchArea").children("." + sap.m.TabStripSelect.CSS_CLASS).length, 0,
@@ -179,7 +179,7 @@
 					"Add aggregation adds successfuly");
 		});
 
-		test("Render all tabs", function () {
+		QUnit.test("Render all tabs", function (assert) {
 			//arrange
 			this.sut.addItem(new sap.m.TabStripItem({
 				text: "Button tab 1"
@@ -220,7 +220,7 @@
 		});
 
 		// tests for a bug that resulted in destroying the select aggr if it already existed on setHasSelect(true)
-		test("setHasSelect(true)", function () {
+		QUnit.test("setHasSelect(true)", function (assert) {
 			this.sut.setHasSelect(true);
 			strictEqual(this.sut.getHasSelect(), true, "Correct hasSelect property value");
 			this.sut.setHasSelect(true);
@@ -228,7 +228,7 @@
 		});
 
 
-		test("Selection prevented", function () {
+		QUnit.test("Selection prevented", function (assert) {
 			var oTabStrip = new sap.m.TabStrip({
 				selectedItem: 0,
 				itemSelect: function (oEvent) {
@@ -264,7 +264,7 @@
 			oTabStrip = null;
 		});
 
-		test("Selected item association is cleared when items are destroyed.", function () {
+		QUnit.test("Selected item association is cleared when items are destroyed.", function (assert) {
 			//prepare
 			var oTabStrip = new sap.m.TabStrip({
 				items: [
@@ -325,7 +325,7 @@
 			}
 		});
 
-		test("Tabs focus handling", function () {
+		QUnit.test("Tabs focus handling", function (assert) {
 			var oTabs = this.sut.getItems();
 
 			//arrage
@@ -357,7 +357,7 @@
 		});
 
 		//ToDo: Might be reconsidered when TabStrip is released for standalone usage
-		test("Select first item, focus it and remove it", function () {
+		QUnit.test("Select first item, focus it and remove it", function (assert) {
 			//arrange
 			var oTabStripItemToRemove = this.items[0];
 			var oTabStripItemToBeSelectedAndFocused = this.items[1];
@@ -374,7 +374,7 @@
 		});
 
 		//ToDo: Might be reconsidered when TabStrip is released for standalone usage
-		test("Select last item, focus it and remove it", function () {
+		QUnit.test("Select last item, focus it and remove it", function (assert) {
 			//arrange
 			var oTabStripItemToRemove = this.items[4];
 			var oTabStripItemToBeSelectedAndFocused = this.items[3];
@@ -391,7 +391,7 @@
 		});
 
 		//ToDo: Might be reconsidered when TabStrip is released for standalone usage
-		test("Select random item, focus another and remove it", function () {
+		QUnit.test("Select random item, focus another and remove it", function (assert) {
 			//arrange
 			var oTabStripItemToRemove = this.items[3];
 			var oTabStripItemToBeSelected = this.items[0];
@@ -445,7 +445,7 @@
 			}
 		});
 
-		test("Is scrolling needed", function () {
+		QUnit.test("Is scrolling needed", function (assert) {
 			//assert
 			ok(!this.sut._checkScrolling(), "Scrolling is not needed when tabs don't overflow (" + this.sut.getItems().length + ") tabs");
 
@@ -455,7 +455,7 @@
 			ok(this.sut._checkScrolling(), "Scrolling is needed when tabs overflow (" + this.sut.getItems().length + ") tabs");
 		});
 
-		test("Overflow Buttons", function () {
+		QUnit.test("Overflow Buttons", function (assert) {
 			//arrange
 			var iTestCurrentScrollLeft = this._iCurrentScrollLeft;
 			var fnUpdateTestScrollValue = function () {
@@ -531,7 +531,7 @@
 			}
 		});
 
-		test("Initial aria attributes", function () {
+		QUnit.test("Initial aria attributes", function (assert) {
 			var that = this;
 			//assert
 			strictEqual(this.sut.$('tabs').attr("role"), 'tablist', "TabStrip container has correct role");
@@ -555,7 +555,7 @@
 			strictEqual(this.sut.$().find("[aria-selected]").length, this.sut.getItems().length, "All elements with aria-selected attributes are equal to the number of aggregations passed to TabStrip");
 		});
 
-		test("Select item changes the aria-selected value", function () {
+		QUnit.test("Select item changes the aria-selected value", function (assert) {
 			//arrange
 			this.sut.setSelectedItem(this._aItems[1]);
 			//assert
@@ -566,7 +566,7 @@
 			ok(!!(this.sut.$('tabs').children().eq(2).attr("aria-selected")), "aria-selected was updated successfully");
 		});
 
-		test("Check for undesired aria attributes", function () {
+		QUnit.test("Check for undesired aria attributes", function (assert) {
 			strictEqual(this.sut.$().find("[aria-aria-selected]").length, 0, "the duplicate aria-aria-selected attribute is not present in the DOM");
 		});
 
@@ -578,7 +578,7 @@
 			}
 		});
 
-		test("Rendering", function () {
+		QUnit.test("Rendering", function (assert) {
 			var stubs = preparePhonePlatform.call(this);
 			this.oTS = new sap.m.TabStrip({
 				hasSelect: true,
@@ -637,7 +637,7 @@
 			}
 		});
 
-		test("Initial selection if no selected item is passed", function () {
+		QUnit.test("Initial selection if no selected item is passed", function (assert) {
 			//arrange
 			this.sut = new sap.m.TabStrip({
 				items: this.items
@@ -648,7 +648,7 @@
 			strictEqual(this.sut.getSelectedItem(), null, "Correct value of selectedItem association");
 		});
 
-		test("Initial selection if selected item is applied", function () {
+		QUnit.test("Initial selection if selected item is applied", function (assert) {
 			//arrange
 			this.sut = new sap.m.TabStrip({
 				selectedItem: this.selectedItem,
@@ -661,7 +661,7 @@
 			ok(this.sut.$("tabs").children().eq(this.selectedItemIndex).hasClass(sap.m.TabStripItem.CSS_CLASS_SELECTED), "The initial selection is applied correctly");
 		});
 
-		test("No Overflow Buttons on phone", function () {
+		QUnit.test("No Overflow Buttons on phone", function (assert) {
 			//arrange
 			var stubs = preparePhonePlatform.call(this);
 			this.sut = new sap.m.TabStrip({
@@ -735,7 +735,7 @@
 			}
 		});
 
-		test("All close buttons are visible on tablet", function () {
+		QUnit.test("All close buttons are visible on tablet", function (assert) {
 			//arrange
 			var fnAreAllItemsButtonsVisible = function (oItem) {
 				return oItem.$().find("button").css("visibility") === 'visible';

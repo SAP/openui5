@@ -277,7 +277,7 @@
 				}
 			});
 
-			test("Initialization", function () {
+			QUnit.test("Initialization", function (assert) {
 				ok(!jQuery.sap.domById(this.oVSD.getId()), "Dialog is not rendered before it's ever opened.");
 				strictEqual(this.oVSD.getTitle(), "", 'The default title is empty and will be filled by "' + this.oResourceBundle.getText("VIEWSETTINGS_TITLE") + '" later');
 				strictEqual(this.oVSD.getSortDescending(), false, 'The default value for sortDescending should be "false"');
@@ -300,7 +300,7 @@
 			});
 
 
-			test("Setting busy state", function () {
+			QUnit.test("Setting busy state", function (assert) {
 				var done = assert.async();
 
 				this.oVSD.open();
@@ -321,7 +321,7 @@
 				}.bind(this), 1000);
 			});
 
-			module ("getter/setter", {
+			QUnit.module ("getter/setter", {
 				beforeEach : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog();
 					this.oFilterState = {
@@ -353,7 +353,7 @@
 				}
 			});
 
-			test("set dialog state via API", function () {
+			QUnit.test("set dialog state via API", function (assert) {
 				var oCore = sap.ui.getCore();
 
 				/* set dialog state (solely by API instead of selected flag) */
@@ -382,7 +382,7 @@
 				ok(compareFilterKeys(this.oFilterState, this.oVSD.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
 			});
 
-			test("setSelectedSortItem via string key throws error if the key is wrong, but does not prevent dialog open", function () {
+			QUnit.test("setSelectedSortItem via string key throws error if the key is wrong, but does not prevent dialog open", function (assert) {
 				var oErrorLogSpy = sinon.spy(jQuery.sap.log, "error"),
 					sErrorMessage,
 					sNonExistentItemKey = "non_existent_key";
@@ -403,7 +403,7 @@
 				jQuery.sap.log.error.restore();
 			});
 
-			test("setSelectedSortItem does not throw error if the item is null or undefined", function () {
+			QUnit.test("setSelectedSortItem does not throw error if the item is null or undefined", function (assert) {
 				var oErrorLogSpy = sinon.spy(jQuery.sap.log, "error");
 
 				//act
@@ -415,7 +415,7 @@
 				jQuery.sap.log.error.restore();
 			});
 
-			test("setFilter count doe not throw an error when filter item type is sap.m.ViewSettingsCustomItem", function () {
+			QUnit.test("setFilter count doe not throw an error when filter item type is sap.m.ViewSettingsCustomItem", function (assert) {
 				var done = assert.async(),
 						oVSD = new sap.m.ViewSettingsDialog({
 							filterItems: [
@@ -481,7 +481,7 @@
 				}
 			});
 
-			test("The control is not invalidated on setting sort, group or filter Items", function () {
+			QUnit.test("The control is not invalidated on setting sort, group or filter Items", function (assert) {
 
 				sinon.spy(this.oVSD, "invalidate");
 
@@ -518,7 +518,7 @@
 				}
 			});
 
-			test("Open ViewSettingsDialog", function (){
+			QUnit.test("Open ViewSettingsDialog", function (assert) {
 				var sId = this.oVSD.getId();
 				this.oVSD.open();
 
@@ -529,13 +529,13 @@
 				ok(jQuery.sap.byId(sId + "-sortbutton").hasClass("sapMSegBBtnSel"), "Segmented 'sort' button should be selected");
 			});
 
-			test("Open predefined tab", function() {
+			QUnit.test("Open predefined tab", function(assert){
 				this.oVSD.open("filter");
 
 				ok(jQuery.sap.byId(this.oVSD.getId() + "-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected");
 			});
 
-			test("Close ViewSettingsDialog", function (assert){
+			test("Close ViewSettingsDialog", function (assert) {
 				var done = assert.async(),
 					that = this;
 
@@ -561,7 +561,7 @@
 				}
 			});
 
-			test("Last Opened Page is correct on Cancel on second opening of the filter detail view", function () {
+			QUnit.test("Last Opened Page is correct on Cancel on second opening of the filter detail view", function (assert) {
 				function openAndNavigateToFilterDetailsPage(oVSD) {
 					oVSD.open("filter");
 					var oItem = oVSD._filterList.getItems()[0].data("item");
@@ -626,7 +626,7 @@
 				}
 			});
 
-			test("ViewSettingsFilterItem event handlers are attached", function () {
+			QUnit.test("ViewSettingsFilterItem event handlers are attached", function (assert) {
 				var oVSD = new sap.m.ViewSettingsDialog(),
 						oVSItem = new sap.m.ViewSettingsItem({
 							key: "name1",
@@ -746,7 +746,7 @@
 				});
 			}
 
-			test("Back on key [SHIFT]+[ENTER] event", function () {
+			QUnit.test("Back on key [SHIFT]+[ENTER] event", function (assert) {
 				this.oVSD.open();
 
 				this.oVSD._switchToPage(0);
@@ -797,7 +797,7 @@
 				});
 			}
 
-			test("Reset event", function () {
+			QUnit.test("Reset event", function (assert) {
 				this.oVSD.setSelectedFilterKeys(this.oFilterState);
 
 				strictEqual(this.oVSD.getSelectedFilterItems().length, 8, "Selected filters are 8 before reset event");
@@ -811,7 +811,7 @@
 				this.oVSD._resetButton.firePress();
 			});
 
-			test("filterDetailPageOpened event", function () {
+			QUnit.test("filterDetailPageOpened event", function (assert) {
 				var done = assert.async(),
 					oFilterItem = this.oVSD.getFilterItems()[0];
 
@@ -866,7 +866,7 @@
 				clock.restore();
 			});
 
-			module ("Construction/Destruction", {
+			QUnit.module ("Construction/Destruction", {
 				beforeEach : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog();
 					this.oFilterState = {
@@ -999,7 +999,7 @@
 				}, 1000);
 			});
 
-			test("Destroy ViewSettingsDialog that has never been opened/rendered", function () {
+			QUnit.test("Destroy ViewSettingsDialog that has never been opened/rendered", function (assert) {
 				// store poiners to internal controls
 				var sortList = this.oVSD._sortList,
 					ariaSortListInvisibleText = this.oVSD._ariaSortListInvisibleText,
@@ -1058,7 +1058,7 @@
 				strictEqual(this.oVSD.$().length, 0, "There is no Domref for ViewSettingsDialog");
 			});
 
-			test("Remove all filter/sort/group items ViewSettingsDialog that has no filter/sort/group items", function () {
+			QUnit.test("Remove all filter/sort/group items ViewSettingsDialog that has no filter/sort/group items", function (assert) {
 				//prepare
 				var oVSD = new sap.m.ViewSettingsDialog();
 
@@ -1106,7 +1106,7 @@
 				}
 			});
 
-			test("Check sort tab only mode", function  () {
+			QUnit.test("Check sort tab only mode", function  (assert){
 				this.oVSD.open();
 				strictEqual(this.oVSD.getSelectedSortItem(), this.oVSD.getSortItems()[1].getId(), "Second selected sort item is set successfully by selected flag");
 				strictEqual(this.oVSD.getSelectedGroupItem(), null, "Selected group item is null");
@@ -1160,7 +1160,7 @@
 				}
 			});
 
-		test("Check group tab only mode", function  () {
+		QUnit.test("Check group tab only mode", function  (assert){
 			this.oVSD.open();
 			strictEqual(this.oVSD.getSelectedSortItem(), null, "Selected sort item is null");
 			strictEqual(this.oVSD.getSelectedGroupItem(), this.oVSD.getGroupItems()[1].getId(), "Second selected group item is set successfully by selected flag");
@@ -1209,7 +1209,7 @@
 			}
 		});
 
-		test("Check preset filter only mode", function  () {
+		QUnit.test("Check preset filter only mode", function  (assert){
 			this.oVSD.open();
 			strictEqual(this.oVSD.getSelectedSortItem(), null, "Selected sort item is null");
 			strictEqual(this.oVSD.getSelectedGroupItem(), null, "Selected group item is null");
@@ -1268,7 +1268,7 @@
 
 		});
 
-		test("setSelectedFilterKeys with duplicate keys but different parents", function() {
+		QUnit.test("setSelectedFilterKeys with duplicate keys but different parents", function(assert){
 			var aSelectedItems;
 
 			//arrange
@@ -1474,7 +1474,7 @@
 			}, 1000);
 		});
 
-		test("StringFilter", function() {
+		QUnit.test("StringFilter", function(assert){
 			var fnStringFilter = this.oVSD._getStringFilter();
 
 			//Assert
@@ -1493,7 +1493,7 @@
 			ok(!fnStringFilter("ou", "mousepad mousepad"), "'anywordstartswith' does not match strings in the middle of the second word");
 		});
 
-		test("setFilterSearchCallback", function() {
+		QUnit.test("setFilterSearchCallback", function(assert){
 			var done = assert.async(),
 				that = this,
 				oCallbackSpy = {
@@ -1622,7 +1622,7 @@
 		});
 
 		//BCP: 1570899196
-		test("removeFilterItem works with index as a parameter", function() {
+		QUnit.test("removeFilterItem works with index as a parameter", function(assert){
 			oVsdConfig.addFilterItems(this.oVSD);
 
 			var iFilterItemsCount = this.oVSD.getFilterItems().length;
@@ -1633,7 +1633,7 @@
 			strictEqual(this.oVSD.getFilterItems().length, iFilterItemsCount - 1, "a filter item is removed");
 		});
 
-		test("Check filter only mode", function  () {
+		QUnit.test("Check filter only mode", function  (assert){
 			var	sId = this.oVSD.getId();
 
 			oVsdConfig.addFilterItems(this.oVSD);
@@ -1660,7 +1660,7 @@
 			strictEqual(this.oVSD._filterDetailList.getSelectedItem().data("item"), this.oVSD.getFilterItems()[2].getItems()[2], "The item 'value3' is selected");
 		});
 
-		test("Check add/remove/toggle/hasStyleClass methods", function () {
+		QUnit.test("Check add/remove/toggle/hasStyleClass methods", function (assert) {
 			var	sCustomStyleClass = "myStyleClass";
 
 			// add + has
@@ -1680,7 +1680,7 @@
 			ok(this.oVSD.hasStyleClass(sCustomStyleClass), 'The ViewSettingsDialog has style class "' + sCustomStyleClass + '" after toggle');
 		});
 
-		test("Check $ and getDomRef methods", function () {
+		QUnit.test("Check $ and getDomRef methods", function (assert) {
 			this.oVSD.open();
 			ok(this.oVSD.$().length === 1, "The inner dialogs jQuery object is returned");
 			ok(this.oVSD.getDomRef().id === this.oVSD.getId() + "-dialog", "The inner dialogs DOM reference is returned");
@@ -2008,7 +2008,7 @@
 			}, delay);
 		});
 
-		test("Reset Button is available on second open of the ViewSettinsDialog", function () {
+		QUnit.test("Reset Button is available on second open of the ViewSettinsDialog", function (assert) {
 			var modelData = this.getFirstModelData();
 			var modelData2 = this.getSecondModelData();
 			var oModel = new sap.ui.model.json.JSONModel();
@@ -2033,7 +2033,7 @@
 			strictEqual(this.oVSD._getSubHeader().getContentRight().length, 1, "Reset Button should be available on page1 when the dialog is opened again");
 		});
 
-		test("Reset group items selection on cancel", function () {
+		QUnit.test("Reset group items selection on cancel", function (assert) {
 			var delay = 1000,
 				done = assert.async(),
 				oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -2188,7 +2188,7 @@
 			}
 		});
 
-		test("Change sort items in the model", function () {
+		QUnit.test("Change sort items in the model", function (assert) {
 			var done = assert.async();
 			this.oVSD.open();
 
@@ -2236,7 +2236,7 @@
 		});
 
 
-		test("Change filter items in the model", function () {
+		QUnit.test("Change filter items in the model", function (assert) {
 			var done = assert.async();
 
 			this.oVSD.open();
@@ -2289,7 +2289,7 @@
 
 
 
-		test("Change filter detail items in the model", function () {
+		QUnit.test("Change filter detail items in the model", function (assert) {
 			var done = assert.async();
 
 			this.oVSD.open();
@@ -2348,7 +2348,7 @@
 		});
 
 
-		test("Change group items in the model", function () {
+		QUnit.test("Change group items in the model", function (assert) {
 			var done = assert.async();
 
 			this.oVSD.open();
@@ -2402,7 +2402,7 @@
 
 		QUnit.module("Others");
 
-		test("customControl is cloned as expected", function(){
+		QUnit.test("customControl is cloned as expected", function(assert){
 			var oViewSettingsCustomItem = new sap.m.ViewSettingsCustomItem({
 				text     : "SomeText",
 				key      : "SomeKey",
@@ -2413,7 +2413,7 @@
 			ok(!!oClone.getCustomControl(), "Custom control is cloned");
 		});
 
-		test("model is propagated to the dialog", function() {
+		QUnit.test("model is propagated to the dialog", function(assert){
 			var oVSD = new sap.m.ViewSettingsDialog(),
 					sData = "this is the model",
 					oModel = new sap.ui.model.json.JSONModel({ data: sData});

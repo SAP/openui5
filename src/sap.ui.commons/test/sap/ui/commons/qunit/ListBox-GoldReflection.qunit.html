@@ -59,10 +59,10 @@
 				oCtrl.addItem(oItem0);
 				oCtrl.addItem(oItem1);
 				sap.ui.getCore().applyChanges();
-			} //, afterEach: function(){}
+			} //, teardown: function(){}
 		});
 
-		test("Initial Check", function() {
+		QUnit.test("Initial Check", function(assert) {
   		ok(oCtrl, "ListBox should exist after creating");
 
   		oDomRef = jQuery.sap.domById("ListBox1");
@@ -73,7 +73,7 @@
 		/**
 		 * Test width
 		 */
-		test("Width", function() {
+		QUnit.test("Width", function(assert) {
 			equal(oCtrl.getWidth(), sWidth, "ListBox width property should have the value that was set");
 
 			// check width in DOM
@@ -85,7 +85,7 @@
 		/**
 		 * Test min-width
 		 */
-		test("MinWidth", function() {
+		QUnit.test("MinWidth", function(assert) {
 			oCtrl.setMinWidth("400px");
 			sap.ui.getCore().applyChanges();
 
@@ -102,7 +102,7 @@
 		/**
 		 * Test max-width
 		 */
-		test("MaxWidth", function() {
+		QUnit.test("MaxWidth", function(assert) {
 			oCtrl.setMaxWidth("50px");
 			sap.ui.getCore().applyChanges();
 
@@ -119,7 +119,7 @@
 		/**
 		 * Tests accessor method for property allowMultiSelect of control ListBox.
 		 */
-		 test("Multi Selection", function() {
+		 QUnit.test("Multi Selection", function(assert) {
 			equal(oCtrl.getAllowMultiSelect(), bAllowMultiSelect);
 
 			oCtrl.addSelectedIndex(1);
@@ -136,7 +136,7 @@
 		 /**
 		  * Test height
 		  */
-	  test("Height", function() {
+	  QUnit.test("Height", function(assert) {
 			equal(oCtrl.getHeight(), sHeight, "ListBox height property must reflect settings");
 
 			// check height in DOM
@@ -230,7 +230,7 @@
 		/**
 		 * Tests accessor method for property scrollTop of control ListBox.
 		 */
-		test("ScrollTop", function() {
+		QUnit.test("ScrollTop", function(assert) {
 			equal(oCtrl.getScrollTop(), iScrollTop, "getScrollTop() must be correct initially");
 			var oDomRef = jQuery.sap.domById("ListBox1");
 			equal(oDomRef.scrollTop, iScrollTop, "oDomRef.scrollTop must be correct initially");
@@ -272,20 +272,20 @@
 				oCtrl.addItem(oItem0);
 				oCtrl.addItem(oItem1);
 				sap.ui.getCore().applyChanges();
-			} //, afterEach: function(){}
+			} //, teardown: function(){}
 		});
 
 		/**
 		 * Tests method getSelectedIndex of control ListBox.
 	 	 */
-		test("GetSelectedIndex", function() {
+		QUnit.test("GetSelectedIndex", function(assert) {
 			equal(oCtrl.getSelectedIndex(), -1, "oCtrl.getSelectedIndex() is wrong");
 		});
 
 		/**
 		 * Tests method setSelectedIndex of control ListBox.
 		 */
-		test("SetSelectedIndex", function() {
+		QUnit.test("SetSelectedIndex", function(assert) {
 			oCtrl.setSelectedIndex(2); // invalid indices may not change the selection
 			equal(oCtrl.getSelectedIndex(), -1, "oCtrl.getSelectedIndex() after .setSelectedIndex() with invalid indices is wrong");
 			oCtrl.setSelectedIndex(-2);
@@ -303,7 +303,7 @@
 		/**
 		 * Tests method addSelectedIndex of control ListBox.
 		 */
-		test("AddSelectedIndex", function() {
+		QUnit.test("AddSelectedIndex", function(assert) {
 			oCtrl.addSelectedIndex(1);
 			oCtrl.addSelectedIndex(-3);
 			equal(oCtrl.getSelectedIndex(), 1, "selected index after adding first index is wrong");
@@ -318,7 +318,7 @@
 		/**
 		 * Tests method removeSelectedIndex of control ListBox.
 		 */
-		test("RemoveSelectedIndex", function() {
+		QUnit.test("RemoveSelectedIndex", function(assert) {
 			oCtrl.addSelectedIndex(1);
 			oCtrl.addSelectedIndex(0);
 			oCtrl.addSelectedIndex(-3);
@@ -332,7 +332,7 @@
 		/**
 		 * Tests method getSelectedIndices of control ListBox.
 		 */
-		test("GetSelectedIndices", function() {
+		QUnit.test("GetSelectedIndices", function(assert) {
 			oCtrl.addSelectedIndex(1);
 			oCtrl.addSelectedIndex(0);
 			oCtrl.addSelectedIndex(99);
@@ -344,7 +344,7 @@
 		/**
 		 * Tests method setSelectedIndices of control ListBox.
 		 */
-		test("SetSelectedIndices", function() {
+		QUnit.test("SetSelectedIndices", function(assert) {
 			var aIndices = [-3,0,1,99];
 			oCtrl.setSelectedIndices(aIndices);
 			equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding second index is wrong");
@@ -358,7 +358,7 @@
 		/**
 		 * Tests method addSelectedIndices of control ListBox.
 		 */
-		test("AddSelectedIndices", function() {
+		QUnit.test("AddSelectedIndices", function(assert) {
 			var aIndices = [-3,0,1,99];
 			oCtrl.addSelectedIndices(aIndices);
 			equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding two valid indices is wrong");
@@ -369,7 +369,7 @@
 		/**
 		 * Tests method isIndexSelected of control ListBox.
 		 */
-		test("IsIndexSelected", function() {
+		QUnit.test("IsIndexSelected", function(assert) {
 			oCtrl.setSelectedIndex(1);
 			equal(oCtrl.isIndexSelected(1), true, "oCtrl.isIndexSelected(1) after .setSelectedIndex(1) is wrong");
 			equal(oCtrl.isIndexSelected(0), false, "oCtrl.isIndexSelected(0) after .setSelectedIndex(1) is wrong");
@@ -383,10 +383,10 @@
 				oCtrl.addItem(oItem0);
 				oCtrl.addItem(oItem1);
 				sap.ui.getCore().applyChanges();
-			} //, afterEach: function(){}
+			} //, teardown: function(){}
 		});
 
-		test("SetSelectedKeys + GetSelectedKeys", function() {
+		QUnit.test("SetSelectedKeys + GetSelectedKeys", function(assert) {
 			var aKeys = [undefined,"key0","","key2"];
 			oCtrl.setSelectedKeys(aKeys);
 			equal(oCtrl.getSelectedKeys().length, 1, "number of selected keys should be 1");
@@ -413,10 +413,10 @@
 				oCtrl.addItem(oItem0);
 				oCtrl.addItem(oItem1);
 				sap.ui.getCore().applyChanges();
-			} //, afterEach: function(){}
+			} //, teardown: function(){}
 		});
 
-		test("GetSelectedItem", function() {
+		QUnit.test("GetSelectedItem", function(assert) {
 			var item = oCtrl.getSelectedItem();
 			ok(item == null, "oCtrl.getSelectedItem() with no selection is wrong");
 			oCtrl.addSelectedIndex(1);
@@ -428,7 +428,7 @@
 		/**
 		 * Tests method getSelectedItems of control ListBox.
 		 */
-		test("GetSelectedItems", function() {
+		QUnit.test("GetSelectedItems", function(assert) {
 			equal(oCtrl.getSelectedItems().length, 0, "oCtrl.getSelectedItems() with no selection is wrong");
 			oCtrl.addSelectedIndex(1);
 			oCtrl.addSelectedIndex(0);
@@ -439,13 +439,13 @@
 		});
 
 
-		test("GetItems", function() {
+		QUnit.test("GetItems", function(assert) {
 			equal(oCtrl.getItems().length, 2, "oCtrl.getItems() with no selection is wrong");
 			ok(oCtrl.getItems()[0] == oItem0, "first returned item is wrong");
 			ok(oCtrl.getItems()[1] == oItem1, "second returned item is wrong");
 		});
 
-		test("AddItem", function() {
+		QUnit.test("AddItem", function(assert) {
 			oCtrl.addSelectedIndex(1);
 			oCtrl.addSelectedIndex(0);
 
@@ -465,7 +465,7 @@
 			ok(oCtrl.getSelectedIndices()[1] == 1, "second selected index after third item is wrong");
 		});
 
-		test("InsertItem", function() {
+		QUnit.test("InsertItem", function(assert) {
 			oCtrl.addSelectedIndex(1);
 			oCtrl.addSelectedIndex(0);
 
@@ -485,7 +485,7 @@
 			ok(oCtrl.getSelectedIndices()[1] == 2, "second selected index after third item is wrong");
 		});
 
-		test("RemoveItem", function() {
+		QUnit.test("RemoveItem", function(assert) {
 			oCtrl.addSelectedIndex(1);
 			oCtrl.addSelectedIndex(0);
 
@@ -500,7 +500,7 @@
 			ok(oCtrl.getSelectedIndices()[0] == 0, "first selected index after removing an item is wrong");
 		});
 
-		test("RemoveAllItems", function() {
+		QUnit.test("RemoveAllItems", function(assert) {
 			oCtrl.addSelectedIndex(1);
 			oCtrl.addSelectedIndex(0);
 
@@ -513,7 +513,7 @@
 			equal(oCtrl.getSelectedIndices().length, 0, "number of selected indices after removing all items is wrong");
 		});
 
-		test("DestroyItems", function() {
+		QUnit.test("DestroyItems", function(assert) {
 			oCtrl.addSelectedIndex(1);
 			oCtrl.addSelectedIndex(0);
 
@@ -539,7 +539,7 @@
 				}
 				oCtrl.setHeight("100px");
 				sap.ui.getCore().applyChanges();
-			} //, afterEach: function(){}
+			} //, teardown: function(){}
 		});
 
 	  // ==================================================
@@ -551,7 +551,7 @@
 	  /**
 	   * Tests event handling for event select of control ListBox.
 	   */
-		test("Select Event", function() {
+		QUnit.test("Select Event", function(assert) {
 			expect(1); // needs to include the test in selectEventHandler !!
 			oCtrl.fireSelect();
 		});

@@ -30,7 +30,7 @@
 
 
 			QUnit.module("Open API");
-			test("Test main control functionality", function() {
+			QUnit.test("Test main control functionality", function(assert) {
 				sap.m.Support.open();
 
 				this.clock.tick(500);
@@ -46,7 +46,7 @@
 			});
 
 			QUnit.module("On and Off API");
-			test("Register/Unregister event", function() {
+			QUnit.test("Register/Unregister event", function(assert) {
 
 				var sEventName = "ontouchstart";
 				document[sEventName] = "alabala";

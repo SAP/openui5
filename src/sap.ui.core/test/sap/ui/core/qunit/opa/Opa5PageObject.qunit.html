@@ -32,7 +32,7 @@ sap.ui.getCore().attachInit(function () {
 			}
 		});
 
-		QUnit.test("Should create a page object with actions and assertions", function() {
+		QUnit.test("Should create a page object with actions and assertions", function(assert) {
 			var oPages = Opa5.createPageObjects({
 				onMyFirstPage : {
 					namespace : "simple",
@@ -56,7 +56,7 @@ sap.ui.getCore().attachInit(function () {
 
 
 
-		QUnit.test("Should create multiple page object with actions or assertions", function() {
+		QUnit.test("Should create multiple page object with actions or assertions", function(assert) {
 			Opa5.createPageObjects({
 				onMyFirstPage : {
 					namespace : "multiple",
@@ -78,7 +78,7 @@ sap.ui.getCore().attachInit(function () {
 			assertStandardAssertionsRegisteredFor("onMySecondPage");
 		});
 
-		QUnit.test("Should be able to pass different namespaces and base classes to a page object", function() {
+		QUnit.test("Should be able to pass different namespaces and base classes to a page object", function(assert) {
 			var fnOtherBase = Opa5.extend("sap.ui.test.opa.otherBase");
 
 			var oPages = Opa5.createPageObjects({

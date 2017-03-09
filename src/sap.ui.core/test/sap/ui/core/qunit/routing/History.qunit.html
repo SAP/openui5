@@ -38,7 +38,7 @@
 		});
 
 		// singleton test only runs standalone
-		test("Should use the hashChanger in the singleton", function() {
+		QUnit.test("Should use the hashChanger in the singleton", function(assert) {
 			//System under Test
 			var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 			var sut = sap.ui.core.routing.History.getInstance(),

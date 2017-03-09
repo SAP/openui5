@@ -142,7 +142,7 @@
 			}
 		});
 
-		test("opening, closing and reopening", function () {
+		QUnit.test("opening, closing and reopening", function (assert) {
 			strictEqual(this.sut.isOpen(), false, 'Popup is closed');
 
 			//Act
@@ -175,7 +175,7 @@
 			strictEqual(this.sut.isOpen(), false, 'Popup is closed');
 		});
 
-		test("popover resizing", function () {
+		QUnit.test("popover resizing", function (assert) {
 			var initialWidth;
 
 			this.sut.openBy(this.oOpeningButton);
@@ -197,7 +197,7 @@
 			ok(initialWidth == this.sut._getPopover().getContentWidth(), "Popover width is back to initial state");
 		});
 
-		test("segmented button", function() {
+		QUnit.test("segmented button", function(assert) {
 			var oSegmentedButton,
 				oSegmentedButtonItems;
 
@@ -214,7 +214,7 @@
 			strictEqual(oSegmentedButtonItems[0].getKey(), PAGE_KEYS.Sort, "is the right button");
 		});
 
-		test("segmented button adding/removing items", function() {
+		QUnit.test("segmented button adding/removing items", function(assert) {
 			var oSegmentedButton,
 				oSegmentedButtonItems;
 
@@ -258,7 +258,7 @@
 			}
 		});
 
-		test("page title", function() {
+		QUnit.test("page title", function(assert) {
 			var oTitle,
 				oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
@@ -290,7 +290,7 @@
 			strictEqual(this.sut._getDetailsPage().getHeaderContent()[0].getContentMiddle()[0].getText(), oResourceBundle.getText("VIEWSETTINGS_TITLE_FILTERBY") + this.sut.getFilterItems()[0].getText(), "its text is correct after change of page");
 		});
 
-		test("no list inside on open", function() {
+		QUnit.test("no list inside on open", function(assert) {
 			var bContentHasSortListInside,
 				fnIsSortList = function(oControl) {
 					return oControl.getId() === this.sut._getSortList().getId();
@@ -316,7 +316,7 @@
 			ok(this.sut._getSortList().getDomRef(), "sort list is rendered");
 		});
 
-		test("no list inside after close and reopen", function() {
+		QUnit.test("no list inside after close and reopen", function(assert) {
 			var bContentHasSortListInside,
 				fnIsSortList = function(oControl) {
 					return oControl.getId() === this.sut._getSortList().getId();
@@ -339,7 +339,7 @@
 			ok(!bContentHasSortListInside, "no sort list inside");
 		});
 
-		test("correct list inside on segmented button change selected button", function() {
+		QUnit.test("correct list inside on segmented button change selected button", function(assert) {
 			var bContentHasSortListInside,
 					bContentHasFilterListInside,
 					fnIsSortList = function(oControl) {
@@ -388,7 +388,7 @@
 			}
 		});
 
-		test("Removing filter detail items does not throw error", function() {
+		QUnit.test("Removing filter detail items does not throw error", function(assert) {
 			//prepare
 			var oVSP = new sap.m.ViewSettingsPopover();
 			try {
@@ -402,7 +402,7 @@
 			//cleanup
 			oVSP.destroy();
 		});
-		test("detail page opens and loads proper content", function() {
+		QUnit.test("detail page opens and loads proper content", function(assert) {
 			var oDetailsPage,
 				oPageToolbar,
 				oListToolbar;
@@ -432,7 +432,7 @@
 					this.sut._getSelectAllCheckbox().getId(), "contains a select all checkbox");
 		});
 
-		test("detail page for single select item opens and loads proper content", function() {
+		QUnit.test("detail page for single select item opens and loads proper content", function(assert) {
 			var fnIsSearchField = function(oControl) {
 					return oControl.getId() === this.sut._getSearchField().getId();
 				},
@@ -460,7 +460,7 @@
 			strictEqual(this.sut._getFilterDetailList().getMode(), sap.m.ListMode.SingleSelectLeft, "list is in single select mode");
 		});
 
-		test("select all checkbox works correctly", function() {
+		QUnit.test("select all checkbox works correctly", function(assert) {
 			var aFirstFilterItemSubItems = this.sut.getFilterItems()[0].getItems(),
 				oSelectAllCheckbox,
 				bAllSelected,
@@ -503,7 +503,7 @@
 			ok(bNoItemsSelected, "after uncheck select all - no items are selected");
 		});
 
-		test("query filter search field works correctly", function() {
+		QUnit.test("query filter search field works correctly", function(assert) {
 			var oSearchField,
 				aFilteredItems,
 				fnIsItemVisible = function(oItem) {
@@ -534,7 +534,7 @@
 			strictEqual(aFilteredItems.length, 3, "empty query in filter search shows all items");
 		});
 
-		test("query filter search field updates the select all checkbox", function  () {
+		QUnit.test("query filter search field updates the select all checkbox", function  (assert) {
 			var oSearchField,
 				oSelectAllCheckbox;
 
@@ -560,7 +560,7 @@
 			ok(oSelectAllCheckbox.getSelected(), "after filter search with selected results only, the select all checkbox is also selected");
 		});
 
-		test("select all checkbox updates only the filtered items", function  () {
+		QUnit.test("select all checkbox updates only the filtered items", function  (assert) {
 			var oFirstFilterItem = this.sut.getFilterItems()[0],
 				oSearchField,
 				oSelectAllCheckbox,
@@ -598,7 +598,7 @@
 			equal(aSelectedItems.length, 1, "after deselecting select all checkbox, on a filtered list with 1 selected result, the selected items are only decreased by 1");
 		});
 
-		test("switching pages keeps the selection", function  () {
+		QUnit.test("switching pages keeps the selection", function  (assert) {
 			var aSelectedItems,
 				fnIsItemSelected = function(oItem) {
 					return oItem.getSelected();
@@ -635,7 +635,7 @@
 			equal(aSelectedItems.length, 1, "after switching pages selecting and deselecting items works");
 		});
 
-		test("close on details page and reopen", function() {
+		QUnit.test("close on details page and reopen", function(assert) {
 			var oSpyErrorLogger = this.spy(jQuery.sap.log, "error");
 
 			this.sut.openBy(this.oOpeningButton);
@@ -654,7 +654,7 @@
 			ok(!oSpyErrorLogger.called, "no errors");
 		});
 
-		test("ok and cancel buttons", function() {
+		QUnit.test("ok and cancel buttons", function(assert) {
 			var oPopover;
 
 			this.sut.openBy(this.oOpeningButton);
@@ -687,7 +687,7 @@
 			ok(!oPopover.getEndButton() || !oPopover.getEndButton().getDomRef(), "cancel button does not exist");
 		});
 
-		test("_cancel", function() {
+		QUnit.test("_cancel", function(assert) {
 			var aFirstFilterItemSubItems = this.sut.getFilterItems()[0].getItems();
 
 			aFirstFilterItemSubItems[0].setSelected(true);
@@ -710,7 +710,7 @@
 			ok(aFirstFilterItemSubItems[0].getSelected(), "filter items are restored to previous selection");
 		});
 
-		test("_confirmFilterDetail", function() {
+		QUnit.test("_confirmFilterDetail", function(assert) {
 			var aFirstFilterItemSubItems = this.sut.getFilterItems()[0].getItems(),
 				oSpyFireFilterSelected = this.spy(this.sut, "fireFilterSelected");
 
@@ -753,7 +753,7 @@
 			}
 		});
 
-		test("detail page", function() {
+		QUnit.test("detail page", function(assert) {
 			this.sut.openBy(this.oOpeningButton);
 			this.clock.tick(1000);
 
@@ -918,7 +918,7 @@
 			}
 		});
 
-		test("change sort items in the model", function() {
+		QUnit.test("change sort items in the model", function(assert) {
 			var aItems,
 				oItem,
 				sTitleSelector,
@@ -971,7 +971,7 @@
 			strictEqual(this.sut._getSortList().getItems().length, 3, 'item was successfully inserted');
 		});
 
-		test("change filter items in the model", function() {
+		QUnit.test("change filter items in the model", function(assert) {
 			var aItems,
 				oItem,
 				sTitleSelector,
@@ -1024,7 +1024,7 @@
 			strictEqual(this.sut._getFilterList().getItems().length, 3, 'item was successfully inserted');
 		});
 
-		test("change filter detail items in the model", function () {
+		QUnit.test("change filter detail items in the model", function (assert) {
 			var aItems,
 				oItem,
 				oSecondData = this.getSecondModelData()['filterData'];
@@ -1079,7 +1079,7 @@
 			strictEqual(this.sut._getFilterDetailList().getItems().length, 3, 'item was successfully inserted');
 		});
 
-		test("change group items in the model", function () {
+		QUnit.test("change group items in the model", function (assert) {
 			var aItems,
 				oItem,
 				oSecondData = this.getSecondModelData()['groupData'];
@@ -1658,7 +1658,7 @@
 
 		QUnit.module("Miscellaneous");
 
-		test("Setting any property does not prevent internal popover to be destroyed ", function(){
+		QUnit.test("Setting any property does not prevent internal popover to be destroyed ", function(assert){
 			var oVSP = new sap.m.ViewSettingsPopover({tooltip: "Hello"});
 			oVSP.placeAt('qunit-fixture');
 

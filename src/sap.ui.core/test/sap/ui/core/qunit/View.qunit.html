@@ -32,7 +32,7 @@
 
 	QUnit.module("sap.ui.core.mvc.View");
 
-	test("ID handling", 5, function () {
+	QUnit.test("ID handling", 5, function (assert) {
 
 		var oView = new sap.ui.core.mvc.View("dummy", {});
 		var sPrefixedId = oView.createId("anyid");
@@ -62,7 +62,7 @@
 		}
 	});
 
-	test("runPreprocessor w/o config", 3, function () {
+	QUnit.test("runPreprocessor w/o config", 3, function (assert) {
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({});
 
@@ -71,7 +71,7 @@
 		equal(oView.runPreprocessor("xml", oSource, true), oSource);
 	});
 
-	test("runPreprocessor w/ config", 2, function () {
+	QUnit.test("runPreprocessor w/ config", 2, function (assert) {
 		var oPreprocessors = {
 				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
 				// These types can be different for several view types.
@@ -99,7 +99,7 @@
 		expectProcess.verify();
 	});
 
-	test("runPreprocessor w/ config and settings", 5, function () {
+	QUnit.test("runPreprocessor w/ config and settings", 5, function (assert) {
 		var oPreprocessors = {
 				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
 				// These types can be different for several view types.
@@ -130,7 +130,7 @@
 	});
 
 
-	test("runPreprocessor w/ default preprocessor for xml view", 2, function () {
+	QUnit.test("runPreprocessor w/ default preprocessor for xml view", 2, function (assert) {
 		var oConfig = {},
 			sViewContent = [
 			    '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
@@ -149,7 +149,7 @@
 		strictEqual(oView._xContent, expectProcess.returnValues[0]);
 	});
 
-	test("runPreprocessor w/ invalid preprocessor", 2, function () {
+	QUnit.test("runPreprocessor w/ invalid preprocessor", 2, function (assert) {
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
@@ -169,7 +169,7 @@
 		sinon.assert.notCalled(expectProcess);
 	});
 
-	test("runPreprocessor w/ valid preprocessor", 1, function () {
+	QUnit.test("runPreprocessor w/ valid preprocessor", 1, function (assert) {
 		var oSource = {},
 			bCalled = false,
 			oView = new sap.ui.core.mvc.View({
@@ -194,7 +194,7 @@
 		}
 	});
 
-	test("runPreprocessor w/o known preprocessor", 2, function () {
+	QUnit.test("runPreprocessor w/o known preprocessor", 2, function (assert) {
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
@@ -208,7 +208,7 @@
 		sinon.assert.notCalled(expectProcess);
 	});
 
-	test("runPreprocessor w/o syncSupport preprocessor", 3, function () {
+	QUnit.test("runPreprocessor w/o syncSupport preprocessor", 3, function (assert) {
 		var oSource = {},
 			bCalled = false,
 			oView = new sap.ui.core.mvc.View({
@@ -447,7 +447,7 @@
 		}
 	});
 
-	test("register global preprocessor", 2, function () {
+	QUnit.test("register global preprocessor", 2, function (assert) {
 
 		// templating preprocessor set by default
 		deepEqual(

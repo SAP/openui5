@@ -22,13 +22,13 @@
 		var element, errorText, warningText, successText;
 
 
-		test("Element Creation", function() {
+		QUnit.test("Element Creation", function(assert) {
 			element = new sap.ui.commons.CheckBox(); // dependency to commons lib, but a control with valueState is required
 			ok(element, "element must have been created");
 		});
 
 
-		test("Value State texts", function() {
+		QUnit.test("Value State texts", function(assert) {
 			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
 			errorText = rb.getText("VALUE_STATE_ERROR");
 			warningText = rb.getText("VALUE_STATE_WARNING");
@@ -40,7 +40,7 @@
 		});
 
 
-		test("getAdditionalText() with sap.ui.core.Element", function() {
+		QUnit.test("getAdditionalText() with sap.ui.core.Element", function(assert) {
 			jQuery.sap.require("sap.ui.core.ValueStateSupport");
 
 			var result = sap.ui.core.ValueStateSupport.getAdditionalText(element);
@@ -72,7 +72,7 @@
 		});
 
 
-		test("getAdditionalText() with sap.ui.core.ValueState", function() {
+		QUnit.test("getAdditionalText() with sap.ui.core.ValueState", function(assert) {
 			jQuery.sap.require("sap.ui.core.ValueStateSupport");
 
 			var result = sap.ui.core.ValueStateSupport.getAdditionalText("Hello");
@@ -96,7 +96,7 @@
 		});
 
 
-		test("With tooltip", function() {
+		QUnit.test("With tooltip", function(assert) {
 			element.setValueState(sap.ui.core.ValueState.None);
 			var result = sap.ui.core.ValueStateSupport.enrichTooltip(element, "test");
 			equal(result, "test", "tooltip should remain unchanged when there is no special state");
@@ -123,7 +123,7 @@
 		});
 
 
-		test("With no tooltip", function() {
+		QUnit.test("With no tooltip", function(assert) {
 			jQuery.sap.require("sap.ui.core.ValueStateSupport");
 
 			var result = sap.ui.core.ValueStateSupport.enrichTooltip(element, null);

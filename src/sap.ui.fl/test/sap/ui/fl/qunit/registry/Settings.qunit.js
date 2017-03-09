@@ -179,13 +179,13 @@ jQuery.sap.require("sap.ui.fl.Cache");
 		Settings.activateFlexChangeMode();
 	});
 
-	QUnit.test("returns by default adaptation button disllowed", function () {
+	QUnit.test("returns by default adaptation button disllowed", function (assert) {
 		var bFlexibilityAdaptationButtonAllowed = sap.ui.fl.registry.Settings.isFlexibilityAdaptationButtonAllowed();
 
 		QUnit.equal(bFlexibilityAdaptationButtonAllowed, false);
 	});
 
-	QUnit.test("changes adaptation button allowed", function () {
+	QUnit.test("changes adaptation button allowed", function (assert) {
 		var bRetrievedAdaptationButtonAllowed;
 		var bFlexibilityAdaptationButtonAllowed = true;
 		var bFlexibilityAdaptationButtonDisallowed = false;

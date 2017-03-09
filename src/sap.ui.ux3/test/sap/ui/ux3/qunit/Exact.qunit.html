@@ -45,20 +45,20 @@
 
 		QUnit.module("API");
 
-		test("Default Values", function() {
+		QUnit.test("Default Values", function(assert) {
 			equals(oExact1.getResultText(), "", "Default 'resultText':");
 			equals(oExact2.getSettingsMenu(), null, "Default 'settingsMenu':");
 			equals(oExact2.getTooltip(), null, "Default 'tooltip':");
 			equals(oExact1.getResultArea().getId(), oResultArea.getId(), "Default 'resultArea':");
 		 });
 
-		test("Custom Values", function() {
+		QUnit.test("Custom Values", function(assert) {
 			equals(oExact2.getResultText(), "Some result text", "Custom 'resultText':");
 			equals(oExact1.getSettingsMenu().getId(), "menu", "Custom 'settingsMenu':");
 			equals(oExact1.getTooltip(), "Some text", "Custom 'tooltip':");
 		});
 
-		test("Aggregation 'attributes'", function() {
+		QUnit.test("Aggregation 'attributes'", function(assert) {
 			equals(oExact2.getAttributes().length, 0, "Initial number of attributes");
 			oExact2.addAttribute(new sap.ui.ux3.ExactAttribute("aggtest1"));
 			equals(oExact2.getAttributes().length, 1, "Number of attributes after add");
@@ -76,7 +76,7 @@
 
 		QUnit.module("Interaction Flow");
 
-		test("Initial State", function() {
+		QUnit.test("Initial State", function(assert) {
 			equals(oSearchTextField.getValue(), "", "Initial text State of Search TextField:");
 			ok(oSearchTextField.getDomRef(), "Initial visibility State of Search TextField:");
 			ok(!oBrowser.getDomRef(), undefined, "Initial visibility State of Browse Area:");

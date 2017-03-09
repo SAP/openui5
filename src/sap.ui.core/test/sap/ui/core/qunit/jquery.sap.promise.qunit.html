@@ -119,14 +119,14 @@
 
 		var bNative = P.toString().indexOf("[native code]") > -1;
 
-		test((bNative ? "Native" : "Custom") +" API tested", function() {
+		QUnit.test((bNative ? "Native" : "Custom") +" API tested", function(assert) {
 			var p = new P(function(res, rej) {
 				rej();
 			});
 			ok(!p._subscribers && bNative || p._subscribers && !bNative , (bNative ? "Native" : "Custom") + " Promise implementation active.");
 		});
 
-		test(sTestPrefix + "Native Support", function() {
+		QUnit.test(sTestPrefix + "Native Support", function(assert) {
 			doOnNativeSupport(function(){
 				ok(window.Promise.toString().indexOf("[native code]") > -1, "Firefox, Chrome and Safari support Promises natively.");
 			}, function(){
@@ -137,7 +137,7 @@
 
 		QUnit.module(sTestPrefix + "promise.then");
 
-		test(sTestPrefix + "API available", function() {
+		QUnit.test(sTestPrefix + "API available", function(assert) {
 			var p = new P(function(res, rej){rej();});
 			ok(typeof(p.then) == "function", "promise.then is a function");
 		});
@@ -212,7 +212,7 @@
 
 		QUnit.module(sTestPrefix + "promise.catch");
 
-		test(sTestPrefix + "API available", function() {
+		QUnit.test(sTestPrefix + "API available", function(assert) {
 			var p = new P(function(res, rej){rej();});
 			ok(typeof(p["catch"]) == "function", "promise.catch is a function");
 		});
@@ -250,7 +250,7 @@
 
 		QUnit.module(sTestPrefix + "Promise.resolve");
 
-		test(sTestPrefix + "API available", function() {
+		QUnit.test(sTestPrefix + "API available", function(assert) {
 			ok(typeof(P.resolve) == "function", "Promise.resolve is a function");
 		});
 
@@ -430,7 +430,7 @@
 
 		QUnit.module(sTestPrefix + "Promise.reject");
 
-		test(sTestPrefix + "API available", function() {
+		QUnit.test(sTestPrefix + "API available", function(assert) {
 			ok(typeof(P.reject) == "function", "Promise.reject is a function");
 		});
 
@@ -465,7 +465,7 @@
 
 		QUnit.module(sTestPrefix + "Promise.all");
 
-		test(sTestPrefix + "API available", function() {
+		QUnit.test(sTestPrefix + "API available", function(assert) {
 			ok(typeof(P.all) == "function", "Promise.all is a function");
 		});
 
@@ -555,7 +555,7 @@
 
 		QUnit.module(sTestPrefix + "Promise.race");
 
-		test(sTestPrefix + "API available", function() {
+		QUnit.test(sTestPrefix + "API available", function(assert) {
 			ok(typeof(P.race) == "function", "Promise.race is a function");
 		});
 
@@ -918,7 +918,7 @@
 			}, 30);
 		});
 
-		test(sTestPrefix + "Wrong argument in constructor", function(){
+		QUnit.test(sTestPrefix + "Wrong argument in constructor", function(assert) {
 			throws(function(){
 	            new P("not callable");
 	        }, Error);

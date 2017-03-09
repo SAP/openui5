@@ -84,7 +84,7 @@
 			}
 		});
 
-		test("sliders initial minutesStep value", function() {
+		QUnit.test("sliders initial minutesStep value", function(assert) {
 			var STEP = 17;
 			this.oTp.setMinutesStep(STEP);
 
@@ -98,7 +98,7 @@
 			equal(this.oTp._getSliders().getMinutesStep(), STEP, "initial value of the time picker for minutesStep is used");
 		});
 
-		test("setMinutesStep", function() {
+		QUnit.test("setMinutesStep", function(assert) {
 			var oSpySetProperty,
 					oSpySlidersSetMinutesStep,
 					STEP = 23;
@@ -134,7 +134,7 @@
 			ANOTHER_STEP: 14
 		});
 
-		test("setMinutesStep", function() {
+		QUnit.test("setMinutesStep", function(assert) {
 			var oSpySetProperty = this.spy(this.oSliders, "setProperty"),
 				oSpySetupLists = this.spy(this.oSliders, "_setupLists");
 
@@ -164,7 +164,7 @@
 			ANOTHER_STEP: 14
 		});
 
-		test("_updateStepAndValue", function() {
+		QUnit.test("_updateStepAndValue", function(assert) {
 			var $ValuesContainer = this.oSlider.$().find(".sapMTimePickerSlider"),
 				SELECTED_VALUE = 18,
 				STEP = this.ANOTHER_STEP,
@@ -183,7 +183,7 @@
 			equal(this.oSlider.getSelectedValue(), SELECTED_VALUE, "slider has the right selected value");
 		});
 
-		test("margins are updated on expand", function() {
+		QUnit.test("margins are updated on expand", function(assert) {
 			var oSpyUpdateMargins = this.spy(this.oSlider, "_updateMargins");
 
 			//Act
@@ -199,7 +199,7 @@
 			ok(oSpyUpdateMargins.calledTwice, "margins are updated on collapse");
 		});
 
-		test("setIsCyclic", function() {
+		QUnit.test("setIsCyclic", function(assert) {
 			this.oSlider.setIsCyclic(true);
 
 			ok(!this.oSlider.$().hasClass("sapMTimePickerSliderShort"), "slider styled correctly");
@@ -235,7 +235,7 @@
 			}
 		});
 
-		test("_fnHandleTypeValues immediately sets the selected value when a unique key is matched", function() {
+		QUnit.test("_fnHandleTypeValues immediately sets the selected value when a unique key is matched", function(assert) {
 			//Act
 			this.oSlider._fnHandleTypeValues(this.iNowTimeStamp, jQuery.sap.KeyCodes.DIGIT_2);
 
@@ -244,7 +244,7 @@
 			ok(this.oSpy.calledWith("2"), "setSelectedValue is called with the right item key");
 		});
 
-		test("_fnHandleTypeValues stacks calls that do not have exact match within a second", function() {
+		QUnit.test("_fnHandleTypeValues stacks calls that do not have exact match within a second", function(assert) {
 			//Act
 			this.oSlider._fnHandleTypeValues(this.iNowTimeStamp, jQuery.sap.KeyCodes.DIGIT_1);
 			this.oSlider._fnHandleTypeValues(this.iNowTimeStamp + 500, jQuery.sap.KeyCodes.DIGIT_1);
@@ -260,7 +260,7 @@
 			ok(this.oSpy.calledWith("11"), "setSelectedValue is called with the right item key");
 		});
 
-		test("_fnHandleTypeValues does not change selection when there is no matched item key", function() {
+		QUnit.test("_fnHandleTypeValues does not change selection when there is no matched item key", function(assert) {
 			//Act
 			this.oSlider._fnHandleTypeValues(this.iNowTimeStamp, jQuery.sap.KeyCodes.DIGIT_5);
 
@@ -287,31 +287,31 @@
 			}
 		});
 
-		test("DOM", function() {
+		QUnit.test("DOM", function(assert) {
 			strictEqual(this.oTimePicker.$().length, 1, "the control is in the DOM");
 		});
 
-		test("After creating a timePicker, the picker aggregation is empty until the picker is opened", function () {
+		QUnit.test("After creating a timePicker, the picker aggregation is empty until the picker is opened", function (assert) {
 			ok(!this.oTimePicker._getPicker(), "the picker aggregation is empty before opening the picker");
 		});
 
-		test("After creating a timePicker, the picker aggregation holds a responsivePopover instance", function() {
+		QUnit.test("After creating a timePicker, the picker aggregation holds a responsivePopover instance", function(assert) {
 			this.oTimePicker._openPicker();
 			ok(this.oTimePicker._getPicker(), "the picker aggregation is not empty");
 			strictEqual(this.oTimePicker._getPicker().getMetadata().getName(), "sap.m.ResponsivePopover", "the picker aggregation holds an instance of responsivePopover");
 		});
 
-		test("After creating new timePicker, the format property is initialized with its default value", function() {
+		QUnit.test("After creating new timePicker, the format property is initialized with its default value", function(assert) {
 			strictEqual(this.oTimePicker.getDisplayFormat(), "h:mm:ss a", "the default value is h:mm:ss a");
 		});
 
-		test("After changing the displayFormat property, the getDisplayFormat function returns the new value", function() {
+		QUnit.test("After changing the displayFormat property, the getDisplayFormat function returns the new value", function(assert) {
 			var newFormat = "hh:mm:ss";
 			this.oTimePicker.setDisplayFormat(newFormat);
 			strictEqual(this.oTimePicker.getDisplayFormat(), newFormat, "the format property was changed");
 		});
 
-		test("The method generatePickerListValues generates the correct result", function() {
+		QUnit.test("The method generatePickerListValues generates the correct result", function(assert) {
 			var iStart = 2;
 			var iEnd = 5;
 			var aList = sap.m.TimePickerSliders.prototype._generatePickerListValues(iStart, iEnd, 1, false);
@@ -323,7 +323,7 @@
 			strictEqual(parseInt(aList[aList.length-1].getText()), iEnd, "the text property of the last element of the array is correct");
 		});
 
-		test("Value help CSS class is applied only when both properties 'Enabled' and 'Editable' are true", function () {
+		QUnit.test("Value help CSS class is applied only when both properties 'Enabled' and 'Editable' are true", function (assert) {
 			//assert
 			ok(this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is applied by default ('Enabled' = true 'Editable' = true)");
 			//arrange
@@ -393,7 +393,7 @@
 			tp.destroy();
 		}
 
-		test(getID(), function() {
+		QUnit.test(getID(), function(assert) {
 			var that = this;
 			generateValuesTest([
 						{ key: "setValue", value: "13:34:00" },
@@ -406,7 +406,7 @@
 					});
 		});
 
-		test(getID(), function() {
+		QUnit.test(getID(), function(assert) {
 			var that = this;
 			generateValuesTest([
 						{ key: "setValueFormat", value: "HH:mm:ss" },
@@ -419,7 +419,7 @@
 					});
 		});
 
-		test(getID(), function() {
+		QUnit.test(getID(), function(assert) {
 			var that = this;
 			generateValuesTest([
 						{ key: "setValue", value: "4:15:55" }
@@ -431,7 +431,7 @@
 					});
 		});
 
-		test(getID(), function() {
+		QUnit.test(getID(), function(assert) {
 			var that = this;
 			generateValuesTest([
 						{ key: "setValue", value: that._defaultFormatter.format(getDate(17, 27, 43)) },
@@ -444,7 +444,7 @@
 					});
 		});
 
-		test(getID(), function() {
+		QUnit.test(getID(), function(assert) {
 			var that = this;
 			generateValuesTest([
 						{ key: "setDisplayFormat", value: "HH:mm" },
@@ -457,7 +457,7 @@
 					});
 		});
 
-		test(getID(), function() {
+		QUnit.test(getID(), function(assert) {
 			var that = this;
 			generateValuesTest([
 						{ key: "setDisplayFormat", value: "HH:mm" },
@@ -470,7 +470,7 @@
 					});
 		});
 
-		test(getID(), function() {
+		QUnit.test(getID(), function(assert) {
 			var that = this;
 			generateValuesTest([
 						{ key: "setDateValue", value: getDate(17, 27, 43) },
@@ -483,7 +483,7 @@
 					});
 		});
 
-		test(getID(), function() {
+		QUnit.test(getID(), function(assert) {
 			var that = this;
 			generateValuesTest([
 						{ key: "setDateValue", value: getDate(17, 27, 43) },
@@ -496,7 +496,7 @@
 					});
 		});
 
-		test(getID(), function() {
+		QUnit.test(getID(), function(assert) {
 			var that = this;
 			generateValuesTest([
 						{ key: "setValue", value: that._defaultFormatter.format(getDate(6, 37, 23)) },
@@ -509,7 +509,7 @@
 					});
 		});
 
-		test(getID(), function() {
+		QUnit.test(getID(), function(assert) {
 			var that = this;
 			generateValuesTest([
 						{ key: "setValue", value: that._defaultFormatter.format(getDate(6, 37, 23)) },
@@ -523,7 +523,7 @@
 					});
 		});
 
-		test(getID(), function() {
+		QUnit.test(getID(), function(assert) {
 			var that = this;
 			generateValuesTest([
 						{ key: "setValue", value: that._defaultFormatter.format(getDate(6, 37, 23)) },
@@ -537,7 +537,7 @@
 					});
 		});
 
-		test(getID(), function() {
+		QUnit.test(getID(), function(assert) {
 			generateValuesTest([
 						{ key: "setValueFormat", value: "HH:mm" },
 						{ key: "setValue", value: "18:37" },
@@ -550,7 +550,7 @@
 					});
 		});
 
-		test(getID(), function() {
+		QUnit.test(getID(), function(assert) {
 			generateValuesTest([
 						{ key: "setValueFormat", value: "HH:mm" },
 						{ key: "setValue", value: "18:37" },
@@ -563,7 +563,7 @@
 					});
 		});
 
-		test(getID(), function() {
+		QUnit.test(getID(), function(assert) {
 			generateValuesTest([
 						{ key: "setValueFormat", value: "HH:mm" },
 						{ key: "setDateValue", value: getDate(18, 37, 0) },
@@ -576,7 +576,7 @@
 					});
 		});
 
-		test("test locale", function() {
+		QUnit.test("test locale", function(assert) {
 			generateValuesTest([
 						{ key: "setValueFormat", value: "hh:mm a" },
 						{ key: "setValue", value: "11:50 nachm." },
@@ -590,7 +590,7 @@
 					});
 		});
 
-		test("test default locale", function () {
+		QUnit.test("test default locale", function (assert) {
 			var stub = sinon.stub(sap.ui.getCore().getConfiguration(), 'getFormatLocale').returns('ar');
 			//Test default browser locale set to arabic
 			generateValuesTest([
@@ -618,7 +618,7 @@
 			stub.restore();
 		});
 
-		test("Value is validated when setValue is called with null or undefined", function () {
+		QUnit.test("Value is validated when setValue is called with null or undefined", function (assert) {
 			var oTP = new sap.m.TimePicker({
 					displayFormat: "HH:mm"
 				});
@@ -644,7 +644,7 @@
 			}
 		});
 
-		test("initial focus", function() {
+		QUnit.test("initial focus", function(assert) {
 			var tp = new sap.m.TimePicker();
 			tp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -662,7 +662,7 @@
 			$firstSlider.focus.restore();
 		});
 
-		test("arrow left", function() {
+		QUnit.test("arrow left", function(assert) {
 			var tp = new sap.m.TimePicker();
 			tp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -695,7 +695,7 @@
 		});
 
 
-		test("arrow right", function() {
+		QUnit.test("arrow right", function(assert) {
 			var tp = new sap.m.TimePicker();
 			tp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -730,7 +730,7 @@
 			tp.destroy();
 		});
 
-		test("end and home", function() {
+		QUnit.test("end and home", function(assert) {
 			var tp = new sap.m.TimePicker();
 			tp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -759,7 +759,7 @@
 			tp.destroy();
 		});
 
-		test("pageup and pagedown", function() {
+		QUnit.test("pageup and pagedown", function(assert) {
 			var tp = new sap.m.TimePicker();
 			tp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -790,7 +790,7 @@
 			tp.destroy();
 		});
 
-		test("up and down", function() {
+		QUnit.test("up and down", function(assert) {
 			var oDate = new Date();
 			oDate.setHours(4);
 			var tp = new sap.m.TimePicker({
@@ -820,7 +820,7 @@
 			tp.destroy();
 		});
 
-		test("Alt + up", function() {
+		QUnit.test("Alt + up", function(assert) {
 			var oDate = new Date();
 			oDate.setHours(4);
 			var tp = new sap.m.TimePicker({
@@ -853,7 +853,7 @@
 			tp._handleOkPress.restore();
 		});
 
-		test("Alt + down", function() {
+		QUnit.test("Alt + down", function(assert) {
 			var oDate = new Date();
 			oDate.setHours(4);
 			var tp = new sap.m.TimePicker({
@@ -888,7 +888,7 @@
 
 		QUnit.module("Keyboard handling of input");
 
-		test("pageup increases the hours", function() {
+		QUnit.test("pageup increases the hours", function(assert) {
 			//arrange
 			var oDate = new Date();
 			oDate.setHours(5);
@@ -913,7 +913,7 @@
 			tp.destroy();
 		});
 
-		test("pagedown decreases the hours", function() {
+		QUnit.test("pagedown decreases the hours", function(assert) {
 			//arrange
 			var oDate = new Date();
 			oDate.setHours(5);
@@ -938,7 +938,7 @@
 			tp.destroy();
 		});
 
-		test("pageup does not have side effects", function() {
+		QUnit.test("pageup does not have side effects", function(assert) {
 			//arrange
 			var oDate = new Date();
 			oDate.setMinutes(20);
@@ -966,7 +966,7 @@
 			tp.destroy();
 		});
 
-		test("shift+pageup increases the minutes", function() {
+		QUnit.test("shift+pageup increases the minutes", function(assert) {
 			//arrange
 			var oDate = new Date();
 			oDate.setMinutes(15);
@@ -991,7 +991,7 @@
 			tp.destroy();
 		});
 
-		test("shift+pagedown decreases the minutes", function() {
+		QUnit.test("shift+pagedown decreases the minutes", function(assert) {
 			//arrange
 			var oDate = new Date();
 			oDate.setMinutes(13);
@@ -1016,7 +1016,7 @@
 			tp.destroy();
 		});
 
-		test("shift+pageup does not have side effects", function() {
+		QUnit.test("shift+pageup does not have side effects", function(assert) {
 			//arrange
 			var oDate = new Date();
 			oDate.setHours(5);
@@ -1044,7 +1044,7 @@
 			tp.destroy();
 		});
 
-		test("ctrl+shift+pageup increases the seconds", function() {
+		QUnit.test("ctrl+shift+pageup increases the seconds", function(assert) {
 			//arrange
 			var oDate = new Date();
 			oDate.setSeconds(11);
@@ -1069,7 +1069,7 @@
 			tp.destroy();
 		});
 
-		test("ctrl+shift+pagedown decreases the seconds", function() {
+		QUnit.test("ctrl+shift+pagedown decreases the seconds", function(assert) {
 			//arrange
 			var oDate = new Date();
 			oDate.setSeconds(4);
@@ -1094,7 +1094,7 @@
 			tp.destroy();
 		});
 
-		test("ctrl+pageup does not have side effects", function() {
+		QUnit.test("ctrl+pageup does not have side effects", function(assert) {
 			//arrange
 			var oDate = new Date();
 			oDate.setHours(5);
@@ -1122,7 +1122,7 @@
 			tp.destroy();
 		});
 
-		test("arrow up opens the picker", function() {
+		QUnit.test("arrow up opens the picker", function(assert) {
 			//sut
 			var tp = new sap.m.TimePicker();
 			tp.placeAt("qunit-fixture");
@@ -1144,7 +1144,7 @@
 			tp.destroy();
 		});
 
-		test("arrow down opens the picker", function() {
+		QUnit.test("arrow down opens the picker", function(assert) {
 			//sut
 			var tp = new sap.m.TimePicker();
 			tp.placeAt("qunit-fixture");
@@ -1166,7 +1166,7 @@
 			tp.destroy();
 		});
 
-		test("right moves the cursor but jumps over the immutable chars", function() {
+		QUnit.test("right moves the cursor but jumps over the immutable chars", function(assert) {
 			//arrange
 			var oDate = new Date();
 			oDate.setHours(5);
@@ -1194,7 +1194,7 @@
 			tp.destroy();
 		});
 
-		test("left moves the cursor but jumps over the immutable chars", function() {
+		QUnit.test("left moves the cursor but jumps over the immutable chars", function(assert) {
 			//arrange
 			var oDate = new Date();
 			oDate.setHours(5);
@@ -1223,7 +1223,7 @@
 
 		QUnit.module("picker interaction");
 
-		test("cancel button closes the picker", function() {
+		QUnit.test("cancel button closes the picker", function(assert) {
 			//sut
 			var tp = new sap.m.TimePicker();
 			var oBtnCancel, oPopoverCloseSpy;
@@ -1248,7 +1248,7 @@
 
 		QUnit.module("data binding");
 
-		test("binding to value property is correct", function() {
+		QUnit.test("binding to value property is correct", function(assert) {
 			//sut
 			var tp = new sap.m.TimePicker({
 				value: {
@@ -1287,7 +1287,7 @@
 			tp.destroy();
 		});
 
-		test("binding to value property overrides displayFormat property", function() {
+		QUnit.test("binding to value property overrides displayFormat property", function(assert) {
 			//sut
 			var tp = new sap.m.TimePicker({
 				value: {
@@ -1382,7 +1382,7 @@
 			}
 		});
 
-		test("fireTap expands slider", function() {
+		QUnit.test("fireTap expands slider", function(assert) {
 			//sut
 			var tp = new sap.m.TimePicker();
 			tp.placeAt("qunit-fixture");
@@ -1407,7 +1407,7 @@
 			tp.destroy();
 		});
 
-		test("_getUpdatedCycleScrollTop returns a new top value with the right offset", function() {
+		QUnit.test("_getUpdatedCycleScrollTop returns a new top value with the right offset", function(assert) {
 			//sut
 			var tp = new sap.m.TimePicker();
 			tp.placeAt("qunit-fixture");
@@ -1439,7 +1439,7 @@
 			tp.destroy();
 		});
 
-		test("_doDrag method updates the top position", function() {
+		QUnit.test("_doDrag method updates the top position", function(assert) {
 			//sut
 			var tp = new sap.m.TimePicker();
 			tp.placeAt("qunit-fixture");
@@ -1468,7 +1468,7 @@
 			tp.destroy();
 		});
 
-		test("_endDrag method initiates an animation on the slider's content", function() {
+		QUnit.test("_endDrag method initiates an animation on the slider's content", function(assert) {
 			//sut
 			var tp = new sap.m.TimePicker();
 			tp.placeAt("qunit-fixture");
@@ -1499,7 +1499,7 @@
 			tp.destroy();
 		});
 
-		test("tap on the input icon open/closes the picker", function() {
+		QUnit.test("tap on the input icon open/closes the picker", function(assert) {
 			var tp = new sap.m.TimePicker();
 			tp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -1518,7 +1518,7 @@
 			tp.destroy();
 		});
 
-		test("mouse wheel scrolls the sliders proportionally to the speed", function() {
+		QUnit.test("mouse wheel scrolls the sliders proportionally to the speed", function(assert) {
 			//sut
 			var tp = new sap.m.TimePicker({
 					displayFormat: "HH:mm",
@@ -1558,7 +1558,7 @@
 			tp.destroy();
 		});
 
-		test("focussed input is styled correctly", function() {
+		QUnit.test("focussed input is styled correctly", function(assert) {
 			var tp = new sap.m.TimePicker();
 			tp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -1580,7 +1580,7 @@
 			tp.destroy();
 		});
 
-		test("_getInputValue", function() {
+		QUnit.test("_getInputValue", function(assert) {
 			var tp = new sap.m.TimePicker();
 			tp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -1612,7 +1612,7 @@
 			}
 		});
 
-		test("displayFormat after value", function() {
+		QUnit.test("displayFormat after value", function(assert) {
 			//system under test
 			var tpId = "tp" + ++caseIndex,
 					tp = new sap.m.TimePicker(tpId, {
@@ -1656,7 +1656,7 @@
 			}
 		});
 
-		test("focus on the input does not open the picker on mobile", function() {
+		QUnit.test("focus on the input does not open the picker on mobile", function(assert) {
 			//system under test
 			var tp = new sap.m.TimePicker('tp');
 
@@ -1757,7 +1757,7 @@
 			}
 		});
 
-		test("getAccessibilityInfo", function() {
+		QUnit.test("getAccessibilityInfo", function(assert) {
 			//arrange
 			var oInfo;
 			this.oTP.setValue("Value");
@@ -1794,7 +1794,7 @@
 			strictEqual(oInfo.description, "10-32-30 Placeholder Tooltip", "Description");
 		});
 
-		test("Dynamic selection change announcement", function () {
+		QUnit.test("Dynamic selection change announcement", function (assert) {
 			this.clock = sinon.useFakeTimers();
 			//arrange
 			var oSliders, aColumns;
@@ -1820,7 +1820,7 @@
 			this.clock.restore();
 		});
 
-		test("_hasLabelReferencing", function() {
+		QUnit.test("_hasLabelReferencing", function(assert) {
 			//prepare
 			var oRenderer = this.oTP.getRenderer(), oLabel;
 			//act & assert
@@ -1846,7 +1846,7 @@
 		 3	no					yes					| "TimePicker"							no
 		 4	no					no					| "TimePicker"							no
 		 */
-		test("Placeholder with labelFor combination", function() {
+		QUnit.test("Placeholder with labelFor combination", function(assert) {
 			var fnCheckAriaAttribute,
 					sTPDefaultDescribedBy = this.oRB.getText("TIMEPICKER_SCREENREADER_TAG"),
 					sTPAriaDescribedBy = this.oRB.getText("TIMEPICKER_WITH_PH_SCREENREADER_TAG", this.oTP._getFormat());
@@ -1973,23 +1973,23 @@
 		});
 
 		//valid
-		test("allows input of valid time string - HH format, hours < 9", function() {
+		QUnit.test("allows input of valid time string - HH format, hours < 9", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("HH:mm", "0615", "06:15");
 		});
 
-		test("allows input of valid time string - HH format, hours === 11", function() {
+		QUnit.test("allows input of valid time string - HH format, hours === 11", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("HH:mm", "1115", "11:15");
 		});
 
-		test("allows input of valid time string - HH format, hours > 12", function() {
+		QUnit.test("allows input of valid time string - HH format, hours > 12", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("HH:mm", "1715", "17:15");
 		});
 
-		test("allows input of valid time string - hh format, hours < 9", function() {
+		QUnit.test("allows input of valid time string - hh format, hours < 9", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("hh:mm", "0615", "06:15");
 		});
 
-		test("allows input of valid time string - hh format, hours === 12", function() {
+		QUnit.test("allows input of valid time string - hh format, hours === 12", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("hh:mm", "1215", "12:15");
 		});
 
@@ -1998,153 +1998,153 @@
 		//time semantics - shifts and replaces
 		//first number in hour
 		//no leading zero
-		test("1 for first hour digit is valid - h format, pos 0", function() {
+		QUnit.test("1 for first hour digit is valid - h format, pos 0", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("h:mm", "115", "11:5-"); //not " 1:15"
 		});
 
-		test("2 for first hour digit are preceded by space - h format, pos 0", function() {
+		QUnit.test("2 for first hour digit are preceded by space - h format, pos 0", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("h:mm", "215", " 2:15");
 		});
 
-		test("numbers > 2 for first hour digit are preceded by space - h format, pos 0", function() {
+		QUnit.test("numbers > 2 for first hour digit are preceded by space - h format, pos 0", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("h:mm", "315", " 3:15");
 		});
 
 
 
-		test("2 for first hour digit is valid - H format, pos 0", function() {
+		QUnit.test("2 for first hour digit is valid - H format, pos 0", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("H:mm", "215", "21:5-"); //not " 2:15"
 		});
 
-		test("numbers > 2 for first hour digit are preceded by space - H format, pos 0", function() {
+		QUnit.test("numbers > 2 for first hour digit are preceded by space - H format, pos 0", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("H:mm", "315", " 3:15");
 		});
 
 
-		test("space is valid for hours - H format, pos 0", function() {
+		QUnit.test("space is valid for hours - H format, pos 0", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("H:mm", " 115", " 1:15"); //not "11:5-"
 		});
 
 		//...could have more of those
 
-		test("0 is replaced with space for hours - h format, pos 0", function() {
+		QUnit.test("0 is replaced with space for hours - h format, pos 0", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("h:mm", "0115", " 1:15");
 		});
 
-		test("0 is preceeded with space for hours - H format, pos 0", function() {
+		QUnit.test("0 is preceeded with space for hours - H format, pos 0", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("H:mm", "0115", " 0:11");
 		});
 
 
 		//leading zero
-		test("1 for first hour digit is valid - hh format, pos 0", function() {
+		QUnit.test("1 for first hour digit is valid - hh format, pos 0", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("hh:mm", "115", "11:5-");
 		});
 
-		test("2 for first hour digit are preceded by 0 - hh format, pos 0", function() {
+		QUnit.test("2 for first hour digit are preceded by 0 - hh format, pos 0", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("hh:mm", "215", "02:15");
 		});
 
 
 
-		test("2 for first hour digit is valid - HH format, pos 0", function() {
+		QUnit.test("2 for first hour digit is valid - HH format, pos 0", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("HH:mm", "215", "21:5-"); //not " 2:15"
 		});
 
-		test("numbers > 2 for first hour digit are preceded by 0 - HH format, pos 0", function() {
+		QUnit.test("numbers > 2 for first hour digit are preceded by 0 - HH format, pos 0", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("HH:mm", "415", "04:15");
 		});
 
 
 
 
-		test("space is replaced with 0 for hours - HH format, pos 0", function() {
+		QUnit.test("space is replaced with 0 for hours - HH format, pos 0", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("HH:mm", " 115", "01:15");
 		});
 
-		test("0 is valid for hours - hh format, pos 0", function() {
+		QUnit.test("0 is valid for hours - hh format, pos 0", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("hh:mm", "0115", "01:15"); //not "11:5-"
 		});
 
 
 
 		//invalid (partially valid)
-		test("do not allow letters, placeholders, immutables and asterisks - HH format", function() {
+		QUnit.test("do not allow letters, placeholders, immutables and asterisks - HH format", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("HH:mm", "-:aQ*?spam1", "1-:--");
 		});
 
-		test("do not allow letters, placeholders, immutables and asterisks - hh format", function() {
+		QUnit.test("do not allow letters, placeholders, immutables and asterisks - hh format", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("hh:mm", "-1:spamaQ1*?", "11:--");
 		});
 
 		//second number in hour
-		test("do not allow numbers > 2 for 2nd number in hour if 1st === 1 - hh format", function() {
+		QUnit.test("do not allow numbers > 2 for 2nd number in hour if 1st === 1 - hh format", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("hh:mm", "13", "1-:--");
 		});
 
-		test("allow numbers <= 2 for 2nd number in hour if 1st === 1 - hh format", function() {
+		QUnit.test("allow numbers <= 2 for 2nd number in hour if 1st === 1 - hh format", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("hh:mm", "12", "12:--");
 		});
 
-		test("do not allow numbers > 2 for 2nd number in hour if 1st === 1 - h format", function() {
+		QUnit.test("do not allow numbers > 2 for 2nd number in hour if 1st === 1 - h format", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("h:mm", "13", "1-:--");
 		});
 
-		test("allow numbers <= 2 for 2nd number in hour if 1st === 1 - h format", function() {
+		QUnit.test("allow numbers <= 2 for 2nd number in hour if 1st === 1 - h format", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("h:mm", "12", "12:--");
 		});
 
 
 
-		test("do not allow numbers > 3 for 2nd number in hour if 1st === 2 - HH format", function() {
+		QUnit.test("do not allow numbers > 3 for 2nd number in hour if 1st === 2 - HH format", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("HH:mm", "24", "2-:--");
 		});
 
-		test("allow numbers <= 3 for 2nd number in hour if 1st === 2 - HH format", function() {
+		QUnit.test("allow numbers <= 3 for 2nd number in hour if 1st === 2 - HH format", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("HH:mm", "23", "23:--");
 		});
 
-		test("do not allow numbers > 3 for 2nd number in hour if 1st === 2 - H format", function() {
+		QUnit.test("do not allow numbers > 3 for 2nd number in hour if 1st === 2 - H format", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("H:mm", "24", "2-:--");
 		});
 
-		test("allow numbers <= 3 for 2nd number in hour if 1st === 2 - H format", function() {
+		QUnit.test("allow numbers <= 3 for 2nd number in hour if 1st === 2 - H format", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("H:mm", "23", "23:--");
 		});
 
 		//first number in minutes
-		test("numbers > 5 for 1st number in minutes are preceded by 0", function() {
+		QUnit.test("numbers > 5 for 1st number in minutes are preceded by 0", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("HH:mm", "226", "22:06");
 		});
 
-		test("allow numbers <= 5 for 1st number in minutes", function() {
+		QUnit.test("allow numbers <= 5 for 1st number in minutes", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("HH:mm", "225", "22:5-");
 		});
 
 		//we probably do not need this separately
-		test("allow 0 for 1st number in minutes", function() {
+		QUnit.test("allow 0 for 1st number in minutes", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("HH:mm", "220", "22:0-");
 		});
 
 		//first number in seconds
-		test("numbers > 5 for 1st number in seconds are preceded by 0", function() {
+		QUnit.test("numbers > 5 for 1st number in seconds are preceded by 0", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("HH:mm:ss", "22556", "22:55:06");
 		});
 
-		test("allow numbers <= 5 for 1st number in seconds", function() {
+		QUnit.test("allow numbers <= 5 for 1st number in seconds", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("HH:mm:ss", "22595", "22:59:5-");
 		});
 
 		//am/pm values type assistence
-		test("am autocompletes the value on first different letter", function() {
+		QUnit.test("am autocompletes the value on first different letter", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("hh a", "01A", "01 AM");
 		});
 
-		test("pm autocompletes the value on first different letter", function() {
+		QUnit.test("pm autocompletes the value on first different letter", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("hh a", "01P", "01 PM");
 		});
 
-		test("on enter '15:--:--', autocomplete to '15:00:00'", function() {
+		QUnit.test("on enter '15:--:--', autocomplete to '15:00:00'", function(assert) {
 			//system under test
 			var oTp = new sap.m.TimePicker({
 				displayFormat: "HH:mm:ss"
@@ -2165,7 +2165,7 @@
 			oTp.destroy();
 		});
 
-		test("on enter '15:1-:--', autocomplete to '15:01:00'", function() {
+		QUnit.test("on enter '15:1-:--', autocomplete to '15:01:00'", function(assert) {
 			//system under test
 			var oTp = new sap.m.TimePicker({
 				displayFormat: "HH:mm:ss"
@@ -2185,7 +2185,7 @@
 			oTp.destroy();
 		});
 
-		test("on enter '07:-- --', autocomplete to '07:00 AM'", function() {
+		QUnit.test("on enter '07:-- --', autocomplete to '07:00 AM'", function(assert) {
 			this.clock = sinon.useFakeTimers();
 
 			//system under test
@@ -2211,7 +2211,7 @@
 			this.clock.restore();
 		});
 
-		test("am match start - then autocomplete on any letter", function() {
+		QUnit.test("am match start - then autocomplete on any letter", function(assert) {
 			//system under test
 			var tp = new sap.m.TimePicker({
 				valueFormat: "hh a",
@@ -2240,7 +2240,7 @@
 			tp.destroy();
 		});
 
-		test("minutes only values are correctly synced with the input", function() {
+		QUnit.test("minutes only values are correctly synced with the input", function(assert) {
 			//system under test
 			var oTp = new sap.m.TimePicker({
 				displayFormat: "mm"
@@ -2261,7 +2261,7 @@
 			oTp.destroy();
 		});
 
-		test("pm match start - then autocomplete on any letter", function() {
+		QUnit.test("pm match start - then autocomplete on any letter", function(assert) {
 			//system under test
 			var tp = new sap.m.TimePicker({
 				valueFormat: "hh a",
@@ -2290,7 +2290,7 @@
 			tp.destroy();
 		});
 
-		test("TimeSemanticMaskHelper.replaceChar replaces any char when am or pm value match is the only possible", function() {
+		QUnit.test("TimeSemanticMaskHelper.replaceChar replaces any char when am or pm value match is the only possible", function(assert) {
 			//system under test
 			var tp = new sap.m.TimePicker({
 				displayFormat: "hh a"
@@ -2308,7 +2308,7 @@
 			tp.destroy();
 		});
 
-		test("TimeSemanticMaskHelper.replaceChar replaces with unique value and completes with spaces when am,pm length differs", function() {
+		QUnit.test("TimeSemanticMaskHelper.replaceChar replaces with unique value and completes with spaces when am,pm length differs", function(assert) {
 			//system under test
 			var tp = new sap.m.TimePicker({
 				localeId: "de_DE",
@@ -2329,7 +2329,7 @@
 			tp.destroy();
 		});
 
-		test("TimeSemanticMaskHelper.replaceChar any char completes am pm values to the first difference", function() {
+		QUnit.test("TimeSemanticMaskHelper.replaceChar any char completes am pm values to the first difference", function(assert) {
 			sinon.stub(sap.ui.core.LocaleData.prototype, "getDayPeriods").returns([ "MA", "MP"]);
 
 			//system under test
@@ -2351,7 +2351,7 @@
 			tp.destroy();
 		});
 
-		test("TimeSemanticMaskHelper.replaceChar correct char only completes am pm values on the position with difference", function() {
+		QUnit.test("TimeSemanticMaskHelper.replaceChar correct char only completes am pm values on the position with difference", function(assert) {
 			sinon.stub(sap.ui.core.LocaleData.prototype, "getDayPeriods").returns([ "MABC", "MPBC"]);
 
 			//system under test
@@ -2373,7 +2373,7 @@
 			tp.destroy();
 		});
 
-		test("TimeSemanticMaskHelper.replaceChar completes am pm values on a middle position with difference, to the end", function() {
+		QUnit.test("TimeSemanticMaskHelper.replaceChar completes am pm values on a middle position with difference, to the end", function(assert) {
 			sinon.stub(sap.ui.core.LocaleData.prototype, "getDayPeriods").returns([ "MABC", "MPBC"]);
 
 			//system under test
@@ -2395,7 +2395,7 @@
 			tp.destroy();
 		});
 
-		test("TimeSemanticMaskHelper.replaceChar autocomplete not case sensitive: a fills AM", function() {
+		QUnit.test("TimeSemanticMaskHelper.replaceChar autocomplete not case sensitive: a fills AM", function(assert) {
 			sinon.stub(sap.ui.core.LocaleData.prototype, "getDayPeriods").returns([ "AM", "PM"]);
 
 			//system under test
@@ -2417,7 +2417,7 @@
 			tp.destroy();
 		});
 
-		test("TimeSemanticMaskHelper constructor", function() {
+		QUnit.test("TimeSemanticMaskHelper constructor", function(assert) {
 			//system under test
 			var tp = new sap.m.TimePicker({
 				localeId: "en_US",
@@ -2450,7 +2450,7 @@
 			equal(tp._oTimeSemanticMaskHelper.iSecondNumber1Index, 8, "Seconds start index");
 		});
 
-		test("TimeSemanticMaskHelper.prototype.formatValueWithLeadingTrailingSpaces", function() {
+		QUnit.test("TimeSemanticMaskHelper.prototype.formatValueWithLeadingTrailingSpaces", function(assert) {
 			//system under test
 			var tp = new sap.m.TimePicker({
 				localeId: "en_US",
@@ -2470,7 +2470,7 @@
 			equal(tp._oTimeSemanticMaskHelper.formatValueWithLeadingTrailingSpaces("AM1:22:52"), "AM 1:22:52", "AM1:22:52");
 		});
 
-		test("TimeSemanticMaskHelper.prototype.stripValueOfLeadingSpaces", function() {
+		QUnit.test("TimeSemanticMaskHelper.prototype.stripValueOfLeadingSpaces", function(assert) {
 			//system under test
 			var tp = new sap.m.TimePicker({
 				localeId: "en_US",
@@ -2490,7 +2490,7 @@
 			equal(tp._oTimeSemanticMaskHelper.stripValueOfLeadingSpaces("AM 1:22:52"), "AM1:22:52", "AM 1:22:52");
 		});
 
-		test("TimeSemanticMaskHelper initialization destroyes any previous instances", function() {
+		QUnit.test("TimeSemanticMaskHelper initialization destroyes any previous instances", function(assert) {
 			//prepare
 			var tp = new sap.m.TimePicker(),
 					oSpyDestroy;
@@ -2537,7 +2537,7 @@
 			}
 		});
 
-		test("change event fires only when the value really changed", function() {
+		QUnit.test("change event fires only when the value really changed", function(assert) {
 			//system under test
 			var tp = new sap.m.TimePicker({
 				valueFormat: "hh mm",
@@ -2567,7 +2567,7 @@
 		});
 
 		//BCP: 1670343229
-		test("change event fires on second change after the value is set in the change handler", function() {
+		QUnit.test("change event fires on second change after the value is set in the change handler", function(assert) {
 			//system under test
 			var tp = new sap.m.TimePicker({
 				valueFormat: "hh mm",
@@ -2597,7 +2597,7 @@
 			tp.destroy();
 		});
 
-		test("change event fires when the value is reset", function() {
+		QUnit.test("change event fires when the value is reset", function(assert) {
 			var oTpFocusDomRef = jQuery(this.oTp.getFocusDomRef());
 
 			//system under test
@@ -2614,14 +2614,14 @@
 			equals(this.oSpy.callCount, 2, "changed event fired when the value is reset");
 		});
 
-		test("upon enter, change event fires only once", function() {
+		QUnit.test("upon enter, change event fires only once", function(assert) {
 			//act
 			triggerMultipleKeypress(this.oTp, "09");
 			qutils.triggerKeydown(jQuery(this.oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
 			equals(this.oSpy.callCount, 1, "changed event must be fired only once");
 		});
 
-		test("upon focusin of timepicker input, no picker should be visible", function () {
+		QUnit.test("upon focusin of timepicker input, no picker should be visible", function (assert) {
 			//arrange (open picker in order it to be initialized and rendered
 			this.oTp._openPicker();
 			this.clock.tick(1000);
@@ -2633,7 +2633,7 @@
 			strictEqual(this.oTp._getPicker().$().css('display'), 'none', "The picker css display property is none");
 		});
 
-		test("tap on the input icon on Tablet opens the picker", function() {
+		QUnit.test("tap on the input icon on Tablet opens the picker", function(assert) {
 			// releated to BCP: 1670338556
 			var tp = new sap.m.TimePicker();
 			tp.placeAt("qunit-fixture");
@@ -2660,7 +2660,7 @@
 			tp.destroy();
 		});
 
-		test("upon focusout, change event fires only once", function() {
+		QUnit.test("upon focusout, change event fires only once", function(assert) {
 			//system under test
 			var	oTp2 = new sap.m.TimePicker({
 					valueFormat: "hh mm"
@@ -2678,7 +2678,7 @@
 			oTp2.destroy();
 		});
 
-		test("upon focusout, change event not fired when no value change", function() {
+		QUnit.test("upon focusout, change event not fired when no value change", function(assert) {
 			//system under test
 			var	oTp2 = new sap.m.TimePicker({
 				valueFormat: "hh:mm"

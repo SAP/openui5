@@ -116,7 +116,7 @@
 
 <script>
 	QUnit.module("Basics");
-	test("All listeners registered", function() {
+	QUnit.test("All listeners registered", function(assert) {
 		expect(1);
 
 		var id = "sapUiIntervalTrigger-event";
@@ -155,7 +155,7 @@
 		}, 250);
 	});
 
-	test("Remove listeners", function() {
+	QUnit.test("Remove listeners", function(assert) {
 		expect(1);
 		oTrigger.removeListener(aListeners[0].trigger, aListeners[0]);
 		oTrigger.removeListener(aListeners[1].trigger, aListeners[1]);

@@ -89,7 +89,7 @@
 
 			QUnit.module("Rendering");
 
-			test("rendered days", function() {
+			QUnit.test("rendered days", function(assert) {
 				var $DatesRow = sap.ui.getCore().byId("Cal1").getAggregation("month")[0].$();
 				var aWeekHeaders = $DatesRow.find(".sapUiCalWH");
 				var aDays = $DatesRow.find(".sapUiCalItem");
@@ -117,13 +117,13 @@
 				equal(iStartDateChanged, 0, "no startDateChangeEvent fired by rendering");
 			});
 
-			test("width", function() {
+			QUnit.test("width", function(assert) {
 				ok(!jQuery("#Cal1").attr("style"), "Calendar1: no width set");
 				equal(jQuery("#Cal2").css("width"), "1000px", "Calendar2: width set");
 			});
 
 			QUnit.module("change date via API");
-			test("setStartDate", function() {
+			QUnit.test("setStartDate", function(assert) {
 				iStartDateChanged = 0;
 				oCal1.setStartDate(new Date("2015", "2", "10"));
 				var $DatesRow = sap.ui.getCore().byId("Cal1").getAggregation("month")[0].$();
@@ -133,7 +133,7 @@
 				equal(iStartDateChanged, 0, "no startDateChangeEvent fired by API change");
 			});
 
-			test("focusDate", function() {
+			QUnit.test("focusDate", function(assert) {
 				iStartDateChanged = 0;
 				oCal1.focusDate(new Date("2015", "2", "11"));
 				var $DatesRow = sap.ui.getCore().byId("Cal1").getAggregation("month")[0].$();
@@ -150,7 +150,7 @@
 			});
 
 			QUnit.module("change date via navigation");
-			test("next/prev days", function() {
+			QUnit.test("next/prev days", function(assert) {
 				iStartDateChanged = 0;
 				qutils.triggerEvent("click", "Cal1--Head-next");
 				equal(iStartDateChanged, 1, "Calendar1: startDateChangeEvent fired");
@@ -170,7 +170,7 @@
 			});
 
 			QUnit.module("MonthPicker");
-			test("displayed months", function() {
+			QUnit.test("displayed months", function(assert) {
 				qutils.triggerEvent("click", "Cal1--Head-B1");
 				var $MonthPicker = sap.ui.getCore().byId("Cal1").getAggregation("monthPicker").$();
 				var aMonths = $MonthPicker.find(".sapUiCalItem");
@@ -202,7 +202,7 @@
 				qutils.triggerEvent("click", "Cal3--Head-B1");
 			});
 
-			test("change block", function() {
+			QUnit.test("change block", function(assert) {
 				qutils.triggerEvent("click", "Cal1--Head-prev");
 				var $MonthPicker = sap.ui.getCore().byId("Cal1").getAggregation("monthPicker").$();
 				var aMonths = $MonthPicker.find(".sapUiCalItem");
@@ -226,7 +226,7 @@
 			});
 
 			QUnit.module("YearPicker");
-			test("displayed years", function() {
+			QUnit.test("displayed years", function(assert) {
 				qutils.triggerEvent("click", "Cal1--Head-B2");
 				var $YearPicker = sap.ui.getCore().byId("Cal1").getAggregation("yearPicker").$();
 				var aYears = $YearPicker.find(".sapUiCalItem");
@@ -252,7 +252,7 @@
 				qutils.triggerEvent("click", "Cal3--Head-B2");
 			});
 
-			test("change block", function() {
+			QUnit.test("change block", function(assert) {
 				qutils.triggerEvent("click", "Cal1--Head-prev");
 				var $YearPicker = sap.ui.getCore().byId("Cal1").getAggregation("yearPicker").$();
 				var aYears = $YearPicker.find(".sapUiCalItem");
@@ -268,7 +268,7 @@
 				qutils.triggerEvent("click", "Cal2--Head-B2");
 			});
 
-			test("Min/Max", function() {
+			QUnit.test("Min/Max", function(assert) {
 				oCal2.setStartDate(new Date(2000, 1, 2));
 				ok(!jQuery("#Cal2--Head-prev").hasClass("sapUiCalDsbl"), "Calendar2: Previous Button enabled");
 				ok(!jQuery("#Cal2--Head-next").hasClass("sapUiCalDsbl"), "Calendar2: Next Button enabled");
@@ -313,7 +313,7 @@
 			});
 
 			QUnit.module("Focus private API");
-			test("_getFocusedDate()", function() {
+			QUnit.test("_getFocusedDate()", function(assert) {
 				var oOldFocusedDate = oCal4._oFocusedDate;
 
 				//Act

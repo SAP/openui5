@@ -100,7 +100,7 @@
 		}
 	});
 
-	test("Mockserver initialisation",  function(){
+	QUnit.test("Mockserver initialisation",  function(assert){
 		oModel = initModel();
 		ok(oMockServer,"MockServer created");
 		ok(oMockServer.isStarted(), "Mock server is started");

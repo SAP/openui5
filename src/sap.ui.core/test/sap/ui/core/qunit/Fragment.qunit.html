@@ -108,7 +108,7 @@
 			};
 
 
-			test("XML Fragment loaded from file", function() {
+			QUnit.test("XML Fragment loaded from file", function(assert) {
 				var oFragment = sap.ui.xmlfragment("testdata.fragments.XMLTestFragment", oDummyController);
 				oFragment.placeAt("content1");
 				sap.ui.getCore().applyChanges();
@@ -133,7 +133,7 @@
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
 
-			test("XML Fragment loaded from file with given Fragment ID", function() {
+			QUnit.test("XML Fragment loaded from file with given Fragment ID", function(assert) {
 				var oFragment = sap.ui.xmlfragment("myXmlFrag", "testdata.fragments.XMLTestFragment", oDummyController);
 				oFragment.placeAt("content1");
 				sap.ui.getCore().applyChanges();
@@ -158,7 +158,7 @@
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
 
-			test("XML Fragment loaded from file with given Fragment ID and root control ID", function() {
+			QUnit.test("XML Fragment loaded from file with given Fragment ID and root control ID", function(assert) {
 				var oFragment = sap.ui.xmlfragment("myXmlFrag1", "testdata.fragments.XMLTestFragmentWithId", oDummyController);
 				oFragment.placeAt("content1");
 				sap.ui.getCore().applyChanges();
@@ -173,7 +173,7 @@
 			});
 
 
-			test("HTML Fragment loaded from file", function() {
+			QUnit.test("HTML Fragment loaded from file", function(assert) {
 				var oFragment = sap.ui.htmlfragment("testdata.fragments.HTMLTestFragment", oDummyController);
 				oFragment.placeAt("content1");
 				sap.ui.getCore().applyChanges();
@@ -198,7 +198,7 @@
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
 
-			test("HTML Fragment loaded from file with given Fragment ID", function() {
+			QUnit.test("HTML Fragment loaded from file with given Fragment ID", function(assert) {
 				var oFragment = sap.ui.htmlfragment("myHtmlFrag", "testdata.fragments.HTMLTestFragment", oDummyController);
 				oFragment.placeAt("content1");
 				sap.ui.getCore().applyChanges();
@@ -224,7 +224,7 @@
 			});
 
 
-			test("HTML Fragment loaded from file with given Fragment ID and root control ID", function() {
+			QUnit.test("HTML Fragment loaded from file with given Fragment ID and root control ID", function(assert) {
 				var oFragment = sap.ui.htmlfragment("myHtmlFrag1", "testdata.fragments.HTMLTestFragmentWithId", oDummyController);
 				oFragment.placeAt("content1");
 				sap.ui.getCore().applyChanges();
@@ -240,7 +240,7 @@
 
 
 
-			test("JS Fragment loaded from file", function() {
+			QUnit.test("JS Fragment loaded from file", function(assert) {
 				var oFragment = sap.ui.jsfragment("testdata.fragments.JSTestFragment", oDummyController);
 				oFragment.placeAt("content1");
 				sap.ui.getCore().applyChanges();
@@ -265,7 +265,7 @@
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
 
-			test("JS Fragment loaded from file with given Fragment ID", function() {
+			QUnit.test("JS Fragment loaded from file with given Fragment ID", function(assert) {
 				var oFragment = sap.ui.jsfragment("myJsFrag", "testdata.fragments.JSTestFragment", oDummyController);
 				oFragment.placeAt("content1");
 				sap.ui.getCore().applyChanges();
@@ -291,7 +291,7 @@
 			});
 
 
-			test("JS Fragment loaded from file with given Fragment ID and root control ID", function() {
+			QUnit.test("JS Fragment loaded from file with given Fragment ID and root control ID", function(assert) {
 				var oFragment = sap.ui.jsfragment("myJsFrag1", "testdata.fragments.JSTestFragmentWithId", oDummyController);
 				oFragment.placeAt("content1");
 				sap.ui.getCore().applyChanges();
@@ -310,13 +310,13 @@
 
 			var oViewWithFragments;
 
-			test("Inline Fragments preconditions", function(){
+			QUnit.test("Inline Fragments preconditions", function(assert) {
 				ok(!jQuery.sap.domById("jsfragbtn"), "Fragment should not be rendered");
 				ok(!jQuery.sap.domById("xmlfragbtn"), "Fragment should not be rendered");
 				ok(!jQuery.sap.domById("htmlfragbtn"), "Fragment should not be rendered");
 			});
 
-			test("JSView creation with Fragments used inside", function() {
+			QUnit.test("JSView creation with Fragments used inside", function(assert) {
 				oViewWithFragments = sap.ui.jsview("myView", "example.fragment.test");
 				oViewWithFragments.placeAt("content2");
 				sap.ui.getCore().applyChanges();
@@ -324,7 +324,7 @@
 				ok(jQuery.sap.domById("myView"), "JSView should be rendered");
 			});
 
-			test("Inline JS Fragment", function() {
+			QUnit.test("Inline JS Fragment", function(assert) {
 				expect(2); // incl. Button click handler
 
 				ok(jQuery.sap.domById("jsfragbtn"), "Fragment should be rendered");
@@ -333,7 +333,7 @@
 				qutils.triggerEvent("click", "jsfragbtn");
 			});
 
-			test("Inline XML Fragment", function() {
+			QUnit.test("Inline XML Fragment", function(assert) {
 				expect(2); // incl. Button click handler
 
 				ok(jQuery.sap.domById("xmlfragbtn"), "Fragment should be rendered");
@@ -342,7 +342,7 @@
 				qutils.triggerEvent("click", "xmlfragbtn");
 			});
 
-			test("Inline HTML Fragment", function() {
+			QUnit.test("Inline HTML Fragment", function(assert) {
 				expect(2); // incl. Button click handler
 
 				ok(jQuery.sap.domById("htmlfragbtn"), "Fragment should be rendered");
@@ -360,7 +360,7 @@
 
 			var DATABOUND_TEXT_IN_VIEW = "Text from Databinding in View";
 
-			test("XMLView Rendering", function() {
+			QUnit.test("XMLView Rendering", function(assert) {
 				oXmlView = sap.ui.xmlview("testdata.fragments.XMLViewWithFragments");
 				oXmlView.placeAt("content3");
 				sap.ui.getCore().applyChanges();
@@ -390,7 +390,7 @@
 			});
 
 
-			test("XML Fragment in XMLView", function() {
+			QUnit.test("XML Fragment in XMLView", function(assert) {
 				expect(8); // incl. Controller function on press
 
 				var id = oXmlFragmentInXmlView.getId();
@@ -411,7 +411,7 @@
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
 
-			test("XML Fragment in XMLView with given Fragment ID", function() {
+			QUnit.test("XML Fragment in XMLView with given Fragment ID", function(assert) {
 				expect(8); // incl. Controller function on press
 
 				var id = oXmlFragmentWithIdInXmlView.getId();
@@ -434,7 +434,7 @@
 
 
 
-			test("JS Fragment in XMLView", function() {
+			QUnit.test("JS Fragment in XMLView", function(assert) {
 				expect(8); // incl. Controller function on press
 
 				var id = oJsFragmentInXmlView.getId();
@@ -455,7 +455,7 @@
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
 
-			test("JS Fragment in XMLView with given Fragment ID", function() {
+			QUnit.test("JS Fragment in XMLView with given Fragment ID", function(assert) {
 				expect(8); // incl. Controller function on press
 
 				var id = oJsFragmentWithIdInXmlView.getId();
@@ -478,7 +478,7 @@
 
 
 
-			test("HTML Fragment in XMLView", function() {
+			QUnit.test("HTML Fragment in XMLView", function(assert) {
 				expect(8); // incl. Controller function on press
 
 				var id = oHtmlFragmentInXmlView.getId();
@@ -499,7 +499,7 @@
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
 
-			test("HTML Fragment in XMLView with given Fragment ID", function() {
+			QUnit.test("HTML Fragment in XMLView with given Fragment ID", function(assert) {
 				expect(8); // incl. Controller function on press
 
 				var id = oHtmlFragmentWithIdInXmlView.getId();
@@ -621,7 +621,7 @@
 
 			QUnit.module("Fragments with no Controller");
 
-			test("XML Fragment loaded from file", function() {
+			QUnit.test("XML Fragment loaded from file", function(assert) {
 				expect(2);
 				var oFragment = sap.ui.xmlfragment("testdata.fragments.XMLTestFragmentNoController");
 				oFragment.placeAt("content4");
@@ -635,7 +635,7 @@
 				equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
 			});
 
-			test("JS Fragment loaded from file", function() {
+			QUnit.test("JS Fragment loaded from file", function(assert) {
 				expect(3); // including one check in the View' createContent method
 				var oFragment = sap.ui.jsfragment("testdata.fragments.JSTestFragmentNoController");
 				oFragment.placeAt("content4");
@@ -649,7 +649,7 @@
 				equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
 			});
 
-			test("HTML Fragment loaded from file", function() {
+			QUnit.test("HTML Fragment loaded from file", function(assert) {
 				expect(2);
 				var oFragment = sap.ui.htmlfragment("testdata.fragments.HTMLTestFragmentNoController");
 				oFragment.placeAt("content4");
@@ -673,7 +673,7 @@
 				}
 			});
 
-			test("Unnamed Model", function() {
+			QUnit.test("Unnamed Model", function(assert) {
 				var oXMLView = sap.ui.xmlview("unnamedView", "my.UnnamedView").placeAt("binding");
 				sap.ui.getCore().applyChanges();
 
@@ -684,7 +684,7 @@
 
 			});
 
-			test("Named Model", function() {
+			QUnit.test("Named Model", function(assert) {
 				var oXMLView = sap.ui.xmlview("namedView", "my.View").placeAt("binding");
 				sap.ui.getCore().applyChanges();
 

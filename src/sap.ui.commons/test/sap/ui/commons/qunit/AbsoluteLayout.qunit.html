@@ -185,13 +185,13 @@
 
 		QUnit.module("Control API");
 
-		test("Property Defaults", function() {
+		QUnit.test("Property Defaults", function(assert) {
 			equal(layout2.getVisible(), true, "Default 'visible':");
 			equal(layout2.getWidth(), "100%", "Default 'width':");
 			equal(layout2.getHeight(), "100%", "Default 'height':");
 		});
 
-		test("Property Custom Values", function() {
+		QUnit.test("Property Custom Values", function(assert) {
 			layout2.setVisible(false);
 			layout2.setWidth("300px");
 			layout2.setHeight("20px");
@@ -205,7 +205,7 @@
 			layout2.setHeight(null);
 		});
 
-		test("placeAt", function() {
+		QUnit.test("placeAt", function(assert) {
 			equal(layout2.getContent().length, 0, "Default # of children:");
 			var oControl = new test.NoWidthHeight();
 			oControl.placeAt(layout2);
@@ -214,7 +214,7 @@
 			equal(layout2.getContent().length, 0, "# of children after remove all:");
 		});
 
-		test("Aggregation Content", function() {
+		QUnit.test("Aggregation Content", function(assert) {
 			equal(layout2.getContent().length, 0, "Default # of children:");
 
 			var oPos = {top: "60px", left: "20px", right: "30px", bottom: "40px"};
@@ -269,7 +269,7 @@
 			}, 100);
 		});
 
-		test("Controls", function() {
+		QUnit.test("Controls", function(assert) {
 			checkControl("test1", "20", "10", "0", null, "0", null);
 			checkControl("test2", ""+(jQuery("#layout1").width()-50), "10", "20", null, "30", null);
 			checkControl("test3", "20", "10", null, "3", null, "3");
@@ -281,7 +281,7 @@
 			checkControl("test9", ""+(jQuery("#layout1").width()-170), "360"/*500-140*/, "140", "30", "100", "40");
 		});
 
-		test("Stretching Form Controls", function() {
+		QUnit.test("Stretching Form Controls", function(assert) {
 			for(var i=10; i<14; i++){
 				ok(jQuery("#test"+i).width() > jQuery("#layout3").width()-50-50/*left+right+some buffer*/, "Control test"+i+" is stretched: " + jQuery("#test"+i).width());
 			}

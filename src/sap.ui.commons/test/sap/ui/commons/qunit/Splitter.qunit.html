@@ -79,7 +79,7 @@
         QUnit.module("Splitter");
         oSplitter = sap.ui.getCore().getControl("mySplitter");
         oSplitter1 = sap.ui.getCore().getControl("mySplitter2");
-        test("basic splitter examples", function() {
+        QUnit.test("basic splitter examples", function(assert) {
 	        equals( oSplitter.getSplitterOrientation(), sap.ui.commons.Orientation.Vertical, "We expect value to be vertical" );
 	        equals( oSplitter.getSplitterPosition(), "15%", "We expect value to be 15%" );
 	        equals( oSplitter.getMinSizeFirstPane(), "0%", "We expect value to be 0%" );
@@ -94,7 +94,7 @@
 	        equals( oSplitter1.getHeight(), "300px", "We expect value to be 300px" );
       	});
 
-       test("resize splitter bar1", function(){
+       QUnit.test("resize splitter bar1", function(assert) {
     	   var oldPosPercent = oSplitter.sBarPosition;
     	   var oldWidthFP = jQuery(oSplitter.firstPane).width();
     	   var oldWidthSP = jQuery(oSplitter.secondPane).width();
@@ -123,7 +123,7 @@
 	    	ok(oldWidthSP > jQuery(oSplitter.secondPane).width(), "pane width comparison");
        });
 
-       test("resize splitter bar2", function(){
+       QUnit.test("resize splitter bar2", function(assert) {
     	   var oldPosPercent = oSplitter1.sBarPosition;
     	   var oldHeightFP = jQuery(oSplitter1.firstPane).height();
     	   var oldHeightSP = jQuery(oSplitter1.secondPane).height();
@@ -152,7 +152,7 @@
 	    	ok(oldHeightSP < jQuery(oSplitter1.secondPane).height(), "pane height comparison");
        });
 
-       test("resize splitter bar over max", function(){
+       QUnit.test("resize splitter bar over max", function(assert) {
     	   qutils.triggerMouseEvent(oSplitter1.splitterBar, "mousedown");
     	   var pageX = oSplitter1.splitterBar.offsetLeft;
        	   var pageY = oSplitter1.splitterBar.offsetTop+300;
@@ -175,7 +175,7 @@
 	        equals( oSplitter1.getSplitterPosition(), "60%", "updated splitter pos" );
        });
 
-       test("hide splitter bar", function(){
+       QUnit.test("hide splitter bar", function(assert) {
     	   var oldPosPercent = oSplitter.sBarPosition;
     	   var oldWidthFP = jQuery(oSplitter.firstPane).width();
     	   var oldWidthSP = jQuery(oSplitter.secondPane).width();
@@ -209,7 +209,7 @@
 	    	ok(oldWidthSP == jQuery(oSplitter.secondPane).width(), "pane width comparison");
        });
 
-       test("hide splitter bar2", function(){
+       QUnit.test("hide splitter bar2", function(assert) {
     	   var oldPosPercent = oSplitter1.sBarPosition;
     	   var oldHeightFP = jQuery(oSplitter1.firstPane).height();
     	   var oldHeightSP = jQuery(oSplitter1.secondPane).height();
@@ -244,19 +244,19 @@
 	    	ok(oldHeightSP = jQuery(oSplitter1.secondPane).height(), "pane height comparison");
        });
 
-       test("keyboard Home check splitterBar", function(){
+       QUnit.test("keyboard Home check splitterBar", function(assert) {
     	   equals( oSplitter1.getSplitterPosition(), "60%", "current splitter pos" );
     	   qutils.triggerKeyboardEvent(oSplitter1.splitterBar, jQuery.sap.KeyCodes.HOME, false, false, false);
     	   equals( oSplitter1.getSplitterPosition(), "20%", "updated splitter pos" );
        });
 
-       test("keyboard End check splitterBar", function(){
+       QUnit.test("keyboard End check splitterBar", function(assert) {
     	   equals( oSplitter1.getSplitterPosition(), "20%", "current splitter pos" );
     	   qutils.triggerKeyboardEvent(oSplitter1.splitterBar, jQuery.sap.KeyCodes.END, false, false, false);
     	   equals( oSplitter1.getSplitterPosition(), "60%", "updated splitter pos" );
        });
 
-       test("keyboard shift left right check splitterBar", function(){
+       QUnit.test("keyboard shift left right check splitterBar", function(assert) {
     	   var oldPos = jQuery(oSplitter.splitterBar).offset().left;
     	   var newPos;
     	   var oldPosPercent = oSplitter.sBarPosition;
@@ -280,7 +280,7 @@
     	   equals( Math.round(oldPos - newPos), 0, "updated splitter pos" );
        });
 
-       test("keyboard shift up down check splitterBar", function(){
+       QUnit.test("keyboard shift up down check splitterBar", function(assert) {
     	   var oldPos = jQuery(oSplitter1.splitterBar).offset().top;
     	   var newPos;
     	   var oldPosPercent = oSplitter1.sBarPosition;

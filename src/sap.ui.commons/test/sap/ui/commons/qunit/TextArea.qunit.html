@@ -62,7 +62,7 @@
 
 	QUnit.module("Properties");
 
-	test("Default Values", function() {
+	QUnit.test("Default Values", function(assert) {
 		var oTA = oTAs["oTA1"];
 		equal(oTA.getValue(), "", "Default 'value':");
 		equal(oTA.getWidth(), "", "Default 'width':");
@@ -81,7 +81,7 @@
 		equal(oTA.getTooltip(), null, "Default 'tooltip':");
 	});
 
-	test("Custom Values", function() {
+	QUnit.test("Custom Values", function(assert) {
 		var oTA = oTAs["oTA2"];
 		equal(oTA.getValue(), "Standard Text Area", "Custom 'value':");
 		equal(oTA.getWidth(), "500px", "Custom 'width':");
@@ -172,7 +172,7 @@
 
 	});
 
-	test("ARIA", function() {
+	QUnit.test("ARIA", function(assert) {
 		var oTA = oTAs["oTA1"];
 		oTA.addAriaDescribedBy("D1");
 		oTA.addAriaLabelledBy("L1");

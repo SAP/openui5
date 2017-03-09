@@ -31,14 +31,14 @@
 <script src="AnyView.qunit.js"></script>
 
 <script>
-test("Get Design Mode", 1, function() {
+QUnit.test("Get Design Mode", 1, function(assert) {
 
 	var designMode = sap.ui.getCore().getConfiguration().getDesignMode();
 	equal(designMode, true, "Design Mode is on");
 
 });
 
-test("Create an HTMLView instance and check controller methods are replaced by empty ones", 2, function(){
+QUnit.test("Create an HTMLView instance and check controller methods are replaced by empty ones", 2, function(assert){
 
 	var oView = sap.ui.htmlview("example.designmode.test01");
 	var oController = oView.getController();
@@ -49,7 +49,7 @@ test("Create an HTMLView instance and check controller methods are replaced by e
 	oView.destroy();
 });
 
-test("Create a XMLView instance and check controller methods are replaced by empty ones", 2, function(){
+QUnit.test("Create a XMLView instance and check controller methods are replaced by empty ones", 2, function(assert){
 
 	var oView = sap.ui.xmlview("example.designmode.test01");
 	var oController = oView.getController();

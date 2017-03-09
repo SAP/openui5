@@ -334,7 +334,7 @@
 			oBlockLayout.destroy();
 		});
 
-		QUnit.test("Blocklayout cell margins with and without content", function () {
+		QUnit.test("Blocklayout cell margins with and without content", function (assert) {
 			// System under test
 			var oContainer = new sap.ui.layout.BlockLayoutCell({
 					title: "Dummy"
@@ -358,7 +358,7 @@
 			strictEqual($cell.css("margin-bottom"), "16px", "The bottom margin is 16px when the content of the cell is filled");
 		});
 
-		QUnit.test("Container Padding Classes", function () {
+		QUnit.test("Container Padding Classes", function (assert) {
 			// System under Test + Act
 			var oContainer = new sap.ui.layout.BlockLayoutCell(),
 					sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px")),

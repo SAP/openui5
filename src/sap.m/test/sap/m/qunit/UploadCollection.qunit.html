@@ -1926,7 +1926,7 @@
 		assert.strictEqual(this.oUploadCollection.getProperty("uploadUrl"), sUploadUrl, "Property 'uploadUrl': default value is '" + sUploadUrl + "'");
 	});
 
-	QUnit.test("fileType", function() {
+	QUnit.test("fileType", function(assert) {
 		var aFileTypes = ["jpg", "png", "bmp", "unittest"];
 		testSetter(this.oUploadCollection, "fileType", aFileTypes, true, assert);
 	});

@@ -210,7 +210,7 @@
 			assert.strictEqual(iInterListItemCounter, iMPItemCounter, "Internal listItem's counter should be the same as MessagePopoverItems's counter");
 		});
 
-		QUnit.test("No Navaigation arrow should be shown if there is no description", function () {
+		QUnit.test("No Navigation arrow should be shown if there is no description", function (assert) {
 			var oStandardListItem;
 			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
 			this.oButton.addDependent(this.oMessagePopover);

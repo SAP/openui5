@@ -107,7 +107,7 @@
 		}
 	});
 
-    test("add Propagation Listener", function() {
+    QUnit.test("add Propagation Listener", function(assert) {
     	fnPropListener = function(data, object) {
 			ok(data, "data passed");
 			equals(data.myData, "myData", "data object passed with data");
@@ -125,7 +125,7 @@
     	fnPropListener.restore();
     });
 
-    test("remove Propagation Listener", function() {
+    QUnit.test("remove Propagation Listener", function(assert) {
     	fnPropListener = function(data, object) {
     		ok(data, "data passed");
 			equals(data.myData, "myData", "data object passed with data");
@@ -144,7 +144,7 @@
     	fnPropListener.restore();
     });
 
-    test("propagation Listener and models/bindings", function() {
+    QUnit.test("propagation Listener and models/bindings", function(assert) {
     	fnPropListener = function(data, object) {
 		}.bind(null,{myData:"myData"});
     	ctrl.addPropagationListener(fnPropListener);
@@ -193,7 +193,7 @@
 		}
 	});
 
-	test("Model propagated from Core", function() {
+	QUnit.test("Model propagated from Core", function(assert) {
 		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
 		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
 		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
@@ -237,7 +237,7 @@
 		ok(oChildBindingBefore !== child.getBinding("value"), "binding should have changed");
 	});
 
-	test("Model propagated from UIArea", function() {
+	QUnit.test("Model propagated from UIArea", function(assert) {
 		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
 		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
 		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
@@ -338,7 +338,7 @@
 
 	});
 
-	test("Model propagated from parent", function() {
+	QUnit.test("Model propagated from parent", function(assert) {
 		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
 		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
 		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
@@ -430,7 +430,7 @@
 		ok(oChildBindingBefore === child.getBinding("value"), "binding should not have changed");
 	});
 
-	test("Model propagated from UIArea", function(){
+	QUnit.test("Model propagated from UIArea", function(assert){
 		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
 		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
 		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
@@ -447,7 +447,7 @@
 		equal(ctrl.getValue(), "2", "value should not be inherited from core model ");
 	});
 
-	test("override core model", function(){
+	QUnit.test("override core model", function(assert){
 		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
 		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
 		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
@@ -515,7 +515,7 @@
 		},0);
 	});
 
-	test("remove content from uiArea: model set", function(){
+	QUnit.test("remove content from uiArea: model set", function(assert){
 
 		uiArea.removeContent();
 		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
@@ -598,7 +598,7 @@
 		}
 	});
 
-	test("incomplete binding context", function(){
+	QUnit.test("incomplete binding context", function(assert){
 		ok(!!ctrl.getBindingInfo("value"), "control should have binding info for 'value'");
 		ok(!ctrl.getBinding("value"), "control must not have a binding for 'value'");
 		ok(!!ctrl.getBindingInfo("other"), "control should have binding info for 'other'");
@@ -624,7 +624,7 @@
 		ok(!!child.getBinding("other"), "child now should have a binding");
 	});
 
-	test("Multiple References to Same Model", function() {
+	QUnit.test("Multiple References to Same Model", function(assert) {
 
 		// default model and m2 are set to the same model instance
 		sap.ui.getCore().setModel(oModel1, "m2");
@@ -648,7 +648,7 @@
 		ok(!child.getBinding("other"), "child must not have a binding for 'other'");
 	});
 
-	test("Remove from Parent", function() {
+	QUnit.test("Remove from Parent", function(assert) {
 		//check preconditions
 		equal(ctrl.getModel(), oModel1, "ctrl should inherit model1 from Core");
 		equal(child.getModel(), oModel1, "child should inherit model1 from ctrl");
@@ -664,7 +664,7 @@
 		ok(child.oPropagatedProperties !== ctrl.oPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
 	});
 
-	test("Changing Parent", function() {
+	QUnit.test("Changing Parent", function(assert) {
 		var oNewParent = new sap.ui.core.TestControl({
 			value : { parts : [ "m2>/value", "/value" ], formatter : function(a,b) { return a + ":" + b; } },
 			other : "{/value}"
@@ -764,7 +764,7 @@
 		});
 	});
 
-	test("Context binding instance", function() {
+	QUnit.test("Context binding instance", function(assert) {
 		mPropagationInfo = {};
 		ctrl.bindElement("/data");
 		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
@@ -801,7 +801,7 @@
 
 		ok(child.getBindingContext().getPath() === "/data", "Context path should be '/data'");
 	});
-	test("Context binding values", function() {
+	QUnit.test("Context binding values", function(assert) {
 		ctrl.bindElement("/data/0/");
 		ok(child.getValue() === "0", "Value should be resolved");
 		ctrl.bindElement("/data/2/");

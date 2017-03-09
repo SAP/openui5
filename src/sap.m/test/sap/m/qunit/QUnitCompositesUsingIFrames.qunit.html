@@ -31,7 +31,7 @@
  	} else {
  		//Write a comment into the test protocol that responsive
  		//tests can not be executed.
- 		test("Test responsive margin classes", function() {
+ 		QUnit.test("Test responsive margin classes", function(assert) {
  			assert.ok(true, "Responsive test not available yet for browser '" + sap.ui.Device.browser.name + "'");
  		});
  	}

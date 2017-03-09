@@ -111,7 +111,7 @@
 			}
 		});
 
-		test("Default behavior", function () {
+		QUnit.test("Default behavior", function (assert) {
 			var oTabStrip = this.oTabContainer._getTabStrip();
 			var oFirstItem = this.oTabContainer.getItems()[0];
 			var oCloseButton = this.oTabContainer._toTabStripItem(oFirstItem).getAggregation("_closeButton");
@@ -144,7 +144,7 @@
 
 		});
 
-		test("Deletion prevented", function () {
+		QUnit.test("Deletion prevented", function (assert) {
 			var oItem = this.oTabContainer._getTabStrip().getItems()[0];
 			var sName = oItem.getText();
 
@@ -172,14 +172,14 @@
 			}
 		});
 
-		test("Initialization without parameters", function () {
+		QUnit.test("Initialization without parameters", function (assert) {
 			var oTabContainer = new sap.m.TabContainer();
 			strictEqual(typeof oTabContainer === 'object', true, 'Sucessfully initialized.');
 			oTabContainer.destroy();
 			oTabContainer = null;
 		});
 
-		test("Rerendering", function () {
+		QUnit.test("Rerendering", function (assert) {
 			var oItem = this.oTabContainer._getTabStrip().getItems()[0];
 			var sName = oItem.getText();
 			//sapMTabSelect
@@ -188,7 +188,7 @@
 			strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 0, 'TabStrip is not re-rendered upon TabContainer re-rendering after TabStrip was destroyed.');
 		});
 
-		test("Add button rendering in nested TabContainer with binding", function () {
+		QUnit.test("Add button rendering in nested TabContainer with binding", function (assert) {
 			//arrange
 			var oTemplate2,
 				oTabContainer2,
@@ -255,7 +255,7 @@
 			}
 		});
 
-		test("Select first item, focus it and remove it", function () {
+		QUnit.test("Select first item, focus it and remove it", function (assert) {
 			//arrange
 			var oTabContainerItemToRemove = this.items[0];
 			var oTabContainerItemToBeSelectedAndFocused = this.items[1];
@@ -273,7 +273,7 @@
 			strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
 		});
 
-		test("Select last item, focus it and remove it", function () {
+		QUnit.test("Select last item, focus it and remove it", function (assert) {
 			//arrange
 			var oTabContainerItemToRemove = this.items[4];
 			var oTabContainerItemToBeSelectedAndFocused = this.items[3];
@@ -291,7 +291,7 @@
 			strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
 		});
 
-		test("Select random item, focus another and remove it", function () {
+		QUnit.test("Select random item, focus another and remove it", function (assert) {
 			//arrange
 			var oTabContainerItemToRemove = this.items[3];
 			var oTabContainerItemToBeSelected = this.items[0];
@@ -310,7 +310,7 @@
 			strictEqual(document.activeElement.id, oTabStripItemToBeFocused.getId(), "Focus is applied to the right item");
 		});
 
-		test("Selection prevented", function () {
+		QUnit.test("Selection prevented", function (assert) {
 			var oTabContainer = new sap.m.TabContainer({
 				items: {
 					path: "/ProductCollection",
@@ -341,7 +341,7 @@
 			oTabContainer = null;
 		});
 
-		test("Add button", function () {
+		QUnit.test("Add button", function (assert) {
 			//arrange
 			var oButton = new sap.m.Button("addButton", {
 				type: sap.m.ButtonType.Transparent
@@ -371,7 +371,7 @@
 			}
 		});
 
-		test("Insert items", function () {
+		QUnit.test("Insert items", function (assert) {
 
 			this.oTabContainer.destroyItems();
 			//assert
@@ -395,7 +395,7 @@
 		});
 
 
-		test("TabContainerItems are in sync with TabStripItems when TabContainerItem.key is null", function () {
+		QUnit.test("TabContainerItems are in sync with TabStripItems when TabContainerItem.key is null", function (assert) {
 			var oTabContainerItem;
 
 			//arrange
@@ -422,7 +422,7 @@
 
 		});
 
-		test("TabContainerItem properties are in sync with TabStripItem properties", function () {
+		QUnit.test("TabContainerItem properties are in sync with TabStripItem properties", function (assert) {
 			var oTabContainerItem;
 
 			//arrange
@@ -478,7 +478,7 @@
 			}
 		});
 
-		test("Default selected item", function () {
+		QUnit.test("Default selected item", function (assert) {
 			//arrange
 			var sConstructorSelectedItemName 	= this.item.getName();
 			var sContainerSelectedItem 			= this.oTabContainer.getSelectedItem();
@@ -488,7 +488,7 @@
 			strictEqual(sContainerSelectedItem, sSelectSelectedItemText, 'Default selected items is propagated to the select list.');
 		});
 
-		test("Selected item association is cleared when items are destroyed.", function () {
+		QUnit.test("Selected item association is cleared when items are destroyed.", function (assert) {
 			//prepare
 			var oTabStripDestroySpy = this.spy(this.oTabContainer._getTabStrip(), "destroyItems");
 			//act

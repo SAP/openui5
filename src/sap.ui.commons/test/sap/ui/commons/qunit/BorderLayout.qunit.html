@@ -57,17 +57,17 @@
 
 	QUnit.module("Parent-Properties");
 
-	test("Custom Values", function() {
+	QUnit.test("Custom Values", function(assert) {
 		equal(oLayout.getRtl()		 , false, "Custom 'rtl': ");
 	});
 
-	test("Default Values", function() {
+	QUnit.test("Default Values", function(assert) {
 		equal(oLayoutInner.getRtl()      , false, "Default 'rtl': ");
 	});
 
 	QUnit.module("Area-Properties");
 
-	test("Custom Area Values", function() {
+	QUnit.test("Custom Area Values", function(assert) {
 		var oData;
 		//Top
 		equal(oLayout.getTop().getAreaId(), "top", "Top AUTO 'areaId': ");
@@ -115,7 +115,7 @@
 		equal(oData.visible, true, "Bottom Custom 'visible': ");
 	});
 
-	test("Default Area Values", function() {
+	QUnit.test("Default Area Values", function(assert) {
 		var oData;
 		//Inner Top
 		equal(oLayoutInner.getTop().getAreaId(), "top", "Inner Top AUTO 'areaId': ");
@@ -165,7 +165,7 @@
 
 	QUnit.module("BorderLayout Helper Methods");
 	var oLink1;
-	test("Adding Content", function() {
+	QUnit.test("Adding Content", function(assert) {
 		//Add one Control
 		oLink1 = new sap.ui.commons.Link("link1", {text : "Link1 added by addContent"});
 		oLayout.addContent("top", oLink1);
@@ -182,7 +182,7 @@
 		equal(oLayout.getEnd().getContent()[2].getId(), "link3", "End Link3 was added: ");
 	});
 
-	test("Inserting Content", function() {
+	QUnit.test("Inserting Content", function(assert) {
 		//Insert one Control
 		var oLink4 = new sap.ui.commons.Link("link4", {text : "Link4 inserted by insertContent to index 0"});
 		oLayout.insertContent("bottom", 0, oLink4);
@@ -200,7 +200,7 @@
 		equal(oLayout.getBottom().getContent()[2].getId(), "link6", "Bottom Link5 and Link6 were added to Index 1");
 	});
 
-	test("Removing Content", function() {
+	QUnit.test("Removing Content", function(assert) {
 		//Remove one Control
 		oLayout.removeContent("end", 1);
 		sap.ui.getCore().applyChanges();
@@ -214,7 +214,7 @@
 		equal(oLayout.getBottom().getContent().length, 0, "Bottom All content has been removed");
 	});
 
-	test("Getting Content", function() {
+	QUnit.test("Getting Content", function(assert) {
 		//Getting Content Object (Array)
 		var content;
 		content = oLayout.getContent("top");
@@ -226,13 +226,13 @@
 		equal(oLayout.indexOfContent("center", sap.ui.getCore().byId("center")), 0, "Center Index of Content (text field)");
 	});
 
-	test("Destroying Content", function() {
+	QUnit.test("Destroying Content", function(assert) {
 		oLayout.destroyContent("begin");
 
 		equal(oLayout.getBegin().getContent().length, 0, "Begin Aggregations were destroyed");
 	});
 
-	test("Getting Area Elements", function() {
+	QUnit.test("Getting Area Elements", function(assert) {
 		var oArea = oLayout.getAreaById("top");
 		equal(oArea.getId(), "myLayout1--top", "Area Element Top");
 
@@ -249,7 +249,7 @@
 		equal(oArea.getId(), "myLayout1--bottom", "Area Element Bottom");
 	});
 
-	test("Getting Area DOM Elements", function() {
+	QUnit.test("Getting Area DOM Elements", function(assert) {
 		var oArea = oLayout.getAreaById("top");
 		equal(oArea.$().size(), 1, "Area Element Top");
 		ok(oArea.$().hasClass("sapUiBorderLayoutTop"), "Area Element Top");

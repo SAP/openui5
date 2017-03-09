@@ -23,7 +23,7 @@
 (function ($, core, undefined) {
 	sinon.config.useFakeTimers = true;
 
-	test("Should render TextArea correctly", function() {
+	QUnit.test("Should render TextArea correctly", function(assert) {
 		var sut = new sap.m.TextArea();
 		sut.placeAt("qunit-fixture");
 		core.applyChanges();
@@ -43,7 +43,7 @@
 		sut.destroy();
 	});
 
-	test("Should inherit from InputBase", function() {
+	QUnit.test("Should inherit from InputBase", function(assert) {
 		var sut = new sap.m.TextArea();
 		sut.placeAt("qunit-fixture");
 		core.applyChanges();
@@ -62,7 +62,7 @@
 		sut.destroy();
 	});
 
-	test("Should configure control and set properties correctly", function() {
+	QUnit.test("Should configure control and set properties correctly", function(assert) {
 		var config = {
 				rows : 10,
 				cols : 50,
@@ -114,7 +114,7 @@
 		sut.destroy();
 	});
 
-	test("Should react on touchstart/move for INSIDE_SCROLLABLE_WITHOUT_FOCUS behaviour", function() {
+	QUnit.test("Should react on touchstart/move for INSIDE_SCROLLABLE_WITHOUT_FOCUS behaviour", function(assert) {
 		// turn on touch support during this test
 		this.stub(sap.ui.Device.support, "touch", true);
 
@@ -174,7 +174,7 @@
 		sut.destroy();
 	});
 
-	test("Should not call Tochstart for PAGE_NON_SCROLLABLE_AFTER_FOCUS Behaviour", function() {
+	QUnit.test("Should not call Tochstart for PAGE_NON_SCROLLABLE_AFTER_FOCUS Behaviour", function(assert) {
 		// turn on touch support during this test
 		this.stub(sap.ui.Device.support, "touch", true);
 
@@ -203,7 +203,7 @@
 		sut.destroy();
 	});
 
-	test("Should not have Touch events for default behaviour", function() {
+	QUnit.test("Should not have Touch events for default behaviour", function(assert) {
 		// turn on touch support during this test
 		this.stub(sap.ui.Device.support, "touch", true);
 		var sut = new sap.m.TextArea();
@@ -223,7 +223,7 @@
 		sut.destroy();
 	});
 
-	test("Should not have touch events in Desktop Mode", function() {
+	QUnit.test("Should not have touch events in Desktop Mode", function(assert) {
 		// turn off touch support during this test
 		this.stub(sap.ui.Device.support, "touch", false);
 
@@ -245,7 +245,7 @@
 	});
 
 
-	test("change event should be fired when last known and dom value are not same", function() {
+	QUnit.test("change event should be fired when last known and dom value are not same", function(assert) {
 
 		// system under test
 		var sInitValue = "Test";
@@ -289,7 +289,7 @@
 		oTA.destroy();
 	});
 
-	test("Live change event should be fired in case of value is reverted with escape", function() {
+	QUnit.test("Live change event should be fired in case of value is reverted with escape", function(assert) {
 		// system under test
 		var sInitValue = "Test";
 		var oTA = new sap.m.TextArea({
@@ -319,7 +319,7 @@
 		oTA.destroy();
 	});
 
-	test("valueLiveUpdate", function() {
+	QUnit.test("valueLiveUpdate", function(assert) {
 
 		var oModel = new sap.ui.model.json.JSONModel({value : ""});
 		var oTA = new sap.m.TextArea({
@@ -360,7 +360,7 @@
 	});
 
 	QUnit.module("Accessibility");
-	test("DOM aria properties", function() {
+	QUnit.test("DOM aria properties", function(assert) {
 		var oTA = new sap.m.TextArea().placeAt("content");
 		sap.ui.getCore().applyChanges();
 
@@ -372,7 +372,7 @@
 	});
 
 	QUnit.module("Encoding");
-	test("carriage return should be converted correctly during rendering", function() {
+	QUnit.test("carriage return should be converted correctly during rendering", function(assert) {
 		var sValue = " \ntest\ntest\n\n";
 		var oTA = new sap.m.TextArea({
 			value : sValue
@@ -386,7 +386,7 @@
 
 
 	QUnit.module("Growing");
-	test("after rendering whole content should be visible", function() {
+	QUnit.test("after rendering whole content should be visible", function(assert) {
 		var sLongText = new Array(1000).join("text ");
 		var oTA = new sap.m.TextArea({
 			value: sLongText,
@@ -400,7 +400,7 @@
 		oTA.destroy();
 	});
 
-	test("maxHeight should be defined if maxLines is set", function() {
+	QUnit.test("maxHeight should be defined if maxLines is set", function(assert) {
 		var sLongText = new Array(1000).join("text ");
 		var oTA = new sap.m.TextArea({
 			value: sLongText,
@@ -417,7 +417,7 @@
 	});
 
 	QUnit.module("Input and Live change events in IE10+ when textarea html element is used");
-	test("iE10+ Input event should not be fired on focus for textarea html element with a native placeholder", function() {
+	QUnit.test("iE10+ Input event should not be fired on focus for textarea html element with a native placeholder", function(assert) {
 		this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", false);
 		var fnOnInputSpy = this.spy(sap.m.TextArea.prototype, "oninput");
 		this.stub(sap.ui.Device, "browser", {
@@ -439,7 +439,7 @@
 		oTextArea.destroy();
 	});
 
-	test("iE10+ Live change event should be fired when a text is entered in textarea field with a native placeholder", function() {
+	QUnit.test("iE10+ Live change event should be fired when a text is entered in textarea field with a native placeholder", function(assert) {
 		this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", false);
 		var fnOnInputSpy = this.spy(sap.m.TextArea.prototype, "oninput");
 		var fnFireLiveChange = this.spy(sap.m.TextArea.prototype, "fireLiveChange");
@@ -466,7 +466,7 @@
 	});
 
 	// The fix for an input field with a native placeholder is valid only for input tag element and should not be applied for textarea.
-	test("iE10+ Input Base should NOT mark event invalid when a textarea field with a native placeholder is used and focused", function() {
+	QUnit.test("iE10+ Input Base should NOT mark event invalid when a textarea field with a native placeholder is used and focused", function(assert) {
 		this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", false);
 		var fnOnInputSpy = this.spy(sap.m.TextArea.prototype, "oninput");
 		this.stub(sap.ui.Device, "browser", {

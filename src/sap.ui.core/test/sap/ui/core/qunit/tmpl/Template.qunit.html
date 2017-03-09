@@ -32,7 +32,7 @@
 
 			QUnit.module("Basic Template Tests");
 
-			test("Basic Lookup", 9, function() {
+			QUnit.test("Basic Lookup", 9, function(assert) {
 
 				// find and load all existing known templates
 				var aTemplates = sap.ui.template();
@@ -60,7 +60,7 @@
 
 			});
 
-			test("ID Lookup", 4, function() {
+			QUnit.test("ID Lookup", 4, function(assert) {
 
 				// lookup an existing template
 				var oTemplate = sap.ui.template("theTemplate");
@@ -71,13 +71,13 @@
 
 			});
 
-			test("Inline Templates", 1, function() {
+			QUnit.test("Inline Templates", 1, function(assert) {
 
 				equal(jQuery("#theEmbeddedTemplate > code").length, 1, "Inline Template doesn't create extra DOM");
 
 			});
 
-			test("Unsupported Type", 1, function() {
+			QUnit.test("Unsupported Type", 1, function(assert) {
 				var theEx;
 				try {
 					sap.ui.template("theSecondTemplate");
@@ -130,7 +130,7 @@
 
 			});
 
-			test("Rerendering on aggregation change", function(assert) {
+			QUnit.test("Rerendering on aggregation change", function(assert) {
 
 				// create a model to validate data binding
 				jQuery.sap.require("sap.ui.model.json.JSONModel");
@@ -189,7 +189,7 @@
 
 			});
 
-			test("Mixing Helpers and Controls", function(assert) {
+			QUnit.test("Mixing Helpers and Controls", function(assert) {
 
 				sap.ui.define("my/Control", ["sap/ui/core/Control"], function(Control) {
 					return Control.extend("my.Control", {

@@ -152,7 +152,7 @@
 				assert.strictEqual(this.oFeedInput._getTextArea().getValue(), this.oFeedInput.getValue(), "Property should be passed to TextArea");
 			});
 
-			QUnit.test("Visible", function(assert){
+			QUnit.test("Visible", function(assert) {
 				this.oFeedInput.setVisible(true);
 				assert.ok(jQuery.sap.domById("input"), "visible=true: FeedInput control should be rendered");
 				this.oFeedInput.setVisible(false);
@@ -171,7 +171,7 @@
 				}
 			});
 
-			QUnit.test("General Stuff", function(assert){
+			QUnit.test("General Stuff", function(assert) {
 				assert.ok(jQuery.sap.byId("input").hasClass("sapMFeedIn"), "FeedInput control should have class 'sapMFeedIn'");
 				assert.ok(jQuery.sap.byId("input-container").hasClass("sapMFeedInContainer"), "input container should have class 'sapMFeedInContainer'");
 			});

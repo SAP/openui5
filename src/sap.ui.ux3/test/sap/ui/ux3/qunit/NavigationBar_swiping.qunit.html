@@ -43,7 +43,7 @@
 			oCtrl.addItem(new sap.ui.ux3.NavigationItem({text:"Item with a long title, so we have something to scroll 1"}));
 		}
 
-		test("Initial Check", function() {
+		QUnit.test("Initial Check", function(assert) {
 			ok(oCtrl, "NavBar should exist after creating");
 			var oDomRef = jQuery.sap.domById("n1");
 			ok(oDomRef, "NavBar root element should exist in the page");

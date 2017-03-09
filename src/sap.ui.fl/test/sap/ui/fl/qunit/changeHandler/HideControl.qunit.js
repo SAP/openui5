@@ -50,7 +50,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 	});
 
 
-	QUnit.test('applyChange on a xml tree', function() {
+	QUnit.test('applyChange on a xml tree', function(assert) {
 		this.oXmlButton = this.oXmlDocument.childNodes[0];
 
 		this.oChangeHandler.applyChange(this.oChange, this.oXmlButton, {

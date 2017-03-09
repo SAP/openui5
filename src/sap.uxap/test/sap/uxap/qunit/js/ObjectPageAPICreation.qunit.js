@@ -702,7 +702,7 @@
 		assert.equal(oObjectPage.getSections()[3].getTitle(), "Recognition");
 		oSection2.addDelegate({
 			onAfterRendering: function () {
-				QUnit.test("Sections Rendering", function () {
+				QUnit.test("Sections Rendering", function (assert) {
 					//check sections
 					assert.strictEqual(checkObjectExists("#objectPageViewSample--sectionGoal"), true);
 					assert.strictEqual(checkObjectExists("#objectPageViewSample--sectionStatus"), true);

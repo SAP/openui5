@@ -64,7 +64,7 @@
 				}
 			});
 
-			QUnit.test("create IDs", function() {
+			QUnit.test("create IDs", function(assert) {
 				return this.oView.loaded().then(function() {
 					assert.ok(jQuery.isXMLDoc(this.xml), "valid xml document as input");
 					var xml = XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
@@ -77,7 +77,7 @@
 				}.bind(this));
 			});
 
-			QUnit.test("create Controls", function() {
+			QUnit.test("create Controls", function(assert) {
 				return this.oView.loaded().then(function() {
 					XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
 					assert.ok(!this.oView.byId("button"), "no control has been created yet");
@@ -86,7 +86,7 @@
 				}.bind(this));
 			});
 
-			QUnit.test("do not create stashed Controls", function() {
+			QUnit.test("do not create stashed Controls", function(assert) {
 				return this.oView.loaded().then(function() {
 					XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
 					assert.ok(!this.oView.byId("stashedButton"), "no stashed control has been created yet");
@@ -95,7 +95,7 @@
 				}.bind(this));
 			});
 
-			QUnit.test("do not process ExtensionPoints", function() {
+			QUnit.test("do not process ExtensionPoints", function(assert) {
 				return this.oView.loaded().then(function() {
 					// Preferrably we should test with a spy on "ExtensionPoint", but due
 					// to the AMD module handling it is not possible to place one
@@ -109,7 +109,7 @@
 
 			QUnit.module("General");
 
-			QUnit.test("on design mode create Controls and fragment with correct declarativeSourceInfo", function () {
+			QUnit.test("on design mode create Controls and fragment with correct declarativeSourceInfo", function (assert) {
 				var fnOrig_getDesignMode = sap.ui.getCore().getConfiguration().getDesignMode;
 				sap.ui.getCore().getConfiguration().getDesignMode = function () {
 					return true;
@@ -135,7 +135,7 @@
 				});
 			});
 
-			QUnit.test("on regular mode create Controls and fragment with no declarativeSourceInfo", function () {
+			QUnit.test("on regular mode create Controls and fragment with no declarativeSourceInfo", function (assert) {
 				jQuery.sap.registerModulePath("my", "../../../../../test-resources/sap/ui/core/qunit/fragment/");
 				return sap.ui.view({
 					viewName: "my.View",

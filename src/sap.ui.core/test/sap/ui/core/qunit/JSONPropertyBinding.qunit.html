@@ -66,7 +66,7 @@
 		detach = false;
 	};
 
-	test("PropertyBinding getValue", function(){
+	QUnit.test("PropertyBinding getValue", function(assert) {
 		setup();
 		createPropertyBindings("/teamMembers", "lastName");
 
@@ -75,7 +75,7 @@
 		});
 	});
 
-	test("PropertyBinding refresh", 3, function() {
+	QUnit.test("PropertyBinding refresh", 3, function(assert) {
 		setup();
 		var oBinding = oModel.bindProperty("/name");
 		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
@@ -87,7 +87,7 @@
 		equal(oBinding.getValue(), "Jonas", "Property Binding returns changed value");
 	});
 
-	test("PropertyBinding async update", 4, function() {
+	QUnit.test("PropertyBinding async update", 4, function(assert) {
 		setup();
 		var oBinding1 = oModel.bindProperty("/name"),
 			oBinding2 = oModel.bindProperty("/name");
@@ -103,7 +103,7 @@
 		equal(oBinding2.getValue(), "Jonas", "Property Binding 2 returns updated value after refresh");
 	});
 
-	test("PropertyBinding getExternalValue", function(){
+	QUnit.test("PropertyBinding getExternalValue", function(assert) {
 		setup();
 		createPropertyBindings("/values", "value");
 
@@ -118,7 +118,7 @@
 
 	});
 
-	test("PropertyBinding setExternalValue", function(){
+	QUnit.test("PropertyBinding setExternalValue", function(assert) {
 		setup();
 		createPropertyBindings("/values", "value");
 
@@ -138,7 +138,7 @@
 
 	});
 
-	test("PropertyBinding binding mode", function() {
+	QUnit.test("PropertyBinding binding mode", function(assert) {
 		setup();
 		var oModel = sap.ui.getCore().getModel();
 		var oLabel = new sap.ui.commons.Label("myLabel");
@@ -257,7 +257,7 @@
 		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
 		equal(oBinding.oValue, "Peter", "Property Binding internal value");
 		equal(oModel.getProperty("/name"), "Petre", "model value");
-		
+
 		oBinding.resume();
 	});
 
@@ -316,7 +316,7 @@
 		});
 		var oBinding = oInput.getBinding("value");
 		ok(oBinding !== undefined, "binding check");
-		// should not trigger event 
+		// should not trigger event
 		oModel.setProperty(oBinding.getPath(), "blubb2", oBinding.getContext());
 		// should trigger event
 		oInput.setValue("blubb");
@@ -343,7 +343,7 @@
 		oInput.bindObject("/teamMembers/1");
 		var oBinding = oInput.getBinding("value");
 		ok(oBinding !== undefined, "binding check");
-		// should not trigger event 
+		// should not trigger event
 		oModel.setProperty(oBinding.getPath(), "blubb2", oBinding.getContext());
 		// should trigger event
 		oInput.setValue("blubb");
@@ -368,7 +368,7 @@
 				equal(oValue, "blubb", "property value check!");
 				equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
 				oInput.setValue("Andreas");
-				
+
 			} else if (iCount === 2) {
 				equal(sPath, "firstName", "path check!");
 				equal(oContext.getPath(), "/teamMembers/1", "context check!");

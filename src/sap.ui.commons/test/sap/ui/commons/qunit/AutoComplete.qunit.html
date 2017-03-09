@@ -89,12 +89,12 @@
 			}
 		});
 
-		test("Property Defaults", function() {
+		QUnit.test("Property Defaults", function(assert) {
 			equals(this.oAuto0.getEnableScrolling(), true, "Default 'enableScrolling'");
 			ok(this.oAuto0._filter === sap.ui.commons.AutoComplete._DEFAULTFILTER, "Default filter set");
 		});
 
-		test("Property Custom Values", function() {
+		QUnit.test("Property Custom Values", function(assert) {
 			this.oAuto0.setEnableScrolling(false);
 
 			function foo(){};
@@ -105,7 +105,7 @@
 			ok(this.oAuto0._filter === foo, "Custom filter set");
 		});
 
-		test("Deprecated APIs", function() {
+		QUnit.test("Deprecated APIs", function(assert) {
 			var oCustomLB = new sap.ui.commons.ListBox();
 			this.oAuto0.setListBox(oCustomLB);
 			this.oAuto0.setSelectedItemId("abc");

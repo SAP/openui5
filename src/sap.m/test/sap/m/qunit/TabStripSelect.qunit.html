@@ -66,7 +66,7 @@
 			}
 		});
 
-		test("Misc", function () {
+		QUnit.test("Misc", function (assert) {
 			this.oMITS.open();
 			this.clock.tick(1000);
 			strictEqual(this.oMITS.$().hasClass(sap.m.TabStripSelect.CSS_CLASS), true, 'Control style class is present.');
@@ -76,7 +76,7 @@
 
 
 
-		test("Rendering dialog on phones", function () {
+		QUnit.test("Rendering dialog on phones", function (assert) {
 			var stubs = prepareMobilePlatform.call(this, true);
 			beforeEachQUnitTest.call(this);
 			this.oMITS.open();
@@ -84,7 +84,7 @@
 			strictEqual(jQuery('.sapMDialog').length, 1, 'Dialog is rendered on mobile.')
 		});
 
-		test("Selection prevented", function () {
+		QUnit.test("Selection prevented", function (assert) {
 			var oSelect = new sap.m.TabStripSelect({
 				type: sap.m.SelectType.IconOnly,
 				autoAdjustWidth: true,
@@ -124,7 +124,7 @@
 			}
 		});
 
-		test("Desktop", function () {
+		QUnit.test("Desktop", function (assert) {
 			this.oMITS.setSelectedItem(this.oFirstItem);
 			this.oMITS.open();
 			this.clock.tick(1000);
@@ -181,13 +181,13 @@
 		});
 
 
-		test("Phone", function () {
+		QUnit.test("Phone", function (assert) {
 			var stubs = prepareMobilePlatform.call(this, true);
 			assertAllCloseButtonsVisible.call(this, true);
 			stubs.forEach(function(item){item.restore()}); // restore stubs
 		});
 
-		test("Tablet", function () {
+		QUnit.test("Tablet", function (assert) {
 			var stubs = prepareMobilePlatform.call(this);
 			assertAllCloseButtonsVisible.call(this, false);
 			stubs.forEach(function(item){item.restore()}); // restore stubs
@@ -204,13 +204,13 @@
 			}
 		});
 
-		test("Phone", function () {
+		QUnit.test("Phone", function (assert) {
 			var stubs = prepareMobilePlatform.call(this, true);
 			strictEqual(this.oMITS.getDefaultSelectedItem().getId(), this.oMITS.getItems()[0].getId(), 'For phone platform the default selected item is the first item');
 			stubs.forEach(function(item){item.restore()}); // restore stubs
 		});
 
-		test("Other (than phone) platforms", function () {
+		QUnit.test("Other (than phone) platforms", function (assert) {
 			strictEqual(this.oMITS.getDefaultSelectedItem(), null, 'For platforms other than phone there is no selected item');
 		});
 
@@ -225,7 +225,7 @@
 			}
 		});
 
-		test("Phone", function () {
+		QUnit.test("Phone", function (assert) {
 			var stubs = prepareMobilePlatform.call(this, true);
 
 			this.oMITS = new sap.m.TabStripSelect({
@@ -255,7 +255,7 @@
 			stubs.forEach(function(item){item.restore()}); // restore stubs
 		});
 
-		test("Other (than phone) platforms", function () {
+		QUnit.test("Other (than phone) platforms", function (assert) {
 			beforeEachQUnitTest.call(this);
 			strictEqual(this.oMITS.getItems()[0].getProperty('modified'), false, "The first item is not modified by default");
 			this.oMITS.open();
@@ -309,7 +309,7 @@
 			}
 		});
 
-		test("TabStripSelectRenderer.renderLabel and select with no selected item", function (oAssert) {
+		QUnit.test("TabStripSelectRenderer.renderLabel and select with no selected item", function (oAssert) {
 			// Arrange
 			var oRenderer = this.oTSS.getRenderer(),
 				oRm = new sap.ui.core.RenderManager(), // Mock render manager

@@ -31,7 +31,7 @@
 
 			QUnit.module("default values");
 
-			test("IconTabBar", function() {
+			QUnit.test("IconTabBar", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar();
@@ -48,7 +48,7 @@
 				oIconTabBar.destroy();
 			});
 
- 			test("IconTabFilter", function() {
+ 			QUnit.test("IconTabFilter", function(assert) {
 
 				// Arrange
 				var oIconTabFilter = new sap.m.IconTabFilter();
@@ -66,7 +66,7 @@
 		    	oIconTabFilter.destroy();
 			});
 
-			test("IconTabSeparator", function() {
+			QUnit.test("IconTabSeparator", function(assert) {
 
 				// Arrange
 				var oIconTabSeparator = new sap.m.IconTabSeparator();
@@ -81,7 +81,7 @@
 
 		    QUnit.module("overwritten Aggregation methods");
 
-		    test("addAggregation()", function() {
+		    QUnit.test("addAggregation()", function(assert) {
 
 		    	// Arrange
 				var oIconTabBar = new sap.m.IconTabBar();
@@ -98,7 +98,7 @@
 			  	oIconTabBar.destroy();
 			});
 
-		    test("destroyAggregation()", function() {
+		    QUnit.test("destroyAggregation()", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -119,7 +119,7 @@
 				oIconTabBar.destroy();
 			});
 
-		    test("removeAllAggregation()", function() {
+		    QUnit.test("removeAllAggregation()", function(assert) {
 
 		    	// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -140,7 +140,7 @@
 				oIconTabBar.destroy();
 			});
 
-		    test("removeAggregation()", function() {
+		    QUnit.test("removeAggregation()", function(assert) {
 
 		    	// Arrange
 				var oIconTabFilter = new sap.m.IconTabFilter();
@@ -158,7 +158,7 @@
 				oIconTabBar.destroy();
 			});
 
-		    test("getAggregation()", function() {
+		    QUnit.test("getAggregation()", function(assert) {
 
 		    	// Arrange
 				var aContent = [new sap.m.Button({ text: "btn1" })];
@@ -171,7 +171,7 @@
 				oIconTabBar.destroy();
 			});
 
-		    test("indexOfAggregation()", function() {
+		    QUnit.test("indexOfAggregation()", function(assert) {
 
 		    	// Arrange
 				var oButton1 = new sap.m.Button({ text: "btn1" });
@@ -186,7 +186,7 @@
 				oIconTabBar.destroy();
 			});
 
-		    test("insertAggregation()", function() {
+		    QUnit.test("insertAggregation()", function(assert) {
 
 		    	// Arrange
 				var oIconTabFilter = new sap.m.IconTabFilter();
@@ -210,7 +210,7 @@
 
 		    QUnit.module("overwritten getter/setter methods");
 
-		    test("getSelectedKey()", function() {
+		    QUnit.test("getSelectedKey()", function(assert) {
 
 		    	// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -230,7 +230,7 @@
 				oIconTabBar.destroy();
 			});
 
-		    test("setSelectedKey()", function() {
+		    QUnit.test("setSelectedKey()", function(assert) {
 
 		    	// Arrange
 		   		var oIconTabBar = new sap.m.IconTabBar({
@@ -250,7 +250,7 @@
 		   		oIconTabBar.destroy();
 		   	});
 
-			test("setEmptySelectedKey()", function() {
+			QUnit.test("setEmptySelectedKey()", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -276,7 +276,7 @@
 				oIconTabBar.destroy();
 			});
 
-		    test("getShowSelection()", function() {
+		    QUnit.test("getShowSelection()", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -290,7 +290,7 @@
 				oIconTabBar.destroy();
 			});
 
-		    test("setShowSelection()", function() {
+		    QUnit.test("setShowSelection()", function(assert) {
 
 		    	// Arrange
 				var oIconTabBar = new sap.m.IconTabBar();
@@ -305,7 +305,7 @@
 		    	oIconTabBar.destroy();
 			});
 
-		    test("setExpandable()", function() {
+		    QUnit.test("setExpandable()", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar();
@@ -320,7 +320,7 @@
 		    	oIconTabBar.destroy();
 			});
 
-		    test("setExpanded()", function() {
+		    QUnit.test("setExpanded()", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar();
@@ -335,7 +335,7 @@
 		    	oIconTabBar.destroy();
 			});
 
-		    test("setSelectedItem()", function() {
+		    QUnit.test("setSelectedItem()", function(assert) {
 
 		    	// Arrange
 		   		var oIconTabFilter = new sap.m.IconTabFilter({key: "key2"});
@@ -359,7 +359,7 @@
 
 			QUnit.module("item aggregation methods");
 
-			test("add IconTabFilter", function() {
+			QUnit.test("add IconTabFilter", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar();
@@ -384,7 +384,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("remove IconTabFilter", function() {
+			QUnit.test("remove IconTabFilter", function(assert) {
 
 				// Arrange
 				var oIconTabFilter = new sap.m.IconTabFilter({
@@ -415,7 +415,7 @@
 
 		    QUnit.module("rendering");
 
-			test("basic rendering", function() {
+			QUnit.test("basic rendering", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -444,7 +444,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("icons only", function() {
+			QUnit.test("icons only", function(assert) {
 
 				// Arrange
 				var oIconTabBarNoText = new sap.m.IconTabBar({
@@ -470,7 +470,7 @@
 				oIconTabBarNoText.destroy();
 			});
 
-			test("text only", function() {
+			QUnit.test("text only", function(assert) {
 
 				// Arrange
 				var oIconTabBarTextOnly = new sap.m.IconTabBar({
@@ -496,7 +496,7 @@
 				oIconTabBarTextOnly.destroy();
 			});
 
-			test("UpperCase filter text", function() {
+			QUnit.test("UpperCase filter text", function(assert) {
 
 				// Arrange
 				var oIconTabBarTextOnly = new sap.m.IconTabBar({
@@ -519,7 +519,7 @@
 				oIconTabBarTextOnly.destroy();
 			});
 
-			test("IconTabFilter without content", function() {
+			QUnit.test("IconTabFilter without content", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -546,7 +546,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("IconTabFilter with content", function() {
+			QUnit.test("IconTabFilter with content", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -574,7 +574,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("IconTabBar without one content no rerendering of content", function() {
+			QUnit.test("IconTabBar without one content no rerendering of content", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -604,7 +604,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("standalone IconTabHeader", function() {
+			QUnit.test("standalone IconTabHeader", function(assert) {
 
 				// Arrange
 				var oIconTabHeader = new sap.m.IconTabHeader({
@@ -640,7 +640,7 @@
 				oIconTabHeader.destroy();
 			});
 
-			test("IconTabBar is sap.m.List", function() {
+			QUnit.test("IconTabBar is sap.m.List", function(assert) {
 
 				var oModel = new sap.ui.model.json.JSONModel({
 					records: [
@@ -692,7 +692,7 @@
 				ok (jQuery('.sapMITBFilter').length > 0, 'IconTabFilters are rendered')
 			});
 
-			test("disabled tab", function() {
+			QUnit.test("disabled tab", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -725,7 +725,7 @@
 
 			QUnit.module("icon color");
 
-			test("Default", function() {
+			QUnit.test("Default", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -753,7 +753,7 @@
 
 			});
 
-			test("Positive", function() {
+			QUnit.test("Positive", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -782,7 +782,7 @@
 
 			});
 
-			test("Negative", function() {
+			QUnit.test("Negative", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -811,7 +811,7 @@
 
 			});
 
-			test("Neutral", function() {
+			QUnit.test("Neutral", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -840,7 +840,7 @@
 
 			});
 
-			test("Critical", function() {
+			QUnit.test("Critical", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -870,7 +870,7 @@
 
 			QUnit.module("rerendering");
 
-			test("filter text changing", function() {
+			QUnit.test("filter text changing", function(assert) {
 
 				// Arrange
 				var oIconTabFilter = new sap.m.IconTabFilter({
@@ -900,7 +900,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("change content", function() {
+			QUnit.test("change content", function(assert) {
 
 				// Arrange
 				var oButton = new sap.m.Button("button", {text: "click me"});
@@ -941,7 +941,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("change several things", function() {
+			QUnit.test("change several things", function(assert) {
 
 				// Arrange
 				var oIconTabFilter = new sap.m.IconTabFilter({
@@ -976,7 +976,7 @@
 
 			QUnit.module("public methods");
 
-			test("expandable set to false", function() {
+			QUnit.test("expandable set to false", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1009,7 +1009,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("expandable set to true", function() {
+			QUnit.test("expandable set to true", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1042,7 +1042,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("collapse", function() {
+			QUnit.test("collapse", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1074,7 +1074,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("expand", function() {
+			QUnit.test("expand", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1108,7 +1108,7 @@
 
 			QUnit.module("layout");
 
-			test("vertical / horizontal", function() {
+			QUnit.test("vertical / horizontal", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1137,7 +1137,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("showAll Filter", function() {
+			QUnit.test("showAll Filter", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1163,7 +1163,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("Inline Mode", function() {
+			QUnit.test("Inline Mode", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1220,7 +1220,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("stretchContentHeight", function () {
+			QUnit.test("stretchContentHeight", function (assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1243,7 +1243,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("applyContentPadding", function () {
+			QUnit.test("applyContentPadding", function (assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1266,7 +1266,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("backgroundDesign transparent", function () {
+			QUnit.test("backgroundDesign transparent", function (assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1289,7 +1289,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("no flexbox support", function() {
+			QUnit.test("no flexbox support", function(assert) {
 				var	$FlexChild,
 					iFlexChildWidth,
 					iFlexChildHeight;
@@ -1327,7 +1327,7 @@
 
 			QUnit.module("scrolling");
 
-			test("initial scrolling - scrollable", function() {
+			QUnit.test("initial scrolling - scrollable", function(assert) {
 
 				//Arrange
 				jQuery.sap.require("sap.ui.core.ResizeHandler");
@@ -1374,7 +1374,7 @@
 
 			});
 
-			test("initial scrolling - not scrollable", function() {
+			QUnit.test("initial scrolling - not scrollable", function(assert) {
 
 				// Arrange
 				jQuery.sap.require("sap.ui.core.ResizeHandler");
@@ -1405,7 +1405,7 @@
 				oResizeHandler.deregister();
 			});
 
-			test("first element is selected / scroll forward arrow is shown", function() {
+			QUnit.test("first element is selected / scroll forward arrow is shown", function(assert) {
 
 				// Arrange
 				jQuery.sap.require("sap.ui.core.ResizeHandler");
@@ -1458,7 +1458,7 @@
 				oResizeHandler.deregister();
 			});
 
-			test("last element is selected  / scroll back arrow is shown", function() {
+			QUnit.test("last element is selected  / scroll back arrow is shown", function(assert) {
 
 				// Arrange
 				jQuery.sap.require("sap.ui.core.ResizeHandler");
@@ -1516,7 +1516,7 @@
 				oResizeHandler.deregister();
 			});
 
-			test("middle element is selected / both arrows are shown", function() {
+			QUnit.test("middle element is selected / both arrows are shown", function(assert) {
 
 				// Arrange
 				jQuery.sap.require("sap.ui.core.ResizeHandler");
@@ -1571,7 +1571,7 @@
 				oResizeHandler.deregister();
 			});
 
-			test("a new item is added / scroll forward arrow is shown", function() {
+			QUnit.test("a new item is added / scroll forward arrow is shown", function(assert) {
 
 				// Arrange
 				jQuery.sap.require("sap.ui.core.ResizeHandler");
@@ -1624,7 +1624,7 @@
 			QUnit.module("preserve dom");
 
 			// test case for: [openui5] sap.m.IconTabBar doesn't support PreserveContent functionality (#26)
-			test("preserve dom", function() {
+			QUnit.test("preserve dom", function(assert) {
 
 				// Arrange
 				// prepare dom content
@@ -1674,7 +1674,7 @@
 
 			QUnit.module("events");
 
-			test("select", function() {
+			QUnit.test("select", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1712,7 +1712,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("expand: shoud not expand(already expanded)", function() {
+			QUnit.test("expand: shoud not expand(already expanded)", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1749,7 +1749,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("expand after selecting twice", function() {
+			QUnit.test("expand after selecting twice", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1805,7 +1805,7 @@
 				});
 			}
 
-			test("Arrow Right", function() {
+			QUnit.test("Arrow Right", function(assert) {
 
 				//Arrange
 				var oIconTabBar = createIconTabBar();
@@ -1829,7 +1829,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("Arrow Left", function() {
+			QUnit.test("Arrow Left", function(assert) {
 
 				//Arrange
 				var oIconTabBar = createIconTabBar();
@@ -1853,7 +1853,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("Arrow Down", function() {
+			QUnit.test("Arrow Down", function(assert) {
 
 				//Arrange
 				var oIconTabBar = createIconTabBar();
@@ -1877,7 +1877,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("Arrow Up", function() {
+			QUnit.test("Arrow Up", function(assert) {
 
 				//Arrange
 				var oIconTabBar = createIconTabBar();
@@ -1901,7 +1901,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("END", function() {
+			QUnit.test("END", function(assert) {
 
 				//Arrange
 				var oIconTabBar = createIconTabBar();
@@ -1922,7 +1922,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("HOME", function() {
+			QUnit.test("HOME", function(assert) {
 
 				//Arrange
 				var oIconTabBar = createIconTabBar();
@@ -1943,7 +1943,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("SPACE", function() {
+			QUnit.test("SPACE", function(assert) {
 
 				//Arrange
 				var oIconTabBar = createIconTabBar();
@@ -1968,7 +1968,7 @@
 
 			QUnit.module("updating data");
 
-			test("keep the selected tab", function() {
+			QUnit.test("keep the selected tab", function(assert) {
 
 				// BCP: 1482007468
 
@@ -2025,7 +2025,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("keep the current content when change IconTabFilter count property", function() {
+			QUnit.test("keep the current content when change IconTabFilter count property", function(assert) {
 
 				// create
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -2084,7 +2084,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("update ObjectHeader with IconTabBar ", function() {
+			QUnit.test("update ObjectHeader with IconTabBar ", function(assert) {
 
 				// create
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -2146,7 +2146,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("change the current content when change IconTabFilter content aggregation", function() {
+			QUnit.test("change the current content when change IconTabFilter content aggregation", function(assert) {
 
 				// create
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -2205,7 +2205,7 @@
 
 			QUnit.module("tabs");
 
-			test("remove selected tab", function() {
+			QUnit.test("remove selected tab", function(assert) {
 
 				// create
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -2256,7 +2256,7 @@
 				oIconTabBar.destroy();
 			});
 
-			test("tab reordering", function() {
+			QUnit.test("tab reordering", function(assert) {
 
 				// create
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -2336,8 +2336,8 @@
 					sap.ui.getCore().applyChanges();
 				},
 				afterEach: function () {
-				this.oIconTabBar.destroy();
-				this.oIconTabBar = null;
+					this.oIconTabBar.destroy();
+					this.oIconTabBar = null;
 				}
 			});
 
@@ -2374,7 +2374,7 @@
 
 			QUnit.module("padding");
 
-			test("Container Padding Classes", function () {
+			QUnit.test("Container Padding Classes", function (assert) {
 				// System under Test + Act
 				var oContainer = new sap.m.IconTabBar(),
 					sContentSelector = ".sapMITBContainerContent > .sapMITBContent",

@@ -115,7 +115,7 @@
 		}
 	}
 
-	test("format binary", function(){
+	QUnit.test("format binary", function(assert) {
 		for(var i=1; i<9; i++){
 			checkFormat("binary", 2*Math.pow(1024, i), "2 "+aBinaryUnits[i-1]);
 			checkFormat("binary", 2*Math.pow(1024, i)+"", "2 "+aBinaryUnits[i-1]);
@@ -131,7 +131,7 @@
 		checkFormat("binary", 1048575, "1 MiB");
 	});
 
-	test("format decimal", function(){
+	QUnit.test("format decimal", function(assert) {
 		for(var i=1; i<9; i++){
 			checkFormat("decimal", 2*Math.pow(1000, i), "2 "+aDecimalUnits[i-1]);
 			checkFormat("decimal", 2*Math.pow(1000, i)+"", "2 "+aDecimalUnits[i-1]);
@@ -147,7 +147,7 @@
 		checkFormat("decimal", 999999, "1 MB");
 	});
 
-	test("format default", function(){
+	QUnit.test("format default", function(assert) {
 		for(var i=1; i<9; i++){
 			checkFormat("default", 2*Math.pow(1000, i), "2 "+aDecimalUnits[i-1]);
 			checkFormat("default", 2*Math.pow(1000, i)+"", "2 "+aDecimalUnits[i-1]);
@@ -162,7 +162,7 @@
 		checkFormat("default", "0x1", "1 Byte");
 	});
 
-	test("parse binary", function(){
+	QUnit.test("parse binary", function(assert) {
 		for(var i=1; i<9; i++){
 			checkParse("binary", "2 "+aBinaryUnits[i-1], 2*Math.pow(1024, i));
 			checkParse("binary", "2 "+aDecimalUnits[i-1], 2*Math.pow(1000, i));
@@ -173,7 +173,7 @@
 		checkParse("binary", "888", 888);
 	});
 
-	test("parse decimal", function(){
+	QUnit.test("parse decimal", function(assert) {
 		for(var i=1; i<9; i++){
 			checkParse("decimal", "2 "+aBinaryUnits[i-1], 2*Math.pow(1024, i));
 			checkParse("decimal", "2 "+aDecimalUnits[i-1], 2*Math.pow(1000, i));
@@ -184,7 +184,7 @@
 		checkParse("decimal", "888", 888);
 	});
 
-	test("parse default", function(){
+	QUnit.test("parse default", function(assert) {
 		for(var i=1; i<9; i++){
 			checkParse("default", "2 "+aBinaryUnits[i-1], 2*Math.pow(1024, i));
 			checkParse("default", "2 "+aDecimalUnits[i-1], 2*Math.pow(1000, i));
@@ -195,7 +195,7 @@
 		checkParse("default", "888", 888);
 	});
 
-	test("create format instance without giving any option", function() {
+	QUnit.test("create format instance without giving any option", function(assert) {
 		var oFormat = sap.ui.core.format.FileSizeFormat.getInstance();
 		equal(oFormat.format(100000), "100 KB", "BinarySize is set to false by default");
 	});

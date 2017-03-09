@@ -99,14 +99,14 @@ QUnit.module("API");
 /* tests for default values       */
 /* ------------------------------ */
 
-test("properties and default values", function(assert) {
+QUnit.test("properties and default values", function(assert) {
 	assert.strictEqual(oSwitch0.getState(), false, "The default state is false");
 	assert.strictEqual(oSwitch0.getEnabled(), true, "By default the switch is disabled");
 	assert.strictEqual(oSwitch0.getFocusDomRef().getAttribute("role"), "checkbox", "The role checkbox is set");
 	assert.strictEqual(jQuery(oSwitch0.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute is set not set by default');
 });
 
-test("getter / setter", function(assert) {
+QUnit.test("getter / setter", function(assert) {
 	assert.strictEqual(oSwitch1.getState(), true, "Check constructor property state === true");
 	assert.strictEqual(oSwitch2.getState(), false, "Check constructor property state === false");
 	assert.strictEqual(oSwitch3.getEnabled(), false, "Check constructor property enabled === false");
@@ -127,7 +127,7 @@ test("getter / setter", function(assert) {
 /* setState()                     */
 /* ------------------------------ */
 
-test("setState() test case 1 (initial rendering)", function(assert) {
+QUnit.test("setState() test case 1 (initial rendering)", function(assert) {
 
 	// system under test
 	var oSwitch = new sap.m.Switch({
@@ -145,7 +145,7 @@ test("setState() test case 1 (initial rendering)", function(assert) {
 	oSwitch.destroy();
 });
 
-test("setState() test case 2 (initial rendering)", function(assert) {
+QUnit.test("setState() test case 2 (initial rendering)", function(assert) {
 
 	// system under test
 	var oSwitch = new sap.m.Switch({
@@ -163,7 +163,7 @@ test("setState() test case 2 (initial rendering)", function(assert) {
 	oSwitch.destroy();
 });
 
-test("setState() test case 3", function(assert) {
+QUnit.test("setState() test case 3", function(assert) {
 
 	// system under test
 	var oSwitch = new sap.m.Switch();
@@ -182,7 +182,7 @@ test("setState() test case 3", function(assert) {
 	oSwitch.destroy();
 });
 
-test("setState() test case 4", function(assert) {
+QUnit.test("setState() test case 4", function(assert) {
 
 	// system under test
 	var oSwitch = new sap.m.Switch();
@@ -205,7 +205,7 @@ test("setState() test case 4", function(assert) {
 /* ariaLabelledBy()               */
 /* ------------------------------ */
 
-test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the invisible element separated by a space (test case 1)", function(assert) {
+QUnit.test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the invisible element separated by a space (test case 1)", function(assert) {
 
 	// system under test
 	var oLabel = new sap.m.Label({
@@ -231,7 +231,7 @@ test("it should set the value of the aria-labelledby attribute to the id of the 
 	oLabel.destroy();
 });
 
-test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the invisible element separated by a space (test case 2)", function(assert) {
+QUnit.test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the invisible element separated by a space (test case 2)", function(assert) {
 
 	// system under test
 	var oSwitch = new sap.m.Switch({
@@ -257,7 +257,7 @@ test("it should set the value of the aria-labelledby attribute to the id of the 
 	oLabel.destroy();
 });
 
-test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the invisible element separated by a space (test case 3)", function(assert) {
+QUnit.test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the invisible element separated by a space (test case 3)", function(assert) {
 
 	// system under test
 	var oLabel = new sap.m.Label({
@@ -281,7 +281,7 @@ test("it should set the value of the aria-labelledby attribute to the id of the 
 	oSwitch.destroy();
 });
 
-test("it should set the value of the invisible element for custom text", function(assert) {
+QUnit.test("it should set the value of the invisible element for custom text", function(assert) {
 
 	// system under test
 	var oSwitch = new sap.m.Switch({
@@ -302,7 +302,7 @@ test("it should set the value of the invisible element for custom text", functio
 	oSwitch.destroy();
 });
 
-test("getAccessibilityInfo", function(assert) {
+QUnit.test("getAccessibilityInfo", function(assert) {
 	var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	var oSwitch = new sap.m.Switch({
 		customTextOn: "CustomON",
@@ -347,7 +347,7 @@ QUnit.module("HTML");
 /* rendering                      */
 /* ------------------------------ */
 
-test("rendering", function(assert) {
+QUnit.test("rendering", function(assert) {
 	oPage.getContent().forEach(function(oSwitch) {
 		var mDomRefs = fnGetDomRefs(oSwitch.getId());
 
@@ -369,7 +369,7 @@ test("rendering", function(assert) {
 	});
 });
 
-test("it should render the invisible element with the corresponding text nodes for screen reader announcement", function(assert) {
+QUnit.test("it should render the invisible element with the corresponding text nodes for screen reader announcement", function(assert) {
 
 	// system under test
 	var oSwitch = new sap.m.Switch({
@@ -395,7 +395,7 @@ test("it should render the invisible element with the corresponding text nodes f
 
 QUnit.module("CSS and DOM");
 
-test("class and attributes", function(assert) {
+QUnit.test("class and attributes", function(assert) {
 	testSwitchON(assert, oSwitch7);
 	testSwitchOFF(assert, oSwitch8);
 });
@@ -476,7 +476,7 @@ function testSwitchEnabled(assert, oSwitch) {
 QUnit.module("Updating");
 
 // test switch disabled
-test("When the method setEnabled is invoked with a boolean false argument", function(assert) {
+QUnit.test("When the method setEnabled is invoked with a boolean false argument", function(assert) {
 	oSwitch7.setState(false);
 
 	// act
@@ -490,7 +490,7 @@ test("When the method setEnabled is invoked with a boolean false argument", func
 });
 
 // test switch enabled
-test("When the method setEnabled is invoked with a boolean true argument", function(assert) {
+QUnit.test("When the method setEnabled is invoked with a boolean true argument", function(assert) {
 
 	// act
 	oSwitch7.setEnabled(true);
@@ -503,7 +503,7 @@ test("When the method setEnabled is invoked with a boolean true argument", funct
 	assert.strictEqual(jQuery(oSwitch7.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute not set');
 });
 
-test("Testing that setName() method add the html attribute name", function(assert) {
+QUnit.test("Testing that setName() method add the html attribute name", function(assert) {
 	var oSwitch7 = sap.ui.getCore().byId("__switch7");
 	assert.strictEqual(oSwitch7.$().find("input[type=checkbox]").attr("name"), "switch-7", "The attribute name from the input type checkbox inside the switch must have the value " + oSwitch7.getName());
 });
@@ -514,7 +514,7 @@ test("Testing that setName() method add the html attribute name", function(asser
 
 QUnit.module("Event");
 
-test("Firing events", function(assert) {
+QUnit.test("Firing events", function(assert) {
 	var j,
 		i,
 		oTouchMove,
@@ -676,7 +676,7 @@ test("Firing events", function(assert) {
 });
 
 // github #234
-test("double click/tap test case", function(assert) {
+QUnit.test("double click/tap test case", function(assert) {
 
 	// system under test
 	var oSwitch = new sap.m.Switch({
@@ -744,7 +744,7 @@ test("double click/tap test case", function(assert) {
 	oSwitch.destroy();
 });
 
-test("The change event should be fired only when it's state changes", function(assert) {
+QUnit.test("The change event should be fired only when it's state changes", function(assert) {
 
 	// system under test
 	var oSwitch = new sap.m.Switch({
@@ -834,7 +834,7 @@ test("The change event should be fired only when it's state changes", function(a
 /* onsapspace()                   */
 /* ------------------------------ */
 
-test("onsapselect SPACE", function(assert) {
+QUnit.test("onsapselect SPACE", function(assert) {
 
 	// system under test
 	var oSwitch = new sap.m.Switch({
@@ -858,7 +858,7 @@ test("onsapselect SPACE", function(assert) {
 	oSwitch.destroy();
 });
 
-test("onsapselect ENTER", function(assert) {
+QUnit.test("onsapselect ENTER", function(assert) {
 
 	// system under test
 	var oSwitch = new sap.m.Switch({
@@ -883,7 +883,7 @@ test("onsapselect ENTER", function(assert) {
 });
 
 // BCP 1570633670
-test("extending the switch should not throw an error", function(assert) {
+QUnit.test("extending the switch should not throw an error", function(assert) {
 
 	// system under test
 	sap.m.Switch.extend("CustomSwitch", {

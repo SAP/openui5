@@ -81,7 +81,7 @@
 		 * Some test function... TODO: implement
 		 */
 
-		test("OneRootOk", function() {
+		QUnit.test("OneRootOk", function(assert) {
 			jQuery("#uiArea1").root();
 
 			var oCore = sap.ui.getCore();
@@ -90,7 +90,7 @@
 			notStrictEqual(oUIArea, undefined, "UI Area should have been created.");
 		});
 
-		test("MultipleRootOk", function() {
+		QUnit.test("MultipleRootOk", function(assert) {
 			jQuery(".test").root();
 
 			var oCore = sap.ui.getCore();
@@ -104,7 +104,7 @@
 			notStrictEqual(oUIArea, undefined, "UI Area 3 should have been created.");
 		});
 
-		test("MultipleRootAndSliceOk", function() {
+		QUnit.test("MultipleRootAndSliceOk", function(assert) {
 			var oCore = sap.ui.getCore();
 			oCore.registerPlugin(oTestPlugin);
 			var iNo1 = oTestPlugin.getNoOfUIAreas();
@@ -124,7 +124,7 @@
 			oCore.unregisterPlugin(oTestPlugin);
 		});
 
-		test("RootWithControlOk", function() {
+		QUnit.test("RootWithControlOk", function(assert) {
 			jQuery("#uiAreaTarget").root(new sap.jsunittest.Test("testControl"));
 			sap.ui.getCore().applyChanges();
 			notStrictEqual(jQuery("#testControl").length, 0, "There should be something rendered");
@@ -132,7 +132,7 @@
 			ok(jQuery("#testControl").control()[0] !== null, "Control should be available");
 		});
 
-		test("RootReturnsAllRelevantUIAreasOk", function(){
+		QUnit.test("RootReturnsAllRelevantUIAreasOk", function(assert) {
 			var oCore = sap.ui.getCore();
 			oCore.registerPlugin(oTestPlugin);
 			var iNo1 = oTestPlugin.getNoOfUIAreas();
@@ -149,7 +149,7 @@
 			oCore.unregisterPlugin(oTestPlugin);
 		});
 
-		test("ControlOnOutermostDomRefOk", function(){
+		QUnit.test("ControlOnOutermostDomRefOk", function(assert) {
 			jQuery("#uiAreaTarget2").root(new sap.jsunittest.Test("testControl2"));
 			sap.ui.getCore().applyChanges();
 
@@ -159,7 +159,7 @@
 			ok(oCheckCtrl === oCtrl, "Created control should be returned");
 		});
 
-		test("ControlOnInnerDomRefOk", function(){
+		QUnit.test("ControlOnInnerDomRefOk", function(assert) {
 			jQuery("#uiAreaTarget3").root(new sap.jsunittest.Test("testControl3"));
 			sap.ui.getCore().applyChanges();
 
@@ -169,7 +169,7 @@
 			ok(oCheckCtrl === oCtrl, "Created control should be returned when queried for inner node");
 		});
 
-		test("MultipleControlsOk", function(){
+		QUnit.test("MultipleControlsOk", function(assert) {
 			jQuery("#uiAreaTarget4").root(new sap.jsunittest.Test("testControl4", {marker: "myClass"}));
 			jQuery("#uiAreaTarget5").root(new sap.jsunittest.Test("testControl5", {marker: "myClass"}));
 			jQuery("#uiAreaTarget6").root(new sap.jsunittest.Test("testControl6", {marker: "myClass"}));
@@ -180,7 +180,7 @@
 			strictEqual(aCtrls.length, 3, "All requested Controls should be returned");
 		});
 
-		test("GetUIAreasOk", function() {
+		QUnit.test("GetUIAreasOk", function(assert) {
 			var oCore = sap.ui.getCore();
 			oCore.registerPlugin(oTestPlugin);
 			var iNo = oTestPlugin.getNoOfUIAreas();
@@ -195,7 +195,7 @@
 			});
 		});
 
-		test("GetRootOfControlOk", function() {
+		QUnit.test("GetRootOfControlOk", function(assert) {
 			var oCore = sap.ui.getCore();
 			var aUIAreas = jQuery(".presetup").uiarea();
 			strictEqual(aUIAreas.length, 0, "No UIareas should be returned");

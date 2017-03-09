@@ -26,7 +26,7 @@
 
 	QUnit.module("popin");
 
-	test("ShouldSetDemandPopin", function() {
+	QUnit.test("ShouldSetDemandPopin", function(assert) {
 		var fnTestCase = function(initialValue, valueToSet,bShouldInvalidate, expectedValidateToBeCalled){
 			//SUT
 			var result,
@@ -74,7 +74,7 @@
 		fnTestCase(false, true, false, false);
 	});
 
-	test("ShouldKnowThatItIsAPopin", function() {
+	QUnit.test("ShouldKnowThatItIsAPopin", function(assert) {
 		var fnTestCase = function(demandsPopin, hasMedia, hasMatchingMedia, expectedResult){
 			//SUT
 			var result,
@@ -115,7 +115,7 @@
 
 	QUnit.module("size and visibility")
 
-	test("ShouldKnowIfItIsHidden", function() {
+	QUnit.test("ShouldKnowIfItIsHidden", function(assert) {
 		var fnTestCase = function( expectedResult, hasMedia, hasMatchingMedia, hasScreen, minWidth){
 			//SUT
 			var result,
@@ -161,7 +161,7 @@
 
 	});
 
-	test("ShouldValidateMinWidth", function() {
+	QUnit.test("ShouldValidateMinWidth", function(assert) {
 		var fnTestCase = function(width){
 			//SUT
 			var screenSize, result,
@@ -196,7 +196,7 @@
 		}
 	});
 
-	test("ShouldKnowIfWidthIsPredefined", function() {
+	QUnit.test("ShouldKnowIfWidthIsPredefined", function(assert) {
 		//SUT
 		var sut = new sap.m.Column({minScreenWidth : "240px"});
 
@@ -215,7 +215,7 @@
 
 	QUnit.module("media");
 
-	test("ShouldAddMedia", function() {
+	QUnit.test("ShouldAddMedia", function(assert) {
 
 		var fnTestCase = function(width,matches) {
 			//SUT
@@ -236,7 +236,7 @@
 		fnTestCase("100px",true);
 	});
 
-	test("ShouldClearMedia", function() {
+	QUnit.test("ShouldClearMedia", function(assert) {
 		//SUT
 		var sut = new sap.m.Column({minScreenWidth: "100px"});
 
@@ -255,7 +255,7 @@
 
 	QUnit.module("events");
 
-	test("Media handler should not be attached if the table is not rendered yet", function () {
+	QUnit.test("Media handler should not be attached if the table is not rendered yet", function (assert) {
 		var mediaAttachSpy = this.spy(sap.ui.Device.media, "attachHandler"),
 				sut = new sap.m.Column({
 					minScreenWidth : "phone"
@@ -274,7 +274,7 @@
 		parent.destroy();
 	});
 
-	test("Media handler should be attached when adding a column to a rendered table", function () {
+	QUnit.test("Media handler should be attached when adding a column to a rendered table", function (assert) {
 		var mediaAttachSpy = this.spy(sap.ui.Device.media, "attachHandler"),
 				sut = new sap.m.Column({
 					minScreenWidth : "phone"
@@ -290,7 +290,7 @@
 		parent.destroy();
 	});
 
-	test("ShouldNotifyOnResize", function() {
+	QUnit.test("ShouldNotifyOnResize", function(assert) {
 
 		// need to bypass the lazy require stub for spies to work
 		jQuery.sap.require("sap/m/Table");
@@ -321,7 +321,7 @@
 		parent.destroy();
 	});
 
-	test("Should not notify when contextual width is set to a parent container, but this width is in the same range as the device width (when initially rendered without contextual width)", function () {
+	QUnit.test("Should not notify when contextual width is set to a parent container, but this width is in the same range as the device width (when initially rendered without contextual width)", function (assert) {
 
 		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
 		var tableResizeSpy = this.spy(sap.m.Table.prototype, "onColumnResize"),
@@ -349,7 +349,7 @@
 		page.destroy();
 	});
 
-	test("Should notify when contextual width is set to a parent container, and this width is in a different range compared to device width (when initially rendered without contextual width)", function () {
+	QUnit.test("Should notify when contextual width is set to a parent container, and this width is in a different range compared to device width (when initially rendered without contextual width)", function (assert) {
 
 		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
 		var tableResizeSpy = this.spy(sap.m.Table.prototype, "onColumnResize"),
@@ -389,7 +389,7 @@
 		page.destroy();
 	});
 
-	test("Should notify when contextual width changes beyond a breakpoint (when already rendered with contextual width)", function () {
+	QUnit.test("Should notify when contextual width changes beyond a breakpoint (when already rendered with contextual width)", function (assert) {
 
 		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
 		var tableResizeSpy = this.spy(sap.m.Table.prototype, "onColumnResize"),
@@ -421,7 +421,7 @@
 		page.destroy();
 	});
 
-	test("Should notify when contextual width is removed from a parent, and this width was in a different range compared to device width", function () {
+	QUnit.test("Should notify when contextual width is removed from a parent, and this width was in a different range compared to device width", function (assert) {
 
 		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
 		var tableResizeSpy = this.spy(sap.m.Table.prototype, "onColumnResize"),
@@ -451,7 +451,7 @@
 		page.destroy();
 	});
 
-	test("Should not notify when contextual width is removed from a parent, but this width wasn't in a different range compared to device width", function () {
+	QUnit.test("Should not notify when contextual width is removed from a parent, but this width wasn't in a different range compared to device width", function (assert) {
 
 		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
 		var tableResizeSpy = this.spy(sap.m.Table.prototype, "onColumnResize"),
@@ -484,7 +484,7 @@
 
 	QUnit.module("display and style");
 
-	test("ShouldSetDisplay", function() {
+	QUnit.test("ShouldSetDisplay", function(assert) {
 		//System under Test + Arrange
 		var sut = new sap.m.Column({
 				demandPopin : true,
@@ -519,7 +519,7 @@
 		parent.destroy();
 	});
 
-	test("ShouldGetTheStyleClass", function() {
+	QUnit.test("ShouldGetTheStyleClass", function(assert) {
 		//Arrange
 		var result,
 			className = "awesomeStyle",
@@ -538,7 +538,7 @@
 		ok(result.indexOf(media) !== -1, "media class was present in: " + result);
 	});
 
-	test("ShouldApplyAlign", function() {
+	QUnit.test("ShouldApplyAlign", function(assert) {
 		//Arrange
 		var align = "Center",
 			label = new sap.m.Label(),
@@ -557,7 +557,7 @@
 		label.destroy();
 	});
 
-	test("Should convert units correctly", function() {
+	QUnit.test("Should convert units correctly", function(assert) {
 
 		var fnTestCase = function(width, px, screen) {
 			//SUT

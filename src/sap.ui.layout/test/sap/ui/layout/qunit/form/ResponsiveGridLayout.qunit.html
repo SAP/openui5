@@ -287,7 +287,7 @@
 
 		QUnit.module("functions");
 
-		test("Getter", function() {
+		QUnit.test("Getter", function(assert) {
 			// overwritten getter must return data of corresponding objects
 			var oContainer = sap.ui.getCore().byId("F1C1");
 			var oElement = sap.ui.getCore().byId("F1C1E1");
@@ -318,7 +318,7 @@
 			equal(oPanel.getLayoutData().getId(), oLayoutData.getId(), "Form3: Panel3 must get LayoutData from Container");
 		});
 
-		test("LayoutData calculation", function() {
+		QUnit.test("LayoutData calculation", function(assert) {
 			var oElement = sap.ui.getCore().byId("F1C1E1");
 			var oLabel = oElement.getLabelControl();
 			var oGrid = sap.ui.getCore().byId("F1C1--Grid");
@@ -451,7 +451,7 @@
 			equal(oLayoutData.getIndentM(), 2, "Form7: Field9 calculated LayoutData indentM correct");
 		});
 
-		test("DOM representation", function() {
+		QUnit.test("DOM representation", function(assert) {
 			var oContainer = sap.ui.getCore().byId("F1C1");
 			equal(oContainer.getRenderedDomRef().id, "F1C1--Grid", "Form1: Container1 ResponsiveFlowLayout is DOM representation");
 			oContainer = sap.ui.getCore().byId("F2C1");
@@ -465,14 +465,14 @@
 
 		QUnit.module("Rendering");
 
-		test("BackgroundDesign", function() {
+		QUnit.test("BackgroundDesign", function(assert) {
 			ok(jQuery("#Layout1").hasClass("sapUiFormBackgrTranslucent"), "Form1: translucent design per default");
 			ok(!jQuery("#Layout2").hasClass("sapUiFormBackgrTranslucent"), "Form2: no translucent design");
 			ok(!jQuery("#Layout2").hasClass("sapUiFormBackgrSolid"), "Form2: no solid design");
 			ok(jQuery("#Layout3").hasClass("sapUiFormBackgrSolid"), "Form1: solid design");
 		});
 
-		test("Container rendering", function() {
+		QUnit.test("Container rendering", function(assert) {
 			ok(jQuery.sap.domById("F1"), "Form1 is rendered");
 			ok(jQuery.sap.domById("Layout1"), "Layout1 is rendered");
 			ok(!jQuery.sap.domById("F1--Grid"), "Form1: no Main-Grid rendered as only one container");
@@ -506,7 +506,7 @@
 			ok(jQuery.sap.domById("F4C2--Grid"), "Form4: Container2 Grid rendered");
 		});
 
-		test("Fields Rendering", function() {
+		QUnit.test("Fields Rendering", function(assert) {
 			ok(jQuery.sap.domById(sap.ui.getCore().byId("F1C1E1").getLabelControl().getId()), "Label1 rendered");
 			ok(jQuery.sap.domById("F1C1E1_T1"), "Input1 rendered");
 
@@ -518,7 +518,7 @@
 			ok(!jQuery.sap.domById("F3C5E1_T1"), "Form3: invisible Container - Input not rendered");
 		});
 
-		test("Aria", function() {
+		QUnit.test("Aria", function(assert) {
 			ok(!jQuery("#F1C1--Grid").attr("role"), "Container-F1C1: role \"form\" not set on grid level");
 			ok(!jQuery("#F1C1--Grid").attr("aria-labelledby"), "Container-F1C1: aria-labelledby not set on grid level");
 			equal(jQuery("#F2C1---Panel").attr("role"), "form", "Container-F2C1: role \"form\" set on panel level");
@@ -532,7 +532,7 @@
 			equal(jQuery("#F6C2---Panel").attr("aria-labelledby"), "F6-TB3", "Container-F6C2: aria-labelledby default set");
 		});
 
-		test("Toolbar", function() {
+		QUnit.test("Toolbar", function(assert) {
 			ok(!jQuery.sap.domById("F6-T"), "Form6: Title not rendered");
 			ok(jQuery.sap.domById("F6-TB1"), "Form6: Toolbar rendered");
 			ok(!jQuery.sap.domById("F6-C1T"), "Form6: Title of Container1 not rendered");
@@ -542,7 +542,7 @@
 
 		QUnit.module("Interaction");
 
-		test("add container", function() {
+		QUnit.test("add container", function(assert) {
 			oForm3.addFormContainer(
 				new sap.ui.layout.form.FormContainer("F3C4",{
 						title: "new container",
@@ -562,7 +562,7 @@
 			ok(jQuery.sap.domById("F3C4E1_T1"), "Form3: new Input1 rendered");
 		});
 
-		test("add element", function() {
+		QUnit.test("add element", function(assert) {
 			var oContainer = sap.ui.getCore().byId("F3C4");
 			oContainer.addFormElement(
 					new sap.ui.layout.form.FormElement("F3C4E2",{
@@ -575,7 +575,7 @@
 			ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: new Input1 rendered");
 		});
 
-		test("add field", function() {
+		QUnit.test("add field", function(assert) {
 			var oElement = sap.ui.getCore().byId("F3C4E2");
 			oElement.addField(new sap.m.Input("F3C4E2_T2",{value: "Text"}));
 			sap.ui.getCore().applyChanges();
@@ -583,7 +583,7 @@
 			ok(jQuery.sap.domById("F3C4E2_T2"), "Form3: new Input2 rendered");
 		});
 
-		test("make Element invisible", function() {
+		QUnit.test("make Element invisible", function(assert) {
 			oElement = sap.ui.getCore().byId("F3C4E2");
 			oElement.setVisible(false);
 			sap.ui.getCore().applyChanges();
@@ -591,7 +591,7 @@
 			ok(!jQuery.sap.domById("F3C4E2_T1"), "Form3: Input1 not longer rendered");
 		});
 
-		test("make Element visible", function() {
+		QUnit.test("make Element visible", function(assert) {
 			oElement = sap.ui.getCore().byId("F3C4E2");
 			oElement.setVisible(true);
 			sap.ui.getCore().applyChanges();
@@ -599,7 +599,7 @@
 			ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: Input1 rendered");
 		});
 
-		test("make Container invisible", function() {
+		QUnit.test("make Container invisible", function(assert) {
 			oContainer = sap.ui.getCore().byId("F3C4");
 			oContainer.setVisible(false);
 			sap.ui.getCore().applyChanges();
@@ -609,7 +609,7 @@
 			ok(!jQuery.sap.domById("F3C4E2_T1"), "Form3: Input1 not longer rendered");
 		});
 
-		test("make Container visible", function() {
+		QUnit.test("make Container visible", function(assert) {
 			oContainer = sap.ui.getCore().byId("F3C4");
 			oContainer.setVisible(true);
 			sap.ui.getCore().applyChanges();
@@ -621,7 +621,7 @@
 			ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: Input1 rendered");
 		});
 
-		test("destroy and add container new", function() {
+		QUnit.test("destroy and add container new", function(assert) {
 			var oContainer = sap.ui.getCore().byId("F3C4");
 			var aFormElements = oContainer.removeAllFormElements();
 			oContainer.destroy();
@@ -638,7 +638,7 @@
 			ok(jQuery.sap.domById("F3C4E1_T1"), "Form3: Input1 still rendered");
 		});
 
-		test("destroy and add element new", function() {
+		QUnit.test("destroy and add element new", function(assert) {
 			var oElement = sap.ui.getCore().byId("F3C4E2");
 			oElement.destroy();
 			var oContainer = sap.ui.getCore().byId("F3C4");
@@ -653,14 +653,14 @@
 			ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: Input1 still rendered");
 		});
 
-		test("remove field", function() {
+		QUnit.test("remove field", function(assert) {
 			var oElement = sap.ui.getCore().byId("F3C4E2");
 			oElement.removeField("F3C4E2_T1");
 			sap.ui.getCore().applyChanges();
 			ok(!jQuery.sap.domById("F3C4E2_T1"), "Form4: new Input1 not longer rendered");
 		});
 
-		test("remove element", function() {
+		QUnit.test("remove element", function(assert) {
 			var oContainer = sap.ui.getCore().byId("F3C4");
 			oContainer.removeFormElement("F3C4E2");
 			sap.ui.getCore().applyChanges();
@@ -668,7 +668,7 @@
 			ok(!jQuery.sap.domById("F3C4E2_T1"), "Form4: new Input1 not longer rendered");
 		});
 
-		test("remove container", function() {
+		QUnit.test("remove container", function(assert) {
 			oForm3.removeFormContainer("F3C4");
 			sap.ui.getCore().applyChanges();
 			ok(!jQuery.sap.domById("F3C4---Panel"), "Form3: new Container Panel not longer rendered rendered");
@@ -680,7 +680,7 @@
 			ok(!sap.ui.getCore().byId("F3C4---Panel"), "Panel destroyed");
 		});
 
-		test("destroy layout", function() {
+		QUnit.test("destroy layout", function(assert) {
 			oForm3.setLayout("");
 			oLayout3.destroy();
 			var iLength = 0;

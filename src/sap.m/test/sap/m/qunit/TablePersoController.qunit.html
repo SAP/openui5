@@ -156,7 +156,7 @@
 
 	QUnit.module("Change & Reset");
 
-	test("Original order and all visible", function() {
+	QUnit.test("Original order and all visible", function(assert) {
 
 		// Open dialog
 		sap.ui.getCore().byId("idPersonalizationButton").firePress();
@@ -183,7 +183,7 @@
 
 	});
 
-	test("Make personalizations (1 invisible, 1 order change)", function() {
+	QUnit.test("Make personalizations (1 invisible, 1 order change)", function(assert) {
 
 		// Open dialog
 		sap.ui.getCore().byId("idPersonalizationButton").firePress();
@@ -230,7 +230,7 @@
 
 	});
 
-	test("More personalizations then reset (1 invisible, 1 order change)", function() {
+	QUnit.test("More personalizations then reset (1 invisible, 1 order change)", function(assert) {
 
 		// Open dialog
 		sap.ui.getCore().byId("idPersonalizationButton").firePress();
@@ -285,7 +285,7 @@
 		strictEqual(oPersData.aColumns[2].visible, true, "2 Name OFF (after 1st reset)");
 	});
 
-	test("More personalizations for real (1 invisible, 1 order change)", function() {
+	QUnit.test("More personalizations for real (1 invisible, 1 order change)", function(assert) {
 
 		// Open dialog
 		sap.ui.getCore().byId("idPersonalizationButton").firePress();
@@ -322,7 +322,7 @@
 
 	});
 
-	test("Reset to the initial Column order", function() {
+	QUnit.test("Reset to the initial Column order", function(assert) {
 
 //      reset personalization
 		sap.ui.getCore().byId("idPersonalizationResetButton").firePress();
@@ -346,7 +346,7 @@
 		});
 	});
 
-	test("Destroy TablePersoController", function(){
+	QUnit.test("Destroy TablePersoController", function(assert) {
 		var iDelegatesCount = oTable.aDelegates.length;
 		oTPC.destroy();
 

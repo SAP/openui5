@@ -1168,7 +1168,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.getContexts(0, 2, 0);
 		})
 	});
-	test("Export to file URL", function(){
+	QUnit.test("Export to file URL", function(assert){
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var sUrl = oBinding.getDownloadUrl("csv");

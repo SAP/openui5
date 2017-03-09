@@ -105,7 +105,7 @@
 
 		QUnit.module("API");
 
-		test("Default Values", function() {
+		QUnit.test("Default Values", function(assert) {
 			equals(oRtt0.getTitle(), "", "Default 'title':");
 			equals(oRtt0.getImageSrc(), "", "Default 'imageSrc':");
 			equals(oRtt0.getText(), "", "Default 'text':");
@@ -117,7 +117,7 @@
 			equals(oRtt0.getCollision(), "flip", "Default 'collision':");
 		});
 
-		test("Custom Values", function() {
+		QUnit.test("Custom Values", function(assert) {
 			equals(oRtt2.getTitle(), sTitle, "Custom 'title':");
 			equals(oRtt2.getImageSrc(), sImageSrc, "Custom 'imageSrc':");
 			equals(oRtt2.getText(), sText, "Custom 'text':");
@@ -129,7 +129,7 @@
 			equals(oRtt2.getCollision(), "none", "Custom 'collision':");
 		});
 
-		test("Control Attachment", function() {
+		QUnit.test("Control Attachment", function(assert) {
 			equals(oButton1.$().attr("title"), sDefaultTitle, "Default tooltip set when no RichTooltip is attached");
 			oButton1.setTooltip(oRtt1);
 			sap.ui.getCore().applyChanges();

@@ -100,7 +100,7 @@
 
 	};
 
-	test("ListBinding with Template (classical)", function(){
+	QUnit.test("ListBinding with Template (classical)", function(assert) {
 		setup();
 		control.bindAggregation("items", "/teamMembers", new MyListItem({text:"{lastName}"}));
 
@@ -109,7 +109,7 @@
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
-	test("Named model: ListBinding with Template (classical)", function(){
+	QUnit.test("Named model: ListBinding with Template (classical)", function(assert) {
 		setup();
 		control.bindAggregation("items", "NamedModel>/teamMembers", new MyListItem({text:"{NamedModel>firstName}"}));
 
@@ -118,7 +118,7 @@
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
-	test("ListBinding with Factory (classical)", function(){
+	QUnit.test("ListBinding with Factory (classical)", function(assert) {
 		setup();
 		control.bindAggregation("items", "/teamMembers", function(sId, oContext) {
 			var gender = oContext.getProperty("gender"),
@@ -134,7 +134,7 @@
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
-	test("Named model: ListBinding with Factory (classical)", function(){
+	QUnit.test("Named model: ListBinding with Factory (classical)", function(assert) {
 		setup();
 		control.bindAggregation("items", "NamedModel>/teamMembers", function(sId, oContext) {
 			var gender = oContext.getProperty("gender"),
@@ -150,7 +150,7 @@
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
-	test("ListBinding with Template", function(){
+	QUnit.test("ListBinding with Template", function(assert) {
 		setup();
 		control.bindAggregation("items", {
 			path: "/teamMembers",
@@ -162,7 +162,7 @@
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
-	test("ListBinding with Factory", function(){
+	QUnit.test("ListBinding with Factory", function(assert) {
 		setup();
 		control.bindAggregation("items", {
 			path: "/teamMembers",
@@ -181,7 +181,7 @@
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
-	test("ListBinding with bindElement", function(){
+	QUnit.test("ListBinding with bindElement", function(assert) {
 		setup();
 		oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData({modelData:testData});
@@ -196,7 +196,7 @@
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
-	test("Named model: ListBinding with bindElement", function(){
+	QUnit.test("Named model: ListBinding with bindElement", function(assert) {
 		setup();
 		oNamedModel = new sap.ui.model.json.JSONModel();
 		oNamedModel.setData({modelData:testData});
@@ -211,7 +211,7 @@
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
-	test("ListBinding with Template (constructor)", function(){
+	QUnit.test("ListBinding with Template (constructor)", function(assert) {
 		setup();
 		control.destroy();
 		control = new MyList({
@@ -227,7 +227,7 @@
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
-	test("ListBinding with Template (constructor, json)", function(){
+	QUnit.test("ListBinding with Template (constructor, json)", function(assert) {
 		setup();
 		control.destroy();
 		control = new MyList({
@@ -247,7 +247,7 @@
 	});
 
 	QUnit.module("Sorter");
-	
+
 	QUnit.test("getGroupFunction", function(assert) {
 		var oSorter = new sap.ui.model.Sorter("myProperty", false);
 		assert.equal(oSorter.getGroupFunction(), undefined, "sorter without group configuration should return undefined group function");
@@ -257,7 +257,7 @@
 		var oSorter = new sap.ui.model.Sorter("myProperty", false, true);
 		assert.equal(typeof oSorter.getGroupFunction(), 'function', "sorter with group configuration 'true' should return a group function");
 	});
-	
+
 	</script>
 
 </head>

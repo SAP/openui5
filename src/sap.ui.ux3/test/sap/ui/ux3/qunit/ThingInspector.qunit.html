@@ -180,20 +180,20 @@
 			var action;
 			var facet;
 
-			test("ThingInspector exists", function() {
+			QUnit.test("ThingInspector exists", function(assert) {
 				equals(true, true, "...");
 				var oDomRef = jQuery.sap.domById(oThingInspector.getId());
 				ok(oDomRef, "Rendered ThingInspector should exist in the page");
 				equal(oDomRef.className, "sapUiUx3Overlay sapUiUx3TI sapUiShd", "Rendered ThingInspector should have the class 'sapUiUx3TI'");
 			});
 
-			test("Swatch", function() {
+			QUnit.test("Swatch", function(assert) {
 				var oSwatch = jQuery.sap.domById(oThingInspector.getId() + "-thingViewer-swatch");
 				ok(oSwatch, "Rendered Swatch should exist in the page");
 				equal(oSwatch.className, "sapUiUx3TVIcon", "Rendered Swatch should have the class 'sapUiUx3TVIcon'");
 			});
 
-			test("Facets", function() {
+			QUnit.test("Facets", function(assert) {
 				//number of navigation items must be the same as number of facets
 				var facets = oThingInspector.getFacets();
 				var $facets = jQuery(".sapUiUx3TIFacetBar");
@@ -202,7 +202,7 @@
 				}
 			});
 
-			test("Toolbar",	function() {
+			QUnit.test("Toolbar",	function(assert) {
 				var oActionBar = oThingInspector.getActionBar();
 				ok(oActionBar, "ActionBar should exist");
 				ok(jQuery(".sapUiUx3ActionBar")[0], "ActionBar rendering ok");
@@ -214,24 +214,24 @@
 
 			QUnit.module("Behaviour");
 
-			test("OpenNew Event", function() {
+			QUnit.test("OpenNew Event", function(assert) {
 				expect(1);
 				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-openNew"), "click", 1, 1, 1, 1);
 			});
 
-			test("OpenNew via Keyboard Event", function() {
+			QUnit.test("OpenNew via Keyboard Event", function(assert) {
 				expect(2);
 				qutils.triggerKeyboardEvent(oThingInspector.getId() + "-openNew", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				qutils.triggerKeyboardEvent(oThingInspector.getId() + "-openNew", jQuery.sap.KeyCodes.SPACE, false, false, false);
 			});
 
-			test("ActionSelected Event", function() {
+			QUnit.test("ActionSelected Event", function(assert) {
 				expect(2);
 				action = "delete";
 				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-deleteButton"), "click", 1, 1, 1, 1);
 			});
 
-			test("FavoriteSelected Event", function() {
+			QUnit.test("FavoriteSelected Event", function(assert) {
 				expect(7);
 				ok(!oThingInspector.getFavoriteState(), "Favorite State is false");
 				action = "favorite";
@@ -241,7 +241,7 @@
 				ok(!oThingInspector.getFavoriteState(), "Favorite State is false");
 			});
 
-			test("Disable Favorite Action", function() {
+			QUnit.test("Disable Favorite Action", function(assert) {
 				expect(1);
 				oThingInspector.setFavoriteActionEnabled(false);
 				ok(!oThingInspector.getFavoriteActionEnabled(), "Favorite Action enabled is false");
@@ -257,7 +257,7 @@
 				},500);
 			});
 
-			test("FlagSelected Event", function() {
+			QUnit.test("FlagSelected Event", function(assert) {
 				expect(7);
 				ok(!oThingInspector.getFlagState(), "Flag State is false");
 				action = "flag";
@@ -267,7 +267,7 @@
 				ok(!oThingInspector.getFlagState(), "Flag State is false");
 			});
 
-			test("FlagSelected via Keyboard Event", function() {
+			QUnit.test("FlagSelected via Keyboard Event", function(assert) {
 				expect(7);
 				ok(!oThingInspector.getFlagState(), "Flag State is false");
 				action = "flag";
@@ -278,7 +278,7 @@
 				ok(!oThingInspector.getFlagState(), "Flag State is false");
 			});
 
-			test("Disable Flag Action", function() {
+			QUnit.test("Disable Flag Action", function(assert) {
 				expect(1);
 				oThingInspector.setFlagActionEnabled(false);
 				ok(!oThingInspector.getFlagActionEnabled(), "Flag Action enabled is false");
@@ -336,7 +336,7 @@
 				}, 500);
 			});
 
-			test("Disable Update Action", function() {
+			QUnit.test("Disable Update Action", function(assert) {
 				expect(1);
 				oThingInspector.setUpdateActionEnabled(false);
 				ok(!oThingInspector.getUpdateActionEnabled(), "Flag Action enabled is false");
@@ -432,7 +432,7 @@
 
 			});
 
-			test("Disable Follow Action", function() {
+			QUnit.test("Disable Follow Action", function(assert) {
 				expect(1);
 				oThingInspector.setFollowActionEnabled(false);
 				ok(!oThingInspector.getFollowActionEnabled(), "Follow Action enabled is false");
@@ -460,7 +460,7 @@
 				}, 500);
 			});
 
-			test("Destroy and remove control", function() {
+			QUnit.test("Destroy and remove control", function(assert) {
 				oThingInspector.destroy();
 				sap.ui.getCore().applyChanges();
 				var oDomRef = jQuery.sap.domById(oThingInspector.getId());
@@ -481,7 +481,7 @@
 			}
 		});
 
-		QUnit.test("insertAction",function(assert){
+		QUnit.test("insertAction",function(assert) {
 			var action1 = new sap.ui.ux3.ThingAction("survey1", {
 				text : "Create Survey"
 			});
@@ -498,7 +498,7 @@
 			assert.strictEqual(this.oTI.getActions().indexOf(action2), 1, "action is inserted on the correct position");
 		});
 
-		QUnit.test("removeAction",function(assert){
+		QUnit.test("removeAction",function(assert) {
 			var action = new sap.ui.ux3.ThingAction("survey3", {
 				text : "Create Survey"
 			});
@@ -507,7 +507,7 @@
 			assert.strictEqual(this.oTI.getActions().indexOf(action), -1, "action is removed");
 		});
 
-		QUnit.test("removeAllActions",function(assert){
+		QUnit.test("removeAllActions",function(assert) {
 			var action1 = new sap.ui.ux3.ThingAction("survey4", {
 				text : "Create Survey"
 			});
@@ -523,7 +523,7 @@
 			assert.strictEqual(this.oTI.getActions().length, 0, "all actions are removed");
 		});
 
-		QUnit.test("destroyActions",function(assert){
+		QUnit.test("destroyActions",function(assert) {
 			var action1 = new sap.ui.ux3.ThingAction("survey6", {
 				text : "Create Survey"
 			});
@@ -534,7 +534,7 @@
 			assert.strictEqual(this.oTI.getActions().length, 0, "all actions are destroyed");
 		});
 
-		QUnit.test("indexOfAction",function(assert){
+		QUnit.test("indexOfAction",function(assert) {
 			var action1 = new sap.ui.ux3.ThingAction("action1", {
 				text : "Create Survey"
 			});
@@ -556,7 +556,7 @@
 			assert.strictEqual(this.oTI.indexOfAction(action3), 2, "action is inserted on the correct position");
 		});
 
-		QUnit.test("getFacets",function(assert){
+		QUnit.test("getFacets",function(assert) {
 
 			var facet1 = new sap.ui.ux3.NavigationItem("overview1", {
 				key: "overview",
@@ -578,7 +578,7 @@
 
 		});
 
-		QUnit.test("insertFacets",function(assert){
+		QUnit.test("insertFacets",function(assert) {
 
 			var facet1 = new sap.ui.ux3.NavigationItem("overview3", {
 				key: "overview",
@@ -598,7 +598,7 @@
 
 		});
 
-		QUnit.test("removeFacet",function(assert){
+		QUnit.test("removeFacet",function(assert) {
 
 			var facet1 = new sap.ui.ux3.NavigationItem("overview5", {
 				key: "overview",
@@ -612,7 +612,7 @@
 			assert.strictEqual(this.oTI.getFacets().indexOf(facet1), -1, "the facet is removed");
 
 		});
-		QUnit.test("removeAllFacets",function(assert){
+		QUnit.test("removeAllFacets",function(assert) {
 
 			var facet1 = new sap.ui.ux3.NavigationItem("overview6", {
 				key: "overview",
@@ -630,7 +630,7 @@
 			assert.strictEqual(this.oTI.getFacets().length, 0, "all facets are removed");
 		});
 
-		QUnit.test("destroyFacets",function(assert){
+		QUnit.test("destroyFacets",function(assert) {
 
 			var facet1 = new sap.ui.ux3.NavigationItem("overview8", {
 				key: "overview",
@@ -648,7 +648,7 @@
 			assert.strictEqual(this.oTI.getFacets().length, 0, "all facets are destroyed");
 		});
 
-		QUnit.test("setFollowState",function(assert){
+		QUnit.test("setFollowState",function(assert) {
 
 			assert.strictEqual(this.oTI.getFollowState(), sap.ui.ux3.FollowActionState.Default, "follow state is set correctly");
 
@@ -657,7 +657,7 @@
 
 		});
 
-		QUnit.test("setFlagState",function(assert){
+		QUnit.test("setFlagState",function(assert) {
 
 			assert.strictEqual(this.oTI.getFlagState(), false, "flag state is set correctly");
 
@@ -665,17 +665,17 @@
 			assert.strictEqual(this.oTI.getFlagState(), true, "flag state is set correctly");
 		});
 
-		QUnit.test("setFavoriteState",function(assert){
+		QUnit.test("setFavoriteState",function(assert) {
 			this.oTI.setFavoriteState(false);
 			assert.strictEqual(this.oTI.getFavoriteState(), false, "favorite state is set correctly");
 		});
 
-		QUnit.test("setIcon",function(assert){
+		QUnit.test("setIcon",function(assert) {
 			this.oTI.setIcon("sap-icon://home");
 			assert.strictEqual(this.oTI.getIcon(), "sap-icon://home", "icon is set correctly");
 		});
 
-		QUnit.test("setType",function(assert){
+		QUnit.test("setType",function(assert) {
 
 			assert.strictEqual(this.oTI.getType(), "", "type is set correctly - the default value is null");
 
@@ -684,7 +684,7 @@
 
 		});
 
-		QUnit.test("insertFacetContent",function(assert){
+		QUnit.test("insertFacetContent",function(assert) {
 
 			var facet1 = new sap.ui.ux3.ThingGroup("overview10", {
 				text: "Overview"
@@ -694,7 +694,7 @@
 			assert.strictEqual(this.oTI.getFacetContent()[0], facet1, "the content is inserted");
 		});
 
-		QUnit.test("addFacetContent",function(assert){
+		QUnit.test("addFacetContent",function(assert) {
 
 			var facet1 = new sap.ui.ux3.ThingGroup("overview11", {
 				text: "Overview"
@@ -704,7 +704,7 @@
 			assert.strictEqual(this.oTI.getFacetContent()[0], facet1, "the content is added");
 		});
 
-		QUnit.test("removeFacetContent",function(assert){
+		QUnit.test("removeFacetContent",function(assert) {
 
 			var facet1 = new sap.ui.ux3.ThingGroup("overview12", {
 				text: "Overview"
@@ -717,7 +717,7 @@
 			assert.strictEqual(this.oTI.getFacetContent().indexOf(facet1), -1, "the facet content is removed");
 		});
 
-		QUnit.test("removeAllFacetContent",function(assert){
+		QUnit.test("removeAllFacetContent",function(assert) {
 
 			var facet1 = new sap.ui.ux3.ThingGroup("overview13", {
 				text: "Overview"
@@ -734,7 +734,7 @@
 			assert.strictEqual(this.oTI.getFacetContent().length, 0, "all facets are removed");
 		});
 
-		QUnit.test("destroyFacetContent",function(assert){
+		QUnit.test("destroyFacetContent",function(assert) {
 
 			var facet1 = new sap.ui.ux3.ThingGroup("overview15", {
 				text: "Overview"
@@ -747,7 +747,7 @@
 			assert.strictEqual(this.oTI.getFacetContent().indexOf(facet1), -1, "the facet content is destroyed");
 		});
 
-		QUnit.test("indexOfFacetContent",function(assert){
+		QUnit.test("indexOfFacetContent",function(assert) {
 			var facet1 = new sap.ui.ux3.ThingGroup("overview16", {
 				text: "Overview"
 			});
@@ -769,7 +769,7 @@
 			assert.strictEqual(this.oTI.indexOfFacetContent(facet3), 2, "facet content is inserted on the correct position");
 		});
 
-		QUnit.test("destroyActionBar",function(assert){
+		QUnit.test("destroyActionBar",function(assert) {
 
 			var facet1 = new sap.ui.ux3.ActionBar("overview19", {
 				text: "Overview"
@@ -781,7 +781,7 @@
 			assert.strictEqual(this.oTI.getActionBar(), null, "the action bar is destroyed");
 		});
 
-		QUnit.test("insertHeaderContent",function(assert){
+		QUnit.test("insertHeaderContent",function(assert) {
 
 			var facet1 = new sap.ui.ux3.ThingGroup("overview20", {
 				text: "Overview"
@@ -791,7 +791,7 @@
 			assert.strictEqual(this.oTI.getHeaderContent()[0], facet1, "the header content is inserted");
 		});
 
-		QUnit.test("addHeaderContent",function(assert){
+		QUnit.test("addHeaderContent",function(assert) {
 
 			var facet1 = new sap.ui.ux3.ThingGroup("overview21", {
 				text: "Overview"
@@ -801,7 +801,7 @@
 			assert.strictEqual(this.oTI.getHeaderContent()[0], facet1, "the header content is added");
 		});
 
-		QUnit.test("removeHeaderContent ",function(assert){
+		QUnit.test("removeHeaderContent ",function(assert) {
 
 			var facet1 = new sap.ui.ux3.ThingGroup("overview22", {
 				text: "Overview"
@@ -814,7 +814,7 @@
 			assert.strictEqual(this.oTI.getHeaderContent ().indexOf(facet1), -1, "the header content is removed");
 		});
 
-		QUnit.test("removeAllHeaderContent",function(assert){
+		QUnit.test("removeAllHeaderContent",function(assert) {
 
 			var facet1 = new sap.ui.ux3.ThingGroup("overview23", {
 				text: "Overview"
@@ -833,7 +833,7 @@
 			assert.strictEqual(this.oTI.getHeaderContent().length, 0, "all header content is removed");
 		});
 
-		QUnit.test("destroyHeaderContent",function(assert){
+		QUnit.test("destroyHeaderContent",function(assert) {
 
 			var facet1 = new sap.ui.ux3.ThingGroup("overview25", {
 				text: "Overview"
@@ -846,7 +846,7 @@
 			assert.strictEqual(this.oTI.getHeaderContent().indexOf(facet1), -1, "the header content is destroyed");
 		});
 
-		QUnit.test("indexOfHeaderContent ",function(assert){
+		QUnit.test("indexOfHeaderContent ",function(assert) {
 			var facet1 = new sap.ui.ux3.ThingGroup("overview26", {
 				text: "Overview"
 			});
@@ -868,7 +868,7 @@
 			assert.strictEqual(this.oTI.indexOfHeaderContent(facet3), 2, "header content is inserted on the correct position");
 		});
 
-		QUnit.test("setSelectedFacet",function(assert){
+		QUnit.test("setSelectedFacet",function(assert) {
 
 			assert.strictEqual(this.oTI.getSelectedFacet(), null, "selected facet is set originally empty");
 
@@ -876,7 +876,7 @@
 			assert.strictEqual(this.oTI.getSelectedFacet(), "test facet", "selected facet is set correctly");
 		});
 
-		QUnit.test("setFavoriteActionEnabled",function(assert){
+		QUnit.test("setFavoriteActionEnabled",function(assert) {
 
 			assert.strictEqual(this.oTI.getFavoriteActionEnabled(), true, "favorite state is enabled");
 
@@ -884,7 +884,7 @@
 			assert.strictEqual(this.oTI.getFavoriteActionEnabled(), false, "favorite state is enabled");
 		});
 
-		QUnit.test("setFlagActionEnabled",function(assert){
+		QUnit.test("setFlagActionEnabled",function(assert) {
 
 			assert.strictEqual(this.oTI.getFlagActionEnabled(), true, "flag action is set enabled");
 
@@ -892,7 +892,7 @@
 			assert.strictEqual(this.oTI.getFlagActionEnabled(), false, "flag action is set enabled");
 		});
 
-		QUnit.test("setUpdateActionEnabled",function(assert){
+		QUnit.test("setUpdateActionEnabled",function(assert) {
 
 			assert.strictEqual(this.oTI.getUpdateActionEnabled(), true, "update action is enabled");
 
@@ -900,7 +900,7 @@
 			assert.strictEqual(this.oTI.getUpdateActionEnabled(), false, "update action is enabled");
 		});
 
-		QUnit.test("setFollowActionEnabled",function(assert){
+		QUnit.test("setFollowActionEnabled",function(assert) {
 
 			assert.strictEqual(this.oTI.getFollowActionEnabled(), true, "follow action is enabled");
 
@@ -908,7 +908,7 @@
 			assert.strictEqual(this.oTI.getFollowActionEnabled(), false, "follow action is enabled");
 		});
 
-		QUnit.test("setFirstTitle",function(assert){
+		QUnit.test("setFirstTitle",function(assert) {
 
 			assert.strictEqual(this.oTI.getFirstTitle(), "", "the default value of the first title is set correctly");
 
@@ -916,7 +916,7 @@
 			assert.strictEqual(this.oTI.getFirstTitle(), "title", "first title is set correctly");
 		});
 
-		QUnit.test("setSecondTitle",function(assert){
+		QUnit.test("setSecondTitle",function(assert) {
 
 			assert.strictEqual(this.oTI.getSecondTitle(), "", "the default value of the second title is set correctly");
 
@@ -924,7 +924,7 @@
 			assert.strictEqual(this.oTI.getSecondTitle(), "second title", "second title is set correctly");
 		});
 
-		QUnit.test("setHeaderType",function(assert){
+		QUnit.test("setHeaderType",function(assert) {
 			this.oTI.setHeaderType(sap.ui.ux3.ThingViewerHeaderType.Standard);
 			assert.strictEqual(this.oTI.getHeaderType(sap.ui.ux3.ThingViewerHeaderType.Standard), sap.ui.ux3.ThingViewerHeaderType.Standard, "the default value of the header type is set correctly");
 

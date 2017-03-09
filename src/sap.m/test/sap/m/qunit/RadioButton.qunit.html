@@ -37,7 +37,7 @@
 		/* ------------------------------ */
 
 
-		test("Initial Check", function() {
+		QUnit.test("Initial Check", function(assert) {
 
 			// arrange
 			var oRadioButton1 = new sap.m.RadioButton();
@@ -62,7 +62,7 @@
 		/* 		Group Check     		  */
 		/* ------------------------------ */
 
-		test("Button Group", function(){
+		QUnit.test("Button Group", function(assert) {
 
 			// arrange
 			var oRadioButton1 = new sap.m.RadioButton({
@@ -79,7 +79,7 @@
 
 		});
 
-		test("Radio Button style", function(){
+		QUnit.test("Radio Button style", function(assert) {
 
 			// arrange
 			var oDisabledRadioButton  = new sap.m.RadioButton({
@@ -113,7 +113,7 @@
 		/* tests for default values       */
 		/* ------------------------------ */
 
-		test("default values", function() {
+		QUnit.test("default values", function(assert) {
 
 			// arrange
 			var oRadioButton = new sap.m.RadioButton();
@@ -137,7 +137,7 @@
 		/* 	   tests for setSelected()    */
 		/* ------------------------------ */
 
-		test("setSelected()", function() {
+		QUnit.test("setSelected()", function(assert) {
 
 			// arrange
 			var oRadioButton1 = new sap.m.RadioButton({
@@ -177,7 +177,7 @@
 			oRadioButton.destroy();
 		});
 
-		test("Triggering tap should check RadioButton and uncheck all other RadioButtons from the same group", function () {
+		QUnit.test("Triggering tap should check RadioButton and uncheck all other RadioButtons from the same group", function (assert) {
 			expect(5);
 
 			// arrange
@@ -238,7 +238,7 @@
 		/* 		tests for setText()       */
 		/* ------------------------------ */
 
-		test("setText()", function() {
+		QUnit.test("setText()", function(assert) {
 
 			// arrange
 			var oRadioButton1 = new sap.m.RadioButton({
@@ -255,7 +255,7 @@
 			oRadioButton1.destroy();
 		});
 
-		test("setText() change text of the RadioButton after it's initialization", function () {
+		QUnit.test("setText() change text of the RadioButton after it's initialization", function (assert) {
 			expect(2);
 
 			// arrange
@@ -280,7 +280,7 @@
 		/* 		tests for setWidth()       */
 		/* ------------------------------ */
 
-		test("setWidth()", function() {
+		QUnit.test("setWidth()", function(assert) {
 
 			// arrange
 			var oRadioButton1 = new sap.m.RadioButton({
@@ -296,7 +296,7 @@
 			oRadioButton1.destroy();
 		});
 
-		test("setWidth() && setEntireWidth()", function() {
+		QUnit.test("setWidth() && setEntireWidth()", function(assert) {
 
 			// arrange
 			var oRadioButton1 = new sap.m.RadioButton({
@@ -317,7 +317,7 @@
 		/*  tests for setTextDirection()  */
 		/* ------------------------------ */
 
-		test("setTextDirection()", function() {
+		QUnit.test("setTextDirection()", function(assert) {
 
 			// arrange
 			var oRadioButton1 = new sap.m.RadioButton({
@@ -340,7 +340,7 @@
 			oRadioButton2.destroy();
 		});
 
-		test("setTabIndex()", function () {
+		QUnit.test("setTabIndex()", function (assert) {
 			expect(1);
 
 			// arrange
@@ -359,7 +359,7 @@
 			oRadioButton1.destroy();
 		});
 
-		test("setTooltip()", function () {
+		QUnit.test("setTooltip()", function (assert) {
 			expect(2);
 
 			// arrange
@@ -378,7 +378,7 @@
 			oRadioButton1.destroy();
 		});
 
-		test("setTextAlign()", function () {
+		QUnit.test("setTextAlign()", function (assert) {
 
 			// arrange
 			var oRadioButton1 = new sap.m.RadioButton({
@@ -396,7 +396,7 @@
 			oRadioButton1.destroy();
 		});
 
-		test("textAlign and RTL", function () {
+		QUnit.test("textAlign and RTL", function (assert) {
 
 			// arrange
 			var oRadioButton1 = new sap.m.RadioButton({
@@ -448,7 +448,7 @@
 		/*          tests label           */
 		/* ------------------------------ */
 
-		test("Label", function() {
+		QUnit.test("Label", function(assert) {
 
 			// arrange
 			var _sLabelText = 'foobar';
@@ -465,7 +465,7 @@
 			oRadioButton1.destroy();
 		});
 
-		QUnit.test("Destroying a RadioButton should not leak", function () {
+		QUnit.test("Destroying a RadioButton should not leak", function (assert) {
 			var oRadioButton1 = new sap.m.RadioButton({
 				groupName: "group1"
 			});
@@ -478,7 +478,7 @@
 
 		QUnit.module("Focus Handling");
 
-		test("Should get the correct focus domref", function() {
+		QUnit.test("Should get the correct focus domref", function(assert) {
 
 			// arrange
 			var oRadioButton = new sap.m.RadioButton();
@@ -495,7 +495,7 @@
 			oRadioButton.destroy();
 		});
 
-		test("Should apply the focus Info", function() {
+		QUnit.test("Should apply the focus Info", function(assert) {
 
 			// arrange
 			var oRadioButton = new sap.m.RadioButton();
@@ -512,7 +512,7 @@
 			oRadioButton.destroy();
 		});
 
-		test("Should handle a tap event", function() {
+		QUnit.test("Should handle a tap event", function(assert) {
 
 			// arrange
 			var oSelectSpy = this.spy()
@@ -539,7 +539,7 @@
 			oRadioButton.destroy();
 		});
 
-		test("Not editable radio button does not select/deselect on tap", function() {
+		QUnit.test("Not editable radio button does not select/deselect on tap", function(assert) {
 
 			// system under test
 			var oRadioButton = new sap.m.RadioButton({editable : false});
@@ -560,7 +560,7 @@
 			oRadioButton.destroy();
 		});
 
-		test("Should keep the focus when rerendering in tap event", function() {
+		QUnit.test("Should keep the focus when rerendering in tap event", function(assert) {
 
 			// arrange
 			var oRadioButton = new sap.m.RadioButton();
@@ -586,7 +586,7 @@
 			this.clock.tick(1);
 		});
 
-		test("Should have class sapMRbBTouched when touchstart event is fired", function () {
+		QUnit.test("Should have class sapMRbBTouched when touchstart event is fired", function (assert) {
 			expect(1);
 
 			// arrange
@@ -604,7 +604,7 @@
 			oRadioButton1.destroy();
 		});
 
-		test("Should remove class sapMRbBTouched when touchend event is fired", function () {
+		QUnit.test("Should remove class sapMRbBTouched when touchend event is fired", function (assert) {
 			expect(2);
 
 			// arrange
@@ -631,7 +631,7 @@
 		QUnit.module("Keyboard handling");
 
 		function checkKeyboardEventhandling(sTestName, oOptions) {
-			test(sTestName, function() {
+			QUnit.test(sTestName, function(assert) {
 				// arrange
 				var oRadioButton1 = new sap.m.RadioButton();
 
@@ -670,7 +670,7 @@
 
 		QUnit.module("Event testing");
 
-		test("Radio Button Select Event", function() {
+		QUnit.test("Radio Button Select Event", function(assert) {
 
 			// arrange
 			var oRadioButton1 = new sap.m.RadioButton({selected:false, groupName:"Group1"});

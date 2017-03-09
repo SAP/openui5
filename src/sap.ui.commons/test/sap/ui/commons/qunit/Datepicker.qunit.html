@@ -89,13 +89,13 @@
 
 			qutils.delayTestStart();
 			QUnit.module("Date Picker");
-			test("DomRef test", function() {
+			QUnit.test("DomRef test", function(assert) {
 				equal( oPicker.getFocusDomRef().id, inputId, "FocusDomRef on input tag" );
 				equal( oPicker.getInputDomRef().id, inputId, "InputDomRef on input tag" );
 				equal( oPicker.getIdForLabel(), inputId, "Label points to input tag" );
 			});
 
-			test("Setter-getter tests", function() {
+			QUnit.test("Setter-getter tests", function(assert) {
 				equal( oPicker.getLocale(),    "en-XX",      "Testing instance with locale:en-XX" );
 				equal( oPicker.getYyyymmdd(),  "20101010",   "Testing instance with yyyymmdd:20101010" );
 				equal( oPicker2.getLocale(),   "de",         "Testing setLocale(de)" );
@@ -104,14 +104,14 @@
 				equal( oPicker3.getYyyymmdd(), "20100212",   "Testing setYyyymmdd(20100212)" );
 			});
 
-			test("YYYYMMDD <-> VALUE conversion tests", function() {
+			QUnit.test("YYYYMMDD <-> VALUE conversion tests", function(assert) {
 				// WARNING: YYYYMMDD <-> VALUE conversions will only work if the Pickers are rendered!
 				equal( oPicker.getValue(),     "Oct 10, 2010", "Testing instance with yyyymmdd:20101010" );
 				equal( oPicker2.getYyyymmdd(), "20101225",   "Testing setValue(25.12.2010)" );
 				equal( oPicker3.getValue(),    "Feb 12, 2010", "Testing setYyyymmdd(20100212)" );
 			});
 
-			test("initialize - blank value", function() {
+			QUnit.test("initialize - blank value", function(assert) {
 				oPicker3.setValue("");
 				equal( oPicker3.getValue(), "", "Testing setValue(\"\")" );
 				equal( oPicker3.getYyyymmdd(), "",   "Testing setValue(\"\")" );
@@ -122,7 +122,7 @@
 			});
 
 			// The DatePicker always appear ":visible" - test for class !!!
-			test("TestOpenViaMouseClick", function(){
+			QUnit.test("TestOpenViaMouseClick", function(assert){
 				if (!bMobile){
 					ok(!jQuery.sap.byId(ctrlId+"-cal").get(0), "calendar not exists before 1st click");
 					qutils.triggerMouseEvent("myDatePicker-icon", "click");
@@ -139,7 +139,7 @@
 
 			if (!bMobile){
 				// on mobile devices no keyboard support
-				test("Keyboard navigation on input field", function() {
+				QUnit.test("Keyboard navigation on input field", function(assert) {
 					qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_UP, false, false, false);
 					equal(jQuery("#myDatePicker2-input").val(), "26.12.2010", "Date increases by 1 day pressing 'PAGE_UP'");
 					equal(oPicker2.getValue(), "25.12.2010", "Value not changed by pressing 'PAGE_UP'");
@@ -165,7 +165,7 @@
 					equal(oPicker2.getValue(), "25.12.2010", "Value changed by pressing ENTER");
 				});
 
-				test("Input vailidation", function() {
+				QUnit.test("Input vailidation", function(assert) {
 					var oInput = jQuery("#myDatePicker-input");
 					oInput.val("Dec 6, 2012");
 					qutils.triggerKeyboardEvent("myDatePicker-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
@@ -201,7 +201,7 @@
 				});
 			}
 
-			test("DataBindingTest", function() {
+			QUnit.test("DataBindingTest", function(assert) {
 				equal(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString(), "en-US", "locale of page")
 				if (sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString() == "en-US"){
 					// test makes no sense if locale is wrong
@@ -234,7 +234,7 @@
 				}
 			});
 
-			test("Placeholder", function() {
+			QUnit.test("Placeholder", function(assert) {
 				equal(oPicker7.getPlaceholder(), "20140120", "Testing attribut value");
 				if (sap.ui.Device.support.input.placeholder) {
 					equal( jQuery("#myDatePicker7-input").attr("placeholder"), "20.01.2014", "Test attribut formatting");

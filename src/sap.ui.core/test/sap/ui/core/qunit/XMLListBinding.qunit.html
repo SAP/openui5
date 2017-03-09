@@ -90,7 +90,7 @@
 		ok(true,"ChangeEvent fired");
 	};
 
-	test("ListBinding getContexts", function(){
+	QUnit.test("ListBinding getContexts", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 
@@ -107,7 +107,7 @@
 
 	});
 
-	test("ListBinding getCurrentContexts", function(){
+	QUnit.test("ListBinding getCurrentContexts", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 
@@ -121,7 +121,7 @@
 		});
 	});
 
-	test("ListBinding getCurrentContexts and extended change detection", function(){
+	QUnit.test("ListBinding getCurrentContexts and extended change detection", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member", "");
 
@@ -149,7 +149,7 @@
 		equal(contexts.diff.length, 2, "Delta information is available");
 	});
 
-	test("ListBinding refresh", 3, function() {
+	QUnit.test("ListBinding refresh", 3, function(assert) {
 		setup();
 		var oBinding = oModel.bindList("/teamMembers/member");
 		oBinding.initialize();
@@ -163,7 +163,7 @@
 		equal(oBinding.getLength(), 8, "ListBinding returns changed length");
 	});
 
-	test("ListBinding refresh with getContexts", 1, function() {
+	QUnit.test("ListBinding refresh with getContexts", 1, function(assert) {
 		setup();
 		var oBinding = oModel.bindList("/teamMembers/member");
 		oBinding.initialize();
@@ -177,7 +177,7 @@
 		oBinding.refresh();
 	});
 
-	test("ListBinding refresh with getContexts und length change", 3, function() {
+	QUnit.test("ListBinding refresh with getContexts und length change", 3, function(assert) {
 		setup();
 		var oBinding = oModel.bindList("/teamMembers/member");
 		var aContexts = oBinding.getContexts(0,5);
@@ -191,7 +191,7 @@
 		equal(oBinding.getLength(), 8, "ListBinding returns changed length");
 	});
 
-	test("ListBinding getContexts with wrong path", function(){
+	QUnit.test("ListBinding getContexts with wrong path", function(assert) {
 		setup();
 		createListBinding("xyz");
 		ok(bindings);
@@ -203,7 +203,7 @@
 		equal(listBinding.getContexts().length, 0, "ListBinding get Contexts with wrong path");
 	});
 
-	test("ListBinding getContexts with wrong path and checkUpdate", function(){
+	QUnit.test("ListBinding getContexts with wrong path and checkUpdate", function(assert) {
 		setup();
 		createListBinding("teamMembers/member");
 
@@ -222,7 +222,7 @@
 
 	});
 
-	test("ListBinding set new data with no merge and check update and getContexts test", function(){
+	QUnit.test("ListBinding set new data with no merge and check update and getContexts test", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 
@@ -243,7 +243,7 @@
 		listBinding.getModel().setXML(newData);
 	});
 
-	test("XMLListBinding getLength", function(){
+	QUnit.test("XMLListBinding getLength", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 
@@ -257,7 +257,7 @@
 	});
 
 	// should also work with other ListBinding implementations
-	test("ListBinding sort", function(){
+	QUnit.test("ListBinding sort", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 
@@ -307,7 +307,7 @@
 
 	});
 
-	test("ListBinding sort invalid binding", function(){
+	QUnit.test("ListBinding sort invalid binding", function(assert) {
 		setup();
 		createListBinding("/unknown");
 
@@ -317,7 +317,7 @@
 	});
 
 	// test for locale dependent sort order
-	test("ListBinding locale sort", function(){
+	QUnit.test("ListBinding locale sort", function(assert) {
 		setup();
 		createListBinding("/sortData/entry");
 
@@ -348,7 +348,7 @@
 
 	});
 
-	test("ListBinding multi sort", function(){
+	QUnit.test("ListBinding multi sort", function(assert) {
 		setup();
 		createListBinding("/teamMembersNew/member");
 
@@ -474,7 +474,7 @@
 	});
 
 	// test for custom compare function
-	test("ListBinding custom sort", function(){
+	QUnit.test("ListBinding custom sort", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 
@@ -509,7 +509,7 @@
 	});
 
 	// should also work with other ListBinding implementations
-	test("ListBinding sort node text", function(){
+	QUnit.test("ListBinding sort node text", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 
@@ -559,7 +559,7 @@
 
 	});
 
-	test("ListBinding change event sorter test", function(){
+	QUnit.test("ListBinding change event sorter test", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 
@@ -582,7 +582,7 @@
 		ok(attach, "change event fired with sorter");
 	});
 
-	test("ListBinding filter", function(){
+	QUnit.test("ListBinding filter", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 
@@ -639,7 +639,7 @@
 
 	});
 
-	test("ListBinding filter invalid binding", function(){
+	QUnit.test("ListBinding filter invalid binding", function(assert) {
 		setup();
 		createListBinding("/unknown");
 
@@ -648,7 +648,7 @@
 		expect(0);
 	});
 
-	test("ListBinding filter (without array)", function(){
+	QUnit.test("ListBinding filter (without array)", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 
@@ -679,7 +679,7 @@
 
 	});
 
-	test("ListBinding filter node text", function(){
+	QUnit.test("ListBinding filter node text", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 
@@ -698,7 +698,7 @@
 
 	});
 
-	test("ListBinding complex filters", function(){
+	QUnit.test("ListBinding complex filters", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 
@@ -731,7 +731,7 @@
 
 	});
 
-	test("ListBinding multi filters", function(){
+	QUnit.test("ListBinding multi filters", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 
@@ -759,7 +759,7 @@
 
 	});
 
-	test("ListBinding with test function", function() {
+	QUnit.test("ListBinding with test function", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 
@@ -779,7 +779,7 @@
 		equal(filtered[0], "Gina", "ListBinding filter value");
 	});
 
-	test("ListBinding change event filter test", function(){
+	QUnit.test("ListBinding change event filter test", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 
@@ -803,7 +803,7 @@
 		ok(attach, "change event fired with filter");
 	});
 
-	test("ListBinding nested array structure and createbindingcontexts", function(){
+	QUnit.test("ListBinding nested array structure and createbindingcontexts", function(assert) {
 		setup();
 		createListBinding("/root/nodes0");
 		var binding = bindings[0];
@@ -828,7 +828,7 @@
 		equal(oModel.getProperty("", context), "subitem3");
 	});
 
-	test("ListBinding nested array structure", function(){
+	QUnit.test("ListBinding nested array structure", function(assert) {
 		setup();
 		bindings[0] = oModel.bindList("/root/nodes0","");
 		bindings[1] = oModel.bindList("/root/nodes0/0/nodes1/0/nodes2","");
@@ -856,7 +856,7 @@
 		ok(jQuery.sap.isEqualNode(bindings[0].oList[1].childNodes[0], bindings[2].oList[0].childNodes[0]));
 	});
 
-	test("ListBinding getDistinctValues", function(){
+	QUnit.test("ListBinding getDistinctValues", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 		var binding = bindings[0],
@@ -876,7 +876,7 @@
 
 	});
 
-	test("ListBinding setSizeLimit", function(){
+	QUnit.test("ListBinding setSizeLimit", function(assert) {
 		var sManyItems = "<root>";
 		for (var i = 0; i < 200; i++) {
 			sManyItems += "<item>" + i + "</item>";
@@ -896,7 +896,7 @@
 		equal(aContext.length, 150, "Custom size limit 150");
 	});
 
-	test("ListBinding setProperty delta", function() {
+	QUnit.test("ListBinding setProperty delta", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 
@@ -913,7 +913,7 @@
 		deepEqual(aContexts.diff, [], "Nothing changed");
 	});
 
-	test("setProperty delta with key", function() {
+	QUnit.test("setProperty delta with key", function(assert) {
 		setup();
 		createListBinding("/teamMembers/member");
 

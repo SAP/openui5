@@ -946,7 +946,7 @@
 	*/
 	QUnit.module("Initial Check");
 
-	test("Overview rendered", function() {
+	QUnit.test("Overview rendered", function(assert) {
 		ok(jQuery.sap.domById("sapMList001-listUl"), "Overview should be rendered");
 		ok(jQuery.sap.domById("sapMList001-listUl").childNodes[0], "Overview ListItem should be rendered");
 	});
@@ -1041,7 +1041,7 @@
 		},50);
 	});
 
-	test("standardListThumb rendered - unread indicatior, counter, info should be rendered", function() {
+	QUnit.test("standardListThumb rendered - unread indicatior, counter, info should be rendered", function(assert) {
 		app.back();
 		sap.ui.getCore().applyChanges();
 		var aItems = oListStandardThumb.getItems();
@@ -1057,7 +1057,7 @@
 		ok(jQuery.sap.domById("actionListItem"), "actionListItem should be rendered");
 	});
 
-	test("standardListIcon rendered", function() {
+	QUnit.test("standardListIcon rendered", function(assert) {
 		app.to("standardListIcon", "show");
 		sap.ui.getCore().applyChanges();
 		ok(jQuery.sap.domById("sapMList003-listUl"), "standardListIcon should be rendered");
@@ -1066,7 +1066,7 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	test("standardListTitle rendered", function() {
+	QUnit.test("standardListTitle rendered", function(assert) {
 		app.back();
 		ok(jQuery.sap.domById("sapMList004-listUl"), "standardListTitle should be rendered");
 		ok(jQuery.sap.domById("sapMList004-listUl").childNodes[0], "standardListTitle ListItem should be rendered");
@@ -1074,7 +1074,7 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	test("standardListNoImage rendered", function() {
+	QUnit.test("standardListNoImage rendered", function(assert) {
 		app.back();
 		ok(jQuery.sap.domById("sapMList005-listUl"), "standardListNoImage should be rendered");
 		ok(jQuery.sap.domById("sapMList005-listUl").childNodes[0], "standardListNoImage ListItem should be rendered");
@@ -1082,7 +1082,7 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	test("displayList rendered", function() {
+	QUnit.test("displayList rendered", function(assert) {
 		app.back();
 		ok(jQuery.sap.domById("sapMList006-listUl"), "displayList should be rendered");
 		ok(jQuery.sap.domById("sapMList006-listUl").childNodes[0], "displayList ListItem should be rendered");
@@ -1090,7 +1090,7 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	test("inputList rendered", function() {
+	QUnit.test("inputList rendered", function(assert) {
 		app.back();
 		ok(jQuery.sap.domById("sapMList007-listUl"), "inputList should be rendered");
 		ok(jQuery.sap.domById("sapMList007-listUl").childNodes[0], "inputList ListItem should be rendered");
@@ -1098,7 +1098,7 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	test("customList rendered", function() {
+	QUnit.test("customList rendered", function(assert) {
 		app.back();
 		ok(jQuery.sap.domById("sapMList008-listUl"), "customList should be rendered");
 		ok(jQuery.sap.domById("sapMList008-listUl").childNodes[0], "customList ListItem should be rendered");
@@ -1106,14 +1106,14 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	test("invisibleList rendered", function() {
+	QUnit.test("invisibleList rendered", function(assert) {
 		app.back();
 		ok(!jQuery.sap.domById("sapMList010-listUl"), "invisibleList should not be rendered");
 		app.to("noDataList", "show");
 		sap.ui.getCore().applyChanges();
 	});
 
-	test("noDataList rendered", function() {
+	QUnit.test("noDataList rendered", function(assert) {
 		app.back();
 		ok(jQuery.sap.domById("sapMList011-listUl"), "noDataList should be rendered");
 		ok(jQuery.sap.domById("sapMList011-nodata-text").textContent == "Forgot something???", "noDataList custom text should be rendered");
@@ -1148,12 +1148,12 @@
 		});
 	}
 
-	test("selectionList rendered", function() {
+	QUnit.test("selectionList rendered", function(assert) {
 		ok(jQuery.sap.domById("sapMList009"), "selectionList should be rendered");
 		ok(jQuery.sap.domById("sapMList009").childNodes[0], "selectionList ListItem should be rendered");
 	});
 
-	test("selectionList singleSelection Item 1", function() {
+	QUnit.test("selectionList singleSelection Item 1", function(assert) {
 		setSelectionItem1();
 		equals(checkSingleSelectionItem1(), true, "SingleSelection: Item 1 should be selected");
 		equals(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
@@ -1162,7 +1162,7 @@
 		equals(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
 	});
 
-	test("selectionList singleSelection Item 2", function() {
+	QUnit.test("selectionList singleSelection Item 2", function(assert) {
 		setSelectionItem2();
 		equals(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
 		equals(checkSingleSelectionItem2(), true, "SingleSelection: Item 2 should be selected");
@@ -1171,7 +1171,7 @@
 		equals(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
 	});
 
-	test("selectionList singleSelection Item 3", function() {
+	QUnit.test("selectionList singleSelection Item 3", function(assert) {
 		setSelectionItem3();
 		equals(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
 		equals(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
@@ -1180,7 +1180,7 @@
 		equals(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
 	});
 
-	test("selectionList singleSelection Item 4", function() {
+	QUnit.test("selectionList singleSelection Item 4", function(assert) {
 		setSelectionItem4();
 		equals(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
 		equals(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
@@ -1189,7 +1189,7 @@
 		equals(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
 	});
 
-	test("selectionList singleSelection Item 5", function() {
+	QUnit.test("selectionList singleSelection Item 5", function(assert) {
 		setSelectionItem5();
 		equals(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
 		equals(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
@@ -1294,14 +1294,14 @@
 		}, 0);
 	});
 
-	test("selectionList switch to SingleSelectionLeft", function() {
+	QUnit.test("selectionList switch to SingleSelectionLeft", function(assert) {
 		switchModeSingleLeft();
 		equals(oListSelection.getMode(), sap.m.ListMode.SingleSelectLeft, "Switch to SingleSelectionLeft: Ok");
 		sap.ui.getCore().applyChanges();
 
 	});
 
-	test("selectionList SingleSelectionLeft Item 1", function() {
+	QUnit.test("selectionList SingleSelectionLeft Item 1", function(assert) {
 		setSelectionItem1();
 		equals(checkSingleSelectionItem1(), true, "SingleSelectionLeft: Item 1 should be selected");
 		equals(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
@@ -1310,7 +1310,7 @@
 		equals(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
 	});
 
-	test("selectionList SingleSelectionLeft Item 2", function() {
+	QUnit.test("selectionList SingleSelectionLeft Item 2", function(assert) {
 		setSelectionItem2();
 		equals(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
 		equals(checkSingleSelectionItem2(), true, "SingleSelectionLeft: Item 2 should be selected");
@@ -1319,7 +1319,7 @@
 		equals(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
 	});
 
-	test("selectionList SingleSelectionLeft Item 3", function() {
+	QUnit.test("selectionList SingleSelectionLeft Item 3", function(assert) {
 		setSelectionItem3();
 		equals(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
 		equals(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
@@ -1328,7 +1328,7 @@
 		equals(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
 	});
 
-	test("selectionList SingleSelectionLeft Item 4", function() {
+	QUnit.test("selectionList SingleSelectionLeft Item 4", function(assert) {
 		setSelectionItem4();
 		equals(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
 		equals(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
@@ -1337,7 +1337,7 @@
 		equals(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
 	});
 
-	test("selectionList SingleSelectionLeft Item 5", function() {
+	QUnit.test("selectionList SingleSelectionLeft Item 5", function(assert) {
 		setSelectionItem5();
 		equals(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
 		equals(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
@@ -1442,14 +1442,14 @@
 		}, 0)
 	});
 
-	test("selectionList switch to multiSelection", function() {
+	QUnit.test("selectionList switch to multiSelection", function(assert) {
 		switchModeMulti();
 		equals(oListSelection.getMode(), sap.m.ListMode.MultiSelect, "Switch to MultiSelection: Ok");
 		sap.ui.getCore().applyChanges();
 
 	});
 
-	test("selectionList multiSelection item check (1,3,5)", function() {
+	QUnit.test("selectionList multiSelection item check (1,3,5)", function(assert) {
 		removeSelection();
 		setSelectionItem1();
 		setSelectionItem3();
@@ -1461,7 +1461,7 @@
 		equals(checkMultiSelectionItem5(), true, "MultiSelection: Item 5 should be selected");
 	});
 
-	test("selectionList multiSelection: remove all selections", function() {
+	QUnit.test("selectionList multiSelection: remove all selections", function(assert) {
 		removeSelection();
 		equals(checkMultiSelectionItem1(), false, "MultiSelection: Item 1 should not be selected");
 		equals(checkMultiSelectionItem2(), false, "MultiSelection: Item 2 should not be selected");
@@ -1470,7 +1470,7 @@
 		equals(checkMultiSelectionItem5(), false, "MultiSelection: Item 5 should not be selected");
 	});
 
-	test("selectionList multiSelection item check (2,4)", function() {
+	QUnit.test("selectionList multiSelection item check (2,4)", function(assert) {
 		setSelectionItem2();
 		setSelectionItem4();
 		equals(checkMultiSelectionItem1(), false, "MultiSelection: Item 1 should not be selected");
@@ -1480,7 +1480,7 @@
 		equals(checkMultiSelectionItem5(), false, "MultiSelection: Item 5 should be selected");
 	});
 
-	test("selectionList multiSelection item check by tap event (1,3,5)", function() {
+	QUnit.test("selectionList multiSelection item check by tap event (1,3,5)", function(assert) {
 		var aItems = oListSelection.getItems();
 		var checkBoxId1 = aItems[0].getModeControl().getId();
 		var checkBoxId2 = aItems[1].getModeControl().getId();
@@ -1504,7 +1504,7 @@
 	});
 
 
-	test("selectionList switch to delete", function() {
+	QUnit.test("selectionList switch to delete", function(assert) {
 		switchModeDelete();
 		equals(oListSelection.getMode(), sap.m.ListMode.Delete, "Switch to Delete: Ok");
 	});
@@ -1520,7 +1520,7 @@
 	});
 
 
-	test("StandardListItem activeIcon", function() {
+	QUnit.test("StandardListItem activeIcon", function(assert) {
 
 		var sIcon = "sap-icon://up";
 		var sActiveIcon = "sap-icon://down";
@@ -1585,7 +1585,7 @@
 
 	QUnit.module("StandartListItem RTL attributes");
 
-	test("setter / getter titleTextDirection", function() {
+	QUnit.test("setter / getter titleTextDirection", function(assert) {
 		var oStdLI = new sap.m.StandardListItem({
 			title : "123 456"
 		});
@@ -1603,7 +1603,7 @@
 		oList.destroy();
 	});
 
-	test("setter / getter infoTextDirection", function() {
+	QUnit.test("setter / getter infoTextDirection", function(assert) {
 		var oStdLI = new sap.m.StandardListItem({
 			title : "Title",
 			info : "+359 123 456"
@@ -1622,7 +1622,7 @@
 		oList.destroy();
 	});
 
-	test("StandardListItem titleTextDirection", function() {
+	QUnit.test("StandardListItem titleTextDirection", function(assert) {
 		var oStdLI = new sap.m.StandardListItem({
 			title : "123 456",
 			titleTextDirection: sap.ui.core.TextDirection.LTR
@@ -1643,7 +1643,7 @@
 		oList.destroy();
 	});
 
-	test("StandardListItem infoTextDirection", function() {
+	QUnit.test("StandardListItem infoTextDirection", function(assert) {
 		var oStdLI = new sap.m.StandardListItem({
 			title : "Title",
 			info : "+359 1234 567",
@@ -1667,7 +1667,7 @@
 
 	QUnit.module("ListItemBase");
 
-	test("ListItemBase RenderOulineClass", function() {
+	QUnit.test("ListItemBase RenderOulineClass", function(assert) {
 		var oMsieStub = this.stub(sap.ui.Device, "browser", {"msie": true});
 		this.stub(sap.ui.Device.system, "desktop", true);
 

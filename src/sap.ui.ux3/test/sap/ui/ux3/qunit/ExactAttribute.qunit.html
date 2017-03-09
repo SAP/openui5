@@ -32,7 +32,7 @@
 
 		QUnit.module("sap.ui.ux3.ExactAttribute");
 
-		test("API - Attribute Default Values", function() {
+		QUnit.test("API - Attribute Default Values", function(assert) {
 			var oAtt = new sap.ui.ux3.ExactAttribute();
 			equal(oAtt.getText(), "", "Default 'text':");
 			equal(oAtt.getSelected(), false, "Default 'selected':");
@@ -45,7 +45,7 @@
 			equal(oAtt.getListOrder(), sap.ui.ux3.ExactOrder.Select, "Default 'listOrder':");
 		 });
 
-		test("API - Attribute Custom Values", function() {
+		QUnit.test("API - Attribute Custom Values", function(assert) {
 			var oAtt = new sap.ui.ux3.ExactAttribute(
 					{text: "Hallo", selected: true, showSubAttributesIndicator: false, additionalData: {text: "Hallo"},
 					tooltip: "Hallo", supplyActive: false, autoActivateSupply: true, width: 200, listOrder: sap.ui.ux3.ExactOrder.Fixed});
@@ -65,7 +65,7 @@
 			equal(oAtt.getWidth(), sap.ui.ux3.ExactAttribute._MAXWIDTH, "Custom 'width' (check Max):");
 		 });
 
-		test("API - Aggregation 'attributes'", function() {
+		QUnit.test("API - Aggregation 'attributes'", function(assert) {
 			var oAtt = new sap.ui.ux3.ExactAttribute();
 			equals(oAtt.getAttributes().length, 0, "Initial number of sub attributes");
 			oAtt.addAttribute(new sap.ui.ux3.ExactAttribute("aggtest1"));
@@ -81,7 +81,7 @@
 			equals(oAtt.getAttributes().length, 0, "Number of sub attributes after removeAll");
 		});
 
-		test("API - Function 'getShowSubAttributesIndicator_Computed'", function() {
+		QUnit.test("API - Function 'getShowSubAttributesIndicator_Computed'", function(assert) {
 			var fDummyHandler = function(){};
 			var aTestAttributes = [];
 
@@ -112,7 +112,7 @@
 			}
 		});
 
-		test("API - Supply function mechanism", function() {
+		QUnit.test("API - Supply function mechanism", function(assert) {
 			var bSupplyFunctionCallExpected = false;
 			var oAtt;
 			var fSupply = function(oEvent){
@@ -168,7 +168,7 @@
 			fCheckSupply(function(){ oAtt.setSelected(true); });
 		});
 
-		test("Internal - ChangeListener", function() {
+		QUnit.test("Internal - ChangeListener", function(assert) {
 			var fCurrentTestFunction;
 			var oTestChangeListener = {id : "myListener", _bActive: true, _notifyOnChange: function(sType, oAttribute){
 				fCurrentTestFunction(oTestChangeListener, sType, oAttribute);

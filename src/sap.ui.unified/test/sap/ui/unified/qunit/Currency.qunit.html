@@ -41,12 +41,12 @@
 				}
 			});
 
-			test("DOM", function () {
+			QUnit.test("DOM", function (assert) {
 				//assert
 				strictEqual(this.sut.$().length, 1, "Currency control was rendered successfully and is present in DOM");
 			});
 
-			test("Testing property defaults", function () {
+			QUnit.test("Testing property defaults", function (assert) {
 				//assert
 				strictEqual(this.sut.getValue(), 0, "Default value is correct");
 				strictEqual(this.sut.getCurrency(), "", "Default currency is correct");
@@ -54,7 +54,7 @@
 				strictEqual(this.sut.getUseSymbol(), true, "Default useSymbol is correct");
 			});
 
-			test("Control default state/visibility with no parameters", function () {
+			QUnit.test("Control default state/visibility with no parameters", function (assert) {
 				// Assert
 				strictEqual(this.sut.$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control has no class " +
 						"sapUiUfdCurrencyNoVal applied");
@@ -62,7 +62,7 @@
 				strictEqual(this.fnGetRenderedCurrency(), "", "No currency rendered");
 			});
 
-			test("Control visibility with no model and setValue set to undefined", function () {
+			QUnit.test("Control visibility with no model and setValue set to undefined", function (assert) {
 				// Act
 				this.sut.setValue(undefined);
 
@@ -72,7 +72,7 @@
 						"sapUiUfdCurrencyNoVal applied when value set to undefined and value is not bound to a model");
 			});
 
-			test("Testing setters", function () {
+			QUnit.test("Testing setters", function (assert) {
 				//act
 				this.sut.setValue(5);
 				this.sut.setCurrency("AUD");
@@ -86,7 +86,7 @@
 				strictEqual(this.sut.getUseSymbol(), false, "UseSymbol setter is correct");
 			});
 
-			test("Test properly currency formatting", function () {
+			QUnit.test("Test properly currency formatting", function (assert) {
 				//act
 				this.sut.setValue(45012.91);
 				this.sut.setCurrency("EUR");
@@ -116,7 +116,7 @@
 				strictEqual(this.fnGetRenderedValue(), "45,013\u2008\u2007\u2007", "Format number with 2 decimals in JPY");
 			});
 
-			test("MaxPrecision changes the rendered value", function () {
+			QUnit.test("MaxPrecision changes the rendered value", function (assert) {
 				//arrange
 				var iStringLength;
 				this.sut.setCurrency("USD");
@@ -136,7 +136,7 @@
 				strictEqual(this.fnGetRenderedValue(), "55.2", "New maxPrecision value subtracted the value with one");
 			});
 
-			test("Special * currency", function () {
+			QUnit.test("Special * currency", function (assert) {
 				//arrange
 				this.sut.setCurrency("*");
 				this.sut.setValue(123.23);
@@ -159,7 +159,7 @@
 				}
 			});
 
-			test("_getCurrency private method", function () {
+			QUnit.test("_getCurrency private method", function (assert) {
 				// Assert
 				strictEqual(this.oCurrency._getCurrency(), "", "No currency returned by default");
 
@@ -174,7 +174,7 @@
 				strictEqual(this.oCurrency._getCurrency(), "EUR", "ISO 4217 code for EURO returned");
 			});
 
-			test("getFormattedValue method", function () {
+			QUnit.test("getFormattedValue method", function (assert) {
 				// Assert
 				strictEqual(this.oCurrency.getFormattedValue(), "0.00 ", "By default we get '0.00 '");
 
@@ -256,12 +256,12 @@
 				}
 			});
 
-			test("Length of data binding", function () {
+			QUnit.test("Length of data binding", function (assert) {
 				//assert
 				strictEqual(this.sut.getItems().length, Object.keys(this.oData.currencyCollection).length, "All currencies are rendered and present in the DOM");
 			});
 
-			test("Property data binding", function () {
+			QUnit.test("Property data binding", function (assert) {
 				//arrange
 				var aItems = this.sut.getItems(),
 					iIndex,
@@ -322,21 +322,21 @@
 				}
 			});
 
-			test("Internal _bHasBoundValue value set correct on model bound", function () {
+			QUnit.test("Internal _bHasBoundValue value set correct on model bound", function (assert) {
 				strictEqual(this.aItems[0]._bRenderNoValClass, true, "Value should be true");
 				strictEqual(this.aItems[1]._bRenderNoValClass, false, "Value should be false");
 				strictEqual(this.aItems[2]._bRenderNoValClass, true, "Value should be true");
 				strictEqual(this.aItems[3]._bRenderNoValClass, true, "Value should be true");
 			});
 
-			test("Undefined value from model", function () {
+			QUnit.test("Undefined value from model", function (assert) {
 				strictEqual(this.aItems[0].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
 				strictEqual(this.aItems[1].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Class sapUiUfdCurrencyNoVal is not applied to control");
 				strictEqual(this.aItems[2].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
 				strictEqual(this.aItems[3].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
 			});
 
-			test("Setting value from undefined to number and back", function () {
+			QUnit.test("Setting value from undefined to number and back", function (assert) {
 				var $Item = this.aItems[0].$();
 
 				// Act
@@ -350,7 +350,7 @@
 				ok($Item.hasClass("sapUiUfdCurrencyNoVal"), "Class sapUiUfdCurrencyNoVal is applied to control");
 			});
 
-			test("Setting model value to null, unbindValue and set value", function () {
+			QUnit.test("Setting model value to null, unbindValue and set value", function (assert) {
 				// SUT
 				var oCurrency = new sap.ui.unified.Currency({
 					value: '{/value}',
@@ -398,7 +398,7 @@
 				}
 			});
 
-			test("Value and Currency setters", function () {
+			QUnit.test("Value and Currency setters", function (assert) {
 				// Arrange
 				this.oCurrency.setValue(5);
 				this.oCurrency.setCurrency("USD");
@@ -409,7 +409,7 @@
 				strictEqual(this.oCurrencyRenderer.render.callCount, 0, "Currency renderer should not be called");
 			});
 
-			test("MaxPrecision and UseSymbol setters", function () {
+			QUnit.test("MaxPrecision and UseSymbol setters", function (assert) {
 				// Arrange
 				this.oCurrency.setUseSymbol(false);
 				this.oCurrency.setMaxPrecision(2);
@@ -420,7 +420,7 @@
 				strictEqual(this.oCurrencyRenderer.render.callCount, 0, "Currency renderer should not be called");
 			});
 
-			test("Special * currency case - Both methods should be called when changing currency to something different then *", function () {
+			QUnit.test("Special * currency case - Both methods should be called when changing currency to something different then *", function (assert) {
 				// Arrange
 				this.oCurrency.setCurrency("*");
 				this.oCurrency.setValue(120);
@@ -449,7 +449,7 @@
 				strictEqual(this.oCurrency._renderCurrency.callCount, 1, "Internal method should be called once");
 			});
 
-			test("Live switch between currency's with different decimal values", function () {
+			QUnit.test("Live switch between currency's with different decimal values", function (assert) {
 				var $Value = this.oCurrency.$().find(".sapUiUfdCurrencyValue");
 
 				// Arrange
@@ -521,7 +521,7 @@
 				}
 			});
 
-			test("Currency control is rendered correctly", function () {
+			QUnit.test("Currency control is rendered correctly", function (assert) {
 				// Assert
 				strictEqual(this.aControls[0].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control should not have the class 'sapUiUfdCurrencyNoVal' applied");
 				strictEqual(this.aControls[1].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control should not have the class 'sapUiUfdCurrencyNoVal' applied");
@@ -529,7 +529,7 @@
 
 			QUnit.module("Accessibility");
 
-			test("getAccessibilityInfo", function() {
+			QUnit.test("getAccessibilityInfo", function(assert) {
 				var oControl = new sap.ui.unified.Currency({value: 100, currency: "EUR", maxPrecision: 2});
 				ok(!!oControl.getAccessibilityInfo, "Currency has a getAccessibilityInfo function");
 				var oInfo = oControl.getAccessibilityInfo();
@@ -545,7 +545,7 @@
 
 			QUnit.module("Currency value text direction");
 
-			test("Currency value dir in LTR", function() {
+			QUnit.test("Currency value dir in LTR", function(assert) {
 				var dirText,
 					oCurrency = new sap.ui.unified.Currency({id: "cDir", value: 100, currency: "EUR"});
 
@@ -558,7 +558,7 @@
 				oCurrency.destroy();
 			});
 
-			test("Currency value dir in RTL", function() {
+			QUnit.test("Currency value dir in RTL", function(assert) {
 				var dirText,
 					oCurrency = new sap.ui.unified.Currency({id: "cDir", value: 100, currency: "EUR"}),
 					bRTL = sap.ui.getCore().getConfiguration().getRTL();

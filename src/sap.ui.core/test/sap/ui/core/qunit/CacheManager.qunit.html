@@ -56,7 +56,7 @@
 		});
 
 		if (!bSupportedEnv) {
-			test("All tests are skipped, as the CacheManager is not supported on the underlying environment (see assert)", function () {
+			QUnit.test("All tests are skipped, as the CacheManager is not supported on the underlying environment (see assert)", function (assert) {
 				ok(true, "Environment: system [" + JSON.stringify(sap.ui.Device.system) + "],  browser: " + JSON.stringify(sap.ui.Device.browser));
 			});
 		} else {
@@ -81,7 +81,7 @@
 				}
 			});
 
-			test('basic creation', function (assert) {
+			QUnit.test('basic creation', function (assert) {
 				oCache._instance = null;
 				return oCache._getInstance()
 						.then(function (cmImpl) {
@@ -93,7 +93,7 @@
 						});
 			});
 
-			test("Certain implementation is selected based on browser support", function () {
+			QUnit.test("Certain implementation is selected based on browser support", function (assert) {
 				var that = this,
 						aNonSupportedEnv = [];
 
@@ -203,31 +203,31 @@
 				}
 			});
 
-			test("#get", function () {
+			QUnit.test("#get", function (assert) {
 				return this.executeMethodSuccessfully("get", ["promised_sallary"], "1000E").then(function () {
 					return this.executeMethodWithError("get", ["actual_sallary"], "Error: access denied");
 				}.bind(this));
 			});
 
-			test("#has", function () {
+			QUnit.test("#has", function (assert) {
 				return this.executeMethodSuccessfully("has", ["promised_sallary"], true).then(function () {
 					return this.executeMethodWithError("has", ["actual_sallary"], "Error: access denied");
 				}.bind(this));
 			});
 
-			test("#set", function () {
+			QUnit.test("#set", function (assert) {
 				return this.executeMethodSuccessfully("set", ["promised_sallary", {"amount": "1000E"}]).then(function () {
 					return this.executeMethodWithError("set", ["promised_sallary", {"amount": "1000E"}], "Error: access denied");
 				}.bind(this));
 			});
 
-			test("#del", function () {
+			QUnit.test("#del", function (assert) {
 				return this.executeMethodSuccessfully("del", ["promised_sallary"]).then(function () {
 					this.executeMethodWithError("del", ["promised_sallary"], "Error: access denied");
 				}.bind(this));
 			});
 
-			test("#reset", function () {
+			QUnit.test("#reset", function (assert) {
 				return this.executeMethodSuccessfully("reset", []).then(function () {
 					return this.executeMethodWithError("reset", ["promised_sallary"], "Error: access denied");
 				}.bind(this));
@@ -239,7 +239,7 @@
 				}
 			});
 
-			test("Switching", function () {
+			QUnit.test("Switching", function (assert) {
 				return oCache._switchOn().then(function () {
 					return oCache.set("testKey", "testValue")
 				}).then(function () {

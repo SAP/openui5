@@ -5,7 +5,7 @@ jQuery.sap.require("sap.ui.core.mvc.HTMLView");
 
 QUnit.module("Start-up");
 
-test("Check dependencies", 4, function() {
+QUnit.test("Check dependencies", 4, function(assert) {
 	ok(sap.ui.core.mvc.JSONView, "sap.ui.core.mvc.JSONView must be defined");
 	ok(sap.ui.core.mvc.JSView, "sap.ui.core.mvc.JSView must be defined");
 	ok(sap.ui.core.mvc.XMLView, "sap.ui.core.mvc.XMLView must be defined");
@@ -64,17 +64,17 @@ function asyncTestsuite(sCaption, oConfig) {
 		}
 	});
 
-	test("Preparation - View requirements", 2, function() {
+	QUnit.test("Preparation - View requirements", 2, function(assert) {
 		var view = jQuery.sap.getObject("sap.ui.core.mvc." + oConfig.type + "View");
 		ok(view.asyncSupport, "View type supports asynchronous loading");
 		ok(view.prototype.loaded, "View type supports Promises via loaded method");
 	});
 
-	test("Preparation - View source preload", 1, function() {
+	QUnit.test("Preparation - View source preload", 1, function(assert) {
 		ok(sSource !== undefined, "View content was preloaded synchronously");
 	});
 
-	test("Rendering - synchronous resource loading", 3, function () {
+	QUnit.test("Rendering - synchronous resource loading", 3, function (assert) {
 		this.oView = fnFactory();
 		this.oView.placeAt("content");
 		sap.ui.getCore().applyChanges();

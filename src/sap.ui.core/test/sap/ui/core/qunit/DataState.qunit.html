@@ -137,7 +137,7 @@
 
 	QUnit.module("Basic");
 
-	test("test DataState API",function(){
+	QUnit.test("test DataState API",function(assert) {
 		var oDataState = new sap.ui.model.DataState();
 		var mChanges = oDataState.getChanges();
 		var aPropertyChecks = [

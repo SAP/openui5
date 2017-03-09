@@ -93,7 +93,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		});
 	};
 
-	test("Binding syntax tests", function() {
+	QUnit.test("Binding syntax tests", function(assert) {
 		setup();
 
 		oTxt.bindValue("/teamMembers/4/firstName");
@@ -121,7 +121,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		equal(oTxt.getValue(), "Gina Andreas Rush", "calculated fields syntax 2");
 	});
 
-	test("Binding syntax constructor tests", function() {
+	QUnit.test("Binding syntax constructor tests", function(assert) {
 		setup();
 
 		oTxt = new sap.ui.commons.TextField({
@@ -150,7 +150,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		equal(oTxt.getValue(), "Gina Andreas Rush", "calculated fields constructor syntax 2");
 	});
 
-	test("Composite Binding tests", function() {
+	QUnit.test("Composite Binding tests", function(assert) {
 		setup();
 
 		oTxt.bindValue({ path: "/teamMembers/4/firstName",
@@ -176,7 +176,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		equals(oComp.getBindings()[3].getExternalValue(), "5.322", "Bindings value check");
 	});
 
-	test("Calculated fields model tests wrong path", function() {
+	QUnit.test("Calculated fields model tests wrong path", function(assert) {
 		setup();
 		oTxt.bindValue({
 			parts: [
@@ -186,7 +186,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		equal(oTxt.getValue(), "Frank ", "calculated fields wrong path");
 	});
 
-	test("Calculated fields model custom formatter", function() {
+	QUnit.test("Calculated fields model custom formatter", function(assert) {
 		setup();
 		oTxt.bindValue({
 			parts: [
@@ -203,7 +203,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		equal(oTxt.getValue(), "Dear Frank Wallace", "calculated fields test custom formatter");
 	});
 
-	test("Calculated fields model tests wrong path", function() {
+	QUnit.test("Calculated fields model tests wrong path", function(assert) {
 		setup();
 		oTxt.bindValue({
 			parts: [
@@ -213,7 +213,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		equal(oTxt.getValue(), "Frank Wallace", "calculated fields syntax 1");
 	});
 
-	test("Calculated fields multi model tests", function() {
+	QUnit.test("Calculated fields multi model tests", function(assert) {
 		setup();
 		oTxt.bindValue({
 			parts: [
@@ -229,7 +229,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		equal(oTxt.getValue(), "555562.06241" , "calculated fields multi model bindings ");
 	});
 
-	test("Calculated fields multi model tests wrong path", function() {
+	QUnit.test("Calculated fields multi model tests wrong path", function(assert) {
 		setup();
 		oTxt.bindValue({
 			parts: [
@@ -246,7 +246,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		equal(oTxt.getValue(), "7.74" , "calculated fields multi model bindings ");
 	});
 
-	test("Calculated fields with types and raw values", function() {
+	QUnit.test("Calculated fields with types and raw values", function(assert) {
 		setup();
 		oTxt.bindValue({
 			parts: [
@@ -286,7 +286,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		}
 	});
 
-	test("Calculated fields with table", function() {
+	QUnit.test("Calculated fields with table", function(assert) {
 		setup();
 		 var oTable = new sap.ui.table.Table({
 			columns: [

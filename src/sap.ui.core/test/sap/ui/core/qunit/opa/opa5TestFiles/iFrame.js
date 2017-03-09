@@ -187,7 +187,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Should be able to set and replace hashes in an IFrame", function() {
+		QUnit.test("Should be able to set and replace hashes in an IFrame", function(assert) {
 
 			this.oOpa5.waitFor({
 				success: function () {

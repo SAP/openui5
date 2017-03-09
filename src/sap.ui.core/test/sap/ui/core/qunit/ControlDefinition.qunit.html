@@ -33,7 +33,7 @@
 			return keys;
 		}
 
-		test("Extend function", function() {
+		QUnit.test("Extend function", function(assert) {
 			ok(sap.ui.base.Object.extend, "Object.extend() must exist");
 			equal(typeof sap.ui.base.Object.extend, "function", "Object.extend() must be a function");
 
@@ -51,7 +51,7 @@
 		/* test creating a control from scratch */
 
 
-		test("Extend sap.ui.core.Control", function() {
+		QUnit.test("Extend sap.ui.core.Control", function(assert) {
 			equal(window.my, undefined, "'my' should not be defined yet");
 
 			// define control
@@ -104,7 +104,7 @@
 		});
 
 
-		test("Instantiate new control type", function() {
+		QUnit.test("Instantiate new control type", function(assert) {
 
 			// check control instance
 			myControl = new my.lib.MyControl("myControl", {
@@ -123,7 +123,7 @@
 		});
 
 
-		test("Properties", function() {
+		QUnit.test("Properties", function(assert) {
 			expect(7);
 
 			// test generation of setter and getter
@@ -146,13 +146,13 @@
 		});
 
 
-		test("Methods", function() {
+		QUnit.test("Methods", function(assert) {
 			equal(myControl.add, my.lib.MyControl.prototype.add, "myControl's add function should actually be a function of the my.lib.MyControl.prototype");
 			equal(myControl.add(1, 2), 3, "myControl's add function should work");
 		});
 
 
-		test("Aggregations", function() {
+		QUnit.test("Aggregations", function(assert) {
 			equal(typeof myControl.getComma, "function", "myControl.getComma should be an aggregation getter");
 			equal(typeof myControl.setComma, "function", "myControl.setComma should be an aggregation setter");
 			equal(typeof myControl.destroyComma, "function", "myControl.destroyComma should be an aggregation destructor");
@@ -171,7 +171,7 @@
 		});
 
 
-		test("Associations", function() {
+		QUnit.test("Associations", function(assert) {
 			equal(typeof myControl.setAssi, "function", "myControl.setAssi should be an association setter");
 			equal(typeof myControl.getAssi, "function", "myControl.getAssi should be an association getter");
 
@@ -180,7 +180,7 @@
 		});
 
 
-		test("Control Events", function() {
+		QUnit.test("Control Events", function(assert) {
 			equal(globalState, "initial", "global state should be initialized");
 
 			// test event registering methods
@@ -198,7 +198,7 @@
 		});
 
 
-		test("Metadata", function() {
+		QUnit.test("Metadata", function(assert) {
 			var md = myControl.getMetadata();
 
 			var properties = md.getProperties();
@@ -233,7 +233,7 @@
 			ok(events.somethingHappened, "there should be a 'somethingHappened' event");
 		});
 
-		test("Metadata singluar names", function() {
+		QUnit.test("Metadata singluar names", function(assert) {
 			var oClass = sap.ui.core.Control.extend("my.lib.MyGrammarControl", {
 				metadata : {
 					aggregations : {
@@ -297,7 +297,7 @@
 		});
 
 
-		test("Render new control type", function() {
+		QUnit.test("Render new control type", function(assert) {
 			myControl.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
@@ -331,7 +331,7 @@
 		var htmlFragment = "<span>BLAH!</span>";
 		var valueSuffix = " ...and more";
 
-		test("Extend sap.ui.commons.TextField", function() {
+		QUnit.test("Extend sap.ui.commons.TextField", function(assert) {
 			var result = sap.ui.commons.TextField.extend("my.lib.MyTextField", {
 
 				setValue : function(value) {
@@ -349,7 +349,7 @@
 		});
 
 
-		test("Instantiate MyTextField", function() {
+		QUnit.test("Instantiate MyTextField", function(assert) {
 			myTf = new my.lib.MyTextField("myTf", {value:"test"});
 
 			ok(myTf, "myTf should be a control instance now");
@@ -359,7 +359,7 @@
 		});
 
 
-		test("Test renderer object", function() {
+		QUnit.test("Test renderer object", function(assert) {
 			myTf.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
@@ -373,7 +373,7 @@
 		});
 
 
-		test("LibraryChanged Event", function() {
+		QUnit.test("LibraryChanged Event", function(assert) {
 			var events=[];
 
 			function onlibchange(oEvent) {
@@ -415,7 +415,7 @@
 
 		/* test extending the base class sap.ui.base.Object */
 
-		test("Extend sap.ui.base.Object", function() {
+		QUnit.test("Extend sap.ui.base.Object", function(assert) {
 			var result = sap.ui.base.Object.extend("my.lib.MyObject", {
 				renderer : function() {
 					return "renderer";
@@ -431,7 +431,7 @@
 		});
 
 
-		test("Instantiate inherited Object", function() {
+		QUnit.test("Instantiate inherited Object", function(assert) {
 			myObj = new my.lib.MyObject("myObj");
 
 			ok(myObj, "myObj should be an object instance now");
@@ -454,7 +454,7 @@
 		});
 
 
-		test("Metadata defaulting", function() {
+		QUnit.test("Metadata defaulting", function(assert) {
 
 			// define control
 			var result = sap.ui.core.Control.extend("my.lib.MyDefaultedControl", {

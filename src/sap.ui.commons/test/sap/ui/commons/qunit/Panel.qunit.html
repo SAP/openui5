@@ -63,7 +63,7 @@
 			return count;
 		}
 
-		test("Initial Check", function() {
+		QUnit.test("Initial Check", function(assert) {
   		ok(oCtrl, "Panel should exist after creating");
 
   		oDomRef = jQuery.sap.domById("Panel");
@@ -71,7 +71,7 @@
   	});
 
 
-		test("Scroll Left", function() {
+		QUnit.test("Scroll Left", function(assert) {
     	expect(6);
 			equals(oCtrl.getScrollLeft(), sScrollLeft, "scrollLeft should be like it was initially set");
 
@@ -91,7 +91,7 @@
 		});
 
 
-		test("Scroll Top", function() {
+		QUnit.test("Scroll Top", function(assert) {
     	expect(6);
 			equals(oCtrl.getScrollTop(), sScrollTop, "scrollTop should be like it was initially set");
 
@@ -122,7 +122,7 @@
 		/**
 		 * Tests method setDimension of control Panel.
 		 */
-		test("setDimensions", function() {
+		QUnit.test("setDimensions", function(assert) {
 			oCtrl.setDimensions("399px", "123px");
 			sap.ui.getCore().applyChanges();
 			equals(oCtrl.getWidth(), "399px", "programmatic panel width should match the settings");
@@ -139,7 +139,7 @@
 			equals($DomRef.outerHeight(), 400, "actual panel height should match the settings");
 		});
 
-		test("setCollapsed API", function () {
+		QUnit.test("setCollapsed API", function (assert) {
 			var panel = new sap.ui.commons.Panel();
 
 			assert.strictEqual(panel.getCollapsed(), false, "the panel should be expanded by default");
@@ -155,7 +155,7 @@
 		/**
 		 * Test the changed DOM when dis-/enabling
 		 */
-		test("DOM setCollapsed=true", function () {
+		QUnit.test("DOM setCollapsed=true", function (assert) {
 			var panel = new sap.ui.commons.Panel().placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
@@ -172,7 +172,7 @@
 			panel = null;
 		});
 
-		test("DOM setCollapsed=false", function () {
+		QUnit.test("DOM setCollapsed=false", function (assert) {
 			var panel = new sap.ui.commons.Panel({
 				collapsed: true
 			}).placeAt("qunit-fixture");
@@ -191,7 +191,7 @@
 			panel = null;
 		});
 
-		test("Enabled DOM", function() {
+		QUnit.test("Enabled DOM", function(assert) {
 			expect(3);
 
 			// first check the DOM / CSS classes of the enabled Panel
@@ -210,7 +210,7 @@
 		});
 
 
-		test("Title Text", function() {
+		QUnit.test("Title Text", function(assert) {
 			oCtrl.setTitle(new sap.ui.core.Title({text:"My Title"}));
 			sap.ui.getCore().applyChanges();
 			var oTitleDomRef = jQuery.sap.domById(oCtrl.getId() + "-title");
@@ -219,7 +219,7 @@
 		});
 
 
-		test("Title Icon", function() {
+		QUnit.test("Title Icon", function(assert) {
 			oCtrl.setTitle(new sap.ui.commons.Title({text:"My New Title",icon:"rss-14x14.gif"})); /* use commons Title to test backward compatibility after moving Title to core */
 			sap.ui.getCore().applyChanges();
 			var oTitleDomRef = jQuery.sap.domById(oCtrl.getId() + "-title");
@@ -230,7 +230,7 @@
 		});
 
 
-		test("Toolbar", function() {
+		QUnit.test("Toolbar", function(assert) {
 			equals(jQuery.sap.byId(oCtrl.getId() + "-tb").length, 0, "toolbar may not be rendered, when not set");
 
 			// add Button to Toolbar
@@ -301,7 +301,7 @@
 
 
 
-		test("Area Design", function() {
+		QUnit.test("Area Design", function(assert) {
 			var oRootDomRef = jQuery.sap.domById(oCtrl.getId());
 			var oContDomRef = jQuery.sap.domById(oCtrl.getId() + "-cont");
 
@@ -349,7 +349,7 @@
 			}
 		});
 
-		test("Border Design", function() {
+		QUnit.test("Border Design", function(assert) {
 			var oRootDomRef = jQuery.sap.domById(oCtrl.getId());
 
 			// make sure the initial design is "Box"
@@ -378,7 +378,7 @@
 		/**
 		 * Test the content padding
 		 */
-		 test("Content Padding", function() {
+		 QUnit.test("Content Padding", function(assert) {
 			expect(4);
 			var $ContDomRef = jQuery.sap.byId(oCtrl.getId() + "-cont");
 
@@ -394,7 +394,7 @@
 			oCtrl.setBorderDesign(sap.ui.commons.enums.BorderDesign.Box);
 		});
 
-		test("Clone", function() {
+		QUnit.test("Clone", function(assert) {
 			ok(!!oCore, "ref to oCore is required");
 			oCtrl.setTitle(null);
 			var n=sizeof(oCore.mElements);
