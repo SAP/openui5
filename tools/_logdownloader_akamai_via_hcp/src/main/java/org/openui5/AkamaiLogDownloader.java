@@ -1355,7 +1355,7 @@ public class AkamaiLogDownloader {
 			FileOutputStream fos = new FileOutputStream(file);
 			bw = new BufferedWriter(new OutputStreamWriter(fos));
 
-			String outFileText = "Date;Runtime Downloads;Hybrid Downloads;SDK Downloads;GitHub Hits;SDK Hits;Blog Hits;IP Counter;References Hits;Features Hits;GetStarted Hits;Core Hits;Versioned Core Hits;Core Versions\n";
+			String outFileText = "Date;Runtime Downloads;Hybrid Downloads;SDK Downloads;GitHub Hits;SDK Hits;Blog Hits;IP Counter;References Hits;Features Hits;UI5con Hits;GetStarted Hits;Core Hits;Versioned Core Hits;Core Versions\n";
 			bw.write(outFileText);
 
 			for (int i = 0; i < dataArray.length(); i++) {
