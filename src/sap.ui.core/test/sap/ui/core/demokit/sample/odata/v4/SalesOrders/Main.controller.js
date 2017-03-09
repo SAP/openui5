@@ -89,9 +89,7 @@ sap.ui.define([
 						"all sales orders");
 				},
 				function (oError) {
-					MessageBox.alert(oError.message, {
-						icon : MessageBox.Icon.ERROR,
-						title : "Error"});
+					MessageBox.error(oError.message);
 				}
 			);
 			oModel.submitBatch("actionGroup");
@@ -149,10 +147,7 @@ sap.ui.define([
 			oContext.created().then(function () {
 				that._setSalesOrderBindingContext(oContext);
 				oView.getModel("ui").setProperty("/bCreateSalesOrderPending", false);
-				MessageBox.alert("SalesOrder created: " + oContext.getProperty("SalesOrderID"), {
-					icon : MessageBox.Icon.SUCCESS,
-					title : "Success"
-				});
+				MessageBox.success("SalesOrder created: " + oContext.getProperty("SalesOrderID"));
 			}, function (oError) {
 				// delete of transient entity
 				oView.getModel("ui").setProperty("/bCreateSalesOrderPending", false);
@@ -188,11 +183,9 @@ sap.ui.define([
 			var oContext = this.getView().byId("BusinessPartner").getBindingContext();
 
 			oContext["delete"](oContext.getModel().getGroupId()).then(function () {
-				MessageBox.alert("Deleted Business Partner",
-					{icon : MessageBox.Icon.SUCCESS, title : "Success"});
+				MessageBox.success("Deleted Business Partner");
 			}, function (oError) {
-				MessageBox.alert("Could not delete Business Partner: " + oError.message,
-					{icon : MessageBox.Icon.ERROR, title : "Error"});
+				MessageBox.error("Could not delete Business Partner: " + oError.message);
 			});
 		},
 
@@ -209,11 +202,10 @@ sap.ui.define([
 				// Use "$auto" or "$direct" just like selected when creating the model
 				oSalesOrderContext["delete"](oSalesOrderContext.getModel().getGroupId())
 					.then(function () {
-						MessageBox.alert("Deleted Sales Order " + sOrderID,
-							{icon : MessageBox.Icon.SUCCESS, title : "Success"});
+						MessageBox.success("Deleted Sales Order " + sOrderID);
 					}, function (oError) {
-						MessageBox.alert("Could not delete Sales Order " + sOrderID + ": "
-							+ oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+						MessageBox.error("Could not delete Sales Order " + sOrderID + ": "
+							+ oError.message);
 					});
 			}
 
@@ -237,11 +229,9 @@ sap.ui.define([
 			Promise.all(aPromises).then(function () {
 				oTable.removeSelections();
 				oView.getModel("ui").setProperty("/bScheduleSelected", false);
-				MessageBox.alert("Deleted " + aPromises.length + " Sales Order Schedule(s)",
-					{icon : MessageBox.Icon.SUCCESS, title : "Success"});
+				MessageBox.success("Deleted " + aPromises.length + " Sales Order Schedule(s)");
 			}, function (oError) {
-				MessageBox.alert("Could not delete a Sales Order Schedule: "
-					+ oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+				MessageBox.error("Could not delete a Sales Order Schedule: " + oError.message);
 			});
 		},
 
