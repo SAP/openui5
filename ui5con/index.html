@@ -1,0 +1,176 @@
+<!DOCTYPE html >
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> 
+    <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/smoothscroll/1.4.6/SmoothScroll.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>UI5con@SAP</title>
+  </head>
+  <body>
+    <header>
+      <div class="flex-container">
+        <h4 class="header-item title-item">UI5con@SAP</h4>
+        <nav class="header-item">
+          <ul >
+            <li><a href="#info">INFO</a></li>
+            <li><a href="#cfp">CALL FOR PAPERS</a></li>
+          </ul>
+        </nav>
+      </div> 
+  
+      <script>
+      $(document).ready(function(){
+		$('a[href^="#"]').on('click',function (e) {
+	    e.preventDefault();
+
+	    var target = this.hash;
+	    var $target = $(target);
+
+	    $('html, body').stop().animate({
+	        'scrollTop': $target.offset().top
+	    }, 900, 'swing', function () {
+	        window.location.hash = target;
+	    	});
+		});
+	  });
+      </script>
+
+      <script type="text/javascript">
+    	$(document).ready(function(){
+      	$('.single-item').slick({
+      	 dots: false,
+      	 arrows: false,
+      	 autoplay: true,
+    	 autoplaySpeed: 4000,
+    	 })
+    	});
+  	  </script>
+
+	  <div class="header_container container">
+     	<div class="logo">
+     		<img class="logoimg" src="resources/UI5con_Logo_plain.png">
+     	</div>
+	    <div class="logo">
+	     	<a class="scrolllink" href="#cfp"><img class="scrollimg" src="resources/scroll_v.png"></a>
+	    </div>	
+		<div class="single-item">
+			<div>
+				<img src="resources/slider1.jpg">
+			</div>
+			<div>
+				<img src="resources/slider2.jpg">
+			</div>
+			<div>
+				<img src="resources/slider3.jpg">
+			</div>
+			<div>
+				<img src="resources/slider4.jpg">
+			</div>
+	   	</div>
+	  </div>
+    </header>
+    
+    <main class="maincontent container">
+	    <div class="Maincontent row divleft" id="info">
+		    <div class="Maincontent infodiv col-xs-6 col-sm-6 col-md-4 col-lg-2-ui5con">
+				<img class="infoimg" src="resources/location.png">
+				<h3>ST. LEON-ROT</h3>
+				<p>SAP-Allee 27</p>
+		    </div>
+		    <div class="Maincontent infodiv col-xs-6 col-sm-6 col-md-4 col-lg-2-ui5con">
+				<img class="infoimg" src="resources/date.png">
+				<h3>30th</h3>
+				<p>June 2017</p>
+			</div>
+			<div class="Maincontent infodiv col-xs-6 col-sm-6 col-md-4 col-lg-2-ui5con">
+				<img class="infoimg" src="resources/time.png">
+				<h3>9am - 7pm</h3>
+				<p>+ Evening Special</p>
+			</div>
+		    <div class="Maincontent infodiv col-xs-6 col-sm-6 col-md-4 col-lg-2-ui5con">		
+				<img class="infoimg" src="resources/people.png">
+				<h3>500</h3>
+				<p>seats</p>
+		    </div>
+		    <div class="Maincontent infodiv col-xs-6 col-sm-6 col-md-4 col-lg-2-ui5con">
+				<img class="infoimg" src="resources/infinite.png">
+				<h3>unlimited</h3>
+				<p>possibilities</p>
+		    </div>
+	    </div>
+   		
+   		<div class="Maincontent disclaimer divleft" id="cfp">
+    			<div class="span12">
+    				<h2>SHOW US YOUR IDEAS! CHOOSE A MEDIUM &amp;</h2>
+				</div>
+				<div>
+					<a id="submitlink" class="submitlink"><span>HAND IN YOUR TOPIC NOW</span><img src="resources/linkarrows_wide.png"></a>
+				</div>
+    	</div>
+    	
+    	<section class="container">
+    		<div class="Maincontent row">
+		    	<div class="format formatbox1 col-xs-12 col-sm-6 col-md-4 col-lg-4">
+			   		<h5 class="formath">MARKETPLACE BOOTH</h5>
+			  		<h6 class="formath">30min With Bistro Table and Monitor</h6>
+			  		<p class="readtext">Your Time to Shine: be the center of attention in the lobby with your info booth, demo pod, meet the expert or Q&amp;A. You decide what you make out of it - it's your individual booth!</p>
+		    	</div>
+		    	<div class="format formatbox2 col-xs-12 col-sm-6 col-md-4 col-lg-4">
+			   		<h5 class="formath">CODE JAM</h5>
+			   		<h6 class="formath">45min Hands-On Workshop</h6>
+			   		<p class="readtext">Let's Get Physical: share your knowledge or guide fellow developers through your innovative ideas. This cozy live coding session is meant for about 30 participants following your steps and having time to thoroughly ask questions.</p>
+		    	</div>
+		    	<div class="format formatbox3 col-xs-12 col-sm-6 col-md-4 col-lg-4">
+			   		<h5 class="formath">LECTURE</h5>
+			   		<h6 class="formath">20min or 40min Live on Stage</h6>
+			   		<p class="readtext">The Stage is Yours: present your innovations, show your expertise and give valuable insights on one of our stages. Wow the crowd with your dashing presentation!</p>
+		    	</div>
+		    </div>
+    	</section>
+    </main>
+    
+    <footer class="Maincontent container row">
+    	<div class="footerdiv">
+			<p class="copyright">&copy; SAP SE, made available under Apache License 2.0</p> 
+			<script> 
+		 		var ref = encodeURIComponent(document.referrer); 
+				document.write('<img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=ui5con&ref=' + ref + '" style="width:1px;height:1px" alt="counter">'); 
+			</script> 
+ 			<noscript><img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=ui5con" style="width:1px;height:1px" alt="counter"></noscript> 
+			<a class="legal" href="http://openui5.org/impressum.html">Legal Disclosure / Impressum</a> 
+	 		<a class="legal" href="http://global.sap.com/corporate-en/legal/privacy.epx">Privacy</a> 
+	 		<a class="legal" href="http://www.sap.com/germany/about/legal/privacy.html">Datenschutz</a> 
+	 		<a class="legal" href="http://openui5.org/ga_disclaimer.html">Google Analytics Disclaimer</a> 
+    	</div>
+    </footer>
+    
+	<script>
+		window.setTimeout(function(){
+			var elem = document.getElementById("submitlink");
+			elem.addEventListener("click", function(evt){
+				var murl = "mai" + "lto:";
+				var m = "openui" + "5asapd".replace("d",".");
+				var m = m.slice(0, 7) + "@" + m.slice(8, 12) + "com";
+				m += "?subject=Proposal for UI5con@SAP&body=Hi,%0D%0Athis is my session proposal.%0D%0A%0D%0AMy Name is:%0D%0A%0D%0A%0D%0ACompany / UI5 Background:%0D%0A%0D%0A%0D%0ASession Title:%0D%0A%0D%0A%0D%0ASession Description:%0D%0A%0D%0A%0D%0ASession Type [20min Lecture / 40min Lecture / 45min Hands-On / 30min Marketplace Booth Slot]:%0D%0A%0D%0A%0D%0A(For Hands-On only) Prerequisites for participants:%0D%0A";
+				window.open(murl + m, "_self");
+			});
+		}, 1000);
+	</script>
+
+	<script>
+       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+       ga('create', 'UA-50072417-1', 'sap.github.io');
+       ga('set', 'anonymizeIp', true);
+       ga('send', 'pageview');
+	</script>
+
+  </body>
+</html>

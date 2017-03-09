@@ -1,0 +1,331 @@
+body { 
+   background-color: #232323; 
+   font-family: Arial, sans-serif;
+ } 
+ 
+header{
+	height: 810px;
+	width: 100%;
+}
+
+.divleft{
+	float: left;
+}
+
+.flex-container {
+    display: -webkit-flex;
+    display: flex;
+    position: fixed;
+    z-index: 5;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    width: 100%;
+    background-color: #232323;
+}
+
+.title-item {
+    margin: 10px;
+    padding-top: 3px;
+}
+
+a{
+     display: inline-block;
+     font-size: 18px;
+     color: #FFFFFF;
+}
+
+li {
+     display: inline-block;
+     font-size: 18px;
+     color: #FFFFFF;
+ 	 margin: 0 15px;
+ }
+
+.header-item {
+    display:inline-block;
+
+}
+
+.flex-item1 {
+     flex: 1 1 auto;
+}
+
+.header_container{
+	height: 810px;
+}
+
+.logo{
+	position: relative;
+	z-index: 2;
+	height: 0px;
+}
+
+.logoimg{
+	height: 350px;
+    margin: 6.5%;
+}
+
+.scrollimg{
+	height: 100px;
+	margin-top: 650px;
+}
+.scrolllink{
+	width: auto;
+    display: block;
+    text-align: center;
+}
+
+.scrollimg:hover{
+	height: 120px;
+}
+
+ h1{
+ 	font-size: 40px;
+ 	font-weight: 800;
+ 	margin-top: 10px;
+ 	color: #FF5A37;
+ }
+ 
+ h2{
+ 	margin-bottom: 0px;
+ 	font-size: 30px;
+ 	font-weight: 300;
+ 	color: #FFFFFF;
+ }
+ 
+ h3 { 
+ 	margin: 3px;
+ 	margin-top: 10px;
+ 	font-size: 30px;
+	font-weight: 600;
+	color: #FFFFFF;
+ }   
+ 
+ h4 {
+ 	font-size: 18px;
+ 	color: #FFFFFF;
+ 	display: inline-block;
+ }
+ 
+ h5{ 
+	margin-top: 20px;
+	font-size: 20px;
+	font-weight: 200;
+	color: #FFA52D;
+ } 	
+ 
+ h6{
+ 	margin-top: 20px;
+ 	padding-left: 4%;
+ 	padding-right: 4%;
+ 	font-size: 20px;
+ 	font-weight: 300;
+ 	color: #FFFFFF;
+ }	
+ 
+ p {
+ 	font-size: 20px;
+ 	font-weight: 300;
+ 	color: #FFFFFF;
+ }
+ 
+ Title { 
+   position: relative; 
+   color: #FFFFFF;  
+   top: 20%; 
+   left: 30%; 
+   width: 80%; 
+ } 
+ 
+ ul{
+    background-color: #232323;
+    margin: 10px;
+ }
+ 
+ a:hover{
+ 	color: #FEFEFE;
+ }
+ 
+ main{
+ 	top: 65%;
+ }
+ 
+ .maincontent{
+ 	position: relative;
+ 	z-index: 2;
+ }
+ 
+ #info{
+ 	width: 100%;
+ 	border: 20px;
+ 	border-style: solid;
+ 	border-color: #232323;
+ 	background-color: #232323;
+ }
+
+.infodiv{
+	text-align: center;
+}
+
+.infoimg{
+	height: 60px;
+}
+
+
+.disclaimer{
+	width: 100%;
+	padding: 50px;
+	border: 20px;
+	border-style: solid;
+	border-color: #232323;
+	text-align: center;
+	background-color: #232323;
+}
+
+.submitlink{
+	font-size: 40px;
+ 	font-weight: 800;
+ 	margin-top: 10px;
+ 	color: #FF5A37;
+	cursor: pointer;
+}
+
+.formatbox1{
+	height: 250px;
+	background-color: #323130;
+}
+
+.formatbox2{
+	height: 250px;
+	background-color: #2a2a29;
+}
+
+.formatbox3{
+	height: 250px;
+	background-color: #272625;
+}
+
+.format{
+	margin-top: 20px;
+	text-align: justify;
+}
+
+.formath{
+	text-align: center;
+}
+
+.readtext{
+	margin-top: 20px;
+ 	padding-left: 4%;
+ 	padding-right: 4%;
+	font-weight: 100;
+	line-height: 150%;
+}
+
+.container{
+    width:100% !important;
+    padding: 0;
+    margin: 0;
+}
+
+.row {
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+.footerdiv{
+	text-align: center;
+	padding: 30px;
+}
+
+.copyright{
+	color: #444444; 
+	font-weight: 200;
+}
+
+.legal{
+	margin: 0 15px;
+	color: #444444;
+	font-weight: 200;
+}
+
+@media (min-width: 1200px) {
+	.col-lg-2-ui5con {
+		width: 20%;
+	}
+	.logoimg {
+		heigth: 450px;
+	}
+}
+
+@media (min-width: 1500px) {
+	header{
+		height: 640px;
+	}
+	.scrollimg{
+		margin-top: 510px;
+	}
+}
+
+@media (max-width: 1500px) {
+	.formatbox1, .formatbox2, .formatbox3{
+		height: 320px;
+	}
+}
+
+@media (max-width: 1210px) {
+	header{
+		height: 540px;
+	}
+}
+
+@media (max-width: 700px) {
+	.infodiv {
+		padding-top: 10px;
+   		padding-bottom: 10px;
+	}
+	h3 {
+		font-size: 20px;
+	}
+	h6 {
+		padding-left: 5%;
+		padding-right: 5%;
+	}
+	.formatbox1, .formatbox2, .formatbox3{
+		height: 350px;
+	}
+	.readtext{
+		padding-left: 5%;
+		padding-right: 5%;
+	}
+}
+
+@media (max-width: 620px) {
+	.logoimg {
+    	height: 180px;
+   	 	margin: 12%;
+   	 	margin-top: 60%;
+	}
+	.disclaimer {
+		margin: 0px;
+	}
+}
+
+@media (max-width: 390px) {
+	header{
+		height: 500px;
+	}
+	h3 {
+    	font-size: 18px;
+	}
+	p {
+		font-size: 15px;
+	}
+	.formatbox1, .formatbox2, .formatbox3{
+		height: 450px;
+	}
+	.readtext{
+		padding-left: 5%;
+		padding-right: 5%;
+	}
+}
