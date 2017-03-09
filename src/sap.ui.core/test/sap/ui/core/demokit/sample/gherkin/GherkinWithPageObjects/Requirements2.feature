@@ -10,10 +10,10 @@ Feature: Opa Page Objects + Step Definitions
     When on the overview: I press on "Go to Page <PAGE_NUM>"
     Then on page <PAGE_NUM> I should see the text "This is Page <PAGE_NUM>"
 
-  Examples:
-    | PAGE_NUM |
-    | 1        |
-    | 2        |
+    Examples:
+      | PAGE_NUM |
+      | 1        |
+      | 2        |
 
   Scenario: Page 1 journey with lots of text fields
     When on the overview: I press on "Go to Page 1"

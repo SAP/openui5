@@ -30,8 +30,8 @@ Feature: Lemmings Have Names Now
     When I click on the life saving button <NUM_CLICKS> times
     Then I see <NAME> at the end of the list of named lemmings
 
-  Examples:
-      | NUM_CLICKS | NAME    |
-      |  1         | Alice   |
-      |  2         | Bob     |
-      |  3         | Charlie |
+    Examples:
+        | NUM_CLICKS | NAME    |
+        |  1         | Alice   |
+        |  2         | Bob     |
+        |  3         | Charlie |
