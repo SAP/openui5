@@ -289,9 +289,25 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		});
 		this._searchField = this._oSearchField; // for downward compatibility
 
+		// store a reference to the checkbox for binding management
+		this._oSelectAll = new CheckBox(this.getId() + "-select-all", {
+			visible: false,
+			selected: false,
+			width: "5%",
+			select: function(oEvent) {
+				if( oEvent.getParameter("selected") ) {
+					that._oList.selectAll(true);
+				} else {
+					that._oList.removeSelections(true, true);
+				}
+			}
+		});
+		this._oSelectAll.setTooltip(this._oRb.getText("TABLESELECTDIALOG_SELECT_ALL_ITEMS"));
+
 		// store a reference to the subheader for hiding it when data loads
 		this._oSubHeader = new sap.m.Bar(this.getId() + "-subHeader", {
 			contentMiddle: [
+				this._oSelectAll,
 				this._oSearchField
 			]
 		});
@@ -320,6 +336,29 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 			// execute cancel action
 			that._onCancel();
 		};
+
+		// If all items of the list are selected the Select All checkbox chould be already chekced
+		var checkIfAllListItemsAreSelected = function(oEvent) {
+			var allItemsSelected = that._oList.getSelectedItems().length === that._oList.getItems().length;
+			that._oSelectAll.setSelected(allItemsSelected);
+		};
+		
+		this._oList.attachSelectionChange(function(oEvent) {
+			checkIfAllListItemsAreSelected(oEvent);
+		});
+		
+		this._oList.attachUpdateFinished(function(oEvent) {
+			checkIfAllListItemsAreSelected(oEvent);
+		});
+		
+		this._oDialog.attachBeforeOpen(function(oEvent) {
+			checkIfAllListItemsAreSelected(oEvent);
+		});
+		
+		// Always uncheck the SelectAll Checkbox when the dialog is closed (even if it's not destroyed)
+		this._oDialog.attachAfterClose(function(oEvent) {
+			that._oSelectAll.setSelected(false);
+		});
 
 		// internally set top and bottom margin of the dialog to 4rem respectively
 		// CSN# 333642/2014: in base theme the parameter sapUiFontSize is "medium", implement a fallback
@@ -493,11 +532,15 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	SelectDialog.prototype.setMultiSelect = function (bMulti) {
 		this.setProperty("multiSelect", bMulti, true);
 		if (bMulti) {
+			this._oSearchField.setWidth("80%");
+			this._oSelectAll.setVisible(true);
 			this._oList.setMode(sap.m.ListMode.MultiSelect);
 			this._oList.setIncludeItemInSelection(true);
 			this._oDialog.setEndButton(this._getCancelButton());
 			this._oDialog.setBeginButton(this._getOkButton());
 		} else {
+			this._oSearchField.setWidth("100%");
+			this._oSelectAll.setVisible(false);
 			this._oList.setMode(sap.m.ListMode.SingleSelectMaster);
 			this._oDialog.setBeginButton(this._getCancelButton());
 		}
