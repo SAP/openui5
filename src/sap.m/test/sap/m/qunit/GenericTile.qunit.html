@@ -586,17 +586,22 @@
 		assert.equal(this.oGenericTile._initScopeContent.callCount, 1, "_initScopeContent has been called once.");
 	});
 
-	QUnit.module("sap.m.GenericTileMode.LineMode cozy", {
+	QUnit.module("sap.m.GenericTileMode.LineMode ListView cozy (small screen only)", {
 		beforeEach: function() {
+			sinon.stub(sap.ui.Device.media, "attachHandler");
 			this.oGenericTile = new sap.m.GenericTile({
 				state: sap.m.LoadState.Loaded,
 				header: "headerText",
 				subheader: "subheaderText",
 				mode: sap.m.GenericTileMode.LineMode
 			}).placeAt("qunit-fixture");
+			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").addClass("sapUiMedia-GenericTileDeviceSet-small");
+			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(false);
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
+			sap.ui.Device.media.attachHandler.restore();
+			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
 		}
@@ -614,16 +619,20 @@
 		assert.ok(this.oGenericTile.$("lineModeHelpContainer").length > 0, "Help container for line mode was found");
 	});
 
-	QUnit.module("LineMode compact w/o parent", {
+	QUnit.module("LineMode FloatingView (large screen only) w/o parent", {
 		beforeEach: function() {
+			sinon.stub(sap.ui.Device.media, "attachHandler");
 			this.oGenericTile = new sap.m.GenericTile({
 				state: sap.m.LoadState.Loaded,
 				mode: sap.m.GenericTileMode.LineMode
 			}).placeAt("qunit-fixture");
-			this.oGenericTile.addStyleClass("sapUiSizeCompact");
+			jQuery("html").addClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
+			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(true);
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
+			sap.ui.Device.media.attachHandler.restore();
+			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
 		}
@@ -647,17 +656,51 @@
 		oSpy.restore();
 	});
 
-	QUnit.module("sap.m.GenericTileMode.LineMode compact", {
+	QUnit.module("sap.m.GenericTileMode.LineMode FloatingView cozy (large screen only)", {
 		beforeEach: function() {
+			sinon.stub(sap.ui.Device.media, "attachHandler");
+			this.oGenericTile = new sap.m.GenericTile({
+				state: sap.m.LoadState.Loaded,
+				header: "headerText",
+				subheader: "subheaderText",
+				mode: sap.m.GenericTileMode.LineMode
+			}).placeAt("qunit-fixture");
+			jQuery("html").addClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
+			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(true);
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			sap.ui.Device.media.attachHandler.restore();
+			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("All elements found", function(assert) {
+		assert.ok(this.oGenericTile.$().hasClass("sapMGT"), "Tile has class 'sapMGT'");
+		assert.ok(this.oGenericTile.$().hasClass("sapMGTLineMode"), "Tile has class 'sapMGTLineMode'");
+		assert.ok(this.oGenericTile.$("startMarker").length > 0, "StartMarker was found.");
+		assert.ok(this.oGenericTile.$("endMarker").length > 0, "EndMarker was found.");
+		assert.ok(this.oGenericTile.$("hdr-text").length > 0, "Header was found");
+		assert.equal(this.oGenericTile.$("hdr-text").text(), "headerText", "Header text was correct");
+		assert.ok(this.oGenericTile.$("subHdr-text").length > 0, "SubHeader was found");
+		assert.equal(this.oGenericTile.$("subHdr-text").text(), "subheaderText", "SubHeader text was correct");
+		assert.ok(this.oGenericTile.$("styleHelper").length > 0, "Style helper was found.");
+	});
+
+	QUnit.module("sap.m.GenericTileMode.LineMode ListView compact (small screen only)", {
+		beforeEach: function() {
+			sinon.stub(sap.ui.Device.media, "attachHandler");
 			this.oGenericTile = new sap.m.GenericTile({
 				state: sap.m.LoadState.Loaded,
 				subheader: "Expenses By Region",
 				header: "Comparative Annual Totals",
 				mode: sap.m.GenericTileMode.LineMode
 			});
-			sinon.stub(this.oGenericTile, "_checkContentDensity");
-
-			//stub this function on order to not queue any updates which might influence the other tests
+			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").addClass("sapUiMedia-GenericTileDeviceSet-small");
+			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(false);
+			//stub this function in order to not queue any updates which might influence the other tests
 			sinon.stub(this.oGenericTile, "_updateHoverStyle");
 
 			this.oParent = new sap.m.FlexBox({
@@ -667,9 +710,57 @@
 			this.oParent.addStyleClass("sapUiSizeCompact");
 			sap.ui.getCore().applyChanges();
 			this.oGenericTile._updateHoverStyle.reset();
-			this.oGenericTile._checkContentDensity.reset();
 		},
 		afterEach: function() {
+			sap.ui.Device.media.attachHandler.restore();
+			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+			this.oParent.destroy();
+			this.oParent = null;
+		}
+	});
+
+	QUnit.test("All elements found", function(assert) {
+		//Arrange
+		//Act
+		//Assert
+		assert.ok(this.oGenericTile.$().hasClass("sapMGT"), "Tile has class 'sapMGT'");
+		assert.ok(this.oGenericTile.$().hasClass("sapMGTLineMode"), "Tile has class 'sapMGTLineMode'");
+		assert.ok(this.oGenericTile.$("hdr-text").length > 0, "Header was found.");
+		assert.equal(this.oGenericTile.$("hdr-text").text(), "Comparative Annual Totals", "Header was correct.");
+		assert.ok(this.oGenericTile.$("subHdr-text").length > 0, "SubHeader was found.");
+		assert.equal(this.oGenericTile.$("subHdr-text").text(), "Expenses By Region", "SubHeader was correct.");
+		assert.ok(this.oGenericTile.$("focus").length > 0, "Focus helper was found");
+		assert.ok(this.oGenericTile.$("touchArea").length > 0, "Touch area for line mode was found");
+		assert.ok(this.oGenericTile.$("lineModeHelpContainer").length > 0, "Help container for line mode was found");
+	});
+
+	QUnit.module("sap.m.GenericTileMode.LineMode FloatingView compact (large screen only)", {
+		beforeEach: function() {
+			sinon.stub(sap.ui.Device.media, "attachHandler");
+			this.oGenericTile = new sap.m.GenericTile({
+				state: sap.m.LoadState.Loaded,
+				subheader: "Expenses By Region",
+				header: "Comparative Annual Totals",
+				mode: sap.m.GenericTileMode.LineMode
+			});
+			jQuery("html").addClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
+			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(true);
+			//stub this function in order to not queue any updates which might influence the other tests
+			sinon.stub(this.oGenericTile, "_updateHoverStyle");
+
+			this.oParent = new sap.m.FlexBox({
+				width: "100px",
+				items: [ this.oGenericTile ]
+			}).placeAt("qunit-fixture");
+			this.oParent.addStyleClass("sapUiSizeCompact");
+			sap.ui.getCore().applyChanges();
+			this.oGenericTile._updateHoverStyle.reset();
+		},
+		afterEach: function() {
+			sap.ui.Device.media.attachHandler.restore();
+			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
 			this.oParent.destroy();
@@ -708,34 +799,62 @@
 		assert.ok(this.oGenericTile.$("styleHelper").length > 0, "Style helper was found.");
 	});
 
-	QUnit.test("Tile attached interval timer after rendering", function(assert) {
+	QUnit.module("sap.m.GenericTileMode.LineMode FloatingView Functions tests (large screen only)", {
+		beforeEach: function() {
+			sinon.stub(sap.ui.Device.media, "attachHandler");
+			this.oGenericTile = new sap.m.GenericTile({
+				state: sap.m.LoadState.Loaded,
+				subheader: "Expenses By Region",
+				header: "Comparative Annual Totals",
+				mode: sap.m.GenericTileMode.LineMode
+			});
+			jQuery("html").addClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
+			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(true);
+			//stub this function in order to not queue any updates which might influence the other tests
+			sinon.stub(this.oGenericTile, "_updateHoverStyle");
+
+			this.oParent = new sap.m.FlexBox({
+				width: "100px",
+				items: [ this.oGenericTile ]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			this.oGenericTile._updateHoverStyle.reset();
+		},
+		afterEach: function() {
+			sap.ui.Device.media.attachHandler.restore();
+			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+			this.oParent.destroy();
+			this.oParent = null;
+		}
+	});
+
+	QUnit.test("Tile attached mediaContainerWidthChange handler after rendering", function(assert) {
 		//Arrange
-		sinon.spy(sap.ui.getCore(), "attachIntervalTimer");
+		// remove stub to attach spy
+		sap.ui.Device.media.attachHandler.restore();
+		var deviceAttachHandlerSpy = sinon.spy(sap.ui.Device.media, "attachHandler");
 
 		//Act
 		this.oGenericTile.invalidate();
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.equal(sap.ui.getCore().attachIntervalTimer.callCount, 1);
-
-		//Cleanup
-		sap.ui.getCore().attachIntervalTimer.restore();
+		assert.ok(deviceAttachHandlerSpy.calledOnce, "The mediaContainerWidthChange handler was attached after invalidation");
 	});
 
-	QUnit.test("Tile is invalidated on content density change", function(assert) {
+	QUnit.test("Tile is invalidated on device size change", function(assert) {
 		//Arrange
-		var done = assert.async();
+		// restore previous stub and replace it with different stub.
+		var oMediaChangeSpy = sinon.spy(this.oGenericTile, "onAfterRendering");
 
 		//Act
-		this.oParent.$().addClass("sapUiSizeCompact");
+		this.oGenericTile._handleMediaChange();
+		sap.ui.getCore().applyChanges();
 
-		jQuery.sap.delayedCall(250, null, function() {
-			//Assert
-			assert.equal(this.oGenericTile._checkContentDensity.callCount, 1, "Content density check has been executed.");
-
-			done();
-		}.bind(this));
+		//Assert
+		assert.equal(oMediaChangeSpy.calledOnce, true, "Invalidate triggered a rerendering");
 	});
 
 	QUnit.test("All elements found in failed state", function(assert) {
@@ -778,7 +897,7 @@
 		this.oGenericTile.invalidate();
 		sap.ui.getCore().applyChanges();
 
-		jQuery.sap.delayedCall(50, this, function() {
+		jQuery.sap.delayedCall(100, this, function() {
 			//Assert
 			assert.equal(this.oGenericTile._updateHoverStyle.callCount, 1, "The hover style is updated when the control is rendered.");
 			assert.equal(this.oGenericTile._queueAnimationEnd.callCount, 1, "The hover style is update is queued when the control is rendered.");
@@ -903,8 +1022,8 @@
 			header: "Comparative Annual Totals",
 			mode: sap.m.GenericTileMode.LineMode
 		});
+		sinon.stub(oSiblingTile, "_isScreenLarge").returns(true);
 		this.oParent.addItem(oSiblingTile);
-		this.oParent.addStyleClass("sapUiSizeCompact");
 		sap.ui.getCore().applyChanges();
 
 		this.oGenericTile._updateHoverStyle.restore(); //restore stub in order to use spy
@@ -1135,6 +1254,7 @@
 
 	QUnit.module("Protected method getBoundingRects", {
 		beforeEach: function() {
+			sinon.stub(sap.ui.Device.media, "attachHandler");
 			this.oGenericTile = new sap.m.GenericTile({
 				state: sap.m.LoadState.Loaded,
 				subheader: "Expenses By Region",
@@ -1142,6 +1262,8 @@
 				mode: sap.m.GenericTileMode.LineMode
 			});
 
+			jQuery("html").addClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
+			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(true);
 			//stub this function on order to not queue any updates which might influence the other tests
 			sinon.stub(this.oGenericTile, "_updateHoverStyle");
 
@@ -1149,6 +1271,8 @@
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
+			sap.ui.Device.media.attachHandler.restore();
+			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
 		}
@@ -1161,7 +1285,6 @@
 		sinon.stub(this.oGenericTile, "_calculateStyleData").returns({
 			lines: []
 		});
-		sinon.stub(this.oGenericTile, "_isCompact").returns(true);
 
 		//Act
 		var aBoundingRects = this.oGenericTile.getBoundingRects();
@@ -1170,9 +1293,12 @@
 		assert.equal(this.oGenericTile._getStyleData.callCount, 1, "_getStyleData has been called once.");
 	});
 
-	QUnit.test("getBoundingRects in cozy tile returns object with necessary fields in cozy mode", function(assert) {
+	QUnit.test("getBoundingRects in cozy tile returns object with necessary fields in list view (small screen)", function(assert) {
 		//Arrange
-		sinon.stub(this.oGenericTile, "_isCompact").returns(false);
+		jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").addClass("sapUiMedia-GenericTileDeviceSet-small");
+		this.oGenericTile._isScreenLarge.restore();
+		sinon.stub(this.oGenericTile, "_isScreenLarge").returns(false);
+		sap.ui.getCore().applyChanges();
 
 		//Act
 		var aBoundingRects = this.oGenericTile.getBoundingRects();
@@ -1185,14 +1311,12 @@
 		assert.ok(aBoundingRects[0].height >= 0, "The field 'height' is available.");
 	});
 
-	QUnit.test("getBoundingRects returns object with necessary fields in compact mode", function(assert) {
+	QUnit.test("getBoundingRects returns object with necessary fields in floating view (large screen)", function(assert) {
 		//Arrange
 		var oStubGetPixelValue = sinon.stub(sap.m.GenericTileLineModeRenderer, "_getCSSPixelValue");
-		oStubGetPixelValue.withArgs(this.oGenericTile, "line-height").returns(30);
+		oStubGetPixelValue.withArgs(this.oGenericTile, "line-height").returns(50);
 		oStubGetPixelValue.withArgs(this.oGenericTile, "min-height").returns(26);
 		oStubGetPixelValue.withArgs(this.oGenericTile, "margin-top").returns(4);
-		this.oGenericTile.addStyleClass("sapUiSizeCompact");
-
 		//Act
 		this.oGenericTile.invalidate();
 		sap.ui.getCore().applyChanges();
@@ -1929,14 +2053,19 @@
 		assert.ok(oDom, "The span with suffix 'inner' exists");
 	});
 
-	QUnit.module("Tooltip handling in LineMode", {
+	QUnit.module("Tooltip handling in LineMode (large screens)", {
 		beforeEach : function() {
+			sinon.stub(sap.ui.Device.media, "attachHandler");
 			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
 				header : "header",
 				subheader : "subheader",
 				mode: sap.m.GenericTileMode.LineMode,
 				tileContent : [new sap.m.TileContent("tile-cont-1"), new sap.m.TileContent("tile-cont-2")]
 			});
+
+			jQuery("html").addClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
+			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(true);
+
 			// stub function _getAriaAndTooltipText of the content
 			this.oGenericTile.getTileContent()[0]._getAriaAndTooltipText = function() {
 				return "ARIA and tooltip text of TileContent 1";
@@ -1953,6 +2082,10 @@
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach : function() {
+			sap.ui.Device.media.attachHandler.restore();
+			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
 			this.oParent.destroy();
 			this.oParent = null;
 		}
@@ -2028,7 +2161,62 @@
 		assert.equal(this.oGenericTile.$().attr("aria-label"), sAriaLabel, "GenericTile has correct ARIA-label");
 	});
 
-	QUnit.test("Tooltip for GenericTile with short header text, long subheader text", function(assert) {
+	QUnit.test("Truncated header text tooltip is removed when mouse leaves the GenericTile", function(assert) {
+		//Arrange
+		var $Tile = this.oGenericTile.$();
+		this.oGenericTile.setHeader("A long long long long long long long long long long");
+
+		//Act
+		$Tile.trigger("mouseenter");
+		$Tile.trigger("mouseleave");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(null, this.oGenericTile.$().attr("title"), "Truncated text tooltip is removed");
+	});
+
+	QUnit.module("Tooltip handling in LineMode (small screens)", {
+		beforeEach : function() {
+			sinon.stub(sap.ui.Device.media, "attachHandler");
+			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
+				header : "header",
+				subheader : "subheader",
+				mode: sap.m.GenericTileMode.LineMode,
+				tileContent : [new sap.m.TileContent("tile-cont-1"), new sap.m.TileContent("tile-cont-2")]
+			});
+
+			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").addClass("sapUiMedia-GenericTileDeviceSet-small");
+			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(false);
+
+			// stub function _getAriaAndTooltipText of the content
+			this.oGenericTile.getTileContent()[0]._getAriaAndTooltipText = function() {
+				return "ARIA and tooltip text of TileContent 1";
+			};
+			// stub function _getAriaAndTooltipText of the content
+			this.oGenericTile.getTileContent()[1]._getAriaAndTooltipText = function() {
+				return "ARIA and tooltip text of TileContent 2";
+			};
+
+			this.oParent = new sap.m.ScrollContainer({
+				width: "100px",
+				content: [ this.oGenericTile ]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			sap.ui.Device.media.attachHandler.restore();
+			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+			this.oParent.destroy();
+			this.oParent = null;
+		}
+	});
+	QUnit.test("Tooltip for GenericTile with short header text, long subheader text truncated", function(assert) {
+		if (sap.ui.Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
 		//Arrange
 		this.oGenericTile.setSubheader("A long long subheader text");
 		sap.ui.getCore().applyChanges();
@@ -2040,7 +2228,11 @@
 		assert.equal(this.oGenericTile.$().attr("title"), "A long long subheader text", "Truncated text for subheader has tooltip");
 	});
 
-	QUnit.test("Tooltip for GenericTile with long header text, short subheader text", function(assert) {
+	QUnit.test("Tooltip for GenericTile with long header text truncated, short subheader text", function(assert) {
+		if (sap.ui.Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
 		//Arrange
 		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
 		this.oGenericTile._oTitle.invalidate(); // needs to invalidate since the sap.m.Text doesn't invalidate (on purpose)
@@ -2053,7 +2245,11 @@
 		assert.equal(this.oGenericTile.$().attr("title"), "A long long long long long long long long long long header text", "Truncated text for header has tooltip");
 	});
 
-	QUnit.test("Tooltip for GenericTile with long header text, long subheader text", function(assert) {
+	QUnit.test("Tooltip for GenericTile with long header text truncated, long subheader text truncated", function(assert) {
+		if (sap.ui.Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
 		//Arrange
 		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
 		this.oGenericTile.setSubheader("A long long subheader text");
@@ -2067,6 +2263,10 @@
 	});
 
 	QUnit.test("Truncated header text tooltip is removed when mouse leaves the GenericTile", function(assert) {
+		if (sap.ui.Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
 		//Arrange
 		var $Tile = this.oGenericTile.$();
 		this.oGenericTile.setHeader("A long long long long long long long long long long");
