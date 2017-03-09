@@ -3873,10 +3873,16 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.getBindingContext = function(sModelName){
-		if (this.mElementBindingContexts[sModelName]) {
-			return this.mElementBindingContexts[sModelName];
+		var oModel = this.getModel(sModelName),
+			oElementBindingContext = this.mElementBindingContexts[sModelName];
+
+		if (oElementBindingContext && !oModel) {
+			return oElementBindingContext;
+		} else if (oElementBindingContext && oModel && oElementBindingContext.getModel() === oModel) {
+			return oElementBindingContext;
+		} else {
+			return this._getBindingContext(sModelName);
 		}
-		return this._getBindingContext(sModelName);
 	};
 
 	/**
@@ -3885,8 +3891,12 @@ sap.ui.define([
 	 */
 	ManagedObject.prototype._getBindingContext = function(sModelName){
 		var oModel = this.getModel(sModelName),
+			oContext = this.oBindingContexts[sModelName],
 			oPropagatedContext = this.oPropagatedProperties.oBindingContexts[sModelName];
-		if (this.oBindingContexts[sModelName]) {
+
+		if (oContext && !oModel) {
+			return this.oBindingContexts[sModelName];
+		} else if (oContext && oModel && oContext.getModel() === oModel) {
 			return this.oBindingContexts[sModelName];
 		} else if (oPropagatedContext && oModel && oPropagatedContext.getModel() !== oModel) {
 			return undefined;
