@@ -266,8 +266,8 @@ sap.ui.define([
             var sResults = rRegex.exec(sTestResult);
             var iFailedTests = parseInt(sResults[2], 10);
             var iTotalTests = parseInt(sResults[1], 10);
-            Opa5.assert.strictEqual(iFailedTests, 2, "Verified failed tests");
-            Opa5.assert.strictEqual(iTotalTests, 3, "Verified total tests");
+            Opa5.assert.strictEqual(iFailedTests, 3, "Verified failed tests");
+            Opa5.assert.strictEqual(iTotalTests, 4, "Verified total tests");
 
             var oCoffee = oFrame$('.test-message').filter(':contains("I should be served a coffee")');
             Opa5.assert.strictEqual(oCoffee.length, 1, 'Verified found text "I should be served a coffee"');
@@ -290,10 +290,19 @@ sap.ui.define([
               .filter(':contains("(WIP) Feature: An @wip feature automatically sets all its scenarios as @wip too")');
             Opa5.assert.strictEqual(oWipFeature.length, 1, 'Verified that @wip feature does not run its scenarios"');
 
-            var sNotFoundText = oFrame$('.test-message').filter(':contains("this test step does not exist and should fail the build")')
+            var sNotFoundText = oFrame$('.test-message')
+              .filter(':contains("this test step does not exist and should fail the build")')
               .parent().parent().find('.test-message').last().text();
             Opa5.assert.ok(sNotFoundText.indexOf("expect(0)") === -1,
               'Verified that a (NOT FOUND) test step doesn\'t trigger an expect(0) error"');
+
+            var oNotFoundNotSkipped = oFrame$('.test-message')
+              .filter(':contains("(NOT FOUND) this step has no step definition defined")');
+            Opa5.assert.strictEqual(oNotFoundNotSkipped.length, 1, " Verified found oNotFoundNotSkipped text");
+
+            var oAtWipSkipped = oFrame$('.module-name')
+            .filter(':contains("Feature: a feature whose scenarios are all @wip will be skipped")');
+            Opa5.assert.strictEqual(oAtWipSkipped.length, 1, " Verified found oAtWipSkipped text");
 
             oOpa5.iTeardownMyApp();
           }

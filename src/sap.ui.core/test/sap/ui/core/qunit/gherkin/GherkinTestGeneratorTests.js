@@ -14,6 +14,7 @@ sap.ui.require([
 
   QUnit.module("Gherkin Test Generator Tests", {
     beforeEach : function() {
+      QUnit.dump.maxDepth = 15;
       this.parser = simpleGherkinParser;
 
       this.assertAllTestsAreMatchedAndSkipped = function(testScenario) {
@@ -57,6 +58,7 @@ sap.ui.require([
       wip: false,
       testScenarios: [{
         name: "Scenario: Buy last coffee",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -113,6 +115,7 @@ sap.ui.require([
       wip: false,
       testScenarios: [{
         name: "Scenario Outline: Coffee changes peoples moods #1",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -131,6 +134,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario Outline: Coffee changes peoples moods #2",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -149,6 +153,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario Outline: Coffee changes peoples moods #3",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -216,6 +221,7 @@ sap.ui.require([
       wip: false,
       testScenarios: [{
         name: "Scenario: Buy first coffee",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -234,6 +240,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario: Buy second coffee",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1013,6 +1020,7 @@ sap.ui.require([
       wip: false,
       testScenarios: [{
         name: "Scenario Outline: Coffee changes peoples moods #1",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1024,6 +1032,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario Outline: Coffee changes peoples moods #2",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1035,6 +1044,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario Outline: Coffee changes peoples moods #3",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1093,6 +1103,7 @@ sap.ui.require([
       wip: false,
       testScenarios: [{
         name: "Scenario Outline: Coffee changes peoples moods #1",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1111,6 +1122,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario Outline: Coffee changes peoples moods #2",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1129,6 +1141,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario Outline: Coffee changes peoples moods #3",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1162,7 +1175,7 @@ sap.ui.require([
       "",
       "  Background:",
       "    Given the user drank coffee",
-      "      And the user drank more coffee",
+      "      And the user drank more coffee", // no step definition for this
       "",
       "  Scenario Outline: Coffee changes peoples moods",
       "    * user <USER> should be <MOOD>",
@@ -1196,6 +1209,7 @@ sap.ui.require([
       wip: false,
       testScenarios: [{
         name: "Scenario Outline: Coffee changes peoples moods #1",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1218,6 +1232,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario Outline: Coffee changes peoples moods #2",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1240,6 +1255,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario Outline: Coffee changes peoples moods #3",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1303,6 +1319,7 @@ sap.ui.require([
       wip: false,
       testScenarios: [{
         name: "Scenario Outline: Coffee changes peoples moods #1",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1357,7 +1374,64 @@ sap.ui.require([
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
   // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Scenario Outline with no Examples will be skipped", function(assert) {
+  QUnit.test("Scenario Outline with background and no Examples will be skipped", function(assert) {
+    var text = [
+      "Feature: Give cups of coffee to users",
+      "",
+      "  Background:",
+      "    Given the user 'Jonathan' has been given 0 cups of coffee",
+      "",
+      "  Scenario Outline: Coffee changes peoples moods",
+      "    Given the user '<USER>' has been given <NUMBER> cups of coffee",
+      ""
+    ].join("\n");
+
+    var feature = this.parser.parse(text);
+
+    var regex1 = /^the user '(.*?)' has been given (.*?) cups of coffee$/i;
+    var function1 = function(user, number) {};
+    var steps = StepDefinitions.extend("sap.ui.test.gherkin.StepDefinitionsTest", {
+      init: function() {
+        this.register(regex1, function1);
+      }
+    });
+
+    var testGenerator = new GherkinTestGenerator(feature, steps);
+    var actualFeatureTest = testGenerator.generate();
+    var expectedFeatureTest = {
+      name: "Feature: Give cups of coffee to users",
+      skip: true,
+      wip: false,
+      testScenarios: [{
+        name: "Scenario Outline: Coffee changes peoples moods",
+        skip: true,
+        wip: false,
+        testSteps: [{
+          isMatch: true,
+          skip: false,
+          text: "the user 'Jonathan' has been given 0 cups of coffee",
+          regex: regex1,
+          parameters: ["Jonathan", "0"],
+          func: function1
+        },{
+          isMatch: true,
+          skip: true,
+          text: "(SKIPPED) the user '<USER>' has been given <NUMBER> cups of coffee",
+          regex: regex1,
+          parameters: ["<USER>", "<NUMBER>"],
+          func: function1
+        }]
+      }]
+    };
+
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest);
+  });
+
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Scenario Outline with no Examples will be skipped (regardless of if step definitions are found)", function(assert) {
     var text = [
       "Feature: Give cups of coffee to users",
       "",
@@ -1387,6 +1461,7 @@ sap.ui.require([
       wip: false,
       testScenarios: [{
         name: "Scenario Outline: Coffee changes peoples moods",
+        skip: true,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1398,6 +1473,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario Outline: Coffee's mysterious origins",
+        skip: true,
         wip: false,
         testSteps: [{
           isMatch: false,
@@ -1407,7 +1483,8 @@ sap.ui.require([
       }]
     };
 
-    assert.deepEqual(actualFeatureTest, expectedFeatureTest, "Scenario Outline with no Examples will be skipped");
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
+      "Scenario Outline with no Examples will be skipped (regardless of if step definitions are found)");
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1418,12 +1495,15 @@ sap.ui.require([
       "Feature: Coffee History Lesson",
       "",
       "  Scenario Outline: Coffee's mysterious origins",
-      "    Given coffee originated in <ORIGIN>, but was first brewed in <FIRST BREWED>", // no step definition
+      "    Given coffee originated in <ORIGIN>, but was first brewed in <FIRST BREWED>",
       "",
       "    @wip",
       "    Examples: A",
       "      | ORIGIN    | FIRST BREWED |",
       "      |  Ethiopia |  Yemen       |",
+      "",
+      "  Scenario: the mysterious nature of coffee",
+      "   Given coffee 'beans' are actually seeds extracted from dried berries!",
       "",
     ].join("\n");
 
@@ -1431,9 +1511,111 @@ sap.ui.require([
 
     var regex1 = /^coffee originated in (.*?), but was first brewed in (.*?)$/i;
     var function1 = function(origin, firstBrewed) {};
+    var regex2 = /^coffee 'beans' are actually seeds extracted from dried berries!$/i;
+    var function2 = function() {};
     var steps = StepDefinitions.extend("sap.ui.test.gherkin.StepDefinitionsTest", {
       init: function() {
         this.register(regex1, function1);
+        this.register(regex2, function2);
+      }
+    });
+
+    var testGenerator = new GherkinTestGenerator(feature, steps);
+    var actualFeatureTest = testGenerator.generate();
+    var expectedFeatureTest = {
+      name: "Feature: Coffee History Lesson",
+      skip: false,
+      wip: false,
+      testScenarios: [{
+        name: "Scenario Outline: Coffee's mysterious origins",
+        skip: true,
+        wip: false,
+        testSteps: [{
+          isMatch: true,
+          skip: true,
+          text: "(SKIPPED) coffee originated in <ORIGIN>, but was first brewed in <FIRST BREWED>",
+          regex: regex1,
+          parameters: ["<ORIGIN>", "<FIRST BREWED>"],
+          func: function1
+        }]
+      },{
+        name: "Scenario: the mysterious nature of coffee",
+        skip: false,
+        wip: false,
+        testSteps: [{
+          isMatch: true,
+          skip: false,
+          text: "coffee 'beans' are actually seeds extracted from dried berries!",
+          regex: regex2,
+          parameters: [],
+          func: function2
+        }]
+      }]
+    };
+
+    deepEqual(actualFeatureTest, expectedFeatureTest, "Scenario Outline with one @wip Example will be skipped");
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Feature whose steps are all not found will not be skipped", function(assert) {
+
+    var text = [
+      "Feature: Coffee History Lesson",
+      "",
+      "  Scenario: the mysterious nature of coffee",
+      "   Given coffee 'beans' are actually seeds extracted from dried berries!",
+      "",
+    ].join("\n");
+
+    var feature = this.parser.parse(text);
+
+    var steps = StepDefinitions.extend("sap.ui.test.gherkin.StepDefinitionsTest", {
+      init: function() {
+        // no step definitions being registered
+      }
+    });
+
+    var testGenerator = new GherkinTestGenerator(feature, steps);
+    var actualFeatureTest = testGenerator.generate();
+    var expectedFeatureTest = {
+      name: "Feature: Coffee History Lesson",
+      skip: false,
+      wip: false,
+      testScenarios: [{
+        name: "Scenario: the mysterious nature of coffee",
+        skip: false,
+        wip: false,
+        testSteps: [{
+          isMatch: false,
+          skip: true,
+          text: "(NOT FOUND) coffee 'beans' are actually seeds extracted from dried berries!"
+        }]
+      }]
+    };
+
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest, "Feature whose steps are all not found will not be skipped");
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Feature whose steps are all @wip will be skipped", function(assert) {
+
+    var text = [
+      "Feature: Coffee History Lesson",
+      "",
+      "  @wip",
+      "  Scenario: the mysterious nature of coffee",
+      "   Given coffee 'beans' are actually seeds extracted from dried berries!",
+      "",
+    ].join("\n");
+
+    var feature = this.parser.parse(text);
+
+    var steps = StepDefinitions.extend("sap.ui.test.gherkin.StepDefinitionsTest", {
+      init: function() {
       }
     });
 
@@ -1444,20 +1626,18 @@ sap.ui.require([
       skip: true,
       wip: false,
       testScenarios: [{
-        name: "Scenario Outline: Coffee's mysterious origins",
-        wip: false,
+        name: "(WIP) Scenario: the mysterious nature of coffee",
+        skip: true,
+        wip: true,
         testSteps: [{
-          isMatch: true,
+          isMatch: false,
           skip: true,
-          text: "(SKIPPED) coffee originated in <ORIGIN>, but was first brewed in <FIRST BREWED>",
-          regex: regex1,
-          parameters: ["<ORIGIN>", "<FIRST BREWED>"],
-          func: function1
+          text: "(NOT FOUND) coffee 'beans' are actually seeds extracted from dried berries!"
         }]
       }]
     };
 
-    assert.deepEqual(actualFeatureTest, expectedFeatureTest, "Scenario Outline with one @wip Example will be skipped");
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest, "Feature whose steps are all @wip will be skipped");
   });
 
 });

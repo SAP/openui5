@@ -41,9 +41,11 @@ sap.ui.define([
    * <pre>
    * {                                            // {FeatureTest} an executable object for testing a Gherkin feature
    *    name: "Feature: Serve expensive coffee",  // {string} the feature name from the Gherkin file
+   *    skip: false,                              // {boolean} true if the feature should not be executed
    *    wip: false,                               // {boolean} true if the feature is a work in progress
    *    testScenarios: [{                         // {[ScenarioTest]} test scenarios to be run in this FeatureTest
    *      name: "Scenario: Buy first coffee",     // {string} the scenario name from the Gherkin file
+   *      skip: false,                            // {boolean} true if the scenario should not be executed
    *      wip: false,                             // {boolean} true if the scenario is a work in progress
    *      testSteps: [{                           // {[TestStep]} test steps that are part of this ScenarioTest
    *        isMatch: true,                        // {boolean} true if the Gherkin scenario matched a step definition
@@ -61,6 +63,7 @@ sap.ui.define([
    *        func: function(){}
    *    }]},{
    *      name: "Scenario: Buy second coffee",
+   *      skip: false,
    *      wip: false,
    *      testSteps: [{
    *        isMatch: true,
@@ -244,16 +247,11 @@ sap.ui.define([
       }, this);
 
       var bFeatureIsWip = ($.inArray("@wip", this._oFeature.tags) !== -1);
-      var bAllScenariosAreSkipped = aTestScenarios.every(function(oTestScenario) {
-        return oTestScenario.testSteps.every(function(oTest) {
-          return oTest.skip;
-        });
-      });
-      var bSkipFeature = bFeatureIsWip || bAllScenariosAreSkipped;
+      var bAllScenariosAreSkipped = aTestScenarios.every(function(oTestScenario) {return oTestScenario.skip;});
 
       return {
         name: ((bFeatureIsWip) ? "(WIP) " : "") + "Feature: " + this._oFeature.name,
-        skip: bSkipFeature,
+        skip: bFeatureIsWip || bAllScenariosAreSkipped,
         wip: bFeatureIsWip,
         testScenarios: aTestScenarios
       };
@@ -316,11 +314,10 @@ sap.ui.define([
     },
 
     /**
-     * Prepares an executable test scenario based on a Gherkin document's scenario. Handles skipping "@wip" scenarios,
-     * unmatched tests and scenario outlines without active examples.
+     * Prepares an executable test scenario based on a Gherkin document's scenario.
      *
      * @param {Scenario} oScenario - the Gherkin scenario for which to generate tests
-     * @param {Scenario} oBackground - the Gherkin background scenario that must be run before each regular scenario
+     * @param {Scenario} [oBackground] - the Gherkin background scenario that must be run before each regular scenario
      * @returns {TestScenario} - the test scenario to be executed during testing
      * @see sap.ui.test.gherkin.simpleGherkinParser#parse
      * @private
@@ -329,24 +326,15 @@ sap.ui.define([
       var bWip = $.inArray("@wip", oScenario.tags) !== -1;
       var sScenarioPrependText = this._isScenarioOutline(oScenario) ? "Scenario Outline: " : "Scenario: ";
       var sScenarioName = (bWip ? "(WIP) " : "") + sScenarioPrependText + oScenario.name;
-      var aTestSteps = [];
-      var bSkip = false;
-
-      if (oBackground) {
-        aTestSteps = this._generateTestSteps(bWip, oBackground, false);
-        bSkip = aTestSteps.some(function(oTestStep) {return !oTestStep.isMatch;});
-      }
-
-      // if this is a scenario outline with no active examples
-      if (this._isScenarioOutline(oScenario) && !this._isScenarioOutlineWithExamples(oScenario)) {
-        // then all of the test steps should be skipped because we can't make them concrete
-        bSkip = true;
-      }
+      var aTestSteps = (oBackground) ? this._generateTestSteps(bWip, oBackground, false) : [];
+      var bNoActiveExamples = this._isScenarioOutline(oScenario) && !this._isScenarioOutlineWithExamples(oScenario);
+      var bSkip = bNoActiveExamples || aTestSteps.some(function(o) {return !o.isMatch;});
 
       aTestSteps = aTestSteps.concat(this._generateTestSteps(bWip, oScenario, bSkip));
 
       return {
         name: sScenarioName,
+        skip: bWip || bNoActiveExamples || aTestSteps.every(function(o) {return o.skip && o.isMatch;}),
         wip: bWip,
         testSteps: aTestSteps
       };
