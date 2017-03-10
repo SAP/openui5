@@ -290,7 +290,11 @@ sap.ui.define([
 			_mResult = mResult;
 			return Settings.getInstance();
 		}).then( function(oSettings){
-			var mDescriptorVariantJSON = JSON.parse(_mResult.response);
+			var mDescriptorVariantJSON = _mResult.response;
+			if (!jQuery.isPlainObject(mDescriptorVariantJSON)) {
+				//Parse if needed. Happens if backend sends wrong content type
+				mDescriptorVariantJSON = JSON.parse(mDescriptorVariantJSON);
+			}
 			return Promise.resolve(new DescriptorVariant(null,mDescriptorVariantJSON,false,oSettings));
 		});
 	};
