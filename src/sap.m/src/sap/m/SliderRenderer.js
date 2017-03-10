@@ -248,6 +248,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		SliderRenderer.renderTickmarksLabel = function (oRm, oSlider, fValue) {
 			var fLeft = oSlider._getPercentOfValue(fValue);
+			fValue = oSlider.toFixed(fValue, oSlider.getDecimalPrecisionOfNumber(oSlider.getStep()));
 
 			oRm.write("<li class=\"" + SliderRenderer.CSS_CLASS + "TickLabel\"");
 			oRm.write(" style=\"left: " + fLeft + "%;\"");
