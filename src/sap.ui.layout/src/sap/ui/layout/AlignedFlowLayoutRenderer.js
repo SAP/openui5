@@ -93,7 +93,12 @@ sap.ui.define(['./library'],
 				oRm.write("<li");
 				oRm.writeAttribute("id", oControl.getId() + "-endContent");
 				oRm.addClass(AlignedFlowLayoutRenderer.CSS_CLASS + "End");
-				oRm.addStyle("flex-basis", oControl.getMinItemWidth());
+
+				// if the end item is the only child, do not change the initial main size of a flex item
+				if (oControl.getContent().length) {
+					oRm.addStyle("flex-basis", oControl.getMinItemWidth());
+				}
+
 				oRm.writeClasses();
 				oRm.writeStyles();
 				oRm.write(">");
