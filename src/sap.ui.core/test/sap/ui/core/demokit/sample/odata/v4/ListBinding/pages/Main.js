@@ -35,7 +35,7 @@ function (Opa5, Properties) {
 						success : function (oEmployeeEquipments) {
 							var oRow = oEmployeeEquipments.getItems()[iRow];
 							Opa5.assert.strictEqual(
-									oRow.getCells()[0].getText(),
+									oRow.getCells()[1].getValue(),
 									sEquipmentName,
 									"Equipment name of row " + iRow + " as expected \""
 									+ sEquipmentName + "\"");

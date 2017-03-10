@@ -250,7 +250,7 @@ sap.ui.define([
 	ODataContextBinding.prototype.applyParameters = function (mParameters) {
 		var oBindingParameters;
 
-		this.mQueryOptions = this.oModel.buildQueryOptions(undefined, mParameters, true);
+		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
 
 		oBindingParameters = this.oModel.buildBindingParameters(mParameters,
 			["$$groupId", "$$updateGroupId"]);
@@ -371,52 +371,6 @@ sap.ui.define([
 	 * @see sap.ui.base.Event
 	 * @since 1.37.0
 	 */
-
-	/**
-	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the
-	 * parent binding adjusting the path.
-	 *
-	 * @param {string} sGroupId
-	 *   The group ID to be used for the DELETE request
-	 * @param {string} sEditUrl
-	 *   The edit URL to be used for the DELETE request
-	 * @param {string} sPath
-	 *   The path of the entity relative to this binding
-	 * @param {function} fnCallback
-	 *   A function which is called after the entity has been deleted from the server and from the
-	 *   cache; the index of the entity is passed as parameter
-	 * @returns {SyncPromise}
-	 *   A promise which is resolved without a result in case of success, or rejected with an
-	 *   instance of <code>Error</code> in case of failure
-	 * @throws {Error}
-	 *   If this binding is a deferred operation binding, if the group ID is neither '$auto'
-	 *   nor '$direct' or if the cache promise for this binding is not yet fulfilled
-	 *
-	 * @private
-	 */
-	ODataContextBinding.prototype.deleteFromCache = function (sGroupId, sEditUrl, sPath,
-			fnCallback) {
-		var oCache;
-
-		if (this.oOperation) {
-			throw new Error("Cannot delete a deferred operation");
-		}
-
-		if (!this.oCachePromise.isFulfilled()) {
-			throw new Error("DELETE request not allowed");
-		}
-
-		oCache = this.oCachePromise.getResult();
-		if (oCache) {
-			sGroupId = sGroupId || this.getUpdateGroupId();
-			if (sGroupId !== "$auto" && sGroupId !== "$direct") {
-				throw new Error("Illegal update group ID: " + sGroupId);
-			}
-			return oCache._delete(sGroupId, sEditUrl, sPath, fnCallback);
-		}
-		return this.oContext.getBinding().deleteFromCache(sGroupId, sEditUrl,
-			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), fnCallback);
-	};
 
 	/**
 	 * Deregisters the given change listener.
@@ -723,14 +677,15 @@ sap.ui.define([
 					that.sRefreshGroupId = sGroupId;
 					that.fetchCache(that.oContext);
 					that.mCacheByContext = undefined;
-					that._fireChange({reason : ChangeReason.Refresh});
+					// Do not fire a change event, or else ManagedObject destroys and recreates the
+					// binding hierarchy causing a flood of events
 				} else if (!that.oOperation.bAction) {
 					// ignore returned promise, error handling takes place in execute
 					that.execute(sGroupId);
 				}
 			}
 			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
-				oDependentBinding.refreshInternal(sGroupId);
+				oDependentBinding.refreshInternal(sGroupId, true);
 			});
 		});
 	};

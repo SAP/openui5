@@ -1,0 +1,10 @@
+{
+	"@odata.context" : "$metadata#D_BP_ROLE_FV_Set",
+	"value" : [{
+		"FIELD_VALUE" : "01",
+		"DESCRIPTION" : "Customer"
+	}, {
+		"FIELD_VALUE" : "02",
+		"DESCRIPTION" : "Supplier"
+	}]
+}

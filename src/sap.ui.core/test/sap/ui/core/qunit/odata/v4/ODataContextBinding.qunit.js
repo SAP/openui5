@@ -110,7 +110,7 @@ sap.ui.require([
 			sUpdateGroupId = "update foo";
 
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(undefined, mParameters, true).returns(mQueryOptions);
+			.withExactArgs(mParameters, true).returns(mQueryOptions);
 		oModelMock.expects("buildBindingParameters")
 			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
 			.returns(mBindingParameters);
@@ -155,7 +155,7 @@ sap.ui.require([
 		};
 
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(undefined, mParameters, true).returns(mQueryOptions);
+			.withExactArgs(mParameters, true).returns(mQueryOptions);
 		oModelMock.expects("buildBindingParameters")
 			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
 			.returns(mBindingParameters);
@@ -184,7 +184,7 @@ sap.ui.require([
 			.withExactArgs(mParameters, ["$$groupId", "$$updateGroupId"])
 			.returns({});
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(undefined, mParameters, true)
+			.withExactArgs(mParameters, true)
 			.returns({$filter : "bar"});
 		this.stub(ODataContextBinding.prototype, "fetchCache", function (oContext0) {
 			assert.strictEqual(oContext0, oContext);
@@ -463,7 +463,6 @@ sap.ui.require([
 		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to read path /EMPLOYEES(ID='1')", sClassName, sinon.match({canceled : true}));
 		oBindingMock = this.mock(oBinding);
-		oBindingMock.expects("_fireChange");
 		oBindingMock.expects("fireDataReceived").withExactArgs(undefined);
 
 		// trigger read before refresh
@@ -1499,8 +1498,6 @@ sap.ui.require([
 
 		// code under test
 		oBinding.refreshInternal();
-
-		sinon.assert.calledOnce(fnOnRefresh);
 	});
 
 	//*********************************************************************************************
@@ -1520,12 +1517,11 @@ sap.ui.require([
 		});
 		oBinding = this.oModel.bindContext("EMPLOYEE_2_TEAM", oContext, {"foo" : "bar"});
 		oBinding.mCacheByContext = {};
-
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Refresh});
+		oBinding.setContext(oContext);
 		this.mock(this.oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oBinding)).returns([oChild0, oChild1]);
-		this.mock(oChild0).expects("refreshInternal").withExactArgs("myGroup");
-		this.mock(oChild1).expects("refreshInternal").withExactArgs("myGroup");
+		this.mock(oChild0).expects("refreshInternal").withExactArgs("myGroup", true);
+		this.mock(oChild1).expects("refreshInternal").withExactArgs("myGroup", true);
 
 		//code under test
 		oBinding.refreshInternal("myGroup");
@@ -1566,87 +1562,6 @@ sap.ui.require([
 		assert.throws(function () {
 			oBinding._delete("myGroup", "EMPLOYEES('42')");
 		}, new Error("Cannot delete due to pending changes"));
-	});
-
-	//*********************************************************************************************
-	["$auto", undefined].forEach(function (sGroupId) {
-		QUnit.test("deleteFromCache(" + sGroupId + ") : binding w/ cache", function (assert) {
-			var oBinding = this.oModel.bindContext("/EMPLOYEES('42')"),
-				fnCallback = {},
-				oResult = {};
-
-			this.mock(oBinding).expects("getUpdateGroupId").exactly(sGroupId ? 0 : 1)
-				.withExactArgs().returns("$auto");
-			this.mock(oBinding.oCachePromise.getResult()).expects("_delete")
-				.withExactArgs("$auto", "EQUIPMENTS('3')", "EMPLOYEE_2_EQUIPMENTS/3",
-					sinon.match.same(fnCallback))
-				.returns(_SyncPromise.resolve(oResult));
-
-			assert.strictEqual(
-				oBinding.deleteFromCache(sGroupId, "EQUIPMENTS('3')", "EMPLOYEE_2_EQUIPMENTS/3",
-					fnCallback).getResult(),
-				oResult);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deleteFromCache: binding w/o cache", function (assert) {
-		var fnCallback = {},
-			oParentBinding = {
-				deleteFromCache : function () {}
-			},
-			oContext = Context.create(this.oModel, oParentBinding, "/TEAMS/42", 42),
-			oBinding = this.oModel.bindContext("", oContext),
-			oResult = {};
-
-		this.mock(_Helper).expects("buildPath")
-			.withExactArgs(42, "", "TEAM_2_EMPLOYEES/1")
-			.returns("~");
-		this.mock(oParentBinding).expects("deleteFromCache")
-			.withExactArgs("$auto", "EMPLOYEES('1')", "~", sinon.match.same(fnCallback))
-			.returns(_SyncPromise.resolve(oResult));
-
-		assert.strictEqual(
-			oBinding.deleteFromCache("$auto", "EMPLOYEES('1')", "TEAM_2_EMPLOYEES/1", fnCallback)
-				.getResult(),
-			oResult);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deleteFromCache: illegal group ID", function (assert) {
-		var oBinding = this.oModel.bindContext("/EMPLOYEES('42')"),
-			fnCallback = {};
-
-		assert.throws(function () {
-			oBinding.deleteFromCache("myGroup");
-		}, new Error("Illegal update group ID: myGroup"));
-
-		this.mock(oBinding).expects("getUpdateGroupId").returns("myGroup");
-
-		assert.throws(function () {
-			oBinding.deleteFromCache();
-		}, new Error("Illegal update group ID: myGroup"));
-
-		this.mock(oBinding.oCachePromise.getResult()).expects("_delete")
-			.withExactArgs("$direct", "EQUIPMENTS('3')", "EMPLOYEE_2_EQUIPMENTS/3",
-				sinon.match.same(fnCallback))
-			.returns(Promise.resolve());
-
-		return oBinding
-			.deleteFromCache("$direct", "EQUIPMENTS('3')", "EMPLOYEE_2_EQUIPMENTS/3", fnCallback)
-			.then();
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deleteFromCache: cache is not yet available", function (assert) {
-		var oBinding = this.oModel.bindContext("/EMPLOYEES('42')");
-
-		// simulate pending cache creation
-		oBinding.oCachePromise = _SyncPromise.resolve(Promise.resolve({ /* cache */}));
-
-		assert.throws(function () {
-			oBinding.deleteFromCache("$auto");
-		}, new Error("DELETE request not allowed"));
 	});
 
 	//*********************************************************************************************

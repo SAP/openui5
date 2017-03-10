@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="../../../../default/iwbep/v4_gw_sample_basic/0001/$metadata">
+		<edmx:Include Namespace="com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001" Alias="ParentService"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.f4.d_bp_role-fv.v0001" Alias="SAP__self">
+			<EntityType Name="D_BP_ROLE_FV">
+				<Key>
+					<PropertyRef Name="FIELD_VALUE"/>
+				</Key>
+				<Property Name="FIELD_VALUE" Type="Edm.String" Nullable="false" MaxLength="3"/>
+				<Property Name="DESCRIPTION" Type="Edm.String" Nullable="false"/>
+			</EntityType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="D_BP_ROLE_FV_Set" EntityType="com.sap.gateway.f4.d_bp_role-fv.v0001.D_BP_ROLE_FV"/>
+			</EntityContainer>
+			<Annotations Target="SAP__self.D_BP_ROLE_FV_Set">
+				<Annotation Term="SAP__capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="ParentService.BusinessPartner/BusinessPartnerRole">
+				<Annotation Term="SAP__common.ValueListMapping">
+					<Record>
+						<PropertyValue Property="CollectionPath" String="D_BP_ROLE_FV_Set"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="SAP__common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="BusinessPartnerRole"/>
+									<PropertyValue Property="ValueListProperty" String="FIELD_VALUE"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

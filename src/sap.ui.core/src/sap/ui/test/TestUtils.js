@@ -20,6 +20,10 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		bRealOData = bProxy || sRealOData === "direct",
 		TestUtils;
 
+	if (bRealOData) {
+		document.title = document.title + " (real OData)";
+	}
+
 	/**
 	 * Checks that the actual value deeply contains the expected value, ignoring additional
 	 * properties.
@@ -427,6 +431,16 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 */
 		isRealOData : function () {
 			return bRealOData;
+		},
+
+		/**
+		 * Returns the realOData query parameter so that it can be forwarded to an embedded test
+		 *
+		 * @returns {String}
+		 *  the realOData query parameter or "" if none was given
+		 */
+		getRealOData : function () {
+			return sRealOData ? "&realOData=" + sRealOData : "";
 		},
 
 		/**

@@ -42,7 +42,7 @@
 					"Component.js",
 					"Main.controller.js",
 					"Main.view.xml",
-					"ValueHelp.js"
+					"../../../common/ValueHelp.js"
 				]
 			}
 		},

@@ -1,4 +1,5 @@
-<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm" Version="4.0">
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_XJG',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="Z__UI"/>
 		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Z__COM"/>
@@ -982,134 +983,353 @@
 					</Record>
 				</Annotation>
 			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/BusinessPartnerID">
+				<Annotation Term="SAP__common.Label" String="Character Field Length = 10"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/BusinessPartnerRole">
+				<Annotation Term="SAP__common.Label" String="Bus. Part. Role"/>
+				<Annotation Term="SAP__common.Heading" String="Business Partner Role"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Business Partner Role"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/CompanyName">
+				<Annotation Term="SAP__common.Label" String="Company"/>
+				<Annotation Term="SAP__common.Heading" String="Company Name"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Company Name"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/EmailAddress">
+				<Annotation Term="SAP__common.Label" String="Email"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: E-Mail Address"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/PhoneNumber">
+				<Annotation Term="SAP__common.Label" String="Phone"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Phone Number"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/FaxNumber">
+				<Annotation Term="SAP__common.Label" String="30 Characters"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/LegalForm">
+				<Annotation Term="SAP__common.Label" String="Legal Form"/>
+				<Annotation Term="SAP__common.Heading" String="Legal Form of Business Partner"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Legal Form of Business Partner"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/CurrencyCode">
+				<Annotation Term="SAP__common.Label" String="Currency Code"/>
+				<Annotation Term="SAP__common.Heading" String="ISO Currency Code"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Currency Code"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/CreatedAt">
+				<Annotation Term="SAP__common.Label" String="Time Stamp"/>
+				<Annotation Term="SAP__common.QuickInfo" String="UTC Time Stamp in Long Form (YYYYMMDDhhmmssmmmuuun)"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/ChangedAt">
+				<Annotation Term="SAP__common.Label" String="Time Stamp"/>
+				<Annotation Term="SAP__common.QuickInfo" String="UTC Time Stamp in Long Form (YYYYMMDDhhmmssmmmuuun)"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/Address/City">
+				<Annotation Term="SAP__common.Label" String="City"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: City"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/Address/PostalCode">
+				<Annotation Term="SAP__common.Label" String="Postal Code"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Postal Code"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/Address/Street">
+				<Annotation Term="SAP__common.Label" String="Street"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Street"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/Address/Building">
+				<Annotation Term="SAP__common.Label" String="Building"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Building"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/Address/Country">
+				<Annotation Term="SAP__common.Label" String="Country"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Country Code"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/Address/AddressType">
+				<Annotation Term="SAP__common.Label" String="Address Type"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Address Type"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/Address/GeoLocation/Longitude">
+				<Annotation Term="SAP__common.Label" String="Longitude"/>
+				<Annotation Term="SAP__common.Heading" String="Geocoordinates: Longitude"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Longitude"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/Address/GeoLocation/Latitude">
+				<Annotation Term="SAP__common.Label" String="Latitude"/>
+				<Annotation Term="SAP__common.Heading" String="Geocoordinates: Latiude"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Latitude"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Contact/Address/City">
+				<Annotation Term="SAP__common.Label" String="City"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: City"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Contact/Address/PostalCode">
+				<Annotation Term="SAP__common.Label" String="Postal Code"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Postal Code"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Contact/Address/Street">
+				<Annotation Term="SAP__common.Label" String="Street"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Street"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Contact/Address/Building">
+				<Annotation Term="SAP__common.Label" String="Building"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Building"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Contact/Address/Country">
+				<Annotation Term="SAP__common.Label" String="Country"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Country Code"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Contact/Address/AddressType">
+				<Annotation Term="SAP__common.Label" String="Address Type"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Address Type"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Contact/Address/GeoLocation/Longitude">
+				<Annotation Term="SAP__common.Label" String="Longitude"/>
+				<Annotation Term="SAP__common.Heading" String="Geocoordinates: Longitude"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Longitude"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Contact/Address/GeoLocation/Latitude">
+				<Annotation Term="SAP__common.Label" String="Latitude"/>
+				<Annotation Term="SAP__common.Heading" String="Geocoordinates: Latiude"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Latitude"/>
+			</Annotations>
+			<Annotations Target="SAP__self.SOLineItem/SalesOrderID">
+				<Annotation Term="SAP__common.Label" String="Character Field Length = 10"/>
+			</Annotations>
+			<Annotations Target="SAP__self.SOLineItem/ItemPosition">
+				<Annotation Term="SAP__common.Label" String="Item Position"/>
+				<Annotation Term="SAP__common.Heading" String="Sales Order Item Position"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Sales Order Item Position"/>
+			</Annotations>
+			<Annotations Target="SAP__self.SOLineItem/Note">
+				<Annotation Term="SAP__common.Label" String="Description"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Text field for names and descriptions"/>
+			</Annotations>
+			<Annotations Target="SAP__self.SOLineItem/NoteLanguage">
+				<Annotation Term="SAP__common.Label" String="Language Key"/>
+				<Annotation Term="SAP__common.Heading" String="Language"/>
+			</Annotations>
+			<Annotations Target="SAP__self.SOLineItem/CurrencyCode">
+				<Annotation Term="SAP__common.Label" String="Currency Code"/>
+				<Annotation Term="SAP__common.Heading" String="ISO Currency Code"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Currency Code"/>
+			</Annotations>
 			<Annotations Target="SAP__self.SOLineItem/GrossAmount">
+				<Annotation Term="SAP__common.Label" String="Gross Amount"/>
+				<Annotation Term="SAP__common.Heading" String="Total Gross Amount"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Total Gross Amount"/>
 				<Annotation Term="Measures.ISOCurrency" Path="CurrencyCode"/>
 			</Annotations>
 			<Annotations Target="SAP__self.SOLineItem/NetAmount">
+				<Annotation Term="SAP__common.Label" String="Net Amount"/>
+				<Annotation Term="SAP__common.Heading" String="Total Net Amount"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Total Net Amount"/>
 				<Annotation Term="Measures.ISOCurrency" Path="CurrencyCode"/>
 			</Annotations>
 			<Annotations Target="SAP__self.SOLineItem/TaxAmount">
+				<Annotation Term="SAP__common.Label" String="Tax Amount"/>
+				<Annotation Term="SAP__common.Heading" String="Total Tax Amount"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Total Tax Amount"/>
 				<Annotation Term="Measures.ISOCurrency" Path="CurrencyCode"/>
 			</Annotations>
+			<Annotations Target="SAP__self.SOLineItem/DeliveryDate">
+				<Annotation Term="SAP__common.Label" String="Time Stamp"/>
+				<Annotation Term="SAP__common.QuickInfo" String="UTC Time Stamp in Long Form (YYYYMMDDhhmmssmmmuuun)"/>
+			</Annotations>
 			<Annotations Target="SAP__self.SOLineItem/Quantity">
+				<Annotation Term="SAP__common.Label" String="Quantity"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Quantity"/>
 				<Annotation Term="Measures.Unit" Path="QuantityUnit"/>
 			</Annotations>
+			<Annotations Target="SAP__self.SOLineItem/QuantityUnit">
+				<Annotation Term="SAP__common.Label" String="Unit of Measure"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Quantity Unit"/>
+			</Annotations>
+			<Annotations Target="SAP__self.SOLineItem/ProductInfo/ProductID">
+				<Annotation Term="SAP__common.Label" String="Product ID"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product ID"/>
+			</Annotations>
+			<Annotations Target="SAP__self.SOLineItem/ProductInfo/ProductName">
+				<Annotation Term="SAP__common.Label" String="Name"/>
+				<Annotation Term="SAP__common.Heading" String="Product Name"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product Name"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Address/City">
+				<Annotation Term="SAP__common.Label" String="City"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: City"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Address/PostalCode">
+				<Annotation Term="SAP__common.Label" String="Postal Code"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Postal Code"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Address/Street">
+				<Annotation Term="SAP__common.Label" String="Street"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Street"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Address/Building">
+				<Annotation Term="SAP__common.Label" String="Building"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Building"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Address/Country">
+				<Annotation Term="SAP__common.Label" String="Country"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Country Code"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Address/AddressType">
+				<Annotation Term="SAP__common.Label" String="Address Type"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Address Type"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Address/GeoLocation/Longitude">
+				<Annotation Term="SAP__common.Label" String="Longitude"/>
+				<Annotation Term="SAP__common.Heading" String="Geocoordinates: Longitude"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Longitude"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Address/GeoLocation/Latitude">
+				<Annotation Term="SAP__common.Label" String="Latitude"/>
+				<Annotation Term="SAP__common.Heading" String="Geocoordinates: Latiude"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Latitude"/>
+			</Annotations>
+			<Annotations Target="SAP__self.GeoLocation/Longitude">
+				<Annotation Term="SAP__common.Label" String="Longitude"/>
+				<Annotation Term="SAP__common.Heading" String="Geocoordinates: Longitude"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Longitude"/>
+			</Annotations>
+			<Annotations Target="SAP__self.GeoLocation/Latitude">
+				<Annotation Term="SAP__common.Label" String="Latitude"/>
+				<Annotation Term="SAP__common.Heading" String="Geocoordinates: Latiude"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Latitude"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ProductInfo/ProductID">
+				<Annotation Term="SAP__common.Label" String="Product ID"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product ID"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ProductInfo/ProductName">
+				<Annotation Term="SAP__common.Label" String="Name"/>
+				<Annotation Term="SAP__common.Heading" String="Product Name"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product Name"/>
+			</Annotations>
 			<Annotations Target="SAP__self.BusinessPartner/BusinessPartnerRole">
-				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
-				<Annotation Term="SAP__common.ValueListReference">
-					<Record>
-						<PropertyValue Property="MappingUrl" String="../../../../f4/sap/d_bp_role-fv/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='ET-BUSINESSPARTNER~BP_ROLE-FIELD_VALUE'/$metadata"/>
-					</Record>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/d_bp_role-fv/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-BUSINESSPARTNER.BP_ROLE'/$metadata</String>
+					</Collection>
 				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
 			</Annotations>
 			<Annotations Target="SAP__self.BusinessPartner/CurrencyCode">
-				<Annotation Term="SAP__common.ValueListReference">
-					<Record>
-						<PropertyValue Property="MappingUrl" String="../../../../f4/sap/h_tcurc-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='ET-BUSINESSPARTNER~CURRENCY_CODE-FIELD_VALUE'/$metadata"/>
-					</Record>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_tcurc-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-BUSINESSPARTNER.CURRENCY_CODE'/$metadata</String>
+					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Contact/Sex">
-				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
-				<Annotation Term="SAP__common.ValueListReference">
-					<Record>
-						<PropertyValue Property="MappingUrl" String="../../../../f4/sap/d_mf-fv/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='ET-CONTACT~SEX-FIELD_VALUE'/$metadata"/>
-					</Record>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/d_mf-fv/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-CONTACT.SEX'/$metadata</String>
+					</Collection>
 				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/ProductID">
-				<Annotation Term="SAP__common.ValueListReference">
-					<Record>
-						<PropertyValue Property="MappingUrl" String="../../../../f4/sap/h_epm_pr-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='ET-PRODUCT~PRODUCT_ID-FIELD_VALUE'/$metadata"/>
-					</Record>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_epm_pr-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.PRODUCT_ID'/$metadata</String>
+					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/TypeCode">
-				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
-				<Annotation Term="SAP__common.ValueListReference">
-					<Record>
-						<PropertyValue Property="MappingUrl" String="../../../../f4/sap/d_pr_type-fv/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='ET-PRODUCT~TYPE_CODE-FIELD_VALUE'/$metadata"/>
-					</Record>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/d_pr_type-fv/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.TYPE_CODE'/$metadata</String>
+					</Collection>
 				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/Category">
-				<Annotation Term="SAP__common.ValueListReference">
-					<Record>
-						<PropertyValue Property="MappingUrl" String="../../../../f4/sap/h_epm_pd_cats-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='ET-PRODUCT~CATEGORY-FIELD_VALUE'/$metadata"/>
-					</Record>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_epm_pd_cats-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.CATEGORY'/$metadata</String>
+					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/NameLanguage">
-				<Annotation Term="SAP__common.ValueListReference">
-					<Record>
-						<PropertyValue Property="MappingUrl" String="../../../../f4/sap/h_t002-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='ET-PRODUCT~NAME_LANGUAGE-SPRAS'/$metadata"/>
-					</Record>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_t002-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.NAME_LANGUAGE'/$metadata</String>
+					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/DescriptionLanguage">
-				<Annotation Term="SAP__common.ValueListReference">
-					<Record>
-						<PropertyValue Property="MappingUrl" String="../../../../f4/sap/h_t002-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='ET-PRODUCT~DESCRIPTION_LANGUAGE-SPRAS'/$metadata"/>
-					</Record>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_t002-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.DESCRIPTION_LANGUAGE'/$metadata</String>
+					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/TaxTarifCode">
-				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
-				<Annotation Term="SAP__common.ValueListReference">
-					<Record>
-						<PropertyValue Property="MappingUrl" String="../../../../f4/sap/d_pr_tax-fv/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='ET-PRODUCT~TAX_TARIF_CODE-FIELD_VALUE'/$metadata"/>
-					</Record>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/d_pr_tax-fv/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.TAX_TARIF_CODE'/$metadata</String>
+					</Collection>
 				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/MeasureUnit">
-				<Annotation Term="SAP__common.ValueListReference">
-					<Record>
-						<PropertyValue Property="MappingUrl" String="../../../../f4/sap/h_epm_t006-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='ET-PRODUCT~MEASURE_UNIT-MSEHI'/$metadata"/>
-					</Record>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_epm_t006-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.MEASURE_UNIT'/$metadata</String>
+					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/WeightUnit">
-				<Annotation Term="SAP__common.ValueListReference">
-					<Record>
-						<PropertyValue Property="MappingUrl" String="../../../../f4/sap/h_epm_t006_qu-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='ET-PRODUCT~WEIGHT_UNIT-MSEHI'/$metadata"/>
-					</Record>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_epm_t006_qu-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.WEIGHT_UNIT'/$metadata</String>
+					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/CurrencyCode">
-				<Annotation Term="SAP__common.ValueListReference">
-					<Record>
-						<PropertyValue Property="MappingUrl" String="../../../../f4/sap/h_tcurc-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='ET-PRODUCT~CURRENCY_CODE-FIELD_VALUE'/$metadata"/>
-					</Record>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_tcurc-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.CURRENCY_CODE'/$metadata</String>
+					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/DimUnit">
-				<Annotation Term="SAP__common.ValueListReference">
-					<Record>
-						<PropertyValue Property="MappingUrl" String="../../../../f4/sap/h_epm_t006_le-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='ET-PRODUCT~DIM_UNIT-MSEHI'/$metadata"/>
-					</Record>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_epm_t006_le-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.DIM_UNIT'/$metadata</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.SalesOrder/BuyerID">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/iwbep/v4_sample_sh_account-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-SALESORDER.BUYER_ID'/$metadata</String>
+					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.SalesOrder/CurrencyCode">
-				<Annotation Term="SAP__common.ValueListReference">
-					<Record>
-						<PropertyValue Property="MappingUrl" String="../../../../f4/sap/h_tcurc-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='ET-SALESORDER~CURRENCY_CODE-FIELD_VALUE'/$metadata"/>
-					</Record>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_tcurc-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-SALESORDER.CURRENCY_CODE'/$metadata</String>
+					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Address/Country">
-				<Annotation Term="SAP__common.ValueListReference">
-					<Record>
-						<PropertyValue Property="MappingUrl" String="../../../../f4/sap/f4_intca-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='CT-CT_ADDRESS~COUNTRY-FIELD_VALUE'/$metadata"/>
-					</Record>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/f4_intca-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.CT-CT_ADDRESS.COUNTRY'/$metadata</String>
+					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Address/AddressType">
-				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
-				<Annotation Term="SAP__common.ValueListReference">
-					<Record>
-						<PropertyValue Property="MappingUrl" String="../../../../f4/sap/d_ad_type-fv/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='CT-CT_ADDRESS~ADDRESS_TYPE-FIELD_VALUE'/$metadata"/>
-					</Record>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/d_ad_type-fv/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.CT-CT_ADDRESS.ADDRESS_TYPE'/$metadata</String>
+					</Collection>
 				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
 			</Annotations>
 		</Schema>
 	</edmx:DataServices>

@@ -10,12 +10,29 @@
 	<Toolbar>
 		<Label text="Teams" labelFor="TeamSelect"/>
 		<Select id="TeamSelect" change="onTeamSelect" autoAdjustWidth="true"
-			items="{path: '/TEAMS',
-				parameters: {$expand:
-					{'TEAM_2_EMPLOYEES': {
-						$expand: {'EMPLOYEE_2_EQUIPMENTS': true},
-						$orderby: 'LOCATION/City/CITYNAME'
-					}, 'TEAM_2_MANAGER': true}}}" >
+			items="{
+				path : '/TEAMS',
+				parameters : {
+					$expand : {
+						'TEAM_2_EMPLOYEES' : {
+							$expand : {
+								'EMPLOYEE_2_EQUIPMENTS' : {
+									$expand : {
+										'EQUIPMENT_2_PRODUCT' : {
+											$expand : {
+												'PRODUCT_2_CATEGORY' : true,
+												'PRODUCT_2_SUPPLIER' : true
+											}
+										}
+									}
+								}
+							},
+							$orderby : 'LOCATION/City/CITYNAME'
+						},
+						'TEAM_2_MANAGER' : true
+					}
+				}
+			}" >
 			<core:Item key="{Team_Id}" text="{Name}"/>
 		</Select>
 		<Button enabled="{ui>/bRealOData}" icon="sap-icon://edit" press="openChangeTeamBudgetDialog"
@@ -156,7 +173,7 @@
 				<cells>
 					<!-- Note: automatic type determination cannot work here and triggers a warning
 					  -->
-					<Text text="{path: '@odata.etag', type: 'sap.ui.model.odata.type.String'}"/>
+					<Text text="{path : '@odata.etag', type : 'sap.ui.model.odata.type.String'}"/>
 				</cells>
 				<cells>
 					<Button icon="sap-icon://delete" text="Delete" press="onDeleteEmployee"/>
@@ -172,25 +189,36 @@
 		items="{EMPLOYEE_2_EQUIPMENTS}">
 		<columns>
 			<Column>
-				<Text text="Equipment Name"/>
-			</Column>
-			<Column>
 				<Text text="Equipment ID"/>
 			</Column>
 			<Column>
+				<Text text="Product Name"/>
+			</Column>
+			<Column>
 				<Text text="Category"/>
+			</Column>
+			<Column>
+				<Text text="Supplier"/>
 			</Column>
 		</columns>
 		<items>
 			<ColumnListItem>
 				<cells>
-					<Text text="{Name}"/>
-				</cells>
-				<cells>
 					<Text text="{ID}"/>
 				</cells>
 				<cells>
-					<Text text="{Category}"/>
+					<Input value="{EQUIPMENT_2_PRODUCT/Name}"/>
+				</cells>
+				<cells>
+					<HBox>
+						<Text text="{Category} -&#160;"/>
+						<List items="{path : 'EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY', templateShareable : false}">
+							<StandardListItem title="{CategoryName}"/>
+						</List>
+					</HBox>
+				</cells>
+				<cells>
+					<Input value="{EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name}"/>
 				</cells>
 			</ColumnListItem>
 		</items>

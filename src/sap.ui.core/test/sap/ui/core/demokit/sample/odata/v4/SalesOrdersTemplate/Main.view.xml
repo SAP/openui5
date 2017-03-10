@@ -2,11 +2,14 @@
 	template:require="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Helper sap.ui.model.odata.v4.AnnotationHelper"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
+	xmlns:demo="sap.ui.core.sample.common"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
-	<template:alias name=".value" value="sap.ui.model.odata.v4.AnnotationHelper.value">
+	<template:alias name=".getValueListType"
+			value="sap.ui.model.odata.v4.AnnotationHelper.getValueListType">
 	<template:alias name=".stringify"
 			value="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Helper.stringify">
+	<template:alias name=".value" value="sap.ui.model.odata.v4.AnnotationHelper.value">
 	<VBox>
 		<Panel expandable="true" headerText="(Technical Tests)">
 			<content>
@@ -49,6 +52,7 @@
 							var="annotation">
 							<Text text="{annotation>@sapui.name} = {path:'annotation>', formatter: '.stringify'}"/>
 						</template:repeat>
+						<Text text="ValueListType: {property>@@.getValueListType}"/>
 					</template:repeat>
 					<!-- TODO repeat over $* properties! -->
 				</VBox>
@@ -58,7 +62,7 @@
 			<template:with path="entityType>@com.sap.vocabularies.UI.v1.LineItem" var="lineItem">
 				<!-- Note: this limits the data shown to 5 rows! -->
 				<Table headerText="Business Partners"
-					items="{path:'', length: 5}">
+					items="{path:'', length: 5, parameters : {$$updateGroupId : 'update'}}">
 					<columns>
 						<template:repeat list="{lineItem>}" var="field">
 							<Column>
@@ -82,8 +86,11 @@
 							<cells>
 								<template:repeat list="{lineItem>}" var="field">
 									<template:with path="field>Value/$Path" var="target">
-										<template:if test="{target>@com.sap.vocabularies.Common.v1.Text}">
+										<template:if test="{= ${target>@@.getValueListType} !== 'None' }">
 											<template:then>
+												<demo:ValueHelp value="{field>Value/@@.value}"/>
+											</template:then>
+											<template:elseif test="{target>@com.sap.vocabularies.Common.v1.Text}">
 												<!-- Note: TextFirst, TextLast, TextSeparate, TextOnly -->
 												<template:if test="{= ${target>@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement/$EnumMember}
 													=== 'com.sap.vocabularies.UI.v1.TextArrangementType/TextLast' }">
@@ -91,7 +98,7 @@
 														Value MUST be a dynamic expression when used as metadata annotation." -->
 													<Text text="{field>Value/@@.value} {target>@com.sap.vocabularies.Common.v1.Text/@@.value}" />
 												</template:if>
-											</template:then>
+											</template:elseif>
 											<template:else>
 												<Text text="{field>Value/@@.value}" />
 											</template:else>
@@ -105,6 +112,7 @@
 			</template:with>
 		</template:with>
 	</VBox>
+	</template:alias>
 	</template:alias>
 	</template:alias>
 </mvc:View>

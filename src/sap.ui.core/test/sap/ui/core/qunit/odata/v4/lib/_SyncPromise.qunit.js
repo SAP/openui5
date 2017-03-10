@@ -12,6 +12,7 @@ sap.ui.require([
 
 	function assertFulfilled(assert, oSyncPromise, vExpectedResult) {
 		assert.strictEqual(oSyncPromise.isFulfilled(), true);
+		assert.strictEqual(oSyncPromise.isPending(), false);
 		assert.strictEqual(oSyncPromise.isRejected(), false);
 		if (Array.isArray(vExpectedResult)) {
 			assert.deepEqual(oSyncPromise.getResult(), vExpectedResult);
@@ -22,12 +23,14 @@ sap.ui.require([
 
 	function assertPending(assert, oSyncPromise) {
 		assert.strictEqual(oSyncPromise.isFulfilled(), false);
+		assert.strictEqual(oSyncPromise.isPending(), true);
 		assert.strictEqual(oSyncPromise.isRejected(), false);
 		assert.strictEqual(oSyncPromise.getResult(), oSyncPromise);
 	}
 
 	function assertRejected(assert, oSyncPromise, vExpectedReason) {
 		assert.strictEqual(oSyncPromise.isFulfilled(), false);
+		assert.strictEqual(oSyncPromise.isPending(), false);
 		assert.strictEqual(oSyncPromise.isRejected(), true);
 		assert.strictEqual(oSyncPromise.getResult(), vExpectedReason);
 	}

@@ -53,7 +53,15 @@ sap.ui.define([
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(this.oSandbox, {
 					"$metadata" : {source : "metadata.xml"},
-					"BusinessPartnerList?$skip=0&$top=5" : {source : "BusinessPartnerList.json"}
+					"BusinessPartnerList?$skip=0&$top=5" : {source : "BusinessPartnerList.json"},
+					"/sap/opu/odata4/IWBEP/V4_SAMPLE/f4/sap/h_tcurc-sh/0001;ps=%27default-%2Aiwbep%2Av4_gw_sample_basic-0001%27;va=%27com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-BUSINESSPARTNER.CURRENCY_CODE%27/$metadata"
+						: {source : "metadata_tcurc.xml"},
+					"/sap/opu/odata4/IWBEP/V4_SAMPLE/f4/sap/h_tcurc-sh/0001;ps=%27default-%2Aiwbep%2Av4_gw_sample_basic-0001%27;va=%27com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-BUSINESSPARTNER.CURRENCY_CODE%27/H_TCURC_SH_Set?$skip=0&$top=20"
+						: {source : "CurrencyList.json"},
+					"/sap/opu/odata4/IWBEP/V4_SAMPLE/f4/sap/d_bp_role-fv/0001;ps=%27default-%2Aiwbep%2Av4_gw_sample_basic-0001%27;va=%27com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-BUSINESSPARTNER.BP_ROLE%27/$metadata"
+						: {source : "metadata_bp_role.xml"},
+					"/sap/opu/odata4/IWBEP/V4_SAMPLE/f4/sap/d_bp_role-fv/0001;ps=%27default-%2Aiwbep%2Av4_gw_sample_basic-0001%27;va=%27com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-BUSINESSPARTNER.BP_ROLE%27/D_BP_ROLE_FV_Set?$skip=0&$top=100"
+						: {source : "RoleList.json"}
 				}, "sap/ui/core/sample/odata/v4/SalesOrdersTemplate/data",
 				"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/");
 			}

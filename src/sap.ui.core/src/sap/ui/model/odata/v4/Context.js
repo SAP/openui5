@@ -429,9 +429,7 @@ sap.ui.define([
 	 * @since 1.43.0
 	 */
 	Context.prototype.isTransient = function () {
-		var oSyncCreatePromise = this.oSyncCreatePromise;
-
-		return oSyncCreatePromise && (oSyncCreatePromise.getResult() === oSyncCreatePromise);
+		return this.oSyncCreatePromise && this.oSyncCreatePromise.isPending();
 	};
 
 	/**

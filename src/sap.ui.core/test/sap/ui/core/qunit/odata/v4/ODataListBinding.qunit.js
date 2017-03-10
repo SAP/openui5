@@ -301,10 +301,9 @@ sap.ui.require([
 		oModelMock.expects("buildBindingParameters")
 			.withExactArgs(mParameters, ["$$groupId", "$$operationMode", "$$updateGroupId"])
 			.returns(mBindingParameters);
-		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(undefined, mParameters, true)
+		oModelMock.expects("buildQueryOptions").withExactArgs(mParameters, true)
 			.returns(mQueryOptions);
-		this.mock(oBinding).expects("reset").withExactArgs(undefined, true);
+		this.mock(oBinding).expects("reset").withExactArgs(undefined);
 
 		//Stub is needed to test, if mCacheByContext is set to undefined before fetchCache is called
 		oBinding.mCacheByContext = {
@@ -354,10 +353,10 @@ sap.ui.require([
 			.withExactArgs(mParameters, ["$$groupId", "$$operationMode", "$$updateGroupId"])
 			.returns({$$operationMode : OperationMode.Server});
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(undefined, mParameters, true).returns(mQueryOptions);
+			.withExactArgs(mParameters, true).returns(mQueryOptions);
 		this.mock(oBinding).expects("fetchCache")
 			.withExactArgs(sinon.match.same(oBinding.oContext));
-		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Change, true);
+		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Change);
 
 		//code under test
 		oBinding.applyParameters(mParameters, ChangeReason.Change);
@@ -460,7 +459,7 @@ sap.ui.require([
 		this.mock(oCountBinding2).expects("checkUpdate").withExactArgs();
 
 		// code under test
-		oBinding.reset(ChangeReason.Change, true);
+		oBinding.reset(ChangeReason.Change);
 	});
 
 	//*********************************************************************************************
@@ -540,7 +539,7 @@ sap.ui.require([
 
 		// absolute binding and binding with base context result in the same cache
 		oModelMock.expects("buildQueryOptions").thrice()
-			.withExactArgs(undefined, mParameters, true)
+			.withExactArgs(mParameters, true)
 			.returns(mQueryOptions);
 		this.mock(ODataListBinding.prototype).expects("getOrderby").twice()
 			.withExactArgs(mQueryOptions.$orderby)
@@ -561,7 +560,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getPath(), "/EMPLOYEES");
 		assert.deepEqual(oBinding.mParameters, mParameters);
 		assert.strictEqual(oBinding.mQueryOptions, mQueryOptions);
-		assert.ok(ODataListBinding.prototype.reset.calledWithExactly(undefined, true));
+		assert.ok(ODataListBinding.prototype.reset.calledWithExactly(undefined));
 		assert.strictEqual(oBinding.hasOwnProperty("sChangeReason"), true);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
 		assert.deepEqual(oBinding.oDiff, undefined);
@@ -1493,7 +1492,7 @@ sap.ui.require([
 			that.mock(that.oModel).expects("getDependentBindings")
 				.withExactArgs(sinon.match.same(oBinding))
 				.returns([oChild0, oChild1]);
-			that.mock(oChild0).expects("refreshInternal").withExactArgs("myGroup");
+			that.mock(oChild0).expects("refreshInternal").withExactArgs("myGroup", false);
 			that.mock(oChild1).expects("refreshInternal").never();
 
 			//code under test
@@ -2012,7 +2011,7 @@ sap.ui.require([
 			assert.ok(_Helper.toArray.calledWithExactly(oFixture.vSorters));
 			assert.strictEqual(oBinding.mCacheByContext, undefined);
 			assert.ok(oBinding.reset.calledWithExactly(), "from setContext");
-			assert.ok(oBinding.reset.calledWithExactly(ChangeReason.Sort, true), "from sort");
+			assert.ok(oBinding.reset.calledWithExactly(ChangeReason.Sort), "from sort");
 		});
 	});
 
@@ -2077,7 +2076,7 @@ sap.ui.require([
 			oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
 			this.mock(_Helper).expects("toArray").withExactArgs(sinon.match.same(oFilter))
 				.returns(aFilters);
-			oBindingMock.expects("reset").on(oBinding).withExactArgs(ChangeReason.Filter, true);
+			oBindingMock.expects("reset").on(oBinding).withExactArgs(ChangeReason.Filter);
 
 			// Code under test
 			assert.strictEqual(oBinding.filter(oFilter, sFilterType), oBinding, "chaining");
@@ -2620,84 +2619,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["$auto", undefined].forEach(function (sGroupId) {
-		QUnit.test("deleteFromCache(" + sGroupId + ") : binding w/ cache", function (assert) {
-			var oBinding = this.oModel.bindList("/EMPLOYEES"),
-				fnCallback = {},
-				oResult = {};
-
-			this.mock(oBinding).expects("getUpdateGroupId").exactly(sGroupId ? 0 : 1)
-				.withExactArgs().returns("$auto");
-			this.mock(oBinding.oCachePromise.getResult()).expects("_delete")
-				.withExactArgs("$auto", "EMPLOYEES('1')", "1/EMPLOYEE_2_EQUIPMENTS/3",
-					sinon.match.same(fnCallback))
-				.returns(_SyncPromise.resolve(oResult));
-
-			assert.strictEqual(
-				oBinding.deleteFromCache(sGroupId, "EMPLOYEES('1')", "1/EMPLOYEE_2_EQUIPMENTS/3",
-					fnCallback).getResult(),
-				oResult);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deleteFromCache: binding w/o cache", function (assert) {
-		var oParentBinding = {
-				deleteFromCache : function () {}
-			},
-			fnCallback = {},
-			oContext = Context.create(this.oModel, oParentBinding, "/TEAMS/42", 42),
-			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
-			oResult = {};
-
-		this.mock(_Helper).expects("buildPath")
-			.withExactArgs(42, "TEAM_2_EMPLOYEES", "1/EMPLOYEE_2_EQUIPMENTS/3")
-			.returns("~");
-		this.mock(oParentBinding).expects("deleteFromCache")
-			.withExactArgs("$auto", "EQUIPMENTS('3')", "~", sinon.match.same(fnCallback))
-			.returns(_SyncPromise.resolve(oResult));
-
-		assert.strictEqual(
-			oBinding.deleteFromCache("$auto", "EQUIPMENTS('3')", "1/EMPLOYEE_2_EQUIPMENTS/3",
-				fnCallback).getResult(),
-			oResult);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deleteFromCache: illegal group ID", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES"),
-			fnCallback = {};
-
-		assert.throws(function () {
-			oBinding.deleteFromCache("myGroup");
-		}, new Error("Illegal update group ID: myGroup"));
-
-		this.mock(oBinding).expects("getUpdateGroupId").returns("myGroup");
-
-		assert.throws(function () {
-			oBinding.deleteFromCache();
-		}, new Error("Illegal update group ID: myGroup"));
-
-		this.mock(oBinding.oCachePromise.getResult()).expects("_delete")
-			.withExactArgs("$direct", "EMPLOYEES('1')", "42", sinon.match.same(fnCallback))
-			.returns(Promise.resolve());
-
-		return oBinding.deleteFromCache("$direct", "EMPLOYEES('1')", "42", fnCallback).then();
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deleteFromCache: cache is not yet available", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES");
-
-		// simulate pending cache creation
-		oBinding.oCachePromise = _SyncPromise.resolve(Promise.resolve({ /* cache */}));
-
-		assert.throws(function () {
-			oBinding.deleteFromCache("$auto");
-		}, new Error("DELETE request not allowed"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("create: cancel callback", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES", null, null, null,
 				{$$updateGroupId : "update"}),
@@ -2980,8 +2901,6 @@ sap.ui.require([
 					oDependent0 = {checkUpdate : function () {}},
 					oDependent1 = {checkUpdate : function () {}};
 
-				this.mock(oBinding).expects("_fireChange")
-					.withExactArgs({reason: ChangeReason.Change});
 				this.mock(oBinding.oModel).expects("getDependentBindings")
 					.withExactArgs(sinon.match.same(oBinding))
 					.returns([oDependent0, oDependent1]);
@@ -3010,8 +2929,6 @@ sap.ui.require([
 			oDependent0 = {checkUpdate : function () {}},
 			oDependent1 = {checkUpdate : function () {}};
 
-		this.mock(oBinding).expects("_fireChange")
-			.withExactArgs({reason: ChangeReason.Change});
 		this.mock(oBinding.oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oBinding))
 			.returns([oDependent0, oDependent1]);
