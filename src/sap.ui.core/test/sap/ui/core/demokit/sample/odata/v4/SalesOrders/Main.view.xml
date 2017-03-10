@@ -3,7 +3,7 @@
 	controllerName="sap.ui.core.sample.odata.v4.SalesOrders.Main"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
-	xmlns:demo="sap.ui.core.sample.odata.v4.SalesOrders"
+	xmlns:demo="sap.ui.core.sample.common"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc">
 	<VBox>
@@ -81,8 +81,7 @@
 								<Label labelFor="NewNote" text="Note"/>
 								<Input id="NewNote" value="{Note}"/>
 								<Label labelFor="NewCurrencyCode" text="Currency Code"/>
-								<demo:ValueHelp id="NewCurrencyCode" value="{CurrencyCode}"
-									valueHelpOnly="false"/>
+								<demo:ValueHelp id="NewCurrencyCode" value="{CurrencyCode}"/>
 							</form:content>
 						</form:SimpleForm>
 					</content>

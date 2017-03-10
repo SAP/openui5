@@ -67,7 +67,7 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 				pressValueHelpOnCurrencyCode : function () {
 					return this.waitFor({
 						actions : new Press(),
-						controlType : "sap.ui.core.sample.odata.v4.SalesOrders.ValueHelp",
+						controlType : "sap.ui.core.sample.common.ValueHelp",
 						matchers : new Interactable(),
 						id : "NewCurrencyCode",
 						success : function (oValueHelp) {
@@ -80,38 +80,12 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 			assertions : {
 				checkCurrencyCodeIsValueHelp : function () {
 					return this.waitFor({
-						controlType : "sap.ui.core.sample.odata.v4.SalesOrders.ValueHelp",
+						controlType : "sap.ui.core.sample.common.ValueHelp",
 						matchers : new Interactable(),
 						id : "NewCurrencyCode",
 						success : function (oValueHelp) {
-							Opa5.assert.ok(oValueHelp.getShowValueHelp(),
+							Opa5.assert.ok(oValueHelp.getAggregation("field").getShowValueHelp(),
 								"CurrencyCode has value help");
-						},
-						viewName : sViewName
-					});
-				},
-				checkInnerValueHelpExists : function () {
-					return this.waitFor({
-						controlType : "sap.ui.core.sample.odata.v4.SalesOrders.ValueHelp",
-						searchOpenDialogs : true,
-						matchers : new Interactable(),
-						id : /-InnerValueHelp-/,
-						success : function (aValueHelps) {
-							Opa5.assert.ok(aValueHelps[0].getShowValueHelp(),
-								"Inner value help exists");
-							return this.waitFor({
-								controlType : "sap.m.Button",
-								searchOpenDialogs : true,
-								// TODO: why match doesn't work with regex via id:?
-								// id : /CloseValueHelp-/,
-								matchers : new Properties({
-									id: new RegExp("CloseValueHelp-", "i")
-								}),
-								success : function (aButtons) {
-									aButtons[0].$().tap();
-								},
-								viewName : sViewName
-							});
 						},
 						viewName : sViewName
 					});

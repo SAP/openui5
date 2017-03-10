@@ -347,7 +347,7 @@ sap.ui.define([
 		this.oModel.checkGroupId(sGroupId);
 
 		// The actual refresh is specific to the binding and is implemented in each binding class.
-		this.refreshInternal(sGroupId);
+		this.refreshInternal(sGroupId, true);
 	};
 
 	/**
@@ -357,6 +357,8 @@ sap.ui.define([
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh
+	 * @param {boolean} [bCheckUpdate]
+	 *   If <code>true</code>, a property binding is expected to check for updates.
 	 *
 	 * @abstract
 	 * @function

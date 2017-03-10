@@ -59,7 +59,7 @@ sap.ui.require([
 		beforeEach : function () {
 			// workaround: Chrome extension "UI5 Inspector" calls this method which loads the
 			// resource "sap-ui-version.json" and thus interferes with mocks for jQuery.ajax
-			sap.ui.getVersionInfo();
+			sap.ui.getVersionInfo({failOnError : false});
 
 			this.oLogMock = sinon.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();

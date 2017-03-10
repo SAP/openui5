@@ -10,18 +10,17 @@ sap.ui.require([
 	/*global QUnit */
 	"use strict";
 
-	QUnit.module("sap.ui.core.sample.ViewTemplate.types");
+	QUnit.module("sap.ui.core.sample.odata.v4.ListBinding");
 
 	//*****************************************************************************
-	opaTest("OData Types", function (Given, When, Then) {
-
-		Given.iStartMyAppInAFrame("../../common/index.html?component=ViewTemplate.types"
+	opaTest("Start sales orders template app and check log", function (Given, When, Then) {
+		Given.iStartMyAppInAFrame(
+			"../../../common/index.html?component=odata.v4.SalesOrdersTemplate"
 			+ "&sap-language=en"
 			+ (TestUtils.isRealOData() ? "&sap-server=test" : "")
 			+ TestUtils.getRealOData());
 
-		When.onTheMainPage.changeMinMaxField("100");
-		Then.onTheMainPage.checkMinMaxField();
+		When.onTheMainPage.pressValueHelpOnCurrencyCode();
 		Then.onTheMainPage.checkLog();
 		Then.iTeardownMyAppFrame();
 	});

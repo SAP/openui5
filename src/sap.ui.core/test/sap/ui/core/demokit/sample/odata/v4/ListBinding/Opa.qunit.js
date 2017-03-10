@@ -4,8 +4,9 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/test/Opa5",
-	"sap/ui/test/opaQunit"
-], function (jQuery, Opa5, opaTest) {
+	"sap/ui/test/opaQunit",
+	"sap/ui/test/TestUtils"
+], function (jQuery, Opa5, opaTest, TestUtils) {
 	/*global QUnit */
 	"use strict";
 
@@ -13,13 +14,10 @@ sap.ui.require([
 
 	//*****************************************************************************
 	opaTest("Start list binding app and check log", function (Given, When, Then) {
-		var vRealOData = jQuery.sap.getUriParameters().get("realOData"),
-			bRealOData = /direct|proxy|true/.test(vRealOData);
-
 		Given.iStartMyAppInAFrame("../../../common/index.html?component=odata.v4.ListBinding"
 				+ "&sap-language=en"
-				+ (bRealOData ? "&sap-server=test" : "")
-				+ "&realOData=" + encodeURIComponent(vRealOData));
+				+ (TestUtils.isRealOData() ? "&sap-server=test" : "")
+				+ TestUtils.getRealOData());
 
 		Then.onTheMainPage.checkTeamIDInForm("TEAM_01");
 		Then.onTheMainPage.checkEmployeeNameInRow(0, "Walter\"s Win's");

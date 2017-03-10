@@ -48,7 +48,7 @@ sap.ui.require([
 		beforeEach : function () {
 			// workaround: Chrome extension "UI5 Inspector" calls this method which loads the
 			// resource "sap-ui-version.json" and thus interferes with mocks for jQuery.ajax
-			sap.ui.getVersionInfo();
+			sap.ui.getVersionInfo({failOnError : false});
 
 			this.oSandbox = sinon.sandbox.create();
 			TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/odata/v4/data", mFixture);

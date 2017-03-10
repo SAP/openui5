@@ -247,12 +247,12 @@ sap.ui.define([
 
 		this.sGroupId = oBindingParameters.$$groupId;
 		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-		this.mQueryOptions = this.oModel.buildQueryOptions(undefined, mParameters, true);
+		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
 		this.mParameters = mParameters; // store mParameters at binding after validation
 
 		this.mCacheByContext = undefined;
 		this.fetchCache(this.oContext);
-		this.reset(sChangeReason, true);
+		this.reset(sChangeReason);
 	};
 
 	/**
@@ -304,7 +304,7 @@ sap.ui.define([
 		var that = this;
 
 		function updateDependents() {
-			that._fireChange({reason: ChangeReason.Change});
+			// Do not fire a change event, there is no change in the list of contexts
 			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
 				oDependentBinding.checkUpdate();
 			});
@@ -469,46 +469,6 @@ sap.ui.define([
 			bChanged = true;
 		}
 		return bChanged;
-	};
-
-	/**
-	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the
-	 * parent binding adjusting the path.
-	 *
-	 * @param {string} [sGroupId=getUpdateGroupId()]
-	 *   The group ID to be used for the DELETE request
-	 * @param {string} sEditUrl
-	 *   The edit URL to be used for the DELETE request
-	 * @param {string} sPath
-	 *   The path of the entity relative to this binding
-	 * @param {function} fnCallback
-	 *   A function which is called after the entity has been deleted from the server and from the
-	 *   cache; the index of the entity is passed as parameter
-	 * @returns {SyncPromise}
-	 *   A promise which is resolved without a result in case of success, or rejected with an
-	 *   instance of <code>Error</code> in case of failure.
-	 * @throws {Error}
-	 *   If the resulting group ID is neither '$auto' nor '$direct' or if the cache promise for
-	 *   this binding is not yet fulfilled
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype.deleteFromCache = function (sGroupId, sEditUrl, sPath, fnCallback) {
-		var oCache = this.oCachePromise.getResult();
-
-		if (!this.oCachePromise.isFulfilled()) {
-			throw new Error("DELETE request not allowed");
-		}
-
-		if (oCache) {
-			sGroupId = sGroupId || this.getUpdateGroupId();
-			if (sGroupId !== "$auto" && sGroupId !== "$direct") {
-				throw new Error("Illegal update group ID: " + sGroupId);
-			}
-			return oCache._delete(sGroupId, sEditUrl, sPath, fnCallback);
-		}
-		return this.oContext.getBinding().deleteFromCache(sGroupId, sEditUrl,
-			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), fnCallback);
 	};
 
 	/**
@@ -900,7 +860,7 @@ sap.ui.define([
 		}
 		this.mCacheByContext = undefined;
 		this.fetchCache(this.oContext);
-		this.reset(ChangeReason.Filter, true);
+		this.reset(ChangeReason.Filter);
 
 		return this;
 	};
@@ -1333,7 +1293,11 @@ sap.ui.define([
 			that.reset(ChangeReason.Refresh);
 			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
 				if (!oDependentBinding.getContext().created()) {
-					oDependentBinding.refreshInternal(sGroupId);
+					// Property bindings should not check for updates yet, otherwise they will cause
+					// a "Failed to drill down..." when the row is no longer part of the collection.
+					// They get another update request in createContexts, when the context for the
+					// row is reused.
+					oDependentBinding.refreshInternal(sGroupId, false);
 				}
 			});
 		});
@@ -1341,18 +1305,15 @@ sap.ui.define([
 
 	/**
 	 * Resets the binding's contexts array and its members related to current contexts and length
-	 * calculation.
+	 * calculation. All bindings dependent to the header context are requested to check for updates.
 	 *
 	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
 	 *   A change reason; if given, a refresh event with this reason is fired and the next
 	 *   getContexts() fires a change event with this reason.
-	 * @param {boolean} [bUpdateHeaderContext]
-	 *   If <code>true</code>, all bindings dependent to the header context are requested to check
-	 *   for updates.
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.reset = function (sChangeReason, bUpdateHeaderContext) {
+	ODataListBinding.prototype.reset = function (sChangeReason) {
 		var that = this;
 
 		if (this.aContexts) {
@@ -1375,7 +1336,7 @@ sap.ui.define([
 			this._fireRefresh({reason : sChangeReason});
 		}
 		// Update after the refresh event, otherwise $count is fetched before the request
-		if (bUpdateHeaderContext && this.getHeaderContext()) {
+		if (this.getHeaderContext()) {
 			this.oModel.getDependentBindings(this.oHeaderContext).forEach(function (oBinding) {
 				oBinding.checkUpdate();
 			});
@@ -1459,7 +1420,7 @@ sap.ui.define([
 		this.aSorters = _Helper.toArray(vSorters);
 		this.mCacheByContext = undefined;
 		this.fetchCache(this.oContext);
-		this.reset(ChangeReason.Sort, true);
+		this.reset(ChangeReason.Sort);
 		return this;
 	};
 

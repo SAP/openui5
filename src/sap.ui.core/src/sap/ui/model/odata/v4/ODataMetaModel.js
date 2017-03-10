@@ -87,6 +87,116 @@ sap.ui.define([
 		WARNING = jQuery.sap.log.Level.WARNING;
 
 	/**
+	 * Returns the schema with the given namespace, or a promise which is resolved as soon as the
+	 * schema has been included, or <code>undefined</code> in case the schema is neither present nor
+	 * referenced.
+	 *
+	 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel
+	 *   The OData metadata model
+	 * @param {object} mScope
+	 *   The $metadata "JSON" of the root service
+	 * @param {string} sNamespace
+	 *   A namespace, for example "foo.bar.", of a schema.
+	 * @param {function} fnLog
+	 *   The log function
+	 * @returns {object|SyncPromise}
+	 *   The schema, or a promise which is resolved without details or rejected with an error, or
+	 *   <code>undefined</code>.
+	 */
+	function getOrFetchSchema(oMetaModel, mScope, sNamespace, fnLog) {
+		var oPromise,
+			oReference,
+			sReferenceUri,
+			sUrl;
+
+		/**
+		 * Include references from the given referenced scope.
+		 *
+		 * @param {object} mReferencedScope
+		 *   The $metadata "JSON"
+		 * @returns {object}
+		 *   <code>mReferencedScope</code> to allow chaining
+		 * @throws {Error}
+		 *   If the given $metadata "JSON" is unsupported
+		 */
+		function includeReferences(mReferencedScope) {
+			var sMessage,
+				sReferenceUri;
+
+			if (mReferencedScope.$Version !== "4.0") {
+				sMessage = "Unsupported OData version: " + mReferencedScope.$Version;
+				jQuery.sap.log.error(sMessage, sUrl, sODataMetaModel);
+				throw new Error(sMessage);
+			}
+
+			// Note: for-in tolerates undefined
+			for (sReferenceUri in mReferencedScope.$Reference) {
+				if (!(sReferenceUri in mScope.$Reference)) { // add new reference
+					mScope.$Reference[sReferenceUri] = mReferencedScope.$Reference[sReferenceUri];
+				} else { // add potentially new includes
+					// Note: it's OK to create duplicates here
+					Array.prototype.push.apply(mScope.$Reference[sReferenceUri].$Include,
+						mReferencedScope.$Reference[sReferenceUri].$Include);
+				}
+			}
+
+			return mReferencedScope;
+		}
+
+		/**
+		 * Include the schema (and all of its children) with namespace <code>sNamespace</code> from
+		 * the given referenced scope.
+		 *
+		 * @param {object} mReferencedScope
+		 *   The $metadata "JSON"
+		 */
+		function includeSchema(mReferencedScope) {
+			var sKey;
+
+			if (!(sNamespace in mReferencedScope)) {
+				fnLog(WARNING, sReferenceUri, " does not contain ", sNamespace);
+				return;
+			}
+
+			fnLog(DEBUG, "Including ", sNamespace, " from ", sReferenceUri);
+			for (sKey in mReferencedScope) {
+				// $EntityContainer can be ignored; $Reference, $Version is handled above
+				if (sKey[0] !== "$" && namespace(sKey) === sNamespace) {
+					mScope[sKey] = mReferencedScope[sKey];
+				}
+			}
+		}
+
+		if (sNamespace in mScope) {
+			return mScope[sNamespace];
+		}
+
+		// Note: for-in tolerates undefined
+		for (sReferenceUri in mScope.$Reference) {
+			oReference = mScope.$Reference[sReferenceUri];
+			if (oReference.$Include.indexOf(sNamespace) >= 0) {
+				fnLog(DEBUG, "Namespace ", sNamespace, " found in $Include of ", sReferenceUri);
+				oPromise = oReference["$ui5.read"];
+				if (!oPromise) {
+					// interpret reference URI relative to metadata URL
+					sUrl = new URI(sReferenceUri).absoluteTo(oMetaModel.sUrl).toString();
+					fnLog(DEBUG, "Reading ", sReferenceUri, " from ", sUrl);
+					oPromise = oReference["$ui5.read"]
+						= _SyncPromise.resolve(oMetaModel.oRequestor.read(sUrl))
+							.then(includeReferences);
+				}
+				oPromise = oPromise.then(includeSchema);
+				// BEWARE: oPromise may already be resolved, then includeSchema() is done now
+				if (sNamespace in mScope) {
+					return mScope[sNamespace];
+				}
+				mScope[sNamespace] = oPromise;
+				return oPromise;
+			}
+		}
+	}
+
+	/**
 	 * Checks that the term is the expected term and determines the qualifier.
 	 *
 	 * @param {string} sTerm
@@ -104,6 +214,18 @@ sap.ui.define([
 				&& sTerm.indexOf("@", sExpectedTerm.length) < 0) {
 			return sTerm.slice(sExpectedTerm.length + 1);
 		}
+	}
+
+	/**
+	 * Returns the namespace of the given qualified name, including the trailing dot.
+	 *
+	 * @param {string} sQualifiedName
+	 *   A qualified name
+	 * @returns {string}
+	 *   The namespace
+	 */
+	function namespace(sQualifiedName) {
+		return sQualifiedName.slice(0, sQualifiedName.lastIndexOf(".") + 1);
 	}
 
 	/**
@@ -496,7 +618,7 @@ sap.ui.define([
 			 * Fetches the key predicate for the absolute path from aSegments[0..iLength] using the
 			 * context.
 			 * @param {number} iLength The path length
-			 * @returns {SyncPromise} a Promise on the key predicate for that path
+			 * @returns {SyncPromise} A Promise on the key predicate for that path
 			 */
 			function fetchKeyPredicate(iLength) {
 				var sSubPath = aSegments.slice(0, iLength).join("/");
@@ -509,9 +631,9 @@ sap.ui.define([
 			/*
 			 * Calculates the key predicate using oEntityType and the given entity instance. Logs
 			 * an error if calculating the key predicate failed.
-			 * @param {object} oEntityInstance the entity instance
+			 * @param {object} oEntityInstance The entity instance
 			 * @param {string} [sPath] An optional path for error messages
-			 * @returns {string} the key predicate
+			 * @returns {string} The key predicate
 			 */
 			function keyPredicate(oEntityInstance, sPath) {
 				try {
@@ -617,13 +739,13 @@ sap.ui.define([
 
 	/**
 	 * Requests the single entity container for this metadata model's service by reading the
-	 * $metadata document via the metadata requestor. The resulting $metadata JSON object is a map
+	 * $metadata document via the metadata requestor. The resulting $metadata "JSON" object is a map
 	 * of qualified names to their corresponding metadata, with the special key "$EntityContainer"
 	 * mapped to the entity container's qualified name as a starting point.
 	 *
 	 * @returns {SyncPromise}
-	 *   A promise which is resolved with the $metadata JSON object as soon as the entity container
-	 *   is fully available, or rejected with an error.
+	 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
+	 *   container is fully available, or rejected with an error.
 	 *
 	 * @private
 	 */
@@ -725,7 +847,20 @@ sap.ui.define([
 			}
 
 			/*
-			 * Outputs a log message for the given level. Leads to an <code>undefined</code> result.
+			 * Tells whether the given object is "thenable".
+			 *
+			 * @param {object} [o]
+			 *   Any object
+			 * @returns {boolean}
+			 *   <code>true</code> iff. an object is given which has a method called "then"
+			 */
+			function isThenable(o) {
+				return o && typeof o.then === "function";
+			}
+
+			/*
+			 * Outputs a log message for the given level. Leads to an <code>undefined</code> result
+			 * in case of a WARNING.
 			 *
 			 * @param {jQuery.sap.log.Level} iLevel
 			 *   A log level, either DEBUG or WARNING
@@ -747,7 +882,9 @@ sap.ui.define([
 						+ (sLocation ? " at /" + sLocation : ""),
 						sResolvedPath, sODataMetaModel);
 				}
-				vResult = undefined;
+				if (iLevel === WARNING) {
+					vResult = undefined;
+				}
 				return false;
 			}
 
@@ -762,13 +899,37 @@ sap.ui.define([
 			 *   Whether to continue after scope lookup
 			 */
 			function scopeLookup(sQualifiedName, sPropertyName) {
-				if (!(sQualifiedName in mScope)) {
-					vLocation = vLocation || sTarget && sTarget + "/" + sPropertyName;
-					return log(WARNING, "Unknown qualified name '", sQualifiedName, "'");
+				var sNamespace;
+
+				/*
+				 * Sets <code>vLocation</code> and delegates to {@link log}.
+				 */
+				function logWithLocation() {
+					vLocation = vLocation
+						|| sTarget && sPropertyName && sTarget + "/" + sPropertyName;
+					return log.apply(this, arguments);
 				}
-				sTarget = sName = sSchemaChildName = sQualifiedName;
-				vResult = oSchemaChild = mScope[sSchemaChildName];
-				return true;
+
+				if (!(sQualifiedName in mScope)) {
+					// unknown qualified name: maybe schema is referenced and can be included?
+					sNamespace = namespace(sQualifiedName);
+					vResult = getOrFetchSchema(that, mScope, sNamespace, logWithLocation);
+				}
+
+				if (sQualifiedName in mScope) {
+					sTarget = sName = sSchemaChildName = sQualifiedName;
+					vResult = oSchemaChild = mScope[sSchemaChildName];
+					if (!isThenable(vResult)) {
+						return true; // qualified name found, steps may continue
+					}
+				}
+
+				if (isThenable(vResult) && vResult.isPending()) {
+					// load on demand still pending
+					return logWithLocation(DEBUG, "Waiting for ", sNamespace);
+				}
+
+				return logWithLocation(WARNING, "Unknown qualified name ", sQualifiedName);
 			}
 
 			/*
@@ -858,8 +1019,8 @@ sap.ui.define([
 								vResult = oSchemaChild = oSchemaChild || mScope[sSchemaChildName];
 								if (sSegment && sSegment[0] !== "@"
 									&& !(sSegment in oSchemaChild)) {
-									return log(WARNING, "Unknown child '", sSegment,
-										"' of '", sSchemaChildName, "'");
+									return log(WARNING, "Unknown child ", sSegment, " of ",
+										sSchemaChildName);
 								}
 							}
 							if (Array.isArray(vResult)) { // overloads of Action or Function
@@ -909,6 +1070,7 @@ sap.ui.define([
 					}
 					if (!vResult || typeof vResult !== "object") {
 						// Note: even an OData path cannot continue here (e.g. by type cast)
+						vResult = undefined;
 						return log(DEBUG, "Invalid segment: ", sSegment);
 					}
 					if (bODataMode && sSegment[0] === "@") {
@@ -958,6 +1120,12 @@ sap.ui.define([
 			}
 
 			steps(sResolvedPath.slice(1));
+
+			if (isThenable(vResult)) {
+				vResult = vResult.then(function () {
+					return that.fetchObject(sPath, oContext, mParameters);
+				});
+			}
 
 			return vResult;
 		});
@@ -1108,6 +1276,42 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines which type of value list exists for the given property.
+	 *
+	 * @param {string} sPropertyPath
+	 *   An absolute path to an OData property within the OData data model
+	 * @returns {SyncPromise}
+	 *   A promise that is resolved with the type of the value list. It is rejected if the property
+	 *   cannot be found in the metadata.
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.fetchValueListType = function (sPropertyPath) {
+		var oContext = this.getMetaContext(sPropertyPath),
+			that = this;
+
+		return this.fetchObject("", oContext).then(function (oProperty) {
+			var mAnnotationByTerm, sTerm;
+
+			if (!oProperty) {
+				throw new Error("No metadata for " + sPropertyPath);
+			}
+			// now we can use getObject() because the property's annotations are definitely loaded
+			mAnnotationByTerm = that.getObject("@", oContext);
+			if (mAnnotationByTerm[sValueListWithFixedValues]) {
+				return ValueListType.Fixed;
+			}
+			for (sTerm in mAnnotationByTerm) {
+				if (getQualifier(sTerm, sValueListReferences) !== undefined
+						|| getQualifier(sTerm, sValueListMapping) !== undefined) {
+					return ValueListType.Standard;
+				}
+			}
+			return ValueListType.None;
+		});
+	};
+
+	/**
 	 * Returns the OData metadata model context corresponding to the given OData data model path.
 	 *
 	 * @param {string} sPath
@@ -1240,41 +1444,13 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If the metadata is not yet loaded or the property cannot be found in the metadata
 	 *
+	 * @function
 	 * @public
+	 * @see #requestValueListType
 	 * @since 1.45.0
 	 */
-	ODataMetaModel.prototype.getValueListType = function (sPropertyPath) {
-		var oContext = this.getMetaContext(sPropertyPath),
-			oPromise,
-			that = this;
-
-		oPromise = this.fetchObject("", oContext).then(function (oProperty) {
-			var mAnnotationByTerm, sTerm;
-
-			if (!oProperty) {
-				throw new Error("No metadata for " + sPropertyPath);
-			}
-			// now we can use getObject() because the property's annotations are definitely loaded
-			mAnnotationByTerm = that.getObject("@", oContext);
-			if (mAnnotationByTerm[sValueListWithFixedValues]) {
-				return ValueListType.Fixed;
-			}
-			for (sTerm in mAnnotationByTerm) {
-				if (getQualifier(sTerm, sValueListReferences) !== undefined
-						|| getQualifier(sTerm, sValueListMapping) !== undefined) {
-					return ValueListType.Standard;
-				}
-			}
-			return ValueListType.None;
-		});
-		if (oPromise.isRejected()) {
-			throw oPromise.getResult();
-		}
-		if (!oPromise.isFulfilled()) {
-			throw new Error("Metadata not yet loaded");
-		}
-		return oPromise.getResult();
-	};
+	ODataMetaModel.prototype.getValueListType
+		= _SyncPromise.createGetMethod("fetchValueListType", true);
 
 	/**
 	 * Method not supported
@@ -1509,6 +1685,24 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.requestUI5Type
 		= _SyncPromise.createRequestMethod("fetchUI5Type");
+
+	/**
+	 * Determines which type of value list exists for the given property.
+	 *
+	 * @param {string} sPropertyPath
+	 *   An absolute path to an OData property within the OData data model
+	 * @returns {Promise}
+	 *   A promise that is resolved with the type of the value list, a constant of the enumeration
+	 *   {@link sap.ui.model.odata.v4.ValueListType}. The promise is rejected if the property cannot
+	 *   be found in the metadata.
+	 *
+	 * @function
+	 * @public
+	 * @see #getValueListType
+	 * @since 1.47.0
+	 */
+	ODataMetaModel.prototype.requestValueListType
+		= _SyncPromise.createRequestMethod("fetchValueListType");
 
 	/**
 	 * Requests information to retrieve a value list for the property given by

@@ -264,9 +264,7 @@ sap.ui.require([
 			mQueryOptions = {};
 
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
-				sinon.match.same(mParameters))
-			.returns(mQueryOptions);
+			.withExactArgs(sinon.match.same(mParameters), false).returns(mQueryOptions);
 		this.stub(ODataPropertyBinding.prototype, "fetchCache", function (oContext) {
 			assert.strictEqual(oContext, null);
 			this.oCachePromise = _SyncPromise.resolve();
@@ -1321,9 +1319,12 @@ sap.ui.require([
 		oBindingMock.expects("checkUpdate").withExactArgs(true, ChangeReason.Refresh, "myGroup");
 
 		// code under test
-		oBinding.refreshInternal("myGroup");
+		oBinding.refreshInternal("myGroup", true);
 
-		assert.strictEqual(ODataPropertyBinding.prototype.fetchCache.callCount, 2);
+		// code under test
+		oBinding.refreshInternal("myGroup", false);
+
+		assert.strictEqual(ODataPropertyBinding.prototype.fetchCache.callCount, 3);
 	});
 
 	//*********************************************************************************************
@@ -1380,7 +1381,9 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["getValueListType", "requestValueListInfo"].forEach(function (sFunctionName) {
+	[
+		"getValueListType", "requestValueListType", "requestValueListInfo"
+	].forEach(function (sFunctionName) {
 		QUnit.test(sFunctionName + ": forward", function(assert) {
 			var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),
 				oPropertyBinding = this.oModel.bindProperty("Category", oContext),

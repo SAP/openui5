@@ -554,4 +554,112 @@ sap.ui.require([
 	});
 //TODO propagate to parent binding in case the current binding does not have an own cache
 
+	//*********************************************************************************************
+	["$auto", undefined].forEach(function (sGroupId) {
+		QUnit.test("deleteFromCache(" + sGroupId + ") : binding w/ cache", function (assert) {
+			var oCache = {
+					_delete : function () {}
+				},
+				oBinding = new ODataParentBinding({
+					oCachePromise : _SyncPromise.resolve(oCache),
+					getUpdateGroupId : function () {}
+				}),
+				fnCallback = {},
+				oResult = {};
+
+			this.mock(oBinding).expects("getUpdateGroupId").exactly(sGroupId ? 0 : 1)
+				.withExactArgs().returns("$auto");
+			this.mock(oCache).expects("_delete")
+				.withExactArgs("$auto", "EMPLOYEES('1')", "1/EMPLOYEE_2_EQUIPMENTS/3",
+					sinon.match.same(fnCallback))
+				.returns(_SyncPromise.resolve(oResult));
+
+			assert.strictEqual(
+				oBinding.deleteFromCache(sGroupId, "EMPLOYEES('1')", "1/EMPLOYEE_2_EQUIPMENTS/3",
+					fnCallback).getResult(),
+				oResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deleteFromCache: binding w/o cache", function (assert) {
+		var oParentBinding = {
+				deleteFromCache : function () {}
+			},
+			oContext = {
+				getBinding : function () {
+					return oParentBinding;
+				},
+				iIndex : 42
+			},
+			oBinding = new ODataParentBinding({
+				oCachePromise : _SyncPromise.resolve(),
+				oContext : oContext,
+				getUpdateGroupId : function () {},
+				sPath : "TEAM_2_EMPLOYEES"
+			}),
+			fnCallback = {},
+			oResult = {};
+
+		this.mock(_Helper).expects("buildPath")
+			.withExactArgs(42, "TEAM_2_EMPLOYEES", "1/EMPLOYEE_2_EQUIPMENTS/3")
+			.returns("~");
+		this.mock(oParentBinding).expects("deleteFromCache")
+			.withExactArgs("$auto", "EQUIPMENTS('3')", "~", sinon.match.same(fnCallback))
+			.returns(_SyncPromise.resolve(oResult));
+
+		assert.strictEqual(
+			oBinding.deleteFromCache("$auto", "EQUIPMENTS('3')", "1/EMPLOYEE_2_EQUIPMENTS/3",
+				fnCallback).getResult(),
+			oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deleteFromCache: check group ID", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oCachePromise : _SyncPromise.resolve({_delete : function () {}}),
+				getUpdateGroupId : function () {}
+			}),
+			fnCallback = {};
+
+		assert.throws(function () {
+			oBinding.deleteFromCache("myGroup");
+		}, new Error("Illegal update group ID: myGroup"));
+
+		this.mock(oBinding).expects("getUpdateGroupId").returns("myGroup");
+
+		assert.throws(function () {
+			oBinding.deleteFromCache();
+		}, new Error("Illegal update group ID: myGroup"));
+
+		this.mock(oBinding.oCachePromise.getResult()).expects("_delete")
+			.withExactArgs("$direct", "EMPLOYEES('1')", "42", sinon.match.same(fnCallback))
+			.returns(Promise.resolve());
+
+		return oBinding.deleteFromCache("$direct", "EMPLOYEES('1')", "42", fnCallback).then();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deleteFromCache: cache is not yet available", function (assert) {
+		var oBinding = new ODataParentBinding({
+				// simulate pending cache creation
+				oCachePromise : _SyncPromise.resolve(Promise.resolve({ /* cache */}))
+			});
+
+		assert.throws(function () {
+			oBinding.deleteFromCache("$auto");
+		}, new Error("DELETE request not allowed"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deleteFromCache: no delete on deferred operation", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oCachePromise : _SyncPromise.resolve(Promise.resolve({ /* cache */})),
+				oOperation : {}
+			});
+
+		assert.throws(function () {
+			oBinding.deleteFromCache("$auto");
+		}, new Error("Cannot delete a deferred operation"));
+	});
 });

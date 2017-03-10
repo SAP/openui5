@@ -92,8 +92,9 @@ sap.ui.define([
 					["$$groupId", "$$updateGroupId"]);
 				this.sGroupId = oBindingParameters.$$groupId;
 				this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-				this.mQueryOptions = this.oModel.buildQueryOptions(this.oModel.mUriParameters,
-					mParameters);
+				// Note: no system query options supported at property binding
+				this.mQueryOptions = this.oModel.buildQueryOptions(mParameters,
+					/*bSystemQueryOptionsAllowed*/false);
 				this.oCachePromise = _SyncPromise.resolve();
 				this.fetchCache(oContext);
 				this.oContext = oContext;
@@ -390,9 +391,11 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
-	ODataPropertyBinding.prototype.refreshInternal = function (sGroupId) {
+	ODataPropertyBinding.prototype.refreshInternal = function (sGroupId, bCheckUpdate) {
 		this.fetchCache(this.oContext);
-		this.checkUpdate(true, ChangeReason.Refresh, sGroupId);
+		if (bCheckUpdate) {
+			this.checkUpdate(true, ChangeReason.Refresh, sGroupId);
+		}
 	};
 
 	/**
@@ -435,6 +438,27 @@ sap.ui.define([
 			throw new Error(this + " is not resolved yet");
 		}
 		return this.getModel().getMetaModel().requestValueListInfo(sResolvedPath);
+	};
+
+	/**
+	 * Determines which type of value list exists for this property.
+	 *
+	 * @returns {Promise}
+	 *   A promise that is resolved with the type of the value list. It is rejected if the property
+	 *   cannot be found in the metadata.
+	 * @throws {Error}
+	 *   If the binding is relative and has no context
+	 *
+	 * @public
+	 * @since 1.47.0
+	 */
+	ODataPropertyBinding.prototype.requestValueListType = function () {
+		var sResolvedPath = this.getModel().resolve(this.sPath, this.oContext);
+
+		if (!sResolvedPath) {
+			throw new Error(this + " is not resolved yet");
+		}
+		return this.getModel().getMetaModel().requestValueListType(sResolvedPath);
 	};
 
 	/**

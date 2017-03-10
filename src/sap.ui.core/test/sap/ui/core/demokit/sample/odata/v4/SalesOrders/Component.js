@@ -8,7 +8,6 @@
  * @version @version@
  */
 sap.ui.define([
-	"sap/m/VBox",
 	"sap/ui/core/mvc/View", // sap.ui.view()
 	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/sample/common/Component",
@@ -16,10 +15,8 @@ sap.ui.define([
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils",
-	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/URI"
-], function (VBox, View, ViewType, BaseComponent, JSONModel, OperationMode, ODataModel, TestUtils,
-		sinon, URI) {
+], function (View, ViewType, BaseComponent, JSONModel, OperationMode, ODataModel, TestUtils, URI) {
 	"use strict";
 
 	return BaseComponent.extend("sap.ui.core.sample.odata.v4.SalesOrders.Component", {
@@ -32,7 +29,6 @@ sap.ui.define([
 					? "$direct" // switch off batch
 					: undefined,
 				bHasOwnProxy = this.proxy !== BaseComponent.prototype.proxy,
-				oMetaModel,
 				oModel = this.getModel(),
 				fnProxy = bHasOwnProxy
 					? this.proxy
@@ -40,8 +36,7 @@ sap.ui.define([
 				sQuery,
 				bRealOData = TestUtils.isRealOData(),
 				sServiceUrl = fnProxy(oModel.sServiceUrl),
-				sUpdateGroupId = jQuery.sap.getUriParameters().get("updateGroupId"),
-				oViewContainer = new VBox();
+				sUpdateGroupId = jQuery.sap.getUriParameters().get("updateGroupId");
 
 			if (oModel.sServiceUrl !== sServiceUrl || sGroupId || sUpdateGroupId) {
 				//replace model from manifest in case of proxy
@@ -61,8 +56,6 @@ sap.ui.define([
 
 			// the same model can be accessed via two names to allow for different binding contexts
 			this.setModel(oModel, "headerContext");
-
-			oMetaModel = oModel.getMetaModel();
 
 			// TODO: Add Mockdata for single sales orders *with expand*
 			// http://localhost:8080/testsuite/proxy/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/SalesOrderList('050001110')?custom-option=value&$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))
@@ -178,38 +171,29 @@ sap.ui.define([
 					"/sap/opu/odata4/IWBEP/V4_SAMPLE/f4/sap/d_pr_type-fv/0001;ps=%27default-%2Aiwbep%2Av4_gw_sample_basic-0001%27;va=%27com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001-ET-PRODUCT~TYPE_CODE%27/$metadata" : {
 						source : "VH_ProductTypeCode.xml"
 					},
-					"/sap/opu/odata4/IWBEP/V4_SAMPLE/f4/sap/d_pr_type-fv/0001;ps=%27default-%2Aiwbep%2Av4_gw_sample_basic-0001%27;va=%27com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001-ET-PRODUCT~TYPE_CODE%27/D_PR_TYPE_FV_SET?$skip=0&$top=20" : {
+					"/sap/opu/odata4/IWBEP/V4_SAMPLE/f4/sap/d_pr_type-fv/0001;ps=%27default-%2Aiwbep%2Av4_gw_sample_basic-0001%27;va=%27com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001-ET-PRODUCT~TYPE_CODE%27/D_PR_TYPE_FV_SET?$skip=0&$top=100" : {
 						source : "VH_ProductTypeCode.json"
 					}
 }, "sap/ui/core/sample/odata/v4/SalesOrders/data",
 				"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/");
 			}
 
-			// Simulate a templating-based app: The metadata is already
-			// available when the view is created.
-			Promise.all([
-				oMetaModel.requestObject("/SalesOrderList/"),
-				oMetaModel.requestObject("/SOLineItemList/")
-			]).then(function () {
-				oViewContainer.addItem(sap.ui.view({
-					id : "sap.ui.core.sample.odata.v4.SalesOrders.Main",
-					models : { undefined : oModel,
-						ui : new JSONModel({
-								bLineItemSelected : false,
-								bRealOData : bRealOData,
-								bSalesOrderSelected : false,
-								bScheduleSelected : false,
-								bSelectedSalesOrderTransient : false,
-								bSortGrossAmountDescending : undefined,
-								sSortGrossAmountIcon : ""
-							}
-					)},
-					type : ViewType.XML,
-					viewName : "sap.ui.core.sample.odata.v4.SalesOrders.Main"
-				}));
+			return sap.ui.view({
+				id : "sap.ui.core.sample.odata.v4.SalesOrders.Main",
+				models : { undefined : oModel,
+					ui : new JSONModel({
+							bLineItemSelected : false,
+							bRealOData : bRealOData,
+							bSalesOrderSelected : false,
+							bScheduleSelected : false,
+							bSelectedSalesOrderTransient : false,
+							bSortGrossAmountDescending : undefined,
+							sSortGrossAmountIcon : ""
+						}
+				)},
+				type : ViewType.XML,
+				viewName : "sap.ui.core.sample.odata.v4.SalesOrders.Main"
 			});
-
-			return oViewContainer;
 			// TODO: enhance sample application after features are supported
 			// - Error Handling; not yet implemented in model
 		}
