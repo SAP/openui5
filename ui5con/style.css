@@ -190,6 +190,14 @@ li {
 	cursor: pointer;
 }
 
+.cfpduration{
+	color: #fff;
+	font-size: 24px;
+}
+.cfpduration > span{
+	font-size: 12px;
+}
+
 .formatbox1{
 	height: 250px;
 	background-color: #323130;
