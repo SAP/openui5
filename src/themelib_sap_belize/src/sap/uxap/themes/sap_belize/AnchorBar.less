@@ -142,7 +142,11 @@ html[data-sap-ui-animation="off"] {
 }
 
 .sapMPopover.sapUxAPAnchorBarPopover .sapMBtn.sapUxAPAnchorBarButton:hover {
-	background-color: @sapUiListSelectionHoverBackground;
+	background-color: @sapUiListHoverBackground;
+}
+
+.sapMPopover.sapUxAPAnchorBarPopover .sapMBtn.sapUxAPAnchorBarButton:hover > .sapMBtnActive:hover {
+	background-color: @sapUiListActiveBackground;
 }
 
 .sapMPopover.sapUxAPAnchorBarPopover .sapMBtn.sapUxAPAnchorBarButton > .sapMBtnText:not(.sapMBtnActive) {
