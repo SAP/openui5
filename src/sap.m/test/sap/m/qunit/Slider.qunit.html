@@ -815,6 +815,32 @@
 				oSlider.destroy();
 			});
 
+			QUnit.test("it should display values using the fixed-point notation instead of the e-notation (labels)", function(assert) {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					step: 1e-7,
+					min: 1e-7,
+					max: 5e-7,
+					value: 5e-7,
+					enableTickmarks: true,
+					scale: new sap.m.ResponsiveScale({tickmarksBetweenLabels: 1})
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var oHandleDomRef = oSlider.$().find(".sapMSliderLabel");
+
+				// assert
+				assert.ok(oHandleDomRef.size() > 0, "Have initialized the labels");
+				assert.strictEqual(oHandleDomRef.eq(0).text(), "0.0000001", "Have properly set the first value");
+				assert.strictEqual(oHandleDomRef.eq(4).text(), "0.0000005", "Have properly set the last value");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
 			/* ------------------------------ */
 			/* setMin()                       */
 			/* ------------------------------ */
