@@ -185,10 +185,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	FeedInput.prototype._getTextArea = function () {
 		if (!this._oTextArea) {
 			this._oTextArea = new sap.m.TextArea(this.getId() + "-textArea", {
-				rows : 1,
+				rows : 3,
 				value : null,
 				maxLength : this.getMaxLength(),
 				placeholder : this.getPlaceholder(),
+				height: "100%",
 				liveChange : jQuery.proxy(function (oEvt) {
 					var sValue = oEvt.getParameter("value");
 					this.setProperty("value", sValue, true); // update myself without re-rendering
