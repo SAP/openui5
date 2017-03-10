@@ -93,7 +93,7 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 			var oDomRef = this.getDomRef(),
 				oEndContentDomRef = this.getDomRef("endContent");
 
-			if (oEndContentDomRef) {
+			if (oEndContentDomRef && this.getContent().length) {
 				this._iEndContentWidth = oEndContentDomRef.offsetWidth;
 				oDomRef.lastElementChild.style.width = this._iEndContentWidth + "px";
 			}
