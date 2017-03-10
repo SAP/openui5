@@ -71,6 +71,8 @@ public final class DiscoveryService implements ServletContextListener {
   /** reference to the <code>ServletContext</code> */
   private ServletContext context;
 
+  /** flag, whether the service has been initialized or not */
+  private boolean initialized = false;
 
   /**
    * returns the instance of the <code>DiscoveryService</code> from the <code>ServletContext</code>
@@ -82,28 +84,37 @@ public final class DiscoveryService implements ServletContextListener {
   } // method: getInstance
 
 
+  /**
+   * initializes the <code>DiscoveryService</code> and performs a resource lookup
+   * to create a map of app, runtime and test resources for resource determination
+   */
+  private synchronized void initialize() {
+    if (!this.initialized) {
+      long millis = System.currentTimeMillis();
+
+      // lookup for the resources in the context path
+      this.listContextResources("/", this.appResources);
+
+      // lookup for the resources in the classpath
+      try {
+        this.listClasspathResources("/resources/", this.resources);
+        this.listClasspathResources("/test-resources/", this.testResources);
+      } catch (IOException ex) {
+        throw new RuntimeException("Scan for classpath resources failed!", ex);
+      }
+
+      this.log("Resource lookup took: " + (System.currentTimeMillis() - millis) + "ms");
+      this.initialized = true;
+    }
+  } // method: initialize
+
+
   /* (non-Javadoc)
    * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
    */
   @Override
   public void contextInitialized(ServletContextEvent event) {
     this.context = event.getServletContext();
-
-    long millis = System.currentTimeMillis();
-
-    // lookup for the resources in the context path
-    this.listContextResources("/", this.appResources);
-
-    // lookup for the resources in the classpath
-    try {
-      this.listClasspathResources("/resources/", this.resources);
-      this.listClasspathResources("/test-resources/", this.testResources);
-    } catch (IOException ex) {
-      throw new RuntimeException("Scan for classpath resources failed!", ex);
-    }
-
-    this.log("Resource lookup took: " + (System.currentTimeMillis() - millis) + "ms");
-
     this.context.setAttribute(DiscoveryService.class.getName(), this);
   } // method: contextInitialized
 
@@ -142,6 +153,7 @@ public final class DiscoveryService implements ServletContextListener {
    * @return the list of available libraries
    */
   public List<Entry> getAllLibraries() {
+    this.initialize();
     List<Entry> libs = new ArrayList<Entry>();
     for (String resource : this.resources) {
       Matcher m = PATTERN_LIBRARIES.matcher(resource);
@@ -159,6 +171,7 @@ public final class DiscoveryService implements ServletContextListener {
    * @return the list of available application pages
    */
   public List<Entry> getAppPages() {
+    this.initialize();
     List<Entry> appPages = new ArrayList<Entry>();
     for (String resource : this.appResources) {
       if (PATTERN_APP_PAGES.matcher(resource).matches()) {
@@ -174,6 +187,7 @@ public final class DiscoveryService implements ServletContextListener {
    * @return the list of available test pages
    */
   public List<TestPage> getTestpages() {
+    this.initialize();
 
     // create the regular expression to filter the test pages for all libraries
     List<Entry> libs = this.getAllLibraries();
@@ -207,6 +221,7 @@ public final class DiscoveryService implements ServletContextListener {
    * @return the version information
    */
   public VersionInfo getVersionInfo() {
+    this.initialize();
     List<Artifact> libraries = new ArrayList<DiscoveryService.Artifact>();
     for (Entry lib : this.getAllLibraries()) {
       libraries.add(new Artifact(lib.entry.replace('/', '.'), "${version}", "${buildtime}", "${lastchange}", ""));
