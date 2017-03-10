@@ -54,7 +54,7 @@
     "request": "^2.53.0",
     "rimraf": "^2.3.2",
     "selenium-webdriver": "^3.0.1",
-    "semver": "^4.1.0",
+    "semver": "^4.3.0",
     "status-bar": "^2.0.2"
   }
 }
