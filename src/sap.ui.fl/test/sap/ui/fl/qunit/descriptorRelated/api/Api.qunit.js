@@ -27,6 +27,24 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		}
 	});
 	
+	QUnit.test("createForExistingVariant", function(assert) {
+		var oServer = this._oSandbox.useFakeServer();
+		oServer.respondWith("GET", "/sap/bc/lrep/appdescr_variants/id.string",
+							[200, { "Content-Type": "text/plain" }, //Simulate an server with incorrect content type response
+							'{ "id": "id.string", "content": [] }']);
+		oServer.respondWith("GET", "/sap/bc/lrep/appdescr_variants/id.json",
+							[200, { "Content-Type": "application/json" },
+							'{ "id": "id.json", "content": [] }']);
+		oServer.autoRespond = true;
+		
+		return DescriptorVariantFactory.createForExisting("id.string").then(function(oVariant){
+			assert.equal(oVariant._getMap().id, "id.string");
+			return DescriptorVariantFactory.createForExisting("id.json");
+		}).then(function(oVariant){
+			assert.equal(oVariant._getMap().id, "id.json");
+		});
+	});
+	
 	QUnit.test("createDescriptorInlineChange", function(assert) {
 		return DescriptorInlineChangeFactory.createDescriptorInlineChange('appdescr_ovp_addNewCard', {
 			"card" : {
