@@ -87,7 +87,7 @@
 							return oCache.get("key12");
 						}).then(function (result) {
 							oCache.stringify = JSON.stringify;
-							deepEqual(result, parent, "Gotten value with a circular reference must be the same as the one that is previously set");
+							assert.deepEqual(result, parent, "Gotten value with a circular reference must be the same as the one that is previously set");
 						}).catch(function (e) {
 							oCache.stringify = JSON.stringify;
 							ok(false, "Test didn't go well: " + e)
@@ -252,7 +252,7 @@
 					return reInitCacheManager(oCache);
 				}).then(function () {
 					jQuery.sap.log.debug("Cache Manager reinitialized!");
-					deepEqual(JSON.stringify(oCache._metadata), JSON.stringify(oCache._metadata), "After reload, the metadata is consistent");
+					assert.deepEqual(JSON.stringify(oCache._metadata), JSON.stringify(oCache._metadata), "After reload, the metadata is consistent");
 				});
 			});
 
@@ -399,7 +399,7 @@
 				oCache.set("key1", that.o1MB);
 				oCache.get("key1").then(function (value) {
 					//check
-					deepEqual(value, that.o1MB, "Get (ro) waits running [set]");
+					assert.deepEqual(value, that.o1MB, "Get (ro) waits running [set]");
 					done();
 				});
 			});
@@ -605,7 +605,7 @@
 					})
 				}).then(function () {
 					self.assertCounters(lru, mru);
-					deepEqual(metadata, oCache._metadata, "After failing to add item the metadata record should be not be changed.");
+					assert.deepEqual(metadata, oCache._metadata, "After failing to add item the metadata record should be not be changed.");
 				}).then(function () {
 					return verifyCacheEntries({"password1": "mysecret"}, "password2", oCache);
 				});
@@ -628,7 +628,7 @@
 					})
 				}).then(function () {
 					self.assertCounters(lru, mru);
-					deepEqual(metadata, oCache._metadata, "After failing to delete item the metadata record should be not be changed.");
+					assert.deepEqual(metadata, oCache._metadata, "After failing to delete item the metadata record should be not be changed.");
 				}).then(function () {
 					return verifyCacheEntries({"password1": "mysecret", "password2": "mysecret"}, null, oCache);
 				});
@@ -645,7 +645,7 @@
 					return oCache.get("password2");
 				}).then(function () {
 					self.assertCounters(lru, mru);
-					deepEqual(metadata, oCache._metadata, "After getting the most used item the metadata should not be changed.");
+					assert.deepEqual(metadata, oCache._metadata, "After getting the most used item the metadata should not be changed.");
 				})
 			});
 
@@ -737,7 +737,7 @@
 						.then(function (cm) {
 							console.log("Cache Manager reinitialized!");
 							oCache = cm;
-							deepEqual(JSON.stringify(cm._metadata), JSON.stringify(that.originalMetadata), "After reload, the lru map is consistent");
+							assert.deepEqual(JSON.stringify(cm._metadata), JSON.stringify(that.originalMetadata), "After reload, the lru map is consistent");
 							that.metadata = null;
 						});
 			});
@@ -778,7 +778,7 @@
 				//Create promise for each item that must be inside the cache
 				var existingPromises = Object.keys(oExpectedEntries).map(function (key) {
 					return oCache.get(key).then(function (existingValue) {
-						deepEqual(existingValue, oExpectedEntries[key], "Values for key [" + key + "] should match.");
+						assert.deepEqual(existingValue, oExpectedEntries[key], "Values for key [" + key + "] should match.");
 						return true;
 					});
 				});

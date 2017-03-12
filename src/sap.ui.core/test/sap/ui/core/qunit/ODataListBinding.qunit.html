@@ -510,7 +510,7 @@
 		oBinding.bUseExtendedChangeDetection = true;
 
 		var handler = function(oEvent) {
-			deepEqual(oBinding.getContexts(0, 8).diff, [
+			assert.deepEqual(oBinding.getContexts(0, 8).diff, [
 				{ index: 0, type: "insert" },
 				{ index: 1, type: "insert" },
 				{ index: 2, type: "insert" },

@@ -92,7 +92,7 @@
 
 				// Assert
 				var oFirstItem = oIconTabBar.getItems()[0];
-				deepEqual(oIconTabFilter, oFirstItem, "aggregation is added");
+				assert.deepEqual(oIconTabFilter, oFirstItem, "aggregation is added");
 
 				// Clean up
 			  	oIconTabBar.destroy();
@@ -165,7 +165,7 @@
 				var oIconTabBar = new sap.m.IconTabBar({ content : aContent });
 
 				// Assert
-				deepEqual(oIconTabBar.getAggregation("content"), aContent, "aggregation is properly returned");
+				assert.deepEqual(oIconTabBar.getAggregation("content"), aContent, "aggregation is properly returned");
 
 				// Clean up
 				oIconTabBar.destroy();

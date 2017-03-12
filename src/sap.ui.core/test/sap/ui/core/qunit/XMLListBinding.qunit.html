@@ -910,7 +910,7 @@
 			{ index: 4, type: "insert" }
 		], "Replace one property");
 		aContexts = oListBinding.getContexts(0, 10);
-		deepEqual(aContexts.diff, [], "Nothing changed");
+		assert.deepEqual(aContexts.diff, [], "Nothing changed");
 	});
 
 	QUnit.test("setProperty delta with key", function(assert) {
@@ -922,7 +922,7 @@
 		var aContexts = oListBinding.getContexts(0, 10);
 		oModel.setProperty("/teamMembers/member/4/@firstName", "Paul");
 		aContexts = oListBinding.getContexts(0, 10);
-		deepEqual(aContexts.diff, [], "No diff detected, as key didn't change");
+		assert.deepEqual(aContexts.diff, [], "No diff detected, as key didn't change");
 		oModel.setProperty("/teamMembers/member/4/@lastName", "Smith");
 		aContexts = oListBinding.getContexts(0, 10);
 		deepEqual(aContexts.diff, [
@@ -930,7 +930,7 @@
 			{ index : 4, type : "insert" }
 		], "Key property was changed");
 		aContexts = oListBinding.getContexts(0, 10);
-		deepEqual(aContexts.diff, [], "Nothing changed");
+		assert.deepEqual(aContexts.diff, [], "Nothing changed");
 	});
 
 

@@ -425,9 +425,9 @@
 
 				oBinding.attachRefresh(handler2);
 				oBinding.refresh();
-				deepEqual(oBinding.oKeys, {}, "Keys object has been reset");
-				deepEqual(oBinding.oLengths, {}, "Lengths object has value for root");
-				deepEqual(oBinding.oFinalLengths, {}, "FinalLengths object has value for root");
+				assert.deepEqual(oBinding.oKeys, {}, "Keys object has been reset");
+				assert.deepEqual(oBinding.oLengths, {}, "Lengths object has value for root");
+				assert.deepEqual(oBinding.oFinalLengths, {}, "FinalLengths object has value for root");
 			};
 
 			var handler2 = function(oEvent) {
@@ -2313,7 +2313,7 @@
 			// initial check without a context set
 			oBinding.attachChange(handler0);
 			var aRootContexts = oBinding.getRootContexts();
-			deepEqual(aRootContexts, [], "Initial root context call has no return value without a context");
+			assert.deepEqual(aRootContexts, [], "Initial root context call has no return value without a context");
 
 			// set context for the binding to make it absolute
 			var sContextPath = "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')";
@@ -2369,7 +2369,7 @@
 			// initial check without a context set
 			oBinding.attachChange(handler0);
 			var aRootContexts = oBinding.getRootContexts();
-			deepEqual(aRootContexts, [], "Initial root context call has no return value without a context");
+			assert.deepEqual(aRootContexts, [], "Initial root context call has no return value without a context");
 
 			// set context for the binding to make it absolute
 			var sContextPath = "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')";

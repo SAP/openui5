@@ -479,7 +479,7 @@
 			ok(oBinding._mTreeState.expanded["/bing_root/0/"], "1st Level node should be expanded");
 			ok(oBinding._mTreeState.expanded["/bing_root/0/0_2/"], "2nd Level node should be expanded");
 
-			deepEqual(oBinding._mTreeState.collapsed, {}, "No nodes should be collapsed");
+			assert.deepEqual(oBinding._mTreeState.collapsed, {}, "No nodes should be collapsed");
 
 
 			//collapsing to level 2
@@ -513,7 +513,7 @@
 
 			// re-expand the root node and check if the expanded states are still correct
 			oBinding.expandToLevel(1);
-			deepEqual(oBinding._mTreeState.collapsed, {}, "No nodes should be collapsed now, just before expanding to level X");
+			assert.deepEqual(oBinding._mTreeState.collapsed, {}, "No nodes should be collapsed now, just before expanding to level X");
 			oBinding.getContexts(0, 100); //rebuild the tree, as usual
 
 			equal(oBinding.isExpanded(0), true, "root is expanded again");
@@ -686,7 +686,7 @@
 			var oContext = oBinding.getContextByIndex(oBinding.getSelectedIndex());
 			var aSelectedContexts = oBinding.getSelectedContexts();
 			equal(aSelectedContexts.length, 1, "One node should be selected");
-			deepEqual(oContext, aSelectedContexts[0], "Contexts should equal");
+			assert.deepEqual(oContext, aSelectedContexts[0], "Contexts should equal");
 			equal(oContext.getProperty("name"), "Rock", "Second Node should be selected");
 
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler2);
@@ -694,7 +694,7 @@
 			oContext = oBinding.getContextByIndex(oBinding.getSelectedIndex());
 			aSelectedContexts = oBinding.getSelectedContexts();
 			equal(aSelectedContexts.length, 1, "Still only one node should be selected");
-			deepEqual(oContext, aSelectedContexts[0], "Contexts should still equal");
+			assert.deepEqual(oContext, aSelectedContexts[0], "Contexts should still equal");
 			equal(oContext.getProperty("name"), "ZZZ", "Last Node should be selected");
 
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler3);
@@ -702,7 +702,7 @@
 			oContext = oBinding.getContextByIndex(oBinding.getSelectedIndex());
 			aSelectedContexts = oBinding.getSelectedContexts();
 			equal(aSelectedContexts.length, 1, "Still only one node should be selected");
-			deepEqual(oContext, aSelectedContexts[0], "Contexts should still equal");
+			assert.deepEqual(oContext, aSelectedContexts[0], "Contexts should still equal");
 			equal(oContext.getProperty("name"), "ZZZ", "Last Node should be selected");
 
 			//select index out of range
@@ -764,13 +764,13 @@
 			oBinding.addSelectionInterval(9, 11);
 
 			var aSelectedIndices = oBinding.getSelectedIndices();
-			deepEqual(aSelectedIndices, [3, 4, 5, 6, 7, 9, 10, 11], "Selected indices array is correct");
+			assert.deepEqual(aSelectedIndices, [3, 4, 5, 6, 7, 9, 10, 11], "Selected indices array is correct");
 
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler3);
 			oBinding.addSelectionInterval(7, 12);
 
 			aSelectedIndices = oBinding.getSelectedIndices();
-			deepEqual(aSelectedIndices, [3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "Selected indices array is correct, after selecting additional indices");
+			assert.deepEqual(aSelectedIndices, [3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "Selected indices array is correct, after selecting additional indices");
 
 			done();
 		});
@@ -791,7 +791,7 @@
 				equal(oEvent.mParameters.oldIndex, 11, "Event: oldIndex should be 11");
 				equal(oEvent.mParameters.rowIndices.length, 6, "Event: length of changedIndices should be 6");
 
-				deepEqual(oEvent.mParameters.rowIndices, [3, 4, 8, 9, 10, 11], "Changed indices after setSelectionInterval is correct");
+				assert.deepEqual(oEvent.mParameters.rowIndices, [3, 4, 8, 9, 10, 11], "Changed indices after setSelectionInterval is correct");
 				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
@@ -801,7 +801,7 @@
 				equal(oEvent.mParameters.oldIndex, 8, "Event: oldIndex should be 8");
 				equal(oEvent.mParameters.rowIndices.length, 5, "Event: length of changedIndices should be 5");
 
-				deepEqual(oEvent.mParameters.rowIndices, [0, 5, 6, 7, 8], "Changed indices after setSelectedIndex is correct");
+				assert.deepEqual(oEvent.mParameters.rowIndices, [0, 5, 6, 7, 8], "Changed indices after setSelectedIndex is correct");
 				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
@@ -809,20 +809,20 @@
 			oBinding.addSelectionInterval(9, 11);
 
 			var aSelectedIndices = oBinding.getSelectedIndices();
-			deepEqual(aSelectedIndices,  [3, 4, 5, 6, 7, 9, 10, 11], "Selected indices array is correct, after selecting additional indices");
+			assert.deepEqual(aSelectedIndices,  [3, 4, 5, 6, 7, 9, 10, 11], "Selected indices array is correct, after selecting additional indices");
 
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
 			oBinding.setSelectionInterval(5, 8);
 
 			aSelectedIndices = oBinding.getSelectedIndices();
-			deepEqual(aSelectedIndices, [5, 6, 7, 8], "Selected indices array is correct, after setting the selection");
+			assert.deepEqual(aSelectedIndices, [5, 6, 7, 8], "Selected indices array is correct, after setting the selection");
 
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler2);
 			oBinding.setSelectedIndex(0);
 
 			equal(oBinding.getSelectedIndex(), 0, "Lead Index is 0");
 			aSelectedIndices = oBinding.getSelectedIndices();
-			deepEqual(aSelectedIndices, [0], "Selected indices array is correct, only one entry (0)");
+			assert.deepEqual(aSelectedIndices, [0], "Selected indices array is correct, only one entry (0)");
 
 			equal(oBinding.findNode(5).selected, undefined, "Index 1 should not be selected anymore.");
 
@@ -849,7 +849,7 @@
 			equal(oBinding.isIndexSelected(1), true, "isIndexSelected(1) works");
 
 			var aSelectedIndices = oBinding.getSelectedIndices();
-			deepEqual(aSelectedIndices, [1], "Selected indices array is correct, after selecting additional indices");
+			assert.deepEqual(aSelectedIndices, [1], "Selected indices array is correct, after selecting additional indices");
 
 			oBinding.setSelectedIndex(3);
 
@@ -858,7 +858,7 @@
 			equal(oBinding.isIndexSelected(3), true, "isIndexSelected(3) works");
 
 			var aSelectedIndices = oBinding.getSelectedIndices();
-			deepEqual(aSelectedIndices, [3], "Selected indices array is correct, after selecting additional indices");
+			assert.deepEqual(aSelectedIndices, [3], "Selected indices array is correct, after selecting additional indices");
 			done();
 		});
 

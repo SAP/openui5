@@ -982,7 +982,7 @@
 			oClone = this.oTree._removeItemFromObject(oOriginal, "keyThatDontExistInObject");
 
 			// Assert
-			deepEqual(oOriginal, oClone, "Clone object is the same as original object");
+			assert.deepEqual(oOriginal, oClone, "Clone object is the same as original object");
 		});
 
 		QUnit.module("Preserve selection", {

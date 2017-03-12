@@ -163,7 +163,7 @@
 			assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), "");
 			assert.strictEqual(oP13nDialog._getNavigationControl(), null, "segmented button does not exist for only one panel");
 			ok(oP13nDialog.getTitle() !== sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
-			deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "panel is shown");
+			assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "panel is shown");
 
 			// cleanup
 			oP13nDialog.destroy();
@@ -191,7 +191,7 @@
 			assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), oPanel.getType());
 			assert.strictEqual(oP13nDialog._getNavigationControl(), null, "segmented button does not exist for only one panel");
 			ok(oP13nDialog.getTitle() !== sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
-			deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "panel is shown");
+			assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "panel is shown");
 
 			// cleanup
 			oP13nDialog.destroy();
@@ -219,7 +219,7 @@
 			assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), "dummy");
 			assert.strictEqual(oP13nDialog._getNavigationControl(), null, "segmented button does not exist for only one panel");
 			ok(oP13nDialog.getTitle() !== sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
-			deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "panel is shown");
+			assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "panel is shown");
 
 			// cleanup
 			oP13nDialog.destroy();
@@ -283,7 +283,7 @@
 			ok(oP13nDialog._getNavigationControl(), "segmented button does exist");
 			assert.strictEqual(oP13nDialog._getNavigationControl().getButtons().length, 2, "segmented button has 2 buttons");
 			assert.strictEqual(oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
-			deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "default panel is shown");
+			assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "default panel is shown");
 			assert.strictEqual(oP13nDialog._getNavigationControl().getSelectedButton(), oP13nDialog._getNavigationItemByPanel(oPanel).getId(), "selected button belongs to desplayed panel");
 
 			// cleanup
@@ -316,7 +316,7 @@
 			ok(oP13nDialog._getNavigationControl(), "segmented button does exist");
 			assert.strictEqual(oP13nDialog._getNavigationControl().getButtons().length, 2, "segmented button has 2 buttons");
 			assert.strictEqual(oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
-			deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "default panel is shown");
+			assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "default panel is shown");
 			assert.strictEqual(oP13nDialog._getNavigationControl().getSelectedButton(), oP13nDialog._getNavigationItemByPanel(oPanel).getId(), "selected button belongs to desplayed panel");
 
 			// cleanup
@@ -351,7 +351,7 @@
 			// assertions
 			assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), "");
 			assert.strictEqual(oP13nDialog._getNavigationControl().getButtons().length, 2, "segmented button has 2 buttons");
-			deepEqual(oP13nDialog.getVisiblePanel(), oPanelF, "switched panel is shown");
+			assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanelF, "switched panel is shown");
 			//assert.strictEqual(oP13nDialog._getNavigationControl().getSelectedButton(), oP13nDialog._getButtonByPanel(oPanelF).getId(), "selected button belongs to switched panel");
 
 			// cleanup

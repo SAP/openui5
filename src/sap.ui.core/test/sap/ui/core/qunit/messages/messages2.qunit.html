@@ -364,7 +364,7 @@
 
 		oModel.setMessages();
 		equals(oCheckMessagesSpy.callCount, 2, "Changes detected - Check messages");
-		deepEqual(oModel.mMessages, {}, "Model messages cleared");
+		assert.deepEqual(oModel.mMessages, {}, "Model messages cleared");
 	});
 
 </script>

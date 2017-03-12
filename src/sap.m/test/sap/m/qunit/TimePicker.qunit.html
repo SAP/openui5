@@ -1877,7 +1877,7 @@
 				aAriaAttributes.forEach(function(id) {
 					aRealStrings.push(jQuery("#" + id).text());
 				});
-				deepEqual(aRealStrings, aExpectedStrings, sScenario + ": " + sAriaAttributeName + " check.");
+				assert.deepEqual(aRealStrings, aExpectedStrings, sScenario + ": " + sAriaAttributeName + " check.");
 			};
 
 			//SC1: Prepare

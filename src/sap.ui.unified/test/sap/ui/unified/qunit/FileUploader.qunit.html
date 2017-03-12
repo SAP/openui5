@@ -107,18 +107,18 @@
 		});
 
 		//Initial Array Check
-		deepEqual(oFileUploader.getFileType(), ["doc", "docx", "txt", "rtf"], "initial property value 'doc,docx,txt,rtf' should be converted to an array");
+		assert.deepEqual(oFileUploader.getFileType(), ["doc", "docx", "txt", "rtf"], "initial property value 'doc,docx,txt,rtf' should be converted to an array");
 
 		//standard cases
 		oFileUploader.setFileType("bmp");
-		deepEqual(oFileUploader.getFileType(), ["bmp"], "setFileType('bmp') --> getFileType() should return the file types converted to an array");
+		assert.deepEqual(oFileUploader.getFileType(), ["bmp"], "setFileType('bmp') --> getFileType() should return the file types converted to an array");
 
 		oFileUploader.setFileType("bmp,png,jpeg");
-		deepEqual(oFileUploader.getFileType(), ["bmp", "png", "jpeg"], "setFileType('bmp,png,jpeg') --> getFileType() should return the file types converted to an array");
+		assert.deepEqual(oFileUploader.getFileType(), ["bmp", "png", "jpeg"], "setFileType('bmp,png,jpeg') --> getFileType() should return the file types converted to an array");
 
 		//Edge case
 		oFileUploader.setFileType("");
-		deepEqual(oFileUploader.getFileType(), [], "setFileType('') --> getFileType() should return an empty array");
+		assert.deepEqual(oFileUploader.getFileType(), [], "setFileType('') --> getFileType() should return an empty array");
 
 		//cleanup
 		oFileUploader.destroy();
@@ -131,18 +131,18 @@
 			});
 
 		//Initial Array Check
-		deepEqual(oFileUploader.getFileType(), ["doc", "docx", "txt", "rtf"], "initial property value should be converted to an array");
+		assert.deepEqual(oFileUploader.getFileType(), ["doc", "docx", "txt", "rtf"], "initial property value should be converted to an array");
 
 		//Standard cases
 		oFileUploader.setFileType(["bmp"]);
-		deepEqual(oFileUploader.getFileType(), ["bmp"], "setFileType(['bmp']) --> getFileType() should return a specific array");
+		assert.deepEqual(oFileUploader.getFileType(), ["bmp"], "setFileType(['bmp']) --> getFileType() should return a specific array");
 
 		oFileUploader.setFileType(["bmp", "png", "jpeg"]);
-		deepEqual(oFileUploader.getFileType(), ["bmp", "png", "jpeg"], "setFileType(['bmp', 'png', 'jpeg']) --> getFileType() should return a specific array");
+		assert.deepEqual(oFileUploader.getFileType(), ["bmp", "png", "jpeg"], "setFileType(['bmp', 'png', 'jpeg']) --> getFileType() should return a specific array");
 
 		//Edge cases
 		oFileUploader.setFileType([]);
-		deepEqual(oFileUploader.getFileType(), [], "setFileType([]) --> getFileType() should return an empty array");
+		assert.deepEqual(oFileUploader.getFileType(), [], "setFileType([]) --> getFileType() should return an empty array");
 
 		oFileUploader.setFileType(null);
 		equal(oFileUploader.getFileType(), null, "setFileType(null) --> getFileType() should return null");
@@ -161,18 +161,18 @@
 		});
 
 		//Initial Array Check
-		deepEqual(oFileUploader.getMimeType(), ["image/png", "image", "image/jpeg", "application/javascript"], "initial property value 'image/png,image,image/jpeg,application/javascript' should be converted to an array");
+		assert.deepEqual(oFileUploader.getMimeType(), ["image/png", "image", "image/jpeg", "application/javascript"], "initial property value 'image/png,image,image/jpeg,application/javascript' should be converted to an array");
 
 		//standard case
 		oFileUploader.setMimeType("image/jpeg,audio/mpeg3,text");
-		deepEqual(oFileUploader.getMimeType(), ["image/jpeg", "audio/mpeg3", "text"], "setMimeType('image/jpeg,audio/mpeg3,text') --> getMimeType() should return the file types converted to an array");
+		assert.deepEqual(oFileUploader.getMimeType(), ["image/jpeg", "audio/mpeg3", "text"], "setMimeType('image/jpeg,audio/mpeg3,text') --> getMimeType() should return the file types converted to an array");
 
 		//Edge Cases
 		oFileUploader.setMimeType("");
-		deepEqual(oFileUploader.getMimeType(), [], "setMimeType('') --> getMimeType() should return an empty array");
+		assert.deepEqual(oFileUploader.getMimeType(), [], "setMimeType('') --> getMimeType() should return an empty array");
 
 		oFileUploader.setMimeType("application");
-		deepEqual(oFileUploader.getMimeType(), ["application"], "setMimeType('application') --> getMimeType() should return the file types converted to an array");
+		assert.deepEqual(oFileUploader.getMimeType(), ["application"], "setMimeType('application') --> getMimeType() should return the file types converted to an array");
 
 		//cleanup
 		oFileUploader.destroy();
@@ -185,18 +185,18 @@
 			});
 
 		//Initial Array Check
-		deepEqual(oFileUploader.getMimeType(), ["image/png", "image", "image/jpeg", "application/javascript"], "initial property value should be converted to an array");
+		assert.deepEqual(oFileUploader.getMimeType(), ["image/png", "image", "image/jpeg", "application/javascript"], "initial property value should be converted to an array");
 
 		//standard cases
 		oFileUploader.setMimeType(["audio"]);
-		deepEqual(oFileUploader.getMimeType(), ["audio"], "setMimeType(['audio']) --> getMimeType() should return an array with the original content");
+		assert.deepEqual(oFileUploader.getMimeType(), ["audio"], "setMimeType(['audio']) --> getMimeType() should return an array with the original content");
 
 		oFileUploader.setMimeType(["image", "audio/mpeg3", "text/x-java-source"]);
-		deepEqual(oFileUploader.getMimeType(), ["image", "audio/mpeg3", "text/x-java-source"], "setMimeType(['image', 'audio/mpeg3', 'text/x-java-source']) --> getMimeType() should return a specific array");
+		assert.deepEqual(oFileUploader.getMimeType(), ["image", "audio/mpeg3", "text/x-java-source"], "setMimeType(['image', 'audio/mpeg3', 'text/x-java-source']) --> getMimeType() should return a specific array");
 
 		//Edge cases
 		oFileUploader.setMimeType([]);
-		deepEqual(oFileUploader.getMimeType(), [], "setMimeType([]) --> getMimeType() should return an empty array");
+		assert.deepEqual(oFileUploader.getMimeType(), [], "setMimeType([]) --> getMimeType() should return an empty array");
 
 		oFileUploader.setMimeType(null);
 		equal(oFileUploader.getMimeType(), null, "setMimeType(null) --> getMimeType() should return null");

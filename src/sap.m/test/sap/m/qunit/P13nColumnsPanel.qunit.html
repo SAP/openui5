@@ -1502,7 +1502,7 @@
 			// CUT -> method shall not be executed -> as no valid input parameter is passed in
 			var aExtractionResultExpected = null;
 			var aExtractionResult = oP13nColumnsPanel._extractExistingColumnsItems();
-			deepEqual(aExtractionResult, aExtractionResultExpected, "no extraction result shall be returned");
+			assert.deepEqual(aExtractionResult, aExtractionResultExpected, "no extraction result shall be returned");
 
 			// CUT -> method shall be executed and a valid extraction result shall be passed back
 			var aColumnsItems = [
@@ -1532,7 +1532,7 @@
 				}
 			];
 			var aExtractionResult = oP13nColumnsPanel._extractExistingColumnsItems(aColumnsItems);
-			deepEqual(aExtractionResult, aExtractionResultExpected, "a valid extraction result shall be returned");
+			assert.deepEqual(aExtractionResult, aExtractionResultExpected, "a valid extraction result shall be returned");
 		});
 
 		QUnit.test("Shall check _extractExistingTableItems", function(assert) {
@@ -1543,7 +1543,7 @@
 			// CUT -> method shall not be executed -> as no valid input parameter is passed in
 			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([]);
 			aExtractionResult = oP13nColumnsPanel._extractExistingTableItems();
-			deepEqual(aExtractionResult, aExtractionResultExpected, "no extraction result shall be returned");
+			assert.deepEqual(aExtractionResult, aExtractionResultExpected, "no extraction result shall be returned");
 
 			// CUT -> method shall be executed and a valid extraction result shall be passed back
 			var oTableItem1 = new sap.m.ColumnListItem();
@@ -1582,7 +1582,7 @@
 
 			];
 			aExtractionResult = oP13nColumnsPanel._extractExistingTableItems();
-			deepEqual(aExtractionResult, aExtractionResultExpected, "a valid extraction result shall be returned");
+			assert.deepEqual(aExtractionResult, aExtractionResultExpected, "a valid extraction result shall be returned");
 		});
 
 		QUnit.test("Shall check this._getTableItemsChangeStatus", function(assert) {

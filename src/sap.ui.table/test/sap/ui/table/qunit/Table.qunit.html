@@ -511,8 +511,8 @@
 		var oColumn = oTable.getColumns()[1];
 		var oMenu = oColumn.getMenu();
 		var fnHandler = function(oEvent) {
-			deepEqual(oEvent.getSource(), oColumn, "Correct Event Source");
-			deepEqual(oEvent.getParameter("menu"), oMenu, "Correct Column Menu Parameter");
+			assert.deepEqual(oEvent.getSource(), oColumn, "Correct Event Source");
+			assert.deepEqual(oEvent.getParameter("menu"), oMenu, "Correct Column Menu Parameter");
 		};
 
 		var fnHandlerPreventDefault = function(oEvent) {

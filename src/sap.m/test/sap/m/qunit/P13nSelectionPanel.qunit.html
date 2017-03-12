@@ -53,9 +53,9 @@
 		assert.strictEqual(oSelectionPanel.getTitle(), "");
 		assert.strictEqual(oSelectionPanel.getTitleLarge(), "");
 		assert.strictEqual(oSelectionPanel.getType(), sap.m.P13nPanelType.selection);
-		deepEqual(oSelectionPanel.getItems(), []);
-		deepEqual(oSelectionPanel.getSelectionItems(), []);
-		deepEqual(oSelectionPanel._getInternalModel().getData().items, []);
+		assert.deepEqual(oSelectionPanel.getItems(), []);
+		assert.deepEqual(oSelectionPanel.getSelectionItems(), []);
+		assert.deepEqual(oSelectionPanel._getInternalModel().getData().items, []);
 
 		// cleanup
 		oSelectionPanel.destroy();
@@ -86,7 +86,7 @@
 
 		// assertions
 		assert.strictEqual(oSelectionPanel.getItems().length, 3);
-		deepEqual(oSelectionPanel.getItems(), [
+		assert.deepEqual(oSelectionPanel.getItems(), [
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
@@ -126,7 +126,7 @@
 
 		// assertions
 		assert.strictEqual(oSelectionPanel.getItems().length, 3);
-		deepEqual(oSelectionPanel.getItems(), [
+		assert.deepEqual(oSelectionPanel.getItems(), [
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
@@ -170,7 +170,7 @@
 
 		// assertions
 		assert.strictEqual(oSelectionPanel.getItems().length, 3);
-		deepEqual(oSelectionPanel.getItems(), [
+		assert.deepEqual(oSelectionPanel.getItems(), [
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
@@ -213,9 +213,9 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		deepEqual(oItem, oItemB);
+		assert.deepEqual(oItem, oItemB);
 		assert.strictEqual(oSelectionPanel.getItems().length, 2);
-		deepEqual(oSelectionPanel.getItems(), [
+		assert.deepEqual(oSelectionPanel.getItems(), [
 			oItemC, oItemA
 		]);
 		// The table items order has been changed to: A, C
@@ -258,7 +258,7 @@
 		// assertions
 		assert.strictEqual(oItem, null);
 		assert.strictEqual(oSelectionPanel.getItems().length, 2);
-		deepEqual(oSelectionPanel.getItems(), [
+		assert.deepEqual(oSelectionPanel.getItems(), [
 			oItemC, oItemA
 		]);
 		// The table items order has been changed to: A, C

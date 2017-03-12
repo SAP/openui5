@@ -59,7 +59,7 @@
 						result.att3 = "att3";
 
 						o = JSON.parse(s);
-						deepEqual(o, result, "Simple parse");
+						assert.deepEqual(o, result, "Simple parse");
 
 						result = new Object();
 						result.att1 = "att1";
@@ -71,7 +71,7 @@
 							}
 							return value;
 						});
-						deepEqual(o, result, "Parse with reviver");
+						assert.deepEqual(o, result, "Parse with reviver");
 	  			});
 	  			QUnit.test("JSON Stringify/Parse piped", function(assert) {
 						result = new Object();
@@ -85,7 +85,7 @@
 
 						s = JSON.stringify(result);
 						o = JSON.parse(s);
-						deepEqual( o, result, "Piped stringify/parse");
+						assert.deepEqual( o, result, "Piped stringify/parse");
 	  			});
 
   			QUnit.module("JSON toJSON method");

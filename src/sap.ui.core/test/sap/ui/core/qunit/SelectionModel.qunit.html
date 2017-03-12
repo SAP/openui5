@@ -71,21 +71,21 @@
 
 			equal(oSelectionModel.getMinSelectionIndex(), aIndices.length ? aIndices[0] : -1, "expected min value");
 			equal(oSelectionModel.getMaxSelectionIndex(), aIndices.length ? aIndices[aIndices.length-1] : -1, "expected max value");
-			deepEqual(aIndices, oSelectionModel.getSelectedIndices(), "expected final indices");
+			assert.deepEqual(aIndices, oSelectionModel.getSelectedIndices(), "expected final indices");
 			equal(oSelectionModel.getLeadSelectedIndex(), iLeadSelection, "expected lead selection");
 
 			if ( fnChange ) {
 				if ( bEvent === true ) {
 					ok(!!oEventParams, "a SelectionChanged event should have been fired");
-					deepEqual(oEventParams.rowIndices, aDiff, "rowindices should match the difference between before and after");
+					assert.deepEqual(oEventParams.rowIndices, aDiff, "rowindices should match the difference between before and after");
 					equal(oEventParams.selectAll, bAll, "selectAll indicator")
 				} else if ( jQuery.isArray(bEvent) && bEvent.length === 0 ) {
 					ok(!!oEventParams, "a SelectionChanged event should have been fired");
-					deepEqual(oEventParams.rowIndices, aDiff, "rowindices should match the difference between before and after");
-					deepEqual(aDiff, [], "difference should be empty (lead selection change)");
+					assert.deepEqual(oEventParams.rowIndices, aDiff, "rowindices should match the difference between before and after");
+					assert.deepEqual(aDiff, [], "difference should be empty (lead selection change)");
 				} else {
 					ok(!oEventParams, "no SelectionChanged event should have been fired");
-					deepEqual([], aDiff, "diff should be empty");
+					assert.deepEqual([], aDiff, "diff should be empty");
 				}
 			}
 		});

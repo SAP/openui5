@@ -1559,7 +1559,7 @@
 				_$content: jQuery()
 			});
 
-			deepEqual(oContentDimensions, oExpectedDimensions, "Content dimensions should be right");
+			assert.deepEqual(oContentDimensions, oExpectedDimensions, "Content dimensions should be right");
 
 			stubPopoverMaxContentWidth.restore();
 			stubPopoverMaxContentHeight.restore();
@@ -1583,7 +1583,7 @@
 				_$content: jQuery()
 			});
 
-			deepEqual(oContentDimensions, oExpectedDimensions, "Content dimensions should be right");
+			assert.deepEqual(oContentDimensions, oExpectedDimensions, "Content dimensions should be right");
 
 			stubPopoverMaxContentWidth.restore();
 			stubPopoverMaxContentHeight.restore();
@@ -1647,10 +1647,10 @@
 					stubArrowOuterHeight = sinon.stub(oPosParams._$arrow, "outerHeight").returns(32);
 
 			var oCalculatedPos = oPopover._getArrowOffsetCss(sap.m.PlacementType.Left, oPosParams);
-			deepEqual(oCalculatedPos, oExpectedPos, "top position should be 355px");
+			assert.deepEqual(oCalculatedPos, oExpectedPos, "top position should be 355px");
 
 			var oCalculatedPos = oPopover._getArrowOffsetCss(sap.m.PlacementType.Right, oPosParams);
-			deepEqual(oCalculatedPos, oExpectedPos, "top position should be 355px");
+			assert.deepEqual(oCalculatedPos, oExpectedPos, "top position should be 355px");
 
 			stubPopoverOuterWidth.restore();
 			stubPopoverOuterHeight.restore();
@@ -1755,9 +1755,9 @@
 			equal(oPopover._marginBottom, 10, "_marginTop should be 10");
 			equal(oPopover._marginLeft, 10, "_marginTop should be 10");
 			equal(oPopover._arrowOffset, 18, "_arrowoffset should be 18");
-			deepEqual(oPopover._offsets, ["0 -18", "18 0", "0 18", "-18 0"], "offsets should be correct according the arrowOffset");
-			deepEqual(oPopover._myPositions, ["center bottom", "begin center", "center top", "end center"], "myPositions should be correct");
-			deepEqual(oPopover._atPositions, ["center top", "end center", "center bottom", "begin center"], "atPositions should be correct");
+			assert.deepEqual(oPopover._offsets, ["0 -18", "18 0", "0 18", "-18 0"], "offsets should be correct according the arrowOffset");
+			assert.deepEqual(oPopover._myPositions, ["center bottom", "begin center", "center top", "end center"], "myPositions should be correct");
+			assert.deepEqual(oPopover._atPositions, ["center top", "end center", "center bottom", "begin center"], "atPositions should be correct");
 
 			oPopover.destroy();
 		});
@@ -1772,9 +1772,9 @@
 			equal(oPopover._marginBottom, 0, "_marginTop should be 0");
 			equal(oPopover._marginLeft, 0, "_marginTop should be 0");
 			equal(oPopover._arrowOffset, 0, "_arrowoffset should be 0");
-			deepEqual(oPopover._offsets, ["0 0", "0 0", "0 0", "0 0"], "offsets should be correct according the arrowOffset");
-			deepEqual(oPopover._myPositions, ["begin bottom", "begin center", "begin top", "end center"], "myPositions should be correct");
-			deepEqual(oPopover._atPositions, ["begin top", "end center", "begin bottom", "begin center"], "atPositions should be correct");
+			assert.deepEqual(oPopover._offsets, ["0 0", "0 0", "0 0", "0 0"], "offsets should be correct according the arrowOffset");
+			assert.deepEqual(oPopover._myPositions, ["begin bottom", "begin center", "begin top", "end center"], "myPositions should be correct");
+			assert.deepEqual(oPopover._atPositions, ["begin top", "end center", "begin bottom", "begin center"], "atPositions should be correct");
 
 			oPopover.destroy();
 		});
@@ -1787,7 +1787,7 @@
 			oPopover.openBy(oButton2);
 
 			equal(oPopover._arrowOffset, 9, "_arrowoffset should be 9");
-			deepEqual(oPopover._offsets, ["0 -9", "9 0", "0 9", "-9 0"], "offsets should be correct according the arrowOffset");
+			assert.deepEqual(oPopover._offsets, ["0 -9", "9 0", "0 9", "-9 0"], "offsets should be correct according the arrowOffset");
 
 			stubGetParameters.restore();
 			oPopover.destroy();
@@ -1801,7 +1801,7 @@
 			oPopover.openBy(oButton2);
 
 			equal(oPopover._arrowOffset, 18, "_arrowoffset should be 18");
-			deepEqual(oPopover._offsets, ["0 -18", "18 0", "0 18", "-18 0"], "offsets should be correct according the arrowOffset");
+			assert.deepEqual(oPopover._offsets, ["0 -18", "18 0", "0 18", "-18 0"], "offsets should be correct according the arrowOffset");
 
 			stubGetParameters.restore();
 			oPopover.destroy();
@@ -1819,7 +1819,7 @@
 			oPopover.openBy(oButton);
 
 			equal(oPopover._arrowOffset, 9, "_arrowoffset should be 9");
-			deepEqual(oPopover._offsets, ["0 -9", "9 0", "0 9", "-9 0"], "offsets should be correct according the arrowOffset");
+			assert.deepEqual(oPopover._offsets, ["0 -9", "9 0", "0 9", "-9 0"], "offsets should be correct according the arrowOffset");
 
 			oScrollContainer.destroy();
 			oPopover.destroy();

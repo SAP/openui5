@@ -167,7 +167,7 @@
 							aRealSecondRowItems.push(nextSibling.id);
 							nextSibling = nextSibling.nextSibling;
 						}
-						deepEqual(aRealSecondRowItems, aItemsOnTheSecondRow, "The order of the second row items must be the same after popup open->close");
+						assert.deepEqual(aRealSecondRowItems, aItemsOnTheSecondRow, "The order of the second row items must be the same after popup open->close");
 						done();
 					}, 1000);
 				}, 1000);
@@ -377,7 +377,7 @@
 				setTimeout(function () {
 					ok(isPopupVisible(oCtrl), "The popup must be visible");
 					var aPopupContent = getPopupContentIds(oCtrl);
-					deepEqual(aPopupContent, aExpectedItemsInTheOverflow, "There must be just 1 items in the overflow -F");
+					assert.deepEqual(aPopupContent, aExpectedItemsInTheOverflow, "There must be just 1 items in the overflow -F");
 					done();
 				}, 1000);
 			}, 500);

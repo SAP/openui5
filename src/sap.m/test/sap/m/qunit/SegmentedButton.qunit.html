@@ -1654,7 +1654,7 @@
 		aButtons = oSB.getButtons();
 
 		// Assert
-		deepEqual(oSB._getRenderedButtonWidths(aButtons), [null,null,null], "Before the control is rendered an array " +
+		assert.deepEqual(oSB._getRenderedButtonWidths(aButtons), [null,null,null], "Before the control is rendered an array " +
 				"of empty widths is returned");
 
 		// Act
@@ -1662,7 +1662,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		deepEqual(oSB._getRenderedButtonWidths(aButtons), [100,100,100], "Returned array of widths " +
+		assert.deepEqual(oSB._getRenderedButtonWidths(aButtons), [100,100,100], "Returned array of widths " +
 				"equals to predefined widths of the buttons");
 
 		// Cleanup

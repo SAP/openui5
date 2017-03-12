@@ -446,24 +446,24 @@
 				this.oTable.setSelectionInterval(2, 4);
 				equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Selection Interval: SelectedIndex OK");
 				equal(this.oTable.getSelectedIndex(), 4, "Selection Interval: SelectedIndex 4");
-				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Selection Interval: SelectedIndices OK");
-				deepEqual(this.oTable.getSelectedIndices(), [2, 3, 4], "Selection Interval: SelectedIndices Values OK");
+				assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Selection Interval: SelectedIndices OK");
+				assert.deepEqual(this.oTable.getSelectedIndices(), [2, 3, 4], "Selection Interval: SelectedIndices Values OK");
 				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 3, "Only one row selected");
 				equal(this.oTable.$().find(".sapUiTableRowSel").length, 6, "Row and RowHeader should be selected");
 
 				this.oTable.addSelectionInterval(5, 0);
 				equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Add Selection Interval: SelectedIndex OK");
 				equal(this.oTable.getSelectedIndex(), 5, "Add Selection Interval: SelectedIndex 5");
-				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Add Selection Interval: SelectedIndices OK");
-				deepEqual(this.oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5], "Add Selection Interval: SelectedIndices Values OK");
+				assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Add Selection Interval: SelectedIndices OK");
+				assert.deepEqual(this.oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5], "Add Selection Interval: SelectedIndices Values OK");
 				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 6, "Only one row selected");
 				equal(this.oTable.$().find(".sapUiTableRowSel").length, 12, "Row and RowHeader should be selected");
 
 				this.oTable.removeSelectionInterval(1, 1);
 				equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Remove Selection Interval: SelectedIndex OK");
 				equal(this.oTable.getSelectedIndex(), 5, "Remove Selection Interval: SelectedIndex 5");
-				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Remove Selection Interval: SelectedIndices OK");
-				deepEqual(this.oTable.getSelectedIndices(), [0, 2, 3, 4, 5], "Remove Selection Interval: SelectedIndices Values OK");
+				assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Remove Selection Interval: SelectedIndices OK");
+				assert.deepEqual(this.oTable.getSelectedIndices(), [0, 2, 3, 4, 5], "Remove Selection Interval: SelectedIndices Values OK");
 				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 5, "Only one row selected");
 				equal(this.oTable.$().find(".sapUiTableRowSel").length, 10, "Row and RowHeader should be selected");
 
@@ -477,8 +477,8 @@
 				this.oTable.removeSelectionInterval(5, 5);
 				equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Remove Selection Interval: SelectedIndex OK");
 				equal(this.oTable.getSelectedIndex(), -1, "Remove Selection Interval: SelectedIndex -1");
-				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Remove Selection Interval: SelectedIndices OK");
-				deepEqual(this.oTable.getSelectedIndices(), [0, 2, 3, 4], "Remove Selection Interval: SelectedIndices Values OK");
+				assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Remove Selection Interval: SelectedIndices OK");
+				assert.deepEqual(this.oTable.getSelectedIndices(), [0, 2, 3, 4], "Remove Selection Interval: SelectedIndices Values OK");
 				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 4, "Only one row selected");
 				equal(this.oTable.$().find(".sapUiTableRowSel").length, 8, "Row and RowHeader should be selected");
 
@@ -490,8 +490,8 @@
 
 			fnHandler2 = function() {
 				attachRowsUpdatedOnce(this.oTable, fnHandler3, this);
-				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Collapse(0): SelectedIndices OK");
-				deepEqual(this.oTable.getSelectedIndices(), [0], "Collapse(0): SelectedIndices Values OK");
+				assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Collapse(0): SelectedIndices OK");
+				assert.deepEqual(this.oTable.getSelectedIndices(), [0], "Collapse(0): SelectedIndices Values OK");
 				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 1, "Only one row selected");
 				equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader should be selected");
 				this.oTable.expand(0);
@@ -500,16 +500,16 @@
 			// collapseRecursive=false
 			// collapse(0)
 			fnHandler3 = function() {
-				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Expand(0): SelectedIndices OK");
-				deepEqual(this.oTable.getSelectedIndices(), [0], "Expand(0): SelectedIndices Values OK");
+				assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Expand(0): SelectedIndices OK");
+				assert.deepEqual(this.oTable.getSelectedIndices(), [0], "Expand(0): SelectedIndices Values OK");
 				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 1, "Only one row selected");
 				equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader should be selected");
 
 				this.oTable.selectAll();
 				equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "SelectAll: SelectedIndex OK");
 				equal(this.oTable.getSelectedIndex(), 9, "SelectAll: SelectedIndex 9");
-				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "SelectAll: SelectedIndices OK");
-				deepEqual(this.oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "SelectAll: SelectedIndices Values OK");
+				assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "SelectAll: SelectedIndices OK");
+				assert.deepEqual(this.oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "SelectAll: SelectedIndices Values OK");
 
 				this.oTable.setCollapseRecursive(false);
 				attachRowsUpdatedOnce(this.oTable, fnHandler4, this);
@@ -519,8 +519,8 @@
 			// expand(0)
 			fnHandler4 = function() {
 
-				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Collapse(0), CollapseRecursive=false: SelectedIndices OK");
-				deepEqual(this.oTable.getSelectedIndices(), [0], "Collapse(0), CollapseRecursive=false: SelectedIndices Values OK");
+				assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Collapse(0), CollapseRecursive=false: SelectedIndices OK");
+				assert.deepEqual(this.oTable.getSelectedIndices(), [0], "Collapse(0), CollapseRecursive=false: SelectedIndices Values OK");
 				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 1, "Only one row selected");
 				equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader should be selected");
 
@@ -529,14 +529,14 @@
 			}
 
 			fnHandler5 = function() {
-				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Expand(0), CollapseRecursive=false: SelectedIndices OK");
-				deepEqual(this.oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "Expand(0), CollapseRecursive=false: SelectedIndices Values OK");
+				assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Expand(0), CollapseRecursive=false: SelectedIndices OK");
+				assert.deepEqual(this.oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "Expand(0), CollapseRecursive=false: SelectedIndices Values OK");
 				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 10, "10 rows selected");
 				equal(this.oTable.$().find(".sapUiTableRowSel").length, 20, "Row and RowHeader should be selected");
 
 				this.oTable.clearSelection();
-				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "clearSelection: SelectedIndices OK");
-				deepEqual(this.oTable.getSelectedIndices(), [], "clearSelection: SelectedIndices Values OK");
+				assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "clearSelection: SelectedIndices OK");
+				assert.deepEqual(this.oTable.getSelectedIndices(), [], "clearSelection: SelectedIndices Values OK");
 				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 0, "No row selected");
 				equal(this.oTable.$().find(".sapUiTableRowSel").length, 0, "No Row and RowHeader should be selected");
 

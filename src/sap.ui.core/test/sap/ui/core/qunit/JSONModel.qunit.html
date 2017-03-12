@@ -85,16 +85,16 @@
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(obj1);
 		oModel.setData(obj2);
-		deepEqual(oModel.getData(), obj2, "setData object without merge");
+		assert.deepEqual(oModel.getData(), obj2, "setData object without merge");
 		oModel.setData(obj1);
 		oModel.setData(obj2, true);
-		deepEqual(oModel.getData(), objMerged, "setData object with merge");
+		assert.deepEqual(oModel.getData(), objMerged, "setData object with merge");
 		oModel.setData(arr1);
 		oModel.setData(arr2);
-		deepEqual(oModel.getData(), arr2, "setData array without merge");
+		assert.deepEqual(oModel.getData(), arr2, "setData array without merge");
 		oModel.setData(arr1);
 		oModel.setData(arr2, true);
-		deepEqual(oModel.getData(), arrMerged, "setData array with merge");
+		assert.deepEqual(oModel.getData(), arrMerged, "setData array with merge");
 	});
 
 	QUnit.test("test model observation", function(assert) {

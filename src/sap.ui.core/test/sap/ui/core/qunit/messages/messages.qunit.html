@@ -376,7 +376,7 @@
 		var aMessageCopy = aMessages.slice(0);
 		sap.ui.core.message.MessageManager.prototype._sortMessages(aMessageCopy);
 		var aNewOrder = aMessageCopy.map(function(oM) { return oM.type; });
-		deepEqual(aNewOrder, aCorrectOrder, "Sorted messages are in the correct order (Highest severity first)");
+		assert.deepEqual(aNewOrder, aCorrectOrder, "Sorted messages are in the correct order (Highest severity first)");
 
 
 

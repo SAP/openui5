@@ -71,7 +71,7 @@ sap.ui.core.mvc.Controller</title>
 	 	equal(oLabel.getLabelFor(), oView.byId("message").getId(), "Assocation id is set right");
 	 	var oNavigationBar = oView.byId("MyNavigationBar");
 	 	equal(oNavigationBar.getAssociatedItems().length, 3, "Number of associated controls is right");
-	 	deepEqual(oNavigationBar.getAssociatedItems(), [oView.byId("navitem1").getId(), oView.byId("navitem2").getId(), oView.byId("navitem3").getId()],"Number of associated controls is right", "Assocation IDs are set right");
+	 	assert.deepEqual(oNavigationBar.getAssociatedItems(), [oView.byId("navitem1").getId(), oView.byId("navitem2").getId(), oView.byId("navitem3").getId()],"Number of associated controls is right", "Assocation IDs are set right");
 		oView.destroy();
 	});
 

@@ -231,7 +231,7 @@
 				equal(result, returnValue, "Method [" + sMethodName + "] call has to return a certain value");
 
 				if (bMethodHasArgs) {
-					deepEqual(oMethodStub.firstCall.args, aMethodCallArg, "Method [" + sMethodName + "] call has to be called with certain arguments");
+					assert.deepEqual(oMethodStub.firstCall.args, aMethodCallArg, "Method [" + sMethodName + "] call has to be called with certain arguments");
 				}
 
 				oMethodStub.restore();
@@ -277,7 +277,7 @@
 
 				equal(oMethodStub.callCount, 1, "Method [" + sMethodName + "] has to be called once");
 				if (bMethodHasArgs) {
-					deepEqual(oMethodStub.firstCall.args, aMethodCallArg, "Method [" + sMethodName + "] call has to be called with certain arguments");
+					assert.deepEqual(oMethodStub.firstCall.args, aMethodCallArg, "Method [" + sMethodName + "] call has to be called with certain arguments");
 				}
 
 				equal(result, returnValue, "Method [" + sMethodName + "] call has to return a certain value");

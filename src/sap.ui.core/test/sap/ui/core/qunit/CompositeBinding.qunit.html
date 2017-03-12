@@ -122,7 +122,7 @@ QUnit.test("composite type", function(assert) {
 
 QUnit.test("array type", function(assert) {
 	this.composite.setType(null, "int[]");
-	deepEqual(this.composite.getExternalValue(), [1,2,3]);
+	assert.deepEqual(this.composite.getExternalValue(), [1,2,3]);
 	this.composite.setExternalValue([3,2,1]);
 	equal(this.model.getProperty("/a"), 3, "setExternalValue() does change model value for contained bindings");
 });

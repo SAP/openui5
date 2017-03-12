@@ -368,7 +368,7 @@
 				equal(oModel.getProperty("FirstName", oContextJanet2), "Janet", "Janet is also at position 7");
 
 				//check if the contexts are the same
-				deepEqual(oContextJanet1, oContextJanet2, "Janets contexts are the same");
+				assert.deepEqual(oContextJanet1, oContextJanet2, "Janets contexts are the same");
 
 				//nodes however should have different node ids
 				notEqual(oBinding.findNode(3).groupID, oBinding.findNode(7).groupID, "Janets groupIDs are different");
@@ -453,16 +453,16 @@
 			}
 
 			var refreshHandler = function () {
-				deepEqual(oBinding._mTreeState.expanded, {}, "Expanded Map is empty");
-				deepEqual(oBinding._mTreeState.collapsed, {}, "Collapsed Map is empty");
-				deepEqual(oBinding._mTreeState.selected, {}, "Selected Map is empty");
+				assert.deepEqual(oBinding._mTreeState.expanded, {}, "Expanded Map is empty");
+				assert.deepEqual(oBinding._mTreeState.collapsed, {}, "Collapsed Map is empty");
+				assert.deepEqual(oBinding._mTreeState.selected, {}, "Selected Map is empty");
 
 				equal(oBinding._iPageSize, 0, "Default page size reseted");
 				equal(oBinding._oRootNode, undefined, "Root node is lost");
 
-				deepEqual(oBinding.oKeys, {}, "Keys object has been reset");
-				deepEqual(oBinding.oLengths, {}, "Lengths object has value for root");
-				deepEqual(oBinding.oFinalLengths, {}, "FinalLengths object has value for root");
+				assert.deepEqual(oBinding.oKeys, {}, "Keys object has been reset");
+				assert.deepEqual(oBinding.oLengths, {}, "Lengths object has value for root");
+				assert.deepEqual(oBinding.oFinalLengths, {}, "FinalLengths object has value for root");
 				done();
 			};
 
@@ -900,7 +900,7 @@
 				ok(oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should be expanded");
 				ok(oBinding._mTreeState.expanded["/000001/001180/001181/"], "3rd Level node should be expanded");
 
-				deepEqual(oBinding._mTreeState.collapsed, {}, "No nodes should be collapsed");
+				assert.deepEqual(oBinding._mTreeState.collapsed, {}, "No nodes should be collapsed");
 
 				//collapsing to level 2 (no change handler, because we do not load data anymore)
 				oBinding.collapseToLevel(2);
@@ -935,7 +935,7 @@
 
 				// re-expand the root node and check if the expanded states are still correct
 				oBinding.expandToLevel(1);
-				deepEqual(oBinding._mTreeState.collapsed, {}, "No nodes should be collapsed now, just before expanding to level X");
+				assert.deepEqual(oBinding._mTreeState.collapsed, {}, "No nodes should be collapsed now, just before expanding to level X");
 				aContexts = oBinding.getContexts(0, 100); //rebuild the tree, as usual
 
 				equal(oBinding.isExpanded(0), true, "root is expanded again");
@@ -1094,7 +1094,7 @@
 				equal(oModel.getProperty("HierarchyNode", oContext), "000362", "HierarchyNode Check for 1st returned context");
 				equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode Check for 1st returned context");
 
-				deepEqual(oContext, aContexts[0], "First returned context is the same as the one returned by getContextByIndex(1)");
+				assert.deepEqual(oContext, aContexts[0], "First returned context is the same as the one returned by getContextByIndex(1)");
 
 				oContext = oBinding.getContextByIndex(2);
 				equal(oModel.getProperty("HierarchyNode", oContext), "000682", "TreeBinding node content");
@@ -1124,19 +1124,19 @@
 
 				//first context
 				oContext = oBinding.getContextByIndex(5);
-				deepEqual(oContext, aContexts[0], "getContextByIndex(1) returns the same context as getContexts(5, 3)[0]");
+				assert.deepEqual(oContext, aContexts[0], "getContextByIndex(1) returns the same context as getContexts(5, 3)[0]");
 				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "TreeBinding node content");
 				equal(oModel.getProperty("HierarchyNode", oContext), "001136", "TreeBinding node content");
 				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
 
 				//second context
 				oContext = oBinding.getContextByIndex(6);
-				deepEqual(oContext, aContexts[1], "getContextByIndex(6) returns the same context as getContexts(5, 3)[1]");
+				assert.deepEqual(oContext, aContexts[1], "getContextByIndex(6) returns the same context as getContexts(5, 3)[1]");
 				equal(oModel.getProperty("HierarchyNode", oContext), "001153", "TreeBinding node content");
 
 				//last context
 				oContext = oBinding.getContextByIndex(7);
-				deepEqual(oContext, aContexts[2], "getContextByIndex(7) returns the same context as getContexts(5, 3)[3]");
+				assert.deepEqual(oContext, aContexts[2], "getContextByIndex(7) returns the same context as getContexts(5, 3)[3]");
 				equal(oModel.getProperty("HierarchyNode", oContext), "001179", "TreeBinding node content");
 
 				// gap at the beginning should still be there
@@ -1418,7 +1418,7 @@
 			var oContext = oBinding.getContextByIndex(oBinding.getSelectedIndex());
 			var aSelectedContexts = oBinding.getSelectedContexts();
 			equal(aSelectedContexts.length, 1, "One node should be selected");
-			deepEqual(oContext, aSelectedContexts[0], "Contexts should equal");
+			assert.deepEqual(oContext, aSelectedContexts[0], "Contexts should equal");
 			equal(oContext.getProperty("HierarchyNode"), "000002", "Second Node should be selected");
 
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler2);
@@ -1426,7 +1426,7 @@
 			var oContext = oBinding.getContextByIndex(oBinding.getSelectedIndex());
 			var aSelectedContexts = oBinding.getSelectedContexts();
 			equal(aSelectedContexts.length, 1, "Still only one node should be selected");
-			deepEqual(oContext, aSelectedContexts[0], "Contexts should still equal");
+			assert.deepEqual(oContext, aSelectedContexts[0], "Contexts should still equal");
 			equal(oContext.getProperty("HierarchyNode"), "001180", "Last Node should be selected");
 
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler3);
@@ -1434,7 +1434,7 @@
 			var oContext = oBinding.getContextByIndex(oBinding.getSelectedIndex());
 			var aSelectedContexts = oBinding.getSelectedContexts();
 			equal(aSelectedContexts.length, 1, "Still only one node should be selected");
-			deepEqual(oContext, aSelectedContexts[0], "Contexts should still equal");
+			assert.deepEqual(oContext, aSelectedContexts[0], "Contexts should still equal");
 			equal(oContext.getProperty("HierarchyNode"), "001180", "Last Node should be selected");
 
 			//select index out of range
@@ -1495,13 +1495,13 @@
 			oBinding.addSelectionInterval(14, 16);
 
 			var aSelectedIndices = oBinding.getSelectedIndices();
-			deepEqual(aSelectedIndices, [3, 4, 5, 6, 7, 8, 9, 10, 14, 15, 16], "Selected indices array is correct");
+			assert.deepEqual(aSelectedIndices, [3, 4, 5, 6, 7, 8, 9, 10, 14, 15, 16], "Selected indices array is correct");
 
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler3);
 			oBinding.addSelectionInterval(9, 15);
 
 			aSelectedIndices = oBinding.getSelectedIndices();
-			deepEqual(aSelectedIndices, [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], "Selected indices array is correct, after selecting additional indices");
+			assert.deepEqual(aSelectedIndices, [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], "Selected indices array is correct, after selecting additional indices");
 
 			done();
 		});
@@ -1525,7 +1525,7 @@
 				equal(oEvent.mParameters.oldIndex, 17, "Event: oldIndex should be 17");
 				equal(oEvent.mParameters.rowIndices.length, 9, "Event: length of changedIndices should be 9");
 
-				deepEqual(oEvent.mParameters.rowIndices, [3, 4, 8, 9, 10, 11, 12, 16, 17], "Changed indices after setSelectionInterval is correct");
+				assert.deepEqual(oEvent.mParameters.rowIndices, [3, 4, 8, 9, 10, 11, 12, 16, 17], "Changed indices after setSelectionInterval is correct");
 			};
 
 			var fnSelectionChangeHandler2 = function(oEvent) {
@@ -1534,27 +1534,27 @@
 				equal(oEvent.mParameters.oldIndex, 15, "Event: oldIndex should be 15");
 				equal(oEvent.mParameters.rowIndices.length, 12, "Event: length of changedIndices should be 12");
 
-				deepEqual(oEvent.mParameters.rowIndices, [0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Changed indices after setSelectedIndex is correct");
+				assert.deepEqual(oEvent.mParameters.rowIndices, [0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Changed indices after setSelectedIndex is correct");
 			};
 
 			oBinding.addSelectionInterval(3, 7);
 			oBinding.addSelectionInterval(13, 17);
 
 			var aSelectedIndices = oBinding.getSelectedIndices();
-			deepEqual(aSelectedIndices, [3, 4, 5, 6, 7, /*8, 9, 10, 11, 12,*/ 13, 14, 15, 16, 17], "Selected indices array is correct, after selecting additional indices");
+			assert.deepEqual(aSelectedIndices, [3, 4, 5, 6, 7, /*8, 9, 10, 11, 12,*/ 13, 14, 15, 16, 17], "Selected indices array is correct, after selecting additional indices");
 
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
 			oBinding.setSelectionInterval(5, 15);
 
 			aSelectedIndices = oBinding.getSelectedIndices();
-			deepEqual(aSelectedIndices, [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Selected indices array is correct, after setting the selection");
+			assert.deepEqual(aSelectedIndices, [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Selected indices array is correct, after setting the selection");
 
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler2);
 			oBinding.setSelectedIndex(0);
 
 			equal(oBinding.getSelectedIndex(), 0, "Lead Index is 0");
 			aSelectedIndices = oBinding.getSelectedIndices();
-			deepEqual(aSelectedIndices, [0], "Selected indices array is correct, only one entry (0)");
+			assert.deepEqual(aSelectedIndices, [0], "Selected indices array is correct, only one entry (0)");
 
 			equal(oBinding.findNode(5).selected, undefined, "Index 1 should not be selected anymore.");
 
@@ -1583,7 +1583,7 @@
 				var aContexts = oBinding.getContexts(0, 4);
 
 				var aSelectedIndices = oBinding.getSelectedIndices();
-				deepEqual(aSelectedIndices, [0, 1, 2, 3], "Selected indices after paging ok");
+				assert.deepEqual(aSelectedIndices, [0, 1, 2, 3], "Selected indices after paging ok");
 
 				// now expand first node
 				oBinding.attachChange(fnChangeHandler3);
@@ -1601,7 +1601,7 @@
 				var aContexts = oBinding.getContexts(0, 4);
 
 				var aSelectedIndices = oBinding.getSelectedIndices();
-				deepEqual(aSelectedIndices, [0, 8, 9, 10], "Selected indices after expand ok");
+				assert.deepEqual(aSelectedIndices, [0, 8, 9, 10], "Selected indices after expand ok");
 
 				done();
 			};
@@ -1791,8 +1791,8 @@
 				var oN000002_test2 = oBinding.getNodeByIndex(0);
 				var oN000003_test2 = oBinding.getNodeByIndex(1);
 
-				deepEqual(oN000002, oN000002_test2, "Correct node for index 0 found via getNodeByIndex.");
-				deepEqual(oN000003, oN000003_test2, "Correct node for index 1 found via getNodeByIndex.");
+				assert.deepEqual(oN000002, oN000002_test2, "Correct node for index 0 found via getNodeByIndex.");
+				assert.deepEqual(oN000003, oN000003_test2, "Correct node for index 1 found via getNodeByIndex.");
 
 				// check if contexts are correctly returned via getContextByIndex vs getContexts
 				// Beware: Indices are shifted by 1, as the context array starts with 0

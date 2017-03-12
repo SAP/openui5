@@ -78,7 +78,7 @@ sap.ui.require([
       ["Jupiter", "1898", "142,984", "23.1"]
     ];
 
-    deepEqual(dtu.toTable(data),
+    assert.deepEqual(dtu.toTable(data),
       [
         {
           "Planet": "Mercury",
@@ -130,10 +130,10 @@ sap.ui.require([
       }
     ];
 
-    deepEqual(dtu.toTable(data, "camelCase"), expected, "camelCase string");
+    assert.deepEqual(dtu.toTable(data, "camelCase"), expected, "camelCase string");
 
     var normalizationFunction = sap.ui.test.gherkin.dataTableUtils.normalization.camelCase;
-    deepEqual(dtu.toTable(data, normalizationFunction), expected, "camelCase function");
+    assert.deepEqual(dtu.toTable(data, normalizationFunction), expected, "camelCase function");
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -179,7 +179,7 @@ sap.ui.require([
       ["Gravity", "9.8"]
     ];
 
-    deepEqual(dtu.toObject(data), {
+    assert.deepEqual(dtu.toObject(data), {
       Planet: "Earth",
       Mass: "5.97",
       Diameter: "12,756",
@@ -199,7 +199,7 @@ sap.ui.require([
       ["Telephone Number", "Work", "123-456-0987"]
     ];
 
-    deepEqual(dtu.toObject(data), {
+    assert.deepEqual(dtu.toObject(data), {
       "Namey Name": "Alice",
       "Mystery Mass": "135 lbs",
       "Telephone Number": {
@@ -329,10 +329,10 @@ sap.ui.require([
       }
     };
 
-    deepEqual(dtu.toObject(data, "hyphenated"), expected, "hyphenated string");
+    assert.deepEqual(dtu.toObject(data, "hyphenated"), expected, "hyphenated string");
 
     var normalizationFunction = sap.ui.test.gherkin.dataTableUtils.normalization.hyphenated;
-    deepEqual(dtu.toObject(data, normalizationFunction), expected, "hyphenated function");
+    assert.deepEqual(dtu.toObject(data, normalizationFunction), expected, "hyphenated function");
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////

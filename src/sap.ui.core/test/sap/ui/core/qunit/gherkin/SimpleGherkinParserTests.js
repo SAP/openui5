@@ -40,7 +40,7 @@ sap.ui.require([
       "# This is a comment with no leading spaces that should be stripped"
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Serve coffee",
       scenarios: [
@@ -79,7 +79,7 @@ sap.ui.require([
       "    Then I should be served a coffee"
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Serve coffee",
       background: {
@@ -119,7 +119,7 @@ sap.ui.require([
       "    Then they should be happy"
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Give coffee to users",
       scenarios: [
@@ -165,7 +165,7 @@ sap.ui.require([
       "  Scenario: No coffee for you"
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: ["@wip", "@integration", "@caffeinated"],
       name: "Serve coffee",
       scenarios: [
@@ -207,7 +207,7 @@ sap.ui.require([
       ""
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Give cups of coffee to users",
       scenarios: [
@@ -301,7 +301,7 @@ sap.ui.require([
       ""
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Give cups of coffee to users",
       scenarios: [{
@@ -334,7 +334,7 @@ sap.ui.require([
       ""
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Give cups of coffee to users",
       scenarios: [{
@@ -364,7 +364,7 @@ sap.ui.require([
       ""
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Give cups of coffee to users",
       scenarios: [{
@@ -397,7 +397,7 @@ sap.ui.require([
       ""
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Give cups of coffee to users",
       scenarios: [{
