@@ -72,8 +72,8 @@
 
 			// Assert
 			//The only that contains a tile id is id+ "-remove" that's why it's retrived like this
-			equal($("#" + tile1.getId()+ "-remove").length,1);
-			equal($("#" + tile2.getId()+ "-remove").length,1);
+			assert.equal($("#" + tile1.getId()+ "-remove").length,1);
+			assert.equal($("#" + tile2.getId()+ "-remove").length,1);
 
 			// Cleanup
 			sut.destroy();
@@ -99,7 +99,7 @@
 			ok(sut.$().hasClass("sapMTCEditable"));
 			ok(sut.getEditable());
 			for ( i = 0; i < tiles.length; i++) {
-				equal(tiles[i].isEditable(),true);
+				assert.equal(tiles[i].isEditable(),true);
 			}
 
 			// Cleanup
@@ -211,20 +211,20 @@
 				oDim = sut._getContainerDimension();
 				pagerHeight = jQuery.sap.byId( id + "-pager").outerHeight();
 
-				equal(sut.$().css("visibility"),"visible","TileContainer was visible");
+				assert.equal(sut.$().css("visibility"),"visible","TileContainer was visible");
 
 				$scroll = jQuery.sap.byId(id + "-scrl");
-				equal($scroll.css("width"), oDim.outerwidth + "px","scroll width");
-				equal($scroll.css("height"), (oDim.outerheight - pagerHeight) + "px","scroll height");
+				assert.equal($scroll.css("width"), oDim.outerwidth + "px","scroll width");
+				assert.equal($scroll.css("height"), (oDim.outerheight - pagerHeight) + "px","scroll height");
 
 
 				$rightEdge = jQuery.sap.byId(id + "-rightedge");
-				equal($rightEdge.css("top"), (sut.getDomRef().offsetTop + expectedOffset) + "px","right edge top");
-				equal($rightEdge.css("right"),expectedOffset + "px");
+				assert.equal($rightEdge.css("top"), (sut.getDomRef().offsetTop + expectedOffset) + "px","right edge top");
+				assert.equal($rightEdge.css("right"),expectedOffset + "px");
 
 				$leftEdge = jQuery.sap.byId(id + "-leftedge");
-				equal($leftEdge.css("top"), (sut.getDomRef().offsetTop + expectedOffset) + "px","left edge top");
-				equal($leftEdge.css("left"),expectedOffset + "px");
+				assert.equal($leftEdge.css("top"), (sut.getDomRef().offsetTop + expectedOffset) + "px","left edge top");
+				assert.equal($leftEdge.css("left"),expectedOffset + "px");
 
 				// Cleanup
 				sut.destroy();
@@ -258,8 +258,8 @@
 				sut.scrollIntoView(lastTile,false);
 
 				//Assert
-				equal(sut._iCurrentPage, 1);
-				equal(sut._iMaxTiles, sut.getPageFirstTileIndex());
+				assert.equal(sut._iCurrentPage, 1);
+				assert.equal(sut._iMaxTiles, sut.getPageFirstTileIndex());
 
 				//Cleanup
 				sut.destroy();
@@ -292,7 +292,7 @@
 				var aTilesDom = jQuery('#testOrder').find('.sapMTile');
 
 				// Assert that the index of the tile in the DOM is the same as the index of aggregation
-				equal(sut.getTiles()[3].getId(), jQuery(aTilesDom[3]).attr('id'), 'first, first; equal success');
+				assert.equal(sut.getTiles()[3].getId(), jQuery(aTilesDom[3]).attr('id'), 'first, first; equal success');
 
 				sut.destroy();
 				done();
@@ -319,10 +319,10 @@
 				var aTilesDom = jQuery('#testOrderVis').find('.sapMTile');
 
 				// Assert that the second tile in the aggregation is first in the DOM, since the first has visible set to false
-				equal(aTilesDom.eq(0).attr('id'), 'second', 'first tile in the DOM is the second one, since the first is not visible');
+				assert.equal(aTilesDom.eq(0).attr('id'), 'second', 'first tile in the DOM is the second one, since the first is not visible');
 
 				// Assert that the tiles in the DOM are only two not three like in aggregation, when one of the tiles is not visible
-				equal(aTilesDom.length, 2, 'only 2 tiles are rendered inside the DOM');
+				assert.equal(aTilesDom.length, 2, 'only 2 tiles are rendered inside the DOM');
 
 				sut.destroy();
 				done();
@@ -376,23 +376,23 @@
 				core.applyChanges();
 				setTimeout(function() {
 					var sRealTileDimension = this.sut._oTileDimensionCalculator.getLastCalculatedDimension();
-					equal(3, sRealTileDimension.width, "Width check");
-					equal(5, sRealTileDimension.height, "Height check");
+					assert.equal(3, sRealTileDimension.width, "Width check");
+					assert.equal(5, sRealTileDimension.height, "Height check");
 
 					// "change" the tile's dimension and verify they didn't take place unless an event that
 					// provokes change occurs
 					this.mockElementWidthAndHeight(30, 50);
 					sRealTileDimension = this.sut._oTileDimensionCalculator.getLastCalculatedDimension();
-					equal(sRealTileDimension.width, 3, "Tile's width should retain the same as before");
-					equal(sRealTileDimension.height, 5, "Tile's height should retain the same as before");
+					assert.equal(sRealTileDimension.width, 3, "Tile's width should retain the same as before");
+					assert.equal(sRealTileDimension.height, 5, "Tile's height should retain the same as before");
 
 					//provoke real tile dimension change
 
 					oFnThatProvokesTileDimensionChanges.apply(this.sut, args);
 					setTimeout(function() {
 						sRealTileDimension = this.sut._oTileDimensionCalculator.getLastCalculatedDimension();
-						equal(sRealTileDimension.width, 30, "Tile's width should be changed.");
-						equal(sRealTileDimension.height, 50, "Tile's height should be changed.");
+						assert.equal(sRealTileDimension.width, 30, "Tile's width should be changed.");
+						assert.equal(sRealTileDimension.height, 50, "Tile's height should be changed.");
 						done();
 					}.bind(this), 1000);
 				}.bind(this), 1000);
@@ -460,12 +460,12 @@
 		QUnit.test('ShouldHaveAccessibilityAttributes', function (assert) {
 			var tile1 	= this.sut.getTiles()[0];
 			// Assert
-			equal(this.sut.$().attr('role'), 'listbox', 'listbox, listbox; equal success');
-			equal(this.sut.$().attr('aria-multiselectable'), "false", 'false, false; equal success');
-			equal(this.sut.$().attr('aria-activedescendant'), "first");
+			assert.equal(this.sut.$().attr('role'), 'listbox', 'listbox, listbox; equal success');
+			assert.equal(this.sut.$().attr('aria-multiselectable'), "false", 'false, false; equal success');
+			assert.equal(this.sut.$().attr('aria-activedescendant'), "first");
 			// Assert
-			equal(tile1.$().attr('aria-posinset'), 1, '1, 1; equal success');
-			equal(tile1.$().attr('aria-setsize'), this.sut.getTiles().length, 'aria-setsize');
+			assert.equal(tile1.$().attr('aria-posinset'), 1, '1, 1; equal success');
+			assert.equal(tile1.$().attr('aria-setsize'), this.sut.getTiles().length, 'aria-setsize');
 		});
 
 		QUnit.test('TilesShouldHaveProperAccessibilityPositionAttributeValueAfterReordering', function (assert) {
@@ -478,7 +478,7 @@
 					aExpectedAriaPosInSetValues = this.getExpectedAriaPositionInSetValues();
 
 				// Assert that there are 6 tiles with aria-posinset attribute
-				equal(aInsetPositions.length, "6", '6, 6; equal success');
+				assert.equal(aInsetPositions.length, "6", '6, 6; equal success');
 
 				// Assert that all tiles have aria-posinset attribute with proper values:
 				// no duplicates and proper numeric order
@@ -490,7 +490,7 @@
 				this.sut.moveTile(this.sut.getTiles()[0], 3);
 				assert.deepEqual(this.getAriaPosInSetValues(), aExpectedAriaPosInSetValues, "Checking the 'aria-posinset' for exact values");
 				// Assert that the tile was actually moved
-				equal(this.sut.getTiles()[3].getId(), 'first', 'first, first; equal success');
+				assert.equal(this.sut.getTiles()[3].getId(), 'first', 'first, first; equal success');
 
 
 				// Assert that all tiles have aria-posinset attribute with proper values
@@ -499,7 +499,7 @@
 				assert.deepEqual(this.getAriaPosInSetValues(), aExpectedAriaPosInSetValues, "Checking the 'aria-posinset' for exact values");
 
 				// Assert that the tile was actually moved
-				equal(this.sut.getTiles()[1].getId(), 'fifth', 'fifth, fifth; equal success');
+				assert.equal(this.sut.getTiles()[1].getId(), 'fifth', 'fifth, fifth; equal success');
 				done();
 			}.bind(this), delay);
 		});

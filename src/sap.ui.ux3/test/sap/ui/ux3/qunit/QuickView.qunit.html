@@ -126,7 +126,7 @@
 
 	QUnit.test("Assignment of elements", function(assert) {
 		// Tooltip
-		equal(sap.ui.getCore().getControl("QVButton").getTooltip().getId(),
+		assert.equal(sap.ui.getCore().getControl("QVButton").getTooltip().getId(),
 				"QuickView", "QuickView is assigned as a tooltip to a button");
 	});
 
@@ -175,7 +175,7 @@
 			 jQuery('#QuickView-link').trigger('click');
 			setTimeout(function(){
 				ok(isQuickViewVisible()==false, "QuickView is not visible after navigate event");
-				equal(document.activeElement.id, "QVButton", "The parent element should be focused after the focused QuickView is closed");
+				assert.equal(document.activeElement.id, "QVButton", "The parent element should be focused after the focused QuickView is closed");
 				done();
 			}, 1000); // CLOSE
 		}, 1000); // OPEN

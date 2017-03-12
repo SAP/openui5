@@ -26,7 +26,7 @@
 		     QUnit.test("1. a basic test example", function(assert) {
 		     ok( true, "this test is fine" );
 		     var value = "hello1";
-		     equal( value, "hello1", "We expect value to be hello" );
+		     assert.equal( value, "hello1", "We expect value to be hello" );
 		   });
 		*/
 
@@ -74,23 +74,23 @@
 
 		QUnit.test("Test Creation, Getters and Setter", function(assert){
 			ok( oRowRepeater != null, "RowRepeater created");
-			equal( oRowRepeater.getVisible(), true , "visible property correct");
-			equal( oRowRepeater.getNumberOfRows(), 5 , "numberOfRows property correct");
+			assert.equal( oRowRepeater.getVisible(), true , "visible property correct");
+			assert.equal( oRowRepeater.getNumberOfRows(), 5 , "numberOfRows property correct");
 			ok( oRowRepeater.setNumberOfRows(10) , "setting numberOfRows to 10");
-			equal( oRowRepeater.getNumberOfRows(), 10 , "numberOfRows property still correct");
-			equal( oRowRepeater.getCurrentPage(), 1 , "currentPage property correct");
+			assert.equal( oRowRepeater.getNumberOfRows(), 10 , "numberOfRows property still correct");
+			assert.equal( oRowRepeater.getCurrentPage(), 1 , "currentPage property correct");
 			ok( oRowRepeater.setCurrentPage(2) , "setting currentPage property to 2");
-			equal( oRowRepeater.getCurrentPage(), 2 , "currentPage property still correct");
-			equal( oRowRepeater.getShowMoreSteps(), 3 , "showMoreSteps property correct");
-			equal( oRowRepeater.getFixedRowHeight(), "25px" , "fixedRowHeight property correct");
-			equal( oRowRepeater.getDesign(), sap.ui.commons.RowRepeaterDesign.Standard , "design property correct");
+			assert.equal( oRowRepeater.getCurrentPage(), 2 , "currentPage property still correct");
+			assert.equal( oRowRepeater.getShowMoreSteps(), 3 , "showMoreSteps property correct");
+			assert.equal( oRowRepeater.getFixedRowHeight(), "25px" , "fixedRowHeight property correct");
+			assert.equal( oRowRepeater.getDesign(), sap.ui.commons.RowRepeaterDesign.Standard , "design property correct");
 			ok( oRowRepeater.setTitle(new sap.ui.core.Title({text:"RowRepeater"})), "setting a title" );
 		});
 
 		QUnit.test("Test Aggregation Binding", function(assert) {
-			equal( oRowRepeater.isBound(), false , "not bound yet");
+			assert.equal( oRowRepeater.isBound(), false , "not bound yet");
 			ok( oRowRepeater.bindRows("/data",oRowTemplate));
-			equal( oRowRepeater.isBound(), true , "now it is bound");
+			assert.equal( oRowRepeater.isBound(), true , "now it is bound");
 		});
 
 		QUnit.test("Test ShowMore Feature (1)", function(assert) {
@@ -153,41 +153,41 @@
 		});
 
 		QUnit.test("Test Filter Aggregation", function(assert) {
-			equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
+			assert.equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
 			ok( oRowRepeater.addFilter(new sap.ui.commons.RowRepeaterFilter("test_filter_1",{text:"Test",filters:[new sap.ui.model.Filter("index", "NE", "Test")],tooltip:"Test"})), "filter added");
-			equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
+			assert.equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
 			ok( oRowRepeater.insertFilter(new sap.ui.commons.RowRepeaterFilter("test_filter_2",{text:"Test",filters:[new sap.ui.model.Filter("test", "EQ", "Test")],tooltip:"Test"}),0), "filter inserted");
 			ok( oRowRepeater.applyFilter("test_filter_1"), "filter 'test_filter_1' applied");
 			ok( oRowRepeater.applyFilter("test_filter_2"), "filter 'test_filter_2' applied");
-			equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
+			assert.equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
 			ok( oRowRepeater.removeFilter(1), "filter removed");
-			equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
-			equal(oRowRepeater.getFilters()[0].getId(), "test_filter_2", "check filter on position 1");
+			assert.equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
+			assert.equal(oRowRepeater.getFilters()[0].getId(), "test_filter_2", "check filter on position 1");
 			ok( oRowRepeater.removeAllFilters(), "all filters removed");
-			equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
+			assert.equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
 			ok( oRowRepeater.addFilter(new sap.ui.commons.RowRepeaterFilter("test_filter_3",{text:"Test",filters:[new sap.ui.model.Filter("test", "EQ", "Test")],tooltip:"Test"})), "filter added");
-			equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
+			assert.equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
 			ok( oRowRepeater.destroyFilters(), "filters destroyed");
-			equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
+			assert.equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
 		});
 
 		QUnit.test("Test Sorter Aggregation", function(assert) {
-			equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
+			assert.equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
 			ok( oRowRepeater.addSorter(new sap.ui.commons.RowRepeaterSorter("test_sorter_1",{text:"Test",sorter:new sap.ui.model.Sorter("index",false),tooltip:"Test"})), "sorter added");
-			equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
+			assert.equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
 			ok( oRowRepeater.insertSorter(new sap.ui.commons.RowRepeaterSorter("test_sorter_2",{text:"Test",sorter:new sap.ui.model.Sorter("index",true),tooltip:"Test"}),0), "sorter inserted");
 			ok( oRowRepeater.triggerSort("test_sorter_1"), "sorter 'test_sorter_1' applied");
 			ok( oRowRepeater.triggerSort("test_sorter_2"), "sorter 'test_sorter_2' applied");
-			equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
+			assert.equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
 			ok( oRowRepeater.removeSorter(1), "sorter removed");
-			equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
-			equal(oRowRepeater.getSorters()[0].getId(), "test_sorter_2", "check sorter on position 1");
+			assert.equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
+			assert.equal(oRowRepeater.getSorters()[0].getId(), "test_sorter_2", "check sorter on position 1");
 			ok( oRowRepeater.removeAllSorters(), "all sorters removed");
-			equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
+			assert.equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
 			ok( oRowRepeater.addSorter(new sap.ui.commons.RowRepeaterSorter("test_sorter_3",{text:"Test",sorter:new sap.ui.model.Sorter("test")})), "sorter added");
-			equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
+			assert.equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
 			ok( oRowRepeater.destroySorters(), "sorters destroyed");
-			equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
+			assert.equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
 		});
 
 		QUnit.test("Test Thresholding", function(assert){
@@ -205,7 +205,7 @@
 		    sap.ui.model.json.JSONListBinding.extend("FWsJSONListBinding", {
 		        getContexts : function(iStartIndex, iLength, iThreshold) {
 					iCount++;
-					equal(iThreshold, 50, "Threshold value test");
+					assert.equal(iThreshold, 50, "Threshold value test");
 
 					// this is only a simple check...if data should be fetched from the server
 					// so no check if every data in between was loaded or not when paging backwards.
@@ -253,8 +253,8 @@
 		    ok( oRowRepeater2.lastPage(), "go to last page" ); // should trigger a reload
 			setTimeout(function() {
 				ok(iCount >= 4, "iCount test");
-				equal(iReloadCount, 2, "iReloadCount test");
-				equal(iMaxLoadedContexts, 440 , "iLoadedData test");
+				assert.equal(iReloadCount, 2, "iReloadCount test");
+				assert.equal(iMaxLoadedContexts, 440 , "iLoadedData test");
 				done();
 			}, 3000);
 

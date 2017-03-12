@@ -107,7 +107,7 @@
 			var oDomRef = jQuery("#resizeArea").get(0);
 			var currentNumberOfEventListeners = oResizeHandler.aResizeListeners.length;
 			var sResizeListenerId = sap.ui.core.ResizeHandler.register(oDomRef, doOnResize);
-			equal(oResizeHandler.aResizeListeners.length, currentNumberOfEventListeners+1, "Number of event listeners after registration");
+			assert.equal(oResizeHandler.aResizeListeners.length, currentNumberOfEventListeners+1, "Number of event listeners after registration");
 			var bIsRegistered = false;
 			jQuery.each(oResizeHandler.aResizeListeners, function(index, oResizeListener){
 				if(oResizeListener.sId == sResizeListenerId){
@@ -119,7 +119,7 @@
 			});
 			ok(bIsRegistered, "Listener registered correctly");
 			sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
-			equal(oResizeHandler.aResizeListeners.length, currentNumberOfEventListeners, "Number of event listeners after de-registration");
+			assert.equal(oResizeHandler.aResizeListeners.length, currentNumberOfEventListeners, "Number of event listeners after de-registration");
 		});
 
 
@@ -264,11 +264,11 @@
 			assert.expect(7);
 			var oResizeAreaDom = jQuery("#resizeArea").get(0);
 			var sResizeListenerId = _register(oResizeAreaDom);
-			equal(oResizeAreaDom.offsetHeight, 150, "height should be 150px");
+			assert.equal(oResizeAreaDom.offsetHeight, 150, "height should be 150px");
 
 			// now make the parent invisible
 			jQuery("#resizeAreaContainer").attr("style", "width:151px;height:150px;display:none;");
-			equal(oResizeAreaDom.offsetHeight, 0, "height should be 0px when the parent is display:none");
+			assert.equal(oResizeAreaDom.offsetHeight, 0, "height should be 0px when the parent is display:none");
 
 			window.setTimeout(function(){
 				ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize due to display:none");
@@ -276,7 +276,7 @@
 
 				// now make the parent visible again
 				jQuery("#resizeAreaContainer").attr("style", "width:151px;height:150px;");
-				equal(oResizeAreaDom.offsetHeight, 150, "height should be 150px again when the parent is display:block");
+				assert.equal(oResizeAreaDom.offsetHeight, 150, "height should be 150px again when the parent is display:block");
 
 				window.setTimeout(function(){
 					ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize due to display:none");

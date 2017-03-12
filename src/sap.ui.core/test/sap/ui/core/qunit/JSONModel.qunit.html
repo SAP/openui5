@@ -144,109 +144,109 @@
 		oArr.attachChange(function(){bArr = true; iChangeCount++});
 		oArrName.attachChange(function(){bArrName = true; iChangeCount++});
 
-		equal(typeof oData.obj, "object", "JSON object");
-		equal(jQuery.isArray(oData.arr), true, "JSON array");
-		equal(typeof oData.string, "string", "JSON string");
-		equal(typeof oData.number, "number", "JSON number");
-		equal(typeof oData.bool, "boolean", "JSON boolean");
-		equal(typeof oData.func, "function", "JSON function");
-		equal(oData.date instanceof Date, true, "JSON Date");
+		assert.equal(typeof oData.obj, "object", "JSON object");
+		assert.equal(jQuery.isArray(oData.arr), true, "JSON array");
+		assert.equal(typeof oData.string, "string", "JSON string");
+		assert.equal(typeof oData.number, "number", "JSON number");
+		assert.equal(typeof oData.bool, "boolean", "JSON boolean");
+		assert.equal(typeof oData.func, "function", "JSON function");
+		assert.equal(oData.date instanceof Date, true, "JSON Date");
 
-		equal(oString.getValue(), "abc123", "String old value");
+		assert.equal(oString.getValue(), "abc123", "String old value");
 		oData.string = "def456";
-		equal(oString.getValue(), "def456", "String new value");
+		assert.equal(oString.getValue(), "def456", "String new value");
 		ok(bString, "String change event fired");
 
-		equal(oNumber.getValue(), 123, "Number old value");
+		assert.equal(oNumber.getValue(), 123, "Number old value");
 		oData.number = 456;
-		equal(oNumber.getValue(), 456, "Number new value");
+		assert.equal(oNumber.getValue(), 456, "Number new value");
 		ok(bNumber, "Number change event fired");
 
-		equal(oBool.getValue(), true, "Boolean old value");
+		assert.equal(oBool.getValue(), true, "Boolean old value");
 		oData.bool = false;
-		equal(oBool.getValue(), false, "Boolean new value");
+		assert.equal(oBool.getValue(), false, "Boolean new value");
 		ok(bBool, "Boolean change event fired");
 
-		equal(oDate.getValue(), oData.date, "Date old value");
+		assert.equal(oDate.getValue(), oData.date, "Date old value");
 		oData.date = new Date();
-		equal(oDate.getValue(), oData.date, "Date new value");
+		assert.equal(oDate.getValue(), oData.date, "Date new value");
 		ok(bDate, "Date change event fired");
 
-		equal(oObj.getValue(), oData.obj, "Object old value");
-		equal(oObjName.getValue(), "value1", "Object name old value");
+		assert.equal(oObj.getValue(), oData.obj, "Object old value");
+		assert.equal(oObjName.getValue(), "value1", "Object name old value");
 		oData.obj = { name1 : "other1" };
-		equal(oObj.getValue(), oData.obj, "Object new value");
-		equal(oObjName.getValue(), "other1", "Object name new value");
+		assert.equal(oObj.getValue(), oData.obj, "Object new value");
+		assert.equal(oObjName.getValue(), "other1", "Object name new value");
 		ok(bObj, "Object change event fired");
 		ok(bObjName, "Object name change event fired");
 
-		equal(oArr.getValue(), oData.arr, "Array old value");
-		equal(oArrName.getValue(), "value1", "Array name old value");
+		assert.equal(oArr.getValue(), oData.arr, "Array old value");
+		assert.equal(oArrName.getValue(), "value1", "Array name old value");
 		oData.arr = [{ name : "other1" }];
-		equal(oArr.getValue(), oData.arr, "Array new value");
-		equal(oArrName.getValue(), "other1", "Array name new value");
+		assert.equal(oArr.getValue(), oData.arr, "Array new value");
+		assert.equal(oArrName.getValue(), "other1", "Array name new value");
 		ok(bArr, "Array change event fired");
 		ok(bArrName, "Array name change event fired");
 
-		equal(iChangeCount, 8, "All 8 change handlers have been called once");
+		assert.equal(iChangeCount, 8, "All 8 change handlers have been called once");
 
 	});
 
 	QUnit.test("test model getProperty", function(assert) {
 		var value = oModel.getProperty("/teamMembers/6/lastName");
-		equal(value, "Wallace", "model value");
+		assert.equal(value, "Wallace", "model value");
 		value = oModel.getProperty("/rootproperty");
-		equal(value, "test1", "model value");
+		assert.equal(value, "test1", "model value");
 	});
 
 	QUnit.test("test model getProperty with context", function(assert) {
 		var oContext = oModel.createBindingContext("/teamMembers");
 		var value = oModel.getProperty("6/lastName", oContext);
-		equal(value, "Wallace", "model value");
+		assert.equal(value, "Wallace", "model value");
 		value = oModel.getProperty("/rootproperty");
-		equal(value, "test1", "model value");
+		assert.equal(value, "test1", "model value");
 	});
 
 	QUnit.test("test model setProperty", function(assert) {
 		oModel.setProperty("/teamMembers/4/lastName", "Jackson");
 		var value = oModel.getProperty("/teamMembers/4/lastName");
-		equal(value, "Jackson", "model value");
+		assert.equal(value, "Jackson", "model value");
 		oModel.setProperty("/rootproperty", "test2");
 		var value = oModel.getProperty("/rootproperty");
-		equal(value, "test2", "model value");
+		assert.equal(value, "test2", "model value");
 	});
 
 	QUnit.test("test model setProperty on root", function(assert) {
 		var oModel = new sap.ui.model.json.JSONModel({a:1}),
 			oTest = {b:2};
 		oModel.setProperty("/", oTest);
-		equal(oModel.getData(), oTest, "model data changed");
+		assert.equal(oModel.getData(), oTest, "model data changed");
 	});
 
 	QUnit.test("test model setProperty with context", function(assert) {
 		var oContext = oModel.createBindingContext("/teamMembers");
 		oModel.setProperty("4/lastName", "Smith", oContext);
 		var value = oModel.getProperty("/teamMembers/4/lastName");
-		equal(value, "Smith", "model value");
+		assert.equal(value, "Smith", "model value");
 		oModel.setProperty("/rootproperty", "test3", oContext);
 		var value = oModel.getProperty("/rootproperty");
-		equal(value, "test3", "model value");
+		assert.equal(value, "test3", "model value");
 	});
 
 	QUnit.test("test getProperty on label", function(assert) {
-		equal(oLabel.getText(),"testText", "old text value");
+		assert.equal(oLabel.getText(),"testText", "old text value");
 		oLabel.bindProperty("text", "/teamMembers/4/firstName");
-		equal(oLabel.getText(), "Michael", "text value from model");
+		assert.equal(oLabel.getText(), "Michael", "text value from model");
 	});
 
 	QUnit.test("test model setProperty onlabel", function(assert) {
 		oLabel.setText("test");
-		equal(oLabel.getText(),"test", "old text value");
+		assert.equal(oLabel.getText(),"test", "old text value");
 		oLabel.bindProperty("text", "/teamMembers/1/firstName");
-		equal(oLabel.getText(), "Peter", "text value from model");
+		assert.equal(oLabel.getText(), "Peter", "text value from model");
 		// modify model value
 		oModel.setProperty("/teamMembers/1/firstName", "Petre");
-		equal(oLabel.getText(), "Petre", "new text value from model");
+		assert.equal(oLabel.getText(), "Petre", "new text value from model");
 	});
 
 	QUnit.test("test model setProperty with invalid bindingContext and relative path", function(assert) {
@@ -259,10 +259,10 @@
 		var oContext = oModel.createBindingContext("/teamMembers");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "1/firstName");
-		equal(oLabel.getText(), "Petre", "text value from model");
+		assert.equal(oLabel.getText(), "Petre", "text value from model");
 		// modify model value
 		oModel.setProperty("1/firstName", "Petri", oLabel.getBindingContext());
-		equal(oLabel.getText(), "Petri", "new text value from model");
+		assert.equal(oLabel.getText(), "Petri", "new text value from model");
 	});
 
 	QUnit.test("test model setProperty onlabel with bindingContext and relative path (legacySyntax = true)", function(assert) {
@@ -270,10 +270,10 @@
 		var oContext = oModel.createBindingContext("/teamMembers");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "1/firstName");
-		equal(oLabel.getText(), "Petri", "text value from model");
+		assert.equal(oLabel.getText(), "Petri", "text value from model");
 		// modify model value
 		oModel.setProperty("1/firstName", "Petro", oLabel.getBindingContext());
-		equal(oLabel.getText(), "Petro", "new text value from model");
+		assert.equal(oLabel.getText(), "Petro", "new text value from model");
 		oModel.setLegacySyntax(false);
 	});
 
@@ -281,10 +281,10 @@
 		oModel.setLegacySyntax(true);
 		oLabel.setBindingContext(undefined);
 		oLabel.bindProperty("text", "teamMembers/1/firstName");
-		equal(oLabel.getText(), "Petro", "text value from model");
+		assert.equal(oLabel.getText(), "Petro", "text value from model");
 		// modify model value
 		oModel.setProperty("teamMembers/1/firstName", "Petre", oLabel.getBindingContext());
-		equal(oLabel.getText(), "Petre", "new text value from model");
+		assert.equal(oLabel.getText(), "Petre", "new text value from model");
 		oModel.setLegacySyntax(false);
 	});
 
@@ -293,10 +293,10 @@
 		var oContext = oModel.createBindingContext("/teamMembers/HorstDerGrosse");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "/teamMembers/1/firstName");
-		equal(oLabel.getText(), "Petre", "text value from model");
+		assert.equal(oLabel.getText(), "Petre", "text value from model");
 		// modify model value
 		oModel.setProperty("/teamMembers/1/firstName", "Petra", oLabel.getBindingContext());
-		equal(oLabel.getText(), "Petra", "new text value from model");
+		assert.equal(oLabel.getText(), "Petra", "new text value from model");
 		oModel.setLegacySyntax(false);
 	});
 
@@ -304,15 +304,15 @@
 		var oContext = oModel.createBindingContext("/teamMembers/HorstDerGrosse");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "/teamMembers/1/firstName");
-		equal(oLabel.getText(), "Petra", "text value from model");
+		assert.equal(oLabel.getText(), "Petra", "text value from model");
 		// modify model value
 		oModel.setProperty("/teamMembers/1/firstName", "Peter");
-		equal(oLabel.getText(), "Peter", "new text value from model");
+		assert.equal(oLabel.getText(), "Peter", "new text value from model");
 	});
 
 	QUnit.test("test model getProperty with bindingContext and path = null", function(assert) {
 		var oContext = oModel.createBindingContext("/teamMembers");
-		equal(oModel.getProperty(null, oContext).length, 7, "array of teammembers");
+		assert.equal(oModel.getProperty(null, oContext).length, 7, "array of teammembers");
 	});
 
 
@@ -323,9 +323,9 @@
 		oLayout.setBindingContext(oContext);
 		oLabel.setModel(oModelChild);
 		oLabel.bindProperty("text", "/pets/0/type");
-		equal(oLabel.getText(), "ape", "text value from model");
+		assert.equal(oLabel.getText(), "ape", "text value from model");
 		oModelChild.setProperty("/pets/0/type", "hamster");
-		equal(oLabel.getText(), "hamster", "new text value from model");
+		assert.equal(oLabel.getText(), "hamster", "new text value from model");
 	});
 
 	var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
@@ -338,11 +338,11 @@
 		oLB.bindAggregation("items", "/teamMembers", oItemTemplate);
 
 		var listItems = oLB.getItems();
-		equal(listItems.length, 7, "length of items");
+		assert.equal(listItems.length, 7, "length of items");
 
 		jQuery(listItems).each( function(i, item){
-			equal(item.getText(), testdata.teamMembers[i].firstName, "firstName");
-			equal(item.getAdditionalText(), testdata.teamMembers[i].lastName, "lastName");
+			assert.equal(item.getText(), testdata.teamMembers[i].firstName, "firstName");
+			assert.equal(item.getAdditionalText(), testdata.teamMembers[i].lastName, "lastName");
 		});
 
 	});
@@ -354,19 +354,19 @@
 			"bar": "ABCDEFG",
 			"baz": [52, 97]
 		});
-		equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
-		equal(testModel.getProperty("/bar"), "ABCDEFG");
-		equal(testModel.getProperty("/baz")[1], 97);
+		assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+		assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
+		assert.equal(testModel.getProperty("/baz")[1], 97);
 
 	});
 
 	QUnit.test("test create binding context", function(assert) {
 		var oContext;
 		oContext = oModel.createBindingContext("/root/test/subtest/name");
-		equal(oContext.getPath(), "/root/test/subtest/name", "newContext returnValue");
+		assert.equal(oContext.getPath(), "/root/test/subtest/name", "newContext returnValue");
 
 		oModel.createBindingContext("/root/test/subtest/name", null, function(context){
-			equal(context.getPath(), "/root/test/subtest/name", "newContext");
+			assert.equal(context.getPath(), "/root/test/subtest/name", "newContext");
 		});
 		oModel.createBindingContext("root/test/subtest/name", null, function(context){
 			ok(context == null, "newContext");
@@ -374,11 +374,11 @@
 		oContext = new sap.ui.model.Context(oModel, "/myContext");
 		// if spath starts with / ... context will be ignored, because path is absolute
 		oModel.createBindingContext("/root/test/subtest/name", oContext, function(context){
-			equal(context.getPath(), "/root/test/subtest/name", "newContext");
+			assert.equal(context.getPath(), "/root/test/subtest/name", "newContext");
 		});
 		oContext = new sap.ui.model.Context(oModel, "/myContext");
 		oModel.createBindingContext("root/test/subtest/name", oContext, function(context){
-			equal(context.getPath(), "/myContext/root/test/subtest/name", "newContext");
+			assert.equal(context.getPath(), "/myContext/root/test/subtest/name", "newContext");
 		});
 	});
 
@@ -394,17 +394,17 @@
 		ok(oLabel.getBindingContext() == undefined, "context undefined");
 		oContext = oModelChild.createBindingContext("/pets");
 		oLabel.setBindingContext(oContext);
-		equal(oLabel.getBindingContext().getPath(), "/pets", "context set correctly");
+		assert.equal(oLabel.getBindingContext().getPath(), "/pets", "context set correctly");
 		oModelChild.setProperty("0/type", "rat",oLabel.getBindingContext());
-		equal(oLabel.getText(), "rat", "new text value from model");
+		assert.equal(oLabel.getText(), "rat", "new text value from model");
 	});
 
 	QUnit.test("test JSONModel loadData: sync",function(assert) {
 		var testModel = new sap.ui.model.json.JSONModel();
 		testModel.loadData("testdata.json", null, false);
-		equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
-		equal(testModel.getProperty("/bar"), "ABCDEFG");
-		equal(testModel.getProperty("/baz")[1], 97);
+		assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+		assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
+		assert.equal(testModel.getProperty("/baz")[1], 97);
 	});
 
 	QUnit.test("test JSONModel loadData",function(assert){
@@ -412,9 +412,9 @@
 		var testModel = new sap.ui.model.json.JSONModel();
 		testModel.loadData("testdata.json");
 		testModel.attachRequestCompleted(function() {
-			equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
-			equal(testModel.getProperty("/bar"), "ABCDEFG");
-			equal(testModel.getProperty("/baz")[1], 97);
+			assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+			assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
+			assert.equal(testModel.getProperty("/baz")[1], 97);
 			done();          // resume normal testing
 		});
 	});
@@ -429,14 +429,14 @@
 			loadCount++;
 			if (loadCount == 1) {
 				// resume normal testing
-				equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
-				equal(testModel.getProperty("/bar"), "ABCDEFG");
-				equal(testModel.getProperty("/baz")[1], 97);
+				assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+				assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
+				assert.equal(testModel.getProperty("/baz")[1], 97);
 			} else {
-				equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
-				equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
-				equal(testModel.getProperty("/baz")[1], 97);
-				equal(testModel.getProperty("/merged"), true);
+				assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+				assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+				assert.equal(testModel.getProperty("/baz")[1], 97);
+				assert.equal(testModel.getProperty("/merged"), true);
 				done();
 			}
 		});
@@ -452,14 +452,14 @@
 			loadCount++;
 			if (loadCount == 1) {
 				// resume normal testing
-				equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
-				equal(testModel.getProperty("/bar"), "ABCDEFG");
-				equal(testModel.getProperty("/baz")[1], 97);
+				assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+				assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
+				assert.equal(testModel.getProperty("/baz")[1], 97);
 			} else {
 				ok(!testModel.getProperty("/foo"), "deleted as no merge");
-				equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+				assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
 				ok(!testModel.getProperty("/baz"), "deleted as no merge");
-				equal(testModel.getProperty("/merged"), true);
+				assert.equal(testModel.getProperty("/merged"), true);
 				done();
 			}
 		});
@@ -478,10 +478,10 @@
 			} else {
 				// resume normal testing
 				ok(oInfo.getParameter("url") == "/fake/testdata4.json", "second request");
-				equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
-				equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
-				equal(testModel.getProperty("/baz")[1], 97);
-				equal(testModel.getProperty("/merged"), true);
+				assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+				assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+				assert.equal(testModel.getProperty("/baz")[1], 97);
+				assert.equal(testModel.getProperty("/merged"), true);
 				done();
 			}
 		});
@@ -501,10 +501,10 @@
 			} else {
 				// resume normal testing
 				ok(oInfo.getParameter("url") == "/fake/testdata4.json", "second request");
-				equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
-				equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
-				equal(testModel.getProperty("/baz")[1], 97);
-				equal(testModel.getProperty("/merged"), true);
+				assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+				assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+				assert.equal(testModel.getProperty("/baz")[1], 97);
+				assert.equal(testModel.getProperty("/merged"), true);
 				done();
 			}
 		});
@@ -514,9 +514,9 @@
 		var done = assert.async();
 		var testModel = new sap.ui.model.json.JSONModel("testdata.json");
 		testModel.attachRequestCompleted(function() {
-			equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
-			equal(testModel.getProperty("/bar"), "ABCDEFG");
-			equal(testModel.getProperty("/baz")[1], 97);
+			assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+			assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
+			assert.equal(testModel.getProperty("/baz")[1], 97);
 			done();          // resume normal testing
 		});
 	});
@@ -527,53 +527,53 @@
 			aContexts;
 		oModel.setData(oArrayData);
 		aContexts = oModel.bindList("/").getContexts();
-		equal(aContexts[0].getPath(), "/0");
-		equal(aContexts[1].getPath(), "/1");
-		equal(aContexts[2].getPath(), "/2");
+		assert.equal(aContexts[0].getPath(), "/0");
+		assert.equal(aContexts[1].getPath(), "/1");
+		assert.equal(aContexts[2].getPath(), "/2");
 		aContexts = oModel.bindList("", null).getContexts();
-		equal(aContexts.length, 0);
+		assert.equal(aContexts.length, 0);
 		aContexts = oModel.bindList("/", oModel.getContext("/0")).getContexts();
-		equal(aContexts[0].getPath(), "/0");
-		equal(aContexts[1].getPath(), "/1");
-		equal(aContexts[2].getPath(), "/2");
+		assert.equal(aContexts[0].getPath(), "/0");
+		assert.equal(aContexts[1].getPath(), "/1");
+		assert.equal(aContexts[2].getPath(), "/2");
 		aContexts = oModel.bindList("", oModel.getContext("/")).getContexts();
-		equal(aContexts[0].getPath(), "/0");
-		equal(aContexts[1].getPath(), "/1");
-		equal(aContexts[2].getPath(), "/2");
+		assert.equal(aContexts[0].getPath(), "/0");
+		assert.equal(aContexts[1].getPath(), "/1");
+		assert.equal(aContexts[2].getPath(), "/2");
 		aContexts = oModel.bindList("/", oModel.getContext("/")).getContexts();
-		equal(aContexts[0].getPath(), "/0");
-		equal(aContexts[1].getPath(), "/1");
-		equal(aContexts[2].getPath(), "/2");
+		assert.equal(aContexts[0].getPath(), "/0");
+		assert.equal(aContexts[1].getPath(), "/1");
+		assert.equal(aContexts[2].getPath(), "/2");
 		var oNestedArrayData = {
 			"array" : oArrayData,
 			"complex" : [1, 2, 3]
 		};
 		oModel.setData(oNestedArrayData);
 		aContexts = oModel.bindList("/array", "").getContexts();
-		equal(aContexts[0].getPath(), "/array/0");
-		equal(aContexts[1].getPath(), "/array/1");
-		equal(aContexts[2].getPath(), "/array/2");
+		assert.equal(aContexts[0].getPath(), "/array/0");
+		assert.equal(aContexts[1].getPath(), "/array/1");
+		assert.equal(aContexts[2].getPath(), "/array/2");
 		aContexts = oModel.bindList("array", null).getContexts();
-		equal(aContexts.length, 0);
+		assert.equal(aContexts.length, 0);
 		aContexts = oModel.bindList("/array", oModel.getContext("/complex")).getContexts();
-		equal(aContexts[0].getPath(), "/array/0");
-		equal(aContexts[1].getPath(), "/array/1");
-		equal(aContexts[2].getPath(), "/array/2");
+		assert.equal(aContexts[0].getPath(), "/array/0");
+		assert.equal(aContexts[1].getPath(), "/array/1");
+		assert.equal(aContexts[2].getPath(), "/array/2");
 		aContexts = oModel.bindList("", oModel.getContext("/array")).getContexts();
-		equal(aContexts[0].getPath(), "/array/0");
-		equal(aContexts[1].getPath(), "/array/1");
-		equal(aContexts[2].getPath(), "/array/2");
+		assert.equal(aContexts[0].getPath(), "/array/0");
+		assert.equal(aContexts[1].getPath(), "/array/1");
+		assert.equal(aContexts[2].getPath(), "/array/2");
 		aContexts = oModel.bindList("array/", oModel.getContext("/")).getContexts();
-		equal(aContexts[0].getPath(), "/array/0");
-		equal(aContexts[1].getPath(), "/array/1");
-		equal(aContexts[2].getPath(), "/array/2");
+		assert.equal(aContexts[0].getPath(), "/array/0");
+		assert.equal(aContexts[1].getPath(), "/array/1");
+		assert.equal(aContexts[2].getPath(), "/array/2");
 	});
 
 	QUnit.test("test JSON setJSON", function(assert) {
 		var oModel = new sap.ui.model.json.JSONModel();
 		var sJSON = '{"name":"John"}';
 		oModel.setJSON(sJSON,false);
-		equal(oModel.getProperty("/name"), "John" , "parse test");
+		assert.equal(oModel.getProperty("/name"), "John" , "parse test");
 	});
 
 	QUnit.test("test JSON setJSON error", function(assert) {
@@ -582,7 +582,7 @@
 		var error = false;
 		oModel.attachParseError(sJSON, function(oEvent){
 			error = true;
-			equal(oEvent.sId, "parseError", "event type");
+			assert.equal(oEvent.sId, "parseError", "event type");
 		});
 		oModel.setJSON(sJSON,false);
 		ok(error, "error occurred");
@@ -593,42 +593,42 @@
 		var oModel = new sap.ui.model.json.JSONModel();
 		var sJSON = '{"name":"John"}';
 		oModel.setJSON(sJSON,false);
-		equal(oModel.getJSON(), sJSON, "get JSON test");
+		assert.equal(oModel.getJSON(), sJSON, "get JSON test");
 	});
 
 	QUnit.test("test JSON getData", function(assert) {
 		var oModel = new sap.ui.model.json.JSONModel();
 		var sJSON = '{"name":"John"}';
 		oModel.setJSON(sJSON,false);
-		equal(oModel.getData().name, "John", "get Data test");
+		assert.equal(oModel.getData().name, "John", "get Data test");
 	});
 
 	QUnit.test("test JSON compatible syntax", function(assert) {
 		var oModel = new sap.ui.model.json.JSONModel(testdata);
 		oModel.setLegacySyntax(true);
 		var value = oModel.getProperty("teamMembers/6/lastName");
-		equal(value, "Wallace", "model value");
+		assert.equal(value, "Wallace", "model value");
 		oModel.setProperty("teamMembers/4/lastName", "Jackson");
 		var value = oModel.getProperty("/teamMembers/4/lastName");
-		equal(value, "Jackson", "model value");
+		assert.equal(value, "Jackson", "model value");
 		var oContext = oModel.createBindingContext("teamMembers/6");
 		var value = oModel.getProperty("lastName", oContext);
-		equal(value, "Wallace", "model value");
+		assert.equal(value, "Wallace", "model value");
 	});
 
 	QUnit.test("test JSON compatible syntax fail", function(assert) {
 		var oModel = new sap.ui.model.json.JSONModel(testdata);
 		oModel.setLegacySyntax(false);
 		var value = oModel.getProperty("teamMembers/6/lastName");
-		equal(value, undefined, "model value");
+		assert.equal(value, undefined, "model value");
 		oModel.setProperty("/teamMembers/4/lastName", "Ander");
 		try {
 			oModel.setProperty("teamMembers/4/lastName", "Jackson");
 		} catch (e) {}
 		var value = oModel.getProperty("/teamMembers/4/lastName");
-		equal(value, "Ander", "model value");
+		assert.equal(value, "Ander", "model value");
 		var oContext = oModel.createBindingContext("teamMembers/6");
-		equal(oContext, undefined, "model value");
+		assert.equal(oContext, undefined, "model value");
 	});
 
 	QUnit.test("test JSONModel destroy", function(assert) {
@@ -643,8 +643,8 @@
 		testModel.loadData("testdata.json");
 		testModel.destroy();
 		ok(testModel.bDestroyed, "Model should be destroyed");
-		equal(spy.callCount, 1, "number of requests should be still 1");
-		equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
+		assert.equal(spy.callCount, 1, "number of requests should be still 1");
+		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
 
 	});
 
@@ -669,15 +669,15 @@
 		testModel.loadData("testdata.json", null, true);
 		testModel.destroy();
 		ok(testModel.bDestroyed, "Model should be destroyed");
-		equal(spy.callCount, 1, "number of requests");
-		equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
+		assert.equal(spy.callCount, 1, "number of requests");
+		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
 
 		// call loaddata again
 		testModel.loadData("testdata.json", null, true);
 
 		ok(testModel.bDestroyed, "Model should be destroyed");
-		equal(spy.callCount, 1, "number of requests should be still 1");
-		equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
+		assert.equal(spy.callCount, 1, "number of requests should be still 1");
+		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
 	});
 
 	QUnit.test("bind Element", function(assert) {
@@ -690,13 +690,13 @@
 		oLabel.placeAt("target1");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindElement("level1");
-		equal(oLabel.getBindingContext().getPath(), "/additionalData/level1", "context should be considered for element binding");
+		assert.equal(oLabel.getBindingContext().getPath(), "/additionalData/level1", "context should be considered for element binding");
 		oLabel.bindProperty("text","text");
-		equal(oLabel.getText(), "level1", "text value from model");
+		assert.equal(oLabel.getText(), "level1", "text value from model");
 		oLabel.bindElement("level1/level2");
-		equal(oLabel.getText(), "level2", "text value from model");
+		assert.equal(oLabel.getText(), "level2", "text value from model");
 		oLabel.unbindElement();
-		equal(oLabel.getText(), "", "text value from model");
+		assert.equal(oLabel.getText(), "", "text value from model");
 		oLabel.destroy();
 	});
 
@@ -710,13 +710,13 @@
 		oLabel.placeAt("target1");
 		oLabel.bindElement("level1");
 		oLabel.setBindingContext(oContext);
-		equal(oLabel.getBindingContext().getPath(), "/additionalData/level1", "context should be considered for element binding");
+		assert.equal(oLabel.getBindingContext().getPath(), "/additionalData/level1", "context should be considered for element binding");
 		oLabel.bindProperty("text","text");
-		equal(oLabel.getText(), "level1", "text value from model");
+		assert.equal(oLabel.getText(), "level1", "text value from model");
 		oLabel.bindElement("level1/level2");
-		equal(oLabel.getText(), "level2", "text value from model");
+		assert.equal(oLabel.getText(), "level2", "text value from model");
 		oLabel.unbindElement();
-		equal(oLabel.getText(), "", "text value from model");
+		assert.equal(oLabel.getText(), "", "text value from model");
 		oLabel.destroy();
 	});
 	</script>

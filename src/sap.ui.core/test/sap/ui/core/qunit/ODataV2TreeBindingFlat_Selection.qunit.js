@@ -25,7 +25,7 @@ QUnit.test("Selection", function(assert){
 
 			// contexts should be now loaded
 			oBinding.setSelectedIndex(1);
-			equal(oBinding.getSelectedIndex(), 1, "Selected index should be 1");
+			assert.equal(oBinding.getSelectedIndex(), 1, "Selected index should be 1");
 
 			ok(bSelectionChanged, "selectionChanged event fired");
 			ok(!bSelectAll, "selectionChanged event don't sets selectAll");
@@ -33,27 +33,27 @@ QUnit.test("Selection", function(assert){
 			bSelectAll = false;
 
 			oBinding.setSelectionInterval(2, 4);
-			equal(oBinding.getSelectedIndex(), 4, "Selected index should be the biggest index in the selection interval");
+			assert.equal(oBinding.getSelectedIndex(), 4, "Selected index should be the biggest index in the selection interval");
 			assert.deepEqual(oBinding.getSelectedIndices(), [2,3,4], "Selected indices are [2,3,4]");
 
 			oBinding.addSelectionInterval(5, 0);
-			equal(oBinding.getSelectedIndex(), 5, "Selected index should be the biggest index in the selection interval");
+			assert.equal(oBinding.getSelectedIndex(), 5, "Selected index should be the biggest index in the selection interval");
 			assert.deepEqual(oBinding.getSelectedIndices(), [0,1,2,3,4,5], "Selected indices are [0,1,2,3,4,5]");
 
 			oBinding.removeSelectionInterval(1,1);
-			equal(oBinding.getSelectedIndex(), 5, "Selected index should be the biggest index in the selection interval");
+			assert.equal(oBinding.getSelectedIndex(), 5, "Selected index should be the biggest index in the selection interval");
 			assert.deepEqual(oBinding.getSelectedIndices(), [0,2,3,4,5], "Selected indices are [0,2,3,4,5]");
 
 			// 1. select a parent and two of its children
 			// 2. collapse parent and expand it again
 			// 3. check whether the two children are deselected
 			oBinding.setSelectionInterval(1, 3);
-			equal(oBinding.getSelectedIndex(), 3, "Selected index should be the biggest index in the selection interval");
+			assert.equal(oBinding.getSelectedIndex(), 3, "Selected index should be the biggest index in the selection interval");
 			assert.deepEqual(oBinding.getSelectedIndices(), [1,2,3], "Selected indices are [1,2,3]");
 			oBinding.collapse(1);
-			equal(oBinding.getSelectedIndex(), -1, "The lead selection index is cleared");
+			assert.equal(oBinding.getSelectedIndex(), -1, "The lead selection index is cleared");
 			oBinding.expand(1);
-			equal(oBinding.getSelectedIndex(), -1, "The lead selection index is cleared");
+			assert.equal(oBinding.getSelectedIndex(), -1, "The lead selection index is cleared");
 			assert.deepEqual(oBinding.getSelectedIndices(), [1], "Only the parent should be selected");
 
 			// 1. select a parent's children on different level
@@ -61,11 +61,11 @@ QUnit.test("Selection", function(assert){
 			// 3. check whether the children are deselected
 			oBinding.setSelectionInterval(2,3);
 			oBinding.addSelectionInterval(8,9);
-			equal(oBinding.getSelectedIndex(), 9, "Selected index should be the biggest index in the selection interval");
+			assert.equal(oBinding.getSelectedIndex(), 9, "Selected index should be the biggest index in the selection interval");
 			assert.deepEqual(oBinding.getSelectedIndices(), [2,3,8,9], "Selected indices are [2,3,8,9]");
 			oBinding.collapse(0);
 			oBinding.expand(0);
-			equal(oBinding.getSelectedIndex(), -1, "The lead selection index should be cleared");
+			assert.equal(oBinding.getSelectedIndex(), -1, "The lead selection index should be cleared");
 			assert.deepEqual(oBinding.getSelectedIndices(), [], "No node is selected");
 
 			// 1. manually expand a node
@@ -80,11 +80,11 @@ QUnit.test("Selection", function(assert){
 			oBinding.detachChange(handler2);
 			oBinding.setSelectedIndex(2);
 			oBinding.addSelectionInterval(4, 6);
-			equal(oBinding.getSelectedIndex(), 6, "Selected index should be the biggest index in the selection interval");
+			assert.equal(oBinding.getSelectedIndex(), 6, "Selected index should be the biggest index in the selection interval");
 			assert.deepEqual(oBinding.getSelectedIndices(), [2,4,5,6], "Selected indices are [2,4,6]");
 			oBinding.collapse(1);
 			oBinding.expand(1);
-			equal(oBinding.getSelectedIndex(), -1, "The lead selection index should be cleared");
+			assert.equal(oBinding.getSelectedIndex(), -1, "The lead selection index should be cleared");
 			assert.deepEqual(oBinding.getSelectedIndices(), [], "No node is selected");
 
 			// 1. select a node which is after the node that will be expanded in the next step
@@ -101,10 +101,10 @@ QUnit.test("Selection", function(assert){
 			oBinding.detachChange(handler3);
 
 			oBinding.addSelectionInterval(4, 6);
-			equal(oBinding.getSelectedIndex(), 6, "Selected index should be the biggest index in the selection interval");
+			assert.equal(oBinding.getSelectedIndex(), 6, "Selected index should be the biggest index in the selection interval");
 			assert.deepEqual(oBinding.getSelectedIndices(), [4,5,6,67], "Selected indices are [4,5,6,67]");
 			oBinding.collapse(3);
-			equal(oBinding.getSelectedIndex(), -1, "The lead selection index is cleared");
+			assert.equal(oBinding.getSelectedIndex(), -1, "The lead selection index is cleared");
 			assert.deepEqual(oBinding.getSelectedIndices(), [4], "Selected indices are [4]");
 
 			done();
@@ -137,8 +137,8 @@ QUnit.test("Select All", function(assert) {
 		function handler1 (oEvent) {
 			oBinding.detachChange(handler1);
 			oBinding.selectAll();
-			equal(oBinding.getSelectedIndex(), 9, "The last selected node sets the selected index");
-			equal(oBinding.getSelectedIndices().length, 10, "All loaded nodes are now selected");
+			assert.equal(oBinding.getSelectedIndex(), 9, "The last selected node sets the selected index");
+			assert.equal(oBinding.getSelectedIndices().length, 10, "All loaded nodes are now selected");
 
 			ok(bSelectionChanged, "selectionChanged event fired");
 			ok(bSelectAll, "selectionChanged event sets selectAll");
@@ -207,17 +207,17 @@ QUnit.test("getSelectedNodesCount with recursive collapse - read only", function
 			oBinding.detachChange(handler1);
 
 			oBinding.selectAll();
-			equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
 
 			oBinding.collapse(1);
-			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
+			assert.equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
 
 			oBinding.expand(1);
-			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after expanding of first first-level node again");
-			equal(oBinding.getLength(), 626, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after expanding of first first-level node again");
+			assert.equal(oBinding.getLength(), 626, "Correct binding length");
 
 			oBinding.removeSelectionInterval(1, 1);
-			equal(oBinding.getSelectedNodesCount(), 619, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
+			assert.equal(oBinding.getSelectedNodesCount(), 619, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
 
 			done();
 		};
@@ -243,17 +243,17 @@ QUnit.test("getSelectedNodesCount without recursive collapse - read only", funct
 
 			oBinding.setCollapseRecursive(false);
 			oBinding.selectAll();
-			equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
 
 			oBinding.collapse(1);
-			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
+			assert.equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
 
 			oBinding.expand(1);
-			equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after expanding of first first-level node again");
-			equal(oBinding.getLength(), 626, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after expanding of first first-level node again");
+			assert.equal(oBinding.getLength(), 626, "Correct binding length");
 
 			oBinding.removeSelectionInterval(1, 1);
-			equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
+			assert.equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
 
 			done();
 		};
@@ -278,8 +278,8 @@ QUnit.test("getSelectedNodesCount with expand - read only", function(assert){
 			oBinding.detachChange(handler1);
 
 			oBinding.selectAll();
-			equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
-			equal(oBinding.getLength(), 626, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getLength(), 626, "Correct binding length");
 
 			oBinding.attachChange(handler2);
 			oBinding.expand(3, true);
@@ -288,8 +288,8 @@ QUnit.test("getSelectedNodesCount with expand - read only", function(assert){
 
 		var handler2 = function() {
 			oBinding.detachChange(handler2);
-			equal(oBinding.getSelectedNodesCount(), 626, "After expand, no additional nodes get selected");
-			equal(oBinding.getLength(), 689, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 626, "After expand, no additional nodes get selected");
+			assert.equal(oBinding.getLength(), 689, "Correct binding length");
 
 			done();
 		};
@@ -314,8 +314,8 @@ QUnit.test("getSelectedNodesCount with expand to level", function(assert){
 			oBinding.detachChange(handler1);
 
 			oBinding.selectAll();
-			equal(oBinding.getSelectedNodesCount(), 104, "Correct selected nodes count after selectAll call");
-			equal(oBinding.getLength(), 104, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 104, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getLength(), 104, "Correct binding length");
 
 			oBinding.attachChange(handler2);
 			oBinding.setNumberOfExpandedLevels(2);
@@ -329,10 +329,10 @@ QUnit.test("getSelectedNodesCount with expand to level", function(assert){
 		};
 		var handler3 = function() {
 			oBinding.detachChange(handler2);
-			equal(oBinding.getSelectedNodesCount(), 0, "After expand, nothing is selected (apparently)");	// TODO currently Flat binding looses all selections
+			assert.equal(oBinding.getSelectedNodesCount(), 0, "After expand, nothing is selected (apparently)");	// TODO currently Flat binding looses all selections
 																											// when changing number of expanded levels
 																											// ODataTreeBinding is capable of this
-			equal(oBinding.getLength(), 626, "Correct binding length");
+			assert.equal(oBinding.getLength(), 626, "Correct binding length");
 
 			done();
 		};
@@ -357,8 +357,8 @@ QUnit.test("getSelectedNodesCount with paging - read only", function(assert){
 			oBinding.detachChange(handler1);
 
 			oBinding.selectAll();
-			equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
-			equal(oBinding.getLength(), 626, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getLength(), 626, "Correct binding length");
 
 			done();
 		};
@@ -386,17 +386,17 @@ QUnit.test("getSelectedNodesCount with recursive collapse - write", function(ass
 			oBinding.removeContext(oBinding.getContextByIndex(2)); // force write-mode
 
 			oBinding.selectAll();
-			equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after selectAll call");
 
 			oBinding.collapse(1);
-			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
+			assert.equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
 
 			oBinding.expand(1);
-			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after expanding of first first-level node again");
-			equal(oBinding.getLength(), 625, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after expanding of first first-level node again");
+			assert.equal(oBinding.getLength(), 625, "Correct binding length");
 
 			oBinding.removeSelectionInterval(1, 1);
-			equal(oBinding.getSelectedNodesCount(), 619, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
+			assert.equal(oBinding.getSelectedNodesCount(), 619, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
 
 			done();
 		};
@@ -423,17 +423,17 @@ QUnit.test("getSelectedNodesCount without recursive collapse - write", function(
 
 			oBinding.setCollapseRecursive(false);
 			oBinding.selectAll();
-			equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after selectAll call");
 
 			oBinding.collapse(1);
-			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
+			assert.equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
 
 			oBinding.expand(1);
-			equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after expanding of first first-level node again");
-			equal(oBinding.getLength(), 625, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after expanding of first first-level node again");
+			assert.equal(oBinding.getLength(), 625, "Correct binding length");
 
 			oBinding.removeSelectionInterval(1, 1);
-			equal(oBinding.getSelectedNodesCount(), 624, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
+			assert.equal(oBinding.getSelectedNodesCount(), 624, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
 
 			done();
 		};
@@ -459,8 +459,8 @@ QUnit.test("getSelectedNodesCount with paging - write", function(assert){
 			oBinding.removeContext(oBinding.getContextByIndex(130)); // force write-mode
 
 			oBinding.selectAll();
-			equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after selectAll call");
-			equal(oBinding.getLength(), 625, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getLength(), 625, "Correct binding length");
 
 			done();
 		};

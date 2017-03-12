@@ -90,8 +90,8 @@
 		QUnit.test("MarkersOrder", function(assert) {
 
 			var markers = $("#" + listItemId + " .sapUiIcon");
-			equal(markers.eq(0).attr("data-sap-ui-icon-content").charCodeAt(0), 57445, "Favorite marker should be rendered first");
-			equal(markers.eq(1).attr("data-sap-ui-icon-content").charCodeAt(0), 57514, "Flag marker should be rendered second");
+			assert.equal(markers.eq(0).attr("data-sap-ui-icon-content").charCodeAt(0), 57445, "Favorite marker should be rendered first");
+			assert.equal(markers.eq(1).attr("data-sap-ui-icon-content").charCodeAt(0), 57514, "Flag marker should be rendered second");
 		});
 
 		QUnit.test("FirstStatusRendered", function(assert) {
@@ -198,18 +198,18 @@
         list.addItem(showTextDir);
 
         QUnit.test("TitleNumberIntroTextDirection RTL rendering", function(assert) {
-            equal($('#showTextDir-intro>span').attr("dir"), undefined, "intro has no dir attribute");
-            equal($('#showTextDir-titleText').attr("dir"), "rtl", "title has attribute dir=rtl");
-            equal($('#showTextDir-ObjectNumber').attr("dir"), "ltr", "ObjectNumber has attribute dir=ltr");
+            assert.equal($('#showTextDir-intro>span').attr("dir"), undefined, "intro has no dir attribute");
+            assert.equal($('#showTextDir-titleText').attr("dir"), "rtl", "title has attribute dir=rtl");
+            assert.equal($('#showTextDir-ObjectNumber').attr("dir"), "ltr", "ObjectNumber has attribute dir=ltr");
 
             showTextDir.setIntroTextDirection(sap.ui.core.TextDirection.RTL);
             showTextDir.setTitleTextDirection(sap.ui.core.TextDirection.Inherit);
             showTextDir.setNumberTextDirection(sap.ui.core.TextDirection.Inherit);
             sap.ui.getCore().applyChanges();
 
-            equal($('#showTextDir-intro>span').attr("dir"), "rtl", "intro has attribute dir=rtl");
-            equal($('#showTextDir-titleText').attr("dir"), undefined, "title has no dir attribute");
-            equal($('#showTextDir-ObjectNumber').attr("dir"), undefined, "ObjectNumber has no dir attribute");
+            assert.equal($('#showTextDir-intro>span').attr("dir"), "rtl", "intro has attribute dir=rtl");
+            assert.equal($('#showTextDir-titleText').attr("dir"), undefined, "title has no dir attribute");
+            assert.equal($('#showTextDir-ObjectNumber').attr("dir"), undefined, "ObjectNumber has no dir attribute");
         });
 
 	QUnit.test("Number properties create a private sap.m.ObjectNumber control", function (assert) {
@@ -457,7 +457,7 @@
 			markerOli.setMarkFavorite(false);
 			markerOli.setMarkFlagged(true);
 			setTimeout(function() {
-				equal($("#" + markerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
+				assert.equal($("#" + markerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
 				ok(jQuery.sap.byId(markerId + "-flag"), "Flag marker should be rendered.");
 				done();
 			}, 100);
@@ -469,7 +469,7 @@
 			markerOli.setMarkFavorite(false);
 			markerOli.setMarkFlagged(false);
 			setTimeout(function() {
-				equal($("#" + markerId + " .sapUiIcon").length, 0, "No markers should be rendered");
+				assert.equal($("#" + markerId + " .sapUiIcon").length, 0, "No markers should be rendered");
 				done();
 			}, 100);
 		});
@@ -480,7 +480,7 @@
 			markerOli.setMarkFavorite(true);
 			markerOli.setMarkFlagged(false);
 			setTimeout(function() {
-				equal($("#" + markerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
+				assert.equal($("#" + markerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
 				ok(jQuery.sap.byId(markerId + "-favorite"), "Favorite marker should be rendered.");
 				done();
 			}, 100);
@@ -492,7 +492,7 @@
 			markerOli.setMarkFavorite(false);
 			markerOli.setMarkFlagged(false);
 			setTimeout(function() {
-				equal($("#" + markerId + " .sapUiIcon").length, 0, "No markers should be rendered");
+				assert.equal($("#" + markerId + " .sapUiIcon").length, 0, "No markers should be rendered");
 				done();
 			}, 100);
 		});

@@ -83,18 +83,18 @@
 			oCtrl[sMutator.replace("add", "remove")].apply(oCtrl, arguments);
 		}
 
-		equal(_get().length, 0, "Initial number of "+sName+" controls");
+		assert.equal(_get().length, 0, "Initial number of "+sName+" controls");
 		_mutator(false, [new oType(sName+"_1")]);
-		equal(_get().length, 1, "Number of "+sName+" controls after add");
+		assert.equal(_get().length, 1, "Number of "+sName+" controls after add");
 		_mutator(true, [new oType(sName+"_2"), 0]);
-		equal(_get().length, 2, "Number of "+sName+" controls after insert");
+		assert.equal(_get().length, 2, "Number of "+sName+" controls after insert");
 		equals(_get()[0].getId(), sName+"_2", "First "+sName+" control");
 		equals(_get()[1].getId(), sName+"_1", "Second "+sName+" control");
 		_remove(0);
-		equal(_get().length, 1, "Number of "+sName+" controls after remove");
+		assert.equal(_get().length, 1, "Number of "+sName+" controls after remove");
 		equals(_get()[0].getId(), sName+"_1", "First "+sName+" control");
 		_removeAll();
-		equal(_get().length, 0, "Number of "+sName+" controls after removeAll");
+		assert.equal(_get().length, 0, "Number of "+sName+" controls after removeAll");
 	};
 
 	</script>
@@ -108,19 +108,19 @@
 		QUnit.module("API");
 
 		QUnit.test("Properties - Default Values", function(assert) {
-			equal(oShell.getShowPane(), false, "Default 'showPane'");
-			equal(oShell.getShowCurtain(), false, "Default 'showCurtain'");
-			equal(oShell.getShowCurtainPane(), false, "Default 'showCurtainPane'");
-			equal(oShell.getHeaderHiding(), false, "Default 'headerHiding'");
-			equal(oShell.getHeaderVisible(), true, "Default 'headerVisible'");
+			assert.equal(oShell.getShowPane(), false, "Default 'showPane'");
+			assert.equal(oShell.getShowCurtain(), false, "Default 'showCurtain'");
+			assert.equal(oShell.getShowCurtainPane(), false, "Default 'showCurtainPane'");
+			assert.equal(oShell.getHeaderHiding(), false, "Default 'headerHiding'");
+			assert.equal(oShell.getHeaderVisible(), true, "Default 'headerVisible'");
 		});
 
 		QUnit.test("Properties - Custom Values", function(assert) {
-			equal(oShell2.getShowPane(), true, "Custom 'showPane'");
-			equal(oShell2.getShowCurtain(), true, "Custom 'showCurtain'");
-			equal(oShell2.getShowCurtainPane(), true, "Custom 'showCurtainPane'");
-			equal(oShell2.getHeaderHiding(), true, "Custom 'headerHiding'");
-			equal(oShell2.getHeaderVisible(), false, "Custom 'headerVisible'");
+			assert.equal(oShell2.getShowPane(), true, "Custom 'showPane'");
+			assert.equal(oShell2.getShowCurtain(), true, "Custom 'showCurtain'");
+			assert.equal(oShell2.getShowCurtainPane(), true, "Custom 'showCurtainPane'");
+			assert.equal(oShell2.getHeaderHiding(), true, "Custom 'headerHiding'");
+			assert.equal(oShell2.getHeaderVisible(), false, "Custom 'headerVisible'");
 		});
 
 		QUnit.test("Aggregation 'content'", function(assert) {

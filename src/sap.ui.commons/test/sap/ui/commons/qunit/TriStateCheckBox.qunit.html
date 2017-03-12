@@ -87,7 +87,7 @@
 			ok(jQuery.sap.domById("tcb1"), "TriStateCheckBox 1 should exist in page");
 			tcb1.setVisible(false);
 			sap.ui.getCore().applyChanges();
-			equal(jQuery.sap.domById("tcb1"), null, "TriStateCheckBox 1 should not be rendered when set to invisible");
+			assert.equal(jQuery.sap.domById("tcb1"), null, "TriStateCheckBox 1 should not be rendered when set to invisible");
 			tcb1.setVisible(true);
 			sap.ui.getCore().applyChanges();
 			ok(jQuery.sap.domById("tcb1"), "TriStateCheckBox 1 should exist in page");
@@ -148,9 +148,9 @@
  		});
 
 		QUnit.test("AriaOK", function(assert) {
-			equal(jQuery("#tcb1").attr("role"), "checkbox", "Role of the TriStateCheckBox");
-			equal(jQuery("#tcb1").attr("aria-checked"), "mixed", "ARIA-Checked of 1. Checkbox");
-			equal(jQuery("#tcb1").children(".sapUiTriCbInner").attr("aria-labelledby"), "sapUiAriaLabeltcb1", "ARIA-LabelledBy of 1. Checkbox");
+			assert.equal(jQuery("#tcb1").attr("role"), "checkbox", "Role of the TriStateCheckBox");
+			assert.equal(jQuery("#tcb1").attr("aria-checked"), "mixed", "ARIA-Checked of 1. Checkbox");
+			assert.equal(jQuery("#tcb1").children(".sapUiTriCbInner").attr("aria-labelledby"), "sapUiAriaLabeltcb1", "ARIA-LabelledBy of 1. Checkbox");
 			ok(jQuery("#tcb1").find("#sapUiAriaLabeltcb1").length > 0, "Aria-Labelling span for checkbox");
 		});
 

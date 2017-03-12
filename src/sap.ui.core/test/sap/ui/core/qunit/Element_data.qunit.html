@@ -41,16 +41,16 @@
 
 		// retrieve the data
 		var data = element.data("test");
-		equal(data, "abc", "Value 'abc' must be returned as data");
+		assert.equal(data, "abc", "Value 'abc' must be returned as data");
 
 		// change the data
 		element.data("test", "def");
 		data = element.data("test");
-		equal(data, "def", "Value 'def' must be returned as data");
+		assert.equal(data, "def", "Value 'def' must be returned as data");
 
 		// unknown key
 		data = element.data("test2");
-		equal(data, null, "Value 'null' must be returned as data for unknown key");
+		assert.equal(data, null, "Value 'null' must be returned as data for unknown key");
 	});
 
 
@@ -60,7 +60,7 @@
 		ok(returnValue === element, "element must be returned");
 
 		var data = element.data("test");
-		equal(data, null, "Value 'null' must be returned as data");
+		assert.equal(data, null, "Value 'null' must be returned as data");
 
 		ok(jQuery.isEmptyObject(element.data()), "element data should be empty");
 	});
@@ -70,8 +70,8 @@
 		element.data("test_func", testFunction);
 		var data = element.data("test_func");
 
-		equal(typeof data, "function", "Value must be a function");
-		equal(data(), "success", "The stored function should return the string 'success'");
+		assert.equal(typeof data, "function", "Value must be a function");
+		assert.equal(data(), "success", "The stored function should return the string 'success'");
 	});
 
 
@@ -79,26 +79,26 @@
 		element.data("test_json", {"two":2});
 		var data = element.data("test_json");
 
-		equal(typeof data, "object", "Value must be an object");
+		assert.equal(typeof data, "object", "Value must be an object");
 		ok(data.two, "The stored object should have a property 'two'");
-		equal(data.two, 2, "The stored object should have a property 'two' with value 2");
+		assert.equal(data.two, 2, "The stored object should have a property 'two' with value 2");
 
 		element.data("test_win", window);
 		var data = element.data("test_win");
 
-		equal(data, window, "Value must be an object");
+		assert.equal(data, window, "Value must be an object");
 	});
 
 
 	QUnit.test("Retrieving all data", function(assert) {
 		var data = element.data();
 
-		equal(typeof data, "object", "Value must be an object");
+		assert.equal(typeof data, "object", "Value must be an object");
 		ok(data.test_func, "The stored object should have a property 'test_func'");
 		ok(data.test_json, "The stored object should have a property 'test_json'");
 		ok(data.test_win, "The stored object should have a property 'test_win'");
 
-		equal(data.test_json.two, 2, "The stored object for key 'test_json' should have a property 'two' with value 2");
+		assert.equal(data.test_json.two, 2, "The stored object for key 'test_json' should have a property 'two' with value 2");
 
 		element.data("test_func", null);
 		element.data("test_json", null);
@@ -117,12 +117,12 @@
 		});
 		var data = element.data();
 
-		equal(typeof data, "object", "Value must be an object");
+		assert.equal(typeof data, "object", "Value must be an object");
 		ok(data.test_func, "The stored object should have a property 'test_func'");
 		ok(data.test_json, "The stored object should have a property 'test_json'");
 		ok(data.test_win, "The stored object should have a property 'test_win'");
 
-		equal(data.test_json.two, 2, "The stored object for key 'test_json' should have a property 'two' with value 2");
+		assert.equal(data.test_json.two, 2, "The stored object for key 'test_json' should have a property 'two' with value 2");
 
 		element.data(null);
 
@@ -152,14 +152,14 @@
 		var clone = element.clone();
 
 		var string_data = clone.data("string_data");
-		equal(string_data, "abc", "The string data of the cloned object should be 'abc' as well");
+		assert.equal(string_data, "abc", "The string data of the cloned object should be 'abc' as well");
 
 		var object_data = clone.data("object_data");
-		equal(object_data.two, 2, "The object data of the cloned object should be the same as the original");
+		assert.equal(object_data.two, 2, "The object data of the cloned object should be the same as the original");
 		object_data.two = 3;
 
 		var object_data_ori = clone.data("object_data");
-		equal(object_data_ori.two, 3, "The object data of the original object should be changed as well, as only the reference to it is cloned");
+		assert.equal(object_data_ori.two, 3, "The object data of the original object should be changed as well, as only the reference to it is cloned");
 	});
 
 
@@ -177,7 +177,7 @@
 		element.data("myKey", "{/lastName}");
 
 		var data = element.data("myKey");
-		equal(data, "Pan", "The data must be the bound string 'Pan'");
+		assert.equal(data, "Pan", "The data must be the bound string 'Pan'");
 
 		oModel.setData({
 			firstName: "Hans",
@@ -185,7 +185,7 @@
 		});
 
 		data = element.data("myKey");
-		equal(data, "Wurst", "The data must be the bound string 'Wurst'");
+		assert.equal(data, "Wurst", "The data must be the bound string 'Wurst'");
 	});
 
 
@@ -216,7 +216,7 @@
 
 		var data = btn.data("coords");
 		ok(data && typeof data === "object", "Data object should be attached to the Button");
-		equal(data.x, 100, "Data object should contain the original data");
+		assert.equal(data.x, 100, "Data object should contain the original data");
 	});
 
 
@@ -233,11 +233,11 @@
 		sap.ui.getCore().applyChanges();
 
 		var $btn = btn.$();
-		equal($btn.attr("data-test"), "some payload", "the 'test' data should be written to DOM");
-		equal($btn.attr("data-test2"), undefined, "the 'test2' data should NOT be written to DOM");
-		equal($btn.attr("data-test3"), undefined, "the 'test3' data should NOT be written to DOM");
-		equal($btn.attr("data-test4"), undefined, "the 'test4' data should NOT be written to DOM");
-		equal($btn.attr("data-test5"), undefined, "the 'test5' data should NOT be written to DOM");
+		assert.equal($btn.attr("data-test"), "some payload", "the 'test' data should be written to DOM");
+		assert.equal($btn.attr("data-test2"), undefined, "the 'test2' data should NOT be written to DOM");
+		assert.equal($btn.attr("data-test3"), undefined, "the 'test3' data should NOT be written to DOM");
+		assert.equal($btn.attr("data-test4"), undefined, "the 'test4' data should NOT be written to DOM");
+		assert.equal($btn.attr("data-test5"), undefined, "the 'test5' data should NOT be written to DOM");
 	});
 
 	</script>

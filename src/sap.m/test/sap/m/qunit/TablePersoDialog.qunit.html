@@ -411,13 +411,13 @@
 				oButtonDown.firePress();
 				sap.ui.getCore().applyChanges();
 			}
-			equal(spyScrollTo.callCount, 1, "scrollTo should be called once when moving down");
+			assert.equal(spyScrollTo.callCount, 1, "scrollTo should be called once when moving down");
 			//now press Up button 5 times to trigger scroll up
 		    for(var i=0; i<5; i++) {
 				oButtonUp.firePress();
 				sap.ui.getCore().applyChanges();
 			}
-		    equal(spyScrollTo.callCount, 2, "scrollTo should be called once when moving up");
+		    assert.equal(spyScrollTo.callCount, 2, "scrollTo should be called once when moving up");
 		    oTPC3.destroy();
 			oTable3.destroy();
 		});
@@ -474,14 +474,14 @@
 			//Press 'Reset All'
 			oResetButton.firePress();
 			sap.ui.getCore().applyChanges();
-			equal(oList.getItems()[0].getLabel(), 'Bingo!', 'Even after reset, label should be the last rendered column name');
+			assert.equal(oList.getItems()[0].getLabel(), 'Bingo!', 'Even after reset, label should be the last rendered column name');
 			oList.setSelectedItem(oList.getItems()[0]);
 			oButtonDown.firePress();
 			sap.ui.getCore().applyChanges();
 			oResetButton.firePress();
 			sap.ui.getCore().applyChanges();
 			this.clock.tick(1);
-			equal(oList.getSelectedItem(), oList.getItems()[0], 'After repositioning and after reset, the last selected item is still selected');
+			assert.equal(oList.getSelectedItem(), oList.getItems()[0], 'After repositioning and after reset, the last selected item is still selected');
 
 			oTPC4.destroy();
 			oTable4.destroy();

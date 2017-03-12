@@ -259,21 +259,21 @@
 		QUnit.test("ARIA", function(assert) {
 			var oT1 = jQuery.sap.byId("t1");
 			var oT2 = jQuery.sap.byId("t2");
-			equal(oT2.attr("role"), oAccessibleRole.toLowerCase(), "Role");
-			equal(oT2.attr("aria-multiline"), "false", "aria-multiline");
-			equal(oT2.attr("aria-autocomplete"), "none", "aria-autocomplete");
+			assert.equal(oT2.attr("role"), oAccessibleRole.toLowerCase(), "Role");
+			assert.equal(oT2.attr("aria-multiline"), "false", "aria-multiline");
+			assert.equal(oT2.attr("aria-autocomplete"), "none", "aria-autocomplete");
 			ok(!oT1.attr("aria-invalid"), "aria-invalid not set");
-			equal(oT2.attr("aria-invalid"), "true", "aria-invalid");
-			equal(oT2.attr("aria-describedby"), "D1 D2", "aria-describesby");
-			equal(oT2.attr("aria-labelledby"), "L1 L2", "aria-labelledby");
+			assert.equal(oT2.attr("aria-invalid"), "true", "aria-invalid");
+			assert.equal(oT2.attr("aria-describedby"), "D1 D2", "aria-describesby");
+			assert.equal(oT2.attr("aria-labelledby"), "L1 L2", "aria-labelledby");
 			ok(!oT1.attr("aria-required"), "aria-required not set");
-			equal(oT2.attr("aria-required"), "true", "aria-required");
+			assert.equal(oT2.attr("aria-required"), "true", "aria-required");
 		});
 
 		QUnit.test("DomRef test", function(assert) {
-			equal( oTextField1.getFocusDomRef().id, "t1", "FocusDomRef OK" );
-			equal( oTextField1.getInputDomRef().id, "t1", "InputDomRef OK" );
-			equal( oTextField1.getIdForLabel(), "t1", "Label ID OK" );
+			assert.equal( oTextField1.getFocusDomRef().id, "t1", "FocusDomRef OK" );
+			assert.equal( oTextField1.getInputDomRef().id, "t1", "InputDomRef OK" );
+			assert.equal( oTextField1.getIdForLabel(), "t1", "Label ID OK" );
 		});
 
 		QUnit.test("Placeholder", function(assert) {
@@ -282,10 +282,10 @@
 			var oT3 = jQuery.sap.byId("t3");
 			if (sap.ui.Device.support.input.placeholder) {
 				ok(!oT1.attr("placeholder"), "placeholder not set");
-				equal(oT2.attr("placeholder"), "Hello", "placeholder set");
+				assert.equal(oT2.attr("placeholder"), "Hello", "placeholder set");
 			}
 			ok(!oT3.attr("placeholder"), "placeholder not set");
-			equal(oT3.val(), "", "no placeholder value set on HTML element");
+			assert.equal(oT3.val(), "", "no placeholder value set on HTML element");
 			ok(!oT3.hasClass("sapUiTfPlace"), "placeholder class not set");
 
 			oTextField3.setPlaceholder("Hello");
@@ -293,24 +293,24 @@
 			oT3 = jQuery.sap.byId("t3");
 
 			if (sap.ui.Device.support.input.placeholder) {
-				equal(oT3.attr("placeholder"), "Hello", "Placeholder set");
-				equal(oT3.val(), "", "no placeholder value set on HTML element");
+				assert.equal(oT3.attr("placeholder"), "Hello", "Placeholder set");
+				assert.equal(oT3.val(), "", "no placeholder value set on HTML element");
 				ok(!oT3.hasClass("sapUiTfPlace"), "placeholder class not set");
 			}else{
 				ok(!oT3.attr("placeholder"), "placeholder not set");
-				equal(oT3.val(), "Hello", "placeholder value set on HTML element");
+				assert.equal(oT3.val(), "Hello", "placeholder value set on HTML element");
 				ok(oT3.hasClass("sapUiTfPlace"), "placeholder class set");
 				oT3.focus();
-				equal(oT3.val(), "", "no placeholdervalue set on HTML element if focused");
+				assert.equal(oT3.val(), "", "no placeholdervalue set on HTML element if focused");
 				ok(!oT3.hasClass("sapUiTfPlace"), "placeholder class not set if focused");
 				oT1.focus();
-				equal(oT3.val(), "Hello", "value set on HTML element if focuse lost");
+				assert.equal(oT3.val(), "Hello", "value set on HTML element if focuse lost");
 				ok(oT3.hasClass("sapUiTfPlace"), "placeholder class set if focus lost");
 				oTextField3.setValue("Text");
-				equal(oT3.val(), "Text", "value set on HTML element");
+				assert.equal(oT3.val(), "Text", "value set on HTML element");
 				ok(!oT3.hasClass("sapUiTfPlace"), "placeholder class not set if a value is set");
 				oTextField3.setValue("");
-				equal(oT3.val(), "Hello", "placeholder value set on HTML element if value is empty");
+				assert.equal(oT3.val(), "Hello", "placeholder value set on HTML element if value is empty");
 				ok(oT3.hasClass("sapUiTfPlace"), "placeholder class set if value is empty");
 			}
 

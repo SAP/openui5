@@ -65,7 +65,7 @@
 
 		QUnit.test("Output of Attribute", function(assert) {
 			// image must be rendered
-			equal(jQuery.sap.byId("Feeder1-thumb").attr("src"), "../images/feeder/m_01.png", "Image rendered");
+			assert.equal(jQuery.sap.byId("Feeder1-thumb").attr("src"), "../images/feeder/m_01.png", "Image rendered");
 
 			// no given image - default image?
 
@@ -73,16 +73,16 @@
 			ok(jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0), "Placeholder rendered");
 
 			// placeholder text as set in the feeder attribute
-			equal(jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0).innerHTML, sPlaceholderText, "Placeholder text rendered");
+			assert.equal(jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0).innerHTML, sPlaceholderText, "Placeholder text rendered");
 
 			// placeholdertext is escaped
-			equal(bPlaceholderXSSPossible, true, "Placeholder text escaped");
+			assert.equal(bPlaceholderXSSPossible, true, "Placeholder text escaped");
 
 			// disabled button for empty feeder
 			ok(jQuery.sap.byId("Feeder1-send").hasClass('sapUiBtnDsbl'), "Send button is disabled if no text entered");
 
 			// given Text must be rendered - no placeholder
-			equal(jQuery.sap.byId("Feeder2-input").text(), sTextTest, "given text rendered");
+			assert.equal(jQuery.sap.byId("Feeder2-input").text(), sTextTest, "given text rendered");
 			ok(!jQuery.sap.byId("Feeder2-input").find(".sapUiFeederEmptyText").get(0), "no text placeholder rendered");
 
 			// if text is given Buttom must be enabled
@@ -121,9 +121,9 @@
 			// click on button must submit text
 			qutils.triggerMouseEvent("Feeder2-send", "click");
 			var delayedCall = function() {
-				equal(sSubmitId, "Feeder2","Click on Submit button fires submit event.");
-				equal(sSubmitText, sTextTest,"Submit event returns submitted text.");
-				equal(oFeeder2.getText(), "","Text of feeder must be cleared after submit");
+				assert.equal(sSubmitId, "Feeder2","Click on Submit button fires submit event.");
+				assert.equal(sSubmitText, sTextTest,"Submit event returns submitted text.");
+				assert.equal(oFeeder2.getText(), "","Text of feeder must be cleared after submit");
 				ok(jQuery.sap.byId("Feeder2-input").find(".sapUiFeederEmptyText").get(0),"Text placeholder rendered after submit");
 				sSubmitId = "";
 				sSubmitText = "";
@@ -147,7 +147,7 @@
 			// focus out - set text property
 			jQuery.sap.domById("Feeder2-input").focus();
 			var delayedCall = function() {
-				equal(oFeeder1.getText(), "A", "After focus out the text must be in text-property");
+				assert.equal(oFeeder1.getText(), "A", "After focus out the text must be in text-property");
 
 				// on deleting text button must be disabled
 				jQuery.sap.domById("Feeder1-input").focus();
@@ -178,7 +178,7 @@
 				}
 
 				oFeeder1.oInput.html(input);
-				equal(oFeeder1.getMultilineText(oFeeder1.oInput), expected, "Expected text: '" + expected + "'. Input: '" + input + "'");
+				assert.equal(oFeeder1.getMultilineText(oFeeder1.oInput), expected, "Expected text: '" + expected + "'. Input: '" + input + "'");
 				oFeeder1.oInput.html('');
 			}
 

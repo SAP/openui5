@@ -27,10 +27,10 @@
 
 		function eventHandler(oEvent) {
 			var itemId = oEvent.getParameter("itemId");
-			equal(itemId, expectedItemId, "the item ID should be the one of the clicked item: " + expectedItemId);
+			assert.equal(itemId, expectedItemId, "the item ID should be the one of the clicked item: " + expectedItemId);
 			var item = oEvent.getParameter("item");
 			ok(item, "item should be given as well");
-			equal(item.getId(), expectedItemId, "the item's ID should be the one of the clicked item: " + expectedItemId);
+			assert.equal(item.getId(), expectedItemId, "the item's ID should be the one of the clicked item: " + expectedItemId);
 		}
 
 		var oCtrl = new sap.ui.ux3.NavigationBar("n1", {select:eventHandler});
@@ -56,26 +56,26 @@
 
 			var oDomRef = jQuery.sap.domById(item1.getId());
 			ok(oDomRef, "Item element should exist in the page");
-			equal(jQuery(oDomRef).text(), "Item 1", "Item 1 text should be written to the page");
+			assert.equal(jQuery(oDomRef).text(), "Item 1", "Item 1 text should be written to the page");
 
 			var $list = jQuery.sap.byId(oCtrl.getId() + "-list");
-			equal($list.children().length, 5, "3 items plus the selection arrow plus dummy should be in the NavigationBar");
-			equal($list.children(":eq(3)").text(), "Item 3", "The text of the third item should be rendered inside the NavigationBar");
+			assert.equal($list.children().length, 5, "3 items plus the selection arrow plus dummy should be in the NavigationBar");
+			assert.equal($list.children(":eq(3)").text(), "Item 3", "The text of the third item should be rendered inside the NavigationBar");
 
 			var $items = jQuery(".sapUiUx3NavBarItem");
-			equal($items.length, 4, "3 items plus the dummy should be in the page");
+			assert.equal($items.length, 4, "3 items plus the dummy should be in the page");
 
-			equal($items[2].getAttribute("href"), "http://item2.org/", "item 2 should have a URL set as href");
-			equal($items[3].getAttribute("href"), "#", "item 3 should have no URL set as href");
+			assert.equal($items[2].getAttribute("href"), "http://item2.org/", "item 2 should have a URL set as href");
+			assert.equal($items[3].getAttribute("href"), "#", "item 3 should have no URL set as href");
 		});
 
 		QUnit.test("Select Item", function(assert) {
 			oCtrl.setSelectedItem(item2);
-			equal(oCtrl.getSelectedItem(), item2.getId(), "item 2 should be selected");
+			assert.equal(oCtrl.getSelectedItem(), item2.getId(), "item 2 should be selected");
 
 			var $selItems = jQuery(".sapUiUx3NavBarItemSel");
-			equal($selItems.length, 1, "1 item should be selected");
-			equal($selItems.children()[0].id, item2.getId(), "DOM element marked as selected should be the one with the same ID as the selected item");
+			assert.equal($selItems.length, 1, "1 item should be selected");
+			assert.equal($selItems.children()[0].id, item2.getId(), "DOM element marked as selected should be the one with the same ID as the selected item");
 		});
 
 		var firstPos;
@@ -129,7 +129,7 @@
 			var done = assert.async();
 			assert.expect(5); // including event handler
 			var oldSel = oCtrl.getSelectedItem();
-			equal(oldSel, item3.getId(), "item 3 should be selected"); // make sure previous selection is right
+			assert.equal(oldSel, item3.getId(), "item 3 should be selected"); // make sure previous selection is right
 
 			// click first item
 			var target = jQuery.sap.domById(item1.getId());
@@ -139,7 +139,7 @@
 			// wait selection animation to be finished
 			setTimeout(function(){
 				var newSel = oCtrl.getSelectedItem();
-				equal(newSel, item1.getId(), "item 1 should be selected after clicking it"); // make sure selection is right after clicking
+				assert.equal(newSel, item1.getId(), "item 1 should be selected after clicking it"); // make sure selection is right after clicking
 				done();
 			}, 600);
 		});
@@ -148,7 +148,7 @@
 			oCtrl.removeAllItems();
 			sap.ui.getCore().applyChanges();
 			var $list = jQuery.sap.byId(oCtrl.getId() + "-list");
-			equal($list.children().length, 2, "no items except for dummy and arrow should be in the NavigationBar");
+			assert.equal($list.children().length, 2, "no items except for dummy and arrow should be in the NavigationBar");
 
 			oCtrl.addAssociatedItem(item1);
 			oCtrl.addAssociatedItem(item2);
@@ -157,25 +157,25 @@
 
 			var oDomRef = jQuery.sap.domById(item1.getId());
 			ok(oDomRef, "Item element should exist in the page");
-			equal(jQuery(oDomRef).text(), "Item 1", "Item 1 text should be written to the page");
+			assert.equal(jQuery(oDomRef).text(), "Item 1", "Item 1 text should be written to the page");
 
 			var $list = jQuery.sap.byId(oCtrl.getId() + "-list");
-			equal($list.children().length, 5, "3 items plus dummy plus the selection arrow should be in the NavigationBar");
-			equal($list.children(":eq(3)").text(), "Item 3", "The text of the third item should be rendered inside the NavigationBar");
+			assert.equal($list.children().length, 5, "3 items plus dummy plus the selection arrow should be in the NavigationBar");
+			assert.equal($list.children(":eq(3)").text(), "Item 3", "The text of the third item should be rendered inside the NavigationBar");
 		});
 
 		QUnit.test("isSelectedItemValid", function(assert) {
 			oCtrl.setSelectedItem(item1);
 			var valid = oCtrl.isSelectedItemValid();
-			equal(valid, true, "item1 is a valid selection");
+			assert.equal(valid, true, "item1 is a valid selection");
 
 			oCtrl.setSelectedItem("item4");
 			valid = oCtrl.isSelectedItemValid();
-			equal(valid, false, "the ID 'item4' is not a valid selection");
+			assert.equal(valid, false, "the ID 'item4' is not a valid selection");
 
 			oCtrl.setSelectedItem(item1.getId());
 			valid = oCtrl.isSelectedItemValid();
-			equal(valid, true, "the ID 'item1' is a valid selection");
+			assert.equal(valid, true, "the ID 'item1' is a valid selection");
 		});
 
 		QUnit.test("enabaling the overflowItemsToUppercase", function (assert) {
@@ -200,24 +200,24 @@
 			var done = assert.async();
 			jQuery.sap.byId("uiArea1").css("width", "80px");
 			setTimeout(function(){
-				equal(isForwardVisible(), true, "forward arrow should be visible");
-				equal(isForwardEnabled(), true, "forward arrow should be enabled");
-				equal(isBackVisible(), true, "back arrow should be visible");
-				equal(isBackEnabled(), false, "back arrow should not be enabled");
+				assert.equal(isForwardVisible(), true, "forward arrow should be visible");
+				assert.equal(isForwardEnabled(), true, "forward arrow should be enabled");
+				assert.equal(isBackVisible(), true, "back arrow should be visible");
+				assert.equal(isBackEnabled(), false, "back arrow should not be enabled");
 
 				jQuery.sap.byId("uiArea1").css("width", "800px");
 				setTimeout(function(){
-					equal(isForwardVisible(), false, "forward arrow should not be visible");
-					equal(isBackVisible(), false, "back arrow should not be visible");
+					assert.equal(isForwardVisible(), false, "forward arrow should not be visible");
+					assert.equal(isBackVisible(), false, "back arrow should not be visible");
 
 					oCtrl.addAssociatedItem(new sap.ui.ux3.NavigationItem({text:"Item with some quite long text to cause overflow 4"}));
 					oCtrl.addAssociatedItem(new sap.ui.ux3.NavigationItem({text:"Item with some quite long text to cause overflow 5"}));
 					setTimeout(function(){
-						equal(isForwardVisible(), true, "forward arrow should be visible");
-						equal(isForwardEnabled(), true, "forward arrow should be enabled");
+						assert.equal(isForwardVisible(), true, "forward arrow should be visible");
+						assert.equal(isForwardEnabled(), true, "forward arrow should be enabled");
 
-						equal(isBackVisible(), true, "back arrow should not be visible");
-						equal(isBackEnabled(), false, "back arrow should not be enabled");
+						assert.equal(isBackVisible(), true, "back arrow should not be visible");
+						assert.equal(isBackEnabled(), false, "back arrow should not be enabled");
 						done();
 					}, 500);
 				}, 500);
@@ -226,23 +226,23 @@
 
 		QUnit.test("Scrolling + Overflow", function(assert) {
 			var done = assert.async();
-			equal(jQuery.sap.domById(oCtrl.getId() + "-list").scrollLeft, 0, "list should not be scrolled initially");
+			assert.equal(jQuery.sap.domById(oCtrl.getId() + "-list").scrollLeft, 0, "list should not be scrolled initially");
 
 			// click first item
 			var target = jQuery.sap.domById(oCtrl.getId() + "-off");
 			qutils.triggerMouseEvent(target, "click");
 			setTimeout(function(){
-				equal(isForwardVisible(), true, "forward arrow should be visible");
-				equal(isBackVisible(), true, "back arrow should be visible");
+				assert.equal(isForwardVisible(), true, "forward arrow should be visible");
+				assert.equal(isBackVisible(), true, "back arrow should be visible");
 				ok(jQuery.sap.domById(oCtrl.getId() + "-list").scrollLeft != 0, "list should be scrolled now");
 
 				// scroll to end
 				qutils.triggerMouseEvent(target, "click");
 				setTimeout(function(){
-					equal(isForwardVisible(), true, "forward arrow should be visible");
-					equal(isForwardEnabled(), false, "forward arrow should not be enabled");
-					equal(isBackVisible(), true, "back arrow should be visible");
-					equal(isBackEnabled(), true, "back arrow should be enabled");
+					assert.equal(isForwardVisible(), true, "forward arrow should be visible");
+					assert.equal(isForwardEnabled(), false, "forward arrow should not be enabled");
+					assert.equal(isBackVisible(), true, "back arrow should be visible");
+					assert.equal(isBackEnabled(), true, "back arrow should be enabled");
 
 					// scroll to the beginning again
 					target = jQuery.sap.domById(oCtrl.getId() + "-ofb");
@@ -250,11 +250,11 @@
 					setTimeout(function(){
 						qutils.triggerMouseEvent(target, "click");
 						setTimeout(function(){
-							equal(isForwardVisible(), true, "forward arrow should be visible");
-							equal(isForwardEnabled(), true, "forward arrow should be enabled");
-							equal(isBackVisible(), true, "back arrow should be visible");
-							equal(isBackEnabled(), false, "back arrow shouldnot  be enabled");
-							equal(jQuery.sap.domById(oCtrl.getId() + "-list").scrollLeft, 0, "list should not be scrolled now");
+							assert.equal(isForwardVisible(), true, "forward arrow should be visible");
+							assert.equal(isForwardEnabled(), true, "forward arrow should be enabled");
+							assert.equal(isBackVisible(), true, "back arrow should be visible");
+							assert.equal(isBackEnabled(), false, "back arrow shouldnot  be enabled");
+							assert.equal(jQuery.sap.domById(oCtrl.getId() + "-list").scrollLeft, 0, "list should not be scrolled now");
 
 							done();
 						}, 600);

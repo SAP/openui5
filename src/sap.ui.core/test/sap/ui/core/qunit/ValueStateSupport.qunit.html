@@ -44,31 +44,31 @@
 			jQuery.sap.require("sap.ui.core.ValueStateSupport");
 
 			var result = sap.ui.core.ValueStateSupport.getAdditionalText(element);
-			equal(result, null, "text should not be returned when there is no special state");
+			assert.equal(result, null, "text should not be returned when there is no special state");
 
 			// null
 			result = sap.ui.core.ValueStateSupport.getAdditionalText(null);
-			equal(result, null, "text should not be returned when there is no special state");
+			assert.equal(result, null, "text should not be returned when there is no special state");
 
 			// error
 			element.setValueState(sap.ui.core.ValueState.Error);
 			result = sap.ui.core.ValueStateSupport.getAdditionalText(element);
-			equal(result, errorText, "text should be the error text when there is the error state");
+			assert.equal(result, errorText, "text should be the error text when there is the error state");
 
 			// warning
 			element.setValueState(sap.ui.core.ValueState.Warning);
 			result = sap.ui.core.ValueStateSupport.getAdditionalText(element);
-			equal(result, warningText, "text should be the warning text when there is the warning state");
+			assert.equal(result, warningText, "text should be the warning text when there is the warning state");
 
 			// success
 			element.setValueState(sap.ui.core.ValueState.Success);
 			result = sap.ui.core.ValueStateSupport.getAdditionalText(element);
-			equal(result, successText, "text should be the success text when there is the success state");
+			assert.equal(result, successText, "text should be the success text when there is the success state");
 
 			// none
 			element.setValueState(sap.ui.core.ValueState.None);
 			result = sap.ui.core.ValueStateSupport.getAdditionalText(element);
-			equal(result, null, "text should not be returned when there is no special state");
+			assert.equal(result, null, "text should not be returned when there is no special state");
 		});
 
 
@@ -76,50 +76,50 @@
 			jQuery.sap.require("sap.ui.core.ValueStateSupport");
 
 			var result = sap.ui.core.ValueStateSupport.getAdditionalText("Hello");
-			equal(result, null, "text should not be returned when there is no special state");
+			assert.equal(result, null, "text should not be returned when there is no special state");
 
 			// error
 			result = sap.ui.core.ValueStateSupport.getAdditionalText(sap.ui.core.ValueState.Error);
-			equal(result, errorText, "text should be the error text when there is the error state");
+			assert.equal(result, errorText, "text should be the error text when there is the error state");
 
 			// warning
 			result = sap.ui.core.ValueStateSupport.getAdditionalText(sap.ui.core.ValueState.Warning);
-			equal(result, warningText, "text should be the warning text when there is the warning state");
+			assert.equal(result, warningText, "text should be the warning text when there is the warning state");
 
 			// success
 			result = sap.ui.core.ValueStateSupport.getAdditionalText(sap.ui.core.ValueState.Success);
-			equal(result, successText, "text should be the success text when there is the success state");
+			assert.equal(result, successText, "text should be the success text when there is the success state");
 
 			// none
 			result = sap.ui.core.ValueStateSupport.getAdditionalText(sap.ui.core.ValueState.None);
-			equal(result, null, "text should not be returned when there is no special state");
+			assert.equal(result, null, "text should not be returned when there is no special state");
 		});
 
 
 		QUnit.test("With tooltip", function(assert) {
 			element.setValueState(sap.ui.core.ValueState.None);
 			var result = sap.ui.core.ValueStateSupport.enrichTooltip(element, "test");
-			equal(result, "test", "tooltip should remain unchanged when there is no special state");
+			assert.equal(result, "test", "tooltip should remain unchanged when there is no special state");
 
 			// error
 			element.setValueState(sap.ui.core.ValueState.Error);
 			result = sap.ui.core.ValueStateSupport.enrichTooltip(element, "test");
-			equal(result, "test - " + errorText, "tooltip should have the error text when there is the error state");
+			assert.equal(result, "test - " + errorText, "tooltip should have the error text when there is the error state");
 
 			// warning
 			element.setValueState(sap.ui.core.ValueState.Warning);
 			result = sap.ui.core.ValueStateSupport.enrichTooltip(element, "test");
-			equal(result, "test - " + warningText, "tooltip should have the warning text when there is the warning state");
+			assert.equal(result, "test - " + warningText, "tooltip should have the warning text when there is the warning state");
 
 			// success
 			element.setValueState(sap.ui.core.ValueState.Success);
 			result = sap.ui.core.ValueStateSupport.enrichTooltip(element, "test");
-			equal(result, "test - " + successText, "tooltip should have the success text when there is the success state");
+			assert.equal(result, "test - " + successText, "tooltip should have the success text when there is the success state");
 
 			// none
 			element.setValueState(sap.ui.core.ValueState.None);
 			result = sap.ui.core.ValueStateSupport.enrichTooltip(element, "test");
-			equal(result, "test", "tooltip should remain unchanged when there is no special state");
+			assert.equal(result, "test", "tooltip should remain unchanged when there is no special state");
 		});
 
 
@@ -127,27 +127,27 @@
 			jQuery.sap.require("sap.ui.core.ValueStateSupport");
 
 			var result = sap.ui.core.ValueStateSupport.enrichTooltip(element, null);
-			equal(result, null, "tooltip should remain empty when there is no special state");
+			assert.equal(result, null, "tooltip should remain empty when there is no special state");
 
 			// error
 			element.setValueState(sap.ui.core.ValueState.Error);
 			result = sap.ui.core.ValueStateSupport.enrichTooltip(element, null);
-			equal(result, errorText, "tooltip should be the error text when there is the error state");
+			assert.equal(result, errorText, "tooltip should be the error text when there is the error state");
 
 			// warning
 			element.setValueState(sap.ui.core.ValueState.Warning);
 			result = sap.ui.core.ValueStateSupport.enrichTooltip(element, null);
-			equal(result, warningText, "tooltip should be the warning text when there is the warning state");
+			assert.equal(result, warningText, "tooltip should be the warning text when there is the warning state");
 
 			// success
 			element.setValueState(sap.ui.core.ValueState.Success);
 			result = sap.ui.core.ValueStateSupport.enrichTooltip(element, null);
-			equal(result, successText, "tooltip should be the success text when there is the success state");
+			assert.equal(result, successText, "tooltip should be the success text when there is the success state");
 
 			// none
 			element.setValueState(sap.ui.core.ValueState.None);
 			result = sap.ui.core.ValueStateSupport.enrichTooltip(element, null);
-			equal(result, null, "tooltip should remain empty when there is no special state");
+			assert.equal(result, null, "tooltip should remain empty when there is no special state");
 		});
 
 	</script>

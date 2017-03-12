@@ -74,46 +74,46 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 	QUnit.test("SAPUI5 Rendering", oConfig.idsToBeChecked.length, function(assert) {
 		for(var i=0; i<oConfig.idsToBeChecked.length; i++) {
 			var $ = jQuery.sap.byId(view.createId(oConfig.idsToBeChecked[i]));
-			equal($.length, 1,  "Element " + oConfig.idsToBeChecked[i] + " rendered");
+			assert.equal($.length, 1,  "Element " + oConfig.idsToBeChecked[i] + " rendered");
 		}
 	});
 
 	QUnit.test("Aggregation", 1, function(assert) {
 		assert.expect(1);
 		$button = jQuery.sap.byId(view.createId("Button2"));
-		equal($button.length, 1,  "SAPUI5 Button rendered in aggregation");
+		assert.equal($button.length, 1,  "SAPUI5 Button rendered in aggregation");
 	});
 
 	QUnit.test("Child Views exists", 3, function(assert) {
 		$JSONView = jQuery.sap.byId(view.createId("MyJSONView"));
-		equal($JSONView.length, 1, "Child View (JSONView) should be rendered");
+		assert.equal($JSONView.length, 1, "Child View (JSONView) should be rendered");
 		$JSView = jQuery.sap.byId(view.createId("MyJSView"));
-		equal($JSONView.length, 1, "Child View (JSView) should be rendered");
+		assert.equal($JSONView.length, 1, "Child View (JSView) should be rendered");
 		$XMLView = jQuery.sap.byId(view.createId("MyXMLView"));
-		equal($XMLView.length, 1, "Child View (XMLView) should be rendered");
+		assert.equal($XMLView.length, 1, "Child View (XMLView) should be rendered");
 	});
 
 	QUnit.test("Child Views content rendered", 9, function(assert) {
 		var oJSONView = view.byId("MyJSONView");
 		$button = jQuery.sap.byId(oJSONView.createId("Button1"));
-		equal($button.length, 1, "Content of Child View (JSONView) should be rendered");
+		assert.equal($button.length, 1, "Content of Child View (JSONView) should be rendered");
 		var oLabel1 = oJSONView.byId("Label1");
 		ok(oLabel1, "exists");
-		equal(oLabel1.getLabelFor(), oJSONView.createId("Button1"), "assocation has been fixed");
+		assert.equal(oLabel1.getLabelFor(), oJSONView.createId("Button1"), "assocation has been fixed");
 
 		var oJSView = view.byId("MyJSView");
 		$button = jQuery.sap.byId(oJSView.createId("Button1"));
-		equal($button.length, 1, "Content of Child View (JSView) should be rendered");
+		assert.equal($button.length, 1, "Content of Child View (JSView) should be rendered");
 		var oLabel = oJSView.byId("Label1");
 		ok(!!oLabel, "Label exists");
-		equal(oLabel.getLabelFor(), oJSView.createId("Button1"), "Association has been adapted");
+		assert.equal(oLabel.getLabelFor(), oJSView.createId("Button1"), "Association has been adapted");
 
 		var oXMLView = view.byId("MyXMLView");
 		$button2 = jQuery.sap.byId(oXMLView.createId("Button1"));
-		equal($button2.length, 1, "Content of Child View (XMLView) should be rendered");
+		assert.equal($button2.length, 1, "Content of Child View (XMLView) should be rendered");
 		var oLabel = oXMLView.byId("Label1");
 		ok(!!oLabel, "Label exists");
-		equal(oLabel.getLabelFor(), oXMLView.createId("Button1"), "Association has been adapted");
+		assert.equal(oLabel.getLabelFor(), oXMLView.createId("Button1"), "Association has been adapted");
 	});
 
 	QUnit.test("Eventhandling", 4, function(assert) {
@@ -135,7 +135,7 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		function doCheck() {
 			for(var i=0; i<oConfig.idsToBeChecked.length; i++) {
 				var $ = jQuery.sap.byId(view.createId(oConfig.idsToBeChecked[i]));
-				equal($.length, 1,  "Element " + oConfig.idsToBeChecked[i] + " rendered again");
+				assert.equal($.length, 1,  "Element " + oConfig.idsToBeChecked[i] + " rendered again");
 			}
 		}
 
@@ -163,13 +163,13 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 	// execute additional tests, when specified
 	if ( bCheckViewData ) {
 		QUnit.test("View Data available in controller hooks", 4, function(assert) {
-			equal(window.dataOnInit, "testdata", "View Data should be available in onInit of controller");
+			assert.equal(window.dataOnInit, "testdata", "View Data should be available in onInit of controller");
 			window.dataOnInit = null;
-			equal(window.dataAfterRendering, "testdata", "View Data should be available in onAfterRendering of controller");
+			assert.equal(window.dataAfterRendering, "testdata", "View Data should be available in onAfterRendering of controller");
 			window.dataAfterRendering = null;
-			equal(window.dataBeforeRendering, "testdata", "View Data should be available in onBeforeRendering of controller");
+			assert.equal(window.dataBeforeRendering, "testdata", "View Data should be available in onBeforeRendering of controller");
 			window.dataBeforeRendering = null;
-			equal(window.dataEventHandler, "testdata", "View Data should be available in event handlers of controller");
+			assert.equal(window.dataEventHandler, "testdata", "View Data should be available in event handlers of controller");
 			window.dataEventHandler = null;
 		});
 	}
@@ -194,7 +194,7 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 	QUnit.test("Lifecycle: NO content after destroy()", oConfig.idsToBeChecked.length, function(assert) {
 		for(var i=0; i<oConfig.idsToBeChecked.length; i++) {
 			var $ = jQuery.sap.byId(view.createId(oConfig.idsToBeChecked[i]));
-			equal($.length, 0, "Content " + oConfig.idsToBeChecked[i] + " should no longer be there");
+			assert.equal($.length, 0, "Content " + oConfig.idsToBeChecked[i] + " should no longer be there");
 		}
 	});
 

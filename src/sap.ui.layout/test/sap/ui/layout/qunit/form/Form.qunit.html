@@ -151,7 +151,7 @@
 		QUnit.test("Form", function(assert) {
 			var oForm = sap.ui.getCore().byId("F1");
 
-			equal(oForm.getLayout().getId(), "Layout1", "getLayout() returns layout.")
+			assert.equal(oForm.getLayout().getId(), "Layout1", "getLayout() returns layout.")
 		});
 
 		QUnit.test("Container", function(assert) {
@@ -160,23 +160,23 @@
 			var oContainer4 = sap.ui.getCore().byId("C4");
 
 			//title must return text if text entered, control if control enterd
-			equal(oContainer1.getTitle(), "Container1", "getTitle(): Title as text entered must return text");
+			assert.equal(oContainer1.getTitle(), "Container1", "getTitle(): Title as text entered must return text");
 			ok(oContainer2.getTitle() instanceof sap.ui.core.Title, "getTitle(): Title as control entered must return control");
 
-			equal(oContainer1.getRenderedDomRef().id, oContainer1.getId(), "DOM for FormContainer rendered");
+			assert.equal(oContainer1.getRenderedDomRef().id, oContainer1.getId(), "DOM for FormContainer rendered");
 		});
 
 		QUnit.test("Element", function(assert) {
 			var oElement = sap.ui.getCore().byId("C1E1");
 			//label must return text if text entered, control if control enterd
-			equal(oElement.getLabel(), "Label1", "getLabel(): Label as text endered must return text");
+			assert.equal(oElement.getLabel(), "Label1", "getLabel(): Label as text endered must return text");
 			ok(!(oElement.getAggregation("label") instanceof sap.m.Label), "Label as text entered must not be an control in aggregation");
 			ok(oElement.getLabelControl() instanceof sap.m.Label, "Label as text endeted must be an control in getLabelControl");
 			oElement = sap.ui.getCore().byId("C1E2");
 			ok(oElement.getLabel() instanceof sap.m.Label, "getLabel(): Label as control entered must return control");
-			equal(oElement.getLabel(), oElement.getLabelControl(), "getLabel(): Label as control entered must be the same in getLabelControl");
+			assert.equal(oElement.getLabel(), oElement.getLabelControl(), "getLabel(): Label as control entered must be the same in getLabelControl");
 
-			equal(oElement.getRenderedDomRef().id, oElement.getId(), "DOM for FormElement rendered");
+			assert.equal(oElement.getRenderedDomRef().id, oElement.getId(), "DOM for FormElement rendered");
 		});
 
 		QUnit.module("Rendering");
@@ -184,13 +184,13 @@
 		QUnit.test("Form", function(assert) {
 			ok(jQuery.sap.domById("F1"), "Form is rendered");
 			ok(jQuery.sap.domById("Layout1"), "Layout is rendered");
-			equal(jQuery("#F1").attr("title"), "Form tooltip", "Form tooltip rendered");
+			assert.equal(jQuery("#F1").attr("title"), "Form tooltip", "Form tooltip rendered");
 			ok(jQuery.sap.domById("F1T"), "Form title is rendered");
 			ok(jQuery("#F1T").is("h4"), "Form title is rendered as H4 as default");
 			ok(jQuery.sap.domById("F1T-ico"), "Form title image is rendered");
 			ok(!jQuery("#F1T").hasClass("sapUiFormTitleEmph"), "Form title rendered not emphasized");
-			equal(jQuery("#F2").width(), 300, "Form2 rendered width 300px");
-			equal(jQuery("#F2T").width(), jQuery("#F2").children().first().innerWidth(), "Form2 title rendered as large as the Layout");
+			assert.equal(jQuery("#F2").width(), 300, "Form2 rendered width 300px");
+			assert.equal(jQuery("#F2T").width(), jQuery("#F2").children().first().innerWidth(), "Form2 title rendered as large as the Layout");
 			ok(jQuery("#F2T").hasClass("sapUiFormTitleEmph"), "Form2 title rendered emphasized");
 			ok(jQuery("#F2T").is("h1"), "Form2 title is rendered as H1 as set on control");
 			ok(!jQuery.sap.domById("F3"), "invisible Form is not rendered");
@@ -217,14 +217,14 @@
 		QUnit.test("FormControls", function(assert) {
 			ok(jQuery('label:contains("Label1")').get(0), "Label (as text) is renderd");
 			ok(jQuery('label:contains("Label1")').hasClass("sapMLabelRequired"), "Label1 is renderd as required");
-			equal(jQuery('label:contains("Label1")').attr("for"), "I1-inner", "Label1 (as text) is renderd for Input1");
+			assert.equal(jQuery('label:contains("Label1")').attr("for"), "I1-inner", "Label1 (as text) is renderd for Input1");
 			ok(jQuery("#L4").hasClass("sapMLabelRequired"), "Label4 is renderd as required");
 			ok(jQuery.sap.domById("I1"), "Input is rendered");
-			equal(jQuery("#I1-inner").attr("aria-labelledby"), jQuery('label:contains("Label1")').attr("id"), "Input aria-labelledby points to label")
-			equal(jQuery("#I3-inner").attr("aria-labelledby"), "L4", "Input3 aria-labelledby points to label")
-			equal(jQuery("#I4-inner").attr("aria-labelledby"), "L4", "Input4 aria-labelledby points to label")
+			assert.equal(jQuery("#I1-inner").attr("aria-labelledby"), jQuery('label:contains("Label1")').attr("id"), "Input aria-labelledby points to label")
+			assert.equal(jQuery("#I3-inner").attr("aria-labelledby"), "L4", "Input3 aria-labelledby points to label")
+			assert.equal(jQuery("#I4-inner").attr("aria-labelledby"), "L4", "Input4 aria-labelledby points to label")
 			ok(jQuery.sap.domById("L1"), "Label (as control) is rendered");
-			equal(jQuery("#L1").attr("for"), "DP1-inner", "Label1 is renderd for DatePicker");
+			assert.equal(jQuery("#L1").attr("for"), "DP1-inner", "Label1 is renderd for DatePicker");
 			ok(jQuery.sap.domById("DP1"), "DatePicker is rendered");
 			ok(jQuery("#DP1-inner").attr("aria-labelledby").search("L1 dummy") >= 0, "DatePicker aria-labelledby changed (contains reference to label)");
 			ok(jQuery.sap.domById("RBG1"), "RadioButtonGroup is rendered");
@@ -233,15 +233,15 @@
 		});
 
 		QUnit.test("Aria", function(assert) {
-			equal(jQuery("#F1").attr("role"), "form", "Form1: role \"form\" set");
-			equal(jQuery("#F1").attr("aria-labelledby"), "F1T", "Form1: aria-labelledby set");
+			assert.equal(jQuery("#F1").attr("role"), "form", "Form1: role \"form\" set");
+			assert.equal(jQuery("#F1").attr("aria-labelledby"), "F1T", "Form1: aria-labelledby set");
 			ok(!jQuery("#F1").attr("aria-readonly"), "Form1: aria-readonly not set");
-			equal(jQuery("#F2").attr("aria-readonly"), "true", "Form2: aria-readonly set");
-			equal(jQuery("#F2").attr("aria-labelledby"), "TestLabel F2T", "Form2: aria-labelledby set");
+			assert.equal(jQuery("#F2").attr("aria-readonly"), "true", "Form2: aria-readonly set");
+			assert.equal(jQuery("#F2").attr("aria-labelledby"), "TestLabel F2T", "Form2: aria-labelledby set");
 
-			equal(jQuery("#C1").attr("role"), "form", "Container1: role \"form\" set");
-			equal(jQuery("#C1").attr("aria-labelledby"), "C1--title", "Container1: aria-labelledby set");
-			equal(jQuery("#C2").attr("aria-labelledby"), "C2T", "Container2: aria-labelledby set");
+			assert.equal(jQuery("#C1").attr("role"), "form", "Container1: role \"form\" set");
+			assert.equal(jQuery("#C1").attr("aria-labelledby"), "C1--title", "Container1: aria-labelledby set");
+			assert.equal(jQuery("#C2").attr("aria-labelledby"), "C2T", "Container2: aria-labelledby set");
 			ok(!jQuery("#C4").attr("aria-labelledby"), "Container4: aria-labelledby not set");
 		});
 
@@ -252,32 +252,32 @@
 			var oContainer = sap.ui.getCore().byId("C3");
 			qutils.triggerEvent("tap", "C3--Exp");
 			ok(!jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is not visible after click on expander");
-			equal(oContainer.getExpanded(), false, "Container3 getExpanded()")
+			assert.equal(oContainer.getExpanded(), false, "Container3 getExpanded()")
 
 			jQuery("#C3--Exp").focus();
 			qutils.triggerKeydown(jQuery("#C3--Exp").get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 			qutils.triggerKeyup(jQuery("#C3--Exp").get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 			ok(jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is visible after ENTER on expander");
-			equal(oContainer.getExpanded(), true, "Container3 getExpanded()")
+			assert.equal(oContainer.getExpanded(), true, "Container3 getExpanded()")
 
 			jQuery("#CB1").focus();
 			qutils.triggerKeydown(jQuery("#CB1").get(0), jQuery.sap.KeyCodes.NUMPAD_MINUS, false, false, false);
 			ok(!jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is not visible after NumpadMinus on control");
-			equal(oContainer.getExpanded(), false, "Container3 getExpanded()")
+			assert.equal(oContainer.getExpanded(), false, "Container3 getExpanded()")
 
 			jQuery("#C3--Exp").focus();
 			qutils.triggerKeydown(jQuery("#C3--Exp").get(0), jQuery.sap.KeyCodes.NUMPAD_PLUS, false, false, false);
 			ok(jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is visible after NumpadPlus on expander");
-			equal(oContainer.getExpanded(), true, "Container3 getExpanded()")
+			assert.equal(oContainer.getExpanded(), true, "Container3 getExpanded()")
 
 			// container navigation
 			jQuery("#I1").focus();
 			qutils.triggerKeydown(jQuery("#I1").get(0), jQuery.sap.KeyCodes.F6, false, false, false);
-			equal(document.activeElement.getAttribute("id"), "I3-inner", "Container2 focused after F6 on Container1");
+			assert.equal(document.activeElement.getAttribute("id"), "I3-inner", "Container2 focused after F6 on Container1");
 
 			jQuery("#I3").focus();
 			qutils.triggerKeydown(jQuery("#I3").get(0), jQuery.sap.KeyCodes.F6, true, false, false);
-			equal(document.activeElement.getAttribute("id"), "I1-inner", "Container1 focused after Shift+F6 on Container2");
+			assert.equal(document.activeElement.getAttribute("id"), "I1-inner", "Container1 focused after Shift+F6 on Container2");
 		});
 
 		</script>

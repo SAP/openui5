@@ -67,9 +67,9 @@
 		setup();
 		createPropertyBindings("/teamMembers/member", "@firstName");
 
-		equal(bindings.length, 7, "amount of bindings");
+		assert.equal(bindings.length, 7, "amount of bindings");
 		jQuery(bindings).each(function (i, binding){
-			equal(binding.getPath(), "/teamMembers/member/" + i + "/@firstName", "Binding path");
+			assert.equal(binding.getPath(), "/teamMembers/member/" + i + "/@firstName", "Binding path");
 		});
 
 	});
@@ -80,7 +80,7 @@
 
 		jQuery(bindings).each(function (i, binding){
 			// check model of each binding...should be the same
-			equal(binding.getModel(), oModel, "Binding model");
+			assert.equal(binding.getModel(), oModel, "Binding model");
 		});
 
 	});
@@ -91,9 +91,9 @@
 
 		jQuery(bindings).each(function (i, binding){
 			// check model of each binding...should be the same
-			equal(binding.getContext(), "context", "Binding context");
+			assert.equal(binding.getContext(), "context", "Binding context");
 			binding.setContext("newContext");
-			equal(binding.getContext(), "newContext", "Binding context");
+			assert.equal(binding.getContext(), "newContext", "Binding context");
 		});
 	});
 
@@ -122,7 +122,7 @@
 			binding.attachChange(callBackOnChange);
 
 			// model stores the binding first when attach change was called
-			equal(oModel.aBindings.length, 1, "model bindings")
+			assert.equal(oModel.aBindings.length, 1, "model bindings")
 
 			// fire change event
 			binding._fireChange();
@@ -139,7 +139,7 @@
 			attach = false;
 			detach = true;
 
-			equal(oModel.aBindings.length, 0, "model bindings")
+			assert.equal(oModel.aBindings.length, 0, "model bindings")
 		});
 	});
 

@@ -111,7 +111,7 @@
 		// for the sake of IE8 which capitalizes tags retrieved with innerHTML, we use lowercase for comparison of strings
 		goodText = goodText.toLowerCase();
 		var deliveredText = jQuery(jQuery.sap.domById('textView3')).html().toLowerCase();
-		equal(deliveredText, goodText, "Text has been sanitized");
+		assert.equal(deliveredText, goodText, "Text has been sanitized");
 	});
 
 

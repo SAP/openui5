@@ -22,7 +22,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistryItem");
 
 		//Assert
 		assert.deepEqual(instance.getChangeTypeMetadata(), oMetadataObject);
-		equal(instance.getControlType(), "sap.ui.fl.DummyControl");
+		assert.equal(instance.getControlType(), "sap.ui.fl.DummyControl");
 
 	});
 
@@ -55,7 +55,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistryItem");
 
 		//Assert
 		assert.deepEqual(instance.getChangeTypeMetadata(), mParam.changeTypeMetadata);
-		equal(instance.getControlType(), mParam.controlType);
+		assert.equal(instance.getControlType(), mParam.controlType);
 		assert.deepEqual(instance.getPermittedRoles(), mParam.permittedRoles);
 		assert.deepEqual(instance.getDragTargets(), mParam.dragTargets);
 	});

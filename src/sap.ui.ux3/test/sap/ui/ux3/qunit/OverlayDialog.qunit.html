@@ -64,7 +64,7 @@
 			QUnit.test("OverlayDialog exists", function (assert) {
 				var oDomRef = jQuery.sap.domById(oOverlayDialog.getId());
 				ok(oDomRef, "Rendered OverlayDialog should exist in the page");
-				equal(oDomRef.className, "sapUiUx3OD sapUiUx3Overlay", "Rendered OverlayDialog should have the classes 'sapUiUx3OD' and 'sapUiUx3Overlay'");
+				assert.equal(oDomRef.className, "sapUiUx3OD sapUiUx3Overlay", "Rendered OverlayDialog should have the classes 'sapUiUx3OD' and 'sapUiUx3Overlay'");
 				oDomRef = jQuery.sap.domById(oOverlayDialog.getId() + "-close");
 				ok(oDomRef, "close button should be rendered");
 				oDomRef = jQuery.sap.domById(oOverlayDialog.getId() + "-openNew");

@@ -595,7 +595,7 @@
 			aSelectedItems = this.sut._getFilterDetailList().getItems().filter(fnIsItemSelected, this);
 
 			//Assert
-			equal(aSelectedItems.length, 1, "after deselecting select all checkbox, on a filtered list with 1 selected result, the selected items are only decreased by 1");
+			assert.equal(aSelectedItems.length, 1, "after deselecting select all checkbox, on a filtered list with 1 selected result, the selected items are only decreased by 1");
 		});
 
 		QUnit.test("switching pages keeps the selection", function  (assert) {
@@ -632,7 +632,7 @@
 			aSelectedItems = this.sut._getFilterDetailList().getItems().filter(fnIsItemSelected, this);
 
 			//Assert
-			equal(aSelectedItems.length, 1, "after switching pages selecting and deselecting items works");
+			assert.equal(aSelectedItems.length, 1, "after switching pages selecting and deselecting items works");
 		});
 
 		QUnit.test("close on details page and reopen", function(assert) {
@@ -1665,7 +1665,7 @@
 			sap.ui.getCore().applyChanges();
 			oVSP.destroy();
 
-			equal(oVSP._popover, null, "After destroy, no internal _popover instance should be available");
+			assert.equal(oVSP._popover, null, "After destroy, no internal _popover instance should be available");
 		});
 
 	</script>

@@ -60,7 +60,7 @@
 		function facetSelectedEventHandler(oEvent) {
 			ok(true, "facet select event handler has been executed."); // this test tests by just being counted in the respective test
 			var id = oEvent.getParameter("id");
-			equal(id, facet, facet + " Facet should be selected");
+			assert.equal(id, facet, facet + " Facet should be selected");
 			var oTG1 = new sap.ui.ux3.ThingGroup({
 				title : "Block1"
 			});
@@ -72,12 +72,12 @@
 		function actionSelectedEventHandler(oEvent) {
 			ok(true, "action select event handler has been executed."); // this test tests by just being counted in the respective test
 			var id = oEvent.getParameter("id");
-			equal(id, action, action + " Action should be selected");
+			assert.equal(id, action, action + " Action should be selected");
 		}
 		function feedSubmitEventHandler(oEvent) {
 			ok(true, "feed submit event handler has been executed."); // this test tests by just being counted in the respective test
 			var text = oEvent.getParameter("text");
-			equal(text, "my feed entry", "Feed text should be 'my feed entry'");
+			assert.equal(text, "my feed entry", "Feed text should be 'my feed entry'");
 		}
 	</script>
 
@@ -153,13 +153,13 @@
 			oOverlayContainer.open();
 			var oDomRef = jQuery.sap.domById(oThingViewer.getId());
 			ok(oDomRef, "Rendered ThingViewer should exist in the page");
-			equal(oDomRef.className, "sapUiUx3TV", "Rendered ThingViewer should have the class 'sapUiUx3TV'");
+			assert.equal(oDomRef.className, "sapUiUx3TV", "Rendered ThingViewer should have the class 'sapUiUx3TV'");
 		});
 
 		QUnit.test("Swatch", function(assert) {
 			var oSwatch = jQuery.sap.domById(oThingViewer.getId() + "-swatch");
 			ok(oSwatch, "Rendered Swatch should exist in the page");
-			equal(oSwatch.className, "sapUiUx3TVIcon", "Rendered Swatch should have the class 'sapUiUx3TVIcon'");
+			assert.equal(oSwatch.className, "sapUiUx3TVIcon", "Rendered Swatch should have the class 'sapUiUx3TVIcon'");
 		});
 
 		QUnit.test("Facets", function(assert) {

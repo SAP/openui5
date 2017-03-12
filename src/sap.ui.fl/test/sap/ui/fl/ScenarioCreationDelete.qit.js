@@ -312,10 +312,10 @@ jQuery.sap.require('sap.ui.fl.Cache');
 			//assert.deepEqual(firstChangesRetrieved, secondChanges, 'List of changes is the same'); //deepEqual seems to have problems comparing the two maps
 			var aKeysFirst = Object.keys(firstChangesRetrieved);
 			var aKeysSecond = Object.keys(secondChanges);
-			equal(aKeysSecond.length, 1);
-			equal(aKeysFirst.length, aKeysSecond.length);
-			equal(aKeysFirst[0], aKeysSecond[0]);
-			equal(firstChangesRetrieved[aKeysFirst[0]].getDefinition(), secondChanges[aKeysSecond[0]].getDefinition());
+			assert.equal(aKeysSecond.length, 1);
+			assert.equal(aKeysFirst.length, aKeysSecond.length);
+			assert.equal(aKeysFirst[0], aKeysSecond[0]);
+			assert.equal(firstChangesRetrieved[aKeysFirst[0]].getDefinition(), secondChanges[aKeysSecond[0]].getDefinition());
 			sinon.assert.calledOnce(LrepConnector.prototype.loadChanges);
 			done();
 		}

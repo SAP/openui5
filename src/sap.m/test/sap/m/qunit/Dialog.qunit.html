@@ -89,13 +89,13 @@
 					ok(jQuery.sap.byId("dialog").css("visibility") !== "visible", "Dialog should be hidden before it's opened");
 				},
 				afterOpen: function () {
-					equal(jQuery.sap.byId("dialog").css("visibility"), "visible", "Dialog should be visible after it's opened");
+					assert.equal(jQuery.sap.byId("dialog").css("visibility"), "visible", "Dialog should be visible after it's opened");
 				},
 				beforeClose: function () {
-					equal(jQuery.sap.byId("dialog").css("visibility"), "visible", "Dialog should be visible after it's opened");
+					assert.equal(jQuery.sap.byId("dialog").css("visibility"), "visible", "Dialog should be visible after it's opened");
 				},
 				afterClose: function (oEvent) {
-					equal(jQuery.sap.byId("dialog").length, 0, "Dialog content is not rendered anymore");
+					assert.equal(jQuery.sap.byId("dialog").length, 0, "Dialog content is not rendered anymore");
 					ok(oEvent.getParameter("origin") !== null, "Origin parameter should be set");
 					ok(!oDialog.isOpen(), "Dialog is already closed");
 				}
@@ -125,7 +125,7 @@
 
 			QUnit.test("Initialization", function (assert) {
 				ok(!jQuery.sap.domById("dialog"), "Dialog is not rendered before it's ever opened.");
-				equal(oDialog.oPopup._sF6NavMode, "SCOPE", "Dialog's popup navigation mode is set to SCOPE.")
+				assert.equal(oDialog.oPopup._sF6NavMode, "SCOPE", "Dialog's popup navigation mode is set to SCOPE.")
 			});
 
 			QUnit.module("Content preservation");
@@ -206,10 +206,10 @@
 				ok(jQuery.sap.domById("dialog"), "dialog is rendered after it's opened.");
 				ok($Dialog.closest("#sap-ui-static")[0], "dialog should be rendered inside the static uiArea.");
 				ok(oSubHeaderDom, "Sub header should be rendered inside the dialog");
-				equal($ScrollDiv.css("display"), "inline-block", "Scroll div should always have display: inline-block");
+				assert.equal($ScrollDiv.css("display"), "inline-block", "Scroll div should always have display: inline-block");
 
 				if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
-					equal(oSearchField, document.activeElement, "searchfield should have the focus");
+					assert.equal(oSearchField, document.activeElement, "searchfield should have the focus");
 				}
 
 				if (jQuery.support.touch || jQuery.sap.simulateMobileOnDesktop) {
@@ -265,10 +265,10 @@
 				oDialog.setHorizontalScrolling(false);
 
 				sap.ui.getCore().applyChanges();
-				equal(jQuery.sap.domById(oDialog.getId()).className.indexOf("sapMDialogVerScrollDisabled") != -1, true, "verticalScrolling should be disabled");
-				equal(jQuery.sap.domById(oDialog.getId()).className.indexOf("sapMDialogHorScrollDisabled") != -1, true, "horizontalScrolling should be disabled");
-				equal(oDialog.getVerticalScrolling(), false, "verticalScrolling should be disabled");
-				equal(oDialog.getVerticalScrolling(), false, "horizontalScrolling should be disabled");
+				assert.equal(jQuery.sap.domById(oDialog.getId()).className.indexOf("sapMDialogVerScrollDisabled") != -1, true, "verticalScrolling should be disabled");
+				assert.equal(jQuery.sap.domById(oDialog.getId()).className.indexOf("sapMDialogHorScrollDisabled") != -1, true, "horizontalScrolling should be disabled");
+				assert.equal(oDialog.getVerticalScrolling(), false, "verticalScrolling should be disabled");
+				assert.equal(oDialog.getVerticalScrolling(), false, "horizontalScrolling should be disabled");
 				oDialog.destroy();
 			});
 
@@ -285,10 +285,10 @@
 				oDialog.setHorizontalScrolling(true);
 
 				sap.ui.getCore().applyChanges();
-				equal(jQuery.sap.domById(oDialog.getId()).className.indexOf("sapMPopoverVerScrollDisabled") == -1, true, "verticalScrolling should be enabled");
-				equal(jQuery.sap.domById(oDialog.getId()).className.indexOf("sapMPopoverHorScrollDisabled") == -1, true, "horizontalScrolling should be enabled");
-				equal(oDialog.getVerticalScrolling(), true, "verticalScrolling should be enabled");
-				equal(oDialog.getVerticalScrolling(), true, "horizontalScrolling should be enabled");
+				assert.equal(jQuery.sap.domById(oDialog.getId()).className.indexOf("sapMPopoverVerScrollDisabled") == -1, true, "verticalScrolling should be enabled");
+				assert.equal(jQuery.sap.domById(oDialog.getId()).className.indexOf("sapMPopoverHorScrollDisabled") == -1, true, "horizontalScrolling should be enabled");
+				assert.equal(oDialog.getVerticalScrolling(), true, "verticalScrolling should be enabled");
+				assert.equal(oDialog.getVerticalScrolling(), true, "horizontalScrolling should be enabled");
 				oDialog.destroy();
 			});
 
@@ -595,36 +595,36 @@
 				oDialog.open();
 				ok(oDialog._oToolbar, "Toolbar instance is created");
 				ok(oDialog._oToolbar.getDomRef(), "Toolbar is rendered");
-				equal(oDialog._oToolbar.getContent().length, 3, "Toolbar contains 2 buttons");
+				assert.equal(oDialog._oToolbar.getContent().length, 3, "Toolbar contains 2 buttons");
 				notEqual(oDialog._oToolbar.indexOfContent(oBBtn), -1, "Toolbar contains beginButton");
 				notEqual(oDialog._oToolbar.indexOfContent(oEBtn), -1, "Toolbar contains endButton");
-				equal(oDialog.getBeginButton(), oBBtn, "Getter of beginButton should return the button itself");
-				equal(oDialog.getEndButton(), oEBtn, "Getter of endButton should return the button itself");
+				assert.equal(oDialog.getBeginButton(), oBBtn, "Getter of beginButton should return the button itself");
+				assert.equal(oDialog.getEndButton(), oEBtn, "Getter of endButton should return the button itself");
 
 				// add button into "buttons" aggregation while begin/endButton are set
 				aButtons.forEach(function (oButton) {
 					oDialog.addButton(oButton);
 				});
 				sap.ui.getCore().applyChanges();
-				equal(oDialog._oToolbar.getContent().length, 4, "Toolbar contains 3 new buttons");
-				equal(oDialog._oToolbar.indexOfContent(oBBtn), -1, "Toolbar doesn't contain beginButton");
-				equal(oDialog._oToolbar.indexOfContent(oEBtn), -1, "Toolbar doesn't contain endButton");
+				assert.equal(oDialog._oToolbar.getContent().length, 4, "Toolbar contains 3 new buttons");
+				assert.equal(oDialog._oToolbar.indexOfContent(oBBtn), -1, "Toolbar doesn't contain beginButton");
+				assert.equal(oDialog._oToolbar.indexOfContent(oEBtn), -1, "Toolbar doesn't contain endButton");
 
 				// remove begin/endButton
 				oDialog.setBeginButton(null);
 				oDialog.setEndButton(null);
-				equal(oDialog._oToolbar.getContent().length, 4, "Toolbar still contains 3 buttons");
-				equal(oDialog.getBeginButton(), null, "Getter of beginButton should return null");
-				equal(oDialog.getEndButton(), null, "Getter of endButton should return null");
+				assert.equal(oDialog._oToolbar.getContent().length, 4, "Toolbar still contains 3 buttons");
+				assert.equal(oDialog.getBeginButton(), null, "Getter of beginButton should return null");
+				assert.equal(oDialog.getEndButton(), null, "Getter of endButton should return null");
 
 				// set begin/endButton back and remove "buttons" aggregation
 				oDialog.setBeginButton(oBBtn);
 				oDialog.setEndButton(oEBtn);
 				oDialog.removeAllButtons();
 				sap.ui.getCore().applyChanges();
-				equal(oDialog._oToolbar.getContent().length, 3, "Toolbar contains 2 buttons");
-				equal(oDialog._oToolbar.indexOfContent(oBBtn), 1, "Toolbar contains beginButton");
-				equal(oDialog._oToolbar.indexOfContent(oEBtn), 2, "Toolbar contains endButton");
+				assert.equal(oDialog._oToolbar.getContent().length, 3, "Toolbar contains 2 buttons");
+				assert.equal(oDialog._oToolbar.indexOfContent(oBBtn), 1, "Toolbar contains beginButton");
+				assert.equal(oDialog._oToolbar.indexOfContent(oEBtn), 2, "Toolbar contains endButton");
 
 				// destroy
 				oDialog.destroy();
@@ -664,9 +664,9 @@
 				this.clock.tick(500);
 				ok(oDialog._oToolbar, "Toolbar instance is not created");
 				ok(oDialog.getDomRef(), "Dialog is rendered");
-				equal(oDialog.getBeginButton(), oBBtn, "Getter of beginButton should return the button itself");
-				equal(oDialog.getEndButton(), oEBtn, "Getter of endButton should return the button itself");
-				equal(oBBtn.$().width(), oEBtn.$().width(), "BeginButton and EndButton are with equal width");
+				assert.equal(oDialog.getBeginButton(), oBBtn, "Getter of beginButton should return the button itself");
+				assert.equal(oDialog.getEndButton(), oEBtn, "Getter of endButton should return the button itself");
+				assert.equal(oBBtn.$().width(), oEBtn.$().width(), "BeginButton and EndButton are with equal width");
 
 				// add button to "buttons" aggregation while begin/endButton are set
 				aButtons.forEach(function (oButton) {
@@ -674,14 +674,14 @@
 				});
 				sap.ui.getCore().applyChanges();
 				ok(oDialog._oToolbar, "Toolbar instance is created");
-				equal(oDialog._oToolbar.getContent().length, 4, "Toolbar contains 3 new buttons");
+				assert.equal(oDialog._oToolbar.getContent().length, 4, "Toolbar contains 3 new buttons");
 
 				// remove begin/endButton
 				oDialog.setBeginButton(null);
 				oDialog.setEndButton(null);
-				equal(oDialog._oToolbar.getContent().length, 4, "Toolbar still contains 3 new buttons");
-				equal(oDialog.getBeginButton(), null, "Getter of beginButton should return null");
-				equal(oDialog.getEndButton(), null, "Getter of endButton should return null");
+				assert.equal(oDialog._oToolbar.getContent().length, 4, "Toolbar still contains 3 new buttons");
+				assert.equal(oDialog.getBeginButton(), null, "Getter of beginButton should return null");
+				assert.equal(oDialog.getEndButton(), null, "Getter of endButton should return null");
 
 				// set begin/endButton back and remove "buttons" aggregation
 				oDialog.setBeginButton(oBBtn);
@@ -993,11 +993,11 @@
 				this.clock.tick(400);
 
 				var oFocusedControl = jQuery(document.activeElement).control(0);
-				equal(oFocusedControl.getId(), "initialFocusButton", "Initial focus should be set correctly");
+				assert.equal(oFocusedControl.getId(), "initialFocusButton", "Initial focus should be set correctly");
 
 				oDialog.$("lastfe").focus();
 				oFocusedControl = jQuery(document.activeElement).control(0);
-				equal(oFocusedControl.getId(), "tabChainButton", "Focus should be set to the button in custom header");
+				assert.equal(oFocusedControl.getId(), "tabChainButton", "Focus should be set to the button in custom header");
 
 				oDialog.destroy();
 			});
@@ -1058,7 +1058,7 @@
 
 				ok(oDialog.isOpen(), "Dialog is opened");
 				this.stub(oDialog, "_adjustScrollingPane", function () {
-					equal(oDialog.$("scroll").css("display"), "inline-block", "display: block is cleared before size calculation");
+					assert.equal(oDialog.$("scroll").css("display"), "inline-block", "display: block is cleared before size calculation");
 				});
 				oDialog._reapplyPosition();
 				oDialog.destroy();

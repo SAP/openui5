@@ -52,7 +52,7 @@
 			assert.strictEqual(sut.getDemandPopin(), valueToSet,"demandPopin was set");
 			assert.strictEqual(sut,result, "should be chainable");
 			if(expectedValidateToBeCalled){
-				equal(bShouldInvalidate, invalidateWasCalled,"invalidate was called")
+				assert.equal(bShouldInvalidate, invalidateWasCalled,"invalidate was called")
 			}
 
 			//Cleanup
@@ -90,7 +90,7 @@
 			result = sut.isPopin();
 
 			//Assert
-			equal(result, expectedResult);
+			assert.equal(result, expectedResult);
 
 			//Cleanup
 			sut.destroy();
@@ -344,7 +344,7 @@
 		// Set contextual width to a parent (as for tablet or above) and wait 1 tick for onColumnResize
 		page._applyContextualSettings({contextualWidth: 600});
 		this.clock.tick(1);
-		equal(tableResizeSpy.callCount, 0, "After applying contextual width to a parent container, but this width is in the same range, onColumnResize is not called");
+		assert.equal(tableResizeSpy.callCount, 0, "After applying contextual width to a parent container, but this width is in the same range, onColumnResize is not called");
 
 		page.destroy();
 	});
@@ -373,18 +373,18 @@
 		// Set contextual width to a parent (as for phone) and wait 1 tick for onColumnResize
 		page._applyContextualSettings({contextualWidth: 100});
 		this.clock.tick(1);
-		equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
+		assert.equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
 
 		// Now set contextual width that doesn't go beyond a breakpoint
 		page._applyContextualSettings({contextualWidth: 101});
 		this.clock.tick(1);
 		// callCount is still 1
-		equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, but this width isn't in a different range, onColumnResize is not called");
+		assert.equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, but this width isn't in a different range, onColumnResize is not called");
 
 		// Now set contextual width that goes beyond a breakpoint (tablet starts at 600)
 		page._applyContextualSettings({contextualWidth: 600});
 		this.clock.tick(1);
-		equal(tableResizeSpy.callCount, 2, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
+		assert.equal(tableResizeSpy.callCount, 2, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
 
 		page.destroy();
 	});
@@ -416,7 +416,7 @@
 		page._applyContextualSettings({contextualWidth: 600});
 		this.clock.tick(1);
 
-		equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
+		assert.equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
 
 		page.destroy();
 	});
@@ -446,7 +446,7 @@
 		// Now remove contextual settings - the table will be rerendered as for desktop
 		page._applyContextualSettings({});
 		this.clock.tick(1);
-		equal(tableResizeSpy.callCount, 1, "After removing contextual with from a parent container, and this width was in another range compared to the device size range, onColumnResize is called");
+		assert.equal(tableResizeSpy.callCount, 1, "After removing contextual with from a parent container, and this width was in another range compared to the device size range, onColumnResize is called");
 
 		page.destroy();
 	});
@@ -476,7 +476,7 @@
 		// Now remove contextual settings - the table will not be rerendered as it is already showing the column
 		page._applyContextualSettings({});
 		this.clock.tick(1);
-		equal(tableResizeSpy.callCount, 0, "After removing contextual width from a parent container, but this width was in the same range compared to the device width, onColumnResize is not called");
+		assert.equal(tableResizeSpy.callCount, 0, "After removing contextual width from a parent container, but this width was in the same range compared to the device width, onColumnResize is not called");
 
 		page.destroy();
 	});

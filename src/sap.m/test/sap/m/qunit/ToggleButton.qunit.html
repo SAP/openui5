@@ -49,8 +49,8 @@
 	QUnit.module("pressed state");
 
 	QUnit.test("TestGetPressedStateOK", function(assert) {
-		equal(oToggleButton1.getPressed(), true, "getPressedState for testToggleButton_1");
-		equal(oToggleButton2.getPressed(), false, "getPressedState for testToggleButton_2");
+		assert.equal(oToggleButton1.getPressed(), true, "getPressedState for testToggleButton_1");
+		assert.equal(oToggleButton2.getPressed(), false, "getPressedState for testToggleButton_2");
 	});
 
 	QUnit.test("Check Accessibility States", function(assert) {
@@ -62,14 +62,14 @@
 	QUnit.test("TestPressedToUnpressedOK", function(assert) {
 		qutils.triggerEvent("tap", oToggleButton1.getId());
 		sap.ui.getCore().applyChanges();
-		equal(oToggleButton1.getPressed(), false, "getPressedState");
+		assert.equal(oToggleButton1.getPressed(), false, "getPressedState");
 		assert.strictEqual(oToggleButton1.$().attr("aria-pressed"), "false", "aria-pressed state is false for testToggleButton_1 after tap");
 	});
 
 	QUnit.test("TestUnpressedToPressedOK", function(assert) {
 		qutils.triggerEvent("tap", oToggleButton2.getId());
 		sap.ui.getCore().applyChanges();
-		equal(oToggleButton2.getPressed(), true, "getPressedState");
+		assert.equal(oToggleButton2.getPressed(), true, "getPressedState");
 		assert.strictEqual(oToggleButton2.$().attr("aria-pressed"), "true", "aria-pressed state is true for testToggleButton_2 after tap");
 	});
 

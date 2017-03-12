@@ -509,7 +509,7 @@
 		oButton.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		equal(oButton.$().attr("aria-labelledby"), "L1 B1", "Label id and Button id are written inside aria-labelledby attribute");
+		assert.equal(oButton.$().attr("aria-labelledby"), "L1 B1", "Label id and Button id are written inside aria-labelledby attribute");
 
 		oLabel.destroy();
 		oButton.destroy();
@@ -546,8 +546,8 @@
 	});
 
 	QUnit.test("tabindex", function(assert) {
-		equal(b1.$().attr("tabindex"), undefined, "By default the button(root) should have no tabindex");
-		equal(b1.$("inner").attr("tabindex"), undefined, "By default the button(inner) should have no tabindex");
+		assert.equal(b1.$().attr("tabindex"), undefined, "By default the button(root) should have no tabindex");
+		assert.equal(b1.$("inner").attr("tabindex"), undefined, "By default the button(inner) should have no tabindex");
 
 		//Act
 		b1._bExcludeFromTabChain = true;
@@ -556,8 +556,8 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		equal(b1.$().attr("tabindex"), "-1", "Button(root) should have negative tabindex when requested via _bExcludeFromTabChain");
-		equal(b1.$("inner").attr("tabindex"), "-1", "Button(inner) should have negative tabindex when requested via _bExcludeFromTabChain");
+		assert.equal(b1.$().attr("tabindex"), "-1", "Button(root) should have negative tabindex when requested via _bExcludeFromTabChain");
+		assert.equal(b1.$("inner").attr("tabindex"), "-1", "Button(inner) should have negative tabindex when requested via _bExcludeFromTabChain");
 	});
 
 

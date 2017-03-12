@@ -90,35 +90,35 @@
 			qutils.delayTestStart();
 			QUnit.module("Date Picker");
 			QUnit.test("DomRef test", function(assert) {
-				equal( oPicker.getFocusDomRef().id, inputId, "FocusDomRef on input tag" );
-				equal( oPicker.getInputDomRef().id, inputId, "InputDomRef on input tag" );
-				equal( oPicker.getIdForLabel(), inputId, "Label points to input tag" );
+				assert.equal( oPicker.getFocusDomRef().id, inputId, "FocusDomRef on input tag" );
+				assert.equal( oPicker.getInputDomRef().id, inputId, "InputDomRef on input tag" );
+				assert.equal( oPicker.getIdForLabel(), inputId, "Label points to input tag" );
 			});
 
 			QUnit.test("Setter-getter tests", function(assert) {
-				equal( oPicker.getLocale(),    "en-XX",      "Testing instance with locale:en-XX" );
-				equal( oPicker.getYyyymmdd(),  "20101010",   "Testing instance with yyyymmdd:20101010" );
-				equal( oPicker2.getLocale(),   "de",         "Testing setLocale(de)" );
-				equal( oPicker2.getValue(),    "25.12.2010", "Testing setValue(25.12.2010)" );
-				equal( oPicker3.getLocale(),   "en",         "Testing setLocale(en)" );
-				equal( oPicker3.getYyyymmdd(), "20100212",   "Testing setYyyymmdd(20100212)" );
+				assert.equal( oPicker.getLocale(),    "en-XX",      "Testing instance with locale:en-XX" );
+				assert.equal( oPicker.getYyyymmdd(),  "20101010",   "Testing instance with yyyymmdd:20101010" );
+				assert.equal( oPicker2.getLocale(),   "de",         "Testing setLocale(de)" );
+				assert.equal( oPicker2.getValue(),    "25.12.2010", "Testing setValue(25.12.2010)" );
+				assert.equal( oPicker3.getLocale(),   "en",         "Testing setLocale(en)" );
+				assert.equal( oPicker3.getYyyymmdd(), "20100212",   "Testing setYyyymmdd(20100212)" );
 			});
 
 			QUnit.test("YYYYMMDD <-> VALUE conversion tests", function(assert) {
 				// WARNING: YYYYMMDD <-> VALUE conversions will only work if the Pickers are rendered!
-				equal( oPicker.getValue(),     "Oct 10, 2010", "Testing instance with yyyymmdd:20101010" );
-				equal( oPicker2.getYyyymmdd(), "20101225",   "Testing setValue(25.12.2010)" );
-				equal( oPicker3.getValue(),    "Feb 12, 2010", "Testing setYyyymmdd(20100212)" );
+				assert.equal( oPicker.getValue(),     "Oct 10, 2010", "Testing instance with yyyymmdd:20101010" );
+				assert.equal( oPicker2.getYyyymmdd(), "20101225",   "Testing setValue(25.12.2010)" );
+				assert.equal( oPicker3.getValue(),    "Feb 12, 2010", "Testing setYyyymmdd(20100212)" );
 			});
 
 			QUnit.test("initialize - blank value", function(assert) {
 				oPicker3.setValue("");
-				equal( oPicker3.getValue(), "", "Testing setValue(\"\")" );
-				equal( oPicker3.getYyyymmdd(), "",   "Testing setValue(\"\")" );
+				assert.equal( oPicker3.getValue(), "", "Testing setValue(\"\")" );
+				assert.equal( oPicker3.getYyyymmdd(), "",   "Testing setValue(\"\")" );
 				oPicker3.setYyyymmdd("20100212");
 				oPicker3.setYyyymmdd("");
-				equal( oPicker3.getValue(), "", "Testing setYyyymmdd(\"\")" );
-				equal( oPicker3.getYyyymmdd(), "",   "Testing setYyyymmdd(\"\")" );
+				assert.equal( oPicker3.getValue(), "", "Testing setYyyymmdd(\"\")" );
+				assert.equal( oPicker3.getYyyymmdd(), "",   "Testing setYyyymmdd(\"\")" );
 			});
 
 			// The DatePicker always appear ":visible" - test for class !!!
@@ -141,124 +141,124 @@
 				// on mobile devices no keyboard support
 				QUnit.test("Keyboard navigation on input field", function(assert) {
 					qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_UP, false, false, false);
-					equal(jQuery("#myDatePicker2-input").val(), "26.12.2010", "Date increases by 1 day pressing 'PAGE_UP'");
-					equal(oPicker2.getValue(), "25.12.2010", "Value not changed by pressing 'PAGE_UP'");
+					assert.equal(jQuery("#myDatePicker2-input").val(), "26.12.2010", "Date increases by 1 day pressing 'PAGE_UP'");
+					assert.equal(oPicker2.getValue(), "25.12.2010", "Value not changed by pressing 'PAGE_UP'");
 					qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_UP, true, false, false);
-					equal(jQuery("#myDatePicker2-input").val(), "26.01.2011", "Date increases by 1 month pressing shift+'PAGE_UP'");
-					equal(oPicker2.getValue(), "25.12.2010", "Value not changed by pressing shift+'PAGE_UP'");
+					assert.equal(jQuery("#myDatePicker2-input").val(), "26.01.2011", "Date increases by 1 month pressing shift+'PAGE_UP'");
+					assert.equal(oPicker2.getValue(), "25.12.2010", "Value not changed by pressing shift+'PAGE_UP'");
 					qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_UP, true, false, true);
-					equal(jQuery("#myDatePicker2-input").val(), "26.01.2012", "Date increases by 1 year pressing ctrl+shift+'PAGE_UP'");
-					equal(oPicker2.getValue(), "25.12.2010", "Value not changed by pressing ctrl+shift+'PAGE_UP'");
+					assert.equal(jQuery("#myDatePicker2-input").val(), "26.01.2012", "Date increases by 1 year pressing ctrl+shift+'PAGE_UP'");
+					assert.equal(oPicker2.getValue(), "25.12.2010", "Value not changed by pressing ctrl+shift+'PAGE_UP'");
 					qutils.triggerKeyboardEvent("myDatePicker2-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
-					equal(oPicker2.getValue(), "26.01.2012", "Value changed by pressing ENTER");
+					assert.equal(oPicker2.getValue(), "26.01.2012", "Value changed by pressing ENTER");
 
 					qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
-					equal(jQuery("#myDatePicker2-input").val(), "25.01.2012", "Date decreases by 1 day pressing 'PAGE_DOWN'");
-					equal(oPicker2.getValue(), "26.01.2012", "Value not changed by pressing 'PAGE_DOWN'");
+					assert.equal(jQuery("#myDatePicker2-input").val(), "25.01.2012", "Date decreases by 1 day pressing 'PAGE_DOWN'");
+					assert.equal(oPicker2.getValue(), "26.01.2012", "Value not changed by pressing 'PAGE_DOWN'");
 					qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_DOWN, true, false, false);
-					equal(jQuery("#myDatePicker2-input").val(), "25.12.2011", "Date decreases by 1 month pressing shift+'PAGE_DOWN'");
-					equal(oPicker2.getValue(), "26.01.2012", "Value not changed by pressing shift+'PAGE_DOWN'");
+					assert.equal(jQuery("#myDatePicker2-input").val(), "25.12.2011", "Date decreases by 1 month pressing shift+'PAGE_DOWN'");
+					assert.equal(oPicker2.getValue(), "26.01.2012", "Value not changed by pressing shift+'PAGE_DOWN'");
 					qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_DOWN, true, false, true);
-					equal(jQuery("#myDatePicker2-input").val(), "25.12.2010", "Date decreases by 1 year pressing ctrl+shift+'PAGE_DOWN'");
-					equal(oPicker2.getValue(), "26.01.2012", "Value not changed by pressing ctrl+shift+'PAGE_DOWN'");
+					assert.equal(jQuery("#myDatePicker2-input").val(), "25.12.2010", "Date decreases by 1 year pressing ctrl+shift+'PAGE_DOWN'");
+					assert.equal(oPicker2.getValue(), "26.01.2012", "Value not changed by pressing ctrl+shift+'PAGE_DOWN'");
 					qutils.triggerKeyboardEvent("myDatePicker2-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
-					equal(oPicker2.getValue(), "25.12.2010", "Value changed by pressing ENTER");
+					assert.equal(oPicker2.getValue(), "25.12.2010", "Value changed by pressing ENTER");
 				});
 
 				QUnit.test("Input vailidation", function(assert) {
 					var oInput = jQuery("#myDatePicker-input");
 					oInput.val("Dec 6, 2012");
 					qutils.triggerKeyboardEvent("myDatePicker-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
-					equal(oPicker.getValue(), "Dec 6, 2012", "Value after input of Dec 6, 2012")
-					equal(oPicker.getYyyymmdd(), "20121206", "Yyyymmdd after input of Dec 6, 2012")
-					equal(sChangeValue, "Dec 6, 2012", "Value of Change event after input of Dec 6, 2012")
-					equal(sChangeYyyymmdd, "20121206", "Yyymmm of Change event after input of Dec 6, 2012")
-					equal(bChangeInvalid, false, "InvalidEntry of Change event after input of Dec 6, 2012")
+					assert.equal(oPicker.getValue(), "Dec 6, 2012", "Value after input of Dec 6, 2012")
+					assert.equal(oPicker.getYyyymmdd(), "20121206", "Yyyymmdd after input of Dec 6, 2012")
+					assert.equal(sChangeValue, "Dec 6, 2012", "Value of Change event after input of Dec 6, 2012")
+					assert.equal(sChangeYyyymmdd, "20121206", "Yyymmm of Change event after input of Dec 6, 2012")
+					assert.equal(bChangeInvalid, false, "InvalidEntry of Change event after input of Dec 6, 2012")
 
 					oInput.val("11/30/12");
 					qutils.triggerKeyboardEvent("myDatePicker-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
-					equal(oPicker.getValue(), "Nov 30, 2012", "Value after input of 11/30/12")
-					equal(oPicker.getYyyymmdd(), "20121130", "Yyyymmdd after input of 11/30/12")
-					equal(sChangeValue, "Nov 30, 2012", "Value of Change event after input of 11/30/12")
-					equal(sChangeYyyymmdd, "20121130", "Yyymmm of Change event after input of 11/30/12")
-					equal(bChangeInvalid, false, "InvalidEntry of Change event after input of 11/30/12")
+					assert.equal(oPicker.getValue(), "Nov 30, 2012", "Value after input of 11/30/12")
+					assert.equal(oPicker.getYyyymmdd(), "20121130", "Yyyymmdd after input of 11/30/12")
+					assert.equal(sChangeValue, "Nov 30, 2012", "Value of Change event after input of 11/30/12")
+					assert.equal(sChangeYyyymmdd, "20121130", "Yyymmm of Change event after input of 11/30/12")
+					assert.equal(bChangeInvalid, false, "InvalidEntry of Change event after input of 11/30/12")
 
 					oInput.val("abc");
 					qutils.triggerKeyboardEvent("myDatePicker-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
-					equal(oPicker.getValue(), "abc", "Value after input of abc")
-					equal(oPicker.getYyyymmdd(), "20121130", "Yyyymmdd after input of abc")
-					equal(sChangeValue, "abc", "Value of Change event after input of abc")
-					equal(sChangeYyyymmdd, "20121130", "Yyymmm of Change event after input of abc")
-					equal(bChangeInvalid, true, "InvalidEntry of Change event after input of abc")
+					assert.equal(oPicker.getValue(), "abc", "Value after input of abc")
+					assert.equal(oPicker.getYyyymmdd(), "20121130", "Yyyymmdd after input of abc")
+					assert.equal(sChangeValue, "abc", "Value of Change event after input of abc")
+					assert.equal(sChangeYyyymmdd, "20121130", "Yyymmm of Change event after input of abc")
+					assert.equal(bChangeInvalid, true, "InvalidEntry of Change event after input of abc")
 
 					oInput.val("");
 					qutils.triggerKeyboardEvent("myDatePicker-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
-					equal(oPicker.getValue(), "", "Value after input of \"\"")
-					equal(oPicker.getYyyymmdd(), "", "Yyyymmdd after input of \"\"")
-					equal(sChangeValue, "", "Value of Change event after input of \"\"")
-					equal(sChangeYyyymmdd, "", "Yyymmm of Change event after input of \"\"")
-					equal(bChangeInvalid, false, "InvalidEntry of Change event after input of \"\"")
+					assert.equal(oPicker.getValue(), "", "Value after input of \"\"")
+					assert.equal(oPicker.getYyyymmdd(), "", "Yyyymmdd after input of \"\"")
+					assert.equal(sChangeValue, "", "Value of Change event after input of \"\"")
+					assert.equal(sChangeYyyymmdd, "", "Yyymmm of Change event after input of \"\"")
+					assert.equal(bChangeInvalid, false, "InvalidEntry of Change event after input of \"\"")
 				});
 			}
 
 			QUnit.test("DataBindingTest", function(assert) {
-				equal(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString(), "en-US", "locale of page")
+				assert.equal(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString(), "en-US", "locale of page")
 				if (sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString() == "en-US"){
 					// test makes no sense if locale is wrong
 					oDatePicker = sap.ui.getCore().byId("myDatePicker4");
-					equal( oDatePicker.getValue(), "Feb 29, 2012", "Value with default pattern" );
-					equal( oDatePicker.getYyyymmdd(), "20120229", "YYYYMMDD with default pattern" );
+					assert.equal( oDatePicker.getValue(), "Feb 29, 2012", "Value with default pattern" );
+					assert.equal( oDatePicker.getYyyymmdd(), "20120229", "YYYYMMDD with default pattern" );
 					if (!bMobile){
-						equal( jQuery("#myDatePicker4-input").val(), "Feb 29, 2012", "Displayed value with default pattern" );
+						assert.equal( jQuery("#myDatePicker4-input").val(), "Feb 29, 2012", "Displayed value with default pattern" );
 					}else{
-						equal( jQuery("#myDatePicker4-input").val(), "2012-02-29", "Displayed value in mobile device format" );
+						assert.equal( jQuery("#myDatePicker4-input").val(), "2012-02-29", "Displayed value in mobile device format" );
 					}
 
 					oDatePicker = sap.ui.getCore().byId("myDatePicker5");
-					equal( oDatePicker.getValue(), "12-02-29", "Value with defined pattern" );
-					equal( oDatePicker.getYyyymmdd(), "20120229", "YYYYMMDD with defined pattern" );
+					assert.equal( oDatePicker.getValue(), "12-02-29", "Value with defined pattern" );
+					assert.equal( oDatePicker.getYyyymmdd(), "20120229", "YYYYMMDD with defined pattern" );
 					if (!bMobile){
-						equal( jQuery("#myDatePicker5-input").val(), "12-02-29", "Displayed value with defined pattern" );
+						assert.equal( jQuery("#myDatePicker5-input").val(), "12-02-29", "Displayed value with defined pattern" );
 					}else{
-						equal( jQuery("#myDatePicker4-input").val(), "2012-02-29", "Displayed value in mobile device format" );
+						assert.equal( jQuery("#myDatePicker4-input").val(), "2012-02-29", "Displayed value in mobile device format" );
 					}
 
 					oDatePicker = sap.ui.getCore().byId("myDatePicker6");
-					equal( oDatePicker.getValue(), "February 29, 2012", "Value with defined pattern" );
-					equal( oDatePicker.getYyyymmdd(), "20120229", "YYYYMMDD with defined pattern" );
+					assert.equal( oDatePicker.getValue(), "February 29, 2012", "Value with defined pattern" );
+					assert.equal( oDatePicker.getYyyymmdd(), "20120229", "YYYYMMDD with defined pattern" );
 					if (!bMobile){
-						equal( jQuery("#myDatePicker6-input").val(), "February 29, 2012", "Displayed value with defined pattern" );
+						assert.equal( jQuery("#myDatePicker6-input").val(), "February 29, 2012", "Displayed value with defined pattern" );
 					}else{
-						equal( jQuery("#myDatePicker4-input").val(), "2012-02-29", "Displayed value in mobile device format" );
+						assert.equal( jQuery("#myDatePicker4-input").val(), "2012-02-29", "Displayed value in mobile device format" );
 					}
 				}
 			});
 
 			QUnit.test("Placeholder", function(assert) {
-				equal(oPicker7.getPlaceholder(), "20140120", "Testing attribut value");
+				assert.equal(oPicker7.getPlaceholder(), "20140120", "Testing attribut value");
 				if (sap.ui.Device.support.input.placeholder) {
-					equal( jQuery("#myDatePicker7-input").attr("placeholder"), "20.01.2014", "Test attribut formatting");
+					assert.equal( jQuery("#myDatePicker7-input").attr("placeholder"), "20.01.2014", "Test attribut formatting");
 				} else {
-					equal( jQuery("#myDatePicker7-input").val(), "20.01.2014", "Test attribut formatting");
+					assert.equal( jQuery("#myDatePicker7-input").val(), "20.01.2014", "Test attribut formatting");
 				}
 
 				oPicker7.setPlaceholder("20101230");
 				sap.ui.getCore().applyChanges();
-				equal( oPicker7.getPlaceholder(), "20101230", "Testing setValue(30.12.2010)" );
+				assert.equal( oPicker7.getPlaceholder(), "20101230", "Testing setValue(30.12.2010)" );
 
 				oPicker7.setPlaceholder("Date");
 				sap.ui.getCore().applyChanges();
-				equal( oPicker7.getPlaceholder(), "Date", "Testing setValue(Date)" );
+				assert.equal( oPicker7.getPlaceholder(), "Date", "Testing setValue(Date)" );
 				if (sap.ui.Device.support.input.placeholder) {
-					equal( jQuery("#myDatePicker7-input").attr("placeholder"), "Date", "Placeholder set");
+					assert.equal( jQuery("#myDatePicker7-input").attr("placeholder"), "Date", "Placeholder set");
 				} else {
-					equal( jQuery("#myDatePicker7-input").val(), "Date", "Placeholder set");
+					assert.equal( jQuery("#myDatePicker7-input").val(), "Date", "Placeholder set");
 				}
 
 				jQuery("#myDatePicker7-icon").focus();
 				qutils.triggerMouseEvent("myDatePicker7-icon", "click");
 				if (sap.ui.Device.support.input.placeholder) {
-					equal( jQuery("#myDatePicker7-input").attr("placeholder"), "Date", "Placeholder still set after opened");
+					assert.equal( jQuery("#myDatePicker7-input").attr("placeholder"), "Date", "Placeholder still set after opened");
 				} else {
 					ok( !jQuery("#myDatePicker7-input").val(), "Placeholder value removed after opened");
 				}
@@ -266,9 +266,9 @@
 				qutils.triggerMouseEvent("myDatePicker7-icon", "click");
 				oPicker2.focus();
 				if (sap.ui.Device.support.input.placeholder) {
-					equal( jQuery("#myDatePicker7-input").attr("placeholder"), "Date", "Placeholder set");
+					assert.equal( jQuery("#myDatePicker7-input").attr("placeholder"), "Date", "Placeholder set");
 				} else {
-					equal( jQuery("#myDatePicker7-input").val(), "Date", "Placeholder set again after closing and focusing other element");
+					assert.equal( jQuery("#myDatePicker7-input").val(), "Date", "Placeholder set again after closing and focusing other element");
 				}
 			});
 

@@ -77,10 +77,10 @@
 
 		sap.ui.core.AppCacheBuster.exit();
 
-		equal(fnAjaxOrig, jQuery.ajax, "jQuery.ajax is restored");
-		equal(fnIncludeScript, jQuery.sap.includeScript, "jQuery.sap.includeScript is restored");
-		equal(fnIncludeStyleSheet, jQuery.sap.includeStyleSheet, "jQuery.sap.includeStyleSheet is restored");
-		equal(fnValidateProperty, sap.ui.base.ManagedObject.prototype.validateProperty, "sap.ui.base.ManagedObject.prototype.validateProperty is restored");
+		assert.equal(fnAjaxOrig, jQuery.ajax, "jQuery.ajax is restored");
+		assert.equal(fnIncludeScript, jQuery.sap.includeScript, "jQuery.sap.includeScript is restored");
+		assert.equal(fnIncludeStyleSheet, jQuery.sap.includeStyleSheet, "jQuery.sap.includeStyleSheet is restored");
+		assert.equal(fnValidateProperty, sap.ui.base.ManagedObject.prototype.validateProperty, "sap.ui.base.ManagedObject.prototype.validateProperty is restored");
 
 	});
 

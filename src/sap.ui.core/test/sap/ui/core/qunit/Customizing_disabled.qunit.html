@@ -104,11 +104,11 @@
 	QUnit.test("Controller Extension", function(assert) {
 
 		// check lifecycle methods
-		equal(aLifeCycleCalls.length, 3, "3 lifecycle methods should be called");
+		assert.equal(aLifeCycleCalls.length, 3, "3 lifecycle methods should be called");
 		// check calling order
-		equal(aLifeCycleCalls[0], "Sub2 Controller onInit()", "1st lifecycle method to be called should be: Sub2 Controller onInit()");
-		equal(aLifeCycleCalls[1], "Sub2 Controller onBeforeRendering()", "1st lifecycle method to be called should be: Sub2 Controller onBeforeRendering()");
-		equal(aLifeCycleCalls[2], "Sub2 Controller onAfterRendering()", "2nd lifecycle method to be called should be: Sub2 Controller onAfterRendering()");
+		assert.equal(aLifeCycleCalls[0], "Sub2 Controller onInit()", "1st lifecycle method to be called should be: Sub2 Controller onInit()");
+		assert.equal(aLifeCycleCalls[1], "Sub2 Controller onBeforeRendering()", "1st lifecycle method to be called should be: Sub2 Controller onBeforeRendering()");
+		assert.equal(aLifeCycleCalls[2], "Sub2 Controller onAfterRendering()", "2nd lifecycle method to be called should be: Sub2 Controller onAfterRendering()");
 
 		assert.strictEqual(iStandardSub2ControllerCalled, 0, "Standard Controller should not have been called yet");
 		assert.strictEqual(iCustomSub2ControllerCalled, 0, "Custom Controller should not have been called yet");
@@ -122,7 +122,7 @@
 		ok(oController, "Extended Sub2 View should have a Controller");
 		ok(oController.originalSAPAction, "Extended Sub2 controller should have an originalSAPAction method");
 		ok(!oController.customerAction, "Extended Sub2 controller should have no customerAction method");
-		equal(oController.originalSAPAction(), "ori", "originalSAPAction method of extended controller should return 'ori'");
+		assert.equal(oController.originalSAPAction(), "ori", "originalSAPAction method of extended controller should return 'ori'");
 	});
 
 
@@ -136,13 +136,13 @@
 	QUnit.test("Controller Extension (Code Extensibility)", function(assert) {
 
 		// check lifecycle methods
-		equal(oLifecycleSpy.callCount, 3, "3 lifecycle methods should be called");
+		assert.equal(oLifecycleSpy.callCount, 3, "3 lifecycle methods should be called");
 		// check calling order
-		equal(oLifecycleSpy.getCall(0).args[0], "Sub6 Controller onInit()", "1st lifecycle method to be called should be: Sub6 Controller onInit()");
+		assert.equal(oLifecycleSpy.getCall(0).args[0], "Sub6 Controller onInit()", "1st lifecycle method to be called should be: Sub6 Controller onInit()");
 
-		equal(oLifecycleSpy.getCall(1).args[0], "Sub6 Controller onBeforeRendering()", "2nd lifecycle method to be called should be: Sub6AnotherControllerExtension Controller onBeforeRendering()");
+		assert.equal(oLifecycleSpy.getCall(1).args[0], "Sub6 Controller onBeforeRendering()", "2nd lifecycle method to be called should be: Sub6AnotherControllerExtension Controller onBeforeRendering()");
 
-		equal(oLifecycleSpy.getCall(2).args[0], "Sub6 Controller onAfterRendering()", "3rd lifecycle method to be called should be: Sub6 Controller onAfterRendering()");
+		assert.equal(oLifecycleSpy.getCall(2).args[0], "Sub6 Controller onAfterRendering()", "3rd lifecycle method to be called should be: Sub6 Controller onAfterRendering()");
 
 	});
 
@@ -163,7 +163,7 @@
 
 		ok(oFirstItem, "First ListItem should exist");
 		ok(oFirstItem.getDomRef(), "First ListItem should be rendered");
-		equal(oFirstItem.getAdditionalText(), "(Original SAP ListItem)", "First ListItem should be the default one");
+		assert.equal(oFirstItem.getAdditionalText(), "(Original SAP ListItem)", "First ListItem should be the default one");
 	});
 
 	</script>

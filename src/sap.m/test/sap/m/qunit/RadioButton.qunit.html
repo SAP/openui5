@@ -51,7 +51,7 @@
 
 			// assertions
 			ok(oRadioButton1.$().hasClass('sapMRb'), true);
-			equal(oRadioButton2.$().hasClass('sapMRb'), false, 'The button should not have class sapMRb');
+			assert.equal(oRadioButton2.$().hasClass('sapMRb'), false, 'The button should not have class sapMRb');
 
 			// cleanup
 			oRadioButton1.destroy();
@@ -72,7 +72,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			equal(oRadioButton1.$("RB").attr("name"), 'Gruppe1', "Group name should be Gruppe1");
+			assert.equal(oRadioButton1.$("RB").attr("name"), 'Gruppe1', "Group name should be Gruppe1");
 
 			// cleanup
 			oRadioButton1.destroy();
@@ -93,8 +93,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			equal(oDisabledRadioButton.$().hasClass('sapMRbDis'), true, 'The button should have class sapMRbDis');
-			equal(oEnabledRadioButton.$().hasClass('sapMRbDis'), false, 'The button should not have class sapMRbDis');
+			assert.equal(oDisabledRadioButton.$().hasClass('sapMRbDis'), true, 'The button should have class sapMRbDis');
+			assert.equal(oEnabledRadioButton.$().hasClass('sapMRbDis'), false, 'The button should not have class sapMRbDis');
 
 			// cleanup
 			oDisabledRadioButton.destroy();
@@ -151,10 +151,10 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			equal(oRadioButton1.getSelected(),false, "The Radio Button should not be selected");
-			equal(oRadioButton2.getSelected(),true, "The Radio Button should be selected");
-			equal(oRadioButton2.$('RB').attr('checked'), 'checked', "The Radio Button should be selected");
-			equal(oRadioButton1.$("RB").attr('checked'), null, "The Radio Button should not be selected");
+			assert.equal(oRadioButton1.getSelected(),false, "The Radio Button should not be selected");
+			assert.equal(oRadioButton2.getSelected(),true, "The Radio Button should be selected");
+			assert.equal(oRadioButton2.$('RB').attr('checked'), 'checked', "The Radio Button should be selected");
+			assert.equal(oRadioButton1.$("RB").attr('checked'), null, "The Radio Button should not be selected");
 			ok(!(oRadioButton1.$().hasClass("sapMRbSel")), "Radio Button should not have class 'sapMRbSel'");
 			ok(oRadioButton2.$().hasClass("sapMRbSel"), "Radio Button should have class 'sapMRbSel'");
 
@@ -333,7 +333,7 @@
 			// assertions
 			assert.strictEqual(oRadioButton1.$('label').css('direction'),'ltr','The text is with left ro right direction');
 			assert.strictEqual(oRadioButton2.getTextDirection(), 'RTL', 'The Text Direction should be right to left');
-			equal(oRadioButton2.$('label').css('direction'), 'rtl', 'The Text Direction should be rtl');
+			assert.equal(oRadioButton2.$('label').css('direction'), 'rtl', 'The Text Direction should be rtl');
 
 			// cleanup
 			oRadioButton1.destroy();
@@ -353,7 +353,7 @@
 			oRadioButton1.setTabIndex(iTabIndex);
 
 			// assertions
-			equal(parseInt(oRadioButton1.getFocusDomRef().getAttribute("tabindex"), 10), iTabIndex, "RadioButton's tabindex should be set to 1");
+			assert.equal(parseInt(oRadioButton1.getFocusDomRef().getAttribute("tabindex"), 10), iTabIndex, "RadioButton's tabindex should be set to 1");
 
 			// cleanup
 			oRadioButton1.destroy();
@@ -457,8 +457,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			equal(oRadioButton1.$('label').css('width'), '20px', "Label width should be 20px");
-			equal(oRadioButton1.$('label').hasClass('sapMRbBLabel'), true, 'The class sapMRbBLabel should be set to the label');
+			assert.equal(oRadioButton1.$('label').css('width'), '20px', "Label width should be 20px");
+			assert.equal(oRadioButton1.$('label').hasClass('sapMRbBLabel'), true, 'The class sapMRbBLabel should be set to the label');
 			assert.strictEqual(oRadioButton1.$('label').text(), _sLabelText, "Label text should be " + _sLabelText);
 
 			// cleanup
@@ -554,7 +554,7 @@
 			assert.strictEqual(oRadioButton.$().attr("tabindex"), "0" , "'getTabindex' should return 0");
 			qutils.triggerEvent("tap", oRadioButton.getId());
 			ok(oSpy.notCalled, "Event 'select' should not have been fired");
-			equal(oRadioButton.getSelected(), false, "Radio button should not be selected");
+			assert.equal(oRadioButton.getSelected(), false, "Radio button should not be selected");
 
 			// cleanup
 			oRadioButton.destroy();

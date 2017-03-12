@@ -144,61 +144,61 @@
 			"Value", "OriginalValue", "InvalidValue"
 		];
 
-		equal(jQuery.sap.equal(mChanges,{}),true, "Initially the changes are empty");
+		assert.equal(jQuery.sap.equal(mChanges,{}),true, "Initially the changes are empty");
 
 		for (var i=0;i<aPropertyChecks.length;i++) {
 			var sProp = aPropertyChecks[i];
 			var sOldValue = oDataState["get" + sProp]();
-			equal(oDataState["set" + sProp](sProp),oDataState, "DataState object returned by " + "set" + sProp);
-			equal(sProp,oDataState["get" + sProp](), "DataState object returned correct value for " + "get" + sProp);
+			assert.equal(oDataState["set" + sProp](sProp),oDataState, "DataState object returned by " + "set" + sProp);
+			assert.equal(sProp,oDataState["get" + sProp](), "DataState object returned correct value for " + "get" + sProp);
 			var mChanges = oDataState.getChanges();
 			var sLowerPropName = sProp.substring(0,1).toLowerCase() + sProp.substring(1);
-			equal(mChanges[sLowerPropName].oldValue,sOldValue, "Changes contain correct old value for " + sProp);
-			equal(mChanges[sLowerPropName].value,oDataState["get" + sProp](), "Changes contain correct new value for " + sProp);
+			assert.equal(mChanges[sLowerPropName].oldValue,sOldValue, "Changes contain correct old value for " + sProp);
+			assert.equal(mChanges[sLowerPropName].value,oDataState["get" + sProp](), "Changes contain correct new value for " + sProp);
 			oDataState["set" + sProp](sOldValue);
 			var mChanges = oDataState.getChanges();
-			equal(jQuery.sap.equal(mChanges,{}),true, "Changes empty after apply of old value for " + sProp);
+			assert.equal(jQuery.sap.equal(mChanges,{}),true, "Changes empty after apply of old value for " + sProp);
 		}
 
 		//checking dirty state
 		oDataState.setOriginalValue("OriginalValue");
 		oDataState.setValue("OriginalValue");
-		equal(oDataState.isDirty(),false, "Value same as Original not dirty");
+		assert.equal(oDataState.isDirty(),false, "Value same as Original not dirty");
 		oDataState.setValue("Value");
-		equal(oDataState.isDirty(),true, "Value other that Original Dirty");
+		assert.equal(oDataState.isDirty(),true, "Value other that Original Dirty");
 		oDataState.setValue("OriginalValue");
-		equal(oDataState.isDirty(),false, "Value same as Original not dirty");
+		assert.equal(oDataState.isDirty(),false, "Value same as Original not dirty");
 		oDataState.setInvalidValue("ControlValue");
-		equal(oDataState.isDirty(),true, "Control Value set and dirty");
-		equal(oDataState.isControlDirty(),true, "Control Value set and controlDirty");
+		assert.equal(oDataState.isDirty(),true, "Control Value set and dirty");
+		assert.equal(oDataState.isControlDirty(),true, "Control Value set and controlDirty");
 		oDataState.setInvalidValue(null);
-		equal(oDataState.isDirty(),true, "Value other that Original Dirty");
-		equal(oDataState.isControlDirty(),true, "Control Value set and controlDirty");
+		assert.equal(oDataState.isDirty(),true, "Value other that Original Dirty");
+		assert.equal(oDataState.isControlDirty(),true, "Control Value set and controlDirty");
 		oDataState.setInvalidValue(undefined);
-		equal(oDataState.isDirty(),false, "Control Value reset  and not dirty");
-		equal(oDataState.isControlDirty(),false, "Control Value reset and not controlDirty");
+		assert.equal(oDataState.isDirty(),false, "Control Value reset  and not dirty");
+		assert.equal(oDataState.isControlDirty(),false, "Control Value reset and not controlDirty");
 		oDataState.setInvalidValue(false);
-		equal(oDataState.isDirty(),true, "Value other that Original Dirty");
-		equal(oDataState.isControlDirty(),true, "Control Value set and controlDirty");
+		assert.equal(oDataState.isDirty(),true, "Value other that Original Dirty");
+		assert.equal(oDataState.isControlDirty(),true, "Control Value set and controlDirty");
 
 		//laundering
 		oDataState.setLaundering(true);
-		equal(oDataState.isLaundering(),true, "Laundering set");
+		assert.equal(oDataState.isLaundering(),true, "Laundering set");
 		oDataState.setLaundering(false);
-		equal(oDataState.isLaundering(),false, "Laundering reset");
+		assert.equal(oDataState.isLaundering(),false, "Laundering reset");
 
 		//messages
 		oDataState.setModelMessages(["ModelMessage"]);
-		equal(oDataState.getModelMessages()[0],"ModelMessage", "Model Message set");
+		assert.equal(oDataState.getModelMessages()[0],"ModelMessage", "Model Message set");
 		oDataState.setControlMessages(["ControlMessage"]);
-		equal(oDataState.getControlMessages()[0],"ControlMessage", "Control Message set");
-		equal(oDataState.getMessages().length,2, "All Messages length 2");
+		assert.equal(oDataState.getControlMessages()[0],"ControlMessage", "Control Message set");
+		assert.equal(oDataState.getMessages().length,2, "All Messages length 2");
 		oDataState.setControlMessages(null);
-		equal(oDataState.getMessages().length,1, "All Messages length 1");
-		equal(oDataState.getControlMessages().length, 0, "Control Message reset");
+		assert.equal(oDataState.getMessages().length,1, "All Messages length 1");
+		assert.equal(oDataState.getControlMessages().length, 0, "Control Message reset");
 		oDataState.setModelMessages(null);
-		equal(oDataState.getMessages().length, 0, "All Messages length 1");
-		equal(oDataState.getModelMessages().length, 0, "Control Message reset");
+		assert.equal(oDataState.getMessages().length, 0, "All Messages length 1");
+		assert.equal(oDataState.getModelMessages().length, 0, "Control Message reset");
 
 	});
 

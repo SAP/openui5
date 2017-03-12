@@ -260,9 +260,9 @@
 			if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
 				ok(jQuery.sap.containsOrEquals($popover[0], document.activeElement), "Popover should have the focus")
 			}
-			equal(fnBeforeOpen.callCount, 1, "beforeOpen event is fired");
-			equal(fnAfterOpen.callCount, 1, "afterOpen event is fired");
-			equal(fnSetArrowPosition.callCount, 1, "Popover is only positioned once");
+			assert.equal(fnBeforeOpen.callCount, 1, "beforeOpen event is fired");
+			assert.equal(fnAfterOpen.callCount, 1, "afterOpen event is fired");
+			assert.equal(fnSetArrowPosition.callCount, 1, "Popover is only positioned once");
 
 			// ok(($popover.position().left + $popover.outerWidth()) <= (jQuery(window).width() - 10), "popover is not overlapping the right border");
 			// ok(($popover.position().top + $popover.outerHeight()) <= (jQuery(window).height() - 20), "popover is not overlapping bottom border");
@@ -273,7 +273,7 @@
 			this.oPopover.attachAfterClose(fnAfterClose);
 			this.oPopover.close();
 			this.clock.tick(500);
-			equal(this.oPopover.$().css("visibility"), "hidden", "popover should be hidden after it's closed");
+			assert.equal(this.oPopover.$().css("visibility"), "hidden", "popover should be hidden after it's closed");
 			ok(!this.oPopover.isOpen(), "Popover is already closed");
 			ok(fnBeforeClose.calledOnce, "beforeClose event is fired");
 			ok(fnAfterClose.calledOnce, "afterClose event is fired");
@@ -298,7 +298,7 @@
 		QUnit.test("Close", function (assert){
 			oPopover.close();
 			this.clock.tick(500);
-			equal(jQuery.sap.byId("popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
+			assert.equal(jQuery.sap.byId("popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
 			ok(!oPopover.isOpen(), "Popover is already closed");
 		});
 
@@ -321,7 +321,7 @@
 		QUnit.test("Close", function (assert){
 			oPopover.close();
 			this.clock.tick(500);
-			equal(jQuery.sap.byId("popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
+			assert.equal(jQuery.sap.byId("popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
 			ok(!oPopover.isOpen(), "Popover is already closed");
 		});
 
@@ -349,7 +349,7 @@
 		QUnit.test("Close", function (assert){
 			oPopover.close();
 			this.clock.tick(500);
-			equal(jQuery.sap.byId("popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
+			assert.equal(jQuery.sap.byId("popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
 			ok(!oPopover.isOpen(), "Popover is already closed");
 		});
 
@@ -625,25 +625,25 @@
 			oPopover.setModal(true);
 			sap.ui.getCore().applyChanges();
 			ok(jQuery.sap.domById("sap-ui-blocklayer-popup"), "Block layer is rendered");
-			equal(jQuery.sap.byId("sap-ui-blocklayer-popup").css("visibility"), "visible", "block layer is visible");
+			assert.equal(jQuery.sap.byId("sap-ui-blocklayer-popup").css("visibility"), "visible", "block layer is visible");
 			oPopover.setModal(false);
 			sap.ui.getCore().applyChanges();
-			equal(jQuery.sap.byId("sap-ui-blocklayer-popup").css("visibility"), "hidden", "block layer is invisible");
+			assert.equal(jQuery.sap.byId("sap-ui-blocklayer-popup").css("visibility"), "hidden", "block layer is invisible");
 		});
 
 		QUnit.test("Set title", function (assert){
 			ok(jQuery.sap.domById(oPopover.getId() + "-title"), "Title is rendered");
-			equal(jQuery.sap.byId(oPopover.getId() + "-title").text(), sOldTitleValue, "Title should be with the right value");
+			assert.equal(jQuery.sap.byId(oPopover.getId() + "-title").text(), sOldTitleValue, "Title should be with the right value");
 			ok(jQuery.sap.byId(oPopover.getId() + "-title").closest("#" + oPopover.getId() + "-intHeader-BarMiddle")[0], "Title should be rendered in the middle part of the bar");
 			oPopover.setTitle(sNewTitleValue);
 			sap.ui.getCore().applyChanges();
-			equal(jQuery.sap.byId(oPopover.getId() + "-title").text(), sNewTitleValue, "Title should be changed to the new value");
+			assert.equal(jQuery.sap.byId(oPopover.getId() + "-title").text(), sNewTitleValue, "Title should be changed to the new value");
 		});
 
 		QUnit.test("Set title to empty string", function (assert){
 			oPopover.setTitle("");
 			sap.ui.getCore().applyChanges();
-			equal(jQuery.sap.byId(oPopover.getId() + "-title").text(), "", "Title should be able to be set to empty string");
+			assert.equal(jQuery.sap.byId(oPopover.getId() + "-title").text(), "", "Title should be able to be set to empty string");
 		});
 
 		QUnit.test("Add left button", function (assert){
@@ -652,7 +652,7 @@
 			var oBeginButtonFocusDom = oBeginButton.getFocusDomRef();
 			ok(oBeginButtonFocusDom, "BeginButton should be rendered");
 			if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
-				equal(oBeginButtonFocusDom, document.activeElement, "beginButton should have the focus");
+				assert.equal(oBeginButtonFocusDom, document.activeElement, "beginButton should have the focus");
 			}
 			ok(oBeginButton.$().closest("#" + oPopover.getId() + "-intHeader-BarLeft")[0], "Left button is set in the left side of the bar in iOS");
 		});
@@ -669,7 +669,7 @@
 			sap.ui.getCore().applyChanges();
 			var oEndButtonFocusDom = oEndButton.getFocusDomRef();
 			if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
-				equal(oEndButtonFocusDom, document.activeElement, "EndButton should have the focus");
+				assert.equal(oEndButtonFocusDom, document.activeElement, "EndButton should have the focus");
 			}
 			if (sap.ui.Device.os.ios) {
 				ok(!jQuery("#" + oPopover.getId() + "-intHeader-BarLeft").children("#beginButton")[0], "BeginButton is removed from the bar");
@@ -724,18 +724,18 @@
 			oPopover.setVerticalScrolling(false);
 			oPopover.setHorizontalScrolling(false);
 
-			equal(jQuery.sap.domById(oPopover.getId()).className.indexOf("sapMPopoverVerScrollDisabled") != -1, true, "verticalScrolling should be disabled");
-			equal(jQuery.sap.domById(oPopover.getId()).className.indexOf("sapMPopoverHorScrollDisabled") != -1, true, "horizontalScrolling should be disabled");
-			equal(oPopover.getVerticalScrolling(), false, "verticalScrolling should be disabled");
-			equal(oPopover.getVerticalScrolling(), false, "horizontalScrolling should be disabled");
+			assert.equal(jQuery.sap.domById(oPopover.getId()).className.indexOf("sapMPopoverVerScrollDisabled") != -1, true, "verticalScrolling should be disabled");
+			assert.equal(jQuery.sap.domById(oPopover.getId()).className.indexOf("sapMPopoverHorScrollDisabled") != -1, true, "horizontalScrolling should be disabled");
+			assert.equal(oPopover.getVerticalScrolling(), false, "verticalScrolling should be disabled");
+			assert.equal(oPopover.getVerticalScrolling(), false, "horizontalScrolling should be disabled");
 
 			oPopover.setVerticalScrolling(true);
 			oPopover.setHorizontalScrolling(true);
 
-			equal(jQuery.sap.domById(oPopover.getId()).className.indexOf("sapMPopoverVerScrollDisabled") == -1, true, "verticalScrolling should be enabled");
-			equal(jQuery.sap.domById(oPopover.getId()).className.indexOf("sapMPopoverHorScrollDisabled") == -1, true, "horizontalScrolling should be enabled");
-			equal(oPopover.getVerticalScrolling(), true, "verticalScrolling should be enabled");
-			equal(oPopover.getVerticalScrolling(), true, "horizontalScrolling should be enabled");
+			assert.equal(jQuery.sap.domById(oPopover.getId()).className.indexOf("sapMPopoverVerScrollDisabled") == -1, true, "verticalScrolling should be enabled");
+			assert.equal(jQuery.sap.domById(oPopover.getId()).className.indexOf("sapMPopoverHorScrollDisabled") == -1, true, "horizontalScrolling should be enabled");
+			assert.equal(oPopover.getVerticalScrolling(), true, "verticalScrolling should be enabled");
+			assert.equal(oPopover.getVerticalScrolling(), true, "horizontalScrolling should be enabled");
 		});
 
 		QUnit.test("Set showHeader", function (assert){
@@ -833,7 +833,7 @@
 			this.clock.tick(500);
 			ok(!oPopover.isOpen(), "Popover should be closed by autoclose");
 			ok(!oSpy.calledWith(false), "All asserts should be passed");
-			equal(oBeforeCloseSpy.callCount, 1, "beforeClose event is fired");
+			assert.equal(oBeforeCloseSpy.callCount, 1, "beforeClose event is fired");
 			oPopover.destroy();
 			oButton.destroy();
 			oButton2.destroy();
@@ -873,8 +873,8 @@
 			//trigger content resize listener
 			oPopover._onOrientationChange();
 
-			equal(oPopover._oScroller.getScrollTop(), iScrollTop, "Popover should keep vertical scroll position");
-			equal(oPopover._oScroller.getScrollLeft(), iScrollLeft, "Popover should keep horizontal scroll position");
+			assert.equal(oPopover._oScroller.getScrollTop(), iScrollTop, "Popover should keep vertical scroll position");
+			assert.equal(oPopover._oScroller.getScrollLeft(), iScrollLeft, "Popover should keep horizontal scroll position");
 			oPopover.destroy();
 		});
 
@@ -910,7 +910,7 @@
 			sap.ui.test.qunit.triggerKeydown(oPopover.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 			this.clock.tick(500);
 			ok(!oPopover.isOpen(), "Popover should be closed by ESCAPE key");
-			equal(document.activeElement, oButton.getFocusDomRef(), "Focus should be set back to the button");
+			assert.equal(document.activeElement, oButton.getFocusDomRef(), "Focus should be set back to the button");
 
 			oPopover.openBy(oButton);
 			this.clock.tick(500);
@@ -918,7 +918,7 @@
 			sap.ui.test.qunit.triggerKeydown(oPopover.getDomRef(), jQuery.sap.KeyCodes.F4, false, true);
 			this.clock.tick(500);
 			ok(!oPopover.isOpen(), "Popover should be closed by Alt+F4 key");
-			equal(document.activeElement, oButton.getFocusDomRef(), "Focus should be set back to the button");
+			assert.equal(document.activeElement, oButton.getFocusDomRef(), "Focus should be set back to the button");
 
 			oPopover.destroy();
 			oButton.destroy();
@@ -941,7 +941,7 @@
 			this.clock.tick(500);
 			var fnContentResize = this.spy(oPopover, "_registerContentResizeHandler");
 			oPopover._onOrientationChange();
-			equal(fnContentResize.callCount, 1, "registerContentResizeHandler should called once");
+			assert.equal(fnContentResize.callCount, 1, "registerContentResizeHandler should called once");
 			oPopover.destroy();
 		});
 
@@ -1170,7 +1170,7 @@
 			oPopover.openBy(oButton);
 
 			this.clock.tick(500);
-			equal(oSpy.callCount, 1, "popup's open method should only be called once");
+			assert.equal(oSpy.callCount, 1, "popup's open method should only be called once");
 
 			oPopover.destroy();
 			oButton.destroy();
@@ -1208,8 +1208,8 @@
 				oPopover._oScroller.scrollTo(30, 20, 1);
 
 				oPopover._onOrientationChange();
-				equal(oPopover._oScroller.getScrollTop(), 20, "scrollTop is restored");
-				equal(oPopover._oScroller.getScrollLeft(), 30, "scrollLeft is restored");
+				assert.equal(oPopover._oScroller.getScrollTop(), 20, "scrollTop is restored");
+				assert.equal(oPopover._oScroller.getScrollLeft(), 30, "scrollLeft is restored");
 
 				oPopover.destroy();
 				oButton.destroy();
@@ -1359,10 +1359,10 @@
 
 			oPopover.openBy(oButton);
 
-			equal(oPopover.$("arrow").length, 0, "Popover should not have arrow");
-			equal(oSpyGetArrowOffsetCss.callCount, 0, "_getArrowOffsetCss should not be called");
-			equal(oSpyGetArrowPositionCssClass.callCount, 0, "_getArrowPositionCssClass should not be called");
-			equal(oSpyGetArrowStyleCssClass.callCount, 0, "_getArrowStyleCssClass should not be called");
+			assert.equal(oPopover.$("arrow").length, 0, "Popover should not have arrow");
+			assert.equal(oSpyGetArrowOffsetCss.callCount, 0, "_getArrowOffsetCss should not be called");
+			assert.equal(oSpyGetArrowPositionCssClass.callCount, 0, "_getArrowPositionCssClass should not be called");
+			assert.equal(oSpyGetArrowStyleCssClass.callCount, 0, "_getArrowStyleCssClass should not be called");
 
 			oSpyGetArrowOffsetCss.restore();
 			oSpyGetArrowPositionCssClass.restore();
@@ -1384,10 +1384,10 @@
 
 			oPopover.openBy(oButton);
 
-			equal(oPopover.$("arrow").length, 1, "Popover should have arrow");
-			equal(oSpyGetArrowOffsetCss.callCount, 1, "_getArrowOffsetCss should be called");
-			equal(oSpyGetArrowPositionCssClass.callCount, 1, "_getArrowPositionCssClass should be called");
-			equal(oSpyGetArrowStyleCssClass.callCount, 1, "_getArrowStyleCssClass should be called");
+			assert.equal(oPopover.$("arrow").length, 1, "Popover should have arrow");
+			assert.equal(oSpyGetArrowOffsetCss.callCount, 1, "_getArrowOffsetCss should be called");
+			assert.equal(oSpyGetArrowPositionCssClass.callCount, 1, "_getArrowPositionCssClass should be called");
+			assert.equal(oSpyGetArrowStyleCssClass.callCount, 1, "_getArrowStyleCssClass should be called");
 
 			oSpyGetArrowOffsetCss.restore();
 			oSpyGetArrowPositionCssClass.restore();
@@ -1412,18 +1412,18 @@
 			if (!sap.ui.Device.system.desktop) {
 				// Assert when resizable
 				var domQueryLength = this.oPopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle').length;
-				equal(domQueryLength,  0, "Arrow not found in popover because not desktop device");
+				assert.equal(domQueryLength,  0, "Arrow not found in popover because not desktop device");
 			} else {
 				// Assert when resizable
 				var domQueryLength = this.oPopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle').length;
-				equal(domQueryLength,  1, "Arrow found in popover");
+				assert.equal(domQueryLength,  1, "Arrow found in popover");
 
 				this.oPopover.setResizable(false);
 				this.oPopover.rerender();
 
 				// Assert when not resizable
 				var domQueryLength = this.oPopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle').length;
-				equal(domQueryLength,  0, "Arrow not found in popover");
+				assert.equal(domQueryLength,  0, "Arrow not found in popover");
 			}
 		});
 
@@ -1447,7 +1447,7 @@
 			});
 
 			// Assert
-			equal(oSpy.callCount, 1, "_applyPosition is called once");
+			assert.equal(oSpy.callCount, 1, "_applyPosition is called once");
 			assert.strictEqual(oSpy.getCall(0).args[1], true, "_applyPosition is called with the second parameter set to true");
 
 			oPopover.destroy();
@@ -1472,10 +1472,10 @@
 
 			var oCalculatedParams = oPopover._getPopoverPositionCss(oPosParams);
 
-			equal(oCalculatedParams.top, 50, "top position should be equal to the _marginTop after calculations");
-			equal(oCalculatedParams.right, undefined, "right position should be equal to 'undefined' after calculations");
+			assert.equal(oCalculatedParams.top, 50, "top position should be equal to the _marginTop after calculations");
+			assert.equal(oCalculatedParams.right, undefined, "right position should be equal to 'undefined' after calculations");
 			ok(isNaN(oCalculatedParams.bottom), "bottom position should be equal to 'NaN' after calculations");
-			equal(oCalculatedParams.left, undefined, "left position should be equal to 'undefined' after calculations");
+			assert.equal(oCalculatedParams.left, undefined, "left position should be equal to 'undefined' after calculations");
 
 			oPopover.destroy();
 		});
@@ -1499,10 +1499,10 @@
 
 			var oCalculatedParams = oPopover._getPopoverPositionCss(oPosParams);
 
-			equal(oCalculatedParams.top, undefined, "top position should be equal to the 'undefined after calculations");
-			equal(oCalculatedParams.right, undefined, "right position should be equal to the 'undefined after calculations");
+			assert.equal(oCalculatedParams.top, undefined, "top position should be equal to the 'undefined after calculations");
+			assert.equal(oCalculatedParams.right, undefined, "right position should be equal to the 'undefined after calculations");
 			ok(isNaN(oCalculatedParams.bottom), "bottom position should be equal to 'NaN' after calculations");
-			equal(oCalculatedParams.left, 10, "left position should be equal to _fMarginLeft after calculations");
+			assert.equal(oCalculatedParams.left, 10, "left position should be equal to _fMarginLeft after calculations");
 
 			oPopover.destroy();
 		});
@@ -1518,7 +1518,7 @@
 				_fPopoverBorderRight: 10
 			});
 
-			equal(iMaxContentWidth, 460, "Popover maxContentWidth should be equal to the documentWidth minus left and right margins and borders");
+			assert.equal(iMaxContentWidth, 460, "Popover maxContentWidth should be equal to the documentWidth minus left and right margins and borders");
 
 			oPopover.destroy();
 		});
@@ -1539,7 +1539,7 @@
 				_fPopoverBorderBottom: 10
 			});
 
-			equal(iMaxContentHeight, 410, "Popover maxContentHeight should be equal to the documentHeight minus header, subheader, footer height; top and bottom margins, borders and content margins");
+			assert.equal(iMaxContentHeight, 410, "Popover maxContentHeight should be equal to the documentHeight minus header, subheader, footer height; top and bottom margins, borders and content margins");
 
 			oPopover.destroy();
 		});
@@ -1666,16 +1666,16 @@
 					oPopover = new sap.m.Popover();
 
 			sPlacementClass = oPopover._getArrowPositionCssClass(sap.m.PlacementType.Top);
-			equal(sPlacementClass, "sapMPopoverArrDown", "The class should be sapMPopoverArrDown");
+			assert.equal(sPlacementClass, "sapMPopoverArrDown", "The class should be sapMPopoverArrDown");
 
 			sPlacementClass = oPopover._getArrowPositionCssClass(sap.m.PlacementType.Bottom);
-			equal(sPlacementClass, "sapMPopoverArrUp", "The class should be sapMPopoverArrUp");
+			assert.equal(sPlacementClass, "sapMPopoverArrUp", "The class should be sapMPopoverArrUp");
 
 			sPlacementClass = oPopover._getArrowPositionCssClass(sap.m.PlacementType.Left);
-			equal(sPlacementClass, "sapMPopoverArrRight", "The class should be sapMPopoverArrRight");
+			assert.equal(sPlacementClass, "sapMPopoverArrRight", "The class should be sapMPopoverArrRight");
 
 			sPlacementClass = oPopover._getArrowPositionCssClass(sap.m.PlacementType.Right);
-			equal(sPlacementClass, "sapMPopoverArrLeft", "The class should be sapMPopoverArrLeft");
+			assert.equal(sPlacementClass, "sapMPopoverArrLeft", "The class should be sapMPopoverArrLeft");
 
 			oPopover.destroy();
 		});
@@ -1694,7 +1694,7 @@
 
 			var sClassName = oPopover._getArrowStyleCssClass(oPosParams);
 
-			equal(sClassName, "sapMPopoverHeaderAlignArr", "Should return sapMPopoverHeaderAlignArr class");
+			assert.equal(sClassName, "sapMPopoverHeaderAlignArr", "Should return sapMPopoverHeaderAlignArr class");
 
 			stubArrowPosition.restore();
 			stubFooterPosition.restore();
@@ -1717,7 +1717,7 @@
 
 			var sClassName = oPopover._getArrowStyleCssClass(oPosParams);
 
-			equal(sClassName, "sapMPopoverCrossArr", "Should return sapMPopoverCrossArr class");
+			assert.equal(sClassName, "sapMPopoverCrossArr", "Should return sapMPopoverCrossArr class");
 
 			stubArrowPosition.restore();
 			stubFooterPosition.restore();
@@ -1738,7 +1738,7 @@
 
 			var sClassName = oPopover._getArrowStyleCssClass(oPosParams);
 
-			equal(sClassName, "sapMPopoverFooterAlignArr", "Should return sapMPopoverFooterAlignArr class");
+			assert.equal(sClassName, "sapMPopoverFooterAlignArr", "Should return sapMPopoverFooterAlignArr class");
 
 			stubArrowPosition.restore();
 			stubFooterPosition.restore();
@@ -1750,11 +1750,11 @@
 
 			oPopover._adaptPositionParams();
 
-			equal(oPopover._marginTop, 48, "_marginTop should be 48");
-			equal(oPopover._marginRight, 10, "_marginTop should be 10");
-			equal(oPopover._marginBottom, 10, "_marginTop should be 10");
-			equal(oPopover._marginLeft, 10, "_marginTop should be 10");
-			equal(oPopover._arrowOffset, 18, "_arrowoffset should be 18");
+			assert.equal(oPopover._marginTop, 48, "_marginTop should be 48");
+			assert.equal(oPopover._marginRight, 10, "_marginTop should be 10");
+			assert.equal(oPopover._marginBottom, 10, "_marginTop should be 10");
+			assert.equal(oPopover._marginLeft, 10, "_marginTop should be 10");
+			assert.equal(oPopover._arrowOffset, 18, "_arrowoffset should be 18");
 			assert.deepEqual(oPopover._offsets, ["0 -18", "18 0", "0 18", "-18 0"], "offsets should be correct according the arrowOffset");
 			assert.deepEqual(oPopover._myPositions, ["center bottom", "begin center", "center top", "end center"], "myPositions should be correct");
 			assert.deepEqual(oPopover._atPositions, ["center top", "end center", "center bottom", "begin center"], "atPositions should be correct");
@@ -1767,11 +1767,11 @@
 
 			oPopover._adaptPositionParams();
 
-			equal(oPopover._marginTop, 0, "_marginTop should be 0");
-			equal(oPopover._marginRight, 0, "_marginTop should be 0");
-			equal(oPopover._marginBottom, 0, "_marginTop should be 0");
-			equal(oPopover._marginLeft, 0, "_marginTop should be 0");
-			equal(oPopover._arrowOffset, 0, "_arrowoffset should be 0");
+			assert.equal(oPopover._marginTop, 0, "_marginTop should be 0");
+			assert.equal(oPopover._marginRight, 0, "_marginTop should be 0");
+			assert.equal(oPopover._marginBottom, 0, "_marginTop should be 0");
+			assert.equal(oPopover._marginLeft, 0, "_marginTop should be 0");
+			assert.equal(oPopover._arrowOffset, 0, "_arrowoffset should be 0");
 			assert.deepEqual(oPopover._offsets, ["0 0", "0 0", "0 0", "0 0"], "offsets should be correct according the arrowOffset");
 			assert.deepEqual(oPopover._myPositions, ["begin bottom", "begin center", "begin top", "end center"], "myPositions should be correct");
 			assert.deepEqual(oPopover._atPositions, ["begin top", "end center", "begin bottom", "begin center"], "atPositions should be correct");
@@ -1786,7 +1786,7 @@
 			stubGetParameters.withArgs("sapMPopoverForceCompactArrowOffset").returns("true");
 			oPopover.openBy(oButton2);
 
-			equal(oPopover._arrowOffset, 9, "_arrowoffset should be 9");
+			assert.equal(oPopover._arrowOffset, 9, "_arrowoffset should be 9");
 			assert.deepEqual(oPopover._offsets, ["0 -9", "9 0", "0 9", "-9 0"], "offsets should be correct according the arrowOffset");
 
 			stubGetParameters.restore();
@@ -1800,7 +1800,7 @@
 			stubGetParameters.withArgs("sapMPopoverForceCompactArrowOffset").returns("false");
 			oPopover.openBy(oButton2);
 
-			equal(oPopover._arrowOffset, 18, "_arrowoffset should be 18");
+			assert.equal(oPopover._arrowOffset, 18, "_arrowoffset should be 18");
 			assert.deepEqual(oPopover._offsets, ["0 -18", "18 0", "0 18", "-18 0"], "offsets should be correct according the arrowOffset");
 
 			stubGetParameters.restore();
@@ -1818,7 +1818,7 @@
 			sap.ui.getCore().applyChanges();
 			oPopover.openBy(oButton);
 
-			equal(oPopover._arrowOffset, 9, "_arrowoffset should be 9");
+			assert.equal(oPopover._arrowOffset, 9, "_arrowoffset should be 9");
 			assert.deepEqual(oPopover._offsets, ["0 -9", "9 0", "0 9", "-9 0"], "offsets should be correct according the arrowOffset");
 
 			oScrollContainer.destroy();
@@ -1837,7 +1837,7 @@
 
 			oPopover.openBy(oButton);
 
-			equal(oSpy.callCount, 1, "_afterAdjustPositionAndArrowHook is called once");
+			assert.equal(oSpy.callCount, 1, "_afterAdjustPositionAndArrowHook is called once");
 
 			oPopover.destroy();
 		});
@@ -1855,7 +1855,7 @@
 			oPopover.openBy(oButton);
 			this.clock.tick(400);
 
-			equal(oPopover.$().attr('role'), 'dialog', 'Popover has role dialog');
+			assert.equal(oPopover.$().attr('role'), 'dialog', 'Popover has role dialog');
 
 			oPopover.destroy();
 			oButton.destroy();
@@ -1872,7 +1872,7 @@
 			oPopover.openBy(oButton);
 			this.clock.tick(400);
 
-			equal(oPopover.$().attr('aria-labelledby'), oPopover._getAnyHeader().getId(), 'Popover aria labeledby attribute is equal to the header id');
+			assert.equal(oPopover.$().attr('aria-labelledby'), oPopover._getAnyHeader().getId(), 'Popover aria labeledby attribute is equal to the header id');
 
 			oPopover.destroy();
 			oButton.destroy();
@@ -1892,7 +1892,7 @@
 			oPopover.openBy(oButton);
 			this.clock.tick(400);
 
-			equal(oPopover._headerTitle.getDomRef().nodeName, "H1", "Popover heading should be set to H1 tag");
+			assert.equal(oPopover._headerTitle.getDomRef().nodeName, "H1", "Popover heading should be set to H1 tag");
 			ok(oPopover._headerTitle instanceof sap.m.Title, "Heading of the popover should be of type sap.m.Title");
 
 			oPopover.destroy();
@@ -1912,7 +1912,7 @@
 			});
 			oPopover.openBy(oButton);
 			this.clock.tick(400);
-			equal(jQuery.sap.byId(oPopover.getId() + "-cont").attr("role"), "application", "Popover's content should have role application");
+			assert.equal(jQuery.sap.byId(oPopover.getId() + "-cont").attr("role"), "application", "Popover's content should have role application");
 
 			oPopover.destroy();
 			oButton.destroy();
@@ -1936,8 +1936,8 @@
 			oPopover.openBy(oButton);
 			this.clock.tick(400);
 
-			equal(oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains a reference to the invisible text");
-			equal(oPopover.getDomRef().getAttribute('aria-labelledby'), sInvTextId, "should have an aria-labelledby attribute pointing to the additional invisible label");
+			assert.equal(oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains a reference to the invisible text");
+			assert.equal(oPopover.getDomRef().getAttribute('aria-labelledby'), sInvTextId, "should have an aria-labelledby attribute pointing to the additional invisible label");
 
 			oInvisibleText.destroy();
 			oPopover.destroy();
@@ -1962,8 +1962,8 @@
 			oPopover.openBy(oButton);
 			this.clock.tick(400);
 
-			equal(oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains only a reference to the invisible text");
-			equal(oPopover.getDomRef().getAttribute('aria-labelledby'), (oPopover._getAnyHeader().getId() + ' ' + sInvTextId), "should have an aria-labelledby attribute pointing to the internal header and the additional invisible label");
+			assert.equal(oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains only a reference to the invisible text");
+			assert.equal(oPopover.getDomRef().getAttribute('aria-labelledby'), (oPopover._getAnyHeader().getId() + ' ' + sInvTextId), "should have an aria-labelledby attribute pointing to the internal header and the additional invisible label");
 
 			oInvisibleText.destroy();
 			oPopover.destroy();
@@ -1999,8 +1999,8 @@
 			this.clock.tick(400);
 
 			//Assert
-			equal(oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains only a reference to the invisible text");
-			equal(oPopover.getDomRef().getAttribute('aria-labelledby'), (sCustomHeaderId + ' ' + sInvTextId), "should have an aria-labelledby attribute pointing to the header and the additional invisible label");
+			assert.equal(oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains only a reference to the invisible text");
+			assert.equal(oPopover.getDomRef().getAttribute('aria-labelledby'), (sCustomHeaderId + ' ' + sInvTextId), "should have an aria-labelledby attribute pointing to the header and the additional invisible label");
 
 			//Cleanup
 			oPopover.destroy();

@@ -77,37 +77,37 @@
 			// i1 is decorative, i2 not
 
 			// read alt attribute from DOM
-			equal(jQuery.sap.byId(i1.getId()).attr("alt"), "", "alt text of i1 should be an empty string because the image is decorative");
-			equal(jQuery.sap.byId(i2.getId()).attr("alt"), sAlt, "alt text of i2 should be rendered");
+			assert.equal(jQuery.sap.byId(i1.getId()).attr("alt"), "", "alt text of i1 should be an empty string because the image is decorative");
+			assert.equal(jQuery.sap.byId(i2.getId()).attr("alt"), sAlt, "alt text of i2 should be rendered");
 
 			// read title attribute from DOM
-			equal(jQuery.sap.byId(i1.getId()).attr("title"), sTooltip, "tooltip text of i1 should be rendered");
-			equal(jQuery.sap.byId(i2.getId()).attr("title"), sTooltip, "tooltip text of i2 should be rendered");
+			assert.equal(jQuery.sap.byId(i1.getId()).attr("title"), sTooltip, "tooltip text of i1 should be rendered");
+			assert.equal(jQuery.sap.byId(i2.getId()).attr("title"), sTooltip, "tooltip text of i2 should be rendered");
 
 			i1.setAlt("");
 			i2.setAlt("");
 			sap.ui.getCore().applyChanges();
 
-			equal(jQuery.sap.byId(i1.getId()).attr("alt"), "", "alt text of i1 should be an empty string because the image is decorative");
-			equal(jQuery.sap.byId(i2.getId()).attr("alt"), sTooltip, "alt text of i2 should have the tooltip when alt is not set, but tooltip is");
+			assert.equal(jQuery.sap.byId(i1.getId()).attr("alt"), "", "alt text of i1 should be an empty string because the image is decorative");
+			assert.equal(jQuery.sap.byId(i2.getId()).attr("alt"), sTooltip, "alt text of i2 should have the tooltip when alt is not set, but tooltip is");
 
 			i1.setTooltip("");
 			i2.setTooltip("");
 			sap.ui.getCore().applyChanges();
 
-			equal(jQuery.sap.domById(i1.getId()).getAttribute("alt"), "", "alt attribute of i1 should be an empty string because the image is decorative");
-			equal(jQuery.sap.domById(i2.getId()).getAttribute("alt"), null, "alt attribute of i2 should NOT be rendered");
-			equal(jQuery.sap.domById(i1.getId()).getAttribute("title"), null, "title attribute of i1 should NOT be rendered");
-			equal(jQuery.sap.domById(i2.getId()).getAttribute("title"), null, "title attribute of i2 should NOT be rendered");
+			assert.equal(jQuery.sap.domById(i1.getId()).getAttribute("alt"), "", "alt attribute of i1 should be an empty string because the image is decorative");
+			assert.equal(jQuery.sap.domById(i2.getId()).getAttribute("alt"), null, "alt attribute of i2 should NOT be rendered");
+			assert.equal(jQuery.sap.domById(i1.getId()).getAttribute("title"), null, "title attribute of i1 should NOT be rendered");
+			assert.equal(jQuery.sap.domById(i2.getId()).getAttribute("title"), null, "title attribute of i2 should NOT be rendered");
 
 			i1.setAlt(sAlt);
 			i2.setAlt(sAlt);
 			sap.ui.getCore().applyChanges();
 
-			equal(jQuery.sap.byId(i1.getId()).attr("alt"), "", "alt text of i1 should be an empty string because the image is decorative");
-			equal(jQuery.sap.byId(i2.getId()).attr("alt"), sAlt, "alt text of i2 should be rendered");
-			equal(jQuery.sap.domById(i1.getId()).getAttribute("title"), null, "title attribute of i1 should NOT be rendered");
-			equal(jQuery.sap.domById(i2.getId()).getAttribute("title"), null, "title attribute of i2 should NOT be rendered");
+			assert.equal(jQuery.sap.byId(i1.getId()).attr("alt"), "", "alt text of i1 should be an empty string because the image is decorative");
+			assert.equal(jQuery.sap.byId(i2.getId()).attr("alt"), sAlt, "alt text of i2 should be rendered");
+			assert.equal(jQuery.sap.domById(i1.getId()).getAttribute("title"), null, "title attribute of i1 should NOT be rendered");
+			assert.equal(jQuery.sap.domById(i2.getId()).getAttribute("title"), null, "title attribute of i2 should NOT be rendered");
 		});
 
 		QUnit.test("Offset Dimensions", function(assert) {

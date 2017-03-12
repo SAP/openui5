@@ -284,7 +284,7 @@
 			oTabStrip.destroyItems();
 
 			//assert
-			equal(oTabStrip.getSelectedItem(), undefined, 'Selected item should not be set when items are destroyed.');
+			assert.equal(oTabStrip.getSelectedItem(), undefined, 'Selected item should not be set when items are destroyed.');
 
 			//cleanup
 			oTabStrip.destroy();
@@ -367,9 +367,9 @@
 			this.sut._removeItem(oTabStripItemToRemove);
 			this.clock.tick(1000);
 			//assert
-			equal(this.sut.getItems().length, 4, "Length check");
-			equal(this.sut.getItems().indexOf(oTabStripItemToRemove), -1, "The item should not exist at any index");
-			equal(this.sut.getSelectedItem(), oTabStripItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
+			assert.equal(this.sut.getItems().length, 4, "Length check");
+			assert.equal(this.sut.getItems().indexOf(oTabStripItemToRemove), -1, "The item should not exist at any index");
+			assert.equal(this.sut.getSelectedItem(), oTabStripItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
 			assert.strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
 		});
 
@@ -384,9 +384,9 @@
 			this.sut._removeItem(oTabStripItemToRemove);
 			this.clock.tick(1000);
 			//assert
-			equal(this.sut.getItems().length, 4, "Length check");
-			equal(this.sut.getItems().indexOf(oTabStripItemToRemove), -1, "The item should not exist at any index");
-			equal(this.sut.getSelectedItem(), oTabStripItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
+			assert.equal(this.sut.getItems().length, 4, "Length check");
+			assert.equal(this.sut.getItems().indexOf(oTabStripItemToRemove), -1, "The item should not exist at any index");
+			assert.equal(this.sut.getSelectedItem(), oTabStripItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
 			assert.strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
 		});
 
@@ -402,9 +402,9 @@
 			this.sut._removeItem(oTabStripItemToRemove);
 			this.clock.tick(1000);
 			//assert
-			equal(this.sut.getItems().length, 4, "Length check");
-			equal(this.sut.getItems().indexOf(oTabStripItemToRemove), -1, "The item should not exist at any index");
-			equal(this.sut.getSelectedItem(), oTabStripItemToBeSelected.getId(), "Selection is applied to the right item");
+			assert.equal(this.sut.getItems().length, 4, "Length check");
+			assert.equal(this.sut.getItems().indexOf(oTabStripItemToRemove), -1, "The item should not exist at any index");
+			assert.equal(this.sut.getSelectedItem(), oTabStripItemToBeSelected.getId(), "Selection is applied to the right item");
 			assert.strictEqual(document.activeElement.id, oTabStripItemToBeFocused.getId(), "Focus is applied to the right item");
 		});
 
@@ -499,7 +499,7 @@
 			this.sut._handleOverflowButtons();
 			//assert
 			ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on _scroll call");
-			equal(this.sut._iCurrentScrollLeft, this.sut._iMaxOffsetLeft, "Scroll out of range test passed successfully");
+			assert.equal(this.sut._iCurrentScrollLeft, this.sut._iMaxOffsetLeft, "Scroll out of range test passed successfully");
 			fnUpdateTestScrollValue();
 			ok(iTestCurrentScrollLeft === this.sut._iCurrentScrollLeft && iTestCurrentScrollLeft === this.sut._iMaxOffsetLeft, "ScrollLeft value is as expected");
 			assert.strictEqual(this.sut.getAggregation("_leftArrowButton").$().css("visibility"), "visible", "Left scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
@@ -677,7 +677,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			equal(fnScrollingSpy.callCount, 0, "scrolling calcualtion is not utilized on phone")
+			assert.equal(fnScrollingSpy.callCount, 0, "scrolling calcualtion is not utilized on phone")
 			ok(!this.sut.getAggregation("_leftArrowButton"), "Left button aggregation is not created");
 			ok(!this.sut.getAggregation("_rightArrowButton"), "Right button aggregation is not created");
 

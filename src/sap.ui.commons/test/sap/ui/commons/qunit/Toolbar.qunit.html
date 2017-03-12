@@ -110,7 +110,7 @@
 			ok(jQuery.sap.domById("Toolbar"), "Toolbar should exist in page");
 			oCtrl.setVisible(false);
 			sap.ui.getCore().applyChanges();
-			equal(jQuery.sap.domById("Toolbar"), null, "Toolbar should not be rendered when set to invisible");
+			assert.equal(jQuery.sap.domById("Toolbar"), null, "Toolbar should not be rendered when set to invisible");
 			oCtrl.setVisible(true);
 			sap.ui.getCore().applyChanges();
 			ok(jQuery.sap.domById("Toolbar"), "Toolbar should exist in page");

@@ -133,7 +133,7 @@
 
 			for(var i=0; i<aFields.length-1; i++){
 				triggerTestEvent(aFields[i], true);
-				equal(_FocusedId, aFields[i+1], "Step "+(i+1)+": "+aFields[i]+"->"+aFields[i+1]);
+				assert.equal(_FocusedId, aFields[i+1], "Step "+(i+1)+": "+aFields[i]+"->"+aFields[i+1]);
 			}
 		});
 
@@ -142,7 +142,7 @@
 
 			for(var i=0; i<aFields.length-1; i++){
 				triggerTestEvent(aFields[i], false);
-				equal(_FocusedId, aFields[i+1], "Step "+(i+1)+": "+aFields[i]+"->"+aFields[i+1]);
+				assert.equal(_FocusedId, aFields[i+1], "Step "+(i+1)+": "+aFields[i]+"->"+aFields[i+1]);
 			}
 		});
 

@@ -893,8 +893,8 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				equal(oIconTabFilter.getText(), "new text", "the text is changed");
-				equal(oIconTabFilter.$("text").html(), "new text", "the new text is rendered");
+				assert.equal(oIconTabFilter.getText(), "new text", "the text is changed");
+				assert.equal(oIconTabFilter.$("text").html(), "new text", "the new text is rendered");
 
 				// Clean up
 				oIconTabBar.destroy();

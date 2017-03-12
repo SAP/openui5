@@ -54,18 +54,18 @@
 					jQuery.sap.log.info("sap.m.ActionSheet: cancelButton is pressed");
 				},
 				beforeOpen: function(){
-					ok(jQuery.sap.byId("actionsheet").css("visibility") !== "visible", "ActionSheet should be hidden before it's opened");
+					QUnit.ok(jQuery.sap.byId("actionsheet").css("visibility") !== "visible", "ActionSheet should be hidden before it's opened");
 				},
 				afterOpen: function(){
-					equal(jQuery.sap.byId("actionsheet").css("visibility"), "visible", "ActionSheet should be visible after it's opened");
+					QUnit.equal(jQuery.sap.byId("actionsheet").css("visibility"), "visible", "ActionSheet should be visible after it's opened");
 					QUnit.start();
 				},
 				beforeClose: function(){
-					equal(jQuery.sap.byId("actionsheet").css("visibility"), "visible", "ActionSheet should be visible before it's closed");
+					QUnit.equal(jQuery.sap.byId("actionsheet").css("visibility"), "visible", "ActionSheet should be visible before it's closed");
 				},
 				afterClose: function(){
-					ok(jQuery.sap.byId("actionsheet").css("visibility") !== "visible", "ActionSheet should be hidden after it's closed");
-					ok(!oActionSheet.isOpen(), "ActionSheet is already closed");
+					QUnit.ok(jQuery.sap.byId("actionsheet").css("visibility") !== "visible", "ActionSheet should be hidden after it's closed");
+					QUnit.ok(!oActionSheet.isOpen(), "ActionSheet is already closed");
 					QUnit.start();
 				}
 			});
@@ -250,7 +250,7 @@
 				var oSpyOfViewInvalidate = sinon.spy(page, "invalidate");
 
 				oAC.attachAfterOpen(function(){
-					equal(oSpyOfViewInvalidate.callCount, 0, "Former parent shouldn't be invalidated");
+					assert.equal(oSpyOfViewInvalidate.callCount, 0, "Former parent shouldn't be invalidated");
 
 					oAC.destroy();
 					done();
@@ -258,7 +258,7 @@
 
 				oAC.openBy(oButton);
 
-				equal(oAC._parent.getParent(), page, "Popup of ActionSheet should be aggregated by the former parent of ActionSheet");
+				assert.equal(oAC._parent.getParent(), page, "Popup of ActionSheet should be aggregated by the former parent of ActionSheet");
 
 			});
 

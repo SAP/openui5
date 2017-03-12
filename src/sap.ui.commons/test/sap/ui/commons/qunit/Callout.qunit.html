@@ -65,7 +65,7 @@
 
 	QUnit.test("Assignment of elements", function(assert) {
 		// Tooltip
-		equal(sap.ui.getCore().getControl("CButton").getTooltip().getId(),
+		assert.equal(sap.ui.getCore().getControl("CButton").getTooltip().getId(),
 				"callout", "Callou is assigned as a tooltip to a button");
 	});
 
@@ -199,12 +199,12 @@
 		qutils.triggerKeyboardEvent("CButton", jQuery.sap.KeyCodes.I, false, false, true);
 		setTimeout(function(){
 			ok(isCalloutVisible()==true, "Callout is visible after Ctrl-I");
-			equal(document.activeElement.id, "clink_1", "The first link should be focused after the Callout is opened with keyboard");
+			assert.equal(document.activeElement.id, "clink_1", "The first link should be focused after the Callout is opened with keyboard");
 			//close it
 			qutils.triggerKeyboardEvent(document.activeElement.id, jQuery.sap.KeyCodes.ESCAPE, false, false, false);
 			setTimeout(function(){
 				ok(isCalloutVisible()==false, "Callout is not visible after Esc");
-				equal(document.activeElement.id, "CButton", "The parent element should be focused after the focused Callout is closed");
+				assert.equal(document.activeElement.id, "CButton", "The parent element should be focused after the focused Callout is closed");
 				done();
 			}, 500); // CLOSE
 		}, 500); // OPEN

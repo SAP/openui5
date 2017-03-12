@@ -517,8 +517,8 @@
 
 	QUnit.test("Metadata Validation", function(assert) {
 
-		equal(this.oMetadata.getName(), "sap.ui.test.v1empty.Component", "Name is correct!");
-		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
+		assert.equal(this.oMetadata.getName(), "sap.ui.test.v1empty.Component", "Name is correct!");
+		assert.equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 
 	});
 
@@ -537,8 +537,8 @@
 
 	QUnit.test("Manifest Validation", function(assert) {
 
-		equal(this.oMetadata.getName(), "sap.ui.test.v2empty.Component", "Name is correct!");
-		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
+		assert.equal(this.oMetadata.getName(), "sap.ui.test.v2empty.Component", "Name is correct!");
+		assert.equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 
 	});
 
@@ -557,8 +557,8 @@
 
 	QUnit.test("Metadata Validation", function(assert) {
 
-		equal(this.oMetadata.getName(), "sap.ui.test.v1missing.Component", "Name is correct!");
-		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
+		assert.equal(this.oMetadata.getName(), "sap.ui.test.v1missing.Component", "Name is correct!");
+		assert.equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 
 	});
 
@@ -577,8 +577,8 @@
 
 	QUnit.test("Manifest Validation", function(assert) {
 
-		equal(this.oMetadata.getName(), "sap.ui.test.v2missing.Component", "Name is correct!");
-		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
+		assert.equal(this.oMetadata.getName(), "sap.ui.test.v2missing.Component", "Name is correct!");
+		assert.equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 
 	});
 

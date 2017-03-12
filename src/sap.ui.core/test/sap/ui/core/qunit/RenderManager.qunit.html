@@ -105,15 +105,15 @@
 
 			fActionCallBack(jQuery.sap.byId(sTargetId).get(0), aControls);
 
-			equal(iBeforeCounter, aControls.length, "onBeforeRendering should be called");
+			assert.equal(iBeforeCounter, aControls.length, "onBeforeRendering should be called");
 
 			checkControlsInDom(aControls, sTargetId, true);
 
 			if(sap.ui.Device.browser.safari){
 				//in safari async because onAfterRendering ist called with delay
 				var delayedCall = function(){
-						start();
-						equal(iAfterCounter, aControls.length, "onAfterRendering should be called");
+					    assert.equal(iAfterCounter, aControls.length, "onAfterRendering should be called");
+					    QUnit.start();
 						for(var i=0; i<aControls.length; i++){
 							aControls[i].doBeforeRendering = null;
 							aControls[i].doAfterRendering = null;
@@ -121,8 +121,8 @@
 					};
 				setTimeout(delayedCall, 500);
 			}else{
-				start();
-				equal(iAfterCounter, aControls.length, "onAfterRendering should be called");
+				assert.equal(iAfterCounter, aControls.length, "onAfterRendering should be called");
+				QUnit.start();
 				for(var i=0; i<aControls.length; i++){
 					aControls[i].doBeforeRendering = null;
 					aControls[i].doAfterRendering = null;
@@ -140,32 +140,32 @@
 			for(var i=0; i<aControls.length; i++){
 				var jControlRef = jQuery.sap.byId(aControls[i].getId());
 				if(bExpectExisting){
-					equal(jControlRef.length, 1, "Control is rendered already");
-					equal(jControlRef.parent().attr("id"), sTargetId, "Control is child of Dom Ref with ID '"+sTargetId+"'");
+					assert.equal(jControlRef.length, 1, "Control is rendered already");
+					assert.equal(jControlRef.parent().attr("id"), sTargetId, "Control is child of Dom Ref with ID '"+sTargetId+"'");
 				}else{
-					equal(jControlRef.length, 0, "Control is not rendered yet");
+					assert.equal(jControlRef.length, 0, "Control is not rendered yet");
 				}
 			}
 		};
 
 		var checkChildOrder = function(sParentId, aChildIds){
 			var jChildren = jQuery.sap.byId(sParentId).children();
-			equal(aChildIds.length, jChildren.length, "Number of children of DOM node '"+sParentId+"'");
+			assert.equal(aChildIds.length, jChildren.length, "Number of children of DOM node '"+sParentId+"'");
 			for(var i=0; i<aChildIds.length; i++){
-				equal(aChildIds[i], jQuery(jChildren.get(i)).attr("id"), "DOM node '"+aChildIds[i]+"' is at position "+i);
+				assert.equal(aChildIds[i], jQuery(jChildren.get(i)).attr("id"), "DOM node '"+aChildIds[i]+"' is at position "+i);
 			}
 		};
 
 		var checkRMWriter = function(sExpectedResult, bExpectReturnsRM, iExpectedNumberOfControls, fActionCallback, fCheckCallBack){
 			var rm = new sap.ui.core.RenderManager();
 			var oCheckFunctionResult = fActionCallback(rm);
-			equal(rm.aBuffer.join(""), sExpectedResult, "Writer function produce expected output.");
+			assert.equal(rm.aBuffer.join(""), sExpectedResult, "Writer function produce expected output.");
 			if(bExpectReturnsRM){
 				ok(rm === oCheckFunctionResult, "Writer function returns RenderManager again for chaining.");
 			}else{
 				ok(rm != oCheckFunctionResult, "Writer function does not return RenderManager for chaining.");
 			}
-			equal(rm.aRenderedControls.length, iExpectedNumberOfControls, "Writer function rendered expected number of controls.");
+			assert.equal(rm.aRenderedControls.length, iExpectedNumberOfControls, "Writer function rendered expected number of controls.");
 			if(fCheckCallBack) fCheckCallBack(rm);
 		};
 
@@ -603,7 +603,7 @@
 
 			oCtrl1.rerender();
 
-			equal(iCounter, 0, "Number of rerenderings of Ctrl2");
+			assert.equal(iCounter, 0, "Number of rerenderings of Ctrl2");
 		});
 
 		QUnit.test("RenderManager writeIcon with Icon URL", function(assert) {
@@ -621,14 +621,14 @@
 			var $icon1 = jQuery.sap.byId("icon1");
 			ok($icon1[0], "icon should be rendered");
 			ok($icon1.is("span"), "Icon URI should be rendered as a span");
-			equal($icon1.css("font-family"), oIconInfo.fontFamily, "Icon's font family is rendered");
-			equal($icon1.attr("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
+			assert.equal($icon1.css("font-family"), oIconInfo.fontFamily, "Icon's font family is rendered");
+			assert.equal($icon1.attr("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
 			ok($icon1.hasClass("classA"), "icon has classA as a CSS class");
 			ok($icon1.hasClass("classB"), "icon has classB as a CSS class");
 			ok($icon1.hasClass("sapUiIcon"), "icon has sapUiIcon as a CSS class");
 			ok($icon1.hasClass("sapUiIconMirrorInRTL"), "icon has sapUiIconMirrorInRTL as a CSS class");
-			equal($icon1.attr("propertyA"), "valueA", "Attribute should be set");
-			equal($icon1.attr("propertyB"), "valueB", "Attribute should be set");
+			assert.equal($icon1.attr("propertyA"), "valueA", "Attribute should be set");
+			assert.equal($icon1.attr("propertyB"), "valueB", "Attribute should be set");
 			notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
 
 			jQuery.sap.byId("area6").empty();
@@ -646,14 +646,14 @@
 			$icon1 = jQuery.sap.byId("icon1");
 			ok($icon1[0], "icon should be rendered");
 			ok($icon1.is("span"), "Icon URI should be rendered as a span");
-			equal($icon1.css("font-family"), oIconInfo.fontFamily, "Icon's font family is rendered");
-			equal($icon1.attr("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
+			assert.equal($icon1.css("font-family"), oIconInfo.fontFamily, "Icon's font family is rendered");
+			assert.equal($icon1.attr("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
 			ok($icon1.hasClass("classA"), "icon has classA as a CSS class");
 			ok($icon1.hasClass("classB"), "icon has classB as a CSS class");
 			ok($icon1.hasClass("sapUiIcon"), "icon has sapUiIcon as a CSS class");
 			ok(!$icon1.hasClass("sapUiIconMirrorInRTL"), "icon doesn't have sapUiIconMirrorInRTL as a CSS class");
-			equal($icon1.attr("propertyA"), "valueA", "Attribute should be set");
-			equal($icon1.attr("propertyB"), "valueB", "Attribute should be set");
+			assert.equal($icon1.attr("propertyA"), "valueA", "Attribute should be set");
+			assert.equal($icon1.attr("propertyB"), "valueB", "Attribute should be set");
 			notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
 
 			jQuery.sap.byId("area6").empty();
@@ -675,9 +675,9 @@
 				$invisibleText = jQuery.sap.byId("icon1-label");
 
 			ok($icon1[0], "icon should be rendered");
-			equal($icon1.attr("aria-label"), undefined, "Attribute aria-label should not be set");
-			equal($icon1.attr("aria-labelledby"), undefined, "Attribute aria-labelledby should not be set");
-			equal($invisibleText.length, 0, "No invisible text is rendered");
+			assert.equal($icon1.attr("aria-label"), undefined, "Attribute aria-label should not be set");
+			assert.equal($icon1.attr("aria-labelledby"), undefined, "Attribute aria-labelledby should not be set");
+			assert.equal($invisibleText.length, 0, "No invisible text is rendered");
 
 			jQuery.sap.byId("area6").empty();
 		});
@@ -699,9 +699,9 @@
 				sText = $invisibleText.text();
 			ok($icon1[0], "icon should be rendered");
 
-			equal($icon1.attr("aria-label"), undefined, "Attribute aria-label should not be set");
-			equal($icon1.attr("aria-labelledby"), "foo icon1-label", "Attribute aria-labelledby should contain both the given id and the id of the invisible text");
-			equal(sText, "abc", "The content of invisible text should be set");
+			assert.equal($icon1.attr("aria-label"), undefined, "Attribute aria-label should not be set");
+			assert.equal($icon1.attr("aria-labelledby"), "foo icon1-label", "Attribute aria-labelledby should contain both the given id and the id of the invisible text");
+			assert.equal(sText, "abc", "The content of invisible text should be set");
 
 			jQuery.sap.byId("area6").empty();
 		});
@@ -722,10 +722,10 @@
 			ok($img1.is("img"), "Image URI should be rendered as a img");
 			ok($img1.hasClass("classA"), "img has classA as a CSS class");
 			ok($img1.hasClass("classB"), "img has classB as a CSS class");
-			equal($img1.attr("propertyA"), "valueA", "Attribute should be set");
-			equal($img1.attr("propertyB"), "valueB", "Attribute should be set");
-			equal($img1.attr("role"), "presentation", "Default attribute should be set");
-			equal($img1.attr("alt"), "", "Default attribute should be set");
+			assert.equal($img1.attr("propertyA"), "valueA", "Attribute should be set");
+			assert.equal($img1.attr("propertyB"), "valueB", "Attribute should be set");
+			assert.equal($img1.attr("role"), "presentation", "Default attribute should be set");
+			assert.equal($img1.attr("alt"), "", "Default attribute should be set");
 
 			jQuery.sap.byId("area7").empty();
 
@@ -743,8 +743,8 @@
 			ok($img1.is("img"), "Image URI should be rendered as a img");
 			ok($img1.hasClass("classA"), "img has classA as a CSS class");
 			ok($img1.hasClass("classB"), "img has classB as a CSS class");
-			equal($img1.attr("role"), "", "Attribute should be changed");
-			equal($img1.attr("alt"), "test alt message", "Attribute should be changed");
+			assert.equal($img1.attr("role"), "", "Attribute should be changed");
+			assert.equal($img1.attr("alt"), "test alt message", "Attribute should be changed");
 		});
 
 		QUnit.test("RenderManager should not break for controls with invalid renderer", function(assert) {
@@ -772,7 +772,7 @@
 			oControl.destroy();
 
 			// check the error message
-			equal("The renderer for class " + oMetadata.getName() + " is not defined or does not define a render function! Rendering of " + oControl.getId() + " will be skipped!", oSpy.getCall(0).args[0], "Error should be reported in the console!")
+			assert.equal("The renderer for class " + oMetadata.getName() + " is not defined or does not define a render function! Rendering of " + oControl.getId() + " will be skipped!", oSpy.getCall(0).args[0], "Error should be reported in the console!")
 
 			// restore the spy
 			jQuery.sap.log.error.restore();

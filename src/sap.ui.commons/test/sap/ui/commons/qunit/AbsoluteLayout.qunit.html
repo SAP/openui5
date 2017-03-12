@@ -163,9 +163,9 @@
 				ok(false, "Rerender should never be called");
 			}
 
-			equal(layout4.getContent().length, 2, "Initial # of children:");
-			equal(layout4.getContent()[0], null, "First child is undefined:");
-			equal(layout4.getContent()[1].getId(), "test14", "Id of second child:");
+			assert.equal(layout4.getContent().length, 2, "Initial # of children:");
+			assert.equal(layout4.getContent()[0], null, "First child is undefined:");
+			assert.equal(layout4.getContent()[1].getId(), "test14", "Id of second child:");
 			checkControl("test14", null, null, "5", null, "5", null);
 			setTimeout(function(){
 				if(layout4._originalRerender) {
@@ -186,18 +186,18 @@
 		QUnit.module("Control API");
 
 		QUnit.test("Property Defaults", function(assert) {
-			equal(layout2.getVisible(), true, "Default 'visible':");
-			equal(layout2.getWidth(), "100%", "Default 'width':");
-			equal(layout2.getHeight(), "100%", "Default 'height':");
+			assert.equal(layout2.getVisible(), true, "Default 'visible':");
+			assert.equal(layout2.getWidth(), "100%", "Default 'width':");
+			assert.equal(layout2.getHeight(), "100%", "Default 'height':");
 		});
 
 		QUnit.test("Property Custom Values", function(assert) {
 			layout2.setVisible(false);
 			layout2.setWidth("300px");
 			layout2.setHeight("20px");
-			equal(layout2.getVisible(), false, "Custom 'visible':");
-			equal(layout2.getWidth(), "300px", "Custom 'width':");
-			equal(layout2.getHeight(), "20px", "Custom 'height':");
+			assert.equal(layout2.getVisible(), false, "Custom 'visible':");
+			assert.equal(layout2.getWidth(), "300px", "Custom 'width':");
+			assert.equal(layout2.getHeight(), "20px", "Custom 'height':");
 
 			//Reset after test
 			layout2.setVisible(true);
@@ -206,16 +206,16 @@
 		});
 
 		QUnit.test("placeAt", function(assert) {
-			equal(layout2.getContent().length, 0, "Default # of children:");
+			assert.equal(layout2.getContent().length, 0, "Default # of children:");
 			var oControl = new test.NoWidthHeight();
 			oControl.placeAt(layout2);
-			equal(layout2.getContent().length, 1, "# of children after placeAt:");
+			assert.equal(layout2.getContent().length, 1, "# of children after placeAt:");
 			layout2.removeAllContent();
-			equal(layout2.getContent().length, 0, "# of children after remove all:");
+			assert.equal(layout2.getContent().length, 0, "# of children after remove all:");
 		});
 
 		QUnit.test("Aggregation Content", function(assert) {
-			equal(layout2.getContent().length, 0, "Default # of children:");
+			assert.equal(layout2.getContent().length, 0, "Default # of children:");
 
 			var oPos = {top: "60px", left: "20px", right: "30px", bottom: "40px"};
 			layout2.addContent(new test.NoWidthHeight("aggCh1"), oPos);
@@ -224,20 +224,20 @@
 			var child2 = new test.WidthHeight("aggCh2", {width: "40px", height: "20px"});
 			layout2.addContent(child2, oPos);
 
-			equal(layout2.getContent().length, 3, "# of children after add:");
-			equal(layout2.indexOfContent(child), 0, "Idx of child after add:");
+			assert.equal(layout2.getContent().length, 3, "# of children after add:");
+			assert.equal(layout2.indexOfContent(child), 0, "Idx of child after add:");
 
-			equal(layout2.getPositionOfChild(child2).bottom, undefined, "Ignored bottom Position of child with height:");
-			equal(layout2.getPositionOfChild(child2).right, undefined, "Ignored right Position of child with width:");
+			assert.equal(layout2.getPositionOfChild(child2).bottom, undefined, "Ignored bottom Position of child with height:");
+			assert.equal(layout2.getPositionOfChild(child2).right, undefined, "Ignored right Position of child with width:");
 
 			layout2.setPositionOfChild(child, {top: "0px"});
 
-			equal(layout2.getPositionOfChild(child).top, "0px", "Changed Position of child:");
+			assert.equal(layout2.getPositionOfChild(child).top, "0px", "Changed Position of child:");
 
 			layout2.removeContent(0);
 
-			equal(layout2.getContent().length, 2, "# of children after remove:");
-			equal(layout2.indexOfContent(child), -1, "Idx of child after remove:");
+			assert.equal(layout2.getContent().length, 2, "# of children after remove:");
+			assert.equal(layout2.indexOfContent(child), -1, "Idx of child after remove:");
 
 			var bErrorThrown = false
 			try{
@@ -249,7 +249,7 @@
 
 			layout2.removeAllContent();
 
-			equal(layout2.getContent().length, 0, "# of children after remove all:");
+			assert.equal(layout2.getContent().length, 0, "# of children after remove all:");
 		});
 
 
@@ -257,12 +257,12 @@
 
 		QUnit.test("Visibility", function(assert) {
 			var done = assert.async();
-			equal(jQuery("#layout2").length, 1, "Visible Control is rendered:");
+			assert.equal(jQuery("#layout2").length, 1, "Visible Control is rendered:");
 
 			layout2.setVisible(false);
 			layout2.rerender();
 			setTimeout(function(){
-				equal(jQuery("#layout2").length, 0, "Invisible Control is not rendered:");
+				assert.equal(jQuery("#layout2").length, 0, "Invisible Control is not rendered:");
 
 				//Reset
 				layout2.setVisible(true);
@@ -312,11 +312,11 @@
 
 			oPosition.setCenterHorizontally(true);
 			var jContainer = jQuery(oPosition.getDomRef());
-			equal(jContainer.css("margin-left"), "-100px", "Margin of horizontally centered Position container:");
+			assert.equal(jContainer.css("margin-left"), "-100px", "Margin of horizontally centered Position container:");
 			ok(Math.abs(jContainer.parent().width()/2 - jContainer.position().left) <= 1, "Correct top position of horizontally centered Position container.");
 
 			oPosition.setCenterVertically(true);
-			equal(jContainer.css("margin-top"), "-50px", "Margin of vertically centered Position container:");
+			assert.equal(jContainer.css("margin-top"), "-50px", "Margin of vertically centered Position container:");
 			ok(Math.abs(jContainer.parent().height()/2 - jContainer.position().top) <= 1, "Correct top position of vertically centered Position container.");
 		});
 
@@ -326,76 +326,76 @@
 
 			var oPosition = layout4.getPositions()[1];
 
-			equal(jQuery.sap.byId(oPosition.getId()).length, 1, "Position container is in Dom before setControl(<someControl>)");
+			assert.equal(jQuery.sap.byId(oPosition.getId()).length, 1, "Position container is in Dom before setControl(<someControl>)");
 			oPosition.setControl(new test.WidthHeight("test14a"));
-			equal(jQuery.sap.byId(oPosition.getId()).length, 1, "Position container is in Dom after setControl(<someControl>)");
+			assert.equal(jQuery.sap.byId(oPosition.getId()).length, 1, "Position container is in Dom after setControl(<someControl>)");
 			checkControl("test14a", null, null, "5", null, "5", null);
 
 			oPosition = layout4.getPositions()[0];
 
-			equal(jQuery.sap.byId(oPosition.getId()).length, 0, "Position container is not in Dom before setControl(null)");
+			assert.equal(jQuery.sap.byId(oPosition.getId()).length, 0, "Position container is not in Dom before setControl(null)");
 			oPosition.setControl(null);
-			equal(jQuery.sap.byId(oPosition.getId()).length, 0, "Position container is not in Dom after setControl(null)");
+			assert.equal(jQuery.sap.byId(oPosition.getId()).length, 0, "Position container is not in Dom after setControl(null)");
 
-			equal(jQuery.sap.byId(oPosition.getId()).length, 0, "Position container is not in Dom before setControl(<someControl>)");
+			assert.equal(jQuery.sap.byId(oPosition.getId()).length, 0, "Position container is not in Dom before setControl(<someControl>)");
 			oPosition.setControl(new test.WidthHeight("test14b"));
-			equal(jQuery.sap.byId(oPosition.getId()).length, 1, "Position container is in Dom after setControl(<someControl>)");
+			assert.equal(jQuery.sap.byId(oPosition.getId()).length, 1, "Position container is in Dom after setControl(<someControl>)");
 			checkControl("test14b", null, null, "10", null, "10", null);
 			ok(jQuery.sap.byId(layout4.getId()).children()[0] === jQuery.sap.byId(oPosition.getId())[0], "Position container was added at the right location.");
 
 			oPosition = layout4.getPositions()[1];
 
-			equal(jQuery.sap.byId(oPosition.getId()).length, 1, "Position container is in Dom before setControl(null)");
+			assert.equal(jQuery.sap.byId(oPosition.getId()).length, 1, "Position container is in Dom before setControl(null)");
 			oPosition.setControl(null);
-			equal(jQuery.sap.byId(oPosition.getId()).length, 0, "Position container is not in Dom after setControl(null)");
+			assert.equal(jQuery.sap.byId(oPosition.getId()).length, 0, "Position container is not in Dom after setControl(null)");
 		});
 
 		QUnit.test("Suppressed Rerendering - Layout position aggregation", function(assert) {
 			var done = assert.async();
 			setupRerenderingCheck();
 
-			equal(jQuery.sap.byId(layout4.getId()).children().length, 1, "Initial # of containers in layout");
+			assert.equal(jQuery.sap.byId(layout4.getId()).children().length, 1, "Initial # of containers in layout");
 			layout4.removeAllPositions();
-			equal(jQuery.sap.byId(layout4.getId()).children().length, 0, "# of containers in layout after removeAll");
+			assert.equal(jQuery.sap.byId(layout4.getId()).children().length, 0, "# of containers in layout after removeAll");
 
 			var oPosition = new sap.ui.commons.layout.PositionContainer({top: "5px", bottom: "5px"});
 			layout4.addPosition(oPosition);
-			equal(jQuery.sap.byId(layout4.getId()).children().length, 0, "# of containers in layout after addPosition with position without control");
+			assert.equal(jQuery.sap.byId(layout4.getId()).children().length, 0, "# of containers in layout after addPosition with position without control");
 
 			oPosition = new sap.ui.commons.layout.PositionContainer({top: "5px", bottom: "5px", control: new test.WidthHeight("test14c")});
 			layout4.addPosition(oPosition);
-			equal(jQuery.sap.byId(layout4.getId()).children().length, 1, "# of containers in layout after addPosition with position with control");
+			assert.equal(jQuery.sap.byId(layout4.getId()).children().length, 1, "# of containers in layout after addPosition with position with control");
 			checkControl("test14c", null, null, "0", null, "5", "5");
 
 			oPosition = new sap.ui.commons.layout.PositionContainer({top: "10px", bottom: "10px", control: new test.WidthHeight("test14d")});
 			layout4.addPosition(oPosition);
-			equal(jQuery.sap.byId(layout4.getId()).children().length, 2, "# of containers in layout after addPosition with position with control");
+			assert.equal(jQuery.sap.byId(layout4.getId()).children().length, 2, "# of containers in layout after addPosition with position with control");
 			checkControl("test14d", null, null, "0", null, "10", "10");
 
 			oPosition = new sap.ui.commons.layout.PositionContainer({top: "5px", bottom: "5px"});
 			layout4.insertPosition(oPosition, 1);
-			equal(jQuery.sap.byId(layout4.getId()).children().length, 2, "# of containers in layout after insertPosition with position without control");
+			assert.equal(jQuery.sap.byId(layout4.getId()).children().length, 2, "# of containers in layout after insertPosition with position without control");
 
 			oPosition = new sap.ui.commons.layout.PositionContainer({top: "15px", bottom: "15px", control: new test.WidthHeight("test14e")});
 			layout4.insertPosition(oPosition, 2);
-			equal(jQuery.sap.byId(layout4.getId()).children().length, 3, "# of containers in layout after insertPosition with position with control");
+			assert.equal(jQuery.sap.byId(layout4.getId()).children().length, 3, "# of containers in layout after insertPosition with position with control");
 			checkControl("test14e", null, null, "0", null, "15", "15");
 			ok(jQuery.sap.byId(layout4.getId()).children()[0] === jQuery.sap.byId(oPosition.getId())[0], "Position container was added at the right location.");
 
 			oPosition = new sap.ui.commons.layout.PositionContainer({top: "20px", bottom: "20px", control: new test.WidthHeight("test14f")});
 			layout4.insertPosition(oPosition, 3);
-			equal(jQuery.sap.byId(layout4.getId()).children().length, 4, "# of containers in layout after insertPosition with position with control");
+			assert.equal(jQuery.sap.byId(layout4.getId()).children().length, 4, "# of containers in layout after insertPosition with position with control");
 			checkControl("test14f", null, null, "0", null, "20", "20");
 			ok(jQuery.sap.byId(layout4.getId()).children()[1] === jQuery.sap.byId(oPosition.getId())[0], "Position container was added at the right location.");
 
 			layout4.removePosition(1);
-			equal(jQuery.sap.byId(layout4.getId()).children().length, 4, "# of containers in layout after removePosition of position without control");
+			assert.equal(jQuery.sap.byId(layout4.getId()).children().length, 4, "# of containers in layout after removePosition of position without control");
 
 			layout4.removePosition(2);
-			equal(jQuery.sap.byId(layout4.getId()).children().length, 3, "# of containers in layout after removePosition of position with control");
+			assert.equal(jQuery.sap.byId(layout4.getId()).children().length, 3, "# of containers in layout after removePosition of position with control");
 
 			layout4.destroyPositions();
-			equal(jQuery.sap.byId(layout4.getId()).children().length, 0, "# of containers in layout after destroyAll");
+			assert.equal(jQuery.sap.byId(layout4.getId()).children().length, 0, "# of containers in layout after destroyAll");
 		});
 
 		QUnit.test("Suppressed Rerendering - Layout attributes", function(assert) {
@@ -411,14 +411,14 @@
 			ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwXScroll"), "Horizontal Scrolling Mode 'Scroll' of the layout after setHorizontalScrolling");
 			ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwYScroll"), "Vertical Scrolling Mode 'Scroll' of the layout after setHorizontalScrolling");
 
-			equal(jQuery.sap.byId(layout4.getId()).css("width"), jQuery("#uiArea4").css("width"), "Height of the layout before setWidth");
-			equal(jQuery.sap.byId(layout4.getId()).css("height"), jQuery("#uiArea4").css("height"), "Height of the layout before setWidth");
+			assert.equal(jQuery.sap.byId(layout4.getId()).css("width"), jQuery("#uiArea4").css("width"), "Height of the layout before setWidth");
+			assert.equal(jQuery.sap.byId(layout4.getId()).css("height"), jQuery("#uiArea4").css("height"), "Height of the layout before setWidth");
 			layout4.setWidth("100px");
-			equal(jQuery.sap.byId(layout4.getId()).css("width"), "100px", "Height of the layout after setWidth");
-			equal(jQuery.sap.byId(layout4.getId()).css("height"), jQuery("#uiArea4").css("height"), "Height of the layout after setWidth");
+			assert.equal(jQuery.sap.byId(layout4.getId()).css("width"), "100px", "Height of the layout after setWidth");
+			assert.equal(jQuery.sap.byId(layout4.getId()).css("height"), jQuery("#uiArea4").css("height"), "Height of the layout after setWidth");
 			layout4.setHeight("100px");
-			equal(jQuery.sap.byId(layout4.getId()).css("width"), "100px", "Height of the layout after setHeight");
-			equal(jQuery.sap.byId(layout4.getId()).css("height"), "100px", "Height of the layout after setHeight");
+			assert.equal(jQuery.sap.byId(layout4.getId()).css("width"), "100px", "Height of the layout after setHeight");
+			assert.equal(jQuery.sap.byId(layout4.getId()).css("height"), "100px", "Height of the layout after setHeight");
 		});
 
 		QUnit.test("Center Positioning", function(assert) {
@@ -437,21 +437,21 @@
 			checkControl("test15", "200", "100", "5", null, "5", null);
 
 			oPosition.setCenterHorizontally(true);
-			equal(jContainer.css("margin-left"), "-100px", "Margin of horizontally centered Position container:");
+			assert.equal(jContainer.css("margin-left"), "-100px", "Margin of horizontally centered Position container:");
 			ok(Math.abs(jContainer.parent().width()/2 - jContainer.position().left) <= 1, "Correct top position of horizontally centered Position container.");
 
 			oPosition.setCenterVertically(true);
-			equal(jContainer.css("margin-top"), "-50px", "Margin of vertically centered Position container:");
+			assert.equal(jContainer.css("margin-top"), "-50px", "Margin of vertically centered Position container:");
 			ok(Math.abs(jContainer.parent().height()/2 - jContainer.position().top) <= 1, "Correct top position of vertically centered Position container.");
 
 			oControl.setWidth("400px");
 			oControl.setHeight("200px");
 
 			setTimeout(function(){
-				equal(jContainer.css("margin-left"), "-200px", "Margin of horizontally centered Position container:");
+				assert.equal(jContainer.css("margin-left"), "-200px", "Margin of horizontally centered Position container:");
 				ok(Math.abs(jContainer.parent().width()/2 - jContainer.position().left) <= 1, "Correct top position of horizontally centered Position container.");
 
-				equal(jContainer.css("margin-top"), "-100px", "Margin of vertically centered Position container:");
+				assert.equal(jContainer.css("margin-top"), "-100px", "Margin of vertically centered Position container:");
 				ok(Math.abs(jContainer.parent().height()/2 - jContainer.position().top) <= 1, "Correct top position of vertically centered Position container.");
 				done();
 			}, 1000);

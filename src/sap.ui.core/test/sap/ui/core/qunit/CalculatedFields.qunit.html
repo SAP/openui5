@@ -97,11 +97,11 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		setup();
 
 		oTxt.bindValue("/teamMembers/4/firstName");
-		equal(oTxt.getValue(), "Michael", "normal syntax 1");
+		assert.equal(oTxt.getValue(), "Michael", "normal syntax 1");
 		oTxt.unbindProperty("value");
 
 		oTxt.bindValue({ path: "/teamMembers/4/firstName"});
-		equal(oTxt.getValue(), "Michael", "normal syntax 2");
+		assert.equal(oTxt.getValue(), "Michael", "normal syntax 2");
 		oTxt.unbindProperty("value");
 
 		oTxt.bindValue({ path: "/teamMembers/4/firstName",
@@ -109,7 +109,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 							{path: "/teamMembers/6/firstName"},
 							{path: "/teamMembers/6/lastName"}
 						]});
-		equal(oTxt.getValue(), "Frank Wallace", "calculated fields syntax 1");
+		assert.equal(oTxt.getValue(), "Frank Wallace", "calculated fields syntax 1");
 		oTxt.unbindProperty("value");
 
 		oTxt.bindValue({
@@ -118,7 +118,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 						"/teamMembers/0/firstName",
 						"/teamMembers/2/lastName"
 					]});
-		equal(oTxt.getValue(), "Gina Andreas Rush", "calculated fields syntax 2");
+		assert.equal(oTxt.getValue(), "Gina Andreas Rush", "calculated fields syntax 2");
 	});
 
 	QUnit.test("Binding syntax constructor tests", function(assert) {
@@ -134,7 +134,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		});
 
 		oTxt.placeAt("txt");
-		equal(oTxt.getValue(), "Frank Wallace", "calculated fields constructor syntax 1");
+		assert.equal(oTxt.getValue(), "Frank Wallace", "calculated fields constructor syntax 1");
 
 		oTxt.destroy();
 		oTxt = new sap.ui.commons.TextField({
@@ -147,7 +147,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 			}
 		});
 		oTxt.placeAt("txt");
-		equal(oTxt.getValue(), "Gina Andreas Rush", "calculated fields constructor syntax 2");
+		assert.equal(oTxt.getValue(), "Gina Andreas Rush", "calculated fields constructor syntax 2");
 	});
 
 	QUnit.test("Composite Binding tests", function(assert) {
@@ -183,7 +183,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 						{path: "/teamMembers/6/firstName"},
 						{path: "/tea/5/xyz"}
 					]});
-		equal(oTxt.getValue(), "Frank ", "calculated fields wrong path");
+		assert.equal(oTxt.getValue(), "Frank ", "calculated fields wrong path");
 	});
 
 	QUnit.test("Calculated fields model custom formatter", function(assert) {
@@ -195,12 +195,12 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 						{path: "/teamMembers/5/lastName"}
 					],
 			formatter: function(oV1, oV2, oV3){
-				equal(oV3, "Green", "name check");
+				assert.equal(oV3, "Green", "name check");
 				return "Dear " + oV1 + " " + oV2;
 			}
 		});
 
-		equal(oTxt.getValue(), "Dear Frank Wallace", "calculated fields test custom formatter");
+		assert.equal(oTxt.getValue(), "Dear Frank Wallace", "calculated fields test custom formatter");
 	});
 
 	QUnit.test("Calculated fields model tests wrong path", function(assert) {
@@ -210,7 +210,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 						{path: "/teamMembers/6/firstName"},
 						{path: "/teamMembers/6/lastName"}
 					]});
-		equal(oTxt.getValue(), "Frank Wallace", "calculated fields syntax 1");
+		assert.equal(oTxt.getValue(), "Frank Wallace", "calculated fields syntax 1");
 	});
 
 	QUnit.test("Calculated fields multi model tests", function(assert) {
@@ -226,7 +226,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 			}
 		});
 
-		equal(oTxt.getValue(), "555562.06241" , "calculated fields multi model bindings ");
+		assert.equal(oTxt.getValue(), "555562.06241" , "calculated fields multi model bindings ");
 	});
 
 	QUnit.test("Calculated fields multi model tests wrong path", function(assert) {
@@ -243,7 +243,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 			}
 		});
 
-		equal(oTxt.getValue(), "7.74" , "calculated fields multi model bindings ");
+		assert.equal(oTxt.getValue(), "7.74" , "calculated fields multi model bindings ");
 	});
 
 	QUnit.test("Calculated fields with types and raw values", function(assert) {
@@ -259,7 +259,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 			}
 		});
 
-		equal(oTxt.getValue(), "5.322555,554.322412.418" , "calculated fields formatter");
+		assert.equal(oTxt.getValue(), "5.322555,554.322412.418" , "calculated fields formatter");
 		oTxt.unbindProperty("value");
 
 		oTxt.bindValue({
@@ -275,7 +275,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 			useRawValues : true
 		});
 
-		equal(oTxt.getValue(), "555562.06241" , "calculated fields formatter raw values");
+		assert.equal(oTxt.getValue(), "555562.06241" , "calculated fields formatter raw values");
 	});
 	QUnit.module("Table", {
 		beforeEach: function() {
@@ -317,11 +317,11 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 
 		jQuery.each(oTable.getRows(), function(i, oRow){
 			if (oRow.getCells()[0].getText()) {
-				equal(oRow.getCells()[0].getText(), "Dear " + testData.teamMembers[i].firstName + " " + testData.teamMembers[i].lastName, "check names");
+				assert.equal(oRow.getCells()[0].getText(), "Dear " + testData.teamMembers[i].firstName + " " + testData.teamMembers[i].lastName, "check names");
 				counter++;
 			}
 		});
-		equal(counter, 7, "table entries");
+		assert.equal(counter, 7, "table entries");
 	});
 
 

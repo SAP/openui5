@@ -42,14 +42,14 @@
 		oBinding = oModel.bindProperty("TEST_TEXT");
 		// model stores the binding first when attach change was called
 		ok(oBinding, "binding instantiated");
-		equal(oBinding.getPath(),"TEST_TEXT","Binding Path set properly");
+		assert.equal(oBinding.getPath(),"TEST_TEXT","Binding Path set properly");
 	});
 
 	QUnit.test("Binding getModel", 1, function(assert) {
 		setup();
 		oBinding = oModel.bindProperty("TEST_TEXT");
 		// check model of each binding...should be the same
-		equal(oBinding.getModel(), oModel, "Binding model");
+		assert.equal(oBinding.getModel(), oModel, "Binding model");
 	});
 
 	QUnit.test("Binding changeEvent", function(assert) {
@@ -60,7 +60,7 @@
 	    oBinding.attachChange(callBackOnChange);
 
 		// model stores the binding first when attach change was called
-		equal(oModel.aBindings.length, 1, "model bindings")
+		assert.equal(oModel.aBindings.length, 1, "model bindings")
 
 		// fire change event
 		oBinding._fireChange();
@@ -77,7 +77,7 @@
 		attach = false;
 		detach = true;
 
-		equal(oModel.aBindings.length, 0, "model bindings")
+		assert.equal(oModel.aBindings.length, 0, "model bindings")
 	});
 
 	var attach = false;
@@ -92,7 +92,7 @@
 		setup();
 		oBinding = oModel.bindProperty("TEST_TEXT");
 
-		equal(oBinding.getValue(), "A text en", "Property binding value");
+		assert.equal(oBinding.getValue(), "A text en", "Property binding value");
 	});
 
 	</script>

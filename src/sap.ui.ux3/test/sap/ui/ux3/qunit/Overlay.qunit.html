@@ -64,7 +64,7 @@
 				equals(true, true, "...");
 				var oDomRef = jQuery.sap.domById(oOverlay.getId());
 				ok(oDomRef, "Rendered Overlay should exist in the page");
-				equal(oDomRef.className, "sapUiUx3Overlay", "Rendered Overlay should have the class 'sapUiUx3TI'");
+				assert.equal(oDomRef.className, "sapUiUx3Overlay", "Rendered Overlay should have the class 'sapUiUx3TI'");
 			});
 
 			QUnit.module("Behaviour");
@@ -95,10 +95,10 @@
 			QUnit.test("Close Events", function (assert) {
 				var done = assert.async();
 				oOverlay.attachClose(function (oEvent) {
-					equal(oOverlay.getId(), oEvent.getParameter("id"), "Close event fired");
+					assert.equal(oOverlay.getId(), oEvent.getParameter("id"), "Close event fired");
 				});
 				oOverlay.attachClosed(function (oEvent) {
-					equal(oOverlay.getId(), oEvent.getParameter("id"), "Closed event fired");
+					assert.equal(oOverlay.getId(), oEvent.getParameter("id"), "Closed event fired");
 					ok(!oOverlay.isOpen(), "Rendered Overlay is not open");
 					done();
 				});

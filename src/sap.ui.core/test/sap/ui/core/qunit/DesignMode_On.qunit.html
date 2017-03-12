@@ -34,7 +34,7 @@
 QUnit.test("Get Design Mode", 1, function(assert) {
 
 	var designMode = sap.ui.getCore().getConfiguration().getDesignMode();
-	equal(designMode, true, "Design Mode is on");
+	assert.equal(designMode, true, "Design Mode is on");
 
 });
 

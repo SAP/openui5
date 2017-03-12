@@ -332,15 +332,15 @@
 			switch (oColumn.getId()){
 				case "idName":
 					ok(oColumn.getVisible(), "Column Name visibility OK!");
-					equal(oColumn.getOrder(), 2, "Column 2 (Name) order is correct");
+					assert.equal(oColumn.getOrder(), 2, "Column 2 (Name) order is correct");
 					break;
 				case "idColor":
 					ok(!oColumn.getVisible(), "Column Color visibility OK!");
-					equal(oColumn.getOrder(), 0, "Column 0 (Color) order is correct");
+					assert.equal(oColumn.getOrder(), 0, "Column 0 (Color) order is correct");
 					break;
 				case "idNumber":
 					ok(oColumn.getVisible(), "Column Number visibility OK!");
-					equal(oColumn.getOrder(), 1, "Column 1 (Number) order is correct");
+					assert.equal(oColumn.getOrder(), 1, "Column 1 (Number) order is correct");
 					break;
 			};
 		});

@@ -21,7 +21,7 @@ function deepContains(oValue, oExpected, sMessage) {
 
 
 		if (Array.isArray(oExpected[sKey]) && Array.isArray(oValue[sKey])) {
-			equal(oValue[sKey].length, oExpected[sKey].length, sMessage + "/" + sKey + " length matches");
+			assert.equal(oValue[sKey].length, oExpected[sKey].length, sMessage + "/" + sKey + " length matches");
 		}
 
 		if (oExpected[sKey] !== null && typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
@@ -29,7 +29,7 @@ function deepContains(oValue, oExpected, sMessage) {
 			deepContains(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
 		} else {
 			// Compare directly
-			equal(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey + " match");
+			assert.equal(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey + " match");
 		}
 	}
 }
@@ -368,8 +368,8 @@ function runODataAnnotationsV2Tests() {
 		}
 
 		pLoaded.then(function(aResults) {
-			equal(aResults.length, iNumAnnotations, "The right number of annotations were successfully loaded from sources");
-			equal(iLoaded, iNumAnnotations, "The right number of annotations were loaded including $metadata");
+			assert.equal(aResults.length, iNumAnnotations, "The right number of annotations were successfully loaded from sources");
+			assert.equal(iLoaded, iNumAnnotations, "The right number of annotations were loaded including $metadata");
 
 			if (mService.annotationsValid === "all") {
 				var bNoErrors = (aResults.length === 0) || aResults.reduce(function(bLastResult, oResult) {
@@ -379,7 +379,7 @@ function runODataAnnotationsV2Tests() {
 						return !(oResult instanceof Error);
 					}
 				}, true);
-				equal(bNoErrors, true, "No Errors in the results");
+				assert.equal(bNoErrors, true, "No Errors in the results");
 			}
 			endTest();
 		});
@@ -636,11 +636,11 @@ function runODataAnnotationsV2Tests() {
 			ok(mService.serviceValid, "Service metadata loaded");
 
 			if (mService.annotationsValid === "none") {
-				equal(bAnnotationsLoaded, false, "No Annotations loaded")
+				assert.equal(bAnnotationsLoaded, false, "No Annotations loaded")
 			} else if (mService.annotationsValid === "metadata") {
-				equal(bAnnotationsLoaded, false, "No Annotations loaded")
+				assert.equal(bAnnotationsLoaded, false, "No Annotations loaded")
 			} else {
-				equal(bAnnotationsLoaded, true, "Annotations loaded")
+				assert.equal(bAnnotationsLoaded, true, "Annotations loaded")
 			}
 
 			endTest();
@@ -690,7 +690,7 @@ function runODataAnnotationsV2Tests() {
 		oModel.attachMetadataLoaded(function() {
 			bMetadataLoaded = true;
 			ok(mService.serviceValid, "Service metadata failed");
-			equal(bAnnotationsLoaded, true, "Annotations loaded")
+			assert.equal(bAnnotationsLoaded, true, "Annotations loaded")
 
 			endTest();
 		});

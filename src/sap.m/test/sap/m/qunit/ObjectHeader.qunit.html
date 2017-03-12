@@ -198,7 +198,7 @@
 
 	QUnit.test("TooltipRendered", function(assert) {
 
-		equal(jQuery("#" + ohBasicId).attr("title"), "Test tooltip for the header", "Tooltip should be rendered.");
+		assert.equal(jQuery("#" + ohBasicId).attr("title"), "Test tooltip for the header", "Tooltip should be rendered.");
 	});
 
 	QUnit.test("IntroRendered", function(assert) {
@@ -214,7 +214,7 @@
 	QUnit.test("TitleArrowRendered", function(assert) {
 
 		notEqual(jQuery.sap.domById(ohBasicId + "-titleArrow"), null, "Title Arrow Icon should be rendered.");
-		equal(jQuery.sap.byId(ohBasic._oTitleArrowIcon.getId()).css("cursor"), "pointer", "The title arrow should have pointer cursor.");
+		assert.equal(jQuery.sap.byId(ohBasic._oTitleArrowIcon.getId()).css("cursor"), "pointer", "The title arrow should have pointer cursor.");
 	});
 
 	QUnit.test("NumberRendered", function(assert) {
@@ -254,7 +254,7 @@
 
 		notEqual(jQuery.sap.domById("oses1"), null, "Object statuses #1 should be rendered.");
 		notEqual(jQuery.sap.domById("oses2"), null, "Object statuses #2 should be rendered.");
-		equal(jQuery.sap.domById("oattr1"), null, "Object attribute should not be rendered.");
+		assert.equal(jQuery.sap.domById("oattr1"), null, "Object attribute should not be rendered.");
 	});
 
 	QUnit.test("InfoRendered", function(assert) {
@@ -268,7 +268,7 @@
 		notEqual(jQuery.sap.domById(ohFlagFavId + "-favorite"), null, "Favorite marker should be rendered.");
 		ok(jQuery.sap.byId(ohFlagFavId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
 
-		equal(jQuery.sap.domById(ohFlagFavId2 + "-favorite"), null, "Favorite marker should not be rendered.");
+		assert.equal(jQuery.sap.domById(ohFlagFavId2 + "-favorite"), null, "Favorite marker should not be rendered.");
 	});
 
 	QUnit.test("FlagRendered", function(assert) {
@@ -276,7 +276,7 @@
 		notEqual(jQuery.sap.domById(ohFlagFavId + "-flag"), null, "Flag marker should be rendered.");
 		ok(jQuery.sap.byId(ohFlagFavId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
 
-		equal(jQuery.sap.domById(ohFlagFavId2 + "-flag"), null, "Flag marker should not be rendered.");
+		assert.equal(jQuery.sap.domById(ohFlagFavId2 + "-flag"), null, "Flag marker should not be rendered.");
 
 		// test flag rendering with one attribute
 		notEqual(jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag"), null, "Flag marker should be rendered.");
@@ -294,7 +294,7 @@
 
 		notEqual(jQuery.sap.domById(ohBasicId + "-pi"), null, "Progress Indicator should be rendered.");
 		ok(!jQuery(jQuery("#ohBasic .sapMOHStatusFixedWidth")[4]).attr("style"), "Progress Indicator only use 35% width.");
-		equal(jQuery("#ohBasic .sapMOHStatusFixedWidth .sapMPI").css("float"), "right", "Progress Indicator is floating right");
+		assert.equal(jQuery("#ohBasic .sapMOHStatusFixedWidth .sapMPI").css("float"), "right", "Progress Indicator is floating right");
 	});
 
 	QUnit.test("NumberStateColorRendered", function(assert) {
@@ -439,12 +439,12 @@
 
 	QUnit.test("Object Header has condensed style", function(assert) {
 
-		equal(jQuery("#ohc1.sapMOHC").length, 1, "Object Header with condensed style is rendered");
+		assert.equal(jQuery("#ohc1.sapMOHC").length, 1, "Object Header with condensed style is rendered");
 	});
 
 	QUnit.test("Object Header attribute is displayed under title", function(assert) {
 
-		equal(jQuery("#ohc1.sapMOHC > .sapMOHAttr").length, 1, "Object Header attribute is displayed under title");
+		assert.equal(jQuery("#ohc1.sapMOHC > .sapMOHAttr").length, 1, "Object Header attribute is displayed under title");
 	});
 
 	QUnit.test("NumberRendered", function(assert) {
@@ -457,14 +457,14 @@
 
 		var transparentCssString = sap.ui.Device.browser.firefox || sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge ? "transparent" : "rgba(0, 0, 0, 0)";
 
-		equal(jQuery("#ohc1.sapMOHBgTransparent").length, 1, "Transparent background style should be set.");
-		equal(jQuery.sap.byId("ohc1").css("background-color"), transparentCssString, "Background color is transparent");
+		assert.equal(jQuery("#ohc1.sapMOHBgTransparent").length, 1, "Transparent background style should be set.");
+		assert.equal(jQuery.sap.byId("ohc1").css("background-color"), transparentCssString, "Background color is transparent");
 	});
 
 	QUnit.test("Background is solid", function(assert) {
 
-		equal(jQuery("#ohc2.sapMOHBgSolid").length, 1, "Solid background style should be set.");
-		equal(jQuery.sap.byId("ohc2").css("background-color"), "rgb(255, 255, 255)", "Background color is solid");
+		assert.equal(jQuery("#ohc2.sapMOHBgSolid").length, 1, "Solid background style should be set.");
+		assert.equal(jQuery.sap.byId("ohc2").css("background-color"), "rgb(255, 255, 255)", "Background color is solid");
 	});
 
 	/******************************************************************/
@@ -656,7 +656,7 @@
 		ohFlagAndFavoriteMarker.setMarkFlagged(true);
 		sap.ui.getCore().applyChanges();
 
-		equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
+		assert.equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
 		ok(jQuery.sap.byId(ohFlagAndFavoriteMarkerId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker");
 
 		// cleanup
@@ -677,7 +677,7 @@
 		ohFlagAndFavoriteMarker.setMarkFavorite(false);
 		sap.ui.getCore().applyChanges();
 
-		equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
+		assert.equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
 
 		// cleanup
 		ohFlagAndFavoriteMarker.destroy();
@@ -697,7 +697,7 @@
 		ohFlagAndFavoriteMarker.setMarkFavorite(true);
 		sap.ui.getCore().applyChanges();
 
-		equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
+		assert.equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
 		ok(jQuery.sap.byId(ohFlagAndFavoriteMarkerId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
 
 		// cleanup
@@ -718,7 +718,7 @@
 		ohFlagAndFavoriteMarker.setMarkFavorite(false);
 		sap.ui.getCore().applyChanges();
 
-		equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
+		assert.equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
 
 		// cleanup
 		ohFlagAndFavoriteMarker.destroy();
@@ -740,7 +740,7 @@
 		}));
 		sap.ui.getCore().applyChanges();
 
-		equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
+		assert.equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
 		notEqual(jQuery.sap.domById("ohefafm1"), null, "Attribute should be rendered.");
 
 		// cleanup
@@ -768,19 +768,19 @@
 
 	QUnit.test("Title color is blue", function(assert) {
 
-		equal(jQuery.sap.byId(ohe._titleText.getId()).css("color"), "rgb(0, 103, 158)", "Title color is blue.");
+		assert.equal(jQuery.sap.byId(ohe._titleText.getId()).css("color"), "rgb(0, 103, 158)", "Title color is blue.");
 	});
 
 	QUnit.test("TestTitleTap", function(assert) {
 
 		qutils.triggerEvent("tap", oheId + "-title");
 		ok(domRef, "domRef is set");
-		equal(domRef.id, oheId + "-title", "Title should be clickable");
+		assert.equal(domRef.id, oheId + "-title", "Title should be clickable");
 		domRef = null;
 
 		qutils.triggerEvent("tap", oheId + "-titleText-inner");
 		ok(domRef, "domRef is set");
-		equal(domRef.id, oheId + "-title", "When clicking inner text div event should return outer div as source");
+		assert.equal(domRef.id, oheId + "-title", "When clicking inner text div event should return outer div as source");
 		domRef = null;
 
 		qutils.triggerEvent("tap", ohBasicId + "-title");
@@ -792,7 +792,7 @@
 
 		qutils.triggerEvent("tap", oheId + "-intro");
 		ok(domRef, "domRef is set");
-		equal(domRef.id, oheId + "-intro", "Intro should be clickable");
+		assert.equal(domRef.id, oheId + "-intro", "Intro should be clickable");
 		domRef = null;
 
 		qutils.triggerEvent("tap", ohBasicId + "-intro");
@@ -804,7 +804,7 @@
 
 		qutils.triggerEvent("tap", oheId + "-img");
 		ok(domRef, "domRef is set");
-		equal(domRef.id, oheId + "-img", "Icon should be clickable");
+		assert.equal(domRef.id, oheId + "-img", "Icon should be clickable");
 		domRef = null;
 
 		qutils.triggerEvent("tap", ohBasicId + "-img");
@@ -816,7 +816,7 @@
 
 		qutils.triggerEvent("tap", ohBasicId + "-titleArrow");
 		ok(oTitleArrowDomRef, "oTitleArrowDomRef is set to titleArrow");
-		equal(oTitleArrowDomRef.id, ohBasicId + "-titleArrow", "Title Arrow should be clickable");
+		assert.equal(oTitleArrowDomRef.id, ohBasicId + "-titleArrow", "Title Arrow should be clickable");
 		oTitleArrowDomRef = null;
 	});
 
@@ -888,7 +888,7 @@
 		oTitleArrowOH.setShowTitleSelector(false);
 
 		setTimeout(function() {
-			equal(jQuery.sap.byId("titleArrowOH-titleArrow").length, 0, " The titleArrowOH showTitleSelector is set to false and is not rendered.");
+			assert.equal(jQuery.sap.byId("titleArrowOH-titleArrow").length, 0, " The titleArrowOH showTitleSelector is set to false and is not rendered.");
 			done();
 		}, 100);
 
@@ -903,7 +903,7 @@
 
 	QUnit.test("OH has attribute role=region", function(assert){
 		ok(jQuery("#" + ohBasicId).attr("role"), "OH has attribute role");
-		equal(jQuery("#" + ohBasicId).attr("role"), "region", "role is region");
+		assert.equal(jQuery("#" + ohBasicId).attr("role"), "region", "role is region");
 	});
 
 	QUnit.test("OH Condensed has aria-labelledby", function(assert){
@@ -912,17 +912,17 @@
 
 	QUnit.test("OH Condensed has attribute role=region", function(assert){
 		ok(jQuery("#" + ohCondensedId).attr("role"), "OH condensed has attribute role");
-		equal(jQuery("#" + ohCondensedId).attr("role"), "region", "role is region");
+		assert.equal(jQuery("#" + ohCondensedId).attr("role"), "region", "role is region");
 	});
 
 	QUnit.test("Active title has aria attributes", function(assert){
 		ok(jQuery("#" + oheId+"-title").attr("aria-haspopup"), "ActiveTitle has attribute aria-haspopup");
-		equal(jQuery("#" + oheId+"-title").attr("role"), "link", "ActiveTitle has role=link");
+		assert.equal(jQuery("#" + oheId+"-title").attr("role"), "link", "ActiveTitle has role=link");
 	});
 
 	QUnit.test("Active icon has aria attributes", function(assert){
 		ok(jQuery(".sapMOHIcon.sapMPointer").attr("aria-haspopup"), "ActiveIcon has attribute aria-haspopup");
-		equal(jQuery(".sapMOHIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
+		assert.equal(jQuery(".sapMOHIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
 	});
 
 	QUnit.test("Title has level H1", function(assert){

@@ -114,7 +114,7 @@
 
 	QUnit.test("Node selection and collapsing (old)", function(assert) {
 		var tree = sap.ui.getCore().getControl("tree");
-		equal(tree.getSelectionMode(), "Legacy", "SelectionMode should be 'Legacy' by default");
+		assert.equal(tree.getSelectionMode(), "Legacy", "SelectionMode should be 'Legacy' by default");
 		var node1 = sap.ui.getCore().getControl("node1");
 		ok(node1.getExpanded(), "Node 1 is expanded");
 		var node11 = sap.ui.getCore().getControl("node11");
@@ -143,7 +143,7 @@
 	QUnit.test("SelectionType Single", function(assert) {
 		var tree = sap.ui.getCore().getControl("tree");
 		tree.setSelectionMode("Multi");
-		equal(tree.getSelectionMode(), "Multi", "SelectionMode is set to 'Multi' now");
+		assert.equal(tree.getSelectionMode(), "Multi", "SelectionMode is set to 'Multi' now");
 		var node1 = sap.ui.getCore().getControl("node1");
 		node1.select();
 		ok(node1.getIsSelected(), "Node 1 is selected");
@@ -156,7 +156,7 @@
 	QUnit.test("Node selection and collapsing (new)", function(assert) {
 		var tree = sap.ui.getCore().getControl("tree");
 		tree.setSelectionMode("Multi");
-		equal(tree.getSelectionMode(), "Multi", "SelectionMode is set to 'Multi' now");
+		assert.equal(tree.getSelectionMode(), "Multi", "SelectionMode is set to 'Multi' now");
 		var node1 = sap.ui.getCore().getControl("node1");
 		ok(node1.getExpanded(), "Node 1 is expanded");
 		var node11 = sap.ui.getCore().getControl("node11");

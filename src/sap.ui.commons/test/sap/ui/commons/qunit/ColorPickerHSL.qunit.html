@@ -63,7 +63,7 @@
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				equal(oColorPicker.getMode(), sap.ui.commons.ColorPickerMode.HSV, "Default mode of ColorPicker is HSV");
+				assert.equal(oColorPicker.getMode(), sap.ui.commons.ColorPickerMode.HSV, "Default mode of ColorPicker is HSV");
 
 				oColorPicker.destroy();
 			});
@@ -75,7 +75,7 @@
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				equal(oColorPicker.getMode(), sap.ui.commons.ColorPickerMode.HSL , "ColorPicker is in HSL mode");
+				assert.equal(oColorPicker.getMode(), sap.ui.commons.ColorPickerMode.HSL , "ColorPicker is in HSL mode");
 
 				oColorPicker.destroy();
 			});
@@ -93,13 +93,13 @@
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				equal(oColorPicker.oRedField.getValue(), "255" , "Default value RED: 255");
-				equal(oColorPicker.oGreenField.getValue(), "255" , "Default value GREEN: 255");
-				equal(oColorPicker.oBlueField.getValue(), "255" , "Default value BLUE: 255");
-				equal(oColorPicker.oHueField.getValue(), "0" , "Default value HUE: 0");
-				equal(oColorPicker.oSatField.getValue(), "0" , "Default value SATURATION: 0");
-				equal(oColorPicker.oLitField.getValue(), "100" , "Default value LIGHTNESS: 100");
-				equal(oColorPicker.oHexField.getValue(), "ffffff" , "Default value HEX: ffffff");
+				assert.equal(oColorPicker.oRedField.getValue(), "255" , "Default value RED: 255");
+				assert.equal(oColorPicker.oGreenField.getValue(), "255" , "Default value GREEN: 255");
+				assert.equal(oColorPicker.oBlueField.getValue(), "255" , "Default value BLUE: 255");
+				assert.equal(oColorPicker.oHueField.getValue(), "0" , "Default value HUE: 0");
+				assert.equal(oColorPicker.oSatField.getValue(), "0" , "Default value SATURATION: 0");
+				assert.equal(oColorPicker.oLitField.getValue(), "100" , "Default value LIGHTNESS: 100");
+				assert.equal(oColorPicker.oHexField.getValue(), "ffffff" , "Default value HEX: ffffff");
 
 				oColorPicker.destroy();
 			});
@@ -111,13 +111,13 @@
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				equal(oColorPicker.oRedField.getValue(), "0" , "Value of RED: 0");
-				equal(oColorPicker.oGreenField.getValue(), "255" , "Value of GREEN: 255");
-				equal(oColorPicker.oBlueField.getValue(), "0" , "Value of BLUE: 0");
-				equal(oColorPicker.oHueField.getValue(), "120" , "Value of HUE: 120");
-				equal(oColorPicker.oSatField.getValue(), "100" , "Value of SATURATION: 100");
-				equal(oColorPicker.oLitField.getValue(), "50" , "Value of LIGHTNESS: 50");
-				equal(oColorPicker.oHexField.getValue(), "00ff00" , "Value of HEX: 00ff00");
+				assert.equal(oColorPicker.oRedField.getValue(), "0" , "Value of RED: 0");
+				assert.equal(oColorPicker.oGreenField.getValue(), "255" , "Value of GREEN: 255");
+				assert.equal(oColorPicker.oBlueField.getValue(), "0" , "Value of BLUE: 0");
+				assert.equal(oColorPicker.oHueField.getValue(), "120" , "Value of HUE: 120");
+				assert.equal(oColorPicker.oSatField.getValue(), "100" , "Value of SATURATION: 100");
+				assert.equal(oColorPicker.oLitField.getValue(), "50" , "Value of LIGHTNESS: 50");
+				assert.equal(oColorPicker.oHexField.getValue(), "00ff00" , "Value of HEX: 00ff00");
 
 				oColorPicker.destroy();
 			});
@@ -129,13 +129,13 @@
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				equal(oColorPicker.oRedField.getValue(), "120" , "Value of RED: 120");
-				equal(oColorPicker.oGreenField.getValue(), "177" , "Value of GREEN: 177");
-				equal(oColorPicker.oBlueField.getValue(), "60" , "Value of BLUE: 60");
-				equal(oColorPicker.oHueField.getValue(), "89" , "Value of HUE: 89");
-				equal(oColorPicker.oSatField.getValue(), "49" , "Value of SATURATION: 49");
-				equal(oColorPicker.oLitField.getValue(), "46" , "Value of LIGHTNESS: 46");
-				equal(oColorPicker.oHexField.getValue(), "78b13c" , "Value of HEX: 78b13c");
+				assert.equal(oColorPicker.oRedField.getValue(), "120" , "Value of RED: 120");
+				assert.equal(oColorPicker.oGreenField.getValue(), "177" , "Value of GREEN: 177");
+				assert.equal(oColorPicker.oBlueField.getValue(), "60" , "Value of BLUE: 60");
+				assert.equal(oColorPicker.oHueField.getValue(), "89" , "Value of HUE: 89");
+				assert.equal(oColorPicker.oSatField.getValue(), "49" , "Value of SATURATION: 49");
+				assert.equal(oColorPicker.oLitField.getValue(), "46" , "Value of LIGHTNESS: 46");
+				assert.equal(oColorPicker.oHexField.getValue(), "78b13c" , "Value of HEX: 78b13c");
 
 				oColorPicker.destroy();
 			});
@@ -147,13 +147,13 @@
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				equal(oColorPicker.oRedField.getValue(), "128" , "Value of RED: 128");
-				equal(oColorPicker.oGreenField.getValue(), "255" , "Value of GREEN: 255");
-				equal(oColorPicker.oBlueField.getValue(), "128" , "Value of BLUE: 128");
-				equal(oColorPicker.oHueField.getValue(), "120" , "Value of HUE: 120");
-				equal(oColorPicker.oSatField.getValue(), "100" , "Value of SATURATION: 100");
-				equal(oColorPicker.oLitField.getValue(), "75" , "Value of LIGHTNESS: 75");
-				equal(oColorPicker.oHexField.getValue(), "80ff80" , "Value of HEX: 80ff80");
+				assert.equal(oColorPicker.oRedField.getValue(), "128" , "Value of RED: 128");
+				assert.equal(oColorPicker.oGreenField.getValue(), "255" , "Value of GREEN: 255");
+				assert.equal(oColorPicker.oBlueField.getValue(), "128" , "Value of BLUE: 128");
+				assert.equal(oColorPicker.oHueField.getValue(), "120" , "Value of HUE: 120");
+				assert.equal(oColorPicker.oSatField.getValue(), "100" , "Value of SATURATION: 100");
+				assert.equal(oColorPicker.oLitField.getValue(), "75" , "Value of LIGHTNESS: 75");
+				assert.equal(oColorPicker.oHexField.getValue(), "80ff80" , "Value of HEX: 80ff80");
 
 				oColorPicker.destroy();
 			});
@@ -165,13 +165,13 @@
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				equal(oColorPicker.oRedField.getValue(), "51" , "Value of RED: 51");
-				equal(oColorPicker.oGreenField.getValue(), "164" , "Value of GREEN: 164");
-				equal(oColorPicker.oBlueField.getValue(), "240" , "Value of BLUE: 240");
-				equal(oColorPicker.oHueField.getValue(), "204" , "Value of HUE: 204");
-				equal(oColorPicker.oSatField.getValue(), "86" , "Value of SATURATION: 86");
-				equal(oColorPicker.oLitField.getValue(), "57" , "Value of LIGHTNESS: 57");
-				equal(oColorPicker.oHexField.getValue(), "33a4f0" , "Value of HEX: 33a4f0");
+				assert.equal(oColorPicker.oRedField.getValue(), "51" , "Value of RED: 51");
+				assert.equal(oColorPicker.oGreenField.getValue(), "164" , "Value of GREEN: 164");
+				assert.equal(oColorPicker.oBlueField.getValue(), "240" , "Value of BLUE: 240");
+				assert.equal(oColorPicker.oHueField.getValue(), "204" , "Value of HUE: 204");
+				assert.equal(oColorPicker.oSatField.getValue(), "86" , "Value of SATURATION: 86");
+				assert.equal(oColorPicker.oLitField.getValue(), "57" , "Value of LIGHTNESS: 57");
+				assert.equal(oColorPicker.oHexField.getValue(), "33a4f0" , "Value of HEX: 33a4f0");
 
 				oColorPicker.destroy();
 			});
@@ -183,13 +183,13 @@
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				equal(oColorPicker.oRedField.getValue(), "17" , "Value of RED: 17");
-				equal(oColorPicker.oGreenField.getValue(), "136" , "Value of GREEN: 136");
-				equal(oColorPicker.oBlueField.getValue(), "170" , "Value of BLUE: 170");
-				equal(oColorPicker.oHueField.getValue(), "193" , "Value of HUE: 193");
-				equal(oColorPicker.oSatField.getValue(), "82" , "Value of SATURATION: 90");
-				equal(oColorPicker.oLitField.getValue(), "37" , "Value of LIGHTNESS: 67");
-				equal(oColorPicker.oHexField.getValue(), "1188aa" , "Value of HEX: 1188aa");
+				assert.equal(oColorPicker.oRedField.getValue(), "17" , "Value of RED: 17");
+				assert.equal(oColorPicker.oGreenField.getValue(), "136" , "Value of GREEN: 136");
+				assert.equal(oColorPicker.oBlueField.getValue(), "170" , "Value of BLUE: 170");
+				assert.equal(oColorPicker.oHueField.getValue(), "193" , "Value of HUE: 193");
+				assert.equal(oColorPicker.oSatField.getValue(), "82" , "Value of SATURATION: 90");
+				assert.equal(oColorPicker.oLitField.getValue(), "37" , "Value of LIGHTNESS: 67");
+				assert.equal(oColorPicker.oHexField.getValue(), "1188aa" , "Value of HEX: 1188aa");
 
 				oColorPicker.destroy();
 			});
@@ -201,13 +201,13 @@
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				equal(oColorPicker.oRedField.getValue(), "255" , "Default value RED: 255");
-				equal(oColorPicker.oGreenField.getValue(), "255" , "Default value GREEN: 255");
-				equal(oColorPicker.oBlueField.getValue(), "255" , "Default value BLUE: 255");
-				equal(oColorPicker.oHueField.getValue(), "0" , "Default value HUE: 0");
-				equal(oColorPicker.oSatField.getValue(), "0" , "Default value SATURATION: 0");
-				equal(oColorPicker.oLitField.getValue(), "100" , "Default value LIGHTNESS: 100");
-				equal(oColorPicker.oHexField.getValue(), "ffffff" , "Default value HEX: ffffff");
+				assert.equal(oColorPicker.oRedField.getValue(), "255" , "Default value RED: 255");
+				assert.equal(oColorPicker.oGreenField.getValue(), "255" , "Default value GREEN: 255");
+				assert.equal(oColorPicker.oBlueField.getValue(), "255" , "Default value BLUE: 255");
+				assert.equal(oColorPicker.oHueField.getValue(), "0" , "Default value HUE: 0");
+				assert.equal(oColorPicker.oSatField.getValue(), "0" , "Default value SATURATION: 0");
+				assert.equal(oColorPicker.oLitField.getValue(), "100" , "Default value LIGHTNESS: 100");
+				assert.equal(oColorPicker.oHexField.getValue(), "ffffff" , "Default value HEX: ffffff");
 
 				oColorPicker.destroy();
 			});
@@ -228,13 +228,13 @@
 				oColorPicker.oLitField.setValue(50);
 				oColorPicker.oLitField.fireChange({newValue:50});
 
-				equal(oColorPicker.oRedField.getValue(), "128" , "RED changed from 225 -> 125");
-				equal(oColorPicker.oGreenField.getValue(), "128" , "GREEN changed from 225 -> 125");
-				equal(oColorPicker.oBlueField.getValue(), "128" , "BLUE changed from 225 -> 125");
-				equal(oColorPicker.oHueField.getValue(), "0" , "HUE not changed: 0");
-				equal(oColorPicker.oSatField.getValue(), "0" , "SATURATION not changed: 0");
-				equal(oColorPicker.oLitField.getValue(), "50" , "LIGHTNESS manually changed from 100 -> 50");
-				equal(oColorPicker.oHexField.getValue(), "808080" , "HEX changed from ffffff -> 808080: ");
+				assert.equal(oColorPicker.oRedField.getValue(), "128" , "RED changed from 225 -> 125");
+				assert.equal(oColorPicker.oGreenField.getValue(), "128" , "GREEN changed from 225 -> 125");
+				assert.equal(oColorPicker.oBlueField.getValue(), "128" , "BLUE changed from 225 -> 125");
+				assert.equal(oColorPicker.oHueField.getValue(), "0" , "HUE not changed: 0");
+				assert.equal(oColorPicker.oSatField.getValue(), "0" , "SATURATION not changed: 0");
+				assert.equal(oColorPicker.oLitField.getValue(), "50" , "LIGHTNESS manually changed from 100 -> 50");
+				assert.equal(oColorPicker.oHexField.getValue(), "808080" , "HEX changed from ffffff -> 808080: ");
 
 				oColorPicker.destroy();
 			});
@@ -249,13 +249,13 @@
 				oColorPicker.oRedField.setValue(123);
 				oColorPicker.oRedField.fireChange({newValue:123});
 
-				equal(oColorPicker.oRedField.getValue(), "123" , "RED manually changed to 123: ");
-				equal(oColorPicker.oGreenField.getValue(), "255" , "GREEN not changed (default value): 255");
-				equal(oColorPicker.oBlueField.getValue(), "255" , "BLUE not changed (default value): 255");
-				equal(oColorPicker.oHueField.getValue(), "180" , "HUE changed from 0 -> 180: ");
-				equal(oColorPicker.oSatField.getValue(), "52" , "SATURATION changed from 0 -> 52: ");
-				equal(oColorPicker.oLitField.getValue(), "100" , "LIGHTNESS not changed (default value): 100");
-				equal(oColorPicker.oHexField.getValue(), "7bffff" , "HEX changed from ffffff -> 7bffff: ");
+				assert.equal(oColorPicker.oRedField.getValue(), "123" , "RED manually changed to 123: ");
+				assert.equal(oColorPicker.oGreenField.getValue(), "255" , "GREEN not changed (default value): 255");
+				assert.equal(oColorPicker.oBlueField.getValue(), "255" , "BLUE not changed (default value): 255");
+				assert.equal(oColorPicker.oHueField.getValue(), "180" , "HUE changed from 0 -> 180: ");
+				assert.equal(oColorPicker.oSatField.getValue(), "52" , "SATURATION changed from 0 -> 52: ");
+				assert.equal(oColorPicker.oLitField.getValue(), "100" , "LIGHTNESS not changed (default value): 100");
+				assert.equal(oColorPicker.oHexField.getValue(), "7bffff" , "HEX changed from ffffff -> 7bffff: ");
 
 				oColorPicker.destroy();
 			});
@@ -271,13 +271,13 @@
 				oColorPicker.oSatField.setValue(4);
 				oColorPicker.oSatField.fireChange({newValue:4});
 
-				equal(oColorPicker.oRedField.getValue(), "189" , "RED changed from 128 -> 189: ");
-				equal(oColorPicker.oGreenField.getValue(), "194" , "GREEN changed from 255 -> 194: ");
-				equal(oColorPicker.oBlueField.getValue(), "189" , "BLUE changed from 128 -> 189: ");
-				equal(oColorPicker.oHueField.getValue(), "120" , "HUE not changed (120): ");
-				equal(oColorPicker.oSatField.getValue(), "4" , "SATURATION manually changed from 100 -> 4: ");
-				equal(oColorPicker.oLitField.getValue(), "75" , "LIGHTNESS not changed (75): ");
-				equal(oColorPicker.oHexField.getValue(), "bdc2bd" , "HEX changed from 80ff80 -> bdc2bd: ");
+				assert.equal(oColorPicker.oRedField.getValue(), "189" , "RED changed from 128 -> 189: ");
+				assert.equal(oColorPicker.oGreenField.getValue(), "194" , "GREEN changed from 255 -> 194: ");
+				assert.equal(oColorPicker.oBlueField.getValue(), "189" , "BLUE changed from 128 -> 189: ");
+				assert.equal(oColorPicker.oHueField.getValue(), "120" , "HUE not changed (120): ");
+				assert.equal(oColorPicker.oSatField.getValue(), "4" , "SATURATION manually changed from 100 -> 4: ");
+				assert.equal(oColorPicker.oLitField.getValue(), "75" , "LIGHTNESS not changed (75): ");
+				assert.equal(oColorPicker.oHexField.getValue(), "bdc2bd" , "HEX changed from 80ff80 -> bdc2bd: ");
 
 				oColorPicker.destroy();
 			});
@@ -292,13 +292,13 @@
 				oColorPicker.oHexField.setValue("16ba30");
 				oColorPicker.oHexField.fireChange({newValue:"16ba30"});
 
-				equal(oColorPicker.oRedField.getValue(), "22" , "RED changed from 128 -> 22: ");
-				equal(oColorPicker.oGreenField.getValue(), "186" , "GREEN changed from 255 -> 186: ");
-				equal(oColorPicker.oBlueField.getValue(), "48" , "BLUE changed from 128 -> 48: ");
-				equal(oColorPicker.oHueField.getValue(), "130" , "HUE changed from 120 -> 130: ");
-				equal(oColorPicker.oSatField.getValue(), "79" , "SATURATION changed from 100 -> 79: ");
-				equal(oColorPicker.oLitField.getValue(), "41" , "LIGHTNESS changed from 75 -> 41: ");
-				equal(oColorPicker.oHexField.getValue(), "16ba30" , "HEX manually changed from 80ff80 -> 16ba30: ");
+				assert.equal(oColorPicker.oRedField.getValue(), "22" , "RED changed from 128 -> 22: ");
+				assert.equal(oColorPicker.oGreenField.getValue(), "186" , "GREEN changed from 255 -> 186: ");
+				assert.equal(oColorPicker.oBlueField.getValue(), "48" , "BLUE changed from 128 -> 48: ");
+				assert.equal(oColorPicker.oHueField.getValue(), "130" , "HUE changed from 120 -> 130: ");
+				assert.equal(oColorPicker.oSatField.getValue(), "79" , "SATURATION changed from 100 -> 79: ");
+				assert.equal(oColorPicker.oLitField.getValue(), "41" , "LIGHTNESS changed from 75 -> 41: ");
+				assert.equal(oColorPicker.oHexField.getValue(), "16ba30" , "HEX manually changed from 80ff80 -> 16ba30: ");
 
 				oColorPicker.destroy();
 			});
@@ -313,13 +313,13 @@
 				oColorPicker.oBlueField.setValue(260);
 				oColorPicker.oBlueField.fireChange({newValue:oColorPicker.oBlueField.getValue()});
 
-				equal(oColorPicker.oRedField.getValue(), "120" , "RED changed from 123 to 120: ");
-				equal(oColorPicker.oGreenField.getValue(), "177" , "GREEN changed from 255 -> 177: ");
-				equal(oColorPicker.oBlueField.getValue(), "255" , "BLUE manually changed to 260 => set to 255: ");
-				equal(oColorPicker.oHueField.getValue(), "215" , "HUE changed from 180 -> 215: ");
-				equal(oColorPicker.oSatField.getValue(), "53" , "SATURATION changed from 52 -> 53: ");
-				equal(oColorPicker.oLitField.getValue(), "46" , "LIGHTNESS not changed (46): ");
-				equal(oColorPicker.oHexField.getValue(), "78b1ff" , "HEX changed from 78b13c -> 78b1ff: ");
+				assert.equal(oColorPicker.oRedField.getValue(), "120" , "RED changed from 123 to 120: ");
+				assert.equal(oColorPicker.oGreenField.getValue(), "177" , "GREEN changed from 255 -> 177: ");
+				assert.equal(oColorPicker.oBlueField.getValue(), "255" , "BLUE manually changed to 260 => set to 255: ");
+				assert.equal(oColorPicker.oHueField.getValue(), "215" , "HUE changed from 180 -> 215: ");
+				assert.equal(oColorPicker.oSatField.getValue(), "53" , "SATURATION changed from 52 -> 53: ");
+				assert.equal(oColorPicker.oLitField.getValue(), "46" , "LIGHTNESS not changed (46): ");
+				assert.equal(oColorPicker.oHexField.getValue(), "78b1ff" , "HEX changed from 78b13c -> 78b1ff: ");
 
 				oColorPicker.destroy();
 			});
@@ -334,7 +334,7 @@
 				oColorPicker.oBlueField.setValue(-20);
 				oColorPicker.oBlueField.fireChange({newValue:oColorPicker.oBlueField.getValue()});
 
-				equal(oColorPicker.oBlueField.getValue(), "0" , "BLUE manually changed to -20 => set to 0: ");
+				assert.equal(oColorPicker.oBlueField.getValue(), "0" , "BLUE manually changed to -20 => set to 0: ");
 
 				oColorPicker.destroy();
 			});
@@ -348,7 +348,7 @@
 				oColorPicker.oRedField.setValue(260);
 				oColorPicker.oRedField.fireChange({newValue:oColorPicker.oRedField.getValue()});
 
-				equal(oColorPicker.oRedField.getValue(), "255" , "RED manually changed to 260 => set to 255: ");
+				assert.equal(oColorPicker.oRedField.getValue(), "255" , "RED manually changed to 260 => set to 255: ");
 
 				oColorPicker.destroy();
 			});
@@ -362,7 +362,7 @@
 				oColorPicker.oRedField.setValue(-20);
 				oColorPicker.oRedField.fireChange({newValue:oColorPicker.oRedField.getValue()});
 
-				equal(oColorPicker.oRedField.getValue(), "0" , "RED manually changed to -20 => set to 0: ");
+				assert.equal(oColorPicker.oRedField.getValue(), "0" , "RED manually changed to -20 => set to 0: ");
 
 				oColorPicker.destroy();
 			});
@@ -376,7 +376,7 @@
 				oColorPicker.oGreenField.setValue(260);
 				oColorPicker.oGreenField.fireChange({newValue:oColorPicker.oGreenField.getValue()});
 
-				equal(oColorPicker.oGreenField.getValue(), "255" , "GREEN manually changed to 260 => set to 255: ");
+				assert.equal(oColorPicker.oGreenField.getValue(), "255" , "GREEN manually changed to 260 => set to 255: ");
 
 				oColorPicker.destroy();
 			});
@@ -390,7 +390,7 @@
 				oColorPicker.oGreenField.setValue(-20);
 				oColorPicker.oGreenField.fireChange({newValue:oColorPicker.oGreenField.getValue()});
 
-				equal(oColorPicker.oGreenField.getValue(), "0" , "GREEN manually changed to -20 => set to 0: ");
+				assert.equal(oColorPicker.oGreenField.getValue(), "0" , "GREEN manually changed to -20 => set to 0: ");
 
 				oColorPicker.destroy();
 			});
@@ -405,13 +405,13 @@
 				oColorPicker.oSatField.setValue(120);
 				oColorPicker.oSatField.fireChange({newValue:oColorPicker.oSatField.getValue()});
 
-				equal(oColorPicker.oRedField.getValue(), "0" , "RED changed from 17 -> 0: ");
-				equal(oColorPicker.oGreenField.getValue(), "148" , "GREEN changed from 136 -> 148: ");
-				equal(oColorPicker.oBlueField.getValue(), "189" , "BLUE not changed (189): ");
-				equal(oColorPicker.oHueField.getValue(), "193" , "HUE not changed (193): ");
-				equal(oColorPicker.oSatField.getValue(), "100" , "SATURATION manually changed to 120 => set to 100: ");
-				equal(oColorPicker.oLitField.getValue(), "37" , "LIGHTNESS not changed (37): ");
-				equal(oColorPicker.oHexField.getValue(), "0094bd" , "HEX changed from 1188aa -> 0094bd: ");
+				assert.equal(oColorPicker.oRedField.getValue(), "0" , "RED changed from 17 -> 0: ");
+				assert.equal(oColorPicker.oGreenField.getValue(), "148" , "GREEN changed from 136 -> 148: ");
+				assert.equal(oColorPicker.oBlueField.getValue(), "189" , "BLUE not changed (189): ");
+				assert.equal(oColorPicker.oHueField.getValue(), "193" , "HUE not changed (193): ");
+				assert.equal(oColorPicker.oSatField.getValue(), "100" , "SATURATION manually changed to 120 => set to 100: ");
+				assert.equal(oColorPicker.oLitField.getValue(), "37" , "LIGHTNESS not changed (37): ");
+				assert.equal(oColorPicker.oHexField.getValue(), "0094bd" , "HEX changed from 1188aa -> 0094bd: ");
 
 				oColorPicker.destroy();
 			});
@@ -426,7 +426,7 @@
 				oColorPicker.oSatField.setValue(-20);
 				oColorPicker.oSatField.fireChange({newValue:oColorPicker.oSatField.getValue()});
 
-				equal(oColorPicker.oSatField.getValue(), "0" , "SATURATION manually changed to -20 => set to 0: ");
+				assert.equal(oColorPicker.oSatField.getValue(), "0" , "SATURATION manually changed to -20 => set to 0: ");
 
 				oColorPicker.destroy();
 			});
@@ -441,13 +441,13 @@
 				oColorPicker.oHueField.setValue(-30);
 				oColorPicker.oHueField.fireChange({newValue:oColorPicker.oHueField.getValue()});
 
-				equal(oColorPicker.oRedField.getValue(), "255" , "RED changed from 123 -> 255: ");
-				equal(oColorPicker.oGreenField.getValue(), "122" , "GREEN changed from 255 -> 122: ");
-				equal(oColorPicker.oBlueField.getValue(), "122" , "BLUE changed from  255 -> 122: ");
-				equal(oColorPicker.oHueField.getValue(), "0" , "HUE manually changed to -30 => set to 0: ");
-				equal(oColorPicker.oSatField.getValue(), "100" , "SATURATION not changed (100): ");
-				equal(oColorPicker.oLitField.getValue(), "74" , "LIGHTNESS not changed (74): ");
-				equal(oColorPicker.oHexField.getValue(), "ff7a7a" , "HEX changed from 7bffff -> ff7a7a: ");
+				assert.equal(oColorPicker.oRedField.getValue(), "255" , "RED changed from 123 -> 255: ");
+				assert.equal(oColorPicker.oGreenField.getValue(), "122" , "GREEN changed from 255 -> 122: ");
+				assert.equal(oColorPicker.oBlueField.getValue(), "122" , "BLUE changed from  255 -> 122: ");
+				assert.equal(oColorPicker.oHueField.getValue(), "0" , "HUE manually changed to -30 => set to 0: ");
+				assert.equal(oColorPicker.oSatField.getValue(), "100" , "SATURATION not changed (100): ");
+				assert.equal(oColorPicker.oLitField.getValue(), "74" , "LIGHTNESS not changed (74): ");
+				assert.equal(oColorPicker.oHexField.getValue(), "ff7a7a" , "HEX changed from 7bffff -> ff7a7a: ");
 
 				oColorPicker.destroy();
 			});
@@ -462,7 +462,7 @@
 				oColorPicker.oHueField.setValue(370);
 				oColorPicker.oHueField.fireChange({newValue:oColorPicker.oHueField.getValue()});
 
-				equal(oColorPicker.oHueField.getValue(), "359" , "SATURATION manually changed to 370 => set to 359: ");
+				assert.equal(oColorPicker.oHueField.getValue(), "359" , "SATURATION manually changed to 370 => set to 359: ");
 
 				oColorPicker.destroy();
 			});
@@ -477,7 +477,7 @@
 				oColorPicker.oAlphaField.setValue(-5);
 				oColorPicker.oAlphaField.fireChange({newValue:oColorPicker.oAlphaField.getValue()});
 
-				equal(oColorPicker.oAlphaField.getValue(), "0" , "SATURATION manually changed to -5 => set to 0: ");
+				assert.equal(oColorPicker.oAlphaField.getValue(), "0" , "SATURATION manually changed to -5 => set to 0: ");
 
 				oColorPicker.destroy();
 			});
@@ -492,7 +492,7 @@
 				oColorPicker.oAlphaField.setValue(2);
 				oColorPicker.oAlphaField.fireChange({newValue:oColorPicker.oAlphaField.getValue()});
 
-				equal(oColorPicker.oAlphaField.getValue(), "1" , "SATURATION manually changed to 2 => set to 1: ");
+				assert.equal(oColorPicker.oAlphaField.getValue(), "1" , "SATURATION manually changed to 2 => set to 1: ");
 
 				oColorPicker.destroy();
 			});
@@ -506,9 +506,9 @@
 
 				oColorPicker.setColorString("rgb(249,238,227)");
 
-				equal(oColorPicker.oRedField.getValue(), "249" , "RED set from color string to 249: ");
-				equal(oColorPicker.oGreenField.getValue(), "238" , "GREEN set from color string to 238: ");
-				equal(oColorPicker.oBlueField.getValue(), "227" , "BLUE set from color string to 227: ");
+				assert.equal(oColorPicker.oRedField.getValue(), "249" , "RED set from color string to 249: ");
+				assert.equal(oColorPicker.oGreenField.getValue(), "238" , "GREEN set from color string to 238: ");
+				assert.equal(oColorPicker.oBlueField.getValue(), "227" , "BLUE set from color string to 227: ");
 
 				oColorPicker.destroy();
 			});
@@ -522,10 +522,10 @@
 
 				oColorPicker.setColorString("rgba(249,238,227,0.5)");
 
-				equal(oColorPicker.oRedField.getValue(), "249" , "RED set from color string to 249: ");
-				equal(oColorPicker.oGreenField.getValue(), "238" , "GREEN set from color string to 238: ");
-				equal(oColorPicker.oBlueField.getValue(), "227" , "BLUE set from color string to 227: ");
-				equal(oColorPicker.oAlphaField.getValue(), "0.5" , "ALPHA set from color string to 0.5: ");
+				assert.equal(oColorPicker.oRedField.getValue(), "249" , "RED set from color string to 249: ");
+				assert.equal(oColorPicker.oGreenField.getValue(), "238" , "GREEN set from color string to 238: ");
+				assert.equal(oColorPicker.oBlueField.getValue(), "227" , "BLUE set from color string to 227: ");
+				assert.equal(oColorPicker.oAlphaField.getValue(), "0.5" , "ALPHA set from color string to 0.5: ");
 
 				oColorPicker.destroy();
 			});
@@ -549,13 +549,13 @@
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				equal(oColorPicker.oRedField.getValue(), colors.r.toString(), "Value of RED: 0");
-				equal(oColorPicker.oGreenField.getValue(), colors.g.toString(), "Value of GREEN: 255");
-				equal(oColorPicker.oBlueField.getValue(), colors.b.toString(), "Value of BLUE: 0");
-				equal(oColorPicker.oHueField.getValue(), colors.h.toString(), "Value of HUE: 120");
-				equal(oColorPicker.oSatField.getValue(), colors.s.toString(), "Value of SATURATION: 100");
-				equal(oColorPicker.oLitField.getValue(), colors.l.toString(), "Value of LIGHTNESS: 50");
-				equal(oColorPicker.Color.hex, colors.hex , "Value of HEX: #00ff00");
+				assert.equal(oColorPicker.oRedField.getValue(), colors.r.toString(), "Value of RED: 0");
+				assert.equal(oColorPicker.oGreenField.getValue(), colors.g.toString(), "Value of GREEN: 255");
+				assert.equal(oColorPicker.oBlueField.getValue(), colors.b.toString(), "Value of BLUE: 0");
+				assert.equal(oColorPicker.oHueField.getValue(), colors.h.toString(), "Value of HUE: 120");
+				assert.equal(oColorPicker.oSatField.getValue(), colors.s.toString(), "Value of SATURATION: 100");
+				assert.equal(oColorPicker.oLitField.getValue(), colors.l.toString(), "Value of LIGHTNESS: 50");
+				assert.equal(oColorPicker.Color.hex, colors.hex , "Value of HEX: #00ff00");
 
 				oColorPicker.destroy();
 			});
@@ -573,13 +573,13 @@
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				equal(oColorPicker.oRedField.getValue(), colors.r.toString() , "Value of RED: 255");
-				equal(oColorPicker.oGreenField.getValue(), colors.g.toString() , "Value of GREEN: 255");
-				equal(oColorPicker.oBlueField.getValue(), colors.b.toString() , "Value of BLUE: 255");
-				equal(oColorPicker.oHueField.getValue(), colors.h.toString() , "Value of HUE: 0");
-				equal(oColorPicker.oSatField.getValue(), colors.s.toString() , "Value of SATURATION: 0");
-				equal(oColorPicker.oLitField.getValue(), colors.l.toString() , "Value of LIGHTNESS: 100");
-				equal(oColorPicker.Color.hex, colors.hex , "Value of HEX: ffffff");
+				assert.equal(oColorPicker.oRedField.getValue(), colors.r.toString() , "Value of RED: 255");
+				assert.equal(oColorPicker.oGreenField.getValue(), colors.g.toString() , "Value of GREEN: 255");
+				assert.equal(oColorPicker.oBlueField.getValue(), colors.b.toString() , "Value of BLUE: 255");
+				assert.equal(oColorPicker.oHueField.getValue(), colors.h.toString() , "Value of HUE: 0");
+				assert.equal(oColorPicker.oSatField.getValue(), colors.s.toString() , "Value of SATURATION: 0");
+				assert.equal(oColorPicker.oLitField.getValue(), colors.l.toString() , "Value of LIGHTNESS: 100");
+				assert.equal(oColorPicker.Color.hex, colors.hex , "Value of HEX: ffffff");
 
 				oColorPicker.destroy();
 			});
@@ -604,13 +604,13 @@
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				equal(oColorPicker.oHueField.getValue(), colors.h.toString() , "Value of HUE before mouse events: 193");
+				assert.equal(oColorPicker.oHueField.getValue(), colors.h.toString() , "Value of HUE before mouse events: 193");
 				qutils.triggerMouseEvent("ColorPicker-hSLD", "click", 166, 0, 0, 0 );
-				equal(oColorPicker.oHueField.getValue(), colors.h.toString() , "Value of HUE after mouse click 1: " + colors.h.toString());
+				assert.equal(oColorPicker.oHueField.getValue(), colors.h.toString() , "Value of HUE after mouse click 1: " + colors.h.toString());
 				qutils.triggerMouseEvent("ColorPicker-hSLD", "click", 16, 0, 0, 0 );
-				equal(oColorPicker.oHueField.getValue(), colors.h.toString() , "Value of HUE after mouse click 2: " + colors.h.toString());
+				assert.equal(oColorPicker.oHueField.getValue(), colors.h.toString() , "Value of HUE after mouse click 2: " + colors.h.toString());
 				qutils.triggerMouseEvent("ColorPicker-hSLD", "click", 250, 0, 0, 0 );
-				equal(oColorPicker.oHueField.getValue(), colors.h.toString() , "Value of HUE after mouse click 3: " + colors.h.toString());
+				assert.equal(oColorPicker.oHueField.getValue(), colors.h.toString() , "Value of HUE after mouse click 3: " + colors.h.toString());
 
 				oColorPicker.destroy();
 			});
@@ -628,13 +628,13 @@
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				equal(oColorPicker.oAlphaField.getValue(), colors.alpha.toString(), "Value of Alpha before mouse events: 1");
+				assert.equal(oColorPicker.oAlphaField.getValue(), colors.alpha.toString(), "Value of Alpha before mouse events: 1");
 				qutils.triggerMouseEvent("ColorPickerA-aSLD", "click", 166, 0, 0, 0 );
-				equal(oColorPicker.oAlphaField.getValue(), colors.alpha.toString() , "Value of Alpha after mouse click 1: " + colors.alpha.toString());
+				assert.equal(oColorPicker.oAlphaField.getValue(), colors.alpha.toString() , "Value of Alpha after mouse click 1: " + colors.alpha.toString());
 				qutils.triggerMouseEvent("ColorPickerA-aSLD", "click", 16, 0, 0, 0 );
-				equal(oColorPicker.oHueField.getValue(), colors.h.toString() , "Value of Alpha after mouse click 2: " + colors.alpha.toString());
+				assert.equal(oColorPicker.oHueField.getValue(), colors.h.toString() , "Value of Alpha after mouse click 2: " + colors.alpha.toString());
 				qutils.triggerMouseEvent("ColorPickerA-aSLD", "click", 250, 0, 0, 0 );
-				equal(oColorPicker.oHueField.getValue(), colors.h.toString() , "Value of Alpha after mouse click 3: " + colors.alpha.toString());
+				assert.equal(oColorPicker.oHueField.getValue(), colors.h.toString() , "Value of Alpha after mouse click 3: " + colors.alpha.toString());
 
 				oColorPicker.destroy();
 			});
@@ -648,16 +648,16 @@
 
 				var cpBoxOffset = jQuery.sap.byId("ColorPicker2-cpBox").offset();
 
-				equal(oColorPicker.oSatField.getValue(), "100" , "SATURATION (before mouse events): 100");
-				equal(oColorPicker.oLitField.getValue(), "75" , "LIGHTNESS (before mouse events): 75");
+				assert.equal(oColorPicker.oSatField.getValue(), "100" , "SATURATION (before mouse events): 100");
+				assert.equal(oColorPicker.oLitField.getValue(), "75" , "LIGHTNESS (before mouse events): 75");
 				qutils.triggerMouseEvent("ColorPicker2-cpBox", "mousedown", 0, 0, cpBoxOffset.left + 10, cpBoxOffset.top + 10 );
 				qutils.triggerMouseEvent("ColorPicker2-cpBox", "mouseup", 0, 0, cpBoxOffset.left + 10, cpBoxOffset.top + 10 );
-				equal(oColorPicker.oSatField.getValue(), "90" , "SATURATION (after mouse event 1): 90");
-				equal(oColorPicker.oLitField.getValue(), "9" , "LIGHTNESS (after mouse event 1): 9");
+				assert.equal(oColorPicker.oSatField.getValue(), "90" , "SATURATION (after mouse event 1): 90");
+				assert.equal(oColorPicker.oLitField.getValue(), "9" , "LIGHTNESS (after mouse event 1): 9");
 				qutils.triggerMouseEvent("ColorPicker2-cpBox", "mousedown", 0, 0, cpBoxOffset.left + 33, cpBoxOffset.top + 33 );
 				qutils.triggerMouseEvent("ColorPicker2-cpBox", "mouseup", 0, 0, cpBoxOffset.left + 33, cpBoxOffset.top + 33 );
-				equal(oColorPicker.oSatField.getValue(), "68" , "SATURATION (after mouse event 2): 68");
-				equal(oColorPicker.oLitField.getValue(), "31" , "LIGHTNESS (after mouse event 2	): 31");
+				assert.equal(oColorPicker.oSatField.getValue(), "68" , "SATURATION (after mouse event 2): 68");
+				assert.equal(oColorPicker.oLitField.getValue(), "31" , "LIGHTNESS (after mouse event 2	): 31");
 
 				oColorPicker.destroy();
 			});
@@ -716,24 +716,24 @@
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				equal(oColorPicker.oRedField.getValue(), colors.r.toString(), "Value of RED: 255");
-				equal(oColorPicker.oGreenField.getValue(), colors.g.toString(), "Value of GREEN: 0");
-				equal(oColorPicker.oBlueField.getValue(), colors.b.toString(), "Value of BLUE: 0");
-				equal(oColorPicker.oHueField.getValue(), colors.h.toString(), "Value of HUE: 0");
-				equal(oColorPicker.oSatField.getValue(), colors.s.toString(), "Value of SATURATION: 100");
-				equal(oColorPicker.oLitField.getValue(), colors.l.toString(), "Value of LIGHTNESS: 50");
-				equal(oColorPicker.Color.hex, colors.hex , "Value of HEX: #ff0000");
+				assert.equal(oColorPicker.oRedField.getValue(), colors.r.toString(), "Value of RED: 255");
+				assert.equal(oColorPicker.oGreenField.getValue(), colors.g.toString(), "Value of GREEN: 0");
+				assert.equal(oColorPicker.oBlueField.getValue(), colors.b.toString(), "Value of BLUE: 0");
+				assert.equal(oColorPicker.oHueField.getValue(), colors.h.toString(), "Value of HUE: 0");
+				assert.equal(oColorPicker.oSatField.getValue(), colors.s.toString(), "Value of SATURATION: 100");
+				assert.equal(oColorPicker.oLitField.getValue(), colors.l.toString(), "Value of LIGHTNESS: 50");
+				assert.equal(oColorPicker.Color.hex, colors.hex , "Value of HEX: #ff0000");
 
 				oColorPicker.setColorString("lime");
 				sap.ui.getCore().applyChanges();
 
-				equal(oColorPicker.oRedField.getValue(), colors.r.toString(), "Value of RED: 0");
-				equal(oColorPicker.oGreenField.getValue(), colors.g.toString(), "Value of GREEN: 255");
-				equal(oColorPicker.oBlueField.getValue(), colors.b.toString(), "Value of BLUE: 0");
-				equal(oColorPicker.oHueField.getValue(), colors.h.toString(), "Value of HUE: 120");
-				equal(oColorPicker.oSatField.getValue(), colors.s.toString(), "Value of SATURATION: 100");
-				equal(oColorPicker.oLitField.getValue(), colors.l.toString(), "Value of LIGHTNESS: 50");
-				equal(oColorPicker.Color.hex, colors.hex , "Value of HEX: #00ff00");
+				assert.equal(oColorPicker.oRedField.getValue(), colors.r.toString(), "Value of RED: 0");
+				assert.equal(oColorPicker.oGreenField.getValue(), colors.g.toString(), "Value of GREEN: 255");
+				assert.equal(oColorPicker.oBlueField.getValue(), colors.b.toString(), "Value of BLUE: 0");
+				assert.equal(oColorPicker.oHueField.getValue(), colors.h.toString(), "Value of HUE: 120");
+				assert.equal(oColorPicker.oSatField.getValue(), colors.s.toString(), "Value of SATURATION: 100");
+				assert.equal(oColorPicker.oLitField.getValue(), colors.l.toString(), "Value of LIGHTNESS: 50");
+				assert.equal(oColorPicker.Color.hex, colors.hex , "Value of HEX: #00ff00");
 
 				// clean up
 				oColorPicker.destroy();

@@ -129,27 +129,27 @@
 	QUnit.module("Rendering");
 
 	QUnit.test("Visual appearance", function(assert) {
-		equal(jQuery("#IPE1").get(0).offsetWidth, 200, "TextField: Width of the control");
-		equal(jQuery("#IPE1").text(), sStartText, "TextField: Displayed text");
+		assert.equal(jQuery("#IPE1").get(0).offsetWidth, 200, "TextField: Width of the control");
+		assert.equal(jQuery("#IPE1").text(), sStartText, "TextField: Displayed text");
 
 		// disabled
 		ok(jQuery("#IPE2").hasClass("sapUiIpeRo"), "Disabled: ReadOnly Class rendered");
 		ok(jQuery("#IPE2--TV").hasClass("sapUiTvDsbl"), "Disabled text renderes with disabled class");
 
 		// invisible
-		equal(jQuery("#IPE3").length, 0, "Invisible control not rendered");
+		assert.equal(jQuery("#IPE3").length, 0, "Invisible control not rendered");
 
 		// link
-		equal(jQuery("#IPE6").get(0).offsetWidth, 200, "Link: Width of the control");
-		equal(jQuery("#IPE6").text(), sStartText, "Link: Displayed text");
+		assert.equal(jQuery("#IPE6").get(0).offsetWidth, 200, "Link: Width of the control");
+		assert.equal(jQuery("#IPE6").text(), sStartText, "Link: Displayed text");
 		ok(jQuery("#IPE6").find("a").get(0), "Link: rendered as <a>");
 		ok(jQuery("#IPE6--Edit").get(0), "Link: Edit button rendered");
-		equal(jQuery("#IPE6--Edit").css("visibility"), "hidden", "Link: Edit button not visible");
+		assert.equal(jQuery("#IPE6--Edit").css("visibility"), "hidden", "Link: Edit button not visible");
 		// edit button invisible -> visible on focus....
 
 		// tooltip
-		equal(jQuery("#IPE1").find("span").attr("title"), sTooltip, "TextField: Tooltip");
-		equal(jQuery("#IPE6").find("a").attr("title"), sTooltip, "Link: Tooltip");
+		assert.equal(jQuery("#IPE1").find("span").attr("title"), sTooltip, "TextField: Tooltip");
+		assert.equal(jQuery("#IPE6").find("a").attr("title"), sTooltip, "Link: Tooltip");
 
 	});
 
@@ -163,14 +163,14 @@
 		ok(jQuery("#IPE1").hasClass("sapUiIpeSucc"), "Success state: Success CSS-class rendered");
 		ok(!jQuery("#IPE1").hasClass("sapUiIpeWarn"), "Success state: Warning CSS-class not rendered");
 		ok(!jQuery("#IPE1").hasClass("sapUiIpeErr"), "Success state: Error CSS-class not rendered");
-		equal(oIPE1.getValueState(), sap.ui.core.ValueState.Success, "GetValueState on InPlaceEdit")
+		assert.equal(oIPE1.getValueState(), sap.ui.core.ValueState.Success, "GetValueState on InPlaceEdit")
 
 		oIPE1.setValueState(sap.ui.core.ValueState.Warning);
 		sap.ui.getCore().applyChanges();
 		ok(!jQuery("#IPE1").hasClass("sapUiIpeSucc"), "Warning state: Success CSS-class not rendered");
 		ok(jQuery("#IPE1").hasClass("sapUiIpeWarn"), "Warning state: Warning CSS-class rendered");
 		ok(!jQuery("#IPE1").hasClass("sapUiIpeErr"), "Warning state: Error CSS-class not rendered");
-		equal(oTextField1.getValueState(), sap.ui.core.ValueState.Warning, "GetValueState on TextField")
+		assert.equal(oTextField1.getValueState(), sap.ui.core.ValueState.Warning, "GetValueState on TextField")
 
 		oTextField1.setValueState(sap.ui.core.ValueState.Error);
 		sap.ui.getCore().applyChanges();
@@ -185,7 +185,7 @@
 	QUnit.module("Functions");
 
 	QUnit.test("Properties", function(assert) {
-		equal(oIPE1.getRequired(), true, "getRequired");
+		assert.equal(oIPE1.getRequired(), true, "getRequired");
 	 });
 
 	QUnit.module("Edit mode");
@@ -193,7 +193,7 @@
 	QUnit.test("Visual appearance", function(assert) {
 		oIPE1.focus();
 		ok(jQuery.sap.domById("TF1"), "TextField1 rendered")
-		equal(jQuery("#IPE1").get(0).offsetWidth, 200, "Width of the control");
+		assert.equal(jQuery("#IPE1").get(0).offsetWidth, 200, "Width of the control");
 
 		oIPE2.focus();
 		ok(!jQuery.sap.domById("TF2"), "TextField2 not rendered");
@@ -208,7 +208,7 @@
 	QUnit.test("Link", function(assert) {
 		oIPE6.focus();
 		ok(!jQuery.sap.domById("IPE6--input"), "on focus no TextField rendered")
-		equal(jQuery("#IPE6--Edit").css("visibility"), "visible", "on focus Edit button visible");
+		assert.equal(jQuery("#IPE6--Edit").css("visibility"), "visible", "on focus Edit button visible");
 		qutils.triggerEvent("click", "IPE6--Edit");
 		ok(jQuery.sap.domById("IPE6--input"), "Edit mode: TextField rendered")
 		ok(!jQuery("#IPE6--Edit").get(0), "Edit mode: no edit button rendered");
@@ -219,12 +219,12 @@
 		oIPE1.focus();
 		sap.ui.getCore().applyChanges();
 		setTimeout(function(){
-			equal(jQuery("#IPE1--X").css("visibility"), "hidden", "Undo button invisible");
+			assert.equal(jQuery("#IPE1--X").css("visibility"), "hidden", "Undo button invisible");
 			qutils.triggerCharacterInput("TF1", "A");
 			qutils.triggerEvent("input", "TF1");
 			qutils.triggerKeyup("TF1", jQuery.sap.KeyCodes.A, true, false, false);
-			equal(jQuery("#TF1").val(), sStartText + "A", "Displayed text");
-			equal(jQuery("#IPE1--X").css("visibility"), "visible", "Undo button visible");
+			assert.equal(jQuery("#TF1").val(), sStartText + "A", "Displayed text");
+			assert.equal(jQuery("#IPE1--X").css("visibility"), "visible", "Undo button visible");
 		done();
 		}, 300);
 	});
@@ -237,7 +237,7 @@
 			ok(!jQuery("#IPE7--X").get(0), "no Undo button rendered");
 			qutils.triggerCharacterInput("TF4", "A");
 			qutils.triggerKeyup("TF4", jQuery.sap.KeyCodes.A, true, false, false);
-			equal(jQuery("#TF4").val(), sStartText + "A", "Displayed text");
+			assert.equal(jQuery("#TF4").val(), sStartText + "A", "Displayed text");
 			ok(!jQuery("#IPE7--X").get(0), "no Undo button rendered");
 		done();
 		}, 300);
@@ -251,7 +251,7 @@
 			qutils.triggerEvent("click", "CB1-icon");
 			ok(jQuery.sap.domById("CB1-lb-list"), "ListBox rendered")
 			qutils.triggerEvent("click", "Day7");
-			equal(jQuery("#CB1-input").val(), "Sunday", "Displayed text");
+			assert.equal(jQuery("#CB1-input").val(), "Sunday", "Displayed text");
 		done();
 		}, 300);
 	});
@@ -265,10 +265,10 @@
 
 		setTimeout(function(){
 			ok(!jQuery.sap.domById("TF1"), "TextField1 not longer rendered")
-			equal(jQuery("#IPE1").find("span").text(), sStartText + "A", "Displayed text");
+			assert.equal(jQuery("#IPE1").find("span").text(), sStartText + "A", "Displayed text");
 			ok(jQuery("#IPE1").hasClass("sapUiIpeUndo"), "Undo CSS-class rendered");
 			ok(jQuery("#IPE1").find("button").get(0), "Undo Button rendered")
-			equal(oTextField1.getValue(), sStartText + "A", "Value of TextField1");
+			assert.equal(oTextField1.getValue(), sStartText + "A", "Value of TextField1");
 			done();
 		}, 300);
 	});
@@ -283,10 +283,10 @@
 				qutils.triggerKeyEvent("keypress", "TF1", jQuery.sap.KeyCodes.ESCAPE);
 				oIPE4.focus(); // to toggle in display mode
 				setTimeout(function(){
-					equal(jQuery("#IPE1").text(), sStartText, "Displayed text");
+					assert.equal(jQuery("#IPE1").text(), sStartText, "Displayed text");
 					ok(!jQuery("#IPE1").hasClass("sapUiIpeUndo"), "Undo CSS-class not longer rendered");
 					ok(!jQuery("#IPE1").find("button").get(0), "Undo Button not longer rendered")
-					equal(oTextField1.getValue(), sStartText, "Value of TextField1 after undo");
+					assert.equal(oTextField1.getValue(), sStartText, "Value of TextField1 after undo");
 					done();
 			}, 300);
 		}, 300);
@@ -301,12 +301,12 @@
 		sap.ui.getCore().applyChanges();
 
 		setTimeout(function(){
-			equal(jQuery("#IPE1").find("span").text(), sStartText + "A", "Displayed text before clearOldText");
+			assert.equal(jQuery("#IPE1").find("span").text(), sStartText + "A", "Displayed text before clearOldText");
 			ok(jQuery("#IPE1").find("button").get(0), "Undo Button rendered before clearOldText")
 			oIPE1.clearOldText();
-			equal(jQuery("#IPE1").find("span").text(), sStartText + "A", "Displayed text after clearOldText");
+			assert.equal(jQuery("#IPE1").find("span").text(), sStartText + "A", "Displayed text after clearOldText");
 			ok(!jQuery("#IPE1").find("button").get(0), "Undo Button not longer rendered")
-			equal(oTextField1.getValue(), sStartText + "A", "Value of TextField1 after clearOldText");
+			assert.equal(oTextField1.getValue(), sStartText + "A", "Value of TextField1 after clearOldText");
 			done();
 		}, 300);
 	});

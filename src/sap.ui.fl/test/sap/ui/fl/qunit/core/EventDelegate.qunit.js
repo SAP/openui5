@@ -21,7 +21,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 		//Assert
 		assert.deepEqual(instance._oControl, oControl);
 		assert.deepEqual(instance._oSupportedRegistryItems, oSupportedRegistryItems);
-		equal(spyLog.callCount, 0);
+		assert.equal(spyLog.callCount, 0);
 		spyLog.restore();
 	});
 
@@ -32,7 +32,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 		var instance = new EventDelegate();
 
 		//Assert
-		equal(spyLog.callCount, 2);
+		assert.equal(spyLog.callCount, 2);
 		spyLog.restore();
 	});
 

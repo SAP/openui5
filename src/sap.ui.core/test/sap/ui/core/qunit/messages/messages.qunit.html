@@ -130,7 +130,7 @@
 		ok(oMessageManager, 'MessageManager instance created');
 		var oMessageModel = oMessageManager.getMessageModel();
 		ok(oMessageModel instanceof sap.ui.model.message.MessageModel, 'MessageModel created');
-		equal(oMessageModel.getObject('/').length, 0, 'No Messages');
+		assert.equal(oMessageModel.getObject('/').length, 0, 'No Messages');
 	});
 
 	QUnit.test("addMessage", function(assert) {
@@ -299,7 +299,7 @@
 			var aMessages = oDataState.getMessages();
 			ok(aMessages[0].additionalText, "AdditionalText was added.");
 			// InputBase takes
-			equal(aMessages[0].additionalText, "First name", "AdditionalText is set correctly.");
+			assert.equal(aMessages[0].additionalText, "First name", "AdditionalText is set correctly.");
 			done();
 		});
 
@@ -318,7 +318,7 @@
 		spyDataState(oInput3, function(sName, oDataState) {
 			var aMessages = oDataState.getMessages();
 			ok(aMessages[0].additionalText, "AdditionalText was added.");
-			equal(aMessages[0].additionalText, "Nickname", "AdditionalText is set correctly.");
+			assert.equal(aMessages[0].additionalText, "Nickname", "AdditionalText is set correctly.");
 
 			oLabel3.destroy();
 			done();

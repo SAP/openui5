@@ -469,7 +469,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Act
-		equal(oObjectStatus.$("title").attr("dir"), "ltr", "When the textDirection has the Inherit value, for the title is set LTR when on LTR page");
+		assert.equal(oObjectStatus.$("title").attr("dir"), "ltr", "When the textDirection has the Inherit value, for the title is set LTR when on LTR page");
 
 		//Cleanup
 		oObjectStatus.destroy();
@@ -482,7 +482,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Act
-		equal(oObjectStatus.$("title").attr("dir"), "rtl", "When textDirection=RTL, for the title is set also RTL");
+		assert.equal(oObjectStatus.$("title").attr("dir"), "rtl", "When textDirection=RTL, for the title is set also RTL");
 
 		//Cleanup
 		oObjectStatus.destroy();

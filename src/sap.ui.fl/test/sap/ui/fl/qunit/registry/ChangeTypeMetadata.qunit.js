@@ -20,8 +20,8 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeTypeMetadata");
 		var instance = new ChangeTypeMetadata(mParam);
 
 		//Assert
-		equal(instance.getName(), "ABC");
-		equal(instance.getChangeHandler(), "myChangeHandler");
+		assert.equal(instance.getName(), "ABC");
+		assert.equal(instance.getChangeHandler(), "myChangeHandler");
 	});
 
 	QUnit.test("constructor - shall log error messages for missing mandatory parameters", function(assert) {
@@ -51,12 +51,12 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeTypeMetadata");
 		var instance = new ChangeTypeMetadata(mParam);
 
 		//Assert
-		equal(instance.getName(), "ABC");
-		equal(instance.getChangeHandler(), "myChangeHandler");
-		equal(instance.getLabel(), "myLabelKey");
-		equal(instance.getTooltip(), "myTooltipKey");
-		equal(instance.getIcon(), "myIconKey");
-		equal(instance.getSortIndex(), 5);
+		assert.equal(instance.getName(), "ABC");
+		assert.equal(instance.getChangeHandler(), "myChangeHandler");
+		assert.equal(instance.getLabel(), "myLabelKey");
+		assert.equal(instance.getTooltip(), "myTooltipKey");
+		assert.equal(instance.getIcon(), "myIconKey");
+		assert.equal(instance.getSortIndex(), 5);
 	});
 
 }(sap.ui.fl.registry.ChangeTypeMetadata));

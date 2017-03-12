@@ -136,11 +136,11 @@
 			oBinding.detachChange(fnChangeHandler1);
 			aContexts = oBinding.getContexts(0, 20, 100);
 
-			equal(oRequestedSpy.callCount, 1, "After Initial Loading: Number of dataRequested Events = 1");
-			equal(oReceivedSpy.callCount, 1, "After Initial Loading: Number of dataReceived Events = 1");
+			assert.equal(oRequestedSpy.callCount, 1, "After Initial Loading: Number of dataRequested Events = 1");
+			assert.equal(oReceivedSpy.callCount, 1, "After Initial Loading: Number of dataReceived Events = 1");
 
-			equal(oRequestSentSpy.callCount, 1, "After Initial Loading: Number of requestSent Events = 1");
-			equal(oRequestCompletedSpy.callCount, 1, "After Initial Loading: Number of requestCompleted Events = 1");
+			assert.equal(oRequestSentSpy.callCount, 1, "After Initial Loading: Number of requestSent Events = 1");
+			assert.equal(oRequestCompletedSpy.callCount, 1, "After Initial Loading: Number of requestCompleted Events = 1");
 
 			oBinding.attachChange(fnChangeHandler2);
 			oBinding.expand(0);
@@ -161,16 +161,16 @@
 			oBinding.detachChange(fnChangeHandler3);
 			//oBinding.getContexts(0, 20, 100);
 
-			equal(oRequestedSpy.callCount, 2, "After Expand: Number of dataRequested Events = 2");
+			assert.equal(oRequestedSpy.callCount, 2, "After Expand: Number of dataRequested Events = 2");
 
-			equal(oRequestSentSpy.callCount, 2, "After Expand: Number of requestSent Events = 2");
+			assert.equal(oRequestSentSpy.callCount, 2, "After Expand: Number of requestSent Events = 2");
 
 		}
 
 		function fnCompletedHandler() {
 			oModel.detachRequestCompleted(fnCompletedHandler);
-			equal(oReceivedSpy.callCount, 2, "After Expand: Number of dataReceived Events = 2");
-			equal(oRequestCompletedSpy.callCount, 2, "After Expand: Number of requestCompleted Events = 2");
+			assert.equal(oReceivedSpy.callCount, 2, "After Expand: Number of dataReceived Events = 2");
+			assert.equal(oRequestCompletedSpy.callCount, 2, "After Expand: Number of requestCompleted Events = 2");
 			done();
 		}
 	});
@@ -191,11 +191,11 @@
 
 			var iChangeHandlerCounter = 0;
 			function fnChangeHandler1() {
-				equal(oRequestedSpy.callCount, 1, "After Initial Loading: Number of dataRequested Events = 1");
-				equal(oReceivedSpy.callCount, 1, "After Initial Loading: Number of dataReceived Events = 1");
+				assert.equal(oRequestedSpy.callCount, 1, "After Initial Loading: Number of dataRequested Events = 1");
+				assert.equal(oReceivedSpy.callCount, 1, "After Initial Loading: Number of dataReceived Events = 1");
 
-				equal(oRequestSentSpy.callCount, 3, "After Initial Loading: Number of requestSent Events = 3");
-				equal(oRequestCompletedSpy.callCount, 3, "After Initial Loading: Number of requestCompleted Events = 3")
+				assert.equal(oRequestSentSpy.callCount, 3, "After Initial Loading: Number of requestSent Events = 3");
+				assert.equal(oRequestCompletedSpy.callCount, 3, "After Initial Loading: Number of requestCompleted Events = 3")
 
 				oBinding.detachChange(fnChangeHandler1);
 
@@ -215,11 +215,11 @@
 			function fnChangeHandler2() {
 				oBinding.detachChange(fnChangeHandler2);
 
-				equal(oRequestedSpy.callCount, 2, "After Expand: Number of dataRequested Events = 2");
-				equal(oReceivedSpy.callCount, 2, "After Expand: Number of dataReceived Events = 2");
+				assert.equal(oRequestedSpy.callCount, 2, "After Expand: Number of dataRequested Events = 2");
+				assert.equal(oReceivedSpy.callCount, 2, "After Expand: Number of dataReceived Events = 2");
 
-				equal(oRequestSentSpy.callCount, 4, "After Expand: Number of requestSent Events = 4");
-				equal(oRequestCompletedSpy.callCount, 4, "After Expand: Number of requestCompleted Events = 4")
+				assert.equal(oRequestSentSpy.callCount, 4, "After Expand: Number of requestSent Events = 4");
+				assert.equal(oRequestCompletedSpy.callCount, 4, "After Expand: Number of requestCompleted Events = 4")
 
 				done();
 			}
@@ -241,9 +241,9 @@
 				var sURL = arguments[0];
 
 				// check if $top is contained in the URL, only $top=0 is allowed here!
-				equal(sURL.indexOf("$top") == -1 || sURL.indexOf("$top=0") > 0, true, "URL was created without $top value");
+				assert.equal(sURL.indexOf("$top") == -1 || sURL.indexOf("$top=0") > 0, true, "URL was created without $top value");
 				// check if $skip is contained in the URL
-				equal(sURL.indexOf("$skip") == -1, true, "URL was created without $skip value");
+				assert.equal(sURL.indexOf("$skip") == -1, true, "URL was created without $skip value");
 
 				return vReturn;
 			};
@@ -253,7 +253,7 @@
 				//retrieve contexts, every thing should be loaded
 				var aContexts = oBinding.getContexts(0, 100);
 
-				equal(aContexts.length, 9, "All contexts on top level loaded");
+				assert.equal(aContexts.length, 9, "All contexts on top level loaded");
 
 				done();
 			}
@@ -276,16 +276,16 @@
 				var aContexts = oBinding.getContexts(0, 1000);
 
 				//even though 1000 were requested, we only receive 230, since that's all there is in the backend
-				equal(aContexts.length, 230, "Access via ATBA: All contexts over every level could be retrieved");
+				assert.equal(aContexts.length, 230, "Access via ATBA: All contexts over every level could be retrieved");
 
-				equal(aContexts[0].getProperty().CostCenter, "100-1000", "Cost Center of 1st row is correct");
-				equal(aContexts[0].getProperty().ActualCosts, "1588416", "Sum Node of 1st row is correctly set");
+				assert.equal(aContexts[0].getProperty().CostCenter, "100-1000", "Cost Center of 1st row is correct");
+				assert.equal(aContexts[0].getProperty().ActualCosts, "1588416", "Sum Node of 1st row is correctly set");
 
-				equal(aContexts[100].getProperty().CostCenter, "200-2000", "Cost Center of 100th row is correct");
-				equal(aContexts[100].getProperty().ActualCosts, "9254", "Sum Node of 100th row is correctly set");
+				assert.equal(aContexts[100].getProperty().CostCenter, "200-2000", "Cost Center of 100th row is correct");
+				assert.equal(aContexts[100].getProperty().ActualCosts, "9254", "Sum Node of 100th row is correctly set");
 
-				equal(aContexts[229].getProperty().CostCenter, "300-2000", "1. CostCenter of last row is correct (last subtotal row)");
-				equal(aContexts[229].getProperty().ActualCosts, "752475", "2. ActualCosts of last row is correct (last subtotal row)");
+				assert.equal(aContexts[229].getProperty().CostCenter, "300-2000", "1. CostCenter of last row is correct (last subtotal row)");
+				assert.equal(aContexts[229].getProperty().ActualCosts, "752475", "2. ActualCosts of last row is correct (last subtotal row)");
 
 				done();
 			}
@@ -306,7 +306,7 @@
 			oBinding.attachChange(fnChangeHandler1);
 			var aContexts = oBinding.getContexts(0, 20, 100);
 
-			equal(oBinding.sCustomParams, "search=ABTestString", "Internally the custom parameters are set");
+			assert.equal(oBinding.sCustomParams, "search=ABTestString", "Internally the custom parameters are set");
 
 			// simple hook to check if the URLs are correctly created
 			oModel.read = function () {
@@ -315,10 +315,10 @@
 				var mParameters = arguments[1];
 
 				// check if custom parameter is contained in the URL
-				equal(mParameters.urlParameters.indexOf("search=ABTestString") >= 0, true, "custom parameter 'search' was added to the URL");
+				assert.equal(mParameters.urlParameters.indexOf("search=ABTestString") >= 0, true, "custom parameter 'search' was added to the URL");
 
 				// check if $search is NOT contained in the URL, this should not be allowed
-				equal(mParameters.urlParameters.indexOf("$search") == -1, true, "No $search was added");
+				assert.equal(mParameters.urlParameters.indexOf("$search") == -1, true, "No $search was added");
 
 				return vReturn;
 			};
@@ -344,7 +344,7 @@
 
 			var sURL = oBinding.getDownloadUrl();
 
-			equal(sURL.indexOf("search=ABTestString"), 191, "URL Parameters are attached");
+			assert.equal(sURL.indexOf("search=ABTestString"), 191, "URL Parameters are attached");
 
 			//just start() the test after the URL has been checked
 			done();

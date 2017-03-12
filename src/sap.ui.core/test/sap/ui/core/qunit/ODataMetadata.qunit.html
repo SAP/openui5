@@ -84,19 +84,19 @@
 	QUnit.test("get annotation 'sap:label'", function(assert) {
 		var oModel = initModel(sServiceUri);
 		ok(oModel,"Model initialized");
-		equal(oModel.getProperty("/#Flight/FlightConnectionID/@sap:label"),"Flight Number");
+		assert.equal(oModel.getProperty("/#Flight/FlightConnectionID/@sap:label"),"Flight Number");
 	});
 	QUnit.test("get annotation 'sap:label' with namespace", function(assert) {
 		var oModel = initModel(sServiceUri);
 		ok(oModel,"Model initialized");
-		equal(oModel.getProperty("/#UNKNOWN.Flight/FlightConnectionID/@sap:label"), undefined, "Unknown namespace");
-		equal(oModel.getProperty("/#RMTSAMPLEFLIGHT_2.Flight/FlightConnectionID/@sap:label"), "Flight Number", "Valid namespace");
+		assert.equal(oModel.getProperty("/#UNKNOWN.Flight/FlightConnectionID/@sap:label"), undefined, "Unknown namespace");
+		assert.equal(oModel.getProperty("/#RMTSAMPLEFLIGHT_2.Flight/FlightConnectionID/@sap:label"), "Flight Number", "Valid namespace");
 	});
 	QUnit.test("get attribute 'type'", function(assert) {
 		var oModel = initModel(sServiceUri);
 		ok(oModel,"Model initialized");
-		equal(oModel.getProperty("/#Flight/FlightConnectionID/@type"),"Edm.String");
-		equal(oModel.getProperty("/#Flight/FirstClassOccupiedSeats/@type"),"Edm.Int32");
+		assert.equal(oModel.getProperty("/#Flight/FlightConnectionID/@type"),"Edm.String");
+		assert.equal(oModel.getProperty("/#Flight/FirstClassOccupiedSeats/@type"),"Edm.Int32");
 	});
 	QUnit.test("get complexType attribute 'type' (not supported yet)", function(assert) {
 		ok(!oModel.getProperty("/#Flight/FlightDetails/@type"),"only Property attributes could be resolved");
@@ -108,8 +108,8 @@
 		ok(!oModel.getProperty("/#Flight"));
 	});
 	QUnit.test("get complexType property attributes", function(assert) {
-		equal(oModel.getProperty("/#Flight/FlightDetails/DepartureTime/@type"),"Edm.Time");
-		equal(oModel.getProperty("/#Flight/FlightDetails/DepartureTime/@sap:label"),"Departure");
+		assert.equal(oModel.getProperty("/#Flight/FlightDetails/DepartureTime/@type"),"Edm.Time");
+		assert.equal(oModel.getProperty("/#Flight/FlightDetails/DepartureTime/@sap:label"),"Departure");
 		oServer.stop();
 		oServer.destroy();
 	});

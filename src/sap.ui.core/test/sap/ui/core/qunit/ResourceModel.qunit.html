@@ -64,7 +64,7 @@
 	//getProperty()
 	QUnit.test("test model getProperty", 1, function(assert){
 		var value = oModel.getProperty("TEST_TEXT");
-		equal(value, "A text en");
+		assert.equal(value, "A text en");
 	});
 
 	//setProperty must not exist!
@@ -77,8 +77,8 @@
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{TEST_TEXT}"});
 		oLabel.placeAt("target1");
 		var value = oModel.getProperty("TEST_TEXT");
-		equal(value, "A text en");
-		equal(oLabel.getText(),"A text en");
+		assert.equal(value, "A text en");
+		assert.equal(oLabel.getText(),"A text en");
 		oLabel.destroy();
 	});
 
@@ -107,7 +107,7 @@
 	//getProperty()
 	QUnit.test("test model getProperty", 1, function(assert){
 		var value = oModel.getProperty("TEST_TEXT");
-		equal(value, "A text en");
+		assert.equal(value, "A text en");
 	});
 
 	//setProperty must not exist!
@@ -120,8 +120,8 @@
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{i18n>TEST_TEXT}"});
 		oLabel.placeAt("target1");
 		var value = oModel.getProperty("TEST_TEXT");
-		equal(value, "A text en");
-		equal(oLabel.getText(),"A text en");
+		assert.equal(value, "A text en");
+		assert.equal(oLabel.getText(),"A text en");
 		oLabel.destroy();
 	});
 
@@ -153,7 +153,7 @@
 	//getProperty()
 	QUnit.test("test model getProperty", 1, function(assert){
 		var value = oModel.getProperty("TEST_TEXT");
-		equal(value, "A text en");
+		assert.equal(value, "A text en");
 	});
 	//setProperty must not exist!
 	QUnit.test("set Property must have no effect", function(assert){
@@ -164,8 +164,8 @@
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{i18n>TEST_TEXT}"});
 		oLabel.placeAt("target1");
 		var value = oModel.getProperty("TEST_TEXT");
-		equal(value, "A text en");
-		equal(oLabel.getText(),"A text en");
+		assert.equal(value, "A text en");
+		assert.equal(oLabel.getText(),"A text en");
 		oLabel.destroy();
 	});
 	//CompositeBinding
@@ -174,24 +174,24 @@
 		oLabel2.placeAt("target1");
 
 		ok(oLabel2, "Label with composite binding must be created");
-		equal(oLabel2.getText(), "A text en A text en", "Text msut be: 'A text en A text en'");
+		assert.equal(oLabel2.getText(), "A text en A text en", "Text msut be: 'A text en A text en'");
 		oLabel2.destroy();
 	});
 	//origin info
 	QUnit.test("test model origin info", 3, function(assert){
 		var value = oModel.getProperty("TEST_TEXT"),
 			info = value.originInfo;
-		equal(info.source, "Resource Bundle");
-		equal(info.url, "./testdata/messages.properties");
-		equal(info.key, "TEST_TEXT");
+		assert.equal(info.source, "Resource Bundle");
+		assert.equal(info.url, "./testdata/messages.properties");
+		assert.equal(info.key, "TEST_TEXT");
 	});
 
 	QUnit.test("Model instantiated successful", function(assert){
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{i18n>TEST_TEXT}"});
 		oLabel.setModel(oModel, "i18n");
 		oDolly = oLabel.clone();
-		equal(oLabel.getModel("i18n"), oModel, "model must exist in origin (precondition)");
-		equal(oDolly.getModel("i18n"), oModel, "model must be the same for a clone");
+		assert.equal(oLabel.getModel("i18n"), oModel, "model must exist in origin (precondition)");
+		assert.equal(oDolly.getModel("i18n"), oModel, "model must be the same for a clone");
 		oLabel.destroy();
 		oDolly.destroy();
 		oModel.destroy();
@@ -201,27 +201,27 @@
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{i18n>TEST_TEXT}"});
 		oDolly = oLabel.clone();
 		oDolly.setModel(oModel, "i18n");
-		equal(oDolly.getText(), "A text en", "binding must lead to the expected result after a clone");
+		assert.equal(oDolly.getText(), "A text en", "binding must lead to the expected result after a clone");
 		oLabel.destroy();
 		oDolly.destroy();
 		oModel.destroy();
 	});
 
 	QUnit.test("Model enhancement", function(assert){
-		equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
-		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
+		assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
+		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 		oModel.enhance({bundleUrl:"./testdata/messages_custom.properties"});
-		equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
-		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
+		assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
+		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 	});
 
 	QUnit.test("Model enhancement (with bundle)", function(assert){
-		equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
-		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
+		assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
+		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 		var oBundle = jQuery.sap.resources({url: "./testdata/messages_custom.properties"});
 		oModel.enhance(oBundle);
-		equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
-		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
+		assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
+		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 	});
 
 	QUnit.module("Resource Model: Async", {
@@ -251,20 +251,20 @@
 			ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
 
 			ok(oModel.bAsync, "model is in async mode");
-			equal(oModel.sDefaultBindingMode, sap.ui.model.BindingMode.OneWay, "Default binding mode is OneWay");
+			assert.equal(oModel.sDefaultBindingMode, sap.ui.model.BindingMode.OneWay, "Default binding mode is OneWay");
 			ok(oModel.mSupportedBindingModes.OneWay, "OneWay is an allowed binding mode");
 			ok(!oModel.mSupportedBindingModes.TwoWay, "TwoWay is a not an allowed binding mode");
 			ok(oModel.bAsync && !oModel.mSupportedBindingModes.OneTime, "OneTime is a not allowed binding mode with asynchronous models");
 
-			equal(oLabel.getText(), "", "Initially no texts available");
-			equal(oModel.getProperty("TEST_TEXT"), null, "Initially getProperty returns null");
+			assert.equal(oLabel.getText(), "", "Initially no texts available");
+			assert.equal(oModel.getProperty("TEST_TEXT"), null, "Initially getProperty returns null");
 
 			var oPromise = oModel.getResourceBundle();
 			ok(oPromise instanceof window.Promise, "getResourceBundle returns Promise");
 
 			oPromise.then(function(oBundle){
-				equal(oLabel.getText(), "A text en", "Texts available after async load");
-				equal(oModel.getProperty("TEST_TEXT"), "A text en", "getProperty returns text after async load");
+				assert.equal(oLabel.getText(), "A text en", "Texts available after async load");
+				assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "getProperty returns text after async load");
 				ok(oBundle == oModel._oResourceBundle, "A text en", "Bundle available after async load");
 				done();
 			});
@@ -272,16 +272,16 @@
 	}
 	QUnit.test("Enhancement after load", function(assert){
 		var done = assert.async();
-		equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
-		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
+		assert.equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
+		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
 
 		oModel.getResourceBundle().then(function(oBundle){
-			equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
-			equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
+			assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
+			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 			var oPromise = oModel.enhance({bundleUrl:"./testdata/messages_custom.properties"});
 			oPromise.then(function(){
-				equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
-				equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
+				assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
+				assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 				done();
 			});
 		});
@@ -289,17 +289,17 @@
 
 	QUnit.test("Enhancement after load (with bundle)", function(assert){
 		var done = assert.async();
-		equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
-		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
+		assert.equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
+		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
 
 		oModel.getResourceBundle().then(function(oBundle){
-			equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
-			equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
+			assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
+			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 			var oBundle = jQuery.sap.resources({url: "./testdata/messages_custom.properties"});
 			var oPromise = oModel.enhance(oBundle);
 			oPromise.then(function(){
-				equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
-				equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
+				assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
+				assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 				done();
 			});
 		});
@@ -307,15 +307,15 @@
 
 	QUnit.test("Enhancement before load", function(assert){
 		var done = assert.async();
-		equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
-		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
+		assert.equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
+		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
 		var oPromise = oModel.enhance({bundleUrl:"./testdata/messages_custom.properties"});
-		equal(oModel.getProperty("TEST_TEXT"), null, "text TEST_TEXT of enhanced model is still null");
-		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "text TEST_TEXT_CUSTOM of enhanced model is still null");
+		assert.equal(oModel.getProperty("TEST_TEXT"), null, "text TEST_TEXT of enhanced model is still null");
+		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "text TEST_TEXT_CUSTOM of enhanced model is still null");
 
 		Promise.all([oModel.getResourceBundle(), oPromise]).then(function(args){
-			equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct after async load");
-			equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct after async load");
+			assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct after async load");
+			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct after async load");
 			done();
 		});
 	});
@@ -324,16 +324,16 @@
 	if (!sap.ui.Device.browser.firefox) {
 		QUnit.test("Enhancement before load (with bundle)", function(assert){
 			var done = assert.async();
-			equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
-			equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
+			assert.equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
+			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
 			var oBundle = jQuery.sap.resources({url: "./testdata/messages_custom.properties"});
 			var oPromise = oModel.enhance(oBundle);
-			equal(oModel.getProperty("TEST_TEXT"), null, "text TEST_TEXT of enhanced model is still null");
-			equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "text TEST_TEXT_CUSTOM of enhanced model is still null");
+			assert.equal(oModel.getProperty("TEST_TEXT"), null, "text TEST_TEXT of enhanced model is still null");
+			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "text TEST_TEXT_CUSTOM of enhanced model is still null");
 
 			Promise.all([oModel.getResourceBundle(), oPromise]).then(function(args){
-				equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct after async load");
-				equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct after async load");
+				assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct after async load");
+				assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct after async load");
 				done();
 			});
 		});
@@ -341,16 +341,16 @@
 
 	QUnit.test("Events", function(assert){
 		var done = assert.async();
-		equal(oLabel2.getText(), "", "Initially no texts available");
-		equal(oModel.getProperty("TEST_TEXT"), null, "Initially getProperty returns null");
+		assert.equal(oLabel2.getText(), "", "Initially no texts available");
+		assert.equal(oModel.getProperty("TEST_TEXT"), null, "Initially getProperty returns null");
 
 		oLabel2.getBinding("text").attachChange(function(){
-			equal(oLabel2.getText(), "A text en", "Binding Change: Texts available after async load");
+			assert.equal(oLabel2.getText(), "A text en", "Binding Change: Texts available after async load");
 		});
 
 		oModel.attachRequestCompleted(function(){
-			equal(oLabel2.getText(), "A text en", "RequestCompleted: Texts available after async load");
-			equal(oModel.getProperty("TEST_TEXT"), "A text en", "RequestCompleted: getProperty returns text after async load");
+			assert.equal(oLabel2.getText(), "A text en", "RequestCompleted: Texts available after async load");
+			assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "RequestCompleted: getProperty returns text after async load");
 			done();
 		});
 	});
@@ -374,10 +374,10 @@
 		var iChangeCount = 0;
 		oBtn.getBinding("text").attachChange(function() {
 			if (iChangeCount++ === 0) {
-				equal(oBtn.getText(), "A text en", "Binding Change: Texts available after sync load");
+				assert.equal(oBtn.getText(), "A text en", "Binding Change: Texts available after sync load");
 				sap.ui.getCore().getConfiguration().setLanguage("de");
 			} else {
-				equal(oBtn.getText(), "Ein Text de", "Binding Change: Texts available after sync load");
+				assert.equal(oBtn.getText(), "Ein Text de", "Binding Change: Texts available after sync load");
 
 				oBtn.destroy();
 				oAsyncModel.destroy();
@@ -401,10 +401,10 @@
 		});
 		sap.ui.getCore().setModel(oSyncModel, "sync5");
 
-		equal(oBtn.getText(), "A text en", "Binding Change: Texts available after sync load");
+		assert.equal(oBtn.getText(), "A text en", "Binding Change: Texts available after sync load");
 		sap.ui.getCore().getConfiguration().setLanguage("de");
 
-		equal(oBtn.getText(), "Ein Text de", "Binding Change: Texts available after sync load");
+		assert.equal(oBtn.getText(), "Ein Text de", "Binding Change: Texts available after sync load");
 		oBtn.destroy();
 		oSyncModel.destroy();
 

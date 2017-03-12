@@ -188,8 +188,8 @@
 		var oReal = oRFL._getElementRect(jQuery("#myDiv"));
 
 		//check
-		equal(oReal.height, "30.3", "Height check");
-		equal(oReal.width, "25.1", "Width check");
+		assert.equal(oReal.height, "30.3", "Height check");
+		assert.equal(oReal.width, "25.1", "Width check");
 
 		//act and check
 		ok(!oRFL._getElementRect(null), "When null is passed, null should be returned");

@@ -665,7 +665,7 @@
 			var oIslamicDate = new sap.ui.core.date.Islamic(1436, 5, 11, 23, 16, 10, 118);
 			oIslamicDate.setYear(iYear);
 			verifyDate("Setting/getting islamic year", oIslamicDate, 1435, 5, 11, 6, 23, 16, 10, 118);
-			equal(oIslamicDate.getYear(), 35, "GetYear should return the 2 digit year offset since 1400");
+			assert.equal(oIslamicDate.getYear(), 35, "GetYear should return the 2 digit year offset since 1400");
 		});
 		QUnit.test("Set/Get Month", function (assert) {
 			var iMonth = 5;
@@ -697,7 +697,7 @@
 
 		QUnit.test("Get Day", function (assert) {
 			var oIslamicDate = new sap.ui.core.date.Islamic(1436, 5, 11, 23, 16, 10, 118);
-			equal(oIslamicDate.getDay(), 3, "Islamic Date 1436/06/11 is the 3th day of week (index 3, starting from 0 Sunday)");//
+			assert.equal(oIslamicDate.getDay(), 3, "Islamic Date 1436/06/11 is the 3th day of week (index 3, starting from 0 Sunday)");//
 		});
 
 		QUnit.test("Set/Get Hours", function (assert) {
@@ -756,7 +756,7 @@
 			var date = oCivilTestData.t1435_06_11__23_16_10_118;
 			var oIslamicDate = createIslamicDateFromTestEntry(date);
 			var iTimezoneOffset = getTimezoneOffset(oIslamicDate);
-			equal(oIslamicDate.getTime(), date.timestamp - iTimezoneOffset, "Get time should return the UTC offset from 1.1.1970 UTC");
+			assert.equal(oIslamicDate.getTime(), date.timestamp - iTimezoneOffset, "Get time should return the UTC offset from 1.1.1970 UTC");
 		});
 
 		QUnit.module("Others", {
@@ -772,8 +772,8 @@
 			var oDate = new sap.ui.core.date.Islamic(1354, 0, 1, 8, 10, 15, 119);
 
 			function check(iTimestamp, sSetter) {
-				equal(typeof iTimestamp, "number", sSetter + " did return a numeric value");
-				equal(iTimestamp, oDate.getTime(), sSetter + " return value matches date timestamp");
+				assert.equal(typeof iTimestamp, "number", sSetter + " did return a numeric value");
+				assert.equal(iTimestamp, oDate.getTime(), sSetter + " return value matches date timestamp");
 			}
 
 			check(oDate.setFullYear(1435), "setFullYear");
@@ -796,12 +796,12 @@
 
 		QUnit.test(".Now()", function (assert) {
 			var clock = sinon.useFakeTimers(0); // 1, January 1970 = 22 Shawwal 1389(22.10.1389)
-			equal(sap.ui.core.date.Islamic.now(), 0, "Islamic.now() must equal to the timestamp since 1 January 1970, 00:00:00 000");
+			assert.equal(sap.ui.core.date.Islamic.now(), 0, "Islamic.now() must equal to the timestamp since 1 January 1970, 00:00:00 000");
 
 			clock.restore();
 			clock = sinon.useFakeTimers(7000); // 7 seconds later
 
-			equal(sap.ui.core.date.Islamic.now(), 7000, "Islamic.now() must equal to the timestamp since 1 January 1970, 00:00:00 000");
+			assert.equal(sap.ui.core.date.Islamic.now(), 7000, "Islamic.now() must equal to the timestamp since 1 January 1970, 00:00:00 000");
 			clock.restore();
 		});
 
@@ -867,7 +867,7 @@
 					String(bUTC ? oDate.getUTCSeconds() : oDate.getSeconds()),
 					String(bUTC ? oDate.getUTCMilliseconds() : oDate.getMilliseconds()));
 
-			equal(sReal, sExpected, sMessage);
+			assert.equal(sReal, sExpected, sMessage);
 		}
 
 		function formatDateTime(year, month, date, day, hours, minutes, seconds, milliseconds) {

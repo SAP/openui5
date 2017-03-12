@@ -526,7 +526,7 @@ QUnit.test("Closing Animation", function(assert) {
 		this.oPopup.detachOpened(fnOpened, this);
 
 		var that = this;
-		equal(this.$Ref.css("opacity"), "1", "Popup must be 'opacity:1' when open");
+		assert.equal(this.$Ref.css("opacity"), "1", "Popup must be 'opacity:1' when open");
 		this.oPopup.close(2000);
 
 		setTimeout(function() {
@@ -656,9 +656,9 @@ QUnit.test("Check the order of function calls during open/close with custom anim
 // 	var fnOpened = function() {
 // 		this.oPopup.detachOpened(fnOpened, this);
 //
-// 		equal(this.oPopup.isOpen(), true, "Popup should be open before AutoClose");
-// 		equal(this.$Ref.css("display"), "block", "Popup should be 'display:block' before AutoClose");
-// 		equal(this.$Ref.css("visibility"), "visible", "Popup should be 'visibility:visible' before AutoClose");
+// 		assert.equal(this.oPopup.isOpen(), true, "Popup should be open before AutoClose");
+// 		assert.equal(this.$Ref.css("display"), "block", "Popup should be 'display:block' before AutoClose");
+// 		assert.equal(this.$Ref.css("visibility"), "visible", "Popup should be 'visibility:visible' before AutoClose");
 //
 // 		// jQuery.sap.domById("focusableElement2").focus(); // focus something else on the page
 // 		var oFocusEvent = jQuery.Event("focus"),
@@ -669,10 +669,10 @@ QUnit.test("Check the order of function calls during open/close with custom anim
 // 	var fnClosed = function() {
 // 		this.oPopup.detachClosed(fnClosed, this);
 //
-// 		equal(this.oPopup.isOpen(), false, "Popup should be closed by AutoClose");
-// 		equal(this.$Ref.css("display"), "none", "Popup should be made 'display:none' by AutoClose");
-// 		equal(this.$Ref.css("visibility"), "hidden", "Popup should be made 'visibility:hidden' by AutoClose");
-// 		equal(this.getFocusedElementId(), "focusableElement2", "the focused element should have the focus after autoclose");
+// 		assert.equal(this.oPopup.isOpen(), false, "Popup should be closed by AutoClose");
+// 		assert.equal(this.$Ref.css("display"), "none", "Popup should be made 'display:none' by AutoClose");
+// 		assert.equal(this.$Ref.css("visibility"), "hidden", "Popup should be made 'visibility:hidden' by AutoClose");
+// 		assert.equal(this.getFocusedElementId(), "focusableElement2", "the focused element should have the focus after autoclose");
 // 		start();
 // 	};
 //
@@ -691,25 +691,25 @@ QUnit.test("Check the order of function calls during open/close with custom anim
 // 	jQuery.sap.domById("focusableElement2").focus(); // focus something else on the page
 //
 // 	setTimeout(function() {
-// 		equal(this.getFocusedElementId(), "focusableElement2", "the focusable button should have the focus before modality tests");
+// 		assert.equal(this.getFocusedElementId(), "focusableElement2", "the focusable button should have the focus before modality tests");
 // 		that.oPopup.open(); // duration is still 0
 //
 // 		jQuery.sap.domById("popupcontent").focus(); // focus something in the popup
 // 		setTimeout(function() {
-//   		equal(this.getFocusedElementId(), "popupcontent", "popupcontent should be focused now");
+//   		assert.equal(this.getFocusedElementId(), "popupcontent", "popupcontent should be focused now");
 //
 //   		jQuery.sap.domById("secondpopupcontent").focus(); // focus something else in the popup
 //   		setTimeout(function() {
-// 	  		equal(this.getFocusedElementId(), "secondpopupcontent", "secondpopupcontent should be focused now");
+// 	  		assert.equal(this.getFocusedElementId(), "secondpopupcontent", "secondpopupcontent should be focused now");
 //
 // 	  		jQuery.sap.domById("focusableElement2").focus(); // focus something else
 // 	  		setTimeout(function() {
-// 		  		equal(this.getFocusedElementId(), "secondpopupcontent", "secondpopupcontent should again be focused after an attempt to focus the background");
+// 		  		assert.equal(this.getFocusedElementId(), "secondpopupcontent", "secondpopupcontent should again be focused after an attempt to focus the background");
 //
-// 		  		equal(that.oPopup.isOpen(), true, "Popup should still be open after testing modality");
+// 		  		assert.equal(that.oPopup.isOpen(), true, "Popup should still be open after testing modality");
 // 		  		that.oPopup.close();
 // 		  		setTimeout(function() {
-// 		  			equal(this.getFocusedElementId(), "focusableElement2", "the focusable button should have the focus back after modality tests");
+// 		  			assert.equal(this.getFocusedElementId(), "focusableElement2", "the focusable button should have the focus back after modality tests");
 // 		  			start();
 // 		  		}, 100);
 // 	  		}, 100);

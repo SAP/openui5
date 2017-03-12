@@ -66,13 +66,13 @@
 				oRule.setMaskFormatSymbol(sSymbol);
 				ok(oSetterSpy.notCalled, "Invalid maskFormatSymbol [" + sSymbol + "] is not accepted");
 				ok(oErrorSpy.calledOnce, "When called with invalid parameter [" + sSymbol + "] setMaskFormatSymbol logs error.");
-				equal(oErrorSpy.getCall(0).args[0], sExpectedError,
+				assert.equal(oErrorSpy.getCall(0).args[0], sExpectedError,
 						"Verify the exact error when setMaskFormatSymbol is called with invalid parameter [" + sSymbol + "]");
 			}
 		});
 
 		QUnit.test("Mask Format Symbol default value", function (assert) {
-			equal(this.oMaskInputRule.getMaskFormatSymbol(), "*", "Default value");
+			assert.equal(this.oMaskInputRule.getMaskFormatSymbol(), "*", "Default value");
 		});
 
 		QUnit.test("Regex setter", function (assert) {
@@ -87,7 +87,7 @@
 		});
 
 		QUnit.test("Regex default value", function (assert) {
-			equal(this.oMaskInputRule.getRegex(), "[a-zA-Z0-9]", "Default value");
+			assert.equal(this.oMaskInputRule.getRegex(), "[a-zA-Z0-9]", "Default value");
 		});
 
 		QUnit.test("Setting an invalid regex is not accepted", function (assert) {
@@ -107,7 +107,7 @@
 				oRule.setRegex(sRegex);
 				ok(oSetterSpy.notCalled, "Invalid regex [" + sRegex + "] is not accepted");
 				ok(oErrorSpy.calledOnce, "When called with invalid parameter [" + sRegex + "] setRegex logs error.");
-				equal(oErrorSpy.getCall(0).args[0], sExpectedError,
+				assert.equal(oErrorSpy.getCall(0).args[0], sExpectedError,
 						"Verify the exact error when setRegex is called with invalid parameter [" + sRegex + "]");
 			}
 		});

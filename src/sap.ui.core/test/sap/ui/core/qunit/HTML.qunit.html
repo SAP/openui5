@@ -75,10 +75,10 @@
                 content : "<div class='fragment1' style='width:64px;height:64px;background-color:rgb(255,0,0);'></div>",
                 selector : "div.fragment1",
                 check : function($) {
-                	equal($.length, 1, "content must have length 1");
-                	equal($.css("width"), "64px", "fragment width");
-                	equal($.css("height"), "64px", "fragment height");
-                	equal(normalize($.css("background-color")), "rgb(255,0,0)", "fragment bg color");
+                	assert.equal($.length, 1, "content must have length 1");
+                	assert.equal($.css("width"), "64px", "fragment width");
+                	assert.equal($.css("height"), "64px", "fragment height");
+                	assert.equal(normalize($.css("background-color")), "rgb(255,0,0)", "fragment bg color");
 	                return $.length === 1
 	                        && $.css("width") === "64px"
 	                        && $.css("height") === "64px"
@@ -90,10 +90,10 @@
                 content : "<div class='fragment2' style='width:64px;height:64px;background-color:rgb(0,0,255);'></div>",
                 selector : "div.fragment2",
                 check : function($) {
-                	equal($.length, 1, "content must have length 1");
-                	equal($.css("width"), "64px", "fragment width");
-                	equal($.css("height"), "64px", "fragment height");
-                	equal(normalize($.css("background-color")), "rgb(0,0,255)", "fragment bg color");
+                	assert.equal($.length, 1, "content must have length 1");
+                	assert.equal($.css("width"), "64px", "fragment width");
+                	assert.equal($.css("height"), "64px", "fragment height");
+                	assert.equal(normalize($.css("background-color")), "rgb(0,0,255)", "fragment bg color");
 	                return $.length === 1
 	                        && $.css("width") === "64px"
 	                        && $.css("height") === "64px"
@@ -202,14 +202,14 @@
             QUnit.test("setting content", function(assert) {
 	            oCore.byId("html2").setContent("");
 							oCore.applyChanges();
-			        equal(jQuery("#html2").size(), 0, "html2 DOM must be empty");
+			        assert.equal(jQuery("#html2").size(), 0, "html2 DOM must be empty");
 
 		          oCore.byId("html2").setContent(FRAGMENT_1.content);
 							oCore.applyChanges();
-              equal(jQuery("#html2").length, 1, "content must have length 1");
-            	equal(jQuery("#html2").css("width"), "64px", "fragment width");
-            	equal(jQuery("#html2").css("height"), "64px", "fragment height");
-            	equal(normalize(jQuery("#html2").css("background-color")), "rgb(255,0,0)", "fragment bg color");
+              assert.equal(jQuery("#html2").length, 1, "content must have length 1");
+            	assert.equal(jQuery("#html2").css("width"), "64px", "fragment width");
+            	assert.equal(jQuery("#html2").css("height"), "64px", "fragment height");
+            	assert.equal(normalize(jQuery("#html2").css("background-color")), "rgb(255,0,0)", "fragment bg color");
 
           		oCore.byId("html2").setContent("someLeadingText" + FRAGMENT_2.content + "someTrailingText");
 							oCore.applyChanges();
@@ -219,14 +219,14 @@
 
 						  oCore.byId("html2").setContent(FRAGMENT_1.content);
 							oCore.applyChanges();
-              equal(jQuery("#html2").length, 1, "content must have length 1");
-            	equal(jQuery("#html2").css("width"), "64px", "fragment width");
-            	equal(jQuery("#html2").css("height"), "64px", "fragment height");
-            	equal(normalize(jQuery("#html2").css("background-color")), "rgb(255,0,0)", "fragment bg color");
+              assert.equal(jQuery("#html2").length, 1, "content must have length 1");
+            	assert.equal(jQuery("#html2").css("width"), "64px", "fragment width");
+            	assert.equal(jQuery("#html2").css("height"), "64px", "fragment height");
+            	assert.equal(normalize(jQuery("#html2").css("background-color")), "rgb(255,0,0)", "fragment bg color");
 
           		oCore.byId("html2").setContent("somePureText");
 							oCore.applyChanges();
-			        equal(jQuery("#html2").size(), 0, "html2 DOM must be empty");
+			        assert.equal(jQuery("#html2").size(), 0, "html2 DOM must be empty");
 
           		oCore.byId("html2").setContent(FRAGMENT_2.content);
 							oCore.applyChanges();
@@ -235,12 +235,12 @@
 
 
             QUnit.test("destroy", function(assert) {
-            	equal(jQuery("#html1").size(), 1, "html1 DOM should exist");
-            	equal(jQuery("#html2").size(), 1, "html2 DOM should exist");
+            	assert.equal(jQuery("#html1").size(), 1, "html1 DOM should exist");
+            	assert.equal(jQuery("#html2").size(), 1, "html2 DOM should exist");
             	sap.ui.getCore().byId("html1").destroy();
             	sap.ui.getCore().byId("html2").destroy();
-            	equal(jQuery("#html1").size(), 0, "html2 DOM should have been deleted");
-            	equal(jQuery("#html2").size(), 0, "html2 DOM should have been deleted");
+            	assert.equal(jQuery("#html1").size(), 0, "html2 DOM should have been deleted");
+            	assert.equal(jQuery("#html2").size(), 0, "html2 DOM should have been deleted");
             });
 
             QUnit.module("sap.ui.core.HTML, preferDOM=true", {
@@ -270,21 +270,21 @@
 
 	            afterRerendering(function() {
 		            okFragment(FRAGMENT_1, "uiAreaA", "UIArea contains expected HTML fragment");
-		            equal(sap.ui.getCore().byId("html3").getDomRef(), oldDomRef, "node after rendering is the same as before");
+		            assert.equal(sap.ui.getCore().byId("html3").getDomRef(), oldDomRef, "node after rendering is the same as before");
 	            });
             });
 
             QUnit.test("setting content", function(assert) {
 	            oCore.byId("html3").setContent("");
 							oCore.applyChanges();
-			        equal(jQuery("#html3").size(), 0, "html3 DOM must be empty");
+			        assert.equal(jQuery("#html3").size(), 0, "html3 DOM must be empty");
 
 		          oCore.byId("html3").setContent(FRAGMENT_1.content);
 							oCore.applyChanges();
-              equal(jQuery("#html3").length, 1, "content must have length 1");
-            	equal(jQuery("#html3").css("width"), "64px", "fragment width");
-            	equal(jQuery("#html3").css("height"), "64px", "fragment height");
-            	equal(normalize(jQuery("#html3").css("background-color")), "rgb(255,0,0)", "fragment bg color");
+              assert.equal(jQuery("#html3").length, 1, "content must have length 1");
+            	assert.equal(jQuery("#html3").css("width"), "64px", "fragment width");
+            	assert.equal(jQuery("#html3").css("height"), "64px", "fragment height");
+            	assert.equal(normalize(jQuery("#html3").css("background-color")), "rgb(255,0,0)", "fragment bg color");
 
           		oCore.byId("html3").setContent("someLeadingText" + FRAGMENT_2.content + "someTrailingText");
 							oCore.applyChanges();
@@ -294,14 +294,14 @@
 
 						  oCore.byId("html3").setContent(FRAGMENT_1.content);
 							oCore.applyChanges();
-              equal(jQuery("#html3").length, 1, "content must have length 1");
-            	equal(jQuery("#html3").css("width"), "64px", "fragment width");
-            	equal(jQuery("#html3").css("height"), "64px", "fragment height");
-            	equal(normalize(jQuery("#html3").css("background-color")), "rgb(255,0,0)", "fragment bg color");
+              assert.equal(jQuery("#html3").length, 1, "content must have length 1");
+            	assert.equal(jQuery("#html3").css("width"), "64px", "fragment width");
+            	assert.equal(jQuery("#html3").css("height"), "64px", "fragment height");
+            	assert.equal(normalize(jQuery("#html3").css("background-color")), "rgb(255,0,0)", "fragment bg color");
 
           		oCore.byId("html3").setContent("somePureText");
 							oCore.applyChanges();
-			        equal(jQuery("#html3").size(), 0, "html3 DOM must be empty");
+			        assert.equal(jQuery("#html3").size(), 0, "html3 DOM must be empty");
 
           		oCore.byId("html3").setContent(FRAGMENT_2.content);
 							oCore.applyChanges();
@@ -312,7 +312,7 @@
             QUnit.test("survive removal", function(assert) {
             	// check preconditions
             	ok(sap.ui.getCore().byId("html3").getUIArea(), "html3 must be part of UIArea");
-            	equal(jQuery("#html3").size(), 1, "html3 DOM should exist");
+            	assert.equal(jQuery("#html3").size(), 1, "html3 DOM should exist");
             	var oldDomRef = jQuery("#html3")[0];
 
             	// remove from control tree and rerender
@@ -321,28 +321,28 @@
 
             	// check that DOM still exists
             	ok(!sap.ui.getCore().byId("html3").getUIArea(), "html3 must no longer be part of UIArea");
-            	equal(jQuery("#html3").size(), 1, "html3 DOM must still exist");
-            	equal(jQuery("#html3")[0], oldDomRef, "html3 DOM must be the same as before the removal");
+            	assert.equal(jQuery("#html3").size(), 1, "html3 DOM must still exist");
+            	assert.equal(jQuery("#html3")[0], oldDomRef, "html3 DOM must be the same as before the removal");
             	ok(sap.ui.core.RenderManager.isPreservedContent(jQuery("#html3")[0]), "html3 DOM must have been moved to preserve area");
-            	equal(jQuery("#sap-ui-dummy-html3").size(), 0, "no dummy must exist");
+            	assert.equal(jQuery("#sap-ui-dummy-html3").size(), 0, "no dummy must exist");
 
             	// add it again to an UIArea and rerender
             	sap.ui.getCore().byId("html3").placeAt("uiAreaB");
             	sap.ui.getCore().applyChanges();
             	ok(sap.ui.getCore().byId("html3").getUIArea(), "html3 must be part of UIArea");
-            	equal(sap.ui.getCore().byId("html3").getUIArea().getId(), "uiAreaB", "html3 must be part of UIArea uiAreaB");
-            	equal(jQuery("#html3").size(), 1, "html3 DOM must exist");
-            	equal(jQuery("#html3")[0], oldDomRef, "html3 DOM still must be the same as before the removal");
+            	assert.equal(sap.ui.getCore().byId("html3").getUIArea().getId(), "uiAreaB", "html3 must be part of UIArea uiAreaB");
+            	assert.equal(jQuery("#html3").size(), 1, "html3 DOM must exist");
+            	assert.equal(jQuery("#html3")[0], oldDomRef, "html3 DOM still must be the same as before the removal");
             	ok(!sap.ui.core.RenderManager.isPreservedContent(jQuery("#html3")[0]), "html3 DOM must no longer be part of preserve area");
-            	equal(jQuery("#sap-ui-dummy-html3").size(), 0, "no dummy must exist");
+            	assert.equal(jQuery("#sap-ui-dummy-html3").size(), 0, "no dummy must exist");
 
             });
 
             QUnit.test("destroy", function(assert) {
-            	equal(jQuery("#html3").size(), 1, "html3 DOM should exist");
+            	assert.equal(jQuery("#html3").size(), 1, "html3 DOM should exist");
             	sap.ui.getCore().byId("html3").destroy();
-            	equal(jQuery("#html3").size(), 0, "html3 DOM should have been deleted");
-            	equal(jQuery("#sap-ui-dummy-html3").size(), 0, "no dummy must exist");
+            	assert.equal(jQuery("#html3").size(), 0, "html3 DOM should have been deleted");
+            	assert.equal(jQuery("#sap-ui-dummy-html3").size(), 0, "no dummy must exist");
             });
 
             QUnit.module("sap.ui.core.HTML, predefinedContent", {
@@ -358,7 +358,7 @@
 
 	            afterRerendering(function() {
 		            okFragment(FRAGMENT_3, "uiAreaB", "UIArea contains expected HTML fragment");
-		            equal(oPredefinedContent, jQuery("#html4")[0], "predefined content has been preserved");
+		            assert.equal(oPredefinedContent, jQuery("#html4")[0], "predefined content has been preserved");
 	            });
             });
 
@@ -406,7 +406,7 @@
 
 	            afterRerendering(function() {
 		            var uiAreaA = jQuery("#uiAreaA").get(0);
-		            equal(jQuery("div", uiAreaA).length, 3, "3 divs have been rendered in the UIArea");
+		            assert.equal(jQuery("div", uiAreaA).length, 3, "3 divs have been rendered in the UIArea");
 		            ok(jQuery("div", uiAreaA).css("width") == "200px", "div has been rendered");
 		            ok(jQuery("div", uiAreaA).css("height") == "64px", "div has been rendered");
 		            ok(normalize(jQuery("div", uiAreaA).css("background-color")) == "rgb(0,0,0)", "div has been rendered");
@@ -457,17 +457,17 @@
 							sap.ui.getCore().applyChanges();
 
 							var $currentDom = jQuery("#uiAreaE").children();
-							equal($currentDom.length, 2, "both controls have been rendered");
-							equal($currentDom[0].tagName, "DIV");
-							equal($currentDom[1].tagName, "BUTTON");
+							assert.equal($currentDom.length, 2, "both controls have been rendered");
+							assert.equal($currentDom[0].tagName, "DIV");
+							assert.equal($currentDom[1].tagName, "BUTTON");
 
 							html.invalidate();
 							sap.ui.getCore().applyChanges();
 
 							var $currentDom = jQuery("#uiAreaE").children();
-							equal($currentDom.length, 2, "both controls have been rendered");
-							equal($currentDom[0].tagName, "DIV");
-							equal($currentDom[1].tagName, "BUTTON");
+							assert.equal($currentDom.length, 2, "both controls have been rendered");
+							assert.equal($currentDom[0].tagName, "DIV");
+							assert.equal($currentDom[1].tagName, "BUTTON");
             });
 
 			QUnit.test("sanitization", function(assert) {
@@ -478,24 +478,24 @@
 				html = new sap.ui.core.HTML({});
 				html.setSanitizeContent(true);
 				html.setContent(offensiveContent);
-				equal(html.getContent(), sanitizedContent, "HTML sanitized using setters");
+				assert.equal(html.getContent(), sanitizedContent, "HTML sanitized using setters");
 
 				html = new sap.ui.core.HTML({});
 				html.setContent(offensiveContent);
 				html.setSanitizeContent(true);
-				equal(html.getContent(), sanitizedContent, "HTML sanitized using setters, wrong order");
+				assert.equal(html.getContent(), sanitizedContent, "HTML sanitized using setters, wrong order");
 
 				html = new sap.ui.core.HTML({
 					sanitizeContent: true,
 					content: offensiveContent
 				});
-				equal(html.getContent(), sanitizedContent, "HTML sanitized using constructor");
+				assert.equal(html.getContent(), sanitizedContent, "HTML sanitized using constructor");
 
 				html = new sap.ui.core.HTML({
 					content: offensiveContent,
 					sanitizeContent: true
 				});
-				equal(html.getContent(), sanitizedContent, "HTML sanitized using constructor, wrong order");
+				assert.equal(html.getContent(), sanitizedContent, "HTML sanitized using constructor, wrong order");
 			});
 
 		</script>

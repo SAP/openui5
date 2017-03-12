@@ -43,9 +43,9 @@
 			// make sure the methods exist
     	QUnit.test("InitialCheck", 4, function(assert) {
     		ok(oBtn.attachBrowserEvent, "oBtn.attachBrowserEvent should be an existing function");
-    		equal(typeof(oBtn.attachBrowserEvent), "function", "oBtn.attachBrowserEvent should be an existing function");
+    		assert.equal(typeof(oBtn.attachBrowserEvent), "function", "oBtn.attachBrowserEvent should be an existing function");
     		ok(oBtn.detachBrowserEvent, "oBtn.detachBrowserEvent should be an existing function");
-    		equal(typeof(oBtn.detachBrowserEvent), "function", "oBtn.detachBrowserEvent should be an existing function");
+    		assert.equal(typeof(oBtn.detachBrowserEvent), "function", "oBtn.detachBrowserEvent should be an existing function");
     	});
 
     	QUnit.test("Adding Handlers and Return Value", 6, function(assert) {
@@ -55,9 +55,9 @@
     		ok((result === oBtn), "oBtn.attachBrowserEvent must return oBtn"); // equal does not work
 
     		ok(oBtn.aBindParameters, "oBtn.aBindParameters should exist");
-    		equal(oBtn.aBindParameters.length, 1, "oBtn.aBindParameters should have one entry");
-    		equal(oBtn.aBindParameters[0].sEventType, "blur", "oBtn.aBindParameters[0] event name should be 'blur'");
-    		equal(oBtn.aBindParameters[0].fnHandler, myHandler1, "oBtn.aBindParameters[0] handler should be myHandler1");
+    		assert.equal(oBtn.aBindParameters.length, 1, "oBtn.aBindParameters should have one entry");
+    		assert.equal(oBtn.aBindParameters[0].sEventType, "blur", "oBtn.aBindParameters[0] event name should be 'blur'");
+    		assert.equal(oBtn.aBindParameters[0].fnHandler, myHandler1, "oBtn.aBindParameters[0] handler should be myHandler1");
     	});
 
     	QUnit.test("Removing Handlers and Return Value", 4, function(assert) {
@@ -67,38 +67,38 @@
     		ok((result === oBtn), "oBtn.detachBrowserEvent must return oBtn"); // equal does not work
 
     		ok(oBtn.aBindParameters, "oBtn.aBindParameters should exist");
-    		equal(oBtn.aBindParameters.length, 0, "oBtn.aBindParameters should have no entry");
+    		assert.equal(oBtn.aBindParameters.length, 0, "oBtn.aBindParameters should have no entry");
     	});
 
     	QUnit.test("Adding Invalid Handlers", 3, function(assert) {
     		oBtn.attachBrowserEvent("blur", null);
-    		equal(oBtn.aBindParameters.length, 0, "oBtn.aBindParameters should have no entry");
+    		assert.equal(oBtn.aBindParameters.length, 0, "oBtn.aBindParameters should have no entry");
 
     		oBtn.attachBrowserEvent("blur", false);
-    		equal(oBtn.aBindParameters.length, 0, "oBtn.aBindParameters should have no entry");
+    		assert.equal(oBtn.aBindParameters.length, 0, "oBtn.aBindParameters should have no entry");
 
     		oBtn.attachBrowserEvent("blur", "burp");
-    		equal(oBtn.aBindParameters.length, 0, "oBtn.aBindParameters should have no entry");
+    		assert.equal(oBtn.aBindParameters.length, 0, "oBtn.aBindParameters should have no entry");
     	});
 
     	QUnit.test("Removing Invalid Handlers", 2, function(assert) {
     		oBtn.attachBrowserEvent("blur", myHandler1);
 
     		oBtn.detachBrowserEvent("blur", null);
-    		equal(oBtn.aBindParameters.length, 1, "oBtn.aBindParameters should have one entry");
+    		assert.equal(oBtn.aBindParameters.length, 1, "oBtn.aBindParameters should have one entry");
 
     		oBtn.detachBrowserEvent(null, myHandler1);
-    		equal(oBtn.aBindParameters.length, 1, "oBtn.aBindParameters should have one entry");
+    		assert.equal(oBtn.aBindParameters.length, 1, "oBtn.aBindParameters should have one entry");
     	});
 
     	QUnit.test("Removing Other Handlers", 4, function(assert) {
     		oBtn.attachBrowserEvent("blur", myHandler2);
-    		equal(oBtn.aBindParameters.length, 2, "oBtn.aBindParameters should have two entries");
+    		assert.equal(oBtn.aBindParameters.length, 2, "oBtn.aBindParameters should have two entries");
 
     		oBtn.detachBrowserEvent("blur", myHandler2);
-    		equal(oBtn.aBindParameters.length, 1, "oBtn.aBindParameters should have one entry");
-    		equal(oBtn.aBindParameters[0].sEventType, "blur", "oBtn.aBindParameters[0] event name should be 'blur'");
-    		equal(oBtn.aBindParameters[0].fnHandler, myHandler1, "oBtn.aBindParameters[0] handler should be myHandler1");
+    		assert.equal(oBtn.aBindParameters.length, 1, "oBtn.aBindParameters should have one entry");
+    		assert.equal(oBtn.aBindParameters[0].sEventType, "blur", "oBtn.aBindParameters[0] event name should be 'blur'");
+    		assert.equal(oBtn.aBindParameters[0].fnHandler, myHandler1, "oBtn.aBindParameters[0] handler should be myHandler1");
     	});
 
     	QUnit.test("Execution of a Handler", 1, function(assert) {
@@ -273,13 +273,13 @@
 
     	QUnit.test("Removing Handlers wrapped with jQuery.proxy()", 2, function(assert) {
     		var done = assert.async();
-    		equal(oBtn3.aBindParameters.length, 1, "oBtn3.aBindParameters should have one entry");
+    		assert.equal(oBtn3.aBindParameters.length, 1, "oBtn3.aBindParameters should have one entry");
 
     		// remove the event, but the handler is wrapped with proxy()
     		oBtn3.detachBrowserEvent("blur", jQuery.proxy(myHandler1));
 
     		// verify we have removed the handler from the list
-    		equal(oBtn3.aBindParameters.length, 0, "oBtn3.aBindParameters should have no entry");
+    		assert.equal(oBtn3.aBindParameters.length, 0, "oBtn3.aBindParameters should have no entry");
 
     		// trigger the browser event whose handler was supposedly unbound
     		oBtn3.getDomRef().focus();

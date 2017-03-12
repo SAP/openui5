@@ -228,8 +228,8 @@
 			var oDate = new sap.ui.core.date.Persian(1395, 0, 1, 8, 10, 15, 119);
 
 			function check(iTimestamp, sSetter) {
-				equal(typeof iTimestamp, "number", sSetter + " did return a numeric value");
-				equal(iTimestamp, oDate.getTime(), sSetter + " return value matches date timestamp");
+				assert.equal(typeof iTimestamp, "number", sSetter + " did return a numeric value");
+				assert.equal(iTimestamp, oDate.getTime(), sSetter + " return value matches date timestamp");
 			}
 
 			check(oDate.setFullYear(1395), "setFullYear");
@@ -253,12 +253,12 @@
 
 		QUnit.test(".Now()", function (assert) {
 			var clock = sinon.useFakeTimers(0); // 1, January 1970 = 22 Shawwal 1389(22.10.1389)
-			equal(sap.ui.core.date.Persian.now(), 0, "Persian.now() must equal to the timestamp since 1 January 1970, 00:00:00 000");
+			assert.equal(sap.ui.core.date.Persian.now(), 0, "Persian.now() must equal to the timestamp since 1 January 1970, 00:00:00 000");
 
 			clock.restore();
 			clock = sinon.useFakeTimers(7000); // 7 seconds later
 
-			equal(sap.ui.core.date.Persian.now(), 7000, "Persian.now() must equal to the timestamp since 1 January 1970, 00:00:00 000");
+			assert.equal(sap.ui.core.date.Persian.now(), 7000, "Persian.now() must equal to the timestamp since 1 January 1970, 00:00:00 000");
 			clock.restore();
 		});
 
@@ -297,7 +297,7 @@
 					String(bUTC ? (oDate.getUTCMonth() + 1) : (oDate.getMonth() + 1)),
 					String(bUTC ? oDate.getUTCDate() : oDate.getDate()));
 
-			equal(sReal, sExpected, sMessage);
+			assert.equal(sReal, sExpected, sMessage);
 		}
 
 		function formatDateTime(year, month, day) {

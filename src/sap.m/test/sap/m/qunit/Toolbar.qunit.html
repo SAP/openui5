@@ -172,18 +172,18 @@
         sap.ui.getCore().applyChanges();
 
         //Assert
-        equal(oTB.$().attr("role"), "toolbar", "Toolbar has attribute role='toolbar'");
-        equal(oTB.$().attr("aria-labelledby"), oTB._sInternalAriaLabelId, "Toolbar has attribute aria-labelledby to the internal label");
-        equal(jQuery.find("#" + oTB._sInternalAriaLabelId).length, 1, "Toolbar dom has a label describing it.");
-        equal(oTB.$().attr("aria-disabled"), undefined, "Toolbar has no attribute aria-disabled");
+        assert.equal(oTB.$().attr("role"), "toolbar", "Toolbar has attribute role='toolbar'");
+        assert.equal(oTB.$().attr("aria-labelledby"), oTB._sInternalAriaLabelId, "Toolbar has attribute aria-labelledby to the internal label");
+        assert.equal(jQuery.find("#" + oTB._sInternalAriaLabelId).length, 1, "Toolbar dom has a label describing it.");
+        assert.equal(oTB.$().attr("aria-disabled"), undefined, "Toolbar has no attribute aria-disabled");
 
         //Act
         oTB.setEnabled(false);
         sap.ui.getCore().applyChanges();
 
         //Assert
-        equal(oTB.$().attr("aria-disabled"), "true", "Toolbar has attribute aria-disabled='true'");
-        equal(oBtn.$().attr("aria-disabled"), "true", "Toolbar's children have attribute aria-disabled='true'");
+        assert.equal(oTB.$().attr("aria-disabled"), "true", "Toolbar has attribute aria-disabled='true'");
+        assert.equal(oBtn.$().attr("aria-disabled"), "true", "Toolbar's children have attribute aria-disabled='true'");
 
         //Cleanup
         oBtn.destroy();
@@ -203,7 +203,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		equal(oTB.$().attr("aria-labelledby"), oLabel.getId(), "Toolbar has attribute aria-labelledby external label");
+		assert.equal(oTB.$().attr("aria-labelledby"), oLabel.getId(), "Toolbar has attribute aria-labelledby external label");
 
 		oTB.applyTagAndContextClassFor("header");
 		sap.ui.getCore().applyChanges();
@@ -226,7 +226,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		equal(oTB.$().attr("aria-labelledby"), oLabel.getId() + " " + oTB._sInternalAriaLabelId, "Toolbar has attribute aria-labelledby for internal and external labels");
+		assert.equal(oTB.$().attr("aria-labelledby"), oLabel.getId() + " " + oTB._sInternalAriaLabelId, "Toolbar has attribute aria-labelledby for internal and external labels");
 
 		//Cleanup
 		oLabel.destroy();

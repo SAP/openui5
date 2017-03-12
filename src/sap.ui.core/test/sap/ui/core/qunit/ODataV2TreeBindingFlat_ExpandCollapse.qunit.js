@@ -75,7 +75,7 @@ QUnit.test("Manually expand and collapse a node multiple times", function(assert
 			oBinding.detachChange(handler1);
 			ok(!oBinding.isExpanded(3), "The node which is going to be expanded is currently collapsed");
 
-			equal(oBinding.getLength(), 626, "Correct binding length");
+			assert.equal(oBinding.getLength(), 626, "Correct binding length");
 			oBinding.attachChange(handler2);
 			oBinding.expand(4, true);
 		}
@@ -93,11 +93,11 @@ QUnit.test("Manually expand and collapse a node multiple times", function(assert
 			oBinding.expand(4, true);
 
 			// idx 4 node expanded
-			equal(oBinding.getLength(), 634, "Correct binding length (no duplicate nodes)");
+			assert.equal(oBinding.getLength(), 634, "Correct binding length (no duplicate nodes)");
 
 			oBinding.collapse(4, true);
 			// idx 4 node collapsed again
-			equal(oBinding.getLength(), 626, "Correct binding length (no duplicate nodes)");
+			assert.equal(oBinding.getLength(), 626, "Correct binding length (no duplicate nodes)");
 
 			done();
 		}
@@ -186,7 +186,7 @@ QUnit.test("Collapse all nodes at level 0", function(assert){
 			oBinding.collapse(8);
 
 			var aContexts = oBinding.getContexts(0, 10);
-			equal(aContexts.length, 9, "There are only 9 nodes on level 0");
+			assert.equal(aContexts.length, 9, "There are only 9 nodes on level 0");
 			done();
 		}
 

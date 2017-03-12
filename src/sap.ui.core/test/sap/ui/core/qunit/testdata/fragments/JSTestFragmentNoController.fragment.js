@@ -8,7 +8,7 @@ sap.ui.jsfragment("testdata.fragments.JSTestFragmentNoController", {
 		});
 		oLayout.addContent(oButton);
 
-		equal(oController, undefined, "Controller should not be given");
+		assert.equal(oController, undefined, "Controller should not be given");
 
 		return oLayout;
 	}

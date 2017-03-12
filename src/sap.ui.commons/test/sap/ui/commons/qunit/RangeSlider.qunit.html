@@ -80,80 +80,80 @@
 
 	QUnit.test("Default Values", function(assert) {
 		var oSli = oSlis["oSli1"];
-		equal(oSli.getValue(), 50, "Default 'value':");
-		equal(oSli.getValue2(), 80, "Default 'value2':");
-		equal(oSli.getMin(), 0, "Default 'min':");
-		equal(oSli.getMax(), 100, "Default 'max':");
-		equal(oSli.getSmallStepWidth(), 0, "Default 'step':");
-		equal(oSli.getWidth(), "100%", "Default 'width':");
-		equal(oSli.getVisible(), true, "Default 'visible':");
-		equal(oSli.getEditable(), true, "Default 'editable':");
-		equal(oSli.getTotalUnits(), 0, "Default 'TotalUnits':");
-		equal(oSli.getStepLabels(), false, "Default 'StepLabels':");
+		assert.equal(oSli.getValue(), 50, "Default 'value':");
+		assert.equal(oSli.getValue2(), 80, "Default 'value2':");
+		assert.equal(oSli.getMin(), 0, "Default 'min':");
+		assert.equal(oSli.getMax(), 100, "Default 'max':");
+		assert.equal(oSli.getSmallStepWidth(), 0, "Default 'step':");
+		assert.equal(oSli.getWidth(), "100%", "Default 'width':");
+		assert.equal(oSli.getVisible(), true, "Default 'visible':");
+		assert.equal(oSli.getEditable(), true, "Default 'editable':");
+		assert.equal(oSli.getTotalUnits(), 0, "Default 'TotalUnits':");
+		assert.equal(oSli.getStepLabels(), false, "Default 'StepLabels':");
 	});
 
 	QUnit.test("Custom Values", function(assert) {
 		var oSli = oSlis["oSli4"];
-		equal(oSli.getValue(), 100, "Custom 'value':");
-		equal(oSli.getValue2(), 150, "Custom 'value2':");
-		equal(oSli.getMin(), 10, "Custom 'min':");
-		equal(oSli.getMax(), 210, "Custom 'max':");
-		equal(oSli.getSmallStepWidth(), 5, "Custom 'step':");
-		equal(oSli.getWidth(), "512px", "Custom 'width':");
-		equal(oSli.getVisible(), true, "Custom 'visible':");
-		equal(oSli.getEditable(), true, "Custom 'editable:");
-		equal(oSli.getTotalUnits(), 8, "Custom 'TotalUnits':");
-		equal(oSli.getStepLabels(), true, "Custom 'StepLabels':");
+		assert.equal(oSli.getValue(), 100, "Custom 'value':");
+		assert.equal(oSli.getValue2(), 150, "Custom 'value2':");
+		assert.equal(oSli.getMin(), 10, "Custom 'min':");
+		assert.equal(oSli.getMax(), 210, "Custom 'max':");
+		assert.equal(oSli.getSmallStepWidth(), 5, "Custom 'step':");
+		assert.equal(oSli.getWidth(), "512px", "Custom 'width':");
+		assert.equal(oSli.getVisible(), true, "Custom 'visible':");
+		assert.equal(oSli.getEditable(), true, "Custom 'editable:");
+		assert.equal(oSli.getTotalUnits(), 8, "Custom 'TotalUnits':");
+		assert.equal(oSli.getStepLabels(), true, "Custom 'StepLabels':");
 	});
 
 	QUnit.test("invalid Values", function(assert) {
 		var oSli = oSlis["oSli12"];
-		equal(oSli.getValue(), 100, "Corrected 'value':");
-		equal(oSli.getValue2(), 100, "Corrected 'value2':");
+		assert.equal(oSli.getValue(), 100, "Corrected 'value':");
+		assert.equal(oSli.getValue2(), 100, "Corrected 'value2':");
 		var oSli = oSlis["oSli13"];
-		equal(oSli.getValue(), 200, "Corrected 'value':");
-		equal(oSli.getValue2(), 200, "Corrected 'value2':");
+		assert.equal(oSli.getValue(), 200, "Corrected 'value':");
+		assert.equal(oSli.getValue2(), 200, "Corrected 'value2':");
 		var oSli = oSlis["oSli14"];
-		equal(oSli.getValue(), 180, "Corrected 'value':");
-		equal(oSli.getValue2(), 180, "Corrected 'value2':");
+		assert.equal(oSli.getValue(), 180, "Corrected 'value':");
+		assert.equal(oSli.getValue2(), 180, "Corrected 'value2':");
 	});
 
 	QUnit.test("Set Value", function(assert) {
 		var oSli = oSlis["oSli2"];
 		oSli.setValue(66);
-		equal(oSli.getValue(), 65, "Set Value with Step-wide: ");
+		assert.equal(oSli.getValue(), 65, "Set Value with Step-wide: ");
 
 		/* reduce position with 6px because of shift to middle of grip -> pssotion of 138 is now 132*/
 		var oGrip = jQuery.sap.domById('oSli2-grip');
-		equal(oGrip.offsetLeft, 133, "Grip position after Set Value with Step-wide: ");
+		assert.equal(oGrip.offsetLeft, 133, "Grip position after Set Value with Step-wide: ");
 
 		oSli.setValue2(82);
-		equal(oSli.getValue2(), 80, "Set Value2 with Step-wide: ");
+		assert.equal(oSli.getValue2(), 80, "Set Value2 with Step-wide: ");
 
 		/* reduce position with 6px because of shift to middle of grip -> pssotion of 138 is now 132*/
 		var oGrip = jQuery.sap.domById('oSli2-grip2');
-		equal(oGrip.offsetLeft, 170, "Grip position after Set Value2 with Step-wide: ");
+		assert.equal(oGrip.offsetLeft, 170, "Grip position after Set Value2 with Step-wide: ");
 
 		oSli.setValue2(50);
-		equal(oSli.getValue2(), 65, "Set Value2 with Step-wide smaller than value: ");
+		assert.equal(oSli.getValue2(), 65, "Set Value2 with Step-wide smaller than value: ");
 
 		/* reduce position with 6px because of shift to middle of grip -> pssotion of 138 is now 132*/
 		var oGrip = jQuery.sap.domById('oSli2-grip2');
-		equal(oGrip.offsetLeft, 133, "Grip position after Set smaller Value2 with Step-wide: ");
+		assert.equal(oGrip.offsetLeft, 133, "Grip position after Set smaller Value2 with Step-wide: ");
 
 		oSli.setValue(80);
-		equal(oSli.getValue(), 80, "Set Value with Step-wide value larger value2: ");
+		assert.equal(oSli.getValue(), 80, "Set Value with Step-wide value larger value2: ");
 
 		/* reduce position with 6px because of shift to middle of grip -> pssotion of 138 is now 132*/
 		var oGrip = jQuery.sap.domById('oSli2-grip2');
-		equal(oGrip.offsetLeft, 133, "Grip position after Set larger Value with Step-wide: ");
+		assert.equal(oGrip.offsetLeft, 133, "Grip position after Set larger Value with Step-wide: ");
 
 		oSli = oSlis["oSli3"];
 		oSli.setValue(66);
-		equal(oSli.getValue(), 66, "Set Value without Step-wide: ");
+		assert.equal(oSli.getValue(), 66, "Set Value without Step-wide: ");
 
 		var oGrip = jQuery.sap.domById('oSli3-grip');
-		equal(oGrip.offsetLeft, 135, "Grip position after Set Value without Step-wide: ");
+		assert.equal(oGrip.offsetLeft, 135, "Grip position after Set Value without Step-wide: ");
 	});
 
 	QUnit.module("Horizontal: Interaction");
@@ -168,131 +168,131 @@
 		qutils.triggerMouseEvent("oSli2-grip", "mousedown", 1, 1);
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_RIGHT");
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_RIGHT");
-		equal(oSli.getValue(), 110, "Value after keyboard right Arrow with step-wide:");
+		assert.equal(oSli.getValue(), 110, "Value after keyboard right Arrow with step-wide:");
 
-		equal(oGrip.offsetLeft, 245, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 245, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_LEFT");
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_LEFT");
-		equal(oSli.getValue(), 90, "Value after keyboard left Arrow with step-wide:");
+		assert.equal(oSli.getValue(), 90, "Value after keyboard left Arrow with step-wide:");
 
-		equal(oGrip.offsetLeft, 195, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 195, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_UP");
-		equal(oSli.getValue(), 105, "Value after keyboard up Arrow with step-wide:");
+		assert.equal(oSli.getValue(), 105, "Value after keyboard up Arrow with step-wide:");
 
-		equal(oGrip.offsetLeft, 233, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 233, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_DOWN");
-		equal(oSli.getValue(), 95, "Value after keyboard down Arrow with step-wide:");
+		assert.equal(oSli.getValue(), 95, "Value after keyboard down Arrow with step-wide:");
 
-		equal(oGrip.offsetLeft, 208, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 208, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli2", "NUMPAD_PLUS");
-		equal(oSli.getValue(), 105, "Value after keyboard '+' with step-wide:");
+		assert.equal(oSli.getValue(), 105, "Value after keyboard '+' with step-wide:");
 
-		equal(oGrip.offsetLeft, 233, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 233, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli2", "NUMPAD_MINUS");
-		equal(oSli.getValue(), 95, "Value after keyboard '-' with step-wide:");
+		assert.equal(oSli.getValue(), 95, "Value after keyboard '-' with step-wide:");
 
-		equal(oGrip.offsetLeft, 208, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 208, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_DOWN", false, false, true);
-		equal(oSli.getValue(), 80, "Value after keyboard down arrow + Ctrl with step-wide:");
+		assert.equal(oSli.getValue(), 80, "Value after keyboard down arrow + Ctrl with step-wide:");
 
-		equal(oGrip.offsetLeft, 170, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 170, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_UP", false, false, true);
-		equal(oSli.getValue(), 120, "Value after keyboard up arrow + Ctrl with step-wide:");
+		assert.equal(oSli.getValue(), 120, "Value after keyboard up arrow + Ctrl with step-wide:");
 
-		equal(oGrip.offsetLeft, 270, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 270, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli2", "HOME");
-		equal(oSli.getValue(), 10, "Value after keyboard home with step-wide:");
+		assert.equal(oSli.getValue(), 10, "Value after keyboard home with step-wide:");
 
-		equal(oGrip.offsetLeft, -5, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, -5, "Grip position after above change: ");
 
 		qutils.triggerKeyboardEvent("oSli2", "HOME");
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_RIGHT");
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_DOWN");
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_UP", false, false, true);
-		equal(oSli.getValue(), 30, "Value after keyboard multible keys with step-wide:");
+		assert.equal(oSli.getValue(), 30, "Value after keyboard multible keys with step-wide:");
 
-		equal(oGrip.offsetLeft, 45, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 45, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerMouseEvent("oSli2-grip2", "mousedown", 1, 1);
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_RIGHT");
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_RIGHT");
-		equal(oSli.getValue2(), 210, "Value after keyboard right Arrow with step-wide:");
+		assert.equal(oSli.getValue2(), 210, "Value after keyboard right Arrow with step-wide:");
 
-		equal(oGrip2.offsetLeft, 495, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 495, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_LEFT");
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_LEFT");
-		equal(oSli.getValue2(), 190, "Value after keyboard left Arrow with step-wide:");
+		assert.equal(oSli.getValue2(), 190, "Value after keyboard left Arrow with step-wide:");
 
-		equal(oGrip2.offsetLeft, 445, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 445, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_UP");
-		equal(oSli.getValue2(), 205, "Value after keyboard up Arrow with step-wide:");
+		assert.equal(oSli.getValue2(), 205, "Value after keyboard up Arrow with step-wide:");
 
-		equal(oGrip2.offsetLeft, 483, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 483, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_DOWN");
-		equal(oSli.getValue2(), 195, "Value after keyboard down Arrow with step-wide:");
+		assert.equal(oSli.getValue2(), 195, "Value after keyboard down Arrow with step-wide:");
 
-		equal(oGrip2.offsetLeft, 458, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 458, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli2", "NUMPAD_PLUS");
-		equal(oSli.getValue2(), 205, "Value after keyboard '+' with step-wide:");
+		assert.equal(oSli.getValue2(), 205, "Value after keyboard '+' with step-wide:");
 
-		equal(oGrip2.offsetLeft, 483, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 483, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli2", "NUMPAD_MINUS");
-		equal(oSli.getValue2(), 195, "Value after keyboard '-' with step-wide:");
+		assert.equal(oSli.getValue2(), 195, "Value after keyboard '-' with step-wide:");
 
-		equal(oGrip2.offsetLeft, 458, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 458, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_DOWN", false, false, true);
-		equal(oSli.getValue2(), 180, "Value after keyboard down arrow + Ctrl with step-wide:");
+		assert.equal(oSli.getValue2(), 180, "Value after keyboard down arrow + Ctrl with step-wide:");
 
-		equal(oGrip2.offsetLeft, 420, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 420, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_UP", false, false, true);
-		equal(oSli.getValue2(), 210, "Value after keyboard up arrow + Ctrl with step-wide:");
+		assert.equal(oSli.getValue2(), 210, "Value after keyboard up arrow + Ctrl with step-wide:");
 
-		equal(oGrip2.offsetLeft, 495, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 495, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli2", "END");
-		equal(oSli.getValue2(), 210, "Value after keyboard end with step-wide:");
+		assert.equal(oSli.getValue2(), 210, "Value after keyboard end with step-wide:");
 
-		equal(oGrip2.offsetLeft, 495, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 495, "Grip position after above change: ");
 
 		qutils.triggerKeyboardEvent("oSli2", "END");
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_RIGHT");
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_UP");
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_DOWN", false, false, true);
-		equal(oSli.getValue2(), 190, "Value after keyboard multible keys with step-wide:");
+		assert.equal(oSli.getValue2(), 190, "Value after keyboard multible keys with step-wide:");
 
-		equal(oGrip2.offsetLeft, 445, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 445, "Grip position after above change: ");
 
 	});
 
@@ -305,128 +305,128 @@
 		oSli.setValue(100);
 		qutils.triggerMouseEvent("oSli3-grip", "mousedown", 1);
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_RIGHT");
-		equal(oSli.getValue(), 100.4, "Value after keyboard right Arrow without step-wide:");
+		assert.equal(oSli.getValue(), 100.4, "Value after keyboard right Arrow without step-wide:");
 
-		equal(oGrip.offsetLeft, 221, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 221, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_LEFT");
-		equal(oSli.getValue(), 99.6, "Value after keyboard left Arrow without step-wide:");
+		assert.equal(oSli.getValue(), 99.6, "Value after keyboard left Arrow without step-wide:");
 
-		equal(oGrip.offsetLeft, 219, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 219, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_UP");
-		equal(oSli.getValue(), 100.4, "Value after keyboard up Arrow without step-wide:");
+		assert.equal(oSli.getValue(), 100.4, "Value after keyboard up Arrow without step-wide:");
 
-		equal(oGrip.offsetLeft, 221, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 221, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_DOWN");
-		equal(oSli.getValue(), 99.6, "Value after keyboard down Arrow without step-wide:");
+		assert.equal(oSli.getValue(), 99.6, "Value after keyboard down Arrow without step-wide:");
 
-		equal(oGrip.offsetLeft, 219, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 219, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli3", "NUMPAD_PLUS");
-		equal(oSli.getValue(), 100.4, "Value after keyboard '+' without step-wide:");
+		assert.equal(oSli.getValue(), 100.4, "Value after keyboard '+' without step-wide:");
 
-		equal(oGrip.offsetLeft, 221, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 221, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli3", "NUMPAD_MINUS");
-		equal(oSli.getValue(), 99.6, "Value after keyboard '-' without step-wide:");
+		assert.equal(oSli.getValue(), 99.6, "Value after keyboard '-' without step-wide:");
 
-		equal(oGrip.offsetLeft, 219, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 219, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_DOWN", false, false, true);
-		equal(oSli.getValue(), 60, "Value after keyboard down arrow + Ctrl without step-wide:");
+		assert.equal(oSli.getValue(), 60, "Value after keyboard down arrow + Ctrl without step-wide:");
 
-		equal(oGrip.offsetLeft, 120, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 120, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_UP", false, false, true);
-		equal(oSli.getValue(), 140, "Value after keyboard up arrow + Ctrl without step-wide:");
+		assert.equal(oSli.getValue(), 140, "Value after keyboard up arrow + Ctrl without step-wide:");
 
-		equal(oGrip.offsetLeft, 320, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 320, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli3", "HOME");
-		equal(oSli.getValue(), 10, "Value after keyboard home without step-wide:");
+		assert.equal(oSli.getValue(), 10, "Value after keyboard home without step-wide:");
 
-		equal(oGrip.offsetLeft, -5, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, -5, "Grip position after above change: ");
 
 		qutils.triggerKeyboardEvent("oSli3", "HOME");
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_RIGHT");
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_DOWN");
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_UP", false, false, true);
-		equal(oSli.getValue(), 50, "Value after keyboard multible keys without step-wide:");
+		assert.equal(oSli.getValue(), 50, "Value after keyboard multible keys without step-wide:");
 
-		equal(oGrip.offsetLeft, 95, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 95, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerMouseEvent("oSli3-grip2", "mousedown", 1, 1);
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_RIGHT");
-		equal(oSli.getValue2(), 200.4, "Value after keyboard right Arrow without step-wide:");
+		assert.equal(oSli.getValue2(), 200.4, "Value after keyboard right Arrow without step-wide:");
 
-		equal(oGrip2.offsetLeft, 471, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 471, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_LEFT");
-		equal(oSli.getValue2(), 199.6, "Value after keyboard left Arrow without step-wide:");
+		assert.equal(oSli.getValue2(), 199.6, "Value after keyboard left Arrow without step-wide:");
 
-		equal(oGrip2.offsetLeft, 469, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 469, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_UP");
-		equal(oSli.getValue2(), 200.4, "Value after keyboard up Arrow without step-wide:");
+		assert.equal(oSli.getValue2(), 200.4, "Value after keyboard up Arrow without step-wide:");
 
-		equal(oGrip2.offsetLeft, 471, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 471, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_DOWN");
-		equal(oSli.getValue2(), 199.6, "Value after keyboard down Arrow without step-wide:");
+		assert.equal(oSli.getValue2(), 199.6, "Value after keyboard down Arrow without step-wide:");
 
-		equal(oGrip2.offsetLeft, 469, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 469, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli3", "NUMPAD_PLUS");
-		equal(oSli.getValue2(), 200.4, "Value after keyboard '+' without step-wide:");
+		assert.equal(oSli.getValue2(), 200.4, "Value after keyboard '+' without step-wide:");
 
-		equal(oGrip2.offsetLeft, 471, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 471, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli3", "NUMPAD_MINUS");
-		equal(oSli.getValue2(), 199.6, "Value after keyboard '-' without step-wide:");
+		assert.equal(oSli.getValue2(), 199.6, "Value after keyboard '-' without step-wide:");
 
-		equal(oGrip2.offsetLeft, 469, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 469, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_DOWN", false, false, true);
-		equal(oSli.getValue2(), 160, "Value after keyboard down arrow + Ctrl without step-wide:");
+		assert.equal(oSli.getValue2(), 160, "Value after keyboard down arrow + Ctrl without step-wide:");
 
-		equal(oGrip2.offsetLeft, 370, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 370, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_UP", false, false, true);
-		equal(oSli.getValue2(), 210, "Value after keyboard up arrow + Ctrl without step-wide:");
+		assert.equal(oSli.getValue2(), 210, "Value after keyboard up arrow + Ctrl without step-wide:");
 
-		equal(oGrip2.offsetLeft, 495, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 495, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli3", "END");
-		equal(oSli.getValue2(), 210, "Value after keyboard end without step-wide:");
+		assert.equal(oSli.getValue2(), 210, "Value after keyboard end without step-wide:");
 
-		equal(oGrip2.offsetLeft, 495, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 495, "Grip position after above change: ");
 
 		qutils.triggerKeyboardEvent("oSli3", "END");
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_RIGHT");
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_UP");
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_DOWN", false, false, true);
-		equal(oSli.getValue2(), 170, "Value after keyboard multible keys without step-wide:");
+		assert.equal(oSli.getValue2(), 170, "Value after keyboard multible keys without step-wide:");
 
-		equal(oGrip2.offsetLeft, 395, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 395, "Grip position after above change: ");
 	});
 
 	QUnit.test("Keyboard with Read Only", function(assert) {
@@ -438,124 +438,124 @@
 		oSli.setValue(100);
 		qutils.triggerMouseEvent("oSli6-grip", "mousedown", 1);
 		qutils.triggerKeyboardEvent("oSli6", "ARROW_RIGHT");
-		equal(oSli.getValue(), 100, "Value after keyboard right Arrow on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard right Arrow on read only:");
 
-		equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli6", "ARROW_LEFT");
-		equal(oSli.getValue(), 100, "Value after keyboard left Arrow on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard left Arrow on read only:");
 
-		equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli6", "ARROW_UP");
-		equal(oSli.getValue(), 100, "Value after keyboard up Arrow on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard up Arrow on read only:");
 
-		equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli6", "ARROW_DOWN");
-		equal(oSli.getValue(), 100, "Value after keyboard down Arrow on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard down Arrow on read only:");
 
-		equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli6", "NUMPAD_PLUS");
-		equal(oSli.getValue(), 100, "Value after keyboard '+' on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard '+' on read only:");
 
-		equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli6", "NUMPAD_MINUS");
-		equal(oSli.getValue(), 100, "Value after keyboard '-' on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard '-' on read only:");
 
-		equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli6", "ARROW_DOWN", false, false, true);
-		equal(oSli.getValue(), 100, "Value after keyboard down arrow + Ctrl on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard down arrow + Ctrl on read only:");
 
-		equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli6", "ARROW_UP", false, false, true);
-		equal(oSli.getValue(), 100, "Value after keyboard up arrow + Ctrl on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard up arrow + Ctrl on read only:");
 
-		equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli6", "HOME");
-		equal(oSli.getValue(), 100, "Value after keyboard home on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard home on read only:");
 
-		equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli6", "END");
-		equal(oSli.getValue(), 100, "Value after keyboard end on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard end on read only:");
 
-		equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
 
 		qutils.triggerMouseEvent("oSli6-grip2", "mousedown", 1);
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli6", "ARROW_RIGHT");
-		equal(oSli.getValue2(), 200, "Value after keyboard right Arrow on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard right Arrow on read only:");
 
-		equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli6", "ARROW_LEFT");
-		equal(oSli.getValue2(), 200, "Value after keyboard left Arrow on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard left Arrow on read only:");
 
-		equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli6", "ARROW_UP");
-		equal(oSli.getValue2(), 200, "Value after keyboard up Arrow on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard up Arrow on read only:");
 
-		equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli6", "ARROW_DOWN");
-		equal(oSli.getValue2(), 200, "Value after keyboard down Arrow on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard down Arrow on read only:");
 
-		equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli6", "NUMPAD_PLUS");
-		equal(oSli.getValue2(), 200, "Value after keyboard '+' on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard '+' on read only:");
 
-		equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli6", "NUMPAD_MINUS");
-		equal(oSli.getValue2(), 200, "Value after keyboard '-' on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard '-' on read only:");
 
-		equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli6", "ARROW_DOWN", false, false, true);
-		equal(oSli.getValue2(), 200, "Value after keyboard down arrow + Ctrl on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard down arrow + Ctrl on read only:");
 
-		equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli6", "ARROW_UP", false, false, true);
-		equal(oSli.getValue2(), 200, "Value after keyboard up arrow + Ctrl on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard up arrow + Ctrl on read only:");
 
-		equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli6", "HOME");
-		equal(oSli.getValue2(), 200, "Value after keyboard home on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard home on read only:");
 
-		equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli6", "END");
-		equal(oSli.getValue2(), 200, "Value after keyboard end on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard end on read only:");
 
-		equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 473, "Grip position after above change: ");
 
 	});
 
@@ -564,32 +564,32 @@
 		var oGrip = jQuery.sap.domById('oSli2-grip');
 		var oGrip2 = jQuery.sap.domById('oSli2-grip2');
 		qutils.triggerMouseEvent("oSli2", "click", 117, 1);
-		equal(oSli.getValue(), 55, "Value after click on control (with spep-wide):");
-		equal(oSli.getValue2(), 190, "Value after click on control (with spep-wide):");
+		assert.equal(oSli.getValue(), 55, "Value after click on control (with spep-wide):");
+		assert.equal(oSli.getValue2(), 190, "Value after click on control (with spep-wide):");
 
-		equal(oGrip.offsetLeft, 108, "Grip position after above change: ");
-		equal(oGrip2.offsetLeft, 445, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 108, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 445, "Grip position after above change: ");
 
 		qutils.triggerMouseEvent("oSli2-bar", "click", 55, 2);
-		equal(oSli.getValue(), 30, "Value after click on bar (with spep-wide):");
-		equal(oSli.getValue2(), 190, "Value after click on bar (with spep-wide):");
+		assert.equal(oSli.getValue(), 30, "Value after click on bar (with spep-wide):");
+		assert.equal(oSli.getValue2(), 190, "Value after click on bar (with spep-wide):");
 
-		equal(oGrip.offsetLeft, 45, "Grip position after above change: ");
-		equal(oGrip2.offsetLeft, 445, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 45, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 445, "Grip position after above change: ");
 
 		qutils.triggerMouseEvent("oSli2-left", "click", 1, 1);
-		equal(oSli.getValue(), 10, "Value after click on left end (with spep-wide):");
-		equal(oSli.getValue2(), 190, "Value after click on left end (with spep-wide):");
+		assert.equal(oSli.getValue(), 10, "Value after click on left end (with spep-wide):");
+		assert.equal(oSli.getValue2(), 190, "Value after click on left end (with spep-wide):");
 
-		equal(oGrip.offsetLeft, -5, "Grip position after above change: ");
-		equal(oGrip2.offsetLeft, 445, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, -5, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 445, "Grip position after above change: ");
 
 		qutils.triggerMouseEvent("oSli2-right", "click", 505, 2);
-		equal(oSli.getValue(), 10, "Value after click on right end (with spep-wide):");
-		equal(oSli.getValue2(), 210, "Value after click on right end (with spep-wide):");
+		assert.equal(oSli.getValue(), 10, "Value after click on right end (with spep-wide):");
+		assert.equal(oSli.getValue2(), 210, "Value after click on right end (with spep-wide):");
 
-		equal(oGrip.offsetLeft, -5, "Grip position after above change: ");
-		equal(oGrip2.offsetLeft, 495, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, -5, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetLeft, 495, "Grip position after above change: ");
 
 	});
 
@@ -602,38 +602,38 @@
 			fValueChange = oEvent.getParameter("value");
 		});
 		qutils.triggerMouseEvent("oSli3", "click", 116, 1);
-		equal(oSli.getValue(), 54, "Value after click on control (without spep-wide):");
-		equal(fValueChange, 54, "Change event value after click on control (without spep-wide):");
+		assert.equal(oSli.getValue(), 54, "Value after click on control (without spep-wide):");
+		assert.equal(fValueChange, 54, "Change event value after click on control (without spep-wide):");
 
-		equal(oGrip.offsetLeft, 105, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 105, "Grip position after above change: ");
 		fValueChange = -1;
 
 		qutils.triggerMouseEvent("oSli3-bar", "click", 55, 2);
-		equal(oSli.getValue(), 32, "Value after click on bar (without spep-wide):");
-		equal(fValueChange, 32, "Change event value after click on bar (without spep-wide):");
+		assert.equal(oSli.getValue(), 32, "Value after click on bar (without spep-wide):");
+		assert.equal(fValueChange, 32, "Change event value after click on bar (without spep-wide):");
 
-		equal(oGrip.offsetLeft, 50, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 50, "Grip position after above change: ");
 
 		fValueChange = -1;
 		qutils.triggerMouseEvent("oSli3-left", "click", 1, 1);
-		equal(oSli.getValue(), 10, "Value after click on left end (without spep-wide):");
-		equal(fValueChange, 10, "Change event value after click on left end (without spep-wide):");
+		assert.equal(oSli.getValue(), 10, "Value after click on left end (without spep-wide):");
+		assert.equal(fValueChange, 10, "Change event value after click on left end (without spep-wide):");
 
-		equal(oGrip.offsetLeft, -5, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, -5, "Grip position after above change: ");
 
 		fValueChange = -1;
 		qutils.triggerMouseEvent("oSli3-right", "click", 505, 2);
-		equal(oSli.getValue(), 10, "Value after click on right end (without spep-wide):");
-		equal(fValueChange, 10, "Change event value after click on right end (without spep-wide):");
+		assert.equal(oSli.getValue(), 10, "Value after click on right end (without spep-wide):");
+		assert.equal(fValueChange, 10, "Change event value after click on right end (without spep-wide):");
 
-		equal(oGrip.offsetLeft, -5, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, -5, "Grip position after above change: ");
 
 		fValueChange = -1;
 		qutils.triggerMouseEvent("oSli3-tick4", "click", 1, 2);
-		equal(oSli.getValue(), 10, "Value after click on tick4 (without spep-wide):");
-		equal(fValueChange, 10, "Change event value after click on tick4 (without spep-wide):");
+		assert.equal(oSli.getValue(), 10, "Value after click on tick4 (without spep-wide):");
+		assert.equal(fValueChange, 10, "Change event value after click on tick4 (without spep-wide):");
 
-		equal(oGrip.offsetLeft, -5, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, -5, "Grip position after above change: ");
 		oSli.detachChange();
 	});
 
@@ -646,30 +646,30 @@
 		});
 		oSli.setValue(100);
 		qutils.triggerMouseEvent("oSli6", "click", 117, 1);
-		equal(oSli.getValue(), 100, "Value after click on control (read only):");
-		equal(fValueChange, -1, "Change event value after click on control (read only):");
+		assert.equal(oSli.getValue(), 100, "Value after click on control (read only):");
+		assert.equal(fValueChange, -1, "Change event value after click on control (read only):");
 
-		equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
 
 		qutils.triggerMouseEvent("oSli6-bar", "click", 55, 2);
-		equal(oSli.getValue(), 100, "Value after click on bar (read only):");
+		assert.equal(oSli.getValue(), 100, "Value after click on bar (read only):");
 
-		equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
 
 		qutils.triggerMouseEvent("oSli6-left", "click", 1, 1);
-		equal(oSli.getValue(), 100, "Value after click on left end (read only):");
+		assert.equal(oSli.getValue(), 100, "Value after click on left end (read only):");
 
-		equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
 
 		qutils.triggerMouseEvent("oSli6-right", "click", 505, 2);
-		equal(oSli.getValue(), 100, "Value after click on right end (read only):");
+		assert.equal(oSli.getValue(), 100, "Value after click on right end (read only):");
 
-		equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
 
 		qutils.triggerMouseEvent("oSli6-tick6", "click", 1, 2);
-		equal(oSli.getValue(), 100, "Value after click on tick6 (read only):");
+		assert.equal(oSli.getValue(), 100, "Value after click on tick6 (read only):");
 
-		equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
 
 		oSli.detachChange();
 	});
@@ -691,15 +691,15 @@
 		oSli.setValue(100);
 		qutils.triggerMouseEvent("oSli2-grip", "mousedown", 1, 1, 100, 100);
 		qutils.triggerMouseEvent("oSli2", "mousemove", 1, 1, 105, 100);
-		equal(fValueLiveChange, -1, "liveChange event value after 1. mousemove on control (with spep-wide):");
-		equal(fValueChange, -1, "Change event value after 1. mousemove on control (with spep-wide):");
+		assert.equal(fValueLiveChange, -1, "liveChange event value after 1. mousemove on control (with spep-wide):");
+		assert.equal(fValueChange, -1, "Change event value after 1. mousemove on control (with spep-wide):");
 		qutils.triggerMouseEvent("oSli2", "mousemove", 1, 1, 110, 100);
-		equal(fValueLiveChange, 105, "liveChange event value after 2. mousemove on control (with spep-wide):");
+		assert.equal(fValueLiveChange, 105, "liveChange event value after 2. mousemove on control (with spep-wide):");
 		qutils.triggerMouseEvent("oSli2-grip", "mouseup", 1, 1);
-		equal(oSli.getValue(), 105, "Value after mousemove on control (with spep-wide):");
-		equal(fValueChange, 105, "Change event value after mouseup on control (with spep-wide):");
+		assert.equal(oSli.getValue(), 105, "Value after mousemove on control (with spep-wide):");
+		assert.equal(fValueChange, 105, "Change event value after mouseup on control (with spep-wide):");
 
-		equal(oGrip.offsetLeft, 233, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 233, "Grip position after above change: ");
 		oSli.detachChange();
 		oSli.detachLiveChange();
 
@@ -716,15 +716,15 @@
 		oSli.setValue(100);
 		qutils.triggerMouseEvent("oSli3-grip", "mousedown", 1, 1, 100, 100);
 		qutils.triggerMouseEvent("oSli3", "mousemove", 1, 1, 105, 100);
-		equal(fValueLiveChange, 102, "liveChange event value after 1. mousemove on control (without spep-wide):");
-		equal(fValueChange, -1, "Change event value after 1. mousemove on control (without spep-wide):");
+		assert.equal(fValueLiveChange, 102, "liveChange event value after 1. mousemove on control (without spep-wide):");
+		assert.equal(fValueChange, -1, "Change event value after 1. mousemove on control (without spep-wide):");
 		qutils.triggerMouseEvent("oSli3", "mousemove", 1, 1, 110, 100);
-		equal(fValueLiveChange, 104, "liveChange event value after 1. mousemove on control (without spep-wide):");
+		assert.equal(fValueLiveChange, 104, "liveChange event value after 1. mousemove on control (without spep-wide):");
 		qutils.triggerMouseEvent("oSli3-grip", "mouseup", 1, 1);
-		equal(oSli.getValue(), 104, "Value after mousemove on control (without spep-wide):");
-		equal(fValueChange, 104, "Change event value after mouseup on control (without spep-wide):");
+		assert.equal(oSli.getValue(), 104, "Value after mousemove on control (without spep-wide):");
+		assert.equal(fValueChange, 104, "Change event value after mouseup on control (without spep-wide):");
 
-		equal(oGrip.offsetLeft, 230, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 230, "Grip position after above change: ");
 		oSli.detachChange();
 		oSli.detachLiveChange();
 
@@ -741,14 +741,14 @@
 		oSli.setValue(100);
 		qutils.triggerMouseEvent("oSli6-grip", "mousedown", 1, 1, 100, 100);
 		qutils.triggerMouseEvent("oSli6", "mousemove", 1, 1, 105, 100);
-		equal(fValueLiveChange, -1, "liveChange event value after 1. mousemove on control (read only):");
+		assert.equal(fValueLiveChange, -1, "liveChange event value after 1. mousemove on control (read only):");
 		qutils.triggerMouseEvent("oSli6", "mousemove", 1, 1, 110, 100);
-		equal(fValueLiveChange, -1, "liveChange event value after 2. mousemove on control (read only):");
+		assert.equal(fValueLiveChange, -1, "liveChange event value after 2. mousemove on control (read only):");
 		qutils.triggerMouseEvent("oSli6-grip", "mouseup", 1, 1);
-		equal(oSli.getValue(), 100, "Value after mousemove on control (read only):");
-		equal(fValueChange, -1, "Change event value after mouseup on control (read only):");
+		assert.equal(oSli.getValue(), 100, "Value after mousemove on control (read only):");
+		assert.equal(fValueChange, -1, "Change event value after mouseup on control (read only):");
 
-		equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 223, "Grip position after above change: ");
 		oSli.detachChange();
 		oSli.detachLiveChange();
 
@@ -766,15 +766,15 @@
 		oGrip = jQuery.sap.domById('oSli2-grip2');
 		qutils.triggerMouseEvent("oSli2-grip2", "mousedown", 1, 1, 200, 100);
 		qutils.triggerMouseEvent("oSli2", "mousemove", 1, 1, 195, 100);
-		equal(fValueLiveChange, -1, "liveChange event value after 1. mousemove on control (with spep-wide):");
-		equal(fValueChange, -1, "Change event value after 1. mousemove on control (with spep-wide):");
+		assert.equal(fValueLiveChange, -1, "liveChange event value after 1. mousemove on control (with spep-wide):");
+		assert.equal(fValueChange, -1, "Change event value after 1. mousemove on control (with spep-wide):");
 		qutils.triggerMouseEvent("oSli2", "mousemove", 1, 1, 190, 100);
-		equal(fValueLiveChange, 195, "liveChange event value after 2. mousemove on control (with spep-wide):");
+		assert.equal(fValueLiveChange, 195, "liveChange event value after 2. mousemove on control (with spep-wide):");
 		qutils.triggerMouseEvent("oSli2-grip2", "mouseup", 1, 1);
-		equal(oSli.getValue2(), 195, "Value after mousemove on control (with spep-wide):");
-		equal(fValueChange, 195, "Change event value after mouseup on control (with spep-wide):");
+		assert.equal(oSli.getValue2(), 195, "Value after mousemove on control (with spep-wide):");
+		assert.equal(fValueChange, 195, "Change event value after mouseup on control (with spep-wide):");
 
-		equal(oGrip.offsetLeft, 458, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 458, "Grip position after above change: ");
 		oSli.detachChange();
 		oSli.detachLiveChange();
 
@@ -791,15 +791,15 @@
 		oSli.setValue2(200);
 		qutils.triggerMouseEvent("oSli3-grip2", "mousedown", 1, 1, 200, 100);
 		qutils.triggerMouseEvent("oSli3", "mousemove", 1, 1, 195, 100);
-		equal(fValueLiveChange, 198, "liveChange event value after 1. mousemove on control (without spep-wide):");
-		equal(fValueChange, -1, "Change event value after 1. mousemove on control (without spep-wide):");
+		assert.equal(fValueLiveChange, 198, "liveChange event value after 1. mousemove on control (without spep-wide):");
+		assert.equal(fValueChange, -1, "Change event value after 1. mousemove on control (without spep-wide):");
 		qutils.triggerMouseEvent("oSli3", "mousemove", 1, 1, 190, 100);
-		equal(fValueLiveChange, 196, "liveChange event value after 1. mousemove on control (without spep-wide):");
+		assert.equal(fValueLiveChange, 196, "liveChange event value after 1. mousemove on control (without spep-wide):");
 		qutils.triggerMouseEvent("oSli3-grip2", "mouseup", 1, 1);
-		equal(oSli.getValue2(), 196, "Value after mousemove on control (without spep-wide):");
-		equal(fValueChange, 196, "Change event value after mouseup on control (without spep-wide):");
+		assert.equal(oSli.getValue2(), 196, "Value after mousemove on control (without spep-wide):");
+		assert.equal(fValueChange, 196, "Change event value after mouseup on control (without spep-wide):");
 
-		equal(oGrip.offsetLeft, 460, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 460, "Grip position after above change: ");
 		oSli.detachChange();
 		oSli.detachLiveChange();
 
@@ -816,14 +816,14 @@
 		oSli.setValue2(200);
 		qutils.triggerMouseEvent("oSli6-grip2", "mousedown", 1, 1, 100, 100);
 		qutils.triggerMouseEvent("oSli6", "mousemove", 1, 1, 105, 100);
-		equal(fValueLiveChange, -1, "liveChange event value after 1. mousemove on control (read only):");
+		assert.equal(fValueLiveChange, -1, "liveChange event value after 1. mousemove on control (read only):");
 		qutils.triggerMouseEvent("oSli6", "mousemove", 1, 1, 110, 100);
-		equal(fValueLiveChange, -1, "liveChange event value after 2. mousemove on control (read only):");
+		assert.equal(fValueLiveChange, -1, "liveChange event value after 2. mousemove on control (read only):");
 		qutils.triggerMouseEvent("oSli6-grip2", "mouseup", 1, 1);
-		equal(oSli.getValue2(), 200, "Value after mousemove on control (read only):");
-		equal(fValueChange, -1, "Change event value after mouseup on control (read only):");
+		assert.equal(oSli.getValue2(), 200, "Value after mousemove on control (read only):");
+		assert.equal(fValueChange, -1, "Change event value after mouseup on control (read only):");
 
-		equal(oGrip.offsetLeft, 473, "Grip position after above change: ");
+		assert.equal(oGrip.offsetLeft, 473, "Grip position after above change: ");
 		oSli.detachChange();
 		oSli.detachLiveChange();
 
@@ -833,40 +833,40 @@
 
 	QUnit.test("Visibility", function(assert) {
 		ok(jQuery("#oSli3").get(0), "Visible: expected defined");
-		equal(jQuery("#oSli5").get(0), undefined, "Invisible:");
+		assert.equal(jQuery("#oSli5").get(0), undefined, "Invisible:");
 
 		var oTick = jQuery.sap.domById('oSli2-tick2');
-		equal(oTick, null, "No Ticks:");
+		assert.equal(oTick, null, "No Ticks:");
 		var oText = jQuery.sap.domById('oSli2-text0');
-		equal(oText, null, "No left Text:");
+		assert.equal(oText, null, "No left Text:");
 		oText = jQuery.sap.domById('oSli2-text1');
-		equal(oText, null, "No second Text:");
+		assert.equal(oText, null, "No second Text:");
 
 		oTick = null;
 		oText = null;
 		oTick = jQuery.sap.domById('oSli3-tick3');
 		ok(oTick, "Ticks visible: expected defined");
-		equal(oTick.offsetLeft, 299, "3. tick position:");
+		assert.equal(oTick.offsetLeft, 299, "3. tick position:");
 		oText = jQuery.sap.domById('oSli3-text0');
-		equal(oText, null, "No left Text:");
+		assert.equal(oText, null, "No left Text:");
 		oText = jQuery.sap.domById('oSli3-text1');
-		equal(oText, null, "No second Text:");
+		assert.equal(oText, null, "No second Text:");
 
 		oTick = null;
 		oText = null;
 		oTick = jQuery.sap.domById('oSli4-tick4');
 		ok(oTick, "Ticks visible: expected defined");
-		equal(oTick.offsetLeft, 249, "Middle tick position:");
+		assert.equal(oTick.offsetLeft, 249, "Middle tick position:");
 		oText = jQuery.sap.domById('oSli4-text0');
 		ok(oText, "left text visible: expected defined");
-		equal(jQuery(oText).text(), "10", "left text:");
+		assert.equal(jQuery(oText).text(), "10", "left text:");
 		oText = null;
 		oText = jQuery.sap.domById('oSli4-text4');
 		ok(oText, "middle text visible: expected defined");
-		equal(jQuery(oText).text(), "110", "middle text:");
+		assert.equal(jQuery(oText).text(), "110", "middle text:");
 		oText = null;
 		oText = jQuery.sap.domById('oSli4-text8');
-		equal(jQuery(oText).text(), "210", "right text:");
+		assert.equal(jQuery(oText).text(), "210", "right text:");
 		ok(oText, "right text visible: expected defined");
 	});
 
@@ -875,39 +875,39 @@
 	QUnit.test("Set Value", function(assert) {
 		var oSli = oSlis["oSli7"];
 		oSli.setValue(66);
-		equal(oSli.getValue(), 65, "Set Value with Step-wide: ");
+		assert.equal(oSli.getValue(), 65, "Set Value with Step-wide: ");
 
 		/* reduce position with 6px because of shift to middle of grip -> pssotion of 138 is now 132*/
 		var oGrip = jQuery.sap.domById('oSli7-grip');
-		equal(oGrip.offsetTop, 358, "Grip position after Set Value with Step-wide: ");
+		assert.equal(oGrip.offsetTop, 358, "Grip position after Set Value with Step-wide: ");
 
 		oSli.setValue2(82);
-		equal(oSli.getValue2(), 80, "Set Value2 with Step-wide: ");
+		assert.equal(oSli.getValue2(), 80, "Set Value2 with Step-wide: ");
 
 		/* reduce position with 6px because of shift to middle of grip -> pssotion of 138 is now 132*/
 		var oGrip = jQuery.sap.domById('oSli7-grip2');
-		equal(oGrip.offsetTop, 320, "Grip position after Set Value2 with Step-wide: ");
+		assert.equal(oGrip.offsetTop, 320, "Grip position after Set Value2 with Step-wide: ");
 
 		oSli.setValue2(50);
-		equal(oSli.getValue2(), 65, "Set Value2 with Step-wide smaller than value: ");
+		assert.equal(oSli.getValue2(), 65, "Set Value2 with Step-wide smaller than value: ");
 
 		/* reduce position with 6px because of shift to middle of grip -> pssotion of 138 is now 132*/
 		var oGrip = jQuery.sap.domById('oSli7-grip2');
-		equal(oGrip.offsetTop, 358, "Grip position after Set smaller Value2 with Step-wide: ");
+		assert.equal(oGrip.offsetTop, 358, "Grip position after Set smaller Value2 with Step-wide: ");
 
 		oSli.setValue(80);
-		equal(oSli.getValue(), 80, "Set Value with Step-wide value larger value2: ");
+		assert.equal(oSli.getValue(), 80, "Set Value with Step-wide value larger value2: ");
 
 		/* reduce position with 6px because of shift to middle of grip -> pssotion of 138 is now 132*/
 		var oGrip = jQuery.sap.domById('oSli7-grip2');
-		equal(oGrip.offsetTop, 358, "Grip position after Set larger Value with Step-wide: ");
+		assert.equal(oGrip.offsetTop, 358, "Grip position after Set larger Value with Step-wide: ");
 
 		oSli = oSlis["oSli8"];
 		oSli.setValue(66);
-		equal(oSli.getValue(), 66, "Set Value without Step-wide: ");
+		assert.equal(oSli.getValue(), 66, "Set Value without Step-wide: ");
 
 		var oGrip = jQuery.sap.domById('oSli8-grip');
-		equal(oGrip.offsetTop, 355, "Grip position after Set Value without Step-wide: ");
+		assert.equal(oGrip.offsetTop, 355, "Grip position after Set Value without Step-wide: ");
 	});
 
 	QUnit.module("Vertical: Interaction");
@@ -922,131 +922,131 @@
 		qutils.triggerMouseEvent("oSli7-grip", "mousedown", 1, 1);
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_RIGHT");
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_RIGHT");
-		equal(oSli.getValue(), 110, "Value after keyboard right Arrow with step-wide:");
+		assert.equal(oSli.getValue(), 110, "Value after keyboard right Arrow with step-wide:");
 
-		equal(oGrip.offsetTop, 245, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 245, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_LEFT");
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_LEFT");
-		equal(oSli.getValue(), 90, "Value after keyboard left Arrow with step-wide:");
+		assert.equal(oSli.getValue(), 90, "Value after keyboard left Arrow with step-wide:");
 
-		equal(oGrip.offsetTop, 295, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 295, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_UP");
-		equal(oSli.getValue(), 105, "Value after keyboard up Arrow with step-wide:");
+		assert.equal(oSli.getValue(), 105, "Value after keyboard up Arrow with step-wide:");
 
-		equal(oGrip.offsetTop, 258, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 258, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_DOWN");
-		equal(oSli.getValue(), 95, "Value after keyboard down Arrow with step-wide:");
+		assert.equal(oSli.getValue(), 95, "Value after keyboard down Arrow with step-wide:");
 
-		equal(oGrip.offsetTop, 283, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 283, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli7", "NUMPAD_PLUS");
-		equal(oSli.getValue(), 105, "Value after keyboard '+' with step-wide:");
+		assert.equal(oSli.getValue(), 105, "Value after keyboard '+' with step-wide:");
 
-		equal(oGrip.offsetTop, 258, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 258, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli7", "NUMPAD_MINUS");
-		equal(oSli.getValue(), 95, "Value after keyboard '-' with step-wide:");
+		assert.equal(oSli.getValue(), 95, "Value after keyboard '-' with step-wide:");
 
-		equal(oGrip.offsetTop, 283, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 283, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_DOWN", false, false, true);
-		equal(oSli.getValue(), 80, "Value after keyboard down arrow + Ctrl with step-wide:");
+		assert.equal(oSli.getValue(), 80, "Value after keyboard down arrow + Ctrl with step-wide:");
 
-		equal(oGrip.offsetTop, 320, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 320, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_UP", false, false, true);
-		equal(oSli.getValue(), 120, "Value after keyboard up arrow + Ctrl with step-wide:");
+		assert.equal(oSli.getValue(), 120, "Value after keyboard up arrow + Ctrl with step-wide:");
 
-		equal(oGrip.offsetTop, 220, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 220, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli7", "HOME");
-		equal(oSli.getValue(), 10, "Value after keyboard home with step-wide:");
+		assert.equal(oSli.getValue(), 10, "Value after keyboard home with step-wide:");
 
-		equal(oGrip.offsetTop, 495, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 495, "Grip position after above change: ");
 
 		qutils.triggerKeyboardEvent("oSli7", "HOME");
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_RIGHT");
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_DOWN");
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_UP", false, false, true);
-		equal(oSli.getValue(), 30, "Value after keyboard multible keys with step-wide:");
+		assert.equal(oSli.getValue(), 30, "Value after keyboard multible keys with step-wide:");
 
-		equal(oGrip.offsetTop, 445, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 445, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerMouseEvent("oSli7-grip2", "mousedown", 1, 1);
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_RIGHT");
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_RIGHT");
-		equal(oSli.getValue2(), 210, "Value after keyboard right Arrow with step-wide:");
+		assert.equal(oSli.getValue2(), 210, "Value after keyboard right Arrow with step-wide:");
 
-		equal(oGrip2.offsetTop, -5, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, -5, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_LEFT");
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_LEFT");
-		equal(oSli.getValue2(), 190, "Value after keyboard left Arrow with step-wide:");
+		assert.equal(oSli.getValue2(), 190, "Value after keyboard left Arrow with step-wide:");
 
-		equal(oGrip2.offsetTop, 45, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 45, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_UP");
-		equal(oSli.getValue2(), 205, "Value after keyboard up Arrow with step-wide:");
+		assert.equal(oSli.getValue2(), 205, "Value after keyboard up Arrow with step-wide:");
 
-		equal(oGrip2.offsetTop, 8, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 8, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_DOWN");
-		equal(oSli.getValue2(), 195, "Value after keyboard down Arrow with step-wide:");
+		assert.equal(oSli.getValue2(), 195, "Value after keyboard down Arrow with step-wide:");
 
-		equal(oGrip2.offsetTop, 33, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 33, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli7", "NUMPAD_PLUS");
-		equal(oSli.getValue2(), 205, "Value after keyboard '+' with step-wide:");
+		assert.equal(oSli.getValue2(), 205, "Value after keyboard '+' with step-wide:");
 
-		equal(oGrip2.offsetTop, 8, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 8, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli7", "NUMPAD_MINUS");
-		equal(oSli.getValue2(), 195, "Value after keyboard '-' with step-wide:");
+		assert.equal(oSli.getValue2(), 195, "Value after keyboard '-' with step-wide:");
 
-		equal(oGrip2.offsetTop, 33, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 33, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_DOWN", false, false, true);
-		equal(oSli.getValue2(), 180, "Value after keyboard down arrow + Ctrl with step-wide:");
+		assert.equal(oSli.getValue2(), 180, "Value after keyboard down arrow + Ctrl with step-wide:");
 
-		equal(oGrip2.offsetTop, 70, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 70, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_UP", false, false, true);
-		equal(oSli.getValue2(), 210, "Value after keyboard up arrow + Ctrl with step-wide:");
+		assert.equal(oSli.getValue2(), 210, "Value after keyboard up arrow + Ctrl with step-wide:");
 
-		equal(oGrip2.offsetTop, -5, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, -5, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli7", "END");
-		equal(oSli.getValue2(), 210, "Value after keyboard end with step-wide:");
+		assert.equal(oSli.getValue2(), 210, "Value after keyboard end with step-wide:");
 
-		equal(oGrip2.offsetTop, -5, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, -5, "Grip position after above change: ");
 
 		qutils.triggerKeyboardEvent("oSli7", "END");
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_RIGHT");
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_UP");
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_DOWN", false, false, true);
-		equal(oSli.getValue2(), 190, "Value after keyboard multible keys with step-wide:");
+		assert.equal(oSli.getValue2(), 190, "Value after keyboard multible keys with step-wide:");
 
-		equal(oGrip2.offsetTop, 45, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 45, "Grip position after above change: ");
 
 	});
 
@@ -1059,128 +1059,128 @@
 		oSli.setValue(100);
 		qutils.triggerMouseEvent("oSli8-grip", "mousedown", 1);
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_RIGHT");
-		equal(oSli.getValue(), 100.4, "Value after keyboard right Arrow without step-wide:");
+		assert.equal(oSli.getValue(), 100.4, "Value after keyboard right Arrow without step-wide:");
 
-		equal(oGrip.offsetTop, 269, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 269, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_LEFT");
-		equal(oSli.getValue(), 99.6, "Value after keyboard left Arrow without step-wide:");
+		assert.equal(oSli.getValue(), 99.6, "Value after keyboard left Arrow without step-wide:");
 
-		equal(oGrip.offsetTop, 271, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 271, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_UP");
-		equal(oSli.getValue(), 100.4, "Value after keyboard up Arrow without step-wide:");
+		assert.equal(oSli.getValue(), 100.4, "Value after keyboard up Arrow without step-wide:");
 
-		equal(oGrip.offsetTop, 269, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 269, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_DOWN");
-		equal(oSli.getValue(), 99.6, "Value after keyboard down Arrow without step-wide:");
+		assert.equal(oSli.getValue(), 99.6, "Value after keyboard down Arrow without step-wide:");
 
-		equal(oGrip.offsetTop, 271, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 271, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli8", "NUMPAD_PLUS");
-		equal(oSli.getValue(), 100.4, "Value after keyboard '+' without step-wide:");
+		assert.equal(oSli.getValue(), 100.4, "Value after keyboard '+' without step-wide:");
 
-		equal(oGrip.offsetTop, 269, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 269, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli8", "NUMPAD_MINUS");
-		equal(oSli.getValue(), 99.6, "Value after keyboard '-' without step-wide:");
+		assert.equal(oSli.getValue(), 99.6, "Value after keyboard '-' without step-wide:");
 
-		equal(oGrip.offsetTop, 271, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 271, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_DOWN", false, false, true);
-		equal(oSli.getValue(), 60, "Value after keyboard down arrow + Ctrl without step-wide:");
+		assert.equal(oSli.getValue(), 60, "Value after keyboard down arrow + Ctrl without step-wide:");
 
-		equal(oGrip.offsetTop, 370, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 370, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_UP", false, false, true);
-		equal(oSli.getValue(), 140, "Value after keyboard up arrow + Ctrl without step-wide:");
+		assert.equal(oSli.getValue(), 140, "Value after keyboard up arrow + Ctrl without step-wide:");
 
-		equal(oGrip.offsetTop, 170, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 170, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli8", "HOME");
-		equal(oSli.getValue(), 10, "Value after keyboard home without step-wide:");
+		assert.equal(oSli.getValue(), 10, "Value after keyboard home without step-wide:");
 
-		equal(oGrip.offsetTop, 495, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 495, "Grip position after above change: ");
 
 		qutils.triggerKeyboardEvent("oSli8", "HOME");
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_RIGHT");
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_DOWN");
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_UP", false, false, true);
-		equal(oSli.getValue(), 50, "Value after keyboard multible keys without step-wide:");
+		assert.equal(oSli.getValue(), 50, "Value after keyboard multible keys without step-wide:");
 
-		equal(oGrip.offsetTop, 395, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 395, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerMouseEvent("oSli8-grip2", "mousedown", 1, 1);
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_RIGHT");
-		equal(oSli.getValue2(), 200.4, "Value after keyboard right Arrow without step-wide:");
+		assert.equal(oSli.getValue2(), 200.4, "Value after keyboard right Arrow without step-wide:");
 
-		equal(oGrip2.offsetTop, 19, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 19, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_LEFT");
-		equal(oSli.getValue2(), 199.6, "Value after keyboard left Arrow without step-wide:");
+		assert.equal(oSli.getValue2(), 199.6, "Value after keyboard left Arrow without step-wide:");
 
-		equal(oGrip2.offsetTop, 21, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 21, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_UP");
-		equal(oSli.getValue2(), 200.4, "Value after keyboard up Arrow without step-wide:");
+		assert.equal(oSli.getValue2(), 200.4, "Value after keyboard up Arrow without step-wide:");
 
-		equal(oGrip2.offsetTop, 19, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 19, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_DOWN");
-		equal(oSli.getValue2(), 199.6, "Value after keyboard down Arrow without step-wide:");
+		assert.equal(oSli.getValue2(), 199.6, "Value after keyboard down Arrow without step-wide:");
 
-		equal(oGrip2.offsetTop, 21, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 21, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli8", "NUMPAD_PLUS");
-		equal(oSli.getValue2(), 200.4, "Value after keyboard '+' without step-wide:");
+		assert.equal(oSli.getValue2(), 200.4, "Value after keyboard '+' without step-wide:");
 
-		equal(oGrip2.offsetTop, 19, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 19, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli8", "NUMPAD_MINUS");
-		equal(oSli.getValue2(), 199.6, "Value after keyboard '-' without step-wide:");
+		assert.equal(oSli.getValue2(), 199.6, "Value after keyboard '-' without step-wide:");
 
-		equal(oGrip2.offsetTop, 21, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 21, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_DOWN", false, false, true);
-		equal(oSli.getValue2(), 160, "Value after keyboard down arrow + Ctrl without step-wide:");
+		assert.equal(oSli.getValue2(), 160, "Value after keyboard down arrow + Ctrl without step-wide:");
 
-		equal(oGrip2.offsetTop, 120, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 120, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_UP", false, false, true);
-		equal(oSli.getValue2(), 210, "Value after keyboard up arrow + Ctrl without step-wide:");
+		assert.equal(oSli.getValue2(), 210, "Value after keyboard up arrow + Ctrl without step-wide:");
 
-		equal(oGrip2.offsetTop, -5, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, -5, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli8", "END");
-		equal(oSli.getValue2(), 210, "Value after keyboard end without step-wide:");
+		assert.equal(oSli.getValue2(), 210, "Value after keyboard end without step-wide:");
 
-		equal(oGrip2.offsetTop, -5, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, -5, "Grip position after above change: ");
 
 		qutils.triggerKeyboardEvent("oSli8", "END");
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_RIGHT");
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_UP");
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_DOWN", false, false, true);
-		equal(oSli.getValue2(), 170, "Value after keyboard multible keys without step-wide:");
+		assert.equal(oSli.getValue2(), 170, "Value after keyboard multible keys without step-wide:");
 
-		equal(oGrip2.offsetTop, 95, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 95, "Grip position after above change: ");
 	});
 
 	QUnit.test("Keyboard with Read Only", function(assert) {
@@ -1192,124 +1192,124 @@
 		oSli.setValue(100);
 		qutils.triggerMouseEvent("oSli11-grip", "mousedown", 1);
 		qutils.triggerKeyboardEvent("oSli11", "ARROW_RIGHT");
-		equal(oSli.getValue(), 100, "Value after keyboard right Arrow on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard right Arrow on read only:");
 
-		equal(oGrip.offsetTop, 273, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 273, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli11", "ARROW_LEFT");
-		equal(oSli.getValue(), 100, "Value after keyboard left Arrow on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard left Arrow on read only:");
 
-		equal(oGrip.offsetTop, 273, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 273, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli11", "ARROW_UP");
-		equal(oSli.getValue(), 100, "Value after keyboard up Arrow on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard up Arrow on read only:");
 
-		equal(oGrip.offsetTop, 273, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 273, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli11", "ARROW_DOWN");
-		equal(oSli.getValue(), 100, "Value after keyboard down Arrow on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard down Arrow on read only:");
 
-		equal(oGrip.offsetTop, 273, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 273, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli11", "NUMPAD_PLUS");
-		equal(oSli.getValue(), 100, "Value after keyboard '+' on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard '+' on read only:");
 
-		equal(oGrip.offsetTop, 273, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 273, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli11", "NUMPAD_MINUS");
-		equal(oSli.getValue(), 100, "Value after keyboard '-' on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard '-' on read only:");
 
-		equal(oGrip.offsetTop, 273, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 273, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli11", "ARROW_DOWN", false, false, true);
-		equal(oSli.getValue(), 100, "Value after keyboard down arrow + Ctrl on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard down arrow + Ctrl on read only:");
 
-		equal(oGrip.offsetTop, 273, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 273, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli11", "ARROW_UP", false, false, true);
-		equal(oSli.getValue(), 100, "Value after keyboard up arrow + Ctrl on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard up arrow + Ctrl on read only:");
 
-		equal(oGrip.offsetTop, 273, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 273, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli11", "HOME");
-		equal(oSli.getValue(), 100, "Value after keyboard home on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard home on read only:");
 
-		equal(oGrip.offsetTop, 273, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 273, "Grip position after above change: ");
 
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli11", "END");
-		equal(oSli.getValue(), 100, "Value after keyboard end on read only:");
+		assert.equal(oSli.getValue(), 100, "Value after keyboard end on read only:");
 
-		equal(oGrip.offsetTop, 273, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 273, "Grip position after above change: ");
 
 		qutils.triggerMouseEvent("oSli11-grip2", "mousedown", 1);
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli11", "ARROW_RIGHT");
-		equal(oSli.getValue2(), 200, "Value after keyboard right Arrow on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard right Arrow on read only:");
 
-		equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli11", "ARROW_LEFT");
-		equal(oSli.getValue2(), 200, "Value after keyboard left Arrow on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard left Arrow on read only:");
 
-		equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli11", "ARROW_UP");
-		equal(oSli.getValue2(), 200, "Value after keyboard up Arrow on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard up Arrow on read only:");
 
-		equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli11", "ARROW_DOWN");
-		equal(oSli.getValue2(), 200, "Value after keyboard down Arrow on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard down Arrow on read only:");
 
-		equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli11", "NUMPAD_PLUS");
-		equal(oSli.getValue2(), 200, "Value after keyboard '+' on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard '+' on read only:");
 
-		equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli11", "NUMPAD_MINUS");
-		equal(oSli.getValue2(), 200, "Value after keyboard '-' on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard '-' on read only:");
 
-		equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli11", "ARROW_DOWN", false, false, true);
-		equal(oSli.getValue2(), 200, "Value after keyboard down arrow + Ctrl on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard down arrow + Ctrl on read only:");
 
-		equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli11", "ARROW_UP", false, false, true);
-		equal(oSli.getValue2(), 200, "Value after keyboard up arrow + Ctrl on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard up arrow + Ctrl on read only:");
 
-		equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli11", "HOME");
-		equal(oSli.getValue2(), 200, "Value after keyboard home on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard home on read only:");
 
-		equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
 
 		oSli.setValue2(200);
 		qutils.triggerKeyboardEvent("oSli11", "END");
-		equal(oSli.getValue2(), 200, "Value after keyboard end on read only:");
+		assert.equal(oSli.getValue2(), 200, "Value after keyboard end on read only:");
 
-		equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 23, "Grip position after above change: ");
 	});
 
 	QUnit.test("Click with Step", function(assert) {
@@ -1317,32 +1317,32 @@
 		var oGrip = jQuery.sap.domById('oSli7-grip');
 		var oGrip2 = jQuery.sap.domById('oSli7-grip2');
 		qutils.triggerMouseEvent("oSli7", "click", 1, 117);
-		equal(oSli.getValue(), 30, "Value after click on control (with spep-wide):");
-		equal(oSli.getValue2(), 165, "Value after click on control (with spep-wide):");
+		assert.equal(oSli.getValue(), 30, "Value after click on control (with spep-wide):");
+		assert.equal(oSli.getValue2(), 165, "Value after click on control (with spep-wide):");
 
-		equal(oGrip.offsetTop, 445, "Grip position after above change: ");
-		equal(oGrip2.offsetTop, 108, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 445, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 108, "Grip position after above change: ");
 
 		qutils.triggerMouseEvent("oSli7-bar", "click", 2, 55);
-		equal(oSli.getValue(), 30, "Value after click on bar (with spep-wide):");
-		equal(oSli.getValue2(), 190, "Value after click on bar (with spep-wide):");
+		assert.equal(oSli.getValue(), 30, "Value after click on bar (with spep-wide):");
+		assert.equal(oSli.getValue2(), 190, "Value after click on bar (with spep-wide):");
 
-		equal(oGrip.offsetTop, 445, "Grip position after above change: ");
-		equal(oGrip2.offsetTop, 45, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 445, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, 45, "Grip position after above change: ");
 
 		qutils.triggerMouseEvent("oSli7-left", "click", 1, 1);
-		equal(oSli.getValue(), 30, "Value after click on left end (with spep-wide):");
-		equal(oSli.getValue2(), 210, "Value after click on left end (with spep-wide):");
+		assert.equal(oSli.getValue(), 30, "Value after click on left end (with spep-wide):");
+		assert.equal(oSli.getValue2(), 210, "Value after click on left end (with spep-wide):");
 
-		equal(oGrip.offsetTop, 445, "Grip position after above change: ");
-		equal(oGrip2.offsetTop, -5, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 445, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, -5, "Grip position after above change: ");
 
 		qutils.triggerMouseEvent("oSli7-right", "click", 2, 505);
-		equal(oSli.getValue(), 10, "Value after click on right end (with spep-wide):");
-		equal(oSli.getValue2(), 210, "Value after click on right end (with spep-wide):");
+		assert.equal(oSli.getValue(), 10, "Value after click on right end (with spep-wide):");
+		assert.equal(oSli.getValue2(), 210, "Value after click on right end (with spep-wide):");
 
-		equal(oGrip.offsetTop, 495, "Grip position after above change: ");
-		equal(oGrip2.offsetTop, -5, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 495, "Grip position after above change: ");
+		assert.equal(oGrip2.offsetTop, -5, "Grip position after above change: ");
 	});
 
 	QUnit.test("Click without Step", function(assert) {
@@ -1354,38 +1354,38 @@
 			fValueChange = oEvent.getParameter("value");
 		});
 		qutils.triggerMouseEvent("oSli8", "click", 1, 116);
-		equal(oSli.getValue(), 50, "Value after click on control (without spep-wide):");
-		equal(fValueChange, 50, "Change event value after click on control (without spep-wide):");
+		assert.equal(oSli.getValue(), 50, "Value after click on control (without spep-wide):");
+		assert.equal(fValueChange, 50, "Change event value after click on control (without spep-wide):");
 
-		equal(oGrip.offsetTop, 395, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 395, "Grip position after above change: ");
 		fValueChange = -1;
 
 		qutils.triggerMouseEvent("oSli8-bar", "click", 2, 55);
-		equal(oSli.getValue(), 50, "Value after click on bar (without spep-wide):");
-		equal(fValueChange, 50, "Change event value after click on bar (without spep-wide):");
+		assert.equal(oSli.getValue(), 50, "Value after click on bar (without spep-wide):");
+		assert.equal(fValueChange, 50, "Change event value after click on bar (without spep-wide):");
 
-		equal(oGrip.offsetTop, 395, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 395, "Grip position after above change: ");
 
 		fValueChange = -1;
 		qutils.triggerMouseEvent("oSli8-left", "click", 1, 1);
-		equal(oSli.getValue(), 50, "Value after click on left end (without spep-wide):");
-		equal(fValueChange, 50, "Change event value after click on left end (without spep-wide):");
+		assert.equal(oSli.getValue(), 50, "Value after click on left end (without spep-wide):");
+		assert.equal(fValueChange, 50, "Change event value after click on left end (without spep-wide):");
 
-		equal(oGrip.offsetTop, 395, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 395, "Grip position after above change: ");
 
 		fValueChange = -1;
 		qutils.triggerMouseEvent("oSli8-right", "click", 2, 505);
-		equal(oSli.getValue(), 10, "Value after click on right end (without spep-wide):");
-		equal(fValueChange, 10, "Change event value after click on right end (without spep-wide):");
+		assert.equal(oSli.getValue(), 10, "Value after click on right end (without spep-wide):");
+		assert.equal(fValueChange, 10, "Change event value after click on right end (without spep-wide):");
 
-		equal(oGrip.offsetTop, 495, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 495, "Grip position after above change: ");
 
 		fValueChange = -1;
 		qutils.triggerMouseEvent("oSli8-tick4", "click", 2, 1);
-		equal(oSli.getValue(), 170, "Value after click on tick4 (without spep-wide):");
-		equal(fValueChange, 170, "Change event value after click on tick4 (without spep-wide):");
+		assert.equal(oSli.getValue(), 170, "Value after click on tick4 (without spep-wide):");
+		assert.equal(fValueChange, 170, "Change event value after click on tick4 (without spep-wide):");
 
-		equal(oGrip.offsetTop, 95, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 95, "Grip position after above change: ");
 		oSli.detachChange();
 	});
 
@@ -1398,30 +1398,30 @@
 		});
 		oSli.setValue(100);
 		qutils.triggerMouseEvent("oSli11", "click", 1, 117);
-		equal(oSli.getValue(), 100, "Value after click on control (read only):");
-		equal(fValueChange, -1, "Change event value after click on control (read only):");
+		assert.equal(oSli.getValue(), 100, "Value after click on control (read only):");
+		assert.equal(fValueChange, -1, "Change event value after click on control (read only):");
 
-		equal(oGrip.offsetTop, 273, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 273, "Grip position after above change: ");
 
 		qutils.triggerMouseEvent("oSli11-bar", "click", 2, 55);
-		equal(oSli.getValue(), 100, "Value after click on bar (read only):");
+		assert.equal(oSli.getValue(), 100, "Value after click on bar (read only):");
 
-		equal(oGrip.offsetTop, 273, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 273, "Grip position after above change: ");
 
 		qutils.triggerMouseEvent("oSli11-left", "click", 1, 1);
-		equal(oSli.getValue(), 100, "Value after click on left end (read only):");
+		assert.equal(oSli.getValue(), 100, "Value after click on left end (read only):");
 
-		equal(oGrip.offsetTop, 273, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 273, "Grip position after above change: ");
 
 		qutils.triggerMouseEvent("oSli11-right", "click", 2, 505);
-		equal(oSli.getValue(), 100, "Value after click on right end (read only):");
+		assert.equal(oSli.getValue(), 100, "Value after click on right end (read only):");
 
-		equal(oGrip.offsetTop, 273, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 273, "Grip position after above change: ");
 
 		qutils.triggerMouseEvent("oSli11-tick6", "click", 2, 1);
-		equal(oSli.getValue(), 100, "Value after click on tick6 (read only):");
+		assert.equal(oSli.getValue(), 100, "Value after click on tick6 (read only):");
 
-		equal(oGrip.offsetTop, 273, "Grip position after above change: ");
+		assert.equal(oGrip.offsetTop, 273, "Grip position after above change: ");
 
 		oSli.detachChange();
 	});
@@ -1430,40 +1430,40 @@
 
 	QUnit.test("Visibility", function(assert) {
 		ok(jQuery("#oSli8").get(0), "Visible: expected defined");
-		equal(jQuery("#oSli10").get(0), undefined, "Invisible:");
+		assert.equal(jQuery("#oSli10").get(0), undefined, "Invisible:");
 
 		var oTick = jQuery.sap.domById('oSli7-tick2');
-		equal(oTick, null, "No Ticks:");
+		assert.equal(oTick, null, "No Ticks:");
 		var oText = jQuery.sap.domById('oSli7-text0');
-		equal(oText, null, "No left Text:");
+		assert.equal(oText, null, "No left Text:");
 		oText = jQuery.sap.domById('oSli7-text1');
-		equal(oText, null, "No second Text:");
+		assert.equal(oText, null, "No second Text:");
 
 		oTick = null;
 		oText = null;
 		oTick = jQuery.sap.domById('oSli8-tick3');
 		ok(oTick, "Ticks visible: expected defined");
-		equal(oTick.offsetTop, 200, "3. tick position:");
+		assert.equal(oTick.offsetTop, 200, "3. tick position:");
 		oText = jQuery.sap.domById('oSli8-text0');
-		equal(oText, null, "No left Text:");
+		assert.equal(oText, null, "No left Text:");
 		oText = jQuery.sap.domById('oSli8-text1');
-		equal(oText, null, "No second Text:");
+		assert.equal(oText, null, "No second Text:");
 
 		oTick = null;
 		oText = null;
 		oTick = jQuery.sap.domById('oSli9-tick4');
 		ok(oTick, "Ticks visible: expected defined");
-		equal(oTick.offsetTop, 250, "Middle tick position:");
+		assert.equal(oTick.offsetTop, 250, "Middle tick position:");
 		oText = jQuery.sap.domById('oSli9-text0');
 		ok(oText, "left text visible: expected defined");
-		equal(jQuery(oText).text(), "10", "left text:");
+		assert.equal(jQuery(oText).text(), "10", "left text:");
 		oText = null;
 		oText = jQuery.sap.domById('oSli9-text4');
 		ok(oText, "middle text visible: expected defined");
-		equal(jQuery(oText).text(), "110", "middle text:");
+		assert.equal(jQuery(oText).text(), "110", "middle text:");
 		oText = null;
 		oText = jQuery.sap.domById('oSli9-text8');
-		equal(jQuery(oText).text(), "210", "right text:");
+		assert.equal(jQuery(oText).text(), "210", "right text:");
 		ok(oText, "right text visible: expected defined");
 	});
 

@@ -172,11 +172,11 @@
   				oBtn3.click();
 
   				setTimeout(function() {
-	  				equal(jQuery("button", oTabStrip.getDomRef()).length, 1, "TabStrip contains one button");
-					equal(jQuery("button", oTabStrip.getDomRef()).get(0).id, oBtn3.id, "TabStrip contains btn3!");
-					equal(jQuery("button", oPreserveArea).length, 2, "Hidden Area contains two hidden buttons!");
+	  				assert.equal(jQuery("button", oTabStrip.getDomRef()).length, 1, "TabStrip contains one button");
+	  				assert.equal(jQuery("button", oTabStrip.getDomRef()).get(0).id, oBtn3.id, "TabStrip contains btn3!");
+	  				assert.equal(jQuery("button", oPreserveArea).length, 2, "Hidden Area contains two hidden buttons!");
 					done();
-				}, (sap.ui.Device.browser.safari ? 2500 : 100));
+  				}, (sap.ui.Device.browser.safari ? 2500 : 100));
 
   			});
 

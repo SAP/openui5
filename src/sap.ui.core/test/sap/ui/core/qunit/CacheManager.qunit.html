@@ -175,7 +175,7 @@
 
 					return oCache[sMethod](args).then(function (value) {
 						that.instanceMock.verify();
-						equal(value, resolveValue, "Promise must be resolved with the given value");
+						assert.equal(value, resolveValue, "Promise must be resolved with the given value");
 					}, function (error) {
 						ok(false, "Calling CacheManager." + sMethod + " should have resolved, but it rejects with error [" + error + "]");
 					})
@@ -198,7 +198,7 @@
 						ok(false, "Calling CacheManager." + sMethod + " should have rejected, but it succeeds with value [" + value + "]");
 					}, function (value) {
 						that.instanceMock.verify();
-						equal(value, rejectValue, "Promise must be rejected with the given value");
+						assert.equal(value, rejectValue, "Promise must be rejected with the given value");
 					});
 				}
 			});

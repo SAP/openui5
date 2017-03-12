@@ -121,21 +121,21 @@
 
 	// assertion methods for the next 3 constructor tests
 	function assertCommonArguments(oModel) {
-		equal(oModel.sServiceUrl, sURI.substr(0, sURI.length - 1), 'serviceUrl');
-		equal(oModel.bJSON, true, 'json');
-		equal(oModel.sUser, 'user', 'user');
-		equal(oModel.sPassword, 'pa$$w0rd', 'password');
+		assert.equal(oModel.sServiceUrl, sURI.substr(0, sURI.length - 1), 'serviceUrl');
+		assert.equal(oModel.bJSON, true, 'json');
+		assert.equal(oModel.sUser, 'user', 'user');
+		assert.equal(oModel.sPassword, 'pa$$w0rd', 'password');
 		assert.deepEqual(oModel.mCustomHeaders, { foo: 'bar' }, 'headers');
-		equal(oModel.bTokenHandling, false, 'tokenHandling');
-		equal(oModel.bWithCredentials, true, 'withCredentials');
-		equal(oModel.bLoadMetadataAsync, true, 'loadMetadataAsync');
+		assert.equal(oModel.bTokenHandling, false, 'tokenHandling');
+		assert.equal(oModel.bWithCredentials, true, 'withCredentials');
+		assert.equal(oModel.bLoadMetadataAsync, true, 'loadMetadataAsync');
 	}
 	function assertLegacyArguments(oModel) {
 		// expect default values as they can't be set with as legacy arguments
-		equal(oModel.bLoadAnnotationsJoined, true, 'loadAnnotationsJoined');
+		assert.equal(oModel.bLoadAnnotationsJoined, true, 'loadAnnotationsJoined');
 		assert.deepEqual(oModel.aUrlParams, [], 'serviceUrlParams');
-		equal(oModel.oServiceData.oMetadata.sUrl, sURI + '$metadata', 'metadataUrlParams');
-		equal(oModel.sDefaultCountMode, 'Both', 'defaultCountMode');
+		assert.equal(oModel.oServiceData.oMetadata.sUrl, sURI + '$metadata', 'metadataUrlParams');
+		assert.equal(oModel.sDefaultCountMode, 'Both', 'defaultCountMode');
 		deepEqual(oModel.oServiceData.oMetadata.mNamespaces, {
 			sap:"http://www.sap.com/Protocols/SAPData",
 			m:"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata",
@@ -144,10 +144,10 @@
 	}
 	function assertObjectArguments(oModel) {
 		// can only be set with parameters object => expect different values
-		equal(oModel.bLoadAnnotationsJoined, false, 'loadAnnotationsJoined');
+		assert.equal(oModel.bLoadAnnotationsJoined, false, 'loadAnnotationsJoined');
 		assert.deepEqual(oModel.aUrlParams, [ 'foo=bar' ], 'serviceUrlParams');
-		equal(oModel.oServiceData.oMetadata.sUrl, sURI + '$metadata?bar=foo', 'metadataUrlParams');
-		equal(oModel.sDefaultCountMode, 'None', 'defaultCountMode');
+		assert.equal(oModel.oServiceData.oMetadata.sUrl, sURI + '$metadata?bar=foo', 'metadataUrlParams');
+		assert.equal(oModel.sDefaultCountMode, 'None', 'defaultCountMode');
 		assert.deepEqual(oModel.oServiceData.oMetadata.mNamespaces, { 'foo': 'bar' }, 'metadataNamespaces');
 	}
 
@@ -267,17 +267,17 @@
 			bReloadNeeded;
 
 		oModel._loadData("Employees", null, function () {
-			equal(oModel.getProperty("/Employees(2)/FirstName"), "Andrew", "Fetching initial data from absolute path");
+			assert.equal(oModel.getProperty("/Employees(2)/FirstName"), "Andrew", "Fetching initial data from absolute path");
 
 			//check if reload needed --> true
 			bReloadNeeded = oModel._isReloadNeeded("/Employees(2)", oModel.getObject("/Employees(2)"), {expand: "Employees1/Employees1/Employees1"});
-			equal(bReloadNeeded, true, "First reload needed for 3 levels of expand");
+			assert.equal(bReloadNeeded, true, "First reload needed for 3 levels of expand");
 
 			//create context for 3 levels of expand
 			oModel.createBindingContext("/Employees(2)", null, {expand: "Employees1/Employees1/Employees1"}, function (oContext){
 				//reload should not be needed anymore --> false
 				bReloadNeeded = oModel._isReloadNeeded("/Employees(2)", oModel.getObject("/Employees(2)"), {expand: "Employees1/Employees1/Employees1"});
- 				equal(bReloadNeeded, false, "Second reload should not be needed");
+ 				assert.equal(bReloadNeeded, false, "Second reload should not be needed");
 
  				done(); //resume normal testing
  			});
@@ -292,16 +292,16 @@
 
 		//Test another case with internal __ref properties instead of __list
 		oModel._loadData("Products", null, function () {
-			equal(oModel.getProperty("/Products(1)/ProductName"), "Chai", "fetching initial data from absolute path.")
+			assert.equal(oModel.getProperty("/Products(1)/ProductName"), "Chai", "fetching initial data from absolute path.")
 
 			//check if reload needed --> true
 			bReloadNeeded = oModel._isReloadNeeded("/Products(1)", oModel.getObject("/Products(1)"), {expand: "Category/Products/Supplier"});
-			equal(bReloadNeeded, true, "First reload needed for 3 levels of expand");
+			assert.equal(bReloadNeeded, true, "First reload needed for 3 levels of expand");
 
 	 		oModel.createBindingContext("/Products(1)", null, {expand: "Category/Products/Supplier"}, function (oContext){
 	 			//reload should not be needed anymore --> false
 				bReloadNeeded = oModel._isReloadNeeded("/Products(1)", oModel.getObject("/Products(1)"), {expand: "Category/Products/Supplier"});
-	 			equal(bReloadNeeded, false, "Second reload should not be needed");
+	 			assert.equal(bReloadNeeded, false, "Second reload should not be needed");
 
 	 			done(); //resume normal testing
 	 		});
@@ -329,16 +329,16 @@
 	});
 
 	function performTest(oModel){
-		equal(oModel.getProperty("/Categories(1)/CategoryName"), "Beverages", "absolute path without context");
+		assert.equal(oModel.getProperty("/Categories(1)/CategoryName"), "Beverages", "absolute path without context");
 		oModel.createBindingContext("/Categories(1)", null, function(newContext){
-			equal(newContext.getProperty("CategoryName"), "Beverages", "relative path with context");
+			assert.equal(newContext.getProperty("CategoryName"), "Beverages", "relative path with context");
 			var iLength = 0;
 			var categories = oModel.getProperty("/");
 			for (category in categories){
 				iLength++;
-				equal(categories[category].CategoryID, iLength);
+				assert.equal(categories[category].CategoryID, iLength);
 			};
-			equal(iLength, 8);
+			assert.equal(iLength, 8);
 		});
 	};
 
@@ -349,10 +349,10 @@
 
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
-			equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "CategoryName available");
-			equal(oModel.getProperty("/Categories(1)").Description, "Soft drinks, coffees, teas, beers, and ales", "Description available");
-			equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "CategoryID available");
-			equal(oBinding.getLength(), 8, "Eigth categories available");
+			assert.equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "CategoryName available");
+			assert.equal(oModel.getProperty("/Categories(1)").Description, "Soft drinks, coffees, teas, beers, and ales", "Description available");
+			assert.equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "CategoryID available");
+			assert.equal(oBinding.getLength(), 8, "Eigth categories available");
 			oBinding.detachChange(handler);
 			done();          // resume normal testing
 		};
@@ -368,10 +368,10 @@
 
 		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "Inline" });
 		var handler = function() { // delay the following test
-			equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "CategoryName available");
-			equal(oModel.getProperty("/Categories(1)").Description, "Soft drinks, coffees, teas, beers, and ales", "Description available");
-			equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "CategoryID available");
-			equal(oBinding.getLength(), 8, "Eigth categories available");
+			assert.equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "CategoryName available");
+			assert.equal(oModel.getProperty("/Categories(1)").Description, "Soft drinks, coffees, teas, beers, and ales", "Description available");
+			assert.equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "CategoryID available");
+			assert.equal(oBinding.getLength(), 8, "Eigth categories available");
 			oBinding.detachChange(handler);
 			done();          // resume normal testing
 		};
@@ -387,10 +387,10 @@
 
 		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None" });
 		var handler = function() { // delay the following test
-			equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "CategoryName available");
-			equal(oModel.getProperty("/Categories(1)").Description, "Soft drinks, coffees, teas, beers, and ales", "Description available");
-			equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "CategoryID available");
-			equal(oBinding.getLength(), 8, "Eigth categories available");
+			assert.equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "CategoryName available");
+			assert.equal(oModel.getProperty("/Categories(1)").Description, "Soft drinks, coffees, teas, beers, and ales", "Description available");
+			assert.equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "CategoryID available");
+			assert.equal(oBinding.getLength(), 8, "Eigth categories available");
 			oBinding.detachChange(handler);
 			done();          // resume normal testing
 		};
@@ -406,10 +406,10 @@
 
 		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" });
 		var handler = function() { // delay the following test
-			equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
-			equal(oModel.getProperty("/Categories(1)").Description, undefined, "other property not available");
-			equal(oModel.getProperty("/Categories(1)").CategoryID, undefined, "other property not available");
-			equal(oModel.getProperty("/Categories(1)").Picture, undefined, "other property not available");
+			assert.equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
+			assert.equal(oModel.getProperty("/Categories(1)").Description, undefined, "other property not available");
+			assert.equal(oModel.getProperty("/Categories(1)").CategoryID, undefined, "other property not available");
+			assert.equal(oModel.getProperty("/Categories(1)").Picture, undefined, "other property not available");
 			oBinding.detachChange(handler);
 			done();          // resume normal testing
 		};
@@ -425,16 +425,16 @@
 
 		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" });
 		var handler1 = function() { // delay the following test
-			equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
-			equal(oModel.getProperty("/Categories(1)").Description, undefined, "other property not available");
-			equal(oModel.getProperty("/Categories(1)").CategoryID, undefined, "other property not available");
-			equal(oModel.getProperty("/Categories(1)").Picture, undefined, "other property not available");
+			assert.equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
+			assert.equal(oModel.getProperty("/Categories(1)").Description, undefined, "other property not available");
+			assert.equal(oModel.getProperty("/Categories(1)").CategoryID, undefined, "other property not available");
+			assert.equal(oModel.getProperty("/Categories(1)").Picture, undefined, "other property not available");
 
 			oModel.createBindingContext("/Categories(1)", null, function(oContext){
 				// rest data should be there now
-				equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
-				equal(oModel.getProperty("/Categories(1)").Description, "Soft drinks, coffees, teas, beers, and ales", "test select property");
-				equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "test select property");
+				assert.equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
+				assert.equal(oModel.getProperty("/Categories(1)").Description, "Soft drinks, coffees, teas, beers, and ales", "test select property");
+				assert.equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "test select property");
 				done();          // resume normal testing
 			});
 
@@ -453,17 +453,17 @@
 
 		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" });
 		var handler1 = function() { // delay the following test
-			equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
-			equal(oModel.getProperty("/Categories(1)").Description, undefined, "other property not available");
-			equal(oModel.getProperty("/Categories(1)").CategoryID, undefined, "other property not available");
-			equal(oModel.getProperty("/Categories(1)").Picture, undefined, "other property not available");
+			assert.equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
+			assert.equal(oModel.getProperty("/Categories(1)").Description, undefined, "other property not available");
+			assert.equal(oModel.getProperty("/Categories(1)").CategoryID, undefined, "other property not available");
+			assert.equal(oModel.getProperty("/Categories(1)").Picture, undefined, "other property not available");
 
 			oModel.createBindingContext("/Categories(1)", null, {select : "CategoryID" }, function(oContext){
 				// rest select data should be there now
-				equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
-				equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "test select property");
-				equal(oModel.getProperty("/Categories(1)").Description, undefined, "other property not available");
-				equal(oModel.getProperty("/Categories(1)").Picture, undefined, "other property not available");
+				assert.equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
+				assert.equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "test select property");
+				assert.equal(oModel.getProperty("/Categories(1)").Description, undefined, "other property not available");
+				assert.equal(oModel.getProperty("/Categories(1)").Picture, undefined, "other property not available");
 				done();          // resume normal testing
 			});
 
@@ -483,8 +483,8 @@
 		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chai");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {expand : "Category" });
 		var handler1 = function() { // delay the following test
-			equal(oModel.getProperty("/Products(1)").ProductName, "Chai", "test property");
-			equal(oModel.getProperty("/Products(1)/Category").CategoryName, "Beverages", "test expand property");
+			assert.equal(oModel.getProperty("/Products(1)").ProductName, "Chai", "test property");
+			assert.equal(oModel.getProperty("/Products(1)/Category").CategoryName, "Beverages", "test expand property");
 			oBinding.detachChange(handler1);
 			done();          // resume normal testing
 		};
@@ -502,14 +502,14 @@
 		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chang");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter]);
 		var handler1 = function() { // delay the following test
-			equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
-			equal(oModel.getProperty("/Products(2)/Category"), undefined, "test expand property not there");
+			assert.equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
+			assert.equal(oModel.getProperty("/Products(2)/Category"), undefined, "test expand property not there");
 
 			oModel.createBindingContext("/Products(2)", null, {expand : "Category" }, function(oContext){
 				// rest expand data should be there now
-				equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
-				equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
-				equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "test select property");
+				assert.equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
+				assert.equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
+				assert.equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "test select property");
 				done();          // resume normal testing
 			});
 			oBinding.detachChange(handler1);
@@ -528,16 +528,16 @@
 		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chang");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {select : "Category,ProductName", expand : "Category" });
 		var handler1 = function() { // delay the following test
-			equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
-			equal(oModel.getProperty("/Products(2)").ProductID, undefined, "test property");
-			equal(oModel.getProperty("/Products(2)/Category").CategoryName, "Beverages", "test expand property");
+			assert.equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
+			assert.equal(oModel.getProperty("/Products(2)").ProductID, undefined, "test property");
+			assert.equal(oModel.getProperty("/Products(2)/Category").CategoryName, "Beverages", "test expand property");
 
 			oModel.createBindingContext("/Products(2)", null, {select : "Category, ProductID", expand : "Category" }, function(oContext){
 				// rest expand data should be there now
-				equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
-				equal(oModel.getProperty("/Products(2)").ProductID, 2, "test property");
-				equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
-				equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "test select property");
+				assert.equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
+				assert.equal(oModel.getProperty("/Products(2)").ProductID, 2, "test property");
+				assert.equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
+				assert.equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "test select property");
 				done();          // resume normal testing
 			});
 			oBinding.detachChange(handler1);
@@ -554,9 +554,9 @@
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
 		oModel._loadData("Categories", null, function(){
-			equal(oLabel.getText(),"testText", "old text value");
+			assert.equal(oLabel.getText(),"testText", "old text value");
 			oLabel.bindProperty("text", "/Categories(2)/CategoryName");
-			equal(oLabel.getText(), "Condiments", "text value from model");
+			assert.equal(oLabel.getText(), "Condiments", "text value from model");
 			oLabel.unbindProperty("text");
 			done();
 		});
@@ -568,14 +568,14 @@
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
 		oModel._loadData("Categories", null, function(){
-			equal(oLabel.getText(),"testText", "old text value");
+			assert.equal(oLabel.getText(),"testText", "old text value");
 			oLabel.bindProperty("text", "/Categories(2)/CategoryName");
-			equal(oLabel.getText(), "Condiments", "new text value from model");
+			assert.equal(oLabel.getText(), "Condiments", "new text value from model");
 			oLabel.unbindProperty("text");
 			oModel._loadData("Regions", null, function(){
-				equal(oLabel.getText(),"", "default value");
+				assert.equal(oLabel.getText(),"", "default value");
 				oLabel.bindProperty("text", "/Regions(2)/RegionID");
-				equal(oLabel.getText(), "2", "2nd new text value from model");
+				assert.equal(oLabel.getText(), "2", "2nd new text value from model");
 				oLabel.unbindProperty("text");
 				done();
 			});
@@ -588,12 +588,12 @@
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
 		oModel._loadData("Categories", null, function(){
-			equal(oLabel.getText(),"testText", "old text value");
+			assert.equal(oLabel.getText(),"testText", "old text value");
 			oLabel.bindProperty("text", "/Categories(2)/CategoryName");
-			equal(oLabel.getText(), "Condiments", "text value from model");
+			assert.equal(oLabel.getText(), "Condiments", "text value from model");
 			oModel.removeData();
 			oLabel.bindProperty("text", "/Categories(2)/CategoryName");
-			equal(oLabel.getText(), "", "text value from model");
+			assert.equal(oLabel.getText(), "", "text value from model");
 			oLabel.unbindProperty("text");
 			done();
 		});
@@ -607,11 +607,11 @@
 		oModel._loadData("Categories", null, function(){
 			oLabel.bindProperty("text", "/Categories(2)/CategoryName");
 			oModel.createBindingContext("/Categories(2)", null, function(oContext){
-				equal(oContext.getPath(), "/Categories(2)","new Context");
+				assert.equal(oContext.getPath(), "/Categories(2)","new Context");
 				oModel.createBindingContext("", oContext, function(oContext2){
-					equal(oContext2.getPath(), "/Categories(2)","new Context");
+					assert.equal(oContext2.getPath(), "/Categories(2)","new Context");
 					oModel.createBindingContext("/Products(2)", null, function(oContext3){
-						equal(oContext3.getPath(), "/Products(2)","new Context");
+						assert.equal(oContext3.getPath(), "/Products(2)","new Context");
 						done();
 					});
 				});
@@ -628,7 +628,7 @@
 		oLabel.bindElement("/Categories(2)");
 		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
-			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
 			oLabel.setBindingContext(null);
@@ -646,7 +646,7 @@
 		oLabel.bindElement("Category");
 		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
-			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
 			oLabel.setBindingContext(null);
@@ -664,7 +664,7 @@
 		oLabel.bindElement("Category");
 		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
-			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.getElementBinding().attachChange(fnHandler2);
 			oLabel.setBindingContext(null);
@@ -690,7 +690,7 @@
 		oLabel.setBindingContext(oTestContext);
 		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
-			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
 			oLabel.setBindingContext(null);
@@ -708,7 +708,7 @@
 		oLabel.setBindingContext(oTestContext);
 		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
-			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
 			oLabel.setBindingContext(null);
@@ -726,7 +726,7 @@
 		oLabel.bindElement("Category");
 		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
-			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.getElementBinding().attachChange(fnHandler2);
 			oModel.attachRequestSent(fnHandler2);
@@ -753,7 +753,7 @@
 		oLabel.bindElement("Category");
 		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
-			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.getElementBinding().attachChange(fnHandler2);
 			oModel.attachRequestSent(fnHandler2);
@@ -778,10 +778,10 @@
 		var oTestContext = oModel.getContext("/Test");
 		oLabel.setBindingContext(oTestContext);
 		var fnRequestedHandler = function() {
-			equal(true, true, "Data requested event was fired");
+			assert.equal(true, true, "Data requested event was fired");
 		};
 		var fnRecievedHandler = function() {
-			equal(true, true, "Data received event was fired");
+			assert.equal(true, true, "Data received event was fired");
 			oLabel.unbindElement();
 			done();
 		};
@@ -802,10 +802,10 @@
 		var oTestContext = oModel.getContext("/Test");
 		oLabel.setBindingContext(oTestContext);
 		var fnRequestedHandler = function() {
-			equal(true, true, "Data requested event was fired");
+			assert.equal(true, true, "Data requested event was fired");
 		};
 		var fnRecievedHandler = function() {
-			equal(true, true, "Data received event was fired");
+			assert.equal(true, true, "Data received event was fired");
 			oLabel.unbindElement();
 			done();
 		};
@@ -832,9 +832,9 @@
 
 		var handler = function() {
 			var listItems = oLB.getItems();
-			equal(listItems.length, 8, "length of items");
-			equal(listItems[0].getText(), "Beverages", "category 1 name");
-			equal(listItems[7].getAdditionalText(), "Seaweed and fish", "category 8 description");
+			assert.equal(listItems.length, 8, "length of items");
+			assert.equal(listItems[0].getText(), "Beverages", "category 1 name");
+			assert.equal(listItems[7].getAdditionalText(), "Seaweed and fish", "category 8 description");
 			oBinding.detachChange(handler);
 			done();          // resume normal testing
 		}
@@ -849,10 +849,10 @@
 
 		//Currently no event fired on bind element
 		var fnRequestedHandler = function() {
-			equal(true, true, "Data requested event was fired");
+			assert.equal(true, true, "Data requested event was fired");
 		};
 		var fnRecievedHandler = function() {
-			equal(true, true, "Data received event was fired");
+			assert.equal(true, true, "Data received event was fired");
 			done();
 		};
 		oBinding.attachDataRequested(fnRequestedHandler);
@@ -864,7 +864,7 @@
 		var oModel = initModel(sURI, false, "Categories");
 		oModel._loadData("Categories", null, function(){
 			var oBinding = oModel.bindProperty("/Categories(2)/CategoryName");
-			equal(oBinding.getValue(), "Condiments", "text value from model");
+			assert.equal(oBinding.getValue(), "Condiments", "text value from model");
 			done();
 		});
 	});
@@ -874,7 +874,7 @@
 
 		var oModel = initModel(sURI, false, "Categories");
 		oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
-			equal(oContext.getPath(), "/Products(1)", "Context path");
+			assert.equal(oContext.getPath(), "/Products(1)", "Context path");
 			ok(oContext.getProperty("Category"), "Category loaded");
 			done();          // resume normal testing
 		});
@@ -885,8 +885,8 @@
 
 		var oModel = initModel(sURI, false, "Categories");
 		oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
-			equal(oContext.getPath("Category"), "/Products(1)/Category", "Expanded entity path");
-			equal(oContext.getObject("Category").CategoryID, 1, "Expanded entity object");
+			assert.equal(oContext.getPath("Category"), "/Products(1)/Category", "Expanded entity path");
+			assert.equal(oContext.getObject("Category").CategoryID, 1, "Expanded entity object");
 			done();          // resume normal testing
 		});
 	});
@@ -896,10 +896,10 @@
 
 		var oModel = initModel(sURI, false, "Categories");
 		oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
-			equal(oModel.getKey(oContext), "Products(1)", "Context key");
-			equal(oModel.getKey(oContext.getObject("Category")), "Categories(1)", "Expanded entity key");
+			assert.equal(oModel.getKey(oContext), "Products(1)", "Context key");
+			assert.equal(oModel.getKey(oContext.getObject("Category")), "Categories(1)", "Expanded entity key");
 			var oObject = oContext.getObject();
-			equal(oModel.getKey(oContext), "Products(1)", "Context key");
+			assert.equal(oModel.getKey(oContext), "Products(1)", "Context key");
 			done();          // resume normal testing
 		});
 	});
@@ -912,17 +912,17 @@
 				uri: "http://some.host/service/Customers('%2F%3F''%2B')"
 			}
 		};
-		equal(oModel.getKey(oObject), "Customers('%2F%3F''%2B')", "Get customers key encoded");
-		equal(oModel.getKey(oObject, true), "Customers('/?''+')", "Get customers key decoded");
+		assert.equal(oModel.getKey(oObject), "Customers('%2F%3F''%2B')", "Get customers key encoded");
+		assert.equal(oModel.getKey(oObject, true), "Customers('/?''+')", "Get customers key decoded");
 	});
 
 	QUnit.test("test createKey", function(assert){
 
 		var oModel = initModel(sURI, false, "Categories");
-		equal(oModel.createKey("Products", {ProductID: 1}), "Products(1)", "Created product key");
-		equal(oModel.createKey("Order_Details", {OrderID: 1, ProductID :2}), "Order_Details(OrderID=1,ProductID=2)", "Created key with multiple key properties");
-		equal(oModel.createKey("Customers", {CustomerID: "/?'+"}), "Customers('%2F%3F''%2B')", "Created customers key encoded");
-		equal(oModel.createKey("Customers", {CustomerID: "/?'+"}, true), "Customers('/?''+')", "Created customers key decoded");
+		assert.equal(oModel.createKey("Products", {ProductID: 1}), "Products(1)", "Created product key");
+		assert.equal(oModel.createKey("Order_Details", {OrderID: 1, ProductID :2}), "Order_Details(OrderID=1,ProductID=2)", "Created key with multiple key properties");
+		assert.equal(oModel.createKey("Customers", {CustomerID: "/?'+"}), "Customers('%2F%3F''%2B')", "Created customers key encoded");
+		assert.equal(oModel.createKey("Customers", {CustomerID: "/?'+"}, true), "Customers('/?''+')", "Created customers key decoded");
 	});
 
 	QUnit.test("metadata check", function(assert){
@@ -932,14 +932,14 @@
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
 			ok(oBinding.oEntityType, "entity type binding check");
-			equal(oBinding.oEntityType.name, "Category", "entity type name check");
+			assert.equal(oBinding.oEntityType.name, "Category", "entity type name check");
 			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
 			ok(oEntityType, "get entity type check");
-			equal(oEntityType.name, "Category", "entity type name check");
+			assert.equal(oEntityType.name, "Category", "entity type name check");
 			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
 			ok(oPropMeta, "property type check");
-			equal(oPropMeta.name, "CategoryName", "entity type property check");
-			equal(oPropMeta.type, "Edm.String", "entity type property check");
+			assert.equal(oPropMeta.name, "CategoryName", "entity type property check");
+			assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
 			done();          // resume normal testing
@@ -956,37 +956,37 @@
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories");
-			equal(oResult.name, "Category", "entity type name check");
+			assert.equal(oResult.name, "Category", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories(1)");
-			equal(oResult.name, "Category", "entity type name check");
+			assert.equal(oResult.name, "Category", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories(1)/Products");
-			equal(oResult.name, "Product", "entity type name check");
+			assert.equal(oResult.name, "Product", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products(3)");
-			equal(oResult.name, "Product", "entity type name check");
+			assert.equal(oResult.name, "Product", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories(1)/CategoryName");
-			equal(oResult.name, "Category", "entity type name check");
+			assert.equal(oResult.name, "Category", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products/ProductName");
-			equal(oResult.name, "Product", "entity type name check");
+			assert.equal(oResult.name, "Product", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products/Category");
-			equal(oResult.name, "Category", "entity type name check");
+			assert.equal(oResult.name, "Category", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories(1)/Products(1)/Category");
-			equal(oResult.name, "Category", "entity type name check");
+			assert.equal(oResult.name, "Category", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products/Supplier");
-			equal(oResult.name, "Supplier", "entity type name check");
+			assert.equal(oResult.name, "Supplier", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products/Category/Supplier/Products");
-			equal(oResult.name, "Product", "entity type name check");
+			assert.equal(oResult.name, "Product", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products(4)/Category/Supplier('4')/Products/Category(1)");
-			equal(oResult.name, "Category", "entity type name check");
+			assert.equal(oResult.name, "Category", "entity type name check");
 			oResult = {};
 			oBinding.detachChange(handler);
 			done();          // resume normal testing
@@ -1003,7 +1003,7 @@
 		var oBinding = oModel.bindList("Products", new sap.ui.model.Context(oModel, "/Categories(7)"));
 		var handler = function() { // delay the following test
 			oResult = oBinding.oEntityType;
-			equal(oResult.name, "Product", "entity type name check");
+			assert.equal(oResult.name, "Product", "entity type name check");
 			oResult = {};
 			oBinding.detachChange(handler);
 			done();          // resume normal testing
@@ -1020,17 +1020,17 @@
 		var handler = function() { // delay the following test
 			oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
 			oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
-			equal(oResult.name, "CategoryName", "Property type name check");
-			equal(oResult.type, "Edm.String", "Property type name check");
+			assert.equal(oResult.name, "CategoryName", "Property type name check");
+			assert.equal(oResult.type, "Edm.String", "Property type name check");
 
 			// check nav property
 			oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "/Products/ProductName/");
-			equal(oResult.name, "ProductName", "Nav Property type name check");
-			equal(oResult.type, "Edm.String", "Nav Property type name check");
+			assert.equal(oResult.name, "ProductName", "Nav Property type name check");
+			assert.equal(oResult.type, "Edm.String", "Nav Property type name check");
 
 			oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "Products/ProductName");
-			equal(oResult.name, "ProductName", "Nav Property type name check");
-			equal(oResult.type, "Edm.String", "Nav Property type name check");
+			assert.equal(oResult.name, "ProductName", "Nav Property type name check");
+			assert.equal(oResult.type, "Edm.String", "Nav Property type name check");
 
 			oBinding.detachChange(handler);
 			done();          // resume normal testing
@@ -1047,24 +1047,24 @@
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		oModel.read("/Categories", null, null, false); // sync call
 
-		equal(spy.callCount, 1, "spy read count");
+		assert.equal(spy.callCount, 1, "spy read count");
 		ok(spy.calledOnce, "spy called once");
-		equal(spy.args[0][0].headers['myCustomHeader1'], "value1", "spy check custom header");
-		equal(spy.args[0][0].headers['myCustomHeader2'], "4.555", "spy check custom header");
+		assert.equal(spy.args[0][0].headers['myCustomHeader1'], "value1", "spy check custom header");
+		assert.equal(spy.args[0][0].headers['myCustomHeader2'], "4.555", "spy check custom header");
 
 		// override headers
 		oModel.setHeaders({"myCustomHeader1" : "666", "TesT": "new Header", "MyCustomHeader2" : "blubb"});
 		oModel.read("/Categories", null, null, false); // sync call
 
-		equal(spy.callCount, 2, "spy read count");
-		equal(spy.args[1][0].headers['myCustomHeader1'], "666", "spy check custom header");
-		equal(spy.args[1][0].headers['MyCustomHeader2'], "blubb", "spy check custom header");
-		equal(spy.args[1][0].headers['TesT'], "new Header", "spy check custom header");
+		assert.equal(spy.callCount, 2, "spy read count");
+		assert.equal(spy.args[1][0].headers['myCustomHeader1'], "666", "spy check custom header");
+		assert.equal(spy.args[1][0].headers['MyCustomHeader2'], "blubb", "spy check custom header");
+		assert.equal(spy.args[1][0].headers['TesT'], "new Header", "spy check custom header");
 
 		var aHeaders = oModel.getHeaders();
-		equal(aHeaders['myCustomHeader1'], "666", "model check custom header");
-		equal(aHeaders['MyCustomHeader2'], "blubb", "model check custom header");
-		equal(aHeaders['TesT'], "new Header", "model check custom header");
+		assert.equal(aHeaders['myCustomHeader1'], "666", "model check custom header");
+		assert.equal(aHeaders['MyCustomHeader2'], "blubb", "model check custom header");
+		assert.equal(aHeaders['TesT'], "new Header", "model check custom header");
 
 	});
 
@@ -1102,14 +1102,14 @@
 			var oBinding = oModel.bindList("/Categories");
 			var handler2 = function() { // delay the following test
 				ok(oBinding.oEntityType, "entity type binding check");
-				equal(oBinding.oEntityType.name, "Category", "entity type name check");
+				assert.equal(oBinding.oEntityType.name, "Category", "entity type name check");
 				var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
 				ok(oEntityType, "get entity type check");
-				equal(oEntityType.name, "Category", "entity type name check");
+				assert.equal(oEntityType.name, "Category", "entity type name check");
 				var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
 				ok(oPropMeta, "property type check");
-				equal(oPropMeta.name, "CategoryName", "entity type property check");
-				equal(oPropMeta.type, "Edm.String", "entity type property check");
+				assert.equal(oPropMeta.name, "CategoryName", "entity type property check");
+				assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 				oBinding.detachChange(handler2);
 				done();          // resume normal testing
@@ -1135,14 +1135,14 @@
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
 			ok(oBinding.oEntityType, "entity type binding check");
-			equal(oBinding.oEntityType.name, "Category", "entity type name check");
+			assert.equal(oBinding.oEntityType.name, "Category", "entity type name check");
 			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
 			ok(oEntityType, "get entity type check");
-			equal(oEntityType.name, "Category", "entity type name check");
+			assert.equal(oEntityType.name, "Category", "entity type name check");
 			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
 			ok(oPropMeta, "property type check");
-			equal(oPropMeta.name, "CategoryName", "entity type property check");
-			equal(oPropMeta.type, "Edm.String", "entity type property check");
+			assert.equal(oPropMeta.name, "CategoryName", "entity type property check");
+			assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
 			done();          // resume normal testing
@@ -1168,18 +1168,18 @@
 			var oEntry = oModel.getProperty("", oContext);
 			ok(oEntry, "entry check");
 
-			equal(oEntry.CategoryName, "Food", "category name check");
-			equal(oEntry.CategoryID, 99, "category ID check");
-			equal(oEntry.Description, "Food Desc", "category ID check");
+			assert.equal(oEntry.CategoryName, "Food", "category name check");
+			assert.equal(oEntry.CategoryID, 99, "category ID check");
+			assert.equal(oEntry.Description, "Food Desc", "category ID check");
 			ok(oEntry._bCreate, "check create flag");
 
 			ok(oModel.oRequestQueue[oContext.getPath().substr(1)], "queue check");
 			ok(oModel.mContexts[oContext.getPath()], "context check");
-			equal(oModel.oData[oContext.getPath().substr(1)].CategoryName, "Food", "data check");
+			assert.equal(oModel.oData[oContext.getPath().substr(1)].CategoryName, "Food", "data check");
 			oModel.deleteCreatedEntry(oContext);
-			equal(oModel.oRequestQueue[oContext.getPath().substr(1)], undefined, "queue check");
-			equal(oModel.oData[oContext.getPath().substr(1)], undefined, "data check");
-			equal(oModel.mContexts[oContext.getPath()], undefined, "context check");
+			assert.equal(oModel.oRequestQueue[oContext.getPath().substr(1)], undefined, "queue check");
+			assert.equal(oModel.oData[oContext.getPath().substr(1)], undefined, "data check");
+			assert.equal(oModel.mContexts[oContext.getPath()], undefined, "context check");
 
 			// check default values
 			oContext = oModel.createEntry("Categories");
@@ -1187,9 +1187,9 @@
 			oEntry = oModel.getProperty("", oContext);
 			ok(oEntry, "entry check");
 
-			equal(oEntry.CategoryName, undefined, "category name check");
-			equal(oEntry.CategoryID, undefined, "category ID check");
-			equal(oEntry.Description, undefined, "category ID check");
+			assert.equal(oEntry.CategoryName, undefined, "category name check");
+			assert.equal(oEntry.CategoryID, undefined, "category ID check");
+			assert.equal(oEntry.Description, undefined, "category ID check");
 			ok(oEntry._bCreate, "check create flag");
 
 			done();
@@ -1276,7 +1276,7 @@
 		oModel.destroy();
 		ok(oModel.bDestroyed, "Model should be destroyed");
 
-		equal(spy.callCount, 1, "number of requests");
+		assert.equal(spy.callCount, 1, "number of requests");
 		ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
 
 	});
@@ -1301,13 +1301,13 @@
 		oModel.destroy();
 		ok(oModel.bDestroyed, "Model should be destroyed");
 
-		equal(spy.callCount, 1, "number of requests");
+		assert.equal(spy.callCount, 1, "number of requests");
 		ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
 
 		// fire new request
 		oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" });
 		oBinding.getContexts();
-		equal(spy.callCount, 1, "number of requests");
+		assert.equal(spy.callCount, 1, "number of requests");
 		ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
 
 		oBinding.detachChange(handler1);
@@ -1328,7 +1328,7 @@
 		var done = assert.async();
 		this.oModel.read("/Categories", null, null, true, function(oData, oResponse) {
 			ok(true, "success handler called");
-			equal(oResponse.requestUri, sURI + "Categories", "request uri does not have parameters");
+			assert.equal(oResponse.requestUri, sURI + "Categories", "request uri does not have parameters");
 			done();
 		}, function() {
 			ok(false, "error handler shouldn't be called");
@@ -1340,7 +1340,7 @@
 		var done = assert.async();
 		this.oModel.read("/Categories", null, "$skip=0&$top=8", true, function(oData, oResponse) {
 			ok(true, "success handler called");
-			equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8", "request uri contains custom parameters");
+			assert.equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8", "request uri contains custom parameters");
 			done();
 		}, function() {
 			ok(false, "error handler shouldn't be called");
@@ -1352,7 +1352,7 @@
 		var done = assert.async();
 		this.oModel.read("/Categories", null, [ "$skip=0", "$top=8" ], true, function(oData, oResponse) {
 			ok(true, "success handler called");
-			equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8", "request uri contains custom parameters");
+			assert.equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8", "request uri contains custom parameters");
 			done();
 		}, function() {
 			ok(false, "error handler shouldn't be called");
@@ -1364,7 +1364,7 @@
 		var done = assert.async();
 		this.oModel.read("/Categories", null, { "horst": true }, true, function(oData, oResponse) {
 			ok(true, "success handler called");
-			equal(oResponse.requestUri, sURI + "Categories?horst=true", "request uri contains custom parameters");
+			assert.equal(oResponse.requestUri, sURI + "Categories?horst=true", "request uri contains custom parameters");
 			done();
 		}, function() {
 			ok(false, "error handler shouldn't be called");
@@ -1378,7 +1378,7 @@
 			urlParameters: "$skip=0&$top=8",
 			success: function(oData, oResponse) {
 				ok(true, "success handler called");
-				equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8", "request uri contains custom parameters");
+				assert.equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8", "request uri contains custom parameters");
 				done();
 			},
 			error: function() {
@@ -1394,7 +1394,7 @@
 			urlParameters: [ "$skip=0", "$top=8" ],
 			success: function(oData, oResponse) {
 				ok(true, "success handler called");
-				equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8", "request uri contains custom parameters");
+				assert.equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8", "request uri contains custom parameters");
 				done();
 			},
 			error: function() {
@@ -1410,7 +1410,7 @@
 			urlParameters: { "horst": true },
 			success: function(oData, oResponse) {
 				ok(true, "success handler called");
-				equal(oResponse.requestUri, sURI + "Categories?horst=true", "request uri contains custom parameters");
+				assert.equal(oResponse.requestUri, sURI + "Categories?horst=true", "request uri contains custom parameters");
 				done();
 			},
 			error: function() {
@@ -1434,7 +1434,7 @@
 			sorters: aSorters,
 			success: function(oData, oResponse) {
 				ok(true, "success handler called");
-				equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8&$orderby=CategoryName%20desc", "request uri contains custom parameters and sorter");
+				assert.equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8&$orderby=CategoryName%20desc", "request uri contains custom parameters and sorter");
 				done();
 			},
 			error: function() {
@@ -1455,7 +1455,7 @@
 			filters: aFilters,
 			success: function(oData, oResponse) {
 				ok(true, "success handler called");
-				equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=1&$filter=CategoryName%20eq%20%27Beverages%27", "request uri contains custom parameters and filter");
+				assert.equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=1&$filter=CategoryName%20eq%20%27Beverages%27", "request uri contains custom parameters and filter");
 				done();
 			},
 			error: function() {
@@ -1474,7 +1474,7 @@
 			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
 			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl(sURI+"$metadata?sap-value-list=all").then(function(oParams) {
-				equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
+				assert.equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
 				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 				ok(oModel.getServiceAnnotations(), "annotations loaded");
 				ok(oParams.entitySets, "array of entitySets returned");
@@ -1496,7 +1496,7 @@
 			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
 			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl([sURI+"$metadata?sap-value-list=Test", sURI+"$metadata?sap-value-list=Test2"]).then(function(oParams) {
-				equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
+				assert.equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
 				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 				ok(oModel.getServiceAnnotations(), "annotations loaded");
 				ok(oParams.entitySets, "array of entitySets returned");
@@ -1522,7 +1522,7 @@
 			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
 			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl("$metadata?sap-value-list=all").then(function() {
-				equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
+				assert.equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
 				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 				ok(oModel.getServiceAnnotations(), "annotations loaded");
 				done();
@@ -1622,11 +1622,11 @@
 	QUnit.test("Entityset metadata w/o context", function(assert) {
 		var done = assert.async();
 		this.oModel.getMetaModel().loaded().then(function() {
-			equal(this.oModel.getProperty("/Categories(1)/##name"), "Category");
-			equal(this.oModel.getProperty("/Categories(1)/##property/0/name"), "CategoryID");
-			equal(this.oModel.getProperty("/Categories(1)/CategoryID/##type"), "Edm.Int32");
-			equal(this.oModel.getProperty("/Categories(1)/Products(0)/##name"), "Product");
-			equal(this.oModel.getProperty("/Categories(1)/Products(0)/ProductID/##type"), "Edm.Int32");
+			assert.equal(this.oModel.getProperty("/Categories(1)/##name"), "Category");
+			assert.equal(this.oModel.getProperty("/Categories(1)/##property/0/name"), "CategoryID");
+			assert.equal(this.oModel.getProperty("/Categories(1)/CategoryID/##type"), "Edm.Int32");
+			assert.equal(this.oModel.getProperty("/Categories(1)/Products(0)/##name"), "Product");
+			assert.equal(this.oModel.getProperty("/Categories(1)/Products(0)/ProductID/##type"), "Edm.Int32");
 			done();
 		}.bind(this))
 	});
@@ -1635,11 +1635,11 @@
 		var done = assert.async();
 		this.oModel.getMetaModel().loaded().then(function() {
 			var oContext = this.oModel.getContext("/Categories(1)");
-			equal(this.oModel.getProperty("##name", oContext), "Category");
-			equal(this.oModel.getProperty("##property/0/name", oContext), "CategoryID");
-			equal(this.oModel.getProperty("CategoryID/##type", oContext), "Edm.Int32");
-			equal(this.oModel.getProperty("Products(0)/##name", oContext), "Product");
-			equal(this.oModel.getProperty("Products(0)/ProductID/##type", oContext), "Edm.Int32");
+			assert.equal(this.oModel.getProperty("##name", oContext), "Category");
+			assert.equal(this.oModel.getProperty("##property/0/name", oContext), "CategoryID");
+			assert.equal(this.oModel.getProperty("CategoryID/##type", oContext), "Edm.Int32");
+			assert.equal(this.oModel.getProperty("Products(0)/##name", oContext), "Product");
+			assert.equal(this.oModel.getProperty("Products(0)/ProductID/##type", oContext), "Edm.Int32");
 			done();
 		}.bind(this))
 	});
@@ -1675,13 +1675,13 @@
 				// Metamodel bindings trigger the creation of the metamodel, so we can wait for loaded() here
 				this.oModel.getMetaModel().loaded().then(function() {
 					ok(!propertySpy.called, "Property binding checkUpdate not called");
-					equal(oPropertyBinding.getValue(), "Produce", "Property value returns correct value");
+					assert.equal(oPropertyBinding.getValue(), "Produce", "Property value returns correct value");
 					ok(!listSpy.called, "List binding checkUpdate not called");
-					equal(oListBinding.getContexts().length, 5, "List binding returns right amount of contexts");
+					assert.equal(oListBinding.getContexts().length, 5, "List binding returns right amount of contexts");
 					ok(metaRelativeSpy.calledOnce, "Relative metamodel binding checkUpdate called once");
-					equal(oMetaBindingRelative.getValue(), "Category", "Relative metamodel binding returns correct value");
+					assert.equal(oMetaBindingRelative.getValue(), "Category", "Relative metamodel binding returns correct value");
 					ok(metaAbsoluteSpy.calledOnce, "Absolute metamodel binding checkUpdate called once");
-					equal(oMetaBindingAbsolute.getValue(), "Category", "Absolute metamodel binding returns correct value");
+					assert.equal(oMetaBindingAbsolute.getValue(), "Category", "Absolute metamodel binding returns correct value");
 					done();
 				});
 			}.bind(this));

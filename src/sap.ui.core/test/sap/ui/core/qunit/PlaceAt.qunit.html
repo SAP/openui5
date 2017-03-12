@@ -51,8 +51,8 @@
 			var oContainer = aCallResult[1];
 			ok(oContainer, "Container available"+sText);
 			if(oContainer){
-				equal(oContainer.getContent().length, iExpectedLength, "# Container children"+sText);
-				equal(oContainer.getContent()[iExpectedIndex].getId(), aCallResult[0], "Correct Position of child"+sText);
+				assert.equal(oContainer.getContent().length, iExpectedLength, "# Container children"+sText);
+				assert.equal(oContainer.getContent()[iExpectedIndex].getId(), aCallResult[0], "Correct Position of child"+sText);
 			}
 		};
 
@@ -60,8 +60,8 @@
 			var oContainer = aCallResult[1];
 			ok(oContainer, "Container available after setRoot");
 			if(oContainer){
-				equal(oContainer.getContent().length, 1, "# Container children after setRoot");
-				equal(oContainer.getContent()[0].getId(), aCallResult[0], "Correct Position of child after setRoot");
+				assert.equal(oContainer.getContent().length, 1, "# Container children after setRoot");
+				assert.equal(oContainer.getContent()[0].getId(), aCallResult[0], "Correct Position of child after setRoot");
 			}
 		};
 

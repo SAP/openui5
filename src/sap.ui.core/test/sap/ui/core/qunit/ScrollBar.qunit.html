@@ -65,15 +65,15 @@
 
 	QUnit.test("Orientation", function(assert) {
 		ok(((vSB.getVertical() !== undefined)), "should not be null or undefined");
-		equal(vSB.getVertical(), true, "This is vertical scrollbar");
+		assert.equal(vSB.getVertical(), true, "This is vertical scrollbar");
 		ok(((hSB.getVertical() !== undefined)), "should not be null or undefined");
-		equal(hSB.getVertical(), false, "This is horizontal scrollbar");
+		assert.equal(hSB.getVertical(), false, "This is horizontal scrollbar");
 	});
 
 	QUnit.test("Scroll Position", function(assert) {
 
-		equal(jQuery("#vertSB-sb").scrollTop()/vSB._iFactor, 4, "Initial scroll position is 4");
-		equal(jQuery("#horiSB-sb").scrollLeft(), 50, "Initial scroll position is 50");
+		assert.equal(jQuery("#vertSB-sb").scrollTop()/vSB._iFactor, 4, "Initial scroll position is 4");
+		assert.equal(jQuery("#horiSB-sb").scrollLeft(), 50, "Initial scroll position is 50");
 	});
 
 
@@ -82,27 +82,27 @@
 
 	QUnit.test("Orientation", function(assert) {
 		vSB.setVertical(false);
-		equal(vSB.getVertical(), false, "This is not vertical scrollbar");
+		assert.equal(vSB.getVertical(), false, "This is not vertical scrollbar");
 		vSB.setVertical(true);
-		equal(vSB.getVertical(), true, "This is vertical scrollbar");
+		assert.equal(vSB.getVertical(), true, "This is vertical scrollbar");
 	});
 
 	QUnit.test("Scroll Position", function(assert) {
 		vSB.setScrollPosition(5); // steps
 		hSB.setScrollPosition(38); // pixels
-		equal(jQuery("#vertSB-sb").scrollTop()/vSB._iFactor, 5, "scroll position should be 5");
-		equal(jQuery("#horiSB-sb").scrollLeft(), 38, "scroll position is 38");
+		assert.equal(jQuery("#vertSB-sb").scrollTop()/vSB._iFactor, 5, "scroll position should be 5");
+		assert.equal(jQuery("#horiSB-sb").scrollLeft(), 38, "scroll position is 38");
 	});
 
 	QUnit.test("Size", function(assert) {
 		vSB.setSize("100px");
-		equal(vSB.getSize(), "100px", "size of vertical scrollbar is 100px");
-		equal(hSB.getSize(), "200px", "size of horizontal scrollbar is 200");
+		assert.equal(vSB.getSize(), "100px", "size of vertical scrollbar is 100px");
+		assert.equal(hSB.getSize(), "200px", "size of horizontal scrollbar is 200");
 	});
 
 	QUnit.test("Content Size and steps", function(assert) {
-		equal(hSB.getContentSize(), "1000px", "size of content is 1000");
-		equal(vSB.getSteps(), 100, "number of steps for vertical scrollbar is 100");
+		assert.equal(hSB.getContentSize(), "1000px", "size of content is 1000");
+		assert.equal(vSB.getSteps(), 100, "number of steps for vertical scrollbar is 100");
 	});
 
 
@@ -110,13 +110,13 @@
 
 	QUnit.test("Rerender scrollbars", function(assert) {
 		var done = assert.async();
-		equal(vSB.getScrollPosition(), 5, "1scroll position should be 5");
-		equal(hSB.getScrollPosition(), 38, "1scroll position is 38");
+		assert.equal(vSB.getScrollPosition(), 5, "1scroll position should be 5");
+		assert.equal(hSB.getScrollPosition(), 38, "1scroll position is 38");
 		vSB.rerender();
 		hSB.rerender();
 		window.setTimeout(function(){
-			equal(vSB.getScrollPosition(), 5, "2scroll position should be 5");
-			equal(hSB.getScrollPosition(), 38, "2scroll position is 38");
+			assert.equal(vSB.getScrollPosition(), 5, "2scroll position should be 5");
+			assert.equal(hSB.getScrollPosition(), 38, "2scroll position is 38");
 			done();
 		}, 100);
 	});
@@ -135,8 +135,8 @@
 		}
 
 	 	setTimeout(function() {
-	 		equal(bScrolled, true, "Scroll event was fired");
-			equal(jQuery("#horiSB-sb").scrollLeft(), 15, "New scroll position of horizontal scrollbar is 15 px");
+	 		assert.equal(bScrolled, true, "Scroll event was fired");
+			assert.equal(jQuery("#horiSB-sb").scrollLeft(), 15, "New scroll position of horizontal scrollbar is 15 px");
 			done();
 		}, 100);
 	});
@@ -147,9 +147,9 @@
 		jQuery("#horiSB-sb").scrollLeft(155);
 
 		setTimeout(function() {
-			equal(vSB.getScrollPosition(), "8", "scroll position is 8 step");
+			assert.equal(vSB.getScrollPosition(), "8", "scroll position is 8 step");
 			// TODO: this is quite often failing! Check why! Maybe we increase the timeout!
-			//equal(hSB.getScrollPosition(), "155", "scroll position is 155 px");
+			//assert.equal(hSB.getScrollPosition(), "155", "scroll position is 155 px");
 			done();
 		}, 10);
 
@@ -163,7 +163,7 @@
 		vSB.setScrollPosition(300000);
 		vSB.rerender();
 		setTimeout(function() {
-			equal(vSB.getScrollPosition(), "300000", "scroll position is 300000 step");
+			assert.equal(vSB.getScrollPosition(), "300000", "scroll position is 300000 step");
 			done();
 		}, 500);
 
@@ -210,8 +210,8 @@
 
 		var self = this;
 		setTimeout(function() {
-			equal(self.oVSB.getScrollPosition(), "8", "scroll position is 8 step");
-			equal(self.oHSB.getScrollPosition(), "155", "scroll position is 155 px");
+			assert.equal(self.oVSB.getScrollPosition(), "8", "scroll position is 8 step");
+			assert.equal(self.oHSB.getScrollPosition(), "155", "scroll position is 155 px");
 			done();
 		}, 10);
 	});

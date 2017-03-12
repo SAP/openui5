@@ -316,13 +316,13 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		equal(oButton1.$().text(), "My Button 1", "Button1 should have text: My Button 1");
+		assert.equal(oButton1.$().text(), "My Button 1", "Button1 should have text: My Button 1");
 		ok(oButton2.$('img').hasClass("sapMBtnIcon"), "Button2 should have class: sapMBtnIcon");
 		ok(oButton2.$('img').hasClass("sapMImg"), "Button2 should have class: sapMImg");
-		equal(oButton2.$().text(), "", "Button2 should have no Label");
+		assert.equal(oButton2.$().text(), "", "Button2 should have no Label");
 		ok(oButton3.$('img').hasClass("sapMBtnIcon"), "Button3 should have class: sapMBtnIcon");
 		ok(oButton3.$('img').hasClass("sapUiIcon"), "Button3 should have class: sapUiIcon");
-		equal(oButton3.$().text(), "", "Button3 should have no Label");
+		assert.equal(oButton3.$().text(), "", "Button3 should have no Label");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -349,10 +349,10 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		equal(oButton1.$().text(), "My Mixed Button 1", "Button1 should have text: My Mixed Button 1");
+		assert.equal(oButton1.$().text(), "My Mixed Button 1", "Button1 should have text: My Mixed Button 1");
 		ok(oButton1.$('img').hasClass("sapMBtnIcon"), "Button2 should have class: sapMBtnIcon");
 		ok(oButton1.$('img').hasClass("sapMImg"), "Button2 should have class: sapMImg");
-		equal(oButton2.$().text(), "My Mixed Button 2", "Button2 should have text: My Mixed Button 2");
+		assert.equal(oButton2.$().text(), "My Mixed Button 2", "Button2 should have text: My Mixed Button 2");
 		ok(oButton2.$('img').hasClass("sapMBtnIcon"), "Button3 should have class: sapMBtnIcon");
 		ok(oButton2.$('img').hasClass("sapUiIcon"), "Button3 should have class: sapUiIcon");
 
@@ -1293,7 +1293,7 @@
 			selectedKey : "b2"
 		});
 
-		equal(oSetSelectedButtonSpy.callCount, 1, "setSelectedButton is called");
+		assert.equal(oSetSelectedButtonSpy.callCount, 1, "setSelectedButton is called");
 
 		// Cleanup
 		oSegmentedButton.destroy();

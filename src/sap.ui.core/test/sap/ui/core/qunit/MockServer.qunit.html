@@ -107,7 +107,7 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.statusCode, "200", "Response status is right");
+		assert.equal(oResponse.statusCode, "200", "Response status is right");
 		deepEqual(oResponse.data, [ {
 			"id" : "323233"
 		} ], "Response is right");
@@ -127,7 +127,7 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.statusCode, "200", "Response status is right");
+		assert.equal(oResponse.statusCode, "200", "Response status is right");
 		deepEqual(oResponse.data, [ {
 			"id" : "323233"
 		} ], "Response is right");
@@ -156,7 +156,7 @@
 		});
 
 		ok(!oResponse.success, "Mock server responded well");
-		equal(oResponse.statusCode, "400", "Response status is right");
+		assert.equal(oResponse.statusCode, "400", "Response status is right");
 
 		oMockServer.destroy();
 	});
@@ -182,8 +182,8 @@
 		});
 
 		ok(oResponse.success, "Mock server responded well");
-		equal(oResponse.data.d.Secret, "May the Force be with you.", "The correct entity was loaded");
-		equal(oResponse.statusCode, "200", "Response status is right");
+		assert.equal(oResponse.data.d.Secret, "May the Force be with you.", "The correct entity was loaded");
+		assert.equal(oResponse.statusCode, "200", "Response status is right");
 
 		oMockServer.destroy();
 	});
@@ -209,8 +209,8 @@
 		});
 
 		ok(oResponse.success, "Mock server responded well");
-		equal(oResponse.data.d.Secret, "Only at the end do you realize the power of the Dark Side.", "The correct entity was loaded");
-		equal(oResponse.statusCode, "200", "Response status is right");
+		assert.equal(oResponse.data.d.Secret, "Only at the end do you realize the power of the Dark Side.", "The correct entity was loaded");
+		assert.equal(oResponse.statusCode, "200", "Response status is right");
 
 		oMockServer.destroy();
 	});
@@ -264,7 +264,7 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data[0].id, "323234", "RegExp groups are used right");
+		assert.equal(oResponse.data[0].id, "323234", "RegExp groups are used right");
 
 		oMockServer.destroy();
 	});
@@ -291,7 +291,7 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data[0].id, "323234", "Id is parsed right");
+		assert.equal(oResponse.data[0].id, "323234", "Id is parsed right");
 
 		oMockServer.destroy();
 	});
@@ -394,7 +394,7 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.statusCode, "200", "Response status is right");
+		assert.equal(oResponse.statusCode, "200", "Response status is right");
 		deepEqual(oResponse.data, [ {
 			"id" : "323233"
 		} ], "Response is right");
@@ -404,7 +404,7 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data[0].id, "323234", "Id is parsed right");
+		assert.equal(oResponse.data[0].id, "323234", "Id is parsed right");
 
 		oMockServer2.stop();
 		ok(!oMockServer2.isStarted(), "Mock server 2 is stopped");
@@ -454,31 +454,31 @@
 
 		var oServer = sap.ui.core.util.MockServer._getInstance();
 
-		equal(jQuery.inArray(oMockServer, sap.ui.core.util.MockServer._aServers), 0, "Mock server is registered");
+		assert.equal(jQuery.inArray(oMockServer, sap.ui.core.util.MockServer._aServers), 0, "Mock server is registered");
 
 		ok(oMockServer, "Mock server is created");
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
 
-		equal(sap.ui.core.util.MockServer._aFilters.length, 3, "Filters are added to server");
-		equal(oServer.responses.length, 3, "Right response length at real sinonfake server obj");
+		assert.equal(sap.ui.core.util.MockServer._aFilters.length, 3, "Filters are added to server");
+		assert.equal(oServer.responses.length, 3, "Right response length at real sinonfake server obj");
 
 		oMockServer.stop();
 		ok(!oMockServer.isStarted(), "Mock server is stopped");
 
-		equal(sap.ui.core.util.MockServer._aFilters.length, 0, "Filters are removed from server");
-		equal(oServer.responses.length, 0, "Right response length on real sinonfake server obj");
+		assert.equal(sap.ui.core.util.MockServer._aFilters.length, 0, "Filters are removed from server");
+		assert.equal(oServer.responses.length, 0, "Right response length on real sinonfake server obj");
 
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started again");
-		equal(sap.ui.core.util.MockServer._aFilters.length, 3, "Filters are added to server");
-		equal(oServer.responses.length, 3, "Right response length at real sinonfake server obj");
+		assert.equal(sap.ui.core.util.MockServer._aFilters.length, 3, "Filters are added to server");
+		assert.equal(oServer.responses.length, 3, "Right response length at real sinonfake server obj");
 
 		oMockServer.destroy();
 		ok(!oMockServer.isStarted(), "Mock server is destroyed");
-		equal(sap.ui.core.util.MockServer._aFilters.length, 0, "Filters are removed from server");
-		equal(oServer.responses.length, 0, "Right response length on real sinonfake server obj");
-		equal(jQuery.inArray(oMockServer, sap.ui.core.util.MockServer._aServers), -1, "Mock server is not registered anymore");
+		assert.equal(sap.ui.core.util.MockServer._aFilters.length, 0, "Filters are removed from server");
+		assert.equal(oServer.responses.length, 0, "Right response length on real sinonfake server obj");
+		assert.equal(jQuery.inArray(oMockServer, sap.ui.core.util.MockServer._aServers), -1, "Mock server is not registered anymore");
 	});
 
 	QUnit.test("Start / Stop / Destroy all", 8, function(assert) {
@@ -636,7 +636,7 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data[0].id, "323234", "Right json is responded");
+		assert.equal(oResponse.data[0].id, "323234", "Right json is responded");
 
 		oMockServer.destroy();
 	});
@@ -665,7 +665,7 @@
 			dataType : "xml"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(getXmlNodeText(oResponse.data.firstChild), "works", "Response is right");
+		assert.equal(getXmlNodeText(oResponse.data.firstChild), "works", "Response is right");
 
 		oMockServer.destroy();
 	});
@@ -696,14 +696,14 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.test, "works", "JSON: Response is right")
+		assert.equal(oResponse.data.test, "works", "JSON: Response is right")
 
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/projects2/323234",
 			dataType : "xml"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(getXmlNodeText(oResponse.data.firstChild), "works", "Response is right");
+		assert.equal(getXmlNodeText(oResponse.data.firstChild), "works", "Response is right");
 
 		oMockServer.destroy();
 	});
@@ -749,8 +749,8 @@
 			url : "/mydummyservice/path?customParameter=123",
 		});
 
-		equal(iTesterPre, 1,"Pre function was executed");
-		equal(oResponse.data.name, "finished");
+		assert.equal(iTesterPre, 1,"Pre function was executed");
+		assert.equal(oResponse.data.name, "finished");
 		iTesterPre = 0;
 
 		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, 'path');
@@ -760,8 +760,8 @@
 			url : "/mydummyservice/path?customParameter=123",
 		});
 
-		equal(iTesterPre, 0,"Pre function was not executed");
-		equal(oResponse.data.name, "test");
+		assert.equal(iTesterPre, 0,"Pre function was not executed");
+		assert.equal(oResponse.data.name, "test");
 	    ok(oResponse.success, "Mock server responded");
 
 		oMockServer.destroy();
@@ -798,8 +798,8 @@
 		});
 
 		ok(oResponse.success, "Mock server responded - attach");
-		equal(iTesterPre, 1,"Pre function was executed");
-		equal(oResponse.data, 99, "callback on $count on entityset attach");
+		assert.equal(iTesterPre, 1,"Pre function was executed");
+		assert.equal(oResponse.data, 99, "callback on $count on entityset attach");
 		iTesterPre = 0;
 
 		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "FlightCollection");
@@ -811,8 +811,8 @@
 		});
 
 		ok(oResponse.success, "Mock server responded  - detach");
-		equal(iTesterPre, 0,"Pre function was executed");
-		equal(oResponse.data, 100, "callback on $count on entityset detach");
+		assert.equal(iTesterPre, 0,"Pre function was executed");
+		assert.equal(oResponse.data, 100, "callback on $count on entityset detach");
 
 		oMockServer.destroy();
 	});
@@ -848,8 +848,8 @@
 		});
 
 		ok(oResponse.success, "Mock server responded - attach");
-		equal(iTesterPre, 1,"Pre function was executed");
-		equal(oResponse.data, 99, "callback on $count on entityset attach");
+		assert.equal(iTesterPre, 1,"Pre function was executed");
+		assert.equal(oResponse.data, 99, "callback on $count on entityset attach");
 		iTesterPre = 0;
 
 
@@ -859,8 +859,8 @@
 		});
 
 		ok(oResponse.success, "Mock server responded - attach");
-		equal(iTesterPre, 1,"Pre function was executed");
-		equal(oResponse.data, 99, "callback on $count on entityset attach");
+		assert.equal(iTesterPre, 1,"Pre function was executed");
+		assert.equal(oResponse.data, 99, "callback on $count on entityset attach");
 		iTesterPre = 0;
 
 		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre);
@@ -872,8 +872,8 @@
 		});
 
 		ok(oResponse.success, "Mock server responded - attach");
-		equal(iTesterPost, 0,"Post function was executed");
-		equal(oResponse.data, 100, "callback on $count on entityset attach");
+		assert.equal(iTesterPost, 0,"Post function was executed");
+		assert.equal(oResponse.data, 100, "callback on $count on entityset attach");
 
         var oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection/$count",
@@ -881,8 +881,8 @@
 		});
 
 		ok(oResponse.success, "Mock server responded - attach");
-		equal(iTesterPost, 0,"Post function was executed");
-		equal(oResponse.data, 100, "callback on $count on entityset attach");
+		assert.equal(iTesterPost, 0,"Post function was executed");
+		assert.equal(oResponse.data, 100, "callback on $count on entityset attach");
 
 		oMockServer.destroy();
 	});
@@ -918,8 +918,8 @@
 		});
 
 		ok(oResponse.success, "Mock server responded - attach");
-		equal(iTesterPre, 1,"Pre function was executed");
-		equal(oResponse.data.d.results.length, 99,"callback on query options on entityset attach");
+		assert.equal(iTesterPre, 1,"Pre function was executed");
+		assert.equal(oResponse.data.d.results.length, 99,"callback on query options on entityset attach");
 		iTesterPre = 0;
 
 		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "FlightCollection");
@@ -931,8 +931,8 @@
 		});
 
 		ok(oResponse.success, "Mock server responded  - detach");
-		equal(iTesterPre, 0,"Pre function was executed");
-		equal(oResponse.data.d.results.length, 100, "callback on query options on entityset detach");
+		assert.equal(iTesterPre, 0,"Pre function was executed");
+		assert.equal(oResponse.data.d.results.length, 100, "callback on query options on entityset detach");
 
 		oMockServer.destroy();
 	});
@@ -969,8 +969,8 @@
 		});
 
 		ok(oResponse.success, "Mock server responded - attach");
-		equal(iTesterPre, 1,"Pre function was executed");
-		equal(oResponse.data.d.CARRNAME, "CARRNAME 2","callback on single entry on entityset attach");
+		assert.equal(iTesterPre, 1,"Pre function was executed");
+		assert.equal(oResponse.data.d.CARRNAME, "CARRNAME 2","callback on single entry on entityset attach");
 		iTesterPre = 0;
 
 		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
@@ -982,8 +982,8 @@
 		});
 
 		ok(oResponse.success, "Mock server responded  - detach");
-		equal(iTesterPre, 0,"Pre function was executed");
-		equal(oResponse.data.d.CARRNAME, "CARRNAME 1", "callback on single entry on entityset detach");
+		assert.equal(iTesterPre, 0,"Pre function was executed");
+		assert.equal(oResponse.data.d.CARRNAME, "CARRNAME 1", "callback on single entry on entityset detach");
 
 		oMockServer.destroy();
 	});
@@ -1019,8 +1019,8 @@
 		});
 
 		ok(oResponse.success, "Mock server responded - attach");
-		equal(iTesterPre, 1,"Pre function was executed");
-		equal(oResponse.data, 99,"callback on navigation property count attach");
+		assert.equal(iTesterPre, 1,"Pre function was executed");
+		assert.equal(oResponse.data, 99,"callback on navigation property count attach");
 		iTesterPre = 0;
 
 		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
@@ -1032,8 +1032,8 @@
 		});
 
 		ok(oResponse.success, "Mock server responded  - detach");
-		equal(iTesterPre, 0,"Pre function was executed");
-		equal(oResponse.data, 100, "callback on navigation property count detach");
+		assert.equal(iTesterPre, 0,"Pre function was executed");
+		assert.equal(oResponse.data, 100, "callback on navigation property count detach");
 
 		oMockServer.destroy();
 	});
@@ -1069,8 +1069,8 @@
 		});
 
 		ok(oResponse.success, "Mock server responded - attach");
-		equal(iTesterPre, 1,"Pre function was executed");
-		equal(oResponse.data.d.results.length, 89,"callback on navigation property query option attach");
+		assert.equal(iTesterPre, 1,"Pre function was executed");
+		assert.equal(oResponse.data.d.results.length, 89,"callback on navigation property query option attach");
 		iTesterPre = 0;
 
 		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
@@ -1082,8 +1082,8 @@
 		});
 
 		ok(oResponse.success, "Mock server responded  - detach");
-		equal(iTesterPre, 0,"Pre function was executed");
-		equal(oResponse.data.d.results.length, 90,"callback on navigation property query option detach");
+		assert.equal(iTesterPre, 0,"Pre function was executed");
+		assert.equal(oResponse.data.d.results.length, 90,"callback on navigation property query option detach");
 
 		oMockServer.destroy();
 	});
@@ -1120,9 +1120,9 @@
 		});
 
 		ok(oPostResponse.success, "Mock server responded - attach");
-		equal(iTesterPre, 1,"Pre function was executed");
-		equal(iTesterPost, 1,"Post function was executed");
-		equal(oPostResponse.statusCode, 201,"callback on post attach");
+		assert.equal(iTesterPre, 1,"Pre function was executed");
+		assert.equal(iTesterPost, 1,"Post function was executed");
+		assert.equal(oPostResponse.statusCode, 201,"callback on post attach");
 		iTesterPre = 0;
 		iTesterPost = 0;
 
@@ -1136,9 +1136,9 @@
 		});
 
 		ok(oPostResponse.success, "Mock server responded - detach");
-		equal(iTesterPre, 0,"Pre function was executed");
-		equal(iTesterPost, 0,"Post function was executed");
-		equal(oPostResponse.statusCode, 201,"callback on post detach");
+		assert.equal(iTesterPre, 0,"Pre function was executed");
+		assert.equal(iTesterPost, 0,"Post function was executed");
+		assert.equal(oPostResponse.statusCode, 201,"callback on post detach");
 
 		oMockServer.destroy();
 	});
@@ -1176,9 +1176,9 @@
 		});
 
 		ok(oPutResponse.success, "Mock server responded - attach");
-		equal(iTesterPre, 1,"Pre function was executed");
-		equal(iTesterPost, 1,"Post function was executed");
-		equal(oPutResponse.statusCode, 204,"callback on put attach");
+		assert.equal(iTesterPre, 1,"Pre function was executed");
+		assert.equal(iTesterPost, 1,"Post function was executed");
+		assert.equal(oPutResponse.statusCode, 204,"callback on put attach");
 		iTesterPre = 0;
 		iTesterPost = 0;
 
@@ -1192,9 +1192,9 @@
 		});
 
 		ok(oPutResponse.success, "Mock server responded - detach");
-		equal(iTesterPre, 0,"Pre function was executed");
-		equal(iTesterPost, 0,"Post function was executed");
-		equal(oPutResponse.statusCode, 204,"callback on put detach");
+		assert.equal(iTesterPre, 0,"Pre function was executed");
+		assert.equal(iTesterPost, 0,"Post function was executed");
+		assert.equal(oPutResponse.statusCode, 204,"callback on put detach");
 
 		oMockServer.destroy();
 	});
@@ -1235,9 +1235,9 @@
 			});
 
 		ok(oResponse.success, "Mock server responded - attach");
-		equal(iTesterPre, 1,"Pre function was executed");
-		equal(iTesterPost, 1,"Post function was executed");
-		equal(oResponse.statusCode, 204,"callback on merge attach");
+		assert.equal(iTesterPre, 1,"Pre function was executed");
+		assert.equal(iTesterPost, 1,"Post function was executed");
+		assert.equal(oResponse.statusCode, 204,"callback on merge attach");
 		iTesterPre = 0;
 	    iTesterPost = 0;
 
@@ -1252,9 +1252,9 @@
 			});
 
 		ok(oResponse.success, "Mock server responded - detach");
-		equal(iTesterPre, 0,"Pre function was executed");
-		equal(iTesterPost, 0,"Post function was executed");
-		equal(oResponse.statusCode, 204,"callback on merge detach");
+		assert.equal(iTesterPre, 0,"Pre function was executed");
+		assert.equal(iTesterPost, 0,"Post function was executed");
+		assert.equal(oResponse.statusCode, 204,"callback on merge detach");
 
 		oMockServer.destroy();
 	});
@@ -1295,9 +1295,9 @@
 			});
 
 		ok(oResponse.success, "Mock server responded - attach");
-		equal(iTesterPre, 1,"Pre function was executed");
-		equal(iTesterPost, 1,"Post function was executed");
-		equal(oResponse.statusCode, 204,"callback on merge attach");
+		assert.equal(iTesterPre, 1,"Pre function was executed");
+		assert.equal(iTesterPost, 1,"Post function was executed");
+		assert.equal(oResponse.statusCode, 204,"callback on merge attach");
 		iTesterPre = 0;
 	    iTesterPost = 0;
 
@@ -1312,9 +1312,9 @@
 			});
 
 		ok(oResponse.success, "Mock server responded - detach");
-		equal(iTesterPre, 0,"Pre function was executed");
-		equal(iTesterPost, 0,"Post function was executed");
-		equal(oResponse.statusCode, 204,"callback on merge detach");
+		assert.equal(iTesterPre, 0,"Pre function was executed");
+		assert.equal(iTesterPost, 0,"Post function was executed");
+		assert.equal(oResponse.statusCode, 204,"callback on merge detach");
 
 		oMockServer.destroy();
 	});
@@ -1350,9 +1350,9 @@
 		});
 
 		ok(oDelResponse.success, "Mock server responded - delete - attach");
-		equal(iTesterPre, 1,"Pre function was executed");
-	    equal(iTesterPost, 1,"Post function was executed");
-		equal(oDelResponse.statusCode, 204,"callback on delete attach");
+		assert.equal(iTesterPre, 1,"Pre function was executed");
+	    assert.equal(iTesterPost, 1,"Post function was executed");
+		assert.equal(oDelResponse.statusCode, 204,"callback on delete attach");
 		iTesterPre = 0;
 	    iTesterPost = 0;
 
@@ -1365,9 +1365,9 @@
 		});
 
 		ok(oDelResponse.success, "Mock server responded - detach");
-		equal(iTesterPre, 0,"Pre function was executed");
-	    equal(iTesterPost, 0,"Post function was executed");
-		equal(oDelResponse.statusCode, 204,"callback on merge detach");
+		assert.equal(iTesterPre, 0,"Pre function was executed");
+	    assert.equal(iTesterPost, 0,"Post function was executed");
+		assert.equal(oDelResponse.statusCode, 204,"callback on merge detach");
 
 		oMockServer.destroy();
 	});
@@ -1390,13 +1390,13 @@
 			}
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.statusCode, 200, "CSRF token fetched");
+		assert.equal(oResponse.statusCode, 200, "CSRF token fetched");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/SomeNonExistentEntity"
 		});
 		ok(!oResponse.success, "Mock server responded");
-		equal(oResponse.statusCode, 404, "CSRF token fetched");
+		assert.equal(oResponse.statusCode, 404, "CSRF token fetched");
 
 		oMockServer.destroy();
 
@@ -1417,7 +1417,7 @@
 			data : '{"carrid":"BB","connid":"007"}'
 		});
 		ok(oPostResponse.success, "Mock server responded the POST resquest");
-		equal(oPostResponse.statusCode, 201, "resource successfully created");
+		assert.equal(oPostResponse.statusCode, 201, "resource successfully created");
 		ok(oPostResponse.data.uri, "resource uri available");
 
 		oMockServer.destroy();
@@ -1439,14 +1439,14 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 3, "FlightCollection from json file");
+		assert.equal(oResponse.data.d.results.length, 3, "FlightCollection from json file");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/SubscriptionCollection",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 0, "SubscriptionCollection");
+		assert.equal(oResponse.data.d.results.length, 0, "SubscriptionCollection");
 
 		oMockServer.destroy();
 
@@ -1464,14 +1464,14 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 3, "FlightCollection from json file");
+		assert.equal(oResponse.data.d.results.length, 3, "FlightCollection from json file");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/SubscriptionCollection",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 0, "SubscriptionCollection");
+		assert.equal(oResponse.data.d.results.length, 0, "SubscriptionCollection");
 		oMockServer.destroy();
 
 		oMockServer = new sap.ui.core.util.MockServer({
@@ -1488,14 +1488,14 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 3, "FlightCollection from json file");
+		assert.equal(oResponse.data.d.results.length, 3, "FlightCollection from json file");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/SubscriptionCollection",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 100, "SubscriptionCollection");
+		assert.equal(oResponse.data.d.results.length, 100, "SubscriptionCollection");
 		oMockServer.destroy();
 
 		oMockServer = new sap.ui.core.util.MockServer({
@@ -1509,14 +1509,14 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 100, "FlightCollection");
+		assert.equal(oResponse.data.d.results.length, 100, "FlightCollection");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/SubscriptionCollection",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 100, "SubscriptionCollection");
+		assert.equal(oResponse.data.d.results.length, 100, "SubscriptionCollection");
 		oMockServer.destroy();
 
 		oMockServer = new sap.ui.core.util.MockServer({
@@ -1533,14 +1533,14 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 100, "FlightCollection");
+		assert.equal(oResponse.data.d.results.length, 100, "FlightCollection");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/SubscriptionCollection",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 100, "SubscriptionCollection");
+		assert.equal(oResponse.data.d.results.length, 100, "SubscriptionCollection");
 		oMockServer.destroy();
 	});
 
@@ -1564,7 +1564,7 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "?$top=1&sap-client=100");
-		equal(oResponse.data.d.results.length, 1, "?$top=1&sap-client=100")
+		assert.equal(oResponse.data.d.results.length, 1, "?$top=1&sap-client=100")
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection?$sap-client=100",
@@ -1642,7 +1642,7 @@
 			dataType : "json"
 		});
 		ok(oResponse.success);
-		equal(oResponse.data.d.EntitySets.length, 9);
+		assert.equal(oResponse.data.d.EntitySets.length, 9);
 
 		oMockServer.destroy();
 
@@ -1662,7 +1662,7 @@
 			url : "/myservice/FlightCollection",
 			dataType : "json"
 		});
-		equal(oResponse.data.d.results.length, 3);
+		assert.equal(oResponse.data.d.results.length, 3);
 
 		var aFlights = oMockServer.getEntitySetData("FlightCollection");
 
@@ -1674,7 +1674,7 @@
 			url : "/myservice/FlightCollection",
 			dataType : "json"
 		});
-		equal(oResponse.data.d.results.length, 0);
+		assert.equal(oResponse.data.d.results.length, 0);
 
 		oMockServer.destroy();
 
@@ -1683,7 +1683,7 @@
 		});
 		oMockServer.start();
 		aFlights = oMockServer.getEntitySetData("FlightCollection");
-		equal(aFlights, undefined);
+		assert.equal(aFlights, undefined);
 		oMockServer.destroy();
 
 	});
@@ -1702,13 +1702,13 @@
 			url : "/myservice/CarrierCollection",
 			dataType : "json"
 		});
-		equal(oResponse.data.d.results.length, 18);
+		assert.equal(oResponse.data.d.results.length, 18);
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection?$top=1&$expand=FlightCarrier",
 			dataType : "json"
 		});
-		equal(oResponse.data.d.results.length, 1);
+		assert.equal(oResponse.data.d.results.length, 1);
 
 		var oDeepCreate = oResponse.data.d.results[0];
 
@@ -1720,13 +1720,13 @@
 			data : JSON.stringify(oDeepCreate)
 		});
 		ok(oResponse.success, "Mock server responded the POST resquest");
-		equal(oResponse.statusCode, 201, "resource successfully created");
+		assert.equal(oResponse.statusCode, 201, "resource successfully created");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection",
 			dataType : "json"
 		});
-		equal(oResponse.data.d.results.length, 19);
+		assert.equal(oResponse.data.d.results.length, 19);
 
 		oMockServer.setEntitySetData("CarrierCollection", []);
 
@@ -1736,13 +1736,13 @@
 			data : JSON.stringify(oDeepCreate)
 		});
 		ok(oResponse.success, "Mock server responded the POST resquest");
-		equal(oResponse.statusCode, 201, "resource successfully created");
+		assert.equal(oResponse.statusCode, 201, "resource successfully created");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection",
 			dataType : "json"
 		});
-		equal(oResponse.data.d.results.length, 1);
+		assert.equal(oResponse.data.d.results.length, 1);
 
 
 		oMockServer.destroy();
@@ -1764,14 +1764,14 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "");
-		equal(oResponse.data.d.results.length, 2, "");
+		assert.equal(oResponse.data.d.results.length, 2, "");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveItemCollection",
 			dataType : "json"
 		});
 		ok(oResponse.success, "");
-		equal(oResponse.data.d.results.length, 7, "");
+		assert.equal(oResponse.data.d.results.length, 7, "");
 
 		oMockServer.destroy();
 
@@ -1842,21 +1842,21 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "FlightCollection - mock server responded");
-		equal(oResponse.data.d.results.length, 3, "FlightCollection json file");
+		assert.equal(oResponse.data.d.results.length, 3, "FlightCollection json file");
 		// Ceck TravelagencyCollection
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/TravelagencyCollection",
 			dataType : "json"
 		});
 		ok(oResponse.success, "TravelagencyCollection - mock server responded");
-		equal(oResponse.data.d.results.length, 0, "TravelagencyCollection json file");
+		assert.equal(oResponse.data.d.results.length, 0, "TravelagencyCollection json file");
 		// Ceck CarrierCollection
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection",
 			dataType : "json"
 		});
 		ok(oResponse.success, "CarrierCollection - mock server responded");
-		equal(oResponse.data.d.results.length, 0, "CarrierCollection not retrieved since it was not in aEntitySetsNames");
+		assert.equal(oResponse.data.d.results.length, 0, "CarrierCollection not retrieved since it was not in aEntitySetsNames");
 		oMockServer.destroy();
 
 		// Check simulate with specifying empty list of aEntitySetsNames - should behave as if no list was sent
@@ -1874,21 +1874,21 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "FlightCollection - mock server responded");
-		equal(oResponse.data.d.results.length, 3, "FlightCollection json file");
+		assert.equal(oResponse.data.d.results.length, 3, "FlightCollection json file");
 		// Ceck TravelagencyCollection
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/TravelagencyCollection",
 			dataType : "json"
 		});
 		ok(oResponse.success, "TravelagencyCollection - mock server responded");
-		equal(oResponse.data.d.results.length, 0, "TravelagencyCollection json file");
+		assert.equal(oResponse.data.d.results.length, 0, "TravelagencyCollection json file");
 		// Ceck CarrierCollection
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection",
 			dataType : "json"
 		});
 		ok(oResponse.success, "CarrierCollection - mock server responded");
-		equal(oResponse.data.d.results.length, 18, "CarrierCollection json file");
+		assert.equal(oResponse.data.d.results.length, 18, "CarrierCollection json file");
 		oMockServer.destroy();
 
 		// Check simulate without specifying entity sets to fetch - should retrieve all entity sets
@@ -1905,21 +1905,21 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "FlightCollection - mock server responded");
-		equal(oResponse.data.d.results.length, 3, "FlightCollection json file");
+		assert.equal(oResponse.data.d.results.length, 3, "FlightCollection json file");
 		// Ceck TravelagencyCollection
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/TravelagencyCollection",
 			dataType : "json"
 		});
 		ok(oResponse.success, "TravelagencyCollection - mock server responded");
-		equal(oResponse.data.d.results.length, 0, "TravelagencyCollection json file");
+		assert.equal(oResponse.data.d.results.length, 0, "TravelagencyCollection json file");
 		// Ceck CarrierCollection
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection",
 			dataType : "json"
 		});
 		ok(oResponse.success, "CarrierCollection - mock server responded");
-		equal(oResponse.data.d.results.length, 18, "CarrierCollection json file");
+		assert.equal(oResponse.data.d.results.length, 18, "CarrierCollection json file");
 		oMockServer.destroy();
 
 		// Check simulate with specifying wrong aEntitySetsNames - should not retrieve any entity set
@@ -1936,21 +1936,21 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "FlightCollection - mock server responded");
-		equal(oResponse.data.d.results.length, 0, "FlightCollection json file");
+		assert.equal(oResponse.data.d.results.length, 0, "FlightCollection json file");
 		// Ceck TravelagencyCollection
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/TravelagencyCollection",
 			dataType : "json"
 		});
 		ok(oResponse.success, "TravelagencyCollection - mock server responded");
-		equal(oResponse.data.d.results.length, 0, "TravelagencyCollection json file");
+		assert.equal(oResponse.data.d.results.length, 0, "TravelagencyCollection json file");
 		// Ceck CarrierCollection
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection",
 			dataType : "json"
 		});
 		ok(oResponse.success, "CarrierCollection - mock server responded");
-		equal(oResponse.data.d.results.length, 0, "CarrierCollection not retrieved since it was not in aEntitySetsNames");
+		assert.equal(oResponse.data.d.results.length, 0, "CarrierCollection not retrieved since it was not in aEntitySetsNames");
 		oMockServer.destroy();
 
 	});
@@ -1978,7 +1978,7 @@
 			dataType : "json"
 		});
 		ok(!oResponse.success);
-		equal(oResponse.statusCode, 404);
+		assert.equal(oResponse.statusCode, 404);
 
 		// Test for an illegal binary value
 		oResponse = jQuery.sap.sjax({
@@ -1986,7 +1986,7 @@
 			dataType : "json"
 		});
 		ok(!oResponse.success);
-		equal(oResponse.statusCode, 400);
+		assert.equal(oResponse.statusCode, 400);
 
 		oMockServer.destroy();
 	});
@@ -2019,7 +2019,7 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "CarrierCollection?$format=json&$top=3");
-		equal(oResponse.data.d.results.length, 3, "CarrierCollection?$format=json&$top=3");
+		assert.equal(oResponse.data.d.results.length, 3, "CarrierCollection?$format=json&$top=3");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection('carrid 1')?$format=xml",
@@ -2054,7 +2054,7 @@
 				});
 				ok(oResponse.success, "Mock server responded");
 				ok(oResponse.data.d, "single entry no OData system query options");
-				equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid%201')", "single key");
+				assert.equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid%201')", "single key");
 
 				jQuery.sap.sjax({
 					url : "/myservice/CarrierCollection(carrid='carrid 1')",
@@ -2062,7 +2062,7 @@
 				});
 				ok(oResponse.success, "Mock server responded");
 				ok(oResponse.data.d, "single entry no OData system query options");
-				equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid%201')", "single key");
+				assert.equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid%201')", "single key");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/CarrierCollection('carrid 1')/?$select=carrid",
@@ -2086,15 +2086,15 @@
 					url : "/myservice/CarrierCollection('carrid 1')/?$selsdfect=carrid",
 					dataType : "json"
 				});
-				equal(oResponse.success, false, "Mock server responded");
-				equal(oResponse.statusCode, 400, "fake query option");
+				assert.equal(oResponse.success, false, "Mock server responded");
+				assert.equal(oResponse.statusCode, 400, "fake query option");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/CarrierCollection('carrid 1')/?$top=1",
 					dataType : "json"
 				});
-				equal(oResponse.success, false, "Mock server responded");
-				equal(oResponse.statusCode, 400, "query option not valid for single entry");
+				assert.equal(oResponse.success, false, "Mock server responded");
+				assert.equal(oResponse.statusCode, 400, "query option not valid for single entry");
 				oMockServer.destroy();
 			});
 
@@ -2131,49 +2131,49 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data, 100, "$count on entityset");
+		assert.equal(oResponse.data, 100, "$count on entityset");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection/$count?$top=10",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data, 10, "$count on entityset");
+		assert.equal(oResponse.data, 10, "$count on entityset");
 
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 100, "entity set no opts.");
+		assert.equal(oResponse.data.d.results.length, 100, "entity set no opts.");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection?$top=1&format=json",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 1, "entity set with opts.");
+		assert.equal(oResponse.data.d.results.length, 1, "entity set with opts.");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection/?$top=1",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 1, "entity set / with opts.");
+		assert.equal(oResponse.data.d.results.length, 1, "entity set / with opts.");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollect",
 			dataType : "json"
 		});
 		ok(!oResponse.success, "Mock server responded");
-		equal(oResponse.statusCode, 404, "entitySet doesn't exist ");
+		assert.equal(oResponse.statusCode, 404, "entitySet doesn't exist ");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection?$fsdf=sfsdf",
 			dataType : "json"
 		});
 		ok(!oResponse.success, "Mock server responded");
-		equal(oResponse.statusCode, 400, "query option dosn't exist");
+		assert.equal(oResponse.statusCode, 400, "query option dosn't exist");
 		oMockServer.destroy();
 	});
 
@@ -2191,39 +2191,39 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 100, "navigation to collection");
-		equal(oResponse.data.d.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight", "simple navigation returns flight");
+		assert.equal(oResponse.data.d.results.length, 100, "navigation to collection");
+		assert.equal(oResponse.data.d.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight", "simple navigation returns flight");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection?$top=1&$expand=flightbooking",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results[0].fldate, oResponse.data.d.results[0].flightbooking.fldate,  "FlightCollection?$top=1&$expand=flightbooking");
+		assert.equal(oResponse.data.d.results[0].fldate, oResponse.data.d.results[0].flightbooking.fldate,  "FlightCollection?$top=1&$expand=flightbooking");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection('carrid 1')/carrierFlights/$count",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data, 100, "navigation $count");
+		assert.equal(oResponse.data, 100, "navigation $count");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection('carrid 1')/carrierFlights/$count?$skip=10",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data, 90, "navigation $count");
+		assert.equal(oResponse.data, 90, "navigation $count");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection('carrid 1')/carrierFlights/?$select=carrid,connid",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 100, "navigation to collection with OData query");
+		assert.equal(oResponse.data.d.results.length, 100, "navigation to collection with OData query");
 		equal(oResponse.data.d.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight",
 				"navigation to collection with OData query returns flight");
-		equal(countProperties(oResponse.data.d.results[0]), 3, "navigation to collection with OData query returns only 2 properties ");
+		assert.equal(countProperties(oResponse.data.d.results[0]), 3, "navigation to collection with OData query returns only 2 properties ");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection",
@@ -2238,7 +2238,7 @@
 		});
 		ok(oResponse.success, "Mock server responded");
 		ok(oResponse.data.d.carrid, "navigation to one entry");
-		equal(oResponse.data.d.__metadata.type, "RMTSAMPLEFLIGHT.Carrier", "navigation to one entry returns Carrier ");
+		assert.equal(oResponse.data.d.__metadata.type, "RMTSAMPLEFLIGHT.Carrier", "navigation to one entry returns Carrier ");
 
 		oResponse = jQuery.sap.sjax({
 			url : skey + "/FlightCarrier?$select=carrid",
@@ -2246,14 +2246,14 @@
 		});
 		ok(oResponse.success, "Mock server responded");
 		ok(oResponse.data.d.carrid, "navigation to one entry");
-		equal(oResponse.data.d.__metadata.type, "RMTSAMPLEFLIGHT.Carrier", "navigation to one entry returns Carrier ");
-		equal(countProperties(oResponse.data.d), 2, "navigation to singel entry with OData query returns only 1 properties ");
+		assert.equal(oResponse.data.d.__metadata.type, "RMTSAMPLEFLIGHT.Carrier", "navigation to one entry returns Carrier ");
+		assert.equal(countProperties(oResponse.data.d), 2, "navigation to singel entry with OData query returns only 1 properties ");
 		oResponse = jQuery.sap.sjax({
 			url : skey + "/FlightCarrier?$top=1",
 			dataType : "json"
 		});
-		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 400, "navigation to singel entry with not valid OData query ");
+		assert.equal(oResponse.success, false, "Mock server responded");
+		assert.equal(oResponse.statusCode, 400, "navigation to singel entry with not valid OData query ");
 
 		oMockServer.destroy();
 	});
@@ -2273,44 +2273,44 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 2, "query chaining worked");
-		equal(oResponse.data.d.results[0].type, "Sick Leave", "top and skip returned ok");
+		assert.equal(oResponse.data.d.results.length, 2, "query chaining worked");
+		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "top and skip returned ok");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$skip=1&$top=1",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 1, "query chaining worked");
-		equal(oResponse.data.d.results[0].type, "Sick Leave", "skip and top returned ok");
+		assert.equal(oResponse.data.d.results.length, 1, "query chaining worked");
+		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "skip and top returned ok");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$skip=1&$top=sdlfksdf",
 			dataType : "json"
 		});
-		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 400, "top invalid value ");
+		assert.equal(oResponse.success, false, "Mock server responded");
+		assert.equal(oResponse.statusCode, 400, "top invalid value ");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$skip=1.5",
 			dataType : "json"
 		});
-		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 400, "skip invalid value [not a number]");
+		assert.equal(oResponse.success, false, "Mock server responded");
+		assert.equal(oResponse.statusCode, 400, "skip invalid value [not a number]");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$skip=5,",
 			dataType : "json"
 		});
-		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 400, "skip invalid value [ends with ,]");
+		assert.equal(oResponse.success, false, "Mock server responded");
+		assert.equal(oResponse.statusCode, 400, "skip invalid value [ends with ,]");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$skip=-5",
 			dataType : "json"
 		});
-		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 400, "skip invalid value [negative]");
+		assert.equal(oResponse.success, false, "Mock server responded");
+		assert.equal(oResponse.statusCode, 400, "skip invalid value [negative]");
 
 		oMockServer.destroy();
 	});
@@ -2331,66 +2331,66 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results[0].type, "Sick Leave", "simple orderby single property");
+		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "simple orderby single property");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$orderby=type asc",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results[0].type, "Sick Leave", "simple orderby single property asc");
+		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "simple orderby single property asc");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$orderby=type desc",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results[0].type, "Vacation", "simple orderby single property desc");
+		assert.equal(oResponse.data.d.results[0].type, "Vacation", "simple orderby single property desc");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$orderby=entitlement,pendingitems",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results[0].type, "Unpaid Leave", "multiple orderby worked");
-		equal(oResponse.data.d.results[2].type, "Sick Leave", "multiple orderby worked");
+		assert.equal(oResponse.data.d.results[0].type, "Unpaid Leave", "multiple orderby worked");
+		assert.equal(oResponse.data.d.results[2].type, "Sick Leave", "multiple orderby worked");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$orderby=entitlement desc, pendingitems asc",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results[0].type, "Sick Leave", "multiple orderby asc/desc");
-		equal(oResponse.data.d.results[2].type, "Vacation", "multiple orderby asc/desc");
+		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "multiple orderby asc/desc");
+		assert.equal(oResponse.data.d.results[2].type, "Vacation", "multiple orderby asc/desc");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$orderby=entitlement%20desc%2Cpendingitems%20asc",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results[0].type, "Sick Leave", "encoded multiple orderby asc/desc");
-		equal(oResponse.data.d.results[2].type, "Vacation", "encoded multiple orderby asc/desc");
+		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "encoded multiple orderby asc/desc");
+		assert.equal(oResponse.data.d.results[2].type, "Vacation", "encoded multiple orderby asc/desc");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$orderby=entitlement descjkh",
 			dataType : "json"
 		});
-		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 400, "orderby invalid order param");
+		assert.equal(oResponse.success, false, "Mock server responded");
+		assert.equal(oResponse.statusCode, 400, "orderby invalid order param");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$orderby=entitlementFood",
 			dataType : "json"
 		});
-		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 400, "orderby invalid param");
+		assert.equal(oResponse.success, false, "Mock server responded");
+		assert.equal(oResponse.statusCode, 400, "orderby invalid param");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$orderby=type%20asc",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results[0].type, "Sick Leave", "encoded url orderby single property asc");
+		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "encoded url orderby single property asc");
 
 		oMockServer.destroy();
 	});
@@ -2421,28 +2421,28 @@
 					dataType : "json"
 				});
 				ok(oResponse.success, "Mock server responded");
-				equal(oResponse.data.d.results.length, 0, "");
+				assert.equal(oResponse.data.d.results.length, 0, "");
 
 				var oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or type eq 'Sick Leave'",
 					dataType : "json"
 				});
 				ok(oResponse.success, "A or B");
-				equal(oResponse.data.d.results.length, 2, "A or B");
+				assert.equal(oResponse.data.d.results.length, 2, "A or B");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=(type eq 'Vacation' or type eq 'Sick Leave')",
 					dataType : "json"
 				});
 				ok(oResponse.success, "(A or B)");
-				equal(oResponse.data.d.results.length, 2, "(A or B)");
+				assert.equal(oResponse.data.d.results.length, 2, "(A or B)");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection/$count?$filter=(type eq 'Vacation' or type eq 'Sick Leave')",
 					dataType : "json"
 				});
 				ok(oResponse.success, "$count on (A or B)");
-				equal(oResponse.data, 2, "(A or B)");
+				assert.equal(oResponse.data, 2, "(A or B)");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=(((type eq 'Vacation' or type eq 'Sick Leave')",
@@ -2455,77 +2455,77 @@
 					dataType : "json"
 				});
 				ok(oResponse.success, "A or B or C");
-				equal(oResponse.data.d.results.length, 3, "A or B or C");
+				assert.equal(oResponse.data.d.results.length, 3, "A or B or C");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or ",
 					dataType : "json"
 				});
 				ok(!oResponse.success, "Mock server responded");
-				equal(oResponse.statusCode, 400, "malformed: A or ");
+				assert.equal(oResponse.statusCode, 400, "malformed: A or ");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' and type eq 'Sick Leave'",
 					dataType : "json"
 				});
 				ok(oResponse.success, "A and B");
-				equal(oResponse.data.d.results.length, 0, "A and B");
+				assert.equal(oResponse.data.d.results.length, 0, "A and B");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' and type eq 'Sick Leave' or type eq 'Vacation'",
 					dataType : "json"
 				});
 				ok(oResponse.success, "A and B or C");
-				equal(oResponse.data.d.results.length, 1, "A and B or C");
+				assert.equal(oResponse.data.d.results.length, 1, "A and B or C");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or type eq 'Sick Leave' and type eq 'Sick Leave'",
 					dataType : "json"
 				});
 				ok(oResponse.success, "A or B and C");
-				equal(oResponse.data.d.results.length, 1, "A or B and C");
+				assert.equal(oResponse.data.d.results.length, 1, "A or B and C");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=(type eq 'Vacation')",
 					dataType : "json"
 				});
 				ok(oResponse.success, "(A)");
-				equal(oResponse.data.d.results.length, 1, "(A)");
+				assert.equal(oResponse.data.d.results.length, 1, "(A)");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' and (type eq 'Sick Leave' or type eq 'Vacation')",
 					dataType : "json"
 				});
 				ok(oResponse.success, "A op (B op C)");
-				equal(oResponse.data.d.results.length, 1, "A op (B op C)");
+				assert.equal(oResponse.data.d.results.length, 1, "A op (B op C)");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' and (type eq 'Sick Leave') or type eq 'Vacation'",
 					dataType : "json"
 				});
 				ok(oResponse.success, "A op (B) op C");
-				equal(oResponse.data.d.results.length, 1, "A op (B) op C");
+				assert.equal(oResponse.data.d.results.length, 1, "A op (B) op C");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=(type eq 'Vacation' and type eq 'Sick Leave') or type eq 'Vacation'",
 					dataType : "json"
 				});
 				ok(oResponse.success, "(A op B) op C");
-				equal(oResponse.data.d.results.length, 1, "(A op B) op C");
+				assert.equal(oResponse.data.d.results.length, 1, "(A op B) op C");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=(type eq 'Vacation' and type eq 'Sick Leave') or (type eq 'Vacation')",
 					dataType : "json"
 				});
 				ok(oResponse.success, "(A op B) op (C)");
-				equal(oResponse.data.d.results.length, 1, "(A op B) op (C)");
+				assert.equal(oResponse.data.d.results.length, 1, "(A op B) op (C)");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=((type eq 'Vacation' and type eq 'Sick Leave') or type eq 'Vacation')",
 					dataType : "json"
 				});
 				ok(oResponse.success, "((A op B) op C)");
-				equal(oResponse.data.d.results.length, 1, "((A op B) op C)");
+				assert.equal(oResponse.data.d.results.length, 1, "((A op B) op C)");
 
 				oResponse = jQuery.sap
 						.sjax({
@@ -2533,14 +2533,14 @@
 							dataType : "json"
 						});
 				ok(oResponse.success, "A op (B)");
-				equal(oResponse.data.d.results.length, 1, "A op (B)");
+				assert.equal(oResponse.data.d.results.length, 1, "A op (B)");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=substringof('ac', type)",
 					dataType : "json"
 				});
 				ok(oResponse.success, "Mock server responded");
-				equal(oResponse.data.d.results[0].type, "Vacation", "filter substringof('ac', type)");
+				assert.equal(oResponse.data.d.results[0].type, "Vacation", "filter substringof('ac', type)");
 
 				oResponse = jQuery.sap
 						.sjax({
@@ -2554,7 +2554,7 @@
 					dataType : "json"
 				});
 				ok(oResponse.success, "Mock server responded");
-				equal(oResponse.data.d.results[0].type, "Vacation", "filter startswith(type, 'Va')");
+				assert.equal(oResponse.data.d.results[0].type, "Vacation", "filter startswith(type, 'Va')");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=endswith(type, 've')",
@@ -2562,8 +2562,8 @@
 				});
 				ok(oResponse.success, "Mock server responded");
 
-				equal(oResponse.data.d.results[0].type, "Sick Leave", "filter endswith(type, 've')");
-				equal(oResponse.data.d.results.length, 2, "filter endswith(type, 've')");
+				assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "filter endswith(type, 've')");
+				assert.equal(oResponse.data.d.results.length, 2, "filter endswith(type, 've')");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation'",
@@ -2571,8 +2571,8 @@
 				});
 				ok(oResponse.success, "Mock server responded");
 
-				equal(oResponse.data.d.results[0].type, "Vacation", "filter type eq 'Vacation'");
-				equal(oResponse.data.d.results.length, 1, "filter type eq 'Vacation'");
+				assert.equal(oResponse.data.d.results[0].type, "Vacation", "filter type eq 'Vacation'");
+				assert.equal(oResponse.data.d.results.length, 1, "filter type eq 'Vacation'");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=type ne 'Vacation'",
@@ -2580,8 +2580,8 @@
 				});
 				ok(oResponse.success, "Mock server responded");
 
-				equal(oResponse.data.d.results[0].type, "Sick Leave", "filter type ne 'Vacation'");
-				equal(oResponse.data.d.results.length, 2, "filter type ne 'Vacation'");
+				assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "filter type ne 'Vacation'");
+				assert.equal(oResponse.data.d.results.length, 2, "filter type ne 'Vacation'");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveItemCollection?$filter=itemid gt 6",
@@ -2589,50 +2589,50 @@
 				});
 				ok(oResponse.success, "Mock server responded");
 
-				equal(oResponse.data.d.results[0].type, "Unpaid Leave", "filter itemid gt 6'");
-				equal(oResponse.data.d.results.length, 1, "itemid gt 6'");
+				assert.equal(oResponse.data.d.results[0].type, "Unpaid Leave", "filter itemid gt 6'");
+				assert.equal(oResponse.data.d.results.length, 1, "itemid gt 6'");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveItemCollection?$filter=itemid lt 6",
 					dataType : "json"
 				});
 				ok(oResponse.success, "Mock server responded");
-				equal(oResponse.data.d.results.length, 5, "itemid lt 6");
+				assert.equal(oResponse.data.d.results.length, 5, "itemid lt 6");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveItemCollection?$filter=itemid ge 6",
 					dataType : "json"
 				});
 				ok(oResponse.success, "Mock server responded");
-				equal(oResponse.data.d.results.length, 2, "itemid le 6");
+				assert.equal(oResponse.data.d.results.length, 2, "itemid le 6");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveItemCollection?$filter=itemid le 6",
 					dataType : "json"
 				});
 				ok(oResponse.success, "Mock server responded");
-				equal(oResponse.data.d.results.length, 6, "itemid le 6");
+				assert.equal(oResponse.data.d.results.length, 6, "itemid le 6");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveItemCollection?$filter=itemid lfde 6",
 					dataType : "json"
 				});
 				ok(!oResponse.success, "Mock server responded");
-				equal(oResponse.statusCode, 400, "filter option doesn't exist");
+				assert.equal(oResponse.statusCode, 400, "filter option doesn't exist");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveItemCollection?$filter=itemidFood le 6",
 					dataType : "json"
 				});
 				ok(!oResponse.success, "Mock server responded");
-				equal(oResponse.statusCode, 400, "filter path doesn't exist");
+				assert.equal(oResponse.statusCode, 400, "filter path doesn't exist");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveItemCollection?$filter=itemid%20le%206",
 					dataType : "json"
 				});
 				ok(oResponse.success, "Mock server responded");
-				equal(oResponse.data.d.results.length, 6, "itemid%20le%206");
+				assert.equal(oResponse.data.d.results.length, 6, "itemid%20le%206");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=type%20ne%20%27Vacation%27",
@@ -2640,8 +2640,8 @@
 				});
 				ok(oResponse.success, "Mock server responded");
 
-				equal(oResponse.data.d.results[0].type, "Sick Leave", "type%20ne%20%27Vacation%27");
-				equal(oResponse.data.d.results.length, 2, "type%20ne%20%27Vacation%27");
+				assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "type%20ne%20%27Vacation%27");
+				assert.equal(oResponse.data.d.results.length, 2, "type%20ne%20%27Vacation%27");
 				oMockServer.destroy();
 
 				oMockServer = new sap.ui.core.util.MockServer({
@@ -2656,7 +2656,7 @@
 					dataType : "json"
 				});
 				ok(oResponse.success, "Mock server responded");
-				equal(oResponse.data.d.results.length, 1, "flightDetails/cityFrom eq 'cityFrom 1'");
+				assert.equal(oResponse.data.d.results.length, 1, "flightDetails/cityFrom eq 'cityFrom 1'");
 
 				oMockServer.destroy();
 
@@ -2675,25 +2675,25 @@
 					url : "/myservice/Products?$filter=Discontinued eq true",
 					dataType : "json"
 				});
-				equal(oResponse.data.d.results.length, 3, "$filter=Discontinued eq true");
+				assert.equal(oResponse.data.d.results.length, 3, "$filter=Discontinued eq true");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/Products?$top=1&$orderby=ProductID desc",
 					dataType : "json"
 				});
-				equal(oResponse.data.d.results[0].ProductID, 20, "$filter=Discontinued eq 1");
+				assert.equal(oResponse.data.d.results[0].ProductID, 20, "$filter=Discontinued eq 1");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/Products?$filter=UnitsInStock lt 40",
 					dataType : "json"
 				});
-				equal(oResponse.data.d.results.length, 15, "$filter=UnitsInStock lt 40");
+				assert.equal(oResponse.data.d.results.length, 15, "$filter=UnitsInStock lt 40");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/Products?$filter=(UnitsInStock eq 120)",
 					dataType : "json"
 				});
-				equal(oResponse.data.d.results.length, 1, "$filter=(UnitsInStock eq 120)");
+				assert.equal(oResponse.data.d.results.length, 1, "$filter=(UnitsInStock eq 120)");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/Products(5)/Category",
@@ -2705,7 +2705,7 @@
 					url : "/myservice/Products?$filter=UnitsInStock eq (120)",
 					dataType : "json"
 				});
-				equal(oResponse.data.d.results.length, 1, "$filter=UnitsInStock eq (120)");
+				assert.equal(oResponse.data.d.results.length, 1, "$filter=UnitsInStock eq (120)");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/Order_Details?$filter=UnitPrice le 100M",
@@ -2731,7 +2731,7 @@
 					dataType : "json"
 				});
 				ok(oResponse.success, "/myservice/Products?$top=20&$filter=Category/CategoryName eq 'Beverages'&$expand=Category");
-				equal(oResponse.data.d.results[0].Category.CategoryName, "Beverages");
+				assert.equal(oResponse.data.d.results[0].Category.CategoryName, "Beverages");
 
 				oMockServer.destroy();
 
@@ -2753,7 +2753,7 @@
 		});
 		ok(oResponse.success, "Mock server responded");
 
-		equal(countProperties(oResponse.data.d.results[0]), 2, "select 1 property");
+		assert.equal(countProperties(oResponse.data.d.results[0]), 2, "select 1 property");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$select=type, availablebalance",
@@ -2761,7 +2761,7 @@
 		});
 		ok(oResponse.success, "Mock server responded");
 
-		equal(countProperties(oResponse.data.d.results[0]), 3, "select 2 properties");
+		assert.equal(countProperties(oResponse.data.d.results[0]), 3, "select 2 properties");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?%24select=type%2Cavailablebalance",
@@ -2769,21 +2769,21 @@
 		});
 		ok(oResponse.success, "Mock server responded");
 
-		equal(countProperties(oResponse.data.d.results[0]), 3, "select 2 properties encoded");
+		assert.equal(countProperties(oResponse.data.d.results[0]), 3, "select 2 properties encoded");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$select=*",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(countProperties(oResponse.data.d.results[0]), 8, "select all properties by *");
+		assert.equal(countProperties(oResponse.data.d.results[0]), 8, "select all properties by *");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$select=sdfsdf",
 			dataType : "json"
 		});
 		ok(!oResponse.success, "Mock server responded");
-		equal(oResponse.statusCode, 404, "select parm invalid");
+		assert.equal(oResponse.statusCode, 404, "select parm invalid");
 
 		oMockServer.destroy();
 	});
@@ -2803,28 +2803,28 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.__count, 3, "inlinecount = allpages, with count = 3 ");
+		assert.equal(oResponse.data.d.__count, 3, "inlinecount = allpages, with count = 3 ");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$inlinecount=none",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.__count, undefined, "inlinecount = none,  No count ");
+		assert.equal(oResponse.data.d.__count, undefined, "inlinecount = none,  No count ");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$inlinecount=sfg",
 			dataType : "json"
 		});
 		ok(!oResponse.success, "Mock server responded");
-		equal(oResponse.statusCode, 400, "inlinecount parm invalid");
+		assert.equal(oResponse.statusCode, 400, "inlinecount parm invalid");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$inlinecount=",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.statusCode, 200, "inlinecount parm is missing");
+		assert.equal(oResponse.statusCode, 200, "inlinecount parm is missing");
 
 		oMockServer.destroy();
 	});
@@ -2852,7 +2852,7 @@
 			});
 			ok(oResponse.success, "Mock server responded");
 			ok(oResponse.data.d.results[0].FlightCarrier.CARRNAME, "expand with multiplicity one");
-			equal(oResponse.data.d.results.length, 1, "expand and top");
+			assert.equal(oResponse.data.d.results.length, 1, "expand and top");
 
 			oResponse = jQuery.sap.sjax({
 				url : "/myservice/FlightCollection?$top=1",
@@ -2882,8 +2882,8 @@
 				dataType : "json"
 			});
 			ok(oResponse.success, "Mock server responded");
-			equal(oResponse.data.d.results.length, 100, "Expand with nav- return 100 nav entries");
-			equal(oResponse.data.d.results[0].fldate, oResponse.data.d.results[0].flightbooking.fldate);
+			assert.equal(oResponse.data.d.results.length, 100, "Expand with nav- return 100 nav entries");
+			assert.equal(oResponse.data.d.results[0].fldate, oResponse.data.d.results[0].flightbooking.fldate);
 
 			oResponse = jQuery.sap.sjax({
 				url : "/myservice/CarrierCollection?$expand=carrierFlights/flightbooking",
@@ -2917,8 +2917,8 @@
 				url : "/myservice/FlightCollection?$top=1&$expand=FlightFood",
 				dataType : "json"
 			});
-			equal(oResponse.success, false, "Mock server responded");
-			equal(oResponse.statusCode, 404, "expand with false navigation property path");
+			assert.equal(oResponse.success, false, "Mock server responded");
+			assert.equal(oResponse.statusCode, 404, "expand with false navigation property path");
 			oMockServer.destroy();
 			oMockServer = new sap.ui.core.util.MockServer({
 				rootUri : "/myservice/"
@@ -2934,8 +2934,8 @@
 				dataType : "json"
 			});
 			ok(oResponse.success, "200");
-			equal(oResponse.data.d.Contacts.results[0].Attachments.results[0].name, "name 1", "Contacts/Attachments");
-			equal(oResponse.data.d.Contacts.results[0].Account.name1, "name1 1", "Contacts/Account");
+			assert.equal(oResponse.data.d.Contacts.results[0].Attachments.results[0].name, "name 1", "Contacts/Attachments");
+			assert.equal(oResponse.data.d.Contacts.results[0].Account.name1, "name1 1", "Contacts/Account");
 
 			oMockServer.destroy();
 		});
@@ -2956,7 +2956,7 @@
 		});
 
 		ok(oResponse.success, "Mock server responded with success");
-		equal(oResponse.data.d.results.length, 3, "3 entries found with search and search-focus (key)");
+		assert.equal(oResponse.data.d.results.length, 3, "3 entries found with search and search-focus (key)");
 
 		//No search focus (=search on all key fields)
 		oResponse = jQuery.sap.sjax({
@@ -2964,7 +2964,7 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded with success");
-		equal(oResponse.data.d.results.length, 3, "3 entries found without search-focus (only search)");
+		assert.equal(oResponse.data.d.results.length, 3, "3 entries found without search-focus (only search)");
 
 		//Non-key search focus
 		oResponse = jQuery.sap.sjax({
@@ -2972,7 +2972,7 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded with success");
-		equal(oResponse.data.d.results.length, 2, "2 entries found with search and non-key search-focus");
+		assert.equal(oResponse.data.d.results.length, 2, "2 entries found with search and non-key search-focus");
 
 		//Neagtive test: search with not existing value
 		oResponse = jQuery.sap.sjax({
@@ -2980,7 +2980,7 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded with success");
-		equal(oResponse.data.d.results.length, 0, "0 entries found with search for not existing value");
+		assert.equal(oResponse.data.d.results.length, 0, "0 entries found with search for not existing value");
 
 		oMockServer.destroy();
 	});
@@ -3000,8 +3000,8 @@
 			dataType : "json"
 		});
 		ok(oResponse.success);
-		equal(oResponse.data.d.results.length ,100, "Expand and select multi respone count");
-		equal(oResponse.data.d.results[0].to_ListTypeGroupAssignment.results[0].ListTypeGroup ,'ListTypeGroup 1', "Expand and select multi value");
+		assert.equal(oResponse.data.d.results.length ,100, "Expand and select multi respone count");
+		assert.equal(oResponse.data.d.results[0].to_ListTypeGroupAssignment.results[0].ListTypeGroup ,'ListTypeGroup 1', "Expand and select multi value");
 		oMockServer.destroy();
 	});
 
@@ -3033,29 +3033,29 @@
 			url : "/myservice/LeaveItemCollection(dummykey='1', employeeid='JSMITH',type='Vacation')",
 			dataType : "json"
 		});
-		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 400, "false key");
+		assert.equal(oResponse.success, false, "Mock server responded");
+		assert.equal(oResponse.statusCode, 400, "false key");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveItemCollection(itemid='dummyValue', employeeid='JSMITH',type='Vacation')",
 			dataType : "json"
 		});
-		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 404, "false key value");
+		assert.equal(oResponse.success, false, "Mock server responded");
+		assert.equal(oResponse.statusCode, 404, "false key value");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveItemCollection(key='keyvalue')",
 			dataType : "json"
 		});
-		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 400, "no commas");
+		assert.equal(oResponse.success, false, "Mock server responded");
+		assert.equal(oResponse.statusCode, 400, "no commas");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveItemCollection('keyvalue')",
 			dataType : "json"
 		});
-		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 400, "single key only value");
+		assert.equal(oResponse.success, false, "Mock server responded");
+		assert.equal(oResponse.statusCode, 400, "single key only value");
 
 		oMockServer.destroy();
 	});
@@ -3073,8 +3073,8 @@
 			url : "/myservice/FlightCollection(carrid='AA',connid='0017',fldate=dattime'2010-10-20T00%3A00%3A00')",
 			dataType : "json"
 		});
-		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 404, "dattime is written incorrect (datetime)");
+		assert.equal(oResponse.success, false, "Mock server responded");
+		assert.equal(oResponse.statusCode, 404, "dattime is written incorrect (datetime)");
 
 		oMockServer.destroy();
 
@@ -3090,8 +3090,8 @@
 			url : "/myservice/Titles(1)",
 			dataType : "json"
 		});
-		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 400, "unquoted key value - 1 key without key name");
+		assert.equal(oResponse.success, false, "Mock server responded");
+		assert.equal(oResponse.statusCode, 400, "unquoted key value - 1 key without key name");
 
 		oMockServer.destroy();
 
@@ -3108,8 +3108,8 @@
 			url : "/myservice/LeaveItemCollection(employeeid='JSMITH',itemid = 1 ,type='Vacation')",
 			dataType : "json"
 		});
-		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 400, "unquoted key value of itemid key name");
+		assert.equal(oResponse.success, false, "Mock server responded");
+		assert.equal(oResponse.statusCode, 400, "unquoted key value of itemid key name");
 
 		oMockServer.destroy();
 	});
@@ -3129,7 +3129,7 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 100, "100 entities generated");
+		assert.equal(oResponse.data.d.results.length, 100, "100 entities generated");
 
 		var oPostResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/Items",
@@ -3137,14 +3137,14 @@
 			data : '{"type":"Vacation","from":"2014-03-26","to":"2014-03-27","length":"1 day","state":"Pending"}'
 		});
 		ok(oPostResponse.success, "Mock server responded the POST resquest");
-		equal(oPostResponse.statusCode, 201, "resource successfully created");
+		assert.equal(oPostResponse.statusCode, 201, "resource successfully created");
 		ok(oPostResponse.data.d.type, "New entry created");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveItemCollection",
 			dataType : "json"
 		});
-		equal(oResponse.data.d.results.length, 101, "101 entities read");
+		assert.equal(oResponse.data.d.results.length, 101, "101 entities read");
 
 		var oPutResponse = jQuery.sap.sjax({
 			url : oPostResponse.data.uri,
@@ -3152,13 +3152,13 @@
 			data : '{"type":"Vacation","from":"2014-03-27","to":"2014-03-28","length":"1 day","state":"Pending"}'
 		});
 		ok(oPutResponse.success, "Mock server responded the PUT resquest");
-		equal(oPutResponse.statusCode, 204, "resource successfully updated");
+		assert.equal(oPutResponse.statusCode, 204, "resource successfully updated");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveItemCollection",
 			dataType : "json"
 		});
-		equal(oResponse.data.d.results.length, 101, "101 entities returned");
+		assert.equal(oResponse.data.d.results.length, 101, "101 entities returned");
 
 		// read the just created resource again
 		var oGetResponse = jQuery.sap.sjax({
@@ -3166,27 +3166,27 @@
 			type : 'GET',
 		});
 		ok(oGetResponse.success, "Mock server responded the GET request");
-		equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
+		assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
 
 		var oDelResponse = jQuery.sap.sjax({
 			url : oPostResponse.data.uri,
 			type : 'DELETE',
 		});
 		ok(oDelResponse.success, "Mock server responded the DELETE request");
-		equal(oDelResponse.statusCode, 204, "resource successfully deleted");
+		assert.equal(oDelResponse.statusCode, 204, "resource successfully deleted");
 		// Try to read the just delted resource -this shall fail
 		var oGetAgainResponse = jQuery.sap.sjax({
 			url : oPostResponse.data.uri,
 			type : 'GET',
 		});
-		equal(oGetAgainResponse.success, false, "Mock server responded the GET request");
-		equal(oGetAgainResponse.statusCode, 404, "Read of deleted resource intensionally failed");
+		assert.equal(oGetAgainResponse.success, false, "Mock server responded the GET request");
+		assert.equal(oGetAgainResponse.statusCode, 404, "Read of deleted resource intensionally failed");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveItemCollection",
 			dataType : "json"
 		});
-		equal(oResponse.data.d.results.length, 100, "100 entities returned");
+		assert.equal(oResponse.data.d.results.length, 100, "100 entities returned");
 
 		oMockServer.destroy();
 
@@ -3206,7 +3206,7 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 100, "100 entities generated");
+		assert.equal(oResponse.data.d.results.length, 100, "100 entities generated");
 
 		var oPostResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection",
@@ -3214,14 +3214,14 @@
 			data : '{"carrid1":"BB","connid":"007","fldate":"\/Date(1287532800000)\/"}'
 		});
 		ok(oPostResponse.success, "Mock server responded the POST resquest");
-		equal(oPostResponse.statusCode, 201, "resource successfully created");
+		assert.equal(oPostResponse.statusCode, 201, "resource successfully created");
 		ok(oPostResponse.data.uri, "resource uri available");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection",
 			dataType : "json"
 		});
-		equal(oResponse.data.d.results.length, 101, "101 entities returned");
+		assert.equal(oResponse.data.d.results.length, 101, "101 entities returned");
 
 		var oPutResponse = jQuery.sap.sjax({
 			url : oPostResponse.data.uri,
@@ -3229,7 +3229,7 @@
 			data : '{"carrid":"BB","connid":"008","fldate":"\/Date(1287532800000)\/"}'
 		});
 		ok(oPutResponse.success, "Mock server responded the PUT resquest");
-		equal(oPutResponse.statusCode, 204, "resource successfully updated");
+		assert.equal(oPutResponse.statusCode, 204, "resource successfully updated");
 
 		oPutResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
@@ -3237,13 +3237,13 @@
 			data : '{"carrid":"BB","connid":"009"}'
 		});
 		ok(oPutResponse.success, "Mock server responded the PUT resquest");
-		equal(oPutResponse.statusCode, 204, "resource successfully updated");
+		assert.equal(oPutResponse.statusCode, 204, "resource successfully updated");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection",
 			dataType : "json"
 		});
-		equal(oResponse.data.d.results.length, 101, "101 entities returned");
+		assert.equal(oResponse.data.d.results.length, 101, "101 entities returned");
 
         // read the just created resource again with encode datetime
         var oGetResponse = jQuery.sap.sjax({
@@ -3251,8 +3251,8 @@
 			type : 'GET',
 		});
 		ok(oGetResponse.success, "Mock server responded the GET request");
-		equal(oGetResponse.statusCode, 200, "re-read of new resource successfull with encoded datetime");
-		equal(oGetResponse.data.d.connid, "009", "re-read of new resource successfull with encoded datetime");
+		assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull with encoded datetime");
+		assert.equal(oGetResponse.data.d.connid, "009", "re-read of new resource successfull with encoded datetime");
 
 
 		// read the just created resource again
@@ -3261,28 +3261,28 @@
 			type : 'GET',
 		});
 		ok(oGetResponse.success, "Mock server responded the GET request");
-		equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
-		equal(oGetResponse.data.d.connid, "009", "re-read of new resource successfull");
+		assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
+		assert.equal(oGetResponse.data.d.connid, "009", "re-read of new resource successfull");
 
 		var oDelResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection(carrid='BB',connid='009',fldate=datetime'2010-10-20T00:00:00')",
 			type : 'DELETE',
 		});
 		ok(oDelResponse.success, "Mock server responded the DELETE request");
-		equal(oDelResponse.statusCode, 204, "resource successfully deleted");
+		assert.equal(oDelResponse.statusCode, 204, "resource successfully deleted");
 		// Try to read the just delted resource -this shall fail
 		var oGetAgainResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection(carrid='BB',connid='009',fldate=datetime'2010-10-20T00:00:00')",
 			type : 'GET',
 		});
-		equal(oGetAgainResponse.success, false, "Mock server responded the GET request");
-		equal(oGetAgainResponse.statusCode, 404, "Read of deleted resource intensionally failed");
+		assert.equal(oGetAgainResponse.success, false, "Mock server responded the GET request");
+		assert.equal(oGetAgainResponse.statusCode, 404, "Read of deleted resource intensionally failed");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection",
 			dataType : "json"
 		});
-		equal(oResponse.data.d.results.length, 100, "100 entities returned");
+		assert.equal(oResponse.data.d.results.length, 100, "100 entities returned");
 
 		oMockServer.destroy();
 
@@ -3305,7 +3305,7 @@
 					dataType : "xml"
 				});
 				ok(oResponse.success, "Mock server responded");
-				equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right")
+				assert.equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right")
 
 				var oPostResponse = jQuery.sap
 						.sjax({
@@ -3314,7 +3314,7 @@
 							data : '{"type":"Vacation","from":"2013-09-26","to":"2013-09-27","length":"1 day","state":"Pending"}'
 						});
 				ok(oPostResponse.success, "Mock server responded the POST resquest");
-				equal(oPostResponse.statusCode, 201, "resource successfully created");
+				assert.equal(oPostResponse.statusCode, 201, "resource successfully created");
 				ok(oPostResponse.data.uri, "resource uri available");
 
 				var oPutResponse = jQuery.sap.sjax({
@@ -3323,7 +3323,7 @@
 					data : '{"type":"Vacation","from":"2013-10-26","to":"2013-10-27","length":"1 day","state":"Pending"}'
 				});
 				ok(oPutResponse.success, "Mock server responded the POST resquest");
-				equal(oPutResponse.statusCode, 204, "resource successfully created");
+				assert.equal(oPutResponse.statusCode, 204, "resource successfully created");
 
 				// read the just created resource again
 				var oGetResponse = jQuery.sap.sjax({
@@ -3331,21 +3331,21 @@
 					type : 'GET',
 				});
 				ok(oGetResponse.success, "Mock server responded the GET request");
-				equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
+				assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
 
 				var oDelResponse = jQuery.sap.sjax({
 					url : oPostResponse.data.uri,
 					type : 'DELETE',
 				});
 				ok(oDelResponse.success, "Mock server responded the DELETE request");
-				equal(oDelResponse.statusCode, 204, "resource successfully deleted");
+				assert.equal(oDelResponse.statusCode, 204, "resource successfully deleted");
 				// Try to read the just delted resource -this shall fail
 				var oGetAgainResponse = jQuery.sap.sjax({
 					url : oPostResponse.data.uri,
 					type : 'GET',
 				});
-				equal(oGetAgainResponse.success, false, "Mock server responded the GET request");
-				equal(oGetAgainResponse.statusCode, 404, "Read of deleted resource intensionally failed");
+				assert.equal(oGetAgainResponse.success, false, "Mock server responded the GET request");
+				assert.equal(oGetAgainResponse.statusCode, 404, "Read of deleted resource intensionally failed");
 
 				oMockServer.destroy();
 
@@ -3399,14 +3399,14 @@
 				aBatchChangeOperations.push(oPostOp);
 
 				var fnSuccess = function(oData, oResponse) {
-					equal(oResponse.statusCode, 202, "batch completed");
-					equal(oData.__batchResponses[0].statusCode, 200, "oData first read succeeded");
-					equal(oData.__batchResponses[1].statusCode, 200, "oData second read succeeded");
-					equal(oResponse.data.__batchResponses[0].statusCode, 200, "oResponse first read succeeded");
+					assert.equal(oResponse.statusCode, 202, "batch completed");
+					assert.equal(oData.__batchResponses[0].statusCode, 200, "oData first read succeeded");
+					assert.equal(oData.__batchResponses[1].statusCode, 200, "oData second read succeeded");
+					assert.equal(oResponse.data.__batchResponses[0].statusCode, 200, "oResponse first read succeeded");
 
-					equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 204, "oData put succeeded");
-					equal(oData.__batchResponses[2].__changeResponses[2].statusCode, 204, "oData delete succeeded");
-					equal(oData.__batchResponses[2].__changeResponses[3].statusCode, 201, "oData post succeeded");
+					assert.equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 204, "oData put succeeded");
+					assert.equal(oData.__batchResponses[2].__changeResponses[2].statusCode, 204, "oData delete succeeded");
+					assert.equal(oData.__batchResponses[2].__changeResponses[3].statusCode, 201, "oData post succeeded");
 				};
 
 				var fnError = function(oError) {
@@ -3467,16 +3467,16 @@
 				aBatchSecondChangeOperations.push(oPostOp_2);
 
 				var fnSuccess = function(oData, oResponse) {
-					equal(oResponse.statusCode, 202, "batch completed");
-					equal(oData.__batchResponses[0].statusCode, 200, "oData first read succeeded");
-					equal(oResponse.data.__batchResponses[0].statusCode, 200, "oResponse first read succeeded");
+					assert.equal(oResponse.statusCode, 202, "batch completed");
+					assert.equal(oData.__batchResponses[0].statusCode, 200, "oData first read succeeded");
+					assert.equal(oResponse.data.__batchResponses[0].statusCode, 200, "oResponse first read succeeded");
 
-					equal(oData.__batchResponses[1].__changeResponses[0].statusCode, 204, "oData put succeeded");
-					equal(oData.__batchResponses[1].__changeResponses[1].statusCode, 204, "oData delete succeeded");
-					equal(oData.__batchResponses[1].__changeResponses[2].statusCode, 201, "oData post succeeded");
+					assert.equal(oData.__batchResponses[1].__changeResponses[0].statusCode, 204, "oData put succeeded");
+					assert.equal(oData.__batchResponses[1].__changeResponses[1].statusCode, 204, "oData delete succeeded");
+					assert.equal(oData.__batchResponses[1].__changeResponses[2].statusCode, 201, "oData post succeeded");
 
-					equal(oData.__batchResponses[2].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
-					equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 201, "oData post succeeded");
+					assert.equal(oData.__batchResponses[2].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
+					assert.equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 201, "oData post succeeded");
 				};
 
 				var fnError = function(oError) {
@@ -3544,22 +3544,22 @@
 				aBatchSecondChangeOperations.push(oPostOp_2);
 
 				var fnSuccess = function(oData, oResponse) {
-					equal(oResponse.statusCode, 202, "batch completed");
-					equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
-					equal(oData.__batchResponses[1].message, "HTTP request failed", "HTTP request failed");
-					equal(oData.__batchResponses[1].response.statusCode, 400, "StatusCode is propagated");
-					equal(oData.__batchResponses[1].response.statusText, "Bad Request", "StatusText is propagated");
+					assert.equal(oResponse.statusCode, 202, "batch completed");
+					assert.equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
+					assert.equal(oData.__batchResponses[1].message, "HTTP request failed", "HTTP request failed");
+					assert.equal(oData.__batchResponses[1].response.statusCode, 400, "StatusCode is propagated");
+					assert.equal(oData.__batchResponses[1].response.statusText, "Bad Request", "StatusText is propagated");
 					// read to verify no changes made
 					var oGetResponse = jQuery.sap.sjax({
 						url : '/mock/LeaveHeaderCollection',
 						type : 'GET',
 					});
 					ok(oGetResponse.success, "Mock server responded the GET request");
-					equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
-					equal(oGetResponse.data.d.results[0].employeeid, "Gal Roter2", "no changes after rollback");
+					assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
+					assert.equal(oGetResponse.data.d.results[0].employeeid, "Gal Roter2", "no changes after rollback");
 
-					equal(oData.__batchResponses[2].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
-					equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 201, "oData post succeeded");
+					assert.equal(oData.__batchResponses[2].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
+					assert.equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 201, "oData post succeeded");
 				};
 
 				var fnError = function(oError) {
@@ -3627,20 +3627,20 @@
 				aBatchSecondChangeOperations.push(oPostOp);
 
 				var fnSuccess = function(oData, oResponse) {
-					equal(oResponse.statusCode, 202, "batch completed");
-					equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
-					equal(oData.__batchResponses[1].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
-					equal(oData.__batchResponses[1].__changeResponses[1].statusCode, 201, "oData post succeeded");
+					assert.equal(oResponse.statusCode, 202, "batch completed");
+					assert.equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
+					assert.equal(oData.__batchResponses[1].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
+					assert.equal(oData.__batchResponses[1].__changeResponses[1].statusCode, 201, "oData post succeeded");
 					// read to verify no changes made
 					var oGetResponse = jQuery.sap.sjax({
 						url : '/mock/LeaveHeaderCollection',
 						type : 'GET',
 					});
 					ok(oGetResponse.success, "Mock server responded the GET request");
-					equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
-					equal(oGetResponse.data.d.results[0].employeeid, "Gal Roter2", "no changes after rollback");
+					assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
+					assert.equal(oGetResponse.data.d.results[0].employeeid, "Gal Roter2", "no changes after rollback");
 
-					equal(oData.__batchResponses[2].message, "HTTP request failed", "HTTP request failed");
+					assert.equal(oData.__batchResponses[2].message, "HTTP request failed", "HTTP request failed");
 
 				};
 
@@ -3688,9 +3688,9 @@
 				aBatchFirstChangeOperations.push(oPostOp);
 
 				var fnSuccess = function(oData, oResponse) {
-					equal(oResponse.statusCode, 202, "batch completed");
-					equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
-					equal(oData.__batchResponses[1].statusCode, 204, "oData  read succeeded");
+					assert.equal(oResponse.statusCode, 202, "batch completed");
+					assert.equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
+					assert.equal(oData.__batchResponses[1].statusCode, 204, "oData  read succeeded");
 				};
 
 				var fnError = function(oError) {
@@ -3729,9 +3729,9 @@
 		aBatchReadOperations.push(oSecGetOp);
 
 		var fnSuccess = function(oData, oResponse) {
-			equal(oResponse.statusCode, 202, "batch completed");
-			equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
-			equal(oData.__batchResponses[1].response.statusCode, 400, "Second Read failed due to incorrect syntax");
+			assert.equal(oResponse.statusCode, 202, "batch completed");
+			assert.equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
+			assert.equal(oData.__batchResponses[1].response.statusCode, 400, "Second Read failed due to incorrect syntax");
 		};
 
 		var fnError = function(oError) {
@@ -3921,20 +3921,20 @@
 			dataType : "xml"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right")
+		assert.equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right")
 
 		var oModel = initModel(sURI, true);
 		var oBinding = oModel.bindList("/LeaveHeaderCollection");
 		var handler = function() { // delay the following test
 			ok(oBinding.oEntityType, "entity type binding check");
-			equal(oBinding.oEntityType.name, "LeaveHeader", "entity type name check");
+			assert.equal(oBinding.oEntityType.name, "LeaveHeader", "entity type name check");
 			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/LeaveHeaderCollection");
 			ok(oEntityType, "get entity type check");
-			equal(oEntityType.name, "LeaveHeader", "entity type name check");
+			assert.equal(oEntityType.name, "LeaveHeader", "entity type name check");
 			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "type");
 			ok(oPropMeta, "property type check");
-			equal(oPropMeta.name, "type", "entity type property check");
-			equal(oPropMeta.type, "Edm.String", "entity type property check");
+			assert.equal(oPropMeta.name, "type", "entity type property check");
+			assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
 			done(); // resume normal testing
@@ -3959,20 +3959,20 @@
 			dataType : "xml"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right")
+		assert.equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right")
 
 		var oModel = initModel(sURI, true);
 		var oBinding = oModel.bindList("/LeaveHeaderCollection");
 		var handler = function() { // delay the following test
 			ok(oBinding.oEntityType, "entity type binding check");
-			equal(oBinding.oEntityType.name, "LeaveHeader", "entity type name check");
+			assert.equal(oBinding.oEntityType.name, "LeaveHeader", "entity type name check");
 			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/LeaveHeaderCollection");
 			ok(oEntityType, "get entity type check");
-			equal(oEntityType.name, "LeaveHeader", "entity type name check");
+			assert.equal(oEntityType.name, "LeaveHeader", "entity type name check");
 			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "type");
 			ok(oPropMeta, "property type check");
-			equal(oPropMeta.name, "type", "entity type property check");
-			equal(oPropMeta.type, "Edm.String", "entity type property check");
+			assert.equal(oPropMeta.name, "type", "entity type property check");
+			assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
 			done(); // resume normal testing
@@ -3999,20 +3999,20 @@
 			dataType : "xml"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right");
+		assert.equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right");
 
 		var oModel = initModel(sURI, true);
 		var oBinding = oModel.bindList("/LeaveHeaderCollection");
 		var handler = function() { // delay the following test
 			ok(oBinding.oEntityType, "entity type binding check");
-			equal(oBinding.oEntityType.name, "LeaveHeader", "entity type name check");
+			assert.equal(oBinding.oEntityType.name, "LeaveHeader", "entity type name check");
 			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/LeaveHeaderCollection");
 			ok(oEntityType, "get entity type check");
-			equal(oEntityType.name, "LeaveHeader", "entity type name check");
+			assert.equal(oEntityType.name, "LeaveHeader", "entity type name check");
 			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "type");
 			ok(oPropMeta, "property type check");
-			equal(oPropMeta.name, "type", "entity type property check");
-			equal(oPropMeta.type, "Edm.String", "entity type property check");
+			assert.equal(oPropMeta.name, "type", "entity type property check");
+			assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
 			done(); // resume normal testing
@@ -4037,7 +4037,7 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 1, "flightDetails/cityFrom eq 'cityFrom 1'");
+		assert.equal(oResponse.data.d.results.length, 1, "flightDetails/cityFrom eq 'cityFrom 1'");
 
 		oMockServer.destroy();
 	});
@@ -4057,14 +4057,14 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 18, "successfuly parsed the GW response for collection");
+		assert.equal(oResponse.data.d.results.length, 18, "successfuly parsed the GW response for collection");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/TravelagencyCollection",
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 0, "invalid GW response for collection");
+		assert.equal(oResponse.data.d.results.length, 0, "invalid GW response for collection");
 
 		oMockServer.destroy();
 	});
@@ -4084,158 +4084,158 @@
 		//Query negative tests
 		oModel.read('LeaveHeaderCollection?$ski=5', null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, "'$ski' is not a valid system query option");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, "'$ski' is not a valid system query option");
 		});
 
 		oModel.read('LeaveHeaderCollection?$select=type, availablebalance,', null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES, "The URI is violating the construction rules defined in the Data Services specification [, at the end of string]");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES, "The URI is violating the construction rules defined in the Data Services specification [, at the end of string]");
 		});
 
 		oModel.read('LeaveHeaderCollection?$skip=5,', null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES, "skip invalid value [ends with ,]");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES, "skip invalid value [ends with ,]");
 		});
 
 		//skip & top
 		oModel.read('LeaveHeaderCollection?$skip=1&$top=sdlfksdf', null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value , oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE , "top invalid value");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value , oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE , "top invalid value");
 		});
 
 		oModel.read('LeaveHeaderCollection?$skip=1.5', null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE, "skip invalid value [not an integer]");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE, "skip invalid value [not an integer]");
 		});
 
 		oModel.read('LeaveHeaderCollection?$top=x', null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE, "top invalid value [not an integer]");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE, "top invalid value [not an integer]");
 		});
 
 		//orderby
 		oModel.read("LeaveHeaderCollection?$orderby=entitlement descjkh", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, "Invalid sortorder 'descjkh' detected", "Invalid sortorder 'descjkh' detected");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Invalid sortorder 'descjkh' detected", "Invalid sortorder 'descjkh' detected");
 		});
 		oModel.read("LeaveHeaderCollection?$orderby=entitlementFood", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, "Property 'entitlementFood' not found", "Property 'entitlementFood' not found");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Property 'entitlementFood' not found", "Property 'entitlementFood' not found");
 		});
 
 		//filter
 		oModel.read("LeaveHeaderCollection?$filter=(((type eq 'Vacation' or type eq 'Sick Leave')", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, "Property '((type' not found", "Property '((type' not found");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Property '((type' not found", "Property '((type' not found");
 		});
 		oModel.read("LeaveHeaderCollection?$filter=type eq 'Vacation' or ", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_FILTER_QUERY_STATEMENT, "Invalid filter query statement");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_FILTER_QUERY_STATEMENT, "Invalid filter query statement");
 		});
 		oModel.read("LeaveItemCollection?$filter=itemid lfde 6", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_FILTER_QUERY_STATEMENT, "Invalid filter query statement ((filter option 'lfde' doesn't exist))");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_FILTER_QUERY_STATEMENT, "Invalid filter query statement ((filter option 'lfde' doesn't exist))");
 		});
 		oModel.read("LeaveItemCollection?$filter=itemidFood le 6", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, "Property 'itemidFood' not found", "Property 'itemidFood' not found");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Property 'itemidFood' not found", "Property 'itemidFood' not found");
 		});
 
 		//select
 		oModel.read("LeaveHeaderCollection?$select=sdfsdf", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 404, "status code = 404");
-			equal(JSON.parse(oResult.response.body).error.message.value, "Resource not found for the segment 'sdfsdf'", "Resource not found for the segment 'sdfsdf'");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 404, "status code = 404");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Resource not found for the segment 'sdfsdf'", "Resource not found for the segment 'sdfsdf'");
 		});
 
 		//inlinecount
 		oModel.read("LeaveHeaderCollection?$inlinecount=sfg", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE, "InlineCount: " + oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE);
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE, "InlineCount: " + oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE);
 		});
 
 		//format
 		oModel.read("LeaveHeaderCollection?$format=xml", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.UNSUPPORTED_FORMAT_VALUE, "Format: " + oMockServer._oErrorMessages.UNSUPPORTED_FORMAT_VALUE);
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.UNSUPPORTED_FORMAT_VALUE, "Format: " + oMockServer._oErrorMessages.UNSUPPORTED_FORMAT_VALUE);
 		});
 
 		//Single entry negative tests
 		oModel.read("LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/?$select=type,", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES, "The URI is violating the construction rules defined in the Data Services specification [, at the end of string]");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES, "The URI is violating the construction rules defined in the Data Services specification [, at the end of string]");
 		});
 
 		oModel.read("LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/?$blabla=type", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, "'$blabla' is not a valid system query option", "'$blabla' is not a valid system query option (single)");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, "'$blabla' is not a valid system query option", "'$blabla' is not a valid system query option (single)");
 		});
 
 		oModel.read("LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/?$top=1", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, "'$top' is not a valid system query option", "'$top' is not a valid system query option (single)");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, "'$top' is not a valid system query option", "'$top' is not a valid system query option (single)");
 		});
 
 		//key
 		oModel.read("LeaveItemCollection(itemid='dummy', employeeid='JSMITH',type='Vacation')", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 404, "status code = 404");
-			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.RESOURCE_NOT_FOUND, oMockServer._oErrorMessages.RESOURCE_NOT_FOUND);
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 404, "status code = 404");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.RESOURCE_NOT_FOUND, oMockServer._oErrorMessages.RESOURCE_NOT_FOUND);
 		});
 
 		oModel.read("LeaveItemCollection(dummy='1', employeeid='JSMITH',type='Vacation')", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, "Invalid key name in key predicate. Expected name is 'employeeid,itemid,type'", "Invalid key name in key predicate. Expected name is 'employeeid,itemid,type'");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Invalid key name in key predicate. Expected name is 'employeeid,itemid,type'", "Invalid key name in key predicate. Expected name is 'employeeid,itemid,type'");
 		});
 		oModel.read("LeaveItemCollection(employeeid='JSMITH',type='Vacation')", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_KEY_PREDICATE_QUANTITY, oMockServer._oErrorMessages.INVALID_KEY_PREDICATE_QUANTITY);
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_KEY_PREDICATE_QUANTITY, oMockServer._oErrorMessages.INVALID_KEY_PREDICATE_QUANTITY);
 		});
 		oModel.read("LeaveItemCollection(itemid='1, employeeid='JSMITH',type='Vacation')", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 400, "status code = 400");
-			equal(JSON.parse(oResult.response.body).error.message.value, "Malformed URI literal syntax in key 'itemid'", "Malformed URI literal syntax in key 'itemid'");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 400, "status code = 400");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Malformed URI literal syntax in key 'itemid'", "Malformed URI literal syntax in key 'itemid'");
 		});
 		oMockServer.destroy();
 
@@ -4251,16 +4251,16 @@
 
 		oModel.read("FlightCollection?$expand=FlightFood", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 404, "status code = 404");
-			equal(JSON.parse(oResult.response.body).error.message.value, "Resource not found for the segment 'FlightFood'", "Resource not found for the segment 'FlightFood'");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 404, "status code = 404");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Resource not found for the segment 'FlightFood'", "Resource not found for the segment 'FlightFood'");
 		});
 
 		oModel.read("CarrierCollection('carrid 1')/carrierFlights?$expand=flightbooking1", null, null, false, function() {
 		}, function(oResult) {
-			equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			equal(oResult.response.statusCode, 404, "status code = 404");
-			equal(JSON.parse(oResult.response.body).error.message.value, "Resource not found for the segment 'flightbooking1'", "Resource not found for the segment 'flightbooking1'");
+			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oResult.response.statusCode, 404, "status code = 404");
+			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Resource not found for the segment 'flightbooking1'", "Resource not found for the segment 'flightbooking1'");
 		});
 		oMockServer.destroy();
 });
@@ -4280,8 +4280,8 @@ QUnit.test("test navigation properties with mocked data", function(assert) {
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 4, "navigation to collection");
-		equal(oResponse.data.d.results[0].__metadata.type, "FRA_STRATEGY_DERIVATION_SRV.StrategyDerivationRequestResult", "simple navigation returns StrategyDerivationRequestResult obj");
+		assert.equal(oResponse.data.d.results.length, 4, "navigation to collection");
+		assert.equal(oResponse.data.d.results[0].__metadata.type, "FRA_STRATEGY_DERIVATION_SRV.StrategyDerivationRequestResult", "simple navigation returns StrategyDerivationRequestResult obj");
 
 		oMockServer.destroy();
 });
@@ -4307,8 +4307,8 @@ QUnit.test("test ODataModel update", function(assert) {
 				url : "/myservice/CarrierCollection('carrid 1')",
 				dataType : "json"
 			});
-			equal(oResponse.data.d.CARRNAME, "USD");
-			equal(oResponse.data.d.mimeType, "mimeType 1");
+			assert.equal(oResponse.data.d.CARRNAME, "USD");
+			assert.equal(oResponse.data.d.mimeType, "mimeType 1");
 			done();
 		}, function() {
 			done();
@@ -4334,19 +4334,19 @@ QUnit.test("test ODataModel update", function(assert) {
 
 		var oModel = initModel(sURI, true);
 		oModel._loadData("LeaveHeaderCollection", null, function() {
-			equal(oModel.getProperty("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/type"), "Vacation",
+			assert.equal(oModel.getProperty("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/type"), "Vacation",
 					"absolute path without context");
-			equal(oModel.getProperty("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/employeeid"), "JSMITH",
+			assert.equal(oModel.getProperty("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/employeeid"), "JSMITH",
 					"absolute path without context");
 			oModel.createBindingContext("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", null, function(newContext) {
-				equal(newContext.getProperty("employeeid"), "JSMITH", "relative path with context");
+				assert.equal(newContext.getProperty("employeeid"), "JSMITH", "relative path with context");
 				var iLength = 0;
 				var employee = oModel.getProperty("/");
 				var iKeys = 0;
 				jQuery.each(employee, function(iIndex, sKey) {
 					iKeys++;
 				});
-				equal(iKeys, 3);
+				assert.equal(iKeys, 3);
 				done(); // resume normal testing
 			});
 		});
@@ -4362,9 +4362,9 @@ QUnit.test("test ODataModel update", function(assert) {
 		var oModel = initModel(sURI, true);
 		sap.ui.getCore().setModel(oModel);
 		oModel._loadData("LeaveItemCollection", null, function() {
-			equal(oLabel.getText(), "testText", "old text value");
+			assert.equal(oLabel.getText(), "testText", "old text value");
 			oLabel.bindProperty("text", "/LeaveItemCollection(employeeid='JSMITH',itemid='1',type='Vacation')/from");
-			equal(oLabel.getText(), "2012-12-27", "text value from model");
+			assert.equal(oLabel.getText(), "2012-12-27", "text value from model");
 			oLabel.unbindProperty("text");
 			done();
 		});
@@ -4376,14 +4376,14 @@ QUnit.test("test ODataModel update", function(assert) {
 		var oModel = initModel(sURI, true);
 		sap.ui.getCore().setModel(oModel);
 		oModel._loadData("LeaveItemCollection", null, function() {
-			equal(oLabel.getText(), "testText", "old text value");
+			assert.equal(oLabel.getText(), "testText", "old text value");
 			oLabel.bindProperty("text", "/LeaveItemCollection(employeeid='JSMITH',itemid='1',type='Vacation')/from");
-			equal(oLabel.getText(), "2012-12-27", "new text value from model");
+			assert.equal(oLabel.getText(), "2012-12-27", "new text value from model");
 			oLabel.unbindProperty("text");
 			oModel._loadData("LeaveHeaderCollection", null, function() {
-				equal(oLabel.getText(), "", "default value");
+				assert.equal(oLabel.getText(), "", "default value");
 				oLabel.bindProperty("text", "/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/type");
-				equal(oLabel.getText(), "Vacation", "2nd new text value from model");
+				assert.equal(oLabel.getText(), "Vacation", "2nd new text value from model");
 				oLabel.unbindProperty("text");
 				done();
 			});
@@ -4403,8 +4403,8 @@ QUnit.test("test ODataModel update", function(assert) {
 
 		var handler = function() {
 			var listItems = oList.getItems();
-			equal(listItems.length, 3, "length of items");
-			equal(listItems[0].getText(), "Vacation", "LeaveHeader 1 name");
+			assert.equal(listItems.length, 3, "length of items");
+			assert.equal(listItems[0].getText(), "Vacation", "LeaveHeader 1 name");
 			oBinding.detachChange(handler);
 			done(); // resume normal testing
 		}
@@ -4417,11 +4417,11 @@ QUnit.test("test ODataModel update", function(assert) {
 		var oBinding = oModel.bindList("/LeaveItemCollection");
 
 		var handler = function() {
-			equal(oBinding.getPath(), "/LeaveItemCollection", "ListBinding path");
+			assert.equal(oBinding.getPath(), "/LeaveItemCollection", "ListBinding path");
 			ok(oBinding.getModel() == oModel, "ListBinding model");
-			equal(oBinding.getLength(), 7, "length of items");
+			assert.equal(oBinding.getLength(), 7, "length of items");
 			jQuery(oBinding.getContexts()).each(function(i, context) {
-				equal(context.getObject().itemid, (i + 1) + "", "ListBinding context");
+				assert.equal(context.getObject().itemid, (i + 1) + "", "ListBinding context");
 			});
 			oBinding.detachChange(handler);
 			done(); // resume normal testing

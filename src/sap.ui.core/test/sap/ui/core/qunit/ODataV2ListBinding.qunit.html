@@ -70,11 +70,11 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		oModel.metadataLoaded().then(function(){
 			var oBinding = oModel.bindList("/Categories");
 			var handler = function() {
-				equal(oBinding.getPath(), "/Categories", "ListBinding path");
+				assert.equal(oBinding.getPath(), "/Categories", "ListBinding path");
 				ok(oBinding.getModel() == oModel, "ListBinding model");
-				equal(oBinding.getLength(), 8, "length of items");
+				assert.equal(oBinding.getLength(), 8, "length of items");
 				jQuery(oBinding.getContexts()).each(function(i, context){
-					equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
+					assert.equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
 				});
 				oBinding.detachChange(handler);
 				done(); // resume normal testing
@@ -93,14 +93,14 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		oModel.metadataLoaded().then(function(){
 			var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: sap.ui.model.odata.CountMode.None} );
 			var handler = function() {
-				equal(oBinding.getPath(), "/Categories", "ListBinding path");
+				assert.equal(oBinding.getPath(), "/Categories", "ListBinding path");
 				ok(oBinding.getModel() == oModel, "ListBinding model");
-				equal(oBinding.getLength(), 16, "length of items");
-				equal(oBinding.isLengthFinal(), false, "length not final");
+				assert.equal(oBinding.getLength(), 16, "length of items");
+				assert.equal(oBinding.isLengthFinal(), false, "length not final");
 				oBinding.detachChange(handler);
 				oBinding.attachChange(function() {
-					equal(oBinding.getLength(), 8, "length of items");
-					equal(oBinding.isLengthFinal(), true, "length final");
+					assert.equal(oBinding.getLength(), 8, "length of items");
+					assert.equal(oBinding.isLengthFinal(), true, "length final");
 					done(); // resume normal testing
 				});
 				oBinding.getContexts(8,8);
@@ -124,9 +124,9 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				var aContexts = oBinding.getContexts(0, 5),
 					aCurrentContexts = oBinding.getCurrentContexts();
 
-				equal(aCurrentContexts.length, 5, "amount of items in current contexts");
+				assert.equal(aCurrentContexts.length, 5, "amount of items in current contexts");
 				jQuery(aCurrentContexts).each(function(i, context){
-					equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
+					assert.equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
 				});
 				oBinding.detachChange(handler);
 				done(); // resume normal testing
@@ -146,14 +146,14 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var changeHandler = function() {
 			iCount++;
 			if (iCount == 1) {
-				equal(oBinding.getPath(), "Products", "ListBinding path");
+				assert.equal(oBinding.getPath(), "Products", "ListBinding path");
 				ok(oBinding.getModel() == oModel, "ListBinding model");
-				equal(oBinding.getLength(), 5, "length of items");
-				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
+				assert.equal(oBinding.getLength(), 5, "length of items");
+				assert.equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 				oBinding.setContext(null);
 			} else {
-				equal(oBinding.getLength(), 0, "length of items");
-				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
+				assert.equal(oBinding.getLength(), 0, "length of items");
+				assert.equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 				oBinding.detachChange(changeHandler);
 				done(); // resume normal testing
 			}
@@ -179,32 +179,32 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			iCount++;
 			if (iCount == 1) {
 				// expanded entries will be filtered on the client
-				equal(oBinding.getPath(), "Products", "ListBinding path");
+				assert.equal(oBinding.getPath(), "Products", "ListBinding path");
 				ok(oBinding.getModel() == oModel, "ListBinding model");
-				equal(oBinding.getLength(), 1, "length of items after filtering");
+				assert.equal(oBinding.getLength(), 1, "length of items after filtering");
 				var oContext = oBinding.getContexts(0, 1)[0];
-				equal(oContext.getProperty("ProductName"), "Uncle Bob's Organic Dried Pears");
-				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
+				assert.equal(oContext.getProperty("ProductName"), "Uncle Bob's Organic Dried Pears");
+				assert.equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 				oBinding.setContext(null);
 			} else if (iCount == 2) {
-				equal(oBinding.getLength(), 0, "length of items");
-				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
+				assert.equal(oBinding.getLength(), 0, "length of items");
+				assert.equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 				oContext = oModel.createBindingContext("/Categories(7)", undefined, {expand: "Products"});
 				oBinding.setContext(oContext)
 			} else if (iCount == 3) {
-				equal(oBinding.getLength(), 1, "length of items after filtering");
+				assert.equal(oBinding.getLength(), 1, "length of items after filtering");
 				var oContext = oBinding.getContexts(0, 1)[0];
-				equal(oContext.getProperty("ProductName"), "Uncle Bob's Organic Dried Pears");
-				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
+				assert.equal(oContext.getProperty("ProductName"), "Uncle Bob's Organic Dried Pears");
+				assert.equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 				// Modify binding so a change can be detected, although data returned by the server is the same
 				oBinding.aExpandRefs = [];
 				oBinding.aLastContexts = [];
 				oModel.createBindingContext("/Categories(7)", undefined, {expand: "Products"}, function() {}, true);
 			} else {
-				equal(oBinding.getLength(), 1, "length of items after filtering");
+				assert.equal(oBinding.getLength(), 1, "length of items after filtering");
 				var oContext = oBinding.getContexts(0, 1)[0];
-				equal(oContext.getProperty("ProductName"), "Uncle Bob's Organic Dried Pears");
-				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
+				assert.equal(oContext.getProperty("ProductName"), "Uncle Bob's Organic Dried Pears");
+				assert.equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 				oBinding.detachChange(changeHandler);
 				done(); // resume normal testing
 			}
@@ -232,12 +232,12 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		function changeHandler() {
 			if (iCount === 0) {
 				var aContexts = oBinding.getContexts();
-				equal(aContexts.length, 5, "List contains entries");
-				equal(aContexts[0].getProperty("ProductName"), undefined, "Product name is missing");
+				assert.equal(aContexts.length, 5, "List contains entries");
+				assert.equal(aContexts[0].getProperty("ProductName"), undefined, "Product name is missing");
 			} else if (iCount === 1) {
 				var aContexts = oBinding.getContexts();
-				equal(aContexts.length, 5, "List contains entries");
-				equal(aContexts[0].getProperty("ProductName"), "Uncle Bob's Organic Dried Pears", "Product name is available now");
+				assert.equal(aContexts.length, 5, "List contains entries");
+				assert.equal(aContexts[0].getProperty("ProductName"), "Uncle Bob's Organic Dried Pears", "Product name is available now");
 				done();
 			} else {
 				ok(false, "Must not change a third time.")
@@ -264,30 +264,30 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler3 = function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oEvent.oSource.getContexts();
-			equal(aContexts.length, 8);
-			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding before sort");
+			assert.equal(aContexts.length, 8);
+			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding before sort");
 			// resume normal testing
 			done();
 		};
 		var handler2 = function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oEvent.oSource.getContexts();
-			equal(aContexts.length, 8);
-			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding after 2nd sort");
+			assert.equal(aContexts.length, 8);
+			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding after 2nd sort");
 			oBinding.detachChange(handler2);
 			oBinding.sort(null);
 			oBinding.attachChange(handler3);
@@ -295,15 +295,15 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler1 =	function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oEvent.oSource.getContexts();
-			equal(aContexts.length, 8);
-			equal(oModel.getProperty("CategoryName", aContexts[7]), "Beverages", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[6]), "Condiments", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[5]), "Confections", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[4]), "Dairy Products", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[3]), "Grains/Cereals", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[2]), "Meat/Poultry", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[1]), "Produce", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[0]), "Seafood", "ListBinding after sort");
+			assert.equal(aContexts.length, 8);
+			assert.equal(oModel.getProperty("CategoryName", aContexts[7]), "Beverages", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[6]), "Condiments", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[5]), "Confections", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[4]), "Dairy Products", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[3]), "Grains/Cereals", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[2]), "Meat/Poultry", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[1]), "Produce", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Seafood", "ListBinding after sort");
 
 			oBinding.detachChange(handler1);
 			// ascending again
@@ -316,15 +316,15 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler0 = function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oEvent.oSource.getContexts();
-			equal(aContexts.length, 8);
-			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding before sort");
+			assert.equal(aContexts.length, 8);
+			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding before sort");
 
 			oBinding.detachChange(handler0);
 			// descending
@@ -348,15 +348,15 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oBinding.getContexts();
-			equal(aContexts.length, 8);
-			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding before sort");
+			assert.equal(aContexts.length, 8);
+			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding before sort");
 
 			oBinding.detachChange(handler);
 			// descending
@@ -364,43 +364,43 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.sort(oSorter);
 
 			var aContexts = oBinding.getContexts();
-			equal(aContexts.length, 8);
-			equal(oModel.getProperty("CategoryName", aContexts[7]), "Beverages", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[6]), "Condiments", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[5]), "Confections", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[4]), "Dairy Products", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[3]), "Grains/Cereals", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[2]), "Meat/Poultry", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[1]), "Produce", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[0]), "Seafood", "ListBinding after sort");
+			assert.equal(aContexts.length, 8);
+			assert.equal(oModel.getProperty("CategoryName", aContexts[7]), "Beverages", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[6]), "Condiments", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[5]), "Confections", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[4]), "Dairy Products", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[3]), "Grains/Cereals", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[2]), "Meat/Poultry", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[1]), "Produce", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Seafood", "ListBinding after sort");
 
 			// ascending again
 			oSorter = new sap.ui.model.Sorter("CategoryName", false);
 			oBinding.sort(oSorter);
 
 			var aContexts = oBinding.getContexts();
-			equal(aContexts.length, 8);
-			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding after 2nd sort");
+			assert.equal(aContexts.length, 8);
+			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding after 2nd sort");
 
 			oBinding.sort(null);
 
 			var aContexts = oBinding.getContexts();
-			equal(aContexts.length, 8);
-			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding before sort");
+			assert.equal(aContexts.length, 8);
+			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding before sort");
 
 			done();
 		};
@@ -419,12 +419,12 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oBinding.getContexts();
-			equal(aContexts.length, 20);
-			equal(oModel.getProperty("UnitPrice", aContexts[0]), "18.0000", "ListBinding before sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[1]), "19.0000", "ListBinding before sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[2]), "10.0000", "ListBinding before sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[3]), "22.0000", "ListBinding before sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[4]), "21.3500", "ListBinding before sort");
+			assert.equal(aContexts.length, 20);
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "18.0000", "ListBinding before sort");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[1]), "19.0000", "ListBinding before sort");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[2]), "10.0000", "ListBinding before sort");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "22.0000", "ListBinding before sort");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "21.3500", "ListBinding before sort");
 
 			oBinding.detachChange(handler);
 			// descending
@@ -432,34 +432,34 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.sort(oSorter);
 
 			var aContexts = oBinding.getContexts();
-			equal(aContexts.length, 20);
-			equal(oModel.getProperty("UnitPrice", aContexts[0]), "97.0000", "ListBinding after sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[1]), "81.0000", "ListBinding after sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[2]), "62.5000", "ListBinding after sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[3]), "40.0000", "ListBinding after sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[4]), "39.0000", "ListBinding after sort");
+			assert.equal(aContexts.length, 20);
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "97.0000", "ListBinding after sort");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[1]), "81.0000", "ListBinding after sort");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[2]), "62.5000", "ListBinding after sort");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "40.0000", "ListBinding after sort");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "39.0000", "ListBinding after sort");
 
 			// ascending again
 			oSorter = new sap.ui.model.Sorter("UnitPrice", false);
 			oBinding.sort(oSorter);
 
 			var aContexts = oBinding.getContexts();
-			equal(aContexts.length, 20);
-			equal(oModel.getProperty("UnitPrice", aContexts[0]), "6.0000", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[1]), "9.2000", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[2]), "10.0000", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[3]), "15.5000", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[4]), "17.4500", "ListBinding after 2nd sort");
+			assert.equal(aContexts.length, 20);
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "6.0000", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[1]), "9.2000", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[2]), "10.0000", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "15.5000", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "17.4500", "ListBinding after 2nd sort");
 
 			oBinding.sort(null);
 
 			var aContexts = oBinding.getContexts();
-			equal(aContexts.length, 20);
-			equal(oModel.getProperty("UnitPrice", aContexts[0]), "18.0000", "ListBinding before sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[1]), "19.0000", "ListBinding before sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[2]), "10.0000", "ListBinding before sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[3]), "22.0000", "ListBinding before sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[4]), "21.3500", "ListBinding before sort");
+			assert.equal(aContexts.length, 20);
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "18.0000", "ListBinding before sort");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[1]), "19.0000", "ListBinding before sort");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[2]), "10.0000", "ListBinding before sort");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "22.0000", "ListBinding before sort");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "21.3500", "ListBinding before sort");
 
 			done();
 		};
@@ -479,18 +479,18 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.detachChange(handler);
 
 			var aContexts = oBinding.getContexts();
-			equal(aContexts.length, 8);
+			assert.equal(aContexts.length, 8);
 
-			equal(oModel.getProperty("CategoryName", aContexts[7]), "Beverages", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[6]), "Condiments", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[5]), "Confections", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[4]), "Dairy Products", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[3]), "Grains/Cereals", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[2]), "Meat/Poultry", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[1]), "Produce", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[0]), "Seafood", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[7]), "Beverages", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[6]), "Condiments", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[5]), "Confections", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[4]), "Dairy Products", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[3]), "Grains/Cereals", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[2]), "Meat/Poultry", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[1]), "Produce", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Seafood", "ListBinding after sort");
 
-			equal(oEvent.getParameter("reason"), "sort", "Change reason is 'sort'.");
+			assert.equal(oEvent.getParameter("reason"), "sort", "Change reason is 'sort'.");
 
 			done();
 		};
@@ -537,7 +537,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler = function() { // delay the following test
 			var aContexts = oBinding.getContexts(),
 				oContext = aContexts[0];
-			equal(oContext.getPath(), "/Categories(1)", "Context path");
+			assert.equal(oContext.getPath(), "/Categories(1)", "Context path");
 			ok(jQuery.isArray(oContext.getProperty("Products")), "Products loaded");
 			done(); // resume normal testing
 		};
@@ -550,8 +550,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 1, "EQ filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
+			assert.equal(aFilteredContexts.length, 1, "EQ filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
 
 			oBinding.detachChange(handler);
 			// NE, contains
@@ -563,9 +563,9 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler1 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 2, "NE, contains, filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
+			assert.equal(aFilteredContexts.length, 2, "NE, contains, filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
 
 			oBinding.detachChange(handler1);
 			// between
@@ -576,10 +576,10 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler2 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 3, "between filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "between filtered content");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "between filtered content");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[2]), "Confections", "between filtered content");
+			assert.equal(aFilteredContexts.length, 3, "between filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "between filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "between filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[2]), "Confections", "between filtered content");
 
 			oBinding.detachChange(handler2);
 			// startsWith, endsWith
@@ -591,8 +591,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler3 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 1, "startsWith, endsWith filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
+			assert.equal(aFilteredContexts.length, 1, "startsWith, endsWith filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
 
 			oBinding.detachChange(handler3);
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.LE, value1: "Z"}, {operator:sap.ui.model.FilterOperator.GE, value1: "A"}, {operator:sap.ui.model.FilterOperator.NE, value1: "Beverages"}]);
@@ -602,7 +602,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler4 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
+			assert.equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
 			ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
 
 			oBinding.detachChange(handler4);
@@ -613,9 +613,9 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler5 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 2, "sap.ui.model.odata.Filter, ORed");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "sap.ui.model.odata.Filter, ORed");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "sap.ui.model.odata.Filter, ORed");
+			assert.equal(aFilteredContexts.length, 2, "sap.ui.model.odata.Filter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "sap.ui.model.odata.Filter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "sap.ui.model.odata.Filter, ORed");
 
 			oBinding.detachChange(handler5);
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"}, {operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"}], false);
@@ -626,8 +626,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler6 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 1, "sap.ui.model.odata.Filter + normal Filter");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(aFilteredContexts.length, 1, "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
 
 			oBinding.detachChange(handler6);
 			//check (ProductID=male AND (SupplierID = Green OR (CategoryName = Peter OR CategoryName = Frank OR CategoryName = Gina)))
@@ -645,8 +645,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler7 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 3, "sap.ui.model.odata.Filter + normal Filter");
-			//equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(aFilteredContexts.length, 3, "sap.ui.model.odata.Filter + normal Filter");
+			//assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
 			oBinding.detachChange(handler7);
 			done();
 		};
@@ -670,9 +670,9 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oEvent.oSource.getContexts();
-			equal(aContexts.length, 8, "EQ unfiltered content length");
-			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "EQ unfiltered content");
-			equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "EQ unfiltered content");
+			assert.equal(aContexts.length, 8, "EQ unfiltered content length");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "EQ unfiltered content");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "EQ unfiltered content");
 			oBinding.detachChange(handler);
 			setTimeout(handler2, 0);
 		};
@@ -705,10 +705,10 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oEvent.oSource.getContexts(0, 1);
-			equal(aContexts.length, 1, "EQ context length");
-			equal(oBinding.getLength(), 8, "EQ $count length");
-			equal(oBinding.isLengthFinal(), true, "length is final");
-			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "EQ unfiltered content");
+			assert.equal(aContexts.length, 1, "EQ context length");
+			assert.equal(oBinding.getLength(), 8, "EQ $count length");
+			assert.equal(oBinding.isLengthFinal(), true, "length is final");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "EQ unfiltered content");
 
 			oBinding.detachChange(handler);
 			done();
@@ -737,9 +737,9 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oEvent.oSource.getContexts();
-			equal(aContexts.length, 1, "filtered content length 1");
-			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "EQ unfiltered content");
-			equal(oBinding.getLength(), 1, "Binding length should be 1");
+			assert.equal(aContexts.length, 1, "filtered content length 1");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "EQ unfiltered content");
+			assert.equal(oBinding.getLength(), 1, "Binding length should be 1");
 			oBinding.detachChange(handler);
 			done();
 		};
@@ -781,8 +781,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oBinding.getContexts();
-			equal(aFilteredContexts.length, 1, "EQ filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
+			assert.equal(aFilteredContexts.length, 1, "EQ filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
 
 			oBinding.detachChange(handler);
 			// NE, contains
@@ -791,19 +791,19 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.filter([oFilter, oFilter2]);
 
 			var aFilteredContexts = oBinding.getContexts();
-			equal(aFilteredContexts.length, 2, "NE, contains, filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
+			assert.equal(aFilteredContexts.length, 2, "NE, contains, filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
 
 			// between
 			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.BT, "Beverages","D");
 			oBinding.filter([oFilter]);
 
 			var aFilteredContexts = oBinding.getContexts();
-			equal(aFilteredContexts.length, 3, "between filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "between filtered content");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "between filtered content");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[2]), "Confections", "between filtered content");
+			assert.equal(aFilteredContexts.length, 3, "between filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "between filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "between filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[2]), "Confections", "between filtered content");
 
 			// startsWith, endsWith
 			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.StartsWith, "C");
@@ -811,15 +811,15 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.filter([oFilter, oFilter2]);
 
 			var aFilteredContexts = oBinding.getContexts();
-			equal(aFilteredContexts.length, 1, "startsWith, endsWith filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
+			assert.equal(aFilteredContexts.length, 1, "startsWith, endsWith filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
 
 			// ANDed filters
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.LE, value1: "Z"}, {operator:sap.ui.model.FilterOperator.GE, value1: "A"}, {operator:sap.ui.model.FilterOperator.NE, value1: "Beverages"}]);
 			oBinding.filter([oFilter]);
 
 			var aFilteredContexts = oBinding.getContexts();
-			equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
+			assert.equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
 			ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
 
 			// ORed filters
@@ -827,9 +827,9 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.filter([oFilter]);
 
 			var aFilteredContexts = oBinding.getContexts();
-			equal(aFilteredContexts.length, 2, "sap.ui.model.odata.Filter, ORed");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "sap.ui.model.odata.Filter, ORed");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "sap.ui.model.odata.Filter, ORed");
+			assert.equal(aFilteredContexts.length, 2, "sap.ui.model.odata.Filter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "sap.ui.model.odata.Filter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "sap.ui.model.odata.Filter, ORed");
 
 			// ORed + ANDed filters
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"}, {operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"}], false);
@@ -837,8 +837,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.filter([oFilter, oFilter2]);
 
 			var aFilteredContexts = oBinding.getContexts();
-			equal(aFilteredContexts.length, 1, "sap.ui.model.odata.Filter + normal Filter");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(aFilteredContexts.length, 1, "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
 
 			//check (ProductID=male AND (SupplierID = Green OR (CategoryName = Peter OR CategoryName = Frank OR CategoryName = Gina)))
 			var oFilter1 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
@@ -852,7 +852,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.filter(oMultiFilter3);
 
 			var aFilteredContexts = oBinding.getContexts();
-			equal(aFilteredContexts.length, 3, "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(aFilteredContexts.length, 3, "sap.ui.model.odata.Filter + normal Filter");
 
 			done();
 		};
@@ -877,10 +877,10 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 			// contexts should be now loaded
 			var aFilteredContexts = oBinding.getContexts();
-			equal(aFilteredContexts.length, 1, "EQ filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
+			assert.equal(aFilteredContexts.length, 1, "EQ filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
 
-			equal(oEvent.getParameter("reason"), "filter", "Change reason is 'filter'.");
+			assert.equal(oEvent.getParameter("reason"), "filter", "Change reason is 'filter'.");
 
 			done();
 		};
@@ -1002,7 +1002,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			done();
 		};
 		var fnChangeHandler = function() {
-			equal(oList.getItems().length, 8, "items created")
+			assert.equal(oList.getItems().length, 8, "items created")
 		};
 
 		oList.bindAggregation("items", {path:"/Categories", template: oItem, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}})
@@ -1016,8 +1016,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 1, "EQ filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
+			assert.equal(aFilteredContexts.length, 1, "EQ filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
 
 			oBinding.detachChange(handler);
 			// NE, contains
@@ -1034,9 +1034,9 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler1 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 2, "NE, contains, filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
+			assert.equal(aFilteredContexts.length, 2, "NE, contains, filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
 
 			oBinding.detachChange(handler1);
 			// between
@@ -1051,10 +1051,10 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler2 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 3, "between filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "between filtered content");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "between filtered content");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[2]), "Confections", "between filtered content");
+			assert.equal(aFilteredContexts.length, 3, "between filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "between filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "between filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[2]), "Confections", "between filtered content");
 
 			oBinding.detachChange(handler2);
 			// startsWith, endsWith
@@ -1066,8 +1066,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler3 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 1, "startsWith, endsWith filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
+			assert.equal(aFilteredContexts.length, 1, "startsWith, endsWith filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
 
 			oBinding.detachChange(handler3);
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
@@ -1086,7 +1086,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler4 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
+			assert.equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
 			ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
 
 			oBinding.detachChange(handler4);
@@ -1103,9 +1103,9 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler5 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 2, "sap.ui.model.odata.Filter, ORed");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "sap.ui.model.odata.Filter, ORed");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "sap.ui.model.odata.Filter, ORed");
+			assert.equal(aFilteredContexts.length, 2, "sap.ui.model.odata.Filter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "sap.ui.model.odata.Filter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "sap.ui.model.odata.Filter, ORed");
 
 			oBinding.detachChange(handler5);
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
@@ -1123,8 +1123,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler6 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 1, "sap.ui.model.odata.Filter + normal Filter");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(aFilteredContexts.length, 1, "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
 
 			oBinding.detachChange(handler6);
 			done();
@@ -1150,15 +1150,15 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.detachChange(handler);
 
 			// check necessary prerequisites
-			equal(oBinding.getPath(), "/Orders", "ListBinding path");
-			equal(oBinding.bFaultTolerant, true, "Binding should run in faultTolerant mode");
-			equal(oBinding.sCountMode, sap.ui.model.odata.CountMode.InlineRepeat, "Binding should use CountMode.InlineRepeat");
+			assert.equal(oBinding.getPath(), "/Orders", "ListBinding path");
+			assert.equal(oBinding.bFaultTolerant, true, "Binding should run in faultTolerant mode");
+			assert.equal(oBinding.sCountMode, sap.ui.model.odata.CountMode.InlineRepeat, "Binding should use CountMode.InlineRepeat");
 
 			// actual assertations against the behavior in the error case when the service could not collect all
 			// data from its data-sources
-			equal(oBinding.aKeys.length, 2, "Loaded data count");
-			equal(oBinding.iLength, 3, "Service says there are still entities to load");
-			equal(oBinding.bLengthFinal, true, "Length should be final as provided by the service");
+			assert.equal(oBinding.aKeys.length, 2, "Loaded data count");
+			assert.equal(oBinding.iLength, 3, "Service says there are still entities to load");
+			assert.equal(oBinding.bLengthFinal, true, "Length should be final as provided by the service");
 
 			oBinding.attachChange(handler2);
 			oBinding.getContexts(2, 1, 0);
@@ -1167,9 +1167,9 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler2 = function() {
 			oBinding.detachChange(handler);
 
-			equal(oBinding.aKeys.length, 2, "Loaded data count is still smaller than expected (somethings missing)");
-			equal(oBinding.iLength, 2, "Length is now set to the correct value, because result was empty...");
-			equal(oBinding.bLengthFinal, true, "...and the length should be final now.");
+			assert.equal(oBinding.aKeys.length, 2, "Loaded data count is still smaller than expected (somethings missing)");
+			assert.equal(oBinding.iLength, 2, "Length is now set to the correct value, because result was empty...");
+			assert.equal(oBinding.bLengthFinal, true, "...and the length should be final now.");
 
 			done(); // resume normal testing
 		};
@@ -1196,9 +1196,9 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var sUrl = oBinding.getDownloadUrl("csv");
-		equal(sUrl, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=csv", "Download URL for csv correctly constructed.")
+		assert.equal(sUrl, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=csv", "Download URL for csv correctly constructed.")
 		sUrl = oBinding.getDownloadUrl("xlsx");
-		equal(sUrl, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=xlsx", "Download URL for excel correctly constructed.")
+		assert.equal(sUrl, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=xlsx", "Download URL for excel correctly constructed.")
 	});
 	QUnit.test("Suspend/Resume", function(assert) {
 		var done = assert.async();
@@ -1208,18 +1208,18 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler1 = function() {
 			oBinding.detachChange(handler1);
 			oBinding.attachChange(handler2);
-			equal(oSpy.callCount, 1, "1 Request has been triggered to load data")
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered to load data")
 			oSpy.reset();
-			equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			assert.equal(oBinding.getContexts().length, 8, "Current context length is 8");
 			oBinding.suspend();
 			oBinding.refresh(true);
 		};
 		var handler2 = function() {
 			oBinding.detachChange(handler2);
 			oBinding.attachChange(handler3);
-			equal(oSpy.callCount, 1, "1 Request has been triggered for refresh(true)")
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered for refresh(true)")
 			oSpy.reset();
-			equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			assert.equal(oBinding.getContexts().length, 8, "Current context length is 8");
 			oBinding.refresh();
 			setTimeout(handler4, 50);
 		};
@@ -1229,16 +1229,16 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler4 = function() {
 			oBinding.detachChange(handler3);
 			oBinding.attachChange(handler5);
-			equal(oSpy.callCount, 0, "refresh() didn't trigger a request")
+			assert.equal(oSpy.callCount, 0, "refresh() didn't trigger a request")
 			oSpy.reset();
-			equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			assert.equal(oBinding.getContexts().length, 8, "Current context length is 8");
 			oBinding.resume();
 		};
 		var handler5 = function() {
 			oBinding.detachChange(handler5);
-			equal(oSpy.callCount, 1, "1 Request has been triggered after resume")
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered after resume")
 			oSpy.reset();
-			equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			assert.equal(oBinding.getContexts().length, 8, "Current context length is 8");
 			done();
 		};
 		oBinding.attachChange(handler1);
@@ -1256,23 +1256,23 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler1 = function() {
 			oBinding.detachChange(handler1);
 			oBinding.attachChange(handler2);
-			equal(oSpy.callCount, 1, "1 Request has been triggered to load data")
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered to load data")
 			oSpy.reset();
-			equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			assert.equal(oBinding.getContexts().length, 8, "Current context length is 8");
 			oBinding.suspend();
 			oBinding.sort(new sap.ui.model.Sorter("CategoryName"));
 		};
 		var handler2 = function() {
 			oBinding.detachChange(handler2);
-			equal(oSpy.callCount, 1, "1 Request has been triggered for sorting")
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered for sorting")
 			oSpy.reset();
-			equal(oBinding.getContexts().length, 8, "Current context length is 8");
-			equal(oBinding.getContexts()[0].getProperty("CategoryName"), "Beverages", "Categories are sorted");
+			assert.equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			assert.equal(oBinding.getContexts()[0].getProperty("CategoryName"), "Beverages", "Categories are sorted");
 			oBinding.resume();
 			setTimeout(handler3, 50);
 		};
 		var handler3 = function() {
-			equal(oSpy.callCount, 0, "No request was sent after resume")
+			assert.equal(oSpy.callCount, 0, "No request was sent after resume")
 			oSpy.reset();
 			done();
 		};
@@ -1291,22 +1291,22 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler1 = function() {
 			oBinding.detachChange(handler1);
 			oBinding.attachChange(handler2);
-			equal(oSpy.callCount, 1, "1 Request has been triggered to load data")
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered to load data")
 			oSpy.reset();
-			equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			assert.equal(oBinding.getContexts().length, 8, "Current context length is 8");
 			oBinding.suspend();
 			oBinding.filter(new sap.ui.model.Filter("CategoryName", "EQ", "Beverages"));
 		};
 		var handler2 = function() {
 			oBinding.detachChange(handler2);
-			equal(oSpy.callCount, 1, "1 Request has been triggered for filtering")
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered for filtering")
 			oSpy.reset();
-			equal(oBinding.getContexts().length, 1, "Current context length is 1");
+			assert.equal(oBinding.getContexts().length, 1, "Current context length is 1");
 			oBinding.resume();
 			setTimeout(handler3, 50);
 		};
 		var handler3 = function() {
-			equal(oSpy.callCount, 0, "No request was sent after resume")
+			assert.equal(oSpy.callCount, 0, "No request was sent after resume")
 			oSpy.reset();
 			done();
 		};
@@ -1325,10 +1325,10 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler1 = function() {
 			oBinding.detachChange(handler1);
 			oBinding.attachChange(handler2);
-			equal(oSpy.callCount, 1, "1 Request has been triggered to load data")
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered to load data")
 			oSpy.reset();
 			oBinding.getContexts();
-			equal(oBinding.getCurrentContexts().length, 8, "Current context length is 8");
+			assert.equal(oBinding.getCurrentContexts().length, 8, "Current context length is 8");
 			oBinding.suspend();
 			oModel.remove("/Categories(1)", {groupId: "changes"});
 			oModel.submitChanges({groupId: "changes", success: handler3});
@@ -1339,14 +1339,14 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler3 = function() {
 			oBinding.detachChange(handler2);
 			oBinding.attachChange(handler4);
-			equal(oSpy.callCount, 0, "No request was triggered for autorefresh")
+			assert.equal(oSpy.callCount, 0, "No request was triggered for autorefresh")
 			oSpy.reset();
-			equal(oBinding.getCurrentContexts().length, 8, "Current context length is 8");
+			assert.equal(oBinding.getCurrentContexts().length, 8, "Current context length is 8");
 			oBinding.resume();
 		};
 		var handler4 = function() {
 			oBinding.detachChange(handler4);
-			equal(oSpy.callCount, 1, "Resume did refresh the binding")
+			assert.equal(oSpy.callCount, 1, "Resume did refresh the binding")
 			oSpy.reset();
 			done();
 		};
@@ -1365,9 +1365,9 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				var oBinding = oEvent.oSource;
 				ok (oBinding.isLengthFinal(), "Length should be final");
 				var aFilteredContexts = oBinding.getContexts();
-				equal(aFilteredContexts.length, 2, "filtered content length");
-				equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
-				equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
+				assert.equal(aFilteredContexts.length, 2, "filtered content length");
+				assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
+				assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
 
 				oBinding.detachChange(handler);
 				oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "NONEXISTING");
@@ -1378,7 +1378,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				var oBinding = oEvent.oSource;
 				ok (oBinding.isLengthFinal(), "Length should be final");
 				var aFilteredContexts = oBinding.getContexts();
-				equal(aFilteredContexts.length, 0, "NE, contains, filtered content length");
+				assert.equal(aFilteredContexts.length, 0, "NE, contains, filtered content length");
 				oBinding.detachChange(handler1);
 				done();
 			};

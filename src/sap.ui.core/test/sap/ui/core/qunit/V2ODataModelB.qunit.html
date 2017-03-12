@@ -75,9 +75,9 @@
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				success : function() {
-					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Flyer", "absolute path without context");
+					assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Flyer", "absolute path without context");
 					oModel.createBindingContext("/ProductSet('AD-1000')", null, function(newContext) {
-						equal(newContext.getProperty("Name"), "Flyer", "relative path with context");
+						assert.equal(newContext.getProperty("Name"), "Flyer", "relative path with context");
 						done(); // resume normal testing
 					});
 				},
@@ -123,9 +123,9 @@
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				success : function() {
-					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Flyer", "absolute path without context");
+					assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Flyer", "absolute path without context");
 					oModel.createBindingContext("/ProductSet('AD-1000')", null, function(newContext) {
-						equal(newContext.getProperty("Name"), "Flyer", "relative path with context");
+						assert.equal(newContext.getProperty("Name"), "Flyer", "relative path with context");
 						done(); // resume normal testing
 					});
 				},
@@ -705,7 +705,7 @@
 		var fnCheck = function() {
 			iCount++;
 			ok(iCount === 1, "request performed");
-			equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
+			assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 			oTxt.destroy();
 			oModel.detachBatchRequestCompleted(fnCheck);
 			done();
@@ -731,7 +731,7 @@
 					ok(true, "request succeeded");
 					bSuccess = true;
 
-					equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
+					assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 					// should not fire a request as data is already loaded by read above
 					oTxt.bindObject("/VH_CategorySet('Headsets')");
 
@@ -796,9 +796,9 @@
 		var fnCheck = function() {
 			iCount++;
 			ok(iCount === 1, "request performed");
-			equal(oModel.getProperty("/VH_CategorySet('Beamers')/Category"),
+			assert.equal(oModel.getProperty("/VH_CategorySet('Beamers')/Category"),
 					"Beamers", "Category loaded check");
-			equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"),
+			assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"),
 					"Headsets", "Category loaded check");
 			ok(oTable.getBinding('rows').getLength() >= 2,
 					"Category size check");
@@ -848,8 +848,8 @@
 
 			if (iCallCount === 2 && bRead1) {
 				ok(true, "request Completed event 1x (==1 request) and succesHandler from read should be called 1x");
-				equal(oModel.getProperty("/VH_CategorySet('Beamers')/Category"), "Beamers", "Category loaded check");
-				equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
+				assert.equal(oModel.getProperty("/VH_CategorySet('Beamers')/Category"), "Beamers", "Category loaded check");
+				assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
 				oTable = null;
@@ -897,8 +897,8 @@
 			iCallCount++;
 			if (iCallCount === 3 && bRead1) {
 				ok(true, "requestCompleted event 2x (==2 requests) and read succes handler should be called 1x");
-				equal(oModel.getProperty("/VH_CategorySet('Beamers')/Category"), "Beamers", "Category loaded check");
-				equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
+				assert.equal(oModel.getProperty("/VH_CategorySet('Beamers')/Category"), "Beamers", "Category loaded check");
+				assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
 				oTable = null;
@@ -947,8 +947,8 @@
 			iCallCount++;
 			if (iCallCount === 3 && bRead1) {
 				ok(true, "requestCompleted event 2x (==2 requests) and read succes handler should be called 1x");
-				equal(oModel.getProperty("/VH_CategorySet('Beamers')/Category"), "Beamers", "Category loaded check");
-				equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
+				assert.equal(oModel.getProperty("/VH_CategorySet('Beamers')/Category"), "Beamers", "Category loaded check");
+				assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
 				oTable = null;
@@ -1061,7 +1061,7 @@
 			oModel.read("/ProductSet('AD-1000')", {
 				success : function(oData, oResponse) {
 					ok(bUpdate, "update should have been called first");
-					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Hello", "check read change");
+					assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Hello", "check read change");
 					bRead = true;
 				},
 				error : function(oError) {
@@ -1215,8 +1215,8 @@
 			    }, {
 				success : function(oData, oResponse) {
 					ok(true, "request succeeded");
-					equal(oData.Name, "Test", "response check");
-					equal(oModel.getProperty("/ProductSet('AD-1111')/Name"), "Test", "new data should already be imorpted into model");
+					assert.equal(oData.Name, "Test", "response check");
+					assert.equal(oModel.getProperty("/ProductSet('AD-1111')/Name"), "Test", "new data should already be imorpted into model");
 					bCreate = true;
 				},
 				error : function(oError) {
@@ -1245,7 +1245,7 @@
 			oModel.remove("/ProductSet('AD-1000')", {
 				success : function(oData, oResponse) {
 					ok(true, "request succeeded");
-					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), undefined, "new data should already be imorpted into model");
+					assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), undefined, "new data should already be imorpted into model");
 					bRemove = true;
 				},
 				error : function(oError) {
@@ -1277,7 +1277,7 @@
 			oModel.read("/ProductSet('AD-1000')", {
 				success : function(oData, oResponse) {
 					ok(true, "request succeeded");
-					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Flyer", "data read check");
+					assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Flyer", "data read check");
 					bRead = true;
 					oModel.submitChanges();
 				},
@@ -1291,7 +1291,7 @@
 			oModel.remove("/ProductSet('AD-1000')", {
 				success : function(oData, oResponse) {
 					ok(true, "request succeeded");
-					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), undefined, "data should also have been removed from the model");
+					assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), undefined, "data should also have been removed from the model");
 					bRemove = true;
 				},
 				error : function(oError) {
@@ -1352,7 +1352,7 @@
 			}
 
 			if (iCount === 2 && bSetProp) {
-				equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
+				assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
 				oTable.destroy();
 				oTable = null;
 				done();
@@ -1400,7 +1400,7 @@
 				oModel.submitChanges({success: function(oParams){
 					ok(true, "request called");
 					ok(bSetProp, "set Property succesful");
-					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
+					assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oTable.destroy();
 					oTable = null;
@@ -1454,14 +1454,14 @@
 					ok(true, "request called");
 					ok(bSetProp, "set property successful");
 					ok(bSetProp2, "set property successful");
-					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "NewValue2", "Two Way check");
+					assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "NewValue2", "Two Way check");
 
-					equal(oParams.__batchResponses.length,2, "should be 2 changesets");
-					equal(oParams.__batchResponses[0].__changeResponses.length,1, "should be 1 response");
-					equal(oParams.__batchResponses[0].__changeResponses[0].statusCode,"204", "statuscode OK");
-					equal(oParams.__batchResponses[1].__changeResponses.length,1, "should be 1 response");
-					equal(oParams.__batchResponses[1].__changeResponses[0].statusCode,"204", "statuscode OK");
+					assert.equal(oParams.__batchResponses.length,2, "should be 2 changesets");
+					assert.equal(oParams.__batchResponses[0].__changeResponses.length,1, "should be 1 response");
+					assert.equal(oParams.__batchResponses[0].__changeResponses[0].statusCode,"204", "statuscode OK");
+					assert.equal(oParams.__batchResponses[1].__changeResponses.length,1, "should be 1 response");
+					assert.equal(oParams.__batchResponses[1].__changeResponses[0].statusCode,"204", "statuscode OK");
 
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oTable.destroy()
@@ -1516,13 +1516,13 @@
 					ok(true, "request called");
 					ok(bSetProp, "set property successful");
 					ok(bSetProp2, "set property successful");
-					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "NewValue2", "Two Way check");
+					assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "NewValue2", "Two Way check");
 
-					equal(oParams.__batchResponses.length,1, "should be 1 changesets");
-					equal(oParams.__batchResponses[0].__changeResponses.length,2, "should be 2 responses");
-					equal(oParams.__batchResponses[0].__changeResponses[0].statusCode,"204", "statuscode OK");
-					equal(oParams.__batchResponses[0].__changeResponses[1].statusCode,"204", "statuscode OK");
+					assert.equal(oParams.__batchResponses.length,1, "should be 1 changesets");
+					assert.equal(oParams.__batchResponses[0].__changeResponses.length,2, "should be 2 responses");
+					assert.equal(oParams.__batchResponses[0].__changeResponses[0].statusCode,"204", "statuscode OK");
+					assert.equal(oParams.__batchResponses[0].__changeResponses[1].statusCode,"204", "statuscode OK");
 
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oTable.destroy()
@@ -1563,8 +1563,8 @@
 
 			if (iCount === 1 && bMetadataLoaded){ // bind rows should have been loaded
 				var oBinding = oTable.getBinding('rows');
-				equal(oBinding.sPath, "/ProductSet", "path check");
-				equal(oBinding.getLength(), 115, "length check");
+				assert.equal(oBinding.sPath, "/ProductSet", "path check");
+				assert.equal(oBinding.getLength(), 115, "length check");
 				ok(oBinding.getContexts(), "context check");
 				ok(oBinding.sCountMode, "Request", "count mode check");
 				oTable.destroy()
@@ -1606,7 +1606,7 @@
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
-				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
+				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
 				done();
 			}
 		});
@@ -1644,7 +1644,7 @@
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
-				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
+				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
 				done();
 			}
 		});
@@ -1692,7 +1692,7 @@
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead && bSuccess) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
-				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
+				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
 				done();
 			}
 		});
@@ -1713,8 +1713,8 @@
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
 					ok(true, "request succeeded");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/TypeCode"), "PR", "check typecode");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/TypeCode"), "PR", "check typecode");
 					bRead = true;
 					oModel.setDeferredBatchGroups(["myId"]);
 					oModel.setChangeBatchGroups({
@@ -1754,8 +1754,8 @@
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead && bRead2 && bSuccess) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
-				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
-				equal(oModel.getProperty("/ProductSet('HT-1000')/TypeCode"), "PR", "check typecode");
+				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
+				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/TypeCode"), "PR", "check typecode");
 				done();
 			}
 		});
@@ -1776,8 +1776,8 @@
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
 					ok(true, "request succeeded");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 					bRead = true;
 					oModel.setDeferredBatchGroups(["myId"]);
 					oModel.setChangeBatchGroups({
@@ -1802,19 +1802,19 @@
 					spy = sinon.spy(oModel, "_processChange");
 					oModel.submitChanges({
 						success : function(oData, oResponse) {
-							equal(spy.callCount, 1, "processChange call count");
+							assert.equal(spy.callCount, 1, "processChange call count");
 							var oRequest = spy.returnValues[0];
-							equal(oRequest.method, "MERGE", "request method");
-							equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
-							equal(oRequest.data.Name, "xy", "request payload name");
-							equal(oRequest.data.Price, "4445.6", "request payload price");
+							assert.equal(oRequest.method, "MERGE", "request method");
+							assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
+							assert.equal(oRequest.data.Name, "xy", "request payload name");
+							assert.equal(oRequest.data.Price, "4445.6", "request payload price");
 							equal(oRequest.data.CurrencyCode, "EUR", "request payload currencyCode." +
 							"Should be also here because price is a currency and has sap:unit = currency code");
 							var iCount = 0;
 							jQuery.each(oRequest.data, function(iIndex, oValue){
 								iCount++;
 							});
-							equal(iCount, 4, "request payload number of properties");
+							assert.equal(iCount, 4, "request payload number of properties");
 							spy.restore();
 							bSuccess = true;
 						},
@@ -1834,8 +1834,8 @@
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead && bRead2 && bSuccess) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
-				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
-				equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "4445.6", "check price");
+				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
+				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "4445.6", "check price");
 				spy.restore();
 				done();
 			}
@@ -1859,8 +1859,8 @@
 		oModel.read("/ProductSet('HT-1000')", {
 			success : function(oData, oResponse) {
 				ok(true, "request succeeded");
-				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
-				equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
+				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 				bRead = true;
 				oModel.setDeferredBatchGroups(["myId"]);
 				oModel.setChangeBatchGroups({
@@ -1887,19 +1887,19 @@
 				spy = sinon.spy(oModel, "_processChange");
 				oModel.submitChanges({
 					success : function(oData, oResponse) {
-						equal(spy.callCount, 1, "processChange call count");
+						assert.equal(spy.callCount, 1, "processChange call count");
 						var oRequest = spy.returnValues[0];
-						equal(oRequest.method, "MERGE", "request method");
-						equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
-						equal(oRequest.data.Name, "xy", "request payload name");
-						equal(oRequest.data.Price, "4445.6", "request payload price");
+						assert.equal(oRequest.method, "MERGE", "request method");
+						assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
+						assert.equal(oRequest.data.Name, "xy", "request payload name");
+						assert.equal(oRequest.data.Price, "4445.6", "request payload price");
 						equal(oRequest.data.CurrencyCode, "USD", "request payload currencyCode." +
 								"Should be also here because price is a currency and has sap:unit = currency code");
 						var iCount = 0;
 						jQuery.each(oRequest.data, function(iIndex, oValue) {
 							iCount++;
 						});
-						equal(iCount, 4, "request payload number of properties");
+						assert.equal(iCount, 4, "request payload number of properties");
 						spy.restore();
 						bSuccess = true;
 					},
@@ -1918,8 +1918,8 @@
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead && bRead2 && bSuccess) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
-				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
-				equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "4445.6", "check price");
+				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
+				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "4445.6", "check price");
 				spy.restore();
 				done();
 			}
@@ -1941,8 +1941,8 @@
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
 					ok(true, "request succeeded");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 					bRead = true;
 
 					bSetProp = oModel.setProperty("/ProductSet('HT-1000')/Name", "xy");
@@ -1969,20 +1969,20 @@
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
-				equal(spy.callCount, 1, "processChange call count");
+				assert.equal(spy.callCount, 1, "processChange call count");
 				var oRequest = spy.returnValues[0];
-				equal(oRequest.method, "POST", "request method");
-				equal(oRequest.headers['x-http-method'], "MERGE", "request method");
-				equal(oRequest.requestUri, "/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
-				equal(oRequest.data.Name, "xy", "request payload name");
-				equal(oRequest.data.Price, "4445.8", "request payload price");
+				assert.equal(oRequest.method, "POST", "request method");
+				assert.equal(oRequest.headers['x-http-method'], "MERGE", "request method");
+				assert.equal(oRequest.requestUri, "/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
+				assert.equal(oRequest.data.Name, "xy", "request payload name");
+				assert.equal(oRequest.data.Price, "4445.8", "request payload price");
 				equal(oRequest.data.CurrencyCode, "EUR", "request payload currencyCode." +
 				"Should be also here because price is a currency and has sap:unit = currency code");
 				var iCount2 = 0;
 				jQuery.each(oRequest.data, function(iIndex, oValue){
 					iCount2++;
 				});
-				equal(iCount2, 4, "request payload number of properties");
+				assert.equal(iCount2, 4, "request payload number of properties");
 				spy.restore();
 				done();
 			}
@@ -2007,9 +2007,9 @@
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
 					ok(true, "request succeeded");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
 					bRead = true;
 					oModel.setDeferredBatchGroups(["myId"]);
 					oModel.setChangeBatchGroups({
@@ -2034,19 +2034,19 @@
 					spy = sinon.spy(oModel, "_processChange");
 					oModel.submitChanges({
 						success : function(oData, oResponse) {
-							equal(spy.callCount, 1, "processChange call count");
+							assert.equal(spy.callCount, 1, "processChange call count");
 							var oRequest = spy.returnValues[0];
-							equal(oRequest.method, "PUT", "request method");
+							assert.equal(oRequest.method, "PUT", "request method");
 							ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
-							equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
-							equal(oRequest.data.Name, "xy", "request payload name");
-							equal(oRequest.data.Price, "4445.6", "request payload price");
-							equal(oRequest.data.CurrencyCode, "EUR", "request payload currency code should be there and not changed!!!");
+							assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
+							assert.equal(oRequest.data.Name, "xy", "request payload name");
+							assert.equal(oRequest.data.Price, "4445.6", "request payload price");
+							assert.equal(oRequest.data.CurrencyCode, "EUR", "request payload currency code should be there and not changed!!!");
 							var iCount = 0;
 							jQuery.each(oRequest.data, function(iIndex, oValue){
 								iCount++;
 							});
-							equal(iCount, 22, "request payload number of properties");
+							assert.equal(iCount, 22, "request payload number of properties");
 							spy.restore();
 							bSuccess = true;
 						},
@@ -2067,8 +2067,8 @@
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead && bRead2 && bSuccess) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
-				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
-				equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "4445.6", "check price");
+				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
+				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "4445.6", "check price");
 				spy.restore();
 				done();
 			}
@@ -2094,9 +2094,9 @@
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
 					ok(true, "request succeeded");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
 					bRead = true;
 					oModel.setDeferredBatchGroups(["myId"]);
 					oModel.setChangeBatchGroups({
@@ -2122,20 +2122,20 @@
 					spy = sinon.spy(oModel, "_processChange");
 					oModel.submitChanges({
 						success : function(oData, oResponse) {
-							equal(spy.callCount, 1, "processChange call count");
+							assert.equal(spy.callCount, 1, "processChange call count");
 							var oRequest = spy.returnValues[0];
-							equal(oRequest.method, "PUT", "request method");
+							assert.equal(oRequest.method, "PUT", "request method");
 							ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
-							equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
-							equal(oRequest.data.Name, "xy", "request payload name");
-							equal(oRequest.data.Price, "4445.6", "request payload price");
+							assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
+							assert.equal(oRequest.data.Name, "xy", "request payload name");
+							assert.equal(oRequest.data.Price, "4445.6", "request payload price");
 							equal(oRequest.data.CurrencyCode, "EUR",
 									"request payload currency code should be there and not changed!!!");
 							var iCount = 0;
 							jQuery.each(oRequest.data, function(iIndex, oValue) {
 								iCount++;
 							});
-							equal(iCount, 22, "request payload number of properties");
+							assert.equal(iCount, 22, "request payload number of properties");
 							spy.restore();
 							bSuccess = true;
 						},
@@ -2155,8 +2155,8 @@
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead && bRead2 && bSuccess) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
-				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
-				equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "4445.6", "check price");
+				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
+				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "4445.6", "check price");
 				spy.restore();
 				done();
 			}
@@ -2181,9 +2181,9 @@
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
 					ok(true, "request succeeded");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
 					bRead = true;
 
 					bSetProp = oModel.setProperty("/ProductSet('HT-1000')/Name", "xy");
@@ -2211,19 +2211,19 @@
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
-				equal(spy.callCount, 1, "processChange call count");
+				assert.equal(spy.callCount, 1, "processChange call count");
 				var oRequest = spy.returnValues[0];
-				equal(oRequest.method, "PUT", "request method");
+				assert.equal(oRequest.method, "PUT", "request method");
 				ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
-				equal(oRequest.requestUri, "/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
-				equal(oRequest.data.Name, "xy", "request payload name");
-				equal(oRequest.data.Price, "4445.8", "request payload price");
-				equal(oRequest.data.CurrencyCode, "EUR", "request payload currency code should be there and not changed!!!");
+				assert.equal(oRequest.requestUri, "/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
+				assert.equal(oRequest.data.Name, "xy", "request payload name");
+				assert.equal(oRequest.data.Price, "4445.8", "request payload price");
+				assert.equal(oRequest.data.CurrencyCode, "EUR", "request payload currency code should be there and not changed!!!");
 				var iCount2 = 0;
 				jQuery.each(oRequest.data, function(iIndex, oValue){
 					iCount2++;
 				});
-				equal(iCount2, 22, "request payload number of properties ");
+				assert.equal(iCount2, 22, "request payload number of properties ");
 				spy.restore();
 				done();
 			}
@@ -2247,9 +2247,9 @@
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
 					ok(true, "request succeeded");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
 					bRead = true;
 
 					bSetProp = oModel.setProperty("/ProductSet('HT-1000')/Name", "xy");
@@ -2277,19 +2277,19 @@
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
-				equal(spy.callCount, 1, "processChange call count");
+				assert.equal(spy.callCount, 1, "processChange call count");
 				var oRequest = spy.returnValues[0];
-				equal(oRequest.method, "PUT", "request method");
+				assert.equal(oRequest.method, "PUT", "request method");
 				ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
-				equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
-				equal(oRequest.data.Name, "xy", "request payload name");
-				equal(oRequest.data.Price, "4445.8", "request payload price");
-				equal(oRequest.data.CurrencyCode, "EUR", "request payload currency code should be there and not changed!!!");
+				assert.equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
+				assert.equal(oRequest.data.Name, "xy", "request payload name");
+				assert.equal(oRequest.data.Price, "4445.8", "request payload price");
+				assert.equal(oRequest.data.CurrencyCode, "EUR", "request payload currency code should be there and not changed!!!");
 				var iCount2 = 0;
 				jQuery.each(oRequest.data, function(iIndex, oValue) {
 					iCount2++;
 				});
-				equal(iCount2, 22, "request payload number of properties ");
+				assert.equal(iCount2, 22, "request payload number of properties ");
 				spy.restore();
 				done();
 			}
@@ -2314,9 +2314,9 @@
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
 					ok(true, "request succeeded");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
 					bRead = true;
 					oModel.setDeferredBatchGroups(["myId"]);
 					oModel.setChangeBatchGroups({
@@ -2352,17 +2352,17 @@
 					spy = sinon.spy(oModel, "_submitBatchRequest");
 					oModel.submitChanges({
 						success : function(oData, oResponse) {
-							equal(spy.callCount, 1, "processChange call count");
+							assert.equal(spy.callCount, 1, "processChange call count");
 							var oRequest = spy.args[0][1][0][0].request;
-							equal(oRequest.method, "MERGE", "request method");
+							assert.equal(oRequest.method, "MERGE", "request method");
 							ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
-							equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
-							equal(oRequest.data.Name, "Test", "request payload name");
+							assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
+							assert.equal(oRequest.data.Name, "Test", "request payload name");
 							var iCount = 0;
 							jQuery.each(oRequest.data, function(iIndex, oValue) {
 								iCount++;
 							});
-							equal(iCount, 1, "request payload number of properties");
+							assert.equal(iCount, 1, "request payload number of properties");
 							spy.restore();
 							bSuccess = true;
 						},
@@ -2382,7 +2382,7 @@
 			iCount++;
 			if (iCount === 2 && bRead && bRead2 && bSuccess) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
-				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Test", "check changed name");
+				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Test", "check changed name");
 				spy.restore();
 				done();
 			}
@@ -2406,9 +2406,9 @@
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
 					ok(true, "request succeeded");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
 					bRead = true;
 					oModel.setDeferredBatchGroups(["myId"]);
 					oModel.setChangeBatchGroups({
@@ -2444,17 +2444,17 @@
 					spy = sinon.spy(oModel, "_submitBatchRequest");
 					oModel.submitChanges({
 						success : function(oData, oResponse) {
-							equal(spy.callCount, 1, "processChange call count");
+							assert.equal(spy.callCount, 1, "processChange call count");
 							var oRequest = spy.args[0][1][0][0].request;
-							equal(oRequest.method, "PUT", "request method");
+							assert.equal(oRequest.method, "PUT", "request method");
 							ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
-							equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
-							equal(oRequest.data.Name, "Test", "request payload name");
+							assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
+							assert.equal(oRequest.data.Name, "Test", "request payload name");
 							var iCount = 0;
 							jQuery.each(oRequest.data, function(iIndex, oValue) {
 								iCount++;
 							});
-							equal(iCount, 1, "request payload number of properties");
+							assert.equal(iCount, 1, "request payload number of properties");
 							spy.restore();
 							bSuccess = true;
 						},
@@ -2474,7 +2474,7 @@
 			iCount++;
 			if (iCount === 2 && bRead && bRead2 && bSuccess) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
-				equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Test", "check changed name");
+				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Test", "check changed name");
 				spy.restore();
 				done();
 			}
@@ -2498,9 +2498,9 @@
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
 					ok(true, "request succeeded");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
 					bRead = true;
 
 					spy = sinon.spy(oModel, "_submitSingleRequest");
@@ -2528,17 +2528,17 @@
 			iCount++;
 			if (iCount === 2 && bUpdate && bRead) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
-				equal(spy.callCount, 1, "call count");
+				assert.equal(spy.callCount, 1, "call count");
 				var oRequest = spy.args[0][0].request;
-				equal(oRequest.method, "POST", "request method");
+				assert.equal(oRequest.method, "POST", "request method");
 				ok(oRequest.headers['x-http-method'] === "MERGE", "request method header should not be present");
-				equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
-				equal(oRequest.data.Name, "Test3", "request payload name");
+				assert.equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
+				assert.equal(oRequest.data.Name, "Test3", "request payload name");
 				var iCount2 = 0;
 				jQuery.each(oRequest.data, function(iIndex, oValue) {
 					iCount2++;
 				});
-				equal(iCount2, 1, "request payload number of properties ");
+				assert.equal(iCount2, 1, "request payload number of properties ");
 				spy.restore();
 				done();
 			}
@@ -2562,9 +2562,9 @@
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
 					ok(true, "request succeeded");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
-					equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
+					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
 					bRead = true;
 
 					spy = sinon.spy(oModel, "_submitSingleRequest");
@@ -2592,17 +2592,17 @@
 			iCount++;
 			if (iCount === 2 && bUpdate && bRead) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
-				equal(spy.callCount, 1, "call count");
+				assert.equal(spy.callCount, 1, "call count");
 				var oRequest = spy.args[0][0].request;
-				equal(oRequest.method, "PUT", "request method");
+				assert.equal(oRequest.method, "PUT", "request method");
 				ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
-				equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
-				equal(oRequest.data.Name, "Test2", "request payload name");
+				assert.equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
+				assert.equal(oRequest.data.Name, "Test2", "request payload name");
 				var iCount2 = 0;
 				jQuery.each(oRequest.data, function(iIndex, oValue) {
 					iCount2++;
 				});
-				equal(iCount2, 1, "request payload number of properties ");
+				assert.equal(iCount2, 1, "request payload number of properties ");
 				spy.restore();
 				done();
 			}
@@ -2653,20 +2653,20 @@
 					"DimUnit":"M"
 			}, batchGroupId: "myId"});
 
-			equal(oModel.getProperty("Name",oContext), "TestEntry", "check virtual entry name");
+			assert.equal(oModel.getProperty("Name",oContext), "TestEntry", "check virtual entry name");
 			ok(oModel.setProperty("Name","newName1", oContext), "modify entry...should not lead to a second request");
-			equal(oModel.getProperty("Name",oContext), "newName1", "check virtual entry name");
+			assert.equal(oModel.getProperty("Name",oContext), "newName1", "check virtual entry name");
 
 			oModel.submitChanges({
 				success : function(oData, oResponse) {
 					bSuccess1 = true;
-					equal(oModel.getProperty("Name",oContext), "newName1", "check virtual entry name");
+					assert.equal(oModel.getProperty("Name",oContext), "newName1", "check virtual entry name");
 					ok(oModel.setProperty("Name","newName2", oContext), "modify entry");
-					equal(oModel.getProperty("Name",oContext), "newName2", "check virtual entry name");
+					assert.equal(oModel.getProperty("Name",oContext), "newName2", "check virtual entry name");
 					oModel.submitChanges({
 						success : function(oData, oResponse) {
 							bSuccess2 = true;
-							equal(oModel.getProperty("Name",oContext), "newName2", "check virtual entry name");
+							assert.equal(oModel.getProperty("Name",oContext), "newName2", "check virtual entry name");
 						},
 						error : function(oError) {
 							ok(false, "request failed");
@@ -2726,9 +2726,9 @@
 					"CreatedAt":"\/Date(1413795983000)\/",
 					"ChangedAt":"\/Date(1413795983000)\/"
 			}});
-			equal(oModel.getProperty("Name",oContext), "TestEntry", "check virtual entry name");
+			assert.equal(oModel.getProperty("Name",oContext), "TestEntry", "check virtual entry name");
 			ok(oModel.setProperty("Name","newName", oContext), "modify entry");
-			equal(oModel.getProperty("Name",oContext), "newName", "check virtual entry name");
+			assert.equal(oModel.getProperty("Name",oContext), "newName", "check virtual entry name");
 			oModel.submitChanges();
 		};
 		oModel.attachBatchRequestCompleted(this, function(test) {
@@ -2874,10 +2874,10 @@
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			ok(true, "should land here");
 			var aRequests = oEvent.getParameter('requests');
-			equal(aRequests.length, 1, "should contain one request");
-			equal(aRequests[0].success, true, "request successful");
-			equal(aRequests[0].url, "ProductSet", "request successful");
-			equal(aRequests[0].response.statusCode, "201", "response code");
+			assert.equal(aRequests.length, 1, "should contain one request");
+			assert.equal(aRequests[0].success, true, "request successful");
+			assert.equal(aRequests[0].url, "ProductSet", "request successful");
+			assert.equal(aRequests[0].response.statusCode, "201", "response code");
 			done();
 		});
 		oModel.attachMetadataLoaded(this, function() {
@@ -2916,20 +2916,20 @@
 			});
 		};
 		oModel.attachBatchRequestSent(this, function(oEvent) {
-			equal(oEvent.getId(), "batchRequestSent", "event id check");
+			assert.equal(oEvent.getId(), "batchRequestSent", "event id check");
 			ok(oEvent.getParameter('url'), "Param check: url");
 			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
-			equal(oEvent.getParameter('method'), "POST" , "Param check: method");
-			equal(oEvent.getParameter('async'), true , "Param check: async");
-			equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
+			assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
+			assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 			var aRequests = oEvent.getParameter('requests');
 			ok(aRequests.length == 1, "should contain one request");
-			equal(aRequests[0].method, "GET", "internal request, Param Check: method");
-			equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
-			equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
+			assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
+			assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
+			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 
-			equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+			assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
 			sReqId = oEvent.getParameter('ID');
 			iReqSent++;
 		});
@@ -2939,33 +2939,33 @@
 			if (iReqComp === 1 && iReqSent === 1 && bSuccess) {
 				ok(true, "eventing performed correctly");
 
-				equal(oEvent.getId(), "batchRequestCompleted", "event id check");
+				assert.equal(oEvent.getId(), "batchRequestCompleted", "event id check");
 				ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
 				ok(oEvent.getParameter('url'), "Param check: url");
 				ok(oEvent.getParameter('success'), "Param check: success");
-				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
-				equal(oEvent.getParameter('async'), true , "Param check: async");
-				equal(oEvent.getParameter('headers').Accept, "multipart/mixed", true , "Param check: headers");
+				assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+				assert.equal(oEvent.getParameter('async'), true , "Param check: async");
+				assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", true , "Param check: headers");
 				ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 				var aRequests = oEvent.getParameter('requests');
 				ok(aRequests.length == 1, "should contain one request");
-				equal(aRequests[0].method, "GET", "internal request, Param Check: method");
-				equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
-				equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
+				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
+				assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
+				assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 
 				//check response
 				var oResponse = oEvent.getParameter('response');
 				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
-				equal(oResponse.statusCode, 202, "oResponse Param check: statusCode");
-				equal(oResponse.statusText, "Accepted", "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusCode, 202, "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusText, "Accepted", "oResponse Param check: statusCode");
 
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
-				equal(aRequests[0].response.statusCode, "200", "internal response, Param Check: statusCode");
-				equal(aRequests[0].response.statusText, "OK", "internal response, Param Check: statusText");
+				assert.equal(aRequests[0].response.statusCode, "200", "internal response, Param Check: statusCode");
+				assert.equal(aRequests[0].response.statusText, "OK", "internal response, Param Check: statusText");
 
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
-				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
+				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
 				done();
 			}
 		});
@@ -2999,18 +2999,18 @@
 		oModel.attachBatchRequestSent(this, function(oEvent) {
 			iReqSent++;
 
-			equal(oEvent.getId(), "batchRequestSent", "event id check");
+			assert.equal(oEvent.getId(), "batchRequestSent", "event id check");
 			ok(oEvent.getParameter('url'), "Param check: url");
 			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
-			equal(oEvent.getParameter('method'), "POST" , "Param check: method");
-			equal(oEvent.getParameter('async'), true , "Param check: async");
-			equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
+			assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
+			assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 			var aRequests = oEvent.getParameter('requests');
 			ok(aRequests.length == 1, "should contain one request");
-			equal(aRequests[0].method, "GET", "internal request, Param Check: method");
-			equal(aRequests[0].url, "ProductXYSet", "internal request, Param Check: url");
-			equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
+			assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
+			assert.equal(aRequests[0].url, "ProductXYSet", "internal request, Param Check: url");
+			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 
 			sReqId = oEvent.getParameter('ID');
 		});
@@ -3020,25 +3020,25 @@
 			if (iReqComp === 1 && iReqSent === 1 && iReqFailed == 0) {
 				ok(true, "eventing performed correctly");
 				ok(oEvent.getParameter('success'), "should be true for batch request itself!");
-				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+				assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 
 				//check response
 				var oResponse = oEvent.getParameter('response');
 				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
-				equal(oResponse.statusCode, 202, "oResponse Param check: statusCode");
-				equal(oResponse.statusText, "Accepted", "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusCode, 202, "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusText, "Accepted", "oResponse Param check: statusCode");
 
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
 				ok(aRequests.length == 1, "should contain one request");
-				equal(aRequests[0].method, "GET", "internal request, Param Check: method");
-				equal(aRequests[0].url, "ProductXYSet", "internal request, Param Check: url");
-				equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
-				equal(aRequests[0].response.statusCode, "404", "internal response, Param Check: statusCode");
-				equal(aRequests[0].response.statusText, "Not Found", "internal response, Param Check: statusText");
+				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
+				assert.equal(aRequests[0].url, "ProductXYSet", "internal request, Param Check: url");
+				assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
+				assert.equal(aRequests[0].response.statusCode, "404", "internal response, Param Check: statusCode");
+				assert.equal(aRequests[0].response.statusText, "Not Found", "internal response, Param Check: statusText");
 
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
-				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
+				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
 				done();
 			}
 		});
@@ -3070,7 +3070,7 @@
 		};
 
 		oModel.attachBatchRequestFailed(this, function(oEvent) {
-			equal(oEvent.getId(), "batchRequestFailed", "event id check");
+			assert.equal(oEvent.getId(), "batchRequestFailed", "event id check");
 			iReqFailed++;
 			if (iReqFailed == 1 && iReqComp === 1 && iReqSent === 1 ) {
 				ok(!oEvent.getParameter('success'), "should be false for batch request itself!");
@@ -3081,9 +3081,9 @@
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
 				ok(aRequests.length == 1, "should contain one request");
-				equal(aRequests[0].method, "GET", "internal request, Param Check: method");
-				equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
-				equal(aRequests[0].response, undefined, "internal response not there");
+				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
+				assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
+				assert.equal(aRequests[0].response, undefined, "internal response not there");
 
 				done();
 			}
@@ -3092,17 +3092,17 @@
 		oModel.attachBatchRequestSent(this, function(oEvent) {
 			iReqSent++;
 
-			equal(oEvent.getId(), "batchRequestSent", "event id check");
+			assert.equal(oEvent.getId(), "batchRequestSent", "event id check");
 			ok(oEvent.getParameter('url'), "Param check: url");
 			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
-			equal(oEvent.getParameter('method'), "POST" , "Param check: method");
-			equal(oEvent.getParameter('async'), true , "Param check: async");
-			equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
+			assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
+			assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			var aRequests = oEvent.getParameter('requests');
 			ok(aRequests.length == 1, "should contain one request");
-			equal(aRequests[0].method, "GET", "internal request, Param Check: method");
-			equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
-			equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
+			assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
+			assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
+			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 
 			sReqId = oEvent.getParameter('ID');
 		});
@@ -3112,7 +3112,7 @@
 			if (iReqComp === 1 && iReqSent === 1 && iReqFailed == 0) {
 				ok(true, "eventing performed correctly");
 				ok(!oEvent.getParameter('success'), "should be false for batch request itself!");
-				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+				assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 
 				//check response
 				var oResponse = oEvent.getParameter('response');
@@ -3121,12 +3121,12 @@
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
 				ok(aRequests.length == 1, "should contain one request");
-				equal(aRequests[0].method, "GET", "internal request, Param Check: method");
-				equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
-				equal(aRequests[0].response, undefined, "internal response not there");
+				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
+				assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
+				assert.equal(aRequests[0].response, undefined, "internal response not there");
 
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
-				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
+				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
 			}
 		});
 		oModel.attachMetadataLoaded(this, fnTest);
@@ -3152,14 +3152,14 @@
 			});
 		};
 		oModel.attachRequestSent(this, function(oEvent) {
-			equal(oEvent.getId(), "requestSent", "event id check");
+			assert.equal(oEvent.getId(), "requestSent", "event id check");
 			ok(oEvent.getParameter('url'), "Param check: url");
 			ok(oEvent.getParameter('url').indexOf("ProductSet") !== -1, "Param check: url should be non batch");
-			equal(oEvent.getParameter('method'), "GET" , "Param check: method");
-			equal(oEvent.getParameter('async'), true , "Param check: async");
-			equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
+			assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
+			assert.equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
 
-			equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+			assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
 			sReqId = oEvent.getParameter('ID');
 			iReqSent++;
 		});
@@ -3169,22 +3169,22 @@
 			if (iReqComp === 1 && iReqSent === 1 && bSuccess) {
 				ok(true, "eventing performed correctly");
 
-				equal(oEvent.getId(), "requestCompleted", "event id check");
+				assert.equal(oEvent.getId(), "requestCompleted", "event id check");
 				ok(oEvent.getParameter('url'), "Param check: url");
 				ok(oEvent.getParameter('url').indexOf("ProductSet") !== -1, "Param check: url should be non batch");
 				ok(oEvent.getParameter('success'), "Param check: success");
-				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
-				equal(oEvent.getParameter('async'), true , "Param check: async");
-				equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
+				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+				assert.equal(oEvent.getParameter('async'), true , "Param check: async");
+				assert.equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
 
 				//check response
 				var oResponse = oEvent.getParameter('response');
 				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
-				equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
-				equal(oResponse.statusText, "OK", "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusText, "OK", "oResponse Param check: statusCode");
 
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
-				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
+				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
 				done();
 			}
 		});
@@ -3203,16 +3203,16 @@
 		oModel.attachRequestFailed(this, function(oEvent) {
 			iReqFailed++;
 			if (iReqSent === 1 && iReqFailed === 1 && iReqComp === 1) {
-				equal(oEvent.getId(), "requestFailed", "event id check");
+				assert.equal(oEvent.getId(), "requestFailed", "event id check");
 				ok(true, "eventing performed correctly");
-				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
-				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
+				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
 				//check response
 				var oResponse = oEvent.getParameter('response');
 				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
-				equal(oResponse.statusCode, 404, "oResponse Param check: statusCode");
-				equal(oResponse.statusText, "Not Found", "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusCode, 404, "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusText, "Not Found", "oResponse Param check: statusCode");
 
 				done();
 			}
@@ -3220,12 +3220,12 @@
 
 		oModel.attachRequestSent(this, function(oEvent) {
 			iReqSent++;
-			equal(oEvent.getId(), "requestSent", "event id check");
+			assert.equal(oEvent.getId(), "requestSent", "event id check");
 			ok(oEvent.getParameter('url'), "Param check: url");
 			ok(oEvent.getParameter('url').indexOf("ProductXYSet") !== -1, "Param check: url should be non batch");
-			equal(oEvent.getParameter('method'), "GET" , "Param check: method");
-			equal(oEvent.getParameter('async'), true , "Param check: async");
-			equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
+			assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
+			assert.equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
 
 			ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 			sReqId = oEvent.getParameter('ID');
@@ -3236,21 +3236,21 @@
 			if (iReqComp === 1 && iReqSent === 1 && iReqFailed === 0) {
 				ok(true, "eventing performed correctly");
 				ok(!oEvent.getParameter('success'), " should be false!");
-				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
-				equal(oEvent.getId(), "requestCompleted", "event id check");
+				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+				assert.equal(oEvent.getId(), "requestCompleted", "event id check");
 				ok(oEvent.getParameter('url'), "Param check: url");
 				ok(oEvent.getParameter('url').indexOf("ProductXYSet") !== -1, "Param check: url should be non batch");
-				equal(oEvent.getParameter('async'), true , "Param check: async");
-				equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
+				assert.equal(oEvent.getParameter('async'), true , "Param check: async");
+				assert.equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
 
 				//check response
 				var oResponse = oEvent.getParameter('response');
 				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
-				equal(oResponse.statusCode, 404, "oResponse Param check: statusCode");
-				equal(oResponse.statusText, "Not Found", "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusCode, 404, "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusText, "Not Found", "oResponse Param check: statusCode");
 
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
-				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
+				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
 			}
 		});
 
@@ -3310,28 +3310,28 @@
 		};
 
 		oModel.attachBatchRequestSent(this, function(oEvent) {
-			equal(oEvent.getId(), "batchRequestSent", "event id check");
+			assert.equal(oEvent.getId(), "batchRequestSent", "event id check");
 			ok(oEvent.getParameter('url'), "Param check: url");
 			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
-			equal(oEvent.getParameter('method'), "POST" , "Param check: method");
-			equal(oEvent.getParameter('async'), true , "Param check: async");
+			assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 
 			var aRequests = oEvent.getParameter('requests');
 			ok(aRequests.length == 3, "should contain 3 requests");
-			equal(aRequests[0].method, "MERGE", "internal request, Param Check: method");
-			equal(aRequests[0].url, "ProductSet('HT-1000')", "internal request, Param Check: url");
-			equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
+			assert.equal(aRequests[0].method, "MERGE", "internal request, Param Check: method");
+			assert.equal(aRequests[0].url, "ProductSet('HT-1000')", "internal request, Param Check: url");
+			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 
-			equal(aRequests[1].method, "GET", "internal request, Param Check: method");
-			equal(aRequests[1].url, "ProductSet('HT-1001')", "internal request, Param Check: url");
-			equal(aRequests[1].headers.Accept, "application/json", "internal request Param check: headers");
+			assert.equal(aRequests[1].method, "GET", "internal request, Param Check: method");
+			assert.equal(aRequests[1].url, "ProductSet('HT-1001')", "internal request, Param Check: url");
+			assert.equal(aRequests[1].headers.Accept, "application/json", "internal request Param check: headers");
 
-			equal(aRequests[2].method, "GET", "internal request, Param Check: method");
-			equal(aRequests[2].url, "ProductSet('AD-1000')", "internal request, Param Check: url");
-			equal(aRequests[2].headers.Accept, "application/json", "internal request Param check: headers");
+			assert.equal(aRequests[2].method, "GET", "internal request, Param Check: method");
+			assert.equal(aRequests[2].url, "ProductSet('AD-1000')", "internal request, Param Check: url");
+			assert.equal(aRequests[2].headers.Accept, "application/json", "internal request Param check: headers");
 
 
-			equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+			assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
 			sReqId = oEvent.getParameter('ID');
 			iReqSent++;
 		});
@@ -3341,49 +3341,49 @@
 			if (iReqComp === 1 && iReqSent === 1 && bSuccess) {
 				ok(true, "eventing performed correctly");
 
-				equal(oEvent.getId(), "batchRequestCompleted", "event id check");
+				assert.equal(oEvent.getId(), "batchRequestCompleted", "event id check");
 				ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
 				ok(oEvent.getParameter('url'), "Param check: url");
 				ok(oEvent.getParameter('success'), "Param check: success");
-				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
-				equal(oEvent.getParameter('async'), true , "Param check: async");
-				equal(oEvent.getParameter('headers').Accept, "multipart/mixed", true , "Param check: headers");
+				assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+				assert.equal(oEvent.getParameter('async'), true , "Param check: async");
+				assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", true , "Param check: headers");
 				ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 				var aRequests = oEvent.getParameter('requests');
 
 				ok(aRequests.length == 3, "should contain 3 requests");
 
-				equal(aRequests[0].method, "MERGE", "internal request, Param Check: method");
-				equal(aRequests[0].url, "ProductSet('HT-1000')", "internal request, Param Check: url");
-				equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
+				assert.equal(aRequests[0].method, "MERGE", "internal request, Param Check: method");
+				assert.equal(aRequests[0].url, "ProductSet('HT-1000')", "internal request, Param Check: url");
+				assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 
-				equal(aRequests[1].method, "GET", "internal request, Param Check: method");
-				equal(aRequests[1].url, "ProductSet('HT-1001')", "internal request, Param Check: url");
-				equal(aRequests[1].headers.Accept, "application/json", "internal request Param check: headers");
+				assert.equal(aRequests[1].method, "GET", "internal request, Param Check: method");
+				assert.equal(aRequests[1].url, "ProductSet('HT-1001')", "internal request, Param Check: url");
+				assert.equal(aRequests[1].headers.Accept, "application/json", "internal request Param check: headers");
 
-				equal(aRequests[2].method, "GET", "internal request, Param Check: method");
-				equal(aRequests[2].url, "ProductSet('AD-1000')", "internal request, Param Check: url");
-				equal(aRequests[2].headers.Accept, "application/json", "internal request Param check: headers");
+				assert.equal(aRequests[2].method, "GET", "internal request, Param Check: method");
+				assert.equal(aRequests[2].url, "ProductSet('AD-1000')", "internal request, Param Check: url");
+				assert.equal(aRequests[2].headers.Accept, "application/json", "internal request Param check: headers");
 
 				//check response
 				var oResponse = oEvent.getParameter('response');
 				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
-				equal(oResponse.statusCode, 202, "oResponse Param check: statusCode");
-				equal(oResponse.statusText, "Accepted", "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusCode, 202, "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusText, "Accepted", "oResponse Param check: statusCode");
 
 				// check internal responses
-				equal(aRequests[0].response.statusCode, "204", "internal response, Param Check: statusCode");
-				equal(aRequests[0].response.statusText, "No Content", "internal response, Param Check: statusText");
+				assert.equal(aRequests[0].response.statusCode, "204", "internal response, Param Check: statusCode");
+				assert.equal(aRequests[0].response.statusText, "No Content", "internal response, Param Check: statusText");
 
-				equal(aRequests[1].response.statusCode, "200", "internal response, Param Check: statusCode");
-				equal(aRequests[1].response.statusText, "OK", "internal response, Param Check: statusText");
+				assert.equal(aRequests[1].response.statusCode, "200", "internal response, Param Check: statusCode");
+				assert.equal(aRequests[1].response.statusText, "OK", "internal response, Param Check: statusText");
 
-				equal(aRequests[2].response.statusCode, "200", "internal response, Param Check: statusCode");
-				equal(aRequests[2].response.statusText, "OK", "internal response, Param Check: statusText");
+				assert.equal(aRequests[2].response.statusCode, "200", "internal response, Param Check: statusCode");
+				assert.equal(aRequests[2].response.statusText, "OK", "internal response, Param Check: statusText");
 
 
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
-				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
+				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
 				done();
 			}
 		});
@@ -3438,23 +3438,23 @@
 			iCount1++;
 			if (iCount1 == 1) {
 				ok(oEvent.getParameter('url').indexOf("HT-1000") !== -1, "Param check: url should be non batch");
-				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
-				equal(oEvent.getParameter('headers')['x-http-method'], "MERGE" , "Param check: method");
-				equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+				assert.equal(oEvent.getParameter('headers')['x-http-method'], "MERGE" , "Param check: method");
+				assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId3 = oEvent.getParameter('ID');
 			}
 
 			if (iCount1 == 2) {
 				ok(oEvent.getParameter('url').indexOf("HT-1001") !== -1, "Param check: url should be non batch");
-				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
-				equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+				assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId1 = oEvent.getParameter('ID');
 			}
 
 			if (iCount1 == 3) {
 				ok(oEvent.getParameter('url').indexOf("AD-1000") !== -1, "Param check: url should be non batch");
-				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
-				equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+				assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId2 = oEvent.getParameter('ID');
 			}
 
@@ -3463,43 +3463,43 @@
 
 		oModel.attachRequestCompleted(this, function(oEvent) {
 
-			equal(oEvent.getId(), "requestCompleted", "event id check");
+			assert.equal(oEvent.getId(), "requestCompleted", "event id check");
 
 			ok(oEvent.getParameter('success'), "Param check: success");
 
 			if (oEvent.getParameter('url').indexOf("HT-1001") !== -1) {
 				ok(oEvent.getParameter('url').indexOf("HT-1001") !== -1, "Param check: url should be non batch");
-				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				var oResponse = oEvent.getParameter('response');
 				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
-				equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
-				equal(oResponse.statusText, "OK", "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusText, "OK", "oResponse Param check: statusCode");
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
-				equal(oEvent.getParameter('ID'), sReqId1, "Check Request ID");
+				assert.equal(oEvent.getParameter('ID'), sReqId1, "Check Request ID");
 				iCount2 ++;
 			}
 
 			if (oEvent.getParameter('url').indexOf("AD-1000") !== -1) {
 				ok(oEvent.getParameter('url').indexOf("AD-1000") !== -1, "Param check: url should be non batch");
-				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				var oResponse = oEvent.getParameter('response');
 				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
-				equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
-				equal(oResponse.statusText, "OK", "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusText, "OK", "oResponse Param check: statusCode");
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
-				equal(oEvent.getParameter('ID'), sReqId2, "Check Request ID");
+				assert.equal(oEvent.getParameter('ID'), sReqId2, "Check Request ID");
 				iCount2 ++;
 			}
 
 			if (oEvent.getParameter('url').indexOf("HT-1000") !== -1) {
-				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
-				equal(oEvent.getParameter('headers')['x-http-method'], "MERGE" , "Param check: method");
+				assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+				assert.equal(oEvent.getParameter('headers')['x-http-method'], "MERGE" , "Param check: method");
 				var oResponse = oEvent.getParameter('response');
 				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
-				equal(oResponse.statusCode, 204, "oResponse Param check: statusCode");
-				equal(oResponse.statusText, "No Content", "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusCode, 204, "oResponse Param check: statusCode");
+				assert.equal(oResponse.statusText, "No Content", "oResponse Param check: statusCode");
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
-				equal(oEvent.getParameter('ID'), sReqId3, "Check Request ID");
+				assert.equal(oEvent.getParameter('ID'), sReqId3, "Check Request ID");
 				iCount2 ++;
 			}
 
@@ -3552,8 +3552,8 @@
 		};
 
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
-			equal(oEvent.getParameter('requests').length, 1, "number of requests check");
-			equal(oEvent.getParameter('requests')[0].url, "ProductSet('HT-1001')" , "Param check: url");
+			assert.equal(oEvent.getParameter('requests').length, 1, "number of requests check");
+			assert.equal(oEvent.getParameter('requests')[0].url, "ProductSet('HT-1001')" , "Param check: url");
 			done();
 		});
 		oModel.attachMetadataLoaded(this, fnTest);
@@ -3595,7 +3595,7 @@
 
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			ok(true, "request should be aborted");
-			equal(oEvent.getParameter('success'), false, "request completed with success false");
+			assert.equal(oEvent.getParameter('success'), false, "request completed with success false");
 			done();
 		});
 		oModel.attachMetadataLoaded(this, fnTest);
@@ -3976,7 +3976,7 @@
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
 			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'", "Valid parameter is added to URL");
-			equal(mUrlParams["SalesOrderID"], "test", "Parameter still exists after sending function import");
+			assert.equal(mUrlParams["SalesOrderID"], "test", "Parameter still exists after sending function import");
 			done();
 		});
 
@@ -4032,11 +4032,11 @@
 
 			oHandle.contextCreated().then(function(oContext) {
 				oInput.setBindingContext(oContext);
-				equal(oInput.getValue(), "test", "Value check");
-				equal(oModel.getProperty("SalesOrderID", oContext), "test", "Value check in model");
+				assert.equal(oInput.getValue(), "test", "Value check");
+				assert.equal(oModel.getProperty("SalesOrderID", oContext), "test", "Value check in model");
 				oInput.setValue("Blubb");
-				equal(oInput.getValue(), "Blubb", "Value check");
-				equal(oModel.getProperty("SalesOrderID", oContext), "Blubb", "Value check in model");
+				assert.equal(oInput.getValue(), "Blubb", "Value check");
+				assert.equal(oModel.getProperty("SalesOrderID", oContext), "Blubb", "Value check in model");
 				oModel.submitChanges();
 			}, function() {
 				ok(false, "Test failed");
@@ -4077,11 +4077,11 @@
 			ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='test'");
 			oHandle.contextCreated().then(function(oContext) {
 				oInput.setBindingContext(oContext);
-				equal(oInput.getValue(), "test", "Value check");
-				equal(oContext.getProperty("SalesOrderID"), "test", "Value check in model");
+				assert.equal(oInput.getValue(), "test", "Value check");
+				assert.equal(oContext.getProperty("SalesOrderID"), "test", "Value check in model");
 				oInput.setValue("Blubb");
-				equal(oInput.getValue(), "Blubb", "Value check");
-				equal(oContext.getProperty("SalesOrderID"), "Blubb", "Value check in model");
+				assert.equal(oInput.getValue(), "Blubb", "Value check");
+				assert.equal(oContext.getProperty("SalesOrderID"), "Blubb", "Value check in model");
 			}, function() {
 				ok(false, "Test failed");
 			});
@@ -4116,11 +4116,11 @@
 
 			oHandle.contextCreated().then(function(oContext) {
 				oInput.setBindingContext(oContext);
-				equal(oInput.getValue(), "test", "Value check");
-				equal(oModel.getProperty("SalesOrderID", oContext), "test", "Value check in model");
+				assert.equal(oInput.getValue(), "test", "Value check");
+				assert.equal(oModel.getProperty("SalesOrderID", oContext), "test", "Value check in model");
 				oInput.setValue("Blubb");
-				equal(oInput.getValue(), "Blubb", "Value check");
-				equal(oModel.getProperty("SalesOrderID", oContext), "Blubb", "Value check in model");
+				assert.equal(oInput.getValue(), "Blubb", "Value check");
+				assert.equal(oModel.getProperty("SalesOrderID", oContext), "Blubb", "Value check in model");
 				oModel.submitChanges();
 			}, function() {
 				ok(false, "Test failed");
@@ -4596,18 +4596,18 @@
 		oModel.setUseBatch(true);
 		oTxt.setModel(oModel);
 
-		equal(oTxt.getBinding('value').getBindingMode(), "OneTime", "Binding mode check!");
+		assert.equal(oTxt.getBinding('value').getBindingMode(), "OneTime", "Binding mode check!");
 		ok(!oTxt.getBinding('value').isResolved(), "Binding should not be resolved!");
 		ok(oTxt.getValue() === "", "text value should be null");
 
 		var fnCheck = function() {
 			iCount++;
 			ok(iCount === 1, "request performed");
-			equal(oTxt.getBinding('value').getBindingMode(), "OneTime", "Binding mode check!");
+			assert.equal(oTxt.getBinding('value').getBindingMode(), "OneTime", "Binding mode check!");
 			ok(oTxt.getBinding('value').isResolved(), "Binding should be resolved!");
 			ok(oTxt.getValue() === "Headsets", "text value should be set");
 
-			equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
+			assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 			oTxt.destroy();
 			oModel.detachBatchRequestCompleted(fnCheck);
 			done();

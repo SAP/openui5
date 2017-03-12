@@ -249,7 +249,7 @@
 
 			notEqual(jQuery.sap.domById(sTransparentTreeId), null, "Tree is rendered.");
 
-			equal(jQuery.sap.domById(sTransparentTreeId+ "-Header"), null, "Tree header is not there.");
+			assert.equal(jQuery.sap.domById(sTransparentTreeId+ "-Header"), null, "Tree header is not there.");
 
 			notEqual(jQuery.sap.domById(sTransparentTreeId+ "-TreeCont"), null, "Tree content is there");
 		});
@@ -518,7 +518,7 @@
 			node12.select();
 
 			handler = function(oEvent) {
-				equal(oEvent.getParameter("node").getId(), "node16", "Event parameter contains Node 1.2.1")
+				assert.equal(oEvent.getParameter("node").getId(), "node16", "Event parameter contains Node 1.2.1")
 			};
 			oStandardTree.attachSelect(handler);
 			qutils.triggerEvent("click", node16.getDomRef().firstChild, {button: 0});
@@ -528,7 +528,7 @@
 			ok( !node12.getIsSelected(), "Root 2 is not selected");
 
 			handler = function(oEvent) {
-				equal(oEvent.getParameter("node").getId(), "node12", "Event parameter contains Root 2")
+				assert.equal(oEvent.getParameter("node").getId(), "node12", "Event parameter contains Root 2")
 			};
 			oStandardTree.attachSelect(handler);
 			qutils.triggerEvent("click", node12.getDomRef().firstChild, {button: 0});
@@ -572,7 +572,7 @@
 			node12.select();
 
 			handler = function(oEvent) {
-				equal(oEvent.getParameter("nodes").length, 0, "Event parameter nodes contains 0 entries");
+				assert.equal(oEvent.getParameter("nodes").length, 0, "Event parameter nodes contains 0 entries");
 			};
 			oStandardTree.attachSelectionChange(handler);
 			qutils.triggerEvent("click", node12.getDomRef().firstChild, {button: 0, ctrlKey: true});
@@ -678,7 +678,7 @@
 
 			qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.ENTER, false, false, false);
 
-			equal( oStandardTree.getSelection().getId(), "node11",  "New selection is set");
+			assert.equal( oStandardTree.getSelection().getId(), "node11",  "New selection is set");
 
 		});
 
@@ -691,16 +691,16 @@
 				setTimeout(function(){
 					qutils.triggerKeyboardEvent(sStandardTreeId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
 					setTimeout(function(){
-						equal( jQuery(document.activeElement).first().attr("id"), "node13",  "Focus is down one node");
+						assert.equal( jQuery(document.activeElement).first().attr("id"), "node13",  "Focus is down one node");
 						qutils.triggerKeyboardEvent(sStandardTreeId, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
 						setTimeout(function(){
-							equal( jQuery(document.activeElement).first().attr("id"), "node11",  "Focus is up one node");
+							assert.equal( jQuery(document.activeElement).first().attr("id"), "node11",  "Focus is up one node");
 							qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.ARROW_LEFT, false, false, false);
 							setTimeout(function(){
-								equal( sap.ui.getCore().getControl("node11").getExpanded(), false,  "Node is collapsed");
+								assert.equal( sap.ui.getCore().getControl("node11").getExpanded(), false,  "Node is collapsed");
 								qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
 								setTimeout(function(){
-									equal( sap.ui.getCore().getControl("node11").getExpanded(), true,  "Node is expanded");
+									assert.equal( sap.ui.getCore().getControl("node11").getExpanded(), true,  "Node is expanded");
 									done();
 								}, 100);
 							}, 100);
@@ -758,11 +758,11 @@
 
 			qutils.triggerKeyboardEvent("node13", jQuery.sap.KeyCodes.END, false, false, false);
 
-			equal( jQuery(document.activeElement).first().attr("id"), "node14",  "Focus moved to last sibling");
+			assert.equal( jQuery(document.activeElement).first().attr("id"), "node14",  "Focus moved to last sibling");
 
 			qutils.triggerKeyboardEvent("node14", jQuery.sap.KeyCodes.HOME, false, false, false);
 
-			equal( jQuery(document.activeElement).first().attr("id"), "node13",  "Focus moved to first sibling");
+			assert.equal( jQuery(document.activeElement).first().attr("id"), "node13",  "Focus moved to first sibling");
 
 
 
@@ -774,11 +774,11 @@
 
 			qutils.triggerKeyboardEvent("node13", jQuery.sap.KeyCodes.END, false, false, true);
 
-			equal( jQuery(document.activeElement).first().attr("id"), "node12",  "Focus moved to last node");
+			assert.equal( jQuery(document.activeElement).first().attr("id"), "node12",  "Focus moved to last node");
 
 			qutils.triggerKeyboardEvent("node12", jQuery.sap.KeyCodes.HOME, false, false, true);
 
-			equal( jQuery(document.activeElement).first().attr("id"), "node11",  "Focus moved to first node");
+			assert.equal( jQuery(document.activeElement).first().attr("id"), "node11",  "Focus moved to first node");
 
 
 
@@ -864,7 +864,7 @@
 			oTargetNode.collapse(true);
 
 			//Assert
-			equal(oAdjustSelectionSpy.callCount, 1, "Selection is adjusted only once.");
+			assert.equal(oAdjustSelectionSpy.callCount, 1, "Selection is adjusted only once.");
 			ok(oAdjustSelectionSpy.calledWith(oTargetNode), "Selection is adjusted starting from collapsed target node.");
 
 			oAdjustSelectionSpy.restore();
@@ -881,7 +881,7 @@
 			oTargetNode.expand(true);
 
 			//Assert
-			equal(oAdjustSelectionSpy.callCount, 1, "Selection is adjusted only once.");
+			assert.equal(oAdjustSelectionSpy.callCount, 1, "Selection is adjusted only once.");
 			ok(oAdjustSelectionSpy.calledWith(oTargetNode), "Selection is adjusted starting from expanded target node.");
 		});
 
@@ -890,9 +890,9 @@
 				oTargetNode = sap.ui.getCore().byId("trnode1");
 
 			oTargetNode.collapse(true);
-			equal(oJqueryShowSpy.callCount, 2, "All nodes with children hide.");
-			equal(oJqueryShowSpy.args[0].length, 0, "Node1 hides without animation.");
-			equal(oJqueryShowSpy.args[1].length, 0, "Node11 hides without animation.");
+			assert.equal(oJqueryShowSpy.callCount, 2, "All nodes with children hide.");
+			assert.equal(oJqueryShowSpy.args[0].length, 0, "Node1 hides without animation.");
+			assert.equal(oJqueryShowSpy.args[1].length, 0, "Node11 hides without animation.");
 		});
 
 		QUnit.test("Store references to the selected hidden children", function(assert) {
@@ -939,10 +939,10 @@
 			this.stub(sap.ui.commons.TreeNode, "ANIMATION_DURATION", 0);
 			oNode1.expand();
 
-			equal(oNode1.getSelectedForNodes().length, 0, "References of its selected hidden children removed when expanded.");
-			equal(oNode11.getSelectedForNodes().length, 1, "Node references propagated to the first collapsed parent of the selected hidden children.");
-			equal(oNode11.getSelectedForNodes()[0], "tr2node1111", "Node references propagated to the first collapsed parent of the selected hidden children.");
-			equal(oNode111.getSelectedForNodes().length, 0, "Node references not propagated to the other collapsed parents of the selected hidden children.");
+			assert.equal(oNode1.getSelectedForNodes().length, 0, "References of its selected hidden children removed when expanded.");
+			assert.equal(oNode11.getSelectedForNodes().length, 1, "Node references propagated to the first collapsed parent of the selected hidden children.");
+			assert.equal(oNode11.getSelectedForNodes()[0], "tr2node1111", "Node references propagated to the first collapsed parent of the selected hidden children.");
+			assert.equal(oNode111.getSelectedForNodes().length, 0, "Node references not propagated to the other collapsed parents of the selected hidden children.");
 
 			oDeepTree.destroy();
 		});

@@ -45,15 +45,15 @@
 		var oBinding = oModel.bindList("/Categories");
 
 		var handler = function() {
-			equal(oBinding.getPath(), "/Categories", "ListBinding path");
+			assert.equal(oBinding.getPath(), "/Categories", "ListBinding path");
 			ok(oBinding.getModel() == oModel, "ListBinding model");
-			equal(oBinding.getLength(), 8, "length of items");
-			equal(oBinding.isLengthFinal(), true, "isLengthFinal");
+			assert.equal(oBinding.getLength(), 8, "length of items");
+			assert.equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 			jQuery(oBinding.getContexts()).each(function(i, context){
-				equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
+				assert.equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
 			});
-			equal(oBinding.getDownloadUrl(), sURI + "Categories");
-			equal(oBinding.getDownloadUrl("xlsx"), sURI + "Categories?$format=xlsx");
+			assert.equal(oBinding.getDownloadUrl(), sURI + "Categories");
+			assert.equal(oBinding.getDownloadUrl("xlsx"), sURI + "Categories?$format=xlsx");
 			oBinding.detachChange(handler);
 			done(); // resume normal testing
 		}
@@ -71,9 +71,9 @@
 			var aContexts = oBinding.getContexts(0, 5),
 				aCurrentContexts = oBinding.getCurrentContexts();
 
-			equal(aCurrentContexts.length, 5, "amount of items in current contexts");
+			assert.equal(aCurrentContexts.length, 5, "amount of items in current contexts");
 			jQuery(aCurrentContexts).each(function(i, context){
-				equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
+				assert.equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
 			});
 			oBinding.detachChange(handler);
 			done(); // resume normal testing
@@ -92,14 +92,14 @@
 		var changeHandler = function() {
 			iCount++;
 			if (iCount == 1) {
-				equal(oBinding.getPath(), "Products", "ListBinding path");
+				assert.equal(oBinding.getPath(), "Products", "ListBinding path");
 				ok(oBinding.getModel() == oModel, "ListBinding model");
-				equal(oBinding.getLength(), 5, "length of items");
-				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
+				assert.equal(oBinding.getLength(), 5, "length of items");
+				assert.equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 				oBinding.setContext(null);
 			} else {
-				equal(oBinding.getLength(), 0, "length of items");
-				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
+				assert.equal(oBinding.getLength(), 0, "length of items");
+				assert.equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 				oBinding.detachChange(changeHandler);
 				done(); // resume normal testing
 			}
@@ -121,17 +121,17 @@
 		var oBinding = oModel.bindList("/Regions", null,null,null, {expand:"Territories"});
 
 		var handler = function() {
-			equal(oBinding.getPath(), "/Regions", "ListBinding path");
+			assert.equal(oBinding.getPath(), "/Regions", "ListBinding path");
 			ok(oBinding.getModel() == oModel, "ListBinding model");
 
 			jQuery(oBinding.getContexts()).each(function(i, context){
-				equal(context.getPath(), "/Regions(" + (i + 1) + ")", "ListBinding context");
+				assert.equal(context.getPath(), "/Regions(" + (i + 1) + ")", "ListBinding context");
 			});
 
 
 			var oBinding2 = oModel.bindList("/Regions(1)/Territories");
-			equal(oBinding2.getLength(), 0, "length of items");
-			equal(oBinding2.isLengthFinal(), true, "isLengthFinal");
+			assert.equal(oBinding2.getLength(), 0, "length of items");
+			assert.equal(oBinding2.isLengthFinal(), true, "isLengthFinal");
 
 			var handler2 = function() {
 				ok(false, "should not land here");
@@ -143,8 +143,8 @@
 
 			// has 2 territories here
 			var oBinding3 = oModel.bindList("/Regions(4)/Territories");
-			equal(oBinding3.getLength(), 2, "length of items");
-			equal(oBinding3.isLengthFinal(), true, "isLengthFinal");
+			assert.equal(oBinding3.getLength(), 2, "length of items");
+			assert.equal(oBinding3.isLengthFinal(), true, "isLengthFinal");
 
 			var handler3 = function() {
 				ok(false, "should not land here");
@@ -171,31 +171,31 @@
 		var handler3 = function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oEvent.oSource.getContexts();
-			equal(aContexts.length, 8);
-			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding before sort");
+			assert.equal(aContexts.length, 8);
+			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding before sort");
 			// resume normal testing
 			done();
 		};
 		var handler2 = function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oEvent.oSource.getContexts();
-			equal(aContexts.length, 8);
-			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding after 2nd sort");
-			equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding after 2nd sort");
-			equal(oBinding.getDownloadUrl(), sURI + "Categories?$orderby=CategoryName%20asc");
+			assert.equal(aContexts.length, 8);
+			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding after 2nd sort");
+			assert.equal(oBinding.getDownloadUrl(), sURI + "Categories?$orderby=CategoryName%20asc");
 			oBinding.detachChange(handler2);
 			oBinding.sort(null);
 			oBinding.attachChange(handler3);
@@ -205,17 +205,17 @@
 		var handler1 =	function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oEvent.oSource.getContexts();
-			equal(aContexts.length, 8);
-			equal(oModel.getProperty("CategoryName", aContexts[7]), "Beverages", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[6]), "Condiments", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[5]), "Confections", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[4]), "Dairy Products", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[3]), "Grains/Cereals", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[2]), "Meat/Poultry", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[1]), "Produce", "ListBinding after sort");
-			equal(oModel.getProperty("CategoryName", aContexts[0]), "Seafood", "ListBinding after sort");
-			equal(oBinding.getDownloadUrl(), sURI + "Categories?$orderby=CategoryName%20desc");
-			equal(oBinding.getDownloadUrl("xlsx"), sURI + "Categories?$format=xlsx&$orderby=CategoryName%20desc");
+			assert.equal(aContexts.length, 8);
+			assert.equal(oModel.getProperty("CategoryName", aContexts[7]), "Beverages", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[6]), "Condiments", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[5]), "Confections", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[4]), "Dairy Products", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[3]), "Grains/Cereals", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[2]), "Meat/Poultry", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[1]), "Produce", "ListBinding after sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Seafood", "ListBinding after sort");
+			assert.equal(oBinding.getDownloadUrl(), sURI + "Categories?$orderby=CategoryName%20desc");
+			assert.equal(oBinding.getDownloadUrl("xlsx"), sURI + "Categories?$format=xlsx&$orderby=CategoryName%20desc");
 
 			oBinding.detachChange(handler1);
 			// ascending again
@@ -229,15 +229,15 @@
 		var handler0 = function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oEvent.oSource.getContexts();
-			equal(aContexts.length, 8);
-			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding before sort");
-			equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding before sort");
+			assert.equal(aContexts.length, 8);
+			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding before sort");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding before sort");
 
 			oBinding.detachChange(handler0);
 			// descending
@@ -261,7 +261,7 @@
 		var handler = function() { // delay the following test
 			var aContexts = oBinding.getContexts(),
 				oContext = aContexts[0];
-			equal(oContext.getPath(), "/Categories(1)", "Context path");
+			assert.equal(oContext.getPath(), "/Categories(1)", "Context path");
 			ok(jQuery.isArray(oContext.getProperty("Products")), "Products loaded");
 			done(); // resume normal testing
 		};
@@ -275,10 +275,10 @@
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 1, "EQ filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
-			equal(oBinding.getDownloadUrl(), sURI + "Categories?$filter=CategoryName%20eq%20%27Beverages%27");
-			equal(oBinding.getDownloadUrl("xlsx"), sURI + "Categories?$format=xlsx&$filter=CategoryName%20eq%20%27Beverages%27");
+			assert.equal(aFilteredContexts.length, 1, "EQ filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
+			assert.equal(oBinding.getDownloadUrl(), sURI + "Categories?$filter=CategoryName%20eq%20%27Beverages%27");
+			assert.equal(oBinding.getDownloadUrl("xlsx"), sURI + "Categories?$format=xlsx&$filter=CategoryName%20eq%20%27Beverages%27");
 
 			oBinding.detachChange(handler);
 			// NE, contains
@@ -291,9 +291,9 @@
 		var handler1 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 2, "NE, contains, filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
+			assert.equal(aFilteredContexts.length, 2, "NE, contains, filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
 
 			oBinding.detachChange(handler1);
 			// between
@@ -305,10 +305,10 @@
 		var handler2 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 3, "between filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "between filtered content");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "between filtered content");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[2]), "Confections", "between filtered content");
+			assert.equal(aFilteredContexts.length, 3, "between filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "between filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "between filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[2]), "Confections", "between filtered content");
 
 			oBinding.detachChange(handler2);
 			// startsWith, endsWith
@@ -321,8 +321,8 @@
 		var handler3 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 1, "startsWith, endsWith filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
+			assert.equal(aFilteredContexts.length, 1, "startsWith, endsWith filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
 
 			oBinding.detachChange(handler3);
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.LE, value1: "Z"}, {operator:sap.ui.model.FilterOperator.GE, value1: "A"}, {operator:sap.ui.model.FilterOperator.NE, value1: "Beverages"}]);
@@ -333,7 +333,7 @@
 		var handler4 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
+			assert.equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
 			ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
 
 			oBinding.detachChange(handler4);
@@ -345,9 +345,9 @@
 		var handler5 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 2, "sap.ui.model.odata.Filter, ORed");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "sap.ui.model.odata.Filter, ORed");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "sap.ui.model.odata.Filter, ORed");
+			assert.equal(aFilteredContexts.length, 2, "sap.ui.model.odata.Filter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "sap.ui.model.odata.Filter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "sap.ui.model.odata.Filter, ORed");
 
 			oBinding.detachChange(handler5);
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"}, {operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"}], false);
@@ -359,8 +359,8 @@
 		var handler6 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 1, "sap.ui.model.odata.Filter + normal Filter");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(aFilteredContexts.length, 1, "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
 
 			oBinding.detachChange(handler6);
 			//check (ProductID=male AND (SupplierID = Green OR (CategoryName = Peter OR CategoryName = Frank OR CategoryName = Gina)))
@@ -379,8 +379,8 @@
 		var handler7 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 3, "sap.ui.model.odata.Filter + normal Filter");
-			//equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(aFilteredContexts.length, 3, "sap.ui.model.odata.Filter + normal Filter");
+			//assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
 
 			oBinding.detachChange(handler7);
 			done();
@@ -401,9 +401,9 @@
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 9, "Only AppFilter, content length");
-			equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chai", "Application Filter only, filtered content");
-			equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m", "Application Filter only, URL-Params-Construction");
+			assert.equal(aFilteredContexts.length, 9, "Only AppFilter, content length");
+			assert.equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chai", "Application Filter only, filtered content");
+			assert.equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m", "Application Filter only, URL-Params-Construction");
 
 			oBinding.detachChange(handler);
 
@@ -420,10 +420,10 @@
 		var handler1 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 5, "ControlFilter AND AppFilter, content length");
-			equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chef Anton's Cajun Seasoning", "ControlFilter AND AppFilter, filtered content");
+			assert.equal(aFilteredContexts.length, 5, "ControlFilter AND AppFilter, content length");
+			assert.equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chef Anton's Cajun Seasoning", "ControlFilter AND AppFilter, filtered content");
 			//check if the braces are set correct
-			equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)", "Control and Application Filter, Braces when ANDed");
+			assert.equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)", "Control and Application Filter, Braces when ANDed");
 
 			oBinding.detachChange(handler1);
 
@@ -439,9 +439,9 @@
 		//check if different control filters were applied and ANDed with the application filters
 		var handler2 = function (oEvent) {
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 6, "Changing the Control-Filters, content length");
-			equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chai", "ControlFilter AND AppFilter, filtered content");
-			equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=(UnitPrice%20le%2030.000m)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)", "Control and Application Filter, Braces when ANDed");
+			assert.equal(aFilteredContexts.length, 6, "Changing the Control-Filters, content length");
+			assert.equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chai", "ControlFilter AND AppFilter, filtered content");
+			assert.equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=(UnitPrice%20le%2030.000m)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)", "Control and Application Filter, Braces when ANDed");
 
 			oBinding.detachChange(handler2);
 
@@ -456,9 +456,9 @@
 		handler3 = function (oEvent) {
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 9, "Reset to AppFilter, content length");
-			equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chai", "Application Filter only, filtered content");
-			equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m", "Application Filter only, URL-Params-Construction");
+			assert.equal(aFilteredContexts.length, 9, "Reset to AppFilter, content length");
+			assert.equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chai", "Application Filter only, filtered content");
+			assert.equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m", "Application Filter only, URL-Params-Construction");
 
 			oBinding.detachChange(handler3);
 			done();
@@ -556,7 +556,7 @@
 		oList.bindAggregation("items", {path:"/Categories", template: oItem, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}})
 		oList.setModel(oModel);
 		var handler = function(oEvent) {
-			equal(oList.getItems().length, 8, "items created")
+			assert.equal(oList.getItems().length, 8, "items created")
 		}
 		oList.getBinding("items").attachChange(handler);
 	});
@@ -567,8 +567,8 @@
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 1, "EQ filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
+			assert.equal(aFilteredContexts.length, 1, "EQ filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
 
 			oBinding.detachChange(handler);
 			// NE, contains
@@ -586,9 +586,9 @@
 		var handler1 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 2, "NE, contains, filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
+			assert.equal(aFilteredContexts.length, 2, "NE, contains, filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
 
 			oBinding.detachChange(handler1);
 			// between
@@ -604,10 +604,10 @@
 		var handler2 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 3, "between filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "between filtered content");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "between filtered content");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[2]), "Confections", "between filtered content");
+			assert.equal(aFilteredContexts.length, 3, "between filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "between filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "between filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[2]), "Confections", "between filtered content");
 
 			oBinding.detachChange(handler2);
 			// startsWith, endsWith
@@ -620,8 +620,8 @@
 		var handler3 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 1, "startsWith, endsWith filtered content length");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
+			assert.equal(aFilteredContexts.length, 1, "startsWith, endsWith filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
 
 			oBinding.detachChange(handler3);
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
@@ -641,7 +641,7 @@
 		var handler4 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
+			assert.equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
 			ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
 
 			oBinding.detachChange(handler4);
@@ -659,9 +659,9 @@
 		var handler5 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 2, "sap.ui.model.odata.Filter, ORed");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "sap.ui.model.odata.Filter, ORed");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "sap.ui.model.odata.Filter, ORed");
+			assert.equal(aFilteredContexts.length, 2, "sap.ui.model.odata.Filter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "sap.ui.model.odata.Filter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "sap.ui.model.odata.Filter, ORed");
 
 			oBinding.detachChange(handler5);
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
@@ -680,8 +680,8 @@
 		var handler6 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			equal(aFilteredContexts.length, 1, "sap.ui.model.odata.Filter + normal Filter");
-			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(aFilteredContexts.length, 1, "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
 
 			oBinding.detachChange(handler6);
 			done();
@@ -702,9 +702,9 @@
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var sUrl = oBinding.getDownloadUrl("csv");
-		equal(sUrl, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=csv", "Download URL for csv correctly constructed.")
+		assert.equal(sUrl, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=csv", "Download URL for csv correctly constructed.")
 		sUrl = oBinding.getDownloadUrl("xlsx");
-		equal(sUrl, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=xlsx", "Download URL for excel correctly constructed.")
+		assert.equal(sUrl, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=xlsx", "Download URL for excel correctly constructed.")
 	});
 	</script>
 

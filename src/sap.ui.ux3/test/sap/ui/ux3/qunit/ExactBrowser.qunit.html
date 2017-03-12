@@ -113,35 +113,35 @@
 		QUnit.module("API");
 
 		QUnit.test("Default Values", function(assert) {
-			equal(oExactBrowser2.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3").getText("EXACT_BRWSR_LST_TITLE"), "Default 'title':");
-			equal(oExactBrowser2.getOptionsMenu(), null, "Default 'optionsMenu':");
-			equal(oExactBrowser2.getTooltip(), null, "Default 'tooltip':");
-			equal(oExactBrowser1.getVisible(), true, "Default 'visible':");
-			equal(oExactBrowser2.getEnableListClose(), false, "Default 'enableListClose':");
-			equal(oExactBrowser2.getHeaderTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3").getText("EXACT_BRWSR_TITLE"), "Default 'headerTitle':");
-			equal(oExactBrowser1.getListHeight(), 290, "Default 'listHeight':");
-			equal(oExactBrowser2.getShowHeader(), false, "Default 'showHeader':");
-			equal(oExactBrowser1.getEnableReset(), true, "Default 'enableReset':");
-			equal(oExactBrowser2.getTopListWidth(), 168, "Default 'topListwidth':");
-			equal(oExactBrowser2.getTopListOrder(), sap.ui.ux3.ExactOrder.Select, "Default 'topListOrder':");
-			equal(oExactBrowser2.getShowTopList(), true, "Default 'showTopList':");
+			assert.equal(oExactBrowser2.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3").getText("EXACT_BRWSR_LST_TITLE"), "Default 'title':");
+			assert.equal(oExactBrowser2.getOptionsMenu(), null, "Default 'optionsMenu':");
+			assert.equal(oExactBrowser2.getTooltip(), null, "Default 'tooltip':");
+			assert.equal(oExactBrowser1.getVisible(), true, "Default 'visible':");
+			assert.equal(oExactBrowser2.getEnableListClose(), false, "Default 'enableListClose':");
+			assert.equal(oExactBrowser2.getHeaderTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3").getText("EXACT_BRWSR_TITLE"), "Default 'headerTitle':");
+			assert.equal(oExactBrowser1.getListHeight(), 290, "Default 'listHeight':");
+			assert.equal(oExactBrowser2.getShowHeader(), false, "Default 'showHeader':");
+			assert.equal(oExactBrowser1.getEnableReset(), true, "Default 'enableReset':");
+			assert.equal(oExactBrowser2.getTopListWidth(), 168, "Default 'topListwidth':");
+			assert.equal(oExactBrowser2.getTopListOrder(), sap.ui.ux3.ExactOrder.Select, "Default 'topListOrder':");
+			assert.equal(oExactBrowser2.getShowTopList(), true, "Default 'showTopList':");
 		});
 
 		QUnit.test("Custom Values", function(assert) {
 			oExactBrowser2.setShowTopList(false);
 
-			equal(oExactBrowser1.getTitle(), "Hello", "Custom 'title':");
-			equal(oExactBrowser1.getOptionsMenu().getId(), "myMenu", "Custom 'optionsMenu':");
-			equal(oExactBrowser1.getTooltip(), "Tooltip", "Custom 'tooltip':");
-			equal(oExactBrowser2.getVisible(), false, "Custom 'visible':");
-			equal(oExactBrowser1.getEnableListClose(), true, "Custom 'enableListClose':");
-			equal(oExactBrowser1.getHeaderTitle(), "Header", "Custom 'headerTitle':");
-			equal(oExactBrowser2.getListHeight(), 300, "Custom 'listHeight':");
-			equal(oExactBrowser1.getShowHeader(), true, "Custom 'showHeader':");
-			equal(oExactBrowser2.getEnableReset(), false, "Custom 'enableReset':");
-			equal(oExactBrowser3.getTopListWidth(), 200, "Custom 'topListwidth':");
-			equal(oExactBrowser3.getTopListOrder(), sap.ui.ux3.ExactOrder.Fixed, "Custom 'topListOrder':");
-			equal(oExactBrowser2.getShowTopList(), false, "Custom 'showTopList':");
+			assert.equal(oExactBrowser1.getTitle(), "Hello", "Custom 'title':");
+			assert.equal(oExactBrowser1.getOptionsMenu().getId(), "myMenu", "Custom 'optionsMenu':");
+			assert.equal(oExactBrowser1.getTooltip(), "Tooltip", "Custom 'tooltip':");
+			assert.equal(oExactBrowser2.getVisible(), false, "Custom 'visible':");
+			assert.equal(oExactBrowser1.getEnableListClose(), true, "Custom 'enableListClose':");
+			assert.equal(oExactBrowser1.getHeaderTitle(), "Header", "Custom 'headerTitle':");
+			assert.equal(oExactBrowser2.getListHeight(), 300, "Custom 'listHeight':");
+			assert.equal(oExactBrowser1.getShowHeader(), true, "Custom 'showHeader':");
+			assert.equal(oExactBrowser2.getEnableReset(), false, "Custom 'enableReset':");
+			assert.equal(oExactBrowser3.getTopListWidth(), 200, "Custom 'topListwidth':");
+			assert.equal(oExactBrowser3.getTopListOrder(), sap.ui.ux3.ExactOrder.Fixed, "Custom 'topListOrder':");
+			assert.equal(oExactBrowser2.getShowTopList(), false, "Custom 'showTopList':");
 		});
 
 		QUnit.test("Aggregation 'attributes'", function(assert) {
@@ -177,7 +177,7 @@
 
 		QUnit.test("Level", 4, function(assert) {
 			function checkLevel(oList, iLevel){
-				equal(oList._iLevel, iLevel, "Level ("+iLevel+") of List "+oList.getId());
+				assert.equal(oList._iLevel, iLevel, "Level ("+iLevel+") of List "+oList.getId());
 				var aLists = oList.getSubLists();
 				for(var i=0; i<aLists.length; i++){
 					checkLevel(aLists[i], iLevel+1);
@@ -511,8 +511,8 @@
 			sap.ui.test.qunit.triggerMouseEvent(aItemRefs[0], "click");
 			setTimeout(function(){
 				var aSubLists = oExactBrowser3._rootList.getSubLists();
-				equal(aSubLists[0].getData(), "_att3", "Attribute 3 on index 0");
-				equal(aSubLists[1].getData(), "_att4", "Attribute 4 on index 1");
+				assert.equal(aSubLists[0].getData(), "_att3", "Attribute 3 on index 0");
+				assert.equal(aSubLists[1].getData(), "_att4", "Attribute 4 on index 1");
 				start();
 			}, 500);
 		});
@@ -523,8 +523,8 @@
 			sap.ui.test.qunit.triggerMouseEvent(aItemRefs[2], "click");
 			setTimeout(function(){
 				var aSubLists = oExactBrowser1._rootList.getSubLists();
-				equal(aSubLists[0].getData(), "att4", "Attribute 4 on index 0");
-				equal(aSubLists[1].getData(), "att3", "Attribute 3 on index 1");
+				assert.equal(aSubLists[0].getData(), "att4", "Attribute 4 on index 0");
+				assert.equal(aSubLists[1].getData(), "att3", "Attribute 3 on index 1");
 				start();
 			}, 500);
 		});
