@@ -43,14 +43,14 @@
 
 		// attach event handlers
 		QUnit.test("Attaching event handlers", function(assert) {
-			expect(0);
+			assert.expect(0);
 			sap.ui.getCore().attachEvent("UIUpdated", uiUpdatedHandler);
 		});
 
 
 		var btn;
 		QUnit.test("Control creation", function(assert) {
-			expect(3); // including event handler
+			assert.expect(3); // including event handler
 			btn = new sap.ui.testlib.TestButton("myButton").placeAt("uiArea1");
 			equal(sap.ui.getCore().getUIDirty(), true, "UI should be dirty after creating the button");
 
@@ -61,7 +61,7 @@
 
 		QUnit.test("UI dirty on control modification", function(assert) {
 			var done = assert.async();
-			expect(4);
+			assert.expect(4);
 			btn.setText("new text");
 			equal(sap.ui.getCore().getUIDirty(), true, "UI should be dirty after setting the button text");
 			window.setTimeout(function(){

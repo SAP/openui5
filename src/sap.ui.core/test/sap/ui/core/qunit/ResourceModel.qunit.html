@@ -246,7 +246,7 @@
 	if (!sap.ui.Device.browser.firefox) {
 		QUnit.test("Test async mode", function(assert){
 			var done = assert.async();
-			expect(13);
+			assert.expect(13);
 			ok(oModel, "model must exist after creation");
 			ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
 
@@ -358,7 +358,7 @@
 
 	QUnit.test("OneWay Binding and Language Change (Asynchronous)", function(assert) {
 		var done = assert.async();
-		expect(2);
+		assert.expect(2);
 		var oBtn = new sap.ui.testlib.TestButton({
 			text: "{async5>TEST_TEXT}"
 		});

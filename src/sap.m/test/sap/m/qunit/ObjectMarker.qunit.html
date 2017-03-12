@@ -334,7 +334,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			expect(1);
+			assert.expect(1);
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oMarker.$("link")); //should fire event
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oMarker.getId()); //should not fire event
 

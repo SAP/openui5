@@ -71,19 +71,19 @@
 			QUnit.module("Behaviour");
 
 			QUnit.test("OpenNew Event", function (assert) {
-				expect(1);
+				assert.expect(1);
 				qutils.triggerMouseEvent(jQuery.sap.byId(oOverlayContainer.getId() + "-openNew"), "click", 1, 1, 1, 1);
 			});
 
 			QUnit.test("OpenNew via Keyboard Event", function (assert) {
-				expect(2);
+				assert.expect(2);
 				qutils.triggerKeyboardEvent(oOverlayContainer.getId() + "-openNew", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				qutils.triggerKeyboardEvent(oOverlayContainer.getId() + "-openNew", jQuery.sap.KeyCodes.SPACE, false, false, false);
 			});
 
 			QUnit.test("Open Method", function (assert) {
 				var done = assert.async();
-				expect(4);
+				assert.expect(4);
 				ok(!oOverlayContainer.isOpen(), "Rendered OverlayContainer is not open");
 				oOverlayContainer.open();
 				ok(oOverlayContainer.isOpen(), "Rendered OverlayContainer is open");
@@ -97,7 +97,7 @@
 			// at the end close
 			QUnit.test("Close Event", function (assert) {
 				var done = assert.async();
-				expect(3);
+				assert.expect(3);
 				ok(oOverlayContainer.isOpen(), "Rendered OverlayContainer is open");
 				qutils.triggerMouseEvent(jQuery.sap.byId(oOverlayContainer.getId() + "-close"), "click", 1, 1, 1, 1);
 				setTimeout(function () {

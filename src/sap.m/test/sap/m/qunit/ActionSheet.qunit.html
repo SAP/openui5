@@ -107,7 +107,7 @@
 						$parentControl = !sap.ui.Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 						$header = $parentControl.children("header.sapMBar"),
 						$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
-					expect(8);
+					assert.expect(8);
 					ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
 					ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
 					ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
@@ -128,7 +128,7 @@
 
 			QUnit.test("Close ActionSheet", function(assert){
 				var done = assert.async();
-				expect(3);
+				assert.expect(3);
 				oActionSheet.close();
 			});
 
@@ -144,7 +144,7 @@
 						$parentControl = !sap.ui.Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 						$header = $parentControl.children("header.sapMBar"),
 						$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
-					expect(8);
+					assert.expect(8);
 					ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
 					ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
 					ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
@@ -160,7 +160,7 @@
 
 			QUnit.test("Close ActionSheet", function(assert){
 				var done = assert.async();
-				expect(3);
+				assert.expect(3);
 
 				oActionSheet.close();
 			});
@@ -178,7 +178,7 @@
 						$parentControl = !sap.ui.Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 						$header = $parentControl.children("div.sapMBar"),
 						$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
-					expect(8);
+					assert.expect(8);
 					ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
 					ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
 					ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
@@ -195,7 +195,7 @@
 
 			QUnit.test("Close ActionSheet", function(assert){
 				var done = assert.async();
-				expect(3);
+				assert.expect(3);
 				oActionSheet.close();
 			});
 
@@ -212,7 +212,7 @@
 						$parentControl = !sap.ui.Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 						$header = $parentControl.children("div.sapMBar"),
 						$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
-					expect(8);
+					assert.expect(8);
 					ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
 					ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
 					ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
@@ -224,7 +224,7 @@
 
 			QUnit.test("Close ActionSheet", function(assert){
 				var done = assert.async();
-				expect(3);
+				assert.expect(3);
 				oActionSheet.close();
 			});
 
@@ -300,7 +300,7 @@
 
 			QUnit.test('PageUp keyboard handling', function(assert){
 				var done = assert.async();
-				expect(2);
+				assert.expect(2);
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
 					press : function() {
@@ -375,7 +375,7 @@
 				var done = assert.async();
 				if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
 						// this test is not supported by IE9
-						expect(0);
+						assert.expect(0);
 						done();
 						return;
 				}
@@ -387,7 +387,7 @@
 				};
 
 				this.stub(sap.ui.Device, "system", oSystem);
-				expect(2);
+				assert.expect(2);
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
 					press : function() {
@@ -461,7 +461,7 @@
 				};
 
 				this.stub(sap.ui.Device, "system", oSystem);
-				expect(2);
+				assert.expect(2);
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
 					press : function() {

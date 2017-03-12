@@ -308,7 +308,7 @@
 
 		QUnit.test("Focusout", function(assert) {
 			var done = assert.async();
-			expect(3);
+			assert.expect(3);
 			popupClosingTest(this.oAuto1, function(oAuto){
 				jQuery("#focusDummy").focus();
 			});

@@ -72,7 +72,7 @@
 
 
 		QUnit.test("Scroll Left", function(assert) {
-    	expect(6);
+    	assert.expect(6);
 			equals(oCtrl.getScrollLeft(), sScrollLeft, "scrollLeft should be like it was initially set");
 
 			oCtrl.setScrollLeft(111);
@@ -92,7 +92,7 @@
 
 
 		QUnit.test("Scroll Top", function(assert) {
-    	expect(6);
+    	assert.expect(6);
 			equals(oCtrl.getScrollTop(), sScrollTop, "scrollTop should be like it was initially set");
 
 			oCtrl.setScrollTop(111);
@@ -192,7 +192,7 @@
 		});
 
 		QUnit.test("Enabled DOM", function(assert) {
-			expect(3);
+			assert.expect(3);
 
 			// first check the DOM / CSS classes of the enabled Panel
 			var oDomRef = jQuery.sap.domById(oCtrl.getId());
@@ -290,7 +290,7 @@
 
 		QUnit.test("Content Height Adaptation", function(assert) {
 			var done = assert.async();
-  		expect(1);
+  		assert.expect(1);
  			setTimeout(function() {
  				// ensure the content starts right below the header
  				$hdr = jQuery.sap.byId(oCtrl.getId() + "-hdr");
@@ -381,7 +381,7 @@
 		 * Test the content padding
 		 */
 		 QUnit.test("Content Padding", function(assert) {
-			expect(4);
+			assert.expect(4);
 			var $ContDomRef = jQuery.sap.byId(oCtrl.getId() + "-cont");
 
 			// test initial padding

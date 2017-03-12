@@ -609,7 +609,7 @@ QUnit.test("POST table", function (assert) {
 	// GIVEN request with $select=ID, no filter WHEN $batch GET THEN response has all data
 	    QUnit.test("batch get request via sap.apf.core.request & selected ID", function (assert) {
 	    	var done = assert.async();
-	        expect(4);
+	        assert.expect(4);
 	        var that = this;
 	        this.oRequest = new sap.apf.core.Request(this.oInject, this.requestConfig);
 
@@ -624,7 +624,7 @@ QUnit.test("POST table", function (assert) {
 
 	    QUnit.test("batch get & selected ID & full select", function (assert) {
 	    	var done = assert.async();
-	        expect(3);
+	        assert.expect(3);
 	        var that = this;
 	        this.requestConfig.selectProperties = [ 'ID', 'Currency_E', 'SAPClient' ];
 	        this.oRequest = new sap.apf.core.Request(this.oInject, this.requestConfig);
@@ -639,7 +639,7 @@ QUnit.test("POST table", function (assert) {
 
 	    QUnit.test("batch get & many selected & filter on SAPClient", function (assert) {
 	    	var done = assert.async();
-	        expect(4);
+	        assert.expect(4);
 	        var that = this;
 
 	        this.stubBuildUri = sinon.stub(sap.apf.core.utils.uriGenerator, "buildUri", function () {

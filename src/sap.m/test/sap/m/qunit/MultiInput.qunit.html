@@ -737,7 +737,7 @@
 			equals(counter, 1, "tokenUpdate event should be fired once");
 			equals(this.multiInput1.getTokens().length, 6, "6 tokens should be added to MultiInput");
 		} else {
-			expect(0);
+			assert.expect(0);
 		}
 	});
 

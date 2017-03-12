@@ -178,7 +178,7 @@
 		});
 
 		QUnit.test("Triggering tap should check RadioButton and uncheck all other RadioButtons from the same group", function (assert) {
-			expect(5);
+			assert.expect(5);
 
 			// arrange
 			var oRadioButton1 = new sap.m.RadioButton({ selected: true }),
@@ -256,7 +256,7 @@
 		});
 
 		QUnit.test("setText() change text of the RadioButton after it's initialization", function (assert) {
-			expect(2);
+			assert.expect(2);
 
 			// arrange
 			var oRadioButton1 = new sap.m.RadioButton({
@@ -341,7 +341,7 @@
 		});
 
 		QUnit.test("setTabIndex()", function (assert) {
-			expect(1);
+			assert.expect(1);
 
 			// arrange
 			var iTabIndex = 1,
@@ -360,7 +360,7 @@
 		});
 
 		QUnit.test("setTooltip()", function (assert) {
-			expect(2);
+			assert.expect(2);
 
 			// arrange
 			var sTooltip = "Tooltip Text",
@@ -587,7 +587,7 @@
 		});
 
 		QUnit.test("Should have class sapMRbBTouched when touchstart event is fired", function (assert) {
-			expect(1);
+			assert.expect(1);
 
 			// arrange
 			var oRadioButton1 = new sap.m.RadioButton();
@@ -605,7 +605,7 @@
 		});
 
 		QUnit.test("Should remove class sapMRbBTouched when touchend event is fired", function (assert) {
-			expect(2);
+			assert.expect(2);
 
 			// arrange
 			var oRadioButton1 = new sap.m.RadioButton();

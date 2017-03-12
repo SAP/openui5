@@ -215,24 +215,24 @@
 			QUnit.module("Behaviour");
 
 			QUnit.test("OpenNew Event", function(assert) {
-				expect(1);
+				assert.expect(1);
 				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-openNew"), "click", 1, 1, 1, 1);
 			});
 
 			QUnit.test("OpenNew via Keyboard Event", function(assert) {
-				expect(2);
+				assert.expect(2);
 				qutils.triggerKeyboardEvent(oThingInspector.getId() + "-openNew", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				qutils.triggerKeyboardEvent(oThingInspector.getId() + "-openNew", jQuery.sap.KeyCodes.SPACE, false, false, false);
 			});
 
 			QUnit.test("ActionSelected Event", function(assert) {
-				expect(2);
+				assert.expect(2);
 				action = "delete";
 				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-deleteButton"), "click", 1, 1, 1, 1);
 			});
 
 			QUnit.test("FavoriteSelected Event", function(assert) {
-				expect(7);
+				assert.expect(7);
 				ok(!oThingInspector.getFavoriteState(), "Favorite State is false");
 				action = "favorite";
 				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Favorite"), "click", 1, 1, 1, 1);
@@ -242,14 +242,14 @@
 			});
 
 			QUnit.test("Disable Favorite Action", function(assert) {
-				expect(1);
+				assert.expect(1);
 				oThingInspector.setFavoriteActionEnabled(false);
 				ok(!oThingInspector.getFavoriteActionEnabled(), "Favorite Action enabled is false");
 			});
 
 			QUnit.test("Favorite Action disabled: no event anymore", function(assert) {
 				var done = assert.async();
-				expect(1);
+				assert.expect(1);
 				action = "favorite";
 				setTimeout(function() {
 					ok(!jQuery.sap.byId(oThingInspector.getId() + "-favorite")[0], "Action not rendered anymore");
@@ -259,7 +259,7 @@
 			});
 
 			QUnit.test("FlagSelected Event", function(assert) {
-				expect(7);
+				assert.expect(7);
 				ok(!oThingInspector.getFlagState(), "Flag State is false");
 				action = "flag";
 				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Flag"), "click", 1, 1, 1, 1);
@@ -269,7 +269,7 @@
 			});
 
 			QUnit.test("FlagSelected via Keyboard Event", function(assert) {
-				expect(7);
+				assert.expect(7);
 				ok(!oThingInspector.getFlagState(), "Flag State is false");
 				action = "flag";
 				//jQuery.sap.byId(oThingInspector.getId() + "-flag").focus();
@@ -280,14 +280,14 @@
 			});
 
 			QUnit.test("Disable Flag Action", function(assert) {
-				expect(1);
+				assert.expect(1);
 				oThingInspector.setFlagActionEnabled(false);
 				ok(!oThingInspector.getFlagActionEnabled(), "Flag Action enabled is false");
 			});
 
 			QUnit.test("Flag Action disabled: no event anymore", function(assert) {
 				var done = assert.async();
-				expect(1);
+				assert.expect(1);
 				action = "flag";
 				setTimeout(function() {
 					ok(!jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Flag")[0], "Action not rendered anymore");
@@ -298,7 +298,7 @@
 
 			QUnit.test("UpdateSelected Event", function(assert) {
 				var done = assert.async();
-				expect(2);
+				assert.expect(2);
 				action = "update";
 				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Update"), "click", 1, 1, 1, 1);
 				setTimeout(function() {
@@ -315,7 +315,7 @@
 
 			QUnit.test("FeedSubmit Event", function(assert) {
 				var done = assert.async();
-				expect(5);
+				assert.expect(5);
 				action = "update";
 				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Update"), "click", 1, 1, 1, 1);
 				setTimeout(function() {
@@ -341,14 +341,14 @@
 			});
 
 			QUnit.test("Disable Update Action", function(assert) {
-				expect(1);
+				assert.expect(1);
 				oThingInspector.setUpdateActionEnabled(false);
 				ok(!oThingInspector.getUpdateActionEnabled(), "Flag Action enabled is false");
 			});
 
 			QUnit.test("Update Action disabled: no event anymore", function(assert) {
 				var done = assert.async();
-				expect(1);
+				assert.expect(1);
 				action = "update";
 				setTimeout(function() {
 					ok(!jQuery.sap.byId(oThingInspector.getId() + "-update")[0], "Action not rendered anymore");
@@ -359,7 +359,7 @@
 
 			QUnit.test("Open Method", function(assert) {
 				var done = assert.async();
-				expect(5);
+				assert.expect(5);
 				facet = "overview";
 				oThingInspector.close();
 				oThingInspector.setSelectedFacet(null);
@@ -377,7 +377,7 @@
 
 			QUnit.test("FacetSelected Event", function(assert) {
 				var done = assert.async();
-				expect(3);
+				assert.expect(3);
 				facet = "activities";
 				qutils.triggerMouseEvent(jQuery.sap.domById("activities"), "click", 1, 1, 1, 1);
 				setTimeout(
@@ -390,7 +390,7 @@
 
 			QUnit.test("FollowSelected Event", function(assert) {
 				var done = assert.async();
-				expect(19);
+				assert.expect(19);
 				equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
 				action = "follow";
 				// trigger follow
@@ -441,14 +441,14 @@
 			});
 
 			QUnit.test("Disable Follow Action", function(assert) {
-				expect(1);
+				assert.expect(1);
 				oThingInspector.setFollowActionEnabled(false);
 				ok(!oThingInspector.getFollowActionEnabled(), "Follow Action enabled is false");
 			});
 
 			QUnit.test("Follow Action disabled: no event anymore", function(assert) {
 				var done = assert.async();
-				expect(1);
+				assert.expect(1);
 				action = "follow";
 				setTimeout(function() {
 					ok(!jQuery.sap.byId(oThingInspector.getId() + "-follow")[0], "Action not rendered anymore");
@@ -460,7 +460,7 @@
 			// at the end close
 			QUnit.test("Close Event", function(assert) {
 				var done = assert.async();
-				expect(3);
+				assert.expect(3);
 				ok(oThingInspector.isOpen(), "Rendered ThingInspector is open");
 
 				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-close"), "click", 1, 1, 1, 1);

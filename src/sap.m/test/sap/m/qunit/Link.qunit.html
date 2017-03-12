@@ -54,12 +54,12 @@
 		});
 
 		QUnit.test("Press event", function(assert) {
-			expect(1); // verifies the event handler was executed
+			assert.expect(1); // verifies the event handler was executed
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
 		});
 
 		QUnit.test("Disabled", function(assert) {
-			expect(0); // verifies the event handler was NOT executed
+			assert.expect(0); // verifies the event handler was NOT executed
 			oLink1.setEnabled(false);
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
 		});
@@ -89,7 +89,7 @@
 
 		QUnit.test("Non-rendered Subtle values", function(assert) {
 			// this checks for the bug in BCP message 1472023641 - no need to actually render the Link (issue is about non-rendered Links) or write checks, it would fail with a JS error
-			expect(0);
+			assert.expect(0);
 			var oLinkNRS = new sap.m.Link({subtle: false});
 			oLinkNRS.setSubtle(true);
 			oLinkNRS.setSubtle(false);
@@ -98,7 +98,7 @@
 
 		QUnit.test("Non-rendered Emphasized values", function(assert) {
 			// this checks for the bug in BCP message 1472023641 - no need to actually render the Link (issue is about non-rendered Links) or write checks, it would fail with a JS error
-			expect(0);
+			assert.expect(0);
 			var oLinkNRE = new sap.m.Link({emphasized: false});
 			oLinkNRE.setEmphasized(true);
 			oLinkNRE.setEmphasized(false);
@@ -106,7 +106,7 @@
 		});
 
 		QUnit.test("Rendered initial Subtle values", function(assert) {
-			expect(1);
+			assert.expect(1);
 			var oLinkRIS = new sap.m.Link({subtle: true});
 			oLinkRIS.placeAt("uiArea1");
 			sap.ui.getCore().applyChanges();
@@ -115,7 +115,7 @@
 		});
 
 		QUnit.test("Rendered initial Emphasized values", function(assert) {
-			expect(1);
+			assert.expect(1);
 			var oLinkRIE = new sap.m.Link({emphasized: true});
 			oLinkRIE.placeAt("uiArea1");
 			sap.ui.getCore().applyChanges();

@@ -94,7 +94,7 @@
 
 	QUnit.test("Open Feed and close it again", function(assert) {
 		var done = assert.async();
-		expect(2);
+		assert.expect(2);
 		qutils.triggerMouseEvent(qutils.triggerMouseEvent("ActionBar0001-Update", "click"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
 			equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").length, 1,
@@ -110,7 +110,7 @@
 
 	QUnit.test("Press \"Create an Update\" (Feed)", function(assert) {
 		var done = assert.async();
-		expect(4);
+		assert.expect(4);
 		qutils.triggerMouseEvent(qutils.triggerMouseEvent("ActionBar0001-Update", "click"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
 			ok(jQuery.sap.domById(oActionBar1.getId() + "-UpdateActionPopup"), "Rendered update popup should exist in the page");
@@ -144,7 +144,7 @@
 
 	QUnit.test("Press \"Follow Toggle\" ", function(assert) {
 		var done = assert.async();
-		expect(14);
+		assert.expect(14);
 		equal(oActionBar1.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
 		action = "follow";
 		// trigger follow
@@ -251,7 +251,7 @@
 
 	QUnit.test("Press social actions programmatically using setter function", function(assert) {
 		var done = assert.async();
-		expect(3);
+		assert.expect(3);
 		oActionBar1.setFollowState(sap.ui.ux3.FollowActionState.Follow);
 		oActionBar1.setFlagState(true);
 		oActionBar1.setFavoriteState(true);
@@ -290,7 +290,7 @@
 
 	QUnit.test("Disable a business action in \"More\" menu", function(assert) {
 		var done = assert.async();
-		expect(1);
+		assert.expect(1);
 		oCreateAction.setEnabled(false);
 		setTimeout(function() {
 			qutils.triggerMouseEvent("ActionBar0001-MoreMenuButton", "click");
@@ -305,7 +305,7 @@
 
 	QUnit.test("Show business action buttons in \"action bar\"", function(assert) {
 		var done = assert.async();
-		expect(1);
+		assert.expect(1);
 		oActionBar1.setAlwaysShowMoreMenu(false);
 		setTimeout(function() {
 			var iVisibleChildCount = jQuery("#ActionBar0001-businessActions").children(":visible").size();
@@ -340,7 +340,7 @@
 
 	QUnit.test("Disable a business action in toolbar", function(assert) {
 		var done = assert.async();
-		expect(1);
+		assert.expect(1);
 		oDeleteAction.setEnabled(false);
 		setTimeout(function() {
 			var bIsDisabled = jQuery("#ActionBar0001-deleteButton").hasClass("sapUiBtnDsbl");
@@ -352,7 +352,7 @@
 
 	QUnit.test("Hide business action buttons from \"action bar\"", function(assert) {
 		var done = assert.async();
-		expect(2);
+		assert.expect(2);
 		oActionBar1.setAlwaysShowMoreMenu(true);
 		setTimeout(function() {
 			var iVisibleChildCount = jQuery("#ActionBar0001-businessActions").children(":visible").size();
@@ -365,7 +365,7 @@
 
 	QUnit.test("Show business action's buttons on \"action bar\" again and destroy them afterwards", function(assert) {
 		var done = assert.async();
-		expect(1);
+		assert.expect(1);
 		oActionBar1.setAlwaysShowMoreMenu(false);
 		oActionBar1.destroyBusinessActions();
 		setTimeout(function() {

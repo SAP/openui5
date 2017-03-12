@@ -1200,7 +1200,7 @@
 
 	QUnit.test("Event order: bindElement", function(assert){
 		var done = assert.async();
-		expect(4);
+		assert.expect(4);
 		var oModel = initModel(sURI, true, "Categories");
 		oLabel = new sap.ui.commons.Label("myLabel2");
 		oLabel.setModel(oModel);
@@ -1218,7 +1218,7 @@
 
 	QUnit.test("Event order: bindElement (setModel after binding)", function(assert){
 		var done = assert.async();
-		expect(4);
+		assert.expect(4);
 		var oModel = initModel(sURI, true, "Categories");
 		oLabel = new sap.ui.commons.Label("myLabel3");
 		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
@@ -1235,7 +1235,7 @@
 
 	QUnit.test("Event order: bindElement (already bound)", function(assert){
 		var done = assert.async();
-		expect(6);
+		assert.expect(6);
 		cleanServiceDataCache();
 		var oModel1 = initModel(sURI, true, "Categories");
 		oLabel = new sap.ui.commons.Label("myLabel4");
@@ -1698,7 +1698,7 @@
 
 	QUnit.test("Synchronous loading: Annotation Events", function(assert) {
 		var done = assert.async();
-		expect(6);
+		assert.expect(6);
 
 		new Promise(function(fnResolve, fnReject) {
 			var bAnnotationsFailed = false;

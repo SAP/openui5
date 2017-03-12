@@ -186,7 +186,7 @@
 
 		QUnit.test(sTestPrefix + "Promise then always asynchronous", function(assert) {
 			var done = assert.async();
-			expect(4);
+			assert.expect(4);
 
 			var iCounter = 0;
 

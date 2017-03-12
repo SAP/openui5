@@ -202,13 +202,13 @@
 			QUnit.test("Open Dialog", function(assert){
 				var done = assert.async();
 				oDialog.open();
-				expect(3);
+				assert.expect(3);
 			});
 
 			QUnit.test("Close Dialog", function(assert){
 				var done = assert.async();
 				im.closeAllDialogs();
-				expect(3);
+				assert.expect(3);
 			});
 
             QUnit.module("callbacks");
@@ -258,13 +258,13 @@
 			QUnit.test("Open Dialog", function(assert){
 				var done = assert.async();
 				oPopover.openBy(oButton);
-				expect(3);
+				assert.expect(3);
 			});
 
 			QUnit.test("Close Dialog", function(assert){
 				var done = assert.async();
 				im.closeAllPopovers();
-				expect(3);
+				assert.expect(3);
 			});
 		</script>
 	</head>

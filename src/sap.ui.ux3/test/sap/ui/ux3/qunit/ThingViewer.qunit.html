@@ -185,7 +185,7 @@
 
 		QUnit.test("FacetSelected Event", function(assert) {
 			var done = assert.async();
-			expect(3);
+			assert.expect(3);
 			facet = "activities";
 			qutils.triggerMouseEvent(jQuery.sap.domById("activities"), "click", 1, 1, 1, 1);
 			setTimeout(

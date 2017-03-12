@@ -79,7 +79,7 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 	});
 
 	QUnit.test("Aggregation", 1, function(assert) {
-		expect(1);
+		assert.expect(1);
 		$button = jQuery.sap.byId(view.createId("Button2"));
 		equal($button.length, 1,  "SAPUI5 Button rendered in aggregation");
 	});
@@ -204,7 +204,7 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		if (!oTmpl.sViewName) {
 			// Cloning views created from string or object (via viewContent) currently fails for HTML and JSON views
 			//	We will address this in a separate change, until then we skip testing those cases
-			expect(6);
+			assert.expect(6);
 			ok(true, "Skipping clone of views created from string of object");
 			return;
 		}

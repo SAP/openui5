@@ -52,7 +52,7 @@
 
 	QUnit.test("test oDataModel - oMetadata shared across models", function(assert){
 		var done = assert.async();
-		expect(1);
+		assert.expect(1);
 		var clock = this.clock;
 		var mOptions = {
 				json : true,
@@ -101,7 +101,7 @@
 
 	QUnit.test("metadata check", function(assert){
 		var done = assert.async();
-		expect(7);
+		assert.expect(7);
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
@@ -126,7 +126,7 @@
 
 	QUnit.test("metadata get entity type check", function(assert){
 		var done = assert.async();
-		expect(11);
+		assert.expect(11);
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
@@ -174,7 +174,7 @@
 
 	QUnit.test("metadata get entity type check with context", function(assert){
 		var done = assert.async();
-		expect(1);
+		assert.expect(1);
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("Products", new sap.ui.model.Context(oModel, "/Categories(7)"));
 		var handler = function() { // delay the following test
@@ -192,7 +192,7 @@
 
 	QUnit.test("metadata get property metadata", function(assert){
 		var done = assert.async();
-		expect(6);
+		assert.expect(6);
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
@@ -222,7 +222,7 @@
 
 	QUnit.test("async metadata request check", function(assert){
 		var done = assert.async();
-		expect(2);
+		assert.expect(2);
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
 			json: true,
 			loadMetadataAsync: true
@@ -241,7 +241,7 @@
 
 	QUnit.test("async metadata request check with bindings", function(assert){
 		var done = assert.async();
-		expect(9);
+		assert.expect(9);
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
 			json: true,
 			loadMetadataAsync: true
@@ -276,7 +276,7 @@
 
 	QUnit.test("async metadata request check with bindings die zwote", function(assert){
 		var done = assert.async();
-		expect(7);
+		assert.expect(7);
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
 			json: true,
 			loadMetadataAsync: true

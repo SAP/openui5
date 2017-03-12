@@ -234,7 +234,7 @@
 
 		QUnit.test("to page 2", function(assert) {
 			var done = assert.async();
-			expect(64); // including the "navigate" event
+			assert.expect(64); // including the "navigate" event
 
 			equal(nc.currentPageIsTopPage(), true, "current page should be considered the top page");
 
@@ -322,7 +322,7 @@
 
 		QUnit.test("to page 3", function(assert) {
 			var done = assert.async();
-			expect(30); // including the "navigate" event
+			assert.expect(30); // including the "navigate" event
 
 			ok(nc._bNavigating === false, "NavContainer should not be navigating");
 
@@ -367,7 +367,7 @@
 
 		QUnit.test("navigate back 2", function(assert) {
 			var done = assert.async();
-			expect(62); // including the "navigate" event
+			assert.expect(62); // including the "navigate" event
 
 			resetEventLog(window.mPage1EventLog);
 			resetEventLog(window.mPage2EventLog);
@@ -448,7 +448,7 @@
 		});
 
 		QUnit.test("Custom Transition Definition (on instance)", function(assert) {
-			expect(4);
+			assert.expect(4);
 
 			equal(!!sap.m.NavContainer.transitions["c_testTrans"], false, "custom animation should not be defined yet");
 
@@ -473,7 +473,7 @@
 		});
 
 		QUnit.test("Custom Transition Definition (static)", function(assert) {
-			expect(4);
+			assert.expect(4);
 
 			equal(!!sap.m.NavContainer.transitions["c_testTrans2"], false, "custom animation should not be defined yet");
 
@@ -498,7 +498,7 @@
 		});
 
 		QUnit.test("Custom Transition To", function(assert) {
-			expect(20); // including the "navigate" event
+			assert.expect(20); // including the "navigate" event
 
 			window.expectedNav = {
 					fromId: "page2",
@@ -518,7 +518,7 @@
 		});
 
 		QUnit.test("Custom Transition Back", function(assert) {
-			expect(20); // including the "navigate" event
+			assert.expect(20); // including the "navigate" event
 
 			window.expectedNav = {
 					fromId: "page3",
@@ -539,7 +539,7 @@
 
 
 		QUnit.test("backToTop", function(assert) {
-			expect(56); // including the "navigate" event
+			assert.expect(56); // including the "navigate" event
 
 			window.expectedNav = {
 					fromId: "page2",
@@ -615,7 +615,7 @@
 
 
 		QUnit.test("backToPage", function(assert) {
-			expect(15);
+			assert.expect(15);
 
 			equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
 
@@ -687,7 +687,7 @@
 
 		QUnit.test("Page rerendering during transitions", function(assert) {
 			var done = assert.async();
-			expect(8);
+			assert.expect(8);
 
 			equal(nc._aQueue.length, 0, "transition queue length should be 0");
 			ok(nc._bNavigating === false, "NavContainer should not be navigating");
@@ -772,7 +772,7 @@
 				}, 40);
 			} else {
 				// no CSS transitions
-				expect(0);
+				assert.expect(0);
 				nc.backToPage("page1");
 				setTimeout(function(){
 					done();

@@ -174,7 +174,7 @@
 
 		QUnit.test("Scrolling - delayed", function(assert) {
 			var done = assert.async();
-			expect(2);
+			assert.expect(2);
 
 			page1.scrollTo(50, 100);
 
@@ -197,7 +197,7 @@
 
 			QUnit.test("Scroll position after navigating away and back to page1", function(assert) {
 				var done = assert.async();
-				expect(5);
+				assert.expect(5);
 
 				var interval = window.setInterval(function(){ // burst of logs to analyze future problems because this is the most tricky situation in IE
 					jQuery.sap.log.info("page1 height: " + jQuery.sap.byId("page1-cont").height()
@@ -235,7 +235,7 @@
 
 		QUnit.test("Scroll position after navigating away and rerendering the page and navigating back to page1", function(assert) {
 			var done = assert.async();
-			expect(5);
+			assert.expect(5);
 
 			var test = function() { // function to be executed after navigating forward and back
 				equal(getScrollPos(), -50, "Page should be scrolled to position 50");
@@ -278,7 +278,7 @@
 
 			QUnit.test("Scroll position after navigating away and rerendering the APP and navigating back to page1", function(assert) {
 				var done = assert.async();
-				expect(2);
+				assert.expect(2);
 
 				var test = function() { // function to be executed after navigating forward and back
 					equal(getScrollPos(), -50, "Page should be scrolled to position 50");
@@ -308,7 +308,7 @@
 
 			QUnit.test("Scroll position after navigating away and removing page1 from DOM and navigating back to page1", function(assert) {
 				var done = assert.async();
-				expect(4);
+				assert.expect(4);
 
 				var test = function() { // function to be executed after navigating forward and back
 					equal(getScrollPos(), -50, "Page should be scrolled to position 50");
@@ -342,7 +342,7 @@
 
 		QUnit.test("Scroll position after making the page huge", function(assert) {
 			var done = assert.async();
-			expect(4);
+			assert.expect(4);
 
 			jQuery("#content").css("height", "3000px");
 
@@ -361,7 +361,7 @@
 
 		QUnit.test("Scroll position after making the page small again", function(assert) {
 			var done = assert.async();
-			expect(2);
+			assert.expect(2);
 
 			jQuery("#content").css("height", "300px");
 
@@ -375,7 +375,7 @@
 
 		QUnit.test("Scroll position after making the page huge and trying animated scrolling", function(assert) {
 			var done = assert.async();
-			expect(2);
+			assert.expect(2);
 
 			jQuery("#content").css("height", "3000px");
 			page1.scrollTo(50, 100); // try to scroll when it should not be possible

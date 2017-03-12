@@ -215,16 +215,16 @@
 				}
 
 				if (jQuery.support.touch || jQuery.sap.simulateMobileOnDesktop) {
-					expect(9);
+					assert.expect(9);
 				} else {
-					expect(10);
+					assert.expect(10);
 				}
 				ok(oIconDom, "Icon should be rendered.");
 				ok(oTitleDom, "Title should be rendered");
 			});
 
 			QUnit.test("Close Dialog. Test set origin parameter value", function (assert) {
-				expect(4);
+				assert.expect(4);
 				oDialog.getBeginButton().$().trigger("tap");
 				this.clock.tick(500);
 			});
@@ -1049,7 +1049,7 @@
 			});
 
 			QUnit.test("Clear CSS property 'display' from scrolling area before size calculation", function (assert) {
-				expect(2);
+				assert.expect(2);
 				var oDialog = new sap.m.Dialog({
 					contentWidth: "450px",
 					contentHeight: "400px"

@@ -296,7 +296,7 @@
     	});
 
 			QUnit.test("WorksetItemSelected Event", function(assert) {
-				expect(5);
+				assert.expect(5);
 
 				qutils.triggerMouseEvent("wi_so", "click", 1, 1, 1, 1);
 
@@ -308,7 +308,7 @@
     	});
 
     	QUnit.test("Logout Event", function(assert) {
-				expect(1);
+				assert.expect(1);
 				var $logout = jQuery(".sapUiUx3ShellHeader-logout");
 				qutils.triggerMouseEvent($logout[0], "click", 1, 1, 1, 1);
     	});
@@ -327,7 +327,7 @@
 				realRender(oRenderManager, oControl);
 			}
 
-			expect(1);
+			assert.expect(1);
 			oShell.forceInvalidation();
 			setTimeout(function() {
 				equal(renderCount, 1, "ONE re-rendering should have happened after forced invalidation");
@@ -337,7 +337,7 @@
 
 		QUnit.test("No Re-rendering on Content Modification", function(assert) {
 			var done = assert.async();
-			expect(2);
+			assert.expect(2);
 			oShell.addContent(new sap.ui.commons.Button("newContentBtn", {text:"new content"}))
 			setTimeout(function() {
 				ok(jQuery.sap.domById("newContentBtn"), "The new content should now be present in the page");
@@ -348,7 +348,7 @@
 
 			QUnit.test("OnAfterRendering Called on Added Content", function(assert) {
 				var done = assert.async();
-				expect(2);
+				assert.expect(2);
 				var newLbx = new sap.ui.commons.ListBox("newContentLbx");
 
 				// overwrite ListBox onAfterRendering to log calls
@@ -395,7 +395,7 @@
 
 			QUnit.test("Search Event", function(assert) {
 				var done = assert.async();
-				expect(4);
+				assert.expect(4);
 
 				// open the search tool
 				qutils.triggerMouseEvent("myShell-tool-myShell-searchTool", "click", 1, 1, 1, 1);
@@ -428,7 +428,7 @@
 
 			QUnit.test("PaneBarItemSelected Event", function(assert) {
 				var done = assert.async();
-				expect(8);
+				assert.expect(8);
 
 				// pane should be closed
 				equal(jQuery.sap.byId(oShell.getId() + "-paneBar").hasClass("sapUiUx3ShellPaneBarOpen"), false, "Pane bar should be closed");
@@ -456,7 +456,7 @@
 			});
 
 			QUnit.test("No Further Re-rendering", function(assert) {
-				expect(1);
+				assert.expect(1);
 				equal(renderCount, 1, "Still, only ONE re-rendering should have happened after further tests");
 			});
 

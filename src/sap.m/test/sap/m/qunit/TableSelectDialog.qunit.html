@@ -371,7 +371,7 @@
 
 		QUnit.test("Destroy TableSelectDialog", function(assert){
 			var done = assert.async();
-			expect(1);
+			assert.expect(1);
 			// simulate close
 			oTableSelectDialog._dialog.attachAfterClose(function() {
 				oTableSelectDialog.destroy();
@@ -384,7 +384,7 @@
 		QUnit.test("Open TableSelectDialog1", function(assert){
 			var done = assert.async();
 			//Expect 6 as one comes from the button press for chainabe test
-			expect(6);
+			assert.expect(6);
 			setTimeout(function() {
 				oButton1.firePress();
 				ok(jQuery.sap.domById("oTableSelectDialog1-dialog"), "TableSelectDialog1 is opened");
@@ -400,7 +400,7 @@
 
 		QUnit.test("TableSelectDialog1 SearchField Set Value 'Mo'", function(assert){
 			var done = assert.async();
-			expect(0);
+			assert.expect(0);
 			sap.ui.getCore().applyChanges();
 			var searchField = sap.ui.getCore().byId("oTableSelectDialog1-searchField");
 			searchField.setValue("Mo");
@@ -409,14 +409,14 @@
 
 		QUnit.test("TableSelectDialog1 SearchField Equals 'Mo'", function(assert){
 			var done = assert.async();
-			expect(1);
+			assert.expect(1);
 			strictEqual(jQuery.sap.domById("oTableSelectDialog1-searchField-I").value, "Mo", "Search Field should Contain 'Mo'");
 			done();
 		});
 
 		QUnit.test("TableSelectDialog1 SearchField Fire Search Event", function(assert){
 			var done = assert.async();
-			expect(0);
+			assert.expect(0);
 			var searchField = sap.ui.getCore().byId("oTableSelectDialog1-searchField");
 			searchField.fireSearch({query: "Mo"});
 			done();
@@ -424,7 +424,7 @@
 
 		QUnit.test("TableSelectDialog1 SearchField Fire Search Results", function(assert){
 			var done = assert.async();
-			expect(3);
+			assert.expect(3);
 			setTimeout(function() {
 				equal(aSearchEvents.length, 2, "there should be 2 events in the serach events log");
 				equal(aSearchEvents[0], 5, "The first event should equal 5 before the filter applied");
@@ -435,7 +435,7 @@
 
 		QUnit.test("TableSelectDialog1 SearchField Fire Search Event Again with same data", function(assert){
 			var done = assert.async();
-			expect(0);
+			assert.expect(0);
 			var searchField = sap.ui.getCore().byId("oTableSelectDialog1-searchField");
 			searchField.fireSearch({query: "Mo"});
 			done();
@@ -443,7 +443,7 @@
 
 		QUnit.test("TableSelectDialog1 SearchField Fire Search Results", function(assert){
 			var done = assert.async();
-			expect(3);
+			assert.expect(3);
 			setTimeout(function() {
 				equal(aSearchEvents.length, 2, "there should be 2 events in the serach events log");
 				equal(aSearchEvents[0], 3, "The first event should equal 3 before the filter applied");
@@ -456,7 +456,7 @@
 
 		QUnit.test("TableSelectDialog1 SearchField Simulate Live Chnage Clear Text", function(assert){
 			var done = assert.async();
-			expect(0);
+			assert.expect(0);
 			var searchField = sap.ui.getCore().byId("oTableSelectDialog1-searchField");
 			searchField.setValue("");
 			searchField.fireLiveChange({newValue: ""});
@@ -465,7 +465,7 @@
 
 		QUnit.test("TableSelectDialog1 SearchField Live Change Results Clear Text", function(assert){
 			var done = assert.async();
-			expect(3);
+			assert.expect(3);
 			setTimeout(function() {
 				equal(aLiveChangeEvents.length, 2, "there should be 2 events in the serach events log");
 				equal(aLiveChangeEvents[0], 3, "The first event should equal 3 before the filter applied");
@@ -484,7 +484,7 @@
 
 		QUnit.test("TableSelectDialog1 Single Select Checks", function(assert){
 			var done = assert.async();
-			expect(2);
+			assert.expect(2);
 			setTimeout(function() {
 				ok(jQuery.sap.domById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
 				ok(!jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should not have an ok button");
@@ -508,7 +508,7 @@
 
 		QUnit.test("TableSelectDialog1 Single Select Check Cancel", function(assert){
 			var done = assert.async();
-			expect(3);
+			assert.expect(3);
 			oInput1.setValue("");
 			oButton1.firePress();
 			ok(jQuery.sap.domById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
@@ -572,7 +572,7 @@
 
 		QUnit.test("Initialfocus when there are no rows in the TableSelectDialog's table", function (assert) {
 			var done = assert.async();
-			expect(1);
+			assert.expect(1);
 			var oSystem = {
 					desktop: true,
 					phone: false,
@@ -600,7 +600,7 @@
 
 		QUnit.test("InitialFocus when there are rows in the tableSelectDialog's table", function(assert){
 			var done = assert.async();
-			expect(1);
+			assert.expect(1);
 			var oTableSelectDialog15 = new sap.m.TableSelectDialog("tableSelectDialog15", {
 				title: "my TableSelectDialog",
 				noDataText: "Sorry, no data is available",

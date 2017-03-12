@@ -74,10 +74,10 @@
 		var $P2R = oP2R.$();
 		var iScroller = oPage1.getScrollDelegate()._scroller;
 		if (iScroller) { // this is executed when iScroll is used
-			expect(8);
+			assert.expect(8);
 			ok($P2R.position().top + $P2R.height() - jQuery("#page1-intHeader").height() <= 0, "Control is hidden over the top of the parent container");
 		} else {
-			expect(7);
+			assert.expect(7);
 		}
 		ok($P2R.length > 0, "Pull down control is rendered");
 		ok($P2R.children(".sapMPullDownCI").length == 0, "No custom logo is rendered initially");
@@ -96,7 +96,7 @@
 		var iScroller = oPage1.getScrollDelegate()._scroller;
 
 		if (iScroller) { // this is executed when iScroll is used
-			expect(14); // 13 + event
+			assert.expect(14); // 13 + event
 			var iTop = oList.$().offset().top + 20;
 			var iLeft = 10;
 			iScroller._start({
@@ -151,7 +151,7 @@
 			}, 1000);
 
 		} else { // this is executed when iScroll is not used (= in mouse environments)  TODO: implement test once control is implemented
-			expect(0);
+			assert.expect(0);
 			done();
 		}
 	});

@@ -96,7 +96,7 @@
 	QUnit.test("test model setProperty with invalid bindingContext and relative path", function(assert) {
 		var oContext = oModel.createBindingContext("/member/HorstDerGrosse");
 		oModel.setProperty("@firstName", "Petre", oContext);
-		expect(0);
+		assert.expect(0);
 	});
 
 	QUnit.test("test model setProperty onlabel with bindingContext and relative path", function(assert) {

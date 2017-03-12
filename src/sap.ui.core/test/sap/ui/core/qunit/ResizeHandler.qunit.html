@@ -127,7 +127,7 @@
 
 		QUnit.test("Check DOM Resize", function(assert) {
 			var done = assert.async();
-			expect(2);
+			assert.expect(2);
 			var oResizeAreaDom = jQuery("#resizeArea").get(0);
 			var sResizeListenerId = _register(oResizeAreaDom);
 
@@ -144,7 +144,7 @@
 
 		QUnit.test("Check DOM Resize width +1", function(assert) {
 			var done = assert.async();
-			expect(2);
+			assert.expect(2);
 			var oResizeAreaDom = jQuery("#resizeArea").get(0);
 			var sResizeListenerId = _register(oResizeAreaDom);
 			jQuery("#resizeAreaContainer").attr("style", "width:151px;height:150px;");
@@ -157,7 +157,7 @@
 
 		QUnit.test("Check DOM Resize width -1", function(assert) {
 			var done = assert.async();
-			expect(2);
+			assert.expect(2);
 			var oResizeAreaDom = jQuery("#resizeArea").get(0);
 			var sResizeListenerId = _register(oResizeAreaDom);
 			jQuery("#resizeAreaContainer").attr("style", "width:150px;height:150px;");
@@ -170,7 +170,7 @@
 
 		QUnit.test("Check DOM Resize height +1", function(assert) {
 			var done = assert.async();
-			expect(2);
+			assert.expect(2);
 			var oResizeAreaDom = jQuery("#resizeArea").get(0);
 			var sResizeListenerId = _register(oResizeAreaDom);
 			jQuery("#resizeAreaContainer").attr("style", "width:150px;height:151px;");
@@ -183,7 +183,7 @@
 
 		QUnit.test("Check DOM Resize height -1", function(assert) {
 			var done = assert.async();
-			expect(2);
+			assert.expect(2);
 			var oResizeAreaDom = jQuery("#resizeArea").get(0);
 			var sResizeListenerId = _register(oResizeAreaDom);
 			jQuery("#resizeAreaContainer").attr("style", "width:150px;height:150px;");
@@ -196,7 +196,7 @@
 
 		QUnit.test("Check DOM Resize width and height +1", function(assert) {
 			var done = assert.async();
-			expect(2);
+			assert.expect(2);
 			var oResizeAreaDom = jQuery("#resizeArea").get(0);
 			var sResizeListenerId = _register(oResizeAreaDom);
 			jQuery("#resizeAreaContainer").attr("style", "width:151px;height:151px;");
@@ -209,7 +209,7 @@
 
 		QUnit.test("Check DOM Resize width and height -1", function(assert) {
 			var done = assert.async();
-			expect(2);
+			assert.expect(2);
 			var oResizeAreaDom = jQuery("#resizeArea").get(0);
 			var sResizeListenerId = _register(oResizeAreaDom);
 			jQuery("#resizeAreaContainer").attr("style", "width:150px;height:150px;");
@@ -222,7 +222,7 @@
 
 		QUnit.test("Check DOM Resize width and height +101", function(assert) {
 			var done = assert.async();
-			expect(2);
+			assert.expect(2);
 			var oResizeAreaDom = jQuery("#resizeArea").get(0);
 			var sResizeListenerId = _register(oResizeAreaDom);
 			jQuery("#resizeAreaContainer").attr("style", "width:251px;height:251px;");
@@ -235,7 +235,7 @@
 
 		QUnit.test("Check DOM Resize width and height -101", function(assert) {
 			var done = assert.async();
-			expect(2);
+			assert.expect(2);
 			var oResizeAreaDom = jQuery("#resizeArea").get(0);
 			var sResizeListenerId = _register(oResizeAreaDom);
 			jQuery("#resizeAreaContainer").attr("style", "width:150px;height:150px;");
@@ -248,7 +248,7 @@
 
 		QUnit.test("DetachListener", function(assert) {
 			var done = assert.async();
-			expect(1);
+			assert.expect(1);
 			var oResizeAreaDom = jQuery("#resizeArea").get(0);
 			var sResizeListenerId = _register(oResizeAreaDom);
 			sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
@@ -261,7 +261,7 @@
 
 		QUnit.test("Check DOM Resize while setting display:none", function(assert) {
 			var done = assert.async();
-			expect(7);
+			assert.expect(7);
 			var oResizeAreaDom = jQuery("#resizeArea").get(0);
 			var sResizeListenerId = _register(oResizeAreaDom);
 			equal(oResizeAreaDom.offsetHeight, 150, "height should be 150px");
@@ -291,7 +291,7 @@
 
 		QUnit.test("Check Control Resize - With Rerendering", function(assert) {
 			var done = assert.async();
-			expect(3);
+			assert.expect(3);
 			var sResizeListenerId = _register(control);
 
 			control.setWidth("150px");
@@ -308,7 +308,7 @@
 
 		QUnit.test("Check Control Resize - Dom Changes", function(assert) {
 			var done = assert.async();
-			expect(3);
+			assert.expect(3);
 			var sResizeListenerId = _register(control);
 
 			control.$().attr("style", "width:151px;height:149px;");
@@ -322,7 +322,7 @@
 		});
 
 		QUnit.test("Check Control Resize - Destroy", function(assert) {
-			expect(3);
+			assert.expect(3);
 			ok(oResizeHandler.aResizeListeners.length == 0, "Number of Handlers before registration");
 			var sResizeListenerId = _register(control);
 			ok(oResizeHandler.aResizeListeners.length == 1, "Number of Handlers after registration");

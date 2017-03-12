@@ -107,7 +107,7 @@
  			//first and a half
 			QUnit.test("call the back() function to simulate the storing from bookmark, default handler should be called", function(assert){
 				var done = assert.async();
-				expect(1);
+				assert.expect(1);
 
 				jQuery.sap.history.back();
 
@@ -119,7 +119,7 @@
 			//second
 			QUnit.test("Add a skippable history and try to go back to skippable history", function(assert){
 				var done = assert.async();
-				expect(4);
+				assert.expect(4);
 				jQuery.sap.history.addVirtualHistory();
 				ok(rSkipRegex.test(window.location.hash), "Current hash is a skippable hash");
 				setTimeout(function(){
@@ -140,7 +140,7 @@
 			//third
 			QUnit.test("Add two skippable histories and try to go back to the skippable histories", function(assert){
 				var done = assert.async();
-				expect(4);
+				assert.expect(4);
 				jQuery.sap.history.addVirtualHistory();
 				jQuery.sap.history.addVirtualHistory();
 
@@ -163,7 +163,7 @@
 			//fourth
 			QUnit.test("Add two skippable histories, one normal history and try to go back and forth", function(assert){
 				var done = assert.async();
-				expect(4);
+				assert.expect(4);
 				jQuery.sap.history.addVirtualHistory();
 				jQuery.sap.history.addVirtualHistory();
 				jQuery.sap.history.addHistory(sHistoryPath, data1);
@@ -189,7 +189,7 @@
 			//fifth
 			QUnit.test("Add one more skippable history and try to go back and forth", function(assert){
 				var done = assert.async();
-				expect(4);
+				assert.expect(4);
 				jQuery.sap.history.addVirtualHistory();
 
 				setTimeout(function(){
@@ -211,7 +211,7 @@
 			//sixth
 			QUnit.test("Add two more skippable history, one more normal history and try to go back and forth", function(assert){
 				var done = assert.async();
-				expect(4);
+				assert.expect(4);
 				jQuery.sap.history.addVirtualHistory();
 				jQuery.sap.history.addVirtualHistory();
 				jQuery.sap.history.addHistory(sHistoryPath, data2);
@@ -247,7 +247,7 @@
 			//eighth
 			QUnit.test("Add one history that matches the route added by calling the addRoute method", function(assert){
 				var done = assert.async();
-				expect(2);
+				assert.expect(2);
 				jQuery.sap.history.addHistory(sNewHistoryPath, data3);
 				jQuery.sap.history.addVirtualHistory();
 
@@ -265,7 +265,7 @@
 			//ninth
 			QUnit.test("Set another default handler for history handling", function(assert){
 				var done = assert.async();
-				expect(2);
+				assert.expect(2);
 				jQuery.sap.history.setDefaultHandler(newDefaultHanlder);
 
 				window.history.go(-8);
@@ -278,7 +278,7 @@
 			//tenth
 			QUnit.test("back directly to some saved state", function(assert){
 				var done = assert.async();
-				expect(2);
+				assert.expect(2);
 
 				var sHash = prepareHistoryState();
 				currentData = data1;
@@ -296,7 +296,7 @@
 			//eleventh
 			QUnit.test("back through the specific path", function(assert){
 				var done = assert.async();
-				expect(2);
+				assert.expect(2);
 
 				prepareHistoryState();
 				currentData = data2;

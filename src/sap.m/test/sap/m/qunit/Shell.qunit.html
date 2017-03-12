@@ -100,7 +100,7 @@
 
 		// logout event
 		QUnit.test("Shell logout event", function(assert) {
-			expect(2); // incl. logout handler
+			assert.expect(2); // incl. logout handler
 			window.loggedOut = false;
 			qutils.triggerTouchEvent("tap", oShell.getId() + "-logout");
 			equal(window.loggedOut, true, "Logout handler should be called");

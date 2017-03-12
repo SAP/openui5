@@ -24,7 +24,7 @@
 	});
 
     QUnit.test("Show/Hide Bar", function (assert) {
-        expect(3); //number of assertions
+        assert.expect(3); //number of assertions
 
         // test whether it is visible by default
         assert.strictEqual(jQuery(ANCHORBAR_CLASS_SELECTOR).length > 0, true, "anchorBar visible by default");

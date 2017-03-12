@@ -61,13 +61,13 @@
 	// TESTS
 
 	QUnit.test("sap.ui.core.CustomizingConfiguration available", function(assert) {
-		expect(1);
+		assert.expect(1);
 
 		ok(sap.ui.core.CustomizingConfiguration, "sap.ui.core.CustomizingConfiguration should be available now without requiring it");
 	});
 
 	QUnit.test("sap.ui.core.CustomizingConfiguration returning no customizing data", function(assert) {
-		expect(4);
+		assert.expect(4);
 
 		strictEqual(sap.ui.core.CustomizingConfiguration.getViewReplacement("samples.components.ext.sap.Sub1"),
 				undefined,
