@@ -88,10 +88,10 @@
 								// If no view info is provided for a route, the internal target instance should not be sap.m.routing.Target
 								ok(oRoute._oTarget instanceof Target && !(oRoute._oTarget instanceof MobileTarget), "The internal target instance for old syntax should be only a core target");
 
-								strictEqual(oRouteMatchedSpy.callCount, 1, "first route is matched");
+								assert.strictEqual(oRouteMatchedSpy.callCount, 1, "first route is matched");
 
 								return oRouteMatchedSpy.returnValues[0].then(function() {
-									strictEqual(oListenerSpy.callCount, 1, "first route gets pattern matched");
+									assert.strictEqual(oListenerSpy.callCount, 1, "first route gets pattern matched");
 
 									// Cleanup
 									oRouteMatchedSpy.restore();

@@ -32,7 +32,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				strictEqual(oBar.getDomRef().nodeName, sExpectedTag.toUpperCase());
+				assert.strictEqual(oBar.getDomRef().nodeName, sExpectedTag.toUpperCase());
 				ok(oBar.$().hasClass(sExpectedClass), "The bar has the context class: " + sExpectedClass);
 
 				// Cleanup

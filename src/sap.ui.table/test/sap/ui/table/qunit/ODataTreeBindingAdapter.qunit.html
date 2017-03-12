@@ -548,7 +548,7 @@
 				equal(aContexts.length, 9, "TreeBinding rootContexts length");
 
 				oContext = aContexts[0];
-				strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level of 1st child should be 2");
+				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level of 1st child should be 2");
 				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierarchyNode ID of 1st child should be set correctly");
 				equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode ID of 1st child should be correct node");
 
@@ -585,7 +585,7 @@
 				equal(aContexts.length, 1, "TreeBinding rootContexts length");
 
 				oContext = aContexts[0];
-				strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 1, "1st root child level check");
+				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 1, "1st root child level check");
 				equal(oModel.getProperty("HierarchyNode", oContext), "000001", "1st root child HierarchyNode check");
 
 				oBinding.detachChange(handler1);
@@ -609,7 +609,7 @@
 				equal(oBinding.getChildCount(oContext), 9, "ChildCount of expanded 1st node");
 
 				oContext = aContexts[0];
-				strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level check on 1st child (0.0)");
+				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level check on 1st child (0.0)");
 				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierarchyNode check on 1st child (0.0)");
 				equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode check on 1st child (0.0)");
 
@@ -647,7 +647,7 @@
 				equal(oBinding._iPageSize, 10, "PageSize must be 10, since 10 requested by getContexts");
 
 				oContext = aContexts[0];
-				strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 1, "1st root child level check");
+				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 1, "1st root child level check");
 				equal(oModel.getProperty("HierarchyNode", oContext), "000001", "1st root child HierarchyNode check");
 
 				oBinding.detachChange(handler1);
@@ -674,7 +674,7 @@
 
 				// row index 4 must be present due to higher page size (10) although not requested by latest getContexts call
 				oContext = oBinding.getContextByIndex(4);
-				strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level check on 1st child (0.0)");
+				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level check on 1st child (0.0)");
 				equal(oModel.getProperty("HierarchyNode", oContext), "001073", "HierarchyNode check on 1st child (0.0)");
 				equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode check on 1st child (0.0)");
 
@@ -706,7 +706,7 @@
 				equal(oBinding._iPageSize, 1, "PageSize must be 1, since 1 requested by getContexts");
 
 				oContext = aContexts[0];
-				strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 1, "1st root child level check");
+				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 1, "1st root child level check");
 				equal(oModel.getProperty("HierarchyNode", oContext), "000001", "1st root child HierarchyNode check");
 
 				oBinding.detachChange(handler1);
@@ -732,7 +732,7 @@
 				equal(oBinding.getChildCount(oContext), 9, "ChildCount of expanded 1st node");
 
 				oContext = oBinding.getContextByIndex(4);
-				strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level check on 1st child (0.0)");
+				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level check on 1st child (0.0)");
 				equal(oModel.getProperty("HierarchyNode", oContext), "001073", "HierarchyNode check on 1st child (0.0)");
 				equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode check on 1st child (0.0)");
 
@@ -772,7 +772,7 @@
 
 				//Level 0
 				oContext = aContexts[0];
-				strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 1, "Level of root node (0)");
+				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 1, "Level of root node (0)");
 				equal(oModel.getProperty("HierarchyNode", oContext), "000001", "HierarchyNode of root node");
 				equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "Content-Item of root node");
 			};
@@ -786,7 +786,7 @@
 				equal(aContexts.length, 9, "TreeBinding nodeContexts length is 9, 9 children of first root node");
 
 				oContext = aContexts[0];
-				strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level of first child of root (0.0)");
+				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level of first child of root (0.0)");
 				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierarchyNode of first child of root (0.0)");
 				equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode of first child of root (0.0), should be the root node id");
 			};
@@ -1090,7 +1090,7 @@
 				equal(oContext, null, "Context for row index 0 must be null, it was not loaded yet.");
 
 				oContext = oBinding.getContextByIndex(1);
-				strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level Check for 1st returned context");
+				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level Check for 1st returned context");
 				equal(oModel.getProperty("HierarchyNode", oContext), "000362", "HierarchyNode Check for 1st returned context");
 				equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode Check for 1st returned context");
 
@@ -1125,7 +1125,7 @@
 				//first context
 				oContext = oBinding.getContextByIndex(5);
 				deepEqual(oContext, aContexts[0], "getContextByIndex(1) returns the same context as getContexts(5, 3)[0]");
-				strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "TreeBinding node content");
+				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "TreeBinding node content");
 				equal(oModel.getProperty("HierarchyNode", oContext), "001136", "TreeBinding node content");
 				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
 

@@ -244,7 +244,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		strictEqual(oOA.$("text").html(), "rerendered", "Attribute is rendered inside ObjectHeader");
+		assert.strictEqual(oOA.$("text").html(), "rerendered", "Attribute is rendered inside ObjectHeader");
 
 		// cleanup
 		oOH.destroy();
@@ -838,7 +838,7 @@
 
 		// Assert
 		sap.ui.test.qunit.triggerKeydown(oArrow, jQuery.sap.KeyCodes.SPACE);
-		strictEqual(oSpy.callCount, 1, "SPACE is pressed, titleSelectorPress event was fired");
+		assert.strictEqual(oSpy.callCount, 1, "SPACE is pressed, titleSelectorPress event was fired");
 
 		// clean up
 		oArrowOH.destroy();
@@ -862,7 +862,7 @@
 
 		// Assert
 		sap.ui.test.qunit.triggerKeydown(oArrow, jQuery.sap.KeyCodes.ENTER);
-		strictEqual(oSpy.callCount, 1, "ENTER is pressed, titleSelectorPress event was fired");
+		assert.strictEqual(oSpy.callCount, 1, "ENTER is pressed, titleSelectorPress event was fired");
 
 		// clean up
 		oArrowOH.destroy();

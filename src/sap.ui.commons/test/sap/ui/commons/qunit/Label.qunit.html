@@ -86,43 +86,43 @@
 		// test property accessor methods
 
 		QUnit.test("TextOk", function(assert) {
-			strictEqual(l1.getText(), sText, "l1.getText() returns wrong result");
-			strictEqual(l2.getText(), sText, "l2.getText() returns wrong result");
+			assert.strictEqual(l1.getText(), sText, "l1.getText() returns wrong result");
+			assert.strictEqual(l2.getText(), sText, "l2.getText() returns wrong result");
 		});
 
 		QUnit.test("IconOk", function(assert) {
-			strictEqual(l1.getIcon(), sIcon, "l1.getIcon() returns wrong result");
-			strictEqual(l2.getIcon(), sIcon, "l2.getIcon() returns wrong result");
+			assert.strictEqual(l1.getIcon(), sIcon, "l1.getIcon() returns wrong result");
+			assert.strictEqual(l2.getIcon(), sIcon, "l2.getIcon() returns wrong result");
 		});
 
 		QUnit.test("WidthOk", function(assert) {
-			strictEqual(l1.getWidth(), sWidth, "l1.getWidth() returns wrong result");
-			strictEqual(l2.getWidth(), sWidth, "l2.getWidth() returns wrong result");
+			assert.strictEqual(l1.getWidth(), sWidth, "l1.getWidth() returns wrong result");
+			assert.strictEqual(l2.getWidth(), sWidth, "l2.getWidth() returns wrong result");
 		});
 
 		QUnit.test("WrappingOk", function(assert) {
-			strictEqual(l1.getWrapping(), bWrapping, "l1.getWrapping() returns wrong result");
-			strictEqual(l2.getWrapping(), bWrapping, "l2.getWrapping() returns wrong result");
+			assert.strictEqual(l1.getWrapping(), bWrapping, "l1.getWrapping() returns wrong result");
+			assert.strictEqual(l2.getWrapping(), bWrapping, "l2.getWrapping() returns wrong result");
 		});
 
 		QUnit.test("VisibleOk", function(assert) {
-			strictEqual(l1.getVisible(), bVisible, "l1.getVisible() returns wrong result");
-			strictEqual(l2.getVisible(), bVisible, "l2.getVisible() returns wrong result");
+			assert.strictEqual(l1.getVisible(), bVisible, "l1.getVisible() returns wrong result");
+			assert.strictEqual(l2.getVisible(), bVisible, "l2.getVisible() returns wrong result");
 		});
 
 		QUnit.test("TextAlignOk", function(assert) {
-			strictEqual(l1.getTextAlign(), oTextAlign, "l1.getTextAlign() returns wrong result");
-			strictEqual(l2.getTextAlign(), oTextAlign, "l2.getTextAlign() returns wrong result");
+			assert.strictEqual(l1.getTextAlign(), oTextAlign, "l1.getTextAlign() returns wrong result");
+			assert.strictEqual(l2.getTextAlign(), oTextAlign, "l2.getTextAlign() returns wrong result");
 		});
 
 		QUnit.test("TextDirectionOk", function(assert) {
-			strictEqual(l1.getTextDirection(), oTextDirection, "l1.getTextDirection() returns wrong result");
-			strictEqual(l2.getTextDirection(), oTextDirection, "l2.getTextDirection() returns wrong result");
+			assert.strictEqual(l1.getTextDirection(), oTextDirection, "l1.getTextDirection() returns wrong result");
+			assert.strictEqual(l2.getTextDirection(), oTextDirection, "l2.getTextDirection() returns wrong result");
 		});
 
 		QUnit.test("DesignOk", function(assert) {
-			strictEqual(l1.getDesign(), oDesign, "l1.getDesign() returns wrong result");
-			strictEqual(l2.getDesign(), oDesign, "l2.getDesign() returns wrong result");
+			assert.strictEqual(l1.getDesign(), oDesign, "l1.getDesign() returns wrong result");
+			assert.strictEqual(l2.getDesign(), oDesign, "l2.getDesign() returns wrong result");
 		});
 
 		// test events
@@ -157,7 +157,7 @@
 			ok(oMetadata !== null, "l1.getMetadata() should not be null");
 			ok(oMetadata.getParent() != null, "l1.getMetadata().getParent() should not be null");
 			ok(sap.ui.core.Control.getMetadata() === oMetadata.getParent());
-			strictEqual(oMetadata.getProperties()["text"]["type"], "string");
+			assert.strictEqual(oMetadata.getProperties()["text"]["type"], "string");
 			ok(isEmpty(oMetadata.getAggregations()));
 			ok(oMetadata.getAssociations() !== undefined);
 			ok(oMetadata.getAssociations()["labelFor"] !== undefined);
@@ -165,28 +165,28 @@
 
 		QUnit.test("DirectionStyleOk", function(assert) {
 			var sDir = l1.$().css("direction");
-			strictEqual(sDir && sDir.toUpperCase(), oTextDirection, "l1 dir is not 'RTL'");
+			assert.strictEqual(sDir && sDir.toUpperCase(), oTextDirection, "l1 dir is not 'RTL'");
 
 			sDir = l2.$().css("direction");
-			strictEqual(sDir && sDir.toUpperCase(), oTextDirection, "l2 dir is not 'RTL'");
+			assert.strictEqual(sDir && sDir.toUpperCase(), oTextDirection, "l2 dir is not 'RTL'");
 		});
 
 		QUnit.test("TextDirectionChangeOk", function(assert) {
 			l1.setTextDirection(sap.ui.core.TextDirection.LTR);
 			sap.ui.getCore().applyChanges();
 			var sDir = l1.$().css("direction");
-			strictEqual(sDir && sDir.toUpperCase(), sap.ui.core.TextDirection.LTR, "l1 dir is not 'LTR'");
+			assert.strictEqual(sDir && sDir.toUpperCase(), sap.ui.core.TextDirection.LTR, "l1 dir is not 'LTR'");
 		});
 
 		QUnit.test("OffsetWidthOk", function(assert) {
 			//test the pixel perfect width of the control
 			var oDomRef = window.document.getElementById("l1");
-			strictEqual(oDomRef.offsetWidth, parseInt(l1.getWidth()), "l1.offsetWidth should equal parseInt(l1.getWidth())");
+			assert.strictEqual(oDomRef.offsetWidth, parseInt(l1.getWidth()), "l1.offsetWidth should equal parseInt(l1.getWidth())");
 
 			l2.setWidth("1000px");
 			sap.ui.getCore().applyChanges();
 			oDomRef = window.document.getElementById("l2");
-			strictEqual(oDomRef.offsetWidth, 1000, "l2.offsetWidth should equal 1000");
+			assert.strictEqual(oDomRef.offsetWidth, 1000, "l2.offsetWidth should equal 1000");
 		});
 
 		QUnit.test("RequiredIndicatorOk", function(assert) {
@@ -231,7 +231,7 @@
 			var fnExitSpy = sinon.spy(this.oLabel3, "exit");
 			this.oLabel3.destroy();
 
-			strictEqual(fnExitSpy.callCount, 1, "Should call exit() method");
+			assert.strictEqual(fnExitSpy.callCount, 1, "Should call exit() method");
 		});
 
 		QUnit.test("On onBeforeRendering call", function(assert) {
@@ -240,10 +240,10 @@
 			sap.ui.getCore().applyChanges();
 
 			if (this.oLabel3.oForTooltip) {
-			    strictEqual(this.oLabel3.oForTooltip, null, "oForTooltip should be cleared");
+			    assert.strictEqual(this.oLabel3.oForTooltip, null, "oForTooltip should be cleared");
 			}
 
-			strictEqual(fnExitSpy.callCount, 1, "Should call onBeforeRendering () method");
+			assert.strictEqual(fnExitSpy.callCount, 1, "Should call onBeforeRendering () method");
 		});
 
 		</script>

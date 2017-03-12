@@ -83,19 +83,19 @@
 
 			//OpenSectionsId property
 			QUnit.test("OpenSectionsId Default value - the first added section", function(assert) {
-				strictEqual(this.oAccordion1.getOpenedSectionsId(), "section1", "OpenSectionsId should be the first added section id.");
+				assert.strictEqual(this.oAccordion1.getOpenedSectionsId(), "section1", "OpenSectionsId should be the first added section id.");
 			});
 			QUnit.test("SetOpenedSectionsId multiple values test", function(assert) {
 				this.oAccordion1.setOpenedSectionsId("section2,section3,section4");
 				this.oAccordion1.openDefaultSections();
 
 //				// now section 2 and 4 should be open as section 3 is disabled
-				strictEqual(this.oAccordion1.getOpenedSectionsId(), "section2,section4", "OpenedSectionsId should be section 2 and section 4 ");
+				assert.strictEqual(this.oAccordion1.getOpenedSectionsId(), "section2,section4", "OpenedSectionsId should be section 2 and section 4 ");
 				var aSections = this.oAccordion1.getSections();
-				strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now open");
-				strictEqual(aSections[2].getCollapsed(), true, "Section 3 is closed as is disabled");
-				strictEqual(aSections[3].getCollapsed(), false, "Section 4 is open now");
-				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is was open by default");
+				assert.strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now open");
+				assert.strictEqual(aSections[2].getCollapsed(), true, "Section 3 is closed as is disabled");
+				assert.strictEqual(aSections[3].getCollapsed(), false, "Section 4 is open now");
+				assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is was open by default");
 			});
 
 			QUnit.test("SetOpenedSectionsId disabled section Id test", function(assert) {
@@ -103,35 +103,35 @@
 				this.oAccordion1.openDefaultSections();
 				sap.ui.getCore().applyChanges();
 				var aSections = this.oAccordion1.getSections();
-				strictEqual(aSections[2].getCollapsed(), true, "Section 3 is closed as is disabled");
+				assert.strictEqual(aSections[2].getCollapsed(), true, "Section 3 is closed as is disabled");
 			});
 
 			QUnit.test("SetOpenedSectionsId invalid section Id test", function(assert) {
 				this.oAccordion1.setOpenedSectionsId("alabala");
 				var aSections = this.oAccordion1.getSections();
-				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open as the provided Id is not valid");
+				assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open as the provided Id is not valid");
 			});
 
 			QUnit.test("Set OpenedSectionsId", function(assert) {
 				var sID = "section2";
 				this.oAccordion1.setOpenedSectionsId(sID);
-				strictEqual(this.oAccordion1.getOpenedSectionsId(), sID, "OpenSectionsId for accordion1 is correct ");
+				assert.strictEqual(this.oAccordion1.getOpenedSectionsId(), sID, "OpenSectionsId for accordion1 is correct ");
 			});
 
 			//Width property
 			QUnit.test("Default Width value 200px", function(assert) {
-				strictEqual(this.oAccordion1.getWidth(), "200px", "Default width for accordion1 should be 200px");
+				assert.strictEqual(this.oAccordion1.getWidth(), "200px", "Default width for accordion1 should be 200px");
 			});
 
 			//sections aggregation
 			QUnit.test("sections Aggregation test", function(assert) {
-				strictEqual(this.oAccordion1.getAggregation("sections").length, 4, "4 sections should be added");
+				assert.strictEqual(this.oAccordion1.getAggregation("sections").length, 4, "4 sections should be added");
 			});
 			QUnit.test("Sections aggregation visibility test", function(assert) {
 				ok(this.oAccordion1.getSections, "Sections aggregation is visible");
 			});
 			QUnit.test("Test getNumberOfOpenedSections", function(assert) {
-				strictEqual(this.oAccordion1.getNumberOfOpenedSections(), 1, "Should be 1");
+				assert.strictEqual(this.oAccordion1.getNumberOfOpenedSections(), 1, "Should be 1");
 			});
 
 
@@ -147,18 +147,18 @@
 
 			//Width property
 			QUnit.test("Default Width value 200px", function(assert) {
-				strictEqual(this.oAccordion1.getWidth(), "200px", "Default width for accordion1 should be 200px");
+				assert.strictEqual(this.oAccordion1.getWidth(), "200px", "Default width for accordion1 should be 200px");
 			});
 
 			//OpenSectionsId property
 			QUnit.test("OpenedSectionsId Default value null", function(assert) {
-				strictEqual(this.oAccordion1.getOpenedSectionsId(), "", "OpenedSectionsId should be null as no sections exist ");
+				assert.strictEqual(this.oAccordion1.getOpenedSectionsId(), "", "OpenedSectionsId should be null as no sections exist ");
 			});
 
 
 			//sections aggregation
 			QUnit.test("sections Aggregation test", function(assert) {
-				strictEqual(this.oAccordion1.getAggregation("sections"), null, "No any section exist");
+				assert.strictEqual(this.oAccordion1.getAggregation("sections"), null, "No any section exist");
 			});
 
 			QUnit.module("AccordionSection API and Properties", {
@@ -174,31 +174,31 @@
 
 			QUnit.test("API test - focusFirstControl", function(assert) {
 				var aSections = this.oAccordion1.getSections();
-				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+				assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 				//focus the first control of the first section
 				aSections[0].focusFirstControl();
-				strictEqual(aSections[0].getContent()[0].$().is(":focus"), true, "The first button is focused");
+				assert.strictEqual(aSections[0].getContent()[0].$().is(":focus"), true, "The first button is focused");
 			});
 
 			QUnit.test("API test - onThemeChanged", function(assert) {
 				var aSections = this.oAccordion1.getSections();
-				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+				assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 				aSections[0].onThemeChanged();
 
-				strictEqual(aSections[0].$("hdrL").css("width"), "20px", "The width is 20px");
+				assert.strictEqual(aSections[0].$("hdrL").css("width"), "20px", "The width is 20px");
 			});
 
 			QUnit.test("API test - Enabled property", function(assert) {
 				var aSections = this.oAccordion1.getSections();
-				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+				assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 
 				//set the property "enabled"
 				aSections[0].setEnabled(false);
-				strictEqual(aSections[0].$().hasClass( "sapUiAcdSectionDis" ), true, "The Section header has the disabled class applied");
-				strictEqual(aSections[0].getEnabled(), false, "The Section 1 is disabled");
+				assert.strictEqual(aSections[0].$().hasClass( "sapUiAcdSectionDis" ), true, "The Section header has the disabled class applied");
+				assert.strictEqual(aSections[0].getEnabled(), false, "The Section 1 is disabled");
 				aSections[0].setEnabled(true);
-				strictEqual(aSections[0].$().hasClass( "sapUiAcdSectionDis" ), false, "The Section header doesn't have the disabled class applied");
-				strictEqual(aSections[0].getEnabled(), true, "The Section 1 is enabled");
+				assert.strictEqual(aSections[0].$().hasClass( "sapUiAcdSectionDis" ), false, "The Section header doesn't have the disabled class applied");
+				assert.strictEqual(aSections[0].getEnabled(), true, "The Section 1 is enabled");
 			});
 
 
@@ -225,10 +225,10 @@
 
 				//Check if default section is closed (1) and (4) are now opened
 				var aSections = this.oAccordion1.getSections();
-				strictEqual(aSections[0].getCollapsed(), true, "Section 1 is now closed ");
-				strictEqual(aSections[1].getCollapsed(), true, "Section 2 is now closed ");
-				strictEqual(aSections[2].getCollapsed(), true, "Section 3 is now closed ");
-				strictEqual(aSections[3].getCollapsed(), false, "Section 4 is now open ");
+				assert.strictEqual(aSections[0].getCollapsed(), true, "Section 1 is now closed ");
+				assert.strictEqual(aSections[1].getCollapsed(), true, "Section 2 is now closed ");
+				assert.strictEqual(aSections[2].getCollapsed(), true, "Section 3 is now closed ");
+				assert.strictEqual(aSections[3].getCollapsed(), false, "Section 4 is now open ");
 
 
 			});
@@ -247,12 +247,12 @@
 			QUnit.test("Space and Arrows Left & Right ", function(assert) {
 
 				var aSections = this.oAccordion1.getSections();
-				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+				assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 				qutils.triggerEvent("click", "section1-minL");
 				// now all sections should be closed
-				strictEqual(aSections[0].getCollapsed(), true, "Section 1 is closed now");
+				assert.strictEqual(aSections[0].getCollapsed(), true, "Section 1 is closed now");
 				this.oAccordion1.getSections()[0].setCollapsed(false);
-				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open now");
+				assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open now");
 
 				jQuery("section1-minL").focus();
 				qutils.triggerEvent("click", "section1-minL");
@@ -264,31 +264,31 @@
 				jQuery("section4-minL").focus();
 				qutils.triggerKeyboardEvent("section4-minL", "ARROW_LEFT");
 				qutils.triggerKeyboardEvent("section2-minL", jQuery.sap.KeyCodes.SPACE);
-				strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now opened");
-				strictEqual(aSections[3].getCollapsed(), true, "Section 4 is now closed");
+				assert.strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now opened");
+				assert.strictEqual(aSections[3].getCollapsed(), true, "Section 4 is now closed");
 
 //				Close it and the default section will reopen, in this case, it is section1
 				qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.SPACE);
-				strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now open");
-				strictEqual(aSections[0].getCollapsed(), true, "Section 1 is now closed");
+				assert.strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now open");
+				assert.strictEqual(aSections[0].getCollapsed(), true, "Section 1 is now closed");
 
 			});
 
 			QUnit.test("Space and End buttons ", function(assert) {
 
 				var aSections = this.oAccordion1.getSections();
-				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+				assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 				qutils.triggerEvent("click", "section1-minL");
 				// now all sections should be closed
-				strictEqual(aSections[0].getCollapsed(), true, "Section 1 is closed now");
+				assert.strictEqual(aSections[0].getCollapsed(), true, "Section 1 is closed now");
 				this.oAccordion1.getSections()[0].setCollapsed(false);
-				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open now");
+				assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open now");
 
 				jQuery("section1-minL").focus();
 				qutils.triggerEvent("click", "section1-minL");
 				// test handling END button
 				qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.END);
-				strictEqual(aSections[3].$("hdr").is(":focus"), true, "Section 4 is now focused");
+				assert.strictEqual(aSections[3].$("hdr").is(":focus"), true, "Section 4 is now focused");
 
 				// test END button, when the last section is disabled
 				//Building Section 5
@@ -311,7 +311,7 @@
 				qutils.triggerEvent("click", "section1-minL");
 				// test handling END button
 				qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.END);
-				strictEqual(aSections[3].$("hdr").is(":focus"), true, "Section 4 is now focused as the last 2 are disabled");
+				assert.strictEqual(aSections[3].$("hdr").is(":focus"), true, "Section 4 is now focused as the last 2 are disabled");
 
 			});
 
@@ -351,25 +351,25 @@
 				sap.ui.getCore().applyChanges();
 				var aSections = this.oAccordion1.getSections();
 				// section 3 should be focused and open by default as first 2 are disabled
-				strictEqual(aSections[2].getCollapsed(), false, "Section 3 is open by default as first 2 are disabled");
+				assert.strictEqual(aSections[2].getCollapsed(), false, "Section 3 is open by default as first 2 are disabled");
 
 				// navigate to the last section
 				qutils.triggerKeyboardEvent("section3-minL", jQuery.sap.KeyCodes.ARROW_DOWN);
-				strictEqual(aSections[3].$("hdr").is(":focus"), true, "Section 4 is now focused ");
+				assert.strictEqual(aSections[3].$("hdr").is(":focus"), true, "Section 4 is now focused ");
 
 				qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.HOME);
-				strictEqual(aSections[2].$("hdr").is(":focus"), true, "Section 3 is now focused as first 2 are disabled");
+				assert.strictEqual(aSections[2].$("hdr").is(":focus"), true, "Section 3 is now focused as first 2 are disabled");
 			});
 
 			QUnit.test("Space and Arrows Up & Down ", function(assert) {
 
 				var aSections = this.oAccordion1.getSections();
-				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+				assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 				qutils.triggerEvent("click", "section1-minL");
 				// now all sections should be closed
-				strictEqual(aSections[0].getCollapsed(), true, "Section 1 is closed now");
+				assert.strictEqual(aSections[0].getCollapsed(), true, "Section 1 is closed now");
 				this.oAccordion1.getSections()[0].setCollapsed(false);
-				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open now");
+				assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open now");
 
 				jQuery("section1-minL").focus();
 				qutils.triggerEvent("click", "section1-minL");
@@ -381,62 +381,62 @@
 				jQuery("section4-minL").focus();
 				qutils.triggerKeyboardEvent("section4-minL", "ARROW_UP");
 				qutils.triggerKeyboardEvent("section2-minL", jQuery.sap.KeyCodes.SPACE);
-				strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now opened as 3 is disabled");
-				strictEqual(aSections[3].getCollapsed(), true, "Section 4 is now closed");
+				assert.strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now opened as 3 is disabled");
+				assert.strictEqual(aSections[3].getCollapsed(), true, "Section 4 is now closed");
 
 //				Close it and the default section will reopen, in this case, it is section1
 				qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.SPACE);
-				strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now open");
-				strictEqual(aSections[0].getCollapsed(), true, "Section 1 is now closed");
+				assert.strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now open");
+				assert.strictEqual(aSections[0].getCollapsed(), true, "Section 1 is now closed");
 
 			});
 
 			QUnit.test("Ctrl + PgDn ", function(assert) {
 
 				var aSections = this.oAccordion1.getSections();
-				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+				assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 
 				jQuery("section2-minL").focus();
 				qutils.triggerKeyboardEvent("section2-minL", jQuery.sap.KeyCodes.PAGE_DOWN, {ctrlKey: true});			//, {ctrlKey: true}
 				//next section will be focused and open
-				strictEqual(aSections[3].$("hdr").is(":focus"), true, "Section 4 is now focused as Section 3 is disabled");
-				strictEqual(aSections[3].getCollapsed(), false, "Section 4 is now open");
+				assert.strictEqual(aSections[3].$("hdr").is(":focus"), true, "Section 4 is now focused as Section 3 is disabled");
+				assert.strictEqual(aSections[3].getCollapsed(), false, "Section 4 is now open");
 
 			});
 
 			QUnit.test("Ctrl + PgUp ", function(assert) {
 
 				var aSections = this.oAccordion1.getSections();
-				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+				assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 
 				jQuery("section4-minL").focus();
 				qutils.triggerKeyboardEvent("section4-minL", jQuery.sap.KeyCodes.PAGE_UP, {ctrlKey: true});			//, {ctrlKey: true}
 				//prev section will be focused and open
-				strictEqual(aSections[1].$("hdr").is(":focus"), true, "Section 2 is now focused as Section 3 is disabled");
-				strictEqual(aSections[1].getCollapsed(), false, "Section 2 is open now as Section 3 is disabled");
+				assert.strictEqual(aSections[1].$("hdr").is(":focus"), true, "Section 2 is now focused as Section 3 is disabled");
+				assert.strictEqual(aSections[1].getCollapsed(), false, "Section 2 is open now as Section 3 is disabled");
 
 			});
 
 			QUnit.test("Ctrl + ARROW DOWN ", function(assert) {
 
 				var aSections = this.oAccordion1.getSections();
-				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+				assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 
 				qutils.triggerKeyboardEvent("section1-minL", jQuery.sap.KeyCodes.ARROW_DOWN, {ctrlKey: true});			//, {ctrlKey: true}
 				//Section 2 will become the first section and Section 1 will become the second one section
-				strictEqual(this.oAccordion1.getSections()[0].getTitle(), "My section 2", "Section 2 is now at the fist position");
-				strictEqual(this.oAccordion1.getSections()[1].getTitle(), "My section 1", "Section1 is now at the second position");
+				assert.strictEqual(this.oAccordion1.getSections()[0].getTitle(), "My section 2", "Section 2 is now at the fist position");
+				assert.strictEqual(this.oAccordion1.getSections()[1].getTitle(), "My section 1", "Section1 is now at the second position");
 			});
 
 			QUnit.test("Ctrl + ARROW UP ", function(assert) {
 
 				var aSections = this.oAccordion1.getSections();
-				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
+				assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 
 				qutils.triggerKeyboardEvent("section2-minL", jQuery.sap.KeyCodes.ARROW_UP, {ctrlKey: true});			//, {ctrlKey: true}
 				//Section 2 will become the first section and Section 1 will become the second one section
-				strictEqual(this.oAccordion1.getSections()[0].getTitle(), "My section 2", "Section 2 is now at the fist position");
-				strictEqual(this.oAccordion1.getSections()[1].getTitle(), "My section 1", "Section 1 is now at the second position");
+				assert.strictEqual(this.oAccordion1.getSections()[0].getTitle(), "My section 2", "Section 2 is now at the fist position");
+				assert.strictEqual(this.oAccordion1.getSections()[1].getTitle(), "My section 1", "Section 1 is now at the second position");
 			});
 
 		</script>

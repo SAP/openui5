@@ -161,21 +161,21 @@
 //		});
 
 		QUnit.test("CharToUpperCase", function (assert) {
-			strictEqual("GggT", jQuery.sap.charToUpperCase("gggT"));
-			strictEqual("Gs4T", jQuery.sap.charToUpperCase("gs4T"));
-			strictEqual("GggT", jQuery.sap.charToUpperCase("gggT",0));
-			strictEqual("gggT", jQuery.sap.charToUpperCase("gggT",3));
-			strictEqual("ggGT", jQuery.sap.charToUpperCase("gggT",2));
-			strictEqual("loW", jQuery.sap.charToUpperCase("low",2));
-			strictEqual("Löw", jQuery.sap.charToUpperCase("löw",3));
+			assert.strictEqual("GggT", jQuery.sap.charToUpperCase("gggT"));
+			assert.strictEqual("Gs4T", jQuery.sap.charToUpperCase("gs4T"));
+			assert.strictEqual("GggT", jQuery.sap.charToUpperCase("gggT",0));
+			assert.strictEqual("gggT", jQuery.sap.charToUpperCase("gggT",3));
+			assert.strictEqual("ggGT", jQuery.sap.charToUpperCase("gggT",2));
+			assert.strictEqual("loW", jQuery.sap.charToUpperCase("low",2));
+			assert.strictEqual("Löw", jQuery.sap.charToUpperCase("löw",3));
 
-			strictEqual("GggT", jQuery.sap.charToUpperCase("gggT",-1));
-			strictEqual("GggT", jQuery.sap.charToUpperCase("gggT",-2));
-			strictEqual("GggT", jQuery.sap.charToUpperCase("gggT","kgtzjrf"));
-			strictEqual("GshfJsrhT", jQuery.sap.charToUpperCase("gshfJsrhT",10));
+			assert.strictEqual("GggT", jQuery.sap.charToUpperCase("gggT",-1));
+			assert.strictEqual("GggT", jQuery.sap.charToUpperCase("gggT",-2));
+			assert.strictEqual("GggT", jQuery.sap.charToUpperCase("gggT","kgtzjrf"));
+			assert.strictEqual("GshfJsrhT", jQuery.sap.charToUpperCase("gshfJsrhT",10));
 
-			strictEqual("GggT", jQuery.sap.charToUpperCase("gggT",null));
-			strictEqual(jQuery.sap.charToUpperCase(null,-1), null);
+			assert.strictEqual("GggT", jQuery.sap.charToUpperCase("gggT",null));
+			assert.strictEqual(jQuery.sap.charToUpperCase(null,-1), null);
 
 			try {
 				jQuery.sap.charToUpperCase("gggT",k)

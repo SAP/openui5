@@ -69,16 +69,16 @@
 	QUnit.test("sap.ui.core.CustomizingConfiguration returning no customizing data", function(assert) {
 		assert.expect(4);
 
-		strictEqual(sap.ui.core.CustomizingConfiguration.getViewReplacement("samples.components.ext.sap.Sub1"),
+		assert.strictEqual(sap.ui.core.CustomizingConfiguration.getViewReplacement("samples.components.ext.sap.Sub1"),
 				undefined,
 				"sap.ui.core.CustomizingConfiguration should return no View replacement data");
-		strictEqual(sap.ui.core.CustomizingConfiguration.getViewExtension("testdata.customizing.sap.Sub2", "extension2"),
+		assert.strictEqual(sap.ui.core.CustomizingConfiguration.getViewExtension("testdata.customizing.sap.Sub2", "extension2"),
 				undefined,
 				"sap.ui.core.CustomizingConfiguration should return no View extension data");
-		strictEqual(sap.ui.core.CustomizingConfiguration.getControllerExtension("testdata.customizing.sap.Sub2"),
+		assert.strictEqual(sap.ui.core.CustomizingConfiguration.getControllerExtension("testdata.customizing.sap.Sub2"),
 				undefined,
 				"sap.ui.core.CustomizingConfiguration should return no Controller extension data");
-		strictEqual(sap.ui.core.CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub3", "customizableText"),
+		assert.strictEqual(sap.ui.core.CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub3", "customizableText"),
 				undefined,
 				"sap.ui.core.CustomizingConfiguration should return no View modification data");
 	});
@@ -110,12 +110,12 @@
 		equal(aLifeCycleCalls[1], "Sub2 Controller onBeforeRendering()", "1st lifecycle method to be called should be: Sub2 Controller onBeforeRendering()");
 		equal(aLifeCycleCalls[2], "Sub2 Controller onAfterRendering()", "2nd lifecycle method to be called should be: Sub2 Controller onAfterRendering()");
 
-		strictEqual(iStandardSub2ControllerCalled, 0, "Standard Controller should not have been called yet");
-		strictEqual(iCustomSub2ControllerCalled, 0, "Custom Controller should not have been called yet");
+		assert.strictEqual(iStandardSub2ControllerCalled, 0, "Standard Controller should not have been called yet");
+		assert.strictEqual(iCustomSub2ControllerCalled, 0, "Custom Controller should not have been called yet");
 		// trigger standard action
 		qutils.triggerEvent("click", "theComponent---mainView--sub2View--standardBtnWithStandardAction");
-		strictEqual(iStandardSub2ControllerCalled, 1, "Standard Controller should have been called now");
-		strictEqual(iCustomSub2ControllerCalled, 0, "Custom Controller should still not have been called");
+		assert.strictEqual(iStandardSub2ControllerCalled, 1, "Standard Controller should have been called now");
+		assert.strictEqual(iCustomSub2ControllerCalled, 0, "Custom Controller should still not have been called");
 
 		// check members
 		var oController = sap.ui.getCore().byId("theComponent---mainView--sub2View").getController();
@@ -151,8 +151,8 @@
 
 	QUnit.test("Property Modifications", function(assert) {
 		var oControl = sap.ui.getCore().byId("theComponent---mainView--sub3View--customizableText");
-		strictEqual(oControl.getVisible(), true, "'visible' property should not be customized");
-		strictEqual(oControl.getEnabled(), true, "'enabled' property should not be customized");
+		assert.strictEqual(oControl.getVisible(), true, "'visible' property should not be customized");
+		assert.strictEqual(oControl.getEnabled(), true, "'enabled' property should not be customized");
 	});
 
 

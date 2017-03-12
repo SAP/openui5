@@ -72,16 +72,16 @@
 					ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
 					ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
 					ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
-					strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
-					strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
+					assert.strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
+					assert.strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
 					ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
 
 					// act + assert loading is finished case for growingScrollToLoad=false
 					oGrowingDelegate._updateTrigger(false);
 					ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
 					ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
-					strictEqual(oList.$("triggerText").css("visibility"), "visible", "Growing trigger text is visible");
-					strictEqual(oList.$("triggerInfo").css("visibility"), "visible", "Growing info text is visible");
+					assert.strictEqual(oList.$("triggerText").css("visibility"), "visible", "Growing trigger text is visible");
+					assert.strictEqual(oList.$("triggerInfo").css("visibility"), "visible", "Growing info text is visible");
 					ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
 
 					// act + assert growingScrollToLoad=true
@@ -94,8 +94,8 @@
 					ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
 					ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
 					ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
-					strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
-					strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
+					assert.strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
+					assert.strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
 					ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
 
 					// act + assert loading is finished case for growingScrollToLoad=true
@@ -291,7 +291,7 @@
 
 				//Assert + Cleanup
 				jQuery.when(oAfterUnGroupingDeferred).then(function () {
-					strictEqual(iInitialItemCount, oList.getItems().length, "The list did contain the same number of items");
+					assert.strictEqual(iInitialItemCount, oList.getItems().length, "The list did contain the same number of items");
 					done();
 
 					oList.destroy();
@@ -325,7 +325,7 @@
 
 				//Act part 2 - set growing treshold to half of the total items and load a second page
 				jQuery.when(oInitialLoadDeferred).then(function () {
-					strictEqual(iInitialThreshold, oList.getItems().length, "The list did contain the same number of items as the initial treshold");
+					assert.strictEqual(iInitialThreshold, oList.getItems().length, "The list did contain the same number of items as the initial treshold");
 					iTotalNumberOfItems = oList.getBinding("items").getLength();
 
 					oList.setGrowingThreshold(Math.floor(iTotalNumberOfItems / 2));
@@ -337,7 +337,7 @@
 				//Act part 3 - load another page - now we should have all items
 				jQuery.when(oSecondPageDeferred).then(function () {
 					//Assert
-					strictEqual(oList.getGrowingThreshold() + iInitialThreshold, oList.getItems().length, "The list did contain the same number of items as twice the treshold");
+					assert.strictEqual(oList.getGrowingThreshold() + iInitialThreshold, oList.getItems().length, "The list did contain the same number of items as twice the treshold");
 
 					oList._oGrowingDelegate.requestNewPage();
 
@@ -346,7 +346,7 @@
 
 				//Assert - check if all items where loaded
 				jQuery.when(oAllPagesDeferred).then(function () {
-					strictEqual(iTotalNumberOfItems, oList.getItems().length, "The list did contain the max number of items");
+					assert.strictEqual(iTotalNumberOfItems, oList.getItems().length, "The list did contain the max number of items");
 
 					//Cleanup
 					oList.destroy();

@@ -99,22 +99,22 @@
 		var oDateValue1 = oFormatter.parse(sDateValue1);
 		dti0.setValue(sDateValue1);
 		oCore.applyChanges();
-		strictEqual(dti0.getValue(), sDateValue1, "value after setValue: " + sDateValue1);
-		strictEqual(+dti0.getDateValue(), +oDateValue1, "dateValue after setValue : " + oDateValue1 + " " + dti0.getDateValue());
+		assert.strictEqual(dti0.getValue(), sDateValue1, "value after setValue: " + sDateValue1);
+		assert.strictEqual(+dti0.getDateValue(), +oDateValue1, "dateValue after setValue : " + oDateValue1 + " " + dti0.getDateValue());
 
 		var oDateValue2 = oFormatter.parse(sDateValue2);
 		dti0.setDateValue(oDateValue2);
 		oCore.applyChanges();
-		strictEqual(dti0.getValue(), sDateValue2, "value after setDateValue: " + sDateValue2);
-		strictEqual(+dti0.getDateValue(), +oDateValue2, "dateValue after setDateValue : " + oDateValue2);
+		assert.strictEqual(dti0.getValue(), sDateValue2, "value after setDateValue: " + sDateValue2);
+		assert.strictEqual(+dti0.getDateValue(), +oDateValue2, "dateValue after setDateValue : " + oDateValue2);
 
 		var oDateValue3 = oFormatter.parse(sDateValue3);
 		oModel.setData({
 			dateVal : oDateValue3
 		});
 		oCore.applyChanges();
-		strictEqual(dti3.getValue(), sDateValue3, "value after oModel.setData: " + sDateValue3);
-		strictEqual(+dti3.getDateValue(), +oDateValue3, "dateValue after oModel.setData : " + oDateValue3);
+		assert.strictEqual(dti3.getValue(), sDateValue3, "value after oModel.setData: " + sDateValue3);
+		assert.strictEqual(+dti3.getDateValue(), +oDateValue3, "dateValue after oModel.setData : " + oDateValue3);
 	});
 
 	QUnit.test("used picker", function(assert) {
@@ -146,8 +146,8 @@
 		dti2.setValue(sInvalidValue);
 		oCore.applyChanges();
 
-		strictEqual(dti2.getValue(), ":)", "value after invalid value set : " + dti2.getValue());
-		strictEqual(dti2.getDateValue(), null, "dateValue after invalid value set : " + dti2.getDateValue());
+		assert.strictEqual(dti2.getValue(), ":)", "value after invalid value set : " + dti2.getValue());
+		assert.strictEqual(dti2.getDateValue(), null, "dateValue after invalid value set : " + dti2.getDateValue());
 	});
 
 	QUnit.module("Interaction");
@@ -187,9 +187,9 @@
 	});
 
 	QUnit.test("Destroy", function(assert) {
-		strictEqual(dti1.$().length, 1, "Before destroy DateTimeInput is available");
+		assert.strictEqual(dti1.$().length, 1, "Before destroy DateTimeInput is available");
 		dti1.destroy();
-		strictEqual(dti1.$().length, 0, "DateTimeInput is destroyed");
+		assert.strictEqual(dti1.$().length, 0, "DateTimeInput is destroyed");
 	});
 
 	QUnit.test("value state and value state message", function(assert) {

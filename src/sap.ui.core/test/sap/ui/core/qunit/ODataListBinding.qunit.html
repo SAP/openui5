@@ -484,22 +484,22 @@
 		// test filter with no params
 		oBinding.sFilterParams = "$filter=foo%20and%20bar";
 		oBinding.filter();
-		strictEqual(oBinding.sFilterParams, undefined, "filter() - Filter-Caching should be reset to 'undefined'");
+		assert.strictEqual(oBinding.sFilterParams, undefined, "filter() - Filter-Caching should be reset to 'undefined'");
 
 		// test filter with empty array
 		oBinding.sFilterParams = "$filter=foo%20and%20bar";
 		oBinding.filter([]);
-		strictEqual(oBinding.sFilterParams, undefined, "filter([]) - Filter-Caching should be reset to 'undefined'");
+		assert.strictEqual(oBinding.sFilterParams, undefined, "filter([]) - Filter-Caching should be reset to 'undefined'");
 
 		//test explicit call to createFilterParams with empty arrays
 		oBinding.sFilterParams = "$filter=foo%20and%20bar";
 		oBinding.createFilterParams([],[]);
-		strictEqual(oBinding.sFilterParams, undefined, "createFilterParams([],[]) - Filte-Cache should be reset to 'undefined'");
+		assert.strictEqual(oBinding.sFilterParams, undefined, "createFilterParams([],[]) - Filte-Cache should be reset to 'undefined'");
 
 		//test explicit call to createFilterParams with no parameters
 		oBinding.sFilterParams = "$filter=foo%20and%20bar";
 		oBinding.createFilterParams();
-		strictEqual(oBinding.sFilterParams, undefined, "createFilterParams() - Filte-Cache should be reset to 'undefined'");
+		assert.strictEqual(oBinding.sFilterParams, undefined, "createFilterParams() - Filte-Cache should be reset to 'undefined'");
 
 	});
 

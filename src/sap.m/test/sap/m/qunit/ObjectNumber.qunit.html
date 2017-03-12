@@ -233,7 +233,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oObjectNumber.$("state").length, 0, "No label for the default state.");
+			assert.strictEqual(oObjectNumber.$("state").length, 0, "No label for the default state.");
 
 			// Clean up
 			oObjectNumber.destroy();
@@ -253,10 +253,10 @@
 
 			// Assert
 			var $valueState = oObjectNumber.$("state");
-			strictEqual($valueState.length, 1, "There is a label for the value state.");
+			assert.strictEqual($valueState.length, 1, "There is a label for the value state.");
 			ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
-			strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
-			strictEqual($valueState.html(),
+			assert.strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
+			assert.strictEqual($valueState.html(),
 						sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_SUCCESS"),
 						"The text for value state \"Success\" is taken from the message bundle."
 			);
@@ -279,10 +279,10 @@
 
 			// Assert
 			var $valueState = oObjectNumber.$("state");
-			strictEqual($valueState.length, 1, "There is a label for the value state.");
+			assert.strictEqual($valueState.length, 1, "There is a label for the value state.");
 			ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
-			strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
-			strictEqual($valueState.html(),
+			assert.strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
+			assert.strictEqual($valueState.html(),
 						sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_WARNING"),
 						"The text for value state \"Warning\" is taken from the message bundle."
 			);
@@ -304,10 +304,10 @@
 
 			// Assert
 			var $valueState = oObjectNumber.$("state");
-			strictEqual($valueState.length, 1, "There is a label for the value state.");
+			assert.strictEqual($valueState.length, 1, "There is a label for the value state.");
 			ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
-			strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
-			strictEqual($valueState.html(),
+			assert.strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
+			assert.strictEqual($valueState.html(),
 						sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
 						"The text for value state \"Error\" is taken from the message bundle."
 			);

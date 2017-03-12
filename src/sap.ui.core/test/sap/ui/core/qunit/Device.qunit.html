@@ -466,7 +466,7 @@
 				}
 
 				for (var prop in currentTest.expected) {
-					strictEqual(actualResult[prop] , currentTest.expected[prop], currentTest.name + ": browser detection property 'browser." + prop + "' should match for " + currentTest.ua);
+					assert.strictEqual(actualResult[prop] , currentTest.expected[prop], currentTest.name + ": browser detection property 'browser." + prop + "' should match for " + currentTest.ua);
 				}
 
 				if (currentTest.system || currentTest.os) {
@@ -486,13 +486,13 @@
 						var oSystem = sap.ui.Device._getSystem(false, currentTest.ua);
 
 						for (prop in currentTest.system) {
-							strictEqual(!!oSystem[prop], currentTest.system[prop], currentTest.name + ": browser detection property 'system." + prop + "' should match for " + currentTest.ua);
+							assert.strictEqual(!!oSystem[prop], currentTest.system[prop], currentTest.name + ": browser detection property 'system." + prop + "' should match for " + currentTest.ua);
 						}
 					}
 
 					if (currentTest.os) {
 						for (prop in currentTest.os) {
-							strictEqual(sap.ui.Device.os[prop], currentTest.os[prop], currentTest.name + ": browser detection property 'os." + prop + "' should match for " + currentTest.ua);
+							assert.strictEqual(sap.ui.Device.os[prop], currentTest.os[prop], currentTest.name + ": browser detection property 'os." + prop + "' should match for " + currentTest.ua);
 						}
 					}
 

@@ -296,21 +296,21 @@ sap.ui.require([
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
 
-    strictEqual(featureTest.name, "(WIP) Feature: Serve quantum coffee", "@wip tag on feature 01");
-    strictEqual(featureTest.skip, true, "@wip tag on feature 02");
-    strictEqual(featureTest.wip, true, "@wip tag on feature 03");
-    strictEqual(featureTest.testScenarios.length, 2, "@wip tag on feature 04");
+    assert.strictEqual(featureTest.name, "(WIP) Feature: Serve quantum coffee", "@wip tag on feature 01");
+    assert.strictEqual(featureTest.skip, true, "@wip tag on feature 02");
+    assert.strictEqual(featureTest.wip, true, "@wip tag on feature 03");
+    assert.strictEqual(featureTest.testScenarios.length, 2, "@wip tag on feature 04");
 
     strictEqual(featureTest.testScenarios[0].name,
       "(WIP) Scenario Outline: Coffee changes peoples moods if you are ready #1", "@wip tag on feature 05");
-    strictEqual(featureTest.testScenarios[0].wip, true, "@wip tag on feature 06");
-    strictEqual(featureTest.testScenarios[0].testSteps.length, 3, "@wip tag on feature 07");
+    assert.strictEqual(featureTest.testScenarios[0].wip, true, "@wip tag on feature 06");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps.length, 3, "@wip tag on feature 07");
     this.assertAllTestsAreMatchedAndSkipped(featureTest.testScenarios[0]);
 
-    strictEqual(featureTest.testScenarios[1].name, "(WIP) Scenario: Buy expensive coffee once barista is ready",
+    assert.strictEqual(featureTest.testScenarios[1].name, "(WIP) Scenario: Buy expensive coffee once barista is ready",
       "@wip tag on feature 08");
-    strictEqual(featureTest.testScenarios[1].wip, true, "@wip tag on feature 09");
-    strictEqual(featureTest.testScenarios[1].testSteps.length, 2, "@wip tag on feature 10");
+    assert.strictEqual(featureTest.testScenarios[1].wip, true, "@wip tag on feature 09");
+    assert.strictEqual(featureTest.testScenarios[1].testSteps.length, 2, "@wip tag on feature 10");
     this.assertAllTestsAreMatchedAndSkipped(featureTest.testScenarios[1]);
   });
 
@@ -350,26 +350,26 @@ sap.ui.require([
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
 
-    strictEqual(featureTest.skip, false, "@wip tag on scenario 01");
-    strictEqual(featureTest.wip, false, "@wip tag on scenario 02");
-    strictEqual(featureTest.testScenarios.length, 2, "@wip tag on scenario 03");
+    assert.strictEqual(featureTest.skip, false, "@wip tag on scenario 01");
+    assert.strictEqual(featureTest.wip, false, "@wip tag on scenario 02");
+    assert.strictEqual(featureTest.testScenarios.length, 2, "@wip tag on scenario 03");
 
     strictEqual(featureTest.testScenarios[0].name, "Scenario: Buy expensive coffee when the barista is alive",
       "@wip tag on scenario 04");
-    strictEqual(featureTest.testScenarios[0].wip, false, "@wip tag on scenario 05");
-    strictEqual(featureTest.testScenarios[0].testSteps.length, 2, "@wip tag on scenario 06");
+    assert.strictEqual(featureTest.testScenarios[0].wip, false, "@wip tag on scenario 05");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps.length, 2, "@wip tag on scenario 06");
     strictEqual(featureTest.testScenarios[0].testSteps[0].text, "that quantum phenomena exist at the macroscopic level",
       "@wip tag on scenario 07");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].isMatch, true, "alive background isMatch");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].skip, false, "alive background skip");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].text, "I should expect a live barista");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].isMatch, true, "alive isMatch");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].skip, false, "alive skip");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].isMatch, true, "alive background isMatch");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].skip, false, "alive background skip");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].text, "I should expect a live barista");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].isMatch, true, "alive isMatch");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].skip, false, "alive skip");
 
-    strictEqual(featureTest.testScenarios[1].name, "(WIP) Scenario: Buy expensive coffee when the barista is dead",
+    assert.strictEqual(featureTest.testScenarios[1].name, "(WIP) Scenario: Buy expensive coffee when the barista is dead",
       "@wip tag on scenario 08");
-    strictEqual(featureTest.testScenarios[1].wip, true, "@wip tag on scenario 09");
-    strictEqual(featureTest.testScenarios[1].testSteps.length, 2, "@wip tag on scenario 10");
+    assert.strictEqual(featureTest.testScenarios[1].wip, true, "@wip tag on scenario 09");
+    assert.strictEqual(featureTest.testScenarios[1].testSteps.length, 2, "@wip tag on scenario 10");
     this.assertAllTestsAreMatchedAndSkipped(featureTest.testScenarios[1]);
   });
 
@@ -409,8 +409,8 @@ sap.ui.require([
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
 
-    strictEqual(featureTest.testScenarios.length, 1, "Parameters and tables are parsed and passed 01");
-    strictEqual(featureTest.testScenarios[0].testSteps.length, 3, "Parameters and tables are parsed and passed 02");
+    assert.strictEqual(featureTest.testScenarios.length, 1, "Parameters and tables are parsed and passed 01");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps.length, 3, "Parameters and tables are parsed and passed 02");
 
     strictEqual(featureTest.testScenarios[0].testSteps[0].text, "these awesome Users:",
       "Parameters and tables are parsed and passed 03");
@@ -440,8 +440,8 @@ sap.ui.require([
       "Parameters and tables are parsed and passed 08");
     strictEqual(featureTest.testScenarios[0].testSteps[2].parameters.length, 2,
       "Parameters and tables are parsed and passed 09");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].parameters[0], "they", "correct person");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].parameters[1], "happy", "correct emotion");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].parameters[0], "they", "correct person");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].parameters[1], "happy", "correct emotion");
   });
 
 
@@ -477,30 +477,30 @@ sap.ui.require([
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
 
-    strictEqual(featureTest.testScenarios.length, 1, "Test 001");
-    strictEqual(featureTest.testScenarios[0].testSteps.length, 5, "Test 002");
+    assert.strictEqual(featureTest.testScenarios.length, 1, "Test 001");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps.length, 5, "Test 002");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[0].text, "kindness to strangers is a virtue", "Test 003");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].isMatch, true, "Test 004");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].skip, false, "Test 005");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].text, "kindness to strangers is a virtue", "Test 003");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].isMatch, true, "Test 004");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].skip, false, "Test 005");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[1].text, "I am a very good person", "Test 006");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].isMatch, true, "Test 007");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].skip, false, "Test 008");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].text, "I am a very good person", "Test 006");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].isMatch, true, "Test 007");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].skip, false, "Test 008");
 
     strictEqual(featureTest.testScenarios[0].testSteps[2].text,
       "(NOT FOUND) I encounter a person whose feet are very dirty", "Test 009");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].isMatch, false, "Test 010");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].skip, true, "Test 011");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].isMatch, false, "Test 010");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].skip, true, "Test 011");
 
     strictEqual(featureTest.testScenarios[0].testSteps[3].text,
       "(SKIPPED) they are classified as a 'Category 3 Unwashed Mass'", "Test 012");
-    strictEqual(featureTest.testScenarios[0].testSteps[3].isMatch, true, "Test 013");
-    strictEqual(featureTest.testScenarios[0].testSteps[3].skip, true, "skip unwashed mass");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[3].isMatch, true, "Test 013");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[3].skip, true, "skip unwashed mass");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[4].text, "(SKIPPED) I should wash their feet", "Test 014");
-    strictEqual(featureTest.testScenarios[0].testSteps[4].isMatch, true, "Test 015");
-    strictEqual(featureTest.testScenarios[0].testSteps[4].skip, true, "skipped feet");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[4].text, "(SKIPPED) I should wash their feet", "Test 014");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[4].isMatch, true, "Test 015");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[4].skip, true, "skipped feet");
   });
 
 
@@ -531,22 +531,22 @@ sap.ui.require([
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
 
-    strictEqual(featureTest.testScenarios.length, 1, "Test 016");
-    strictEqual(featureTest.testScenarios[0].wip, false, "Test 017");
-    strictEqual(featureTest.testScenarios[0].testSteps.length, 3, "Test 018");
+    assert.strictEqual(featureTest.testScenarios.length, 1, "Test 016");
+    assert.strictEqual(featureTest.testScenarios[0].wip, false, "Test 017");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps.length, 3, "Test 018");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[0].text, "(NOT FOUND) meanness to strangers is ok", "Test 019");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].isMatch, false, "Test 020");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].skip, true, "Test 021");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].text, "(NOT FOUND) meanness to strangers is ok", "Test 019");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].isMatch, false, "Test 020");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].skip, true, "Test 021");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[1].text, "(SKIPPED) I should wash their feet", "Test 022");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].isMatch, true, "Test 023");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].skip, true, "Test 024");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].text, "(SKIPPED) I should wash their feet", "Test 022");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].isMatch, true, "Test 023");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].skip, true, "Test 024");
 
     // test that further unfound testSteps still say "(NOT FOUND)" instead of "(SKIPPED)"
-    strictEqual(featureTest.testScenarios[0].testSteps[2].text, "(NOT FOUND) I don't feel like it", "Test 025");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].isMatch, false, "Test 026");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].skip, true, "Test 027");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].text, "(NOT FOUND) I don't feel like it", "Test 025");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].isMatch, false, "Test 026");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].skip, true, "Test 027");
   });
 
 
@@ -576,7 +576,7 @@ sap.ui.require([
 
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
-    strictEqual(featureTest.name, "Feature: Serve humanity", "Test 028");
+    assert.strictEqual(featureTest.name, "Feature: Serve humanity", "Test 028");
     testGenerator.setUp();
     testGenerator.execute(featureTest.testScenarios[0].testSteps[0]);
     testGenerator.tearDown();
@@ -612,8 +612,8 @@ sap.ui.require([
 
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
-    strictEqual(featureTest.name, "Feature: Serve humanity", "Test 029");
-    strictEqual(featureTest.testScenarios.length, 2, "Test 030");
+    assert.strictEqual(featureTest.name, "Feature: Serve humanity", "Test 029");
+    assert.strictEqual(featureTest.testScenarios.length, 2, "Test 030");
     for (var i=0; i<featureTest.testScenarios.length; ++i) {
       testGenerator.setUp();
       testGenerator.execute(featureTest.testScenarios[i].testSteps[0]);
@@ -657,8 +657,8 @@ sap.ui.require([
 
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
-    strictEqual(featureTest.name, "Feature: Serve humanity", "Test 031");
-    strictEqual(featureTest.testScenarios.length, 3, "Test 032");
+    assert.strictEqual(featureTest.name, "Feature: Serve humanity", "Test 031");
+    assert.strictEqual(featureTest.testScenarios.length, 3, "Test 032");
     for (var i=0; i<featureTest.testScenarios.length; ++i) {
       testGenerator.setUp();
       expectCloseApplication = testGenerator.execute(featureTest.testScenarios[i].testSteps[0]);
@@ -695,7 +695,7 @@ sap.ui.require([
 
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
-    strictEqual(featureTest.name, "(WIP) Feature: Serve humanity", "Test 033");
+    assert.strictEqual(featureTest.name, "(WIP) Feature: Serve humanity", "Test 033");
     testGenerator.setUp();
     testGenerator.execute(featureTest.testScenarios[0].testSteps[0]);
     testGenerator.tearDown();
@@ -724,7 +724,7 @@ sap.ui.require([
 
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
-    strictEqual(featureTest.name, "Feature: Serve humanity", "Test 034");
+    assert.strictEqual(featureTest.name, "Feature: Serve humanity", "Test 034");
     testGenerator.setUp();
     testGenerator.tearDown();
   });
@@ -885,25 +885,25 @@ sap.ui.require([
     var featureTest = testGenerator.generate();
 
     // if we match the step with a Step Definition, then we expect that it should be used
-    strictEqual(featureTest.testScenarios[0].testSteps[0].text, "I should be served a coffee", "Test 035");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].func, normalStepFunction, "Test 036");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].skip, false, "Test 037");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].text, "I should be served a coffee", "Test 035");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].func, normalStepFunction, "Test 036");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].skip, false, "Test 037");
 
     // If we fail to match, then we expect to use a generated step
-    strictEqual(featureTest.testScenarios[0].testSteps[1].text, "this step does not exist in the steps file", "Test 038");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].func, alternateStepFunction, "Test 039");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].skip, false, "Test 040");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].text, "this step does not exist in the steps file", "Test 038");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].func, alternateStepFunction, "Test 039");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].skip, false, "Test 040");
 
     // If we fail to match and the generated step says it"s not a match, then it should be skipped!
-    strictEqual(featureTest.testScenarios[0].testSteps[2].text, "(NOT FOUND) the generator will not match this one",
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].text, "(NOT FOUND) the generator will not match this one",
       "Test 041");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].func, alternateStepFunction, "Test 042");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].skip, true, "Test 043");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].func, alternateStepFunction, "Test 042");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].skip, true, "Test 043");
 
     // Since the third step was not found, this one should be skipped
-    strictEqual(featureTest.testScenarios[0].testSteps[3].text, "(SKIPPED) I should be served a coffee", "Test 044");
-    strictEqual(featureTest.testScenarios[0].testSteps[3].func, normalStepFunction, "Test 045");
-    strictEqual(featureTest.testScenarios[0].testSteps[3].skip, true, "Test 046");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[3].text, "(SKIPPED) I should be served a coffee", "Test 044");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[3].func, normalStepFunction, "Test 045");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[3].skip, true, "Test 046");
   });
 
 

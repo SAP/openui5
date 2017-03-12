@@ -354,7 +354,7 @@
 		};
 
 		var _assertFocus = function(oTarget) {
-			strictEqual(document.activeElement.id, oTarget && oTarget.id, "Element with id: " + oTarget.id + " should be focused");
+			assert.strictEqual(document.activeElement.id, oTarget && oTarget.id, "Element with id: " + oTarget.id + " should be focused");
 		};
 
 		var _formatDate = function(oDate) {
@@ -1315,7 +1315,7 @@
 					// Assert
 					ok(oRow, "There must be a returned row");
 					ok(oRow instanceof sap.m.PlanningCalendarRow, "Returned row must derive from sap.m.PlanningCalendarRow");
-					strictEqual(oRow, oSecondRow, "Returned row must be reference to the second row");
+					assert.strictEqual(oRow, oSecondRow, "Returned row must be reference to the second row");
 				};
 
 			oSpy = sinon.spy(handleRowHeaderClick);
@@ -1325,7 +1325,7 @@
 			qutils.triggerEvent("click", "PC1-Row2-Head-content");
 
 			// Assert
-			strictEqual(oSpy.callCount, 1, "Event method must be called once");
+			assert.strictEqual(oSpy.callCount, 1, "Event method must be called once");
 
 			// Cleanup
 			oPC1.detachEvent("rowHeaderClick", oSpy);
@@ -1353,8 +1353,8 @@
 			this.sut._bDateRangeChanged = true;
 			this.sut.invalidate();
 			//assert
-			strictEqual(oPCInvalidateSpy.callCount, 1, "'PlanningCalendar invalidate()' was called once");
-			strictEqual(oIntervalInvalidateSpy.callCount, 1, "'CalendarWeekInterval invalidate()' was called once");
+			assert.strictEqual(oPCInvalidateSpy.callCount, 1, "'PlanningCalendar invalidate()' was called once");
+			assert.strictEqual(oIntervalInvalidateSpy.callCount, 1, "'CalendarWeekInterval invalidate()' was called once");
 			ok(oPCInvalidateSpy.callCount == oIntervalInvalidateSpy.callCount == 1, "Both methods are called exact (1) time");
 		});
 
@@ -1366,8 +1366,8 @@
 			//act
 			this.sut.exit();
 			//assert
-			strictEqual(oPCExitSpy.callCount, 1, "'PlanningCalendar exit()' was called once");
-			strictEqual(oIntervalDestroySpy.callCount, 1, "'CalendarWeekInterval destroy()' was called once");
+			assert.strictEqual(oPCExitSpy.callCount, 1, "'PlanningCalendar exit()' was called once");
+			assert.strictEqual(oIntervalDestroySpy.callCount, 1, "'CalendarWeekInterval destroy()' was called once");
 			ok(oPCExitSpy.callCount == oIntervalDestroySpy.callCount == 1, "Both methods are called exact (1) time");
 		});
 
@@ -1387,9 +1387,9 @@
 			qutils.triggerKeydown(oFirstCalendarIntervalItem, "ENTER", false, false, false);
 			sap.ui.getCore().applyChanges();
 			//assert
-			strictEqual(oMonthSelectSpy.callCount, 1, "MonthSelect fired once");
-			strictEqual(oCalendarSelectSpy.callCount, 1, "CalendarSelect fired once");
-			strictEqual(oPlanningCalendarIntervalSelectSpy.callCount, 1, "PlanningCalendar IntervalSelect fired once");
+			assert.strictEqual(oMonthSelectSpy.callCount, 1, "MonthSelect fired once");
+			assert.strictEqual(oCalendarSelectSpy.callCount, 1, "CalendarSelect fired once");
+			assert.strictEqual(oPlanningCalendarIntervalSelectSpy.callCount, 1, "PlanningCalendar IntervalSelect fired once");
 		});
 
 		QUnit.test("'_handleYearSelect()' invokes its internal child '_adjustFocusedDateUponYearChange()'", function (assert) {
@@ -1411,7 +1411,7 @@
 			oYearPicker.fireSelect();
 
 			//assert
-			strictEqual(_adjustFocusedDateUponYearChangeStub.callCount, 1, "'_adjustFocusedDateUponYearChange()' was called once");
+			assert.strictEqual(_adjustFocusedDateUponYearChangeStub.callCount, 1, "'_adjustFocusedDateUponYearChange()' was called once");
 			equal(oCalledWithFocusedDate.getJSDate().toUTCString(), oExpectedFocusedDate.getJSDate().toUTCString(),
 					"'_adjustFocusedDateUponYearChange()' was called with the correct parameter oFocusedDate");
 			equal(iCalledWithYear, oYearPicker.getYear(), "'_adjustFocusedDateUponYearChange()' was called with the correct parameters iYear");
@@ -1435,7 +1435,7 @@
 			//act
 			oMonthPicker.fireSelect();
 			//assert
-			strictEqual(_adjustFocusedDateUponMonthChangeStub.callCount, 1, "'_adjustFocusedDateUponMonthChange()' was called once");
+			assert.strictEqual(_adjustFocusedDateUponMonthChangeStub.callCount, 1, "'_adjustFocusedDateUponMonthChange()' was called once");
 			equal(oCalledWithFocusedDate.getJSDate().toUTCString(), oExpectedFocusedDate.getJSDate().toUTCString(),
 					"'_adjustFocusedDateUponMonthChange()' was called with the correct parameter oFocusedDate");
 			equal(iCalledWithMonth, oMonthPicker.getMonth(), "'_adjustFocusedDateUponMonthChange()' was called with the correct parameters iMonth");
@@ -1460,7 +1460,7 @@
 			//act
 			this.sut._updateTodayButtonState();
 			//assert
-			strictEqual(_dateMatchesVisibleRangeSpy.callCount, 1, "'_dateMatchesVisibleRangeSpy()' was called once");
+			assert.strictEqual(_dateMatchesVisibleRangeSpy.callCount, 1, "'_dateMatchesVisibleRangeSpy()' was called once");
 		});
 
 		QUnit.test("today button enabled state is updated when the view is changed", function(assert) {
@@ -1473,8 +1473,8 @@
 			this.sut.setViewKey(sap.ui.unified.CalendarIntervalType.OneMonth);
 
 			//assert
-			strictEqual(oEnabledSpy.called, true, 'today button state is updated');
-			strictEqual(oEnabledSpy.lastCall.args[0], false, 'today button state is updated correctly');
+			assert.strictEqual(oEnabledSpy.called, true, 'today button state is updated');
+			assert.strictEqual(oEnabledSpy.lastCall.args[0], false, 'today button state is updated correctly');
 		});
 
 		QUnit.test("'_dateMatchesVisibleRange()' has correct output" , function (assert) {
@@ -1503,10 +1503,10 @@
 				oWeekView = this.sut._getView(sViewKey);
 			//The act of this test is done in the module beforeEach
 			//assert
-			strictEqual(this.sut._aViews.length, 5, "Correct number (5) of views assigned to PlanningCalendar");
-			strictEqual(oWeekView.getIntervalsS(), 7, "Correct number (7) intervals for S screen sizes");
-			strictEqual(oWeekView.getIntervalsM(), 7, "Correct number (7) intervals for M screen sizes");
-			strictEqual(oWeekView.getIntervalsL(), 7, "Correct number (7) intervals for L screen sizes");
+			assert.strictEqual(this.sut._aViews.length, 5, "Correct number (5) of views assigned to PlanningCalendar");
+			assert.strictEqual(oWeekView.getIntervalsS(), 7, "Correct number (7) intervals for S screen sizes");
+			assert.strictEqual(oWeekView.getIntervalsM(), 7, "Correct number (7) intervals for M screen sizes");
+			assert.strictEqual(oWeekView.getIntervalsL(), 7, "Correct number (7) intervals for L screen sizes");
 		});
 
 		QUnit.module("Interaction", {
@@ -2691,8 +2691,8 @@
 
 			this._createCalendar();
 			//assert
-			strictEqual(oSetDisplayModeSpy.callCount, 3, "'_setDisplayMode()' is called correct number of times"); //viewKey setter + onBeforeRendering + resizeHandler
-			strictEqual(oSetDisplayModeSpy.getCall(0).args[0], iPhoneSize, "The correct mode value is set");
+			assert.strictEqual(oSetDisplayModeSpy.callCount, 3, "'_setDisplayMode()' is called correct number of times"); //viewKey setter + onBeforeRendering + resizeHandler
+			assert.strictEqual(oSetDisplayModeSpy.getCall(0).args[0], iPhoneSize, "The correct mode value is set");
 		});
 
 		QUnit.test("'setViewKeys()' setter calls 'setStartDate()' setter with an auto switched to 1st day of the month date", function (assert) {
@@ -2700,9 +2700,9 @@
 			var oStartDateSetterSpy = this.spy(sap.m.PlanningCalendar.prototype, "setStartDate");
 			this._createCalendar();
 			//assert
-			strictEqual(oStartDateSetterSpy.callCount, 3, "'setStartDate()' setter is called correct number of times"); //init + startDate setter + OneMonth adjustment.
-			strictEqual(oStartDateSetterSpy.getCall(1).args[0].getTime(), this.o14Sep2016MidOfMonth.getTime(), "The correct date is auto adjusted for the first day of month");
-			strictEqual(oStartDateSetterSpy.getCall(2).args[0].getTime(), new Date(2016, 8, 1).getTime(), "The correct date is auto adjusted for the first day of month");
+			assert.strictEqual(oStartDateSetterSpy.callCount, 3, "'setStartDate()' setter is called correct number of times"); //init + startDate setter + OneMonth adjustment.
+			assert.strictEqual(oStartDateSetterSpy.getCall(1).args[0].getTime(), this.o14Sep2016MidOfMonth.getTime(), "The correct date is auto adjusted for the first day of month");
+			assert.strictEqual(oStartDateSetterSpy.getCall(2).args[0].getTime(), new Date(2016, 8, 1).getTime(), "The correct date is auto adjusted for the first day of month");
 		});
 
 		QUnit.test("'setStartDate()' setter calls '_setRowsStartDate()' with correct date parameter", function (assert) {
@@ -2714,8 +2714,8 @@
 			this._oPC.setStartDate(new Date(2015, 3, 5));
 
 			//assert
-			strictEqual(oSetRowsStartDateSpy.callCount, 1, "'_setRowsStartDate()' is called only once");
-			strictEqual(oSetRowsStartDateSpy.getCall(0).args[0].getTime(), new Date(2015, 3, 1).getTime(), "'_setRowsStartDate()' is called with correct parameter");
+			assert.strictEqual(oSetRowsStartDateSpy.callCount, 1, "'_setRowsStartDate()' is called only once");
+			assert.strictEqual(oSetRowsStartDateSpy.getCall(0).args[0].getTime(), new Date(2015, 3, 1).getTime(), "'_setRowsStartDate()' is called with correct parameter");
 		});
 
 		QUnit.test("_setRowsStartDate", function(assert) {
@@ -2737,8 +2737,8 @@
 			oSetStartDateSpy = this.spy(this._oPC, "setStartDate");
 			qutils.triggerEvent('tap', this._oPC._oTodayButton.getDomRef());
 			//assert
-			strictEqual(oHandleTodayPressSpy.callCount, 1, "'_handleTodayPress()' handler is called once");
-			strictEqual(oSetStartDateSpy.callCount, 1, "'setStartDate()' setter is called once");
+			assert.strictEqual(oHandleTodayPressSpy.callCount, 1, "'_handleTodayPress()' handler is called once");
+			assert.strictEqual(oSetStartDateSpy.callCount, 1, "'setStartDate()' setter is called once");
 			//clear
 			oHandleTodayPressSpy.restore();
 			oSetStartDateSpy.restore();
@@ -2757,7 +2757,7 @@
 			oPCIntervalMonth.$('days').children().eq(0).trigger('mousedown');
 			oPCIntervalMonth.$('days').children().eq(0).trigger('mouseup');
 			//assert
-			strictEqual(oHandleCalendarSelectSpy.callCount, 1, "'_handleStartDateChange()' event handler is called once");
+			assert.strictEqual(oHandleCalendarSelectSpy.callCount, 1, "'_handleStartDateChange()' event handler is called once");
 			//clean
 			oHandleCalendarSelectSpy.restore();
 		});
@@ -2772,9 +2772,9 @@
 
 			this._createCalendar();
 			//assert
-			strictEqual(oDateIntervalCreateMonthSpy.callCount, 0, "'CalendarDateInterval._createMonth()' method was NOT called");
-			strictEqual(oOneMonthIntervalCreateMonthSpy.callCount, 1, "'CalendarOneMonthInterval._createMonth()' method was overridden and called");
-			strictEqual(oOneMonthIntervalCreateMonthSpy.getCall(0).args[0], fnGetFullMonthId(this._oPC), "'CalendarOneMonthInterval._createMonth()' was called with correct parameters");
+			assert.strictEqual(oDateIntervalCreateMonthSpy.callCount, 0, "'CalendarDateInterval._createMonth()' method was NOT called");
+			assert.strictEqual(oOneMonthIntervalCreateMonthSpy.callCount, 1, "'CalendarOneMonthInterval._createMonth()' method was overridden and called");
+			assert.strictEqual(oOneMonthIntervalCreateMonthSpy.getCall(0).args[0], fnGetFullMonthId(this._oPC), "'CalendarOneMonthInterval._createMonth()' was called with correct parameters");
 			//clean
 			oOneMonthIntervalCreateMonthSpy.restore();
 		});
@@ -2787,10 +2787,10 @@
 
 			this._createCalendar();
 			//assert
-			strictEqual(oOneMonthDatesRowSpy.callCount, 1, "'OneMonthDatesRow.init()' method was called once");
-			strictEqual(oDatesRowSpy.callCount, 1, "'OneMonthDatesRow.init()' method was called once");
+			assert.strictEqual(oOneMonthDatesRowSpy.callCount, 1, "'OneMonthDatesRow.init()' method was called once");
+			assert.strictEqual(oDatesRowSpy.callCount, 1, "'OneMonthDatesRow.init()' method was called once");
 			ok(oOneMonthDatesRowSpy.calledBefore(oDatesRowSpy), "The call sequence is as expected");
-			strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 2, "'OneMonthDatesRow.init()' correctly set the internal 'iMode' property to its default value");
+			assert.strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 2, "'OneMonthDatesRow.init()' correctly set the internal 'iMode' property to its default value");
 			//clean
 			oOneMonthDatesRowSpy.restore();
 			oDatesRowSpy.restore();
@@ -2800,15 +2800,15 @@
 			//arrange
 			this._createCalendar();
 			//assert
-			strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 2, "'OneMonthDatesRow.init()' correctly sets the internal 'iMode' property to its default value");
+			assert.strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 2, "'OneMonthDatesRow.init()' correctly sets the internal 'iMode' property to its default value");
 			//arrange
 			this._oPCOneMonthInterval.getAggregation("month")[0].setMode(0);
 			//assert
-			strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 0, "'OneMonthDatesRow.setMode()' sets the internal 'iMode' property as expected");
+			assert.strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 0, "'OneMonthDatesRow.setMode()' sets the internal 'iMode' property as expected");
 			//arrange
 			this._oPCOneMonthInterval.getAggregation("month")[0].setMode(1);
 			//assert
-			strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 1, "'OneMonthDatesRow.setMode()' sets the internal 'iMode' property as expected");
+			assert.strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 1, "'OneMonthDatesRow.setMode()' sets the internal 'iMode' property as expected");
 		});
 
 		QUnit.test("'OneMonthDatesRow.setDate()' setter with a date calls its super class 'setDate()' setter", function (assert) {
@@ -2822,13 +2822,13 @@
 			this._oPCOneMonthInterval._bNoRangeCheck = false;
 			this._oPCOneMonthInterval._setStartDate(oVisibleDate, true, false);
 			//assert
-			strictEqual(oOneMonthDatesRowSpy.callCount, 1, "'OneMonthDatesRow.setDate()' method was called once");
-			strictEqual(oDatesRowSpy.callCount, 1, "'DatesRow.setDate()' method was called once");
+			assert.strictEqual(oOneMonthDatesRowSpy.callCount, 1, "'OneMonthDatesRow.setDate()' method was called once");
+			assert.strictEqual(oDatesRowSpy.callCount, 1, "'DatesRow.setDate()' method was called once");
 			//arrange
 			this._oPCOneMonthInterval._setStartDate(oOutsideVisibleRangeDate, true, false);
 			//assert
-			strictEqual(oOneMonthDatesRowSpy.callCount, 2, "'OneMonthDatesRow.setDate()' method was called once");
-			strictEqual(oDatesRowSpy.callCount, 2, "'DatesRow.setDate()' method was called once");
+			assert.strictEqual(oOneMonthDatesRowSpy.callCount, 2, "'OneMonthDatesRow.setDate()' method was called once");
+			assert.strictEqual(oDatesRowSpy.callCount, 2, "'DatesRow.setDate()' method was called once");
 			//clean
 			oOneMonthDatesRowSpy.restore();
 			oDatesRowSpy.restore();
@@ -2841,7 +2841,7 @@
 
 			this._createCalendar();
 			//assert
-			strictEqual(oCalendarRowRendererSpy.callCount, 2, "'renderSingleDayInterval()' is called as expected"); //Two rows
+			assert.strictEqual(oCalendarRowRendererSpy.callCount, 2, "'renderSingleDayInterval()' is called as expected"); //Two rows
 			//clean
 			oCalendarRowRendererSpy.restore();
 		});
@@ -2859,7 +2859,7 @@
 					sWeekDayAriaText = aWeekDaysWide[5],
 					sExpectedAria = sWeekDayAriaText + " " + sAriaDate;
 
-			strictEqual(jQuery("#PC1-DateInt--Month0-20150102").attr("aria-label"), sExpectedAria, "Correct week day and date aria are written");
+			assert.strictEqual(jQuery("#PC1-DateInt--Month0-20150102").attr("aria-label"), sExpectedAria, "Correct week day and date aria are written");
 		});
 
 		QUnit.module("views", {

@@ -117,7 +117,7 @@
 			var oCloseButton = this.oTabContainer._toTabStripItem(oFirstItem).getAggregation("_closeButton");
 			var sName = oFirstItem.getName();
 
-			strictEqual(this.oTabContainer.getSelectedItem(),oFirstItem.getId(),
+			assert.strictEqual(this.oTabContainer.getSelectedItem(),oFirstItem.getId(),
 					"The default selected tab is the first one");
 
 			equal(jQuery( "span." + sap.m.TabStripItem.CSS_CLASS_LABEL + ":contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
@@ -134,11 +134,11 @@
 				equal(jQuery( "span." + sap.m.TabStripItem.CSS_CLASS_LABEL + ":contains("+sName+")").length, 0, 'Element with name "'+sName+'" is not in the DOM.');
 
 			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			strictEqual(jQuery(this.oTabContainer._getTabStrip().getAggregation('_select').$()).attr('title'),
+			assert.strictEqual(jQuery(this.oTabContainer._getTabStrip().getAggregation('_select').$()).attr('title'),
 					oMessageBundle.getText("TABSTRIP_OPENED_TABS"),
 					"The select button tooltip is correct");
 
-			strictEqual(jQuery(this.oTabContainer._getTabStrip().getAggregation('addButton').$()).attr('title'),
+			assert.strictEqual(jQuery(this.oTabContainer._getTabStrip().getAggregation('addButton').$()).attr('title'),
 					oMessageBundle.getText("TABCONTAINER_ADD_NEW_TAB"),
 					"The add button tooltip is correct");
 
@@ -174,7 +174,7 @@
 
 		QUnit.test("Initialization without parameters", function (assert) {
 			var oTabContainer = new sap.m.TabContainer();
-			strictEqual(typeof oTabContainer === 'object', true, 'Sucessfully initialized.');
+			assert.strictEqual(typeof oTabContainer === 'object', true, 'Sucessfully initialized.');
 			oTabContainer.destroy();
 			oTabContainer = null;
 		});
@@ -183,9 +183,9 @@
 			var oItem = this.oTabContainer._getTabStrip().getItems()[0];
 			var sName = oItem.getText();
 			//sapMTabSelect
-			strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 1, 'TabStrip is initially rendered.');
+			assert.strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 1, 'TabStrip is initially rendered.');
 			this.oTabContainer.destroyAggregation('_tabStrip');
-			strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 0, 'TabStrip is not re-rendered upon TabContainer re-rendering after TabStrip was destroyed.');
+			assert.strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 0, 'TabStrip is not re-rendered upon TabContainer re-rendering after TabStrip was destroyed.');
 		});
 
 		QUnit.test("Add button rendering in nested TabContainer with binding", function (assert) {
@@ -228,7 +228,7 @@
 
 			//assert
 			ok(oItems[0].getContent()[0].getShowAddNewButton(), "showAddNewButton is set to true");
-			strictEqual(oItems[0].getContent()[0]._getTabStrip().$().find(".sapMTSAddNewTabBtn").length, 1, "Add new button is rendered and it is only one");
+			assert.strictEqual(oItems[0].getContent()[0]._getTabStrip().$().find(".sapMTSAddNewTabBtn").length, 1, "Add new button is rendered and it is only one");
 
 			// clean up
 			oTabContainer2.destroy();
@@ -270,7 +270,7 @@
 			equal(this.oTabContainer.getItems().length, 4, "Length check");
 			equal(this.oTabContainer.getItems().indexOf(oTabContainerItemToRemove), -1, "The item should not exist at any index");
 			equal(this.oTabContainer.getSelectedItem(), oTabContainerItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
-			strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
+			assert.strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
 		});
 
 		QUnit.test("Select last item, focus it and remove it", function (assert) {
@@ -288,7 +288,7 @@
 			equal(this.oTabContainer.getItems().length, 4, "Length check");
 			equal(this.oTabContainer.getItems().indexOf(oTabContainerItemToRemove), -1, "The item should not exist at any index");
 			equal(this.oTabContainer.getSelectedItem(), oTabContainerItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
-			strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
+			assert.strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
 		});
 
 		QUnit.test("Select random item, focus another and remove it", function (assert) {
@@ -307,7 +307,7 @@
 			equal(this.oTabContainer.getItems().length, 4, "Length check");
 			equal(this.oTabContainer.getItems().indexOf(oTabContainerItemToRemove), -1, "The item should not exist at any index");
 			equal(this.oTabContainer.getSelectedItem(), oTabContainerItemToBeSelected.getId(), "Selection is applied to the right item");
-			strictEqual(document.activeElement.id, oTabStripItemToBeFocused.getId(), "Focus is applied to the right item");
+			assert.strictEqual(document.activeElement.id, oTabStripItemToBeFocused.getId(), "Focus is applied to the right item");
 		});
 
 		QUnit.test("Selection prevented", function (assert) {
@@ -328,7 +328,7 @@
 			var oTabStrip = oTabContainer._getTabStrip();
 
 
-			strictEqual(oItem.getId() === oTabContainer.getSelectedItem(), false);
+			assert.strictEqual(oItem.getId() === oTabContainer.getSelectedItem(), false);
 
 			var aTargetTouches = [{pageX: oItem.$().offset().left + 2}];
 			qutils.triggerTouchEvent('touchstart', oTabStrip.getDomRef(), {changedTouches: aTargetTouches, target: oItem.getDomRef()}, 'on', true);
@@ -336,7 +336,7 @@
 
 			this.clock.tick(1000);
 
-			strictEqual(oItem.getId() === oTabContainer.getSelectedItem(), false);
+			assert.strictEqual(oItem.getId() === oTabContainer.getSelectedItem(), false);
 			oTabContainer.destroy();
 			oTabContainer = null;
 		});
@@ -349,9 +349,9 @@
 			this.oTabContainer.setAddButton(oButton);
 
 			//assert
-			strictEqual( this.oTabContainer._getTabStrip().getAddButton().getId(), oButton.getId(),
+			assert.strictEqual( this.oTabContainer._getTabStrip().getAddButton().getId(), oButton.getId(),
 					"The add button is set");
-			strictEqual( this.oTabContainer.getAddButton().getId(), oButton.getId(),
+			assert.strictEqual( this.oTabContainer.getAddButton().getId(), oButton.getId(),
 					"The add button is get");
 		});
 
@@ -375,7 +375,7 @@
 
 			this.oTabContainer.destroyItems();
 			//assert
-			strictEqual( this.oTabContainer._getTabStrip().getItems().length, 0,
+			assert.strictEqual( this.oTabContainer._getTabStrip().getItems().length, 0,
 					"All items are destroyed");
 
 			//arrange
@@ -385,12 +385,12 @@
 					}),
 					0);
 
-			strictEqual( this.oTabContainer._getTabStrip().getItems().length, 1,
+			assert.strictEqual( this.oTabContainer._getTabStrip().getItems().length, 1,
 					"An item is successfully added");
 
 			this.oTabContainer.removeAllItems();
 			//assert
-			strictEqual( this.oTabContainer._getTabStrip().getItems().length, 0,
+			assert.strictEqual( this.oTabContainer._getTabStrip().getItems().length, 0,
 					"All items are removed");
 		});
 
@@ -406,18 +406,18 @@
 			//act
 			this.oTabContainer.addItem(oTabContainerItem);
 
-			strictEqual(this.oTabContainer._getTabStrip().getItems().length, 1,
+			assert.strictEqual(this.oTabContainer._getTabStrip().getItems().length, 1,
 					"An item in TabStrip is successfully added");
-			strictEqual(this.oTabContainer.getItems().length, 1,
+			assert.strictEqual(this.oTabContainer.getItems().length, 1,
 					"An item in TabContainer is successfully added");
 
 			oTabContainerItem.setKey(null);
 			this.oTabContainer.removeItem(oTabContainerItem);
 
 			//assert
-			strictEqual( this.oTabContainer.getItems().length, 0,
+			assert.strictEqual( this.oTabContainer.getItems().length, 0,
 					"Item in TabContainer is removed");
-			strictEqual( this.oTabContainer._getTabStrip().getItems().length, 0,
+			assert.strictEqual( this.oTabContainer._getTabStrip().getItems().length, 0,
 					"Item in TabStrip is removed");
 
 		});
@@ -484,8 +484,8 @@
 			var sContainerSelectedItem 			= this.oTabContainer.getSelectedItem();
 			var sSelectSelectedItemText 		= this.oTabContainer._getTabStrip().getAggregation('_select').getSelectedItem().getText();
 
-			strictEqual(sConstructorSelectedItemName, sSelectSelectedItemText, 'Default selected items is the one passed to the constructor.');
-			strictEqual(sContainerSelectedItem, sSelectSelectedItemText, 'Default selected items is propagated to the select list.');
+			assert.strictEqual(sConstructorSelectedItemName, sSelectSelectedItemText, 'Default selected items is the one passed to the constructor.');
+			assert.strictEqual(sContainerSelectedItem, sSelectSelectedItemText, 'Default selected items is propagated to the select list.');
 		});
 
 		QUnit.test("Selected item association is cleared when items are destroyed.", function (assert) {

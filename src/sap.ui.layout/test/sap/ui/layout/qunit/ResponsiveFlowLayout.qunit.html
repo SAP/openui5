@@ -233,8 +233,8 @@
 		oResponsiveFlowLayout.destroy();
 
 		// Assert
-		strictEqual(oExitSpy.callCount, 1, "exit is called");
-		strictEqual(oResponsiveFlowLayout.oRm, null, "RenderManager is null since the destroy is not called on it");
+		assert.strictEqual(oExitSpy.callCount, 1, "exit is called");
+		assert.strictEqual(oResponsiveFlowLayout.oRm, null, "RenderManager is null since the destroy is not called on it");
 	});
 
 	QUnit.test("Render manager is destroyed on exit of the control", function(assert) {
@@ -252,8 +252,8 @@
 		oResponsiveFlowLayout.destroy();
 
 		// Assert
-		strictEqual(oDestroySpy.callCount, 1, "destroy is called on the RenderManager");
-		strictEqual(oResponsiveFlowLayout.oRm, undefined, "RenderManager is undefined after destroy");
+		assert.strictEqual(oDestroySpy.callCount, 1, "destroy is called on the RenderManager");
+		assert.strictEqual(oResponsiveFlowLayout.oRm, undefined, "RenderManager is undefined after destroy");
 	});
 </script>
 

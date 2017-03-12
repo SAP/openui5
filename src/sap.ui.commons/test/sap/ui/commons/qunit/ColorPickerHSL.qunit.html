@@ -676,7 +676,7 @@
 
 				// Assert
 				oColorPicker.setColorString("#18a");
-				strictEqual(oSpy.callCount, 1, "Chnage event was fired");
+				assert.strictEqual(oSpy.callCount, 1, "Chnage event was fired");
 
 				// clean up
 				oColorPicker.destroy();
@@ -696,7 +696,7 @@
 
 				// Assert
 				oColorPicker.setColorString("#18a");
-				strictEqual(oSpy.callCount, 1, "LiveChnage event was fired");
+				assert.strictEqual(oSpy.callCount, 1, "LiveChnage event was fired");
 
 				// clean up
 				oColorPicker.destroy();

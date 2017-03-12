@@ -54,12 +54,12 @@
 		//sap.ui.getCore().applyChanges();
 
 		// assertions
-		strictEqual(oMultiComboBox.getName(), "", 'Default name is ""');
-		strictEqual(oMultiComboBox.getVisible(), true, "By default the MultiComboBox control is visible");
-		strictEqual(oMultiComboBox.getEnabled(), true, "By default the MultiComboBox control is enabled");
-		strictEqual(oMultiComboBox.getWidth(), "100%", 'By default the "width" of the MultiComboBox control is ""');
-		strictEqual(oMultiComboBox.getValue(), "", 'By default the "value" of the MultiComboBox control is ""');
-		strictEqual(oMultiComboBox.getMaxWidth(), "100%",
+		assert.strictEqual(oMultiComboBox.getName(), "", 'Default name is ""');
+		assert.strictEqual(oMultiComboBox.getVisible(), true, "By default the MultiComboBox control is visible");
+		assert.strictEqual(oMultiComboBox.getEnabled(), true, "By default the MultiComboBox control is enabled");
+		assert.strictEqual(oMultiComboBox.getWidth(), "100%", 'By default the "width" of the MultiComboBox control is ""');
+		assert.strictEqual(oMultiComboBox.getValue(), "", 'By default the "value" of the MultiComboBox control is ""');
+		assert.strictEqual(oMultiComboBox.getMaxWidth(), "100%",
 				'By default the "max-width" of the MultiComboBox control is "100%"');
 		deepEqual(oMultiComboBox.getSelectedItems(), [],
 				"By default the selected items of the MultiComboBox control is null");
@@ -99,12 +99,12 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		strictEqual(oMultiComboBox.getName(), "", 'Default name is ""');
-		strictEqual(oMultiComboBox.getVisible(), true, "By default the MultiComboBox control is visible");
-		strictEqual(oMultiComboBox.getEnabled(), true, "By default the MultiComboBox control is enabled");
-		strictEqual(oMultiComboBox.getWidth(), "100%", 'By default the "width" of the MultiComboBox control is ""');
-		strictEqual(oMultiComboBox.getValue(), "", 'By default the "value" of the MultiComboBox control is ""');
-		strictEqual(oMultiComboBox.getMaxWidth(), "100%",
+		assert.strictEqual(oMultiComboBox.getName(), "", 'Default name is ""');
+		assert.strictEqual(oMultiComboBox.getVisible(), true, "By default the MultiComboBox control is visible");
+		assert.strictEqual(oMultiComboBox.getEnabled(), true, "By default the MultiComboBox control is enabled");
+		assert.strictEqual(oMultiComboBox.getWidth(), "100%", 'By default the "width" of the MultiComboBox control is ""');
+		assert.strictEqual(oMultiComboBox.getValue(), "", 'By default the "value" of the MultiComboBox control is ""');
+		assert.strictEqual(oMultiComboBox.getMaxWidth(), "100%",
 				'By default the "max-width" of the MultiComboBox control is "100%"');
 		deepEqual(oMultiComboBox.getSelectedItems(), [],
 				"By default the selected items of the MultiComboBox control is null");
@@ -126,12 +126,12 @@
 		});
 
 		// assertions
-		strictEqual(oMultiComboBox.getName(), "", 'Default name is ""');
-		strictEqual(oMultiComboBox.getVisible(), true, "By default the MultiComboBox control is visible");
-		strictEqual(oMultiComboBox.getEnabled(), true, "By default the MultiComboBox control is enabled");
-		strictEqual(oMultiComboBox.getWidth(), "100%", 'By default the "width" of the MultiComboBox control is ""');
-		strictEqual(oMultiComboBox.getValue(), "", 'By default the "value" of the MultiComboBox control is ""');
-		strictEqual(oMultiComboBox.getMaxWidth(), "100%",
+		assert.strictEqual(oMultiComboBox.getName(), "", 'Default name is ""');
+		assert.strictEqual(oMultiComboBox.getVisible(), true, "By default the MultiComboBox control is visible");
+		assert.strictEqual(oMultiComboBox.getEnabled(), true, "By default the MultiComboBox control is enabled");
+		assert.strictEqual(oMultiComboBox.getWidth(), "100%", 'By default the "width" of the MultiComboBox control is ""');
+		assert.strictEqual(oMultiComboBox.getValue(), "", 'By default the "value" of the MultiComboBox control is ""');
+		assert.strictEqual(oMultiComboBox.getMaxWidth(), "100%",
 				'By default the "max-width" of the MultiComboBox control is "100%"');
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem],
 				"By default the selected items of the MultiComboBox control is null");
@@ -224,8 +224,8 @@
 				oMultiComboBox.setSelectedKeys(["0"]);
 
 				// assertions
-				strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
-				strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
+				assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
+				assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
 				deepEqual(oMultiComboBox.getSelectedKeys(), ["0"]);
 				deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 
@@ -254,8 +254,8 @@
 				oMultiComboBox.removeSelectedKeys(["0"]);
 
 				// assertions
-				strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The change event was not fired");
-				strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
+				assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The change event was not fired");
+				assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
 				deepEqual(oMultiComboBox.getSelectedKeys(), []);
 				deepEqual(oMultiComboBox.getSelectedItems(), []);
 
@@ -301,8 +301,8 @@
 			sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ENTER); //onsapenter
 
 			// assertions
-			strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
-			strictEqual(fnFireSelectionChangeSpy.args[0][0].changedItem, oMultiComboBox.getSelectedItems()[0],
+			assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
+			assert.strictEqual(fnFireSelectionChangeSpy.args[0][0].changedItem, oMultiComboBox.getSelectedItems()[0],
 					"The selection change event parameter was passed");
 
 			// cleanup
@@ -476,8 +476,8 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		strictEqual(oMultiComboBox.getMaxWidth(), "300px");
-		strictEqual(oMultiComboBox.getDomRef().style.maxWidth, "300px");
+		assert.strictEqual(oMultiComboBox.getMaxWidth(), "300px");
+		assert.strictEqual(oMultiComboBox.getDomRef().style.maxWidth, "300px");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -497,8 +497,8 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		strictEqual(oMultiComboBox.getMaxWidth(), "30%");
-		strictEqual(oMultiComboBox.getDomRef().style.maxWidth, "30%");
+		assert.strictEqual(oMultiComboBox.getMaxWidth(), "30%");
+		assert.strictEqual(oMultiComboBox.getDomRef().style.maxWidth, "30%");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -950,7 +950,7 @@
 		oItemRemoved = oMultiComboBox.removeItem(oItem);
 
 		// assertions
-		strictEqual(oItemRemoved, oItem);
+		assert.strictEqual(oItemRemoved, oItem);
 		deepEqual(oMultiComboBox.getAggregation("items"), []);
 		deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
@@ -975,7 +975,7 @@
 		oItemRemoved = oMultiComboBox.removeItem(oItemDummy);
 
 		// assertions
-		strictEqual(oItemRemoved, null);
+		assert.strictEqual(oItemRemoved, null);
 		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
@@ -1000,7 +1000,7 @@
 		oItemRemoved = oMultiComboBox.removeItem(null);
 
 		// assertions
-		strictEqual(oItemRemoved, null);
+		assert.strictEqual(oItemRemoved, null);
 		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
@@ -1050,7 +1050,7 @@
 		oItemRemoved = oMultiComboBox.removeSelectedItem(oItem);
 
 		// assertions
-		strictEqual(oItem, oItemRemoved);
+		assert.strictEqual(oItem, oItemRemoved);
 		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
@@ -1075,7 +1075,7 @@
 		oItemRemoved = oMultiComboBox.removeSelectedItem(oItemDummy);
 
 		// assertions
-		strictEqual(oItemRemoved, null);
+		assert.strictEqual(oItemRemoved, null);
 		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
@@ -1100,7 +1100,7 @@
 		oItemRemoved = oMultiComboBox.removeSelectedItem(null);
 
 		// assertions
-		strictEqual(oItemRemoved, null);
+		assert.strictEqual(oItemRemoved, null);
 		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
@@ -1126,7 +1126,7 @@
 		oItemRemoved = oMultiComboBox.removeSelectedItem(oItem);
 
 		// assertions
-		strictEqual(oItemRemoved, oItem);
+		assert.strictEqual(oItemRemoved, oItem);
 		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		deepEqual(oMultiComboBox.getSelectedKeys(), ["dummyKey"]);
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
@@ -1417,12 +1417,12 @@
 		oMultiComboBox.setSelectedItems([null]);
 
 		// assertions
-		strictEqual(fnErrorSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
-		strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.MultiComboBox.prototype.setProperty() method was not called");
+		assert.strictEqual(fnErrorSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
+		assert.strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.MultiComboBox.prototype.setProperty() method was not called");
 		strictEqual(fnSetAssociationSpy.callCount, 0,
 				"sap.m.MultiComboBox.prototype.setAssociation() method was not called");
-		strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-		//strictEqual(oMultiComboBox.getSelectedItemId(), "");
+		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
+		//assert.strictEqual(oMultiComboBox.getSelectedItemId(), "");
 		deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
 		ok(fnSetSelectedItemsSpy.returned(oMultiComboBox),
@@ -1460,7 +1460,7 @@
 
 		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem1, oItem2], "Should have both items");
-		strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 2, "should have two item");
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 2, "should have two item");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1481,11 +1481,11 @@
 		oMultiComboBox.setSelectedKeys(null);
 
 		// assertions
-		strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.MultiComboBox.prototype.setProperty() method was not called");
+		assert.strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.MultiComboBox.prototype.setProperty() method was not called");
 		strictEqual(fnSetAssociationSpy.callCount, 0,
 				"sap.m.MultiComboBox.prototype.setAssociation() method was not called");
-		strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-		//strictEqual(oMultiComboBox.getSelectedItemId(), "");
+		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
+		//assert.strictEqual(oMultiComboBox.getSelectedItemId(), "");
 		deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
 		ok(fnSetSelectedKeysSpy.returned(oMultiComboBox),
@@ -1537,7 +1537,7 @@
 		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 
-		strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
+		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1581,10 +1581,10 @@
 
 		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
+		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 
 		//sap.ui.getCore().applyChanges();
-		//strictEqual(oMultiComboBox.getValue(), "item 1");
+		//assert.strictEqual(oMultiComboBox.getValue(), "item 1");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1985,9 +1985,9 @@
 			sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ENTER); //onsapenter
 
 			// assertions
-			strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
-			strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection change event was fired");
-			strictEqual(fnFireSelectionChangeSpy.args[0][0].changedItem, oMultiComboBox.getSelectedItems()[0],
+			assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
+			assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection change event was fired");
+			assert.strictEqual(fnFireSelectionChangeSpy.args[0][0].changedItem, oMultiComboBox.getSelectedItems()[0],
 					"The selection change event parameter was passed");
 			strictEqual(fnFireSelectionChangeSpy.args[0][0].selected, true,
 					"The selection change event parameter was passed");
@@ -2610,11 +2610,11 @@
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oTarget);
 
 		// assertions
-		strictEqual(fnOninputSpy.callCount, 1, "The oninput was called");
-		strictEqual(fnOnkeyupSpy.callCount, 1, "The onkeyup was called");
-		strictEqual(oMultiComboBox.getValue(), sInitValue,
+		assert.strictEqual(fnOninputSpy.callCount, 1, "The oninput was called");
+		assert.strictEqual(fnOnkeyupSpy.callCount, 1, "The onkeyup was called");
+		assert.strictEqual(oMultiComboBox.getValue(), sInitValue,
 				"Input value is returned to the inital value after wrong character was typed");
-		strictEqual(oMultiComboBox.getFocusDomRef().value, oMultiComboBox.getValue(),
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().value, oMultiComboBox.getValue(),
 				"Dom value and value property are same after wrong character was typed");
 		ok(oMultiComboBox.$().hasClass("sapMInputBaseError"),
 				'The MultiComboBox must have the css class sapMInputBaseError');
@@ -2653,11 +2653,11 @@
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oTarget);
 
 		// assertions
-		strictEqual(fnOninputSpy.callCount, 1, "The oninput was called");
-		strictEqual(fnOnkeyupSpy.callCount, 1, "The onkeyup was called");
-		strictEqual(oMultiComboBox.getValue(), sInitValue,
+		assert.strictEqual(fnOninputSpy.callCount, 1, "The oninput was called");
+		assert.strictEqual(fnOnkeyupSpy.callCount, 1, "The onkeyup was called");
+		assert.strictEqual(oMultiComboBox.getValue(), sInitValue,
 				"Input value is returned to the inital value after wrong character was typed");
-		strictEqual(oMultiComboBox.getFocusDomRef().value, oMultiComboBox.getValue(),
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().value, oMultiComboBox.getValue(),
 				"Dom value and value property are same after wrong character was typed");
 		ok(oMultiComboBox.$().hasClass("sapMInputBaseError"),
 				'The MultiComboBox must have the css class sapMInputBaseError');
@@ -2702,9 +2702,9 @@
 
 		// assertions
 		var aTokens = oMultiComboBox._oTokenizer.getTokens();
-		strictEqual(aTokens[0].getKey(), oItem1.getKey());
-		strictEqual(aTokens[1].getKey(), oItem2.getKey());
-		strictEqual(aTokens[2].getKey(), oItem3.getKey());
+		assert.strictEqual(aTokens[0].getKey(), oItem1.getKey());
+		assert.strictEqual(aTokens[1].getKey(), oItem2.getKey());
+		assert.strictEqual(aTokens[2].getKey(), oItem3.getKey());
 
 		// arrange
 		oMultiComboBox.clearSelection();
@@ -2721,9 +2721,9 @@
 
 		// assertions
 		aTokens = oMultiComboBox._oTokenizer.getTokens();
-		strictEqual(aTokens[0].getKey(), oItem3.getKey());
-		strictEqual(aTokens[1].getKey(), oItem2.getKey());
-		strictEqual(aTokens[2].getKey(), oItem1.getKey());
+		assert.strictEqual(aTokens[0].getKey(), oItem3.getKey());
+		assert.strictEqual(aTokens[1].getKey(), oItem2.getKey());
+		assert.strictEqual(aTokens[2].getKey(), oItem1.getKey());
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -2758,9 +2758,9 @@
 
 		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -2791,9 +2791,9 @@
 
 		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -2827,16 +2827,16 @@
 		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), "ustralia");
 
 		// assertions
-		strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
+		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ENTER);
 
 		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -2874,8 +2874,8 @@
 			});
 
 			// assertions
-			strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
-			strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
+			assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
+			assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
 
 			deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 
@@ -2922,15 +2922,15 @@
 			});
 
 			// assertions
-			strictEqual(fnFireSelectionChangeSpy.callCount, 2, "The selection change event was fired");
-			strictEqual(fnFireSelectionFinishSpy.callCount, 2, "The selection finish event was fired");
+			assert.strictEqual(fnFireSelectionChangeSpy.callCount, 2, "The selection change event was fired");
+			assert.strictEqual(fnFireSelectionFinishSpy.callCount, 2, "The selection finish event was fired");
 
 			var selectedItems = oMultiComboBox.getSelectedItems();
-			strictEqual(selectedItems[0].getKey(), oItem1.getKey(), "The first key should be 'key1'");
-			strictEqual(selectedItems[1].getKey(), oItem2.getKey(), "The second key should be 'key2'");
+			assert.strictEqual(selectedItems[0].getKey(), oItem1.getKey(), "The first key should be 'key1'");
+			assert.strictEqual(selectedItems[1].getKey(), oItem2.getKey(), "The second key should be 'key2'");
 
-			strictEqual(selectedItems[0].getText(), oItem1.getText(), "The first item text should be 'item1'");
-			strictEqual(selectedItems[1].getText(), oItem2.getText(), "The second item text should be 'item2'");
+			assert.strictEqual(selectedItems[0].getText(), oItem1.getText(), "The first item text should be 'item1'");
+			assert.strictEqual(selectedItems[1].getText(), oItem2.getText(), "The second item text should be 'item2'");
 
 			// cleanup
 			oMultiComboBox.destroy();
@@ -2965,10 +2965,10 @@
 
 		// assertions
 		var aSelectedItems = oMultiComboBox.getSelectedItems();
-		strictEqual(aSelectedItems.length, 0, "No token was selected on Focus Out");
-		strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
+		assert.strictEqual(aSelectedItems.length, 0, "No token was selected on Focus Out");
+		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3000,9 +3000,9 @@
 
 		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3034,9 +3034,9 @@
 
 		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3074,9 +3074,9 @@
 
 		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		strictEqual(fnFireChangeSpy.callCount, 3, "The change event was fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 3, "The selection change event was fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 3, "The selection finish event was fired");
+		assert.strictEqual(fnFireChangeSpy.callCount, 3, "The change event was fired");
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 3, "The selection change event was fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 3, "The selection finish event was fired");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3109,9 +3109,9 @@
 
 		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3147,15 +3147,15 @@
 		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
 
-		strictEqual(oMultiComboBox.getValue(), sInitValue, "Input value is returned to the inital value after escape.");
-		strictEqual(oMultiComboBox.getFocusDomRef().value, oMultiComboBox.getValue(),
+		assert.strictEqual(oMultiComboBox.getValue(), sInitValue, "Input value is returned to the inital value after escape.");
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().value, oMultiComboBox.getValue(),
 				"Dom value and value property are same after escape.");
 		ok(fnFireEventSpy.calledWith("liveChange"), "Private liveChange event is fired on escape");
-		strictEqual(fnFireEventSpy.callCount, 1, "LiveChange event is fired once");
+		assert.strictEqual(fnFireEventSpy.callCount, 1, "LiveChange event is fired once");
 
-		strictEqual(fnFireChangeSpy.callCount, 0, "The change event was fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was fired");
+		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was fired");
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was fired");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3194,7 +3194,7 @@
 
 		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3277,7 +3277,7 @@
 
 		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), [], "should not select anything");
-		strictEqual(oMultiComboBox.getValue(), "al", "Value should not be deleted");
+		assert.strictEqual(oMultiComboBox.getValue(), "al", "Value should not be deleted");
 
 		// cleanup
 		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
@@ -3325,16 +3325,16 @@
 
 		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was fired");
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was fired");
 
 		// act - CloseList
 		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, true);
 		this.clock.tick(500);
 
 		// assertions
-		strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3382,16 +3382,16 @@
 
 		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was fired");
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was fired");
 
 		// act - CloseList
 		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, true);
 		this.clock.tick(500);
 
 		// assertions
-		strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3422,9 +3422,9 @@
 		this.clock.tick(500);
 
 		// assertions
-		strictEqual(fnTapSpy.callCount, 1, "ontap event was called exactly once on " + oMultiComboBox);
-		strictEqual(fnOpenSpy.callCount, 0, "open was not called");
-		strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Popup is closed");
+		assert.strictEqual(fnTapSpy.callCount, 1, "ontap event was called exactly once on " + oMultiComboBox);
+		assert.strictEqual(fnOpenSpy.callCount, 0, "open was not called");
+		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Popup is closed");
 		ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
 		ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 				'The MultiComboBox must not have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
@@ -3526,9 +3526,9 @@
 		this.clock.tick(500);
 
 		// assertions
-		strictEqual(fnShowSpy.callCount, 1, "onsapshow was called exactly once");
-		strictEqual(fnOpenSpy.callCount, 1, "openwas called exactly once");
-		strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
+		assert.strictEqual(fnShowSpy.callCount, 1, "onsapshow was called exactly once");
+		assert.strictEqual(fnOpenSpy.callCount, 1, "openwas called exactly once");
+		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 		ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
@@ -3569,9 +3569,9 @@
 		this.clock.tick(500);
 
 		// assertions
-		strictEqual(fnHideSpy.callCount, 1, "onsaphide was called exactly once");
-		strictEqual(fnOpenSpy.callCount, 1, "openwas called exactly once");
-		strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
+		assert.strictEqual(fnHideSpy.callCount, 1, "onsaphide was called exactly once");
+		assert.strictEqual(fnOpenSpy.callCount, 1, "openwas called exactly once");
+		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 		ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
@@ -3612,9 +3612,9 @@
 		this.clock.tick(500);
 
 		// assertions
-		strictEqual(fnShowSpy.callCount, 1, "onsapshow was called exactly once");
-		strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
-		strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
+		assert.strictEqual(fnShowSpy.callCount, 1, "onsapshow was called exactly once");
+		assert.strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
+		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 		ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
@@ -3657,9 +3657,9 @@
 		this.clock.tick(500);
 
 		// assertions
-		strictEqual(fnTapSpy.callCount, 1, "ontap event was called exactly once on Arrow");
-		strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
-		strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
+		assert.strictEqual(fnTapSpy.callCount, 1, "ontap event was called exactly once on Arrow");
+		assert.strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
+		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 		ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
@@ -3702,8 +3702,8 @@
 		this.clock.tick(500);
 
 		// assertions
-		strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
-		strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
+		assert.strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
+		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 		ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
@@ -3839,8 +3839,8 @@
 				this.clock.tick(500);
 
 				// assertions
-				strictEqual(fnOpenSpy.callCount, 2, "open was called exactly once");
-				strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
+				assert.strictEqual(fnOpenSpy.callCount, 2, "open was called exactly once");
+				assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 				ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 				ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 						'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
@@ -3895,8 +3895,8 @@
 				this.clock.tick(500);
 
 				// assertions
-				strictEqual(fnOpenSpy.callCount, 2, "open was called exactly twice");
-				strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
+				assert.strictEqual(fnOpenSpy.callCount, 2, "open was called exactly twice");
+				assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 				ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 				ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 						'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
@@ -3979,8 +3979,8 @@
 	      this.clock.tick(1000);
 
 	      // assertions
-	      strictEqual(fnCloseSpy.callCount, 1, "close was called exactly once");
-	      strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Popup is closed");
+	      assert.strictEqual(fnCloseSpy.callCount, 1, "close was called exactly once");
+	      assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Popup is closed");
 	      ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
 	      ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"), 'The MultiComboBox must not have the css class “'
 	                    + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
@@ -4280,7 +4280,7 @@
 		this.clock.tick(500);
 
 		// assertions
-		strictEqual(oMultiComboBox.getValue(), "",
+		assert.strictEqual(oMultiComboBox.getValue(), "",
 				'The InputValue of the MultiComboBox must be resetted (empty) when it loses the focus.');
 
 		// cleanup
@@ -4318,9 +4318,9 @@
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.TAB);
 
 		// assertions
-		strictEqual(oMultiComboBox.getValue(), "",
+		assert.strictEqual(oMultiComboBox.getValue(), "",
 				'The InputValue of the MultiComboBox must be resetted (empty) when user tabs to next control.');
-		strictEqual(oMultiComboBox.getSelectedItems()[0].getKey(), "DZ");
+		assert.strictEqual(oMultiComboBox.getSelectedItems()[0].getKey(), "DZ");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4391,7 +4391,7 @@
 		oMultiComboBox.getPicker().getCustomHeader().getContentRight()[0].firePress();
 		this.clock.tick(300);
 
-		strictEqual(oMultiComboBox.getSelectedItems().length, 0, "No items selected after cancel selection");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 0, "No items selected after cancel selection");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4747,29 +4747,29 @@
 		ok(!!oComboBox.getAccessibilityInfo, "MultiComboBox has a getAccessibilityInfo function");
 		var oInfo = oComboBox.getAccessibilityInfo();
 		ok(!!oInfo, "getAccessibilityInfo returns a info object");
-		strictEqual(oInfo.role, oComboBox.getRenderer().getAriaRole(), "AriaRole");
-		strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO"), "Type");
-		strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
-		strictEqual(oInfo.focusable, true, "Focusable");
-		strictEqual(oInfo.enabled, true, "Enabled");
-		strictEqual(oInfo.editable, true, "Editable");
+		assert.strictEqual(oInfo.role, oComboBox.getRenderer().getAriaRole(), "AriaRole");
+		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO"), "Type");
+		assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.focusable, true, "Focusable");
+		assert.strictEqual(oInfo.enabled, true, "Enabled");
+		assert.strictEqual(oInfo.editable, true, "Editable");
 		oComboBox.setValue("");
 		oComboBox.setEnabled(false);
 		oInfo = oComboBox.getAccessibilityInfo();
-		strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
-		strictEqual(oInfo.focusable, false, "Focusable");
-		strictEqual(oInfo.enabled, false, "Enabled");
-		strictEqual(oInfo.editable, false, "Editable");
+		assert.strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.focusable, false, "Focusable");
+		assert.strictEqual(oInfo.enabled, false, "Enabled");
+		assert.strictEqual(oInfo.editable, false, "Editable");
 		oComboBox.setEnabled(true);
 		oComboBox.setEditable(false);
 		oInfo = oComboBox.getAccessibilityInfo();
-		strictEqual(oInfo.focusable, true, "Focusable");
-		strictEqual(oInfo.enabled, true, "Enabled");
-		strictEqual(oInfo.editable, false, "Editable");
+		assert.strictEqual(oInfo.focusable, true, "Focusable");
+		assert.strictEqual(oInfo.enabled, true, "Enabled");
+		assert.strictEqual(oInfo.editable, false, "Editable");
 		oComboBox.setEditable(true);
 		oComboBox.setSelectedKeys(["Item1", "Item2"]);
 		oInfo = oComboBox.getAccessibilityInfo();
-		strictEqual(oInfo.description, "Placeholder Tooltip Item1 Item2", "Description");
+		assert.strictEqual(oInfo.description, "Placeholder Tooltip Item1 Item2", "Description");
 		oComboBox.destroy();
 	});
 

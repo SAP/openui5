@@ -172,8 +172,8 @@
 				for (j = -2 ; j <= 2 ; j++) {
 					equal(typeof oLocaleData.getRelativeSecond(j), "string", "getRelativeSecond(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
 					if (j === 0) {
-						strictEqual(oLocaleData.getRelativeMinute(j), null, "getRelativeMinute(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
-						strictEqual(oLocaleData.getRelativeHour(j), null, "getRelativeHour(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+						assert.strictEqual(oLocaleData.getRelativeMinute(j), null, "getRelativeMinute(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+						assert.strictEqual(oLocaleData.getRelativeHour(j), null, "getRelativeHour(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
 					} else {
 						equal(typeof oLocaleData.getRelativeMinute(j), "string", "getRelativeMinute(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
 						equal(typeof oLocaleData.getRelativeHour(j), "string", "getRelativeHour(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");

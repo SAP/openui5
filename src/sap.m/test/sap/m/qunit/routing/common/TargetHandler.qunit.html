@@ -64,7 +64,7 @@
 						});
 
 						//Assert
-						strictEqual(oToSpy.callCount, 1, "did call the 'to' function on the oNavContainer instance");
+						assert.strictEqual(oToSpy.callCount, 1, "did call the 'to' function on the oNavContainer instance");
 						sinon.assert.calledWithExactly(oToSpy, oToPage.getId(), oNavigationParameters.transition, oNavigationParameters.eventData, oNavigationParameters.transitionParameters);
 
 						// Cleanup
@@ -97,8 +97,8 @@
 						});
 
 						//Assert
-						strictEqual(oBackSpy.callCount, 1, "did call the 'backToPage' function on the oNavContainer instance");
-						strictEqual(oInsertSpy.callCount, 1, "did call the 'insertPreviousPage' function on the oNavContainer instance");
+						assert.strictEqual(oBackSpy.callCount, 1, "did call the 'backToPage' function on the oNavContainer instance");
+						assert.strictEqual(oInsertSpy.callCount, 1, "did call the 'insertPreviousPage' function on the oNavContainer instance");
 						sinon.assert.calledWithExactly(oBackSpy, oToPage.getId(), oNavigationParameters.eventData, oNavigationParameters.transitionParameters);
 						sinon.assert.calledWithExactly(oInsertSpy, oToPage.getId(), oNavigationParameters.transition, oNavigationParameters.eventData);
 
@@ -133,8 +133,8 @@
 						});
 
 						//Assert
-						strictEqual(oToSpy.callCount, 0, "did not call the 'to' function on the oNavContainer instance");
-						strictEqual(oNavigateSpy.callCount, 1, "did call _handleRouteMatched");
+						assert.strictEqual(oToSpy.callCount, 0, "did not call the 'to' function on the oNavContainer instance");
+						assert.strictEqual(oNavigateSpy.callCount, 1, "did call _handleRouteMatched");
 					});
 
 					QUnit.test("Should do a forward navigation in master and detail of a splitContainer", function (assert) {
@@ -173,7 +173,7 @@
 						});
 
 						//Assert
-						strictEqual(oToSpy.callCount, 2, "did call the 'to' function twice");
+						assert.strictEqual(oToSpy.callCount, 2, "did call the 'to' function twice");
 
 						sinon.assert.calledWithExactly(oToSpy, oMasterToPage.getId(), oNavigationParameters.transition, oNavigationParameters.eventData, oNavigationParameters.transitionParameters);
 						sinon.assert.calledWithExactly(oToSpy, oDetailToPage.getId(), oNavigationParameters.transition, oNavigationParameters.eventData, oNavigationParameters.transitionParameters);
@@ -206,10 +206,10 @@
 						});
 
 						//Assert
-						strictEqual(fnApplyNavigationResultSpy.callCount, 1, "did invoke the 'to' function on the container");
+						assert.strictEqual(fnApplyNavigationResultSpy.callCount, 1, "did invoke the 'to' function on the container");
 						var oCall = fnApplyNavigationResultSpy.getCall(0);
 
-						strictEqual(oCall.args[0].view.getId(), oPage2.getId(), "did invoke it with the second page");
+						assert.strictEqual(oCall.args[0].view.getId(), oPage2.getId(), "did invoke it with the second page");
 
 						oTargets.destroy();
 					}
@@ -242,7 +242,7 @@
 							direction: HistoryDirection.forwards
 						});
 
-						strictEqual(fnAppyNavigationResultSpy.callCount, 1, "did invoke handleRouteMatched");
+						assert.strictEqual(fnAppyNavigationResultSpy.callCount, 1, "did invoke handleRouteMatched");
 
 						//Act - fire the event again
 						oTargets.navigate({
@@ -250,10 +250,10 @@
 						});
 
 						//Assert
-						strictEqual(fnAppyNavigationResultSpy.callCount, 1, "did invoke handleRouteMatched only once");
+						assert.strictEqual(fnAppyNavigationResultSpy.callCount, 1, "did invoke handleRouteMatched only once");
 						var oCall = fnAppyNavigationResultSpy.getCall(0);
 
-						strictEqual(oCall.args[0].view.getId(), oPage.getId(), "did invoke it with the first view");
+						assert.strictEqual(oCall.args[0].view.getId(), oPage.getId(), "did invoke it with the first view");
 
 						oTargets.destroy();
 					});
@@ -298,8 +298,8 @@
 						this.oTargetHandler.navigate({});
 
 						// Assert
-						QUnit.strictEqual(oCloseAllPopoversSpy.callCount, 1, "did close the popups");
-						QUnit.strictEqual(oCloseAllDialogsSpy.callCount, 1, "did close the dialogs");
+						assert.strictEqual(oCloseAllPopoversSpy.callCount, 1, "did close the popups");
+						assert.strictEqual(oCloseAllDialogsSpy.callCount, 1, "did close the dialogs");
 
 						// Cleanup
 						oTargetPage.destroy();
@@ -318,7 +318,7 @@
 
 
 						// Assert
-						QUnit.strictEqual(fnCloseSpy.callCount, 0, "did not close the dialogs");
+						assert.strictEqual(fnCloseSpy.callCount, 0, "did not close the dialogs");
 					});
 
 					QUnit.test("Should set close all dialogs", function (assert) {
@@ -351,7 +351,7 @@
 							});
 
 							// Assert
-							strictEqual(bResult, bExprectedBackwards, "Did return the expected direction");
+							assert.strictEqual(bResult, bExprectedBackwards, "Did return the expected direction");
 						}
 
 						directDirectionTestcase.call(this, HistoryDirection.Backwards, true);
@@ -369,7 +369,7 @@
 						});
 
 						// Assert
-						strictEqual(bResult, oTestOptions.expectedBackwards, "Did return the expected direction");
+						assert.strictEqual(bResult, oTestOptions.expectedBackwards, "Did return the expected direction");
 					}
 
 					QUnit.test("Should be backwards if the new viewlevel is lower than the current one", function (assert) {
@@ -443,8 +443,8 @@
 						});
 
 						// Assert
-						strictEqual(bResult, oTestOptions.expectedBackwards, "Did return the expected direction");
-						strictEqual(oStub.callCount, 1, "Did ask the history");
+						assert.strictEqual(bResult, oTestOptions.expectedBackwards, "Did return the expected direction");
+						assert.strictEqual(oStub.callCount, 1, "Did ask the history");
 					}
 
 					QUnit.test("Should be forwards if history direction is not backwards", function (assert) {
@@ -488,8 +488,8 @@
 						});
 
 						// Assert
-						strictEqual(bBackwards, true, "Did return the backwards direction");
-						strictEqual(oStub.callCount, 0, "Did not ask the history");
+						assert.strictEqual(bBackwards, true, "Did return the backwards direction");
+						assert.strictEqual(oStub.callCount, 0, "Did not ask the history");
 
 					});
 
@@ -507,8 +507,8 @@
 						});
 
 						// Assert
-						strictEqual(bBackwards, true, "Did return the backwards direction");
-						strictEqual(oStub.callCount, 0, "Did not ask the history");
+						assert.strictEqual(bBackwards, true, "Did return the backwards direction");
+						assert.strictEqual(oStub.callCount, 0, "Did not ask the history");
 
 					});
 
@@ -521,8 +521,8 @@
 						});
 
 						// Assert
-						strictEqual(bBackwards, false, "Did return the backwards direction");
-						strictEqual(oStub.callCount, 0, "Did not ask the history");
+						assert.strictEqual(bBackwards, false, "Did return the backwards direction");
+						assert.strictEqual(oStub.callCount, 0, "Did not ask the history");
 					});
 
 					QUnit.test("Should remember the viewlevel after a direction is determined", function (assert) {
@@ -536,7 +536,7 @@
 							viewLevel: 0
 						});
 
-						strictEqual(bResult, true, "Did do a backwards navigation because view level was 1 then it is 0");
+						assert.strictEqual(bResult, true, "Did do a backwards navigation because view level was 1 then it is 0");
 
 					});
 				});

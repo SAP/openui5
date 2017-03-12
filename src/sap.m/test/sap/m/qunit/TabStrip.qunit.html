@@ -50,7 +50,7 @@
 
 		QUnit.test("Initialization without parameters", function (assert) {
 			var oTabStrip = new sap.m.TabStrip();
-			strictEqual(typeof oTabStrip === 'object', true, 'Sucessfully initialized.');
+			assert.strictEqual(typeof oTabStrip === 'object', true, 'Sucessfully initialized.');
 			oTabStrip.destroy();
 			oTabStrip = null;
 		});
@@ -76,7 +76,7 @@
 
 			this.clock.tick(1000);
 
-			strictEqual(oTS.getAggregation('_select').getSelectedItem().getText(), oItem2.getText(), "Correct default selectedItem property value");
+			assert.strictEqual(oTS.getAggregation('_select').getSelectedItem().getText(), oItem2.getText(), "Correct default selectedItem property value");
 
 			oTS.destroy();
 		});
@@ -89,29 +89,29 @@
 		QUnit.test("Control defaults", function (assert) {
 			//assert
 			ok(!this.sut.getHasSelect(), "Correct default hasSelect property value");
-			strictEqual(this.sut.$("touchArea").children("." + sap.m.TabStripSelect.CSS_CLASS).length, 0,
+			assert.strictEqual(this.sut.$("touchArea").children("." + sap.m.TabStripSelect.CSS_CLASS).length, 0,
 					"Select is not rendered in DOM");
-			strictEqual(this.sut.getSelectedItem(), null, "Correct default selectedItem property value");
+			assert.strictEqual(this.sut.getSelectedItem(), null, "Correct default selectedItem property value");
 
 			this.sut.setHasSelect(true);
 
 			ok(this.sut.getHasSelect(), "Correct default hasSelect property value");
 
-			strictEqual(this.sut.getFocusDomRef(), null, "When no item is selected there is no focused DomRef");
+			assert.strictEqual(this.sut.getFocusDomRef(), null, "When no item is selected there is no focused DomRef");
 
 			this.sut.setSelectedItem(this.sut.getItems()[1]);
 
-			strictEqual(this.sut.getSelectedItem(),this.sut.getItems()[1].getId(),
+			assert.strictEqual(this.sut.getSelectedItem(),this.sut.getItems()[1].getId(),
 					"Correctly set selectedItem property value");
 			this.clock.tick(1000);
 
-			strictEqual(this.sut.$("touchArea").children("." + sap.m.TabStripSelect.CSS_CLASS).length, 1,
+			assert.strictEqual(this.sut.$("touchArea").children("." + sap.m.TabStripSelect.CSS_CLASS).length, 1,
 					"Toucharea is rendered in DOM");
 
-			strictEqual(this.sut.getFocusDomRef(), this.sut.getItems()[1].getDomRef(),
+			assert.strictEqual(this.sut.getFocusDomRef(), this.sut.getItems()[1].getDomRef(),
 					"When there is a selected item the focus is properly set as focused DOM ref");
 
-			strictEqual(this.sut.getAggregation('_select').getSelectedItem().getId(),
+			assert.strictEqual(this.sut.getAggregation('_select').getSelectedItem().getId(),
 					this.sut.getSelectedItem()+sap.m.TabStrip.SELECT_ITEMS_ID_SUFFIX,
 					"The selected item in the select aggregation is the same as the one in the TabStrip area");
 
@@ -122,17 +122,17 @@
 			var srcControl = this.sut.getItems()[1];
 			qutils.triggerTouchEvent('touchstart', this.sut.getDomRef(), {changedTouches: [{pageX: srcControl.$().offset().left + 2}], target: srcControl.getDomRef()});
 			qutils.triggerTouchEvent('touchend', this.sut.getDomRef(), {changedTouches: [{pageX: srcControl.$().offset().left + 2}], target: srcControl.getDomRef()});
-			strictEqual(fnActivateItemSpy.calledWith(srcControl), true, "On tap activates the correct item");
+			assert.strictEqual(fnActivateItemSpy.calledWith(srcControl), true, "On tap activates the correct item");
 
-			strictEqual(fnFireItemPressSpy.calledOnce, true, "On tap fires item press event");
-			strictEqual(fnSetSelectedItemSpy.calledOnce, false, "On tap does not fire selection change when the same selected tab is pressed");
+			assert.strictEqual(fnFireItemPressSpy.calledOnce, true, "On tap fires item press event");
+			assert.strictEqual(fnSetSelectedItemSpy.calledOnce, false, "On tap does not fire selection change when the same selected tab is pressed");
 
 			srcControl = this.sut.getItems()[2];
 			qutils.triggerTouchEvent('touchstart', this.sut.getDomRef(), {changedTouches: [{pageX: srcControl.$().offset().left + 2}], target: srcControl.getDomRef()});
 			qutils.triggerTouchEvent('touchend', this.sut.getDomRef(), {changedTouches: [{pageX: srcControl.$().offset().left + 2}], target: srcControl.getDomRef()});
-			strictEqual(fnActivateItemSpy.calledWith(srcControl), true, "On tap activates the correct item");
+			assert.strictEqual(fnActivateItemSpy.calledWith(srcControl), true, "On tap activates the correct item");
 
-			strictEqual(fnFireItemPressSpy.calledOnce, false, "On tap does not fire an item press event");
+			assert.strictEqual(fnFireItemPressSpy.calledOnce, false, "On tap does not fire an item press event");
 			strictEqual(fnSetSelectedItemSpy.calledOnce, true,
 					"On tap does not fire selection change when the same selected tab is pressed");
 
@@ -140,11 +140,11 @@
 			fnFireItemPressSpy.restore();
 			fnSetSelectedItemSpy.restore();
 
-			strictEqual(this.sut.getItems().length, 3,
+			assert.strictEqual(this.sut.getItems().length, 3,
 					"There are 3 items");
 
 			this.sut.removeAggregation('items', this.sut.getItems()[2]);
-			strictEqual(this.sut.getItems().length, 2,
+			assert.strictEqual(this.sut.getItems().length, 2,
 					"After removing an item there are 2 left");
 
 			var oItem = this.sut.getItems()[0];
@@ -153,29 +153,29 @@
 			qutils.triggerTouchEvent('touchend', this.sut.getDomRef(), {changedTouches: [{pageX: oItemButton.$().offset().left + 2}], target: oItemButton.getDomRef()});
 
 			this.clock.tick(1000);
-			strictEqual(this.sut.getItems().length, 1,
+			assert.strictEqual(this.sut.getItems().length, 1,
 					"Successfuly deleted element when pressing close button");
 
 			this.sut.removeAllAggregation ('items', false);
-			strictEqual(this.sut.getItems().length, 0,
+			assert.strictEqual(this.sut.getItems().length, 0,
 					"All tabs are removed after remove all aggregation");
 
 			var item1 = new sap.m.TabStripItem({
 				text: "insert item"
 			});
 			this.sut.insertAggregation('items', item1, 1);
-			strictEqual(this.sut.getItems().length, 1,
+			assert.strictEqual(this.sut.getItems().length, 1,
 					"Insert aggregation inserts successfuly");
 
 			this.sut.destroyAggregation('items');
-			strictEqual(this.sut.getItems().length, 0,
+			assert.strictEqual(this.sut.getItems().length, 0,
 					"Destroy aggregation destroys successfuly");
 
 			var item2 = new sap.m.TabStripItem({
 				text: "add item"
 			});
 			this.sut.addAggregation('items', item2, 1);
-			strictEqual(this.sut.getItems().length, 1,
+			assert.strictEqual(this.sut.getItems().length, 1,
 					"Add aggregation adds successfuly");
 		});
 
@@ -192,7 +192,7 @@
 				modified:true
 			}));
 			oCore.applyChanges();
-			strictEqual(this.sut.$().find(".sapMTSTabs").children().length, 6, "All tabs are rendered");
+			assert.strictEqual(this.sut.$().find(".sapMTSTabs").children().length, 6, "All tabs are rendered");
 
 			ok(!this.sut.getAggregation("_leftArrowButton"), "Left button aggregation is not created");
 			ok(!this.sut.getAggregation("_rightArrowButton"), "Right button aggregation is not created");
@@ -202,29 +202,29 @@
 			this.sut.removeItem(this.sut.getItems()[2]);
 			this.clock.tick(1000);
 
-			strictEqual(this.sut.$("tabs").children("#"+itemToBeRemovedId).length, 0,
+			assert.strictEqual(this.sut.$("tabs").children("#"+itemToBeRemovedId).length, 0,
 					"The ID of the item on position 2 is removed");
 
-			strictEqual(this.sut.getItems()[4].getModified(), true,
+			assert.strictEqual(this.sut.getItems()[4].getModified(), true,
 					"Modified state is correct");
 
 			var modifiedItem = sap.m.TabStripItem.CSS_CLASS_MODIFIED;
-			strictEqual(jQuery(this.sut.getItems()[3].getFocusDomRef()).hasClass(modifiedItem), false,
+			assert.strictEqual(jQuery(this.sut.getItems()[3].getFocusDomRef()).hasClass(modifiedItem), false,
 					"The correspondent CSS class for the item change state is available ");
-			strictEqual(jQuery(this.sut.getItems()[4].getFocusDomRef()).hasClass(modifiedItem), true,
+			assert.strictEqual(jQuery(this.sut.getItems()[4].getFocusDomRef()).hasClass(modifiedItem), true,
 					"The correspondent CSS class for the item change state is available ");
 
 			this.sut.changeItemState(this.sut.getItems()[3].getId(), true);
-			strictEqual(jQuery(this.sut.getItems()[3].getFocusDomRef()).hasClass(modifiedItem), true,
+			assert.strictEqual(jQuery(this.sut.getItems()[3].getFocusDomRef()).hasClass(modifiedItem), true,
 					"The correspondent CSS class for the item change state is available ");
 		});
 
 		// tests for a bug that resulted in destroying the select aggr if it already existed on setHasSelect(true)
 		QUnit.test("setHasSelect(true)", function (assert) {
 			this.sut.setHasSelect(true);
-			strictEqual(this.sut.getHasSelect(), true, "Correct hasSelect property value");
+			assert.strictEqual(this.sut.getHasSelect(), true, "Correct hasSelect property value");
 			this.sut.setHasSelect(true);
-			strictEqual(this.sut.getAggregation('_select') instanceof sap.m.TabStripSelect, true, "The select aggregation should not be destroyed when hasSelect is set to 'true'");
+			assert.strictEqual(this.sut.getAggregation('_select') instanceof sap.m.TabStripSelect, true, "The select aggregation should not be destroyed when hasSelect is set to 'true'");
 		});
 
 
@@ -250,7 +250,7 @@
 			var oItem = oTabStrip.getItems()[1];
 			var sName = oItem.getText();
 
-			strictEqual(oItem.getId() === oTabStrip.getSelectedItem(), false);
+			assert.strictEqual(oItem.getId() === oTabStrip.getSelectedItem(), false);
 
 			var aTargetTouches = [{pageX: oItem.$().offset().left}];
 			qutils.triggerTouchEvent('touchstart', oTabStrip.getDomRef(), {changedTouches: aTargetTouches, target: oItem.getDomRef()}, 'on', true);
@@ -258,7 +258,7 @@
 
 			this.clock.tick(1000);
 
-			strictEqual(oItem.getId() === oTabStrip.getSelectedItem(), false);
+			assert.strictEqual(oItem.getId() === oTabStrip.getSelectedItem(), false);
 
 			oTabStrip.destroy();
 			oTabStrip = null;
@@ -332,27 +332,27 @@
 			oTabs[0].focus();
 			this.clock.tick(1000);
 			//assert
-			strictEqual(oTabs[0].getId(), document.activeElement.id, "First tab is focused");
+			assert.strictEqual(oTabs[0].getId(), document.activeElement.id, "First tab is focused");
 			//arrange
 			qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_RIGHT);
 			this.clock.tick(1000);
 			//assert
-			strictEqual(oTabs[1].getId(), document.activeElement.id, "Second tab is focused on ARROW_RIGHT");
+			assert.strictEqual(oTabs[1].getId(), document.activeElement.id, "Second tab is focused on ARROW_RIGHT");
 			//arrange
 			qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_DOWN);
 			this.clock.tick(1000);
 			//assert
-			strictEqual(oTabs[2].getId(), document.activeElement.id, "Third tab is focused on ARROW_DOWN");
+			assert.strictEqual(oTabs[2].getId(), document.activeElement.id, "Third tab is focused on ARROW_DOWN");
 			//arrange
 			qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_LEFT);
 			this.clock.tick(1000);
 			//assert
-			strictEqual(oTabs[1].getId(), document.activeElement.id, "Second tab is focused on forth ARROW_LEFT");
+			assert.strictEqual(oTabs[1].getId(), document.activeElement.id, "Second tab is focused on forth ARROW_LEFT");
 			//arrange
 			qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_UP);
 			this.clock.tick(1000);
 			//assert
-			strictEqual(oTabs[0].getId(), document.activeElement.id, "First is focused on fifth ARROW_UP");
+			assert.strictEqual(oTabs[0].getId(), document.activeElement.id, "First is focused on fifth ARROW_UP");
 
 		});
 
@@ -370,7 +370,7 @@
 			equal(this.sut.getItems().length, 4, "Length check");
 			equal(this.sut.getItems().indexOf(oTabStripItemToRemove), -1, "The item should not exist at any index");
 			equal(this.sut.getSelectedItem(), oTabStripItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
-			strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
+			assert.strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
 		});
 
 		//ToDo: Might be reconsidered when TabStrip is released for standalone usage
@@ -387,7 +387,7 @@
 			equal(this.sut.getItems().length, 4, "Length check");
 			equal(this.sut.getItems().indexOf(oTabStripItemToRemove), -1, "The item should not exist at any index");
 			equal(this.sut.getSelectedItem(), oTabStripItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
-			strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
+			assert.strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
 		});
 
 		//ToDo: Might be reconsidered when TabStrip is released for standalone usage
@@ -405,7 +405,7 @@
 			equal(this.sut.getItems().length, 4, "Length check");
 			equal(this.sut.getItems().indexOf(oTabStripItemToRemove), -1, "The item should not exist at any index");
 			equal(this.sut.getSelectedItem(), oTabStripItemToBeSelected.getId(), "Selection is applied to the right item");
-			strictEqual(document.activeElement.id, oTabStripItemToBeFocused.getId(), "Focus is applied to the right item");
+			assert.strictEqual(document.activeElement.id, oTabStripItemToBeFocused.getId(), "Focus is applied to the right item");
 		});
 
 		QUnit.module("Scrolling", {
@@ -465,9 +465,9 @@
 			oCore.applyChanges();
 			fnUpdateTestScrollValue();
 			//assert
-			strictEqual(iTestCurrentScrollLeft, 0, "The initial ScrollLeft value is as expected");
-			strictEqual(this.sut.getAggregation("_leftArrowButton").$().css("visibility"), "hidden", "Left scroll button is hidden when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft );
-			strictEqual(this.sut.getAggregation("_rightArrowButton").$().css("visibility"), "visible", "Right scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
+			assert.strictEqual(iTestCurrentScrollLeft, 0, "The initial ScrollLeft value is as expected");
+			assert.strictEqual(this.sut.getAggregation("_leftArrowButton").$().css("visibility"), "hidden", "Left scroll button is hidden when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft );
+			assert.strictEqual(this.sut.getAggregation("_rightArrowButton").$().css("visibility"), "visible", "Right scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
 			//arrange
 			this.sut.getAggregation("_rightArrowButton").firePress({});
 			this.clock.tick(1000);
@@ -479,9 +479,9 @@
 			//arrange
 			fnUpdateTestScrollValue();
 			//assert
-//			strictEqual(iTestCurrentScrollLeft, 640, "ScrollLeft value is as expected");
-			strictEqual(this.sut.getAggregation("_leftArrowButton").$().css("visibility"), "visible", "Left scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
-			strictEqual(this.sut.getAggregation("_rightArrowButton").$().css("visibility"), "visible", "Right scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
+//			assert.strictEqual(iTestCurrentScrollLeft, 640, "ScrollLeft value is as expected");
+			assert.strictEqual(this.sut.getAggregation("_leftArrowButton").$().css("visibility"), "visible", "Left scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
+			assert.strictEqual(this.sut.getAggregation("_rightArrowButton").$().css("visibility"), "visible", "Right scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
 			//arrange
 			this.sut.getAggregation("_leftArrowButton").firePress({});
 			this.clock.tick(1000);
@@ -490,7 +490,7 @@
 			ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on LeftScrollButton press");
 			//arrange
 			fnUpdateTestScrollValue();
-//			strictEqual(iTestCurrentScrollLeft, 320, "ScrollLeft value is as expected");
+//			assert.strictEqual(iTestCurrentScrollLeft, 320, "ScrollLeft value is as expected");
 			//arrange
 			var iLargeScroll = 100000;
 			this.sut._scroll(iLargeScroll, 500); //make sure that this enforces max right position
@@ -502,8 +502,8 @@
 			equal(this.sut._iCurrentScrollLeft, this.sut._iMaxOffsetLeft, "Scroll out of range test passed successfully");
 			fnUpdateTestScrollValue();
 			ok(iTestCurrentScrollLeft === this.sut._iCurrentScrollLeft && iTestCurrentScrollLeft === this.sut._iMaxOffsetLeft, "ScrollLeft value is as expected");
-			strictEqual(this.sut.getAggregation("_leftArrowButton").$().css("visibility"), "visible", "Left scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
-//			strictEqual(this.sut._oRightArrowButton.$().css("visibility"), "hidden", "Right scroll button is hidden when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
+			assert.strictEqual(this.sut.getAggregation("_leftArrowButton").$().css("visibility"), "visible", "Left scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
+//			assert.strictEqual(this.sut._oRightArrowButton.$().css("visibility"), "hidden", "Right scroll button is hidden when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
 		});
 
 		QUnit.module("ARIA", {
@@ -534,7 +534,7 @@
 		QUnit.test("Initial aria attributes", function (assert) {
 			var that = this;
 			//assert
-			strictEqual(this.sut.$('tabs').attr("role"), 'tablist', "TabStrip container has correct role");
+			assert.strictEqual(this.sut.$('tabs').attr("role"), 'tablist', "TabStrip container has correct role");
 			ok(!!(this.sut.$('tabs').children().eq(0).attr("aria-selected")), "The initial aria-selected attribute value is correct");
 			this.sut.$('tabs').children().each(function () {
 				var $Tab = jQuery(this),
@@ -544,15 +544,15 @@
 						bIsSelected = $Tab.attr("aria-selected");
 
 				ok(bHasRole, this.id + " has role attribute assigned");
-				strictEqual(sRoleValue, "tab", this.id + " has a correct role value");
+				assert.strictEqual(sRoleValue, "tab", this.id + " has a correct role value");
 				ok(bHasAriaSelected, this.id + " has aria-selected attribute");
 				if (that.sut.getSelectedItem() === this.id) {
-					strictEqual(bIsSelected, "true", this.id + " has correct aria-selected value (true)");
+					assert.strictEqual(bIsSelected, "true", this.id + " has correct aria-selected value (true)");
 				} else {
-					strictEqual(bIsSelected, "false", this.id + " has correct aria-selected value (false)");
+					assert.strictEqual(bIsSelected, "false", this.id + " has correct aria-selected value (false)");
 				}
 			});
-			strictEqual(this.sut.$().find("[aria-selected]").length, this.sut.getItems().length, "All elements with aria-selected attributes are equal to the number of aggregations passed to TabStrip");
+			assert.strictEqual(this.sut.$().find("[aria-selected]").length, this.sut.getItems().length, "All elements with aria-selected attributes are equal to the number of aggregations passed to TabStrip");
 		});
 
 		QUnit.test("Select item changes the aria-selected value", function (assert) {
@@ -567,7 +567,7 @@
 		});
 
 		QUnit.test("Check for undesired aria attributes", function (assert) {
-			strictEqual(this.sut.$().find("[aria-aria-selected]").length, 0, "the duplicate aria-aria-selected attribute is not present in the DOM");
+			assert.strictEqual(this.sut.$().find("[aria-aria-selected]").length, 0, "the duplicate aria-aria-selected attribute is not present in the DOM");
 		});
 
 
@@ -592,12 +592,12 @@
 			this.oTS.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(this.oTS.$("leftOverflowButtons").length, 0, "Left overflow buttons are not rendered");
-			strictEqual(this.oTS.$("rightflowButtons").length, 0, "Right overflow buttons are not rendered");
-			strictEqual(this.oTS.$("tabsContainer").length, 0, "Tab container is not rendered");
+			assert.strictEqual(this.oTS.$("leftOverflowButtons").length, 0, "Left overflow buttons are not rendered");
+			assert.strictEqual(this.oTS.$("rightflowButtons").length, 0, "Right overflow buttons are not rendered");
+			assert.strictEqual(this.oTS.$("tabsContainer").length, 0, "Tab container is not rendered");
 
-			strictEqual(jQuery(this.oTS.$()).find('.sapMSltLabel').length, 1, 'Label is rendered');
-			strictEqual(jQuery(this.oTS.$()).find('.sapMSltIcon').length, 1, 'Arrow is rendered');
+			assert.strictEqual(jQuery(this.oTS.$()).find('.sapMSltLabel').length, 1, 'Label is rendered');
+			assert.strictEqual(jQuery(this.oTS.$()).find('.sapMSltIcon').length, 1, 'Arrow is rendered');
 			jQuery('body').removeClass('sap-phone');
 			stubs.forEach(function(item){item.restore()}); // restore stubs
 		});
@@ -644,8 +644,8 @@
 			});
 			oCore.applyChanges();
 			//assert
-			strictEqual(this.sut.$("tabs").children("." + sap.m.TabStripItem.CSS_CLASS_SELECTED).length, 0, "The initial selection is not applied");
-			strictEqual(this.sut.getSelectedItem(), null, "Correct value of selectedItem association");
+			assert.strictEqual(this.sut.$("tabs").children("." + sap.m.TabStripItem.CSS_CLASS_SELECTED).length, 0, "The initial selection is not applied");
+			assert.strictEqual(this.sut.getSelectedItem(), null, "Correct value of selectedItem association");
 		});
 
 		QUnit.test("Initial selection if selected item is applied", function (assert) {
@@ -657,7 +657,7 @@
 			this.sut.placeAt('qunit-fixture');
 			oCore.applyChanges();
 			//assert
-			strictEqual(this.sut.getSelectedItem(), this.sut.getItems()[this.selectedItemIndex].getId(), "Correct selectedItem aggregation value");
+			assert.strictEqual(this.sut.getSelectedItem(), this.sut.getItems()[this.selectedItemIndex].getId(), "Correct selectedItem aggregation value");
 			ok(this.sut.$("tabs").children().eq(this.selectedItemIndex).hasClass(sap.m.TabStripItem.CSS_CLASS_SELECTED), "The initial selection is applied correctly");
 		});
 

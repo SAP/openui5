@@ -409,7 +409,7 @@
 
 				oPopover3._calcPlacement();
 
-				strictEqual(oPopover3._oCalcedPos, expectedPlace);
+				assert.strictEqual(oPopover3._oCalcedPos, expectedPlace);
 
 				stubOpenByRef.restore();
 				stubOffset.restore();
@@ -451,7 +451,7 @@
 
 			oPopover.openBy(oButton2);
 
-			strictEqual(oPopover._oCalcedPos, sap.m.PlacementType.Bottom);
+			assert.strictEqual(oPopover._oCalcedPos, sap.m.PlacementType.Bottom);
 
 			oList.destroy();
 			oPopover.destroy();
@@ -473,7 +473,7 @@
 
 				oPopover3._calcPlacement();
 
-				strictEqual(oPopover3._oCalcedPos, expectedPlace);
+				assert.strictEqual(oPopover3._oCalcedPos, expectedPlace);
 
 				stubOpenByRef.restore();
 				stubOffset.restore();
@@ -502,7 +502,7 @@
 				var stubOpenByRef = sinon.stub(oPopover3, "_getOpenByDomRef").returns(document.createElement("div"));
 				oPopover3._calcPlacement();
 
-				strictEqual(oPopover3._oCalcedPos, expectedPlace);
+				assert.strictEqual(oPopover3._oCalcedPos, expectedPlace);
 
 				stubOpenByRef.restore();
 				stubOffset.restore();
@@ -531,7 +531,7 @@
 				var stubOpenByRef = sinon.stub(oPopover3, "_getOpenByDomRef").returns(document.createElement("div"));
 				oPopover3._calcPlacement();
 
-				strictEqual(oPopover3._oCalcedPos, expectedPlace);
+				assert.strictEqual(oPopover3._oCalcedPos, expectedPlace);
 
 				stubOpenByRef.restore();
 				stubOffset.restore();
@@ -588,7 +588,7 @@
 				var stubOpenByRef = sinon.stub(oPopover3, "_getOpenByDomRef").returns(document.createElement("div"));
 				oPopover3._calcPlacement();
 
-				strictEqual(oPopover3._oCalcedPos, expectedPlace);
+				assert.strictEqual(oPopover3._oCalcedPos, expectedPlace);
 
 				stubOffsetTop.restore();
 				stubOpenByRef.restore();
@@ -713,11 +713,11 @@
 				enableScrolling: true
 			});
 
-			strictEqual(oPopover4.getVerticalScrolling(), true);
-			strictEqual(oPopover4.getHorizontalScrolling(), true);
+			assert.strictEqual(oPopover4.getVerticalScrolling(), true);
+			assert.strictEqual(oPopover4.getHorizontalScrolling(), true);
 			oPopover4.setEnableScrolling(false);
-			strictEqual(oPopover4.getVerticalScrolling(), false);
-			strictEqual(oPopover4.getHorizontalScrolling(), false);
+			assert.strictEqual(oPopover4.getVerticalScrolling(), false);
+			assert.strictEqual(oPopover4.getHorizontalScrolling(), false);
 		});
 
 		QUnit.test("Set vertical/horizontal scrolling", function (assert){
@@ -1260,30 +1260,30 @@
 			$containerContent = oContainer.$().find(sContentSelector);
 
 			// Assert
-			strictEqual($containerContent.css("padding-left"), "0px", "The container has no left content padding when class \"sapUiNoContentPadding\" is set");
-			strictEqual($containerContent.css("padding-right"), "0px", "The container has no right content padding when class \"sapUiNoContentPadding\" is set");
-			strictEqual($containerContent.css("padding-top"), "0px", "The container has no top content padding when class \"sapUiNoContentPadding\" is set");
-			strictEqual($containerContent.css("padding-bottom"), "0px", "The container has no bottom content padding when class \"sapUiNoContentPadding\" is set");
+			assert.strictEqual($containerContent.css("padding-left"), "0px", "The container has no left content padding when class \"sapUiNoContentPadding\" is set");
+			assert.strictEqual($containerContent.css("padding-right"), "0px", "The container has no right content padding when class \"sapUiNoContentPadding\" is set");
+			assert.strictEqual($containerContent.css("padding-top"), "0px", "The container has no top content padding when class \"sapUiNoContentPadding\" is set");
+			assert.strictEqual($containerContent.css("padding-bottom"), "0px", "The container has no bottom content padding when class \"sapUiNoContentPadding\" is set");
 
 			// Act
 			oContainer.removeStyleClass("sapUiNoContentPadding");
 			oContainer.addStyleClass("sapUiContentPadding");
 
 			// Assert
-			strictEqual($containerContent.css("padding-left"), "16px", "The container has 1rem left content padding when class \"sapUiContentPadding\" is set");
-			strictEqual($containerContent.css("padding-right"), "16px", "The container has 1rem right content padding when class \"sapUiContentPadding\" is set");
-			strictEqual($containerContent.css("padding-top"), "16px", "The container has 1rem top content padding when class \"sapUiContentPadding\" is set");
-			strictEqual($containerContent.css("padding-bottom"), "16px", "The container has 1rem bottom content padding when class \"sapUiContentPadding\" is set");
+			assert.strictEqual($containerContent.css("padding-left"), "16px", "The container has 1rem left content padding when class \"sapUiContentPadding\" is set");
+			assert.strictEqual($containerContent.css("padding-right"), "16px", "The container has 1rem right content padding when class \"sapUiContentPadding\" is set");
+			assert.strictEqual($containerContent.css("padding-top"), "16px", "The container has 1rem top content padding when class \"sapUiContentPadding\" is set");
+			assert.strictEqual($containerContent.css("padding-bottom"), "16px", "The container has 1rem bottom content padding when class \"sapUiContentPadding\" is set");
 
 			// Act
 			oContainer.removeStyleClass("sapUiContentPadding");
 			oContainer.addStyleClass("sapUiResponsiveContentPadding");
 
 			// Assert
-			strictEqual($containerContent.css("padding-left"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-			strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-			strictEqual($containerContent.css("padding-top"), aResponsiveSize[0], "The container has " + sResponsiveSize + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-			strictEqual($containerContent.css("padding-bottom"), aResponsiveSize[0], "The container has " + sResponsiveSize + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+			assert.strictEqual($containerContent.css("padding-left"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+			assert.strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+			assert.strictEqual($containerContent.css("padding-top"), aResponsiveSize[0], "The container has " + sResponsiveSize + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+			assert.strictEqual($containerContent.css("padding-bottom"), aResponsiveSize[0], "The container has " + sResponsiveSize + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
 
 			// Cleanup
 			oContainer.destroy();
@@ -1448,7 +1448,7 @@
 
 			// Assert
 			equal(oSpy.callCount, 1, "_applyPosition is called once");
-			strictEqual(oSpy.getCall(0).args[1], true, "_applyPosition is called with the second parameter set to true");
+			assert.strictEqual(oSpy.getCall(0).args[1], true, "_applyPosition is called with the second parameter set to true");
 
 			oPopover.destroy();
 		});

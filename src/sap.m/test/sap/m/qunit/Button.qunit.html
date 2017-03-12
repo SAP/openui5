@@ -276,8 +276,8 @@
 		var bHoverable = oButton._isHoverable();
 
 		// Assert
-		strictEqual(bHoverable, oTestDescription.shouldBeHoverable, "The button determined wether is should be hoverable");
-		strictEqual(oButton.$("inner").hasClass("sapMBtnHoverable"), oTestDescription.shouldHaveCssClass, "The button determined wether is should be hoverable");
+		assert.strictEqual(bHoverable, oTestDescription.shouldBeHoverable, "The button determined wether is should be hoverable");
+		assert.strictEqual(oButton.$("inner").hasClass("sapMBtnHoverable"), oTestDescription.shouldHaveCssClass, "The button determined wether is should be hoverable");
 	}
 
 	QUnit.test("Should be hoverable if the button is enabled and in desktop", function(assert) {
@@ -334,10 +334,10 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oButton, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not re-render");
+		assert.strictEqual(oResult, oButton, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not re-render");
 		ok(!/.*<script>.*/.test(oButton.$("content").html()), "Did not contain a unescaped script tag");
-		strictEqual(oButton.getText(), sTextToSet, "Did set the non encoded string as value");
+		assert.strictEqual(oButton.getText(), sTextToSet, "Did set the non encoded string as value");
 
 		// Cleanup
 		oButton.destroy();
@@ -358,7 +358,7 @@
 		oButton.ontap({ setMarked:  jQuery.noop });
 
 		// Assert
-		strictEqual(oRenderSpy.callCount, 0, "Tap event not fired");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Tap event not fired");
 
 		// Cleanup
 		oButton.destroy();
@@ -380,7 +380,7 @@
 		this.clock.tick(1000);
 
 		// Assert
-		strictEqual(oRenderSpy.callCount, 1, "The button is focused on touch start");
+		assert.strictEqual(oRenderSpy.callCount, 1, "The button is focused on touch start");
 
 		// Cleanup
 		oButton.destroy();
@@ -403,7 +403,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oRenderSpy.callCount, 0, "No conversation error");
+		assert.strictEqual(oRenderSpy.callCount, 0, "No conversation error");
 
 		// Cleanup
 		oButton.destroy();
@@ -426,7 +426,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 
 		// Cleanup
 		oButton.destroy();
@@ -439,13 +439,13 @@
 		var oButton = new sap.m.Button({text: "MyText",
 			icon: "sap-icon://search"});
 
-		strictEqual(oButton._getTooltip(), undefined, "Should not return tooltip");
+		assert.strictEqual(oButton._getTooltip(), undefined, "Should not return tooltip");
 
 		// Act
 		oButton.setTooltip("MyTooltip");
 
 		// Assert
-		strictEqual(oButton._getTooltip(), "MyTooltip", "Should return the tooltip");
+		assert.strictEqual(oButton._getTooltip(), "MyTooltip", "Should return the tooltip");
 
 		// Cleanup
 		oButton.destroy();
@@ -458,13 +458,13 @@
 		var oButton = new sap.m.Button({tooltip: "MyTooltip",
 			icon: "sap-icon://search"});
 
-		strictEqual(oButton._getTooltip(), "MyTooltip", "Should return the primary tooltip");
+		assert.strictEqual(oButton._getTooltip(), "MyTooltip", "Should return the primary tooltip");
 
 		// Act
 		oButton.setTooltip(null);
 
 		// Assert
-		strictEqual(oButton._getTooltip(), "Search", "Should return the derived tooltip");
+		assert.strictEqual(oButton._getTooltip(), "Search", "Should return the derived tooltip");
 
 		// Cleanup
 		oButton.destroy();
@@ -476,23 +476,23 @@
 		ok(!!oButton.getAccessibilityInfo, "Button has a getAccessibilityInfo function");
 		var oInfo = oButton.getAccessibilityInfo();
 		ok(!!oInfo, "getAccessibilityInfo returns a info object");
-		strictEqual(oInfo.role, "button", "AriaRole");
-		strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
-		strictEqual(oInfo.description, "Tooltip", "Description");
-		strictEqual(oInfo.focusable, true, "Focusable");
-		strictEqual(oInfo.enabled, true, "Enabled");
+		assert.strictEqual(oInfo.role, "button", "AriaRole");
+		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+		assert.strictEqual(oInfo.description, "Tooltip", "Description");
+		assert.strictEqual(oInfo.focusable, true, "Focusable");
+		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 		oButton.setText("Text");
 		oButton.setEnabled(false);
 		oInfo = oButton.getAccessibilityInfo();
-		strictEqual(oInfo.description, "Text", "Description");
-		strictEqual(oInfo.focusable, false, "Focusable");
-		strictEqual(oInfo.enabled, false, "Enabled");
+		assert.strictEqual(oInfo.description, "Text", "Description");
+		assert.strictEqual(oInfo.focusable, false, "Focusable");
+		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		oButton.setText(null);
 		oButton.setTooltip(null);
 		oButton.setIcon("sap-icon://search");
 		oInfo = oButton.getAccessibilityInfo();
-		strictEqual(oInfo.description, "Search", "Description");
+		assert.strictEqual(oInfo.description, "Search", "Description");
 		oButton.destroy();
 	});
 

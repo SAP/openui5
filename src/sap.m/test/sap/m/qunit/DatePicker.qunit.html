@@ -651,8 +651,8 @@
 				oDP.onChange();
 
 				//assert
-				strictEqual(newValue, "05-05-16", "change event fired and new value is the same");
-				strictEqual(oDP.getDateValue().getFullYear(), 1916, "new dateValue is correct");
+				assert.strictEqual(newValue, "05-05-16", "change event fired and new value is the same");
+				assert.strictEqual(oDP.getDateValue().getFullYear(), 1916, "new dateValue is correct");
 
 				//clean
 				oDP.destroy();
@@ -672,15 +672,15 @@
 				var $DescribedByReference = jQuery.sap.byId($Input.attr("aria-describedby"));
 				var sDateAnnouncement = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DATEPICKER_DATE_TYPE");
 
-				strictEqual($DescribedByReference.text(), sDateAnnouncement, "Date announcement added into aria-describedby");
-				strictEqual($LabelledByReference.text(), sPlaceholder, "Placholder announcement added into aria-labelledby");
+				assert.strictEqual($DescribedByReference.text(), sDateAnnouncement, "Date announcement added into aria-describedby");
+				assert.strictEqual($LabelledByReference.text(), sPlaceholder, "Placholder announcement added into aria-labelledby");
 
 				oDP.setTooltip(sTooltip);
 				sap.ui.getCore().applyChanges();
 				$Input = jQuery(oDP.getFocusDomRef());
 				$DescribedByReference = jQuery.sap.byId($Input.attr("aria-describedby"));
 
-				strictEqual($DescribedByReference.text(), sDateAnnouncement + " " + sTooltip, "Date announcement and tootip is added into aria-describedby");
+				assert.strictEqual($DescribedByReference.text(), sDateAnnouncement + " " + sTooltip, "Date announcement and tootip is added into aria-describedby");
 
 				oDP.destroy();
 			});
@@ -694,30 +694,30 @@
 				ok(!!oInput.getAccessibilityInfo, "DatePicker has a getAccessibilityInfo function");
 				var oInfo = oInput.getAccessibilityInfo();
 				ok(!!oInfo, "getAccessibilityInfo returns a info object");
-				strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
-				strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT"), "Type");
-				strictEqual(oInfo.description, "Value Placeholder Date Tooltip", "Description");
-				strictEqual(oInfo.focusable, true, "Focusable");
-				strictEqual(oInfo.enabled, true, "Enabled");
-				strictEqual(oInfo.editable, true, "Editable");
+				assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
+				assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT"), "Type");
+				assert.strictEqual(oInfo.description, "Value Placeholder Date Tooltip", "Description");
+				assert.strictEqual(oInfo.focusable, true, "Focusable");
+				assert.strictEqual(oInfo.enabled, true, "Enabled");
+				assert.strictEqual(oInfo.editable, true, "Editable");
 				oInput.setValue("");
 				oInput.setEnabled(false);
 				oInfo = oInput.getAccessibilityInfo();
-				strictEqual(oInfo.description, "Placeholder Date Tooltip", "Description");
-				strictEqual(oInfo.focusable, false, "Focusable");
-				strictEqual(oInfo.enabled, false, "Enabled");
-				strictEqual(oInfo.editable, false, "Editable");
+				assert.strictEqual(oInfo.description, "Placeholder Date Tooltip", "Description");
+				assert.strictEqual(oInfo.focusable, false, "Focusable");
+				assert.strictEqual(oInfo.enabled, false, "Enabled");
+				assert.strictEqual(oInfo.editable, false, "Editable");
 				oInput.setEnabled(true);
 				oInput.setEditable(false);
 				oInfo = oInput.getAccessibilityInfo();
-				strictEqual(oInfo.focusable, true, "Focusable");
-				strictEqual(oInfo.enabled, true, "Enabled");
-				strictEqual(oInfo.editable, false, "Editable");
+				assert.strictEqual(oInfo.focusable, true, "Focusable");
+				assert.strictEqual(oInfo.enabled, true, "Enabled");
+				assert.strictEqual(oInfo.editable, false, "Editable");
 				oInput.setValueFormat("yyyy.MM.dd");
 				oInput.setDisplayFormat("yyyy-MM-dd");
 				oInput.setValue("2014.03.26");
 				oInfo = oInput.getAccessibilityInfo();
-				strictEqual(oInfo.description, "2014-03-26 Placeholder Date Tooltip", "Description");
+				assert.strictEqual(oInfo.description, "2014-03-26 Placeholder Date Tooltip", "Description");
 				oInput.destroy();
 			});
 
@@ -729,7 +729,7 @@
 					sExpectedAria = sDayAriaText + " " + sAriaSecondaryDay,
 					sAriaText = jQuery("#DP5-cal--Month0-20151124").attr('aria-label');
 
-				strictEqual(sAriaText, sExpectedAria, "Aria contains text for the secondary calendar type");
+				assert.strictEqual(sAriaText, sExpectedAria, "Aria contains text for the secondary calendar type");
 			});
 
 			QUnit.module("Events", {
@@ -755,13 +755,13 @@
 				qutils.triggerEvent("click", "EDP-icon");
 
 				// Assert
-				strictEqual(this.oSpy.callCount, 1, "Event handler should be called once after opening picker");
+				assert.strictEqual(this.oSpy.callCount, 1, "Event handler should be called once after opening picker");
 
 				// Act
 				qutils.triggerEvent("click", "EDP-cal--Head-next");
 
 				// Assert
-				strictEqual(this.oSpy.callCount, 2, "Event handler should be called second time after navigating in calendar");
+				assert.strictEqual(this.oSpy.callCount, 2, "Event handler should be called second time after navigating in calendar");
 			});
 
 			QUnit.module("SpecialDates - lazy loading", {

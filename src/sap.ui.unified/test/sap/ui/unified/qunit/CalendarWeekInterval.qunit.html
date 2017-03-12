@@ -171,9 +171,9 @@
 					restoreOldDate : false
 				});
 				//assert
-				strictEqual(_handleFocusCalendarDateSpy.callCount, 1, "CalendarDateInterval '_handleFocus()' was called for first time");
-				strictEqual(_focusDateExtendCalendarDateSpy.callCount, 1, "CalendarDateInterval '_focusDateExtend()' was called for first time");
-				strictEqual(_focusDateExtendWeekDateSpy.callCount, 1, "CalendarWeekInterval '_focusDateExtend()' was called for first time");
+				assert.strictEqual(_handleFocusCalendarDateSpy.callCount, 1, "CalendarDateInterval '_handleFocus()' was called for first time");
+				assert.strictEqual(_focusDateExtendCalendarDateSpy.callCount, 1, "CalendarDateInterval '_focusDateExtend()' was called for first time");
+				assert.strictEqual(_focusDateExtendWeekDateSpy.callCount, 1, "CalendarWeekInterval '_focusDateExtend()' was called for first time");
 				//act
 				this.sutMonth.fireFocus({
 					date : CalendarUtils._createUniversalUTCDate(new Date(2015, 0, 2, 19, 15, 0)),
@@ -181,9 +181,9 @@
 					restoreOldDate : false,
 					_outsideBorder: true
 				});
-				strictEqual(_handleFocusCalendarDateSpy.callCount, 2, "CalendarDateInterval '_handleFocus()' was called for second time");
-				strictEqual(_focusDateExtendCalendarDateSpy.callCount, 1, "CalendarDateInterval '_focusDateExtend()' was called for first time");
-				strictEqual(_focusDateExtendWeekDateSpy.callCount, 2, "CalendarWeekInterval '_focusDateExtend()' was not called");
+				assert.strictEqual(_handleFocusCalendarDateSpy.callCount, 2, "CalendarDateInterval '_handleFocus()' was called for second time");
+				assert.strictEqual(_focusDateExtendCalendarDateSpy.callCount, 1, "CalendarDateInterval '_focusDateExtend()' was called for first time");
+				assert.strictEqual(_focusDateExtendWeekDateSpy.callCount, 2, "CalendarWeekInterval '_focusDateExtend()' was not called");
 			});
 
 			QUnit.test("'_focusDateExtend()' has correct output", function (assert) {
@@ -194,12 +194,12 @@
 				//act
 				this.sut._focusDate(oExpectedDate, false, true);
 				//assert
-				strictEqual(_focusDateExtendSpy.callCount, 1, "'_focusDateExtend()' was called once");
+				assert.strictEqual(_focusDateExtendSpy.callCount, 1, "'_focusDateExtend()' was called once");
 				ok(_focusDateExtendSpy.calledWith(oExpectedDate, false, true), "'_focusDateExtend()' was called with the correct parameters");
 				//act
 				this.sut._focusDate(oExpectedDate, true, false);
 				//assert
-				strictEqual(_focusDateExtendSpy.callCount, 2, "'_focusDateExtend()' was called twice");
+				assert.strictEqual(_focusDateExtendSpy.callCount, 2, "'_focusDateExtend()' was called twice");
 				ok(_focusDateExtendSpy.calledWith(oExpectedDate, true, false), "'_focusDateExtend()' was called with the correct parameters");
 			});
 
@@ -314,7 +314,7 @@
 
 							this.sut._adjustFocusedDateUponYearChange(oTestDate, oTargetYear);
 							//assert
-							strictEqual(oTestDate.getTime(), oExpectedFirstDate.getTime(),
+							assert.strictEqual(oTestDate.getTime(), oExpectedFirstDate.getTime(),
 								sTestName + ": '_adjustFocusedDateUponMonthChange()' calculated correctly oFocusedDate when trying to navigate from " + oTestFocusedDateFullYear + " to " + oTargetYear + " for en-US locale");
 						}
 						fnRestartTestEnv();

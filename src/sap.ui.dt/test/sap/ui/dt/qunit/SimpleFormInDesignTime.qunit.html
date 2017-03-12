@@ -97,10 +97,10 @@
 				oHiddenFormAggregationOverlay.getChildren().forEach(function(oElementOverlay) {
 					bChildrenAreInHiddenTree = bChildrenAreInHiddenTree && oElementOverlay.isInHiddenTree();
 				});
-				strictEqual(bChildrenAreInHiddenTree, true, "all children of hidden aggregation are flaggen as inHiddenTree");
+				assert.strictEqual(bChildrenAreInHiddenTree, true, "all children of hidden aggregation are flaggen as inHiddenTree");
 
 				var oLabelOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLabel);
-				strictEqual(oLabelOverlay.isInHiddenTree(), false, "Public controls from content aggregation are not flagged as inHiddenTree");
+				assert.strictEqual(oLabelOverlay.isInHiddenTree(), false, "Public controls from content aggregation are not flagged as inHiddenTree");
 			});
 
 			QUnit.test("when the content is added to a SimpleForm ...", function(assert) {

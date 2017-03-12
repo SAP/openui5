@@ -30,14 +30,14 @@
 
 		// check rendered
 		var $container = $("div.sapMTextArea");
-		strictEqual($container.length, 1, "Textarea container is rendered");
+		assert.strictEqual($container.length, 1, "Textarea container is rendered");
 
 		var $textarea = $("textarea.sapMTextAreaInner");
-		strictEqual($textarea.length, 1, "Textarea is rendered");
+		assert.strictEqual($textarea.length, 1, "Textarea is rendered");
 
 		// check assigned and focus
-		strictEqual(sut._$input[0], $textarea[0], "Textarea set correctly");
-		strictEqual(sut._$input[0], sut.getFocusDomRef(), "Textarea is the focus object");
+		assert.strictEqual(sut._$input[0], $textarea[0], "Textarea set correctly");
+		assert.strictEqual(sut._$input[0], sut.getFocusDomRef(), "Textarea is the focus object");
 
 		//Cleanup
 		sut.destroy();
@@ -50,10 +50,10 @@
 
 		// check input base classes are assigned
 		var $container = $("div.sapMInputBase");
-		strictEqual($container.length, 1, "Container has InputBase class");
+		assert.strictEqual($container.length, 1, "Container has InputBase class");
 
 		var $textarea = $("textarea.sapMInputBaseInner");
-		strictEqual($textarea.length, 1, "TextArea has InputBase class");
+		assert.strictEqual($textarea.length, 1, "TextArea has InputBase class");
 
 		// check assigned
 		ok(sut instanceof sap.m.InputBase, "TextArea inherited from InputBase");
@@ -86,9 +86,9 @@
 				equal($textarea.attr("rows"), props.rows, "TextArea has correct max rows : " + props.rows);
 				equal($textarea.attr("cols"), props.cols, "TextArea has correct max cols : " + props.cols);
 				equal($textarea.attr("maxLength"), props.maxLength, "TextArea has correct max length : " + props.maxLength);
-				strictEqual($outer.outerWidth(), parseInt(props.width, 10), "TextArea has correct width : " + props.width);
-				strictEqual($outer.outerHeight(), parseInt(props.height, 10), "TextArea has correct height : " + props.height);
-				strictEqual($textarea.val(), sut.getValue(), "TextArea has correct value");
+				assert.strictEqual($outer.outerWidth(), parseInt(props.width, 10), "TextArea has correct width : " + props.width);
+				assert.strictEqual($outer.outerHeight(), parseInt(props.height, 10), "TextArea has correct height : " + props.height);
+				assert.strictEqual($textarea.val(), sut.getValue(), "TextArea has correct value");
 			},
 			applySetters = function(setters) {
 				Object.getOwnPropertyNames(setters).forEach(function(key) {
@@ -197,7 +197,7 @@
 
 		var spy = this.spy(sut, "_onTouchStart");
 		$textarea.trigger(tsEvent);
-		strictEqual(spy.called, false, "TouchStart event never called as expected");
+		assert.strictEqual(spy.called, false, "TouchStart event never called as expected");
 
 		//Cleanup
 		sut.destroy();
@@ -214,9 +214,9 @@
 
 		var $textarea = $("textarea");
 		if (jQuery.sap.Version(jQuery.fn.jquery).compareTo("1.8") < 0) {
-			strictEqual($textarea.data("events"), undefined, "Textarea does not bind dom events");
+			assert.strictEqual($textarea.data("events"), undefined, "Textarea does not bind dom events");
 		} else {
-			strictEqual($textarea._sapTest_dataEvents(), undefined, "Textarea does not bind dom events");
+			assert.strictEqual($textarea._sapTest_dataEvents(), undefined, "Textarea does not bind dom events");
 		}
 
 		//Cleanup
@@ -235,9 +235,9 @@
 
 		// desktop mode: browser should handle scroll no event required
 		if (jQuery.sap.Version(jQuery.fn.jquery).compareTo("1.8") < 0) {
-			strictEqual($textarea.data("events"), undefined, "Textarea does not bind dom events");
+			assert.strictEqual($textarea.data("events"), undefined, "Textarea does not bind dom events");
 		} else {
-			strictEqual($textarea._sapTest_dataEvents(), undefined, "Textarea does not bind dom events");
+			assert.strictEqual($textarea._sapTest_dataEvents(), undefined, "Textarea does not bind dom events");
 		}
 
 		//Cleanup
@@ -264,7 +264,7 @@
 		sap.ui.test.qunit.triggerKeydown(oTADomRef, "ENTER");
 
 		// assertion
-		strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired because initial value and dom value are same.");
+		assert.strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired because initial value and dom value are same.");
 
 		// change dom and cursor pos
 		sap.ui.test.qunit.triggerCharacterInput(oTADomRef, "a");
@@ -273,7 +273,7 @@
 		sap.ui.test.qunit.triggerKeydown(oTADomRef, "ENTER");
 
 		// assertion
-		strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired because enter is not a valid event to fire change event for textarea")
+		assert.strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired because enter is not a valid event to fire change event for textarea")
 
 		// reset spy
 		fnFireChangeSpy.reset();
@@ -283,7 +283,7 @@
 		this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
 		// assertion
-		strictEqual(fnFireChangeSpy.callCount, 1, "Change event is fired  because last known value and dom value are different");
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "Change event is fired  because last known value and dom value are different");
 
 		// cleanup
 		oTA.destroy();
@@ -310,10 +310,10 @@
 		var fnLiveChangeSpy = this.spy(oTA, "fireLiveChange");
 		sap.ui.test.qunit.triggerKeydown(oTADomRef, "ESCAPE");
 
-		strictEqual(fnLiveChangeSpy.callCount, 1, "LiveChange event is fired");
-		strictEqual(fnLiveChangeSpy.args[0][0].value, sInitValue, "Event is fired with correct parameter value");
-		strictEqual(fnLiveChangeSpy.args[0][0].newValue, sInitValue, "Event is fired with correct compatible parameter");
-		strictEqual(oTA.getValue(), sInitValue, "Value is reverted to initial");
+		assert.strictEqual(fnLiveChangeSpy.callCount, 1, "LiveChange event is fired");
+		assert.strictEqual(fnLiveChangeSpy.args[0][0].value, sInitValue, "Event is fired with correct parameter value");
+		assert.strictEqual(fnLiveChangeSpy.args[0][0].newValue, sInitValue, "Event is fired with correct compatible parameter");
+		assert.strictEqual(oTA.getValue(), sInitValue, "Value is reverted to initial");
 
 		// cleanup
 		oTA.destroy();
@@ -365,8 +365,8 @@
 		sap.ui.getCore().applyChanges();
 
 		var $TA = jQuery(oTA.getFocusDomRef());
-		strictEqual($TA.attr("role"), undefined, "Control role is not set. It causes issues with Jaws");
-		strictEqual($TA.attr("aria-multiline"), undefined, "Multiline is not for textarea. It causes issues with Jaws");
+		assert.strictEqual($TA.attr("role"), undefined, "Control role is not set. It causes issues with Jaws");
+		assert.strictEqual($TA.attr("aria-multiline"), undefined, "Multiline is not for textarea. It causes issues with Jaws");
 
 		oTA.destroy();
 	});
@@ -380,7 +380,7 @@
 		sap.ui.getCore().applyChanges();
 
 		oTA.focus();
-		strictEqual(oTA.getValue(), sValue, "API value is correct");
+		assert.strictEqual(oTA.getValue(), sValue, "API value is correct");
 		oTA.destroy();
 	});
 
@@ -433,7 +433,7 @@
 		var oTextAreaDomRef = oTextArea.getFocusDomRef();
 		oTextAreaDomRef.focus();
 
-		strictEqual(fnOnInputSpy.callCount, 0, "input event is NOT triggered when the textarea is focused");
+		assert.strictEqual(fnOnInputSpy.callCount, 0, "input event is NOT triggered when the textarea is focused");
 
 		// cleanup
 		oTextArea.destroy();
@@ -458,8 +458,8 @@
 		sap.ui.test.qunit.triggerEvent("input", oTextAreaDomRef);
 		sap.ui.test.qunit.triggerKeydown(oTextAreaDomRef, "1");
 
-		strictEqual(fnOnInputSpy.callCount, 1, "input event is triggered");
-		strictEqual(fnFireLiveChange.callCount, 1, "change event is fired");
+		assert.strictEqual(fnOnInputSpy.callCount, 1, "input event is triggered");
+		assert.strictEqual(fnFireLiveChange.callCount, 1, "change event is fired");
 
 		// cleanup
 		oTextArea.destroy();
@@ -483,9 +483,9 @@
 		oTextAreaDomRef.focus();
 		sap.ui.test.qunit.triggerEvent("input", oTextAreaDomRef);
 
-		strictEqual(fnOnInputSpy.callCount, 1, "input event is triggered");
-		strictEqual(oTextArea._getInputElementTagName(), "TEXTAREA", "Textarea tag element is used");
-		strictEqual(fnOnInputSpy.args[0][0].isMarked("invalid"), false, "input event is NOT marked as invalid");
+		assert.strictEqual(fnOnInputSpy.callCount, 1, "input event is triggered");
+		assert.strictEqual(oTextArea._getInputElementTagName(), "TEXTAREA", "Textarea tag element is used");
+		assert.strictEqual(fnOnInputSpy.args[0][0].isMarked("invalid"), false, "input event is NOT marked as invalid");
 
 		// cleanup
 		oTextArea.destroy();

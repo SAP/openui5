@@ -146,20 +146,20 @@
 		 * Tests accessor method for property visible of the whole Toolbar.
 		 */
 		QUnit.test("VisibleOk", function(assert) {
-			strictEqual(oCtrl.getVisible(), true);
+			assert.strictEqual(oCtrl.getVisible(), true);
 		});
 
 		/**
 		 * Tests accessor method for property width of the whole Toolbar.
 		 */
 		QUnit.test("WidthOk", function(assert) {
-			strictEqual(oCtrl.getWidth(), "490px");
+			assert.strictEqual(oCtrl.getWidth(), "490px");
 		});
 
 		QUnit.test("VisibleItems calculation with item size change", function(assert) {
 			var done = assert.async();
 			assert.expect(3);
-			strictEqual(oCtrl.getWidth(), "490px");
+			assert.strictEqual(oCtrl.getWidth(), "490px");
 			oCtrl.setWidth("350px");
 			sap.ui.getCore().applyChanges();
 			setTimeout(function(){ // give the Toolbar some time to recognize the change
@@ -170,7 +170,7 @@
 		});
 
 		QUnit.test("WidthOk after resize", function(assert) {
-			strictEqual(sap.ui.getCore().byId("Toolbar").getWidth(), "350px");
+			assert.strictEqual(sap.ui.getCore().byId("Toolbar").getWidth(), "350px");
 		});
 
 		// ==================================================

@@ -74,10 +74,10 @@
 					},
 					oSemanticPage = createSemanticPageFactory(null, oConfig);
 
-			strictEqual(oSemanticPage.$().length, 1, "Semantic page is in the DOM");
-			strictEqual(oSemanticPage.getAggregation("_page").$().length, 1, "Page is in the DOM");
-			strictEqual(oSemanticPage._getAnyHeader().$().length, 1, "Header is in the DOM");
-			//strictEqual(oSemanticPage._getPage().getFooter().$().length, 1, "Footer is in the DOM");
+			assert.strictEqual(oSemanticPage.$().length, 1, "Semantic page is in the DOM");
+			assert.strictEqual(oSemanticPage.getAggregation("_page").$().length, 1, "Page is in the DOM");
+			assert.strictEqual(oSemanticPage._getAnyHeader().$().length, 1, "Header is in the DOM");
+			//assert.strictEqual(oSemanticPage._getPage().getFooter().$().length, 1, "Footer is in the DOM");
 
 			oSemanticPage.destroy();
 		});
@@ -92,8 +92,8 @@
 					},
 					oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.detail, oConfig);
 
-			strictEqual(oSemanticPage.$("footer").length, 1, "Footer is in the DOM");
-			strictEqual(oSemanticPage.$("shareButton").length, 1, "shareButton is in the DOM");
+			assert.strictEqual(oSemanticPage.$("footer").length, 1, "Footer is in the DOM");
+			assert.strictEqual(oSemanticPage.$("shareButton").length, 1, "shareButton is in the DOM");
 
 			oSemanticPage.destroy();
 		});
@@ -107,8 +107,8 @@
 					},
 					oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.fullscreen, oConfig);
 
-			strictEqual(oSemanticPage._getPage().getFooter().$().length, 1, "Footer is in the DOM");
-			strictEqual(oSemanticPage._getPage().getFooter().getContent().length, 2, "ShareMenu button is in the DOM");
+			assert.strictEqual(oSemanticPage._getPage().getFooter().$().length, 1, "Footer is in the DOM");
+			assert.strictEqual(oSemanticPage._getPage().getFooter().getContent().length, 2, "ShareMenu button is in the DOM");
 
 			oSemanticPage.destroy();
 		});
@@ -123,7 +123,7 @@
 
 			ok(oSemanticPage.getAggregation("_page").getFooter() instanceof sap.m.Toolbar, "The footer is Toolbar");
 
-			strictEqual(oSemanticPage._getPage().getFooter().getContent()[0] instanceof sap.m.ToolbarSpacer, true, "inner footer first item is spacer");
+			assert.strictEqual(oSemanticPage._getPage().getFooter().getContent()[0] instanceof sap.m.ToolbarSpacer, true, "inner footer first item is spacer");
 
 			oSemanticPage.destroy();
 		});
@@ -138,7 +138,7 @@
 
 			ok(oSemanticPage.getAggregation("_page").getFooter() instanceof sap.m.Toolbar, "The footer is Toolbar");
 
-			strictEqual(oSemanticPage._getPage().getFooter().getContent()[1] instanceof sap.m.Button, true, "inner footer last item is button (for shareMenu)");
+			assert.strictEqual(oSemanticPage._getPage().getFooter().getContent()[1] instanceof sap.m.Button, true, "inner footer last item is button (for shareMenu)");
 
 			oSemanticPage.destroy();
 		});
@@ -153,7 +153,7 @@
 
 			ok(oSemanticPage.getAggregation("_page").getFooter() instanceof sap.m.Toolbar, "The footer is Toolbar");
 
-			strictEqual(oSemanticPage._getPage().getFooter().getContent()[1] instanceof sap.m.Button, true, "inner footer last item is button (for shareMenu)");
+			assert.strictEqual(oSemanticPage._getPage().getFooter().getContent()[1] instanceof sap.m.Button, true, "inner footer last item is button (for shareMenu)");
 
 			oSemanticPage.destroy();
 		});
@@ -162,7 +162,7 @@
 			var oConfig = {},
 				oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.fullscreen, oConfig);
 
-			strictEqual(oSemanticPage._getPage().getShowHeader(), false, "header not shown");
+			assert.strictEqual(oSemanticPage._getPage().getShowHeader(), false, "header not shown");
 
 			oSemanticPage.destroy();
 		});
@@ -173,7 +173,7 @@
 					},
 					oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.fullscreen, oConfig);
 
-			strictEqual(oSemanticPage._getPage().getShowHeader(), true, "header is shown");
+			assert.strictEqual(oSemanticPage._getPage().getShowHeader(), true, "header is shown");
 
 			oSemanticPage.destroy();
 		});
@@ -186,8 +186,8 @@
 					oMasterPage = createSemanticPageFactory(_SemanticPageTypes.master, null),
 					oDetailPage = createSemanticPageFactory(_SemanticPageTypes.detail, null);
 
-			strictEqual(oSemanticPage.getTitle(), "", "The default value for title is empty");
-			strictEqual(oSemanticPage.getShowNavButton(), false, "Navigation Button should not be showed by default");
+			assert.strictEqual(oSemanticPage.getTitle(), "", "The default value for title is empty");
+			assert.strictEqual(oSemanticPage.getShowNavButton(), false, "Navigation Button should not be showed by default");
 
 			oSemanticPage.destroy();
 			oMasterPage.destroy();
@@ -202,9 +202,9 @@
 					oSemanticPage2 = createSemanticPageFactory();
 
 			ok(oSemanticPage1._getInternalHeader().getContentMiddle()[0] instanceof sap.m.Title, "header content contains title");
-			strictEqual(oSemanticPage1._getInternalHeader().getContentMiddle()[0].getText(), "This is a title", "header content contains title");
-			strictEqual(oSemanticPage1.getTitle(), "This is a title", "title is set");
-			strictEqual(oSemanticPage2._getInternalHeader().getContentMiddle()[0], undefined, "Header content middle is empty");
+			assert.strictEqual(oSemanticPage1._getInternalHeader().getContentMiddle()[0].getText(), "This is a title", "header content contains title");
+			assert.strictEqual(oSemanticPage1.getTitle(), "This is a title", "title is set");
+			assert.strictEqual(oSemanticPage2._getInternalHeader().getContentMiddle()[0], undefined, "Header content middle is empty");
 
 			// Arrange
 			var sUpdatedTitle = "Updated title";
@@ -212,8 +212,8 @@
 			// Act
 			oSemanticPage1.setTitle(sUpdatedTitle);
 
-			strictEqual(oSemanticPage1.getTitle(), sUpdatedTitle, "title is updated");
-			strictEqual(oSemanticPage1._getInternalHeader().getContentMiddle()[0].getText(), sUpdatedTitle, "header content contains updated title");
+			assert.strictEqual(oSemanticPage1.getTitle(), sUpdatedTitle, "title is updated");
+			assert.strictEqual(oSemanticPage1._getInternalHeader().getContentMiddle()[0].getText(), sUpdatedTitle, "header content contains updated title");
 
 			oSemanticPage1.destroy();
 			oSemanticPage2.destroy();
@@ -227,8 +227,8 @@
 					oSemanticPage2 = createSemanticPageFactory();
 
 			ok(oSemanticPage1._getInternalHeader().getContentLeft()[0] instanceof sap.m.Button, "header content contains navButton");
-			strictEqual(oSemanticPage1.getShowNavButton(), true, "showNavButton is set");
-			strictEqual(oSemanticPage2._getInternalHeader().getContentLeft()[0], undefined, "Header content left is empty");
+			assert.strictEqual(oSemanticPage1.getShowNavButton(), true, "showNavButton is set");
+			assert.strictEqual(oSemanticPage2._getInternalHeader().getContentLeft()[0], undefined, "Header content left is empty");
 
 			oSemanticPage1.destroy();
 			oSemanticPage2.destroy();
@@ -244,9 +244,9 @@
 					oSemanticPage = createSemanticPageFactory(null, oConfig);
 
 			oSemanticPage.setFloatingFooter(true);
-			strictEqual(oSemanticPage._getPage().getFloatingFooter(), true);
+			assert.strictEqual(oSemanticPage._getPage().getFloatingFooter(), true);
 			oSemanticPage.setFloatingFooter(false);
-			strictEqual(oSemanticPage._getPage().getFloatingFooter(), false);
+			assert.strictEqual(oSemanticPage._getPage().getFloatingFooter(), false);
 			oSemanticPage.destroy();
 		});
 
@@ -266,14 +266,14 @@
 					oTitle = new sap.m.Title();
 
 			oSemanticPage.setSubHeader(oBar);
-			strictEqual(oSemanticPage.getAggregation("_page").getSubHeader(), oBar, "Subheader is set to Bar");
+			assert.strictEqual(oSemanticPage.getAggregation("_page").getSubHeader(), oBar, "Subheader is set to Bar");
 
 			//TODO: check how restrictions of type are imposed
 			//oSemanticPage.setSubHeader(oTitle);
 			//ok(!(oSemanticPage.getAggregation("_page").getSubHeader() instanceof sap.m.Title), "Subheader content should not allow adding components that does not implement IBar interface");
 
 			oSemanticPage.getAggregation("_page").setSubHeader(oBar);
-			strictEqual(oSemanticPage.getSubHeader(), oBar, "Retrieved content is Bar");
+			assert.strictEqual(oSemanticPage.getSubHeader(), oBar, "Retrieved content is Bar");
 
 			oSemanticPage.setShowSubHeader(true);
 			ok(oSemanticPage.getAggregation("_page").getShowSubHeader(), "SubHeader content should be shown");
@@ -282,7 +282,7 @@
 			ok(!oSemanticPage.getAggregation("_page").getShowSubHeader(), "SubHeader content should not be hidden");
 
 			oSemanticPage.destroySubHeader();
-			strictEqual(oSemanticPage.getAggregation("_page").getSubHeader(), null, "There should be no subheader content");
+			assert.strictEqual(oSemanticPage.getAggregation("_page").getSubHeader(), null, "There should be no subheader content");
 
 			oSemanticPage.destroy();
 		});
@@ -300,41 +300,41 @@
 					},
 					oSemanticPage = createSemanticPageFactory(null, oConfig);
 
-			strictEqual(oSemanticPage.getContent().length, 2, "getContent has correct content length");
-			strictEqual(oSemanticPage._getPage().getContent().length, 2, "inner page content has correct content length");
+			assert.strictEqual(oSemanticPage.getContent().length, 2, "getContent has correct content length");
+			assert.strictEqual(oSemanticPage._getPage().getContent().length, 2, "inner page content has correct content length");
 
-			strictEqual(oSemanticPage.getContent()[0], oButton1, "getContent retrieves the correct content[0]");
-			strictEqual(oSemanticPage.indexOfContent(oButton1), 0, "index of the inner content is 0");
-			strictEqual(oSemanticPage._getPage().indexOfContent(oButton1), 0, "index of the inner page content is 0");
+			assert.strictEqual(oSemanticPage.getContent()[0], oButton1, "getContent retrieves the correct content[0]");
+			assert.strictEqual(oSemanticPage.indexOfContent(oButton1), 0, "index of the inner content is 0");
+			assert.strictEqual(oSemanticPage._getPage().indexOfContent(oButton1), 0, "index of the inner page content is 0");
 
-			strictEqual(oSemanticPage.getContent()[1], oButton2, "getContent retrieves the correct content[1]");
-			strictEqual(oSemanticPage.indexOfContent(oButton2), 1, "index of the inner content is 1");
-			strictEqual(oSemanticPage._getPage().indexOfContent(oButton2), 1, "index of the inner page content is 1");
+			assert.strictEqual(oSemanticPage.getContent()[1], oButton2, "getContent retrieves the correct content[1]");
+			assert.strictEqual(oSemanticPage.indexOfContent(oButton2), 1, "index of the inner content is 1");
+			assert.strictEqual(oSemanticPage._getPage().indexOfContent(oButton2), 1, "index of the inner page content is 1");
 
 			var oInsertResult = oSemanticPage.insertContent(oTitle, 1);
-			strictEqual(oInsertResult, oSemanticPage, "insert method returns semanticPage reference");
-			strictEqual(oSemanticPage.indexOfContent(oTitle), 1, "index of the inserted inner content is 1");
-			strictEqual(oSemanticPage._getPage().indexOfContent(oTitle), 1, "index of the inserted inner page content is 1");
+			assert.strictEqual(oInsertResult, oSemanticPage, "insert method returns semanticPage reference");
+			assert.strictEqual(oSemanticPage.indexOfContent(oTitle), 1, "index of the inserted inner content is 1");
+			assert.strictEqual(oSemanticPage._getPage().indexOfContent(oTitle), 1, "index of the inserted inner page content is 1");
 
 			var oRemoveResult = oSemanticPage.removeContent(oButton1);
-			strictEqual(oRemoveResult, oButton1, "remove method returns remove content reference");
+			assert.strictEqual(oRemoveResult, oButton1, "remove method returns remove content reference");
 			ok(oSemanticPage.getContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
 			ok(oSemanticPage._getPage().getContent()[0] !== oButton1, "Button 1 is removed from the inner page aggregation");
 
 			var oRemoveAllResult = oSemanticPage.removeAllContent();
-			strictEqual(oRemoveAllResult.length, 2, "removeAll method returns all removed content");
-			strictEqual(oSemanticPage.getContent().length, 0, "all content is removed");
-			strictEqual(oSemanticPage._getPage().getContent().length, 0, "all inner page content is removed");
+			assert.strictEqual(oRemoveAllResult.length, 2, "removeAll method returns all removed content");
+			assert.strictEqual(oSemanticPage.getContent().length, 0, "all content is removed");
+			assert.strictEqual(oSemanticPage._getPage().getContent().length, 0, "all inner page content is removed");
 
 			var oAddResult = oSemanticPage.addContent(oButton3);
-			strictEqual(oAddResult, oSemanticPage, "add method returns semanticPage reference");
-			strictEqual(oSemanticPage.getContent().length, 1, "A button is added to the custom inner content");
-			strictEqual(oSemanticPage._getPage().getContent().length, 1, "A button is added to the inner page content");
+			assert.strictEqual(oAddResult, oSemanticPage, "add method returns semanticPage reference");
+			assert.strictEqual(oSemanticPage.getContent().length, 1, "A button is added to the custom inner content");
+			assert.strictEqual(oSemanticPage._getPage().getContent().length, 1, "A button is added to the inner page content");
 
 			oSemanticPage.destroyContent();
 			ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
-			strictEqual(oSemanticPage.getContent().length, 0, "no custom inner content is available");
-			strictEqual(oSemanticPage._getPage().getContent().length, 0, "no inner page content is available");
+			assert.strictEqual(oSemanticPage.getContent().length, 0, "no custom inner content is available");
+			assert.strictEqual(oSemanticPage._getPage().getContent().length, 0, "no inner page content is available");
 
 			oSemanticPage.destroy();
 		});
@@ -364,16 +364,16 @@
 
 			oPage.setModel(oModel);
 
-			strictEqual(oPage.getContent().length, 1, "page has custom inner content");
-			strictEqual(oPage._getPage().getContent().length, 1, "inner page has content");
+			assert.strictEqual(oPage.getContent().length, 1, "page has custom inner content");
+			assert.strictEqual(oPage._getPage().getContent().length, 1, "inner page has content");
 
 			var oButton = oPage.getContent()[0];
-			strictEqual(oButton.getText(), "Custom", "content has correct text");
-			strictEqual(oButton.getType(), "Reject", "content has correct button type");
-			strictEqual(oButton.getTooltip(), "Martin", "content has correct tooltip");
+			assert.strictEqual(oButton.getText(), "Custom", "content has correct text");
+			assert.strictEqual(oButton.getType(), "Reject", "content has correct button type");
+			assert.strictEqual(oButton.getTooltip(), "Martin", "content has correct tooltip");
 
 			var oInnerButton = oPage._getPage().getContent()[0];
-			strictEqual(oInnerButton, oButton, "inner page has correct content");
+			assert.strictEqual(oInnerButton, oButton, "inner page has correct content");
 
 			// Clean up
 			oPage.destroy();
@@ -394,41 +394,41 @@
 
 			var iInitFooterContentLength = 0; //no other content in header
 
-			strictEqual(oSemanticPage.getCustomHeaderContent().length, 2, "getCustomHeaderContent has correct content length");
-			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 2), "inner footer content has correct content length");
+			assert.strictEqual(oSemanticPage.getCustomHeaderContent().length, 2, "getCustomHeaderContent has correct content length");
+			assert.strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 2), "inner footer content has correct content length");
 
-			strictEqual(oSemanticPage.getCustomHeaderContent()[0], oButton1, "getCustomHeaderContent retrieves the correct content");
-			strictEqual(oSemanticPage._getInternalHeader().getContentRight()[0], oButton1, "inner header has the correct content");
+			assert.strictEqual(oSemanticPage.getCustomHeaderContent()[0], oButton1, "getCustomHeaderContent retrieves the correct content");
+			assert.strictEqual(oSemanticPage._getInternalHeader().getContentRight()[0], oButton1, "inner header has the correct content");
 
-			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton1), 0, "index of the first header content item  is 0");
-			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton1), 0, "inner header has the correct index 0");
+			assert.strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton1), 0, "index of the first header content item  is 0");
+			assert.strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton1), 0, "inner header has the correct index 0");
 
-			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton2), 1, "index of the second header content item is 1");
-			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton2), 1, "inner header has the correct index 1");
+			assert.strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton2), 1, "index of the second header content item is 1");
+			assert.strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton2), 1, "inner header has the correct index 1");
 
 			var oInsertResult = oSemanticPage.insertCustomHeaderContent(oTitle, 1);
-			strictEqual(oInsertResult, oSemanticPage, "insert method returns the semantic page");
-			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oTitle), 1, "index of the inserted header content is 1");
-			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oTitle), 1, "index of the inner inserted header content is 1");
+			assert.strictEqual(oInsertResult, oSemanticPage, "insert method returns the semantic page");
+			assert.strictEqual(oSemanticPage.indexOfCustomHeaderContent(oTitle), 1, "index of the inserted header content is 1");
+			assert.strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oTitle), 1, "index of the inner inserted header content is 1");
 
 			var oRemoveResult = oSemanticPage.removeCustomHeaderContent(oButton1);
-			strictEqual(oRemoveResult, oButton1, "remove method returns the removed content");
+			assert.strictEqual(oRemoveResult, oButton1, "remove method returns the removed content");
 			ok(oSemanticPage.getCustomHeaderContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
 			ok(oSemanticPage._getInternalHeader().getContentRight()[1] !== oButton1, "Button 1 is removed from the inner header aggregation");
 
 			var oRemoveAllResult = oSemanticPage.removeAllCustomHeaderContent();
-			strictEqual(oRemoveAllResult.length, 2, "removeAll method reurns all removed content");
-			strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "all content is removed");
-			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, iInitFooterContentLength, "all content is removed");
+			assert.strictEqual(oRemoveAllResult.length, 2, "removeAll method reurns all removed content");
+			assert.strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "all content is removed");
+			assert.strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, iInitFooterContentLength, "all content is removed");
 
 			var oAddResult = oSemanticPage.addCustomHeaderContent(oButton3);
-			strictEqual(oAddResult, oSemanticPage, "insert method returns the semantic page");
-			strictEqual(oSemanticPage.getCustomHeaderContent().length, 1, "A button is added to the custom header content");
-			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 1), "A button is added to the custom header content");
+			assert.strictEqual(oAddResult, oSemanticPage, "insert method returns the semantic page");
+			assert.strictEqual(oSemanticPage.getCustomHeaderContent().length, 1, "A button is added to the custom header content");
+			assert.strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 1), "A button is added to the custom header content");
 
 			oSemanticPage.destroyCustomHeaderContent();
 			ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
-			strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "no custom header content is available");
+			assert.strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "no custom header content is available");
 
 			oSemanticPage.destroy();
 		});
@@ -460,16 +460,16 @@
 
 			var iInitFooterContentLength = 0; //no init content
 
-			strictEqual(oPage.getCustomHeaderContent().length, 1, "page has custom header content");
-			strictEqual(oPage._getInternalHeader().getContentRight().length, (1 + iInitFooterContentLength), "page has custom header content");
+			assert.strictEqual(oPage.getCustomHeaderContent().length, 1, "page has custom header content");
+			assert.strictEqual(oPage._getInternalHeader().getContentRight().length, (1 + iInitFooterContentLength), "page has custom header content");
 
 			var oButton = oPage.getCustomHeaderContent()[0];
-			strictEqual(oButton.getText(), "Custom", "content has correct text");
-			strictEqual(oButton.getType(), "Reject", "content has correct button type");
-			strictEqual(oButton.getTooltip(), "Martin", "content has correct tooltip");
+			assert.strictEqual(oButton.getText(), "Custom", "content has correct text");
+			assert.strictEqual(oButton.getType(), "Reject", "content has correct button type");
+			assert.strictEqual(oButton.getTooltip(), "Martin", "content has correct tooltip");
 
 			var oInnerButton = oPage._getInternalHeader().getContentRight()[0];
-			strictEqual(oInnerButton, oButton, "inner header has correct content");
+			assert.strictEqual(oInnerButton, oButton, "inner header has correct content");
 
 			// Clean up
 			oPage.destroy();
@@ -491,41 +491,41 @@
 
 			var iInitFooterContentLength = 1; //paging button
 
-			strictEqual(oSemanticPage.getCustomHeaderContent().length, 2, "getCustomHeaderContent has correct content length");
-			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 2), "inner footer content has correct content length");
+			assert.strictEqual(oSemanticPage.getCustomHeaderContent().length, 2, "getCustomHeaderContent has correct content length");
+			assert.strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 2), "inner footer content has correct content length");
 
-			strictEqual(oSemanticPage.getCustomHeaderContent()[0], oButton1, "getCustomHeaderContent retrieves the correct content");
-			strictEqual(oSemanticPage._getInternalHeader().getContentRight()[0], oButton1, "inner header has the correct content");
+			assert.strictEqual(oSemanticPage.getCustomHeaderContent()[0], oButton1, "getCustomHeaderContent retrieves the correct content");
+			assert.strictEqual(oSemanticPage._getInternalHeader().getContentRight()[0], oButton1, "inner header has the correct content");
 
-			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton1), 0, "index of the first header content item  is 0");
-			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton1), 0, "inner header has the correct index 0");
+			assert.strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton1), 0, "index of the first header content item  is 0");
+			assert.strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton1), 0, "inner header has the correct index 0");
 
-			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton2), 1, "index of the second header content item is 1");
-			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton2), 1, "inner header has the correct index 1");
+			assert.strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton2), 1, "index of the second header content item is 1");
+			assert.strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton2), 1, "inner header has the correct index 1");
 
 			var oInsertResult = oSemanticPage.insertCustomHeaderContent(oTitle, 1);
-			strictEqual(oInsertResult, oSemanticPage, "insert method returns the semantic page");
-			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oTitle), 1, "index of the inserted header content is 1");
-			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oTitle), 1, "index of the inner inserted header content is 1");
+			assert.strictEqual(oInsertResult, oSemanticPage, "insert method returns the semantic page");
+			assert.strictEqual(oSemanticPage.indexOfCustomHeaderContent(oTitle), 1, "index of the inserted header content is 1");
+			assert.strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oTitle), 1, "index of the inner inserted header content is 1");
 
 			var oRemoveResult = oSemanticPage.removeCustomHeaderContent(oButton1);
-			strictEqual(oRemoveResult, oButton1, "remove method returns the removed content");
+			assert.strictEqual(oRemoveResult, oButton1, "remove method returns the removed content");
 			ok(oSemanticPage.getCustomHeaderContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
 			ok(oSemanticPage._getInternalHeader().getContentRight()[1] !== oButton1, "Button 1 is removed from the inner header aggregation");
 
 			var oRemoveAllResult = oSemanticPage.removeAllCustomHeaderContent();
-			strictEqual(oRemoveAllResult.length, 2, "removeAll method reurns all removed content");
-			strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "all content is removed");
-			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, iInitFooterContentLength, "all content is removed");
+			assert.strictEqual(oRemoveAllResult.length, 2, "removeAll method reurns all removed content");
+			assert.strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "all content is removed");
+			assert.strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, iInitFooterContentLength, "all content is removed");
 
 			var oAddResult = oSemanticPage.addCustomHeaderContent(oButton3);
-			strictEqual(oAddResult, oSemanticPage, "insert method returns the semantic page");
-			strictEqual(oSemanticPage.getCustomHeaderContent().length, 1, "A button is added to the custom header content");
-			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 1), "A button is added to the custom header content");
+			assert.strictEqual(oAddResult, oSemanticPage, "insert method returns the semantic page");
+			assert.strictEqual(oSemanticPage.getCustomHeaderContent().length, 1, "A button is added to the custom header content");
+			assert.strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 1), "A button is added to the custom header content");
 
 			oSemanticPage.destroyCustomHeaderContent();
 			ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
-			strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "no custom header content is available");
+			assert.strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "no custom header content is available");
 
 			oSemanticPage.destroy();
 		});
@@ -546,41 +546,41 @@
 
 			var iInitFooterContentLength = 1; //multiselect action
 
-			strictEqual(oSemanticPage.getCustomHeaderContent().length, 2, "getCustomHeaderContent has correct content length");
-			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 2), "inner footer content has correct content length");
+			assert.strictEqual(oSemanticPage.getCustomHeaderContent().length, 2, "getCustomHeaderContent has correct content length");
+			assert.strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 2), "inner footer content has correct content length");
 
-			strictEqual(oSemanticPage.getCustomHeaderContent()[0], oButton1, "getCustomHeaderContent retrieves the correct content");
-			strictEqual(oSemanticPage._getInternalHeader().getContentRight()[0], oButton1, "inner header has the correct content");
+			assert.strictEqual(oSemanticPage.getCustomHeaderContent()[0], oButton1, "getCustomHeaderContent retrieves the correct content");
+			assert.strictEqual(oSemanticPage._getInternalHeader().getContentRight()[0], oButton1, "inner header has the correct content");
 
-			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton1), 0, "index of the first header content item  is 0");
-			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton1), 0, "inner header has the correct index 0");
+			assert.strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton1), 0, "index of the first header content item  is 0");
+			assert.strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton1), 0, "inner header has the correct index 0");
 
-			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton2), 1, "index of the second header content item is 1");
-			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton2), 1, "inner header has the correct index 1");
+			assert.strictEqual(oSemanticPage.indexOfCustomHeaderContent(oButton2), 1, "index of the second header content item is 1");
+			assert.strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oButton2), 1, "inner header has the correct index 1");
 
 			var oInsertResult = oSemanticPage.insertCustomHeaderContent(oTitle, 1);
-			strictEqual(oInsertResult, oSemanticPage, "insert method returns the semantic page");
-			strictEqual(oSemanticPage.indexOfCustomHeaderContent(oTitle), 1, "index of the inserted header content is 1");
-			strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oTitle), 1, "index of the inner inserted header content is 1");
+			assert.strictEqual(oInsertResult, oSemanticPage, "insert method returns the semantic page");
+			assert.strictEqual(oSemanticPage.indexOfCustomHeaderContent(oTitle), 1, "index of the inserted header content is 1");
+			assert.strictEqual(oSemanticPage._getInternalHeader().indexOfContentRight(oTitle), 1, "index of the inner inserted header content is 1");
 
 			var oRemoveResult = oSemanticPage.removeCustomHeaderContent(oButton1);
-			strictEqual(oRemoveResult, oButton1, "remove method returns the removed content");
+			assert.strictEqual(oRemoveResult, oButton1, "remove method returns the removed content");
 			ok(oSemanticPage.getCustomHeaderContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
 			ok(oSemanticPage._getInternalHeader().getContentRight()[1] !== oButton1, "Button 1 is removed from the inner header aggregation");
 
 			var oRemoveAllResult = oSemanticPage.removeAllCustomHeaderContent();
-			strictEqual(oRemoveAllResult.length, 2, "removeAll method reurns all removed content");
-			strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "all content is removed");
-			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, iInitFooterContentLength, "all content is removed");
+			assert.strictEqual(oRemoveAllResult.length, 2, "removeAll method reurns all removed content");
+			assert.strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "all content is removed");
+			assert.strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, iInitFooterContentLength, "all content is removed");
 
 			var oAddResult = oSemanticPage.addCustomHeaderContent(oButton3);
-			strictEqual(oAddResult, oSemanticPage, "insert method returns the semantic page");
-			strictEqual(oSemanticPage.getCustomHeaderContent().length, 1, "A button is added to the custom header content");
-			strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 1), "A button is added to the custom header content");
+			assert.strictEqual(oAddResult, oSemanticPage, "insert method returns the semantic page");
+			assert.strictEqual(oSemanticPage.getCustomHeaderContent().length, 1, "A button is added to the custom header content");
+			assert.strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 1), "A button is added to the custom header content");
 
 			oSemanticPage.destroyCustomHeaderContent();
 			ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
-			strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "no custom header content is available");
+			assert.strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "no custom header content is available");
 
 			oSemanticPage.destroy();
 		});
@@ -613,16 +613,16 @@
 
 			var iInitFooterContentLength = 1; //paging button
 
-			strictEqual(oPage.getCustomHeaderContent().length, 1, "page has custom header content");
-			strictEqual(oPage._getInternalHeader().getContentRight().length, (1 + iInitFooterContentLength), "page has custom header content");
+			assert.strictEqual(oPage.getCustomHeaderContent().length, 1, "page has custom header content");
+			assert.strictEqual(oPage._getInternalHeader().getContentRight().length, (1 + iInitFooterContentLength), "page has custom header content");
 
 			var oButton = oPage.getCustomHeaderContent()[0];
-			strictEqual(oButton.getText(), "Custom", "content has correct text");
-			strictEqual(oButton.getType(), "Reject", "content has correct button type");
-			strictEqual(oButton.getTooltip(), "Martin", "content has correct tooltip");
+			assert.strictEqual(oButton.getText(), "Custom", "content has correct text");
+			assert.strictEqual(oButton.getType(), "Reject", "content has correct button type");
+			assert.strictEqual(oButton.getTooltip(), "Martin", "content has correct tooltip");
 
 			var oInnerButton = oPage._getInternalHeader().getContentRight()[0];
-			strictEqual(oInnerButton, oButton, "inner header has correct content");
+			assert.strictEqual(oInnerButton, oButton, "inner header has correct content");
 
 			// Clean up
 			oPage.destroy();
@@ -656,16 +656,16 @@
 
 			var iInitFooterContentLength = 1; //multiselect button
 
-			strictEqual(oPage.getCustomHeaderContent().length, 1, "page has custom header content");
-			strictEqual(oPage._getInternalHeader().getContentRight().length, (1 + iInitFooterContentLength), "page has custom header content");
+			assert.strictEqual(oPage.getCustomHeaderContent().length, 1, "page has custom header content");
+			assert.strictEqual(oPage._getInternalHeader().getContentRight().length, (1 + iInitFooterContentLength), "page has custom header content");
 
 			var oButton = oPage.getCustomHeaderContent()[0];
-			strictEqual(oButton.getText(), "Custom", "content has correct text");
-			strictEqual(oButton.getType(), "Reject", "content has correct button type");
-			strictEqual(oButton.getTooltip(), "Martin", "content has correct tooltip");
+			assert.strictEqual(oButton.getText(), "Custom", "content has correct text");
+			assert.strictEqual(oButton.getType(), "Reject", "content has correct button type");
+			assert.strictEqual(oButton.getTooltip(), "Martin", "content has correct tooltip");
 
 			var oInnerButton = oPage._getInternalHeader().getContentRight()[0];
-			strictEqual(oInnerButton, oButton, "inner header has correct content");
+			assert.strictEqual(oInnerButton, oButton, "inner header has correct content");
 
 			// Clean up
 			oPage.destroy();
@@ -686,41 +686,41 @@
 
 			var iInitFooterContentLength = 1; //spacer
 
-			strictEqual(oSemanticPage.getCustomFooterContent().length, 2, "getCustomFooterContent has correct content length");
-			strictEqual(oSemanticPage._getPage().getFooter().getContent().length, (iInitFooterContentLength + 2), "inner footer content has correct content length");
+			assert.strictEqual(oSemanticPage.getCustomFooterContent().length, 2, "getCustomFooterContent has correct content length");
+			assert.strictEqual(oSemanticPage._getPage().getFooter().getContent().length, (iInitFooterContentLength + 2), "inner footer content has correct content length");
 
-			strictEqual(oSemanticPage.getCustomFooterContent()[0], oButton1, "getCustomFooterContent retrieves the correct content");
-			strictEqual(oSemanticPage._getPage().getFooter().getContent()[1], oButton1, "inner footer has the correct content"); //spacer is the first item
+			assert.strictEqual(oSemanticPage.getCustomFooterContent()[0], oButton1, "getCustomFooterContent retrieves the correct content");
+			assert.strictEqual(oSemanticPage._getPage().getFooter().getContent()[1], oButton1, "inner footer has the correct content"); //spacer is the first item
 
-			strictEqual(oSemanticPage.indexOfCustomFooterContent(oButton1), 0, "index of the first footer content item  is 0");
-			strictEqual(oSemanticPage._getPage().getFooter().indexOfContent(oButton1), 1, "inner footer has the correct index 1"); //spacer is the first item
+			assert.strictEqual(oSemanticPage.indexOfCustomFooterContent(oButton1), 0, "index of the first footer content item  is 0");
+			assert.strictEqual(oSemanticPage._getPage().getFooter().indexOfContent(oButton1), 1, "inner footer has the correct index 1"); //spacer is the first item
 
-			strictEqual(oSemanticPage.indexOfCustomFooterContent(oButton2), 1, "index of the second footer content item is 1");
-			strictEqual(oSemanticPage._getPage().getFooter().indexOfContent(oButton2), 2, "inner footer has the correct index 2"); //spacer is the first item
+			assert.strictEqual(oSemanticPage.indexOfCustomFooterContent(oButton2), 1, "index of the second footer content item is 1");
+			assert.strictEqual(oSemanticPage._getPage().getFooter().indexOfContent(oButton2), 2, "inner footer has the correct index 2"); //spacer is the first item
 
 			var oInsertResult = oSemanticPage.insertCustomFooterContent(oTitle, 1);
-			strictEqual(oInsertResult, oSemanticPage, "insert method returns the semantic page");
-			strictEqual(oSemanticPage.indexOfCustomFooterContent(oTitle), 1, "index of the inserted Footer content is 1");
-			strictEqual(oSemanticPage._getPage().getFooter().indexOfContent(oTitle), 2, "index of the inner inserted Footer content is 2"); //spacer is the first item
+			assert.strictEqual(oInsertResult, oSemanticPage, "insert method returns the semantic page");
+			assert.strictEqual(oSemanticPage.indexOfCustomFooterContent(oTitle), 1, "index of the inserted Footer content is 1");
+			assert.strictEqual(oSemanticPage._getPage().getFooter().indexOfContent(oTitle), 2, "index of the inner inserted Footer content is 2"); //spacer is the first item
 
 			var oRemoveResult = oSemanticPage.removeCustomFooterContent(oButton1);
-			strictEqual(oRemoveResult, oButton1, "remove method returns the removed content");
+			assert.strictEqual(oRemoveResult, oButton1, "remove method returns the removed content");
 			ok(oSemanticPage.getCustomFooterContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
 			ok(oSemanticPage._getPage().getFooter().getContent()[1] !== oButton1, "Button 1 is removed from the inner footer aggregation");
 
 			var oRemoveAllResult = oSemanticPage.removeAllCustomFooterContent();
-			strictEqual(oRemoveAllResult.length, 2, "removeAll method reurns all removed content");
-			strictEqual(oSemanticPage.getCustomFooterContent().length, 0, "all content is removed");
-			strictEqual(oSemanticPage._getPage().getFooter().getContent().length, iInitFooterContentLength, "all content is removed");
+			assert.strictEqual(oRemoveAllResult.length, 2, "removeAll method reurns all removed content");
+			assert.strictEqual(oSemanticPage.getCustomFooterContent().length, 0, "all content is removed");
+			assert.strictEqual(oSemanticPage._getPage().getFooter().getContent().length, iInitFooterContentLength, "all content is removed");
 
 			var oAddResult = oSemanticPage.addCustomFooterContent(oButton3);
-			strictEqual(oAddResult, oSemanticPage, "insert method returns the semantic page");
-			strictEqual(oSemanticPage.getCustomFooterContent().length, 1, "A button is added to the custom Footer content");
-			strictEqual(oSemanticPage._getPage().getFooter().getContent().length, (iInitFooterContentLength + 1), "A button is added to the custom Footer content");
+			assert.strictEqual(oAddResult, oSemanticPage, "insert method returns the semantic page");
+			assert.strictEqual(oSemanticPage.getCustomFooterContent().length, 1, "A button is added to the custom Footer content");
+			assert.strictEqual(oSemanticPage._getPage().getFooter().getContent().length, (iInitFooterContentLength + 1), "A button is added to the custom Footer content");
 
 			oSemanticPage.destroyCustomFooterContent();
 			ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
-			strictEqual(oSemanticPage.getCustomFooterContent().length, 0, "no custom Footer content is available");
+			assert.strictEqual(oSemanticPage.getCustomFooterContent().length, 0, "no custom Footer content is available");
 
 			oSemanticPage.destroy();
 		});
@@ -752,16 +752,16 @@
 
 			var iInitFooterContentLength = 1; //spacer
 
-			strictEqual(oPage.getCustomFooterContent().length, 1, "page has custom footer content");
-			strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "page has custom footer content");
+			assert.strictEqual(oPage.getCustomFooterContent().length, 1, "page has custom footer content");
+			assert.strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "page has custom footer content");
 
 			var oButton = oPage.getCustomFooterContent()[0];
-			strictEqual(oButton.getText(), "Custom", "content has correct text");
-			strictEqual(oButton.getType(), "Reject", "content has correct button type");
-			strictEqual(oButton.getTooltip(), "Martin", "content has correct tooltip");
+			assert.strictEqual(oButton.getText(), "Custom", "content has correct text");
+			assert.strictEqual(oButton.getType(), "Reject", "content has correct button type");
+			assert.strictEqual(oButton.getTooltip(), "Martin", "content has correct tooltip");
 
 			var oInnerButton = oPage._getPage().getFooter().getContent()[1];
-			strictEqual(oInnerButton, oButton, "inner footer has correct content");
+			assert.strictEqual(oInnerButton, oButton, "inner footer has correct content");
 
 			// Clean up
 			oPage.destroy();
@@ -781,41 +781,41 @@
 					},
 					oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.detail, oConfig);
 
-			strictEqual(oSemanticPage.getCustomShareMenuContent().length, 2, "getCustomShareMenuContent has correct content length");
-			strictEqual(oSemanticPage._getActionSheet().getButtons().length, 2, "inner menu content has correct content length");
+			assert.strictEqual(oSemanticPage.getCustomShareMenuContent().length, 2, "getCustomShareMenuContent has correct content length");
+			assert.strictEqual(oSemanticPage._getActionSheet().getButtons().length, 2, "inner menu content has correct content length");
 
-			strictEqual(oSemanticPage.getCustomShareMenuContent()[0], oButton1, "getCustomShareMenuContent retrieves the correct content[0]");
-			strictEqual(oSemanticPage.indexOfCustomShareMenuContent(oButton1), 0, "index of the inner content is 0");
-			//strictEqual(oSemanticPage._getActionSheet().indexOfContent(oButton1), 0, "index of the inner page content is 0");
+			assert.strictEqual(oSemanticPage.getCustomShareMenuContent()[0], oButton1, "getCustomShareMenuContent retrieves the correct content[0]");
+			assert.strictEqual(oSemanticPage.indexOfCustomShareMenuContent(oButton1), 0, "index of the inner content is 0");
+			//assert.strictEqual(oSemanticPage._getActionSheet().indexOfContent(oButton1), 0, "index of the inner page content is 0");
 
-			strictEqual(oSemanticPage.getCustomShareMenuContent()[1], oButton2, "getCustomShareMenuContent retrieves the correct content[1]");
-			strictEqual(oSemanticPage.indexOfCustomShareMenuContent(oButton2), 1, "index of the inner content is 1");
-			//strictEqual(oSemanticPage._getSegmentedShareMenu().indexOfContent(oButton2), 1, "index of the inner page content is 1");
+			assert.strictEqual(oSemanticPage.getCustomShareMenuContent()[1], oButton2, "getCustomShareMenuContent retrieves the correct content[1]");
+			assert.strictEqual(oSemanticPage.indexOfCustomShareMenuContent(oButton2), 1, "index of the inner content is 1");
+			//assert.strictEqual(oSemanticPage._getSegmentedShareMenu().indexOfContent(oButton2), 1, "index of the inner page content is 1");
 
 			var oInsertResult = oSemanticPage.insertCustomShareMenuContent(oButton4, 1);
-			strictEqual(oInsertResult, oSemanticPage, "insert method returns semanticPage reference");
-			strictEqual(oSemanticPage.indexOfCustomShareMenuContent(oButton4), 1, "index of the inserted inner content is 1");
-			//strictEqual(oSemanticPage._getSegmentedShareMenu().indexOfContent(oButton4), 1, "index of the inserted inner page content is 1");
+			assert.strictEqual(oInsertResult, oSemanticPage, "insert method returns semanticPage reference");
+			assert.strictEqual(oSemanticPage.indexOfCustomShareMenuContent(oButton4), 1, "index of the inserted inner content is 1");
+			//assert.strictEqual(oSemanticPage._getSegmentedShareMenu().indexOfContent(oButton4), 1, "index of the inserted inner page content is 1");
 
 			var oRemoveResult = oSemanticPage.removeCustomShareMenuContent(oButton1);
-			strictEqual(oRemoveResult, oButton1, "remove method returns remove content reference");
+			assert.strictEqual(oRemoveResult, oButton1, "remove method returns remove content reference");
 			ok(oSemanticPage.getCustomShareMenuContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
 			//ok(oSemanticPage._getSegmentedShareMenu().getContent()[0] !== oButton1, "Button 1 is removed from the inner page aggregation");
 
 			var oRemoveAllResult = oSemanticPage.removeAllCustomShareMenuContent();
-			strictEqual(oRemoveAllResult.length, 2, "removeAll method returns all removed content");
-			strictEqual(oSemanticPage.getCustomShareMenuContent().length, 0, "all content is removed");
-			//strictEqual(oSemanticPage._getSegmentedShareMenu().getContent().length, 0, "all inner page content is removed");
+			assert.strictEqual(oRemoveAllResult.length, 2, "removeAll method returns all removed content");
+			assert.strictEqual(oSemanticPage.getCustomShareMenuContent().length, 0, "all content is removed");
+			//assert.strictEqual(oSemanticPage._getSegmentedShareMenu().getContent().length, 0, "all inner page content is removed");
 
 			var oAddResult = oSemanticPage.addCustomShareMenuContent(oButton3);
-			strictEqual(oAddResult, oSemanticPage, "add method returns semanticPage reference");
-			strictEqual(oSemanticPage.getCustomShareMenuContent().length, 1, "A button is added to the custom inner content");
-			//strictEqual(oSemanticPage._getSegmentedShareMenu().getContent().length, 1, "A button is added to the inner page content");
+			assert.strictEqual(oAddResult, oSemanticPage, "add method returns semanticPage reference");
+			assert.strictEqual(oSemanticPage.getCustomShareMenuContent().length, 1, "A button is added to the custom inner content");
+			//assert.strictEqual(oSemanticPage._getSegmentedShareMenu().getContent().length, 1, "A button is added to the inner page content");
 
 			oSemanticPage.destroyCustomShareMenuContent();
 			ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
-			strictEqual(oSemanticPage.getCustomShareMenuContent().length, 0, "no custom inner content is available");
-			//strictEqual(oSemanticPage._oWrappedShareMenu.getContent().length, 0, "no inner page content is available");
+			assert.strictEqual(oSemanticPage.getCustomShareMenuContent().length, 0, "no custom inner content is available");
+			//assert.strictEqual(oSemanticPage._oWrappedShareMenu.getContent().length, 0, "no inner page content is available");
 
 			oSemanticPage.destroy();
 		});
@@ -850,24 +850,24 @@
 
 			oPage.setModel(oModel);
 
-			strictEqual(oPage.getCustomShareMenuContent().length, 2, "page has custom shareMenu content");
-			strictEqual(oPage._getActionSheet().getButtons().length, 2, "page has custom shareMenu content");
+			assert.strictEqual(oPage.getCustomShareMenuContent().length, 2, "page has custom shareMenu content");
+			assert.strictEqual(oPage._getActionSheet().getButtons().length, 2, "page has custom shareMenu content");
 
 			var oButton1 = oPage.getCustomShareMenuContent()[0];
-			strictEqual(oButton1.getText(), "Custom1", "content has correct text");
-			strictEqual(oButton1.getType(), "Reject", "content has correct button type");
-			strictEqual(oButton1.getTooltip(), "Martin", "content has correct tooltip");
+			assert.strictEqual(oButton1.getText(), "Custom1", "content has correct text");
+			assert.strictEqual(oButton1.getType(), "Reject", "content has correct button type");
+			assert.strictEqual(oButton1.getTooltip(), "Martin", "content has correct tooltip");
 
 			var oInnerButton1 = oPage._getActionSheet().getButtons()[0];
-			strictEqual(oInnerButton1, oButton1, "inner menu has correct content");
+			assert.strictEqual(oInnerButton1, oButton1, "inner menu has correct content");
 
 			var oButton2 = oPage.getCustomShareMenuContent()[1];
-			strictEqual(oButton2.getText(), "Custom2", "content has correct text");
-			//strictEqual(oButton2.getType(), "Emphasized", "content has correct button type"); TODO: check why emphasized is lost in the action sheet
-			strictEqual(oButton2.getTooltip(), "CustomTooltip", "content has correct tooltip");
+			assert.strictEqual(oButton2.getText(), "Custom2", "content has correct text");
+			//assert.strictEqual(oButton2.getType(), "Emphasized", "content has correct button type"); TODO: check why emphasized is lost in the action sheet
+			assert.strictEqual(oButton2.getTooltip(), "CustomTooltip", "content has correct tooltip");
 
 			var oInnerButton2 = oPage._getActionSheet().getButtons()[1];
-			strictEqual(oInnerButton2, oButton2, "inner menu has correct content");
+			assert.strictEqual(oInnerButton2, oButton2, "inner menu has correct content");
 
 			// Clean up
 			oPage.destroy();
@@ -883,9 +883,9 @@
 			var oResult = oPage.setPositiveAction(oPositiveAction);
 			var iInitFooterContentLength = 2; //spacer + shareMenuButton
 
-			strictEqual(oPage.getPositiveAction(), oPositiveAction, "page has positive action");
-			strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
-			strictEqual(oResult, oPage, "setPositiveAction returns reference to page");
+			assert.strictEqual(oPage.getPositiveAction(), oPositiveAction, "page has positive action");
+			assert.strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
+			assert.strictEqual(oResult, oPage, "setPositiveAction returns reference to page");
 
 			// Clean up
 			oPage.destroy();
@@ -903,8 +903,8 @@
 			oPage.setPositiveAction(oPositiveAction2); //replace
 			var iInitFooterContentLength = 2; //spacer + shareMenuButton
 
-			strictEqual(oPage.getPositiveAction(), oPositiveAction2, "page has the latest set positive action");
-			strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has correct number of semantic content");
+			assert.strictEqual(oPage.getPositiveAction(), oPositiveAction2, "page has the latest set positive action");
+			assert.strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has correct number of semantic content");
 
 			// Clean up
 			oPage.destroy();
@@ -920,13 +920,13 @@
 			var iInitFooterContentLength = 2; //spacer + shareMenuButton
 
 			equal(oPage.getPositiveAction(), oPositiveAction, "page has positive action");
-			strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
+			assert.strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
 
 			//act
 			oPage.setPositiveAction(null);
 			var oRevievedAction = oPage.getPositiveAction();
 			equal(oRevievedAction, null, "page has no positive action");
-			strictEqual(oPage._getPage().getFooter().getContent().length, (iInitFooterContentLength), "footer does not have semantic content");
+			assert.strictEqual(oPage._getPage().getFooter().getContent().length, (iInitFooterContentLength), "footer does not have semantic content");
 
 			// Clean up
 			oPage.destroy();
@@ -942,13 +942,13 @@
 			var iInitFooterContentLength = 2; //spacer + shareMenuButton
 
 			equal(oPage.getPositiveAction(), oPositiveAction, "page has positive action");
-			strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
+			assert.strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
 
 			//act
 			oPage.setPositiveAction(undefined);
 			var oRevievedAction = oPage.getPositiveAction();
 			equal(oRevievedAction, null, "page has no positive action");
-			strictEqual(oPage._getPage().getFooter().getContent().length, (iInitFooterContentLength), "footer does not have semantic content");
+			assert.strictEqual(oPage._getPage().getFooter().getContent().length, (iInitFooterContentLength), "footer does not have semantic content");
 
 			// Clean up
 			oPage.destroy();
@@ -964,15 +964,15 @@
 			var iInitFooterContentLength = 2; //spacer + shareMenuButton
 
 			equal(oPage.getPositiveAction(), oPositiveAction, "page has positive action");
-			strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
+			assert.strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
 
 			//act
 			var oResult = oPage.destroyPositiveAction(undefined);
 			var oRevievedAction = oPage.getPositiveAction();
 			equal(oRevievedAction, null, "page has no positive action");
-			strictEqual(oPage._getPage().getFooter().getContent().length, (iInitFooterContentLength), "footer does not have semantic content");
-			strictEqual(oPositiveAction.bIsDestroyed, true, "action is destroyed");
-			strictEqual(oResult, oPage, "destroyPositiveAction returns reference to page");
+			assert.strictEqual(oPage._getPage().getFooter().getContent().length, (iInitFooterContentLength), "footer does not have semantic content");
+			assert.strictEqual(oPositiveAction.bIsDestroyed, true, "action is destroyed");
+			assert.strictEqual(oResult, oPage, "destroyPositiveAction returns reference to page");
 
 			// Clean up
 			oPage.destroy();
@@ -990,9 +990,9 @@
 
 			var oRetrievedAction = oPage.getSaveAsTileAction();
 			equal(oRetrievedAction, oSaveAsTileAction, "page has saveAsTile action");
-			strictEqual(oPage._getPage().getFooter().getContent().length, iInitFooterContentLength, "footer has initial content");
-			strictEqual(oPage._getActionSheet().getButtons().length, 0, "shareMenu has correct length"); //save as tile has replaced shareButton
-			strictEqual(oPage._getPage().getFooter().getContent()[1], oSaveAsTileAction, "footer contains saveAsTile button");
+			assert.strictEqual(oPage._getPage().getFooter().getContent().length, iInitFooterContentLength, "footer has initial content");
+			assert.strictEqual(oPage._getActionSheet().getButtons().length, 0, "shareMenu has correct length"); //save as tile has replaced shareButton
+			assert.strictEqual(oPage._getPage().getFooter().getContent()[1], oSaveAsTileAction, "footer contains saveAsTile button");
 
 			// Clean up
 			oPage.destroy();
@@ -1012,8 +1012,8 @@
 
 			//check
 			equal(oPage.getSaveAsTileAction(), null, "page no longer has saveAsTile action");
-			strictEqual(oPage._getActionSheet().getButtons().length, 0, "shareMenu has correct length");
-			strictEqual(oPage._getPage().getFooter().getContent().length, iInitFooterContentLength, "footer has initial content");
+			assert.strictEqual(oPage._getActionSheet().getButtons().length, 0, "shareMenu has correct length");
+			assert.strictEqual(oPage._getPage().getFooter().getContent().length, iInitFooterContentLength, "footer has initial content");
 
 			// Clean up
 			oPage.destroy();
@@ -1033,8 +1033,8 @@
 
 			//check
 			equal(oPage.getSaveAsTileAction(), null, "page no longer has saveAsTile action");
-			strictEqual(oPage._getActionSheet().getButtons().length, 0, "shareMenu has correct length");
-			strictEqual(oPage._getPage().getFooter().getContent().length, iInitFooterContentLength, "footer has initial content");
+			assert.strictEqual(oPage._getActionSheet().getButtons().length, 0, "shareMenu has correct length");
+			assert.strictEqual(oPage._getPage().getFooter().getContent().length, iInitFooterContentLength, "footer has initial content");
 
 			// Clean up
 			oPage.destroy();
@@ -1054,9 +1054,9 @@
 
 			//check
 			equal(oPage.getSaveAsTileAction(), null, "page no longer has saveAsTile action");
-			strictEqual(oPage._getActionSheet().getButtons().length, 0, "shareMenu has correct length");
-			strictEqual(oPage._getPage().getFooter().getContent().length, iInitFooterContentLength, "footer has initial content");
-			strictEqual(oSaveAsTileAction.bIsDestroyed, true, "button is destroyed");
+			assert.strictEqual(oPage._getActionSheet().getButtons().length, 0, "shareMenu has correct length");
+			assert.strictEqual(oPage._getPage().getFooter().getContent().length, iInitFooterContentLength, "footer has initial content");
+			assert.strictEqual(oSaveAsTileAction.bIsDestroyed, true, "button is destroyed");
 
 			// Clean up
 			oPage.destroy();
@@ -1072,9 +1072,9 @@
 			oPage.setPagingAction(oPagingAction);
 
 			//check
-			strictEqual(oPage.getPagingAction(), oPagingAction, "page has paging action");
-			strictEqual(oPage._getInternalHeader().getContentRight().length, 1, "header has expected length");
-			strictEqual(oPage._getInternalHeader().getContentRight()[0], oPagingAction, "header contains paging button");
+			assert.strictEqual(oPage.getPagingAction(), oPagingAction, "page has paging action");
+			assert.strictEqual(oPage._getInternalHeader().getContentRight().length, 1, "header has expected length");
+			assert.strictEqual(oPage._getInternalHeader().getContentRight()[0], oPagingAction, "header contains paging button");
 
 			// Clean up
 			oPage.destroy();
@@ -1091,8 +1091,8 @@
 			oPage.setPagingAction(null);
 
 			//check
-			strictEqual(oPage.getPagingAction(), null, "page has paging action");
-			strictEqual(oPage._getInternalHeader().getContentRight().length, 0, "header has expected length");
+			assert.strictEqual(oPage.getPagingAction(), null, "page has paging action");
+			assert.strictEqual(oPage._getInternalHeader().getContentRight().length, 0, "header has expected length");
 
 			// Clean up
 			oPage.destroy();
@@ -1109,8 +1109,8 @@
 			oPage.setPagingAction(undefined);
 
 			//check
-			strictEqual(oPage.getPagingAction(), null, "page has paging action");
-			strictEqual(oPage._getInternalHeader().getContentRight().length, 0, "header has expected length");
+			assert.strictEqual(oPage.getPagingAction(), null, "page has paging action");
+			assert.strictEqual(oPage._getInternalHeader().getContentRight().length, 0, "header has expected length");
 
 			// Clean up
 			oPage.destroy();
@@ -1127,9 +1127,9 @@
 			oPage.destroyPagingAction();
 
 			//check
-			strictEqual(oPage.getPagingAction(), null, "page has paging action");
-			strictEqual(oPage._getInternalHeader().getContentRight().length, 0, "header has expected length");
-			strictEqual(oPagingAction.bIsDestroyed, true, "button is destroyed");
+			assert.strictEqual(oPage.getPagingAction(), null, "page has paging action");
+			assert.strictEqual(oPage._getInternalHeader().getContentRight().length, 0, "header has expected length");
+			assert.strictEqual(oPagingAction.bIsDestroyed, true, "button is destroyed");
 
 			// Clean up
 			oPage.destroy();
@@ -1164,11 +1164,11 @@
 			var iInitFooterContentLength = 2; //spacer + shareMenuButton
 
 			notEqual(oPage.getPositiveAction(), null, "page has semantic content");
-			strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
+			assert.strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
 
 			var oButton = oPage.getPositiveAction();
-			//strictEqual(oButton.getTooltip(), "Martin", "content has correct tooltip");
-			//strictEqual(oButton.getText(), "Positive", "content has correct tooltip");
+			//assert.strictEqual(oButton.getTooltip(), "Martin", "content has correct tooltip");
+			//assert.strictEqual(oButton.getText(), "Positive", "content has correct tooltip");
 
 			// Clean up
 			oPage.destroy();
@@ -1199,20 +1199,20 @@
 			}
 
 			// Assert
-			strictEqual(_getActualButton(), oExpectedButton, "Semantic share button is correctly positioned last by default");
+			assert.strictEqual(_getActualButton(), oExpectedButton, "Semantic share button is correctly positioned last by default");
 
 			// Act
 			oDetailPage.setFlagAction(oFlagButton);
 
 			// Assert
-			strictEqual(_getActualButton(), oExpectedButton, "Semantic share button is correctly positioned last even if new content is added");
+			assert.strictEqual(_getActualButton(), oExpectedButton, "Semantic share button is correctly positioned last even if new content is added");
 
 			// Act
 			var content = oDetailPage._getPage().getFooter().getContent();
 			oDetailPage.setFavoriteAction(oFavorite);
 
 			// Assert
-			strictEqual(_getActualButton(), oExpectedButton, "Semantic share button is correctly positioned last even if new content is inserted at the last index");
+			assert.strictEqual(_getActualButton(), oExpectedButton, "Semantic share button is correctly positioned last even if new content is inserted at the last index");
 
 			// Clean up
 			oDetailPage.destroy();
@@ -1233,7 +1233,7 @@
 
 			var layout = oShareButton.getLayoutData();
 
-			strictEqual(layout.getMoveToOverflow(), false, "The share button has correct default behavior");
+			assert.strictEqual(layout.getMoveToOverflow(), false, "The share button has correct default behavior");
 
 			// Clean up
 			oDetailPage.destroy();
@@ -1261,14 +1261,14 @@
 			var bCustomButtonIsContained = oDetailPage.indexOfCustomFooterContent(oButton) >= 0;
 
 			// Assert
-			strictEqual(bCustomButtonIsContained, true, "The custom footer section correctly contains the custom content");
+			assert.strictEqual(bCustomButtonIsContained, true, "The custom footer section correctly contains the custom content");
 
 			// Act
 			oDetailPage.removeCustomFooterContent(oButton);
 			var bCustomButtonIsRemoved = oDetailPage.indexOfCustomFooterContent(oButton) < 0;
 
 			// Assert
-			strictEqual(bCustomButtonIsRemoved, true, "The item has been correctly removed");
+			assert.strictEqual(bCustomButtonIsRemoved, true, "The item has been correctly removed");
 
 			// Assert
 			throws(function () {
@@ -1328,9 +1328,9 @@
 			var iInitFooterContentLength = 2; //spacer + shareMenuButton
 			var iCustomFooterContentLength = 2;
 
-			strictEqual(oPage.getSemanticControls().length, 15, "page has semantic content");
-			strictEqual(oPage._getPage().getFooter().getContent().length, (10 + iInitFooterContentLength + iCustomFooterContentLength), "footer has semantic content");
-			strictEqual(oPage._getSegmentedShareMenu().getSection("semantic").getContent().length, 5, "shareMenu has semantic content");
+			assert.strictEqual(oPage.getSemanticControls().length, 15, "page has semantic content");
+			assert.strictEqual(oPage._getPage().getFooter().getContent().length, (10 + iInitFooterContentLength + iCustomFooterContentLength), "footer has semantic content");
+			assert.strictEqual(oPage._getSegmentedShareMenu().getSection("semantic").getContent().length, 5, "shareMenu has semantic content");
 
 			// Clean up
 			oPage.destroy();
@@ -1386,35 +1386,35 @@
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			//messages indicator
-			strictEqual(oPage._getPage().getFooter().getContent()[0].getType(), sap.m.ButtonType.Emphasized, "MessagesIndicator button type is Accept");
-			strictEqual(oPage._getPage().getFooter().getContent()[0].getIcon(), "sap-icon://alert", "MessagesIndicator button icon");
+			assert.strictEqual(oPage._getPage().getFooter().getContent()[0].getType(), sap.m.ButtonType.Emphasized, "MessagesIndicator button type is Accept");
+			assert.strictEqual(oPage._getPage().getFooter().getContent()[0].getIcon(), "sap-icon://alert", "MessagesIndicator button icon");
 
 			//spacer
-			strictEqual(oPage._getPage().getFooter().getContent()[1] instanceof sap.m.ToolbarSpacer, true, "contains spacer");
+			assert.strictEqual(oPage._getPage().getFooter().getContent()[1] instanceof sap.m.ToolbarSpacer, true, "contains spacer");
 
 			//edit
-			strictEqual(oPage._getPage().getFooter().getContent()[2].getText(), oBundle.getText("SEMANTIC_CONTROL_EDIT"), "Edit button type has correct text");
-			strictEqual(oPage._getPage().getFooter().getContent()[2].getType(), sap.m.ButtonType.Emphasized, "Edit button type is Emphasized");
+			assert.strictEqual(oPage._getPage().getFooter().getContent()[2].getText(), oBundle.getText("SEMANTIC_CONTROL_EDIT"), "Edit button type has correct text");
+			assert.strictEqual(oPage._getPage().getFooter().getContent()[2].getType(), sap.m.ButtonType.Emphasized, "Edit button type is Emphasized");
 
 			//save
-			strictEqual(oPage._getPage().getFooter().getContent()[3].getText(), oBundle.getText("SEMANTIC_CONTROL_SAVE"), "Save button type has correct text");
-			strictEqual(oPage._getPage().getFooter().getContent()[3].getType(), sap.m.ButtonType.Emphasized, "Save button type is Emphasized");
+			assert.strictEqual(oPage._getPage().getFooter().getContent()[3].getText(), oBundle.getText("SEMANTIC_CONTROL_SAVE"), "Save button type has correct text");
+			assert.strictEqual(oPage._getPage().getFooter().getContent()[3].getType(), sap.m.ButtonType.Emphasized, "Save button type is Emphasized");
 
 			//cancel
-			strictEqual(oPage._getPage().getFooter().getContent()[4].getText(), oBundle.getText("SEMANTIC_CONTROL_CANCEL"), "Cancel button type has correct text");
-			strictEqual(oPage._getPage().getFooter().getContent()[4].getType(), sap.m.ButtonType.Default, "Cancel button type is of Default type");
+			assert.strictEqual(oPage._getPage().getFooter().getContent()[4].getText(), oBundle.getText("SEMANTIC_CONTROL_CANCEL"), "Cancel button type has correct text");
+			assert.strictEqual(oPage._getPage().getFooter().getContent()[4].getType(), sap.m.ButtonType.Default, "Cancel button type is of Default type");
 
 			//approve
-			strictEqual(oPage._getPage().getFooter().getContent()[5].getText(), oBundle.getText("SEMANTIC_CONTROL_APPROVE"), "Approve button type has correct text");
-			strictEqual(oPage._getPage().getFooter().getContent()[5].getType(), sap.m.ButtonType.Accept, "Approve button type is of Accept type");
+			assert.strictEqual(oPage._getPage().getFooter().getContent()[5].getText(), oBundle.getText("SEMANTIC_CONTROL_APPROVE"), "Approve button type has correct text");
+			assert.strictEqual(oPage._getPage().getFooter().getContent()[5].getType(), sap.m.ButtonType.Accept, "Approve button type is of Accept type");
 
 			//reject
-			strictEqual(oPage._getPage().getFooter().getContent()[6].getText(), oBundle.getText("SEMANTIC_CONTROL_REJECT"), "Reject button type has correct text");
-			strictEqual(oPage._getPage().getFooter().getContent()[6].getType(), sap.m.ButtonType.Reject, "Reject button type is of Reject type");
+			assert.strictEqual(oPage._getPage().getFooter().getContent()[6].getText(), oBundle.getText("SEMANTIC_CONTROL_REJECT"), "Reject button type has correct text");
+			assert.strictEqual(oPage._getPage().getFooter().getContent()[6].getType(), sap.m.ButtonType.Reject, "Reject button type is of Reject type");
 
 			//forward
-			strictEqual(oPage._getPage().getFooter().getContent()[7].getText(), oBundle.getText("SEMANTIC_CONTROL_FORWARD"), "Forward button type has correct text");
-			strictEqual(oPage._getPage().getFooter().getContent()[7].getType(), sap.m.ButtonType.Default, "Forward button type is of Default type");
+			assert.strictEqual(oPage._getPage().getFooter().getContent()[7].getText(), oBundle.getText("SEMANTIC_CONTROL_FORWARD"), "Forward button type has correct text");
+			assert.strictEqual(oPage._getPage().getFooter().getContent()[7].getType(), sap.m.ButtonType.Default, "Forward button type is of Default type");
 
 			// Clean up
 			oPage.destroy();
@@ -1443,14 +1443,14 @@
 
 			oSemanticPage.destroy();
 
-			strictEqual(oSemanticPage.$().length, 0, "There is no dom ref for semantic page");
+			assert.strictEqual(oSemanticPage.$().length, 0, "There is no dom ref for semantic page");
 
 			// check if all internal controls are destroyed successfully
-			strictEqual(oPage.bIsDestroyed, true, "page is destroyed successfully");
-			strictEqual(oFooter.bIsDestroyed, true, "footer is destroyed successfully");
+			assert.strictEqual(oPage.bIsDestroyed, true, "page is destroyed successfully");
+			assert.strictEqual(oFooter.bIsDestroyed, true, "footer is destroyed successfully");
 			// check if all controls are set to null correctly
-			strictEqual(oSemanticPage.getAggregation("_page"), null, "page is null");
-			strictEqual(oSemanticPage._oWrappedFooter, null, "footer is null");
+			assert.strictEqual(oSemanticPage.getAggregation("_page"), null, "page is null");
+			assert.strictEqual(oSemanticPage._oWrappedFooter, null, "footer is null");
 		});
 
 		QUnit.test("Detail page and its internal controls are destroyed successfully", function (assert) {
@@ -1468,10 +1468,10 @@
 			oSemanticPage.destroy();
 
 			if (oActionSheet) {
-				strictEqual(oActionSheet.bIsDestroyed, true, "action sheet is destroyed successfully");
+				assert.strictEqual(oActionSheet.bIsDestroyed, true, "action sheet is destroyed successfully");
 			}
 			// check if all controls are set to null correctly
-			strictEqual(oSemanticPage.getAggregation("_actionSheet"), null, "action sheet is null");
+			assert.strictEqual(oSemanticPage.getAggregation("_actionSheet"), null, "action sheet is null");
 
 		});
 

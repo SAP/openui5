@@ -1039,7 +1039,7 @@
 		ok(initialValue, "Have adjusted slider's handler "+initialValue);
 
 		oSlider.setValue(iValue);
-		strictEqual(initialValue, oSlider.getDomRef("grip").style.top, "Slider's handle is at the same place");
+		assert.strictEqual(initialValue, oSlider.getDomRef("grip").style.top, "Slider's handle is at the same place");
 
 		oSlider.destroy();
 		oSlider = null;

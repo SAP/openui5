@@ -70,7 +70,7 @@
 			equals(this.sut.getEnabled(), true, "Default 'enabled':");
 			equals(this.sut.getText(), "", "Default 'title':");
 			equals(this.sut.getMenu(), null, "Default 'menu':");
-			strictEqual(this.sut.getAggregation('_button').getMetadata().getName() === 'sap.m.Button', true, 'Normal sap m button.');
+			assert.strictEqual(this.sut.getAggregation('_button').getMetadata().getName() === 'sap.m.Button', true, 'Normal sap m button.');
 		});
 		QUnit.test("Property - Custom Values", function(assert) {
 			equals(this.sut.getTooltip(), "This is a test tooltip", "Custom 'tooltip':");
@@ -106,8 +106,8 @@
 				sAriaHasPopup = oInnerButton._getArrowButton().$().attr("aria-haspopup");
 
 			//assert
-			strictEqual(oInnerButton.getMetadata().getName(), "sap.m.SplitButton", "The inner aggregation '_buttonControl' has correct type");
-			strictEqual(sAriaHasPopup, "true", '"aria-haspopup" is present and has a correct value');
+			assert.strictEqual(oInnerButton.getMetadata().getName(), "sap.m.SplitButton", "The inner aggregation '_buttonControl' has correct type");
+			assert.strictEqual(sAriaHasPopup, "true", '"aria-haspopup" is present and has a correct value');
 		});
 
 		QUnit.test("MenuButton in Split mode", function (assert) {
@@ -124,15 +124,15 @@
 				});
 
 			//assert
-			strictEqual(aAriaLabelledByDomElements.length, 3, "There exactly 2 dom elements referenced in the aria-labelledby");
-			strictEqual(aAriaLabelledByDomElements[0].text(),
+			assert.strictEqual(aAriaLabelledByDomElements.length, 3, "There exactly 2 dom elements referenced in the aria-labelledby");
+			assert.strictEqual(aAriaLabelledByDomElements[0].text(),
 					sText,
 					'Referenced control in "aria-labelledby" shows the text of the button');
-			strictEqual(aAriaLabelledByDomElements[1].text(),
+			assert.strictEqual(aAriaLabelledByDomElements[1].text(),
 					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_DESCRIPTION"),
 					'Referenced control in "aria-labelledby" shows that this is a split button');
 
-			strictEqual(aAriaLabelledByDomElements[2].text(),
+			assert.strictEqual(aAriaLabelledByDomElements[2].text(),
 					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"),
 					'Referenced control in "aria-labelledby" shows the keyboard handling hint');
 
@@ -153,10 +153,10 @@
 
 			//assert
 			ok(oInvisibleTooltip, "There is a tooltip info label");
-			strictEqual(oInvisibleTooltip.getText(), sTooltip, "The info label holds the tooltip text");
+			assert.strictEqual(oInvisibleTooltip.getText(), sTooltip, "The info label holds the tooltip text");
 			ok(oInvisibleTooltip.getDomRef(), "The info label is rendered");
 			ok(aAriaLabelledByIds.indexOf(oInvisibleTooltip.$().attr('id')) !== -1, "The info label is rendered at the correct place");
-			strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
+			assert.strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
 			ok(!oTextButton.getDomRef().hasAttribute("title"), "The inner '_textButton' button does not have and need DOM title property");
 			ok(!oArrowButton.getDomRef().hasAttribute("title"), "The inner '_arrowButton' button does not have DOM title property set to its Icon name");
 		});
@@ -196,10 +196,10 @@
 
 			//assert
 			ok(oInvisibleTooltip, "There is an inner info label");
-			strictEqual(oInvisibleTooltip.getText(), sTooltip, "The info label holds the tooltip text");
+			assert.strictEqual(oInvisibleTooltip.getText(), sTooltip, "The info label holds the tooltip text");
 			ok(oInvisibleTooltip.getDomRef(), "The info label is rendered");
 			ok(aAriaLabelledByIds.indexOf(oInvisibleTooltip.$().attr('id')) !== -1, "The info label is rendered at the correct place");
-			strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
+			assert.strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
 		});
 
 		QUnit.test("Semantic MenuButton in Split mode", function (assert) {
@@ -238,9 +238,9 @@
 
 			//assert
 			ok(oInvisibleTooltip, "There is an inner info label");
-			strictEqual(oInvisibleTooltip.getText(), sTooltip, "The info label holds the tooltip text");
+			assert.strictEqual(oInvisibleTooltip.getText(), sTooltip, "The info label holds the tooltip text");
 			ok(oInvisibleTooltip.getDomRef(), "The info label is rendered");
-			strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
+			assert.strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
 			ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
 		});
 
@@ -281,7 +281,7 @@
 			//assert
 			ok(oInnerButton._oInvisibleTooltipInfoLabel.getDomRef(), "There is tooltip info label and it is rendered");
 			ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct value');
-			strictEqual(oInnerButton.$().attr('title'), sTooltip, "The icon tooltip is successfully set");
+			assert.strictEqual(oInnerButton.$().attr('title'), sTooltip, "The icon tooltip is successfully set");
 		});
 
 		QUnit.module("Pressing", {
@@ -315,34 +315,34 @@
 			 button - for this reason assertion is done on the opened control DOM - this test is tightly coupling with sap.m.Menu
 			 - must be decoupled like the keyboard open test below */
 			this.sut.getAggregation('_button').firePress();
-			strictEqual(jQuery('.sapMMenu').length, 1, "Opened control is visible after click");
+			assert.strictEqual(jQuery('.sapMMenu').length, 1, "Opened control is visible after click");
 		});
 
 
 		QUnit.test("Open with keyboard", function(assert) {
 			var fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
 			this.sut.onsapup();
-			strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapup' event.");
+			assert.strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapup' event.");
 
 			fnHandleButtonPress.restore();
 			fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
 			this.sut.onsapdown();
-			strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapdown' event.");
+			assert.strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapdown' event.");
 
 			fnHandleButtonPress.restore();
 			fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
 			this.sut.onsapupmodifiers();
-			strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapupmodifiers' event.");
+			assert.strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapupmodifiers' event.");
 
 			fnHandleButtonPress.restore();
 			fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
 			this.sut.onsapdownmodifiers();
-			strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapdownmodifiers' event.");
+			assert.strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapdownmodifiers' event.");
 
 			fnHandleButtonPress.restore();
 			fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
 			this.sut.onsapshow();
-			strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapshow' event.");
+			assert.strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapshow' event.");
 		});
 
 		QUnit.test("_menuItemSelected is fired", function(assert) {
@@ -351,13 +351,13 @@
 
 			this.sut.getMenu().fireItemSelected({item: this.sut.getMenu().getItems()[0]});
 			this.clock.tick(1000);
-			strictEqual(fnHandleMenuItemSelected.calledOnce, true, "_menuItemSelected handler is notified");
+			assert.strictEqual(fnHandleMenuItemSelected.calledOnce, true, "_menuItemSelected handler is notified");
 
 
 			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
 			this.sut.getMenu().fireItemSelected({item: this.sut.getMenu().getItems()[0]});
 			this.clock.tick(1000);
-			strictEqual(fnHandleMenuItemSelected.calledTwice, true, "_menuItemSelected handler is notified in split Mode");
+			assert.strictEqual(fnHandleMenuItemSelected.calledTwice, true, "_menuItemSelected handler is notified in split Mode");
 		});
 
 		QUnit.test('SplitButton mode', function (assert) {
@@ -374,9 +374,9 @@
 			this.sut.getAggregation('_button').firePress();
 
 			this.clock.tick(1000);
-			strictEqual(this.sut.getAggregation('_button').getMetadata().getName() === 'sap.m.SplitButton', true, 'Split button.');
-			strictEqual(jQuery('.sapMMenuBtnSplit').length, 1, 'Split button rendered');
-			strictEqual(fnFireDefaultAction.calledOnce, true, 'Default action called.');
+			assert.strictEqual(this.sut.getAggregation('_button').getMetadata().getName() === 'sap.m.SplitButton', true, 'Split button.');
+			assert.strictEqual(jQuery('.sapMMenuBtnSplit').length, 1, 'Split button rendered');
+			assert.strictEqual(fnFireDefaultAction.calledOnce, true, 'Default action called.');
 
 			var handlerCalled = 0;
 			this.oMenu = new sap.m.Menu({
@@ -394,28 +394,28 @@
 			this.sut.getMenu().fireItemSelected({item: this.sut.getMenu().getItems()[0]});
 			this.clock.tick(1000);
 			this.sut.getAggregation('_button').firePress();
-			strictEqual(handlerCalled, 2, 'The itemSelected handler of the menu is called when the text button is pressed after an item is selected.');
+			assert.strictEqual(handlerCalled, 2, 'The itemSelected handler of the menu is called when the text button is pressed after an item is selected.');
 			this.clock.tick(1000);
-			strictEqual(jQuery('.sapMBtnContent').text(), '', 'Button text remains unchanged when no default text is set.');
+			assert.strictEqual(jQuery('.sapMBtnContent').text(), '', 'Button text remains unchanged when no default text is set.');
 
 			this.sut.setText('default text');
 			this.clock.tick(1000);
 			this.sut.getAggregation('_button').firePress();
-			strictEqual(handlerCalled, 3, 'The itemSelected handler of the menu is called when the text button is pressed after an item is selected.');
+			assert.strictEqual(handlerCalled, 3, 'The itemSelected handler of the menu is called when the text button is pressed after an item is selected.');
 			this.clock.tick(1000);
-			strictEqual(jQuery('.sapMBtnContent').text(), 'item1', 'Button text corresponds to the last selected item.');
+			assert.strictEqual(jQuery('.sapMBtnContent').text(), 'item1', 'Button text corresponds to the last selected item.');
 
 
 			this.sut.setButtonMode(sap.m.MenuButtonMode.Regular);
 			this.clock.tick(1000);
-			strictEqual(this.sut.getAggregation('_button').getMetadata().getName() === 'sap.m.Button', true, 'Normal sap m button.');
-			strictEqual(jQuery('.sapMMenuBtnSplit').length, 0, 'Split button not rendered');
-			strictEqual(jQuery('.sapMMenuBtn').length, 1, 'Normal button rendered');
+			assert.strictEqual(this.sut.getAggregation('_button').getMetadata().getName() === 'sap.m.Button', true, 'Normal sap m button.');
+			assert.strictEqual(jQuery('.sapMMenuBtnSplit').length, 0, 'Split button not rendered');
+			assert.strictEqual(jQuery('.sapMMenuBtn').length, 1, 'Normal button rendered');
 
 			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
 			this.clock.tick(1000);
-			strictEqual(this.sut.getAggregation('_button').getMetadata().getName() === 'sap.m.SplitButton', true, 'Split button.');
-			strictEqual(jQuery('.sapMMenuBtnSplit').length, 1, 'Split button rendered');
+			assert.strictEqual(this.sut.getAggregation('_button').getMetadata().getName() === 'sap.m.SplitButton', true, 'Split button.');
+			assert.strictEqual(jQuery('.sapMMenuBtnSplit').length, 1, 'Split button rendered');
 		});
 
 		QUnit.module("SplitButton integration", {
@@ -476,7 +476,7 @@
 		});
 
 		QUnit.test("_getFocusDomRef", function(assert) {
-			strictEqual(this.sut.getFocusDomRef(), this.sut._getButtonControl().getDomRef(), "focus dom ref is right");
+			assert.strictEqual(this.sut.getFocusDomRef(), this.sut._getButtonControl().getDomRef(), "focus dom ref is right");
 		});
 
 		QUnit.test("_handleButtonPress", function(assert) {
@@ -593,50 +593,50 @@
 			this.sut.onsapenter();
 
 			//Assert
-			strictEqual(oSpyTextButtonPress.callCount, 1, "Main button firePress called");
+			assert.strictEqual(oSpyTextButtonPress.callCount, 1, "Main button firePress called");
 			ok(!oSpyArrowButtonPress.called, "Arrow button firePress not called");
 
 			//Act
 			this.sut.onsapspace();
 
 			//Assert
-			strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress called");
+			assert.strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress called");
 			ok(!oSpyArrowButtonPress.called, "Arrow button firePress not called");
 
 			//Act
 			this.sut.onsapup();
 
 			//Assert
-			strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress not called");
-			strictEqual(oSpyArrowButtonPress.callCount, 1, "Arrow button firePress called");
+			assert.strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress not called");
+			assert.strictEqual(oSpyArrowButtonPress.callCount, 1, "Arrow button firePress called");
 
 			//Act
 			this.sut.onsapdown();
 
 			//Assert
-			strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress not called");
-			strictEqual(oSpyArrowButtonPress.callCount, 2, "Arrow button firePress called");
+			assert.strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress not called");
+			assert.strictEqual(oSpyArrowButtonPress.callCount, 2, "Arrow button firePress called");
 
 			//Act
 			this.sut.onsapupmodifiers();
 
 			//Assert
-			strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress not called");
-			strictEqual(oSpyArrowButtonPress.callCount, 3, "Arrow button firePress called");
+			assert.strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress not called");
+			assert.strictEqual(oSpyArrowButtonPress.callCount, 3, "Arrow button firePress called");
 
 			//Act
 			this.sut.onsapdownmodifiers();
 
 			//Assert
-			strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress not called");
-			strictEqual(oSpyArrowButtonPress.callCount, 4, "Arrow button firePress called");
+			assert.strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress not called");
+			assert.strictEqual(oSpyArrowButtonPress.callCount, 4, "Arrow button firePress called");
 
 			//Act
 			this.sut.onsapshow({ preventDefault: function() {} });
 
 			//Assert
-			strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress not called");
-			strictEqual(oSpyArrowButtonPress.callCount, 5, "Arrow button firePress called");
+			assert.strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress not called");
+			assert.strictEqual(oSpyArrowButtonPress.callCount, 5, "Arrow button firePress called");
 		});
 	</script>
 </head>

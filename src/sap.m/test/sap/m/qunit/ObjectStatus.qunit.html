@@ -105,10 +105,10 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oObjectStatus, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		assert.strictEqual(oResult, oObjectStatus, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 		ok(!/.*<script>.*/.test(oObjectStatus.$().children(".sapMObjStatusText").html()), "Did not contain a unescaped script tag");
-		strictEqual(oObjectStatus.getText(), sTextToSet, "Did set the non encoded string as value");
+		assert.strictEqual(oObjectStatus.getText(), sTextToSet, "Did set the non encoded string as value");
 
 		//Cleanup
 		oObjectStatus.destroy();
@@ -133,9 +133,9 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oObjectStatus, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-		strictEqual(oObjectStatus.getText(), sTextToExpect, "Did set the number as a string as a value");
+		assert.strictEqual(oResult, oObjectStatus, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		assert.strictEqual(oObjectStatus.getText(), sTextToExpect, "Did set the number as a string as a value");
 
 		//Cleanup
 		oObjectStatus.destroy();
@@ -159,14 +159,14 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oObjectStatus, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		assert.strictEqual(oResult, oObjectStatus, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 
 		ok(!/.*<script>.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did not contain a unescaped script tag");
 
 		var sDisplayedTitle = oObjectStatus.$().children(".sapMObjStatusTitle").text();
 		ok(sDisplayedTitle.indexOf(":", sDisplayedTitle.length - 1) , "Did contain a :");
-		strictEqual(oObjectStatus.getTitle(), sTextToSet, "Did set the non encoded string as value");
+		assert.strictEqual(oObjectStatus.getTitle(), sTextToSet, "Did set the non encoded string as value");
 
 		//Cleanup
 		oObjectStatus.destroy();
@@ -191,11 +191,11 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oObjectStatus, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		assert.strictEqual(oResult, oObjectStatus, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 		ok(!/.*<script>.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did not contain a unescaped script tag");
-		strictEqual(oObjectStatus.$().children(".sapMObjStatusTitle").text(), oObjectStatus.getTitle() + ":", "Did contain a :");
-		strictEqual(oObjectStatus.getTitle(), sTitleToExpect, "Did set the number as a string as a value");
+		assert.strictEqual(oObjectStatus.$().children(".sapMObjStatusTitle").text(), oObjectStatus.getTitle() + ":", "Did contain a :");
+		assert.strictEqual(oObjectStatus.getTitle(), sTitleToExpect, "Did set the number as a string as a value");
 
 		//Cleanup
 		oObjectStatus.destroy();
@@ -219,9 +219,9 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oRenderSpy.callCount, 1, "Did rerender");
+		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
 		ok(!oObjectStatus.$().children(".sapMObjStatusText").length, "Did not render the text span");
-		strictEqual(oObjectStatus.getText(), sTextToSet, "Did set the value");
+		assert.strictEqual(oObjectStatus.getText(), sTextToSet, "Did set the value");
 
 		//Cleanup
 		oObjectStatus.destroy();
@@ -245,9 +245,9 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oRenderSpy.callCount, 1, "Did rerender");
+		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
 		ok(!oObjectStatus.$().children(".sapMObjStatusTitle").length, "Did not render the title span");
-		strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
+		assert.strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
 
 		//Cleanup
 		oObjectStatus.destroy();
@@ -271,9 +271,9 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oRenderSpy.callCount, 1, "Did rerender");
+		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
 		ok(!oObjectStatus.$().children(".sapMObjStatusText").length, "Did not render the text span");
-		strictEqual(oObjectStatus.getText(), "", "Did set the default value");
+		assert.strictEqual(oObjectStatus.getText(), "", "Did set the default value");
 
 		//Cleanup
 		oObjectStatus.destroy();
@@ -297,9 +297,9 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oRenderSpy.callCount, 1, "Did rerender");
+		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
 		ok(!oObjectStatus.$().children(".sapMObjStatusTitle").length, "Did not render the title span");
-		strictEqual(oObjectStatus.getTitle(), "", "Did set the default value");
+		assert.strictEqual(oObjectStatus.getTitle(), "", "Did set the default value");
 
 		//Cleanup
 		oObjectStatus.destroy();
@@ -323,9 +323,9 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oRenderSpy.callCount, 1, "Did rerender");
+		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
 		ok(oObjectStatus.$().children(".sapMObjStatusText").length, "Did render the text span");
-		strictEqual(oObjectStatus.getText(), sTextToSet, "Did set the value");
+		assert.strictEqual(oObjectStatus.getText(), sTextToSet, "Did set the value");
 
 		//Cleanup
 		oObjectStatus.destroy();
@@ -349,9 +349,9 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oRenderSpy.callCount, 1, "Did rerender");
+		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
 		ok(oObjectStatus.$().children(".sapMObjStatusTitle").length, "Did render the title span");
-		strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
+		assert.strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
 
 		//Cleanup
 		oObjectStatus.destroy();
@@ -373,7 +373,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
+		assert.strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
 		ok(/.*Account blocked - Blocked for payment:.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did display dashed string correctly");
 
 		//Cleanup
@@ -396,7 +396,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oObjectStatus.getText(), sTextToSet, "Did set the value");
+		assert.strictEqual(oObjectStatus.getText(), sTextToSet, "Did set the value");
 		ok(/.*Account blocked - Blocked for payment.*/.test(oObjectStatus.$().children(".sapMObjStatusText").html()), "Did display dashed string correctly");
 
 		//Cleanup
@@ -419,7 +419,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
+		assert.strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
 		ok(/.*Account blocked - Blocked for payment:.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did display dashed string correctly");
 
 		//Cleanup
@@ -447,16 +447,16 @@
 		ok(!!oControl.getAccessibilityInfo, "ObjectStatus has a getAccessibilityInfo function");
 		var oInfo = oControl.getAccessibilityInfo();
 		ok(!!oInfo, "getAccessibilityInfo returns a info object");
-		strictEqual(oInfo.role, undefined, "AriaRole");
-		strictEqual(oInfo.type, undefined, "Type");
-		strictEqual(oInfo.description, "Title Text", "Description");
-		strictEqual(oInfo.focusable, undefined, "Focusable");
-		strictEqual(oInfo.enabled, undefined, "Enabled");
-		strictEqual(oInfo.editable, undefined, "Editable");
+		assert.strictEqual(oInfo.role, undefined, "AriaRole");
+		assert.strictEqual(oInfo.type, undefined, "Type");
+		assert.strictEqual(oInfo.description, "Title Text", "Description");
+		assert.strictEqual(oInfo.focusable, undefined, "Focusable");
+		assert.strictEqual(oInfo.enabled, undefined, "Enabled");
+		assert.strictEqual(oInfo.editable, undefined, "Editable");
 		oControl.setState("Warning");
 		oControl.setTitle("");
 		oInfo = oControl.getAccessibilityInfo();
-		strictEqual(oInfo.description, "Text " + sap.ui.core.ValueStateSupport.getAdditionalText(oControl.getState()), "Description");
+		assert.strictEqual(oInfo.description, "Text " + sap.ui.core.ValueStateSupport.getAdditionalText(oControl.getState()), "Description");
 		oControl.destroy();
 	});
 

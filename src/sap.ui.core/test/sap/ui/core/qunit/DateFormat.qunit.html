@@ -41,12 +41,12 @@
 	QUnit.test("format invalid date", function(assert) {
 		var oDate = new Date("");
 		ok(isNaN(oDate.getTime()), "This is an invalid date");
-		strictEqual(oDefaultDate.format(oDate), "", "Formatting an invalid date should return ''");
+		assert.strictEqual(oDefaultDate.format(oDate), "", "Formatting an invalid date should return ''");
 	});
 
 	QUnit.test("format undefined date", function(assert) {
 		var oDate;
-		strictEqual(oDefaultDate.format(oDate), "", "Formatting an undefined date should return ''");
+		assert.strictEqual(oDefaultDate.format(oDate), "", "Formatting an undefined date should return ''");
 	});
 
 	QUnit.test("format default date", function(assert){
@@ -369,10 +369,10 @@
 		ok((oDateOut.toString() === oDate.toString()), "6 digit fallback: "+sDateIn + " to " + oDateOut);
 
 		oDateOut = oFormat.parse("000100");
-		strictEqual(oDateOut, null, "000100 shouldn't be parsed as a valid date");
+		assert.strictEqual(oDateOut, null, "000100 shouldn't be parsed as a valid date");
 
 		oDateOut = oFormat.parse("010000");
-		strictEqual(oDateOut, null, "010000 shouldn't be parsed as a valid date");
+		assert.strictEqual(oDateOut, null, "010000 shouldn't be parsed as a valid date");
 
 		sDateIn = "04072014";
 		oDateOut = oFormat.parse(sDateIn);

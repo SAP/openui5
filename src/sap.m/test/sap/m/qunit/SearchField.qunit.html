@@ -136,7 +136,7 @@
 		// showSearchButton:false :
 		ok(jQuery("#sf4-search").length == 0, "Search button is not rendered if showSearchButton == false");
 		var rightOffset = window.getComputedStyle(jQuery("#sf4-reset")[0]).getPropertyValue("right");
-		strictEqual(rightOffset, "0px", "Reset button is right aligned if showSearchButton == false");
+		assert.strictEqual(rightOffset, "0px", "Reset button is right aligned if showSearchButton == false");
 	});
 
 	QUnit.test("Screen Reader", function(assert) {

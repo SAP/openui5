@@ -38,14 +38,14 @@
 		// Arrange
 		var oDraftIndi = new sap.m.DraftIndicator("draftId");
 
-		strictEqual(oDraftIndi.getId(), "draftId", "control has the expected id");
+		assert.strictEqual(oDraftIndi.getId(), "draftId", "control has the expected id");
 
 		// Act
 		var oRetrievedIndi = sap.ui.getCore().byId("draftId");
 
 		// Assert
 		notEqual(oRetrievedIndi, undefined, "the button is retrieved by id");
-		strictEqual(oRetrievedIndi.getId(), "draftId", "control has the expected id");
+		assert.strictEqual(oRetrievedIndi.getId(), "draftId", "control has the expected id");
 
 		oDraftIndi.destroy();
 	});
@@ -64,14 +64,14 @@
 		// Act
 		oDraftIndi.showDraftSaving();
 		// Assert
-		strictEqual(oDraftIndi.$("label").html(), oBundle.getText("DRAFT_INDICATOR_SAVING_DRAFT"), "Saving draft is shown");
+		assert.strictEqual(oDraftIndi.$("label").html(), oBundle.getText("DRAFT_INDICATOR_SAVING_DRAFT"), "Saving draft is shown");
 
 		this.clock.tick(3000);
 
 		// Act
 		oDraftIndi.clearDraftState();
 		// Assert
-		strictEqual(oDraftIndi.$("label").html(), "", "Draft saved is cleared");
+		assert.strictEqual(oDraftIndi.$("label").html(), "", "Draft saved is cleared");
 
 		// Clean up
 		oDraftIndi._resetDraftTimer();
@@ -90,7 +90,7 @@
 		oDraftIndi.showDraftSaved();
 
 		// Assert
-		strictEqual(oDraftIndi.$("label").html(), oBundle.getText("DRAFT_INDICATOR_DRAFT_SAVED"), "Draft saved is shown");
+		assert.strictEqual(oDraftIndi.$("label").html(), oBundle.getText("DRAFT_INDICATOR_DRAFT_SAVED"), "Draft saved is shown");
 		this.clock.tick(1500);
 
 		// Assert
@@ -113,11 +113,11 @@
 		oDraftIndi.showDraftSaving();
 
 		// Assert
-		strictEqual(oDraftIndi.$("label").html(), oBundle.getText("DRAFT_INDICATOR_SAVING_DRAFT"), "Draft saved is shown");
+		assert.strictEqual(oDraftIndi.$("label").html(), oBundle.getText("DRAFT_INDICATOR_SAVING_DRAFT"), "Draft saved is shown");
 		this.clock.tick(1500);
 
 		// Assert
-		strictEqual(oDraftIndi.$("label").html(), "", "Draft saving state is cleared after default timeout");
+		assert.strictEqual(oDraftIndi.$("label").html(), "", "Draft saving state is cleared after default timeout");
 
 		// Clean up
 		oDraftIndi._resetDraftTimer();

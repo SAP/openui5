@@ -974,9 +974,9 @@
 			// Assert
 			notOk(oClone === oOriginal, "Clone object is not a reference to original object");
 			notDeepEqual(oOriginal, oClone, "Clone object is different from original object");
-			strictEqual(oClone.hasOwnProperty("keyOne"), false, "KeyOne does not exist in cloned object");
-			strictEqual(oClone.hasOwnProperty("keyTwo"), true, "keyTwo exist in cloned object");
-			strictEqual(oClone.hasOwnProperty("keyThree"), true, "keyThree exist in cloned object");
+			assert.strictEqual(oClone.hasOwnProperty("keyOne"), false, "KeyOne does not exist in cloned object");
+			assert.strictEqual(oClone.hasOwnProperty("keyTwo"), true, "keyTwo exist in cloned object");
+			assert.strictEqual(oClone.hasOwnProperty("keyThree"), true, "keyThree exist in cloned object");
 
 			// Act
 			oClone = this.oTree._removeItemFromObject(oOriginal, "keyThatDontExistInObject");
@@ -1342,9 +1342,9 @@
 			aNodes = this.oTree.getNodes();
 
 			// Assert
-			strictEqual(aNodes.length, 2, "There should be 2 items that survive the filtering");
-			strictEqual(aNodes[0].getText(), "JSON_item1", "Item 1 text should match");
-			strictEqual(aNodes[1].getText(), "JSON_item2", "Item 2 text should match");
+			assert.strictEqual(aNodes.length, 2, "There should be 2 items that survive the filtering");
+			assert.strictEqual(aNodes[0].getText(), "JSON_item1", "Item 1 text should match");
+			assert.strictEqual(aNodes[1].getText(), "JSON_item2", "Item 2 text should match");
 		});
 
 		</script>

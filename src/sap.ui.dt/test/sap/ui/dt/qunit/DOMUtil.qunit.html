@@ -158,19 +158,19 @@
 
 				var oCopyDiv = jQuery("#right-part > [data-find=div]");
 				ok(oCopyDiv, "element is copied");
-				strictEqual(oCopyDiv.css("width"), "200px", "styles for element are also copied");
+				assert.strictEqual(oCopyDiv.css("width"), "200px", "styles for element are also copied");
 
 				var sBeforeDivContent = window.getComputedStyle( this.oDomElement.get(0), ':before' ).getPropertyValue('content').replace(/\"/g, "");
 				var sBeforeCopyDivContent = oCopyDiv.children().first().html();
-				strictEqual(sBeforeCopyDivContent, sBeforeDivContent, "and the pseudoElements are also copied");
+				assert.strictEqual(sBeforeCopyDivContent, sBeforeDivContent, "and the pseudoElements are also copied");
 
 				var oCopySpan = oCopyDiv.find("> [data-find=span]");
 				ok(oCopySpan, "child elemen is copied");
-				strictEqual(oCopySpan.css("color"), 'rgb(255, 0, 0)', "styles for child elemen are also copied");
+				assert.strictEqual(oCopySpan.css("color"), 'rgb(255, 0, 0)', "styles for child elemen are also copied");
 
 				var sAfterSpanContent = window.getComputedStyle( this.oDomElement.find(">span").get(0), ':after' ).getPropertyValue('content').replace(/\"/g, "");
 				var sAfterCopySpanContent =oCopySpan.children().last().html();
-				strictEqual(sAfterCopySpanContent, sAfterSpanContent, "and the pseudoElements are also copied");
+				assert.strictEqual(sAfterCopySpanContent, sAfterSpanContent, "and the pseudoElements are also copied");
 			});
 
 			/**
@@ -254,7 +254,7 @@
 				var mSrcStyles = window.getComputedStyle(this.oSrcDomElement.get(0));
 				var mDestStyles = window.getComputedStyle(this.oDestDomElement.get(0));
 				assert.strictEqual(mDestStyles["display"], "none", "css-attribute display is copied to source dom element");
-				assert.notEqual(mDestStyles["background-color"], mSrcStyles["background-color"], 
+				assert.notEqual(mDestStyles["background-color"], mSrcStyles["background-color"],
 					"css-attribute background on source and dest Element are not equal");
 			});
 
@@ -262,7 +262,7 @@
 				sap.ui.dt.DOMUtil.copyComputedStyle(this.oSrcDomElement, this.oDestDomElement);
 				var mSrcStyles = window.getComputedStyle(this.oSrcDomElement.get(0));
 				var mDestStyles = window.getComputedStyle(this.oDestDomElement.get(0));
-				assert.strictEqual(mDestStyles["background-color"], mSrcStyles["background-color"], 
+				assert.strictEqual(mDestStyles["background-color"], mSrcStyles["background-color"],
 					"css styles of source and dest element are equal");
 			});
 

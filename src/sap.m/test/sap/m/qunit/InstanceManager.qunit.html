@@ -238,20 +238,20 @@
 
 
                     //Assert
-                    strictEqual(events.length, dialogs.length, "registered to event");
-                    strictEqual(closeSpy.callCount, dialogs.length, "close was called");
+                    assert.strictEqual(events.length, dialogs.length, "registered to event");
+                    assert.strictEqual(closeSpy.callCount, dialogs.length, "close was called");
 
 
                     //fire first close event
                     events[0]();
-                    strictEqual(callback.callCount, 0, "callback was not executed yet");
+                    assert.strictEqual(callback.callCount, 0, "callback was not executed yet");
 
 
 
 
                     //fire second close event
                     events[1]();
-                    strictEqual(callback.callCount, 1, "callback was executed");
+                    assert.strictEqual(callback.callCount, 1, "callback was executed");
             });
 
 			QUnit.module("Open and close Popover");

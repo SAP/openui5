@@ -780,12 +780,12 @@
 
 		// assert
 		ok(!!oInfo, "getAccessibilityInfo returns a info object");
-		strictEqual(oInfo.role, this.multiInput1.getRenderer().getAriaRole(), "AriaRole");
-		strictEqual(oInfo.type, oResourceBundle.getText("ACC_CTR_TYPE_MULTIINPUT"), "Type");
-		strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
-		strictEqual(oInfo.focusable, true, "Focusable");
-		strictEqual(oInfo.enabled, true, "Enabled");
-		strictEqual(oInfo.editable, true, "Editable");
+		assert.strictEqual(oInfo.role, this.multiInput1.getRenderer().getAriaRole(), "AriaRole");
+		assert.strictEqual(oInfo.type, oResourceBundle.getText("ACC_CTR_TYPE_MULTIINPUT"), "Type");
+		assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.focusable, true, "Focusable");
+		assert.strictEqual(oInfo.enabled, true, "Enabled");
+		assert.strictEqual(oInfo.editable, true, "Editable");
 
 		// act
 		this.multiInput1.setValue("");
@@ -793,10 +793,10 @@
 		oInfo = this.multiInput1.getAccessibilityInfo();
 
 		// assert
-		strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
-		strictEqual(oInfo.focusable, false, "Focusable");
-		strictEqual(oInfo.enabled, false, "Enabled");
-		strictEqual(oInfo.editable, false, "Editable");
+		assert.strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.focusable, false, "Focusable");
+		assert.strictEqual(oInfo.enabled, false, "Enabled");
+		assert.strictEqual(oInfo.editable, false, "Editable");
 
 		// act
 		this.multiInput1.setEnabled(true);
@@ -804,16 +804,16 @@
 		oInfo = this.multiInput1.getAccessibilityInfo();
 
 		// assert
-		strictEqual(oInfo.focusable, true, "Focusable");
-		strictEqual(oInfo.enabled, true, "Enabled");
-		strictEqual(oInfo.editable, false, "Editable");
+		assert.strictEqual(oInfo.focusable, true, "Focusable");
+		assert.strictEqual(oInfo.enabled, true, "Enabled");
+		assert.strictEqual(oInfo.editable, false, "Editable");
 
 		// act
 		this.multiInput1.setDescription("Description");
 		oInfo = this.multiInput1.getAccessibilityInfo();
 
 		// assert
-		strictEqual(oInfo.description, "Placeholder Tooltip Description", "Description");
+		assert.strictEqual(oInfo.description, "Placeholder Tooltip Description", "Description");
 
 		// act
 		this.multiInput1.addToken(new sap.m.Token({text: "Token1"}));
@@ -822,7 +822,7 @@
 		oInfo = this.multiInput1.getAccessibilityInfo();
 
 		// assert
-		strictEqual(oInfo.description, "Placeholder Tooltip Description Token1 Token2", "Description");
+		assert.strictEqual(oInfo.description, "Placeholder Tooltip Description Token1 Token2", "Description");
 	});
 
 	QUnit.test("_tokensInfo aggregation", function(assert) {
@@ -830,7 +830,7 @@
 		var oInvisibleText = this.multiInput1.getAggregation("_tokensInfo");
 
 		// assert
-		strictEqual(oInvisibleText.getText(), oResourceBundle.getText("MULTIINPUT_ARIA_CONTAIN_TOKEN"), "'MultiInput may contain tokens' text is set.");
+		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("MULTIINPUT_ARIA_CONTAIN_TOKEN"), "'MultiInput may contain tokens' text is set.");
 
 		// act
 		this.multiInput1.addToken(new sap.m.Token({text: "Token1"}));
@@ -838,7 +838,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		strictEqual(oInvisibleText.getText(), oResourceBundle.getText("MULTIINPUT_ARIA_CONTAIN_ONE_TOKEN"), "'MultiInput contains 1 token' text is set.");
+		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("MULTIINPUT_ARIA_CONTAIN_ONE_TOKEN"), "'MultiInput contains 1 token' text is set.");
 
 		// act
 		this.multiInput1.addToken(new sap.m.Token({text: "Token2"}));
@@ -846,7 +846,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		strictEqual(oInvisibleText.getText(), oResourceBundle.getText("MULTIINPUT_ARIA_CONTAIN_SEVERAL_TOKENS", this.multiInput1.getTokens().length), "'MultiInput contains N tokens' text is set.");
+		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("MULTIINPUT_ARIA_CONTAIN_SEVERAL_TOKENS", this.multiInput1.getTokens().length), "'MultiInput contains N tokens' text is set.");
 	});
 
 	QUnit.test("Placeholder opacity", function(assert) {

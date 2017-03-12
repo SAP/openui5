@@ -276,14 +276,14 @@
 		var oButton = new sap.m.Button({
 			text : "Open TableSelectDialog",
 			press : function() {
-				strictEqual(oTableSelectDialog.open() , oTableSelectDialog , "TableSelectDialog should be chaninable");
+				assert.strictEqual(oTableSelectDialog.open() , oTableSelectDialog , "TableSelectDialog should be chaninable");
 			}
 		});
 
 		var oButton1 = new sap.m.Button({
 			text : "Open TableSelectDialog1",
 			press : function() {
-				strictEqual(oTableSelectDialog1.open() , oTableSelectDialog1 , "TableSelectDialog1 should be chaninable");
+				assert.strictEqual(oTableSelectDialog1.open() , oTableSelectDialog1 , "TableSelectDialog1 should be chaninable");
 			}
 		});
 
@@ -302,17 +302,17 @@
 
 		QUnit.test("Initialization", function(assert) {
 			ok(!jQuery.sap.domById("oTableSelectDialog"), "TableSelectDialog is not rendered before it's ever opened.");
-			strictEqual(oTableSelectDialog.getTitle(), "Choose your tech..", 'The title should be "Choose your tech.."');
-			strictEqual(oTableSelectDialog.getNoDataText(), "We do not have any tech to show here and we are very sorry for that!", '"We do not have any tech to show here and we are very sorry for that!" should be displayed when no data is there');
-			strictEqual(oTableSelectDialog.getMultiSelect(), false, 'Multi Select should by default be set to "false"');
-			strictEqual(oTableSelectDialog.getGrowingThreshold(), 50, 'The growing threshold should be "50"');
+			assert.strictEqual(oTableSelectDialog.getTitle(), "Choose your tech..", 'The title should be "Choose your tech.."');
+			assert.strictEqual(oTableSelectDialog.getNoDataText(), "We do not have any tech to show here and we are very sorry for that!", '"We do not have any tech to show here and we are very sorry for that!" should be displayed when no data is there');
+			assert.strictEqual(oTableSelectDialog.getMultiSelect(), false, 'Multi Select should by default be set to "false"');
+			assert.strictEqual(oTableSelectDialog.getGrowingThreshold(), 50, 'The growing threshold should be "50"');
 			ok(!jQuery.sap.domById("oTableSelectDialog1"), "TableSelectDialog is not rendered before it's ever opened.");
-			strictEqual(oTableSelectDialog1.getTitle(), "Title", 'The title should be "Title"');
-			strictEqual(oTableSelectDialog1.getNoDataText(), "No Data", '"No Data" should be displayed when no data is there');
-			strictEqual(oTableSelectDialog1.getMultiSelect(), false, 'Multi Select should by default be set to "false"');
+			assert.strictEqual(oTableSelectDialog1.getTitle(), "Title", 'The title should be "Title"');
+			assert.strictEqual(oTableSelectDialog1.getNoDataText(), "No Data", '"No Data" should be displayed when no data is there');
+			assert.strictEqual(oTableSelectDialog1.getMultiSelect(), false, 'Multi Select should by default be set to "false"');
 			oTableSelectDialog1.setMultiSelect(true);
 			sap.ui.getCore().applyChanges();
-			strictEqual(oTableSelectDialog1.getMultiSelect(), true, 'Multi Select should now be updated to  "true"');
+			assert.strictEqual(oTableSelectDialog1.getMultiSelect(), true, 'Multi Select should now be updated to  "true"');
 
 		});
 
@@ -321,15 +321,15 @@
 			oTableSelectDialog.setBusyIndicatorDelay(iDelay);
 
 			sap.ui.getCore().applyChanges();
-			strictEqual(oTableSelectDialog._oTable.getBusyIndicatorDelay(), iDelay, 'The delay value should be ' + iDelay);
-			strictEqual(oTableSelectDialog.getBusyIndicatorDelay(), iDelay, 'The delay value should be ' + iDelay);
+			assert.strictEqual(oTableSelectDialog._oTable.getBusyIndicatorDelay(), iDelay, 'The delay value should be ' + iDelay);
+			assert.strictEqual(oTableSelectDialog.getBusyIndicatorDelay(), iDelay, 'The delay value should be ' + iDelay);
 		});
 
 		QUnit.module("Bindings Check");
 
 		QUnit.test("Bindings", function(assert) {
-			strictEqual(oTableSelectDialog.getBinding("items").iLength, 5 , 'TableSelectDialog should have 5 items bound');
-			strictEqual(oTableSelectDialog1.getBinding("items").iLength, 5 , 'TableSelectDialog1 should have 5 items bound');
+			assert.strictEqual(oTableSelectDialog.getBinding("items").iLength, 5 , 'TableSelectDialog should have 5 items bound');
+			assert.strictEqual(oTableSelectDialog1.getBinding("items").iLength, 5 , 'TableSelectDialog1 should have 5 items bound');
 		});
 
 		QUnit.module("MultiSelect proper selection reset");
@@ -375,7 +375,7 @@
 			// simulate close
 			oTableSelectDialog._dialog.attachAfterClose(function() {
 				oTableSelectDialog.destroy();
-				strictEqual(oTableSelectDialog.$().length, 0, "TableSelectDialog is destroyed");
+				assert.strictEqual(oTableSelectDialog.$().length, 0, "TableSelectDialog is destroyed");
 				done();
 			})
 			oTableSelectDialog._dialog.close();
@@ -410,7 +410,7 @@
 		QUnit.test("TableSelectDialog1 SearchField Equals 'Mo'", function(assert){
 			var done = assert.async();
 			assert.expect(1);
-			strictEqual(jQuery.sap.domById("oTableSelectDialog1-searchField-I").value, "Mo", "Search Field should Contain 'Mo'");
+			assert.strictEqual(jQuery.sap.domById("oTableSelectDialog1-searchField-I").value, "Mo", "Search Field should Contain 'Mo'");
 			done();
 		});
 
@@ -479,7 +479,7 @@
 		QUnit.test("TableSelectDialog1 Change to Single Select", function(assert) {
 			oTableSelectDialog1.setMultiSelect(false);
 			sap.ui.getCore().applyChanges();
-			strictEqual(oTableSelectDialog1.getMultiSelect(), false, 'Multi Select should now be updated to  "false"');
+			assert.strictEqual(oTableSelectDialog1.getMultiSelect(), false, 'Multi Select should now be updated to  "false"');
 		});
 
 		QUnit.test("TableSelectDialog1 Single Select Checks", function(assert){
@@ -654,7 +654,7 @@
 			oTableSelectDialog15.open();
 
 			setTimeout(function() {
-				strictEqual(oTableSelectDialog15.getItems()[0].$().is(":focus"), true, 'The first row of the table should be focused');
+				assert.strictEqual(oTableSelectDialog15.getItems()[0].$().is(":focus"), true, 'The first row of the table should be focused');
 					oTableSelectDialog15._oDialog.close();
 					oTableSelectDialog15.destroy();
 					done();

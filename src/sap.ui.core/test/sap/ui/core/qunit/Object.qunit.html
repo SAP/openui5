@@ -38,14 +38,14 @@
 
 		function assertArrayEquals(sMessage, a1, a2) {
 			if ( !a1 || !a2 ) {
-				strictEqual(a2, a1, sMessage);
+				assert.strictEqual(a2, a1, sMessage);
 				return;
 			}
 
 			var l1=a1.length,l2=a2.length;
-			strictEqual(l2, l1, sMessage);
+			assert.strictEqual(l2, l1, sMessage);
 			for(var i=0; i<l1; i++) {
-				strictEqual(a2[i], a1[i], sMessage);
+				assert.strictEqual(a2[i], a1[i], sMessage);
 			};
 		};
 
@@ -101,7 +101,7 @@
 					// TODO the following tests only work for methods that have stable results and that don't require arguments
 					var r1 = oNewClassInstance[m]();
 					var r2 = oIntf1[m]();
-					strictEqual(r2, r1, "same values returned");
+					assert.strictEqual(r2, r1, "same values returned");
 				}
 			}
 		});
@@ -113,9 +113,9 @@
 
 		QUnit.test("BaseTypeSet", function(assert) {
 			ok(oNewClassInstance.getMetadata().getParent() != false, "basetype set");
-			strictEqual("sap.ui.base.Object", oNewClassInstance.getMetadata().getParent().getName(), "basetype as expected");
+			assert.strictEqual("sap.ui.base.Object", oNewClassInstance.getMetadata().getParent().getName(), "basetype as expected");
 			ok(oNewSubClassInstance.getMetadata().getParent() != false, "basetype set");
-			strictEqual(oNewClassInstance.getMetadata(), oNewSubClassInstance.getMetadata().getParent(), "basetype as expected");
+			assert.strictEqual(oNewClassInstance.getMetadata(), oNewSubClassInstance.getMetadata().getParent(), "basetype as expected");
 		});
 
 		QUnit.test("PublicMethods", function(assert) {

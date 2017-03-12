@@ -641,9 +641,9 @@
 					var oButton1 = sap.ui.getCore().byId('asButton1'),
 						aInvisibleTexts = oActionSheet.getAggregation("_invisibleAriaTexts");
 
-					strictEqual(aInvisibleTexts[0] instanceof sap.ui.core.InvisibleText, true, "Second label should be invisibleText");
-					strictEqual(aInvisibleTexts[0].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 2]), "Text should be the index of the button");
-					strictEqual(aInvisibleTexts[1].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [2, 2]), "Text should be the index of the button");
+					assert.strictEqual(aInvisibleTexts[0] instanceof sap.ui.core.InvisibleText, true, "Second label should be invisibleText");
+					assert.strictEqual(aInvisibleTexts[0].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 2]), "Text should be the index of the button");
+					assert.strictEqual(aInvisibleTexts[1].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [2, 2]), "Text should be the index of the button");
 
 					oActionSheet.close();
 					oActionSheet._getAllButtons()[1].setVisible(false);
@@ -652,7 +652,7 @@
 					setTimeout(function(){
 						aInvisibleTexts = oActionSheet.getAggregation("_invisibleAriaTexts");
 
-						strictEqual(aInvisibleTexts[0].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 1]), "Text should be the index of the button");
+						assert.strictEqual(aInvisibleTexts[0].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 1]), "Text should be the index of the button");
 						done();
 						oActionSheet.close();
 						oButton.destroy();
@@ -696,8 +696,8 @@
 						aInvisibleTexts = oActionSheet.getAggregation("_invisibleAriaTexts");
 						aButtonLabels = button1.getAriaLabelledBy();
 
-						strictEqual(aInvisibleTexts.length, 1, "Invisible text should be one");
-						strictEqual(aButtonLabels.length, 1, "Button should be labelled by 1 id");
+						assert.strictEqual(aInvisibleTexts.length, 1, "Invisible text should be one");
+						assert.strictEqual(aButtonLabels.length, 1, "Button should be labelled by 1 id");
 						ok(aButtonLabels.indexOf(aInvisibleTexts[0].getId()) > -1, "The button should be lablled by a text from the invisibleTexts");
 						done();
 						oActionSheet.close();
@@ -737,7 +737,7 @@
 						sInvisibleText = sap.ui.getCore().byId('asButton1').getAriaLabelledBy()[0],
 						oInvisibleTextObj = sap.ui.getCore().byId(sInvisibleText);
 
-					strictEqual(oInvisibleTextObj.getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 1]), "Total amount of buttons should be 1");
+					assert.strictEqual(oInvisibleTextObj.getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 1]), "Total amount of buttons should be 1");
 
 					done();
 					oActionSheet.close();
@@ -782,7 +782,7 @@
  				deepEqual(aPreCloneHandlers, aPostCloneHandlers,
  					'The handlers before the clone should be the same as the press handlers after the clone');
 				oClonedActionSheet.getButtons().forEach(function(oButton, i) {
- 					strictEqual(oButton.getParent(),oClonedActionSheet,
+ 					assert.strictEqual(oButton.getParent(),oClonedActionSheet,
  						"Cloned actionsheet buttons parent should be the clone instance");
  				});
  				notStrictEqual(oClonedActionSheet.sId, oActionSheet.sId, 'The sId should be unique for each clone');
@@ -800,11 +800,11 @@
 
 				oActionSheet.addButton(oButton)
 				oActionSheet.removeButton(oButton);
-				strictEqual(oActionSheet.getAggregation("_invisibleAriaTexts").length, 0, "Invisible text should be destroyed");
+				assert.strictEqual(oActionSheet.getAggregation("_invisibleAriaTexts").length, 0, "Invisible text should be destroyed");
 
 				oActionSheet.addButton(oButton)
 				oActionSheet.removeAllButtons();
-				strictEqual(oActionSheet.getAggregation("_invisibleAriaTexts").length, 0, "Invisible text should be destroyed");
+				assert.strictEqual(oActionSheet.getAggregation("_invisibleAriaTexts").length, 0, "Invisible text should be destroyed");
 			});
 
 			QUnit.done(function() {

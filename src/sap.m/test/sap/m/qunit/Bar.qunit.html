@@ -200,7 +200,7 @@
 				sap.ui.getCore().applyChanges();
 
 				//Assert
-				strictEqual(sut.$().filter(".sapMBarTranslucent").length,1,"translucent class got set");
+				assert.strictEqual(sut.$().filter(".sapMBarTranslucent").length,1,"translucent class got set");
 
 				//Cleanup
 				sut.destroy();
@@ -223,7 +223,7 @@
 				sap.ui.getCore().applyChanges();
 
 				//Assert
-				strictEqual(fnSpy.callCount, 0,"the resize listeners did not get registered");
+				assert.strictEqual(fnSpy.callCount, 0,"the resize listeners did not get registered");
 
 				//Cleanup
 				oBar.destroy();
@@ -255,11 +255,11 @@
 				// Assert
 				function assertButton (oButton, oMargins) {
 					if(sap.ui.getCore().getConfiguration().getRTL()) {
-						strictEqual(oButton.$().css("margin-left"), oMargins.right + "px", oButton + " did have the correct right margin");
-						strictEqual(oButton.$().css("margin-right"),  oMargins.left + "px", oButton + " did have the correct left margin");
+						assert.strictEqual(oButton.$().css("margin-left"), oMargins.right + "px", oButton + " did have the correct right margin");
+						assert.strictEqual(oButton.$().css("margin-right"),  oMargins.left + "px", oButton + " did have the correct left margin");
 					} else {
-						strictEqual(oButton.$().css("margin-left"), oMargins.left + "px", oButton + " did have the correct left margin");
-						strictEqual(oButton.$().css("margin-right"),  oMargins.right + "px", oButton + " did have the correct right margin");
+						assert.strictEqual(oButton.$().css("margin-left"), oMargins.left + "px", oButton + " did have the correct left margin");
+						assert.strictEqual(oButton.$().css("margin-right"),  oMargins.right + "px", oButton + " did have the correct right margin");
 					}
 				}
 
@@ -279,9 +279,9 @@
 				});
 
 				if(sap.ui.getCore().getConfiguration().getRTL()) {
-					strictEqual(oBar.$("BarLeft").css("padding-right"), iStartEndPadding + "px", "Left bar does have a padding");
+					assert.strictEqual(oBar.$("BarLeft").css("padding-right"), iStartEndPadding + "px", "Left bar does have a padding");
 				} else {
-					strictEqual(oBar.$("BarLeft").css("padding-left"), iStartEndPadding + "px", "Left bar does have a padding");
+					assert.strictEqual(oBar.$("BarLeft").css("padding-left"), iStartEndPadding + "px", "Left bar does have a padding");
 				}
 
 				// Cleanup
@@ -441,7 +441,7 @@
 
 				if(style) {
 
-					strictEqual(style.indexOf("width"), -1, sElementName + " has no inline width set style was " + style);
+					assert.strictEqual(style.indexOf("width"), -1, sElementName + " has no inline width set style was " + style);
 
 				} else {
 
@@ -455,8 +455,8 @@
 
 				if(stlye) {
 
-					strictEqual(stlye.indexOf("right"), -1, sElementName + " has no inline right set style was " + stlye);
-					strictEqual(stlye.indexOf("left"), -1, sElementName + " has no inline left set style was " + stlye);
+					assert.strictEqual(stlye.indexOf("right"), -1, sElementName + " has no inline right set style was " + stlye);
+					assert.strictEqual(stlye.indexOf("left"), -1, sElementName + " has no inline left set style was " + stlye);
 
 				} else {
 
@@ -532,15 +532,15 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 100 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 100 + iStartEndPadding, "left outerWidth is correct");
 				elementHasNoWidth(oBarInternals.$left, "left Bar");
 				elementHasNoLeftOrRight(oBarInternals.$left, "left Bar");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 100 + iStartEndPadding * 2, "mid outerWidth is correct");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 100 + iStartEndPadding * 2, "mid outerWidth is correct");
 				elementHasNoWidth(oBarInternals.$mid, "mid Bar");
 				elementHasNoLeftOrRight(oBarInternals.$left, "mid Bar");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
 				elementHasNoWidth(oBarInternals.$right, "right Bar");
 				elementHasNoLeftOrRight(oBarInternals.$right, "right Bar");
 
@@ -557,13 +557,13 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 50 - iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 50 - iStartEndPadding, "left outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$left, "left Bar");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$mid, "mid Bar");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 450 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 450 + iStartEndPadding, "right outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$right, "right Bar");
 
 				//Cleanup
@@ -579,13 +579,13 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 400 - iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 400 - iStartEndPadding, "left outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$left, "left Bar");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$mid, "mid Bar");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$right, "right Bar");
 
 				//Cleanup
@@ -601,11 +601,11 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 225 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 225 + iStartEndPadding, "left outerWidth is correct");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 175 -  iStartEndPadding * 2, "mid outerWidth is correct");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 175 -  iStartEndPadding * 2, "mid outerWidth is correct");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
 
 				//Cleanup
 				sut.destroy();
@@ -632,12 +632,12 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 -  iStartEndPadding * 2, "mid outerWidth is the remaining space");
-				strictEqual(oBarInternals.$mid.css("left"), 0 +  iStartEndPadding + "px", "mid was positioned at the left edge");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 -  iStartEndPadding * 2, "mid outerWidth is the remaining space");
+				assert.strictEqual(oBarInternals.$mid.css("left"), 0 +  iStartEndPadding + "px", "mid was positioned at the left edge");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
 
 				//Cleanup
 				sut.destroy();
@@ -664,12 +664,12 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 -  iStartEndPadding * 2, "mid outerWidth is the remaining space");
-				strictEqual(oBarInternals.$mid.css("left"), 225 + iStartEndPadding + "px", "mid was positioned at the right edge");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 -  iStartEndPadding * 2, "mid outerWidth is the remaining space");
+				assert.strictEqual(oBarInternals.$mid.css("left"), 225 + iStartEndPadding + "px", "mid was positioned at the right edge");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
 
 				//Cleanup
 				sut.destroy();
@@ -684,11 +684,11 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 500, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 500, "right outerWidth is correct");
 
 				//Cleanup
 				sut.destroy();
@@ -708,11 +708,11 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 500 - iStartEndPadding, "left width is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 500 - iStartEndPadding, "left width is correct");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 0 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 0 + iStartEndPadding, "right outerWidth is correct");
 
 				//Cleanup
 				sut.destroy();
@@ -732,11 +732,11 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 100 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 100 + iStartEndPadding, "left outerWidth is correct");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 300 -  iStartEndPadding * 2, "mid outerWidth is correct");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 300 -  iStartEndPadding * 2, "mid outerWidth is correct");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
 
 				//Cleanup
 				sut.destroy();
@@ -756,11 +756,11 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 - iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 - iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
 
 				//Cleanup
 				sut.destroy();
@@ -780,15 +780,15 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$left, "left Bar");
 
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
 				elementHasNoLeftOrRight(oBarInternals.$mid, "mid Bar");
 
 
-				strictEqual(oBarInternals.$right.outerWidth(), 500, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 500, "right outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$right, "right Bar");
 
 
@@ -811,9 +811,9 @@
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
 				if (sap.ui.getCore().getConfiguration().getRTL()) {
-					strictEqual(oBarInternals.$right.outerWidth(), oBarInternals.$left.position().left, "left content starts where right content ends");
+					assert.strictEqual(oBarInternals.$right.outerWidth(), oBarInternals.$left.position().left, "left content starts where right content ends");
 				} else {
-					strictEqual(oBarInternals.$left.outerWidth(), oBarInternals.$right.position().left, "right content starts where left content ends");
+					assert.strictEqual(oBarInternals.$left.outerWidth(), oBarInternals.$right.position().left, "right content starts where left content ends");
 				}
 
 				//Cleanup
@@ -836,18 +836,18 @@
 				sut.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				strictEqual(oHandleResizeSpy.callCount, 1, "resize was called once");
+				assert.strictEqual(oHandleResizeSpy.callCount, 1, "resize was called once");
 
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 225 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 225 + iStartEndPadding, "left outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$left, "left Bar");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 50 - iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
-				strictEqual(oBarInternals.$mid.css("left"), 225 + iStartEndPadding + "px", "mid was positioned at the left edge");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 50 - iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
+				assert.strictEqual(oBarInternals.$mid.css("left"), 225 + iStartEndPadding + "px", "mid was positioned at the left edge");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$right, "right Bar");
 
 				jQuery("#qunit-fixture").width("600px");
@@ -856,16 +856,16 @@
 
 				oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 225 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 225 + iStartEndPadding, "left outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$left, "left Bar");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 100 + iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 100 + iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
 				elementHasNoLeftOrRight(oBarInternals.$left, "mid Bar");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$right, "right Bar");
 
-				strictEqual(oHandleResizeSpy.callCount, 2, "resize was called twice");
+				assert.strictEqual(oHandleResizeSpy.callCount, 2, "resize was called twice");
 
 				//Cleanup
 				sut.destroy();
@@ -883,7 +883,7 @@
 				sut.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				strictEqual(oHandleResizeSpy.callCount, 1, "resize was called once");
+				assert.strictEqual(oHandleResizeSpy.callCount, 1, "resize was called once");
 
 				//Act
 				jQuery("#qunit-fixture").width("600px");
@@ -891,16 +891,16 @@
 				this.clock.tick(200);
 
 				//Assert
-				strictEqual(oHandleResizeSpy.callCount, 1, "resize not called twice");
+				assert.strictEqual(oHandleResizeSpy.callCount, 1, "resize not called twice");
 
 				sut.addContentLeft(new sap.m.Button());
 				sap.ui.getCore().applyChanges();
 
-				strictEqual(oHandleResizeSpy.callCount, 2, "resize was called twice");
+				assert.strictEqual(oHandleResizeSpy.callCount, 2, "resize was called twice");
 
 				jQuery("#qunit-fixture").width("500px");
 				this.clock.tick(200);
-				strictEqual(oHandleResizeSpy.callCount, 3, "resize was called three times");
+				assert.strictEqual(oHandleResizeSpy.callCount, 3, "resize was called three times");
 
 				//Cleanup
 				sut.destroy();
@@ -915,7 +915,7 @@
 				//left | right | mid
 				var sut = createAndPlaceSUT(100, 100, 100);
 
-				strictEqual(oHandleResizeSpy.callCount, 1, "resize was called");
+				assert.strictEqual(oHandleResizeSpy.callCount, 1, "resize was called");
 
 
 				var oBarInternals = getJqueryObjectsForBar(sut);
@@ -924,19 +924,19 @@
 				oBarInternals.$left.width(105);
 				this.clock.tick(200);
 
-				strictEqual(oHandleResizeSpy.callCount, 2, "resize was called");
+				assert.strictEqual(oHandleResizeSpy.callCount, 2, "resize was called");
 
 				//right
 				oBarInternals.$right.width(105);
 				this.clock.tick(200);
 
-				strictEqual(oHandleResizeSpy.callCount, 3, "resize was called");
+				assert.strictEqual(oHandleResizeSpy.callCount, 3, "resize was called");
 
 				//mid
 				oBarInternals.$mid.width(105);
 				this.clock.tick(200);
 
-				strictEqual(oHandleResizeSpy.callCount, 4, "resize was called");
+				assert.strictEqual(oHandleResizeSpy.callCount, 4, "resize was called");
 
 				//detach
 				sut._removeAllListeners();
@@ -945,7 +945,7 @@
 				oBarInternals.$right.width(100);
 				oBarInternals.$mid.width(100);
 
-				strictEqual(oHandleResizeSpy.callCount, 4, "resize was not called");
+				assert.strictEqual(oHandleResizeSpy.callCount, 4, "resize was not called");
 
 				//Cleanup
 				sut.destroy();

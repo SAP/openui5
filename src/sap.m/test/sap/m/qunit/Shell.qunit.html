@@ -65,14 +65,14 @@
 
 
 		QUnit.test("Shell should hide the branding bar when another Shell-like control is parent and has one", function(assert) {
-			strictEqual(oShell.$().find(".sapMShellBrandingBar").length, 1, "branding bar should be rendered");
-			strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "block", "branding bar should normally be visible");
+			assert.strictEqual(oShell.$().find(".sapMShellBrandingBar").length, 1, "branding bar should be rendered");
+			assert.strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "block", "branding bar should normally be visible");
 
 			jQuery(document.body).addClass("sapMBrandingBar-CTX");
-			strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "none", "branding bar should not be visible when a Shell is ancestor");
+			assert.strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "none", "branding bar should not be visible when a Shell is ancestor");
 
 			jQuery(document.body).removeClass("sapMBrandingBar-CTX");
-			strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "block", "branding bar should normally be visible");
+			assert.strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "block", "branding bar should normally be visible");
 		});
 
 

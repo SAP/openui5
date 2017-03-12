@@ -119,12 +119,12 @@
 			_fnBigYearTest: function (iYear) {
 				var iNumberOfWeeksForYear = CalendarUtils._getNumberOfWeeksForYear(iYear);
 				//assert
-				strictEqual(iNumberOfWeeksForYear, 53, "Correct number of weeks (" + iNumberOfWeeksForYear + ") for year " + iYear);
+				assert.strictEqual(iNumberOfWeeksForYear, 53, "Correct number of weeks (" + iNumberOfWeeksForYear + ") for year " + iYear);
 			},
 			_fnRegularYearTest: function (iYear) {
 				var iNumberOfWeeksForYear = CalendarUtils._getNumberOfWeeksForYear(iYear);
 				//assert
-				strictEqual(iNumberOfWeeksForYear, 52, "Correct number of weeks (" + iNumberOfWeeksForYear + ") for year " + iYear);
+				assert.strictEqual(iNumberOfWeeksForYear, 52, "Correct number of weeks (" + iNumberOfWeeksForYear + ") for year " + iYear);
 			}
 		});
 
@@ -173,8 +173,8 @@
 			iWeekNumber_enUS_custom = CalendarUtils.calculateWeekNumber(oDate, 2016, 'en-US', oLocaleData);
 
 			// assert
-			strictEqual(iWeekNumber_enUS, 47, "The week is 47 for 17.11.2016 when locale is en-US-x-sapufmt");
-			strictEqual(iWeekNumber_enUS_custom, 47, "The week is 47 for 17.11.2016 when locale is en-US");
+			assert.strictEqual(iWeekNumber_enUS, 47, "The week is 47 for 17.11.2016 when locale is en-US-x-sapufmt");
+			assert.strictEqual(iWeekNumber_enUS_custom, 47, "The week is 47 for 17.11.2016 when locale is en-US");
 		});
 
 		QUnit.test("Week number when locale is en-GB", function(assert) {
@@ -192,7 +192,7 @@
 			iWeekNumber = CalendarUtils.calculateWeekNumber(oDate, 2016, 'en-GB', oLocaleData);
 
 			// assert
-			strictEqual(iWeekNumber, 46, "The week is 46 for 17.11.2016 when locale is en-GB");
+			assert.strictEqual(iWeekNumber, 46, "The week is 46 for 17.11.2016 when locale is en-GB");
 		});
 
 		QUnit.test("'isDateLastInMonth' checks if the corresponding date is last in a month depending on its parameter", function(assert) {

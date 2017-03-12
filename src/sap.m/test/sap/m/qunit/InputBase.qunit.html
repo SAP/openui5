@@ -33,7 +33,7 @@
 				var sProperty = mOptions.property.charAt(0).toUpperCase() + mOptions.property.slice(1);
 
 				QUnit.test("method: get" + sProperty + "()", function(assert) {
-					strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
+					assert.strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
 				});
 			};
 
@@ -57,15 +57,15 @@
 				sap.ui.getCore().applyChanges();
 
 				// assertions
-				strictEqual(oInput.getValue(), "", 'The default value is ""');
-				strictEqual(oInput.getWidth(), "", 'The default width is ""');
-				strictEqual(oInput.getEnabled(), true, "By default the input field is enabled");
-				strictEqual(oInput.getVisible(), true, "By default the input field is visible");
-				strictEqual(oInput.getValueState(), "None", 'By default the value state is "None"');
-				strictEqual(oInput.getName(), "", 'The default name is ""');
-				strictEqual(oInput.getPlaceholder(), "", 'The default placeholder value is ""');
-				strictEqual(oInput.getEditable(), true, 'By default the input field is editable');
-				strictEqual(oInput.getTooltip(), null);
+				assert.strictEqual(oInput.getValue(), "", 'The default value is ""');
+				assert.strictEqual(oInput.getWidth(), "", 'The default width is ""');
+				assert.strictEqual(oInput.getEnabled(), true, "By default the input field is enabled");
+				assert.strictEqual(oInput.getVisible(), true, "By default the input field is visible");
+				assert.strictEqual(oInput.getValueState(), "None", 'By default the value state is "None"');
+				assert.strictEqual(oInput.getName(), "", 'The default name is ""');
+				assert.strictEqual(oInput.getPlaceholder(), "", 'The default placeholder value is ""');
+				assert.strictEqual(oInput.getEditable(), true, 'By default the input field is editable');
+				assert.strictEqual(oInput.getTooltip(), null);
 
 				// cleanup
 				oInput.destroy();
@@ -337,7 +337,7 @@
 					sap.ui.getCore().applyChanges();
 
 					// assertions
-					strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
+					assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
 
 					// cleanup
 					oInput.destroy();
@@ -381,9 +381,9 @@
 					oInput.setValue(mSettings.input);
 
 					// assertions
-					strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
+					assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
 					ok(fnSetValueSpy.returned(oInput), "sap.m.InputBase.prototype.setValue() method returns the correct value");
-					strictEqual(fnRerenderSpy.callCount, 0, "Input is not rerendered with setValue calls");
+					assert.strictEqual(fnRerenderSpy.callCount, 0, "Input is not rerendered with setValue calls");
 
 					// cleanup
 					oInput.destroy();
@@ -425,7 +425,7 @@
 					sap.ui.getCore().applyChanges();
 
 					// assertions
-					strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
+					assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
 
 					// cleanup
 					oInput.destroy();
@@ -478,9 +478,9 @@
 					oInput.setValue(mSettings.input);
 
 					// assertions
-					strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
+					assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
 					ok(fnSetValueSpy.returned(oInput), "sap.m.InputBase.prototype.setValue() method returns the correct value");
-					strictEqual(fnRerenderSpy.callCount, 0, "Input is not rerendered with setValue calls");
+					assert.strictEqual(fnRerenderSpy.callCount, 0, "Input is not rerendered with setValue calls");
 
 					// cleanup
 					oInput.destroy();
@@ -521,7 +521,7 @@
 				oInput.setValue(sTestValue);
 
 				// assertions
-				strictEqual(sLastValue, sInitValue, "Last value did not change");
+				assert.strictEqual(sLastValue, sInitValue, "Last value did not change");
 
 				// cleanup
 				oInput.destroy();
@@ -549,7 +549,7 @@
 				oInput.setValue(sValue);
 
 				// assertion - after setValue
-				strictEqual(oInput.getFocusDomRef().value, sValue, "Dom value and value property are same after setValue call.");
+				assert.strictEqual(oInput.getFocusDomRef().value, sValue, "Dom value and value property are same after setValue call.");
 
 				// cleanup
 				oInput.destroy();
@@ -570,7 +570,7 @@
 					sap.ui.getCore().applyChanges();
 
 					// assertions
-					strictEqual(oInput.getDomRef().style.width, mSettings.output);
+					assert.strictEqual(oInput.getDomRef().style.width, mSettings.output);
 
 					// cleanup
 					oInput.destroy();
@@ -613,7 +613,7 @@
 					sap.ui.getCore().applyChanges();
 
 					// assertions
-					strictEqual(oInput.getDomRef().style.width, mSettings.output);
+					assert.strictEqual(oInput.getDomRef().style.width, mSettings.output);
 
 					// cleanup
 					oInput.destroy();
@@ -657,7 +657,7 @@
 
 				// assertions
 				ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
-				strictEqual(oInput.getFocusDomRef().getAttribute("aria-disabled"), "true");
+				assert.strictEqual(oInput.getFocusDomRef().getAttribute("aria-disabled"), "true");
 
 				// cleanup
 				oInput.destroy();
@@ -676,7 +676,7 @@
 
 				// assertions
 				ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
-				strictEqual(oInput.getFocusDomRef().getAttribute("aria-disabled"), "true");
+				assert.strictEqual(oInput.getFocusDomRef().getAttribute("aria-disabled"), "true");
 
 				// cleanup
 				oInput.destroy();
@@ -692,7 +692,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// assertions
-				strictEqual(jQuery(oInput.getFocusDomRef()).attr("aria-disabled"), undefined);
+				assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("aria-disabled"), undefined);
 
 				// cleanup
 				oInput.destroy();
@@ -764,7 +764,7 @@
 
 					// assertions
 					ok(oInput.$().hasClass(mSettings.output), "Input should have the class " + mSettings.output);
-					strictEqual(fnRerenderSpy.callCount, 0, "Input is not rerendered with setValueState calls");
+					assert.strictEqual(fnRerenderSpy.callCount, 0, "Input is not rerendered with setValueState calls");
 
 					// cleanup
 					oInput.destroy();
@@ -795,13 +795,13 @@
 				}).placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				strictEqual(oInput.getValueState(), sap.ui.core.ValueState.None, "Invalid value state before rendering is converted to default value.");
+				assert.strictEqual(oInput.getValueState(), sap.ui.core.ValueState.None, "Invalid value state before rendering is converted to default value.");
 
 				oInput.setValueState(sap.ui.core.ValueState.Error);
 				ok(oInput.$().hasClass("sapMInputBaseState"), "Input has the state class before testing the invalid value.");
 
 				oInput.setValueState(undefined);
-				strictEqual(oInput.getValueState(), sap.ui.core.ValueState.None, "Invalid value state is converted to default value.");
+				assert.strictEqual(oInput.getValueState(), sap.ui.core.ValueState.None, "Invalid value state is converted to default value.");
 				ok(!oInput.$().hasClass("sapMInputBaseState"), "Input's state class is removed after setting the invalid value");
 
 				oInput.destroy();
@@ -823,7 +823,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// assertions
-				strictEqual(jQuery(oInput.getFocusDomRef()).attr("name"), "myInput", 'The attribute name is "myInput"');
+				assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("name"), "myInput", 'The attribute name is "myInput"');
 
 				// cleanup
 				oInput.destroy();
@@ -843,7 +843,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// assertions
-				strictEqual(jQuery(oInput.getFocusDomRef()).attr("name"), "myInput", 'The attribute name is "myInput"');
+				assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("name"), "myInput", 'The attribute name is "myInput"');
 
 				// cleanup
 				oInput.destroy();
@@ -865,7 +865,7 @@
 
 					// assertions
 					if (!oInput.bShowLabelAsPlaceholder) {
-						strictEqual(jQuery(oInput.getFocusDomRef()).attr("placeholder"), mSettings.output);
+						assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("placeholder"), mSettings.output);
 					}
 
 					// force to show synthetic placeholder
@@ -876,7 +876,7 @@
 					sap.ui.getCore().applyChanges();
 
 					// assertions
-					strictEqual(oInput.$().find(".sapMInputBasePlaceholder").text(), mSettings.output || "");
+					assert.strictEqual(oInput.$().find(".sapMInputBasePlaceholder").text(), mSettings.output || "");
 
 					// cleanup
 					oInput.destroy();
@@ -921,7 +921,7 @@
 
 					// assertions
 					if (!oInput.bShowLabelAsPlaceholder) {
-						strictEqual(jQuery(oInput.getFocusDomRef()).attr("placeholder") || "", mSettings.output);
+						assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("placeholder") || "", mSettings.output);
 					}
 
 					// force to show synthetic placeholder
@@ -936,7 +936,7 @@
 					sap.ui.getCore().applyChanges();
 
 					// assertions
-					strictEqual(oInput.$().find(".sapMInputBasePlaceholder").text(), mSettings.output);
+					assert.strictEqual(oInput.$().find(".sapMInputBasePlaceholder").text(), mSettings.output);
 
 					// cleanup
 					oInput.destroy();
@@ -977,7 +977,7 @@
 					sap.ui.getCore().applyChanges();
 
 					// assertions
-					strictEqual(jQuery(oInput.getFocusDomRef()).attr("readonly"), mSettings.output);
+					assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("readonly"), mSettings.output);
 
 					// cleanup
 					oInput.destroy();
@@ -1013,7 +1013,7 @@
 					sap.ui.getCore().applyChanges();
 
 					// assertions
-					strictEqual(jQuery(oInput.getFocusDomRef()).attr("readonly"), mSettings.output);
+					assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("readonly"), mSettings.output);
 
 					// cleanup
 					oInput.destroy();
@@ -1048,7 +1048,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// assertions
-				strictEqual(oInput.$().length, 0);
+				assert.strictEqual(oInput.$().length, 0);
 
 				// cleanup
 				oInput.destroy();
@@ -1069,7 +1069,7 @@
 					sap.ui.getCore().applyChanges();
 
 					// assertions
-					strictEqual(oInput.getFocusDomRef().style.textAlign, mSettings.output);
+					assert.strictEqual(oInput.getFocusDomRef().style.textAlign, mSettings.output);
 
 					// cleanup
 					oInput.destroy();
@@ -1105,7 +1105,7 @@
 					sap.ui.getCore().applyChanges();
 
 					// assertions
-					strictEqual(oInput.getFocusDomRef().style.textAlign, mSettings.output);
+					assert.strictEqual(oInput.getFocusDomRef().style.textAlign, mSettings.output);
 
 					// cleanup
 					oInput.destroy();
@@ -1141,7 +1141,7 @@
 				oInput.destroy();
 
 				// assertions
-				strictEqual(oInput.$().length, 0);
+				assert.strictEqual(oInput.$().length, 0);
 
 				// cleanup
 				oInput.destroy();
@@ -1299,7 +1299,7 @@
 				oInput.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				strictEqual(jQuery(oInput.getFocusDomRef()).attr("dir"), "rtl");
+				assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("dir"), "rtl");
 
 				oInput.destroy();
 
@@ -1315,7 +1315,7 @@
 				oInput.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				strictEqual(jQuery(oInput.getFocusDomRef()).attr("dir"), "ltr");
+				assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("dir"), "ltr");
 
 				oInput.destroy();
 
@@ -1334,8 +1334,8 @@
 
 				var $Input = jQuery(oInput.getFocusDomRef());
 
-				strictEqual($Input.attr("dir"), "rtl", "Dir attribute is set to rtl");
-				strictEqual($Input.css("text-align"), "right", "Text align style is shifted to right");
+				assert.strictEqual($Input.attr("dir"), "rtl", "Dir attribute is set to rtl");
+				assert.strictEqual($Input.css("text-align"), "right", "Text align style is shifted to right");
 
 				oInput.destroy();
 
@@ -1354,8 +1354,8 @@
 
 				var $Input = jQuery(oInput.getFocusDomRef());
 
-				strictEqual($Input.attr("dir"), "ltr", "Dir attribute is set to ltr");
-				strictEqual($Input.css("text-align"), "right", "Text align style is shifted to right");
+				assert.strictEqual($Input.attr("dir"), "ltr", "Dir attribute is set to ltr");
+				assert.strictEqual($Input.css("text-align"), "right", "Text align style is shifted to right");
 
 				oInput.destroy();
 
@@ -1382,7 +1382,7 @@
 				oInput.onChange();
 
 				// assertions
-				strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
+				assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
 
 				// cleanup
 				oInput.destroy();
@@ -1412,7 +1412,7 @@
 				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
 				// assertions
-				strictEqual(fnFireChangeSpy.callCount, 0, "The change event should not be fired");
+				assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event should not be fired");
 
 				// cleanup
 				oInput.destroy();
@@ -1439,8 +1439,8 @@
 				});
 
 				// assertions
-				strictEqual(fnFireChangeSpy.args[0][0].parameter1, true);
-				strictEqual(fnFireChangeSpy.args[0][0].parameter2, false);
+				assert.strictEqual(fnFireChangeSpy.args[0][0].parameter1, true);
+				assert.strictEqual(fnFireChangeSpy.args[0][0].parameter2, false);
 
 				// cleanup
 				oInput.destroy();
@@ -1474,8 +1474,8 @@
 				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
 				// assertions
-				strictEqual(fnFireChangeSpy.args[0][0].parameter1, false);
-				strictEqual(fnFireChangeSpy.args[0][0].parameter2, true);
+				assert.strictEqual(fnFireChangeSpy.args[0][0].parameter1, false);
+				assert.strictEqual(fnFireChangeSpy.args[0][0].parameter2, true);
 
 				// cleanup
 				oInput.destroy();
@@ -1500,7 +1500,7 @@
 				sap.ui.test.qunit.triggerKeydown(oInputDomRef, "ENTER");
 
 				// assertion
-				strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired because initial value and dom value are same.");
+				assert.strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired because initial value and dom value are same.");
 
 				// change dom and cursor pos
 				sap.ui.test.qunit.triggerCharacterInput(oInputDomRef, "a");
@@ -1509,7 +1509,7 @@
 				sap.ui.test.qunit.triggerKeydown(oInputDomRef, "ENTER");
 
 				// assertion
-				strictEqual(fnFireChangeSpy.callCount, 1, "Change event is fired because last known value and dom value are not same.");
+				assert.strictEqual(fnFireChangeSpy.callCount, 1, "Change event is fired because last known value and dom value are not same.");
 
 				// reset spy
 				fnFireChangeSpy.reset();
@@ -1518,7 +1518,7 @@
 				oInputDomRef.blur();
 
 				// assertion
-				strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired again because last known value and dom value are same");
+				assert.strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired again because last known value and dom value are same");
 
 				// cleanup
 				oInput.destroy();
@@ -1545,9 +1545,9 @@
 				oButton.focus();
 
 				// assert
-				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired sync');
-				strictEqual(oInput.getValue(), sExpectedValue);
-				strictEqual(oInput.getProperty("value"), sExpectedValue);
+				assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired sync');
+				assert.strictEqual(oInput.getValue(), sExpectedValue);
+				assert.strictEqual(oInput.getProperty("value"), sExpectedValue);
 
 				// cleanup
 				oInput.destroy();
@@ -1578,10 +1578,10 @@
 				sap.ui.test.qunit.triggerKeyboardEvent(oInput.getFocusDomRef(), "ESCAPE");
 
 				// assertion - after escape
-				strictEqual(oInput.getValue(), sInitValue, "Input value is returned to the inital value after escape.");
-				strictEqual(oInput.getFocusDomRef().value, oInput.getValue(), "Dom value and value property are same after escape.");
+				assert.strictEqual(oInput.getValue(), sInitValue, "Input value is returned to the inital value after escape.");
+				assert.strictEqual(oInput.getFocusDomRef().value, oInput.getValue(), "Dom value and value property are same after escape.");
 				ok(fnFireEventSpy.calledWith("liveChange"), "Private liveChange event is fired on escape");
-				strictEqual(fnFireEventSpy.callCount, 1, "LiveChange event is fired once");
+				assert.strictEqual(fnFireEventSpy.callCount, 1, "LiveChange event is fired once");
 				ok(fnOnEscapeSpy.args[0][0].isMarked(), "Escape is marked as handled");
 
 				// reset spy
@@ -1591,7 +1591,7 @@
 				sap.ui.test.qunit.triggerKeyboardEvent(oInput.getFocusDomRef(), "ESCAPE");
 
 				// assertion - after 2nd escape
-				strictEqual(fnFireEventSpy.callCount, 0, "LiveChange event is not fired again because dom and value property are same.");
+				assert.strictEqual(fnFireEventSpy.callCount, 0, "LiveChange event is not fired again because dom and value property are same.");
 
 				// cleanup
 				oInput.destroy();
@@ -1622,7 +1622,7 @@
 				sap.ui.test.qunit.triggerEvent("input", oInputDomRef);
 
 				// assertion
-				strictEqual(fnInputDelegateSpy.callCount, 1, "input event delegate is called with character input");
+				assert.strictEqual(fnInputDelegateSpy.callCount, 1, "input event delegate is called with character input");
 				fnInputDelegateSpy.reset();
 
 				// cleanup
@@ -1643,7 +1643,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// assertion - before escape
-				strictEqual(oInput.getFocusDomRef(), oInput.$().find("input")[0], "getFocusDomRef returns the input field.");
+				assert.strictEqual(oInput.getFocusDomRef(), oInput.$().find("input")[0], "getFocusDomRef returns the input field.");
 
 				// cleanup
 				oInput.destroy();
@@ -1670,11 +1670,11 @@
 				sap.ui.getCore().applyChanges();
 
 				// assertions
-				strictEqual(fnFireChangeSpy.callCount, 0, "Change event should not be fired during the rendering");
+				assert.strictEqual(fnFireChangeSpy.callCount, 0, "Change event should not be fired during the rendering");
 
 				// in test environment focus can leave the test page
 				if (document.activeElement == oInput.getFocusDomRef()) {
-					strictEqual(jQuery(oInput.getFocusDomRef()).cursorPos(), sTestCurPos, "Cursor position reverted to the last know position after rendering.");
+					assert.strictEqual(jQuery(oInput.getFocusDomRef()).cursorPos(), sTestCurPos, "Cursor position reverted to the last know position after rendering.");
 				}
 
 				// cleanup
@@ -1707,11 +1707,11 @@
 				sap.ui.getCore().applyChanges();
 
 				// assertion
-				strictEqual(jQuery(oInput.getFocusDomRef()).val(), sTestValue, "InputBase respected setProperty value call and did not revert the dom value.");
+				assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), sTestValue, "InputBase respected setProperty value call and did not revert the dom value.");
 
 				// in test environment focus can leave the test page
 				if (document.activeElement == oInput.getFocusDomRef()) {
-					strictEqual(jQuery(oInput.getFocusDomRef()).cursorPos(), sTestCurPos, "Cursor position reverted to the last know position after rendering.");
+					assert.strictEqual(jQuery(oInput.getFocusDomRef()).cursorPos(), sTestCurPos, "Cursor position reverted to the last know position after rendering.");
 				}
 
 				// cleanup
@@ -1740,7 +1740,7 @@
 				oInput.applyFocusInfo(oFocusInfo);
 
 				// assertion
-				strictEqual($Input.cursorPos(), oFocusInfo.cursorPos, "Cursor position is set to the correct position after apply focus.");
+				assert.strictEqual($Input.cursorPos(), oFocusInfo.cursorPos, "Cursor position is set to the correct position after apply focus.");
 
 				// cleanup
 				oInput.destroy();
@@ -1766,7 +1766,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oInput.getFocusDomRef().value, sValue);
+				assert.strictEqual(oInput.getFocusDomRef().value, sValue);
 
 				// cleanup
 				oInput.destroy();
@@ -1804,7 +1804,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// assertion
-				strictEqual(oInput.getValue(), smile(sInitValue), "Initial formatter is applied correctly");
+				assert.strictEqual(oInput.getValue(), smile(sInitValue), "Initial formatter is applied correctly");
 
 				// in test enviroment focus can leave the test page
 				if (document.activeElement != oInput.getFocusDomRef()) {
@@ -1817,7 +1817,7 @@
 				oInput.getFocusDomRef().blur();
 
 				// assertion
-				strictEqual(oInput.getValue(), smile(sTestValue), "Test value formatter is applied correctly on change");
+				assert.strictEqual(oInput.getValue(), smile(sTestValue), "Test value formatter is applied correctly on change");
 
 				// set the value again to check last value is correct
 				oInput.getFocusDomRef().focus();
@@ -1825,7 +1825,7 @@
 				oInput.getFocusDomRef().blur();
 
 				// assertion
-				strictEqual(oInput.getValue(), smile(sTestValue), "Test value formatter is applied correctly on change again");
+				assert.strictEqual(oInput.getValue(), smile(sTestValue), "Test value formatter is applied correctly on change again");
 
 				// cleanup
 				oInput.destroy();
@@ -1838,41 +1838,41 @@
 				sap.ui.getCore().applyChanges();
 
 				var $Input = jQuery(oInput.getFocusDomRef());
-				strictEqual($Input.attr("role"), "textbox", "Textbox role set correctly");
-				strictEqual($Input.attr("aria-invalid"), undefined, "No aria-invalid set for valueState=None");
-				strictEqual($Input.attr("aria-readonly"), undefined, "No aria-readonly set for editable=true");
-				strictEqual($Input.attr("aria-disabled"), undefined, "No aria-disabled set for enabled=true");
-				strictEqual($Input.attr("aria-labelledby"), undefined, "No aria-labelledby set by default");
+				assert.strictEqual($Input.attr("role"), "textbox", "Textbox role set correctly");
+				assert.strictEqual($Input.attr("aria-invalid"), undefined, "No aria-invalid set for valueState=None");
+				assert.strictEqual($Input.attr("aria-readonly"), undefined, "No aria-readonly set for editable=true");
+				assert.strictEqual($Input.attr("aria-disabled"), undefined, "No aria-disabled set for enabled=true");
+				assert.strictEqual($Input.attr("aria-labelledby"), undefined, "No aria-labelledby set by default");
 
 				oInput.setValueState(sap.ui.core.ValueState.Warning);
-				strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Warning does not make control invalid");
+				assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Warning does not make control invalid");
 
 				oInput.setValueState(sap.ui.core.ValueState.Success);
-				strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Success does not make control invalid");
+				assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Success does not make control invalid");
 
 				oInput.setValueState(sap.ui.core.ValueState.Error);
-				strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error makes control invalid");
+				assert.strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error makes control invalid");
 
 				oInput.rerender();
 				sap.ui.getCore().applyChanges();
 				$Input = jQuery(oInput.getFocusDomRef());
-				strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error is at the dom after rendering");
+				assert.strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error is at the dom after rendering");
 
 				oInput.setEditable(false);
 				sap.ui.getCore().applyChanges();
 				$Input = jQuery(oInput.getFocusDomRef());
-				strictEqual($Input.attr("aria-readonly"), "true", "aria-readonly set for editable=false");
+				assert.strictEqual($Input.attr("aria-readonly"), "true", "aria-readonly set for editable=false");
 
 				oInput.setEnabled(false);
 				sap.ui.getCore().applyChanges();
 				$Input = jQuery(oInput.getFocusDomRef());
-				strictEqual($Input.attr("aria-disabled"), "true", "aria-disabled set for enabled=false");
+				assert.strictEqual($Input.attr("aria-disabled"), "true", "aria-disabled set for enabled=false");
 
 				var oText = new sap.m.Text("text");
 				oInput.addAriaLabelledBy(oText);
 				sap.ui.getCore().applyChanges();
 				$Input = jQuery(oInput.getFocusDomRef());
-				strictEqual($Input.attr("aria-labelledby"), "text", "aria-labelledby set for assosiation");
+				assert.strictEqual($Input.attr("aria-labelledby"), "text", "aria-labelledby set for assosiation");
 
 				// cleanup
 				oInput.destroy();
@@ -1888,23 +1888,23 @@
 
 				var $Input = jQuery(oInput.getFocusDomRef());
 				var $Reference = jQuery.sap.byId($Input.attr("aria-labelledby"));
-				strictEqual($Reference.text(), sPlaceholder, "Placeholder is added into aria-labelledby");
+				assert.strictEqual($Reference.text(), sPlaceholder, "Placeholder is added into aria-labelledby");
 
 				var oText = new sap.m.Text("text");
 				oInput.addAriaLabelledBy(oText);
 				sap.ui.getCore().applyChanges();
 				$Input = jQuery(oInput.getFocusDomRef());
-				strictEqual($Input.attr("aria-labelledby"), "text " + oInput.getId() + "-labelledby", "aria-labelledby is set for assosiation and placeholder together");
+				assert.strictEqual($Input.attr("aria-labelledby"), "text " + oInput.getId() + "-labelledby", "aria-labelledby is set for assosiation and placeholder together");
 
 				oInput.removeAriaLabelledBy(oText);
 				sap.ui.getCore().applyChanges();
 				$Input = jQuery(oInput.getFocusDomRef());
-				strictEqual($Input.attr("aria-labelledby"), oInput.getId() + "-labelledby", "aria-labelledby is set only for placeholder");
+				assert.strictEqual($Input.attr("aria-labelledby"), oInput.getId() + "-labelledby", "aria-labelledby is set only for placeholder");
 
 				oInput.setPlaceholder("");
 				sap.ui.getCore().applyChanges();
 				$Input = jQuery(oInput.getFocusDomRef());
-				strictEqual($Input.attr("aria-labelledby"), undefined, "no placeholder so aria-labelledby is removed");
+				assert.strictEqual($Input.attr("aria-labelledby"), undefined, "no placeholder so aria-labelledby is removed");
 
 				oInput.destroy();
 				oText.destroy();
@@ -1919,7 +1919,7 @@
 
 				var $Input = jQuery(oInput.getFocusDomRef());
 				var $Reference = jQuery.sap.byId($Input.attr("aria-describedby"));
-				strictEqual($Reference.text(), sTooltip, "Tooltip is added into aria-describedby");
+				assert.strictEqual($Reference.text(), sTooltip, "Tooltip is added into aria-describedby");
 
 				oInput.destroy();
 			});
@@ -1936,8 +1936,8 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oInput.$().attr("title"), "tooltip");
-				strictEqual(oInput.$("describedby").text(), "tooltip");
+				assert.strictEqual(oInput.$().attr("title"), "tooltip");
+				assert.strictEqual(oInput.$("describedby").text(), "tooltip");
 
 				// cleanup
 				oInput.destroy();
@@ -1956,9 +1956,9 @@
 				oInput.setTooltip("tooltip");
 
 				// assert
-				strictEqual(oInput.$().attr("title"), "tooltip");
-				strictEqual(oInput.$("describedby").text(), "tooltip");
-				strictEqual(oInput.getFocusDomRef().getAttribute("aria-describedby"), oInput.getId() + "-describedby");
+				assert.strictEqual(oInput.$().attr("title"), "tooltip");
+				assert.strictEqual(oInput.$("describedby").text(), "tooltip");
+				assert.strictEqual(oInput.getFocusDomRef().getAttribute("aria-describedby"), oInput.getId() + "-describedby");
 
 				// cleanup
 				oInput.destroy();
@@ -1977,8 +1977,8 @@
 				oInput.setTooltip("");
 
 				// assert
-				strictEqual(oInput.$().attr("title"), undefined);
-				strictEqual(oInput.$("describedby").length, 0);
+				assert.strictEqual(oInput.$().attr("title"), undefined);
+				assert.strictEqual(oInput.$("describedby").length, 0);
 
 				// cleanup
 				oInput.destroy();
@@ -2000,7 +2000,7 @@
 
 				// assert
 				ok(oInput.$().attr("title") === undefined);
-				strictEqual(oInput.$("describedby").length, 0);
+				assert.strictEqual(oInput.$("describedby").length, 0);
 
 				// cleanup
 				oInput.destroy();
@@ -2069,7 +2069,7 @@
 				oInput.setTooltip("");
 
 				// assert
-				strictEqual(oInput.getFocusDomRef().getAttribute("aria-describedby"), "text");
+				assert.strictEqual(oInput.getFocusDomRef().getAttribute("aria-describedby"), "text");
 
 				// cleanup
 				oText.destroy();
@@ -2116,28 +2116,28 @@
 				sap.ui.getCore().applyChanges();
 
 				var $Input = jQuery(oInput.getFocusDomRef());
-				strictEqual($Input.attr("role"), "combobox", "Control role set correctly");
-				strictEqual($Input.attr("aria-invalid"), "true", "Base functionality still works");
-				strictEqual($Input.attr("aria-labelledby"), "internal_labelledby_id", "Internal aria labelledby is set");
-				strictEqual($Input.attr("aria-describedby"), "internal_describedby_id", "Internal aria describedby is set");
-				strictEqual($Input.attr("aria-autocomplete"), "true", "autocomplete aria attribute is set");
-				strictEqual(oInput.$("labelledby").text(), "my labelledby text", "labelledby announcement is set");
-				strictEqual(oInput.$("describedby").text(), "my describedby text", "describedby announcement is set");
+				assert.strictEqual($Input.attr("role"), "combobox", "Control role set correctly");
+				assert.strictEqual($Input.attr("aria-invalid"), "true", "Base functionality still works");
+				assert.strictEqual($Input.attr("aria-labelledby"), "internal_labelledby_id", "Internal aria labelledby is set");
+				assert.strictEqual($Input.attr("aria-describedby"), "internal_describedby_id", "Internal aria describedby is set");
+				assert.strictEqual($Input.attr("aria-autocomplete"), "true", "autocomplete aria attribute is set");
+				assert.strictEqual(oInput.$("labelledby").text(), "my labelledby text", "labelledby announcement is set");
+				assert.strictEqual(oInput.$("describedby").text(), "my describedby text", "describedby announcement is set");
 
 				var oText = new sap.m.Text("text");
 				oInput.addAriaLabelledBy(oText);
 				oInput.addAriaDescribedBy(oText);
 				sap.ui.getCore().applyChanges();
 				$Input = jQuery(oInput.getFocusDomRef());
-				strictEqual($Input.attr("aria-labelledby"), "text internal_labelledby_id", "aria-labelledby is set for assosiation and internal together");
-				strictEqual($Input.attr("aria-describedby"), "text internal_describedby_id", "aria-describedby is set for assosiation and internal together");
+				assert.strictEqual($Input.attr("aria-labelledby"), "text internal_labelledby_id", "aria-labelledby is set for assosiation and internal together");
+				assert.strictEqual($Input.attr("aria-describedby"), "text internal_describedby_id", "aria-describedby is set for assosiation and internal together");
 
 				oInput.removeAriaLabelledBy(oText);
 				oInput.removeAriaDescribedBy(oText);
 				sap.ui.getCore().applyChanges();
 				$Input = jQuery(oInput.getFocusDomRef());
-				strictEqual($Input.attr("aria-labelledby"), "internal_labelledby_id", "aria-labelledby is set only for internal");
-				strictEqual($Input.attr("aria-describedby"), "internal_describedby_id", "aria-describedby is set only for internal");
+				assert.strictEqual($Input.attr("aria-labelledby"), "internal_labelledby_id", "aria-labelledby is set only for internal");
+				assert.strictEqual($Input.attr("aria-describedby"), "internal_describedby_id", "aria-describedby is set only for internal");
 
 				oInput.destroy();
 				oText.destroy();
@@ -2154,11 +2154,11 @@
 				sap.ui.getCore().applyChanges();
 
 				var oPlaceholder = oInput.getDomRef("placeholder");
-				strictEqual(oPlaceholder.hasAttribute("for"), false, "synthetic placeholder does not have for attribute.");
+				assert.strictEqual(oPlaceholder.hasAttribute("for"), false, "synthetic placeholder does not have for attribute.");
 
 				sap.ui.test.qunit.triggerEvent("tap", oPlaceholder);
-				strictEqual(fnOnTapSpy.callCount, 1, "tap event is catched from placeholder");
-				strictEqual(fnFocusSpy.callCount, 1, "focus is called when placeholder is tapped ");
+				assert.strictEqual(fnOnTapSpy.callCount, 1, "tap event is catched from placeholder");
+				assert.strictEqual(fnFocusSpy.callCount, 1, "focus is called when placeholder is tapped ");
 
 				ok(document.activeElement === oInput.getFocusDomRef(), "input is focused when placeholder is tapped");
 
@@ -2170,25 +2170,25 @@
 				ok(!!oInput.getAccessibilityInfo, "InputBase has a getAccessibilityInfo function");
 				var oInfo = oInput.getAccessibilityInfo();
 				ok(!!oInfo, "getAccessibilityInfo returns a info object");
-				strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
-				strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_INPUT"), "Type");
-				strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
-				strictEqual(oInfo.focusable, true, "Focusable");
-				strictEqual(oInfo.enabled, true, "Enabled");
-				strictEqual(oInfo.editable, true, "Editable");
+				assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
+				assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_INPUT"), "Type");
+				assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+				assert.strictEqual(oInfo.focusable, true, "Focusable");
+				assert.strictEqual(oInfo.enabled, true, "Enabled");
+				assert.strictEqual(oInfo.editable, true, "Editable");
 				oInput.setValue("");
 				oInput.setEnabled(false);
 				oInfo = oInput.getAccessibilityInfo();
-				strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
-				strictEqual(oInfo.focusable, false, "Focusable");
-				strictEqual(oInfo.enabled, false, "Enabled");
-				strictEqual(oInfo.editable, false, "Editable");
+				assert.strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+				assert.strictEqual(oInfo.focusable, false, "Focusable");
+				assert.strictEqual(oInfo.enabled, false, "Enabled");
+				assert.strictEqual(oInfo.editable, false, "Editable");
 				oInput.setEnabled(true);
 				oInput.setEditable(false);
 				oInfo = oInput.getAccessibilityInfo();
-				strictEqual(oInfo.focusable, true, "Focusable");
-				strictEqual(oInfo.enabled, true, "Enabled");
-				strictEqual(oInfo.editable, false, "Editable");
+				assert.strictEqual(oInfo.focusable, true, "Focusable");
+				assert.strictEqual(oInfo.enabled, true, "Enabled");
+				assert.strictEqual(oInfo.editable, false, "Editable");
 				oInput.destroy();
 			});
 
@@ -2212,8 +2212,8 @@
 			sap.ui.test.qunit.triggerEvent("input", oInputDomRef);
 
 			// This fix should be valid only for input tag elements
-			strictEqual(oInput._getInputElementTagName(), "INPUT", "Input tag element is used");
-			strictEqual(fnOnInputSpy.callCount, 1, "input event is triggered");
+			assert.strictEqual(oInput._getInputElementTagName(), "INPUT", "Input tag element is used");
+			assert.strictEqual(fnOnInputSpy.callCount, 1, "input event is triggered");
 			ok(fnOnInputSpy.args[0][0].isMarked("invalid"), 1, "input event is marked as invalid");
 
 			// cleanup
@@ -2236,7 +2236,7 @@
 			oInputDomRef.focus();
 			sap.ui.test.qunit.triggerEvent("input", oInputDomRef);
 
-			strictEqual(fnOnInputSpy.callCount, 1, "input event is triggered");
+			assert.strictEqual(fnOnInputSpy.callCount, 1, "input event is triggered");
 			ok(fnOnInputSpy.args[0][0].isMarked("invalid"), 1, "input event is marked as invalid");
 
 			// cleanup
@@ -2254,7 +2254,7 @@
 			oInputBase.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(fnOnInputBaseSpy.callCount, 1, "writeInnerId() is called");
+			assert.strictEqual(fnOnInputBaseSpy.callCount, 1, "writeInnerId() is called");
 
 			// cleanup
 			oInputBase.destroy();

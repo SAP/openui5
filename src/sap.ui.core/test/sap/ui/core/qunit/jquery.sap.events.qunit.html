@@ -472,9 +472,9 @@
 
 			// assertions
 			if (mOptions.mark) {
-				strictEqual(oEvent.isMarked(mOptions.mark), true);
+				assert.strictEqual(oEvent.isMarked(mOptions.mark), true);
 			} else {
-				strictEqual(oEvent.isMarked(), true);
+				assert.strictEqual(oEvent.isMarked(), true);
 			}
 		});
 	};
@@ -535,7 +535,7 @@
 			}
 
 			// assertions
-			strictEqual(oEvent.isMarked(mOptions.mark), true);
+			assert.strictEqual(oEvent.isMarked(mOptions.mark), true);
 		});
 	};
 
@@ -579,7 +579,7 @@
 			jQuery.extend(oEvent, mOptions);
 
 			// assertions
-			strictEqual(jQuery.sap.isSpecialKey(oEvent), bOuput);
+			assert.strictEqual(jQuery.sap.isSpecialKey(oEvent), bOuput);
 		});
 	};
 

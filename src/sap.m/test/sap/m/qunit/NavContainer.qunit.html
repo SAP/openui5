@@ -854,15 +854,15 @@
 
 			oPromise.then(function () {
 				//Assert
-				strictEqual(calls.length, 6, "Did call to() 3 times and back() 3 times");
+				assert.strictEqual(calls.length, 6, "Did call to() 3 times and back() 3 times");
 
 				//ensure right order
-				strictEqual(calls[0], "secondPage");
-				strictEqual(calls[1], "thirdPage");
-				strictEqual(calls[2], "secondPage");
-				strictEqual(calls[3], "firstPage");
-				strictEqual(calls[4], "secondPage");
-				strictEqual(calls[5], "firstPage");
+				assert.strictEqual(calls[0], "secondPage");
+				assert.strictEqual(calls[1], "thirdPage");
+				assert.strictEqual(calls[2], "secondPage");
+				assert.strictEqual(calls[3], "firstPage");
+				assert.strictEqual(calls[4], "secondPage");
+				assert.strictEqual(calls[5], "firstPage");
 
 				//cleanup
 				oNavContainer.destroy();
@@ -985,13 +985,13 @@
 											nc.rerender();
 
 											window.setTimeout(function(){
-												strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
+												assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
 
 												//ensure right order
-												strictEqual(calls[0], "page2");
-												strictEqual(calls[1], "page3");
-												strictEqual(calls[2], "page2");
-												strictEqual(calls[3], "page1");
+												assert.strictEqual(calls[0], "page2");
+												assert.strictEqual(calls[1], "page3");
+												assert.strictEqual(calls[2], "page2");
+												assert.strictEqual(calls[3], "page1");
 
 												//cleanup
 												nc.detachAfterNavigate(afterNavigate);
@@ -1049,13 +1049,13 @@
 											page2.rerender();
 
 											window.setTimeout(function(){
-												strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
+												assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
 
 												//ensure right order
-												strictEqual(calls[0], "page2");
-												strictEqual(calls[1], "page3");
-												strictEqual(calls[2], "page2");
-												strictEqual(calls[3], "page1");
+												assert.strictEqual(calls[0], "page2");
+												assert.strictEqual(calls[1], "page3");
+												assert.strictEqual(calls[2], "page2");
+												assert.strictEqual(calls[3], "page1");
 
 												//cleanup
 												nc.detachAfterNavigate(afterNavigate);
@@ -1110,13 +1110,13 @@
 											nc.rerender();
 
 											window.setTimeout(function(){
-												strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
+												assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
 
 												//ensure right order
-												strictEqual(calls[0], "page2");
-												strictEqual(calls[1], "page3");
-												strictEqual(calls[2], "page2");
-												strictEqual(calls[3], "page1");
+												assert.strictEqual(calls[0], "page2");
+												assert.strictEqual(calls[1], "page3");
+												assert.strictEqual(calls[2], "page2");
+												assert.strictEqual(calls[3], "page1");
 
 												//cleanup
 												nc.detachAfterNavigate(afterNavigate);
@@ -1174,13 +1174,13 @@
 											page2.rerender();
 
 											window.setTimeout(function(){
-												strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
+												assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
 
 												//ensure right order
-												strictEqual(calls[0], "page2");
-												strictEqual(calls[1], "page3");
-												strictEqual(calls[2], "page2");
-												strictEqual(calls[3], "page1");
+												assert.strictEqual(calls[0], "page2");
+												assert.strictEqual(calls[1], "page3");
+												assert.strictEqual(calls[2], "page2");
+												assert.strictEqual(calls[3], "page1");
 
 												//cleanup
 												nc.detachAfterNavigate(afterNavigate);
@@ -1235,13 +1235,13 @@
 											nc.rerender();
 
 											window.setTimeout(function(){
-												strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
+												assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
 
 												//ensure right order
-												strictEqual(calls[0], "page2");
-												strictEqual(calls[1], "page3");
-												strictEqual(calls[2], "page2");
-												strictEqual(calls[3], "page1");
+												assert.strictEqual(calls[0], "page2");
+												assert.strictEqual(calls[1], "page3");
+												assert.strictEqual(calls[2], "page2");
+												assert.strictEqual(calls[3], "page1");
 
 												//cleanup
 												nc.detachAfterNavigate(afterNavigate);
@@ -1299,13 +1299,13 @@
 											page2.rerender();
 
 											window.setTimeout(function(){
-												strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
+												assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
 
 												//ensure right order
-												strictEqual(calls[0], "page2");
-												strictEqual(calls[1], "page3");
-												strictEqual(calls[2], "page2");
-												strictEqual(calls[3], "page1");
+												assert.strictEqual(calls[0], "page2");
+												assert.strictEqual(calls[1], "page3");
+												assert.strictEqual(calls[2], "page2");
+												assert.strictEqual(calls[3], "page1");
 
 												//cleanup
 												nc.detachAfterNavigate(afterNavigate);
@@ -1360,13 +1360,13 @@
 											nc.rerender();
 
 											window.setTimeout(function(){
-												strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
+												assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
 
 												//ensure right order
-												strictEqual(calls[0], "page2");
-												strictEqual(calls[1], "page3");
-												strictEqual(calls[2], "page2");
-												strictEqual(calls[3], "page1");
+												assert.strictEqual(calls[0], "page2");
+												assert.strictEqual(calls[1], "page3");
+												assert.strictEqual(calls[2], "page2");
+												assert.strictEqual(calls[3], "page1");
 
 												//cleanup
 												nc.detachAfterNavigate(afterNavigate);
@@ -1424,13 +1424,13 @@
 											page2.rerender();
 
 											window.setTimeout(function(){
-												strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
+												assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
 
 												//ensure right order
-												strictEqual(calls[0], "page2");
-												strictEqual(calls[1], "page3");
-												strictEqual(calls[2], "page2");
-												strictEqual(calls[3], "page1");
+												assert.strictEqual(calls[0], "page2");
+												assert.strictEqual(calls[1], "page3");
+												assert.strictEqual(calls[2], "page2");
+												assert.strictEqual(calls[3], "page1");
 
 												//cleanup
 												nc.detachAfterNavigate(afterNavigate);
@@ -1471,12 +1471,12 @@
 
 				setTimeout(function() {
 					//Assert
-					strictEqual(calls.length, 3, "Did call to() 3 times");
+					assert.strictEqual(calls.length, 3, "Did call to() 3 times");
 
 					//ensure right order
-					strictEqual(calls[0], "page2");
-					strictEqual(calls[1], "page1");
-					strictEqual(calls[2], "page2");
+					assert.strictEqual(calls[0], "page2");
+					assert.strictEqual(calls[1], "page1");
+					assert.strictEqual(calls[2], "page2");
 
 					//cleanup
 					nc.detachAfterNavigate(afterNavigate);
@@ -1522,11 +1522,11 @@
 
 			setTimeout(function() {
 				//Assert
-				strictEqual(calls.length, 2, "Did call to() 2 times");
+				assert.strictEqual(calls.length, 2, "Did call to() 2 times");
 
 				//ensure right order
-				strictEqual(calls[0], page2.getId());
-				strictEqual(calls[1], page1.getId());
+				assert.strictEqual(calls[0], page2.getId());
+				assert.strictEqual(calls[1], page1.getId());
 
 				//cleanup
 				localNc.detachAfterNavigate(afterNavigate);
@@ -1590,8 +1590,8 @@
 
 				oEventDelegate[sEventName] = function (oEvent) {
 					// Assert
-					strictEqual(oNavContainer.getCurrentPage().getId(), oInitialPage.getId(), "The initial page is shown");
-					strictEqual(oEvent.data, oNavigationData, "Did pass the data to " + sEventName)
+					assert.strictEqual(oNavContainer.getCurrentPage().getId(), oInitialPage.getId(), "The initial page is shown");
+					assert.strictEqual(oEvent.data, oNavigationData, "Did pass the data to " + sEventName)
 
 					//Cleanup
 					oNavContainer.destroy();
@@ -1640,8 +1640,8 @@
 
 			oInitialPage.addEventDelegate({
 				onBeforeShow: function(oEvent) {
-					strictEqual(oEvent.data, oNavigationData, "The forward navigation data is passed to the back navigation");
-					strictEqual(oEvent.backData, oBackData, "The back navigation data is passed");
+					assert.strictEqual(oEvent.data, oNavigationData, "The forward navigation data is passed to the back navigation");
+					assert.strictEqual(oEvent.backData, oBackData, "The back navigation data is passed");
 
 					oNavContainer.destroy();
 					done();
@@ -1674,7 +1674,7 @@
 			var afterNavigate = function(evt) {
 				ok(localNc._mFocusObject, "_mFocusObject should be set before destroy()");
 				localNc.destroy();
-				strictEqual(localNc._mFocusObject, null, "_mFocusObject should be nulled after destroy()"); // this is nulled for memory reasons
+				assert.strictEqual(localNc._mFocusObject, null, "_mFocusObject should be nulled after destroy()"); // this is nulled for memory reasons
 				// this also checks whether the NavContainer can handle being destroyed within the afterNavigate (because there is further code in afterNavigate, which may not access destroyed parts)
 				done();
 			};

@@ -82,13 +82,13 @@
 
 			QUnit.module("Properties");
 			QUnit.test("Default values", 3, function(assert) {
-				strictEqual(oP2R.getShowIcon(), false, "Default value for showIcon");
-				strictEqual(oP2R.getDescription(), sDescription, "Description value");
+				assert.strictEqual(oP2R.getShowIcon(), false, "Default value for showIcon");
+				assert.strictEqual(oP2R.getDescription(), sDescription, "Description value");
 				ok(!oP2R.getCustomIcon(), "Custom icon is not set");
 			});
 
 			QUnit.test("Invisible PullToRefresh", 2, function(assert) {
-				strictEqual(oP2RHidden.getVisible(), false, "Hidden control should have visiblity false");
+				assert.strictEqual(oP2RHidden.getVisible(), false, "Hidden control should have visiblity false");
 				ok(!oP2RHidden._oBusyIndicator, "Hidden PullToRefresh does not have a BusyIndicator");
 			});
 
@@ -98,8 +98,8 @@
 				var $P2R = oP2R.$();
 				ok(window.getComputedStyle($P2R[0]).position, "relative", "position: should e set to 'relative'");
 				ok($P2R.length > 0, "Pull down control is rendered");
-				strictEqual($P2R.children(".sapMPullDownText").text(), sPullDwn, "Pull down text is set correctly");
-				strictEqual($P2R.children(".sapMPullDownInfo").text(), sDescription, "Pull down description is set correctly");
+				assert.strictEqual($P2R.children(".sapMPullDownText").text(), sPullDwn, "Pull down text is set correctly");
+				assert.strictEqual($P2R.children(".sapMPullDownInfo").text(), sDescription, "Pull down description is set correctly");
 				ok(!($P2R.hasClass("sapLoading")), "Loading class is not set");
 				ok(!oP2RHidden.getDomRef(), "Invisible control does not have DOM");
 			});
@@ -111,8 +111,8 @@
 				var done = assert.async();
 				var $P2R = oP2R.$();
 				qutils.triggerEvent("click", oP2R.getId());
-				strictEqual($P2R.children(".sapMPullDownText").text(), sLoading, "Pull down text is set correctly");
-				strictEqual($P2R.children(".sapMPullDownInfo").text(), sRefresh, "Pull down description is set correctly");
+				assert.strictEqual($P2R.children(".sapMPullDownText").text(), sLoading, "Pull down text is set correctly");
+				assert.strictEqual($P2R.children(".sapMPullDownInfo").text(), sRefresh, "Pull down description is set correctly");
 				setTimeout(function() {
 					oP2R.hide(); // Close
 					oP2R.setDescription("");

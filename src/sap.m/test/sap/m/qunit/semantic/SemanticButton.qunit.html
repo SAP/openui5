@@ -49,8 +49,8 @@
 
 			QUnit.test("semantic action has correct init " + sPropertyName, function(assert) {
 
-				strictEqual(oButton.getProperty(sPropertyName), oExpectedInitValue, "action has correct init " + sPropertyName);
-				strictEqual(oButton["get" + capitalize(sPropertyName)](), oExpectedInitValue, "action has correct init " + sPropertyName);
+				assert.strictEqual(oButton.getProperty(sPropertyName), oExpectedInitValue, "action has correct init " + sPropertyName);
+				assert.strictEqual(oButton["get" + capitalize(sPropertyName)](), oExpectedInitValue, "action has correct init " + sPropertyName);
 				oButton.destroy();
 			});
 		}
@@ -67,8 +67,8 @@
 				oButton.setProperty(sPropertyName, oModifiedValue);
 
 				// Assert
-				strictEqual(oButton.getProperty(sPropertyName), oModifiedValue, "property " + sPropertyName + " is modified correctly");
-				strictEqual(oButton["get" + capitalize(sPropertyName)](), oModifiedValue, "property " + sPropertyName + " is modified correctly");
+				assert.strictEqual(oButton.getProperty(sPropertyName), oModifiedValue, "property " + sPropertyName + " is modified correctly");
+				assert.strictEqual(oButton["get" + capitalize(sPropertyName)](), oModifiedValue, "property " + sPropertyName + " is modified correctly");
 
 				// Clean up
 				oButton.destroy();
@@ -88,8 +88,8 @@
 				oButton[sModifier](oModifiedValue);
 
 				// Assert
-				strictEqual(oButton.getProperty(sPropertyName), oModifiedValue, "property " + sPropertyName + " is modified correctly");
-				strictEqual(oButton["get" + capitalize(sPropertyName)](), oModifiedValue, "property " + sPropertyName + " is modified correctly");
+				assert.strictEqual(oButton.getProperty(sPropertyName), oModifiedValue, "property " + sPropertyName + " is modified correctly");
+				assert.strictEqual(oButton["get" + capitalize(sPropertyName)](), oModifiedValue, "property " + sPropertyName + " is modified correctly");
 
 				// Clean up
 				oButton.destroy();
@@ -110,7 +110,7 @@
 				var oButton = new fnClass(oExtendedMetadata);
 
 				// Assert
-				strictEqual(oButton["get" + capitalize(sField)](), oModifiedValue, "property " + sField + " is modified correctly");
+				assert.strictEqual(oButton["get" + capitalize(sField)](), oModifiedValue, "property " + sField + " is modified correctly");
 			});
 
 			QUnit.test(sField + " correct binding when bindingInfo in metadata", function (assert) {
@@ -122,7 +122,7 @@
 				oButton.setModel(oModel);
 
 				// Assert
-				strictEqual(oButton["get" + capitalize(sField)](), oModifiedValue, "property " + sField + " is modified correctly");
+				assert.strictEqual(oButton["get" + capitalize(sField)](), oModifiedValue, "property " + sField + " is modified correctly");
 			});
 
 			QUnit.test(sField + " correct binding when model in metadata", function (assert) {
@@ -134,7 +134,7 @@
 				oButton.bindProperty(sField, "/modifiedValue");
 
 				// Assert
-				strictEqual(oButton["get" + capitalize(sField)](), oModifiedValue, "property " + sField + " is modified correctly");
+				assert.strictEqual(oButton["get" + capitalize(sField)](), oModifiedValue, "property " + sField + " is modified correctly");
 			});
 
 			QUnit.test(sField + " correct binding via bindProperty and setModel", function (assert) {
@@ -146,7 +146,7 @@
 				oButton.setModel(oModel);
 
 				// Assert
-				strictEqual(oButton["get" + capitalize(sField)](), oModifiedValue, "property " + sField + " is modified correctly");
+				assert.strictEqual(oButton["get" + capitalize(sField)](), oModifiedValue, "property " + sField + " is modified correctly");
 			});
 
 		}
@@ -172,14 +172,14 @@
 			 var oButton = new fnClass(oExtendedMetadata);
 
 			 // Assert
-			 strictEqual(oButton["get" + capitalize(sField)](), oInitValue, "property " + sField + " is modified correctly");
+			 assert.strictEqual(oButton["get" + capitalize(sField)](), oInitValue, "property " + sField + " is modified correctly");
 
 			 // Act
 			 oButton.bindProperty(sField, "/modifiedValue");
 			 oButton.setModel(oModel);
 
 			 // Assert
-			 strictEqual(oButton["get" + capitalize(sField)](), oModifiedValue, "property " + sField + " is modified correctly");
+			 assert.strictEqual(oButton["get" + capitalize(sField)](), oModifiedValue, "property " + sField + " is modified correctly");
 			 });
 
 		}
@@ -192,8 +192,8 @@
 
 			QUnit.test("semantic button with no type has correct init " + sAggregationName, function(assert) {
 
-				strictEqual(oButton.getAggregation(sAggregationName), oExpectedInitValue, "button with no type has correct init " + sAggregationName);
-				strictEqual(oButton["get" + capitalize(sAggregationName)](), oExpectedInitValue, "button with no type has correct init " + sAggregationName);
+				assert.strictEqual(oButton.getAggregation(sAggregationName), oExpectedInitValue, "button with no type has correct init " + sAggregationName);
+				assert.strictEqual(oButton["get" + capitalize(sAggregationName)](), oExpectedInitValue, "button with no type has correct init " + sAggregationName);
 				oButton.destroy();
 			});
 		}
@@ -210,8 +210,8 @@
 				oButton.setAggregation(sAggregationName, oModifiedValue);
 
 				// Assert
-				strictEqual(oButton.getAggregation(sAggregationName), oModifiedValue, "aggregation " + sAggregationName + " is modified correctly");
-				strictEqual(oButton["get" + capitalize(sAggregationName)](), oModifiedValue, "aggregation " + sAggregationName + " is modified correctly");
+				assert.strictEqual(oButton.getAggregation(sAggregationName), oModifiedValue, "aggregation " + sAggregationName + " is modified correctly");
+				assert.strictEqual(oButton["get" + capitalize(sAggregationName)](), oModifiedValue, "aggregation " + sAggregationName + " is modified correctly");
 
 				// Clean up
 				oButton.destroy();
@@ -232,8 +232,8 @@
 				oButton[sModifier](oModifiedValue);
 
 				// Assert
-				strictEqual(oButton.getAggregation(sAggregatioName), oModifiedValue, "property " + sAggregatioName + " is modified correctly");
-				strictEqual(oButton["get" + capitalize(sAggregatioName)](), oModifiedValue, "property " + sAggregatioName + " is modified correctly");
+				assert.strictEqual(oButton.getAggregation(sAggregatioName), oModifiedValue, "property " + sAggregatioName + " is modified correctly");
+				assert.strictEqual(oButton["get" + capitalize(sAggregatioName)](), oModifiedValue, "property " + sAggregatioName + " is modified correctly");
 
 				// Clean up
 				oButton.destroy();
@@ -247,14 +247,14 @@
 			// Arrange
 			var oEditButton = new sap.m.semantic.EditAction("editBtn");
 
-			strictEqual(oEditButton.getId(), "editBtn", "control has the expected id");
+			assert.strictEqual(oEditButton.getId(), "editBtn", "control has the expected id");
 
 			// Act
 			var oRetrievedBtn = sap.ui.getCore().byId("editBtn");
 
 			// Assert
 			notEqual(oRetrievedBtn, undefined, "the button is retrieved by id");
-			strictEqual(oRetrievedBtn.getId(), "editBtn", "control has the expected id");
+			assert.strictEqual(oRetrievedBtn.getId(), "editBtn", "control has the expected id");
 
 			oEditButton.destroy();
 		});
@@ -360,7 +360,7 @@
 			});
 
 			//act
-			strictEqual(oFlagAction.getPressed(), true, "pressed is set to by metadata");
+			assert.strictEqual(oFlagAction.getPressed(), true, "pressed is set to by metadata");
 
 			//cleanup
 			oFlagAction.destroy();
@@ -395,7 +395,7 @@
 			this.clock.tick(500);
 
 			// Assert
-			strictEqual(oSpy.callCount, 1, "Popover was opened");
+			assert.strictEqual(oSpy.callCount, 1, "Popover was opened");
 
 			oPopover.close();
 
@@ -420,7 +420,7 @@
 			var $ref = oEditButton.getDomRef();
 			// Assert
 			notEqual($ref, null, "reference to dom returned");
-			strictEqual($ref, oEditButton._getControl().getDomRef(), "correct reference to dom returned");
+			assert.strictEqual($ref, oEditButton._getControl().getDomRef(), "correct reference to dom returned");
 
 			// Clean up
 			oSemanticPage.destroy();
@@ -441,8 +441,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oMultiSelectAction.getPressed(), false, "multiselect off by default");
-			strictEqual(oMultiSelectAction._getControl().getIcon(), "sap-icon://multi-select", "multiselect off by default");
+			assert.strictEqual(oMultiSelectAction.getPressed(), false, "multiselect off by default");
+			assert.strictEqual(oMultiSelectAction._getControl().getIcon(), "sap-icon://multi-select", "multiselect off by default");
 
 			// Clean up
 			oSemanticPage.destroy();
@@ -464,9 +464,9 @@
 			jQuery(oMultiSelectAction.getDomRef()).trigger('tap');
 
 			// Assert
-			strictEqual(oMultiSelectAction.getPressed(), true, "multiselect on after press");
-			strictEqual(oMultiSelectAction._getControl().getIcon(), "sap-icon://sys-cancel", "multiselect icon correct after press");
-			strictEqual(oSpy.callCount, 1, "press was called once");
+			assert.strictEqual(oMultiSelectAction.getPressed(), true, "multiselect on after press");
+			assert.strictEqual(oMultiSelectAction._getControl().getIcon(), "sap-icon://sys-cancel", "multiselect icon correct after press");
+			assert.strictEqual(oSpy.callCount, 1, "press was called once");
 
 			// Clean up
 			oSemanticPage.destroy();
@@ -490,9 +490,9 @@
 			jQuery(oMultiSelectAction.getDomRef()).trigger('tap');
 
 			// Assert
-			strictEqual(oMultiSelectAction.getPressed(), false, "multiselect on after unpress");
-			strictEqual(oMultiSelectAction._getControl().getIcon(), "sap-icon://multi-select", "multiselect icon correct after unpress");
-			strictEqual(oSpy.callCount, 2, "press was called twice");
+			assert.strictEqual(oMultiSelectAction.getPressed(), false, "multiselect on after unpress");
+			assert.strictEqual(oMultiSelectAction._getControl().getIcon(), "sap-icon://multi-select", "multiselect icon correct after unpress");
+			assert.strictEqual(oSpy.callCount, 2, "press was called twice");
 
 			// Clean up
 			oSemanticPage.destroy();
@@ -514,9 +514,9 @@
 			qutils.triggerKeydown(oMultiSelectAction.getDomRef(), jQuery.sap.KeyCodes.SPACE);
 
 			// Assert
-			strictEqual(oMultiSelectAction.getPressed(), true, "multiselect on after press");
-			strictEqual(oMultiSelectAction._getControl().getIcon(), "sap-icon://sys-cancel", "multiselect icon correct after press");
-			strictEqual(oSpy.callCount, 1, "press was called once");
+			assert.strictEqual(oMultiSelectAction.getPressed(), true, "multiselect on after press");
+			assert.strictEqual(oMultiSelectAction._getControl().getIcon(), "sap-icon://sys-cancel", "multiselect icon correct after press");
+			assert.strictEqual(oSpy.callCount, 1, "press was called once");
 
 			// Clean up
 			oSemanticPage.destroy();
@@ -540,9 +540,9 @@
 			qutils.triggerKeydown(oMultiSelectAction.getDomRef(), jQuery.sap.KeyCodes.SPACE);
 
 			// Assert
-			strictEqual(oMultiSelectAction.getPressed(), false, "multiselect on after unpress");
-			strictEqual(oMultiSelectAction._getControl().getIcon(), "sap-icon://multi-select", "multiselect icon correct after unpress");
-			strictEqual(oSpy.callCount, 2, "press was called twice");
+			assert.strictEqual(oMultiSelectAction.getPressed(), false, "multiselect on after unpress");
+			assert.strictEqual(oMultiSelectAction._getControl().getIcon(), "sap-icon://multi-select", "multiselect icon correct after unpress");
+			assert.strictEqual(oSpy.callCount, 2, "press was called twice");
 
 			// Clean up
 			oSemanticPage.destroy();
@@ -562,13 +562,13 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oMultiSelectAction.getEnabled(), false, "baound value initialized correctly");
+			assert.strictEqual(oMultiSelectAction.getEnabled(), false, "baound value initialized correctly");
 
 			// Act
 			oStatusModel.setData({master: {multiSelectEnabled: true}}, true);
 
 			// Assert
-			strictEqual(oMultiSelectAction.getEnabled(), true, "baound value changed correctly");
+			assert.strictEqual(oMultiSelectAction.getEnabled(), true, "baound value changed correctly");
 
 			// Clean up
 			oSemanticPage.destroy();
@@ -589,7 +589,7 @@
 			oSemanticPage.placeAt("qunit-fixture-visible");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(callback.calledOnce, true, "delegate is called");
+			assert.strictEqual(callback.calledOnce, true, "delegate is called");
 
 			oSemanticPage.destroy();
 		});
@@ -607,8 +607,8 @@
 			oSemanticPage.placeAt("qunit-fixture-visible");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(callback.getCall(0).args[0].srcControl.getId(), "multiAction");
-			strictEqual(oResult.getId(), "multiAction");
+			assert.strictEqual(callback.getCall(0).args[0].srcControl.getId(), "multiAction");
+			assert.strictEqual(oResult.getId(), "multiAction");
 
 			oSemanticPage.destroy();
 		});
@@ -626,7 +626,7 @@
 			oSemanticPage.placeAt("qunit-fixture-visible");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(oResult.getId(), "multiAction");
+			assert.strictEqual(oResult.getId(), "multiAction");
 
 			oSemanticPage.destroy();
 		});
@@ -645,14 +645,14 @@
 			oSemanticPage.placeAt("qunit-fixture-visible");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(callback.calledOnce, true, "delegate is called");
+			assert.strictEqual(callback.calledOnce, true, "delegate is called");
 
 			var oResult = oMultiSelectAction.removeEventDelegate(oDelegate);
 
 			oSemanticPage.rerender();
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(callback.calledOnce, true, "delegate is called only once");
+			assert.strictEqual(callback.calledOnce, true, "delegate is called only once");
 
 			oSemanticPage.destroy();
 		});
@@ -671,11 +671,11 @@
 			oSemanticPage.placeAt("qunit-fixture-visible");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(callback.calledOnce, true, "delegate is called");
+			assert.strictEqual(callback.calledOnce, true, "delegate is called");
 
 			var oResult = oMultiSelectAction.removeEventDelegate(oDelegate);
 
-			strictEqual(oResult.getId(), "multiAction");
+			assert.strictEqual(oResult.getId(), "multiAction");
 
 			oSemanticPage.destroy();
 		});

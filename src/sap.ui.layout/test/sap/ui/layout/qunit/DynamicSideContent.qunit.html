@@ -322,11 +322,11 @@
 
 					// _getBreakPointFromWidth
 					sBreakpoint = this._oDSC._getBreakPointFromWidth(0);
-					strictEqual(sBreakpoint, S, "If parent container's width is 0px, the breakpoint should default to 'S'");
+					assert.strictEqual(sBreakpoint, S, "If parent container's width is 0px, the breakpoint should default to 'S'");
 
 					// _setBreakpointFromWidth
 					this._oDSC._setBreakpointFromWidth(0);
-					strictEqual(this._oDSC.getCurrentBreakpoint(), S, "If setting the breakpoint from width 0px, the breakpoint should default to 'S'");
+					assert.strictEqual(this._oDSC.getCurrentBreakpoint(), S, "If setting the breakpoint from width 0px, the breakpoint should default to 'S'");
 				});
 
 				QUnit.test("Calculate breakpoint from width",function(assert) {
@@ -334,28 +334,28 @@
 
 					// test S breakpoint
 					sBreakpoint = this._oDSC._getBreakPointFromWidth(200);
-					strictEqual(sBreakpoint, S, "If parent container's width is under 720px, the breakpoint should be 'S'");
+					assert.strictEqual(sBreakpoint, S, "If parent container's width is under 720px, the breakpoint should be 'S'");
 
 					sBreakpoint = this._oDSC._getBreakPointFromWidth(720);
-					strictEqual(sBreakpoint, S, "If parent container's width is equal to 720px, the breakpoint should be 'S'");
+					assert.strictEqual(sBreakpoint, S, "If parent container's width is equal to 720px, the breakpoint should be 'S'");
 
 					// test M breakpoint
 					sBreakpoint = this._oDSC._getBreakPointFromWidth(800);
-					strictEqual(sBreakpoint, M, "If parent container's width is in the range 720px-1024px includingly, the breakpoint should be 'M'");
+					assert.strictEqual(sBreakpoint, M, "If parent container's width is in the range 720px-1024px includingly, the breakpoint should be 'M'");
 
 					sBreakpoint = this._oDSC._getBreakPointFromWidth(1024);
-					strictEqual(sBreakpoint, M, "If parent container's width is in the range 720px-1024px includingly, the breakpoint should be 'M'");
+					assert.strictEqual(sBreakpoint, M, "If parent container's width is in the range 720px-1024px includingly, the breakpoint should be 'M'");
 
 					// test L breakpoint
 					sBreakpoint = this._oDSC._getBreakPointFromWidth(1060);
-					strictEqual(sBreakpoint, L, "If parent container's width is in the range 1024px-1440px includingly, the breakpoint should be 'L'");
+					assert.strictEqual(sBreakpoint, L, "If parent container's width is in the range 1024px-1440px includingly, the breakpoint should be 'L'");
 
 					sBreakpoint = this._oDSC._getBreakPointFromWidth(1440);
-					strictEqual(sBreakpoint, L, "If parent container's width is in the range 1024px-1440px includingly, the breakpoint should be 'L'");
+					assert.strictEqual(sBreakpoint, L, "If parent container's width is in the range 1024px-1440px includingly, the breakpoint should be 'L'");
 
 					// test XL breakpoint
 					sBreakpoint = this._oDSC._getBreakPointFromWidth(1500);
-					strictEqual(sBreakpoint, XL, "If parent container's width is above 1440px, the breakpoint should be 'XL'");
+					assert.strictEqual(sBreakpoint, XL, "If parent container's width is above 1440px, the breakpoint should be 'XL'");
 
 				});
 
@@ -365,9 +365,9 @@
 					// S breakpoint
 					this._oDSC._setResizeData(S, bIsInComparisonMode);
 
-					strictEqual(this._oDSC._iMcSpan, SPAN_SIZE_12, "Main content span size is set to 12 when breakpoint is 'S'");
-					strictEqual(this._oDSC._iScSpan, SPAN_SIZE_12, "Side content span size is set to 12 when breakpoint is 'S'.");
-					strictEqual(this._oDSC._SCVisible, false, "Side content is not visible.");
+					assert.strictEqual(this._oDSC._iMcSpan, SPAN_SIZE_12, "Main content span size is set to 12 when breakpoint is 'S'");
+					assert.strictEqual(this._oDSC._iScSpan, SPAN_SIZE_12, "Side content span size is set to 12 when breakpoint is 'S'.");
+					assert.strictEqual(this._oDSC._SCVisible, false, "Side content is not visible.");
 
 					// M breakpoint
 					this.assertOnContentSpanSize("Main", "_iMcSpan", M, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_12, false);
@@ -605,8 +605,8 @@
 				QUnit.test("Set main and side content span sizes",function(assert) {
 					this._oDSC._setSpanSize(SPAN_SIZE_3, SPAN_SIZE_9);
 
-					strictEqual(this._oDSC._iMcSpan, SPAN_SIZE_9, "Main content span size should be equal to " + SPAN_SIZE_9);
-					strictEqual(this._oDSC._iScSpan, SPAN_SIZE_3, "Side content span size should be equal to " + SPAN_SIZE_3);
+					assert.strictEqual(this._oDSC._iMcSpan, SPAN_SIZE_9, "Main content span size should be equal to " + SPAN_SIZE_9);
+					assert.strictEqual(this._oDSC._iScSpan, SPAN_SIZE_3, "Side content span size should be equal to " + SPAN_SIZE_3);
 				});
 
 				QUnit.module("Content Query", {
@@ -629,7 +629,7 @@
 
 				QUnit.test("On init with contentQuery _adjustToScreenSize method should be called", function (assert) {
 					assert.ok(this._oDSC._adjustToScreenSize.calledOnce, "The resize event handler is fired once initially");
-					strictEqual(this._oDSC.getCurrentBreakpoint(), M, "The current breakpoint in this setup should be 'M'");
+					assert.strictEqual(this._oDSC.getCurrentBreakpoint(), M, "The current breakpoint in this setup should be 'M'");
 				});
 
 				QUnit.module("Construction / Destruction", {
@@ -668,8 +668,8 @@
 					this._oDSC.destroy();
 					this._oDSC.setContainerQuery(true);
 
-					strictEqual(this._oDSC._oSCScroller, null, "Side content scroller is null");
-					strictEqual(this._oDSC._oMCScroller, null, "Main content scroller is null");
+					assert.strictEqual(this._oDSC._oSCScroller, null, "Side content scroller is null");
+					assert.strictEqual(this._oDSC._oMCScroller, null, "Main content scroller is null");
 				});
 
 				QUnit.module("Interaction", {
@@ -739,7 +739,7 @@
 				QUnit.test("Listeners are created / removed",function(assert) {
 					notStrictEqual(this._oDSC._sContainerResizeListener, undefined, "Container resize listener is registered if there is container query");
 					this._oDSC.destroy();
-					strictEqual(this._oDSC._sContainerResizeListener, null, "Container resize listener is null if there is container query");
+					assert.strictEqual(this._oDSC._sContainerResizeListener, null, "Container resize listener is null if there is container query");
 				});
 
 				QUnit.module("Screen reader", {
@@ -759,9 +759,9 @@
 					//$sideContent = this.oDSC.$().find("> aside"),
 							oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
 
-					strictEqual($sideContent.length, 1, "Side Content has correct " + sSideContentTag + " tag");
-					strictEqual($sideContent.attr("role"), "complementary", "Side Content has correct role 'complementary'");
-					strictEqual($sideContent.attr("aria-label"), oMessageBundle.getText(SIDE_CONTENT_LABEL), "Side Content has correct 'aria-role' " + oMessageBundle.getText(SIDE_CONTENT_LABEL));
+					assert.strictEqual($sideContent.length, 1, "Side Content has correct " + sSideContentTag + " tag");
+					assert.strictEqual($sideContent.attr("role"), "complementary", "Side Content has correct role 'complementary'");
+					assert.strictEqual($sideContent.attr("aria-label"), oMessageBundle.getText(SIDE_CONTENT_LABEL), "Side Content has correct 'aria-role' " + oMessageBundle.getText(SIDE_CONTENT_LABEL));
 				});
 
 				QUnit.module("Invalidation", {
