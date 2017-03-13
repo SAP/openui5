@@ -664,3 +664,85 @@ Simple Syntax Highlighter
 .sh-js-keyword{
   color: #c26230;
 }
+/*******************************************************************************
+Related UI5 Projects
+*******************************************************************************/
+.projectsTable {
+	text-align: center;
+	margin-left: 16.3rem;	
+	margin-bottom: 4rem;
+	margin-top: 2rem;
+	max-width: 1200px;
+	width: 61%;
+	background-color: white;
+	font-size: 14px;
+}
+.headerContent {
+	margin-left: 16.3rem;
+	padding-top: 0.7rem;
+}
+p {
+	font-size: 20px;
+}
+.featuredProject1 {
+	width: 20%;
+	height:300px;
+	float: left;
+	margin-left: 16.3rem;
+	margin-bottom:2.5rem;
+	margin-top:2.5rem;
+}
+.featuredProject2 {
+	width: 20%;
+	height:300px;
+	float: left;
+	margin-left: 14rem;
+	margin-top:2.5rem;
+	margin-bottom:2.5rem;
+}
+.projectsDescription {
+	text-align: center;
+	width: 100%;
+}
+.moreDetails {
+	margin-left: 16.3rem;
+}
+.tutorial {
+	display:none;
+	margin-left: 16.3rem;
+	width: 61%;
+}
+.tutorial li {
+	list-style-type: none;
+	margin-bottom: 0.5rem;
+	background: #eee;
+}
+.tutorial li img {
+	max-height: 300px;
+	width: 100%;
+	margin-top: 0.5rem;
+}
+.tutorial li:hover {
+  cursor: text;
+}
+pre {
+	white-space: pre-line;
+	background-color: transparent;
+	color: ##3f3f3f;
+}
+.code-block {
+	padding: 0;
+}
+#projectsContainer img:hover {
+	-webkit-transform: scale(0.80); /* Chrome */
+	-ms-transform: scale(0.80); /* Internet Explorer */
+	-moz-transform: scale(0.80); /* Mozila*/
+	transition-duration: 1s; /* Mozila and Internet Explorer */
+
+}
+#projectsContainer img:not(hover) {
+	-webkit-transform: scale(1); /* Chrome */
+	-ms-transform: scale(1); /* Internet Explorer */
+	-moz-transform: scale(1); /* Mozila*/
+	transition-duration: 1s; /* Mozila and Internet Explorer */
+}
