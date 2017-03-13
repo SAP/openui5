@@ -714,7 +714,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			_scrollTo: function(x, y, time) {
 				if (this._$Container.length > 0) {
 					if (time > 0) {
-						this._$Container.animate({ scrollTop: y, scrollLeft: x }, time, jQuery.proxy(this._readActualScrollPosition, this));
+						this._$Container.finish().animate({ scrollTop: y, scrollLeft: x }, time, jQuery.proxy(this._readActualScrollPosition, this));
 					} else {
 						this._$Container.scrollTop(y);
 						this._$Container.scrollLeft(x);
