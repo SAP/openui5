@@ -37,77 +37,78 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		defaultAggregation : "items",
 		aggregations : {
 				/**
-				 * Contains {@link sap.m.SelectionDetailsItem items} that are displayed on the first page
+				 * Contains {@link sap.m.SelectionDetailsItem items} that are displayed on the first page.
 				 */
 				"items" : {type : "sap.m.SelectionDetailsItem", multiple : true,  bindable : "bindable"},
 
 				/**
-				 * Contains custom actions shown in the responsive toolbar below items on the first page
+				 * Contains custom actions shown in the responsive toolbar below items on the first page.
 				 */
 				"actions" : {type : "sap.ui.core.Item", multiple : true},
 
 				/**
-				 * Contains group actions that are displayed below  items and list level actions on the first page
+				 * Contains actions that are rendered as a dedicated {@link sap.m.ActionListItem item}.
+				 * In case an action group is pressed, a navigation should be triggered via <code>navTo</code> method.
 				 */
 				"actionGroups" : {type : "sap.ui.core.Item", multiple : true},
 
 				/**
-				 * Hidden aggregation which contains the popover that is opened
+				 * Hidden aggregation that contains the popover.
 				 */
 				"_popover": {type : "sap.m.ResponsivePopover", multiple : false, visibility : "hidden"},
 
 				/**
-				 * Hidden aggregation which contains the button that opens the popover
+				 * Hidden aggregation that contains the button.
 				 *
 				 */
 				"_button": {type : "sap.m.Button", multiple : false, visibility : "hidden"}
 		},
 		events : {
 			/**
-			 * Event is fired before the popover has been opened
+			 * Event is fired before the popover is open.
 			 */
 			beforeOpen : {},
 
 			/**
-			 * Event is fired before the popover has been closed
+			 * Event is fired before the popover is closed.
 			 */
 			beforeClose : {},
 
 			/**
-			 * Event is fired when the custom action is pressed on the {@link sap.m.SelectionDetailsItem item} belonging to the items aggregation
+			 * Event is fired when the custom action is pressed on the {@link sap.m.SelectionDetailsItem item} belonging to the items aggregation.
 			 */
 			navigate : {
 				parameters : {
 					/**
-					 * The item on which the action has been pressed
+					 * The item on which the action has been pressed.
 					 */
 					item : {type : "sap.m.SelectionDetailsItem"},
 
 					/**
-					 * The direction of navigation. Can be either 'forward' or 'backward'. Backward means that the navigation occured as a result of activating the back button on the current page
+					 * The direction of navigation. Can be either 'forward' or 'backward'. Backward means that the navigation occurred as a result of activating the back button on the current page.
 					 */
 					direction : {type : "string"},
 
 					/**
-					 * The custom content, from which the navigation occurs. Null if navigating from first page
+					 * The custom content from which the navigation occurs. Null if navigating from first page.
 					 */
 					contentFrom : {type : "sap.ui.core.Control"},
 
 					/**
-					 * The custom content, to which the navigation occurs. Null if navigating to first page
+					 * The custom content to which the navigation occurs. Null if navigating to first page.
 					 */
 					contentTo : {type : "sap.ui.core.Control"}
 				}
 			},
 
 			/**
-			 * Event is fired when the custom action is pressed
+			 * Event is fired when the custom action is pressed.
 			 */
 			actionPress : {
 				parameters : {
 
 					/**
-					 * The action that has to be processed once the action has been pressed
+					 * The action that has to be processed once the action has been pressed.
 					 */
 					action : {type : "sap.ui.core.Item"},
 
