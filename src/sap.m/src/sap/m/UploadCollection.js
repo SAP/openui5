@@ -526,7 +526,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		this._requestIdValue = 0;
 		this._iFUCounter = 0; // it is necessary to count FileUploader instances in case of 'instantUpload' = false
 
-		this._oList = new List(this.getId() + "-list");
+		this._oList = new List(this.getId() + "-list", {
+			selectionChange : [this._handleSelectionChange, this]
+		});
 		this.setAggregation("_list", this._oList, true);
 		this._oList.addStyleClass("sapMUCList");
 		this.setAggregation("_noDataIcon", new Icon(this.getId() + "-no-data-icon", {
@@ -1884,8 +1886,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				oItem.attachEvent("selected", that._handleItemSetSelected, that);
 			}
 		});
-		// Handles Upload Collection selection change event
-		that._oList.attachSelectionChange(that._handleSelectionChange, that);
 	};
 
 	/**
