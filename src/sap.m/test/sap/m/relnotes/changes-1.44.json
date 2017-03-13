@@ -1759,5 +1759,82 @@
         "references": []
       }
     ]
+  },
+  "1.44.9": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "b58bfc553855308dd6a57f273d0e2e67dd747aa5",
+        "type": "FIX",
+        "text": " core.Popup|m.Dialog: consider window scroll for positioning",
+        "references": []
+      },
+      {
+        "id": "76de526d7a05dfbc3d0d93811181751d7df41ee5",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: model with non-default sizeLimit is now supported.",
+        "references": []
+      },
+      {
+        "id": "a07579dab99dc512d3572b25dcb537e5c081d0e3",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Tile content visibility independent of Generic Tile Mode",
+        "references": []
+      },
+      {
+        "id": "5118b778c9cdcc796da1cfab61fe623907f320ff",
+        "type": "FIX",
+        "text": " sap.m.ListItemBase: Accessibility improvement",
+        "references": []
+      },
+      {
+        "id": "ae1c94889b64f5d4662936b6ae17cf2ce0bb4358",
+        "type": "FIX",
+        "text": " sap.m.MaskInput: Acc example now has correct labels",
+        "references": []
+      },
+      {
+        "id": "fbda892ce58925eedb2f9b3b01b3c28a244fc1a5",
+        "type": "FIX",
+        "text": " sap.m.NumericContent: ARIA role for container corrected",
+        "references": []
+      },
+      {
+        "id": "80817eff6d718acb180cd6099d2f5f8868469fb4",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: displays correctly on combi device",
+        "references": []
+      },
+      {
+        "id": "2e3d3b94d925ac97a109575904fa4ccaf374c804",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Color of the number applied correctly",
+        "references": []
+      },
+      {
+        "id": "566f8ddb4f4ad51d0074cbb381bc3751e22befb4",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: ObjectNumber has correct styling",
+        "references": []
+      },
+      {
+        "id": "ec3c2aa3ba5d65091c7ff2ebe566856c8d811924",
+        "type": "FIX",
+        "text": " sap.m.Shell: Omitt rendering of title if no title is set",
+        "references": []
+      },
+      {
+        "id": "cd2fde0719bdb25a513d18070c0f52103bfc1714",
+        "type": "FIX",
+        "text": " sap.m.TextArea setting the width of the control correctly",
+        "references": []
+      },
+      {
+        "id": "47d163d9d043ee4c73657e4fc476b183541e6c28",
+        "type": "FIX",
+        "text": " sap.m.Wizard: on scrolling is showing only active steps",
+        "references": []
+      }
+    ]
   }
 }
