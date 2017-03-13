@@ -380,14 +380,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 					}
 				}
 			}
-		} else if (oEvent.keyCode == jQuery.sap.KeyCodes.A && (oEvent.metaKey || oEvent.ctrlKey)) {
+		} else if (oEvent.keyCode == jQuery.sap.KeyCodes.A && (oEvent.metaKey || oEvent.ctrlKey) && !oEvent.altKey) {
 			// CTRL + A handling
-			var oInfo = TableUtils.getFocusedItemInfo(this);
-
 			this._toggleSelectAll();
-
-			TableUtils.focusItem(this, oInfo.cell, oEvent);
-
 			oEvent.preventDefault();
 			oEvent.stopImmediatePropagation(true);
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.F10 && (oEvent.shiftKey)) {
