@@ -140,7 +140,7 @@
 //                title: "Dialog with MessageView",
                 content: oMessageViewDialog,
                 showHeader: false,
-                beginButton: new sap.m.Button({
+                beginButton: new sap.m.Button("dialogCloseButton", {
                     press: function () {
                         oDialog1.close();
                     },
@@ -153,7 +153,7 @@
 
             var page1 = new sap.m.Page("page1", {
                 content: [
-                    new sap.m.Button('hide-show-header', {
+                    new sap.m.Button('mView-in-dialog-btn', {
                         text: "MessageView in Dialog",
                         press: function () {
                             oDialog1.open();
