@@ -39,7 +39,7 @@
 
 	QUnit.test("Internal aggregations created on init", function(assert) {
 		//Assert
-		assert.equal(this.oSelectionDetails.getAggregation("_button").getMetadata().getName(), "sap.m.OverflowToolbarButton", "Private button created");
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getMetadata().getName(), "sap.m.Button", "Private button created");
 	});
 
 	QUnit.module("Basic Rendering", {
@@ -156,7 +156,7 @@
 		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem();
 		this.oSelectionDetails.addItem(oSelectionDetailsItem);
 		// Act
-		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.OverflowToolbarButton, sap.m.List);
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button, sap.m.List);
 		var oList = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-list");
 		//Assert
 		assert.equal(oList.getAggregation("items").length, 1, "One list item has been added to the list");
@@ -167,7 +167,7 @@
 		var sText = "myText";
 		this.oSelectionDetails.addAction(new sap.ui.core.Item({text: sText, enabled: true}));
 		// Act
-		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.OverflowToolbarButton, sap.m.List);
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button, sap.m.List);
 		//Assert
 		var oButton = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-action-0");
 		assert.equal(oButton.getText(), sText, "Button has correct text");
@@ -178,7 +178,7 @@
 		// Arrange
 		var oAction = new sap.ui.core.Item();
 		this.oSelectionDetails.addAction(oAction);
-		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.OverflowToolbarButton, sap.m.List);
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button, sap.m.List);
 		var oButton = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-action-0");
 		var oSpy = sinon.spy(this.oSelectionDetails, "fireActionPress");
 		// Act
