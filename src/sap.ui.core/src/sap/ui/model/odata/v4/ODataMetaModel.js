@@ -121,6 +121,7 @@ sap.ui.define([
 		 */
 		function includeReferences(mReferencedScope) {
 			var sMessage,
+				oReference,
 				sReferenceUri;
 
 			if (mReferencedScope.$Version !== "4.0") {
@@ -131,12 +132,18 @@ sap.ui.define([
 
 			// Note: for-in tolerates undefined
 			for (sReferenceUri in mReferencedScope.$Reference) {
+				oReference = mReferencedScope.$Reference[sReferenceUri];
+				if ("$IncludeAnnotations" in oReference) {
+					sMessage = "Unsupported IncludeAnnotations";
+					jQuery.sap.log.error(sMessage, sUrl, sODataMetaModel);
+					throw new Error(sMessage);
+				}
 				if (!(sReferenceUri in mScope.$Reference)) { // add new reference
-					mScope.$Reference[sReferenceUri] = mReferencedScope.$Reference[sReferenceUri];
+					mScope.$Reference[sReferenceUri] = oReference;
 				} else { // add potentially new includes
 					// Note: it's OK to create duplicates here
 					Array.prototype.push.apply(mScope.$Reference[sReferenceUri].$Include,
-						mReferencedScope.$Reference[sReferenceUri].$Include);
+						oReference.$Include);
 				}
 			}
 
@@ -436,7 +443,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.prototype._mergeMetadata = function (aMetadata) {
-		var oResult = aMetadata[0],
+		var sMessage,
+			sReferenceUri,
+			oResult = aMetadata[0],
 			that = this;
 
 		function moveAnnotations(oElement) {
@@ -450,6 +459,16 @@ sap.ui.define([
 					}
 				});
 				delete oElement.$Annotations;
+			}
+		}
+
+		if (this.bSupportReferences) {
+			for (sReferenceUri in oResult.$Reference) {
+				if ("$IncludeAnnotations" in oResult.$Reference[sReferenceUri]) {
+					sMessage = "Unsupported IncludeAnnotations";
+					jQuery.sap.log.error(sMessage, this.sUrl, sODataMetaModel);
+					throw new Error(sMessage);
+				}
 			}
 		}
 

@@ -1680,7 +1680,7 @@ sap.ui.require([
 				+ bSupportReferences;
 
 		QUnit.test(sTitle, function (assert) {
-			var oModel = new ODataModel({
+			var oModel = new ODataModel({ // code under test
 					serviceUrl : "/a/b/c/d/e/",
 					supportReferences : bSupportReferences,
 					synchronizationMode : "None"
@@ -1690,6 +1690,8 @@ sap.ui.require([
 				sUrl = "/a/default/iwbep/tea_busi_product/0001/$metadata";
 
 			bSupportReferences = bSupportReferences !== false; // default is true!
+			assert.strictEqual(oMetaModel.bSupportReferences, bSupportReferences);
+
 			this.mock(oMetaModel).expects("fetchEntityContainer").atLeast(1)
 				.returns(_SyncPromise.resolve(clone(mXServiceScope)));
 			this.mock(oMetaModel.oRequestor).expects("read").exactly(bSupportReferences ? 1 : 0)
@@ -1699,11 +1701,124 @@ sap.ui.require([
 			this.oLogMock.expects("warning").exactly(bSupportReferences ? 0 : 1)
 				.withExactArgs("Unknown qualified name " + sPath.slice(1), sPath, sODataMetaModel);
 
+			// code under test
 			return oMetaModel.fetchObject(sPath).then(function (vResult) {
 				assert.strictEqual(vResult, bSupportReferences
 					? mProductScope["tea_busi_product.v0001.Product"]
 					: undefined);
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bSupportReferences) {
+		var sTitle = "fetchEntityContainer: forbid edmx:IncludeAnnotations - supportReferences: "
+				+ bSupportReferences;
+
+		QUnit.test(sTitle, function (assert) {
+			var mScope = {
+					"$Reference" : {
+						"/A/$metadata" : {
+							"$Include" : [
+								"A."
+							]
+						},
+						"/B/$metadata" : {
+							"$IncludeAnnotations" : [{
+								"$TermNamespace" : "com.sap.vocabularies.Common.v1"
+							}]
+						}
+					}
+				},
+				sMessage = "Unsupported IncludeAnnotations";
+
+			this.oMetaModel.bSupportReferences = bSupportReferences;
+			this.mock(this.oMetaModel.oRequestor).expects("read")
+				.withExactArgs("/a/b/c/d/e/$metadata")
+				.returns(Promise.resolve(mScope));
+			if (bSupportReferences) {
+				this.oLogMock.expects("error")
+					.withExactArgs(sMessage, "/a/b/c/d/e/$metadata", sODataMetaModel);
+			}
+
+			return this.oMetaModel.fetchEntityContainer()
+				.then(function (vResult) {
+					if (bSupportReferences) {
+						assert.ok(false, "unexpected success");
+					} else {
+						assert.strictEqual(vResult, mScope);
+					}
+				}, function (oError) {
+					if (bSupportReferences) {
+						assert.strictEqual(oError.message, sMessage);
+					} else {
+						assert.ok(false, "unexpected error");
+					}
+				});
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bSupportReferences) {
+		var sTitle = "fetchObject: cross-service reference, forbid edmx:IncludeAnnotations"
+				+ " - supportReferences: " + bSupportReferences;
+
+		QUnit.test(sTitle, function (assert) {
+			var mScope0 = {
+					"$Reference" : {
+						"/A/$metadata" : {
+							"$Include" : [
+								"A."
+							]
+						}
+					}
+				},
+				mScopeA = {
+					"$Version" : "4.0",
+					"$Reference" : {
+						"/B/$metadata" : {
+							"$Include" : [
+								"B."
+							]
+						},
+						"/C/$metadata" : {
+							"$IncludeAnnotations" : [{
+								"$TermNamespace" : "com.sap.vocabularies.Common.v1"
+							}]
+						}
+					}
+				},
+				sMessage = "Unsupported IncludeAnnotations";
+
+			this.oMetaModel.bSupportReferences = bSupportReferences;
+			this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
+				.returns(_SyncPromise.resolve(mScope0));
+			if (bSupportReferences) {
+				this.mock(this.oMetaModel.oRequestor).expects("read")
+					.withExactArgs("/A/$metadata")
+					.returns(Promise.resolve(mScopeA));
+				this.oLogMock.expects("error")
+					.withExactArgs(sMessage, "/A/$metadata", sODataMetaModel);
+			} else {
+				this.allowWarnings(assert, true);
+				this.oLogMock.expects("warning")
+					.withExactArgs("Unknown qualified name A.", "/A.", sODataMetaModel);
+			}
+
+			return this.oMetaModel.fetchObject("/A.")
+				.then(function (vResult) {
+					if (bSupportReferences) {
+						assert.ok(false, "unexpected success");
+					} else {
+						assert.strictEqual(vResult, undefined);
+					}
+				}, function (oError) {
+					if (bSupportReferences) {
+						assert.strictEqual(oError.message, sMessage);
+					} else {
+						assert.ok(false, "unexpected error");
+					}
+				});
 		});
 	});
 
