@@ -589,5 +589,22 @@
         "references": []
       }
     ]
+  },
+  "1.46.5": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "be1cf875b8cfaef9c64249f84f56e29bb9100c5a",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Focus clear visible on IE",
+        "references": []
+      },
+      {
+        "id": "25fcfc95a0b1b3cae275485f810c363d86c9fde3",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: the css alignment is fixed in compact mode",
+        "references": []
+      }
+    ]
   }
 }

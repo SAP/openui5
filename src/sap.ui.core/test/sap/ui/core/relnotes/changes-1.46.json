@@ -653,5 +653,22 @@
         "references": []
       }
     ]
+  },
+  "1.46.5": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "126cc3c68922774ac9609e3c90f5e4d403b2b613",
+        "type": "FIX",
+        "text": " Fragment, Customizing: ensure viewModification support",
+        "references": []
+      },
+      {
+        "id": "44a23ff01ecbe79519365e5b80f4c218a475834b",
+        "type": "FIX",
+        "text": " core.Popup|m.Dialog: consider window scroll for positioning",
+        "references": []
+      }
+    ]
   }
 }

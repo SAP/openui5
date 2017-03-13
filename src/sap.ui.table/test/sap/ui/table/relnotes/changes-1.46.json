@@ -379,5 +379,16 @@
         "references": []
       }
     ]
+  },
+  "1.46.5": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "029a02f060b15d468bac1dafcba3817606f5c514",
+        "type": "FIX",
+        "text": " AnalyticalTable: Ungrouping using the column menu",
+        "references": []
+      }
+    ]
   }
 }
