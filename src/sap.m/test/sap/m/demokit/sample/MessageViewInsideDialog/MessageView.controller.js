@@ -74,9 +74,10 @@ sap.ui.define([
 		handleDialogPress: function (oEvent) {
 
 			var oDialog = new sap.m.Dialog({
-				showHeader: false,
+				title: "Messages",
 				resizable: true,
 				content: this._oMessageView,
+				state: 'Error',
 				beginButton: new sap.m.Button({
 					press: function () {
 						oDialog.close();
