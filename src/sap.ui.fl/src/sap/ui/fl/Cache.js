@@ -102,7 +102,8 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 					changes : [],
 					contexts : []
 				},
-				componentClassName: sComponentName
+				componentClassName: sComponentName,
+				dummy: true
 			});
 		}
 
