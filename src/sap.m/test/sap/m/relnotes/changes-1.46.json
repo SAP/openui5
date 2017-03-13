@@ -1711,5 +1711,130 @@
         "references": []
       }
     ]
+  },
+  "1.46.5": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "d8c09794627b319eb4f8535fd98a4b020e437aa1",
+        "type": "FIX",
+        "text": " SearchField: Fixed opening suggestions on phone",
+        "references": []
+      },
+      {
+        "id": "44a23ff01ecbe79519365e5b80f4c218a475834b",
+        "type": "FIX",
+        "text": " core.Popup|m.Dialog: consider window scroll for positioning",
+        "references": []
+      },
+      {
+        "id": "8018545090c572892fdf7c5b6c7847f733cae33b",
+        "type": "FIX",
+        "text": " m.PlanningCalendar: Rows resize properly depending on the container width",
+        "references": []
+      },
+      {
+        "id": "5f729faec40798ee7e81b4fdf4370e0794519843",
+        "type": "FIX",
+        "text": " m.PlanningCalendar: Today button enabled state is always updated",
+        "references": []
+      },
+      {
+        "id": "f4c782957979d79f9ca19e0f8c5d3aca411e6802",
+        "type": "FIX",
+        "text": " sap.m.ListItemBase: Accessibility improvement",
+        "references": []
+      },
+      {
+        "id": "474eebb2398a13f1500b8b5d95a60f91a743ac4a",
+        "type": "FIX",
+        "text": " sap.m.MaskInput - after setValue(\"\") the previous value is not retained anymore.",
+        "references": []
+      },
+      {
+        "id": "45d296929ae0f00ceea5495dfbb8b5dd688ebdfb",
+        "type": "FIX",
+        "text": " sap.m.MaskInput: Acc example now has correct labels",
+        "references": []
+      },
+      {
+        "id": "d72fcaf263d4e2db9fe2a19e1df442c977334888",
+        "type": "FIX",
+        "text": " sap.m.NumericContent: ARIA role for container corrected",
+        "references": []
+      },
+      {
+        "id": "be1cf875b8cfaef9c64249f84f56e29bb9100c5a",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Focus clear visible on IE",
+        "references": []
+      },
+      {
+        "id": "65a3c92da82ce5535020ef5984c1de0c07f399b8",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: displays correctly on combi device",
+        "references": []
+      },
+      {
+        "id": "1d74f7ebcb450f83f5ccf5f17bd4ba16d5eb3e26",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Color of the number applied correctly",
+        "references": []
+      },
+      {
+        "id": "efcc0ca6ae74f5905178d81cc7653bf8fdf70453",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: ObjectNumber has correct styling",
+        "references": []
+      },
+      {
+        "id": "25fcfc95a0b1b3cae275485f810c363d86c9fde3",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: the css alignment is fixed in compact mode",
+        "references": []
+      },
+      {
+        "id": "d0640d134076a54f4826a3ea92a4517173714f4a",
+        "type": "FIX",
+        "text": " sap.m.Shell: Omitt rendering of title if no title is set",
+        "references": []
+      },
+      {
+        "id": "112d0e23abc3bf438b0627c5d9ed5697dff994a7",
+        "type": "FIX",
+        "text": " sap.m.Slider / sap.m.RangeSlider: Labels are not cut anymore",
+        "references": []
+      },
+      {
+        "id": "86e228e0087a78462a27ab09863a904e1f7816c6",
+        "type": "FIX",
+        "text": " sap.m.TextArea setting the width of the control correctly",
+        "references": []
+      },
+      {
+        "id": "83daada8d7e06aa3376f33a8cdf73ad823a71ca1",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: sapContrast removed",
+        "references": []
+      },
+      {
+        "id": "d151881fe6cc72fb4bce01dcc0b8c1b295ed300c",
+        "type": "FIX",
+        "text": " sap.m.Token: Truncating token is Safari fixed",
+        "references": []
+      },
+      {
+        "id": "78e4ebd24b579b12663ed0113c0dd6687f7a17d6",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: selectionChange event call corrected",
+        "references": []
+      },
+      {
+        "id": "b42d476514a65691c863cdfea92c86799e600624",
+        "type": "FIX",
+        "text": " sap.m.Wizard: on scrolling is showing only active steps",
+        "references": []
+      }
+    ]
   }
 }

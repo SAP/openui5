@@ -55,5 +55,16 @@
         "references": []
       }
     ]
+  },
+  "1.46.5": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "bfae0dd427b2923d93f38caed9524fc204269f72",
+        "type": "FIX",
+        "text": " sap.ui.dt: Border fixes in HCB theme",
+        "references": []
+      }
+    ]
   }
 }

@@ -32,5 +32,16 @@
         "references": []
       }
     ]
+  },
+  "1.46.5": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "042c05bf223621374724ed98c8b79da6602aa520",
+        "type": "FIX",
+        "text": " Variant loading fails if server sends correct content type",
+        "references": []
+      }
+    ]
   }
 }
