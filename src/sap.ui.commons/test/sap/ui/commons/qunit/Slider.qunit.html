@@ -1124,6 +1124,99 @@
 		oSlider = null;
 	});
 
+	module("Limit values", {
+		setup: function () {
+			this.oSlider = new sap.ui.commons.Slider("oSLimit", {
+				width:'300px',
+				height:'300px'
+			});
+
+			this.oSlider.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+		},
+		teardown: function () {
+			this.oSlider.destroy();
+			this.oSlider = null;
+		}
+	});
+
+	test("Setting values to 100 and to 0 in Vertical mode", function () {
+		this.oSlider.setVertical(true);
+
+		var oBar = jQuery.sap.domById('oSLimit-bar'),
+			oGrip = jQuery.sap.domById('oSLimit-grip'),
+			oHili = jQuery.sap.domById('oSLimit-hili');
+
+		this.oSlider.setValue(100);
+		// check if the grip offset is correct
+		equal(oGrip.offsetTop, 0 - this.oSlider.iShiftGrip, "Grip position is correct after setting Value to 100");
+		// check if the highlited area has correct height
+		equal(oHili.clientHeight, oBar.clientHeight, "Highlited area has correct height after setting Value to 100");
+
+		this.oSlider.setValue(0);
+		// check if the grip offset is correct
+		equal(oGrip.offsetTop, oBar.clientHeight - this.oSlider.iShiftGrip, "Grip position is correct after setting Value to 0");
+		// check if the highlited area has correct height
+		equal(oHili.clientHeight, 0, "Highlited area has correct height after setting Value to 0");
+	});
+
+	test("Setting values to bigger then Max (100) and less to Min (0) in Vertical mode", function () {
+		this.oSlider.setVertical(true);
+
+		var oBar = jQuery.sap.domById('oSLimit-bar'),
+			oGrip = jQuery.sap.domById('oSLimit-grip'),
+			oHili = jQuery.sap.domById('oSLimit-hili');
+
+		this.oSlider.setValue(110);
+		// check if the grip offset is correct
+		equal(oGrip.offsetTop, 0 - this.oSlider.iShiftGrip, "Grip position is correct after setting Value to 100");
+		// check if the highlited area has correct height
+		equal(oHili.clientHeight, oBar.clientHeight, "Highlited area has correct height after setting Value to 100");
+
+		this.oSlider.setValue(-5);
+		// check if the grip offset is correct
+		equal(oGrip.offsetTop, oBar.clientHeight - this.oSlider.iShiftGrip, "Grip position is correct after setting Value to 0");
+		// check if the highlited area has correct height
+		equal(oHili.clientHeight, 0, "Highlited area has correct height after setting Value to 0");
+	});
+
+	test("Setting values to 100 and to 0 in Horizontal mode", function () {
+		var oBar = jQuery.sap.domById('oSLimit-bar'),
+			oGrip = jQuery.sap.domById('oSLimit-grip'),
+			oHili = jQuery.sap.domById('oSLimit-hili');
+
+		this.oSlider.setValue(100);
+		// check if the grip offset is correct
+		equal(oGrip.offsetLeft, oBar.clientWidth - this.oSlider.iShiftGrip, "Grip position is correct after setting Value to 100");
+		// check if the highlited area has correct height
+		equal(oHili.clientWidth, oBar.clientWidth, "Highlited area has correct width after setting Value to 100");
+
+		this.oSlider.setValue(0);
+		// check if the grip offset is correct
+		equal(oGrip.offsetLeft, 0 - this.oSlider.iShiftGrip, "Grip position is correct after setting Value to 0");
+		// check if the highlited area has correct height
+		equal(oHili.clientWidth, 0, "Highlited area has correct width after setting Value to 0");
+	});
+
+	test("Setting values to bigger then Max (100) and less to Min (0) in Horizontal mode", function () {
+		var oBar = jQuery.sap.domById('oSLimit-bar'),
+			oGrip = jQuery.sap.domById('oSLimit-grip'),
+			oHili = jQuery.sap.domById('oSLimit-hili');
+
+		this.oSlider.setValue(110);
+		// check if the grip offset is correct
+		equal(oGrip.offsetLeft, oBar.clientWidth - this.oSlider.iShiftGrip, "Grip position is correct after setting Value to 100");
+		// check if the highlited area has correct height
+		equal(oHili.clientWidth, oBar.clientWidth, "Highlited area has correct width after setting Value to 100");
+
+		this.oSlider.setValue(-5);
+		// check if the grip offset is correct
+		equal(oGrip.offsetLeft, 0 - this.oSlider.iShiftGrip, "Grip position is correct after setting Value to 0");
+		// check if the highlited area has correct height
+		equal(oHili.clientWidth, 0, "Highlited area has correct width after setting Value to 0");
+	});
+
 	</script>
 
 	<title>qunit Test for Slider</title>
@@ -1137,6 +1230,7 @@
 	<h2 id="qunit-userAgent"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
 	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture"></div>
 	<br>
 	<div id="uiArea1"></div>
 	<div id="uiArea2"></div>
