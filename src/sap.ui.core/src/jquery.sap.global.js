@@ -319,20 +319,22 @@
 				_catch = Promise.prototype.catch,
 				_timeout = window.setTimeout,
 				_interval = window.setInterval,
-				oQueue;
+				aQueue = [];
 			function addPromiseHandler(fnHandler) {
 				// Collect all promise handlers and execute within the same timeout,
 				// to avoid them to be split among several tasks
 				if (!bPromisesQueued) {
 					bPromisesQueued = true;
-					oQueue = new Promise(function(resolve, reject) {
-						_timeout(function() {
-							resolve();
-							bPromisesQueued = false;
-						}, 0);
-					});
+					_timeout(function() {
+						var aCurrentQueue = aQueue;
+						aQueue = [];
+						bPromisesQueued = false;
+						aCurrentQueue.forEach(function(fnQueuedHandler) {
+							fnQueuedHandler();
+						});
+					}, 0);
 				}
-				_then.call(oQueue, fnHandler);
+				aQueue.push(fnHandler);
 			}
 			function wrapPromiseHandler(fnHandler, oScope, bCatch) {
 				if (typeof fnHandler !== "function") {
