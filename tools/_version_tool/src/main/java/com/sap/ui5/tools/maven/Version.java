@@ -174,6 +174,12 @@ public class Version {
       }
       newPatch++;
       break;
+    case PatchVersionIncrement:
+      if (isSnapshot() ) {
+        throw new IllegalArgumentException("Can not increment from snapshot version, must be a release version, but is " + this);
+      }
+      newPatch++;
+      break;
     }
   
 	  
