@@ -83,17 +83,54 @@
 					unit: "Yuons"
 				}
 			]
+		],
+		actions: [
+			{
+				key: "1",
+				text: "action 1"
+			},
+			{
+				key: "2",
+				text: "action 2"
+			}
+		],
+		actionGroups: [
+			{
+				key: "1",
+				text: "action group 1"
+			},
+			{
+				key: "2",
+				text: "action group 2"
+			}
 		]
 	});
 
 	// set the model to the core
 	sap.ui.getCore().setModel(oModel);
 
+	var oActionTemplate = new sap.ui.core.Item({
+		key: "{key}",
+		text: "{text}"
+	});
+
+	var oActionGroupTemplate = new sap.ui.core.Item({
+		key: "{key}",
+		text: "{text}"
+	});
+
 	var oSelectionDetails = new sap.m.SelectionDetails("selectionDetails", {
 		items: aItems,
-		actions: aActions,
+		actions: {
+			path: "/actions",
+			template: oActionTemplate
+		},
+		actionGroups: {
+			path: "/actionGroups",
+			template: oActionGroupTemplate
+		},
 		actionPress: function(oEvent) {
-			sap.m.MessageToast.show(oEvent.getParameter("action").getText() + " is pressed" + "\n item is " + oEvent.getParameter("item"));
+			sap.m.MessageToast.show(oEvent.getParameter("action").getText() + " is pressed" + "\n items are " + oEvent.getParameter("items"));
 		}
 	});
 
