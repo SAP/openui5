@@ -215,7 +215,7 @@
 		oMockServer.destroy();
 	});
 
-	QUnit.test("Test URL parameters with ampersand in value", 3, function(assert) {
+	QUnit.test("Test URL parameters with ampersand in value", 4, function(assert) {
 
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -225,13 +225,12 @@
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
 
-
  		var oResponse = jQuery.sap.sjax({
  			url : "/myservice/FlightCollection?$filter=startswith(flightDetails,'Smartphones&$Tab&lets')",
  			dataType : "json"
  		});
-
- 		ok(!oResponse.success, "Mock server responded well");
+        ok(oResponse.success, "Mock server responded well");
+        equal(oResponse.data.d.results.length, 0, "No values found for the filter query");
 
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection?key1=1&key2=22&key3='h&m'&key4='42\" tv'",
@@ -2406,6 +2405,14 @@
 				oMockServer.start();
 				ok(oMockServer.isStarted(), "Mock server is started");
 
+				//test for filtering while sample data contains null values
+				var oResponse = jQuery.sap.sjax({
+					url : "/myservice/LeaveHeaderCollection?$filter=substringof('e', organizationunit)",
+					dataType : "json"
+				});
+				ok(oResponse.success, "Mock didn't crash on null");
+				equal(oResponse.data.d.results.length, 2, "");
+
 				//test for filtering by comma
 				var oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=substringof(',', type)",
@@ -2767,7 +2774,7 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "Mock server responded");
-		equal(countProperties(oResponse.data.d.results[0]), 7, "select all properties by *");
+		equal(countProperties(oResponse.data.d.results[0]), 8, "select all properties by *");
 
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/LeaveHeaderCollection?$select=sdfsdf",
