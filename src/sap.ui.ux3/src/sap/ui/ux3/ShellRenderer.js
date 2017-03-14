@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		rm.write("<span class='sapUiUx3ShellFocusDummy' id='" + sId + "-focusDummyHdrStart'" + tabIndex + "></span>");
 		ShellRenderer.renderHeader(rm, oControl);
 		rm.write("<span class='sapUiUx3ShellFocusDummy' id='" + sId + "-focusDummyHdrEnd'" + tabIndex + "></span>");
-		rm.write("</header>   <!-- end of sapUiUx3ShellHeader -->");
+		rm.write("</header>");
 
 
 
@@ -91,14 +91,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		var wsMargin = bPaneOpen ? " style='margin-" + (bRtl ? "left" : "right") + ":" + (iPaneWidthPlus + 22) + "px'" : "";
 		rm.write("<div id='", sId, "-wBar'" + wsMargin + " class='sapUiUx3ShellWorksetBar'>");
 		ShellRenderer.renderWorksetItems(rm, oControl);
-		rm.write("</div>   <!--  end of worksetBar -->");
+		rm.write("</div>");
 
 
 
 		// write tool palette area
 		rm.write("<section id='" + sId + "-tp' class='sapUiUx3ShellToolPaletteArea' role='complementary' data-sap-ui-fastnavgroup='true'>");
 		ShellRenderer.renderToolPalette(rm, oControl);
-		rm.write("</section> <!-- end of toolPaletteArea -->");
+		rm.write("</section>");
 
 
 
@@ -150,7 +150,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		rm.write("</div>");
 
 
-		rm.write("</aside>   <!-- end of paneBar -->");
+		rm.write("</aside>");
 
 
 
