@@ -35,6 +35,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Renderer", "sap/m/ListItemBaseR
 		oRm.write(">");
 
 		oRm.write("<div");
+		oRm.addClass("sapMSDItemLineMarkerContainer");
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.write("</div>");
+
+		oRm.write("<div");
 		oRm.addClass("sapMSDItemLineLabel");
 		oRm.writeClasses();
 		oRm.write(">");
