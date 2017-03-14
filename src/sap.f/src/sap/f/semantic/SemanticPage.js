@@ -279,6 +279,11 @@ sap.ui.define([
 				discussInJamAction: {type: "sap.f.semantic.DiscussInJamAction", multiple: false},
 
 				/**
+				* A button which is placed in the <code>ShareMenu</code> area of the <code>SemanticPage</code> title.
+				*/
+				saveAsTileAction: {type: "sap.m.Button", multiple: false},
+
+				/**
 				* A semantic-specific button which is placed in the <code>ShareMenu</code> area of the <code>SemanticPage</code> title.
 				*/
 				shareInJamAction: {type: "sap.f.semantic.ShareInJamAction", multiple: false},
@@ -319,12 +324,17 @@ sap.ui.define([
 		SHARE_MENU_CONTENT_CHANGED : "_shareMenuContentChanged"
 	};
 
+	SemanticPage._SAVE_AS_TILE_ACTION = "saveAsTileAction";
+
 	/*
 	* LIFECYCLE METHODS
 	*/
 	SemanticPage.prototype.init = function () {
 		this._initDynamicPage();
 		this._attachShareMenuButtonChange();
+		this._fnActionSubstituteParentFunction = function () {
+			return this;
+		}.bind(this);
 	};
 
 	SemanticPage.prototype.exit = function () {
@@ -390,17 +400,27 @@ sap.ui.define([
 		}
 
 		oObject = this.validateAggregation(sAggregationName, oObject, false);
-		sType = this.getMetadata().getManagedAggregation(sAggregationName).type;
+
+		if (sAggregationName === SemanticPage._SAVE_AS_TILE_ACTION) {
+			sType = SemanticPage._SAVE_AS_TILE_ACTION;
+		} else {
+			sType = this.getMetadata().getManagedAggregation(sAggregationName).type;
+		}
 
 		if (SemanticConfiguration.isKnownSemanticType(sType)) {
 			sPlacement = SemanticConfiguration.getPlacement(sType);
 
 			if (oOldChild) {
+				this._onRemoveAggregation(oOldChild, sType);
 				this._getSemanticContainer(sPlacement).removeContent(oOldChild, sPlacement);
 			}
 
 			if (oObject) {
+				oObject._getType = function() {
+					return sType;
+				};
 				this._getSemanticContainer(sPlacement).addContent(oObject, sPlacement);
+				this._onAddAggregation(oObject, sType);
 			}
 
 			return ManagedObject.prototype.setAggregation.call(this, sAggregationName, oObject, true);
@@ -410,13 +430,20 @@ sap.ui.define([
 	};
 
 	SemanticPage.prototype.destroyAggregation = function (sAggregationName, bSuppressInvalidate) {
-		var oAggregationInfo = this.getMetadata().getAggregations()[sAggregationName], oObject, sPlacement;
+		var oAggregationInfo = this.getMetadata().getAggregations()[sAggregationName], oObject, sPlacement, sType;
 
-		if (oAggregationInfo && SemanticConfiguration.isKnownSemanticType(oAggregationInfo.type)) {
+		if (sAggregationName === SemanticPage._SAVE_AS_TILE_ACTION) {
+			sType = SemanticPage._SAVE_AS_TILE_ACTION;
+		} else {
+			sType = oAggregationInfo && oAggregationInfo.type;
+		}
+
+		if (sType && SemanticConfiguration.isKnownSemanticType(sType)) {
 			oObject = ManagedObject.prototype.getAggregation.call(this, sAggregationName);
 
 			if (oObject) {
-				sPlacement = SemanticConfiguration.getPlacement(oAggregationInfo.type);
+				sPlacement = SemanticConfiguration.getPlacement(sType);
+				this._onRemoveAggregation(oObject, sType);
 				this._getSemanticContainer(sPlacement).removeContent(oObject, sPlacement);
 			}
 		}
@@ -619,6 +646,61 @@ sap.ui.define([
 		};
 	}, this);
 
+	/**
+	* Process the given control,
+	* before setting it to one of the <code>sap.f.semantic.SemanticPage</code> aggregations.
+	* @param {sap.ui.core.Control} oControl
+	* @param {String} sType
+	* @private
+	*/
+	SemanticPage.prototype._onAddAggregation = function (oControl, sType) {
+		if (sType === SemanticPage._SAVE_AS_TILE_ACTION) {
+			this._replaceParent(oControl);
+		}
+	};
+
+	/**
+	* Process the given control,
+	* after removing it from one of the <code>sap.f.semantic.SemanticPage</code> aggregations.
+	* @param {sap.ui.core.Control} oControl
+	* @param {String} sType
+	* @private
+	*/
+	SemanticPage.prototype._onRemoveAggregation = function (oControl, sType) {
+		if (sType === SemanticPage._SAVE_AS_TILE_ACTION) {
+			 this._restoreParent(oControl);
+		}
+
+		if (oControl._getType) {
+			delete oControl._getType;
+		}
+	};
+
+	/**
+	* Replaces the <code>getParent</code> function of the given control,
+	* so the control would return the <code>SemanticPage</code> as its parent, rather than its real parent.
+	* @param {sap.ui.core.Control} oControl
+	* @private
+	*/
+	SemanticPage.prototype._replaceParent = function (oControl) {
+		if (oControl._fnOriginalGetParent) {
+			return;
+		}
+
+		oControl._fnOriginalGetParent = oControl.getParent;
+		oControl.getParent = this._fnActionSubstituteParentFunction;
+	};
+
+	/**
+	 * Restores the original <code>getParent</code> function of the given control.
+	 * @param oControl
+	 * @private
+	 */
+	SemanticPage.prototype._restoreParent = function (oControl) {
+		if (oControl && oControl._fnOriginalGetParent) {
+			oControl.getParent = oControl._fnOriginalGetParent;
+		}
+	};
 
 	/*
 	* Attaches a handler to the <code>ShareMenu</code> base button change.
