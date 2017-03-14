@@ -50,15 +50,31 @@ sap.ui.require([
 
 	QUnit.test("when saving a single change", function(assert) {
 		return oFakeLrepConnectorLocalStorage.create(oTestData)
-		.then(function () {
+		.then(function (oResult) {
 			assert.equal(FakeLrepLocalStorage.getNumChanges(), 1, "then the Local Storage saves one change.");
+			assert.deepEqual(oResult.response, oTestData, "and the change definition is returned as response");
+		});
+	});
+
+	QUnit.test("when updating a single change", function(assert) {
+		return oFakeLrepConnectorLocalStorage.create(oTestData)
+		.then(function () {
+			//any update on change
+			oTestData.layer = "USER";
+
+			return oFakeLrepConnectorLocalStorage.update(oTestData);
+		})
+		.then(function (oResult) {
+			assert.equal(FakeLrepLocalStorage.getNumChanges(), 1, "then the Local Storage still has one change.");
+			assert.deepEqual(oResult.response, FakeLrepLocalStorage.getChange(oTestData.fileName), "and the change definition is updated and updated returned");
 		});
 	});
 
 	QUnit.test("when saving three changes", function(assert) {
 		return oFakeLrepConnectorLocalStorage.create(aTestData)
-		.then(function () {
+		.then(function (oResult) {
 			assert.equal(FakeLrepLocalStorage.getNumChanges(), 3, "then the Local Storage saves three changes.");
+			assert.deepEqual(oResult.response, aTestData, "and the change definitions are returned");
 		});
 	});
 

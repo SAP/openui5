@@ -36,19 +36,39 @@ sap.ui.define([
 
 	/**
 	 * Creates a Fake Lrep change in localStorage
-	 * @param  {Object|Array} vChange - the change array/object
+	 * @param  {Object|Array} vChangeDefinitions - single or multiple changeDefinitions
 	 * @returns {Promise} Returns a promise to the result of the request
 	 */
-	FakeLrepConnectorLocalStorage.prototype.create = function(vChange) {
-
-		if (Array.isArray(vChange)) {
-			vChange.forEach(function(elem) {
-				FakeLrepLocalStorage.saveChange(elem.fileName, elem);
-			});
+	FakeLrepConnectorLocalStorage.prototype.create = function(vChangeDefinitions) {
+		var response;
+		if (Array.isArray(vChangeDefinitions)) {
+			response = vChangeDefinitions.map(function(mChangeDefinition) {
+				return this._saveChange(mChangeDefinition);
+			}.bind(this));
 		} else {
-			FakeLrepLocalStorage.saveChange(vChange.fileName, vChange);
+			response = this._saveChange(vChangeDefinitions);
 		}
-		return Promise.resolve();
+
+		return Promise.resolve({
+			response: response,
+			status: 'success'
+		});
+	};
+
+	FakeLrepConnectorLocalStorage.prototype._saveChange = function(mChangeDefinition) {
+		if (!mChangeDefinition.creation){
+			mChangeDefinition.creation = new Date().toISOString();
+		}
+		FakeLrepLocalStorage.saveChange(mChangeDefinition.fileName, mChangeDefinition);
+		return mChangeDefinition;
+	};
+
+
+	FakeLrepConnectorLocalStorage.prototype.update = function(mChangeDefinition, sChangeName, aChangelist, bIsVariant) {
+		return Promise.resolve({
+			response: this._saveChange(mChangeDefinition),
+			status: 'success'
+		});
 	};
 
 	/**
