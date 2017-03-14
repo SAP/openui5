@@ -25,6 +25,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 		var CalendarUtils = {};
 
 		/**
+		 * The maximum ECMAScript Date converted to milliseconds.
+		 * @type {number} milliseconds
+		 * @private
+		 */
+		CalendarUtils.MAX_MILLISECONDS = 8640000000000000;
+
+		/**
 		 * Creates a Date in local timezone from UTC timezone
 		 * @param {Date} oDate in UTC timezone
 		 * @param {boolean} bTime if set the time part of the date will be used too, otherwise it will be initial

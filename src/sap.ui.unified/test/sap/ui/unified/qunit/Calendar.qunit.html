@@ -636,6 +636,28 @@
 				oCal5.destroy();
 			});
 
+			test("dates are correctly styled as special or not", function() {
+				//arrange
+				var oCal = new sap.ui.unified.Calendar({
+					specialDates: [
+						new sap.ui.unified.DateTypeRange({
+							startDate: new Date(1969, 11, 2),
+							type: "Type04"
+						})
+					]
+				}).placeAt("uiArea1");
+
+				//act
+				oCal.focusDate(new Date(1969, 11, 1));
+				sap.ui.getCore().applyChanges();
+
+				//assert
+				equal(oCal.$().find(".sapUiCalItemType04").length, 1, "There should be only one special date displayed");
+
+				//clean
+				oCal.destroy();
+			});
+
 			QUnit.module("Focus", {
 				beforeEach: function () {
 					this.oCal = new sap.ui.unified.Calendar().placeAt("qunit-fixture");
