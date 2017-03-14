@@ -187,6 +187,47 @@
 		assert.deepEqual(oSpy.getCall(0).args[0].action, oAction, "The actionPress event of SelectionDetails has been fired");
 	});
 
+	QUnit.module("Control interface", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Facade is not returning the original instance", function(assert) {
+		// Act
+		var oFacade = this.oSelectionDetails.getFacade();
+		//Assert
+		assert.notDeepEqual(this.oSelectionDetails, oFacade, "Proxy object is returned.");
+	});
+
+	QUnit.test("Facade proxy object is buffered on instance level", function(assert) {
+		// Act
+		var oFacadeFirstCall = this.oSelectionDetails.getFacade();
+		var oFacadeSecondCall = this.oSelectionDetails.getFacade();
+		//Assert
+		assert.equal(oFacadeFirstCall, oFacadeSecondCall, "Same proxy object is returned");
+	});
+
+	QUnit.test("Facade includes setText method", function(assert) {
+		// Arrange
+		var oFacade = this.oSelectionDetails.getFacade();
+		// Act
+		oFacade.setText("New Text for Details Button");
+		//Assert
+		assert.equal(this.oSelectionDetails.getText(), "New Text for Details Button", "setText proxy is working");
+	});
+
+	QUnit.test("Facade includes isOpen method", function(assert) {
+		// Act
+		var oFacade = this.oSelectionDetails.getFacade();
+		//Assert
+		assert.notOk(oFacade.isOpen(), "isOpen returns false");
+	});
+
 </script>
 </head>
 <body class="sapUiBody">

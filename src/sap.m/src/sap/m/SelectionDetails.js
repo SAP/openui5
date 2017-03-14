@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SelectionDetails.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Button'],
-	function(jQuery, library, Control, Button) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Button', 'sap/ui/base/Interface'],
+	function(jQuery, library, Control, Button, Interface) {
 	"use strict";
 
 	/**
@@ -25,7 +25,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @alias sap.m.SelectionDetails
 	 */
 	var SelectionDetails = Control.extend("sap.m.SelectionDetails", /** @lends sap.m.SelectionDetails.prototype */ { metadata : {
-
 		library : "sap.m",
 		properties : {
 
@@ -156,6 +155,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 */
 	SelectionDetails.prototype.isEnabled = function() {
 		return this.getItems().length > 0;
+	};
+
+	/**
+	 * Returns the public facade of the SelectionDetails control for non inner framework usages.
+	 * @returns {sap.ui.base.Interface} the reduced facade for outer framework usages
+	 * @protected
+	 */
+	SelectionDetails.prototype._aFacadeMethods = ["setText", "getText", "isOpen"];
+	SelectionDetails.prototype.getFacade = function() {
+		var oFacade = new Interface(this, SelectionDetails.prototype._aFacadeMethods);
+		this.getFacade = jQuery.sap.getter(oFacade);
+		return oFacade;
 	};
 
 	/* =========================================================== */
