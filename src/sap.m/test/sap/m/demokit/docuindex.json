@@ -697,6 +697,7 @@
 		  "category": "Display",
 		  "since": "1.12",
 		  "samples": [
+			"sap.m.sample.ObjectAttributes",
 			"sap.m.sample.ObjectHeaderResponsiveI",
 			"sap.m.sample.ObjectHeaderActiveAttributes"
 		  ]
@@ -1692,6 +1693,11 @@
 		  "id": "sap.m.sample.Title",
 		  "name": "Title",
 		  "description": "The Title control is a simple one line text with additional semantic information about the level of the following section in the page structure for accessibility purposes."
+		},
+		{
+		  "id": "sap.m.sample.ObjectAttributes",
+		  "name": "Object Attribute",
+		  "description": "This is an example of Object Attribute used standalone."
 		},
 		{
 		  "id": "sap.m.sample.ObjectHeader",

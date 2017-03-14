@@ -99,26 +99,14 @@ sap.ui.define([
 					return this.waitFor({
 						controlType : "sap.m.ObjectAttribute",
 						matchers : new BindingPath({path : "/cartEntries/HT-1254", modelName: "cartProducts"}),
-						success: function (aObjectAttributes) {
-							this.waitFor({
-								controlType : "sap.m.Text",
-								matchers: new Ancestor(aObjectAttributes[0], true),
-								actions : new Press()
-							});
-						}
+						actions : new Press()
 					});
 				},
 				iPressOnAddBackToBasketForTheFirstProduct : function () {
 					return this.waitFor({
 						controlType : "sap.m.ObjectAttribute",
 						matchers : new BindingPath({path : "/savedForLaterEntries/HT-1254", modelName: "cartProducts"}),
-						success: function (aObjectAttributes) {
-							this.waitFor({
-								controlType : "sap.m.Text",
-								matchers: new Ancestor(aObjectAttributes[0], true),
-								actions : new Press()
-							});
-						}
+						actions : new Press()
 					});
 				}
 			},
