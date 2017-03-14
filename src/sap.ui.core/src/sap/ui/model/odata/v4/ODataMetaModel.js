@@ -1311,17 +1311,18 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.prototype.fetchValueListType = function (sPropertyPath) {
-		var oContext = this.getMetaContext(sPropertyPath),
+		var oMetaContext = this.getMetaContext(sPropertyPath),
 			that = this;
 
-		return this.fetchObject("", oContext).then(function (oProperty) {
+		// Note: undefined is more efficient than "" here
+		return this.fetchObject(undefined, oMetaContext).then(function (oProperty) {
 			var mAnnotationByTerm, sTerm;
 
 			if (!oProperty) {
 				throw new Error("No metadata for " + sPropertyPath);
 			}
 			// now we can use getObject() because the property's annotations are definitely loaded
-			mAnnotationByTerm = that.getObject("@", oContext);
+			mAnnotationByTerm = that.getObject("@", oMetaContext);
 			if (mAnnotationByTerm[sValueListWithFixedValues]) {
 				return ValueListType.Fixed;
 			}
@@ -1349,7 +1350,23 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataMetaModel.prototype.getMetaContext = function (sPath) {
-		return new BaseContext(this, sPath.replace(rNotMetaContext, ""));
+		return new BaseContext(this, this.getMetaPath(sPath));
+	};
+
+	/**
+	 * Returns the OData metadata model path corresponding to the given OData data model path.
+	 *
+	 * @param {string} sPath
+	 *   An absolute data path within the OData data model, for example
+	 *   "/EMPLOYEES/0/ENTRYDATE"
+	 * @returns {string}
+	 *   The corresponding metadata path within the OData metadata model, for example
+	 *    "/EMPLOYEES/ENTRYDATE"
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.getMetaPath = function (sPath) {
+		return sPath.replace(rNotMetaContext, "");
 	};
 
 	/**

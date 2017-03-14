@@ -23,10 +23,7 @@ sap.ui.define([
 
 	asODataBinding(ODataParentBinding.prototype);
 
-
-	var sClassName = "sap.ui.model.odata.v4.ODataParentBinding",
-		// regular expression converting path to metadata path
-		rNotMetaContext = /\([^/]*|\/\d+|^\d+\//g;
+	var sClassName = "sap.ui.model.odata.v4.ODataParentBinding";
 
 	/**
 	 * Changes this binding's parameters and refreshes the binding. The parameters are changed
@@ -224,7 +221,9 @@ sap.ui.define([
 		if (Object.keys(this.mParameters).length) {
 			// binding has parameters -> all query options need to be defined at the binding
 			mQueryOptions = this.mQueryOptions;
-			sPath.replace(rNotMetaContext, "") // transform path to metadata path
+			// getMetaPath needs an absolute path, a relative path starting with an index would not
+			// result in a correct meta path -> first add, then remove '/'
+			this.oModel.oMetaModel.getMetaPath("/" + sPath).slice(1)
 				.split("/").some(function (sSegment) {
 					mQueryOptions = mQueryOptions.$expand && mQueryOptions.$expand[sSegment];
 					if (!mQueryOptions || mQueryOptions === true) {

@@ -6,8 +6,9 @@ sap.ui.require([
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_SyncPromise",
+	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataParentBinding"
-], function (jQuery, ChangeReason, _Helper, _SyncPromise, asODataParentBinding) {
+], function (jQuery, ChangeReason, _Helper, _SyncPromise, ODataModel, asODataParentBinding) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
 	"use strict";
@@ -156,6 +157,22 @@ sap.ui.require([
 		},
 		path : "FooSet/WithoutExpand",
 		result : {}
+	}, { // $expand(FooSet=$expand(BarSet=$select(Baz)))
+		options : {
+			$expand : {
+				FooSet : {
+					$expand : {
+						BarSet : {
+							$select : "Baz"
+						}
+					}
+				}
+			}
+		},
+		path : "15/FooSet('0815')/12/BarSet",
+		result : {
+			$select : "Baz"
+		}
 	}, { // $expand(ExpandWithoutOptions)
 		options : {
 			$expand : {
@@ -195,7 +212,12 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 		QUnit.test("getQueryOptionsForPath: binding with mParameters, " + oFixture.path,
 				function(assert) {
-			var oBinding = new ODataParentBinding({
+			var oModel = new ODataModel({
+					serviceUrl : "/service/?sap-client=111",
+					synchronizationMode : "None"
+				}),
+				oBinding = new ODataParentBinding({
+					oModel : oModel,
 					mParameters : {$$groupId : "group"},
 					mQueryOptions : oFixture.options,
 					bRelative : true

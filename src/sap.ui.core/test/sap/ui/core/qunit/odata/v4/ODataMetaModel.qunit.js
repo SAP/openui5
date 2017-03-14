@@ -802,6 +802,21 @@ sap.ui.require([
 	//TODO later support "$Extends" : "<13.1.2 EntityContainer Extends>"
 
 	//*********************************************************************************************
+	QUnit.test("getMetaContext", function (assert) {
+		var oMetaContext;
+
+		this.mock(this.oMetaModel).expects("getMetaPath")
+			.withExactArgs("/Foo/-1/bar")
+			.returns("/Foo/bar");
+
+		// code under test
+		oMetaContext = this.oMetaModel.getMetaContext("/Foo/-1/bar");
+
+		assert.strictEqual(oMetaContext.getModel(), this.oMetaModel);
+		assert.strictEqual(oMetaContext.getPath(), "/Foo/bar");
+	});
+
+	//*********************************************************************************************
 	[{
 		dataPath : "/Foo",
 		metaPath : "/Foo"
@@ -824,11 +839,10 @@ sap.ui.require([
 		dataPath : "/Foo/-1/bar",
 		metaPath : "/Foo/bar"
 	}].forEach(function (oFixture) {
-		QUnit.test("getMetaContext: " + oFixture.dataPath, function (assert) {
-			var oMetaContext = this.oMetaModel.getMetaContext(oFixture.dataPath);
+		QUnit.test("getMetaPath: " + oFixture.dataPath, function (assert) {
+			var sMetaPath = this.oMetaModel.getMetaPath(oFixture.dataPath);
 
-			assert.strictEqual(oMetaContext.getModel(), this.oMetaModel);
-			assert.strictEqual(oMetaContext.getPath(), oFixture.metaPath);
+			assert.strictEqual(sMetaPath, oFixture.metaPath);
 		});
 	});
 	//TODO $all, $count, $crossjoin, $ref, $value
@@ -2681,7 +2695,7 @@ sap.ui.require([
 
 		oMetaModelMock.expects("getMetaContext").withExactArgs(sPath).returns(oContext);
 		oMetaModelMock.expects("fetchObject")
-			.withExactArgs("", sinon.match.same(oContext))
+			.withExactArgs(undefined, sinon.match.same(oContext))
 			.returns(Promise.resolve());
 
 		// code under test
@@ -2731,7 +2745,7 @@ sap.ui.require([
 			oMetaModelMock.expects("getMetaContext")
 				.withExactArgs(sPropertyPath).returns(oContext);
 			oMetaModelMock.expects("fetchObject")
-				.withExactArgs("", sinon.match.same(oContext))
+				.withExactArgs(undefined, sinon.match.same(oContext))
 				.returns(_SyncPromise.resolve({}));
 			oMetaModelMock.expects("getObject")
 				.withExactArgs("@", sinon.match.same(oContext))
