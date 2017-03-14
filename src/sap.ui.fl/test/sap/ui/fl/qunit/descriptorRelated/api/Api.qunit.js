@@ -136,6 +136,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
 			assert.notEqual(oDescriptorInlineChange.getMap().texts, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ovp_addNewCard");
 		});
 	});
 
@@ -157,6 +158,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			"cardId" : "a.id"
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ovp_removeCard");
 		});
 	});
 
@@ -210,6 +212,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
 			assert.notEqual(oDescriptorInlineChange.getMap().texts, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_addNewInbound");
 		});
 	});
 
@@ -231,6 +234,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			"inboundId" : "a.id"
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_removeInbound");
 		});
 	});
 
@@ -257,6 +261,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			}
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_changeInbound");
 		});
 	});
 
@@ -283,6 +288,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
 			assert.notEqual(oDescriptorInlineChange.getMap().texts, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_changeInbound");
 		});
 	});
 
@@ -317,6 +323,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			}
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_addNewOutbound");
 		});
 	});
 
@@ -338,6 +345,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			"outboundId" : "a.id"
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_removeOutbound");
 		});
 	});
 
@@ -364,6 +372,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			}
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_changeOutbound");
 		});
 	});
 
@@ -390,6 +399,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			"dataSource": {}
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_addNewDataSource");
 		});
 	});
 
@@ -411,6 +421,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			"dataSourceId" : "a.id"
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_removeDataSource");
 		});
 	});
 
@@ -437,6 +448,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			}
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_changeDataSource");
 		});
 	});
 
@@ -467,6 +479,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			"dataSource" : { }
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_addAnnotationsToOData");
 		});
 	});
 
@@ -523,6 +536,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		return DescriptorInlineChangeFactory.create_app_setTitle(mParameter).then(function(oDescriptorInlineChange) {
 			assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
 			_oDescriptorInlineChange = oDescriptorInlineChange;
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setTitle");
 			return DescriptorVariantFactory.createNew({
 					"id" : "a.id",
 					"reference": "a.reference"
@@ -554,6 +568,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		return DescriptorInlineChangeFactory.create_app_setTitle(mParameter).then(function(oDescriptorInlineChange) {
 			assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
 			_oDescriptorInlineChange = oDescriptorInlineChange;
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setTitle");
 			return new DescriptorChangeFactory().createNew("a.reference", _oDescriptorInlineChange);		
 		}).then(function(_oDescriptorChange){
 			_oDescriptorChange._getChangeToSubmit();
@@ -580,6 +595,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		return DescriptorInlineChangeFactory.create_app_setSubTitle(mParameter).then(function(oDescriptorInlineChange) {
 			assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
 			_oDescriptorInlineChange = oDescriptorInlineChange;
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setSubTitle");
 			return DescriptorVariantFactory.createNew({
 					"id" : "a.id",
 					"reference": "a.reference"
@@ -611,6 +627,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		return DescriptorInlineChangeFactory.create_app_setDescription(mParameter).then(function(oDescriptorInlineChange) {
 			assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
 			_oDescriptorInlineChange = oDescriptorInlineChange;
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setDescription");
 			return DescriptorVariantFactory.createNew({
 					"id" : "a.id",
 					"reference": "a.reference"
@@ -656,6 +673,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
 			assert.notEqual(oDescriptorInlineChange.getMap().texts, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setKeywords");
 		});
 	});
 
@@ -679,6 +697,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			}
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setDestination");
 		});
 	});
 
@@ -695,11 +714,12 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		}.bind(this));
 	});
 
-	QUnit.test("create_appdescr_app_addTechnicalAttributes", function(assert) {
+	QUnit.test("create_app_addTechnicalAttributes", function(assert) {
 		return DescriptorInlineChangeFactory.create_app_addTechnicalAttributes({
 			"technicalAttributes": [ "TAG1", "TAG2" ]
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_addTechnicalAttributes");
 		});
 	});
 
@@ -716,11 +736,12 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		}.bind(this));
 	});
 
-	QUnit.test("create_appdescr_app_removeTechnicalAttributes", function(assert) {
+	QUnit.test("create_app_removeTechnicalAttributes", function(assert) {
 		return DescriptorInlineChangeFactory.create_app_removeTechnicalAttributes({
 			"technicalAttributes": [ "TAG1" ]
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_removeTechnicalAttributes");
 		});
 	});
 
@@ -747,6 +768,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			}
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_addNewModel");
 		});
 	});
 
@@ -759,6 +781,33 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_ui5_addNewModel({
 				"model" : "a.id"
+			})
+		}.bind(this));
+	});
+	
+	QUnit.test("appdescr_ui5_replaceComponentUsage", function(assert) {
+		return DescriptorInlineChangeFactory.create_ui5_replaceComponentUsage({
+			"componentUsageId": "usageAttachment",
+			"componentUsage": {
+				"name": "new.component",
+				"settings": {},
+				"componentData": {}
+			}
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_replaceComponentUsage");
+		});
+	});
+	
+	QUnit.test("appdescr_ui5_replaceComponentUsage failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_ui5_replaceComponentUsage({
+				"componentUsageId" : {}
+			})
+		}.bind(this));
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_ui5_replaceComponentUsage({
+				"componentUsage" : "a.id"
 			})
 		}.bind(this));
 	});
@@ -785,6 +834,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 				}
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_smb_addNamespace");
 		});
 	});
 
@@ -816,6 +866,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			}
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_smb_changeNamespace");
 		});
 	});
 
@@ -845,6 +896,7 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			}
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui_generic_app_setMainPage");
 		});
 	});
 
