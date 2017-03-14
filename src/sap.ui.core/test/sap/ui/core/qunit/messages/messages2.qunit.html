@@ -86,11 +86,11 @@
 		sap.ui.getCore().setModel(oModel);
 	}
 	QUnit.module("MessageManager components", {
-		setup : function() {
+		beforeEach : function() {
 			initModel("json");
 		},
 
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 		}
 	});

@@ -258,12 +258,12 @@
 			};
 
 		QUnit.module("Custom tabs", {
-			setup : function () {
+			beforeEach : function () {
 				this.oVSD = new sap.m.ViewSettingsDialog();
 				this.oVSD.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oVSD.destroy();
 				this.oVSD = null;
 			}

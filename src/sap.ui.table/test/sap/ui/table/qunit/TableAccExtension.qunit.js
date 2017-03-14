@@ -88,11 +88,11 @@ sap.ui.test.qunit.delayTestStart(500);
 
 
 QUnit.module("Data Cells", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 		_modifyTables();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -401,11 +401,11 @@ QUnit.test("Other ARIA Attributes of Data Cell", function(assert) {
 
 
 QUnit.module("Column Header", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 		_modifyTables();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -523,11 +523,11 @@ QUnit.test("Other ARIA Attributes of Column Header", function(assert) {
 
 
 QUnit.module("Row Header", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 		_modifyTables();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -677,12 +677,12 @@ QUnit.test("Other ARIA Attributes of Row Header", function(assert) {
 
 
 QUnit.module("Row Actions", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 		_modifyTables();
 		initRowActions(oTable, 1, 1);
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -804,12 +804,12 @@ QUnit.test("Other ARIA Attributes of Row Action", function(assert) {
 
 
 QUnit.module("SelectAll", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 		_modifyTables();
 		this._sAdditionalLabeling = oTable._getShowStandardTooltips() ? "" : (" " + oTable.getId() + "-ariaselectall");
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -897,14 +897,14 @@ QUnit.test("Other ARIA Attributes SelectAll", function(assert) {
 
 
 QUnit.module("Misc", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 		_modifyTables();
 		oTable.addExtension(new TestControl({text: "Extension"}));
 		oTable.setFooter(new TestControl({text: "Footer"}));
 		sap.ui.getCore().applyChanges();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -1222,11 +1222,11 @@ QUnit.test("Hidden Standard Tooltips", function(assert) {
 
 
 QUnit.module("No Acc Mode", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 		_modifyTables();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -1259,10 +1259,10 @@ QUnit.test("No Acc Mode", function(assert) {
 
 
 QUnit.module("Destruction", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 	},
-	teardown: function () {
+	afterEach: function () {
 		oTable = null;
 		oTreeTable = null;
 	}

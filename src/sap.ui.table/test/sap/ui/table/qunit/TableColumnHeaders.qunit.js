@@ -122,10 +122,10 @@ function destroyTable() {
 }
 
 QUnit.module("Rendering", {
-	setup: function() {
+	beforeEach: function() {
 		createTable();
 	},
-	teardown: function () {
+	afterEach: function () {
 	}
 });
 
@@ -145,13 +145,13 @@ QUnit.test("Check column spans", function(assert) {
 });
 
 QUnit.module("Hidden columns with span", {
-	setup: function() {
+	beforeEach: function() {
 		var aCols = oTable.getColumns();
 		aCols[2].setVisible(false);
 		aCols[4].setVisible(false);
 		sap.ui.getCore().applyChanges();
 	},
-	teardown: function () {
+	afterEach: function () {
 		var aCols = oTable.getColumns();
 		aCols[2].setVisible(true);
 		aCols[4].setVisible(true);
@@ -168,11 +168,11 @@ QUnit.test("Column spans over hidden columns", function(assert) {
 
 
 QUnit.module("Fixed columns", {
-	setup: function() {
+	beforeEach: function() {
 		oTable.setFixedColumnCount(1);
 		sap.ui.getCore().applyChanges();
 	},
-	teardown: function () {
+	afterEach: function () {
 	}
 });
 

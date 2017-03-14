@@ -1511,10 +1511,10 @@
 
 
 	QUnit.module("Properties", {
-		setup: function() {
+		beforeEach: function() {
 			sinon.config.useFakeTimers = true;
 		},
-		teardown: function() {
+		afterEach: function() {
 			sinon.config.useFakeTimers = false;
 		}
 	});

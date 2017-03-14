@@ -278,10 +278,10 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		equal(oTxt.getValue(), "555562.06241" , "calculated fields formatter raw values");
 	});
 	QUnit.module("Table", {
-		setup: function() {
+		beforeEach: function() {
 			this.clock = sinon.useFakeTimers();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.clock.restore();
 		}
 	});

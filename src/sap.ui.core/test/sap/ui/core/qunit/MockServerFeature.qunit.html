@@ -29,7 +29,7 @@ jQuery.sap.require("sap.ui.core.util.MockServer");
 
 
 QUnit.module('GIVEN data and complex filter features in MockServer', {
-    setup: function () {
+    beforeEach: function () {
     	this.oMockServer = new sap.ui.core.util.MockServer({
    	   	 rootUri: "/myService/"
    		});
@@ -71,7 +71,7 @@ QUnit.module('GIVEN data and complex filter features in MockServer', {
             }
         };
     },
-    teardown: function () {
+    afterEach: function () {
         this.oMockServer.stop();
         this.oMockServer.destroy();
     }
@@ -272,7 +272,7 @@ test("POST table", function () {
 });
 
 	 QUnit.module('MockServer URI ', {
-	        setup: function () {
+	        beforeEach: function () {
 
         		this.simpleXML = 'testdata/apfapp/tMockServerFeatureTestingMetadata.xml';
         		this.simpleJSON = 'testdata/apfapp/';
@@ -333,7 +333,7 @@ test("POST table", function () {
 	    });
 */
 	    QUnit.module('MockServer requests', {
-	        setup: function () {
+	        beforeEach: function () {
 	        	this.oMockServer = new sap.ui.core.util.MockServer({
 	        	   	 rootUri: "/myService/"
 	        		});
@@ -342,7 +342,7 @@ test("POST table", function () {
 	        		this.oMockServer.simulate(this.simpleXML, this.simpleJSON);
 	        		this.oMockServer.start();
 	        },
-	        teardown: function () {
+	        afterEach: function () {
 	            this.oResponse = undefined;
 	            this.oMessageHandler = undefined;
 	            this.oFilter = undefined;
@@ -517,7 +517,7 @@ test("POST table", function () {
 
 /*
 	    QUnit.module('MockServer metadata included requests', {
-	        setup: function () {
+	        beforeEach: function () {
 	            var that = this;
 
 	            this.stubApfCoreAjax = sinon.stub(sap.apf.core, "ajax", function (oSettings) {
@@ -539,7 +539,7 @@ test("POST table", function () {
 	                messageHandler: that.oMessageHandler
 	            }, '/myService/');
 	        },
-	        teardown: function () {
+	        afterEach: function () {
 	            this.oResponse = undefined;
 	            this.oMessageHandler = undefined;
 	            this.oFilter = undefined;
@@ -558,7 +558,7 @@ test("POST table", function () {
 	    });
 
 	    QUnit.module('MockServer batch requests', {
-	        setup: function () {
+	        beforeEach: function () {
 	            var that = this,
 	                result;
 	            this.stubApfCoreAjax = sinon.stub(sap.apf.core, "ajax", function (oSettings) {
@@ -593,7 +593,7 @@ test("POST table", function () {
 	                coreApi: that.oCoreApi
 	            };
 	        },
-	        teardown: function () {
+	        afterEach: function () {
 	            this.oResponse = undefined;
 	            this.oMessageHandler = undefined;
 	            this.oFilter = undefined;

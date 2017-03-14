@@ -27,7 +27,7 @@
 		sinon.config.useFakeTimers = true;
 
 		QUnit.module("Rendering", {
-			setup : function () {
+			beforeEach : function () {
 
 				this.oRC = new sap.ui.commons.ResponsiveContainer({
 					defaultContent: new sap.ui.commons.TextView({
@@ -52,7 +52,7 @@
 				this.oRC.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oRC.destroy();
 				this.oRC = null;
 			}
@@ -77,7 +77,7 @@
 		});
 
 		QUnit.module("API", {
-			setup : function () {
+			beforeEach : function () {
 				this.oRCR = new sap.ui.commons.ResponsiveContainerRange();
 				this.oRC = new sap.ui.commons.ResponsiveContainer({
 					ranges: this.oRCR
@@ -85,7 +85,7 @@
 				this.oRC.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oRC.destroy();
 				this.oRCR.destroy();
 				this.oRC = null;
@@ -124,7 +124,7 @@
 		});
 
 		QUnit.module("Behaviour", {
-			setup : function () {
+			beforeEach : function () {
 
 				this.oRC = new sap.ui.commons.ResponsiveContainer({
 					width: "199px",
@@ -150,7 +150,7 @@
 				this.oRC.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oRC.destroy();
 				this.oRC = null;
 			}
@@ -197,7 +197,7 @@
 		});
 
 		QUnit.module("Events", {
-			setup : function () {
+			beforeEach : function () {
 
 				this.oRC = new sap.ui.commons.ResponsiveContainer({
 					width: "199px",
@@ -219,7 +219,7 @@
 				this.oRC.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oRC.destroy();
 				this.oRC = null;
 			}
@@ -243,12 +243,12 @@
 		});
 
 		QUnit.module("Cleanup", {
-			setup : function () {
+			beforeEach : function () {
 				this.oRC = new sap.ui.commons.ResponsiveContainer();
 				this.oRC.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oRC.destroy();
 				this.oRC = null;
 			}

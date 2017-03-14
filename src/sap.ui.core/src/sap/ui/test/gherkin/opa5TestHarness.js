@@ -125,10 +125,10 @@ sap.ui.define([
       var oFeatureTest = oTestGenerator.generate();
 
       QUnit.module(oFeatureTest.name, {
-        setup: function() {
+        beforeEach: function() {
           oTestGenerator.setUp();
         },
-        teardown: function() {
+        afterEach: function() {
           if (componentLauncher.hasLaunched() || iFrameLauncher.hasLaunched()) {
             this._oOpa5.iTeardownMyApp();
           }

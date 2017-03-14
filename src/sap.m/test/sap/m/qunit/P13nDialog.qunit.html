@@ -34,9 +34,9 @@
 		jQuery.sap.require("sap.m.P13nPanel");
 
 		QUnit.module("Properties", {
-			setup: function() {
+			beforeEach: function() {
 			},
-			teardown: function() {
+			afterEach: function() {
 				sap.ui.Device.system.desktop = true;
 				sap.ui.Device.system.phone = false;
 			}

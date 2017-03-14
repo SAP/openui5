@@ -28,13 +28,13 @@
 	}
 
 	QUnit.module("Initial rendering", {
-		setup: function () {
+		beforeEach: function () {
 			this.oResponsiveSplitter = new sap.ui.layout.ResponsiveSplitter();
 
 			this.oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oResponsiveSplitter.destroy();
 		}
 	});
@@ -67,7 +67,7 @@
 	});
 
 	QUnit.module("Rendering and pagination", {
-		setup: function () {
+		beforeEach: function () {
 			this.oResponsiveSplitter = new sap.ui.layout.ResponsiveSplitter();
 			this.oScrollContainer = new sap.m.ScrollContainer({ horizontal: false, content: this.oResponsiveSplitter, width: "500px" });
 			this.oButton1 = new sap.m.Button();
@@ -83,7 +83,7 @@
 
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oResponsiveSplitter.destroy();
 			this.oScrollContainer.destroy();
 			this.oButton1.destroy();
@@ -141,7 +141,7 @@
 	});
 
 	QUnit.module("Interaction with paginator", {
-		setup: function () {
+		beforeEach: function () {
 			this.oResponsiveSplitter = new sap.ui.layout.ResponsiveSplitter();
 			this.oScrollContainer = new sap.m.ScrollContainer({ horizontal: false, content: this.oResponsiveSplitter, width: "500px" });
 			this.oButton1 = new sap.m.Button({ text: "first" });
@@ -160,7 +160,7 @@
 
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oScrollContainer.destroy();
 		}
 	});
@@ -181,9 +181,9 @@
 	});
 
 	QUnit.module("API", {
-		setup: function () {
+		beforeEach: function () {
 			initSetup.call(this);
-		}, teardown: function () {
+		}, afterEach: function () {
 			this.oScrollContainer.destroy();
 		}
 	});
@@ -193,7 +193,7 @@
 	});
 
 	QUnit.module("Keyboard Handling", {
-		setup: function () {
+		beforeEach: function () {
 			initSetup.call(this);
 			this.$ResponsiveSplitter = this.oResponsiveSplitter.$();
 			this.oSplitterBarDOM = this.$ResponsiveSplitter.find(".sapUiLoSplitterBar")[0];
@@ -204,7 +204,7 @@
 		}, triggerKeyOnPaginator: function (iButtonindex, iKeyCode) {
 			sap.ui.test.qunit.triggerKeydown(this.getButtonByIndex(iButtonindex), iKeyCode);
 			this.clock.tick(1)
-		}, teardown: function () {
+		}, afterEach: function () {
 			this.oScrollContainer.destroy();
 		}, checkButtonSelection: function (assert, keyCode, sEvent) {
 			var oSpy = sinon.spy(this.oResponsiveSplitter, sEvent);
@@ -309,7 +309,7 @@
 	});
 
 	QUnit.module("Aria support", {
-		setup: function () {
+		beforeEach: function () {
 			initSetup.call(this);
 			var oPaneContainer = new sap.ui.layout.PaneContainer({
 				orientation: "Vertical",
@@ -336,7 +336,7 @@
 
 			this.oResponsiveSplitter.getRootPaneContainer().addPane(oPaneContainer);
 			sap.ui.getCore().applyChanges();
-		}, teardown: function () {
+		}, afterEach: function () {
 			this.oResourceBundle.getText.restore();
 			this.oScrollContainer.destroy();
 		}

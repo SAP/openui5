@@ -56,12 +56,12 @@
 		/**************** TESTS ********************/
 
 		QUnit.module("Properties", {
-			setup: function(){
+			beforeEach: function(){
 				oCtrl.removeAllItems();
 				oCtrl.addItem(oItem0);
 				oCtrl.addItem(oItem1);
 				sap.ui.getCore().applyChanges();
-			} //, teardown: function(){}
+			} //, afterEach: function(){}
 		});
 
 		test("Initial Check", function() {
@@ -269,12 +269,12 @@
 		//==================================================
 
 		QUnit.module("Selected Indices", {
-			setup: function(){
+			beforeEach: function(){
 				oCtrl.removeAllItems();
 				oCtrl.addItem(oItem0);
 				oCtrl.addItem(oItem1);
 				sap.ui.getCore().applyChanges();
-			} //, teardown: function(){}
+			} //, afterEach: function(){}
 		});
 
 		/**
@@ -380,13 +380,13 @@
 
 
 		QUnit.module("Keys", {
-			setup: function(){
+			beforeEach: function(){
 				oCtrl.removeAllItems();
 				oCtrl.addItem(oItem0);
 				oCtrl.addItem(oItem1);
 				oCtrl.addItem(oItem2);
 				sap.ui.getCore().applyChanges();
-			} //, teardown: function(){}
+			} //, afterEach: function(){}
 		});
 
 		test("SetSelectedKeys + GetSelectedKeys", function() {
@@ -415,12 +415,12 @@
 
 
 		QUnit.module("Items", {
-			setup: function(){
+			beforeEach: function(){
 				oCtrl.removeAllItems();
 				oCtrl.addItem(oItem0);
 				oCtrl.addItem(oItem1);
 				sap.ui.getCore().applyChanges();
-			} //, teardown: function(){}
+			} //, afterEach: function(){}
 		});
 
 		test("GetSelectedItem", function() {
@@ -536,7 +536,7 @@
 
 
 		QUnit.module("Height in Items", {
-			setup: function(){
+			beforeEach: function(){
 				oCtrl.removeAllItems();
 				// add more items to allow scrolling
 				for (var i = 0; i < 20; i++) {
@@ -546,7 +546,7 @@
 				}
 				oCtrl.setHeight("100px");
 				sap.ui.getCore().applyChanges();
-			} //, teardown: function(){}
+			} //, afterEach: function(){}
 		});
 
 

@@ -2329,13 +2329,13 @@
 			}
 
 			QUnit.module("Overflow Select List",{
-				setup: function () {
+				beforeEach: function () {
 					this.oIconTabBar = getIconTabBarWithOverflowList();
 					this.oIconTabBar.placeAt('qunit-fixture');
 
 					sap.ui.getCore().applyChanges();
 				},
-				teardown: function () {
+				afterEach: function () {
 				this.oIconTabBar.destroy();
 				this.oIconTabBar = null;
 				}

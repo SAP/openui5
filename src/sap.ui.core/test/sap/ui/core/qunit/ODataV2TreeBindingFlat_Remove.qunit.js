@@ -1,9 +1,9 @@
 QUnit.module("Remove and reinsert", {
-	setup: function() {
+	beforeEach: function() {
 		fnSetupNewMockServer();
 		oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, {useBatch:false});
 	},
-	teardown: function() {
+	afterEach: function() {
 		oMockServer.stop();
 		delete oModel;
 	}
@@ -777,11 +777,11 @@ asyncTest("Length calculation - Move Node from upper Subtree to a lower Subtree 
 });
 
 QUnit.module("create new node", {
-	setup: function() {
+	beforeEach: function() {
 		oMockServer.start();
 		oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, {useBatch:false});
 	},
-	teardown: function() {
+	afterEach: function() {
 		oMockServer.stop();
 		delete oModel;
 	}

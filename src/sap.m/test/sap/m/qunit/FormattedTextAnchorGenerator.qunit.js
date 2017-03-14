@@ -3,22 +3,22 @@ jQuery.sap.require("sap.m.FormattedTextAnchorGenerator");
 	"use strict";
 
 	var oStandardSetup = {
-		setup: function () {
+		beforeEach: function () {
 			this.sStrategy = sap.m.LinkConversion.ProtocolOnly;
 			this.sTarget = "_blank";
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.sStrategy = null;
 			this.sTarget = null;
 		}
 	};
 
 	var oAllLinksSetup = {
-		setup: function () {
+		beforeEach: function () {
 			this.sStrategy = sap.m.LinkConversion.All;
 			this.sTarget = "_self";
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.sStrategy = null;
 			this.sTarget = null;
 		}

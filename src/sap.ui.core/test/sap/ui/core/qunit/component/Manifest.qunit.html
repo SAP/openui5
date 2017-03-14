@@ -44,7 +44,7 @@
 			// getComponentName
 			assert.strictEqual(this.oManifest.getComponentName(), this.sComponentName, "'getComponentName' should return the expected value.");
 		},
-		teardown: function() {
+		afterEach: function() {
 			if (this.oManifest) {
 				this.oManifest.destroy();
 				this.oManifest = undefined;

@@ -82,7 +82,7 @@
 	}
 
 	QUnit.module("Basic checks", {
-		teardown: destroyController
+		afterEach: destroyController
 	});
 
 	test("autoSave", 5, function() {
@@ -182,7 +182,7 @@
 	});
 
 	QUnit.module("Personalization interations", {
-		teardown: destroyController
+		afterEach: destroyController
 	});
 
 	asyncTest("Column visibility (autoSave)", 16, function() {
@@ -421,7 +421,7 @@
 	});
 
 	QUnit.module("Personalization via CustomDataKey", {
-		teardown: destroyController
+		afterEach: destroyController
 	});
 
 	test("CustomDataKey", 11, function() {

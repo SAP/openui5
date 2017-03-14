@@ -28,7 +28,7 @@
 
         <script>
             QUnit.module("Public API", {
-                setup: function () {
+                beforeEach: function () {
                     var that = this;
 
                     this.oMessageView = new sap.m.MessageView();
@@ -120,7 +120,7 @@
 
                     this.oButton.firePress();
                 },
-                teardown: function () {
+                afterEach: function () {
                     this.oDialog.close();
 
                     this.oDialog.destroy();
@@ -344,7 +344,7 @@
             });
 
             QUnit.module("Core integration", {
-                setup: function () {
+                beforeEach: function () {
                     var that = this;
 
                     var oModel = new sap.ui.model.json.JSONModel({
@@ -387,7 +387,7 @@
 
                     this.oButton.firePress();
                 },
-                teardown: function () {
+                afterEach: function () {
                     sap.ui.getCore().getMessageManager().removeAllMessages();
 
                     this.oDialog.close();
@@ -411,7 +411,7 @@
             });
 
             QUnit.module("HTML representation", {
-                setup: function () {
+                beforeEach: function () {
                     var that = this;
 
                     this.oMessageView = new sap.m.MessageView();
@@ -432,7 +432,7 @@
 
                     sap.ui.getCore().applyChanges();
                 },
-                teardown: function () {
+                afterEach: function () {
                     this.oDialog.close();
 
                     this.oDialog.destroy();
@@ -478,7 +478,7 @@
             });
 
             QUnit.module("Binding", {
-                setup: function () {
+                beforeEach: function () {
                     var that = this;
 
                     this.oButton2 = new sap.m.Button({text: "Press me"});
@@ -513,7 +513,7 @@
 
                     sap.ui.getCore().applyChanges();
                 },
-                teardown: function () {
+                afterEach: function () {
                     this.oDialog2.close();
 
                     this.oDialog2.destroy();

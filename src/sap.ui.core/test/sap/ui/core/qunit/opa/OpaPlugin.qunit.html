@@ -556,11 +556,11 @@ sap.ui.require([
 	});
 
 	QUnit.module("initialization", {
-		setup: function () {
+		beforeEach: function () {
 			this.fnLoggerSpy = sinon.spy(jQuery.sap.log, "getLogger");
 			this.oPlugin =  new OpaPlugin();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oPlugin.destroy();
 			this.fnLoggerSpy.restore();
 		}

@@ -10,15 +10,15 @@ sap.ui.define(
 		return {
 			start : function (oOptions) {
 
-				var fnSetup = oOptions.setup;
+				var fnSetup = oOptions.beforeEach;
 				var fnAct = oOptions.act;
 
 				///////////////////////////////////////////////////////
 				/// Integation test
 				///////////////////////////////////////////////////////
 				QUnit.module("Common integration tests", {
-					teardown: function () {
-						oOptions.teardown.call(this);
+					afterEach: function () {
+						oOptions.afterEach.call(this);
 					}
 				});
 

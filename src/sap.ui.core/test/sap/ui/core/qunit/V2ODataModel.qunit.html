@@ -87,11 +87,11 @@
 	}
 
 	QUnit.module("ODataModelV2 XML", {
-		setup : function() {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel({json: false});
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanServiceDataCache();
@@ -115,11 +115,11 @@
 	});
 
 	QUnit.module("ODataModelV2 JSON", {
-		setup : function() {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel();
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanServiceDataCache();
@@ -1038,12 +1038,12 @@
 	});
 
 	QUnit.module("ODataModelV2 write", {
-		setup : function() {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel();
 			oModel.setRefreshAfterChange(false);
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanServiceDataCache();
@@ -3111,11 +3111,11 @@
 	});
 
 	QUnit.module("ODataModelV2 refresh after change", {
-		setup : function() {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel();
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanServiceDataCache();
@@ -3656,11 +3656,11 @@
 	});
 
 	QUnit.module("ODataModelV2 Eventing", {
-		setup : function() {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel();
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanServiceDataCache();
@@ -4969,11 +4969,11 @@
 	});
 
 	QUnit.module("ODataModelV2 abort requests", {
-		setup : function() {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel();
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanServiceDataCache();
@@ -6195,11 +6195,11 @@
 	});
 
 	QUnit.module("ODataModelV2 single request with groupId", {
-		setup : function() {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel({json: true, useBatch: false, defaultCountMode: 'None'});
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanServiceDataCache();

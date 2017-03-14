@@ -204,14 +204,14 @@
 		});
 
 		QUnit.module("Aggregation overrides", {
-			setup : function () {
+			beforeEach : function () {
 				this.oTV = new sap.ui.ux3.ThingViewer({
 
 				});
 				this.oTV.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oTV.destroy();
 				this.oTV = null;
 			}

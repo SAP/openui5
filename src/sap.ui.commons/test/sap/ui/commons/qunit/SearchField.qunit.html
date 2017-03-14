@@ -311,10 +311,10 @@
 
 		//***********************************
 		QUnit.module("Trigger Search", {
-			setup: function(){
+			beforeEach: function(){
 				oSearch4.clearHistory();
 			},
-			teardown: function(){
+			afterEach: function(){
 				oSearch2.setEnabled(true);
 				oSearch4.setEnabled(true);
 				sap.ui.getCore().applyChanges();
@@ -354,10 +354,10 @@
 
 		//***********************************
 		QUnit.module("Clear", {
-			setup: function(){
+			beforeEach: function(){
 				oSearch5.clearHistory();
 			},
-			teardown: function(){
+			afterEach: function(){
 				oSearch3.setEnabled(true);
 				oSearch5.setEnabled(true);
 				sap.ui.getCore().applyChanges();

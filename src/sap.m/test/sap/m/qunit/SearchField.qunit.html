@@ -97,7 +97,7 @@
 	qutils.delayTestStart();
 
 	QUnit.module("Basic", {
-		setup : function() {
+		beforeEach : function() {
 			sf1 = sap.ui.getCore().getControl("sf1");
 			sf2 = sap.ui.getCore().getControl("sf2");
 			sf3 = sap.ui.getCore().getControl("sf3");
@@ -105,7 +105,7 @@
 			sf2Dom = sf2.getFocusDomRef();
 			sf3Dom = sf3.getFocusDomRef();
 		},
-		teardown : function() {
+		afterEach : function() {
 			sf1 = null;
 			sf2 = null;
 			sf3 = null;
@@ -190,7 +190,7 @@
 	});
 
 	QUnit.module("Rendering", {
-		setup: function () {
+		beforeEach: function () {
 			this.SearchField = new sap.m.SearchField({
 				placeholder: sPlaceholder,
 				value: sValue,
@@ -200,7 +200,7 @@
 			}).placeAt("content");
 			sap.ui.getCore().applyChanges();
         },
-        teardown: function() {
+        afterEach: function() {
 			this.SearchField.destroy();
         }
     });

@@ -9,7 +9,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 (function(UnhideControlChangeHandler, Control, Element, Change, JsControlTreeModifier, XmlTreeModifier) {
 
 	QUnit.module("sap.ui.fl.changeHandler.UnhideControl", {
-		setup: function() {
+		beforeEach: function() {
 			this.stubs = [];
 			this.oChangeHandler = UnhideControlChangeHandler;
 			var oChangeJson = {
@@ -22,7 +22,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 			this.oChange = new Change(oChangeJson);
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.stubs.forEach(function(stub) {
 				stub.restore();
 			});

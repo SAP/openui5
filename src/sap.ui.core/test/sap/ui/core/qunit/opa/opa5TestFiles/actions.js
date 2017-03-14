@@ -7,14 +7,14 @@ sap.ui.define([
 	"sap/ui/test/_autoWaiter"
 ], function (Opa5, opaTest, _timeoutCounter, Device, Button, _autoWaiter) {
 	QUnit.module("Opa actions", {
-		setup: function () {
+		beforeEach: function () {
 			this.oButton = new Button("foo");
 			this.oButton.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			sinon.config.useFakeTimers = true;
 			this.fnTimeoutStub = sinon.stub(_timeoutCounter, "hasPendingTimeouts");
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oButton.destroy();
 			sinon.config.useFakeTimers = false;
 			this.fnTimeoutStub.restore();

@@ -6,10 +6,10 @@ sap.ui.test.qunit.delayTestStart(500);
 
 
 QUnit.module("Initialization", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -41,10 +41,10 @@ QUnit.test("_debug()", function(assert) {
 
 
 QUnit.module("Item Navigation", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -161,10 +161,10 @@ QUnit.test("Stored Focus Position", function(assert) {
 
 
 QUnit.module("Misc", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -326,10 +326,10 @@ QUnit.test("IEFocusOutlineWorkaround", function(assert) {
 
 
 QUnit.module("Destruction", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 	},
-	teardown: function () {
+	afterEach: function () {
 		oTable = null;
 		oTreeTable.destroy();
 		oTreeTable = null;

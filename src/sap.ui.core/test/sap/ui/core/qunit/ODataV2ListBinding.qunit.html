@@ -73,10 +73,10 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		initModel(false);
 	}
 	QUnit.module("v2.ODataListBinding", {
-		setup : function() {
+		beforeEach : function() {
 			oModel = initModel(false);
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel = undefined;
 			removeSharedMetadata();
 		}

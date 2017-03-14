@@ -13,14 +13,14 @@
     //================================================================================
 
     QUnit.module('API', {
-        setup: function() {
+        beforeEach: function() {
             this.LightBox = new sap.m.LightBox({
                 imageContent : [
                     new sap.m.LightBoxItem()
                 ]
             });
         },
-        teardown: function() {
+        afterEach: function() {
             this.LightBox.destroy();
         }
     });
@@ -39,14 +39,14 @@
     //================================================================================
 
     QUnit.module('Public setters and getters', {
-        setup: function() {
+        beforeEach: function() {
             this.LightBox = new sap.m.LightBox({
                 imageContent : [
                     new sap.m.LightBoxItem()
                 ]
             });
         },
-        teardown: function() {
+        afterEach: function() {
             this.LightBox.destroy();
         }
     });
@@ -110,14 +110,14 @@
 
 
     QUnit.module('PublicAPI', {
-        setup: function() {
+        beforeEach: function() {
             this.LightBox = new sap.m.LightBox({
                 imageContent : [
                     new sap.m.LightBoxItem()
                 ]
             });
         },
-        teardown: function() {
+        afterEach: function() {
             this.LightBox.close();
             this.LightBox.destroy();
         }
@@ -187,14 +187,14 @@
     //================================================================================
 
     QUnit.module('private methods', {
-        setup: function() {
+        beforeEach: function() {
             this.LightBox = new sap.m.LightBox({
                 imageContent : [
                     new sap.m.LightBoxItem()
                 ]
             });
         },
-        teardown: function() {
+        afterEach: function() {
             this.LightBox.destroy();
         }
     });
@@ -221,14 +221,14 @@
     //================================================================================
 
     QUnit.module('Accessibility', {
-        setup: function() {
+        beforeEach: function() {
             this.LightBox = new sap.m.LightBox({
                 imageContent : [
                     new sap.m.LightBoxItem()
                 ]
             });
         },
-        teardown: function() {
+        afterEach: function() {
             this.LightBox.close();
             this.LightBox.destroy();
         }

@@ -172,7 +172,7 @@
 
 	// Touch support
 	QUnit.module("Touch Support", {
-		setup : function() {
+		beforeEach : function() {
 			// Remember original touch event mode
 			this.touchEventMode = jQuery.sap.touchEventMode;
 			jQuery.sap.touchEventMode = "ON"
@@ -193,7 +193,7 @@
 		},
 
 
-		teardown : function() {
+		afterEach : function() {
 			this.oVSB.destroy();
 			this.oVSB = null;
 			this.oHSB.destroy();

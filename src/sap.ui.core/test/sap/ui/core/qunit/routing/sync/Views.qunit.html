@@ -41,7 +41,7 @@
 			}
 
 			QUnit.module("views - creation and caching", {
-				setup: function () {
+				beforeEach: function () {
 					// System under test + Arrange
 					this.oViews = new Views();
 					this.oViewOptions = {
@@ -52,7 +52,7 @@
 
 					this.oView = createXmlView();
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.oViews.destroy();
 				}
 			});
@@ -95,12 +95,12 @@
 			});
 
 			QUnit.module("component", {
-				setup: function () {
+				beforeEach: function () {
 					this.oUIComponent = new UIComponent({});
 					// System under test
 					this.oViews = new Views({ component: this.oUIComponent });
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.oViews.destroy();
 					this.oUIComponent.destroy();
 				}
@@ -225,11 +225,11 @@
 			});
 
 			QUnit.module("events", {
-				setup: function () {
+				beforeEach: function () {
 					// System under test + Arrange
 					this.oViews = new Views();
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.oViews.destroy();
 				}
 			});

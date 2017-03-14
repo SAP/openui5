@@ -6,10 +6,10 @@ sap.ui.test.qunit.delayTestStart(500);
 
 
 QUnit.module("Initialization", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -29,14 +29,14 @@ QUnit.test("init()", function(assert) {
 
 
 QUnit.module("VisibleRowCountMode 'Interactive'", {
-	setup: function() {
+	beforeEach: function() {
 		jQuery.sap.byId("content").toggleClass("StablePosition", true);
 		createTables(true);
 		oTable.placeAt("content");
 		oTable.setVisibleRowCountMode("Interactive");
 		sap.ui.getCore().applyChanges();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 		jQuery.sap.byId("content").toggleClass("StablePosition", false);
 	}
@@ -82,7 +82,7 @@ QUnit.test("resize", function(assert) {
 });
 
 QUnit.module("Column Resizing", {
-	setup: function() {
+	beforeEach: function() {
 		this.bOriginalSystemDesktop = sap.ui.Device.system.desktop;
 
 		jQuery.sap.byId("content").toggleClass("StablePosition", true);
@@ -110,7 +110,7 @@ QUnit.module("Column Resizing", {
 			return oControl.getMetadata().getName() === "TestControl";
 		};
 	},
-	teardown: function () {
+	afterEach: function () {
 		sap.ui.Device.system.desktop = this.bOriginalSystemDesktop;
 
 		destroyTables();
@@ -464,10 +464,10 @@ QUnit.test("Data Cell", function(assert) {
 });
 
 QUnit.module("Mousedown", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -515,10 +515,10 @@ QUnit.test("Scrollbar", function(assert){
 });
 
 QUnit.module("Click", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -748,14 +748,14 @@ QUnit.test("Selection", function(assert) {
 
 
 QUnit.module("Column Reordering", {
-	setup: function() {
+	beforeEach: function() {
 		jQuery.sap.byId("content").toggleClass("StablePosition", true);
 		createTables(true);
 		oTable.placeAt("content");
 		oTreeTable.placeAt("content");
 		sap.ui.getCore().applyChanges();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 		jQuery.sap.byId("content").toggleClass("StablePosition", false);
 	}
@@ -979,14 +979,14 @@ QUnit.asyncTest("TreeTable - No Reordering via Drag&Drop of first column - decre
 
 
 QUnit.module("Row Hover Effect", {
-	setup: function() {
+	beforeEach: function() {
 		jQuery.sap.byId("content").toggleClass("StablePosition", true);
 		createTables(true);
 		oTable.placeAt("content");
 		oTreeTable.placeAt("content");
 		sap.ui.getCore().applyChanges();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 		jQuery.sap.byId("content").toggleClass("StablePosition", false);
 	}
@@ -1037,10 +1037,10 @@ QUnit.test("Scroll column area", function(assert) {
 
 
 QUnit.module("Helpers", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -1108,10 +1108,10 @@ QUnit.test("_getEventPosition()", function(assert) {
 
 
 QUnit.module("Destruction", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 	},
-	teardown: function () {
+	afterEach: function () {
 		oTable = null;
 		oTreeTable.destroy();
 		oTreeTable = null;

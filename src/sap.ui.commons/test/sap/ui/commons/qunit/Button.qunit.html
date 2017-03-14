@@ -91,11 +91,11 @@
 	qutils.delayTestStart();
 
 	QUnit.module("SAPUI5 Button - test property accessor methods", {
-		setup: function() {
+		beforeEach: function() {
 	 		b1 = sap.ui.getCore().getControl("b1");
 	 		b2 = sap.ui.getCore().getControl("b2");
 	 	},
-	 	teardown: function() {
+	 	afterEach: function() {
 	 		b1 = null;
 	 		b2 = null;
 	 	}
@@ -139,11 +139,11 @@
 	 });
 
  	QUnit.module("SAPUI5 Button - test event handlers", {
-		setup: function() {
+		beforeEach: function() {
 	 		b1 = sap.ui.getCore().getControl("b1");
 	 		b2 = sap.ui.getCore().getControl("b2");
 	 	},
-	 	teardown: function() {
+	 	afterEach: function() {
 	 		b1 = null;
 	 		b2 = null;
 	 	}
@@ -196,11 +196,11 @@
 		});
 
 	 	QUnit.module("SAPUI5 Button - test methods", {
-			setup: function() {
+			beforeEach: function() {
 		 		b1 = sap.ui.getCore().getControl("b1");
 		 		b2 = sap.ui.getCore().getControl("b2");
 		 	},
-		 	teardown: function() {
+		 	afterEach: function() {
 		 		b1 = null;
 		 		b2 = null;
 		 	}

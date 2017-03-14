@@ -74,10 +74,10 @@
 		oCombo5.placeAt("uiArea5");
 
 		QUnit.module("Control Test - sap.ui.commons.ComboBox", {
-			setup: function(){
+			beforeEach: function(){
 				oCombo.setValue(sCheckText);
 				oCombo.focus();
-			} //, teardown: function(){}
+			} //, afterEach: function(){}
 		});
 
 		test("TestRenderedOK", function(){
@@ -203,7 +203,7 @@
 		});
 
 		QUnit.module("Autocomplete Tests - sap.ui.commons.ComboBox", {
-			setup: function(){
+			beforeEach: function(){
 				oCombo.focus();
 			}
 		});
@@ -271,7 +271,7 @@
 		});
 
 		QUnit.module("Arrow Control Tests - sap.ui.commons.ComboBox", {
-			setup: function(){
+			beforeEach: function(){
 				oCombo.focus();
 			}
 		});
@@ -337,7 +337,7 @@
 		});
 
 		QUnit.module("Misc. Keys Control Tests - sap.ui.commons.ComboBox", {
-			setup: function(){
+			beforeEach: function(){
 				oCombo.focus();
 			}
 		});
@@ -372,7 +372,7 @@
 
 
 		QUnit.module("Open / Close Tests - sap.ui.commons.ComboBox", {
-			setup: function(){
+			beforeEach: function(){
 				oCombo.focus();
 			}
 		});
@@ -421,12 +421,12 @@
 		});
 
 		QUnit.module("Mouse Handling Tests - sap.ui.commons.ComboBox", {
-			setup: function(){
+			beforeEach: function(){
 				resetBeforeTest();
 				oCombo.focus();
 				oCombo.attachChange(this.handleChange);
 			},
-			teardown: function(){
+			afterEach: function(){
 				oCombo.detachChange(this.handleChange);
 			},
 			// next function does not belong to qUnit but allows setting and removing some event handler to the ComboBox
@@ -467,7 +467,7 @@
 
 
 		QUnit.module("Misc. Keys Control Tests with open Listbox - sap.ui.commons.ComboBox", {
-			setup: function(){
+			beforeEach: function(){
 				oCombo.focus();
 			}
 		});
@@ -544,11 +544,11 @@
 		});
 
 		QUnit.module("Event Tests - sap.ui.commons.ComboBox", {
-			setup: function(){
+			beforeEach: function(){
 				oCombo.focus();
 				oCombo.attachChange(this.handleChange);
 			},
-			teardown: function(){
+			afterEach: function(){
 				oCombo.detachChange(this.handleChange);
 			},
 			// next function does not belong to qUnit but allows setting and removing some event handler to the ComboBox

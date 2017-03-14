@@ -71,7 +71,7 @@
 	};
 
 	QUnit.module("Visibility", {
-		setup: function() {
+		beforeEach: function() {
 			this.oBoxConfig = {
 				id: "flexbox",
 				visible: false
@@ -94,7 +94,7 @@
 			this.fixture = jQuery.sap.byId(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
 		}
@@ -119,7 +119,7 @@
 	});
 
 	QUnit.module("Render Type", {
-		setup: function() {
+		beforeEach: function() {
 			this.oBoxConfig = {
 				renderType: "List"
 			},
@@ -145,7 +145,7 @@
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
 		}
@@ -176,7 +176,7 @@
 	});
 
 	QUnit.module("Inline vs. block display", {
-		setup: function() {
+		beforeEach: function() {
 			this.oBoxConfig = {
 				displayInline: true
 			},
@@ -186,7 +186,7 @@
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
 		}
@@ -215,7 +215,7 @@
 	});
 
 	QUnit.module("Fit Container", {
-		setup: function() {
+		beforeEach: function() {
 			this.oBoxConfig = {
 				displayInline: true
 			},
@@ -225,7 +225,7 @@
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
 		}
@@ -239,7 +239,7 @@
 	});
 
 	QUnit.module("Width and height", {
-		setup: function() {
+		beforeEach: function() {
 			this.oBoxConfig = {
 				displayInline: true
 			},
@@ -249,7 +249,7 @@
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
 		}
@@ -264,7 +264,7 @@
 	});
 
 	QUnit.module("Background Design", {
-		setup: function() {
+		beforeEach: function() {
 			this.oBoxConfig = {
 				displayInline: true
 			},
@@ -285,7 +285,7 @@
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
 		}
@@ -337,7 +337,7 @@
 	});
 
 	QUnit.module("Direction", {
-		setup: function() {
+		beforeEach: function() {
 			this.oBoxConfig = {
 
 			},
@@ -350,7 +350,7 @@
 			this.oItem2DomRef = this.oBox.getItems()[1].getDomRef();
 			this.oItem3DomRef = this.oBox.getItems()[2].getDomRef();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
 		}
@@ -381,7 +381,7 @@
 	});
 
 	QUnit.module("Re-ordering", {
-		setup: function() {
+		beforeEach: function() {
 			this.oBoxConfig = {
 
 			},
@@ -410,7 +410,7 @@
 			this.oItem2DomRef = this.oBox.getItems()[1].getDomRef();
 			this.oItem3DomRef = this.oBox.getItems()[2].getDomRef();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
 		}
@@ -425,7 +425,7 @@
 	});
 
 	QUnit.module("Positioning", {
-		setup: function() {
+		beforeEach: function() {
 			this.oBoxConfig = {
 				width: "388px",
 				height: "398px"
@@ -452,7 +452,7 @@
 			this.oItem2DomRef = this.oBox.getItems()[1].getDomRef().parentNode;
 			this.oItem3DomRef = this.oBox.getItems()[2].getDomRef().parentNode;
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
 		}
@@ -539,7 +539,7 @@
 
 	if (jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {	// multi-line mode is not supported by older browsers
 		QUnit.module("Multi-line", {
-			setup: function() {
+			beforeEach: function() {
 				this.oBoxConfig = {
 				},
 				this.vItemTemplates = 4,
@@ -562,7 +562,7 @@
 				this.oItem3DomRef.style.minHeight = "75px";
 				this.oItem4DomRef.style.minHeight = "50px";
 			},
-			teardown: function() {
+			afterEach: function() {
 				this.oBox.destroy();
 				this.oBox = null;
 			}
@@ -642,7 +642,7 @@
 	}
 
 	QUnit.module("Flexibility", {
-		setup: function() {
+		beforeEach: function() {
 			this.oBoxConfig = {
 			},
 			this.vItemTemplates = 3,
@@ -672,7 +672,7 @@
 			this.oItem2DomRef = this.oBox.getItems()[1].getDomRef().parentNode;
 			this.oItem3DomRef = this.oBox.getItems()[2].getDomRef().parentNode;
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
 		}
@@ -738,7 +738,7 @@
 	});
 
 	QUnit.module("Item Aggregation", {
-		setup: function() {
+		beforeEach: function() {
 			this.oBoxConfig = {
 			},
 			this.vItemTemplates = 3,
@@ -748,7 +748,7 @@
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
 		}
@@ -788,7 +788,7 @@
 	});
 
 	QUnit.module("Nested FlexBoxes", {
-		setup: function() {
+		beforeEach: function() {
 			this.oBoxConfig = {
 			},
 			this.vItemTemplates = [
@@ -817,7 +817,7 @@
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
 		}
@@ -828,7 +828,7 @@
 	});
 
 	QUnit.module("Accessibility", {
-		setup: function() {
+		beforeEach: function() {
 			this.oBoxConfig = {
 			},
 			this.vItemTemplates = [
@@ -843,7 +843,7 @@
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
 		}

@@ -3,13 +3,13 @@
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	QUnit.module("HTML", {
-		setup: function () {
+		beforeEach: function () {
 			this.rangeSlider = new sap.m.RangeSlider();
 
 			this.rangeSlider.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.rangeSlider.destroy();
 			this.rangeSlider = null;
 		}
@@ -82,13 +82,13 @@
 	});
 
 	QUnit.module("API", {
-		setup: function () {
+		beforeEach: function () {
 			this.rangeSlider = new sap.m.RangeSlider();
 
 			this.rangeSlider.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.rangeSlider.destroy();
 			this.rangeSlider = null;
 		}
@@ -490,7 +490,7 @@
 	});
 
 	QUnit.module("SAP KH", {
-		setup: function () {
+		beforeEach: function () {
 			this.oRangeSlider = new sap.m.RangeSlider({range: [20, 30]});
 			this.oRangeSlider.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
@@ -516,7 +516,7 @@
 				assert.notDeepEqual(this.oRangeSlider.getRange(), aCurRange, "Not equals");
 			};
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oEvent = null;
 			this.testSAPEvents = null;
 			this.oRangeSlider.destroy();

@@ -11,12 +11,12 @@
 	// Carousel Properties
 	//================================================================================
 	QUnit.module("Properties", {
-		setup: function () {
+		beforeEach: function () {
 			this.oCarousel = new sap.m.Carousel();
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oCarousel.destroy();
 		}
 	});
@@ -36,7 +36,7 @@
 	// Carousel Methods
 	//================================================================================
 	QUnit.module("Methods", {
-		setup: function () {
+		beforeEach: function () {
 			this.oCarousel = new sap.m.Carousel({
 				height: "100%",
 				width: "100%",
@@ -64,7 +64,7 @@
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oCarousel.destroy();
 		}
 	});
@@ -195,7 +195,7 @@
 	// Carousel Events
 	//================================================================================
 	QUnit.module("Events", {
-		setup: function () {
+		beforeEach: function () {
 			//carousel with 9 pages. Page Indicator will be numeric.
 			this.oCarousel = new sap.m.Carousel("myCrsl", {
 				pages: [
@@ -214,7 +214,7 @@
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oCarousel.destroy();
 		}
 	});
@@ -274,7 +274,7 @@
 	// Nested Carousel
 	//================================================================================
 	QUnit.module("Nested Carousel", {
-		setup: function () {
+		beforeEach: function () {
 
 			this.oNestedCarousel = new sap.m.Carousel({
 				pages: [new sap.m.Page()]
@@ -291,7 +291,7 @@
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oCarousel.destroy();
 		}
 	});
@@ -327,7 +327,7 @@
 	// Carousel clean up
 	//================================================================================
 	QUnit.module("Clean up", {
-		setup: function () {
+		beforeEach: function () {
 			this.oCarousel = new sap.m.Carousel({
 				pages: [
 					new sap.m.Page("keyTestPage_1"),
@@ -340,7 +340,7 @@
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oCarousel.destroy();
 		}
 	});
@@ -361,7 +361,7 @@
 	// Carousel Keyboard handling
 	//================================================================================
 	QUnit.module("Keyboard", {
-		setup: function () {
+		beforeEach: function () {
 			this.oCarousel = new sap.m.Carousel({
 				pages: [
 					new sap.m.Page("keyTestPage1"),
@@ -391,7 +391,7 @@
 
 			this.oCarousel.$().focus();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oCarousel.destroy();
 		}
 	});

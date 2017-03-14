@@ -2,10 +2,10 @@
     "use strict";
 
     QUnit.module("WizardStep API", {
-        setup: function () {
+        beforeEach: function () {
             this.wizardStep = new sap.m.WizardStep();
         },
-        teardown: function () {
+        afterEach: function () {
             this.wizardStep.destroy();
             this.wizardStep = null;
         },
@@ -60,10 +60,10 @@
     });
 
     QUnit.module("WizardStep Events", {
-        setup: function () {
+        beforeEach: function () {
             this.wizardStep = new sap.m.WizardStep();
         },
-        teardown: function () {
+        afterEach: function () {
             this.wizardStep.destroy();
             this.wizardStep = null;
         }

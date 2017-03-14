@@ -28,7 +28,7 @@
 			function(Targets, Views, ModuleHook){
 
 				QUnit.module("getTarget and target names", {
-					setup: function () {
+					beforeEach: function () {
 						// System under test + Arrange
 						this.oViews = new Views();
 						this.oTargets = new Targets({
@@ -47,7 +47,7 @@
 							views: this.oViews
 						});
 					},
-					teardown: function () {
+					afterEach: function () {
 						this.oTargets.destroy();
 					}
 				});
@@ -122,7 +122,7 @@
 				});
 
 				QUnit.module("config - defaults and additional values", {
-					setup: function () {
+					beforeEach: function () {
 						var oTargetConfig = {
 							controlAggregation: "foo",
 							someThingCustom: "bar",
@@ -139,7 +139,7 @@
 							config: oTargetConfig
 						});
 					},
-					teardown: function () {
+					afterEach: function () {
 						this.oTargets.destroy();
 					}
 				});
@@ -165,7 +165,7 @@
 				});
 
 				QUnit.module("config - invalid parent", {
-					teardown: function () {
+					afterEach: function () {
 						this.oTargets.destroy();
 					}
 				});
@@ -189,7 +189,7 @@
 				});
 
 				QUnit.module("display", {
-					setup: function () {
+					beforeEach: function () {
 						// System under test + Arrange
 						this.oTargets = new Targets({
 							targets: {
@@ -203,7 +203,7 @@
 							}
 						});
 					},
-					teardown: function () {
+					afterEach: function () {
 						this.oTargets.destroy();
 					}
 				});
@@ -464,7 +464,7 @@
 				});
 
 				QUnit.module("titleChanged event", {
-					setup: function () {
+					beforeEach: function () {
 						this.oApp = new sap.m.App();
 						this.oView = createView(
 								['<View xmlns="sap.ui.core">',
@@ -508,7 +508,7 @@
 							config: this.oDefaultConfig
 						});
 					},
-					teardown: function () {
+					afterEach: function () {
 						this.oApp.destroy();
 						this.oTargets.destroy();
 						this.oViews.destroy();

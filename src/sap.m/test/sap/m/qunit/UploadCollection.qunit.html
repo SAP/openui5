@@ -2132,7 +2132,7 @@
 	});
 
 	QUnit.module("Managing event delegates when entering and exiting edit mode", {
-		setup : function() {
+		beforeEach : function() {
 			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 				items : {
 					path : "/items",
@@ -2143,7 +2143,7 @@
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
 		}

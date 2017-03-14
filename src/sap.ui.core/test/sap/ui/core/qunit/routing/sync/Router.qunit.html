@@ -201,7 +201,7 @@
 		});
 
 		QUnit.module("config", {
-			setup : function() {
+			beforeEach : function() {
 				//make sure to start with an empty hash
 				hasher.setHash("");
 			}
@@ -449,7 +449,7 @@
 		});
 
 		QUnit.module("routing", {
-			setup : function() {
+			beforeEach : function() {
 				//make sure to start with an empty hash
 				hasher.setHash("");
 			}
@@ -651,13 +651,13 @@
 		});
 
 		QUnit.module("navTo", {
-			setup: function () {
+			beforeEach: function () {
 				this.oRouter = new sap.ui.core.routing.Router();
 				this.oRouter.oHashChanger = {
 					setHash: jQuery.noop
 				};
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oRouter.destroy();
 			}
 		});
@@ -1031,13 +1031,13 @@
 		}
 
 		QUnit.module("views - creation and caching", {
-			setup: function () {
+			beforeEach: function () {
 				// System under test + Arrange
 				this.oRouter = new sap.ui.core.routing.Router();
 
 				this.oView = createXmlView();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oRouter.destroy();
 			}
 		});
@@ -1080,11 +1080,11 @@
 
 
 		QUnit.module("created event", {
-			setup: function () {
+			beforeEach: function () {
 				// System under test + Arrange
 				this.oRouter = new sap.ui.core.routing.Router();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oRouter.destroy();
 			}
 		});
@@ -1141,7 +1141,7 @@
 		});
 
 		QUnit.module("titleChanged event", {
-			setup: function() {
+			beforeEach: function() {
 				sap.ui.core.routing.HashChanger.getInstance().setHash("");
 				this.oApp = new sap.m.App();
 				this.sPattern = "anything";
@@ -1160,7 +1160,7 @@
 				};
 
 			},
-			teardown: function() {
+			afterEach: function() {
 				this.fnStub.restore();
 				this.oRouter.destroy();
 			}
@@ -1331,7 +1331,7 @@
 		});
 
 		QUnit.module("title history", {
-			setup: function() {
+			beforeEach: function() {
 				// reset hash
 				sap.ui.core.routing.HashChanger.getInstance().setHash("");
 
@@ -1350,7 +1350,7 @@
 				};
 
 			},
-			teardown: function() {
+			afterEach: function() {
 				this.fnStub.restore();
 				this.oRouter.destroy();
 			}
@@ -2011,7 +2011,7 @@
 		});
 
 		QUnit.module("targets", {
-				setup: function () {
+				beforeEach: function () {
 					this.oShell = new sap.ui.ux3.Shell();
 					this.oChildShell = new sap.ui.ux3.Shell();
 					this.oSecondShell = new sap.ui.ux3.Shell();
@@ -2032,7 +2032,7 @@
 						}
 					}
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.oRouter.destroy();
 					this.oShell.destroy();
 					this.oChildShell.destroy();
@@ -2159,10 +2159,10 @@
 		});
 
 		QUnit.module("bypassed", {
-			setup: function () {
+			beforeEach: function () {
 				sap.ui.core.routing.HashChanger.getInstance().replaceHash("test");
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oRouter.destroy();
 				sap.ui.core.routing.HashChanger.getInstance().replaceHash("");
 			}

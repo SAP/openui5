@@ -10,19 +10,17 @@ sap.ui.require([
 		"use strict";
 
 		QUnit.module("Formatting functions", {
-			setup: function () {
+			beforeEach: function () {
 				this._oResourceModel = new ResourceModel({
 					bundleUrl: jQuery.sap.getModulePath("sap.ui.demo.wt", "/i18n/i18n.properties")
 				});
 			},
-			teardown: function () {
+			afterEach: function () {
 				this._oResourceModel.destroy();
 			}
 		});
 
-
 		QUnit.test("Should return the translated texts", function (assert) {
-
 			// Arrange
 			var oViewStub = {
 				getModel: this.stub().withArgs("i18n").returns(this._oResourceModel)

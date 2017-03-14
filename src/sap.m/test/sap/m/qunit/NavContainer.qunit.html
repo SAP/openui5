@@ -154,12 +154,12 @@
 		});
 
 		QUnit.module("AutoFocus tests", {
-			setup: function () {
+			beforeEach: function () {
 				this.sinon = sinon.sandbox.create();
 				this.spy = this.sinon.spy(sap.m.NavContainer, "_applyAutoFocusTo");
 				this.pageId = "someId";
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.sinon.restore();
 			}
 		});

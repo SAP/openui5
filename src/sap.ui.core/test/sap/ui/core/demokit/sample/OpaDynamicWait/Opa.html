@@ -23,7 +23,7 @@
 			], function (Opa5, opaTest, PropertyStrictEquals) {
 
 				QUnit.module("Nested waitFors", {
-					setup : function () {
+					beforeEach : function () {
 
 						Opa5.extendConfig({
 							viewName : "appUnderTest.view.Main",

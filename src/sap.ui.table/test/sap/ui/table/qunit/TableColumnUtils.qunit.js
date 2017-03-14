@@ -13,7 +13,7 @@ var TableUtils = sap.ui.table.TableUtils;
 //************************************************************************
 
 QUnit.module("Misc", {
-	setup: function() {
+	beforeEach: function() {
 		this.oTable = new sap.ui.table.Table();
 		this.fnColumnMapToMinimum = function(oColumnMap) {
 			var oMinColumnMap = {};
@@ -62,7 +62,7 @@ QUnit.module("Misc", {
 			return mBoundaries;
 		}
 	},
-	teardown: function () {
+	afterEach: function () {
 		this.oTable.destroy();
 	}
 });
@@ -318,10 +318,10 @@ QUnit.test("getHeaderSpan", function(assert) {
 
 
 QUnit.module("ColumnMove", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -703,7 +703,7 @@ QUnit.test("getColumnWidth", function(assert) {
 
 
 QUnit.module("Fixed Columns", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 		oTable.setFixedColumnCount(0);
 		this.aColumns = oTable.getColumns();
@@ -714,7 +714,7 @@ QUnit.module("Fixed Columns", {
 		oTable.setWidth(((this.aColumns.length * 100) + 200) +  "px");
 		sap.ui.getCore().applyChanges();
 	},
-	teardown: function () {
+	afterEach: function () {
 		this.aColumns = null;
 		destroyTables();
 	}

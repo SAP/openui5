@@ -135,12 +135,12 @@
 				});
 
 				QUnit.module("Managing Containers", {
-					setup: function () {
+					beforeEach: function () {
 						this.oRouter = fnCreateRouter({
 							myRoute: {}
 						});
 					},
-					teardown: function () {
+					afterEach: function () {
 						this.oRouter.destroy();
 					}
 				});
@@ -260,7 +260,7 @@
 				});
 
 				QUnit.module("Dialog closing", {
-					setup: function () {
+					beforeEach: function () {
 						var oPageToNavigateTo = new Page();
 						this.oNavContainer = new NavContainer({
 							pages: [ new Page(), oPageToNavigateTo ]
@@ -275,7 +275,7 @@
 							myRoute: {}
 						});
 					},
-					teardown: function () {
+					afterEach: function () {
 						this.oNavContainer.destroy();
 						this.oRouter.destroy();
 					}
@@ -328,7 +328,7 @@
 
 
 				QUnit.module("Routing with targets", {
-					setup: function () {
+					beforeEach: function () {
 						this.oDummyMaster = createViewAndController("DummyMaster");
 						this.oDummyDetail = createViewAndController("DummyDetail");
 						this.oSplitContainer = new SplitContainer({
@@ -336,7 +336,7 @@
 							detailPages: [ this.oDummyDetail ]
 						});
 					},
-					teardown: function () {
+					afterEach: function () {
 						this.oSplitContainer.destroy();
 						this.oDummyMaster.destroy();
 						this.oDummyDetail.destroy();
@@ -495,7 +495,7 @@
 				});
 
 				integrationTests.start({
-					setup: function (oConfig) {
+					beforeEach: function (oConfig) {
 						var oRouter = fnCreateRouter(oConfig);
 						this.oGetViewStub = sinon.stub(oRouter._oViews, "_getViewWithGlobalId", helpers.createViewMock);
 
@@ -513,7 +513,7 @@
 						oRouteMatchedSpy.restore();
 						return oPromise;
 					},
-					teardown: function () {
+					afterEach: function () {
 						this.oRouter.destroy();
 						this.oRouteMatchedHandler.destroy();
 					}

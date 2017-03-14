@@ -53,7 +53,7 @@
 			'unitTests/utils/customQUnitAssertions'
 		], function (Opa5, opaTest) {
 			QUnit.module("wait for basics", {
-				setup: function () {
+				beforeEach: function () {
 					this.oOpa5 = new Opa5();
 				}
 			});

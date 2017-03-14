@@ -190,13 +190,13 @@
 		  }
 
 			QUnit.module("Context objects (oListener)", {
-				setup : function() {
+				beforeEach : function() {
 					oLabel = new sap.ui.commons.Label({id : "c0", text:"something"});
 				  oLabel.placeAt("uiArea1");
 				  sap.ui.getCore().applyChanges();
 					clear();
 				},
-				teardown : function() {
+				afterEach : function() {
 					oLabel.destroy();
 					oLabel = undefined;
 				  sap.ui.getCore().applyChanges();

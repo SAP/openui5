@@ -26,10 +26,10 @@
 	var text = "testText";
 
 	QUnit.module("Init", {
-		setup : function() {
+		beforeEach : function() {
 			tokenizer = new sap.m.Tokenizer();
 		},
-		teardown : function() {
+		afterEach : function() {
 			tokenizer.destroy();
 		}
 	});
@@ -39,11 +39,11 @@
 	});
 
 	QUnit.module("Basic", {
-		setup : function() {
+		beforeEach : function() {
 			tokenizer1 = new sap.m.Tokenizer("t1");
 			tokenizer1.placeAt("content");
 		},
-		teardown : function() {
+		afterEach : function() {
 			token1 = null;
 			tokenizer1.destroy();
 		}

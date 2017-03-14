@@ -73,7 +73,7 @@
 
     var uiArea,ctrl,child;
     QUnit.module("Propagation listener", {
-		setup : function() {
+		beforeEach : function() {
 			var oDiv = jQuery("<div></div>").appendTo("#uiAreas");
 			uiArea = sap.ui.getCore().createUIArea(oDiv[0]);
 
@@ -97,7 +97,7 @@
 			ctrl.placeAt(uiArea.getId());
 		},
 
-		teardown : function() {
+		afterEach : function() {
 			uiArea.detachModelContextChange(fnChange);
 			ctrl.destroy();
 			ctrl = null;
@@ -159,7 +159,7 @@
     });
 
 	QUnit.module("Model propagation", {
-		setup : function() {
+		beforeEach : function() {
 			var oDiv = jQuery("<div></div>").appendTo("#uiAreas");
 			uiArea = sap.ui.getCore().createUIArea(oDiv[0]);
 
@@ -183,7 +183,7 @@
 			ctrl.placeAt(uiArea.getId());
 		},
 
-		teardown : function() {
+		afterEach : function() {
 			uiArea.detachModelContextChange(fnChange);
 			ctrl.destroy();
 			ctrl = null;
@@ -574,7 +574,7 @@
 	});
 
 	QUnit.module("More Complex Updates", {
-		setup : function() {
+		beforeEach : function() {
 			sap.ui.getCore().setModel(oModel1);
 			uiArea = sap.ui.getCore().createUIArea("content");
 			uiArea.setModel(null);
@@ -590,7 +590,7 @@
 			ctrl.placeAt("content");
 		},
 
-		teardown : function() {
+		afterEach : function() {
 			sap.ui.getCore().setModel(null, "m2");
 			ctrl.destroy();
 			ctrl = null;
@@ -687,7 +687,7 @@
 	});
 
 	QUnit.module("Context Binding", {
-		setup : function() {
+		beforeEach : function() {
 			mPropagationInfo = {};
 			fnChange = function(oEvent) {
 				mPropagationInfo[oEvent.getSource().getId()] ? mPropagationInfo[oEvent.getSource().getId()]++ : mPropagationInfo[oEvent.getSource().getId()] = 1;
@@ -709,7 +709,7 @@
 			ctrl.placeAt("content");
 		},
 
-		teardown : function() {
+		afterEach : function() {
 			sap.ui.getCore().setModel(null);
 			ctrl.destroy();
 			ctrl = null;

@@ -41,7 +41,7 @@
 		}
 
 		QUnit.module("views - creation", {
-			setup: function () {
+			beforeEach: function () {
 				this.oShell = new sap.ui.ux3.Shell();
 				this.oViews = new sap.ui.core.routing.Views();
 				this.oView = createView(
@@ -63,7 +63,7 @@
 					this.oViews
 				);
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oShell.destroy();
 				this.oTarget.destroy();
 				this.oViews.destroy();
@@ -325,7 +325,7 @@
 
 
 		QUnit.module("target parent and children", {
-			setup: function () {
+			beforeEach: function () {
 				this.oParentView = createView(
 						['<View xmlns="sap.ui.core" xmlns:ux3="sap.ui.ux3">',
 							'<ux3:Shell id="myShell">',
@@ -351,7 +351,7 @@
 					this.oViews
 				);
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oParentView.destroy();
 				this.oChildView.destroy();
 				this.oTarget.destroy();
@@ -406,7 +406,7 @@
 		});
 
 		QUnit.module("display event", {
-			setup: function () {
+			beforeEach: function () {
 				this.oShell = new sap.ui.ux3.Shell();
 				this.oView =  createView(
 						['<View xmlns="sap.ui.core">',
@@ -430,7 +430,7 @@
 						this.oViews
 				);
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oShell.destroy();
 				this.oTarget.destroy();
 				this.oViews.destroy();
@@ -493,7 +493,7 @@
 		});
 
 		QUnit.module("titleChanged event", {
-			setup: function () {
+			beforeEach: function () {
 				this.oApp = new sap.m.App();
 				this.oView =  createView(
 						['<View xmlns="sap.ui.core">',
@@ -514,7 +514,7 @@
 				this.oViews.setView("bar.foo", this.oView);
 
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oApp.destroy();
 				this.oTarget.destroy();
 				this.oViews.destroy();

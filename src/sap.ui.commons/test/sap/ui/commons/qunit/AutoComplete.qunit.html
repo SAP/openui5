@@ -77,10 +77,10 @@
 		qutils.delayTestStart();
 
 		QUnit.module("Control API", {
-			setup : function() {
+			beforeEach : function() {
 				this.oAuto0 = new sap.ui.commons.AutoComplete();
 			},
-			teardown : function() {
+			afterEach : function() {
 				clear(this.oAuto0);
 				this.oAuto0.destroy();
 
@@ -117,7 +117,7 @@
 		});
 
 		QUnit.module("Suggestion - Static Items", {
-			setup : function() {
+			beforeEach : function() {
 				this.oAuto1 = new sap.ui.commons.AutoComplete({
 					maxPopupItems: 3
 				}).placeAt("uiArea1");
@@ -133,7 +133,7 @@
 
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function() {
+			afterEach : function() {
 				clear(this.oAuto1);
 				this.oAuto1.destroy();
 
@@ -202,13 +202,13 @@
 		});
 
 		QUnit.module("Suggestion - Dynamic Items", {
-			setup : function() {
+			beforeEach : function() {
 				this.oAuto2 = new sap.ui.commons.AutoComplete();
 				this.oAuto2.placeAt("uiArea2");
 
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function() {
+			afterEach : function() {
 				clear(this.oAuto2);
 				this.oAuto2.destroy();
 
@@ -252,7 +252,7 @@
 		});
 
 		QUnit.module("Closing Popup", {
-			setup : function() {
+			beforeEach : function() {
 				this.oAuto1 = new sap.ui.commons.AutoComplete({
 					maxPopupItems: 3
 				}).placeAt("uiArea1");
@@ -268,7 +268,7 @@
 
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function() {
+			afterEach : function() {
 				clear(this.oAuto1);
 				this.oAuto1.destroy();
 
@@ -329,7 +329,7 @@
 		});
 
 		QUnit.module("ARIA", {
-			setup : function() {
+			beforeEach : function() {
 				this.oAuto1 = new sap.ui.commons.AutoComplete({
 					maxPopupItems: 3
 				}).placeAt("uiArea1");
@@ -345,7 +345,7 @@
 
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function() {
+			afterEach : function() {
 				clear(this.oAuto1);
 				this.oAuto1.destroy();
 

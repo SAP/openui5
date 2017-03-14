@@ -1,10 +1,10 @@
 QUnit.module("Toolbar Default", {
-	setup : function() {
+	beforeEach : function() {
 		this.oUploadCollection = new sap.m.UploadCollection("noToolbarTest", {});
 		this.oUploadCollection.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	},
-	teardown : function() {
+	afterEach : function() {
 		this.oUploadCollection.destroy();
 		this.oUploadCollection = null;
 	}
@@ -19,9 +19,9 @@ QUnit.test("No Toolbar is provided. Test that default toolbar is set", function(
 });
 
 QUnit.module("Toolbar missing Placeholder", {
-	setup : function() {
+	beforeEach : function() {
 	},
-	teardown : function() {
+	afterEach : function() {
 		this.oUploadCollection.destroy();
 		this.oUploadCollection = null;
 		jQuery.sap.log.info.restore();
@@ -61,7 +61,7 @@ QUnit.test("A Toolbar without place holder is provided. Test that an info log ha
 });
 
 QUnit.module("Toolbar Custom", {
-	setup : function() {
+	beforeEach : function() {
 		this.oUploadCollection = new sap.m.UploadCollection("PHToolbarTest", {
 			toolbar : new sap.m.OverflowToolbar({
 				content : [ new sap.m.Button("element1", {text: "Filter"}),
@@ -77,7 +77,7 @@ QUnit.module("Toolbar Custom", {
 		this.oUploadCollection.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	},
-	teardown : function() {
+	afterEach : function() {
 		this.oUploadCollection.destroy();
 		this.oUploadCollection = null;
 	}

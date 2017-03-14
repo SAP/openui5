@@ -40,11 +40,11 @@
 	var oModel;
 
 	QUnit.module("Resource Model: Resources bundle loaded via name", {
-		setup : function() {
+		beforeEach : function() {
 			oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages"});
 			sap.ui.getCore().setModel(oModel);
 		},
-		teardown : function() {
+		afterEach : function() {
 			sap.ui.getCore().setModel(null);
 			oModel.destroy();
 			oModel = undefined;
@@ -83,11 +83,11 @@
 	});
 
 	QUnit.module("Resource Model: Resources bundle loaded via name / set Model with alias", {
-		setup : function() {
+		beforeEach : function() {
 			oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages"});
 			sap.ui.getCore().setModel(oModel,"i18n");
 		},
-		teardown : function() {
+		afterEach : function() {
 			sap.ui.getCore().setModel(null, "i18n");
 			oModel.destroy();
 			oModel = undefined;
@@ -126,11 +126,11 @@
 	});
 
 	QUnit.module("Resource Model: Resources bundle loaded via url", {
-		setup : function() {
+		beforeEach : function() {
 			oModel = new sap.ui.model.resource.ResourceModel({bundleUrl:"./testdata/messages.properties"});
 			sap.ui.getCore().setModel(oModel,"i18n");
 		},
-		teardown : function() {
+		afterEach : function() {
 			sap.ui.getCore().setModel(null, "i18n");
 			oModel.destroy();
 			oModel = undefined;
@@ -225,7 +225,7 @@
 	});
 
 	QUnit.module("Resource Model: Async", {
-		setup : function() {
+		beforeEach : function() {
 			oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{async>TEST_TEXT}"});
 			oLabel.placeAt("target1");
 			oLabel2 = new sap.ui.testlib.TestButton("myLabel2",{text:"{async>TEST_TEXT}"});
@@ -233,7 +233,7 @@
 			oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages", async: true});
 			sap.ui.getCore().setModel(oModel, "async");
 		},
-		teardown : function() {
+		afterEach : function() {
 			sap.ui.getCore().setModel(null, "async");
 			oModel.destroy();
 			oModel = undefined;

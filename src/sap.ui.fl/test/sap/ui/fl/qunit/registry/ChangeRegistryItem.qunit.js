@@ -3,9 +3,9 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistryItem");
 (function(ChangeRegistryItem) {
 
 	QUnit.module("sap.ui.fl.registry.ChangeRegistryItem", {
-		setup: function() {
+		beforeEach: function() {
 		},
-		teardown: function() {
+		afterEach: function() {
 		}
 	});
 

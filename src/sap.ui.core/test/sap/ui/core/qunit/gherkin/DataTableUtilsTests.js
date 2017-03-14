@@ -12,7 +12,7 @@ sap.ui.require([
 
   QUnit.module("Data Table Utilities Tests", {
 
-    setup : function() {
+    beforeEach : function() {
     }
 
   });

@@ -61,7 +61,7 @@
 		var rb1, rb2;
 
 		QUnit.module('API', {
-			setup: function() {
+			beforeEach: function() {
 				// arrange
 				this.oRadioButton1 = new sap.ui.commons.RadioButton();
 				this.oRadioButton2 = new sap.ui.commons.RadioButton();
@@ -71,7 +71,7 @@
 				this.oRadioButton2.placeAt("qunit-fixture");
 				this.oRadioButton3.placeAt("qunit-fixture");
 			},
-			teardown: function() {
+			afterEach: function() {
 				// cleanup
 				this.oRadioButton1.destroy();
 				this.oRadioButton2.destroy();
@@ -109,7 +109,7 @@
 
 
 		QUnit.module("Basic", {
-			setup : function() {
+			beforeEach : function() {
 				rb1 = sap.ui.getCore().getControl("rb1");
 				rb2 = sap.ui.getCore().getControl("rb2");
 
@@ -127,7 +127,7 @@
 				ok(rb1, "rb1 should not be null");
 				ok(rb2, "rb2 should not be null");
 			},
-			teardown : function() {
+			afterEach : function() {
 				rb1 = null;
 				rb2 = null;
 			}

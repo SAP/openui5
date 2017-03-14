@@ -98,11 +98,11 @@
 	qutils.delayTestStart();
 
 	QUnit.module("Basic checks", {
-		setup: function() {
+		beforeEach: function() {
 			this.clock = sinon.useFakeTimers();
 			this.table = createTable();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.clock.restore();
 			destroyTable(this.table);
 		}

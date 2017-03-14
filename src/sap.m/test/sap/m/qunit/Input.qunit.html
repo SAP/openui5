@@ -86,7 +86,7 @@
 	qutils.delayTestStart();
 
 	QUnit.module("Basic", {
-		setup : function() {
+		beforeEach : function() {
 			i1 = sap.ui.getCore().getControl("i1");
 			i2 = sap.ui.getCore().getControl("i2");
 			i3 = sap.ui.getCore().getControl("i3");
@@ -94,7 +94,7 @@
 			i5 = sap.ui.getCore().getControl("i5");
 			i8 = sap.ui.getCore().getControl("i8");
 		},
-		teardown : function() {
+		afterEach : function() {
 			i1 = null;
 			i2 = null;
 			i3 = null;

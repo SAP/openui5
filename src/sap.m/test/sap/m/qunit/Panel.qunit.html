@@ -20,7 +20,7 @@
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script>
 	QUnit.module("API", {
-		setup: function () {
+		beforeEach: function () {
 			this.oPanel = new sap.m.Panel({
 				headerText: "Panel Header",
 				content: [
@@ -32,7 +32,7 @@
 			this.oPanel.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oPanel.destroy();
 			this.oPanel = null;
 		}
@@ -171,7 +171,7 @@
 			this.oPanel.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oPanel.destroy();
 			this.oPanel = null;
 		}
@@ -206,7 +206,7 @@
 	});
 
 	QUnit.module("Rendering", {
-		setup: function () {
+		beforeEach: function () {
 			this.oPanel = new sap.m.Panel({
 				headerText: "Panel Header",
 				content: [
@@ -218,7 +218,7 @@
 			this.oPanel.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oPanel.destroy();
 			this.oPanel = null;
 		},
@@ -261,7 +261,7 @@
 	});
 
 	QUnit.module("CSS classes", {
-		setup: function () {
+		beforeEach: function () {
 			this.oPanel = new sap.m.Panel({
 				headerText: "Panel Header",
 				content: [
@@ -273,7 +273,7 @@
 			this.oPanel.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oPanel.destroy();
 			this.oPanel = null;
 		},
@@ -395,7 +395,7 @@
 	});
 
 	QUnit.module("Computed styles", {
-		setup: function () {
+		beforeEach: function () {
 			this.oPanel = new sap.m.Panel({
 				headerText: "Panel Header",
 				content: [
@@ -407,7 +407,7 @@
 			this.oPanel.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oPanel.destroy();
 			this.oPanel = null;
 		},
@@ -596,7 +596,7 @@
 	});
 
 	QUnit.module("ARIA attributes", {
-		setup: function () {
+		beforeEach: function () {
 			this.oPanel = new sap.m.Panel({
 				headerText: "Panel Header",
 				content: [
@@ -608,7 +608,7 @@
 			this.oPanel.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oPanel.destroy();
 			this.oPanel = null;
 		},

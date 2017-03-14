@@ -1,5 +1,5 @@
 QUnit.module("Remove and reinsert", {
-	setup: function() {
+	beforeEach: function() {
 		fnSetupNewMockServer();
 		oMockServer.start();
 		oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, {
@@ -7,7 +7,7 @@ QUnit.module("Remove and reinsert", {
 			defaultUpdateMethod: "PUT"
 		});
 	},
-	teardown: function() {
+	afterEach: function() {
 		oMockServer.stop();
 		delete oModel;
 	}

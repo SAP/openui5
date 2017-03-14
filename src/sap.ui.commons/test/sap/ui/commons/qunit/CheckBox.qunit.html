@@ -59,7 +59,7 @@
 
 
 		QUnit.module("Basic", {
-			setup : function() {
+			beforeEach : function() {
 				c1 = sap.ui.getCore().getControl("c1");
 				c2 = sap.ui.getCore().getControl("c2");
 
@@ -75,7 +75,7 @@
 				ok(c1, "c1 should not be null");
 				ok(c2, "c2 should not be null");
 			},
-			teardown : function() {
+			afterEach : function() {
 				c1 = null;
 				c2 = null;
 			}

@@ -22,13 +22,13 @@
     //================================================================================
 
     QUnit.module('API', {
-        setup: function() {
+        beforeEach: function() {
             this.NotificationListGroup = new sap.m.NotificationListGroup();
 
             this.NotificationListGroup.placeAt(RENDER_LOCATION);
             sap.ui.getCore().applyChanges();
         },
-        teardown: function() {
+        afterEach: function() {
             this.NotificationListGroup.destroy();
         }
     });
@@ -307,13 +307,13 @@
     //================================================================================
 
     QUnit.module('Rendering', {
-        setup: function() {
+        beforeEach: function() {
             this.NotificationListGroup = new sap.m.NotificationListGroup();
 
             this.NotificationListGroup.placeAt(RENDER_LOCATION);
             sap.ui.getCore().applyChanges();
         },
-        teardown: function() {
+        afterEach: function() {
             this.NotificationListGroup.destroy();
         }
     });
@@ -462,13 +462,13 @@
     //================================================================================
 
     QUnit.module('Events', {
-        setup: function() {
+        beforeEach: function() {
             this.NotificationListGroup = new sap.m.NotificationListGroup();
 
             this.NotificationListGroup.placeAt(RENDER_LOCATION);
             sap.ui.getCore().applyChanges();
         },
-        teardown: function() {
+        afterEach: function() {
             this.NotificationListGroup.destroy();
         }
     });
@@ -524,13 +524,13 @@
     //================================================================================
 
     QUnit.module('Group with 0 items', {
-        setup: function() {
+        beforeEach: function() {
             this.NotificationListGroup = new sap.m.NotificationListGroup();
 
             this.NotificationListGroup.placeAt(RENDER_LOCATION);
             sap.ui.getCore().applyChanges();
         },
-        teardown: function() {
+        afterEach: function() {
             this.NotificationListGroup.destroy();
         }
     });
@@ -608,13 +608,13 @@
     });
 
     QUnit.module('Test Visible property', {
-        setup: function() {
+        beforeEach: function() {
             this.NotificationListGroup = new sap.m.NotificationListGroup();
 
             this.NotificationListGroup.placeAt(RENDER_LOCATION);
             sap.ui.getCore().applyChanges();
         },
-        teardown: function() {
+        afterEach: function() {
             this.NotificationListGroup.destroy();
         }
     });
@@ -733,13 +733,13 @@
     });
 
     QUnit.module('Test buttons enabled state when just 1 item is in the group', {
-        setup: function() {
+        beforeEach: function() {
             this.NotificationListGroup = new sap.m.NotificationListGroup();
 
             this.NotificationListGroup.placeAt(RENDER_LOCATION);
             sap.ui.getCore().applyChanges();
         },
-        teardown: function() {
+        afterEach: function() {
             this.NotificationListGroup.destroy();
         }
     });
@@ -835,13 +835,13 @@
 	//================================================================================
 
 	QUnit.module('ARIA support', {
-		setup: function () {
+		beforeEach: function () {
 			this.NotificationListGroup = new sap.m.NotificationListGroup();
 
 			this.NotificationListGroup.placeAt(RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.NotificationListGroup.destroy();
 		}
 	});
@@ -936,7 +936,7 @@
 	//================================================================================
 
 	QUnit.module('Keyboard handling', {
-		setup: function () {
+		beforeEach: function () {
 			this.NotificationListGroup = new sap.m.NotificationListGroup({
 				items: [
 					new sap.m.NotificationListItem(),
@@ -948,7 +948,7 @@
 			this.NotificationListGroup.placeAt(RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.NotificationListGroup.destroy();
 		}
 	});

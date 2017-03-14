@@ -20,7 +20,7 @@ sap.ui.require([
 
   QUnit.module("Opa5 Test Harness Tests", {
 
-    setup : function() {
+    beforeEach : function() {
 
       var Given = this.Given = {};
       var When = this.When = {};
@@ -54,7 +54,7 @@ sap.ui.require([
       testHarnessTests.setup(this.fMockOpa5Setup, this.fMockOpa5Teardown, opa5TestHarness);
     },
 
-    teardown: function() {
+    afterEach: function() {
       testHarnessTests.teardown();
     }
 

@@ -15,13 +15,13 @@
 	var CLASS_ICON = ".sapMMsgStripIcon";
 
 	QUnit.module("API", {
-		setup: function() {
+		beforeEach: function() {
 			this.oMessageStrip = new sap.m.MessageStrip();
 
 			this.oMessageStrip.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oMessageStrip.destroy();
 		}
 	});
@@ -114,14 +114,14 @@
 	});
 
 	QUnit.module("Data binding", {
-		setup: function() {
+		beforeEach: function() {
 			this.oMessageStrip = new sap.m.MessageStrip();
 
 			this.oMessageStrip.placeAt(DOM_RENDER_LOCATION);
 
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oMessageStrip.destroy();
 		},
 		generateData: function() {
@@ -149,7 +149,7 @@
 
 
 	QUnit.module("Events", {
-		setup: function() {
+		beforeEach: function() {
 			this.oMessageStrip = new sap.m.MessageStrip({
 				text: "Test",
 				showCloseButton: true
@@ -159,7 +159,7 @@
 
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			if (this.oMessageStrip) {
 				this.oMessageStrip.destroy();
 			}
@@ -209,7 +209,7 @@
 	});
 
 	QUnit.module("ARIA Support", {
-		setup: function() {
+		beforeEach: function() {
 			this.oMessageStrip = new sap.m.MessageStrip({
 				text: "Test",
 				showCloseButton: true,
@@ -220,7 +220,7 @@
 
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			if (this.oMessageStrip) {
 				this.oMessageStrip.destroy();
 			}

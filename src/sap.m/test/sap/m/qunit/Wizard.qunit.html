@@ -28,7 +28,7 @@
 		QUnit.module("Wizard Public API", {
 			sWizardId: "wizard-id",
 			oSpies: {},
-			setup: function () {
+			beforeEach: function () {
 				var that = this;
 				this.oParams = {};
 				this.oSpies.onStepActivated = sinon.spy(function (oEvent) {
@@ -82,7 +82,7 @@
 				this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oWizard.destroy();
 				this.oSpies.error.restore();
 				sap.ui.base.ObjectPool.prototype.returnObject.restore();
@@ -295,7 +295,7 @@
 
 		QUnit.module("Wizard Branching", {
 			sWizardId: "wizard-branching-id",
-			setup: function () {
+			beforeEach: function () {
 				var that = this;
 
 				this.externalStep = new sap.m.WizardStep();
@@ -338,7 +338,7 @@
 				sinon.stub(sap.ui.base.ObjectPool.prototype, "returnObject", function () {
 				});
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oWizard.destroy();
 				sap.ui.base.ObjectPool.prototype.returnObject.restore();
 				this.oWizard = null;
@@ -417,7 +417,7 @@
 
 		QUnit.module("Wizard ACC", {
 			sWizardId: "wizard-acc-id",
-			setup: function () {
+			beforeEach: function () {
 				this.oWizard = new sap.m.Wizard(this.sWizardId, {
 					steps: [
 						new sap.m.WizardStep({
@@ -440,7 +440,7 @@
 				this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oWizard.destroy();
 				this.oWizard = null;
 				this.oResourceBundle = null;

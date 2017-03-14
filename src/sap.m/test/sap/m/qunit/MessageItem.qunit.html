@@ -22,9 +22,9 @@
 
 	<script>
         QUnit.module("MessageItem Public API", {
-            setup: function() {
+            beforeEach: function() {
                 this.oMessageItem = new sap.m.MessageItem();
-            }, teardown: function() {
+            }, afterEach: function() {
                 this.oMessageItem.destroy();
             }
         });

@@ -35,10 +35,10 @@
 		var oP13nColumnsPanel = null;
 
 		QUnit.module("Properties", {
-			setup: function() {
+			beforeEach: function() {
 				oP13nColumnsPanel = new sap.m.P13nColumnsPanel({});
 			},
-			teardown: function() {
+			afterEach: function() {
 				/* 			oP13nColumnsPanel.destroy();
 				 oP13nColumnsPanel = null; */
 			}

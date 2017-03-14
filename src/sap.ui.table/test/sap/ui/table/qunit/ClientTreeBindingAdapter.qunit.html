@@ -190,11 +190,11 @@
 		};
 
 		QUnit.module("ClientBindingAdapter", {
-			setup: function() {
+			beforeEach: function() {
 				oModel = new sap.ui.model.json.JSONModel();
 				oModel.setData(jQuery.extend({}, oData));
 			},
-			teardown: function() {
+			afterEach: function() {
 				oModel = undefined;
 			}
 		});
@@ -975,11 +975,11 @@
 		};
 
 		QUnit.module("ClientBindingAdapter - Model Data 2", {
-			setup: function() {
+			beforeEach: function() {
 				oModel = new sap.ui.model.json.JSONModel();
 				oModel.setData(jQuery.extend({}, oData2));
 			},
-			teardown: function() {
+			afterEach: function() {
 				oModel = undefined;
 			}
 		});

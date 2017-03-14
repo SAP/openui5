@@ -79,7 +79,7 @@
 		aProperties = oHelpers.generateProperties(aPropertyTypes, aScreenTypes);
 
 	QUnit.module("Object Page SubSection - Managing Block Layouts in Standard Mode", {
-		setup: function () {
+		beforeEach: function () {
 			this.oLayoutConfig = {M: 2, L: 3, XL: 4};
 		}
 	});
@@ -87,7 +87,7 @@
 	oHelpers.generateLayoutConfigTests("TitleOnTop", false, testData.aStandardModeConfig);
 
 	QUnit.module("Object Page SubSection - Managing Block Layouts in two column layout in L", {
-		setup: function () {
+		beforeEach: function () {
 			this.oLayoutConfig = {M: 2, L: 2, XL: 4};
 		}
 	});
@@ -95,7 +95,7 @@
 	oHelpers.generateLayoutConfigTests("TitleOnTop", true, testData.aTwoColumnInLConfig);
 
 	QUnit.module("Object Page SubSection - Managing Block With Title On The Left", {
-		setup: function () {
+		beforeEach: function () {
 			this.oLayoutConfig = {M: 2, L: 2, XL: 3};
 		}
 	});
@@ -103,7 +103,7 @@
 	oHelpers.generateLayoutConfigTests("TitleOnLeft", false, testData.aTitleOnTheLeftConfig);
 
 	QUnit.module("Object Page SubSection - Managing Block With Title On The Left and two column layout in L", {
-		setup: function () {
+		beforeEach: function () {
 			this.oLayoutConfig = {M: 2, L: 1, XL: 3};
 		}
 	});

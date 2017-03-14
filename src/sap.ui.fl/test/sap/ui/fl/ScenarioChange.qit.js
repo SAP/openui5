@@ -39,7 +39,7 @@ jQuery.sap.require('sap.ui.core.mvc.View');
 
 	QUnit.module("flex change handling", {
 
-		setup: function() {
+		beforeEach: function() {
 			Cache.setActive(false);
 			Cache._entries = {};
 
@@ -76,7 +76,7 @@ jQuery.sap.require('sap.ui.core.mvc.View');
 
 			this.oControl = new TestingControl("testingID1");
 		},
-		teardown: function() {
+		afterEach: function() {
 			QUnit.stop();
 
 			var stubs = this.stubs;

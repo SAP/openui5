@@ -50,11 +50,11 @@
 	};
 
 	QUnit.module("ODataTreeBinding with navigation properties", {
-		setup: function() {
+		beforeEach: function() {
 			oNavPropMockServer.start();
 			oModel = new sap.ui.model.odata.ODataModel('/navprop/', true);
 		},
-		teardown: function() {
+		afterEach: function() {
 			oNavPropMockServer.stop();
 			delete oModel;
 		}
@@ -596,11 +596,11 @@
 	});
 
 	QUnit.module("ODataTreeBinding with annotations", {
-		setup: function() {
+		beforeEach: function() {
 			oAnnotationMockServer.start();
 			oModel = new sap.ui.model.odata.ODataModel('/metadata/', true);
 		},
-		teardown: function() {
+		afterEach: function() {
 			oAnnotationMockServer.stop();
 			delete oModel;
 		}

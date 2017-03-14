@@ -183,13 +183,13 @@
 		}
 
 		QUnit.module("API and Rendering", {
-			setup: function () {
+			beforeEach: function () {
 				this.toolHeader = getToolHeader();
 				oPage.addContent(this.toolHeader);
 
 				sap.ui.getCore().applyChanges();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.toolHeader.destroy();
 				this.toolHeader = null;
 			}

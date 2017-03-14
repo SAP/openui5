@@ -27,7 +27,7 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/thirdparty/sinon-qunit"
 	], function (Opa, Opa5, sinon) {
 		QUnit.module("Page Objects", {
-			teardown : function () {
+			afterEach : function () {
 				Opa5.resetConfig();
 			}
 		});

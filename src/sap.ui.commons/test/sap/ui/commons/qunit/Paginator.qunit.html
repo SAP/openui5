@@ -205,7 +205,7 @@
 		});
 
 		QUnit.module("Keyboard handling", {
-			setup: function() {
+			beforeEach: function() {
 				// arrange
 				this.oPaginator = new sap.ui.commons.Paginator({
 					currentPage: 1,
@@ -218,7 +218,7 @@
 			getPageLink: function(oPaginator, iIndex) {
 				return oPaginator.$("a--" + iIndex);
 			},
-			teardown: function() {
+			afterEach: function() {
 				// cleanup
 				this.oPaginator.destroy();
 			}
@@ -274,7 +274,7 @@
 		});
 
 		QUnit.module("ARIA disabled link states", {
-			setup: function () {
+			beforeEach: function () {
 				this.oPaginator = new sap.ui.commons.Paginator({
 					numberOfPages: 7,
 					currentPage: 1
@@ -299,7 +299,7 @@
 				var sSuffix = "-" + sLinkId + "Link";
 				return this.oPaginator.$(sSuffix);
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oPaginator.destroy();
 				this.$firstPageLink = null;
 				this.$lastPageLink = null;

@@ -13,7 +13,7 @@ sap.ui.require([
   "use strict";
 
   QUnit.module("Gherkin Test Generator Tests", {
-    setup : function() {
+    beforeEach : function() {
       this.parser = simpleGherkinParser;
 
       this.assertAllTestsAreMatchedAndSkipped = function(testScenario) {
@@ -25,7 +25,7 @@ sap.ui.require([
         }
       };
     },
-    teardown: function() {}
+    afterEach: function() {}
   });
 
 

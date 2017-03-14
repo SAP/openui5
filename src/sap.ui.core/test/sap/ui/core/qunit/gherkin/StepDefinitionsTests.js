@@ -11,7 +11,7 @@ sap.ui.require([
 
   QUnit.module("Step Definitions Tests", {
 
-    setup : function() {
+    beforeEach : function() {
       this.stepDefs = new sap.ui.test.gherkin.StepDefinitions();
     }
 

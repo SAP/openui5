@@ -248,7 +248,7 @@
 	});
 
 	QUnit.module("Routing", {
-		setup : function () {
+		beforeEach : function () {
 			// System under test
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "samples.components.targets"

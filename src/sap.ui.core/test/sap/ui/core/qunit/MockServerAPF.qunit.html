@@ -27,7 +27,7 @@
 jQuery.sap.require("sap.ui.core.util.MockServer");
 
 QUnit.module('GIVEN APF model and data in MockServer', {
-    setup: function () {
+    beforeEach: function () {
         this.rootUri = "/apfService/";
         this.dataEntitySet = "ApfTestQueryResults";
         this.paramEntitySet = "ApfTestQuery";
@@ -91,7 +91,7 @@ QUnit.module('GIVEN APF model and data in MockServer', {
             "NavID": "#9999"
         };
     },
-    teardown: function () {
+    afterEach: function () {
         this.oMockServer.stop();
         this.oMockServer.destroy();
     }

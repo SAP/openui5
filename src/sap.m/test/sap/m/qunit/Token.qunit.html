@@ -27,10 +27,10 @@
 	oToken.placeAt("content");
 
 	QUnit.module("Basic", {
-		setup : function() {
+		beforeEach : function() {
 			token1 = sap.ui.getCore().getControl("t1");
 		},
-		teardown : function() {
+		afterEach : function() {
 			token1 = null;
 		}
 	});

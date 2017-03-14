@@ -149,7 +149,7 @@
 		var oObj11, oObj13, oObj21, oObj23, fHandler11, fHandler12, fHandler13, fHandler14, fHandler21, fHandler22, fHandler23, fHandler24;
 
 		QUnit.module("Publish", {
-			setup : function(){
+			beforeEach : function(){
 				oObj11 = {id: "Obj11"};
 				oObj13 = {id: "Obj13"};
 
@@ -191,7 +191,7 @@
 				oBus.subscribe("CustomChannel", "Test23", fHandler23, oObj23);
 				oBus.subscribe("CustomChannel", "Test24", fHandler24);
 			},
-			teardown : function(){
+			afterEach : function(){
 				oBus.unsubscribe("Test11", fHandler11, oObj11);
 				oBus.unsubscribe("Test12", fHandler12);
 				oBus.unsubscribe("Test13", fHandler13, oObj13);

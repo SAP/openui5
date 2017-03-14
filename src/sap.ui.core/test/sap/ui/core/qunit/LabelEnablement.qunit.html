@@ -88,7 +88,7 @@
 
 
 		QUnit.module("LabelEnablement", {
-			setup : function () {
+			beforeEach : function () {
 				this.oLabel = new TestLabel("testLabel");
 				this.oControl1 = new TestControl("testControl1", {ariaLabelledBy: "someLabelFromApplication"});
 				this.oControl2 = new TestControl("testControl2");
@@ -98,7 +98,7 @@
 				this.oControl2.placeAt("content");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oLabel.destroy();
 				this.oLabel = null;
 				this.oControl1.destroy();
@@ -197,7 +197,7 @@
 		});
 
 		QUnit.module("Required Propagation", {
-			setup : function () {
+			beforeEach : function () {
 				this.oLabel = new TestLabel("testLabel");
 				this.oControl = new TestControl("testControl");
 				this.oLabel.placeAt("content");
@@ -205,7 +205,7 @@
 				this.oLabel.setLabelFor(this.oControl);
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oLabel.destroy();
 				this.oLabel = null;
 				this.oControl.destroy();

@@ -889,8 +889,8 @@
 	/* =========================================================== */
 
 	QUnit.module("SegmentedButton in Dialog", {
-		setup : function () { sinon.config.useFakeTimers = false; },
-		teardown : function () { sinon.config.useFakeTimers = true; }
+		beforeEach : function () { sinon.config.useFakeTimers = false; },
+		afterEach : function () { sinon.config.useFakeTimers = true; }
 	});
 
 	asyncTest("SegmentedButton in Dialog's header", 3, function(assert) {
