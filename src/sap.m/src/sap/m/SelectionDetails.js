@@ -129,6 +129,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			type : library.ButtonType.Transparent,
 			press : [this._onToolbarButtonPress, this]
 		}), true);
+		this._oItemFactory = null;
 	};
 
 	SelectionDetails.prototype.onBeforeRendering = function () {
@@ -308,6 +309,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		});
 	};
 
+	/* =========================================================== */
+	/* Public and Protected methods                                             */
+	/* =========================================================== */
 	/**
 	 * @description Closes SelectionDetails if open.
 	 * @returns {sap.m.SelectionDetails} To ensure method chaining, return the SelectionDetails.
@@ -321,5 +325,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		return this;
 	};
 
+	/**
+	 * Method to register the factory function that creates the SelectionDetailsItems.
+	 * @protected
+	 * @param {any} oData Data to be passed to the factory function.
+	 * @param {function} fnFunction The item factory function that returns SelectionDetailsItems.
+	 * @returns {sap.m.SelectionDetails} To ensure method chaining, return the SelectionDetails.
+	 */
+	SelectionDetails.prototype.registerSelectionDetailsItemFactory = function(oData, fnFunction) {
+		if (typeof (oData) === "function") {
+			fnFunction = oData;
+			oData = undefined;
+		}
+		if (typeof fnFunction === "function") {
+			this._oItemFactory = {
+				fFunction: fnFunction,
+				data: oData
+			};
+		}
+		return this;
+	};
 	return SelectionDetails;
 });

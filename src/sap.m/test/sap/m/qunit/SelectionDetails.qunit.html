@@ -255,6 +255,52 @@
 		assert.notOk(oFacade.isOpen(), "isOpen returns false");
 	});
 
+	QUnit.module("Factory Function", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Factory function not registered yet", function(assert) {
+		//Assert
+		assert.equal(this.oSelectionDetails._oItemFactory, null, "Factory function is undefined");
+	});
+
+	QUnit.test("Factory Function - only function provided", function(assert) {
+		//Arrange
+		fnFunction = function(){};
+		this.oSelectionDetails.registerSelectionDetailsItemFactory(fnFunction);
+		//Assert
+		assert.equal(this.oSelectionDetails._oItemFactory.fFunction, fnFunction, "Factory function is defined");
+		assert.ok(!this.oSelectionDetails._oItemFactory.data, "Factory data is undefined");
+	});
+
+	QUnit.test("Register Factory Function - data and function provided", function(assert) {
+		//Arrange
+		fnFunction = function(){};
+		oData = [1, 2];
+		this.oSelectionDetails.registerSelectionDetailsItemFactory(oData, fnFunction);
+		//Assert
+		assert.equal(this.oSelectionDetails._oItemFactory.fFunction, fnFunction, "Factory function is defined");
+		assert.equal(this.oSelectionDetails._oItemFactory.data, oData, "Factory data is defined");
+	});
+
+	QUnit.test("Factory Function - invalid data provided", function(assert) {
+		//Arrange
+		fnFunction = "Invalid data";
+		var result = this.oSelectionDetails.registerSelectionDetailsItemFactory(fnFunction);
+		//Assert
+		assert.equal(this.oSelectionDetails._oItemFactory, null, "Factory function is undefined");
+		assert.equal(result, this.oSelectionDetails, "Factory function returns SelectionDetails");
+	});
+
+
 </script>
 </head>
 <body class="sapUiBody">
