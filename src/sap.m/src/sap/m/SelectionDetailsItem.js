@@ -69,6 +69,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 		}
 	});
 
+	SelectionDetailsItem.prototype.exit = function () {
+		if (this._oListItem) {
+			this._oListItem.destroy();
+			this._oListItem = null;
+		}
+	};
 	/**
 	 * Builds or changes a SelectionDetailsListItem and returns it.
 	 * @returns {sap.m.SelectionDetailsListItem} The item that has been created or changed
@@ -78,8 +84,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 		if (!this._oListItem) {
 			this._oListItem = new SelectionDetailsListItem();
 			this._oListItem._getData = jQuery.sap.getter(this);
-
-			this.addDependent(this._oListItem);
 		}
 
 		return this._oListItem;

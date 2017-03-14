@@ -60,14 +60,22 @@
 		assert.ok(this.oItem._oListItem, "Function _getListItem creates a new list item.");
 	});
 
-	QUnit.test("List item is dependent of element", function(assert) {
+	QUnit.test("List item is member of element", function(assert) {
 		//Arrange
-		var oListItem = this.oItem._getListItem(),
-			aDependents = this.oItem.getDependents();
+		var oListItem = this.oItem._getListItem();
 
 		//Assert
-		assert.equal(aDependents.length, 1, "One object has been added to the element's dependents.");
-		assert.deepEqual(aDependents[0], oListItem, "The correct list item has been added as dependent.");
+		assert.deepEqual(this.oItem._oListItem, oListItem, "The correct list item has been added as local member.");
+	});
+
+	QUnit.test("List item is destroyed as well if element is destroyed", function(assert) {
+		//Arrange
+		var oListItem = this.oItem._getListItem(),
+		oSpy = sinon.spy(oListItem, "destroy");
+		//Act
+		this.oItem.destroy();
+		//Assert
+		assert.ok(oSpy.calledOnce, "ListItem is destroyed.");
 	});
 
 	QUnit.test("List item is destroyed with element", function(assert) {
