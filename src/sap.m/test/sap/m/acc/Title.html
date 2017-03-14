@@ -14,7 +14,7 @@
 		function addTest(sText, oControl){
 			var sId = jQuery.sap.uid();
 			jQuery(function(){
-				jQuery("body").append("<h3 style='margin:5px'>"+sText+"</h3><div style='padding:1rem' id='"+sId+"'></div><hr>");
+				jQuery("body").append("<h3 style='margin:5px'>"+sText+"</h3><div style='padding:1rem' id='"+sId+"'></div><div role='separator' aria-orientation='horizontal' style='border-bottom:1px solid black;'></div>");
 				oControl.placeAt(sId);
 			});
 		}
@@ -40,6 +40,6 @@
 		</script>
 	</head>
 	<body class="sapUiBody" role="application">
-		<h2 style="margin:5px;margin-bottom:15px">sap.m.Title</h2>
+	<h2 style="margin:5px;margin-bottom:15px">sap.m.Title</h2>
 	</body>
 </html>
