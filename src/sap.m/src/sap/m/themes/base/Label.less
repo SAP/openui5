@@ -240,6 +240,14 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-LargeDesktop.sapU
 	}
 }
 
+.sapUiSizeCondensed {
+	.sapUiTableTd {
+		:not(.sapMRbBLabel):not(.sapMCbLabel) .sapMLabel {
+			line-height: 1.5rem;
+		}
+	}
+}
+
 .sapUiTableCell .sapMLabel,
 .sapUiTableColCell > .sapMLabel {
 	color: @sapUiListTextColor;
@@ -254,8 +262,4 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-LargeDesktop.sapU
 	.sapUiAnalyticalTableSum .sapUiTableCell .sapMLabel {
 		font-weight: bold;
 	}
-}
-
-.sapUiTableCell .sapMLabel:not(.sapMRbBLabel):not(.sapMCbLabel) {
-	vertical-align: middle;
 }
