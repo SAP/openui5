@@ -917,11 +917,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			oBinding.updateAnalyticalInfo(aColumnInfo, bForceChange);
 
 			this._updateTotalRow(bSupressRefresh);
-
-			if (bForceChange) {
-				// A request will be issued by the binding. In order to correctly indicate that request, the table must switch to busy state.
-				this._setBusy(true);
-			}
 		}
 	};
 
