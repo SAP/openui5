@@ -185,12 +185,12 @@ ul, ol, dl {
 
 ul > li {
   list-style: disc inside;
-  padding-left: 24px;
+  padding: 0 24px;
 }
 
 ol > li {
   list-style: decimal inside;
-  padding-left: 24px;
+  padding: 0 24px;
 }
 
 .download li {
@@ -462,7 +462,131 @@ ul.feature-links > li {
 }
 
 .feature-anchor {
-  color: #666;;
+  color: #666;
+}
+
+/*******************************************************************************
+Related UI5 Projects
+*******************************************************************************/
+.header-container {
+  background: #F5F5F5;
+  min-height: 220px;
+}
+.main-container {
+	background-color: white;
+}
+.table-container {
+    display: -webkit-flex;
+    display: flex;
+	justify-content: center;
+}
+
+.part-container {
+    display: -webkit-flex;
+    display: flex;
+	justify-content: center;
+}
+
+.paragraph {
+	width: 61%;	
+}
+
+.projects-table {
+	text-align: center;
+	margin-bottom: 4rem;
+	margin-top: 2rem;
+	width: 61%;
+	background-color: white;
+	font-size: 14px;
+	border-collapse: true;
+}
+
+.projects-table tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+.projects-table td {
+	border: none;
+}
+
+.projects-table th {
+	background-color: rgb(148, 148, 148);	
+}
+
+.headerContent {
+	padding: 20px 10px;
+	margin: 0 auto;
+	position: relative;	
+
+}
+
+.centered-content {
+	text-align: center;
+}
+
+.description-container {
+	padding: 0 50px;	
+}
+
+.tutorial {
+	display:none;
+}
+.tutorial li {
+	margin: 0.7rem 0;
+	text-align: left;
+	
+}
+.tutorial img {
+	max-height: 300px;
+	width: auto;
+	margin:  0 1.5rem;
+}
+.tutorial li:hover {
+  cursor: text;
+}
+pre {
+	white-space: pre-line;
+	background-color: transparent;
+	color: ##3f3f3f;
+}
+.code-block {
+	padding: 0;
+	white-space: pre;
+	background-color: rgba(63, 63, 63, 0.11);
+}
+
+.flex-container img:hover {
+	-webkit-transform: scale(1.10); /* Chrome */
+	-ms-transform: scale(1.10); /* Internet Explorer */
+	-moz-transform: scale(1.10); /* Mozila*/
+	transition-duration: 1s; /* Mozila and Internet Explorer */
+
+}
+.flex-container img:not(hover) {
+	-webkit-transform: scale(1); /* Chrome */
+	-ms-transform: scale(1); /* Internet Explorer */
+	-moz-transform: scale(1); /* Mozila*/
+	transition-duration: 1s; /* Mozila and Internet Explorer */
+}
+a.tutorial-link:hover {
+	cursor: pointer;
+}
+
+.flex-container {
+    display: -webkit-flex;
+    display: flex;
+}
+
+.flex-item {
+ 	display: inline-block;
+	flex: 1 1 50%;
+	margin: 10px;
+	padding: 0 15px;
+}
+
+.project-image {
+	height: 150px;
+	width: 150px;
 }
 
 /*******************************************************************************
@@ -478,13 +602,19 @@ Small Device Styles
   .feature-container {
       min-height: 490px;
   }
+  
   .feature-list {
     width: 100%;
   }
+  
   .teaser-pic {
     width: 400px;
   }
   .faq-container {
+    min-height: 0px;
+  }
+  
+  .header-container {
     min-height: 0px;
   }
 }
@@ -547,6 +677,30 @@ Small Device Styles
   height: 50px;
   margin-left: -2px;
   }
+  
+  h4 {
+  font-size: 16px;
+}
+.header-desc {
+	font-size: 13px;
+}
+.project-desc {
+	font-size: 13px;
+}
+
+.project-image {
+	height: 80px;
+	width: 80px;
+}
+
+.description-container {
+	padding: 0 20px;
+	font-size: 13px;	
+}
+
+.projects-table td, tr, th {
+	font-size: 12px;
+}
 }
 
 /*******************************************************************************
@@ -628,11 +782,9 @@ Download links and page
 }
 
 
-
 /*******************************************************************************
 Simple Syntax Highlighter
 *******************************************************************************/
-
 
 .shKeyword {
   color: #333;
@@ -663,86 +815,4 @@ Simple Syntax Highlighter
 
 .sh-js-keyword{
   color: #c26230;
-}
-/*******************************************************************************
-Related UI5 Projects
-*******************************************************************************/
-.projectsTable {
-	text-align: center;
-	margin-left: 16.3rem;	
-	margin-bottom: 4rem;
-	margin-top: 2rem;
-	max-width: 1200px;
-	width: 61%;
-	background-color: white;
-	font-size: 14px;
-}
-.headerContent {
-	margin-left: 16.3rem;
-	padding-top: 0.7rem;
-}
-p {
-	font-size: 20px;
-}
-.featuredProject1 {
-	width: 20%;
-	height:300px;
-	float: left;
-	margin-left: 16.3rem;
-	margin-bottom:2.5rem;
-	margin-top:2.5rem;
-}
-.featuredProject2 {
-	width: 20%;
-	height:300px;
-	float: left;
-	margin-left: 14rem;
-	margin-top:2.5rem;
-	margin-bottom:2.5rem;
-}
-.projectsDescription {
-	text-align: center;
-	width: 100%;
-}
-.moreDetails {
-	margin-left: 16.3rem;
-}
-.tutorial {
-	display:none;
-	margin-left: 16.3rem;
-	width: 61%;
-}
-.tutorial li {
-	list-style-type: none;
-	margin-bottom: 0.5rem;
-	background: #eee;
-}
-.tutorial li img {
-	max-height: 300px;
-	width: 100%;
-	margin-top: 0.5rem;
-}
-.tutorial li:hover {
-  cursor: text;
-}
-pre {
-	white-space: pre-line;
-	background-color: transparent;
-	color: ##3f3f3f;
-}
-.code-block {
-	padding: 0;
-}
-#projectsContainer img:hover {
-	-webkit-transform: scale(0.80); /* Chrome */
-	-ms-transform: scale(0.80); /* Internet Explorer */
-	-moz-transform: scale(0.80); /* Mozila*/
-	transition-duration: 1s; /* Mozila and Internet Explorer */
-
-}
-#projectsContainer img:not(hover) {
-	-webkit-transform: scale(1); /* Chrome */
-	-ms-transform: scale(1); /* Internet Explorer */
-	-moz-transform: scale(1); /* Mozila*/
-	transition-duration: 1s; /* Mozila and Internet Explorer */
 }
