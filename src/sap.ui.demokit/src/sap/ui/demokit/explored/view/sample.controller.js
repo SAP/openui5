@@ -16,9 +16,11 @@ sap.ui.define([
 	'sap/m/Text',
 	'../util/ToggleFullScreenHandler',
 	'../data',
-	'sap/ui/demokit/explored/view/base.controller'
+	'sap/ui/demokit/explored/view/base.controller',
+	"sap/ui/fl/FakeLrepConnectorLocalStorage",
+	"sap/ui/fl/Utils"
 ],
-function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Controller, History, JSONModel, mobileLibrary, Text, ToggleFullScreenHandler, data, Base) {
+function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Controller, History, JSONModel, mobileLibrary, Text, ToggleFullScreenHandler, data, Base, FakeLrepConnectorLocalStorage, Utils) {
 	"use strict";
 
 	var SampleController = Base.extend("sap.ui.demokit.explored.view.sample", {
@@ -30,6 +32,7 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 				showNavButton : true,
 				showNewTab: false
 			});
+			this._initFakeLREP();
 			this._loadRuntimeAuthoring();
 			this.getView().setModel(this._viewModel);
 
@@ -196,53 +199,27 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 			ToggleFullScreenHandler.updateMode(oEvt, this.getView());
 		},
 
+		_initFakeLREP : function(){
+			// fake stable IDs
+			Utils.checkControlId = function() {
+				return true;
+			};
+
+			FakeLrepConnectorLocalStorage.enableFakeConnector({
+				"isKeyUser": true,
+				"isAtoAvailable": false,
+				"isProductiveSystem": true
+			});
+		},
+
 		/*
 		* Loades runtime authoring asynchronously (will fail if the rta library is not loaded)
 		*/
 		_loadRuntimeAuthoring : function() {
 			try {
 				sap.ui.require([
-					"sap/ui/rta/RuntimeAuthoring",
-					"sap/ui/fl/FakeLrepConnector",
-					"sap/ui/fl/Utils",
-					"sap/ui/fl/registry/Settings"],
-				function (RuntimeAuthoring, FakeLrepConnector, Utils, Settings) {
-					// fake stable IDs
-					Utils.checkControlId = function() {
-						return true;
-					};
-
-					// fake productive system (to disable publish)
-					Settings.prototype.isProductiveSystem = function() {
-						return true;
-					};
-
-					// override FakeLrepConnector functions
-					FakeLrepConnector.prototype.create = function(payload, changeList, isVariant) {
-						return Promise.resolve();
-					};
-					FakeLrepConnector.prototype.loadChanges = function(sComponentClassName) {
-						return new Promise(function(resolve, reject) {
-							resolve({
-								changes: {},
-								componentClassName: sComponentClassName
-							});
-						});
-					};
-					FakeLrepConnector.prototype.send = function(sUri, sMethod, oData, mOptions){
-						return Promise.resolve();
-					};
-					FakeLrepConnector.prototype.update = function(payload, changeName, changelist, isVariant) {
-						return Promise.resolve();
-					};
-					FakeLrepConnector.prototype.deleteChange = function(params, isVariant) {
-						return Promise.resolve({
-							response: undefined,
-							status: 'nocontent'
-						});
-					};
-
-					FakeLrepConnector.enableFakeConnector();
+					"sap/ui/rta/RuntimeAuthoring"],
+				function (RuntimeAuthoring) {
 					this._oRTA = new RuntimeAuthoring();
 					this.getView().byId("toggleRTA").setVisible(true);
 				}.bind(this));
