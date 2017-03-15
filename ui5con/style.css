@@ -65,6 +65,16 @@ li {
     margin: 6.5%;
 }
 
+.registrationimg {
+	width: 30%;
+	min-width: 220px;
+	float: right;
+	position: absolute;
+	top: 110px;
+	right: 9%;
+	z-index: 9;
+}
+
 .scrollimg{
 	height: 100px;
 	margin-top: 650px;
@@ -188,6 +198,10 @@ li {
  	margin-top: 10px;
  	color: #FF5A37;
 	cursor: pointer;
+}
+.submitlink:focus{
+ 	color: #FF5A37;
+	outline: none;
 }
 
 .cfpduration{

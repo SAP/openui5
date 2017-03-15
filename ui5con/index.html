@@ -55,6 +55,7 @@
      	<div class="logo">
      		<img class="logoimg" src="resources/UI5con_Logo_plain.png">
      	</div>
+   		<img class="registrationimg" src="resources/RegistrationInfo.png">
 	    <div class="logo">
 	     	<a class="scrolllink" href="#cfp"><img class="scrollimg" src="resources/scroll_v.png"></a>
 	    </div>	
@@ -109,7 +110,7 @@
     				<h2>SHOW US YOUR IDEAS! CHOOSE A MEDIUM &amp;</h2>
 				</div>
 				<div>
-					<a id="submitlink" class="submitlink"><span>HAND IN YOUR TOPIC NOW</span><img src="resources/linkarrows_wide.png"></a>
+					<a id="submitlink" href="mailto:openui5@sap.com?subject=Proposal for UI5con@SAP&body=Hi,%0D%0Athis is my session proposal.%0D%0A%0D%0AMy Name is:%0D%0A%0D%0A%0D%0ACompany / UI5 Background:%0D%0A%0D%0A%0D%0ASession Title:%0D%0A%0D%0A%0D%0ASession Description:%0D%0A%0D%0A%0D%0ASession Type [20min Lecture / 40min Lecture / 45min Hands-On / 30min Marketplace Booth Slot]:%0D%0A%0D%0A%0D%0A(For Hands-On only) Prerequisites for participants:%0D%0A" class="submitlink"><span>HAND IN YOUR TOPIC NOW</span><img src="resources/linkarrows_wide.png"></a>
 				</div>
 				<div class="cfpduration">
 					March 10th - April 3rd <span>(END OF DAY)</span> 2017
@@ -151,20 +152,7 @@
 	 		<a class="legal" href="http://openui5.org/ga_disclaimer.html">Google Analytics Disclaimer</a> 
     	</div>
     </footer>
-    
-	<script>
-		window.setTimeout(function(){
-			var elem = document.getElementById("submitlink");
-			elem.addEventListener("click", function(evt){
-				var murl = "mai" + "lto:";
-				var m = "openui" + "5asapd".replace("d",".");
-				var m = m.slice(0, 7) + "@" + m.slice(8, 12) + "com";
-				m += "?subject=Proposal for UI5con@SAP&body=Hi,%0D%0Athis is my session proposal.%0D%0A%0D%0AMy Name is:%0D%0A%0D%0A%0D%0ACompany / UI5 Background:%0D%0A%0D%0A%0D%0ASession Title:%0D%0A%0D%0A%0D%0ASession Description:%0D%0A%0D%0A%0D%0ASession Type [20min Lecture / 40min Lecture / 45min Hands-On / 30min Marketplace Booth Slot]:%0D%0A%0D%0A%0D%0A(For Hands-On only) Prerequisites for participants:%0D%0A";
-				window.open(murl + m, "_self");
-			});
-		}, 1000);
-	</script>
-
+ 
 	<script>
        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
