@@ -1120,7 +1120,7 @@
 				oContext = oBinding.getContextByIndex(1);
 				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000362", "Context for index 1 should still be the same after paging");
 
-				notDeepEqual(oContext, aContexts[0], "getContextByIndex(1) returns a different context than getContexts(5, 3)[0]");
+				assert.notDeepEqual(oContext, aContexts[0], "getContextByIndex(1) returns a different context than getContexts(5, 3)[0]");
 
 				//first context
 				oContext = oBinding.getContextByIndex(5);
