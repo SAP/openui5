@@ -1,12 +1,11 @@
-
 function onLoad() {
 	this.oFeaturedProjects = {
-		"Ui5Strap": {
-			"name": "Ui5Strap",
-			"decription": "Ui5Strap is a multitasking environment, which means you can start multiple apps at the same time",
-			"githubLink": "https://github.com/pks5/ui5strap",
-			"documentaionLink": "http://www.ui5strap.com/manual/",
-			"owner": "pks5",
+		"ui5-inspector": {
+			"name": "UI5 Inspector",
+			"decription": "The UI5 Inspector is a standard Chrome extension for debugging and getting to know UI5 applications.",
+			"githubLink": "https://github.com/SAP/ui5-inspector",
+			"documentaionLink": "",
+			"owner": "SAP",
 			"license": "Apache 2.0"
 		},
 		"UI5CustomControl": {
@@ -28,13 +27,27 @@ function onLoad() {
 		"openui5-i18n-util": {
 			"name": "openui5-i18n-util",
 			"decription": "This script will search all your i18n strings and build auto-magically every translations file for you.",
-			"githubLink": "https://github.com/propellerlabsio/meteor-ui5",
+			"githubLink": "https://github.com/StErMi/openui5-i18n-util",
 			"documentaionLink": "",
 			"owner": "StErMi",
 			"license": "Apache 2.0"
+		},
+		"ui5-inspector": {
+			"name": "UI5 Inspector",
+			"decription": "The UI5 Inspector is a standard Chrome extension for debugging and getting to know UI5 applications.",
+			"githubLink": "https://github.com/SAP/ui5-inspector",
+			"documentaionLink": "",
+			"owner": "SAP",
+			"license": "Apache 2.0"
+		},
+		"Ui5Strap": {
+			"name": "Ui5Strap",
+			"decription": "Ui5Strap is a multitasking environment, which means you can start multiple apps at the same time",
+			"githubLink": "https://github.com/pks5/ui5strap",
+			"documentaionLink": "http://www.ui5strap.com/manual/",
+			"owner": "pks5",
+			"license": "Apache 2.0"
 		}
-		
-		
 	};
 	// generate template for each table entry
 	var tableNode = document.getElementById("projectsTable");
@@ -49,35 +62,4 @@ function onLoad() {
 		tableNode.appendChild(sRowTemplate);
 	});
 }
- 
- function toggleTutorial () {
 
-	$("#tutorial").toggle();
- }
- 
- // handel click event on the Ui5Strap project
- function onUi5StrapClick () {
-	 var sFirstRow = $("#projectsTable").children()[1];
-	 var sSecondRow = $("#projectsTable").children()[2];
-	 $(sFirstRow).css("background-color", "#dcdcdc");
-	 $(sSecondRow).css("background-color", "#ffffff");
- }
- // handel click event on the OpenUI5 Custom Controls project
-  function onCustomControlClick () {
-	 var sFirstRow = $("#projectsTable").children()[1];
-	 var sSecondRow = $("#projectsTable").children()[2];
-	 $(sSecondRow).css("background-color", "#dcdcdc");
-	 $(sFirstRow).css("background-color", "#ffffff");
- }
- // handel click event on the Meteor-UI5 project
- /*
- function onMeteor-UI5lClick () {
-	 var sThirdRow = $("#projectsTable").children()[3];
-	 var sFirstRow = $("#projectsTable").children()[1];
-	 var sSecondRow = $("#projectsTable").children()[2];
-	 $(sThirdRow).css("background-color", "#dcdcdc");
-	 $(sSecondRow).css("background-color", "#ffffff");
-	 $(sFirstRow).css("background-color", "#ffffff");
- }*/
-
-	
