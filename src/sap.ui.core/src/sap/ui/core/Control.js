@@ -434,11 +434,11 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * </ul>
 	 *
 	 * @param {string|Element|sap.ui.core.Control} oRef container into which the control should be put
-	 * @param {string|int} oPosition Describes the position where the control should be put into the container
+	 * @param {string|int} [vPosition="last"] Describes the position where the control should be put into the container
 	 * @return {sap.ui.core.Control} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
-	Control.prototype.placeAt = function(oRef, oPosition) {
+	Control.prototype.placeAt = function(oRef, vPosition) {
 		var oCore = sap.ui.getCore();
 		if (oCore.isInitialized()) {
 			// core already initialized, do it now
@@ -481,11 +481,11 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				}
 			}
 
-			if (typeof oPosition === "number") {
-				oContainer.insertContent(this, oPosition);
+			if (typeof vPosition === "number") {
+				oContainer.insertContent(this, vPosition);
 			} else {
-				oPosition = oPosition || "last"; //"last" is default
-				switch (oPosition) {
+				vPosition = vPosition || "last"; //"last" is default
+				switch (vPosition) {
 					case "last":
 						oContainer.addContent(this);
 						break;
@@ -497,14 +497,14 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 						oContainer.addContent(this);
 						break;
 					default:
-						jQuery.sap.log.warning("Position " + oPosition + " is not supported for function placeAt.");
+						jQuery.sap.log.warning("Position " + vPosition + " is not supported for function placeAt.");
 				}
 			}
 		} else {
 			// core not yet initialized, defer execution
 			var that = this;
 			oCore.attachInitEvent(function () {
-				that.placeAt(oRef, oPosition);
+				that.placeAt(oRef, vPosition);
 			});
 		}
 		return this;
