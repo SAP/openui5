@@ -317,10 +317,10 @@
 	QUnit.test("Factory Function - invalid data provided", function(assert) {
 		//Arrange
 		fnFunction = "Invalid data";
-		var result = this.oSelectionDetails.registerSelectionDetailsItemFactory(fnFunction);
+		var oResult = this.oSelectionDetails.registerSelectionDetailsItemFactory(fnFunction);
 		//Assert
 		assert.equal(this.oSelectionDetails._oItemFactory, null, "Factory function is undefined");
-		assert.equal(result, this.oSelectionDetails, "Factory function returns SelectionDetails");
+		assert.equal(oResult, this.oSelectionDetails, "Factory function returns SelectionDetails");
 	});
 
 	QUnit.module("Events", {
@@ -372,6 +372,71 @@
 		assert.notOk(oSpyBeforeClose.calledOnce, "Popover event 'beforeClose' not delegated.");
 	});
 
+	QUnit.module("Change Handler", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			this.oDummyControl = new sap.ui.base.ManagedObject();
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+			this.oDummyControl.destroy();
+			this.oDummyControl = null;
+		}
+	});
+
+	QUnit.test("Calling 'attachSelectionHandler' returns this", function(assert) {
+		//Act
+		var oResult = this.oSelectionDetails.attachSelectionHandler();
+		//Assert
+		assert.equal(oResult, this.oSelectionDetails, "Function returns SelectionDetails.");
+	});
+
+	QUnit.test("Wrong paramter ends in nothing", function(assert) {
+		//Act
+		var oResult = this.oSelectionDetails.attachSelectionHandler({}, "");
+		//Assert
+		assert.equal(oResult, this.oSelectionDetails, "Function returns SelectionDetails.");
+	});
+
+	QUnit.test("Save parameters to enable detach mechanism", function(assert) {
+		//Arrange
+		var oExpected = {
+			eventId: "myEventName",
+			listener: this.oDummyControl
+		};
+		//Act
+		this.oSelectionDetails.attachSelectionHandler("myEventName", this.oDummyControl);
+		//Assert
+		assert.deepEqual(this.oSelectionDetails._oChangeHandler, oExpected, "Parameters are saved");
+	});
+
+	QUnit.test("Event listener is attached to listener object", function(assert) {
+		//Act
+		this.oSelectionDetails.attachSelectionHandler("myEventName", this.oDummyControl);
+		//Assert
+		assert.ok(this.oDummyControl.mEventRegistry.myEventName, "Event registered");
+		assert.equal(this.oDummyControl.mEventRegistry.myEventName[0].fFunction, this.oSelectionDetails._handleSelectionChange, "Internal function assigned");
+		assert.equal(this.oDummyControl.mEventRegistry.myEventName[0].oListener, this.oSelectionDetails, "Listener assigned");
+	});
+
+	QUnit.test("Function 'detachSelectionHandler' without attach beforehand does nothing", function(assert) {
+		//Act
+		var oResult = this.oSelectionDetails.detachSelectionHandler();
+		//Assert
+		assert.equal(oResult, this.oSelectionDetails, "Function returns SelectionDetails.");
+	});
+
+	QUnit.test("Function 'detachSelectionHandler' detaches event on listener", function(assert) {
+		//Arrange
+		this.oSelectionDetails.attachSelectionHandler("myEventName", this.oDummyControl);
+		//Act
+		this.oSelectionDetails.detachSelectionHandler();
+		//Assert
+		assert.notOk(this.oDummyControl.mEventRegistry.myEventName, "Event detached on listener object");
+	});
 
 </script>
 </head>

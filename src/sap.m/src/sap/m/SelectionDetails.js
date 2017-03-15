@@ -79,22 +79,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			navigate : {
 				parameters : {
 					/**
-					 * The item on which the action has been pressed.
+					 * The item on which the action has been pressed
 					 */
 					item : {type : "sap.m.SelectionDetailsItem"},
 
 					/**
-					 * The direction of navigation. Can be either 'forward' or 'backward'. Backward means that the navigation occurred as a result of activating the back button on the current page.
+					 * The direction of navigation. Can be either 'forward' or 'backward'. Backward means that the navigation occurred as a result of activating the back button on the current page
 					 */
 					direction : {type : "string"},
 
 					/**
-					 * The custom content from which the navigation occurs. Null if navigating from first page.
+					 * The custom content from which the navigation occurs. Null if navigating from first page
 					 */
 					contentFrom : {type : "sap.ui.core.Control"},
 
 					/**
-					 * The custom content to which the navigation occurs. Null if navigating to first page.
+					 * The custom content to which the navigation occurs. Null if navigating to first page
 					 */
 					contentTo : {type : "sap.ui.core.Control"}
 				}
@@ -107,12 +107,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 				parameters : {
 
 					/**
-					 * The action that has to be processed once the action has been pressed.
+					 * The action that has to be processed once the action has been pressed
 					 */
 					action : {type : "sap.ui.core.Item"},
 
 					/**
-					 * If the action is pressed on one of the {@link sap.m.SelectionDetailsItem items}, the parameter contains a reference to the pressed {@link sap.m.SelectionDetailsItem item}. If a custom action or action group of the SelectionDetails popover is pressed, this parameter refers to all {@link sap.m.SelectionDetailsItem items}.
+					 * If the action is pressed on one of the {@link sap.m.SelectionDetailsItem items}, the parameter contains a reference to the pressed {@link sap.m.SelectionDetailsItem item}. If a custom action or action group of the SelectionDetails popover is pressed, this parameter refers to all {@link sap.m.SelectionDetailsItem items}
 					 */
 					items : {type : "sap.m.SelectionDetailsItem"}
 				}
@@ -184,7 +184,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 
 	/**
 	 * Returns the public facade of the SelectionDetails control for non inner framework usages.
-	 * @returns {sap.ui.base.Interface} the reduced facade for outer framework usages
+	 * @returns {sap.ui.base.Interface} the reduced facade for outer framework usages.
 	 * @protected
 	 */
 	SelectionDetails.prototype._aFacadeMethods = ["setText", "getText", "isOpen"];
@@ -359,7 +359,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	/**
 	 * Handles the press on the action or actionGroups by triggering the action press event on the instance of SelectionDetails.
 	 * @param {sap.ui.base.Event} oEvent of action press
-	 * @param {sap.ui.core.Item} The item that was used in the creation of the action button and action list item.
+	 * @param {sap.ui.core.Item} The item that was used in the creation of the action button and action list item
 	 * @private
 	 */
 	SelectionDetails.prototype._onActionPress = function(oEvent, oAction) {
@@ -369,12 +369,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		});
 	};
 
-	SelectionDetails.prototype._delegatePopoverEvent = function (oEvt) {
-		if (oEvt.sId === "beforeOpen") {
+	/**
+	 * Delegates the popover event to the corresponding SelectioNDetails event
+	 * @param {sap.ui.base.Event} oEvent of popover
+	 */
+	SelectionDetails.prototype._delegatePopoverEvent = function (oEvent) {
+		if (oEvent.sId === "beforeOpen") {
 			this.fireBeforeOpen();
-		} else if (oEvt.sId === "beforeClose") {
+		} else if (oEvent.sId === "beforeClose") {
 			this.fireBeforeClose();
 		}
+	};
+
+	/**
+	 * TBW
+	 * @param {sap.ui.base.Event} oEvent of selection change listener object
+	 */
+	SelectionDetails.prototype._handleSelectionChange = function (oEvent) {
+
 	};
 
 	/* =========================================================== */
@@ -383,9 +395,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	/**
 	 * Method to register the factory function that creates the SelectionDetailsItems.
 	 * @protected
-	 * @param {any} oData Data to be passed to the factory function.
-	 * @param {function} fnFunction The item factory function that returns SelectionDetailsItems.
-	 * @returns {sap.m.SelectionDetails} To ensure method chaining, return the SelectionDetails.
+	 * @param {any} oData Data to be passed to the factory function
+	 * @param {function} fnFunction The item factory function that returns SelectionDetailsItems
+	 * @returns {sap.m.SelectionDetails} To ensure method chaining, return the SelectionDetails
 	 */
 	SelectionDetails.prototype.registerSelectionDetailsItemFactory = function(oData, fnFunction) {
 		if (typeof (oData) === "function") {
@@ -400,5 +412,36 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		}
 		return this;
 	};
+
+	/**
+	 * Attaches an event handler to the given listener to react on user selection interaction.
+	 * @protected
+	 * @param {string} sEventId The identifier of the event to listen for
+	 * @param {object} oListener The object which triggers the event to register on
+	 * @returns {sap.m.SelectionDetails} To ensure method chaining, return the SelectionDetails.
+	 */
+	SelectionDetails.prototype.attachSelectionHandler = function(eventId, listener) {
+		if (jQuery.type(eventId) !== "String" && (jQuery.type(listener) !== "object" || jQuery.type(listener.attachEvent) !== "function")) {
+			return this;
+		} else {
+			this._oChangeHandler = {
+				eventId: eventId,
+				listener: listener
+			};
+			listener.attachEvent(eventId, this._handleSelectionChange, this);
+		}
+		return this;
+	};
+
+	/**
+	 * Detaches the event which was attached by <code>attachSelectionHandler</code>.
+	 */
+	SelectionDetails.prototype.detachSelectionHandler = function () {
+		if (this._oChangeHandler) {
+			this._oChangeHandler.listener.detachEvent(this._oChangeHandler.eventId, this._handleSelectionChange, this);
+		}
+		return this;
+	};
+
 	return SelectionDetails;
 });
