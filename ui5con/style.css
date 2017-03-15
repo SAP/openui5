@@ -65,6 +65,15 @@ li {
     margin: 6.5%;
 }
 
+.registrationimg {
+	width: 30%;
+	float: right;
+	position: relative;
+	top: 90px;
+	right: 7%;
+	z-index: 9;
+}
+
 .scrollimg{
 	height: 100px;
 	margin-top: 650px;
