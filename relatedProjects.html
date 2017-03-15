@@ -51,103 +51,99 @@
 		<!-- Fork me on GitHub -->
 		<a href="https://github.com/SAP/openui5/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="images/forkme_fiori.png" alt="Fork me on GitHub"></a>
 		
-		<div>
+		<div class="main-container">
 		
-			<div class="faq-container">
-				<div class="headerContent">
-					<h2>Open UI5 Projects</h2>
-					<p>here you find a list of open source projects which using OpenUI5</p>
-					<p>if you like you can add your own project to the list</p>
+			<div class="header-container">
+				<div class="inner">
+					<h2 >Open UI5 Projects</h2>
+					<p>Here you find a list of open source projects which using OpenUI5.<br>If you like you can add your own project to the list.</p>
 				</div>			
 			</div>
 			
 
-			<div id="projectsContainer" style="height: 31rem;">
-				<div class="featuredProject1">
+			<div class="flex-container">
+				<div class="flex-item centered-content">
 					<a href="#Ui5Strap" onclick="onUi5StrapClick(this);return true;">
-						<img src="images/ui5strap-logo-8.png" width="100%" height="100%"/>
+						<img src="images/ui5strap-logo-8.png" class="project-image"/>
 					</a>
-					<div class="projectsDescription">
-						<h4>UI5strap</h2>
-						<p style="font-size: 16px;">Ui5Strap is a multitasking environment, which means you can start multiple apps at the same time</p>
+					<div class="description-container">
+						<h4>UI5strap</h4>
+						Ui5Strap is a multitasking environment, which means you can start multiple apps at the same time
 					</div>
 				</div>
 				
-				<div class="featuredProject2">
+				<div class="flex-item centered-content">
 					<a href="#UI5CustomControl" onclick="onCustomControlClick(this);return true;">
-						<img src="images/chart-logo.jpg" width="100%" height="100%" style="border-radius: 40px;"/>
+						<img src="images/chart-logo.jpg" class="project-image" />
 					</a>
-					<div class="projectsDescription">
-						<h4>OpenUI5 Custom Controls for charting</h2>
-						<p style="font-size: 16px;">This project shows how to use C3.js and Chart.js within OpenUI5 projects.</p>
+					<div class="description-container">
+						<h4>OpenUI5 Custom Controls for charting</h4>
+						This project shows how to use C3.js and Chart.js within OpenUI5 projects.
 					</div>
 				</div>
+				
+				<div class="flex-item centered-content">
+					<a href="#Meteor-UI5" onclick="onMeteor-UI5lClick(this);return true;">
+						<img src="images/Meteor-UI5-logo.png" class="project-image" />
+					</a>
+					<div class="description-container">
+						<h4>Meteor-UI5</h4>
+						Meteor-UI5 is a collection of packages that brings to together two powerful open source JavaScript web frameworks: Meteor and OpenUI5.
+					</div>
+				</div>
+				
 			</div>
 		
-			<div>
-				<table id="projectsTable" class="projectsTable">
+			<div class="table-container">
+				<table id="projectsTable" class="projects-table">
 					<thead>
 						<tr>
-							<th>Project Name</th>
-							<th>Git Hub Link</th>
+							<th>Project</th>
 							<th>Owner</th>
 							<th>Description</th>
-							<th>Link to Documentation</th>
+							<th>Link</th>
 							<th>License</th>
 						</tr>
 					</thead>
 				</table>
 			</div>
-			<div>
-				<p class="moreDetails">Want to upload your own project? Click on <button onclick="toggleTutorial()">More Details</button> and follow the instructions</p>
+			<div class="part-container">
+				<p class="paragraph">Want to upload your own project? Click on <a class="tutorial-link" onclick="toggleTutorial(this)">More Details</a> and follow the instructions.</p>
 			</div>
 			<div class="tutorial" id="tutorial">
-				<ul>
+			<div class="part-container">
+				<ol class="paragraph">
 					<li>Start by going to our Git repository <a href="https://github.com/SAP/openui5">SAP OpenUI5</a>.</li>
 					<li>Login or register on GitHub.</li>
-					<li>Click on the fork button in the top right corner of the screen. <img src="images/UploadTutorial_Fork.png"></li>
-					<li>Click on the branch button on the left and then select the gh-pages branch.<img src="images/UploadTutorial_SelectBranch.png"</li>
+					<li>Fork the OpenUI5 project to your repository.</li>
+					<li>Switch to the gh-pages branch.</li><img src="images/UploadTutorial_SelectBranch.png"/>
 					<li>Select the javascripts folder and open the relatedProjects.js.</li>
-					<li>Enable the edit button.<img src="images/UploadTutorial_EnableEditMode.png"/></li>
 					<li>At the beginning of the file you will find the oFeaturedProjects object. Here you have to add a new entry. It should look like this example:
 						<div>
 							<pre class="code-block">
-								this.oFeaturedProjects = {
-									"Ui5Strap": {
-										"name": "Ui5Strap",
-										"decription": "-",
-										"githubLink": "https://github.com/pks5/ui5strap",
-										"documentaionLink": "http://www.ui5strap.com/manual/",
-										"owner": "-",
-										"license": "Apache 2"
-									},
-									"UI5CustomControl": {
-										"name": "OpenUI5 Custom Controls for charting",
-										"decription": "-",
-										"githubLink": "https://github.com/SAP/openui5-charting-custom-controls",
-										"documentaionLink": "#UI5CustomControl",
-										"owner": "Michael Graf",
-										"license": "-"
-									},
-								<pre style="background-color: yellow;">
-										"keyWord": {
-											"name": "official name of your project",
-											"description": "short description of your project",
-											"githubLink": "link to your project in GitHub",
-											"documentaionLink": "link to the documrntation",
-											"owner": "the owner of the project",
-											"license": "license of your project"
-										}
-								</pre>};
+this.oFeaturedProjects = {
+  "UI5CustomControl": {
+	...
+  },<code style="background-color: yellow;">
+  "&lt;keyWord&gt;": {
+    "name": "official name of your project",
+    "description": "short description of your project",
+    "documentaionLink": "link to the documrntation",
+    "owner": "the owner of the project",
+    "license": "license of your project"
+  }
+</code>};
 							</pre>
 						</div>
 						
 
 				</li>
 					
-					<li>Commit your changes.<img src="images/UploadTutorial_CommitMessage.png" /></li>
-				</ul>
-			</div>
+					<li>Commit your changes.</li>
+			
+				</ol>
+					</div>
+					</div>
 		</div>
 	</body>
 </html>
