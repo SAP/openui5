@@ -729,37 +729,52 @@
 	QUnit.test("test Semantic Actions", function (assert) {
 		var oSendEmailAction = oFactory.getSendEmailAction(),
 			oSendMessageAction = oFactory.getSendMessageAction(),
+			oSaveAsTileAction = oFactory.getAction(),
 			sSendEmailActionType = "sap.f.semantic.SendEmailAction",
 			sSendMessageActionType = "sap.f.semantic.SendMessageAction",
+			sSaveAsTileActionType = "saveAsTileAction",
 			iSendEmailActionExpectedOrder = 0,
 			iSendMessageActionExpectedOrder = 1,
-			iSemanticActions = 2,
+			iSaveAsTileActionExpectedOrder = 2,
+			iSemanticActions = 3,
 			mMode = {initial: "initial", menu: "menu"},
 			oSpy = this.spy(this.oSemanticShareMenu, "_fireContentChanged");
+
+		oSaveAsTileAction._getType = function() {
+			return sSaveAsTileActionType;
+		};
 
 		// Assert
 		assert.equal(this.oSemanticShareMenu._getMode(), mMode.initial,
 			"The ShareMenu is empty, the mode is initial");
 
 		// Act
-		// Inserted as 1st but should be ordered 2nd.
+
+		// Inserted as 1st but should be ordered 3th.
+		this.oSemanticShareMenu.addContent(oSaveAsTileAction,
+				oSemanticConfiguration.getPlacement(sSaveAsTileActionType));
+
+		// Inserted as 2nd and should be ordered 2nd.
 		this.oSemanticShareMenu.addContent(oSendMessageAction,
 			oSemanticConfiguration.getPlacement(sSendMessageActionType));
 
-		// Inserted as 2nd, but should be ordered 1st.
+		// Inserted as 3th, but should be ordered 1st.
 		this.oSemanticShareMenu.addContent(oSendEmailAction,
 			oSemanticConfiguration.getPlacement(sSendEmailActionType));
+
 		assert.ok(oSpy.called, "The Internal ContentChanged event is fired");
 		assert.equal(this.oSemanticShareMenu._getMode(), mMode.menu,
 			"The ShareMenu is not empty, the mode is menu");
 		assert.equal(this.oActionSheet.getButtons().length, iSemanticActions,
 			iSemanticActions + " semantic actions have been added to the container.");
+		assert.equal(this.oActionSheet.indexOfButton(oSaveAsTileAction), iSaveAsTileActionExpectedOrder,
+				"The Save as Tile Action has the correct order: " + iSaveAsTileActionExpectedOrder);
 		assert.equal(this.oActionSheet.indexOfButton(oSendEmailAction._getControl()), iSendEmailActionExpectedOrder,
 			"The Send Email Action internal control has the correct order: " + iSendEmailActionExpectedOrder);
 		assert.equal(this.oActionSheet.indexOfButton(oSendMessageAction._getControl()), iSendMessageActionExpectedOrder,
 			"The Send Message Action internal control has the correct order: " + iSendMessageActionExpectedOrder);
 
-		// Act
+		//Act
 		this.oSemanticShareMenu.removeContent(oSendEmailAction,
 			oSemanticConfiguration.getPlacement(sSendEmailActionType));
 
@@ -777,5 +792,6 @@
 		// Clean up
 		oSendEmailAction.destroy();
 		oSendMessageAction.destroy();
+		oSaveAsTileAction.destroy();
 	});
 })(jQuery, QUnit, sinon);

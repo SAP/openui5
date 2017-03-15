@@ -81,6 +81,10 @@
 			<semantic:DiscussInJamAction />
 		</semantic:discussInJamAction>
 
+		<semantic:saveAsTileAction>
+			<Button icon= "sap-icon://add-favorite" text="Save as Tile"/>
+		</semantic:saveAsTileAction>
+
 		<semantic:sendEmailAction>
 			<semantic:SendEmailAction />
 		</semantic:sendEmailAction>
