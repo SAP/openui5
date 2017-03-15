@@ -1,5 +1,7 @@
 (function(window, undefined) {
 
+	/*global CollectGarbage */
+
 	/*
 	 * Simulate the JSUnit Testsuite to collect the available
 	 * test pages per Suite
@@ -201,6 +203,13 @@
 			}
 
 			$frame[0].src = "about:blank";
+			$frame[0].contentWindow.document.write('');
+			$frame[0].contentWindow.close();
+
+			if ( typeof CollectGarbage == "function") {
+				CollectGarbage(); // eslint-disable-line
+			}
+
 			$framediv.remove();
 
 			this.printTestResult(oContext);
