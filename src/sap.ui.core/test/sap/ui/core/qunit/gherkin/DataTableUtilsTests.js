@@ -143,7 +143,7 @@ sap.ui.require([
     // The Cucumber Java's reference implementation uses the first column and doesn't throw an Error
     // We are deviating from the reference implementation because it seems like they didn't consider this edge case
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toTable([
         ["Planet", "Planet"],
         ["Mercury", "Jupiter"]
@@ -154,7 +154,7 @@ sap.ui.require([
       "When we duplicate column headers then toTable throws an Error"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toTable([
         ["PLANET", "planet"],
         ["Mercury", "Jupiter"]
@@ -217,7 +217,7 @@ sap.ui.require([
     // The Cucumber Java's implementation of DataTable.asMap() keeps values from the last row and doesn't throw an Error
     // We are deviating from the reference implementation because it seems like they didn't consider this edge case
 
-    throws( function() {
+    assert.throws( function() {
       dtu.toObject([
         ["Name", "135 lbs"],
         ["Name", "Alice"],
@@ -228,7 +228,7 @@ sap.ui.require([
       "When we duplicate column headers then toTable throws an Error - Simple Key"
     );
 
-    throws( function() {
+    assert.throws( function() {
       dtu.toObject([
         ["Telephone Number", "555-777-8888"],
         ["Telephone Number", "Home", "333-555-7777"],
@@ -240,7 +240,7 @@ sap.ui.require([
       "When we duplicate column headers then toTable throws an Error - Simple key replaced by nested key"
     );
 
-    throws( function() {
+    assert.throws( function() {
       dtu.toObject([
         ["Address", "Street", "Grand Boulevard"],
         ["Address", "5000 Hollywood Ave"],
@@ -251,7 +251,7 @@ sap.ui.require([
       "When we duplicate column headers then toTable throws an Error - Nested key replaced by simple key"
     );
 
-    throws( function() {
+    assert.throws( function() {
       dtu.toObject([
         ["Address", "Street", "House", "Grand Boulevard"],
         ["Address", "5000 Hollywood Ave"],
@@ -262,7 +262,7 @@ sap.ui.require([
       "When we duplicate column headers then toTable throws an Error - Deeply nested key replaced by simple key"
     );
 
-    throws( function() {
+    assert.throws( function() {
       dtu.toObject([
         ["GPS", "Latitude", "Minutes", "30"],
         ["GPS", "Latitude", "50"]
@@ -273,7 +273,7 @@ sap.ui.require([
       "When we duplicate column headers then toTable throws an Error - Deeply nested key replaced by nested key"
     );
 
-    throws( function() {
+    assert.throws( function() {
       dtu.toObject([
         ["GPS", "Latitude", "50"],
         ["GPS", "Latitude", "Minutes", "30"]
@@ -284,7 +284,7 @@ sap.ui.require([
       "When we duplicate column headers then toTable throws an Error - Deeply nested key replaced by nested key 2"
     );
 
-    throws( function() {
+    assert.throws( function() {
       dtu.toObject([
         ["GPS", "Latitude", "Minutes", "30"],
         ["GPS", "Latitude", "Minutes", "50"]
@@ -295,7 +295,7 @@ sap.ui.require([
       "When we duplicate column headers then toTable throws an Error - Deeply nested key"
     );
 
-    throws( function() {
+    assert.throws( function() {
       dtu.toObject([
         ["HOME ADDRESS", "5000 Boulevard Rene-Levesque"],
         ["home address", "8000 Hollywood Boulevard"]
@@ -343,7 +343,7 @@ sap.ui.require([
     var arrayError = "dataTableUtils.toTable: parameter 'aData' must be an Array of Array of Strings";
     var normError = "dataTableUtils.toTable: parameter 'vNorm' must be either a Function or a String with the value 'titleCase', 'pascalCase', 'camelCase', 'hyphenated' or 'none'";
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toTable();
     }, function(error) {
       return error.message === arrayError;
@@ -351,7 +351,7 @@ sap.ui.require([
       "toTable aData is undefined"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toTable(100);
     }, function(error) {
       return error.message === arrayError;
@@ -359,7 +359,7 @@ sap.ui.require([
       "toTable aData is invalid type"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toTable([7]);
     }, function(error) {
       return error.message === arrayError;
@@ -367,7 +367,7 @@ sap.ui.require([
       "toTable aData is invalid array of arrays of string"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toTable([[7]]);
     }, function(error) {
       return error.message === arrayError;
@@ -375,7 +375,7 @@ sap.ui.require([
       "toTable aData is invalid array of arrays of string"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toTable([], 100);
     }, function(error) {
       return error.message === normError;
@@ -383,7 +383,7 @@ sap.ui.require([
       "toTable vNorm is invalid type"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toTable([], "invalidNormalizationFunction");
     }, function(error) {
       return error.message === normError;
@@ -401,7 +401,7 @@ sap.ui.require([
     var arrayError = "dataTableUtils.toObject: parameter 'aData' must be an Array of Array of Strings";
     var normError = "dataTableUtils.toObject: parameter 'vNorm' must be either a Function or a String with the value 'titleCase', 'pascalCase', 'camelCase', 'hyphenated' or 'none'";
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toObject();
     }, function(error) {
       return error.message === arrayError;
@@ -409,7 +409,7 @@ sap.ui.require([
       "toObject aArray is undefined"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toObject(100);
     }, function(error) {
       return error.message === arrayError;
@@ -417,7 +417,7 @@ sap.ui.require([
       "toObject aArray is invalid type"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toObject([7]);
     }, function(error) {
       return error.message === arrayError;
@@ -425,7 +425,7 @@ sap.ui.require([
       "toObject aArray is invalid normalization string"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toObject([[7]]);
     }, function(error) {
       return error.message === arrayError;
@@ -433,7 +433,7 @@ sap.ui.require([
       "toObject aArray is invalid normalization string"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toObject([], 100);
     }, function(error) {
       return error.message === normError;
@@ -441,7 +441,7 @@ sap.ui.require([
       "toObject vNorm is invalid type"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toObject([], "invalidNormalizationFunction");
     }, function(error) {
       return error.message === normError;
@@ -457,7 +457,7 @@ sap.ui.require([
   QUnit.test("Normalization functions: invalid data input", function(assert) {
 
     // titleCase
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.titleCase();
     }, function(error) {
       return error.message === "dataTableUtils.normalization.titleCase: parameter 'sString' must be a valid string";
@@ -465,7 +465,7 @@ sap.ui.require([
       "titleCase sString is not defined"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.titleCase(100);
     }, function(error) {
       return error.message === "dataTableUtils.normalization.titleCase: parameter 'sString' must be a valid string";
@@ -474,7 +474,7 @@ sap.ui.require([
     );
 
     // pascalCase
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.pascalCase();
     }, function(error) {
       return error.message === "dataTableUtils.normalization.pascalCase: parameter 'sString' must be a valid string";
@@ -482,7 +482,7 @@ sap.ui.require([
       "pascalCase sString is not defined"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.pascalCase(100);
     }, function(error) {
       return error.message === "dataTableUtils.normalization.pascalCase: parameter 'sString' must be a valid string";
@@ -491,7 +491,7 @@ sap.ui.require([
     );
 
     // camelCase
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.camelCase();
     }, function(error) {
       return error.message === "dataTableUtils.normalization.camelCase: parameter 'sString' must be a valid string";
@@ -499,7 +499,7 @@ sap.ui.require([
       "camelCase sString is not defined"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.camelCase(100);
     }, function(error) {
       return error.message === "dataTableUtils.normalization.camelCase: parameter 'sString' must be a valid string";
@@ -508,7 +508,7 @@ sap.ui.require([
     );
 
     // hyphenated
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.hyphenated();
     }, function(error) {
       return error.message === "dataTableUtils.normalization.hyphenated: parameter 'sString' must be a valid string";
@@ -516,7 +516,7 @@ sap.ui.require([
       "hyphenated sString is not defined"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.hyphenated(100);
     }, function(error) {
       return error.message === "dataTableUtils.normalization.hyphenated: parameter 'sString' must be a valid string";
@@ -525,7 +525,7 @@ sap.ui.require([
     );
 
     // none
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.none();
     }, function(error) {
       return error.message === "dataTableUtils.normalization.none: parameter 'sString' must be a valid string";
@@ -533,7 +533,7 @@ sap.ui.require([
       "none sString is not defined"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.none(100);
     }, function(error) {
       return error.message === "dataTableUtils.normalization.none: parameter 'sString' must be a valid string";

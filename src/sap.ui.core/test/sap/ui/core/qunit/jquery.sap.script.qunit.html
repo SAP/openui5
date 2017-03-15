@@ -1279,7 +1279,7 @@
 				assert.strictEqual(oTokenizer.getIndex(), 7, "index after setIndex");
 				assert.strictEqual(oTokenizer.getCh(), "}");
 
-				throws(function() {
+				assert.throws(function() {
 					oTokenizer.setIndex(0);
 				}, /Must not set index 0 before previous index 7/, "setIndex must not go back in text");
 				oTokenizer.setIndex(42);

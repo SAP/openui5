@@ -309,7 +309,7 @@
 			} ]
 		});
 
-		throws(function() {
+		assert.throws(function() {
 			oMockServer.start();
 		}, /method/, "Throws exception");
 		oMockServer.destroy();
@@ -328,7 +328,7 @@
 			} ]
 		});
 
-		throws(function() {
+		assert.throws(function() {
 			oMockServer.start();
 		}, /path/, "Throws exception");
 		oMockServer.destroy();
@@ -343,7 +343,7 @@
 			} ]
 		});
 
-		throws(function() {
+		assert.throws(function() {
 			oMockServer.start();
 		}, /response/, "Throws exception");
 		oMockServer.destroy();

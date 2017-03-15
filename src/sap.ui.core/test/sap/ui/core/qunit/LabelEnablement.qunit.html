@@ -109,7 +109,7 @@
 		});
 
 		QUnit.test("Initialization", function(assert) {
-			throws(function(){
+			assert.throws(function(){
 				sap.ui.core.LabelEnablement.enrich(new TestControl());
 			}, "sap.ui.core.LabelEnablement cannot be applied on Controls which does not implement interface sap.ui.core.Label");
 

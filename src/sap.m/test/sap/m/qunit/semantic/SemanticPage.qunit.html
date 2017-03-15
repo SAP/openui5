@@ -1271,7 +1271,7 @@
 			assert.strictEqual(bCustomButtonIsRemoved, true, "The item has been correctly removed");
 
 			// Assert
-			throws(function () {
+			assert.throws(function () {
 				oDetailPage.addCustomFooterContent(oSemanticButton);
 			}, "correctly throws an error when semantic content is added");
 

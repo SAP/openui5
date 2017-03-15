@@ -504,7 +504,7 @@ sap.ui.require([
 		}
 
 		oDateTimeOffset0.validateValue("2000-01-01T16:00:00Z");
-		throws(oDateTimeOffset0, "2000-01-01T16:00:00.0Z");
+		assert.throws(oDateTimeOffset0, "2000-01-01T16:00:00.0Z");
 
 		// @see _AnnotationHelperExpression.qunit.js
 		[
@@ -531,7 +531,7 @@ sap.ui.require([
 			"-0006-12-24T00:00:00Z",
 			"-6-12-24T16:00:00Z"
 		].forEach(function (sValue) {
-			throws(oDateTimeOffset12, sValue);
+			assert.throws(oDateTimeOffset12, sValue);
 		});
 	});
 });

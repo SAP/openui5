@@ -971,7 +971,7 @@
 		});
 
 		QUnit.test(sTestPrefix + "Wrong argument in constructor", function(assert) {
-			throws(function(){
+			assert.throws(function(){
 	            new P("not callable");
 	        }, Error);
 		});

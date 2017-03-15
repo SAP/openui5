@@ -599,7 +599,7 @@
 			// TODO: decide if check on internal variables is needed (Cahit)
 			assert.strictEqual(oList._bSelectionMode, true, 'Internal selection mode is true for list mode "SingleSelectLeft" on ' + oList);
 
-			throws(function () {
+			assert.throws(function () {
 				oList.setMode("DoesNotExist");
 			}, "Throws a type exception");
 			assert.strictEqual(oList.getMode(), sap.m.ListMode.SingleSelectLeft, 'The property "mode" is still "SingleSelectLeft" after setting mode "DoesNotExist" on ' + oList);
@@ -646,17 +646,17 @@
 			assert.strictEqual($list.css("width"), sWidth, 'The CSS property "width" is now "' + sWidth + '" on ' + oList);
 			assert.strictEqual($list.width(), sWidthPx, 'The px width is now "' + sWidthPx + '" on ' + oList);
 
-			throws(function () {
+			assert.throws(function () {
 				oList.setWidth("NotaCSSSize");
 			}, "Throws a type exception");
 			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is still "' + sWidth + '" after setting value "NotACSSSize"  on ' + oList);
 
-			throws(function () {
+			assert.throws(function () {
 				oList.setWidth(-666);
 			}, "Throws a type exception");
 			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is still "' + sWidth + '" after setting value "-666"  on ' + oList);
 
-			throws(function () {
+			assert.throws(function () {
 				oList.setWidth(false);
 			}, "Throws a type exception");
 			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is still "' + sWidth + '" after setting value "false" on ' + oList);
@@ -771,7 +771,7 @@
 			assert.strictEqual(oRenderSpy.callCount, 2, 'The list should be rerendered after setting growing to "true"');
 
 			// TODO: this should fire an exception because type is boolean
-			//throws(function () {
+			//assert.throws(function () {
 				oList.setGrowing("WrongType");
 			//}, "Throws a type exception");
 			assert.strictEqual(oList.getGrowing(), true, 'The control property "growing" is now "true" after setting value "WrongType" on ' + oList);
@@ -815,7 +815,7 @@
 			//assert.strictEqual(oList.setGrowingThreshold(0).getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is still "' + iThreshold + '" after setting value "0" on ' + oList);
 			//assert.strictEqual(oList.setGrowingThreshold(-99).getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is still "' + iThreshold + '" after setting value "-99" on ' + oList);
 
-			throws(function () {
+			assert.throws(function () {
 				oList.setGrowingThreshold("WrongType");
 			}, "Throws a type exception");
 			assert.strictEqual(oList.getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is still "' + iThreshold + '" after setting value "wrongType" on ' + oList);
@@ -918,7 +918,7 @@
 			assert.ok(!$list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list does not have class "sapMListBGTransparent" on ' + oList);
 			assert.ok($list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list has class "sapMListBGTranslucent" on ' + oList);
 
-			throws(function () {
+			assert.throws(function () {
 				oList.setBackgroundDesign("DoesNotExist");
 			}, "Throws a type exception");
 			assert.strictEqual(oList.getBackgroundDesign(), sap.m.BackgroundDesign.Translucent, 'The property "backgroundDesign" is still "sap.m.BackgroundDesign.Translucent" after setting mode "DoesNotExist" on ' + oList);
@@ -968,7 +968,7 @@
 			assert.ok(!$listUl.hasClass("sapMListShowSeparatorsInner"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsInner" on ' + oList);
 			assert.ok($listUl.hasClass("sapMListShowSeparatorsNone"), 'The HTML div container for the list has class "sapMListShowSeparatorsNone" on ' + oList);
 
-			throws(function () {
+			assert.throws(function () {
 				oList.setshowSeparators("DoesNotExist");
 			}, "Throws a type exception");
 			assert.strictEqual(oList.getShowSeparators(), sap.m.ListSeparators.None, 'The property "showSeparators" is still "sap.m.showSeparators.None" after setting mode "DoesNotExist" on ' + oList);
@@ -1028,7 +1028,7 @@
 			oSelectionItem.setSelected(false);
 
 			// TODO: this should fire an exception because type is boolean
-			throws(function () {
+			assert.throws(function () {
 				oList.setIncludeItemInSelection("WrongType");
 			}, "Throws a type exception");
 			assert.strictEqual(oList.getIncludeItemInSelection(), false, 'The control property "includeItemInSelection" is still "false" after setting value "WrongType" on ' + oList);

@@ -806,7 +806,7 @@ sap.ui.require([
 
     var testGenerator = new GherkinTestGenerator(feature, steps);
 
-    throws( function(){
+    assert.throws( function(){
       testGenerator.execute();
     }, function(error) {
       return error.message === "Run 'generate' before calling 'execute'";
@@ -816,7 +816,7 @@ sap.ui.require([
 
     var featureTest = testGenerator.generate();
 
-    throws( function(){
+    assert.throws( function(){
       testGenerator.execute();
     }, function(error) {
       return error.message === "Input parameter 'oTestStep' is not a valid TestStep object.";
@@ -824,7 +824,7 @@ sap.ui.require([
       "call 'execute' with undefined test step"
     );
 
-    throws( function(){
+    assert.throws( function(){
       testGenerator.execute(100);
     }, function(error) {
       return error.message === "Input parameter 'oTestStep' is not a valid TestStep object.";
@@ -832,7 +832,7 @@ sap.ui.require([
       "call \"execute\" with test step that's not an object"
     );
 
-    throws( function(){
+    assert.throws( function(){
       testGenerator.execute({});
     }, function(error) {
       return error.message === "Input parameter 'oTestStep' is not a valid TestStep object.";
@@ -918,7 +918,7 @@ sap.ui.require([
     var badAltGeneratorError = "GherkinTestGenerator constructor: if specified, parameter 'fnAlternateTestStepGenerator' must be a valid Function";
 
 
-    throws( function(){
+    assert.throws( function(){
       new GherkinTestGenerator();
     }, function(error) {
       return error.message === badFeatureError;
@@ -926,7 +926,7 @@ sap.ui.require([
       "first parameter is not specified"
     );
 
-    throws( function(){
+    assert.throws( function(){
       new GherkinTestGenerator(1000);
     }, function(error) {
       return error.message === badFeatureError;
@@ -934,7 +934,7 @@ sap.ui.require([
       "first parameter is not a String or Object"
     );
 
-    throws( function(){
+    assert.throws( function(){
       new GherkinTestGenerator({});
     }, function(error) {
       return error.message === badFeatureError;
@@ -942,7 +942,7 @@ sap.ui.require([
       "first parameter is an object, but not a Feature object"
     );
 
-    throws( function(){
+    assert.throws( function(){
       new GherkinTestGenerator(this.parser.parse("Feature: Serve coffee"));
     }, function(error) {
       return error.message === badStepDefsError;
@@ -950,7 +950,7 @@ sap.ui.require([
       "second parameter is not specified"
     );
 
-    throws( function(){
+    assert.throws( function(){
       new GherkinTestGenerator(this.parser.parse("Feature: Serve coffee"), "not a function");
     }, function(error) {
       return error.message === badStepDefsError;
@@ -958,7 +958,7 @@ sap.ui.require([
       "second parameter is not a function"
     );
 
-    throws( function(){
+    assert.throws( function(){
       new GherkinTestGenerator(this.parser.parse("Feature: Serve coffee"), function(){});
     }, function(error) {
       return error.message === badStepDefsError;
@@ -966,7 +966,7 @@ sap.ui.require([
       "second parameter is a function, but not a StepDefs constructor"
     );
 
-    throws( function(){
+    assert.throws( function(){
       new GherkinTestGenerator(this.parser.parse("Feature: Serve coffee"),
         StepDefinitions, "not a function");
     }, function(error) {
@@ -1344,7 +1344,7 @@ sap.ui.require([
 
     var testGenerator = new GherkinTestGenerator(feature, steps);
 
-    throws( function(){
+    assert.throws( function(){
       testGenerator.generate();
     }, function(error) {
       return error.message === "Ambiguous step definition error: 3 step definitions '/^I should be served a coffee$/i', '/^I should.*/i' and '/^.*/i' match the feature file step 'I should be served a coffee'";
