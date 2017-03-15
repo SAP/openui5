@@ -67,10 +67,11 @@ li {
 
 .registrationimg {
 	width: 30%;
+	min-width: 220px;
 	float: right;
-	position: relative;
-	top: 90px;
-	right: 7%;
+	position: absolute;
+	top: 110px;
+	right: 9%;
 	z-index: 9;
 }
 
