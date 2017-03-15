@@ -1279,6 +1279,7 @@ sap.ui.define([
 			text: that._oRb.getText('COLUMNSPANEL_CHARTTYPE')
 		});
 		var oChartTypeComboBox = new sap.m.ComboBox({
+			placeholder: oInvisibleChartTypeText.getText(),
 			selectedKey: {
 				path: '/selectedChartTypeKey'
 			},
