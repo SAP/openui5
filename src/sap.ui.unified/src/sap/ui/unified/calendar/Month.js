@@ -707,13 +707,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			// initialize the time part of the start and end time
 			var oRange = aSpecialDates[i];
 			var oStartDate = oRange.getStartDate();
-			var oStartTimeStamp = 0;
+			var oStartTimeStamp = CalendarUtils.MAX_MILLISECONDS; //max date
 			if (oStartDate) {
 				oStartDate = CalendarUtils._createUniversalUTCDate(oStartDate, sCalendarType);
 				oStartTimeStamp = oStartDate.getTime();
 			}
 			var oEndDate = oRange.getEndDate();
-			var oEndTimeStamp = 0;
+			var oEndTimeStamp = -CalendarUtils.MAX_MILLISECONDS; //min date
 			if (oEndDate) {
 				oEndDate = CalendarUtils._createUniversalUTCDate(oEndDate, sCalendarType);
 				oEndTimeStamp = oEndDate.getTime();
