@@ -429,42 +429,46 @@ sap.ui.define([
 	};
 
 	/**
-	 * Merges the given metadata and <code>$Annotations</code> from schemas at the root element.
-	 * The content of the first metadata object is modified and enriched with the content of the
-	 * other metadata objects.
+	 * Merges <code>$Annotations</code> from the given $metadata and additional annotation files
+	 * into the root scope as a new map of all annotations, called <code>$Annotations</code>.
 	 *
-	 * @param {object[]} aMetadata
-	 *   The metadata objects to be merged
-	 * @returns {object}
-	 *   The merged metadata
+	 * @param {object} mScope
+	 *   The $metadata "JSON" of the root service
+	 * @param {object[]} aAnnotationFiles
+	 *   The metadata "JSON" of the additional annotation files
 	 * @throws {Error}
 	 *   If metadata cannot be merged
 	 *
 	 * @private
 	 */
-	ODataMetaModel.prototype._mergeMetadata = function (aMetadata) {
+	ODataMetaModel.prototype._mergeAnnotations = function (mScope, aAnnotationFiles) {
 		var sMessage,
 			sReferenceUri,
-			oResult = aMetadata[0],
 			that = this;
 
-		function moveAnnotations(oElement) {
-			if (oElement.$kind === "Schema" && oElement.$Annotations) {
-				Object.keys(oElement.$Annotations).forEach(function (sTerm) {
-					if (!oResult.$Annotations[sTerm]) {
-						oResult.$Annotations[sTerm] = oElement.$Annotations[sTerm];
-					} else {
-						jQuery.extend(oResult.$Annotations[sTerm],
-							oElement.$Annotations[sTerm]);
-					}
-				});
-				delete oElement.$Annotations;
+		/*
+		 * Merges the given schema's annotations into the root scope's $Annotations.
+		 *
+		 * @param {object} oSchema
+		 *   a schema; schema children are ignored because they do not contain $Annotations
+		 */
+		function mergeAnnotations(oSchema) {
+			var sTarget;
+
+			for (sTarget in oSchema.$Annotations) {
+				if (sTarget in mScope.$Annotations) {
+					// "PUT" semantics on term level, last annotation file wins
+					jQuery.extend(mScope.$Annotations[sTarget], oSchema.$Annotations[sTarget]);
+				} else {
+					mScope.$Annotations[sTarget] = oSchema.$Annotations[sTarget];
+				}
 			}
+			delete oSchema.$Annotations;
 		}
 
 		if (this.bSupportReferences) {
-			for (sReferenceUri in oResult.$Reference) {
-				if ("$IncludeAnnotations" in oResult.$Reference[sReferenceUri]) {
+			for (sReferenceUri in mScope.$Reference) {
+				if ("$IncludeAnnotations" in mScope.$Reference[sReferenceUri]) {
 					sMessage = "Unsupported IncludeAnnotations";
 					jQuery.sap.log.error(sMessage, this.sUrl, sODataMetaModel);
 					throw new Error(sMessage);
@@ -472,29 +476,29 @@ sap.ui.define([
 			}
 		}
 
-		// shift $annotations from schema to root
-		oResult.$Annotations = oResult.$Annotations || {};
-		Object.keys(oResult).forEach(function (sElement) {
-			moveAnnotations(oResult[sElement]);
+		// merge $Annotations from all schemas at root scope
+		mScope.$Annotations = {};
+		Object.keys(mScope).forEach(function (sElement) {
+			mergeAnnotations(mScope[sElement]);
 		});
 
-		// enrich metadata with annotations
-		aMetadata.slice(1).forEach(function (oAnnotationMetadata, i) {
-			Object.keys(oAnnotationMetadata).forEach(function (sKey) {
-				var oElement = oAnnotationMetadata[sKey];
+		// merge annotation files into root scope
+		aAnnotationFiles.forEach(function (mAnnotationScope, i) {
+			var oElement,
+				sQualifiedName;
 
-				if (oElement.$kind !== undefined
-						|| Array.isArray(oElement) /*Actions or Functions*/) {
-					if (oResult[sKey]) {
-						throw new Error("Overwriting '" + sKey + "' with the value defined in '"
-							+ that.aAnnotationUris[i] + "' is not supported");
+			for (sQualifiedName in mAnnotationScope) {
+				if (sQualifiedName[0] !== "$") {
+					if (sQualifiedName in mScope) {
+						throw new Error("Duplicate name " + sQualifiedName + " in "
+							+ that.aAnnotationUris[i]);
 					}
-					oResult[sKey] = oElement;
-					moveAnnotations(oElement);
+					oElement = mAnnotationScope[sQualifiedName];
+					mScope[sQualifiedName] = oElement;
+					mergeAnnotations(oElement);
 				}
-			});
+			}
 		});
-		return oResult;
 	};
 
 	// See class documentation
@@ -787,7 +791,11 @@ sap.ui.define([
 				});
 			}
 			this.oMetadataPromise = _SyncPromise.all(aPromises).then(function (aMetadata) {
-				return that._mergeMetadata(aMetadata);
+				var mScope = aMetadata[0];
+
+				that._mergeAnnotations(mScope, aMetadata.slice(1));
+
+				return mScope;
 			});
 		}
 		return this.oMetadataPromise;

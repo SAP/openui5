@@ -749,51 +749,32 @@ sap.ui.require([
 				oMetadataRequestorMock = this.mock(oMetadataRequestor),
 				sUrl = "/~/$metadata",
 				oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl, oFixture.vAnnotationURI),
-				oMergedMetadata = {},
-				aReadResults = [{/*mScope metadata*/}],
-				oPromise = Promise.resolve(aReadResults[0]),
+				aReadResults = [],
+				mRootScope = {},
 				oSyncPromise;
 
 			oMetadataRequestorMock.expects("read").withExactArgs(sUrl)
-				.returns(oPromise);
-
+				.returns(Promise.resolve(mRootScope));
 			oFixture.aAdditionalRequest.forEach(function (sAnnotationUrl) {
-				var oAnnotationResult = {/*mScope*/};
+				var oAnnotationResult = {};
 
 				aReadResults.push(oAnnotationResult);
 				oMetadataRequestorMock.expects("read").withExactArgs(sAnnotationUrl, true)
 					.returns(Promise.resolve(oAnnotationResult));
 			});
-			this.mock(oMetaModel).expects("_mergeMetadata")
-				.withExactArgs(sinon.match(function (aMetadata) {
-					var i, n;
-					if (aMetadata.length !== aReadResults.length) {
-						return false;
-					}
-					for (i = 0, n = aMetadata.length; i < n; i += 1) {
-						if (aMetadata[i] !== aReadResults[i]) {
-							return false;
-						}
-						return true;
-					}
-				})).returns(oMergedMetadata);
+			this.mock(oMetaModel).expects("_mergeAnnotations")
+				.withExactArgs(mRootScope, aReadResults);
 
 			// code under test
 			oSyncPromise = oMetaModel.fetchEntityContainer();
 
 			// pending
-			assert.strictEqual(oSyncPromise.isFulfilled(), false);
-			assert.strictEqual(oSyncPromise.isRejected(), false);
-			assert.strictEqual(oSyncPromise.getResult(), oSyncPromise);
+			assert.strictEqual(oSyncPromise.isPending(), true);
 			// already caching
 			assert.strictEqual(oMetaModel.fetchEntityContainer(), oSyncPromise);
 
-			return oSyncPromise.then(function (mScope) {
-				// fulfilled
-				assert.strictEqual(oSyncPromise.isFulfilled(), true);
-				assert.strictEqual(oSyncPromise.isRejected(), false);
-				assert.strictEqual(mScope, oMergedMetadata);
-				assert.strictEqual(oSyncPromise.getResult(), oMergedMetadata);
+			return oSyncPromise.then(function (mRootScope0) {
+				assert.strictEqual(mRootScope0, mRootScope);
 				// still caching
 				assert.strictEqual(oMetaModel.fetchEntityContainer(), oSyncPromise);
 			});
@@ -2526,88 +2507,246 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_mergeMetadata", function (assert) {
-		var sWorker = "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/",
+	QUnit.test("_mergeAnnotations: without annotation files", function (assert) {
+		var sNamespace = "com.sap.gateway.default.iwbep.tea_busi.v0001.",
+			sBaseUrl = "/" + window.location.pathname.split("/")[1]
+				+ "/test-resources/sap/ui/core/qunit/odata/v4/data/",
+			oMetadata = jQuery.sap.sjax({url : sBaseUrl + "metadata.json", dataType : 'json'}).data,
+			oMetadataCopy = clone(oMetadata);
+
+		// code under test
+		this.oMetaModel._mergeAnnotations(oMetadataCopy, []);
+
+		assert.deepEqual(oMetadataCopy.$Annotations,
+			jQuery.extend({}, oMetadata[sNamespace].$Annotations),
+			"$Annotations have been shifted and merged from schemas to root");
+		assert.strictEqual(oMetadataCopy[sNamespace].$Annotations,
+			undefined, "$Annotations removed from schema");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_mergeAnnotations: with annotation files (legacy)", function (assert) {
+		var sNamespace = "com.sap.gateway.default.iwbep.tea_busi.v0001.",
+			sWorker = sNamespace + "Worker/",
 			sBasicSalaryCurr = sWorker + "ComplexType_Salary/BASIC_SALARY_CURR",
 			sBasicSalaryCurr2 = "another.schema.2.ComplexType_Salary/BASIC_SALARY_CURR",
 			sBonusCurr = sWorker + "ComplexType_Salary/BONUS_CURR",
 			sCommonLabel = "@com.sap.vocabularies.Common.v1.Label",
 			sCommonQuickInfo = "@com.sap.vocabularies.Common.v1.QuickInfo",
 			sCommonText = "@com.sap.vocabularies.Common.v1.Text",
-			oExpectedMergedMetadata,
-			oMergedMetadata,
 			sBaseUrl = "/" + window.location.pathname.split("/")[1]
 				+ "/test-resources/sap/ui/core/qunit/odata/v4/data/",
 			oMetadata = jQuery.sap.sjax({url : sBaseUrl + "metadata.json", dataType : 'json'}).data,
-			oAnnotation = jQuery.sap.sjax({url : sBaseUrl + "annotations1.json", dataType : 'json'})
-				.data,
-			oAnnotationCopy,
+			oExpectedResult = clone(oMetadata),
+			oAnnotation = jQuery.sap.sjax({
+				url : sBaseUrl + "legacy_annotations.json",
+				dataType : 'json'
+			}).data,
+			oAnnotationCopy = clone(oAnnotation),
 			oMetadataCopy = clone(oMetadata);
 
-		// code under test
-		oMergedMetadata = this.oMetaModel._mergeMetadata([oMetadataCopy]);
+		// the examples are unrealistic and only need to work in 'legacy mode'
+		this.oMetaModel.bSupportReferences = false;
 
-		assert.strictEqual(oMergedMetadata, oMetadataCopy, "same instance is returned");
-		assert.deepEqual(oMergedMetadata.$Annotations,
-			jQuery.extend({}, oMetadata["com.sap.gateway.default.iwbep.tea_busi.v0001."].$Annotations),
-			"$Annotations have been shifted and merged from schemas to root");
-		assert.strictEqual(oMergedMetadata["com.sap.gateway.default.iwbep.tea_busi.v0001."].$Annotations,
-			undefined, "$Annotations removed from schema");
-
-		// prepare test with annotations
-		oAnnotationCopy = clone(oAnnotation);
-		oExpectedMergedMetadata = clone(oMetadata);
-		oExpectedMergedMetadata.$Annotations = jQuery.extend({},
-				oMetadata["com.sap.gateway.default.iwbep.tea_busi.v0001."].$Annotations);
-		delete oExpectedMergedMetadata["com.sap.gateway.default.iwbep.tea_busi.v0001."].$Annotations;
-		// all kind entries are merged
-		oExpectedMergedMetadata["my.schema.2.FuGetEmployeeMaxAge"] =
+		oExpectedResult.$Annotations = jQuery.extend({}, oMetadata[sNamespace].$Annotations);
+		delete oExpectedResult[sNamespace].$Annotations;
+		// all entries with $kind are merged
+		oExpectedResult["my.schema.2.FuGetEmployeeMaxAge"] =
 			oAnnotationCopy["my.schema.2.FuGetEmployeeMaxAge"];
-		oExpectedMergedMetadata["my.schema.2.Entity"] =
+		oExpectedResult["my.schema.2.Entity"] =
 			oAnnotationCopy["my.schema.2.Entity"];
-		oExpectedMergedMetadata["my.schema.2.DefaultContainer"] =
+		oExpectedResult["my.schema.2.DefaultContainer"] =
 			oAnnotationCopy["my.schema.2.DefaultContainer"];
-		oExpectedMergedMetadata["my.schema.2."] =
+		oExpectedResult["my.schema.2."] =
 			oAnnotationCopy["my.schema.2."];
-		oExpectedMergedMetadata["another.schema.2."] =
+		oExpectedResult["another.schema.2."] =
 			oAnnotationCopy["another.schema.2."];
 		// update annotations
-		oExpectedMergedMetadata.$Annotations[sBasicSalaryCurr][sCommonLabel]
+		oExpectedResult.$Annotations[sBasicSalaryCurr][sCommonLabel]
 			= oAnnotationCopy["my.schema.2."].$Annotations[sBasicSalaryCurr][sCommonLabel];
-		oExpectedMergedMetadata.$Annotations[sBasicSalaryCurr][sCommonQuickInfo]
+		oExpectedResult.$Annotations[sBasicSalaryCurr][sCommonQuickInfo]
 			= oAnnotationCopy["my.schema.2."].$Annotations[sBasicSalaryCurr][sCommonQuickInfo];
-		oExpectedMergedMetadata.$Annotations[sBonusCurr][sCommonText]
+		oExpectedResult.$Annotations[sBonusCurr][sCommonText]
 			= oAnnotationCopy["my.schema.2."].$Annotations[sBonusCurr][sCommonText];
-		oExpectedMergedMetadata.$Annotations[sBasicSalaryCurr2]
+		oExpectedResult.$Annotations[sBasicSalaryCurr2]
 			= oAnnotationCopy["another.schema.2."].$Annotations[sBasicSalaryCurr2];
-		delete oExpectedMergedMetadata["my.schema.2."].$Annotations;
-		delete oExpectedMergedMetadata["another.schema.2."].$Annotations;
-
-		oMetadataCopy = clone(oMetadata);
-		oAnnotationCopy = clone(oAnnotation);
+		delete oExpectedResult["my.schema.2."].$Annotations;
+		delete oExpectedResult["another.schema.2."].$Annotations;
 
 		// code under test
-		oMergedMetadata = this.oMetaModel._mergeMetadata([oMetadataCopy, oAnnotationCopy]);
+		this.oMetaModel._mergeAnnotations(oMetadataCopy, [oAnnotation]);
 
-		assert.strictEqual(oMergedMetadata, oMetadataCopy, "same instance as first element");
-		assert.deepEqual(oMergedMetadata, oExpectedMergedMetadata, "merged metadata as expected");
+		assert.deepEqual(oMetadataCopy, oExpectedResult, "merged metadata as expected");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_mergeMetadata - error", function (assert) {
-		var sBaseUrl = "/" + window.location.pathname.split("/")[1]
-				+ "/test-resources/sap/ui/core/qunit/odata/v4/data/",
-			oAnnotation = jQuery.sap.sjax({url : sBaseUrl + "annotations2.json", dataType : 'json'})
-				.data,
-			oMetadata = jQuery.sap.sjax({url : sBaseUrl + "metadata.json", dataType : 'json'}).data,
-			oMetaModel = new ODataMetaModel({} /*requestor*/, "/url", "/my/annotation.xml");
+	QUnit.test("_mergeAnnotations: with annotation files", function (assert) {
+		var mScope0 = {
+				"$EntityContainer" : "tea_busi.DefaultContainer",
+				"$Version" : "4.0",
+				"tea_busi." : {
+					"$kind" : "Schema",
+					"$Annotations" : {
+						"tea_busi.DefaultContainer" : {
+							"@A" : "from $metadata",
+							"@B" : "from $metadata",
+							"@C" : "from $metadata"
+						},
+						"tea_busi.TEAM" : {
+							"@D" : ["from $metadata"],
+							"@E" : ["from $metadata"],
+							"@F" : ["from $metadata"]
+						}
+					}
+				},
+				"tea_busi.DefaultContainer" : {
+					"$kind" : "EntityContainer"
+				},
+				"tea_busi.EQUIPMENT" : {
+					"$kind" : "EntityType"
+				},
+				"tea_busi.TEAM" : {
+					"$kind" : "EntityType"
+				},
+				"tea_busi.Worker" : {
+					"$kind" : "EntityType"
+				}
+			},
+			mAnnotationScope1 = {
+				"$Version" : "4.0",
+				"foo." : {
+					"$kind" : "Schema",
+					"$Annotations" : {
+						"tea_busi.DefaultContainer" : {
+							"@B" : "from annotation #1",
+							"@C" : "from annotation #1"
+						},
+						"tea_busi.TEAM" : {
+							"@E" : ["from annotation #1"],
+							"@F" : ["from annotation #1"]
+						},
+						"tea_busi.Worker" : {
+							"@From.Annotation" : {
+								"$Type" : "some.Record",
+								"Label" : "from annotation #1"
+							},
+							"@From.Annotation1" : "from annotation #1"
+						}
+					}
+				}
+			},
+			mAnnotationScope2 = {
+				"$Version" : "4.0",
+				"bar." : {
+					"$kind" : "Schema",
+					"$Annotations" : {
+						"tea_busi.DefaultContainer" : {
+							"@C" : "from annotation #2"
+						},
+						"tea_busi.EQUIPMENT" : {
+							"@From.Annotation2" : "from annotation #2"
+						},
+						"tea_busi.TEAM" : {
+							"@F" : ["from annotation #2"]
+						},
+						"tea_busi.Worker" : {
+							"@From.Annotation" : {
+								"$Type" : "some.Record",
+								"Value" : "from annotation #2"
+							}
+						}
+					}
+				}
+			},
+			mExpectedScope = {
+				"$Annotations" : {
+					"tea_busi.DefaultContainer" : {
+						"@A" : "from $metadata",
+						"@B" : "from annotation #1",
+						"@C" : "from annotation #2"
+					},
+					"tea_busi.EQUIPMENT" : {
+						"@From.Annotation2" : "from annotation #2"
+					},
+					"tea_busi.TEAM" : { // Note: no aggregation of array elements here!
+						"@D" : ["from $metadata"],
+						"@E" : ["from annotation #1"],
+						"@F" : ["from annotation #2"]
+					},
+					"tea_busi.Worker" : {
+						"@From.Annotation" : {
+							"$Type" : "some.Record",
+							// Note: no "Label" here!
+							"Value" : "from annotation #2"
+						},
+						"@From.Annotation1" : "from annotation #1"
+					}
+				},
+				"$EntityContainer" : "tea_busi.DefaultContainer",
+				"$Version" : "4.0",
+				"bar." : {
+					"$kind" : "Schema"
+				},
+				"foo." : {
+					"$kind" : "Schema"
+				},
+				"tea_busi." : {
+					"$kind" : "Schema"
+				},
+				"tea_busi.DefaultContainer" : {
+					"$kind" : "EntityContainer"
+				},
+				"tea_busi.EQUIPMENT" : {
+					"$kind" : "EntityType"
+				},
+				"tea_busi.TEAM" : {
+					"$kind" : "EntityType"
+				},
+				"tea_busi.Worker" : {
+					"$kind" : "EntityType"
+				}
+			};
+
+		// code under test
+		this.oMetaModel._mergeAnnotations(mScope0, [mAnnotationScope1, mAnnotationScope2]);
+
+		assert.deepEqual(mScope0, mExpectedScope);
+		assert.strictEqual(mScope0["tea_busi."].$Annotations, undefined);
+		assert.strictEqual(mAnnotationScope1["foo."].$Annotations, undefined);
+		assert.strictEqual(mAnnotationScope2["bar."].$Annotations, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_mergeAnnotations - error (legacy)", function (assert) {
+		var oAnnotation1 = {
+				"tea_busi.NewType1" : {
+					"$kind" : "EntityType"
+				}
+			},
+			oAnnotation2 = {
+				"tea_busi.NewType2" : {
+					"$kind" : "EntityType"
+				},
+				"tea_busi.ExistingType" : {
+					"$kind" : "EntityType"
+				}
+			},
+			oMetadata = {
+				"tea_busi.ExistingType" : {
+					"$kind" : "EntityType"
+				}
+			};
+
+		this.oMetaModel.aAnnotationUris = ["n/a", "/my/annotation.xml"];
+		// legacy behavior - a schema cannot span more than one document
+		this.oMetaModel.bSupportReferences = false;
 
 		assert.throws(function () {
 			// code under test
-			oMetaModel._mergeMetadata([oMetadata, oAnnotation]);
-		}, new Error("Overwriting 'com.sap.gateway.default.iwbep.tea_busi.v0001.Department'"
-				+ " with the value defined in '/my/annotation.xml' is not supported"));
+			this.oMetaModel._mergeAnnotations(oMetadata, [oAnnotation1, oAnnotation2]);
+		}, new Error("Duplicate name tea_busi.ExistingType in /my/annotation.xml"));
 	});
+	//TODO - check that a schema cannot span more than one document
 
 	//*********************************************************************************************
 	QUnit.test("getOrCreateValueListModel", function(assert) {
