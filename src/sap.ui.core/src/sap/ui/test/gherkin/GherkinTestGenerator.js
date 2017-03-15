@@ -246,7 +246,7 @@ sap.ui.define([
         return this._generateTestScenario(oScenario, this._oFeature.background);
       }, this);
 
-      var bFeatureIsWip = ($.inArray("@wip", this._oFeature.tags) !== -1);
+      var bFeatureIsWip = this._isWip(this._oFeature);
       var bAllScenariosAreSkipped = aTestScenarios.every(function(oTestScenario) {return oTestScenario.skip;});
 
       return {
@@ -273,7 +273,7 @@ sap.ui.define([
      */
     _expandScenarioOutline: function(oScenario) {
 
-      // if this is not a scenario outline OR it's a scenario outline with no Examples
+      // if this is not a scenario outline OR it's a scenario outline with no active Examples
       if (!this._isScenarioOutlineWithExamples(oScenario)) {
         // then don't change anything
         return [oScenario];
@@ -282,8 +282,8 @@ sap.ui.define([
       // else this is a scenario outline with at least one set of Examples
       var aConcreteScenarios = [];
 
-      // for each set of Examples in the Scenario Outline
-      oScenario.examples.forEach(function(oExample, i) {
+      // for each set of active Examples in the Scenario Outline
+      oScenario.examples.filter(this._isNotWip).forEach(function(oExample, i) {
 
         var aConvertedExamples = this._convertScenarioExamplesToListOfObjects(oExample.data);
 
@@ -323,7 +323,7 @@ sap.ui.define([
      * @private
      */
     _generateTestScenario: function(oScenario, oBackground) {
-      var bWip = $.inArray("@wip", oScenario.tags) !== -1;
+      var bWip = this._isWip(oScenario);
       var sScenarioPrependText = this._isScenarioOutline(oScenario) ? "Scenario Outline: " : "Scenario: ";
       var sScenarioName = (bWip ? "(WIP) " : "") + sScenarioPrependText + oScenario.name;
       var aTestSteps = (oBackground) ? this._generateTestSteps(bWip, oBackground, false) : [];
@@ -416,9 +416,25 @@ sap.ui.define([
      * @private
      */
     _isScenarioOutlineWithExamples: function(oScenario) {
-      return !!oScenario.examples && (oScenario.examples.length !== 0) && oScenario.examples.some(function(example) {
-        return ($.inArray("@wip", example.tags) === -1);
-      });
+      return !!oScenario.examples && (oScenario.examples.length !== 0) && oScenario.examples.some(this._isNotWip);
+    },
+
+    /**
+     * @param {object} oObject - any object with a 'tags' attribute (tags are of type array)
+     * @returns true if the given oObject does not have an '@wip' tag
+     * @private
+     */
+    _isNotWip: function(oObject) {
+      return ($.inArray("@wip", oObject.tags) === -1);
+    },
+
+    /**
+     * @param {object} oObject - any object with a 'tags' attribute (tags are of type array)
+     * @returns true if the given oObject has an '@wip' tag
+     * @private
+     */
+    _isWip: function(oObject) {
+      return !this._isNotWip(oObject);
     }
 
   });
