@@ -35,7 +35,7 @@
 	  },
 	  {
 		"control": "sap.ui.layout.Splitter",
-		"url": "../Splitter.html",
+		"url": "Splitter.html",
 		"appComponent": "CA-UI5-CTR-RIL"
 	  },
 	  {
