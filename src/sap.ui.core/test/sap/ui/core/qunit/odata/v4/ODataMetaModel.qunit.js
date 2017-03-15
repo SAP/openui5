@@ -4,11 +4,14 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/model/BindingMode",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/ClientListBinding",
+	"sap/ui/model/ClientPropertyBinding",
 	"sap/ui/model/Context",
 	"sap/ui/model/ContextBinding",
-	"sap/ui/model/FilterProcessor",
-	"sap/ui/model/json/JSONListBinding",
+	"sap/ui/model/Filter",
 	"sap/ui/model/MetaModel",
+	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/type/Int64",
 	"sap/ui/model/odata/type/Raw",
@@ -19,12 +22,12 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ValueListType",
-	"sap/ui/model/PropertyBinding",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
-], function (jQuery, BindingMode, BaseContext, ContextBinding, FilterProcessor, JSONListBinding,
-		MetaModel, OperationMode, Int64, Raw, AnnotationHelper, Context, _Helper, _SyncPromise,
-		ODataMetaModel, ODataModel, ValueListType, PropertyBinding, TestUtils, URI) {
+], function (jQuery, BindingMode, ChangeReason, ClientListBinding, ClientPropertyBinding,
+		BaseContext, ContextBinding, Filter, MetaModel, Sorter, OperationMode, Int64, Raw,
+		AnnotationHelper, Context, _Helper, _SyncPromise, ODataMetaModel, ODataModel,
+		ValueListType, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0 */
 	"use strict";
@@ -688,6 +691,10 @@ sap.ui.require([
 			"sap.ui.model.odata.v4.ODataMetaModel: /~/$metadata");
 
 		// code under test
+		oMetaModel.setDefaultBindingMode(BindingMode.OneWay);
+		assert.strictEqual(oMetaModel.getDefaultBindingMode(), BindingMode.OneWay);
+
+		// code under test
 		oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl, aAnnotationUris);
 
 		assert.strictEqual(oMetaModel.aAnnotationUris, aAnnotationUris, "arrays are passed");
@@ -726,9 +733,6 @@ sap.ui.require([
 			oMetaModel.setLegacySyntax(); // argument does not matter!
 		}, new Error("Unsupported operation: v4.ODataMetaModel#setLegacySyntax"));
 
-		assert.throws(function () {
-			oMetaModel.setDefaultBindingMode(BindingMode.OneWay);
-		});
 		assert.throws(function () {
 			oMetaModel.setDefaultBindingMode(BindingMode.TwoWay);
 		});
@@ -1033,7 +1037,6 @@ sap.ui.require([
 	//TODO support also external targeting from a different schema!
 	//TODO MySchema.MyFunction/MyParameter --> requires search in array?!
 	//TODO $count?
-	//TODO this.oList => getObject/getProperty MUST also accept object instead of context!
 	//TODO "For annotations targeting a property of an entity type or complex type, the path
 	// expression is evaluated starting at the outermost entity type or complex type named in the
 	// Target of the enclosing edm:Annotations element, i.e. an empty path resolves to the
@@ -2254,7 +2257,7 @@ sap.ui.require([
 			sPath = "foo",
 			oValue = {};
 
-		//TODO call fetchObject instead once lazy loading is implemented
+		//TODO call fetchObject instead once lazy loading is implemented?
 		this.mock(this.oMetaModel).expects("getProperty")
 			.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
 			.returns(oValue);
@@ -2262,7 +2265,7 @@ sap.ui.require([
 		// code under test
 		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
 
-		assert.ok(oBinding instanceof PropertyBinding);
+		assert.ok(oBinding instanceof ClientPropertyBinding);
 		assert.strictEqual(oBinding.getContext(), oContext);
 		assert.strictEqual(oBinding.getModel(), this.oMetaModel);
 		assert.strictEqual(oBinding.getPath(), sPath);
@@ -2276,6 +2279,39 @@ sap.ui.require([
 		assert.throws(function () {
 			oBinding.setExternalValue("foo");
 		}, /Unsupported operation: ODataMetaPropertyBinding#setValue/);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODataMetaPropertyBinding#checkUpdate", function (assert) {
+		var oBinding,
+			oBindingMock,
+			oContext = {},
+			sPath = "foo",
+			oValue1 = {},
+			oValue2 = {};
+
+		this.mock(this.oMetaModel).expects("getProperty")
+			.withExactArgs(sPath, sinon.match.same(oContext), undefined)
+			.returns(oValue1);
+		oBinding = this.oMetaModel.bindProperty(sPath, oContext);
+		oBindingMock = this.mock(oBinding);
+		oBindingMock.expects("_getValue").withExactArgs().returns(oValue1);
+		oBindingMock.expects("_fireChange").never();
+
+		// code under test: nothing changed -> no event
+		oBinding.checkUpdate();
+
+		// simulate a changed value; this may happen when a new context was set
+		oBindingMock.expects("_getValue").twice().withExactArgs().returns(oValue2);
+		oBindingMock.expects("_fireChange").twice().withExactArgs({reason : ChangeReason.Change});
+
+		// code under test: value changed -> changeEvent expected
+		oBinding.checkUpdate();
+
+		assert.strictEqual(oBinding.getValue(), oValue2);
+
+		// code under test: value unchanged and bForceUpdate=true -> changeEvent expected
+		oBinding.checkUpdate(true);
 	});
 
 	//*********************************************************************************************
@@ -2359,164 +2395,246 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("bindList", function (assert) {
-		var fnApply = this.mock(FilterProcessor).expects("apply"),
-			oBinding,
-			oMetaModel = this.oMetaModel, // instead of "that = this"
-			oContext = oMetaModel.getMetaContext("/EMPLOYEES"),
+		var oBinding,
+			oContext = this.oMetaModel.getContext("/EMPLOYEES"),
 			aFilters = [],
-			fnGetValue, // fnApply.args[0][2]
-			aIndices = ["ID", "AGE"], // mock filter result
-			sPath = "",
+			sPath = "@",
 			aSorters = [];
 
-		this.mock(oMetaModel).expects("_getObject")
-			.withExactArgs(sPath, sinon.match.same(oContext))
-			.returns({
-				"ID" : {/*...*/},
-				"AGE" : {/*...*/},
-				"EMPLOYEE_2_TEAM" : {/*...*/}
-			});
-		fnApply.withArgs(["ID", "AGE", "EMPLOYEE_2_TEAM"], aFilters).returns(aIndices);
+		// avoid request to backend during initialization
+		this.mock(this.oMetaModel).expects("getObject");
 
-		// code under test: implicitly calls oBinding.applyFilter()
-		oBinding = oMetaModel.bindList(sPath, oContext, aSorters, aFilters);
+		// code under test
+		oBinding = this.oMetaModel.bindList(sPath, oContext, aSorters, aFilters);
 
-		assert.ok(oBinding instanceof JSONListBinding);
-		//TODO improve performance by not extending JSONListBinding?
-		// - update() makes a shallow copy of this.oList, avoid?!
-		// - checkUpdate() calls _getObject() twice; uses jQuery.sap.equal(); avoid?!
-		assert.strictEqual(oBinding.getModel(), oMetaModel);
+		assert.ok(oBinding instanceof ClientListBinding);
+		assert.strictEqual(oBinding.getModel(), this.oMetaModel);
 		assert.strictEqual(oBinding.getPath(), sPath);
 		assert.strictEqual(oBinding.getContext(), oContext);
 		assert.strictEqual(oBinding.aSorters, aSorters);
 		assert.strictEqual(oBinding.aApplicationFilters, aFilters);
-		assert.strictEqual(oBinding.aIndices, aIndices);
-		assert.strictEqual(oBinding.iLength, oBinding.aIndices.length);
+	});
 
-		assert.raises(function () {
-			oBinding.enableExtendedChangeDetection();
-		}, new Error("Unsupported operation"));
+	//*********************************************************************************************
+	QUnit.test("ODataMetaListBinding#update", function (assert) {
+		var oBinding,
+			oBindingMock,
+			oContext = this.oMetaModel.getContext("/EMPLOYEES"),
+			aContexts = [],
+			sPath = "path";
 
-		assert.deepEqual(oBinding.getCurrentContexts().map(function (oContext) {
-			assert.strictEqual(oContext.getModel(), oMetaModel);
-			return oContext.getPath();
-		}), [ // see aIndices
-			"/EMPLOYEES/ID",
-			"/EMPLOYEES/AGE"
-		]);
+		// avoid request to backend during initialization
+		this.mock(this.oMetaModel).expects("getObject");
 
-		// further tests regarding the getter provided to FilterProcessor.apply()
-		fnGetValue = fnApply.args[0][2];
-		this.mock(this.oMetaModel).expects("getProperty")
-			.withExactArgs("fooPath", sinon.match.same(oBinding.oList[aIndices[0]]))
-			.returns("foo");
+		oBinding = this.oMetaModel.bindList(sPath, oContext);
+		oBindingMock = this.mock(oBinding);
 
-		// code under test: "@sapui.name" is treated specially
-		assert.strictEqual(fnGetValue(aIndices[0], "@sapui.name"), aIndices[0]);
+		oBindingMock.expects("_getContexts").withExactArgs().returns(aContexts);
+		oBindingMock.expects("updateIndices").withExactArgs();
+		oBindingMock.expects("applyFilter").withExactArgs();
+		oBindingMock.expects("applySort").withExactArgs();
+		oBindingMock.expects("_getLength").withExactArgs().returns(42);
 
-		// code under test: all other paths are passed through
-		assert.strictEqual(fnGetValue(aIndices[0], "fooPath"), "foo");
+		// code under test
+		oBinding.update();
+
+		assert.strictEqual(oBinding.oList, aContexts);
+		assert.strictEqual(oBinding.iLength, 42);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODataMetaListBinding#checkUpdate", function (assert) {
+		var oBinding,
+			oBindingMock,
+			oMetaModel = this.oMetaModel, // instead of "that = this"
+			oContext = oMetaModel.getContext("/"),
+			sPath = "";
+
+		// avoid request to backend during initialization
+		this.mock(this.oMetaModel).expects("getObject");
+
+		oBinding = oMetaModel.bindList(sPath, oContext);
+		oBindingMock = this.mock(oBinding);
+
+		this.stub(oBinding, "update", function () {
+			this.oList = [{/*a context*/}];
+		});
+
+		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+
+		// code under test
+		oBinding.checkUpdate();
+
+		// code under test: The second call must call update, but not fire an event
+		oBinding.checkUpdate();
+
+		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+
+		// code under test: Must fire a change event
+		oBinding.checkUpdate(true);
+
+		sinon.assert.calledThrice(oBinding.update);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODataMetaListBinding#getContexts, getCurrentContexts", function (assert) {
+		var oBinding,
+			oMetaModel = this.oMetaModel,
+			oContext = oMetaModel.getMetaContext("/EMPLOYEES"),
+			sPath = "";
+
+		function assertContextPaths(aContexts, aPaths) {
+			assert.notOk("diff" in aContexts, "extended change detection is ignored");
+			assert.deepEqual(aContexts.map(function (oContext) {
+				assert.strictEqual(oContext.getModel(), oMetaModel);
+				return oContext.getPath().replace("/EMPLOYEES/", "");
+			}), aPaths);
+			assert.deepEqual(oBinding.getCurrentContexts(), aContexts);
+		}
+
+		this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
+			.returns(_SyncPromise.resolve(mScope));
+		oBinding = oMetaModel.bindList(sPath, oContext);
+
+		// code under test: should be ignored
+		oBinding.enableExtendedChangeDetection();
+
+		assertContextPaths(oBinding.getContexts(0, 2), ["ID", "AGE"]);
+		assertContextPaths(oBinding.getContexts(1, 2), ["AGE", "EMPLOYEE_2_CONTAINED_S"]);
+		assertContextPaths(oBinding.getContexts(), ["ID", "AGE", "EMPLOYEE_2_CONTAINED_S",
+			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM"]);
+		assertContextPaths(oBinding.getContexts(0, 10), ["ID", "AGE", "EMPLOYEE_2_CONTAINED_S",
+			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM"]);
+
+		oMetaModel.setSizeLimit(2);
+		assertContextPaths(oBinding.getContexts(), ["ID", "AGE"]);
+
+		oBinding.attachEvent("sort", function () {
+			assert.ok(false, "unexpected sort event");
+		});
+
+		oMetaModel.setSizeLimit(100);
+		oBinding.sort(new Sorter("@sapui.name"));
+		assertContextPaths(oBinding.getContexts(), ["AGE", "EMPLOYEE_2_CONTAINED_S",
+			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "ID"]);
+
+		oBinding.attachEvent("filter", function () {
+			assert.ok(false, "unexpected filter event");
+		});
+
+		oBinding.filter(new Filter("$kind", "EQ", "Property"));
+		assertContextPaths(oBinding.getContexts(), ["AGE", "ID"]);
 	});
 
 	//*********************************************************************************************
 	[{
+		contextPath : undefined,
+		metaPath : "@",
+		result : []
+	}, {
 		// <template:repeat list="{entitySet>}" ...>
 		// Iterate all OData path segments, i.e. (navigation) properties.
 		// Implicit $Type insertion happens here!
 		//TODO support for $BaseType
 		contextPath : "/EMPLOYEES",
 		metaPath : "",
-		pathIntoObject : "./",
-		result : {
-			"ID" : oWorkerData.ID,
-			"AGE" : oWorkerData.AGE,
-			"EMPLOYEE_2_CONTAINED_S" : oWorkerData.EMPLOYEE_2_CONTAINED_S,
-			"EMPLOYEE_2_TEAM" : oWorkerData.EMPLOYEE_2_TEAM,
-			"EMPLOYEE_2_EQUIPM€NTS" : oWorkerData["EMPLOYEE_2_EQUIPM€NTS"]
-		}
+		result : [
+			"/EMPLOYEES/ID",
+			"/EMPLOYEES/AGE",
+			"/EMPLOYEES/EMPLOYEE_2_CONTAINED_S",
+			"/EMPLOYEES/EMPLOYEE_2_EQUIPM€NTS",
+			"/EMPLOYEES/EMPLOYEE_2_TEAM"
+		]
 	}, {
 		// <template:repeat list="{meta>EMPLOYEES}" ...>
 		// same as before, but with non-empty path
 		contextPath : "/",
 		metaPath : "EMPLOYEES",
-		pathIntoObject : "EMPLOYEES/",
-		result : {
-			"ID" : oWorkerData.ID,
-			"AGE" : oWorkerData.AGE,
-			"EMPLOYEE_2_CONTAINED_S" : oWorkerData.EMPLOYEE_2_CONTAINED_S,
-			"EMPLOYEE_2_TEAM" : oWorkerData.EMPLOYEE_2_TEAM,
-			"EMPLOYEE_2_EQUIPM€NTS" : oWorkerData["EMPLOYEE_2_EQUIPM€NTS"]
-		}
+		result : [
+			"/EMPLOYEES/ID",
+			"/EMPLOYEES/AGE",
+			"/EMPLOYEES/EMPLOYEE_2_CONTAINED_S",
+			"/EMPLOYEES/EMPLOYEE_2_EQUIPM€NTS",
+			"/EMPLOYEES/EMPLOYEE_2_TEAM"
+		]
 	}, {
 		// <template:repeat list="{meta>/}" ...>
 		// Iterate all OData path segments, i.e. entity sets and imports.
 		// Implicit scope lookup happens here!
 		metaPath : "/",
-		result : {
-			"ChangeManagerOfTeam" : oContainerData.ChangeManagerOfTeam,
-			"EMPLOYEES" : oContainerData.EMPLOYEES,
-			"EQUIPM€NTS" : oContainerData["EQUIPM€NTS"],
-			"GetEmployeeMaxAge" : oContainerData.GetEmployeeMaxAge,
-			"Me" : oContainerData.Me,
-			"TEAMS" : oContainerData.TEAMS,
-			"T€AMS" : oContainerData["T€AMS"]
-		}
+		result :[
+			"/ChangeManagerOfTeam",
+			"/EMPLOYEES",
+			"/EQUIPM€NTS",
+			"/GetEmployeeMaxAge",
+			"/Me",
+			"/TEAMS",
+			"/T€AMS"
+		]
 	}, {
 		// <template:repeat list="{property>@}" ...>
 		// Iterate all external targeting annotations.
 		contextPath : "/T€AMS/Team_Id",
 		metaPath : "@",
-		result : mScope.$Annotations["tea_busi.TEAM/Team_Id"],
-		strict : true
+		result : [
+			"/T€AMS/Team_Id@Common.Label",
+			"/T€AMS/Team_Id@Common.Text",
+			"/T€AMS/Team_Id@Common.Text@UI.TextArrangement"
+		]
 	}, {
 		// <template:repeat list="{property>@}" ...>
 		// Iterate all external targeting annotations.
 		contextPath : "/T€AMS/Name",
 		metaPath : "@",
-		result : {}
+		result : []
 	}, {
 		// <template:repeat list="{field>./@}" ...>
 		// Iterate all inline annotations.
 		contextPath : "/T€AMS/$Type/@UI.LineItem/0",
 		metaPath : "./@",
-		result : {
-			"@UI.Importance" : oTeamLineItem[0]["@UI.Importance"]
-		}
+		result : [
+			"/T€AMS/$Type/@UI.LineItem/0/@UI.Importance"
+		]
 	}, {
 		// <template:repeat list="{at>}" ...>
 		// Iterate all inline annotations (edge case with empty relative path).
 		contextPath : "/T€AMS/$Type/@UI.LineItem/0/@",
 		metaPath : "",
-		result : {
-			"@UI.Importance" : oTeamLineItem[0]["@UI.Importance"]
-		}
+		result : [
+			"/T€AMS/$Type/@UI.LineItem/0/@UI.Importance"
+		]
+	}, {
+		contextPath : undefined,
+		metaPath : "/Unknown",
+		result : [],
+		warning : ["Unknown child Unknown of tea_busi.DefaultContainer", "/Unknown/"]
 	}].forEach(function (oFixture) {
 		var sResolvedPath = oFixture.contextPath
-			? oFixture.contextPath + " / "/*make cut more visible*/ + oFixture.metaPath
+			? oFixture.contextPath + "|"/*make cut more visible*/ + oFixture.metaPath
 			: oFixture.metaPath;
 
-		QUnit.test("_getObject: " + sResolvedPath, function (assert) {
-			var oContext = oFixture.contextPath && this.oMetaModel.getContext(oFixture.contextPath),
-				fnGetObjectSpy = this.spy(this.oMetaModel, "getObject"),
-				oMetadataClone = clone(mScope),
-				oObject,
-				sPathIntoObject = oFixture.pathIntoObject || oFixture.metaPath;
+		QUnit.test("ODataMetaListBinding#_getContexts: " + sResolvedPath, function (assert) {
+			var oBinding,
+				oMetaModel = this.oMetaModel,
+				oContext = oFixture.contextPath && oMetaModel.getContext(oFixture.contextPath);
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer")
-				.returns(_SyncPromise.resolve(mScope));
-
-			// code under test
-			oObject = this.oMetaModel._getObject(oFixture.metaPath, oContext);
-
-			assert.strictEqual(fnGetObjectSpy.callCount, 1);
-			assert.ok(fnGetObjectSpy.alwaysCalledWithExactly(sPathIntoObject, oContext),
-				fnGetObjectSpy.printf("%C"));
-			if (oFixture.strict) {
-				assert.strictEqual(oObject, oFixture.result);
-			} else {
-				assert.deepEqual(oObject, oFixture.result);
+			if (oFixture.warning) {
+				// Note that update is called twice in this test: once from bindList via the
+				// constructor, once from _getContexts
+				this.oLogMock.expects("isLoggable").twice()
+					.withExactArgs(jQuery.sap.log.Level.WARNING, sODataMetaModel)
+					.returns(true);
+				this.oLogMock.expects("warning").twice()
+					.withExactArgs(oFixture.warning[0], oFixture.warning[1], sODataMetaModel);
 			}
-			assert.deepEqual(mScope, oMetadataClone, "metadata unchanged");
+			this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(0)
+				.returns(_SyncPromise.resolve(mScope));
+			oBinding = this.oMetaModel.bindList(oFixture.metaPath, oContext);
+
+			assert.deepEqual(oBinding._getContexts().map(function (oContext) {
+				assert.strictEqual(oContext.getModel(), oMetaModel);
+				return oContext.getPath();
+			}), oFixture.result);
 		});
 	});
 	//TODO iterate mix of inline and external targeting annotations

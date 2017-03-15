@@ -6,21 +6,22 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/BindingMode",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/ClientListBinding",
+	"sap/ui/model/ClientPropertyBinding",
 	"sap/ui/model/ContextBinding",
 	"sap/ui/model/Context",
 	"sap/ui/model/FilterProcessor",
-	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/type/Int64",
-	"sap/ui/model/PropertyBinding",
 	"sap/ui/thirdparty/URI",
 	"./lib/_Helper",
 	"./lib/_SyncPromise",
 	"./ValueListType"
-], function (jQuery, BindingMode, ContextBinding, BaseContext, FilterProcessor, JSONListBinding,
-		MetaModel, OperationMode, Int64, PropertyBinding, URI, _Helper, _SyncPromise,
-		ValueListType) {
+], function (jQuery, BindingMode, ChangeReason, ClientListBinding, ClientPropertyBinding,
+		ContextBinding, BaseContext, FilterProcessor, MetaModel, OperationMode, Int64, URI, _Helper,
+		_SyncPromise, ValueListType) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
@@ -307,49 +308,140 @@ sap.ui.define([
 	 * &lt;template:repeat list="{path : 'entityType>', filters : {path : '@sapui.name', operator : 'StartsWith', value1 : 'com.sap.vocabularies.UI.v1.FieldGroup'}}" var="fieldGroup">
 	 * </pre>
 	 *
-	 * @extends sap.ui.model.json.JSONListBinding
+	 * @extends sap.ui.model.ClientListBinding
 	 * @private
 	 */
-	ODataMetaListBinding = JSONListBinding.extend("sap.ui.model.odata.v4.ODataMetaListBinding", {
+	ODataMetaListBinding = ClientListBinding.extend("sap.ui.model.odata.v4.ODataMetaListBinding", {
+		// @deprecated
 		// @override
-		// @see sap.ui.model.ClientListBinding#applyFilter
-		applyFilter : function () {
-			var that = this;
+		// @see sap.ui.model.ListBinding#_fireFilter
+		_fireFilter : function () {
+			// do not fire an event as this function is deprecated
+		},
 
-			this.aIndices = FilterProcessor.apply(this.aIndices,
-				this.aFilters.concat(this.aApplicationFilters), function (vRef, sPath) {
-				return sPath === "@sapui.name"
-					? vRef
-					: that.oModel.getProperty(sPath, that.oList[vRef]);
-			});
-			this.iLength = this.aIndices.length;
-		},
-		constructor : function () {
-			JSONListBinding.apply(this, arguments);
-		},
+		// @deprecated
 		// @override
-		// @see sap.ui.model.ListBinding#enableExtendedChangeDetection
-		enableExtendedChangeDetection : function () {
-			throw new Error("Unsupported operation");
+		// @see sap.ui.model.ListBinding#_fireSort
+		_fireSort : function () {
+			// do not fire an event as this function is deprecated
+		},
+
+		/**
+		 * Returns the contexts that result from iterating over the binding's path/context.
+		 * @returns {sap.ui.model.Context[]} The contexts
+		 *
+		 * @private
+		 */
+		_getContexts : function () {
+			var bIterateAnnotations,
+				sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+				oResult,
+				that = this;
+
+			if (!sResolvedPath) {
+				return [];
+			}
+			bIterateAnnotations = sResolvedPath.slice(-1) === "@";
+			if (!bIterateAnnotations && sResolvedPath !== "/") {
+				sResolvedPath += "/";
+			}
+			oResult = this.oModel.getObject(sResolvedPath);
+			if (!oResult) {
+				return [];
+			}
+			if (bIterateAnnotations) {
+				// strip off the trailing "@"
+				sResolvedPath = sResolvedPath.slice(0, -1);
+			}
+			return Object.keys(oResult).filter(function (sKey) {
+				// always filter technical properties; filter annotations iff. not iterating them
+				return sKey[0] !== "$" &&  bIterateAnnotations !== (sKey[0] !== "@");
+			}).map(function (sKey) {
+				return new BaseContext(that.oModel, sResolvedPath + sKey);
+			});
+		},
+
+		// @override
+		// @see sap.ui.model.Binding#checkUpdate
+		checkUpdate : function (bForceUpdate) {
+			var iPreviousLength = this.oList.length;
+
+			this.update();
+			// the data cannot change, only new items may be added due to lazy loading of references
+			if (bForceUpdate || this.oList.length !== iPreviousLength) {
+				this._fireChange({reason: ChangeReason.Change});
+			}
+		},
+
+		constructor : function () {
+			ClientListBinding.apply(this, arguments);
+		},
+
+		// @override
+		// @see sap.ui.model.ListBinding#getContexts
+		// the third parameter (iMaximumPrefetchSize) is ignored because the data is already
+		// available completely
+		getContexts : function (iStartIndex, iLength) {
+			// extended change detection is ignored
+			this.iCurrentStart = iStartIndex || 0;
+			this.iCurrentLength =
+				Math.min(iLength || Infinity, this.iLength, this.oModel.iSizeLimit);
+			return this.getCurrentContexts();
+		},
+
+		// @override
+		// @see sap.ui.model.ListBinding#getCurrentContexts
+		getCurrentContexts : function () {
+			var aContexts = [],
+				i,
+				n = this.iCurrentStart + this.iCurrentLength;
+
+			for (i = this.iCurrentStart; i < n; i++) {
+				aContexts.push(this.oList[this.aIndices[i]]);
+			}
+			return aContexts;
+		},
+
+		/**
+		 * Update list and indices array.
+		 * @private
+		 */
+		update : function () {
+			this.oList = this._getContexts();
+			this.updateIndices();
+			this.applyFilter();
+			this.applySort();
+			this.iLength = this._getLength();
 		}
 	});
 
 	/**
 	 * @class Property binding implementation for the OData metadata model.
 	 *
-	 * @extends sap.ui.model.PropertyBinding
+	 * @extends sap.ui.model.ClientPropertyBinding
 	 * @private
 	 */
 	ODataMetaPropertyBinding
-		= PropertyBinding.extend("sap.ui.model.odata.v4.ODataMetaPropertyBinding", {
+		= ClientPropertyBinding.extend("sap.ui.model.odata.v4.ODataMetaPropertyBinding", {
 			constructor : function () {
-				PropertyBinding.apply(this, arguments);
-				this.vValue = this.oModel.getProperty(this.sPath, this.oContext, this.mParameters);
+				ClientPropertyBinding.apply(this, arguments);
 			},
-			// @see sap.ui.model.PropertyBinding#getValue
-			getValue : function () {
-				return this.vValue;
+			// @override
+			// @see sap.ui.model.Binding#checkUpdate
+			checkUpdate : function (bForceUpdate) {
+				var vValue = this._getValue();
+
+				if (bForceUpdate || vValue !== this.oValue) {
+					this.oValue = vValue;
+					this._fireChange({reason : ChangeReason.Change});
+				}
 			},
+			// @override
+			// @see sap.ui.model.ClientPropertyBinding#_getValue
+			_getValue : function () {
+				return this.oModel.getProperty(this.sPath, this.oContext, this.mParameters);
+			},
+			// @override
 			// @see sap.ui.model.PropertyBinding#setValue
 			setValue : function () {
 				throw new Error("Unsupported operation: ODataMetaPropertyBinding#setValue");
@@ -399,59 +491,11 @@ sap.ui.define([
 			this.oMetadataPromise = null;
 			this.oModel = oModel;
 			this.oRequestor = oRequestor;
-			this.mSupportedBindingModes = {"OneTime" : true};
+			this.mSupportedBindingModes = {"OneTime" : true, "OneWay" : true};
 			this.bSupportReferences = bSupportReferences !== false; // default is true
 			this.sUrl = sUrl;
 		}
 	});
-
-	/**
-	 * Returns the value of the object or property inside this model's metadata which can be
-	 * reached, starting at the given context, by following the given path. The resulting value is
-	 * suitable for a list binding, for example
-	 * <code>&lt;template:repeat list="{context>path}" ...></code>.
-	 *
-	 * @param {string} sPath
-	 *   A relative or absolute path
-	 * @param {object|sap.ui.model.Context} [oContext]
-	 *   The context to be used as a starting point in case of a relative path
-	 * @returns {any}
-	 *   The value of the object or property or <code>null</code> in case a relative path without
-	 *   a context is given
-	 *
-	 * @private
-	 */
-	ODataMetaModel.prototype._getObject = function (sPath, oContext) {
-		var bIsCloned = false,
-			bIterateAnnotations = sPath === "@"
-				|| sPath === "" && oContext.getPath().slice(-2) === "/@"
-				|| sPath.slice(-2) === "/@",
-			sKey,
-			sPathIntoObject,
-			vResult;
-
-		if (bIterateAnnotations || sPath === "/") {
-			sPathIntoObject = sPath; // no trailing slash needed
-		} else if (sPath) {
-			sPathIntoObject = sPath + "/";
-		} else {
-			sPathIntoObject = "./";
-		}
-		vResult = this.getObject(sPathIntoObject, oContext);
-
-		for (sKey in vResult) {
-			// always filter technical properties; filter annotations iff. not iterating them
-			if (sKey[0] === "$" || bIterateAnnotations === (sKey[0] !== "@")) {
-				if (!bIsCloned) { // copy on write
-					vResult = jQuery.extend({}, vResult);
-					bIsCloned = true;
-				}
-				delete vResult[sKey];
-			}
-		}
-
-		return vResult;
-	};
 
 	/**
 	 * Merges <code>$Annotations</code> from the given $metadata and additional annotation files

@@ -49,6 +49,7 @@ sap.ui.define([
 				this.setModel(oModel);
 			}
 			oMetaModel = oModel.getMetaModel();
+			oMetaModel.setDefaultBindingMode("OneWay");
 
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(this.oSandbox, {
@@ -75,6 +76,7 @@ sap.ui.define([
 					models : {
 						// Note: XML Templating creates bindings to default model only!
 						undefined : oModel,
+						metaModel : oMetaModel,
 						ui : new JSONModel({
 							bRealOData : bRealOData,
 							icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
