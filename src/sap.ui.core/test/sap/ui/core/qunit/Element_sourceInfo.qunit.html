@@ -21,7 +21,7 @@
 
 	QUnit.test("only elements created from XML view should have _sapui_declarativeSourceInfo", function(assert) {
 		var element = new sap.ui.core.Element();
-		notOk(element._sapui_declarativeSourceInfo);
+		assert.notOk(element._sapui_declarativeSourceInfo);
 	});
 
 	QUnit.test("Cloning elements with declarativeSourceInfo", function(assert) {

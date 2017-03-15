@@ -1699,10 +1699,10 @@
 		oSB._clearAutoWidthAppliedToControl();
 
 		// Assert
-		notOk(oSB.$().attr("style"), "Auto width is removed from control");
-		notOk(aButtons[0].$().attr("style"), "Auto width is removed from internal button");
+		assert.notOk(oSB.$().attr("style"), "Auto width is removed from control");
+		assert.notOk(aButtons[0].$().attr("style"), "Auto width is removed from internal button");
 		assert.ok(aButtons[1].$().attr("style").indexOf("20px") !== -1, "Predefined width is not removed from internal button");
-		notOk(aButtons[2].$().attr("style"), "Auto width is removed from internal button");
+		assert.notOk(aButtons[2].$().attr("style"), "Auto width is removed from internal button");
 
 		// Act
 		oSB.setWidth("200px");
@@ -1787,7 +1787,7 @@
 		oSB._updateWidth();
 
 		// Assert
-		notOk(oSB.$().css("width") === "1px", "Corner case when all reported inner buttons width is 0 applied width " +
+		assert.notOk(oSB.$().css("width") === "1px", "Corner case when all reported inner buttons width is 0 applied width " +
 				"should not be 1px");
 
 		// Cleanup
