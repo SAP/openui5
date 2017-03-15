@@ -127,7 +127,7 @@
 
 		var bScrolled = false;
 		hSB.attachScroll( function() {bScrolled = true;});
-		notEqual(bScrolled, true, "Scroll event was not fired yet");
+		assert.notEqual(bScrolled, true, "Scroll event was not fired yet");
 		if ( sap.ui.getCore().getConfiguration().getRTL() && sap.ui.Device.browser.firefox){
 			jQuery('#'+ oHSB.getId() + ' > div').scrollLeft(-15);
 		} else {

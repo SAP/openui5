@@ -116,7 +116,7 @@
 		assert.ok(oResponse.success);
 		assert.ok(oResponse.data.d.IsActiveEntity);
 		assert.equal(oResponse.data.d.ActiveSalesOrderID, sId);
-		notEqual(oResponse.data.d.SalesOrderDraftUUID, sDraftId);
+		assert.notEqual(oResponse.data.d.SalesOrderDraftUUID, sDraftId);
 		// in active documents that have a draft the navigation property SiblingEntity points to the edit draft document
 		var sDraftSiblingUri = oResponse.data.d.SiblingEntity.__deferred.uri;
 			oResponse = jQuery.sap.sjax({
@@ -160,7 +160,7 @@
 		assert.ok(oResponse.success, "A new draft was created");
 
 		oNewDraft = oResponse.data.d;
-		notEqual(oNewDraft.SalesOrderDraftUUID, "00000000-0000-0000-0000-000000000000");
+		assert.notEqual(oNewDraft.SalesOrderDraftUUID, "00000000-0000-0000-0000-000000000000");
 		assert.ok(typeof oNewDraft.IsActiveEntity !== "undefined" && !oNewDraft.IsActiveEntity);
 		assert.ok(!oNewDraft.HasActiveEntity);
 		assert.ok(!oNewDraft.HasDraftEntity);

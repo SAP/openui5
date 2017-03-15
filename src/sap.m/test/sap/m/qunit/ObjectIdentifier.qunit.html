@@ -251,7 +251,7 @@
 		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 		assert.ok(!/.*<script>.*/.test(oObjectIdentifier.$().children(".sapMObjectIdentifierText").html()), "Did not contain an unescaped script tag");
 		assert.strictEqual(oObjectIdentifier.getText(), sTextToSet, "Did set the non encoded string as value");
-		notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
+		assert.notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -303,7 +303,7 @@
 		// Assert
 		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
 		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-		notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
+		assert.notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -330,7 +330,7 @@
 
 		//Assert
 		assert.strictEqual($(oObjectIdentifier.$("title").children()[0]).text(), sDummyTitle, "The title text is correctly set");
-		notEqual(oObjectIdentifier.$("title").children(0).css("display"), "none", "The title control should be visible if title is not empty");
+		assert.notEqual(oObjectIdentifier.$("title").children(0).css("display"), "none", "The title control should be visible if title is not empty");
 
 		//Act
 		oObjectIdentifier.setTitle(sEmptyTitle);
@@ -356,7 +356,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		notEqual(oObjectIdentifier.$("title").children(0).css("display"), "none", "The text control is visible");
+		assert.notEqual(oObjectIdentifier.$("title").children(0).css("display"), "none", "The text control is visible");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -393,7 +393,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
+		assert.notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
 
 		//Cleanup
 		oObjectIdentifier.destroy();

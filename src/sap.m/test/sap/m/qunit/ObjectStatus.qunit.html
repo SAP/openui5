@@ -45,9 +45,9 @@
 
 	QUnit.test("StatusRendered", function(assert) {
 
-		notEqual(jQuery.sap.domById("os1"), null, "Object Status #1 should be rendered.");
-		notEqual(jQuery.sap.domById("os2"), null, "Object Status #2 should be rendered.");
-		notEqual(jQuery.sap.domById("os3"), null, "Object Status #3 should be rendered.");
+		assert.notEqual(jQuery.sap.domById("os1"), null, "Object Status #1 should be rendered.");
+		assert.notEqual(jQuery.sap.domById("os2"), null, "Object Status #2 should be rendered.");
+		assert.notEqual(jQuery.sap.domById("os3"), null, "Object Status #3 should be rendered.");
 	});
 
 	/******************************************************************/

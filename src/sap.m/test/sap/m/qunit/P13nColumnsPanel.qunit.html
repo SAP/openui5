@@ -312,7 +312,7 @@
 			oP13nColumnsPanel._swopShowSelectedButton();
 			bShowSelected_After = oP13nColumnsPanel._bShowSelected;
 
-			notEqual(bShowSelected_Before, bShowSelected_After, "Button swop did not work");
+			assert.notEqual(bShowSelected_Before, bShowSelected_After, "Button swop did not work");
 			assert.strictEqual(oP13nColumnsPanel._filterItems.called, true, "Method _filterItems wasn't called");
 			assert.strictEqual(oP13nColumnsPanel._fnHandleResize.called, true, "Method _fnHandleResize wasn't called");
 		});
@@ -1102,7 +1102,7 @@
 			//CUT -> check that method is executed and a new columnsItem instance created
 			var sItemKey = "4711"
 			var oNewColumnsItem = oP13nColumnsPanel._createNewColumnsItem(sItemKey);
-			notEqual(oNewColumnsItem, null, "columnsItem shall be instanciated");
+			assert.notEqual(oNewColumnsItem, null, "columnsItem shall be instanciated");
 			assert.strictEqual(oNewColumnsItem.getColumnKey(), sItemKey, "New columnsItem shall conatins the given key");
 			assert.strictEqual(oNewColumnsItem instanceof sap.m.P13nColumnsItem, true, "new columnsItem shall be an instance of type sap.m.P13nColumnsItem");
 		});
@@ -1136,7 +1136,7 @@
 
 			assert.strictEqual(oP13nColumnsPanel.getColumnsItems.called, true, "Method getColumnsItems shall be executed");
 			assert.strictEqual(oP13nColumnsPanel._getArrayIndexByItemKey.called, true, "Method _getArrayIndexByItemKey shall be executed");
-			notEqual(oColumnsItem, null, "columnsItem shall not be null as a valid columnsItem does exist with key 4712");
+			assert.notEqual(oColumnsItem, null, "columnsItem shall not be null as a valid columnsItem does exist with key 4712");
 			assert.strictEqual(oColumnsItem.getColumnKey(), "4712", "returned columnsItem instance is wrong as it shall have the columnKey 4712");
 		});
 
@@ -1342,7 +1342,7 @@
 			oItem.getTooltip = sinon.stub().returns("tooltip");
 
 			oNewCreatedTableItem = oP13nColumnsPanel._createNewTableItemBasedOnP13nItem(oItem);
-			notEqual(oNewCreatedTableItem, null, "A new table item instance shall be created");
+			assert.notEqual(oNewCreatedTableItem, null, "A new table item instance shall be created");
 			assert.strictEqual(oNewCreatedTableItem.data('P13nColumnKey'), "4711", "New created table item instance shall have custom data for P13nColumnKey");
 			assert.strictEqual(oItem.getColumnKey.called, true, "Method getColumnKey() shall be called to get data of oItem");
 		});

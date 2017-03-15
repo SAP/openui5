@@ -613,7 +613,7 @@
 		});
 		var oOldItemsPage = oNavContainer.getPages()[1];
 		oFF._navToFilterItemsPage(oFacetListItem1);
-		notEqual(oNavContainer.getPages()[1].getId(), oOldItemsPage && oOldItemsPage.getId(), 'New items page has been created');
+		assert.notEqual(oNavContainer.getPages()[1].getId(), oOldItemsPage && oOldItemsPage.getId(), 'New items page has been created');
 	});
 
 	QUnit.test("FacetFilter._getSequencedLists", function(assert) {

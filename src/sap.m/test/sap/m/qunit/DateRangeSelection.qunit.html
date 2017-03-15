@@ -171,11 +171,11 @@
 				qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				jQuery("#DRS2-cal--Month0-20140409").focus();
 				qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140409", jQuery.sap.KeyCodes.ENTER, false, false, false);
-				notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after date selection");
+				assert.notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after date selection");
 
 				qutils.triggerEvent("click", "DRS2-icon");
 				jQuery("#DRS2-cal").control(0).fireCancel();
-				notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after cancel");
+				assert.notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after cancel");
 
 				sap.ui.Device.support.touch = bOrigTouch;
 			});

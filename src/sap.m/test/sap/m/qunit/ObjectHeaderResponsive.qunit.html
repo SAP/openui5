@@ -700,7 +700,7 @@
 
 					// Assert
 					assert.equal(count, 2, "States are rendered in 2 columns.");
-					notEqual(count, 3, "States aren't rendered in 3 columns.");
+					assert.notEqual(count, 3, "States aren't rendered in 3 columns.");
 				});
 
 				QUnit.test("5 states rendered in 3 columns", function (assert){
@@ -708,7 +708,7 @@
 
 					// Assert
 					assert.equal(count, 3, "States are rendered in 3 columns.");
-					notEqual(count, 2, "States aren't rendered in 2 columns.");
+					assert.notEqual(count, 2, "States aren't rendered in 2 columns.");
 				});
 
 			QUnit.module("Desktop fullScreenOptimized rendering", {
@@ -739,7 +739,7 @@
 
 					// Assert
 					assert.equal(count, 4, "5 states are rendered in 4 columns");
-					notEqual(count, 3, "States aren't rendered in 3 columns.");
+					assert.notEqual(count, 3, "States aren't rendered in 3 columns.");
 				});
 
 			QUnit.module("Desktop on Combi device (e.g. both system Desktop and Tablet return true) - master detail rendering", {
@@ -765,7 +765,7 @@
 
 					// Assert
 					assert.equal(count, 2, "States are rendered in 2 columns.");
-					notEqual(count, 3, "States aren't rendered in 3 columns.");
+					assert.notEqual(count, 3, "States aren't rendered in 3 columns.");
 				});
 
 				QUnit.test("5 states rendered in 3 columns", function (assert){
@@ -773,7 +773,7 @@
 
 					// Assert
 					assert.equal(count, 3, "States are rendered in 3 columns.");
-					notEqual(count, 2, "States aren't rendered in 2 columns.");
+					assert.notEqual(count, 2, "States aren't rendered in 2 columns.");
 				});
 
 			QUnit.module("Desktop on Combi device (e.g. both system Desktop and Tablet return true) - fullScreenOptimized should be rendered as on a 'normal' device", {
@@ -812,7 +812,7 @@
 
 					// Assert
 					assert.equal(count, 4, "5 states are rendered in 4 columns");
-					notEqual(count, 3, "States aren't rendered in 3 columns.");
+					assert.notEqual(count, 3, "States aren't rendered in 3 columns.");
 				});
 
 			QUnit.module("Desktop rendering resized to Tablet size", {
@@ -838,7 +838,7 @@
 
 				// Assert
 				assert.equal(count, 2, "3 states are rendered in two columns");
-				notEqual(count, 1, "States aren't rendered in 1 column.");
+				assert.notEqual(count, 1, "States aren't rendered in 1 column.");
 			});
 
 			QUnit.test("2 states in fullScreenOptimized mode rendered in 2 columns", function (assert){
@@ -855,7 +855,7 @@
 
 				//Assert
 				assert.equal(count, 2, "2 states are rendered in two columns in FullscreenOptimized mode (desktop - tablet size)");
-				notEqual(count, 1, "States aren't rendered in 1 column.");
+				assert.notEqual(count, 1, "States aren't rendered in 1 column.");
 			});
 
 			QUnit.test("5 states in fullScreenOptimized mode rendered in 3 columns", function (assert){
@@ -872,7 +872,7 @@
 
 				//Assert
 				assert.equal(count, 3, "5 states are rendered in three columns in FullscreenOptimized mode (desktop - tablet size)");
-				notEqual(count, 4, "States aren't rendered in 4 columns.");
+				assert.notEqual(count, 4, "States aren't rendered in 4 columns.");
 			});
 
 			QUnit.module("Desktop rendering resized to Phone size", {
@@ -897,7 +897,7 @@
 				var count = getColsCountAfterAddingStates(2, 3,".sapMOHROneCols");
 				// Assert
 				assert.equal(count, 1, "5 states are rendered in one column on desktop - phone size");
-				notEqual(count, 2, "States aren't rendered in 2 columns.");
+				assert.notEqual(count, 2, "States aren't rendered in 2 columns.");
 			});
 
 
@@ -924,7 +924,7 @@
 
 				// Assert
 				assert.equal(count, 2, "3 states are rendered in two columns");
-				notEqual(count, 3, "States aren't rendered in 3 columns.");
+				assert.notEqual(count, 3, "States aren't rendered in 3 columns.");
 			});
 
 			QUnit.test("4 states in fullScreenOptimized mode rendered in 2 columns in portrait mode", function (assert){
@@ -944,7 +944,7 @@
 
 				//Assert
 				assert.equal(count, 2, "4 states are rendered in two columns in portrait mode");
-				notEqual(count, 4, "States aren't rendered in 4 columns.");
+				assert.notEqual(count, 4, "States aren't rendered in 4 columns.");
 			});
 
 			QUnit.test("2 states in fullScreenOptimized mode rendered in 2 columns in landscape mode", function (assert){
@@ -963,7 +963,7 @@
 
 				// Assert
 				assert.equal(count, 2, "2 states are rendered in two columns in landscape mode");
-				notEqual(count, 1, "States aren't rendered in 1 column.");
+				assert.notEqual(count, 1, "States aren't rendered in 1 column.");
 			});
 
 			QUnit.test("5 states in fullScreenOptimized mode rendered in 3 columns in landscape mode", function (assert){
@@ -982,7 +982,7 @@
 
 				// Assert
 				assert.equal(count, 3, "5 states are rendered in 3 columns in landscape mode");
-				notEqual(count, 2, "States aren't rendered in 2 columns.");
+				assert.notEqual(count, 2, "States aren't rendered in 2 columns.");
 			});
 
 
@@ -1014,7 +1014,7 @@
 					var count = getColsCountAfterAddingStates(3, 3,".sapMOHROneCols");
 					// Assert
 					assert.equal(count, 1, "6 states are rendered in one column on phone");
-					notEqual(count, 3, "States aren't rendered in 3 columns.");
+					assert.notEqual(count, 3, "States aren't rendered in 3 columns.");
 				});
 
 

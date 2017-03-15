@@ -101,7 +101,7 @@
 		});
 
 		QUnit.test("TestRenderedOK", function(assert){
-			notEqual(jQuery.sap.domById(sDropdownId), null, "DropdownBox outer HTML Element should be rendered.");
+			assert.notEqual(jQuery.sap.domById(sDropdownId), null, "DropdownBox outer HTML Element should be rendered.");
 			assert.equal(jQuery("#" + sDropdownId + " > input").length, 1, "DropdownBox should provide an input element.");
 			assert.equal(oDropdown.getValue(), sCheckText, "Default value / text should still be set.");
 			assert.equal(jQuery.sap.domById(sDropdownInputId).value, sCheckText, "Default value / text should be in the HTML.");

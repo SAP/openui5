@@ -1163,7 +1163,7 @@
 
 			var iInitFooterContentLength = 2; //spacer + shareMenuButton
 
-			notEqual(oPage.getPositiveAction(), null, "page has semantic content");
+			assert.notEqual(oPage.getPositiveAction(), null, "page has semantic content");
 			assert.strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
 
 			var oButton = oPage.getPositiveAction();

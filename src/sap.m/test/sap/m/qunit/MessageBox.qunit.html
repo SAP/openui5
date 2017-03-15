@@ -662,7 +662,7 @@
 
 		QUnit.test("Language change", function (assert) {
 			sap.ui.getCore().getConfiguration().setLanguage("de");
-			notEqual(sap.ui.getCore().getLibraryResourceBundle("sap.m"), sap.m.MessageBox._rb, "The MessageBox should have a different resource bundle before opening");
+			assert.notEqual(sap.ui.getCore().getLibraryResourceBundle("sap.m"), sap.m.MessageBox._rb, "The MessageBox should have a different resource bundle before opening");
 			sap.m.MessageBox.show(sMessageText, {
 				title: sMessageTitle,
 				details: "Some details",

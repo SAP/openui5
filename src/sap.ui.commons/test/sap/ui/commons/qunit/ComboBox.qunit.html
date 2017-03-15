@@ -81,7 +81,7 @@
 		});
 
 		QUnit.test("TestRenderedOK", function(assert){
-			notEqual(jQuery.sap.domById(sComboId), null, "ComboBox outer HTML Element should be rendered.");
+			assert.notEqual(jQuery.sap.domById(sComboId), null, "ComboBox outer HTML Element should be rendered.");
 			assert.equal(jQuery("#testCmb > input").length, 1, "ComboBox should provide an input element.");
 			assert.equal(oCombo.getValue(), sCheckText, "Default value / text should still be set.");
 			assert.equal(jQuery.sap.domById(sComboInputId).value, sCheckText, "Default value / text should be in the HTML.");

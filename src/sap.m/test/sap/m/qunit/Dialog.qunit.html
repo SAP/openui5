@@ -596,8 +596,8 @@
 				assert.ok(oDialog._oToolbar, "Toolbar instance is created");
 				assert.ok(oDialog._oToolbar.getDomRef(), "Toolbar is rendered");
 				assert.equal(oDialog._oToolbar.getContent().length, 3, "Toolbar contains 2 buttons");
-				notEqual(oDialog._oToolbar.indexOfContent(oBBtn), -1, "Toolbar contains beginButton");
-				notEqual(oDialog._oToolbar.indexOfContent(oEBtn), -1, "Toolbar contains endButton");
+				assert.notEqual(oDialog._oToolbar.indexOfContent(oBBtn), -1, "Toolbar contains beginButton");
+				assert.notEqual(oDialog._oToolbar.indexOfContent(oEBtn), -1, "Toolbar contains endButton");
 				assert.equal(oDialog.getBeginButton(), oBBtn, "Getter of beginButton should return the button itself");
 				assert.equal(oDialog.getEndButton(), oEBtn, "Getter of endButton should return the button itself");
 
@@ -964,7 +964,7 @@
 				var $FocusedElement = jQuery(document.activeElement);
 				var oFocusedControl = $FocusedElement.control(0);
 
-				notEqual(oFocusedControl.getId(), "inputWantsFocus", "Input control shouldn't get the focus");
+				assert.notEqual(oFocusedControl.getId(), "inputWantsFocus", "Input control shouldn't get the focus");
 				assert.strictEqual(oFocusedControl.getId(), oDialog.getId(), "Dialog should get the focus");
 
 				oDialog.destroy();

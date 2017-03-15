@@ -543,7 +543,7 @@
 				oInput.getFocusDomRef().value = sValue + sValue;
 
 				// assertion - before setValue
-				notEqual(oInput.getFocusDomRef().value, oInput.getValue(), "Before setValue call dom value and value property are not same.");
+				assert.notEqual(oInput.getFocusDomRef().value, oInput.getValue(), "Before setValue call dom value and value property are not same.");
 
 				// act - set the same value
 				oInput.setValue(sValue);
@@ -1572,7 +1572,7 @@
 				oInput.getFocusDomRef().value = "SomethingThatIsNotSameWithTheInitialValue";
 
 				// assertion - before escape
-				notEqual(oInput.getFocusDomRef().value, oInput.getValue(), "Before escape call dom value and value property are not same.");
+				assert.notEqual(oInput.getFocusDomRef().value, oInput.getValue(), "Before escape call dom value and value property are not same.");
 
 				// act
 				sap.ui.test.qunit.triggerKeyboardEvent(oInput.getFocusDomRef(), "ESCAPE");

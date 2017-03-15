@@ -193,7 +193,7 @@
 
 	QUnit.test("ControlRendered", function(assert) {
 
-		notEqual(jQuery.sap.domById(ohBasicId), null, "ObjectHeader Basic should be rendered.");
+		assert.notEqual(jQuery.sap.domById(ohBasicId), null, "ObjectHeader Basic should be rendered.");
 	});
 
 	QUnit.test("TooltipRendered", function(assert) {
@@ -203,30 +203,30 @@
 
 	QUnit.test("IntroRendered", function(assert) {
 
-		notEqual(jQuery.sap.domById(ohBasicId + "-intro"), null, "Intro should be rendered.");
+		assert.notEqual(jQuery.sap.domById(ohBasicId + "-intro"), null, "Intro should be rendered.");
 	});
 
 	QUnit.test("TitleRendered", function(assert) {
 
-		notEqual(jQuery.sap.domById(ohBasic._titleText.getId()), null, "Title should be rendered.");
+		assert.notEqual(jQuery.sap.domById(ohBasic._titleText.getId()), null, "Title should be rendered.");
 	});
 
 	QUnit.test("TitleArrowRendered", function(assert) {
 
-		notEqual(jQuery.sap.domById(ohBasicId + "-titleArrow"), null, "Title Arrow Icon should be rendered.");
+		assert.notEqual(jQuery.sap.domById(ohBasicId + "-titleArrow"), null, "Title Arrow Icon should be rendered.");
 		assert.equal(jQuery.sap.byId(ohBasic._oTitleArrowIcon.getId()).css("cursor"), "pointer", "The title arrow should have pointer cursor.");
 	});
 
 	QUnit.test("NumberRendered", function(assert) {
 
-		notEqual(jQuery.sap.domById(ohBasicId + "-number"), null, "Number should be rendered.");
+		assert.notEqual(jQuery.sap.domById(ohBasicId + "-number"), null, "Number should be rendered.");
 		assert.ok(jQuery("#" + ohBasicId + "-number").hasClass("sapMObjectNumber"), "Number is sap.m.ObjectNumber");
 	});
 
 	QUnit.test("AttributesRendered", function(assert) {
 
-		notEqual(jQuery.sap.domById("oa1"), null, "Object attribute #1 should be rendered.");
-		notEqual(jQuery.sap.domById("oa2"), null, "Object attribute #2 should be rendered.");
+		assert.notEqual(jQuery.sap.domById("oa1"), null, "Object attribute #1 should be rendered.");
+		assert.notEqual(jQuery.sap.domById("oa2"), null, "Object attribute #2 should be rendered.");
 	});
 
 	QUnit.test("Attribute rerendered after being empty", function(assert) {
@@ -252,20 +252,20 @@
 
 	QUnit.test("StatusesRendered", function(assert) {
 
-		notEqual(jQuery.sap.domById("oses1"), null, "Object statuses #1 should be rendered.");
-		notEqual(jQuery.sap.domById("oses2"), null, "Object statuses #2 should be rendered.");
+		assert.notEqual(jQuery.sap.domById("oses1"), null, "Object statuses #1 should be rendered.");
+		assert.notEqual(jQuery.sap.domById("oses2"), null, "Object statuses #2 should be rendered.");
 		assert.equal(jQuery.sap.domById("oattr1"), null, "Object attribute should not be rendered.");
 	});
 
 	QUnit.test("InfoRendered", function(assert) {
 
-		notEqual(jQuery.sap.domById("os1"), null, "First status should be rendered.");
-		notEqual(jQuery.sap.domById("os2"), null, "Second status info should be rendered.");
+		assert.notEqual(jQuery.sap.domById("os1"), null, "First status should be rendered.");
+		assert.notEqual(jQuery.sap.domById("os2"), null, "Second status info should be rendered.");
 	});
 
 	QUnit.test("FavoriteRendered", function(assert) {
 
-		notEqual(jQuery.sap.domById(ohFlagFavId + "-favorite"), null, "Favorite marker should be rendered.");
+		assert.notEqual(jQuery.sap.domById(ohFlagFavId + "-favorite"), null, "Favorite marker should be rendered.");
 		assert.ok(jQuery.sap.byId(ohFlagFavId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
 
 		assert.equal(jQuery.sap.domById(ohFlagFavId2 + "-favorite"), null, "Favorite marker should not be rendered.");
@@ -273,13 +273,13 @@
 
 	QUnit.test("FlagRendered", function(assert) {
 
-		notEqual(jQuery.sap.domById(ohFlagFavId + "-flag"), null, "Flag marker should be rendered.");
+		assert.notEqual(jQuery.sap.domById(ohFlagFavId + "-flag"), null, "Flag marker should be rendered.");
 		assert.ok(jQuery.sap.byId(ohFlagFavId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
 
 		assert.equal(jQuery.sap.domById(ohFlagFavId2 + "-flag"), null, "Flag marker should not be rendered.");
 
 		// test flag rendering with one attribute
-		notEqual(jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag"), null, "Flag marker should be rendered.");
+		assert.notEqual(jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag"), null, "Flag marker should be rendered.");
 		assert.ok(jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
 
 	});
@@ -292,14 +292,14 @@
 
 	QUnit.test("ProgressIndicatorRendered", function(assert) {
 
-		notEqual(jQuery.sap.domById(ohBasicId + "-pi"), null, "Progress Indicator should be rendered.");
+		assert.notEqual(jQuery.sap.domById(ohBasicId + "-pi"), null, "Progress Indicator should be rendered.");
 		assert.ok(!jQuery(jQuery("#ohBasic .sapMOHStatusFixedWidth")[4]).attr("style"), "Progress Indicator only use 35% width.");
 		assert.equal(jQuery("#ohBasic .sapMOHStatusFixedWidth .sapMPI").css("float"), "right", "Progress Indicator is floating right");
 	});
 
 	QUnit.test("NumberStateColorRendered", function(assert) {
 
-		notEqual(jQuery.sap.domById(ohBasicId + "-number"), null, "Number should be rendered.");
+		assert.notEqual(jQuery.sap.domById(ohBasicId + "-number"), null, "Number should be rendered.");
 		assert.ok(jQuery("#" + ohBasicId + "-number").hasClass("sapMObjectNumberStatusSuccess"), "Number color uses value state success color.");
 	});
 
@@ -449,7 +449,7 @@
 
 	QUnit.test("NumberRendered", function(assert) {
 
-		notEqual(jQuery.sap.domById(ohCondensedId + "-number"), null, "Number should be rendered.");
+		assert.notEqual(jQuery.sap.domById(ohCondensedId + "-number"), null, "Number should be rendered.");
 		assert.ok(jQuery("#" + ohCondensedId + "-number").hasClass("sapMObjectNumber"), "Number is sap.m.ObjectNumber");
 	});
 
@@ -741,7 +741,7 @@
 		sap.ui.getCore().applyChanges();
 
 		assert.equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
-		notEqual(jQuery.sap.domById("ohefafm1"), null, "Attribute should be rendered.");
+		assert.notEqual(jQuery.sap.domById("ohefafm1"), null, "Attribute should be rendered.");
 
 		// cleanup
 		ohFlagAndFavoriteMarker.destroy();

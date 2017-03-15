@@ -177,7 +177,7 @@
 
 	            afterRerendering(function() {
 		            okFragment(FRAGMENT_2, "uiAreaA", "UIArea contains expected HTML fragment");
-		            notEqual(sap.ui.getCore().byId("html2").getDomRef(), oldDomRef, "node has changed");
+		            assert.notEqual(sap.ui.getCore().byId("html2").getDomRef(), oldDomRef, "node has changed");
 	            });
             });
 
@@ -187,7 +187,7 @@
 
 	            afterRerendering(function() {
 		            okFragment(FRAGMENT_2, "uiAreaA", "UIArea contains expected HTML fragment");
-		            notEqual(sap.ui.getCore().byId("html2").getDomRef(), oldDomRef, "node has changed");
+		            assert.notEqual(sap.ui.getCore().byId("html2").getDomRef(), oldDomRef, "node has changed");
 	            });
             });
 

@@ -153,7 +153,7 @@
 			oSemanticSelect.setModel(oModel);
 
 			// Assert
-			notEqual(oSemanticSelect.getSelectedKey(), null, "selectedKey is not null");
+			assert.notEqual(oSemanticSelect.getSelectedKey(), null, "selectedKey is not null");
 			assert.strictEqual(oSemanticSelect.getSelectedKey(), "name", "selectedKey value is correct");
 			assert.strictEqual(oSemanticSelect.getSelectedItem(), oSemanticSelect.getItemAt(1), "'selectedItem corresponds to selectedKey");
 
@@ -161,7 +161,7 @@
 			oModel.setData({selected: "date"}, true);
 
 			// Assert
-			notEqual(oSemanticSelect.getSelectedKey(), null, "selectedKey is not null after update from model");
+			assert.notEqual(oSemanticSelect.getSelectedKey(), null, "selectedKey is not null after update from model");
 			assert.strictEqual(oSemanticSelect.getSelectedKey(), "date", "selectedKey value is correct after update from model");
 			assert.strictEqual(oSemanticSelect.getSelectedItem(), oSemanticSelect.getItemAt(2), "'selectedItem corresponds to selectedKey after update from model");
 
@@ -169,7 +169,7 @@
 			oSemanticSelect.setSelectedItem(oSemanticSelect.getItemAt(3));
 
 			// Assert
-			notEqual(oSemanticSelect.getSelectedKey(), "selectedKey is not null after update from API");
+			assert.notEqual(oSemanticSelect.getSelectedKey(), "selectedKey is not null after update from API");
 			assert.strictEqual(oSemanticSelect.getSelectedKey(), "description", "selectedKey value is correct after update from API");
 			assert.strictEqual(oModel.getData().selected, "description", "model is correctly updated after update from API");
 

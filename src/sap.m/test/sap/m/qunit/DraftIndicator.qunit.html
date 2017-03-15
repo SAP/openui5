@@ -44,7 +44,7 @@
 		var oRetrievedIndi = sap.ui.getCore().byId("draftId");
 
 		// Assert
-		notEqual(oRetrievedIndi, undefined, "the button is retrieved by id");
+		assert.notEqual(oRetrievedIndi, undefined, "the button is retrieved by id");
 		assert.strictEqual(oRetrievedIndi.getId(), "draftId", "control has the expected id");
 
 		oDraftIndi.destroy();

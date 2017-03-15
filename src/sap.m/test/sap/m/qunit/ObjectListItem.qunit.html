@@ -74,7 +74,7 @@
 		});
 
 		QUnit.test("IntroRendered", function(assert) {
-			notEqual(jQuery.sap.domById(listItemId + "-intro"), null, "Worst case list item intro should be rendered.");
+			assert.notEqual(jQuery.sap.domById(listItemId + "-intro"), null, "Worst case list item intro should be rendered.");
 		});
 
 		QUnit.test("FlagRendered", function(assert) {

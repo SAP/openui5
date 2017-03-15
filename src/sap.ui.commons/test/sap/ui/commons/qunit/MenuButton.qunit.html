@@ -53,7 +53,7 @@
 			QUnit.module("Basic");
 
 			QUnit.test("Initial Rendering", function(assert) {
-				notEqual(jQuery.sap.domById(oMenuButton1.getId()), null, "MenuButton HTML Element should be rendered");
+				assert.notEqual(jQuery.sap.domById(oMenuButton1.getId()), null, "MenuButton HTML Element should be rendered");
 				assert.equal(jQuery.sap.domById(oMenu1.getId()), null, "Menu HTML Element is not yet rendered");
 			});
 

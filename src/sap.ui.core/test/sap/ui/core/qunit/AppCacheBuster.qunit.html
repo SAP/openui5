@@ -70,10 +70,10 @@
 
 		sap.ui.core.AppCacheBuster.init();
 
-		notEqual(fnAjaxOrig, jQuery.ajax, "jQuery.ajax is intercepted");
-		notEqual(fnIncludeScript, jQuery.sap.includeScript, "jQuery.sap.includeScript is intercepted");
-		notEqual(fnIncludeStyleSheet, jQuery.sap.includeStyleSheet, "jQuery.sap.includeStyleSheet is intercepted");
-		notEqual(fnValidateProperty, sap.ui.base.ManagedObject.prototype.validateProperty, "sap.ui.base.ManagedObject.prototype.validateProperty is intercepted");
+		assert.notEqual(fnAjaxOrig, jQuery.ajax, "jQuery.ajax is intercepted");
+		assert.notEqual(fnIncludeScript, jQuery.sap.includeScript, "jQuery.sap.includeScript is intercepted");
+		assert.notEqual(fnIncludeStyleSheet, jQuery.sap.includeStyleSheet, "jQuery.sap.includeStyleSheet is intercepted");
+		assert.notEqual(fnValidateProperty, sap.ui.base.ManagedObject.prototype.validateProperty, "sap.ui.base.ManagedObject.prototype.validateProperty is intercepted");
 
 		sap.ui.core.AppCacheBuster.exit();
 

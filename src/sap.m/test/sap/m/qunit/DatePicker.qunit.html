@@ -294,11 +294,11 @@
 				qutils.triggerEvent("click", "DP5-icon");
 				jQuery("#DP5-cal--Month0-20151124").focus();
 				qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
-				notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after date selection");
+				assert.notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after date selection");
 
 				qutils.triggerEvent("click", "DP5-icon");
 				jQuery("#DP5-cal").control(0).fireCancel();
-				notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after cancel");
+				assert.notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after cancel");
 
 				sap.ui.Device.support.touch = bOrigTouch;
 			});
