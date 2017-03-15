@@ -110,7 +110,7 @@
 
 			QUnit.module("initialization");
 
-			test("Date formatter", function() {
+			QUnit.test("Date formatter", function(assert) {
 				ok(!oDP1.getValue(), "DP1: no value");
 				ok(!oDP1.getDateValue(), "DP1: no DateValue");
 				equal(oDP2.getValue(), "2014-04-01", "DP2: Value in internal format set");
@@ -125,7 +125,7 @@
 				equal(oDP7.getDateValue().getTime(), new Date("2015", "10", "23").getTime(), "DP7: DateValue set");
 			});
 
-			test("calendar and popup", function() {
+			QUnit.test("calendar and popup", function(assert) {
 				ok(!sap.ui.unified || !sap.ui.unified.Calendar, "sap.ui.unified.Calendar not loaded");
 				ok(!sap.ui.getCore().byId("DP1-cal"), "DP1: no calender exists");
 				ok(!oDP1._oPopup, "DP1: no popup exists");
@@ -133,14 +133,14 @@
 
 			QUnit.module("Rendering");
 
-			test("styling", function() {
+			QUnit.test("styling", function(assert) {
 				equal(jQuery("#DP1").css("width"), jQuery("body").css("width"), "Default width is 100%"); // comparision with 100% will not work, because with is returned in px
 				equal(jQuery("#DP2").css("width"), "250px", "given width used");
 				ok(jQuery("#DP1-icon")[0], "Calendar icon rendered");
 				ok(!jQuery("#DP3-cal")[0], "no calendar rendered");
 			});
 
-			test("date format", function() {
+			QUnit.test("date format", function(assert) {
 				ok(!jQuery("#DP1").children("div.sapMInputDivWrapper").children("input").val(), "DP1 : empty date");
 				equal(jQuery("#DP2").children("div.sapMInputDivWrapper").children("input").val(), "01+04+2014", "DP2: defined output format used");
 				equal(jQuery("#DP3").children("div.sapMInputDivWrapper").children("input").val(), "April 1, 2014", "DP3: defined output format used");
@@ -151,7 +151,7 @@
 
 			QUnit.module("interaction");
 
-			test("change date by typing", function() {
+			QUnit.test("change date by typing", function(assert) {
 				bChange = false;
 				sValue = "";
 				bValid = true;
@@ -216,7 +216,7 @@
 				equal(oDP6.getDateValue().getTime(), new Date("2015", "0", "1").getTime(), "DateValue changed");
 			});
 
-			test("change date by Pageup/down", function() {
+			QUnit.test("change date by Pageup/down", function(assert) {
 				bChange = false;
 				sValue = "";
 				sId = "";
@@ -275,7 +275,7 @@
 			});
 
 			//BCP 1670441899
-			test("focused element after picker close", function() {
+			QUnit.test("focused element after picker close", function(assert) {
 				var bOrigTouch = sap.ui.Device.support.touch;
 
 				// On a desktop (non-touch) device
@@ -303,7 +303,7 @@
 				sap.ui.Device.support.touch = bOrigTouch;
 			});
 
-			test("change date using calendar", function() {
+			QUnit.test("change date using calendar", function(assert) {
 				bChange = false;
 				sValue = "";
 				sId = "";
@@ -388,7 +388,7 @@
 				equal(oDP3.getDateValue().getTime(), new Date("2014", "03", "10").getTime(), "DateValue set");
 			});
 
-			test("min/max", function() {
+			QUnit.test("min/max", function(assert) {
 				var oMinDate = new Date(1,0,1);
 				oMinDate.setFullYear("0001");
 				var oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 99);
@@ -467,7 +467,7 @@
 				qutils.triggerEvent("click", "DP3-icon");
 			});
 
-			test("special cases", function() {
+			QUnit.test("special cases", function(assert) {
 				var oDate = new Date(1, 0, 1);
 				oDate.setFullYear(1);
 				oDP3.setDateValue(oDate);
@@ -507,7 +507,7 @@
 			});
 
 
-			test("validation check", function() {
+			QUnit.test("validation check", function(assert) {
 
 				simulateUserInputViaTheInputField();
 				simulateSelectionOnTheCalendar();
@@ -628,7 +628,7 @@
 			});
 
 			//github #1172
-			test("value is updated when we change the century", function() {
+			QUnit.test("value is updated when we change the century", function(assert) {
 				//arrange
 				var newValue,
 					oDP = new sap.m.DatePicker({
@@ -656,7 +656,7 @@
 			});
 
 			QUnit.module("ARIA");
-			test("Tooltip and date annoncement should be set correctly at the described by", function() {
+			QUnit.test("Tooltip and date annoncement should be set correctly at the described by", function(assert) {
 				var sTooltip = "tooltip";
 				var sPlaceholder = "placeholder";
 				var oDP = new sap.m.DatePicker({
@@ -682,7 +682,7 @@
 				oDP.destroy();
 			});
 
-			test("getAccessibilityInfo", function() {
+			QUnit.test("getAccessibilityInfo", function(assert) {
 				var oInput = new sap.m.DatePicker({
 					value: "Value",
 					tooltip: "Tooltip",
@@ -718,7 +718,7 @@
 				oInput.destroy();
 			});
 
-			test("Aria in calendar with Secondary calendar type", function() {
+			QUnit.test("Aria in calendar with Secondary calendar type", function(assert) {
 				var oFormatSecondaryLong = sap.ui.core.format.DateFormat.getInstance({style: "long", calendarType: "Gregorian"}),
 					oSecondaryDay = sap.ui.core.date.UniversalDate.getInstance(new Date(2015, 10, 25, 0, 0, 0), "Gregorian");
 					sAriaSecondaryDay = oFormatSecondaryLong.format(oSecondaryDay, true),
@@ -744,7 +744,7 @@
 				}
 			});
 
-			test("navigate", function () {
+			QUnit.test("navigate", function (assert) {
 				// Arrange
 				this.oDP.attachEvent("navigate", this.oSpy);
 
@@ -910,7 +910,7 @@
 				}
 			});
 
-			test("_getVisibleDatesRange", function () {
+			QUnit.test("_getVisibleDatesRange", function (assert) {
 				// Assert
 				ok(this.oDP._getVisibleDatesRange(new sap.ui.unified.Calendar()) instanceof sap.ui.unified.DateRange,
 					"The method should return sap.ui.unified.DateRange");

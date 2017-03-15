@@ -138,7 +138,7 @@ var oModel = new sap.ui.model.json.JSONModel({
 
 
 QUnit.module("ManagedObject Model", {
-	setup: function() {
+	beforeEach: function() {
 		this.obj = new sap.ui.test.TestElement("myObject");
 		this.subObj = new sap.ui.test.TestElement();
 		this.subObj2 = new sap.ui.test.TestElement();
@@ -151,7 +151,7 @@ QUnit.module("ManagedObject Model", {
 		this.obj.setModel(oModel);
 		this.oManagedObjectModel = new sap.ui.model.base.ManagedObjectModel(this.obj);
 	},
-	teardown: function() {
+	afterEach: function() {
 		this.obj.destroy();
 		this.obj = null;
 	}

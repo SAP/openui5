@@ -191,7 +191,7 @@
 				cleanup.call(this);
 			}
 		});
-		test("with no arguments", function () {
+		QUnit.test("with no arguments", function (assert) {
 			var clock = sinon.useFakeTimers(); // 1, January 1970 = 22 Shawwal 1389(22.10.1389)
 			var oIslamicDate = new sap.ui.core.date.Islamic(); //22 Shawwal 1389(22.10.1389)
 			var now = new Date();// 1, January 1970
@@ -200,7 +200,7 @@
 			clock.restore();
 		});
 
-		test("with value parameter (timestamp)", function () {
+		QUnit.test("with value parameter (timestamp)", function (assert) {
 			var oIslamicDate;
 
 			oIslamicDate = new sap.ui.core.date.Islamic("invalid islamic date timestamp");
@@ -227,7 +227,7 @@
 					oIslamicDate, 1389, 9, 21, oGregorianDate.getDay(), oGregorianDate.getHours(), oGregorianDate.getMinutes(), oGregorianDate.getSeconds(), oGregorianDate.getMilliseconds());
 		});
 
-		test("with year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: invalid parameter type )", function () {
+		QUnit.test("with year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: invalid parameter type )", function (assert) {
 			// ------------- object -----------------------------
 			var oIslamicDate = null;
 
@@ -278,14 +278,14 @@
 			ok(isInvalid(oIslamicDate), "Constructor with invalid string as milliseconds must return invalid date");
 		});
 
-		test("with year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: valid values)", function () {
+		QUnit.test("with year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: valid values)", function (assert) {
 			var oIslamicDate = null;
 			var oTestDate = oCivilTestData.t1436_06_10__23_16_10_118;
 			oIslamicDate = createIslamicDateFromTestEntry(oTestDate);
 			verifyDateWithTestDate("Constructor with valid values", oIslamicDate, oTestDate.islamic);
 		});
 
-		test("with optional parameters", function () {
+		QUnit.test("with optional parameters", function (assert) {
 			var oIslamicDate = new sap.ui.core.date.Islamic(1430, 10);
 			verifyDate("new Islamic(1430, 10) must be equal to 01.11.1430 (tuesday) 00:00:00.00 AM", oIslamicDate, 1430, 10, 1, 2, 0, 0, 0, 0);
 
@@ -310,7 +310,7 @@
 				cleanup.call(this);
 			}
 		});
-		test("month given as setter is outside the range(0-11)", function () {
+		QUnit.test("month given as setter is outside the range(0-11)", function (assert) {
 			var date = oCivilTestData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = createIslamicDateFromTestEntry(date);
 			var oOneMonthLater = oCivilTestData.t1437_01_01__23_16_10_118.islamic;
@@ -318,53 +318,53 @@
 			verifyDateWithTestDate("1436_12_1__23_16_10_118;setMonth(12) -> 1437_01_01__23_16_10_118", oIslamicDate, oOneMonthLater);
 		});
 
-		test("month given in constructor is outside the range(0-11)", function () {
+		QUnit.test("month given in constructor is outside the range(0-11)", function (assert) {
 			var date = oCivilTestData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = new sap.ui.core.date.Islamic(date.islamic.year, 12, date.islamic.date, date.islamic.hours, date.islamic.minutes, date.islamic.seconds, date.islamic.milliseconds);
 			var oOneMonthLater = oCivilTestData.t1437_01_01__23_16_10_118.islamic;
 			verifyDateWithTestDate("new Islamic(1436, *12*, 1, 23, 16, 10, 19) -> 1437_01_01__23_16_10_118", oIslamicDate, oOneMonthLater);
 		});
 
-		test("date given as setter is outside the range(1-30)", function () {
+		QUnit.test("date given as setter is outside the range(1-30)", function (assert) {
 			var date = oCivilTestData.t1436_11_30__23_16_10_118;
 			var oIslamicDate = createIslamicDateFromTestEntry(date);
 			oIslamicDate.setDate(31);
 			verifyDateWithTestDate("t1436_11_30__23_16_10_118; setDate(31)->t1436_12_1__23_16_10_118", oIslamicDate, oCivilTestData.t1436_12_1__23_16_10_118.islamic);
 		});
 
-		test("date given in constructor is outside the range(1-30)", function () {
+		QUnit.test("date given in constructor is outside the range(1-30)", function (assert) {
 			var date = oCivilTestData.t1436_11_30__23_16_10_118;
 			var oIslamicDate = new sap.ui.core.date.Islamic(date.islamic.year, date.islamic.month, 31, date.islamic.hours, date.islamic.minutes, date.islamic.seconds, date.islamic.milliseconds);
 			verifyDateWithTestDate("new Islamic(1436, 10, *31*, 23, 16, 10, 118) -> t1436_12_1__23_16_10_118", oIslamicDate, oCivilTestData.t1436_12_1__23_16_10_118.islamic);
 		});
 
-		test("hours given as setter is outside the range(0-23)", function () {
+		QUnit.test("hours given as setter is outside the range(0-23)", function (assert) {
 			var date = oCivilTestData.t1435_06_11__23_16_10_118;
 			var oIslamicDate = createIslamicDateFromTestEntry(date);
 			oIslamicDate.setHours(24);
 			verifyDateWithTestDate("t1435_06_11__23_16_10_118; setHours(24)->t1435_06_12__00_16_10_118", oIslamicDate, oCivilTestData.t1435_06_12__00_16_10_118.islamic);
 		});
 
-		test("hours given in constructor is outside the range(0-23)", function () {
+		QUnit.test("hours given in constructor is outside the range(0-23)", function (assert) {
 			var date = oCivilTestData.t1435_06_11__23_16_10_118;
 			var oIslamicDate = new sap.ui.core.date.Islamic(date.islamic.year, date.islamic.month, date.islamic.date, 24, date.islamic.minutes, date.islamic.seconds, date.islamic.milliseconds);
 			verifyDateWithTestDate("new Islamic(1435, 5, 11, *24*, 16, 10, 118) - > t1435_06_12__00_16_10_118", oIslamicDate, oCivilTestData.t1435_06_12__00_16_10_118.islamic);
 		});
 
-		test("minutes given as setter is outside the range(0-59)", function () {
+		QUnit.test("minutes given as setter is outside the range(0-59)", function (assert) {
 			var date = oCivilTestData.t1435_06_11__23_16_10_118;
 			var oIslamicDate = createIslamicDateFromTestEntry(date);
 			oIslamicDate.setMinutes(60);
 			verifyDateWithTestDate("t1435_06_11__23_16_10_118; setMinutes(60)->t1435_06_12__00_00_10_118", oIslamicDate, oCivilTestData.t1435_06_12__00_00_10_118.islamic);
 		});
 
-		test("minutes given in constructor is outside the range(0-59)", function () {
+		QUnit.test("minutes given in constructor is outside the range(0-59)", function (assert) {
 			var date = oCivilTestData.t1435_06_11__23_16_10_118;
 			var oIslamicDate = new sap.ui.core.date.Islamic(date.islamic.year, date.islamic.month, date.islamic.date, date.islamic.hours, 60, date.islamic.seconds, date.islamic.milliseconds);
 			verifyDateWithTestDate("new Islamic(1435, 5, 11, 23, *60*, 10, 118) - > t1435_06_12__00_16_10_118", oIslamicDate, oCivilTestData.t1435_06_12__00_00_10_118.islamic);
 		});
 
-		test("seconds given as setter is outside the range(0-59)", function () {
+		QUnit.test("seconds given as setter is outside the range(0-59)", function (assert) {
 			var date = oCivilTestData.t1435_06_11__23_16_10_118;
 			var oExpectedId = date.islamic;
 			var oIslamicDate = createIslamicDateFromTestEntry(date);
@@ -373,7 +373,7 @@
 					oIslamicDate, oExpectedId.year, oExpectedId.month, oExpectedId.date, oExpectedId.day, oExpectedId.hours, 17, 0, oExpectedId.milliseconds);
 		});
 
-		test("seconds given in constructor outside the range(0-59)", function () {
+		QUnit.test("seconds given in constructor outside the range(0-59)", function (assert) {
 			var date = oCivilTestData.t1435_06_11__23_16_10_118;
 			var oExpectedId = date.islamic;
 			var oIslamicDate = new sap.ui.core.date.Islamic(date.islamic.year, date.islamic.month, date.islamic.date, date.islamic.hours, date.islamic.minutes, 60, date.islamic.milliseconds);
@@ -381,7 +381,7 @@
 					oExpectedId.year, oExpectedId.month, oExpectedId.date, oExpectedId.day, oExpectedId.hours, 17, 0, oExpectedId.milliseconds);
 		});
 
-		test("milliseconds given as setter is outside the range(0-999)", function () {
+		QUnit.test("milliseconds given as setter is outside the range(0-999)", function (assert) {
 			var date = oCivilTestData.t1435_06_11__23_16_10_118;
 			var oExpectedId = date.islamic;
 			var oIslamicDate = createIslamicDateFromTestEntry(date);
@@ -390,7 +390,7 @@
 					oExpectedId.year, oExpectedId.month, oExpectedId.date, oExpectedId.day, oExpectedId.hours, oExpectedId.minutes, 11, 0);
 		});
 
-		test("milliseconds given in constructor is outside the range(0-999)", function () {
+		QUnit.test("milliseconds given in constructor is outside the range(0-999)", function (assert) {
 			var date = oCivilTestData.t1435_06_11__23_16_10_118;
 			var oExpectedId = date.islamic;
 			var oIslamicDate = new sap.ui.core.date.Islamic(date.islamic.year, date.islamic.month, date.islamic.date, date.islamic.hours, date.islamic.minutes, date.islamic.seconds, 1000);
@@ -398,48 +398,48 @@
 					oExpectedId.year, oExpectedId.month, oExpectedId.date, oExpectedId.day, oExpectedId.hours, oExpectedId.minutes, 11, 0);
 		});
 
-		test("setMonth(-1)", function () {
+		QUnit.test("setMonth(-1)", function (assert) {
 			var date = oCivilTestData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = createIslamicDateFromTestEntry(date);
 			oIslamicDate.setMonth(-1);
 			verifyDateWithTestDate("1436_12_1__23_16_10_118 setMonth(-1) -> 1435_12_1__23_16_10_118(last month in the previous year)", oIslamicDate, oCivilTestData.t1435_12_1__23_16_10_118.islamic);
 		});
 
-		test("setUTCMonth(-1)", function () {
+		QUnit.test("setUTCMonth(-1)", function (assert) {
 			var date = oCivilTestData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = createIslamicDateFromTestEntry(date, true);
 			oIslamicDate.setUTCMonth(-1);
 			verifyDateWithTestDate("1436_12_1__23_16_10_118 setUTCMonth(-1) -> 1435_12_1__23_16_10_118(last month in the previous year)", oIslamicDate, oCivilTestData.t1435_12_1__23_16_10_118.islamic, true);
 		});
 
-		test("-1 as month in the constructor", function () {
+		QUnit.test("-1 as month in the constructor", function (assert) {
 			var date = oCivilTestData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = new sap.ui.core.date.Islamic(date.islamic.year, -1, date.islamic.date, date.islamic.hours, date.islamic.minutes, date.islamic.seconds, date.islamic.milliseconds);
 			verifyDateWithTestDate("new Islamic(1436,11,*-1*,23,16,10,118) -> 1435_12_1__23_16_10_118(last month in the previous year)", oIslamicDate, oCivilTestData.t1435_12_1__23_16_10_118.islamic);
 		});
 
-		test("setDate(0)", function () {
+		QUnit.test("setDate(0)", function (assert) {
 			var date = oCivilTestData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = createIslamicDateFromTestEntry(date);
 			oIslamicDate.setDate(0);
 			verifyDateWithTestDate("t1436_12_1__23_16_10_118 setDate(0) - > t1436_11_30__23_16_10_118", oIslamicDate, oCivilTestData.t1436_11_30__23_16_10_118.islamic);
 		});
 
-		test("setUTCDate(0)", function () {
+		QUnit.test("setUTCDate(0)", function (assert) {
 			var date = oCivilTestData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = createIslamicDateFromTestEntry(date, true);
 			oIslamicDate.setUTCDate(0);
 			verifyDateWithTestDate("t1436_12_1__23_16_10_118 setUTCDate(0) - > t1436_11_30__23_16_10_118", oIslamicDate, oCivilTestData.t1436_11_30__23_16_10_118.islamic, true);
 		});
 
-		test("0 as date in the constructor", function () {
+		QUnit.test("0 as date in the constructor", function (assert) {
 			var date = oCivilTestData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = new sap.ui.core.date.Islamic(date.islamic.year, date.islamic.month, 0, date.islamic.hours, date.islamic.minutes, date.islamic.seconds, date.islamic.milliseconds);
 			verifyDateWithTestDate("new Islamic(1436,12,*0*,23,16,10,118) - > t1436_11_30__23_16_10_118", oIslamicDate, oCivilTestData.t1436_11_30__23_16_10_118.islamic);
 		});
 
 
-		test("setMinutes(-1)", function () {
+		QUnit.test("setMinutes(-1)", function (assert) {
 			var date = oCivilTestData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = createIslamicDateFromTestEntry(date);
 			var oExpectedId = date.islamic;
@@ -448,7 +448,7 @@
 					oExpectedId.year, oExpectedId.month, oExpectedId.date, oExpectedId.day, oExpectedId.hours - 1, 59, oExpectedId.seconds, oExpectedId.milliseconds);
 		});
 
-		test("setUTCMinutes(-1)", function () {
+		QUnit.test("setUTCMinutes(-1)", function (assert) {
 			var date = oCivilTestData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = createIslamicDateFromTestEntry(date, true);
 			var oExpectedId = date.islamic;
@@ -457,7 +457,7 @@
 					oExpectedId.year, oExpectedId.month, oExpectedId.date, oExpectedId.day, oExpectedId.hours - 1, 59, oExpectedId.seconds, oExpectedId.milliseconds, true);
 		});
 
-		test("-1 as minutes in the constructor", function () {
+		QUnit.test("-1 as minutes in the constructor", function (assert) {
 			var date = oCivilTestData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = new sap.ui.core.date.Islamic(date.islamic.year, date.islamic.month, date.islamic.date, date.islamic.hours, -1, date.islamic.seconds, date.islamic.milliseconds);
 			var oExpectedId = date.islamic;
@@ -465,7 +465,7 @@
 					oExpectedId.year, oExpectedId.month, oExpectedId.date, oExpectedId.day, oExpectedId.hours - 1, 59, oExpectedId.seconds, oExpectedId.milliseconds);
 		});
 
-		test("setSeconds(-1)", function () {
+		QUnit.test("setSeconds(-1)", function (assert) {
 			var date = oCivilTestData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = createIslamicDateFromTestEntry(date);
 			var oExpectedId = date.islamic;
@@ -474,7 +474,7 @@
 					oExpectedId.year, oExpectedId.month, oExpectedId.date, oExpectedId.day, oExpectedId.hours, 15, 59, oExpectedId.milliseconds);
 		});
 
-		test("setUTCSeconds(-1)", function () {
+		QUnit.test("setUTCSeconds(-1)", function (assert) {
 			var date = oCivilTestData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = createIslamicDateFromTestEntry(date, true);
 			var oExpectedId = date.islamic;
@@ -483,7 +483,7 @@
 					oExpectedId.year, oExpectedId.month, oExpectedId.date, oExpectedId.day, oExpectedId.hours, 15, 59, oExpectedId.milliseconds, true);
 		});
 
-		test("-1 as seconds in the constructor", function () {
+		QUnit.test("-1 as seconds in the constructor", function (assert) {
 			var date = oCivilTestData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = new sap.ui.core.date.Islamic(date.islamic.year, date.islamic.month, date.islamic.date, date.islamic.hours, date.islamic.minutes, -1, date.islamic.milliseconds);
 			var oExpectedId = date.islamic;
@@ -491,7 +491,7 @@
 					oExpectedId.year, oExpectedId.month, oExpectedId.date, oExpectedId.day, oExpectedId.hours, 15, 59, oExpectedId.milliseconds);
 		});
 
-		test("setMilliseconds(-1)", function () {
+		QUnit.test("setMilliseconds(-1)", function (assert) {
 			var date = oCivilTestData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = createIslamicDateFromTestEntry(date);
 			var oExpectedId = date.islamic;
@@ -500,7 +500,7 @@
 					oExpectedId.year, oExpectedId.month, oExpectedId.date, oExpectedId.day, oExpectedId.hours, oExpectedId.minutes, 9, 999);
 		});
 
-		test("setUTCMilliseconds(-1)", function () {
+		QUnit.test("setUTCMilliseconds(-1)", function (assert) {
 			var date = oCivilTestData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = createIslamicDateFromTestEntry(date, true);
 			var oExpectedId = date.islamic;
@@ -509,7 +509,7 @@
 					oExpectedId.year, oExpectedId.month, oExpectedId.date, oExpectedId.day, oExpectedId.hours, oExpectedId.minutes, 9, 999, true);
 		});
 
-		test("-1 as milliseconds in the constructor", function () {
+		QUnit.test("-1 as milliseconds in the constructor", function (assert) {
 			var date = oCivilTestData.t1436_12_1__23_16_10_118;
 			var oIslamicDate = new sap.ui.core.date.Islamic(date.islamic.year, date.islamic.month, date.islamic.date, date.islamic.hours, date.islamic.minutes, date.islamic.seconds, -1);
 			var oExpectedId = date.islamic;
@@ -641,52 +641,52 @@
 				equals(bUTC ? oIslamicDate.getUTCMilliseconds() : oIslamicDate.getMilliseconds(), iMilliseconds, ": milliseconds");
 			}
 		});
-		test("Set/Get Full Year", function () {
+		QUnit.test("Set/Get Full Year", function (assert) {
 			var iYear = 1435;
 			var oIslamicDate = new sap.ui.core.date.Islamic(1436, 5, 11, 23, 16, 10, 118);
 			oIslamicDate.setFullYear(iYear);
 			verifyDate("Setting/getting islamic year", oIslamicDate, iYear, 5, 11, 6, 23, 16, 10, 118);
 		});
 
-		test("setFullYear with optional parameters", function () {
+		QUnit.test("setFullYear with optional parameters", function (assert) {
 			this.verifyYear2Date(false, 1433, 2, 5);
 		});
 
-		test("setUTCFullYear with optional parameters", function () {
+		QUnit.test("setUTCFullYear with optional parameters", function (assert) {
 			this.verifyYear2Date(true, 1433, 2, 5);
 		});
 
-		test("setUTCFullYear with optional parameters close to the border values", function () {
+		QUnit.test("setUTCFullYear with optional parameters close to the border values", function (assert) {
 			this.verifyYear2Date(true, 1436, 7, 1, 1436, 6, 30);
 		});
 
-		test("Set/Get Year", function () {
+		QUnit.test("Set/Get Year", function (assert) {
 			var iYear = 35;
 			var oIslamicDate = new sap.ui.core.date.Islamic(1436, 5, 11, 23, 16, 10, 118);
 			oIslamicDate.setYear(iYear);
 			verifyDate("Setting/getting islamic year", oIslamicDate, 1435, 5, 11, 6, 23, 16, 10, 118);
 			equal(oIslamicDate.getYear(), 35, "GetYear should return the 2 digit year offset since 1400");
 		});
-		test("Set/Get Month", function () {
+		QUnit.test("Set/Get Month", function (assert) {
 			var iMonth = 5;
 			var oIslamicDate = new sap.ui.core.date.Islamic(1400, 4, 11, 23, 16, 10, 118);
 			oIslamicDate.setMonth(iMonth);
 			verifyDate("Setting an islamic date with given month must return the same month", oIslamicDate, 1400, iMonth, 11, 0, 23, 16, 10, 118);
 		});
 
-		test("setMonth with optional parameters", function () {
+		QUnit.test("setMonth with optional parameters", function (assert) {
 			this.verifyMonth2Date(false, 2, 5);
 		});
 
-		test("setUTCMonth with optional parameters", function () {
+		QUnit.test("setUTCMonth with optional parameters", function (assert) {
 			this.verifyMonth2Date(true, 2, 5);
 		});
 
-		test("setUTCMonth with optional parameters close to te border values", function () {
+		QUnit.test("setUTCMonth with optional parameters close to te border values", function (assert) {
 			this.verifyMonth2Date(true, 7, 1, 6, 30);
 		});
 
-		test("Set/Get Date", function () {
+		QUnit.test("Set/Get Date", function (assert) {
 			var iDate = 22;
 			var oIslamicDate = new sap.ui.core.date.Islamic(1436, 5, 11, 23, 16, 10, 118);
 			var iOrigHours = oIslamicDate.getHours();
@@ -695,64 +695,64 @@
 			equals(oIslamicDate.getHours(), iOrigHours, "Setting an islamic date with given date must not change hours");
 		});
 
-		test("Get Day", function () {
+		QUnit.test("Get Day", function (assert) {
 			var oIslamicDate = new sap.ui.core.date.Islamic(1436, 5, 11, 23, 16, 10, 118);
 			equal(oIslamicDate.getDay(), 3, "Islamic Date 1436/06/11 is the 3th day of week (index 3, starting from 0 Sunday)");//
 		});
 
-		test("Set/Get Hours", function () {
+		QUnit.test("Set/Get Hours", function (assert) {
 			var oIslamicDate = new sap.ui.core.date.Islamic(1436, 5, 11, 23, 16, 10, 118);
 			var iHours = 14;
 			oIslamicDate.setHours(iHours);
 			verifyDate("Setting an islamic date with given hours must return the same hours", oIslamicDate, 1436, 5, 11, 3, iHours, 16, 10, 118);
 		});
 
-		test("setHours with optional parameters", function () {
+		QUnit.test("setHours with optional parameters", function (assert) {
 			this.verifyHours2Milliseconds(false, 5, 22, 17, 11);
 		});
 
-		test("setUTCHours with optional parameters", function () {
+		QUnit.test("setUTCHours with optional parameters", function (assert) {
 			this.verifyHours2Milliseconds(true, 5, 22, 17, 11);
 		});
 
-		test("Set/Get Minutes", function () {
+		QUnit.test("Set/Get Minutes", function (assert) {
 			var oIslamicDate = new sap.ui.core.date.Islamic(1436, 5, 11, 23, 16, 10, 118);
 			var iMinutes = 14;
 			oIslamicDate.setMinutes(iMinutes);
 			verifyDate("Setting an islamic date with given minutes must return the same minutes", oIslamicDate, 1436, 5, 11, 3, 23, iMinutes, 10, 118);
 		});
 
-		test("setMinutes with optional parameters", function () {
+		QUnit.test("setMinutes with optional parameters", function (assert) {
 			this.verifyMinutes2Milliseconds(false, 22, 17, 11);
 		});
 
-		test("setUTCMinutes with optional parameters", function () {
+		QUnit.test("setUTCMinutes with optional parameters", function (assert) {
 			this.verifyMinutes2Milliseconds(true, 22, 17, 11);
 		});
 
-		test("Set/Get Seconds", function () {
+		QUnit.test("Set/Get Seconds", function (assert) {
 			var oIslamicDate = new sap.ui.core.date.Islamic(1436, 5, 11, 23, 16, 10, 118);
 			var iSeconds = 44;
 			oIslamicDate.setSeconds(iSeconds);
 			verifyDate("Setting an islamic date with given seconds must return the same seconds", oIslamicDate, 1436, 5, 11, 3, 23, 16, iSeconds, 118);
 		});
 
-		test("setSeconds with optional parameters", function () {
+		QUnit.test("setSeconds with optional parameters", function (assert) {
 			this.verifySeconds2Milliseconds(false, 17, 11);
 		});
 
-		test("setUTCSeconds with optional parameters", function () {
+		QUnit.test("setUTCSeconds with optional parameters", function (assert) {
 			this.verifySeconds2Milliseconds(true, 17, 11);
 		});
 
-		test("Set/Get Milliseconds", function () {
+		QUnit.test("Set/Get Milliseconds", function (assert) {
 			var oIslamicDate = new sap.ui.core.date.Islamic(1436, 5, 11, 23, 16, 10, 118);
 			var iMilliseconds = 44;
 			oIslamicDate.setMilliseconds(iMilliseconds);
 			verifyDate("Setting an islamic date with given seconds must return the same seconds", oIslamicDate, 1436, 5, 11, 3, 23, 16, 10, iMilliseconds);
 		});
 
-		test("Get time", function () {
+		QUnit.test("Get time", function (assert) {
 			var date = oCivilTestData.t1435_06_11__23_16_10_118;
 			var oIslamicDate = createIslamicDateFromTestEntry(date);
 			var iTimezoneOffset = getTimezoneOffset(oIslamicDate);
@@ -768,7 +768,7 @@
 			}
 		});
 
-		test("Setters have to return the time since 1.1.1970", function () {
+		QUnit.test("Setters have to return the time since 1.1.1970", function (assert) {
 			var oDate = new sap.ui.core.date.Islamic(1354, 0, 1, 8, 10, 15, 119);
 
 			function check(iTimestamp, sSetter) {
@@ -794,7 +794,7 @@
 			check(oDate.setUTCMilliseconds(118), "setUTCMilliseconds");
 		});
 
-		test(".Now()", function () {
+		QUnit.test(".Now()", function (assert) {
 			var clock = sinon.useFakeTimers(0); // 1, January 1970 = 22 Shawwal 1389(22.10.1389)
 			equal(sap.ui.core.date.Islamic.now(), 0, "Islamic.now() must equal to the timestamp since 1 January 1970, 00:00:00 000");
 
@@ -805,11 +805,11 @@
 			clock.restore();
 		});
 
-		test("Convert Gregorian to Islamic dates", function () {
+		QUnit.test("Convert Gregorian to Islamic dates", function (assert) {
 			testGregorian2IslamicWithTestDataSet(oCivilTestData);
 		});
 
-		test("Convert Islamic to Gregorian dates", function () {
+		QUnit.test("Convert Islamic to Gregorian dates", function (assert) {
 			testIslamic2GregorianWithTestDataSet(oCivilTestData);
 		});
 
@@ -822,7 +822,7 @@
 			}
 		});
 
-		test("Convert Gregorian to Islamic dates and vise-versa with customData", function () {
+		QUnit.test("Convert Gregorian to Islamic dates and vise-versa with customData", function (assert) {
 			testGregorian2IslamicWithTestDataSet(oTestDates4Customization);
 			testIslamic2GregorianWithTestDataSet(oTestDates4Customization);
 		});

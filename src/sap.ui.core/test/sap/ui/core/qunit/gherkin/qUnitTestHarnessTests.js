@@ -36,11 +36,11 @@ sap.ui.require([
         this.oQUnitOkStub.restore();
       };
 
-      testHarnessTests.setup(fMockQUnitSetup, fMockQUnitTeardown, qUnitTestHarness);
+      testHarnessTests.beforeEach(fMockQUnitSetup, fMockQUnitTeardown, qUnitTestHarness);
     },
 
     afterEach: function() {
-      testHarnessTests.teardown();
+      testHarnessTests.afterEach();
     }
 
   });
@@ -50,7 +50,7 @@ sap.ui.require([
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
   // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Given invalid parameters, when I call 'test', then I get an error", function() {
+  QUnit.test("Given invalid parameters, when I call 'test', then I get an error", function(assert) {
 
     var sObjectError = "qUnitTestHarness.test: input all arguments via a single object";
     var sFeaturePathError = "qUnitTestHarness.test: parameter 'featurePath' must be a valid string";

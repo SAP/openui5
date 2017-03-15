@@ -336,7 +336,7 @@
 
 		});
 
-		test("ResourceRoots", function() {
+		QUnit.test("ResourceRoots", function(assert) {
 			if (this.iExpectedMetadataVersion === 1) {
 				ok(true, "Metadata version 1 does not support 'resourceRoots'. Skipping tests...");
 			} else {
@@ -357,7 +357,7 @@
 			}
 		});
 
-		test("Manifest Validation", function() {
+		QUnit.test("Manifest Validation", function(assert) {
 
 			deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
 			deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
@@ -515,7 +515,7 @@
 		}
 	});
 
-	test("Metadata Validation", function() {
+	QUnit.test("Metadata Validation", function(assert) {
 
 		equal(this.oMetadata.getName(), "sap.ui.test.v1empty.Component", "Name is correct!");
 		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
@@ -535,7 +535,7 @@
 		}
 	});
 
-	test("Manifest Validation", function() {
+	QUnit.test("Manifest Validation", function(assert) {
 
 		equal(this.oMetadata.getName(), "sap.ui.test.v2empty.Component", "Name is correct!");
 		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
@@ -555,7 +555,7 @@
 		}
 	});
 
-	test("Metadata Validation", function() {
+	QUnit.test("Metadata Validation", function(assert) {
 
 		equal(this.oMetadata.getName(), "sap.ui.test.v1missing.Component", "Name is correct!");
 		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
@@ -575,7 +575,7 @@
 		}
 	});
 
-	test("Manifest Validation", function() {
+	QUnit.test("Manifest Validation", function(assert) {
 
 		equal(this.oMetadata.getName(), "sap.ui.test.v2missing.Component", "Name is correct!");
 		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
@@ -621,7 +621,7 @@
 
 	});
 
-	test("ResourceRoots", function() {
+	QUnit.test("ResourceRoots", function(assert) {
 		ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/anypath"))
 			.equals(new URI(jQuery.sap.getModulePath("x.y.z"))), "ResourceRoot 'x.y.z' registered (" + jQuery.sap.getModulePath("x.y.z") + ")");
 		ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
@@ -636,7 +636,7 @@
 			"ResourceRoot 'server.absolute' not registered (" + jQuery.sap.getModulePath("server.absolute") + ")");
 	});
 
-	test("Manifest Validation", function() {
+	QUnit.test("Manifest Validation", function(assert) {
 
 		deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
 		deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
@@ -708,7 +708,7 @@
 
 	});
 
-	test("ResourceRoots", function() {
+	QUnit.test("ResourceRoots", function(assert) {
 		ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getParent().getComponentName(), "/anypath"))
 			.equals(new URI(jQuery.sap.getModulePath("x.y.z"))), "ResourceRoot 'x.y.z' registered (" + jQuery.sap.getModulePath("x.y.z") + ")");
 		ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
@@ -723,7 +723,7 @@
 			"ResourceRoot 'server.absolute' not registered (" + jQuery.sap.getModulePath("server.absolute") + ")");
 	});
 
-	test("Manifest Validation", function() {
+	QUnit.test("Manifest Validation", function(assert) {
 
 		deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
 		deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");

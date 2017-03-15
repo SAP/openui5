@@ -106,7 +106,7 @@
 
 	QUnit.module("Properties and Aggregations");
 
-	test("Properties - Default Values", function() {
+	QUnit.test("Properties - Default Values", function(assert) {
 		ok(!oRoadMap2.getSelectedStep(), "Default 'selectedStep'");
 		ok(!oRoadMap2.getFirstVisibleStep(), "Default 'firstVisibleStep'");
 		ok(!oRoadMap2.getNumberOfVisibleSteps(), "Default 'numberOfVisibleSteps'");
@@ -119,7 +119,7 @@
 		ok(!oRoadMap2.getSteps()[0].getLabel(), "Step: Default 'label'");
 	});
 
-	test("Properties - Custom Values", function() {
+	QUnit.test("Properties - Custom Values", function(assert) {
 		equals(oRoadMap1.getSelectedStep(), "s4", "Custom 'selectedStep'");
 		equals(oRoadMap1.getFirstVisibleStep(), "s2", "Custom 'firstVisibleStep'");
 		equals(oRoadMap1.getNumberOfVisibleSteps(), 5, "Custom 'numberOfVisibleSteps'");
@@ -132,7 +132,7 @@
 		equals(oRoadMap2.getSteps()[1].getLabel(), "Hallo", "Step: Custom 'label'");
 	});
 
-	test("Aggregation 'Steps'", function() {
+	QUnit.test("Aggregation 'Steps'", function(assert) {
 		equals(oRoadMap2.getSteps().length, 2, "# Steps");
 		oRoadMap2.addStep(new sap.ui.commons.RoadMapStep());
 		oRoadMap2.addStep(new sap.ui.commons.RoadMapStep());
@@ -149,7 +149,7 @@
 
 	QUnit.module("Appearance");
 
-	test("Visibility", function() {
+	QUnit.test("Visibility", function(assert) {
 		equals(jQuery("#rm1").length, 1, "Visible Roadmap is rendered");
 		equals(jQuery("#rm2").length, 0, "Hidden Roadmap is not rendered");
 
@@ -157,27 +157,27 @@
 		ok(!jQuery("#s6").is(":visible"), "Hidden step is not visible");
 	});
 
-	test("Width", function() {
+	QUnit.test("Width", function(assert) {
 		equals(jQuery("#rm3").width(), jQuery("#uiArea3").width(), "By default the Roadmap has 100% width");
 		equals(jQuery("#rm1").width(), 600, "Fixed Roadmap width");
 	});
 
-	test("# Visible Steps", function() {
+	QUnit.test("# Visible Steps", function(assert) {
 		equals(jQuery("#s1").width()*5, jQuery("#rm1-steparea").width(), "5 Steps visible");
 	});
 
-	test("First visible Step", function() {
+	QUnit.test("First visible Step", function(assert) {
 		equals(jQuery("#s1").width(), jQuery("#rm1-steparea").scrollLeft(), "Area scrolled to 2. step");
 	});
 
-	test("Overflow", function() {
+	QUnit.test("Overflow", function(assert) {
 		ok(jQuery("#rm3-Start").hasClass("sapUiRoadMapStartFixed"), "Delimiter start CSS class when scrolling not possible");
 		ok(jQuery("#rm3-End").hasClass("sapUiRoadMapEndFixed"), "Delimiter end CSS class when scrolling not possible");
 		ok(jQuery("#rm1-Start").hasClass("sapUiRoadMapStartScroll"), "Delimiter start CSS class when scrolling possible");
 		ok(jQuery("#rm1-End").hasClass("sapUiRoadMapEndScroll"), "Delimiter end CSS class when scrolling possible");
 	});
 
-	test("Selection", function() {
+	QUnit.test("Selection", function(assert) {
 		for(var i=1; i<8; i++){
 			if(i==4){
 				ok(jQuery("#s"+i).hasClass("sapUiRoadMapSelected"), "Selected Step has special CSS class");
@@ -187,7 +187,7 @@
 		}
 	});
 
-	test("Enablement", function() {
+	QUnit.test("Enablement", function(assert) {
 		for(var i=1; i<8; i++){
 			if(i==2){
 				ok(jQuery("#s"+i).hasClass("sapUiRoadMapDisabled"), "Disabled Step has special CSS class");
@@ -197,7 +197,7 @@
 		}
 	});
 
-	test("Expand State", function() {
+	QUnit.test("Expand State", function(assert) {
 		checkExpandState(3, false);
 		checkExpandState(5, true);
 	});

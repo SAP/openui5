@@ -31,7 +31,7 @@
 	// require the draft enabled mock server before testing
 	jQuery.sap.require("sap.ui.core.util.DraftEnabledMockServer");
 
-	test("mock data generation", function() {
+	QUnit.test("mock data generation", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -136,7 +136,7 @@
 		oMockServer.destroy();
 	});
 
-	test("actions on draft", function() {
+	QUnit.test("actions on draft", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -269,7 +269,7 @@
 		oMockServer.destroy();
 	});
 
-	test("remainder", function() {
+	QUnit.test("remainder", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});

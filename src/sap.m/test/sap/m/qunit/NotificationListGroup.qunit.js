@@ -267,7 +267,7 @@
 		assert.strictEqual(expandCollapseButton.getEnabled(), true, 'Should be enabled when "enableCollapseButtonWhenEmpty" is set to "true"');
 	});
 
-    QUnit.test('Reach max number of notifications', function(assert){
+    QUnit.test('Reach max number of notifications', function(assert) {
         //arrange
         var maxNumberOfNotifications = (sap.ui.Device.system.desktop ? 400 : 100) + 1;
         var expectedNumberOfNotifications = maxNumberOfNotifications - 1;
@@ -285,7 +285,7 @@
         assert.strictEqual(this.NotificationListGroup._maxNumberReached,  true, 'Max number of shown notifications should be reached.');
     });
 
-    QUnit.test('Remove notification after reaching max number of notifications', function(assert){
+    QUnit.test('Remove notification after reaching max number of notifications', function(assert) {
         //arrange
         var maxNumberOfNotifications = (sap.ui.Device.system.desktop ? 400 : 100);
         var lastNotification = new sap.m.NotificationListItem();

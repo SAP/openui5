@@ -271,7 +271,7 @@ QUnit.test("toggleRowSelection", function(assert) {
 		iCallbackIndex = iIndex;
 	};
 
-	function test(oRowIndicator) {
+	function testLocal(oRowIndicator) {
 		oTable.clearSelection();
 		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
 		sap.ui.getCore().applyChanges();
@@ -302,8 +302,8 @@ QUnit.test("toggleRowSelection", function(assert) {
 	}
 
 	// Test by passing a cell as the row indicator.
-	test(getRowHeader(0));
-	test(getCell(0, 0));
+	testLocal(getRowHeader(0));
+	testLocal(getCell(0, 0));
 
 	// If row selection is not allowed on data cells the selection state should not change.
 	oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowSelector);
@@ -333,8 +333,8 @@ QUnit.test("toggleRowSelection", function(assert) {
 	assert.ok(oTable.isIndexSelected(0), "Row selected");
 
 	// Test by passing a row index as the row indicator.
-	test(0);
-	test(iNumberOfRows - 1);
+	testLocal(0);
+	testLocal(iNumberOfRows - 1);
 
 	// Test by passing invalid row indices.
 	assert.ok(!TableUtils.toggleRowSelection(oTable, -1), "Row index out of bound: No selection was performed"); // Toggle

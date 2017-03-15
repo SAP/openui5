@@ -36,7 +36,7 @@
 			}
 		});
 
-		test("has correct init state", function () {
+		QUnit.test("has correct init state", function (assert) {
 			// Arrange
 			var oMenu = new sap.m.semantic.ShareMenu(this.oActionSheet);
 
@@ -50,7 +50,7 @@
 			oMenu.destroy();
 		});
 
-		test("content aggregation", function () {
+		QUnit.test("content aggregation", function (assert) {
 			// Arrange
 			var oMenu = new sap.m.semantic.ShareMenu(this.oActionSheet),
 					oCustomButton1 = new sap.m.Button("customButtonId1",{

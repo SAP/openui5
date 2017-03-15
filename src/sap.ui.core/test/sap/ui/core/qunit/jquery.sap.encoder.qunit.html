@@ -31,19 +31,19 @@
 <!-- <SAPWIKI>/wiki/download/attachments/867713114/XSS_Char_Table.pdf -->
 
 QUnit.module("HTML context");
-test("encode HTML", function(){
+QUnit.test("encode HTML", function(assert){
 	equal(jQuery.sap.encodeHTML("+"), "&#x2b;", "Plus");
 	equal(jQuery.sap.encodeHTML("<>&\""), "&lt;&gt;&amp;&quot;", "<>&\"");
 	equal(jQuery.sap.encodeHTML("\x00\x01\x02"), "&#xfffd;&#xfffd;&#xfffd;", "0x00 0x01 0x02");
 	equal(jQuery.sap.encodeHTML(">&<\"\'\\/"), "&gt;&amp;&lt;&quot;&#x27;&#x5c;&#x2f;", ">&<\"\'\\/");
 });
 
-test("should not encode", function(){
+QUnit.test("should not encode", function(assert){
 	equal(jQuery.sap.encodeHTML("nothingtoencode123,.-_"), "nothingtoencode123,.-_", "nothingtoencode123,.-_");
 });
 
 <!-- http://unicode.org/review/pr-121.html -->
-test("should replaced with 0xfffd", function(){
+QUnit.test("should replaced with 0xfffd", function(assert){
 	equal(jQuery.sap.encodeHTML(String.fromCharCode(8)),  "&#xfffd;", "Backspace");
 	equal(jQuery.sap.encodeHTML(String.fromCharCode(9)), "&#x9;", "Tab");
 	equal(jQuery.sap.encodeHTML(String.fromCharCode(10)), "&#xa;", "Line feed");
@@ -56,7 +56,7 @@ test("should replaced with 0xfffd", function(){
 
 });
 
-test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 and 0x2029", function(){
+QUnit.test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 and 0x2029", function(assert){
 	equal(jQuery.sap.encodeHTML(String.fromCharCode(256)),  "Ā", "Ā (0x100)");
 	equal(jQuery.sap.encodeHTML(String.fromCharCode(257)),  "ā", "ā (0x101)");
 	equal(jQuery.sap.encodeHTML(String.fromCharCode(0x2028)),  "&#x2028;", "(0x2028)");
@@ -64,7 +64,7 @@ test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 a
 });
 
 QUnit.module("JS context");
-test("encode JS", function(){
+QUnit.test("encode JS", function(assert){
 	equal(jQuery.sap.encodeJS("\""), "\\x22", "Quote");
 	equal(jQuery.sap.encodeJS("\'"), "\\x27", "Apostrophe");
 	equal(jQuery.sap.encodeJS("\x00\x01\x02"), "\\x00\\x01\\x02", "0x00 0x01 0x02");
@@ -72,11 +72,11 @@ test("encode JS", function(){
 });
 
 
-test("should not encode", function(){
+QUnit.test("should not encode", function(assert){
 	equal(jQuery.sap.encodeJS("nothingtoencode123,._"), "nothingtoencode123,._", "nothingtoencode123,._");
 });
 
-test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 and 0x2029", function(){
+QUnit.test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 and 0x2029", function(assert){
 	equal(jQuery.sap.encodeJS(String.fromCharCode(256)),  "Ā", "Ā (0x100)");
 	equal(jQuery.sap.encodeJS(String.fromCharCode(257)),  "ā", "ā (0x101)");
 	equal(jQuery.sap.encodeJS(String.fromCharCode(0x2028)),  "\\u2028", "(0x2028)");
@@ -84,14 +84,14 @@ test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 a
 });
 
 QUnit.module("URL context");
-test("encode URL", function(){
+QUnit.test("encode URL", function(assert){
 	equal(jQuery.sap.encodeURL("*"), "%2a", "Asterisk");
 	equal(jQuery.sap.encodeURL("+"), "%2b", "Plus");
 	equal(jQuery.sap.encodeURL("ä"), "%c3%a4", "Umlaut");
 	equal(jQuery.sap.encodeURL("\x00\x01\x02"), "%00%01%02", "0x00 0x01 0x02");
 	equal(jQuery.sap.encodeURL(">&<\"\'\\/"), "%3e%26%3c%22%27%5c%2f", ">&<\"\'\\/");
 });
-test("encode URL parameters", function(){
+QUnit.test("encode URL parameters", function(assert){
 	equal(jQuery.sap.encodeURLParameters({
 		"?": "=",
 		"&": "?",
@@ -100,17 +100,17 @@ test("encode URL parameters", function(){
 	equal(jQuery.sap.encodeURLParameters({}), "", "empty parameter map");
 	equal(jQuery.sap.encodeURLParameters(), "", "no parameter map");
 });
-test("should not encode", function(){
+QUnit.test("should not encode", function(assert){
 	equal(jQuery.sap.encodeURL("nothingtoencode123-._"), "nothingtoencode123-._", "nothingtoencode123-._");
 });
 
-test("characters above (>) 255 (0xff) should be encoded always", function(){
+QUnit.test("characters above (>) 255 (0xff) should be encoded always", function(assert){
 	equal(jQuery.sap.encodeURL(String.fromCharCode(256)),  "%c4%80", "Ā (0x100)");
 	equal(jQuery.sap.encodeURL(String.fromCharCode(257)),  "%c4%81", "ā (0x101)");
 });
 
 QUnit.module("CSS context");
-test("encode CSS", function(){
+QUnit.test("encode CSS", function(assert){
 	equal(jQuery.sap.encodeCSS("+"), "\\2b", "Plus");
 	equal(jQuery.sap.encodeCSS("~7"), "\\7e 7", "~7");
 	equal(jQuery.sap.encodeCSS("+apple"), "\\2b apple", "+apple");
@@ -120,12 +120,12 @@ test("encode CSS", function(){
 	equal(jQuery.sap.encodeCSS(">&<\"\'\\/"), "\\3e\\26\\3c\\22\\27\\5c\\2f", ">&<\"\'\\/");
 });
 
-test("should not encode", function(){
+QUnit.test("should not encode", function(assert){
 	equal(jQuery.sap.encodeCSS("nothingtoencode123"), "nothingtoencode123", "nothingtoencode123");
 
 });
 
-test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 and 0x2029", function(){
+QUnit.test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 and 0x2029", function(assert){
 	equal(jQuery.sap.encodeCSS(String.fromCharCode(256)),  "Ā", "Ā (0x100)");
 	equal(jQuery.sap.encodeCSS(String.fromCharCode(257)),  "ā", "ā (0x101)");
 	equal(jQuery.sap.encodeCSS(String.fromCharCode(0x2028)),  "\\2028", "(0x2028)");
@@ -133,7 +133,7 @@ test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 a
 });
 
 QUnit.module("URL validation");
-test("HTTP urls", function() {
+QUnit.test("HTTP urls", function(assert) {
 	equal(jQuery.sap.validateUrl("http://host"), true, "http://host");
 	equal(jQuery.sap.validateUrl("http://host/path"), true, "http://host/path");
 	equal(jQuery.sap.validateUrl("http://www.host.com"), true, "http://www.host.com");
@@ -150,7 +150,7 @@ test("HTTP urls", function() {
 
 });
 
-test("mailto urls", function() {
+QUnit.test("mailto urls", function(assert) {
 	jQuery.sap.addUrlWhitelist("mailto");
 	equal(jQuery.sap.validateUrl("mailto:name@domain.com"), true, "mailto:name@domain.com");
 	equal(jQuery.sap.validateUrl("mailto:NAME@domain.com"), true, "mailto:NAME@domain.com");
@@ -162,7 +162,7 @@ test("mailto urls", function() {
 	jQuery.sap.clearUrlWhitelist();
 });
 
-test("Syntax check", function() {
+QUnit.test("Syntax check", function(assert) {
 
 	var sUrl = "http://www.sap.com";
 	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
@@ -244,7 +244,7 @@ test("Syntax check", function() {
 
 });
 
-test("Whitelist", function() {
+QUnit.test("Whitelist", function(assert) {
 
 	var aWhitelist = new Array();
 	jQuery.sap.addUrlWhitelist("http","www.sap.com");
@@ -325,7 +325,7 @@ test("Whitelist", function() {
 
 QUnit.module("Sanitize check");
 
-test("valid HTML5", function() {
+QUnit.test("valid HTML5", function(assert) {
 
 	var sHTML = "<div><article></article><progress></progress></div>";
 	equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
@@ -341,7 +341,7 @@ test("valid HTML5", function() {
 
 });
 
-test("obsolete HTML4 (not valid)", function() {
+QUnit.test("obsolete HTML4 (not valid)", function(assert) {
 
 	var sHTML = "<div><font></font><center></center></div>";
 	var sresultHTML = "<div></div>";
@@ -361,7 +361,7 @@ test("obsolete HTML4 (not valid)", function() {
 
 });
 
-test("dangerous code (not valid)", function() {
+QUnit.test("dangerous code (not valid)", function(assert) {
 
 	var sHTML = "<table><tr><td><script>alert('XSS attack');</" + "script></td></tr></table>";
 	var sresultHTML = "<table><tr><td></td></tr></table>";
@@ -381,7 +381,7 @@ test("dangerous code (not valid)", function() {
 
 });
 
-test("valid URLs", function() {
+QUnit.test("valid URLs", function(assert) {
 
 	var sHTML = '<div><a href="http://anonymous.org">Some Link</a></div>';
 	equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
@@ -397,7 +397,7 @@ test("valid URLs", function() {
 
 });
 
-test("invalid URLs (not valid)", function() {
+QUnit.test("invalid URLs (not valid)", function(assert) {
 
 	var sHTML = '<div><a href="xxxxx%%%%%%-----------;;;;;;">Some Link</a></div>';
 	var sresultHTML = '<div><a>Some Link</a></div>';

@@ -125,7 +125,7 @@
 		}
 	});
 
-	test("instanziation", function() {
+	QUnit.test("instanziation", function(assert) {
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		ok(oMessageManager, 'MessageManager instance created');
 		var oMessageModel = oMessageManager.getMessageModel();

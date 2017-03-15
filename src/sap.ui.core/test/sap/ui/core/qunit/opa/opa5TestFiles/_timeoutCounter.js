@@ -229,7 +229,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Should ignore long runners for resolve", function () {
+	QUnit.test("Should ignore long runners for resolve", function (assert) {
 		var oPromiseAfter2Sec = new Promise(function (fnResolve) {
 			setTimeout(fnResolve, 2000);
 		});
@@ -254,7 +254,7 @@ sap.ui.define([
 			sinon.assert.calledWith(oDebugSpy, sinon.match(/There are [1-9] pending microtasks/));
 		});
 
-		QUnit.test("Should ignore long runners for " + sPromiseFunction, function () {
+		QUnit.test("Should ignore long runners for " + sPromiseFunction, function (assert) {
 			var oPromiseAfter2Sec = new Promise(function (fnResolve) {
 				setTimeout(fnResolve, 2000);
 			});

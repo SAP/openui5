@@ -40,7 +40,7 @@
 		afterEach: teardownFunction
 	});
 
-	QUnit.test("Avatar with press event only", function () {
+	QUnit.test("Avatar with press event only", function (assert) {
 		var $oAvatar = this.oAvatar.$();
 
 		ok(jQuery.sap.domById(sControlId), "Avatar is rendered in the DOM");
@@ -57,7 +57,7 @@
 		afterEach: teardownFunction
 	});
 
-	QUnit.test("Avatar with displaySize set to 'XS'", function () {
+	QUnit.test("Avatar with displaySize set to 'XS'", function (assert) {
 		this.oAvatar.setDisplaySize("XS");
 		oCore.applyChanges();
 
@@ -65,7 +65,7 @@
 		ok($oAvatar.hasClass("sapFAvatarXS"), sPreAvatarSize + "XS");
 	});
 
-	QUnit.test("Avatar with displaySize set to 'S'", function () {
+	QUnit.test("Avatar with displaySize set to 'S'", function (assert) {
 		this.oAvatar.setDisplaySize("S");
 		oCore.applyChanges();
 
@@ -73,7 +73,7 @@
 		ok($oAvatar.hasClass("sapFAvatarS"), sPreAvatarSize + "S");
 	});
 
-	QUnit.test("Avatar with displaySize set to 'M'", function () {
+	QUnit.test("Avatar with displaySize set to 'M'", function (assert) {
 		this.oAvatar.setDisplaySize("M");
 		oCore.applyChanges();
 
@@ -81,7 +81,7 @@
 		ok($oAvatar.hasClass("sapFAvatarM"), sPreAvatarSize + "M");
 	});
 
-	QUnit.test("Avatar with displaySize set to 'L'", function () {
+	QUnit.test("Avatar with displaySize set to 'L'", function (assert) {
 		this.oAvatar.setDisplaySize("L");
 		oCore.applyChanges();
 
@@ -89,7 +89,7 @@
 		ok($oAvatar.hasClass("sapFAvatarL"), sPreAvatarSize + "L");
 	});
 
-	QUnit.test("Avatar with displaySize set to 'XL'", function () {
+	QUnit.test("Avatar with displaySize set to 'XL'", function (assert) {
 		this.oAvatar.setDisplaySize("XL");
 		oCore.applyChanges();
 
@@ -97,7 +97,7 @@
 		ok($oAvatar.hasClass("sapFAvatarXL"), sPreAvatarSize + "XL");
 	});
 
-	QUnit.test("Avatar with displaySize set to 'Custom'", function () {
+	QUnit.test("Avatar with displaySize set to 'Custom'", function (assert) {
 		this.oAvatar.setDisplaySize("Custom");
 		oCore.applyChanges();
 
@@ -110,7 +110,7 @@
 		afterEach: teardownFunction
 	});
 
-	QUnit.test("Avatar with displayShape set to 'Circle'", function () {
+	QUnit.test("Avatar with displayShape set to 'Circle'", function (assert) {
 		this.oAvatar.setDisplayShape("Circle");
 		oCore.applyChanges();
 
@@ -118,7 +118,7 @@
 		ok($oAvatar.hasClass("sapFAvatarCircle"), sPreAvatarShape + "Circle");
 	});
 
-	QUnit.test("Avatar with displayShape set to 'Square'", function () {
+	QUnit.test("Avatar with displayShape set to 'Square'", function (assert) {
 		this.oAvatar.setDisplayShape("Square");
 		oCore.applyChanges();
 
@@ -131,7 +131,7 @@
 		afterEach: teardownFunction
 	});
 
-	QUnit.test("Avatar with src leading to an icon", function () {
+	QUnit.test("Avatar with src leading to an icon", function (assert) {
 		this.oAvatar.setSrc(sIconPath);
 		oCore.applyChanges();
 
@@ -139,7 +139,7 @@
 		ok($oAvatar.hasClass("sapFAvatarIcon"), sPreAvatarType + "Icon");
 	});
 
-	QUnit.test("Avatar with src leading to an image", function () {
+	QUnit.test("Avatar with src leading to an image", function (assert) {
 		this.oAvatar.setSrc(sImagePath);
 		oCore.applyChanges();
 
@@ -147,7 +147,7 @@
 		ok($oAvatar.hasClass("sapFAvatarImage"), sPreAvatarType + "Image");
 	});
 
-	QUnit.test("Avatar with initials in valid format", function () {
+	QUnit.test("Avatar with initials in valid format", function (assert) {
 		this.oAvatar.setInitials("SR");
 		oCore.applyChanges();
 
@@ -155,7 +155,7 @@
 		ok($oAvatar.hasClass("sapFAvatarInitials"), sPreAvatarType + "Initials");
 	});
 
-	QUnit.test("Avatar with initials consisting of three letters", function () {
+	QUnit.test("Avatar with initials consisting of three letters", function (assert) {
 		this.oAvatar.setInitials("SRL");
 		oCore.applyChanges();
 
@@ -163,7 +163,7 @@
 		ok($oAvatar.hasClass("sapFAvatarIcon"), sDefaultIconRendered);
 	});
 
-	QUnit.test("Avatar with initials consisting of no letters", function () {
+	QUnit.test("Avatar with initials consisting of no letters", function (assert) {
 		this.oAvatar.setInitials("");
 		oCore.applyChanges();
 
@@ -171,7 +171,7 @@
 		ok($oAvatar.hasClass("sapFAvatarIcon"), sDefaultIconRendered);
 	});
 
-	QUnit.test("Avatar with initials consisting of non-latin letters", function () {
+	QUnit.test("Avatar with initials consisting of non-latin letters", function (assert) {
 		this.oAvatar.setInitials("ЯЪ");
 		oCore.applyChanges();
 
@@ -184,7 +184,7 @@
 		afterEach: teardownFunction
 	});
 
-	QUnit.test("Avatar with imageFitType set to 'Cover'", function () {
+	QUnit.test("Avatar with imageFitType set to 'Cover'", function (assert) {
 		this.oAvatar.setSrc(sImagePath);
 		this.oAvatar.setImageFitType("Cover");
 		oCore.applyChanges();
@@ -193,7 +193,7 @@
 		ok($oAvatar.hasClass("sapFAvatarImageCover"), sPreAvatarFitType + "Cover");
 	});
 
-	QUnit.test("Avatar with imageFitType set to 'Contain'", function () {
+	QUnit.test("Avatar with imageFitType set to 'Contain'", function (assert) {
 		this.oAvatar.setSrc(sImagePath);
 		this.oAvatar.setImageFitType("Contain");
 		oCore.applyChanges();

@@ -607,7 +607,7 @@ jQuery.sap.require("sap.m.Button");
 		assert.equal(decodedString, expectedString);
 	});
 
-	QUnit.test("getAppComponentForControl can determine the smart template special case", function () {
+	QUnit.test("getAppComponentForControl can determine the smart template special case", function (assert) {
 		var oComponent = new sap.ui.core.UIComponent();
 		var oAppComponent = new sap.ui.core.UIComponent();
 		oComponent.getAppComponent = function () {
@@ -619,7 +619,7 @@ jQuery.sap.require("sap.m.Button");
 		assert.equal(oDeterminedAppComponent, oAppComponent);
 	});
 
-	QUnit.test("getAppComponentForControl can determine that the passed control is already the app component", function () {
+	QUnit.test("getAppComponentForControl can determine that the passed control is already the app component", function (assert) {
 		var oComponent = new sap.ui.core.UIComponent({
 			manifest: {
 				"sap.app": {
@@ -633,7 +633,7 @@ jQuery.sap.require("sap.m.Button");
 		assert.equal(oDeterminedAppComponent, oComponent);
 	});
 
-	QUnit.test("getAppComponentForControl can determine the OVP special case", function () {
+	QUnit.test("getAppComponentForControl can determine the OVP special case", function (assert) {
 		var oComponent = new sap.ui.core.UIComponent();
 		var oAppComponent = new sap.ui.core.UIComponent();
 		oComponent.oComponentData = {appComponent: oAppComponent};
@@ -643,7 +643,7 @@ jQuery.sap.require("sap.m.Button");
 		assert.equal(oDeterminedAppComponent, oAppComponent);
 	});
 
-	QUnit.test("getAppComponentForControl returns the component if no Manifest is available", function () {
+	QUnit.test("getAppComponentForControl returns the component if no Manifest is available", function (assert) {
 		var oComponent = new sap.ui.core.UIComponent();
 
 		var oDeterminedAppComponent = Utils.getAppComponentForControl(oComponent);
@@ -651,7 +651,7 @@ jQuery.sap.require("sap.m.Button");
 		assert.equal(oDeterminedAppComponent, oComponent);
 	});
 
-	QUnit.test("getAppComponentForControl searches further for the app component if the passed component is not of the type application", function () {
+	QUnit.test("getAppComponentForControl searches further for the app component if the passed component is not of the type application", function (assert) {
 		var oComponent = new sap.ui.core.UIComponent();
 		var oParentComponent = {};
 		var oSapAppEntry = {
@@ -674,7 +674,7 @@ jQuery.sap.require("sap.m.Button");
 		assert.equal(oStub.firstCall.args[0], oParentComponent, "the function was called with the parent component the first time");
 	});
 
-	QUnit.test("getAppComponentForControl returns the component if the passed component is of the type application", function () {
+	QUnit.test("getAppComponentForControl returns the component if the passed component is of the type application", function (assert) {
 		var oComponent = new sap.ui.core.UIComponent();
 		var oSapAppEntry = {
 			type: "application"

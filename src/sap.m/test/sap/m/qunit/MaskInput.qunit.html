@@ -38,7 +38,7 @@
 			}
 		});
 
-		test("Mask setter", function () {
+		QUnit.test("Mask setter", function (assert){
 			var oControl = this.oMaskInput.setPlaceholderSymbol('#'),
 				sMask1 = '1a9a-aa4', /* 1 and 4 are immutable characters*/
 				sMask2 = 'aa9a-aa4';
@@ -49,7 +49,7 @@
 			strictEqual(oControl.getMask(), sMask2, "The mask has the same value as the last set one");
 		});
 
-		test("Setting empty mask should give a warning", function () {
+		QUnit.test("Setting empty mask should give a warning", function (assert){
 			var oControl = this.oMaskInput;
 			var oWarningSpy = this.sandbox.spy(jQuery.sap.log, 'warning'),
 				oSetterSpy = this.sandbox.spy(oControl, "setProperty");
@@ -63,7 +63,7 @@
 		});
 
 
-		test("Setting (invalid) placeholder symbol that is part of mask's regex", function () {
+		QUnit.test("Setting (invalid) placeholder symbol that is part of mask's regex", function (assert){
 			var oControl = this.oMaskInput,
 				sPlaceholderSymbol = '+',
 				oDefinition = new sap.m.MaskInputRule({
@@ -83,7 +83,7 @@
 			equal(oControl.getPlaceholderSymbol(), sOriginalPlaceholderSymbol, "The placeholder symbol must not be changed");
 		});
 
-		test("Setting (invalid) regex that contains the placeholder symbol", function () {
+		QUnit.test("Setting (invalid) regex that contains the placeholder symbol", function (assert){
 			var oControl = this.oMaskInput,
 				sPlaceholderSymbol = '+',
 				oDefinition = new sap.m.MaskInputRule({
@@ -101,7 +101,7 @@
 					"Verify the exact error");
 		});
 
-		test("setValue", function () {
+		QUnit.test("setValue", function (assert){
 			//Prepare
 			var oControl = this.oMaskInput.setPlaceholderSymbol('_').setMask('aa-aa');
 			//Act
@@ -169,12 +169,12 @@
 			oOtherControl.destroy();
 		});
 
-		test("Placeholder symbol default value", function () {
+		QUnit.test("Placeholder symbol default value", function (assert){
 			var oControl = this.oMaskInput;
 			equal(oControl.getPlaceholderSymbol(), "_", "the placeholder symbol default value should be '_'");
 		});
 
-		test("Placeholder symbol setter", function () {
+		QUnit.test("Placeholder symbol setter", function (assert){
 			var oControl = this.oMaskInput,
 				sPlaceHolderSymbol1 = '#',
 				sPlaceHolderSymbol2 = '+';
@@ -186,7 +186,7 @@
 			strictEqual(oControl.getPlaceholderSymbol(), sPlaceHolderSymbol2, "The placeholder symbol has the same value as the last set one");
 		});
 
-		test("Setting an invalid placeholder symbol is not accepted", function () {
+		QUnit.test("Setting an invalid placeholder symbol is not accepted", function (assert){
 			var oControl = this.oMaskInput,
 				oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error'),
 				oSetterSpy = this.sandbox.spy(oControl, 'setProperty');
@@ -208,7 +208,7 @@
 		});
 
 
-		test("The mask default rules are: a:[A-Za-z] and 9:[0-9]", function () {
+		QUnit.test("The mask default rules are: a:[A-Za-z] and 9:[0-9]", function (assert){
 			var oControl = this.oMaskInput,
 				aExpectedDefaultRules = [
 					new sap.m.MaskInputRule({
@@ -226,7 +226,7 @@
 			}
 		});
 
-		test("Replace existing mask rule", function () {
+		QUnit.test("Replace existing mask rule", function (assert){
 			var oControl = this.oMaskInput.addRule(new sap.m.MaskInputRule({
 				maskFormatSymbol: "~",
 				regex: '[@?]'
@@ -239,7 +239,7 @@
 			equal(oControl.getRules()[2].getRegex(), "[{}]", "The rule with mask format symbol '~' regex must be the last one set");
 		});
 
-		test("Single escaped character", function () {
+		QUnit.test("Single escaped character", function (assert){
 			var oControl = this.oMaskInput.setMask("999^9");
 
 			jQuery(oControl).focus();
@@ -247,7 +247,7 @@
 					"immutable on their predefined place");
 		});
 
-		test("Multiple escape characters in value", function () {
+		QUnit.test("Multiple escape characters in value", function (assert){
 			var oControl = this.oMaskInput.setMask("^99aaa^aaa^a");
 
 			jQuery(oControl).focus();
@@ -255,7 +255,7 @@
 					"immutable on their predefined place");
 		});
 
-		test("Escape the escape character", function () {
+		QUnit.test("Escape the escape character", function (assert){
 			var oControl = this.oMaskInput.setMask("99^^99");
 
 			jQuery(oControl).focus();
@@ -274,7 +274,7 @@
 			}
 		});
 
-		test("_getSkipIndexes", function () {
+		QUnit.test("_getSkipIndexes", function (assert){
 			var that = this;
 
 			// Returns result of _getSkipIndexes as string - helper method to make the asserts more readable
@@ -293,7 +293,7 @@
 
 		});
 
-		test("_getMaskArray", function () {
+		QUnit.test("_getMaskArray", function (assert){
 			var that = this;
 
 			// Returns result of _getMaskArray as string - helper method to make the asserts more readable
@@ -349,7 +349,7 @@
 			}
 		});
 
-		test("Del button", function () {
+		QUnit.test("Del button", function (assert){
 			var oControl = this.oMaskInput.setPlaceholderSymbol('_');
 			strictEqual(this.setAndDel('delete', 'aaaaa', 'abcde', 0), "_bcde", "Delete single character");
 			strictEqual(this.setAndDel('delete', 'aaaaa', 'abcd', 4), "abcd_", "Try deleting non existing character");
@@ -357,7 +357,7 @@
 			strictEqual(this.setAndDel('delete', 'aaaaa', 'abcde', 0, 3), "___de", "Delete selection");
 		});
 
-		test("Backspace button", function () {
+		QUnit.test("Backspace button", function (assert){
 			var oControl = this.oMaskInput.setPlaceholderSymbol('_');
 			strictEqual(this.setAndDel('backspace', '99/9', '12/3', 2), "1_/3", "Delete single character");
 			strictEqual(this.setAndDel('backspace', '99/9', '12/3', 3), "1_/3", "Delete single character behind immutable character");
@@ -395,7 +395,7 @@
 			}
 		});
 
-		test("All clipboard characters that match the mask are pasted into the input", function () {
+		QUnit.test("All clipboard characters that match the mask are pasted into the input", function (assert){
 			//since there is no way to really do a paste, set the value and focus the mask input,
 			// so the corresponding mask is applied to the value
 			this.oMaskSerialNumber.setValue("31 / 12 / 1981");
@@ -425,7 +425,7 @@
 				this.sandbox.restore();
 			}
 		});
-		test("Initial focusing on mask input", function () {
+		QUnit.test("Initial focusing on mask input", function (assert){
 			var oControl = this.oMaskInput.setPlaceholderSymbol('#'),
 				sMask = '1a9a-aa4';
 
@@ -437,7 +437,7 @@
 			checkForEmptyValue(oControl);
 		});
 
-		test("Initial focusing of MaskInput - caret positioning", function () {
+		QUnit.test("Initial focusing of MaskInput - caret positioning", function (assert){
 			//arrange
 			this.oMaskInput.setPlaceholderSymbol("_").setMask("9999-9999-99");
 			sap.ui.getCore().applyChanges();
@@ -448,7 +448,7 @@
 			checkCursorIsAtPosition(this.oMaskInput, 0, "On initial focus the caret is on the first placeholder symbol");
 		});
 
-		test("Focus of MaskInput when it has incomplete value - caret positioning", function () {
+		QUnit.test("Focus of MaskInput when it has incomplete value - caret positioning", function (assert){
 			//arrange
 			this.oMaskInput.setPlaceholderSymbol("_").setMask("9999-9999-99");
 			sap.ui.getCore().applyChanges();
@@ -466,7 +466,7 @@
 			checkCursorIsAtPosition(this.oMaskInput, 3, "When partially value is present and we focus again the caret is on the first placeholder position");
 		});
 
-		test("Focus of MaskInput when it has complete value - caret positioning", function () {
+		QUnit.test("Focus of MaskInput when it has complete value - caret positioning", function (assert){
 			//arrange
 			this.oMaskInput.setPlaceholderSymbol("_").setMask("9999-9999-99");
 			sap.ui.getCore().applyChanges();
@@ -493,7 +493,7 @@
 			checkSelection(this.oMaskInput, 0, this.oMaskInput.getMask().length, "When complete value is present (no placeholders are left) and we focus the input all the input is selected");
 		});
 
-		test("Focusout for input with deleted value restores an empty value", function () {
+		QUnit.test("Focusout for input with deleted value restores an empty value", function (assert){
 			var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123"),
 				oOtherControl = new sap.m.Input({value: "some other value"});
 			oOtherControl.placeAt("content");
@@ -512,7 +512,7 @@
 			oOtherControl.destroy();
 		});
 
-		test("Focusout after partially filled value is set through the API validates it against MaskInput rules", function () {
+		QUnit.test("Focusout after partially filled value is set through the API validates it against MaskInput rules", function (assert){
 			var oControl = this.oMaskInput.setPlaceholderSymbol('#').setMask('99-99'),
 				oOtherControl = new sap.m.Input({value: "some other value"});
 
@@ -535,7 +535,7 @@
 			oOtherControl.destroy();
 		});
 
-		test("Focus after invalid value is set through the API", function () {
+		QUnit.test("Focus after invalid value is set through the API", function (assert){
 			var oControl = this.oMaskInput.setPlaceholderSymbol('#'),
 				sMask = 'aa-aa';
 
@@ -549,7 +549,7 @@
 			strictEqual(getMaskInputDomValue(oControl), '##-##', "On intial focus, the mask that the user needs to follow is shown");
 		});
 
-		test("Focus after partially filled value is set through the API", function () {
+		QUnit.test("Focus after partially filled value is set through the API", function (assert){
 			var oControl = this.oMaskInput.setPlaceholderSymbol('#'),
 				sMask = 'aa-aa';
 
@@ -590,7 +590,7 @@
 			}
 		});
 
-		test("Change event is called", function () {
+		QUnit.test("Change event is called", function (assert){
 			var oControl = this.oMaskInput;
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
@@ -603,7 +603,7 @@
 			equal(this.oChangeListenerPassedEvent.mParameters.value, "1__", "Change event must have an exact value");
 		});
 
-		test("Change event must not be called unless ENTER or focusout", function () {
+		QUnit.test("Change event must not be called unless ENTER or focusout", function (assert){
 			var oControl = this.oMaskInput;
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
@@ -620,7 +620,7 @@
 			equal(this.spyChangeEvent.callCount, 1, "Change event must be called exactly once");
 		});
 
-		test("Change event must not be called if Escape", function () {
+		QUnit.test("Change event must not be called if Escape", function (assert){
 			var oControl = this.oMaskInput;
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
@@ -631,7 +631,7 @@
 			ok(!this.spyChangeEvent.called, "Change event must not be called");
 		});
 
-		test("Change event must be called if the existing input value is entirely deleted", function() {
+		QUnit.test("Change event must be called if the existing input value is entirely deleted", function(assert){
 			var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123");
 
 			jQuery(oControl).focus();
@@ -644,7 +644,7 @@
 			equal(this.oChangeListenerPassedEvent.mParameters.value, "", "Change event must have an exact value");
 		});
 
-		test("Change event must not be called if existing value is not really changed", function() {
+		QUnit.test("Change event must not be called if existing value is not really changed", function(assert){
 			var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123");
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
@@ -730,18 +730,18 @@
 				}
 			});
 
-			test("Left arrow on selected string moves the carret to the most left position", function() {
+			QUnit.test("Left arrow on selected string moves the carret to the most left position", function(assert){
 				this.testSelectedInputWithArrow(this.oMaskInputLatin, this.clock, "left", 0, "Latin content");
 				this.testSelectedInputWithArrow(this.oMaskInputHebrew, this.clock, "left", this.sTestHebrewValue.length, "Hebrew content");
 				//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
 			});
 
-			test("Right arrow on selected string moves the carret to the most right position", function() {
+			QUnit.test("Right arrow on selected string moves the carret to the most right position", function(assert){
 				this.testSelectedInputWithArrow(this.oMaskInputLatin, this.clock, "right", this.sTestLatinValue.length, "Latin content");
 				this.testSelectedInputWithArrow(this.oMaskInputHebrew, this.clock, "right", 0, "Hebrew content");
 			});
 
-			test("Left arrow when caret is at the middle moves to the left", function() {
+			QUnit.test("Left arrow when caret is at the middle moves to the left", function(assert){
 				var iStartPositionHebrew = Math.floor(this.oMaskInputHebrew.getValue().length / 2),
 					iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length / 2);
 				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputHebrew, this.clock, iStartPositionHebrew, "left", iStartPositionHebrew + 1, "Hebrew content");
@@ -749,14 +749,14 @@
 				//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
 			});
 
-			test("Left arrow when caret is at the rightmost position moves to the left", function() {
+			QUnit.test("Left arrow when caret is at the rightmost position moves to the left", function(assert){
 				var iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length);
 				for (var i = iStartPositionLatin; i > 0; i-- ) {
 					this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, i, "left", i - 1, "Latin content. Start position: " + i);
 				}
 			});
 
-			test("Navigate the whole field with left arrow when caret is at the middle moves to the left between RTL and LTR characters", function() {
+			QUnit.test("Navigate the whole field with left arrow when caret is at the middle moves to the left between RTL and LTR characters", function(assert){
 				// this test is needed because the native behavior of some browsers is different - we're mimicking IE11
 				this.oMaskInputMixed = new sap.m.MaskInput({
 					textDirection: sap.ui.core.TextDirection.RTL,
@@ -782,7 +782,7 @@
 				//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
 			});
 
-			test("Right arrow when caret is at the middle moves to the right", function() {
+			QUnit.test("Right arrow when caret is at the middle moves to the right", function(assert){
 				var iStartPositionHebrew = Math.floor(this.oMaskInputHebrew.getValue().length / 2),
 					iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length / 2);
 				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputHebrew, this.clock, iStartPositionHebrew, "right", iStartPositionHebrew - 1, "Hebrew content");
@@ -790,14 +790,14 @@
 				//Note: iStartPosition - 1 is correct, since when content is hebrew, selectionStarts & selectionEnd are mirrored.
 			});
 
-			test("Navigate the whole field with right arrow when caret is at the leftmost moves to the right", function() {
+			QUnit.test("Navigate the whole field with right arrow when caret is at the leftmost moves to the right", function(assert){
 				var iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length);
 				for (var i = 0; i < iStartPositionLatin; i++ ) {
 					this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, i, "right", i + 1, "Latin content. Start position: " + i);
 				}
 			});
 
-			test("Typing in a empty field (Latin content)", function() {
+			QUnit.test("Typing in a empty field (Latin content)", function(assert){
 				this.oMaskInputLatin.destroy();
 				this.oMaskInputLatin = new sap.m.MaskInput( {
 					textDirection: sap.ui.core.TextDirection.RTL,
@@ -812,7 +812,7 @@
 				equals(this.oMaskInputLatin.getValue(), sContent + "_", "Latin content check.");
 			});
 
-			test("Typing in a empty field (Hebrew content)", function() {
+			QUnit.test("Typing in a empty field (Hebrew content)", function(assert){
 				this.oMaskInputHebrew.destroy();
 				this.oMaskInputHebrew = new sap.m.MaskInput({
 					textDirection: sap.ui.core.TextDirection.RTL,
@@ -889,7 +889,7 @@
 			oOtherControl.destroy();
 
 		});
-		test("Entering a rule incompatible characters is forbidden at any position for mask", function () {
+		QUnit.test("Entering a rule incompatible characters is forbidden at any position for mask", function (assert){
 			var oControl = this.oMaskInput.setMask("9a-9a").setPlaceholderSymbol("#");
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
@@ -899,7 +899,7 @@
 			this.sendAndValidate(4, "6", "##-##");
 		});
 
-		test("Entering a rule compatible character is possible at any position for mask", function () {
+		QUnit.test("Entering a rule compatible character is possible at any position for mask", function (assert){
 			var oControl = this.oMaskInput.setMask("9a-9a").setPlaceholderSymbol("#");
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
@@ -909,7 +909,7 @@
 			this.sendAndValidate(-1, "c", "1b-3c");
 		});
 
-		test("Entering an separator will move the caret after it", function () {
+		QUnit.test("Entering an separator will move the caret after it", function (assert){
 			var oControl = this.oMaskInput.setMask("9-9").setPlaceholderSymbol("#");
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
@@ -920,7 +920,7 @@
 			equal(oSelection.iFrom, 2, "Cursor position.");
 		});
 
-		test("Escape position the cursor at the first repalcable character", function () {
+		QUnit.test("Escape position the cursor at the first repalcable character", function (assert){
 			var oControl = this.oMaskInput.setMask("9-9").setPlaceholderSymbol("#");
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
@@ -933,7 +933,7 @@
 			equal(oSelection.iFrom, 0, "Cursor position.");
 		});
 
-		test("Click on mask input with an existing value selects the whole value", function () {
+		QUnit.test("Click on mask input with an existing value selects the whole value", function (assert){
 			var oControl = this.oMaskInput.setMask("a9a9a").setValue("b1c2d");
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
@@ -943,7 +943,7 @@
 			equal(oSelection.iTo, 5);
 		});
 
-		test("Click on mask input with empty value should position the cursor at the first editable position", function () {
+		QUnit.test("Click on mask input with empty value should position the cursor at the first editable position", function (assert){
 			var oControl = this.oMaskInput.setMask("(+35)a9a9a");
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
@@ -951,7 +951,7 @@
 			checkCursorIsAtPosition(oControl, 5);
 		});
 
-		test("Click on mask input with partially completed value should position the cursor at the first editable position", function () {
+		QUnit.test("Click on mask input with partially completed value should position the cursor at the first editable position", function (assert){
 			var oControl = this.oMaskInput.setMask("(+35)a9a9a");
 			oControl.setValue("a1");
 			jQuery(oControl).focus();
@@ -960,7 +960,7 @@
 			checkCursorIsAtPosition(oControl, 7);
 		});
 
-		test("Esc key does reset the value back to the original", function () {
+		QUnit.test("Esc key does reset the value back to the original", function (assert){
 			var oControl = this.oMaskInput.setMask("aa-aa").setValue("ab-__");
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
@@ -970,7 +970,7 @@
 			equal(oControl.getValue(), "ab-__", "The value before focusing-in must be restored");
 		});
 
-		test("OnBeforeRendering captures any validation errors.", function () {
+		QUnit.test("OnBeforeRendering captures any validation errors.", function (assert){
 			var oControl = this.oMaskInput,
 				oDefinition1 = new sap.m.MaskInputRule({maskFormatSymbol: "-", regex: "[']"}),
 				oDefinition2 = new sap.m.MaskInputRule({maskFormatSymbol: "+", regex: "[()]"}),
@@ -985,7 +985,7 @@
 					"Invalid mask input: Empty mask. Duplicated rule's maskFormatSymbol [+]", "Message");
 		});
 
-		test("Once the user completed the input, the property 'value' is changed", function () {
+		QUnit.test("Once the user completed the input, the property 'value' is changed", function (assert){
 			var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123"),
 				oOtherControl = new sap.m.Input({value: "some other value"});
 			oOtherControl.placeAt("content");
@@ -1012,19 +1012,19 @@
 			oOtherControl.destroy();
 		});
 
-		test("Backspace when only one character left should restore the default input value all browsers", function () {
+		QUnit.test("Backspace when only one character left should restore the default input value all browsers", function (assert){
 			checkForDeleteAndBackspace.call(this);
 		});
 
 		if (sap.ui.Device.browser.msie) {
-			test("Backspace when only one character left should restore the default input value IE9", function () {
+			QUnit.test("Backspace when only one character left should restore the default input value IE9", function (assert){
 				//stub - IE9
 				this.sandbox.stub(sap.ui.Device.browser, "version", 9);
 				checkForDeleteAndBackspace.call(this);
 			});
 		}
 
-		test("Adding rule with placeholderSymbol that matches existing rule", function() {
+		QUnit.test("Adding rule with placeholderSymbol that matches existing rule", function(assert){
 			//prepare
 			var oRule1 = new sap.m.MaskInputRule({maskFormatSymbol: "_", regex: "aaa"}),
 					oRule2 = new sap.m.MaskInputRule({maskFormatSymbol: "_", regex: "999"}),
@@ -1058,14 +1058,14 @@
 			}
 		});
 
-		test("Testing aria label", function () {
+		QUnit.test("Testing aria label", function (assert){
 			var $AriaLabel = this.oMaskInput.$().find("#" + this.oMaskInput.getId() + "-labelledby");
 			//assert
 			ok($AriaLabel.length > 0, "The hidden aria description is present in the DOM");
 			strictEqual(this.oRenderer.getLabelledByAnnouncement(this.oMaskInput), $AriaLabel.text(), "The message is rendered correctly");
 		});
 
-		test("Testing aria description", function () {
+		QUnit.test("Testing aria description", function (assert){
 			//arrange
 			var $AriaDescripttion = this.oMaskInput.$().find("#" + this.oMaskInput.getId() + "-describedby");
 			//assert

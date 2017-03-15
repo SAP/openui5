@@ -84,7 +84,7 @@
 		}
 	});
 
-	test("Properties", function(){
+	QUnit.test("Properties", function(assert){
 		createTreeBindingAdapter("/Employees(2)", null, [], {
 			navigation: {}
 		});
@@ -1783,7 +1783,7 @@
 			var aContexts = oBinding.getContexts(1, 10);
 		});
 
-		test("Empty binding should not cause exceptions", function() {
+		QUnit.test("Empty binding should not cause exceptions", function(assert) {
 			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
 				displayRootNode: true,
 				numberOfExpandedLevels: 2,

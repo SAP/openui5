@@ -19,7 +19,7 @@ sap.ui.require([
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Should parse simple feature", function() {
+  QUnit.test("Should parse simple feature", function(assert) {
 
     var text = [
       "Feature: Serve coffee",
@@ -62,7 +62,7 @@ sap.ui.require([
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Should parse feature with background", function() {
+  QUnit.test("Should parse feature with background", function(assert) {
 
     var text = [
       "Feature: Serve coffee",
@@ -104,7 +104,7 @@ sap.ui.require([
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Should parse feature with data table", function() {
+  QUnit.test("Should parse feature with data table", function(assert) {
 
     var text = [
       "Feature: Give coffee to users",
@@ -147,7 +147,7 @@ sap.ui.require([
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Should parse feature and scenario with tags", function() {
+  QUnit.test("Should parse feature and scenario with tags", function(assert) {
 
     var text = [
       "@wip @integration @caffeinated",
@@ -189,7 +189,7 @@ sap.ui.require([
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Should parse scenario outline", function() {
+  QUnit.test("Should parse scenario outline", function(assert) {
 
     var text = [
       "Feature: Give cups of coffee to users",
@@ -236,7 +236,7 @@ sap.ui.require([
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("invalid parameters as function input", function() {
+  QUnit.test("invalid parameters as function input", function(assert) {
 
     var badStringError = "simpleGherkinParser.parse: parameter 'sText' must be a valid string";
     var badFilenameError = "simpleGherkinParser.parseFile: parameter 'sPath' must be a valid string";
@@ -285,7 +285,7 @@ sap.ui.require([
 
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("given feature has single column table then parse as 1D list", function() {
+  QUnit.test("given feature has single column table then parse as 1D list", function(assert) {
 
     var text = [
       "Feature: Give cups of coffee to users",
@@ -322,7 +322,7 @@ sap.ui.require([
 
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("given feature has single row table then parse as 1D list", function() {
+  QUnit.test("given feature has single row table then parse as 1D list", function(assert) {
 
     var text = [
       "Feature: Give cups of coffee to users",
@@ -352,7 +352,7 @@ sap.ui.require([
 
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("given feature has single element table then parse as list with one element", function() {
+  QUnit.test("given feature has single element table then parse as list with one element", function(assert) {
 
     var text = [
       "Feature: Give cups of coffee to users",
@@ -381,7 +381,7 @@ sap.ui.require([
   });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Should parse scenario outline with single column", function() {
+  QUnit.test("Should parse scenario outline with single column", function(assert) {
 
     var text = [
       "Feature: Give cups of coffee to users",
@@ -417,7 +417,7 @@ sap.ui.require([
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Feature tags inherit downward from Feature-Scenario/Outline-Examples", function() {
+  QUnit.test("Feature tags inherit downward from Feature-Scenario/Outline-Examples", function(assert) {
 
     var text = [
       "@feature",
@@ -462,7 +462,7 @@ sap.ui.require([
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Given two Examples and one is @wip", function() {
+  QUnit.test("Given two Examples and one is @wip", function(assert) {
 
     var text = [
       "Feature: Serve coffee later",
@@ -503,7 +503,7 @@ sap.ui.require([
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Should parse two Scenario Outlines with no Examples", function() {
+  QUnit.test("Should parse two Scenario Outlines with no Examples", function(assert) {
 
     var text = [
       "Feature: Serve coffee later",
@@ -535,7 +535,7 @@ sap.ui.require([
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Should parse @tags with all characters but @ and space", function() {
+  QUnit.test("Should parse @tags with all characters but @ and space", function(assert) {
 
     var text = [
       "Feature: Outer Space",

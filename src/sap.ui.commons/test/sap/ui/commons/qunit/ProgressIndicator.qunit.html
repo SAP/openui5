@@ -55,7 +55,7 @@
 
 	QUnit.module("Properties");
 
-	test("Default Values", function() {
+	QUnit.test("Default Values", function(assert) {
 		var oProgInd = oProgInds["oProgInd1"];
 
 		equals(oProgInd.getVisible(), true, "Default 'visible':");
@@ -69,7 +69,7 @@
 		oProgInd.destroy();
 	 });
 
-	test("Properties", function() {
+	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd2"];
 
 		equals(oProgInd.getVisible(), true, "Default 'visible':");
@@ -83,7 +83,7 @@
 		oProgInd.destroy();
 	});
 
-	test("Properties", function() {
+	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd3"];
 
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
@@ -97,7 +97,7 @@
 		oProgInd.destroy();
 	});
 
-	test("Properties", function() {
+	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd4"];
 
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
@@ -111,7 +111,7 @@
 		oProgInd.destroy();
 	});
 
-	test("Properties", function() {
+	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd5"];
 
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
@@ -125,7 +125,7 @@
 		oProgInd.destroy();
 	});
 
-	test("Properties", function() {
+	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd6"];
 
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
@@ -139,7 +139,7 @@
 		oProgInd.destroy();
 	});
 
-	test("Properties", function() {
+	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd7"];
 
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");

@@ -72,7 +72,7 @@
 
 	// Run generic test for all supported locales, run custom tests where it is defined
 	jQuery.each(aLocales, function(i, sLocale) {
-		test("Locale " + sLocale, function() {
+		QUnit.test("Locale " + sLocale, function(assert) {
 			var oLocale = new sap.ui.core.Locale(sLocale),
 				oLocaleData = new sap.ui.core.LocaleData(oLocale),
 				fnCustomTests = window["customTests_" + sLocale];
@@ -442,7 +442,7 @@
 		equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
 	}
 
-	test("Currency digits", function() {
+	QUnit.test("Currency digits", function(assert) {
 		var oLocaleData = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale("en_US"));
 		equal(oLocaleData.getCurrencyDigits("USD"), 2, "2 digits fuer USD");
 		equal(oLocaleData.getCurrencyDigits("EUR"), 2, "2 digits fuer EUR");
@@ -454,7 +454,7 @@
 		equal(oLocaleData.getCurrencyDigits("TWD"), 0, "0 digits fuer TWD");
 	});
 
-	test("Calendar type should use the value set in configuration when getting calendar related values", function() {
+	QUnit.test("Calendar type should use the value set in configuration when getting calendar related values", function(assert) {
 		sap.ui.getCore().getConfiguration().setCalendarType(sap.ui.core.CalendarType.Islamic);
 
 		var oLocaleData = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale("en_US"));
@@ -471,7 +471,7 @@
 		sap.ui.getCore().getConfiguration().setCalendarType(null);
 	});
 
-	test("Locale data with customization from format settings in configuration", function() {
+	QUnit.test("Locale data with customization from format settings in configuration", function(assert) {
 		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
 
 		oFormatSettings.setLegacyDateFormat("3");

@@ -522,7 +522,7 @@ QUnit.test("Collapse / Expand", function(assert) {
 	ok(oBinding.isExpanded(0), "Expanded");
 });
 
-QUnit.test("Reset Grouping", 3, function() {
+QUnit.test("Reset Grouping", 3, function(assert) {
 	var oBinding = oTable.getBinding("rows");
 	assert.equal(oBinding.getLength(), 8, "Row count before Grouping");
 

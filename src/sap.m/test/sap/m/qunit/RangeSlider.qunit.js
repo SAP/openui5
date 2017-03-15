@@ -231,12 +231,12 @@
 		assert.strictEqual(oHandleDomRef, this.rangeSlider.getDomRef("handle2"), "The function should return the second handle");
 	});
 
-	QUnit.test("setValue()", function () {
+	QUnit.test("setValue()", function (assert) {
 		var that = this.rangeSlider.setValue();
 		assert.ok(that === this.rangeSlider, "The function should not do anything and return this for chaining");
 	});
 
-	QUnit.test("_calculateHandlePosition()", function () {
+	QUnit.test("_calculateHandlePosition()", function (assert) {
 		this.rangeSlider._fSliderWidth = 100;
 		this.rangeSlider._fSliderOffsetLeft = 0;
 		this.rangeSlider._fSliderPaddingLeft = 0;
@@ -254,7 +254,7 @@
 		assert.strictEqual(this.rangeSlider._calculateHandlePosition(value5), 100, "The function should return 100");
 	});
 
-	QUnit.test("_calculateHandlePosition() with even step", function () {
+	QUnit.test("_calculateHandlePosition() with even step", function (assert) {
 		this.rangeSlider._fSliderWidth = 100;
 		this.rangeSlider._fSliderOffsetLeft = 0;
 		this.rangeSlider._fSliderPaddingLeft = 0;
@@ -269,7 +269,7 @@
 		assert.strictEqual(this.rangeSlider._calculateHandlePosition(value3), 74, "The function should return 74");
 	});
 
-	QUnit.test("_calculateHandlePosition() with odd step", function () {
+	QUnit.test("_calculateHandlePosition() with odd step", function (assert) {
 		this.rangeSlider._fSliderWidth = 100;
 		this.rangeSlider._fSliderOffsetLeft = 0;
 		this.rangeSlider._fSliderPaddingLeft = 0;
@@ -286,7 +286,7 @@
 		assert.strictEqual(this.rangeSlider._calculateHandlePosition(value4), 72, "The function should return 72");
 	});
 
-	QUnit.test("_calculateHandlePosition() with decimal step", function () {
+	QUnit.test("_calculateHandlePosition() with decimal step", function (assert) {
 		this.rangeSlider._fSliderWidth = 100;
 		this.rangeSlider._fSliderOffsetLeft = 0;
 		this.rangeSlider._fSliderPaddingLeft = 0;

@@ -20,7 +20,7 @@
 
 		<script>
 		function renderBarInPageTestCase(sTestName, sContext, sExpectedTag, sExpectedClass) {
-			test(sTestName, function () {
+			QUnit.test(sTestName, function (assert) {
 				// System under Test + Act
 				var oBar = new sap.m.Bar();
 

@@ -24,7 +24,7 @@
 
 			jQuery.sap.require("sap.ui.core.ws.WebSocket");
 
-			test("Constructor with url only", 1, function() {
+			QUnit.test("Constructor with url only", 1, function(assert) {
 				var theEx;
 
 				try {
@@ -41,7 +41,7 @@
 
 			});
 
-			test("Constructor with url and single protocol", 1, function() {
+			QUnit.test("Constructor with url and single protocol", 1, function(assert) {
 				var theEx;
 
 				try {
@@ -58,7 +58,7 @@
 
 			});
 
-			test("Constructor with url and multiple protocols", 1, function() {
+			QUnit.test("Constructor with url and multiple protocols", 1, function(assert) {
 				var theEx;
 
 				try {
@@ -75,7 +75,7 @@
 
 			});
 
-			test("No url in constructor", 2, function() {
+			QUnit.test("No url in constructor", 2, function(assert) {
 
 				var theEx;
 
@@ -95,7 +95,7 @@
 
 			});
 
-			test("Wrong protocol parameter in constructor", 2, function() {
+			QUnit.test("Wrong protocol parameter in constructor", 2, function(assert) {
 
 				var theEx;
 
@@ -115,7 +115,7 @@
 
 			});
 
-			test("Resolve URLs", 4, function() {
+			QUnit.test("Resolve URLs", 4, function(assert) {
 
 				var _resolveFullUrl = sap.ui.core.ws.WebSocket.prototype._resolveFullUrl;
 

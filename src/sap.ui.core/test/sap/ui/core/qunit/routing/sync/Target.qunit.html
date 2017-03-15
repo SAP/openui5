@@ -69,7 +69,7 @@
 			}
 		});
 
-		QUnit.test("Should create a view specified by a target", function () {
+		QUnit.test("Should create a view specified by a target", function (assert) {
 			// Arrange
 			var oButton = new sap.m.Button();
 
@@ -87,7 +87,7 @@
 			oButton.destroy();
 		});
 
-		QUnit.test("Should pass the correct values to the view creation", function () {
+		QUnit.test("Should pass the correct values to the view creation", function (assert) {
 			// Arrange
 			var that = this,
 				oStub = this.stub(this.oViews, "_getView", function (oOptions) {
@@ -104,7 +104,7 @@
 			strictEqual(oStub.callCount, 1, "Did inform the view creation");
 		});
 
-		QUnit.test("Should use the _getView to create a unprefixed id if _bUseRawViewId is set", function () {
+		QUnit.test("Should use the _getView to create a unprefixed id if _bUseRawViewId is set", function (assert) {
 			// Arrange
 			var that = this,
 				oSpy = this.spy(this.oViews, "_getView"),
@@ -124,7 +124,7 @@
 			strictEqual(oSpy.callCount, 0, "Did not use the prefix version");
 		});
 
-		QUnit.test("Should clear a target aggregation", function () {
+		QUnit.test("Should clear a target aggregation", function (assert) {
 			// Arrange
 			var oButton = new sap.m.Button(),
 				oExistingButton = new sap.m.Button();
@@ -150,7 +150,7 @@
 			oExistingButton.destroy();
 		});
 
-		QUnit.test("Should log an error if the target parent is not found", function () {
+		QUnit.test("Should log an error if the target parent is not found", function (assert) {
 			// Arrange
 			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 
@@ -163,7 +163,7 @@
 			sinon.assert.calledWith(oStub, sinon.match(/root view/), sinon.match(this.oTarget));
 		});
 
-		QUnit.test("Should log an error if the target control does not have an nonexistion aggregation specified", function () {
+		QUnit.test("Should log an error if the target control does not have an nonexistion aggregation specified", function (assert) {
 			// Arrange
 			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 
@@ -176,7 +176,7 @@
 			sinon.assert.calledWith(oStub, sinon.match(/aggregation/), sinon.match(this.oTarget));
 		});
 
-		QUnit.test("Should log an error if the target control does not have an aggregation specified", function () {
+		QUnit.test("Should log an error if the target control does not have an aggregation specified", function (assert) {
 			// Arrange
 			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 
@@ -189,7 +189,7 @@
 			sinon.assert.calledWith(oStub, sinon.match(/no 'controlAggregation' was set/), sinon.match(this.oTarget));
 		});
 
-		QUnit.test("Should log an error if the target control could not be found", function () {
+		QUnit.test("Should log an error if the target control could not be found", function (assert) {
 			// Arrange
 			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 
@@ -237,7 +237,7 @@
 			}
 		});
 
-		QUnit.test("Should use a different root view", function () {
+		QUnit.test("Should use a different root view", function (assert) {
 			// Arrange
 			this.oTarget._oOptions.rootView = "parent";
 			this.oViews.setView("parent", this.oParentView);
@@ -251,7 +251,7 @@
 			strictEqual(oShell.getContent()[0], this.oChildView, "it is the child view");
 		});
 
-		QUnit.test("Should display a child target", function () {
+		QUnit.test("Should display a child target", function (assert) {
 			// Arrange
 			var oRootShell = new sap.ui.ux3.Shell(),
 				oParentTarget = new sap.ui.core.routing.Target({
@@ -310,7 +310,7 @@
 			}
 		});
 
-		QUnit.test("should be able to fire/attach/detach the display event", function() {
+		QUnit.test("should be able to fire/attach/detach the display event", function(assert) {
 			// Arrange
 			var oParameters = { foo : "bar" },
 				fnEventSpy = this.spy(function(oEvent, oActualData) {

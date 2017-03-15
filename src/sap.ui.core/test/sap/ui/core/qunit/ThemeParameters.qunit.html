@@ -36,12 +36,12 @@
 		jQuery.sap.require("sap.ui.core.theming.Parameters");
 
 
-   	test("InitialCheck", function() {
+   	QUnit.test("InitialCheck", function(assert) {
    		ok(sap.ui.core.theming.Parameters, "sap.ui.core.theming.Parameters must exist");
    		ok(sap.ui.core.theming.Parameters.get, "sap.ui.core.theming.Parameters.get() must exist");
    	});
 
-   	test("Read single parameters", function() {
+   	QUnit.test("Read single parameters", function(assert) {
    		/* HCB theme was chosen because:
    		 *  1. it should be quite stable in general
    		 *  2. background and text color are defined by design and thus even less likely to change
@@ -56,15 +56,15 @@
    		equal(sap.ui.core.theming.Parameters.get("sapUiLegacyText"), "#ffffff", "sapUiLegacyText must be defined as '#ffffff'");
    	});
 
-   	test("Undefined parameter", function() {
+   	QUnit.test("Undefined parameter", function(assert) {
    		equal(sap.ui.core.theming.Parameters.get("thisParameterNameMayNeverExist"), undefined, "'undefined' should be returned for unknown parameter names");
    	});
 
-   	test("Invalid parameter", function() {
+   	QUnit.test("Invalid parameter", function(assert) {
    		equal(sap.ui.core.theming.Parameters.get(null), undefined, "'undefined' should be returned for 'null' parameter name");
    	});
 
-   	test("All parameters", function() {
+   	QUnit.test("All parameters", function(assert) {
    		var mAllParams = sap.ui.core.theming.Parameters.get();
    		ok(mAllParams, "A map of parameters should be returned when get is called without parameter name");
 
@@ -76,7 +76,7 @@
    		ok(count > 10, "The map of parameters should have quite some entries");
    	});
 
-   	test("Parameter from Unknown Library", function() {
+   	QUnit.test("Parameter from Unknown Library", function(assert) {
    		equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor"), undefined, "'undefined' should be returned for a parameter of a library that currently is not loaded");
    	});
 
@@ -100,7 +100,7 @@
 			sap.ui.getCore().applyTheme("base");
 		});
 
-   	test("Dynamically Loaded Library", function() {
+   	QUnit.test("Dynamically Loaded Library", function(assert) {
 
 			function getStyleId(i) {
 				return "style" + (i + 1);
@@ -120,7 +120,7 @@
 			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor"), "#fafafa", "parameter for newly loaded library should be known now");
 	});
 
-		test("Read scoped parameters (from sap.ui.testlib)", function() {
+		QUnit.test("Read scoped parameters (from sap.ui.testlib)", function(assert) {
 			var oControl = new sap.ui.core.Control();
 
 			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oControl), "#fafafa",
@@ -145,7 +145,7 @@
 
 		});
 
-		test("Read scoped parameters (error handling)", function() {
+		QUnit.test("Read scoped parameters (error handling)", function(assert) {
 			var oElement = new sap.ui.core.Element();
 
 			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oElement), "#fafafa",
@@ -166,7 +166,7 @@
 
 		});
 
-		test("Read multiple given parameters", function() {
+		QUnit.test("Read multiple given parameters", function(assert) {
 			var aParams = ["sapUiTstTextColor", "sapUiText"];
 			var oExpected = {
 					"sapUiTstTextColor": "#fafafa",
@@ -179,7 +179,7 @@
 					"Key-value map for the given params 'sapUiTstTextColor' and 'sapUiText' should be returned");
 		});
 
-		test("Read multiple given parameters and Element", function() {
+		QUnit.test("Read multiple given parameters and Element", function(assert) {
 			var oElement = new sap.ui.core.Element();
 			var oParent = new sap.ui.core.Control();
 
@@ -198,7 +198,7 @@
 					"Key-value map for the given params 'sapUiTstTextColor' and 'sapUiText' should be returned");
 		});
 
-		test("Read multiple given parameters (including undefined param name)", function() {
+		QUnit.test("Read multiple given parameters (including undefined param name)", function(assert) {
 			var aParams = ["sapUiTstTextColor", "sapUiText", "sapUiTestParam"];
 			var oExpected = {
 					"sapUiTstTextColor": "#fafafa",

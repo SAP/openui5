@@ -50,7 +50,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Should log if a control is not found inside a view", function() {
+	QUnit.test("Should log if a control is not found inside a view", function(assert) {
 		// Arrange
 		new Opa5().waitFor({
 			viewName: "bar",
@@ -64,7 +64,7 @@ sap.ui.define([
 		sinon.assert.calledWith(this.debugSpy, "Found no control with the id: 'notExistingId' in the view: 'bar'");
 	});
 
-	QUnit.test("Should log if a view is not found", function() {
+	QUnit.test("Should log if a view is not found", function(assert) {
 		// Arrange
 		new Opa5().waitFor({
 			viewName: "notExistingView"

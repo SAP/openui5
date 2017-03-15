@@ -104,7 +104,7 @@
 
 		QUnit.module("Setter/Getter");
 
-		test("used Layout", function() {
+		QUnit.test("used Layout", function(assert) {
 			var oForm = oSimpleForm.getAggregation("form");
 			var oLayout = oForm.getLayout();
 			equal(oLayout.getMetadata().getName(), "sap.ui.layout.form.ResponsiveLayout", "ResponsiveLayout used by default");
@@ -114,7 +114,7 @@
 			equal(oLayout.getMetadata().getName(), "sap.ui.layout.form.GridLayout", "GridLayout used");
 		});
 
-		test("first content", function() {
+		QUnit.test("first content", function(assert) {
 			var aContent = oSimpleForm.getContent();
 			equal(aContent.length, 24, "Number of content entries");
 
@@ -142,7 +142,7 @@
 			equal(aElements2[2].getFields().length, 1, "Number of Fields of third FormElement");
 		});
 
-		test("LayoutData", function() {
+		QUnit.test("LayoutData", function(assert) {
 			var oLabel = sap.ui.getCore().byId("L1");
 			var oLayoutData = oLabel.getLayoutData();
 			ok(oLayoutData, "Label has LayoutData");
@@ -209,7 +209,7 @@
 			equal(oLayoutData.getWeight(), 1, "Container2: TextField6 LayoutData weight");
 		});
 
-		test("addContent", function() {
+		QUnit.test("addContent", function(assert) {
 
 			oSimpleForm.addContent(new sap.ui.commons.Title("title3",{text:"Title 3"}));
 			var aContent = oSimpleForm.getContent();
@@ -242,7 +242,7 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		test("insertContent", function() {
+		QUnit.test("insertContent", function(assert) {
 			oSimpleForm.insertContent(new sap.ui.commons.Title("title4",{text:"Title 4"}), 26); // insert before Label
 			var aContent = oSimpleForm.getContent();
 			var oTitle = sap.ui.getCore().byId("title4");
@@ -335,7 +335,7 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		test("removeContent", function() {
+		QUnit.test("removeContent", function(assert) {
 			var aContent = oSimpleForm.getContent();
 			var iContentLengthBefore = aContent.length;
 			var sOldContainerId = sap.ui.getCore().byId("title4").getParent().getId();
@@ -398,7 +398,7 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		test("removeAllContent", function() {
+		QUnit.test("removeAllContent", function(assert) {
 			var oLabel = sap.ui.getCore().byId("SF2-L1");
 			var sOldElementId = oLabel.getParent().getId();
 			var sOldContainerId = oLabel.getParent().getParent().getId();
@@ -420,7 +420,7 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		test("destroyContent", function() {
+		QUnit.test("destroyContent", function(assert) {
 			var oLabel = sap.ui.getCore().byId("SF3-L1");
 			var sOldElementId = oLabel.getParent().getId();
 			var sOldContainerId = oLabel.getParent().getParent().getId();
@@ -440,7 +440,7 @@
 
 		QUnit.module("Content changing");
 
-		test("toggle visibility", function() {
+		QUnit.test("toggle visibility", function(assert) {
 
 			var oTextField = sap.ui.getCore().byId("TF-X-3");
 			var oElement = oTextField.getParent();

@@ -90,7 +90,7 @@
 					aClasses = oLibrary.controls.concat(oLibrary.elements.slice());
 
 					(function (aClasses) {
-						test("All control and element setters should return correct context in library " + sLibName, function (fnAssert) {
+						QUnit.test("All control and element setters should return correct context in library " + sLibName, function (fnAssert) {
 							// Test all classes from list
 							assertAllSettersFromList(aClasses, fnAssert);
 						});

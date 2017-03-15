@@ -62,7 +62,7 @@
 
 			QUnit.module("initialization");
 
-			QUnit.test("Should initialize the router instance", function() {
+			QUnit.test("Should initialize the router instance", function(assert) {
 				//Arrange
 				var parseSpy,
 				//System under Test
@@ -86,7 +86,7 @@
 				router.destroy();
 			});
 
-			QUnit.test("Should stop the router instance", function() {
+			QUnit.test("Should stop the router instance", function(assert) {
 				//Arrange
 				var parseSpy,
 				//System under Test
@@ -148,7 +148,7 @@
 				router.destroy();
 			});
 
-			QUnit.test("Should destroy the router instance", function() {
+			QUnit.test("Should destroy the router instance", function(assert) {
 				//Arrange
 				var parseSpy,
 				//System under Test
@@ -169,7 +169,7 @@
 
 			});
 
-			QUnit.test("Should destroy the routers dependencies", function() {
+			QUnit.test("Should destroy the routers dependencies", function(assert) {
 				// System under test + Arrange
 				var oRouter = fnCreateRouter([ { name : "myRoute", pattern : "foo" } ], {}, {}, {myTarget : {}});
 
@@ -190,7 +190,7 @@
 
 			});
 
-			QUnit.test("Should log a warning if a router gets destroyed while the hash changes", function () {
+			QUnit.test("Should log a warning if a router gets destroyed while the hash changes", function (assert) {
 				// Arrange
 				var oStub = this.stub(jQuery.sap.log, "warning", jQuery.noop),
 					oFirstRouter = fnCreateRouter({
@@ -279,7 +279,7 @@
 				});
 			});
 
-			QUnit.test("subroute handling", function() {
+			QUnit.test("subroute handling", function(assert) {
 
 				//Arrange System under Test
 				var router = fnCreateRouter({
@@ -375,7 +375,7 @@
 
 			});
 
-			QUnit.test("Should not crash if viewName is not defined, but controlId and aggregation are defaulted but no view is given", function () {
+			QUnit.test("Should not crash if viewName is not defined, but controlId and aggregation are defaulted but no view is given", function (assert) {
 				var oNavContainer = new sap.m.NavContainer();
 
 				//Arrange System under Test
@@ -399,7 +399,7 @@
 
 			QUnit.module("greedy");
 
-			QUnit.test("Should create a greedy route", function () {
+			QUnit.test("Should create a greedy route", function (assert) {
 				// Arrange + System under test
 				var sPattern = "product",
 					oRouter = fnCreateRouter([
@@ -448,7 +448,7 @@
 				});
 			});
 
-			QUnit.test("Should create a greedy route", function () {
+			QUnit.test("Should create a greedy route", function (assert) {
 				// Arrange + System under test
 				var sPattern = "product",
 						oRouter = fnCreateRouter([
@@ -502,7 +502,7 @@
 				}
 			});
 
-			QUnit.test("Should attach to a route", function() {
+			QUnit.test("Should attach to a route", function(assert) {
 				//Arrange
 				var spy = this.spy(),
 				//System under Test
@@ -530,7 +530,7 @@
 				});
 			});
 
-			QUnit.test("Should attach to a route using getRoute", function() {
+			QUnit.test("Should attach to a route using getRoute", function(assert) {
 				//Arrange
 				var spy = this.spy(),
 					//System under Test
@@ -558,7 +558,7 @@
 				});
 			});
 
-			QUnit.test("Should go to a route", function() {
+			QUnit.test("Should go to a route", function(assert) {
 				//Arrange
 				var callCount = 0,
 						aArguments = [],
@@ -605,7 +605,7 @@
 				});
 			});
 
-			QUnit.test("Should go to a route", function() {
+			QUnit.test("Should go to a route", function(assert) {
 				//Arrange
 				var beforeCallCount = 0,
 					callCount = 0,
@@ -679,7 +679,7 @@
 			});
 
 			//there was a bug that an empty route would catch all the requests
-			QUnit.test("Should route to a route after an emptyHash", function() {
+			QUnit.test("Should route to a route after an emptyHash", function(assert) {
 				//Arrange
 				var callCount = 0, matched = function(oEvent) {
 							if (oEvent.getParameter("name") === "name") {
@@ -719,7 +719,7 @@
 
 			QUnit.module("hrefGeneration");
 
-			QUnit.test("Should create an URL for a route", function() {
+			QUnit.test("Should create an URL for a route", function(assert) {
 				//Arrange
 				var //System under Test
 						router = fnCreateRouter([ {
@@ -754,7 +754,7 @@
 				}
 			});
 
-			QUnit.test("Should be able to chain NavTo", function () {
+			QUnit.test("Should be able to chain NavTo", function (assert) {
 				// Act
 				var oReturnValue = this.oRouter.navTo();
 
@@ -805,7 +805,7 @@
 
 			});
 
-			QUnit.test("Should set a view to the cache", function () {
+			QUnit.test("Should set a view to the cache", function (assert) {
 				var oShell = new sap.ui.ux3.Shell();
 
 				//Arrange System under Test
@@ -853,7 +853,7 @@
 				});
 			});
 
-			QUnit.test("Nested View initialization", function() {
+			QUnit.test("Nested View initialization", function(assert) {
 
 				sap.ui.core.routing.HashChanger.getInstance().setHash("");
 
@@ -946,7 +946,7 @@
 				});
 			});
 
-			QUnit.test("Nested target parents", function() {
+			QUnit.test("Nested target parents", function(assert) {
 
 				sap.ui.core.routing.HashChanger.getInstance().setHash("");
 
@@ -1083,7 +1083,7 @@
 				});
 			});
 
-			QUnit.test("Fixed id", function() {
+			QUnit.test("Fixed id", function(assert) {
 
 				var oShell = new sap.ui.ux3.Shell();
 
@@ -1161,7 +1161,7 @@
 				}
 			});
 
-			QUnit.test("Should create a view", function () {
+			QUnit.test("Should create a view", function (assert) {
 				var that = this,
 					fnStub = this.stub(sap.ui, "view", function (oViewOptions) {
 						strictEqual(oViewOptions.viewName, "foo", "DId pass the viewname");
@@ -1180,7 +1180,7 @@
 			});
 
 
-			QUnit.test("Should set a view to the cache", function () {
+			QUnit.test("Should set a view to the cache", function (assert) {
 				var that = this,
 						oReturnValue,
 						fnStub = this.stub(sap.ui, "view", function () {
@@ -1208,7 +1208,7 @@
 				}
 			});
 
-			QUnit.test("should be able to fire/attach/detach the created event", function() {
+			QUnit.test("should be able to fire/attach/detach the created event", function(assert) {
 				// Arrange
 				var oParameters = { foo : "bar" },
 						fnEventSpy = this.spy(function(oEvent, oActualData) {
@@ -1234,7 +1234,7 @@
 				strictEqual(oFireReturnValue, this.oRouter, "did return this for chaining for fire");
 			});
 
-			QUnit.test("Should fire the view created event if a view is created", function () {
+			QUnit.test("Should fire the view created event if a view is created", function (assert) {
 				// Arrange
 				var oView = createXmlView(),
 					fnStub = this.stub(sap.ui, "view", function () {
@@ -2213,7 +2213,7 @@
 
 			QUnit.module("component");
 
-			QUnit.test("Should create a view with an component", function () {
+			QUnit.test("Should create a view with an component", function (assert) {
 				// Arrange
 				var oUIComponent = new sap.ui.core.UIComponent({}),
 					fnOwnerSpy = this.spy(oUIComponent, "runAsOwner"),
@@ -2264,7 +2264,7 @@
 					}
 				});
 
-			QUnit.test("Should display a target referenced by a route", function () {
+			QUnit.test("Should display a target referenced by a route", function (assert) {
 				// Arrange
 				this.stub(sap.ui.core.routing.Views.prototype, "_getView", function () {
 					return createXmlView();
@@ -2298,7 +2298,7 @@
 
 			});
 
-			QUnit.test("Should display multiple targets referenced by a route", function () {
+			QUnit.test("Should display multiple targets referenced by a route", function (assert) {
 				// Arrange
 				this.stub(sap.ui.core.routing.Views.prototype, "_getView", function () {
 					return createXmlView();
@@ -2338,7 +2338,7 @@
 				}.bind(this));
 			});
 
-			QUnit.test("Should display child targets referenced by a route", function () {
+			QUnit.test("Should display child targets referenced by a route", function (assert) {
 				// Arrange
 				this.stub(sap.ui.core.routing.Views.prototype, "_getView", function () {
 					return createXmlView();
@@ -2383,14 +2383,14 @@
 
 			QUnit.module("getTargets");
 
-			QUnit.test("Should get the created targets instance", function () {
+			QUnit.test("Should get the created targets instance", function (assert) {
 				// System under test + arrange
 				var oRouter = fnCreateRouter({}, {}, null, {});
 
 				strictEqual(oRouter.getTargets(), oRouter._oTargets, "Did return the Targets instance");
 			});
 
-			QUnit.test("Should return undefined if no targets where defined", function () {
+			QUnit.test("Should return undefined if no targets where defined", function (assert) {
 
 				// System under test + arrange
 				var oRouter = fnCreateRouter();
@@ -2524,7 +2524,7 @@
 				});
 			});
 
-			QUnit.test("Hash 'page12' shouldn't match pattern 'page1/:context:'", function() {
+			QUnit.test("Hash 'page12' shouldn't match pattern 'page1/:context:'", function(assert) {
 				var oRouter = fnCreateRouter([{
 						name: "page1",
 						pattern: "page1/:context:"
@@ -2548,7 +2548,7 @@
 				});
 			});
 
-			QUnit.test("Interpolate on pattern with multiple optional params", function() {
+			QUnit.test("Interpolate on pattern with multiple optional params", function(assert) {
 				var oRouter = new sap.ui.core.routing.Router([{
 						name: "page1",
 						pattern: "page1/:context:/:context1:"

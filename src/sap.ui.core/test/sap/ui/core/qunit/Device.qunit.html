@@ -451,7 +451,7 @@
 
 		var fnUATest =  function(i, oUserAgentAndResult) {
 
-			test(oUserAgentAndResult.name, function() {
+			QUnit.test(oUserAgentAndResult.name, function(assert) {
 
 				var currentTest = oUserAgentAndResult;
 				var actualResult = sap.ui.Device._testUserAgent(currentTest.ua, currentTest.nav);

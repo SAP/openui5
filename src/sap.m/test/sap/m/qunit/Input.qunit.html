@@ -105,17 +105,17 @@
 	});
 
 	// test property accessor methods
-	test("Value", function() {
+	QUnit.test("Value", function(assert) {
 		i1.setValue(value);
 		equals(i1.getValue(), value, "Input value is "+value);
 	});
 
-	test("InputType", function() {
+	QUnit.test("InputType", function(assert) {
 		var typeDefault = "Text";
 		equals(i1.getType(), typeDefault, "Input Type: Default");
 	});
 
-	test("InputEnabled", function() {
+	QUnit.test("InputEnabled", function(assert) {
 		var enabled = false;
 		i1.setEnabled(enabled);
 		equals(i1.getEnabled(), enabled, "Input is disabled");
@@ -124,14 +124,14 @@
 		equals(i1.getEnabled(), enabled, "Input is enabled");
 	});
 
-	test("ValueHelpOnly", function() {
+	QUnit.test("ValueHelpOnly", function(assert) {
 		equals(i1.getValueHelpOnly(), false, "ValueHelpOnly Default: false");
 		var helponly = true;
 		i1.setValueHelpOnly(helponly);
 		equals(i1.getValueHelpOnly(), helponly, "ValueHelpOnly is true");
 	});
 
-	test("Placeholder", function() {
+	QUnit.test("Placeholder", function(assert) {
 		var placeholder = "Placeholder";
 		i1.setPlaceholder(placeholder);
 		equals(i1.getPlaceholder(), placeholder, "Placeholder for text");
@@ -140,12 +140,12 @@
 		equals(i2.getPlaceholder(), placeholder, "Placeholder for number field");
 	});
 
-	test("Visible", function() {
+	QUnit.test("Visible", function(assert) {
 		equals(i1.$().length, 1, "Visible input found");
 		equals(i3.$().length, 0, "Invisible input not found");
 	});
 
-	test("Change", function() {
+	QUnit.test("Change", function(assert) {
 		i1.setValue("new");
 		sap.ui.getCore().applyChanges();
 		i1.attachChange(function() {
@@ -155,7 +155,7 @@
 		equals(i1.getValue(),"new", "Value after onchange");
 	});
 
-	test("Event order", function() {
+	QUnit.test("Event order", function(assert) {
 		var oInput = new sap.m.Input({
 				showSuggestion: true
 			}),
@@ -201,7 +201,7 @@
 		oInput.destroy();
 	});
 
-	test("valueLiveUpdate", function() {
+	QUnit.test("valueLiveUpdate", function(assert) {
 
 		var oModel = new sap.ui.model.json.JSONModel({testValue: ""});
 		oInput8.setModel(oModel);
@@ -243,7 +243,7 @@
 	});
 
 
-	test("Value States", function() {
+	QUnit.test("Value States", function(assert) {
 
 		equals(i4.$().hasClass('sapMInputBaseError'), true, "Before new value state : Error");
 		equals(i5.$().hasClass('sapMInputBaseWarning'), true, "Before new value state : Warning");
@@ -265,7 +265,7 @@
 		equals(i5.$().attr("title"), undefined, "Tooltip is empty for valueState \"None\"");
 	});
 
-	test("Value Help Indicator", function() {
+	QUnit.test("Value Help Indicator", function(assert) {
 		var spy = this.spy(),
 			oInput = new sap.m.Input( {
 				valueHelpRequest: spy
@@ -310,7 +310,7 @@
 		strictEqual(spy.callCount, 1, "Value Help Request has been fired and received successfully");
 	});
 
-	test("Keyboard Handling", function() {
+	QUnit.test("Keyboard Handling", function(assert) {
 		// F4 event check
 		var evt = jQuery.Event("sapshow"),
 			spy = this.spy(),
@@ -323,7 +323,7 @@
 		strictEqual(spy.callCount, 1, "The value help was requested by pressing F4");
 	});
 
-	test("Submit Event", function() {
+	QUnit.test("Submit Event", function(assert) {
 
 		var sEvents = "";
 		var sValue = "";
@@ -405,7 +405,7 @@
 		oInput.destroy();
 	});
 
-	test("Value Help Only CSS Classes and event", function() {
+	QUnit.test("Value Help Only CSS Classes and event", function(assert) {
 		var spy = this.spy(),
 			oInputVHO = new sap.m.Input( {
 				showValueHelp: true,
@@ -428,7 +428,7 @@
         strictEqual(spy.callCount, 1, "Value Help Request has been fired and received successfully");
 	});
 
-	test("Conditions for Value Help Only not valid", function() {
+	QUnit.test("Conditions for Value Help Only not valid", function(assert) {
 	// case1: showValueHelp is false
 		var spy = this.spy(),
 			oInputVHO = new sap.m.Input( {
@@ -523,7 +523,7 @@
 		strictEqual(spy3.callCount, 0, "enabled = false: Tap has been fired and no Value Help Request is submitted");
 	});
 
-	test("Keyboard Handling for ValueHelpOnly", function() {
+	QUnit.test("Keyboard Handling for ValueHelpOnly", function(assert) {
 		//Event check for Enter and Space
 		var evt = jQuery.Event("sapselect"),
 
@@ -539,7 +539,7 @@
 
 	QUnit.module("Destroy");
 
-	test("Destroy DOM", function() {
+	QUnit.test("Destroy DOM", function(assert) {
 		var oInput = new sap.m.Input({
 			showSuggestion: false
 		}),
@@ -556,7 +556,7 @@
 		strictEqual($Input.length, 0, "After destroy input DOM node is removed");
 	});
 
-	test("Destroy ValueHelpIcon", function() {
+	QUnit.test("Destroy ValueHelpIcon", function(assert) {
 		var oInput = new sap.m.Input({
 			showValueHelp: true
 		}),
@@ -574,7 +574,7 @@
 		strictEqual(sap.ui.getCore().byId(sValueHelpIconId), undefined, "Value Help Indicator icon is also destroyed");
 	});
 
-	test("Destroy Suggestion List and Popup", function() {
+	QUnit.test("Destroy Suggestion List and Popup", function(assert) {
 		var oInput = new sap.m.Input({
 				showSuggestion: true
 			}),
@@ -626,7 +626,7 @@
 
 	QUnit.module("Suggestions");
 
-	test("Suggestions deactivated and aggregations are not filled - list and popup should not be initialized", function(){
+	QUnit.test("Suggestions deactivated and aggregations are not filled - list and popup should not be initialized", function(assert){
 		var oInput = new sap.m.Input({
 				showSuggestion: false
 			}),
@@ -648,7 +648,7 @@
 		oInput.destroy();
 	});
 
-	test("Suggestion on Desktop", function(){
+	QUnit.test("Suggestion on Desktop", function(assert){
 		var $Input = oInput6.$(),
 			oPopup, // is lazy loaded
 			aNames = ["abcTom", "abcPhilips", "abcAnna"],
@@ -689,7 +689,7 @@
 		oInput6.destroy();
 	});
 
-	test("Suggestion on Desktop - enter key pressed before the first suggest event", function(){
+	QUnit.test("Suggestion on Desktop - enter key pressed before the first suggest event", function(assert){
 		var oInput = new sap.m.Input({
 				showSuggestion: true
 			}),
@@ -718,7 +718,7 @@
 		oInput.destroy();
 	});
 
-	test("Suggestion on Desktop - Close with enter key", function(){
+	QUnit.test("Suggestion on Desktop - Close with enter key", function(assert){
 		var oSystem = {
 				desktop: true,
 				phone: false,
@@ -762,7 +762,7 @@
 		oInput.destroy();
 	});
 
-	test("Suggestion on Desktop with change event handler", function(){
+	QUnit.test("Suggestion on Desktop with change event handler", function(assert){
 		var fnCallback = this.spy(),
 			aNames = ["abcTom", "abcPhilips", "abcAnna"],
 			aItemAdded = [],
@@ -811,7 +811,7 @@
 		oInput.destroy();
 	});
 
-	test("Suggestion on Desktop with change event handler (focus on next input)", function(){
+	QUnit.test("Suggestion on Desktop with change event handler (focus on next input)", function(assert){
 		var fnCallback = this.spy(),
 			aNames = ["abcTom", "abcPhilips", "abcAnna"],
 			aItemAdded = [],
@@ -858,7 +858,7 @@
 		oNextInput.destroy();
 	});
 
-	test("Two Value Suggestion on Desktop", function(){
+	QUnit.test("Two Value Suggestion on Desktop", function(assert){
 		var $Input = oInput7.$(),
 			oPopup1,
 			aNames = ["abcTom", "abcPhilips", "abcAnna"],
@@ -910,7 +910,7 @@
 		oInput7.destroy();
 	});
 
-	test("Two Value Suggestions with disabled items on Desktop", function(){
+	QUnit.test("Two Value Suggestions with disabled items on Desktop", function(assert){
 		var $Input,
 			oPopup,
 			aNames = ["abcTom", "abcPhilips", "abcAnna", "abcJames"],
@@ -968,7 +968,7 @@
 	});
 
 	// this test ensured downward compatibility: ColumnListItem has default type "Inactive" but still does need to be selected
-	test("Tabular Suggestions with type=\"Inactive\"", function(){
+	QUnit.test("Tabular Suggestions with type=\"Inactive\"", function(assert){
 		var oInput = new sap.m.Input({
 			showSuggestion: true,
 			suggestionColumns: [
@@ -1106,7 +1106,7 @@
 		oInput.destroy();
 	});
 
-	test("Suggestion on Phone", function(){
+	QUnit.test("Suggestion on Phone", function(assert){
 
 		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
 			ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
@@ -1174,7 +1174,7 @@
 		oInput.destroy();
 	});
 
-	test("Suggestion on Phone with changing the input value in SuggestionItemSelected event handler", function(){
+	QUnit.test("Suggestion on Phone with changing the input value in SuggestionItemSelected event handler", function(assert){
 
 		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
 			ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
@@ -1227,7 +1227,7 @@
 		oInput.destroy();
 	});
 
-	test("Two value Suggestion on Phone", function(){
+	QUnit.test("Two value Suggestion on Phone", function(assert){
 
 		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
 			ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
@@ -1295,7 +1295,7 @@
 		oInput.destroy();
 	});
 
-	test("Suggestion with liveChange handler on phone", function(){
+	QUnit.test("Suggestion with liveChange handler on phone", function(assert){
 
 		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
 			ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
@@ -1331,7 +1331,7 @@
 		oInput.destroy();
 	});
 
-	test("SuggestionPopup shouldn't invalidate when insert suggest item on phone", function(){
+	QUnit.test("SuggestionPopup shouldn't invalidate when insert suggest item on phone", function(assert){
 
 		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
 			ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
@@ -1375,7 +1375,7 @@
 		oInput.destroy();
 	});
 
-	test("Tabular Suggestions on Desktop", function(){
+	QUnit.test("Tabular Suggestions on Desktop", function(assert){
 		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		var oInput = new sap.m.Input({
@@ -1525,7 +1525,7 @@
 		oInput.destroy();
 	});
 
-	test("Tabular Suggestions invalidation handling", function(){
+	QUnit.test("Tabular Suggestions invalidation handling", function(assert){
 		var oInput = new sap.m.Input({
 			suggestionColumns: [
 				new sap.m.Column({
@@ -1681,7 +1681,7 @@
 		oInput.destroy();
 	});
 
-	test("Tabular Suggestion on Phone", function(){
+	QUnit.test("Tabular Suggestion on Phone", function(assert){
 
 		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
 			ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
@@ -1881,7 +1881,7 @@
 		oInput.destroy();
 	});
 
-	test("Tabular Suggestions with custom filter and result fuction", function(){
+	QUnit.test("Tabular Suggestions with custom filter and result fuction", function(assert){
 		var oInput = new sap.m.Input({
 			showSuggestion: true,
 			width: "100px",
@@ -2027,7 +2027,7 @@
 		oInput.destroy();
 	});
 
-	test("Property startSuggestion on Desktop (non Zero)",  function() {
+	QUnit.test("Property startSuggestion on Desktop (non Zero)",  function(assert) {
 		var oSystem = {
 				desktop: true,
 				phone: false,
@@ -2062,7 +2062,7 @@
 		oInput.destroy();
 	});
 
-	test("Property startSuggestion on Desktop (Zero)",  function() {
+	QUnit.test("Property startSuggestion on Desktop (Zero)",  function(assert) {
 		var oSystem = {
 				desktop: true,
 				phone: false,
@@ -2102,7 +2102,7 @@
 		oInput.destroy();
 	});
 
-	test("The order of setting properties: showValueHelp, bindAggregation and showSuggestion", function(){
+	QUnit.test("The order of setting properties: showValueHelp, bindAggregation and showSuggestion", function(assert){
 		var oInput = new sap.m.Input({
 			width: "100px",
 			maxSuggestionWidth: "500px",
@@ -2206,7 +2206,7 @@
 		oInput.destroy();
 	});
 
-	test("The order of setting properties: showValueHelp, showSuggestion after bindAggregation", function(){
+	QUnit.test("The order of setting properties: showValueHelp, showSuggestion after bindAggregation", function(assert){
 		var oInput = new sap.m.Input({
 			width: "100px",
 			maxSuggestionWidth: "500px",
@@ -2311,7 +2311,7 @@
 		oInput.destroy();
 	});
 
-	test("Hightlighting", function() {
+	QUnit.test("Hightlighting", function(assert) {
 		var oInput = createInputWithSuggestions();
 
 		oInput.placeAt("content");
@@ -2369,7 +2369,7 @@
 		return oInput;
 	}
 
-	test("Set selection", function() {
+	QUnit.test("Set selection", function(assert) {
 		var oInput = createInputWithSuggestions(),
 				fnCallback = this.spy();
 
@@ -2397,7 +2397,7 @@
 		oInput.destroy();
 	});
 
-	test("Set selection via API", function() {
+	QUnit.test("Set selection via API", function(assert) {
 		var oInput = createInputWithSuggestions(),
 				fnCallback = this.spy();
 
@@ -2416,7 +2416,7 @@
 		oInput.destroy();
 	});
 
-	test("Display text formatting", function() {
+	QUnit.test("Display text formatting", function(assert) {
 		var oInput = createInputWithSuggestions();
 
 		oInput.setTextFormatMode(sap.m.InputTextFormatMode.ValueKey);
@@ -2599,7 +2599,7 @@
 		return oInput;
 	}
 
-	test("Tabular Suggestions - Set selection via API", function() {
+	QUnit.test("Tabular Suggestions - Set selection via API", function(assert) {
 		var oInput = createInputWithTabularSuggestions(),
 				fnCallback = this.spy();
 
@@ -2619,7 +2619,7 @@
 		oInput.destroy();
 	});
 
-	test("Tabular Suggestions - Display text formatting", function() {
+	QUnit.test("Tabular Suggestions - Display text formatting", function(assert) {
 		var oInput = createInputWithTabularSuggestions();
 
 		oInput.setTextFormatMode(sap.m.InputTextFormatMode.ValueKey);
@@ -2637,7 +2637,7 @@
 
 	QUnit.module("Input Description");
 
-	test("Input description", function() {
+	QUnit.test("Input description", function(assert) {
 		var oInputWithDes = new sap.m.Input({
 			value: "220"
 		});
@@ -2660,7 +2660,7 @@
 
 	QUnit.module("Accessibility");
 
-	test("getAccessibilityInfo", function() {
+	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oInput = new sap.m.Input({value: "Value", tooltip: "Tooltip", placeholder: "Placeholder"});
 		ok(!!oInput.getAccessibilityInfo, "Input has a getAccessibilityInfo function");
 		var oInfo = oInput.getAccessibilityInfo();
@@ -2691,7 +2691,7 @@
 		oInput.destroy();
 	});
 
-	test("Popup", function() {
+	QUnit.test("Popup", function(assert) {
 		var oInput = createInputWithSuggestions();
 
 		oInput.placeAt("content");

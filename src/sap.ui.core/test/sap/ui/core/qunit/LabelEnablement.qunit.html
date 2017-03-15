@@ -108,7 +108,7 @@
 			}
 		});
 
-		test("Initialization", function() {
+		QUnit.test("Initialization", function(assert) {
 			throws(function(){
 				sap.ui.core.LabelEnablement.enrich(new TestControl());
 			}, "sap.ui.core.LabelEnablement cannot be applied on Controls which does not implement interface sap.ui.core.Label");
@@ -120,7 +120,7 @@
 			}
 		});
 
-		test("No label assignment done", function() {
+		QUnit.test("No label assignment done", function(assert) {
 			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 0, "No label assigned to control 1");
 			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
 			ok(!this.oLabel.$().attr("for"), "Label has no for attribute");
@@ -128,7 +128,7 @@
 			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
 		});
 
-		test("Label assignment done with LabelFor association", function() {
+		QUnit.test("Label assignment done with LabelFor association", function(assert) {
 			this.oLabel.setLabelFor(this.oControl1);
 			sap.ui.getCore().applyChanges();
 
@@ -140,7 +140,7 @@
 			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
 		});
 
-		test("Label assignment done with setAlternativeLabelFor", function() {
+		QUnit.test("Label assignment done with setAlternativeLabelFor", function(assert) {
 			this.oLabel.setAlternativeLabelFor(this.oControl1);
 			sap.ui.getCore().applyChanges();
 
@@ -152,7 +152,7 @@
 			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
 		});
 
-		test("Label assignment done with LabelFor association and setAlternativeLabelFor - association wins", function() {
+		QUnit.test("Label assignment done with LabelFor association and setAlternativeLabelFor - association wins", function(assert) {
 			this.oLabel.setLabelFor(this.oControl1);
 			this.oLabel.setAlternativeLabelFor(this.oControl2);
 			sap.ui.getCore().applyChanges();
@@ -165,7 +165,7 @@
 			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
 		});
 
-		test("Label assignment change is reflected", function() {
+		QUnit.test("Label assignment change is reflected", function(assert) {
 			this.oLabel.setLabelFor(this.oControl1);
 			sap.ui.getCore().applyChanges();
 
@@ -214,7 +214,7 @@
 		});
 
 		// BCP 1680118922
-		test("it should invalidate the associated control only if the required property has changed", function() {
+		QUnit.test("it should invalidate the associated control only if the required property has changed", function(assert) {
 
 			// arrange
 			var fnInvalidateSpy = this.spy(this.oControl, "invalidate");
@@ -226,7 +226,7 @@
 			strictEqual(fnInvalidateSpy.callCount, 0);
 		});
 
-		test("LabelEnablement.isRequired", function() {
+		QUnit.test("LabelEnablement.isRequired", function(assert) {
 			ok(!sap.ui.core.LabelEnablement.isRequired(this.oControl), "Control not required (own property and label property not set)");
 
 			this.oControl.setRequired(true);
@@ -246,7 +246,7 @@
 			ok(!sap.ui.core.LabelEnablement.isRequired(this.oControl), "Control not required (own property not set and no label assigned)");
 		});
 
-		test("aria-required", function() {
+		QUnit.test("aria-required", function(assert) {
 			ok(!this.oControl.$().attr("aria-required"), "Control not required (own property and label property not set)");
 
 			this.oControl.setRequired(true);

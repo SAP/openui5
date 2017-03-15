@@ -52,7 +52,7 @@
 			decimalSeparator: ","
 		});
 
-	test("integer default format", function(){
+	QUnit.test("integer default format", function(assert) {
 		equal(oDefaultInteger.format(1), "1", "1");
 		equal(oDefaultInteger.format(123), "123", "123");
 		// Integer instance has TOWARDS_ZERO set as default rounding mode
@@ -65,7 +65,7 @@
 		equal(oDefaultInteger.format(-123), "-123", "-123");
 	});
 
-	test("integer format for a specific locale", function(){
+	QUnit.test("integer format for a specific locale", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oIntegerFormat = sap.ui.core.format.NumberFormat.getIntegerInstance(oLocale);
 		equal(oIntegerFormat.format(1), "1", "1");
@@ -76,7 +76,7 @@
 		equal(oIntegerFormat.format(-123), "-123", "-123");
 	});
 
-	test("integer custom format", function(){
+	QUnit.test("integer custom format", function(assert) {
 		equal(oCustomInteger.format(1), "01", "1");
 		equal(oCustomInteger.format(123), "123", "123");
 		equal(oCustomInteger.format(123.23), "123", "123.23");
@@ -85,7 +85,7 @@
 		equal(oCustomInteger.format(-123), "-123", "-123");
 	});
 
-	test("integer short style", function(){
+	QUnit.test("integer short style", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({style: "short"}, oLocale);
 
@@ -219,7 +219,7 @@
 		equal(oFormat.format(-999999), "-1\xa0Mio.", "-999999 formatted");
 	});
 
-	test("integer short style under locale zh_CN", function() {
+	QUnit.test("integer short style under locale zh_CN", function(assert) {
 		// The pattern for 1000-other in locale zh_CN is defined as "0" without any scale which means a number with 4 digits
 		// shouldn't be formatted using the short style.
 		// But when a formatted string without any scale is parsed under locale zh_CN, this pattern is always selected which
@@ -235,7 +235,7 @@
 		equal(oFormat.parse("1万"), 10000, "'1万' is parsed as 10000");
 	});
 
-	test("short style with 'shortRefNumber' set", function() {
+	QUnit.test("short style with 'shortRefNumber' set", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
 			style: "short",
@@ -408,7 +408,7 @@
 		equal(oFormat.format(-999999), "-100万", "-999999 formatted");
 	});
 
-	test("integer long style", function(){
+	QUnit.test("integer long style", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({style: "long"}, oLocale);
 
@@ -474,7 +474,7 @@
 		equal(oFormat.format(-1234567), "-1,23 Millionen", "-1234567 formatted");
 	});
 
-	test("getScale", function() {
+	QUnit.test("getScale", function(assert) {
 		var aLocales = ["de-DE", "zh_CN"];
 
 		var aScales = [
@@ -496,7 +496,7 @@
 		});
 	});
 
-	test("short style with 'showScale' set to false", function() {
+	QUnit.test("short style with 'showScale' set to false", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
@@ -560,7 +560,7 @@
 		equal(oFormat.format(-999999), "-1", "-999999 formatted");
 	});
 
-	test("integet long style under locale zh_CN", function() {
+	QUnit.test("integet long style under locale zh_CN", function(assert) {
 		// The pattern for 1000-other in locale zh_CN is defined as "0" without any scale which means a number with 4 digits
 		// shouldn't be formatted using the short style.
 		// But when a formatted string without any scale is parsed under locale zh_CN, this pattern is always selected which
@@ -576,7 +576,7 @@
 		equal(oFormat.parse("1万"), 10000, "'1万' is parsed as 10000");
 	});
 
-	test("Priority of properties (normal style): maxFractionDigits, decimals, shortDecimals, precision", function() {
+	QUnit.test("Priority of properties (normal style): maxFractionDigits, decimals, shortDecimals, precision", function(assert) {
 		var fNum = 12345.678901;
 
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
@@ -622,7 +622,7 @@
 		equal(oFormat.format(fNum), "12,346", fNum + " with minFractionDigits, maxFractionDigits, decimals, shortDecimals and precision (precision set with a number less than the number of integer digits)");
 	});
 
-	test("Priority of properties (short style): maxFractionDigits, decimals, shortDecimals, precision", function() {
+	QUnit.test("Priority of properties (short style): maxFractionDigits, decimals, shortDecimals, precision", function(assert) {
 		var fNum = 3456.678901;
 
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
@@ -676,7 +676,7 @@
 		equal(oFormat.format(123456.678901), "123K", fNum + " with minFractionDigits, maxFractionDigits, decimals, shortDecimals and precision (precision set with a number less than the number of integer digits)");
 	});
 
-	test("float default format", function(){
+	QUnit.test("float default format", function(assert) {
 		equal(oDefaultFloat.format(.1), "0.1", ".1");
 		equal(oDefaultFloat.format(0.123), "0.123", "0.123");
 		equal(oDefaultFloat.format(123), "123", "123");
@@ -710,7 +710,7 @@
 
 	});
 
-	test("float format for a specific locale", function(){
+	QUnit.test("float format for a specific locale", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance(oLocale);
 		equal(oFloatFormat.format(.1), "0,1", ".1");
@@ -727,7 +727,7 @@
 		equal(oFloatFormat.format("1000.0000"), "1.000,0000", "1000.0000");
 	});
 
-	test("float format with decimals and indian grouping", function(){
+	QUnit.test("float format with decimals and indian grouping", function(assert) {
 		var oLocale = new sap.ui.core.Locale("en-IN");
 		var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			decimals: 2
@@ -740,7 +740,7 @@
 		equal(oFloatFormat.format(10000000), "1,00,00,000.00", "10000000");
 	});
 
-	test("float format with decimals and myriad grouping", function(){
+	QUnit.test("float format with decimals and myriad grouping", function(assert) {
 		var oLocale = new sap.ui.core.Locale("ja_JP");
 		var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			decimals: 2,
@@ -754,7 +754,7 @@
 		equal(oFloatFormat.format(100000000), "1,0000,0000.00", "10000000");
 	});
 
-	test("float format with custom grouping", function(){
+	QUnit.test("float format with custom grouping", function(assert) {
 		var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			decimals: 2,
 			groupingSize: 2
@@ -827,7 +827,7 @@
 		equal(oFloatFormat.format(100000000), "1000,0000,0.0", "100000000");
 	});
 
-	test("float format with pattern defined grouping", function(){
+	QUnit.test("float format with pattern defined grouping", function(assert) {
 		var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			pattern: "#,##0.00"
 		});
@@ -859,7 +859,7 @@
 		equal(oFloatFormat.format(100000000), "1,0000,0000.00", "100000000");
 	});
 
-	test("float custom format", function(){
+	QUnit.test("float custom format", function(assert) {
 		equal(oCustomFloat.format(.1), "00,10", ".1");
 		equal(oCustomFloat.format(0.123), "00,123", "0.123");
 		equal(oCustomFloat.format(123), "123,00", "123");
@@ -874,7 +874,7 @@
 
 	});
 
-	test("float format with default rounding mode: HALF_AWAY_FROM_ZERO", function(){
+	QUnit.test("float format with default rounding mode: HALF_AWAY_FROM_ZERO", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			maxFractionDigits: 3,
 		});
@@ -913,7 +913,7 @@
 
 	});
 
-	test("float format with rounding mode: CEILING", function(){
+	QUnit.test("float format with rounding mode: CEILING", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			maxFractionDigits: 3,
 			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.CEILING
@@ -929,7 +929,7 @@
 		equal(oFormat.format(-.1236), "-0.123", "-.1236");
 	});
 
-	test("float format with rounding mode: CEILING with decimals set to a string which contains a number", function(){
+	QUnit.test("float format with rounding mode: CEILING with decimals set to a string which contains a number", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			decimals: "3",
 			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.CEILING
@@ -945,7 +945,7 @@
 		equal(oFormat.format(-.1236), "-0.123", "-.1236");
 	});
 
-	test("float format with rounding mode: FLOOR", function(){
+	QUnit.test("float format with rounding mode: FLOOR", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			maxFractionDigits: 3,
 			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.FLOOR
@@ -961,7 +961,7 @@
 		equal(oFormat.format(-.1236), "-0.124", "-.1236");
 	});
 
-	test("float format with rounding mode: TOWARDS_ZERO", function(){
+	QUnit.test("float format with rounding mode: TOWARDS_ZERO", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			maxFractionDigits: 3,
 			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.TOWARDS_ZERO
@@ -978,7 +978,7 @@
 		equal(oFormat.format(-.1236), "-0.123", "-.1236");
 	});
 
-	test("float format with rounding mode: AWAY_FROM_ZERO", function(){
+	QUnit.test("float format with rounding mode: AWAY_FROM_ZERO", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			maxFractionDigits: 3,
 			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.AWAY_FROM_ZERO
@@ -995,7 +995,7 @@
 		equal(oFormat.format(-.1236), "-0.124", "-.1236");
 	});
 
-	test("float format with rounding mode: HALF_TOWARDS_ZERO", function(){
+	QUnit.test("float format with rounding mode: HALF_TOWARDS_ZERO", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			maxFractionDigits: 3,
 			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.HALF_TOWARDS_ZERO
@@ -1025,7 +1025,7 @@
 		equal(oFormat.format(-1.005), "-1", "-1.005");
 	});
 
-	test("float format with rounding mode: HALF_CEILING", function(){
+	QUnit.test("float format with rounding mode: HALF_CEILING", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			maxFractionDigits: 3,
 			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.HALF_CEILING
@@ -1055,7 +1055,7 @@
 		equal(oFormat.format(-1.005), "-1", "-1.005");
 	});
 
-	test("float format with rounding mode: HALF_FLOOR", function(){
+	QUnit.test("float format with rounding mode: HALF_FLOOR", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			maxFractionDigits: 3,
 			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.HALF_FLOOR
@@ -1085,7 +1085,7 @@
 		equal(oFormat.format(-1.005), "-1.01", "-1.005");
 	});
 
-	test("float format with custom rounding function", function(){
+	QUnit.test("float format with custom rounding function", function(assert) {
 		var oSpy = this.spy(function(a, b){
 			return a;
 		}), oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
@@ -1098,7 +1098,7 @@
 		ok(oSpy.calledWith(1.23456, 3), "Custom rounding function is called with correct parameters");
 	});
 
-	test("Currency format with sMeasure", function() {
+	QUnit.test("Currency format with sMeasure", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance();
 		equal(oFormat.format(123456.789, "EUR"), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
 		equal(oFormat.format([123456.789, "EUR"]), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
@@ -1110,7 +1110,7 @@
 		equal(oFormat.format([-123456.789, "JPY"]), "JPY"+ "\ufeff" +"-123,457", "-123456.789 JPY");
 	});
 
-	test("Currency format with sMeasure and showMeasure as symbol", function(){
+	QUnit.test("Currency format with sMeasure and showMeasure as symbol", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
 			currencyCode: false
 		});
@@ -1120,7 +1120,7 @@
 		equal(oFormat.format([-123456.789, "EUR"]), "\u20ac\ufeff" + "-123,456.79", "123456.789 EUR");
 	});
 
-	test("Currency format with sMeasure and showMeasure set to none", function(){
+	QUnit.test("Currency format with sMeasure and showMeasure set to none", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
 			showMeasure: false
 		});
@@ -1130,7 +1130,7 @@
 		equal(oFormat.format([-123456.789, "EUR"]), "-123,456.79", "123456.789 EUR");
 	});
 
-	test("Currency format with showMeasure true and currencyContext accounting", function(){
+	QUnit.test("Currency format with showMeasure true and currencyContext accounting", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
 			showMeasure: true,
 			currencyContext: "accounting"
@@ -1141,7 +1141,7 @@
 		equal(oFormat.format([-123456.789, "EUR"]), "(EUR" + "\xa0" + "123,456.79)", "123456.789 EUR");
 	});
 
-	test("Currency format with showMeasure false and currencyContext accounting", function(){
+	QUnit.test("Currency format with showMeasure false and currencyContext accounting", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
 			showMeasure: false,
 			currencyContext: "accounting"
@@ -1152,7 +1152,7 @@
 		equal(oFormat.format([-123456.789, "EUR"]), "(123,456.79)", "123456.789 EUR");
 	});
 
-	test("Currency format with sMeasure specific locale ko", function() {
+	QUnit.test("Currency format with sMeasure specific locale ko", function(assert) {
 		// The currency pattern is definde in "ko" as: ¤#,##0.00;(¤#,##0.00) where the pattern after ';'
 		// should be used for negative numbers.
 		var oLocale = new sap.ui.core.Locale("ko");
@@ -1166,7 +1166,7 @@
 		equal(oFormat.format([-123456.789, "EUR"]), "(EUR" + "\xa0" + "123,456.79)", "-123456.789 EUR");
 	});
 
-	test("Currency format with sMeaure and set decimal option to overwrite the default number of decimal", function(){
+	QUnit.test("Currency format with sMeaure and set decimal option to overwrite the default number of decimal", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
 			decimals: 1
 		});
@@ -1177,7 +1177,7 @@
 		equal(oFormat.format([-123456.789, "EUR"]), "EUR"+ "\ufeff" +"-123,456.8", "123456.789 EUR");
 	});
 
-	test("check space between currency code and number in different scenarios", function() {
+	QUnit.test("check space between currency code and number in different scenarios", function(assert) {
 		// in "en-US" locale there's no space in the currency pattern
 		// space should be inserted when it's necessary
 		var oCurrencyCodeFormatter = sap.ui.core.format.NumberFormat.getCurrencyInstance(),
@@ -1224,7 +1224,7 @@
 		equal(oCurrencySymbolFormatter.format(-123456.789, "UAK"), "(123" + "\xa0" + "456,79" + "\xa0\u043a\u0440\u0431\u002e)", "-123456.789 UAK");
 	});
 
-	test("Percent format with default rounding mode", function(){
+	QUnit.test("Percent format with default rounding mode", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getPercentInstance({
 			maxFractionDigits: 3
 		});
@@ -1238,7 +1238,7 @@
 		ok(isNaN(oFormat.parse("%12.345%")), "NaN", "%12.345%");
 	});
 
-	test("Percent format with specific locale tr-TR", function(){
+	QUnit.test("Percent format with specific locale tr-TR", function(assert) {
 		var oLocale = new sap.ui.core.Locale("tr-TR");
 		var oFormat = sap.ui.core.format.NumberFormat.getPercentInstance(oLocale);
 
@@ -1247,7 +1247,7 @@
 		ok(isNaN(oFormat.parse("12,34567%")), "12,34567%");
 	});
 
-	test("parse default format", function(){
+	QUnit.test("parse default format", function(assert) {
 		equal(oDefaultInteger.parse("123"), 123, "123");
 		equal(oDefaultInteger.parse("123,123"), 123123, "123,123");
 		equal(oDefaultInteger.parse("123,123,1234"), 1231231234, "123,123,1234");
@@ -1277,7 +1277,7 @@
 				"Ridiculously long number is parsed as string");
 	});
 
-	test("parse default format with parameter 'parseAsString' set to true", function() {
+	QUnit.test("parse default format with parameter 'parseAsString' set to true", function(assert) {
 		var oIntegerFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
 			parseAsString: true
 		}), oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
@@ -1305,7 +1305,7 @@
 		equal(isNaN(oFloatFormat.parse("123.x5")), true, "123.x5");
 	});
 
-	test("parse a number with custom plus and minus signs", function() {
+	QUnit.test("parse a number with custom plus and minus signs", function(assert) {
 		var oIntegerFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
 			plusSign: ".",
 			minusSign: "["
@@ -1320,7 +1320,7 @@
 		equal(oFloatFormat.parse("|1,234.567"), -1234.567, "1234.567 with custom minusSign '|'");
 	});
 
-	test("parse a number with custom grouping separator", function() {
+	QUnit.test("parse a number with custom grouping separator", function(assert) {
 		var oIntegerFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
 			groupingEnabled: true,
 			groupingSeparator: "S"
@@ -1330,7 +1330,7 @@
 		ok(isNaN(oIntegerFormat.parse("1s234s567")), "1s234s567 is parsed as NaN");
 	});
 
-	test("parse custom format", function(){
+	QUnit.test("parse custom format", function(assert) {
 		equal(oCustomInteger.parse("123"), 123, "123");
 		equal(oCustomInteger.parse("123.123"), 123123, "123.123");
 		equal(oCustomInteger.parse("123.123.1234"), 1231231234, "123.123.1234");
@@ -1362,7 +1362,7 @@
 
 	});
 
-	test("parse currency format",  function() {
+	QUnit.test("parse currency format",  function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance();
 		var aResult = oFormat.parse("-12,345.67 EUR");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
@@ -1443,7 +1443,7 @@
 		equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 	});
 
-	test("float precision", function(){
+	QUnit.test("float precision", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({precision: 0}, oLocale);
 
@@ -1478,7 +1478,7 @@
 	});
 
 
-	test("float short style", function(){
+	QUnit.test("float short style", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({style: "short", shortDecimals: 0}, oLocale);
 
@@ -1603,7 +1603,7 @@
 
 	});
 
-	test("float short style", function() {
+	QUnit.test("float short style", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			style: "short",
 			decimals: 2,
@@ -1616,7 +1616,7 @@
 		equal(oFormat.format(3000), "3.0K", "3000 is formatted with 1 decimal");
 	});
 
-	test("float long style", function(){
+	QUnit.test("float long style", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			style: "long", maxFractionDigits: 1
@@ -1630,7 +1630,7 @@
 		// other test similar to integer -> skip
 	});
 
-	test("origin info", function(){
+	QUnit.test("origin info", function(assert) {
 		sap.ui.getCore().getConfiguration().originInfo = true;
 		var oOriginNumber = sap.ui.core.format.NumberFormat.getIntegerInstance(),
 			sValue = oOriginNumber.format(123),
@@ -1639,7 +1639,7 @@
 		equal(oInfo.locale, "en-US", "Origin Info: locale")
 	});
 
-	test("Private method NumberFormat._shiftDecimalPoint", function() {
+	QUnit.test("Private method NumberFormat._shiftDecimalPoint", function(assert) {
 		var f = sap.ui.core.format.NumberFormat._shiftDecimalPoint;
 		equal(f("1234.567", 2), "123456.7", "1234.567 -> (2) = 123456.7");
 		equal(f("1234.567", 10), "12345670000000", "1234.567 -> (10) = 12345670000000");
@@ -1656,7 +1656,7 @@
 		equal(f("1e-79", 71), "0.00000001", "1e-79 -> (71) = 0.00000001");
 	});
 
-	test("Format option 'emptyString'", function() {
+	QUnit.test("Format option 'emptyString'", function(assert) {
 		var aMethods = ["getIntegerInstance", "getFloatInstance", "getPercentInstance", "getCurrencyInstance"],
 			aValues = [NaN, null, 0],
 			aCompareValues = [["NaN", null, "0"], [NaN, null, 0]],

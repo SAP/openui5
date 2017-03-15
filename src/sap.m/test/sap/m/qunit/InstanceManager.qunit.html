@@ -173,12 +173,12 @@
 				oInstance = {property: "Property"};
 
 			QUnit.module("Initial Check");
-			test("Initialization", function() {
+			QUnit.test("Initialization", function(assert) {
 				ok(sap.m.InstanceManager, "Instance Manager module has been loaded");
 			});
 
 			QUnit.module("Add and remove normal object");
-			test("Add object", function(){
+			QUnit.test("Add object", function(assert){
 				ok(im.isCategoryEmpty(sCategoryId), "Category is empty now");
 				im.addInstance(sCategoryId, oInstance);
 				ok(!im.isCategoryEmpty(sCategoryId), "Category is not empty anymore");
@@ -190,7 +190,7 @@
 				ok(im.isInstanceManaged(sCategoryId, oInstance), "Instance is still managed");
 			});
 
-			test("Remove object", function(){
+			QUnit.test("Remove object", function(assert){
 				im.removeInstance(sCategoryId, oInstance);
 				ok(im.isCategoryEmpty(sCategoryId), "Category is empty now");
 				ok(!im.isInstanceManaged(sCategoryId, oInstance), "Instance is not managed any more");
@@ -211,7 +211,7 @@
 
             QUnit.module("callbacks");
 
-            test("Should close all dialogs and trigger a callback", function() {
+            QUnit.test("Should close all dialogs and trigger a callback", function(assert) {
 
                     //Arrange
 

@@ -79,39 +79,39 @@ QUnit.module("Basic functionality", {
 		}
 });
 
-test("getValue/setValue", function() {
+QUnit.test("getValue/setValue", function(assert) {
 	equal(jQuery.sap.equal(this.composite.getValue(), [1,2,3]), true, "getValue() returns array of bound model values");
 	this.composite.setValue([3,2,1]);
 	equal(this.model.getProperty("/a"), 3, "setValue() does change model values for contained bindings");
 });
 
-test("getExternalValue/setExternalValue", function() {
+QUnit.test("getExternalValue/setExternalValue", function(assert) {
 	equal(this.composite.getExternalValue(), "1 2 3", "getExternalValue() returns space separated list of values");
 	this.composite.setExternalValue("3 2 1");
 	equal(this.model.getProperty("/a"), 3, "setExternalValue() does change model values for contained bindings");
 });
 
-test("disabled methods", function() {
+QUnit.test("disabled methods", function(assert) {
 	equal(this.composite.getContext(), null, "getContext() always returns null");
 	equal(this.composite.getModel(), null, "getModel() always returns null");
 	equal(this.composite.getPath(), null, "getPath() always returns null");
 });
 
-test("change event", function() {
+QUnit.test("change event", function(assert) {
 	this.composite.attachChange(function() {
 		equal(this.composite.getExternalValue(), "1 2 4");
 	}.bind(this));
 	this.model.setProperty("/c", 4);
 });
 
-test("formatter function", function() {
+QUnit.test("formatter function", function(assert) {
 	this.composite.setFormatter(myFormatter);
 	equal(this.composite.getExternalValue(), "1-2-3");
 	this.composite.setFormatter(myCalculator);
 	equal(this.composite.getExternalValue(), 6);
 });
 
-test("composite type", function() {
+QUnit.test("composite type", function(assert) {
 	this.composite.setType(new MyCompositeType());
 	equal(this.composite.getExternalValue(), "1,2,3");
 	this.composite.setExternalValue("3,2,1");
@@ -120,14 +120,14 @@ test("composite type", function() {
 		sap.ui.model.ValidateException, "validation throws ValidateExpception for invalid values")
 });
 
-test("array type", function() {
+QUnit.test("array type", function(assert) {
 	this.composite.setType(null, "int[]");
 	deepEqual(this.composite.getExternalValue(), [1,2,3]);
 	this.composite.setExternalValue([3,2,1]);
 	equal(this.model.getProperty("/a"), 3, "setExternalValue() does change model value for contained bindings");
 });
 
-test("simple type", function() {
+QUnit.test("simple type", function(assert) {
 	raises(function(){this.composite.setType(new sap.ui.model.type.Float());}.bind(this),
 		Error, "setting a simple type on a composite binding throws")
 });
@@ -170,26 +170,26 @@ QUnit.module("With inner types/formatters", {
 	}
 });
 
-test("getValue/setValue", function() {
+QUnit.test("getValue/setValue", function(assert) {
 	equal(jQuery.sap.equal(this.composite.getValue(), [1,2,3]), true, "getValue() returns array of bound model values");
 	this.composite.setValue([3,2,1]);
 	equal(this.model.getProperty("/a"), 3, "setValue() does change model values for contained bindings");
 });
 
-test("getExternalValue/setExternalValue", function() {
+QUnit.test("getExternalValue/setExternalValue", function(assert) {
 	equal(this.composite.getExternalValue(), "-1- 2.00 3", "getExternalValue() returns space separated list of values");
 	this.composite.setExternalValue("-3- 2.00 1");
 	equal(this.model.getProperty("/a"), 1, "setExternalValue() cannot change value of binding with formatter");
 	equal(this.model.getProperty("/c"), 1, "setExternalValue() does change model values for contained bindings");
 });
 
-test("with bUseRawValues", function() {
+QUnit.test("with bUseRawValues", function(assert) {
 	equal(this.compositeraw.getExternalValue(), "1 2 3", "getExternalValue() returns space separated list of values");
 	this.compositeraw.setExternalValue("3 2 1");
 	equal(this.model.getProperty("/a"), 3, "setExternalValue() does change model values for contained bindings");
 });
 
-test("with composite type", function() {
+QUnit.test("with composite type", function(assert) {
 	this.composite.setType(new MyCompositeType());
 	equal(this.composite.getExternalValue(), "-1-,2.00,3", "getExternalValue() returns space separated list of values");
 	this.composite.setExternalValue("-3-,2.00,1");
@@ -199,21 +199,21 @@ test("with composite type", function() {
 			sap.ui.model.ParseException, "throws ParseException for invalid inner value")
 });
 
-test("with raw value composite type", function() {
+QUnit.test("with raw value composite type", function(assert) {
 	this.composite.setType(new MyRawValueType());
 	equal(this.composite.getExternalValue(), "1,2,3", "getExternalValue() returns space separated list of values");
 	this.composite.setExternalValue("3,2,1");
 	equal(this.model.getProperty("/a"), 3, "setExternalValue() does change model values for contained bindings");
 });
 
-test("with formatter", function() {
+QUnit.test("with formatter", function(assert) {
 	this.composite.setFormatter(myFormatter);
 	equal(this.composite.getExternalValue(), "-1--2.00-3", "getExternalValue() returns formatter values");
 	this.composite.setFormatter(myCalculator);
 	equal(this.composite.getExternalValue(), "-1-2.003", "getExternalValue() returns string concatenated values");
 });
 
-test("with bUseRawValues and formatter", function() {
+QUnit.test("with bUseRawValues and formatter", function(assert) {
 	this.compositeraw.setFormatter(myFormatter);
 	equal(this.compositeraw.getExternalValue(), "1-2-3", "getExternalValue() returns formatter values");
 	this.compositeraw.setFormatter(myCalculator);
@@ -244,7 +244,7 @@ QUnit.module("Unresolved inner bindings", {
 	}
 });
 
-test("isResolved", function() {
+QUnit.test("isResolved", function(assert) {
 	var context = this.model.createBindingContext("/obj");
 	equal(this.composite.isResolved(), false, "Not resolved because of unresolved inner bindings");
 	this.composite.setContext(context);

@@ -24,7 +24,7 @@
 			}
 		});
 
-		QUnit.test('applyChange on a js control tree', function() {
+		QUnit.test('applyChange on a js control tree', function(assert) {
 			jQuery.sap.require("sap.ui.core.StashedControlSupport");
 			StashedControlSupport.mixInto(Control);
 			var oControl = new Control();
@@ -35,7 +35,7 @@
 			assert.equal(oControl.getVisible(), false);
 		});
 
-		QUnit.test('applyChange on a xml tree', function() {
+		QUnit.test('applyChange on a xml tree', function(assert) {
 			var oDOMParser = new DOMParser();
 			var oXmlDocument = oDOMParser.parseFromString("<ObjectPageSection id='ObjectPageSection' title='ObjectPage Section 1' stashed='false' />", "application/xml");
 			this.oXmlObjectPage = oXmlDocument.childNodes[0];

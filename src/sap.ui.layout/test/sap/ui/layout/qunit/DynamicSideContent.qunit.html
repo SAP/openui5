@@ -64,7 +64,7 @@
 					}
 				});
 
-				QUnit.test("Default values",function(assert){
+				QUnit.test("Default values",function(assert) {
 					assert.strictEqual(this._oDSC.getShowSideContent(), true, "'showSideContent' property default value should be 'true'");
 					assert.strictEqual(this._oDSC.getShowMainContent(), true, "'showMainContent' property default value should be 'true'");
 					assert.strictEqual(this._oDSC.getSideContentVisibility(), sap.ui.layout.SideContentVisibility.ShowAboveS, "'showMainContent' property default value should be 'ShowAboveS'");
@@ -74,14 +74,14 @@
 					assert.strictEqual(this._oDSC.getSideContentPosition(), sap.ui.layout.SideContentPosition.End, "'sideContentPosition' property default value should be 'false'");
 				});
 
-				QUnit.test("'sideContentPosition' property set to End by default",function(assert){
+				QUnit.test("'sideContentPosition' property set to End by default",function(assert) {
 					var oSideContent = this._oDSC.$("SCGridCell"),
 						oMainContent = this._oDSC.$("MCGridCell");
 
 					assert.ok(oSideContent.position().left > oMainContent.position().left, "Main content is before the side content by default");
 				});
 
-				QUnit.test("'sideContentPosition' property set to Begin",function(assert){
+				QUnit.test("'sideContentPosition' property set to Begin",function(assert) {
 
 					this._oDSC.setSideContentPosition(sap.ui.layout.SideContentPosition.Begin);
 					sap.ui.getCore().applyChanges();
@@ -92,7 +92,7 @@
 					assert.ok(oSideContent.position().left < oMainContent.position().left, "Side content is before the main content");
 				});
 
-				QUnit.test("'ShowSideContent' property is set correctly",function(assert){
+				QUnit.test("'ShowSideContent' property is set correctly",function(assert) {
 					var bSuppressVisualUpdate = false;
 					sinon.spy(this._oDSC, "_changeGridState");
 
@@ -117,7 +117,7 @@
 					this._oDSC._changeGridState.restore();
 				});
 
-				QUnit.test("'ShowMainContent' property is set correctly",function(assert){
+				QUnit.test("'ShowMainContent' property is set correctly",function(assert) {
 					var bSuppressInvalidate = false;
 
 					sinon.spy(this._oDSC, "_changeGridState");
@@ -146,7 +146,7 @@
 					this._oDSC._changeGridState.restore();
 				});
 
-				QUnit.test("'EqualSplit' property is set correctly",function(assert){
+				QUnit.test("'EqualSplit' property is set correctly",function(assert) {
 					sinon.spy(this._oDSC, "_setResizeData");
 					sinon.spy(this._oDSC, "_changeGridState");
 
@@ -174,7 +174,7 @@
 					this._oDSC._changeGridState.restore();
 				});
 
-				QUnit.test("'SideContent' aggregation is set correctly",function(assert){
+				QUnit.test("'SideContent' aggregation is set correctly",function(assert) {
 					var oButton = new sap.m.Button("button1");
 
 					sinon.spy(this._oDSC, "_rerenderControl");
@@ -188,7 +188,7 @@
 					oButton = null;
 				});
 
-				QUnit.test("'MainContent' aggregation is set correctly",function(assert){
+				QUnit.test("'MainContent' aggregation is set correctly",function(assert) {
 					var oButton = new sap.m.Button("button1");
 
 					sinon.spy(this._oDSC, "_rerenderControl");
@@ -202,7 +202,7 @@
 					oButton = null;
 				});
 
-				QUnit.test("'Toggle' button functionality",function(assert){
+				QUnit.test("'Toggle' button functionality",function(assert) {
 					// 1
 					sinon.spy(this._oDSC, "_changeGridState");
 					this._oDSC.setEqualSplit(true);
@@ -329,7 +329,7 @@
 					strictEqual(this._oDSC.getCurrentBreakpoint(), S, "If setting the breakpoint from width 0px, the breakpoint should default to 'S'");
 				});
 
-				QUnit.test("Calculate breakpoint from width",function(assert){
+				QUnit.test("Calculate breakpoint from width",function(assert) {
 					var sBreakpoint;
 
 					// test S breakpoint
@@ -359,7 +359,7 @@
 
 				});
 
-				QUnit.test("The size of the main and side content is calculated correctly, according to the current breakpoint",function(){
+				QUnit.test("The size of the main and side content is calculated correctly, according to the current breakpoint",function(assert) {
 					var bIsInComparisonMode = false;
 
 					// S breakpoint
@@ -490,7 +490,7 @@
 					this.assertOnMainContentVisibility(XL, true, true);
 				});
 
-				QUnit.test("Grid state",function(){
+				QUnit.test("Grid state",function(assert) {
 					var SC_GRID_CELL_SELECTOR = "SCGridCell",
 						MC_GRID_CELL_SELECTOR = "MCGridCell",
 						HIDDEN_CLASS = "sapUiHidden",
@@ -565,7 +565,7 @@
 
 				});
 
-				QUnit.test("Check if height should be set",function(){
+				QUnit.test("Check if height should be set",function(assert) {
 					this._oDSC._iScSpan = SPAN_SIZE_6;
 					this._oDSC._iMcSpan = SPAN_SIZE_6;
 					this._oDSC._MCVisible = true;
@@ -602,7 +602,7 @@
 							"but side content visibility is set to NeverShow.");
 				});
 
-				QUnit.test("Set main and side content span sizes",function(){
+				QUnit.test("Set main and side content span sizes",function(assert) {
 					this._oDSC._setSpanSize(SPAN_SIZE_3, SPAN_SIZE_9);
 
 					strictEqual(this._oDSC._iMcSpan, SPAN_SIZE_9, "Main content span size should be equal to " + SPAN_SIZE_9);
@@ -627,7 +627,7 @@
 					}
 				});
 
-				QUnit.test("On init with contentQuery _adjustToScreenSize method should be called", function (){
+				QUnit.test("On init with contentQuery _adjustToScreenSize method should be called", function (assert) {
 					assert.ok(this._oDSC._adjustToScreenSize.calledOnce, "The resize event handler is fired once initially");
 					strictEqual(this._oDSC.getCurrentBreakpoint(), M, "The current breakpoint in this setup should be 'M'");
 				});
@@ -643,15 +643,15 @@
 					}
 				});
 
-				QUnit.test("Dynamic side content is created",function(){
+				QUnit.test("Dynamic side content is created",function(assert) {
 					strictEqual(this._oDSC.$().length, 1, "Dynamic side content is created in the dom.");
 				});
 
-				QUnit.test("Current breakpoint is set",function(){
+				QUnit.test("Current breakpoint is set",function(assert) {
 					ok(this._oDSC.getCurrentBreakpoint(), "The current breakpoint of the page is set");
 				});
 
-				QUnit.test("Calculate the size of the main and side content according to the current breakpoint",function(){
+				QUnit.test("Calculate the size of the main and side content according to the current breakpoint",function(assert) {
 					sinon.spy(this._oDSC, "_setResizeData");
 
 					assert.ok(!this._oDSC._setResizeData.calledOnce, "The size of the main and side content are set");
@@ -659,12 +659,12 @@
 					this._oDSC._setResizeData.restore();
 				});
 
-				QUnit.test("Main content and Side content sliders are initialized",function(){
+				QUnit.test("Main content and Side content sliders are initialized",function(assert) {
 					ok(this._oDSC._oMCScroller, "Main content slider is set");
 					ok(this._oDSC._oSCScroller, "Side content slider is set");
 				});
 
-				QUnit.test("dispose",function(){
+				QUnit.test("dispose",function(assert) {
 					this._oDSC.destroy();
 					this._oDSC.setContainerQuery(true);
 
@@ -684,7 +684,7 @@
 					}
 				});
 
-				QUnit.test("setShowSideContent consistent visibility on breakpoint change and toggling",function(){
+				QUnit.test("setShowSideContent consistent visibility on breakpoint change and toggling",function(assert) {
 					this._oDSC._currentBreakpoint = XL;
 					this._oDSC.setShowSideContent(false);
 
@@ -736,7 +736,7 @@
 					}
 				});
 
-				QUnit.test("Listeners are created / removed",function(){
+				QUnit.test("Listeners are created / removed",function(assert) {
 					notStrictEqual(this._oDSC._sContainerResizeListener, undefined, "Container resize listener is registered if there is container query");
 					this._oDSC.destroy();
 					strictEqual(this._oDSC._sContainerResizeListener, null, "Container resize listener is null if there is container query");
@@ -753,7 +753,7 @@
 					}
 				});
 
-				QUnit.test("Side Content has correct aria attributes",function(){
+				QUnit.test("Side Content has correct aria attributes",function(assert) {
 					var sSideContentTag = sap.ui.Device.browser.firefox ? "div" : "aside",
 							$sideContent = $("#" + this._oDSC.getId() + "-SCGridCell"),
 					//$sideContent = this.oDSC.$().find("> aside"),
@@ -775,7 +775,7 @@
 					}
 				});
 
-				QUnit.test("Side Content invisible after invalidation",function() {
+				QUnit.test("Side Content invisible after invalidation",function(assert) {
 					var SC_GRID_CELL_SELECTOR = "SCGridCell",
 						HIDDEN_CLASS = "sapUiHidden";
 

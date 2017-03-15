@@ -17,19 +17,19 @@ sap.ui.require([
 
   });
 
-  QUnit.test("Smoke test to register a step", function() {
+  QUnit.test("Smoke test to register a step", function(assert) {
     this.stepDefs.register(/^some regex$/i, function() {});
     ok(this.stepDefs._aDefinitions.length === 1, "Smoke test to register a step");
   });
 
-  QUnit.test("Given no registered steps, cannot match", function() {
+  QUnit.test("Given no registered steps, cannot match", function(assert) {
     deepEqual(this.stepDefs._generateTestStep({text: "hello world"}), {
       isMatch: false,
       text: "(NOT FOUND) hello world"
     }, "Given no registered steps, cannot match");
   });
 
-  QUnit.test("Given three registered steps, when we try a bad step name, then cannot match", function() {
+  QUnit.test("Given three registered steps, when we try a bad step name, then cannot match", function(assert) {
 
     var regex1 = /^hello world$/i;
     var function1 = function() {};
@@ -49,7 +49,7 @@ sap.ui.require([
     }, "Given three registered steps, when we try a bad step name, then cannot match");
   });
 
-  QUnit.test("Given one registered step, we can match it!", function() {
+  QUnit.test("Given one registered step, we can match it!", function(assert) {
 
     var regex1 = /^hello world$/i;
     var function1 = function() {};
@@ -64,7 +64,7 @@ sap.ui.require([
     }, "Given one registered step, we can match it!");
   });
 
-  QUnit.test("Given two registered steps, can match one of them", function() {
+  QUnit.test("Given two registered steps, can match one of them", function(assert) {
 
     var regex1 = /^goodbye cruel world$/i;
     var function1 = function() {};
@@ -83,7 +83,7 @@ sap.ui.require([
     }, "Given two registered steps, can match one of them");
   });
 
-  QUnit.test("When two step definitions are identical, then throws error", function() {
+  QUnit.test("When two step definitions are identical, then throws error", function(assert) {
 
     var regex = /^hello world$/i;
     this.stepDefs.register(regex, function() {});
@@ -97,7 +97,7 @@ sap.ui.require([
     );
   });
 
-  QUnit.test("When two step definitions are ambiguous, then throws error", function() {
+  QUnit.test("When two step definitions are ambiguous, then throws error", function(assert) {
 
     this.stepDefs.register(/^hello world$/i, function() {});
     this.stepDefs.register(/.*/, function() {});
@@ -111,7 +111,7 @@ sap.ui.require([
     );
   });
 
-  QUnit.test("Parameters without data", function() {
+  QUnit.test("Parameters without data", function(assert) {
 
     var regex1 = /^thing # (.*?) is better than theng # (.*?) and thang # (.*?)$/i;
     var function1 = function() {};
@@ -126,7 +126,7 @@ sap.ui.require([
     }, "Parameters without data");
   });
 
-  QUnit.test("No parameters but there is data", function() {
+  QUnit.test("No parameters but there is data", function(assert) {
 
     var regex1 = /^Yet another regex$/i;
     var function1 = function() {};
@@ -146,7 +146,7 @@ sap.ui.require([
     }, "No parameters but there is data");
   });
 
-  QUnit.test("Parameters and data", function() {
+  QUnit.test("Parameters and data", function(assert) {
 
     var regex1 = /^Regex # (.*?)$/i;
     var function1 = function() {};
@@ -166,7 +166,7 @@ sap.ui.require([
     }, "Parameters and data");
   });
 
-  QUnit.test("invalid parameters as function input", function() {
+  QUnit.test("invalid parameters as function input", function(assert) {
 
     var missingRegexError = "StepDefinitions.register: parameter 'rRegex' must be a valid RegExp object";
     var missingFunctionError = "StepDefinitions.register: parameter 'fnFunc' must be a valid Function";

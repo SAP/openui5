@@ -78,7 +78,7 @@
 
 	};
 
-	test("supported BindingModes", function(){
+	QUnit.test("supported BindingModes", function(assert) {
 		setup();
 		ok(oModel.isBindingModeSupported(sap.ui.model.BindingMode.OneWay), "One Way supported");
 		ok(oModel.isBindingModeSupported(sap.ui.model.BindingMode.TwoWay), "Two Way supported");
@@ -86,13 +86,13 @@
 		ok(!oModel.isBindingModeSupported(sap.ui.model.BindingMode.Default), "Default not supported");
 	});
 
-	test("getDefaultBindingMode", function(){
+	QUnit.test("getDefaultBindingMode", function(assert) {
 		setup();
 		var sMode = oModel.getDefaultBindingMode();
 		equal(sMode, sap.ui.model.BindingMode.TwoWay, "default binding mode");
 	});
 
-	test("setDefaultBindingMode", function(){
+	QUnit.test("setDefaultBindingMode", function(assert) {
 		setup();
 		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
 		var sMode = oModel.getDefaultBindingMode();
@@ -106,7 +106,7 @@
 		raises(function(){oModel.setDefaultBindingMode(sap.ui.model.BindingMode.Default)}, "test set not supported binding mode");
 	});
 
-	test("One Way model test", function(){
+	QUnit.test("One Way model test", function(assert) {
 		setup();
 		// should be set first before any binding creation
 		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
@@ -129,7 +129,7 @@
 
 	});
 
-	test("Two Way model test", function(){
+	QUnit.test("Two Way model test", function(assert) {
 		setup();
 		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
 		createPropertyBindingsUI("value", "@firstName", "");
@@ -151,7 +151,7 @@
 
 	});
 
-	test("One Way model with Two Way bindings", function(){
+	QUnit.test("One Way model with Two Way bindings", function(assert) {
 		setup();
 		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
 		createPropertyBindingsUI("value", "@firstName", sap.ui.model.BindingMode.TwoWay);
@@ -171,7 +171,7 @@
 
 	});
 
-	test("Two Way model with One Way bindings", function(){
+	QUnit.test("Two Way model with One Way bindings", function(assert) {
 		setup();
 		//oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
 		createPropertyBindingsUI("value", "@firstName", sap.ui.model.BindingMode.OneWay);
@@ -189,7 +189,7 @@
 		equal(counter, 7, "check amount");
 	});
 
-	test("Two Way with multimodels", function(){
+	QUnit.test("Two Way with multimodels", function(assert) {
 		setup();
 
 		// create 2nd model
@@ -224,7 +224,7 @@
 
 	});
 
-	test("One Way with multimodels", function(){
+	QUnit.test("One Way with multimodels", function(assert) {
 		setup();
 
 		// create 2nd model
@@ -260,7 +260,7 @@
 
 	});
 
-	test("One Time model test", function(){
+	QUnit.test("One Time model test", function(assert) {
 		setup();
 		// should be set first before any binding creation
 		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneTime);
@@ -298,7 +298,7 @@
 
 	});
 
-	test("One Way model with One Time bindings", function(){
+	QUnit.test("One Way model with One Time bindings", function(assert) {
 		setup();
 		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
 		createPropertyBindingsUI("value", "@firstName", sap.ui.model.BindingMode.OneTime);
@@ -332,7 +332,7 @@
 
 	});
 
-	test("Two Way model with One Time bindings", function(){
+	QUnit.test("Two Way model with One Time bindings", function(assert) {
 		setup();
 		//oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
 		createPropertyBindingsUI("value", "@firstName", sap.ui.model.BindingMode.OneTime);

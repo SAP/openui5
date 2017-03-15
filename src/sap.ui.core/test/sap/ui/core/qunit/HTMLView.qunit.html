@@ -53,7 +53,7 @@ sap.ui.core.mvc.Controller</title>
 
 	QUnit.module("Custom Tests");
 
-	test("Embedded HTML", 13, function() {
+	QUnit.test("Embedded HTML", 13, function(assert) {
 		var oView = sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -63,7 +63,7 @@ sap.ui.core.mvc.Controller</title>
 		oView.destroy();
 	});
 
-	test("Assocations", 13, function() {
+	QUnit.test("Assocations", 13, function(assert) {
 		var oView = sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -75,7 +75,7 @@ sap.ui.core.mvc.Controller</title>
 		oView.destroy();
 	});
 
-	test("Custom Data", 12, function() {
+	QUnit.test("Custom Data", 12, function(assert) {
 		var oView = sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -84,7 +84,7 @@ sap.ui.core.mvc.Controller</title>
 		oView.destroy();
 	});
 
-	test("DataBinding", function() {
+	QUnit.test("DataBinding", function(assert) {
 
 		var oModel1 = new sap.ui.model.json.JSONModel({
 			booleanValue : true,

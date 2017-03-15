@@ -17,7 +17,7 @@
 
 		QUnit.module("Rendering");
 
-		test("test rendering", function() {
+		QUnit.test("test rendering", function(assert) {
 			var oDLI = sap.m.DisplayListItem({
 				label : "text",
 				value : "value"
@@ -34,7 +34,7 @@
 
 		QUnit.module("Right to left support");
 
-		test("Value text direction set to RTL", function() {
+		QUnit.test("Value text direction set to RTL", function(assert) {
 			var sDisplayListItem = new sap.m.DisplayListItem({
 				label: "Title text",
 				value: "(+359) 111 222 333",
@@ -49,7 +49,7 @@
 			sDisplayListItem.destroy();
 		});
 
-		test("Value text direction set to LTR", function() {
+		QUnit.test("Value text direction set to LTR", function(assert) {
 			var sDisplayListItem = new sap.m.DisplayListItem({
 				label: "Title text",
 				value: "(+359) 111 222 333",
@@ -64,7 +64,7 @@
 			sDisplayListItem.destroy();
 		});
 
-		test("Value text direction not set", function() {
+		QUnit.test("Value text direction not set", function(assert) {
 			var sDisplayListItem = new sap.m.DisplayListItem({
 				label: "Title text",
 				value: "(+359) 111 222 333"

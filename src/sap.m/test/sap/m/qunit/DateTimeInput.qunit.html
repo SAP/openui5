@@ -94,7 +94,7 @@
 
 	QUnit.module("Properties");
 
-	test("Set and Get Date Value ", function() {
+	QUnit.test("Set and Get Date Value ", function(assert) {
 
 		var oDateValue1 = oFormatter.parse(sDateValue1);
 		dti0.setValue(sDateValue1);
@@ -117,13 +117,13 @@
 		strictEqual(+dti3.getDateValue(), +oDateValue3, "dateValue after oModel.setData : " + oDateValue3);
 	});
 
-	test("used picker", function() {
+	QUnit.test("used picker", function(assert) {
 		equal(dti0.getAggregation("_picker").getMetadata().getName(), "sap.m.DatePicker", "DatePicker control used inside");
 		equal(dti1.getAggregation("_picker").getMetadata().getName(), "sap.m.TimePicker", "TimePicker control used inside");
 		equal(dti2.getAggregation("_picker").getMetadata().getName(), "sap.m.DateTimePicker", "DateTimePicker control used inside");
 	});
 
-	test("picker properties", function() {
+	QUnit.test("picker properties", function(assert) {
 		var oDatePicker = dti0.getAggregation("_picker");
 		equal(dti0.getValue(), oDatePicker.getValue(), "DatePicker value");
 		equal(dti0.getDateValue().getTime(), oDatePicker.getDateValue().getTime(), "DatePicker Datealue");
@@ -140,7 +140,7 @@
 	});
 
 
-	test("Invalid Value", function() {
+	QUnit.test("Invalid Value", function(assert) {
 		var sInvalidValue = ":)";
 
 		dti2.setValue(sInvalidValue);
@@ -152,7 +152,7 @@
 
 	QUnit.module("Interaction");
 
-	test("Change event", function() {
+	QUnit.test("Change event", function(assert) {
 		var oDateValue2 = oFormatter.parse(sDateValue2);
 		var oDatePicker = dti0.getAggregation("_picker");
 		bChange = false;
@@ -186,13 +186,13 @@
 
 	});
 
-	test("Destroy", function() {
+	QUnit.test("Destroy", function(assert) {
 		strictEqual(dti1.$().length, 1, "Before destroy DateTimeInput is available");
 		dti1.destroy();
 		strictEqual(dti1.$().length, 0, "DateTimeInput is destroyed");
 	});
 
-	test("value state and value state message", function() {
+	QUnit.test("value state and value state message", function(assert) {
 		var oPicker = dti4.getAggregation("_picker");
 		dti4.focus();
 		ok(oPicker._oValueStateMessage._oPopup.isOpen(), "error message is open");
@@ -204,7 +204,7 @@
 
 	QUnit.module("Accessibility");
 
-	test("getAccessibilityInfo", function() {
+	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oInput = new sap.m.DateTimeInput();
 		ok(!!oInput.getAccessibilityInfo, "DateTimeInput has a getAccessibilityInfo function");
 		var oInfo = oInput.getAccessibilityInfo();

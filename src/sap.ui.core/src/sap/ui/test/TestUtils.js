@@ -341,7 +341,7 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 				// requests.
 				sinon.xhr.supportsCORS = jQuery.support.cors;
 				sinon.FakeXMLHttpRequest.useFilters = true;
-				sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl, bAsync) {
+				sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl) {
 					// must return true if the request is NOT processed by the fake server
 					return sMethod !== "DELETE" && sMethod !== "POST" &&
 						!(sMethod === "GET" && sUrl in mUrls);
@@ -385,7 +385,7 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 *
 		 * <b>Usage</b>:
 		 * <pre>
-		 * test("parse error", function () {
+		 * QUnit.test("parse error", function (assert) {
 		 *     sap.ui.test.TestUtils.withNormalizedMessages(function () {
 		 *         var oType = new sap.ui.model.odata.type.Decimal({},
 		 *                        {constraints: {precision: 10, scale: 3});

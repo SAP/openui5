@@ -71,7 +71,7 @@
 
 			QUnit.module("initialization");
 
-			test("Date formatter", function() {
+			QUnit.test("Date formatter", function(assert) {
 				ok(!oDRS1.getValue(), "DRS1: no value");
 				ok(!oDRS1.getDateValue(), "DRS1: no DateValue");
 				equal(oDRS2.getDateValue().getTime(), dateFrom.getTime(), "DRS2: DateValue set");
@@ -80,7 +80,7 @@
 				equal(oDRS3.getSecondDateValue().getTime(), dateTo2.getTime(), "DRS3: SecondDateValue set");
 			});
 
-			test("Calendar and popup", function() {
+			QUnit.test("Calendar and popup", function(assert) {
 				ok(!sap.ui.unified || !sap.ui.unified.Calendar, "sap.ui.unified.Calendar not loaded");
 				ok(!sap.ui.getCore().byId("DRS1-cal"), "DRS1: no calender exists");
 				ok(!oDRS1._oPopup, "DRS1: no popup exists");
@@ -88,14 +88,14 @@
 
 			QUnit.module("Rendering");
 
-			test("Styling", function() {
+			QUnit.test("Styling", function(assert) {
 				equal(jQuery("#DRS1").css("width"), jQuery("body").css("width"), "Default width is 100%");
 				equal(jQuery("#DRS2").css("width"), "250px", "given width used");
 				ok(jQuery("#DRS1-icon")[0], "Calendar icon rendered");
 				ok(!jQuery("#DRS3-cal")[0], "no calendar rendered");
 			});
 
-			test("Date format", function() {
+			QUnit.test("Date format", function(assert) {
 				ok(!jQuery("#DRS1").children("div.sapMInputDivWrapper").children("input").val(), "DRS1 : empty date");
 				equal(jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").val(), "01+04+2014 - 10+04+2014", "DRS2: defined output format used");
 				equal(jQuery("#DRS3").children("div.sapMInputDivWrapper").children("input").val(), "April 1, 2014 - April 3, 2014", "DRS3: defined output format used");
@@ -103,7 +103,7 @@
 
 			QUnit.module("interaction");
 
-			test("min/max", function() {
+			QUnit.test("min/max", function(assert) {
 				var oNewMinDate = new Date(2014,0,1);
 				var oNewMaxDate = new Date(2014,11,31);
 				oDRS2.setMinDate(oNewMinDate);
@@ -148,7 +148,7 @@
 
 			});
 
-			test("focused element after picker close", function() {
+			QUnit.test("focused element after picker close", function(assert) {
 				var bOrigTouch = sap.ui.Device.support.touch;
 
 				// On a desktop (non-touch) device
@@ -180,7 +180,7 @@
 				sap.ui.Device.support.touch = bOrigTouch;
 			});
 
-			test("Control destroy", function() {
+			QUnit.test("Control destroy", function(assert) {
 				strictEqual(oDRS1.$().length + oDRS2.$().length + oDRS3.$().length, 3, "Before destroy DateRangeSelection is available");
 				oDRS1.destroy();
 				oDRS2.destroy();
@@ -190,7 +190,7 @@
 
 			QUnit.module("Accessibility");
 
-			test("getAccessibilityInfo", function() {
+			QUnit.test("getAccessibilityInfo", function(assert) {
 				var oInput = new sap.m.DateRangeSelection({
 					value: "Value",
 					tooltip: "Tooltip",

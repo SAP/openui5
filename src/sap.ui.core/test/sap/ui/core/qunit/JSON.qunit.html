@@ -25,14 +25,14 @@
 		<script>
 
 	  		QUnit.module("JSON Native Support basics");
-	  			test("JSON object", function() {
+	  			QUnit.test("JSON object", function(assert) {
 	  				ok( JSON, "JSON object exists");
 	  				ok( JSON.stringify, "JSON.stringify is defined");
 	  				ok( JSON.parse, "JSON.parse is defined");
 	  			});
 
 	  		QUnit.module("JSON Stringify/Parse");
-	  			test("JSON Stringification", function() {
+	  			QUnit.test("JSON Stringification", function(assert) {
 						s = JSON.stringify(['e', {pluribus: 'unum'}]);
 						result = '["e",{"pluribus":"unum"}]';
 						equal(s, result, "Simple stringify");
@@ -51,7 +51,7 @@
 						result = '{"att1":"att1","att3":"att3"}';
 						equal(s, result, "Stringify with replacer")
 	  			});
-	  			test("JSON Parsing", function() {
+	  			QUnit.test("JSON Parsing", function(assert) {
 						s = '{"att1":"att1","att2":"att2","att3":"att3"}';
 						result = new Object();
 						result.att1 = "att1";
@@ -73,7 +73,7 @@
 						});
 						deepEqual(o, result, "Parse with reviver");
 	  			});
-	  			test("JSON Stringify/Parse piped", function() {
+	  			QUnit.test("JSON Stringify/Parse piped", function(assert) {
 						result = new Object();
 						result.att1 = "att1";
 						result.att2 = "att2";
@@ -89,7 +89,7 @@
 	  			});
 
   			QUnit.module("JSON toJSON method");
-  				test("JSON toJSON method", function() {
+  				QUnit.test("JSON toJSON method", function(assert) {
 						o = new Object();
 						o.att1 = "public"; /* only public attribute */
 						o.att2 = "att2";
@@ -105,7 +105,7 @@
 
   				});
   			QUnit.module("JSON on SAPUI5 Control");
-  				test("JSON Button", function() {
+  				QUnit.test("JSON Button", function(assert) {
 					var sText = "Hello",
 					sTooltip = "abc",
 					sWidth = "111px",

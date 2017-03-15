@@ -61,7 +61,7 @@
 		}
 	});
 
-	test("check method interception", function() {
+	QUnit.test("check method interception", function(assert) {
 
 		var fnAjaxOrig = jQuery.ajax,
 			fnIncludeScript = jQuery.sap.includeScript,
@@ -128,7 +128,7 @@
 		}
 	});
 
-	test("check basic URL handling", function() {
+	QUnit.test("check basic URL handling", function(assert) {
 
 		// check normal URLs
 		ok(sap.ui.core.AppCacheBuster.convertURL("my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
@@ -155,7 +155,7 @@
 
 	});
 
-	test("check AJAX handling", function() {
+	QUnit.test("check AJAX handling", function(assert) {
 
 		// fake the script
 		this.server.respondWith(/.*\/~1234567890~\/js\/script.js/, function (xhr, id) {
@@ -180,7 +180,7 @@
 
 	});
 
-	test("check includeScript handling", function() {
+	QUnit.test("check includeScript handling", function(assert) {
 
 		// check script prefixing
 		jQuery.sap.includeScript("js/script.js", "myjs");
@@ -189,7 +189,7 @@
 
 	});
 
-	test("check includeStyleSheet handling", function() {
+	QUnit.test("check includeStyleSheet handling", function(assert) {
 
 		// check script prefixing
 		jQuery.sap.includeStyleSheet("css/style.css", "mycss");
@@ -198,7 +198,7 @@
 
 	});
 
-	test("check sap.ui.core.URI.type handling", function() {
+	QUnit.test("check sap.ui.core.URI.type handling", function(assert) {
 
 		// check script prefixing
 		var oControl = new sap.ui.core.UriControl({
@@ -242,7 +242,7 @@
 		}
 	});
 
-	test("check basic URL handling", function() {
+	QUnit.test("check basic URL handling", function(assert) {
 
 		// check normal URLs
 		ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
@@ -262,7 +262,7 @@
 
 	});
 
-	test("check AJAX handling", function() {
+	QUnit.test("check AJAX handling", function(assert) {
 
 		// fake the script
 		this.server.respondWith(/http:\/\/anyserver:4711\/anyapp\/~1234567890~\/js\/script.js/, function (xhr, id) {
@@ -286,7 +286,7 @@
 
 	});
 
-	test("check includeScript handling", function() {
+	QUnit.test("check includeScript handling", function(assert) {
 
 		// check script prefixing
 		jQuery.sap.includeScript("http://anyserver:4711/anyapp/js/script.js", "myjs");
@@ -295,7 +295,7 @@
 
 	});
 
-	test("check includeStyleSheet handling", function() {
+	QUnit.test("check includeStyleSheet handling", function(assert) {
 
 		// check script prefixing
 		jQuery.sap.includeStyleSheet("http://anyserver:4711/anyapp/css/style.css", "mycss");
@@ -304,7 +304,7 @@
 
 	});
 
-	test("check sap.ui.core.URI.type handling", function() {
+	QUnit.test("check sap.ui.core.URI.type handling", function(assert) {
 
 		// check script prefixing
 		var oControl = new sap.ui.core.UriControl({
@@ -356,7 +356,7 @@
 		}
 	});
 
-	test("check sap.ui.core.AppCacheBuster.onIndexLoad(ed) hook", 4, function() {
+	QUnit.test("check sap.ui.core.AppCacheBuster.onIndexLoad(ed) hook", 4, function(assert) {
 
 		var that = this;
 		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
@@ -378,7 +378,7 @@
 
 	});
 
-	test("check sap.ui.core.AppCacheBuster.onIndexLoad(ed) hook (override)", 4, function() {
+	QUnit.test("check sap.ui.core.AppCacheBuster.onIndexLoad(ed) hook (override)", 4, function(assert) {
 
 		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 		var sBaseUrl = "http://anyserver:4711/anyapp/";

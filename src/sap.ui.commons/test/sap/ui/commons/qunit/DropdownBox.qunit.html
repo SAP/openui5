@@ -100,7 +100,7 @@
 			//}
 		});
 
-		test("TestRenderedOK", function(){
+		QUnit.test("TestRenderedOK", function(assert){
 			notEqual(jQuery.sap.domById(sDropdownId), null, "DropdownBox outer HTML Element should be rendered.");
 			equal(jQuery("#" + sDropdownId + " > input").length, 1, "DropdownBox should provide an input element.");
 			equal(oDropdown.getValue(), sCheckText, "Default value / text should still be set.");
@@ -118,7 +118,7 @@
 			equal(jQuery("#" + sDropdownId + " > input").attr("aria-describedby"), sDropdownId + "-SecVal", "aria-describesby");
 		});
 
-		test("Setter / Getter", function(){
+		QUnit.test("Setter / Getter", function(assert){
 			oDropdown.setValue("second item");
 			equal(oDropdown.getValue(), "second item", "setValue: value");
 			equal(oDropdown.getSelectedKey(), "key2", "setValue: selectedKey");
@@ -150,7 +150,7 @@
 			//}
 		});
 
-		test("TestInputOK", function(){
+		QUnit.test("TestInputOK", function(assert){
 			jQuery(oDropdown.getInputDomRef()).val(""); //simulate clearing value by typing on selected text
 			qutils.triggerKeypress(sDropdownTypingInputId, "s");
 
@@ -163,7 +163,7 @@
 			equal(oDropdown.getInputDomRef().value, "second item", "DropdownBox' value should not have changed in HTML.");
 		});
 
-		test("TestMultipleInputOK", function(){
+		QUnit.test("TestMultipleInputOK", function(assert){
 			jQuery(oDropdown.getInputDomRef()).val(""); //simulate clearing value by typing on selected text
 			jQuery.each("third".split(''), function(idx, val){
 				qutils.triggerKeypress(sDropdownTypingInputId, val);
@@ -184,7 +184,7 @@
 			}
 		});
 
-		test("TestArrowDownOK", function(){
+		QUnit.test("TestArrowDownOK", function(assert){
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
@@ -210,7 +210,7 @@
 
 		});
 
-		test("TestArrowUpOK", function(){
+		QUnit.test("TestArrowUpOK", function(assert){
 			var sTestValue = "last item";
 			equal(oDropdown.getValue(), sTestValue, "DropdownBox' value should be last item.");
 			equal(oDropdown.getInputDomRef().value, sTestValue, "DropdownBox' value should match to HTML.");
@@ -247,7 +247,7 @@
 			}
 		});
 
-		test("TestEndOK", function(){
+		QUnit.test("TestEndOK", function(assert){
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.END, false, false, false);
@@ -255,17 +255,17 @@
 			equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should not have changed in HTML when not proposal list not open.");
 		});
 
-		test("TestPageDownOK", function(){
+		QUnit.test("TestPageDownOK", function(assert){
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
 			ok(true, "Implementation pending. Specification prio 3");
 		});
 
-		test("TestPageUpOK", function(){
+		QUnit.test("TestPageUpOK", function(assert){
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.PAGE_UP, false, false, false);
 			ok(true, "Implementation pending. Specification prio 3");
 		});
 
-		test("TestEscape", function(){
+		QUnit.test("TestEscape", function(assert){
 			oDropdown.setValue("third item");
 			oDropdown.focus();
 			oDropdown._doSelect();
@@ -293,7 +293,7 @@
 			}
 		});
 
-		test("TestOpenCloseViaKeyboardOK", function(){
+		QUnit.test("TestOpenCloseViaKeyboardOK", function(assert){
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
@@ -310,7 +310,7 @@
 
 		});
 
-		test("TestOpenCloseViaMouseOK", function(){
+		QUnit.test("TestOpenCloseViaMouseOK", function(assert){
 			resetBeforeTest();
 
 			qutils.triggerEvent("click", sDropdownIconId);
@@ -337,7 +337,7 @@
 			}
 		});
 
-		test("TestSelectItemFromListOK", function(){
+		QUnit.test("TestSelectItemFromListOK", function(assert){
 			expect(12); // two from reset, 8 from this method and 2 from the event handler (initiated via click events)
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
@@ -371,7 +371,7 @@
 			}
 		});
 
-		test("TestEndWhenOpenedOK", function(){
+		QUnit.test("TestEndWhenOpenedOK", function(assert){
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
@@ -398,7 +398,7 @@
 
 		});
 
-		test("TestHomeWhenOpenedOK", function(){
+		QUnit.test("TestHomeWhenOpenedOK", function(assert){
 			oDropdown.setValue("last item"); // reset value to the one from the test method before
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
@@ -440,7 +440,7 @@
 			}
 		});
 
-		test("TestChangeOnEnterAfterTextInputOK", function(){
+		QUnit.test("TestChangeOnEnterAfterTextInputOK", function(assert){
 			expect(4); // two from cleanup + two from the event handlers (the one from the module plus the local one)
 			resetBeforeTest();
 			var sInput = "second";
@@ -462,7 +462,7 @@
 		var oTest1 = function(oEvent) {
 			equal(oEvent.getParameter("newValue"), sText, "Entered value should be provided as Event parameter");
 		};
-		test("TestChangeOnFocusLostAfterTextInputOK", function(){
+		QUnit.test("TestChangeOnFocusLostAfterTextInputOK", function(assert){
 			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
 			// expect(4); // two from cleanup + two from the event handler
@@ -488,7 +488,7 @@
 			}, 100);
 		});
 
-		test("TestChangeOnEnterAfterUpDownOK", function(){
+		QUnit.test("TestChangeOnEnterAfterUpDownOK", function(assert){
 			expect(3); // two from cleanup + the one from the event handler
 			resetBeforeTest();
 
@@ -501,7 +501,7 @@
 		var oTest3 = function(oEvent) {
 			equal(oEvent.getParameter("newValue"), "third item", "Entered value should be provided as Event parameter");
 		};
-		test("TestChangeOnFocusLostAfterUpDownOK", function(){
+		QUnit.test("TestChangeOnFocusLostAfterUpDownOK", function(assert){
 			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
 			// expect(4); // two from cleanup + two from the event handler
@@ -528,7 +528,7 @@
 			},100);
 		});
 
-		test("TestCleanUp", function() {
+		QUnit.test("TestCleanUp", function(assert) {
 			ok(!!sap.ui.getCore().byId("fi"), "fi must exist");
 			ok(!!sap.ui.getCore().byId("si"), "si must exist");
 			ok(!!sap.ui.getCore().byId("ti"), "ti must exist");
@@ -608,7 +608,7 @@
 
 		QUnit.module("Other");
 
-		test("Change items while open", function() {
+		QUnit.test("Change items while open", function(assert) {
 			var oListBox = sap.ui.getCore().byId("ddb4-lb")
 			oDropdown4.focus();
 			// open list box
@@ -655,7 +655,7 @@
 		});
 
 		QUnit.module("DataBinding");
-		test("initial binding", function(){
+		QUnit.test("initial binding", function(assert){
 			// even if selectedKey is set before items it must be used after items are added
 			equal(oDropdown5.getValue(), "Item 2", "Text of second item must be set");
 			equal(jQuery.sap.domById(oDropdown5.getId()+"-input").value, "Item 2", "Text of second item must be set in the HTML.");
@@ -677,7 +677,7 @@
 			},0);
 		});
 
-		test("manual with ID", function(){
+		QUnit.test("manual with ID", function(assert){
 			// even if selectedItemId is set before items it must be used after items are added
    		oDropdown5.setSelectedItemId("Item-Y");
 			oDropdown5.removeAllItems();
@@ -690,7 +690,7 @@
 			equal(oDropdown5.getSelectedItemId(), "Item-Y", "ID of second item must be selected");
 		});
 
-		test("manual with Value", function(){
+		QUnit.test("manual with Value", function(assert){
 			// even if selectedItemId is set before items it must be used after items are added
    		oDropdown5.setValue("Item F");
 			oDropdown5.destroyItems();

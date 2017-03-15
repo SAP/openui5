@@ -85,7 +85,7 @@
 		afterEach: destroyController
 	});
 
-	test("autoSave", 5, function() {
+	QUnit.test("autoSave", 5, function(assert) {
 		var getPersDataCalls = 0,
 			setPersDataCalls = 0;
 		createController({
@@ -120,7 +120,7 @@
 
 	});
 
-	test("persoService unsupported value", 3, function() {
+	QUnit.test("persoService unsupported value", 3, function(assert) {
 		createController();
 
 		try {
@@ -148,7 +148,7 @@
 
 	});
 
-	test("persoService / table", 1, function() {
+	QUnit.test("persoService / table", 1, function(assert) {
 		var getPersDataCalls = 0;
 		createController({
 			persoService: {
@@ -352,7 +352,7 @@
 
 	});
 
-	test("Manual table changes via API", 11, function() {
+	QUnit.test("Manual table changes via API", 11, function(assert) {
 		var getPersDataCalls = 0;
 		createController({
 			persoService: {
@@ -424,7 +424,7 @@
 		afterEach: destroyController
 	});
 
-	test("CustomDataKey", 11, function() {
+	QUnit.test("CustomDataKey", 11, function(assert) {
 
 		var getPersDataCalls = 0;
 		createController({

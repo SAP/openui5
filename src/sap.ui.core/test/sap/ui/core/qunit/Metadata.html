@@ -28,7 +28,7 @@
 
 			QUnit.module("Basic");
 
-			test("Lazy calculation of public method name uniqueness", function() {
+			QUnit.test("Lazy calculation of public method name uniqueness", function(assert) {
 				var testObj = new TestClass();
 				var metaData = testObj.getMetadata();
 
@@ -41,7 +41,7 @@
 				ok(metaData._bInterfacesUnique, "dirty flag must be cleared");
 			});
 
-			test("Lazy calculation of public method name uniqueness after addition", function() {
+			QUnit.test("Lazy calculation of public method name uniqueness after addition", function(assert) {
 				var testObj = new TestClass();
 				var metaData = testObj.getMetadata();
 

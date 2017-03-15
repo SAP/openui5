@@ -132,7 +132,7 @@
 
 					QUnit.start();
 					if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout) {
-						test("Dummy Test", function() {
+						QUnit.test("Dummy Test", function(assert) {
 							ok(true, "At least one test needs to run to avoid test timeouts!");
 						});
 					}
@@ -140,7 +140,7 @@
 			});
 
 			if(jQuery.support.flexBoxLayout || jQuery.support.newFlexBoxLayout) {
-				test("Flex Boxes rendered", function() {
+				QUnit.test("Flex Boxes rendered", function(assert) {
 					ok(jQuery.sap.domById("outerHBox"), "Outer HBox should be rendered");
 					ok(jQuery.sap.domById("item1"), "Item 1 should be rendered");
 					ok(jQuery.sap.domById("item2"), "Item 2 should be rendered");
@@ -152,7 +152,7 @@
 					ok(jQuery.sap.domById("item6"), "Item 6 should be rendered");
 				});
 
-				test("Width and height correct", function() {
+				QUnit.test("Width and height correct", function(assert) {
 					equal(jQuery.sap.domById("outerHBox").offsetWidth, outerhboxWidth, "Outer HBox should have the correct width");
 					equal(jQuery.sap.domById("outerHBox").offsetHeight, outerhboxHeight, "Outer HBox should have the correct height");
 					equal(jQuery.sap.domById("vbox").offsetWidth, vboxWidth, "VBox should have the correct width");

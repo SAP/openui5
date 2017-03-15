@@ -19,12 +19,12 @@
 
 	<script>
 
-	test("only elements created from XML view should have _sapui_declarativeSourceInfo", function() {
+	QUnit.test("only elements created from XML view should have _sapui_declarativeSourceInfo", function(assert) {
 		var element = new sap.ui.core.Element();
 		notOk(element._sapui_declarativeSourceInfo);
 	});
 
-	test("Cloning elements with declarativeSourceInfo", function() {
+	QUnit.test("Cloning elements with declarativeSourceInfo", function(assert) {
 		var element = new sap.ui.core.Element();
 		element._sapui_declarativeSourceInfo = {
 			xmlNode: {}

@@ -78,35 +78,35 @@
 
 		QUnit.module("Rendering All Fields");
 
-		test("ControlRendered", function() {
+		QUnit.test("ControlRendered", function(assert) {
 			notEqual(jQuery.sap.domById(tileBasicId), null, "tileBasic should be rendered.");
 		});
 
-		test("IconRendered", function() {
+		QUnit.test("IconRendered", function(assert) {
 			notEqual(jQuery.sap.domById(tileBasicId + "-img"), null, "tileBasic icon should be rendered.");
 		});
 
-		test("IconFontRendered", function() {
+		QUnit.test("IconFontRendered", function(assert) {
 			equal(jQuery.sap.domById(tileIconFont + "-img"), null, "tileIconFont icon should be rendered.");
 		});
 
-		test("NumberRendered", function() {
+		QUnit.test("NumberRendered", function(assert) {
 			notEqual(jQuery.sap.domById(tileBasicId + "-number"), null, "tileBasic number should be rendered.");
 		});
 
-		test("NumberUnitRendered", function() {
+		QUnit.test("NumberUnitRendered", function(assert) {
 			notEqual(jQuery.sap.domById(tileBasicId + "-numberUnit"), null, "tileBasic number unit should be rendered.");
 		});
 
-		test("TitleRendered", function() {
+		QUnit.test("TitleRendered", function(assert) {
 			notEqual(jQuery.sap.domById(tileBasicId + "-title"), null, "tileBasic title should be rendered.");
 		});
 
-		test("DescriptionRendered", function() {
+		QUnit.test("DescriptionRendered", function(assert) {
 			notEqual(jQuery.sap.domById(tileBasicId + "-info"), null, "tileBasic info should be rendered.");
 		});
 
-		test("ShouldRenderAddIconIfTypeIsCreate", function() {
+		QUnit.test("ShouldRenderAddIconIfTypeIsCreate", function(assert) {
 			//SUT
 			var result,
 				sut = new sap.m.StandardTile({type: "Create"});
@@ -122,7 +122,7 @@
 			sut.destroy();
 		});
 
-        test("ShouldStyleLongNumbersDifferently", function() {
+        QUnit.test("ShouldStyleLongNumbersDifferently", function(assert) {
             //SUT
             var sut = new sap.m.StandardTile({type: "Monitor", number:"4000", icon : "../images/action.png"}),
                     result;
@@ -155,11 +155,11 @@
 
 		QUnit.module("Not Rendering Optional Fields");
 
-		test("IconNotRendered", function() {
+		QUnit.test("IconNotRendered", function(assert) {
 			equal(jQuery.sap.domById(tileNoIconId + "-img"), null, "tileNoIcon icon should not be rendered.");
 		});
 
-		test("NumberNotRendered", function() {
+		QUnit.test("NumberNotRendered", function(assert) {
 			equal(jQuery.sap.domById(tileNoNumberId + "-number"), null, "tileNoNumber number and number units should not be rendered.");
 		});
 
@@ -173,13 +173,13 @@
 			}
 		});
 
-		test("PressOk", function() {
+		QUnit.test("PressOk", function(assert) {
 			tileBasic.firePress();
 			jQuery.sap.log.info("Pressed tile id=" + pressedTileId);
 			equals(pressedTileId, tileBasicId, "tileBasic was pressed");
 		});
 
-		test("ShouldDestroyTheImageIfTileGetsDestroyed", function() {
+		QUnit.test("ShouldDestroyTheImageIfTileGetsDestroyed", function(assert) {
 			//SUT
 			var sut = new sap.m.StandardTile({type: "Create"});
 			sut.placeAt("qunit-fixture");

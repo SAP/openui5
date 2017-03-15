@@ -231,7 +231,7 @@
 	//Needed to identify the views which are created during test
 	var iCount = 0;
 
-	test("Test static margin classes", function() {
+	QUnit.test("Test static margin classes", function(assert) {
 		//Currently only works under chrome
 		if (sap.ui.Device.browser.chrome) {
 			//Test Margins all around

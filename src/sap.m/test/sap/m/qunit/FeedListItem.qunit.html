@@ -321,7 +321,7 @@
 				assert.ok(oFeedList.getItems()[5].$("info").length === 0, "no info should be rendered");
 			});
 
-			QUnit.test("No Sender", function() {
+			QUnit.test("No Sender", function(assert) {
 				ok(!oFeedList.getItems()[6]._oLinkControl, "No sender name rendered");
 			});
 

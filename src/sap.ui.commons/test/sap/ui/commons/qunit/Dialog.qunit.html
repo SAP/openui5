@@ -113,7 +113,7 @@
 			assert.ok(this.initialPopupFocusSpy.calledWithExactly(undefined), 'setInitialFocusId should be called with the proper sId');
 		});
 
-		QUnit.test('Get minimal reasonable size', function(assert){
+		QUnit.test('Get minimal reasonable size', function(assert) {
 			var done = assert.async(),
 				that = this;
 
@@ -324,7 +324,7 @@
 			this.oDialog.open();
 		});
 
-		QUnit.test("Test dialog onClick event handling", function () {
+		QUnit.test("Test dialog onClick event handling", function (assert) {
 			var done = assert.async(),
 					that = this;
 
@@ -525,7 +525,7 @@
 			}
 		});
 
-		QUnit.test('Dialog with focusable elements', function(assert){
+		QUnit.test('Dialog with focusable elements', function(assert) {
 			var that = this,
 				done = assert.async();
 
@@ -541,7 +541,7 @@
 		});
 
 
-		QUnit.test('Dialog without focusable elements', function(assert){
+		QUnit.test('Dialog without focusable elements', function(assert) {
 			var that = this,
 				done = assert.async();
 
@@ -553,7 +553,7 @@
 			this.oDialog.open();
 		});
 
-		QUnit.test('Dialog with variable size of the footer/header', function(assert){
+		QUnit.test('Dialog with variable size of the footer/header', function(assert) {
 			var that = this,
 				done = assert.async(),
 				oOldMinSize,

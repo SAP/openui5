@@ -44,21 +44,21 @@
 
 
 
-		test("Initial Check", function() {
+		QUnit.test("Initial Check", function(assert) {
 			expect(2);
 			ok(oCtrl, "Paginator should exist after creating");
   		var oDomRef = jQuery.sap.domById(sId);
   		ok(oDomRef, "Paginator root element should exist in the page");
 		});
 
-		test("Last Page Link", function() {
+		QUnit.test("Last Page Link", function(assert) {
 			expect(2);
   		var oDomRef = jQuery.sap.domById(sId + "--lastPageLink");
   		ok(oDomRef, "'Last Page' link should exist in the page");
   		equal(jQuery(oDomRef).text(), oResourceBundle.getText("PAGINATOR_OTHER_PAGE", [110]), "'Last Page' link should display 'Page 110'");
 		});
 
-		test("Page Links", function() {
+		QUnit.test("Page Links", function(assert) {
 			expect(8);
   		var $pages = jQuery.sap.byId(sId + "-pages");
   		equal($pages.length, 1, "pages ul tag should exist in the page");
@@ -71,7 +71,7 @@
   		ok(!$pages.children(":eq(1)").hasClass("sapUiPagCurrentPage"), "second page link should not be current");
 		});
 
-		test("Change Current Page", function() {
+		QUnit.test("Change Current Page", function(assert) {
 			expect(3); // no event should be fired
 			oCtrl.setCurrentPage(2);
 			sap.ui.getCore().applyChanges();
@@ -81,7 +81,7 @@
   		ok(!$pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should not be current");
 		});
 
-		test("Change Current Page To The Middle", function() {
+		QUnit.test("Change Current Page To The Middle", function(assert) {
 			expect(9); // no event should be fired
 			oCtrl.setCurrentPage(50);
 			sap.ui.getCore().applyChanges();
@@ -97,7 +97,7 @@
   		ok(!$pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should not be current");
 		});
 
-		test("Change Current Page Close To The End", function() {
+		QUnit.test("Change Current Page Close To The End", function(assert) {
 			expect(6); // no event should be fired
 			oCtrl.setCurrentPage(109);
 			sap.ui.getCore().applyChanges();
@@ -110,7 +110,7 @@
   		ok(!$pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should not be current");
 		});
 
-		test("Trigger Forward (mouse)", function() {
+		QUnit.test("Trigger Forward (mouse)", function(assert) {
 			expect(17); // including event handler
 			equal(lastTargetPage, null, "lastTargetPage should be initial");
 

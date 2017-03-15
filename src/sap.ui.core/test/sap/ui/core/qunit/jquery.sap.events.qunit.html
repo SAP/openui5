@@ -228,11 +228,11 @@
 
 
 	function doTestCtrlEvent(sEventName, sOrigEventName, oEventParams, fHandlerChecks, bExpectHandlersNotCalled){
-		test(sEventName + " Event", function() {
+		QUnit.test(sEventName + " Event", function(assert) {
 			_testCtrlEvent(sEventName, sOrigEventName, oEventParams, false, fHandlerChecks, bExpectHandlersNotCalled);
 		});
 
-		test(sEventName + " Event (bubbling cancelled)", function() {
+		QUnit.test(sEventName + " Event (bubbling cancelled)", function(assert) {
 			_testCtrlEvent(sEventName, sOrigEventName, oEventParams, true, fHandlerChecks, bExpectHandlersNotCalled);
 		});
 	};
@@ -263,7 +263,7 @@
 
 
 	function doTestPseudoEvent(sOriginalEventName, sEventName, iTriggerCount, oEventParams) {
-		test(sEventName + " Event - Basic", function() {
+		QUnit.test(sEventName + " Event - Basic", function(assert) {
 			_testPseudoEvent(sOriginalEventName, sEventName, iTriggerCount, oEventParams);
 		});
 
@@ -291,7 +291,7 @@
 	//***************************************
 	QUnit.module("Initialization");
 
-	test("Control Events", function() {
+	QUnit.test("Control Events", function(assert) {
 		var aBrowserEvents = [].concat(aBasicBrowserEvents);
 
 		if(sap.ui.Device.support.touch){
@@ -304,7 +304,7 @@
 		}
 	});
 
-	test("Pseudo Events", function() {
+	QUnit.test("Pseudo Events", function(assert) {
 		function fCheck(sEventName, sOrigEventName){
 			var evt = jQuery.sap.PseudoEvents[sEventName];
 			ok(!!evt, "Event "+sEventName+" contained in jQuery.sap.PseudoEvents");
@@ -457,7 +457,7 @@
 
 	var setMarkedTestCase = function(mOptions) {
 
-		test("setMarked()", function() {
+		QUnit.test("setMarked()", function(assert) {
 
 			// system under test + arrange
 			var oEvent = mOptions.event;
@@ -496,7 +496,7 @@
 		})
 	});
 
-	test("setMarked() on an event which has originalEvent point to itself", function() {
+	QUnit.test("setMarked() on an event which has originalEvent point to itself", function(assert) {
 		var oEvent = new jQuery.Event("mousedown"),
 			sMark = "mark";
 
@@ -517,7 +517,7 @@
 
 	var setMarkTestCase = function(mOptions) {
 
-		test("setMark()", function() {
+		QUnit.test("setMark()", function(assert) {
 
 			// system under test + arrange
 			var oEvent = mOptions.event;
@@ -567,7 +567,7 @@
 	/* ------------------------------ */
 
 	var fnIsSpecialKeyTestCase = function(sEventName, mOptions, bOuput, sDescription) {
-		test("jQuery.sap.isSpecialKey() " + sDescription, function() {
+		QUnit.test("jQuery.sap.isSpecialKey() " + sDescription, function(assert) {
 
 			// arrange
 			var oEvent = new jQuery.Event(sEventName);

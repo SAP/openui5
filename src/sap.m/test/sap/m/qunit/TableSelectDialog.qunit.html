@@ -300,7 +300,7 @@
 
 		QUnit.module("Initial Check");
 
-		test("Initialization", function() {
+		QUnit.test("Initialization", function(assert) {
 			ok(!jQuery.sap.domById("oTableSelectDialog"), "TableSelectDialog is not rendered before it's ever opened.");
 			strictEqual(oTableSelectDialog.getTitle(), "Choose your tech..", 'The title should be "Choose your tech.."');
 			strictEqual(oTableSelectDialog.getNoDataText(), "We do not have any tech to show here and we are very sorry for that!", '"We do not have any tech to show here and we are very sorry for that!" should be displayed when no data is there');
@@ -316,7 +316,7 @@
 
 		});
 
-		test("busyIndicatorDelay propagation test", function() {
+		QUnit.test("busyIndicatorDelay propagation test", function(assert) {
 			var iDelay = 50;
 			oTableSelectDialog.setBusyIndicatorDelay(iDelay);
 
@@ -327,14 +327,14 @@
 
 		QUnit.module("Bindings Check");
 
-		test("Bindings", function() {
+		QUnit.test("Bindings", function(assert) {
 			strictEqual(oTableSelectDialog.getBinding("items").iLength, 5 , 'TableSelectDialog should have 5 items bound');
 			strictEqual(oTableSelectDialog1.getBinding("items").iLength, 5 , 'TableSelectDialog1 should have 5 items bound');
 		});
 
 		QUnit.module("MultiSelect proper selection reset");
 
-		test("TableSelectDialog1 proper selection reset", function() {
+		QUnit.test("TableSelectDialog1 proper selection reset", function(assert) {
 			oTableSelectDialog1.setMultiSelect(true);
 
 			oTableSelectDialog1.open();
@@ -360,7 +360,7 @@
 
 		QUnit.module("Open and Close");
 
-		test("Open TableSelectDialog", function(){
+		QUnit.test("Open TableSelectDialog", function(assert) {
 			oButton.firePress();
 			ok(jQuery.sap.domById("oTableSelectDialog-dialog"), "TableSelectDialog is opened");
 			ok(jQuery.sap.domById("oTableSelectDialog-dialog-title"), "TableSelectDialog title should be rendered");
@@ -466,7 +466,7 @@
 
 		QUnit.module("Test Dialog Change to Single Select");
 
-		test("TableSelectDialog1 Change to Single Select", function() {
+		QUnit.test("TableSelectDialog1 Change to Single Select", function(assert) {
 			oTableSelectDialog1.setMultiSelect(false);
 			sap.ui.getCore().applyChanges();
 			strictEqual(oTableSelectDialog1.getMultiSelect(), false, 'Multi Select should now be updated to  "false"');
@@ -483,7 +483,7 @@
 
 		QUnit.module("Test Dialog Single Select Item");
 
-		test("TableSelectDialog1 singleSelection Item 2", function() {
+		QUnit.test("TableSelectDialog1 singleSelection Item 2", function(assert) {
 			var oTable = sap.ui.getCore().byId("oTableSelectDialog1-table");
 			var aItems = oTable.getItems();
 			aItems[2].setSelected(true);
@@ -650,7 +650,7 @@
 		QUnit.module("Accessibility");
 		/********************************************************************************/
 
-		test("Aria-live attribute of the InfoToolBar should be set to 'polite'", function() {
+		QUnit.test("Aria-live attribute of the InfoToolBar should be set to 'polite'", function(assert) {
 			oButton1.firePress();
 			equals(oTableSelectDialog1._oTable.getInfoToolbar().$().attr("aria-live"), "polite", "The aria-live attribute is set to polite");
 			oTableSelectDialog1._oCancelButton.firePress()

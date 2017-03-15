@@ -235,7 +235,7 @@
 
 		QUnit.module("Rendering");
 
-		test("Rendering of Standard tree", function() {
+		QUnit.test("Rendering of Standard tree", function(assert) {
 
 			notEqual(jQuery.sap.domById(sStandardTreeId), null, "Tree is rendered.");
 
@@ -245,7 +245,7 @@
 
 		});
 
-		test("Rendering of transparent tree", function() {
+		QUnit.test("Rendering of transparent tree", function(assert) {
 
 			notEqual(jQuery.sap.domById(sTransparentTreeId), null, "Tree is rendered.");
 
@@ -256,7 +256,7 @@
 
 		QUnit.module("Nodes public methods");
 
-		test("Single Collapse and Expand", function() {
+		QUnit.test("Single Collapse and Expand", function(assert) {
 
 
 			//Collapse
@@ -274,7 +274,7 @@
 			ok( node13.getExpanded(), "Node 1.1 is now expanded");
 		});
 
-		test("Node selection legacy", function() {
+		QUnit.test("Node selection legacy", function(assert) {
 			oStandardTree.expandAll();
 			var initialSelection = sap.ui.getCore().getControl("node13");
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
@@ -289,7 +289,7 @@
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
 		});
 
-		test("Node selection single", function() {
+		QUnit.test("Node selection single", function(assert) {
 			oStandardTree.expandAll();
 			oStandardTree.setSelectionMode("Single");
 
@@ -307,7 +307,7 @@
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected again");
 		});
 
-		test("Node selection multi", function() {
+		QUnit.test("Node selection multi", function(assert) {
 			oStandardTree.expandAll();
 			oStandardTree.setSelectionMode("Multi");
 			var initialSelection = sap.ui.getCore().getControl("node13");
@@ -324,7 +324,7 @@
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
 		});
 
-		test("Node selection legacy with context", function() {
+		QUnit.test("Node selection legacy with context", function(assert) {
 			var oModel = new sap.ui.model.json.JSONModel({}),
 				oContext = oModel.createBindingContext("/");
 
@@ -344,7 +344,7 @@
 			oStandardTree.setBindingContext(null);
 		});
 
-		test("Node selection single with context", function() {
+		QUnit.test("Node selection single with context", function(assert) {
 			var oModel = new sap.ui.model.json.JSONModel({}),
 				oContext = oModel.createBindingContext("/");
 
@@ -367,7 +367,7 @@
 			oStandardTree.setBindingContext(null);
 		});
 
-		test("Node selection multi with context", function() {
+		QUnit.test("Node selection multi with context", function(assert) {
 			var oModel = new sap.ui.model.json.JSONModel({}),
 				oContext = oModel.createBindingContext("/");
 
@@ -389,7 +389,7 @@
 			oStandardTree.setBindingContext(null);
 		});
 
-		test("Node selection single databinding", function() {
+		QUnit.test("Node selection single databinding", function(assert) {
 			oBoundTree.expandAll();
 			oBoundTree.setSelectionMode("Single");
 
@@ -419,7 +419,7 @@
 			ok( !newSelection.getIsSelected(), "Node 2 is not selected after second refresh");
 		});
 
-		test("Node selection multi databinding", function() {
+		QUnit.test("Node selection multi databinding", function(assert) {
 			oBoundTree.expandAll();
 			oBoundTree.setSelectionMode("Multi");
 			var initialSelection = oBoundTree.getNodes()[0];
@@ -449,7 +449,7 @@
 
 		});
 
-		test("Node selection single databinding with named model", function() {
+		QUnit.test("Node selection single databinding with named model", function(assert) {
 			oBoundTreeNamedModel.expandAll();
 			oBoundTreeNamedModel.setSelectionMode("Single");
 
@@ -479,7 +479,7 @@
 			ok( !newSelection.getIsSelected(), "Node 2 is not selected after second refresh");
 		});
 
-		test("Node selection multi databinding with named model", function() {
+		QUnit.test("Node selection multi databinding with named model", function(assert) {
 			oBoundTreeNamedModel.expandAll();
 			oBoundTreeNamedModel.setSelectionMode("Multi");
 			var initialSelection = oBoundTreeNamedModel.getNodes()[0];
@@ -509,7 +509,7 @@
 
 		});
 
-		test("Node selection events single", function() {
+		QUnit.test("Node selection events single", function(assert) {
 			var handler,
 				node12 = sap.ui.getCore().getControl("node12"),
 				node16 = sap.ui.getCore().getControl("node16"),
@@ -538,7 +538,7 @@
 			ok( node12.getIsSelected(), "Root 2 is not selected");
 		});
 
-		test("Node selection events multi", function() {
+		QUnit.test("Node selection events multi", function(assert) {
 			var handler,
 				node12 = sap.ui.getCore().getControl("node12"),
 				node16 = sap.ui.getCore().getControl("node16"),
@@ -639,7 +639,7 @@
 
 		QUnit.module("Tree public methods");
 
-		test("Collapse all", function() {
+		QUnit.test("Collapse all", function(assert) {
 
 			oStandardTree.collapseAll();
 
@@ -655,7 +655,7 @@
 			ok( !foundNodeExpanded, "All nodes are now collapsed");
 		});
 
-		test("Expand all", function() {
+		QUnit.test("Expand all", function(assert) {
 
 			oStandardTree.expandAll();
 
@@ -673,7 +673,7 @@
 
 		QUnit.module("Keyboard support");
 
-		test("Space/Enter", function() {
+		QUnit.test("Space/Enter", function(assert) {
 			oStandardTree.expandAll();
 
 			qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.ENTER, false, false, false);
@@ -709,7 +709,7 @@
 			});
 		}
 
-		test("Plus/Minus", function() {
+		QUnit.test("Plus/Minus", function(assert) {
 
 			qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.NUMPAD_MINUS, false, false, false);
 
@@ -721,7 +721,7 @@
 
 		});
 
-		test("Asterisk", function() {
+		QUnit.test("Asterisk", function(assert) {
 
 			qutils.triggerKeyboardEvent(sStandardTreeId, jQuery.sap.KeyCodes.NUMPAD_ASTERISK, false, false, false);
 
@@ -751,7 +751,7 @@
 
 		});
 
-		test("Home/End", function() {
+		QUnit.test("Home/End", function(assert) {
 
 			sap.ui.getCore().getControl("node13").focus();
 
@@ -767,7 +767,7 @@
 
 		});
 
-		test("Ctrl+Home/Ctrl+End", function() {
+		QUnit.test("Ctrl+Home/Ctrl+End", function(assert) {
 
 			sap.ui.getCore().getControl("node13").focus();
 
@@ -853,7 +853,7 @@
 			}
 		});
 
-		test("Selection is adjusted only once for the real target node on collapse", function() {
+		QUnit.test("Selection is adjusted only once for the real target node on collapse", function(assert) {
 			var oAdjustSelectionSpy = this.spy(this.oTree, "_adjustSelectionOnCollapsing"),
 				oTargetNode = sap.ui.getCore().byId("trnode1"),
 				oSelectedChildNode = sap.ui.getCore().byId("trnode111");
@@ -869,7 +869,7 @@
 			oAdjustSelectionSpy.restore();
 		});
 
-		test("Selection is adjusted only once for the real target node on expand", function() {
+		QUnit.test("Selection is adjusted only once for the real target node on expand", function(assert) {
 			var oAdjustSelectionSpy = this.spy(sap.ui.commons.Tree.prototype, "_adjustSelectionOnExpanding"),
 					oTargetNode = sap.ui.getCore().byId("trnode1"),
 					oSelectedChildNode = sap.ui.getCore().byId("trnode111");
@@ -884,7 +884,7 @@
 			ok(oAdjustSelectionSpy.calledWith(oTargetNode), "Selection is adjusted starting from expanded target node.");
 		});
 
-		test("Animating only when collapse is not propagated to children", function() {
+		QUnit.test("Animating only when collapse is not propagated to children", function(assert) {
 			var oJqueryShowSpy = this.spy(jQuery.fn, "hide"),
 				oTargetNode = sap.ui.getCore().byId("trnode1");
 
@@ -894,7 +894,7 @@
 			equal(oJqueryShowSpy.args[1].length, 0, "Node11 hides without animation.");
 		});
 
-		test("Store references to the selected hidden children", function() {
+		QUnit.test("Store references to the selected hidden children", function(assert) {
 			var oDeepTree = new sap.ui.commons.Tree("tr2tree", {
 				nodes: [
 					new sap.ui.commons.TreeNode("tr2node1", {
@@ -956,7 +956,7 @@
 			}
 		});
 
-		test("_removeItemFromObject private method", function () {
+		QUnit.test("_removeItemFromObject private method", function (assert) {
 			// Arrange
 			var oOriginal,
 				oClone;
@@ -1119,7 +1119,7 @@
 			}
 		});
 
-		test("Selection is preserved on node collapse/expand in single selection mode", function () {
+		QUnit.test("Selection is preserved on node collapse/expand in single selection mode", function (assert) {
 			var that = this,
 				oTestIfNodesSelectionIsPreservedOnExpand;
 
@@ -1156,7 +1156,7 @@
 
 		});
 
-		test("Selection is preserved on node collapse/expand in multi selection mode", function () {
+		QUnit.test("Selection is preserved on node collapse/expand in multi selection mode", function (assert) {
 			var that = this,
 				oTestIfNodesSelectionIsPreservedOnExpand;
 
@@ -1198,7 +1198,7 @@
 			oTestIfNodesSelectionIsPreservedOnExpand();
 		});
 
-		test("Selection is preserved on oDate model filtering with single selection", function () {
+		QUnit.test("Selection is preserved on oDate model filtering with single selection", function (assert) {
 			// Mark node as selected
 			this.oNodes.node33.setIsSelected(true);
 
@@ -1216,7 +1216,7 @@
 			ok(!this.oNodes.node33.getIsSelected(), "Node 33 should not be selected");
 		});
 
-		test("Selection is preserved on oDate model filtering with multiple selection", function () {
+		QUnit.test("Selection is preserved on oDate model filtering with multiple selection", function (assert) {
 			var oNode31 = this.oNodes.node31;
 
 			// Set tree selection mode to Multi
@@ -1254,7 +1254,7 @@
 			oNode31 = null;
 		});
 
-		test("Selection is preserved on oDate model filtering with multiple selection", function () {
+		QUnit.test("Selection is preserved on oDate model filtering with multiple selection", function (assert) {
 			// Set tree selection mode to Multi
 			this.oTree.setSelectionMode(sap.ui.commons.TreeSelectionMode.Multi);
 
@@ -1330,7 +1330,7 @@
 			}
 		});
 
-		test("Filtering", function () {
+		QUnit.test("Filtering", function (assert) {
 			// Arrange
 			var oTreeBinding = this.oTree.getBinding("nodes"),
 				oFilter = new sap.ui.model.Filter("name","StartsWith","JSON_i"),

@@ -30,7 +30,7 @@
 		/* Test: Default Values                    */
 		/* --------------------------------------- */
 
-		test("Default Values", function(){
+		QUnit.test("Default Values", function(assert){
 
 			var bEnabled = true;
 			var bEditable = true;
@@ -77,7 +77,7 @@
 		/* Test: 'visible=false'                           */
 		/* ----------------------------------------------- */
 
-		test("'visible=false'", function(){
+		QUnit.test("'visible=false'", function(assert){
 
 			// system under test
 			var oRBGroup = new sap.m.RadioButtonGroup({visible: false});
@@ -133,7 +133,7 @@
 		/* Test: 'enabled=false'                            */
 		/* ----------------------------------------------- */
 
-		test("'enabled=false'", function(){
+		QUnit.test("'enabled=false'", function(assert){
 
 			// system under test
 			var bEnabled = false;
@@ -170,7 +170,7 @@
 		/* 	   tests for setSelectedIndex() */
 		/* -------------------------------- */
 
-		test("setSelectedIndex()", function() {
+		QUnit.test("setSelectedIndex()", function(assert) {
 
 			var oRBGroup = new sap.m.RadioButtonGroup("RBG");
 			var iSelectedIndex = 1;
@@ -204,7 +204,7 @@
 		/*	--------------------------------------- 	*/
 		/*			tests for keyboard handling			*/
 		/*	--------------------------------------- 	*/
-		test("'keyboard handling'", function() {
+		QUnit.test("'keyboard handling'", function(assert) {
 			//setup RadioButtonGroups
 			var iRadiosCount = 4;
 			var columnsCount = 2
@@ -266,7 +266,7 @@
 		/*	        tests textDirection	            	*/
 		/*	--------------------------------------- 	*/
 
-		test("textDirection set to RTL", function() {
+		QUnit.test("textDirection set to RTL", function(assert) {
 			// arrange
 			var oRBGroup = new sap.m.RadioButtonGroup({
 				textDirection: sap.ui.core.TextDirection.RTL,
@@ -287,7 +287,7 @@
 			oRBGroup.destroy();
 		});
 
-		test("textDirection set to LTR", function() {
+		QUnit.test("textDirection set to LTR", function(assert) {
 			// arrange
 			var oRBGroup = new sap.m.RadioButtonGroup({
 				textDirection: sap.ui.core.TextDirection.LTR,
@@ -326,7 +326,7 @@
 			}
 		});
 
-		test("setEnabled doesn't modify RadioButton state", function() {
+		QUnit.test("setEnabled doesn't modify RadioButton state", function(assert) {
 			var aButtons = this.rbg.getButtons();
 
 			// act
@@ -348,7 +348,7 @@
 			equal(aButtons[2].getEnabled(), true, "Third RadioButton is enabled");
 		});
 
-		test("setEditable doesn't modify RadioButton state", function() {
+		QUnit.test("setEditable doesn't modify RadioButton state", function(assert) {
 			var aButtons = this.rbg.getButtons();
 
 			// act

@@ -62,7 +62,7 @@
 		detach = false;
 	};
 
-	test("Binding getPath", function(){
+	QUnit.test("Binding getPath", function(assert) {
 		setup();
 		createPropertyBindings("/teamMembers", "firstName");
 
@@ -73,7 +73,7 @@
 
 	});
 
-	test("Binding getModel", function(){
+	QUnit.test("Binding getModel", function(assert) {
 		setup();
 		createPropertyBindings("/teamMembers", "lastName");
 
@@ -84,7 +84,7 @@
 
 	});
 
-	test("Binding set/getContext", function(){
+	QUnit.test("Binding set/getContext", function(assert) {
 		setup();
 		var oContext = oModel.getContext("/teamMembers/0"),
 			oNewContext = new sap.ui.model.Context();
@@ -98,7 +98,7 @@
 		});
 	});
 
-	test("Binding isResolved", function(){
+	QUnit.test("Binding isResolved", function(assert) {
 		setup();
 		var oNewContext = oModel.getContext("/");
 
@@ -114,7 +114,7 @@
 		ok(oBinding.isResolved(), "Binding should be resolved!");
 	});
 
-	test("Binding changeEvent", function(){
+	QUnit.test("Binding changeEvent", function(assert) {
 		setup();
 		createPropertyBindings("/teamMembers", "firstName");
 

@@ -45,7 +45,7 @@
 
 		var oSF;
 
-		test("static values", function() {
+		QUnit.test("static values", function(assert) {
 			var aItems = ["001", "002", "003", "004", "005"];
 
 			oSF = new sap.m.SearchField({
@@ -72,12 +72,12 @@
 		QUnit.module("Test the suggest function");
 
 		// test properties
-		test("Properties", function() {
+		QUnit.test("Properties", function(assert) {
 			equal(oSF.getWidth(), '100%', "Default value of the property Width is 100%s");
 
 		});
 
-		test("call the suggest() function", function() {
+		QUnit.test("call the suggest() function", function(assert) {
 			// action
 			oSF.suggest();
 			this.clock.tick(1000);
@@ -112,7 +112,7 @@
 
 		QUnit.module("Aggregations");
 
-		test("update suggestions by aggregation changes", function() {
+		QUnit.test("update suggestions by aggregation changes", function(assert) {
 
 			// action
 			oSF.suggest();
@@ -138,7 +138,7 @@
 
 		QUnit.module("User interaction");
 
-		test("select an item via keyboard", function() {
+		QUnit.test("select an item via keyboard", function(assert) {
 
 			// action
 			oSF.suggest();
@@ -157,14 +157,14 @@
 			strictEqual(oSF.getValue(), oSF.getSuggestionItems()[0].getSuggestionText(), "Suggestion text value is set to the search field");
 		});
 
-		test("Enter closes suggestions", function(){
+		QUnit.test("Enter closes suggestions", function(assert){
 			sap.ui.test.qunit.triggerKeydown(oSF.getDomRef("I"), jQuery.sap.KeyCodes.ENTER);
 			sap.ui.test.qunit.triggerKeyup(oSF.getDomRef("I"), jQuery.sap.KeyCodes.ENTER);
 			this.clock.tick(1000);
 			ok(!oSF._oSuggest.isOpen(), "Picker is closed after ENTER");
 		});
 
-		test("Escape closes suggestions", function() {
+		QUnit.test("Escape closes suggestions", function(assert) {
 			// action
 			oSF.setValue("ABCD");
 			oSF.suggest();
@@ -181,7 +181,7 @@
 			strictEqual(oSF.getValue(), "ABCD", "Escape closes suggestions and keeps the value");
 		});
 
-		test("applyFocusInfo test", function () {
+		QUnit.test("applyFocusInfo test", function (assert) {
 			var 	oInput = oSF.getFocusDomRef(),
 					$SF = jQuery(oInput);
 
@@ -198,7 +198,7 @@
 
 		});
 
-		test("Clear method test", function() {
+		QUnit.test("Clear method test", function(assert) {
 			// action
 			var toValue = 'ABCD';
 			var fnSpyFireLiveChange = this.spy(oSF, 'fireLiveChange');
@@ -222,14 +222,14 @@
 			fnFireSearch.restore();
 		});
 
-		test("Background color on blur is restored", function() {
+		QUnit.test("Background color on blur is restored", function(assert) {
 			oSF.onBlur();
 			this.clock.tick(1000);
 
 			strictEqual(oSF.$().hasClass( "sapMFocus"), false, "Blur event processing restores the previous background color");
 		});
 
-		test("onInput test - when change or paste in the input", function() {
+		QUnit.test("onInput test - when change or paste in the input", function(assert) {
 			var 	oInput = oSF.getFocusDomRef();
 			var fnSpyFireLiveChange = this.spy(oSF, 'fireLiveChange');
 			var fnFireSuggest = this.spy(oSF, 'fireSuggest');
@@ -249,7 +249,7 @@
 			fnFireSuggest.restore();
 		});
 
-		test("onSearch test - event ", function() {
+		QUnit.test("onSearch test - event ", function(assert) {
 			var 	oInput = oSF.getFocusDomRef();
 			var fnFireSearch = this.spy(oSF, 'fireSearch');
 			var toValue = 'abcd';
@@ -279,7 +279,7 @@
 
 		QUnit.module("Formatting");
 
-		test("Search value is bold in suggestions", function() {
+		QUnit.test("Search value is bold in suggestions", function(assert) {
 
 			// set value and open suggestions
 			oSF.setValue("003");
@@ -301,7 +301,7 @@
 		});
 
 		QUnit.module("Clean up");
-		test("cleanup", function(){
+		QUnit.test("cleanup", function(assert){
 			oSF.destroy();
 			this.clock.tick(1000);
 			ok(!oSF.getDomRef(), "The search field is removed");

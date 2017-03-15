@@ -482,7 +482,7 @@
 		oBinding.getContexts();
 	});
 
-	test("ListBinding - Clearing Filters if application filters are empty", function (){
+	QUnit.test("ListBinding - Clearing Filters if application filters are empty", function (assert) {
 
 		// Arrange
 		var oModel = initModel(sURI, false, "Categories");
@@ -686,7 +686,7 @@
 		oBinding.getContexts();
 	});
 
-	test("Export to file URL", function(){
+	QUnit.test("Export to file URL", function(assert) {
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var sUrl = oBinding.getDownloadUrl("csv");

@@ -122,7 +122,7 @@
 
 		// Tests
 
-		test("GrowingList rendered", function() {
+		QUnit.test("GrowingList rendered", function(assert) {
 			expect(10); // incl. rendering
 			app.placeAt("content");
 			sap.ui.getCore().applyChanges();
@@ -169,7 +169,7 @@
 			}, 0);
 		});
 
-		test("New Data", function(){
+		QUnit.test("New Data", function(assert) {
 			expect(7);
 			model.setData(data2);
 			sap.ui.getCore().applyChanges();

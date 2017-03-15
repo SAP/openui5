@@ -92,7 +92,7 @@
 
 			QUnit.module("Initial Check");
 
-			test("Page rendered", function() {
+			QUnit.test("Page rendered", function(assert) {
 				ok(jQuery.sap.domById("myFirstPage"), "Page should be rendered");
 				ok(jQuery.sap.domById("myFirstPage-intHeader"), "header should be rendered");
 				ok(jQuery.sap.domById("hdrbtn"), "header right button should be rendered");
@@ -133,7 +133,7 @@
 				equal(oPage.$("cont").hasClass("sapMPageEnableScrolling"), false, "In a page with scrolling disabled, no scroll-related class should be added")
 			});
 
-			test("Page 2 rendered", function() {
+			QUnit.test("Page 2 rendered", function(assert) {
 				ok(jQuery.sap.domById("mySecondPage"), "Page should be rendered");
 				ok(jQuery.sap.domById("mySecondPage-intHeader"), "header should be rendered");
 				equal(jQuery.sap.domById("mySecondPage-navButton"), undefined, "nav button should not be rendered");
@@ -142,7 +142,7 @@
 				ok(jQuery.sap.byId("mySecondPage").hasClass("sapMPageBgList"), "Page 2 content should have list background color");
 			});
 
-			test("Page 3 rendered with no header", function() {
+			QUnit.test("Page 3 rendered with no header", function(assert) {
 				ok(jQuery.sap.domById("myThirdPage"), "Page should be rendered");
 				equal(jQuery.sap.domById("myThirdPage-intHeader"), undefined, "header should not be rendered");
 				equal(jQuery.sap.domById("myThirdPage-navButton"), undefined, "nav button should not be rendered");
@@ -155,7 +155,7 @@
 				equal($p3c.width(), jQuery(window).width(), "Page 3 content width should cover the whole screen");
 			});
 
-			test("render once only", function() { // regression test for issue 1570014242
+			QUnit.test("render once only", function(assert) { // regression test for issue 1570014242
 				var iRenderCounter = 0;
 				var oDelegate = {
 					onAfterRendering : function() {
@@ -177,7 +177,7 @@
 				oRenderOncePage.destroy();
 			});
 
-			test("render once only with combinatorics", function() { // regression test for issue 1570014242
+			QUnit.test("render once only with combinatorics", function(assert) { // regression test for issue 1570014242
 				// the mechanism that avoids double rendering is different depending on whether there is a title/navbutton or not, hence this test
 				var iRenderCounter = 0;
 				var oDelegate = {
@@ -200,7 +200,7 @@
 				oRenderOncePage.destroy();
 			});
 
-			test("Page with footer and unescaped id", function () {
+			QUnit.test("Page with footer and unescaped id", function (assert) {
 				var oPage = new sap.m.Page("my.Page", {
 					footer: new sap.m.Bar({
 						contentMiddle: [
@@ -223,7 +223,7 @@
 
 			QUnit.module("Properties Check");
 
-			test("showSubHeader", function() {
+			QUnit.test("showSubHeader", function(assert) {
 				var oSubHeader = sap.ui.getCore().byId("mySubHeader");
 				ok(jQuery.sap.domById("mySubHeader"), "subHeader should be rendered");
 
@@ -238,7 +238,7 @@
 				equal(jQuery.sap.byId("myFirstPage-cont").css("top"), "96px", "top of Page content with subHeader shown should be 96px (6rem)");
 			});
 
-			test("showFooter", function() {
+			QUnit.test("showFooter", function(assert) {
 				oPage.setShowFooter(false);
 				sap.ui.getCore().applyChanges();
 				equal(jQuery.sap.domById("myFooter"), undefined, "footer should not be rendered");
@@ -259,7 +259,7 @@
 						}, 10);
 					});
 
-					test("Title", function() {
+					QUnit.test("Title", function(assert) {
 						ok(jQuery.sap.byId("myFirstPage-title").parent().hasClass("sapMBarPH"), "title should be located in the middle");
 					});
 
@@ -275,7 +275,7 @@
 						}, 10);
 					});
 
-					test("Title", function() {
+					QUnit.test("Title", function(assert) {
 						jQuery.sap.require("sap.ui.core.theming.Parameters");
 						if (sap.ui.core.theming.Parameters.get("sapMPlatformDependent") == "true") {
 							ok(jQuery.sap.byId("myFirstPage-title").parent().hasClass("sapMBarLeft"), "title should be located in the left");
@@ -327,13 +327,13 @@
 					}
 				}
 
-				test("Scroll area rendered", function() {
+				QUnit.test("Scroll area rendered", function(assert) {
 					ok(jQuery.sap.domById("myFirstPage-cont"), "Scroll container should be rendered for Page 1");
 					ok(jQuery.sap.domById("mySecondPage-cont"), "Scroll container should be rendered for Page 2");
 					ok(jQuery.sap.domById("myThirdPage-cont"), "Scroll container should be rendered for Page 3");
 				});
 
-				test("Scrolling", function() {
+				QUnit.test("Scrolling", function(assert) {
 					expect(2);
 					equal(getScrollPos("mySecondPage"), 0, "Page 2 should be scrolled to position 0");
 					oPage2.scrollTo(100, 0);
@@ -365,13 +365,13 @@
 					oPage4.destroy();
 				});
 
-				test("Restoring scrolling state after rendering", function() {
+				QUnit.test("Restoring scrolling state after rendering", function(assert) {
 					expect(1); // event should not be fired after rerendering
 					oPage2.rerender();
 					equal(getScrollPos("mySecondPage"), -100, "Page 2 should be scrolled to position 100");
 				});
 
-				test(
+				QUnit.test(
 						"Container Padding Classes",
 						function() {
 							// System under Test + Act

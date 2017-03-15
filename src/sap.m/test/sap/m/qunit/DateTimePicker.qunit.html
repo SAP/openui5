@@ -93,7 +93,7 @@
 
 			QUnit.module("initialization");
 
-			test("Date formatter", function() {
+			QUnit.test("Date formatter", function(assert) {
 				ok(!oDTP1.getValue(), "DTP1: no value");
 				ok(!oDTP1.getDateValue(), "DTP1: no DateValue");
 				equal(oDTP2.getValue(), "2016-02-17,10-11-12", "DTP2: Value in internal format set");
@@ -106,14 +106,14 @@
 
 			QUnit.module("Rendering");
 
-			test("date format", function() {
+			QUnit.test("date format", function(assert) {
 				ok(!jQuery("#DTP1").children("div.sapMInputDivWrapper").children("input").val(), "DTP1: empty date");
 				equal(jQuery("#DTP2").children("div.sapMInputDivWrapper").children("input").val(), "17+02+2016:10+11", "DTP2: defined output format used");
 				equal(jQuery("#DTP3").children("div.sapMInputDivWrapper").children("input").val(), "2/17/16, 10:11 AM", "DTP3: defined output format used");
 				equal(jQuery("#DTP4").children("div.sapMInputDivWrapper").children("input").val(), "Feb 17, 2016, 10:11:12 AM", "DTP4: defined output format from binding used");
 			});
 
-			test("placeholder", function() {
+			QUnit.test("placeholder", function(assert) {
 				if(sap.ui.Device.support.input.placeholder) {
 					equal(jQuery("#DTP1").children("div.sapMInputDivWrapper").children("input").attr("placeholder"), "MMM d, y, h:mm:ss a" , "DTP1: placeholder");
 					equal(jQuery("#DTP2").children("div.sapMInputDivWrapper").children("input").attr("placeholder"), "dd+MM+yyyy:HH+mm", "DTP2: placeholder");
@@ -148,7 +148,7 @@
 
 			QUnit.module("interaction");
 
-			test("change date by typing", function() {
+			QUnit.test("change date by typing", function(assert) {
 				bChange = false;
 				sValue = "";
 				bValid = true;
@@ -179,7 +179,7 @@
 
 			});
 /*
-			test("change date by Pageup/down", function() {
+			QUnit.test("change date by Pageup/down", function(assert) {
 			});
 */
 			asyncTest("change date using calendar - open", function() {
@@ -242,7 +242,7 @@
 
 			QUnit.module("Accessibility");
 
-			test("getAccessibilityInfo", function() {
+			QUnit.test("getAccessibilityInfo", function(assert) {
 				var oInput = new sap.m.DateTimePicker({
 					value: "Value",
 					tooltip: "Tooltip",
@@ -279,7 +279,7 @@
 			});
 			QUnit.module("Calendar and TimePicker");
 
-			test("When the popover is initially opened and there is a tap on the hours slider it should gain focus", function() {
+			QUnit.test("When the popover is initially opened and there is a tap on the hours slider it should gain focus", function(assert) {
 				//Prepare
 				var oDTP = new sap.m.DateTimePicker().placeAt("uiArea7");
 

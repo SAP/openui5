@@ -36,17 +36,17 @@
 	});
 
 	// test property accessor methods
-	test("setter / getter Key", function() {
+	QUnit.test("setter / getter Key", function(assert) {
 		token1.setKey(key);
 		equals(token1.getKey(), key, "Input value is "+key);
 	});
 
-	test("setter / getter Text", function() {
+	QUnit.test("setter / getter Text", function(assert) {
 		token1.setText(text);
 		equals(token1.getText(), text, "Input value is "+text);
 	});
 
-	test("setter / getter editable", function() {
+	QUnit.test("setter / getter editable", function(assert) {
 		var isEditable = true;
 		equals(token1.getEditable(), isEditable, "Token is editable");
 
@@ -59,7 +59,7 @@
 		equals(token1.getEditable(), isEditable, "Token is editable");
 	});
 
-	test("setter / getter isSelected", function() {
+	QUnit.test("setter / getter isSelected", function(assert) {
 		var isSelected = false;
 		equals(token1.getSelected(), isSelected, "Token is not selected");
 
@@ -72,7 +72,7 @@
 		equals(token1.getSelected(), isSelected, "Token is not selected");
 	});
 
-	test("show / hide delete icon depending on isEditable", function() {
+	QUnit.test("show / hide delete icon depending on isEditable", function(assert) {
 		var isEditable = true;
 		token1.setEditable(isEditable);
 		equals(token1.$().children().length, 2, "Token contains icon");
@@ -84,7 +84,7 @@
 
 	});
 
-	test("select/deselect token", function() {
+	QUnit.test("select/deselect token", function(assert) {
 		token1.setSelected(false);
 		sap.ui.test.qunit.triggerEvent("tap", token1.getDomRef());
 		ok(token1.$().hasClass("sapMTokenSelected"), "token is selected");
@@ -93,12 +93,12 @@
 		ok(token1.$().hasClass("sapMTokenSelected"), "token is selected");
 	});
 
-	test("setter / getter textDirection", function() {
+	QUnit.test("setter / getter textDirection", function(assert) {
 		token1.setTextDirection(sap.ui.core.TextDirection.RTL);
 		equals(token1.getTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
 	});
 
-	test("Token has attribute dir", function() {
+	QUnit.test("Token has attribute dir", function(assert) {
 		token1.setTextDirection(sap.ui.core.TextDirection.RTL);
 		sap.ui.getCore().applyChanges();
 

@@ -46,17 +46,17 @@
 
 	QUnit.module("Properties");
 
-	test("Default Values", function() {
+	QUnit.test("Default Values", function(assert) {
 		equals(oLayout1.getWidth(), "", "Default 'Width':");
 	});
 
-	test("Custom Values", function() {
+	QUnit.test("Custom Values", function(assert) {
 		equals(oLayout2.getWidth(), "200px", "Custom 'Width':");
 	});
 
 	QUnit.module("Visual Appearence");
 
-	test("Visibility", function() {
+	QUnit.test("Visibility", function(assert) {
 		// controls must be one below the other -> same X coordinate, nut higher Y coordinate
 		var oButtonDom = jQuery.sap.domById('B1');
 		var oTextDom = jQuery.sap.domById('TF1');
@@ -83,7 +83,7 @@
 
 	});
 
-	test("Container Padding Classes", function () {
+	QUnit.test("Container Padding Classes", function (assert) {
 		// System under Test + Act
 		var oContainer = new sap.ui.layout.VerticalLayout(),
 			sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px")),
@@ -129,7 +129,7 @@
 
 	QUnit.module("Accessibility");
 
-	test("getAccessibilityInfo", function() {
+	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oLayout = new sap.ui.layout.VerticalLayout({
 			content: [
 				new sap.ui.layout.VerticalLayout(),

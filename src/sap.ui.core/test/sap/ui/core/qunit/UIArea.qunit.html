@@ -42,7 +42,7 @@
 			 * After rendering, the two controls should be visible in the UIArea
 			 * their order should match the order in which they have been added
 			 */
-	    test("basic rendering", function() {
+	    QUnit.test("basic rendering", function(assert) {
         text1.placeAt("uiArea1");
 	      text2.placeAt("uiArea1");
 	      oCore.applyChanges();
@@ -55,7 +55,7 @@
 			 * Removes the controls from the UIArea
 			 * UIArea must be empty after the rendering
 			 */
-	    test("removeAllContent", function() {
+	    QUnit.test("removeAllContent", function(assert) {
 	    	oCore.getUIArea("uiArea1").removeAllContent();
 	      oCore.applyChanges();
 				equal(jQuery("#uiArea1").children().length, 0, "no more content");
@@ -68,7 +68,7 @@
 			 * Rendering after addiition or removal of controls must not destroy
 			 * the content nor modify its order
 			 */
-	    test("initial DOM content", function() {
+	    QUnit.test("initial DOM content", function(assert) {
 	    	var $originalDom = jQuery("#uiArea2").children();
 			  equal($originalDom.length, 1, "precondition: one span exists already in UIArea");
 			  equal(jQuery($originalDom.get(0)).text(), "Before", "precondition: span contains correct text");
@@ -94,7 +94,7 @@
 			 * When additional pure DOM content is added to an UIArea,
 			 * that content must not be modified by the UIArea rerendering
 			 */
-	    test("additional DOM content", function() {
+	    QUnit.test("additional DOM content", function(assert) {
 	    	// check preconditions
 	    	var $originalDom = jQuery("#uiArea2").children();
 			  equal($originalDom.length, 1, "precondition: one span exists already in UIArea");
@@ -136,7 +136,7 @@
 			 * When the UIArea contains a control that preserves its DOM,
 			 * then rerendering of the UIArea must not delete such preserved DOM
 			 */
-	    test("preserved DOM content", function() {
+	    QUnit.test("preserved DOM content", function(assert) {
         ok(oCore.byId("text1"), "precondition: control 1 still exists");
         ok(!oCore.byId("text1").getParent(), "precondition: control 1 not bound");
         ok(oCore.byId("text2"), "precondition: control 2 still exists");

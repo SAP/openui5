@@ -52,11 +52,11 @@
 
 		QUnit.module("UNorm");
 
-		QUnit.test("test dependencies", function() {
+		QUnit.test("test dependencies", function(assert) {
 			ok(sap.ui.Device, "Device API loaded");
 		});
 
-		QUnit.test("conditional polyfill", function() {
+		QUnit.test("conditional polyfill", function(assert) {
 			UNorm = window.UNorm;
 			if (UNorm) {
 				assert.ok(UNorm, "unorm is loaded");
@@ -74,7 +74,7 @@
 		});
 
 		if (UNorm) {
-			QUnit.test("reference data", function() {
+			QUnit.test("reference data", function(assert) {
 				assert.expect(8);
 				jQuery.each(aData, function(i, o) {
 					assert.equal(toCharCodes(o.string), o.representation, "\"" + o.form + "\"" + " string is valid");
@@ -90,7 +90,7 @@
 				});
 
 				// ref: http://unicode.org/reports/tr15/#Design_Goals
-				QUnit.test("chaining", function() {
+				QUnit.test("chaining", function(assert) {
 					o.compatible ? assert.expect(6) : assert.expect(2);
 					// primitive value of the normalized string as reference
 					var sRef = this.s.normalize(o.form).valueOf();
@@ -127,7 +127,7 @@
 				afterEach: function() {}
 			});
 
-			QUnit.test("verify test string", function() {
+			QUnit.test("verify test string", function(assert) {
 				assert.equal(this.sBlind, this.sBlind.normalize("NFC"), "NFC verified");
 				assert.equal(this.sSomething, this.sSomething.normalize("NFC"), "NFC verified");
 				assert.equal(this.sNFC, this.sNFC.normalize("NFC"), "NFC verified");
@@ -144,7 +144,7 @@
 				assert.equal(this.sNFKD + this.sNFKD + this.sNFKD + this.sNFKD, this.s.normalize("NFKD"), "NFKD concatenation verified");
 			});
 
-			QUnit.test("isStringNFC", function() {
+			QUnit.test("isStringNFC", function(assert) {
 				assert.ok(jQuery.sap.isStringNFC("ABC"), "NFC is NFC");
 				assert.ok(jQuery.sap.isStringNFC("Améliè"), "NFC is NFC");
 				assert.ok(!jQuery.sap.isStringNFC(this.sNFC) || jQuery.sap.isStringNFC(this.sNFC), "NFC maybe NFC");

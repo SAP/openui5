@@ -78,7 +78,7 @@
 	// TEST functions
 	QUnit.module("Appearance");
 	//Test social action
-	test("Set thing icon", function() {
+	QUnit.test("Set thing icon", function(assert) {
 		oActionBar1.setThingIconURI("../images/Account_48.png");
 		ok(oActionBar1.getThingIconURI() == "../images/Account_48.png", "Thin icon uri: " + oActionBar1.getThingIconURI());
 	});
@@ -87,7 +87,7 @@
 	// TEST functions
 	QUnit.module("Social Actions");
 	//Test social action
-	test("Count visible social actions", function() {
+	QUnit.test("Count visible social actions", function(assert) {
 		var iVisibleChildCount = jQuery("#ActionBar0001-socialActions").children(":visible").size();
 		ok(iVisibleChildCount == 5, iVisibleChildCount + " social actions visible");
 	});
@@ -191,31 +191,31 @@
 
 
 
-	test("Press \"Follow Up Toggle Pressed\" ", function() {
+	QUnit.test("Press \"Follow Up Toggle Pressed\" ", function(assert) {
 		qutils.triggerMouseEvent("ActionBar0001-Flag", "click");
 		ok(oEventData.action == "Flag" && oEventData.state == true,
 				"ActionId: " + oEventData.action + ", State: " + oEventData.state);
 	});
 
-	test("Press \"Follow Up Toggle Default\" ", function() {
+	QUnit.test("Press \"Follow Up Toggle Default\" ", function(assert) {
 		qutils.triggerMouseEvent("ActionBar0001-Flag", "click");
 		ok(oEventData.action == "Flag" && oEventData.state == false,
 				"ActionId: " + oEventData.action + ", State: " + oEventData.state);
 	});
 
-	test("Press \"Favorite Toggle Pressed\" ", function() {
+	QUnit.test("Press \"Favorite Toggle Pressed\" ", function(assert) {
 		qutils.triggerMouseEvent("ActionBar0001-Favorite", "click");
 		ok(oEventData.action == "Favorite" && oEventData.state == true,
 				"ActionId: " + oEventData.action + ", State: " + oEventData.state);
 	});
 
-	test("Press \"Favorite Toggle Default\" ", function() {
+	QUnit.test("Press \"Favorite Toggle Default\" ", function(assert) {
 		qutils.triggerMouseEvent("ActionBar0001-Favorite", "click");
 		ok(oEventData.action == "Favorite" && oEventData.state == false,
 				"ActionId: " + oEventData.action + ", State: " + oEventData.state);
 	});
 
-	test("Press \"Open Thing\" ", function() {
+	QUnit.test("Press \"Open Thing\" ", function(assert) {
 		qutils.triggerMouseEvent("ActionBar0001-Open", "click");
 		ok(oEventData.action == "Open", "ActionId: " + oEventData.action);
 	});
@@ -224,7 +224,7 @@
 
 
 
-	test("Hide social actions using \"setShow...\" properties", function() {
+	QUnit.test("Hide social actions using \"setShow...\" properties", function(assert) {
 
 		oActionBar1.setShowUpdate(false);
 		oActionBar1.setShowFollow(false);
@@ -235,7 +235,7 @@
 		ok(iVisibleChildCount == 0, iVisibleChildCount + " social actions visible");
 	});
 
-	test("Show social actions using \"setShow...\" properties", function() {
+	QUnit.test("Show social actions using \"setShow...\" properties", function(assert) {
 
 		oActionBar1.setShowUpdate(true);
 		oActionBar1.setShowFollow(true);
@@ -269,7 +269,7 @@
 	QUnit.module("Business Actions");
 
 	//Test business action events
-	test("Test business action events", function() {
+	QUnit.test("Test business action events", function(assert) {
 		qutils.triggerMouseEvent("ActionBar0001-MoreMenuButton", "click");
 		qutils.triggerMouseEvent("ActionBar0001-MoreMenu-MenuItem-create", "click");
 		ok(oEventData.action == "create", "ActionId: " + oEventData.action );
@@ -308,20 +308,20 @@
 		}, 500);
 	});
 
-	test("Remove two business actions: one directly, one by its Id", function() {
+	QUnit.test("Remove two business actions: one directly, one by its Id", function(assert) {
 		oActionBar1.removeBusinessAction(oCreateAction);
 		oActionBar1.removeBusinessAction('duplicate');
 		var iVisibleChildCount = jQuery("#ActionBar0001-businessActions").children(":visible").size();
 		ok(iVisibleChildCount == 1, iVisibleChildCount + " business action buttons visible");
 	});
 
-	test("Remove all business actions", function() {
+	QUnit.test("Remove all business actions", function(assert) {
 		oActionBar1.removeAllBusinessActions();
 		var iVisibleChildCount = jQuery("#ActionBar0001-businessActions").children(":visible").size();
 		ok(iVisibleChildCount == 0, iVisibleChildCount + " business action buttons visible");
 	});
 
-	test("Add three business actions", function() {
+	QUnit.test("Add three business actions", function(assert) {
 		oActionBar1.addBusinessAction(oCreateAction);
 		oActionBar1.addBusinessAction(oDuplicateAction);
 		oActionBar1.addBusinessAction(oDeleteAction);
@@ -366,7 +366,7 @@
 		}, 500);
 	});
 
-	test("Destroy actionBar", function() {
+	QUnit.test("Destroy actionBar", function(assert) {
 		oActionBar1.destroy();
 		ok(true, "Action Bar successfully destroyed");
 

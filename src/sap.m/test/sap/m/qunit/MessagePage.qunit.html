@@ -43,7 +43,7 @@
 
 		QUnit.module("Basic rendering");
 
-		test("The control should be rendered", function(){
+		QUnit.test("The control should be rendered", function(assert) {
 			// Arrange`
 			var oMessagePage = createMessagePage(),
 				$oMessagePage;
@@ -61,7 +61,7 @@
 			oMessagePage.destroy();
 		});
 
-		test("The control inner page should be rendered", function(){
+		QUnit.test("The control inner page should be rendered", function(assert) {
 			// Arrange
 			var oMessagePage = createMessagePage(),
 				$oMessagePageInnerPage ;
@@ -79,7 +79,7 @@
 			oMessagePage.destroy();
 		});
 
-		test("The control inner text should be rendered", function(){
+		QUnit.test("The control inner text should be rendered", function(assert) {
 			// Arrange
 			var oMessagePage = createMessagePage(),
 				$oMessagePageInnerPageText;
@@ -96,7 +96,7 @@
 			oMessagePage.destroy();
 		});
 
-		test("The description control should be rendered", function(){
+		QUnit.test("The description control should be rendered", function(assert) {
 			// Arrange
 			var oMessagePage = createMessagePage(),
 					$oMessagePageInnerDescription;
@@ -114,7 +114,7 @@
 			oMessagePage.destroy();
 		});
 
-		test("The control inner icon should be rendered", function(){
+		QUnit.test("The control inner icon should be rendered", function(assert) {
 			// Arrange
 			var oMessagePage = createMessagePage(),
 					$oMessagePageInnerIcon;
@@ -132,7 +132,7 @@
 			oMessagePage.destroy();
 		});
 
-		test("The control inner png icon should be rendered", function(){
+		QUnit.test("The control inner png icon should be rendered", function(assert) {
 			// Arrange
 			var oMessagePage = new sap.m.MessagePage(messagePageId,{
 				text: "One Line Text",
@@ -153,7 +153,7 @@
 			oMessagePage.destroy();
 		});
 
-		test("The control inner nav button should be rendered", function(){
+		QUnit.test("The control inner nav button should be rendered", function(assert) {
 			// Arrange
 			var oMessagePage = new sap.m.MessagePage(messagePageId,{
 				text: "One Line Text",
@@ -177,7 +177,7 @@
 
 		QUnit.module("Api tests");
 
-		test("The control setTitle should render the correct value", function(){
+		QUnit.test("The control setTitle should render the correct value", function(assert) {
 			// Arrange
 			var oMessagePage = createMessagePage(),
 				sExpectedValue = "Not default title",
@@ -199,7 +199,7 @@
 			oMessagePage.destroy();
 		});
 
-		test("The control getIcon should return default value", function(){
+		QUnit.test("The control getIcon should return default value", function(assert) {
 			// Arrange
 			var oMessagePage = createMessagePage(),
 					sExpectedValue;
@@ -217,7 +217,7 @@
 			oMessagePage.destroy();
 		});
 
-		test("The control getText should return default value", function(){
+		QUnit.test("The control getText should return default value", function(assert) {
 			// Arrange
 			var oMessagePage = createMessagePage(),
 				sExpectedValue;
@@ -235,7 +235,7 @@
 			oMessagePage.destroy();
 		});
 
-		test("The control setText should set new value", function(){
+		QUnit.test("The control setText should set new value", function(assert) {
 			// Arrange
 			var oMessagePage = createMessagePage(),
 				sExpectedValue = "Not default text",
@@ -257,7 +257,7 @@
 			oMessagePage.destroy();
 		});
 
-		test("The control getDescription should return default value", function(){
+		QUnit.test("The control getDescription should return default value", function(assert) {
 			// Arrange
 			var oMessagePage = createMessagePage(),
 				sExpectedValue;
@@ -275,7 +275,7 @@
 			oMessagePage.destroy();
 		});
 
-		test("The control setDescription should return new value", function(){
+		QUnit.test("The control setDescription should return new value", function(assert) {
 			// Arrange
 			var oMessagePage = createMessagePage(),
 				sExpectedValue = "Not default text",
@@ -299,7 +299,7 @@
 			oMessagePage.destroy();
 		});
 
-		test("The control setHeader should be without header", function(){
+		QUnit.test("The control setHeader should be without header", function(assert) {
 			// Arrange
 			var oMessagePage = createMessagePage(),
 				iActualResult;
@@ -321,7 +321,7 @@
 
 		QUnit.module("Destroying");
 
-		test("The control destroy should destroy the control and all the inner containers", function(){
+		QUnit.test("The control destroy should destroy the control and all the inner containers", function(assert) {
 			// Arrange
 			var oMessagePage = createMessagePage(),
 					iActualResult;
@@ -355,7 +355,7 @@
 
 		QUnit.module("Custom aggregation");
 
-		test("The control is set with customText", function(){
+		QUnit.test("The control is set with customText", function(assert) {
 			// Arrange
 			var oMessagePage = new sap.m.MessagePage(messagePageId,{
 				title: "Title",
@@ -377,7 +377,7 @@
 			oMessagePage.destroy();
 		});
 
-		test("The control is set with customDescription", function(){
+		QUnit.test("The control is set with customDescription", function(assert) {
 			// Arrange
 			var oMessagePage = new sap.m.MessagePage(messagePageId,{
 				title: "messagePage Title",

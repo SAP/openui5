@@ -23,7 +23,7 @@
 
 		Example:
 		   QUnit.module("Module A");
-		     test("1. a basic test example", function() {
+		     QUnit.test("1. a basic test example", function(assert) {
 		     ok( true, "this test is fine" );
 		     var value = "hello1";
 		     equal( value, "hello1", "We expect value to be hello" );
@@ -80,7 +80,7 @@
 			} //, afterEach: function(){}
 		});
 
-		test("TestRenderedOK", function(){
+		QUnit.test("TestRenderedOK", function(assert){
 			notEqual(jQuery.sap.domById(sComboId), null, "ComboBox outer HTML Element should be rendered.");
 			equal(jQuery("#testCmb > input").length, 1, "ComboBox should provide an input element.");
 			equal(oCombo.getValue(), sCheckText, "Default value / text should still be set.");
@@ -93,13 +93,13 @@
 			equal(jQuery("#testCmb3").length, 0, "Third (invisible) ComboBox should not be rendered at all.");
 		});
 
-		test("DomRef test", function() {
+		QUnit.test("DomRef test", function(assert) {
 			equal( oCombo.getFocusDomRef().id, sComboInputId, "FocusDomRef on input tag" );
 			equal( oCombo.getInputDomRef().id, sComboInputId, "InputDomRef on input tag" );
 			equal( oCombo.getIdForLabel(), sComboInputId, "Label points to input tag" );
 		});
 
-		test("ARIA", function() {
+		QUnit.test("ARIA", function(assert) {
 			var oCB = jQuery.sap.byId(sComboId);
 			var oCBInput = jQuery("#testCmb > input");
 			var oCB2 = jQuery.sap.byId(sComboId+"2");
@@ -116,7 +116,7 @@
 			ok(!oCBInput.attr("aria-posinset"), "aria-posinset");
 		});
 
-		test("Setter / Getter", function(){
+		QUnit.test("Setter / Getter", function(assert){
 			var oCBInput = jQuery("#testCmb > input");
 			oCombo.setValue("second item");
 			equal(oCombo.getValue(), "second item", "setValue: value");
@@ -143,7 +143,7 @@
 			ok(!oCBInput.attr("aria-posinset"), "setValue: aria-posinset");
 		});
 
-		test("Misc.", function(){
+		QUnit.test("Misc.", function(assert){
 			// empty ComboBox without value and items must not have a ListBox after Rendering
 			ok(!oCombo5._oListBox, "Empty ComboBox has not ListBox")
 			ok(!sap.ui.getCore().byId(oCombo5.getId()+"-lb"), "no ListBox Control exists for empty ComboBox")
@@ -153,7 +153,7 @@
 
 		QUnit.module("Shared listBox");
 
-		test("SetUp", function() {
+		QUnit.test("SetUp", function(assert) {
 			oComboBox1 = new sap.ui.commons.ComboBox({
 				listBox: "sharedListBox"
 			});
@@ -174,7 +174,7 @@
 
 		});
 
-		test("Replace ListBox", function() {
+		QUnit.test("Replace ListBox", function(assert) {
 			oSharedListBox2 = new sap.ui.commons.ListBox("sharedListBox2", {
 	        	items : [
 					new sap.ui.core.ListItem({text:"first item", additionalText: "(1)", key: "key1"}),
@@ -189,7 +189,7 @@
 			ok(oComboBox2._getListBox() === oSharedListBox1, "oCB2.listBox still should reference listBox");
 		});
 
-		test("Cleanup", function() {
+		QUnit.test("Cleanup", function(assert) {
 			oComboBox1.destroy();
 			oComboBox1 = null;
 			oComboBox2.destroy();
@@ -208,7 +208,7 @@
 			}
 		});
 
-		test("TestInputOK", function(){
+		QUnit.test("TestInputOK", function(assert){
 			resetBeforeTest();
 			qutils.triggerCharacterInput(sComboInputId, "s");
 		});
@@ -229,7 +229,7 @@
 			}, 500);
 		});
 
-		test("TestMultipleInputOK", function(){
+		QUnit.test("TestMultipleInputOK", function(assert){
 			resetBeforeTest();
 			jQuery.each("third".split(''), function(idx, val){
 				qutils.triggerCharacterInput(sComboInputId, val);
@@ -253,7 +253,7 @@
 			}, 500);
 		});
 
-		test("TestEscape", function(){
+		QUnit.test("TestEscape", function(assert){
 			qutils.triggerCharacterInput(sComboInputId, "X");
 
 			equal(oCombo.getValue(), "third item", "ComboBox' value should have not been changed.");
@@ -276,7 +276,7 @@
 			}
 		});
 
-		test("TestArrowDownOK", function(){
+		QUnit.test("TestArrowDownOK", function(assert){
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
@@ -308,7 +308,7 @@
 
 		});
 
-		test("TestArrowUpOK", function(){
+		QUnit.test("TestArrowUpOK", function(assert){
 			equal(oCombo.getValue(), "last item", "ComboBox' value should be last item.");
 			equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should match to HTML.");
 
@@ -342,7 +342,7 @@
 			}
 		});
 
-		test("TestEndOK", function(){
+		QUnit.test("TestEndOK", function(assert){
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.END, false, false, false);
@@ -352,7 +352,7 @@
 			equal(oCombo.getSelectedItemId(), "", "selectedItemId should not have changed");
 		});
 
-		test("TestHomeOK", function(){
+		QUnit.test("TestHomeOK", function(assert){
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.HOME, false, false, false);
 			equal(oCombo.getValue(), "", "ComboBox' value should not have changed when not proposal list not open.");
 			equal(oCombo.getFocusDomRef().value, "", "ComobBox' value should not have changed in HTML when not proposal list not open.");
@@ -360,12 +360,12 @@
 			equal(oCombo.getSelectedItemId(), "", "selectedItemId should not have changed");
 		});
 
-		test("TestPageDownOK", function(){
+		QUnit.test("TestPageDownOK", function(assert){
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
 			ok(true, "Implementation pending. Specification prio 3");
 		});
 
-		test("TestPageUpOK", function(){
+		QUnit.test("TestPageUpOK", function(assert){
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.PAGE_UP, false, false, false);
 			ok(true, "Implementation pending. Specification prio 3");
 		});
@@ -557,7 +557,7 @@
 			}
 		});
 
-		test("TestChangeOnEnterAfterTextInputOK", function(){
+		QUnit.test("TestChangeOnEnterAfterTextInputOK", function(assert){
 			expect(7); // two from cleanup + two from the event handler + 3 check
 			resetBeforeTest();
 
@@ -583,7 +583,7 @@
 		var oTest1 = function(oEvent) {
 			equal(oEvent.getParameter("newValue"), sText, "Entered value should be provided as Event parameter");
 		};
-		test("TestChangeOnFocusLostAfterTextInputOK", function(){
+		QUnit.test("TestChangeOnFocusLostAfterTextInputOK", function(assert){
 			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
 			// expect(4); // two from cleanup + two from the event handler
@@ -611,7 +611,7 @@
 		var oTest2 = function(oEvent) {
 			equal(oEvent.getParameter("newValue"), "second item", "Entered value should be provided as Event parameter");
 		};
-		test("TestChangeOnEnterAfterUpDownOK", function(){
+		QUnit.test("TestChangeOnEnterAfterUpDownOK", function(assert){
 			expect(8); // two from cleanup + two from the event handler + 4 checks
 			resetBeforeTest();
 
@@ -633,7 +633,7 @@
 		var oTest3 = function(oEvent) {
 			equal(oEvent.getParameter("newValue"), "third item", "Entered value should be provided as Event parameter");
 		};
-		test("TestChangeOnFocusLostAfterUpDownOK", function(){
+		QUnit.test("TestChangeOnFocusLostAfterUpDownOK", function(assert){
 			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
 			// expect(4); // two from cleanup plus two from event handler (focusleave)
@@ -663,7 +663,7 @@
 			},100);
 		});
 
-		test("TestCleanUp", function(){
+		QUnit.test("TestCleanUp", function(assert){
 			ok(!!sap.ui.getCore().byId("fi"), "fi must exist");
 			ok(!!sap.ui.getCore().byId("si"), "si must exist");
 			ok(!!sap.ui.getCore().byId("ti"), "ti must exist");
@@ -690,7 +690,7 @@
 		};*/
 
 		QUnit.module("DataBinding");
-		test("initial binding", function(){
+		QUnit.test("initial binding", function(assert){
 			// even if selectedKey is set before items it must be used after items are added
 			equal(oCombo4.getValue(), "Item 2", "Text of second item must be set");
 			equal(jQuery.sap.domById(oCombo4.getId()+"-input").value, "Item 2", "Text of second item must be set in the HTML.");
@@ -726,7 +726,7 @@
 			},0);
 		});
 
-		test("manual with ID", function(){
+		QUnit.test("manual with ID", function(assert){
 			// even if selectedItemId is set before items it must be used after items are added
 			oCombo4.setSelectedItemId("Item-Y");
 			oCombo4.removeAllItems();

@@ -34,7 +34,7 @@
 		}
 	});
 
-	test("test scroll width", function() {
+	QUnit.test("test scroll width", function(assert) {
 		strictEqual(tokenizer.getScrollWidth(), 0, 'Scroll width should be 0 when control is not rendered');
 	});
 
@@ -49,7 +49,7 @@
 		}
 	});
 
-	test("validator add/remove/removeAll", function() {
+	QUnit.test("validator add/remove/removeAll", function(assert) {
 		var function1 = function() {
 		};
 		var function2 = function() {
@@ -76,7 +76,7 @@
 		equals(tokenizer1._aTokenValidators.length, 0, "No token validators available");
 	});
 
-	test("clone", function() {
+	QUnit.test("clone", function(assert) {
 		//arrange
 		var token1 = new sap.m.Token(),
 			token2 = new sap.m.Token(),
@@ -97,7 +97,7 @@
 		tokenizer2.destroy();
 	});
 
-	test("tokens aggregation", function() {
+	QUnit.test("tokens aggregation", function(assert) {
 		var token1 = new sap.m.Token();
 		var token2 = new sap.m.Token();
 		var token3 = new sap.m.Token();
@@ -121,7 +121,7 @@
 		tokenizer1.removeAllTokens();
 	});
 
-	test("validate tokens using validator callback", function() {
+	QUnit.test("validate tokens using validator callback", function(assert) {
 		// 1
 		equals(tokenizer1.getTokens().length, 0, "Tokenizer contains 0 tokens");
 		tokenizer1.removeAllValidators();
@@ -242,7 +242,7 @@
 		tokenizer1.removeAllTokens();
 	});
 
-    test("tokens change event", function() {
+    QUnit.test("tokens change event", function(assert) {
         var eventType;
         tokenizer1.attachTokenChange(function(args) {
             eventType = args.getParameter("type");
@@ -259,7 +259,7 @@
         equals(eventType, sap.m.Tokenizer.TokenChangeType.RemovedAll, "removedAll event raised");
     });
 
-	test("getSelectedTokens", function() {
+	QUnit.test("getSelectedTokens", function(assert) {
 		var token1 = new sap.m.Token({
 			selected : true
 		});
@@ -279,7 +279,7 @@
 		tokenizer1.removeAllTokens();
 	});
 
-	test("test keyboard select all", function() {
+	QUnit.test("test keyboard select all", function(assert) {
 		var token1 = new sap.m.Token();
 		var token2 = new sap.m.Token();
 		var token3 = new sap.m.Token();
@@ -303,7 +303,7 @@
 	});
 
 
-	test("token editable in tokenizer", function() {
+	QUnit.test("token editable in tokenizer", function(assert) {
 
 		var oToken1 = new sap.m.Token({text:"Dente", editable: false});
 		var oToken2 = new sap.m.Token({text:"Friese", editable: false});
@@ -320,7 +320,7 @@
 		tokenizer1.removeAllTokens();
 	});
 
-    test("selected token is visible after select with left arrow", function() {
+    QUnit.test("selected token is visible after select with left arrow", function(assert) {
         var oSpecialToken = new sap.m.Token({text: "Token 5", key: "0005"});
         var oMultiInput = new sap.m.MultiInput({
             width: '300px',
@@ -353,7 +353,7 @@
         oMultiInput.destroy();
     });
 
-	test("parsing for copy and paste", function() {
+	QUnit.test("parsing for copy and paste", function(assert) {
 		var text1 = "1\r\n2\r\n3";
 		var aTextArray1 = tokenizer1._parseString(text1);
 
@@ -369,7 +369,7 @@
 		equals(aTextArray1[2], "3)\t(/&%$)", "text separated");
 	});
 
-	test("test setEditable=false Tokenizer with editable tokens", function() {
+	QUnit.test("test setEditable=false Tokenizer with editable tokens", function(assert) {
 		var aFirstToken,
 			aSecondToken;
 		//arrange
@@ -393,7 +393,7 @@
 		ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
 	});
 
-	test("copy to clipboard", function() {
+	QUnit.test("copy to clipboard", function(assert) {
 		if (window.clipboardData) {
 			jQuery.sap.require("jquery.sap.script");
 			var sParam = jQuery.sap.getUriParameters().get("testIE");

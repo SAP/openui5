@@ -53,7 +53,7 @@
 					return sap.ui.jsview(sName);
 				}
 
-				test("Should destroy correctly", function () {
+				QUnit.test("Should destroy correctly", function (assert) {
 					//Arrange
 					var oRouteMatchedSpy = this.spy(RouteMatchedHandler.prototype, "_onHandleRouteMatched"),
 							oRoutePatternMatchedSpy = this.spy(RouteMatchedHandler.prototype, "_handleRoutePatternMatched"),
@@ -87,7 +87,7 @@
 
 				QUnit.module("Transition Directions");
 
-				test("Should forward the Direction info to the TargetHandler", function () {
+				QUnit.test("Should forward the Direction info to the TargetHandler", function (assert) {
 					//Arrange
 					var view = createViewAndController("dummy"),
 							oRouter = new Router({
@@ -291,11 +291,11 @@
 					strictEqual(oCloseAllDialogsSpy.callCount, iExpectedCallCount, "did close the dialogs");
 				}
 
-				test("Should close all dialogs", function () {
+				QUnit.test("Should close all dialogs", function (assert) {
 					closeDialogsTestCase.call(this, true);
 				});
 
-				test("Should not close all dialogs", function () {
+				QUnit.test("Should not close all dialogs", function (assert) {
 					closeDialogsTestCase.call(this, false);
 				});
 
@@ -329,7 +329,7 @@
 					}
 				});
 
-				test("Should also work for routes with targets", function () {
+				QUnit.test("Should also work for routes with targets", function (assert) {
 					//Arrange
 					var oMasterView = createViewAndController("Master"),
 						oDetailView = createViewAndController("Detail"),

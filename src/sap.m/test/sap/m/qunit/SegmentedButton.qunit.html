@@ -36,7 +36,7 @@
 	var fnTestControlProperty = function(mOptions) {
 		var sProperty = mOptions.property.charAt(0).toUpperCase() + mOptions.property.slice(1);
 
-		test("get" + sProperty + "()", function() {
+		QUnit.test("get" + sProperty + "()", function(assert) {
 			strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
 		});
 	};
@@ -47,7 +47,7 @@
 
 	QUnit.module("Init");
 
-	test("Initial Check", function() {
+	QUnit.test("Initial Check", function(assert) {
 		// System under Test
 		var oSegmentedButton = new sap.m.SegmentedButton();
 
@@ -67,7 +67,7 @@
 
 	QUnit.module("Render");
 
-	test("Check if buttons are rendered", function() {
+	QUnit.test("Check if buttons are rendered", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button(),
 			oButton2 = new sap.m.Button(),
@@ -100,7 +100,7 @@
 		oButton3.destroy();
 	});
 
-	test("SegmentedButton selection after rendering", function() {
+	QUnit.test("SegmentedButton selection after rendering", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button(),
 			oButton2 = new sap.m.Button();
@@ -124,7 +124,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("SegmentedButton selection before and after rendering", function() {
+	QUnit.test("SegmentedButton selection before and after rendering", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button(),
 			oButton2 = new sap.m.Button();
@@ -152,7 +152,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("SegmentedButton set selected button to invalid value before rendering", function() {
+	QUnit.test("SegmentedButton set selected button to invalid value before rendering", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button(),
 			oButton2 = new sap.m.Button();
@@ -175,7 +175,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("SegmentedButton set selected button to invalid value after rendering", function() {
+	QUnit.test("SegmentedButton set selected button to invalid value after rendering", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button(),
 			oButton2 = new sap.m.Button();
@@ -199,7 +199,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("SegmentedButton set selected button to null value", function() {
+	QUnit.test("SegmentedButton set selected button to null value", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button(),
 			oButton2 = new sap.m.Button();
@@ -222,7 +222,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("SegmentedButton set selected button to undefined value", function() {
+	QUnit.test("SegmentedButton set selected button to undefined value", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button(),
 			oButton2 = new sap.m.Button();
@@ -245,7 +245,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("SegmentedButton set selected button to \"\" value", function() {
+	QUnit.test("SegmentedButton set selected button to \"\" value", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button(),
 			oButton2 = new sap.m.Button();
@@ -268,7 +268,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("SegmentedButton set selected button before adding the buttons", function() {
+	QUnit.test("SegmentedButton set selected button before adding the buttons", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button(),
 			oButton2 = new sap.m.Button();
@@ -294,7 +294,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("Check icon button", function() {
+	QUnit.test("Check icon button", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button({
 			text : "My Button 1"
@@ -328,7 +328,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("Check icon and text button", function() {
+	QUnit.test("Check icon and text button", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button({
 			type : sap.m.ButtonType.Default,
@@ -360,7 +360,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("Check when in bar container with button width set in percent", function() {
+	QUnit.test("Check when in bar container with button width set in percent", function(assert) {
 
 		var oButton1,
 			oButton2,
@@ -409,7 +409,7 @@
 	});
 
 
-	test("Button textDirecton attribute", function() {
+	QUnit.test("Button textDirecton attribute", function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new sap.m.SegmentedButton({
@@ -441,7 +441,7 @@
 
 	});
 
-	test("Button visible attribute", function() {
+	QUnit.test("Button visible attribute", function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new sap.m.SegmentedButton({
@@ -484,7 +484,7 @@
 
 	});
 
-	test("Mixed content buttons width calculation when in bar (all buttons should have the same width)", function() {
+	QUnit.test("Mixed content buttons width calculation when in bar (all buttons should have the same width)", function(assert) {
 
 		// Arrange
 		var oButton1 = new sap.m.Button({text: "All"}),
@@ -526,7 +526,7 @@
 
 	});
 
-	test("Initialize with items aggregation", function() {
+	QUnit.test("Initialize with items aggregation", function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new sap.m.SegmentedButton({
@@ -557,7 +557,7 @@
 
 	});
 
-	test("Items aggregation tooltip", function() {
+	QUnit.test("Items aggregation tooltip", function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new sap.m.SegmentedButton({
@@ -590,7 +590,7 @@
 
 	});
 
-	test("Items aggregation visible property", function() {
+	QUnit.test("Items aggregation visible property", function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new sap.m.SegmentedButton({
@@ -634,7 +634,7 @@
 
 	});
 
-	test("selectedKey is set correctly for invisible items and removes the selection from other items", function() {
+	QUnit.test("selectedKey is set correctly for invisible items and removes the selection from other items", function(assert) {
 
 		//Arrange
 		var oSegmentedButton = new sap.m.SegmentedButton({
@@ -675,7 +675,7 @@
 
 	});
 
-	test("Initialize with XML view", function() {
+	QUnit.test("Initialize with XML view", function(assert) {
 
 		// Arrange
 		var xmlData = '<core:FragmentDefinition\
@@ -711,7 +711,7 @@
 
 	});
 
-	test("ID's of internal elements properly set/rendered", function() {
+	QUnit.test("ID's of internal elements properly set/rendered", function(assert) {
 
 		var sItemIdComponent = "segmentedButtonItem-",
 			aButtons,
@@ -772,7 +772,7 @@
 
 	});
 
-	test("Using the .sapMSegmentedButtonNoAutoWidth CSS class", function () {
+	QUnit.test("Using the .sapMSegmentedButtonNoAutoWidth CSS class", function (assert) {
 
 		// Arrange
 		var oSB,
@@ -825,7 +825,7 @@
 
 	QUnit.module("Event");
 
-	test("SegmentedButton Select Events", function() {
+	QUnit.test("SegmentedButton Select Events", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button();
 		var oButton2 = new sap.m.Button();
@@ -855,7 +855,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("Select event fire count", function() {
+	QUnit.test("Select event fire count", function(assert) {
 		// Arrange
 		var fnCallback = sinon.spy();
 		var oButton1 = new sap.m.Button();
@@ -949,7 +949,7 @@
 
 	QUnit.module("API");
 
-	test("SegmentedButton setSelectedButton API call", function() {
+	QUnit.test("SegmentedButton setSelectedButton API call", function(assert) {
 
 		// Arrange
 		var oButton1 = new sap.m.Button({
@@ -1004,7 +1004,7 @@
 	/* Check default values           */
 	/* ------------------------------ */
 
-	test("Test default values", function() {
+	QUnit.test("Test default values", function(assert) {
 		// System under Test
 		var oSegmentedButton = new sap.m.SegmentedButton({
 			buttons : [new sap.m.Button(), new sap.m.Button()]
@@ -1033,7 +1033,7 @@
 	/* addButton and indexOfButton    */
 	/* ------------------------------ */
 
-	test("addButton and indexOfButton ", function() {
+	QUnit.test("addButton and indexOfButton ", function(assert) {
 		// System under Test
 		var oSegmentedButton = new sap.m.SegmentedButton();
 
@@ -1055,7 +1055,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("indexOfButton ", function() {
+	QUnit.test("indexOfButton ", function(assert) {
 		// System under Test
 		var oSegmentedButton = new sap.m.SegmentedButton();
 
@@ -1082,7 +1082,7 @@
 	/* setEnabled()                   */
 	/* ------------------------------ */
 
-	test("Disbale SegmentedButton", function() {
+	QUnit.test("Disbale SegmentedButton", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button();
 		var oButton2 = new sap.m.Button();
@@ -1111,7 +1111,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("Disable single button", function() {
+	QUnit.test("Disable single button", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button();
 		var oButton2 = new sap.m.Button();
@@ -1144,7 +1144,7 @@
 	/* removeButton()                 */
 	/* ------------------------------ */
 
-	test("remove button", function() {
+	QUnit.test("remove button", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button();
 		var oButton2 = new sap.m.Button();
@@ -1177,7 +1177,7 @@
 	/* removeAllButtons()             */
 	/* ------------------------------ */
 
-	test("remove all buttons", function() {
+	QUnit.test("remove all buttons", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button();
 		var oButton2 = new sap.m.Button();
@@ -1211,7 +1211,7 @@
 	/* destroyButtons()               */
 	/* ------------------------------ */
 
-	test("Destroy button", function() {
+	QUnit.test("Destroy button", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button();
 		var oButton2 = new sap.m.Button();
@@ -1236,7 +1236,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("getSelectedKey()", function() {
+	QUnit.test("getSelectedKey()", function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new sap.m.SegmentedButton({
@@ -1269,7 +1269,7 @@
 
 	});
 
-	test("when using items & setSelectedKey() is called, setSelectedButton() is called too", function() {
+	QUnit.test("when using items & setSelectedKey() is called, setSelectedButton() is called too", function(assert) {
 		// Arrange
 		var oItem1 = new sap.m.SegmentedButtonItem({
 			key: "b1",
@@ -1298,7 +1298,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("setSelectedKey()", function() {
+	QUnit.test("setSelectedKey()", function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new sap.m.SegmentedButton({
@@ -1349,7 +1349,7 @@
 
 	});
 
-	test("selectedKey property on button press", function() {
+	QUnit.test("selectedKey property on button press", function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new sap.m.SegmentedButton({
@@ -1382,7 +1382,7 @@
 
 	});
 
-	test("sap.m.SegmentedButtonItem property update", function () {
+	QUnit.test("sap.m.SegmentedButtonItem property update", function (assert) {
 
 		// Arrange
 		var oSBI = new sap.m.SegmentedButtonItem({
@@ -1577,7 +1577,7 @@
 
 	QUnit.module("Helper functions");
 
-	test("_getButtonWidth private method", function () {
+	QUnit.test("_getButtonWidth private method", function (assert) {
 		// Arrange
 		var oSB = new sap.m.SegmentedButton(),
 			aButtons;
@@ -1638,7 +1638,7 @@
 
 	});
 
-	test("_getRenderedButtonWidths private method", function () {
+	QUnit.test("_getRenderedButtonWidths private method", function (assert) {
 		// Arrange
 		var oSB,
 			aButtons;
@@ -1670,7 +1670,7 @@
 		aButtons = null;
 	});
 
-	test("_clearAutoWidthAppliedToControl private method", function () {
+	QUnit.test("_clearAutoWidthAppliedToControl private method", function (assert) {
 		// Arrange
 		var oSB,
 			aButtons,
@@ -1719,7 +1719,7 @@
 		aButtons = null;
 	});
 
-	test("_handleContainerResize private method", function () {
+	QUnit.test("_handleContainerResize private method", function (assert) {
 		// Arrange
 		var oSB = new sap.m.SegmentedButton({
 			items: [
@@ -1746,7 +1746,7 @@
 		oSB = null;
 	});
 
-	test("_updateWidth private method", function () {
+	QUnit.test("_updateWidth private method", function (assert) {
 		// Arrange
 		var oSB,
 			aButtons,
@@ -1795,7 +1795,7 @@
 		oSB = null;
 	});
 
-	test("_updateWidth - sum of buttons width is greater than parent element width", function () {
+	QUnit.test("_updateWidth - sum of buttons width is greater than parent element width", function (assert) {
 		// Arrange
 		var that = this,
 			oSB = new sap.m.SegmentedButton({
@@ -1841,7 +1841,7 @@
 
 	QUnit.module("Data binding");
 
-	test("Data binding buttons aggregation", function() {
+	QUnit.test("Data binding buttons aggregation", function(assert) {
 		// Arrange
 		var mData = {
 			"items" : [{
@@ -1927,7 +1927,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("Data binding items aggregation", function() {
+	QUnit.test("Data binding items aggregation", function(assert) {
 		// Arrange
 		var mData = {
 			selectedKey: "b7",
@@ -2001,7 +2001,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("Data binding items aggregation live model change", function() {
+	QUnit.test("Data binding items aggregation live model change", function(assert) {
 		var mDataInitial,
 			mDataSecond,
 			oSegmentedButton,
@@ -2094,7 +2094,7 @@
 	QUnit.module("Keyboard handling");
 
 	function checkKeyboardEventhandling(sTestName, oOptions) {
-		test(sTestName, function() {
+		QUnit.test(sTestName, function(assert) {
 			// Arrange
 			var oButton1 = new sap.m.Button();
 			var oButton2 = new sap.m.Button();
@@ -2198,72 +2198,72 @@
 
 	// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 	if (!sap.ui.Device.browser.phantomJS) {
-		test('Left Arrow after setSelectedButton call on image buttons - fix 619572', function() {
+		QUnit.test('Left Arrow after setSelectedButton call on image buttons - fix 619572', function(assert) {
 			// Flip the arrow keys in RTL mode
 			var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_RIGHT : jQuery.sap.KeyCodes.ARROW_LEFT;
 			testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 2, keycode: keyCode});
 		});
 
-		test('Left Arrow when the first button has the focus', function() {
+		QUnit.test('Left Arrow when the first button has the focus', function(assert) {
 			var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_RIGHT : jQuery.sap.KeyCodes.ARROW_LEFT;
 			testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: keyCode});
 		});
 
-		test('Right Arrow', function() {
+		QUnit.test('Right Arrow', function(assert) {
 			var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT;
 			testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 2, keycode: keyCode});
 		});
 
-		test('Right Arrow when the last button has the focus', function() {
+		QUnit.test('Right Arrow when the last button has the focus', function(assert) {
 			var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT;
 			testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: keyCode});
 		});
 
-		test('Up Arrow', function() {
+		QUnit.test('Up Arrow', function(assert) {
 			testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 2, keycode: jQuery.sap.KeyCodes.ARROW_UP});
 		});
 
-		test('Up Arrow when the first button has the focus', function() {
+		QUnit.test('Up Arrow when the first button has the focus', function(assert) {
 			testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.ARROW_UP});
 		});
 
-		test('Down Arrow', function() {
+		QUnit.test('Down Arrow', function(assert) {
 			testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 2, keycode: jQuery.sap.KeyCodes.ARROW_DOWN});
 		});
 
-		test('Down Arrow when the last button has the focus', function() {
+		QUnit.test('Down Arrow when the last button has the focus', function(assert) {
 			testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.ARROW_DOWN});
 		});
 
-		test('Home', function() {
+		QUnit.test('Home', function(assert) {
 			testNavigationSegmentedButton4Items({initialSelectedIndex: 2, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.HOME});
 		});
 
-		test('Home when the first button has the focus', function() {
+		QUnit.test('Home when the first button has the focus', function(assert) {
 			testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.HOME});
 		});
 
-		test('Page up', function() {
+		QUnit.test('Page up', function(assert) {
 			testNavigationSegmentedButton4Items({initialSelectedIndex: 2, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.PAGE_UP});
 		});
 
-		test('Page up when the first button has the focus', function() {
+		QUnit.test('Page up when the first button has the focus', function(assert) {
 			testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.PAGE_UP});
 		});
 
-		test('End', function() {
+		QUnit.test('End', function(assert) {
 			testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.END});
 		});
 
-		test('End when the last button has the focus', function() {
+		QUnit.test('End when the last button has the focus', function(assert) {
 			testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.END});
 		});
 
-		test('Page up', function() {
+		QUnit.test('Page up', function(assert) {
 			testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.PAGE_DOWN});
 		});
 
-		test('Page up when the last button has the focus', function() {
+		QUnit.test('Page up when the last button has the focus', function(assert) {
 			testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.PAGE_DOWN});
 		});
 	}
@@ -2272,7 +2272,7 @@
 
 	QUnit.module('ARIA');
 
-	test("Check aria atributes", function() {
+	QUnit.test("Check aria atributes", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button();
 		var oButton2 = new sap.m.Button();
@@ -2302,7 +2302,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("Check aria attributes on SegmentedButton with icons", function() {
+	QUnit.test("Check aria attributes on SegmentedButton with icons", function(assert) {
 		// Arrange
 		var oSegmentedButton = new sap.m.SegmentedButton({
 			items : [
@@ -2380,7 +2380,7 @@
 
 	QUnit.module('Select Mode');
 
-	test("When not in select mode, there is no overhead", function() {
+	QUnit.test("When not in select mode, there is no overhead", function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new sap.m.SegmentedButton({
@@ -2420,7 +2420,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("Activating select mode works", function() {
+	QUnit.test("Activating select mode works", function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new sap.m.SegmentedButton({
@@ -2460,7 +2460,7 @@
 	});
 
 
-	test("Modifying the segmented button affects the select", function() {
+	QUnit.test("Modifying the segmented button affects the select", function(assert) {
 		var newText = "new text";
 
 		// Arrange
@@ -2495,7 +2495,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("Modifying the select affects the segmented button", function() {
+	QUnit.test("Modifying the select affects the segmented button", function(assert) {
 		var newText = "new text";
 
 		// Arrange
@@ -2531,7 +2531,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("When switched to select mode and back to normal mode, there are no leftovers", function() {
+	QUnit.test("When switched to select mode and back to normal mode, there are no leftovers", function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new sap.m.SegmentedButton({
@@ -2574,7 +2574,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("_toSelectMode transfers only visible buttons into select items", function() {
+	QUnit.test("_toSelectMode transfers only visible buttons into select items", function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new sap.m.SegmentedButton({
@@ -2617,7 +2617,7 @@
 		oSegmentedButton.destroy();
 	});
 
-    test("Can work with special characters in the ID", function() {
+    QUnit.test("Can work with special characters in the ID", function(assert) {
 
         // Arrange
         var oSegmentedButton = new sap.m.SegmentedButton({
@@ -2646,7 +2646,7 @@
 
     QUnit.module("SegmentedButton in communicates changes in its aggregated items/buttons");
 
-    test("Changing the text property aggregated buttons", function () {
+    QUnit.test("Changing the text property aggregated buttons", function (assert) {
         // Arrange
         var oTestItem = new sap.m.Button({text: "Button 1"}),
             oSegmentedButton = new sap.m.SegmentedButton({buttons: [oTestItem]}),
@@ -2670,7 +2670,7 @@
     });
 
 
-    test("Changing the text property aggregated items", function () {
+    QUnit.test("Changing the text property aggregated items", function (assert) {
         // Arrange
         var oTestItem = new sap.m.SegmentedButtonItem({text: "Button 1"}),
             oSegmentedButton = new sap.m.SegmentedButton({items: [oTestItem]}),

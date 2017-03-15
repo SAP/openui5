@@ -100,7 +100,7 @@
 
 		QUnit.module("API");
 
-		test("Properties - Default Values", function() {
+		QUnit.test("Properties - Default Values", function(assert) {
 			equal(oShell.getIcon(), "", "Default 'icon'");
 			equal(oShell.getShowPane(), false, "Default 'showPane'");
 			equal(oShell.getShowCurtain(), false, "Default 'showCurtain'");
@@ -109,7 +109,7 @@
 			equal(oShell.getSearchVisible(), true, "Default 'searchVisible'");
 		});
 
-		test("Properties - Custom Values", function() {
+		QUnit.test("Properties - Custom Values", function(assert) {
 			equal(oShell2.getIcon(), "../icon.png", "Custom 'icon'");
 			equal(oShell2.getShowPane(), true, "Custom 'showPane'");
 			equal(oShell2.getShowCurtain(), true, "Custom 'showCurtain'");
@@ -118,31 +118,31 @@
 			equal(oShell2.getSearchVisible(), false, "Custom 'searchVisible'");
 		});
 
-		test("Aggregation 'content'", function() {
+		QUnit.test("Aggregation 'content'", function(assert) {
 			testMultiAggregation("content", oShell2);
 		});
 
-		test("Aggregation 'paneContent'", function() {
+		QUnit.test("Aggregation 'paneContent'", function(assert) {
 			testMultiAggregation("paneContent", oShell2);
 		});
 
-		test("Aggregation 'curtainContent'", function() {
+		QUnit.test("Aggregation 'curtainContent'", function(assert) {
 			testMultiAggregation("curtainContent", oShell2);
 		});
 
-		test("Aggregation 'curtainPaneContent'", function() {
+		QUnit.test("Aggregation 'curtainPaneContent'", function(assert) {
 			testMultiAggregation("curtainPaneContent", oShell2);
 		});
 
-		test("Aggregation 'headItems'", function() {
+		QUnit.test("Aggregation 'headItems'", function(assert) {
 			testMultiAggregation("headItems", oShell2);
 		});
 
-		test("Aggregation 'headEndItems'", function() {
+		QUnit.test("Aggregation 'headEndItems'", function(assert) {
 			testMultiAggregation("headEndItems", oShell2);
 		});
 
-		test("Aggregation 'search'", function() {
+		QUnit.test("Aggregation 'search'", function(assert) {
 			ok(!oShell2.getSearch(), "Initially no search control");
 			oShell2.setSearch(new my.Test());
 			ok(!!oShell2.getSearch(), "Search control available after set");
@@ -150,7 +150,7 @@
 			ok(!oShell2.getSearch(), "No search control again");
 		});
 
-		test("Aggregation 'user'", function() {
+		QUnit.test("Aggregation 'user'", function(assert) {
 			ok(!oShell2.getUser(), "Initially no user button");
 			oShell2.setUser(new sap.ui.unified.ShellHeadUserItem());
 			ok(!!oShell2.getUser(), "User button available after set");
@@ -161,7 +161,7 @@
 
 		QUnit.module("Rendering");
 
-		test("Content", function() {
+		QUnit.test("Content", function(assert) {
 			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-header-hdr-center"), jQuery.sap.domById("search")), "Search rendered correctly");
 			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-header-hdr-begin"), jQuery.sap.domById("_itm")), "Header Items rendered correctly");
 			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-header-hdr-end"), jQuery.sap.domById("_end_itm")), "Header End Items rendered correctly");
@@ -238,7 +238,7 @@
 			}, 600);
 		});
 
-		test("Item press", function() {
+		QUnit.test("Item press", function(assert) {
 			var aItems = ["_itm", "_end_itm", "_useritm"];
 
 			var bEventFired = false;
@@ -256,7 +256,7 @@
 			}
 		});
 
-		test("Item toggle state", function() {
+		QUnit.test("Item toggle state", function(assert) {
 			var oItem = sap.ui.getCore().byId("_itm");
 
 			function checkToggle(bSelected, bToggleEnabled, bExpectVisualSelection, sAriaPressed) {
@@ -276,7 +276,7 @@
 			checkToggle(true, true, true, "true");
 		});
 
-		test("Clear UI", 0, function(){
+		QUnit.test("Clear UI", 0, function(assert) {
 			jQuery("#uiArea1").remove();
 		});
 

@@ -69,11 +69,11 @@
 
 		QUnit.module("Core Versions");
 
-		test("Core Version", function() {
+		QUnit.test("Core Version", function(assert) {
 			equal(config.getVersion().toString(), sap.ui.version, "Used UI5 Core version");
 		});
 
-		test("Compatibility Version", function() {
+		QUnit.test("Compatibility Version", function(assert) {
 			var _origConfig = window["sap-ui-config"];
 
 			function checkCompat(oConf, sText, sExp1, sExp2){
@@ -118,7 +118,7 @@
 		    })();
 		}
 
-		test("Create", function() {
+		QUnit.test("Create", function(assert) {
 			var args, text;
 			var values = [[2, 2, 2], [30, 40, 0], [22, 0, 15, "-SNAPSHOT"]];
 			var result = [[2, 2, 2, ""], [30, 40, 0, ""], [22, 0, 15, "-SNAPSHOT"]];
@@ -137,7 +137,7 @@
 			}
 		});
 
-		test("Cast", function() {
+		QUnit.test("Cast", function(assert) {
 			ok(jQuery.sap.Version(v1) === v1, "jQuery.sap.Version(v1) === v1");
 			var v = jQuery.sap.Version(v1.toString());
 			ok(jQuery.sap.Version(v1) != v, "jQuery.sap.Version(v1) != jQuery.sap.Version(v1.toString())");
@@ -150,7 +150,7 @@
 		var getter = ["toString", "getMajor", "getMinor", "getPatch", "getSuffix"];
 
 		for(var i=0; i<getter.length; i++){
-			test(getter[i], (function getterCheck(sName, resIdx){
+			QUnit.test(getter[i], (function getterCheck(sName, resIdx){
 				var getter_Values = ["2.5", "34.0.5.Hello", "4", "Hello"];
 				var getter_Results = [[2, 5, 0, ""], [34, 0, 5, ".Hello"], [4, 0, 0, ""], [0, 0, 0, ""]];
 
@@ -167,7 +167,7 @@
 
 		QUnit.module("jQuery.sap.Version - Compare");
 
-		test("Equals", function() {
+		QUnit.test("Equals", function(assert) {
 			var vOk, vWrong, argsOk, argsWrong, text;
 
 			for(var i=0; i<part.length; i++){ // major, minor, patch, suffix
@@ -186,7 +186,7 @@
 		});
 
 
-		test("Smaller", function() {
+		QUnit.test("Smaller", function(assert) {
 			var vOk, vWrong, argsOk, argsWrong, text;
 
 			for(var i=0; i<part.length; i++){ // major, minor, patch, suffix
@@ -206,7 +206,7 @@
 		});
 
 
-		test("Greater", function() {
+		QUnit.test("Greater", function(assert) {
 			var vOk, vWrong, argsOk, argsWrong, text;
 
 			for(var i=0; i<part.length; i++){ // major, minor, patch, suffix
@@ -226,7 +226,7 @@
 		});
 
 
-		test("Range", function() {
+		QUnit.test("Range", function(assert) {
 			var start = [3, 5],
 				end = [4, 2],
 				rangeCheck = ["v<min", "v=min", "min<v<max", "v=max", "v>max"],

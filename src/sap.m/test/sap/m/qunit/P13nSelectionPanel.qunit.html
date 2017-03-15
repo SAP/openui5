@@ -42,7 +42,7 @@
 	// ------------------------------ //
 	// tests for default values       //
 	// ------------------------------ //
-	test("constructor - items: []", function() {
+	QUnit.test("constructor - items: []", function(assert) {
 
 		// system under test
 		var oSelectionPanel = new sap.m.P13nSelectionPanel({
@@ -61,7 +61,7 @@
 		oSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems]", function() {
+	QUnit.test("constructor - items: [aItems]", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -102,7 +102,7 @@
 		oSelectionPanel.destroy();
 	});
 
-	test("constructor - [], addItem", function() {
+	QUnit.test("constructor - [], addItem", function(assert) {
 
 		// system under test
 		var oSelectionPanel = new sap.m.P13nSelectionPanel();
@@ -142,7 +142,7 @@
 		oSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems], insertItem", function() {
+	QUnit.test("constructor - items: [aItems], insertItem", function(assert) {
 
 		// system under test
 		var oItemA, oItemB = new sap.m.P13nItem({
@@ -186,7 +186,7 @@
 		oSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems], removeItem", function() {
+	QUnit.test("constructor - items: [aItems], removeItem", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -229,7 +229,7 @@
 		oSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems], removeItem dummy", function() {
+	QUnit.test("constructor - items: [aItems], removeItem dummy", function(assert) {
 
 		// system under test
 		var oItemA, oItemB = new sap.m.P13nItem({
@@ -272,7 +272,7 @@
 		oSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems], removeAllItems", function() {
+	QUnit.test("constructor - items: [aItems], removeAllItems", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -311,7 +311,7 @@
 		oSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems], destroyItems", function() {
+	QUnit.test("constructor - items: [aItems], destroyItems", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -347,7 +347,7 @@
 		oSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems], selectionItems: [aSelectionItems]", function() {
+	QUnit.test("constructor - items: [aItems], selectionItems: [aSelectionItems]", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -395,7 +395,7 @@
 		oSelectionPanel.destroy();
 	});
 
-	test("constructor - selectionItems: [aSelectionItems], items: [aItems]", function() {
+	QUnit.test("constructor - selectionItems: [aSelectionItems], items: [aItems]", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -443,7 +443,7 @@
 		oSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems], selectionItems: [aSelectionItems]", function() {
+	QUnit.test("constructor - items: [aItems], selectionItems: [aSelectionItems]", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -493,7 +493,7 @@
 		oSelectionPanel.destroy();
 	});
 
-	test("getOkPayload: â0 -> a0", function() {
+	QUnit.test("getOkPayload: â0 -> a0", function(assert) {
 
 		// system under test
 		var oSelectionItemA;
@@ -532,7 +532,7 @@
 		oSelectionPanel.destroy();
 	});
 
-	test("getOkPayload: a0 -> â0", function() {
+	QUnit.test("getOkPayload: a0 -> â0", function(assert) {
 
 		// system under test
 		var oSelectionPanel = new sap.m.P13nSelectionPanel({
@@ -564,7 +564,7 @@
 		oSelectionPanel.destroy();
 	});
 
-	test("getOkPayload: a0 -> a1", function() {
+	QUnit.test("getOkPayload: a0 -> a1", function(assert) {
 
 		// system under test
 		var oSelectionPanel = new sap.m.P13nSelectionPanel({
@@ -594,7 +594,7 @@
 		oSelectionPanel.destroy();
 	});
 
-	test("getOkPayload: a0 -> â1", function() {
+	QUnit.test("getOkPayload: a0 -> â1", function(assert) {
 
 		// system under test
 		var oSelectionPanel = new sap.m.P13nSelectionPanel({
@@ -626,7 +626,7 @@
 		oSelectionPanel.destroy();
 	});
 
-	test("getOkPayload: â0 -> â1", function() {
+	QUnit.test("getOkPayload: â0 -> â1", function(assert) {
 
 		// system under test
 		var oSelectionItemsA;
@@ -666,7 +666,7 @@
 		oSelectionPanel.destroy();
 	});
 
-	test("getOkPayload: â0 -> a1", function() {
+	QUnit.test("getOkPayload: â0 -> a1", function(assert) {
 
 		// system under test
 		var oSelectionItemsA;

@@ -32,7 +32,7 @@
 			}
 		});
 
-		test("has correct init state", function () {
+		QUnit.test("has correct init state", function (assert) {
 			// Arrange
 			var oToolbar = new sap.m.Toolbar();
 
@@ -46,7 +46,7 @@
 			oToolbar.destroy();
 		});
 
-		test("content is managed correctly", function () {
+		QUnit.test("content is managed correctly", function (assert) {
 			// Arrange
 			var oToolbar = new sap.m.Toolbar(),
 					oSegment = new sap.m.semantic.Segment(null, oToolbar, "content"),

@@ -149,7 +149,7 @@
 					assert.equal(oIcon7, oIcon8, "Multi-Icons have correct content");
 
 				});
-				QUnit.test("getIconInfo: icons under the undefined collection", function() {
+				QUnit.test("getIconInfo: icons under the undefined collection", function(assert) {
 					var oIconInfo = IconPool.getIconInfo("manager");
 
 					assert.strictEqual(oIconInfo.collectionName, undefined, "The default collection name should be undefined");

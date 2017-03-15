@@ -92,7 +92,7 @@
 
 			QUnit.module("Initial Check");
 
-			test("Initialization", function() {
+			QUnit.test("Initialization", function(assert) {
 				ok(!jQuery.sap.domById("actionsheet"), "ActionSheet is not rendered before it's ever opened.");
 			});
 
@@ -518,7 +518,7 @@
 
 			QUnit.module("Screen reader");
 
-			test("Popup should have ariaLabelledBy that points to the sPopupHiddenLabelId", function(assert) {
+			QUnit.test("Popup should have ariaLabelledBy that points to the sPopupHiddenLabelId", function(assert) {
 				var done = assert.async(),
 					oButton = new sap.m.Button({
 						text : "Open ActionSheet",
@@ -554,7 +554,7 @@
 				});
 			});
 
-			test('Dialog without a title on mobile phone should have ariaLabeleedBy pointing to the sPopupHiddenLabelId', function(assert){
+			QUnit.test('Dialog without a title on mobile phone should have ariaLabeleedBy pointing to the sPopupHiddenLabelId', function(assert) {
 				var done = assert.async(),
 					oSystem = {
 						desktop: false,
@@ -733,7 +733,7 @@
 
 			QUnit.module("API");
 
- 			test('ActionSheet clone should create a duplicate', function() {
+ 			QUnit.test('ActionSheet clone should create a duplicate', function(assert) {
  				function mockButtonPressHandler() {
  					jQuery.sap.log.info('mock button press event handler was triggered');
  				}
@@ -775,7 +775,7 @@
 
  			});
 
-			test('After removing buttons the additional invisible texts should be cleaned', function () {
+			QUnit.test('After removing buttons the additional invisible texts should be cleaned', function (assert) {
 				var oButton = new sap.m.Button({text: "Button1"}),
 					oActionSheet = new sap.m.ActionSheet({
 						cancelButtonText: "Cancel",

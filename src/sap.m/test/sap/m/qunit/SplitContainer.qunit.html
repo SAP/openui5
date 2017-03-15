@@ -66,7 +66,7 @@
 				}
 			});
 
-			test("Try add master page more than once", function() {
+			QUnit.test("Try add master page more than once", function(assert) {
 				//Assert
 				var page = new sap.m.Page("master3");
 				strictEqual(this.sut.getMasterPages().length, 2, "initial master pages are 2");
@@ -80,7 +80,7 @@
 
 			});
 
-			test("Properties default values", function() {
+			QUnit.test("Properties default values", function(assert) {
 				strictEqual(this.sut.getDefaultTransitionNameDetail(), "slide", "Default value of the property is 'slide'");
 
 				strictEqual(this.sut.getDefaultTransitionNameMaster(), "slide", "Default value of the property is 'slide'");
@@ -98,7 +98,7 @@
 				strictEqual(this.sut.getBackgroundOpacity(), 1, "Default value of the property backgroundOpacity is '1'");
 			});
 
-			test("Try add detail page twice", function() {
+			QUnit.test("Try add detail page twice", function(assert) {
 				var page = new sap.m.Page("detail3");
 				strictEqual(this.sut.getDetailPages().length, 2, "initial detail pages are 2");
 
@@ -338,7 +338,7 @@
 				oSplitContainer.showMaster();
 			});
 
-			test("sap.ui.Device.resize event should be reacted also on phone", function() {
+			QUnit.test("sap.ui.Device.resize event should be reacted also on phone", function(assert) {
 				var oPortrait = {
 						landscape: false,
 						portrait: true
@@ -365,7 +365,7 @@
 				oSplitContainer.destroy();
 			});
 
-			test("Navigate and afterNavigate events should work in phone also", function(){
+			QUnit.test("Navigate and afterNavigate events should work in phone also", function(assert){
 				var oSystem = {
 							desktop: false,
 							phone: true,
@@ -402,7 +402,7 @@
 				sap.ui.Device.system = oOldSystem;
 			});
 
-			test("Should show and hide a masterButton with a toolbar", function() {
+			QUnit.test("Should show and hide a masterButton with a toolbar", function(assert) {
 				// Arrange
 				var oPortrait = {
 						landscape: false,
@@ -448,7 +448,7 @@
 				oSplitContainer.destroy();
 			});
 
-			test("Set custom header to current detail page after master button is already inserted", function(){
+			QUnit.test("Set custom header to current detail page after master button is already inserted", function(assert){
 				var oPortrait = {
 						landscape: false,
 						portrait: true
@@ -487,7 +487,7 @@
 				oSplitContainer.destroy();
 			});
 
-			test("Add NavContainer to detail area of SplitContainer and test the show/hide master button", function() {
+			QUnit.test("Add NavContainer to detail area of SplitContainer and test the show/hide master button", function(assert) {
 				// Arrange
 				var oPortrait = {
 						landscape: false,
@@ -531,7 +531,7 @@
 				oSC.destroy();
 			});
 
-			test("Overwrite and restore of methods on page in detail area of SplitContainer when not runs on phone", function() {
+			QUnit.test("Overwrite and restore of methods on page in detail area of SplitContainer when not runs on phone", function(assert) {
 				var oSystem = {
 						desktop: true,
 						phone: false,
@@ -554,7 +554,7 @@
 				strictEqual(oPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "setShowNavButton should be restored");
 			});
 
-			test("Functions on page shouldn't be patched when runs on phone", function() {
+			QUnit.test("Functions on page shouldn't be patched when runs on phone", function(assert) {
 				var oSystem = {
 						desktop: false,
 						phone: true,
@@ -574,7 +574,7 @@
 				oSC.destroy();
 			});
 
-			test("Hide hamburger button when page shows back button", function() {
+			QUnit.test("Hide hamburger button when page shows back button", function(assert) {
 				var oPortrait = {
 						landscape: false,
 						portrait: true
@@ -606,7 +606,7 @@
 				oSC.destroy();
 			});
 
-			test("Call preventDefault on masterNavigate or detailNavigate events should prevent the navigation", function() {
+			QUnit.test("Call preventDefault on masterNavigate or detailNavigate events should prevent the navigation", function(assert) {
 				var oLandscape = {
 						landscape: true,
 						portrait: false
@@ -652,7 +652,7 @@
 				oSC.destroy();
 			});
 
-			test("Show hamburger button when there's INVISIBLE back button in detail page's header", function() {
+			QUnit.test("Show hamburger button when there's INVISIBLE back button in detail page's header", function(assert) {
 				var oPortrait = {
 						landscape: false,
 						portrait: true
@@ -692,7 +692,7 @@
 				oSC.destroy();
 			});
 
-			test("restore the overwritten methods on pages when page is moved from splitcontainer to navcontainer", function() {
+			QUnit.test("restore the overwritten methods on pages when page is moved from splitcontainer to navcontainer", function(assert) {
 				var oDetailPage = new sap.m.Page(),
 					oSplitContainer = new sap.m.SplitContainer({
 						detailPages: oDetailPage
@@ -773,7 +773,7 @@
 				});
 			});
 
-			test("Initialize the SplitContainer in portrait mode and switch to landscape, the sapMSplitContainerPortrait class should be correctly removed", function() {
+			QUnit.test("Initialize the SplitContainer in portrait mode and switch to landscape, the sapMSplitContainerPortrait class should be correctly removed", function(assert) {
 				var oSystem = {
 						desktop: true,
 						tablet: false,
@@ -811,7 +811,7 @@
 				oSplitContainer.destroy();
 			});
 
-			test("MasterButtonTooltip Property", function() {
+			QUnit.test("MasterButtonTooltip Property", function(assert) {
 
 				var oTooltip = 'Custom Tooltip';
 
@@ -834,7 +834,7 @@
 				}
 			});
 
-			test("Test go to page navigation", function() {
+			QUnit.test("Test go to page navigation", function(assert) {
 				var MASTER_PAGE_ID = "master3",
 					DETAIL_PAGE_ID = "detail3";
 				//test master page navigation
@@ -850,7 +850,7 @@
 				deepEqual(this.sut.getCurrentDetailPage(), page, "Current page should be detail3");
 			});
 
-			test("Test backToPage ", function() {
+			QUnit.test("Test backToPage ", function(assert) {
 				var MASTER_PAGE_ID = "master2",
 					DETAIL_PAGE_ID = "detail2";
 				//test master page navigation
@@ -867,7 +867,7 @@
 				strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail2");
 			});
 
-			test("Test insertPreviousPage ", function() {
+			QUnit.test("Test insertPreviousPage ", function(assert) {
 				var MASTER_PAGE_ID = "master2",
 					DETAIL_PAGE_ID = "detail2";
 				//test master page navigation
@@ -884,7 +884,7 @@
 				strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail2");
 			});
 
-			test("Test backMaster  ", function() {
+			QUnit.test("Test backMaster  ", function(assert) {
 				var MASTER_PAGE_ID = "master2";
 				//test master page navigation
 
@@ -894,7 +894,7 @@
 				strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
 			});
 
-			test("Test backMasterToPage", function() {
+			QUnit.test("Test backMasterToPage", function(assert) {
 				var MASTER_PAGE_ID = "master2";
 
 				this.sut.to(MASTER_PAGE_ID);
@@ -903,7 +903,7 @@
 				strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
 			});
 
-			test("Test backDetailToPage  ", function() {
+			QUnit.test("Test backDetailToPage  ", function(assert) {
 				var DETAIL_PAGE_ID = "detail2";
 
 				//test detail page navigation
@@ -913,7 +913,7 @@
 				strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail2");
 			});
 
-			test("Test backToTopDetail   ", function() {
+			QUnit.test("Test backToTopDetail   ", function(assert) {
 				var DETAIL_PAGE_ID = "detail";
 
 				//test detail page navigation
@@ -923,7 +923,7 @@
 				strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail");
 			});
 
-			test("Test backToTopMaster ", function() {
+			QUnit.test("Test backToTopMaster ", function(assert) {
 				var MASTER_PAGE_ID = "master";
 
 				this.sut.to(MASTER_PAGE_ID);
@@ -932,7 +932,7 @@
 				strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master");
 			});
 
-			test("Mater button tooltip updating", function() {
+			QUnit.test("Mater button tooltip updating", function(assert) {
 
 				this.sut.placeAt('content');
 				sap.ui.getCore().applyChanges();
@@ -956,7 +956,7 @@
 				}
 			});
 
-			test("Test indexOfMasterPage ", function() {
+			QUnit.test("Test indexOfMasterPage ", function(assert) {
 				var MASTER_PAGE_ID = "master3",
 					page = new sap.m.Page(MASTER_PAGE_ID);
 
@@ -965,14 +965,14 @@
 				strictEqual(this.sut.indexOfMasterPage(page), 2, "Index should be 2");
 			});
 
-			test("Test indexOfDetailPage ", function() {
+			QUnit.test("Test indexOfDetailPage ", function(assert) {
 				var page = page = new sap.m.Page("detail3");
 
 				this.sut.addDetailPage(page);
 				strictEqual(this.sut.indexOfDetailPage(page), 2, "Index should be 2");
 			});
 
-			test("Test addPage ", function() {
+			QUnit.test("Test addPage ", function(assert) {
 				var page = new sap.m.Page("alabala");
 
 				this.sut.addPage(page, true);
@@ -989,13 +989,13 @@
 				strictEqual(this.sut.getDetailPages().length, 3, "Detail pages now are 3");
 			});
 
-			test("Test getCurrentPage ", function() {
+			QUnit.test("Test getCurrentPage ", function(assert) {
 				strictEqual(this.sut.getCurrentPage(true).sId, "master", "Current master page is 'master'");
 
 				strictEqual(this.sut.getCurrentPage(false).sId, "detail", "Current detail page is 'detail'");
 			});
 
-			test("Test getPreviousPage ", function() {
+			QUnit.test("Test getPreviousPage ", function(assert) {
 				this.sut.to("master2");
 				strictEqual(this.sut.getPreviousPage(true).sId, "master", "Current master page is 'master'");
 
@@ -1003,7 +1003,7 @@
 				strictEqual(this.sut.getPreviousPage(false).sId, "detail", "Current detail page is 'detail'");
 			});
 
-			test("Test getMasterPage / getDetailPage ", function() {
+			QUnit.test("Test getMasterPage / getDetailPage ", function(assert) {
 				var PAGE_ID1 = "master",
 					PAGE_ID2 = "detail";
 
@@ -1012,7 +1012,7 @@
 				strictEqual(this.sut.getDetailPage(PAGE_ID2).sId, PAGE_ID2, "Expected page is is 'detail'");
 			});
 
-			test("Test getPage ", function() {
+			QUnit.test("Test getPage ", function(assert) {
 				var PAGE_ID1 = "master",
 						PAGE_ID2 = "detail";
 
@@ -1034,7 +1034,7 @@
 				}
 			});
 
-			test("Test insertDetailPage / removeAllDetailPages ", function() {
+			QUnit.test("Test insertDetailPage / removeAllDetailPages ", function(assert) {
 				var page = new sap.m.Page("detail3");
 
 				this.sut.insertDetailPage(page, 0, true);
@@ -1047,7 +1047,7 @@
 				strictEqual(this.sut.getDetailPages().length, 0, "Detail pages now are 0");
 			});
 
-			test("Test insertMasterPage / removeMasterPage / removeAllMasterPages ", function() {
+			QUnit.test("Test insertMasterPage / removeMasterPage / removeAllMasterPages ", function(assert) {
 				var page = new sap.m.Page("master3");
 
 				this.sut.insertMasterPage(page, 0, true);
@@ -1068,7 +1068,7 @@
 
 			QUnit.module("Add master and detail pages");
 
-			test("Test pages order", function() {
+			QUnit.test("Test pages order", function(assert) {
 				//arrange
 				var oSystem = {
 					desktop: false,

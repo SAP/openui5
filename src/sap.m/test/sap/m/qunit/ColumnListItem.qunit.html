@@ -27,7 +27,7 @@
 	jQuery.sap.initMobile();
 	var core = sap.ui.getCore();
 
-	test("ShouldRemoveAPopin", function() {
+	QUnit.test("ShouldRemoveAPopin", function(assert) {
 		// SUT
 		var result,
 			popinId,
@@ -58,7 +58,7 @@
 		table.destroy();
 	});
 
-	test("ShouldToggleActiveClass", function() {
+	QUnit.test("ShouldToggleActiveClass", function(assert) {
 		var testCase = function(sFunctionName,hasClass){
 			//Arrange
 			var className ="sapMLIBActive",
@@ -92,7 +92,7 @@
 		testCase("_inactiveHandlingInheritor",false);
 	});
 
-	test("Should not clone headers for popinDisplay:WithoutHeader", function() {
+	QUnit.test("Should not clone headers for popinDisplay:WithoutHeader", function(assert) {
 		// SUT
 		var result,
 			popinId,
@@ -144,7 +144,7 @@
 		table.destroy();
 	});
 
-	test("RenderOulineClassButNotLegacyOutlineClass", function() {
+	QUnit.test("RenderOulineClassButNotLegacyOutlineClass", function(assert) {
 		this.stub(sap.ui.Device.system, "desktop", true);
 		this.stub(sap.ui.Device, "browser", {"msie": true});
 

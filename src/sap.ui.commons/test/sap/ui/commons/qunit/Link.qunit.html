@@ -79,38 +79,38 @@
 
 		// test property accessor methods
 
-		test("TextOk", function() {
+		QUnit.test("TextOk", function(assert) {
 			strictEqual(l1.getText(), sText, "l1.getText()");
 			strictEqual(l2.getText(), sText, "l2.getText()");
 		});
 
-		test("EnabledOk", function() {
+		QUnit.test("EnabledOk", function(assert) {
 			strictEqual(l1.getEnabled(), bEnabled, "l1.getEnabled()");
 
 			strictEqual(l2.getEnabled(), bEnabled, "l2.getEnabled()");
 		});
 
-		test("VisibleOk", function() {
+		QUnit.test("VisibleOk", function(assert) {
 			strictEqual(l1.getVisible(), bVisible, "l1.getVisible()");
 			strictEqual(l2.getVisible(), bVisible, "l2.getVisible()");
 		});
 
-		test("TooltipOk", function() {
+		QUnit.test("TooltipOk", function(assert) {
 			strictEqual(l1.getTooltip(), sTooltip, "l1.getTooltip()");
 			strictEqual(l2.getTooltip(), sTooltip, "l2.getTooltip()");
 		});
 
-		test("HelpIdOk", function() {
+		QUnit.test("HelpIdOk", function(assert) {
 			strictEqual(l1.getHelpId(), sHelpId, "l1.getHelpId()");
 			strictEqual(l2.getHelpId(), sHelpId, "l2.getHelpId()");
 		});
 
-		test("HrefOk", function() {
+		QUnit.test("HrefOk", function(assert) {
 			strictEqual(l1.getHref(), sHref, "l1.getHref()");
 			strictEqual(l2.getHref(), sHref, "l2.getHref()");
 		});
 
-		test("TargetOk", function() {
+		QUnit.test("TargetOk", function(assert) {
 			strictEqual(l1.getTarget(), sTarget, "l1.getTarget()");
 			strictEqual(l2.getTarget(), sTarget, "l2.getTarget()");
 		});
@@ -119,7 +119,7 @@
 
 		// TODO: event handler using Event parameters
 
-		test("PressOk", function() {
+		QUnit.test("PressOk", function(assert) {
 			try {
 				l1.firePress();
 				fail("exception should have been thrown!");
@@ -135,7 +135,7 @@
 			}
 		});
 
-		test("DetachPressOk", function() {
+		QUnit.test("DetachPressOk", function(assert) {
 			l1.detachPress(pressEventHandler);
 			try {
 				l1.firePress();
@@ -159,7 +159,7 @@
 			return true;
 		}
 
-		test("MetadataOk", function() {
+		QUnit.test("MetadataOk", function(assert) {
 			var oMetadata = l1.getMetadata();
 			ok(oMetadata, "l1.getMetadata() should not be null");
 			ok(oMetadata.getParent(), "l1.getMetadata().getParent() should not be null");

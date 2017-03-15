@@ -23,7 +23,7 @@ sap.ui.define([
 
   var testHarnessTests = {
 
-    setup: function(fMockSetup, fMockTeardown, oTestHarness) {
+    beforeEach: function(fMockSetup, fMockTeardown, oTestHarness) {
 
       // mocks the test harness's QUnit/Opa5 executions (use this carefully, only for a very limited scope)
       this.fMockSetup = fMockSetup;
@@ -48,7 +48,7 @@ sap.ui.define([
       });
     },
 
-    teardown: function() {
+    afterEach: function() {
       $.sap.log.removeLogListener(this.oLogListener);
       this.oParseFileStub.restore();
     },
@@ -58,7 +58,7 @@ sap.ui.define([
       // //////////////////////////////////////////////////////////////////////////////////////////////////////
       // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
       // //////////////////////////////////////////////////////////////////////////////////////////////////////
-      QUnit.test("Smoke test for regular logging", function() {
+      QUnit.test("Smoke test for regular logging", function(assert) {
 
         var sText = [
           "Feature: The meaning of life is hard to figure out, is it really 42?",
@@ -94,7 +94,7 @@ sap.ui.define([
       // //////////////////////////////////////////////////////////////////////////////////////////////////////
       // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
       // //////////////////////////////////////////////////////////////////////////////////////////////////////
-      QUnit.test("Given an @wip scenario, then its test steps should not execute", function() {
+      QUnit.test("Given an @wip scenario, then its test steps should not execute", function(assert) {
 
         var sText = [
           "Feature: The meaning of life is hard to figure out",
@@ -137,7 +137,7 @@ sap.ui.define([
       // //////////////////////////////////////////////////////////////////////////////////////////////////////
       // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
       // //////////////////////////////////////////////////////////////////////////////////////////////////////
-      QUnit.test("Given a not found test step, then skipped tests don't execute", function() {
+      QUnit.test("Given a not found test step, then skipped tests don't execute", function(assert) {
 
         var sText = [
           "Feature: The meaning of life is hard to figure out",

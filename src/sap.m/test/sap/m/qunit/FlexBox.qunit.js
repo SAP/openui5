@@ -12,7 +12,7 @@
 	jQuery.sap.require("sap.ui.qunit.qunit-css");
 
 	if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout && !jQuery.support.ie10FlexBoxLayout) {
-		test("Dummy Test", function() {
+		QUnit.test("Dummy Test", function(assert) {
 			ok(true, "At least one test needs to run to avoid test timeouts!");
 		});
 		return;
@@ -100,18 +100,18 @@
 		}
 	});
 
-	QUnit.test("FlexBox visible:false", function() {
+	QUnit.test("FlexBox visible:false", function(assert) {
 		ok(!jQuery(".sapMFlexBox", this.fixture).length, "Flex Box should not be rendered initially");
 	});
 
-	QUnit.test("FlexBox visible:true - Item 3 visible:false", function() {
+	QUnit.test("FlexBox visible:true - Item 3 visible:false", function(assert) {
 		this.oBox.setVisible(true);
 		sap.ui.getCore().applyChanges();
 		ok(jQuery(".sapMFlexBox", this.fixture).length, "Flex Box should now be rendered");
 		equal(jQuery(".sapMFlexBox > .sapMFlexItem:not(.sapUiHiddenPlaceholder)", this.fixture).length, 2, "Only two items should be rendered");
 	});
 
-	QUnit.test("Item 3 visible:true", function() {
+	QUnit.test("Item 3 visible:true", function(assert) {
 		this.oBox.setVisible(true);
 		this.oBox.getItems()[2].setVisible(true);
 		sap.ui.getCore().applyChanges();
@@ -151,13 +151,13 @@
 		}
 	});
 
-	QUnit.test("List", function() {
+	QUnit.test("List", function(assert) {
 		equal(this.oBox.$().get(0).tagName, "UL", "Flex Box should be rendered as UL");
 		equal(this.oBox.$().find(".sapMFlexItem:first-child").get(0).tagName, "LI", "First item of Flex Box should be rendered as LI");
 		equal(this.oBox.$().find(".sapMFlexItem:nth-child(2)").get(0).tagName, "LI", "Second item of Flex Box should be rendered as LI");
 	});
 
-	QUnit.test("Div", function() {
+	QUnit.test("Div", function(assert) {
 		this.oBox.setRenderType("Div");
 		sap.ui.getCore().applyChanges();
 		equal(this.oBox.$().get(0).tagName, "DIV", "Flex Box should now be rendered as DIV");
@@ -165,7 +165,7 @@
 		equal(this.oBox.$().find(".sapMFlexItem:nth-child(2)").get(0).tagName, "DIV", "Second item of Flex Box should be rendered as DIV");
 	});
 
-	QUnit.test("Bare", function() {
+	QUnit.test("Bare", function(assert) {
 		this.oBox.setRenderType("Bare");
 		sap.ui.getCore().applyChanges();
 		equal(this.oBox.getItems()[0].$().get(0).tagName, "IMG", "First item of Flex Box should now be rendered as IMG");
@@ -192,7 +192,7 @@
 		}
 	});
 
-	QUnit.test("Inline", function() {
+	QUnit.test("Inline", function(assert) {
 		this.oBox.setDisplayInline(true);
 		if (jQuery.support.newFlexBoxLayout) {
 			equal(this.oBox.$().css('display'), sVendorPrefix + "inline-flex", "Flex Box display property should be set to inline");
@@ -203,7 +203,7 @@
 		}
 	});
 
-	QUnit.test("Block", function() {
+	QUnit.test("Block", function(assert) {
 		this.oBox.setDisplayInline(false);
 		if (jQuery.support.newFlexBoxLayout) {
 			equal(this.oBox.$().css('display'), sVendorPrefix + "flex", "Flex Box display property should be set to block");
@@ -231,7 +231,7 @@
 		}
 	});
 
-	QUnit.test("Height 100%", function() {
+	QUnit.test("Height 100%", function(assert) {
 		jQuery.sap.byId(DOM_RENDER_LOCATION).css("height", "123px");
 		this.oBox.setFitContainer(true);
 		equal(this.oBox.$().css('height'), "123px", "Flex Box height property should be set to 100%");
@@ -255,7 +255,7 @@
 		}
 	});
 
-	QUnit.test("Set explicit dimensions", function() {
+	QUnit.test("Set explicit dimensions", function(assert) {
 		this.oBox.setWidth("388px");
 		this.oBox.setHeight("398px");
 		sap.ui.getCore().applyChanges();
@@ -291,28 +291,28 @@
 		}
 	});
 
-	QUnit.test("FlexBox Solid", function() {
+	QUnit.test("FlexBox Solid", function(assert) {
 		this.oBox.setBackgroundDesign("Solid");
 		ok(this.oBox.$().hasClass("sapMFlexBoxBGSolid"), "HTML class for Solid is set");
 		ok(!this.oBox.$().hasClass("sapMFlexBoxBGTransparent"), "HTML class for Transparent is not set");
 		ok(!this.oBox.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is not set");
 	});
 
-	QUnit.test("FlexBox Transparent", function() {
+	QUnit.test("FlexBox Transparent", function(assert) {
 		this.oBox.setBackgroundDesign("Transparent");
 		ok(this.oBox.$().hasClass("sapMFlexBoxBGTransparent"), "HTML class for Transparent is set");
 		ok(!this.oBox.$().hasClass("sapMFlexBoxBGSolid"), "HTML class for Solid is not set");
 		ok(!this.oBox.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is not set");
 	});
 
-	QUnit.test("FlexBox Translucent", function() {
+	QUnit.test("FlexBox Translucent", function(assert) {
 		this.oBox.setBackgroundDesign("Translucent");
 		ok(this.oBox.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is set");
 		ok(!this.oBox.$().hasClass("sapMFlexBoxBGTransparent"), "HTML class for Transparent is not set");
 		ok(!this.oBox.$().hasClass("sapMFlexBoxBGSolid"), "HTML class for Solid is not set");
 	});
 
-	QUnit.test("Flex item Solid", function() {
+	QUnit.test("Flex item Solid", function(assert) {
 		var oItem3LayoutData = this.oBox.getItems()[2].getLayoutData();
 		oItem3LayoutData.setBackgroundDesign("Solid");
 		ok(oItem3LayoutData.$().hasClass("sapMFlexBoxBGSolid"), "HTML class for Solid is set");
@@ -320,7 +320,7 @@
 		ok(!oItem3LayoutData.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is not set");
 	});
 
-	QUnit.test("Flex item Transparent", function() {
+	QUnit.test("Flex item Transparent", function(assert) {
 		var oItem3LayoutData = this.oBox.getItems()[2].getLayoutData();
 		oItem3LayoutData.setBackgroundDesign("Transparent");
 		ok(oItem3LayoutData.$().hasClass("sapMFlexBoxBGTransparent"), "HTML class for Transparent is set");
@@ -328,7 +328,7 @@
 		ok(!oItem3LayoutData.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is not set");
 	});
 
-	QUnit.test("Flex item Translucent", function() {
+	QUnit.test("Flex item Translucent", function(assert) {
 		var oItem3LayoutData = this.oBox.getItems()[2].getLayoutData();
 		oItem3LayoutData.setBackgroundDesign("Translucent");
 		ok(oItem3LayoutData.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is set");
@@ -356,25 +356,25 @@
 		}
 	});
 
-	QUnit.test("Row Reverse", function() {
+	QUnit.test("Row Reverse", function(assert) {
 		this.oBox.setDirection("RowReverse");
 		ok((this.oItem2DomRef.getBoundingClientRect().left - this.oItem1DomRef.getBoundingClientRect().left) < 0, "Item 1 should be placed to the right of Item 2");
 		ok((this.oItem3DomRef.getBoundingClientRect().left - this.oItem2DomRef.getBoundingClientRect().left) < 0, "Item 2 should be placed to the right of Item 3");
 	});
 
-	QUnit.test("Column", function() {
+	QUnit.test("Column", function(assert) {
 		this.oBox.setDirection("Column");
 		ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) > 0, "Item 1 should be placed above Item 2");
 		ok((this.oItem3DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) > 0, "Item 2 should be placed above Item 3");
 	});
 
-	QUnit.test("Column Reverse", function() {
+	QUnit.test("Column Reverse", function(assert) {
 		this.oBox.setDirection("ColumnReverse");
 		ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) < 0, "Item 1 should be placed below Item 2");
 		ok((this.oItem3DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) < 0, "Item 2 should be placed below Item 3");
 	});
 
-	QUnit.test("Row", function() {
+	QUnit.test("Row", function(assert) {
 		this.oBox.setDirection("Row");
 		ok((this.oItem2DomRef.getBoundingClientRect().left - this.oItem1DomRef.getBoundingClientRect().left) > 0, "Item 1 should be placed to the left of Item 2");
 		ok((this.oItem3DomRef.getBoundingClientRect().left - this.oItem2DomRef.getBoundingClientRect().left) > 0, "Item 2 should be placed to the left of Item 3");
@@ -416,7 +416,7 @@
 		}
 	});
 
-	QUnit.test("3 - 1 - 2", function() {
+	QUnit.test("3 - 1 - 2", function(assert) {
 		this.oItem1LayoutData.setOrder(3);
 		this.oItem2LayoutData.setOrder(1);
 		this.oItem3LayoutData.setOrder(2);
@@ -458,21 +458,21 @@
 		}
 	});
 
-	QUnit.test("Justify Content/Align Items: Center/Center", function() {
+	QUnit.test("Justify Content/Align Items: Center/Center", function(assert) {
 		this.oBox.setJustifyContent("Center");
 		this.oBox.setAlignItems("Center");
 		ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 130) <= 1, "Item 1 should be placed at the horizontal center");
 		ok(Math.round(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 173) <= 1, "Item 1 should be placed at the vertical center");
 	});
 
-	QUnit.test("Justify Content/Align Items: End/End", function() {
+	QUnit.test("Justify Content/Align Items: End/End", function(assert) {
 		this.oBox.setJustifyContent("End");
 		this.oBox.setAlignItems("End");
 		ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 259) <= 1, "Item 1 should be placed at the horizontal end");
 		ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 346) <= 2, "Item 1 should be placed at the vertical end");
 	});
 
-	QUnit.test("Justify Content/Align Items: Space Between/Baseline", function() {
+	QUnit.test("Justify Content/Align Items: Space Between/Baseline", function(assert) {
 		this.oItem1DomRef.style.fontSize = "40px";
 		this.oBox.setJustifyContent("SpaceBetween");
 		this.oBox.setAlignItems("Baseline");
@@ -485,7 +485,7 @@
 		this.oItem1DomRef.style.fontSize = "";
 	});
 
-	QUnit.test("Justify Content/Align Items: Space Around/Stretch", function() {
+	QUnit.test("Justify Content/Align Items: Space Around/Stretch", function(assert) {
 		this.oBox.setJustifyContent("SpaceAround");
 		this.oBox.setAlignItems("Stretch");
 		ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 43) <= 1, "Item 1 should be placed at the horizontal start");
@@ -495,7 +495,7 @@
 		ok((this.oItem1DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) === 0, "Item 1 should stretch to the vertical end");
 	});
 
-	QUnit.test("Justify Content/Align Items: Start/Start", function() {
+	QUnit.test("Justify Content/Align Items: Start/Start", function(assert) {
 		this.oBox.setJustifyContent("Start");
 		this.oBox.setAlignItems("Start");
 		ok((this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left) === 0, "Item 1 should be placed at the horizontal start");
@@ -503,24 +503,24 @@
 	});
 
 	if (jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {	// align-self is not supported by older browsers
-		QUnit.test("Align Self: Start", function(){
+		QUnit.test("Align Self: Start", function(assert) {
 			this.oBox.setAlignItems("Stretch");
 			this.oItem1LayoutData.setAlignSelf("Start");
 			ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
 			ok(Math.abs(this.oBoxDomRef.getBoundingClientRect().bottom - this.oItem1DomRef.getBoundingClientRect().bottom - 346) <= 2, "Item 1 should not be stretched");
 		});
 
-		QUnit.test("Align Self: Center", function(){
+		QUnit.test("Align Self: Center", function(assert) {
 			this.oItem1LayoutData.setAlignSelf("Center");
 			ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 173) <= 1, "Item 1 should be placed at the vertical center");
 		});
 
-		QUnit.test("Align Self: End", function(){
+		QUnit.test("Align Self: End", function(assert) {
 			this.oItem1LayoutData.setAlignSelf("End");
 			ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 346) <= 2, "Item 1 should be placed at the vertical end");
 		});
 
-		QUnit.test("Align Self: Baseline", function(){
+		QUnit.test("Align Self: Baseline", function(assert) {
 			this.oItem2DomRef.style.fontSize = "40px";
 			this.oItem1LayoutData.setAlignSelf("Baseline");
 			ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
@@ -528,7 +528,7 @@
 			this.oItem2DomRef.style.fontSize = "";
 		});
 
-		QUnit.test("Align Self: Stretch", function(){
+		QUnit.test("Align Self: Stretch", function(assert) {
 			this.oItem1LayoutData.setAlignSelf("Stretch");
 			ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
 			ok((this.oItem1DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) === 0, "Item 1 should stretch to the vertical end");
@@ -568,28 +568,28 @@
 			}
 		});
 
-		QUnit.test("Wrapping: No Wrap", function() {
+		QUnit.test("Wrapping: No Wrap", function(assert) {
 			this.oBox.setWrap("NoWrap");
 			ok((this.oItem1DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) === 0, "Item 1 should be on the same line as Item 2");
 			ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
 			ok((this.oItem3DomRef.getBoundingClientRect().top - this.oItem4DomRef.getBoundingClientRect().top) === 0, "Item 3 should be on the same line as Item 4");
 		});
 
-		QUnit.test("Wrapping: Wrap", function() {
+		QUnit.test("Wrapping: Wrap", function(assert) {
 			this.oBox.setWrap("Wrap");
 			ok((this.oItem4DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) > 0, "Item 4 should be in a line below Item 2");
 			ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) > 0, "Item 2 should be in a line below Item 1");
 			ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
 		});
 
-		QUnit.test("Wrapping: Wrap Reverse", function() {
+		QUnit.test("Wrapping: Wrap Reverse", function(assert) {
 			this.oBox.setWrap("WrapReverse");
 			ok((this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) < 0, "Item 4 should be in a line above Item 2");
 			ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) < 0, "Item 2 should be in a line above Item 1");
 			ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
 		});
 
-		QUnit.test("Align Content: Start", function() {
+		QUnit.test("Align Content: Start", function(assert) {
 			this.oBox.setWrap("Wrap");
 			this.oBox.setAlignContent("Start");
 			ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
@@ -597,7 +597,7 @@
 			ok(Math.round(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) === 0, "Item 4 should be directly below Item 2");
 		});
 
-		QUnit.test("Align Content: Center", function() {
+		QUnit.test("Align Content: Center", function(assert) {
 			this.oBox.setWrap("Wrap");
 			this.oBox.setAlignContent("Center");
 			ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 86) <= 2, "Item 1 should be placed towards the vertical center");
@@ -605,7 +605,7 @@
 			ok(Math.round(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) === 0, "Item 4 should be directly below Item 2");
 		});
 
-		QUnit.test("Align Content: End", function() {
+		QUnit.test("Align Content: End", function(assert) {
 			this.oBox.setWrap("Wrap");
 			this.oBox.setAlignContent("End");
 			ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed at the vertical end");
@@ -613,7 +613,7 @@
 			ok(Math.round(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) === 0, "Item 1 should be directly above Item 2");
 		});
 
-		QUnit.test("Align Content: Space Between", function() {
+		QUnit.test("Align Content: Space Between", function(assert) {
 			this.oBox.setWrap("Wrap");
 			this.oBox.setAlignContent("SpaceBetween");
 			ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
@@ -622,7 +622,7 @@
 		});
 
 		if (!jQuery.support.ie10FlexBoxLayout) {		// IE 10 doesn't support Space Around
-			QUnit.test("Align Content: Space Around", function() {
+			QUnit.test("Align Content: Space Around", function(assert) {
 				this.oBox.setWrap("Wrap");
 				this.oBox.setAlignContent("SpaceAround");
 				ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 28) <= 1, "Item 1 should be placed below the vertical start");
@@ -631,7 +631,7 @@
 			});
 		}
 
-		QUnit.test("Align Content: Stretch", function() {
+		QUnit.test("Align Content: Stretch", function(assert) {
 			this.oBox.setWrap("Wrap");
 			this.oBox.setAlignContent("Stretch");
 			ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) <= 1, "Item 1 should be placed at the vertical start");
@@ -678,7 +678,7 @@
 		}
 	});
 
-	QUnit.test("Growing", function() {
+	QUnit.test("Growing", function(assert) {
 		this.oItem1LayoutData.setGrowFactor(1);
 		this.oItem2LayoutData.setGrowFactor(2);
 		this.oItem3LayoutData.setGrowFactor(3);
@@ -687,7 +687,7 @@
 		ok(Math.abs(this.oItem3DomRef.offsetWidth - 173) <= 1, "Width of Item 3 should be 173 (is " + this.oItem3DomRef.offsetWidth + ")");
 	});
 
-	QUnit.test("Shrinking", function() {
+	QUnit.test("Shrinking", function(assert) {
 		this.oItem1LayoutData.setShrinkFactor(1);
 		this.oItem2LayoutData.setShrinkFactor(2);
 		this.oItem3LayoutData.setShrinkFactor(3);
@@ -706,7 +706,7 @@
 		}
 	});
 
-	QUnit.test("Base Size", function() {
+	QUnit.test("Base Size", function(assert) {
 		this.oItem1LayoutData.setBaseSize("20%");
 		this.oItem2LayoutData.setBaseSize("30%");
 		this.oItem3LayoutData.setBaseSize("50%");
@@ -715,23 +715,23 @@
 		ok(Math.abs(this.oItem3DomRef.offsetWidth - 194) <= 1, "Width of Item 3 should be 194 (is " + this.oItem3DomRef.offsetWidth + ")");
 	});
 
-	QUnit.test("Min Height", function() {
+	QUnit.test("Min Height", function(assert) {
 		this.oBox.setAlignItems("Start");
 		this.oItem1LayoutData.setMinHeight("200px");
 		ok(Math.abs(this.oItem1DomRef.offsetHeight - 200) <= 1, "Height of Item 1 should be 200 (is " + this.oItem1DomRef.offsetHeight + ")");
 	});
 
-	QUnit.test("Max Height", function() {
+	QUnit.test("Max Height", function(assert) {
 		this.oItem1LayoutData.setMaxHeight("60px");
 		ok(Math.abs(this.oItem1DomRef.offsetHeight - 60) <= 1, "Height of Item 1 should be 60 (is " + this.oItem1DomRef.offsetHeight + ")");
 	});
 
-	QUnit.test("Min Width", function() {
+	QUnit.test("Min Width", function(assert) {
 		this.oItem1LayoutData.setMinWidth("200px");
 		ok(Math.abs(this.oItem1DomRef.offsetWidth - 200) <= 1, "Width of Item 1 should be 200 (is " + this.oItem1DomRef.offsetWidth + ")");
 	});
 
-	QUnit.test("Max Width", function() {
+	QUnit.test("Max Width", function(assert) {
 		this.oItem1LayoutData.setGrowFactor(1);
 		this.oItem1LayoutData.setMaxWidth("60px");
 		ok(Math.abs(this.oItem1DomRef.offsetWidth - 60) <= 1, "Width of Item 1 should be 60 (is " + this.oItem1DomRef.offsetWidth + ")");
@@ -754,7 +754,7 @@
 		}
 	});
 
-	QUnit.test("Add Item", function() {
+	QUnit.test("Add Item", function(assert) {
 		this.oItem5 = new sap.ui.core.HTML("item5", {
 			content: "<div class='items'>5</div>"
 		});
@@ -763,7 +763,7 @@
 		ok(this.oItem5.getDomRef(), "Item 5 should be rendered");
 	});
 
-	QUnit.test("Insert Item", function() {
+	QUnit.test("Insert Item", function(assert) {
 		this.oItem6 = new sap.ui.core.HTML("item6", {
 			content: "<div class='items'>6</div>"
 		});
@@ -774,14 +774,14 @@
 		equal(Array.prototype.indexOf.call(oFlexItem6.parentNode.children, oFlexItem6), 2, "Item 6 should be rendered as the third element");
 	});
 
-	QUnit.test("Remove Item", function() {
+	QUnit.test("Remove Item", function(assert) {
 		ok((this.oItem1.getDomRef().parentElement.parentElement === this.oBox.getDomRef()), "Item 1 is present");
 		this.oBox.removeItem(this.oItem1);
 		sap.ui.getCore().applyChanges();
 		ok((this.oItem1.getDomRef().parentElement.parentElement !== this.oBox.getDomRef()), "Item 1 should have been removed");
 	});
 
-	QUnit.test("Remove All Items", function() {
+	QUnit.test("Remove All Items", function(assert) {
 		this.oBox.removeAllItems();
 		sap.ui.getCore().applyChanges();
 		equal(this.oBox.getDomRef().children.length, 0, "All items should have been removed");
@@ -823,7 +823,7 @@
 		}
 	});
 
-	QUnit.test("Nested FlexBox rendered without wrapper", function() {
+	QUnit.test("Nested FlexBox rendered without wrapper", function(assert) {
 		ok(this.oItem1.getDomRef().classList.contains("sapMVBox"), "Inner VBox should be rendered without a wrapper");
 	});
 
@@ -849,7 +849,7 @@
 		}
 	});
 
-	QUnit.test("getAccessibilityInfo", function() {
+	QUnit.test("getAccessibilityInfo", function(assert) {
 		ok(!!this.oBox.getAccessibilityInfo, "FlexBox has a getAccessibilityInfo function");
 		var oInfo = this.oBox.getAccessibilityInfo();
 		ok(!!oInfo, "getAccessibilityInfo returns a info object");

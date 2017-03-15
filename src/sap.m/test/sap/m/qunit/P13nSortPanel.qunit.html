@@ -79,7 +79,7 @@
 			}));
 		};
 
-		test("Default Values", function() {
+		QUnit.test("Default Values", function(assert) {
 
 			// system under test
 			var oP13nSortPanel = new sap.m.P13nSortPanel({
@@ -97,7 +97,7 @@
 			oP13nSortPanel.destroy();
 		});
 
-		test("bind Items test", function() {
+		QUnit.test("bind Items test", function(assert) {
 
 			// system under test
 			var oP13nSortPanel = new sap.m.P13nSortPanel();
@@ -115,7 +115,7 @@
 			oP13nSortPanel.destroy();
 		});
 
-		test("bind SortItems test", function() {
+		QUnit.test("bind SortItems test", function(assert) {
 
 			// system under test
 			var oP13nSortPanel = new sap.m.P13nSortPanel();
@@ -134,7 +134,7 @@
 			oP13nSortPanel.destroy();
 		});
 
-		test("test model update events", function() {
+		QUnit.test("test model update events", function(assert) {
 
 			// system under test
 			var oP13nSortPanel = new sap.m.P13nSortPanel({
@@ -196,7 +196,7 @@
 			oP13nSortPanel.destroy();
 		});
 
-		test("bind named model", function() {
+		QUnit.test("bind named model", function(assert) {
 
 			// system under test
 			var oP13nSortPanel = new sap.m.P13nSortPanel();
@@ -226,7 +226,7 @@
 			oP13nSortPanel.destroy();
 		});
 
-		test("create with aggregations", function() {
+		QUnit.test("create with aggregations", function(assert) {
 
 			// system under test
 			var oP13nSortPanel = new sap.m.P13nSortPanel({
@@ -266,7 +266,7 @@
 			oP13nSortPanel.destroy();
 		});
 
-		test("create with addXXX", function() {
+		QUnit.test("create with addXXX", function(assert) {
 
 			// system under test
 			var oP13nSortPanel = new sap.m.P13nSortPanel();
@@ -308,7 +308,7 @@
 			oP13nSortPanel.destroy();
 		});
 
-		test("'none'", function() {
+		QUnit.test("'none'", function(assert) {
 
 			// system under test
 			var oP13nSortPanel = new sap.m.P13nSortPanel();

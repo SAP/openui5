@@ -81,7 +81,7 @@
 							" 'Element sap.m.Button#myButton' is 'text to test', expected 'foo'");
 				});
 
-				QUnit.test("With non-existing properties", function() {
+				QUnit.test("With non-existing properties", function(assert) {
 					var bResult = new Properties({
 						text : "text to test",
 						notExistingProperty : "not existing value"
@@ -90,14 +90,14 @@
 					sinon.assert.calledWith(this.fnErrorStub, "Control 'myButton' does not have a property called: 'notExistingProperty'");
 				});
 
-				QUnit.test("With regexp", function() {
+				QUnit.test("With regexp", function(assert) {
 					var bResult = new Properties({
 						text : /test/i
 					})(this.oButton);
 					assert.strictEqual(bResult, true, "Should match regexp");
 				});
 
-				QUnit.test("Should match in the pipeline", function () {
+				QUnit.test("Should match in the pipeline", function (assert) {
 					var oMatcherPipeline = new MatcherPipeline();
 
 					var bPipleineResult = oMatcherPipeline.process({

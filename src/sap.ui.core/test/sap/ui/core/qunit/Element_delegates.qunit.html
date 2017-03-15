@@ -39,7 +39,7 @@
 			onSomeEvent: testFunction
 		};
 
-		test("Adding Delegates", function() {
+		QUnit.test("Adding Delegates", function(assert) {
 			element = new sap.ui.core.Element();
 
 			equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
@@ -56,7 +56,7 @@
 			equal(element.aDelegates.length, 1, "Element should have one after delegate");
 		});
 
-		test("Triggering Delegates", function() {
+		QUnit.test("Triggering Delegates", function(assert) {
 			expect(4);
 			counter = 0;
 
@@ -67,7 +67,7 @@
 			equal(lastThisId, "del1"); // del2 should be called earlier, the this context should be the delegate itself
 		});
 
-		test("Removing Delegates", function() {
+		QUnit.test("Removing Delegates", function(assert) {
 			element.removeDelegate(del1);
 
 			equal(element.aBeforeDelegates.length, 1, "Element should have one before delegate");
@@ -86,7 +86,7 @@
 			equal(element.aDelegates.length, 0, "Element should have no after delegate");
 		});
 
-		test("Other 'this' context", function() {
+		QUnit.test("Other 'this' context", function(assert) {
 			element.addDelegate(del1, testObject);
 			lastThisId = undefined;
 
@@ -96,7 +96,7 @@
 			equal(lastThisId, "testObject", "the test object should have been the this context");
 		});
 
-		test("Cloning", function() {
+		QUnit.test("Cloning", function(assert) {
 			element.addDelegate(del2, false, true);
 			lastThisId = undefined;
 			counter = 0;
@@ -113,7 +113,7 @@
 			equal(clone.aDelegates.length, 1, "Clone should have one after delegate");
 		});
 
-		test("Cloned 'this' context", function() {
+		QUnit.test("Cloned 'this' context", function(assert) {
 			element.destroy();
 			element = new sap.ui.core.Element();
 			var originalId = element.getId();
@@ -140,7 +140,7 @@
 			equal(lastThisId, cloneId, "the clone should be the this context");
 		});
 
-		test("addEventDelegate method", function() {
+		QUnit.test("addEventDelegate method", function(assert) {
 			element.destroy();
 			element = new sap.ui.core.Element();
 
@@ -172,7 +172,7 @@
 			equal(clone.aDelegates.length, 1, "Clone should have one after delegate");
 		});
 
-		test("removeEventDelegate method", function() {
+		QUnit.test("removeEventDelegate method", function(assert) {
 			element.removeEventDelegate(del1);
 
 			equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
@@ -186,7 +186,7 @@
 			equal(counter, 0, "the handler should not be executed");
 		});
 
-		test("removeDelegate from within delegate", function() {
+		QUnit.test("removeDelegate from within delegate", function(assert) {
 			// BUG: Removing the delegate while it is called modifies the array of delegates,
 			//      the second delegate is not called
 			//      Fixed in 1.20.7

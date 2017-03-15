@@ -29,7 +29,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		}
 	});
 
-	QUnit.test('applyChange on a js control tree', function() {
+	QUnit.test('applyChange on a js control tree', function(assert) {
 		var oControl = new Control();
 		oControl.setVisible(false);
 
@@ -38,7 +38,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		assert.equal(oControl.getVisible(), true);
 	});
 
-	QUnit.test('applyChange on a xml tree', function() {
+	QUnit.test('applyChange on a xml tree', function(assert) {
 		var oDOMParser = new DOMParser();
 		var oXmlDocument = oDOMParser.parseFromString("<Button text='" + this.OLD_VALUE + "' enabled='true' />", "application/xml");
 		this.oXmlButton = oXmlDocument.childNodes[0];
@@ -48,7 +48,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		assert.equal(this.oXmlButton.getAttribute("visible"), "true", "xml button node has the visible attribute added and set to false");
 	});
 
-	QUnit.test('applyChange throws an error if the change is not applyable', function() {
+	QUnit.test('applyChange throws an error if the change is not applyable', function(assert) {
 		assert.throws(function () {
 			var oElement = new Element();
 			this.oChangeHandler.applyChange(this.oChange, oElement, {modifier: JsControlTreeModifier});

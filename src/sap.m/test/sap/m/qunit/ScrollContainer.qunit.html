@@ -99,7 +99,7 @@
 			QUnit.start();
 		});
 
-		test("ScrollContainer rendered", function() {
+		QUnit.test("ScrollContainer rendered", function(assert) {
 			ok(jQuery.sap.domById("sc1"), "ScrollContainer 1 should be rendered");
 			ok(jQuery.sap.domById("sc2"), "ScrollContainer 2 should be rendered");
 			ok(!jQuery.sap.domById("sc3"), "ScrollContainer 3 should not be rendered");
@@ -132,7 +132,7 @@
 
 		if (sap.ui.Device.browser.mozilla || sap.ui.Device.browser.safari || sap.ui.Device.browser.chrome || (sap.ui.Device.browser.msie && sap.ui.Device.browser.version >= 9)) {
 
-			test("Scrolling - immediate", function() {
+			QUnit.test("Scrolling - immediate", function(assert) {
 				expect(4);
 
 				equal(getScrollPos(oSC2.getId(), "left"), 0, "ScrollContainer 2 should be scrolled to position 0");
@@ -160,7 +160,7 @@
 			*/
 
 
-			test("Scrolling - wrong direction", function() {
+			QUnit.test("Scrolling - wrong direction", function(assert) {
 				expect(3);
 
 				oSC2.scrollTo(110,50,0);
@@ -171,7 +171,7 @@
 				intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0"); // no y scrolling possible, so 0 should be the position
 			});
 
-			test("Rerendering after scrolling", function() {
+			QUnit.test("Rerendering after scrolling", function(assert) {
 				expect(3);
 
 				oSC2.rerender();
@@ -278,7 +278,7 @@
 
 			});
 
-			test("Press [CTRL] + [DOWN]", function() {
+			QUnit.test("Press [CTRL] + [DOWN]", function(assert) {
 				intEqual(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled to position 0");
 
 				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "ARROW_DOWN", false, false, true);
@@ -287,7 +287,7 @@
 
 			});
 
-			test("Press [CTRL] + [UP]", function() {
+			QUnit.test("Press [CTRL] + [UP]", function(assert) {
 				intEqual(oSC4.$().scrollTop(), parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF), "ScrollContainer 4 should be scrolled vertically to position " + parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF));
 
 				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "ARROW_UP", false, false, true);
@@ -295,7 +295,7 @@
 				intEqual(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled vertically to position 0");
 			});
 
-			test("Press [CTRL] + [RIGHT]", function() {
+			QUnit.test("Press [CTRL] + [RIGHT]", function(assert) {
 				intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled to horizontal position 0");
 
 				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "ARROW_RIGHT", false, false, true);
@@ -303,7 +303,7 @@
 				intEqual(oSC4.$().scrollLeft(), parseInt(oSC4.getDomRef().clientWidth), "ScrollContainer 4 should be scrolled horizontally to position " + parseInt(oSC4.getDomRef().clientWidth));
 			});
 
-			test("Press [CTRL] + [LEFT]", function() {
+			QUnit.test("Press [CTRL] + [LEFT]", function(assert) {
 				intEqual(oSC4.$().scrollLeft(), parseInt(oSC4.getDomRef().clientWidth), "ScrollContainer 4 should be scrolled horizontally to position " + parseInt(oSC4.getDomRef().clientWidth));
 
 				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "ARROW_LEFT", false, false, true);
@@ -311,7 +311,7 @@
 				intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled horizontally to position 0");
 			});
 
-			test("Press [CTRL] + [END]", function() {
+			QUnit.test("Press [CTRL] + [END]", function(assert) {
 				intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled horizontally to position 0");
 				intEqual(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled vertically to position 0");
 
@@ -322,14 +322,14 @@
 				equal(Math.ceil(oSC4.$().scrollTop()), _getMaxScrollTop(oSC4), "ScrollContainer 4 should be scrolled vertically to position " + _getMaxScrollTop(oSC4));
 			});
 
-			test("Press [CTRL] + [HOME]", function() {
+			QUnit.test("Press [CTRL] + [HOME]", function(assert) {
 				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "HOME", false, false, true);
 
 				intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled horizontally to position 0");
 				intEqual(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled vertically to position 0");
 			});
 
-			test("Press [ALT] + [PAGE DOWN]", function() {
+			QUnit.test("Press [ALT] + [PAGE DOWN]", function(assert) {
 				intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled to position 0");
 
 				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "PAGE_DOWN", false, true, false);
@@ -337,7 +337,7 @@
 				intEqual(oSC4.$().scrollLeft(), parseInt(oSC4.getDomRef().clientWidth), "ScrollContainer 4 should be scrolled horizontally to position " + parseInt(oSC4.getDomRef().clientWidth));
 			});
 
-			test("Press [ALT] + [PAGE UP]", function() {
+			QUnit.test("Press [ALT] + [PAGE UP]", function(assert) {
 				intEqual(oSC4.$().scrollLeft(), parseInt(oSC4.getDomRef().clientWidth), "ScrollContainer 4 should be scrolled horizontally to position " + parseInt(oSC4.getDomRef().clientWidth));
 
 				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "PAGE_UP", false, true, false);
@@ -345,7 +345,7 @@
 				intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled to position 0");
 			});
 
-			test("Container Padding Classes", function () {
+			QUnit.test("Container Padding Classes", function (assert) {
 				// System under Test + Act
 				var oContainer = new sap.m.ScrollContainer(),
 					sContentSelector = ".sapMScrollContScroll",

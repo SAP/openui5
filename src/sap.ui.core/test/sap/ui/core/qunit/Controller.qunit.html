@@ -25,7 +25,7 @@
 	<script>
 		QUnit.module("getComponent");
 
-		test("Should not overwrite getOwnerComponent function", function() {
+		QUnit.test("Should not overwrite getOwnerComponent function", function(assert) {
 			// System under Test
 			sap.ui.controller("getComponentController", {
 				getOwnerComponent : function () {
@@ -42,7 +42,7 @@
 			strictEqual(oResult, "foo", "");
 		});
 
-		test("Should return undefined as component of a controller without view", function() {
+		QUnit.test("Should return undefined as component of a controller without view", function(assert) {
 			// System under Test
 			sap.ui.controller("someController", {});
 			var oController = sap.ui.controller("someController");
@@ -54,7 +54,7 @@
 			strictEqual(oResult, undefined);
 		});
 
-		test("Should get undefined as component of a controller with a view without component", function() {
+		QUnit.test("Should get undefined as component of a controller with a view without component", function(assert) {
 			//Arrange
 			sap.ui.jsview("myView", {
 				createContent : function() {
@@ -81,7 +81,7 @@
 			oView.destroy();
 		});
 
-		test("Should get the component of a controller", function() {
+		QUnit.test("Should get the component of a controller", function(assert) {
 			//Arrange
 			var oComponent = new sap.ui.core.Component("foo");
 

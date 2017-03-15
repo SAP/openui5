@@ -52,7 +52,7 @@
 					}
 				});
 
-				test("Should be able to get an existing target by key", function () {
+				QUnit.test("Should be able to get an existing target by key", function (assert) {
 					// Act
 					var oTarget = this.oTargets.getTarget("myTarget");
 
@@ -61,7 +61,7 @@
 					strictEqual(oTarget._oViews, this.oViews, "Did pass the views instance");
 				});
 
-				test("Should return undefined if a target does not exist", function () {
+				QUnit.test("Should return undefined if a target does not exist", function (assert) {
 					// Act
 					var oTarget = this.oTargets.getTarget("foo");
 
@@ -69,7 +69,7 @@
 					strictEqual(oTarget, undefined, "Did not find such a target");
 				});
 
-				test("Should be able to get a child target", function () {
+				QUnit.test("Should be able to get a child target", function (assert) {
 					// Act
 					var oChild = this.oTargets.getTarget("myChild");
 
@@ -78,7 +78,7 @@
 					strictEqual(oChild._oParent, this.oTargets.getTarget("myParent"), "The parent was correctly passed to the target");
 				});
 
-				test("Should be able to get multiple targets", function () {
+				QUnit.test("Should be able to get multiple targets", function (assert) {
 					// Arrange
 					var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 
@@ -93,7 +93,7 @@
 					sinon.assert.calledWith(oStub, sinon.match(/foo/), sinon.match(this.oTargets));
 				});
 
-				test("Should be able to add a new target", function () {
+				QUnit.test("Should be able to add a new target", function (assert) {
 					this.oTargets.addTarget("newTarget", {
 						viewName: "newView",
 						parent: "myParent"
@@ -105,7 +105,7 @@
 					strictEqual(oTarget._oParent, this.oTargets.getTarget("myParent"), "correct parent should be set");
 				});
 
-				test("Should kept the existing target and log an error message if 'addTarget' is called with the same name", function () {
+				QUnit.test("Should kept the existing target and log an error message if 'addTarget' is called with the same name", function (assert) {
 					// Arrange
 					var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 
@@ -170,7 +170,7 @@
 					}
 				});
 
-				test("Should complain about an non existing parent", function () {
+				QUnit.test("Should complain about an non existing parent", function (assert) {
 					// Arrange
 					var oIncorrectConfig = {
 								targets: {
@@ -208,7 +208,7 @@
 					}
 				});
 
-				test("Should display one target", function () {
+				QUnit.test("Should display one target", function (assert) {
 					// Arrange
 					var sName = "firstTarget";
 					// Replace display with an empty fn
@@ -227,7 +227,7 @@
 
 				});
 
-				test("Should display multiple targets", function () {
+				QUnit.test("Should display multiple targets", function (assert) {
 					// Arrange
 					// Set the parentInfo to a non-undefined value because it will be set to undefined later and checked with undefined in an assertion
 					var oParentInfo = {};
@@ -266,7 +266,7 @@
 
 				});
 
-				test("Should log an error if user tries to display a non existing Target", function () {
+				QUnit.test("Should log an error if user tries to display a non existing Target", function (assert) {
 					// Assert
 					var oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 
@@ -279,7 +279,7 @@
 					}.bind(this));
 				});
 
-				test("Should log an error if user tries to display a non existing Target, but should display existing ones", function () {
+				QUnit.test("Should log an error if user tries to display a non existing Target, but should display existing ones", function (assert) {
 					// Assert
 					var oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 					// Replace display with an empty fn
@@ -353,7 +353,7 @@
 				});
 
 
-				test("should be able to fire/attach/detach the display event", function() {
+				QUnit.test("should be able to fire/attach/detach the display event", function(assert) {
 					// Arrange
 					var oParameters = { foo : "bar" },
 						fnEventSpy = this.spy(function(oEvent, oActualData) {
@@ -430,7 +430,7 @@
 					}.bind(this));
 				});
 
-				test("Should fire the display event for multiple targets and children", function () {
+				QUnit.test("Should fire the display event for multiple targets and children", function (assert) {
 					// Arrange
 					var aTargetNames = [],
 						that = this,
@@ -765,7 +765,7 @@
 
 				QUnit.module("destruction");
 
-				test("Should destroy all dependencies", function () {
+				QUnit.test("Should destroy all dependencies", function (assert) {
 					// Arrange
 					var oViews = new Views(),
 						oFirstTarget,

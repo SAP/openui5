@@ -96,7 +96,7 @@
 
 		QUnit.module("Appearance");
 
-		test("Visibility", function() {
+		QUnit.test("Visibility", function(assert) {
 			var firstTabId = "#" + oTabStrip1.getTabs()[0].getId();
 
 			ok(jQuery(firstTabId), "1.Tab is Visible: expected defined");
@@ -134,7 +134,7 @@
 			equal(jQuery("#tab4").attr("title"), "Tooltip4", "5.tab - tooltip");
 		});
 
-		test("ARIA", function() {
+		QUnit.test("ARIA", function(assert) {
 			var firstTabId = "#" + oTabStrip1.getTabs()[0].getId();
 
 			// tab list
@@ -176,7 +176,7 @@
 
 		QUnit.module("Behaviour");
 
-		test("mouse interaction", function() {
+		QUnit.test("mouse interaction", function(assert) {
 			var firstTabId = "#" + oTabStrip1.getTabs()[0].getId();
 
 			//click on title ID -> otherwise DOM element would be needed
@@ -224,7 +224,7 @@
 
 		});
 
-		test("keyboard interaction", function() {
+		QUnit.test("keyboard interaction", function(assert) {
 			var firstTabId = "#" + oTabStrip1.getTabs()[0].getId();
 
 			qutils.triggerKeyboardEvent(oTabStrip1.getTabs()[0].getId(), "SPACE");
@@ -276,7 +276,7 @@
 			iIndex = -1;
 		});
 
-		test("switching using method", function() {
+		QUnit.test("switching using method", function(assert) {
 			var firstTabId = "#" + oTabStrip1.getTabs()[0].getId();
 
 			oTabStrip1.setSelectedIndex(1);
@@ -323,7 +323,7 @@
 
 		});
 
-		test("CloseTab-method", function() {
+		QUnit.test("CloseTab-method", function(assert) {
 			var firstTabId = "#" + oTabStrip1.getTabs()[0].getId();
 
 			oTabStrip1.closeTab(0); // not closeable
@@ -353,7 +353,7 @@
 
 		});
 
-		test("removeTab-method", function() {
+		QUnit.test("removeTab-method", function(assert) {
 			var firstTabId = "#" + oTabStrip1.getTabs()[0].getId();
 
 			oTabStrip1.removeTab(4);
@@ -380,7 +380,7 @@
 
 		});
 
-		test("toggling tabs enabled", function() {
+		QUnit.test("toggling tabs enabled", function(assert) {
 			ok(!jQuery("#T2-tab0").hasClass("sapUiTabDsbl"), "1.Tab is enabled");
 			ok(jQuery("#T2-tab1").hasClass("sapUiTabSel"), "2.Tab is selected");
 			ok(!jQuery("#T2-tab1").hasClass("sapUiTabDsbl"), "2.Tab is enabled");
@@ -430,7 +430,7 @@
 			equal(jQuery(jQuery("#T2-tab1-panel").children()[0]).text(), "Test 2", "Text 2 is rendered");
 		});
 
-		test("change properties", function() {
+		QUnit.test("change properties", function(assert) {
 
 			var $tabs = jQuery('#tabstrip1 .sapUiTabBarCnt').children();
 			ok ($tabs.length == 2, 'TabStrip has 2 tabs visible');
@@ -449,7 +449,7 @@
 		});
 
 
-		test("tab reordering", function() {
+		QUnit.test("tab reordering", function(assert) {
 			var firstTabId = "#" + oTabStrip1.getTabs()[0].getId();
 
 			oTabStrip1.setEnableTabReordering(true);
@@ -532,7 +532,7 @@
 
 		QUnit.module("scrolling");
 
-		test("size changing", function() {
+		QUnit.test("size changing", function(assert) {
 
 			ok(oTabStrip.$().hasClass("sapUiTabStripScrollable") == false, "TabStrip is not scrollable");
 
@@ -555,7 +555,7 @@
 			ok(oTabStrip.$().hasClass("sapUiTabStripScrollable") == false, "TabStrip is not scrollable");
 		});
 
-		test("select item", function() {
+		QUnit.test("select item", function(assert) {
 			this.clock.tick(1000);
 			oTabStrip.setWidth('300px');
 			oTabStrip.setSelectedIndex(4);
@@ -568,7 +568,7 @@
 			ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack"), "sapUiTabStripScrollBack is set");
 		});
 
-		test("keyboard navigation", function() {
+		QUnit.test("keyboard navigation", function(assert) {
 			var oTab = oTabStrip.getTabs()[4];
 			oTab.$().focus();
 			qutils.triggerKeyboardEvent(oTab.getId(), "HOME");
@@ -590,7 +590,7 @@
 			ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack"), "sapUiTabStripScrollBack is set");
 		});
 
-		test("mouse click", function() {
+		QUnit.test("mouse click", function(assert) {
 			var $leftArrow = oTabStrip.$().find('.sapUiTabStripLeftScrollIcon');
 			qutils.triggerMouseEvent($leftArrow, 'click');
 

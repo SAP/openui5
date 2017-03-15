@@ -26,7 +26,7 @@
 		var core = sap.ui.getCore();
 		var delay = 500;
 
-		test("ShouldRenderNiceHtml", function() {
+		QUnit.test("ShouldRenderNiceHtml", function(assert) {
 			// SUT
 			var id,
 				expectedWidth = "100px",
@@ -55,7 +55,7 @@
 			sut.destroy();
 		});
 
-		test("ShouldRenderMultipleTiles", function() {
+		QUnit.test("ShouldRenderMultipleTiles", function(assert) {
 			// Arrange
 			var tile1 = new sap.m.StandardTile(),
 				tile2 = new sap.m.CustomTile(),
@@ -79,7 +79,7 @@
 			sut.destroy();
 		});
 
-		test("ShouldSetEditable", function() {
+		QUnit.test("ShouldSetEditable", function(assert) {
 			// Arrange
 			var tile1 = new sap.m.StandardTile(),
 				tile2 = new sap.m.CustomTile(),
@@ -107,7 +107,7 @@
 
 		});
 
-		test("ShouldMoveATile", function(assert) {
+		QUnit.test("ShouldMoveATile", function(assert) {
 			var done = assert.async();
 			// Arrange
 			var m = sap.m,
@@ -136,7 +136,7 @@
 			}.bind(this), delay);
 		});
 
-		test("ShouldInsertATile", function() {
+		QUnit.test("ShouldInsertATile", function(assert) {
 			// Arrange
 			var sut,
 				m = sap.m,
@@ -157,7 +157,7 @@
 			sut.destroy();
 		});
 
-		test("ShouldDeleteATile", function() {
+		QUnit.test("ShouldDeleteATile", function(assert) {
 			// Arrange
 			var sut,
 				m = sap.m,
@@ -180,7 +180,7 @@
 			sut.destroy();
 		});
 
-		test("ShouldApplyDimensions", function(assert) {
+		QUnit.test("ShouldApplyDimensions", function(assert) {
 			var done = assert.async();
 			// Arrange
 			var sut,
@@ -232,7 +232,7 @@
 			}.bind(this),delay);
 		});
 
-		test("ShouldScrollIntoAView", function(assert) {
+		QUnit.test("ShouldScrollIntoAView", function(assert) {
 			var done = assert.async();
 			//Arrange
 			var sut,
@@ -268,7 +268,7 @@
 
 		});
 
-		test('TilesShouldHaveTheSameOrderInTheDomAsInTheAggregation', function (assert) {
+		QUnit.test('TilesShouldHaveTheSameOrderInTheDomAsInTheAggregation', function (assert) {
 			var done = assert.async();
 			// SUT
 			var m 	  	= sap.m,
@@ -299,7 +299,7 @@
 			}.bind(this), delay);
 		});
 
-		test('Test setting first tile to visible false', function (assert) {
+		QUnit.test('Test setting first tile to visible false', function (assert) {
 			var done = assert.async();
 			// SUT
 			var m 	= sap.m,
@@ -398,7 +398,7 @@
 				}.bind(this), 1000);
 			}
 		});
-		test('Tile dimension gets updated upon orientation changes', function (assert) {
+		QUnit.test('Tile dimension gets updated upon orientation changes', function (assert) {
 			var done = assert.async();
 			//emulate device that supports orientation change
 			var bOrigTablet = sap.ui.Device.system.tablet;
@@ -416,11 +416,11 @@
 			}.bind(this), delay);
 		});
 
-		test('Tile dimension gets updated upon themeChanges handler called', function (assert) {
+		QUnit.test('Tile dimension gets updated upon themeChanges handler called', function (assert) {
 			this.callAndTest(this.sut.onThemeChanged, [], assert);
 		});
 
-		test('Tile dimension gets updated upon real theme change', function (assert) {
+		QUnit.test('Tile dimension gets updated upon real theme change', function (assert) {
 			this.callAndTest(sap.ui.getCore().applyTheme, ["sap_hcb"], assert);
 		});
 
@@ -457,7 +457,7 @@
 				this.sut.destroy();
 			}
 		});
-		test('ShouldHaveAccessibilityAttributes', function () {
+		QUnit.test('ShouldHaveAccessibilityAttributes', function (assert) {
 			var tile1 	= this.sut.getTiles()[0];
 			// Assert
 			equal(this.sut.$().attr('role'), 'listbox', 'listbox, listbox; equal success');
@@ -468,7 +468,7 @@
 			equal(tile1.$().attr('aria-setsize'), this.sut.getTiles().length, 'aria-setsize');
 		});
 
-		test('TilesShouldHaveProperAccessibilityPositionAttributeValueAfterReordering', function (assert) {
+		QUnit.test('TilesShouldHaveProperAccessibilityPositionAttributeValueAfterReordering', function (assert) {
 			var done = assert.async();
 			// SUT
 			// build an array with the "aria-posinset" values for each tile
@@ -504,7 +504,7 @@
 			}.bind(this), delay);
 		});
 
-		test("Deletion of tile updates the aria-posinset and aria-setsize attributes", function(assert) {
+		QUnit.test("Deletion of tile updates the aria-posinset and aria-setsize attributes", function(assert) {
 			var done = assert.async();
 			var oTile2 = this.sut.getTiles()[2];
 
@@ -516,14 +516,14 @@
 			}.bind(this), delay);
 		});
 
-		test("Insert of tile updates the aria-posinset and aria-setsize attributes", function() {
+		QUnit.test("Insert of tile updates the aria-posinset and aria-setsize attributes", function(assert) {
 			var oNewTile = new sap.m.StandardTile();
 			this.sut.insertTile(oNewTile, 4);
 
 			deepEqual(this.getAriaPosInSetValues(), this.getExpectedAriaPositionInSetValues(), "Checking the 'aria-posinset' for exact values");
 		});
 
-		test("Add of tile updates the aria-posinset and aria-setsize attributes", function() {
+		QUnit.test("Add of tile updates the aria-posinset and aria-setsize attributes", function(assert) {
 			var oNewTile = new sap.m.StandardTile();
 			this.sut.addTile(oNewTile);
 			deepEqual(this.getAriaPosInSetValues(), this.getExpectedAriaPositionInSetValues(), "Checking the 'aria-posinset' for exact values");
@@ -584,7 +584,7 @@
 			}
 		});
 
-		test("Tiles are destroyed when model is changed", function () {
+		QUnit.test("Tiles are destroyed when model is changed", function (assert) {
 			//Arrange
 			var fnDestroyTilesSpy = this.sandbox.spy(this.oTileContainer, 'destroyTiles'),
 				newDataModel = new sap.ui.model.json.JSONModel({
@@ -602,7 +602,7 @@
 			strictEqual(fnDestroyTilesSpy.callCount, 1, "Tiles are destroyed when data model was updated");
 		});
 
-		test('Paging is updated, when model is changed', function (assert) {
+		QUnit.test('Paging is updated, when model is changed', function (assert) {
 			var done = assert.async();
 
 			setTimeout(function(){

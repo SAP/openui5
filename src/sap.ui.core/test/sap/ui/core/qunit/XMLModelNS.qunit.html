@@ -37,7 +37,7 @@
 						"<test a:value=\"Namespace a\" b:value=\"Namespace b\" />" +
 					"</teamMembers>";
 
-	test("test model namespace same prefix", function(){
+	QUnit.test("test model namespace same prefix", function(assert) {
 		var oModel = new sap.ui.model.xml.XMLModel();
 		oModel.setNameSpace("http://tempuri.org/x");
 		oModel.setNameSpace("http://tempuri.org/a", "a");
@@ -49,7 +49,7 @@
 		equal(value, "Spring", "model value");
 	});
 
-	test("test model namespace custom prefix", function(){
+	QUnit.test("test model namespace custom prefix", function(assert) {
 		var oModel = new sap.ui.model.xml.XMLModel();
 		oModel.setNameSpace("http://tempuri.org/a");
 		oModel.setNameSpace("http://tempuri.org/x", "x");
@@ -61,7 +61,7 @@
 		equal(value, "Spring", "model value");
 	});
 
-	test("test model namespace attributes", function(){
+	QUnit.test("test model namespace attributes", function(assert) {
 		var oModel = new sap.ui.model.xml.XMLModel();
 		oModel.setNameSpace("http://tempuri.org/x");
 		oModel.setNameSpace("http://tempuri.org/a", "a");

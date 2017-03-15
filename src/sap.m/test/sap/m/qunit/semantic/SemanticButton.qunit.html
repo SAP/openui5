@@ -47,7 +47,7 @@
 			oMetadata || (oMetadata = {});
 			var oButton = new fnClass(oMetadata);
 
-			test("semantic action has correct init " + sPropertyName, function() {
+			QUnit.test("semantic action has correct init " + sPropertyName, function(assert) {
 
 				strictEqual(oButton.getProperty(sPropertyName), oExpectedInitValue, "action has correct init " + sPropertyName);
 				strictEqual(oButton["get" + capitalize(sPropertyName)](), oExpectedInitValue, "action has correct init " + sPropertyName);
@@ -61,7 +61,7 @@
 			oMetadata || (oMetadata = {});
 			var oButton = new fnClass(oMetadata);
 
-			test("setProperty" + sPropertyName, function () {
+			QUnit.test("setProperty" + sPropertyName, function (assert) {
 
 				// Act
 				oButton.setProperty(sPropertyName, oModifiedValue);
@@ -82,7 +82,7 @@
 			var oButton = new fnClass(oMetadata);
 			var sModifier = "set" + capitalize(sPropertyName);
 
-			test("test " + sModifier, function () {
+			QUnit.test("test " + sModifier, function (assert) {
 
 				// Act
 				oButton[sModifier](oModifiedValue);
@@ -104,7 +104,7 @@
 			oBindingInfo[sField] = "{/modifiedValue}";
 			oMetadata || (oMetadata = {});
 
-			test(sField + " correct binding when bindingInfo and model in metadata", function () {
+			QUnit.test(sField + " correct binding when bindingInfo and model in metadata", function (assert) {
 				// Arrange
 				var oExtendedMetadata = jQuery.extend({}, oMetadata, oBindingInfo, {models: oModel});
 				var oButton = new fnClass(oExtendedMetadata);
@@ -113,7 +113,7 @@
 				strictEqual(oButton["get" + capitalize(sField)](), oModifiedValue, "property " + sField + " is modified correctly");
 			});
 
-			test(sField + " correct binding when bindingInfo in metadata", function () {
+			QUnit.test(sField + " correct binding when bindingInfo in metadata", function (assert) {
 				// Arrange
 				var oExtendedMetadata = jQuery.extend({}, oMetadata, oBindingInfo);
 				var oButton = new fnClass(oExtendedMetadata);
@@ -125,7 +125,7 @@
 				strictEqual(oButton["get" + capitalize(sField)](), oModifiedValue, "property " + sField + " is modified correctly");
 			});
 
-			test(sField + " correct binding when model in metadata", function () {
+			QUnit.test(sField + " correct binding when model in metadata", function (assert) {
 				// Arrange
 				var oExtendedMetadata = jQuery.extend({}, oMetadata, {models: oModel});
 				var oButton = new fnClass(oExtendedMetadata);
@@ -137,7 +137,7 @@
 				strictEqual(oButton["get" + capitalize(sField)](), oModifiedValue, "property " + sField + " is modified correctly");
 			});
 
-			test(sField + " correct binding via bindProperty and setModel", function () {
+			QUnit.test(sField + " correct binding via bindProperty and setModel", function (assert) {
 				// Arrange
 				var oButton = new fnClass(oMetadata);
 
@@ -159,7 +159,7 @@
 			oBindingInfo[sField] = "{/modifiedValue}";
 			oMetadata || (oMetadata = {});
 
-			test(sField + " correct binding after unbind", function () {
+			QUnit.test(sField + " correct binding after unbind", function (assert) {
 
 			 var oModel = new sap.ui.model.json.JSONModel({initValue: oInitValue,
 			 												modifiedValue: oModifiedValue});
@@ -190,7 +190,7 @@
 			oMetadata || (oMetadata = {});
 			var oButton = new fnClass(oMetadata);
 
-			test("semantic button with no type has correct init " + sAggregationName, function() {
+			QUnit.test("semantic button with no type has correct init " + sAggregationName, function(assert) {
 
 				strictEqual(oButton.getAggregation(sAggregationName), oExpectedInitValue, "button with no type has correct init " + sAggregationName);
 				strictEqual(oButton["get" + capitalize(sAggregationName)](), oExpectedInitValue, "button with no type has correct init " + sAggregationName);
@@ -204,7 +204,7 @@
 			oMetadata || (oMetadata = {});
 			var oButton = new fnClass(oMetadata);
 
-			test("setAggregation" + sAggregationName, function () {
+			QUnit.test("setAggregation" + sAggregationName, function (assert) {
 
 				// Act
 				oButton.setAggregation(sAggregationName, oModifiedValue);
@@ -226,7 +226,7 @@
 			var oButton = new fnClass(oMetadata);
 			var sModifier = "set" + capitalize(sAggregatioName);
 
-			test("test " + sModifier, function () {
+			QUnit.test("test " + sModifier, function (assert) {
 
 				// Act
 				oButton[sModifier](oModifiedValue);
@@ -243,7 +243,7 @@
 
 		QUnit.module("id");
 
-		test("semantic control can be retrieved by Id", function () {
+		QUnit.test("semantic control can be retrieved by Id", function (assert) {
 			// Arrange
 			var oEditButton = new sap.m.semantic.EditAction("editBtn");
 
@@ -295,7 +295,7 @@
 
 		QUnit.module("inaccessible properties");
 
-		test("Semantic buttons should not allow setting icon value to them", function () {
+		QUnit.test("Semantic buttons should not allow setting icon value to them", function (assert) {
 			// Arrange
 			var oEditButton = new sap.m.semantic.EditAction(""),
 					oRejectButton = new sap.m.semantic.NegativeAction(""),
@@ -324,7 +324,7 @@
 			oEditButton.destroy();
 		});
 
-		test("Semantic buttons should not allow setting text value to them", function () {
+		QUnit.test("Semantic buttons should not allow setting text value to them", function (assert) {
 			// Arrange
 			var oEditButton = new sap.m.semantic.EditAction(""),
 					oCancelAction = new sap.m.semantic.CancelAction(),
@@ -353,7 +353,7 @@
 			oEditButton.destroy();
 		});
 
-		test("FlagAction pressed in metadata", function() {
+		QUnit.test("FlagAction pressed in metadata", function(assert) {
 			//setup
 			var oFlagAction = new sap.m.semantic.FlagAction({
 				pressed: true
@@ -368,7 +368,7 @@
 
 		QUnit.module("domRef available");
 
- 		test("Popover can be opened by a semantic button", function() {
+ 		QUnit.test("Popover can be opened by a semantic button", function(assert) {
 
 			var oSpy = this.spy();
 
@@ -405,7 +405,7 @@
 
 		});
 
-		test("Semantic button provides domRef", function() {
+		QUnit.test("Semantic button provides domRef", function(assert) {
 
 			var oEditButton = new sap.m.semantic.EditAction();
 
@@ -429,7 +429,7 @@
 
 		QUnit.module("multiSelectAction");
 
-		test("MultiSelectAction has correct default value", function() {
+		QUnit.test("MultiSelectAction has correct default value", function(assert) {
 
 			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction();
 
@@ -448,7 +448,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("MultiSelectAction has correct value when pressed", function() {
+		QUnit.test("MultiSelectAction has correct value when pressed", function(assert) {
 
 			var oSpy = this.spy();
 			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction", {press: oSpy});
@@ -472,7 +472,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("MultiSelectAction has correct value when unpressed", function() {
+		QUnit.test("MultiSelectAction has correct value when unpressed", function(assert) {
 
 			var oSpy = this.spy();
 			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction", {press: oSpy});
@@ -498,7 +498,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("MultiSelectAction has correct value after pressed with keydown", function() {
+		QUnit.test("MultiSelectAction has correct value after pressed with keydown", function(assert) {
 
 			var oSpy = this.spy();
 			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction", {press: oSpy});
@@ -522,7 +522,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("MultiSelectAction has correct value when unpressed with keydown", function() {
+		QUnit.test("MultiSelectAction has correct value when unpressed with keydown", function(assert) {
 
 			var oSpy = this.spy();
 			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction", {press: oSpy});
@@ -548,7 +548,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("MultiSelectAction enabled property", function() {
+		QUnit.test("MultiSelectAction enabled property", function(assert) {
 
 			var oStatusModel = new sap.ui.model.json.JSONModel({ master: { multiSelectEnabled: false } });
 			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction", {enabled: "{status>/master/multiSelectEnabled}"});
@@ -576,7 +576,7 @@
 
 		QUnit.module("eventDelegate");
 
-		test("add callback", function() {
+		QUnit.test("add callback", function(assert) {
 
 			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction"),
 				callback = sinon.spy();
@@ -594,7 +594,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("callback references the semantic object", function() {
+		QUnit.test("callback references the semantic object", function(assert) {
 
 			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction"),
 					callback = sinon.spy();
@@ -613,7 +613,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("addEventDelegate returns the semantic object", function() {
+		QUnit.test("addEventDelegate returns the semantic object", function(assert) {
 
 			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction"),
 					callback = sinon.spy();
@@ -631,7 +631,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("remove callback", function() {
+		QUnit.test("remove callback", function(assert) {
 
 			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction"),
 					callback = sinon.spy(),
@@ -657,7 +657,7 @@
 			oSemanticPage.destroy();
 		});
 
-		test("removeEventDelegate returns the semantic object", function() {
+		QUnit.test("removeEventDelegate returns the semantic object", function(assert) {
 
 			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction"),
 					callback = sinon.spy(),

@@ -134,40 +134,40 @@
 
 			QUnit.module("Dates");
 
-			test("20150701", function() {
+			QUnit.test("20150701", function(assert) {
 				checkDate("20150701", 1, 7, 27, 235, "Heisei", 31, 3, 3, 1);
 			});
 
-			test("19890102", function() {
+			QUnit.test("19890102", function(assert) {
 				checkDate("19890102", 2, 1, 64, 234, "Shōwa", 31, 1, 0, 4);
 			});
 
-			test("19890202", function() {
+			QUnit.test("19890202", function(assert) {
 				checkDate("19890202", 2, 2, 1, 235, "Heisei", 28, 4, 3, 4);
 			});
 
 
 			QUnit.module("Navigation to next/previous Month");
 
-			test("20150701 -> next", function() {
+			QUnit.test("20150701 -> next", function(assert) {
 				checkMonthNavigation("20150701", 7, "27 Heisei", true);
 			});
 
-			test("19890202 -> prev", function() {
+			QUnit.test("19890202 -> prev", function(assert) {
 				checkMonthNavigation("19890202", 0, "64 Shōwa", false);
 			});
 
-			test("19890102 -> next", function() {
+			QUnit.test("19890102 -> next", function(assert) {
 				checkMonthNavigation("19890102", 1, "1 Heisei", true);
 			});
 
 			QUnit.module("Yearpicker");
 
-			test("20150701 Yearpicker", function() {
+			QUnit.test("20150701 Yearpicker", function(assert) {
 				checkYearPicker("20150701", "17 Heisei", "36 Heisei", "27 Heisei" );
 			});
 
-			test("19900101 Yearpicker", function() {
+			QUnit.test("19900101 Yearpicker", function(assert) {
 				checkYearPicker("19900101", "55 Shōwa", "11 Heisei", "2 Heisei" );
 			});
 

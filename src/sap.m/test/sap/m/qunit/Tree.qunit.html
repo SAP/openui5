@@ -129,13 +129,13 @@ oTree.placeAt("content");
 
 QUnit.module("Initial Check");
 
-test("Overview rendered", function() {
+QUnit.test("Overview rendered", function(assert){
 	ok(jQuery.sap.domById("__item0-__tree0-0"), "initial render of first node");
 	ok(jQuery.sap.domById("__item0-__tree0-1"), "initial render of second node");
 });
 
 QUnit.module("Indentation");
-test("indentation1", function() {
+QUnit.test("indentation1", function(assert){
 	this.clock.tick(100);
 	equals(oTree.getDeepestLevel(), 0, "deepestLevel");
 
@@ -203,14 +203,14 @@ test("indentation1", function() {
 
 QUnit.module("Selection");
 
-test("Single selection", function() {
+QUnit.test("Single selection", function(assert){
 	oTree.setMode(sap.m.ListMode.SingleSelect);
 	oTree.getItems()[0].setSelected(true);
 	ok(oTree.getItems()[0].getSelected(),"tree item is selected.");
 	ok(oTree.getItems()[0].getItemNodeContext().nodeState.selected, "item context is selected");
 });
 
-test("Multi selection", function() {
+QUnit.test("Multi selection", function(assert){
 	oTree.setMode(sap.m.ListMode.MultiSelect);
 	oTree.getItems()[0].setSelected(true);
 	oTree.getItems()[1].setSelected(true);
@@ -222,7 +222,7 @@ test("Multi selection", function() {
 
 QUnit.module("Expand/Collapse");
 
-test("Expand", function() {
+QUnit.test("Expand", function(assert){
 	//initial state
 	ok(oTree.getItems(), 2, "two nodes displayed before tree expanding");
 
@@ -236,7 +236,7 @@ test("Expand", function() {
 	equals(oTree.getItems()[1].getLevel(), 1, "second node is in level 1");
 });
 
-test("Collapse", function() {
+QUnit.test("Collapse", function(assert){
 	//back to initial state
 	ok(oTree.getItems(), 4, "four nodes before tree expanding");
 
@@ -247,13 +247,13 @@ test("Collapse", function() {
 	ok(oTree.getItems(), 2, "two nodes displayed after tree collapsing");
 });
 
-test("Expand to level", function() {
+QUnit.test("Expand to level", function(assert){
 	oTree.expandToLevel(3);
 	ok(oTree.getItems()[0].getExpanded(),"node is expanded");
 	equals(oTree.getItems()[4].getLevel(), 3, "expand to level 3");
 });
 
-test("Collapse all", function() {
+QUnit.test("Collapse all", function(assert){
 	oTree.collapseAll();
 	ok(!oTree.getItems()[0].getExpanded(),"node is expanded");
 	equals(oTree.getItems().length, 2, "node is collapsed");
@@ -261,24 +261,24 @@ test("Collapse all", function() {
 
 QUnit.module("Node structure");
 
-test("ParentNode", function() {
+QUnit.test("ParentNode", function(assert){
 	oTree.focus();
 	var oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
 	oArrowDomRef.trigger("click");
 	ok(oTree.getItems()[1].getParentNode().getId(),"__item0-__tree0-0","parent node is found.")
 });
 
-test("Is leaf", function() {
+QUnit.test("Is leaf", function(assert){
 	ok(!oTree.getItems()[0].isLeaf(), "first node is not leaf.");
 	ok(oTree.getItems()[1].isLeaf(), "second node is leaf.");
 });
 
-test("Is top level", function() {
+QUnit.test("Is top level", function(assert){
 	ok(oTree.getItems()[0].isTopLevel(), "first node is root.");
 	ok(!oTree.getItems()[1].isTopLevel(), "second node is not root.");
 });
 
-test("Expanded", function() {
+QUnit.test("Expanded", function(assert){
 	oTree.focus();
 	var oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
 	oArrowDomRef.trigger("click");
@@ -289,7 +289,7 @@ test("Expanded", function() {
 
 QUnit.module("Keyboard Handling");
 
-test("Right + Left key", function() {
+QUnit.test("Right + Left key", function(assert){
 	ok(!oTree.getItems()[0].getExpanded(), "first node is not expanded");
 	oTree.focus();
 	var oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
@@ -305,7 +305,7 @@ test("Right + Left key", function() {
 });
 
 QUnit.module("Icon");
-test("tree item with icon", function() {
+QUnit.test("tree item with icon", function(assert){
 	ok(jQuery.sap.domById("__item0-__tree0-0-icon"), "icon is rendered");
 
 	var oImage = sap.ui.getCore().byId("__item0-__tree0-0-icon");
@@ -314,7 +314,7 @@ test("tree item with icon", function() {
 
 QUnit.module("Binding");
 
-test("data binding update", function() {
+QUnit.test("data binding update", function(assert){
 	ok(oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"));
 
 	oModel.setProperty("/", oData2);
@@ -326,7 +326,7 @@ test("data binding update", function() {
 
 QUnit.module("Aggregation");
 
-test("Validate aggregation", function() {
+QUnit.test("Validate aggregation", function(assert){
 
 	throws(function () {
 		var oTreeItem = new sap.m.StandardListItem();

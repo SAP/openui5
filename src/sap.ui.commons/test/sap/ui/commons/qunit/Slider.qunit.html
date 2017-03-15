@@ -69,7 +69,7 @@
 
 	QUnit.module("Horizontal: Properties");
 
-	test("Default Values", function() {
+	QUnit.test("Default Values", function(assert) {
 		var oSli = oSlis["oSli1"];
 		equal(oSli.getValue(), 50, "Default 'value':");
 		equal(oSli.getMin(), 0, "Default 'min':");
@@ -82,7 +82,7 @@
 		equal(oSli.getStepLabels(), false, "Default 'StepLabels':");
 	});
 
-	test("Custom Values", function() {
+	QUnit.test("Custom Values", function(assert) {
 		var oSli = oSlis["oSli4"];
 		equal(oSli.getValue(), 100, "Custom 'value':");
 		equal(oSli.getMin(), 10, "Custom 'min':");
@@ -96,7 +96,7 @@
 	});
 
 
-	test("invalid Values", function() {
+	QUnit.test("invalid Values", function(assert) {
 		var oSli = oSlis["oSli12"];
 		equal(oSli.getMin(), 100, "Corrected 'min':");
 		equal(oSli.getMax(), 200, "Corrected 'max':");
@@ -104,7 +104,7 @@
 		equal(oSli.getValue(), 100, "Corrected 'value':");
 	});
 
-	test("Set Value", function() {
+	QUnit.test("Set Value", function(assert) {
 		var oSli = oSlis["oSli2"];
 		oSli.setValue(66);
 		equal(oSli.getValue(), 65, "Set Value with Step-wide: ");
@@ -123,7 +123,7 @@
 
 	QUnit.module("Horizontal: Interaction");
 
-	test("Keyboard with Step", function() {
+	QUnit.test("Keyboard with Step", function(assert) {
 		var oSli = oSlis["oSli2"];
 		var oGrip = jQuery.sap.domById('oSli2-grip');
 		jQuery("#oSli2").focus();
@@ -208,7 +208,7 @@
 
 	});
 
-	test("Keyboard without Step", function() {
+	QUnit.test("Keyboard without Step", function(assert) {
 		var oSli = oSlis["oSli3"];
 		var oGrip = jQuery.sap.domById('oSli3-grip');
 		jQuery("#oSli3").focus();
@@ -289,7 +289,7 @@
 		equal(oGrip.offsetLeft, 395, "Grip position after above change: ");
 	});
 
-	test("Keyboard with Read Only", function() {
+	QUnit.test("Keyboard with Read Only", function(assert) {
 		var oSli = oSlis["oSli6"];
 		var oGrip = jQuery.sap.domById('oSli6-grip');
 		jQuery("#oSli6").focus();
@@ -355,7 +355,7 @@
 
 	});
 
-	test("Click with Step", function() {
+	QUnit.test("Click with Step", function(assert) {
 		var oSli = oSlis["oSli2"];
 		var oGrip = jQuery.sap.domById('oSli2-grip');
 		qutils.triggerMouseEvent("oSli2", "click", 117, 1 );
@@ -380,7 +380,7 @@
 
 	});
 
-	test("Click without Step", function() {
+	QUnit.test("Click without Step", function(assert) {
 		var oSli = oSlis["oSli3"];
 		var oGrip = jQuery.sap.domById('oSli3-grip');
 		var fValueChange = -1;
@@ -422,7 +422,7 @@
 
 	});
 
-	test("Click Read only", function() {
+	QUnit.test("Click Read only", function(assert) {
 		var oSli = oSlis["oSli6"];
 		var oGrip = jQuery.sap.domById('oSli6-grip');
 		var fValueChange = -1;
@@ -457,7 +457,7 @@
 		oSli.detachChange();
 	});
 
-	test("Mouse Move", function() {
+	QUnit.test("Mouse Move", function(assert) {
 		/* Simulate mousemove using "not real" coordinates. Works, because only difference is used to calculate position */
 		var oSli = oSlis["oSli2"];
 		var oGrip = jQuery.sap.domById('oSli2-grip');
@@ -524,7 +524,7 @@
 
 	QUnit.module("Horizontal: Visual Appearence");
 
-	test("Visibility", function() {
+	QUnit.test("Visibility", function(assert) {
 		ok(jQuery("#oSli3").get(0), "Visible: expected defined");
 		equal(jQuery("#oSli5").get(0), undefined, "Invisible:");
 
@@ -565,7 +565,7 @@
 
 	QUnit.module("Vertical: Properties");
 
-	test("Set Value", function() {
+	QUnit.test("Set Value", function(assert) {
 		var oSli = oSlis["oSli7"];
 		oSli.setValue(66);
 		equal(oSli.getValue(), 65, "Set Value with Step-wide: ");
@@ -584,7 +584,7 @@
 
 	QUnit.module("Vertical: Interaction");
 
-	test("Keyboard with Step", function() {
+	QUnit.test("Keyboard with Step", function(assert) {
 		var oSli = oSlis["oSli7"];
 		var oGrip = jQuery.sap.domById('oSli7-grip');
 		jQuery("#oSli7").focus();
@@ -668,7 +668,7 @@
 
 	});
 
-	test("Keyboard without Step", function() {
+	QUnit.test("Keyboard without Step", function(assert) {
 		var oSli = oSlis["oSli8"];
 		var oGrip = jQuery.sap.domById('oSli8-grip');
 		jQuery("#oSli8").focus();
@@ -749,7 +749,7 @@
 		equal(oGrip.offsetTop, 95, "Grip position after above change: ");
 	});
 
-	test("Keyboard with Read Only", function() {
+	QUnit.test("Keyboard with Read Only", function(assert) {
 		var oSli = oSlis["oSli11"];
 		var oGrip = jQuery.sap.domById('oSli11-grip');
 		jQuery("#oSli11").focus();
@@ -815,7 +815,7 @@
 
 	});
 
-	test("Click with Step", function() {
+	QUnit.test("Click with Step", function(assert) {
 		var oSli = oSlis["oSli7"];
 		var oGrip = jQuery.sap.domById('oSli7-grip');
 		qutils.triggerMouseEvent("oSli7", "click", 1, 117 );
@@ -840,7 +840,7 @@
 
 	});
 
-	test("Click without Step", function() {
+	QUnit.test("Click without Step", function(assert) {
 		var oSli = oSlis["oSli8"];
 		var oGrip = jQuery.sap.domById('oSli8-grip');
 		var fValueChange = -1;
@@ -882,7 +882,7 @@
 
 	});
 
-	test("Click Read only", function() {
+	QUnit.test("Click Read only", function(assert) {
 		var oSli = oSlis["oSli11"];
 		var oGrip = jQuery.sap.domById('oSli11-grip');
 		var fValueChange = -1;
@@ -917,7 +917,7 @@
 		oSli.detachChange();
 	});
 
-	test("Mouse Move", function() {
+	QUnit.test("Mouse Move", function(assert) {
 		//Simulate mousemove using "not real" coordinates. Works, because only difference is used to calculate position
 		var oSli = oSlis["oSli7"];
 		var oGrip = jQuery.sap.domById('oSli7-grip');
@@ -984,7 +984,7 @@
 
 	QUnit.module("Vertical: Visual Appearence");
 
-	test("Visibility", function() {
+	QUnit.test("Visibility", function(assert) {
 		ok(jQuery("#oSli8").get(0), "Visible: expected defined");
 		equal(jQuery("#oSli10").get(0), undefined, "Invisible:");
 
@@ -1023,7 +1023,7 @@
 		ok(oText, "right text visible: expected defined");
 	});
 
-	test("Set value via Slider's API", function () {
+	QUnit.test("Set value via Slider's API", function (assert) {
 		var initialValue,
 			iValue = 30,
 			oSlider = new sap.ui.commons.Slider({
@@ -1101,7 +1101,7 @@
 
 	QUnit.module("Accessibility");
 
-	test("ARIA readonly", function () {
+	QUnit.test("ARIA readonly", function (assert) {
 		var oSlider = new sap.ui.commons.Slider({
 			editable: false
 		});
@@ -1124,8 +1124,8 @@
 		oSlider = null;
 	});
 
-	module("Limit values", {
-		setup: function () {
+	QUnit.module("Limit values", {
+		beforeEach: function () {
 			this.oSlider = new sap.ui.commons.Slider("oSLimit", {
 				width:'300px',
 				height:'300px'
@@ -1135,13 +1135,13 @@
 			sap.ui.getCore().applyChanges();
 
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oSlider.destroy();
 			this.oSlider = null;
 		}
 	});
 
-	test("Setting values to 100 and to 0 in Vertical mode", function () {
+	QUnit.test("Setting values to 100 and to 0 in Vertical mode", function (assert) {
 		this.oSlider.setVertical(true);
 
 		var oBar = jQuery.sap.domById('oSLimit-bar'),
@@ -1161,7 +1161,7 @@
 		equal(oHili.clientHeight, 0, "Highlited area has correct height after setting Value to 0");
 	});
 
-	test("Setting values to bigger then Max (100) and less to Min (0) in Vertical mode", function () {
+	QUnit.test("Setting values to bigger then Max (100) and less to Min (0) in Vertical mode", function (assert) {
 		this.oSlider.setVertical(true);
 
 		var oBar = jQuery.sap.domById('oSLimit-bar'),
@@ -1181,7 +1181,7 @@
 		equal(oHili.clientHeight, 0, "Highlited area has correct height after setting Value to 0");
 	});
 
-	test("Setting values to 100 and to 0 in Horizontal mode", function () {
+	QUnit.test("Setting values to 100 and to 0 in Horizontal mode", function (assert) {
 		var oBar = jQuery.sap.domById('oSLimit-bar'),
 			oGrip = jQuery.sap.domById('oSLimit-grip'),
 			oHili = jQuery.sap.domById('oSLimit-hili');
@@ -1199,7 +1199,7 @@
 		equal(oHili.clientWidth, 0, "Highlited area has correct width after setting Value to 0");
 	});
 
-	test("Setting values to bigger then Max (100) and less to Min (0) in Horizontal mode", function () {
+	QUnit.test("Setting values to bigger then Max (100) and less to Min (0) in Horizontal mode", function (assert) {
 		var oBar = jQuery.sap.domById('oSLimit-bar'),
 			oGrip = jQuery.sap.domById('oSLimit-grip'),
 			oHili = jQuery.sap.domById('oSLimit-hili');

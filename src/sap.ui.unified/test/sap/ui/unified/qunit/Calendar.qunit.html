@@ -107,7 +107,7 @@
 
 			QUnit.module("Rendering");
 
-			test("width", function() {
+			QUnit.test("width", function(assert) {
 				var sStyle = jQuery("#Cal1").attr("style");
 				ok((!sStyle || sStyle.search("width") < 0), "Calendar1: no width set");
 
@@ -115,7 +115,7 @@
 				ok((sStyle && sStyle.search("width:") >= 0  && sStyle.search("400px") >= 0), "Calendar2: width set");
 			});
 
-			test("Week day orders", function() {
+			QUnit.test("Week day orders", function(assert) {
 				var $Month = sap.ui.getCore().byId("Cal1").getAggregation("month")[0].$();
 				var aWeekHeaders = $Month.find(".sapUiCalWH");
 				equal(aWeekHeaders.length, 7, "7 weekheaders rendered");
@@ -133,7 +133,7 @@
 				equal(oFormatYyyymmdd.format(oCal2.getStartDate()), "20110101", "Cal2: Start date");
 			});
 
-			test("rendered month", function() {
+			QUnit.test("rendered month", function(assert) {
 				var oToday = new Date();
 				equal(jQuery("#Cal1--Head-B1").text(), oLocaleDataUS.getMonthsStandAlone("wide")[oToday.getMonth()], "curent month shown");
 				equal(jQuery("#Cal1--Head-B2").text(), oToday.getFullYear(), "curent year shown");
@@ -199,7 +199,7 @@
 				ok(bOK, "Custom weekend used");
 			});
 
-			test("disabled date", function() {
+			QUnit.test("disabled date", function(assert) {
 				ok(jQuery("#Cal3--Month0-20150110").hasClass("sapUiCalItemDsbl"), "Calendar3: 20150110 is disabled");
 				ok(jQuery("#Cal3--Month0-20150110").attr("aria-disabled"), "Calendar3: 20150110 has aria-disabled");
 				ok(jQuery("#Cal3--Month1-20150211").hasClass("sapUiCalItemDsbl"), "Calendar3: 20150211 is disabled");
@@ -214,7 +214,7 @@
 				ok(jQuery("#Cal3--Month1-20150226").attr("aria-disabled"), "Calendar3: 20150226 has aria-disabled");
 			});
 
-			test("focusDate method", function() {
+			QUnit.test("focusDate method", function(assert) {
 				iStartDateChangeFired = 0;
 				oCal2.focusDate(new Date(2012, 11, 12));
 				equal(jQuery("#Cal2--Head-B1").text(), "Dezember", "December shown");
@@ -233,7 +233,7 @@
 				oCal2.focusDate(new Date(2011, 0, 10));
 			});
 
-			test("week number calculation", function() {
+			QUnit.test("week number calculation", function(assert) {
 				// en-US
 				oCal1.focusDate(new Date(2011, 0, 10));
 				var aDays = jQuery("#Cal1--Month0-days").find(".sapUiCalItem");
@@ -256,7 +256,7 @@
 				oCal2.focusDate(new Date(2011, 0, 10));
 			});
 
-			test("special days", function() {
+			QUnit.test("special days", function(assert) {
 				ok(jQuery("#Cal2--Month0-20110101").hasClass("sapUiCalItemType01"), "20110101 is special day of Type01");
 				equal(jQuery("#Cal2--Month0-20110101").attr("title"), "Text", "20110101 has special days tooltip");
 				equal(jQuery("#Cal2--Month0-20110101").attr("aria-label"), "1. Januar 2011; Type 1", "20110101 aria label");
@@ -271,7 +271,7 @@
 				equal(jQuery("#Cal2--Month0-20110104").attr("aria-label"), "4. Januar 2011; Type 2", "20110101 aria label");
 			});
 
-			test("primaryCalendarType", function() {
+			QUnit.test("primaryCalendarType", function(assert) {
 				equal(oCal2.getPrimaryCalendarType(), sap.ui.getCore().getConfiguration().getCalendarType(), "Calendar2: PrimaryCalendarType default")
 				oCal2.focusDate(new Date(2011, 0, 1)); // to be sure where focus is
 				oCal2.setPrimaryCalendarType(sap.ui.core.CalendarType.Islamic);
@@ -295,7 +295,7 @@
 				sap.ui.getCore().applyChanges();
 			});
 
-			test("secondaryCalendarType", function() {
+			QUnit.test("secondaryCalendarType", function(assert) {
 				oCal2.setSecondaryCalendarType(sap.ui.core.CalendarType.Islamic);
 				sap.ui.getCore().applyChanges();
 
@@ -316,7 +316,7 @@
 				equal(jQuery("#Cal2--Head-B2").text(), "2011", "year 2011 shown");
 			});
 
-			test("check if Month names are too long to fit", function() {
+			QUnit.test("check if Month names are too long to fit", function(assert) {
 				var oCalM = new sap.ui.unified.Calendar("CalM", {}),
 					month = oCalM.getAggregation("month"),
 					aMonthHeadersShort = [{clientWidth:123, scrollWidth:123}], //array with values that will fit inside "month boxes"
@@ -339,7 +339,7 @@
 
 			QUnit.module("Interaction");
 
-			test("month switch", function() {
+			QUnit.test("month switch", function(assert) {
 				iStartDateChangeFired = 0;
 				qutils.triggerEvent("click", "Cal2--Head-prev");
 				equal(jQuery("#Cal2--Head-B1").text(), "Dezember", "December shown");
@@ -411,7 +411,7 @@
 
 			});
 
-			test("year switch", function() {
+			QUnit.test("year switch", function(assert) {
 				iStartDateChangeFired = 0;
 				qutils.triggerEvent("click", "Cal2--Head-B2");
 				ok(jQuery("#Cal2--YP").get(0), "Year picker rendered");
@@ -469,7 +469,7 @@
 				strictEqual(oSpy.callCount, 1, "SPACE is pressed, preventDefault event was fired");
 			});
 
-			test("Min/Max", function() {
+			QUnit.test("Min/Max", function(assert) {
 				oCal1.focusDate(new Date(9999, 10, 10));
 				ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled");
 				ok(!jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled");
@@ -547,7 +547,7 @@
 				oCal3.focusDate(new Date(2015, 0, 5));
 			});
 
-			test("select event", function() {
+			QUnit.test("select event", function(assert) {
 				var $Today = jQuery(jQuery("#Cal1--Month0-days").find(".sapUiCalItemNow"));
 				var oToday = new Date();
 				bSelectFired = false;
@@ -569,7 +569,7 @@
 				equal($Date.attr("aria-selected"), "false", "Disabled date aria-selected = false");
 			});
 
-			test("Multiple selection", function() {
+			QUnit.test("Multiple selection", function(assert) {
 
 				// ensure that tested date range is displayed in calendar
 				oCal4.displayDate(oCal4.getMinDate());
@@ -605,7 +605,7 @@
 
 		QUnit.module("Misc");
 
-			test("Invalidate month ", function() {
+			QUnit.test("Invalidate month ", function(assert) {
 				var oCal5 = new sap.ui.unified.Calendar("Cal5",{
 					months: 2
 				});
@@ -646,7 +646,7 @@
 				}
 			});
 
-			test("Adding special date should not move the focus to the calendar control", function (oAssert) {
+			QUnit.test("Adding special date should not move the focus to the calendar control", function (oAssert) {
 				// Arrange
 				var fnDone = oAssert.async(), // Async test
 					oSpecialDate = new sap.ui.unified.DateTypeRange({

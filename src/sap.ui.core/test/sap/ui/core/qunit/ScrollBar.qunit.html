@@ -54,7 +54,7 @@
 	QUnit.module("Initial check");
 
 
-	test("Controls Check", function() {
+	QUnit.test("Controls Check", function(assert) {
 	 	 vSB = sap.ui.getCore().getControl("vertSB");
 		 hSB = sap.ui.getCore().getControl("horiSB");
 
@@ -63,14 +63,14 @@
 
 	});
 
-	test("Orientation", function() {
+	QUnit.test("Orientation", function(assert) {
 		ok(((vSB.getVertical() !== undefined)), "should not be null or undefined");
 		equal(vSB.getVertical(), true, "This is vertical scrollbar");
 		ok(((hSB.getVertical() !== undefined)), "should not be null or undefined");
 		equal(hSB.getVertical(), false, "This is horizontal scrollbar");
 	});
 
-	test("Scroll Position", function() {
+	QUnit.test("Scroll Position", function(assert) {
 
 		equal(jQuery("#vertSB-sb").scrollTop()/vSB._iFactor, 4, "Initial scroll position is 4");
 		equal(jQuery("#horiSB-sb").scrollLeft(), 50, "Initial scroll position is 50");
@@ -80,27 +80,27 @@
 	QUnit.module("Properties");
 
 
-	test("Orientation", function() {
+	QUnit.test("Orientation", function(assert) {
 		vSB.setVertical(false);
 		equal(vSB.getVertical(), false, "This is not vertical scrollbar");
 		vSB.setVertical(true);
 		equal(vSB.getVertical(), true, "This is vertical scrollbar");
 	});
 
-	test("Scroll Position", function() {
+	QUnit.test("Scroll Position", function(assert) {
 		vSB.setScrollPosition(5); // steps
 		hSB.setScrollPosition(38); // pixels
 		equal(jQuery("#vertSB-sb").scrollTop()/vSB._iFactor, 5, "scroll position should be 5");
 		equal(jQuery("#horiSB-sb").scrollLeft(), 38, "scroll position is 38");
 	});
 
-	test("Size", function() {
+	QUnit.test("Size", function(assert) {
 		vSB.setSize("100px");
 		equal(vSB.getSize(), "100px", "size of vertical scrollbar is 100px");
 		equal(hSB.getSize(), "200px", "size of horizontal scrollbar is 200");
 	});
 
-	test("Content Size and steps", function() {
+	QUnit.test("Content Size and steps", function(assert) {
 		equal(hSB.getContentSize(), "1000px", "size of content is 1000");
 		equal(vSB.getSteps(), 100, "number of steps for vertical scrollbar is 100");
 	});

@@ -635,7 +635,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		});
 	});
 
-	QUnit.test("after a change creation has been saved, the change shall be added to the cache", function (assert){
+	QUnit.test("after a change creation has been saved, the change shall be added to the cache", function (assert) {
 		var oChangeContent = {
 			fileName: "Gizorillus",
 			layer: "VENDOR",
@@ -683,7 +683,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		}.bind(this));
 	});
 
-	QUnit.test("shall delete the change from the cache, after a change deletion has been saved", function (assert){
+	QUnit.test("shall delete the change from the cache, after a change deletion has been saved", function (assert) {
 		var oChangeContent = {
 			fileName: "Gizorillus",
 			layer: "VENDOR",

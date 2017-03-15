@@ -107,7 +107,7 @@
 	  /**
 	   * Tests accessor method for property verticalScrolling of control .
 	   */
-	  test("VerticalScrollingOk", function() {
+	  QUnit.test("VerticalScrollingOk", function(assert) {
 	     t1.setVerticalScrolling(sap.ui.core.Scrolling.None);
 	     strictEqual(t1.getVerticalScrolling(), sap.ui.core.Scrolling.None);
 
@@ -118,7 +118,7 @@
 	  /**
 	   * Tests accessor method for property horizontalScrolling of control .
 	   */
-	  test("HorizontalScrollingOk", function() {
+	  QUnit.test("HorizontalScrollingOk", function(assert) {
 	    t1.setHorizontalScrolling(sap.ui.core.Scrolling.None);
 	    strictEqual(t1.getHorizontalScrolling(), sap.ui.core.Scrolling.None);
 
@@ -129,21 +129,21 @@
 	  /**
 	   * Tests accessor method for property enabled of control .
 	   */
-	  test("EnabledOk", function() {
+	  QUnit.test("EnabledOk", function(assert) {
 	    strictEqual(t1.getEnabled(), bEnabled1);
 	  });
 
 	  /**
 	   * Tests accessor method for property visible of control .
 	   */
-	  test("VisibleOk", function() {
+	  QUnit.test("VisibleOk", function(assert) {
 	    strictEqual(t1.getVisible(), bVisible1);
 	  });
 
 	  /**
 	   * Tests accessor method for property scrollLeft of control .
 	   */
-	  test("ScrollLeftOk", function() {
+	  QUnit.test("ScrollLeftOk", function(assert) {
 	    strictEqual(t1.getScrollLeft(), iScrollLeft1);
 	  });
 
@@ -152,7 +152,7 @@
 	   */
 
 	  /* TODO:  THIS DOES NOT WORK because the Tab expands its height with the content and never has a scrollbar
-	  test("ScrollTopOk", function() {
+	  QUnit.test("ScrollTopOk", function(assert) {
 	    assertEquals(iScrollTop1, t1.getScrollTop());
 	  });
 	  */
@@ -160,14 +160,14 @@
 	  /**
 	   * Tests accessor method for property closable of control .
 	   */
-	  test("ClosableOk", function() {
+	  QUnit.test("ClosableOk", function(assert) {
 	    strictEqual(t1.getClosable(), bClosable1);
 	  });
 
 	  /**
 	   * Tests accessor method for property selected of control .
 	   */
-	  test("SelectedOk", function() {
+	  QUnit.test("SelectedOk", function(assert) {
 	    strictEqual(t1.getSelected(), bSelected1);
 	  });
 
@@ -176,7 +176,7 @@
 	  //          test control methods
 	  // ==================================================
 
-	  test("TitleOk", function() {
+	  QUnit.test("TitleOk", function(assert) {
 	    var oTitle = t1.getTitle();
 			strictEqual(oTitle.getText(), oText1);
 			t1.setTitle(null);
@@ -186,7 +186,7 @@
 			strictEqual(oTitle.getText(), oText1);
 	  });
 
-	  test("ControlsOk", function() {
+	  QUnit.test("ControlsOk", function(assert) {
 			var l1 = new sap.ui.commons.Label("l1", "Foo"),
 					l2 = new sap.ui.commons.Label("l2", "Goo");
 			t1.addContent(l1);
@@ -199,7 +199,7 @@
 			strictEqual(t1.getContent().length, 1);
 	  });
 
-	  test("CreateTab", function() {
+	  QUnit.test("CreateTab", function(assert) {
 	  	var oTab = new sap.ui.commons.Tab("t2", {
 	  	  verticalScrolling : oVerticalScrolling2,
 	  	  horizontalScrolling : oHorizontalScrolling2,

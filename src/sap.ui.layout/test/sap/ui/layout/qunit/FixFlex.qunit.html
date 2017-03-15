@@ -23,7 +23,7 @@
 	var fnTestControlProperty = function(mOptions) {
 		var sProperty = mOptions.property.charAt(0).toUpperCase() + mOptions.property.slice(1);
 
-		test("get" + sProperty + "()", function() {
+		QUnit.test("get" + sProperty + "()", function(assert) {
 			strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
 		});
 	};
@@ -34,7 +34,7 @@
 
 	QUnit.module("Init");
 
-	test("Initial Check", function() {
+	QUnit.test("Initial Check", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button();
 		var oButton2 = new sap.m.Button();
@@ -62,7 +62,7 @@
 
 	QUnit.module("Render");
 
-	test("Check if fix/flex content is rendered", function() {
+	QUnit.test("Check if fix/flex content is rendered", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button(), oButton2 = new sap.m.Button(), oButton3 = new sap.m.Button();
 
@@ -93,7 +93,7 @@
 
 	QUnit.module("API");
 
-	test("Test child order", function() {
+	QUnit.test("Test child order", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button(), oButton2 = new sap.m.Button(), oButton3 = new sap.m.Button();
 
@@ -117,7 +117,7 @@
 		oFixFlex.destroy();
 	});
 
-	test("Test layout direction", function() {
+	QUnit.test("Test layout direction", function(assert) {
 		// Arrange
 		var oButton1 = new sap.m.Button(), oButton2 = new sap.m.Button(), oButton3 = new sap.m.Button();
 
@@ -141,7 +141,7 @@
 		oFixFlex.destroy();
 	});
 
-	test("Legacy support", function() {
+	QUnit.test("Legacy support", function(assert) {
 		var	$FixChild,
 			$FlexChild,
 			iFixChildWidth,
@@ -183,7 +183,7 @@
 		oFixFlex.destroy();
 	});
 
-	test("Test fix size when browser doesn't support flex layout", function() {
+	QUnit.test("Test fix size when browser doesn't support flex layout", function(assert) {
 		// Arrange
 		var label1 = new sap.m.Label({
 			text: "something wrong",

@@ -23,7 +23,7 @@
 
 	  Example:
       QUnit.module("Module A");
-        test("1. a basic test example", function() {
+        QUnit.test("1. a basic test example", function(assert) {
         ok( true, "this test is fine" );
         var value = "hello1";
         equals( value, "hello1", "We expect value to be hello" );
@@ -35,16 +35,16 @@
 		var oToggleButton2 = new sap.ui.commons.ToggleButton( sToggleButtonId + "_2" , {text:"TestButton1", tooltip:"TestButton1", pressed:false});
 		oToggleButton2.placeAt("uiArea2");
 
-		test("TestGetPressedStateOK", function(){
+		QUnit.test("TestGetPressedStateOK", function(assert){
 			equal(oToggleButton1.getPressed(), true, "getPressedState for testToggleButton_1");
 			equal(oToggleButton2.getPressed(), false, "getPressedState for testToggleButton_2");
 		});
-		test("TestPressedToUnpressedOK", function(){
+		QUnit.test("TestPressedToUnpressedOK", function(assert){
 			qutils.triggerEvent("click", sToggleButtonId + "_1");
 			equal(oToggleButton1.getPressed(), false, "getPressedState");
 		});
 
-		test("TestUnpressedToPressedOK", function(){
+		QUnit.test("TestUnpressedToPressedOK", function(assert){
 			qutils.triggerEvent("click", sToggleButtonId + "_2");
 			equal(oToggleButton2.getPressed(), true, "getPressedState");
 		});

@@ -49,7 +49,7 @@
 
     qutils.delayTestStart();
     QUnit.module("MessageBar Control");
-    test("Initial Conditions", function() {
+    QUnit.test("Initial Conditions", function(assert) {
     	equals(msgBar.getAnchorID()              ,"uiArea1","AnchorID");
     	equals(msgBar.getVisible()               ,true     ,"Visible");
     	equals(msgBar.getMaxToasted()            ,3        ,"MaxToasted");
@@ -64,7 +64,7 @@
     	equals((jList.css('display')=="block")   ,false  ,"List not displayed");
     });
 
-    test("Messages added", function() {
+    QUnit.test("Messages added", function(assert) {
     	// Injecting Messages:
 		msgBar.addMessages(aMeliMelos);
   		// Anchor and Bar should be visible, but not the List:
@@ -81,7 +81,7 @@
 	  	equals((jList.css('display')=="block")   ,false  ,"List not displayed");
     });
 
-    test("Messages removed", function() {
+    QUnit.test("Messages removed", function(assert) {
     	// Removing the previous Messages:
 		msgBar.deleteMessages(aMeliMeloIdsB);
   		// The "uiArea1" anchor should be visible, but not the Bar nor the List:
@@ -93,7 +93,7 @@
 	  	equals((jList.css('display')=="block")   ,false  ,"List not displayed");
     });
 
-	test("Delete all messages", function () {
+	QUnit.test("Delete all messages", function (assert) {
 		msgBar.addMessages(aMeliMelos);
 		ok(msgBar.aErrors.length > 0, "The errors should be greater than 0");
 		ok(msgBar.aWarnings.length > 0, "The warnings should be greater than 0");
@@ -105,7 +105,7 @@
 		equals(msgBar.aSuccesses.length, 0, "The successes should be 0");
 	});
 
-	test("Toggle the list", function () {
+	QUnit.test("Toggle the list", function (assert) {
 		msgBar.toggleList();
 		ok(msgBar.oList instanceof sap.ui.commons.MessageList, "The list should be an instance of sap.ui.commons.MessageList");
 		ok(msgBar.$().hasClass("sapUiMsgBarOpen"));
@@ -113,12 +113,12 @@
 		ok(!msgBar.$().hasClass("sapUiMsgBarOpen"));
 	});
 
-	test("Hide the MessageBar", function () {
+	QUnit.test("Hide the MessageBar", function (assert) {
 		msgBar.setVisible(false);
 		equals(msgBar.oPopup.isOpen(), false, "The popup should be closed");
 	});
 
-	test("Destroy the MessageBar", function () {
+	QUnit.test("Destroy the MessageBar", function (assert) {
 		msgBar.destroy();
 		equals(msgBar.oPopup, null, "The Popup should be destroyed");
 		equals(msgBar.oToast, null, "The Toast should be destroyed");
