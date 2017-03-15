@@ -156,7 +156,7 @@
 		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem();
 		this.oSelectionDetails.addItem(oSelectionDetailsItem);
 		// Act
-		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button, sap.m.List);
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button, sap.m.List, sap.m.ActionListItem);
 		var oList = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-list");
 		//Assert
 		assert.equal(oList.getAggregation("items").length, 1, "One list item has been added to the list");
@@ -167,7 +167,7 @@
 		var sText = "myText";
 		this.oSelectionDetails.addAction(new sap.ui.core.Item({text: sText, enabled: true}));
 		// Act
-		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button, sap.m.List);
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button, sap.m.List, sap.m.ActionListItem);
 		//Assert
 		var oButton = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-action-0");
 		assert.equal(oButton.getText(), sText, "Button has correct text");
@@ -178,13 +178,40 @@
 		// Arrange
 		var oAction = new sap.ui.core.Item();
 		this.oSelectionDetails.addAction(oAction);
-		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button, sap.m.List);
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button, sap.m.List, sap.m.ActionListItem);
 		var oButton = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-action-0");
 		var oSpy = sinon.spy(this.oSelectionDetails, "fireActionPress");
 		// Act
 		oButton.firePress();
 		//Assert
-		assert.deepEqual(oSpy.getCall(0).args[0].action, oAction, "The actionPress event of SelectionDetails has been fired");
+		assert.deepEqual(oSpy.getCall(0).args[0].action, oAction, "The actionPress event of SelectionDetails has been triggered");
+	});
+
+	QUnit.test("ActionListItem is created for actiongroups property", function(assert) {
+		// Arrange
+		var oActionGroup = new sap.ui.core.Item();
+		this.oSelectionDetails.addActionGroup(oActionGroup);
+		// Act
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		// Assert
+		assert.ok(sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-actiongroup-0"), "ActionListItem has been created");
+	});
+
+	QUnit.test("Press on the ActionListItem triggers action press event", function(assert) {
+		// Arrange
+		var oActionGroup = new sap.ui.core.Item();
+		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem();
+		this.oSelectionDetails.addActionGroup(oActionGroup);
+		this.oSelectionDetails.addItem(oSelectionDetailsItem);
+
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		var oActionListItem = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-actiongroup-0");
+		var oSpy = sinon.spy(this.oSelectionDetails, "fireActionPress");
+		// Act
+		oActionListItem.firePress();
+		// Assert
+		assert.deepEqual(oSpy.getCall(0).args[0].action, oActionGroup, "The actionPress event of SelectionDetails has been triggered");
+		assert.deepEqual(oSpy.getCall(0).args[0].items, [oSelectionDetailsItem], "The items are attached in the actionPress event");
 	});
 
 	QUnit.module("Control interface", {

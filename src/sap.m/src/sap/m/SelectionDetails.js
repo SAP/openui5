@@ -112,9 +112,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 					action : {type : "sap.ui.core.Item"},
 
 					/**
-					 * If the action is pressed on one of the {@link sap.m.SelectionDetailsItem items}, the parameter contains a reference to the pressed {@link sap.m.SelectionDetailsItem item}. If a custom action of the SelectionDetails popover is pressed, this parameter is empty.
+					 * If the action is pressed on one of the {@link sap.m.SelectionDetailsItem items}, the parameter contains a reference to the pressed {@link sap.m.SelectionDetailsItem item}. If a custom action or action group of the SelectionDetails popover is pressed, this parameter refers to all {@link sap.m.SelectionDetailsItem items}.
 					 */
-					item : {type : "sap.m.SelectionDetailsItem"}
+					items : {type : "sap.m.SelectionDetailsItem"}
 				}
 			}
 		}
@@ -182,12 +182,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @param {object} List the constructor of sap.m.List
 	 * @private
 	 */
-	SelectionDetails.prototype._handlePressLazy = function(NavContainer, ResponsivePopover, Page, OverflowToolbar, Button, List) {
+	SelectionDetails.prototype._handlePressLazy = function(NavContainer, ResponsivePopover, Page, OverflowToolbar, Button, List, ActionListItem) {
 		var oPopover = this.getAggregation("_popover"),
 			oNavContainer, oPage, oActionsToolbar, oItemsList;
 		if (!oPopover) {
-			oPopover = new ResponsivePopover({
+			oPopover = new ResponsivePopover(this.getId() + "-popover", {
 				placement: library.PlacementType.Bottom,
+				showHeader: false,
 				contentWidth: "25rem",
 				contentHeight: "20rem"
 			});
@@ -200,11 +201,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		}
 		oPage = oNavContainer.getPages()[0];
 		if (!oPage) {
-			oPage = new Page(this.getId() + "-page");
+			oPage = new Page(this.getId() + "-page", {
+				showHeader: false
+			});
 			oNavContainer.addAggregation("pages", oPage, true);
 		}
 		oPage.destroyAggregation("content", true);
-		oItemsList = this._getItemsList(List);
+		oItemsList = this._getItemsList(List, ActionListItem);
 		if (oItemsList) {
 			oPage.addAggregation("content", oItemsList, true);
 		}
@@ -221,7 +224,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 */
 	SelectionDetails.prototype._onToolbarButtonPress = function() {
 		sap.ui.require(['sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page',
-		'sap/m/OverflowToolbar', 'sap/m/Button', 'sap/m/List'], this._handlePressLazy.bind(this));
+		'sap/m/OverflowToolbar', 'sap/m/Button', 'sap/m/List', 'sap/m/ActionListItem'], this._handlePressLazy.bind(this));
 	};
 
 	/**
@@ -251,14 +254,34 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	};
 
 	/**
+	 * Adds ActionListItems to list which will be used for actionGroups on list level.
+	 * @param {object} ActionListItem the constructor of sap.m.ActionListItem
+	 * @param {sap.m.List} oList which is the target list
+	 * @returns {sap.m.List} The list with ActionListItems
+	 * @private
+	 */
+	SelectionDetails.prototype._addActionListItems = function(ActionListItem, oList) {
+		var aActionGroupItems = this.getActionGroups(), oActionListItem, i;
+		for (i = 0; i < aActionGroupItems.length; i++) {
+			oActionListItem = new ActionListItem(this.getId() + "-actiongroup-" + i, {
+				text: aActionGroupItems[i].getText(),
+				type: library.ListType.Navigation,
+				press: [aActionGroupItems[i], this._onActionPress, this]
+			});
+			oList.addAggregation("items", oActionListItem, true);
+		}
+		return oList;
+	};
+
+	/**
 	 * Creates the new List that contains SelectionDetailsListItems based on the items aggregation.
 	 * @param {object} List the constructor of sap.m.List
 	 * @returns {sap.m.List} The list items.
 	 * @private
 	 */
-	SelectionDetails.prototype._getItemsList = function(List) {
+	SelectionDetails.prototype._getItemsList = function(List, ActionListItem) {
 		var i, aItems, oItem, oList, oListItem;
-		if (!this.getItems().length) {
+		if (!this.getItems().length && !this.getActionGroups().length) {
 			return null;
 		}
 		oList = new List(this.getId() + "-list");
@@ -268,17 +291,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			oListItem = oItem._getListItem();
 			oList.addAggregation("items", oListItem, true);
 		}
-		return oList;
+
+		return this._addActionListItems(ActionListItem, oList);
 	};
 
 	/**
-	 * Handles the press on the action button by firing the action press event on the instance of SelectionDetails.
-	 * @param {sap.ui.core.Item} The item that was used in the creation of the action button.
+	 * Handles the press on the action or actionGroups by triggering the action press event on the instance of SelectionDetails.
+	 * @param {sap.ui.base.Event} oEvent of action press
+	 * @param {sap.ui.core.Item} The item that was used in the creation of the action button and action list item.
 	 * @private
 	 */
 	SelectionDetails.prototype._onActionPress = function(oEvent, oAction) {
 		this.fireActionPress({
-			action: oAction
+			action: oAction,
+			items: this.getItems()
 		});
 	};
 
