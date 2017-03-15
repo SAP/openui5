@@ -128,7 +128,12 @@ html[data-sap-ui-browser*='ie'] .sapMFeedIn .sapMBtnInner {
 }
 
 .sapMFeedIn .sapMInputBase.sapMTextArea .sapMTextAreaInner {
-	height: 3.75rem;
+	height: 4rem;
+}
+
+/* 1px too much in firefox */
+html[data-sap-ui-browser^="ff"] .sapMFeedIn .sapMInputBase.sapMTextArea .sapMTextAreaInner {
+	height: ~"calc(4rem - 1px)";
 }
 
 /* Compact size */
@@ -139,5 +144,9 @@ html[data-sap-ui-browser*='ie'] .sapMFeedIn .sapMBtnInner {
 	margin: 0;
 }
 .sapUiSizeCompact .sapMFeedIn .sapMInputBase.sapMTextArea .sapMTextAreaInner {
-	height: 3.75rem;
+	height: 4rem;
+}
+/* 1px too much in firefox */
+html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapMFeedIn .sapMInputBase.sapMTextArea .sapMTextAreaInner {
+	height: ~"calc(4rem - 1px)";
 }
