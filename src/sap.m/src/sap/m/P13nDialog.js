@@ -453,7 +453,7 @@ sap.ui.define([
 		oPanel.setValidationExecutor(jQuery.proxy(this._callValidationExecutor, this));
 		oPanel.setValidationListener(jQuery.proxy(this._registerValidationListener, this));
 		oPanel.setChangeNotifier(jQuery.proxy(this._callChangeNotifier, this));
-// oNavigationItem.setModel(oPanel.getModel("$sapmP13nPanel")); ---> is not yet needed as P13nDialog sets the model coming from controller
+		// oNavigationItem.setModel(oPanel.getModel("$sapmP13nPanel")); ---> is not yet needed as P13nDialog sets the model coming from controller
 		return oNavigationItem;
 	};
 
@@ -682,13 +682,15 @@ sap.ui.define([
 	P13nDialog.prototype._callValidationExecutor = function() {
 		var fValidate = this.getValidationExecutor();
 		if (fValidate && !jQuery.isEmptyObject(this._mValidationListener)) {
-			var oResultRaw = fValidate(this._getPayloadOfPanels());
-			var oResult = this._distributeValidationResult(oResultRaw);
-			// Publish the result to registered listeners
-			for ( var sType in this._mValidationListener) {
-				var fCallback = this._mValidationListener[sType];
-				fCallback(oResult[sType] || []);
-			}
+			var that = this;
+			fValidate(this._getPayloadOfPanels()).then(function(aValidationResult) {
+				var oResult = that._distributeValidationResult(aValidationResult);
+				// Publish the result to registered listeners
+				for ( var sType in that._mValidationListener) {
+					var fCallback = that._mValidationListener[sType];
+					fCallback(oResult[sType] || []);
+				}
+			});
 		}
 	};
 
@@ -737,12 +739,15 @@ sap.ui.define([
 				priority: sap.m.OverflowToolbarPriority.NeverOverflow
 			}),
 			press: function() {
+				that.setBusy(true);
 				var oPayload = that._getPayloadOfPanels();
 				var fFireOK = function() {
+					that.setBusy(false);
 					that.fireOk({
 						payload: oPayload
 					});
 				};
+				var aFailedPanelTypes = [];
 				var fCallbackIgnore = function() {
 					that.getPanels().forEach(function(oPanel) {
 						if (aFailedPanelTypes.indexOf(oPanel.getType()) > -1) {
@@ -751,24 +756,33 @@ sap.ui.define([
 					});
 					fFireOK();
 				};
-				var aFailedPanelTypes = [];
-				var aValidationResult = [];
-				// Execute validation of controller
-				var fValidate = that.getValidationExecutor();
-				if (fValidate) {
-					aValidationResult = fValidate(oPayload);
-				}
 				// Execute validation of panels
 				that.getPanels().forEach(function(oPanel) {
 					if (!oPanel.onBeforeNavigationFrom()) {
 						aFailedPanelTypes.push(oPanel.getType());
 					}
 				});
-				// In case of invalid panels show the dialog
-				if (aFailedPanelTypes.length || aValidationResult.length) {
-					that._showValidationDialog(fCallbackIgnore, aFailedPanelTypes, aValidationResult);
+				var aValidationResult = [];
+				// Execute validation of controller
+				var fValidate = that.getValidationExecutor();
+				if (fValidate) {
+					fValidate(oPayload).then(function(aValidationResult) {
+						// In case of invalid panels show the dialog
+						if (aFailedPanelTypes.length || aValidationResult.length) {
+							that.setBusy(false);
+							that._showValidationDialog(fCallbackIgnore, aFailedPanelTypes, aValidationResult);
+						} else {
+							fFireOK();
+						}
+					});
 				} else {
-					fFireOK();
+					// In case of invalid panels show the dialog
+					if (aFailedPanelTypes.length || aValidationResult.length) {
+						that.setBusy(false);
+						that._showValidationDialog(fCallbackIgnore, aFailedPanelTypes, aValidationResult);
+					} else {
+						fFireOK();
+					}
 				}
 			}
 		});
