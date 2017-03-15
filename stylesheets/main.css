@@ -468,17 +468,13 @@ ul.feature-links > li {
 /*******************************************************************************
 Related UI5 Projects
 *******************************************************************************/
+.main-container {
+    background-color: white;
+}
+
 .header-container {
   background: #F5F5F5;
   min-height: 220px;
-}
-.main-container {
-	background-color: white;
-}
-.table-container {
-    display: -webkit-flex;
-    display: flex;
-	justify-content: center;
 }
 
 .part-container {
@@ -488,17 +484,17 @@ Related UI5 Projects
 }
 
 .paragraph {
-	width: 61%;	
+	width: 61%;
 }
 
 .projects-table {
 	text-align: center;
-	margin-bottom: 4rem;
-	margin-top: 2rem;
+	margin-bottom: 1rem;
+	margin-top: 1rem;
 	width: 61%;
 	background-color: white;
 	font-size: 14px;
-	border-collapse: true;
+	border-collapse: collapse;
 }
 
 .projects-table tr:nth-child(even) {
@@ -507,17 +503,11 @@ Related UI5 Projects
 
 .projects-table td {
 	border: none;
+    vertical-align: middle;
 }
 
 .projects-table th {
-	background-color: rgb(148, 148, 148);	
-}
-
-.headerContent {
-	padding: 20px 10px;
-	margin: 0 auto;
-	position: relative;	
-
+	background-color: rgb(148, 148, 148);
 }
 
 .centered-content {
@@ -525,17 +515,15 @@ Related UI5 Projects
 }
 
 .description-container {
-	padding: 0 50px;	
+	padding: 0 25px;
 }
 
-.tutorial {
-	display:none;
-}
+
 .tutorial li {
 	margin: 0.7rem 0;
 	text-align: left;
-	
 }
+
 .tutorial img {
 	max-height: 300px;
 	width: auto;
@@ -544,15 +532,21 @@ Related UI5 Projects
 .tutorial li:hover {
   cursor: text;
 }
+
 pre {
 	white-space: pre-line;
 	background-color: transparent;
-	color: ##3f3f3f;
+	color: #3f3f3f;
 }
+
 .code-block {
-	padding: 0;
+	padding: 15px;
 	white-space: pre;
 	background-color: rgba(63, 63, 63, 0.11);
+}
+
+.highlight-code {
+	background-color: rgba(122, 228, 73, 0.29);
 }
 
 .flex-container img:hover {
@@ -560,14 +554,28 @@ pre {
 	-ms-transform: scale(1.10); /* Internet Explorer */
 	-moz-transform: scale(1.10); /* Mozila*/
 	transition-duration: 1s; /* Mozila and Internet Explorer */
-
 }
+
 .flex-container img:not(hover) {
 	-webkit-transform: scale(1); /* Chrome */
 	-ms-transform: scale(1); /* Internet Explorer */
 	-moz-transform: scale(1); /* Mozila*/
 	transition-duration: 1s; /* Mozila and Internet Explorer */
 }
+
+.h-centered-content {
+	width: 150px;
+	display: block;
+	margin-left: auto;
+    margin-right: auto;
+}
+
+.image-link {
+	height: 150px;
+	display: table-cell;
+    vertical-align: middle;
+}
+
 a.tutorial-link:hover {
 	cursor: pointer;
 }
@@ -575,17 +583,16 @@ a.tutorial-link:hover {
 .flex-container {
     display: -webkit-flex;
     display: flex;
+	width: 61%;
 }
 
 .flex-item {
  	display: inline-block;
-	flex: 1 1 50%;
-	margin: 10px;
-	padding: 0 15px;
+	flex: 1 1 33%;
+	margin: 20px 0 10px 0;
 }
 
 .project-image {
-	height: 150px;
 	width: 150px;
 }
 
@@ -689,7 +696,10 @@ Small Device Styles
 }
 
 .project-image {
-	height: 80px;
+	width: 80px;
+}
+
+.h-centered-content {
 	width: 80px;
 }
 
