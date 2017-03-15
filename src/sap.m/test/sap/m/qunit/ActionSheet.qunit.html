@@ -785,7 +785,7 @@
  					assert.strictEqual(oButton.getParent(),oClonedActionSheet,
  						"Cloned actionsheet buttons parent should be the clone instance");
  				});
- 				notStrictEqual(oClonedActionSheet.sId, oActionSheet.sId, 'The sId should be unique for each clone');
+ 				assert.notStrictEqual(oClonedActionSheet.sId, oActionSheet.sId, 'The sId should be unique for each clone');
  				deepEqual(oClonedActionSheet.mProperties, oActionSheet.mProperties,
  					'The properties of the clone should be the same as the properties of the ActionSheet');
 

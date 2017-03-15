@@ -856,7 +856,7 @@
 
 		var oFF = new sap.m.FacetFilter();
 		var oResetButton = oFF._createResetButton();
-		notStrictEqual(oResetButton, oFF._createResetButton(), "A new button should be created with each call");
+		assert.notStrictEqual(oResetButton, oFF._createResetButton(), "A new button should be created with each call");
 
 		assert.equal(oResetButton.getIcon(), sap.ui.core.IconPool.getIconURI("undo"), "Button should have the undo icon URI");
 		assert.equal(oResetButton.getType(), sap.m.ButtonType.Transparent, "Button type should be Transparent");

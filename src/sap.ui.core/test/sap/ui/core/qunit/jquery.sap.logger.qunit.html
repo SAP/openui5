@@ -42,7 +42,7 @@
 
 		QUnit.test("GetLog", function (assert) {
 			var aLog = jQuery.sap.log.getLogEntries();
-			notStrictEqual(aLog, null, "jQuery.sap.log.getLogEntries() may not be null");
+			assert.notStrictEqual(aLog, null, "jQuery.sap.log.getLogEntries() may not be null");
 		});
 
 		QUnit.test("Configuration", function(assert) {
@@ -143,7 +143,7 @@
 			var myLogMessageDebug = "This is a debug message";
 			jQuery.sap.log.debug(myLogMessageDebug);
 			assert.strictEqual(iListenedMessages, 1, "listened messages should be 1");
-			notStrictEqual(oLastEntry, null, "listened message should there");
+			assert.notStrictEqual(oLastEntry, null, "listened message should there");
 			assert.strictEqual(oLastEntry.message, myLogMessageDebug, "listened message should have the correct text");
 
 			jQuery.sap.log.removeLogListener(oLogListener);

@@ -2064,7 +2064,7 @@
 
 			this.oVSD.setSelectedGroupItem(aGroupItems[0]);
 			sap.ui.getCore().applyChanges();
-			notStrictEqual(sap.ui.getCore().byId(this.oVSD.getSelectedGroupItem()).getText(),
+			assert.notStrictEqual(sap.ui.getCore().byId(this.oVSD.getSelectedGroupItem()).getText(),
 					oResourceBundle.getText("VIEWSETTINGS_NONE_ITEM"),
 					"Should have changed the selection");
 

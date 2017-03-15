@@ -135,7 +135,7 @@
 
 		QUnit.test("CssClassesOk", function(assert) {
 			var sClasses = window.document.getElementById("l1").className;
-			notStrictEqual(sClasses, null, "sClasses is null");
+			assert.notStrictEqual(sClasses, null, "sClasses is null");
 			assert.ok(sClasses.indexOf("sapUiLbl") > -1, "l1 className is missing 'sapUiLbl'");
 			assert.ok(sClasses.indexOf("sapUiLblEmph") > -1, "l1 className is missing 'sapUiLblEmph'");
 		});

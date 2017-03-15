@@ -240,7 +240,7 @@
 					id: "jsunitIncludeStyleSheetTest",
 					promisify: true
 				}).then(function() {
-					notStrictEqual(jQuery(oTestArea).css("backgroundColor"), sBefore, "background-color should have changed");
+					assert.notStrictEqual(jQuery(oTestArea).css("backgroundColor"), sBefore, "background-color should have changed");
 					assert.strictEqual(document.getElementsByTagName("LINK").length, iLinkCnt, "no new link element should have been created");
 				});
 			});

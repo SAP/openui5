@@ -437,7 +437,7 @@ sap.ui.require([
       "    | $2    |",
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: ["@feature"],
       name: "Serve coffee",
       scenarios: [{
@@ -480,7 +480,7 @@ sap.ui.require([
       "    | $4    |",
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Serve coffee later",
       scenarios: [{
@@ -515,7 +515,7 @@ sap.ui.require([
       "    Given I have deposited <MONEY>",
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Serve coffee later",
       scenarios: [{
@@ -545,7 +545,7 @@ sap.ui.require([
       "    Given the vacuum of outer space is nearly 0 degrees Kelvin",
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Outer Space",
       scenarios: [{

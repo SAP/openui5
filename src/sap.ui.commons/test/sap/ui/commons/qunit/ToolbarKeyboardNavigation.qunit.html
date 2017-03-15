@@ -66,8 +66,8 @@
 		QUnit.module("Item Navigation", {
 			beforeEach: function () {
 				oCtrl = sap.ui.getCore().getControl(sToolbarId);
-				notStrictEqual(oCtrl, null, "oCtrl must exist");
-				notStrictEqual(jQuery.sap.domById(sToolbarId), null, "Toolbar DomRef must exist");
+				assert.notStrictEqual(oCtrl, null, "oCtrl must exist");
+				assert.notStrictEqual(jQuery.sap.domById(sToolbarId), null, "Toolbar DomRef must exist");
 				initToolbar();
 			},
 			afterEach: function () {

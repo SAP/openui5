@@ -114,7 +114,7 @@
 		QUnit.test("CssClassesOk", function(assert) {
 			var sSpan = jQuery.sap.domById("tcb1");
 			var sClasses = sSpan.className;
-			notStrictEqual(sClasses, null, "sClasses is null");
+			assert.notStrictEqual(sClasses, null, "sClasses is null");
 			assert.ok(sClasses.indexOf("sapUiTriCb") > -1, "c1 className is missing 'sapUiTriCb'");
 			sSpan = sSpan.firstChild;
 			sClasses = sSpan.className;

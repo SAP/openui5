@@ -1568,7 +1568,7 @@
 
 			oInput1.focus();
 			sap.ui.test.qunit.triggerKeydown(document.activeElement, "TAB");
-			notStrictEqual(document.activeElement, oList.getDomRef("after"), "Focus is not forwarded after the table");
+			assert.notStrictEqual(document.activeElement, oList.getDomRef("after"), "Focus is not forwarded after the table");
 
 			oInput1.focus();
 			sap.ui.test.qunit.triggerKeydown(document.activeElement, "F2");
@@ -1593,7 +1593,7 @@
 			assert.strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is moved to the item since second input is disabled");
 
 			sap.ui.test.qunit.triggerKeydown(document.activeElement, "TAB", true, false, false);
-			notStrictEqual(document.activeElement, oList.getItemsContainerDomRef(), "Focus is not forwarded before the table");
+			assert.notStrictEqual(document.activeElement, oList.getItemsContainerDomRef(), "Focus is not forwarded before the table");
 
 			oInput2.setEnabled(true);
 			sap.ui.getCore().applyChanges();
