@@ -422,18 +422,30 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		if (sap.ui.Device.system.phone) {
 			this.setType(sap.m.FacetFilterType.Light);
 		}
+
+		this._aOwnedLabels = [];
 	};
 
 	/**
 	 * @private
 	 */
 	FacetFilter.prototype.exit = function() {
-
+		var oCtrl;
 		sap.ui.getCore().detachIntervalTimer(this._checkOverflow, this);
 
 		if (this.oItemNavigation) {
 			this.removeDelegate(this.oItemNavigation);
 			this.oItemNavigation.destroy();
+		}
+
+		if (this._aOwnedLabels) {
+			this._aOwnedLabels.forEach(function (sId) {
+				oCtrl = sap.ui.getCore().byId(sId);
+				if (oCtrl) {
+					oCtrl.destroy();
+				}
+			});
+			this._aOwnedLabels = null;
 		}
 	};
 
