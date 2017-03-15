@@ -199,6 +199,10 @@ li {
  	color: #FF5A37;
 	cursor: pointer;
 }
+.submitlink:focus{
+ 	color: #FF5A37;
+	outline: none;
+}
 
 .cfpduration{
 	color: #fff;
