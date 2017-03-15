@@ -45,6 +45,7 @@ sap.ui.define([
 			groupId : true,
 			operationMode : true,
 			serviceUrl : true,
+			supportReferences : true,
 			synchronizationMode : true,
 			updateGroupId : true
 		},
@@ -81,6 +82,10 @@ sap.ui.define([
 	 *   "/MyService/?custom=foo".
 	 *   See specification "OData Version 4.0 Part 2: URL Conventions", "5.2 Custom Query Options".
 	 *   OData system query options and OData parameter aliases lead to an error.
+	 * @param {boolean} [mParameters.supportReferences=true]
+	 *   Whether <code>&lt;edmx:Reference></code> and <code>&lt;edmx:Include></code> directives are
+	 *   supported in order to load schemas on demand from other $metadata documents and include
+	 *   them into the current service ("cross-service references").
 	 * @param {string} mParameters.synchronizationMode
 	 *   Controls synchronization between different bindings which refer to the same data for the
 	 *   case data changes in one binding. Must be set to 'None' which means bindings are not
@@ -176,7 +181,8 @@ sap.ui.define([
 
 					this.oMetaModel = new ODataMetaModel(
 						_MetadataRequestor.create(mHeaders, this.mUriParameters),
-						this.sServiceUrl + "$metadata", mParameters.annotationURI, this);
+						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
+						mParameters.supportReferences);
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
 						this.mUriParameters, function (sGroupId) {
 							if (sGroupId === "$auto") {

@@ -161,6 +161,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("supportReferences", function (assert) {
+		createModel("", {supportReferences : false});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("with serviceUrl params", function (assert) {
 		var oModel,
 			mModelOptions = {};
@@ -301,13 +306,6 @@ sap.ui.require([
 			assert.strictEqual(oControl.getText(), "Business Suite", "property value");
 			done();
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getMetaModel", function (assert) {
-		var oMetaModel = createModel().getMetaModel();
-
-		assert.ok(oMetaModel instanceof ODataMetaModel);
 	});
 
 	//*********************************************************************************************
