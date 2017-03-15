@@ -42,7 +42,7 @@
 						
 						<span class="headertitle"><a href="whoUsesUI5.html">Who Uses UI5?</a></span>
 						
-						<span class="headertitle">OpenUI5 Projects</span>
+						<span class="headertitle">Related Projects</span>
 					</h2>
 				</div>
 			</div>
@@ -52,98 +52,125 @@
 		<a href="https://github.com/SAP/openui5/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="images/forkme_fiori.png" alt="Fork me on GitHub"></a>
 		
 		<div class="main-container">
-		
 			<div class="header-container">
-				<div class="inner">
-					<h2 >Open UI5 Projects</h2>
-					<p>Here you find a list of open source projects which using OpenUI5.<br>If you like you can add your own project to the list.</p>
-				</div>			
+				<div class="part-container">
+					<div class="flex-container">
+						<div class="flex-item centered-content">
+							<div class="h-centered-content">
+								<a
+									href="https://github.com/SAP/ui5-inspector"
+									target="_blank"
+									class="image-link part-container">
+									<img src="images/ui5strap-logo-8.png" class="project-image"/>
+								</a>
+							</div>
+							<div class="description-container">
+								<h4>
+									<a
+										href="https://github.com/SAP/ui5-inspector"
+										target="_blank">
+											UI5 Inspector
+									</a>
+								</h4>
+								The UI5 Inspector is a standard Chrome extension for debugging and getting to know UI5 applications.
+							</div>
+						</div>
+						<div class="flex-item centered-content">
+							<div class="h-centered-content">
+								<a
+									href="https://github.com/SAP/openui5-charting-custom-controls"
+									target="_blank"
+									class="image-link part-container">
+									<img src="images/chart-logo.jpg" class="project-image" />
+								</a>
+							</div>
+							<div class="description-container">
+								<h4>
+									<a
+										href="https://github.com/SAP/openui5-charting-custom-controls"
+										target="_blank">
+										OpenUI5 Custom Controls for charting
+									</a>
+								</h4>
+								This project shows how to use C3.js and Chart.js within OpenUI5 projects.
+							</div>
+						</div>
+						<div class="flex-item centered-content">
+							<div class="h-centered-content">
+								<a
+									href="https://github.com/propellerlabsio/meteor-ui5"
+									target="_blank"
+									class="image-link part-container">
+									<img src="images/Meteor-UI5-logo.png" class="project-image" />
+								</a>
+							</div>
+							<div class="description-container">
+								<h4>
+									<a
+										href="https://github.com/propellerlabsio/meteor-ui5"
+										target="_blank">
+											Meteor-UI5
+									</a>
+								</h4>
+								Meteor-UI5 is a collection of packages that brings to together two powerful open source JavaScript web frameworks: Meteor and OpenUI5.
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
-			
-
-			<div class="flex-container">
-				<div class="flex-item centered-content">
-					<a href="#Ui5Strap" onclick="onUi5StrapClick(this);return true;">
-						<img src="images/ui5strap-logo-8.png" class="project-image"/>
-					</a>
-					<div class="description-container">
-						<h4>UI5strap</h4>
-						Ui5Strap is a multitasking environment, which means you can start multiple apps at the same time
-					</div>
-				</div>
-				
-				<div class="flex-item centered-content">
-					<a href="#UI5CustomControl" onclick="onCustomControlClick(this);return true;">
-						<img src="images/chart-logo.jpg" class="project-image" />
-					</a>
-					<div class="description-container">
-						<h4>OpenUI5 Custom Controls for charting</h4>
-						This project shows how to use C3.js and Chart.js within OpenUI5 projects.
-					</div>
-				</div>
-				
-				<div class="flex-item centered-content">
-					<a href="#Meteor-UI5" onclick="onMeteor-UI5lClick(this);return true;">
-						<img src="images/Meteor-UI5-logo.png" class="project-image" />
-					</a>
-					<div class="description-container">
-						<h4>Meteor-UI5</h4>
-						Meteor-UI5 is a collection of packages that brings to together two powerful open source JavaScript web frameworks: Meteor and OpenUI5.
-					</div>
-				</div>
-				
+			<div class="part-container">
+				<p class="paragraph" style="margin-top: 1.5rem;">A listing of open source projects related to OpenUI5. Feel free to add your project as well!</p>
 			</div>
-		
-			<div class="table-container">
+			<div class="part-container">
 				<table id="projectsTable" class="projects-table">
 					<thead>
-						<tr>
-							<th>Project</th>
-							<th>Owner</th>
-							<th>Description</th>
-							<th>Link</th>
-							<th>License</th>
-						</tr>
+					<tr>
+						<th>Project</th>
+						<th>Owner</th>
+						<th>Description</th>
+						<th>Link</th>
+						<th>License</th>
+					</tr>
 					</thead>
 				</table>
 			</div>
 			<div class="part-container">
-				<p class="paragraph">Want to upload your own project? Click on <a class="tutorial-link" onclick="toggleTutorial(this)">More Details</a> and follow the instructions.</p>
+				<h4>Add a new project</h4>
+			</div>
+			<div class="part-container">
+				<p class="paragraph">Follow these steps to add a new project to the list above:</p>
 			</div>
 			<div class="tutorial" id="tutorial">
-			<div class="part-container">
-				<ol class="paragraph">
-					<li>Start by going to our Git repository <a href="https://github.com/SAP/openui5">SAP OpenUI5</a>.</li>
-					<li>Login or register on GitHub.</li>
-					<li>Fork the OpenUI5 project to your repository.</li>
-					<li>Switch to the gh-pages branch.</li><img src="images/UploadTutorial_SelectBranch.png"/>
-					<li>Select the javascripts folder and open the relatedProjects.js.</li>
-					<li>At the beginning of the file you will find the oFeaturedProjects object. Here you have to add a new entry. It should look like this example:
-						<div>
+				<div class="part-container">
+					<ol class="paragraph">
+						<li>Start by going to our Git repository <a href="https://github.com/SAP/openui5">SAP OpenUI5</a>.</li>
+						<li>Login or register on GitHub.</li>
+						<li>Fork the <code>OpenUI5</code> project to your repository.</li>
+						<li>Switch to the <code>gh-pages</code> branch.</li>
+						<!--<img src="images/UploadTutorial_SelectBranch.png"/>-->
+						<li>Select the <code>javascripts</code> folder and open the  <code>relatedProjects.js</code>.</li>
+						<li>At the beginning of the file you will find the <code>oFeaturedProjects</code> object. Here you have to add a new entry. It should look like this example:
+							<div>
 							<pre class="code-block">
 this.oFeaturedProjects = {
   "UI5CustomControl": {
 	...
-  },<code style="background-color: yellow;">
-  "&lt;keyWord&gt;": {
-    "name": "official name of your project",
-    "description": "short description of your project",
-    "documentaionLink": "link to the documrntation",
-    "owner": "the owner of the project",
-    "license": "license of your project"
+  },<code class="highlight-code">  "&lt;keyWord&gt;": {
+    "name": "&lt;official name of your project&gt;",
+    "description": "&lt;short description of your project&gt;",
+    "documentaionLink": "&lt;link to the documentation&gt;",
+    "owner": "&lt;the owner of the project&gt;",
+    "license": "&lt;license of your project&gt;"
   }
-</code>};
-							</pre>
-						</div>
-						
-
-				</li>
-					
-					<li>Commit your changes.</li>
-			
-				</ol>
-					</div>
-					</div>
+</code>};</pre>
+							</div>
+						</li>
+						<li>Commit your changes.</li>
+						<li>Make a new pull request.</li>
+						<li>Your change will be reviewed and the project is listed.</li>
+					</ol>
+				</div>
+			</div>
 		</div>
 	</body>
 </html>
