@@ -540,6 +540,47 @@
 				"sapMMsgPopover-init class should present on the HTML element");
 		});
 
+		QUnit.test("MessagePopover's behavior in different screens on Desktop", function (assert) {
+			//System under test
+			this.stub(sap.ui.Device, "system", {desktop: true});
+
+			var oMessagePopover = new sap.m.MessagePopover({
+				items: [
+					new sap.m.MessagePopoverItem({
+						type: sap.ui.core.MessageType.Error,
+						title: 'ERROR',
+						description: 'ERROR desc'
+					})
+				]
+			});
+			sap.ui.getCore().applyChanges();
+
+
+			// Act
+			// Open the popover normally
+			oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+			// Emulate a small screen size on desktop
+			oMessagePopover._oPopover.setContentHeight("0px");
+			sap.ui.getCore().applyChanges();
+
+			// Close the popover
+			oMessagePopover.close();
+			this.clock.tick(500);
+
+			// Open it again
+			oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+
+			// Assert
+			assert.notStrictEqual(oMessagePopover._oPopover.getContentHeight(), "0px", "Popover's height not to be set to 0");
+
+			// Clean
+			oMessagePopover.destroy();
+		});
+
 		QUnit.module("Public API for async handlers", {
 			sCustomId: "custom-msg-popover-id",
 			oSpies : {},

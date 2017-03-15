@@ -1067,7 +1067,9 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * @private
 		 */
 		MessagePopover.prototype._expandMsgPopover = function () {
-			var sHeight = this._oPopover.$("cont").css("height") || this._oPopover.getContentWidth();
+			// var sHeight = this._oPopover.$("cont").css("height") || this._oPopover.getContentWidth();
+			var sDomHeight = this._oPopover.$("cont").css("height"),
+				sHeight = parseFloat(sDomHeight) ? sDomHeight : this._oPopover.getContentWidth();
 
 			this._oPopover
 				.setContentHeight(sHeight)
