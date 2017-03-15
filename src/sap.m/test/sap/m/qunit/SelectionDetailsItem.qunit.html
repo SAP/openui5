@@ -107,6 +107,15 @@
 						label: "Boring label",
 						displayValue: "20 K"
 					})
+				],
+				actions: [
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item action 1"
+					}), new sap.ui.core.Item({
+						key: "2",
+						text: "item action 2"
+					})
 				]
 			});
 			this.oListItem = this.oItem._getListItem();
@@ -142,6 +151,15 @@
 		assert.equal($ListItem.find(".sapMSDItemLineUnit").length, 1, "The correct number of units has been rendered.");
 	});
 
+	QUnit.test("Action rendering", function(assert) {
+		//Arrange
+		var $ListItem = this.oListItem.$();
+
+		//Assert
+		assert.ok(this.oItem.getAggregation("_overflowToolbar"), "OverflowToolbar has been created");
+		assert.ok(this.oItem.getAggregation("_overflowToolbar").getContent().length, 3, "Toolbar spacer and two buttons have been created");
+		assert.equal($ListItem.find(".sapMSDItemActions").length, 1, "The action buttons toolbar has been rendered");
+	});
 </script>
 </head>
 
