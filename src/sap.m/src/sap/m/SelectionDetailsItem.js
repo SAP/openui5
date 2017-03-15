@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SelectionDetailsItem.
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase", "./library"],
-	function(jQuery, Element, ListItemBase, library) {
+sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase", "./library", "sap/m/Button", "sap/m/OverflowToolbar", "sap/m/ToolbarSpacer"],
+	function(jQuery, Element, ListItemBase, library, Button, OverflowToolbar, ToolbarSpacer) {
 	"use strict";
 
 	/**
@@ -64,7 +64,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 				/**
 				 * Contains custom actions shown below the main content of the item.
 				 */
-				actions: { type: "sap.ui.core.Item", multiple: true }
+				actions: { type: "sap.ui.core.Item", multiple: true },
+
+				/**
+				 * Shows custom action buttons below the main content of the item.
+				 */
+				_overflowToolbar: { type: "sap.m.OverflowToolbar", multiple: false, visibility : "hidden"}
 			}
 		}
 	});
@@ -74,7 +79,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 			this._oListItem.destroy();
 			this._oListItem = null;
 		}
+		if (this._oToolbar) {
+			this._oToolbar.destroy();
+			this._oToolbar = null;
+		}
 	};
+
 	/**
 	 * Builds or changes a SelectionDetailsListItem and returns it.
 	 * @returns {sap.m.SelectionDetailsListItem} The item that has been created or changed
@@ -84,9 +94,42 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 		if (!this._oListItem) {
 			this._oListItem = new SelectionDetailsListItem();
 			this._oListItem._getData = jQuery.sap.getter(this);
+			this._addOverflowToolbar();
 		}
 
 		return this._oListItem;
+	};
+
+	/**
+	 * Adds OverflowToolbar to display action buttons on the item level.
+	 * @private
+	 */
+	SelectionDetailsItem.prototype._addOverflowToolbar = function() {
+		var aListItemActions = this.getActions(), i, oButton;
+		this._oToolbar = this.getAggregation("_overflowToolbar");
+		if (aListItemActions.length === 0) {
+			if (this._oToolbar) {
+				this._oToolbar.destroy();
+				this._oToolbar = null;
+			}
+			return;
+		}
+
+		if (!this._oToolbar) {
+			this._oToolbar = new OverflowToolbar(this.getId() + "-action-toolbar");
+		}
+		this._oToolbar.destroyAggregation("content", true);
+		this._oToolbar.addAggregation("content", new ToolbarSpacer(), true);
+
+		for (i = 0; i < aListItemActions.length; i++) {
+			oButton = new Button(this.getId() + "-action-" + i, {
+				text: aListItemActions[i].getText(),
+				type : library.ButtonType.Transparent,
+				enabled: aListItemActions[i].getEnabled()
+			});
+			this._oToolbar.addAggregation("content", oButton, true);
+		}
+		this.setAggregation("_overflowToolbar", this._oToolbar, true);
 	};
 
 	return SelectionDetailsItem;

@@ -203,7 +203,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 */
 	SelectionDetails.prototype._onToolbarButtonPress = function() {
 		sap.ui.require(['sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page',
-		'sap/m/OverflowToolbar', 'sap/m/Button', 'sap/m/List', 'sap/m/ActionListItem'], this._handlePressLazy.bind(this));
+		'sap/m/OverflowToolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/List', 'sap/m/ActionListItem'], this._handlePressLazy.bind(this));
 	};
 
 	/**
@@ -212,15 +212,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @param {object} ResponsivePopover the constructor of sap.m.ResponsivePopover
 	 * @param {object} Page the constructor of sap.m.Page
 	 * @param {object} OverflowToolbar the constructor of sap.m.OverflowToolbar
+	 * @param {object} ToolbarSpacer the constructor of sap.m.ToolbarSpacer
 	 * @param {object} Button the constructor of sap.m.OverflowToolbarButton
 	 * @param {object} List the constructor of sap.m.List
+	 * @param {object} ActionListItem the constructor of sap.m.ActionListItem
 	 * @private
 	 */
-	SelectionDetails.prototype._handlePressLazy = function(NavContainer, ResponsivePopover, Page, OverflowToolbar, Button, List, ActionListItem) {
+	SelectionDetails.prototype._handlePressLazy = function(NavContainer, ResponsivePopover, Page, OverflowToolbar, ToolbarSpacer, Button, List, ActionListItem) {
 		var oPopover = this._getPopover(ResponsivePopover, NavContainer, Page),
 				oPage = oPopover.getContent()[0].getPages()[0];
 		this._addList(List, ActionListItem, oPage);
-		this._addListActions(OverflowToolbar, Button, oPage);
+		this._addListActions(OverflowToolbar, ToolbarSpacer, Button, oPage);
 		oPopover.openBy(this.getAggregation("_button"));
 	};
 
@@ -259,11 +261,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	/**
 	 * Creates the new overflow toolbar that will contain the buttons for actions on list level.
 	 * @param {object} OverflowToolbar the constructor of sap.m.OverflowToolbar
+	 * @param {object} ToolbarSpacer the constructor of sap.m.ToolbarSpacer
 	 * @param {object} Button the constructor of sap.m.OverflowToolbarButton
 	 * @returns {sap.m.OverflowToolbar} The toolbar with action buttons.
 	 * @private
 	 */
-	SelectionDetails.prototype._addListActions = function(OverflowToolbar, Button, oPage) {
+	SelectionDetails.prototype._addListActions = function(OverflowToolbar, ToolbarSpacer, Button, oPage) {
 		var oButton, i, aActions, oAction;
 		if (!this.getActions().length) {
 			oPage.removeAggregation("content", this._oToolbar, true);
@@ -273,6 +276,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			this._oToolbar = new OverflowToolbar(this.getId() + "-action-toolbar");
 		}
 		this._oToolbar.destroyAggregation("content", true);
+		this._oToolbar.addAggregation("content", new ToolbarSpacer(), true);
 		aActions = this.getActions();
 		for (i = 0; i < aActions.length; i++) {
 			oAction = aActions[i];
@@ -290,6 +294,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	/**
 	 * Add the List that contains SelectionDetailsListItems based on the items aggregation.
 	 * @param {object} List Constructor function for sap.m.List
+	 * @param {object} ActionListItem Constructor function for sap.m.ActionListItem
 	 * @param {sap.m.Page} oPage first page inside the NavContainer
 	 * @private
 	 */
