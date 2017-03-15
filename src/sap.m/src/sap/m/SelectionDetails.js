@@ -247,7 +247,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 				showHeader: false,
 				contentWidth: "25rem",
 				contentHeight: "20rem",
-				content: oNavContainer
+				content: oNavContainer,
+				beforeOpen: [this._delegatePopoverEvent, this],
+				beforeClose: [this._delegatePopoverEvent, this]
 			});
 			this.setAggregation("_popover", oPopover, true);
 		}
@@ -347,7 +349,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			});
 			oList.addAggregation("items", oActionListItem, true);
 		}
-		return oList;
 	};
 
 	/**
@@ -361,6 +362,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			action: oAction,
 			items: this.getItems()
 		});
+	};
+
+	SelectionDetails.prototype._delegatePopoverEvent = function (oEvt) {
+		if (oEvt.sId === "beforeOpen") {
+			this.fireBeforeOpen();
+		} else if (oEvt.sId === "beforeClose") {
+			this.fireBeforeClose();
+		}
 	};
 
 	/* =========================================================== */

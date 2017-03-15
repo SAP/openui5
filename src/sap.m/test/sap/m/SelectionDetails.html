@@ -131,6 +131,12 @@
 		},
 		actionPress: function(oEvent) {
 			sap.m.MessageToast.show(oEvent.getParameter("action").getText() + " is pressed" + "\n items are " + oEvent.getParameter("items"));
+		},
+		beforeOpen: function () {
+			sap.m.MessageToast.show("Event 'beforeOpen' triggered");
+		},
+		beforeClose: function () {
+			sap.m.MessageToast.show("Event 'beforeClose' triggered");
 		}
 	});
 

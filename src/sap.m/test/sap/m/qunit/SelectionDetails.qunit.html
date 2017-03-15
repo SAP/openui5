@@ -323,6 +323,55 @@
 		assert.equal(result, this.oSelectionDetails, "Factory function returns SelectionDetails");
 	});
 
+	QUnit.module("Events", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Event 'beforeOpen' is triggered", function(assert) {
+		assert.expect(1);
+		//Arrange
+		this.oSelectionDetails.attachBeforeOpen(fnBeforeOpen);
+		//Act
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button);
+		//Assert
+		function fnBeforeOpen (oEvt) {
+			assert.ok(true, "Event was triggered");
+		}
+	});
+
+	QUnit.test("Event 'beforeClose' is triggered", function(assert) {
+		assert.expect(1);
+		//Arrange
+		this.oSelectionDetails.attachBeforeClose(fnBeforeClose);
+		//Act
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button);
+		//Assert
+		function fnBeforeClose (oEvt) {
+			assert.ok(true, "Event was triggered");
+		}
+	});
+
+	QUnit.test("Popover event 'beforeOpen' is delegated", function(assert) {
+		//Arrange
+		var oSpyBeforeOpen = sinon.spy(this.oSelectionDetails, "fireBeforeOpen");
+		var oSpyBeforeClose = sinon.spy(this.oSelectionDetails, "fireBeforeClose");
+		//Act
+		this.oSelectionDetails._delegatePopoverEvent({
+			sId: "beforeOpen"
+		});
+		//Assert
+		assert.ok(oSpyBeforeOpen.calledOnce, "Popover event 'beforeOpen' delegated.");
+		assert.notOk(oSpyBeforeClose.calledOnce, "Popover event 'beforeClose' not delegated.");
+	});
+
 
 </script>
 </head>
