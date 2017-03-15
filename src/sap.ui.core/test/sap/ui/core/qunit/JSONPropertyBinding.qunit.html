@@ -75,7 +75,8 @@
 		});
 	});
 
-	QUnit.test("PropertyBinding refresh", 3, function(assert) {
+	QUnit.test("PropertyBinding refresh", function(assert) {
+		assert.expect(3);
 		setup();
 		var oBinding = oModel.bindProperty("/name");
 		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
@@ -87,7 +88,8 @@
 		assert.equal(oBinding.getValue(), "Jonas", "Property Binding returns changed value");
 	});
 
-	QUnit.test("PropertyBinding async update", 4, function(assert) {
+	QUnit.test("PropertyBinding async update", function(assert) {
+		assert.expect(4);
 		setup();
 		var oBinding1 = oModel.bindProperty("/name"),
 			oBinding2 = oModel.bindProperty("/name");

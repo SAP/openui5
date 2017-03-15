@@ -20,7 +20,8 @@
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script>
 
-		QUnit.test("InitialObject", 0, function(assert) {
+		QUnit.test("InitialObject", function(assert) {
+			assert.expect(0);
 			var oObject = new sap.ui.base.EventProvider();
 			var mEventRegistry = oObject.mEventRegistry;
 
@@ -314,7 +315,8 @@
 		});
 
 
-		QUnit.test("attachEventOnce", 2, function(assert) {
+		QUnit.test("attachEventOnce", function(assert) {
+			assert.expect(2);
 			var oEventProvider = new sap.ui.base.EventProvider();
 			var iCount = 0;
 			var that = this;

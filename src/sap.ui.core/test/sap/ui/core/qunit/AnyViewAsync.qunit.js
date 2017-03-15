@@ -5,7 +5,8 @@ jQuery.sap.require("sap.ui.core.mvc.HTMLView");
 
 QUnit.module("Start-up");
 
-QUnit.test("Check dependencies", 4, function(assert) {
+QUnit.test("Check dependencies", function(assert) {
+	assert.expect(4);
 	assert.ok(sap.ui.core.mvc.JSONView, "sap.ui.core.mvc.JSONView must be defined");
 	assert.ok(sap.ui.core.mvc.JSView, "sap.ui.core.mvc.JSView must be defined");
 	assert.ok(sap.ui.core.mvc.XMLView, "sap.ui.core.mvc.XMLView must be defined");
@@ -64,17 +65,20 @@ function asyncTestsuite(sCaption, oConfig) {
 		}
 	});
 
-	QUnit.test("Preparation - View requirements", 2, function(assert) {
+	QUnit.test("Preparation - View requirements", function(assert) {
+		assert.expect(2);
 		var view = jQuery.sap.getObject("sap.ui.core.mvc." + oConfig.type + "View");
 		assert.ok(view.asyncSupport, "View type supports asynchronous loading");
 		assert.ok(view.prototype.loaded, "View type supports Promises via loaded method");
 	});
 
-	QUnit.test("Preparation - View source preload", 1, function(assert) {
+	QUnit.test("Preparation - View source preload", function(assert) {
+		assert.expect(1);
 		assert.ok(sSource !== undefined, "View content was preloaded synchronously");
 	});
 
-	QUnit.test("Rendering - synchronous resource loading", 3, function (assert) {
+	QUnit.test("Rendering - synchronous resource loading", function (assert) {
+		assert.expect(3);
 		this.oView = fnFactory();
 		this.oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -84,7 +88,8 @@ function asyncTestsuite(sCaption, oConfig) {
 		assert.ok(this.oView.$().children().length, "View content was rendered synchronously");
 	});
 
-	QUnit.test("Rendering - asynchronous resource loading", 5, function (assert) {
+	QUnit.test("Rendering - asynchronous resource loading", function (assert) {
+		assert.expect(5);
 		var done = assert.async();
 		this.oView = fnFactory(true); //true for async
 
@@ -106,7 +111,8 @@ function asyncTestsuite(sCaption, oConfig) {
 
 	});
 
-	QUnit.test("Promise - loaded() for sync view", 3, function(assert) {
+	QUnit.test("Promise - loaded() for sync view", function(assert) {
+		assert.expect(3);
 		var done = assert.async();
 		this.oView = fnFactory();
 
@@ -122,7 +128,8 @@ function asyncTestsuite(sCaption, oConfig) {
 	});
 
 
-	QUnit.test("Promise - loaded() for async view", 3, function(assert) {
+	QUnit.test("Promise - loaded() for async view", function(assert) {
+		assert.expect(3);
 		var done = assert.async();
 		this.oView = fnFactory(true);
 

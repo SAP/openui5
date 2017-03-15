@@ -193,7 +193,8 @@ QUnit.test("EnableGrouping", function (assert) {
 	assert.equal(this.oTable.getEnableGrouping(), false, "EnableGrouping cannot be changed");
 });
 
-QUnit.test("getTotalSize", 3, function (assert) {
+QUnit.test("getTotalSize", function (assert) {
+	assert.expect(3);
 	var done = assert.async();
 	function doTest(oTable) {
 		var oBinding = oTable.getBinding("rows");
@@ -210,7 +211,8 @@ QUnit.test("getTotalSize", 3, function (assert) {
 	performTestAfterTableIsUpdated.call(this, doTest);
 });
 
-QUnit.test("CollapseRecursive", 7, function (assert) {
+QUnit.test("CollapseRecursive", function (assert) {
+	assert.expect(7);
 	var done = assert.async();
 	function doTest(oTable) {
 		var oBinding = oTable.getBinding("rows");
@@ -234,7 +236,8 @@ QUnit.test("CollapseRecursive", 7, function (assert) {
 	performTestAfterTableIsUpdated.call(this, doTest);
 });
 
-QUnit.test("_isRowSelectable", 5, function (assert) {
+QUnit.test("_isRowSelectable", function (assert) {
+	assert.expect(5);
 	var done = assert.async();
 	function doTest(oTable) {
 		var oBinding = oTable.getBinding("rows");
@@ -252,7 +255,8 @@ QUnit.test("_isRowSelectable", 5, function (assert) {
 	performTestAfterTableIsUpdated.call(this, doTest);
 });
 
-QUnit.test("collapseAll", 6, function (assert) {
+QUnit.test("collapseAll", function (assert) {
+	assert.expect(6);
 	var done = assert.async();
 	function doTest(oTable) {
 		oTable.setFirstVisibleRow(2);

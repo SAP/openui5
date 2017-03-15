@@ -619,7 +619,8 @@
 		});
 	});
 
-	QUnit.test("test bindElement", 2, function(assert){
+	QUnit.test("test bindElement", function(assert){
+		assert.expect(2);
 		var done = assert.async();
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -637,7 +638,8 @@
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	QUnit.test("test bindElement 2", 2, function(assert){
+	QUnit.test("test bindElement 2", function(assert){
+		assert.expect(2);
 		var done = assert.async();
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -655,7 +657,8 @@
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	QUnit.test("test bindElement - set ParentContext null", 5, function(assert){
+	QUnit.test("test bindElement - set ParentContext null", function(assert){
+		assert.expect(5);
 		var done = assert.async();
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -681,7 +684,8 @@
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	QUnit.test("test bindElement 3", 2, function(assert){
+	QUnit.test("test bindElement 3", function(assert){
+		assert.expect(2);
 		var done = assert.async();
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -699,7 +703,8 @@
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	QUnit.test("test bindElement 4", 2, function(assert){
+	QUnit.test("test bindElement 4", function(assert){
+		assert.expect(2);
 		var done = assert.async();
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -717,7 +722,8 @@
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	QUnit.test("test bindElement 5 - change parentContext", 3, function(assert){
+	QUnit.test("test bindElement 5 - change parentContext", function(assert){
+		assert.expect(3);
 		var done = assert.async();
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -744,7 +750,8 @@
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	QUnit.test("test bindElement 6 - change parentContext with propagation", 3, function(assert){
+	QUnit.test("test bindElement 6 - change parentContext with propagation", function(assert){
+		assert.expect(3);
 		var done = assert.async();
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -771,7 +778,8 @@
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	QUnit.test("test data events for bindElement", 3, function(assert){
+	QUnit.test("test data events for bindElement", function(assert){
+		assert.expect(3);
 		var done = assert.async();
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -795,7 +803,8 @@
 		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 	});
 
-	QUnit.test("test data events for bindElement 204", 3, function(assert){
+	QUnit.test("test data events for bindElement 204", function(assert){
+		assert.expect(3);
 		var done = assert.async();
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -841,7 +850,8 @@
 		oBinding.attachChange(handler);
 	});
 
-	QUnit.test("test model bindAggregation on Listbox events", 1, function(assert){
+	QUnit.test("test model bindAggregation on Listbox events", function(assert){
+		assert.expect(1);
 		var done = assert.async();
 
 		oItemTemplate.bindProperty("text", "CategoryName").bindProperty("additionalText", "Description");

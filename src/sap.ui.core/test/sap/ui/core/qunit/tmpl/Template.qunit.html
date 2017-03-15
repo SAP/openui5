@@ -32,7 +32,8 @@
 
 			QUnit.module("Basic Template Tests");
 
-			QUnit.test("Basic Lookup", 9, function(assert) {
+			QUnit.test("Basic Lookup", function(assert) {
+				assert.expect(9);
 
 				// find and load all existing known templates
 				var aTemplates = sap.ui.template();
@@ -60,7 +61,8 @@
 
 			});
 
-			QUnit.test("ID Lookup", 4, function(assert) {
+			QUnit.test("ID Lookup", function(assert) {
+				assert.expect(4);
 
 				// lookup an existing template
 				var oTemplate = sap.ui.template("theTemplate");
@@ -71,13 +73,15 @@
 
 			});
 
-			QUnit.test("Inline Templates", 1, function(assert) {
+			QUnit.test("Inline Templates", function(assert) {
+				assert.expect(1);
 
 				assert.equal(jQuery("#theEmbeddedTemplate > code").length, 1, "Inline Template doesn't create extra DOM");
 
 			});
 
-			QUnit.test("Unsupported Type", 1, function(assert) {
+			QUnit.test("Unsupported Type", function(assert) {
+				assert.expect(1);
 				var theEx;
 				try {
 					sap.ui.template("theSecondTemplate");
@@ -90,7 +94,8 @@
 
 			QUnit.module("Binding Template Tests");
 
-			QUnit.test("Binding Path in Template", 1, function(assert) {
+			QUnit.test("Binding Path in Template", function(assert) {
+				assert.expect(1);
 				var done = assert.async();
 				var sTitle = "Test123";
 

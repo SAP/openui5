@@ -895,7 +895,8 @@
 		 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 		 * Data should already be present, since prebuildTree already requested a big set
 		 */
-		QUnit.test("Clear selection", 4, function(assert){
+		QUnit.test("Clear selection", function(assert){
+			assert.expect(4);
 			var done = assert.async();
 			createTreeBindingAdapter("/bing/root", [], null, {
 				collapseRecursive: false,

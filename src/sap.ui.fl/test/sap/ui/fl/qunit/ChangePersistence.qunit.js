@@ -774,7 +774,8 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		}.bind(this));
 	});
 
-	QUnit.test("Shall save the dirty changes in a bulk", 4, function (assert) {
+	QUnit.test("Shall save the dirty changes in a bulk", function (assert) {
+		assert.expect(4);
 		// REVISE There might be more elegant implementation
 		var oChangeContent1, oChangeContent2, lrepConnectorMock;
 

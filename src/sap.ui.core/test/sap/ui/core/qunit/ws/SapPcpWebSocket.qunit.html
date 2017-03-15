@@ -24,7 +24,8 @@
 
 			jQuery.sap.require("sap.ui.core.ws.SapPcpWebSocket");
 
-			QUnit.test("Serialize Pcp-Fields", 1, function(assert) {
+			QUnit.test("Serialize Pcp-Fields", function(assert) {
+				assert.expect(1);
 
 				var _serializePcpFields = sap.ui.core.ws.SapPcpWebSocket.prototype._serializePcpFields,
 					_escape = sap.ui.core.ws.SapPcpWebSocket.prototype._escape;
@@ -51,7 +52,8 @@
 					"\n", "Output string equals expected string");
 			});
 
-			QUnit.test("Extract Pcp-Fields", 6, function(assert) {
+			QUnit.test("Extract Pcp-Fields", function(assert) {
+				assert.expect(6);
 
 				var _extractPcpFields = sap.ui.core.ws.SapPcpWebSocket.prototype._extractPcpFields,
 					_unescape = sap.ui.core.ws.SapPcpWebSocket.prototype._unescape;

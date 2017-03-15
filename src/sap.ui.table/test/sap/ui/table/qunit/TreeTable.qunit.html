@@ -108,11 +108,13 @@
 		}
 	});
 
-	QUnit.test("InitialOk", 1, function(assert) {
+	QUnit.test("InitialOk", function(assert) {
+		assert.expect(1);
 		assert.equal(this.table.getBinding("rows").getLength(), 3,	"Row count is correct!");
 	});
 
-	QUnit.test("ExpandFirstLevelOk", 2, function(assert) {
+	QUnit.test("ExpandFirstLevelOk", function(assert) {
+		assert.expect(2);
 		// check the behavior of the expand first level property (only used intially)
 		this.table.setExpandFirstLevel(true);
 		this.table.unbindRows().bindRows("/root");
@@ -122,19 +124,22 @@
 		assert.equal(this.table.getBinding("rows").getLength(), 3,	"Row count is correct!");
 	});
 
-	QUnit.test("ExpandRow", 2, function(assert) {
+	QUnit.test("ExpandRow", function(assert) {
+		assert.expect(2);
 		this.table.expand(0);
 		assert.equal(this.table.getBinding("rows").getLength(), 5, "Row count is correct!");
 		assert.equal(this.table.isExpanded(0), true, "Expanded state is correct!");
 	});
 
-	QUnit.test("CollapseRow", 2, function(assert) {
+	QUnit.test("CollapseRow", function(assert) {
+		assert.expect(2);
 		this.table.collapse(0);
 		assert.equal(this.table.getBinding("rows").getLength(), 3, "Row count is correct!");
 		assert.equal(this.table.isExpanded(0), false, "Expanded state is correct!");
 	});
 
-	QUnit.test("InsertRow", 1, function(assert) {
+	QUnit.test("InsertRow", function(assert) {
+		assert.expect(1);
 		var oData = this.table.getModel().getData();
 		jQuery.extend(oData.root, {
 			3: {
@@ -146,14 +151,16 @@
 		assert.equal(this.table.getBinding("rows").getLength(), 4, "Row count is correct!");
 	});
 
-	QUnit.test("RemoveRow", 1, function(assert) {
+	QUnit.test("RemoveRow", function(assert) {
+		assert.expect(1);
 		var oData = this.table.getModel().getData();
 		delete oData.root[3];
 		this.table.getModel().setData(oData);
 		assert.equal(this.table.getBinding("rows").getLength(), 3, "Row count is correct!");
 	});
 
-	QUnit.test("InsertChildRow", 3, function(assert) {
+	QUnit.test("InsertChildRow", function(assert) {
+		assert.expect(3);
 		var oData = this.table.getModel().getData();
 		jQuery.extend(oData.root[2], {
 			0: {
@@ -168,7 +175,8 @@
 		assert.equal(this.table.isExpanded(2), true, "Expanded state is correct!");
 	});
 
-	QUnit.test("ApplyFilter", 1, function(assert) {
+	QUnit.test("ApplyFilter", function(assert) {
+		assert.expect(1);
 		var oData = this.table.getModel().getData();
 		jQuery.extend(oData.root[2], {
 			0: {
@@ -183,7 +191,8 @@
 		assert.equal(this.table.getBinding("rows").getLength(), 2, "Row count is correct!");
 	});
 
-	QUnit.test("RemoveFilter", 1, function(assert) {
+	QUnit.test("RemoveFilter", function(assert) {
+		assert.expect(1);
 		var oData = this.table.getModel().getData();
 		jQuery.extend(oData.root[2], {
 			0: {
@@ -200,7 +209,8 @@
 		assert.equal(this.table.getBinding("rows").getLength(), 4, "Row count is correct!");
 	});
 
-	QUnit.test("FilterSaveExpandedState", 3, function(assert) {
+	QUnit.test("FilterSaveExpandedState", function(assert) {
+		assert.expect(3);
 		var oData = this.table.getModel().getData();
 		jQuery.extend(oData.root[2], {
 			0: {
@@ -241,7 +251,8 @@
 		}
 	});
 
-	QUnit.test("RowSelectionChange", 42, function(assert) {
+	QUnit.test("RowSelectionChange", function(assert) {
+		assert.expect(42);
 		var oTable = this.table;
 		var sTestCase = "";
 		var fnHandler = function(oEvent) {
@@ -327,7 +338,8 @@
 		oTable.setSelectedIndex(0);
 	});
 
-	QUnit.test("Select All on Binding Change", 4, function(assert) {
+	QUnit.test("Select All on Binding Change", function(assert) {
+		assert.expect(4);
 		var done = assert.async();
 		var oModel;
 		var oTable = this.table;
@@ -356,7 +368,8 @@
 		oTable.$("selall").click();
 	});
 
-	QUnit.test("TreeTable + JSONModel: Select entries synchronously", 6, function(assert) {
+	QUnit.test("TreeTable + JSONModel: Select entries synchronously", function(assert) {
+		assert.expect(6);
 		var oModel;
 		var oTable = this.table;
 

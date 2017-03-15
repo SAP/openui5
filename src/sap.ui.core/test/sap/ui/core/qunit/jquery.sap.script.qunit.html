@@ -193,7 +193,8 @@
 
 			QUnit.module("jQuery.sap.getUriParameters");
 
-			QUnit.test("empty query string", 0, function(assert) {
+			QUnit.test("empty query string", function(assert) {
+				assert.expect(0);
 				var oParams = jQuery.sap.getUriParameters("/service");
 				// TODO how to check ? assert.ok(jQuery.isEmptyObject(oParams));
 			});

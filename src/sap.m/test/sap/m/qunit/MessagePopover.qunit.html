@@ -411,7 +411,8 @@
 				"callback should be called with correct argument");
 		});
 
-		QUnit.test("AfterOpen should always load control's overview screen", 2, function (assert) {
+		QUnit.test("AfterOpen should always load control's overview screen", function (assert) {
+			assert.expect(2);
 			var done = assert.async(),
 				that = this,
 				fnAfterOpen = function() {

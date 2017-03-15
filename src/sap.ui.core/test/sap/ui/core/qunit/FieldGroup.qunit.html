@@ -189,28 +189,33 @@
 		},1);
 	};
 
-	QUnit.test("focus field of group 1", 1, function(assert){
+	QUnit.test("focus field of group 1", function(assert){
+		assert.expect(1);
 		var done = assert.async();
 		//focus the content area initially
 		document.getElementById("content").focus();
 		moveFocus("field11",[""],"group1",start);
 	});
-	QUnit.test("focus field of group 2",2, function(assert){
+	QUnit.test("focus field of group 2", function(assert){
+		assert.expect(2);
 		var done = assert.async();
 		document.getElementById("field11").focus();
 		moveFocus("field21",["group1"],"group2",start);
 	});
-	QUnit.test("focus field of group 3", 2, function(assert){
+	QUnit.test("focus field of group 3", function(assert){
+		assert.expect(2);
 		var done = assert.async();
 		document.getElementById("field21").focus();
 		moveFocus("field31",["group2"],"group3",start);
 	});
-	QUnit.test("focus field with no group ", 2, function(assert){
+	QUnit.test("focus field with no group ", function(assert){
+		assert.expect(2);
 		var done = assert.async();
 		document.getElementById("field31").focus();
 		moveFocus("field1",["group3"],"",start);
 	});
-	QUnit.test("focus field of group 3 and validate", 3, function(assert){
+	QUnit.test("focus field of group 3 and validate", function(assert){
+		assert.expect(3);
 		var done = assert.async();
 		document.getElementById("field1").focus();
 		moveFocus("field31",[],"group3",function() {
@@ -240,7 +245,8 @@
 			done();
 		});
 	});
-	QUnit.test("change field group id", 4, function(assert){
+	QUnit.test("change field group id", function(assert){
+		assert.expect(4);
 		var done = assert.async();
 		sNewGroup = "group4";
 		oEnterControl = sap.ui.getCore().byId("field31");
@@ -267,7 +273,8 @@
 
 	});
 
-	QUnit.test("get controls by field group", 18, function(assert) {
+	QUnit.test("get controls by field group", function(assert) {
+		assert.expect(18);
 		var aGroup = oVerticalLayout.getControlsByFieldGroupId("group1");
 		assert.equal(aGroup.length,3,"3 controls in group1");
 		var aGroup = oVerticalLayout.getControlsByFieldGroupId("group2");
@@ -310,7 +317,8 @@
 	});
 
 	var oParent = null;
-	QUnit.test("Destroy of fields", 6, function(assert){
+	QUnit.test("Destroy of fields", function(assert){
+		assert.expect(6);
 		var done = assert.async();
 		document.getElementById("field11").focus();
 		oEnterControl = sap.ui.getCore().byId("field21");
@@ -337,7 +345,8 @@
 	});
 
 
-	QUnit.test("Multiple Groups focus field of group 4, group5, group6", 7, function(assert){
+	QUnit.test("Multiple Groups focus field of group 4, group5, group6", function(assert){
+		assert.expect(7);
 		var done = assert.async();
 		//focus the content area initially
 		bPauseEventing = true;

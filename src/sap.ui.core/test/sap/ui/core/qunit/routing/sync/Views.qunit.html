@@ -194,7 +194,8 @@
 
 			QUnit.module("error handling");
 
-			QUnit.test("Should log an error if the options are missing", 2, function (assert) {
+			QUnit.test("Should log an error if the options are missing", function (assert) {
+				assert.expect(2);
 				// Arrange
 				var fnErrorSpy = this.spy(jQuery.sap.log, "error");
 
@@ -210,7 +211,8 @@
 				}
 			});
 
-			QUnit.test("Should log an error if the viewName is missing", 2, function (assert) {
+			QUnit.test("Should log an error if the viewName is missing", function (assert) {
+				assert.expect(2);
 				// Arrange
 				var fnErrorSpy = this.spy(jQuery.sap.log, "error");
 

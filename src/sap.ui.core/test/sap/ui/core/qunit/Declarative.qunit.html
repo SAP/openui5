@@ -31,7 +31,8 @@
 	QUnit.module("Basic");
 
 
-	QUnit.test("Id", 2, function(assert) {
+	QUnit.test("Id", function(assert) {
+		assert.expect(2);
 		var $element = jQuery("#basic-id");
 		var sId = sap.ui.core.DeclarativeSupport._getId($element.find("#basicId"));
 		assert.equal(sId, "basicId", "Id is retrieved right");
@@ -42,7 +43,8 @@
 	QUnit.module("Compile");
 
 
-	QUnit.test("Simple Button", 3, function(assert) {
+	QUnit.test("Simple Button", function(assert) {
+		assert.expect(3);
 
 	 	var oButton = sap.ui.getCore().byId("simpleButton");
 	 	assert.equal(!!oButton, false, 'No control with id "simpleButton" found.');
@@ -55,7 +57,8 @@
 	});
 
 
-	QUnit.test("Test special attribute handling", 3, function(assert) {
+	QUnit.test("Test special attribute handling", function(assert) {
+		assert.expect(3);
 		var backup = null;
 		try {
 			backup = sap.ui.core.DeclarativeSupport.attributes["data-tooltip"];
@@ -77,7 +80,8 @@
 	});
 
 
-	QUnit.test("Button with style and class", 3, function(assert) {
+	QUnit.test("Button with style and class", function(assert) {
+		assert.expect(3);
 
 	 	var oButton = sap.ui.getCore().byId("buttonStyleClass");
 	 	assert.equal(!!oButton, false, 'No control with id "buttonStyleClass" found.');
@@ -90,7 +94,8 @@
 	});
 
 
-	QUnit.test("HTML Content", 4, function(assert) {
+	QUnit.test("HTML Content", function(assert) {
+		assert.expect(4);
 	 	var oButton = sap.ui.getCore().byId("htmlContentButton");
 	 	assert.equal(!!oButton, false, 'No control with id "htmlContentButton" found.');
 
@@ -106,7 +111,8 @@
 	});
 
 
-	QUnit.test("Panel aggregation", 4, function(assert) {
+	QUnit.test("Panel aggregation", function(assert) {
+		assert.expect(4);
 	 	var oPanel = sap.ui.getCore().byId("panelAggregation");
 	 	assert.equal(!!oPanel, false, 'No control with id "panelAggregation" found.');
 
@@ -120,7 +126,8 @@
 	});
 
 
-	QUnit.test("Panel with default aggregation", 4, function(assert) {
+	QUnit.test("Panel with default aggregation", function(assert) {
+		assert.expect(4);
 	 	var oPanel = sap.ui.getCore().byId("panelWithDefaultAggregation");
 	 	assert.equal(!!oPanel, false, 'No control with id "panelWithDefaultAggregation" found.');
 
@@ -133,7 +140,8 @@
 	 	assert.equal(oPanel.getContent().length, 6, "Number of child controls is right");
 	});
 
-	QUnit.test("Panel with association", 6, function(assert) {
+	QUnit.test("Panel with association", function(assert) {
+		assert.expect(6);
 	 	var oPanel = sap.ui.getCore().byId("panelWithAssociation");
 	 	assert.equal(!!oPanel, false, 'No control with id "panelWithAssociation" found.');
 
@@ -152,7 +160,8 @@
 
 
 
-	QUnit.test("UIArea", 7, function(assert) {
+	QUnit.test("UIArea", function(assert) {
+		assert.expect(7);
 	 	var oUIArea = sap.ui.getCore().getUIArea("uiAreaSimple");
 	 	assert.equal(!!oUIArea, false, 'No control with id "uiAreaSimple" found.');
 
@@ -177,7 +186,8 @@
 	});
 
 
-	QUnit.test("Complex Declaration", 8, function(assert) {
+	QUnit.test("Complex Declaration", function(assert) {
+		assert.expect(8);
 	 	var oUIArea = sap.ui.getCore().getUIArea("complexDeclarationUIArea");
 	 	assert.equal(!!oUIArea, false, 'No control with id "complexDeclarationUIArea" found.');
 
@@ -205,7 +215,8 @@
 	 	assert.ok(!!oPanel3, 'Control with id "complexDeclarationPanel3" found.');
 	});
 
-	QUnit.test("Events", 3, function(assert) {
+	QUnit.test("Events", function(assert) {
+		assert.expect(3);
 	 	var oButton1 = sap.ui.getCore().byId("buttonWithEvent");
 	 	assert.equal(!!oButton1, false, 'No control with id "buttonWithEvent" found.');
 
@@ -217,7 +228,8 @@
 	});
 
 
-	QUnit.test("AltType", 3, function(assert) {
+	QUnit.test("AltType", function(assert) {
+		assert.expect(3);
 		var oForm = sap.ui.getCore().byId("form");
 	 	assert.equal(!!oForm, false, 'No control with id "form" found.');
 
@@ -230,7 +242,8 @@
 	});
 
 
-	QUnit.test("Events Undefined Error", 1, function(assert) {
+	QUnit.test("Events Undefined Error", function(assert) {
+		assert.expect(1);
 		var bThrown = false;
 		try {
 			sap.ui.core.DeclarativeSupport.compile($("#events-error"));
@@ -242,7 +255,8 @@
 	});
 
 	/* TODO: Add this test once the deprecation warnings are removed
-	QUnit.test("Data Attributes", 1, function(assert) {
+	QUnit.test("Data Attributes", function(assert) {
+		assert.expect(1);
 		var bThrown = false;
 		try {
 			sap.ui.core.DeclarativeSupport.compile($("#data-attributes"));
@@ -256,7 +270,8 @@
 	*/
 
 
-	QUnit.test("DataBinding", 8, function(assert) {
+	QUnit.test("DataBinding", function(assert) {
+		assert.expect(8);
 	 	var oButton1 = sap.ui.getCore().byId("buttonDataBinding");
 	 	assert.equal(!!oButton1, false, 'No control with id "buttonDataBinding" found.');
 
@@ -299,13 +314,15 @@
 	});
 
 
-	QUnit.test("No Polution", 3, function(assert) {
+	QUnit.test("No Polution", function(assert) {
+		assert.expect(3);
 	 	assert.equal(jQuery.find("[data-sap-ui-type]").length, 0, 'No elements with attribute "data-sap-ui-type" found"');
 	 	assert.equal(jQuery.find("[data-sap-ui-aggregation]").length, 0, 'No elements with attribute "data-sap-ui-aggregation" found"');
 	 	assert.equal(jQuery.find("[data-sap-ui-default-aggregation]").length, 0, 'No elements with attribute "data-sap-ui-default-aggregation" found"');
 	});
 
-	QUnit.test("Custom Data", 2, function(assert) {
+	QUnit.test("Custom Data", function(assert) {
+		assert.expect(2);
 		var oButton = sap.ui.getCore().byId("simpleButton");
 	 	assert.equal(oButton.data("customData1"), "customvalue", 'Custom Data not applied!');
 	 	assert.equal(oButton.data("CustomData2"), "customvalue", 'Custom Data not applied!');
