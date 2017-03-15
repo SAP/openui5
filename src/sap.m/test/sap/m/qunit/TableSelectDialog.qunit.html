@@ -301,12 +301,12 @@
 		QUnit.module("Initial Check");
 
 		QUnit.test("Initialization", function(assert) {
-			ok(!jQuery.sap.domById("oTableSelectDialog"), "TableSelectDialog is not rendered before it's ever opened.");
+			assert.ok(!jQuery.sap.domById("oTableSelectDialog"), "TableSelectDialog is not rendered before it's ever opened.");
 			assert.strictEqual(oTableSelectDialog.getTitle(), "Choose your tech..", 'The title should be "Choose your tech.."');
 			assert.strictEqual(oTableSelectDialog.getNoDataText(), "We do not have any tech to show here and we are very sorry for that!", '"We do not have any tech to show here and we are very sorry for that!" should be displayed when no data is there');
 			assert.strictEqual(oTableSelectDialog.getMultiSelect(), false, 'Multi Select should by default be set to "false"');
 			assert.strictEqual(oTableSelectDialog.getGrowingThreshold(), 50, 'The growing threshold should be "50"');
-			ok(!jQuery.sap.domById("oTableSelectDialog1"), "TableSelectDialog is not rendered before it's ever opened.");
+			assert.ok(!jQuery.sap.domById("oTableSelectDialog1"), "TableSelectDialog is not rendered before it's ever opened.");
 			assert.strictEqual(oTableSelectDialog1.getTitle(), "Title", 'The title should be "Title"');
 			assert.strictEqual(oTableSelectDialog1.getNoDataText(), "No Data", '"No Data" should be displayed when no data is there');
 			assert.strictEqual(oTableSelectDialog1.getMultiSelect(), false, 'Multi Select should by default be set to "false"');
@@ -362,11 +362,11 @@
 
 		QUnit.test("Open TableSelectDialog", function(assert) {
 			oButton.firePress();
-			ok(jQuery.sap.domById("oTableSelectDialog-dialog"), "TableSelectDialog is opened");
-			ok(jQuery.sap.domById("oTableSelectDialog-dialog-title"), "TableSelectDialog title should be rendered");
-			ok(jQuery.sap.domById("oTableSelectDialog-searchField"), "TableSelectDialog should have a searchfield");
-			ok(jQuery.sap.domById("oTableSelectDialog-cancel"), "TableSelectDialog should have a cancel button");
-			ok(!jQuery.sap.domById("oTableSelectDialog-ok"), "TableSelectDialog should not have an ok button");
+			assert.ok(jQuery.sap.domById("oTableSelectDialog-dialog"), "TableSelectDialog is opened");
+			assert.ok(jQuery.sap.domById("oTableSelectDialog-dialog-title"), "TableSelectDialog title should be rendered");
+			assert.ok(jQuery.sap.domById("oTableSelectDialog-searchField"), "TableSelectDialog should have a searchfield");
+			assert.ok(jQuery.sap.domById("oTableSelectDialog-cancel"), "TableSelectDialog should have a cancel button");
+			assert.ok(!jQuery.sap.domById("oTableSelectDialog-ok"), "TableSelectDialog should not have an ok button");
 		});
 
 		QUnit.test("Destroy TableSelectDialog", function(assert){
@@ -387,11 +387,11 @@
 			assert.expect(6);
 			setTimeout(function() {
 				oButton1.firePress();
-				ok(jQuery.sap.domById("oTableSelectDialog1-dialog"), "TableSelectDialog1 is opened");
-				ok(jQuery.sap.domById("oTableSelectDialog1-dialog-title"), "TableSelectDialog1 title should be rendered");
-				ok(jQuery.sap.domById("oTableSelectDialog1-searchField"), "TableSelectDialog1 should have a searchfield");
-				ok(jQuery.sap.domById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
-				ok(jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should have an ok button");
+				assert.ok(jQuery.sap.domById("oTableSelectDialog1-dialog"), "TableSelectDialog1 is opened");
+				assert.ok(jQuery.sap.domById("oTableSelectDialog1-dialog-title"), "TableSelectDialog1 title should be rendered");
+				assert.ok(jQuery.sap.domById("oTableSelectDialog1-searchField"), "TableSelectDialog1 should have a searchfield");
+				assert.ok(jQuery.sap.domById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
+				assert.ok(jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should have an ok button");
 			done();
 			}, 10);
 		});
@@ -486,8 +486,8 @@
 			var done = assert.async();
 			assert.expect(2);
 			setTimeout(function() {
-				ok(jQuery.sap.domById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
-				ok(!jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should not have an ok button");
+				assert.ok(jQuery.sap.domById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
+				assert.ok(!jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should not have an ok button");
 			done();
 			}, 50);
 		});
@@ -511,8 +511,8 @@
 			assert.expect(3);
 			oInput1.setValue("");
 			oButton1.firePress();
-			ok(jQuery.sap.domById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
-			ok(!jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should not have an ok button");
+			assert.ok(jQuery.sap.domById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
+			assert.ok(!jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should not have an ok button");
 			var oCancel = sap.ui.getCore().byId("oTableSelectDialog1-cancel");
 			oCancel.firePress();
 			done();
@@ -526,18 +526,18 @@
 			// add + has
 			oTableSelectDialog.addStyleClass(sCustomStyleClass);
 			oTableSelectDialog.open();
-			ok(oTableSelectDialog._oDialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog now has style class "' + sCustomStyleClass + '"');
-			ok(oTableSelectDialog.hasStyleClass(sCustomStyleClass), 'The TableSelectDialog now has style class "' + sCustomStyleClass + '"');
+			assert.ok(oTableSelectDialog._oDialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog now has style class "' + sCustomStyleClass + '"');
+			assert.ok(oTableSelectDialog.hasStyleClass(sCustomStyleClass), 'The TableSelectDialog now has style class "' + sCustomStyleClass + '"');
 
 			// remove
 			oTableSelectDialog.removeStyleClass(sCustomStyleClass);
-			ok(!oTableSelectDialog._oDialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog does not have style class "' + sCustomStyleClass + '" after remove');
-			ok(!oTableSelectDialog.hasStyleClass(sCustomStyleClass), 'The TableSelectDialog does not have style class "' + sCustomStyleClass + '" after remove');
+			assert.ok(!oTableSelectDialog._oDialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog does not have style class "' + sCustomStyleClass + '" after remove');
+			assert.ok(!oTableSelectDialog.hasStyleClass(sCustomStyleClass), 'The TableSelectDialog does not have style class "' + sCustomStyleClass + '" after remove');
 
 			// toggle
 			oTableSelectDialog.toggleStyleClass(sCustomStyleClass);
-			ok(oTableSelectDialog._oDialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog has style class "' + sCustomStyleClass + '" after toggle');
-			ok(oTableSelectDialog.hasStyleClass(sCustomStyleClass), 'The TableSelectDialog has style class "' + sCustomStyleClass + '" after toggle');
+			assert.ok(oTableSelectDialog._oDialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog has style class "' + sCustomStyleClass + '" after toggle');
+			assert.ok(oTableSelectDialog.hasStyleClass(sCustomStyleClass), 'The TableSelectDialog has style class "' + sCustomStyleClass + '" after toggle');
 
 			// cleanup
 			oTableSelectDialog._oDialog.attachAfterClose(function (oEvent) {
@@ -554,10 +554,10 @@
 			oTableSelectDialog.open();
 
 			// $ method
-			ok(oTableSelectDialog.$() instanceof jQuery && oTableSelectDialog.$().length === 1, "The inner dialogs jQuery object is returned");
+			assert.ok(oTableSelectDialog.$() instanceof jQuery && oTableSelectDialog.$().length === 1, "The inner dialogs jQuery object is returned");
 
 			// getDomRef
-			ok(oTableSelectDialog.getDomRef() instanceof Element && oTableSelectDialog.getDomRef().id === oTableSelectDialog.getId()+"-dialog", "The inner dialogs DOM reference is returned");
+			assert.ok(oTableSelectDialog.getDomRef() instanceof Element && oTableSelectDialog.getDomRef().id === oTableSelectDialog.getId()+"-dialog", "The inner dialogs DOM reference is returned");
 
 			// cleanup
 			oTableSelectDialog._oDialog.attachAfterClose(function (oEvent) {
@@ -589,7 +589,7 @@
 			oTableSelectDialog5.open();
 
 			setTimeout(function(){
-				ok(jQuery.sap.byId('tableSelectDialog-searchField-I').is(":focus"), 'SearchField should be focused if there are no rows in the list');
+				assert.ok(jQuery.sap.byId('tableSelectDialog-searchField-I').is(":focus"), 'SearchField should be focused if there are no rows in the list');
 					oTableSelectDialog5._oDialog.close();
 					oTableSelectDialog5.destroy();
 					done();

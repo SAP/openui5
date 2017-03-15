@@ -123,14 +123,14 @@
 			var p = new P(function(res, rej) {
 				rej();
 			});
-			ok(!p._subscribers && bNative || p._subscribers && !bNative , (bNative ? "Native" : "Custom") + " Promise implementation active.");
+			assert.ok(!p._subscribers && bNative || p._subscribers && !bNative , (bNative ? "Native" : "Custom") + " Promise implementation active.");
 		});
 
 		QUnit.test(sTestPrefix + "Native Support", function(assert) {
 			doOnNativeSupport(function(){
-				ok(window.Promise.toString().indexOf("[native code]") > -1, "Firefox, Chrome and Safari support Promises natively.");
+				assert.ok(window.Promise.toString().indexOf("[native code]") > -1, "Firefox, Chrome and Safari support Promises natively.");
 			}, function(){
-				ok(window.Promise.toString().indexOf("[native code]") == -1, "Browsers other than Firefox, Chrome and Safari does not support Promises natively.");
+				assert.ok(window.Promise.toString().indexOf("[native code]") == -1, "Browsers other than Firefox, Chrome and Safari does not support Promises natively.");
 			});
 		});
 
@@ -139,7 +139,7 @@
 
 		QUnit.test(sTestPrefix + "API available", function(assert) {
 			var p = new P(function(res, rej){rej();});
-			ok(typeof(p.then) == "function", "promise.then is a function");
+			assert.ok(typeof(p.then) == "function", "promise.then is a function");
 		});
 
 		QUnit.test(sTestPrefix + "promise.then", function(assert) {
@@ -148,12 +148,12 @@
 			p1.then(function(oVal){
 				assert.equal(oVal, "X", "Success Case - promise.then");
 			}, function(oVal){
-				ok(false, "Success Case - promise.then, Fail should not be called");
+				assert.ok(false, "Success Case - promise.then, Fail should not be called");
 			});
 
 			var p2 = asyncAction(true, "Y", 10, false);
 			p2.then(function(oVal){
-				ok(false, "Fail Case - promise.then, Success should not be called");
+				assert.ok(false, "Fail Case - promise.then, Success should not be called");
 				done();
 			}, function(oVal){
 				assert.equal(oVal, "Y", "Fail Case - Promise.then");
@@ -168,14 +168,14 @@
 				p1.then(function(oVal){
 					assert.equal(oVal, "X", "Success Case - promise.then");
 				}, function(oVal){
-					ok(false, "Success Case - promise.then, Fail should not be called");
+					assert.ok(false, "Success Case - promise.then, Fail should not be called");
 				});
 			}, 30);
 
 			var p2 = asyncAction(true, "Y", 10, false);
 			setTimeout(function(){
 				p2.then(function(oVal){
-					ok(false, "Fail Case - promise.then, Success should not be called");
+					assert.ok(false, "Fail Case - promise.then, Success should not be called");
 					done();
 				}, function(oVal){
 					assert.equal(oVal, "Y", "Fail Case - Promise.then");
@@ -217,14 +217,14 @@
 
 		QUnit.test(sTestPrefix + "API available", function(assert) {
 			var p = new P(function(res, rej){rej();});
-			ok(typeof(p["catch"]) == "function", "promise.catch is a function");
+			assert.ok(typeof(p["catch"]) == "function", "promise.catch is a function");
 		});
 
 		QUnit.test(sTestPrefix + "promise.catch", function(assert) {
 			var done = assert.async();
 			var p1 = asyncAction(false, "X", 10, false);
 			p1["catch"](function(oVal){
-				ok(false, "Success Case - promise.catch, Fail should not be called");
+				assert.ok(false, "Success Case - promise.catch, Fail should not be called");
 			});
 
 			var p2 = asyncAction(true, "Y", 10, false);
@@ -239,7 +239,7 @@
 			var p1 = asyncAction(false, "X", 10, false);
 			setTimeout(function(){
 				p1["catch"](function(oVal){
-					ok(false, "Success Case - promise.catch, Fail should not be called");
+					assert.ok(false, "Success Case - promise.catch, Fail should not be called");
 				});
 			}, 30);
 
@@ -256,7 +256,7 @@
 		QUnit.module(sTestPrefix + "Promise.resolve");
 
 		QUnit.test(sTestPrefix + "API available", function(assert) {
-			ok(typeof(P.resolve) == "function", "Promise.resolve is a function");
+			assert.ok(typeof(P.resolve) == "function", "Promise.resolve is a function");
 		});
 
 		QUnit.test(sTestPrefix + "Promise.resolve(promise)", function(assert) {
@@ -264,19 +264,19 @@
 			var p1 = asyncAction(false, "X", 10, false);
 			var p2 = P.resolve(p1);
 			if (!bNative || !sap.ui.Device.browser.safari) {
-				ok(p1 == p2, "Promise.resolve(promise) == promise");
+				assert.ok(p1 == p2, "Promise.resolve(promise) == promise");
 			}
 
 			p2.then(function(oVal){
 				assert.equal(oVal, "X", "Success Case - Promise.resolve(Thenable)");
 			}, function(oVal){
-				ok(false, "Success Case - Promise.resolve(Thenable), Fail should not be called");
+				assert.ok(false, "Success Case - Promise.resolve(Thenable), Fail should not be called");
 			});
 
 			var p3 = asyncAction_Deferred(true, "Y", 10, false);
 			var p4 = P.resolve(p3);
 			p4.then(function(oVal){
-				ok(false, "Fail Case - Promise.resolve(Thenable), Success should not be called");
+				assert.ok(false, "Fail Case - Promise.resolve(Thenable), Success should not be called");
 				done();
 			}, function(oVal){
 				assert.equal(oVal, "Y", "Fail Case - Promise.resolve(Thenable)");
@@ -291,13 +291,13 @@
 			p1.then(function(oVal){
 				assert.equal(oVal, "X", "Success Case - Promise.resolve(Thenable)");
 			}, function(oVal){
-				ok(false, "Success Case - Promise.resolve(Thenable), Fail should not be called");
+				assert.ok(false, "Success Case - Promise.resolve(Thenable), Fail should not be called");
 			});
 
 			var d2 = asyncAction_Deferred(true, "Y", 10, false);
 			var p2 = P.resolve(d2);
 			p2.then(function(oVal){
-				ok(false, "Fail Case - Promise.resolve(Thenable), Success should not be called");
+				assert.ok(false, "Fail Case - Promise.resolve(Thenable), Success should not be called");
 				done();
 			}, function(oVal){
 				assert.equal(oVal, "Y", "Fail Case - Promise.resolve(Thenable)");
@@ -315,7 +315,7 @@
 						done();
 					}
 				}, function(oVal){
-					ok(false, "Promise.resolve("+oValue+"), Fail should not be called");
+					assert.ok(false, "Promise.resolve("+oValue+"), Fail should not be called");
 					if(bStart){
 						done();
 					}
@@ -348,7 +348,7 @@
 				assert.equal(oVal, "X", "Success with correct value");
 				iSuccessCount++;
 			}, function(oVal){
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 				iFailCount++;
 			});
 
@@ -374,7 +374,7 @@
 				assert.equal(oVal, "X", "Success with correct value");
 				iSuccessCount++;
 			}, function(oVal){
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 				iFailCount++;
 			});
 
@@ -398,10 +398,10 @@
             	};
 
             P.resolve(thenable).then(function(oVal){
-            	ok(false, "Success should not be called");
+            	assert.ok(false, "Success should not be called");
 				iSuccessCount++;
 			}, function(oVal){
-				ok(oVal === oError, "Failed with the correct error");
+				assert.ok(oVal === oError, "Failed with the correct error");
 				iFailCount++;
 			});
 
@@ -425,10 +425,10 @@
             	};
 
             P.resolve(thenable).then(function(oVal){
-            	ok(false, "Success should not be called");
+            	assert.ok(false, "Success should not be called");
 				iSuccessCount++;
 			}, function(oVal){
-				ok(oVal === oError, "Failed with the correct error");
+				assert.ok(oVal === oError, "Failed with the correct error");
 				iFailCount++;
 			});
 
@@ -443,7 +443,7 @@
 		QUnit.module(sTestPrefix + "Promise.reject");
 
 		QUnit.test(sTestPrefix + "API available", function(assert) {
-			ok(typeof(P.reject) == "function", "Promise.reject is a function");
+			assert.ok(typeof(P.reject) == "function", "Promise.reject is a function");
 		});
 
 		QUnit.test(sTestPrefix + "Promise.reject(obj)", function(assert) {
@@ -451,7 +451,7 @@
 			function check(oValue, bStart){
 				var p = P.reject(oValue);
 				p.then(function(oVal){
-					ok(false, "Promise.resolve("+oValue+"), Success should not be called");
+					assert.ok(false, "Promise.resolve("+oValue+"), Success should not be called");
 					if(bStart){
 						done();
 					}
@@ -479,20 +479,20 @@
 		QUnit.module(sTestPrefix + "Promise.all");
 
 		QUnit.test(sTestPrefix + "API available", function(assert) {
-			ok(typeof(P.all) == "function", "Promise.all is a function");
+			assert.ok(typeof(P.all) == "function", "Promise.all is a function");
 		});
 
 		QUnit.test(sTestPrefix + "Promise.all - Success Case", function(assert) {
 			var done = assert.async();
 			var p = P.all([asyncAction(false, "X", 10, false), asyncAction(false, "Y", 10, false)]);
 			p.then(function(oVal){
-				ok(jQuery.isArray(oVal), "Result is array");
+				assert.ok(jQuery.isArray(oVal), "Result is array");
 				assert.equal(oVal.length, 2, "Result has length 2");
 				assert.equal(oVal[0], "X", "Result[0] is 'X'");
 				assert.equal(oVal[1], "Y", "Result[1] is 'Y'");
 				done();
 			}, function(oVal){
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 				done();
 			});
 		});
@@ -501,7 +501,7 @@
 			var done = assert.async();
 			var p = P.all([asyncAction(true, "X", 10, false), asyncAction(false, "Y", 10, false)]);
 			p.then(function(oVal){
-				ok(false, "Success should not be called");
+				assert.ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
 				assert.equal(oVal, "X", "Result is 'X'");
@@ -513,7 +513,7 @@
 			var done = assert.async();
 			var p = P.all([asyncAction(false, "X", 10, false), asyncAction(true, "Y", 10, false)]);
 			p.then(function(oVal){
-				ok(false, "Success should not be called");
+				assert.ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
 				assert.equal(oVal, "Y", "Result is 'Y'");
@@ -525,7 +525,7 @@
 			var done = assert.async();
 			var p = P.all([asyncAction(true, "X", 10, false), asyncAction(true, "Y", 10, false)]);
 			p.then(function(oVal){
-				ok(false, "Success should not be called");
+				assert.ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
 				assert.equal(oVal, "X", "Result is 'X'");
@@ -536,13 +536,13 @@
 		QUnit.test(sTestPrefix + "Promise.all - empty array", function (assert) {
 			var done = assert.async();
 	        var p = P.all([]);
-	        ok(p instanceof P);
+	        assert.ok(p instanceof P);
 
 	        p.then(function(val) {
 	            assert.deepEqual([], val);
 	            done();
 	        }, function(val) {
-	        	ok(false, "Fail should not be called");
+	        	assert.ok(false, "Fail should not be called");
 				done();
 	        });
 	    });
@@ -550,10 +550,10 @@
 		QUnit.test(sTestPrefix + "Promise.all - no array parameter", function(assert){
 			var done = assert.async();
 			P.all({}).then(function(oVal){
-				ok(false, "Success should not be called");
+				assert.ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
-				ok(oVal instanceof Error, "Fail should be called with an Error");
+				assert.ok(oVal instanceof Error, "Fail should be called with an Error");
 				done();
 			});
 		});
@@ -561,13 +561,13 @@
 		QUnit.test(sTestPrefix + "Promise.all - non-promise array content", function(assert){
 			var done = assert.async();
 			P.all(["X", new P(function(resolve, reject){resolve("Y");})]).then(function(oVal){
-				ok(jQuery.isArray(oVal), "Result is array");
+				assert.ok(jQuery.isArray(oVal), "Result is array");
 				assert.equal(oVal.length, 2, "Result has length 2");
 				assert.equal(oVal[0], "X", "Result[0] is 'X'");
 				assert.equal(oVal[1], "Y", "Result[1] is 'Y'");
 				done();
 			}, function(oVal){
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 				done();
 			});
 		});
@@ -576,14 +576,14 @@
 		QUnit.module(sTestPrefix + "Promise.race");
 
 		QUnit.test(sTestPrefix + "API available", function(assert) {
-			ok(typeof(P.race) == "function", "Promise.race is a function");
+			assert.ok(typeof(P.race) == "function", "Promise.race is a function");
 		});
 
 		QUnit.test(sTestPrefix + "Promise.race - Fail Case 1", function(assert) {
 			var done = assert.async();
 			var p = P.race([asyncAction(true, "X", 10, false), asyncAction(true, "Y", 20, false)]);
 			p.then(function(oVal){
-				ok(false, "Success should not be called");
+				assert.ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
 				assert.equal(oVal, "X", "Result is 'X'");
@@ -595,7 +595,7 @@
 			var done = assert.async();
 			var p = P.race([asyncAction(true, "X", 20, false), asyncAction(true, "Y", 10, false)]);
 			p.then(function(oVal){
-				ok(false, "Success should not be called");
+				assert.ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
 				assert.equal(oVal, "Y", "Result is 'Y'");
@@ -607,7 +607,7 @@
 			var done = assert.async();
 			var p = P.race([asyncAction(false, "X", 20, false), asyncAction(true, "Y", 10, false)]);
 			p.then(function(oVal){
-				ok(false, "Success should not be called");
+				assert.ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
 				assert.equal(oVal, "Y", "Result is 'Y'");
@@ -622,7 +622,7 @@
 				assert.equal(oVal, "X", "Result is 'X'");
 				done();
 			}, function(oVal){
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 				done();
 			});
 		});
@@ -634,7 +634,7 @@
 				assert.equal(oVal, "Y", "Result is 'Y'");
 				done();
 			}, function(oVal){
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 				done();
 			});
 		});
@@ -646,7 +646,7 @@
 				assert.equal(oVal, "X", "Result is 'X'");
 				done();
 			}, function(oVal){
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 				done();
 			});
 		});
@@ -658,7 +658,7 @@
 				assert.equal(oVal, "Y", "Result is 'Y'");
 				done();
 			}, function(oVal){
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 				done();
 			});
 		});
@@ -674,7 +674,7 @@
 			var sCallbackCalled = null;
 
 			setTimeout(function(){
-				ok(!sCallbackCalled, "No callback should not be called: "+sCallbackCalled);
+				assert.ok(!sCallbackCalled, "No callback should not be called: "+sCallbackCalled);
 				done();
 			}, 30);
 		});
@@ -682,10 +682,10 @@
 		QUnit.test(sTestPrefix + "Promise.race - no array parameter", function(assert){
 			var done = assert.async();
 			P.race({}).then(function(oVal){
-				ok(false, "Success should not be called");
+				assert.ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
-				ok(oVal instanceof TypeError, "Fail should be called with an TypeError");
+				assert.ok(oVal instanceof TypeError, "Fail should be called with an TypeError");
 				done();
 			});
 		});
@@ -699,7 +699,7 @@
 					assert.equal(oVal, "X", "Success Result is 'X'");
 					done();
 			}, function(oVal){
-				ok(false, "Fail should not be called "+oVal);
+				assert.ok(false, "Fail should not be called "+oVal);
 				done();
 			});
 		});
@@ -774,7 +774,7 @@
 				assert.equal(sResult, "A: 1 -> B: 2 -> D: 3 -> SUCCESS: 5", "Result is: " + sResult);
 				done();
 			}, function(sResult){
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 			});
 		});
 
@@ -784,7 +784,7 @@
 				assert.equal(sResult, "C: 1 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
 				done();
 			}, function(sResult){
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 			});
 		});
 
@@ -794,7 +794,7 @@
 				assert.equal(sResult, "A: 1 -> C: 2 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
 				done();
 			}, function(sResult){
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 			});
 		});
 
@@ -804,7 +804,7 @@
 				assert.equal(sResult, "A: 1 -> B: 2 -> C: 3 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
 				done();
 			}, function(sResult){
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 			});
 		});
 
@@ -814,7 +814,7 @@
 				assert.equal(sResult, "A: 1 -> B: 2 -> C: 3 -> E: 4 -> SUCCESS: 6", "Result is: " + sResult);
 				done();
 			}, function(sResult){
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 			});
 		});
 
@@ -890,10 +890,10 @@
 			p.then(function(oVal){
 				throw new Error("error");
 			}).then(function(oVal){
-				ok(false, "Success should not be called");
+				assert.ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
-				ok(oVal instanceof Error, "Fail-Result is an error");
+				assert.ok(oVal instanceof Error, "Fail-Result is an error");
 				assert.equal(oVal.message, "error", "Fail-Result message is: " + oVal.message);
 				done();
 			});
@@ -905,10 +905,10 @@
 			p["catch"](function(oVal){
 				throw new Error("error");
 			}).then(function(oVal){
-				ok(false, "Success should not be called");
+				assert.ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
-				ok(oVal instanceof Error, "Fail-Result is an error");
+				assert.ok(oVal instanceof Error, "Fail-Result is an error");
 				assert.equal(oVal.message, "error", "Fail-Result message is: " + oVal.message);
 				done();
 			});
@@ -925,11 +925,11 @@
 			});
 
 			p.then(function(oVal){
-				ok(false, "Success should not be called");
+				assert.ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
 				var res = log("D", true);
-				ok(oVal instanceof Error, "Fail-Result is an error");
+				assert.ok(oVal instanceof Error, "Fail-Result is an error");
 				assert.equal(oVal.message, "error", "Fail-Result message is: " + oVal.message);
 				assert.equal(res, "A -> B -> C -> D", "Success-Result is: " + res);
 				done();
@@ -964,7 +964,7 @@
 
 			setTimeout(function(){
 				var res = log("E", true);
-				ok(!sCallbackCalled, "No callback should not be called: "+sCallbackCalled);
+				assert.ok(!sCallbackCalled, "No callback should not be called: "+sCallbackCalled);
 				assert.equal(res, "A -> B -> C -> D -> E", "Result is: " + res);
 				done();
 			}, 30);
@@ -989,7 +989,7 @@
 				assert.equal(oVal, "X", "Success with correct value");
 				done();
 			}, function(oVal){
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 				done();
 			});
 		});
@@ -1004,10 +1004,10 @@
             };
 
             P.resolve(thenable).then(function(oVal){
-            	ok(false, "Success should not be called");
+            	assert.ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
-				ok(oVal === oError, "Failed with the correct error");
+				assert.ok(oVal === oError, "Failed with the correct error");
 				done();
 			});
 		});
@@ -1030,7 +1030,7 @@
 				assert.equal(res, "A -> B -> C -> D X", "Success-Result is: " + res);
 				done();
 			}, function(oVal){
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 				done();
 			});
 
@@ -1048,7 +1048,7 @@
 			});
 
 			p.then(function(oVal){
-				ok(false, "Success should not be called");
+				assert.ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
 				var res = log("D "+oVal, true);
@@ -1071,7 +1071,7 @@
 				assert.equal(oVal, "X", "Success called with the correct value");
 				done();
 	        }, function(oVal) {
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 				done();
 			});
 		});
@@ -1082,7 +1082,7 @@
 	        var p2 = asyncAction(false, p1, 10, false);
 
 	        p2.then(function(oVal) {
-	        	ok(false, "Success should not be called");
+	        	assert.ok(false, "Success should not be called");
 	        	done();
 	        }, function(oVal) {
 	        	assert.equal(oVal, "X", "Fail called with the correct value");
@@ -1099,7 +1099,7 @@
 				assert.equal(oVal, "X", "Success called with the correct value");
 				done();
 	        }, function(oVal) {
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 				done();
 			});
 		});
@@ -1110,7 +1110,7 @@
 	        var p2 = asyncAction(false, p1, 10, false);
 
 	        p2.then(function(oVal) {
-	        	ok(false, "Success should not be called");
+	        	assert.ok(false, "Success should not be called");
 	        	done();
 	        }, function(oVal) {
 	        	assert.equal(oVal, "X", "Fail called with the correct value");
@@ -1128,7 +1128,7 @@
 				assert.equal(oVal, "X", "Success called with the correct value");
 				done();
 	        }, function(oVal) {
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 				done();
 			});
 		});
@@ -1140,7 +1140,7 @@
 	        var p3 = asyncAction(false, p2, 10, false);
 
 	        p3.then(function(oVal) {
-	        	ok(false, "Success should not be called");
+	        	assert.ok(false, "Success should not be called");
 	        	done();
 	        }, function(oVal) {
 	        	assert.equal(oVal, "X", "Fail called with the correct value");
@@ -1158,7 +1158,7 @@
 				assert.equal(oVal, "X", "Success called with the correct value");
 				done();
 	        }, function(oVal) {
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 				done();
 			});
 		});
@@ -1170,7 +1170,7 @@
 	        var p3 = asyncAction(false, p2, 10, false);
 
 	        p3.then(function(oVal) {
-	        	ok(false, "Success should not be called");
+	        	assert.ok(false, "Success should not be called");
 	        	done();
 	        }, function(oVal) {
 	        	assert.equal(oVal, "X", "Fail called with the correct value");
@@ -1184,10 +1184,10 @@
 	        var p2 = asyncAction(true, p1, 0, false);
 
 	        p2.then(function(oVal) {
-	        	ok(false, "Success should not be called");
+	        	assert.ok(false, "Success should not be called");
 	        	done();
 	        }, function(oVal) {
-	        	ok(oVal === p1, "Fail called with the correct value");
+	        	assert.ok(oVal === p1, "Fail called with the correct value");
 	        	done();
 			});
 		});
@@ -1199,13 +1199,13 @@
 
 	        var p = P.all([asyncAction(false, "X", 10, false), p2]);
 			p.then(function(oVal){
-				ok(jQuery.isArray(oVal), "Result is array");
+				assert.ok(jQuery.isArray(oVal), "Result is array");
 				assert.equal(oVal.length, 2, "Result has length 2");
 				assert.equal(oVal[0], "X", "Result[0] is 'X'");
 				assert.equal(oVal[1], "Y", "Result[1] is 'Y'");
 				done();
 			}, function(oVal){
-				ok(false, "Fail should not be called");
+				assert.ok(false, "Fail should not be called");
 				done();
 			});
 		});

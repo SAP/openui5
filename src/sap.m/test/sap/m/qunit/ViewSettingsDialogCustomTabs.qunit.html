@@ -275,8 +275,8 @@
 			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory('taxi-settings'));
 			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory('other-tab'));
 			this.oVSD.open();
-			ok(jQuery.sap.domById(sId + "-custom-button-taxi-settings"), "Button is rendered custom tab.");
-			ok(jQuery.sap.domById(sId + "-custom-button-other-tab"), "Button is rendered custom tab.");
+			assert.ok(jQuery.sap.domById(sId + "-custom-button-taxi-settings"), "Button is rendered custom tab.");
+			assert.ok(jQuery.sap.domById(sId + "-custom-button-other-tab"), "Button is rendered custom tab.");
 		});
 
 		QUnit.test("Check if all tabs contents are rendered when tab is focused.", function (assert) {
@@ -296,7 +296,7 @@
 			}));
 
 			this.oVSD.open();
-			ok(jQuery.sap.domById('taxi-settings-button-content2'), "Custom page contents are rendered.");
+			assert.ok(jQuery.sap.domById('taxi-settings-button-content2'), "Custom page contents are rendered.");
 		});
 
 		QUnit.test("Make sure 'reset' and 'back' buttons is not rendered when on custom page.", function (assert) {
@@ -308,7 +308,7 @@
 			oVsdConfig.addGroupItems(this.oVSD);
 
 			this.oVSD.open();
-			ok(!jQuery.sap.domById(sId + "-resetbutton"), "Filter reset button should not be rendered");
+			assert.ok(!jQuery.sap.domById(sId + "-resetbutton"), "Filter reset button should not be rendered");
 		});
 
 		/* [start]  Actual unit tests of custom tabs */
@@ -611,13 +611,13 @@
 
 			setTimeout(function () {
 				that.oVSD.open();
-				ok(jQuery.sap.domById(sId + "-page2-cont"), "Page 2 (filter detail content) should be rendered");
+				assert.ok(jQuery.sap.domById(sId + "-page2-cont"), "Page 2 (filter detail content) should be rendered");
 
 				setTimeout(function () {
 					that.oVSD._pressBackButton();
 
 					setTimeout(function () {
-						ok(jQuery.sap.byId(sId + "-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected after 'back' is pressed.");
+						assert.ok(jQuery.sap.byId(sId + "-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected after 'back' is pressed.");
 						done();
 					}, delay);
 				}, delay);

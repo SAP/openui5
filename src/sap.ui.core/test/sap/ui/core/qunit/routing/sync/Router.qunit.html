@@ -159,9 +159,9 @@
 			oRouter.destroy();
 
 			//Assert
-			ok(oRouter.bIsDestroyed, "did set the destroy flag");
-			ok(oTargets.bIsDestroyed, "did destroy the targets");
-			ok(oRoute.bIsDestroyed, "did destroy the route");
+			assert.ok(oRouter.bIsDestroyed, "did set the destroy flag");
+			assert.ok(oTargets.bIsDestroyed, "did destroy the targets");
+			assert.ok(oRoute.bIsDestroyed, "did destroy the route");
 			assert.strictEqual(oRouter._oRouter, null, "did free the crossroads router");
 			assert.strictEqual(oRouter._oRoutes, null, "did free the UI5 routes");
 			assert.strictEqual(oRouter._oTargets, null, "did free the UI5 targets");
@@ -216,7 +216,7 @@
 									callCount++;
 								}
 								if (oEvent.getParameter("name") === "parent") {
-									ok(false, "did hit the parent route");
+									assert.ok(false, "did hit the parent route");
 								}
 							},
 					//System under Test
@@ -276,9 +276,9 @@
 
 			var aRoutes = router._oRoutes;
 
-			ok(aRoutes.name);
-			ok(aRoutes.subpage);
-			ok(aRoutes.subsubpage);
+			assert.ok(aRoutes.name);
+			assert.ok(aRoutes.subpage);
+			assert.ok(aRoutes.subsubpage);
 
 			var route1 = aRoutes.name;
 			assert.strictEqual(route1._oConfig.name, "name", "Route has correct name");
@@ -323,9 +323,9 @@
 
 			aRoutes = router._oRoutes;
 
-			ok(aRoutes.name);
-			ok(aRoutes.subpage);
-			ok(aRoutes.subsubpage);
+			assert.ok(aRoutes.name);
+			assert.ok(aRoutes.subpage);
+			assert.ok(aRoutes.subsubpage);
 
 			route1 = aRoutes.name;
 			assert.strictEqual(route1._oConfig.name, "name", "Route has correct name");
@@ -357,7 +357,7 @@
 
 			oRouter.parse("view1");
 
-			ok(true, "Did not crash");
+			assert.ok(true, "Did not crash");
 
 			oNavContainer.destroy();
 			oRouter.destroy();
@@ -555,7 +555,7 @@
 				patternMatched = function(oEvent) {
 					patternCallCount++;
 					if (oEvent.getParameter("name") === "name") {
-						ok(false, "the parent route should not be hit")
+						assert.ok(false, "the parent route should not be hit")
 					}
 				},
 				//System under Test
@@ -588,7 +588,7 @@
 			assert.strictEqual(callCount, 2, "Did call the callback function twice");
 			assert.strictEqual(patternCallCount, 1, "Did call the patternMatched function once");
 			assert.deepEqual(aArguments.foo, "foo", "Did pass foo as parameter it was: " + aArguments.foo);
-			ok(bParentCallFirst, "Parent route was called first");
+			assert.ok(bParentCallFirst, "Parent route was called first");
 
 			//Cleanup
 			router.destroy();
@@ -2004,7 +2004,7 @@
 
 			// Assert
 			assert.strictEqual(fnOwnerSpy.callCount, 1, "Did run with owner");
-			ok(fnOwnerSpy.calledBefore(fnViewStub), "Did invoke the owner function before creating the view");
+			assert.ok(fnOwnerSpy.calledBefore(fnViewStub), "Did invoke the owner function before creating the view");
 
 			// Cleanup
 			oRouter.destroy();

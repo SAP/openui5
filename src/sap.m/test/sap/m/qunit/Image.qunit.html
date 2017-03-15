@@ -55,8 +55,8 @@
 
 			// Assert
 			var $oImage = oImage.$();
-			ok($oImage.hasClass("sapMImg"), "Image is rendered.");
-			ok(($oImage !== undefined) && ($oImage != null), "oImage should not be null");
+			assert.ok($oImage.hasClass("sapMImg"), "Image is rendered.");
+			assert.ok(($oImage !== undefined) && ($oImage != null), "oImage should not be null");
 
 			// Clean up
 			oImage.destroy();
@@ -74,8 +74,8 @@
 
 			// Assert
 			var $oImage = oImage.$();
-			ok(!$oImage.hasClass("sapMImg"), "sapMImage class is not found.");
-			ok(!jQuery.sap.domById(sControlId) , "oImage is not rendered");
+			assert.ok(!$oImage.hasClass("sapMImg"), "sapMImage class is not found.");
+			assert.ok(!jQuery.sap.domById(sControlId) , "oImage is not rendered");
 
 			// Clean up
 			oImage.destroy();
@@ -135,8 +135,8 @@
 			var $oImage = oImage.$();
 			assert.equal($oImage.attr("role"), "presentation", "role is set to presentation");
 			assert.equal($oImage.attr("aria-hidden"), "true", "aria-hidden is set to true");
-			ok(!$oImage.attr("alt"), "alt is kept empty");
-			ok(!$oImage.attr("title"), "title isn't set when no tooltip is provided");
+			assert.ok(!$oImage.attr("alt"), "alt is kept empty");
+			assert.ok(!$oImage.attr("title"), "title isn't set when no tooltip is provided");
 
 			oImage.setTooltip(sTooltip);
 			sap.ui.getCore().applyChanges();
@@ -230,8 +230,8 @@
 			assert.equal($oImage.attr("alt"), sAlt, "alt is rendered");
 			assert.equal($oImage.attr("aria-label"), sAlt, "aria-label is rendered");
 			assert.equal($oImage.attr("title"), sTooltip, "title is rendered");
-			ok(!$oImage.attr("role"), "no role is output");
-			ok(!$oImage.attr("aria-hidden"), "no aria-hidden is output");
+			assert.ok(!$oImage.attr("role"), "no role is output");
+			assert.ok(!$oImage.attr("aria-hidden"), "no aria-hidden is output");
 
 			// Clean up
 			oImage.destroy();
@@ -271,7 +271,7 @@
 
 				assert.equal(sBackgroundImage.indexOf("url("), 0, "The background-image CSS style starts with 'url('");
 				assert.equal(sBackgroundImage.charAt(sBackgroundImage.length-1), ")", "The background-image CSS style ends with ')'");
-				ok(sBackgroundImage.substring(4, sBackgroundImage.length - 1).indexOf("images/SAPLogo.jpg") !== -1, "The background-image CSS style has the right path");
+				assert.ok(sBackgroundImage.substring(4, sBackgroundImage.length - 1).indexOf("images/SAPLogo.jpg") !== -1, "The background-image CSS style has the right path");
 				assert.equal($Image.css("background-size"), "cover", "backgroundSize property is set by default to 'cover' and output to the dom CSS style");
 				assert.equal($Image.css("background-repeat"), "no-repeat", "backgroundRepeat property is set by default to 'no-repeat' and output to the dom CSS style");
 				oImage.destroy();
@@ -462,10 +462,10 @@
 			oCore.applyChanges();
 
 			oImage.$().on("load", function() {
-				ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is taken");
+				assert.ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is taken");
 				oImage.rerender();
 				oImage.$().on("load", function() {
-					ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is still taken");
+					assert.ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is still taken");
 					oImage.destroy();
 					// Restore the stubbed property in the callback
 					oSandbox.restore();
@@ -610,7 +610,7 @@
 
 			oImage.detachPress(fn2);
 			assert.strictEqual($Image.attr("tabindex"), undefined, "no tabindex is output");
-			ok(!$Image.attr("role"), "role is removed");
+			assert.ok(!$Image.attr("role"), "role is removed");
 
 			//Clean up
 			oImage.destroy();
@@ -620,17 +620,17 @@
 
 		QUnit.test("getAccessibilityInfo", function(assert) {
 			var oImage = new sap.m.Image({alt: "Alt", tooltip: "Tooltip"});
-			ok(!!oImage.getAccessibilityInfo, "Image has a getAccessibilityInfo function");
+			assert.ok(!!oImage.getAccessibilityInfo, "Image has a getAccessibilityInfo function");
 			var oInfo = oImage.getAccessibilityInfo();
-			ok(!oInfo, "getAccessibilityInfo returns no info object in case of decorative images");
+			assert.ok(!oInfo, "getAccessibilityInfo returns no info object in case of decorative images");
 			oImage.setDecorative(false);
 			oInfo = oImage.getAccessibilityInfo();
 			assert.strictEqual(oInfo.role, "img", "AriaRole");
 			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_IMAGE"), "Type");
 			assert.strictEqual(oInfo.description, "Alt", "Description");
 			assert.strictEqual(oInfo.focusable, false, "Focusable");
-			ok(oInfo.enabled === undefined || oInfo.enabled === null, "Enabled");
-			ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+			assert.ok(oInfo.enabled === undefined || oInfo.enabled === null, "Enabled");
+			assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 			oImage.setAlt("");
 			oImage.attachPress(function(){});
 			oInfo = oImage.getAccessibilityInfo();
@@ -715,11 +715,11 @@
 			oImage.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			oImage.$().on("load", function() {
-				ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is taken");
+				assert.ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is taken");
 				assert.equal(oLoadSpy.callCount, 1, "load event handler is called");
 				oImage.rerender();
 				oImage.$().on("load", function() {
-					ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is still taken");
+					assert.ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is still taken");
 					assert.equal(oLoadSpy.callCount, 2, "load event handler is called again");
 					oImage.destroy();
 					// Restore the stubbed property in the callback

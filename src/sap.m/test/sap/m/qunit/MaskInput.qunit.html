@@ -55,7 +55,7 @@
 				oSetterSpy = this.sandbox.spy(oControl, "setProperty");
 
 			this.oMaskInput.setMask('');
-			ok(oSetterSpy.notCalled, "Invalid placeholder symbol is not accepted");
+			assert.ok(oSetterSpy.notCalled, "Invalid placeholder symbol is not accepted");
 			assert.equal(oWarningSpy.calledOnce, true, "Log warning method called");
 			assert.equal(oWarningSpy.getCall(0).args[0],
 					"Setting an empty mask is pointless. Make sure you set it with a non-empty value.",
@@ -108,33 +108,33 @@
 			oControl.setValue(null);
 			//Assert
 			assert.strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
-			ok(!oControl._oTempValue.differsFromOriginal(), "When setting 'null' buffer is not modified");
+			assert.ok(!oControl._oTempValue.differsFromOriginal(), "When setting 'null' buffer is not modified");
 
 			//Act
 			oControl.setValue(undefined);
 			//Assert
 			assert.strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
-			ok(!oControl._oTempValue.differsFromOriginal(), "When setting 'undefined' buffer is not modified");
+			assert.ok(!oControl._oTempValue.differsFromOriginal(), "When setting 'undefined' buffer is not modified");
 
 			//Act
 			oControl.setValue("");
 			//Assert
 			assert.strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
-			ok(!oControl._oTempValue.differsFromOriginal(), "When setting empty string buffer is not modified");
+			assert.ok(!oControl._oTempValue.differsFromOriginal(), "When setting empty string buffer is not modified");
 
 			//Act
 			oControl.setValue("bc-d9");
 			//Assert
 			assert.strictEqual(oControl.getValue(), "bc-d9", "When setValue is called with mask incompatible string, the value it is not modified.");
 			assert.strictEqual(getMaskInputDomValue(oControl), "bc-d9", "The value was updated successfully (EVEN NOT VALID)");
-			ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "bc-d_", "Buffer is successfully modified with the correct ALREADY VALIDATED value");
+			assert.ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "bc-d_", "Buffer is successfully modified with the correct ALREADY VALIDATED value");
 
 			//Act
 			oControl.setValue("bc-de");
 			//Assert
 			assert.strictEqual(oControl.getValue(), "bc-de", "When setValue is called with mask compatible string, the value is not modified.");
 			assert.strictEqual(getMaskInputDomValue(oControl), "bc-de", "The value was updated successfully");
-			ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "bc-de", "Buffer is successfully modified");
+			assert.ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "bc-de", "Buffer is successfully modified");
 
 			//Prepare
 			oControl.setMask("ISBN99-99");
@@ -200,8 +200,8 @@
 				oSetterSpy.restore();
 				oSetterSpy = oSandbox.spy(oControl, 'setProperty');
 				oControl.setPlaceholderSymbol(sSymbol);
-				ok(oSetterSpy.notCalled, "Invalid placeholder symbol [" + sSymbol + "] is not accepted");
-				ok(oErrorSpy.calledOnce, "When called with invalid parameter [" + sSymbol + "] setPlaceholderSymbol logs error.");
+				assert.ok(oSetterSpy.notCalled, "Invalid placeholder symbol [" + sSymbol + "] is not accepted");
+				assert.ok(oErrorSpy.calledOnce, "When called with invalid parameter [" + sSymbol + "] setPlaceholderSymbol logs error.");
 				assert.equal(oErrorSpy.getCall(0).args[0], "Invalid placeholder symbol string given",
 						"Verify the exact error when setPlaceholderSymbol is called with invalid parameter [" + sSymbol + "]");
 			}
@@ -523,7 +523,7 @@
 			oControl.setValue('#1-23');
 			jQuery(oControl).focus();
 			assert.strictEqual(getMaskInputDomValue(oControl), "#1-23", "The value was not validated on focusin");
-			ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "12-3#", "Buffer is successfully modified with the correct ALREADY VALIDATED value");
+			assert.ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "12-3#", "Buffer is successfully modified with the correct ALREADY VALIDATED value");
 
 
 			jQuery(oOtherControl).focus();
@@ -599,7 +599,7 @@
 			jQuery(this.oOtherControl).focus();
 			this.clock.tick(1000);
 
-			ok(this.spyChangeEvent.called, "Change event must be fired");
+			assert.ok(this.spyChangeEvent.called, "Change event must be fired");
 			assert.equal(this.oChangeListenerPassedEvent.mParameters.value, "1__", "Change event must have an exact value");
 		});
 
@@ -609,11 +609,11 @@
 			this.clock.tick(1000);
 
 			qutils.triggerKeypress(oControl.getDomRef(), "1");
-			ok(getMaskInputDomValue(oControl), "The '1' should go into the input");
-			ok(!this.spyChangeEvent.called, "Change event must not be called");
+			assert.ok(getMaskInputDomValue(oControl), "The '1' should go into the input");
+			assert.ok(!this.spyChangeEvent.called, "Change event must not be called");
 			qutils.triggerKeypress(oControl.getDomRef(), "8");
-			ok(getMaskInputDomValue(oControl), "The '18' should go into the input");
-			ok(!this.spyChangeEvent.called, "Change event must not be called");
+			assert.ok(getMaskInputDomValue(oControl), "The '18' should go into the input");
+			assert.ok(!this.spyChangeEvent.called, "Change event must not be called");
 
 			qutils.triggerKeydown(jQuery(oControl.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
 
@@ -626,9 +626,9 @@
 			this.clock.tick(1000);
 
 			qutils.triggerKeypress(oControl.getDomRef(), "1");
-			ok(getMaskInputDomValue(oControl), "The '1' should go into the input");
+			assert.ok(getMaskInputDomValue(oControl), "The '1' should go into the input");
 			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
-			ok(!this.spyChangeEvent.called, "Change event must not be called");
+			assert.ok(!this.spyChangeEvent.called, "Change event must not be called");
 		});
 
 		QUnit.test("Change event must be called if the existing input value is entirely deleted", function(assert){
@@ -640,7 +640,7 @@
 
 			jQuery(this.oOtherControl).focus();
 			this.clock.tick(1000);
-			ok(this.spyChangeEvent.called, "Change event must be called");
+			assert.ok(this.spyChangeEvent.called, "Change event must be called");
 			assert.equal(this.oChangeListenerPassedEvent.mParameters.value, "", "Change event must have an exact value");
 		});
 
@@ -651,7 +651,7 @@
 
 			jQuery(this.oOtherControl).focus();
 			this.clock.tick(1000);
-			ok(!this.oChangeListenerPassedEvent, "Change event must not be called");
+			assert.ok(!this.oChangeListenerPassedEvent, "Change event must not be called");
 		});
 
 		// Disabling for phantomJS browser only because keyboard handling does not work - remove this check when resolved
@@ -916,7 +916,7 @@
 			this.sendAndValidate(-1, "2", "2-#");
 			var oSelection = getCurrentSelection(oControl);
 
-			ok(oSelection.iFrom === oSelection.iTo, "There must not be any selection");
+			assert.ok(oSelection.iFrom === oSelection.iTo, "There must not be any selection");
 			assert.equal(oSelection.iFrom, 2, "Cursor position.");
 		});
 
@@ -929,7 +929,7 @@
 			this.clock.tick(1000);
 
 			var oSelection = getCurrentSelection(oControl);
-			ok(oSelection.iFrom === oSelection.iTo, "There must not be any selection");
+			assert.ok(oSelection.iFrom === oSelection.iTo, "There must not be any selection");
 			assert.equal(oSelection.iFrom, 0, "Cursor position.");
 		});
 
@@ -980,7 +980,7 @@
 			oDefinition1.setMaskFormatSymbol("+");
 
 			this.clock.tick(1000);
-			ok(oWarningSpy.calledOnce, "Warning issued.")
+			assert.ok(oWarningSpy.calledOnce, "Warning issued.")
 			assert.equal(oWarningSpy.getCall(0).args[0],
 					"Invalid mask input: Empty mask. Duplicated rule's maskFormatSymbol [+]", "Message");
 		});
@@ -1061,7 +1061,7 @@
 		QUnit.test("Testing aria label", function (assert){
 			var $AriaLabel = this.oMaskInput.$().find("#" + this.oMaskInput.getId() + "-labelledby");
 			//assert
-			ok($AriaLabel.length > 0, "The hidden aria description is present in the DOM");
+			assert.ok($AriaLabel.length > 0, "The hidden aria description is present in the DOM");
 			assert.strictEqual(this.oRenderer.getLabelledByAnnouncement(this.oMaskInput), $AriaLabel.text(), "The message is rendered correctly");
 		});
 
@@ -1069,7 +1069,7 @@
 			//arrange
 			var $AriaDescripttion = this.oMaskInput.$().find("#" + this.oMaskInput.getId() + "-describedby");
 			//assert
-			ok($AriaDescripttion.length > 0, "The hidden aria description is present in the DOM");
+			assert.ok($AriaDescripttion.length > 0, "The hidden aria description is present in the DOM");
 			assert.strictEqual(this.oRenderer.getDescribedByAnnouncement(this.oMaskInput), $AriaDescripttion.text(), "The message is rendered correctly");
 		});
 
@@ -1123,7 +1123,7 @@
 		}
 
 		function checkForEmptyValue(oControl) {
-			ok(typeof oControl.getValue() === "undefined" || oControl.getValue() == null || oControl.getValue().length === 0,
+			assert.ok(typeof oControl.getValue() === "undefined" || oControl.getValue() == null || oControl.getValue().length === 0,
 					"The value [" + oControl.getValue() + "] should be empty ");
 		}
 

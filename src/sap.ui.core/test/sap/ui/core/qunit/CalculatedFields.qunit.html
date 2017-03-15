@@ -162,7 +162,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 						]});
 
 		var oComp = oTxt.getBinding("value");
-		ok(oComp);
+		assert.ok(oComp);
 		equals(oComp.getType(), null, "Type should be null");
 		equals(oComp.getPath(), null, "Path should be null");
 		equals(oComp.getModel(), null, "Model should be null");
@@ -238,7 +238,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 						{path: "model2>/values/2/value"}
 					],
 			formatter: function(oV1, oV2, oV3){
-				ok(!oV2, "value should be undefined");
+				assert.ok(!oV2, "value should be undefined");
 				return oV1 + oV3;
 			}
 		});

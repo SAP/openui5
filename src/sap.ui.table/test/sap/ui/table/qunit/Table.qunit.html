@@ -349,7 +349,7 @@
 		assert.equal(oTable.$().find(".sapUiTableColHdrCnt").height(), 100, "ColumnHeaderHeight ok");
 		oTable.setColumnHeaderHeight(0);
 		sap.ui.getCore().applyChanges();
-		ok(oTable.$().find(".sapUiTableColHdrCnt").height() < 100, "ColumnHeaderHeight ok");
+		assert.ok(oTable.$().find(".sapUiTableColHdrCnt").height() < 100, "ColumnHeaderHeight ok");
 	});
 
 	QUnit.test("ColumnHeaderVisible", 2, function(assert) {

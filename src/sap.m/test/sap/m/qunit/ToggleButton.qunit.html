@@ -173,7 +173,7 @@
 		assert.strictEqual(oToggleButton.getEnabled(), false, "the enabled state of the toolbar got propagated");
 		assert.strictEqual(oToggleButton.$().attr("aria-disabled"), "true", "aria-disabled is true");
 		assert.strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
-		ok(oToggleButton.$("inner").hasClass("sapMToggleBtnPressed"), "still has the pressed class")
+		assert.ok(oToggleButton.$("inner").hasClass("sapMToggleBtnPressed"), "still has the pressed class")
 		assert.strictEqual(oTapSpy.callCount, 1, "tap was fired");
 	});
 
@@ -181,15 +181,15 @@
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oButton = new sap.m.ToggleButton({tooltip: "Tooltip"});
-		ok(!!oButton.getAccessibilityInfo, "ToggleButton has a getAccessibilityInfo function");
+		assert.ok(!!oButton.getAccessibilityInfo, "ToggleButton has a getAccessibilityInfo function");
 		var oInfo = oButton.getAccessibilityInfo();
-		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "button", "AriaRole");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
 		assert.strictEqual(oInfo.description, "Tooltip", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
-		ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 		oButton.setText("Text");
 		oButton.setEnabled(false);
 		oInfo = oButton.getAccessibilityInfo();

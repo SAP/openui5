@@ -6,7 +6,7 @@ sap.ui.controller("testdata.fragments.XMLViewController", {
 	},
 
 	doSomething: function() {
-		ok(true, "method 'doSomething' in controller called");
+		assert.ok(true, "method 'doSomething' in controller called");
 	}
 
 });

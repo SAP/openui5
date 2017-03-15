@@ -59,7 +59,7 @@ sap.ui.core.mvc.Controller</title>
 		sap.ui.getCore().applyChanges();
 		assert.equal(jQuery("#htmlRoot").html(), "THIS IS A TEST" , "HTML at root level rendered");
 		assert.equal(jQuery("#htmlNested").html(), "NESTED WORKS AS WELL",   "HTML at nested level rendered");
-		ok(jQuery("#htmlEmbeddedTable")[0], "HTML at embedded level rendered");
+		assert.ok(jQuery("#htmlEmbeddedTable")[0], "HTML at embedded level rendered");
 		oView.destroy();
 	});
 

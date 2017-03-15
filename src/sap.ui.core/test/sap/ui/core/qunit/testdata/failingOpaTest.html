@@ -189,7 +189,7 @@
 								return bLoaded;
 							},
 							success: function () {
-								ok(false, "Should not happen");
+								assert.ok(false, "Should not happen");
 							},
 							error: function () {
 								Opa5.resetConfig();
@@ -216,7 +216,7 @@
 							viewName: "myView",
 							id: "myButton",
 							success: function () {
-								ok(false, "Should not happen");
+								assert.ok(false, "Should not happen");
 							}
 						})
 					});

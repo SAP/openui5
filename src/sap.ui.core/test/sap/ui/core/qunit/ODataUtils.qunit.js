@@ -101,10 +101,10 @@ sap.ui.require([
 				assert.strictEqual(fnComparator(oFixture.s1 , oFixture.gt), -1, sDesc + ": s < gt");
 				assert.strictEqual(fnComparator(oFixture.gt , oFixture.s2), 1, sDesc + ": gt > s");
 
-				ok(isNaN(fnComparator(oFixture.s1, null)), sDesc + ": s, null");
-				ok(isNaN(fnComparator(null, oFixture.s2)), sDesc + ": null, s");
-				ok(isNaN(fnComparator(oFixture.s1, undefined)), sDesc + ": s, undefined");
-				ok(isNaN(fnComparator(undefined, oFixture.s2)), sDesc + ": undefined, s");
+				assert.ok(isNaN(fnComparator(oFixture.s1, null)), sDesc + ": s, null");
+				assert.ok(isNaN(fnComparator(null, oFixture.s2)), sDesc + ": null, s");
+				assert.ok(isNaN(fnComparator(oFixture.s1, undefined)), sDesc + ": s, undefined");
+				assert.ok(isNaN(fnComparator(undefined, oFixture.s2)), sDesc + ": undefined, s");
 
 				assert.strictEqual(fnComparator(null, null), 0, sDesc + ": null,null");
 				assert.strictEqual(fnComparator(undefined, undefined), 0,
@@ -158,9 +158,9 @@ sap.ui.require([
 			{p1: "-1", p2: -1, r: NaN, t: "p2 is a number"}
 		].forEach(function (oFixture) {
 			if (isNaN(oFixture.r)) {
-				ok(isNaN(ODataUtils.compare(oFixture.p1, oFixture.p2, true)), oFixture.t);
-				ok(isNaN(fnDecimal(oFixture.p1, oFixture.p2)), oFixture.t);
-				ok(isNaN(fnInt64(oFixture.p1, oFixture.p2)), oFixture.t);
+				assert.ok(isNaN(ODataUtils.compare(oFixture.p1, oFixture.p2, true)), oFixture.t);
+				assert.ok(isNaN(fnDecimal(oFixture.p1, oFixture.p2)), oFixture.t);
+				assert.ok(isNaN(fnInt64(oFixture.p1, oFixture.p2)), oFixture.t);
 			} else {
 				assert.strictEqual(ODataUtils.compare(oFixture.p1, oFixture.p2, true),
 					oFixture.r, oFixture.t);

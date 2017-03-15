@@ -86,7 +86,7 @@
 					}
 				}),
 				beforeOpen: function () {
-					ok(jQuery.sap.byId("dialog").css("visibility") !== "visible", "Dialog should be hidden before it's opened");
+					assert.ok(jQuery.sap.byId("dialog").css("visibility") !== "visible", "Dialog should be hidden before it's opened");
 				},
 				afterOpen: function () {
 					assert.equal(jQuery.sap.byId("dialog").css("visibility"), "visible", "Dialog should be visible after it's opened");
@@ -96,8 +96,8 @@
 				},
 				afterClose: function (oEvent) {
 					assert.equal(jQuery.sap.byId("dialog").length, 0, "Dialog content is not rendered anymore");
-					ok(oEvent.getParameter("origin") !== null, "Origin parameter should be set");
-					ok(!oDialog.isOpen(), "Dialog is already closed");
+					assert.ok(oEvent.getParameter("origin") !== null, "Origin parameter should be set");
+					assert.ok(!oDialog.isOpen(), "Dialog is already closed");
 				}
 			});
 
@@ -124,7 +124,7 @@
 			QUnit.module("Initial Check");
 
 			QUnit.test("Initialization", function (assert) {
-				ok(!jQuery.sap.domById("dialog"), "Dialog is not rendered before it's ever opened.");
+				assert.ok(!jQuery.sap.domById("dialog"), "Dialog is not rendered before it's ever opened.");
 				assert.equal(oDialog.oPopup._sF6NavMode, "SCOPE", "Dialog's popup navigation mode is set to SCOPE.")
 			});
 
@@ -151,8 +151,8 @@
 				var fnOpened2 = function() {
 					oDialog.detachAfterOpen(fnOpened2);
 
-					ok(oDialog.isOpen(), "Dialog is open");
-					ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
+					assert.ok(oDialog.isOpen(), "Dialog is open");
+					assert.ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
 					equals(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
 
 					oDialog.attachAfterClose(start);
@@ -163,7 +163,7 @@
 				var fnClosed1 = function() {
 					oDialog.detachAfterClose(fnClosed1);
 
-					ok(!oDialog.isOpen(), "Dialog is closed");
+					assert.ok(!oDialog.isOpen(), "Dialog is closed");
 					equals(document.querySelector("#htmlControl").parentElement.id, "sap-ui-preserve", "HTML control rendered (preserved)");
 
 					oDialog.attachAfterOpen(fnOpened2);
@@ -175,8 +175,8 @@
 				var fnOpened1 = function() {
 					oDialog.detachAfterOpen(fnOpened1);
 
-					ok(oDialog.isOpen(), "Dialog is open");
-					ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
+					assert.ok(oDialog.isOpen(), "Dialog is open");
+					assert.ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
 					equals(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
 
 					oDialog.attachAfterClose(fnClosed1);
@@ -195,7 +195,7 @@
 
 			QUnit.test("Open Dialog", function (assert) {
 				oButton.firePress();
-				ok(oDialog.isOpen(), "Dialog is already open");
+				assert.ok(oDialog.isOpen(), "Dialog is already open");
 				this.clock.tick(600);
 				var $Dialog = jQuery.sap.byId("dialog"),
 						$ScrollDiv = oDialog.$("scroll"),
@@ -203,9 +203,9 @@
 						oSubHeaderDom = $Dialog.children(".sapMDialogSubHeader")[0],
 						oIconDom = jQuery.sap.domById(oDialog.getId() + "-icon"),
 						oSearchField = sap.ui.getCore().byId("__field0").getFocusDomRef();
-				ok(jQuery.sap.domById("dialog"), "dialog is rendered after it's opened.");
-				ok($Dialog.closest("#sap-ui-static")[0], "dialog should be rendered inside the static uiArea.");
-				ok(oSubHeaderDom, "Sub header should be rendered inside the dialog");
+				assert.ok(jQuery.sap.domById("dialog"), "dialog is rendered after it's opened.");
+				assert.ok($Dialog.closest("#sap-ui-static")[0], "dialog should be rendered inside the static uiArea.");
+				assert.ok(oSubHeaderDom, "Sub header should be rendered inside the dialog");
 				assert.equal($ScrollDiv.css("display"), "inline-block", "Scroll div should always have display: inline-block");
 
 				if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
@@ -217,8 +217,8 @@
 				} else {
 					assert.expect(10);
 				}
-				ok(oIconDom, "Icon should be rendered.");
-				ok(oTitleDom, "Title should be rendered");
+				assert.ok(oIconDom, "Icon should be rendered.");
+				assert.ok(oTitleDom, "Title should be rendered");
 			});
 
 			QUnit.test("Close Dialog. Test set origin parameter value", function (assert) {
@@ -243,9 +243,9 @@
 				});
 
 				oDialog.open();
-				ok(oDialog.isOpen(), "Dialog is already open");
+				assert.ok(oDialog.isOpen(), "Dialog is already open");
 				this.clock.tick(500);
-				ok(oDialog.$().outerWidth() <= (jQuery(window).width() - 32), "Dialog adapts to the screen on phone");
+				assert.ok(oDialog.$().outerWidth() <= (jQuery(window).width() - 32), "Dialog adapts to the screen on phone");
 
 				oDialog.destroy();
 			});
@@ -319,9 +319,9 @@
 				//Assert
 				resultingScrollPaneWidth = sut._$scrollPane.width();
 				resultingContentWidth = sut._$content.width();
-				ok(resultingScrollPaneWidth >= resultingContentWidth, "scroll pane width: " + resultingScrollPaneWidth + " was bigger than or equal to the contentWidth - we are able to scroll");
+				assert.ok(resultingScrollPaneWidth >= resultingContentWidth, "scroll pane width: " + resultingScrollPaneWidth + " was bigger than or equal to the contentWidth - we are able to scroll");
 
-				ok(resultingContentWidth >= 398 && resultingContentWidth <= 500, "content width should be within the set value and minimum value of dialog");
+				assert.ok(resultingContentWidth >= 398 && resultingContentWidth <= 500, "content width should be within the set value and minimum value of dialog");
 				sut.destroy();
 			});
 
@@ -349,7 +349,7 @@
 				resultingScrollPaneWidth = sut._$scrollPane.width();
 				resultingContentWidth = sut.$("scrollCont").width();
 				assert.strictEqual(resultingScrollPaneWidth, resultingContentWidth, "scroll pane width " + resultingScrollPaneWidth + " was as bis as the content: " + resultingContentWidth);
-				ok(90 <= resultingScrollPaneWidth, "The content fits in the scollpane");
+				assert.ok(90 <= resultingScrollPaneWidth, "The content fits in the scollpane");
 				sut.destroy();
 				// Removing the sap-desktop breaks the focus tests
 				// jQuery("html").removeClass("sap-desktop");
@@ -367,10 +367,10 @@
 				this.clock.tick(500);
 
 				var $Dialog = oDialog.$();
-				ok(marginCompare(jQuery(window).width(), $Dialog.outerWidth()), "Stretched Dialog's width equals window's width");
-				ok(marginCompare(jQuery(window).height(), $Dialog.outerHeight()), "Stretched Dialog's height equals window's height");
-				ok(marginCompare($Dialog.width(), oDialog._$content.width()), "content should be as wide as dialog");
-				ok(oDialog.getDomRef('scrollCont').classList.contains('sapMDialogStretchContent'), "Stretched dialog should have class sapMDialogStretchContent");
+				assert.ok(marginCompare(jQuery(window).width(), $Dialog.outerWidth()), "Stretched Dialog's width equals window's width");
+				assert.ok(marginCompare(jQuery(window).height(), $Dialog.outerHeight()), "Stretched Dialog's height equals window's height");
+				assert.ok(marginCompare($Dialog.width(), oDialog._$content.width()), "content should be as wide as dialog");
+				assert.ok(oDialog.getDomRef('scrollCont').classList.contains('sapMDialogStretchContent'), "Stretched dialog should have class sapMDialogStretchContent");
 				oDialog.destroy();
 				jQuery("html").css("overflow", ""); // restore scrollbar after test
 			});
@@ -381,9 +381,9 @@
 				});
 
 				oDialog.open();
-				ok(oDialog.isOpen(), "Dialog is already open");
+				assert.ok(oDialog.isOpen(), "Dialog is already open");
 				this.clock.tick(500);
-				ok(!oDialog.$().hasClass("sapMDialogStretched"), "Dilog should not has sapMDialogStretched class");
+				assert.ok(!oDialog.$().hasClass("sapMDialogStretched"), "Dilog should not has sapMDialogStretched class");
 
 				oDialog.destroy();
 			});
@@ -402,9 +402,9 @@
 				});
 
 				oDialog.open();
-				ok(oDialog.isOpen(), "Dialog is already open");
+				assert.ok(oDialog.isOpen(), "Dialog is already open");
 				this.clock.tick(500);
-				ok(oDialog.$().hasClass("sapMDialogStretched"), "Dilog should has sapMDialogStretched class");
+				assert.ok(oDialog.$().hasClass("sapMDialogStretched"), "Dilog should has sapMDialogStretched class");
 
 				oDialog.destroy();
 			});
@@ -422,9 +422,9 @@
 				this.clock.tick(500);
 
 				var $Dialog = oDialog.$();
-				ok(marginCompare(jQuery(window).width(), $Dialog.outerWidth()), "Stretched Dialog's width equals window's width");
-				ok(marginCompare(jQuery(window).height(), $Dialog.outerHeight()), "Stretched Dialog's height equals window's height");
-				ok(marginCompare($Dialog.width(), oDialog._$content.width()), "content should be as wide as dialog");
+				assert.ok(marginCompare(jQuery(window).width(), $Dialog.outerWidth()), "Stretched Dialog's width equals window's width");
+				assert.ok(marginCompare(jQuery(window).height(), $Dialog.outerHeight()), "Stretched Dialog's height equals window's height");
+				assert.ok(marginCompare($Dialog.width(), oDialog._$content.width()), "content should be as wide as dialog");
 				oDialog.destroy();
 				jQuery("html").css("overflow", ""); // restore scrollbar after test
 			});
@@ -453,8 +453,8 @@
 
 				var $Dialog = oDialog.$();
 
-				ok(marginCompare(oDialog._$content.width(), iValue), "contentWidth should be set to content div");
-				ok(marginCompare($Dialog.width(), iValue), "dialog should also be as big as content");
+				assert.ok(marginCompare(oDialog._$content.width(), iValue), "contentWidth should be set to content div");
+				assert.ok(marginCompare($Dialog.width(), iValue), "dialog should also be as big as content");
 				oDialog.destroy();
 			});
 
@@ -491,8 +491,8 @@
 
 					var $Dialog = oDialog.$();
 
-					ok(marginCompare(oDialog._$content.width(), iValue), "Landscape: contentWidth should be set to content div");
-					ok(marginCompare($Dialog.width(), iValue), "Landscape: dialog should also be as big as content");
+					assert.ok(marginCompare(oDialog._$content.width(), iValue), "Landscape: contentWidth should be set to content div");
+					assert.ok(marginCompare($Dialog.width(), iValue), "Landscape: dialog should also be as big as content");
 
 					oDialog.close();
 					this.clock.tick(500);
@@ -504,8 +504,8 @@
 
 					$Dialog = oDialog.$();
 
-					ok(marginCompare(oDialog._$content.width(), iValue), "Portrait: contentWidth should be set to content div");
-					ok(marginCompare($Dialog.width(), iValue), "Portrait: dialog should also be as big as content");
+					assert.ok(marginCompare(oDialog._$content.width(), iValue), "Portrait: contentWidth should be set to content div");
+					assert.ok(marginCompare($Dialog.width(), iValue), "Portrait: dialog should also be as big as content");
 					oDialog.destroy();
 				});
 			}
@@ -525,9 +525,9 @@
 				});
 
 				oDialog.open();
-				ok(marginCompare(oDialog._$content.width(), (jQuery(window).width() * 0.5)) || (oDialog._$content.width() === 398)), "Dialog content width " + oDialog._$content.width() + " is equal or less than part of window width " + jQuery(window).width() * 0.5;
-				ok(marginCompare(oDialog._$content.height(), jQuery(window).height() * 0.5), "Dialog content height " + oDialog._$content.height() + " is equal or less than part of window height " + jQuery(window).height() * 0.5);
-				ok(oDialog.getDomRef('scrollCont').classList.contains('sapMDialogStretchContent'), "Dialog with contentHeight set should have class sapMDialogStretchContent");
+				assert.ok(marginCompare(oDialog._$content.width(), (jQuery(window).width() * 0.5)) || (oDialog._$content.width() === 398)), "Dialog content width " + oDialog._$content.width() + " is equal or less than part of window width " + jQuery(window).width() * 0.5;
+				assert.ok(marginCompare(oDialog._$content.height(), jQuery(window).height() * 0.5), "Dialog content height " + oDialog._$content.height() + " is equal or less than part of window height " + jQuery(window).height() * 0.5);
+				assert.ok(oDialog.getDomRef('scrollCont').classList.contains('sapMDialogStretchContent'), "Dialog with contentHeight set should have class sapMDialogStretchContent");
 
 				oDialog.destroy();
 			});
@@ -593,8 +593,8 @@
 				});
 
 				oDialog.open();
-				ok(oDialog._oToolbar, "Toolbar instance is created");
-				ok(oDialog._oToolbar.getDomRef(), "Toolbar is rendered");
+				assert.ok(oDialog._oToolbar, "Toolbar instance is created");
+				assert.ok(oDialog._oToolbar.getDomRef(), "Toolbar is rendered");
 				assert.equal(oDialog._oToolbar.getContent().length, 3, "Toolbar contains 2 buttons");
 				notEqual(oDialog._oToolbar.indexOfContent(oBBtn), -1, "Toolbar contains beginButton");
 				notEqual(oDialog._oToolbar.indexOfContent(oEBtn), -1, "Toolbar contains endButton");
@@ -628,8 +628,8 @@
 
 				// destroy
 				oDialog.destroy();
-				ok(oBBtn.bIsDestroyed, "beginButton should also be destroyed");
-				ok(oEBtn.bIsDestroyed, "endButton should also be destroyed");
+				assert.ok(oBBtn.bIsDestroyed, "beginButton should also be destroyed");
+				assert.ok(oEBtn.bIsDestroyed, "endButton should also be destroyed");
 				aButtons.forEach(function (oButton) {
 					oButton.destroy();
 				});
@@ -662,8 +662,8 @@
 
 				oDialog.open();
 				this.clock.tick(500);
-				ok(oDialog._oToolbar, "Toolbar instance is not created");
-				ok(oDialog.getDomRef(), "Dialog is rendered");
+				assert.ok(oDialog._oToolbar, "Toolbar instance is not created");
+				assert.ok(oDialog.getDomRef(), "Dialog is rendered");
 				assert.equal(oDialog.getBeginButton(), oBBtn, "Getter of beginButton should return the button itself");
 				assert.equal(oDialog.getEndButton(), oEBtn, "Getter of endButton should return the button itself");
 				assert.equal(oBBtn.$().width(), oEBtn.$().width(), "BeginButton and EndButton are with equal width");
@@ -673,7 +673,7 @@
 					oDialog.addButton(oButton);
 				});
 				sap.ui.getCore().applyChanges();
-				ok(oDialog._oToolbar, "Toolbar instance is created");
+				assert.ok(oDialog._oToolbar, "Toolbar instance is created");
 				assert.equal(oDialog._oToolbar.getContent().length, 4, "Toolbar contains 3 new buttons");
 
 				// remove begin/endButton
@@ -688,13 +688,13 @@
 				oDialog.setEndButton(oEBtn);
 				oDialog.removeAllButtons();
 				sap.ui.getCore().applyChanges();
-				ok(oBBtn.$().closest(".sapMIBar").length, "BeginButton should be rendered");
-				ok(oEBtn.$().closest(".sapMIBar").length, "EndButton should be rendered");
+				assert.ok(oBBtn.$().closest(".sapMIBar").length, "BeginButton should be rendered");
+				assert.ok(oEBtn.$().closest(".sapMIBar").length, "EndButton should be rendered");
 
 				//destroy
 				oDialog.destroy();
-				ok(oBBtn.bIsDestroyed, "beginButton should also be destroyed");
-				ok(oEBtn.bIsDestroyed, "endButton should also be destroyed");
+				assert.ok(oBBtn.bIsDestroyed, "beginButton should also be destroyed");
+				assert.ok(oEBtn.bIsDestroyed, "endButton should also be destroyed");
 				aButtons.forEach(function (oButton) {
 					oButton.destroy();
 				});
@@ -937,7 +937,7 @@
 
 				var oDialog = new sap.m.Dialog();
 				oDialog.open();
-				ok(!oDialog.$().hasClass("sapMDialogPhone"), "Dialog shouldn't have phone CSS class on desktop");
+				assert.ok(!oDialog.$().hasClass("sapMDialogPhone"), "Dialog shouldn't have phone CSS class on desktop");
 
 				oDialog.destroy();
 			});
@@ -1056,7 +1056,7 @@
 				oDialog.open();
 				this.clock.tick(500);
 
-				ok(oDialog.isOpen(), "Dialog is opened");
+				assert.ok(oDialog.isOpen(), "Dialog is opened");
 				this.stub(oDialog, "_adjustScrollingPane", function () {
 					assert.equal(oDialog.$("scroll").css("display"), "inline-block", "display: block is cleared before size calculation");
 				});

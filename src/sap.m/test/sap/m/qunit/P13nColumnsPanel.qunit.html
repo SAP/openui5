@@ -45,11 +45,11 @@
 		});
 
 		QUnit.test("Shall be instantiable to check conrol existence", function(assert) {
-			ok(oP13nColumnsPanel, "Could not instantiate P13nColumnsPanel");
+			assert.ok(oP13nColumnsPanel, "Could not instantiate P13nColumnsPanel");
 		});
 
 		QUnit.test("Shall check _ItemMoveToTop", function(assert) {
-			ok(oP13nColumnsPanel._ItemMoveToTop, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._ItemMoveToTop, "Method does not exist");
 
 			var getArrayIndexByItemKeySpy = sinon.stub();
 			var handleItemIndexChangedSpy = sinon.stub();
@@ -86,7 +86,7 @@
 		});
 
 		QUnit.test("Shall check _ItemMoveUp", function(assert) {
-			ok(oP13nColumnsPanel._ItemMoveUp, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._ItemMoveUp, "Method does not exist");
 
 			var getArrayIndexByItemKeySpy = sinon.stub();
 			var handleItemIndexChangedSpy = sinon.stub();
@@ -141,7 +141,7 @@
 		});
 
 		QUnit.test("Shall check _ItemMoveDown", function(assert) {
-			ok(oP13nColumnsPanel._ItemMoveDown, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._ItemMoveDown, "Method does not exist");
 
 			var getArrayIndexByItemKeySpy = sinon.stub();
 			var handleItemIndexChangedSpy = sinon.stub();
@@ -196,7 +196,7 @@
 		});
 
 		QUnit.test("Shall check _ItemMoveToBottom", function(assert) {
-			ok(oP13nColumnsPanel._ItemMoveToBottom, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._ItemMoveToBottom, "Method does not exist");
 
 			var getArrayIndexByItemKeySpy = sinon.stub();
 			var handleItemIndexChangedSpy = sinon.stub();
@@ -255,7 +255,7 @@
 		});
 
 		QUnit.test("Shall check _changeColumnsItemsIndexes", function(assert) {
-			ok(oP13nColumnsPanel._changeColumnsItemsIndexes, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._changeColumnsItemsIndexes, "Method does not exist");
 
 			var getColumnsItemsSpy = sinon.stub();
 			oP13nColumnsPanel.getColumnsItems = getColumnsItemsSpy;
@@ -303,7 +303,7 @@
 		});
 
 		QUnit.test("Shall check _swopShowSelectedButton", function(assert) {
-			ok(oP13nColumnsPanel._swopShowSelectedButton, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._swopShowSelectedButton, "Method does not exist");
 			var bShowSelected_Before = bShowSelected_After = oP13nColumnsPanel._bShowSelected;
 			oP13nColumnsPanel._filterItems = sinon.stub();
 			oP13nColumnsPanel._fnHandleResize = sinon.stub();
@@ -318,7 +318,7 @@
 		});
 
 		QUnit.test("Shall check _afterMoveItem", function(assert) {
-			ok(oP13nColumnsPanel._afterMoveItem, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._afterMoveItem, "Method does not exist");
 			oP13nColumnsPanel._scrollToSelectedItem = sinon.stub();
 			oP13nColumnsPanel._calculateMoveButtonAppearance = sinon.stub();
 
@@ -329,7 +329,7 @@
 		});
 
 		QUnit.test("Shall check _filterItems if no filters are activated", function(assert) {
-			ok(oP13nColumnsPanel._filterItems, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._filterItems, "Method does not exist");
 			var oItem = {
 				"id": "4711",
 				"getId": function() {
@@ -460,7 +460,7 @@
 		});
 
 		QUnit.test("Shall check _executeSearch", function(assert) {
-			ok(oP13nColumnsPanel._executeSearch, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._executeSearch, "Method does not exist");
 			oP13nColumnsPanel._oSearchField.setValue('TestSearchFieldValue')
 			oP13nColumnsPanel._deactivateSelectedItem = sinon.stub();
 			oP13nColumnsPanel._filterItems = sinon.stub();
@@ -512,7 +512,7 @@
 		});
 
 		QUnit.test("Shall check _updateSelectAllDescription", function(assert) {
-			ok(oP13nColumnsPanel._updateSelectAllDescription, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._updateSelectAllDescription, "Method does not exist");
 			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
 				{}, {}, {}, {}, {}, {}
 			]);
@@ -535,7 +535,7 @@
 		});
 
 		QUnit.test("Shall check _itemPressed", function(assert) {
-			ok(oP13nColumnsPanel._itemPressed, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._itemPressed, "Method does not exist");
 
 			var oEvent = {}, oItem = {
 				"id": "tempItem"
@@ -576,7 +576,7 @@
 		});
 
 		QUnit.test("Shall check _calculateMoveButtonAppearance", function(assert) {
-			ok(oP13nColumnsPanel._calculateMoveButtonAppearance, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._calculateMoveButtonAppearance, "Method does not exist");
 
 			//CUT (no table item was selected up to here)
 			oP13nColumnsPanel._oSelectedItem = null;
@@ -680,7 +680,7 @@
 		});
 
 		QUnit.test("Shall check _setHighLightingToItem", function(assert) {
-			ok(oP13nColumnsPanel._setHighLightingToItem, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._setHighLightingToItem, "Method does not exist");
 
 			var oItem = {};
 			oItem.addStyleClass = sinon.stub();
@@ -690,7 +690,7 @@
 		});
 
 		QUnit.test("Shall check _removeHighLightingFromItem", function(assert) {
-			ok(oP13nColumnsPanel._removeHighLightingFromItem, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._removeHighLightingFromItem, "Method does not exist");
 
 			var oItem = {};
 			oItem.removeStyleClass = sinon.stub();
@@ -700,7 +700,7 @@
 		});
 
 		QUnit.test("Shall check _deactivateSelectedItem", function(assert) {
-			ok(oP13nColumnsPanel._deactivateSelectedItem, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._deactivateSelectedItem, "Method does not exist");
 
 			//CUT
 			oP13nColumnsPanel._oSelectedItem = null;
@@ -726,7 +726,7 @@
 		});
 
 		QUnit.test("Shall check _getArrayIndexByItemKey", function(assert) {
-			ok(oP13nColumnsPanel._getArrayIndexByItemKey, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._getArrayIndexByItemKey, "Method does not exist");
 
 			var oItem = null
 			var oTableItem1, oTableItem2, oTableItem3, oTableItem4, oTableItem5, oTableItem6;
@@ -773,7 +773,7 @@
 		});
 
 		QUnit.test("Shall check onBeforeRendering", function(assert) {
-			ok(oP13nColumnsPanel.onBeforeRendering, "Method does not exist");
+			assert.ok(oP13nColumnsPanel.onBeforeRendering, "Method does not exist");
 
 			oP13nColumnsPanel._calculateMoveButtonAppearance = sinon.stub();
 			oP13nColumnsPanel._updateSelectAllDescription = sinon.stub();
@@ -798,7 +798,7 @@
 		});
 
 		QUnit.test("Shall check exit", function(assert) {
-			ok(oP13nColumnsPanel.exit, "Method does not exist");
+			assert.ok(oP13nColumnsPanel.exit, "Method does not exist");
 
 			var fMoveToTopButton = oP13nColumnsPanel._oMoveToTopButton.destroy;
 			oP13nColumnsPanel._oMoveToTopButton.destroy = oMoveToTopButtonStub = sinon.stub();
@@ -841,7 +841,7 @@
 		});
 
 		QUnit.test("Shall check _scrollToSelectedItem", function(assert) {
-			ok(oP13nColumnsPanel._scrollToSelectedItem, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._scrollToSelectedItem, "Method does not exist");
 
 			var oItem = new sap.m.ColumnListItem();
 			oItem.getDomRef = sinon.stub().returns({});
@@ -856,7 +856,7 @@
 		});
 
 		QUnit.test("Shall check _getPreviousItemIndex", function(assert) {
-			ok(oP13nColumnsPanel._getPreviousItemIndex, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._getPreviousItemIndex, "Method does not exist");
 
 			var oResultIndex = null;
 			var oTableItem1 = new sap.m.ColumnListItem();
@@ -899,7 +899,7 @@
 		});
 
 		QUnit.test("Shall check _getNextItemIndex", function(assert) {
-			ok(oP13nColumnsPanel._getNextItemIndex, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._getNextItemIndex, "Method does not exist");
 
 			var oResultIndex = null;
 			var oTableItem1 = new sap.m.ColumnListItem();
@@ -943,7 +943,7 @@
 		});
 
 		QUnit.test("Shall check _handleItemIndexChanged", function(assert) {
-			ok(oP13nColumnsPanel._handleItemIndexChanged, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._handleItemIndexChanged, "Method does not exist");
 
 			var oItem = new sap.m.ColumnListItem();
 
@@ -1011,7 +1011,7 @@
 		});
 
 		QUnit.test("Shall check _handleItemVisibilityChanged", function(assert) {
-			ok(oP13nColumnsPanel._handleItemVisibilityChanged, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._handleItemVisibilityChanged, "Method does not exist");
 
 			var oItem = new sap.m.ColumnListItem();
 			oItem.getSelected = sinon.stub().returns(true);
@@ -1097,7 +1097,7 @@
 		});
 
 		QUnit.test("Shall check _createNewColumnsItem", function(assert) {
-			ok(oP13nColumnsPanel._createNewColumnsItem, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._createNewColumnsItem, "Method does not exist");
 
 			//CUT -> check that method is executed and a new columnsItem instance created
 			var sItemKey = "4711"
@@ -1108,7 +1108,7 @@
 		});
 
 		QUnit.test("Shall check _getColumnsItemByKey", function(assert) {
-			ok(oP13nColumnsPanel._getColumnsItemByKey, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._getColumnsItemByKey, "Method does not exist");
 
 			var oColumnsItem = null;
 
@@ -1141,7 +1141,7 @@
 		});
 
 		QUnit.test("Shall check _updateTableItems", function(assert) {
-			ok(oP13nColumnsPanel._updateTableItems, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._updateTableItems, "Method does not exist");
 
 			var oColumnsItem = new sap.m.P13nColumnsItem({
 				"columnKey": "4711"
@@ -1185,7 +1185,7 @@
 		});
 
 		QUnit.test("Shall check _addTableItem ", function(assert) {
-			ok(oP13nColumnsPanel._addTableItem, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._addTableItem, "Method does not exist");
 
 			var oNewCreatedTableItem = null, oItem = null;
 
@@ -1268,7 +1268,7 @@
 		});
 
 		QUnit.test("Shall check _insertTableItem", function(assert) {
-			ok(oP13nColumnsPanel._insertTableItem, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._insertTableItem, "Method does not exist");
 
 			var oNewCreatedTableItem = null, oItem = null;
 
@@ -1326,7 +1326,7 @@
 		});
 
 		QUnit.test("Shall check _createNewTableItemBasedOnP13nItem", function(assert) {
-			ok(oP13nColumnsPanel._createNewTableItemBasedOnP13nItem, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._createNewTableItemBasedOnP13nItem, "Method does not exist");
 
 			var oNewCreatedTableItem = null, oItem = null;
 
@@ -1348,7 +1348,7 @@
 		});
 
 		QUnit.test("Shall check _applyColumnsItem2TableItem", function(assert) {
-			ok(oP13nColumnsPanel._applyColumnsItem2TableItem, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._applyColumnsItem2TableItem, "Method does not exist");
 
 			var oColumnsItem = new sap.m.P13nColumnsItem({
 				"columnKey": "4711",
@@ -1383,7 +1383,7 @@
 		});
 
 		QUnit.test("Shall check _reOrderExistingTableItems", function(assert) {
-			ok(oP13nColumnsPanel._reOrderExistingTableItems, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._reOrderExistingTableItems, "Method does not exist");
 
 			var oTableItemA = new sap.m.ColumnListItem({
 				cells: [
@@ -1450,7 +1450,7 @@
 			var aTableItems = oP13nColumnsPanel._oTable.getItems();
 			//SortOrder -> at first all selected items in the same order as they exist in the table
 			// afterwards all unselected table items in a n alphanumerical sort order
-			ok(aTableItems, "Table shall exist");
+			assert.ok(aTableItems, "Table shall exist");
 			assert.strictEqual(aTableItems.length, 5, "Table shall contain 5 items in a special sorted order");
 			assert.strictEqual(aTableItems[0].getCells()[0].getText(), "E", "Column E shall be first column");
 			assert.strictEqual(aTableItems[0].getSelected(), true, "Column E shall be selected");
@@ -1466,7 +1466,7 @@
 		});
 
 		test("Shall check onBeforeNavigationFrom", function(assert) {
-			ok(oP13nColumnsPanel.onBeforeNavigationFrom, "Method does not exist");
+			assert.ok(oP13nColumnsPanel.onBeforeNavigationFrom, "Method does not exist");
 
 			// CUT -> method shall be executed -> threshold is not defined -> BeforeNavigationFrom shall result in true
 			assert.strictEqual(oP13nColumnsPanel.onBeforeNavigationFrom(), true, "navigation validation shall not be influenced");
@@ -1497,7 +1497,7 @@
 		});
 
 		QUnit.test("Shall check _extractExistingColumnsItems", function(assert) {
-			ok(oP13nColumnsPanel._extractExistingColumnsItems, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._extractExistingColumnsItems, "Method does not exist");
 
 			// CUT -> method shall not be executed -> as no valid input parameter is passed in
 			var aExtractionResultExpected = null;
@@ -1536,7 +1536,7 @@
 		});
 
 		QUnit.test("Shall check _extractExistingTableItems", function(assert) {
-			ok(oP13nColumnsPanel._extractExistingTableItems, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._extractExistingTableItems, "Method does not exist");
 
 			var aExtractionResultExpected = null, aExtractionResult = null;
 
@@ -1586,7 +1586,7 @@
 		});
 
 		QUnit.test("Shall check this._getTableItemsChangeStatus", function(assert) {
-			ok(oP13nColumnsPanel._getTableItemsChangeStatus, "Method does not exist");
+			assert.ok(oP13nColumnsPanel._getTableItemsChangeStatus, "Method does not exist");
 
 			var bTableItemsChangeStatusResult = null;
 			var oTableItem1 = new sap.m.ColumnListItem();

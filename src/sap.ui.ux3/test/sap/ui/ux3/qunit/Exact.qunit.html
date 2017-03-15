@@ -78,10 +78,10 @@
 
 		QUnit.test("Initial State", function(assert) {
 			equals(oSearchTextField.getValue(), "", "Initial text State of Search TextField:");
-			ok(oSearchTextField.getDomRef(), "Initial visibility State of Search TextField:");
-			ok(!oBrowser.getDomRef(), undefined, "Initial visibility State of Browse Area:");
-			ok(!oResultText.getDomRef(), undefined, "Initial visibility State of Result Text:");
-			ok(!oResultArea.getDomRef(), undefined, "Initial visibility State of Result Area:");
+			assert.ok(oSearchTextField.getDomRef(), "Initial visibility State of Search TextField:");
+			assert.ok(!oBrowser.getDomRef(), undefined, "Initial visibility State of Browse Area:");
+			assert.ok(!oResultText.getDomRef(), undefined, "Initial visibility State of Result Text:");
+			assert.ok(!oResultArea.getDomRef(), undefined, "Initial visibility State of Result Area:");
 		});
 
 		QUnit.test("Trigger Search", function(assert) {
@@ -105,10 +105,10 @@
 			var done = assert.async();
 			setTimeout(function(){
 				equals(oSearchTextField.getValue(), "Some search query", "Text State of Search TextField:");
-				ok(oSearchTextField.getDomRef(), "Visibility State of Search TextField:");
-				ok(oBrowser.getDomRef(), "Visibility State of Browse Area:");
-				ok(oResultText.getDomRef(), "Visibility State of Result Text:");
-				ok(oResultArea.getDomRef(), "Visibility State of Result Area:");
+				assert.ok(oSearchTextField.getDomRef(), "Visibility State of Search TextField:");
+				assert.ok(oBrowser.getDomRef(), "Visibility State of Browse Area:");
+				assert.ok(oResultText.getDomRef(), "Visibility State of Result Text:");
+				assert.ok(oResultArea.getDomRef(), "Visibility State of Result Area:");
 				equals(oBrowser.getAttributes().length, 4, "Number of top level attributes:");
 
 				var aSubLists = oBrowser._rootList.getSubLists();
@@ -118,10 +118,10 @@
 				for(var i=0; i<aSubLists.length; i++){
 					var aSubSubLists = aSubLists[i].getSubLists();
 					if(i==0){
-						ok(aSubSubLists.length == 1, "List " +aSubLists[i].getData()+ " contains 1 sub list.");
+						assert.ok(aSubSubLists.length == 1, "List " +aSubLists[i].getData()+ " contains 1 sub list.");
 						equals(aSubSubLists[0].getData(), "att1-1", "Sub-List at position 0:");
 					}else{
-						ok(aSubSubLists.length == 0, "List " +aSubLists[i].getData()+ " contains no sub lists.");
+						assert.ok(aSubSubLists.length == 0, "List " +aSubLists[i].getData()+ " contains no sub lists.");
 					}
 				}
 				done();
@@ -146,10 +146,10 @@
 					for(var i=0; i<aSubLists.length; i++){
 						var aSubSubLists = aSubLists[i].getSubLists();
 						if(i==0){
-							ok(aSubSubLists.length == 1, "List " +aSubLists[i].getData()+ " contains 1 sub list.");
+							assert.ok(aSubSubLists.length == 1, "List " +aSubLists[i].getData()+ " contains 1 sub list.");
 							equals(aSubSubLists[0].getData(), "att1-1", "Sub-List at position 0:");
 						}else{
-							ok(aSubSubLists.length == 0, "List " +aSubLists[i].getData()+ " contains no sub lists.");
+							assert.ok(aSubSubLists.length == 0, "List " +aSubLists[i].getData()+ " contains no sub lists.");
 						}
 					}
 					done();

@@ -96,8 +96,8 @@
 
 				sap.ui.getCore().applyChanges();
 
-				ok(t1, "t1 should not be null");
-				ok(t2, "t2 should not be null");
+				assert.ok(t1, "t1 should not be null");
+				assert.ok(t2, "t2 should not be null");
 			},
 			afterEach: function() {
 				t1 = null;
@@ -178,12 +178,12 @@
 		});
 
 		QUnit.test("ariaDescribedBy", function(assert) {
-			ok(isEmpty(t1.getAriaDescribedBy()), "t1.getAriaDescribedBy()");
+			assert.ok(isEmpty(t1.getAriaDescribedBy()), "t1.getAriaDescribedBy()");
 			assert.deepEqual(t2.getAriaDescribedBy(), aAriaDescribedBy, "t2.getAriaDescribedBy()");
 		});
 
 		QUnit.test("ariaLabelledBy", function(assert) {
-			ok(isEmpty(t1.getAriaLabelledBy()), "t1.getAriaLabelledBy()");
+			assert.ok(isEmpty(t1.getAriaLabelledBy()), "t1.getAriaLabelledBy()");
 			assert.deepEqual(t2.getAriaLabelledBy(), aAriaLabelledBy, "t2.getAriaLabelledBy()");
 		});
 
@@ -211,7 +211,7 @@
 			t1.detachChange(changeEventHandler);
 			try {
 				t1.fireChange();
-				ok(true, "No event and thus no exception should be triggered!");
+				assert.ok(true, "No event and thus no exception should be triggered!");
 			} catch (e) {
  				fail("should not occur");
 			}
@@ -234,16 +234,16 @@
 
 		QUnit.test("MetadataOk", function(assert) {
 			var oMetadata = t1.getMetadata();
-			ok(oMetadata, "t1.getMetadata() should not be null");
-			ok(oMetadata.getParent(), "t1.getMetadata().getParent() should not be null");
-			ok(oMetadata.getParent() === sap.ui.core.Control.getMetadata());
+			assert.ok(oMetadata, "t1.getMetadata() should not be null");
+			assert.ok(oMetadata.getParent(), "t1.getMetadata().getParent() should not be null");
+			assert.ok(oMetadata.getParent() === sap.ui.core.Control.getMetadata());
 			assert.strictEqual(oMetadata.getProperties()["value"]["type"], "string");
-			ok(isEmpty(oMetadata.getAggregations()));
+			assert.ok(isEmpty(oMetadata.getAggregations()));
 			var oAssociations = oMetadata.getAssociations();
 			assert.strictEqual(oAssociations["ariaDescribedBy"]["type"], "sap.ui.core.Control", "ariaDescribedBy type");
-			ok(oAssociations["ariaDescribedBy"]["multiple"], "ariaDescribedBy multiple");
+			assert.ok(oAssociations["ariaDescribedBy"]["multiple"], "ariaDescribedBy multiple");
 			assert.strictEqual(oAssociations["ariaLabelledBy"]["type"], "sap.ui.core.Control", "ariaLabelledBy type");
-			ok(oAssociations["ariaLabelledBy"]["multiple"], "ariaLabelledBy multiple");
+			assert.ok(oAssociations["ariaLabelledBy"]["multiple"], "ariaLabelledBy multiple");
 		});
 
 		QUnit.test("OffsetWidthOk", function(assert) {
@@ -262,11 +262,11 @@
 			assert.equal(oT2.attr("role"), oAccessibleRole.toLowerCase(), "Role");
 			assert.equal(oT2.attr("aria-multiline"), "false", "aria-multiline");
 			assert.equal(oT2.attr("aria-autocomplete"), "none", "aria-autocomplete");
-			ok(!oT1.attr("aria-invalid"), "aria-invalid not set");
+			assert.ok(!oT1.attr("aria-invalid"), "aria-invalid not set");
 			assert.equal(oT2.attr("aria-invalid"), "true", "aria-invalid");
 			assert.equal(oT2.attr("aria-describedby"), "D1 D2", "aria-describesby");
 			assert.equal(oT2.attr("aria-labelledby"), "L1 L2", "aria-labelledby");
-			ok(!oT1.attr("aria-required"), "aria-required not set");
+			assert.ok(!oT1.attr("aria-required"), "aria-required not set");
 			assert.equal(oT2.attr("aria-required"), "true", "aria-required");
 		});
 
@@ -281,12 +281,12 @@
 			var oT2 = jQuery.sap.byId("t2");
 			var oT3 = jQuery.sap.byId("t3");
 			if (sap.ui.Device.support.input.placeholder) {
-				ok(!oT1.attr("placeholder"), "placeholder not set");
+				assert.ok(!oT1.attr("placeholder"), "placeholder not set");
 				assert.equal(oT2.attr("placeholder"), "Hello", "placeholder set");
 			}
-			ok(!oT3.attr("placeholder"), "placeholder not set");
+			assert.ok(!oT3.attr("placeholder"), "placeholder not set");
 			assert.equal(oT3.val(), "", "no placeholder value set on HTML element");
-			ok(!oT3.hasClass("sapUiTfPlace"), "placeholder class not set");
+			assert.ok(!oT3.hasClass("sapUiTfPlace"), "placeholder class not set");
 
 			oTextField3.setPlaceholder("Hello");
 			sap.ui.getCore().applyChanges();
@@ -295,23 +295,23 @@
 			if (sap.ui.Device.support.input.placeholder) {
 				assert.equal(oT3.attr("placeholder"), "Hello", "Placeholder set");
 				assert.equal(oT3.val(), "", "no placeholder value set on HTML element");
-				ok(!oT3.hasClass("sapUiTfPlace"), "placeholder class not set");
+				assert.ok(!oT3.hasClass("sapUiTfPlace"), "placeholder class not set");
 			}else{
-				ok(!oT3.attr("placeholder"), "placeholder not set");
+				assert.ok(!oT3.attr("placeholder"), "placeholder not set");
 				assert.equal(oT3.val(), "Hello", "placeholder value set on HTML element");
-				ok(oT3.hasClass("sapUiTfPlace"), "placeholder class set");
+				assert.ok(oT3.hasClass("sapUiTfPlace"), "placeholder class set");
 				oT3.focus();
 				assert.equal(oT3.val(), "", "no placeholdervalue set on HTML element if focused");
-				ok(!oT3.hasClass("sapUiTfPlace"), "placeholder class not set if focused");
+				assert.ok(!oT3.hasClass("sapUiTfPlace"), "placeholder class not set if focused");
 				oT1.focus();
 				assert.equal(oT3.val(), "Hello", "value set on HTML element if focuse lost");
-				ok(oT3.hasClass("sapUiTfPlace"), "placeholder class set if focus lost");
+				assert.ok(oT3.hasClass("sapUiTfPlace"), "placeholder class set if focus lost");
 				oTextField3.setValue("Text");
 				assert.equal(oT3.val(), "Text", "value set on HTML element");
-				ok(!oT3.hasClass("sapUiTfPlace"), "placeholder class not set if a value is set");
+				assert.ok(!oT3.hasClass("sapUiTfPlace"), "placeholder class not set if a value is set");
 				oTextField3.setValue("");
 				assert.equal(oT3.val(), "Hello", "placeholder value set on HTML element if value is empty");
-				ok(oT3.hasClass("sapUiTfPlace"), "placeholder class set if value is empty");
+				assert.ok(oT3.hasClass("sapUiTfPlace"), "placeholder class set if value is empty");
 			}
 
 		});

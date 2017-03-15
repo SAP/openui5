@@ -83,19 +83,19 @@
 
 		QUnit.test("DOM", function (assert) {
 			//assert
-			ok(this.sut.$().length > 0, "The control was successfully rendered");
+			assert.ok(this.sut.$().length > 0, "The control was successfully rendered");
 		});
 
 		QUnit.test("Control defaults", function (assert) {
 			//assert
-			ok(!this.sut.getHasSelect(), "Correct default hasSelect property value");
+			assert.ok(!this.sut.getHasSelect(), "Correct default hasSelect property value");
 			assert.strictEqual(this.sut.$("touchArea").children("." + sap.m.TabStripSelect.CSS_CLASS).length, 0,
 					"Select is not rendered in DOM");
 			assert.strictEqual(this.sut.getSelectedItem(), null, "Correct default selectedItem property value");
 
 			this.sut.setHasSelect(true);
 
-			ok(this.sut.getHasSelect(), "Correct default hasSelect property value");
+			assert.ok(this.sut.getHasSelect(), "Correct default hasSelect property value");
 
 			assert.strictEqual(this.sut.getFocusDomRef(), null, "When no item is selected there is no focused DomRef");
 
@@ -194,8 +194,8 @@
 			oCore.applyChanges();
 			assert.strictEqual(this.sut.$().find(".sapMTSTabs").children().length, 6, "All tabs are rendered");
 
-			ok(!this.sut.getAggregation("_leftArrowButton"), "Left button aggregation is not created");
-			ok(!this.sut.getAggregation("_rightArrowButton"), "Right button aggregation is not created");
+			assert.ok(!this.sut.getAggregation("_leftArrowButton"), "Left button aggregation is not created");
+			assert.ok(!this.sut.getAggregation("_rightArrowButton"), "Right button aggregation is not created");
 
 			var itemToBeRemovedId = this.sut.getItems()[2].getId();
 
@@ -447,12 +447,12 @@
 
 		QUnit.test("Is scrolling needed", function (assert) {
 			//assert
-			ok(!this.sut._checkScrolling(), "Scrolling is not needed when tabs don't overflow (" + this.sut.getItems().length + ") tabs");
+			assert.ok(!this.sut._checkScrolling(), "Scrolling is not needed when tabs don't overflow (" + this.sut.getItems().length + ") tabs");
 
 			//arrange
 			this.addTabs(15);
 			oCore.applyChanges();
-			ok(this.sut._checkScrolling(), "Scrolling is needed when tabs overflow (" + this.sut.getItems().length + ") tabs");
+			assert.ok(this.sut._checkScrolling(), "Scrolling is needed when tabs overflow (" + this.sut.getItems().length + ") tabs");
 		});
 
 		QUnit.test("Overflow Buttons", function (assert) {
@@ -475,7 +475,7 @@
 			this.clock.tick(1000);
 			this.sut._handleOverflowButtons();
 			//assert
-			ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on RightScrollButton press");
+			assert.ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on RightScrollButton press");
 			//arrange
 			fnUpdateTestScrollValue();
 			//assert
@@ -487,21 +487,21 @@
 			this.clock.tick(1000);
 			this.sut._handleOverflowButtons();
 			//assert
-			ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on LeftScrollButton press");
+			assert.ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on LeftScrollButton press");
 			//arrange
 			fnUpdateTestScrollValue();
 //			assert.strictEqual(iTestCurrentScrollLeft, 320, "ScrollLeft value is as expected");
 			//arrange
 			var iLargeScroll = 100000;
 			this.sut._scroll(iLargeScroll, 500); //make sure that this enforces max right position
-			ok(true, "Performing very large scroll (" + iLargeScroll + "/" + this.sut._iMaxOffsetLeft + ")");
+			assert.ok(true, "Performing very large scroll (" + iLargeScroll + "/" + this.sut._iMaxOffsetLeft + ")");
 			this.clock.tick(1000);
 			this.sut._handleOverflowButtons();
 			//assert
-			ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on _scroll call");
+			assert.ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on _scroll call");
 			assert.equal(this.sut._iCurrentScrollLeft, this.sut._iMaxOffsetLeft, "Scroll out of range test passed successfully");
 			fnUpdateTestScrollValue();
-			ok(iTestCurrentScrollLeft === this.sut._iCurrentScrollLeft && iTestCurrentScrollLeft === this.sut._iMaxOffsetLeft, "ScrollLeft value is as expected");
+			assert.ok(iTestCurrentScrollLeft === this.sut._iCurrentScrollLeft && iTestCurrentScrollLeft === this.sut._iMaxOffsetLeft, "ScrollLeft value is as expected");
 			assert.strictEqual(this.sut.getAggregation("_leftArrowButton").$().css("visibility"), "visible", "Left scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
 //			assert.strictEqual(this.sut._oRightArrowButton.$().css("visibility"), "hidden", "Right scroll button is hidden when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
 		});
@@ -535,7 +535,7 @@
 			var that = this;
 			//assert
 			assert.strictEqual(this.sut.$('tabs').attr("role"), 'tablist', "TabStrip container has correct role");
-			ok(!!(this.sut.$('tabs').children().eq(0).attr("aria-selected")), "The initial aria-selected attribute value is correct");
+			assert.ok(!!(this.sut.$('tabs').children().eq(0).attr("aria-selected")), "The initial aria-selected attribute value is correct");
 			this.sut.$('tabs').children().each(function () {
 				var $Tab = jQuery(this),
 						bHasRole = $Tab.is("[role]"),
@@ -543,9 +543,9 @@
 						bHasAriaSelected = $Tab.is("[aria-selected]"),
 						bIsSelected = $Tab.attr("aria-selected");
 
-				ok(bHasRole, this.id + " has role attribute assigned");
+				assert.ok(bHasRole, this.id + " has role attribute assigned");
 				assert.strictEqual(sRoleValue, "tab", this.id + " has a correct role value");
-				ok(bHasAriaSelected, this.id + " has aria-selected attribute");
+				assert.ok(bHasAriaSelected, this.id + " has aria-selected attribute");
 				if (that.sut.getSelectedItem() === this.id) {
 					assert.strictEqual(bIsSelected, "true", this.id + " has correct aria-selected value (true)");
 				} else {
@@ -559,11 +559,11 @@
 			//arrange
 			this.sut.setSelectedItem(this._aItems[1]);
 			//assert
-			ok(!!(this.sut.$('tabs').children().eq(1).attr("aria-selected")), "aria-selected was updated successfully");
+			assert.ok(!!(this.sut.$('tabs').children().eq(1).attr("aria-selected")), "aria-selected was updated successfully");
 			//arrange
 			this.sut.setSelectedItem(this._aItems[2]);
 			//assert
-			ok(!!(this.sut.$('tabs').children().eq(2).attr("aria-selected")), "aria-selected was updated successfully");
+			assert.ok(!!(this.sut.$('tabs').children().eq(2).attr("aria-selected")), "aria-selected was updated successfully");
 		});
 
 		QUnit.test("Check for undesired aria attributes", function (assert) {
@@ -658,7 +658,7 @@
 			oCore.applyChanges();
 			//assert
 			assert.strictEqual(this.sut.getSelectedItem(), this.sut.getItems()[this.selectedItemIndex].getId(), "Correct selectedItem aggregation value");
-			ok(this.sut.$("tabs").children().eq(this.selectedItemIndex).hasClass(sap.m.TabStripItem.CSS_CLASS_SELECTED), "The initial selection is applied correctly");
+			assert.ok(this.sut.$("tabs").children().eq(this.selectedItemIndex).hasClass(sap.m.TabStripItem.CSS_CLASS_SELECTED), "The initial selection is applied correctly");
 		});
 
 		QUnit.test("No Overflow Buttons on phone", function (assert) {
@@ -678,11 +678,11 @@
 
 			// assert
 			assert.equal(fnScrollingSpy.callCount, 0, "scrolling calcualtion is not utilized on phone")
-			ok(!this.sut.getAggregation("_leftArrowButton"), "Left button aggregation is not created");
-			ok(!this.sut.getAggregation("_rightArrowButton"), "Right button aggregation is not created");
+			assert.ok(!this.sut.getAggregation("_leftArrowButton"), "Left button aggregation is not created");
+			assert.ok(!this.sut.getAggregation("_rightArrowButton"), "Right button aggregation is not created");
 
-			ok(!this.sut.$().hasClass(this.sut.getRenderer().LEFT_OVERRFLOW_BTN_CLASS_NAME), "No left button placeholder");
-			ok(!this.sut.$().hasClass(this.sut.getRenderer().RIGHT_OVERRFLOW_BTN_CLASS_NAME), "No right button placeholder");
+			assert.ok(!this.sut.$().hasClass(this.sut.getRenderer().LEFT_OVERRFLOW_BTN_CLASS_NAME), "No left button placeholder");
+			assert.ok(!this.sut.$().hasClass(this.sut.getRenderer().RIGHT_OVERRFLOW_BTN_CLASS_NAME), "No right button placeholder");
 
 			jQuery('body').removeClass('sap-phone');
 			stubs.forEach(function(item){item.restore()}); // restore stubs
@@ -741,7 +741,7 @@
 				return oItem.$().find("button").css("visibility") === 'visible';
 			};
 			//assert
-			ok(this.oTS.getItems().every(fnAreAllItemsButtonsVisible), "All buttons on tablet are visible");
+			assert.ok(this.oTS.getItems().every(fnAreAllItemsButtonsVisible), "All buttons on tablet are visible");
 		});
 	</script>
 </head>

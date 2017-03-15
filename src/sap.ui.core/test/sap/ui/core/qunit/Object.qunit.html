@@ -85,19 +85,19 @@
 
 		QUnit.test("InitialObject", function(assert) {
 			// assert("fresh object doesn't have interface", typeof oObject.oInterface === "undefined");
-			ok(oObject.getInterface === sap.ui.base.Object.prototype.getInterface, "fresh object doesn't have own getInterface implementation");
+			assert.ok(oObject.getInterface === sap.ui.base.Object.prototype.getInterface, "fresh object doesn't have own getInterface implementation");
 		});
 
 		QUnit.test("GetInterface", function(assert) {
 			var oIntf1 = oNewClassInstance.getInterface();
-			ok(oIntf1 !== undefined && oIntf1 !== null, "interface returned");
+			assert.ok(oIntf1 !== undefined && oIntf1 !== null, "interface returned");
 			// assert("object has interface member", oObject.oInterface && typeof oObject.oInterface === "object" );
-			ok(oNewClassInstance.getInterface !== sap.ui.base.Object.prototype.getInterface, "object has own getInterface implementation");
+			assert.ok(oNewClassInstance.getInterface !== sap.ui.base.Object.prototype.getInterface, "object has own getInterface implementation");
 			var oIntf2 = oNewClassInstance.getInterface();
-			ok(oIntf1 === oIntf2, "stable interface");
+			assert.ok(oIntf1 === oIntf2, "stable interface");
 			for(var m in oIntf1) {
 				if ( typeof oIntf1[m] === "function" ) {
-					ok(oNewClassInstance.getMetadata().getAllPublicMethods().indexOf(m) >= 0, "interface has only functions from the list");
+					assert.ok(oNewClassInstance.getMetadata().getAllPublicMethods().indexOf(m) >= 0, "interface has only functions from the list");
 					// TODO the following tests only work for methods that have stable results and that don't require arguments
 					var r1 = oNewClassInstance[m]();
 					var r2 = oIntf1[m]();
@@ -107,14 +107,14 @@
 		});
 
 		QUnit.test("GetMetadata", function(assert) {
-			ok(oNewClassInstance.getMetadata() != false, "metadata available");
-			ok(oNewSubClassInstance.getMetadata() != false, "metadata available");
+			assert.ok(oNewClassInstance.getMetadata() != false, "metadata available");
+			assert.ok(oNewSubClassInstance.getMetadata() != false, "metadata available");
 		});
 
 		QUnit.test("BaseTypeSet", function(assert) {
-			ok(oNewClassInstance.getMetadata().getParent() != false, "basetype set");
+			assert.ok(oNewClassInstance.getMetadata().getParent() != false, "basetype set");
 			assert.strictEqual("sap.ui.base.Object", oNewClassInstance.getMetadata().getParent().getName(), "basetype as expected");
-			ok(oNewSubClassInstance.getMetadata().getParent() != false, "basetype set");
+			assert.ok(oNewSubClassInstance.getMetadata().getParent() != false, "basetype set");
 			assert.strictEqual(oNewClassInstance.getMetadata(), oNewSubClassInstance.getMetadata().getParent(), "basetype as expected");
 		});
 
@@ -127,11 +127,11 @@
 
 		QUnit.test("Interfaces", function(assert) {
 			assertArrayEquals("interfaces", oNewClassInstance.getMetadata().getInterfaces(), ["sap.ui.base.Poolable"]);
-			ok(oNewClassInstance.getMetadata().isInstanceOf("sap.ui.base.Poolable"), "isInstanceOf");
-			ok(!oNewClassInstance.getMetadata().isInstanceOf("sap.ui.base.PureImagination"), "isInstanceOf");
+			assert.ok(oNewClassInstance.getMetadata().isInstanceOf("sap.ui.base.Poolable"), "isInstanceOf");
+			assert.ok(!oNewClassInstance.getMetadata().isInstanceOf("sap.ui.base.PureImagination"), "isInstanceOf");
 			assertArrayEquals("interfaces", oNewSubClassInstance.getMetadata().getInterfaces(), ["sap.ui.base.Cacheable"]);
-			ok(oNewSubClassInstance.getMetadata().isInstanceOf("sap.ui.base.Cacheable"), "isInstanceOf");
-			ok(oNewSubClassInstance.getMetadata().isInstanceOf("sap.ui.base.Poolable"), "isInstanceOf");
+			assert.ok(oNewSubClassInstance.getMetadata().isInstanceOf("sap.ui.base.Cacheable"), "isInstanceOf");
+			assert.ok(oNewSubClassInstance.getMetadata().isInstanceOf("sap.ui.base.Poolable"), "isInstanceOf");
 		});
 
   	</script>

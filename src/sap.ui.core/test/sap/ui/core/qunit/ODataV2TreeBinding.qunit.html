@@ -100,7 +100,7 @@
 		});
 		assert.equal(oBinding.getPath(), "/Employees(2)", "TreeBinding path");
 		assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
-		ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
+		assert.ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
 	});
 
 	QUnit.test("getRootContexts getNodeContexts", function(assert){
@@ -828,7 +828,7 @@
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
 				navigation: {}
 			});
-			ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
+			assert.ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
 			assert.equal(oBinding.getPath(), "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", "TreeBinding path");
 			assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
 			assert.equal(oBinding.bHasTreeAnnotations, true, "TreeBinding Metadata should be available");
@@ -1261,7 +1261,7 @@
 				var aRootContexts = oBinding.getRootContexts();
 
 				//check if the root contexts are sorted correctly
-				ok(true, "Sorted descending test:");
+				assert.ok(true, "Sorted descending test:");
 				assert.equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
 				assert.equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
 				assert.equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
@@ -1278,7 +1278,7 @@
 				var aRootContexts = oBinding.getRootContexts();
 				var aChildContexts = oBinding.getNodeContexts(aRootContexts[4]);
 
-				ok(true, "Check if sorting is still applied after expanding a node:");
+				assert.ok(true, "Check if sorting is still applied after expanding a node:");
 				assert.equal(aChildContexts.length, 2, "Exactly 2 contexts returned.");
 				assert.equal(aChildContexts[0].getProperty("HierarchyNode"), "001134", "aChildContexts[0] of expanded node is also sorted: 001134");
 				assert.equal(aChildContexts[1].getProperty("HierarchyNode"), "001132", "aChildContexts[1] of expanded node is also sorted: 001132");
@@ -1312,7 +1312,7 @@
 				var aRootContexts = oBinding.getRootContexts();
 
 				//check if the root contexts are sorted correctly
-				ok(true, "Sorted descending test:");
+				assert.ok(true, "Sorted descending test:");
 				assert.equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
 				assert.equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
 				assert.equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
@@ -1329,7 +1329,7 @@
 				var aRootContexts = oBinding.getRootContexts();
 				var aChildContexts = oBinding.getNodeContexts(aRootContexts[4]);
 
-				ok(true, "Check if sorting is still applied after expanding a node:");
+				assert.ok(true, "Check if sorting is still applied after expanding a node:");
 				assert.equal(aChildContexts.length, 2, "Exactly 2 contexts returned.");
 				assert.equal(aChildContexts[0].getProperty("HierarchyNode"), "001134", "aChildContexts[0] of expanded node is also sorted: 001134");
 				assert.equal(aChildContexts[1].getProperty("HierarchyNode"), "001132", "aChildContexts[1] of expanded node is also sorted: 001132");
@@ -2007,7 +2007,7 @@
 				var aRootContexts = oBinding.getRootContexts();
 
 				//check if the root contexts are sorted correctly
-				ok(true, "Sorted descending test:");
+				assert.ok(true, "Sorted descending test:");
 				assert.equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
 				assert.equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
 				assert.equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
@@ -2016,7 +2016,7 @@
 				//loading the children of a node
 				var aChildContexts = oBinding.getNodeContexts(aRootContexts[4]);
 
-				ok(true, "Check if sorting is still applied after expanding a node:");
+				assert.ok(true, "Check if sorting is still applied after expanding a node:");
 				assert.equal(aChildContexts.length, 2, "Exactly 2 contexts returned.");
 				assert.equal(aChildContexts[0].getProperty("HierarchyNode"), "001134", "aChildContexts[0] of expanded node is also sorted: 001134");
 				assert.equal(aChildContexts[1].getProperty("HierarchyNode"), "001132", "aChildContexts[1] of expanded node is also sorted: 001132");
@@ -2059,7 +2059,7 @@
 				var aRootContexts = oBinding.getRootContexts();
 
 				//check if the root contexts are sorted correctly
-				ok(true, "Sorted descending test:");
+				assert.ok(true, "Sorted descending test:");
 				assert.equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
 				assert.equal(aRootContexts[0].getProperty("HierarchyNode"), "000002", "First Root Node is 000002");
 				assert.equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
@@ -2068,13 +2068,13 @@
 				//loading the children of a node
 				var aChildContexts = oBinding.getNodeContexts(aRootContexts[4]);
 
-				ok(true, "Check if sorting is still applied after expanding a node:");
+				assert.ok(true, "Check if sorting is still applied after expanding a node:");
 				assert.equal(aChildContexts.length, 2, "Exactly 2 contexts returned.");
 				assert.equal(aChildContexts[0].getProperty("HierarchyNode"), "001132", "aChildContexts[0] of expanded node is also sorted: 001134");
 				assert.equal(aChildContexts[1].getProperty("HierarchyNode"), "001134", "aChildContexts[1] of expanded node is also sorted: 001132");
 
 				//apply clientside sorter -> NO request anymore
-				ok(true, "Sorting on the client");
+				assert.ok(true, "Sorting on the client");
 				oBinding.sort([new sap.ui.model.Sorter("HierarchyNode", true)]);
 				aRootContexts = oBinding.getRootContexts();
 				assert.equal(aRootContexts.length, 9, "Still exactly 9 contexts after sorting - No Request sent");
@@ -2308,7 +2308,7 @@
 			};
 
 			// binding is relative?
-			ok(oBinding.isRelative(), "Binding is relative");
+			assert.ok(oBinding.isRelative(), "Binding is relative");
 
 			// initial check without a context set
 			oBinding.attachChange(handler0);
@@ -2364,7 +2364,7 @@
 			};
 
 			// binding is relative?
-			ok(oBinding.isRelative(), "Binding is relative");
+			assert.ok(oBinding.isRelative(), "Binding is relative");
 
 			// initial check without a context set
 			oBinding.attachChange(handler0);

@@ -400,7 +400,7 @@
 				updateFinished : function(oEvent) {
 					assert.strictEqual(oEvent.getParameter("total") > oEvent.getParameter("actual"), true, "Total items is higher than actual items");
 					setTimeout(function() {
-						ok(oList.$().find(".sapMGrowingList").is(":visible"), "Growing indicator is visible");
+						assert.ok(oList.$().find(".sapMGrowingList").is(":visible"), "Growing indicator is visible");
 					}, 0);
 				}
 			}, {
@@ -429,7 +429,7 @@
 				updateFinished : function(oEvent) {
 					assert.strictEqual(oEvent.getParameter("total"), 16, "Total number equals amount of entries");
 					assert.strictEqual(oEvent.getParameter("actual"), 16, "Actual number equals amount of entries");
-					ok(!oList.$().find(".sapMGrowingList").is(":visible"), "Growing indicator is not visible");
+					assert.ok(!oList.$().find(".sapMGrowingList").is(":visible"), "Growing indicator is not visible");
 				}
 			}, {
 				parameters: {
@@ -450,13 +450,13 @@
 		var oMockServer = startMockServer(),
 			oList = createList({
 				updateStarted : function () {
-					ok(false, "Started an update! Why should we? There should no request fired.");
+					assert.ok(false, "Started an update! Why should we? There should no request fired.");
 				}
 			}, {
 				path : "nonAbsoluteAndUnresolveable"
 			});
 
-		ok(!oList.getBusy(), "Why should the list be busy? There should not be any request");
+		assert.ok(!oList.getBusy(), "Why should the list be busy? There should not be any request");
 
 		// clean up
 		oMockServer.stop();
@@ -550,12 +550,12 @@
 					var oNavigationRoot = oList.getNavigationRoot(),
 						$GrowingButton = oList.$("trigger");
 
-					ok($GrowingButton.parent().next().get(0) === oList.getDomRef("before"), "Growing button is inserted before the first item.");
-					ok(oList.getItems().pop().getDomRef() === oNavigationRoot.children[0], "Last aggregation DOM is the first child of the list");
+					assert.ok($GrowingButton.parent().next().get(0) === oList.getDomRef("before"), "Growing button is inserted before the first item.");
+					assert.ok(oList.getItems().pop().getDomRef() === oNavigationRoot.children[0], "Last aggregation DOM is the first child of the list");
 
 					if (document.hasFocus()) {
 						oList.focus();
-						ok(document.activeElement === oNavigationRoot.children[iThreshold - 1], "First focus jumps to last item");
+						assert.ok(document.activeElement === oNavigationRoot.children[iThreshold - 1], "First focus jumps to last item");
 					}
 
 					// act: request new page
@@ -563,10 +563,10 @@
 
 					oList.attachUpdateFinished(function(oEvent) {
 						oNavigationRoot = oList.getNavigationRoot(),
-						ok(oList.getItems().pop().getDomRef() === oNavigationRoot.children[0], "Last aggregation DOM is the first child of the list");
+						assert.ok(oList.getItems().pop().getDomRef() === oNavigationRoot.children[0], "Last aggregation DOM is the first child of the list");
 
 						if (document.hasFocus()) {
-							ok(document.activeElement === $GrowingButton.get(0), "Focus is not changed after growing");
+							assert.ok(document.activeElement === $GrowingButton.get(0), "Focus is not changed after growing");
 						}
 
 						oDeferred.resolve();

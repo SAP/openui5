@@ -66,7 +66,7 @@
 		});
 		assert.equal(oBinding.getPath(), "/Employees(2)", "TreeBinding path");
 		assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
-		ok(oBinding instanceof sap.ui.model.odata.ODataTreeBinding, "treeBinding class check");
+		assert.ok(oBinding instanceof sap.ui.model.odata.ODataTreeBinding, "treeBinding class check");
 	});
 
 	QUnit.test("getRootContexts getNodeContexts", function(assert){
@@ -275,15 +275,15 @@
 			var aContexts = oBinding.getRootContexts();
 			var aSubContexts;
 
-			ok(oBinding.hasChildren(aContexts[0]), " root context should have children");
+			assert.ok(oBinding.hasChildren(aContexts[0]), " root context should have children");
 
 			//Level 0.0
 			aContexts = oBinding.getNodeContexts(aContexts[0]);
-			ok(!oBinding.hasChildren(aContexts[0]), " node context should not have children");
-			ok(oBinding.hasChildren(aContexts[3]), " node context should have children");
+			assert.ok(!oBinding.hasChildren(aContexts[0]), " node context should not have children");
+			assert.ok(oBinding.hasChildren(aContexts[3]), " node context should have children");
 
 			aSubContexts = oBinding.getNodeContexts(aContexts[3]);
-			ok(oBinding.hasChildren(aContexts[3]), " node context should have children");
+			assert.ok(oBinding.hasChildren(aContexts[3]), " node context should have children");
 
 			done();
 		};
@@ -617,7 +617,7 @@
 		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
 			navigation: {}
 		});
-		ok(oBinding instanceof sap.ui.model.odata.ODataTreeBinding, "treeBinding class check");
+		assert.ok(oBinding instanceof sap.ui.model.odata.ODataTreeBinding, "treeBinding class check");
 		assert.equal(oBinding.getPath(), "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", "TreeBinding path");
 		assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
 		assert.equal(oBinding.bHasTreeAnnotations, true, "TreeBinding Metadata should be available");

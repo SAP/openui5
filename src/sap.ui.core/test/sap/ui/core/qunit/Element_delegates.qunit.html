@@ -24,7 +24,7 @@
 		var testObject = { id: "testObject" };
 
 		var testFunction = function() {
-			ok(true, "this test only checks whether the function is executed");
+			assert.ok(true, "this test only checks whether the function is executed");
 			counter++;
 			lastThisId = this.id ? this.id : this.getId(); // the simple ID for the delegate and testObject, but the real element ID when the Element is the this context
 		}
@@ -194,14 +194,14 @@
 
 			var oDelegate1 = {
 		        onAfterRendering:function() {
-		            ok(true, "Invoke onAfterRendering on delegate #1");
+		            assert.ok(true, "Invoke onAfterRendering on delegate #1");
 					element.removeEventDelegate(oDelegate1);
 		        }
 		    };
 
 			var oDelegate2 = {
 		        onAfterRendering:function() {
-		            ok(true, "Invoke onAfterRendering on delegate #2");
+		            assert.ok(true, "Invoke onAfterRendering on delegate #2");
 					element.removeEventDelegate(oDelegate2);
 
 					assert.equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");

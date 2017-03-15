@@ -68,7 +68,7 @@
 		var oDomRefPI = jQuery.sap.domById("pi1");
 		assert.equal(oDomRefPI.style.width, "50%", "control width should be the same");
 		var oDomRefPIRemainingBar = jQuery.sap.domById("pi1" + "-remainingBar");
-		ok(oDomRefPIRemainingBar, "the remaining bar  is rendered");
+		assert.ok(oDomRefPIRemainingBar, "the remaining bar  is rendered");
 	});
 
 	QUnit.test("tooltip", function(assert) {
@@ -157,7 +157,7 @@
 		],
 		fnTestForClassesToValuesMapping = function (fPercentValueToSet, sExpectedClass){
 			oProgressIndicator.setPercentValue(fPercentValueToSet);
-			ok($progressIndicator.hasClass(sExpectedClass),
+			assert.ok($progressIndicator.hasClass(sExpectedClass),
 					"the progress indicator has the correct class: " + sExpectedClass + " for " + fPercentValueToSet + "%");
 		};
 
@@ -293,15 +293,15 @@
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oControl = new sap.m.ProgressIndicator({percentValue: 50});
-		ok(!!oControl.getAccessibilityInfo, "ProgressIndicator has a getAccessibilityInfo function");
+		assert.ok(!!oControl.getAccessibilityInfo, "ProgressIndicator has a getAccessibilityInfo function");
 		var oInfo = oControl.getAccessibilityInfo();
-		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "progressbar", "AriaRole");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_PROGRESS"), "Type");
 		assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [50]), "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
-		ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 		oControl.setPercentValue(10);
 		oControl.setEnabled(false);
 		oInfo = oControl.getAccessibilityInfo();

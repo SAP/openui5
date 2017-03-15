@@ -341,17 +341,17 @@
 
 			QUnit.test("getAccessibilityInfo", function (assert) {
 				var oIcon = new sap.ui.core.Icon({alt: "Alt", tooltip: "Tooltip", src: "sap-icon://search"});
-				ok(!!oIcon.getAccessibilityInfo, "Icon has a getAccessibilityInfo function");
+				assert.ok(!!oIcon.getAccessibilityInfo, "Icon has a getAccessibilityInfo function");
 				var oInfo = oIcon.getAccessibilityInfo();
-				ok(!oInfo, "getAccessibilityInfo returns no info object in case of decorative icons");
+				assert.ok(!oInfo, "getAccessibilityInfo returns no info object in case of decorative icons");
 				oIcon.setDecorative(false);
 				oInfo = oIcon.getAccessibilityInfo();
 				assert.strictEqual(oInfo.role, "img", "AriaRole");
 				assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("ACC_CTR_TYPE_IMAGE"), "Type");
 				assert.strictEqual(oInfo.description, "Alt", "Description");
 				assert.strictEqual(oInfo.focusable, false, "Focusable");
-				ok(oInfo.enabled === undefined || oInfo.enabled === null, "Enabled");
-				ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+				assert.ok(oInfo.enabled === undefined || oInfo.enabled === null, "Enabled");
+				assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 				oIcon.setAlt("");
 				oIcon.attachPress(function(){});
 				oInfo = oIcon.getAccessibilityInfo();

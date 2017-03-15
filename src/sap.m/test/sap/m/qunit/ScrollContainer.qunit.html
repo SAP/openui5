@@ -100,9 +100,9 @@
 		});
 
 		QUnit.test("ScrollContainer rendered", function(assert) {
-			ok(jQuery.sap.domById("sc1"), "ScrollContainer 1 should be rendered");
-			ok(jQuery.sap.domById("sc2"), "ScrollContainer 2 should be rendered");
-			ok(!jQuery.sap.domById("sc3"), "ScrollContainer 3 should not be rendered");
+			assert.ok(jQuery.sap.domById("sc1"), "ScrollContainer 1 should be rendered");
+			assert.ok(jQuery.sap.domById("sc2"), "ScrollContainer 2 should be rendered");
+			assert.ok(!jQuery.sap.domById("sc3"), "ScrollContainer 3 should not be rendered");
 		});
 
 		// Gets the scroll position of ScrolLContainer with id: sScrollContainerId in sDirection(left/top)

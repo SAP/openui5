@@ -115,7 +115,7 @@
 					var oDirectionInfo = oNavigateStub.firstCall.args[0];
 
 					assert.strictEqual(oEvent.config.viewLevel, oDirectionInfo.viewLevel, "did have the correct viewlevel");
-					ok(oDirectionInfo.askHistory, "did ask the history");
+					assert.ok(oDirectionInfo.askHistory, "did ask the history");
 
 					oRouter.destroy();
 				});

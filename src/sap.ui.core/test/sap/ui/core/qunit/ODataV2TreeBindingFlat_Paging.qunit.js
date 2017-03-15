@@ -22,11 +22,11 @@ QUnit.test("Initialize & Adapter check", function(assert){
 		});
 
 		// API Check
-		ok(oBinding.getContexts, "getContexts function is present");
-		ok(oBinding.getNodes, "getNodes function is present");
-		ok(oBinding.getLength, "getLength function is present");
-		ok(oBinding.expand, "expand function is present");
-		ok(oBinding.collapse, "collapse function is present");
+		assert.ok(oBinding.getContexts, "getContexts function is present");
+		assert.ok(oBinding.getNodes, "getNodes function is present");
+		assert.ok(oBinding.getLength, "getLength function is present");
+		assert.ok(oBinding.expand, "expand function is present");
+		assert.ok(oBinding.collapse, "collapse function is present");
 
 		// $select validation
 		assert.equal(oBinding.mParameters.select, "LEVEL,DRILLDOWN_STATE,PARENT_NODE,HIERARCHY_NODE,MAGNITUDE", "$select is complete incl. Magnitude");

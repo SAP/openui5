@@ -102,21 +102,21 @@
 		var oCompZip = sap.ui.getCore().byId("zip_enabled");
 
 		spyDataState(oCompZip, function(sName, oDataState) {
-			ok(oDataState.getMessages().length == 1, 'Format Message created');
-			ok(oCompZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
-			ok(oCompZip.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly')
+			assert.ok(oDataState.getMessages().length == 1, 'Format Message created');
+			assert.ok(oCompZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
+			assert.ok(oCompZip.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly')
 		});
 		var oCoreValHandler = function(oEvent) {
-			ok(false,"should never be called");
+			assert.ok(false,"should never be called");
 		};
 		sap.ui.getCore().attachValidationError(oCoreValHandler);
 		oCompZip.setValue('123456');
 
 		jQuery.sap.delayedCall(0, this, function() {
 			spyDataState(oCompZip, function(sName, oDataState) {
-				ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
-				ok(oCompZip.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
-				ok(oCompZip.getValueStateText() === '', 'Input: ValueStateText set correctly')
+				assert.ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
+				assert.ok(oCompZip.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
+				assert.ok(oCompZip.getValueStateText() === '', 'Input: ValueStateText set correctly')
 				done();
 			});
 			oCompZip.setValue('12345');
@@ -132,13 +132,13 @@
 
 		var oValHandler = function(oEvent) {
 			if (oEvent.getParameter("dataState").getMessages() && oEvent.getParameter("dataState").getMessages().length > 0) {
-				ok(false,"should never be called");
+				assert.ok(false,"should never be called");
 			}
 		};
 		oCompZip.getBinding("value").attachDataStateChange(oValHandler);
 		sap.ui.getCore().attachValidationError(oValHandler);
 		oCompZip.setValue('123456');
-		ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
+		assert.ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
 		sap.ui.getCore().detachValidationError(oValHandler);
 	});
 
@@ -148,17 +148,17 @@
 		var oCompZip = sap.ui.getCore().byId("zip");
 		var oChangeHandler = function(oEvent) {
 			if (oEvent.getParameter("dataState").getMessages() && oEvent.getParameter("dataState").getMessages().length > 0) {
-				ok(false,"should never be called");
+				assert.ok(false,"should never be called");
 			}
 		};
 		var oValHandler = function(oEvent) {
-			ok(true,oEvent.sId);
+			assert.ok(true,oEvent.sId);
 			sap.ui.getCore().detachValidationError(oValHandler);
 		};
 		oCompZip.getBinding("value").attachDataStateChange(oChangeHandler);
 		sap.ui.getCore().attachValidationError(oValHandler);
 		oCompZip.setValue('123456');
-		ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
+		assert.ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
 	});
 
 	QUnit.module("Component: handleValidation / registerObject");

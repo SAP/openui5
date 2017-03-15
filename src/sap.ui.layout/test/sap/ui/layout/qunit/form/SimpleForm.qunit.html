@@ -117,8 +117,8 @@
 		QUnit.module("Setter/Getter");
 
 		QUnit.test("width", function(assert) {
-			ok(/width:/.test(oSimpleForm.$().attr("style")) && /100%/.test(oSimpleForm.$().attr("style")), "SimpleForm1: width set");
-			ok(!/width:/.test(oSimpleForm2.$().attr("style")), "SimpleForm2: no width set");
+			assert.ok(/width:/.test(oSimpleForm.$().attr("style")) && /100%/.test(oSimpleForm.$().attr("style")), "SimpleForm1: width set");
+			assert.ok(!/width:/.test(oSimpleForm2.$().attr("style")), "SimpleForm2: no width set");
 		});
 
 		QUnit.test("used Layout", function(assert) {
@@ -143,10 +143,10 @@
 
 		QUnit.test("toolbar", function(assert) {
 			var oForm = oSimpleForm.getAggregation("form");
-			ok(!oForm.getToolbar(), "Form1 has no toolbar");
+			assert.ok(!oForm.getToolbar(), "Form1 has no toolbar");
 
 			oForm = oSimpleForm2.getAggregation("form");
-			ok(oForm.getToolbar(), "Form2 gets Toolbar of SimpleForm");
+			assert.ok(oForm.getToolbar(), "Form2 gets Toolbar of SimpleForm");
 			assert.equal(oForm.getToolbar().getId(), "SF2-TB", "Form2 gets Toolbar of SimpleForm");
 		});
 
@@ -154,8 +154,8 @@
 			var aContent = oSimpleForm.getContent();
 			assert.equal(aContent.length, 24, "Number of content entries");
 
-			ok(oSimpleForm.getAggregation("form"), "Internal Form exists");
-			ok(oSimpleForm.getAggregation("form").getDomRef(), "Internal Form rendered");
+			assert.ok(oSimpleForm.getAggregation("form"), "Internal Form exists");
+			assert.ok(oSimpleForm.getAggregation("form").getDomRef(), "Internal Form rendered");
 
 			//containers + title
 			var aContainers = oSimpleForm.getAggregation("form").getFormContainers();
@@ -174,57 +174,57 @@
 			assert.equal(aElements2.length, 4, "number of FormElements of second Container");
 			assert.equal(aElements2[1].getLabel().getId(), "L2-2", "Label of second FormElement");
 			assert.equal(aElements2[1].getFields().length, 1, "Number of Fields of second FormElement");
-			ok(!aElements2[2].getLabel(), "no Label on third FormElement");
+			assert.ok(!aElements2[2].getLabel(), "no Label on third FormElement");
 			assert.equal(aElements2[2].getFields().length, 1, "Number of Fields of third FormElement");
 		});
 
 		QUnit.test("LayoutData", function(assert) {
 			var oLabel = sap.ui.getCore().byId("L1");
 			var oLayoutData = oLabel.getLayoutData();
-			ok(oLayoutData, "Label has LayoutData");
+			assert.ok(oLayoutData, "Label has LayoutData");
 			assert.equal(oLayoutData.getWeight(), 3, "Label LayoutData weight");
 			var oInput = sap.ui.getCore().byId("I1");
 			oLayoutData = oInput.getLayoutData();
-			ok(oLayoutData, "TextField has LayoutData");
+			assert.ok(oLayoutData, "TextField has LayoutData");
 			assert.equal(oLayoutData.getWeight(), 5, "TextField LayoutData weight");
 
 			oLabel = sap.ui.getCore().byId("L2");
 			oLayoutData = oLabel.getLayoutData();
-			ok(oLayoutData, "Label2 has LayoutData");
+			assert.ok(oLayoutData, "Label2 has LayoutData");
 			assert.equal(oLayoutData.getWeight(), 3, "Label2 LayoutData weight");
 			oInput = sap.ui.getCore().byId("I2");
 			oLayoutData = oInput.getLayoutData();
-			ok(oLayoutData, "TextField2 has LayoutData");
+			assert.ok(oLayoutData, "TextField2 has LayoutData");
 			assert.equal(oLayoutData.getWeight(), 3, "TextField2 LayoutData weight");
 			oInput = sap.ui.getCore().byId("I3");
 			oLayoutData = oInput.getLayoutData();
-			ok(oLayoutData, "TextField3 has LayoutData");
+			assert.ok(oLayoutData, "TextField3 has LayoutData");
 			assert.equal(oLayoutData.getWeight(), 2, "TextField3 LayoutData weight");
 
 			oLabel = sap.ui.getCore().byId("L3");
 			oLayoutData = oLabel.getLayoutData();
-			ok(oLayoutData, "Label3 has LayoutData");
+			assert.ok(oLayoutData, "Label3 has LayoutData");
 			assert.equal(oLayoutData.getWeight(), 3, "Label3 LayoutData weight");
 			oInput = sap.ui.getCore().byId("I4");
 			oLayoutData = oInput.getLayoutData();
-			ok(oLayoutData, "TextField4 has LayoutData");
+			assert.ok(oLayoutData, "TextField4 has LayoutData");
 			assert.equal(oLayoutData.getWeight(), 2, "TextField4 LayoutData weight");
 			oInput = sap.ui.getCore().byId("I5");
 			oLayoutData = oInput.getLayoutData();
-			ok(oLayoutData, "TextField5 has LayoutData");
+			assert.ok(oLayoutData, "TextField5 has LayoutData");
 			assert.equal(oLayoutData.getWeight(), 2, "TextField5 LayoutData weight");
 			oInput = sap.ui.getCore().byId("I6");
 			oLayoutData = oInput.getLayoutData();
-			ok(oLayoutData, "TextField6 has LayoutData");
+			assert.ok(oLayoutData, "TextField6 has LayoutData");
 			assert.equal(oLayoutData.getWeight(), 1, "TextField6 LayoutData weight");
 
 			oLabel = sap.ui.getCore().byId("L2-2");
 			oLayoutData = oLabel.getLayoutData();
-			ok(oLayoutData, "Container2: Label2 has LayoutData");
+			assert.ok(oLayoutData, "Container2: Label2 has LayoutData");
 			assert.equal(oLayoutData.getWeight(), 3, "Container2: Label2 LayoutData weight");
 			oInput = sap.ui.getCore().byId("I2-2");
 			oLayoutData = oInput.getLayoutData();
-			ok(oLayoutData, "Container2: TextField2 has LayoutData");
+			assert.ok(oLayoutData, "Container2: TextField2 has LayoutData");
 			assert.equal(oLayoutData.getWeight(), 5, "Container2: TextField2 LayoutData weight");
 			oInput = sap.ui.getCore().byId("I2-3");
 			oLayoutData = oInput.getLayoutData();
@@ -237,11 +237,11 @@
 			assert.equal(oLayoutData.getWeight(), 3, "Container2: TextField4 LayoutData weight");
 			oInput = sap.ui.getCore().byId("I2-5");
 			oLayoutData = oInput.getLayoutData();
-			ok(oLayoutData, "Container2: TextField5 has LayoutData");
+			assert.ok(oLayoutData, "Container2: TextField5 has LayoutData");
 			assert.equal(oLayoutData.getWeight(), 1, "Container2: TextField5 LayoutData weight");
 			oInput = sap.ui.getCore().byId("I2-6");
 			oLayoutData = oInput.getLayoutData();
-			ok(oLayoutData, "Container2: TextField6 has LayoutData");
+			assert.ok(oLayoutData, "Container2: TextField6 has LayoutData");
 			assert.equal(oLayoutData.getWeight(), 1, "Container2: TextField6 LayoutData weight");
 		});
 
@@ -260,7 +260,7 @@
 			var oInput = sap.ui.getCore().byId("I3-1");
 			var oElement = oInput.getParent();
 			assert.equal(oElement.getParent().getId(), aContainers[2].getId(), "TextField is inside new container");
-			ok(!oElement.getLabel(), "First Element of new container has no label");
+			assert.ok(!oElement.getLabel(), "First Element of new container has no label");
 
 			oSimpleForm.addContent(new sap.m.Label("L-X",{text:"Label"}));
 			oSimpleForm.addContent(new sap.m.Input("I-X-1",{value:"Text"}));
@@ -337,7 +337,7 @@
 			iIndex = aContainers[2].indexOfFormElement(oElement);
 			assert.equal(iIndex, 0, "index of FormElement in Container3");
 			oLayoutData = oLabel.getLayoutData();
-			ok(oLayoutData, "Label has LayoutData");
+			assert.ok(oLayoutData, "Label has LayoutData");
 			assert.equal(oLayoutData.getWeight(), 3, "Label LayoutData weight");
 
 			oSimpleForm.insertContent(new sap.m.Input("I-X",{value:"Text X"}), 28); // insert before title
@@ -423,7 +423,7 @@
 			assert.equal(iContentLengthBefore, iContentLengthAfter+1, "Number of content entries after title was removed");
 			var aContainers = oSimpleForm.getAggregation("form").getFormContainers();
 			assert.equal(aContainers.length, 4, "number of FormContainers");
-			ok(!sap.ui.getCore().byId(sOldContainerId), "Old container not longer exists");
+			assert.ok(!sap.ui.getCore().byId(sOldContainerId), "Old container not longer exists");
 			var oLabel = sap.ui.getCore().byId("L-X");
 			var oElement = oLabel.getParent();
 			assert.equal(oElement.getParent().getId(), aContainers[2].getId(), "Label now in container3");
@@ -443,11 +443,11 @@
 			assert.equal(iContentLengthBefore, iContentLengthAfter+2, "Number of content entries after title was removed");
 			aContainers = oSimpleForm.getAggregation("form").getFormContainers();
 			assert.equal(aContainers.length, 3, "number of FormContainers");
-			ok(!sap.ui.getCore().byId(sOldContainerId), "Old container not longer exists");
+			assert.ok(!sap.ui.getCore().byId(sOldContainerId), "Old container not longer exists");
 			oElement = oInput.getParent();
 			assert.equal(oElement.getParent().getId(), aContainers[2].getId(), "TextField now in container3");
 			assert.equal(oElement.indexOfField(oInput), oElement.getFields().length-1, "TextField now last Field in Element");
-			ok(!sap.ui.getCore().byId(sOldElementId), "Old element not longer exists");
+			assert.ok(!sap.ui.getCore().byId(sOldElementId), "Old element not longer exists");
 
 			oLabel = sap.ui.getCore().byId("L-Y");
 			sOldElementId = oLabel.getParent().getId();
@@ -459,19 +459,19 @@
 			oElement = oInput.getParent();
 			assert.equal(oElement.getLabel().getId(), "L-Z2", "TextField now in previous FormElement");
 			assert.equal(oElement.indexOfField(oInput), 1, "TextField now second Field in Element");
-			ok(!sap.ui.getCore().byId(sOldElementId), "Old element not longer exists");
-			ok(!oLabel.getLayoutData(), "Label has no LayoutData");
+			assert.ok(!sap.ui.getCore().byId(sOldElementId), "Old element not longer exists");
+			assert.ok(!oLabel.getLayoutData(), "Label has no LayoutData");
 
 			oLabel = sap.ui.getCore().byId("L-Z2");
 			oElement = oLabel.getParent();
 			oSimpleForm.removeContent("L-Z2"); // remove label of first FormElement of Container
-			ok(!oElement.getLabel(), "FormElement has no longer a label");
+			assert.ok(!oElement.getLabel(), "FormElement has no longer a label");
 
 			oInput = sap.ui.getCore().byId("I-X-2");
 			oElement = oInput.getParent();
 			oSimpleForm.removeContent("I-X-2"); // remove TextField
 			assert.equal(oElement.getFields().length, 2, "FormElement number of fields after removing TextField");
-			ok(!oInput.getLayoutData(), "TextField has no LayoutData");
+			assert.ok(!oInput.getLayoutData(), "TextField has no LayoutData");
 
 			oSimpleForm2.removeContent("L-ZZ"); // remove Label
 			oSimpleForm2.removeContent("I-ZZ"); // remove TextField
@@ -496,16 +496,16 @@
 			assert.equal(oSimpleForm2.getContent().length, 0, "No content");
 			var aContainers = oSimpleForm2.getAggregation("form").getFormContainers();
 			assert.equal(aContainers.length, 0, "No FormContainers");
-			ok(!oLabel.getLayoutData(), "Label has no LayoutData");
-			ok(!oLabel.getParent(), "Label has no parent");
+			assert.ok(!oLabel.getLayoutData(), "Label has no LayoutData");
+			assert.ok(!oLabel.getParent(), "Label has no parent");
 			var oInput = sap.ui.getCore().byId("SF2-I1");
-			ok(!oInput.getLayoutData(), "TextField has no LayoutData");
-			ok(!oInput.getParent(), "TextField has no parent");
+			assert.ok(!oInput.getLayoutData(), "TextField has no LayoutData");
+			assert.ok(!oInput.getParent(), "TextField has no parent");
 			oInput = sap.ui.getCore().byId("SF2-I2-3");
-			ok(oInput.getLayoutData(), "TextField still has LayoutData");
+			assert.ok(oInput.getLayoutData(), "TextField still has LayoutData");
 			assert.equal(oInput.getLayoutData().getId(), "SF2-LD_tf2-3", "TextField has original LayoutData");
-			ok(!sap.ui.getCore().byId(sOldContainerId), "FormContainer not longer exists");
-			ok(!sap.ui.getCore().byId(sOldContainerId), "FormElement not longer exists");
+			assert.ok(!sap.ui.getCore().byId(sOldContainerId), "FormContainer not longer exists");
+			assert.ok(!sap.ui.getCore().byId(sOldContainerId), "FormElement not longer exists");
 
 			sap.ui.getCore().applyChanges();
 		});
@@ -519,11 +519,11 @@
 			var aContainers = oSimpleForm3.getAggregation("form").getFormContainers();
 			assert.equal(aContainers.length, 0, "No FormContainers");
 			var oLabel = sap.ui.getCore().byId("SF3-L1");
-			ok(!oLabel, "Label no longer exist");
+			assert.ok(!oLabel, "Label no longer exist");
 			var oInput = sap.ui.getCore().byId("SF3-I1");
-			ok(!oInput, "TextField no longer exist");
-			ok(!sap.ui.getCore().byId(sOldContainerId), "FormContainer not longer exists");
-			ok(!sap.ui.getCore().byId(sOldContainerId), "FormElement not longer exists");
+			assert.ok(!oInput, "TextField no longer exist");
+			assert.ok(!sap.ui.getCore().byId(sOldContainerId), "FormContainer not longer exists");
+			assert.ok(!sap.ui.getCore().byId(sOldContainerId), "FormElement not longer exists");
 
 			sap.ui.getCore().applyChanges();
 		});
@@ -556,10 +556,10 @@
 
 		QUnit.test("aria-labelledby", function(assert) {
 			var oForm = oSimpleForm.getAggregation("form");
-			ok(jQuery.sap.equal(oForm.getAriaLabelledBy(), ["ARIA-1"]), "Form1 gets AriaLabelledBy from SimpleForm");
+			assert.ok(jQuery.sap.equal(oForm.getAriaLabelledBy(), ["ARIA-1"]), "Form1 gets AriaLabelledBy from SimpleForm");
 			var sIds = oForm.$().attr("aria-labelledby");
-			ok(sIds.search("ARIA-1") >= 0, "AriaLabelledBy rendered on Form");
-			ok(!oSimpleForm.$().attr("aria-labelledby"), "SimpleForm has no aria-labelledby rendered");
+			assert.ok(sIds.search("ARIA-1") >= 0, "AriaLabelledBy rendered on Form");
+			assert.ok(!oSimpleForm.$().attr("aria-labelledby"), "SimpleForm has no aria-labelledby rendered");
 
 			oForm = oSimpleForm3.getAggregation("form");
 			assert.equal(oForm.getAriaLabelledBy().length, 0, "Form3 no AriaLabelledBy");

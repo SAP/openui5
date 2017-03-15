@@ -322,7 +322,7 @@
 			});
 
 			QUnit.test("No Sender", function(assert) {
-				ok(!oFeedList.getItems()[6]._oLinkControl, "No sender name rendered");
+				assert.ok(!oFeedList.getItems()[6]._oLinkControl, "No sender name rendered");
 			});
 
 			QUnit.test("Sender link disabled", function(assert) {

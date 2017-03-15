@@ -53,15 +53,15 @@
 				pressed = true;
 			});
 
-			ok(!pressed, "Button must not have fired 'press' yet");
+			assert.ok(!pressed, "Button must not have fired 'press' yet");
 			jQuery("#button").focus().click();
-			ok(!pressed, "Button still must not have fired 'press'");
+			assert.ok(!pressed, "Button still must not have fired 'press'");
 
 			sap.ui.getCore().unlock();
 
-			ok(!pressed, "Button still must not have fired 'press'");
+			assert.ok(!pressed, "Button still must not have fired 'press'");
 			jQuery("#button").focus().click();
-			ok(pressed, "Button should have fired 'press'");
+			assert.ok(pressed, "Button should have fired 'press'");
 		});
 
 	</script>

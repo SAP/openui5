@@ -93,24 +93,24 @@
 				QUnit.start();
 				if (!jQuery.support.flexBoxLayout) {
 					QUnit.test("Dummy Test", function(assert) {
-						ok(true, "At least one test needs to run to avoid test timeouts!");
+						assert.ok(true, "At least one test needs to run to avoid test timeouts!");
 					});
 				}
 			});
 
 			if(jQuery.support.flexBoxLayout || jQuery.support.newFlexBoxLayout) {
 				QUnit.test("Flex Boxes rendered", function(assert) {
-					ok(jQuery.sap.domById("hbox1"), "HBox 1 should be rendered");
+					assert.ok(jQuery.sap.domById("hbox1"), "HBox 1 should be rendered");
 					assert.equal(jQuery.sap.byId("hbox1").get(0).tagName, "UL", "HBox 1 should be rendered as UL");
-					ok(jQuery.sap.domById("item1"), "First item of HBox 1 should be rendered");
+					assert.ok(jQuery.sap.domById("item1"), "First item of HBox 1 should be rendered");
 					assert.equal(jQuery.sap.byId("hbox1").find(".sapMFlexItem:first-child").get(0).tagName, "LI", "First item of HBox 1 should be rendered as LI");
-					ok(jQuery.sap.domById("item2"), "Second item of HBox 1 should be rendered");
+					assert.ok(jQuery.sap.domById("item2"), "Second item of HBox 1 should be rendered");
 					assert.equal(jQuery.sap.byId("hbox1").find(".sapMFlexItem:nth-child(2)").get(0).tagName, "LI", "Second item of HBox 1 should be rendered as LI");
-					ok(jQuery.sap.domById("hbox2"), "HBox 2 should be rendered");
+					assert.ok(jQuery.sap.domById("hbox2"), "HBox 2 should be rendered");
 					assert.equal(jQuery.sap.byId("hbox2").get(0).tagName, "DIV", "HBox 2 should be rendered as DIV");
-					ok(jQuery.sap.domById("item3"), "First item of HBox 2 should be rendered");
+					assert.ok(jQuery.sap.domById("item3"), "First item of HBox 2 should be rendered");
 					assert.equal(jQuery.sap.byId("hbox2").find(".sapMFlexItem:first-child").get(0).tagName, "DIV", "First item of HBox 2 should be rendered as DIV");
-					ok(jQuery.sap.domById("item4"), "Second item of HBox 2 should be rendered");
+					assert.ok(jQuery.sap.domById("item4"), "Second item of HBox 2 should be rendered");
 					assert.equal(jQuery.sap.byId("hbox2").find(".sapMFlexItem:nth-child(2)").get(0).tagName, "DIV", "Second item of HBox 2 should be rendered as DIV");
 				});
 			}

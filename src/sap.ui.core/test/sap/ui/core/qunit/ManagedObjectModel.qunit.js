@@ -478,16 +478,16 @@ QUnit.test("ManagedObject Model - getManagedObject", function(assert) {
 		return new sap.ui.model.Context(oModel, sPath);
 	}
 
-	ok(oModel.getManagedObject() === this.obj, "getManagedObject() returns the root of the control tree model");
+	assert.ok(oModel.getManagedObject() === this.obj, "getManagedObject() returns the root of the control tree model");
 
 	assert.equal(oModel.getManagedObject("/subObjects/0"), null, "PATH: Path to single entry of empty multiple Aggregation");
 	assert.equal(oModel.getManagedObject("/singleAggr"), null, "PATH: Path to empty single Aggregation");
 	assert.equal(oModel.getManagedObject("/doesNotExist"), null, "PATH: Invalid Path");
 	this.obj.addSubObj(this.subObj);
 	this.obj.setSingleAggr(this.subObj2);
-	ok(oModel.getManagedObject("/singleAggr") === this.subObj2, "PATH: Path to single Aggregation");
+	assert.ok(oModel.getManagedObject("/singleAggr") === this.subObj2, "PATH: Path to single Aggregation");
 	assert.equal(oModel.getManagedObject("/subObjects"), null, "PATH: Path to multiple Aggregation");
-	ok(oModel.getManagedObject("/subObjects/0") === this.subObj, "PATH: Path to single entry of multiple Aggregation");
+	assert.ok(oModel.getManagedObject("/subObjects/0") === this.subObj, "PATH: Path to single entry of multiple Aggregation");
 	assert.equal(oModel.getManagedObject("/subObjects/0/value"), null, "PATH: Path to Property");
 
 	this.obj.removeSubObj(this.subObj);
@@ -499,12 +499,12 @@ QUnit.test("ManagedObject Model - getManagedObject", function(assert) {
 	assert.equal(oModel.getManagedObject(createContext("/doesNotExist")), null, "CONTEXT: Invalid Path");
 	this.obj.addSubObj(this.subObj);
 	this.obj.setSingleAggr(this.subObj2);
-	ok(oModel.getManagedObject(createContext("/singleAggr")) === this.subObj2, "CONTEXT: Path to single Aggregation");
+	assert.ok(oModel.getManagedObject(createContext("/singleAggr")) === this.subObj2, "CONTEXT: Path to single Aggregation");
 	assert.equal(oModel.getManagedObject(createContext("/subObjects")), null, "CONTEXT: Path to multiple Aggregation");
-	ok(oModel.getManagedObject(createContext("/subObjects/0")) === this.subObj, "CONTEXT: Path to single entry of multiple Aggregation");
+	assert.ok(oModel.getManagedObject(createContext("/subObjects/0")) === this.subObj, "CONTEXT: Path to single entry of multiple Aggregation");
 	assert.equal(oModel.getManagedObject(createContext("/subObjects/0/value")), null, "CONTEXT: Path to Property");
 
-	ok(oModel.getManagedObject("subObjects/0", createContext("/singleAggr")) === this.subObj3, "CONTEXT + PATH: Path to single entry of multiple Aggregation");
+	assert.ok(oModel.getManagedObject("subObjects/0", createContext("/singleAggr")) === this.subObj3, "CONTEXT + PATH: Path to single entry of multiple Aggregation");
 });
 
 
@@ -522,7 +522,7 @@ QUnit.test("ManagedObjectModel - Custom Data", function(assert) {
 	assert.equal(this.oManagedObjectModel.getProperty(sCustomDataPath + "/xyz"), "value xyz", "Property xyz is 'value xyz' in custom data with absolute path after merged setData");
 	this.oManagedObjectModel.setData({def: "value def"});
 	assert.equal(this.oManagedObjectModel.getProperty(sCustomDataPath + "/def"), "value def", "Property def is 'value def' in custom data with absolute path after setData");
-	ok(!this.oManagedObjectModel.getProperty(sCustomDataPath + "/xyz"), "Property xyz not available after setData");
+	assert.ok(!this.oManagedObjectModel.getProperty(sCustomDataPath + "/xyz"), "Property xyz not available after setData");
 	assert.equal(this.oManagedObjectModel.getJSON(), "{\"def\":\"value def\"}", "getJSON returns the stringified custom data");
 });
 

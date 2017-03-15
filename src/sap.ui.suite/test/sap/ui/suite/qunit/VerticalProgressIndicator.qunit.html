@@ -222,7 +222,7 @@
 				oVPIndicator1.detachPress(pressEventHandler);
 				try {
 					oVPIndicator1.firePress();
-					ok(true, "No event and thus no exception should be triggered!");
+					assert.ok(true, "No event and thus no exception should be triggered!");
 				} catch (e) {
 	 				fail("should not occur");
 				}

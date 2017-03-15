@@ -125,8 +125,8 @@
 
             function okFragment(oFragment, sUIArea, sComment) {
 	            var $ = jQuery(oFragment.selector, jQuery("#" + sUIArea)[0]);
-	            ok($.length > 0, "expected fragment exists");
-	            ok(oFragment.check($), sComment);
+	            assert.ok($.length > 0, "expected fragment exists");
+	            assert.ok(oFragment.check($), sComment);
             }
 
             function afterRerendering(fnTest) {
@@ -214,8 +214,8 @@
           		oCore.byId("html2").setContent("someLeadingText" + FRAGMENT_2.content + "someTrailingText");
 							oCore.applyChanges();
 						  okFragment(FRAGMENT_2, "uiAreaA", "html2 DOM must be equal to FRAGMENT_2");
-						  ok(jQuery("#uiAreaA")[0].innerHTML.indexOf("someLeadingText") < 0, "rendered HTML does not contain leading text");
-						  ok(jQuery("#uiAreaA")[0].innerHTML.indexOf("someTrailingText") < 0, "rendered HTML does not contain trailing text");
+						  assert.ok(jQuery("#uiAreaA")[0].innerHTML.indexOf("someLeadingText") < 0, "rendered HTML does not contain leading text");
+						  assert.ok(jQuery("#uiAreaA")[0].innerHTML.indexOf("someTrailingText") < 0, "rendered HTML does not contain trailing text");
 
 						  oCore.byId("html2").setContent(FRAGMENT_1.content);
 							oCore.applyChanges();
@@ -289,8 +289,8 @@
           		oCore.byId("html3").setContent("someLeadingText" + FRAGMENT_2.content + "someTrailingText");
 							oCore.applyChanges();
 						  okFragment(FRAGMENT_2, "uiAreaA", "html3 DOM must be equal to FRAGMENT_2");
-						  ok(jQuery("#uiAreaA")[0].innerHTML.indexOf("someLeadingText") < 0, "rendered HTML does not contain leading text");
-						  ok(jQuery("#uiAreaA")[0].innerHTML.indexOf("someTrailingText") < 0, "rendered HTML does not contain trailing text");
+						  assert.ok(jQuery("#uiAreaA")[0].innerHTML.indexOf("someLeadingText") < 0, "rendered HTML does not contain leading text");
+						  assert.ok(jQuery("#uiAreaA")[0].innerHTML.indexOf("someTrailingText") < 0, "rendered HTML does not contain trailing text");
 
 						  oCore.byId("html3").setContent(FRAGMENT_1.content);
 							oCore.applyChanges();
@@ -311,7 +311,7 @@
 
             QUnit.test("survive removal", function(assert) {
             	// check preconditions
-            	ok(sap.ui.getCore().byId("html3").getUIArea(), "html3 must be part of UIArea");
+            	assert.ok(sap.ui.getCore().byId("html3").getUIArea(), "html3 must be part of UIArea");
             	assert.equal(jQuery("#html3").size(), 1, "html3 DOM should exist");
             	var oldDomRef = jQuery("#html3")[0];
 
@@ -320,20 +320,20 @@
             	sap.ui.getCore().applyChanges();
 
             	// check that DOM still exists
-            	ok(!sap.ui.getCore().byId("html3").getUIArea(), "html3 must no longer be part of UIArea");
+            	assert.ok(!sap.ui.getCore().byId("html3").getUIArea(), "html3 must no longer be part of UIArea");
             	assert.equal(jQuery("#html3").size(), 1, "html3 DOM must still exist");
             	assert.equal(jQuery("#html3")[0], oldDomRef, "html3 DOM must be the same as before the removal");
-            	ok(sap.ui.core.RenderManager.isPreservedContent(jQuery("#html3")[0]), "html3 DOM must have been moved to preserve area");
+            	assert.ok(sap.ui.core.RenderManager.isPreservedContent(jQuery("#html3")[0]), "html3 DOM must have been moved to preserve area");
             	assert.equal(jQuery("#sap-ui-dummy-html3").size(), 0, "no dummy must exist");
 
             	// add it again to an UIArea and rerender
             	sap.ui.getCore().byId("html3").placeAt("uiAreaB");
             	sap.ui.getCore().applyChanges();
-            	ok(sap.ui.getCore().byId("html3").getUIArea(), "html3 must be part of UIArea");
+            	assert.ok(sap.ui.getCore().byId("html3").getUIArea(), "html3 must be part of UIArea");
             	assert.equal(sap.ui.getCore().byId("html3").getUIArea().getId(), "uiAreaB", "html3 must be part of UIArea uiAreaB");
             	assert.equal(jQuery("#html3").size(), 1, "html3 DOM must exist");
             	assert.equal(jQuery("#html3")[0], oldDomRef, "html3 DOM still must be the same as before the removal");
-            	ok(!sap.ui.core.RenderManager.isPreservedContent(jQuery("#html3")[0]), "html3 DOM must no longer be part of preserve area");
+            	assert.ok(!sap.ui.core.RenderManager.isPreservedContent(jQuery("#html3")[0]), "html3 DOM must no longer be part of preserve area");
             	assert.equal(jQuery("#sap-ui-dummy-html3").size(), 0, "no dummy must exist");
 
             });
@@ -407,9 +407,9 @@
 	            afterRerendering(function() {
 		            var uiAreaA = jQuery("#uiAreaA").get(0);
 		            assert.equal(jQuery("div", uiAreaA).length, 3, "3 divs have been rendered in the UIArea");
-		            ok(jQuery("div", uiAreaA).css("width") == "200px", "div has been rendered");
-		            ok(jQuery("div", uiAreaA).css("height") == "64px", "div has been rendered");
-		            ok(normalize(jQuery("div", uiAreaA).css("background-color")) == "rgb(0,0,0)", "div has been rendered");
+		            assert.ok(jQuery("div", uiAreaA).css("width") == "200px", "div has been rendered");
+		            assert.ok(jQuery("div", uiAreaA).css("height") == "64px", "div has been rendered");
+		            assert.ok(normalize(jQuery("div", uiAreaA).css("background-color")) == "rgb(0,0,0)", "div has been rendered");
 	            });
             });
 
@@ -422,28 +422,28 @@
 
 	            afterRerendering(function() {
 		            var uiAreaD = jQuery("#uiAreaD").get(0);
-		            ok(jQuery("div", uiAreaD).length == 3, "div has been rendered");
-		            ok(jQuery("div", uiAreaD).css("width") == "256px", "div has been rendered");
-		            ok(jQuery("div", uiAreaD).css("height") == "64px", "div has been rendered");
-		            ok(normalize(jQuery("div", uiAreaD).css("background-color")) == "rgb(0,0,255)", "div has been rendered");
+		            assert.ok(jQuery("div", uiAreaD).length == 3, "div has been rendered");
+		            assert.ok(jQuery("div", uiAreaD).css("width") == "256px", "div has been rendered");
+		            assert.ok(jQuery("div", uiAreaD).css("height") == "64px", "div has been rendered");
+		            assert.ok(normalize(jQuery("div", uiAreaD).css("background-color")) == "rgb(0,0,255)", "div has been rendered");
 	            });
             });
 
             QUnit.test("predefined content, multiple roots, nested controls, rerendering", function(assert) {
 	            var layout = sap.ui.getCore().byId("layout7");
 	            var oldLayoutDomRef = layout.getDomRef();
-	            ok(oldLayoutDomRef != undefined, "layout has a domref");
+	            assert.ok(oldLayoutDomRef != undefined, "layout has a domref");
 
 	            // note: this results in a HTML.rerender(), not UIArea.rerender()!
 	            layout.invalidate();
 
 	            afterRerendering(function() {
 		            var uiAreaD = jQuery("#uiAreaD").get(0);
-		            //ok(oldLayoutDomRef != layout.getDomRef(), "layout has been rerendered");
-		            ok(jQuery("div", uiAreaD).length == 3, "div has been rendered");
-		            ok(jQuery("div", uiAreaD).css("width") == "256px", "div has been rendered");
-		            ok(jQuery("div", uiAreaD).css("height") == "64px", "div has been rendered");
-		            ok(normalize(jQuery("div", uiAreaD).css("background-color")) == "rgb(0,0,255)", "div has been rendered");
+		            //assert.ok(oldLayoutDomRef != layout.getDomRef(), "layout has been rerendered");
+		            assert.ok(jQuery("div", uiAreaD).length == 3, "div has been rendered");
+		            assert.ok(jQuery("div", uiAreaD).css("width") == "256px", "div has been rendered");
+		            assert.ok(jQuery("div", uiAreaD).css("height") == "64px", "div has been rendered");
+		            assert.ok(normalize(jQuery("div", uiAreaD).css("background-color")) == "rgb(0,0,255)", "div has been rendered");
 	            });
 
             });

@@ -92,7 +92,7 @@
 		 */
 		var bTest = (w1 + rangeTolerance > w2) && (w1 - rangeTolerance < w2);
 
-		ok(bTest, "Button2 is twice of Button2");
+		assert.ok(bTest, "Button2 is twice of Button2");
 	});
 
 	QUnit.test("Line break works & LayoutData event catched by Layout", function(assert) {
@@ -105,15 +105,15 @@
 
 		var bTest = oBtn1DomRef !== null && oBtn2DomRef !== null;
 
-		ok(bTest, "Line break for button");
-		ok(bTest, "LayoutDataChanged event catched by Layout");
+		assert.ok(bTest, "Line break for button");
+		assert.ok(bTest, "LayoutDataChanged event catched by Layout");
 
 		var oRow1DomRef = jQuery.sap.domById("rflLayout-row0");
 		var oRow2DomRef = jQuery.sap.domById("rflLayout-row1");
 
 		bTest = oRow1DomRef !== null && oRow2DomRef !== null;
 
-		ok(bTest, "Buttons put in separate rows with correct IDs");
+		assert.ok(bTest, "Buttons put in separate rows with correct IDs");
 	});
 
 	QUnit.module("Resize", {
@@ -141,7 +141,7 @@
 			var $btn2 = jQuery.sap.byId("button2-cont0_1");
 
 			var bTest = ($btn1.length > 0) && ($btn2.length > 0);
-			ok(bTest, "Buttons are logically in one single line");
+			assert.ok(bTest, "Buttons are logically in one single line");
 
 			if (bTest) {
 				var oBtn1Rect = $btn1.rect();
@@ -149,7 +149,7 @@
 
 				bTest = oBtn1Rect.top !== oBtn2Rect.top;
 			}
-			ok(bTest, "Layout wrapped second button");
+			assert.ok(bTest, "Layout wrapped second button");
 
 			done();
 
@@ -173,7 +173,7 @@
 				bTest = !!(p1.top === p2.top);
 			}
 
-			ok(bTest, "Layout wrapped back to one line");
+			assert.ok(bTest, "Layout wrapped back to one line");
 			done();
 
 		}, 100);
@@ -192,7 +192,7 @@
 		assert.equal(oReal.width, "25.1", "Width check");
 
 		//act and check
-		ok(!oRFL._getElementRect(null), "When null is passed, null should be returned");
+		assert.ok(!oRFL._getElementRect(null), "When null is passed, null should be returned");
 	});
 
 	QUnit.test("The private render manager is lazy initialized", function(assert) {
@@ -201,7 +201,7 @@
 		//act
 		sap.ui.layout.ResponsiveFlowLayout.prototype.init.call(oResponsiveFlowLayout);
 		//check
-		ok(!oResponsiveFlowLayout.oRm, "RenderManager should not be created in ResponsiveFlowLayout.prototype.init method, as focus handler is not available yet (no dom yet)");
+		assert.ok(!oResponsiveFlowLayout.oRm, "RenderManager should not be created in ResponsiveFlowLayout.prototype.init method, as focus handler is not available yet (no dom yet)");
 
 		//prepare
 		oResponsiveFlowLayout = new sap.ui.layout.ResponsiveFlowLayout();
@@ -209,7 +209,7 @@
 		oResponsiveFlowLayout.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		//check
-		ok(oResponsiveFlowLayout.oRm, "RenderManager should be created during rendering");
+		assert.ok(oResponsiveFlowLayout.oRm, "RenderManager should be created during rendering");
 		//cleanup
 		oResponsiveFlowLayout.destroy();
 	});
@@ -223,7 +223,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//check
-		ok(!oResponsiveFlowLayout.oRm, "RenderManager should not be created since the control is not visible");
+		assert.ok(!oResponsiveFlowLayout.oRm, "RenderManager should not be created since the control is not visible");
 
 		// set the RenderManager to null and check on exit if the value will be changed
 		// if it stays the same the destroy function of the RenderManager is not called
@@ -246,7 +246,7 @@
 		var oDestroySpy = sinon.spy(oResponsiveFlowLayout.oRm, "destroy");
 
 		//check
-		ok(oResponsiveFlowLayout.oRm, "RenderManager exists");
+		assert.ok(oResponsiveFlowLayout.oRm, "RenderManager exists");
 
 		//cleanup
 		oResponsiveFlowLayout.destroy();

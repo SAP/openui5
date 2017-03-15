@@ -28,18 +28,18 @@
 				if(aRegisteredListeners && jQuery.isArray(aRegisteredListeners)){
 					assert.equal(aRegisteredListeners.length, iExpected, iExpected+" listener(s) subscribed for event "+sEventId);
 				}else{
-					ok(!oEventProvider.hasListeners(sEventId) && iExpected == 0, "0 listener(s) subscribed for event "+sEventId);
+					assert.ok(!oEventProvider.hasListeners(sEventId) && iExpected == 0, "0 listener(s) subscribed for event "+sEventId);
 				}
 			}else{
-				ok(iExpected == 0, "0 listener(s) subscribed for event "+sEventId);
+				assert.ok(iExpected == 0, "0 listener(s) subscribed for event "+sEventId);
 			}
 		};
 
 		function checkHandler(bWithListener, sChannelId, sEventId, oData, oThis, sExpectedChannel, sExpectedEventId, sExpectedData, oListener){
 			assert.equal(sChannelId, sExpectedChannel, "Expected Channel");
 			assert.equal(sEventId, sExpectedEventId, "Expected Event");
-			ok(oThis === (bWithListener ? oListener : oBus), "'this' is set as expected - "+(bWithListener ? "Listener" : "EventBus"));
-			ok(!!oData, "Data object provided");
+			assert.ok(oThis === (bWithListener ? oListener : oBus), "'this' is set as expected - "+(bWithListener ? "Listener" : "EventBus"));
+			assert.ok(!!oData, "Data object provided");
 			if(sExpectedData){
 				assert.equal(oData.data, sExpectedData, "Expected Data");
 			}
@@ -54,7 +54,7 @@
 		QUnit.module("Basics");
 
 		QUnit.test("EventBus initialized", function(assert) {
-			ok(!!oBus, "Event Bus initialized");
+			assert.ok(!!oBus, "Event Bus initialized");
 		});
 
 		QUnit.module("(Un-)subscribe");
@@ -90,7 +90,7 @@
 			checkNumberOfListeners(oBus._mChannels[sChannelId], sEventId, 1);
 			oBus.unsubscribe(sChannelId, sEventId, fHandler2, oObj2);
 			checkNumberOfListeners(oBus._mChannels[sChannelId], sEventId, 0);
-			ok(!oBus._mChannels[sChannelId], "Unused Channel is cleaned up.");
+			assert.ok(!oBus._mChannels[sChannelId], "Unused Channel is cleaned up.");
 		});
 
 		QUnit.module("SubscribeOnce");

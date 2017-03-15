@@ -19,7 +19,7 @@ sap.ui.require([
 
   QUnit.test("Smoke test to register a step", function(assert) {
     this.stepDefs.register(/^some regex$/i, function() {});
-    ok(this.stepDefs._aDefinitions.length === 1, "Smoke test to register a step");
+    assert.ok(this.stepDefs._aDefinitions.length === 1, "Smoke test to register a step");
   });
 
   QUnit.test("Given no registered steps, cannot match", function(assert) {

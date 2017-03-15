@@ -27,7 +27,7 @@
 			sap.ui.getCore().applyChanges();
 
 			assert.strictEqual(oDLI.$().length, 1, "DisplayListItem is in DOM");
-			ok(oDLI.$().hasClass("sapMDLI"), "DisplayListItem has correct class name");
+			assert.ok(oDLI.$().hasClass("sapMDLI"), "DisplayListItem has correct class name");
 
 			oDLI.destroy();
 		});

@@ -296,7 +296,7 @@ QUnit.test("Tree Mode", function(assert) {
 	var done = assert.async();
 	var iRowCount = oTreeTable._getRowCount();
 	assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows, "Row count before expand");
-	ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
+	assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
 
 	var bSecondPass = false;
 
@@ -356,7 +356,7 @@ QUnit.test("Tree Mode", function(assert) {
 	bSecondPass = true;
 	oTreeTable.attachEventOnce("_rowsUpdated", fnHandler);
 	Grouping.toggleGroupHeaderByRef(oTreeTable, jQuery.sap.byId(oTreeTable.getId() + "-rows-row0-col0").find(".sapUiTableTreeIcon"), true);
-	ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
+	assert.ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
 	assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows + 1, "Row count after expand");
 });
 
@@ -367,7 +367,7 @@ QUnit.test("Group Mode", function(assert) {
 
 	var iRowCount = oTreeTable._getRowCount();
 	assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows, "Row count before expand");
-	ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
+	assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
 
 	var bSecondPass = false;
 
@@ -428,7 +428,7 @@ QUnit.test("Group Mode", function(assert) {
 	bSecondPass = true;
 	oTreeTable.attachEventOnce("_rowsUpdated", fnHandler);
 	Grouping.toggleGroupHeaderByRef(oTreeTable, jQuery.sap.byId(oTreeTable.getId() + "-rowsel0"), true);
-	ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
+	assert.ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
 	assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows + 1, "Row count after expand");
 });
 
@@ -513,16 +513,16 @@ QUnit.test("Collapse / Expand", function(assert) {
 
 	Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0), false);
 	assert.equal(oBinding.getLength(), 6, "Row count after Collapse");
-	ok(!oBinding.isExpanded(0), "!Expanded");
+	assert.ok(!oBinding.isExpanded(0), "!Expanded");
 	Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0), true);
 	assert.equal(oBinding.getLength(), 10, "Row count after Expand");
-	ok(oBinding.isExpanded(0), "Expanded");
+	assert.ok(oBinding.isExpanded(0), "Expanded");
 	Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0));
 	assert.equal(oBinding.getLength(), 6, "Row count after Toggle");
-	ok(!oBinding.isExpanded(0), "!Expanded");
+	assert.ok(!oBinding.isExpanded(0), "!Expanded");
 	Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0));
 	assert.equal(oBinding.getLength(), 10, "Row count after Toggle");
-	ok(oBinding.isExpanded(0), "Expanded");
+	assert.ok(oBinding.isExpanded(0), "Expanded");
 });
 
 QUnit.test("Reset Grouping", 3, function(assert) {

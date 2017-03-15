@@ -24,7 +24,7 @@
 		Example:
 		   QUnit.module("Module A");
 		     QUnit.test("1. a basic test example", function(assert) {
-		     ok( true, "this test is fine" );
+		     assert.ok( true, "this test is fine" );
 		     var value = "hello1";
 		     assert.equal( value, "hello1", "We expect value to be hello" );
 		   });
@@ -88,7 +88,7 @@
 			assert.equal(oCombo.getFocusDomRef().value, sCheckText, "Default value / text should be in the HTML and accessible via getDomRef.");
 
 			// in jQuery 1.6.2 this has changed
-			ok((jQuery("#testCmb2 > input").attr("readonly"))||(jQuery("#testCmb2 > input").prop("readonly")) , "Second DropdownBox should be read only.");
+			assert.ok((jQuery("#testCmb2 > input").attr("readonly"))||(jQuery("#testCmb2 > input").prop("readonly")) , "Second DropdownBox should be read only.");
 
 			assert.equal(jQuery("#testCmb3").length, 0, "Third (invisible) ComboBox should not be rendered at all.");
 		});
@@ -110,10 +110,10 @@
 			assert.equal(oCBInput.attr("aria-labelledby"), "L1 L2", "aria-labelledby");
 			assert.equal(oCBInput.attr("aria-live"), "polite", "aria-live");
 			assert.equal(oCBInput.attr("aria-autocomplete"), "inline", "aria-autocomplete");
-			ok(!oCBInput.attr("aria-invalid"), "aria-invalid");
+			assert.ok(!oCBInput.attr("aria-invalid"), "aria-invalid");
 			assert.equal(oCBInput2.attr("aria-invalid"), "true", "aria-invalid");
 			assert.equal(oCBInput.attr("aria-setsize"), "4", "aria-setsize");
-			ok(!oCBInput.attr("aria-posinset"), "aria-posinset");
+			assert.ok(!oCBInput.attr("aria-posinset"), "aria-posinset");
 		});
 
 		QUnit.test("Setter / Getter", function(assert){
@@ -140,13 +140,13 @@
 			assert.equal(oCombo.getValue(), "xxx", "setValue: value");
 			assert.equal(oCombo.getSelectedKey(), "", "setValue: selectedKey");
 			assert.equal(oCombo.getSelectedItemId(), "", "setValue: selectedId");
-			ok(!oCBInput.attr("aria-posinset"), "setValue: aria-posinset");
+			assert.ok(!oCBInput.attr("aria-posinset"), "setValue: aria-posinset");
 		});
 
 		QUnit.test("Misc.", function(assert){
 			// empty ComboBox without value and items must not have a ListBox after Rendering
-			ok(!oCombo5._oListBox, "Empty ComboBox has not ListBox")
-			ok(!sap.ui.getCore().byId(oCombo5.getId()+"-lb"), "no ListBox Control exists for empty ComboBox")
+			assert.ok(!oCombo5._oListBox, "Empty ComboBox has not ListBox")
+			assert.ok(!sap.ui.getCore().byId(oCombo5.getId()+"-lb"), "no ListBox Control exists for empty ComboBox")
 		});
 
 		var oSharedListBox1, oSharedListBox2, oComboBox1, oComboBox2;
@@ -169,8 +169,8 @@
 				listBox: oSharedListBox1
 			});
 
-			ok(oComboBox1._getListBox() === oSharedListBox1, "oCB1.listBox should reference listBox");
-			ok(oComboBox2._getListBox() === oSharedListBox1, "oCB2.listBox should reference listBox");
+			assert.ok(oComboBox1._getListBox() === oSharedListBox1, "oCB1.listBox should reference listBox");
+			assert.ok(oComboBox2._getListBox() === oSharedListBox1, "oCB2.listBox should reference listBox");
 
 		});
 
@@ -183,10 +183,10 @@
 					new sap.ui.core.ListItem({text:"last item", additionalText: "(4)", key: "key4"})
 				]
 			});
-			ok(oComboBox1._getListBox() === oSharedListBox1, "oCB1.listBox still should reference listBox1");
+			assert.ok(oComboBox1._getListBox() === oSharedListBox1, "oCB1.listBox still should reference listBox1");
 			oComboBox1.setListBox(oSharedListBox2);
-			ok(oComboBox1._getListBox() === oSharedListBox2, "oCB1.listBox should reference listBox2");
-			ok(oComboBox2._getListBox() === oSharedListBox1, "oCB2.listBox still should reference listBox");
+			assert.ok(oComboBox1._getListBox() === oSharedListBox2, "oCB1.listBox should reference listBox2");
+			assert.ok(oComboBox2._getListBox() === oSharedListBox1, "oCB2.listBox still should reference listBox");
 		});
 
 		QUnit.test("Cleanup", function(assert) {
@@ -194,8 +194,8 @@
 			oComboBox1 = null;
 			oComboBox2.destroy();
 			oComboBox2 = null;
-			ok(oSharedListBox1.getParent() == null, "oListBox still should be alive");
-			ok(oSharedListBox2.getParent() == null, "oListBox still should be alive");
+			assert.ok(oSharedListBox1.getParent() == null, "oListBox still should be alive");
+			assert.ok(oSharedListBox2.getParent() == null, "oListBox still should be alive");
 			oSharedListBox1.destroy();
 			oSharedListBox1 = null;
 			oSharedListBox2.destroy();
@@ -364,12 +364,12 @@
 
 		QUnit.test("TestPageDownOK", function(assert){
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
-			ok(true, "Implementation pending. Specification prio 3");
+			assert.ok(true, "Implementation pending. Specification prio 3");
 		});
 
 		QUnit.test("TestPageUpOK", function(assert){
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.PAGE_UP, false, false, false);
-			ok(true, "Implementation pending. Specification prio 3");
+			assert.ok(true, "Implementation pending. Specification prio 3");
 		});
 
 
@@ -386,10 +386,10 @@
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
 			setTimeout( function(){
 				// as Popup calls fireOpended for IE9 async
-				ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+				assert.ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
 				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after second F4 press");
+				assert.ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after second F4 press");
 				done();
 			}, 10);
 
@@ -400,10 +400,10 @@
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, true, false);
 			setTimeout( function(){
 				// as Popup calls fireOpended for IE9 async
-				ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after Alt + Arrow Down press");
+				assert.ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after Alt + Arrow Down press");
 
 				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
-				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after Alt + Arrow Up press");
+				assert.ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after Alt + Arrow Up press");
 				done();
 			}, 10);
 
@@ -416,10 +416,10 @@
 			qutils.triggerEvent("click", sComboIconId);
 			setTimeout( function(){
 				// as Popup calls fireOpended for IE9 async
-				ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after click on F4 help button");
+				assert.ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after click on F4 help button");
 
 				qutils.triggerEvent("click", sComboIconId);
-				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after second click on F4 help button");
+				assert.ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after second click on F4 help button");
 				done();
 			}, 10);
 
@@ -436,7 +436,7 @@
 			},
 			// next function does not belong to qUnit but allows setting and removing some event handler to the ComboBox
 			handleChange: function(){
-				ok(true, "ComboBox event handler change was triggered.");
+				assert.ok(true, "ComboBox event handler change was triggered.");
 			}
 		});
 
@@ -447,7 +447,7 @@
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
 			setTimeout( function(){
 				// as Popup calls fireOpended for IE9 async
-				ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+				assert.ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
 				qutils.triggerEvent("click", "si-txt");
 				assert.equal(oCombo.getValue(), "second item", "ComboBox' second item should have been selected.");
@@ -455,10 +455,10 @@
 				assert.equal(oCombo.getSelectedKey(), "key2", "selectedKey should fit to the selected item");
 				assert.equal(oCombo.getSelectedItemId(), "si", "selectedItemId should fit to the selected item");
 
-				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after item selection");
+				assert.ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after item selection");
 
 				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-				ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+				assert.ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
 				qutils.triggerEvent("click", "li-txt");
 				assert.equal(oCombo.getValue(), "last item", "ComboBox' second item should have been selected.");
@@ -466,7 +466,7 @@
 				assert.equal(oCombo.getSelectedKey(), "key4", "selectedKey should fit to the selected item");
 				assert.equal(oCombo.getSelectedItemId(), "li", "selectedItemId should fit to the selected item");
 
-				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after item selection");
+				assert.ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after item selection");
 				done();
 			}, 10);
 		});
@@ -485,7 +485,7 @@
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
 			setTimeout( function(){
 				// as Popup calls fireOpended for IE9 async
-				ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+				assert.ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
 				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.END, false, false, false);
 				assert.equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");
@@ -501,7 +501,7 @@
 				assert.equal(oCombo.getSelectedItemId(), "", "selectedItemId should not have changed");
 
 				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
+				assert.ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
 
 				assert.equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");
 				assert.equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should match to HTML.");
@@ -523,7 +523,7 @@
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
 			setTimeout( function(){
 				// as Popup calls fireOpended for IE9 async
-				ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+				assert.ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
 				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.HOME, false, false, false);
 				assert.equal(oCombo.getValue(), "last item", "ComboBox' value should not have changed in HTML.");
@@ -539,7 +539,7 @@
 				assert.equal(oCombo.getSelectedItemId(), "li", "selectedItemId should not have changed");
 
 				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
+				assert.ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
 
 				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 
@@ -561,7 +561,7 @@
 			},
 			// next function does not belong to qUnit but allows setting and removing some event handler to the ComboBox
 			handleChange: function(){
-				ok(true, "ComboBox event handler change was triggered.");
+				assert.ok(true, "ComboBox event handler change was triggered.");
 			}
 		});
 
@@ -674,15 +674,15 @@
 		});
 
 		QUnit.test("TestCleanUp", function(assert){
-			ok(!!sap.ui.getCore().byId("fi"), "fi must exist");
-			ok(!!sap.ui.getCore().byId("si"), "si must exist");
-			ok(!!sap.ui.getCore().byId("ti"), "ti must exist");
-			ok(!!sap.ui.getCore().byId("li"), "li must exist");
+			assert.ok(!!sap.ui.getCore().byId("fi"), "fi must exist");
+			assert.ok(!!sap.ui.getCore().byId("si"), "si must exist");
+			assert.ok(!!sap.ui.getCore().byId("ti"), "ti must exist");
+			assert.ok(!!sap.ui.getCore().byId("li"), "li must exist");
 			oCombo.destroy();
-			ok(!sap.ui.getCore().byId("fi"), "fi must no longer exist");
-			ok(!sap.ui.getCore().byId("si"), "si must no longer exist");
-			ok(!sap.ui.getCore().byId("ti"), "ti must no longer exist");
-			ok(!sap.ui.getCore().byId("li"), "li must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("fi"), "fi must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("si"), "si must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("ti"), "ti must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("li"), "li must no longer exist");
 		});
 
 		function resetBeforeTest(){

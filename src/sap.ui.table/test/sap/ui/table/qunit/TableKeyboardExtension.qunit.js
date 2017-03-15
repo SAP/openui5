@@ -144,7 +144,7 @@ QUnit.test("Stored Focus Position", function(assert) {
 	assert.strictEqual(oInfo.cellCount, (iNumberOfCols + 1) * (3 /*visible rows*/ + 1), "cellCount");
 	assert.strictEqual(oInfo.header, 1, "header");
 
-	ok(!oExtension._oLastFocusedCellInfo, "No LastFocusedCellInfo stored");
+	assert.ok(!oExtension._oLastFocusedCellInfo, "No LastFocusedCellInfo stored");
 
 	getCell(1, 2, true, assert);
 
@@ -156,7 +156,7 @@ QUnit.test("Stored Focus Position", function(assert) {
 	assert.strictEqual(oInfo.cellCount, (iNumberOfCols + 1) * (3 /*visible rows*/ + 1), "cellCount");
 	assert.strictEqual(oInfo.header, 1, "header");
 
-	ok(oExtension._oLastFocusedCellInfo === oInfo, "LastFocusedCellInfo stored");
+	assert.ok(oExtension._oLastFocusedCellInfo === oInfo, "LastFocusedCellInfo stored");
 });
 
 

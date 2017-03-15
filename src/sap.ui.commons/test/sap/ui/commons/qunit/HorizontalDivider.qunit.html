@@ -76,28 +76,28 @@
 
 		QUnit.test("Visibility", function(assert) {
 			equals(jQuery("#oDivider2").get(0), undefined, "Invisible:");
-			ok(jQuery("#oDivider1").get(0), "Visible: expected defined");
+			assert.ok(jQuery("#oDivider1").get(0), "Visible: expected defined");
 		});
 
 		QUnit.test("Area Divider", function(assert) {
 			for(var i=3; i<7; i++){
 				var oDivider = jQuery("#oDivider"+i);
 				var sDividerStyle = oDivider.attr("style");
-				ok(sDividerStyle.toLowerCase().indexOf("width: 100px") != -1 || sDividerStyle.toLowerCase().indexOf("width:100px") != -1, "Area - width set for divider "+i+" ("+sDividerStyle+"): expected 100px");
-				ok(oDivider.hasClass("sapUiCommonsHoriDiv"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDiv'");
-				ok(oDivider.hasClass("sapUiCommonsHoriDivTypeArea"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivTypeArea'");
+				assert.ok(sDividerStyle.toLowerCase().indexOf("width: 100px") != -1 || sDividerStyle.toLowerCase().indexOf("width:100px") != -1, "Area - width set for divider "+i+" ("+sDividerStyle+"): expected 100px");
+				assert.ok(oDivider.hasClass("sapUiCommonsHoriDiv"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDiv'");
+				assert.ok(oDivider.hasClass("sapUiCommonsHoriDivTypeArea"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivTypeArea'");
 				switch(i){
 					case 3:
-						ok(oDivider.hasClass("sapUiCommonsHoriDivHeightR"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightR'");
+						assert.ok(oDivider.hasClass("sapUiCommonsHoriDivHeightR"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightR'");
 						break;
 					case 4:
-						ok(oDivider.hasClass("sapUiCommonsHoriDivHeightS"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightS'");
+						assert.ok(oDivider.hasClass("sapUiCommonsHoriDivHeightS"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightS'");
 						break;
 					case 5:
-						ok(oDivider.hasClass("sapUiCommonsHoriDivHeightM"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightM'");
+						assert.ok(oDivider.hasClass("sapUiCommonsHoriDivHeightM"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightM'");
 						break;
 					case 6:
-						ok(oDivider.hasClass("sapUiCommonsHoriDivHeightL"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightL'");
+						assert.ok(oDivider.hasClass("sapUiCommonsHoriDivHeightL"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightL'");
 						break;
 				}
 			}
@@ -107,21 +107,21 @@
 			for(var i=7; i<11; i++){
 				var oDivider = jQuery("#oDivider"+i);
 				var sDividerStyle = oDivider.attr("style");
-				ok(sDividerStyle.toLowerCase().indexOf("width: 100px") != -1 || sDividerStyle.toLowerCase().indexOf("width:100px") != -1, "Area - width set for divider "+i+" ("+sDividerStyle+"): expected 100px");
-				ok(oDivider.hasClass("sapUiCommonsHoriDiv"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDiv'");
-				ok(oDivider.hasClass("sapUiCommonsHoriDivTypePage"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivTypePage'");
+				assert.ok(sDividerStyle.toLowerCase().indexOf("width: 100px") != -1 || sDividerStyle.toLowerCase().indexOf("width:100px") != -1, "Area - width set for divider "+i+" ("+sDividerStyle+"): expected 100px");
+				assert.ok(oDivider.hasClass("sapUiCommonsHoriDiv"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDiv'");
+				assert.ok(oDivider.hasClass("sapUiCommonsHoriDivTypePage"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivTypePage'");
 				switch(i){
 					case 7:
-						ok(oDivider.hasClass("sapUiCommonsHoriDivHeightR"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightR'");
+						assert.ok(oDivider.hasClass("sapUiCommonsHoriDivHeightR"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightR'");
 						break;
 					case 8:
-						ok(oDivider.hasClass("sapUiCommonsHoriDivHeightS"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightS'");
+						assert.ok(oDivider.hasClass("sapUiCommonsHoriDivHeightS"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightS'");
 						break;
 					case 9:
-						ok(oDivider.hasClass("sapUiCommonsHoriDivHeightM"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightM'");
+						assert.ok(oDivider.hasClass("sapUiCommonsHoriDivHeightM"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightM'");
 						break;
 					case 10:
-						ok(oDivider.hasClass("sapUiCommonsHoriDivHeightL"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightL'");
+						assert.ok(oDivider.hasClass("sapUiCommonsHoriDivHeightL"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightL'");
 						break;
 				}
 			}

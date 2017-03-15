@@ -63,7 +63,7 @@
 	QUnit.test("sap.ui.core.CustomizingConfiguration available", function(assert) {
 		assert.expect(1);
 
-		ok(sap.ui.core.CustomizingConfiguration, "sap.ui.core.CustomizingConfiguration should be available now without requiring it");
+		assert.ok(sap.ui.core.CustomizingConfiguration, "sap.ui.core.CustomizingConfiguration should be available now without requiring it");
 	});
 
 	QUnit.test("sap.ui.core.CustomizingConfiguration returning no customizing data", function(assert) {
@@ -87,15 +87,15 @@
 	// View Replacement
 
 	QUnit.test("View Replacement", function(assert) {
-		ok(!jQuery.sap.domById("theComponent---mainView--sub1View--customTextInCustomSub1"), "Replacement View should not be rendered");
-		ok(jQuery.sap.domById("theComponent---mainView--sub1View--originalSapTextInSub1"), "Original View should be rendered");
+		assert.ok(!jQuery.sap.domById("theComponent---mainView--sub1View--customTextInCustomSub1"), "Replacement View should not be rendered");
+		assert.ok(jQuery.sap.domById("theComponent---mainView--sub1View--originalSapTextInSub1"), "Original View should be rendered");
 	});
 
 
 	// View Extension
 
 	QUnit.test("View Extension", function(assert) {
-		ok(!jQuery.sap.domById("theComponent---mainView--sub2View--customFrag1BtnWithCustAction"), "View Extension should not be rendered");
+		assert.ok(!jQuery.sap.domById("theComponent---mainView--sub2View--customFrag1BtnWithCustAction"), "View Extension should not be rendered");
 	});
 
 
@@ -119,9 +119,9 @@
 
 		// check members
 		var oController = sap.ui.getCore().byId("theComponent---mainView--sub2View").getController();
-		ok(oController, "Extended Sub2 View should have a Controller");
-		ok(oController.originalSAPAction, "Extended Sub2 controller should have an originalSAPAction method");
-		ok(!oController.customerAction, "Extended Sub2 controller should have no customerAction method");
+		assert.ok(oController, "Extended Sub2 View should have a Controller");
+		assert.ok(oController.originalSAPAction, "Extended Sub2 controller should have an originalSAPAction method");
+		assert.ok(!oController.customerAction, "Extended Sub2 controller should have no customerAction method");
 		assert.equal(oController.originalSAPAction(), "ori", "originalSAPAction method of extended controller should return 'ori'");
 	});
 
@@ -129,7 +129,7 @@
 	QUnit.test("Controller Extension (sap.ui.controller)", function(assert) {
 		oComp.runAsOwner(function() {
 			var oController = sap.ui.controller("testdata.customizing.sap.Sub2");
-			ok(oController.isExtended === undefined, "Controller has not been extended with sap.ui.controller factory function!");
+			assert.ok(oController.isExtended === undefined, "Controller has not been extended with sap.ui.controller factory function!");
 		});
 	});
 
@@ -161,8 +161,8 @@
 	QUnit.test("ExtensionPoint default content", function(assert) {
 		var oFirstItem = sap.ui.getCore().byId("__item0-theComponent---mainView--sub2View--lb-0");
 
-		ok(oFirstItem, "First ListItem should exist");
-		ok(oFirstItem.getDomRef(), "First ListItem should be rendered");
+		assert.ok(oFirstItem, "First ListItem should exist");
+		assert.ok(oFirstItem.getDomRef(), "First ListItem should be rendered");
 		assert.equal(oFirstItem.getAdditionalText(), "(Original SAP ListItem)", "First ListItem should be the default one");
 	});
 

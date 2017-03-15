@@ -53,13 +53,13 @@
 
 	QUnit.test("init MockServer Flight", function(assert) {
 		oServer = initServer(sServiceUri, "model/metadata1.xml", sDataRootPath);
-		ok(oServer,"Server initialized");
+		assert.ok(oServer,"Server initialized");
 	});
 
 	QUnit.test("init Model", function(assert) {
 		var oModel = initModel(sServiceUri);
-		ok(oModel,"Model initialized");
-		ok(oModel.getServiceMetadata(),"Metadata loaded");
+		assert.ok(oModel,"Model initialized");
+		assert.ok(oModel.getServiceMetadata(),"Metadata loaded");
 	});
 
 	QUnit.test("metadata failed handling", function(assert){
@@ -68,13 +68,13 @@
  		var oModel = initModel(sServiceUri3);
  		var oModel2 = {};
  		var handleFailed1 = function(){
-			ok(!oModel2.getServiceMetadata(), "Metadata on second model failed correctly");
+			assert.ok(!oModel2.getServiceMetadata(), "Metadata on second model failed correctly");
 			oModel2.detachMetadataFailed(handleFailed1);
 			done();
 		};
  		var handleFailed2 = function(){
-			ok(!oModel.getServiceMetadata(), "Metadata failed correctly");
-			ok(oModel.oMetadata.isFailed(), "Failed on metadata object has been set correctly");
+			assert.ok(!oModel.getServiceMetadata(), "Metadata failed correctly");
+			assert.ok(oModel.oMetadata.isFailed(), "Failed on metadata object has been set correctly");
 			oModel2 = initModel(sServiceUri3);
 			oModel2.attachMetadataFailed(handleFailed1);
 			oModel.detachMetadataFailed(handleFailed2);
@@ -83,29 +83,29 @@
 	});
 	QUnit.test("get annotation 'sap:label'", function(assert) {
 		var oModel = initModel(sServiceUri);
-		ok(oModel,"Model initialized");
+		assert.ok(oModel,"Model initialized");
 		assert.equal(oModel.getProperty("/#Flight/FlightConnectionID/@sap:label"),"Flight Number");
 	});
 	QUnit.test("get annotation 'sap:label' with namespace", function(assert) {
 		var oModel = initModel(sServiceUri);
-		ok(oModel,"Model initialized");
+		assert.ok(oModel,"Model initialized");
 		assert.equal(oModel.getProperty("/#UNKNOWN.Flight/FlightConnectionID/@sap:label"), undefined, "Unknown namespace");
 		assert.equal(oModel.getProperty("/#RMTSAMPLEFLIGHT_2.Flight/FlightConnectionID/@sap:label"), "Flight Number", "Valid namespace");
 	});
 	QUnit.test("get attribute 'type'", function(assert) {
 		var oModel = initModel(sServiceUri);
-		ok(oModel,"Model initialized");
+		assert.ok(oModel,"Model initialized");
 		assert.equal(oModel.getProperty("/#Flight/FlightConnectionID/@type"),"Edm.String");
 		assert.equal(oModel.getProperty("/#Flight/FirstClassOccupiedSeats/@type"),"Edm.Int32");
 	});
 	QUnit.test("get complexType attribute 'type' (not supported yet)", function(assert) {
-		ok(!oModel.getProperty("/#Flight/FlightDetails/@type"),"only Property attributes could be resolved");
+		assert.ok(!oModel.getProperty("/#Flight/FlightDetails/@type"),"only Property attributes could be resolved");
 	});
 	QUnit.test("get property/entity object (not supported)", function(assert) {
 		var oModel = initModel(sServiceUri);
-		ok(oModel,"Model initialized");
-		ok(!oModel.getProperty("/#Flight/FlightConnectionID"));
-		ok(!oModel.getProperty("/#Flight"));
+		assert.ok(oModel,"Model initialized");
+		assert.ok(!oModel.getProperty("/#Flight/FlightConnectionID"));
+		assert.ok(!oModel.getProperty("/#Flight"));
 	});
 	QUnit.test("get complexType property attributes", function(assert) {
 		assert.equal(oModel.getProperty("/#Flight/FlightDetails/DepartureTime/@type"),"Edm.Time");
@@ -392,9 +392,9 @@
 		var mObject = oMetadata._getPropertyMetadata(mEntityType, "AirLineID")
 
 		var mAnnotation = oMetadata._getV4AnnotationObject(mEntityType, mObject, ["com.sap.test.ui5"]);
-		ok(!!mAnnotation, "Annotation object found");
-		ok(!!mAnnotation.extensions, "Annotation extension object found");
-		ok(Array.isArray(mAnnotation.extensions) && !!mAnnotation.extensions.length > 0, "Filled annotation extension array found");
+		assert.ok(!!mAnnotation, "Annotation object found");
+		assert.ok(!!mAnnotation.extensions, "Annotation extension object found");
+		assert.ok(Array.isArray(mAnnotation.extensions) && !!mAnnotation.extensions.length > 0, "Filled annotation extension array found");
 		equals(mAnnotation.extensions[0].value, "AirLineID Annotation", "Correct value for AirLineID annotation");
 
 		mAnnotation = oMetadata._getV4AnnotationObject(mEntityType, mObject, ["AirLineID", "com.sap.test.ui5"]);

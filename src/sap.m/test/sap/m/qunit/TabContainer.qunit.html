@@ -227,7 +227,7 @@
 			oFirstItemContent = oItems[0].getContent();
 
 			//assert
-			ok(oItems[0].getContent()[0].getShowAddNewButton(), "showAddNewButton is set to true");
+			assert.ok(oItems[0].getContent()[0].getShowAddNewButton(), "showAddNewButton is set to true");
 			assert.strictEqual(oItems[0].getContent()[0]._getTabStrip().$().find(".sapMTSAddNewTabBtn").length, 1, "Add new button is rendered and it is only one");
 
 			// clean up

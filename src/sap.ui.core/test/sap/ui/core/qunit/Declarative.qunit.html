@@ -50,7 +50,7 @@
 	 	sap.ui.core.DeclarativeSupport.compile($("#simple-button"));
 
 	 	var oButton = sap.ui.getCore().byId("simpleButton");
-	 	ok(!!oButton, 'Control with id "simpleButton" found.');
+	 	assert.ok(!!oButton, 'Control with id "simpleButton" found.');
 	 	assert.equal(oButton.getText(), "My Button", "Text is set right");
 	});
 
@@ -60,13 +60,13 @@
 		try {
 			backup = sap.ui.core.DeclarativeSupport.attributes["data-tooltip"];
 			sap.ui.core.DeclarativeSupport.attributes["data-tooltip"] = function() {
-			 	ok(true, "Called special attribute handling");
+			 	assert.ok(true, "Called special attribute handling");
 			};
 		 	var oButton = sap.ui.getCore().byId("buttonWithTooltip");
 		 	assert.equal(!!oButton, false, 'No control with id "buttonWithTooltip" found.');
 		 	sap.ui.core.DeclarativeSupport.compile($("#button-with-tooltip"));
 		 	var oButton = sap.ui.getCore().byId("buttonWithTooltip");
-		 	ok(!!oButton, 'Control with id "buttonWithTooltip" found.');
+		 	assert.ok(!!oButton, 'Control with id "buttonWithTooltip" found.');
 		} catch (exc) {
 			throw exc;
 		} finally {
@@ -85,8 +85,8 @@
 	 	sap.ui.core.DeclarativeSupport.compile($("#button-with-style-and-class"));
 
 	 	var oButton = sap.ui.getCore().byId("buttonStyleClass");
-	 	ok(!!oButton, 'Control with id "buttonStyleClass" found.');
-	 	ok(!!oButton.hasStyleClass("mybutton"), 'Control has right classes.');
+	 	assert.ok(!!oButton, 'Control with id "buttonStyleClass" found.');
+	 	assert.ok(!!oButton.hasStyleClass("mybutton"), 'Control has right classes.');
 	});
 
 
@@ -97,10 +97,10 @@
 	 	sap.ui.core.DeclarativeSupport.compile($("#html-content"));
 
 	 	var oButton = sap.ui.getCore().byId("htmlContentButton");
-	 	ok(!!oButton, 'Control with id "htmlContentButton" found.');
+	 	assert.ok(!!oButton, 'Control with id "htmlContentButton" found.');
 
 	 	var oPanel = sap.ui.getCore().byId("htmlContentPanel");
-	 	ok(!!oPanel, 'Control with id "htmlContentPanel" found.');
+	 	assert.ok(!!oPanel, 'Control with id "htmlContentPanel" found.');
 
 	 	assert.equal(oPanel.getTitle().getText(), "SAPUI5 Content in HTML Table in SAPUI5 Panel", "Text is set right");
 	});
@@ -113,7 +113,7 @@
 	 	sap.ui.core.DeclarativeSupport.compile($("#panel-aggregation"));
 
 	 	var oPanel = sap.ui.getCore().byId("panelAggregation");
-	 	ok(!!oPanel, 'Control with id "panelAggregation" found.');
+	 	assert.ok(!!oPanel, 'Control with id "panelAggregation" found.');
 
 	 	assert.equal(oPanel.getTitle().getText(), "Panel Aggregation", "Text is set right");
 	 	assert.equal(oPanel.getContent().length, 6, "Number of child controls is right");
@@ -127,7 +127,7 @@
 	 	sap.ui.core.DeclarativeSupport.compile($("#panel-with-default-aggregation"));
 
 	 	var oPanel = sap.ui.getCore().byId("panelWithDefaultAggregation");
-	 	ok(!!oPanel, 'Control with id "panelWithDefaultAggregation" found.');
+	 	assert.ok(!!oPanel, 'Control with id "panelWithDefaultAggregation" found.');
 
 	 	assert.equal(oPanel.getTitle().getText(), "Panel With Default Aggregation", "Text is set right");
 	 	assert.equal(oPanel.getContent().length, 6, "Number of child controls is right");
@@ -140,7 +140,7 @@
 	 	sap.ui.core.DeclarativeSupport.compile($("#panel-with-association"));
 
 	 	var oPanel = sap.ui.getCore().byId("panelWithAssociation");
-	 	ok(!!oPanel, 'Control with id "panelWithAssociation" found.');
+	 	assert.ok(!!oPanel, 'Control with id "panelWithAssociation" found.');
 
 	 	assert.equal(oPanel.getContent().length, 3, "Number of child controls is right");
 	 	var oLabel = oPanel.getContent()[0];
@@ -165,13 +165,13 @@
 	 	sap.ui.core.DeclarativeSupport.compile($("#ui-area-simple"));
 
 	 	var oUIArea = sap.ui.getCore().getUIArea("uiAreaSimple");
-	 	ok(!!oUIArea, 'UIArea with id "uiAreaSimple" found.');
+	 	assert.ok(!!oUIArea, 'UIArea with id "uiAreaSimple" found.');
 
 	 	var oButton1 = sap.ui.getCore().byId("uiAreaSimpleButton2");
-	 	ok(!!oButton1, 'Control with id "uiAreaSimpleButton2" found.');
+	 	assert.ok(!!oButton1, 'Control with id "uiAreaSimpleButton2" found.');
 
 	 	var oButton2 = sap.ui.getCore().byId("uiAreaSimpleButton2");
-	 	ok(!!oButton2, 'Control with id "uiAreaSimpleButton2" found.');
+	 	assert.ok(!!oButton2, 'Control with id "uiAreaSimpleButton2" found.');
 
 	 	assert.equal(oButton2.getUIArea().getId(), "uiAreaSimple", "UI Areas are the same");
 	});
@@ -193,16 +193,16 @@
 	 	sap.ui.core.DeclarativeSupport.compile($("#complex-declaration"));
 
 	 	var oUIArea = sap.ui.getCore().getUIArea("complexDeclarationUIArea");
-	 	ok(!!oUIArea, 'Control with id "complexDeclarationUIArea" found.');
+	 	assert.ok(!!oUIArea, 'Control with id "complexDeclarationUIArea" found.');
 
 	 	var oPanel1 = sap.ui.getCore().byId("complexDeclarationPanel1");
-	 	ok(!!oPanel1, 'Control with id "complexDeclarationPanel1" found.');
+	 	assert.ok(!!oPanel1, 'Control with id "complexDeclarationPanel1" found.');
 
 	 	var oPanel2 = sap.ui.getCore().byId("complexDeclarationPanel2");
-	 	ok(!!oPanel2, 'Control with id "complexDeclarationPanel2" found.');
+	 	assert.ok(!!oPanel2, 'Control with id "complexDeclarationPanel2" found.');
 
 	 	var oPanel3 = sap.ui.getCore().byId("complexDeclarationPanel3");
-	 	ok(!!oPanel3, 'Control with id "complexDeclarationPanel3" found.');
+	 	assert.ok(!!oPanel3, 'Control with id "complexDeclarationPanel3" found.');
 	});
 
 	QUnit.test("Events", 3, function(assert) {
@@ -212,7 +212,7 @@
 		sap.ui.core.DeclarativeSupport.compile($("#events"));
 
 	 	var oButton1 = sap.ui.getCore().byId("buttonWithEvent");
-	 	ok(!!oButton1, 'Control with id "buttonWithEvent" found.');
+	 	assert.ok(!!oButton1, 'Control with id "buttonWithEvent" found.');
 	 	var executeDefault = oButton1.firePress();
 	});
 
@@ -224,7 +224,7 @@
 		sap.ui.core.DeclarativeSupport.compile($("#altType"));
 
 		var oForm = sap.ui.getCore().byId("form");
-		ok(!!oForm, 'Control with id "form" found.');
+		assert.ok(!!oForm, 'Control with id "form" found.');
 
 		assert.equal(oForm.getTitle(), "Alt type works", "Title is set right");
 	});
@@ -237,7 +237,7 @@
 		} catch (exc) {
 			bThrown = true;
 		}
-		ok(bThrown, "Undefined event handler throws error");
+		assert.ok(bThrown, "Undefined event handler throws error");
 		$("#events-error").remove();
 	});
 
@@ -250,7 +250,7 @@
 			debugger;
 			bThrown = true;
 		}
-		ok(bThrown, "Missing data-* prefix for attributes throws error");
+		assert.ok(bThrown, "Missing data-* prefix for attributes throws error");
 		$("#data-attributes").remove();
 	});
 	*/
@@ -277,7 +277,7 @@
 		sap.ui.core.DeclarativeSupport.compile($("#databinding"));
 
 	 	var oButton1 = sap.ui.getCore().byId("buttonDataBinding");
-	 	ok(!!oButton1, 'Control with id "buttonWithEvent" found.');
+	 	assert.ok(!!oButton1, 'Control with id "buttonWithEvent" found.');
 
 	 	oButton1.setModel(oModel1);
 	 	oButton1.setModel(oModel2, "model2");
@@ -288,7 +288,7 @@
 		var oCarousel = sap.ui.getCore().byId("aggregationDataBinding");
 
 		var oCarousel = sap.ui.getCore().byId("aggregationDataBinding");
-	 	ok(!!oCarousel, 'Control with id "aggregationDataBinding" found.');
+	 	assert.ok(!!oCarousel, 'Control with id "aggregationDataBinding" found.');
 
 
 		oCarousel.setModel(oModel2);
@@ -454,7 +454,7 @@
 
 	<script>
 		function handlePress(evt) {
-		 	ok(true, "Handler is called");
+		 	assert.ok(true, "Handler is called");
 		};
 	</script>
 	<div id="events">

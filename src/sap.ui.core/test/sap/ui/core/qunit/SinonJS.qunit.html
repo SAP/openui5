@@ -37,11 +37,11 @@
 				var callback = sinon.spy();
 				var oButton = new sap.ui.commons.Button();
 				oButton.attachPress(callback);
-				ok(!callback.called, "Callback Spy not called yet");
+				assert.ok(!callback.called, "Callback Spy not called yet");
 
 				oButton.firePress();
 
-				ok(callback.called, "Callback Spy called");
+				assert.ok(callback.called, "Callback Spy called");
 
 				oButton.destroy();
 			});
@@ -54,11 +54,11 @@
 
 				var oButton = new sap.ui.commons.Button();
 				oButton.attachPress(spy);
-				ok(!spy.called, "Callback Spy not called yet");
+				assert.ok(!spy.called, "Callback Spy not called yet");
 
 				oButton.firePress();
 
-				ok(spy.calledOnce, "Callback Spy called");
+				assert.ok(spy.calledOnce, "Callback Spy called");
 
 				oButton.destroy();
 			});
@@ -73,9 +73,9 @@
 
 				obj.doSomething("My message");
 
-				ok(obj.doSomething.calledOnce, "Spy called");
+				assert.ok(obj.doSomething.calledOnce, "Spy called");
 
-				ok(obj.doSomething.calledWith("My message"), "Spy called with right value");
+				assert.ok(obj.doSomething.calledWith("My message"), "Spy called with right value");
 
 				// Restore the function
 				obj.doSomething.restore();
@@ -109,7 +109,7 @@
 			    try {
 			    	myAPI.method();
 			    } catch (exc) {
-			    	ok(mock.verify(), "Mock function called and all expectations are fullfilled");
+			    	assert.ok(mock.verify(), "Mock function called and all expectations are fullfilled");
 			    }
 
 			    mock.restore();
@@ -120,7 +120,7 @@
 			QUnit.test("Basic", 1, function(assert) {
 				var oClock = sinon.useFakeTimers();
 				setTimeout(function() {
-					ok(true, "Called without need of async test");
+					assert.ok(true, "Called without need of async test");
 				},800);
 				oClock.tick(800);
 				oClock.restore();
@@ -153,7 +153,7 @@
 
 		        this.requests[0].respond(200, { "Content-Type": "application/json" },
 		                                 '[{ "foo": "bar", "bar" : "foo" }]');
-		        ok(callback.calledWith([{ "foo": "bar", "bar" : "foo" }]), "Data is called right");
+		        assert.ok(callback.calledWith([{ "foo": "bar", "bar" : "foo" }]), "Data is called right");
 			});
 
 

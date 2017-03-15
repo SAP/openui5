@@ -54,7 +54,7 @@
 		QUnit.module("Basic");
 
 		QUnit.test("Check FocusHandler initialized", function(assert) {
-			ok(oFocusHandler, "FocusHandler initialized");
+			assert.ok(oFocusHandler, "FocusHandler initialized");
 		});
 
 		QUnit.test("Check FocusHandler initial state", function(assert) {
@@ -91,12 +91,12 @@
 				assert.equal(oEvent.type, "sapfocusleave", "Type of sapfocusleave Event:");
 				assert.equal(oEvent.relatedControlId, "oControl2", "Related Control ID of sapfocusleave Event");
 				var oFocusInfo = oEvent.relatedControlFocusInfo;
-				ok(oFocusInfo, "Focus Info available");
+				assert.ok(oFocusInfo, "Focus Info available");
 				if(oFocusInfo)
 					assert.equal(oFocusInfo.id, "oControl2", "Related Control FocusInfo ID of sapfocusleave Event");
 			};
 			oControls["oControl2"].focus();
-			ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
+			assert.ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
 		});
 
 		QUnit.test("Check sapfocusleave Event - Focus to outer HTML", function(assert) {
@@ -106,10 +106,10 @@
 				bHandlerCalled = true;
 				assert.equal(oEvent.type, "sapfocusleave", "Type of sapfocusleave Event:");
 				assert.equal(oEvent.relatedControlId, null, "Related Control ID of sapfocusleave Event");
-				ok(!oEvent.relatedControlFocusInfo, "Focus Info not available");
+				assert.ok(!oEvent.relatedControlFocusInfo, "Focus Info not available");
 			};
 			jQuery("#customInput").get(0).focus();
-			ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
+			assert.ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
 		});
 
 		QUnit.test("Check sapfocusleave Event - Focus lost", function(assert) {
@@ -120,7 +120,7 @@
 				bHandlerCalled = true;
 				assert.equal(oEvent.type, "sapfocusleave", "Type of sapfocusleave Event:");
 				assert.equal(oEvent.relatedControlId, null, "Related Control ID of sapfocusleave Event");
-				ok(!oEvent.relatedControlFocusInfo, "Focus Info not available");
+				assert.ok(!oEvent.relatedControlFocusInfo, "Focus Info not available");
 			};
 			//Change the focus handler temporarily
 			var onfocusEvent_ORIG = oFocusHandler.onfocusEvent;
@@ -130,7 +130,7 @@
 
 			var checker = {};
 			checker.check = function(){
-				ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
+				assert.ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
 
 				//Revert the temporary changes
 				oFocusHandler.onfocusEvent = onfocusEvent_ORIG;
@@ -154,7 +154,7 @@
 			bOk = bOk && oFocusHandler.oCurrent == "oControl3";
 			jQuery("#customInput").get(0).focus();
 			bOk = bOk && oFocusHandler.oCurrent == null;
-			ok(bOk, "Changes successfully reverted");
+			assert.ok(bOk, "Changes successfully reverted");
 		});
 
 	</script>

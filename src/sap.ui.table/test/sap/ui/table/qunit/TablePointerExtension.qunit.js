@@ -298,9 +298,9 @@ QUnit.test("Skip trigger resize when resizing already started", function(assert)
 	oTable._getPointerExtension()._debug();
 	var ColumnResizeHelper = oTable._getPointerExtension()._ColumnResizeHelper;
 	oTable._bIsColumnResizerMoving = true;
-	ok(!oTable.$().hasClass("sapUiTableResizing"), "Before Trigger");
+	assert.ok(!oTable.$().hasClass("sapUiTableResizing"), "Before Trigger");
 	ColumnResizeHelper.initColumnResizing(oTable);
-	ok(!oTable.$().hasClass("sapUiTableResizing"), "After Trigger");
+	assert.ok(!oTable.$().hasClass("sapUiTableResizing"), "After Trigger");
 });
 
 QUnit.module("Menus", {
@@ -535,7 +535,7 @@ QUnit.test("Tree Icon", function(assert) {
 
 	var iRowCount = oTreeTable._getRowCount();
 	assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows, "Row count before expand");
-	ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
+	assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
 	oExtension._ExtensionHelper.__handleClickSelection = oExtension._ExtensionHelper._handleClickSelection;
 	oExtension._ExtensionHelper._handleClickSelection = function() {
 		assert.ok(false, "_doSelect should not be called");
@@ -544,7 +544,7 @@ QUnit.test("Tree Icon", function(assert) {
 	var fnHandler = function() {
 		sap.ui.getCore().applyChanges();
 		assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows + 1, "Row count after expand");
-		ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
+		assert.ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
 		oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
 		oExtension._ExtensionHelper.__handleClickSelection = null;
 		done();
@@ -570,12 +570,12 @@ QUnit.test("Group Header", function(assert) {
 
 	var iRowCount = oTreeTable._getRowCount();
 	assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows, "Row count before expand");
-	ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
+	assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
 
 	var fnHandler = function() {
 		sap.ui.getCore().applyChanges();
 		assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows + 1, "Row count after expand");
-		ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
+		assert.ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
 		oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
 		oExtension._ExtensionHelper.__handleClickSelection = null;
 		done();
@@ -791,8 +791,8 @@ QUnit.test("Reordering via Drag&Drop - increase Index", function(assert) {
 	var iCount = 0;
 
 	oTable.updateAnalyticalInfo = function(bFirst, bSecond) {
-		ok(bFirst, "updateAnalyticalInfo with first parameter true");
-		ok(bSecond, "updateAnalyticalInfo with second parameter true");
+		assert.ok(bFirst, "updateAnalyticalInfo with first parameter true");
+		assert.ok(bSecond, "updateAnalyticalInfo with second parameter true");
 		iCount++;
 	};
 

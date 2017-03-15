@@ -90,23 +90,23 @@
 				QUnit.module("CSS class presence check");
 				//check if all css classes are there as required
 				QUnit.test("marginsOK", function(assert) {
-					ok(!!jQuery("#grid1.sapUiGrid.sapUiGridHSpace1.sapUiGridVSpace1"), "CSS classes at root div of grid");
+					assert.ok(!!jQuery("#grid1.sapUiGrid.sapUiGridHSpace1.sapUiGridVSpace1"), "CSS classes at root div of grid");
 				});
 				QUnit.test("spanOK", function(assert) {
-					ok(!!jQuery("tf1").parent("sapUiGridSpanL4.sapUiGridSpanM6.sapUiGridSpanS10"), "CSS classes for custom span parameters");
-					ok(!!jQuery("tf2").parent("sapUiGridSpanL1.sapUiGridSpanM6.sapUiGridSpanS12"), "CSS classes for default span values");
-					ok(!!jQuery("tf3").parent("sapUiGridSpanL4.sapUiGridSpanS10"), "CSS classes for custom span parameters without M value");
+					assert.ok(!!jQuery("tf1").parent("sapUiGridSpanL4.sapUiGridSpanM6.sapUiGridSpanS10"), "CSS classes for custom span parameters");
+					assert.ok(!!jQuery("tf2").parent("sapUiGridSpanL1.sapUiGridSpanM6.sapUiGridSpanS12"), "CSS classes for default span values");
+					assert.ok(!!jQuery("tf3").parent("sapUiGridSpanL4.sapUiGridSpanS10"), "CSS classes for custom span parameters without M value");
 				});
 				QUnit.test("indentOK", function(assert) {
-					ok(!!jQuery("#label2").parent(".sapUiGridIndentL1.sapUiGridIndentM0.sapUiGridIndentS0"), "CSS classes for custom indent");
-					ok(!!jQuery("#label2").parent("sapUiGridIndentL0.sapUiGridIndentM0.sapUiGridIndentS0"), "CSS classes for default indent 0");
+					assert.ok(!!jQuery("#label2").parent(".sapUiGridIndentL1.sapUiGridIndentM0.sapUiGridIndentS0"), "CSS classes for custom indent");
+					assert.ok(!!jQuery("#label2").parent("sapUiGridIndentL0.sapUiGridIndentM0.sapUiGridIndentS0"), "CSS classes for default indent 0");
 				});
 				QUnit.test("moveOK", function(assert) {
-					ok(!!jQuery("#label1").parent("sapUiGridSpanBwdL1.sapUiGridSpanBwdM2"), "CSS classes for moveBackwards parameters");
-					ok(!!jQuery("#label2").parent("sapUiGridSpanFwdL1.sapUiGridSpanFwdM2.sapUiGridSpanFwdS1"), "CSS classes for moveForward parameters");
+					assert.ok(!!jQuery("#label1").parent("sapUiGridSpanBwdL1.sapUiGridSpanBwdM2"), "CSS classes for moveBackwards parameters");
+					assert.ok(!!jQuery("#label2").parent("sapUiGridSpanFwdL1.sapUiGridSpanFwdM2.sapUiGridSpanFwdS1"), "CSS classes for moveForward parameters");
 				});
 				QUnit.test("visibilityOK", function(assert) {
-					ok(!!jQuery("#tf4").parent(".sapUiGridHiddenM.sapUiGridHiddenL"), "CSS class for hidden on large and medium screens");
+					assert.ok(!!jQuery("#tf4").parent(".sapUiGridHiddenM.sapUiGridHiddenL"), "CSS class for hidden on large and medium screens");
 				});
 
 				QUnit.module("Accessibility");
@@ -118,16 +118,16 @@
 							new sap.ui.layout.Grid()
 						]
 					});
-					ok(!!oLayout.getAccessibilityInfo, "Grid has a getAccessibilityInfo function");
+					assert.ok(!!oLayout.getAccessibilityInfo, "Grid has a getAccessibilityInfo function");
 					var oInfo = oLayout.getAccessibilityInfo();
-					ok(!!oInfo, "getAccessibilityInfo returns a info object");
-					ok(oInfo.role === undefined || oInfo.editable === null, "AriaRole");
-					ok(oInfo.type === undefined || oInfo.editable === null, "Type");
-					ok(oInfo.description === undefined || oInfo.editable === null, "Description");
-					ok(oInfo.focusable === undefined || oInfo.editable === null, "Focusable");
-					ok(oInfo.enabled === undefined || oInfo.editable === null, "Enabled");
-					ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
-					ok(oInfo.children && oInfo.children.length == 2, "Children");
+					assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
+					assert.ok(oInfo.role === undefined || oInfo.editable === null, "AriaRole");
+					assert.ok(oInfo.type === undefined || oInfo.editable === null, "Type");
+					assert.ok(oInfo.description === undefined || oInfo.editable === null, "Description");
+					assert.ok(oInfo.focusable === undefined || oInfo.editable === null, "Focusable");
+					assert.ok(oInfo.enabled === undefined || oInfo.editable === null, "Enabled");
+					assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+					assert.ok(oInfo.children && oInfo.children.length == 2, "Children");
 					oLayout.destroy();
 				});
 			} else {

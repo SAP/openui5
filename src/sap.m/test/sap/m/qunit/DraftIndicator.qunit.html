@@ -94,7 +94,7 @@
 		this.clock.tick(1500);
 
 		// Assert
-		ok(oDraftIndi.$("label").html()!="", "Draft saved state is not cleared after default timeout");
+		assert.ok(oDraftIndi.$("label").html()!="", "Draft saved state is not cleared after default timeout");
 
 		// Clean up
 		oDraftIndi._resetDraftTimer();

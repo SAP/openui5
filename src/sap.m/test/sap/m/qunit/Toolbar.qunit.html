@@ -58,7 +58,7 @@
 
 
 		assert.strictEqual(oTB.$().length, 1, "Toolbar is in DOM");
-		ok(oTB.$().hasClass("sapMTB"), "Toolbar has correct class name");
+		assert.ok(oTB.$().hasClass("sapMTB"), "Toolbar has correct class name");
 		oTB.setVisible(false);
 		sap.ui.getCore().applyChanges();
 		var $ToolbarPlaceHolder = jQuery.sap.byId(sap.ui.core.RenderManager.createInvisiblePlaceholderId(oTB));
@@ -93,30 +93,30 @@
 		});
 
 		assert.strictEqual(sap.m.ToolbarDesign.Auto, oTB.getDesign(), "Toolbar initially has design property 'Auto'");
-		ok(!oTB.$().hasClass("sapMTB-Info-CTX"), "Initially, toolbar has no info context class");
-		ok(!oTB.$().hasClass("sapMTB-Transparent-CTX"), "Initially, toolbar has no transparent context class");
+		assert.ok(!oTB.$().hasClass("sapMTB-Info-CTX"), "Initially, toolbar has no info context class");
+		assert.ok(!oTB.$().hasClass("sapMTB-Transparent-CTX"), "Initially, toolbar has no transparent context class");
 
 		oTB.setDesign(sap.m.ToolbarDesign.Transparent);
 		sap.ui.getCore().applyChanges();
-		ok(oTB.$().hasClass("sapMTB-Transparent-CTX"), "Toolbar has transparent context");
+		assert.ok(oTB.$().hasClass("sapMTB-Transparent-CTX"), "Toolbar has transparent context");
 
 		oTB.setDesign(sap.m.ToolbarDesign.Solid);
 		sap.ui.getCore().applyChanges();
-		ok(oTB.$().hasClass("sapMTB-Solid-CTX"), "Toolbar has solid context");
+		assert.ok(oTB.$().hasClass("sapMTB-Solid-CTX"), "Toolbar has solid context");
 
 		oTB.setDesign(sap.m.ToolbarDesign.Info);
 		sap.ui.getCore().applyChanges();
-		ok(oTB.$().hasClass("sapMTB-Info-CTX"), "Toolbar has info context");
+		assert.ok(oTB.$().hasClass("sapMTB-Info-CTX"), "Toolbar has info context");
 
 		oTB.setDesign(sap.m.ToolbarDesign.Auto);
 		sap.ui.getCore().applyChanges();
-		ok(!oTB.$().hasClass("sapMTB-Transparent-CTX"), "Transparent context has been removed again");
+		assert.ok(!oTB.$().hasClass("sapMTB-Transparent-CTX"), "Transparent context has been removed again");
 
 		oTB.setDesign(sap.m.ToolbarDesign.Info, true);
 		oTB.rerender();
 		sap.ui.getCore().applyChanges();
-		ok(oTB.$().hasClass("sapMTB-Info-CTX"), "Toolbar has now Info design.");
-		ok(!oTB.$().hasClass("sapMTB-Transparent-CTX"), "Transparent context is not set");
+		assert.ok(oTB.$().hasClass("sapMTB-Info-CTX"), "Toolbar has now Info design.");
+		assert.ok(!oTB.$().hasClass("sapMTB-Transparent-CTX"), "Transparent context is not set");
 		assert.strictEqual(sap.m.ToolbarDesign.Info, oTB.getActiveDesign(), "Active design should be 'Info'");
 		assert.strictEqual(sap.m.ToolbarDesign.Auto, oTB.getDesign(), "But design property is still 'Auto'");
 
@@ -127,15 +127,15 @@
 		// Arrange + System under Test
 		var oTB = createToolbar();
 
-		ok(!oTB.$().hasClass("sapMIBar-CTX"), "Toolbar does not have the IBar context");
+		assert.ok(!oTB.$().hasClass("sapMIBar-CTX"), "Toolbar does not have the IBar context");
 
 		// Act
 		oTB.applyTagAndContextClassFor("footer");
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		ok(oTB.$().hasClass("sapMIBar-CTX"), "Toolbar does have the IBar context");
-		ok(oTB.$().hasClass("sapMFooter-CTX"), "Toolbar does have the Footer context");
+		assert.ok(oTB.$().hasClass("sapMIBar-CTX"), "Toolbar does have the IBar context");
+		assert.ok(oTB.$().hasClass("sapMFooter-CTX"), "Toolbar does have the Footer context");
 
 		//Cleanup
 		oTB.destroy();
@@ -150,9 +150,9 @@
 		});
 
 		// Assert
-		ok(oToolbarSeparator.$().hasClass("sapMTBSeparator"), "Separator does have the expected CSS class");
-		ok(oToolbarSeparator.$().width() > 0, "Separator does have a width");
-		ok(oToolbarSeparator.$().height() > 0, "Separator does have a height");
+		assert.ok(oToolbarSeparator.$().hasClass("sapMTBSeparator"), "Separator does have the expected CSS class");
+		assert.ok(oToolbarSeparator.$().width() > 0, "Separator does have a width");
+		assert.ok(oToolbarSeparator.$().height() > 0, "Separator does have a height");
 
 		//Cleanup
 		oTB.destroy();
@@ -244,7 +244,7 @@
 		oToolbar.removeContent(undefined);
 
 		// Assert
-		ok(true, "no error occured");
+		assert.ok(true, "no error occured");
 
 		//Cleanup
 		oToolbar.destroy();
@@ -304,7 +304,7 @@
 
 			var bShrink = sap.m.Toolbar.checkShrinkable(oControl, sShrinkClass);
 			var sPrefix = (bExpected) ? "should shrink" : "should not shrink";
-			ok(bExpected ? bShrink : !bShrink, sMessage + " " + sPrefix);
+			assert.ok(bExpected ? bShrink : !bShrink, sMessage + " " + sPrefix);
 			oControl.destroy();
 		};
 
@@ -348,27 +348,27 @@
 		var vRetVal;
 
 		// test inital
-		ok(!oLabel.hasListeners("_change"), "Initially content does not have _change event");
+		assert.ok(!oLabel.hasListeners("_change"), "Initially content does not have _change event");
 
 		// add content and test
 		vRetVal = oTB.addContent(oLabel);
 		assert.strictEqual(vRetVal, oTB, "Toolbar#addContent function returns the toolbar instance for method chaining");
-		ok(oLabel.hasListeners("_change"), "After new content is added _change event is registered to the control");
+		assert.ok(oLabel.hasListeners("_change"), "After new content is added _change event is registered to the control");
 
 		// remove content and test
 		vRetVal = oTB.removeContent(oLabel);
 		assert.strictEqual(vRetVal, oLabel, "Toolbar#removeContent function returns removed control");
-		ok(!oLabel.hasListeners("_change"), "After content is removed _change event is deregistered from the control");
+		assert.ok(!oLabel.hasListeners("_change"), "After content is removed _change event is deregistered from the control");
 
 		// insert content and test
 		vRetVal = oTB.insertContent(oLabel, 0);
 		assert.strictEqual(vRetVal, oTB, "Toolbar#insertContent function returns the toolbar instance for method chaining");
-		ok(oLabel.hasListeners("_change"), "After new content is inserted _change event is registered to the control");
+		assert.ok(oLabel.hasListeners("_change"), "After new content is inserted _change event is registered to the control");
 
 		// remove all content and test
 		vRetVal = oTB.removeAllContent();
 		assert.strictEqual(vRetVal[0], oLabel, "Toolbar#removeAllContent function returns the array of removed controls");
-		ok(!oLabel.hasListeners("_change"), "After all content is removed _change event is deregistered from the control too");
+		assert.ok(!oLabel.hasListeners("_change"), "After all content is removed _change event is deregistered from the control too");
 
 		// cleanup
 		oLabel.destroy();
@@ -401,7 +401,7 @@
 			Label : {text: "text", layoutData : new sap.m.ToolbarLayoutData({ shrinkable : false })}
 		});
 
-		ok(!oTB._sResizeListenerId, "Toolbar does not have any resize handler");
+		assert.ok(!oTB._sResizeListenerId, "Toolbar does not have any resize handler");
 		assert.strictEqual(spy.callCount, 0, "Content resize handler is not needed");
 		oTB.destroy();
 	});
@@ -415,8 +415,8 @@
 			Label : {text: "text"}
 		});
 
-		ok(oTB.$().hasClass("sapMTBNewFlex"), "Toolbar has correct sapMTBNewFlex class");
-		ok(!oTB._sResizeListenerId, "Toolbar does not have any resize handler");
+		assert.ok(oTB.$().hasClass("sapMTBNewFlex"), "Toolbar has correct sapMTBNewFlex class");
+		assert.ok(!oTB._sResizeListenerId, "Toolbar does not have any resize handler");
 		assert.strictEqual(spy.callCount, 0, "Content resize handler is not needed");
 		oTB.destroy();
 	});
@@ -430,8 +430,8 @@
 			Label : {text: "text"}
 		});
 
-		ok(oTB._sResizeListenerId, "Toolbar has resize handler");
-		ok(oTB.$().hasClass("sapMTBOldFlex"), "Toolbar has correct sapMTBOldFlex class");
+		assert.ok(oTB._sResizeListenerId, "Toolbar has resize handler");
+		assert.ok(oTB.$().hasClass("sapMTBOldFlex"), "Toolbar has correct sapMTBOldFlex class");
 		assert.strictEqual(oTB.$().find(".sapMLabel").css("display"), "block", "Display is set to block for shrinkable item");
 		assert.strictEqual(spy.callCount, 1, "Content resize handler is registered once");
 		oTB.destroy();
@@ -445,7 +445,7 @@
 		});
 
 		var iInitEndPoint = oTB._getEndPoint();
-		ok(iInitEndPoint, "After rendering some control endpoint must be more than 0px");
+		assert.ok(iInitEndPoint, "After rendering some control endpoint must be more than 0px");
 
 		// change label
 		oTB.getContent()[0].setText("this is a long label");
@@ -542,9 +542,9 @@
 			var oTB = createToolbar(oConfig || {});
 			var oDomRef = oTB.getDomRef();
 			sMessage += " so Toolbar should not overflow";
-			ok(oDomRef.scrollWidth === oDomRef.clientWidth, sMessage + ".");
+			assert.ok(oDomRef.scrollWidth === oDomRef.clientWidth, sMessage + ".");
 			oTB.setWidth("500px");
-			ok(oDomRef.scrollWidth === oDomRef.clientWidth, sMessage + " even after resize.");
+			assert.ok(oDomRef.scrollWidth === oDomRef.clientWidth, sMessage + " even after resize.");
 			oTB.destroy();
 		};
 

@@ -128,7 +128,7 @@
 				assert.strictEqual(this.oAccordion1.getAggregation("sections").length, 4, "4 sections should be added");
 			});
 			QUnit.test("Sections aggregation visibility test", function(assert) {
-				ok(this.oAccordion1.getSections, "Sections aggregation is visible");
+				assert.ok(this.oAccordion1.getSections, "Sections aggregation is visible");
 			});
 			QUnit.test("Test getNumberOfOpenedSections", function(assert) {
 				assert.strictEqual(this.oAccordion1.getNumberOfOpenedSections(), 1, "Should be 1");

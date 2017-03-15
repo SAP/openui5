@@ -133,7 +133,7 @@
 			equals(oButton1.$().attr("title"), sDefaultTitle, "Default tooltip set when no RichTooltip is attached");
 			oButton1.setTooltip(oRtt1);
 			sap.ui.getCore().applyChanges();
-			ok(!oButton1.$().attr("title"), "No default tooltip set when RichTooltip is attached");
+			assert.ok(!oButton1.$().attr("title"), "No default tooltip set when RichTooltip is attached");
 		});
 
 
@@ -162,25 +162,25 @@
 
 		asyncTest("Open/Close via mouse hover", function() {
 			checkOpenClose(1, false, 2500 /*500 delay + 200 duration + 1800 buffer*/, 1000, function(bOpen) {
-				ok(bOpen, "RichTooltip is visible after mouseover");
+				assert.ok(bOpen, "RichTooltip is visible after mouseover");
 			}, function(bOpen) {
-				ok(!bOpen, "RichTooltip is not visible after mouseout");
+				assert.ok(!bOpen, "RichTooltip is not visible after mouseout");
 			});
 		});
 
 		asyncTest("No Open via \"fast\" mouse hover", function() {
 			checkOpenClose(1, false, 300 /*< 500 delay*/, 800, function(bOpen) {
-				ok(!bOpen, "RichTooltip is not visible after mouseover");
+				assert.ok(!bOpen, "RichTooltip is not visible after mouseover");
 			}, function(bOpen) {
-				ok(!bOpen, "RichTooltip is still not visible after mouseout");
+				assert.ok(!bOpen, "RichTooltip is still not visible after mouseout");
 			});
 		});
 
 		asyncTest("Open/Close via keyboard", function() {
 			checkOpenClose(1, true, 400 /*200 duration + 200 buffer (no delay)*/, 400, function(bOpen) {
-				ok(bOpen, "RichTooltip is visible after press Ctrl+I");
+				assert.ok(bOpen, "RichTooltip is visible after press Ctrl+I");
 			}, function(bOpen) {
-				ok(!bOpen, "RichTooltip is visible after press Escape");
+				assert.ok(!bOpen, "RichTooltip is visible after press Escape");
 			});
 		});
 
@@ -190,8 +190,8 @@
 				var oCtrlOffset = jCtrl.offset();
 				var jRtt = oRtt1.$();
 				var oRttOffset = jRtt.offset();
-				ok(Math.abs(oCtrlOffset.left - oRttOffset.left + 10) <= 2, "Position from left");
-				ok(Math.abs((oCtrlOffset.top + jCtrl.outerHeight()) - oRttOffset.top + 3) <= 2, "Position from top");
+				assert.ok(Math.abs(oCtrlOffset.left - oRttOffset.left + 10) <= 2, "Position from left");
+				assert.ok(Math.abs((oCtrlOffset.top + jCtrl.outerHeight()) - oRttOffset.top + 3) <= 2, "Position from top");
 			});
 		});
 
@@ -206,10 +206,10 @@
 				var iRttOuterH = $rtt2.outerHeight();
 
 				var result = Math.abs((oTextFieldOffset.left + 10) - (oRttOffset.left));
-				ok(result <= 2, "Position from left");
+				assert.ok(result <= 2, "Position from left");
 				// rounding needed since FireFox returns floating pixel values...
 				result = Math.round(Math.abs((oTextFieldOffset.top + iTFOuterH - 10) - (oRttOffset.top + iRttOuterH)));
-				ok(result <= 5, "Position from top");
+				assert.ok(result <= 5, "Position from top");
 			});
 		});
 
@@ -237,22 +237,22 @@
 				var jRtt1 = jQuery.sap.byId("rtt1");
 
 				var jObj = jRtt1.find(".sapUiRttText");
-				ok(jObj.size() == 1, "RichTooltip text section is available");
+				assert.ok(jObj.size() == 1, "RichTooltip text section is available");
 				equals(jObj.text(), sText, "Text in text section ok:");
 
 				jObj = jRtt1.find(".sapUiRttImage");
-				ok(jObj.size() == bIconExpected ? 1 : 0, "RichTooltip image section is "+(bIconExpected ? "" : "not ")+"available");
+				assert.ok(jObj.size() == bIconExpected ? 1 : 0, "RichTooltip image section is "+(bIconExpected ? "" : "not ")+"available");
 				if(bIconExpected){
 					equals(jObj.attr("src"), sImageSrc, "Image Source ok:");
 				}
 
 				jObj = jRtt1.find(".sapUiRttTitle");
-				ok(jObj.size() == bTitleExpected ? 1 : 0, "RichTooltip title section is "+(bTitleExpected ? "" : "not ")+"available");
+				assert.ok(jObj.size() == bTitleExpected ? 1 : 0, "RichTooltip title section is "+(bTitleExpected ? "" : "not ")+"available");
 				if(bTitleExpected){
 					equals(jObj.text(), sTitle, "Text in title section ok:");
 				}
 
-				ok(jRtt1.find(".sapUiRttSep").size() == bTitleExpected ? 1 : 0, "RichTooltip title seperator section is "+(bTitleExpected ? "" : "not ")+"available");
+				assert.ok(jRtt1.find(".sapUiRttSep").size() == bTitleExpected ? 1 : 0, "RichTooltip title seperator section is "+(bTitleExpected ? "" : "not ")+"available");
 			});
 		}
 
@@ -283,14 +283,14 @@
 				var jObjValueStateText = jQuery.sap.byId("rtt2").find(".sapUiRttValueStateText");
 				var jObjText = jQuery.sap.byId("rtt2").find(".sapUiRttText");
 
-				ok(jObjValueStateText.size() == 1, "ValueState text section is available");
-				ok(jObjText.size() == 1, "RichTooltip text section is available");
+				assert.ok(jObjValueStateText.size() == 1, "ValueState text section is available");
+				assert.ok(jObjText.size() == 1, "RichTooltip text section is available");
 
 				// fetch the default text to prevent any wrongly set language
 				var valueStateText = sap.ui.core.ValueStateSupport.getAdditionalText(oRtt2.getParent());
 
-				ok(jObjValueStateText.text() === valueStateText, "ValueState text contains default state information.");
-				ok(jObjText.text() === sText, "RichTooltip text section is the original text.");
+				assert.ok(jObjValueStateText.text() === valueStateText, "ValueState text contains default state information.");
+				assert.ok(jObjText.text() === sText, "RichTooltip text section is the original text.");
 			});
 		});
 
@@ -310,10 +310,10 @@
 					var sText = jObjText.html().toLowerCase();
 					var sLowerOriginal = sRtt2HtmlText.toLowerCase();
 
-					ok(sText === sLowerOriginal, "HTML text as content text");
+					assert.ok(sText === sLowerOriginal, "HTML text as content text");
 
 					var jObjValueStateText = jQuery.sap.byId("rtt2").find(".sapUiRttValueStateText");
-					ok(jObjValueStateText.html() === sRtt2ValueStateText, "Custom 'ValueStateMessage':");
+					assert.ok(jObjValueStateText.html() === sRtt2ValueStateText, "Custom 'ValueStateMessage':");
 				});
 			}, 400);
 		});

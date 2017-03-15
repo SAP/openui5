@@ -195,12 +195,12 @@
 				this.sut._focusDate(oExpectedDate, false, true);
 				//assert
 				assert.strictEqual(_focusDateExtendSpy.callCount, 1, "'_focusDateExtend()' was called once");
-				ok(_focusDateExtendSpy.calledWith(oExpectedDate, false, true), "'_focusDateExtend()' was called with the correct parameters");
+				assert.ok(_focusDateExtendSpy.calledWith(oExpectedDate, false, true), "'_focusDateExtend()' was called with the correct parameters");
 				//act
 				this.sut._focusDate(oExpectedDate, true, false);
 				//assert
 				assert.strictEqual(_focusDateExtendSpy.callCount, 2, "'_focusDateExtend()' was called twice");
-				ok(_focusDateExtendSpy.calledWith(oExpectedDate, true, false), "'_focusDateExtend()' was called with the correct parameters");
+				assert.ok(_focusDateExtendSpy.calledWith(oExpectedDate, true, false), "'_focusDateExtend()' was called with the correct parameters");
 			});
 
 			QUnit.test("'_adjustFocusedDateUponYearChange()' has correct output", function (assert) {

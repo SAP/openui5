@@ -76,13 +76,13 @@
 	QUnit.module("Callout: open and close");
 	QUnit.test("Open Callout", function(assert) {
 		var done = assert.async();
-		ok(true, "A-sync OK start");
+		assert.ok(true, "A-sync OK start");
 		qutils.triggerMouseEvent("CButton", "mouseover");
 		setTimeout(function() {
-			ok(isCalloutVisible()==true, "Callout is visible after mouseover");
+			assert.ok(isCalloutVisible()==true, "Callout is visible after mouseover");
 			qutils.triggerMouseEvent("callout", "mouseout");
 			setTimeout(function() {
-				ok(isCalloutVisible()==false, "Callout is not visible after mouseout");
+				assert.ok(isCalloutVisible()==false, "Callout is not visible after mouseout");
 				done();
 			}, 500);
 		}, 900);
@@ -90,13 +90,13 @@
 
 	QUnit.test("Do not open Callout by fast mouse movement over the parent", function(assert) {
 		var done = assert.async();
-		ok(true, "A-sync open/close start");
+		assert.ok(true, "A-sync open/close start");
 		qutils.triggerMouseEvent("CButton", "mouseover");
 		setTimeout(function() {
-			ok(isCalloutVisible()==false, "Callout is not visible immediately after mouseover");
+			assert.ok(isCalloutVisible()==false, "Callout is not visible immediately after mouseover");
 			qutils.triggerMouseEvent("CButton", "mouseout");
 			setTimeout(function() {
-				ok(isCalloutVisible()==false, "Callout is not visible after mouseout");
+				assert.ok(isCalloutVisible()==false, "Callout is not visible after mouseout");
 				done();
 			}, 500);
 		}, 50);
@@ -104,13 +104,13 @@
 
 	QUnit.test("Close using close method", function(assert) {
 		var done = assert.async();
-		ok(true, "A-sync close() start");
+		assert.ok(true, "A-sync close() start");
 		qutils.triggerMouseEvent("CButton", "mouseover");
 		setTimeout(function() {
-			ok(isCalloutVisible()==true, "Callout is visible after mouseover");
+			assert.ok(isCalloutVisible()==true, "Callout is visible after mouseover");
 			oCallout.close();
 			setTimeout(function() {
-				ok(isCalloutVisible()==false, "Callout is not visible after close()");
+				assert.ok(isCalloutVisible()==false, "Callout is not visible after close()");
 				done();
 			}, 400);
 		}, 900);
@@ -195,15 +195,15 @@
 	QUnit.test("Initial Focus", function(assert) {
 		var done = assert.async();
 		oButton.focus();
-		ok(document.activeElement.id == "CButton", "Focus the button initially");
+		assert.ok(document.activeElement.id == "CButton", "Focus the button initially");
 		qutils.triggerKeyboardEvent("CButton", jQuery.sap.KeyCodes.I, false, false, true);
 		setTimeout(function(){
-			ok(isCalloutVisible()==true, "Callout is visible after Ctrl-I");
+			assert.ok(isCalloutVisible()==true, "Callout is visible after Ctrl-I");
 			assert.equal(document.activeElement.id, "clink_1", "The first link should be focused after the Callout is opened with keyboard");
 			//close it
 			qutils.triggerKeyboardEvent(document.activeElement.id, jQuery.sap.KeyCodes.ESCAPE, false, false, false);
 			setTimeout(function(){
-				ok(isCalloutVisible()==false, "Callout is not visible after Esc");
+				assert.ok(isCalloutVisible()==false, "Callout is not visible after Esc");
 				assert.equal(document.activeElement.id, "CButton", "The parent element should be focused after the focused Callout is closed");
 				done();
 			}, 500); // CLOSE

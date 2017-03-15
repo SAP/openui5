@@ -947,16 +947,16 @@
 	QUnit.module("Initial Check");
 
 	QUnit.test("Overview rendered", function(assert) {
-		ok(jQuery.sap.domById("sapMList001-listUl"), "Overview should be rendered");
-		ok(jQuery.sap.domById("sapMList001-listUl").childNodes[0], "Overview ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList001-listUl"), "Overview should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList001-listUl").childNodes[0], "Overview ListItem should be rendered");
 	});
 
 	QUnit.test("standardListThumb rendered - navigate from listitem no 1 to detail page", function(assert) {
 		var done = assert.async();
 		app.to("standardListThumb", "show");
 		sap.ui.getCore().applyChanges();
-		ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
-		ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[0].getId();
 		var oListItem = sap.ui.getCore().byId(listItemId);
@@ -965,7 +965,7 @@
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
+			assert.ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
 			done();
 		},50);
 	});
@@ -974,8 +974,8 @@
 		var done = assert.async();
 		app.back();
 		sap.ui.getCore().applyChanges();
-		ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
-		ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[1].getId();
 		var oListItem = sap.ui.getCore().byId(listItemId);
@@ -984,7 +984,7 @@
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
+			assert.ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
 			done();
 		},50);
 	});
@@ -993,8 +993,8 @@
 		var done = assert.async();
 		app.back();
 		sap.ui.getCore().applyChanges();
-		ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
-		ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[2].getId();
 		var oListItem = sap.ui.getCore().byId(listItemId);
@@ -1003,7 +1003,7 @@
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
+			assert.ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
 			done();
 		},50);
 	});
@@ -1012,8 +1012,8 @@
 		var done = assert.async();
 		app.back();
 		sap.ui.getCore().applyChanges();
-		ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
-		ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[3].getId();
 		var oListItem = sap.ui.getCore().byId(listItemId);
@@ -1022,7 +1022,7 @@
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
+			assert.ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
 			done();
 		},50);
 	});
@@ -1031,8 +1031,8 @@
 		var done = assert.async();
 		app.back();
 		sap.ui.getCore().applyChanges();
-		ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
-		ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[4].getId();
 		var oListItem = sap.ui.getCore().byId(listItemId);
@@ -1041,7 +1041,7 @@
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
+			assert.ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
 			done();
 		},50);
 	});
@@ -1055,73 +1055,73 @@
 		jQuery.sap.require("sap.ui.core.theming.Parameters");
 		var _bShowUnreadBubble = (sap.ui.core.theming.Parameters.get("sapUiLIUnreadAsBubble") == "true");
 		if (_bShowUnreadBubble) {
-			ok(jQuery.sap.domById(listItemId + "-unread"), "standardListThumb unread indicator should be rendered");
+			assert.ok(jQuery.sap.domById(listItemId + "-unread"), "standardListThumb unread indicator should be rendered");
 		}
-		ok(jQuery.sap.domById(listItemId + "-counter"), "standardListThumb counter should be rendered");
-		ok(jQuery.sap.domById(listItemId + "-info"), "standardListThumb info should be rendered");
-		ok(jQuery.sap.domById("actionListItem"), "actionListItem should be rendered");
+		assert.ok(jQuery.sap.domById(listItemId + "-counter"), "standardListThumb counter should be rendered");
+		assert.ok(jQuery.sap.domById(listItemId + "-info"), "standardListThumb info should be rendered");
+		assert.ok(jQuery.sap.domById("actionListItem"), "actionListItem should be rendered");
 	});
 
 	QUnit.test("standardListIcon rendered", function(assert) {
 		app.to("standardListIcon", "show");
 		sap.ui.getCore().applyChanges();
-		ok(jQuery.sap.domById("sapMList003-listUl"), "standardListIcon should be rendered");
-		ok(jQuery.sap.domById("sapMList003-listUl").childNodes[0], "standardListIcon ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList003-listUl"), "standardListIcon should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList003-listUl").childNodes[0], "standardListIcon ListItem should be rendered");
 		app.to("standardListTitle", "show");
 		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("standardListTitle rendered", function(assert) {
 		app.back();
-		ok(jQuery.sap.domById("sapMList004-listUl"), "standardListTitle should be rendered");
-		ok(jQuery.sap.domById("sapMList004-listUl").childNodes[0], "standardListTitle ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList004-listUl"), "standardListTitle should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList004-listUl").childNodes[0], "standardListTitle ListItem should be rendered");
 		app.to("standardListNoImage", "show");
 		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("standardListNoImage rendered", function(assert) {
 		app.back();
-		ok(jQuery.sap.domById("sapMList005-listUl"), "standardListNoImage should be rendered");
-		ok(jQuery.sap.domById("sapMList005-listUl").childNodes[0], "standardListNoImage ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList005-listUl"), "standardListNoImage should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList005-listUl").childNodes[0], "standardListNoImage ListItem should be rendered");
 		app.to("displayList", "show");
 		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("displayList rendered", function(assert) {
 		app.back();
-		ok(jQuery.sap.domById("sapMList006-listUl"), "displayList should be rendered");
-		ok(jQuery.sap.domById("sapMList006-listUl").childNodes[0], "displayList ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList006-listUl"), "displayList should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList006-listUl").childNodes[0], "displayList ListItem should be rendered");
 		app.to("inputList", "show");
 		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("inputList rendered", function(assert) {
 		app.back();
-		ok(jQuery.sap.domById("sapMList007-listUl"), "inputList should be rendered");
-		ok(jQuery.sap.domById("sapMList007-listUl").childNodes[0], "inputList ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList007-listUl"), "inputList should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList007-listUl").childNodes[0], "inputList ListItem should be rendered");
 		app.to("customList", "show");
 		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("customList rendered", function(assert) {
 		app.back();
-		ok(jQuery.sap.domById("sapMList008-listUl"), "customList should be rendered");
-		ok(jQuery.sap.domById("sapMList008-listUl").childNodes[0], "customList ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList008-listUl"), "customList should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList008-listUl").childNodes[0], "customList ListItem should be rendered");
 		app.to("invisibleList", "show");
 		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("invisibleList rendered", function(assert) {
 		app.back();
-		ok(!jQuery.sap.domById("sapMList010-listUl"), "invisibleList should not be rendered");
+		assert.ok(!jQuery.sap.domById("sapMList010-listUl"), "invisibleList should not be rendered");
 		app.to("noDataList", "show");
 		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("noDataList rendered", function(assert) {
 		app.back();
-		ok(jQuery.sap.domById("sapMList011-listUl"), "noDataList should be rendered");
-		ok(jQuery.sap.domById("sapMList011-nodata-text").textContent == "Forgot something???", "noDataList custom text should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList011-listUl"), "noDataList should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList011-nodata-text").textContent == "Forgot something???", "noDataList custom text should be rendered");
 		app.to("selectionList", "show");
 		sap.ui.getCore().applyChanges();
 	});
@@ -1143,7 +1143,7 @@
 
 			setTimeout(function() {
 				var oContainer = jQuery.sap.domById(swipeContentList.getId() + "-swp");
-				ok(oContainer instanceof HTMLElement, "Swipe Content is rendered");
+				assert.ok(oContainer instanceof HTMLElement, "Swipe Content is rendered");
 				swipeContentList.swipeOut(function(li, swpcnt){
 					var oContainer = jQuery.sap.domById(swipeContentList.getId() + "-swp");
 					equals(oContainer, null, "Swipe Content is removed");
@@ -1155,8 +1155,8 @@
 	}
 
 	QUnit.test("selectionList rendered", function(assert) {
-		ok(jQuery.sap.domById("sapMList009"), "selectionList should be rendered");
-		ok(jQuery.sap.domById("sapMList009").childNodes[0], "selectionList ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList009"), "selectionList should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList009").childNodes[0], "selectionList ListItem should be rendered");
 	});
 
 	QUnit.test("selectionList singleSelection Item 1", function(assert) {
@@ -1698,8 +1698,8 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		ok(sut1.$().hasClass("sapMLIBFocusable"), "Outline class is added");
-		ok(sut1.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is added");
+		assert.ok(sut1.$().hasClass("sapMLIBFocusable"), "Outline class is added");
+		assert.ok(sut1.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is added");
 
 		// Act
 		oMsieStub.restore();
@@ -1708,8 +1708,8 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		ok(sut2.$().hasClass("sapMLIBFocusable"), "Outline class is added");
-		ok(!sut2.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is not added");
+		assert.ok(sut2.$().hasClass("sapMLIBFocusable"), "Outline class is added");
+		assert.ok(!sut2.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is not added");
 
 		//Cleanup
 		list.destroy();

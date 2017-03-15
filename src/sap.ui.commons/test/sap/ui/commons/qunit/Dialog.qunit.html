@@ -592,7 +592,7 @@
 			var fnOpened2 = function() {
 				this.oDialog.oPopup.detachOpened(fnOpened2);
 
-				ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
+				assert.ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
 				equals(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
 
 				this.oDialog.oPopup.attachClosed(done);
@@ -613,7 +613,7 @@
 			var fnOpened1 = function() {
 				this.oDialog.oPopup.detachOpened(fnOpened1);
 
-				ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
+				assert.ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
 				equals(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
 
 				this.oDialog.oPopup.attachClosed(fnClosed1);

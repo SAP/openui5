@@ -41,8 +41,8 @@
 		assert.equal(sPrefixedId, "dummy--anyid");
 		assert.equal(sLocalId, "anyid");
 		assert.equal(sOtherId, null);
-		ok(oView.isPrefixedId(sPrefixedId));
-		notOk(oView.isPrefixedId(sLocalId));
+		assert.ok(oView.isPrefixedId(sPrefixedId));
+		assert.notOk(oView.isPrefixedId(sLocalId));
 		oView.destroy();
 	});
 
@@ -124,9 +124,9 @@
 		oPreprocessors.foo._settings.foo = "bar";
 		sinon.assert.calledOnce(oSpy);
 		assert.strictEqual(oSpy.args[0][2].foo, oPreprocessors.foo._settings.foo, "Configured object instance gets passed to the preprocessor");
-		ok(oSpy.args[0][2].foo === "bar", "Property got set correctly");
+		assert.ok(oSpy.args[0][2].foo === "bar", "Property got set correctly");
 		assert.strictEqual(oSpy.args[0][2].foofoo, oPreprocessors.foo.foofoo, "Relevant settings have been passed to the pp");
-		ok(Object.keys(oSpy.args[0][2]).length == 3, "Only relevant settings have been passed to the pp");
+		assert.ok(Object.keys(oSpy.args[0][2]).length == 3, "Only relevant settings have been passed to the pp");
 	});
 
 
@@ -162,9 +162,9 @@
 
 		try {
 			oView.runPreprocessor("xml", oSource, true);
-			ok(false);
+			assert.ok(false);
 		} catch (ex) {
-			ok(true, ex); // TypeError: string is not a function
+			assert.ok(true, ex); // TypeError: string is not a function
 		}
 		sinon.assert.notCalled(expectProcess);
 	});
@@ -188,9 +188,9 @@
 
 		try {
 			oView.runPreprocessor("xml", oSource, true);
-			ok(bCalled, "Preprocessor executed correctly");
+			assert.ok(bCalled, "Preprocessor executed correctly");
 		} catch (ex) {
-			ok(false, ex); // TypeError: string is not a function
+			assert.ok(false, ex); // TypeError: string is not a function
 		}
 	});
 
@@ -203,7 +203,7 @@
 			});
 
 		oView.runPreprocessor("foo", oSource);
-		ok(true); // do nothing
+		assert.ok(true); // do nothing
 
 		sinon.assert.notCalled(expectProcess);
 	});
@@ -225,10 +225,10 @@
 
 		try {
 			oView.runPreprocessor("xml", oSource, true);
-			ok(!bCalled, "Preprocessor was ignored in sync view");
+			assert.ok(!bCalled, "Preprocessor was ignored in sync view");
 			sinon.assert.calledWith(logSpy, "Async \"xml\"-preprocessor was skipped in sync view execution for undefinedView", oView.getId());
 		} catch (ex) {
-			ok(false, ex); // TypeError: string is not a function
+			assert.ok(false, ex); // TypeError: string is not a function
 		}
 		sinon.assert.notCalled(expectProcess);
 	});
@@ -334,8 +334,8 @@
 			oPreprocessors.foo.settings.foo = "bar";
 			sinon.assert.calledOnce(oSpy);
 			assert.strictEqual(oSpy.args[0][2].settings.foo, oPreprocessors.foo.settings.foo, "Configured object instance gets passed to the preprocessor");
-			ok(oSpy.args[0][2].settings.foo === "bar", "Property got set correctly");
-			ok(Object.keys(oSpy.args[0][2]).length == 2, "Nothing has been added to the pp config");
+			assert.ok(oSpy.args[0][2].settings.foo === "bar", "Property got set correctly");
+			assert.ok(Object.keys(oSpy.args[0][2]).length == 2, "Nothing has been added to the pp config");
 			done();
 		});
 	});
@@ -376,10 +376,10 @@
 			});
 
 		oView.runPreprocessor("xml", oSource).then(function() {
-			ok(false);
+			assert.ok(false);
 			done();
 		}, function(ex) {
-			ok(true, ex); // TypeError: string is not a function
+			assert.ok(true, ex); // TypeError: string is not a function
 			sinon.assert.notCalled(expectProcess);
 			done();
 		});
@@ -403,10 +403,10 @@
 			});
 		oView.loaded().then(function() {
 			oView.runPreprocessor("xml", oSource).then(function() {
-				ok(bCalled, "preprocessor was called");
+				assert.ok(bCalled, "preprocessor was called");
 				done();
 			},function(ex) {
-				ok(false, ex); // TypeError: string is not a function
+				assert.ok(false, ex); // TypeError: string is not a function
 				done();
 			});
 		});
@@ -422,7 +422,7 @@
 			});
 
 		oView.runPreprocessor("foo", oSource).then(function() {
-			ok(true); // do nothing
+			assert.ok(true); // do nothing
 			sinon.assert.notCalled(expectProcess);
 			done();
 		});
@@ -436,7 +436,7 @@
 			].join(''),
 			this.oPreprocessor = function(vSource, sCaller, mSettings) {
 				jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
-				ok(true, "Preprocessor executed");
+				assert.ok(true, "Preprocessor executed");
 				return new Promise(function(resolve) {
 					resolve(vSource);
 				});
@@ -513,7 +513,7 @@
 		oView.attachAfterInit(function() {
 			// call independent
 			oView.runPreprocessor("controls").then(function(vSource) {
-				ok(true, "Method called");
+				assert.ok(true, "Method called");
 				sinon.assert.calledThrice(spy);
 				done();
 			});
@@ -544,7 +544,7 @@
 		var oLocalPreprocessor = function(vSource, sCaller, mSettings) {
 			// async test part
 			jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
-			ok(true, "Local preprocessor executed");
+			assert.ok(true, "Local preprocessor executed");
 			return new Promise(function(resolve) {
 				resolve(vSource);
 			});
@@ -569,8 +569,8 @@
 
 		oView.attachAfterInit(function() {
 			sinon.assert.calledTwice(spy);
-			ok(oView.hasPreprocessor("xml"), "active xml preprocessor");
-			ok(oView.hasPreprocessor("controls"), "active controls preprocessor");
+			assert.ok(oView.hasPreprocessor("xml"), "active xml preprocessor");
+			assert.ok(oView.hasPreprocessor("controls"), "active controls preprocessor");
 			done();
 		});
 	});
@@ -578,7 +578,7 @@
 	QUnit.test("global preprocessor and local preprocessor on one hook", 5, function (assert) {
 		var done = assert.async();
 		var oLocalPreprocessor = function(vSource, sCaller, mSettings) {
-			ok(true, "Local preprocessor executed");
+			assert.ok(true, "Local preprocessor executed");
 			return new Promise(function(resolve) {
 				resolve(vSource);
 			});
@@ -603,8 +603,8 @@
 
 		oView.attachAfterInit(function() {
 			sinon.assert.calledTwice(spy);
-			ok(!oView.hasPreprocessor("xml"), "no active xml preprocessor");
-			ok(oView.hasPreprocessor("controls"), "active controls preprocessor");
+			assert.ok(!oView.hasPreprocessor("xml"), "no active xml preprocessor");
+			assert.ok(oView.hasPreprocessor("controls"), "active controls preprocessor");
 			done();
 		});
 	});
@@ -631,8 +631,8 @@
 
 		oView.attachAfterInit(function() {
 			sinon.assert.calledTwice(spy);
-			ok(oView.hasPreprocessor("xml"), "active xml preprocessor");
-			ok(!oView.hasPreprocessor("controls"), "no active controls preprocessor");
+			assert.ok(oView.hasPreprocessor("xml"), "active xml preprocessor");
+			assert.ok(!oView.hasPreprocessor("controls"), "no active controls preprocessor");
 			done();
 		});
 	});
@@ -654,10 +654,10 @@
 		});
 
 		oView.attachAfterInit(function() {
-			ok(!logSpy.calledWithExactly("Running preprocessor for \"xml\" via given function", oView), "No log statement");
+			assert.ok(!logSpy.calledWithExactly("Running preprocessor for \"xml\" via given function", oView), "No log statement");
 			sinon.assert.calledTwice(spy);
-			ok(!oView.hasPreprocessor("controls"), "no active controls preprocessor");
-			ok(!oView.hasPreprocessor("xml"), "no active xml preprocessor");
+			assert.ok(!oView.hasPreprocessor("controls"), "no active controls preprocessor");
+			assert.ok(!oView.hasPreprocessor("xml"), "no active xml preprocessor");
 			done();
 		});
 	});
@@ -713,7 +713,7 @@
 		var oView = new sap.ui.core.mvc.View({});
 			oPromise = oView.loaded();
 
-		ok(oPromise instanceof Promise, "Promise returned");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
 
 		oPromise.then(function(oViewLoaded) {
 			assert.deepEqual(oView, oViewLoaded, "Views equal deeply");

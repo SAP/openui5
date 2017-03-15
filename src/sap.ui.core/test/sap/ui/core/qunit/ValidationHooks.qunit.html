@@ -64,14 +64,14 @@
 			assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
 			assert.equal(oEvent.getParameter("oldValue"), "hello", "old value");
 			assert.equal(oEvent.getParameter("type"), oType, "type");
-			ok(oEvent.getParameter("exception") instanceof sap.ui.model.ValidateException, "exception instance");
+			assert.ok(oEvent.getParameter("exception") instanceof sap.ui.model.ValidateException, "exception instance");
 			assert.equal(oEvent.getParameter("exception").violatedConstraints.length, 1, " violated constraints size");
 			assert.equal(oEvent.getParameter("exception").violatedConstraints[0], "maxLength", "violated constraints check");
 			bSuccess = true;
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			ok(bSuccess, "error occurred sucessfully");
+			assert.ok(bSuccess, "error occurred sucessfully");
 			sap.ui.getCore().detachValidationError(handler);
 			teardown(handler);
 			done();          // resume normal testing
@@ -91,13 +91,13 @@
 			assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
 			assert.equal(oEvent.getParameter("oldValue"), 3, "old value");
 			assert.equal(oEvent.getParameter("type"), oType, "type");
-			ok(oEvent.getParameter("exception") instanceof sap.ui.model.ParseException, "exception instance");
+			assert.ok(oEvent.getParameter("exception") instanceof sap.ui.model.ParseException, "exception instance");
 
 			bSuccess = true;
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			ok(bSuccess, "error occurred sucessfully");
+			assert.ok(bSuccess, "error occurred sucessfully");
 			sap.ui.getCore().detachParseError(handler);
 			teardown(handler);
 			done();          // resume normal testing
@@ -120,13 +120,13 @@
 			assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
 			assert.equal(oEvent.getParameter("oldValue"), 4, "old value");
 			assert.equal(oEvent.getParameter("type"), oType, "type");
-			ok(oEvent.getParameter("exception") instanceof sap.ui.model.FormatException, "exception instance");
+			assert.ok(oEvent.getParameter("exception") instanceof sap.ui.model.FormatException, "exception instance");
 
 			bSuccess = true;
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			ok(bSuccess, "error occurred sucessfully");
+			assert.ok(bSuccess, "error occurred sucessfully");
 			sap.ui.getCore().detachFormatError(handler);
 			oRating.destroy();
 			teardown(handler);
@@ -152,7 +152,7 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			ok(bSuccess, "validation was sucessful");
+			assert.ok(bSuccess, "validation was sucessful");
 			sap.ui.getCore().detachValidationSuccess(handler);
 			teardown(handler);
 			done();          // resume normal testing
@@ -188,8 +188,8 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			ok(bSuccess, "parse error occurred sucessfully and no other events occurred");
-			ok(iEventCount == 1 , "event count should be 1");
+			assert.ok(bSuccess, "parse error occurred sucessfully and no other events occurred");
+			assert.ok(iEventCount == 1 , "event count should be 1");
 			sap.ui.getCore().detachParseError(handler);
 			sap.ui.getCore().detachFormatError(handler);
 			sap.ui.getCore().detachValidationError(handler);
@@ -231,8 +231,8 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			ok(bSuccess, "validation error occurred sucessfully and no other events occurred");
-			ok(iEventCount == 1 , "event count should be 1");
+			assert.ok(bSuccess, "validation error occurred sucessfully and no other events occurred");
+			assert.ok(iEventCount == 1 , "event count should be 1");
 			sap.ui.getCore().detachParseError(handler);
 			sap.ui.getCore().detachFormatError(handler);
 			sap.ui.getCore().detachValidationError(handler);
@@ -262,7 +262,7 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			ok(bSuccess, "validation was sucessful");
+			assert.ok(bSuccess, "validation was sucessful");
 			assert.equal(iCount, 2, "validation event count");
 			sap.ui.getCore().detachValidationSuccess(handler);
 			oTxt.detachValidationSuccess(handler);
@@ -289,7 +289,7 @@
 			assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
 			assert.equal(oEvent.getParameter("oldValue"), "hello", "old value");
 			assert.equal(oEvent.getParameter("type"), oType, "type");
-			ok(oEvent.getParameter("exception") instanceof sap.ui.model.ValidateException, "exception instance");
+			assert.ok(oEvent.getParameter("exception") instanceof sap.ui.model.ValidateException, "exception instance");
 			assert.equal(oEvent.getParameter("exception").violatedConstraints.length, 1, " violated constraints size");
 			assert.equal(oEvent.getParameter("exception").violatedConstraints[0], "maxLength", "violated constraints check");
 			bSuccess = true;
@@ -297,7 +297,7 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			ok(bSuccess, "error occurred sucessfully");
+			assert.ok(bSuccess, "error occurred sucessfully");
 			assert.equal(iCount, 2, "validation event count");
 			sap.ui.getCore().detachValidationError(handler);
 			oTxt.detachValidationError(handler);
@@ -324,7 +324,7 @@
 			assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
 			assert.equal(oEvent.getParameter("oldValue"), "hello", "old value");
 			assert.equal(oEvent.getParameter("type"), oType, "type");
-			ok(oEvent.getParameter("exception") instanceof sap.ui.model.ValidateException, "exception instance");
+			assert.ok(oEvent.getParameter("exception") instanceof sap.ui.model.ValidateException, "exception instance");
 			assert.equal(oEvent.getParameter("exception").violatedConstraints.length, 1, " violated constraints size");
 			assert.equal(oEvent.getParameter("exception").violatedConstraints[0], "maxLength", "violated constraints check");
 			bSuccess = true;
@@ -333,7 +333,7 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			ok(bSuccess, "error occurred sucessfully");
+			assert.ok(bSuccess, "error occurred sucessfully");
 			assert.equal(iCount, 1, "validation event count");
 			sap.ui.getCore().detachValidationError(handler);
 			oTxt.detachValidationError(handler);
@@ -356,13 +356,13 @@
 			assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
 			assert.equal(oEvent.getParameter("oldValue"), 3, "old value");
 			assert.equal(oEvent.getParameter("type"), oType, "type");
-			ok(oEvent.getParameter("exception") instanceof sap.ui.model.ParseException, "exception instance");
+			assert.ok(oEvent.getParameter("exception") instanceof sap.ui.model.ParseException, "exception instance");
 			bSuccess = true;
 			iCount++;
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			ok(bSuccess, "error occurred sucessfully");
+			assert.ok(bSuccess, "error occurred sucessfully");
 			oTxt.detachParseError(handler);
 			assert.equal(iCount, 2, "validation event count");
 			sap.ui.getCore().detachParseError(handler);
@@ -389,7 +389,7 @@
 			assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
 			assert.equal(oEvent.getParameter("oldValue"), 4, "old value");
 			assert.equal(oEvent.getParameter("type"), oType, "type");
-			ok(oEvent.getParameter("exception") instanceof sap.ui.model.FormatException, "exception instance");
+			assert.ok(oEvent.getParameter("exception") instanceof sap.ui.model.FormatException, "exception instance");
 
 			bSuccess = true;
 			iCount++;
@@ -397,7 +397,7 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			ok(bSuccess, "error occurred sucessfully");
+			assert.ok(bSuccess, "error occurred sucessfully");
 			sap.ui.getCore().detachFormatError(handler);
 			oTxt.detachFormatError(handler);
 			assert.equal(iCount, 1, "validation event count");

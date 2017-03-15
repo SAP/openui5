@@ -44,9 +44,9 @@
 		}
 
 		QUnit.test("Initial Check", function(assert) {
-			ok(oCtrl, "NavBar should exist after creating");
+			assert.ok(oCtrl, "NavBar should exist after creating");
 			var oDomRef = jQuery.sap.domById("n1");
-			ok(oDomRef, "NavBar root element should exist in the page");
+			assert.ok(oDomRef, "NavBar root element should exist in the page");
 		});
 
 		QUnit.test("Swiping", function(assert) {
@@ -82,7 +82,7 @@
 
 						// verify that inertia scrolling has done its job
 						var finalScrollLeft = oList.scrollLeft;
-						ok(finalScrollLeft > 200, "list should be scrolled now a bit further by inertia scrolling");
+						assert.ok(finalScrollLeft > 200, "list should be scrolled now a bit further by inertia scrolling");
 
 						setTimeout(function(){
 							// verify that inertia scrolling has stopped

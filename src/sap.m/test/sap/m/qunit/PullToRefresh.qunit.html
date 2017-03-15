@@ -46,7 +46,7 @@
 		description: sDescription,
 		refresh: function(){
 			oP2R.setDescription(sRefresh);
-			ok(true, "Refresh event has been fired.");
+			assert.ok(true, "Refresh event has been fired.");
 		}
 	});
 
@@ -66,7 +66,7 @@
 	QUnit.test("Default values", 3, function(assert) {
 		assert.strictEqual(oP2R.getShowIcon(), false, "Default value for showIcon");
 		assert.strictEqual(oP2R.getDescription(), sDescription, "Description value");
-		ok(!oP2R.getCustomIcon(), "Custom icon is not set");
+		assert.ok(!oP2R.getCustomIcon(), "Custom icon is not set");
 	});
 
 	QUnit.module("Check HTML");
@@ -75,17 +75,17 @@
 		var iScroller = oPage1.getScrollDelegate()._scroller;
 		if (iScroller) { // this is executed when iScroll is used
 			assert.expect(8);
-			ok($P2R.position().top + $P2R.height() - jQuery("#page1-intHeader").height() <= 0, "Control is hidden over the top of the parent container");
+			assert.ok($P2R.position().top + $P2R.height() - jQuery("#page1-intHeader").height() <= 0, "Control is hidden over the top of the parent container");
 		} else {
 			assert.expect(7);
 		}
-		ok($P2R.length > 0, "Pull down control is rendered");
-		ok($P2R.children(".sapMPullDownCI").length == 0, "No custom logo is rendered initially");
-		ok(!$P2R.hasClass("sapMPullDownLogo"), "Standard logo is not shown");
+		assert.ok($P2R.length > 0, "Pull down control is rendered");
+		assert.ok($P2R.children(".sapMPullDownCI").length == 0, "No custom logo is rendered initially");
+		assert.ok(!$P2R.hasClass("sapMPullDownLogo"), "Standard logo is not shown");
 		assert.strictEqual($P2R.children(".sapMPullDownText").text(), sPullDwn, "Pull down text is set correctly");
 		assert.strictEqual($P2R.children(".sapMPullDownInfo").text(), sDescription, "Pull down description is set correctly");
-		ok(!($P2R.hasClass("sapMFlip")), "Arrow is not rotated");
-		ok(!($P2R.hasClass("sapLoading")), "Loading class is not set");
+		assert.ok(!($P2R.hasClass("sapMFlip")), "Arrow is not rotated");
+		assert.ok(!($P2R.hasClass("sapLoading")), "Loading class is not set");
 	});
 
 // Test pull to refresh functionality
@@ -118,9 +118,9 @@
 			// Check HTML
 			assert.strictEqual(oP2R._iState, 1, "New state after pull should be 1 - release to refresh");
 			var $P2R = oP2R.$();
-			ok($P2R.children(".sapMPullDownText").text() == sRelease, "Release text is set correctly");
-			ok($P2R.position().top >= 0, "Control is visible");
-			ok($P2R.hasClass("sapMFlip"), "Arrow is rotated");
+			assert.ok($P2R.children(".sapMPullDownText").text() == sRelease, "Release text is set correctly");
+			assert.ok($P2R.position().top >= 0, "Control is visible");
+			assert.ok($P2R.hasClass("sapMFlip"), "Arrow is rotated");
 
 			setTimeout(function() {
 				iScroller._end({ // Release
@@ -133,9 +133,9 @@
 				//
 				setTimeout(function() {
 					assert.strictEqual(oP2R._iState, 2, "New state after release should be 2 - loading");
-					ok($P2R.children(".sapMPullDownText").text() == sLoading, "Loading text is set");
+					assert.ok($P2R.children(".sapMPullDownText").text() == sLoading, "Loading text is set");
 					assert.strictEqual($P2R.children(".sapMPullDownInfo").text(), sRefresh, "Description is set");
-					ok($P2R.hasClass("sapMLoading"), "Loading css is set");
+					assert.ok($P2R.hasClass("sapMLoading"), "Loading css is set");
 					oP2R.hide(); // Close
 					oP2R.setDescription(sDescription);
 
@@ -143,8 +143,8 @@
 						assert.strictEqual(oP2R._iState, 0, "New state after hide should be 0 - initial");
 						assert.strictEqual($P2R.children(".sapMPullDownText").text(), sPullDwn, "Initial text is restored");
 						assert.strictEqual($P2R.children(".sapMPullDownInfo").text(), sDescription, "Initial description is restored");
-						ok($P2R.position().top + $P2R.height() - jQuery("#page1-intHeader").height() <= 0, "Control is hidden over the top of the parent container");
-						ok(!($P2R.hasClass("sapMFlip")), "Arrow is not rotated");
+						assert.ok($P2R.position().top + $P2R.height() - jQuery("#page1-intHeader").height() <= 0, "Control is hidden over the top of the parent container");
+						assert.ok(!($P2R.hasClass("sapMFlip")), "Arrow is not rotated");
 						done();
 					}, 1000);
 				}, 1000);

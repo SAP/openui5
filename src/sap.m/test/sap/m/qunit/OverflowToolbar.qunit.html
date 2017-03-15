@@ -1191,7 +1191,7 @@
 				sControlToRemoveId = oControlToRemove.getId();
 
 				oOverflowTB.removeContent(oControlToRemove);
-				ok(removeAssociatedContentSpy.calledWith(sControlToRemoveId), "The control is removed from the AssociatedContent");
+				assert.ok(removeAssociatedContentSpy.calledWith(sControlToRemoveId), "The control is removed from the AssociatedContent");
 				assert.strictEqual(oAssociativePopover.getAssociatedContent().indexOf(sControlToRemoveId), -1, "The control cannot be found in the AssociatedContent");
 				assert.strictEqual(oOverflowTB.getContent().length, aContent.length - 1, "For a toolbar with width = " + sWidth + ", removing the last control works");
 

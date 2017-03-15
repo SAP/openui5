@@ -101,7 +101,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 				return deletionPersistence.saveAll();
 			}).then(finalSteps)['catch'](function(err) {
-				ok(false, err);
+				assert.ok(false, err);
 				done();
 			});
 
@@ -126,7 +126,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		var newChangeId = creationPersistence.addChange(oChangeDefinition);
 
 		creationPersistence.saveAll().then(checkSaveAndGetSavedChanges).then(checkSavedChangesAndMarkForDeletion).then(checkDeletion)['catch'](function(err) {
-			ok(false, err);
+			assert.ok(false, err);
 			done();
 		});
 
@@ -184,7 +184,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		var newChangeId = creationPersistence.addChange(oChangeDefinition);
 
 		creationPersistence.saveAll().then(checkSavedAndGetSavedChanges).then(checkTheLayerMarkForDeletionAndSave).then(checkDeletion)['catch'](function(err) {
-			ok(false, err);
+			assert.ok(false, err);
 			done();
 		});
 
@@ -233,7 +233,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		var newChangeId = creationPersistence.addChange(oChangeDefinition);
 
 		creationPersistence.saveAll().then(checkSaveAndGetSavedChanges).then(updateVariantNameAndSave).then(getSavedChanges).then(checkUpdatedVariantNameAndMarkForDeletionAndSave).then(checkDeletion)['catch'](function(err) {
-			ok(false, err);
+			assert.ok(false, err);
 			done();
 		});
 
@@ -293,7 +293,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		creationPersistence.addChange(oChangeDefinition);
 
 		creationPersistence.saveAll().then(retrieveChangesFisrtTime).then(retrieveChangesSecondTime).then(checkChangesAndBackendCalls)['catch'](function(err) {
-			ok(false, err);
+			assert.ok(false, err);
 			done();
 		});
 
@@ -331,7 +331,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		var anotherRetrievcalPersistence = createPersistence();
 
 		retrievalPersistence.getChanges().then(createAChange).then(retrieveChangesWithAnotherPersistence).then(checkChangesAndBackendCalls)['catch'](function(err) {
-			ok(false, err);
+			assert.ok(false, err);
 			done();
 		});
 
@@ -348,7 +348,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 		function checkChangesAndBackendCalls(changes) {
 			var creation = changes[Object.keys(changes)[0]].getDefinition().creation;
-			ok(creation, 'Creation string is filled');
+			assert.ok(creation, 'Creation string is filled');
 			assert.strictEqual(isNaN(new Date(creation)), false, 'Creation string is a valid date');
 			sinon.assert.calledOnce(LrepConnector.prototype.loadChanges);
 			done();

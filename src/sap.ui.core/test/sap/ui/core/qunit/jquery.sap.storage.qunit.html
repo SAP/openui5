@@ -47,14 +47,14 @@
 
 			if(supported){
 				if(iCheckSupported != SUPPORTED_CHECK_INACTIVE){
-					ok(iCheckSupported == SUPPORTED_CHECK_EXPECT_SUPPORT, "Store is supported as expected");
+					assert.ok(iCheckSupported == SUPPORTED_CHECK_EXPECT_SUPPORT, "Store is supported as expected");
 				}
 
 				var val = store.get("testkey");
-				ok(!val, "Value initally not defined");
+				assert.ok(!val, "Value initally not defined");
 
 				var res = store.put("testkey", "testvalue");
-				ok(res, "put returns true when storage is supported");
+				assert.ok(res, "put returns true when storage is supported");
 
 				val = store.get("testkey");
 				assert.equal(val, "testvalue", "Value correct after put");
@@ -68,50 +68,50 @@
 				assert.equal(val, "testvalue3", "Value correct after put");
 
 				res = store.removeAll("Test");
-				ok(res, "removeAll returns true when storage is supported");
+				assert.ok(res, "removeAll returns true when storage is supported");
 
 				val = store.get("testkey");
 				assert.equal(val, "testvalue", "Value still there after removeAll");
 
 				val = store.get("Testkey2");
-				ok(!val, "Value not there after removeAll");
+				assert.ok(!val, "Value not there after removeAll");
 
 				val = store.get("testkey3");
 				assert.equal(val, "testvalue3", "Value still there after removeAll");
 
 				res = store.remove("testkey3");
-				ok(res, "remove returns true when storage is supported");
+				assert.ok(res, "remove returns true when storage is supported");
 
 				val = store.get("testkey3");
-				ok(!val, "Value not there after remove");
+				assert.ok(!val, "Value not there after remove");
 
 				val = store.get("testkey");
 				assert.equal(val, "testvalue", "Value still there after remove");
 
 				res = store.removeAll();
-				ok(res, "removeAll returns true when storage is supported");
+				assert.ok(res, "removeAll returns true when storage is supported");
 
 				val = store.get("testkey");
-				ok(!val, "Value not there after removeAll");
+				assert.ok(!val, "Value not there after removeAll");
 			}else{
 				if(iCheckSupported != SUPPORTED_CHECK_INACTIVE){
-					ok(iCheckSupported == SUPPORTED_CHECK_EXPECT_NO_SUPPORT, "Store is not supported as expected");
+					assert.ok(iCheckSupported == SUPPORTED_CHECK_EXPECT_NO_SUPPORT, "Store is not supported as expected");
 				}
 
 				var val = store.get("testkey");
-				ok(!val, "Value initally not defined");
+				assert.ok(!val, "Value initally not defined");
 
 				var res = store.put("testkey", "testvalue");
-				ok(!res, "put returns false when storage is not supported");
+				assert.ok(!res, "put returns false when storage is not supported");
 
 				val = store.get("testkey");
-				ok(!val, "Value still not set after put");
+				assert.ok(!val, "Value still not set after put");
 
 				res = store.remove("testkey");
-				ok(!res, "remove returns false when storage is not supported");
+				assert.ok(!res, "remove returns false when storage is not supported");
 
 				res = store.removeAll();
-				ok(!res, "removeAll returns false when storage is not supported");
+				assert.ok(!res, "removeAll returns false when storage is not supported");
 			}
 
 			store.clear();
@@ -123,12 +123,12 @@
 			var store3 = jQuery.sap.storage(oStorage, sIdPrefix+"Something");
 
 			if(bCachingExpected){
-				ok(store1 === store2, "Storage cached: "+store1.getType());
+				assert.ok(store1 === store2, "Storage cached: "+store1.getType());
 			}else{
-				ok(store1 != store2, "Storage not cached "+store1.getType());
+				assert.ok(store1 != store2, "Storage not cached "+store1.getType());
 			}
 
-			ok(store1 != store3, "Cache is prefix aware "+store1.getType());
+			assert.ok(store1 != store3, "Cache is prefix aware "+store1.getType());
 		};
 
 		function testPrefix(sIdPrefix){

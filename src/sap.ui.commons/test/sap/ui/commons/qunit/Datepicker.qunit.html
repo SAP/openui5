@@ -124,16 +124,16 @@
 			// The DatePicker always appear ":visible" - test for class !!!
 			QUnit.test("TestOpenViaMouseClick", function(assert){
 				if (!bMobile){
-					ok(!jQuery.sap.byId(ctrlId+"-cal").get(0), "calendar not exists before 1st click");
+					assert.ok(!jQuery.sap.byId(ctrlId+"-cal").get(0), "calendar not exists before 1st click");
 					qutils.triggerMouseEvent("myDatePicker-icon", "click");
-					ok(jQuery.sap.byId(ctrlId+"-cal").is(":visible"), "Should be visible after 1st click");
+					assert.ok(jQuery.sap.byId(ctrlId+"-cal").is(":visible"), "Should be visible after 1st click");
 					qutils.triggerMouseEvent("myDatePicker-icon", "click");
-					ok(!jQuery.sap.byId(ctrlId+"-cal").is(":visible"), "Should be hidden after 2nd click");
+					assert.ok(!jQuery.sap.byId(ctrlId+"-cal").is(":visible"), "Should be hidden after 2nd click");
 				}else{
 					// on mobile device no jQuery DatePicker must open
-					ok(!jQuery.sap.byId(ctrlId+"-cal").get(0), "no jQuery-DatePicker rendered on mobile devices");
+					assert.ok(!jQuery.sap.byId(ctrlId+"-cal").get(0), "no jQuery-DatePicker rendered on mobile devices");
 					qutils.triggerMouseEvent("myDatePicker-icon", "click");
-					ok(!jQuery.sap.byId(ctrlId+"-cal").get(0), "still no jQuery-DatePicker rendered on mobile devices after click");
+					assert.ok(!jQuery.sap.byId(ctrlId+"-cal").get(0), "still no jQuery-DatePicker rendered on mobile devices after click");
 				}
 			});
 
@@ -260,7 +260,7 @@
 				if (sap.ui.Device.support.input.placeholder) {
 					assert.equal( jQuery("#myDatePicker7-input").attr("placeholder"), "Date", "Placeholder still set after opened");
 				} else {
-					ok( !jQuery("#myDatePicker7-input").val(), "Placeholder value removed after opened");
+					assert.ok( !jQuery("#myDatePicker7-input").val(), "Placeholder value removed after opened");
 				}
 
 				qutils.triggerMouseEvent("myDatePicker7-icon", "click");

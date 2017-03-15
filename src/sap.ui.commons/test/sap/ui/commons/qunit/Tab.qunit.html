@@ -87,7 +87,7 @@
 		QUnit.module("Basic", {
 	  	beforeEach: function() {
 			  ts1 = sap.ui.getCore().getControl("TabStrip");
-			  ok(ts1);
+			  assert.ok(ts1);
 
 			  var tabs = ts1.getTabs();
 			  assert.strictEqual(1, tabs.length);

@@ -122,7 +122,7 @@
 			assert.equal(stringType.validateValue("fff"), undefined, "validate test");
 			assert.equal(stringType.validateValue("ffdddddddd"), undefined, "validate test");
 		}catch (e){
-			ok(false, "one of the validation tests failed please check");
+			assert.ok(false, "one of the validation tests failed please check");
 		}
 		raises(function(){stringType.validateValue("dd")}, checkValidateException, "validate test");
 		raises(function(){stringType.validateValue("ddggggggggggg")}, checkValidateException, "validate test");
@@ -135,7 +135,7 @@
 			assert.equal(stringType.validateValue("abcccdfff"), undefined, "validate test");
 			assert.equal(stringType.validateValue("abcd"), undefined, "validate test");
 		}catch (e){
-			ok(false, "one of the validation tests failed please check");
+			assert.ok(false, "one of the validation tests failed please check");
 		}
 		raises(function(){stringType.validateValue("cdab")}, checkValidateException, "validate test");
 		raises(function(){stringType.validateValue("abdccsbaab")}, checkValidateException, "validate test");
@@ -146,7 +146,7 @@
 		try{
 			assert.equal(stringType.validateValue("ab"), undefined, "validate test");
 		}catch (e){
-			ok(false, "one of the validation tests failed please check");
+			assert.ok(false, "one of the validation tests failed please check");
 		}
 		raises(function(){stringType.validateValue("cdab")}, checkValidateException, "validate test");
 		raises(function(){stringType.validateValue("abdaab")}, checkValidateException, "validate test");
@@ -157,7 +157,7 @@
 			assert.equal(stringType.validateValue("ddabcccdfff"), undefined, "validate test");
 			assert.equal(stringType.validateValue("abcd"), undefined, "validate test");
 		}catch (e){
-			ok(false, "one of the validation tests failed please check");
+			assert.ok(false, "one of the validation tests failed please check");
 		}
 		raises(function(){stringType.validateValue("cdb")}, checkValidateException, "validate test");
 		raises(function(){stringType.validateValue("adccsbba")}, checkValidateException, "validate test");
@@ -211,7 +211,7 @@
 			assert.equal(intType.validateValue(4), undefined, "validate test");
 			assert.equal(intType.validateValue(10), undefined, "validate test");
 		}catch (e){
-			ok(false, "one of the validation tests failed please check");
+			assert.ok(false, "one of the validation tests failed please check");
 		}
 		raises(function(){intType.validateValue(-1)}, checkValidateException, "validate test");
 		raises(function(){intType.validateValue(33)}, checkValidateException, "validate test");
@@ -266,7 +266,7 @@
 			assert.equal(intType.validateValue("4,0"), undefined, "validate test");
 			assert.equal(intType.validateValue("10"), undefined, "validate test");
 		}catch (e){
-			ok(false, "one of the validation tests failed please check");
+			assert.ok(false, "one of the validation tests failed please check");
 		}
 		raises(function(){intType.validateValue("-1")}, checkValidateException, "validate test");
 		raises(function(){intType.validateValue("3.300")}, checkValidateException, "validate test");
@@ -328,7 +328,7 @@
 			assert.equal(floatType.validateValue(3.01), undefined, "validate test");
 			assert.equal(floatType.validateValue(10), undefined, "validate test");
 		}catch (e){
-			ok(false, "one of the validation tests failed please check");
+			assert.ok(false, "one of the validation tests failed please check");
 		}
 		raises(function(){floatType.validateValue(2.99999)}, checkValidateException, "validate test");
 		raises(function(){floatType.validateValue(10.0000001)}, checkValidateException, "validate test");
@@ -393,7 +393,7 @@
 			assert.equal(floatType.validateValue("3,01"), undefined, "validate test");
 			assert.equal(floatType.validateValue("10"), undefined, "validate test");
 		}catch (e){
-			ok(false, "one of the validation tests failed please check");
+			assert.ok(false, "one of the validation tests failed please check");
 		}
 		raises(function(){floatType.validateValue("2,99999")}, checkValidateException, "validate test");
 		raises(function(){floatType.validateValue("10,0000001")}, checkValidateException, "validate test");
@@ -443,7 +443,7 @@
 			assert.equal(currencyType.validateValue([3.01, "USD"]), undefined, "validate test");
 			assert.equal(currencyType.validateValue([10, "JPY"]), undefined, "validate test");
 		}catch (e){
-			ok(false, "one of the validation tests failed please check");
+			assert.ok(false, "one of the validation tests failed please check");
 		}
 		raises(function(){currencyType.validateValue([2.99999, "USD"])}, checkValidateException, "validate test");
 		raises(function(){currencyType.validateValue([10.0000001, "EUR"])}, checkValidateException, "validate test");
@@ -505,7 +505,7 @@
 			assert.equal(currencyType.validateValue("USD3.01"), undefined, "validate test");
 			assert.equal(currencyType.validateValue("JPY10"), undefined, "validate test");
 		}catch (e){
-			ok(false, "one of the validation tests failed please check");
+			assert.ok(false, "one of the validation tests failed please check");
 		}
 		raises(function(){currencyType.validateValue("USD2.99999")}, checkValidateException, "validate test");
 		raises(function(){currencyType.validateValue("EUR10.0000001")}, checkValidateException, "validate test");
@@ -575,7 +575,7 @@
 			try{
 				assert.equal(dateType.validateValue(dateValue), undefined, "validate test");
 			}catch (e){
-				ok(false, "one of the validation tests failed please check");
+				assert.ok(false, "one of the validation tests failed please check");
 			}
 
 			dateValue = new Date(1999, 1, 1);
@@ -595,7 +595,7 @@
 				assert.equal(dateType.validateValue("06.06.2000"), undefined, "validate test");
 				assert.equal(dateType.validateValue("31.12.2000"), undefined, "validate test");
 			}catch (e){
-				ok(false, "one of the validation tests failed please check");
+				assert.ok(false, "one of the validation tests failed please check");
 			}
 			raises(function(){dateType.validateValue("10.10.1999")}, checkValidateException, "validate test");
 			raises(function(){dateType.validateValue("10.10.2001")}, checkValidateException, "validate test");
@@ -659,7 +659,7 @@
 			try{
 				assert.equal(timeType.validateValue("10:30:00"), undefined, "validate test");
 			}catch (e){
-				ok(false, "one of the validation tests failed please check");
+				assert.ok(false, "one of the validation tests failed please check");
 			}
 			raises(function(){timeType.validateValue("09:30:00")}, checkValidateException, "validate test");
 			raises(function(){timeType.validateValue("11:30:00")}, checkValidateException, "validate test");
@@ -724,7 +724,7 @@
 			try{
 				assert.equal(dateType.validateValue("24.01.2012 10:30:00"), undefined, "validate test");
 			}catch (e){
-				ok(false, "one of the validation tests failed please check");
+				assert.ok(false, "one of the validation tests failed please check");
 			}
 			raises(function(){dateType.validateValue("24.01.2012 09:30:00")}, checkValidateException, "validate test");
 			raises(function(){dateType.validateValue("25.01.2012 10:30:00")}, checkValidateException, "validate test");
@@ -851,7 +851,7 @@
 				assert.equal(filesizeType.validateValue(1000), undefined, "validate test: 1000-floatcompare");
 				assert.equal(filesizeType.validateValue(1500), undefined, "validate test: 1500-floatcompare");
 			}catch (e){
-				ok(false, "one of the validation tests failed please check");
+				assert.ok(false, "one of the validation tests failed please check");
 			}
 
 			raises(function(){filesizeType.validateValue(2000.1)}, checkValidateException, "validate test: 2000.1-floatcompare");
@@ -881,7 +881,7 @@
 				assert.equal(filesizeType.validateValue(1500), undefined, "validate test: 1500-floatcompare-inputformat");
 				assert.equal(filesizeType.validateValue("1.5 kB"), undefined, "validate test: 5 kB-floatcompare-inputformat");
 			}catch (e){
-				ok(false, "one of the validation tests failed please check");
+				assert.ok(false, "one of the validation tests failed please check");
 			}
 
 			raises(function(){filesizeType.validateValue(2000.1)}, checkValidateException, "validate test: 2000.1-floatcompare-inputformat");
@@ -896,7 +896,7 @@
 				assert.equal(filesizeType2.validateValue(1500), undefined, "validate test: 1500-stringcompare-inputformat");
 				assert.equal(filesizeType2.validateValue("1.5 kB"), undefined, "validate test: 5 kB-stringcompare-inputformat");
 			}catch (e){
-				ok(false, "one of the validation tests failed please check");
+				assert.ok(false, "one of the validation tests failed please check");
 			}
 
 

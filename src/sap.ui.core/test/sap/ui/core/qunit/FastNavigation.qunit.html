@@ -54,7 +54,7 @@
 	sap.ui.getCore().getEventBus().subscribe("fastnav", "screenready", function(){
 
 		QUnit.test("Page initialized", function(assert) {
-			ok(jQuery("#content").children().length > 0, "Page initialized");
+			assert.ok(jQuery("#content").children().length > 0, "Page initialized");
 		});
 
 		QUnit.test("Forward Navigation", function(assert) {
@@ -80,9 +80,9 @@
 			sap.ui.test.qunit.triggerEvent("click", "openPopup1");
 
 			triggerTestEvent("id1", true);
-			ok(_FocusedId == "dummy" || _FocusedId == "id1", "F6 on non-modal Popup with Nav Mode NONE has no effect");
+			assert.ok(_FocusedId == "dummy" || _FocusedId == "id1", "F6 on non-modal Popup with Nav Mode NONE has no effect");
 			triggerTestEvent("id1", false);
-			ok(_FocusedId == "dummy" || _FocusedId == "id1", "Shift+F6 on non-modal Popup with Nav Mode NONE has no effect");
+			assert.ok(_FocusedId == "dummy" || _FocusedId == "id1", "Shift+F6 on non-modal Popup with Nav Mode NONE has no effect");
 
 			_FocusedId = null;
 			oPopup1.close(0);
@@ -94,7 +94,7 @@
 			triggerTestEvent("id14", true);
 			assert.equal(_FocusedId, "id98", "F6 on non-modal Popup with Nav Mode DOCK moves the focus to next element in F6 chain after the dock element");
 			triggerTestEvent("id14", false);
-			ok(_FocusedId == "dummy" || _FocusedId == "id147", "Shift+F6 on non-modal Popup with Nav Mode DOCK moves the focus to previous element in F6 chain before the dock element");
+			assert.ok(_FocusedId == "dummy" || _FocusedId == "id147", "Shift+F6 on non-modal Popup with Nav Mode DOCK moves the focus to previous element in F6 chain before the dock element");
 
 			oPopup2.close(0);
 		});
@@ -119,9 +119,9 @@
 			sap.ui.test.qunit.triggerEvent("click", "openPopup4");
 
 			triggerTestEvent("id40", true);
-			ok(_FocusedId == "dummy" || _FocusedId == "id40", "F6 on modal Popup with Nav Mode NONE has no effect");
+			assert.ok(_FocusedId == "dummy" || _FocusedId == "id40", "F6 on modal Popup with Nav Mode NONE has no effect");
 			triggerTestEvent("id40", false);
-			ok(_FocusedId == "dummy" || _FocusedId == "id40", "Shift+F6 on modal Popup with Nav Mode NONE has no effect");
+			assert.ok(_FocusedId == "dummy" || _FocusedId == "id40", "Shift+F6 on modal Popup with Nav Mode NONE has no effect");
 
 			_FocusedId = null;
 			oPopup4.close(0);

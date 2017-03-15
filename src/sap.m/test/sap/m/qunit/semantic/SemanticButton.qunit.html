@@ -317,7 +317,7 @@
 				iNumExceptions++;
 			}
 
-			ok(iNumExceptions === 2, "Two errors are generated, because the property icon does not exist");
+			assert.ok(iNumExceptions === 2, "Two errors are generated, because the property icon does not exist");
 
 			// Clean up
 			oRejectButton.destroy();
@@ -346,7 +346,7 @@
 				iNumExceptions++;
 			}
 
-			ok(iNumExceptions === 2, "Two errors are generated, because the property text does not exist");
+			assert.ok(iNumExceptions === 2, "Two errors are generated, because the property text does not exist");
 
 			// Clean up
 			oCancelAction.destroy();

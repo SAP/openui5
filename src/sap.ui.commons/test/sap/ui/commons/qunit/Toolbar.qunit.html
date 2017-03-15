@@ -56,8 +56,8 @@
 		QUnit.module("Basic", {
 			beforeEach: function() {
 				oCtrl = sap.ui.getCore().getControl("Toolbar");
-				ok(oCtrl);
-				ok(jQuery.sap.domById("Toolbar"));
+				assert.ok(oCtrl);
+				assert.ok(jQuery.sap.domById("Toolbar"));
 				initToolbar();
 			},
 			afterEach: function() {
@@ -107,13 +107,13 @@
 		 * Test actual visibility
 		 */
 		QUnit.test("Visibility", function(assert) {
-			ok(jQuery.sap.domById("Toolbar"), "Toolbar should exist in page");
+			assert.ok(jQuery.sap.domById("Toolbar"), "Toolbar should exist in page");
 			oCtrl.setVisible(false);
 			sap.ui.getCore().applyChanges();
 			assert.equal(jQuery.sap.domById("Toolbar"), null, "Toolbar should not be rendered when set to invisible");
 			oCtrl.setVisible(true);
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.domById("Toolbar"), "Toolbar should exist in page");
+			assert.ok(jQuery.sap.domById("Toolbar"), "Toolbar should exist in page");
 		});
 
 		/**
@@ -206,7 +206,7 @@
 			oCtrl.removeItem(oItem);
 			// the above simply must not throw exceptions
 			// assertions could be checked but optimizer might remove them
-			ok(true, "must not throw exception for aggregations with interface types");
+			assert.ok(true, "must not throw exception for aggregations with interface types");
 			oItem.destroy();
 			sap.ui.getCore().applyChanges();
 		});
@@ -231,7 +231,7 @@
 
 		QUnit.test("Inner toolbar container has id", function(assert) {
 			var sExpectedId = oCtrl.getId() + "-inner";
-			ok(document.getElementById(sExpectedId), "The inner container must has an id [" + sExpectedId + "]");
+			assert.ok(document.getElementById(sExpectedId), "The inner container must has an id [" + sExpectedId + "]");
 		});
 
 		// ==================================================
@@ -345,7 +345,7 @@
 		QUnit.test("ResizeUntilOverflowButtonAppears", function(assert) {
 			var done = assert.async();
 			oCtrl = sap.ui.getCore().getControl("Toolbar");
-			ok(oCtrl);
+			assert.ok(oCtrl);
 
 			assert.strictEqual(oCtrl.getDomRef().offsetWidth, iWidth, "Toolbar width is wrong");
 			verifyOverflowButtonIsNotVisible("Overflow button may not be visible initially");
@@ -458,7 +458,7 @@
 		QUnit.test("ToolbarAdaptsToOuterWidthAndUpdates", function(assert) {
 			var done = assert.async();
 			oCtrl = sap.ui.getCore().getControl("Toolbar");
-			ok(oCtrl);
+			assert.ok(oCtrl);
 			var uiArea = jQuery.sap.domById("content");
 
 			uiArea.style.width = "600px"; // make the parent div have a defined size
@@ -518,10 +518,10 @@
 		QUnit.test("existance of menu", function(assert) {
 			var done = assert.async();
 			oCtrl = sap.ui.getCore().getControl("Toolbar");
-			ok(oCtrl);
+			assert.ok(oCtrl);
 
 			// check initial visibility of the overflow popup
-			ok((getPopupDomRef()==null)||(getPopupDomRef().style.visibility=="hidden"), "the Popup must be either invisible or not existing at all");
+			assert.ok((getPopupDomRef()==null)||(getPopupDomRef().style.visibility=="hidden"), "the Popup must be either invisible or not existing at all");
 
 			var aButtons = [];
 			for (var i = 0; i < 10; i++) {

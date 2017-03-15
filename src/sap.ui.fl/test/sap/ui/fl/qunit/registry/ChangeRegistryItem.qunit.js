@@ -34,7 +34,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistryItem");
 		var instance = new ChangeRegistryItem({});
 
 		//Assert
-		ok(errorLogSpy.calledTwice);
+		assert.ok(errorLogSpy.calledTwice);
 
 	});
 

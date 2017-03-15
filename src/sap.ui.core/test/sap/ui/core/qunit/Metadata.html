@@ -33,12 +33,12 @@
 				var metaData = testObj.getMetadata();
 
 				// initial state checks
-				ok(!metaData._bInterfacesUnique, "dirty flag must be set");
+				assert.ok(!metaData._bInterfacesUnique, "dirty flag must be set");
 				assert.deepEqual(metaData._aPublicMethods, ["a1", "a2", "a2"], "duplicates must be present before getting")
 
 				// get public methods and assert correctness
 				assert.deepEqual(metaData.getAllPublicMethods(), ["a1", "a2"], "obj must have 2 public methods");
-				ok(metaData._bInterfacesUnique, "dirty flag must be cleared");
+				assert.ok(metaData._bInterfacesUnique, "dirty flag must be cleared");
 			});
 
 			QUnit.test("Lazy calculation of public method name uniqueness after addition", function(assert) {
@@ -47,17 +47,17 @@
 
 				// initial state checks
 				assert.deepEqual(metaData.getAllPublicMethods(), ["a1", "a2"], "obj must have 2 public methods");
-				ok(metaData._bInterfacesUnique, "dirty flag must be cleared");
+				assert.ok(metaData._bInterfacesUnique, "dirty flag must be cleared");
 
 				// add a duplicate and non-duplicate method name
 				metaData.addPublicMethods(["a2", "a3"]);
 				assert.deepEqual(metaData.getAllPublicMethods(), ["a1", "a2", "a3"], "obj must have 3 public methods");
-				ok(metaData._bInterfacesUnique, "dirty flag must be cleared");
+				assert.ok(metaData._bInterfacesUnique, "dirty flag must be cleared");
 
 				// add a duplicate and non-duplicate method name as arguments
 				metaData.addPublicMethods("a3", "a4");
 				assert.deepEqual(metaData.getAllPublicMethods(), ["a1", "a2", "a3", "a4"], "obj must have 4 public methods");
-				ok(metaData._bInterfacesUnique, "dirty flag must be cleared");
+				assert.ok(metaData._bInterfacesUnique, "dirty flag must be cleared");
 			});
 
 		</script>

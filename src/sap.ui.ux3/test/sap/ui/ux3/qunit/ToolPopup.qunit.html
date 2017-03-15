@@ -101,20 +101,20 @@
 			oArrowRect = $Arrow.rect();
 
 			// since this function is called - it is already open
-			ok(true, "ToolPopup was opened");
+			assert.ok(true, "ToolPopup was opened");
 
 			bTest = oBtnRect.left < oTPRect.left;
-			ok(bTest, "ToolPopup opened right from button");
+			assert.ok(bTest, "ToolPopup opened right from button");
 
 			bTest = (oBtnRect.left + oBtnRect.width - oTP1.iArrowWidth <= oArrowRect.left) && (oArrowRect.left + oArrowRect.width >= oTPRect.left);
-			ok(bTest, "Arrow opened between button and ToolPopup");
+			assert.ok(bTest, "Arrow opened between button and ToolPopup");
 
 			oTP1.endTime = new Date();
 			var iStart = oTP1.startTime.getTime();
 			var iEnd = oTP1.endTime.getTime();
 			// if just one second passed
 			bTest = iStart + 1000 <= iEnd;
-			ok(bTest, "Open animation duration min 1 second (start: " + oTP1.startTime.toLocaleTimeString() + " end: " + oTP1.endTime.toLocaleTimeString() + ")");
+			assert.ok(bTest, "Open animation duration min 1 second (start: " + oTP1.startTime.toLocaleTimeString() + " end: " + oTP1.endTime.toLocaleTimeString() + ")");
 			done();
 		};
 
@@ -139,14 +139,14 @@
 			oTP1.detachClosed(fnClosed);
 
 			bTest = oTP1.isOpen();
-			ok(!bTest, "ToolPopup was closed over close button in ToolPopup");
+			assert.ok(!bTest, "ToolPopup was closed over close button in ToolPopup");
 
 			oTP1.endTime = new Date();
 			var iStart = oTP1.startTime.getTime();
 			var iEnd = oTP1.endTime.getTime();
 			// if just one second passed
 			bTest = iStart + 1000 <= iEnd;
-			ok(bTest, "Close animation duration min 1 second (start: " + oTP1.startTime.toLocaleTimeString() + " end: " + oTP1.endTime.toLocaleTimeString() + ")");
+			assert.ok(bTest, "Close animation duration min 1 second (start: " + oTP1.startTime.toLocaleTimeString() + " end: " + oTP1.endTime.toLocaleTimeString() + ")");
 			done();
 		};
 
@@ -179,18 +179,18 @@
 			oArrowRect = $Arrow.rect();
 
 			bTest = oTP1.isOpen();
-			ok(bTest, "ToolPopup was opened");
+			assert.ok(bTest, "ToolPopup was opened");
 
 			if (bTest) {
 				bTest = oBtnRect.top + oBtnRect.height <= oTPRect.top;
 			}
-			ok(bTest, "ToolPopup below button");
+			assert.ok(bTest, "ToolPopup below button");
 
 			if (bTest) {
 				bTest = (oBtnRect.top + oBtnRect.height <= oArrowRect.top + oTP1.iArrowWidth)
 						&& (oArrowRect.top + oArrowRect.height + oTP1.iArrowWidth >= oTPRect.top);
 			}
-			ok(bTest, "Arrow opened between button and ToolPopup");
+			assert.ok(bTest, "Arrow opened between button and ToolPopup");
 			done();
 		};
 
@@ -208,7 +208,7 @@
 		if (oWindowRect.width === 0) {
 			assert.expect(1);
 			done();
-			ok(true, "Test skipped since window is too small");
+			assert.ok(true, "Test skipped since window is too small");
 		}
 
 		assert.expect(3);
@@ -239,18 +239,18 @@
 			iBorderWidth = parseInt(sBorderWidth, 10);
 
 			bTest = oTP1.isOpen();
-			ok(bTest, "ToolPopup was opened");
+			assert.ok(bTest, "ToolPopup was opened");
 
 			if (bTest) {
 				bTest = oTPRect.left + oTPRect.width <= oBtnRect.left;
 			}
-			ok(bTest, "ToolPopup opened left from button");
+			assert.ok(bTest, "ToolPopup opened left from button");
 
 			if (bTest) {
 				// -1 since arrow starts at next pixel
 				bTest = (oTPRect.left + oTPRect.width - iBorderWidth - 1 <= oArrowRect.left) && (oArrowRect.left + oTP1.iArrowWidth <= oBtnRect.left);
 			}
-			ok(bTest, "Arrow opened between button and ToolPopup");
+			assert.ok(bTest, "Arrow opened between button and ToolPopup");
 			done();
 		};
 
@@ -284,18 +284,18 @@
 			iBorderWidth = parseInt(sBorderWidth, 10);
 
 			bTest = oTP1.isOpen();
-			ok(bTest, "ToolPopup was opened");
+			assert.ok(bTest, "ToolPopup was opened");
 
 			if (bTest) {
 				bTest = oTPRect.top + oTPRect.height <= oBtnRect.top;
 			}
-			ok(bTest, "ToolPopup opened above button");
+			assert.ok(bTest, "ToolPopup opened above button");
 
 			if (bTest) {
 				bTest = (oTPRect.top + oTPRect.height - iBorderWidth <= oArrowRect.top + (oArrowRect.height - oTP1.iArrowWidth))
 						&& (oArrowRect.top - oArrowRect.height + oTP1.iArrowWidth <= oBtnRect.top);
 			}
-			ok(bTest, "Arrow opened between button and ToolPopup");
+			assert.ok(bTest, "Arrow opened between button and ToolPopup");
 			done();
 		};
 
@@ -334,22 +334,22 @@
 				oArrowRect = $Arrow.rect();
 
 				bTest = oTPRect.top + oTPRect.height <= oBtnRect.top;
-				ok(bTest, "ToolPopup was opened above");
+				assert.ok(bTest, "ToolPopup was opened above");
 
 				bTest = ((oTP1.oPopup._oPosition.my === oPosition.my) || ((oTP1.oPopup._oPosition.my === "begin-20 bottom-27") && (!oTP1.oPopup._oPosition.offset))) ? true : false;
-				ok(bTest, "'my' is still the same");
+				assert.ok(bTest, "'my' is still the same");
 
 				bTest = (oTP1.oPopup._oPosition.at === oPosition.at) ? true : false;
-				ok(bTest, "'at' is still the same");
+				assert.ok(bTest, "'at' is still the same");
 
 				bTest = (oTP1.oPopup._oPosition.of === oPosition.of) ? true : false;
-				ok(bTest, "'of' is still the same");
+				assert.ok(bTest, "'of' is still the same");
 
 				bTest = ((oTP1.oPopup._oPosition.offset === oPosition.offset) || ((oTP1.oPopup._oPosition.my === "begin-20 bottom-27") && (!oTP1.oPopup._oPosition.offset))) ? true : false;
-				ok(bTest, "'offset' is still the same");
+				assert.ok(bTest, "'offset' is still the same");
 
 				bTest = (oTP1.oPopup._oPosition.collision === oPosition.collision) ? true : false;
-				ok(bTest, "'collision' is still the same");
+				assert.ok(bTest, "'collision' is still the same");
 
 				oTP1.close();
 				sap.ui.getCore().applyChanges();
@@ -372,7 +372,7 @@
 
 		if (oWindowRect.width > 1175) {
 			assert.expect(1);
-			ok(true, "Fit-test not possible because window is too big");
+			assert.ok(true, "Fit-test not possible because window is too big");
 			done();
 			return;
 		}
@@ -401,7 +401,7 @@
 			oTP2.detachOpened(fnOpened);
 
 			bTest = oTP2.isOpen();
-			ok(bTest, "ToolPopup opened");
+			assert.ok(bTest, "ToolPopup opened");
 
 			oBtnRect = oBtn1.$().rect();
 			oTPRect = oTP2.$().rect();
@@ -415,7 +415,7 @@
 				});
 				bTest = oBtnRect.left + oBtnRect.width >= oTPRect.left;
 			}
-			ok(bTest, "ToolPopup overlaps button");
+			assert.ok(bTest, "ToolPopup overlaps button");
 
 			oTP2.close();
 			sap.ui.getCore().applyChanges();
@@ -438,7 +438,7 @@
 		});
 		if (oWindowRect.width < 350) {
 			assert.expect(1);
-			ok(true, "Flip-test not possible because window is too small");
+			assert.ok(true, "Flip-test not possible because window is too small");
 			done();
 			return;
 		}
@@ -465,7 +465,7 @@
 			oTP3.detachOpened(fnOpened);
 
 			bTest = oTP3.isOpen();
-			ok(bTest, "ToolPopup opened");
+			assert.ok(bTest, "ToolPopup opened");
 
 			oBtnRect = oBtn2.$().rect();
 			oTPRect = oTP3.$().rect();
@@ -478,13 +478,13 @@
 			if (bTest) {
 				bTest = oTPRect.left + oTPRect.width <= oBtnRect.left;
 			}
-			ok(bTest, "ToolPopup flipped to the opposite side");
+			assert.ok(bTest, "ToolPopup flipped to the opposite side");
 
 			if (bTest) {
 				// -1 since arrow starts at next pixel
 				bTest = (oTPRect.left + oTPRect.width - iBorderWidth - 1 <= oArrowRect.left) && (oArrowRect.left + oTP3.iArrowWidth <= oBtnRect.left);
 			}
-			ok(bTest, "Arrow positioned accordingly to flipped ToolPopup");
+			assert.ok(bTest, "Arrow positioned accordingly to flipped ToolPopup");
 
 			oTP3.destroy();
 			done();
@@ -532,7 +532,7 @@
 
 			bTest = document.activeElement.id === "focusBtn1";
 
-			ok(bTest, "First button was focused per default")
+			assert.ok(bTest, "First button was focused per default")
 			done();
 		};
 
@@ -551,7 +551,7 @@
 
 			bTest = document.activeElement.id === "defaultBtn1";
 
-			ok(bTest, "Default button was focused by default");
+			assert.ok(bTest, "Default button was focused by default");
 			done();
 		};
 		oTPFocus.attachOpened(fnOpened);
@@ -569,7 +569,7 @@
 
 			bTest = typeof oTPFocus.getFocusDomRef() === 'object' ;
 
-			ok(bTest, "getFocusDomRef returns object");
+			assert.ok(bTest, "getFocusDomRef returns object");
 			done();
 		};
 		oTPFocus.attachOpened(fnOpened);
@@ -592,7 +592,7 @@
 
 			bTest = document.activeElement.id === "defaultBtn1";
 
-			ok(bTest, "Default button was focused by pressEnter");
+			assert.ok(bTest, "Default button was focused by pressEnter");
 			done();
 		};
 
@@ -611,7 +611,7 @@
 
 			bTest = document.activeElement.id === "focusBtn2";
 
-			ok(bTest, "Second button was focused");
+			assert.ok(bTest, "Second button was focused");
 			done();
 		};
 
@@ -646,7 +646,7 @@
 		var fnClosed = function() {
 			oTPFocus.detachClosed(fnClosed);
 			oTF.destroy();
-			ok(true, "ToolPopup was closed when focusing Textfield")
+			assert.ok(true, "ToolPopup was closed when focusing Textfield")
 
 			done();
 		};
@@ -666,20 +666,20 @@
 
 		// since a wrong type is given 'oValue' should be null
 		var oValue = oTPFocus.addFocusableArea(oTF);
-		ok(!!!oValue, "Wrong type is recognized while adding");
+		assert.ok(!!!oValue, "Wrong type is recognized while adding");
 		oValue = null; // reset result for next test
 
 		oValue = oTPFocus.addFocusableArea(oTF.getId());
-		ok(!!oValue, "Correct type is accepted while adding");
+		assert.ok(!!oValue, "Correct type is accepted while adding");
 		oValue = null;
 
 		oValue = oTPFocus.removeFocusableArea(oTF);
 		// since a wrong type is given 'oValue' should be null
-		ok(!!!oValue, "Wrong type is recognized while removal");
+		assert.ok(!!!oValue, "Wrong type is recognized while removal");
 		oValue = null;
 
 		oValue = oTPFocus.removeFocusableArea(oTF.getId());
-		ok(!!oValue, "Correct type is accepted while removal");
+		assert.ok(!!oValue, "Correct type is accepted while removal");
 		oValue = null;
 	});
 
@@ -724,7 +724,7 @@
 		var fnClosed = function() {
 			oTPFocus.detachClosed(fnClosed);
 			oTF.destroy();
-			ok(bCloseOnMyCommand, "ToolPopup was closed when focusing Textfield")
+			assert.ok(bCloseOnMyCommand, "ToolPopup was closed when focusing Textfield")
 
 			done();
 		};
@@ -781,7 +781,7 @@
 		var fnClosed = function() {
 			oTPFocus.detachClosed(fnClosed);
 			oTF.destroy();
-			ok(bCloseOnMyCommand, "ToolPopup was closed when focusing Textfield");
+			assert.ok(bCloseOnMyCommand, "ToolPopup was closed when focusing Textfield");
 
 			done();
 		};
@@ -804,10 +804,10 @@
 		oTPFocus.setCloseDuration(100).setOpenDuration(100);
 		oTPFocus.attachOpened(function() {
 			// Yay, it opened...
-			ok(true, "ToolPopup opened");
+			assert.ok(true, "ToolPopup opened");
 			oTPFocus.attachClosed(function() {
 				// Yay, it closed...
-				ok(true, "ToolPopup closed itself after opener removal");
+				assert.ok(true, "ToolPopup closed itself after opener removal");
 				done();
 			});
 
@@ -871,7 +871,7 @@
 			oTPRect = oTPMaxHeight.$().rect();
 
 			bTest = Math.round(oTPRect.height) <= 200;
-			ok(bTest, "ToolPopup not higher than 200px");
+			assert.ok(bTest, "ToolPopup not higher than 200px");
 			done();
 		};
 
@@ -891,7 +891,7 @@
 
 			// IE10, 11 are adding some fractions to the calculation in some cases
 			bTest = Math.round(oTPRect.width) <= 120;
-			ok(bTest, "ToolPopup's width of 120px");
+			assert.ok(bTest, "ToolPopup's width of 120px");
 			done();
 		};
 
@@ -908,14 +908,14 @@
 		var fnOpened = function() {
 			oTPMaxHeight.detachOpened(fnOpened);
 
-			ok(!!oTPMaxHeight._sResizeID, "Resize handler attached after ToolPopup has been opened");
+			assert.ok(!!oTPMaxHeight._sResizeID, "Resize handler attached after ToolPopup has been opened");
 
 			oTPMaxHeight.close();
 		};
 		var fnClosed = function() {
 			oTPMaxHeight.detachOpened(fnOpened);
 
-			ok(!!!oTPMaxHeight._sResizeID, "Resize handler deregistered again");
+			assert.ok(!!!oTPMaxHeight._sResizeID, "Resize handler deregistered again");
 
 			done();
 		}
@@ -923,7 +923,7 @@
 		oTPMaxHeight.attachOpened(fnOpened);
 		oTPMaxHeight.attachClosed(fnClosed);
 
-		ok(!!!oTPMaxHeight._sResizeID, "No resize handler attached if ToolPopup is closed");
+		assert.ok(!!!oTPMaxHeight._sResizeID, "No resize handler attached if ToolPopup is closed");
 		oBtn1.press();
 		sap.ui.getCore().applyChanges();
 	});
@@ -936,10 +936,10 @@
 			var iWinHeight = jQuery(window).height();
 			var oRect = oTPMaxHeight.$().rect();
 
-			ok(oRect.top + oRect.height < iWinHeight, "ToolPopup isn't bigger than window");
+			assert.ok(oRect.top + oRect.height < iWinHeight, "ToolPopup isn't bigger than window");
 
 			oRect = oTPMaxHeight.$("content").rect();
-			ok(oRect.top + oRect.height < iWinHeight, "Content properly shrinked to ToolPopup size and not bigger than window");
+			assert.ok(oRect.top + oRect.height < iWinHeight, "Content properly shrinked to ToolPopup size and not bigger than window");
 
 			done();
 		};
@@ -1046,8 +1046,8 @@
 			$Rect = oTPContent.$().rect();
 			var iNewHeight = $Rect.height;
 
-			ok(iNewHeight > iOldHeight, "Content was added when Popup was open");
-			ok(fnApplyPosition.calledOnce, "Position of Popup was updated");
+			assert.ok(iNewHeight > iOldHeight, "Content was added when Popup was open");
+			assert.ok(fnApplyPosition.calledOnce, "Position of Popup was updated");
 			done();
 		};
 
@@ -1073,7 +1073,7 @@
 		var fnOpened2 = function() {
 			oTPContent.detachOpened(fnOpened2);
 
-			ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
+			assert.ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
 			equals(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
 
 			oTPContent.attachClosed(start);
@@ -1094,7 +1094,7 @@
 		var fnOpened1 = function() {
 			oTPContent.detachOpened(fnOpened1);
 
-			ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
+			assert.ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
 			equals(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
 
 			oTPContent.attachClosed(fnClosed1);

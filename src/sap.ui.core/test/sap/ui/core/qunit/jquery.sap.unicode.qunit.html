@@ -53,7 +53,7 @@
 		QUnit.module("UNorm");
 
 		QUnit.test("test dependencies", function(assert) {
-			ok(sap.ui.Device, "Device API loaded");
+			assert.ok(sap.ui.Device, "Device API loaded");
 		});
 
 		QUnit.test("conditional polyfill", function(assert) {

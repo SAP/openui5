@@ -93,37 +93,37 @@
 			QUnit.module("Initial Check");
 
 			QUnit.test("Page rendered", function(assert) {
-				ok(jQuery.sap.domById("myFirstPage"), "Page should be rendered");
-				ok(jQuery.sap.domById("myFirstPage-intHeader"), "header should be rendered");
-				ok(jQuery.sap.domById("hdrbtn"), "header right button should be rendered");
-				ok(jQuery.sap.domById("mySubHeader"), "Sub header should be rendered");
-				ok(jQuery.sap.domById("myFirstPage-navButton"), "nav button should be rendered");
+				assert.ok(jQuery.sap.domById("myFirstPage"), "Page should be rendered");
+				assert.ok(jQuery.sap.domById("myFirstPage-intHeader"), "header should be rendered");
+				assert.ok(jQuery.sap.domById("hdrbtn"), "header right button should be rendered");
+				assert.ok(jQuery.sap.domById("mySubHeader"), "Sub header should be rendered");
+				assert.ok(jQuery.sap.domById("myFirstPage-navButton"), "nav button should be rendered");
 				var sNavButtonTooltip = jQuery("#myFirstPage-navButton").attr("title");
-				ok(sNavButtonTooltip && (sNavButtonTooltip.length > 0), "nav button should have a tooltip by default");
-				ok(jQuery.sap.domById("qunit-header"), "Page content should be rendered");
-				ok(jQuery.sap.byId("myFirstPage-intHeader").is("header"), "header should be rendered as header tag");
-				ok(jQuery.sap.byId("myFooter").is("footer"), "footer should be rendered as footer tag");
+				assert.ok(sNavButtonTooltip && (sNavButtonTooltip.length > 0), "nav button should have a tooltip by default");
+				assert.ok(jQuery.sap.domById("qunit-header"), "Page content should be rendered");
+				assert.ok(jQuery.sap.byId("myFirstPage-intHeader").is("header"), "header should be rendered as header tag");
+				assert.ok(jQuery.sap.byId("myFooter").is("footer"), "footer should be rendered as footer tag");
 
  				// The following qunit is removed because of
  				// BCP: 1670157998
  				// It checks visual appearance and such a test can be made in visual test
  				// because it causes issues with browser reporting distances + rounding
- 				/*ok(parseInt(jQuery.sap.byId("mySubHeader").position().top, 10) >= parseInt(jQuery.sap.byId("myFirstPage-intHeader").position().top, 10) + parseInt(jQuery.sap.byId("myFirstPage-intHeader").outerHeight(), 10),
+ 				/*assert.ok(parseInt(jQuery.sap.byId("mySubHeader").position().top, 10) >= parseInt(jQuery.sap.byId("myFirstPage-intHeader").position().top, 10) + parseInt(jQuery.sap.byId("myFirstPage-intHeader").outerHeight(), 10),
 							"subHeader should be directly below header");*/
 
-				ok(jQuery.sap.byId("myFirstPage-intHeader").hasClass("sapMHeader-CTX"), "header should contain header context");
-				ok(!jQuery.sap.byId("mySubHeader").hasClass("sapMHeader-CTX"), "subHeader should not contain header context");
-				ok(jQuery.sap.byId("myFooter").hasClass("sapMFooter-CTX"), "footer should contain footer context");
-				ok(!jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgList"), "Page content should not have list gray background color");
+				assert.ok(jQuery.sap.byId("myFirstPage-intHeader").hasClass("sapMHeader-CTX"), "header should contain header context");
+				assert.ok(!jQuery.sap.byId("mySubHeader").hasClass("sapMHeader-CTX"), "subHeader should not contain header context");
+				assert.ok(jQuery.sap.byId("myFooter").hasClass("sapMFooter-CTX"), "footer should contain footer context");
+				assert.ok(!jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgList"), "Page content should not have list gray background color");
 				oPage.setBackgroundDesign("List");
-				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgList"), "Page content should have list background color");
+				assert.ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgList"), "Page content should have list background color");
 				oPage.setBackgroundDesign("Standard");
-				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgStandard"), "Page content should have standard background color");
-				ok(!jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgList"), "Page content should not have list background color");
+				assert.ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgStandard"), "Page content should have standard background color");
+				assert.ok(!jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgList"), "Page content should not have list background color");
 				oPage.setBackgroundDesign("Solid");
-				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgSolid"), "Page content should have a solid background color");
+				assert.ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgSolid"), "Page content should have a solid background color");
 				oPage.setBackgroundDesign("Transparent");
-				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgTransparent"), "Page content should be transparent");
+				assert.ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgTransparent"), "Page content should be transparent");
 
 				var transparentCssString = (sap.ui.Device.browser.firefox ||
 								sap.ui.Device.browser.internet_explorer ||
@@ -134,20 +134,20 @@
 			});
 
 			QUnit.test("Page 2 rendered", function(assert) {
-				ok(jQuery.sap.domById("mySecondPage"), "Page should be rendered");
-				ok(jQuery.sap.domById("mySecondPage-intHeader"), "header should be rendered");
+				assert.ok(jQuery.sap.domById("mySecondPage"), "Page should be rendered");
+				assert.ok(jQuery.sap.domById("mySecondPage-intHeader"), "header should be rendered");
 				assert.equal(jQuery.sap.domById("mySecondPage-navButton"), undefined, "nav button should not be rendered");
-				ok(jQuery.sap.domById("p2content"), "Page 2 content should be rendered");
+				assert.ok(jQuery.sap.domById("p2content"), "Page 2 content should be rendered");
 				oPage2.setBackgroundDesign("List");
-				ok(jQuery.sap.byId("mySecondPage").hasClass("sapMPageBgList"), "Page 2 content should have list background color");
+				assert.ok(jQuery.sap.byId("mySecondPage").hasClass("sapMPageBgList"), "Page 2 content should have list background color");
 			});
 
 			QUnit.test("Page 3 rendered with no header", function(assert) {
-				ok(jQuery.sap.domById("myThirdPage"), "Page should be rendered");
+				assert.ok(jQuery.sap.domById("myThirdPage"), "Page should be rendered");
 				assert.equal(jQuery.sap.domById("myThirdPage-intHeader"), undefined, "header should not be rendered");
 				assert.equal(jQuery.sap.domById("myThirdPage-navButton"), undefined, "nav button should not be rendered");
 				var p3c = jQuery.sap.domById("p3content");
-				ok(p3c, "Page 3 content should be rendered");
+				assert.ok(p3c, "Page 3 content should be rendered");
 
 				//var $p3c = jQuery(p3c);
 				var $p3c = jQuery(p3c).parent();
@@ -213,8 +213,8 @@
 				}).placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				ok(jQuery.sap.domById("my.Page"), "Page should be rendered");
-				ok(jQuery.sap.domById("p4content"), "Page content should be rendered");
+				assert.ok(jQuery.sap.domById("my.Page"), "Page should be rendered");
+				assert.ok(jQuery.sap.domById("p4content"), "Page content should be rendered");
 				assert.equal(oPage._contentHasScroll(), false, "Content should be correctly checked for scroll");
 
 				oPage.destroy();
@@ -225,7 +225,7 @@
 
 			QUnit.test("showSubHeader", function(assert) {
 				var oSubHeader = sap.ui.getCore().byId("mySubHeader");
-				ok(jQuery.sap.domById("mySubHeader"), "subHeader should be rendered");
+				assert.ok(jQuery.sap.domById("mySubHeader"), "subHeader should be rendered");
 
 				oPage.setShowSubHeader(false);
 				sap.ui.getCore().applyChanges();
@@ -234,7 +234,7 @@
 
 				oPage.setShowSubHeader(true);
 				sap.ui.getCore().applyChanges();
-				ok(jQuery.sap.domById("mySubHeader"), "subHeader should be rendered");
+				assert.ok(jQuery.sap.domById("mySubHeader"), "subHeader should be rendered");
 				assert.equal(jQuery.sap.byId("myFirstPage-cont").css("top"), "96px", "top of Page content with subHeader shown should be 96px (6rem)");
 			});
 
@@ -249,30 +249,30 @@
 
 					QUnit.test("NavButton", function(assert) {
 						var done = assert.async();
-						ok(jQuery.sap.byId("myFirstPage-navButton").hasClass("sapMBtnBack"), "back button should be rendered");
+						assert.ok(jQuery.sap.byId("myFirstPage-navButton").hasClass("sapMBtnBack"), "back button should be rendered");
 						assert.equal(jQuery.sap.domById("mySecondPage-navButton"), undefined, "up button should not be rendered");
 						oPage.setShowNavButton(false);
 						oPage2.setShowNavButton(true);
 						setTimeout(function() {
 							assert.equal(jQuery.sap.domById("myFirstPage-navButton"), undefined, "back button should not be rendered");
-							ok(jQuery.sap.domById("mySecondPage-navButton"), "up button should be rendered");
+							assert.ok(jQuery.sap.domById("mySecondPage-navButton"), "up button should be rendered");
 							done();
 						}, 10);
 					});
 
 					QUnit.test("Title", function(assert) {
-						ok(jQuery.sap.byId("myFirstPage-title").parent().hasClass("sapMBarPH"), "title should be located in the middle");
+						assert.ok(jQuery.sap.byId("myFirstPage-title").parent().hasClass("sapMBarPH"), "title should be located in the middle");
 					});
 
 				} else if (sap.ui.Device.os.android) {
 
 					QUnit.test("NavButton", function(assert) {
 						var done = assert.async();
-						ok(jQuery.sap.byId("myFirstPage-navButton").hasClass("sapMBtnUp"), "up button should be rendered");
+						assert.ok(jQuery.sap.byId("myFirstPage-navButton").hasClass("sapMBtnUp"), "up button should be rendered");
 						assert.equal(jQuery.sap.domById("mySecondPage-navButton"), undefined, "up button should not be rendered");
 						oPage2.setShowNavButton(true);
 						setTimeout(function() {
-							ok(jQuery.sap.domById("mySecondPage-navButton"), "up button should be rendered");
+							assert.ok(jQuery.sap.domById("mySecondPage-navButton"), "up button should be rendered");
 							done();
 						}, 10);
 					});
@@ -280,20 +280,20 @@
 					QUnit.test("Title", function(assert) {
 						jQuery.sap.require("sap.ui.core.theming.Parameters");
 						if (sap.ui.core.theming.Parameters.get("sapMPlatformDependent") == "true") {
-							ok(jQuery.sap.byId("myFirstPage-title").parent().hasClass("sapMBarLeft"), "title should be located in the left");
+							assert.ok(jQuery.sap.byId("myFirstPage-title").parent().hasClass("sapMBarLeft"), "title should be located in the left");
 						} else {
-							ok(jQuery.sap.byId("myFirstPage-title").parent().hasClass("sapMBarPH"), "title should be located in the middle");
+							assert.ok(jQuery.sap.byId("myFirstPage-title").parent().hasClass("sapMBarPH"), "title should be located in the middle");
 						}
 					});
 
 					QUnit.test("Icon", function(assert) {
 						var done = assert.async();
-						ok(jQuery.sap.byId("myFirstPage-navButton").children("myFirstPage-navButton-img"), "up button should be rendered with the icon");
+						assert.ok(jQuery.sap.byId("myFirstPage-navButton").children("myFirstPage-navButton-img"), "up button should be rendered with the icon");
 						assert.equal(jQuery.sap.domById("myFirstPage-icon"), undefined, "app Icon should not be rendered");
 						oPage.setShowNavButton(false);
 						setTimeout(function() {
 							if (sap.ui.core.theming.Parameters.get("sapMPlatformDependent") == "true") {
-								ok(jQuery.sap.domById("myFirstPage-icon"), "app Icon should be rendered");
+								assert.ok(jQuery.sap.domById("myFirstPage-icon"), "app Icon should be rendered");
 							} else {
 								assert.equal(jQuery.sap.domById("myFirstPage-icon"), undefined, "app Icon should not be rendered");
 							}
@@ -331,9 +331,9 @@
 				}
 
 				QUnit.test("Scroll area rendered", function(assert) {
-					ok(jQuery.sap.domById("myFirstPage-cont"), "Scroll container should be rendered for Page 1");
-					ok(jQuery.sap.domById("mySecondPage-cont"), "Scroll container should be rendered for Page 2");
-					ok(jQuery.sap.domById("myThirdPage-cont"), "Scroll container should be rendered for Page 3");
+					assert.ok(jQuery.sap.domById("myFirstPage-cont"), "Scroll container should be rendered for Page 1");
+					assert.ok(jQuery.sap.domById("mySecondPage-cont"), "Scroll container should be rendered for Page 2");
+					assert.ok(jQuery.sap.domById("myThirdPage-cont"), "Scroll container should be rendered for Page 3");
 				});
 
 				QUnit.test("Scrolling", function(assert) {

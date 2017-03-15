@@ -106,7 +106,7 @@
 
 		var items = control.getAggregation("items");
 		assert.equal(items.length, testData.teamMembers.length, "number of list items");
-		ok(items[0] instanceof MyListItem, "cloned items are list items");
+		assert.ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
 	QUnit.test("Named model: ListBinding with Template (classical)", function(assert) {
@@ -115,7 +115,7 @@
 
 		var items = control.getAggregation("items");
 		assert.equal(items.length, testData.teamMembers.length, "number of list items");
-		ok(items[0] instanceof MyListItem, "cloned items are list items");
+		assert.ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
 	QUnit.test("ListBinding with Factory (classical)", function(assert) {
@@ -131,7 +131,7 @@
 
 		var items = control.getAggregation("items");
 		assert.equal(items.length, testData.teamMembers.length, "number of list items");
-		ok(items[0] instanceof MyListItem, "cloned items are list items");
+		assert.ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
 	QUnit.test("Named model: ListBinding with Factory (classical)", function(assert) {
@@ -147,7 +147,7 @@
 
 		var items = control.getAggregation("items");
 		assert.equal(items.length, testData.teamMembers.length, "number of list items");
-		ok(items[0] instanceof MyListItem, "cloned items are list items");
+		assert.ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
 	QUnit.test("ListBinding with Template", function(assert) {
@@ -159,7 +159,7 @@
 
 		var items = control.getAggregation("items");
 		assert.equal(items.length, testData.teamMembers.length, "number of list items");
-		ok(items[0] instanceof MyListItem, "cloned items are list items");
+		assert.ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
 	QUnit.test("ListBinding with Factory", function(assert) {
@@ -178,7 +178,7 @@
 
 		var items = control.getAggregation("items");
 		assert.equal(items.length, testData.teamMembers.length, "number of list items");
-		ok(items[0] instanceof MyListItem, "cloned items are list items");
+		assert.ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
 	QUnit.test("ListBinding with bindElement", function(assert) {
@@ -193,7 +193,7 @@
 		control.bindElement("/modelData");
 		var items = control.getAggregation("items");
 		assert.equal(items.length, testData.teamMembers.length, "number of list items");
-		ok(items[0] instanceof MyListItem, "cloned items are list items");
+		assert.ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
 	QUnit.test("Named model: ListBinding with bindElement", function(assert) {
@@ -208,7 +208,7 @@
 		control.bindElement("NamedModel>/modelData");
 		var items = control.getAggregation("items");
 		assert.equal(items.length, testData.teamMembers.length, "number of list items");
-		ok(items[0] instanceof MyListItem, "cloned items are list items");
+		assert.ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
 	QUnit.test("ListBinding with Template (constructor)", function(assert) {
@@ -224,7 +224,7 @@
 
 		var items = control.getAggregation("items");
 		assert.equal(items.length, testData.teamMembers.length, "number of list items");
-		ok(items[0] instanceof MyListItem, "cloned items are list items");
+		assert.ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
 	QUnit.test("ListBinding with Template (constructor, json)", function(assert) {
@@ -243,7 +243,7 @@
 
 		var items = control.getAggregation("items");
 		assert.equal(items.length, testData.teamMembers.length, "number of list items");
-		ok(items[0] instanceof MyListItem, "cloned items are list items");
+		assert.ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
 	QUnit.module("Sorter");

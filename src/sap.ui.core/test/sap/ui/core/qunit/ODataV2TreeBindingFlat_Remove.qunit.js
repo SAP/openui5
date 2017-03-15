@@ -880,8 +880,8 @@ QUnit.test("Create new node and added to a leaf node", function(assert) {
 			assert.strictEqual(oN1017.addedSubtrees[0]._getSubtree()[0].context, oContext, "The node is correctly added");
 			assert.equal(oBinding.getLength(), 626, "The length is not yet increased by 1 after added a new node");
 			assert.equal(oBinding.hasChildren(oN1017.context), true, "Node 1017 is not a leaf node anymore but collapsed");
-			ok(!oN1017.nodeState.isLeaf, "Node 1017 isn't a leaf anymore");
-			ok(oN1017.nodeState.collapsed, "Node 1017 is collapsed");
+			assert.ok(!oN1017.nodeState.isLeaf, "Node 1017 isn't a leaf anymore");
+			assert.ok(oN1017.nodeState.collapsed, "Node 1017 is collapsed");
 
 			oBinding.expand(oN1017);
 			assert.equal(oBinding.getLength(), 627, "The length is increased by 1 after the parent of added new node is expanded");

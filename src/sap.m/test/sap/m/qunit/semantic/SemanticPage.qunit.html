@@ -121,7 +121,7 @@
 					},
 					oSemanticPage = createSemanticPageFactory(null, oConfig);
 
-			ok(oSemanticPage.getAggregation("_page").getFooter() instanceof sap.m.Toolbar, "The footer is Toolbar");
+			assert.ok(oSemanticPage.getAggregation("_page").getFooter() instanceof sap.m.Toolbar, "The footer is Toolbar");
 
 			assert.strictEqual(oSemanticPage._getPage().getFooter().getContent()[0] instanceof sap.m.ToolbarSpacer, true, "inner footer first item is spacer");
 
@@ -136,7 +136,7 @@
 					},
 					oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.detail, oConfig);
 
-			ok(oSemanticPage.getAggregation("_page").getFooter() instanceof sap.m.Toolbar, "The footer is Toolbar");
+			assert.ok(oSemanticPage.getAggregation("_page").getFooter() instanceof sap.m.Toolbar, "The footer is Toolbar");
 
 			assert.strictEqual(oSemanticPage._getPage().getFooter().getContent()[1] instanceof sap.m.Button, true, "inner footer last item is button (for shareMenu)");
 
@@ -151,7 +151,7 @@
 					},
 					oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.fullscreen, oConfig);
 
-			ok(oSemanticPage.getAggregation("_page").getFooter() instanceof sap.m.Toolbar, "The footer is Toolbar");
+			assert.ok(oSemanticPage.getAggregation("_page").getFooter() instanceof sap.m.Toolbar, "The footer is Toolbar");
 
 			assert.strictEqual(oSemanticPage._getPage().getFooter().getContent()[1] instanceof sap.m.Button, true, "inner footer last item is button (for shareMenu)");
 
@@ -201,7 +201,7 @@
 					oSemanticPage1 = createSemanticPageFactory(null, oConfig),
 					oSemanticPage2 = createSemanticPageFactory();
 
-			ok(oSemanticPage1._getInternalHeader().getContentMiddle()[0] instanceof sap.m.Title, "header content contains title");
+			assert.ok(oSemanticPage1._getInternalHeader().getContentMiddle()[0] instanceof sap.m.Title, "header content contains title");
 			assert.strictEqual(oSemanticPage1._getInternalHeader().getContentMiddle()[0].getText(), "This is a title", "header content contains title");
 			assert.strictEqual(oSemanticPage1.getTitle(), "This is a title", "title is set");
 			assert.strictEqual(oSemanticPage2._getInternalHeader().getContentMiddle()[0], undefined, "Header content middle is empty");
@@ -226,7 +226,7 @@
 					oSemanticPage1 = createSemanticPageFactory(null, oConfig),
 					oSemanticPage2 = createSemanticPageFactory();
 
-			ok(oSemanticPage1._getInternalHeader().getContentLeft()[0] instanceof sap.m.Button, "header content contains navButton");
+			assert.ok(oSemanticPage1._getInternalHeader().getContentLeft()[0] instanceof sap.m.Button, "header content contains navButton");
 			assert.strictEqual(oSemanticPage1.getShowNavButton(), true, "showNavButton is set");
 			assert.strictEqual(oSemanticPage2._getInternalHeader().getContentLeft()[0], undefined, "Header content left is empty");
 
@@ -270,16 +270,16 @@
 
 			//TODO: check how restrictions of type are imposed
 			//oSemanticPage.setSubHeader(oTitle);
-			//ok(!(oSemanticPage.getAggregation("_page").getSubHeader() instanceof sap.m.Title), "Subheader content should not allow adding components that does not implement IBar interface");
+			//assert.ok(!(oSemanticPage.getAggregation("_page").getSubHeader() instanceof sap.m.Title), "Subheader content should not allow adding components that does not implement IBar interface");
 
 			oSemanticPage.getAggregation("_page").setSubHeader(oBar);
 			assert.strictEqual(oSemanticPage.getSubHeader(), oBar, "Retrieved content is Bar");
 
 			oSemanticPage.setShowSubHeader(true);
-			ok(oSemanticPage.getAggregation("_page").getShowSubHeader(), "SubHeader content should be shown");
+			assert.ok(oSemanticPage.getAggregation("_page").getShowSubHeader(), "SubHeader content should be shown");
 
 			oSemanticPage.setShowSubHeader(false);
-			ok(!oSemanticPage.getAggregation("_page").getShowSubHeader(), "SubHeader content should not be hidden");
+			assert.ok(!oSemanticPage.getAggregation("_page").getShowSubHeader(), "SubHeader content should not be hidden");
 
 			oSemanticPage.destroySubHeader();
 			assert.strictEqual(oSemanticPage.getAggregation("_page").getSubHeader(), null, "There should be no subheader content");
@@ -318,8 +318,8 @@
 
 			var oRemoveResult = oSemanticPage.removeContent(oButton1);
 			assert.strictEqual(oRemoveResult, oButton1, "remove method returns remove content reference");
-			ok(oSemanticPage.getContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
-			ok(oSemanticPage._getPage().getContent()[0] !== oButton1, "Button 1 is removed from the inner page aggregation");
+			assert.ok(oSemanticPage.getContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
+			assert.ok(oSemanticPage._getPage().getContent()[0] !== oButton1, "Button 1 is removed from the inner page aggregation");
 
 			var oRemoveAllResult = oSemanticPage.removeAllContent();
 			assert.strictEqual(oRemoveAllResult.length, 2, "removeAll method returns all removed content");
@@ -332,7 +332,7 @@
 			assert.strictEqual(oSemanticPage._getPage().getContent().length, 1, "A button is added to the inner page content");
 
 			oSemanticPage.destroyContent();
-			ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
+			assert.ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
 			assert.strictEqual(oSemanticPage.getContent().length, 0, "no custom inner content is available");
 			assert.strictEqual(oSemanticPage._getPage().getContent().length, 0, "no inner page content is available");
 
@@ -413,8 +413,8 @@
 
 			var oRemoveResult = oSemanticPage.removeCustomHeaderContent(oButton1);
 			assert.strictEqual(oRemoveResult, oButton1, "remove method returns the removed content");
-			ok(oSemanticPage.getCustomHeaderContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
-			ok(oSemanticPage._getInternalHeader().getContentRight()[1] !== oButton1, "Button 1 is removed from the inner header aggregation");
+			assert.ok(oSemanticPage.getCustomHeaderContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
+			assert.ok(oSemanticPage._getInternalHeader().getContentRight()[1] !== oButton1, "Button 1 is removed from the inner header aggregation");
 
 			var oRemoveAllResult = oSemanticPage.removeAllCustomHeaderContent();
 			assert.strictEqual(oRemoveAllResult.length, 2, "removeAll method reurns all removed content");
@@ -427,7 +427,7 @@
 			assert.strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 1), "A button is added to the custom header content");
 
 			oSemanticPage.destroyCustomHeaderContent();
-			ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
+			assert.ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
 			assert.strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "no custom header content is available");
 
 			oSemanticPage.destroy();
@@ -510,8 +510,8 @@
 
 			var oRemoveResult = oSemanticPage.removeCustomHeaderContent(oButton1);
 			assert.strictEqual(oRemoveResult, oButton1, "remove method returns the removed content");
-			ok(oSemanticPage.getCustomHeaderContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
-			ok(oSemanticPage._getInternalHeader().getContentRight()[1] !== oButton1, "Button 1 is removed from the inner header aggregation");
+			assert.ok(oSemanticPage.getCustomHeaderContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
+			assert.ok(oSemanticPage._getInternalHeader().getContentRight()[1] !== oButton1, "Button 1 is removed from the inner header aggregation");
 
 			var oRemoveAllResult = oSemanticPage.removeAllCustomHeaderContent();
 			assert.strictEqual(oRemoveAllResult.length, 2, "removeAll method reurns all removed content");
@@ -524,7 +524,7 @@
 			assert.strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 1), "A button is added to the custom header content");
 
 			oSemanticPage.destroyCustomHeaderContent();
-			ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
+			assert.ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
 			assert.strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "no custom header content is available");
 
 			oSemanticPage.destroy();
@@ -565,8 +565,8 @@
 
 			var oRemoveResult = oSemanticPage.removeCustomHeaderContent(oButton1);
 			assert.strictEqual(oRemoveResult, oButton1, "remove method returns the removed content");
-			ok(oSemanticPage.getCustomHeaderContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
-			ok(oSemanticPage._getInternalHeader().getContentRight()[1] !== oButton1, "Button 1 is removed from the inner header aggregation");
+			assert.ok(oSemanticPage.getCustomHeaderContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
+			assert.ok(oSemanticPage._getInternalHeader().getContentRight()[1] !== oButton1, "Button 1 is removed from the inner header aggregation");
 
 			var oRemoveAllResult = oSemanticPage.removeAllCustomHeaderContent();
 			assert.strictEqual(oRemoveAllResult.length, 2, "removeAll method reurns all removed content");
@@ -579,7 +579,7 @@
 			assert.strictEqual(oSemanticPage._getInternalHeader().getContentRight().length, (iInitFooterContentLength + 1), "A button is added to the custom header content");
 
 			oSemanticPage.destroyCustomHeaderContent();
-			ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
+			assert.ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
 			assert.strictEqual(oSemanticPage.getCustomHeaderContent().length, 0, "no custom header content is available");
 
 			oSemanticPage.destroy();
@@ -705,8 +705,8 @@
 
 			var oRemoveResult = oSemanticPage.removeCustomFooterContent(oButton1);
 			assert.strictEqual(oRemoveResult, oButton1, "remove method returns the removed content");
-			ok(oSemanticPage.getCustomFooterContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
-			ok(oSemanticPage._getPage().getFooter().getContent()[1] !== oButton1, "Button 1 is removed from the inner footer aggregation");
+			assert.ok(oSemanticPage.getCustomFooterContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
+			assert.ok(oSemanticPage._getPage().getFooter().getContent()[1] !== oButton1, "Button 1 is removed from the inner footer aggregation");
 
 			var oRemoveAllResult = oSemanticPage.removeAllCustomFooterContent();
 			assert.strictEqual(oRemoveAllResult.length, 2, "removeAll method reurns all removed content");
@@ -719,7 +719,7 @@
 			assert.strictEqual(oSemanticPage._getPage().getFooter().getContent().length, (iInitFooterContentLength + 1), "A button is added to the custom Footer content");
 
 			oSemanticPage.destroyCustomFooterContent();
-			ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
+			assert.ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
 			assert.strictEqual(oSemanticPage.getCustomFooterContent().length, 0, "no custom Footer content is available");
 
 			oSemanticPage.destroy();
@@ -799,8 +799,8 @@
 
 			var oRemoveResult = oSemanticPage.removeCustomShareMenuContent(oButton1);
 			assert.strictEqual(oRemoveResult, oButton1, "remove method returns remove content reference");
-			ok(oSemanticPage.getCustomShareMenuContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
-			//ok(oSemanticPage._getSegmentedShareMenu().getContent()[0] !== oButton1, "Button 1 is removed from the inner page aggregation");
+			assert.ok(oSemanticPage.getCustomShareMenuContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
+			//assert.ok(oSemanticPage._getSegmentedShareMenu().getContent()[0] !== oButton1, "Button 1 is removed from the inner page aggregation");
 
 			var oRemoveAllResult = oSemanticPage.removeAllCustomShareMenuContent();
 			assert.strictEqual(oRemoveAllResult.length, 2, "removeAll method returns all removed content");
@@ -813,7 +813,7 @@
 			//assert.strictEqual(oSemanticPage._getSegmentedShareMenu().getContent().length, 1, "A button is added to the inner page content");
 
 			oSemanticPage.destroyCustomShareMenuContent();
-			ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
+			assert.ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
 			assert.strictEqual(oSemanticPage.getCustomShareMenuContent().length, 0, "no custom inner content is available");
 			//assert.strictEqual(oSemanticPage._oWrappedShareMenu.getContent().length, 0, "no inner page content is available");
 

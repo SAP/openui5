@@ -46,10 +46,10 @@
 			assert.strictEqual(sut.$().css("width"),expectedWidth);
 			assert.strictEqual(sut.$().css("height"),expectedHeight);
 
-			ok($("#" + id + "-scrl").length > 0);
-			ok($("#" + id + "-blind").length > 0);
-			ok($("#" + id + "-cnt").length > 0);
-			ok($("#" + id + "-pager").length > 0);
+			assert.ok($("#" + id + "-scrl").length > 0);
+			assert.ok($("#" + id + "-blind").length > 0);
+			assert.ok($("#" + id + "-cnt").length > 0);
+			assert.ok($("#" + id + "-pager").length > 0);
 
 
 			sut.destroy();
@@ -96,8 +96,8 @@
 			sut.setEditable(true);
 
 			// Assert
-			ok(sut.$().hasClass("sapMTCEditable"));
-			ok(sut.getEditable());
+			assert.ok(sut.$().hasClass("sapMTCEditable"));
+			assert.ok(sut.getEditable());
 			for ( i = 0; i < tiles.length; i++) {
 				assert.equal(tiles[i].isEditable(),true);
 			}

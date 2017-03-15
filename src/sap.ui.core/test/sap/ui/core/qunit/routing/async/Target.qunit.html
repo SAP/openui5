@@ -164,7 +164,7 @@
 				assert.strictEqual(this.oShell.getContent().length, 1, "only one button is inside of the the Shell");
 				assert.strictEqual(this.oShell.getContent()[0], oView, "it is the displayed button");
 				//TODO: Should we destroy in this case? Is it a regression if we do so?
-				//ok(oExistingButton.bIsDestroyed, "the button got destroyed");
+				//assert.ok(oExistingButton.bIsDestroyed, "the button got destroyed");
 
 				// Cleanup
 				oView.destroy();
@@ -247,7 +247,7 @@
 			return oDisplayed.then(function(oViewInfo) {
 				// Assert
 				assert.strictEqual(oViewInfo.name, "myTarget", "oViewInfo.name is correct");
-				ok(oViewInfo.error.indexOf("root view") !== -1, "oViewInfo.error error message is provided");
+				assert.ok(oViewInfo.error.indexOf("root view") !== -1, "oViewInfo.error error message is provided");
 				sinon.assert.calledWith(oSpy, sinon.match(/root view/), sinon.match(this.oTarget));
 				oSpy.restore();
 			}.bind(this));
@@ -271,7 +271,7 @@
 			return oDisplayed.then(function(oViewInfo) {
 				// Assert
 				assert.strictEqual(oViewInfo.name, "myTarget", "oViewInfo.name is correct");
-				ok(oViewInfo.error.indexOf("aggregation") !== -1, "oViewInfo.error error message is provided");
+				assert.ok(oViewInfo.error.indexOf("aggregation") !== -1, "oViewInfo.error error message is provided");
 				sinon.assert.calledWith(oSpy, sinon.match(/aggregation/), sinon.match(this.oTarget));
 				oSpy.restore();
 			}.bind(this));
@@ -294,7 +294,7 @@
 			return oDisplayed.then(function(oViewInfo) {
 				// Assert
 				assert.strictEqual(oViewInfo.name, "myTarget", "oViewInfo.name is correct");
-				ok(oViewInfo.error.indexOf("no 'controlAggregation' was set") !== -1, "oViewInfo.error error message is provided");
+				assert.ok(oViewInfo.error.indexOf("no 'controlAggregation' was set") !== -1, "oViewInfo.error error message is provided");
 				sinon.assert.calledWith(oSpy, sinon.match(/no 'controlAggregation' was set/), sinon.match(this.oTarget));
 				oSpy.restore();
 			}.bind(this));
@@ -317,7 +317,7 @@
 			return oDisplayed.then(function(oViewInfo) {
 				// Assert
 				assert.strictEqual(oViewInfo.name, "myTarget", "oViewInfo.name is correct");
-				ok(oViewInfo.error.indexOf("Control with ID") !== -1, "oViewInfo.error error message is provided");
+				assert.ok(oViewInfo.error.indexOf("Control with ID") !== -1, "oViewInfo.error error message is provided");
 				sinon.assert.calledWith(oSpy, sinon.match(/Control with ID/), sinon.match(this.oTarget));
 				oSpy.restore();
 			}.bind(this));
@@ -692,10 +692,10 @@
 			oTarget.destroy();
 
 			// Assert
-			ok(oTarget.bIsDestroyed, "Did flag the target as destroyed");
+			assert.ok(oTarget.bIsDestroyed, "Did flag the target as destroyed");
 			assert.strictEqual(oTarget._oParent, null, "Did free the parent reference");
 			assert.strictEqual(oTarget._oViews, null, "Did free the views reference");
-			ok(!oViews.bIsDestroyed, "Did not destroy the views instance");
+			assert.ok(!oViews.bIsDestroyed, "Did not destroy the views instance");
 			assert.strictEqual(oTarget._oOptions, null, "Did free the options reference");
 			assert.ok(oTitleProvider.bIsDestroyed, "TitleProvider is destroyed");
 			assert.strictEqual(oTarget._oTitleProvider, null, "Did free the TitleProvider");

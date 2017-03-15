@@ -76,13 +76,13 @@
 
 	test ("TestIsEmpty", function() {
 
-		ok(!os1._isEmpty(), "Object Status #1 is not empty");
-		ok(!os2._isEmpty(), "Object Status #2 is not empty");
-		ok(!os3._isEmpty(), "Object Status #3 is not empty");
-		ok(os4._isEmpty(), "Object Status #4 is empty");
-		ok(os5._isEmpty(), "Object Status #5 is empty");
-		ok(os6._isEmpty(), "Object Status #6 is empty");
-		ok(os7.$().length == 0, "Object Status #7 is not rendered");
+		assert.ok(!os1._isEmpty(), "Object Status #1 is not empty");
+		assert.ok(!os2._isEmpty(), "Object Status #2 is not empty");
+		assert.ok(!os3._isEmpty(), "Object Status #3 is not empty");
+		assert.ok(os4._isEmpty(), "Object Status #4 is empty");
+		assert.ok(os5._isEmpty(), "Object Status #5 is empty");
+		assert.ok(os6._isEmpty(), "Object Status #6 is empty");
+		assert.ok(os7.$().length == 0, "Object Status #7 is not rendered");
 	});
 
 	QUnit.module("Supressed invalidation");
@@ -107,7 +107,7 @@
 		// Assert
 		assert.strictEqual(oResult, oObjectStatus, "Should be able to chain");
 		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-		ok(!/.*<script>.*/.test(oObjectStatus.$().children(".sapMObjStatusText").html()), "Did not contain a unescaped script tag");
+		assert.ok(!/.*<script>.*/.test(oObjectStatus.$().children(".sapMObjStatusText").html()), "Did not contain a unescaped script tag");
 		assert.strictEqual(oObjectStatus.getText(), sTextToSet, "Did set the non encoded string as value");
 
 		//Cleanup
@@ -162,10 +162,10 @@
 		assert.strictEqual(oResult, oObjectStatus, "Should be able to chain");
 		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 
-		ok(!/.*<script>.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did not contain a unescaped script tag");
+		assert.ok(!/.*<script>.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did not contain a unescaped script tag");
 
 		var sDisplayedTitle = oObjectStatus.$().children(".sapMObjStatusTitle").text();
-		ok(sDisplayedTitle.indexOf(":", sDisplayedTitle.length - 1) , "Did contain a :");
+		assert.ok(sDisplayedTitle.indexOf(":", sDisplayedTitle.length - 1) , "Did contain a :");
 		assert.strictEqual(oObjectStatus.getTitle(), sTextToSet, "Did set the non encoded string as value");
 
 		//Cleanup
@@ -193,7 +193,7 @@
 		// Assert
 		assert.strictEqual(oResult, oObjectStatus, "Should be able to chain");
 		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-		ok(!/.*<script>.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did not contain a unescaped script tag");
+		assert.ok(!/.*<script>.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did not contain a unescaped script tag");
 		assert.strictEqual(oObjectStatus.$().children(".sapMObjStatusTitle").text(), oObjectStatus.getTitle() + ":", "Did contain a :");
 		assert.strictEqual(oObjectStatus.getTitle(), sTitleToExpect, "Did set the number as a string as a value");
 
@@ -220,7 +220,7 @@
 
 		// Assert
 		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
-		ok(!oObjectStatus.$().children(".sapMObjStatusText").length, "Did not render the text span");
+		assert.ok(!oObjectStatus.$().children(".sapMObjStatusText").length, "Did not render the text span");
 		assert.strictEqual(oObjectStatus.getText(), sTextToSet, "Did set the value");
 
 		//Cleanup
@@ -246,7 +246,7 @@
 
 		// Assert
 		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
-		ok(!oObjectStatus.$().children(".sapMObjStatusTitle").length, "Did not render the title span");
+		assert.ok(!oObjectStatus.$().children(".sapMObjStatusTitle").length, "Did not render the title span");
 		assert.strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
 
 		//Cleanup
@@ -272,7 +272,7 @@
 
 		// Assert
 		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
-		ok(!oObjectStatus.$().children(".sapMObjStatusText").length, "Did not render the text span");
+		assert.ok(!oObjectStatus.$().children(".sapMObjStatusText").length, "Did not render the text span");
 		assert.strictEqual(oObjectStatus.getText(), "", "Did set the default value");
 
 		//Cleanup
@@ -298,7 +298,7 @@
 
 		// Assert
 		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
-		ok(!oObjectStatus.$().children(".sapMObjStatusTitle").length, "Did not render the title span");
+		assert.ok(!oObjectStatus.$().children(".sapMObjStatusTitle").length, "Did not render the title span");
 		assert.strictEqual(oObjectStatus.getTitle(), "", "Did set the default value");
 
 		//Cleanup
@@ -324,7 +324,7 @@
 
 		// Assert
 		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
-		ok(oObjectStatus.$().children(".sapMObjStatusText").length, "Did render the text span");
+		assert.ok(oObjectStatus.$().children(".sapMObjStatusText").length, "Did render the text span");
 		assert.strictEqual(oObjectStatus.getText(), sTextToSet, "Did set the value");
 
 		//Cleanup
@@ -350,7 +350,7 @@
 
 		// Assert
 		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
-		ok(oObjectStatus.$().children(".sapMObjStatusTitle").length, "Did render the title span");
+		assert.ok(oObjectStatus.$().children(".sapMObjStatusTitle").length, "Did render the title span");
 		assert.strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
 
 		//Cleanup
@@ -374,7 +374,7 @@
 
 		// Assert
 		assert.strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
-		ok(/.*Account blocked - Blocked for payment:.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did display dashed string correctly");
+		assert.ok(/.*Account blocked - Blocked for payment:.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did display dashed string correctly");
 
 		//Cleanup
 		oObjectStatus.destroy();
@@ -397,7 +397,7 @@
 
 		// Assert
 		assert.strictEqual(oObjectStatus.getText(), sTextToSet, "Did set the value");
-		ok(/.*Account blocked - Blocked for payment.*/.test(oObjectStatus.$().children(".sapMObjStatusText").html()), "Did display dashed string correctly");
+		assert.ok(/.*Account blocked - Blocked for payment.*/.test(oObjectStatus.$().children(".sapMObjStatusText").html()), "Did display dashed string correctly");
 
 		//Cleanup
 		oObjectStatus.destroy();
@@ -420,7 +420,7 @@
 
 		// Assert
 		assert.strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
-		ok(/.*Account blocked - Blocked for payment:.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did display dashed string correctly");
+		assert.ok(/.*Account blocked - Blocked for payment:.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did display dashed string correctly");
 
 		//Cleanup
 		oObjectStatus.destroy();
@@ -435,8 +435,8 @@
 		sap.ui.getCore().applyChanges();
 
 		//Act
-		ok(oObjectStatus.$().attr("aria-describedby") !== null, "aria-describedby attribute is present");
-		ok(oObjectStatus.$().children(":last-child").attr("aria-hidden") !== null, "hidden element has aria-hidden attribute");
+		assert.ok(oObjectStatus.$().attr("aria-describedby") !== null, "aria-describedby attribute is present");
+		assert.ok(oObjectStatus.$().children(":last-child").attr("aria-hidden") !== null, "hidden element has aria-hidden attribute");
 
 		//Cleanup
 		oObjectStatus.destroy();
@@ -444,9 +444,9 @@
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oControl = new sap.m.ObjectStatus({text: "Text", title: "Title"});
-		ok(!!oControl.getAccessibilityInfo, "ObjectStatus has a getAccessibilityInfo function");
+		assert.ok(!!oControl.getAccessibilityInfo, "ObjectStatus has a getAccessibilityInfo function");
 		var oInfo = oControl.getAccessibilityInfo();
-		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, undefined, "AriaRole");
 		assert.strictEqual(oInfo.type, undefined, "Type");
 		assert.strictEqual(oInfo.description, "Title Text", "Description");

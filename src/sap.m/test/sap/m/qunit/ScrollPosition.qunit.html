@@ -155,8 +155,8 @@
 		/***************** TESTS ******************/
 
 		QUnit.test("Page and List rendered", function(assert) {
-			ok(jQuery.sap.domById("page1"), "page1 should be rendered");
-			ok(jQuery.sap.domById("growingList"), "growingList should be rendered");
+			assert.ok(jQuery.sap.domById("page1"), "page1 should be rendered");
+			assert.ok(jQuery.sap.domById("growingList"), "growingList should be rendered");
 		});
 
 

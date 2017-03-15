@@ -82,7 +82,7 @@
 					});
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
@@ -103,15 +103,15 @@
 
 	QUnit.test("Mockserver initialisation",  function(assert){
 		oModel = initModel();
-		ok(oMockServer,"MockServer created");
-		ok(oMockServer.isStarted(), "Mock server is started");
+		assert.ok(oMockServer,"MockServer created");
+		assert.ok(oMockServer.isStarted(), "Mock server is started");
 	});
 
 	QUnit.test("test init Model", function(assert) {
 		var done = assert.async();
 		oModel = initModel();
 		var fnTest = function() {
-			ok(true, "metadataloaded");
+			assert.ok(true, "metadataloaded");
 			done();
 		}
 		oModel.attachMetadataLoaded(this, fnTest);
@@ -130,7 +130,7 @@
 					});
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		}
@@ -150,16 +150,16 @@
 					"myCustomHeader" : "xyz"
 				},
 				success : function(oData, oResponse) {
-					ok(oData.results.length === 1, "length check");
+					assert.ok(oData.results.length === 1, "length check");
 					var oP = oModel
 							.getProperty("/ProductSet('HT-1000')");
-					ok(oP, "one entry loaded");
+					assert.ok(oP, "one entry loaded");
 					ok(oP.Name === "Notebook Basic 15",
 							"one entry loaded");
 					done();
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		}
@@ -171,12 +171,12 @@
 		oModel = initModel();
 		var fnTest = function() {
 			var oPromise = oModel.metadataLoaded();
-			ok(oPromise, "promise exists");
+			assert.ok(oPromise, "promise exists");
 			oPromise.then(function(result){
-				ok(true, "Promise resolved");
+				assert.ok(true, "Promise resolved");
 				done();
 			}, function(){
-				ok(false, "Promise rejected");
+				assert.ok(false, "Promise rejected");
 			});
 		}
 		oModel.attachMetadataLoaded(this, fnTest);
@@ -188,28 +188,28 @@
 		var fnTest = function() {
 			oModel.detachMetadataLoaded(fnTest);
 			var oPromise = oModel.metadataLoaded();
-			ok(oPromise, "promise exists");
+			assert.ok(oPromise, "promise exists");
 			oPromise.then(function(result){
-				ok(true, "Promise resolved");
+				assert.ok(true, "Promise resolved");
 				var oNewP = oModel.refreshMetadata();
-				ok(oNewP, "oNewP promise exists");
+				assert.ok(oNewP, "oNewP promise exists");
 				return oNewP;
 			}, function(){
-				ok(false, "Promise rejected");
+				assert.ok(false, "Promise rejected");
 			})
 			.then(function(result){
-				ok(true, "oNewP Promise resolved");
+				assert.ok(true, "oNewP Promise resolved");
 				var oNewP2 = oModel.refreshMetadata();
-				ok(oNewP2, "oNewP2 promise exists");
+				assert.ok(oNewP2, "oNewP2 promise exists");
 				return oNewP2;
 			}, function(){
-				ok(false, "oNewP Promise rejected");
+				assert.ok(false, "oNewP Promise rejected");
 			})
 			.then(function(result){
-				ok(true, "oNewP2 Promise resolved");
+				assert.ok(true, "oNewP2 Promise resolved");
 				done();
 			}, function(){
-				ok(false, "oNewP2 Promise rejected");
+				assert.ok(false, "oNewP2 Promise rejected");
 			});
 		}
 		oModel.attachMetadataLoaded(this, fnTest);
@@ -222,21 +222,21 @@
 			var sTempService = sServiceUri;
 			oModel.detachMetadataLoaded(fnTest);
 			var oPromise = oModel.metadataLoaded();
-			ok(oPromise, "promise exists");
+			assert.ok(oPromise, "promise exists");
 			oPromise.then(function(result){
-				ok(true, "Promise resolved");
+				assert.ok(true, "Promise resolved");
 				sServiceUri = "/doesnotWork/";
 				oModel.oMetadata.sUrl = sServiceUri + "$metadata";
 				var oNewP = oModel.refreshMetadata();
-				ok(oNewP, "oNewP promise exists");
+				assert.ok(oNewP, "oNewP promise exists");
 				return oNewP;
 			}, function(){
-				ok(false, "Promise rejected which should never happen");
+				assert.ok(false, "Promise rejected which should never happen");
 			})
 			.then(function(result){
-				ok(false, "oNewP Promise resolved");
+				assert.ok(false, "oNewP Promise resolved");
 			}, function(){
-				ok(true, "oNewP Promise rejected");
+				assert.ok(true, "oNewP Promise rejected");
 				cleanServiceDataCache();
 				sServiceUri = sTempService;
 				done();
@@ -252,33 +252,33 @@
 			oModel.detachMetadataLoaded(fnTest);
 			var sTempService = sServiceUri;
 			var oPromise = oModel.metadataLoaded();
-			ok(oPromise, "promise exists");
+			assert.ok(oPromise, "promise exists");
 			oPromise.then(function(result){
-				ok(true, "Promise resolved");
+				assert.ok(true, "Promise resolved");
 				sServiceUri = "/doesnotWork/";
 				oModel.oMetadata.sUrl = sServiceUri + "$metadata";
 				var oNewP = oModel.refreshMetadata();
-				ok(oNewP, "oNewP promise exists");
+				assert.ok(oNewP, "oNewP promise exists");
 				return oNewP;
 			}, function(){
-				ok(false, "Promise rejected which should never happen");
+				assert.ok(false, "Promise rejected which should never happen");
 			}).then(function(result){
-				ok(false, "oNewP Promise resolved");
+				assert.ok(false, "oNewP Promise resolved");
 			}, function(){
-				ok(true, "oNewP Promise rejected");
+				assert.ok(true, "oNewP Promise rejected");
 				// fix url
 				oModel.oMetadata.sUrl = sTempService + "$metadata";
 				var oNewP2 = oModel.refreshMetadata();
-				ok(oNewP2, "oNewP2 promise exists");
+				assert.ok(oNewP2, "oNewP2 promise exists");
 				return oNewP2;
 			})
 			.then(function(result){
-				ok(true, "oNewP2 Promise resolved");
+				assert.ok(true, "oNewP2 Promise resolved");
 				cleanServiceDataCache();
 				sServiceUri = sTempService;
 				done();
 			}, function(){
-				ok(false, "oNewP2 Promise rejected");
+				assert.ok(false, "oNewP2 Promise rejected");
 			});
 		}
 		oModel.attachMetadataLoaded(this, fnTest);
@@ -292,14 +292,14 @@
 				filters : [ new sap.ui.model.Filter("ProductID", "EQ",
 						"HT-1000") ],
 				success : function(oData, oResponse) {
-					ok(oData.results.length === 1, "length check");
+					assert.ok(oData.results.length === 1, "length check");
 					var oP = oModel.getProperty("/ProductSet('HT-1000')");
-					ok(oP, "one entry loaded");
-					ok(oP.Name === "Notebook Basic 15", "one entry loaded");
+					assert.ok(oP, "one entry loaded");
+					assert.ok(oP.Name === "Notebook Basic 15", "one entry loaded");
 					done();
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		}
@@ -314,11 +314,11 @@
 				filters : [ new sap.ui.model.Filter("ProductID", "EQ",
 						"HT-1000") ],
 				success : function(oData, oResponse) {
-					ok(oData === "1", "length check");
+					assert.ok(oData === "1", "length check");
 					done();
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		}
@@ -335,15 +335,15 @@
 						new sap.ui.model.Filter("ProductID", "EQ", "AD-1000"),
 						new sap.ui.model.Filter("ProductID", "EQ", "HT-1041") ],
 				success : function(oData, oResponse) {
-					ok(oData.results.length === 3, "length check");
-					ok(oData.results[0].ProductID === "HT-1041", "sort check");
-					ok(oData.results[1].ProductID === "HT-1000", "sort check");
-					ok(oData.results[2].ProductID === "AD-1000", "sort check");
+					assert.ok(oData.results.length === 3, "length check");
+					assert.ok(oData.results[0].ProductID === "HT-1041", "sort check");
+					assert.ok(oData.results[1].ProductID === "HT-1000", "sort check");
+					assert.ok(oData.results[2].ProductID === "AD-1000", "sort check");
 
 					done();
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		}
@@ -356,11 +356,11 @@
 		var fnTest = function() {
 			oModel.read("/ProductXYSet", {
 				success : function(oData, oResponse) {
-					ok(false, "request succeeded...error expected");
+					assert.ok(false, "request succeeded...error expected");
 				},
 				error : function(oError) {
-					ok(oError.statusCode === "404", "error code");
-					ok(true, "request failed");
+					assert.ok(oError.statusCode === "404", "error code");
+					assert.ok(true, "request failed");
 					done();
 				}
 			});
@@ -374,10 +374,10 @@
 		var fnTest = function() {
 			oModel.remove("/ProductSet('Error')", {
 				success : function(oData, oResponse) {
-					ok(false, "request succeeded...error expected");
+					assert.ok(false, "request succeeded...error expected");
 				},
 				error : function(oError) {
-					ok(oError, "error succeeded");
+					assert.ok(oError, "error succeeded");
 					done();
 				}
 			});
@@ -392,10 +392,10 @@
 		var fnTest = function() {
 			oModel.remove("/ProductSet('Error')", {
 				success : function(oData, oResponse) {
-					ok(false, "request succeeded...error expected");
+					assert.ok(false, "request succeeded...error expected");
 				},
 				error : function(oError) {
-					ok(oError, "error succeeded");
+					assert.ok(oError, "error succeeded");
 					done();
 				}
 			});
@@ -414,26 +414,26 @@
 			oModel.read("/ProductSet", {
 				success : function(oData, oResponse) {
 					bRead1 = true;
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 			oModel.read("/ContactSet", {
 				success : function(oData, oResponse) {
 					bRead2 = true;
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 1 && bRead1 && bRead2) {
-				ok(true, "requests with no ids should should be combined in a single batch request");
+				assert.ok(true, "requests with no ids should should be combined in a single batch request");
 				done();
 			}
 		});
@@ -451,27 +451,27 @@
 				batchGroupId : "myId1",
 				success : function(oData, oResponse) {
 					bRead1 = true;
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 			oModel.read("/ContactSet", {
 				batchGroupId : "myId2",
 				success : function(oData, oResponse) {
 					bRead2 = true;
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		}
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bRead1 && bRead2) {
-				ok(true, "requests with different ids should be in separate batch requests");
+				assert.ok(true, "requests with different ids should be in separate batch requests");
 				done();
 			}
 		});
@@ -490,27 +490,27 @@
 				batchGroupId : "myId",
 				success : function(oData, oResponse) {
 					bRead1 = true;
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 			oModel.read("/ContactSet", {
 				batchGroupId : "myId",
 				success : function(oData, oResponse) {
 					bRead2 = true;
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		}
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 1 && bRead1 && bRead2) {
-				ok(true, "requests with same id should be combined in a batch request");
+				assert.ok(true, "requests with same id should be combined in a batch request");
 				done();
 			}
 		});
@@ -525,11 +525,11 @@
 			oModel.read("/ProductSet", {
 				batchGroupId : "myId",
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					done();
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 
@@ -549,20 +549,20 @@
 			oModel.read("/ProductSet", {
 				success : function(oData, oResponse) {
 					bRead1 = true;
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 
 			oModel.read("/ContactSet", {
 				success : function(oData, oResponse) {
 					bRead2 = true;
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 			oModel.submitChanges();
@@ -570,7 +570,7 @@
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 1 && bRead1 && bRead2) {
-				ok(true, "requests with same default id should be combined in a batch request");
+				assert.ok(true, "requests with same default id should be combined in a batch request");
 				done();
 			}
 		});
@@ -589,10 +589,10 @@
 				batchGroupId : "myId1",
 				success : function(oData, oResponse) {
 					bRead1 = true;
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 
@@ -600,10 +600,10 @@
 				batchGroupId : "myId1",
 				success : function(oData, oResponse) {
 					bRead2 = true;
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 			oModel.submitChanges();
@@ -611,7 +611,7 @@
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 1 && bRead1 && bRead2) {
-				ok(true, "requests with same id should be combined in a batch request");
+				assert.ok(true, "requests with same id should be combined in a batch request");
 				done();
 			}
 		});
@@ -630,10 +630,10 @@
 				batchGroupId : "myId1",
 				success : function(oData, oResponse) {
 					bRead1 = true;
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 
@@ -641,10 +641,10 @@
 				batchGroupId : "myId2",
 				success : function(oData, oResponse) {
 					bRead2 = true;
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 			oModel.submitChanges();
@@ -652,7 +652,7 @@
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bRead1 && bRead2) {
-				ok(true, "requests with different ids should be in separate batch requests");
+				assert.ok(true, "requests with different ids should be in separate batch requests");
 				done();
 			}
 		});
@@ -668,22 +668,22 @@
 			oModel.read("/ProductSet", {
 				batchGroupId : "myId",
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					bSuccess = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 
 			oModel.submitChanges({
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
-					ok(bSuccess, "callback handler of internal request should have been called")
+					assert.ok(true, "request succeeded");
+					assert.ok(bSuccess, "callback handler of internal request should have been called")
 					done();
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		}
@@ -704,7 +704,7 @@
 		}
 		var fnCheck = function() {
 			iCount++;
-			ok(iCount === 1, "request performed");
+			assert.ok(iCount === 1, "request performed");
 			assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 			oTxt.destroy();
 			oModel.detachBatchRequestCompleted(fnCheck);
@@ -728,7 +728,7 @@
 			oModel.read("/VH_CategorySet", {
 				batchGroupId : "myId",
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					bSuccess = true;
 
 					assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
@@ -738,7 +738,7 @@
 					var fnCheck = function(oEvent) {
 						iCount++;
 						if (iCount === 2) {
-							ok(false, "request performed but should not go out as data already loaded by read request before");
+							assert.ok(false, "request performed but should not go out as data already loaded by read request before");
 						}
 						oTxt.destroy();
 						oModel.detachBatchRequestCompleted(fnCheck);
@@ -749,7 +749,7 @@
 					);
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
@@ -795,12 +795,12 @@
 
 		var fnCheck = function() {
 			iCount++;
-			ok(iCount === 1, "request performed");
+			assert.ok(iCount === 1, "request performed");
 			assert.equal(oModel.getProperty("/VH_CategorySet('Beamers')/Category"),
 					"Beamers", "Category loaded check");
 			assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"),
 					"Headsets", "Category loaded check");
-			ok(oTable.getBinding('rows').getLength() >= 2,
+			assert.ok(oTable.getBinding('rows').getLength() >= 2,
 					"Category size check");
 			oTable.destroy();
 			oTable= null;
@@ -833,12 +833,12 @@
 			});
 			oModel.read("/VH_CategorySet", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					bRead1 = true;
 					iCallCount++;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
@@ -847,10 +847,10 @@
 			iCallCount++;
 
 			if (iCallCount === 2 && bRead1) {
-				ok(true, "request Completed event 1x (==1 request) and succesHandler from read should be called 1x");
+				assert.ok(true, "request Completed event 1x (==1 request) and succesHandler from read should be called 1x");
 				assert.equal(oModel.getProperty("/VH_CategorySet('Beamers')/Category"), "Beamers", "Category loaded check");
 				assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
-				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
+				assert.ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
 				oTable = null;
 				oModel.detachBatchRequestCompleted(fnCheck);
@@ -884,11 +884,11 @@
 				batchGroupId : "myId2",
 				success : function(oData, oResponse) {
 					bRead1 = true;
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					iCallCount++;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
@@ -896,10 +896,10 @@
 		var fnCheck = function() {
 			iCallCount++;
 			if (iCallCount === 3 && bRead1) {
-				ok(true, "requestCompleted event 2x (==2 requests) and read succes handler should be called 1x");
+				assert.ok(true, "requestCompleted event 2x (==2 requests) and read succes handler should be called 1x");
 				assert.equal(oModel.getProperty("/VH_CategorySet('Beamers')/Category"), "Beamers", "Category loaded check");
 				assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
-				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
+				assert.ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
 				oTable = null;
 				oModel.detachBatchRequestCompleted(fnCheck);
@@ -934,11 +934,11 @@
 				batchGroupId : "myId2",
 				success : function(oData, oResponse) {
 					bRead1 = true;
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					iCallCount++;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 			oModel.submitChanges();
@@ -946,10 +946,10 @@
 		var fnCheck = function(mArguments) {
 			iCallCount++;
 			if (iCallCount === 3 && bRead1) {
-				ok(true, "requestCompleted event 2x (==2 requests) and read succes handler should be called 1x");
+				assert.ok(true, "requestCompleted event 2x (==2 requests) and read succes handler should be called 1x");
 				assert.equal(oModel.getProperty("/VH_CategorySet('Beamers')/Category"), "Beamers", "Category loaded check");
 				assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
-				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
+				assert.ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
 				oTable = null;
 				oModel.detachBatchRequestCompleted(fnCheck);
@@ -971,7 +971,7 @@
 		oModel.attachRequestCompleted(this,function(test) {
 			iCount++;
 			if (iCount === 2 && bRead1 && bRead2) {
-				ok(true, "requests with same default id should be in 2 non batch requests");
+				assert.ok(true, "requests with same default id should be in 2 non batch requests");
 				done();
 			}
 		});
@@ -979,20 +979,20 @@
 			oModel.read("/ProductSet", {
 				success : function(oData, oResponse) {
 					bRead1 = true;
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 
 			oModel.read("/VH_CategorySet", {
 				success : function(oData, oResponse) {
 					bRead2 = true;
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
@@ -1021,12 +1021,12 @@
 				Name : "Test"
 			}, {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					iCount++;
 					done();
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 					done();
 				},
 				merge : true,
@@ -1047,11 +1047,11 @@
 				Name : "Hello"
 			}, {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					bUpdate = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 					done();
 				},
 				merge : true,
@@ -1060,12 +1060,12 @@
 
 			oModel.read("/ProductSet('AD-1000')", {
 				success : function(oData, oResponse) {
-					ok(bUpdate, "update should have been called first");
+					assert.ok(bUpdate, "update should have been called first");
 					assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Hello", "check read change");
 					bRead = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 					done();
 				}
 			});
@@ -1073,7 +1073,7 @@
 
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			if (bRead && bUpdate) {
-				ok(true, "requests with same default id should be in 1 batch requests");
+				assert.ok(true, "requests with same default id should be in 1 batch requests");
 				done();
 			}
 		});
@@ -1092,11 +1092,11 @@
 					Name : "Hello2"
 			    }, {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					bUpdate = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				},
 				merge: true,
 				eTag: "*",
@@ -1105,11 +1105,11 @@
 
 			oModel.read("/ProductSet('AD-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					bRead = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				},
 				batchGroupId: "myId2"
 			});
@@ -1117,7 +1117,7 @@
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bRead && bUpdate) {
-					ok(true, "requests with same default id should be in 1 batch requests");
+					assert.ok(true, "requests with same default id should be in 1 batch requests");
 					done();
 			}
 		});
@@ -1138,11 +1138,11 @@
 					Name : "Hello2"
 			    }, {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					bUpdate = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				},
 				merge: true,
 				eTag: "*",
@@ -1151,22 +1151,22 @@
 
 			oModel.read("/ProductSet('AD-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					bRead = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				},
 				batchGroupId: "myId2"
 			});
 
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					bRead2 = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 
 			});
@@ -1176,7 +1176,7 @@
 			iCount++;
 
 			if (iCount === 3 && bRead && bUpdate && bRead2) {
-					ok(true, "requests with same default id should be in 1 batch requests");
+					assert.ok(true, "requests with same default id should be in 1 batch requests");
 					done();
 			}
 		});
@@ -1214,13 +1214,13 @@
 				"ChangedAt":"\/Date(1413795983000)\/"
 			    }, {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					assert.equal(oData.Name, "Test", "response check");
 					assert.equal(oModel.getProperty("/ProductSet('AD-1111')/Name"), "Test", "new data should already be imorpted into model");
 					bCreate = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		}
@@ -1228,7 +1228,7 @@
 			iCount++;
 
 			if (iCount === 1 && bCreate) {
-					ok(true, "requests with same default id should be in 1 batch requests");
+					assert.ok(true, "requests with same default id should be in 1 batch requests");
 					done();
 			}
 		});
@@ -1244,12 +1244,12 @@
 		var fnTest = function() {
 			oModel.remove("/ProductSet('AD-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), undefined, "new data should already be imorpted into model");
 					bRemove = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				},
 				eTag: "*"
 			});
@@ -1258,7 +1258,7 @@
 			iCount++;
 
 			if (iCount === 1 && bRemove) {
-					ok(true, "requests with same default id should be in 1 batch requests");
+					assert.ok(true, "requests with same default id should be in 1 batch requests");
 					done();
 			}
 		});
@@ -1276,13 +1276,13 @@
 		var fnTest = function() {
 			oModel.read("/ProductSet('AD-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Flyer", "data read check");
 					bRead = true;
 					oModel.submitChanges();
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				},
 				batchGroupId: "myId1"
 			});
@@ -1290,12 +1290,12 @@
 
 			oModel.remove("/ProductSet('AD-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), undefined, "data should also have been removed from the model");
 					bRemove = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				},
 				eTag: "*",
 				batchGroupId: "myId2"
@@ -1305,7 +1305,7 @@
 			iCount++;
 
 			if (iCount === 2 && bRemove && bRead) {
-					ok(true, "requests with same default id should be in 1 batch requests");
+					assert.ok(true, "requests with same default id should be in 1 batch requests");
 					done();
 			}
 		});
@@ -1396,12 +1396,12 @@
 
 			if (iCount === 1 && bMetadataLoaded){ // bind rows should have been loaded
 				bSetProp = oModel.setProperty("/ProductSet('AD-1000')/Name", "NewValue");
-				ok(oModel.hasPendingChanges(), "Pending changes test");
+				assert.ok(oModel.hasPendingChanges(), "Pending changes test");
 				oModel.submitChanges({success: function(oParams){
-					ok(true, "request called");
-					ok(bSetProp, "set Property succesful");
+					assert.ok(true, "request called");
+					assert.ok(bSetProp, "set Property succesful");
 					assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
-					ok(!oModel.hasPendingChanges(), "Pending changes test");
+					assert.ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oTable.destroy();
 					oTable = null;
 					done();
@@ -1449,11 +1449,11 @@
 			if (iCount === 1 && bMetadataLoaded){ // bind rows should have been loaded
 				bSetProp = oModel.setProperty("/ProductSet('AD-1000')/Name", "NewValue");
 				bSetProp2 = oModel.setProperty("/ProductSet('HT-1000')/Name", "NewValue2");
-				ok(oModel.hasPendingChanges(), "Pending changes test");
+				assert.ok(oModel.hasPendingChanges(), "Pending changes test");
 				oModel.submitChanges({success: function(oParams){
-					ok(true, "request called");
-					ok(bSetProp, "set property successful");
-					ok(bSetProp2, "set property successful");
+					assert.ok(true, "request called");
+					assert.ok(bSetProp, "set property successful");
+					assert.ok(bSetProp2, "set property successful");
 					assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "NewValue2", "Two Way check");
 
@@ -1463,7 +1463,7 @@
 					assert.equal(oParams.__batchResponses[1].__changeResponses.length,1, "should be 1 response");
 					assert.equal(oParams.__batchResponses[1].__changeResponses[0].statusCode,"204", "statuscode OK");
 
-					ok(!oModel.hasPendingChanges(), "Pending changes test");
+					assert.ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oTable.destroy()
 					oTable = null;
 					done();
@@ -1511,11 +1511,11 @@
 			if (iCount === 1 && bMetadataLoaded){ // bind rows should have been loaded
 				bSetProp = oModel.setProperty("/ProductSet('AD-1000')/Name", "NewValue");
 				bSetProp2 = oModel.setProperty("/ProductSet('HT-1000')/Name", "NewValue2");
-				ok(oModel.hasPendingChanges(), "Pending changes test");
+				assert.ok(oModel.hasPendingChanges(), "Pending changes test");
 				oModel.submitChanges({success: function(oParams){
-					ok(true, "request called");
-					ok(bSetProp, "set property successful");
-					ok(bSetProp2, "set property successful");
+					assert.ok(true, "request called");
+					assert.ok(bSetProp, "set property successful");
+					assert.ok(bSetProp2, "set property successful");
 					assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "NewValue2", "Two Way check");
 
@@ -1524,7 +1524,7 @@
 					assert.equal(oParams.__batchResponses[0].__changeResponses[0].statusCode,"204", "statuscode OK");
 					assert.equal(oParams.__batchResponses[0].__changeResponses[1].statusCode,"204", "statuscode OK");
 
-					ok(!oModel.hasPendingChanges(), "Pending changes test");
+					assert.ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oTable.destroy()
 					oTable = null;
 					done();
@@ -1565,8 +1565,8 @@
 				var oBinding = oTable.getBinding('rows');
 				assert.equal(oBinding.sPath, "/ProductSet", "path check");
 				assert.equal(oBinding.getLength(), 115, "length check");
-				ok(oBinding.getContexts(), "context check");
-				ok(oBinding.sCountMode, "Request", "count mode check");
+				assert.ok(oBinding.getContexts(), "context check");
+				assert.ok(oBinding.sCountMode, "Request", "count mode check");
 				oTable.destroy()
 				oTable = null;
 				done();
@@ -1592,12 +1592,12 @@
 		var fnTest = function() {
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					bRead = true;
 					bSetProp = oModel.setProperty("/ProductSet('HT-1000')/Name", "xy");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
@@ -1605,7 +1605,7 @@
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead) {
-				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				assert.ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
 				done();
 			}
@@ -1630,12 +1630,12 @@
 		var fnTest = function() {
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					bRead = true;
 					bSetProp = oModel.setProperty("/ProductSet('HT-1000')/Name", "xy");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
@@ -1643,7 +1643,7 @@
 		oModel.attachRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead) {
-				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				assert.ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
 				done();
 			}
@@ -1663,7 +1663,7 @@
 		var fnTest = function() {
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					bRead = true;
 					oModel.setDeferredBatchGroups(["myId"]);
 					oModel.setChangeBatchGroups({
@@ -1678,12 +1678,12 @@
 							bSuccess = true;
 						},
 						error : function(oError) {
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						}
 					});
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
@@ -1691,7 +1691,7 @@
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead && bSuccess) {
-				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				assert.ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
 				done();
 			}
@@ -1712,7 +1712,7 @@
 		var fnTest = function() {
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/TypeCode"), "PR", "check typecode");
 					bRead = true;
@@ -1727,12 +1727,12 @@
 					oModel.read("/ProductSet('HT-1000')", {
 						batchGroupId : "myId",
 						success : function(oData, oResponse) {
-							ok(true, "request succeeded");
+							assert.ok(true, "request succeeded");
 							bRead2 = true;
 
 						},
 						error : function(oError) {
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						}
 					});
 					oModel.submitChanges({
@@ -1740,12 +1740,12 @@
 							bSuccess = true;
 						},
 						error : function(oError) {
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						}
 					});
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
@@ -1753,7 +1753,7 @@
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead && bRead2 && bSuccess) {
-				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				assert.ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/TypeCode"), "PR", "check typecode");
 				done();
@@ -1775,7 +1775,7 @@
 		var fnTest = function(){
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 					bRead = true;
@@ -1791,12 +1791,12 @@
 					oModel.read("/ProductSet('HT-1000')", {
 						batchGroupId : "myId",
 						success : function(oData, oResponse) {
-							ok(true, "request succeeded");
+							assert.ok(true, "request succeeded");
 							bRead2 = true;
 
 						},
 						error : function(oError) {
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						}
 					});
 					spy = sinon.spy(oModel, "_processChange");
@@ -1820,12 +1820,12 @@
 						},
 						error : function(oError) {
 							spy.restore();
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						}
 					});
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 			};
@@ -1833,7 +1833,7 @@
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead && bRead2 && bSuccess) {
-				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				assert.ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "4445.6", "check price");
 				spy.restore();
@@ -1858,7 +1858,7 @@
 
 		oModel.read("/ProductSet('HT-1000')", {
 			success : function(oData, oResponse) {
-				ok(true, "request succeeded");
+				assert.ok(true, "request succeeded");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 				bRead = true;
@@ -1876,12 +1876,12 @@
 				oModel.read("/ProductSet('HT-1000')", {
 					batchGroupId : "myId",
 					success : function(oData, oResponse) {
-						ok(true, "request succeeded");
+						assert.ok(true, "request succeeded");
 						bRead2 = true;
 
 					},
 					error : function(oError) {
-						ok(false, "request failed");
+						assert.ok(false, "request failed");
 					}
 				});
 				spy = sinon.spy(oModel, "_processChange");
@@ -1905,19 +1905,19 @@
 					},
 					error : function(oError) {
 						spy.restore();
-						ok(false, "request failed");
+						assert.ok(false, "request failed");
 					}
 				});
 			},
 			error : function(oError) {
-				ok(false, "request failed");
+				assert.ok(false, "request failed");
 			}
 		});
 
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead && bRead2 && bSuccess) {
-				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				assert.ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "4445.6", "check price");
 				spy.restore();
@@ -1940,7 +1940,7 @@
 		var fnTest = function(){
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 					bRead = true;
@@ -1950,17 +1950,17 @@
 					spy = sinon.spy(oModel, "_processChange");
 					oModel.submitChanges({
 						success : function(oData, oResponse) {
-							ok(false,"should not be called if batch off");
+							assert.ok(false,"should not be called if batch off");
 							spy.restore();
 						},
 						error : function(oError) {
 							spy.restore();
-							ok(false,"should not be called if batch off");
+							assert.ok(false,"should not be called if batch off");
 						}
 					});
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
@@ -1968,7 +1968,7 @@
 		oModel.attachRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead) {
-				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				assert.ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				assert.equal(spy.callCount, 1, "processChange call count");
 				var oRequest = spy.returnValues[0];
 				assert.equal(oRequest.method, "POST", "request method");
@@ -2006,7 +2006,7 @@
 		var fnTest = function(){
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
@@ -2023,12 +2023,12 @@
 					oModel.read("/ProductSet('HT-1000')", {
 						batchGroupId : "myId",
 						success : function(oData, oResponse) {
-							ok(true, "request succeeded");
+							assert.ok(true, "request succeeded");
 							bRead2 = true;
 
 						},
 						error : function(oError) {
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						}
 					});
 					spy = sinon.spy(oModel, "_processChange");
@@ -2037,7 +2037,7 @@
 							assert.equal(spy.callCount, 1, "processChange call count");
 							var oRequest = spy.returnValues[0];
 							assert.equal(oRequest.method, "PUT", "request method");
-							ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+							assert.ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
 							assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
 							assert.equal(oRequest.data.Name, "xy", "request payload name");
 							assert.equal(oRequest.data.Price, "4445.6", "request payload price");
@@ -2052,13 +2052,13 @@
 						},
 						error : function(oError) {
 							spy.restore();
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						},
 						merge : false
 					});
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
@@ -2066,7 +2066,7 @@
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead && bRead2 && bSuccess) {
-				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				assert.ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "4445.6", "check price");
 				spy.restore();
@@ -2093,7 +2093,7 @@
 		var fnTest = function(){
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
@@ -2111,12 +2111,12 @@
 					oModel.read("/ProductSet('HT-1000')", {
 						batchGroupId : "myId",
 						success : function(oData, oResponse) {
-							ok(true, "request succeeded");
+							assert.ok(true, "request succeeded");
 							bRead2 = true;
 
 						},
 						error : function(oError) {
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						}
 					});
 					spy = sinon.spy(oModel, "_processChange");
@@ -2125,7 +2125,7 @@
 							assert.equal(spy.callCount, 1, "processChange call count");
 							var oRequest = spy.returnValues[0];
 							assert.equal(oRequest.method, "PUT", "request method");
-							ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+							assert.ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
 							assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
 							assert.equal(oRequest.data.Name, "xy", "request payload name");
 							assert.equal(oRequest.data.Price, "4445.6", "request payload price");
@@ -2141,12 +2141,12 @@
 						},
 						error : function(oError) {
 							spy.restore();
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						}
 					});
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		}
@@ -2154,7 +2154,7 @@
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead && bRead2 && bSuccess) {
-				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				assert.ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "xy", "check changed name");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "4445.6", "check price");
 				spy.restore();
@@ -2180,7 +2180,7 @@
 		var fnTest = function(){
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
@@ -2191,18 +2191,18 @@
 					spy = sinon.spy(oModel, "_processChange");
 					oModel.submitChanges({
 						success : function(oData, oResponse) {
-							ok(false,"should not be called if batch off");
+							assert.ok(false,"should not be called if batch off");
 							spy.restore();
 						},
 						error : function(oError) {
 							spy.restore();
-							ok(false,"should not be called if batch off");
+							assert.ok(false,"should not be called if batch off");
 						},
 						merge: false
 					});
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
@@ -2210,11 +2210,11 @@
 		oModel.attachRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead) {
-				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				assert.ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				assert.equal(spy.callCount, 1, "processChange call count");
 				var oRequest = spy.returnValues[0];
 				assert.equal(oRequest.method, "PUT", "request method");
-				ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+				assert.ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
 				assert.equal(oRequest.requestUri, "/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
 				assert.equal(oRequest.data.Name, "xy", "request payload name");
 				assert.equal(oRequest.data.Price, "4445.8", "request payload price");
@@ -2246,7 +2246,7 @@
 		var fnTest = function(){
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
@@ -2257,18 +2257,18 @@
 					spy = sinon.spy(oModel, "_processChange");
 					oModel.submitChanges({
 						success : function(oData, oResponse) {
-							ok(false, "should not be called if batch off");
+							assert.ok(false, "should not be called if batch off");
 							spy.restore();
 						},
 						error : function(oError) {
 							spy.restore();
-							ok(false, "should not be called if batch off");
+							assert.ok(false, "should not be called if batch off");
 						},
 						merge : false
 					});
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		}
@@ -2276,11 +2276,11 @@
 		oModel.attachRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bSetProp && bRead) {
-				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				assert.ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				assert.equal(spy.callCount, 1, "processChange call count");
 				var oRequest = spy.returnValues[0];
 				assert.equal(oRequest.method, "PUT", "request method");
-				ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+				assert.ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
 				assert.equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
 				assert.equal(oRequest.data.Name, "xy", "request payload name");
 				assert.equal(oRequest.data.Price, "4445.8", "request payload price");
@@ -2313,7 +2313,7 @@
 		var fnTest = function(){
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
@@ -2330,10 +2330,10 @@
 						Name : "Test"
 					    }, {
 						success : function(oData, oResponse) {
-							ok(true, "request succeeded");
+							assert.ok(true, "request succeeded");
 						},
 						error : function(oError) {
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						},
 						eTag: "*",
 						batchGroupId: "myId"
@@ -2341,12 +2341,12 @@
 					oModel.read("/ProductSet('HT-1000')", {
 						batchGroupId : "myId",
 						success : function(oData, oResponse) {
-							ok(true, "request succeeded");
+							assert.ok(true, "request succeeded");
 							bRead2 = true;
 
 						},
 						error : function(oError) {
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						}
 					});
 					spy = sinon.spy(oModel, "_submitBatchRequest");
@@ -2355,7 +2355,7 @@
 							assert.equal(spy.callCount, 1, "processChange call count");
 							var oRequest = spy.args[0][1][0][0].request;
 							assert.equal(oRequest.method, "MERGE", "request method");
-							ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+							assert.ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
 							assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
 							assert.equal(oRequest.data.Name, "Test", "request payload name");
 							var iCount = 0;
@@ -2368,12 +2368,12 @@
 						},
 						error : function(oError) {
 							spy.restore();
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						}
 					});
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		}
@@ -2381,7 +2381,7 @@
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bRead && bRead2 && bSuccess) {
-				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				assert.ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Test", "check changed name");
 				spy.restore();
 				done();
@@ -2405,7 +2405,7 @@
 		var fnTest = function(){
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
@@ -2422,10 +2422,10 @@
 						Name : "Test"
 					    }, {
 						success : function(oData, oResponse) {
-							ok(true, "request succeeded");
+							assert.ok(true, "request succeeded");
 						},
 						error : function(oError) {
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						},
 						eTag: "*",
 						batchGroupId: "myId"
@@ -2433,12 +2433,12 @@
 					oModel.read("/ProductSet('HT-1000')", {
 						batchGroupId : "myId",
 						success : function(oData, oResponse) {
-							ok(true, "request succeeded");
+							assert.ok(true, "request succeeded");
 							bRead2 = true;
 
 						},
 						error : function(oError) {
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						}
 					});
 					spy = sinon.spy(oModel, "_submitBatchRequest");
@@ -2447,7 +2447,7 @@
 							assert.equal(spy.callCount, 1, "processChange call count");
 							var oRequest = spy.args[0][1][0][0].request;
 							assert.equal(oRequest.method, "PUT", "request method");
-							ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+							assert.ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
 							assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
 							assert.equal(oRequest.data.Name, "Test", "request payload name");
 							var iCount = 0;
@@ -2460,12 +2460,12 @@
 						},
 						error : function(oError) {
 							spy.restore();
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						}
 					});
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		}
@@ -2473,7 +2473,7 @@
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bRead && bRead2 && bSuccess) {
-				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				assert.ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Test", "check changed name");
 				spy.restore();
 				done();
@@ -2497,7 +2497,7 @@
 		var fnTest = function(){
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
@@ -2508,18 +2508,18 @@
 						Name : "Test3"
 					    }, {
 						success : function(oData, oResponse) {
-							ok(true, "request succeeded");
+							assert.ok(true, "request succeeded");
 							bUpdate = true;
 						},
 						error : function(oError) {
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						},
 						eTag: "*",
 						batchGroupId: "myId"
 					});
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		}
@@ -2527,11 +2527,11 @@
 		oModel.attachRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bUpdate && bRead) {
-				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				assert.ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				assert.equal(spy.callCount, 1, "call count");
 				var oRequest = spy.args[0][0].request;
 				assert.equal(oRequest.method, "POST", "request method");
-				ok(oRequest.headers['x-http-method'] === "MERGE", "request method header should not be present");
+				assert.ok(oRequest.headers['x-http-method'] === "MERGE", "request method header should not be present");
 				assert.equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
 				assert.equal(oRequest.data.Name, "Test3", "request payload name");
 				var iCount2 = 0;
@@ -2561,7 +2561,7 @@
 		var fnTest = function(){
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
@@ -2572,18 +2572,18 @@
 						Name : "Test2"
 					    }, {
 						success : function(oData, oResponse) {
-							ok(true, "request succeeded");
+							assert.ok(true, "request succeeded");
 							bUpdate = true;
 						},
 						error : function(oError) {
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						},
 						eTag: "*",
 						batchGroupId: "myId"
 					});
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		}
@@ -2591,11 +2591,11 @@
 		oModel.attachRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bUpdate && bRead) {
-				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
+				assert.ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				assert.equal(spy.callCount, 1, "call count");
 				var oRequest = spy.args[0][0].request;
 				assert.equal(oRequest.method, "PUT", "request method");
-				ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+				assert.ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
 				assert.equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
 				assert.equal(oRequest.data.Name, "Test2", "request payload name");
 				var iCount2 = 0;
@@ -2654,14 +2654,14 @@
 			}, batchGroupId: "myId"});
 
 			assert.equal(oModel.getProperty("Name",oContext), "TestEntry", "check virtual entry name");
-			ok(oModel.setProperty("Name","newName1", oContext), "modify entry...should not lead to a second request");
+			assert.ok(oModel.setProperty("Name","newName1", oContext), "modify entry...should not lead to a second request");
 			assert.equal(oModel.getProperty("Name",oContext), "newName1", "check virtual entry name");
 
 			oModel.submitChanges({
 				success : function(oData, oResponse) {
 					bSuccess1 = true;
 					assert.equal(oModel.getProperty("Name",oContext), "newName1", "check virtual entry name");
-					ok(oModel.setProperty("Name","newName2", oContext), "modify entry");
+					assert.ok(oModel.setProperty("Name","newName2", oContext), "modify entry");
 					assert.equal(oModel.getProperty("Name",oContext), "newName2", "check virtual entry name");
 					oModel.submitChanges({
 						success : function(oData, oResponse) {
@@ -2669,12 +2669,12 @@
 							assert.equal(oModel.getProperty("Name",oContext), "newName2", "check virtual entry name");
 						},
 						error : function(oError) {
-							ok(false, "request failed");
+							assert.ok(false, "request failed");
 						}
 					});
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
@@ -2702,7 +2702,7 @@
 		});
 
 		var fnTest = function(){
-			ok(true, "metadata loaded");
+			assert.ok(true, "metadata loaded");
 			oContext = oModel.createEntry("/ProductSet", {properties: {
 					"ProductID":"AD-1234",
 					"TypeCode":"AD",
@@ -2727,7 +2727,7 @@
 					"ChangedAt":"\/Date(1413795983000)\/"
 			}});
 			assert.equal(oModel.getProperty("Name",oContext), "TestEntry", "check virtual entry name");
-			ok(oModel.setProperty("Name","newName", oContext), "modify entry");
+			assert.ok(oModel.setProperty("Name","newName", oContext), "modify entry");
 			assert.equal(oModel.getProperty("Name",oContext), "newName", "check virtual entry name");
 			oModel.submitChanges();
 		};
@@ -2782,19 +2782,19 @@
 			oModel.deleteCreatedEntry(oContext);
 			oModel.submitChanges({
 				success : function(oData, oResponse) {
-					ok(false, "should not land here");
+					assert.ok(false, "should not land here");
 				},
 				error : function(oError) {
-					ok(false, "should not land here");
+					assert.ok(false, "should not land here");
 				}
 			});
 			jQuery.sap.delayedCall(500, this, function() {
-				ok(true, 'no request sent');
+				assert.ok(true, 'no request sent');
 				done();
 			});
 		};
 		oModel.attachBatchRequestCompleted(this, function(test) {
-			ok(false, "should not land here");
+			assert.ok(false, "should not land here");
 		});
 		oModel.attachMetadataLoaded(this, function() {
 			fnTest();
@@ -2864,15 +2864,15 @@
 
 			oModel.submitChanges({
 				success : function(oData, oResponse) {
-					ok(true, "should land here");
+					assert.ok(true, "should land here");
 				},
 				error : function(oError) {
-					ok(false, "should not land here");
+					assert.ok(false, "should not land here");
 				}
 			});
 		};
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
-			ok(true, "should land here");
+			assert.ok(true, "should land here");
 			var aRequests = oEvent.getParameter('requests');
 			assert.equal(aRequests.length, 1, "should contain one request");
 			assert.equal(aRequests[0].success, true, "request successful");
@@ -2911,20 +2911,20 @@
 					bSuccess = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
 		oModel.attachBatchRequestSent(this, function(oEvent) {
 			assert.equal(oEvent.getId(), "batchRequestSent", "event id check");
-			ok(oEvent.getParameter('url'), "Param check: url");
-			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
+			assert.ok(oEvent.getParameter('url'), "Param check: url");
+			assert.ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
 			assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 			assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
-			ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
+			assert.ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 			var aRequests = oEvent.getParameter('requests');
-			ok(aRequests.length == 1, "should contain one request");
+			assert.ok(aRequests.length == 1, "should contain one request");
 			assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 			assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
@@ -2937,25 +2937,25 @@
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			iReqComp++;
 			if (iReqComp === 1 && iReqSent === 1 && bSuccess) {
-				ok(true, "eventing performed correctly");
+				assert.ok(true, "eventing performed correctly");
 
 				assert.equal(oEvent.getId(), "batchRequestCompleted", "event id check");
-				ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
-				ok(oEvent.getParameter('url'), "Param check: url");
-				ok(oEvent.getParameter('success'), "Param check: success");
+				assert.ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
+				assert.ok(oEvent.getParameter('url'), "Param check: url");
+				assert.ok(oEvent.getParameter('success'), "Param check: success");
 				assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 				assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 				assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", true , "Param check: headers");
-				ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
+				assert.ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 				var aRequests = oEvent.getParameter('requests');
-				ok(aRequests.length == 1, "should contain one request");
+				assert.ok(aRequests.length == 1, "should contain one request");
 				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 				assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 				assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 
 				//check response
 				var oResponse = oEvent.getParameter('response');
-				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 202, "oResponse Param check: statusCode");
 				assert.equal(oResponse.statusText, "Accepted", "oResponse Param check: statusCode");
 
@@ -2964,7 +2964,7 @@
 				assert.equal(aRequests[0].response.statusCode, "200", "internal response, Param Check: statusCode");
 				assert.equal(aRequests[0].response.statusText, "OK", "internal response, Param Check: statusText");
 
-				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
 				done();
 			}
@@ -2982,32 +2982,32 @@
 		var fnTest = function() {
 			oModel.read("/ProductXYSet", {
 				success : function(oData, oResponse) {
-					ok(false, "request succeeded...error expected");
+					assert.ok(false, "request succeeded...error expected");
 				},
 				error : function(oError) {
-					ok(oError.statusCode === "404", "error code");
-					ok(true, "request failed");
+					assert.ok(oError.statusCode === "404", "error code");
+					assert.ok(true, "request failed");
 				}
 			});
 		};
 
 		oModel.attachBatchRequestFailed(this, function(oEvent) {
 			iReqFailed++;
-			ok(false, "batch request itself should have no errors");
+			assert.ok(false, "batch request itself should have no errors");
 		});
 
 		oModel.attachBatchRequestSent(this, function(oEvent) {
 			iReqSent++;
 
 			assert.equal(oEvent.getId(), "batchRequestSent", "event id check");
-			ok(oEvent.getParameter('url'), "Param check: url");
-			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
+			assert.ok(oEvent.getParameter('url'), "Param check: url");
+			assert.ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
 			assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 			assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
-			ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
+			assert.ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 			var aRequests = oEvent.getParameter('requests');
-			ok(aRequests.length == 1, "should contain one request");
+			assert.ok(aRequests.length == 1, "should contain one request");
 			assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 			assert.equal(aRequests[0].url, "ProductXYSet", "internal request, Param Check: url");
 			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
@@ -3018,26 +3018,26 @@
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			iReqComp++;
 			if (iReqComp === 1 && iReqSent === 1 && iReqFailed == 0) {
-				ok(true, "eventing performed correctly");
-				ok(oEvent.getParameter('success'), "should be true for batch request itself!");
+				assert.ok(true, "eventing performed correctly");
+				assert.ok(oEvent.getParameter('success'), "should be true for batch request itself!");
 				assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 
 				//check response
 				var oResponse = oEvent.getParameter('response');
-				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 202, "oResponse Param check: statusCode");
 				assert.equal(oResponse.statusText, "Accepted", "oResponse Param check: statusCode");
 
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
-				ok(aRequests.length == 1, "should contain one request");
+				assert.ok(aRequests.length == 1, "should contain one request");
 				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 				assert.equal(aRequests[0].url, "ProductXYSet", "internal request, Param Check: url");
 				assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 				assert.equal(aRequests[0].response.statusCode, "404", "internal response, Param Check: statusCode");
 				assert.equal(aRequests[0].response.statusText, "Not Found", "internal response, Param Check: statusText");
 
-				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
 				done();
 			}
@@ -3057,10 +3057,10 @@
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				success : function(oData, oResponse) {
-					ok(false, "request succeeded...error expected");
+					assert.ok(false, "request succeeded...error expected");
 				},
 				error : function(oError) {
-					ok(true, "request failed");
+					assert.ok(true, "request failed");
 				},
 				batchGroupId: "myId1"
 			});
@@ -3073,14 +3073,14 @@
 			assert.equal(oEvent.getId(), "batchRequestFailed", "event id check");
 			iReqFailed++;
 			if (iReqFailed == 1 && iReqComp === 1 && iReqSent === 1 ) {
-				ok(!oEvent.getParameter('success'), "should be false for batch request itself!");
+				assert.ok(!oEvent.getParameter('success'), "should be false for batch request itself!");
 				//check response
 				var oResponse = oEvent.getParameter('response');
-				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
-				ok(aRequests.length == 1, "should contain one request");
+				assert.ok(aRequests.length == 1, "should contain one request");
 				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 				assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 				assert.equal(aRequests[0].response, undefined, "internal response not there");
@@ -3093,13 +3093,13 @@
 			iReqSent++;
 
 			assert.equal(oEvent.getId(), "batchRequestSent", "event id check");
-			ok(oEvent.getParameter('url'), "Param check: url");
-			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
+			assert.ok(oEvent.getParameter('url'), "Param check: url");
+			assert.ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
 			assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 			assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			var aRequests = oEvent.getParameter('requests');
-			ok(aRequests.length == 1, "should contain one request");
+			assert.ok(aRequests.length == 1, "should contain one request");
 			assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 			assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
@@ -3110,22 +3110,22 @@
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			iReqComp++;
 			if (iReqComp === 1 && iReqSent === 1 && iReqFailed == 0) {
-				ok(true, "eventing performed correctly");
-				ok(!oEvent.getParameter('success'), "should be false for batch request itself!");
+				assert.ok(true, "eventing performed correctly");
+				assert.ok(!oEvent.getParameter('success'), "should be false for batch request itself!");
 				assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 
 				//check response
 				var oResponse = oEvent.getParameter('response');
-				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
-				ok(aRequests.length == 1, "should contain one request");
+				assert.ok(aRequests.length == 1, "should contain one request");
 				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 				assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 				assert.equal(aRequests[0].response, undefined, "internal response not there");
 
-				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
 			}
 		});
@@ -3147,14 +3147,14 @@
 					bSuccess = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
 		oModel.attachRequestSent(this, function(oEvent) {
 			assert.equal(oEvent.getId(), "requestSent", "event id check");
-			ok(oEvent.getParameter('url'), "Param check: url");
-			ok(oEvent.getParameter('url').indexOf("ProductSet") !== -1, "Param check: url should be non batch");
+			assert.ok(oEvent.getParameter('url'), "Param check: url");
+			assert.ok(oEvent.getParameter('url').indexOf("ProductSet") !== -1, "Param check: url should be non batch");
 			assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 			assert.equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
@@ -3167,23 +3167,23 @@
 		oModel.attachRequestCompleted(this, function(oEvent) {
 			iReqComp++;
 			if (iReqComp === 1 && iReqSent === 1 && bSuccess) {
-				ok(true, "eventing performed correctly");
+				assert.ok(true, "eventing performed correctly");
 
 				assert.equal(oEvent.getId(), "requestCompleted", "event id check");
-				ok(oEvent.getParameter('url'), "Param check: url");
-				ok(oEvent.getParameter('url').indexOf("ProductSet") !== -1, "Param check: url should be non batch");
-				ok(oEvent.getParameter('success'), "Param check: success");
+				assert.ok(oEvent.getParameter('url'), "Param check: url");
+				assert.ok(oEvent.getParameter('url').indexOf("ProductSet") !== -1, "Param check: url should be non batch");
+				assert.ok(oEvent.getParameter('success'), "Param check: success");
 				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 				assert.equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
 
 				//check response
 				var oResponse = oEvent.getParameter('response');
-				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
 				assert.equal(oResponse.statusText, "OK", "oResponse Param check: statusCode");
 
-				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
 				done();
 			}
@@ -3204,13 +3204,13 @@
 			iReqFailed++;
 			if (iReqSent === 1 && iReqFailed === 1 && iReqComp === 1) {
 				assert.equal(oEvent.getId(), "requestFailed", "event id check");
-				ok(true, "eventing performed correctly");
+				assert.ok(true, "eventing performed correctly");
 				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
-				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
 				//check response
 				var oResponse = oEvent.getParameter('response');
-				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 404, "oResponse Param check: statusCode");
 				assert.equal(oResponse.statusText, "Not Found", "oResponse Param check: statusCode");
 
@@ -3221,35 +3221,35 @@
 		oModel.attachRequestSent(this, function(oEvent) {
 			iReqSent++;
 			assert.equal(oEvent.getId(), "requestSent", "event id check");
-			ok(oEvent.getParameter('url'), "Param check: url");
-			ok(oEvent.getParameter('url').indexOf("ProductXYSet") !== -1, "Param check: url should be non batch");
+			assert.ok(oEvent.getParameter('url'), "Param check: url");
+			assert.ok(oEvent.getParameter('url').indexOf("ProductXYSet") !== -1, "Param check: url should be non batch");
 			assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 			assert.equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
 
-			ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+			assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 			sReqId = oEvent.getParameter('ID');
 		});
 
 		oModel.attachRequestCompleted(this, function(oEvent) {
 			iReqComp++;
 			if (iReqComp === 1 && iReqSent === 1 && iReqFailed === 0) {
-				ok(true, "eventing performed correctly");
-				ok(!oEvent.getParameter('success'), " should be false!");
+				assert.ok(true, "eventing performed correctly");
+				assert.ok(!oEvent.getParameter('success'), " should be false!");
 				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				assert.equal(oEvent.getId(), "requestCompleted", "event id check");
-				ok(oEvent.getParameter('url'), "Param check: url");
-				ok(oEvent.getParameter('url').indexOf("ProductXYSet") !== -1, "Param check: url should be non batch");
+				assert.ok(oEvent.getParameter('url'), "Param check: url");
+				assert.ok(oEvent.getParameter('url').indexOf("ProductXYSet") !== -1, "Param check: url should be non batch");
 				assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 				assert.equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
 
 				//check response
 				var oResponse = oEvent.getParameter('response');
-				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 404, "oResponse Param check: statusCode");
 				assert.equal(oResponse.statusText, "Not Found", "oResponse Param check: statusCode");
 
-				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
 			}
 		});
@@ -3257,11 +3257,11 @@
 		var fnTest = function() {
 			oModel.read("/ProductXYSet", {
 				success : function(oData, oResponse) {
-					ok(false, "request succeeded...error expected");
+					assert.ok(false, "request succeeded...error expected");
 				},
 				error : function(oError) {
-					ok(oError.statusCode === 404, "error code");
-					ok(true, "request failed");
+					assert.ok(oError.statusCode === 404, "error code");
+					assert.ok(true, "request failed");
 				}
 			});
 		};
@@ -3281,7 +3281,7 @@
 					bSuccess = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				},
 				batchGroupId: "myId1"
 			});
@@ -3290,7 +3290,7 @@
 					bSuccess = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				},
 				batchGroupId: "myId1"
 			});
@@ -3298,10 +3298,10 @@
 				Name : "Test"
 			    }, {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				},
 				merge: true,
 				eTag: "*",
@@ -3311,13 +3311,13 @@
 
 		oModel.attachBatchRequestSent(this, function(oEvent) {
 			assert.equal(oEvent.getId(), "batchRequestSent", "event id check");
-			ok(oEvent.getParameter('url'), "Param check: url");
-			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
+			assert.ok(oEvent.getParameter('url'), "Param check: url");
+			assert.ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
 			assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 
 			var aRequests = oEvent.getParameter('requests');
-			ok(aRequests.length == 3, "should contain 3 requests");
+			assert.ok(aRequests.length == 3, "should contain 3 requests");
 			assert.equal(aRequests[0].method, "MERGE", "internal request, Param Check: method");
 			assert.equal(aRequests[0].url, "ProductSet('HT-1000')", "internal request, Param Check: url");
 			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
@@ -3339,19 +3339,19 @@
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			iReqComp++;
 			if (iReqComp === 1 && iReqSent === 1 && bSuccess) {
-				ok(true, "eventing performed correctly");
+				assert.ok(true, "eventing performed correctly");
 
 				assert.equal(oEvent.getId(), "batchRequestCompleted", "event id check");
-				ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
-				ok(oEvent.getParameter('url'), "Param check: url");
-				ok(oEvent.getParameter('success'), "Param check: success");
+				assert.ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
+				assert.ok(oEvent.getParameter('url'), "Param check: url");
+				assert.ok(oEvent.getParameter('success'), "Param check: success");
 				assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 				assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 				assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", true , "Param check: headers");
-				ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
+				assert.ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 				var aRequests = oEvent.getParameter('requests');
 
-				ok(aRequests.length == 3, "should contain 3 requests");
+				assert.ok(aRequests.length == 3, "should contain 3 requests");
 
 				assert.equal(aRequests[0].method, "MERGE", "internal request, Param Check: method");
 				assert.equal(aRequests[0].url, "ProductSet('HT-1000')", "internal request, Param Check: url");
@@ -3367,7 +3367,7 @@
 
 				//check response
 				var oResponse = oEvent.getParameter('response');
-				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 202, "oResponse Param check: statusCode");
 				assert.equal(oResponse.statusText, "Accepted", "oResponse Param check: statusCode");
 
@@ -3382,7 +3382,7 @@
 				assert.equal(aRequests[2].response.statusText, "OK", "internal response, Param Check: statusText");
 
 
-				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
 				done();
 			}
@@ -3406,7 +3406,7 @@
 					bSuccess = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				},
 				batchGroupId: "myId1"
 			});
@@ -3415,7 +3415,7 @@
 					bSuccess = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				},
 				batchGroupId: "myId1"
 			});
@@ -3423,10 +3423,10 @@
 				Name : "Test"
 			    }, {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				},
 				merge: true,
 				eTag: "*",
@@ -3437,7 +3437,7 @@
 		oModel.attachRequestSent(this, function(oEvent) {
 			iCount1++;
 			if (iCount1 == 1) {
-				ok(oEvent.getParameter('url').indexOf("HT-1000") !== -1, "Param check: url should be non batch");
+				assert.ok(oEvent.getParameter('url').indexOf("HT-1000") !== -1, "Param check: url should be non batch");
 				assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 				assert.equal(oEvent.getParameter('headers')['x-http-method'], "MERGE" , "Param check: method");
 				assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
@@ -3445,14 +3445,14 @@
 			}
 
 			if (iCount1 == 2) {
-				ok(oEvent.getParameter('url').indexOf("HT-1001") !== -1, "Param check: url should be non batch");
+				assert.ok(oEvent.getParameter('url').indexOf("HT-1001") !== -1, "Param check: url should be non batch");
 				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId1 = oEvent.getParameter('ID');
 			}
 
 			if (iCount1 == 3) {
-				ok(oEvent.getParameter('url').indexOf("AD-1000") !== -1, "Param check: url should be non batch");
+				assert.ok(oEvent.getParameter('url').indexOf("AD-1000") !== -1, "Param check: url should be non batch");
 				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId2 = oEvent.getParameter('ID');
@@ -3465,28 +3465,28 @@
 
 			assert.equal(oEvent.getId(), "requestCompleted", "event id check");
 
-			ok(oEvent.getParameter('success'), "Param check: success");
+			assert.ok(oEvent.getParameter('success'), "Param check: success");
 
 			if (oEvent.getParameter('url').indexOf("HT-1001") !== -1) {
-				ok(oEvent.getParameter('url').indexOf("HT-1001") !== -1, "Param check: url should be non batch");
+				assert.ok(oEvent.getParameter('url').indexOf("HT-1001") !== -1, "Param check: url should be non batch");
 				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				var oResponse = oEvent.getParameter('response');
-				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
 				assert.equal(oResponse.statusText, "OK", "oResponse Param check: statusCode");
-				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId1, "Check Request ID");
 				iCount2 ++;
 			}
 
 			if (oEvent.getParameter('url').indexOf("AD-1000") !== -1) {
-				ok(oEvent.getParameter('url').indexOf("AD-1000") !== -1, "Param check: url should be non batch");
+				assert.ok(oEvent.getParameter('url').indexOf("AD-1000") !== -1, "Param check: url should be non batch");
 				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				var oResponse = oEvent.getParameter('response');
-				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
 				assert.equal(oResponse.statusText, "OK", "oResponse Param check: statusCode");
-				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId2, "Check Request ID");
 				iCount2 ++;
 			}
@@ -3495,10 +3495,10 @@
 				assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 				assert.equal(oEvent.getParameter('headers')['x-http-method'], "MERGE" , "Param check: method");
 				var oResponse = oEvent.getParameter('response');
-				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 204, "oResponse Param check: statusCode");
 				assert.equal(oResponse.statusText, "No Content", "oResponse Param check: statusCode");
-				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId3, "Check Request ID");
 				iCount2 ++;
 			}
@@ -3535,7 +3535,7 @@
 					bSuccess = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				},
 				batchGroupId: "myId1"
 			});
@@ -3544,7 +3544,7 @@
 					bSuccess = true;
 				},
 				error : function(oError) {
-					ok(true, "error callback of aborted request is called");
+					assert.ok(true, "error callback of aborted request is called");
 				},
 				batchGroupId: "myId1"
 			});
@@ -3572,7 +3572,7 @@
 					bSuccess = true;
 				},
 				error : function(oError) {
-					ok(true, "error callback of aborted request is called");
+					assert.ok(true, "error callback of aborted request is called");
 				},
 				batchGroupId: "myId1"
 			});
@@ -3581,20 +3581,20 @@
 					bSuccess = true;
 				},
 				error : function(oError) {
-					ok(true, "error callback of aborted request is called");
+					assert.ok(true, "error callback of aborted request is called");
 				},
 				batchGroupId: "myId1"
 			});
 			oAbort = oModel.submitChanges({success: function(oParams){
-				ok(false, "request should be aborted");
+				assert.ok(false, "request should be aborted");
 			}, error: function(oEvent){
-				ok(true, "request should be aborted");
+				assert.ok(true, "request should be aborted");
 			}});
 			oAbort.abort();
 		};
 
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
-			ok(true, "request should be aborted");
+			assert.ok(true, "request should be aborted");
 			assert.equal(oEvent.getParameter('success'), false, "request completed with success false");
 			done();
 		});
@@ -3614,7 +3614,7 @@
 					bSuccess = true;
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				},
 			});
 			oAbort = oModel.read("/ProductSet('AD-1000')", {
@@ -3622,7 +3622,7 @@
 					bSuccess = true;
 				},
 				error : function(oError) {
-					ok(true, "error callback of aborted request is called");
+					assert.ok(true, "error callback of aborted request is called");
 				},
 			});
 			oAbort.abort();
@@ -3630,9 +3630,9 @@
 
 		oModel.attachRequestCompleted(this, function(oEvent) {
 			if (oEvent.getParameter('success')){
-				ok(oEvent.getParameter('url').indexOf("ProductSet('HT-1001')") !== -1, "Param check: url");
+				assert.ok(oEvent.getParameter('url').indexOf("ProductSet('HT-1001')") !== -1, "Param check: url");
 			} else {
-				ok(false, "aborted request should have been sent!");
+				assert.ok(false, "aborted request should have been sent!");
 			}
 			if (bSuccess){
 				done();
@@ -3658,10 +3658,10 @@
 			iChange++;
 		}
 		var fnDataReceived = function(oEvent) {
-			ok(iChange == 2, "checkupdate done");
+			assert.ok(iChange == 2, "checkupdate done");
 			iReceived++;
 			if (iReceived == 2) {
-				ok(true, "dataReceived after checkUpdate");
+				assert.ok(true, "dataReceived after checkUpdate");
 			}
 		}
 		var fnTest = function() {
@@ -3672,7 +3672,7 @@
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 1 ) {
-				ok(true, "batch request completed");
+				assert.ok(true, "batch request completed");
 				oInput1.destroy();
 				oInput2.destroy();
 				done();
@@ -3696,32 +3696,32 @@
 		var fnChange = function(oEvent) {
 			iChange++;
 			if (iChange == 2) {
-				ok(true, "checkupdate done");
+				assert.ok(true, "checkupdate done");
 				oInput1.destroy();
 				oInput2.destroy();
 				done();
 			}
 		}
 		var fnDataReceived = function(oEvent) {
-			ok(false, "no data retrieval necessary");
+			assert.ok(false, "no data retrieval necessary");
 		}
 		var fnTest = function() {
 			oModel.read("/ProductSet('AD-1000')", {
 				batchGroupId : "myId1",
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 			oModel.read("/ProductSet('HT-1000')", {
 				batchGroupId : "myId1",
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
@@ -3734,11 +3734,11 @@
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 1 ) {
-				ok(true, "read batch request completed");
+				assert.ok(true, "read batch request completed");
 				fnBind();
 			}
 			if (iCount > 1 ) {
-				ok(false, "data already loaded: No further request necessary");
+				assert.ok(false, "data already loaded: No further request necessary");
 			}
 		});
 		oModel.attachMetadataLoaded(this, fnTest);
@@ -3765,17 +3765,17 @@
 			iChange++;
 		}
 		var fnDataReceived = function(oEvent) {
-			ok(iChange == 1, "checkupdate done");
+			assert.ok(iChange == 1, "checkupdate done");
 			iReceived++;
 			if (iReceived == 1) {
-				ok(true, "dataReceived after checkUpdate");
+				assert.ok(true, "dataReceived after checkUpdate");
 			}
 		}
 
 		var fnTest = function(){
 			oTable.bindRows({path:mEntities.categories.collection, events:{change: fnChange, dataReceived: fnDataReceived}});
 			var fnCheck = function() {
-				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
+				assert.ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
 				oTable = null;
 				done();
@@ -3808,10 +3808,10 @@
 			iChange++;
 		}
 		var fnDataReceived = function(oEvent) {
-			ok(iChange == 1, "checkupdate done");
+			assert.ok(iChange == 1, "checkupdate done");
 			iReceived++;
 			if (iReceived == 1) {
-				ok(true, "dataReceived after checkUpdate");
+				assert.ok(true, "dataReceived after checkUpdate");
 				oTable.destroy();
 				oTable = null;
 			}
@@ -3822,12 +3822,12 @@
 			var fnCheck = function() {
 				iCount++;
 				if (iCount <= 2) {
-					ok(true, "request completed");
+					assert.ok(true, "request completed");
 					if (iCount === 2) {
 						done();
 					}
 				} else {
-					ok(false, "too many requests");
+					assert.ok(false, "too many requests");
 				}
 			}
 			oModel.attachBatchRequestCompleted(this, fnCheck);
@@ -3836,11 +3836,11 @@
 		var fnLoad = function() {
 			oModel.read("/VH_CategorySet", {
 				success : function(oData, oResponse) {
-					ok(true, "request succeeded");
+					assert.ok(true, "request succeeded");
 					fnTest();
 				},
 				error : function(oError) {
-					ok(false, "request failed");
+					assert.ok(false, "request failed");
 				}
 			});
 		};
@@ -3881,15 +3881,15 @@
 			oModel.setProperty("DimUnit","M", oContext);
 			oModel.submitChanges({
 				success : function(oData, oResponse) {
-					ok(true, "$batch successful");
-					ok(oData.__batchResponses.length === 1, "One response found");
+					assert.ok(true, "$batch successful");
+					assert.ok(oData.__batchResponses.length === 1, "One response found");
 					if (!oData.__batchResponses[0].message) {
-						ok(true, "creation successful");
+						assert.ok(true, "creation successful");
 						done();
 					}
 				},
 				error : function(oError) {
-					ok(false, "creation failed");
+					assert.ok(false, "creation failed");
 				}
 			});
 		};
@@ -3901,18 +3901,18 @@
 
 			oModel.submitChanges({
 				success : function(oData, oResponse) {
-					ok(true, "$batch successful");
-					ok(oData.__batchResponses.length === 1, "One response found");
-					ok(oData.__batchResponses.length === 1, "One response found");
+					assert.ok(true, "$batch successful");
+					assert.ok(oData.__batchResponses.length === 1, "One response found");
+					assert.ok(oData.__batchResponses.length === 1, "One response found");
 					//MockServer does not really fail so we create a message
 					oData.__batchResponses[0].message = "error";
 					if (oData.__batchResponses[0].message) {
-						ok(true, "creation failed");
+						assert.ok(true, "creation failed");
 						fnChange();
 					}
 				},
 				error : function(oError) {
-					ok(false, "should not land here");
+					assert.ok(false, "should not land here");
 				}
 			});
 		};
@@ -3931,7 +3931,7 @@
 		};
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
-			ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='test'", "Valid parameter is added to URL");
+			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='test'", "Valid parameter is added to URL");
 			done();
 		});
 
@@ -3951,7 +3951,7 @@
 		};
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
-			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'", "Valid parameter is added to URL");
+			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'", "Valid parameter is added to URL");
 			done();
 		});
 
@@ -3975,7 +3975,7 @@
 		};
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
-			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'", "Valid parameter is added to URL");
+			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'", "Valid parameter is added to URL");
 			assert.equal(mUrlParams["SalesOrderID"], "test", "Parameter still exists after sending function import");
 			done();
 		});
@@ -4002,7 +4002,7 @@
 		};
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
-			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'&$expand=ToBusinessPartner&sap-some=sapTest", "Valid parameter is added to URL");
+			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'&$expand=ToBusinessPartner&sap-some=sapTest", "Valid parameter is added to URL");
 			done();
 		});
 
@@ -4039,11 +4039,11 @@
 				assert.equal(oModel.getProperty("SalesOrderID", oContext), "Blubb", "Value check in model");
 				oModel.submitChanges();
 			}, function() {
-				ok(false, "Test failed");
+				assert.ok(false, "Test failed");
 			});
 		};
 		oModel.attachRequestSent(this, function(oEventInfo) {
-			ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='Blubb'");
+			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='Blubb'");
 			done();
 		});
 		oModel.attachMetadataLoaded(this, function() {
@@ -4074,7 +4074,7 @@
 		var handler1 = function(oEventInfo) {
 			oModel.detachRequestSent(handler1);
 			oModel.attachRequestSent(handler2);
-			ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='test'");
+			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='test'");
 			oHandle.contextCreated().then(function(oContext) {
 				oInput.setBindingContext(oContext);
 				assert.equal(oInput.getValue(), "test", "Value check");
@@ -4083,12 +4083,12 @@
 				assert.equal(oInput.getValue(), "Blubb", "Value check");
 				assert.equal(oContext.getProperty("SalesOrderID"), "Blubb", "Value check in model");
 			}, function() {
-				ok(false, "Test failed");
+				assert.ok(false, "Test failed");
 			});
 		};
 		var handler2 = function(oEventInfo) {
 			oModel.detachRequestSent(handler2);
-			ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='Blubb'");
+			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='Blubb'");
 			done();
 		};
 		oModel.attachRequestSent(this, handler1);
@@ -4123,12 +4123,12 @@
 				assert.equal(oModel.getProperty("SalesOrderID", oContext), "Blubb", "Value check in model");
 				oModel.submitChanges();
 			}, function() {
-				ok(false, "Test failed");
+				assert.ok(false, "Test failed");
 			});
 		}
 
 		oModel.attachRequestCompleted(this, function(oEventInfo) {
-			ok(!oEventInfo.getParameter("success"), "request should have failed!");
+			assert.ok(!oEventInfo.getParameter("success"), "request should have failed!");
 			done();
 		});
 
@@ -4197,7 +4197,7 @@
 		var test1 = function(oEventinfo) {
 			iCount++;
 			if (iCount === 2 && spy.callCount === 2) {
-				ok(true,"2 batch requests sent");
+				assert.ok(true,"2 batch requests sent");
 				iCount = 0;
 				spy.restore();
 				oModel.detachBatchRequestCompleted(test1);
@@ -4206,7 +4206,7 @@
 				oModel.attachBatchRequestCompleted(this, function(oEventInfo) {
 					iCount++;
 					if (iCount === 2 && spy.callCount === 2) {
-						ok(true,"2 for refresh batch requests sent");
+						assert.ok(true,"2 for refresh batch requests sent");
 						oTable.destroy();
 						oTable2.destroy();
 						oTable = null;
@@ -4269,14 +4269,14 @@
 		var test1 = function(oEventinfo) {
 			iCount++;
 			if (iCount === 2 && spy.callCount === 2) {
-				ok(true,"2 batch requests sent");
+				assert.ok(true,"2 batch requests sent");
 				spy.restore();
 				oModel.detachBatchRequestCompleted(test1);
 				spy = sinon.spy(oModel, "_submitBatchRequest");
 				oModel.refresh(true,true,"refreshGroup");
 				oModel.attachBatchRequestCompleted(this, function(oEventInfo) {
 					if (spy.callCount === 1) {
-						ok(true,"1 for refresh batch requests sent");
+						assert.ok(true,"1 for refresh batch requests sent");
 						oTable.destroy();
 						oTable2.destroy();
 						oTable = null;
@@ -4339,7 +4339,7 @@
 		var test1 = function(oEventinfo) {
 			iCount++;
 			if (iCount === 2 && spy.callCount === 2) {
-				ok(true,"2 batch requests sent");
+				assert.ok(true,"2 batch requests sent");
 				spy.restore();
 				oModel.detachBatchRequestCompleted(test1);
 				iCount = 0;
@@ -4349,7 +4349,7 @@
 				oModel.attachBatchRequestCompleted(this, function(oEventInfo) {
 					iCount++;
 					if (iCount === 2 && spy.callCount === 2) {
-						ok(true,"1 for refresh batch requests sent");
+						assert.ok(true,"1 for refresh batch requests sent");
 						oTable.destroy();
 						oTable2.destroy();
 						oTable = null;
@@ -4411,7 +4411,7 @@
 		var test1 = function(oEventinfo) {
 			iCount++;
 			if (iCount === 2 && spy.callCount === 2) {
-				ok(true,"2 batch requests sent");
+				assert.ok(true,"2 batch requests sent");
 				spy.restore();
 				oModel.detachBatchRequestCompleted(test1);
 				spy = sinon.spy(oModel, "_submitBatchRequest");
@@ -4419,7 +4419,7 @@
 				oTable2.getBinding("rows").refresh("test");
 				oModel.attachBatchRequestCompleted(this, function(oEventInfo) {
 					if (spy.callCount === 1) {
-						ok(true,"1 for refresh batch requests sent");
+						assert.ok(true,"1 for refresh batch requests sent");
 						oTable.destroy();
 						oTable2.destroy();
 						oTable = null;
@@ -4484,7 +4484,7 @@
 		var test1 = function(oEventinfo) {
 			iCount++;
 			if (iCount === 3 && spy.callCount === 3) {
-				ok(true,"3 batch requests sent");
+				assert.ok(true,"3 batch requests sent");
 				spy.restore();
 				oModel.detachBatchRequestCompleted(test1);
 				spy = sinon.spy(oModel, "_submitBatchRequest");
@@ -4492,7 +4492,7 @@
 				oTable2.getElementBinding().refresh();
 				oModel.attachBatchRequestCompleted(this, function(oEventInfo) {
 					if (spy.callCount === 1) {
-						ok(true,"1 for refresh batch requests sent");
+						assert.ok(true,"1 for refresh batch requests sent");
 						oTable.destroy();
 						oTable2.destroy();
 						oTable = null;
@@ -4557,7 +4557,7 @@
 		var test1 = function(oEventinfo) {
 			iCount++;
 			if (iCount === 3 && spy.callCount === 3) {
-				ok(true,"3 batch requests sent");
+				assert.ok(true,"3 batch requests sent");
 				spy.restore();
 				oModel.detachBatchRequestCompleted(test1);
 				spy = sinon.spy(oModel, "_submitBatchRequest");
@@ -4567,7 +4567,7 @@
 				oModel.attachBatchRequestCompleted(this, function(oEventInfo) {
 					iCount++;
 					if (iCount === 2 && spy.callCount === 2) {
-						ok(true,"2 refresh batch requests sent");
+						assert.ok(true,"2 refresh batch requests sent");
 					oTable.destroy();
 						oTable2.destroy();
 						oTable = null;
@@ -4597,15 +4597,15 @@
 		oTxt.setModel(oModel);
 
 		assert.equal(oTxt.getBinding('value').getBindingMode(), "OneTime", "Binding mode check!");
-		ok(!oTxt.getBinding('value').isResolved(), "Binding should not be resolved!");
-		ok(oTxt.getValue() === "", "text value should be null");
+		assert.ok(!oTxt.getBinding('value').isResolved(), "Binding should not be resolved!");
+		assert.ok(oTxt.getValue() === "", "text value should be null");
 
 		var fnCheck = function() {
 			iCount++;
-			ok(iCount === 1, "request performed");
+			assert.ok(iCount === 1, "request performed");
 			assert.equal(oTxt.getBinding('value').getBindingMode(), "OneTime", "Binding mode check!");
-			ok(oTxt.getBinding('value').isResolved(), "Binding should be resolved!");
-			ok(oTxt.getValue() === "Headsets", "text value should be set");
+			assert.ok(oTxt.getBinding('value').isResolved(), "Binding should be resolved!");
+			assert.ok(oTxt.getValue() === "Headsets", "text value should be set");
 
 			assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 			oTxt.destroy();

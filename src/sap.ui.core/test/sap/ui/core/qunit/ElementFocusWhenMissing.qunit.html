@@ -53,7 +53,7 @@
 
 					setTimeout(function() {
 						sap.ui.core.BusyIndicator.hide();
-						ok(true, "when this checkpoint is reached, the test is passed")
+						assert.ok(true, "when this checkpoint is reached, the test is passed")
     				done();
 					}, 600);
 				}, 600);

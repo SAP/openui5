@@ -16,7 +16,7 @@ function deepContains(oValue, oExpected, sMessage) {
 		if (Array.isArray(oExpected[sKey]) === Array.isArray(oValue[sKey])) {
 			equals(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
 		} else {
-			ok(false, sMessage + "/" + sKey + " - one is an array, the other is not");
+			assert.ok(false, sMessage + "/" + sKey + " - one is an array, the other is not");
 		}
 
 
@@ -385,7 +385,7 @@ function runODataAnnotationsV2Tests() {
 		});
 
 		pLoaded.catch(function(aResults) {
-			ok(false, "With a valid service at least the metadata should have been parsed for annotations successfully");
+			assert.ok(false, "With a valid service at least the metadata should have been parsed for annotations successfully");
 			endTest();
 		});
 
@@ -447,11 +447,11 @@ function runODataAnnotationsV2Tests() {
 
 			bSomeLoadedFired = true;
 			var aResults = oEvent.getParameter("result");
-			ok(Array.isArray(aResults), "Result parameter contained an array of results");
+			assert.ok(Array.isArray(aResults), "Result parameter contained an array of results");
 			equals(aResults.length, iAnnotations, "The correct number of Annotations was loaded");
 
 			var iErrorsInResults = fnCountErrors(aResults);
-			ok(iErrorsInResults < iAnnotations, "The failed event parameter \"result\" should NOT contain ONLY Error objects");
+			assert.ok(iErrorsInResults < iAnnotations, "The failed event parameter \"result\" should NOT contain ONLY Error objects");
 
 			equals(iErrorsInResults, iErrors, "The number of Errors in the Results is the same as the number of error-events that occurred")
 			equals(aResults.length - iErrorsInResults, iSuccesses, "The number of successfully parsed entries in the Results is the same as the number of success-events that occurred")
@@ -464,7 +464,7 @@ function runODataAnnotationsV2Tests() {
 			bAllFailedFired = true;
 			var aErrors = oEvent.getParameter("result");
 
-			ok(Array.isArray(aErrors), "Result parameter contained an array of errors");
+			assert.ok(Array.isArray(aErrors), "Result parameter contained an array of errors");
 			equals(aErrors.length, iAnnotations, "The correct number of Annotations failed");
 
 			var iErrorsInResults = fnCountErrors(aErrors);
@@ -553,7 +553,7 @@ function runODataAnnotationsV2Tests() {
 
 			bLoadedFired = true;
 			var aResults = oEvent.getParameter("result");
-			ok(Array.isArray(aResults), "Result parameter contained an array of results");
+			assert.ok(Array.isArray(aResults), "Result parameter contained an array of results");
 			equals(aResults.length, iAnnotations, "The correct number of Annotations was loaded");
 
 			var iErrorsInResults = fnCountErrors(aResults);
@@ -570,11 +570,11 @@ function runODataAnnotationsV2Tests() {
 			bFailedFired = true;
 			var aResults = oEvent.getParameter("result");
 
-			ok(Array.isArray(aResults), "Result parameter contained an array of errors");
+			assert.ok(Array.isArray(aResults), "Result parameter contained an array of errors");
 			equals(aResults.length, iAnnotations, "The correct number of Annotations failed");
 
 			var iErrorsInResults = fnCountErrors(aResults);
-			ok(iErrorsInResults > 0, "The failed event parameter \"result\" should contain at least one Error object");
+			assert.ok(iErrorsInResults > 0, "The failed event parameter \"result\" should contain at least one Error object");
 
 			equals(iErrorsInResults, iErrors, "The number of Errors in the Results is the same as the number of error-events that occurred")
 			equals(iSuccesses, aResults.length - iErrorsInResults, "No success events should have been fired")
@@ -588,7 +588,7 @@ function runODataAnnotationsV2Tests() {
 		};
 
 		pLoaded.catch(function() {}).then(function() {
-			ok(bLoadedFired !== bFailedFired, "Either loaded or failed shoud have been fired but not both");
+			assert.ok(bLoadedFired !== bFailedFired, "Either loaded or failed shoud have been fired but not both");
 			fnEndTest();
 		});
 	};
@@ -627,13 +627,13 @@ function runODataAnnotationsV2Tests() {
 
 		oModel.attachAnnotationsLoaded(function() {
 			bAnnotationsLoaded = true;
-			ok(mService.serviceValid, "Service annotations loaded");
+			assert.ok(mService.serviceValid, "Service annotations loaded");
 			notEqual(mService.annotationsValid, "none", "Service annotations loaded");
 		});
 
 		oModel.attachMetadataLoaded(function() {
 			bMetadataLoaded = true;
-			ok(mService.serviceValid, "Service metadata loaded");
+			assert.ok(mService.serviceValid, "Service metadata loaded");
 
 			if (mService.annotationsValid === "none") {
 				assert.equal(bAnnotationsLoaded, false, "No Annotations loaded")
@@ -647,7 +647,7 @@ function runODataAnnotationsV2Tests() {
 		});
 
 		oModel.attachMetadataFailed(function() {
-			ok(!mService.serviceValid || mService.annotationsValid === "none", "Service metadata or annotations failed");
+			assert.ok(!mService.serviceValid || mService.annotationsValid === "none", "Service metadata or annotations failed");
 			endTest();
 		});
 
@@ -684,19 +684,19 @@ function runODataAnnotationsV2Tests() {
 
 		oModel.attachAnnotationsLoaded(function() {
 			bAnnotationsLoaded = true;
-			ok(mService.serviceValid, "Service annotations loaded");
+			assert.ok(mService.serviceValid, "Service annotations loaded");
 		});
 
 		oModel.attachMetadataLoaded(function() {
 			bMetadataLoaded = true;
-			ok(mService.serviceValid, "Service metadata failed");
+			assert.ok(mService.serviceValid, "Service metadata failed");
 			assert.equal(bAnnotationsLoaded, true, "Annotations loaded")
 
 			endTest();
 		});
 
 		oModel.attachMetadataFailed(function() {
-			ok(!mService.serviceValid, "Service metadata failed");
+			assert.ok(!mService.serviceValid, "Service metadata failed");
 			endTest();
 		});
 
@@ -729,7 +729,7 @@ function runODataAnnotationsV2Tests() {
 
 
 		var fnEvent = function() {
-			ok(false, "Success/Error/Loaded handler should not be called for this instance");
+			assert.ok(false, "Success/Error/Loaded handler should not be called for this instance");
 		};
 		oAnnotations.attachSuccess(fnEvent);
 		oAnnotations.attachError(fnEvent);
@@ -750,37 +750,37 @@ function runODataAnnotationsV2Tests() {
 				oAnnotations.addSource({
 					type: "invalid"
 				}).then(function() {
-					ok(false, "Adding invalid sources should not be successful");
+					assert.ok(false, "Adding invalid sources should not be successful");
 				}).catch(function() {
-					ok(true, "Adding invalid sources should lead to an error");
+					assert.ok(true, "Adding invalid sources should lead to an error");
 
 					oAnnotations.addSource({
 						type: "xml",
 						xml: "I am not valid XML"
 					}).then(function() {
 						// This is a phantomJS bug...
-						ok(!!sap.ui.Device.browser.phantomJS, "Adding sources with invalid XML content should not be successful");
+						assert.ok(!!sap.ui.Device.browser.phantomJS, "Adding sources with invalid XML content should not be successful");
 
 						if (sap.ui.Device.browser.phantomJS) {
 							throw "Continue in catch block";
 						}
 
 					}).catch(function() {
-						ok(true, "Adding sources with invalid XML content should lead to an error");
+						assert.ok(true, "Adding sources with invalid XML content should lead to an error");
 
 						oAnnotations.addSource({
 							type: "xml",
 							document: { invalid: "I ain't no XML document..." }
 						}).then(function() {
 							// This is a phantomJS bug...
-							ok(!!sap.ui.Device.browser.phantomJS, "Adding sources with invalid XML content should not be successful");
+							assert.ok(!!sap.ui.Device.browser.phantomJS, "Adding sources with invalid XML content should not be successful");
 
 							if (sap.ui.Device.browser.phantomJS) {
 								throw "Continue in catch block";
 							}
 
 						}).catch(function() {
-							ok(true, "Adding sources with invalid XML documents should lead to an error");
+							assert.ok(true, "Adding sources with invalid XML documents should lead to an error");
 
 
 							// XML Parser is not available should lead to an error
@@ -795,9 +795,9 @@ function runODataAnnotationsV2Tests() {
 								type: "url",
 								data: "fakeService://testdata/odata/multiple-annotations-01.xml"
 							}).then(function() {
-								ok(false, "Adding annotations without having a DOM parser should not be successful");
+								assert.ok(false, "Adding annotations without having a DOM parser should not be successful");
 							}).catch(function() {
-								ok(true, "Adding annotations without having a DOM parser should lead to an error");
+								assert.ok(true, "Adding annotations without having a DOM parser should lead to an error");
 
 								sap.ui.Device.browser.internet_explorer = sap.ui.Device.browser.msie = bIsIE;
 								window.DOMParser = oOriginalDOMParser;
@@ -814,9 +814,9 @@ function runODataAnnotationsV2Tests() {
 									type: "url",
 									data: "fakeService://testdata/odata/multiple-annotations-01.xml"
 								}).then(function() {
-									ok(false, "Adding annotations without having a DOM parser should not be successful");
+									assert.ok(false, "Adding annotations without having a DOM parser should not be successful");
 								}).catch(function() {
-									ok(true, "Adding annotations without having a DOM parser should lead to an error");
+									assert.ok(true, "Adding annotations without having a DOM parser should lead to an error");
 
 
 									window.ActiveXObject = oOriginalActiveXObject;

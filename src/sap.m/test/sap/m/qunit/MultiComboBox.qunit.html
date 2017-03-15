@@ -791,11 +791,11 @@
 		oMultiComboBox.addItem(oItem);
 
 		// assertions
-		ok(fnAddAggregationSpy.calledWith("items", oItem),
+		assert.ok(fnAddAggregationSpy.calledWith("items", oItem),
 				"sap.m.MultiComboBox.addAggregation() method was called with the expected arguments");
-		ok(fnListAddAggregationSpy.calledWith("items", oMultiComboBox.getListItem(oItem)),
+		assert.ok(fnListAddAggregationSpy.calledWith("items", oMultiComboBox.getListItem(oItem)),
 				"sap.m.List.addAggregation() method was called with the expected arguments");
-		ok(fnAddItemSpy.returned(oMultiComboBox));
+		assert.ok(fnAddItemSpy.returned(oMultiComboBox));
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		assert.deepEqual(oMultiComboBox.getItems(), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
@@ -824,11 +824,11 @@
 		oMultiComboBox.addItem(oItem);
 
 		// assertions
-		ok(fnAddAggregationSpy.calledWith("items", oItem),
+		assert.ok(fnAddAggregationSpy.calledWith("items", oItem),
 				"sap.m.MultiComboBox.addAggregation() method was called with the expected arguments");
-		ok(fnListAddAggregationSpy.calledWith("items", oMultiComboBox.getListItem(oItem)),
+		assert.ok(fnListAddAggregationSpy.calledWith("items", oMultiComboBox.getListItem(oItem)),
 				"sap.m.List.addAggregation() method was called with the expected arguments");
-		ok(fnAddItemSpy.returned(oMultiComboBox));
+		assert.ok(fnAddItemSpy.returned(oMultiComboBox));
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		assert.deepEqual(oMultiComboBox.getItems(), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
@@ -855,11 +855,11 @@
 		oMultiComboBox.addItem(oItem);
 
 		// assertions
-		ok(fnAddAggregationSpy.calledWith("items", oItem),
+		assert.ok(fnAddAggregationSpy.calledWith("items", oItem),
 				"sap.m.MultiComboBox.addAggregation() method was called with the expected arguments");
-		ok(fnListAddAggregationSpy.calledWith("items", oMultiComboBox.getListItem(oItem)),
+		assert.ok(fnListAddAggregationSpy.calledWith("items", oMultiComboBox.getListItem(oItem)),
 				"sap.m.List.addAggregation() method was called with the expected arguments");
-		ok(fnAddItemSpy.returned(oMultiComboBox));
+		assert.ok(fnAddItemSpy.returned(oMultiComboBox));
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		assert.deepEqual(oMultiComboBox.getItems(), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
@@ -890,11 +890,11 @@
 		oMultiComboBox.addItem(oItem);
 
 		// assertions
-		ok(fnAddAggregationSpy.calledWith("items", oItem),
+		assert.ok(fnAddAggregationSpy.calledWith("items", oItem),
 				"sap.m.MultiComboBox.addAggregation() method was called with the expected arguments");
-		ok(fnListAddAggregationSpy.calledWith("items", oMultiComboBox.getListItem(oItem)),
+		assert.ok(fnListAddAggregationSpy.calledWith("items", oMultiComboBox.getListItem(oItem)),
 				"sap.m.List.addAggregation() method was called with the expected arguments");
-		ok(fnAddItemSpy.returned(oMultiComboBox));
+		assert.ok(fnAddItemSpy.returned(oMultiComboBox));
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		assert.deepEqual(oMultiComboBox.getItems(), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
@@ -918,11 +918,11 @@
 		oMultiComboBox.addItem(null);
 
 		// assertions
-		ok(fnAddAggregationSpy.calledWith("items", null),
+		assert.ok(fnAddAggregationSpy.calledWith("items", null),
 				"sap.m.MultiComboBox.addAggregation() method was called with the expected arguments");
-		ok(fnListAddAggregationSpy.calledWith("items", null),
+		assert.ok(fnListAddAggregationSpy.calledWith("items", null),
 				"sap.m.List.addAggregation() method was called with the expected arguments");
-		ok(fnAddItemSpy.returned(oMultiComboBox));
+		assert.ok(fnAddItemSpy.returned(oMultiComboBox));
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), null);
 		assert.deepEqual(oMultiComboBox.getItems(), []);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
@@ -1259,11 +1259,11 @@
 		oMultiComboBox.insertItem(oItem, 0);
 
 		// assertions
-		ok(fnInsertAggregation.calledWith("items", oItem, 0),
+		assert.ok(fnInsertAggregation.calledWith("items", oItem, 0),
 				"oMultiComboBox.insertAggregation() method was called with the expected arguments");
-		ok(fnListInsertAggregation.calledWith("items", oMultiComboBox.getListItem(oItem), 0),
+		assert.ok(fnListInsertAggregation.calledWith("items", oMultiComboBox.getListItem(oItem), 0),
 				"oList.insertAggregation() method was called with the expected arguments");
-		ok(fnInsertItem.returned(oMultiComboBox), 'oMultiComboBox.insertAggregation() method return the "this" reference');
+		assert.ok(fnInsertItem.returned(oMultiComboBox), 'oMultiComboBox.insertAggregation() method return the "this" reference');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1296,7 +1296,7 @@
 		this.clock.tick(500);
 
 		// assertions
-		ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is displayed');
+		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is displayed');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1327,7 +1327,7 @@
 		this.clock.tick(500);
 
 		// assertions
-		ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is displayed');
+		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is displayed');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1358,7 +1358,7 @@
 		this.clock.tick(500);
 
 		// assertions
-		ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is displayed');
+		assert.ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is displayed');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1390,7 +1390,7 @@
 		this.clock.tick(500);
 
 		// assertions
-		ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is displayed');
+		assert.ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is displayed');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1425,7 +1425,7 @@
 		//assert.strictEqual(oMultiComboBox.getSelectedItemId(), "");
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
-		ok(fnSetSelectedItemsSpy.returned(oMultiComboBox),
+		assert.ok(fnSetSelectedItemsSpy.returned(oMultiComboBox),
 				'sap.m.MultiComboBox.prototype.setSelectedItems() method return the "this" reference');
 
 		// cleanup
@@ -1488,7 +1488,7 @@
 		//assert.strictEqual(oMultiComboBox.getSelectedItemId(), "");
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
-		ok(fnSetSelectedKeysSpy.returned(oMultiComboBox),
+		assert.ok(fnSetSelectedKeysSpy.returned(oMultiComboBox),
 				'sap.m.MultiComboBox.prototype.setSelectedKeys() method return the "this" reference');
 
 		// cleanup
@@ -1528,10 +1528,10 @@
 		oMultiComboBox.setSelectedItems([oItem]);
 
 		// assertions
-		//ok(fnSetPropertySpy.calledWith("selectedKeys", [ oItem.getKey() ], true));
-		//ok(fnSetPropertySpy.calledWith("selectedItemId", "myItem1"));
-		ok(fnAddAssociationSpy.calledWith("selectedItems", oItem));
-		ok(fnSetSelectedItemsSpy.returned(oMultiComboBox),
+		//assert.ok(fnSetPropertySpy.calledWith("selectedKeys", [ oItem.getKey() ], true));
+		//assert.ok(fnSetPropertySpy.calledWith("selectedItemId", "myItem1"));
+		assert.ok(fnAddAssociationSpy.calledWith("selectedItems", oItem));
+		assert.ok(fnSetSelectedItemsSpy.returned(oMultiComboBox),
 				'sap.m.MultiComboBox.prototype.setSelectedItems() method return the "this" reference');
 
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
@@ -1575,8 +1575,8 @@
 		oMultiComboBox.setSelectedItems([oItem.getId()]);
 
 		// assertions
-		ok(fnAddAssociationSpy.calledWith("selectedItems", oItem));
-		ok(fnSetSelectedItemsSpy.returned(oMultiComboBox),
+		assert.ok(fnAddAssociationSpy.calledWith("selectedItems", oItem));
+		assert.ok(fnSetSelectedItemsSpy.returned(oMultiComboBox),
 				'sap.m.MultiComboBox.prototype.setSelectedItems() method return the "this" reference');
 
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
@@ -1849,7 +1849,7 @@
 		var aKeys = oMultiComboBox.addSelectedKeys(undefined);
 
 		// assert
-		ok(Array.isArray(oMultiComboBox.getSelectedKeys()));
+		assert.ok(Array.isArray(oMultiComboBox.getSelectedKeys()));
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -2102,7 +2102,7 @@
 						'The second Listitem should be shown');
 				equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 						'The third Listitem should be shown');
-				ok(!oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).hasClass(
+				assert.ok(!oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).hasClass(
 						"sapMComboBoxBaseItemDisabled"),
 						'The third Listitem must not have the css class sapMComboBoxBaseItemDisabled');
 
@@ -2139,7 +2139,7 @@
 		this.clock.tick(500);
 
 		// assertions
-		ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
+		assert.ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
 		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
 				'The first Listitem should not be shown');
 		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
@@ -2616,10 +2616,10 @@
 				"Input value is returned to the inital value after wrong character was typed");
 		assert.strictEqual(oMultiComboBox.getFocusDomRef().value, oMultiComboBox.getValue(),
 				"Dom value and value property are same after wrong character was typed");
-		ok(oMultiComboBox.$().hasClass("sapMInputBaseError"),
+		assert.ok(oMultiComboBox.$().hasClass("sapMInputBaseError"),
 				'The MultiComboBox must have the css class sapMInputBaseError');
 		this.clock.tick(1100);
-		ok(!oMultiComboBox.$().hasClass("sapMInputBaseError"),
+		assert.ok(!oMultiComboBox.$().hasClass("sapMInputBaseError"),
 				'The MultiComboBox must not have the css class sapMInputBaseError after 1000 msec');
 
 		// cleanup
@@ -2659,10 +2659,10 @@
 				"Input value is returned to the inital value after wrong character was typed");
 		assert.strictEqual(oMultiComboBox.getFocusDomRef().value, oMultiComboBox.getValue(),
 				"Dom value and value property are same after wrong character was typed");
-		ok(oMultiComboBox.$().hasClass("sapMInputBaseError"),
+		assert.ok(oMultiComboBox.$().hasClass("sapMInputBaseError"),
 				'The MultiComboBox must have the css class sapMInputBaseError');
 		this.clock.tick(1100);
-		ok(!oMultiComboBox.$().hasClass("sapMInputBaseError"),
+		assert.ok(!oMultiComboBox.$().hasClass("sapMInputBaseError"),
 				'The MultiComboBox must not have the css class sapMInputBaseError after 1000 msec');
 
 		// cleanup
@@ -3150,7 +3150,7 @@
 		assert.strictEqual(oMultiComboBox.getValue(), sInitValue, "Input value is returned to the inital value after escape.");
 		assert.strictEqual(oMultiComboBox.getFocusDomRef().value, oMultiComboBox.getValue(),
 				"Dom value and value property are same after escape.");
-		ok(fnFireEventSpy.calledWith("liveChange"), "Private liveChange event is fired on escape");
+		assert.ok(fnFireEventSpy.calledWith("liveChange"), "Private liveChange event is fired on escape");
 		assert.strictEqual(fnFireEventSpy.callCount, 1, "LiveChange event is fired once");
 
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was fired");
@@ -3425,8 +3425,8 @@
 		assert.strictEqual(fnTapSpy.callCount, 1, "ontap event was called exactly once on " + oMultiComboBox);
 		assert.strictEqual(fnOpenSpy.callCount, 0, "open was not called");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Popup is closed");
-		ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-		ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+		assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
+		assert.ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 				'The MultiComboBox must not have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 
 		// cleanup
@@ -3484,7 +3484,7 @@
 		});
 		this.clock.tick(500);
 
-		ok(true, "The test should not throw and exception");
+		assert.ok(true, "The test should not throw and exception");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3529,10 +3529,10 @@
 		assert.strictEqual(fnShowSpy.callCount, 1, "onsapshow was called exactly once");
 		assert.strictEqual(fnOpenSpy.callCount, 1, "openwas called exactly once");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
-		ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
+		assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
-		ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
+		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3572,10 +3572,10 @@
 		assert.strictEqual(fnHideSpy.callCount, 1, "onsaphide was called exactly once");
 		assert.strictEqual(fnOpenSpy.callCount, 1, "openwas called exactly once");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
-		ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
+		assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
-		ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
+		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3615,10 +3615,10 @@
 		assert.strictEqual(fnShowSpy.callCount, 1, "onsapshow was called exactly once");
 		assert.strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
-		ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
+		assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
-		ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
+		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3660,10 +3660,10 @@
 		assert.strictEqual(fnTapSpy.callCount, 1, "ontap event was called exactly once on Arrow");
 		assert.strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
-		ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
+		assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
-		ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
+		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3704,10 +3704,10 @@
 		// assertions
 		assert.strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
-		ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
+		assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
-		ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
+		assert.ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3743,7 +3743,7 @@
 		this.clock.tick(500);
 
 		// assertions
-		ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
+		assert.ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
 
 		// act
 		oMultiComboBox.setValue("");
@@ -3751,7 +3751,7 @@
 		this.clock.tick(500);
 
 		// assertions
-		ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
+		assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3791,7 +3791,7 @@
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
 		this.clock.tick(500);
 
-		ok(oMultiComboBox.isOpen(), "oMultiComboBox is opened");
+		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is opened");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3831,7 +3831,7 @@
 				this.clock.tick(500);
 
 				// assertions
-				ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
+				assert.ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
 
 				// act
 				var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
@@ -3841,8 +3841,8 @@
 				// assertions
 				assert.strictEqual(fnOpenSpy.callCount, 2, "open was called exactly once");
 				assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
-				ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-				ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+				assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
+				assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 						'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 
 				// cleanup
@@ -3884,7 +3884,7 @@
 				this.clock.tick(500);
 
 				// assertions
-				ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
+				assert.ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
 
 				// act
 				sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false,
@@ -3897,10 +3897,10 @@
 				// assertions
 				assert.strictEqual(fnOpenSpy.callCount, 2, "open was called exactly twice");
 				assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
-				ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-				ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+				assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
+				assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 						'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
-				ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
+				assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 				// cleanup
 				oMultiComboBox.destroy();
@@ -3942,7 +3942,7 @@
 		this.clock.tick(500);
 
 		// assertions
-		ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
+		assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
 		equals(oMultiComboBox.getFocusDomRef().id, document.activeElement.id, "Input field has focus");
 
 		// cleanup
@@ -3981,8 +3981,8 @@
 	      // assertions
 	      assert.strictEqual(fnCloseSpy.callCount, 1, "close was called exactly once");
 	      assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Popup is closed");
-	      ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-	      ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"), 'The MultiComboBox must not have the css class “'
+	      assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
+	      assert.ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"), 'The MultiComboBox must not have the css class “'
 	                    + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 
 	      // cleanup
@@ -4015,8 +4015,8 @@
 		});
 
 		// assertions
-		ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"), 'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
+		assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
+		assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"), 'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4044,8 +4044,8 @@
 		});
 
 		// assertions
-		ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-		ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+		assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
+		assert.ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 				'The MultiComboBox must not have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 
 		// cleanup
@@ -4089,9 +4089,9 @@
 		this.clock.tick(500);
 
 		// assertions
-		ok(oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-		ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
-		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is closed");
+		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
+		assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
 				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 
 		// cleanup
@@ -4123,7 +4123,7 @@
 		});
 
 		// assertions
-		ok(oMultiComboBox.$().hasClass("sapMMultiComboBoxFocus"), 'The MultiComboBox has the CSS class "sapMMultiComboBoxFocus"');
+		assert.ok(oMultiComboBox.$().hasClass("sapMMultiComboBoxFocus"), 'The MultiComboBox has the CSS class "sapMMultiComboBoxFocus"');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4151,7 +4151,7 @@
 		});
 
 		// assertions
-		ok(oMultiComboBox.$().hasClass("sapMMultiComboBoxFocus"), 'The MultiComboBox has the CSS class "sapMMultiComboBoxFocus"');
+		assert.ok(oMultiComboBox.$().hasClass("sapMMultiComboBoxFocus"), 'The MultiComboBox has the CSS class "sapMMultiComboBoxFocus"');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4183,7 +4183,7 @@
 		});
 
 		// assertions
-		ok(oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX + "Focused"),
+		assert.ok(oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX + "Focused"),
 				'The MultiComboBox must have the css class “' + sap.m.MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX + 'Focused”');
 
 		// cleanup
@@ -4214,7 +4214,7 @@
 		sap.ui.test.qunit.triggerEvent("focusout", oMultiComboBox.getDomRef());
 
 		// assertions
-		ok(!oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX + "Focused"),
+		assert.ok(!oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX + "Focused"),
 				'The MultiComboBox must not have the css class “' + sap.m.MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX + 'Focused”');
 
 		// cleanup
@@ -4243,7 +4243,7 @@
 		sap.ui.test.qunit.triggerEvent("focusout", oDomRef);
 
 		// assertions
-		ok(!oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX + "Focused"),
+		assert.ok(!oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX + "Focused"),
 				'The MultiComboBox must not have the css class “' + sap.m.MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX + 'Focused”');
 
 		// cleanup
@@ -4354,8 +4354,8 @@
 		this.clock.tick(500);
 
 		// assertions
-		ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		ok(oMultiComboBox.getList().getItems()[0].getDomRef() === document.activeElement, "First Item of list is focused");
+		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
+		assert.ok(oMultiComboBox.getList().getItems()[0].getDomRef() === document.activeElement, "First Item of list is focused");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4421,7 +4421,7 @@
 		this.clock.tick(1000);
 
 		// assertions
-		ok(oMultiComboBox.getDomRef().clientWidth >= jQuery.find(".sapMMultiComboBoxInputContainer")[0].clientWidth,
+		assert.ok(oMultiComboBox.getDomRef().clientWidth >= jQuery.find(".sapMMultiComboBoxInputContainer")[0].clientWidth,
 			"Check if the size of the container is calculated correctly.");
 
 
@@ -4671,7 +4671,7 @@
 		oMultiComboBox.onsapfocusleave(oFakeEvent);
 
 		// assert
-		ok(oSpy.called, "Tokenizer's scrollToEnd should be called when focus is outside MCB");
+		assert.ok(oSpy.called, "Tokenizer's scrollToEnd should be called when focus is outside MCB");
 
 		// cleanup
 		oSpy.restore();
@@ -4744,9 +4744,9 @@
 				new sap.ui.core.Item({key: "Item3", text: "Item3"})
 			]
 		});
-		ok(!!oComboBox.getAccessibilityInfo, "MultiComboBox has a getAccessibilityInfo function");
+		assert.ok(!!oComboBox.getAccessibilityInfo, "MultiComboBox has a getAccessibilityInfo function");
 		var oInfo = oComboBox.getAccessibilityInfo();
-		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oComboBox.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO"), "Type");
 		assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
@@ -4797,8 +4797,8 @@
 		this.oMultiComboBox.onsapend();
 		this.clock.tick();
 
-		ok(oSapEndSpy.called, "onsapend of the Tokenizer should be called");
-		ok(oSapEndSpy.calledOn(this.oTokenizer), "onsapend should be called on the internal Tokenizer");
+		assert.ok(oSapEndSpy.called, "onsapend of the Tokenizer should be called");
+		assert.ok(oSapEndSpy.calledOn(this.oTokenizer), "onsapend should be called on the internal Tokenizer");
 	});
 
 	QUnit.test("onsaphome should trigger Tokenizer's onsaphome", function (assert) {
@@ -4807,8 +4807,8 @@
 		this.oMultiComboBox.onsaphome();
 		this.clock.tick();
 
-		ok(oSapEndSpy.called, "onsaphome of the Tokenizer should be called");
-		ok(oSapEndSpy.calledOn(this.oTokenizer), "onsapend should be called on the internal Tokenizer");
+		assert.ok(oSapEndSpy.called, "onsaphome of the Tokenizer should be called");
+		assert.ok(oSapEndSpy.calledOn(this.oTokenizer), "onsapend should be called on the internal Tokenizer");
 	});
 
 	QUnit.test("onsapdown should update input's value with first item's text", function (assert) {
@@ -5045,7 +5045,7 @@
 			suppressInvalidate: true,
 			listItemUpdated: true
 		};
-		
+
 		oMultiComboBox.setSelection(oFakeParams);
 		sap.ui.getCore().applyChanges();
 

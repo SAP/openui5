@@ -208,7 +208,7 @@
 				var oModel = oP13nFilterPanel.getModel();
 				var oData = oModel.getData();
 				var oFilterItemData = params.filterItemData;
-				ok(oFilterItemData instanceof sap.m.P13nFilterItem, "oFilterItemData should be of type P13nFilterItem");
+				assert.ok(oFilterItemData instanceof sap.m.P13nFilterItem, "oFilterItemData should be of type P13nFilterItem");
 				assert.strictEqual(oFilterItemData.getValue1(), "foo", "new Value1 value should be 'foo'");
 			});
 
@@ -262,9 +262,9 @@
 			assert.strictEqual(oP13nFilterPanel.getFilterItems().length, nItems, "length of getFilterItems should be '" + nItems + "'");
 
 			// check that all event handlers are called
-			ok(removeSpy.called, "removeFilterItem was called");
-			ok(updateSpy.called, "updateFilterItem was called");
-			ok(addSpy.called, "addFilterItem was called");
+			assert.ok(removeSpy.called, "removeFilterItem was called");
+			assert.ok(updateSpy.called, "updateFilterItem was called");
+			assert.ok(addSpy.called, "addFilterItem was called");
 
 			// cleanup
 			oP13nFilterPanel.destroy();

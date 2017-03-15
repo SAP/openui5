@@ -112,8 +112,8 @@
 		QUnit.module("Rendering");
 
 		QUnit.test("Content", function(assert) {
-			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("sc-canvas"), jQuery.sap.domById("_ctnt")), "Content rendered correctly");
-			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("sc-pane"), jQuery.sap.domById("_sec_ctnt")), "Secondary Content rendered correctly");
+			assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("sc-canvas"), jQuery.sap.domById("_ctnt")), "Content rendered correctly");
+			assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("sc-pane"), jQuery.sap.domById("_sec_ctnt")), "Secondary Content rendered correctly");
 		});
 
 		QUnit.test("Secondary Content Width", function(assert) {
@@ -134,14 +134,14 @@
 				return jQuery.sap.byId("sc-panecntnt").is(":visible");
 			}
 
-			ok(!checkVisibility(), "Secondary Content initially hidden");
+			assert.ok(!checkVisibility(), "Secondary Content initially hidden");
 			oSC.setShowSecondaryContent(true);
 
 			setTimeout(function(){
-				ok(checkVisibility(), "Secondary Content visible");
+				assert.ok(checkVisibility(), "Secondary Content visible");
 				oSC.setShowSecondaryContent(false);
 				setTimeout(function(){
-					ok(!checkVisibility(), "Secondary Content hidden again");
+					assert.ok(!checkVisibility(), "Secondary Content hidden again");
 					done();
 				}, 600);
 			}, 600);

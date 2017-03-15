@@ -348,7 +348,7 @@
         sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, jQuery.sap.KeyCodes.ARROW_LEFT);
 
         equals(oSpecialToken.getSelected(), true, "Token5 is selected");
-        ok(oSpecialToken.$().offset().left >= jQuery(oTokenizerDomRef).offset().left, "token 5 left side is visible.");
+        assert.ok(oSpecialToken.$().offset().left >= jQuery(oTokenizerDomRef).offset().left, "token 5 left side is visible.");
 
         oMultiInput.destroy();
     });
@@ -382,7 +382,7 @@
 
 		//assert
 		equals(aFirstToken.$('icon').css('display'), 'inline-block', 'First token icon is visible');
-		ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
+		assert.ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
 
 		//act
 		tokenizer1.setEditable(false);
@@ -390,7 +390,7 @@
 
 		//assert
 		equals(aFirstToken.$('icon').css('display'), 'none', 'First token icon is invisible');
-		ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
+		assert.ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
 	});
 
 	QUnit.test("copy to clipboard", function(assert) {
@@ -399,7 +399,7 @@
 			var sParam = jQuery.sap.getUriParameters().get("testIE");
 			sParam = sParam ? sParam.trim().toLowerCase() : null;
 			if (sParam != "x" && sParam != "true") {
-				ok(true, "Test on IE skipped");
+				assert.ok(true, "Test on IE skipped");
 				return;
 			}
 		}
@@ -411,10 +411,10 @@
 		sap.ui.getCore().applyChanges();
 
 		if (!sap.ui.Device.system.desktop && !sap.ui.Device.system.combi) {
-			ok(!tokenizer1._bCopyToClipboardSupport, "Copy to Clipboard support only on Desktop so far");
+			assert.ok(!tokenizer1._bCopyToClipboardSupport, "Copy to Clipboard support only on Desktop so far");
 			return;
 		} else {
-			ok(tokenizer1._bCopyToClipboardSupport, "Copy to Clipboard support only on Desktop so far");
+			assert.ok(tokenizer1._bCopyToClipboardSupport, "Copy to Clipboard support only on Desktop so far");
 		}
 
 		function testCopiedText(sText) {
@@ -428,11 +428,11 @@
 			try {
 				var oRange = window.getSelection().getRangeAt(0);
 				var oClipRef = tokenizer1.getDomRef("clip");
-				ok(oRange.startContainer === oClipRef || oRange.startContainer.parentNode === oClipRef, "Dummy Clip Element is start of selection");
-				ok(oRange.endContainer === oClipRef || oRange.startContainer.parentNode === oClipRef, "Dummy Clip Element is start of selection");
+				assert.ok(oRange.startContainer === oClipRef || oRange.startContainer.parentNode === oClipRef, "Dummy Clip Element is start of selection");
+				assert.ok(oRange.endContainer === oClipRef || oRange.startContainer.parentNode === oClipRef, "Dummy Clip Element is start of selection");
 			} catch (e) {
 				jQuery.sap.log.warning(e);
-				ok(false, "Problems with selection");
+				assert.ok(false, "Problems with selection");
 			}
 		}
 

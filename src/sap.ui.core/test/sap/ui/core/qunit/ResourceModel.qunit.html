@@ -56,8 +56,8 @@
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{TEST_TEXT}"});
 		oLabel.placeAt("target1");
 
-		ok(oModel, "model must exist after creation");
-		ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
+		assert.ok(oModel, "model must exist after creation");
+		assert.ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
 		oLabel.destroy();
 	});
 
@@ -69,7 +69,7 @@
 
 	//setProperty must not exist!
 	QUnit.test("set Property must have no effect", function(assert){
-		ok(!oModel.setProperty,"set Property method should not be defined");
+		assert.ok(!oModel.setProperty,"set Property method should not be defined");
 	});
 
 	//getProperty()/binding
@@ -99,8 +99,8 @@
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{i18n>TEST_TEXT}"});
 		oLabel.placeAt("target1");
 
-		ok(oModel, "model must exist after creation");
-		ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
+		assert.ok(oModel, "model must exist after creation");
+		assert.ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
 		oLabel.destroy();
 	});
 
@@ -112,7 +112,7 @@
 
 	//setProperty must not exist!
 	QUnit.test("set Property must have no effect", function(assert){
-		ok(!oModel.setProperty,"set Property method should not be defined");
+		assert.ok(!oModel.setProperty,"set Property method should not be defined");
 	});
 
 	//getProperty()/binding
@@ -141,12 +141,12 @@
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{i18n>TEST_TEXT}"});
 		oLabel.placeAt("target1");
 
-		ok(oModel, "model must exist after creation");
-		ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
+		assert.ok(oModel, "model must exist after creation");
+		assert.ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
 
-		ok(oModel.mSupportedBindingModes.OneWay, "OneWay is an allowed binding mode");
-		ok(!oModel.mSupportedBindingModes.TwoWay, "TwoWay is a not an allowed binding mode");
-		ok(!oModel.bAsync && oModel.mSupportedBindingModes.OneTime, "OneTime is an allowed binding mode with synchronous models");
+		assert.ok(oModel.mSupportedBindingModes.OneWay, "OneWay is an allowed binding mode");
+		assert.ok(!oModel.mSupportedBindingModes.TwoWay, "TwoWay is a not an allowed binding mode");
+		assert.ok(!oModel.bAsync && oModel.mSupportedBindingModes.OneTime, "OneTime is an allowed binding mode with synchronous models");
 
 		oLabel.destroy();
 	});
@@ -157,7 +157,7 @@
 	});
 	//setProperty must not exist!
 	QUnit.test("set Property must have no effect", function(assert){
-		ok(!oModel.setProperty,"set Property method should not be defined");
+		assert.ok(!oModel.setProperty,"set Property method should not be defined");
 	});
 	//getProperty()/binding
 	QUnit.test("test model getProperty", 2, function(assert){
@@ -173,7 +173,7 @@
 		oLabel2 = new sap.ui.testlib.TestButton("myLabel2",{text:{parts:[{path:"i18n>TEST_TEXT"},{path:"i18n>TEST_TEXT"}]}});
 		oLabel2.placeAt("target1");
 
-		ok(oLabel2, "Label with composite binding must be created");
+		assert.ok(oLabel2, "Label with composite binding must be created");
 		assert.equal(oLabel2.getText(), "A text en A text en", "Text msut be: 'A text en A text en'");
 		oLabel2.destroy();
 	});
@@ -247,25 +247,25 @@
 		QUnit.test("Test async mode", function(assert){
 			var done = assert.async();
 			assert.expect(13);
-			ok(oModel, "model must exist after creation");
-			ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
+			assert.ok(oModel, "model must exist after creation");
+			assert.ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
 
-			ok(oModel.bAsync, "model is in async mode");
+			assert.ok(oModel.bAsync, "model is in async mode");
 			assert.equal(oModel.sDefaultBindingMode, sap.ui.model.BindingMode.OneWay, "Default binding mode is OneWay");
-			ok(oModel.mSupportedBindingModes.OneWay, "OneWay is an allowed binding mode");
-			ok(!oModel.mSupportedBindingModes.TwoWay, "TwoWay is a not an allowed binding mode");
-			ok(oModel.bAsync && !oModel.mSupportedBindingModes.OneTime, "OneTime is a not allowed binding mode with asynchronous models");
+			assert.ok(oModel.mSupportedBindingModes.OneWay, "OneWay is an allowed binding mode");
+			assert.ok(!oModel.mSupportedBindingModes.TwoWay, "TwoWay is a not an allowed binding mode");
+			assert.ok(oModel.bAsync && !oModel.mSupportedBindingModes.OneTime, "OneTime is a not allowed binding mode with asynchronous models");
 
 			assert.equal(oLabel.getText(), "", "Initially no texts available");
 			assert.equal(oModel.getProperty("TEST_TEXT"), null, "Initially getProperty returns null");
 
 			var oPromise = oModel.getResourceBundle();
-			ok(oPromise instanceof window.Promise, "getResourceBundle returns Promise");
+			assert.ok(oPromise instanceof window.Promise, "getResourceBundle returns Promise");
 
 			oPromise.then(function(oBundle){
 				assert.equal(oLabel.getText(), "A text en", "Texts available after async load");
 				assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "getProperty returns text after async load");
-				ok(oBundle == oModel._oResourceBundle, "A text en", "Bundle available after async load");
+				assert.ok(oBundle == oModel._oResourceBundle, "A text en", "Bundle available after async load");
 				done();
 			});
 		});

@@ -88,7 +88,7 @@
 					// Assert
 					var $objectHeader = oObjectHeader.$();
 
-					ok($objectHeader.hasClass("sapMOHROuter"), "Object header is rendered in responsive mode.");
+					assert.ok($objectHeader.hasClass("sapMOHROuter"), "Object header is rendered in responsive mode.");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -106,7 +106,7 @@
 
 					// Assert
 					var $sTitle = oObjectHeader.$("txt");
-					ok(!$sTitle.attr("href"), "No title text div is rendered");
+					assert.ok(!$sTitle.attr("href"), "No title text div is rendered");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -124,7 +124,7 @@
 
 					// Assert
 					var iconEl = jQuery.sap.domById(sControlId + "-img");
-					ok(iconEl, "Icon is rendered.");
+					assert.ok(iconEl, "Icon is rendered.");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -140,7 +140,7 @@
 
 					// Assert
 					var iconEl = jQuery.sap.domById(sControlId + "-img");
-					ok(!iconEl, "Icon isn't rendered.");
+					assert.ok(!iconEl, "Icon isn't rendered.");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -161,7 +161,7 @@
 					// Assert
 					var $objectHeader = oObjectHeader.$("titlediv");
 
-					ok($objectHeader.hasClass("sapMOHRTitleIcon"), "Object has class \"sapMOHRTitleIcon\".");
+					assert.ok($objectHeader.hasClass("sapMOHRTitleIcon"), "Object has class \"sapMOHRTitleIcon\".");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -181,7 +181,7 @@
 					// Assert
 					var $objectHeader = oObjectHeader.$("titlediv");
 
-					ok(!$objectHeader.hasClass("sapMOHRTitleIcon"), "Object doesn't have class \"sapMOHRTitleIcon\".");
+					assert.ok(!$objectHeader.hasClass("sapMOHRTitleIcon"), "Object doesn't have class \"sapMOHRTitleIcon\".");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -201,7 +201,7 @@
 					// Assert
 					var $objectHeader = oObjectHeader.$("titlediv");
 
-					ok($objectHeader.hasClass("sapMOHRTitleDivFull"), "title occupies the whole available space");
+					assert.ok($objectHeader.hasClass("sapMOHRTitleDivFull"), "title occupies the whole available space");
 					assert.equal($objectHeader.width(), oObjectHeader.$("titlenumdiv").width(), "title div width is equal to titleNumber div");
 
 					// Clean up
@@ -220,7 +220,7 @@
 
 					// Assert
 					var titleSelectorEl = jQuery.sap.domById(sControlId + "-titleArrow");
-					ok(titleSelectorEl, "Title arrow is rendered.");
+					assert.ok(titleSelectorEl, "Title arrow is rendered.");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -236,7 +236,7 @@
 
 					// Assert
 					var titleSelectorEl = jQuery.sap.domById(sControlId + "-titleArrow");
-					ok(!titleSelectorEl, "Title arrow is not rendered.");
+					assert.ok(!titleSelectorEl, "Title arrow is not rendered.");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -256,7 +256,7 @@
 
 					// Assert
 					var introEl = jQuery.sap.domById(sControlId + "-intro");
-					ok(introEl, "Intro is rendered");
+					assert.ok(introEl, "Intro is rendered");
 					assert.equal(introEl.textContent, sIntro, "Intro exist and it is with the right value.");
 
 					// Clean up
@@ -274,7 +274,7 @@
 
 					// Assert
 					var introEl = jQuery.sap.domById(sControlId + "-intro");
-					ok(!introEl, "Intro isn't rendered");
+					assert.ok(!introEl, "Intro isn't rendered");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -294,7 +294,7 @@
 
 					// Assert
 					var $sTitle = oObjectHeader.$("txt");
-					ok($sTitle.attr("href"), "Title has attribute href and is a link.");
+					assert.ok($sTitle.attr("href"), "Title has attribute href and is a link.");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -332,7 +332,7 @@
 
 					// Assert
 					var $objectHeader = oObjectHeader.$("title");
-					ok(!$objectHeader.hasClass("sapMOHRTitleActive"), "Title div doesn't have the active class \"sapMOHRTitleActive\".");
+					assert.ok(!$objectHeader.hasClass("sapMOHRTitleActive"), "Title div doesn't have the active class \"sapMOHRTitleActive\".");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -351,7 +351,7 @@
 
 					// Assert
 					var $sIntro = oObjectHeader.$("intro");
-					ok($sIntro.hasClass("sapMLnk"), "Intro is sap.m.Link");
+					assert.ok($sIntro.hasClass("sapMLnk"), "Intro is sap.m.Link");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -429,7 +429,7 @@
 
 					// Assert
 					var attr = oObjectHeader.$().find(".sapMOHRAttr");
-					ok(attr.length, "One attribute is rendered.");
+					assert.ok(attr.length, "One attribute is rendered.");
 				});
 
 				QUnit.test("Attribute shouldn't be rendered", function (assert){
@@ -442,7 +442,7 @@
 
 					// Assert
 					var attr = oObjectHeader.$().find(".sapMOHRAttr");
-					ok(!attr.length, "Zero attributes are rendered.");
+					assert.ok(!attr.length, "Zero attributes are rendered.");
 				});
 
 				QUnit.test("Attribute should be rendered after insertAttribute", function (assert){
@@ -461,7 +461,7 @@
 
 					// Assert
 					var attr = oObjectHeader.$().find(".sapMOHRAttr");
-					ok(attr.length, "One attribute is rendered.");
+					assert.ok(attr.length, "One attribute is rendered.");
 				});
 
 				QUnit.test("Attribute should be removed: removeAttribute", function (assert){
@@ -480,14 +480,14 @@
 
 					// Assert
 					var attr = oObjectHeader.$().find(".sapMOHRAttr");
-					ok((attr.length==1), "One attribute is rendered.");
+					assert.ok((attr.length==1), "One attribute is rendered.");
 
 					oObjectHeader.removeAttribute(oAttr);
 					oCore.applyChanges();
 
 					// Assert
 					attr = oObjectHeader.$().find(".sapMOHRAttr");
-					ok(!attr.length, "The attribute is removed.");
+					assert.ok(!attr.length, "The attribute is removed.");
 				});
 
 				QUnit.test("Attributes should be removed: removeAllAttributes", function (assert){
@@ -501,14 +501,14 @@
 
 					// Assert
 					var attr = oObjectHeader.$().find(".sapMOHRAttr");
-					ok((attr.length==2), "Two attributes are rendered.");
+					assert.ok((attr.length==2), "Two attributes are rendered.");
 
 					oObjectHeader.removeAllAttributes();
 					oCore.applyChanges();
 
 					// Assert
 					attr = oObjectHeader.$().find(".sapMOHRAttr");
-					ok(!attr.length, "All attributes are removed.");
+					assert.ok(!attr.length, "All attributes are removed.");
 				});
 
 				QUnit.test("removeAllAttributes when no attributes at all", function (assert){
@@ -524,7 +524,7 @@
 
 					// Assert
 					var attr = oObjectHeader.$().find(".sapMOHRAttr");
-					ok(!attr.length, "No error is raised when executing removeAllAttributes");
+					assert.ok(!attr.length, "No error is raised when executing removeAllAttributes");
 				});
 
 				QUnit.test("Attributes should be destroyed: destroyAttributes", function (assert){
@@ -538,14 +538,14 @@
 
 					// Assert
 					var attr = oObjectHeader.$().find(".sapMOHRAttr");
-					ok((attr.length==2), "Two attributes are rendered.");
+					assert.ok((attr.length==2), "Two attributes are rendered.");
 
 					oObjectHeader.destroyAttributes();
 					oCore.applyChanges();
 
 					// Assert
 					attr = oObjectHeader.$().find(".sapMOHRAttr");
-					ok(!attr.length, "All attributes are destroyed.");
+					assert.ok(!attr.length, "All attributes are destroyed.");
 				});
 
 				QUnit.test("Status should be rendered", function (assert){
@@ -566,7 +566,7 @@
 
 					// Assert
 					var status = oObjectHeader.$().find(".sapMOHRStatus");
-					ok(status.length, "Status is rendered.");
+					assert.ok(status.length, "Status is rendered.");
 				});
 
 				QUnit.test("Status shouldn't be rendered", function (assert){
@@ -579,7 +579,7 @@
 
 					// Assert
 					var status = oObjectHeader.$().find(".sapMOHRStatus");
-					ok(!status.length, "Zero statuses are rendered.");
+					assert.ok(!status.length, "Zero statuses are rendered.");
 				});
 
 				QUnit.test("Status should be rendered after insertStatus", function (assert){
@@ -598,7 +598,7 @@
 
 					// Assert
 					var status = oObjectHeader.$().find(".sapMOHRStatus");
-					ok(status.length, "Status is rendered.");
+					assert.ok(status.length, "Status is rendered.");
 				});
 
 				QUnit.test("Status should be removed: removeStatus", function (assert){
@@ -617,14 +617,14 @@
 
 					// Assert
 					var status = oObjectHeader.$().find(".sapMOHRStatus");
-					ok((status.length===1), "One status is rendered.");
+					assert.ok((status.length===1), "One status is rendered.");
 
 					oObjectHeader.removeStatus(oStatus);
 					oCore.applyChanges();
 
 					// Assert
 					status = oObjectHeader.$().find(".sapMOHRStatus");
-					ok(!status.length, "The status is removed.");
+					assert.ok(!status.length, "The status is removed.");
 				});
 
 				QUnit.test("Statuses should be removed: removeAllStatuses", function (assert){
@@ -638,14 +638,14 @@
 
 					// Assert
 					var status = oObjectHeader.$().find(".sapMOHRStatus");
-					ok(status.length===2, "Two statuses are rendered.");
+					assert.ok(status.length===2, "Two statuses are rendered.");
 
 					oObjectHeader.removeAllStatuses();
 					oCore.applyChanges();
 
 					// Assert
 					status = oObjectHeader.$().find(".sapMOHRStatus");
-					ok(!status.length, "All statuses are removed.");
+					assert.ok(!status.length, "All statuses are removed.");
 				});
 
 				QUnit.test("removeAllStatuses when no statuses at all", function (assert){
@@ -661,7 +661,7 @@
 
 					// Assert
 					var status = oObjectHeader.$().find(".sapMOHRStatus");
-					ok(!status.length, "No error is raised when executing removeAllStatuses");
+					assert.ok(!status.length, "No error is raised when executing removeAllStatuses");
 				});
 
 				QUnit.test("Statuses should be destroyed: destroyStatuses", function (assert){
@@ -675,14 +675,14 @@
 
 					// Assert
 					var status = oObjectHeader.$().find(".sapMOHRStatus");
-					ok(status.length===2, "Two statuses are rendered.");
+					assert.ok(status.length===2, "Two statuses are rendered.");
 
 					oObjectHeader.destroyStatuses();
 					oCore.applyChanges();
 
 					// Assert
 					status = oObjectHeader.$().find(".sapMOHRStatus");
-					ok(!status.length, "All statuses are destroyed.");
+					assert.ok(!status.length, "All statuses are destroyed.");
 				});
 
 			QUnit.module("Desktop master detail rendering", {
@@ -1033,7 +1033,7 @@
 					oObjectHeader.placeAt("qunit-fixture");
 					oCore.applyChanges();
 
-					ok(oObjectHeader.$().attr("aria-labelledby"), "OH has attribute aria-labelledby");
+					assert.ok(oObjectHeader.$().attr("aria-labelledby"), "OH has attribute aria-labelledby");
 				});
 
 				QUnit.test("OH has attribute role=region", function(assert){
@@ -1046,7 +1046,7 @@
 
 					var $objectHeader = oObjectHeader.$();
 
-					ok($objectHeader.attr("role"), "OH has attribute role");
+					assert.ok($objectHeader.attr("role"), "OH has attribute role");
 					assert.equal($objectHeader.attr("role"), "region", "role is region");
 				});
 
@@ -1063,7 +1063,7 @@
 
 					// Assert
 					var $sTitle = oObjectHeader.$("txt");
-					ok($sTitle.attr("aria-haspopup"), "ActiveTitle has attribute aria-haspopup");
+					assert.ok($sTitle.attr("aria-haspopup"), "ActiveTitle has attribute aria-haspopup");
 					assert.equal($sTitle.attr("role"), "link", "ActiveTitle has role=link");
 				});
 
@@ -1079,7 +1079,7 @@
 					oCore.applyChanges();
 
 					// Assert
-					ok(jQuery(".sapMOHRIcon.sapMPointer").attr("aria-haspopup"), "ActiveIcon has attribute aria-haspopup");
+					assert.ok(jQuery(".sapMOHRIcon.sapMPointer").attr("aria-haspopup"), "ActiveIcon has attribute aria-haspopup");
 					assert.equal(jQuery(".sapMOHRIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
 				});
 
@@ -1095,7 +1095,7 @@
 					oCore.applyChanges();
 
 					var $sImg = oObjectHeader.$("img");
-					ok($sImg.attr("aria-label"), "image has attribute aria-label");
+					assert.ok($sImg.attr("aria-label"), "image has attribute aria-label");
 				});
 
 				QUnit.test("Title has level H1", function(assert){
@@ -1110,7 +1110,7 @@
 
 					// Assert
 					var $sTitle = oObjectHeader.$("title");
-					ok($sTitle.find( "h1" ), "Title has the default titleLevel H1");
+					assert.ok($sTitle.find( "h1" ), "Title has the default titleLevel H1");
 				});
 
 				QUnit.test("Title has level H3", function(assert){
@@ -1126,7 +1126,7 @@
 
 					// Assert
 					var $sTitle = oObjectHeader.$("title");
-					ok($sTitle.find( "h3" ), "Title has titleLevel H13");
+					assert.ok($sTitle.find( "h3" ), "Title has titleLevel H13");
 				});
 
 				QUnit.test("Title level is set correctly", function(assert){
@@ -1144,7 +1144,7 @@
 
 					// Assert
 					var $sTitle = oObjectHeader.$("title");
-					ok($sTitle.find( "h4" ), "Title has titleLevel H4");
+					assert.ok($sTitle.find( "h4" ), "Title has titleLevel H4");
 				});
 
 				QUnit.test("When set to Auto title has level H1", function(assert){
@@ -1160,7 +1160,7 @@
 
 					// Assert
 					var $sTitle = oObjectHeader.$("title");
-					ok($sTitle.find( "h1" ), "Title has titleLevel H1");
+					assert.ok($sTitle.find( "h1" ), "Title has titleLevel H1");
 				});
 
 				QUnit.module("Rendering Markers aggregation");
@@ -1180,8 +1180,8 @@
 					oObjectHeader.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 
-					ok(jQuery.sap.domById("draft"), "marker draft should be rendered.");
-					ok(jQuery.sap.domById("favorite"), "marker favorite should be rendered.");
+					assert.ok(jQuery.sap.domById("draft"), "marker draft should be rendered.");
+					assert.ok(jQuery.sap.domById("favorite"), "marker favorite should be rendered.");
 
 					oObjectHeader.destroy();
 				});
@@ -1200,12 +1200,12 @@
 					sap.ui.getCore().applyChanges();
 
 					var $allRows = jQuery("#markersOH .sapMObjStatusMarker");
-					ok($allRows.length === 0, "There are no markers");
+					assert.ok($allRows.length === 0, "There are no markers");
 
 					oObjectHeader.insertMarker(marker, 0);
 					sap.ui.getCore().applyChanges();
 
-					ok(jQuery.sap.domById("draft"), "marker draft should be rendered.");
+					assert.ok(jQuery.sap.domById("draft"), "marker draft should be rendered.");
 
 					oObjectHeader.destroy();
 				});
@@ -1225,13 +1225,13 @@
 					oObjectHeader.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 
-					ok(jQuery.sap.domById("flag"), "marker flag should be rendered.");
+					assert.ok(jQuery.sap.domById("flag"), "marker flag should be rendered.");
 
 					oObjectHeader.removeAllMarkers();
 					sap.ui.getCore().applyChanges();
 
 					var $allRows = jQuery("#markersOH .sapMObjStatusMarker");
-					ok($allRows.length === 0, "There are no markers");
+					assert.ok($allRows.length === 0, "There are no markers");
 
 					oObjectHeader.destroy();
 				});

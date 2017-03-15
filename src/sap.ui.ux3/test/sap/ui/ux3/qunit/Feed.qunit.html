@@ -95,27 +95,27 @@
 
 		QUnit.test("Output of elements", function(assert) {
 			// feeder
-			ok(jQuery.sap.byId("Feed1").children(".sapUiFeeder").get(0), "Feeder rendered");
+			assert.ok(jQuery.sap.byId("Feed1").children(".sapUiFeeder").get(0), "Feeder rendered");
 			assert.equal(sap.ui.getCore().getControl("Feed1-Feeder").getThumbnailSrc(), "../images/feeder/w_01.png", "ThumbnailSrc of feeder");
 
 			// no menu button if no items
-			ok(!jQuery.sap.byId("Feed1-toolsButton").get(0), "No Menu button if no items");
+			assert.ok(!jQuery.sap.byId("Feed1-toolsButton").get(0), "No Menu button if no items");
 
 			// live button
-			ok(jQuery.sap.byId("Feed1-liveButton").get(0), "Live button rendered");
+			assert.ok(jQuery.sap.byId("Feed1-liveButton").get(0), "Live button rendered");
 
 			// filter
-			ok(jQuery.sap.byId("Feed1-filter").get(0), "filter rendered");
+			assert.ok(jQuery.sap.byId("Feed1-filter").get(0), "filter rendered");
 			assert.equal(sap.ui.getCore().getControl("Feed1-filter").getItems().length, 2, "Number of filter items");
 			assert.equal(sap.ui.getCore().getControl("Feed1-filter").getItems()[0].getId(), "FilterItem1", "Id of first filter item");
 
 			//search field
-			ok(jQuery.sap.byId("Feed1-search").get(0), "searchField rendered");
+			assert.ok(jQuery.sap.byId("Feed1-search").get(0), "searchField rendered");
 
 			// chunks
-			ok(jQuery.sap.byId("Feed1").children("section").get(0), "chunk section rendered");
-			ok(jQuery.sap.byId("Chunk1").get(0), "First Chunk rendered rendered");
-			ok(jQuery.sap.byId("Chunk2").get(0), "Second Chunk rendered rendered");
+			assert.ok(jQuery.sap.byId("Feed1").children("section").get(0), "chunk section rendered");
+			assert.ok(jQuery.sap.byId("Chunk1").get(0), "First Chunk rendered rendered");
+			assert.ok(jQuery.sap.byId("Chunk2").get(0), "Second Chunk rendered rendered");
 			assert.equal(jQuery.sap.byId("Feed1").children("section").children("article").get(0).id, "Chunk1", "first chunk rendered at first");
 
 		});
@@ -126,7 +126,7 @@
 			oFeed.addToolsMenuItem(new sap.ui.commons.MenuItem('MenuItem2',{ text: 'Item2' }));
 
 			var delayedCall = function() {
-				ok(jQuery.sap.byId("Feed1-toolsButton").get(0), "Menu button rendered");
+				assert.ok(jQuery.sap.byId("Feed1-toolsButton").get(0), "Menu button rendered");
 				assert.equal(sap.ui.getCore().getControl("Feed1-toolsButton").getMenu().getItems().length, 2, "Number of menu items");
 				done();
 			};

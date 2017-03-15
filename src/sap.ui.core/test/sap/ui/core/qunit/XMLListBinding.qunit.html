@@ -87,7 +87,7 @@
 	};
 
 	function callBackOnChange(){
-		ok(true,"ChangeEvent fired");
+		assert.ok(true,"ChangeEvent fired");
 	};
 
 	QUnit.test("ListBinding getContexts", function(assert) {
@@ -155,7 +155,7 @@
 		oBinding.initialize();
 		assert.equal(oBinding.getLength(), 7, "ListBinding returns correct length");
 		oBinding.attachChange(function() {
-			ok(true, "ListBinding fires change event when changed");
+			assert.ok(true, "ListBinding fires change event when changed");
 		});
 		var oDoc = oModel.getData();
 		oDoc.firstChild.childNodes[1].appendChild(oDoc.createElement("member"));
@@ -170,7 +170,7 @@
 		var aContexts = oBinding.getContexts(0,5);
 		assert.equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
 		oBinding.attachChange(function() {
-			ok(false, "ListBinding fires no change event, as changed data is outside visible range");
+			assert.ok(false, "ListBinding fires no change event, as changed data is outside visible range");
 		});
 		var oDoc = oModel.getData();
 		oDoc.firstChild.childNodes[1].childNodes[6].setAttribute("firstName", "Jonas");
@@ -183,7 +183,7 @@
 		var aContexts = oBinding.getContexts(0,5);
 		assert.equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
 		oBinding.attachChange(function() {
-			ok(true, "ListBinding fires change event, as length has changed");
+			assert.ok(true, "ListBinding fires change event, as length has changed");
 		});
 		var oDoc = oModel.getData();
 		oDoc.firstChild.childNodes[1].appendChild(oDoc.createElement("member"));
@@ -194,10 +194,10 @@
 	QUnit.test("ListBinding getContexts with wrong path", function(assert) {
 		setup();
 		createListBinding("xyz");
-		ok(bindings);
+		assert.ok(bindings);
 		assert.equal(bindings.length, 1, "amount of ListBindings");
 		var listBinding = bindings[0];
-		ok(listBinding);
+		assert.ok(listBinding);
 		assert.equal(listBinding.getPath(), "xyz", "ListBinding path");
 		assert.equal(listBinding.getModel(), oModel, "ListBinding model");
 		assert.equal(listBinding.getContexts().length, 0, "ListBinding get Contexts with wrong path");
@@ -216,7 +216,7 @@
 			listBinding.setContext(oContext);
 			listBinding.checkUpdate();
 			assert.equal(listBinding.getPath(), "teamMembers/member", "ListBinding path");
-			ok(listBinding.getContext() == oContext, "ListBinding context");
+			assert.ok(listBinding.getContext() == oContext, "ListBinding context");
 			assert.equal(listBinding.getContexts().length, 0, "ListBinding contexts");
 		});
 
@@ -236,7 +236,7 @@
 			listBinding.detachChange(fnFunc);
 		}
 		assert.equal(listBinding.getPath(), "/teamMembers/member", "ListBinding path");
-		ok(listBinding.getModel() === oModel, "ListBinding model");
+		assert.ok(listBinding.getModel() === oModel, "ListBinding model");
 		// does not work...recursion because bining is set on model
 		//assert.equal(listBinding.getModel(), oModel, "ListBinding model");
 		var newData = "<blubb>xx</blubb>";
@@ -579,7 +579,7 @@
 
 		listBinding.detachChange(myFnCallback);
 
-		ok(attach, "change event fired with sorter");
+		assert.ok(attach, "change event fired with sorter");
 	});
 
 	QUnit.test("ListBinding filter", function(assert) {
@@ -800,7 +800,7 @@
 
 		listBinding.detachChange(myFnCallback);
 
-		ok(attach, "change event fired with filter");
+		assert.ok(attach, "change event fired with filter");
 	});
 
 	QUnit.test("ListBinding nested array structure and createbindingcontexts", function(assert) {
@@ -808,7 +808,7 @@
 		createListBinding("/root/nodes0");
 		var binding = bindings[0];
 		var contexts = binding.getContexts();
-		ok(jQuery.isArray(contexts));
+		assert.ok(jQuery.isArray(contexts));
 		assert.equal(contexts.length, 2);
 		assert.equal(oModel.getProperty("@name",contexts[0]), "item1");
 		var context;
@@ -817,7 +817,7 @@
 		});
 		assert.equal(oModel.getProperty("", context), "subsubsubitem2");
 		assert.equal(oModel.getProperty("/root/nodes0/0/nodes1/0/nodes2/0/nodes3/1"), "subsubsubitem2");
-		ok(oModel.getProperty("/root/nodes0/0/nodes1/0/nodes2/1/@collapsed"), true);
+		assert.ok(oModel.getProperty("/root/nodes0/0/nodes1/0/nodes2/1/@collapsed"), true);
 
 		assert.equal(oModel.getProperty("@name", contexts[1]), "item2");
 
@@ -836,7 +836,7 @@
 
 		var binding = bindings[1];
 		var contexts = binding.getContexts();
-		ok(jQuery.isArray(contexts));
+		assert.ok(jQuery.isArray(contexts));
 		assert.equal(contexts.length, 2);
 		assert.equal(oModel.getProperty("@name", contexts[0]), "subsubitem1");
 		assert.equal(oModel.getProperty("@name", contexts[1]), "subsubitem2");
@@ -849,11 +849,11 @@
 		// check if nodes from different listbindings are the same/have the same reference
 		assert.equal(oModel.getProperty("nodes1/0/nodes2/0/@name",bindings[0].getContexts()[0]), "subsubitem1");
 		assert.equal(oModel.getProperty("@name",bindings[1].getContexts()[0]), "subsubitem1");
-		ok(jQuery.sap.isEqualNode(bindings[0].oList[0].childNodes[0].childNodes[0], bindings[1].oList[0]));
+		assert.ok(jQuery.sap.isEqualNode(bindings[0].oList[0].childNodes[0].childNodes[0], bindings[1].oList[0]));
 
 		assert.equal(oModel.getProperty("nodes1/0",bindings[0].getContexts()[1]), "subitem3");
 		assert.equal(oModel.getProperty("",bindings[2].getContexts()[0]), "subitem3");
-		ok(jQuery.sap.isEqualNode(bindings[0].oList[1].childNodes[0], bindings[2].oList[0].childNodes[0]));
+		assert.ok(jQuery.sap.isEqualNode(bindings[0].oList[1].childNodes[0], bindings[2].oList[0].childNodes[0]));
 	});
 
 	QUnit.test("ListBinding getDistinctValues", function(assert) {
@@ -863,13 +863,13 @@
 			distinctValues;
 
 		distinctValues = binding.getDistinctValues("@firstName");
-		ok(jQuery.isArray(distinctValues), "Result is an array");
+		assert.ok(jQuery.isArray(distinctValues), "Result is an array");
 		assert.equal(distinctValues.length, 7, "Number of distinct values");
 		assert.equal(distinctValues[0], "Andreas", "Distinct value content");
 		assert.equal(distinctValues[6], "Frank", "Distinct value content");
 
 		distinctValues = binding.getDistinctValues("@gender");
-		ok(jQuery.isArray(distinctValues), "Result is an array");
+		assert.ok(jQuery.isArray(distinctValues), "Result is an array");
 		assert.equal(distinctValues.length, 2, "Number of distinct values");
 		assert.equal(distinctValues[0], "male", "Distinct value content");
 		assert.equal(distinctValues[1], "female", "Distinct value content");

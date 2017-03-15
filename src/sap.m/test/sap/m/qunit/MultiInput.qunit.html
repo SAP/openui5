@@ -105,8 +105,8 @@
 	});
 
 	QUnit.test("check base class prerequisites", function(assert) {
-		ok(this.multiInput1._$input && this.multiInput1._$input.cursorPos, "Base class can return cursor position");
-		//ok(multiInput1._oSuggestionPopup && multiInput1._oSuggestionPopup.isOpen, "Base class can tell if suggestion popup is open");
+		assert.ok(this.multiInput1._$input && this.multiInput1._$input.cursorPos, "Base class can return cursor position");
+		//assert.ok(multiInput1._oSuggestionPopup && multiInput1._oSuggestionPopup.isOpen, "Base class can tell if suggestion popup is open");
 	});
 
 	QUnit.test("test setEditable", function(assert) {
@@ -325,7 +325,7 @@
 
 		//assert
 		equals(aFirstToken.$('icon').css('display'), 'inline-block', 'First token icon is visible');
-		ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
+		assert.ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
 
 		//act
 		this.multiInput1.setEditable(false);
@@ -333,7 +333,7 @@
 
 		//assert
 		equals(aFirstToken.$('icon').css('display'), 'none', 'First token icon is invisible');
-		ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
+		assert.ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
 	});
 
 	QUnit.test("test text validation on focus leave", function(assert) {
@@ -471,7 +471,7 @@
 		this.multiInput1.addToken(token1);
 
 		this.multiInput1.onsapbackspace({preventDefault:function(){}, stopPropagation:function(){}, setMarked:function(){}});
-		ok(token1.getSelected(), "Token got selected");
+		assert.ok(token1.getSelected(), "Token got selected");
 
 		this.multiInput1.onsapbackspace({preventDefault:function(){}, stopPropagation:function(){}, setMarked:function(){}});
 		equals(this.multiInput1.getTokens().length, 0, "Token got deleted");
@@ -773,13 +773,13 @@
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		// assert
-		ok(!!this.multiInput1.getAccessibilityInfo, "MultiInput has a getAccessibilityInfo function");
+		assert.ok(!!this.multiInput1.getAccessibilityInfo, "MultiInput has a getAccessibilityInfo function");
 
 		// arrange
 		var oInfo = this.multiInput1.getAccessibilityInfo();
 
 		// assert
-		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, this.multiInput1.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInfo.type, oResourceBundle.getText("ACC_CTR_TYPE_MULTIINPUT"), "Type");
 		assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
@@ -851,7 +851,7 @@
 
 	QUnit.test("Placeholder opacity", function(assert) {
 		// assert
-		ok(!this.multiInput1.$().hasClass("sapMMultiInputNoPlaceholder"), "MultiInput placeholder shows placeholder");
+		assert.ok(!this.multiInput1.$().hasClass("sapMMultiInputNoPlaceholder"), "MultiInput placeholder shows placeholder");
 
 		// act
 		this.multiInput1.addToken(new sap.m.Token({text: "Token2"}));
@@ -859,7 +859,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		ok(this.multiInput1.$().hasClass("sapMMultiInputNoPlaceholder"), "MultiInput placeholder doesn't show placeholder");
+		assert.ok(this.multiInput1.$().hasClass("sapMMultiInputNoPlaceholder"), "MultiInput placeholder doesn't show placeholder");
 	});
 
 </script>

@@ -29,7 +29,7 @@
 			var itemId = oEvent.getParameter("itemId");
 			assert.equal(itemId, expectedItemId, "the item ID should be the one of the clicked item: " + expectedItemId);
 			var item = oEvent.getParameter("item");
-			ok(item, "item should be given as well");
+			assert.ok(item, "item should be given as well");
 			assert.equal(item.getId(), expectedItemId, "the item's ID should be the one of the clicked item: " + expectedItemId);
 		}
 
@@ -38,9 +38,9 @@
 
 
 		QUnit.test("Initial Check", function(assert) {
-			ok(oCtrl, "NavBar should exist after creating");
+			assert.ok(oCtrl, "NavBar should exist after creating");
 			var oDomRef = jQuery.sap.domById("n1");
-			ok(oDomRef, "NavBar root element should exist in the page");
+			assert.ok(oDomRef, "NavBar root element should exist in the page");
 		});
 
 
@@ -55,7 +55,7 @@
 			sap.ui.getCore().applyChanges();
 
 			var oDomRef = jQuery.sap.domById(item1.getId());
-			ok(oDomRef, "Item element should exist in the page");
+			assert.ok(oDomRef, "Item element should exist in the page");
 			assert.equal(jQuery(oDomRef).text(), "Item 1", "Item 1 text should be written to the page");
 
 			var $list = jQuery.sap.byId(oCtrl.getId() + "-list");
@@ -82,7 +82,7 @@
 		QUnit.test("Selection Arrow", function(assert) {
 			var done = assert.async();
 			var arrow = jQuery.sap.domById(oCtrl.getId() + "-arrow");
-			ok(arrow, "there should be one selection arrow");
+			assert.ok(arrow, "there should be one selection arrow");
 
 			setTimeout(function(){
 				var item = jQuery.sap.domById(item2.getId());
@@ -106,7 +106,7 @@
 
 			setTimeout(function(){
 				var arrowPos = arrow.offsetLeft + (arrow.offsetWidth/2);
-				ok(arrowPos > firstPos, "arrow should have moved to the right a bit in the middle of the animation (from " + firstPos + ", now " + arrowPos + ")");
+				assert.ok(arrowPos > firstPos, "arrow should have moved to the right a bit in the middle of the animation (from " + firstPos + ", now " + arrowPos + ")");
 
 				setTimeout(function() {
 					var newArrowPos = arrow.offsetLeft + (arrow.offsetWidth/2);
@@ -116,7 +116,7 @@
 					var right = left + 3*width/5;
 					left = left + 2*width/5;
 
-					ok(newArrowPos > arrowPos, "arrow should have moved further to the right after the animation (from " + arrowPos + ", now " + newArrowPos + ")");
+					assert.ok(newArrowPos > arrowPos, "arrow should have moved further to the right after the animation (from " + arrowPos + ", now " + newArrowPos + ")");
 					ok(newArrowPos > left && newArrowPos < right, "arrow position (" + newArrowPos
 							+ ") should be around the center of the newly selected item (between " + left + " and " + right + ")");
 					done();
@@ -156,7 +156,7 @@
 			sap.ui.getCore().applyChanges();
 
 			var oDomRef = jQuery.sap.domById(item1.getId());
-			ok(oDomRef, "Item element should exist in the page");
+			assert.ok(oDomRef, "Item element should exist in the page");
 			assert.equal(jQuery(oDomRef).text(), "Item 1", "Item 1 text should be written to the page");
 
 			var $list = jQuery.sap.byId(oCtrl.getId() + "-list");
@@ -234,7 +234,7 @@
 			setTimeout(function(){
 				assert.equal(isForwardVisible(), true, "forward arrow should be visible");
 				assert.equal(isBackVisible(), true, "back arrow should be visible");
-				ok(jQuery.sap.domById(oCtrl.getId() + "-list").scrollLeft != 0, "list should be scrolled now");
+				assert.ok(jQuery.sap.domById(oCtrl.getId() + "-list").scrollLeft != 0, "list should be scrolled now");
 
 				// scroll to end
 				qutils.triggerMouseEvent(target, "click");

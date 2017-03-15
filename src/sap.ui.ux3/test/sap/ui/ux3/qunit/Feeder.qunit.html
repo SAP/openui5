@@ -58,8 +58,8 @@
 
 		QUnit.test("Feeder styles", function(assert) {
 
-			ok(jQuery.sap.byId("Feeder1").height() > jQuery.sap.byId("Feeder2").height(), "Large feeder higher than medium feeder");
-			ok(jQuery.sap.byId("Feeder2").height() > jQuery.sap.byId("Feeder3").height(), "Medium feeder higher than comment feeder");
+			assert.ok(jQuery.sap.byId("Feeder1").height() > jQuery.sap.byId("Feeder2").height(), "Large feeder higher than medium feeder");
+			assert.ok(jQuery.sap.byId("Feeder2").height() > jQuery.sap.byId("Feeder3").height(), "Medium feeder higher than comment feeder");
 
 		});
 
@@ -70,7 +70,7 @@
 			// no given image - default image?
 
 			// placeholder text for empty feeder
-			ok(jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0), "Placeholder rendered");
+			assert.ok(jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0), "Placeholder rendered");
 
 			// placeholder text as set in the feeder attribute
 			assert.equal(jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0).innerHTML, sPlaceholderText, "Placeholder text rendered");
@@ -79,14 +79,14 @@
 			assert.equal(bPlaceholderXSSPossible, true, "Placeholder text escaped");
 
 			// disabled button for empty feeder
-			ok(jQuery.sap.byId("Feeder1-send").hasClass('sapUiBtnDsbl'), "Send button is disabled if no text entered");
+			assert.ok(jQuery.sap.byId("Feeder1-send").hasClass('sapUiBtnDsbl'), "Send button is disabled if no text entered");
 
 			// given Text must be rendered - no placeholder
 			assert.equal(jQuery.sap.byId("Feeder2-input").text(), sTextTest, "given text rendered");
-			ok(!jQuery.sap.byId("Feeder2-input").find(".sapUiFeederEmptyText").get(0), "no text placeholder rendered");
+			assert.ok(!jQuery.sap.byId("Feeder2-input").find(".sapUiFeederEmptyText").get(0), "no text placeholder rendered");
 
 			// if text is given Buttom must be enabled
-			ok(!jQuery.sap.byId("Feeder2-send").hasClass('sapUiBtnDsbl'), "Send button is enabled if text entered");
+			assert.ok(!jQuery.sap.byId("Feeder2-send").hasClass('sapUiBtnDsbl'), "Send button is enabled if text entered");
 
 		});
 
@@ -97,7 +97,7 @@
 			// click in empty text - placeholder must disapear
 			jQuery.sap.domById("Feeder1-input").focus();
 			var delayedCall = function() {
-				ok(!jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0), "After Focus in Input area no text placeholder rendered");
+				assert.ok(!jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0), "After Focus in Input area no text placeholder rendered");
 			done();
 			};
 			setTimeout(delayedCall, 0);
@@ -109,7 +109,7 @@
 			// click in empty text - placeholder must disapear
 			jQuery.sap.domById("Feeder3-input").focus();
 			var delayedCall = function() {
-				ok(jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0), "After focus out of Input area no text placeholder rendered");
+				assert.ok(jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0), "After focus out of Input area no text placeholder rendered");
 			done();
 			};
 			setTimeout(delayedCall, 0);
@@ -124,7 +124,7 @@
 				assert.equal(sSubmitId, "Feeder2","Click on Submit button fires submit event.");
 				assert.equal(sSubmitText, sTextTest,"Submit event returns submitted text.");
 				assert.equal(oFeeder2.getText(), "","Text of feeder must be cleared after submit");
-				ok(jQuery.sap.byId("Feeder2-input").find(".sapUiFeederEmptyText").get(0),"Text placeholder rendered after submit");
+				assert.ok(jQuery.sap.byId("Feeder2-input").find(".sapUiFeederEmptyText").get(0),"Text placeholder rendered after submit");
 				sSubmitId = "";
 				sSubmitText = "";
 				done();
@@ -142,7 +142,7 @@
 			jQuery.sap.domById("Feeder1-input").focus();
 			jQuery.sap.byId("Feeder1-input").text("A");
 			qutils.triggerKeyup("Feeder1-input", jQuery.sap.KeyCodes.A, true, false, false);
-			ok(!jQuery.sap.byId("Feeder1-send").attr('disabled'), "After text is entered button must be enabled");
+			assert.ok(!jQuery.sap.byId("Feeder1-send").attr('disabled'), "After text is entered button must be enabled");
 
 			// focus out - set text property
 			jQuery.sap.domById("Feeder2-input").focus();
@@ -154,7 +154,7 @@
 				jQuery.sap.byId("Feeder1-input").text("");
 				qutils.triggerKeyup("Feeder1-input", jQuery.sap.KeyCodes.BACKSPACE, false, false, false);
 				var delayedCall2 = function() {
-					ok(jQuery.sap.byId("Feeder1-send").hasClass('sapUiBtnDsbl'), "After text is deleted button must be disabled");
+					assert.ok(jQuery.sap.byId("Feeder1-send").hasClass('sapUiBtnDsbl'), "After text is deleted button must be disabled");
 					done();
 				};
 				setTimeout(delayedCall2, 0);

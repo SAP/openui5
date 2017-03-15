@@ -31,7 +31,7 @@
 		oRawImage.src = sSrc;
 
 		function handleEvent() {
-			ok(true); // just for counting
+			assert.ok(true); // just for counting
 		}
 
 		var i1 = new sap.ui.commons.Image("i1");
@@ -69,8 +69,8 @@
 			i1 = sap.ui.getCore().byId("i1");
 			i2 = sap.ui.getCore().byId("i2");
 
-			ok((i1 !== undefined) && (i1 != null), "i1 should not be null");
-			ok((i2 !== undefined) && (i2 != null), "i2 should not be null");
+			assert.ok((i1 !== undefined) && (i1 != null), "i1 should not be null");
+			assert.ok((i2 !== undefined) && (i2 != null), "i2 should not be null");
 		});
 
 		QUnit.test("Alt text and tooltip", function(assert) {
@@ -121,7 +121,7 @@
 		QUnit.test("Empty Source No Height", function(assert) {
 			// test the initial dimensions
 			var oImage = jQuery.sap.byId("imageNoSourceNoHeight");
-			ok(oImage.hasClass("sapUiImgNoSource"), "imageNoSourceNoHeight has the right class 'sapUiImgNoSource' set");
+			assert.ok(oImage.hasClass("sapUiImgNoSource"), "imageNoSourceNoHeight has the right class 'sapUiImgNoSource' set");
 			var oDomRef = jQuery.sap.domById("imageNoSourceNoHeight");
 			equals(oDomRef.offsetWidth, 0, "imageNoSourceNoHeight has the right width of 0px");
 			equals(oDomRef.offsetHeight, 0, "imageNoSourceNoHeight has the right height of 0px");
@@ -131,7 +131,7 @@
 		QUnit.test("Empty Source", function(assert) {
 			// test the initial dimensions
 			var oImage = jQuery.sap.byId("imageNoSource");
-			ok(oImage.hasClass("sapUiImgNoSource"), "imageNoSource has the right class 'sapUiImgNoSource' set");
+			assert.ok(oImage.hasClass("sapUiImgNoSource"), "imageNoSource has the right class 'sapUiImgNoSource' set");
 			var oDomRef = jQuery.sap.domById("imageNoSource");
 			equals(oDomRef.offsetWidth, 100, "imageNoSource has the right width of 100px");
 			equals(oDomRef.offsetHeight, 100, "imageNoSource has the right height of 100px");

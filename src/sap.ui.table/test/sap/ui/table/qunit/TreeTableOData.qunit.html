@@ -137,9 +137,9 @@
 				// test some defaults
 				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels should be 0");
 				assert.equal(oBinding.mParameters.rootLevel, 1, "RootLevel should be one");
-				ok(oBinding.mParameters.collapseRecursive, "Collapse recursive should be false");
-				ok(!this.oTable.getExpandFirstLevel(), "Expand first Level should be false");
-				ok(!this.oTable.getUseGroupMode(), "useGroupMode should be false");
+				assert.ok(oBinding.mParameters.collapseRecursive, "Collapse recursive should be false");
+				assert.ok(!this.oTable.getExpandFirstLevel(), "Expand first Level should be false");
+				assert.ok(!this.oTable.getUseGroupMode(), "useGroupMode should be false");
 
 				var aRows = this.oTable.getRows();
 				assert.equal(aRows.length, 10, "10 Rows present");
@@ -173,10 +173,10 @@
 			// test expand root
 			var fnHandler1 = function() {
 				oBinding = this.oTable.getBinding("rows");
-				ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
+				assert.ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
 
 				assert.equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1, "Test that only one node is rendered, State: collapsed");
-				ok(this.oTable.getCollapseRecursive(), "CollapseRecursive is true (default)");
+				assert.ok(this.oTable.getCollapseRecursive(), "CollapseRecursive is true (default)");
 				// expand first node, 2 change events, 1 for expand, 1 when data is loaded
 				attachEventHandler(this.oTable, 1, fnHandler2, this);
 				this.oTable.expand(0);
@@ -254,25 +254,25 @@
 				var iLevel2c = parseInt(this.oTable.getRows()[8].$().find(".sapUiTableTreeIcon").css("margin-left"), 10);
 				var iLevel1b = parseInt(this.oTable.getRows()[9].$().find(".sapUiTableTreeIcon").css("margin-left"), 10);
 
-				ok(iLevel0a < iLevel1a, "Margin-left: Level 0 smaller Level 1");
-				ok(iLevel1a < iLevel2a, "Margin-left: Level 1 smaller Level 2");
-				ok(iLevel2a === iLevel2b, "Margin-left: Level 2 equals Level 2");
-				ok(iLevel2c === iLevel2c, "Margin-left: Level 2 equals Level 2");
-				ok(iLevel1b < iLevel2c, "Margin-left: Level 1 smaller Level 2");
+				assert.ok(iLevel0a < iLevel1a, "Margin-left: Level 0 smaller Level 1");
+				assert.ok(iLevel1a < iLevel2a, "Margin-left: Level 1 smaller Level 2");
+				assert.ok(iLevel2a === iLevel2b, "Margin-left: Level 2 equals Level 2");
+				assert.ok(iLevel2c === iLevel2c, "Margin-left: Level 2 equals Level 2");
+				assert.ok(iLevel1b < iLevel2c, "Margin-left: Level 1 smaller Level 2");
 
 				// check isExpanded
-				ok(this.oTable.isExpanded(0), "Root expanded");
-				ok(this.oTable.isExpanded(1), "First child of Root expanded");
-				ok(!this.oTable.isExpanded(2), "1st grand child of Root NOT expanded");
-				ok(!this.oTable.isExpanded(3), "2nd grand child of Root NOT expanded");
-				ok(!this.oTable.isExpanded(4), "3rd grand child of Root NOT expanded");
-				ok(!this.oTable.isExpanded(5), "4th grand child of Root NOT expanded");
-				ok(!this.oTable.isExpanded(6), "5th grand child of Root NOT expanded");
-				ok(!this.oTable.isExpanded(7), "6th grand child of Root NOT expanded");
-				ok(!this.oTable.isExpanded(8), "7th grand child of Root NOT expanded");
-				ok(!this.oTable.isExpanded(9), "2nd child of Root NOT expanded");
+				assert.ok(this.oTable.isExpanded(0), "Root expanded");
+				assert.ok(this.oTable.isExpanded(1), "First child of Root expanded");
+				assert.ok(!this.oTable.isExpanded(2), "1st grand child of Root NOT expanded");
+				assert.ok(!this.oTable.isExpanded(3), "2nd grand child of Root NOT expanded");
+				assert.ok(!this.oTable.isExpanded(4), "3rd grand child of Root NOT expanded");
+				assert.ok(!this.oTable.isExpanded(5), "4th grand child of Root NOT expanded");
+				assert.ok(!this.oTable.isExpanded(6), "5th grand child of Root NOT expanded");
+				assert.ok(!this.oTable.isExpanded(7), "6th grand child of Root NOT expanded");
+				assert.ok(!this.oTable.isExpanded(8), "7th grand child of Root NOT expanded");
+				assert.ok(!this.oTable.isExpanded(9), "2nd child of Root NOT expanded");
 				// also check a node which is not in the visible area of the table
-				ok(!this.oTable.isExpanded(12), "5th child of Root NOT expanded");
+				assert.ok(!this.oTable.isExpanded(12), "5th child of Root NOT expanded");
 
 				this.oTable.setCollapseRecursive(true);
 				attachRowsUpdatedOnce(this.oTable, fnHandler9, this);
@@ -302,25 +302,25 @@
 				setTimeout(function() {
 					assert.equal($("#table0").find(".sapUiTableTreeIconNodeOpen").length, 3, "ExpandToLevel(2): Test that 3 nodes are expanded");
 					assert.equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 7, "ExpandToLevel(2): Test that 7 nodes are collapsed");
-					ok(this.oTable.isExpanded(0), "Root expanded");
-					ok(this.oTable.isExpanded(1), "First child of root expanded");
-					ok(!this.oTable.isExpanded(2), "1st grand child of Root NOT expanded");
+					assert.ok(this.oTable.isExpanded(0), "Root expanded");
+					assert.ok(this.oTable.isExpanded(1), "First child of root expanded");
+					assert.ok(!this.oTable.isExpanded(2), "1st grand child of Root NOT expanded");
 
-					ok(!this.oTable.isExpanded(8), "Node 000360 NOT expanded");
-					ok(this.oTable.isExpanded(9), "Node 000362 expanded");
-					ok(!this.oTable.isExpanded(10), "Node 000363 NOT expanded");
+					assert.ok(!this.oTable.isExpanded(8), "Node 000360 NOT expanded");
+					assert.ok(this.oTable.isExpanded(9), "Node 000362 expanded");
+					assert.ok(!this.oTable.isExpanded(10), "Node 000363 NOT expanded");
 
-					ok(!this.oTable.isExpanded(14), "Node 000680 NOT expanded");
-					ok(this.oTable.isExpanded(15), "Node 000682 expanded");
-					ok(!this.oTable.isExpanded(16), "Node 000683 NOT expanded");
+					assert.ok(!this.oTable.isExpanded(14), "Node 000680 NOT expanded");
+					assert.ok(this.oTable.isExpanded(15), "Node 000682 expanded");
+					assert.ok(!this.oTable.isExpanded(16), "Node 000683 NOT expanded");
 
-					ok(!this.oTable.isExpanded(14), "Node 000680 NOT expanded");
-					ok(this.oTable.isExpanded(15), "Node 000682 expanded");
-					ok(!this.oTable.isExpanded(16), "Node 000683 NOT expanded");
+					assert.ok(!this.oTable.isExpanded(14), "Node 000680 NOT expanded");
+					assert.ok(this.oTable.isExpanded(15), "Node 000682 expanded");
+					assert.ok(!this.oTable.isExpanded(16), "Node 000683 NOT expanded");
 
-					ok(!this.oTable.isExpanded(31), "Node 001114 NOT expanded");
-					ok(this.oTable.isExpanded(32), "Node 001131 expanded");
-					ok(!this.oTable.isExpanded(33), "Node 001132 NOT expanded");
+					assert.ok(!this.oTable.isExpanded(31), "Node 001114 NOT expanded");
+					assert.ok(this.oTable.isExpanded(32), "Node 001131 expanded");
+					assert.ok(!this.oTable.isExpanded(33), "Node 001132 NOT expanded");
 
 					attachRowsUpdatedOnce(this.oTable, fnHandler12, this);
 					// scroll the table
@@ -331,9 +331,9 @@
 			var fnHandler12 = function() {
 				assert.equal($("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1, "After Scrolling: Test that only one node is expanded");
 				assert.equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9, "After Scrolling: Test that 9 nodes are collapsed");
-				ok(!this.oTable.isExpanded(31), "Node 001114 NOT expanded");
-				ok(this.oTable.isExpanded(32), "Node 001131 expanded");
-				ok(!this.oTable.isExpanded(33), "Node 001132 NOT expanded");
+				assert.ok(!this.oTable.isExpanded(31), "Node 001114 NOT expanded");
+				assert.ok(this.oTable.isExpanded(32), "Node 001131 expanded");
+				assert.ok(!this.oTable.isExpanded(33), "Node 001132 NOT expanded");
 				done();
 			};
 
@@ -355,7 +355,7 @@
 				// test some defaults
 				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 1, "Number of expanded levels should be 1");
 				assert.equal(oBinding.mParameters.rootLevel, 1, "RootLevel should be one");
-				ok(this.oTable.getExpandFirstLevel(), "Expand first Level should be true");
+				assert.ok(this.oTable.getExpandFirstLevel(), "Expand first Level should be true");
 
 				var aRows = this.oTable.getRows();
 				assert.equal(aRows.length, 15, "15 Rows present");
@@ -371,9 +371,9 @@
 
 				assert.equal($("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1, "ExpandToLevel(2): Test that 3 nodes are expanded");
 				assert.equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9, "ExpandToLevel(2): Test that 7 nodes are collapsed");
-				ok(this.oTable.isExpanded(0), "Root expanded");
-				ok(!this.oTable.isExpanded(1), "First child of Root NOT expanded");
-				ok(!this.oTable.isExpanded(2), "Second child of Root NOT expanded");
+				assert.ok(this.oTable.isExpanded(0), "Root expanded");
+				assert.ok(!this.oTable.isExpanded(1), "First child of Root NOT expanded");
+				assert.ok(!this.oTable.isExpanded(2), "Second child of Root NOT expanded");
 
 				assert.equal(this.oTable.getContextByIndex(0).getProperty("HierarchyNode"), "000001", "Root Node is 000001");
 				assert.equal(this.oTable.getContextByIndex(1).getProperty("HierarchyNode"), "000002", "First child of Root Node is 000002");
@@ -399,7 +399,7 @@
 				oBinding = this.oTable.getBinding("rows");
 				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels should be 0");
 				assert.equal(oBinding.mParameters.rootLevel, 2, "RootLevel should be 2");
-				ok(!this.oTable.getExpandFirstLevel(), "Expand first Level should be false");
+				assert.ok(!this.oTable.getExpandFirstLevel(), "Expand first Level should be false");
 				var aRows = this.oTable.getRows();
 				assert.equal(aRows.length, 10, "10 Rows present");
 
@@ -467,11 +467,11 @@
 				assert.equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 5, "Only one row selected");
 				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 10, "Row and RowHeader should be selected");
 
-				ok(this.oTable.isIndexSelected(0), "Index 0 selected");
-				ok(!this.oTable.isIndexSelected(1), "Index 1 selected");
-				ok(this.oTable.isIndexSelected(5), "Index 5 selected");
-				ok(!this.oTable.isIndexSelected(6), "Index 6 NOT selected");
-				ok(!this.oTable.isIndexSelected(16), "Index 16 NOT selected");
+				assert.ok(this.oTable.isIndexSelected(0), "Index 0 selected");
+				assert.ok(!this.oTable.isIndexSelected(1), "Index 1 selected");
+				assert.ok(this.oTable.isIndexSelected(5), "Index 5 selected");
+				assert.ok(!this.oTable.isIndexSelected(6), "Index 6 NOT selected");
+				assert.ok(!this.oTable.isIndexSelected(16), "Index 16 NOT selected");
 
 				// remove leadSelection
 				this.oTable.removeSelectionInterval(5, 5);

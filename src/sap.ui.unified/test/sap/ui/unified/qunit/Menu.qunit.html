@@ -167,11 +167,11 @@
 				oMenu = oRootMenu;
 			}
 			if(sExpectedId){
-				ok(oMenu.oHoveredItem, "Hovered Item exists");
+				assert.ok(oMenu.oHoveredItem, "Hovered Item exists");
 				if(oMenu.oHoveredItem)
 					equals(oMenu.oHoveredItem.getId(), sExpectedId, "Correct item '"+sExpectedId+"' hovered:");
 			}else{
-				ok(!oMenu.oHoveredItem, "Hovered Item not exists");
+				assert.ok(!oMenu.oHoveredItem, "Hovered Item not exists");
 			}
 		};
 
@@ -184,9 +184,9 @@
 
 		var checkMenusClosed = function(sText){
 			sText = sText ? " ("+sText+")" : "";
-			ok(!oRootMenu.bOpen, "Rootmenu closed"+sText);
-			ok(!oSubMenu.bOpen, "Submenu closed"+sText);
-			ok(!oSpecialMenu.bOpen, "Menu with special items closed"+sText);
+			assert.ok(!oRootMenu.bOpen, "Rootmenu closed"+sText);
+			assert.ok(!oSubMenu.bOpen, "Submenu closed"+sText);
+			assert.ok(!oSpecialMenu.bOpen, "Menu with special items closed"+sText);
 		};
 
 		var openRootMenu = function(bWithMouse){
@@ -197,7 +197,7 @@
 			var eDock = sap.ui.core.Popup.Dock;
 			var oDomRef = jQuery("#menuDockRef").get(0);
 			oMenu.open(!bWithMouse, oDomRef, eDock.LeftTop, eDock.LeftTop, oDomRef, "5 5");
-			ok(oMenu.bOpen, "Menu opened");
+			assert.ok(oMenu.bOpen, "Menu opened");
 		};
 
 		var triggerKey = function(target, sKey){
@@ -234,7 +234,7 @@
 			equals(oItem.getEnabled(), false, "Custom 'enabled':");
 			equals(oItem.getVisible(), false, "Custom 'visible':");
 			var oItemSubmenu = oItem.getSubmenu();
-			ok(oItemSubmenu, "Submenu available");
+			assert.ok(oItemSubmenu, "Submenu available");
 			if(oItemSubmenu)
 				equals(oItem.getSubmenu().getId(), "menu1", "Custom 'submenu':");
 		});
@@ -487,8 +487,8 @@
 			qutils.triggerKeyboardEvent("menu3", "ARROW_DOWN");
 			checkHoveredItem("item9", oSubMenu);
 			qutils.triggerKeyboardEvent("menu3", "ARROW_LEFT");
-			ok(oRootMenu.bOpen, "Rootmenu not closed after Arrow Left");
-			ok(!oSubMenu.bOpen, "Submenu closed after Arrow Left");
+			assert.ok(oRootMenu.bOpen, "Rootmenu not closed after Arrow Left");
+			assert.ok(!oSubMenu.bOpen, "Submenu closed after Arrow Left");
 			checkHoveredItem("item7");
 			closeAllMenusAndCheck();
 		});
@@ -499,7 +499,7 @@
 			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
 			qutils.triggerKeyboardEvent("menu2", "ESCAPE");
 			checkMenusClosed("after Escape");
-			ok(!lastSelectedItemId, "No Event triggered on Escape");
+			assert.ok(!lastSelectedItemId, "No Event triggered on Escape");
 
 			openRootMenu();
 			lastSelectedItemId = null;
@@ -507,9 +507,9 @@
 			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
 			qutils.triggerKeyboardEvent("menu2", "ARROW_RIGHT");
 			qutils.triggerKeyboardEvent("menu3", "ESCAPE");
-			ok(oRootMenu.bOpen, "Rootmenu not closed after Escape");
-			ok(!oSubMenu.bOpen, "Submenu closed after Escape");
-			ok(!lastSelectedItemId, "No Event triggered on Escape");
+			assert.ok(oRootMenu.bOpen, "Rootmenu not closed after Escape");
+			assert.ok(!oSubMenu.bOpen, "Submenu closed after Escape");
+			assert.ok(!lastSelectedItemId, "No Event triggered on Escape");
 			checkHoveredItem("item7");
 			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
 			checkHoveredItem("item3");
@@ -577,12 +577,12 @@
 				var oSpyMenuFocusFn = sinon.spy(oRootMenu.getDomRef(), "focus");
 				qutils.triggerEvent("mouseover", "item7", {});
 				checkHoveredItem("item7");
-				ok(oRootMenu.bOpen, "Rootmenu open");
-				ok(!oSubMenu.bOpen, "Submenu not yet open");
+				assert.ok(oRootMenu.bOpen, "Rootmenu open");
+				assert.ok(!oSubMenu.bOpen, "Submenu not yet open");
 				setTimeout(function(){
 					checkHoveredItem("item7");
-					ok(oRootMenu.bOpen, "Rootmenu open");
-					ok(oSubMenu.bOpen, "Submenu open");
+					assert.ok(oRootMenu.bOpen, "Rootmenu open");
+					assert.ok(oSubMenu.bOpen, "Submenu open");
 					checkMenuFocusing();
 					closeAllMenusAndCheck();
 					done();
@@ -607,8 +607,8 @@
 				setTimeout(function(){
 					checkHoveredItem("item7");
 					checkHoveredItem(null, oSubMenu);
-					ok(oRootMenu.bOpen, "Rootmenu open");
-					ok(oSubMenu.bOpen, "Submenu open");
+					assert.ok(oRootMenu.bOpen, "Rootmenu open");
+					assert.ok(oSubMenu.bOpen, "Submenu open");
 					qutils.triggerEvent("mouseover", "item8", {});
 					setTimeout(function(){
 						checkHoveredItem("item8", oSubMenu);
@@ -626,8 +626,8 @@
 				checkHoveredItem(null);
 				qutils.triggerEvent("click", "item7", {});
 				checkHoveredItem(null, oSubMenu);
-				ok(oRootMenu.bOpen, "Rootmenu open");
-				ok(oSubMenu.bOpen, "Submenu open");
+				assert.ok(oRootMenu.bOpen, "Rootmenu open");
+				assert.ok(oSubMenu.bOpen, "Submenu open");
 				qutils.triggerEvent("click", "item8", {});
 				equals(lastSelectedItemId, "item8", "Event triggered on item:");
 				closeAllMenusAndCheck();
@@ -643,7 +643,7 @@
 			}
 			qutils.triggerEvent("click", "item5", {});
 			equals(lastSelectedItemId, null, "No Event triggered on disabled item:");
-			ok(oRootMenu.bOpen, "Rootmenu still open");
+			assert.ok(oRootMenu.bOpen, "Rootmenu still open");
 			closeAllMenusAndCheck();
 		});
 
@@ -657,16 +657,16 @@
 				setTimeout(function(){
 					checkHoveredItem("item7");
 					checkHoveredItem(null, oSubMenu);
-					ok(oRootMenu.bOpen, "Rootmenu open");
-					ok(oSubMenu.bOpen, "Submenu open");
+					assert.ok(oRootMenu.bOpen, "Rootmenu open");
+					assert.ok(oSubMenu.bOpen, "Submenu open");
 					qutils.triggerEvent("mouseover", "item10", {});
 					setTimeout(function(){
 						checkHoveredItem("item10", oSubMenu);
 						qutils.triggerEvent("click", "item10", {});
 						equals(lastSelectedItemId, null, "Event not triggered on disabled item:");
-						ok(oRootMenu.bOpen, "Rootmenu still open");
-						ok(oSubMenu.bOpen, "Submenu still open");
-						ok(!oSubSubMenu.bOpen, "SubSubmenu not open");
+						assert.ok(oRootMenu.bOpen, "Rootmenu still open");
+						assert.ok(oSubMenu.bOpen, "Submenu still open");
+						assert.ok(!oSubSubMenu.bOpen, "SubSubmenu not open");
 						closeAllMenusAndCheck();
 						done();
 					}, DELAY_SUBMENU_TIMER);
@@ -679,14 +679,14 @@
 				checkHoveredItem(null);
 				qutils.triggerEvent("click", "item7", {});
 				checkHoveredItem(null, oSubMenu);
-				ok(oRootMenu.bOpen, "Rootmenu open");
-				ok(oSubMenu.bOpen, "Submenu open");
+				assert.ok(oRootMenu.bOpen, "Rootmenu open");
+				assert.ok(oSubMenu.bOpen, "Submenu open");
 				lastSelectedItemId = null;
 				qutils.triggerEvent("click", "item10", {});
 				equals(lastSelectedItemId, null, "Event not triggered on disabled item:");
-				ok(oRootMenu.bOpen, "Rootmenu still open");
-				ok(oSubMenu.bOpen, "Submenu still open");
-				ok(!oSubSubMenu.bOpen, "SubSubmenu not open");
+				assert.ok(oRootMenu.bOpen, "Rootmenu still open");
+				assert.ok(oSubMenu.bOpen, "Submenu still open");
+				assert.ok(!oSubSubMenu.bOpen, "SubSubmenu not open");
 				closeAllMenusAndCheck();
 			});
 		}
@@ -795,7 +795,7 @@
 				checkHoveredItem("item12", oSpecialMenu);
 
 				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					ok(document.activeElement.id == sTfId, "Focus on textfield -1");
+					assert.ok(document.activeElement.id == sTfId, "Focus on textfield -1");
 				}
 
 				qutils.triggerKeyboardEvent(sTfId, "ARROW_DOWN");
@@ -804,7 +804,7 @@
 				checkHoveredItem("item12", oSpecialMenu);
 
 				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					ok(document.activeElement.id == sTfId, "Focus on textfield -2");
+					assert.ok(document.activeElement.id == sTfId, "Focus on textfield -2");
 				}
 
 				qutils.triggerCharacterInput(sTfId, "A");
@@ -817,7 +817,7 @@
 				qutils.triggerKeyEvent("keydown", sTfId, jQuery.sap.KeyCodes.ESCAPE);
 				qutils.triggerKeyEvent("keypress", sTfId, jQuery.sap.KeyCodes.ESCAPE);
 				checkMenusClosed("after 2.Escape");
-				ok(!lastSelectedItemId, "No Event triggered on Escape");
+				assert.ok(!lastSelectedItemId, "No Event triggered on Escape");
 
 				equals(oMenuItems["item12"].getValue(), "FilterValue", "Value of item after Escape");
 				done();
@@ -835,7 +835,7 @@
 				checkHoveredItem("item12", oSpecialMenu);
 
 				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					ok(document.activeElement.id == sTfId, "Focus on textfield -1");
+					assert.ok(document.activeElement.id == sTfId, "Focus on textfield -1");
 				}
 
 				qutils.triggerKeyboardEvent(sTfId, "PAGE_DOWN");
@@ -844,7 +844,7 @@
 				checkHoveredItem("item12", oSpecialMenu);
 
 				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					ok(document.activeElement.id == sTfId, "Focus on textfield -2");
+					assert.ok(document.activeElement.id == sTfId, "Focus on textfield -2");
 				}
 
 				qutils.triggerKeyboardEvent(sTfId, "PAGE_UP");
@@ -863,7 +863,7 @@
 				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
 				checkHoveredItem("item12", oSpecialMenu);
 				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					ok(document.activeElement.id == sTfId, "Focus on textfield -1");
+					assert.ok(document.activeElement.id == sTfId, "Focus on textfield -1");
 				}
 
 				jQuery.sap.byId(sTfId).cursorPos(1);
@@ -876,7 +876,7 @@
 				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
 				checkHoveredItem("item12", oSpecialMenu);
 				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					ok(document.activeElement.id == sTfId, "Focus on textfield -2");
+					assert.ok(document.activeElement.id == sTfId, "Focus on textfield -2");
 				}
 
 				jQuery.sap.byId(sTfId).cursorPos(0);
@@ -889,7 +889,7 @@
 				qutils.triggerKeyboardEvent("menu5", "ARROW_UP");
 				checkHoveredItem("item12", oSpecialMenu);
 				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					ok(document.activeElement.id == sTfId, "Focus on textfield -3");
+					assert.ok(document.activeElement.id == sTfId, "Focus on textfield -3");
 				}
 
 				qutils.triggerCharacterInput(sTfId, "A");
@@ -912,11 +912,11 @@
 			checkHoveredItem(null, oSpecialMenu);
 			qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
 			checkHoveredItem(null, oSpecialMenu);
-			ok(document.activeElement.id != sTfId, "Focus not on textfield");
+			assert.ok(document.activeElement.id != sTfId, "Focus not on textfield");
 
 			qutils.triggerKeyboardEvent(sTfId, "ESCAPE");
 			checkMenusClosed("after Escape");
-			ok(!lastSelectedItemId, "No Event triggered on Escape");
+			assert.ok(!lastSelectedItemId, "No Event triggered on Escape");
 		});
 
 		QUnit.module("Aria");
@@ -935,9 +935,9 @@
 			var sSubId = oSubMenu.getId();
 			var bHasPopup = !!oRootMenu.oPopup;
 			oRootMenu.destroy();
-			ok(!sap.ui.getCore().byId(sId), "No Menu registered in the Core anymore");
-			ok(!sap.ui.getCore().byId(sSubId), "No Submenu registered in the Core anymore");
-			ok(!oRootMenu.oPopup && bHasPopup, "Internal Popup cleaned up");
+			assert.ok(!sap.ui.getCore().byId(sId), "No Menu registered in the Core anymore");
+			assert.ok(!sap.ui.getCore().byId(sSubId), "No Submenu registered in the Core anymore");
+			assert.ok(!oRootMenu.oPopup && bHasPopup, "Internal Popup cleaned up");
 		});
 
 		QUnit.test("setRootMenuTopStyle", function(assert) {
@@ -946,13 +946,13 @@
 				items: [new sap.ui.unified.MenuItem({submenu: oSubMenu})]
 			});
 			oMenu.open();
-			ok(oSubMenu.getRootMenu() === oMenu, "Menu is the root");
+			assert.ok(oSubMenu.getRootMenu() === oMenu, "Menu is the root");
 			oSubMenu.setRootMenuTopStyle(true);
-			ok(oMenu.bUseTopStyle, "Top Style active");
-			ok(oMenu.$().hasClass("sapUiMnuTop"), "Top Style CSS class set");
+			assert.ok(oMenu.bUseTopStyle, "Top Style active");
+			assert.ok(oMenu.$().hasClass("sapUiMnuTop"), "Top Style CSS class set");
 			oMenu.setRootMenuTopStyle(false);
-			ok(!oMenu.bUseTopStyle, "Top Style inactive");
-			ok(!oMenu.$().hasClass("sapUiMnuTop"), "Top Style CSS class not set");
+			assert.ok(!oMenu.bUseTopStyle, "Top Style inactive");
+			assert.ok(!oMenu.$().hasClass("sapUiMnuTop"), "Top Style CSS class not set");
 			oMenu.destroy();
 		});
 
@@ -966,9 +966,9 @@
 			});
 
 			var oItem = oMenu.getPreviousSelectableItem(1);
-			ok(oItem === oItem1, "Previous selectable item of item 2 is item 1");
+			assert.ok(oItem === oItem1, "Previous selectable item of item 2 is item 1");
 			oItem = oMenu.getPreviousSelectableItem(0);
-			ok(oItem === oItem2, "Previous selectable item of item 1 is item 2");
+			assert.ok(oItem === oItem2, "Previous selectable item of item 1 is item 2");
 			oMenu.destroy();
 		});
 
@@ -982,9 +982,9 @@
 			});
 
 			var oItem = oMenu.getNextSelectableItem(0);
-			ok(oItem === oItem2, "Previous selectable item of item 1 is item 2");
+			assert.ok(oItem === oItem2, "Previous selectable item of item 1 is item 2");
 			oItem = oMenu.getNextSelectableItem(1);
-			ok(oItem === oItem1, "Previous selectable item of item 2 is item 1");
+			assert.ok(oItem === oItem1, "Previous selectable item of item 2 is item 1");
 			oMenu.destroy();
 		});
 
@@ -994,8 +994,8 @@
 				oMenu.addItem(new sap.ui.unified.MenuItemBase());
 			}
 			openMenu(oMenu, false);
-			ok(!!oMenu.$().css("max-height"), "Max. height is set");
-			ok(oMenu.$().hasClass("sapUiMnuScroll"), "Scrolling is enabled");
+			assert.ok(!!oMenu.$().css("max-height"), "Max. height is set");
+			assert.ok(oMenu.$().hasClass("sapUiMnuScroll"), "Scrolling is enabled");
 			oMenu.destroy();
 		});
 
@@ -1022,8 +1022,8 @@
 			}
 			openMenu(oMenu, false);
 
-			ok(oMenu.getRootMenu().isCozy(), "Cozy Mode recognized by Menu");
-			ok(oMenu.$().hasClass("sapUiSizeCozy"), "Cozy CSS class set");
+			assert.ok(oMenu.getRootMenu().isCozy(), "Cozy Mode recognized by Menu");
+			assert.ok(oMenu.$().hasClass("sapUiSizeCozy"), "Cozy CSS class set");
 
 			oMenu.destroy();
 			jQuery.sap.byId("menuDockRef").toggleClass("sapUiSizeCozy", false);

@@ -19,9 +19,9 @@ sap.ui.require([
       this.assertAllTestsAreMatchedAndSkipped = function(testScenario) {
         for (var i=0; i<testScenario.testSteps.length; ++i) {
           var testStep = testScenario.testSteps[i];
-          ok(!!testStep.text.match(/^\(SKIPPED\)/), "text: " + testScenario.name + " -- " + testStep.text);
-          ok(testStep.isMatch, "isMatch: " + testScenario.name + " -- " + testStep.text);
-          ok(testStep.skip, "skip: " + testScenario.name + " -- " + testStep.text);
+          assert.ok(!!testStep.text.match(/^\(SKIPPED\)/), "text: " + testScenario.name + " -- " + testStep.text);
+          assert.ok(testStep.isMatch, "isMatch: " + testScenario.name + " -- " + testStep.text);
+          assert.ok(testStep.skip, "skip: " + testScenario.name + " -- " + testStep.text);
         }
       };
     },
@@ -570,7 +570,7 @@ sap.ui.require([
         this.register(/^I do something \(finally\)$/i, function() {});
       },
       closeApplication: function() {
-        ok(true, "Given a non-WIP feature, calling 'tearDown' MUST execute 'closeApplication'");
+        assert.ok(true, "Given a non-WIP feature, calling 'tearDown' MUST execute 'closeApplication'");
       }
     });
 
@@ -606,7 +606,7 @@ sap.ui.require([
         this.register(/^I do something \(finally\)$/i, function() {});
       },
       closeApplication: function() {
-        ok(false, "Given feature with all @wip scenarios, calling 'tearDown' must NOT execute 'closeApplication'");
+        assert.ok(false, "Given feature with all @wip scenarios, calling 'tearDown' must NOT execute 'closeApplication'");
       }
     });
 
@@ -651,7 +651,7 @@ sap.ui.require([
         this.register(/^I do something \(finally\)$/i, function() {});
       },
       closeApplication: function() {
-        ok(expectCloseApplication, "calling 'tearDown' must execute 'closeApplication' only for non-skipped scenarios");
+        assert.ok(expectCloseApplication, "calling 'tearDown' must execute 'closeApplication' only for non-skipped scenarios");
       }
     });
 
@@ -689,7 +689,7 @@ sap.ui.require([
         this.register(/^I do something \(finally\)$/i, function() {});
       },
       closeApplication: function() {
-        ok(false, "Given @wip feature, calling 'tearDown' must NOT execute 'closeApplication'");
+        assert.ok(false, "Given @wip feature, calling 'tearDown' must NOT execute 'closeApplication'");
       }
     });
 
@@ -718,7 +718,7 @@ sap.ui.require([
 
     var steps = StepDefinitions.extend("sap.ui.test.gherkin.StepDefinitionsTest", {
       closeApplication: function() {
-        ok(false, "Given feature with no scenarios, calling 'tearDown' must NOT execute 'closeApplication'");
+        assert.ok(false, "Given feature with no scenarios, calling 'tearDown' must NOT execute 'closeApplication'");
       }
     });
 
@@ -765,8 +765,8 @@ sap.ui.require([
         });
         this.register(/^I should expect a (live|dead) barista$/i, function(shouldBeDead) {
           shouldBeDead = (shouldBeDead === "dead");
-          ok(shouldBeDead === !!this.poisonReleased, "test that context was cleared between scenarios");
-          ok(shouldBeDead === this.emitted, "test that context was retained while inside one scenario");
+          assert.ok(shouldBeDead === !!this.poisonReleased, "test that context was cleared between scenarios");
+          assert.ok(shouldBeDead === this.emitted, "test that context was retained while inside one scenario");
         });
       }
     });
@@ -840,7 +840,7 @@ sap.ui.require([
       "call \"execute\" with an object, but it's not a TestStep"
     );
 
-    ok(testGenerator.execute({skip: false, func: function(){}, parameters: []}), "test exceptions");
+    assert.ok(testGenerator.execute({skip: false, func: function(){}, parameters: []}), "test exceptions");
   });
 
 

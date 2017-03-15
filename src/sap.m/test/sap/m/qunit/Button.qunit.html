@@ -236,30 +236,30 @@
 	QUnit.test("PressOk", function(assert) {
 		try {
 			b1.firePress();
-			ok(false,"Exception should have been thrown!");
+			assert.ok(false,"Exception should have been thrown!");
 		} catch (e) {
-			ok(e == sPressMessage + " - Exception","Button1 - Exception was thrown correctly!");
+			assert.ok(e == sPressMessage + " - Exception","Button1 - Exception was thrown correctly!");
 			equals(e,sPressMessage + " - Exception","Button1 - Exception was thrown correctly!")
 		}
 		b2.firePress();
-		ok(msg == sPressMessage, "Button2 - Event was fired correctly!");
+		assert.ok(msg == sPressMessage, "Button2 - Event was fired correctly!");
 		equals(msg, sPressMessage, "Button2 - Event was fired correctly!!");
 		b4.firePress();
-		ok(msg == sPressMessage, "Button4 - Event was fired correctly!");
+		assert.ok(msg == sPressMessage, "Button4 - Event was fired correctly!");
 		equals(msg, sPressMessage, "Button4 - Event was fired correctly!!");
 		b5.firePress();
-		ok(msg == sPressMessage, "Button5 - Event was fired correctly!");
+		assert.ok(msg == sPressMessage, "Button5 - Event was fired correctly!");
 		equals(msg, sPressMessage, "Button5 - Event was fired correctly!!");
 		b6.firePress();
-		ok(msg == sPressMessage, "Button6 - Event was fired correctly!");
+		assert.ok(msg == sPressMessage, "Button6 - Event was fired correctly!");
 		equals(msg, sPressMessage, "Button6 - Event was fired correctly!!");
 		b7.firePress();
-		ok(msg == sPressMessage, "Button7 - Event was fired correctly!");
+		assert.ok(msg == sPressMessage, "Button7 - Event was fired correctly!");
 		equals(msg, sPressMessage, "Button7 - Event was fired correctly!!");
 	});
 
 	QUnit.test("Visibility", function(assert) {
-		ok(!jQuery.sap.domById("b12"), "Button12 should not be rendered");
+		assert.ok(!jQuery.sap.domById("b12"), "Button12 should not be rendered");
 	});
 
 	function hoverableTestCase (oTestDescription) {
@@ -336,7 +336,7 @@
 		// Assert
 		assert.strictEqual(oResult, oButton, "Should be able to chain");
 		assert.strictEqual(oRenderSpy.callCount, 0, "Did not re-render");
-		ok(!/.*<script>.*/.test(oButton.$("content").html()), "Did not contain a unescaped script tag");
+		assert.ok(!/.*<script>.*/.test(oButton.$("content").html()), "Did not contain a unescaped script tag");
 		assert.strictEqual(oButton.getText(), sTextToSet, "Did set the non encoded string as value");
 
 		// Cleanup
@@ -473,15 +473,15 @@
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oButton = new sap.m.Button({tooltip: "Tooltip"});
-		ok(!!oButton.getAccessibilityInfo, "Button has a getAccessibilityInfo function");
+		assert.ok(!!oButton.getAccessibilityInfo, "Button has a getAccessibilityInfo function");
 		var oInfo = oButton.getAccessibilityInfo();
-		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "button", "AriaRole");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
 		assert.strictEqual(oInfo.description, "Tooltip", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
-		ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 		oButton.setText("Text");
 		oButton.setEnabled(false);
 		oInfo = oButton.getAccessibilityInfo();
@@ -531,14 +531,14 @@
 		oButton._activeButton();
 
 		//assert
-		ok(oButton.$("inner").hasClass("sapMBtnActive"), 'button is styled as active');
+		assert.ok(oButton.$("inner").hasClass("sapMBtnActive"), 'button is styled as active');
 		equals(oButton._image.getSrc(), sActiveIconURI);
 
 		//act
 		oButton._inactiveButton();
 
 		//assert
-		ok(!oButton.$("inner").hasClass("sapMBtnActive"), 'button is styled as inactive');
+		assert.ok(!oButton.$("inner").hasClass("sapMBtnActive"), 'button is styled as inactive');
 		equals(oButton._image.getSrc(), sIconURI);
 
 		//clean

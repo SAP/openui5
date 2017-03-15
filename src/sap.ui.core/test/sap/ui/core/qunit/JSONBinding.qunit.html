@@ -103,15 +103,15 @@
 		var oNewContext = oModel.getContext("/");
 
 		var oBinding = oModel.bindProperty("lastName");
-		ok(!oBinding.isResolved(), "Binding should not be resolved yet!");
+		assert.ok(!oBinding.isResolved(), "Binding should not be resolved yet!");
 		oBinding.setContext(oNewContext);
-		ok(oBinding.isResolved(), "Binding should be resolved!");
+		assert.ok(oBinding.isResolved(), "Binding should be resolved!");
 
 		oBinding = oModel.bindProperty("/lastName");
-		ok(oBinding.isResolved(), "Binding should be resolved!");
+		assert.ok(oBinding.isResolved(), "Binding should be resolved!");
 
 		oBinding = oModel.bindProperty("lastName", oNewContext);
-		ok(oBinding.isResolved(), "Binding should be resolved!");
+		assert.ok(oBinding.isResolved(), "Binding should be resolved!");
 	});
 
 	QUnit.test("Binding changeEvent", function(assert) {
@@ -127,16 +127,16 @@
 
 			// fire change event
 			binding._fireChange();
-			ok(attach, "call back method was attached");
-			ok(!detach, "call back method was not detached");
+			assert.ok(attach, "call back method was attached");
+			assert.ok(!detach, "call back method was not detached");
 
 			binding.detachChange(callBackOnChange);
 			attach = false;
 			detach = true;
 			//refire change event
 			binding._fireChange();
-			ok(!attach, "call back method was not attached");
-			ok(detach, "call back method was detached");
+			assert.ok(!attach, "call back method was not attached");
+			assert.ok(detach, "call back method was detached");
 			attach = false;
 			detach = true;
 

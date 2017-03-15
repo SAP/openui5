@@ -11,10 +11,10 @@
 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.ux3.Exact.gif">
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-		src="../../../../../resources/sap-ui-core.js"
-		data-sap-ui-noConflict="true"
-		data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
-		data-sap-ui-language=en>
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
+			data-sap-ui-language=en>
 	</script>
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
@@ -76,7 +76,7 @@
 		function testSelection(sAttId, bSelected, iTotalSelectedAtts, aVisibleFirstLevelLists) {
 			var handler = function(oControlEvent){
 				if(!sAttId){
-					ok(!oControlEvent.getParameter("attribute"), "No selected attribute:");
+					assert.ok(!oControlEvent.getParameter("attribute"), "No selected attribute:");
 				}else{
 					equals(oControlEvent.getParameter("attribute").getId(), sAttId, "Id of (de-)selected attribute:");
 					equals(oControlEvent.getParameter("attribute").getSelected(), bSelected, "Selection state of selected attribute:");
@@ -164,15 +164,15 @@
 		QUnit.module("Visual appearence");
 
 		QUnit.test("Visiblity", function(assert) {
-			ok(oExactBrowser1.getDomRef(), "Visible Control rendered");
-			ok(!oExactBrowser2.getDomRef(), "Invisible Control not rendered");
+			assert.ok(oExactBrowser1.getDomRef(), "Visible Control rendered");
+			assert.ok(!oExactBrowser2.getDomRef(), "Invisible Control not rendered");
 		});
 
 		QUnit.test("Options Menu", function(assert) {
-			ok(oExactBrowser1._rootList.$().hasClass("sapUiUx3ExactLstTopActive"), "Header menu visible");
+			assert.ok(oExactBrowser1._rootList.$().hasClass("sapUiUx3ExactLstTopActive"), "Header menu visible");
 			oExactBrowser1.destroyOptionsMenu();
 			sap.ui.getCore().applyChanges();
-			ok(!oExactBrowser1._rootList.$().hasClass("sapUiUx3ExactLstTopActive"), "Header menu not visible");
+			assert.ok(!oExactBrowser1._rootList.$().hasClass("sapUiUx3ExactLstTopActive"), "Header menu not visible");
 		});
 
 		QUnit.test("Level", 4, function(assert) {
@@ -187,8 +187,8 @@
 		});
 
 		QUnit.test("Width", function(assert) {
-			ok(Math.abs(jQuery.sap.byId(oExactBrowser1._rootList.getId()+"-lst").width()-168) < 5, "Default List Width");
-			ok(Math.abs(jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-lst").width()-200) < 5, "Custom List Width");
+			assert.ok(Math.abs(jQuery.sap.byId(oExactBrowser1._rootList.getId()+"-lst").width()-168) < 5, "Default List Width");
+			assert.ok(Math.abs(jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-lst").width()-200) < 5, "Custom List Width");
 		});
 
 		QUnit.module("List Interaction");
@@ -202,16 +202,16 @@
 			for(var i=0; i<aSubLists.length; i++){
 				var aSubSubLists = aSubLists[i].getSubLists();
 				if(i==0){
-					ok(aSubSubLists.length == 1, "List " +aSubLists[i].getData()+ " contains 1 sub list.");
+					assert.ok(aSubSubLists.length == 1, "List " +aSubLists[i].getData()+ " contains 1 sub list.");
 					equals(aSubSubLists[0].getData(), "att1-1", "Sub-List at position 0:");
 				}else{
-					ok(aSubSubLists.length == 0, "List " +aSubLists[i].getData()+ " contains no sub lists.");
+					assert.ok(aSubSubLists.length == 0, "List " +aSubLists[i].getData()+ " contains no sub lists.");
 				}
 			}
 		});
 
 		asyncTest("Reset via Button", function() {
-			ok(oExactBrowser1._resetButton.getDomRef(), "Reset Button visible");
+			assert.ok(oExactBrowser1._resetButton.getDomRef(), "Reset Button visible");
 			testSelection(null, false, 0, []);
 			sap.ui.test.qunit.triggerMouseEvent(oExactBrowser1._resetButton.getDomRef(), "click");
 		});
@@ -286,22 +286,22 @@
 
 
 		//Disabled on UX request
-//		asyncTest("Expand / Collapse vertically with keyboard (CTRL + PLUS, CTRL + MINUS)", function() {
-//			var oListBox = oExactBrowser1._rootList.getSubLists()[0]._lb;
-//			var aItemRefs = getListItemRefs(oListBox);
-//			var iInitialHeight = jQuery(oListBox.getDomRef()).height();
-//
-//			stop(3000);
-//			setTimeout(function(){
-//				ok(iInitialHeight != jQuery(oListBox.getDomRef()).height(), "List height increased ("+iInitialHeight+" != "+(jQuery(oListBox.getDomRef()).height())+")");
-//				setTimeout(function(){
-//					start();
-//					ok(iInitialHeight == jQuery(oListBox.getDomRef()).height(), "List height back to normal again");
-//				}, 1000);
-//				sap.ui.test.qunit.triggerKeydown(aItemRefs[0], "NUMPAD_MINUS", false, false, true);
-//			}, 1000);
-//			sap.ui.test.qunit.triggerKeydown(aItemRefs[0], "NUMPAD_PLUS", false, false, true);
-//		});
+		//		asyncTest("Expand / Collapse vertically with keyboard (CTRL + PLUS, CTRL + MINUS)", function() {
+		//			var oListBox = oExactBrowser1._rootList.getSubLists()[0]._lb;
+		//			var aItemRefs = getListItemRefs(oListBox);
+		//			var iInitialHeight = jQuery(oListBox.getDomRef()).height();
+		//
+		//			stop(3000);
+		//			setTimeout(function(){
+		//				assert.ok(iInitialHeight != jQuery(oListBox.getDomRef()).height(), "List height increased ("+iInitialHeight+" != "+(jQuery(oListBox.getDomRef()).height())+")");
+		//				setTimeout(function(){
+		//					start();
+		//					assert.ok(iInitialHeight == jQuery(oListBox.getDomRef()).height(), "List height back to normal again");
+		//				}, 1000);
+		//				sap.ui.test.qunit.triggerKeydown(aItemRefs[0], "NUMPAD_MINUS", false, false, true);
+		//			}, 1000);
+		//			sap.ui.test.qunit.triggerKeydown(aItemRefs[0], "NUMPAD_PLUS", false, false, true);
+		//		});
 
 
 		asyncTest("Expand / Collapse vertically with click", function() {
@@ -310,7 +310,7 @@
 			var iInitialHeight = jQuery(oListBox.getDomRef()).height();
 
 			setTimeout(function(){
-				ok(iInitialHeight != jQuery(oListBox.getDomRef()).height(), "List height increased ("+iInitialHeight+" != "+(jQuery(oListBox.getDomRef()).height())+")");
+				assert.ok(iInitialHeight != jQuery(oListBox.getDomRef()).height(), "List height increased ("+iInitialHeight+" != "+(jQuery(oListBox.getDomRef()).height())+")");
 				setTimeout(function(){
 					start();
 					if(navigator.userAgent.indexOf("Windows") >= 0 && sap.ui.Device.browser.safari){
@@ -319,8 +319,8 @@
 							return;
 						}
 					}
-					ok(iInitialHeight == jQuery(oListBox.getDomRef()).height(), "List height back to normal again ("+iInitialHeight+" == "+(jQuery(oListBox.getDomRef()).height())+")");
-				}, 3000);
+					assert.ok(iInitialHeight == jQuery(oListBox.getDomRef()).height(), "List height back to normal again ("+iInitialHeight+" == "+(jQuery(oListBox.getDomRef()).height())+")");
+				}, 2000);
 				sap.ui.test.qunit.triggerMouseEvent(sExpanderId, "click");
 			}, 1000);
 			sap.ui.test.qunit.triggerMouseEvent(sExpanderId, "click");
@@ -339,10 +339,10 @@
 			var iInitialWidth = jQuery(oListBox.getDomRef()).width();
 
 			setTimeout(function(){
-				ok(iInitialWidth != jQuery(oListBox.getDomRef()).width(), "List width increased ("+iInitialWidth+" != "+(jQuery(oListBox.getDomRef()).width())+")");
+				assert.ok(iInitialWidth != jQuery(oListBox.getDomRef()).width(), "List width increased ("+iInitialWidth+" != "+(jQuery(oListBox.getDomRef()).width())+")");
 				setTimeout(function(){
 					start();
-					ok(iInitialWidth == jQuery(oListBox.getDomRef()).width(), "List width back to normal again");
+					assert.ok(iInitialWidth == jQuery(oListBox.getDomRef()).width(), "List width back to normal again");
 				}, 1000);
 				sap.ui.test.qunit.triggerKeydown(aItemRefs[0], "NUMPAD_MINUS", true, false, false);
 			}, 1000);
@@ -353,13 +353,13 @@
 		asyncTest("Expand / Collapse horizontally with keyboard (ALT + PLUS, ALT + MINUS)", function() {
 			var oSubList = oExactBrowser1._rootList.getSubLists()[0];
 			var aItemRefs = getListItemRefs(oSubList._lb);
-			ok(!jQuery(oSubList.getDomRef()).hasClass("sapUiUx3ExactLstCollapsed"), "List is not collapsed");
+			assert.ok(!jQuery(oSubList.getDomRef()).hasClass("sapUiUx3ExactLstCollapsed"), "List is not collapsed");
 
 			setTimeout(function(){
-				ok(jQuery(oSubList.getDomRef()).hasClass("sapUiUx3ExactLstCollapsed"), "List is collapsed");
+				assert.ok(jQuery(oSubList.getDomRef()).hasClass("sapUiUx3ExactLstCollapsed"), "List is collapsed");
 				setTimeout(function(){
 					start();
-					ok(!jQuery(oSubList.getDomRef()).hasClass("sapUiUx3ExactLstCollapsed"), "List is not collapsed");
+					assert.ok(!jQuery(oSubList.getDomRef()).hasClass("sapUiUx3ExactLstCollapsed"), "List is not collapsed");
 				}, 1000);
 				sap.ui.test.qunit.triggerKeydown(aItemRefs[0], "NUMPAD_PLUS", false, true, false);
 			}, 1000);
@@ -370,13 +370,13 @@
 		asyncTest("Expand / Collapse horizontally with click", function() {
 			var oSubList = oExactBrowser1._rootList.getSubLists()[0];
 			var sExpanderId = oSubList.getId()+"-hide";
-			ok(!jQuery(oSubList.getDomRef()).hasClass("sapUiUx3ExactLstCollapsed"), "List is not collapsed");
+			assert.ok(!jQuery(oSubList.getDomRef()).hasClass("sapUiUx3ExactLstCollapsed"), "List is not collapsed");
 
 			setTimeout(function(){
-				ok(jQuery(oSubList.getDomRef()).hasClass("sapUiUx3ExactLstCollapsed"), "List is collapsed");
+				assert.ok(jQuery(oSubList.getDomRef()).hasClass("sapUiUx3ExactLstCollapsed"), "List is collapsed");
 				setTimeout(function(){
 					start();
-					ok(!jQuery(oSubList.getDomRef()).hasClass("sapUiUx3ExactLstCollapsed"), "List is not collapsed");
+					assert.ok(!jQuery(oSubList.getDomRef()).hasClass("sapUiUx3ExactLstCollapsed"), "List is not collapsed");
 				}, 1000);
 				sap.ui.test.qunit.triggerMouseEvent(sExpanderId, "click");
 			}, 1000);
@@ -435,7 +435,7 @@
 		QUnit.module("Keyboard Navigation");
 
 		function checkNav(oList){
-			ok(jQuery.sap.containsOrEquals(oList.getFocusDomRef(), document.activeElement) && !jQuery.sap.containsOrEquals(jQuery.sap.domById(oList.getId()+"-cntnt"), document.activeElement), oList.getId() + " has focus.");
+			assert.ok(jQuery.sap.containsOrEquals(oList.getFocusDomRef(), document.activeElement) && !jQuery.sap.containsOrEquals(jQuery.sap.domById(oList.getId()+"-cntnt"), document.activeElement), oList.getId() + " has focus.");
 		}
 
 		asyncTest("Tab", function() {
@@ -538,14 +538,14 @@
 		});
 
 		QUnit.test("Hidden Elements", function(assert) {
-			ok(!jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-lst").is(":visible"), "Listbox is not visible.");
-			ok(!jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-rsz").is(":visible"), "ResizeHandle is not visible.");
-			ok(!jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-head").is(":visible"), "Header is not visible.");
+			assert.ok(!jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-lst").is(":visible"), "Listbox is not visible.");
+			assert.ok(!jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-rsz").is(":visible"), "ResizeHandle is not visible.");
+			assert.ok(!jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-head").is(":visible"), "Header is not visible.");
 		});
 
 		QUnit.test("Visible Elements", function(assert) {
-			ok(jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-cntnt").is(":visible"), "Content Area is visible.");
-			ok(jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-foc").length == 1, "Focus Handle exists.");
+			assert.ok(jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-cntnt").is(":visible"), "Content Area is visible.");
+			assert.ok(jQuery.sap.byId(oExactBrowser3._rootList.getId()+"-foc").length == 1, "Focus Handle exists.");
 		});
 
 
@@ -562,14 +562,14 @@
 
 </head>
 <body class="sapUiBody" role="application">
-	<h1 id="qunit-header">QUnit tests: sap.ui.ux3.ExactBrowser</h1>
-	<h2 id="qunit-banner"></h2>
- 	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<br>
-	<div id="uiArea1"></div>
-	<div id="uiArea2"></div>
-	<div id="uiArea3"></div>
+<h1 id="qunit-header">QUnit tests: sap.ui.ux3.ExactBrowser</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="uiArea1"></div>
+<div id="uiArea2"></div>
+<div id="uiArea3"></div>
 </body>
 </html>

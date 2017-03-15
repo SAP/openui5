@@ -32,13 +32,13 @@
 		<!-- Test help functions -->
 		<script>
 			function closeEventHandler(oEvent) {
-				ok(true, "close event handler has been executed."); // this test tests by just being counted in the respective test
+				assert.ok(true, "close event handler has been executed."); // this test tests by just being counted in the respective test
 			}
 			function openEventHandler(oEvent) {
-				ok(true, "open event handler has been executed."); // this test tests by just being counted in the respective test
+				assert.ok(true, "open event handler has been executed."); // this test tests by just being counted in the respective test
 			}
 			function openNewEventHandler(oEvent) {
-				ok(true, "open new event handler has been executed."); // this test tests by just being counted in the respective test
+				assert.ok(true, "open new event handler has been executed."); // this test tests by just being counted in the respective test
 			}
 		</script>
 
@@ -63,7 +63,7 @@
 			QUnit.test("Overlay exists", function (assert) {
 				equals(true, true, "...");
 				var oDomRef = jQuery.sap.domById(oOverlay.getId());
-				ok(oDomRef, "Rendered Overlay should exist in the page");
+				assert.ok(oDomRef, "Rendered Overlay should exist in the page");
 				assert.equal(oDomRef.className, "sapUiUx3Overlay", "Rendered Overlay should have the class 'sapUiUx3TI'");
 			});
 
@@ -83,10 +83,10 @@
 			QUnit.test("Open Method", function (assert) {
 				var done = assert.async();
 				assert.expect(3);
-				ok(!oOverlay.isOpen(), "Rendered Overlay is not open");
+				assert.ok(!oOverlay.isOpen(), "Rendered Overlay is not open");
 				oOverlay.open();
 				setTimeout(function () {
-					ok(oOverlay.isOpen(), "Rendered Overlay is open");
+					assert.ok(oOverlay.isOpen(), "Rendered Overlay is open");
 					done();
 				}, 500);
 			});
@@ -99,11 +99,11 @@
 				});
 				oOverlay.attachClosed(function (oEvent) {
 					assert.equal(oOverlay.getId(), oEvent.getParameter("id"), "Closed event fired");
-					ok(!oOverlay.isOpen(), "Rendered Overlay is not open");
+					assert.ok(!oOverlay.isOpen(), "Rendered Overlay is not open");
 					done();
 				});
 				assert.expect(5);
-				ok(oOverlay.isOpen(), "Rendered Overlay is open");
+				assert.ok(oOverlay.isOpen(), "Rendered Overlay is open");
 				qutils.triggerMouseEvent(jQuery.sap.byId(oOverlay.getId() + "-close"), "click", 1, 1, 1, 1);
 			});
 
@@ -112,7 +112,7 @@
 				oOverlay.destroy();
 				sap.ui.getCore().applyChanges();
 				var oDomRef = jQuery.sap.domById(oOverlay.getId());
-				ok(!oDomRef, "Rendered Overlay should not exist in the page after destruction");
+				assert.ok(!oDomRef, "Rendered Overlay should not exist in the page after destruction");
 			});
 
 		</script>
