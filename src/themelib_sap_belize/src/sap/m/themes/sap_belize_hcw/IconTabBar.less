@@ -62,9 +62,17 @@ html.sap-phone .sapMITBTextOnly .sapMITBTab {
 html.sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
 html.sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
 html.sap-desktop .sapMITBItem:focus.sapMITBAll {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
+	&::after {
+		content: "";
+		position: absolute;
+		top: -1px;
+		bottom: -1px;
+		right: -1px;
+		left: -1px;
+		border:  0.125rem dotted @sapUiContentFocusColor;
+		pointer-events: none;
+	}
 }
-
 /* HCB Additional Styles */
 
 .sapMITBFilterPositive .sapMITBText:before,

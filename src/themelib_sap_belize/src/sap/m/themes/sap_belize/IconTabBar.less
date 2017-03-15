@@ -160,13 +160,22 @@ html.sap-desktop .sapMITBArrowScroll:active {
 	color: @sapUiHighlight;
 }
 
+
 /* Custom focus outline */
 html.sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
 html.sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
 html.sap-desktop .sapMITBItem:focus.sapMITBAll {
-	outline: 1px dotted @sapUiContentFocusColor;
+	&::after {
+		content: "";
+		position: absolute;
+		top: -1px;
+		bottom: -1px;
+		right: -1px;
+		left: -1px;
+		border: 1px dotted @sapUiContentFocusColor;
+		pointer-events: none;
+	}
 }
-
 /* container background design */
 .sapMITBBackgroundDesignTranslucent > .sapMITBContainerContent > .sapMITBContent {
 	background-color: fade(@sapUiGroupContentBackground, 60);
