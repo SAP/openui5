@@ -2844,7 +2844,7 @@
 				'sap/ui/thirdparty/RequestRecorder.js': {
 					amd: true,
 					exports: 'RequestRecorder',
-					deps: ['sap/ui/thirdparty/URI', 'sap/ui/thirdparty/sinon.js']
+					deps: ['sap/ui/thirdparty/URI', 'sap/ui/thirdparty/sinon']
 				}
 			},
 
