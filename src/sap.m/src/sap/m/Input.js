@@ -239,7 +239,19 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					/**
 					 * The new value of the input.
 					 */
-					value : {type : "string"}
+					value : {type : "string"},
+
+					/**
+					 * Indicate that ESC key triggered the event.
+					 * @since 1.48
+					 */
+					escPressed : {type : "boolean"},
+
+					/**
+					 * The value of the input before pressing ESC key.
+					 * @since 1.48
+					 */
+					previousValue : {type : "string"}
 				}
 			},
 

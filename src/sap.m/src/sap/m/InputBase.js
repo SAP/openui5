@@ -474,11 +474,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {String} sValue Reverted value of the input.
 	 * @since 1.26
 	 */
-	InputBase.prototype.onValueRevertedByEscape = function(sValue) {
+	InputBase.prototype.onValueRevertedByEscape = function(sValue, sPreviousValue) {
 
 		// fire private live change event
 		this.fireEvent("liveChange", {
 			value: sValue,
+
+			//indicate that ESC key is trigger
+			escPressed: true,
+
+			//the value that was before pressing ESC key
+			previousValue: sPreviousValue,
 
 			// backwards compatibility
 			newValue: sValue
@@ -523,7 +529,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.updateDomValue(this._lastValue);
 
 			// value is reverted, now call the hook to inform
-			this.onValueRevertedByEscape(this._lastValue);
+			this.onValueRevertedByEscape(this._lastValue, sValue);
 		}
 	};
 
