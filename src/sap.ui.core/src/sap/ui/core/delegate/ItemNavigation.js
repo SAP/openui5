@@ -292,12 +292,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	/**
 	 * Sets the item DOM references as an array for the items
 	 *
-	 * @param {Element[]} aItemDomRefs Array of DOM references representing the items
+	 * @param {Element[]} aItemDomRefs Array of DOM references or DOM node list object, representing the items
 	 * @return {sap.ui.core.delegate.ItemNavigation} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ItemNavigation.prototype.setItemDomRefs = function(aItemDomRefs) {
-		jQuery.sap.assert(Array.isArray(aItemDomRefs), "aItemDomRefs must be an array of DOM elements");
+		jQuery.sap.assert(typeof aItemDomRefs === "object" && typeof aItemDomRefs.length === "number", "aItemDomRefs must be an array of DOM elements");
 		this.aItemDomRefs = aItemDomRefs;
 
 		if (this.iFocusedIndex > aItemDomRefs.length - 1) {
