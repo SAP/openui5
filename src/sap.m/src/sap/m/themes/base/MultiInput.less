@@ -2,7 +2,10 @@
 /* CSS for control sap.m/MultiInput  */
 /* Base theme                        */
 /* ================================= */
+//max min-width of whole multiinput
+//max min-width of tokenizer inside multiinput
 
+//when multiinput width changes the width of the tokenizer should be auto
 .sapMMultiInput {
 	min-width: 7rem; //9.5rem;
 }
@@ -295,4 +298,11 @@ html.sap-phone .sapMTokenizerMultiLine > .sapMTokenizerScrollContainer > .sapMTo
 
 .sapUiSizeCompact .sapMMultiInputMultiModeBorder .sapMTokenizer .sapMToken {
 	margin-bottom: -0.125rem;
+}
+
+// Prevents the cursor offset on desktop when there is only 1 token
+@media screen and (min-width:768px) {
+	.sapMMultiInput .sapMTokenizer {
+		min-width: auto;
+	}
 }
