@@ -132,7 +132,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	};
 
 	SelectionDetails.prototype.onBeforeRendering = function () {
-		this.getAggregation("_button").setProperty("text", this._getButtonText(), true);
+		this._updateButton();
 	};
 
 	SelectionDetails.prototype.exit = function() {
@@ -198,12 +198,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	/* =========================================================== */
 
 	/**
-	 * Gets the text for the button in the toolbar.
+	 * Updates the button text and sets the button to enabled or disabled depending of the amount of items.
 	 * @private
-	 * @returns {string} The text on the button
 	 */
-	SelectionDetails.prototype._getButtonText = function () {
-		return this._oRb.getText("SELECTIONDETAILS_BUTTON_TEXT", [this.getItems().length]);
+	SelectionDetails.prototype._updateButton = function () {
+		var sText,
+				oButton = this.getAggregation("_button");
+		if (this.getItems().length > 0) {
+			sText = this._oRb.getText("SELECTIONDETAILS_BUTTON_TEXT_WITH_NUMBER", [this.getItems().length]);
+			oButton.setProperty("text", sText, true);
+			oButton.setProperty("enabled", true, true);
+		} else {
+			sText = this._oRb.getText("SELECTIONDETAILS_BUTTON_TEXT");
+			oButton.setProperty("text", sText, true);
+			oButton.setProperty("enabled", false, true);
+		}
 	};
 
 	/**

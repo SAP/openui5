@@ -59,12 +59,24 @@
 		assert.ok(this.oSelectionDetails.$(), "Minimal dom strcture is present");
 	});
 
+	QUnit.test("Button is rendered", function(assert) {
+		//Assert
+		assert.ok(this.oSelectionDetails.getAggregation("_button").$(), "Button is rendered");
+	});
+
+	QUnit.test("Button has text 'Details' and is disabled if no items are present", function(assert) {
+		//Assert
+		assert.ok(this.oSelectionDetails.getAggregation("_button").getText(), "Details", "The button text is 'Details'");
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getEnabled(), false, "The button disabled");
+	});
+
 	QUnit.test("Toolbar button is up to date", function(assert) {
 		// Arrange
 		this.oSelectionDetails.addItem(new sap.m.SelectionDetailsItem());
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(this.oSelectionDetails.getAggregation("_button").getText(), "Details (1)", "The button text is up to date");
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getEnabled(), true, "The button enabled");
 	});
 
 	QUnit.module("API methods", {
