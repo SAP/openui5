@@ -76,23 +76,50 @@
 		}
 	});
 
+	var oResetActionsButton = new sap.m.Button({
+		text: "Reset Actions",
+		press: function (oEvt) {
+			oSelectionDetails.destroyActions();
+			oSelectionDetails.destroyActionGroups();
+		}
+	});
+
 	var oSelectionDetails = new sap.m.SelectionDetails("selectionDetails");
 	oSelectionDetails.registerSelectionDetailsItemFactory(["MyFirstData", "MySecondData"],
 		function (aDisplayData, aData, oData) {
 			var aLines = [];
 			for (var i = 0; i < aDisplayData.length; i++) {
 				aLines.push(new sap.m.SelectionDetailsItemLine({
-					label : aDisplayData[i].label,
+					label: aDisplayData[i].label,
 					value: aDisplayData[i].value,
 					unit: aDisplayData[i].unit
 				}));
 			}
 			return new sap.m.SelectionDetailsItem({
-				enableNav: Math.random > 0.5 ? true: false,
-				lines : aLines
+				enableNav: Math.random() > 0.5 ? true : false,
+				lines: aLines,
+				actions: [
+					new sap.ui.core.Item({
+						text: "First Action"
+					})
+				]
 			});
 		}
 	);
+	oSelectionDetails.attachEvent("beforeUpdate", function (oEvent) {
+		sap.m.MessageToast.show("Event 'beforeUpdate' triggered");
+	});
+	oSelectionDetails.attachEvent("afterUpdate", function (oEvent) {
+		oEvent.getSource().addAction(new sap.ui.core.Item({
+			text: "First Action",
+			key: "firstAction"
+		}));
+		oEvent.getSource().addActionGroup(new sap.ui.core.Item({
+			text: "First Action",
+			key: "firstAction"
+		}));
+		sap.m.MessageToast.show("Event 'afterUpdate' triggered");
+	});
 
 	//Not yet implemented
 	oSelectionDetails.attachSelectionHandler("_selectionDetails", oChangeButton);
@@ -100,7 +127,7 @@
 	var oApp = new sap.m.App({
 		pages: new sap.m.Page({
 			title: "Testpage of sap.m.SelectionDetails control for inner Framework Integration",
-			content: [ oSelectionDetails, oChangeButton ]
+			content: [ oSelectionDetails, oChangeButton, oResetActionsButton ]
 		})
 	});
 	oApp.placeAt("content");
