@@ -598,6 +598,7 @@
 		this.oSemanticFooter.addContent(oDraftIndicator,
 			oSemanticConfiguration.getPlacement(sDraftIndicatorType));
 
+		// Assert
 		// The Internal OverflowToolbar content count should be always decreased by one
 		// as ToolbarSpacer is always added.
 		assert.equal(this.oOTB.getContent().length - 1, iFooterActions,
@@ -641,14 +642,140 @@
 	/* --------------------------- SemanticShareMenu -------------------------------------- */
 	QUnit.module("SemanticShareMenu", {
 		beforeEach: function () {
-			this.oOTB = oFactory.getOverflowToolbar();
-			this.oSemanticFooter = oFactory.getSemanticFooter(this.oOTB);
+			this.oActionSheet = oFactory.getActionSheet();
+			this.oSemanticShareMenu = oFactory.getSemanticShareMenu(this.oActionSheet);
 		},
 		afterEach: function () {
-			this.oSemanticFooter.destroy();
-			this.oOTB.destroy();
-			this.oSemanticFooter = null;
-			this.oOTB = null;
+			this.oSemanticShareMenu.destroy();
+			this.oActionSheet.destroy();
+			this.oSemanticShareMenu = null;
+			this.oActionSheet = null;
 		}
+	});
+
+	QUnit.test("test Custom Actions", function (assert) {
+		var oButton = oFactory.getAction(),
+			oButton2 = oFactory.getAction(),
+			iContentCount = 0, iContentIdx = 0, mMode = {initial: "initial", menu: "menu"},
+			oSpy = this.spy(this.oSemanticShareMenu, "_fireContentChanged");
+
+		// Assert
+		assert.equal(this.oSemanticShareMenu._getMode(), mMode.initial,
+			"The ShareMenu is empty, the mode is initial");
+
+		// Act
+		iContentCount++;
+		this.oSemanticShareMenu.addCustomAction(oButton);
+
+		// Assert
+		assert.equal(this.oSemanticShareMenu._getMode(), mMode.menu,
+			"The ShareMenu is not empty, the mode is menu");
+		assert.ok(oSpy.called, "The Internal ContentChanged event is fired");
+		assert.equal(this.oSemanticShareMenu.getCustomActions().length, iContentCount,
+			"There is one new action added - items count: " + iContentCount);
+		assert.equal(this.oSemanticShareMenu.indexOfCustomAction(oButton), iContentIdx,
+			"The action is added is on index: " + iContentIdx);
+
+		// Act
+		iContentCount--;
+		this.oSemanticShareMenu.removeAllCustomActions();
+
+		// Assert
+		assert.equal(this.oSemanticShareMenu._getMode(), mMode.initial,
+			"The ShareMenu is empty, the mode is initial");
+		assert.ok(oSpy.called, "The Internal ContentChanged event is fired");
+		assert.equal(this.oSemanticShareMenu.getCustomActions().length, iContentCount,
+			"The single action has been removed - actions left: " + iContentCount);
+
+		// Act
+		iContentCount += 2;
+		this.oSemanticShareMenu.addCustomAction(oButton);
+		this.oSemanticShareMenu.insertCustomAction(oButton2, iContentIdx);
+
+		// Assert
+		assert.equal(this.oSemanticShareMenu._getMode(), mMode.menu,
+			"The ShareMenu is not empty, the mode is menu");
+		assert.ok(oSpy.called, "The Internal ContentChanged event is fired");
+		assert.equal(this.oSemanticShareMenu.getCustomActions().length, iContentCount,
+			"There are two actions added - actions count: " + iContentCount);
+		assert.equal(this.oSemanticShareMenu.indexOfCustomAction(oButton2), iContentIdx,
+			"The second action is inserted as first at index: " + iContentIdx);
+
+		// Act
+		iContentCount --;
+		this.oSemanticShareMenu.removeCustomAction(oButton2);
+		assert.equal(this.oSemanticShareMenu.indexOfCustomAction(oButton2), -1,
+			"The second action has been removed");
+		assert.equal(this.oSemanticShareMenu.indexOfCustomAction(oButton), iContentIdx,
+			"The single action is now on index: " + iContentIdx);
+		assert.equal(this.oSemanticShareMenu.getCustomActions().length, iContentCount,
+			"The actions count is: " + iContentCount);
+
+		// Act
+		this.oSemanticShareMenu.addCustomAction(oButton2);
+		this.oSemanticShareMenu.destroyCustomActions();
+		iContentCount = 0;
+
+		// Assert
+		assert.equal(this.oSemanticShareMenu._getMode(), mMode.initial,
+			"The ShareMenu is empty, the mode is initial");
+		assert.ok(oSpy.called, "The Internal ContentChanged event is fired");
+		assert.equal(this.oSemanticShareMenu.getCustomActions().length, iContentCount,
+			"The actions have been destroyed - items count: " + iContentCount);
+		assert.ok(oButton.bIsDestroyed, "The action has been destroyed.");
+		assert.ok(oButton2.bIsDestroyed, "The action has been destroyed.");
+	});
+
+	QUnit.test("test Semantic Actions", function (assert) {
+		var oSendEmailAction = oFactory.getSendEmailAction(),
+			oSendMessageAction = oFactory.getSendMessageAction(),
+			sSendEmailActionType = "sap.f.semantic.SendEmailAction",
+			sSendMessageActionType = "sap.f.semantic.SendMessageAction",
+			iSendEmailActionExpectedOrder = 0,
+			iSendMessageActionExpectedOrder = 1,
+			iSemanticActions = 2,
+			mMode = {initial: "initial", menu: "menu"},
+			oSpy = this.spy(this.oSemanticShareMenu, "_fireContentChanged");
+
+		// Assert
+		assert.equal(this.oSemanticShareMenu._getMode(), mMode.initial,
+			"The ShareMenu is empty, the mode is initial");
+
+		// Act
+		// Inserted as 1st but should be ordered 2nd.
+		this.oSemanticShareMenu.addContent(oSendMessageAction,
+			oSemanticConfiguration.getPlacement(sSendMessageActionType));
+
+		// Inserted as 2nd, but should be ordered 1st.
+		this.oSemanticShareMenu.addContent(oSendEmailAction,
+			oSemanticConfiguration.getPlacement(sSendEmailActionType));
+		assert.ok(oSpy.called, "The Internal ContentChanged event is fired");
+		assert.equal(this.oSemanticShareMenu._getMode(), mMode.menu,
+			"The ShareMenu is not empty, the mode is menu");
+		assert.equal(this.oActionSheet.getButtons().length, iSemanticActions,
+			iSemanticActions + " semantic actions have been added to the container.");
+		assert.equal(this.oActionSheet.indexOfButton(oSendEmailAction._getControl()), iSendEmailActionExpectedOrder,
+			"The Send Email Action internal control has the correct order: " + iSendEmailActionExpectedOrder);
+		assert.equal(this.oActionSheet.indexOfButton(oSendMessageAction._getControl()), iSendMessageActionExpectedOrder,
+			"The Send Message Action internal control has the correct order: " + iSendMessageActionExpectedOrder);
+
+		// Act
+		this.oSemanticShareMenu.removeContent(oSendEmailAction,
+			oSemanticConfiguration.getPlacement(sSendEmailActionType));
+
+		// Assert
+		assert.equal(this.oSemanticShareMenu._getMode(), mMode.menu,
+			"The ShareMenu is not empty, the mode is menu");
+		assert.ok(oSpy.called, "The Internal ContentChanged event is fired");
+		assert.equal(this.oActionSheet.getButtons().length, iSemanticActions - 1,
+			iSemanticActions - 1 + " semantic actions remained in the container.");
+		assert.equal(this.oActionSheet.indexOfButton(oSendEmailAction._getControl()), -1,
+			"The Send Email Action internal control has been removed from the container.");
+		assert.equal(this.oActionSheet.indexOfButton(oSendMessageAction._getControl()),
+			iSendMessageActionExpectedOrder - 1, "The Send Message Action should become first action as the Main Action is removed.");
+
+		// Clean up
+		oSendEmailAction.destroy();
+		oSendMessageAction.destroy();
 	});
 })(jQuery, QUnit, sinon);

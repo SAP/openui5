@@ -423,9 +423,15 @@ sap.ui.define([
 			}
 		};
 
-		oTypeConfigs["sap.f.semantic.PrintAction"] = {
+		oTypeConfigs["saveAsTileAction"] = {
 			placement: SemanticConfiguration._Placement.shareMenu,
 			order: 4,
+			constraints: "IconOnly"
+		};
+
+		oTypeConfigs["sap.f.semantic.PrintAction"] = {
+			placement: SemanticConfiguration._Placement.shareMenu,
+			order: 5,
 			constraints: "IconOnly",
 			getSettings: function() {
 				return {

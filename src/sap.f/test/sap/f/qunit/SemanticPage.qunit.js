@@ -567,6 +567,23 @@
 		});
 	});
 
+	QUnit.test("test saveAsTileAction aggregation", function (assert) {
+		var oSaveAsTileAction = oFactory.getAction();
+
+		// Act
+		this.oSemanticPage.setSaveAsTileAction(oSaveAsTileAction);
+
+		// Assert
+		assert.equal(this.oSemanticPage.getSaveAsTileAction(), oSaveAsTileAction, "saveAsTileAction aggregation has been set");
+
+		// Act
+		this.oSemanticPage.destroySaveAsTileAction();
+
+		// Assert
+		assert.equal(this.oSemanticPage.getSaveAsTileAction(), null, "saveAsTileAction aggregation does not exist anymore");
+		assert.ok(oSaveAsTileAction.bIsDestroyed, "oSaveAsTileAction button has been destroyed.");
+	});
+
 	/* --------------------------- SemanticPage Rendering ---------------------------------- */
 	QUnit.module("SemanticPage - Rendering", {
 		beforeEach: function () {
