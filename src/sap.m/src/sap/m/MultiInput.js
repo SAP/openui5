@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.MultiInput.
-sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './library', 'sap/ui/Device', 'sap/ui/core/InvisibleText'],
-	function (jQuery, Input, Tokenizer, Token, library, Device, InvisibleText) {
+sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/Device', 'sap/ui/core/InvisibleText'],
+	function (jQuery, Input, Tokenizer, Token, library, EnabledPropagator, Device, InvisibleText) {
 		"use strict";
 
 
@@ -133,6 +133,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 			}
 		}
 	});
+
+	EnabledPropagator.apply(MultiInput.prototype, [true]);
 
 	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
