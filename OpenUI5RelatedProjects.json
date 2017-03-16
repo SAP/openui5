@@ -1,0 +1,47 @@
+	{
+		"ui5-inspector": {
+			"name": "UI5 Inspector",
+			"decription": "The UI5 Inspector is a standard Chrome extension for debugging and getting to know UI5 applications.",
+			"githubLink": "https://github.com/SAP/ui5-inspector",
+			"documentationLink": "",
+			"owner": "SAP",
+			"license": "Apache 2.0",
+			"type": "Add-on"
+		},
+		"UI5CustomControl": {
+			"name": "OpenUI5 Custom Controls for charting",
+			"decription": "This project shows how to use C3.js and Chart.js within OpenUI5 projects.",
+			"githubLink": "https://github.com/SAP/openui5-charting-custom-controls",
+			"documentationLink": "http://www.chartjs.org/docs/",
+			"owner": "michadelic",
+			"license": "Apache 2.0",
+			"type": "Control"
+		},
+		"Meteor-UI5": {
+			"name": "Meteor-UI5",
+			"decription": "Meteor-UI5 is a collection of packages that brings to together two powerful open source JavaScript web frameworks: Meteor and OpenUI5.",
+			"githubLink": "https://github.com/propellerlabsio/meteor-ui5",
+			"documentationLink": "https://meteor-ui5.propellerlabs.com/",
+			"owner": "proehlen",
+			"license": "Apache 2.0",
+			"type": "Extension"
+		},
+		"openui5-i18n-util": {
+			"name": "openui5-i18n-util",
+			"decription": "This script will search all your i18n strings and build auto-magically every translations file for you.",
+			"githubLink": "https://github.com/StErMi/openui5-i18n-util",
+			"documentationLink": "",
+			"owner": "StErMi",
+			"license": "Apache 2.0",
+			"type": "Tool"
+		},
+		"Ui5Strap": {
+			"name": "Ui5Strap",
+			"decription": "App Development Toolkit for Desktop, Cloud and Mobile. Based on OpenUI5 + Bootstrap.",
+			"githubLink": "https://github.com/pks5/ui5strap",
+			"documentationLink": "http://www.ui5strap.com/manual/",
+			"owner": "pks5",
+			"license": "Apache 2.0",
+			"type": "Extension"
+		}
+	}
