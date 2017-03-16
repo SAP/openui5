@@ -140,7 +140,8 @@ sap.ui.define([
 			oOpa5.emptyQueue().done(done);
 		});
 
-		QUnit.asyncTest("Should throw error if the IFrame throws an error", function (assert) {
+		QUnit.test("Should throw error if the IFrame throws an error", function (assert) {
+			var done = assert.async();
 			// Arrange
 			jQuery("body").append('<iframe id="OpaFrame" src="../testdata/emptySite.html"></iframe>');
 			var $Frame = jQuery("#OpaFrame").on("load", function () {
@@ -167,7 +168,7 @@ sap.ui.define([
 				oOpa5.iTeardownMyAppFrame();
 
 				oOpa5.emptyQueue().done(function () {
-					QUnit.start();
+					done();
 				});
 			});
 

@@ -616,14 +616,15 @@
 		}
 	});
 
-	QUnit.asyncTest("After initialization", function(assert) {
+	QUnit.test("After initialization", function(assert) {
+		var done = assert.async();
 		var fnTest = function() {
 			oTable.attachEvent("_rowsUpdated", fnTest2);
 		};
 
 		var fnTest2 = function() {
 			assert.equal(oTable.getVisibleRowCount(), 22, "Expected visibleRowCount: 22, Is: " + oTable.getVisibleRowCount());
-			QUnit.start();
+			done();
 		};
 
 		oTable.attachEventOnce("_rowsUpdated", fnTest);
@@ -1076,7 +1077,8 @@
 		}
 	});
 
-	QUnit.asyncTest("Export filtered table with named model", function(assert) {
+	QUnit.test("Export filtered table with named model", function(assert) {
+		var done = assert.async();
 		oExport
 		.generate()
 		.done(function(sContent) {
@@ -1098,7 +1100,7 @@
 			assert.ok(false, 'Generate should not fail.');
 		})
 		.always(function() {
-			QUnit.start();
+			done();
 		});
 	});
 
@@ -1149,7 +1151,8 @@
 		afterEach: destroyTable
 	});
 
-	QUnit.asyncTest("Multi-columns sorting", function(assert) {
+	QUnit.test("Multi-columns sorting", function(assert) {
+		var done = assert.async();
 		creatSortingTableData();
 
 		var fnHandler = function() {
@@ -1172,7 +1175,8 @@
 		sortTable();
 	});
 
-	QUnit.asyncTest("Sort Icon", function(assert) {
+	QUnit.test("Sort Icon", function(assert) {
+		var done = assert.async();
 		creatSortingTableData();
 
 		var fnHandler = function() {
@@ -1191,7 +1195,7 @@
 				assert.ok(cell.hasClass("sapUiTableColSortedD"), "sort icon is descending");
 
 				oTable.detachEvent("_rowsUpdated", fnHandler);
-				QUnit.start();
+				done();
 			}
 		};
 
@@ -1201,7 +1205,8 @@
 		oTable.sort(aColumns[1], sap.ui.table.SortOrder.Descending, true);
 	});
 
-	QUnit.asyncTest("Sort Icon", function(assert) {
+	QUnit.test("Sort Icon", function(assert) {
+		var done = assert.async();
 		creatSortingTableData();
 		var aColumns = oTable.getColumns();
 
@@ -1227,7 +1232,7 @@
 			assert.ok(aColumns[1].getSorted() == false, "Second column not sorted");
 
 			oTable.detachEvent("_rowsUpdated", fnHandler2);
-			QUnit.start();
+			done();
 		};
 
 		oTable.attachEvent("_rowsUpdated", fnHandler);
@@ -1235,7 +1240,8 @@
 		oTable.sort(aColumns[1], sap.ui.table.SortOrder.Descending, true);
 	});
 
-	QUnit.asyncTest("remove column", function(assert) {
+	QUnit.test("remove column", function(assert) {
+		var done = assert.async();
 		creatSortingTableData();
 		var oRemovedColumn;
 
@@ -1255,7 +1261,7 @@
 			assert.strictEqual(oRemovedColumn.getSortProperty(), "name", "first name is removed");
 			assert.strictEqual(aSortedColumns[0].getSortProperty(), "lastName", "second column becomes the first column.");
 			oTable.detachEvent("_rowsUpdated", fnHandler2);
-			QUnit.start();
+			done();
 		};
 
 		oTable.attachEvent("_rowsUpdated", fnHandler);
@@ -1263,7 +1269,8 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	QUnit.asyncTest("remove all columns", function(assert) {
+	QUnit.test("remove all columns", function(assert) {
+		var done = assert.async();
 		creatSortingTableData();
 
 		var fnHandler = function() {
@@ -1281,7 +1288,7 @@
 			oTable.detachEvent("_rowsUpdated", fnHandler2);
 			var aSortedColumns = oTable.getSortedColumns();
 			assert.strictEqual(aSortedColumns.length, 0, "sorted column deletion.");
-			QUnit.start();
+			done();
 		};
 
 		oTable.attachEvent("_rowsUpdated", fnHandler);
@@ -1289,7 +1296,8 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	QUnit.asyncTest("destroy columns", function(assert) {
+	QUnit.test("destroy columns", function(assert) {
+		var done = assert.async();
 		creatSortingTableData();
 
 		var fnHandler = function() {
@@ -1307,7 +1315,7 @@
 			oTable.detachEvent("_rowsUpdated", fnHandler2);
 			var aSortedColumns = oTable.getSortedColumns();
 			assert.strictEqual(aSortedColumns.length, 0, "sorted column deletion.");
-			QUnit.start();
+			done();
 		};
 
 		oTable.attachEvent("_rowsUpdated", fnHandler);
@@ -1315,7 +1323,8 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	QUnit.asyncTest("change column order", function(assert) {
+	QUnit.test("change column order", function(assert) {
+		var done = assert.async();
 		creatSortingTableData();
 		var oRemovedColumn;
 
@@ -1346,7 +1355,7 @@
 			assert.strictEqual(aSortedColumns[0].getSortProperty(), "name", "first name stays in first sorted column");
 			assert.strictEqual(aSortedColumns[1].getSortProperty(), "lastName", "last name stays in second sorted column");
 			oTable.detachEvent("_rowsUpdated", fnHandler3);
-			QUnit.start();
+			done();
 		};
 
 		oTable.attachEvent("_rowsUpdated", fnHandler);
@@ -1412,7 +1421,8 @@
 		afterEach: destroyTable
 	});
 
-	QUnit.asyncTest("_updateTableCell callback", function(assert) {
+	QUnit.test("_updateTableCell callback", function(assert) {
+		var done = assert.async();
 		var iCallCountUpdateTableCellOnTable = 0;
 		var iCallCountUpdateTableCell = 0;
 		var fnTest = function() {
@@ -1425,7 +1435,7 @@
 		var fnTestScroll = function() {
 			assert.equal(iCallCountUpdateTableCellOnTable, 40, "UpdateTableCell callback called on table ok");
 			assert.equal(iCallCountUpdateTableCell, 40, "UpdateTableCell callback called on cell ok");
-			QUnit.start();
+			done();
 		};
 
 		// create a dummy control for this test which has _updateTableCell implemented
@@ -1543,7 +1553,8 @@
 		oTable.setSelectedIndex(0);
 	});
 
-	QUnit.asyncTest("Select All on Binding Change", 4, function(assert) {
+	QUnit.test("Select All on Binding Change", 4, function(assert) {
+		var done = assert.async();
 		var oModel;
 		oTable.attachRowSelectionChange(function(){
 			assert.ok(!oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is checked.");
@@ -1553,7 +1564,7 @@
 
 				oTable.attachEventOnce("_rowsUpdated", function() {
 					assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
-					start();
+					done();
 				});
 
 				oModel.setData({modelData: aData});
@@ -1572,43 +1583,48 @@
 
 	QUnit.module("Legacy Modules", {});
 
-	QUnit.asyncTest("TreeAutoExpandMode", function(assert) {
+	QUnit.test("TreeAutoExpandMode", function(assert) {
+		var done = assert.async();
 		sap.ui.require(['sap/ui/table/TreeAutoExpandMode', 'sap/ui/table/library'], function(oClass, oLib) {
 			assert.ok(oClass === sap.ui.table.TreeAutoExpandMode, "Global Namespace");
 			assert.ok(oClass === oLib.TreeAutoExpandMode, "Library");
-			start();
+			done();
 		});
 	});
 
-	QUnit.asyncTest("ColumnMenuRenderer", function(assert) {
+	QUnit.test("ColumnMenuRenderer", function(assert) {
+		var done = assert.async();
 		sap.ui.require(['sap/ui/table/ColumnMenuRenderer', 'sap/ui/table/ColumnMenu'], function(oRenderer, oMenu) {
 			assert.ok(oRenderer === sap.ui.table.ColumnMenuRenderer, "Global Namespace");
 			assert.ok(oRenderer === oMenu.getMetadata().getRenderer(), "Metadata");
-			start();
+			done();
 		});
 	});
 
-	QUnit.asyncTest("AnalyticalColumnMenuRenderer", function(assert) {
+	QUnit.test("AnalyticalColumnMenuRenderer", function(assert) {
+		var done = assert.async();
 		sap.ui.require(['sap/ui/table/AnalyticalColumnMenuRenderer', 'sap/ui/table/AnalyticalColumnMenu'], function(oRenderer, oMenu) {
 			assert.ok(oRenderer === sap.ui.table.AnalyticalColumnMenuRenderer, "Global Namespace");
 			assert.ok(oRenderer === oMenu.getMetadata().getRenderer(), "Metadata");
-			start();
+			done();
 		});
 	});
 
-	QUnit.asyncTest("TreeTableRenderer", function(assert) {
+	QUnit.test("TreeTableRenderer", function(assert) {
+		var done = assert.async();
 		sap.ui.require(['sap/ui/table/TreeTableRenderer', 'sap/ui/table/TreeTable'], function(oRenderer, oTable) {
 			assert.ok(oRenderer === sap.ui.table.TreeTableRenderer, "Global Namespace");
 			assert.ok(oRenderer === oTable.getMetadata().getRenderer(), "Metadata");
-			start();
+			done();
 		});
 	});
 
-	QUnit.asyncTest("TreeTableRenderer", function(assert) {
+	QUnit.test("TreeTableRenderer", function(assert) {
+		var done = assert.async();
 		sap.ui.require(['sap/ui/table/AnalyticalTableRenderer', 'sap/ui/table/AnalyticalTable'], function(oRenderer, oTable) {
 			assert.ok(oRenderer === sap.ui.table.AnalyticalTableRenderer, "Global Namespace");
 			assert.ok(oRenderer === oTable.getMetadata().getRenderer(), "Metadata");
-			start();
+			done();
 		});
 	});
 

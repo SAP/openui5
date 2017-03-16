@@ -288,7 +288,8 @@
 
 			QUnit.module("Synchronous hash setting");
 
-			asyncTest("Should not omit a history entry when hash is set again in a handler", function () {
+			QUnit.test("Should not omit a history entry when hash is set again in a handler", function (assert) {
+				var done = assert.async();
 				//Arrange
 				var aCalls = [],
 						fnHashChanged = function (oEvt) {
@@ -318,7 +319,7 @@
 
 							//Cleanup
 							oHashChanger.destroy();
-							start();
+							done();
 						};
 
 				//System under Test

@@ -79,7 +79,8 @@
 		});
 
 		var firstPos;
-		asyncTest("Selection Arrow", function() {
+		QUnit.test("Selection Arrow", function(assert) {
+			var done = assert.async();
 			var arrow = jQuery.sap.domById(oCtrl.getId() + "-arrow");
 			ok(arrow, "there should be one selection arrow");
 
@@ -94,11 +95,12 @@
 
 				ok(arrowPos > left && arrowPos < right, "arrow position (" + arrowPos
 						+ ") should be around the center of the selected item (between " + left + " and " + right + ")");
-				start();
+				done();
 			}, 600);
 		});
 
-		asyncTest("Selection Arrow Animation", function() {
+		QUnit.test("Selection Arrow Animation", function(assert) {
+			var done = assert.async();
 			oCtrl.setSelectedItem(item3);
 			var arrow = jQuery.sap.domById(oCtrl.getId() + "-arrow");
 
@@ -117,13 +119,14 @@
 					ok(newArrowPos > arrowPos, "arrow should have moved further to the right after the animation (from " + arrowPos + ", now " + newArrowPos + ")");
 					ok(newArrowPos > left && newArrowPos < right, "arrow position (" + newArrowPos
 							+ ") should be around the center of the newly selected item (between " + left + " and " + right + ")");
-					start();
+					done();
 				}, 400);
 			}, 300);
 		});
 
 		var expectedItemId;
-		asyncTest("Item selection (mouse)", function() {
+		QUnit.test("Item selection (mouse)", function(assert) {
+			var done = assert.async();
 			expect(5); // including event handler
 			var oldSel = oCtrl.getSelectedItem();
 			equal(oldSel, item3.getId(), "item 3 should be selected"); // make sure previous selection is right
@@ -137,7 +140,7 @@
 			setTimeout(function(){
 				var newSel = oCtrl.getSelectedItem();
 				equal(newSel, item1.getId(), "item 1 should be selected after clicking it"); // make sure selection is right after clicking
-				start();
+				done();
 			}, 600);
 		});
 
@@ -193,7 +196,8 @@
 			strictEqual(oOverflowMenu.hasStyleClass("sapUiUx3NavBarUpperCaseText"), false,  "the items in the menu are with their original case")
 		})
 
-		asyncTest("Overflow", function() {
+		QUnit.test("Overflow", function(assert) {
+			var done = assert.async();
 			jQuery.sap.byId("uiArea1").css("width", "80px");
 			setTimeout(function(){
 				equal(isForwardVisible(), true, "forward arrow should be visible");
@@ -214,13 +218,14 @@
 
 						equal(isBackVisible(), true, "back arrow should not be visible");
 						equal(isBackEnabled(), false, "back arrow should not be enabled");
-						start();
+						done();
 					}, 500);
 				}, 500);
 			}, 500);
 		});
 
-		asyncTest("Scrolling + Overflow", function() {
+		QUnit.test("Scrolling + Overflow", function(assert) {
+			var done = assert.async();
 			equal(jQuery.sap.domById(oCtrl.getId() + "-list").scrollLeft, 0, "list should not be scrolled initially");
 
 			// click first item
@@ -251,7 +256,7 @@
 							equal(isBackEnabled(), false, "back arrow shouldnot  be enabled");
 							equal(jQuery.sap.domById(oCtrl.getId() + "-list").scrollLeft, 0, "list should not be scrolled now");
 
-							start();
+							done();
 						}, 600);
 					}, 600);
 				}, 600);

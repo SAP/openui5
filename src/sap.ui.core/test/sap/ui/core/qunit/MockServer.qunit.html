@@ -533,7 +533,8 @@
 		ok(!oMockServer2.isStarted(), "Mock server 2 is stopped");
 	});
 
-	asyncTest("Test Config: autoRespondAfter & async", 3, function() {
+	QUnit.test("Test Config: autoRespondAfter & async", 3, function(assert) {
+		var done = assert.async();
 		sap.ui.core.util.MockServer.config({
 			autoRespondAfter : 1000
 		})
@@ -559,7 +560,6 @@
 			url : "/myservice/projects/323234",
 			dataType : "json",
 			success : function() {
-				start();
 				ok(true, "Mock server responded");
 				var iNow = new Date().getTime();
 				var iRespondedAfter = iNow - iBefore;
@@ -571,11 +571,13 @@
 				sap.ui.core.util.MockServer.config({
 					autoRespondAfter : 0
 				})
+				done();
 			}
 		});
 	});
 
-	asyncTest("Test Config: autoRespond false & async", 2, function() {
+	QUnit.test("Test Config: autoRespond false & async", 2, function(assert) {
+		var done = assert.async();
 		sap.ui.core.util.MockServer.config({
 			autoRespond : false
 		})
@@ -600,12 +602,12 @@
 			url : "/myservice/projects/323234",
 			dataType : "json",
 			success : function() {
-				start();
 				ok(true, "Mock server responded");
 				oMockServer.destroy();
 				sap.ui.core.util.MockServer.config({
 					autoRespond : true
 				})
+				done();
 			}
 		});
 
@@ -3903,7 +3905,8 @@
 		oModel.submitChanges();
 	});
 
-	asyncTest("test mock data in one file", 10, function() {
+	QUnit.test("test mock data in one file", 10, function(assert) {
+		var done = assert.async();
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -3934,14 +3937,15 @@
 			equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
-			start(); // resume normal testing
+			done(); // resume normal testing
 		};
 		oBinding.attachChange(handler);
 		oBinding.getContexts();
 		oMockServer.destroy();
 	});
 
-	asyncTest("test mock data generation", 10, function() {
+	QUnit.test("test mock data generation", 10, function(assert) {
+		var done = assert.async();
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -3971,7 +3975,7 @@
 			equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
-			start(); // resume normal testing
+			done(); // resume normal testing
 		};
 		oBinding.attachChange(handler);
 		oBinding.getContexts();
@@ -3979,7 +3983,8 @@
 	});
 
 
-	asyncTest("test $metadata xml", 10, function() {
+	QUnit.test("test $metadata xml", 10, function(assert) {
+		var done = assert.async();
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -4010,7 +4015,7 @@
 			equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
-			start(); // resume normal testing
+			done(); // resume normal testing
 		};
 		oBinding.attachChange(handler);
 		oBinding.getContexts();
@@ -4282,7 +4287,10 @@ QUnit.test("test navigation properties with mocked data", function(assert) {
 });
 
 
-asyncTest("test ODataModel update", function() {
+QUnit.test("test ODataModel update", function(assert) {
+
+
+	var done = assert.async();
 	sURI = "/myservice/";
 	var oMockServer = new sap.ui.core.util.MockServer({
 		rootUri : sURI
@@ -4301,9 +4309,9 @@ asyncTest("test ODataModel update", function() {
 			});
 			equal(oResponse.data.d.CARRNAME, "USD");
 			equal(oResponse.data.d.mimeType, "mimeType 1");
-			start();
+			done();
 		}, function() {
-			start();
+			done();
 			oMockServer.destroy();
 		}, true); // merge:true trigger a MERGE request instead of a PUT request to perform a differential update
 
@@ -4313,7 +4321,8 @@ asyncTest("test ODataModel update", function() {
 
 });
 
-	asyncTest("test oDataModel _loadData JSON", function() {
+	QUnit.test("test oDataModel _loadData JSON", function(assert) {
+		var done = assert.async();
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -4338,7 +4347,7 @@ asyncTest("test ODataModel update", function() {
 					iKeys++;
 				});
 				equal(iKeys, 3);
-				start(); // resume normal testing
+				done(); // resume normal testing
 			});
 		});
 	});
@@ -4347,7 +4356,8 @@ asyncTest("test ODataModel update", function() {
 	oLabel.placeAt("target1");
 
 
-	asyncTest("test getProperty on label", function() {
+	QUnit.test("test getProperty on label", function(assert) {
+		var done = assert.async();
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, true);
 		sap.ui.getCore().setModel(oModel);
@@ -4356,11 +4366,12 @@ asyncTest("test ODataModel update", function() {
 			oLabel.bindProperty("text", "/LeaveItemCollection(employeeid='JSMITH',itemid='1',type='Vacation')/from");
 			equal(oLabel.getText(), "2012-12-27", "text value from model");
 			oLabel.unbindProperty("text");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test double load update", function() {
+	QUnit.test("test double load update", function(assert) {
+		var done = assert.async();
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, true);
 		sap.ui.getCore().setModel(oModel);
@@ -4374,7 +4385,7 @@ asyncTest("test ODataModel update", function() {
 				oLabel.bindProperty("text", "/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/type");
 				equal(oLabel.getText(), "Vacation", "2nd new text value from model");
 				oLabel.unbindProperty("text");
-				start();
+				done();
 			});
 		});
 	});
@@ -4383,7 +4394,8 @@ asyncTest("test ODataModel update", function() {
 	var oListItem = new MyListItem();
 	oList.placeAt("target2");
 
-	asyncTest("test model bindAggregation on List", function() {
+	QUnit.test("test model bindAggregation on List", function(assert) {
+		var done = assert.async();
 		var oModel = initModel(sURI, true);
 		sap.ui.getCore().setModel(oModel);
 		oListItem.bindProperty("text", "type");
@@ -4394,12 +4406,13 @@ asyncTest("test ODataModel update", function() {
 			equal(listItems.length, 3, "length of items");
 			equal(listItems[0].getText(), "Vacation", "LeaveHeader 1 name");
 			oBinding.detachChange(handler);
-			start(); // resume normal testing
+			done(); // resume normal testing
 		}
 		oBinding.attachChange(handler);
 	});
 
-	asyncTest("ListBinding getLength, getContexts", function() {
+	QUnit.test("ListBinding getLength, getContexts", function(assert) {
+		var done = assert.async();
 		var oModel = initModel(sURI, true);
 		var oBinding = oModel.bindList("/LeaveItemCollection");
 
@@ -4411,7 +4424,7 @@ asyncTest("test ODataModel update", function() {
 				equal(context.getObject().itemid, (i + 1) + "", "ListBinding context");
 			});
 			oBinding.detachChange(handler);
-			start(); // resume normal testing
+			done(); // resume normal testing
 		}
 		oBinding.attachChange(handler);
 		oBinding.getContexts();

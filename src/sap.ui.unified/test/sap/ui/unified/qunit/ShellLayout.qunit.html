@@ -160,7 +160,8 @@
 
 		QUnit.module("Behavior");
 
-		asyncTest("Open/Close Pane", function() {
+		QUnit.test("Open/Close Pane", function(assert) {
+			var done = assert.async();
 			function checkVisibility(){
 				return jQuery.sap.byId("shell-container-panecntnt").is(":visible");
 			}
@@ -173,12 +174,13 @@
 				oShell.setShowPane(false);
 				setTimeout(function(){
 					ok(!checkVisibility(), "Pane hidden again");
-					start();
+					done();
 				}, 600);
 			}, 600);
 		});
 
-		asyncTest("Open Curtain", function() {
+		QUnit.test("Open Curtain", function(assert) {
+			var done = assert.async();
 			function checkVisibility(){
 				return jQuery.sap.byId("shell-curtcntnt").is(":visible");
 			}
@@ -188,11 +190,12 @@
 
 			setTimeout(function(){
 				ok(checkVisibility(), "Curtain visible");
-				start();
+				done();
 			}, 600);
 		});
 
-		asyncTest("Open/Close Curtain Pane", function() {
+		QUnit.test("Open/Close Curtain Pane", function(assert) {
+			var done = assert.async();
 			function checkVisibility(){
 				return jQuery.sap.byId("shell-curt-container-panecntnt").is(":visible");
 			}
@@ -205,12 +208,13 @@
 				oShell.setShowCurtainPane(false);
 				setTimeout(function(){
 					ok(!checkVisibility(), "Curtain Pane hidden again");
-					start();
+					done();
 				}, 600);
 			}, 600);
 		});
 
-		asyncTest("Close Curtain", function() {
+		QUnit.test("Close Curtain", function(assert) {
+			var done = assert.async();
 			function checkVisibility(){
 				return jQuery.sap.byId("shell-curtcntnt").is(":visible");
 			}
@@ -220,7 +224,7 @@
 
 			setTimeout(function(){
 				ok(!checkVisibility(), "Curtain hidden again");
-				start();
+				done();
 			}, 600);
 		});
 

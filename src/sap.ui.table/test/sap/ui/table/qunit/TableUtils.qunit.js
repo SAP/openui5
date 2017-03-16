@@ -740,7 +740,8 @@ QUnit.module("Resize Handler", {
 	}
 });
 
-QUnit.asyncTest("Register/Deregister", 17, function(assert) {
+QUnit.test("Register/Deregister", 17, function(assert) {
+	var done = assert.async();
 	var sResizeHandlerId;
 	var fnTestOuter = function(oEvent) {
 		assert.equal(oEvent.currentTarget.getAttribute("id"), this.oTable.getId("outer"), "ResizeHandler triggered for 'outer' element");
@@ -787,7 +788,7 @@ QUnit.asyncTest("Register/Deregister", 17, function(assert) {
 		assert.strictEqual(sResizeHandlerId, undefined, "No ResizeHandler ID returned because of wrong type for handler function");
 		assert.deepEqual(this.oTable.getResizeHandlerIdKeys(), [], "No ResizeHandler IDs stored at table instance");
 
-		QUnit.start();
+		done();
 	};
 
 	assert.strictEqual(this.oTable._mResizeHandlerIds, undefined, "No ResizeHandler registered, therefore no ResizeHandlerIds map");

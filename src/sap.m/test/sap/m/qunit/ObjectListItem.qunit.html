@@ -322,7 +322,8 @@
 
 		QUnit.module("Icon / Image ratio");
 
-		asyncTest("Icon has equal width and height", function() {
+		QUnit.test("Icon has equal width and height", function(assert) {
+			var done = assert.async();
 			var imageOLIIcon = new sap.m.ObjectListItem("imageOLIIcon", {
 				icon : "sap-icon://hint",
 				iconDensityAware: false,
@@ -339,11 +340,12 @@
 				var iconHeight = imageOLIIcon.$().find('.sapMObjLIcon').height();
 				ok(iconWidth == iconHeight, "Icon has equal width and height");
 				imageOLIIcon.destroy();
-				start();
+				done();
 			},1000);
 		});
 
-		asyncTest("Image has different width and height", function() {
+		QUnit.test("Image has different width and height", function(assert) {
+			var done = assert.async();
 			var imageOLIImg = new sap.m.ObjectListItem("imageOLIImg", {
 				icon : "../images/grass.jpg",
 				iconDensityAware: false,
@@ -360,7 +362,7 @@
 				var imageHeight = imageOLIImg.$('img').height();
 				ok(imageWidth > imageHeight, "The image still has different width and height");
 				imageOLIImg.destroy();
-				start();
+				done();
 			},1000);
 		});
 
@@ -372,11 +374,12 @@
 			}
 		});
 
-		asyncTest("ListItemTappedOrPressed", function() {
+		QUnit.test("ListItemTappedOrPressed", function(assert) {
+			var done = assert.async();
 			qutils.triggerEvent("tap", listItemId);
 			setTimeout(function(){
 				ok(pressed, "List item was tapped.");
-				start();
+				done();
 			},50);
 		});
 
@@ -448,45 +451,49 @@
 
 		QUnit.module("Dynamic Marker States");
 
-		asyncTest("Flag Marker Set", function() {
+		QUnit.test("Flag Marker Set", function(assert) {
+			var done = assert.async();
 
 			markerOli.setMarkFavorite(false);
 			markerOli.setMarkFlagged(true);
 			setTimeout(function() {
 				equal($("#" + markerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
 				ok(jQuery.sap.byId(markerId + "-flag"), "Flag marker should be rendered.");
-				start();
+				done();
 			}, 100);
 		});
 
-		asyncTest("Flag Marker Unset", function() {
+		QUnit.test("Flag Marker Unset", function(assert) {
+			var done = assert.async();
 
 			markerOli.setMarkFavorite(false);
 			markerOli.setMarkFlagged(false);
 			setTimeout(function() {
 				equal($("#" + markerId + " .sapUiIcon").length, 0, "No markers should be rendered");
-				start();
+				done();
 			}, 100);
 		});
 
-		asyncTest("Favorite Marker Set", function() {
+		QUnit.test("Favorite Marker Set", function(assert) {
+			var done = assert.async();
 
 			markerOli.setMarkFavorite(true);
 			markerOli.setMarkFlagged(false);
 			setTimeout(function() {
 				equal($("#" + markerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
 				ok(jQuery.sap.byId(markerId + "-favorite"), "Favorite marker should be rendered.");
-				start();
+				done();
 			}, 100);
 		});
 
-		asyncTest("Favorite Marker Unset", function() {
+		QUnit.test("Favorite Marker Unset", function(assert) {
+			var done = assert.async();
 
 			markerOli.setMarkFavorite(false);
 			markerOli.setMarkFlagged(false);
 			setTimeout(function() {
 				equal($("#" + markerId + " .sapUiIcon").length, 0, "No markers should be rendered");
-				start();
+				done();
 			}, 100);
 		});
 

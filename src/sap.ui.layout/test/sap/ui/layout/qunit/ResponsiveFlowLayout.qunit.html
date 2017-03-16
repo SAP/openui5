@@ -126,7 +126,8 @@
 			sap.ui.getCore().applyChanges();
 		}
 	});
-	asyncTest("Shrink", function() {
+	QUnit.test("Shrink", function(assert) {
+		var done = assert.async();
 		expect(2);
 
 		var $layout = jQuery.sap.byId("uiArea1");
@@ -150,12 +151,13 @@
 			}
 			ok(bTest, "Layout wrapped second button");
 
-			start();
+			done();
 
 		}, 100);
 	});
 
-	asyncTest("Enlarge", function() {
+	QUnit.test("Enlarge", function(assert) {
+		var done = assert.async();
 		expect(1);
 
 		// have to wait more than 300ms until the layout recognized the minimization
@@ -172,7 +174,7 @@
 			}
 
 			ok(bTest, "Layout wrapped back to one line");
-			start();
+			done();
 
 		}, 100);
 	});

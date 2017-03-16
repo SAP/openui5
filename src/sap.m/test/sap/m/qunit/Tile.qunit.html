@@ -35,7 +35,8 @@
 			equals(sut._posY,2)
 		});
 
-		asyncTest("ShouldSetStyledForPosition", function() {
+		QUnit.test("ShouldSetStyledForPosition", function(assert) {
+			var done = assert.async();
 			// Arrange
 			var sut, $sut,
 				xPosition = 5,
@@ -63,7 +64,7 @@
 								} else {
 					equal(result,"matrix(1, 0, 0, 1, " + xPosition + ", " + yPosition + ")" );
 				}
-				start();
+				done();
 			},800);
 		});
 

@@ -84,7 +84,8 @@ function asyncTestsuite(sCaption, oConfig) {
 		ok(this.oView.$().children().length, "View content was rendered synchronously");
 	});
 
-	asyncTest("Rendering - asynchronous resource loading", 5, function () {
+	QUnit.test("Rendering - asynchronous resource loading", 5, function (assert) {
+		var done = assert.async();
 		this.oView = fnFactory(true); //true for async
 
 		// event attachement needs to be done immediately, otherwise the event may be fired beforehands
@@ -92,7 +93,7 @@ function asyncTestsuite(sCaption, oConfig) {
 		this.oView.attachAfterInit(function() {
 			sap.ui.getCore().applyChanges();
 			ok(that.oView.$().children().length, "View content was rendered");
-			start();
+			done();
 		});
 
 		this.oView.placeAt("content");
@@ -105,7 +106,8 @@ function asyncTestsuite(sCaption, oConfig) {
 
 	});
 
-	asyncTest("Promise - loaded() for sync view", 3, function() {
+	QUnit.test("Promise - loaded() for sync view", 3, function(assert) {
+		var done = assert.async();
 		this.oView = fnFactory();
 
 		var oPromise = this.oView.loaded();
@@ -115,12 +117,13 @@ function asyncTestsuite(sCaption, oConfig) {
 		oPromise.then(function(oViewLoaded) {
 			ok(that.oAfterInitSpy.calledOnce, "AfterInit event fired before resolving");
 			deepEqual(that.oView, oViewLoaded, "Views equal deeply");
-			start();
+			done();
 		});
 	});
 
 
-	asyncTest("Promise - loaded() for async view", 3, function() {
+	QUnit.test("Promise - loaded() for async view", 3, function(assert) {
+		var done = assert.async();
 		this.oView = fnFactory(true);
 
 		var oPromise = this.oView.loaded();
@@ -130,7 +133,7 @@ function asyncTestsuite(sCaption, oConfig) {
 		oPromise.then(function(oViewLoaded) {
 			ok(that.oAfterInitSpy.calledOnce, "AfterInit event fired before resolving");
 			deepEqual(that.oView, oViewLoaded, "Views equal deeply");
-			start();
+			done();
 		});
 	});
 

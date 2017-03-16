@@ -84,32 +84,33 @@
 			ok(!oResultArea.getDomRef(), undefined, "Initial visibility State of Result Area:");
 		});
 
-		asyncTest("Trigger Search", function() {
+		QUnit.test("Trigger Search", function(assert) {
+			var done = assert.async();
 			oSearchTextField.setValue("Some search query");
 			var handler = function(oControlEvent){
-				start();
 				equals(oControlEvent.getParameter("query"), "Some search query", "Value of query parameter of search event:");
 				oExact1.detachSearch(handler);
-
 				//Fill the Exact control with some attributes
 				oExact1.setResultText("Some result text");
+
 				exactTestData.initAttributesForQUnit(oExact1);
+				done();
 			};
 			oExact1.attachSearch(handler);
 			oSearchTextField.getDomRef().focus();
 			qutils.triggerKeyboardEvent(oSearchTextField.getFocusDomRef(), "ENTER");
 		});
 
-		asyncTest("State after Search", function() {
+		QUnit.test("State after Search", function(assert) {
+			var done = assert.async();
 			setTimeout(function(){
-				start();
 				equals(oSearchTextField.getValue(), "Some search query", "Text State of Search TextField:");
 				ok(oSearchTextField.getDomRef(), "Visibility State of Search TextField:");
 				ok(oBrowser.getDomRef(), "Visibility State of Browse Area:");
 				ok(oResultText.getDomRef(), "Visibility State of Result Text:");
 				ok(oResultArea.getDomRef(), "Visibility State of Result Area:");
-
 				equals(oBrowser.getAttributes().length, 4, "Number of top level attributes:");
+
 				var aSubLists = oBrowser._rootList.getSubLists();
 				equals(aSubLists.length, 2, "Number of visible 1st level lists:");
 				equals(aSubLists[0].getData(), "att1", "List at position 0:");
@@ -123,10 +124,12 @@
 						ok(aSubSubLists.length == 0, "List " +aSubLists[i].getData()+ " contains no sub lists.");
 					}
 				}
+				done();
 			}, 1000);
 		});
 
-		asyncTest("Check Refine Search", function() {
+		QUnit.test("Check Refine Search", function(assert) {
+			var done = assert.async();
 			var handler = function(oControlEvent){
 				equals(oControlEvent.getParameter("query"), "Some search query", "Value of query parameter of search refine event:");
 				equals(oControlEvent.getParameter("changedAttribute").getId(), "att3", "Id of selected attribute:");
@@ -134,7 +137,6 @@
 				equals(oControlEvent.getParameter("allSelectedAttributes").length, 4, "Number of selected attributes:");
 
 				setTimeout(function(){
-					start();
 					equals(oBrowser.getAttributes().length, 4, "Number of top level attributes:");
 					var aSubLists = oBrowser._rootList.getSubLists();
 					equals(aSubLists.length, 3, "Number of visible 1st level lists:");
@@ -150,6 +152,7 @@
 							ok(aSubSubLists.length == 0, "List " +aSubLists[i].getData()+ " contains no sub lists.");
 						}
 					}
+					done();
 				}, 1000);
 
 				oExact1.detachRefineSearch(handler);

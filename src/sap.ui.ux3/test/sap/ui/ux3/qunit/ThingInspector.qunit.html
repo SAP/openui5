@@ -247,13 +247,14 @@
 				ok(!oThingInspector.getFavoriteActionEnabled(), "Favorite Action enabled is false");
 			});
 
-			asyncTest("Favorite Action disabled: no event anymore", function() {
+			QUnit.test("Favorite Action disabled: no event anymore", function(assert) {
+				var done = assert.async();
 				expect(1);
 				action = "favorite";
 				setTimeout(function() {
 					ok(!jQuery.sap.byId(oThingInspector.getId() + "-favorite")[0], "Action not rendered anymore");
 					qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-favorite"), "click", 1, 1, 1, 1);
-					start();
+					done();
 				},500);
 			});
 
@@ -284,17 +285,19 @@
 				ok(!oThingInspector.getFlagActionEnabled(), "Flag Action enabled is false");
 			});
 
-			asyncTest("Flag Action disabled: no event anymore", function() {
+			QUnit.test("Flag Action disabled: no event anymore", function(assert) {
+				var done = assert.async();
 				expect(1);
 				action = "flag";
 				setTimeout(function() {
 					ok(!jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Flag")[0], "Action not rendered anymore");
 					qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Flag"), "click", 1, 1, 1, 1);
-					start();
+					done();
 				},500);
 			});
 
-			asyncTest("UpdateSelected Event", function() {
+			QUnit.test("UpdateSelected Event", function(assert) {
+				var done = assert.async();
 				expect(2);
 				action = "update";
 				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Update"), "click", 1, 1, 1, 1);
@@ -303,14 +306,15 @@
 					//click again should hide comment popup
 					qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Update"), "click", 1, 1, 1, 1);
 					setTimeout(function() {
-						start();
 						equal(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup").length, 0,
 								"Rendered update popup was removed in the page");
+						done();
 					}, 500);
 				}, 500);
 			});
 
-			asyncTest("FeedSubmit Event", function() {
+			QUnit.test("FeedSubmit Event", function(assert) {
+				var done = assert.async();
 				expect(5);
 				action = "update";
 				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Update"), "click", 1, 1, 1, 1);
@@ -325,10 +329,10 @@
 								//click on feed submit button should hide comment popup
 								qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + '-actionBar-Feeder-send'), "click", 1, 1, 1, 1);
 								setTimeout(function() {
-									start();
 									ok(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup"), "Rendered comment popup should exist in the page");
 									equal(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup").length, 0,
 											"Rendered update popup was removed in the page");
+									done();
 								}, 500);
 							}, 500);
 						}, 500);
@@ -342,17 +346,19 @@
 				ok(!oThingInspector.getUpdateActionEnabled(), "Flag Action enabled is false");
 			});
 
-			asyncTest("Update Action disabled: no event anymore", function() {
+			QUnit.test("Update Action disabled: no event anymore", function(assert) {
+				var done = assert.async();
 				expect(1);
 				action = "update";
 				setTimeout(function() {
 					ok(!jQuery.sap.byId(oThingInspector.getId() + "-update")[0], "Action not rendered anymore");
 					qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-update"), "click", 1, 1, 1, 1);
-					start();
+					done();
 				},500);
 			});
 
-			asyncTest("Open Method", function() {
+			QUnit.test("Open Method", function(assert) {
+				var done = assert.async();
 				expect(5);
 				facet = "overview";
 				oThingInspector.close();
@@ -364,24 +370,26 @@
 							function() {
 								ok(jQuery.sap.domById(oThingInspector.getId() + facet + "FacetButton"), "Rendered Facet Content for facet " + facet
 										+ " should exist in the page");
-								start();
+								done();
 							}, 500);
 				}, 500);
 			});
 
-			asyncTest("FacetSelected Event", function() {
+			QUnit.test("FacetSelected Event", function(assert) {
+				var done = assert.async();
 				expect(3);
 				facet = "activities";
 				qutils.triggerMouseEvent(jQuery.sap.domById("activities"), "click", 1, 1, 1, 1);
 				setTimeout(
 						function() {
-							start();
 							ok(jQuery.sap.domById(oThingInspector.getId() + facet + "FacetButton"), "Rendered Facet Content for facet " + facet
 									+ " should exist in the page");
+							done();
 						}, 500);
 			});
 
-			asyncTest("FollowSelected Event", function() {
+			QUnit.test("FollowSelected Event", function(assert) {
+				var done = assert.async();
 				expect(19);
 				equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
 				action = "follow";
@@ -424,7 +432,7 @@
 												"Rendered Follow Action menu with unholdState should not exists in the page");
 										ok(!jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unfollowState"),
 												"Rendered Follow Action menu with unfollowState should not exists in the page");
-										start();
+										done();
 									}, 500);
 								}, 500);
 					}, 500);
@@ -438,25 +446,27 @@
 				ok(!oThingInspector.getFollowActionEnabled(), "Follow Action enabled is false");
 			});
 
-			asyncTest("Follow Action disabled: no event anymore", function() {
+			QUnit.test("Follow Action disabled: no event anymore", function(assert) {
+				var done = assert.async();
 				expect(1);
 				action = "follow";
 				setTimeout(function() {
 					ok(!jQuery.sap.byId(oThingInspector.getId() + "-follow")[0], "Action not rendered anymore");
 					qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-follow"), "click", 1, 1, 1, 1);
-					start();
+					done();
 				},500);
 			});
 
 			// at the end close
-			asyncTest("Close Event", function() {
+			QUnit.test("Close Event", function(assert) {
+				var done = assert.async();
 				expect(3);
 				ok(oThingInspector.isOpen(), "Rendered ThingInspector is open");
 
 				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-close"), "click", 1, 1, 1, 1);
 				setTimeout(function() {
-					start();
 					ok(!oThingInspector.isOpen(), "Rendered ThingInspector is not open");
+					done();
 				}, 500);
 			});
 

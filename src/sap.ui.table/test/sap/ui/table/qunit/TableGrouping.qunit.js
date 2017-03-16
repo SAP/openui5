@@ -292,7 +292,8 @@ QUnit.test("_calcGroupIndent", function(assert) {
 	assert.equal(Grouping._calcGroupIndent(oTable, 4, false), 36, "sap.ui.table.TreeTable, Level 4, !Group Header");
 });
 
-QUnit.asyncTest("Tree Mode", function(assert) {
+QUnit.test("Tree Mode", function(assert) {
+	var done = assert.async();
 	var iRowCount = oTreeTable._getRowCount();
 	assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows, "Row count before expand");
 	ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
@@ -342,7 +343,7 @@ QUnit.asyncTest("Tree Mode", function(assert) {
 					assert.ok(!$Row.data("sap-ui-level"), "Row " + i + " has no level in data.");
 					assert.ok(!$Row.attr("data-sap-ui-level"), "Row " + i + " has no level in dom.");
 				}
-				QUnit.start();
+				done();
 			};
 
 			oTreeTable.attachEventOnce("_rowsUpdated", fnUnbindHandler);
@@ -359,7 +360,8 @@ QUnit.asyncTest("Tree Mode", function(assert) {
 	assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows + 1, "Row count after expand");
 });
 
-QUnit.asyncTest("Group Mode", function(assert) {
+QUnit.test("Group Mode", function(assert) {
+	var done = assert.async();
 	oTreeTable.setUseGroupMode(true);
 	sap.ui.getCore().applyChanges();
 
@@ -413,7 +415,7 @@ QUnit.asyncTest("Group Mode", function(assert) {
 					assert.ok(!$Row.data("sap-ui-level"), "Row " + i + " has no level in data.");
 					assert.ok(!$Row.attr("data-sap-ui-level"), "Row " + i + " has no level in dom.");
 				}
-				QUnit.start();
+				done();
 			};
 
 			oTreeTable.attachEventOnce("_rowsUpdated", fnUnbindHandler);
@@ -471,7 +473,8 @@ QUnit.module("sap.ui.table.Table: Experimental Grouping", {
 	}
 });
 
-QUnit.asyncTest("Activate Grouping", function(assert) {
+QUnit.test("Activate Grouping", function(assert) {
+	var done = assert.async();
 	var oBinding = oTable.getBinding("rows");
 	assert.equal(oBinding.getLength(), 8, "Row count before Grouping");
 
@@ -488,7 +491,7 @@ QUnit.asyncTest("Activate Grouping", function(assert) {
 				assert.ok(!getRowHeader(i).hasClass("sapUiTableGroupHeader"), "Row " + i + " is no group header");
 			}
 		}
-		QUnit.start();
+		done();
 	};
 
 	oTable.attachEventOnce("_rowsUpdated", fnHandlerProxy);

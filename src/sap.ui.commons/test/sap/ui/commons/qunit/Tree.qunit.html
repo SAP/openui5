@@ -684,7 +684,8 @@
 
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		if (!sap.ui.Device.browser.phantomJS) {
-			asyncTest("Arrow keys", function() {
+			QUnit.test("Arrow keys", function(assert) {
+				var done = assert.async();
 				sap.ui.getCore().getControl("node11").focus();
 
 				setTimeout(function(){
@@ -700,7 +701,7 @@
 								qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
 								setTimeout(function(){
 									equal( sap.ui.getCore().getControl("node11").getExpanded(), true,  "Node is expanded");
-									start();
+									done();
 								}, 100);
 							}, 100);
 						}, 100);

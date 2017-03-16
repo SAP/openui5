@@ -105,14 +105,15 @@
 
 			QUnit.module("Events");
 
-			asyncTest("Test Press Event", function(){
+			QUnit.test("Test Press Event", function(assert){
+				var done = assert.async();
 				oMenuButton1.focus();
 
 				var handler = function(oControlEvent){
-					start();
 					equals(oControlEvent.getParameter("item").getId(), oMenuItem1.getId(), "Parameter 'item' of press event:");
 					equals(oControlEvent.getParameter("itemId"), oMenuItem1.getId(), "Parameter 'itemId' of press event:");
 					oMenuButton1.detachPress(handler);
+					done();
 				};
 				oMenuButton1.attachPress(handler);
 
@@ -120,14 +121,15 @@
 				qutils.triggerEvent("click", oMenuItem1.getId());
 			});
 
-			asyncTest("Test ItemSelected Event", function(){
+			QUnit.test("Test ItemSelected Event", function(assert){
+				var done = assert.async();
 				oMenuButton1.focus();
 
 				var handler = function(oControlEvent){
-					start();
 					equals(oControlEvent.getParameter("item").getId(), oMenuItem1.getId(), "Parameter 'item' of itemSelected event:");
 					equals(oControlEvent.getParameter("itemId"), oMenuItem1.getId(), "Parameter 'itemId' of itemSelected event:");
 					oMenuButton1.detachItemSelected(handler);
+					done();
 				};
 				oMenuButton1.attachItemSelected(handler);
 

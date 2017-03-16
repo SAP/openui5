@@ -447,7 +447,8 @@
 		});
 
 
-		asyncTest("Manual expand", function(){
+		QUnit.test("Manual expand", function(assert){
+			var done = assert.async();
 			var oContext;
 			createTreeBindingAdapter("/bing/root", [], null, {
 				collapseRecursive: false,
@@ -544,7 +545,7 @@
 			var fnChangeHandler6 = function(oEvent) {
 				oBinding.detachChange(fnChangeHandler6);
 				equal(oEvent.getParameter("reason"), "collapse", "Change Reason expand is set");
-				start();
+				done();
 			};
 
 			oBinding.attachChange(fnChangeHandler5);
@@ -578,7 +579,8 @@
 		 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 		 * Data should already be present, since prebuildTree already requested a big set
 		 */
-		asyncTest("SelectAll, Deselect All", function(){
+		QUnit.test("SelectAll, Deselect All", function(assert){
+			var done = assert.async();
 			createTreeBindingAdapter("/bing/root", [], null, {
 				collapseRecursive: false,
 				displayRootNode: true,
@@ -635,14 +637,15 @@
 			iLeadIndex = oBinding.getSelectedIndex();
 			equal(iLeadIndex, - 1, "LeadIndex must be -1 if there is no selection");
 
-			start();
+			done();
 		});
 
 		/**
 		 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 		 * Data should already be present, since prebuildTree already requested a big set
 		 */
-		asyncTest("Select single nodes", function(){
+		QUnit.test("Select single nodes", function(assert){
+			var done = assert.async();
 			createTreeBindingAdapter("/bing/root", [], null, {
 				collapseRecursive: false,
 				displayRootNode: true,
@@ -711,10 +714,11 @@
 			equal(oBinding._isNodeSelectable(undefined), false, "Illegal nodes are not selectable.");
 			equal(oBinding._isNodeSelectable(""), false, "Illegal nodes are not selectable.");
 
-			start();
+			done();
 		});
 
-		asyncTest("Add Selection Interval", function(){
+		QUnit.test("Add Selection Interval", function(assert){
+			var done = assert.async();
 			createTreeBindingAdapter("/bing/root", [], null, {
 				collapseRecursive: false,
 				displayRootNode: true,
@@ -768,10 +772,11 @@
 			aSelectedIndices = oBinding.getSelectedIndices();
 			deepEqual(aSelectedIndices, [3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "Selected indices array is correct, after selecting additional indices");
 
-			start();
+			done();
 		});
 
-		asyncTest("Set Selection Interval", function(){
+		QUnit.test("Set Selection Interval", function(assert){
+			var done = assert.async();
 			createTreeBindingAdapter("/bing/root", [], null, {
 				collapseRecursive: false,
 				displayRootNode: true,
@@ -821,10 +826,11 @@
 
 			equal(oBinding.findNode(5).selected, undefined, "Index 1 should not be selected anymore.");
 
-			start();
+			done();
 		});
 
-		asyncTest("setSelectedIndex and getSelectedIndex", function(){
+		QUnit.test("setSelectedIndex and getSelectedIndex", function(assert){
+			var done = assert.async();
 			createTreeBindingAdapter("/bing/root", [], null, {
 				collapseRecursive: false,
 				displayRootNode: false,
@@ -853,10 +859,11 @@
 
 			var aSelectedIndices = oBinding.getSelectedIndices();
 			deepEqual(aSelectedIndices, [3], "Selected indices array is correct, after selecting additional indices");
-			start();
+			done();
 		});
 
-		asyncTest("Sorting with stable expand states", function(){
+		QUnit.test("Sorting with stable expand states", function(assert){
+			var done = assert.async();
 
 			createTreeBindingAdapter("/bing/root", null,null, {
 				numberOfExpandedLevels: 1,
@@ -876,7 +883,7 @@
 				equal(oBinding._mTreeState.expanded["/bing_root/0/"].expanded, true, "Node Rock is still expanded after sorting.");
 				equal(oBinding._mTreeState.expanded["/bing_root/2/"].expanded, true, "Node Swing/BigBand is still expanded after sorting.");
 
-				start();
+				done();
 			}
 
 			oBinding.attachChange(fnRefreshHandler);
@@ -888,7 +895,8 @@
 		 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 		 * Data should already be present, since prebuildTree already requested a big set
 		 */
-		asyncTest("Clear selection", 4, function(){
+		QUnit.test("Clear selection", 4, function(assert){
+			var done = assert.async();
 			createTreeBindingAdapter("/bing/root", [], null, {
 				collapseRecursive: false,
 				displayRootNode: true,
@@ -913,10 +921,11 @@
 			var oSomeNode = oBinding.getNodeByIndex(2);
 			equal(oSomeNode.nodeState.selectAllMode, false, "selectAllMode of any other node should be cleared");
 
-			start();
+			done();
 		});
 
-		asyncTest("Synchronous Expand", function(){
+		QUnit.test("Synchronous Expand", function(assert){
+			var done = assert.async();
 
 			createTreeBindingAdapter("/bing/root", null,null, {
 				numberOfExpandedLevels: 0,
@@ -937,7 +946,7 @@
 			// synchronous tree update works
 			equal(oBinding.getLength(), 9, "Length is correctly calculated synchronously");
 
-			start();
+			done();
 		});
 
 		QUnit.test("Empty binding should not cause exceptions", function(assert) {
@@ -985,7 +994,8 @@
 		});
 
 
-		asyncTest("Expand with arrayNames == bindingPath", function(){
+		QUnit.test("Expand with arrayNames == bindingPath", function(assert){
+			var done = assert.async();
 
 			createTreeBindingAdapter("/root", null,null, {
 				numberOfExpandedLevels: 1,
@@ -1017,7 +1027,7 @@
 				//    node_2
 				equal(oBinding.getLength(), 5, "length after expand is ok");
 
-				start();
+				done();
 			}
 
 		});

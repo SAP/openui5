@@ -58,7 +58,7 @@
 				},
 				afterOpen: function(){
 					equal(jQuery.sap.byId("actionsheet").css("visibility"), "visible", "ActionSheet should be visible after it's opened");
-					start();
+					QUnit.start();
 				},
 				beforeClose: function(){
 					equal(jQuery.sap.byId("actionsheet").css("visibility"), "visible", "ActionSheet should be visible before it's closed");
@@ -66,7 +66,7 @@
 				afterClose: function(){
 					ok(jQuery.sap.byId("actionsheet").css("visibility") !== "visible", "ActionSheet should be hidden after it's closed");
 					ok(!oActionSheet.isOpen(), "ActionSheet is already closed");
-					start();
+					QUnit.start();
 				}
 			});
 
@@ -98,7 +98,8 @@
 
 			QUnit.module("Open and Close - with Title and Cancel Button");
 
-			asyncTest("Open ActionSheet - - with Title and Cancel Button", function(){
+			QUnit.test("Open ActionSheet - - with Title and Cancel Button", function(assert){
+				var done = assert.async();
 				oButton.firePress();
 				ok(oActionSheet.isOpen(), "ActionSheet is already open");
 				setTimeout(function(){
@@ -125,14 +126,16 @@
 				}, 50);
 			});
 
-			asyncTest("Close ActionSheet", function(){
+			QUnit.test("Close ActionSheet", function(assert){
+				var done = assert.async();
 				expect(3);
 				oActionSheet.close();
 			});
 
 			QUnit.module("Open and Close - with Title but no Cancel Button");
 
-			asyncTest("Open ActionSheet - - with Title  but no Cancel Button", function(){
+			QUnit.test("Open ActionSheet - - with Title  but no Cancel Button", function(assert){
+				var done = assert.async();
 				oActionSheet.setShowCancelButton(false);
 				oButton.firePress();
 				ok(oActionSheet.isOpen(), "ActionSheet is already open");
@@ -155,7 +158,8 @@
 				}, 50);
 			});
 
-			asyncTest("Close ActionSheet", function(){
+			QUnit.test("Close ActionSheet", function(assert){
+				var done = assert.async();
 				expect(3);
 
 				oActionSheet.close();
@@ -163,7 +167,8 @@
 
 			QUnit.module("Open and Close - no Title but with Cancel Button");
 
-			asyncTest("Open ActionSheet - - no Title but with Cancel Button", function(){
+			QUnit.test("Open ActionSheet - - no Title but with Cancel Button", function(assert){
+				var done = assert.async();
 				oActionSheet.setShowCancelButton(true);
 				oActionSheet.setTitle(null);
 				oButton.firePress();
@@ -188,14 +193,16 @@
 				}, 50);
 			});
 
-			asyncTest("Close ActionSheet", function(){
+			QUnit.test("Close ActionSheet", function(assert){
+				var done = assert.async();
 				expect(3);
 				oActionSheet.close();
 			});
 
 			QUnit.module("Open and Close - no Title and no Cancel Button");
 
-			asyncTest("Open ActionSheet - - no Title and no Cancel Button", function(){
+			QUnit.test("Open ActionSheet - - no Title and no Cancel Button", function(assert){
+				var done = assert.async();
 				oActionSheet.setShowCancelButton(false);
 				oActionSheet.setTitle(null);
 				oButton.firePress();
@@ -215,14 +222,16 @@
 				}, 50);
 			});
 
-			asyncTest("Close ActionSheet", function(){
+			QUnit.test("Close ActionSheet", function(assert){
+				var done = assert.async();
 				expect(3);
 				oActionSheet.close();
 			});
 
 			QUnit.module("Additional Test");
 
-			asyncTest("Open an ActionSheet which is already aggregated in dependents aggregation", function(){
+			QUnit.test("Open an ActionSheet which is already aggregated in dependents aggregation", function(assert){
+				var done = assert.async();
 				var oAC = new sap.m.ActionSheet({
 					cancelButtonText: "Cancel",
 					title: "Title",
@@ -244,7 +253,7 @@
 					equal(oSpyOfViewInvalidate.callCount, 0, "Former parent shouldn't be invalidated");
 
 					oAC.destroy();
-					start();
+					done();
 				});
 
 				oAC.openBy(oButton);
@@ -253,7 +262,8 @@
 
 			});
 
-			asyncTest("If first button is invinsible, focus goes to the second one", function () {
+			QUnit.test("If first button is invinsible, focus goes to the second one", function (assert) {
+				var done = assert.async();
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
 					press : function() {
@@ -279,7 +289,7 @@
 				setTimeout(function(){
 					ok(jQuery.sap.byId('asButton2').is(":focus"), 'The 2nd button should be focused');
 
-					start();
+					done();
 					oActionSheet.close();
 					oButton.destroy();
 					oActionSheet.destroy();
@@ -288,7 +298,8 @@
 
 			QUnit.module("keyboard handling");
 
-			asyncTest('PageUp keyboard handling', function(){
+			QUnit.test('PageUp keyboard handling', function(assert){
+				var done = assert.async();
 				expect(2);
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
@@ -351,7 +362,7 @@
 					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton2')[0], jQuery.sap.KeyCodes.PAGE_UP);
 
 					ok(jQuery.sap.byId('oButton1').is(":focus"), 'The first button should be focused');
-					start();
+					done();
 					oActionSheet.close();
 
 					oButton.destroy();
@@ -360,11 +371,12 @@
 
 			});
 
-			asyncTest('PageDown keyboard handling mobile phone', function(){
+			QUnit.test('PageDown keyboard handling mobile phone', function(assert){
+				var done = assert.async();
 				if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
 						// this test is not supported by IE9
 						expect(0);
-						start();
+						done();
 						return;
 				}
 
@@ -433,7 +445,7 @@
 					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
 					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
 					ok(oActionSheet.$('cancelBtn').is(":focus"), 'The cancel button should be focused');
-					start();
+					done();
 					oActionSheet.close();
 
 					oButton.destroy();
@@ -441,7 +453,8 @@
 				}, 500)
 			});
 
-			asyncTest('PageDown keyboard handling desktop', function(){
+			QUnit.test('PageDown keyboard handling desktop', function(assert){
+				var done = assert.async();
 				var oSystem = {
 						desktop: true,
 						phone: false
@@ -508,7 +521,7 @@
 
 					ok(jQuery.sap.byId('oButton7').is(":focus"), 'The 7th button should be focused');
 
-					start();
+					done();
 					oActionSheet.close();
 
 					oButton.destroy();
@@ -600,7 +613,8 @@
 				}, 500)
 			});
 
-			asyncTest('Button should have ariaLabelledBy that points to itself and hidden text', function() {
+			QUnit.test('Button should have ariaLabelledBy that points to itself and hidden text', function(assert) {
+				var done = assert.async();
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
 					press : function() {
@@ -639,7 +653,7 @@
 						aInvisibleTexts = oActionSheet.getAggregation("_invisibleAriaTexts");
 
 						strictEqual(aInvisibleTexts[0].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 1]), "Text should be the index of the button");
-						start();
+						done();
 						oActionSheet.close();
 						oButton.destroy();
 						oActionSheet.destroy();
@@ -647,7 +661,8 @@
 
 				}, 500);
 			});
-			asyncTest('Removing a button and adding it again should not add wrong labels', function() {
+			QUnit.test('Removing a button and adding it again should not add wrong labels', function(assert) {
+				var done = assert.async();
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
 					press : function() {
@@ -684,7 +699,7 @@
 						strictEqual(aInvisibleTexts.length, 1, "Invisible text should be one");
 						strictEqual(aButtonLabels.length, 1, "Button should be labelled by 1 id");
 						ok(aButtonLabels.indexOf(aInvisibleTexts[0].getId()) > -1, "The button should be lablled by a text from the invisibleTexts");
-						start();
+						done();
 						oActionSheet.close();
 						oButton.destroy();
 						oActionSheet.destroy();
@@ -693,7 +708,8 @@
 				}, 500);
 			});
 
-			asyncTest('Invisible buttons should not be counted', function() {
+			QUnit.test('Invisible buttons should not be counted', function(assert) {
+				var done = assert.async();
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
 					press : function() {
@@ -723,7 +739,7 @@
 
 					strictEqual(oInvisibleTextObj.getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 1]), "Total amount of buttons should be 1");
 
-					start();
+					done();
 					oActionSheet.close();
 					oButton.destroy();
 					oActionSheet.destroy();

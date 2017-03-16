@@ -107,7 +107,8 @@
 			// Test pull to refresh functionality
 			QUnit.module("Behavior");
 
-			asyncTest("Refresh", function() {
+			QUnit.test("Refresh", function(assert) {
+				var done = assert.async();
 				var $P2R = oP2R.$();
 				qutils.triggerEvent("click", oP2R.getId());
 				strictEqual($P2R.children(".sapMPullDownText").text(), sLoading, "Pull down text is set correctly");
@@ -115,7 +116,7 @@
 				setTimeout(function() {
 					oP2R.hide(); // Close
 					oP2R.setDescription("");
-					start();
+					done();
 				}, 200);
 			});
 		}

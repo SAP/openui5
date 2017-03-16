@@ -471,7 +471,8 @@
 		ok(oBindingBefore === oBindingAfter, "binding should not change as it is not affected");
 	});
 
-	asyncTest("remove content from uiArea: no models set", function(){
+	QUnit.test("remove content from uiArea: no models set", function(assert){
+		var done = assert.async();
 		sap.ui.getCore().setModel();
 		mPropagationInfo = {};
 
@@ -511,7 +512,7 @@
 			ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
 			ok(!mPropagationInfo[ctrl.getId()], "ModelContextChange event not fired on ctrl");
 			ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child - should happen async");
-			start();
+			done();
 		},0);
 	});
 
@@ -524,7 +525,8 @@
 		mPropagationInfo = {};
 	});
 
-	asyncTest("Move child / remove child: async setParent null propagation", function() {
+	QUnit.test("Move child / remove child: async setParent null propagation", function(assert) {
+		var done = assert.async();
 		//remove from parent
 		var moveCtrl = uiArea.removeContent(ctrl);
 
@@ -568,7 +570,7 @@
 				ok(child.getBinding("value") == null, "child shouldn't have a binding for the default model");
 				ok(child.oPropagatedProperties === sap.ui.base.ManagedObject._oEmptyPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
 				ok(ctrl.oPropagatedProperties === sap.ui.base.ManagedObject._oEmptyPropagatedProperties, "ctrl should no longer inherit propagatedProperties 1:1 from ctrl");
-				start();
+				done();
 			}, 0);
 		}, 0);
 	});
@@ -717,7 +719,8 @@
 		}
 	});
 /*
-	asyncTest("Binding/Model types", function() {
+	QUnit.test("Binding/Model types", function(assert) {
+		var done = assert.async();
 		oModel5.metadataLoaded().then(function(){
 			var child = new sap.ui.core.TestControl({
 				objectBindings: "Suppliers(1)",
@@ -735,11 +738,12 @@
 			child.setBindingContext(oJSONContext);
 			ok(spy.callCount === 0, "no request should be sent");
 			oModel5.read.restore();
-			start();
+			done();
 		});
 	});
 */
-	asyncTest("Binding/Model types 2", function() {
+	QUnit.test("Binding/Model types 2", function(assert) {
+		var done = assert.async();
 		oModel5.metadataLoaded().then(function(){
 			var ctrl3 = new sap.ui.core.TestControl({
 				objectBindings: "Suppliers(1)",
@@ -760,7 +764,7 @@
 			ctrl.setBindingContext(oJSONContext);
 			ok(spy.callCount === 0, "no request should be sent");
 			oModel5.read.restore();
-			start();
+			done();
 		});
 	});
 

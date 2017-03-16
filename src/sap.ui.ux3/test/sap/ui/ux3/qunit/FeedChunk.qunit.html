@@ -290,7 +290,8 @@
 			sEventParameter = "";
 		});
 
-		asyncTest("Click on action buttons", function() {
+		QUnit.test("Click on action buttons", function(assert) {
+			var done = assert.async();
 			qutils.triggerMouseEvent("Chunk1-ActFlag", "click");
 			equal(sEvent, "ToggleFlagged", "Event fired on click on flag action button");
 			equal(sEventSourceId, "Chunk1", "Event on right ID");
@@ -337,13 +338,14 @@
 				ok(jQuery.sap.byId("Chunk1").find(".sapUiFeedChunkFlagged").get(0), "Status icon flagged displayed after action");
 				ok(!jQuery.sap.byId("Chunk1").find(".sapUiFeedChunkFavorite").get(0), "Status icon favorite not displayed after action");
 				ok(jQuery.sap.byId("Chunk1").find(".sapUiFeedChunkShared").get(0), "Status icon shared displayed after action");
-				start();
+				done();
 			};
 			setTimeout(delayedCall, 0);
 
 		});
 
-		asyncTest("show feeder", function() {
+		QUnit.test("show feeder", function(assert) {
+			var done = assert.async();
 
 			// separate test to do nox mix rerendering of feeder with rerendering for status icons
 			qutils.triggerMouseEvent("Chunk1-ActComment", "click");
@@ -352,12 +354,13 @@
 				ok(jQuery.sap.byId("Chunk1").children("section").get(0), "Comment section visible after showing comment feeder");
 				ok(jQuery.sap.byId("Chunk1").find("#Chunk1-CommentFeeder").get(0), "Comment feeder visible after pressing comment button");
 				ok(!jQuery.sap.byId("Chunk1-all").get(0), "Link to show all comments not displayed if no comments or lesst than 3");
-				start();
+				done();
 			};
 			setTimeout(delayedCall, 0);
 		});
 
-		asyncTest("Add comment", function() {
+		QUnit.test("Add comment", function(assert) {
+			var done = assert.async();
 
 			jQuery.sap.domById("Chunk2-CommentFeeder-input").focus();
 			jQuery.sap.byId("Chunk2-CommentFeeder-input").text("Test");
@@ -384,31 +387,33 @@
 				// comment counter must be increased
 				equal(jQuery.sap.byId("Chunk2").find(".sapUiFeedChunkComments").text().slice(0,1), "4", "Number of comments increased");
 
-				start();
+				done();
 			};
 			setTimeout(delayedCall, 0);
 		});
 
-		asyncTest("show all comments", function() {
+		QUnit.test("show all comments", function(assert) {
+			var done = assert.async();
 
 			qutils.triggerMouseEvent("Chunk2-all", "click");
 
 			var delayedCall = function() {
 				ok(jQuery.sap.byId("Chunk2-new-3").get(0) && jQuery.sap.byId("commentChunk1").get(0) && jQuery.sap.byId("commentChunk2").get(0) && jQuery.sap.byId("commentChunk3").get(0), "All comments displayed");
 				equal(jQuery.sap.byId("Chunk2-all").text(), rb.getText('FEED_MAX_COMMENTS'), "Link to show only max. number of comments if all comments are shown");
-				start();
+				done();
 			};
 			setTimeout(delayedCall, 0);
 		});
 
-		asyncTest("show max comments", function() {
+		QUnit.test("show max comments", function(assert) {
+			var done = assert.async();
 
 			qutils.triggerMouseEvent("Chunk2-all", "click");
 
 			var delayedCall = function() {
 				ok(jQuery.sap.byId("Chunk2-new-3").get(0) && !jQuery.sap.byId("commentChunk1").get(0) && !jQuery.sap.byId("commentChunk2").get(0) && jQuery.sap.byId("commentChunk3").get(0), "Only Max. number of comments displayed");
 				equal(jQuery.sap.byId("Chunk2-all").text(), rb.getText('FEED_ALL_COMMENTS'), "Link to show only max. number of comments if all comments are shown");
-				start();
+				done();
 			};
 			setTimeout(delayedCall, 0);
 		});

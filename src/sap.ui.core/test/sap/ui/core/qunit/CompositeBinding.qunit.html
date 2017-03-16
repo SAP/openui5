@@ -132,11 +132,13 @@ QUnit.test("simple type", function(assert) {
 		Error, "setting a simple type on a composite binding throws")
 });
 
-asyncTest("suspend/resume", function() {
+QUnit.test("suspend/resume", function(assert) {
+
+	var done = assert.async();
 	equal(jQuery.sap.equal(this.composite.getValue(), [1,2,3]), true, "getValue() returns array of bound model values");
 	this.composite.attachChange(this, function() {
 		equal(jQuery.sap.equal(this.getValue(), [666,2,3]), true, "getValue() returns array of bound model values");
-		start();
+		done();
 	});
 	this.composite.suspend();
 	this.composite.setValue([3,2,1]);

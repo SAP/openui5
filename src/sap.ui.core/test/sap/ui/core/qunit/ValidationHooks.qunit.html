@@ -49,7 +49,8 @@
 		oTxt.destroy();
 	}
 
-	asyncTest("validation error", function(){
+	QUnit.test("validation error", function(assert){
+		var done = assert.async();
 		var oType =  new sap.ui.model.type.String(null, {
 			minLength : 1,
 			maxLength : 5
@@ -70,15 +71,16 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			start();          // resume normal testing
 			ok(bSuccess, "error occurred sucessfully");
 			sap.ui.getCore().detachValidationError(handler);
 			teardown(handler);
-			}, 100);
+			done();          // resume normal testing
+		}, 100);
 
 	});
 
-	asyncTest("parse error", function(){
+	QUnit.test("parse error", function(assert){
+		var done = assert.async();
 		var oType =  new sap.ui.model.type.Integer();
 		setup("/visibleItems", oType);
 		var bSuccess = false;
@@ -95,15 +97,16 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			start();          // resume normal testing
 			ok(bSuccess, "error occurred sucessfully");
 			sap.ui.getCore().detachParseError(handler);
 			teardown(handler);
-			}, 100);
+			done();          // resume normal testing
+		}, 100);
 
 	});
 
-	asyncTest("format error", function(){
+	QUnit.test("format error", function(assert){
+		var done = assert.async();
 		var oType =  new sap.ui.model.type.String();
 		var oRating = new sap.ui.commons.RatingIndicator();
 		oRating.bindValue("/rating", oType);
@@ -123,16 +126,17 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			start();          // resume normal testing
 			ok(bSuccess, "error occurred sucessfully");
 			sap.ui.getCore().detachFormatError(handler);
 			oRating.destroy();
 			teardown(handler);
-			}, 100);
+			done();          // resume normal testing
+		}, 100);
 
 	});
 
-	asyncTest("validation success", function(){
+	QUnit.test("validation success", function(assert){
+		var done = assert.async();
 		var oType =  new sap.ui.model.type.String();
 		setup("/test", oType);
 		var bSuccess = false;
@@ -148,15 +152,16 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			start();          // resume normal testing
 			ok(bSuccess, "validation was sucessful");
 			sap.ui.getCore().detachValidationSuccess(handler);
 			teardown(handler);
-			}, 100);
+			done();          // resume normal testing
+		}, 100);
 
 	});
 
-	asyncTest("event checks 1", function(){
+	QUnit.test("event checks 1", function(assert){
+		var done = assert.async();
 		var oType =  new sap.ui.model.type.Integer();
 		setup("/visibleItems", oType);
 		var bSuccess = false;
@@ -183,7 +188,6 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			start();          // resume normal testing
 			ok(bSuccess, "parse error occurred sucessfully and no other events occurred");
 			ok(iEventCount == 1 , "event count should be 1");
 			sap.ui.getCore().detachParseError(handler);
@@ -191,11 +195,13 @@
 			sap.ui.getCore().detachValidationError(handler);
 			sap.ui.getCore().detachValidationSuccess(handler);
 			teardown(handler);
-			}, 100);
+			done();          // resume normal testing
+		}, 100);
 
 	});
 
-	asyncTest("event checks 2", function(){
+	QUnit.test("event checks 2", function(assert){
+		var done = assert.async();
 		var oType =  new sap.ui.model.type.String(null, {
 			minLength : 1,
 			maxLength : 5
@@ -225,7 +231,6 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			start();          // resume normal testing
 			ok(bSuccess, "validation error occurred sucessfully and no other events occurred");
 			ok(iEventCount == 1 , "event count should be 1");
 			sap.ui.getCore().detachParseError(handler);
@@ -233,11 +238,13 @@
 			sap.ui.getCore().detachValidationError(handler);
 			sap.ui.getCore().detachValidationSuccess(handler);
 			teardown(handler);
-			}, 100);
+			done();          // resume normal testing
+		}, 100);
 
 	});
 
-	asyncTest("validation success on core and control --> bubbling", function(){
+	QUnit.test("validation success on core and control --> bubbling", function(assert){
+		var done = assert.async();
 		var oType =  new sap.ui.model.type.String();
 		setup("/test", oType);
 		var bSuccess = false;
@@ -255,17 +262,18 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			start();          // resume normal testing
 			ok(bSuccess, "validation was sucessful");
 			equal(iCount, 2, "validation event count");
 			sap.ui.getCore().detachValidationSuccess(handler);
 			oTxt.detachValidationSuccess(handler);
 			teardown(handler);
-			}, 100);
+			done();          // resume normal testing
+		}, 100);
 
 	});
 
-	asyncTest("validation error on core and control --> bubbling", function(){
+	QUnit.test("validation error on core and control --> bubbling", function(assert){
+		var done = assert.async();
 		var oType =  new sap.ui.model.type.String(null, {
 			minLength : 1,
 			maxLength : 5
@@ -289,17 +297,18 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			start();          // resume normal testing
 			ok(bSuccess, "error occurred sucessfully");
 			equal(iCount, 2, "validation event count");
 			sap.ui.getCore().detachValidationError(handler);
 			oTxt.detachValidationError(handler);
 			teardown(handler);
-			}, 100);
+			done();          // resume normal testing
+		}, 100);
 
 	});
 
-	asyncTest("validation error on core and control --> cancel bubbling", function(){
+	QUnit.test("validation error on core and control --> cancel bubbling", function(assert){
+		var done = assert.async();
 		var oType =  new sap.ui.model.type.String(null, {
 			minLength : 1,
 			maxLength : 5
@@ -324,16 +333,17 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			start();          // resume normal testing
 			ok(bSuccess, "error occurred sucessfully");
 			equal(iCount, 1, "validation event count");
 			sap.ui.getCore().detachValidationError(handler);
 			oTxt.detachValidationError(handler);
 			teardown(handler);
-			}, 100);
+			done();          // resume normal testing
+		}, 100);
 	});
 
-	asyncTest("parse error on core and control --> bubbling", function(){
+	QUnit.test("parse error on core and control --> bubbling", function(assert){
+		var done = assert.async();
 		var oType =  new sap.ui.model.type.Integer();
 		setup("/visibleItems", oType);
 		var bSuccess = false;
@@ -352,17 +362,18 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			start();          // resume normal testing
 			ok(bSuccess, "error occurred sucessfully");
 			oTxt.detachParseError(handler);
 			equal(iCount, 2, "validation event count");
 			sap.ui.getCore().detachParseError(handler);
 			teardown(handler);
-			}, 100);
+			done();          // resume normal testing
+		}, 100);
 
 	});
 
-	asyncTest("format error on core and control --> cancel bubbling", function(){
+	QUnit.test("format error on core and control --> cancel bubbling", function(assert){
+		var done = assert.async();
 		var oType =  new sap.ui.model.type.String();
 		var oRating = new sap.ui.commons.RatingIndicator();
 		oRating.bindValue("/rating", oType);
@@ -386,14 +397,14 @@
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
-			start();          // resume normal testing
 			ok(bSuccess, "error occurred sucessfully");
 			sap.ui.getCore().detachFormatError(handler);
 			oTxt.detachFormatError(handler);
 			equal(iCount, 1, "validation event count");
 			oRating.destroy();
 			teardown(handler);
-			}, 100);
+			done();          // resume normal testing
+		}, 100);
 
 	});
 

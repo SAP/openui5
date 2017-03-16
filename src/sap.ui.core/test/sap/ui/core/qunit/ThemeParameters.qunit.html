@@ -80,10 +80,11 @@
    		equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor"), undefined, "'undefined' should be returned for a parameter of a library that currently is not loaded");
    	});
 
-		asyncTest("After Theme Change", function() {
+		QUnit.test("After Theme Change", function(assert) {
+			var done = assert.async();
 			var fnContinue = function() {
 				sap.ui.getCore().detachThemeChanged(fnContinue);
-				start();
+				done();
 			}
 			var fnAssertThemeChanged = function() {
 

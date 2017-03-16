@@ -189,7 +189,8 @@
 
 	QUnit.module("Interaction - Keyboard");
 
-	asyncTest("Item navigation", function() {
+	QUnit.test("Item navigation", function(assert) {
+		var done = assert.async();
 		jQuery("#menubar1").get(0).focus();
 		setTimeout(function(){
 			checkFocus("menubar1_item1", "First item is focused when entering the MenuBar");
@@ -198,18 +199,19 @@
 			triggerKeyBoardAndCheckFocus("menubar1", "ARROW_RIGHT", 2);
 			triggerKeyBoardAndCheckFocus("menubar1", "ARROW_LEFT", 1);
 			triggerKeyBoardAndCheckFocus("menubar1", "ARROW_LEFT", 1);
-			start();
+			done();
 		}, 0);
 	});
 
-	asyncTest("Item navigation with overflow", function() {
+	QUnit.test("Item navigation with overflow", function(assert) {
+		var done = assert.async();
 		jQuery("#menubar5").get(0).focus();
 		setTimeout(function(){
 			checkFocus("menubar5_item1", "First item is focused when entering the MenuBar");
 			triggerKeyBoardAndCheckFocus("menubar5", "ARROW_RIGHT", 2);
 			triggerKeyBoardAndCheckFocus("menubar5", "ARROW_RIGHT", "ovrflw");
 			triggerKeyBoardAndCheckFocus("menubar5", "ARROW_LEFT", 2);
-			start();
+			done();
 		}, 0);
 	});
 

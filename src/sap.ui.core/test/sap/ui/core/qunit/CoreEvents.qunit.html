@@ -59,14 +59,15 @@
 		});
 
 
-		asyncTest("UI dirty on control modification", function() {
+		QUnit.test("UI dirty on control modification", function(assert) {
+			var done = assert.async();
 			expect(4);
 			btn.setText("new text");
 			equal(sap.ui.getCore().getUIDirty(), true, "UI should be dirty after setting the button text");
 			window.setTimeout(function(){
 				equal(jQuery.sap.byId("myButton")[0].innerHTML, "new text", "button should have new text after setting the button text and some timeout");
 				equal(sap.ui.getCore().getUIDirty(), false, "UI should be not dirty after setting the button text and some timeout");
-				start();
+				done();
 			}, 500);
 		});
 

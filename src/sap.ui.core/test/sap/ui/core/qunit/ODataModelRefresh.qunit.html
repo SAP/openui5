@@ -83,7 +83,8 @@
 
 		QUnit.module("After read, " + (bJSON ? "JSON" : "XML") + ", " + (bUseBatch ? "w/" : "w/o") + " $batch");
 
-		asyncTest("Context & Context", function() {
+		QUnit.test("Context & Context", function(assert) {
+			var done = assert.async();
 			var bChanged2, bChanged3,
 				oModel = initModel(sReadURI, bJSON, bUseBatch),
 				iRequestCount = 0,
@@ -100,12 +101,13 @@
 				if (iRequestCount == 4) {
 					ok(!bChanged2, "No change event on same entity (not needed for context binding)");
 					ok(!bChanged3, "No change event on different entity");
-					start();
+					done();
 				}
 			});
 		});
 
-		asyncTest("Context & List, Context refreshes", function() {
+		QUnit.test("Context & List, Context refreshes", function(assert) {
+			var done = assert.async();
 			var bChanged2, bChanged3, bChanged4,
 				oModel = initModel(sReadURI, bJSON, bUseBatch),
 				iRequestCount = 0,
@@ -125,12 +127,13 @@
 					ok(bChanged2, "ListBinding with contained entity must fire Change event");
 					ok(!bChanged3, "No change event on ListBinding with different subset");
 					ok(!bChanged4, "No change event on ListBinding on different collection");
-					start();
+					done();
 				}
 			});
 		});
 
-		asyncTest("Context & List, List refreshes", function() {
+		QUnit.test("Context & List, List refreshes", function(assert) {
+			var done = assert.async();
 			var bChanged2, bChanged3, bChanged4,
 				oModel = initModel(sReadURI, bJSON, bUseBatch),
 				iRequestCount = 0,
@@ -150,12 +153,13 @@
 					ok(!bChanged2, "No change event on same entity (not needed for context binding)");
 					ok(!bChanged3, "No change event on not contained entity");
 					ok(!bChanged4, "No change event on unrelated entity from different collection");
-					start();
+					done();
 				}
 			});
 		});
 
-		asyncTest("List & List", function() {
+		QUnit.test("List & List", function(assert) {
+			var done = assert.async();
 			var bChanged2, bChanged3, bChanged4,
 				oModel = initModel(sReadURI, bJSON, bUseBatch),
 				iRequestCount = 0,
@@ -175,7 +179,7 @@
 					ok(bChanged2, "ListBinding with intersecting entities must fire Change event");
 					ok(!bChanged3, "No change event if there are not shared entities");
 					ok(!bChanged4, "No change event if bound to unrelated collection");
-					start();
+					done();
 				}
 			});
 		});
@@ -188,7 +192,8 @@
 
 	QUnit.module("After write");
 
-	asyncTest("Create", function() {
+	QUnit.test("Create", function(assert) {
+		var done = assert.async();
 		var bChanged1, bChanged2,
 			oModel = initModel(sWriteURI),
 			iRequestCount = 0,
@@ -214,7 +219,7 @@
 			if (iRequestCount == 3) {
 				ok(bChanged1, "ListBinding with contained entity must refresh");
 				ok(!bChanged2, "No change event if bound to unrelated collection");
-				start();
+				done();
 			}
 		});
 	});

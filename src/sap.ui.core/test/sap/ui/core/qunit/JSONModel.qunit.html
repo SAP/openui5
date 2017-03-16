@@ -407,18 +407,20 @@
 		equal(testModel.getProperty("/baz")[1], 97);
 	});
 
-	asyncTest("test JSONModel loadData",function(){
+	QUnit.test("test JSONModel loadData",function(assert){
+		var done = assert.async();
 		var testModel = new sap.ui.model.json.JSONModel();
 		testModel.loadData("testdata.json");
 		testModel.attachRequestCompleted(function() {
 			equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
 			equal(testModel.getProperty("/bar"), "ABCDEFG");
 			equal(testModel.getProperty("/baz")[1], 97);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		});
 	});
 
-	asyncTest("test JSONModel loadData: multiple requests - merge",function(){
+	QUnit.test("test JSONModel loadData: multiple requests - merge",function(assert){
+		var done = assert.async();
 		var testModel = new sap.ui.model.json.JSONModel();
 		var loadCount = 0;
 		testModel.loadData("testdata.json");
@@ -435,12 +437,13 @@
 				equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
 				equal(testModel.getProperty("/baz")[1], 97);
 				equal(testModel.getProperty("/merged"), true);
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test JSONModel loadData: multiple requests",function(){
+	QUnit.test("test JSONModel loadData: multiple requests",function(assert){
+		var done = assert.async();
 		var testModel = new sap.ui.model.json.JSONModel();
 		var loadCount = 0;
 		testModel.loadData("testdata.json");
@@ -457,12 +460,13 @@
 				equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
 				ok(!testModel.getProperty("/baz"), "deleted as no merge");
 				equal(testModel.getProperty("/merged"), true);
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test JSONModel loadData: multiple requests with merge: 1. request slow",function(){
+	QUnit.test("test JSONModel loadData: multiple requests with merge: 1. request slow",function(assert){
+		var done = assert.async();
 		var testModel = new sap.ui.model.json.JSONModel();
 		var loadCount = 0;
 		testModel.loadData("/fake/testdata3.json");
@@ -478,12 +482,13 @@
 				equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
 				equal(testModel.getProperty("/baz")[1], 97);
 				equal(testModel.getProperty("/merged"), true);
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test JSONModel loadData: multiple requests with merge: 1. request slow: 1 throws exception",function(){
+	QUnit.test("test JSONModel loadData: multiple requests with merge: 1. request slow: 1 throws exception",function(assert){
+		var done = assert.async();
 		var testModel = new sap.ui.model.json.JSONModel();
 		var loadCount = 0;
 		testModel.loadData("/fake");
@@ -500,18 +505,19 @@
 				equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
 				equal(testModel.getProperty("/baz")[1], 97);
 				equal(testModel.getProperty("/merged"), true);
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test JSONModel loadData constructor",function(){
+	QUnit.test("test JSONModel loadData constructor",function(assert){
+		var done = assert.async();
 		var testModel = new sap.ui.model.json.JSONModel("testdata.json");
 		testModel.attachRequestCompleted(function() {
 			equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
 			equal(testModel.getProperty("/bar"), "ABCDEFG");
 			equal(testModel.getProperty("/baz")[1], 97);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		});
 	});
 

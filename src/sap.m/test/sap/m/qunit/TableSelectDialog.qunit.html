@@ -369,18 +369,20 @@
 			ok(!jQuery.sap.domById("oTableSelectDialog-ok"), "TableSelectDialog should not have an ok button");
 		});
 
-		asyncTest("Destroy TableSelectDialog", function(){
+		QUnit.test("Destroy TableSelectDialog", function(assert){
+			var done = assert.async();
 			expect(1);
 			// simulate close
 			oTableSelectDialog._dialog.attachAfterClose(function() {
 				oTableSelectDialog.destroy();
 				strictEqual(oTableSelectDialog.$().length, 0, "TableSelectDialog is destroyed");
-				start();
+				done();
 			})
 			oTableSelectDialog._dialog.close();
 		});
 
-		asyncTest("Open TableSelectDialog1", function(){
+		QUnit.test("Open TableSelectDialog1", function(assert){
+			var done = assert.async();
 			//Expect 6 as one comes from the button press for chainabe test
 			expect(6);
 			setTimeout(function() {
@@ -390,77 +392,85 @@
 				ok(jQuery.sap.domById("oTableSelectDialog1-searchField"), "TableSelectDialog1 should have a searchfield");
 				ok(jQuery.sap.domById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
 				ok(jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should have an ok button");
-			start();
+			done();
 			}, 10);
 		});
 
 		QUnit.module("Test Dialog Search");
 
-		asyncTest("TableSelectDialog1 SearchField Set Value 'Mo'", function(){
+		QUnit.test("TableSelectDialog1 SearchField Set Value 'Mo'", function(assert){
+			var done = assert.async();
 			expect(0);
 			sap.ui.getCore().applyChanges();
 			var searchField = sap.ui.getCore().byId("oTableSelectDialog1-searchField");
 			searchField.setValue("Mo");
-			start();
+			done();
 		});
 
-		asyncTest("TableSelectDialog1 SearchField Equals 'Mo'", function(){
+		QUnit.test("TableSelectDialog1 SearchField Equals 'Mo'", function(assert){
+			var done = assert.async();
 			expect(1);
 			strictEqual(jQuery.sap.domById("oTableSelectDialog1-searchField-I").value, "Mo", "Search Field should Contain 'Mo'");
-			start();
+			done();
 		});
 
-		asyncTest("TableSelectDialog1 SearchField Fire Search Event", function(){
+		QUnit.test("TableSelectDialog1 SearchField Fire Search Event", function(assert){
+			var done = assert.async();
 			expect(0);
 			var searchField = sap.ui.getCore().byId("oTableSelectDialog1-searchField");
 			searchField.fireSearch({query: "Mo"});
-			start();
+			done();
 		});
 
-		asyncTest("TableSelectDialog1 SearchField Fire Search Results", function(){
+		QUnit.test("TableSelectDialog1 SearchField Fire Search Results", function(assert){
+			var done = assert.async();
 			expect(3);
 			setTimeout(function() {
 				equal(aSearchEvents.length, 2, "there should be 2 events in the serach events log");
 				equal(aSearchEvents[0], 5, "The first event should equal 5 before the filter applied");
 				equal(aSearchEvents[1], 3, "The second event should equal 3 after the filter applied");
-			start();
+			done();
 			}, 10);
 		});
 
-		asyncTest("TableSelectDialog1 SearchField Fire Search Event Again with same data", function(){
+		QUnit.test("TableSelectDialog1 SearchField Fire Search Event Again with same data", function(assert){
+			var done = assert.async();
 			expect(0);
 			var searchField = sap.ui.getCore().byId("oTableSelectDialog1-searchField");
 			searchField.fireSearch({query: "Mo"});
-			start();
+			done();
 		});
 
-		asyncTest("TableSelectDialog1 SearchField Fire Search Results", function(){
+		QUnit.test("TableSelectDialog1 SearchField Fire Search Results", function(assert){
+			var done = assert.async();
 			expect(3);
 			setTimeout(function() {
 				equal(aSearchEvents.length, 2, "there should be 2 events in the serach events log");
 				equal(aSearchEvents[0], 3, "The first event should equal 3 before the filter applied");
 				equal(aSearchEvents[1], 3, "The second event should equal 3 after the filter applied");
-			start();
+			done();
 			}, 10);
 		});
 
 		QUnit.module("Test Dialog Live Change");
 
-		asyncTest("TableSelectDialog1 SearchField Simulate Live Chnage Clear Text", function(){
+		QUnit.test("TableSelectDialog1 SearchField Simulate Live Chnage Clear Text", function(assert){
+			var done = assert.async();
 			expect(0);
 			var searchField = sap.ui.getCore().byId("oTableSelectDialog1-searchField");
 			searchField.setValue("");
 			searchField.fireLiveChange({newValue: ""});
-			start();
+			done();
 		});
 
-		asyncTest("TableSelectDialog1 SearchField Live Change Results Clear Text", function(){
+		QUnit.test("TableSelectDialog1 SearchField Live Change Results Clear Text", function(assert){
+			var done = assert.async();
 			expect(3);
 			setTimeout(function() {
 				equal(aLiveChangeEvents.length, 2, "there should be 2 events in the serach events log");
 				equal(aLiveChangeEvents[0], 3, "The first event should equal 3 before the filter applied");
 				equal(aLiveChangeEvents[1], 5, "The second event should equal 5 after the filter applied");
-			start();
+			done();
 			}, 10);
 		});
 
@@ -472,12 +482,13 @@
 			strictEqual(oTableSelectDialog1.getMultiSelect(), false, 'Multi Select should now be updated to  "false"');
 		});
 
-		asyncTest("TableSelectDialog1 Single Select Checks", function(){
+		QUnit.test("TableSelectDialog1 Single Select Checks", function(assert){
+			var done = assert.async();
 			expect(2);
 			setTimeout(function() {
 				ok(jQuery.sap.domById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
 				ok(!jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should not have an ok button");
-			start();
+			done();
 			}, 50);
 		});
 
@@ -495,7 +506,8 @@
 			oTable.fireSelect({ listItem : aItems[2] });
 		});
 
-		asyncTest("TableSelectDialog1 Single Select Check Cancel", function(){
+		QUnit.test("TableSelectDialog1 Single Select Check Cancel", function(assert){
+			var done = assert.async();
 			expect(3);
 			oInput1.setValue("");
 			oButton1.firePress();
@@ -503,10 +515,11 @@
 			ok(!jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should not have an ok button");
 			var oCancel = sap.ui.getCore().byId("oTableSelectDialog1-cancel");
 			oCancel.firePress();
-			start();
+			done();
 		});
 
-		asyncTest("Check add/remove/toggle/hasStyleClass methods", function () {
+		QUnit.test("Check add/remove/toggle/hasStyleClass methods", function (assert) {
+			var done = assert.async();
 			var oTableSelectDialog = new sap.m.TableSelectDialog("TableSelectDialog"),
 				sCustomStyleClass = "myStyleClass";
 
@@ -529,12 +542,13 @@
 			// cleanup
 			oTableSelectDialog._oDialog.attachAfterClose(function (oEvent) {
 				oTableSelectDialog.destroy();
-				start();
+				done();
 			});
 			oTableSelectDialog._oDialog.close();
 		});
 
-		asyncTest("Check $ and getDomRef methods", function () {
+		QUnit.test("Check $ and getDomRef methods", function (assert) {
+			var done = assert.async();
 			var oTableSelectDialog = new sap.m.TableSelectDialog("TableSelectDialog");
 
 			oTableSelectDialog.open();
@@ -547,7 +561,7 @@
 
 			// cleanup
 			oTableSelectDialog._oDialog.attachAfterClose(function (oEvent) {
-				start();
+				done();
 			});
 			oTableSelectDialog._oDialog.close();
 		});
@@ -556,7 +570,8 @@
 			QUnit.module("Keyboard Handling");
 		/********************************************************************************/
 
-		asyncTest("Initialfocus when there are no rows in the TableSelectDialog's table", function () {
+		QUnit.test("Initialfocus when there are no rows in the TableSelectDialog's table", function (assert) {
+			var done = assert.async();
 			expect(1);
 			var oSystem = {
 					desktop: true,
@@ -577,13 +592,14 @@
 				ok(jQuery.sap.byId('tableSelectDialog-searchField-I').is(":focus"), 'SearchField should be focused if there are no rows in the list');
 					oTableSelectDialog5._oDialog.close();
 					oTableSelectDialog5.destroy();
-					start();
+					done();
 
 			}, 500);
 
 		});
 
-		asyncTest("InitialFocus when there are rows in the tableSelectDialog's table", function(){
+		QUnit.test("InitialFocus when there are rows in the tableSelectDialog's table", function(assert){
+			var done = assert.async();
 			expect(1);
 			var oTableSelectDialog15 = new sap.m.TableSelectDialog("tableSelectDialog15", {
 				title: "my TableSelectDialog",
@@ -641,7 +657,7 @@
 				strictEqual(oTableSelectDialog15.getItems()[0].$().is(":focus"), true, 'The first row of the table should be focused');
 					oTableSelectDialog15._oDialog.close();
 					oTableSelectDialog15.destroy();
-					start();
+					done();
 			}, 500);
 
 		});

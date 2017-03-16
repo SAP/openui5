@@ -120,14 +120,15 @@
 
 		});
 
-		asyncTest("add menu items", function() {
+		QUnit.test("add menu items", function(assert) {
+			var done = assert.async();
 			oFeed.addToolsMenuItem(new sap.ui.commons.MenuItem('MenuItem1',{ text: 'Item1' }));
 			oFeed.addToolsMenuItem(new sap.ui.commons.MenuItem('MenuItem2',{ text: 'Item2' }));
 
 			var delayedCall = function() {
 				ok(jQuery.sap.byId("Feed1-toolsButton").get(0), "Menu button rendered");
 				equal(sap.ui.getCore().getControl("Feed1-toolsButton").getMenu().getItems().length, 2, "Number of menu items");
-				start();
+				done();
 			};
 			setTimeout(delayedCall, 0);
 		});
@@ -160,7 +161,8 @@
 
 		});
 
-		asyncTest("filter", function() {
+		QUnit.test("filter", function(assert) {
+			var done = assert.async();
 			jQuery.sap.domById("Feed1-filter").focus();
 			qutils.triggerKeyboardEvent("Feed1-filter", jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
 			qutils.triggerKeyboardEvent("Feed1-filter", jQuery.sap.KeyCodes.ENTER, false, false, false);
@@ -169,7 +171,7 @@
 				equal(sEventParameter, "Filter2", "New value of filter");
 				sEvent = "";
 				sEventParameter = "";
-				start();
+				done();
 			};
 			setTimeout(delayedCall,0);
 
@@ -187,7 +189,8 @@
 
 		});
 
-		asyncTest("Add chunk", function() {
+		QUnit.test("Add chunk", function(assert) {
+			var done = assert.async();
 
 			jQuery.sap.domById("Feed1-Feeder-input").focus();
 			jQuery.sap.byId("Feed1-Feeder-input").text("Test");
@@ -205,7 +208,7 @@
 			var delayedCall = function() {
 				var aChunks = jQuery.sap.byId("Feed1").children("section").children("article");
 				equal(aChunks.get(0).id, "Feed1-new-2", "New chunk must be the first one");
-				start();
+				done();
 			};
 			setTimeout(delayedCall, 0);
 		});

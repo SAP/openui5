@@ -143,7 +143,8 @@
 
 	});
 
-	asyncTest("PropertyBinding suspend/resume with control value change", function() {
+	QUnit.test("PropertyBinding suspend/resume with control value change", function(assert) {
+		var done = assert.async();
 		setup();
 		var oInput = new sap.m.Input({
 			value: "{/name}"
@@ -159,7 +160,7 @@
 			equal(oModel.getProperty("/name"), "Peter", "model value");
 			equal(oInput.getValue(), "Peter", "Input field returns value");
 			oInput.destroy();
-			start();
+			done();
 		});
 		ok(oBinding !== undefined, "binding check");
 		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
@@ -173,7 +174,8 @@
 		oBinding.resume();
 	});
 
-	asyncTest("PropertyBinding suspend/resume with model value change", function() {
+	QUnit.test("PropertyBinding suspend/resume with model value change", function(assert) {
+		var done = assert.async();
 		setup();
 		var oInput = new sap.m.Input({
 			value: "{/name}"
@@ -189,7 +191,7 @@
 			equal(oModel.getProperty("/name"), "Petre", "model value");
 			equal(oInput.getValue(), "Petre", "Input field returns value");
 			oInput.destroy();
-			start();
+			done();
 		});
 		ok(oBinding !== undefined, "binding check");
 		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
@@ -204,7 +206,8 @@
 		oBinding.resume();
 	});
 
-	asyncTest("PropertyBinding suspend/resume with control and model value change", function() {
+	QUnit.test("PropertyBinding suspend/resume with control and model value change", function(assert) {
+		var done = assert.async();
 		setup();
 		var oInput = new sap.m.Input({
 			value: "{/name}"
@@ -220,7 +223,7 @@
 			equal(oModel.getProperty("/name"), "Petre", "model value");
 			equal(oInput.getValue(), "Petre", "Input field returns value");
 			oInput.destroy();
-			start();
+			done();
 		});
 		ok(oBinding !== undefined, "binding check");
 		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
@@ -243,7 +246,8 @@
 		oBinding.resume();
 	});
 
-	asyncTest("PropertyBinding suspend/resume with model and control value change", function() {
+	QUnit.test("PropertyBinding suspend/resume with model and control value change", function(assert) {
+		var done = assert.async();
 		setup();
 		var oInput = new sap.m.Input({
 			value: "{/name}"
@@ -259,7 +263,7 @@
 			equal(oModel.getProperty("/name"), "Petre", "model value");
 			equal(oInput.getValue(), "Petre", "Input field returns value");
 			oInput.destroy();
-			start();
+			done();
 		});
 		ok(oBinding !== undefined, "binding check");
 		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
@@ -278,7 +282,8 @@
 		oBinding.resume();
 	});
 
-	asyncTest("propertyChange event", function(){
+	QUnit.test("propertyChange event", function(assert){
+		var done = assert.async();
 		setup();
 		var oInput = new sap.m.Input({
 			value: "{/name}"
@@ -294,7 +299,7 @@
 			equal(oValue, "blubb", "property value check!");
 			equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
 			oInput.destroy();
-			start();
+			done();
 		});
 		var oBinding = oInput.getBinding("value");
 		ok(oBinding !== undefined, "binding check");
@@ -304,7 +309,8 @@
 		oInput.setValue("blubb");
 	});
 
-	asyncTest("propertyChange event relative", function(){
+	QUnit.test("propertyChange event relative", function(assert){
+		var done = assert.async();
 		setup();
 		var oInput = new sap.m.Input({
 			value: "{@firstName}"
@@ -320,7 +326,7 @@
 			equal(oValue, "blubb", "property value check!");
 			equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
 			oInput.destroy();
-			start();
+			done();
 		});
 		oInput.bindObject("/teamMembers/member/1");
 		var oBinding = oInput.getBinding("value");
@@ -331,7 +337,8 @@
 		oInput.setValue("blubb");
 	});
 
-	asyncTest("propertyChange event reset", function(){
+	QUnit.test("propertyChange event reset", function(assert){
+		var done = assert.async();
 		setup();
 		var oInput = new sap.m.Input({
 			value: "{@firstName}"
@@ -364,7 +371,7 @@
 		// should trigger event
 		oInput.setValue("blubb");
 		oInput.destroy();
-		start();
+		done();
 	});
 
 </script>

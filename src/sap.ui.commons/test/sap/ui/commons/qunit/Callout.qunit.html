@@ -74,7 +74,8 @@
 	}
 
 	QUnit.module("Callout: open and close");
-	asyncTest("Open Callout", function() {
+	QUnit.test("Open Callout", function(assert) {
+		var done = assert.async();
 		ok(true, "A-sync OK start");
 		qutils.triggerMouseEvent("CButton", "mouseover");
 		setTimeout(function() {
@@ -82,12 +83,13 @@
 			qutils.triggerMouseEvent("callout", "mouseout");
 			setTimeout(function() {
 				ok(isCalloutVisible()==false, "Callout is not visible after mouseout");
-				start();
+				done();
 			}, 500);
 		}, 900);
 	});
 
-	asyncTest("Do not open Callout by fast mouse movement over the parent", function() {
+	QUnit.test("Do not open Callout by fast mouse movement over the parent", function(assert) {
+		var done = assert.async();
 		ok(true, "A-sync open/close start");
 		qutils.triggerMouseEvent("CButton", "mouseover");
 		setTimeout(function() {
@@ -95,12 +97,13 @@
 			qutils.triggerMouseEvent("CButton", "mouseout");
 			setTimeout(function() {
 				ok(isCalloutVisible()==false, "Callout is not visible after mouseout");
-				start();
+				done();
 			}, 500);
 		}, 50);
 	});
 
-	asyncTest("Close using close method", function() {
+	QUnit.test("Close using close method", function(assert) {
+		var done = assert.async();
 		ok(true, "A-sync close() start");
 		qutils.triggerMouseEvent("CButton", "mouseover");
 		setTimeout(function() {
@@ -108,13 +111,14 @@
 			oCallout.close();
 			setTimeout(function() {
 				ok(isCalloutVisible()==false, "Callout is not visible after close()");
-				start();
+				done();
 			}, 400);
 		}, 900);
 	});
 
 
-	asyncTest("Opened and closed events", function() {
+	QUnit.test("Opened and closed events", function(assert) {
+		var done = assert.async();
 		// Randomize number of attempts
 		var iRepetitions = 2 + Math.round(Math.random() * 3);
 		// Delay must be >= 700 (Tooltipbase open delay (500) + animation duration (200)).
@@ -178,7 +182,7 @@
 						mCounter.close === mCounter.closed,
 						"Closed event fired as often as close occurred. ("+ mCounter.close +"/"+ mCounter.closed +")"
 					);
-					start();
+					done();
 				}, iDelay + 10);
 			}
 		};
@@ -188,7 +192,8 @@
 
 
 	QUnit.module("Callout: keyboard navigation");
-	asyncTest("Initial Focus", function() {
+	QUnit.test("Initial Focus", function(assert) {
+		var done = assert.async();
 		oButton.focus();
 		ok(document.activeElement.id == "CButton", "Focus the button initially");
 		qutils.triggerKeyboardEvent("CButton", jQuery.sap.KeyCodes.I, false, false, true);
@@ -200,7 +205,7 @@
 			setTimeout(function(){
 				ok(isCalloutVisible()==false, "Callout is not visible after Esc");
 				equal(document.activeElement.id, "CButton", "The parent element should be focused after the focused Callout is closed");
-				start();
+				done();
 			}, 500); // CLOSE
 		}, 500); // OPEN
 	});

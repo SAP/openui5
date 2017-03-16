@@ -80,25 +80,27 @@
 				qutils.triggerKeyboardEvent(oOverlay.getId() + "-openNew", jQuery.sap.KeyCodes.SPACE, false, false, false);
 			});
 
-			asyncTest("Open Method", function () {
+			QUnit.test("Open Method", function (assert) {
+				var done = assert.async();
 				expect(3);
 				ok(!oOverlay.isOpen(), "Rendered Overlay is not open");
 				oOverlay.open();
 				setTimeout(function () {
-					start();
 					ok(oOverlay.isOpen(), "Rendered Overlay is open");
+					done();
 				}, 500);
 			});
 
 			// at the end close
-			asyncTest("Close Events", function () {
+			QUnit.test("Close Events", function (assert) {
+				var done = assert.async();
 				oOverlay.attachClose(function (oEvent) {
 					equal(oOverlay.getId(), oEvent.getParameter("id"), "Close event fired");
 				});
 				oOverlay.attachClosed(function (oEvent) {
 					equal(oOverlay.getId(), oEvent.getParameter("id"), "Closed event fired");
 					ok(!oOverlay.isOpen(), "Rendered Overlay is not open");
-					start();
+					done();
 				});
 				expect(5);
 				ok(oOverlay.isOpen(), "Rendered Overlay is open");

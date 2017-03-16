@@ -50,14 +50,15 @@
 			equal(jQuery.sap.byId("mySB-radiogroup").children("button").length, 6, "All Buttons rendered");
 		});
 
-		asyncTest("ARIA", function() {
+		QUnit.test("ARIA", function(assert) {
+			var done = assert.async();
 			equal(jQuery.sap.byId("mySB-radiogroup").attr("role"), "radiogroup", "role = radiogroup");
 			equal(jQuery.sap.byId("mySB-radiogroup").attr("aria-disabled"), "false", "aria-disabled = false");
 			oSegmentedButton.setEnabled(false);
 			setTimeout(function() {
 				equal(jQuery.sap.byId("mySB-radiogroup").attr("aria-disabled"), "true", "aria-disabled = true");
 				oSegmentedButton.setEnabled(true);
-				start();
+				done();
 			},500);
    		});
 
@@ -71,7 +72,8 @@
 			ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
 		});
 
-		asyncTest("Icons", function() {
+		QUnit.test("Icons", function(assert) {
+			var done = assert.async();
 			oSegmentedButton.setSelectedButton("But3");
 			setTimeout(function() {
 				equal(jQuery.sap.byId("But2").children("img").attr('src'), "../images/sb/card.png", "Button deselected: Use icon again");
@@ -80,7 +82,7 @@
 				setTimeout(function() {
 					equal(jQuery.sap.byId("But3").children("img").attr('src'), "../images/sb/tiles_hover.png", "Button selected: Use iconHovered instead of icon even it has no focus!");
 					equal(jQuery.sap.byId("But1").children("img").attr('src'), "../images/sb/list.png", "Button hovered: Use icon when focused!");
-					start();
+					done();
 				},500);
 			},500);
 		});

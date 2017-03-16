@@ -90,7 +90,8 @@
 
 			QUnit.module("Binding Template Tests");
 
-			asyncTest("Binding Path in Template", 1, function() {
+			QUnit.test("Binding Path in Template", 1, function(assert) {
+				var done = assert.async();
 				var sTitle = "Test123";
 
 				sap.ui.controller("test.myController", {
@@ -122,9 +123,9 @@
 					});
 
 					setTimeout(function() {
-						start();
 						var sResult = jQuery(document.getElementById("templateContent")).text()
 						ok(sResult === sTitle, "Binding resolved properly");
+						done();
 					}, 10);
 				}, 10);
 

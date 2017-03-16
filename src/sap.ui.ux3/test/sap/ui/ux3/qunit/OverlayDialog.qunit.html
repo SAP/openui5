@@ -73,26 +73,28 @@
 
 			QUnit.module("Behaviour");
 
-			asyncTest("Open Method", function () {
+			QUnit.test("Open Method", function (assert) {
+				var done = assert.async();
 				expect(4);
 				ok(!oOverlayDialog.isOpen(), "Rendered OverlayDialog is not open");
 				oOverlayDialog.open();
 				ok(oOverlayDialog.isOpen(), "Rendered OverlayDialog is open");
 				setTimeout(
 						function () {
-							start();
 							ok(jQuery.sap.domById(oOverlayDialog.getId() + "Button"), "Rendered Content should exist in the page");
+							done();
 						}, 500);
 			});
 
 			// at the end close
-			asyncTest("Close Event", function () {
+			QUnit.test("Close Event", function (assert) {
+				var done = assert.async();
 				expect(3);
 				ok(oOverlayDialog.isOpen(), "Rendered OverlayDialog is open");
 				qutils.triggerMouseEvent(jQuery.sap.byId(oOverlayDialog.getId() + "-close"), "click", 1, 1, 1, 1);
 				setTimeout(function () {
-					start();
 					ok(!oOverlayDialog.isOpen(), "Rendered OverlayDialog is not open");
+					done();
 				}, 500);
 			});
 

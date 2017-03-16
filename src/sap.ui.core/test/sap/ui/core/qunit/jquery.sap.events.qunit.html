@@ -276,7 +276,6 @@
 		// at least 500 ms should have passed trigger again to simulate dblclick
 		setTimeout(function() {
 			jQuery("#"+sTargetId).trigger("click");
-			start();
 			if(fDoAfter){
 				fDoAfter();
 			}
@@ -354,7 +353,8 @@
 		doTestPseudoEvent("keydown", aPseudoKeyEvents[i].sName, aPseudoKeyEvents[i].iTrigger, aPseudoKeyEvents[i].oParams);
 	}
 
-	asyncTest("sapdelayeddoubleclick Event - Basic", function(){
+	QUnit.test("sapdelayeddoubleclick Event - Basic", function(assert){
+		var done = assert.async();
 		var iCount = 0;
 		var bFirst = true;
 
@@ -373,11 +373,13 @@
 			equal(iCount, 2, "Event handler called 2 times");
 			jQuery("#inner").unbind();
 			jQuery("#outer").unbind();
+			done();
 		});
 
 	});
 
-	asyncTest("sapdelayeddoubleclick Event", function(){
+	QUnit.test("sapdelayeddoubleclick Event", function(assert){
+		var done = assert.async();
 		var fCheck = function(oEvent, bTestOuter) {
 			var oTestControl = bTestOuter ? oTestControl1 : oTestControl2;
 			oTestControl._bEventHandlerCalled = true;
@@ -399,10 +401,12 @@
 			oTestControl2._bEventHandlerCalled = undefined;
 			oTestControl1["onsapdelayeddoubleclick"] = undefined;
 			oTestControl2["onsapdelayeddoubleclick"] = undefined;
+			done();
 		});
 	});
 
-	asyncTest("sapdelayeddoubleclick Event (bubbling cancelled)", function(){
+	QUnit.test("sapdelayeddoubleclick Event (bubbling cancelled)", function(assert){
+		var done = assert.async();
 		var fCheck = function(oEvent, bTestOuter) {
 			if(!bTestOuter){
 				oEvent.stopPropagation();
@@ -427,6 +431,7 @@
 			oTestControl2._bEventHandlerCalled = undefined;
 			oTestControl1["onsapdelayeddoubleclick"] = undefined;
 			oTestControl2["onsapdelayeddoubleclick"] = undefined;
+			done();
 		});
 	});
 

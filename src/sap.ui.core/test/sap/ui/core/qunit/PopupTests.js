@@ -650,7 +650,8 @@ QUnit.test("Check the order of function calls during open/close with custom anim
  * Tests are commented out as focus testing with QUnit is not stable.
  * This should rather be covered by a Selenium test.
  */
-// asyncTest("AutoClose (and setDurations)", function() {
+// QUnit.test("AutoClose (and setDurations)", function(assert) {
+// 	var done = assert.async();
 // 	assert.expect(7);
 // 	var fnOpened = function() {
 // 		this.oPopup.detachOpened(fnOpened, this);
@@ -682,7 +683,8 @@ QUnit.test("Check the order of function calls during open/close with custom anim
 // 	this.oPopup.open();
 // });
 
-// asyncTest("Modality", function() {
+// QUnit.test("Modality", function(assert) {
+// 	var done = assert.async();
 // 	var that = this;
 // 	this.oPopup.setAutoClose(false);
 // 	this.oPopup.setModal(true);

@@ -22,7 +22,9 @@
 
 QUnit.module("Contained in SplitContainer");
 
-asyncTest("SplitContainer containing carousel should not show hidden master page on swipe right on carousel", function() {
+QUnit.test("SplitContainer containing carousel should not show hidden master page on swipe right on carousel", function(assert) {
+	var done = assert.async();
+
 	// Arrange
 	var img2 = new sap.m.Image("myPage2", {
 			src: "../images/demo/nature/elephant.jpg",
@@ -81,7 +83,7 @@ asyncTest("SplitContainer containing carousel should not show hidden master page
 	setTimeout(function() {
 		ok(!oSplitApp.isMasterShown(), "Master page must not be shown after swipe right");
 		oSplitApp.destroy();
-		start();
+		done();
 	}, 600);
 
 });

@@ -93,12 +93,12 @@
 	};
 
 	var checkSearch = function(sType, oSearchField, bReadOnly, bWithClear) {
+		var done = assert.async();
 		if(!bReadOnly){
 			oSearchField.focus();
 		}
 
 		setTimeout(function(){
-			start();
 			if(!jQuery.sap.startsWith(jQuery("html").attr("data-sap-ui-browser"), "ie")){ //TODO check why this does not work for IE
 				checkFocus(oSearchField.getFocusDomRef().id, "SearchField has "+(bReadOnly ? "no " : "")+"focus before user action", !bReadOnly);
 			}
@@ -128,12 +128,15 @@
 			equal(oSearchField.getValue(), bNoChange ? "" : "SapUi5", "SearchField' value after user action (Property)");
 			checkFocus(oSearchField.getFocusDomRef().id, "SearchField has "+(bReadOnly ? "no " : "")+"focus after user action", !bReadOnly);
 
+			done();
+
 			// focus is removed for the next test
 			document.activeElement && document.activeElement.blur();
 		}, 10);
 	};
 
 	var checkSuggestion = function(oSearchField, fSecondPassCheck){
+		var done = assert.async();
 		oSearchField.clearHistory();
 		oSearchField.focus();
 
@@ -152,7 +155,6 @@
 			oSearchField.attachSuggest(handler);
 			triggerInputSequence(oSearchField, 3, false);
 			setTimeout(function(){
-				start();
 				oSearchField.detachSuggest(handler);
 				var aItems = [];
 				if(oSearchField.getEnableListSuggest()){
@@ -176,6 +178,7 @@
 						oSearchField.detachSearch(handler2);
 					}
 				}
+				done();
 			}, 1000);
 		}, 300);
 	};
@@ -321,31 +324,31 @@
 			}
 		});
 
-		asyncTest("TextField - Click on icon", function() {
+		QUnit.test("TextField - Click on icon", function(assert) {
 			checkSearch("click", oSearch2, false, false);
 		});
 
-		asyncTest("TextField - Press enter", function() {
+		QUnit.test("TextField - Press enter", function(assert) {
 			checkSearch("enter", oSearch2, false, false);
 		});
 
-		asyncTest("TextField - Click on icon (disabled)", function() {
+		QUnit.test("TextField - Click on icon (disabled)", function(assert) {
 			oSearch2.setEnabled(false);
 			sap.ui.getCore().applyChanges();
 			checkSearch("click", oSearch2, true, false);
 		});
 
-		asyncTest("ComboBox - Click on icon", function() {
+		QUnit.test("ComboBox - Click on icon", function(assert) {
 			oSearch4.clearHistory();
 			checkSearch("click", oSearch4, false, false);
 		});
 
-		asyncTest("ComboBox - Press enter", function() {
+		QUnit.test("ComboBox - Press enter", function(assert) {
 			oSearch4.clearHistory();
 			checkSearch("enter", oSearch4, false, false);
 		});
 
-		asyncTest("ComboBox - Click on icon (disabled)", function() {
+		QUnit.test("ComboBox - Click on icon (disabled)", function(assert) {
 			oSearch4.setEnabled(false);
 			sap.ui.getCore().applyChanges();
 			checkSearch("click", oSearch4, true, false);
@@ -364,31 +367,31 @@
 			}
 		});
 
-		asyncTest("TextField - Click on icon", function() {
+		QUnit.test("TextField - Click on icon", function(assert) {
 			checkSearch("click", oSearch3, false, true);
 		});
 
-		asyncTest("TextField - Press enter", function() {
+		QUnit.test("TextField - Press enter", function(assert) {
 			checkSearch("enter", oSearch3, false, true);
 		});
 
-		asyncTest("TextField - Click on icon (disabled)", function() {
+		QUnit.test("TextField - Click on icon (disabled)", function(assert) {
 			oSearch3.setEnabled(false);
 			sap.ui.getCore().applyChanges();
 			checkSearch("click", oSearch3, true, true);
 		});
 
-		asyncTest("ComboBox - Click on icon", function() {
+		QUnit.test("ComboBox - Click on icon", function(assert) {
 			oSearch5.clearHistory();
 			checkSearch("click", oSearch5, false, true);
 		});
 
-		asyncTest("ComboBox - Press enter", function() {
+		QUnit.test("ComboBox - Press enter", function(assert) {
 			oSearch5.clearHistory();
 			checkSearch("enter", oSearch5, false, true);
 		});
 
-		asyncTest("ComboBox - Click on icon (disabled)", function() {
+		QUnit.test("ComboBox - Click on icon (disabled)", function(assert) {
 			oSearch5.setEnabled(false);
 			sap.ui.getCore().applyChanges();
 			checkSearch("click", oSearch5, true, true);
@@ -471,17 +474,17 @@
 			};
 		};
 
-		asyncTest("Textfield mode (no suggestion list)", function() {
+		QUnit.test("Textfield mode (no suggestion list)", function(assert) {
 			checkSuggestion(oSearch7, function(sSuggestValue, aItems){
 				equals(sSuggestValue, "SaSap", "Suggest value");
 			});
 		});
 
-		asyncTest("Open Search provider with XML response", getProviderTest(oSearch8));
+		QUnit.test("Open Search provider with XML response", getProviderTest(oSearch8));
 
-		asyncTest("Open Search provider with JSON response", getProviderTest(oSearch9));
+		QUnit.test("Open Search provider with JSON response", getProviderTest(oSearch9));
 
-		asyncTest("Combobox mode (with suggestion list)", function() {
+		QUnit.test("Combobox mode (with suggestion list)", function(assert) {
 			checkSuggestion(oSearch10, function(sSuggestValue, aItems){
 				equals(sSuggestValue, "SaSap", "Suggest value");
 				equals(aItems.length, 2, "Number of suggestions correct");

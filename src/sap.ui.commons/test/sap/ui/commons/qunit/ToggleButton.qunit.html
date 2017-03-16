@@ -49,13 +49,14 @@
 			equal(oToggleButton2.getPressed(), true, "getPressedState");
 		});
 
-		asyncTest("ARIA", function(){
+		QUnit.test("ARIA", function(assert){
+			var done = assert.async();
 			setTimeout(function() {
-				start();
 				var oTB1 = jQuery.sap.domById(sToggleButtonId + "_1");
 				equal(jQuery(oTB1).attr("aria-pressed"),"false","ARIA-PRESSED: for testToggleButton_1");
 				var oTB2 = jQuery.sap.domById(sToggleButtonId + "_2");
 				equal(jQuery(oTB2).attr("aria-pressed"),"true","ARIA-PRESSED: for testToggleButton_2");
+				done();
 			},0);
 		});
 	  </script>

@@ -33,7 +33,7 @@ function runODataMessagesTests() {
 
 	// Start delayed so the message model is available
 	setTimeout(function() {
-		start();
+		QUnit.start();
 	}, 100);
 
 
@@ -63,7 +63,8 @@ function runODataMessagesTests() {
 	oMainLayout.placeAt("content");
 
 
-	asyncTest("JSON format", function() {
+	QUnit.test("JSON format", function(assert) {
+		var done = assert.async();
 		mModelOptions.json = true;
 		oModelJson = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
 		sap.ui.getCore().setModel(oModelJson, "json");
@@ -86,13 +87,14 @@ function runODataMessagesTests() {
 					equal(iMessages, 21, "One message has been added for every Item and one for the Collection");
 
 					oModelJson.destroy();
-					start();
+					done();
 				}, 0);
 			}
 		});
 	});
 
-	asyncTest("XML format", function() {
+	QUnit.test("XML format", function(assert) {
+		var done = assert.async();
 		mModelOptions.json = false;
 		oModelXml = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
 		sap.ui.getCore().setModel(oModelXml, "xml");
@@ -113,14 +115,15 @@ function runODataMessagesTests() {
 					equal(iMessages, 21, "One message has been added for every Item and one for the Collection");
 
 					oModelXml.destroy();
-					start();
+					done();
 				}, 0);
 			}
 		});
 	});
 
 
-	asyncTest("Function Imports", function() {
+	QUnit.test("Function Imports", function(assert) {
+		var done = assert.async();
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/function-imports/", {
 			useBatch: false,
 			json: false
@@ -197,7 +200,7 @@ function runODataMessagesTests() {
 							if (mTestOptions.final) {
 								testFunctionTarget._running = false;
 								oModel.destroy();
-								start();
+								done();
 							} else {
 								fnNextTest();
 							}
@@ -217,6 +220,8 @@ function runODataMessagesTests() {
 
 
 	var fnTestTechnicalErrors = function(bJson) {
+		var done = assert.async();
+
 		expect(20);
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/technical-errors/", {
@@ -228,7 +233,7 @@ function runODataMessagesTests() {
 		var fnStart = function() {
 			if (!--iStartCounter) {
 				oModel.destroy();
-				start();
+				done();
 			}
 		};
 
@@ -326,11 +331,12 @@ function runODataMessagesTests() {
 		});
 	};
 
-	asyncTest("Technical Errors (JSON)", fnTestTechnicalErrors.bind(this, true));
-	asyncTest("Technical Errors (XML)", fnTestTechnicalErrors.bind(this, false));
-
+	QUnit.test("Technical Errors (JSON)", fnTestTechnicalErrors.bind(this, true));
+	QUnit.test("Technical Errors (XML)", fnTestTechnicalErrors.bind(this, false));
 
 	var fnTestLongtextUrl = function(bJson) {
+		var done = assert.async();
+
 		expect(15);
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/technical-errors/", {
@@ -342,7 +348,7 @@ function runODataMessagesTests() {
 		var fnStart = function() {
 			if (!--iStartCounter) {
 				oModel.destroy();
-				start();
+				done();
 			}
 		};
 
@@ -421,10 +427,11 @@ function runODataMessagesTests() {
 	};
 
 
-	asyncTest("LongText URL (JSON)", fnTestLongtextUrl.bind(this, true));
-	asyncTest("LongText URL (XML)", fnTestLongtextUrl.bind(this, false));
+	QUnit.test("LongText URL (JSON)", fnTestLongtextUrl.bind(this, true));
+	QUnit.test("LongText URL (XML)", fnTestLongtextUrl.bind(this, false));
 
-	asyncTest("ODataMessageParser reads headers case-insensitive", function() {
+	QUnit.test("ODataMessageParser reads headers case-insensitive", function(assert) {
+		var done = assert.async();
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
 
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
@@ -505,11 +512,12 @@ function runODataMessagesTests() {
 			};
 			oParser.parse(oResponse, oRequest);
 			equal(iCounter, 3, "Message from 'SAP-Message' header was added");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("ODataMessageParser without ODataModel", function() {
+	QUnit.test("ODataMessageParser without ODataModel", function(assert) {
+		var done = assert.async();
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
 
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
@@ -612,7 +620,7 @@ function runODataMessagesTests() {
 
 			oMetadata.destroy();
 			oParser.destroy();
-			start();
+			done();
 		});
 
 
@@ -623,7 +631,8 @@ function runODataMessagesTests() {
 	// TODO: Function imports with action-for annotation
 
 
-	asyncTest("Function Imports with action-for annotation", function() {
+	QUnit.test("Function Imports with action-for annotation", function(assert) {
+		var done = assert.async();
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/function-imports/", {
 			useBatch: false,
 			json: false
@@ -700,7 +709,7 @@ function runODataMessagesTests() {
 							if (mTestOptions.final) {
 								testFunctionTarget._running = false;
 								oModel.destroy();
-								start();
+								done();
 							} else {
 								fnNextTest();
 							}
@@ -722,6 +731,8 @@ function runODataMessagesTests() {
 
 
 	var fnTestBatchGroups = function(bUseBatch, bJSON) {
+		var done = assert.async();
+
 		expect(bUseBatch ? 9 : 5);
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", {
 			useBatch: bUseBatch,
@@ -770,18 +781,20 @@ function runODataMessagesTests() {
 
 		function onCompleted() {
 			oModel.destroy();
-			start();
+			done();
 		}
 	}
 
-	asyncTest("Message with groups - Batch: off, JSON: true",  fnTestBatchGroups.bind(this, false, true));
-	asyncTest("Message with groups - Batch: off, JSON: false", fnTestBatchGroups.bind(this, false, false));
-	asyncTest("Message with groups - Batch: on,  JSON: true",  fnTestBatchGroups.bind(this, true,  true));
-	asyncTest("Message with groups - Batch: on,  JSON: false", fnTestBatchGroups.bind(this, true,  false));
+	QUnit.test("Message with groups - Batch: off, JSON: true",  fnTestBatchGroups.bind(this, false, true));
+	QUnit.test("Message with groups - Batch: off, JSON: false", fnTestBatchGroups.bind(this, false, false));
+	QUnit.test("Message with groups - Batch: on,  JSON: true",  fnTestBatchGroups.bind(this, true,  true));
+	QUnit.test("Message with groups - Batch: on,  JSON: false", fnTestBatchGroups.bind(this, true,  false));
 
 
 
 	var fnTestWriteBatchGroups = function(bUseBatch, bJSON) {
+		var done = assert.async();
+
 		expect(bUseBatch ? 9 : 5);
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", {
 			useBatch: bUseBatch,
@@ -830,18 +843,20 @@ function runODataMessagesTests() {
 
 		function onCompleted() {
 			oModel.destroy();
-			start();
+			done();
 		}
 	}
 
-	asyncTest("Message with groups (write) - Batch: off, JSON: true",  fnTestWriteBatchGroups.bind(this, false, true));
-	asyncTest("Message with groups (write) - Batch: off, JSON: false", fnTestWriteBatchGroups.bind(this, false, false));
-	asyncTest("Message with groups (write) - Batch: on,  JSON: true",  fnTestWriteBatchGroups.bind(this, true,  true));
-	asyncTest("Message with groups (write) - Batch: on,  JSON: false", fnTestWriteBatchGroups.bind(this, true,  false));
+	QUnit.test("Message with groups (write) - Batch: off, JSON: true",  fnTestWriteBatchGroups.bind(this, false, true));
+	QUnit.test("Message with groups (write) - Batch: off, JSON: false", fnTestWriteBatchGroups.bind(this, false, false));
+	QUnit.test("Message with groups (write) - Batch: on,  JSON: true",  fnTestWriteBatchGroups.bind(this, true,  true));
+	QUnit.test("Message with groups (write) - Batch: on,  JSON: false", fnTestWriteBatchGroups.bind(this, true,  false));
 
 
 
 	var fnTestFunctionImport = function() {
+		var done = assert.async();
+
 		expect(10);
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
@@ -878,7 +893,7 @@ function runODataMessagesTests() {
 							ok(/\/Suppliers\(.{1,2}\)\/SupplierName/.test(sSupplierNameTarget), "Message targetting '/Suppliers(XXX)/SupplierName' has been received.");
 
 							oModel.destroy();
-							start();
+							done();
 						}
 					});
 				}
@@ -889,11 +904,13 @@ function runODataMessagesTests() {
 		});
 	};
 
-	asyncTest("Messages for NavigationProperties",  fnTestFunctionImport);
+	QUnit.test("Messages for NavigationProperties",  fnTestFunctionImport);
 
 
 
 	var fnTestFunctionImportWithInvalidTarget = function() {
+		var done = assert.async();
+
 		expect(20);
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
@@ -956,7 +973,7 @@ function runODataMessagesTests() {
 											ok(aMessageTagets.indexOf("/Products(1)/ProductName") === -1, "Message targetting '/Products(1)/ProductName' has been removed.");
 
 											oModel.destroy();
-											start();
+											done();
 										}
 									});
 								}
@@ -971,9 +988,11 @@ function runODataMessagesTests() {
 		});
 	};
 
-	asyncTest("Messages with 'invalid' targets",  fnTestFunctionImportWithInvalidTarget);
+	QUnit.test("Messages with 'invalid' targets",  fnTestFunctionImportWithInvalidTarget);
 
 	var fnTestRemoveMessagesWithBinding = function() {
+		var done = assert.async();
+
 		expect(11);
 
 		var oInput3 = new sap.m.Input({
@@ -1049,14 +1068,16 @@ function runODataMessagesTests() {
 
 			oInput3.destroy();
 			oModel.destroy();
-			start();
+			done();
 		});
 	};
 
-	asyncTest("Delete control messages when the binding is destroyed and on rebinding",  fnTestRemoveMessagesWithBinding);
+	QUnit.test("Delete control messages when the binding is destroyed and on rebinding",  fnTestRemoveMessagesWithBinding);
 
 
 	var fnTestTransientMessages = function() {
+		var done = assert.async();
+
 		expect(19);
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, jQuery.extend({}, mModelOptions, { json: true }));
@@ -1099,13 +1120,15 @@ function runODataMessagesTests() {
 			equal(aMessages[4].target, "/TransientTest1/SupplierID", "Message has correct target");
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	};
 
-	asyncTest("Transient messages with /#TRANSIENT#-target or transient-flag", fnTestTransientMessages);
+	QUnit.test("Transient messages with /#TRANSIENT#-target or transient-flag", fnTestTransientMessages);
 
 	var fnTestTransientMessageRemoval = function() {
+		var done = assert.async();
+
 		expect(35);
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, jQuery.extend({}, mModelOptions, { json: true }));
@@ -1190,9 +1213,9 @@ function runODataMessagesTests() {
 
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	};
 
-	asyncTest("Transient message removal from MessageManager", fnTestTransientMessageRemoval);
+	QUnit.test("Transient message removal from MessageManager", fnTestTransientMessageRemoval);
 }

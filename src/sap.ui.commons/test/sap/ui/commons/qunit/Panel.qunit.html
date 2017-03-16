@@ -242,7 +242,8 @@
 			equals($tb.children().length, 1, "toolbar button must be rendered, when added");
 		});
 
-		asyncTest("Toolbar Resizing behavior", function() {
+		QUnit.test("Toolbar Resizing behavior", function(assert) {
+			var done = assert.async();
 			// measure initial toolbar height
 			var $tb = jQuery.sap.byId(oCtrl.getId() + "-tb");
 			var $title = jQuery.sap.byId(oCtrl.getId() + "-title");
@@ -280,14 +281,15 @@
 				$panel = jQuery.sap.byId(oCtrl.getId());
 				equals($panel.outerHeight(), 400, "Panel should despite a taller header still have the original size");
 
-				start();
+				done();
 			}, 500);
 
 		});
 
 
 
-		asyncTest("Content Height Adaptation", function() {
+		QUnit.test("Content Height Adaptation", function(assert) {
+			var done = assert.async();
   		expect(1);
  			setTimeout(function() {
  				// ensure the content starts right below the header
@@ -295,7 +297,7 @@
  				var headerHeight = $hdr.outerHeight();
  				$cont = jQuery.sap.byId(oCtrl.getId() + "-cont");
  				equals($cont.css("top"), headerHeight + "px", "Panel content should be postioned exactly below the header");
- 				start();
+ 				done();
  			}, 500);
   	});
 

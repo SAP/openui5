@@ -149,7 +149,8 @@
 		ok(!!window.OData, "global OData object should exist");
 	});
 
-	asyncTest("test oDataModel - oMetadata shared across models", function(){
+	QUnit.test("test oDataModel - oMetadata shared across models", function(assert){
+		var done = assert.async();
 		var that = this;
 		var mOptions = {
 				json : true,
@@ -185,12 +186,13 @@
 				} else {
 					ok(false, 'Metadata loaded fired at metadata object')
 				}
-				start();
+				done();
 			});
 		});
 	});
 
-	asyncTest("metadata failed handling", function(){
+	QUnit.test("metadata failed handling", function(assert){
+		var done = assert.async();
 		var that = this;
 		var mOptions = {
 				json : true,
@@ -206,22 +208,26 @@
 				ok(!oModel2.getServiceMetadata(), "Metadata on second model failed correctly");
 			});
 			oModel.detachMetadataFailed(handleFailed);
-			start();
+			done();
  		};
 		oModel.attachMetadataFailed(handleFailed);
 	});
 
-	asyncTest("test oDataModel _loadData XML",function(){
+	QUnit.test("test oDataModel _loadData XML",function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oModel.read("/Categories", {success: function(){
 			performTest(oModel);
+			done();
 		}});
 	});
 
-	asyncTest("test oDataModel _loadData JSON",function(){
+	QUnit.test("test oDataModel _loadData JSON",function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI);
 		oModel.read("/Categories", {success: function(){
 			performTest(oModel);
+			done();
 		}});
 	});
 
@@ -236,11 +242,11 @@
 				equal(categories[category].CategoryID, iLength);
 			};
 			equal(iLength, 8);
-			start();          // resume normal testing
 		});
 	};
 
-	asyncTest("test bindList", function(){
+	QUnit.test("test bindList", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 
@@ -251,7 +257,7 @@
 			equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "CategoryID available");
 			equal(oBinding.getLength(), 8, "Eigth categories available");
 			oBinding.detachChange(handler);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		oBinding.attachRefresh(function() {oBinding.getContexts();});
 		oBinding.attachChange(handler);
@@ -259,7 +265,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("test bindList inlinecount", function(){
+	QUnit.test("test bindList inlinecount", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 
@@ -270,7 +277,7 @@
 			equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "CategoryID available");
 			equal(oBinding.getLength(), 8, "Eigth categories available");
 			oBinding.detachChange(handler);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		oBinding.attachRefresh(function() {oBinding.getContexts();});
 		oBinding.attachChange(handler);
@@ -278,7 +285,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("test bindList no count", function(){
+	QUnit.test("test bindList no count", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 
@@ -289,7 +297,7 @@
 			equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "CategoryID available");
 			equal(oBinding.getLength(), 8, "Eigth categories available");
 			oBinding.detachChange(handler);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		oBinding.attachRefresh(function() {oBinding.getContexts();});
 		oBinding.attachChange(handler);
@@ -297,7 +305,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("test select", function(){
+	QUnit.test("test select", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
 
@@ -308,7 +317,7 @@
 			equal(oModel.getProperty("/Categories(1)").CategoryID, undefined, "other property not available");
 			equal(oModel.getProperty("/Categories(1)").Picture, undefined, "other property not available");
 			oBinding.detachChange(handler);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		oBinding.attachRefresh(function() {oBinding.getContexts();});
 		oBinding.attachChange(handler);
@@ -316,7 +325,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("test select with create binding context", function(){
+	QUnit.test("test select with create binding context", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
 
@@ -332,7 +342,7 @@
 				equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
 				equal(oModel.getProperty("/Categories(1)").Description, "Soft drinks, coffees, teas, beers, and ales", "test select property");
 				equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "test select property");
-				start();          // resume normal testing
+				done();          // resume normal testing
 			});
 
 			oBinding.detachChange(handler1);
@@ -344,7 +354,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("test select with create binding context select", function(){
+	QUnit.test("test select with create binding context select", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
 
@@ -361,7 +372,7 @@
 				equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "test select property");
 				equal(oModel.getProperty("/Categories(1)").Description, undefined, "other property not available");
 				equal(oModel.getProperty("/Categories(1)").Picture, undefined, "other property not available");
-				start();          // resume normal testing
+				done();          // resume normal testing
 			});
 
 			oBinding.detachChange(handler1);
@@ -373,7 +384,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("test expand", function(){
+	QUnit.test("test expand", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
 
@@ -383,7 +395,7 @@
 			equal(oModel.getProperty("/Products(1)").ProductName, "Chai", "test property");
 			equal(oModel.getProperty("/Products(1)/Category").CategoryName, "Beverages", "test expand property");
 			oBinding.detachChange(handler1);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		oBinding.attachRefresh(function() {oBinding.getContexts();});
 		oBinding.attachChange(handler1);
@@ -391,7 +403,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("test expand with create binding context", function(){
+	QUnit.test("test expand with create binding context", function(assert){
+		var done = assert.async();
 
 		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
@@ -407,7 +420,7 @@
 				equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
 				equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
 				equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "test select property");
-				start();          // resume normal testing
+				done();          // resume normal testing
 			});
 			oBinding.detachChange(handler1);
 		};
@@ -417,7 +430,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("test select expand with create binding context", function(){
+	QUnit.test("test select expand with create binding context", function(assert){
+		var done = assert.async();
 
 		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
@@ -435,7 +449,7 @@
 				equal(oModel.getProperty("/Products(2)").ProductID, 2, "test property");
 				equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
 				equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "test select property");
-				start();          // resume normal testing
+				done();          // resume normal testing
 			});
 			oBinding.detachChange(handler1);
 
@@ -446,7 +460,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("test select with nav props and expand with create binding context and data already loaded: isreloadneeded = false", function(){
+	QUnit.test("test select with nav props and expand with create binding context and data already loaded: isreloadneeded = false", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI);
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
@@ -469,7 +484,7 @@
 				equal(oModel.getProperty("/Categories(1)").CategoryID, undefined, "test property should not be there");
 				equal(spy.callCount, 2, "no additional request should be sent!!!");
 				OData.defaultHttpClient.request.restore();
-				start();
+				done();
 			});
 			oBinding.detachChange(handler1);
 
@@ -480,7 +495,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("test select with nav props and expand with context binding and data already loaded: isreloadneeded = false", function(){
+	QUnit.test("test select with nav props and expand with context binding and data already loaded: isreloadneeded = false", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI);
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
@@ -504,7 +520,7 @@
 				equal(oModel.getProperty("/Categories(1)").CategoryID, undefined, "test property should not be there");
 				equal(spy.callCount, 2, "no additional request should be sent!!!");
 				OData.defaultHttpClient.request.restore();
-				start();
+				done();
 			});
 			oContextBinding.initialize();
 			oBinding.detachChange(handler1);
@@ -516,7 +532,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("test isreloadneeded - only product loaded", function(){
+	QUnit.test("test isreloadneeded - only product loaded", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
@@ -545,11 +562,12 @@
 			ok(!oContext, "Reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test isreloadneeded - only productname selected", function(){
+	QUnit.test("test isreloadneeded - only productname selected", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
@@ -578,11 +596,12 @@
 			ok(!oContext, "Reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test isreloadneeded - category expanded", function(){
+	QUnit.test("test isreloadneeded - category expanded", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
@@ -611,11 +630,12 @@
 			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test isreloadneeded - productname selected, category expanded", function(){
+	QUnit.test("test isreloadneeded - productname selected, category expanded", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
@@ -644,11 +664,12 @@
 			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test isreloadneeded - productname and categoryname selected, category expanded", function(){
+	QUnit.test("test isreloadneeded - productname and categoryname selected, category expanded", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
@@ -677,11 +698,12 @@
 			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test isreloadneeded - category expanded, but null", function(){
+	QUnit.test("test isreloadneeded - category expanded, but null", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
@@ -707,11 +729,12 @@
 			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test isreloadneeded - supplier expanded", function(){
+	QUnit.test("test isreloadneeded - supplier expanded", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
@@ -746,11 +769,12 @@
 			ok(!oContext, "Reload needed for supplier/products expand");
 
 			OData.defaultHttpClient.request.restore();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test isreloadneeded - supplier/products expanded", function(){
+	QUnit.test("test isreloadneeded - supplier/products expanded", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
@@ -785,11 +809,12 @@
 			ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier/products expand");
 
 			OData.defaultHttpClient.request.restore();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test getProperty on label", function(){
+	QUnit.test("test getProperty on label", function(assert){
+		var done = assert.async();
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
@@ -798,11 +823,12 @@
 			oLabel.bindProperty("text", "/Categories(2)/CategoryName");
 			equal(oLabel.getText(), "Condiments", "text value from model");
 			oLabel.unbindProperty("text");
-			start();
+			done();
 		}});
 	});
 
-	asyncTest("test getProperty with expand and bIncludeExpandEntries true and false", function(){
+	QUnit.test("test getProperty with expand and bIncludeExpandEntries true and false", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
 
@@ -815,7 +841,7 @@
 			equal(oModel.getProperty("/Products(1)", null, true).Category.CategoryID, 1, "test get property bIncludeExpandEntries = true");
 			equal(oModel.getProperty("/Products(1)", null, true).Category.CategoryName, "Beverages", "test get property bIncludeExpandEntries = true");
 			oBinding.detachChange(handler1);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		oBinding.attachRefresh(function() {oBinding.getContexts();});
 		oBinding.attachChange(handler1);
@@ -823,7 +849,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("test getObject", function(){
+	QUnit.test("test getObject", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json: false});
 
@@ -839,11 +866,12 @@
 			equal(oValue.ProductID, 3, "test getObject with select param");
 			ok(!oValue.hasOwnProperty('Category'), "test getObject with select param");
 
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test getObject with property/meta path", function(){
+	QUnit.test("test getObject with property/meta path", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json: false});
 		oModel.getMetaModel();
@@ -856,11 +884,12 @@
 			equal(oModel.getObject("/Products(3)/ProductName"), "Aniseed Syrup", "getObject returns property values correctly");
 			equal(oModel.getObject("/Products(3)/##name"), "Product", "getObject returns meta path results correctly")
 
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test getObject with/without select/expand", function(){
+	QUnit.test("test getObject with/without select/expand", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
 
@@ -886,7 +915,7 @@
 			equal(oValue.Category.CategoryName, "Beverages", "test getObject with select and expand param");
 
 			oBinding.detachChange(handler1);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		oBinding.attachRefresh(function() {oBinding.getContexts();});
 		oBinding.attachChange(handler1);
@@ -894,7 +923,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("test getObject with not all data available", function(){
+	QUnit.test("test getObject with not all data available", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json: false});
 
@@ -919,11 +949,12 @@
 			var oValue = oModel.getObject("/Products(3)", {select: "ProductName,ProductID,Category", expand:"Category,Supplier"});
 			equal(oValue, undefined, "test getObject with expand and select param");
 
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test getObject with expand and 1..n nav prop", function(){
+	QUnit.test("test getObject with expand and 1..n nav prop", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json: false});
 		sap.ui.getCore().setModel(oModel);
@@ -953,11 +984,12 @@
 			equal(oValue.CategoryName, "Produce", "test getObject with select and expand param");
 			ok(!oValue.hasOwnProperty('CategoryID'), "test getObject with select and expand param");
 			ok(!oValue.hasOwnProperty('Products'), "test getObject with select and expand param");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test getObject with multiple nested expands", function(){
+	QUnit.test("test getObject with multiple nested expands", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json: true});
 		sap.ui.getCore().setModel(oModel);
@@ -1022,11 +1054,12 @@
 			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
 			ok(!oValue.Products[0].Category.hasOwnProperty('Description'), "test getObject with expand param");
 
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test getObject with complex cases with select and expand", function(){
+	QUnit.test("test getObject with complex cases with select and expand", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json: true});
 		sap.ui.getCore().setModel(oModel);
@@ -1146,11 +1179,12 @@
 			equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with select and expand param");
 			equal(oValue.Products[0].ProductID, 16, "test getObject with select and expand param");
 
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test double load update", function(){
+	QUnit.test("test double load update", function(assert){
+		var done = assert.async();
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
@@ -1164,12 +1198,13 @@
 				oLabel.bindProperty("text", "/Regions(2)/RegionID");
 				equal(oLabel.getText(), "2", "2nd new text value from model");
 				oLabel.unbindProperty("text");
-				start();
+				done();
 			}});
 		}});
 	});
 
-	asyncTest("test remove data", function(){
+	QUnit.test("test remove data", function(assert){
+		var done = assert.async();
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
@@ -1181,11 +1216,12 @@
 			oLabel.bindProperty("text", "/Categories(2)/CategoryName");
 			equal(oLabel.getText(), "", "text value from model");
 			oLabel.unbindProperty("text");
-			start();
+			done();
 		}});
 	});
 
-	asyncTest("test create binding context", function(){
+	QUnit.test("test create binding context", function(assert){
+		var done = assert.async();
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
@@ -1197,25 +1233,27 @@
 					equal(oContext2.getPath(), "/Categories(2)","new Context");
 					oModel.createBindingContext("/Products(2)", null, function(oContext3){
 						equal(oContext3.getPath(), "/Products(2)","new Context");
-						start();
+						done();
 					});
 				});
 			});
 		}});
 	});
 
-	asyncTest("test create binding context with broken service", function(){
+	QUnit.test("test create binding context with broken service", function(assert){
+		var done = assert.async();
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, {json:true});
 		sap.ui.getCore().setModel(oModel);
 		oModel.createBindingContext("/Categories(5)", null, function(oContext){
 			equal(oContext.getPath(), "/Categories(5)", "new Context");
 			equal(oContext.getProperty("CategoryName"), "Grains/Cereals", "Data can be accessed");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test bindElement", 2, function(){
+	QUnit.test("test bindElement", 2, function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		var oTestContext = oModel.getContext("/Test");
@@ -1227,12 +1265,13 @@
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
 			oLabel.setBindingContext(null);
-			start();
+			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	asyncTest("test bindElement 2", 2, function(){
+	QUnit.test("test bindElement 2", 2, function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		var oTestContext = oModel.getContext("/Products(2)");
@@ -1244,12 +1283,13 @@
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
 			oLabel.setBindingContext(null);
-			start();
+			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	asyncTest("test bindElement - set ParentContext null", 5, function(){
+	QUnit.test("test bindElement - set ParentContext null", 5, function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		var oTestContext = oModel.getContext("/Products(2)");
@@ -1269,12 +1309,13 @@
 			oLabel.getElementBinding().detachChange(fnHandler2);
 			oLabel.setBindingContext(null);
 			oLabel.unbindElement();
-			start();
+			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	asyncTest("test bindElement 3", 2, function(){
+	QUnit.test("test bindElement 3", 2, function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		oLabel.bindElement("Category");
@@ -1286,12 +1327,13 @@
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.setBindingContext(null);
 			oLabel.unbindElement();
-			start();
+			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	asyncTest("test bindElement 4", 2, function(){
+	QUnit.test("test bindElement 4", 2, function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		oLabel.bindElement("/Categories(2)");
@@ -1303,11 +1345,12 @@
 			oLabel.setBindingContext(null);
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
-			start();
+			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
-	asyncTest("test bindElement 5 - change parentContext", 3, function(){
+	QUnit.test("test bindElement 5 - change parentContext", 3, function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
@@ -1329,12 +1372,13 @@
 			oLabel.getElementBinding().detachChange(fnHandler2);
 			oLabel.unbindElement();
 			oLabel.setBindingContext(null);
-			start();
+			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	asyncTest("test bindElement 6 - change parentContext with propagation", 3, function(){
+	QUnit.test("test bindElement 6 - change parentContext with propagation", 3, function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
@@ -1356,12 +1400,13 @@
 			oLabel.getElementBinding().detachChange(fnHandler2);
 			oLabel.unbindElement();
 			oLabel.setBindingContext(null);
-			start();
+			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	asyncTest("test bindElement 7 - checkUpdate", 2, function(){
+	QUnit.test("test bindElement 7 - checkUpdate", 2, function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
@@ -1386,11 +1431,12 @@
 			oLabel.getElementBinding().detachChange(fnHandler2);
 			oLabel.unbindElement();
 			oLabel.setBindingContext(null);
-			start();
+			done();
 		}
 	});
 
-	asyncTest("test getBindingContext", 4, function(){
+	QUnit.test("test getBindingContext", 4, function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oODataModel = initModel(sURI, {json:false});
 		var oJSONModel = new sap.ui.model.json.JSONModel();
@@ -1407,12 +1453,13 @@
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oPanel.setBindingContext(oTestContextJSON);
 			ok(!oPanel.getBindingContext(), "Model is type OData, Context is type JSON so no context should be returned")
-			start();
+			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	asyncTest("test data events for bindElement",3, function(){
+	QUnit.test("test data events for bindElement",3, function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
@@ -1427,13 +1474,14 @@
 		var fnRecievedHandler = function() {
 			equal(true, true, "Data received event was fired");
 			oLabel.unbindElement();
-			start();
+			done();
 		};
 		oLabel.getElementBinding().attachDataRequested(fnRequestedHandler);
 		oLabel.getElementBinding().attachDataReceived(fnRecievedHandler);
 	});
 
-	asyncTest("test data events for bindElement 204", 3, function(){
+	QUnit.test("test data events for bindElement 204", 3, function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -1448,13 +1496,14 @@
 		var fnRecievedHandler = function() {
 			equal(true, true, "Data received event was fired");
 			oLabel.unbindElement();
-			start();
+			done();
 		};
 		oLabel.getElementBinding().attachDataRequested(fnRequestedHandler);
 		oLabel.getElementBinding().attachDataReceived(fnRecievedHandler);
 	});
 
-	asyncTest("test refresh(true) - dependant bindings should reload data",3, function(){
+	QUnit.test("test refresh(true) - dependant bindings should reload data",3, function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
@@ -1478,13 +1527,14 @@
 		var oHandler3 = function() {
 			equal(spy.callCount, 7, "element binding as well as Table should refetch data");
 			OData.defaultHttpClient.request.restore();
-			start();
+			done();
 		}
 
 		oTable.getBinding("rows").attachDataReceived(oHandler);
 	});
 
-	asyncTest("test bindElement with batchGroupId", 2, function(){
+	QUnit.test("test bindElement with batchGroupId", 2, function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
 		oModel.setUseBatch(true);
@@ -1496,7 +1546,7 @@
 			oLabel.setBindingContext(null);
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
-			start();
+			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 
@@ -1513,7 +1563,8 @@
 	var oItemTemplate = new sap.ui.core.ListItem();
 	oLB.placeAt("target2");
 
-	asyncTest("test model bindAggregation on Listbox", function(){
+	QUnit.test("test model bindAggregation on Listbox", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		oItemTemplate.bindProperty("text", "CategoryName").bindProperty("additionalText", "Description");
@@ -1525,12 +1576,13 @@
 			equal(listItems[0].getText(), "Beverages", "category 1 name");
 			equal(listItems[7].getAdditionalText(), "Seaweed and fish", "category 8 description");
 			oBinding.detachChange(handler);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		}
 		oBinding.attachChange(handler);
 	});
 
-	asyncTest("test model bindAggregation on Listbox events", 2, function(){
+	QUnit.test("test model bindAggregation on Listbox events", 2, function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
@@ -1543,51 +1595,56 @@
 		};
 		var fnRecievedHandler = function() {
 			equal(true, true, "Data received event was fired");
-			start();
+			done();
 		};
 		oBinding.attachDataRequested(fnRequestedHandler);
 		oBinding.attachDataReceived(fnRecievedHandler);
 	});
 
-	asyncTest("PropertyBinding getValue", function(){
+	QUnit.test("PropertyBinding getValue", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oModel.read("/Categories", {success: function(){
 			var oBinding = oModel.bindProperty("/Categories(2)/CategoryName");
 			equal(oBinding.getValue(), "Condiments", "text value from model");
-			start();
+			done();
 		}});
 	});
 
-	asyncTest("createBindingContext expand", function(){
+	QUnit.test("createBindingContext expand", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
 			equal(oContext.getPath(), "/Products(1)", "Context path");
 			ok(oContext.getProperty("Category"), "Category loaded");
-			start();          // resume normal testing
+			done();          // resume normal testing
 		});
 	});
 
-	asyncTest("test Context.getPath/getObject", function(){
+	QUnit.test("test Context.getPath/getObject", function(assert){
+		var done = assert.async();
 
 		var oModel = initModel(sURI, {json:false});
 		oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
 			equal(oContext.getPath("Category"), "/Products(1)/Category", "Expanded entity path");
 			equal(oContext.getObject("Category").CategoryID, 1, "Expanded entity object");
-			start();          // resume normal testing
+			done();          // resume normal testing
 		});
 	});
 
-	asyncTest("test getKey", function(){
+	QUnit.test("test getKey", function(assert){
+		var done = assert.async();
 
 		var oModel = initModel(sURI, {json:false});
 		oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
 			equal(oModel.getKey(oContext), "Products(1)", "Context key");
 			equal(oModel.getKey(oContext.getObject("Category")), "Categories(1)", "Expanded entity key");
-			start();          // resume normal testing
+			done();          // resume normal testing
 		});
 	});
 
-	asyncTest("test createKey", function(){
+	QUnit.test("test createKey", function(assert){
+		var done = assert.async();
 
 		var oModel = initModel(sURI, {json:false});
 		oModel.attachMetadataLoaded(function(){
@@ -1595,11 +1652,12 @@
 			equal(oModel.createKey("Order_Details", {OrderID: 1, ProductID :2}), "Order_Details(OrderID=1,ProductID=2)", "Expanded entity key");
 			equal(oModel.createKey("Customers", {CustomerID: "abc123"}), "Customers('abc123')", "String entity key");
 			equal(oModel.createKey("Customers", {CustomerID: "abc:/123"}), "Customers('abc%3A%2F123')", "String entity key with encoding");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("PropertyBinding suspend/resume with control value change", function(){
+	QUnit.test("PropertyBinding suspend/resume with control value change", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oModel.setDefaultBindingMode("TwoWay");
 		var oInput = new sap.m.Input({
@@ -1620,7 +1678,7 @@
 				equal(oModel.getProperty("/Categories(2)/CategoryName"), "Condiments", "model value");
 				equal(oInput.getValue(), "Condiments", "input field returns value");
 				oInput.destroy();
-				start();
+				done();
 			});
 			equal(oInput.getValue(), "Condiments", "input field returns value");
 			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
@@ -1636,7 +1694,8 @@
 		oModel.read("/Categories");
 	});
 
-	asyncTest("PropertyBinding suspend/resume with model value change", function(){
+	QUnit.test("PropertyBinding suspend/resume with model value change", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oModel.setDefaultBindingMode("TwoWay");
 		var oInput = new sap.m.Input({
@@ -1657,7 +1716,7 @@
 				equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
 				equal(oInput.getValue(), "blubb", "input field returns value");
 				oInput.destroy();
-				start();
+				done();
 			});
 			equal(oInput.getValue(), "Condiments", "input field returns value");
 			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
@@ -1673,7 +1732,8 @@
 		oModel.read("/Categories");
 	});
 
-	asyncTest("PropertyBinding suspend/resume with control and model value change", function(){
+	QUnit.test("PropertyBinding suspend/resume with control and model value change", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oModel.setDefaultBindingMode("TwoWay");
 		var oInput = new sap.m.Input({
@@ -1694,7 +1754,7 @@
 				equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
 				equal(oInput.getValue(), "blubb", "input field returns value");
 				oInput.destroy();
-				start();
+				done();
 			});
 			equal(oInput.getValue(), "Condiments", "input field returns value");
 			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
@@ -1720,7 +1780,8 @@
 		oModel.read("/Categories");
 	});
 
-	asyncTest("PropertyBinding suspend/resume with model and control value change", function(){
+	QUnit.test("PropertyBinding suspend/resume with model and control value change", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oModel.setDefaultBindingMode("TwoWay");
 		var oInput = new sap.m.Input({
@@ -1741,7 +1802,7 @@
 				equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
 				equal(oInput.getValue(), "blubb", "input field returns value");
 				oInput.destroy();
-				start();
+				done();
 			});
 			equal(oInput.getValue(), "Condiments", "input field returns value");
 			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
@@ -1767,7 +1828,8 @@
 		oModel.read("/Categories");
 	});
 
-	asyncTest("Declarative property and list binding with suspend",function(){
+	QUnit.test("Declarative property and list binding with suspend",function(assert){
+		var done = assert.async();
 		sap.ui.controller("my.Controller", {});
 		var oView = sap.ui.xmlview("xmlview", {viewContent: document.getElementById("xmlview").innerHTML});
 		var oModel = initModel(sURI, {json:false});
@@ -1782,7 +1844,7 @@
 			ok(oPropBinding.isSuspended(), "suspended flag should be true");
 			oBinding.detachChange(handler1);
 			oView.destroy();
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		var handler2 = function() {
 			ok(!oBinding.isSuspended(), "suspended flag should be false");
@@ -1796,7 +1858,8 @@
 		});
 	});
 
-	asyncTest("propertyChange event", function(){
+	QUnit.test("propertyChange event", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oModel.setDefaultBindingMode("TwoWay");
 		var oInput = new sap.m.Input({
@@ -1816,7 +1879,7 @@
 				equal(oValue, "blubb", "property value check!");
 				equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
 				oInput.destroy();
-				start();
+				done();
 			});
 			var oBinding = oInput.getBinding("value");
 			ok(oBinding !== undefined, "binding check");
@@ -1828,7 +1891,8 @@
 		oModel.read("/Categories");
 	});
 
-	asyncTest("propertyChange event relative", function(){
+	QUnit.test("propertyChange event relative", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oModel.setDefaultBindingMode("TwoWay");
 		var oInput = new sap.m.Input({
@@ -1848,7 +1912,7 @@
 				equal(oValue, "blubb", "property value check!");
 				equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
 				oInput.destroy();
-				start();
+				done();
 			});
 			oInput.bindObject("/Categories(2)");
 			var oBinding = oInput.getBinding("value");
@@ -1861,7 +1925,8 @@
 		oModel.read("/Categories");
 	});
 
-	asyncTest("propertyChange event reset", function(){
+	QUnit.test("propertyChange event reset", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oModel.setDefaultBindingMode("TwoWay");
 		var oInput = new sap.m.Input({
@@ -1896,12 +1961,13 @@
 			equal(oBinding.getValue(), "Condiments", "property name check!");
 			oInput.setValue("blubb");
 			oInput.destroy();
-			start();
+			done();
 		});
 		oModel.read("/Categories");
 	});
 
-	asyncTest("test setProperty on complex Types (internal)",function(){
+	QUnit.test("test setProperty on complex Types (internal)",function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {useBatch : true});
 		oModel.attachMetadataLoaded(function(){
 			// create dummy testdata
@@ -1974,10 +2040,11 @@
 			oModel.setProperty("/Products(0)/Supplier/Address/Street", "GatterStreet");
 			equal(oModel.getProperty("/Products(0)/Supplier/Address/Street"), "GatterStreet", "set Property on expanded nav property with complex type");
 
-			start();
+			done();
 		});
 	});
-	asyncTest("test setProperty/getProperty on complex Types (internal)",function(){
+	QUnit.test("test setProperty/getProperty on complex Types (internal)",function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {useBatch : true});
 		oModel.attachMetadataLoaded(function(){
 			// create dummy testdata
@@ -2014,11 +2081,12 @@
 			equal(oComplextType.City, "Boston", "complex obj type property check");
 			equal(oComplextType.Street, "150th", "complex obj type property check");
 			equal(oComplextType.Plz, "88888", "complex obj type property check");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test setProperty on complex Types (internal): setting same value",function(){
+	QUnit.test("test setProperty on complex Types (internal): setting same value",function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {useBatch : true});
 		oModel.attachMetadataLoaded(function(){
 			// create dummy testdata
@@ -2051,11 +2119,12 @@
 			oModel.setProperty("/Suppliers(0)/Address/Street", "140th");
 			equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "140th", "set Property: complex type not updated");
 			ok(!oModel.hasPendingChanges(), "No pending changes");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test setProperty on complex Types 2 (internal): change value, then setting same value",function(){
+	QUnit.test("test setProperty on complex Types 2 (internal): change value, then setting same value",function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {useBatch : true});
 		oModel.attachMetadataLoaded(function(){
 			// create dummy testdata
@@ -2094,11 +2163,12 @@
 			oModel.setProperty("/Suppliers(0)/Address/Street", "140th");
 			equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "140th", "set Property: complex type updated");
 			ok(!oModel.hasPendingChanges(), "No pending changes");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test setProperty on complex Types 3 (internal): setting same value",function(){
+	QUnit.test("test setProperty on complex Types 3 (internal): setting same value",function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {useBatch : true});
 		oModel.attachMetadataLoaded(function(){
 			// create dummy testdata
@@ -2134,11 +2204,12 @@
 			oModel.setProperty("/Suppliers(0)/Address/Plz/part1", "1");
 			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/part1"), "1", "set Property: complex type not updated");
 			ok(!oModel.hasPendingChanges(), "No pending changes");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test setProperty on complex Types 4 (internal): change value, then setting same value",function(){
+	QUnit.test("test setProperty on complex Types 4 (internal): change value, then setting same value",function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {useBatch : true});
 		oModel.attachMetadataLoaded(function(){
 			// create dummy testdata
@@ -2180,11 +2251,12 @@
 			oModel.setProperty("/Suppliers(0)/Address/Plz/part1", "1");
 			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/part1"), "1", "set Property: complex type updated");
 			ok(!oModel.hasPendingChanges(), "No pending changes");
-			start();
+			done();
 		});
 	});
 
-	asyncTest("createEntry with complex types which have namespace with . characters", function() {
+	QUnit.test("createEntry with complex types which have namespace with . characters", function(assert) {
+		var done = assert.async();
 		var oModel = initModel(sURI, {metadataUrlParams : {test: "complex"}});
 		oModel.metadataLoaded().then(function() {
 			var oContext = oModel.createEntry("BusinessPartnerSet");
@@ -2198,11 +2270,12 @@
 			ok(oData.Address.hasOwnProperty('Country'), " check context data");
 			ok(oData.Address.hasOwnProperty('Street'), " check context data");
 			oModel.destroy();
-			start();
+			done();
 		}.bind(this))
 	});
 
-	asyncTest("metadata check", function(){
+	QUnit.test("metadata check", function(assert){
+		var done = assert.async();
 
 		var oModel = initModel(sURI, {json:false});
 		var oBinding = oModel.bindList("/Categories").initialize();
@@ -2218,7 +2291,7 @@
 			equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		oBinding.attachRefresh(function() {oBinding.getContexts();});
 		oBinding.attachChange(handler);
@@ -2226,7 +2299,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("metadata get entity type check", function(){
+	QUnit.test("metadata get entity type check", function(assert){
+		var done = assert.async();
 
 		var oModel = initModel(sURI, {json:false});
 		var oBinding = oModel.bindList("/Categories").initialize();
@@ -2265,7 +2339,7 @@
 			equal(oResult.name, "Category", "entity type name check");
 			oResult = {};
 			oBinding.detachChange(handler);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		oBinding.attachRefresh(function() {oBinding.getContexts();});
 		oBinding.attachChange(handler);
@@ -2273,7 +2347,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("metadata get entity type check with context", function(){
+	QUnit.test("metadata get entity type check with context", function(assert){
+		var done = assert.async();
 
 		var oModel = initModel(sURI, {json:false});
 		var oBinding = oModel.bindList("Products", new sap.ui.model.Context(oModel, "/Categories(7)")).initialize();
@@ -2282,7 +2357,7 @@
 			equal(oResult.name, "Product", "entity type name check");
 			oResult = {};
 			oBinding.detachChange(handler);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		oBinding.attachRefresh(function() {oBinding.getContexts();});
 		oBinding.attachChange(handler);
@@ -2290,7 +2365,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("metadata get property metadata", function(){
+	QUnit.test("metadata get property metadata", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		var oBinding = oModel.bindList("/Categories").initialize();
 		var handler = function() { // delay the following test
@@ -2309,7 +2385,7 @@
 			equal(oResult.type, "Edm.String", "Nav Property type name check");
 
 			oBinding.detachChange(handler);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		oBinding.attachRefresh(function() {oBinding.getContexts();});
 		oBinding.attachChange(handler);
@@ -2317,7 +2393,8 @@
 		oBinding.getContexts();
 	});
 
-	asyncTest("Custom Header test", function(){
+	QUnit.test("Custom Header test", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		var oModel = initModel(sURI, {headers: {"myCustomHeader1" : "value1", "myCustomHeader2" : "4.555"}});
@@ -2342,7 +2419,7 @@
 					equal(spy.args[2][0].headers['TesT'], "new Header", "spy check custom header");
 					equal(spy.callCount, 3, "spy read count");
 					OData.defaultHttpClient.request.restore();
-					start();
+					done();
 				}
 			});
 			var aHeaders = oModel.getHeaders();
@@ -2450,7 +2527,8 @@
 		});
 	});
 
-	asyncTest("async metadata request check", function(){
+	QUnit.test("async metadata request check", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {
 			json: true,
 			useBatch: false
@@ -2460,13 +2538,14 @@
 			ok(true, "Metadata callback handler called");
 			oModel.detachMetadataLoaded(handler);
 			ok(oModel.getServiceMetadata(), "get metadata check");
-			start();
+			done();
 		}
 		oModel.attachMetadataLoaded(handler);
 	});
 
 
-	asyncTest("async metadata request check with bindings", function(){
+	QUnit.test("async metadata request check with bindings", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {
 			json: true,
 			loadMetadataAsync: true,
@@ -2490,7 +2569,7 @@
 				equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 				oBinding.detachChange(handler2);
-				start();          // resume normal testing
+				done();          // resume normal testing
 			};
 			oBinding.attachRefresh(handler2);
 			oBinding.initialize();
@@ -2499,7 +2578,8 @@
 
 	});
 
-	asyncTest("async metadata request check with bindings die zwote", function(){
+	QUnit.test("async metadata request check with bindings die zwote", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {
 			json: true,
 			loadMetadataAsync: true,
@@ -2521,13 +2601,14 @@
 			equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
-			start();          // resume normal testing
+			done();          // resume normal testing
 		};
 		oBinding.attachChange(handler);
 		oBinding.attachRefresh(handler);
 	});
 
-	asyncTest("async test createEntity", function(){
+	QUnit.test("async test createEntity", function(assert){
+		var done = assert.async();
 		var oSpy;
 		var oModel = initModel(sURI, {
 			json: true,
@@ -2652,7 +2733,8 @@
 		});
 	}
 
-	asyncTest("async test sequentializeRequests - single", function(){
+	QUnit.test("async test sequentializeRequests - single", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {
 			json: true,
 			useBatch: false,
@@ -2683,13 +2765,14 @@
 					delete window.fakeRequested;
 					delete window.fakeResponsed;
 					oModel.destroy();
-					start();
+					done();
 				}, 0);
 			}
 		});
 	});
 
-	asyncTest("async test sequentializeRequests - batch", function(){
+	QUnit.test("async test sequentializeRequests - batch", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {
 			json: true,
 			useBatch: true,
@@ -2726,13 +2809,14 @@
 					delete window.fakeRequested;
 					delete window.fakeResponsed;
 					oModel.destroy();
-					start();
+					done();
 				}, 0);
 			}
 		});
 	});
 
-	asyncTest("async test request events - single", function(){
+	QUnit.test("async test request events - single", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {
 			json: true,
 			useBatch: false
@@ -2760,13 +2844,14 @@
 					equal(oInfo.batchRequestSent, 0, "No batch requests sent");
 					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 					equal(oInfo.batchRequestCompleted, 0, "No batch requests completed");
-					start();
+					done();
 				}, 0);
 			}
 		});
 	});
 
-	asyncTest("async test request events - batch", function(){
+	QUnit.test("async test request events - batch", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {
 			json: true,
 			useBatch: true
@@ -2791,13 +2876,14 @@
 				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
 				equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-				start();
+				done();
 			}, 0);
 		});
 
 	});
 
-	asyncTest("async test request events - batch with one changeset", function(){
+	QUnit.test("async test request events - batch with one changeset", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {
 			json: true,
 			useBatch: true
@@ -2822,12 +2908,13 @@
 				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
 				equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-				start();
+				done();
 			}, 0);
 		});
 	});
 
-	asyncTest("async test request events - batch with two changeset", function(){
+	QUnit.test("async test request events - batch with two changeset", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {
 			json: true,
 			useBatch: true
@@ -2854,12 +2941,13 @@
 				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
 				equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-				start();
+				done();
 			}, 0);
 		});
 	});
 
-	asyncTest("async test request events - batch with two changeset, one failing", function(){
+	QUnit.test("async test request events - batch with two changeset, one failing", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {
 			json: true,
 			useBatch: true
@@ -2886,12 +2974,13 @@
 				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
 				equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-				start();
+				done();
 			}, 0);
 		});
 	});
 
-	asyncTest("async test request events - batch fail", function(){
+	QUnit.test("async test request events - batch fail", function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {
 			json: true,
 			useBatch: true
@@ -2916,12 +3005,13 @@
 				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
 				equal(oInfo.batchRequestFailed, 1, "One batch requests failed");
 				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-				start();
+				done();
 			}, 0);
 		});
 	});
 
-	asyncTest("async test request events - aborted requests single", function(){
+	QUnit.test("async test request events - aborted requests single", function(assert){
+		var done = assert.async();
 
 		removeSharedServicedata(sURI);
 
@@ -2952,13 +3042,14 @@
 					equal(oInfo.batchRequestSent, 0, "No batch requests sent");
 					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 					equal(oInfo.batchRequestCompleted, 0, "No batch requests completed");
-					start();
+					done();
 				}, 0);
 			})
 		})
 	});
 
-		asyncTest("async test request events - aborted same requests single", function(){
+		QUnit.test("async test request events - aborted same requests single", function(assert){
+			var done = assert.async();
 		removeSharedServicedata(sURI);
 		var oModel = initModel(sURI, {
 			json: true,
@@ -2987,14 +3078,15 @@
 					equal(oInfo.batchRequestSent, 0, "No batch requests sent");
 					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 					equal(oInfo.batchRequestCompleted, 0, "No batch requests completed");
-					start();
+					done();
 				}, 0);
 			})
 		})
 	});
 
 
-	asyncTest("async test request events - aborted requests single after sent", function(){
+	QUnit.test("async test request events - aborted requests single after sent", function(assert){
+		var done = assert.async();
 
 		removeSharedServicedata(sURI);
 
@@ -3033,7 +3125,7 @@
 						equal(oInfo.batchRequestSent, 0, "No batch requests sent");
 						equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 						equal(oInfo.batchRequestCompleted, 0, "No batch requests completed");
-						start();
+						done();
 					}, 0);
 				}
 			})
@@ -3041,7 +3133,8 @@
 
 	});
 
-	asyncTest("async test request events - aborted same requests single after sent", function(){
+	QUnit.test("async test request events - aborted same requests single after sent", function(assert){
+		var done = assert.async();
 
 		removeSharedServicedata(sURI);
 
@@ -3080,7 +3173,7 @@
 						equal(oInfo.batchRequestSent, 0, "No batch requests sent");
 						equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 						equal(oInfo.batchRequestCompleted, 0, "No batch requests completed");
-						start();
+						done();
 					}, 0);
 				}
 			})
@@ -3089,7 +3182,8 @@
 	});
 
 
-	asyncTest("async test request events - aborted requests batch", function(){
+	QUnit.test("async test request events - aborted requests batch", function(assert){
+		var done = assert.async();
 		removeSharedServicedata(sURI);
 		var oModel = initModel(sURI, {
 			json: true,
@@ -3123,13 +3217,14 @@
 					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
 					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-					start();
+					done();
 				}, 0);
 			})
 		})
 	});
 
-		asyncTest("async test request events - aborted same requests batch", function(){
+		QUnit.test("async test request events - aborted same requests batch", function(assert){
+			var done = assert.async();
 		removeSharedServicedata(sURI);
 		var oModel = initModel(sURI, {
 			json: true,
@@ -3162,13 +3257,14 @@
 					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
 					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-					start();
+					done();
 				}, 0);
 			})
 		})
 	});
 
-	asyncTest("async test request events - aborted requests batch after sent", function(){
+	QUnit.test("async test request events - aborted requests batch after sent", function(assert){
+		var done = assert.async();
 
 		removeSharedServicedata(sURI);
 
@@ -3208,14 +3304,15 @@
 					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
 					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-					start();
+					done();
 				}, 0);
 			})
 		})
 
 	});
 
-	asyncTest("async test request events - aborted same requests batch after sent", function(){
+	QUnit.test("async test request events - aborted same requests batch after sent", function(assert){
+		var done = assert.async();
 
 		removeSharedServicedata(sURI);
 
@@ -3255,14 +3352,15 @@
 					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
 					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-					start();
+					done();
 				}, 0);
 			})
 		})
 
 	});
 
-	asyncTest("async test request events - aborted deferred requests batch", function(){
+	QUnit.test("async test request events - aborted deferred requests batch", function(assert){
+		var done = assert.async();
 
 		removeSharedServicedata(sURI);
 
@@ -3300,7 +3398,7 @@
 					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
 					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-					start();
+					done();
 				}, 0);
 			});
 			oModel.submitChanges();
@@ -3308,7 +3406,8 @@
 
 	});
 
-	asyncTest("async test request events - aborted deferred requests batch after sent", function(){
+	QUnit.test("async test request events - aborted deferred requests batch after sent", function(assert){
+		var done = assert.async();
 
 		removeSharedServicedata(sURI);
 
@@ -3356,7 +3455,7 @@
 					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
 					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-					start();
+					done();
 				}, 0);
 			});
 			oModel.submitChanges();
@@ -3364,7 +3463,8 @@
 
 	});
 
-	asyncTest("async test request events - auto refresh element binding", function(){
+	QUnit.test("async test request events - auto refresh element binding", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 
 		var oModel = initModel(sURI, {
@@ -3399,7 +3499,7 @@
 					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
 					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-					start();
+					done();
 				}, 0);
 			} else {
 				ok(false, "More than two batch requests sent!");
@@ -3407,7 +3507,8 @@
 		});
 	});
 
-	asyncTest("async test request events - don't auto refresh element binding when deleting", function(){
+	QUnit.test("async test request events - don't auto refresh element binding when deleting", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 
 		var oModel = initModel(sURI, {
@@ -3442,7 +3543,7 @@
 					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
 					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-					start();
+					done();
 				}, 0);
 			} else {
 				ok(false, "More than two batch requests sent!");
@@ -3450,7 +3551,8 @@
 		});
 	});
 
-	asyncTest("async test request events - auto refresh list binding", function(){
+	QUnit.test("async test request events - auto refresh list binding", function(assert){
+		var done = assert.async();
 
 		removeSharedServicedata(sURI);
 
@@ -3489,7 +3591,7 @@
 					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
 					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-					start();
+					done();
 				}, 0);
 			} else {
 				ok(false, "More than two batch requests sent!");
@@ -3497,7 +3599,8 @@
 		});
 	});
 
-	asyncTest("async test request events - auto refresh list binding for nav property create", function(){
+	QUnit.test("async test request events - auto refresh list binding for nav property create", function(assert){
+		var done = assert.async();
 
 		removeSharedServicedata(sURI);
 
@@ -3536,7 +3639,7 @@
 					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
 					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-					start();
+					done();
 				}, 0);
 			} else {
 				ok(false, "More than two batch requests sent!");
@@ -3544,7 +3647,8 @@
 		});
 	});
 
-	asyncTest("async test request events - auto refresh list binding for nav property update", function(){
+	QUnit.test("async test request events - auto refresh list binding for nav property update", function(assert){
+		var done = assert.async();
 
 		removeSharedServicedata(sURI);
 
@@ -3584,7 +3688,7 @@
 					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
 					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-					start();
+					done();
 				}, 0);
 			} else {
 				ok(false, "More than two batch requests sent!");
@@ -3592,7 +3696,8 @@
 		});
 	});
 
-	asyncTest("async test request events - auto refresh list binding also when deleting", function(){
+	QUnit.test("async test request events - auto refresh list binding also when deleting", function(assert){
+		var done = assert.async();
 
 		removeSharedServicedata(sURI);
 
@@ -3631,14 +3736,15 @@
 					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
 					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
 					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-					start();
+					done();
 				}, 0);
 			} else {
 				ok(false, "More than two batch requests sent!");
 			}
 		});
 	});
-	asyncTest("Event order (single request): bindElement - batch fails", function(){
+	QUnit.test("Event order (single request): bindElement - batch fails", function(assert){
+		var done = assert.async();
 		expect(3);
 		cleanServiceDataCache();
 		var oModel = initModel(sURI);
@@ -3651,12 +3757,13 @@
 			bChanged = false;
 			bDataRequested = false;
 			bDataReceived = false;
-			start(); // resume normal testing
+			done(); // resume normal testing
 		}
 		oLabel.bindElement( {path:"/Categories(1)", parameters: {custom: {Batch500:"fail"}}, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
 
-	asyncTest("Event order (batch request): bindElement - batch fails --> refresh", function(){
+	QUnit.test("Event order (batch request): bindElement - batch fails --> refresh", function(assert){
+		var done = assert.async();
 		expect(5);
 		cleanServiceDataCache();
 		var oModel = initModel(sURI);
@@ -3675,14 +3782,15 @@
 				bChanged = false;
 				bDataRequested = false;
 				bDataReceived = false;
-				start(); // resume normal testing
+				done(); // resume normal testing
 			});
 			oLabel.getElementBinding().refresh();
 		}
 		oLabel.bindElement( {path:"/Categories(1)", parameters: {custom: {Batch500:"fail"}}, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
 
-	asyncTest("Event order: bindElement", function(){
+	QUnit.test("Event order: bindElement", function(assert){
+		var done = assert.async();
 		expect(4);
 		cleanServiceDataCache();
 		var oModel = initModel(sURI);
@@ -3695,12 +3803,13 @@
 			bChanged = false;
 			bDataRequested = false;
 			bDataReceived = false;
-			start(); // resume normal testing
+			done(); // resume normal testing
 		}
 		oLabel.getElementBinding().attachDataReceived(handler);
 	});
 
-	asyncTest("Event order: bindElement (setModel after binding)", function(){
+	QUnit.test("Event order: bindElement (setModel after binding)", function(assert){
+		var done = assert.async();
 		expect(4);
 		cleanServiceDataCache();
 		var oModel = initModel(sURI);
@@ -3711,13 +3820,14 @@
 			bChanged = false;
 			bDataRequested = false;
 			bDataReceived = false;
-			start(); // resume normal testing
+			done(); // resume normal testing
 		}
 		oLabel.setModel(oModel);
 		oLabel.getElementBinding().attachDataReceived(handler);
 	});
 
-	asyncTest("Event order: bindElement (already bound)", function(){
+	QUnit.test("Event order: bindElement (already bound)", function(assert){
+		var done = assert.async();
 		expect(6);
 		cleanServiceDataCache();
 		var oModel1 = initModel(sURI);
@@ -3736,7 +3846,7 @@
 				bChanged = false;
 				bDataRequested = false;
 				bDataReceived = false;
-				start(); // resume normal testing
+				done(); // resume normal testing
 			};
 			oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange2, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
 		}
@@ -3744,27 +3854,29 @@
 		oLabel.getElementBinding().attachDataReceived(handler);
 	});
 
-	asyncTest("ContextBinding: Unresolved bindings must fire change with null context", function(){
+	QUnit.test("ContextBinding: Unresolved bindings must fire change with null context", function(assert){
+		var done = assert.async();
 		expect(2);
 		cleanServiceDataCache();
 		var oModel = initModel(sURI);
 		var handler = function(oEvent) {
 			ok(true, "Change event fired for unresolved binding")
 			equal(oBinding.getBoundContext(), null, "Bound context is null")
-			start(); // resume normal testing
+			done(); // resume normal testing
 		}
 		var oBinding = oModel.bindContext("Category");
 		oBinding.attachChange(handler);
 		oBinding.initialize();
 	});
 
-	asyncTest("read with zero Response", function(){
+	QUnit.test("read with zero Response", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI);
 		var fnSuccess = function(oData) {
 			ok(true, "zero data loaded");
 			ok(oData === 0, "zero data loaded");
-			start();
+			done();
 		}
 		oModel.read("/ZeroTest(1)", { success: fnSuccess});
 	});
@@ -3806,84 +3918,93 @@
 		ok(!oModel.oMetadata, "ODataMetadata instance destroyed");
 	});
 
-	asyncTest("test metadata url parameters: no parameters", function() {
+	QUnit.test("test metadata url parameters: no parameters", function(assert) {
+		var done = assert.async();
 		cleanServiceDataCache();
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI);
 		oModel.attachMetadataLoaded(function() {
 			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata","no metadata url parameters");
 			OData.request.restore();
-			start();
+			done();
 		});
 	});
-	asyncTest("test metadata url parameters: service url parameters", function() {
+	QUnit.test("test metadata url parameters: service url parameters", function(assert) {
+		var done = assert.async();
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI+'?test=x');
 		oModel.attachMetadataLoaded(function() {
 			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x","parameters of service url attached");
 			OData.request.restore();
-			start();
+			done();
 		});
 	});
-	asyncTest("test metadata url parameters: metadataUrlParameters", function() {
+	QUnit.test("test metadata url parameters: metadataUrlParameters", function(assert) {
+		var done = assert.async();
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI, {metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
 			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-language=en&test2=xx","metadataUrlParams attached");
 			OData.request.restore();
-			start();
+			done();
 		});
 	});
-	asyncTest("test metadata url parameters: serviceUrl + metadataUrlParameters", function() {
+	QUnit.test("test metadata url parameters: serviceUrl + metadataUrlParameters", function(assert) {
+		var done = assert.async();
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI+'?test=x', {metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
 			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x&sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
 			OData.request.restore();
-			start();
+			done();
 		});
 	});
-	asyncTest("test metadata url parameters: no parameters", function() {
+	QUnit.test("test metadata url parameters: no parameters", function(assert) {
+		var done = assert.async();
 		cleanServiceDataCache();
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI, {serviceUrlParams: {"hubel":"dubel"}});
 		oModel.attachMetadataLoaded(function() {
 			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata","no metadata url parameters");
 			OData.request.restore();
-			start();
+			done();
 		});
 	});
-	asyncTest("test metadata url parameters: service url parameters", function() {
+	QUnit.test("test metadata url parameters: service url parameters", function(assert) {
+		var done = assert.async();
 		cleanServiceDataCache();
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI+'?test=x', {serviceUrlParams: {"hubel":"dubel"}});
 		oModel.attachMetadataLoaded(function() {
 			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x","parameters of service url attached");
 			OData.request.restore();
-			start();
+			done();
 		});
 	});
-	asyncTest("test metadata url parameters: metadataUrlParameters", function() {
+	QUnit.test("test metadata url parameters: metadataUrlParameters", function(assert) {
+		var done = assert.async();
 		cleanServiceDataCache();
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI, {serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
 			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-language=en&test2=xx","metadataUrlParams attached");
 			OData.request.restore();
-			start();
+			done();
 		});
 	});
-	asyncTest("test metadata url parameters: serviceUrl + metadataUrlParameters", function() {
+	QUnit.test("test metadata url parameters: serviceUrl + metadataUrlParameters", function(assert) {
+		var done = assert.async();
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI+'?test=x', {serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
 			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x&sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
 			OData.request.restore();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("test service url parameters: serviceUrlParams", function() {
+	QUnit.test("test service url parameters: serviceUrlParams", function(assert) {
+		var done = assert.async();
 		cleanServiceDataCache();
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI+'?test=x', {json: false, serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
@@ -3895,14 +4016,15 @@
 				ok(true, "success handler called");
 				equal(oResponse.requestUri, sURI + "Categories?test=x&hubel=dubel", "request uri with parameters");
 				OData.request.restore();
-				start();
+				done();
 			}, error: function() {
 				ok(false, "error handler shouldn't be called");
 			}});
 		});
 	});
 
-	asyncTest("test service url parameters: serviceUrlParams", function() {
+	QUnit.test("test service url parameters: serviceUrlParams", function(assert) {
+		var done = assert.async();
 		cleanServiceDataCache();
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI, {json: false, serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
@@ -3914,7 +4036,7 @@
 				ok(true, "success handler called");
 				equal(oResponse.requestUri, sURI + "Categories?hubel=dubel", "request uri with parameters");
 				OData.request.restore();
-				start();
+				done();
 			}, error: function() {
 				ok(false, "error handler shouldn't be called");
 			}});
@@ -3930,7 +4052,7 @@
 		var handler1 = function() { // delay the following test
 			ok(false, "Data should not be loaded");
 			oBinding.detachChange(handler1);
-			start();
+			done();
 		};
 		oBinding.attachRefresh(function() {oBinding.getContexts();});
 		oBinding.attachChange(handler1);
@@ -3965,30 +4087,33 @@
 		}
 	});
 
-	/*asyncTest("old syntax", function() {
+	/*QUnit.test("old syntax", function(assert) {
+	/*	var done = assert.async();
 		this.oModel.read("/Categories", {json:true, success: function(oData, oResponse) {
 			ok(true, "success handler called");
 			equal(oResponse.requestUri, sURI + "Categories", "request uri does not have parameters");
-			start();
+			done();
 		}, error: function() {
 			ok(false, "error handler shouldn't be called");
-			start();
+			done();
 		}});
 	});*/
 
-	asyncTest("syntax with url parameters as map", function() {
+	QUnit.test("syntax with url parameters as map", function(assert) {
+		var done = assert.async();
 		var that = this;
 		that.oModel.read("/Categories", {urlParameters: { "horst": true }, json: true, success: function(oData, oResponse) {
 			ok(true, "success handler called");
 			equal(oResponse.requestUri, sURI + "Categories?horst=true", "request uri contains custom parameters");
-			start();
+			done();
 		}, error: function() {
 			ok(false, "error handler shouldn't be called");
-			start();
+			done();
 		}});
 	});
 
-	asyncTest("syntax with sorter and url parameters", function() {
+	QUnit.test("syntax with sorter and url parameters", function(assert) {
+		var done = assert.async();
 		var that = this;
 		var aSorters = [
 			"should be ignored",
@@ -4002,16 +4127,17 @@
 			success: function(oData, oResponse) {
 				ok(true, "success handler called");
 				equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8&$orderby=CategoryName%20desc", "request uri contains custom parameters and sorter");
-				start();
+				done();
 			},
 			error: function() {
 				ok(false, "error handler shouldn't be called");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("new syntax with filter and url parameters", function() {
+	QUnit.test("new syntax with filter and url parameters", function(assert) {
+		var done = assert.async();
 		var that = this;
 		var aFilters = [
 			new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages")
@@ -4022,16 +4148,17 @@
 			success: function(oData, oResponse) {
 				ok(true, "success handler called");
 				equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=1&$filter=CategoryName%20eq%20%27Beverages%27", "request uri contains custom parameters and filter");
-				start();
+				done();
 			},
 			error: function() {
 				ok(false, "error handler shouldn't be called");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("test metadata loading: sap-value-list",function(){
+	QUnit.test("test metadata loading: sap-value-list",function(assert){
+		var done = assert.async();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function(){
 			ok(oModel.getServiceMetadata(), "metadata loaded");
@@ -4047,11 +4174,12 @@
 				ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
 				ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
 				ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
-				start();
+				done();
 			});
 		});
 	});
-	asyncTest("test metadata loading: sap-value-list",function(){
+	QUnit.test("test metadata loading: sap-value-list",function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function(){
@@ -4071,12 +4199,13 @@
 				ok(typeof oParams.entitySets[1] == "object", "entitySet metadata object exists");
 				ok(oParams.entitySets[1].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
 				ok(oParams.entitySets[1].name === "VL_CH_ANLA", "entitySetName ok");
-				start();
+				done();
 			});
 		});
 	});
 
-	asyncTest("test metadata loading: sap-value-list - double entityTypes",function(){
+	QUnit.test("test metadata loading: sap-value-list - double entityTypes",function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var iEntitySetCount, iEntityTypeCount, iAnnotationCount;
 
@@ -4114,13 +4243,14 @@
 					ok(iEntitySetCount == oModel.getServiceMetadata().dataServices.schema[0].entityContainer[0].entitySet.length,"no EntitySet added");
 					ok(iEntityTypeCount == oModel.getServiceMetadata().dataServices.schema[0].entityType.length,"no EntityType added");
 					ok(iAnnotationCount < oModel.getServiceMetadata().dataServices.schema[0].annotations.length,"annotations added");
-					start();
+					done();
 				});
 			});
 		});
 	});
 
-	asyncTest("test metadata loading (relative metadataUrl): sap-value-list",function(){
+	QUnit.test("test metadata loading (relative metadataUrl): sap-value-list",function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function(){
@@ -4132,12 +4262,13 @@
 				equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
 				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 				ok(oModel.getServiceAnnotations(), "annotations loaded");
-				start();
+				done();
 			});
 		});
 	});
 
-	asyncTest("async test media entity update check metadata", function(){
+	QUnit.test("async test media entity update check metadata", function(assert){
+		var done = assert.async();
 		cleanServiceDataCache();
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		var oModel = initModel(sURI, {
@@ -4160,7 +4291,7 @@
 				equal(oPayload.__metadata.edit_media, undefined, "check media entity property");
 				OData.defaultHttpClient.request.restore();
 				oModel.destroy();
-				start();
+				done();
 			} else {
 				ok(false, "More than two batch requests sent!");
 			}
@@ -4182,28 +4313,31 @@
 		}
 	});
 
-	asyncTest("No token request for GET requests", function() {
+	QUnit.test("No token request for GET requests", function(assert) {
+		var done = assert.async();
 		this.oModel.setUseBatch(false);
 		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 		this.oModel.read("/Categories(1)", {
 			success: function() {
 				ok(!refreshSpy.called, "No security token needed for GET requests")
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("Token request for GET request inside batch", function() {
+	QUnit.test("Token request for GET request inside batch", function(assert) {
+		var done = assert.async();
 		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 		this.oModel.read("/Categories(1)", {
 			success: function() {
 				ok(refreshSpy.calledOnce, "Token requested for GET inside batch")
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("Token request for POST requests", function() {
+	QUnit.test("Token request for POST requests", function(assert) {
+		var done = assert.async();
 
 		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 		this.oModel.create("/Categories(1)", {}, {
@@ -4212,14 +4346,15 @@
 				this.oModel.create("/Categories(1)", {}, {
 					success: function() {
 						ok(refreshSpy.calledOnce, "No additional token request")
-						start();
+						done();
 					}
 				});
 			}.bind(this)
 		});
 	});
 
-	asyncTest("Token request, automatic resubmit", function() {
+	QUnit.test("Token request, automatic resubmit", function(assert) {
+		var done = assert.async();
 		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken"),
 			resetSpy = sinon.spy(this.oModel, "resetSecurityToken");
 		this.oModel.create("/Categories(1)", {}, {
@@ -4230,14 +4365,15 @@
 					success: function() {
 						ok(resetSpy.calledOnce, "Token was reset, as it was invalid");
 						ok(refreshSpy.calledTwice, "Token was fetched again after update");
-						start();
+						done();
 					}
 				});
 			}.bind(this)
 		});
 	});
 
-	asyncTest("Token request, manual refresh", function() {
+	QUnit.test("Token request, manual refresh", function(assert) {
+		var done = assert.async();
 		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken"),
 			resetSpy = sinon.spy(this.oModel, "resetSecurityToken");
 		this.oModel.create("/Categories(1)", {}, {
@@ -4249,14 +4385,15 @@
 					success: function() {
 						ok(!resetSpy.called, "No reset, as token was explicitely refreshed before");
 						ok(refreshSpy.calledTwice, "Token was fetched in explicit refresh call");
-						start();
+						done();
 					}
 				});
 			}.bind(this)
 		});
 	});
 
-	asyncTest("Token request using HEAD method", function() {
+	QUnit.test("Token request using HEAD method", function(assert) {
+		var done = assert.async();
 		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 		this.oModel.create("/Categories(1)", {}, {
 			success: function() {
@@ -4268,14 +4405,15 @@
 					success: function() {
 						equals(window.odataFakeServiceData.csrfRequests.length, 1, "Only one CSRF request replied to");
 						ok(refreshSpy.calledOnce, "No additional token request");
-						start();
+						done();
 					}
 				});
 			}.bind(this)
 		});
 	});
 
-	asyncTest("Token request trying HEAD, then fallback to GET method", function() {
+	QUnit.test("Token request trying HEAD, then fallback to GET method", function(assert) {
+		var done = assert.async();
 		window.odataFakeServiceData.forbidHeadRequest = true;
 		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 		this.oModel.create("/Categories(1)", {}, {
@@ -4289,14 +4427,15 @@
 					success: function() {
 						equals(window.odataFakeServiceData.csrfRequests.length, 2, "Two CSRF requests replied to");
 						ok(refreshSpy.calledOnce, "No additional token request");
-						start();
+						done();
 					}
 				});
 			}.bind(this)
 		});
 	});
 
-	asyncTest("Token request using only GET method", function() {
+	QUnit.test("Token request using only GET method", function(assert) {
+		var done = assert.async();
 		// Replace model with model that should not use HEAD
 		this.oModel.destroy();
 		this.oModel = initModel(sURI, {
@@ -4318,7 +4457,7 @@
 					success: function() {
 						equals(window.odataFakeServiceData.csrfRequests.length, 1, "Two CSRF requests replied to");
 						ok(refreshSpy.calledOnce, "No additional token request");
-						start();
+						done();
 					}
 				});
 			}.bind(this)
@@ -4327,7 +4466,8 @@
 
 	QUnit.module("Soft State Header Support");
 
-	asyncTest("Soft State Support for CSRF-, Single- and Batchrequests", 9, function(){
+	QUnit.test("Soft State Support for CSRF-, Single- and Batchrequests", 9, function(assert){
+		var done = assert.async();
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		var sPath = "/Categories";
 		this.oModel = new sap.ui.model.odata.v2.ODataModel(sURI);
@@ -4354,7 +4494,7 @@
 									OData.defaultHttpClient.request.restore();
 									this.oModel.destroy();
 									delete this.oModel;
-									start();
+									done();
 								}.bind(this)
 							});
 						}.bind(this)
@@ -4374,18 +4514,20 @@
 		}
 	});
 
-	asyncTest("Entityset metadata w/o context", function() {
+	QUnit.test("Entityset metadata w/o context", function(assert) {
+		var done = assert.async();
 		this.oModel.getMetaModel().loaded().then(function() {
 			equal(this.oModel.getProperty("/Categories(1)/##name"), "Category");
 			equal(this.oModel.getProperty("/Categories(1)/##property/0/name"), "CategoryID");
 			equal(this.oModel.getProperty("/Categories(1)/CategoryID/##type"), "Edm.Int32");
 			equal(this.oModel.getProperty("/Categories(1)/Products(0)/##name"), "Product");
 			equal(this.oModel.getProperty("/Categories(1)/Products(0)/ProductID/##type"), "Edm.Int32");
-			start();
+			done();
 		}.bind(this))
 	});
 
-	asyncTest("Entityset metadata w/ context", function() {
+	QUnit.test("Entityset metadata w/ context", function(assert) {
+		var done = assert.async();
 		this.oModel.getMetaModel().loaded().then(function() {
 			var oContext = this.oModel.getContext("/Categories(1)")
 			equal(this.oModel.getProperty("##name", oContext), "Category");
@@ -4393,11 +4535,12 @@
 			equal(this.oModel.getProperty("CategoryID/##type", oContext), "Edm.Int32");
 			equal(this.oModel.getProperty("Products(0)/##name", oContext), "Product");
 			equal(this.oModel.getProperty("Products(0)/ProductID/##type", oContext), "Edm.Int32");
-			start();
+			done();
 		}.bind(this))
 	});
 
-	asyncTest("Metamodel binding refresh after metamodel load", function() {
+	QUnit.test("Metamodel binding refresh after metamodel load", function(assert) {
+		var done = assert.async();
 		var oPropertyBinding, oListBinding, oMetaBindingRelative, oMetaBindingAbsolute,
 			propertySpy, listSpy, metaRelativeSpy, metaAbsoluteSpy;
 
@@ -4434,7 +4577,7 @@
 					equal(oMetaBindingRelative.getValue(), "Category", "Relative metamodel binding returns correct value");
 					ok(metaAbsoluteSpy.calledOnce, "Absolute metamodel binding checkUpdate called once");
 					equal(oMetaBindingAbsolute.getValue(), "Category", "Absolute metamodel binding returns correct value");
-					start();
+					done();
 				});
 			}.bind(this));
 		}.bind(this));
@@ -4449,7 +4592,8 @@
 			delete this.oModel;
 		}
 	});
-	asyncTest("set same value again", function() {
+	QUnit.test("set same value again", function(assert) {
+		var done = assert.async();
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
 			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, urlParameters: {'Fail500': true}});
@@ -4458,10 +4602,11 @@
 			ok(oProduct, "Product created");
 			ok(oProduct.__metadata.created, "Product flagged as created");
 			ok(this.oModel.hasPendingChanges(), "Model should still have pending changes");
-			start();
+			done();
 		}.bind(this))
 	});
-	asyncTest("submit again after error", function() {
+	QUnit.test("submit again after error", function(assert) {
+		var done = assert.async();
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
 			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, urlParameters: {'Fail500': true}});
@@ -4487,7 +4632,7 @@
 					ok(oProduct, "Product still exists");
 					ok(oProduct.__metadata.created, "Product still flagged as created");
 					ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
-					start();
+					done();
 				});
 				that.oModel.attachRequestCompleted(function(oInfo) {
 					that.oModel.detachRequestCompleted(fnCompl);
@@ -4502,7 +4647,8 @@
 			this.oModel.submitChanges();
 		}.bind(this))
 	});
-	asyncTest("submit:check header & url params", function() {
+	QUnit.test("submit:check header & url params", function(assert) {
+		var done = assert.async();
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
 			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, headers: {'test-header': 'test-header-value'}, urlParameters: {'Fail500': true, 'test-param':'test-param-value'}});
@@ -4534,7 +4680,7 @@
 						ok(oInfo.getParameter('headers')['test-header'], 'header set correctly');
 					ok(oInfo.getParameter('headers')['test-header'] === 'test-header-value', 'header value set correctly');
 					ok(oInfo.getParameter('url').indexOf('&test-param=test-param-value') > -1, 'url param set correctly');
-					start();
+					done();
 				});
 				that.oModel.attachRequestCompleted(function(oInfo) {
 					that.oModel.detachRequestCompleted(fnCompl);
@@ -4551,7 +4697,8 @@
 			this.oModel.submitChanges();
 		}.bind(this))
 	});
-	asyncTest("submit:check eTag", function() {
+	QUnit.test("submit:check eTag", function(assert) {
+		var done = assert.async();
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
 			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, eTag: 'testEtag', urlParameters: {'Fail500': true, 'test-param':'test-param-value'}});
@@ -4577,7 +4724,7 @@
 					ok(oProduct, "Product still exists");
 					ok(oProduct.__metadata.created, "Product still flagged as created");
 					ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');
-					start();
+					done();
 				});
 				that.oModel.attachRequestCompleted(function(oInfo) {
 					that.oModel.detachRequestCompleted(fnCompl);
@@ -4593,13 +4740,14 @@
 		}.bind(this))
 	});
 
-	asyncTest("callFunction:check eTag", function() {
+	QUnit.test("callFunction:check eTag", function(assert) {
+		var done = assert.async();
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
 			var fnSent = function(oInfo) {
 				that.oModel.detachRequestCompleted(fnSent);
 				ok(oInfo.getParameter('headers')['If-Match'] === 'myEtag', 'header for eTag set correctly');
-				start();
+				done();
 			};
 			this.oModel.attachRequestSent(fnSent);
 			this.oModel.callFunction("/GetProductsByRating", {method: "PUT", eTag: "myEtag"});
@@ -4607,7 +4755,8 @@
 		}.bind(this))
 	});
 
-	asyncTest("submit:check eTag - forceUpdate", function() {
+	QUnit.test("submit:check eTag - forceUpdate", function(assert) {
+		var done = assert.async();
 		var that = this;
 		this.oModel
 		this.oModel.metadataLoaded().then(function() {
@@ -4647,7 +4796,7 @@
 						ok(oInfo.getParameter('success'), "request successful");
 						ok(oInfo.getParameter('response').statusCode === 204, 'status code = 204');
 						ok(oInfo.getParameter('headers')['If-Match'] === '*', 'header for eTag set correctly');
-						start();
+						done();
 					});
 					that.oModel.submitChanges();
 				};
@@ -4664,7 +4813,8 @@
 		}.bind(this))
 	});
 
-	asyncTest("submit:check success", function() {
+	QUnit.test("submit:check success", function(assert) {
+		var done = assert.async();
 		assert.expect( 6 );
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
@@ -4681,13 +4831,14 @@
 				var oProduct =  oContext.getObject();
 				ok(oProduct, "Product still exists");
 				ok(!oProduct.__metadata.created, "Product not flagged as created");
-				start();
+				done();
 			};
 			this.oModel.attachRequestCompleted(fnCompl);
 			this.oModel.submitChanges();
 		}.bind(this))
 	});
-	asyncTest("submit:check erro handler", function() {
+	QUnit.test("submit:check erro handler", function(assert) {
+		var done = assert.async();
 		assert.expect( 12 );
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
@@ -4714,7 +4865,7 @@
 					var oProduct = that.oModel.getProperty('', oContext);
 					ok(oProduct, "Product still exists");
 					ok(oProduct.__metadata.created, "Product still flagged as created");
-					start();
+					done();
 				});
 				that.oModel.attachRequestCompleted(function(oInfo) {
 					that.oModel.detachRequestCompleted(fnCompl);
@@ -4728,7 +4879,8 @@
 			this.oModel.submitChanges();
 		}.bind(this))
 	});
-	asyncTest("create on NavProp", function() {
+	QUnit.test("create on NavProp", function(assert) {
+		var done = assert.async();
 		assert.expect( 8 );
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
@@ -4747,13 +4899,14 @@
 				var oSupplier = oContext.getObject();
 				ok(oSupplier, "Supplier still exists");
 				ok(!oSupplier.__metadata.created, "Supplier not flagged as created");
-				start();
+				done();
 			};
 			this.oModel.attachRequestCompleted(fnCompl);
 			this.oModel.submitChanges();
 		}.bind(this))
 	});
-	asyncTest("submit:check success - no pending changes", function() {
+	QUnit.test("submit:check success - no pending changes", function(assert) {
+		var done = assert.async();
 		assert.expect( 9 );
 		var that = this;
 		this.oModel.setUseBatch(true);
@@ -4763,7 +4916,7 @@
 				var oSupplier = oContext.getObject();
 				ok(oSupplier, "Supplier still exists");
 				ok(!oSupplier.__metadata.created, "Supplier not flagged as created");
-				start();
+				done();
 			}
 			var fnError = function() {
 				ok(true, "error handler called");
@@ -4789,7 +4942,8 @@
 		}.bind(this))
 	});
 
-	asyncTest("createEntry and relative bindings", function() {
+	QUnit.test("createEntry and relative bindings", function(assert) {
+		var done = assert.async();
 		assert.expect(2);
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
@@ -4819,12 +4973,13 @@
 				ok(false, "No requests must be sent");
 			});
 			setTimeout(function() {
-				start();
+				done();
 			}, 0);
 		}.bind(this))
 	});
 
-	asyncTest("createEntry and relative bindings (setContext)", function() {
+	QUnit.test("createEntry and relative bindings (setContext)", function(assert) {
+		var done = assert.async();
 		assert.expect(2);
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
@@ -4856,14 +5011,14 @@
 				ok(false, "No requests must be sent");
 			});
 			setTimeout(function() {
-				start();
+				done();
 			}, 0);
 		}.bind(this))
 	});
 
-	asyncTest("createEntry and absolute bindings", function() {
+	QUnit.test("createEntry and absolute bindings", function(assert) {
+		var done = assert.async();
 		assert.expect(6);
-		var that = this;
 		this.oModel.metadataLoaded().then(function() {
 			var fnSuccess = function() {
 				ok(false, "success handler must not be called");
@@ -4880,6 +5035,7 @@
 			var oListBinding = this.oModel.bindList("/Products", oCreatedContext);
 			oListBinding.attachChange(function(){
 				ok(true, "ListBinding change most be fired");
+				done();
 			});
 			oListBinding.attachRefresh(function(){
 				oListBinding.getContexts(0,10);
@@ -4889,13 +5045,11 @@
 			this.oModel.attachRequestSent(function() {
 				ok(true, "Requests must be triggered");
 			});
-			setTimeout(function() {
-				start();
-			}, 0);
 		}.bind(this))
 	});
 
-	asyncTest("createEntry and bindElement", function() {
+	QUnit.test("createEntry and bindElement", function(assert) {
+		var done = assert.async();
 		assert.expect(1);
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
@@ -4917,14 +5071,15 @@
 			oContextBinding.initialize();
 			setTimeout(function() {
 				that.oModel.detachRequestSent(fnRequestSent);
-				start();
+				done();
 			}, 0);
 		}.bind(this))
 	});
 
 	QUnit.module("Model: SAML");
 
-	asyncTest("SAML redirect - without batch", function(){
+	QUnit.test("SAML redirect - without batch", function(assert){
+		var done = assert.async();
 
 		removeSharedServicedata(sURI);
 
@@ -4936,17 +5091,18 @@
 		oModel.read("/SAML200", {
 			success: function() {
 				ok(false, "Success handler must not be called in case of SAML redirect");
-				start();
+				done();
 			},
 			error: function(oError) {
 				ok(oError.statusCode, 200, "SAML redirect has a 200 response code");
 				ok(oError.headers["com.sap.cloud.security.login"], "SAML login header is contained in response");
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("SAML redirect - with batch", function(){
+	QUnit.test("SAML redirect - with batch", function(assert){
+		var done = assert.async();
 
 		removeSharedServicedata(sURI);
 
@@ -4958,19 +5114,20 @@
 		oModel.read("/SAML200", {
 			success: function() {
 				ok(false, "Success handler must not be called in case of SAML redirect");
-				start();
+				done();
 			},
 			error: function(oError) {
 				ok(oError.statusCode, 200, "SAML redirect has a 200 response code");
 				ok(oError.headers["com.sap.cloud.security.login"], "SAML login header is contained in response");
-				start();
+				done();
 			}
 		});
 	});
 
 	QUnit.module("Model: includeExpandEntries");
 
-	asyncTest("test getProperty with includeExpandEntries __ref", function(){
+	QUnit.test("test getProperty with includeExpandEntries __ref", function(assert){
+		var done = assert.async();
 		removeSharedServicedata(sURI);
 		var oModel = initModel(sURI, {json:false, useBatch: true});
 		oModel.read("/Products(7)", { urlParameters: {"$expand" : "Category"}, success: function(){
@@ -4985,11 +5142,12 @@
 			ok(oDeepEntry.Category.__ref, "check ref");
 			equal(oDeepEntry.Category.__ref, "Categories(7)", "check ref value");
 
-			start();
+			done();
 		}});
 	});
 
-	asyncTest("test getProperty with includeExpandEntries __list", function(){
+	QUnit.test("test getProperty with includeExpandEntries __list", function(assert){
+		var done = assert.async();
 		removeSharedServicedata(sURI);
 		var oModel = initModel(sURI, {json:false, useBatch: true});
 		oModel.read("/Categories(7)", { urlParameters: {"$expand" : "Products"}, success: function(){
@@ -5006,11 +5164,12 @@
 			ok(oDeepEntry.Products.__list, "check list");
 			equal(oDeepEntry.Products.__list[0], "Products(7)", "check list value");
 
-			start();
+			done();
 		}});
 	});
 
-	asyncTest("test getProperty with includeExpandEntries and cyclic dependencies", function(){
+	QUnit.test("test getProperty with includeExpandEntries and cyclic dependencies", function(assert){
+		var done = assert.async();
 		removeSharedServicedata(sURI);
 		var oModel = initModel(sURI, {json:false, useBatch: true});
 		oModel.read("/Products(7)", { urlParameters: {"$expand" : "Category"}, success: function(){
@@ -5040,19 +5199,20 @@
 				ok(oDeepEntry.Products.__list, "check list");
 				equal(oDeepEntry.Products.__list[0], "Products(7)", "check list value");
 
-				start();
+				done();
 			}});
 		}});
 	});
 
-	asyncTest("Bindable response headers in metadata", function() {
+	QUnit.test("Bindable response headers in metadata", function(assert) {
+		var done = assert.async();
 		expect(4);
 
 
 		var batchDone = false, singleDone = false;
 		var fnEndTestIfDone = function() {
 			if (batchDone && singleDone) {
-				start();
+				done();
 			}
 		}
 
@@ -5116,13 +5276,14 @@
 
 			oModelSingle.destroy();
 			oModelBatch.destroy();
-			start();
+			done();
 		});
 
 	});
 
 
-	asyncTest("Header normalization and lastModified in metadataLoaded-promise", function() {
+	QUnit.test("Header normalization and lastModified in metadataLoaded-promise", function(assert) {
+		var done = assert.async();
 		expect(5);
 
 		var oModel = initModel(sURI, {
@@ -5158,12 +5319,13 @@
 			equals(mHeaders["X-CuStOm-HeAdEr"], "case-sensitive", "Special header is not normalized and contains correct value");
 
 			oModel.destroy();
-			start();
+			done();
 		});
 
 	});
 
-	asyncTest("ListBinding: Custom params", function() {
+	QUnit.test("ListBinding: Custom params", function(assert) {
+		var done = assert.async();
 		expect(6);
 
 		var oModel = initModel(sURI);
@@ -5178,7 +5340,7 @@
 					equals(spy.callCount, 2 , "custom Params created");
 					equals(spy.returnValues[1], "hubel=dubel&test" , "params created correctly");
 					oModel.createCustomParams.restore();
-					start();
+					done();
 				}, true);
 			});
 		});
@@ -5197,7 +5359,8 @@
 		equal(oModel._normalizeKey("Entity(%2FTEST%2FTEST=123M)"), "Entity(%2FTEST%2FTEST=123m)", "No double encoding");
 	});
 
-  asyncTest("Normalize key, model access", function() {
+  QUnit.test("Normalize key, model access", function(assert) {
+  	var done = assert.async();
 		var oModel = initModel(sURI);
 		oModel.read("/Current_Product_Lists", {
 			success: function() {
@@ -5215,7 +5378,7 @@
 				equal(oModel.getProperty("/Current_Product_Lists(ProductID=3,ProductName='Aniseed%20Syrup')/ProductName"), "Aniseed Syrup", "Property is returned");
 				equal(oModel.getProperty("/Current_Product_Lists(ProductID=61,ProductName='Sirop%20d''%C3%A9rable')/ProductName"), "Sirop d'érable", "Property is returned");
 				equal(oModel.getProperty("/Current_Product_Lists(ProductID=75,ProductName='Rh%C3%B6nbr%C3%A4u%20Klosterbier')/ProductName"), "Rhönbräu Klosterbier", "Property is returned");
-				start();
+				done();
 			}
 		})
 	});

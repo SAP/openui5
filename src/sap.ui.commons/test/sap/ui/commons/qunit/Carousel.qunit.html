@@ -117,7 +117,8 @@
 				}
 			});
 
-			asyncTest("Navigation Next Test", function() {
+			QUnit.test("Navigation Next Test", function(assert) {
+				var done = assert.async();
 				this.oCarousel1.showNext();
 				this.oCarousel2.showNext();
 				var that = this;
@@ -129,11 +130,12 @@
 						strictEqual(jQuery.sap.byId(that.oCarousel2.getId() + '-scrolllist').find('li:first')[0],
 								jQuery.sap.byId(that.oCarousel2.getId() + '-item-IMG9')[0],
 							"Image 9 should be at first position.");
-						start();
+						done();
 					}, Math.max(this.oCarousel1.getAnimationDuration(), this.oCarousel2.getAnimationDuration()) + 750);
 			});
 
-			asyncTest("Navigation Previous", function() {
+			QUnit.test("Navigation Previous", function(assert) {
+				var done = assert.async();
 				this.oCarousel1.showPrevious();
 				this.oCarousel2.showPrevious();
 				var that = this;
@@ -145,7 +147,7 @@
 						strictEqual(jQuery.sap.byId(that.oCarousel2.getId() + '-scrolllist') .find('li:first')[0],
 								jQuery.sap.byId(that.oCarousel2.getId() + '-item-IMG10')[0],
 							"Image 10 should be at first position.");
-						start();
+						done();
 					}, Math.max(this.oCarousel1.getAnimationDuration(), this.oCarousel2.getAnimationDuration()) + 750);
 			});
 
@@ -209,7 +211,8 @@
 				}
 			});
 
-			asyncTest("Test click on the control - Previous btn", function() {
+			QUnit.test("Test click on the control - Previous btn", function(assert) {
+				var done = assert.async();
 				strictEqual(this.oCarousel1.$().length, 1 ,"Control is rendered...");
 				var oPrevButton = this.oCarousel1.$("prevbutton");
 				strictEqual(oPrevButton.length, 1 ,"Previous element is rendered...");
@@ -224,11 +227,12 @@
 							strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
 									jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG6')[0],
 									"Image 6 should be at first position.");
-							start();
+							done();
 						}, this.oCarousel1.getAnimationDuration() + 750);
 			});
 
-			asyncTest("Test click on the control - Next btn", function() {
+			QUnit.test("Test click on the control - Next btn", function(assert) {
+				var done = assert.async();
 				strictEqual(this.oCarousel1.$().length, 1 ,"Control is rendered...");
 				var oNextButton = this.oCarousel1.$("nextbutton");
 				strictEqual(oNextButton.length, 1 ,"Next element is rendered...");
@@ -242,11 +246,12 @@
 							strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
 									jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG2')[0],
 									"Image 2 should be at first position.");
-							start();
+							done();
 						}, this.oCarousel1.getAnimationDuration() + 750);
 			});
 
-			asyncTest("Test click on the control - Invalid btn", function() {
+			QUnit.test("Test click on the control - Invalid btn", function(assert) {
+				var done = assert.async();
 				strictEqual(this.oCarousel1.$().length, 1 ,"Control is rendered...");
 
 				var oEvent = {
@@ -259,7 +264,7 @@
 							strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
 									jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG1')[0],
 									"Image 1 should be at first position.");
-							start();
+							done();
 						}, this.oCarousel1.getAnimationDuration() + 750);
 			});
 
@@ -275,7 +280,8 @@
 				}
 			});
 
-			asyncTest("Test keydown and Action mode ", function() {
+			QUnit.test("Test keydown and Action mode ", function(assert) {
+				var done = assert.async();
 				var oEvent = {
 					keyCode: jQuery.sap.KeyCodes.F2
 				}
@@ -293,12 +299,13 @@
 							strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
 									jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG2')[0],
 									"Image 2 should be at first position.");
-							start();
+							done();
 
 						}, this.oCarousel1.getAnimationDuration() + 750);
 			});
 
-			asyncTest("Test Arrow Up and Action mode ", function() {
+			QUnit.test("Test Arrow Up and Action mode ", function(assert) {
+				var done = assert.async();
 
 				// Action mode should be undefined
 				strictEqual(this.oCarousel1._bActionMode, undefined, "Action mode should be undefined by default");
@@ -340,7 +347,7 @@
 							that.oCarousel1.onresize();
 							strictEqual(that.oCarousel1.sResizeListenerId, null, "Resize listener Id should be null ");
 
-							start();
+							done();
 
 						}, this.oCarousel1.getAnimationDuration() + 750);
 			});

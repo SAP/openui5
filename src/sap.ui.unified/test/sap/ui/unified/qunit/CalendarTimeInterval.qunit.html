@@ -622,7 +622,8 @@
 				// not needed to check classes of new selected items as it is the same like before
 			});
 
-			asyncTest("multiple selection", function() {
+			QUnit.test("multiple selection", function(assert) {
+				var done = assert.async();
 				oCal3.destroySelectedDates();
 				setTimeout(function(){
 					// async because items are updated async if DateRange changed
@@ -675,7 +676,7 @@
 					ok(!oSelectedEndDate, "No end date")
 					ok($selectItem2.hasClass("sapUiCalItemSel"), "Item2 marked as selected");
 					ok(!$selectItem1.hasClass("sapUiCalItemSel"), "Item1 not marked as selected");
-					start();
+					done();
 				}, 0);
 			});
 

@@ -534,7 +534,8 @@
 			oDialogModel.setData(data);
 
 
-			asyncTest("JS Fragment as Dialog", function() {
+			QUnit.test("JS Fragment as Dialog", function(assert) {
+				var done = assert.async();
 				var oDialog = sap.ui.jsfragment("testdata.fragments.JSFragmentDialog", {closeDialog: function(){oDialog.close();}});
 
 				ok(!jQuery.sap.domById("jsDialog"), "Fragment should not yet be rendered");
@@ -555,14 +556,15 @@
 						ok(!oDialog.isOpen(), "Dialog should be closed now");
 						oDialog.destroy();
 
-						start();
+						done();
 					}, 600);
 				}, 600);
 
 			});
 
 
-			asyncTest("XML Fragment as Dialog", function() {
+			QUnit.test("XML Fragment as Dialog", function(assert) {
+				var done = assert.async();
 				var oDialog = sap.ui.xmlfragment("testdata.fragments.XMLFragmentDialog", {closeDialog: function(){oDialog.close();}});
 
 				ok(!jQuery.sap.domById("xmlDialog"), "Fragment should not yet be rendered");
@@ -583,14 +585,15 @@
 						ok(!oDialog.isOpen(), "Dialog should be closed now");
 						oDialog.destroy();
 
-						start();
+						done();
 					}, 600);
 				}, 600);
 
 			});
 
 
-			asyncTest("HTML Fragment as Dialog", function() {
+			QUnit.test("HTML Fragment as Dialog", function(assert) {
+				var done = assert.async();
 				var oDialog = sap.ui.htmlfragment("testdata.fragments.HTMLFragmentDialog", {closeDialog: function(){oDialog.close();}});
 
 				ok(!jQuery.sap.domById("htmlDialog"), "Fragment should not yet be rendered");
@@ -611,7 +614,7 @@
 						ok(!oDialog.isOpen(), "Dialog should be closed now");
 						oDialog.destroy();
 
-						start();
+						done();
 					}, 600);
 				}, 600);
 

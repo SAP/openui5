@@ -9,7 +9,9 @@ QUnit.module("ODataTreeBinding - AutoExpand", {
 	}
 });
 
-asyncTest("Manually expand a node", function(){
+QUnit.test("Manually expand a node", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -50,7 +52,7 @@ asyncTest("Manually expand a node", function(){
 			oChild = oBinding.findNode(66);
 			ok(oBinding._isInSubtree(oParent, oChild), "Child is loaded");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -58,7 +60,9 @@ asyncTest("Manually expand a node", function(){
 	});
 });
 
-asyncTest("Manually expand and collapse a node multiple times", function(){
+QUnit.test("Manually expand and collapse a node multiple times", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -95,7 +99,7 @@ asyncTest("Manually expand and collapse a node multiple times", function(){
 			// idx 4 node collapsed again
 			equal(oBinding.getLength(), 626, "Correct binding length (no duplicate nodes)");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -103,7 +107,9 @@ asyncTest("Manually expand and collapse a node multiple times", function(){
 	});
 });
 
-asyncTest("Manually expand two levels and collapse the parent", function(){
+QUnit.test("Manually expand two levels and collapse the parent", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -146,7 +152,7 @@ asyncTest("Manually expand two levels and collapse the parent", function(){
 
 			oBinding.collapse(4);
 			ok(oBinding.findNode(9).key.indexOf("1010") !== -1, "The index shifting is done correctly");
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -154,7 +160,9 @@ asyncTest("Manually expand two levels and collapse the parent", function(){
 	});
 });
 
-asyncTest("Collapse all nodes at level 0", function(){
+QUnit.test("Collapse all nodes at level 0", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -179,7 +187,7 @@ asyncTest("Collapse all nodes at level 0", function(){
 
 			var aContexts = oBinding.getContexts(0, 10);
 			equal(aContexts.length, 9, "There are only 9 nodes on level 0");
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -187,7 +195,9 @@ asyncTest("Collapse all nodes at level 0", function(){
 	});
 });
 
-asyncTest("Bug fix: when deepnode is collapsed, its parents' magnitude needs to be updated", function() {
+QUnit.test("Bug fix: when deepnode is collapsed, its parents' magnitude needs to be updated", function(assert) {
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -226,7 +236,7 @@ asyncTest("Bug fix: when deepnode is collapsed, its parents' magnitude needs to 
 			oBinding.expand(5);
 			oBinding.collapse(5);
 			ok(oBinding.findNode(12).key.indexOf("1637") !== -1, "The last child of 1005 is 1637");
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);

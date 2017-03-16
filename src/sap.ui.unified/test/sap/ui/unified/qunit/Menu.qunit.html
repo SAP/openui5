@@ -251,7 +251,8 @@
 			equals(oRootMenu.getEnabled(), true, "Custom 'enabled':");
 		});
 
-		asyncTest("Menu - Item Aggregation", function() {
+		QUnit.test("Menu - Item Aggregation", function(assert) {
+			var done = assert.async();
 			var oMenu = new sap.ui.unified.Menu();
 			openMenu(oMenu, true);
 			oMenu.addItem(new sap.ui.unified.MenuItem());
@@ -271,7 +272,7 @@
 			setTimeout(function(){
 				oMenu.close();
 				oMenu.destroy();
-				start();
+				done();
 			}, 100);
 		});
 
@@ -570,7 +571,8 @@
 		var DELAY_SUBMENU_TIMER = sap.ui.unified.Menu._DELAY_SUBMENU_TIMER + 20;
 
 		if (sap.ui.Device.system.desktop) {
-			asyncTest("Delayed Open Submenu", function() {
+			QUnit.test("Delayed Open Submenu", function(assert) {
+				var done = assert.async();
 				openRootMenu(true);
 				var oSpyMenuFocusFn = sinon.spy(oRootMenu.getDomRef(), "focus");
 				qutils.triggerEvent("mouseover", "item7", {});
@@ -583,7 +585,7 @@
 					ok(oSubMenu.bOpen, "Submenu open");
 					checkMenuFocusing();
 					closeAllMenusAndCheck();
-					start();
+					done();
 				}, DELAY_SUBMENU_TIMER);
 				function checkMenuFocusing() {
 					var iExpectedFocusFnCall = 1;
@@ -596,7 +598,8 @@
 		}
 
 		if (sap.ui.Device.system.desktop) {
-			asyncTest("Select", function() {
+			QUnit.test("Select", function(assert) {
+				var done = assert.async();
 				openRootMenu(true);
 				lastSelectedItemId = null;
 				checkHoveredItem(null);
@@ -612,7 +615,7 @@
 						qutils.triggerEvent("click", "item8", {});
 						equals(lastSelectedItemId, "item8", "Event triggered on item:");
 						closeAllMenusAndCheck();
-						start();
+						done();
 					}, DELAY_SUBMENU_TIMER);
 				}, DELAY_SUBMENU_TIMER);
 			});
@@ -645,7 +648,8 @@
 		});
 
 		if (sap.ui.Device.system.desktop) {
-			asyncTest("Disabled Item with Submenu", function() {
+			QUnit.test("Disabled Item with Submenu", function(assert) {
+				var done = assert.async();
 				openRootMenu(true);
 				lastSelectedItemId = null;
 				checkHoveredItem(null);
@@ -664,7 +668,7 @@
 						ok(oSubMenu.bOpen, "Submenu still open");
 						ok(!oSubSubMenu.bOpen, "SubSubmenu not open");
 						closeAllMenusAndCheck();
-						start();
+						done();
 					}, DELAY_SUBMENU_TIMER);
 				}, DELAY_SUBMENU_TIMER);
 			});
@@ -780,11 +784,11 @@
 		});
 
 
-		asyncTest("Keyboard - Arrow Down, Arrow Up, Escape", function() {
+		QUnit.test("Keyboard - Arrow Down, Arrow Up, Escape", function(assert) {
+			var done = assert.async();
 			lastSelectedItemId = null;
 			var sTfId = "item12-tf";
 			setTimeout(function(){
-				start();
 				openMenu(oSpecialMenu);
 				checkHoveredItem("item11", oSpecialMenu);
 				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
@@ -816,14 +820,15 @@
 				ok(!lastSelectedItemId, "No Event triggered on Escape");
 
 				equals(oMenuItems["item12"].getValue(), "FilterValue", "Value of item after Escape");
+				done();
 			}, 100);
 		});
 
-		asyncTest("Keyboard - Page-up, Page-down", function() {
+		QUnit.test("Keyboard - Page-up, Page-down", function(assert) {
+			var done = assert.async();
 			lastSelectedItemId = null;
 			var sTfId = "item12-tf";
 			setTimeout(function(){
-				start();
 				openMenu(oSpecialMenu);
 				checkHoveredItem("item11", oSpecialMenu);
 				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
@@ -844,14 +849,15 @@
 
 				qutils.triggerKeyboardEvent(sTfId, "PAGE_UP");
 				checkHoveredItem("item11", oSpecialMenu);
+				done();
 			}, 100);
 		});
 
-		asyncTest("Keyboard - Home, End, Enter", function() {
+		QUnit.test("Keyboard - Home, End, Enter", function(assert) {
+			var done = assert.async();
 			lastSelectedItemId = null;
 			var sTfId = "item12-tf";
 			setTimeout(function(){
-				start();
 				openMenu(oSpecialMenu);
 				checkHoveredItem("item11", oSpecialMenu);
 				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
@@ -894,6 +900,7 @@
 				equals(lastSelectedItemId, "item12", "Event triggered on selected item:");
 
 				equals(oMenuItems["item12"].getValue(), "FilterValueA", "Value of item after Enter");
+				done();
 			}, 100);
 		});
 

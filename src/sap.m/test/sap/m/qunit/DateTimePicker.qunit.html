@@ -124,7 +124,8 @@
 				}
 			});
 
-			asyncTest("Time sliders are updated right after popup is open", function() {
+			QUnit.test("Time sliders are updated right after popup is open", function(assert) {
+				var done = assert.async();
 				//Prepare
 				var oDTP = new sap.m.DateTimePicker().placeAt("uiArea1");
 				sap.ui.getCore().applyChanges();
@@ -142,7 +143,7 @@
 					//Cleanup
 					oSpyUpdateSlidersFn.restore();
 					oDTP.destroy();
-					start();
+					done();
 				}, 400);
 			});
 
@@ -182,7 +183,8 @@
 			QUnit.test("change date by Pageup/down", function(assert) {
 			});
 */
-			asyncTest("change date using calendar - open", function() {
+			QUnit.test("change date using calendar - open", function(assert) {
+				var done = assert.async();
 				bChange = false;
 				sValue = "";
 				sId = "";
@@ -219,11 +221,12 @@
 					}
 					aHours[iIndex].focus();
 					qutils.triggerKeyboardEvent(aHours[iIndex], jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
-					start();
+					done();
 				}, 400);
 			});
 
-			asyncTest("change date using calendar - choose", function() {
+			QUnit.test("change date using calendar - choose", function(assert) {
+				var done = assert.async();
 				setTimeout(function(){
 					jQuery("#DTP3-OK").focus();
 					qutils.triggerKeydown("DTP3-OK", jQuery.sap.KeyCodes.ENTER, false, false, false);
@@ -235,7 +238,7 @@
 						equal(sValue, "2/10/16, 11:11 AM", "Value in internal format priovided");
 						equal(oDTP3.getValue(), "2/10/16, 11:11 AM", "Value in internal format set");
 						equal(oDTP3.getDateValue().getTime(), new Date("2016", "01", "10", "11", "11").getTime(), "DateValue set");
-						start();
+						done();
 					}, 600);
 				}, 400);
 			});

@@ -81,26 +81,28 @@
 				qutils.triggerKeyboardEvent(oOverlayContainer.getId() + "-openNew", jQuery.sap.KeyCodes.SPACE, false, false, false);
 			});
 
-			asyncTest("Open Method", function () {
+			QUnit.test("Open Method", function (assert) {
+				var done = assert.async();
 				expect(4);
 				ok(!oOverlayContainer.isOpen(), "Rendered OverlayContainer is not open");
 				oOverlayContainer.open();
 				ok(oOverlayContainer.isOpen(), "Rendered OverlayContainer is open");
 				setTimeout(
 						function () {
-							start();
 							ok(jQuery.sap.domById(oOverlayContainer.getId() + "Button"), "Rendered Content should exist in the page");
+							done();
 						}, 500);
 			});
 
 			// at the end close
-			asyncTest("Close Event", function () {
+			QUnit.test("Close Event", function (assert) {
+				var done = assert.async();
 				expect(3);
 				ok(oOverlayContainer.isOpen(), "Rendered OverlayContainer is open");
 				qutils.triggerMouseEvent(jQuery.sap.byId(oOverlayContainer.getId() + "-close"), "click", 1, 1, 1, 1);
 				setTimeout(function () {
-					start();
 					ok(!oOverlayContainer.isOpen(), "Rendered OverlayContainer is not open");
+					done();
 				}, 500);
 			});
 

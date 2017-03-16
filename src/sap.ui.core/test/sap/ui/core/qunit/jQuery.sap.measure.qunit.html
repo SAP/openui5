@@ -22,7 +22,8 @@
 
 		QUnit.module("Performance");
 
-		asyncTest("Simple Measurement", 10, function() {
+		QUnit.test("Simple Measurement", 10, function(assert) {
+			var done = assert.async();
 			jQuery.sap.measure.clear();
 			var oMeasurement = jQuery.sap.measure.start("qUnit_Test_1", "This is the first test measure");
 			equal(oMeasurement.id, "qUnit_Test_1", "ID in start set");
@@ -38,7 +39,6 @@
 			oMeasurement = undefined;
 
 			var delayedCall = function(){
-				start();
 				oMeasurement = jQuery.sap.measure.end("qUnit_Test_1");
 				equal(oMeasurement.id, "qUnit_Test_1", "Measurement found for end");
 				equal(oMeasurement.start, iStart, "Start time still th same");
@@ -49,12 +49,14 @@
 				equal(oMeasurement.id, "qUnit_Test_1", "Measurement found for getMeasurement");
 				ok(oMeasurement.time > 0, "time > 0");
 				equal(oMeasurement.time, oMeasurement.duration, "time = duration");
+				done();
 			};
 			setTimeout(delayedCall, 100);
 
 		});
 
-		asyncTest("Measurement with break", 11, function() {
+		QUnit.test("Measurement with break", 11, function(assert) {
+			var done = assert.async();
 			oMeasurement = jQuery.sap.measure.pause("qUnit_Test_2");
 			equal(oMeasurement.id, "qUnit_Test_2", "Measurement found for pause");
 			ok(oMeasurement.start > 0, "Start time set");
@@ -69,7 +71,6 @@
 				jQuery.sap.measure.resume("qUnit_Test_3");
 				oMeasurement = undefined;
 				var delayedCall2 = function(){
-					start();
 					oMeasurement = jQuery.sap.measure.end("qUnit_Test_2");
 					equal(oMeasurement.id, "qUnit_Test_2", "Measurement found for end");
 					ok(oMeasurement.end > 0, "end time set");
@@ -80,13 +81,15 @@
 					ok(oMeasurement.time > 0, "time > 0");
 					ok(oMeasurement.duration > 0, "duration > 0");
 					ok(oMeasurement.time > oMeasurement.duration, "duration < time");
+					done();
 				};
 				setTimeout(delayedCall2, 100);
 			};
 			setTimeout(delayedCall, 100);
 		});
 
-		asyncTest("Measurement with 2 breaks", 11, function() {
+		QUnit.test("Measurement with 2 breaks", 11, function(assert) {
+			var done = assert.async();
 			oMeasurement = jQuery.sap.measure.pause("qUnit_Test_3");
 			equal(oMeasurement.id, "qUnit_Test_3", "Measurement found for pause");
 			ok(oMeasurement.start > 0, "Start time set");
@@ -99,7 +102,6 @@
 
 				oMeasurement = undefined;
 				var delayedCall2 = function(){
-					start();
 					oMeasurement = jQuery.sap.measure.end("qUnit_Test_3");
 					equal(oMeasurement.id, "qUnit_Test_3", "Measurement found for end");
 					ok(oMeasurement.end > 0, "end time set");
@@ -110,6 +112,7 @@
 					ok(oMeasurement.time > 0, "time > 0");
 					ok(oMeasurement.duration > 0, "duration > 0");
 					ok(oMeasurement.time > oMeasurement.duration, "duration < time");
+					done();
 				};
 				setTimeout(delayedCall2, 100);
 			};

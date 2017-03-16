@@ -254,7 +254,8 @@
 			oImage.destroy();
 		});
 
-		asyncTest("Image with mode sap.m.ImageMode.Background", function() {
+		QUnit.test("Image with mode sap.m.ImageMode.Background", function(assert) {
+			var done = assert.async();
 			var oImage = createImage({
 				mode: sap.m.ImageMode.Background
 			});
@@ -275,7 +276,7 @@
 				equal($Image.css("background-repeat"), "no-repeat", "backgroundRepeat property is set by default to 'no-repeat' and output to the dom CSS style");
 				oImage.destroy();
 				equal(oImage._oImage, null, "internal image instance is also set to null");
-				start();
+				done();
 			});
 
 		});
@@ -299,7 +300,8 @@
 			oImage.destroy();
 		});
 
-		asyncTest("Original Width", function() {
+		QUnit.test("Original Width", function(assert) {
+			var done = assert.async();
 			var oImage = createImage();
 
 			// System under test
@@ -318,11 +320,12 @@
 
 				// Clean up
 				oImage.destroy();
-				start();
+				done();
 			}, 100);
 		});
 
-		asyncTest("Dimension Changes", function() {
+		QUnit.test("Dimension Changes", function(assert) {
+			var done = assert.async();
 			var oImage = createImage();
 
 			// System under test
@@ -342,11 +345,12 @@
 
 				// Clean up
 				oImage.destroy();
-				start();
+				done();
 			}, 1000);
 		});
 
-		asyncTest("Aspect Ratio", function() {
+		QUnit.test("Aspect Ratio", function(assert) {
+			var done = assert.async();
 			var oImage = createImage();
 
 			// System under test
@@ -365,7 +369,7 @@
 
 				// Clean up
 				oImage.destroy();
-				start();
+				done();
 			}, 100);
 		});
 
@@ -373,7 +377,8 @@
 	QUnit.module("Density Aware");
 
 		if (window.devicePixelRatio > 1) {
-			asyncTest("Density Aware deafult value (true)", function() {
+			QUnit.test("Density Aware deafult value (true)", function(assert) {
+				var done = assert.async();
 				var oImage = createImage({
 					width: "",
 					height: ""
@@ -393,11 +398,12 @@
 
 					// Clean up
 					oImage.destroy();
-					start();
+					done();
 				}, 1000);
 			});
 
-			asyncTest("Density Aware set to false", function() {
+			QUnit.test("Density Aware set to false", function(assert) {
+				var done = assert.async();
 				var oImage = createImage({
 					densityAware: false,
 					width: "",
@@ -418,11 +424,12 @@
 
 					// Clean up
 					oImage.destroy();
-					start();
+					done();
 				}, 1000);
 			});
 
-			asyncTest("Loading default image when high resolution image not available", function() {
+			QUnit.test("Loading default image when high resolution image not available", function(assert) {
+				var done = assert.async();
 				var oImage = createImage({
 					src: sSrc3
 				});
@@ -438,12 +445,13 @@
 
 					// Clean up
 					oImage.destroy();
-					start();
+					done();
 				}, 1000);
 			});
 		}
 
-		asyncTest("Image with density 1.5, source handling after rerendering", function() {
+		QUnit.test("Image with density 1.5, source handling after rerendering", function(assert) {
+			var done = assert.async();
 			var oSandbox = sinon.sandbox.create();
 			oSandbox.stub(sap.m.Image, "_currentDevicePixelRatio", 1.5);
 
@@ -461,7 +469,7 @@
 					oImage.destroy();
 					// Restore the stubbed property in the callback
 					oSandbox.restore();
-					start();
+					done();
 				});
 			});
 		});
@@ -470,7 +478,8 @@
 	QUnit.module("Src and ActiveSrc properties");
 
 		if (window.devicePixelRatio === 1) {
-			asyncTest("Active Source Changed when pressed", function() {
+			QUnit.test("Active Source Changed when pressed", function(assert) {
+				var done = assert.async();
 				var oImage = createImage({
 					src: sSrcAction,
 					activeSrc: sSrcActionPressed,
@@ -500,13 +509,14 @@
 						equal($oImage.attr("src"), sSrcAction);
 						// Clean up
 						oImage.destroy();
-						start();
+						done();
 					}, 50);
 				}, 50);
 			});
 		}
 
-		asyncTest("Image with valid src", function() {
+		QUnit.test("Image with valid src", function(assert) {
+			var done = assert.async();
 
 			var oLoadSpy = sinon.spy(function() {
 					var $Image = oImage.$();
@@ -514,7 +524,7 @@
 					equal(oErrorSpy.callCount, 0, "Error handler isn't called");
 
 					oImage.destroy();
-					start();
+					done();
 				}),
 				oErrorSpy = sinon.spy();
 
@@ -529,14 +539,15 @@
 			oCore.applyChanges();
 		});
 
-		asyncTest("Image with Invalid src and src change", function() {
+		QUnit.test("Image with Invalid src and src change", function(assert) {
+			var done = assert.async();
 			var oLoadSpy = sinon.spy(function() {
 					var $oImage = jQuery.sap.byId(sControlId);
 					equal($oImage.css("visibility"), "visible", "Image with valid src should be set back to visible");
 					equal(oErrorSpy.callCount, 1, "error handler isn't called again");
 
 					oImage.destroy();
-					start();
+					done();
 				}),
 				oErrorSpy = sinon.spy(function() {
 					equal(oLoadSpy.callCount, 0 ,"load handler shouldn't be called");
@@ -632,14 +643,15 @@
 
 	QUnit.module("Bug fixes");
 
-		asyncTest("Image with valid src under densityAware turned off", function() {
+		QUnit.test("Image with valid src under densityAware turned off", function(assert) {
+			var done = assert.async();
 			var oLoadSpy = sinon.spy(function() {
 					var $Image = oImage.$();
 					equal($Image.css("visibility"), "visible", "Image with valid src should be visible");
 					equal(oErrorSpy.callCount, 0, "Error handler isn't called");
 
 					oImage.destroy();
-					start();
+					done();
 				}),
 				oErrorSpy = sinon.spy();
 
@@ -654,14 +666,15 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		asyncTest("Image with Invalid src and src change under densityAware turned off", function() {
+		QUnit.test("Image with Invalid src and src change under densityAware turned off", function(assert) {
+			var done = assert.async();
 			var oLoadSpy = sinon.spy(function() {
 					var $Image = oImage.$();
 					equal($Image.css("visibility"), "visible", "Image with valid src should be set back to visible");
 					equal(oErrorSpy.callCount, 1, "error handler isn't called again");
 
 					oImage.destroy();
-					start();
+					done();
 				}),
 				oErrorSpy = sinon.spy(function() {
 					equal(oLoadSpy.callCount, 0 ,"load handler shouldn't be called");
@@ -684,7 +697,8 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		asyncTest("Image with density 1.5, source handling after rerendering", function() {
+		QUnit.test("Image with density 1.5, source handling after rerendering", function(assert) {
+			var done = assert.async();
 			var oSandbox = sinon.sandbox.create(),
 				oLoadSpy = sinon.spy(function() {
 					equal(oErrorSpy.callCount, 0, "error event handler shouldn't be called");
@@ -710,7 +724,7 @@
 					oImage.destroy();
 					// Restore the stubbed property in the callback
 					oSandbox.restore();
-					start();
+					done();
 				});
 			});
 		});

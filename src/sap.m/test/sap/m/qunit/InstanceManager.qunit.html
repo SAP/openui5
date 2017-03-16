@@ -104,13 +104,13 @@
 					ok(im.hasOpenPopover(), "There is popover open");
 					ok(im.isPopoverOpen(this), "This popover is open");
 					equal(im.getOpenPopovers().length, 1, "There is one popover open");
-					start();
+					QUnit.start();
 				},
 				afterClose:function(){
 					ok(!im.hasOpenPopover(), "There is popover open");
 					ok(!im.isPopoverOpen(this), "This Popover isn't open");
 					equal(im.getOpenPopovers().length, 0, "There is no dialog open");
-					start();
+					QUnit.start();
 				},
 				content: [
 					oScrollContainer
@@ -143,13 +143,13 @@
 					ok(im.hasOpenDialog(), "There is dialog open");
 					ok(im.isDialogOpen(this), "This dialog is open");
 					equal(im.getOpenDialogs().length, 1, "There is one dialog open");
-					start();
+					QUnit.start();
 				},
 				afterClose: function(){
 					ok(!im.hasOpenDialog(), "There is dialog open");
 					ok(!im.isDialogOpen(this), "This dialog isn't open");
 					equal(im.getOpenDialogs().length, 0, "There is no dialog open");
-					start();
+					QUnit.start();
 				}
 			});
 
@@ -199,12 +199,14 @@
 
 
 			QUnit.module("Open and close Dialog");
-			asyncTest("Open Dialog", function(){
+			QUnit.test("Open Dialog", function(assert){
+				var done = assert.async();
 				oDialog.open();
 				expect(3);
 			});
 
-			asyncTest("Close Dialog", function(){
+			QUnit.test("Close Dialog", function(assert){
+				var done = assert.async();
 				im.closeAllDialogs();
 				expect(3);
 			});
@@ -253,12 +255,14 @@
             });
 
 			QUnit.module("Open and close Popover");
-			asyncTest("Open Dialog", function(){
+			QUnit.test("Open Dialog", function(assert){
+				var done = assert.async();
 				oPopover.openBy(oButton);
 				expect(3);
 			});
 
-			asyncTest("Close Dialog", function(){
+			QUnit.test("Close Dialog", function(assert){
+				var done = assert.async();
 				im.closeAllPopovers();
 				expect(3);
 			});

@@ -1047,7 +1047,8 @@
 
 	QUnit.module("Events");
 
-	asyncTest("Change Event", function() {
+	QUnit.test("Change Event", function(assert) {
+		var done = assert.async();
 		// Randomize number of repetitions
 		var iRepetitions = Math.round(Math.random() * 20);
 		var iDelay = 50;
@@ -1092,7 +1093,7 @@
 						"Number of triggered change-events equals number of changes ("+ mTests.changed +"/"+ mTests.changes +")"
 					);
 
-					start();
+					done();
 				}, iDelay + 10);
 			}
 		};

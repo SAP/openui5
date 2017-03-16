@@ -110,7 +110,8 @@
 				strictEqual(this.sut.getDetailPages().length, 3, "Now details pages should remain 3");
 			});
 
-			asyncTest("Destroy showMasterBtn during page navigation", function(){
+			QUnit.test("Destroy showMasterBtn during page navigation", function(assert){
+				var done = assert.async();
 				var oSplitContainer = new sap.m.SplitContainer({
 					detailNavigate: function(){
 						ok(this._oShowMasterBtn.bIsDestroyed, "showMasterBtn is destroyed with the customHeader together");
@@ -118,7 +119,7 @@
 					afterDetailNavigate: function(){
 						ok(!this._oShowMasterBtn.bIsDestroyed, "showMasterBtn should be recreated after page navigation");
 						this.destroy();
-						start();
+						done();
 					}
 				});
 				oSplitContainer.setMode(sap.m.SplitAppMode.HideMode);
@@ -154,7 +155,8 @@
 				oButton.firePress();
 			});
 
-			asyncTest("No endless rerendering triggered by invalidation after navigation", function(){
+			QUnit.test("No endless rerendering triggered by invalidation after navigation", function(assert){
+				var done = assert.async();
 				var oSystem = {
 						desktop: true,
 						phone: false,
@@ -223,7 +225,7 @@
 					oSC.detachAfterMasterClose(fnMasterClose);
 					equal(oSpy.callCount, 1, "invalidate should be called once after rendering");
 					oApp.destroy();
-					start();
+					done();
 				};
 
 				var fnMasterOpen = function() {
@@ -241,7 +243,8 @@
 				oSC.showMaster();
 			});
 
-			asyncTest("Master button should be hidden in portrait mode with ShowHideMode", function(){
+			QUnit.test("Master button should be hidden in portrait mode with ShowHideMode", function(assert){
+				var done = assert.async();
 				var oLandscape = {
 							landscape: true,
 							portrait: false
@@ -283,7 +286,7 @@
 							// restore the stubs
 							sap.ui.Device.orientation = oOldOrientation;
 							sap.ui.Device.system = oOldSystem;
-							start();
+							done();
 						} else if (toId === "page2") {
 							// manually sub the orientation object on sap.ui.Device
 							sap.ui.Device.orientation = oLandscape;
@@ -299,7 +302,8 @@
 				oSplitContainer.toDetail("page2");
 			});
 
-			asyncTest("activeElement in master area should be blurred after master area is closed", function(){
+			QUnit.test("activeElement in master area should be blurred after master area is closed", function(assert){
+				var done = assert.async();
 				var oPortrait = {
 						landscape: false,
 						portrait: true
@@ -328,7 +332,7 @@
 					afterMasterClose: function(){
 						notEqual(oInput.getFocusDomRef(), document.activeElement, "Focus should be removed from the master area after master is closed");
 						oSplitContainer.destroy();
-						start();
+						done();
 					}
 				});
 
@@ -718,7 +722,8 @@
 				oSplitContainer.destroy();
 			});
 
-			asyncTest("Switch between different modes", function() {
+			QUnit.test("Switch between different modes", function(assert) {
+				var done = assert.async();
 				var oSplitContainer = new sap.m.SplitContainer({
 						masterPages: new sap.m.Page(),
 						detailPages: new sap.m.Page()
@@ -769,7 +774,7 @@
 
 					oSplitContainer.destroy();
 					sap.ui.Device.orientation = oOldOrientation;
-					start();
+					done();
 				});
 			});
 
