@@ -485,7 +485,7 @@
 		},
 		{
 		  "id": "sap.m.ImageContent",
-		  "name": "ImageContent",
+		  "name": "Image Content",
 		  "category": "Tile",
 		  "since": "1.38",
 		  "samples": ["sap.m.sample.ImageContent"]
