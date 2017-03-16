@@ -138,10 +138,29 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 	margin-bottom: 0;
 }
 
+.sapUxAPBlockContainerDesktop {
+	padding: 1rem 2rem 3rem 2rem;
+}
+.sapUxAPBlockContainerTablet {
+	padding: 1rem 1rem 3rem 1rem;
+}
+.sapUxAPBlockContainerPhone {
+	padding: 1rem 0 1rem 0;
+}
+
 /* compact size */
-.sapUiSizeCompact .sapUxAPObjectPageSubSectionHeaderTitle {
-	height: 2rem;
-	line-height: 2rem;
+.sapUiSizeCompact {
+	.sapUxAPObjectPageSubSectionHeaderTitle {
+		height: 2rem;
+		line-height: 2rem;
+	}
+	.sapUxAPBlockContainerDesktop {
+		padding: 1rem 2rem 2rem 2rem;
+	}
+	.sapUxAPBlockContainerTablet,
+	.sapUxAPBlockContainerPhone{
+		padding: 1rem 1rem 2rem 1rem;
+	}
 }
 
 /* IE ignores outline-offset. Use an overlay: */
