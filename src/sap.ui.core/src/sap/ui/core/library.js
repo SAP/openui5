@@ -25,6 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"void",
 
 			// simple types and enums
+			"sap.ui.core.AbsoluteCSSSize",
 			"sap.ui.core.AccessibleRole",
 			"sap.ui.core.AccessibleLandmarkRole",
 			"sap.ui.core.BarColor",
@@ -133,7 +134,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	/* eslint-enable no-undef */
 
 	/**
-	 * @classdesc A string type that represents CSS size values.
+	 * @classdesc A string type that represents non-relative CSS size values.
 	 *
 	 * This is a subtype of the <code>'&lt;length&gt; type'</code> defined in the CSS specifications.
 	 * Allowed values are only absolute CSS sizes like &quot;1px&quot; or &quot;2em&quot;. Percentage
@@ -142,7 +143,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 * are allowed as long as they do not use percentage sizes.
 	 *
 	 * Note that CSS might not allow all these values for every CSS property representing a size.
-	 * So even if a value is accepted by <code>sap.ui.core.CSSSize</code>, it still might have no effect
+	 * So even if a value is accepted by <code>sap.ui.core.AbsoluteCSSSize</code>, it still might have no effect
 	 * in a specific context. In other words: UI5 controls usually don't extend the range of allowed
 	 * values in CSS.
 	 *
@@ -150,7 +151,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 * <b>Units</b>
 	 *
 	 * Valid font-relative units are <code>em, ex</code> and <code>rem</code>. Supported absolute units
-	 * are <code>cm, mm, in, pc, pt</code> and <code>px</code>. Other units are not supported yet.
+	 * are <code>cm, mm, in, pc, pt</code> and <code>px</code>. Other units are not supported.
 	 *
 	 *
 	 * <b>Mathematical Expressions</b>
