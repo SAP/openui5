@@ -75,6 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.QuickViewGroupElementType",
 			"sap.m.RatingIndicatorVisualMode",
 			"sap.m.ScreenSize",
+			"sap.m.SelectionDetailsActionLevel",
 			"sap.m.SelectListKeyboardNavigationMode",
 			"sap.m.SelectType",
 			"sap.m.SplitAppMode",
@@ -2458,6 +2459,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	};
 
+	/**
+	 * Enumeration for different action levels in SelectionDetails.
+	 *
+	 * @enum {string}
+	 * @private
+	 * @since 1.48
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.SelectionDetailsActionLevel = {
+
+		/**
+		 * Action on SelectionDetailsItem level.
+		 * @private
+		 */
+		Item : "Item",
+
+		/**
+		 * Action on SelectionDetails list level.
+		 * @private
+		 */
+		List : "List",
+
+		/**
+		 * ActionGroup on SelectionDetails list level.
+		 * @private
+		 */
+		Group : "Group"
+	};
 
 	/**
 	 * Enumeration for different Select types.
