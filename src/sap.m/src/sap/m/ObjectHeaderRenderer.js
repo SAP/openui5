@@ -768,6 +768,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.addClass("sapMOHROuter");
 		oRM.writeClasses();
 
+		var sTooltip = oOH.getTooltip_AsString();
+		if (sTooltip) {
+			oRM.writeAttributeEscaped("title", sTooltip);
+		}
+
 		//ARIA attributes
 		oRM.writeAccessibilityState({
 			role : "region",
