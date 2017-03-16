@@ -17,7 +17,7 @@ sap.ui.define([
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"}),
-		sServiceNamespace = "com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.";
+		sServiceNamespace = "com.sap.gateway.default.zui5_epm_sample.v0001.";
 
 //	function onRejected(oError) {
 //		jQuery.sap.log.error(oError.message, oError.stack);

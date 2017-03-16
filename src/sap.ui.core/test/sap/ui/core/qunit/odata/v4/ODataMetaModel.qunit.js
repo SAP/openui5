@@ -84,7 +84,7 @@ sap.ui.require([
 			}
 		},
 		sSampleServiceUrl
-			= "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/",
+			= "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/",
 		mScope = {
 			"$Annotations" : {
 				"name.space.Id" : {
@@ -2652,7 +2652,7 @@ sap.ui.require([
 			oProperty = {},
 			oValueListMetadata = {
 				"$Annotations" : {
-					"gw_sample_basic.Product/Category" : {
+					"zui5_epm_sample.Product/Category" : {
 						"@com.sap.vocabularies.Common.v1.ValueListMapping" : oDefaultMapping,
 						"@com.sap.vocabularies.Common.v1.ValueListMapping#foo" : oFooMapping
 					},
@@ -2670,12 +2670,12 @@ sap.ui.require([
 			};
 
 		oMetaModelMock.expects("getObject")
-			.withExactArgs("/gw_sample_basic.Product/Category")
+			.withExactArgs("/zui5_epm_sample.Product/Category")
 			.returns(oProperty);
 
 		// code under test
 		return oModel.getMetaModel()
-			.fetchValueListMappings(oValueListModel, "gw_sample_basic", oProperty)
+			.fetchValueListMappings(oValueListModel, "zui5_epm_sample", oProperty)
 			.then(function (oValueListMappings) {
 				assert.deepEqual(oValueListMappings, {
 					"" : oDefaultMapping,
@@ -2687,18 +2687,18 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		annotations : {
-			"gw_sample_basic.Product/CurrencyCode/type.cast" : true
+			"zui5_epm_sample.Product/CurrencyCode/type.cast" : true
 		},
-		error : "Unexpected annotation target 'gw_sample_basic.Product/CurrencyCode/type.cast' " +
+		error : "Unexpected annotation target 'zui5_epm_sample.Product/CurrencyCode/type.cast' " +
 			"with namespace of data service in /Foo/ValueListService"
 	}, {
 		annotations : {
-			"gw_sample_basic.Product/Category" : {
+			"zui5_epm_sample.Product/Category" : {
 				"@some.other.Term" : true
 			}
 		},
 		error : "Unexpected annotation 'some.other.Term' for target "
-			+ "'gw_sample_basic.Product/Category' with namespace of data service "
+			+ "'zui5_epm_sample.Product/Category' with namespace of data service "
 			+ "in /Foo/ValueListService"
 	}, {
 		annotations : {},
@@ -2730,11 +2730,11 @@ sap.ui.require([
 
 			oMetaModelMock.expects("getObject").atLeast(0)
 				.withExactArgs("/" + sTarget)
-				.returns(sTarget === "gw_sample_basic.Product/Category" ? oProperty : undefined);
+				.returns(sTarget === "zui5_epm_sample.Product/Category" ? oProperty : undefined);
 
 			// code under test
 			return oMetaModel
-				.fetchValueListMappings(oValueListModel, "gw_sample_basic", oProperty)
+				.fetchValueListMappings(oValueListModel, "zui5_epm_sample", oProperty)
 				.then(function () {
 					assert.ok(false);
 				}, function (oError) {
@@ -2830,13 +2830,13 @@ sap.ui.require([
 				},
 				sPropertyPath = "/ProductList('HT-1000')/Category",
 				oMetadata = {
-					"$EntityContainer" : "gw_sample_basic.Container",
-					"gw_sample_basic.Product" : {
+					"$EntityContainer" : "zui5_epm_sample.Container",
+					"zui5_epm_sample.Product" : {
 						"$kind" : "Entity",
 						"Category" : oProperty
 					},
 					"$Annotations" : {
-						"gw_sample_basic.Product/Category" : {
+						"zui5_epm_sample.Product/Category" : {
 							"@com.sap.vocabularies.Common.v1.ValueListReferences" :
 								[sMappingUrl1, sMappingUrl2],
 							"@com.sap.vocabularies.Common.v1.ValueListReferences#bar" :
@@ -2846,10 +2846,10 @@ sap.ui.require([
 							"@some.other.Annotation" : true
 						}
 					},
-					"gw_sample_basic.Container" : {
+					"zui5_epm_sample.Container" : {
 						"ProductList" : {
 							"$kind" : "EntitySet",
-							"$Type" : "gw_sample_basic.Product"
+							"$Type" : "zui5_epm_sample.Product"
 						}
 					}
 				},
@@ -2871,21 +2871,21 @@ sap.ui.require([
 				.withExactArgs(sMappingUrl1)
 				.returns(oValueListModel1);
 			oMetaModelMock.expects("fetchValueListMappings")
-				.withExactArgs(sinon.match.same(oValueListModel1), "gw_sample_basic",
+				.withExactArgs(sinon.match.same(oValueListModel1), "zui5_epm_sample",
 					sinon.match.same(oProperty))
 				.returns(Promise.resolve(oValueListMappings1));
 			oMetaModelMock.expects("getOrCreateValueListModel")
 				.withExactArgs(sMappingUrl2)
 				.returns(oValueListModel2);
 			oMetaModelMock.expects("fetchValueListMappings")
-				.withExactArgs(sinon.match.same(oValueListModel2), "gw_sample_basic",
+				.withExactArgs(sinon.match.same(oValueListModel2), "zui5_epm_sample",
 					sinon.match.same(oProperty))
 				.returns(Promise.resolve(oValueListMappings2));
 			oMetaModelMock.expects("getOrCreateValueListModel")
 				.withExactArgs(sMappingUrlBar)
 				.returns(oValueListModelBar);
 			oMetaModelMock.expects("fetchValueListMappings")
-				.withExactArgs(sinon.match.same(oValueListModelBar), "gw_sample_basic",
+				.withExactArgs(sinon.match.same(oValueListModelBar), "zui5_epm_sample",
 					sinon.match.same(oProperty))
 				.returns(_SyncPromise.resolve(oValueListMappingsBar));
 
@@ -3033,20 +3033,20 @@ sap.ui.require([
 				"$kind" : "Property"
 			},
 			oMetadata = {
-				"$EntityContainer" : "gw_sample_basic.Container",
-				"gw_sample_basic.Container" : {
+				"$EntityContainer" : "zui5_epm_sample.Container",
+				"zui5_epm_sample.Container" : {
 					"$kind" : "EntityContainer",
 					"ProductList" : {
 						"$kind" : "EntitySet",
-						"$Type" : "gw_sample_basic.Product"
+						"$Type" : "zui5_epm_sample.Product"
 					}
 				},
-				"gw_sample_basic.Product" : {
+				"zui5_epm_sample.Product" : {
 					"$kind" : "Entity",
 					"Category" : oProperty
 				},
 				"$Annotations" : {
-					"gw_sample_basic.Product/Category" : {
+					"zui5_epm_sample.Product/Category" : {
 						"@com.sap.vocabularies.Common.v1.ValueListReferences" : [sMappingUrl],
 						"@com.sap.vocabularies.Common.v1.ValueListMapping#foo" : {}
 					}
@@ -3066,7 +3066,7 @@ sap.ui.require([
 			.withExactArgs(sMappingUrl)
 			.returns(oValueListModel);
 		oMetaModelMock.expects("fetchValueListMappings")
-			.withExactArgs(sinon.match.same(oValueListModel), "gw_sample_basic",
+			.withExactArgs(sinon.match.same(oValueListModel), "zui5_epm_sample",
 				sinon.match.same(oProperty))
 			.returns(Promise.resolve({"foo" : {}}));
 
@@ -3097,7 +3097,7 @@ sap.ui.require([
 
 			return oMetaModel.requestObject("/ProductList/").then(function () {
 				assert.strictEqual(oMetaModel.getValueListType(
-						"/com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.Contact/Sex"),
+						"/com.sap.gateway.default.zui5_epm_sample.v0001.Contact/Sex"),
 					ValueListType.Fixed);
 				assert.strictEqual(oMetaModel.getValueListType(sPropertyPath),
 					ValueListType.Standard);

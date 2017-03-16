@@ -5,7 +5,7 @@
 			Alias="Z__UI" />
 		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1"
 			Alias="Z__COM" />
-		<edmx:Include Namespace="com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001"
+		<edmx:Include Namespace="com.sap.gateway.default.zui5_epm_sample.v0001"
 			Alias="GW_SAMPLE" />
 	</edmx:Reference>
 	<edmx:Reference Uri="">
@@ -16,7 +16,7 @@
 		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures" />
 	</edmx:Reference>
 	<edmx:DataServices>
-		<Schema Namespace="my.v4_gw_sample_basic.v0001"
+		<Schema Namespace="my.zui5_epm_sample.v0001"
 			Alias="SAP__self" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 			<Annotations Target="GW_SAMPLE.BusinessPartner">
 				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
