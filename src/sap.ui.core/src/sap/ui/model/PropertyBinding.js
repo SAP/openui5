@@ -125,7 +125,7 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType','./DataState'],
 			throw oException;
 		}
 		// if no type specified set value directly
-		oDataState.setInvalidValue(null);
+		oDataState.setInvalidValue(undefined);
 		this.setValue(oValue);
 	};
 
