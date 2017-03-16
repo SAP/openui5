@@ -597,81 +597,71 @@
 		var fnEventSpy = sinon.spy(this.NotificationListItem, '_showHideTruncateButton');
 		this.NotificationListItem._deregisterResize();
 
-		// arrange
+		// arrange		
 		this.list.setWidth('50%');
 		sap.ui.getCore().applyChanges();
-		/** @type {DOMTokenList[]}
-         */
+
 		var buttonClassList = this.NotificationListItem.getDomRef('expandCollapseButton').classList;
 
 		// assert
 		assert.strictEqual(fnEventSpy.callCount, 1, 'The _showHideTruncateButton() method should be called.');
-		assert.strictEqual(buttonClassList.contains('sapMNLI-CollapseButtonHide'), false, 'The "Show More" button should be shown by default.');
+		assert.strictEqual(this.NotificationListItem.$('expandCollapseButton').hasClass('sapMNLI-CollapseButtonHide'), false, 'The hideShowMoreButton is not hidden');
 
-		// arrange
+		// arrange		
 		this.NotificationListItem.setHideShowMoreButton(true);
+
 		sap.ui.getCore().applyChanges();
 		buttonClassList = this.NotificationListItem.getDomRef('expandCollapseButton').classList;
 
 		// assert
 		assert.strictEqual(fnEventSpy.callCount, 2, 'The _showHideTruncateButton() method should be called again.');
-		assert.strictEqual(buttonClassList.contains('sapMNLI-CollapseButtonHide'), true, 'The "Show More" button should be hidden.');
+		assert.strictEqual(this.NotificationListItem.$('expandCollapseButton').hasClass('sapMNLI-CollapseButtonHide'), true, 'The hideShowMoreButton is hidden');
 	});
 
 	QUnit.test('Notifications truncate and hideShowMoreButton properties test', function(assert) {
+
 		//arrange
-		var title = "this is my Title",
-			description = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+		this.NotificationListItem.setTitle('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id lorem at ' +
+			'magna laoreet lobortis quis id tortor. Cras in tellus a nibh cursus porttitor et vel purus. Nulla neque ' +
+			'lacus, eleifend sed quam eget, facilisis luctus nulla. Vestibulum ut mollis sem, ac sollicitudin massa. ' +
+			'Mauris vehicula posuere tortor ac vulputate.');
 
-		var oItem1 = new sap.m.NotificationListItem({
-			title: title,
-			description: description,
-			truncate: false,
-			hideShowMoreButton: false
-		});
-
-		var oItem2 = new sap.m.NotificationListItem({
-			title: title,
-			description: description,
-			truncate: false,
-			hideShowMoreButton: true
-		});
-
-		var oItem3 = new sap.m.NotificationListItem({
-			title: title,
-			description: description,
-			truncate: true,
-			hideShowMoreButton: false
-		});
-
-		var oItem4 = new sap.m.NotificationListItem({
-			title: title,
-			description: description,
-			truncate: true,
-			hideShowMoreButton: true
-		});
-
-		var oList = new sap.m.List({
-			items: [oItem1, oItem2, oItem3, oItem4]
-		});
-
-		oList.placeAt(RENDER_LOCATION);
+		this.NotificationListItem.setDescription('Donec felis sem, tincidunt vitae gravida eget, egestas sit amet dolor. ' +
+			'Duis mauris erat, eleifend sit amet dapibus vel, cursus quis ante. Pellentesque erat dui, aliquet id ' +
+			'fringilla eget, aliquam at odio. Interdum et malesuada fames ac ante ipsum primis in faucibus. ' +
+			'Donec tincidunt semper mattis. Nunc id convallis ex. Sed bibendum volutpat urna, vitae eleifend nisi ' +
+			'maximus id. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. ' +
+			'Nunc suscipit nulla ligula, ut faucibus ex pellentesque vel. Suspendisse id aliquet mauris. ');
 
 		sap.ui.getCore().applyChanges();
 
-		//assert
-		assert.ok(!oItem1.$('expandCollapseButton').hasClass('sapMNLI-CollapseButtonHide'), 'Notification\'s Show More button is visible');
-		assert.ok(oItem2.$('expandCollapseButton').hasClass('sapMNLI-CollapseButtonHide'), 'Notification\'s Show More button is not visible');
-		assert.ok(!oItem3.$('expandCollapseButton').hasClass('sapMNLI-CollapseButtonHide'), 'Notification\'s Show More button is visible');
-		assert.ok(oItem4.$('expandCollapseButton').hasClass('sapMNLI-CollapseButtonHide'), 'Notification\'s Show More button is not visible');
+		//act
+		this.NotificationListItem.setTruncate(false);
 
-		assert.ok(oItem1.$().find('.sapMNLI-TextWrapper').hasClass('sapMNLI-TextWrapper--is-expanded'), 'Notification is expanded');
-		assert.ok(oItem2.$().find('.sapMNLI-TextWrapper').hasClass('sapMNLI-TextWrapper--is-expanded'), 'Notification is expanded');
-		assert.ok(!oItem3.$().find('.sapMNLI-TextWrapper').hasClass('sapMNLI-TextWrapper--is-expanded'), 'Notification is not expanded');
-		assert.ok(!oItem4.$().find('.sapMNLI-TextWrapper').hasClass('sapMNLI-TextWrapper--is-expanded'), 'Notification is not expanded');
+		//assert - no truncate and button
+		assert.strictEqual(this.NotificationListItem.getTruncate(), false, 'The truncate property is set to false');
+		assert.strictEqual(this.NotificationListItem.getHideShowMoreButton(), false, 'The hideShowMoreButton property is false by default');
 
+		//act
+		this.NotificationListItem.setHideShowMoreButton(true);
+		//assert - no truncate but with button - which is implossible
+		assert.strictEqual(this.NotificationListItem.getTruncate(), false, 'The truncate property is set to false');
+		assert.strictEqual(this.NotificationListItem.getHideShowMoreButton(), true, 'The hideShowMoreButton property is set to true');
 
+		//act
+		this.NotificationListItem.setTruncate(true);
+		this.NotificationListItem.setHideShowMoreButton(true);
 
+		//assert - with truncate and button
+		assert.strictEqual(this.NotificationListItem.getTruncate(), true, 'The truncate property is set to true');
+		assert.strictEqual(this.NotificationListItem.getHideShowMoreButton(), true, 'The hideShowMoreButton property is set to true');
+
+		//act
+		this.NotificationListItem.setHideShowMoreButton(false);
+
+		//assert - with truncate but no button - default
+		assert.strictEqual(this.NotificationListItem.getTruncate(), true, 'The truncate property is set to true');
+		assert.strictEqual(this.NotificationListItem.getHideShowMoreButton(), false, 'The hideShowMoreButton property is false by default');
 	});
 
 	QUnit.test('Notifications on L size (bigger than 640px) should position footer differently', function(assert) {
