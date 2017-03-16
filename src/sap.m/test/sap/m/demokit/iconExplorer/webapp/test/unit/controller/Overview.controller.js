@@ -33,7 +33,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Should keep the context and set the new value when updating the hash", function () {
+	QUnit.test("Should keep the context and set the new value when updating the hash", function (assert) {
 		this.oOverviewController._oCurrentQueryContext.tab = "test";
 		this.oOverviewController._oCurrentQueryContext.icon = "test";
 		this.oOverviewController._oCurrentQueryContext.tag = "test";
@@ -50,37 +50,37 @@ sap.ui.define([
 		}});
 	});
 
-	QUnit.test("Should write the parameter to the hash if key and value are passed", function () {
+	QUnit.test("Should write the parameter to the hash if key and value are passed", function (assert) {
 		this.oOverviewController._updateHash("foo", "bar");
 		sinon.assert.calledWith(this.oRouterStub.navTo, "overview", {query: {foo: "bar"}});
 	});
 
-	QUnit.test("Should update the tab properly in the hash", function () {
+	QUnit.test("Should update the tab properly in the hash", function (assert) {
 		this.oOverviewController._updateHash("tab", "test");
 		sinon.assert.calledWith(this.oRouterStub.navTo, "overview", {query: {tab: "test"}});
 	});
 
-	QUnit.test("Should update the icon properly in the hash", function () {
+	QUnit.test("Should update the icon properly in the hash", function (assert) {
 		this.oOverviewController._updateHash("icon", "test");
 		sinon.assert.calledWith(this.oRouterStub.navTo, "overview", {query: {icon: "test"}});
 	});
 
-	QUnit.test("Should update the tag properly in the hash", function () {
+	QUnit.test("Should update the tag properly in the hash", function (assert) {
 		this.oOverviewController._updateHash("tag", "test");
 		sinon.assert.calledWith(this.oRouterStub.navTo, "overview", {query: {tag: "test"}});
 	});
 
-	QUnit.test("Should update the category properly in the hash", function () {
+	QUnit.test("Should update the category properly in the hash", function (assert) {
 		this.oOverviewController._updateHash("cat", "test");
 		sinon.assert.calledWith(this.oRouterStub.navTo, "overview", {query: {cat: "test"}});
 	});
 
-	QUnit.test("Should update the search properly in the hash", function () {
+	QUnit.test("Should update the search properly in the hash", function (assert) {
 		this.oOverviewController._updateHash("search", "test");
 		sinon.assert.calledWith(this.oRouterStub.navTo, "overview", {query: {search: "test"}});
 	});
 
-	QUnit.test("Should reset tag and search in the hash when passing reset", function () {
+	QUnit.test("Should reset tag and search in the hash when passing reset", function (assert) {
 		this.oOverviewController._oCurrentQueryContext.tab = "test";
 		this.oOverviewController._oCurrentQueryContext.icon = "test";
 		this.oOverviewController._oCurrentQueryContext.tag = "test";
@@ -91,28 +91,28 @@ sap.ui.define([
 		sinon.assert.calledWith(this.oRouterStub.navTo, "overview", {query: {tab: "test", icon: "test"}});
 	});
 
-	QUnit.test("Should reset search in the hash when passing no value", function () {
+	QUnit.test("Should reset search in the hash when passing no value", function (assert) {
 		this.oOverviewController._oCurrentQueryContext.search = "test";
 
 		this.oOverviewController._updateHash("search");
 		sinon.assert.calledWith(this.oRouterStub.navTo, "overview", {query: {}});
 	});
 
-	QUnit.test("Should reset tag in the hash when passing no value", function () {
+	QUnit.test("Should reset tag in the hash when passing no value", function (assert) {
 		this.oOverviewController._oCurrentQueryContext.tag = "test";
 
 		this.oOverviewController._updateHash("tag");
 		sinon.assert.calledWith(this.oRouterStub.navTo, "overview", {query: {}});
 	});
 
-	QUnit.test("Should reset icon in the hash when passing no value", function () {
+	QUnit.test("Should reset icon in the hash when passing no value", function (assert) {
 		this.oOverviewController._oCurrentQueryContext.icon = "test";
 
 		this.oOverviewController._updateHash("icon");
 		sinon.assert.calledWith(this.oRouterStub.navTo, "overview", {query: {}});
 	});
 
-	QUnit.test("Should reset tag if category was changed", function () {
+	QUnit.test("Should reset tag if category was changed", function (assert) {
 		this.oOverviewController._oCurrentQueryContext.tag = "test";
 		this.oOverviewController._oCurrentQueryContext.cat = "test";
 
@@ -120,7 +120,7 @@ sap.ui.define([
 		sinon.assert.calledWith(this.oRouterStub.navTo, "overview", {query: {cat: "new"}});
 	});
 
-	QUnit.test("Should reset tag if category was changed to favorites", function () {
+	QUnit.test("Should reset tag if category was changed to favorites", function (assert) {
 		this.oOverviewController._oCurrentQueryContext.tag = "test";
 		this.oOverviewController._oCurrentQueryContext.tab = "details";
 
@@ -128,7 +128,7 @@ sap.ui.define([
 		sinon.assert.calledWith(this.oRouterStub.navTo, "overview", {query: {tab: "favorites"}});
 	});
 
-	QUnit.test("Should reset tag if category was changed from favorites", function () {
+	QUnit.test("Should reset tag if category was changed from favorites", function (assert) {
 		this.oOverviewController._oCurrentQueryContext.tag = "test";
 		this.oOverviewController._oCurrentQueryContext.tab = "favorites";
 

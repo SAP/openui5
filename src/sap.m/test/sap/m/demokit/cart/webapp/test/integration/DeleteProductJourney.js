@@ -20,8 +20,7 @@ sap.ui.define([
 		When.onHome.iPressOnTheSecondCategory();
 
 		// Assertions
-		Then.onTheCategory.
-			and.iShouldBeTakenToTheSecondCategory().
+		Then.onTheCategory.iShouldBeTakenToTheSecondCategory().
 			and.iShouldSeeTheProductList().
 			and.theProductListShouldHaveSomeEntries();
 	});

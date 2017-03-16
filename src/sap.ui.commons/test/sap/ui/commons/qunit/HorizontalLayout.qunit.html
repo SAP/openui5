@@ -32,13 +32,13 @@
 		oLayout1.placeAt("uiArea1");
 
 
-		test("Children Rendered", function() {
+		QUnit.test("Children Rendered", function(assert) {
 			ok(jQuery.sap.domById('B1'), "Button should be rendered");
 			ok(jQuery.sap.domById('TF1'), "TextField should be rendered");
 			ok(jQuery.sap.domById('B2'), "Second button should be rendered");
 		});
 
-		test("Layout", function() {
+		QUnit.test("Layout", function(assert) {
 			var oButton = jQuery.sap.byId('B1');
 			var oText = jQuery.sap.byId('TF1');
 			var oImage = jQuery.sap.byId('B2');
@@ -49,7 +49,7 @@
 			equal(oText[0].offsetLeft, oButton[0].offsetLeft + oButton[0].offsetWidth, "TextField should be exactly right of Button");
 		});
 
-		test("NoWrap", function() {
+		QUnit.test("NoWrap", function(assert) {
 			sap.ui.getCore().byId("TF1").setWidth("5000px");
 			sap.ui.getCore().applyChanges();
 
@@ -60,7 +60,7 @@
 			ok(oText.offset().left < oImage.offset().left, "Left offset of TextField < Second button");
 		});
 
-		test("Wrapping", function() {
+		QUnit.test("Wrapping", function(assert) {
 			oLayout1.setAllowWrapping(true);
 			sap.ui.getCore().applyChanges();
 
@@ -71,7 +71,7 @@
 			equal(oImage.offset().left, oText.offset().left, "Left offset of TextField == Second button");
 		});
 
-		test("Container Padding Classes", function () {
+		QUnit.test("Container Padding Classes", function (assert) {
 			// System under Test + Act
 			var oContainer = new sap.ui.layout.HorizontalLayout(),
 					sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px")),

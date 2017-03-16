@@ -150,9 +150,9 @@
 		// TEST functions
 		qutils.delayTestStart();
 
-		module("Properties");
+		QUnit.module("Properties");
 
-		test("Default Values", function() {
+		QUnit.test("Default Values", function(assert) {
 			equal(oRBGroup1.getEditable(), true, "Editable");
 			equal(oRBGroup1.getColumns(), 1, "Columns");
 			equal(oRBGroup1.getVisible(), true, "Visible");
@@ -161,7 +161,7 @@
 			equal(oRBGroup1.getSelectedIndex(), 0, "Selected Index");
 		});
 
-		test("Properties of Radio Buttons", function() {
+		QUnit.test("Properties of Radio Buttons", function(assert) {
 			equal(sap.ui.getCore().getElementById("RBG1-0").getText(), "Option 1", "RadioButton 0 - Text");
 			equal(sap.ui.getCore().getElementById("RBG1-0").getTooltip(), "Tooltip 1", "RadioButton 0 - Tooltip");
 			equal(sap.ui.getCore().getElementById("RBG1-0").getEnabled(), true, "RadioButton 0 - Enabled");
@@ -188,7 +188,7 @@
 
 		});
 
-		test("Toggle Enabled", function() {
+		QUnit.test("Toggle Enabled", function(assert) {
 			oRBGroup1.setEnabled(false);
 			sap.ui.getCore().applyChanges();
 			equal(jQuery("#RBG1").attr("tabindex"), -1, "RadioButtonGroup - Tabindex = -1");
@@ -214,22 +214,22 @@
 			equal(jQuery("#RBG1-3").attr("tabindex"), -1, "RadioButton 3 - Tabindex = -1");
 		});
 
-		module("Appearance");
+		QUnit.module("Appearance");
 
-		test("Visibility", function() {
+		QUnit.test("Visibility", function(assert) {
 			// Visible
 			ok(jQuery("#RBG1").get(0), "Visible, expected defined");
 			equal(jQuery("#RBG2").get(0), undefined, "Invisible");
 		});
 
-		test("Radio buttons rendered correctly", function () {
+		QUnit.test("Radio buttons rendered correctly", function (assert) {
 			ok(jQuery("#RBG1-0").get(0), "RadioButton 0, expected defined");
 			ok(jQuery("#RBG1-1").get(0), "RadioButton 1, expected defined");
 			ok(jQuery("#RBG1-2").get(0), "RadioButton 2, expected defined");
 			ok(jQuery("#RBG1-3").get(0), "RadioButton 3, expected defined");
 		});
 
-		test("Output of RadioButtons in first group", function () {
+		QUnit.test("Output of RadioButtons in first group", function (assert) {
 			// arrange
 			var iOffsetLeft0 = jQuery("#RBG1-0").position().left;
 			var iOffsetTop0 = jQuery("#RBG1-0").position().top;
@@ -245,7 +245,7 @@
 			equal(iOffsetTop1 < iOffsetTop3, true, "Group 1: Top Position Radiobutton 1 less than 3");
 		});
 
-		test("Output of RadioButtons in third group", function () {
+		QUnit.test("Output of RadioButtons in third group", function (assert) {
 			// arrange
 			var iOffsetLeft0 = jQuery("#RBG3-0").position().left;
 			var iOffsetTop0 = jQuery("#RBG3-0").position().top;
@@ -261,7 +261,7 @@
 			equal(iOffsetTop1 < iOffsetTop3, true, "Group 3: Top Position Radiobutton 0 less than 3");
 		});
 
-		test("Output of RadioButtons in last group", function () {
+		QUnit.test("Output of RadioButtons in last group", function (assert) {
 			iOffsetLeft0 = jQuery("#RBG4-0").position().left;
 			iOffsetTop0 = jQuery("#RBG4-0").position().top;
 			iOffsetLeft1 = jQuery("#RBG4-1").position().left;
@@ -271,7 +271,7 @@
 			equal(iOffsetTop0 == iOffsetTop1, true, "Group 4: Top Position Radiobutton 0 equal 1");
 		});
 
-		test("ARIA", function() {
+		QUnit.test("ARIA", function(assert) {
 			oRBGDom = jQuery.sap.domById('RBG1');
 			equal(jQuery(oRBGDom).attr("role"),"radiogroup","ARIA role");
 			equal(jQuery(oRBGDom).attr("aria-disabled"),"false","ARIA-disabled: for enabled field");
@@ -279,9 +279,9 @@
 
 		});
 
-		module("Behaviour");
+		QUnit.module("Behaviour");
 
-		test("Change Selection", function() {
+		QUnit.test("Change Selection", function(assert) {
 			// via method - index
 			oRBGroup1.setSelectedIndex(1);
 			sap.ui.getCore().applyChanges();
@@ -314,7 +314,7 @@
 
 		});
 
-		test("Keyboard Navigation", function() {
+		QUnit.test("Keyboard Navigation", function(assert) {
 
 			// via keyboard
 			qutils.triggerKeyboardEvent("RBG3", "ARROW_RIGHT");
@@ -381,7 +381,7 @@
 
 		});
 
-		test("TestCleanUp", function(){
+		QUnit.test("TestCleanUp", function(assert) {
 			ok(!!sap.ui.getCore().byId("RBG1-0"), "RBG1-0 must exist");
 			ok(!!sap.ui.getCore().byId("RBG1-1"), "RBG1-1 must exist");
 			ok(!!sap.ui.getCore().byId("RBG1-2"), "RBG1-2 must exist");

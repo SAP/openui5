@@ -39,7 +39,7 @@
 				// a failure of the first test when the core or some initial module loads the versioninfo
 				// right away. If this is the case and the behavior is expected these module/tests should be adopted.
 				QUnit.module("sap.ui.getVersionInfo", {
-					setup: function() {
+					beforeEach: function() {
 						// Define mocked version info
 						this.oVersionInfo = {
 							"name": "qunit",
@@ -70,7 +70,7 @@
 							JSON.stringify(this.oVersionInfo)
 						]);
 					},
-					teardown: function() {
+					afterEach: function() {
 						// Delete cached versionInfo data after each test
 						delete sap.ui.versioninfo;
 					}

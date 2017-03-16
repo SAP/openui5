@@ -21,10 +21,10 @@
 	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 	<script>
 		QUnit.module("Get default landmarks", {
-			setup: function () {
+			beforeEach: function () {
 				this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oPageAccessibleLandmarkInfo.destroy();
 				this.oPageAccessibleLandmarkInfo = null;
 			},
@@ -60,7 +60,7 @@
 
 
 		QUnit.module("Get landmarks from not defined landmarks instance", {
-			teardown: function () {
+			afterEach: function () {
 				this.oPageAccessibleLandmarkInfo = null;
 			},
 
@@ -95,7 +95,7 @@
 
 
 		QUnit.module("Get landmarks with invalid role", {
-			teardown: function () {
+			afterEach: function () {
 				this.oPageAccessibleLandmarkInfo.destroy();
 				this.oPageAccessibleLandmarkInfo = null;
 			}
@@ -110,7 +110,7 @@
 
 
 		QUnit.module("Get custom landmarks", {
-			teardown: function () {
+			afterEach: function () {
 				this.oPageAccessibleLandmarkInfo.destroy();
 				this.oPageAccessibleLandmarkInfo = null;
 			},
@@ -186,13 +186,13 @@
 
 
 		QUnit.module("Write default landmarks", {
-			setup: function () {
+			beforeEach: function () {
 				this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo();
 				this.oPage = new sap.m.Page({
 					landmarkInfo: this.oPageAccessibleLandmarkInfo
 				});
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oPage.destroy();
 				this.oPageAccessibleLandmarkInfo = null;
 				this.oPage = null;
@@ -239,11 +239,11 @@
 
 
 		QUnit.module("Write landmarks when page has not landmarks", {
-			setup: function () {
+			beforeEach: function () {
 				this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo();
 				this.oPage = new sap.m.Page();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oPage.destroy();
 				this.oPageAccessibleLandmarkInfo = null;
 				this.oPage = null;
@@ -288,13 +288,13 @@
 
 
 		QUnit.module("Write landmarks with invalid role", {
-			setup: function () {
+			beforeEach: function () {
 				this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo();
 				this.oPage = new sap.m.Page({
 					landmarkInfo: this.oPageAccessibleLandmarkInfo
 				});
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oPage.destroy();
 				this.oPageAccessibleLandmarkInfo = null;
 				this.oPage = null;
@@ -319,7 +319,7 @@
 
 
 		QUnit.module("Write custom landmarks", {
-			teardown: function () {
+			afterEach: function () {
 				this.oPage.destroy();
 				this.oPageAccessibleLandmarkInfo = null;
 				this.oPage = null;

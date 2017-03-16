@@ -187,9 +187,9 @@
 
 		qutils.delayTestStart();
 
-		module("Properties and Aggregations");
+		QUnit.module("Properties and Aggregations");
 
-		test("Default Values", function() {
+		QUnit.test("Default Values", function(assert) {
 			equals(oSearch1.getEnableListSuggest(), true, "Default 'enableListSuggest'");
 			equals(oSearch1.getShowListExpander(), true, "Default 'showListExpander'");
 			equals(oSearch1.getEnableClear(), false, "Default 'enableClear'");
@@ -211,7 +211,7 @@
 			equals(oSearch1.getSearchProvider(), null, "Default aggregation 'searchProvider'");
 		});
 
-		test("Custom Values", function() {
+		QUnit.test("Custom Values", function(assert) {
 			oSearch1.setEnableListSuggest(false);
 			oSearch1.setShowListExpander(false);
 			oSearch1.setEnableClear(true);
@@ -255,9 +255,9 @@
 
 
 		//***********************************
-		module("Appearance");
+		QUnit.module("Appearance");
 
-		test("Visibility", function() {
+		QUnit.test("Visibility", function(assert) {
 			oSearch1.setVisible(false);
 			sap.ui.getCore().applyChanges();
 			ok(!oSearch1.getDomRef(), "Control is not visible, when property visible is set to false");
@@ -266,7 +266,7 @@
 			ok(!!oSearch1.getDomRef(), "Control is visible, when property visible is set to true");
 		});
 
-		test("Width", function() {
+		QUnit.test("Width", function(assert) {
 			oSearch1.setWidth("200px");
 			oSearch1.setVisible(true);
 
@@ -283,7 +283,7 @@
 			checkWidth(true, true);
 		});
 
-		test("ValueState", function() {
+		QUnit.test("ValueState", function(assert) {
 			var iNumberOfClasses;
 			oSearch1.setValueState(sap.ui.core.ValueState.None);
 			sap.ui.getCore().applyChanges();
@@ -296,25 +296,25 @@
 			ok(iNumberOfClasses === jQuery("#" + oSearch1._ctrl.getId()).attr("class").split(" ").length, "error state style class removed again");
 		});
 
-		test("List Expander Visibility", function() {
+		QUnit.test("List Expander Visibility", function(assert) {
 			ok(checkVisible(oSearch6._ctrl.getId()+"-icon", true), "List expander is not visible");
 			oSearch6.setShowListExpander(false);
 			sap.ui.getCore().applyChanges();
 			ok(checkVisible(oSearch6._ctrl.getId()+"-icon", false), "List expander is not visible");
 		});
 
-		test("Search Provider Icon Visibility", function() {
+		QUnit.test("Search Provider Icon Visibility", function(assert) {
 			ok(checkVisible(oSearch8._ctrl.getId()+"-providerico", true), "Search Provider Icon is visible when configured");
 			ok(checkVisible(oSearch9._ctrl.getId()+"-providerico", false), "Search Provider Icon is not visible when not configured");
 		});
 
 
 		//***********************************
-		module("Trigger Search", {
-			setup: function(){
+		QUnit.module("Trigger Search", {
+			beforeEach: function(){
 				oSearch4.clearHistory();
 			},
-			teardown: function(){
+			afterEach: function(){
 				oSearch2.setEnabled(true);
 				oSearch4.setEnabled(true);
 				sap.ui.getCore().applyChanges();
@@ -353,11 +353,11 @@
 
 
 		//***********************************
-		module("Clear", {
-			setup: function(){
+		QUnit.module("Clear", {
+			beforeEach: function(){
 				oSearch5.clearHistory();
 			},
-			teardown: function(){
+			afterEach: function(){
 				oSearch3.setEnabled(true);
 				oSearch5.setEnabled(true);
 				sap.ui.getCore().applyChanges();
@@ -396,9 +396,9 @@
 
 
 		//***********************************
-		module("List Handling");
+		QUnit.module("List Handling");
 
-		test("Open List with F4 - No List Expander", function() {
+		QUnit.test("Open List with F4 - No List Expander", function(assert) {
 			oSearch6.clearHistory();
 			oSearch6.setShowListExpander(false);
 			sap.ui.getCore().applyChanges();
@@ -408,7 +408,7 @@
 			ok(checkVisible(oSearch6._lb.getId(), false), "List is still not visible");
 		});
 
-		test("Open List with F4 - no values", function() {
+		QUnit.test("Open List with F4 - no values", function(assert) {
 			oSearch6.clearHistory();
 			oSearch6.setShowListExpander(true);
 			sap.ui.getCore().applyChanges();
@@ -418,7 +418,7 @@
 			ok(checkVisible(oSearch6._lb.getId(), false), "List is not visible");
 		});
 
-		test("Open List with click - no values", function() {
+		QUnit.test("Open List with click - no values", function(assert) {
 			oSearch6.clearHistory();
 			oSearch6.setShowListExpander(true);
 			sap.ui.getCore().applyChanges();
@@ -428,7 +428,7 @@
 			ok(checkVisible(oSearch6._lb.getId(), false), "List is not visible");
 		});
 
-		test("Open List with F4", function() {
+		QUnit.test("Open List with F4", function(assert) {
 			oSearch6.focus();
 			triggerInputSequence(oSearch6, 1, true);
 			sap.ui.test.qunit.triggerKeydown(oSearch6.getFocusDomRef(), "ENTER"); //Create History entry
@@ -438,19 +438,19 @@
 			ok(checkVisible(oSearch6._lb.getId(), true), "List is  visible");
 		});
 
-		test("Close List with ESCAPE", function() {
+		QUnit.test("Close List with ESCAPE", function(assert) {
 			ok(checkVisible(oSearch6._lb.getId(), true), "List is visible");
 			sap.ui.test.qunit.triggerKeydown(oSearch6.getFocusDomRef(), "ESCAPE");
 			ok(checkVisible(oSearch6._lb.getId(), false), "List is not visible");
 		});
 
-		test("Open List with click", function() {
+		QUnit.test("Open List with click", function(assert) {
 			ok(checkVisible(oSearch6._lb.getId(), false), "List is not visible");
 			sap.ui.test.qunit.triggerEvent("click", oSearch6._ctrl.getId()+"-icon");
 			ok(checkVisible(oSearch6._lb.getId(), true), "List is  visible");
 		});
 
-		test("Close List with click", function() {
+		QUnit.test("Close List with click", function(assert) {
 			ok(checkVisible(oSearch6._lb.getId(), true), "List is visible");
 			sap.ui.test.qunit.triggerEvent("click", oSearch6._ctrl.getId()+"-icon");
 			ok(checkVisible(oSearch6._lb.getId(), false), "List is not visible");
@@ -458,7 +458,7 @@
 
 
 		//***********************************
-		module("Suggestion");
+		QUnit.module("Suggestion");
 
 		var getProviderTest = function(oSearchControl){
 			return function(){
@@ -492,7 +492,7 @@
 
 
 		//***********************************
-		module("Filter Mode");
+		QUnit.module("Filter Mode");
 
 		function testFilterMode(bClick, sVal) {
 			function trigger(bClick) {
@@ -527,15 +527,15 @@
 			oSearch11.detachSearch(handler);
 		};
 
-		test("Press ENTER", function() {
+		QUnit.test("Press ENTER", function(assert) {
 			testFilterMode(false, "");
 		});
 
-		test("Click Search Icon", function() {
+		QUnit.test("Click Search Icon", function(assert) {
 			testFilterMode(true, "");
 		});
 
-		test("Click Clear Icon", function() {
+		QUnit.test("Click Clear Icon", function(assert) {
 			oSearch11.setEnableClear(true);
 			sap.ui.getCore().applyChanges();
 			testFilterMode(true, "Test");

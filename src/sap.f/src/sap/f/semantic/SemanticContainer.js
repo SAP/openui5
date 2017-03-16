@@ -62,7 +62,9 @@ sap.ui.define([
 	* @returns {String}
 	*/
 	SemanticContainer.prototype._getControlOrder = function(oControl) {
-		return SemanticConfiguration.getOrder(oControl.getMetadata().getName());
+		var sType = (oControl._getType && oControl._getType()) || oControl.getMetadata().getName();
+
+		return SemanticConfiguration.getOrder(sType);
 	};
 
 	/**

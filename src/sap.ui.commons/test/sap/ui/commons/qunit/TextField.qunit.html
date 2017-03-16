@@ -87,8 +87,8 @@
 
 		var t1, t2;
 
-		module("Basic", {
-			setup: function() {
+		QUnit.module("Basic", {
+			beforeEach: function() {
 				t1 = sap.ui.getCore().getControl("t1");
 				t2 = sap.ui.getCore().getControl("t2");
 
@@ -99,7 +99,7 @@
 				ok(t1, "t1 should not be null");
 				ok(t2, "t2 should not be null");
 			},
-			teardown: function() {
+			afterEach: function() {
 				t1 = null;
 				t2 = null;
 			}
@@ -107,82 +107,82 @@
 
 		// test property accessor methods
 
-		test("ValueOk", function() {
+		QUnit.test("ValueOk", function(assert) {
 			strictEqual(t1.getValue(), sValue, "t1.getValue()");
 			strictEqual(t2.getValue(), sValue, "t2.getValue()");
 		});
 
-		test("TextDirectionOk", function() {
+		QUnit.test("TextDirectionOk", function(assert) {
 			strictEqual(t1.getTextDirection(), oTextDirection, "t1.getTextDirection()");
 			strictEqual(t2.getTextDirection(), oTextDirection, "t2.getTextDirection()");
 		});
 
-		test("TooltipOk", function() {
+		QUnit.test("TooltipOk", function(assert) {
 			strictEqual(t1.getTooltip(), sTooltip, "t1.getTooltip()");
 			strictEqual(t2.getTooltip(), sTooltip, "t2.getTooltip()");
 		});
 
-		test("EnabledOk", function() {
+		QUnit.test("EnabledOk", function(assert) {
 			strictEqual(t1.getEnabled(), bEnabled, "t1.getEnabled()");
 			strictEqual(t2.getEnabled(), bEnabled, "t2.getEnabled()");
 		});
 
-		test("EditableOk", function() {
+		QUnit.test("EditableOk", function(assert) {
 			strictEqual(t1.getEditable(), bEditable, "t1.getEditable()");
 			strictEqual(t2.getEditable(), bEditable, "t2.getEditable()");
 		});
 
-		test("VisibleOk", function() {
+		QUnit.test("VisibleOk", function(assert) {
 			strictEqual(t1.getVisible(), bVisible, "t1.getVisible()");
 			strictEqual(t2.getVisible(), bVisible, "t2.getVisible()");
 		});
 
-		test("RequiredOk", function() {
+		QUnit.test("RequiredOk", function(assert) {
 			strictEqual(t1.getRequired(), bRequired, "t1.getRequired()");
 			strictEqual(t2.getRequired(), !bRequired, "t2.getRequired()");
 		});
 
-		test("WidthOk", function() {
+		QUnit.test("WidthOk", function(assert) {
 			strictEqual(t1.getWidth(), sWidth, "t1.getWidth()");
 			strictEqual(t2.getWidth(), sWidth, "t2.getWidth()");
 		});
 
-		test("MaxLengthOk", function() {
+		QUnit.test("MaxLengthOk", function(assert) {
 			strictEqual(t1.getMaxLength(), iMaxLength, "t1.getMaxLength()");
 			strictEqual(t2.getMaxLength(), iMaxLength, "t2.getMaxLength()");
 		});
 
-		test("ValueStateOk", function() {
+		QUnit.test("ValueStateOk", function(assert) {
 			strictEqual(t1.getValueState(), oValueState, "t1.getValueState()");
 			strictEqual(t2.getValueState(), sap.ui.core.ValueState.Error, "t2.getValueState()");
 		});
 
-		test("TextAlignOk", function() {
+		QUnit.test("TextAlignOk", function(assert) {
 			strictEqual(t1.getTextAlign(), oTextAlign, "t1.getTextAlign()");
 			strictEqual(t2.getTextAlign(), oTextAlign, "t2.getTextAlign()");
 		});
 
-		test("ImeModeOk", function() {
+		QUnit.test("ImeModeOk", function(assert) {
 			strictEqual(t1.getImeMode(), oImeMode, "t1.getImeMode()");
 			strictEqual(t2.getImeMode(), oImeMode, "t2.getImeMode()");
 		});
 
-		test("HelpIdOk", function() {
+		QUnit.test("HelpIdOk", function(assert) {
 			strictEqual(t1.getHelpId(), sHelpId, "t1.getHelpId()");
 			strictEqual(t2.getHelpId(), sHelpId, "t2.getHelpId()");
 		});
 
-		test("AccessibleRoleOk", function() {
+		QUnit.test("AccessibleRoleOk", function(assert) {
 			strictEqual(t1.getAccessibleRole(), oAccessibleRole, "t1.getAccessibleRole()");
 			strictEqual(t2.getAccessibleRole(), oAccessibleRole, "t2.getAccessibleRole()");
 		});
 
-		test("ariaDescribedBy", function() {
+		QUnit.test("ariaDescribedBy", function(assert) {
 			ok(isEmpty(t1.getAriaDescribedBy()), "t1.getAriaDescribedBy()");
 			deepEqual(t2.getAriaDescribedBy(), aAriaDescribedBy, "t2.getAriaDescribedBy()");
 		});
 
-		test("ariaLabelledBy", function() {
+		QUnit.test("ariaLabelledBy", function(assert) {
 			ok(isEmpty(t1.getAriaLabelledBy()), "t1.getAriaLabelledBy()");
 			deepEqual(t2.getAriaLabelledBy(), aAriaLabelledBy, "t2.getAriaLabelledBy()");
 		});
@@ -191,7 +191,7 @@
 
 		// TODO: event handler using Event parameters
 
-		test("ChangeOk", function() {
+		QUnit.test("ChangeOk", function(assert) {
 			try {
 				t1.fireChange();
 				fail("exception should have been thrown!");
@@ -207,7 +207,7 @@
 			}
 		});
 
-		test("DetachChangeOk", function() {
+		QUnit.test("DetachChangeOk", function(assert) {
 			t1.detachChange(changeEventHandler);
 			try {
 				t1.fireChange();
@@ -232,7 +232,7 @@
 			return true;
 		}
 
-		test("MetadataOk", function() {
+		QUnit.test("MetadataOk", function(assert) {
 			var oMetadata = t1.getMetadata();
 			ok(oMetadata, "t1.getMetadata() should not be null");
 			ok(oMetadata.getParent(), "t1.getMetadata().getParent() should not be null");
@@ -246,7 +246,7 @@
 			ok(oAssociations["ariaLabelledBy"]["multiple"], "ariaLabelledBy multiple");
 		});
 
-		test("OffsetWidthOk", function() {
+		QUnit.test("OffsetWidthOk", function(assert) {
 			//test the pixel perfect width of the control
 			var oDomRef = window.document.getElementById("t1");
 			strictEqual(oDomRef.offsetWidth, parseInt(t1.getWidth()), "t1.offsetWidth == parseInt(t1.getWidth())");
@@ -256,7 +256,7 @@
 			strictEqual(oDomRef.offsetWidth, 500, "b2.offsetWidth == 500");
 		});
 
-		test("ARIA", function() {
+		QUnit.test("ARIA", function(assert) {
 			var oT1 = jQuery.sap.byId("t1");
 			var oT2 = jQuery.sap.byId("t2");
 			equal(oT2.attr("role"), oAccessibleRole.toLowerCase(), "Role");
@@ -270,13 +270,13 @@
 			equal(oT2.attr("aria-required"), "true", "aria-required");
 		});
 
-		test("DomRef test", function() {
+		QUnit.test("DomRef test", function(assert) {
 			equal( oTextField1.getFocusDomRef().id, "t1", "FocusDomRef OK" );
 			equal( oTextField1.getInputDomRef().id, "t1", "InputDomRef OK" );
 			equal( oTextField1.getIdForLabel(), "t1", "Label ID OK" );
 		});
 
-		test("Placeholder", function() {
+		QUnit.test("Placeholder", function(assert) {
 			var oT1 = jQuery.sap.byId("t1");
 			var oT2 = jQuery.sap.byId("t2");
 			var oT3 = jQuery.sap.byId("t3");

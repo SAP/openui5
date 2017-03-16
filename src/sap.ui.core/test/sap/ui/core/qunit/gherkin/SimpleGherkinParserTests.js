@@ -11,7 +11,7 @@ sap.ui.require([
 
   QUnit.module("Simple Gherkin Parser Tests", {
 
-    setup: function() {
+    beforeEach: function() {
       QUnit.dump.maxDepth = 15;
       this.parser = simpleGherkinParser;
     }
@@ -19,7 +19,7 @@ sap.ui.require([
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Should parse simple feature", function() {
+  QUnit.test("Should parse simple feature", function(assert) {
 
     var text = [
       "Feature: Serve coffee",
@@ -62,7 +62,7 @@ sap.ui.require([
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Should parse feature with background", function() {
+  QUnit.test("Should parse feature with background", function(assert) {
 
     var text = [
       "Feature: Serve coffee",
@@ -104,7 +104,7 @@ sap.ui.require([
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Should parse feature with data table", function() {
+  QUnit.test("Should parse feature with data table", function(assert) {
 
     var text = [
       "Feature: Give coffee to users",
@@ -147,7 +147,7 @@ sap.ui.require([
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Should parse feature and scenario with tags", function() {
+  QUnit.test("Should parse feature and scenario with tags", function(assert) {
 
     var text = [
       "@wip @integration @caffeinated",
@@ -189,7 +189,7 @@ sap.ui.require([
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Should parse scenario outline", function() {
+  QUnit.test("Should parse scenario outline", function(assert) {
 
     var text = [
       "Feature: Give cups of coffee to users",
@@ -219,12 +219,16 @@ sap.ui.require([
             { text: "I give him <number> cups of coffee", keyword: "When" },
             { text: "he should be <mood>", keyword: "Then" }
           ],
-          examples: [
-            ["user","number","mood"],
-            ["Michael","1","happy"],
-            ["Elvis","4","electrified"],
-            ["John","2","happy"]
-          ]
+          examples: [{
+            name: "",
+            tags: [],
+            data: [
+              ["user","number","mood"],
+              ["Michael","1","happy"],
+              ["Elvis","4","electrified"],
+              ["John","2","happy"]
+            ]
+          }]
         }
       ]
     });
@@ -232,7 +236,7 @@ sap.ui.require([
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("invalid parameters as function input", function() {
+  QUnit.test("invalid parameters as function input", function(assert) {
 
     var badStringError = "simpleGherkinParser.parse: parameter 'sText' must be a valid string";
     var badFilenameError = "simpleGherkinParser.parseFile: parameter 'sPath' must be a valid string";
@@ -281,7 +285,7 @@ sap.ui.require([
 
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("given feature has single column table then parse as 1D list", function() {
+  QUnit.test("given feature has single column table then parse as 1D list", function(assert) {
 
     var text = [
       "Feature: Give cups of coffee to users",
@@ -318,7 +322,7 @@ sap.ui.require([
 
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("given feature has single row table then parse as 1D list", function() {
+  QUnit.test("given feature has single row table then parse as 1D list", function(assert) {
 
     var text = [
       "Feature: Give cups of coffee to users",
@@ -348,7 +352,7 @@ sap.ui.require([
 
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("given feature has single element table then parse as list with one element", function() {
+  QUnit.test("given feature has single element table then parse as list with one element", function(assert) {
 
     var text = [
       "Feature: Give cups of coffee to users",
@@ -377,7 +381,7 @@ sap.ui.require([
   });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Should parse scenario outline with single column", function() {
+  QUnit.test("Should parse scenario outline with single column", function(assert) {
 
     var text = [
       "Feature: Give cups of coffee to users",
@@ -402,10 +406,156 @@ sap.ui.require([
         steps: [
           { text: "he should be <MOOD>", keyword: "Then" }
         ],
-        examples: ["MOOD","happy","electrified","happy"]
+        examples: [{
+          name: "",
+          tags: [],
+          data: ["MOOD","happy","electrified","happy"]
+        }]
       }]
     });
 
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Feature tags inherit downward from Feature-Scenario/Outline-Examples", function(assert) {
+
+    var text = [
+      "@feature",
+      "Feature: Serve coffee",
+      "",
+      "  @scenario",
+      "  Scenario: Buy last coffee",
+      "    Given I have deposited $1",
+      "",
+      "  @outline",
+      "  Scenario Outline: No coffee for you",
+      "    Given I have deposited <MONEY>",
+      "",
+      "  @examples",
+      "  Examples:",
+      "    | MONEY |",
+      "    | $2    |",
+    ].join("\n");
+
+    deepEqual(this.parser.parse(text), {
+      tags: ["@feature"],
+      name: "Serve coffee",
+      scenarios: [{
+        tags: ["@feature", "@scenario"],
+        name: "Buy last coffee",
+        steps: [
+          { text: "I have deposited $1", keyword: "Given" }
+        ]
+      },{
+        tags: ["@feature", "@outline"],
+        name: "No coffee for you",
+        steps: [
+          { text: "I have deposited <MONEY>", keyword: "Given" }
+        ],
+        examples: [{
+          name: "",
+          tags: ["@feature", "@outline", "@examples"],
+          data: ["MONEY", "$2"]
+        }]
+      }]
+    });
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Given two Examples and one is @wip", function(assert) {
+
+    var text = [
+      "Feature: Serve coffee later",
+      "",
+      "  Scenario Outline: save money now to have more money for coffee later",
+      "    Given I have deposited <MONEY>",
+      "",
+      "  @wip",
+      "  Examples: lesser savings",
+      "    | MONEY |",
+      "    | $2    |",
+      "",
+      "  Examples: greater savings",
+      "    | MONEY |",
+      "    | $4    |",
+    ].join("\n");
+
+    deepEqual(this.parser.parse(text), {
+      tags: [],
+      name: "Serve coffee later",
+      scenarios: [{
+        tags: [],
+        name: "save money now to have more money for coffee later",
+        steps: [
+          { text: "I have deposited <MONEY>", keyword: "Given" }
+        ],
+        examples: [{
+          name: "lesser savings",
+          tags: ["@wip"],
+          data: ["MONEY","$2"]
+        },{
+          name: "greater savings",
+          tags: [],
+          data: ["MONEY","$4"]
+        }]
+      }]
+    });
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Should parse two Scenario Outlines with no Examples", function(assert) {
+
+    var text = [
+      "Feature: Serve coffee later",
+      "",
+      "  Scenario Outline: don't save money now to have no money for coffee later",
+      "    Given I wasted <MONEY> on lottery tickets",
+      "",
+      "  Scenario Outline: save money now to have more money for coffee later",
+      "    Given I have deposited <MONEY>",
+    ].join("\n");
+
+    deepEqual(this.parser.parse(text), {
+      tags: [],
+      name: "Serve coffee later",
+      scenarios: [{
+        tags: [],
+        name: "don't save money now to have no money for coffee later",
+        steps: [
+          { text: "I wasted <MONEY> on lottery tickets", keyword: "Given" }
+        ]
+      },{
+        tags: [],
+        name: "save money now to have more money for coffee later",
+        steps: [
+          { text: "I have deposited <MONEY>", keyword: "Given" }
+        ]
+      }]
+    });
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Should parse @tags with all characters but @ and space", function(assert) {
+
+    var text = [
+      "Feature: Outer Space",
+      "",
+      "  @!! @#$% @hello-world @_+=\/<> @|?*&^~`",
+      "  Scenario: Space travel is REALLY cool",
+      "    Given the vacuum of outer space is nearly 0 degrees Kelvin",
+    ].join("\n");
+
+    deepEqual(this.parser.parse(text), {
+      tags: [],
+      name: "Outer Space",
+      scenarios: [{
+        tags: ["@!!", "@#$%", "@hello-world", "@_+=\/<>", "@|?*&^~`"],
+        name: "Space travel is REALLY cool",
+        steps: [
+          { text: "the vacuum of outer space is nearly 0 degrees Kelvin", keyword: "Given" }
+        ]
+      }]
+    });
   });
 
 });

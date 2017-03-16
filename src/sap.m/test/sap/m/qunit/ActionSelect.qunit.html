@@ -49,9 +49,9 @@
 		/* getButtons()                   */
 		/* ------------------------------ */
 
-		module("API");
+		QUnit.module("API");
 
-		test("method: getButtons()", function() {
+		QUnit.test("method: getButtons()", function(assert) {
 
 			// system under test
 			var oActionSelect = new sap.m.ActionSelect({
@@ -89,7 +89,7 @@
 		/* ------------------------------ */
 
 		var removeButtonTestCase = function(mOptions) {
-			test("method: removeButton()", function() {
+			QUnit.test("method: removeButton()", function(assert) {
 
 				// system under test
 				var oActionSelect = mOptions.control;
@@ -191,7 +191,7 @@
 		/* ------------------------------ */
 
 		var removeAllButtonsTestCase = function(mOptions) {
-			test("method: removeAllButtons()", function() {
+			QUnit.test("method: removeAllButtons()", function(assert) {
 
 				// system under test
 				var oActionSelect = mOptions.control;
@@ -232,9 +232,9 @@
 			})
 		});
 
-		module("Keyboard Navigation");
+		QUnit.module("Keyboard Navigation");
 
-		test("onsaptabnext keyboard handler", function(assert) {
+		QUnit.test("onsaptabnext keyboard handler", function(assert) {
 
 			var oActionSelect = new sap.m.ActionSelect({
 				items: [
@@ -290,7 +290,7 @@
 			oActionSelect.destroy();
 		});
 
-		test("onsaptabprevious keyboard handler", function(assert) {
+		QUnit.test("onsaptabprevious keyboard handler", function(assert) {
 
 			var oActionSelect = new sap.m.ActionSelect("actionSheet", {
 				items: [

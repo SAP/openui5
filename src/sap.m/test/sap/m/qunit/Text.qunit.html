@@ -50,11 +50,11 @@
 		// =========
 
 		qutils.delayTestStart();
-		module("Properties");
+		QUnit.module("Properties");
 		var oCore = sap.ui.getCore();
 		var oDom;
 
-		test("Default Values", function() {
+		QUnit.test("Default Values", function(assert) {
 			equals(t1.getTextDirection(), "Inherit", "text direction");
 			equals(t1.getVisible(), true, "visible");
 			equals(t1.getWrapping(), true, "wrapping");
@@ -62,16 +62,16 @@
 			equals(t1.getWidth(), "", "width");
 		});
 
-		module("Appearance");
+		QUnit.module("Appearance");
 
-		test("Visibility", function() {
+		QUnit.test("Visibility", function(assert) {
 			// test if visible
 			ok(jQuery("#Text1").get(0), "Text 1 Visible");
 			// test if invisible
 			equals(jQuery("#Text3").get(0), undefined, "Text 3 Invisible");
 		});
 
-		test("Text Output", function() {
+		QUnit.test("Text Output", function(assert) {
 			// test if result is in HTML
 			oDom = jQuery.sap.domById('Text1');
 			equals(oDom.innerHTML,"This is a simple Text.", "Displayed Text");
@@ -97,12 +97,12 @@
 			equals(iLineHeight2, iLineHeight1 * 3, "Wrapping off => 3 Lines (lineheight: " + iLineHeight1 +")");
 		});*/
 
-		test("Width", function() {
+		QUnit.test("Width", function(assert) {
 			oDom = jQuery.sap.domById('Text2');
 			equals(oDom.style.width, "155px", "Defined width");
 		});
 
-		test("Text Align & RTL", function() {
+		QUnit.test("Text Align & RTL", function(assert) {
 			// default
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text1');
@@ -134,7 +134,7 @@
 			t1.setTextAlign(sap.ui.core.TextAlign.Begin);
 		});
 
-		test("Null Text", function() {
+		QUnit.test("Null Text", function(assert) {
 			expect(2);
 			t1.setText(null);
 			try {
@@ -150,7 +150,7 @@
 			equals(oDom.innerHTML,"Hello World!", "Text entered again");
 		});
 
-		test("wrapping & no-wrapping", function() {
+		QUnit.test("wrapping & no-wrapping", function(assert) {
 			strictEqual(t1.$().css("white-space"), "pre-line", "Text has correct white-spece style for wrapping");
 			strictEqual(t4.$().hasClass("sapMTextNoWrap"), true, "Text has correct class for non-wrapping");
 			strictEqual(t4.$().css("white-space"), "nowrap", "Text has correct white-spece style for non-wrapping");
@@ -199,7 +199,7 @@
 			}, 200);
 		});
 
-		test("When width is not set max-width should apply to control", function() {
+		QUnit.test("When width is not set max-width should apply to control", function(assert) {
 			var sut = new sap.m.Text({text : "text"}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			ok(sut.$().hasClass("sapMTextMaxWidth"), "Text has max width restriction for the trunctation.");
@@ -210,7 +210,7 @@
 			sut.destroy();
 		});
 
-		test("getTextDomRef should respect maxlines", function() {
+		QUnit.test("getTextDomRef should respect maxlines", function(assert) {
 			var sut = new sap.m.Text({text : "line1\nline2\nline3", maxLines: 2}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			ok(sut.getDomRef("inner") === sut.getTextDomRef(), "TextDomRef is the inner wrapper.");
@@ -221,13 +221,13 @@
 			sut.destroy();
 		});
 
-		test("text should be shrinkable", function() {
+		QUnit.test("text should be shrinkable", function(assert) {
 			var oText = new sap.m.Text;
 			ok(oText.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Text control implements IShrinkable interface");
 			oText.destroy();
 		});
 
-		test("wrapping and break word with initially empty text", function() {
+		QUnit.test("wrapping and break word with initially empty text", function(assert) {
 			strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
 			t6.setText("LongTextWithNoSpaces");
 			strictEqual(t6.$().hasClass("sapMTextBreakWord"), true, "Text has a class for break word");
@@ -235,9 +235,9 @@
 			strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
 		});
 
-		module("Accessibility");
+		QUnit.module("Accessibility");
 
-		test("getAccessibilityInfo", function() {
+		QUnit.test("getAccessibilityInfo", function(assert) {
 			var oControl = new sap.m.Text({text: "Text"});
 			ok(!!oControl.getAccessibilityInfo, "Text has a getAccessibilityInfo function");
 			var oInfo = oControl.getAccessibilityInfo();

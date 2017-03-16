@@ -7,14 +7,14 @@ sap.ui.define([
 	"sap/ui/test/_autoWaiter"
 ], function (Opa5, opaTest, _timeoutCounter, Device, Button, _autoWaiter) {
 	QUnit.module("Opa actions", {
-		setup: function () {
+		beforeEach: function () {
 			this.oButton = new Button("foo");
 			this.oButton.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			sinon.config.useFakeTimers = true;
 			this.fnTimeoutStub = sinon.stub(_timeoutCounter, "hasPendingTimeouts");
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oButton.destroy();
 			sinon.config.useFakeTimers = false;
 			this.fnTimeoutStub.restore();
@@ -173,7 +173,7 @@ sap.ui.define([
 	});
 
 	[true, false].forEach(function (bAutoWait) {
-		QUnit.test("Should autowait again when a success gets delayed after an waitFor added by an action for autowait:" + bAutoWait, function () {
+		QUnit.test("Should autowait again when a success gets delayed after an waitFor added by an action for autowait:" + bAutoWait, function (assert) {
 			var oStub, fnDone = assert.async(), oOpa = new Opa5();
 			oOpa.waitFor({
 				actions: function () {

@@ -105,9 +105,9 @@
 		qutils.delayTestStart();
 
 
-		module("API");
+		QUnit.module("API");
 
-		test("Properties - Default Values", function() {
+		QUnit.test("Properties - Default Values", function(assert) {
 			equal(oShell.getShowPane(), false, "Default 'showPane'");
 			equal(oShell.getShowCurtain(), false, "Default 'showCurtain'");
 			equal(oShell.getShowCurtainPane(), false, "Default 'showCurtainPane'");
@@ -115,7 +115,7 @@
 			equal(oShell.getHeaderVisible(), true, "Default 'headerVisible'");
 		});
 
-		test("Properties - Custom Values", function() {
+		QUnit.test("Properties - Custom Values", function(assert) {
 			equal(oShell2.getShowPane(), true, "Custom 'showPane'");
 			equal(oShell2.getShowCurtain(), true, "Custom 'showCurtain'");
 			equal(oShell2.getShowCurtainPane(), true, "Custom 'showCurtainPane'");
@@ -123,23 +123,23 @@
 			equal(oShell2.getHeaderVisible(), false, "Custom 'headerVisible'");
 		});
 
-		test("Aggregation 'content'", function() {
+		QUnit.test("Aggregation 'content'", function(assert) {
 			testMultiAggregation("content", oShell2);
 		});
 
-		test("Aggregation 'paneContent'", function() {
+		QUnit.test("Aggregation 'paneContent'", function(assert) {
 			testMultiAggregation("paneContent", oShell2);
 		});
 
-		test("Aggregation 'curtainContent'", function() {
+		QUnit.test("Aggregation 'curtainContent'", function(assert) {
 			testMultiAggregation("curtainContent", oShell2, "getCurtainContent", "addCurtainContent");
 		});
 
-		test("Aggregation 'curtainPaneContent'", function() {
+		QUnit.test("Aggregation 'curtainPaneContent'", function(assert) {
 			testMultiAggregation("curtainPaneContent", oShell2, "getCurtainPaneContent", "addCurtainPaneContent");
 		});
 
-		test("Aggregation 'header'", function() {
+		QUnit.test("Aggregation 'header'", function(assert) {
 			ok(!oShell2.getHeader(), "Initially no header control");
 			oShell2.setHeader(new my.Test());
 			ok(!!oShell2.getHeader(), "Header control available after set");
@@ -148,9 +148,9 @@
 		});
 
 
-		module("Rendering");
+		QUnit.module("Rendering");
 
-		test("Content", function() {
+		QUnit.test("Content", function(assert) {
 			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-hdrcntnt"), jQuery.sap.domById("_header")), "Header rendered correctly");
 			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-curt-container-canvas"), jQuery.sap.domById("_curt_ctnt")), "Curtain Content rendered correctly");
 			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-curt-container-pane"), jQuery.sap.domById("_curt_pane_ctnt")), "Curtain Pane rendered correctly");
@@ -158,7 +158,7 @@
 			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-container-pane"), jQuery.sap.domById("_pane_ctnt")), "Pane Content rendered correctly");
 		});
 
-		module("Behavior");
+		QUnit.module("Behavior");
 
 		asyncTest("Open/Close Pane", function() {
 			function checkVisibility(){
@@ -224,7 +224,7 @@
 			}, 600);
 		});
 
-		test("Show/Hide Header", function() {
+		QUnit.test("Show/Hide Header", function(assert) {
 			function checkVisibility(){
 				return jQuery.sap.byId("shell-hdr").is(":visible");
 			}
@@ -236,7 +236,7 @@
 			ok(checkVisibility(), "Header visible");
 		});
 
-		test("Clear UI", 0, function(){
+		QUnit.test("Clear UI", 0, function(assert) {
 			jQuery("#uiArea1").remove();
 		});
 

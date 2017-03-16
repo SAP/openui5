@@ -51,15 +51,15 @@
 
 		qutils.delayTestStart();
 
-		module("Basics");
+		QUnit.module("Basics");
 
-		test("EventBus initialized", function() {
+		QUnit.test("EventBus initialized", function(assert) {
 			ok(!!oBus, "Event Bus initialized");
 		});
 
-		module("(Un-)subscribe");
+		QUnit.module("(Un-)subscribe");
 
-		test("Default channel", 5, function() {
+		QUnit.test("Default channel", 5, function(assert) {
 			var sEventId = "Test1";
 			checkNumberOfListeners(oBus._defaultChannel, sEventId, 0);
 			var fHandler1 = function(){};
@@ -75,7 +75,7 @@
 			checkNumberOfListeners(oBus._defaultChannel, sEventId, 0);
 		});
 
-		test("Custom channel", 6, function() {
+		QUnit.test("Custom channel", 6, function(assert) {
 			var sEventId = "Test2";
 			var sChannelId = "TestChannel2";
 			checkNumberOfListeners(oBus._mChannels[sChannelId], sEventId, 0);
@@ -93,9 +93,9 @@
 			ok(!oBus._mChannels[sChannelId], "Unused Channel is cleaned up.");
 		});
 
-		module("SubscribeOnce");
+		QUnit.module("SubscribeOnce");
 
-		test("Default channel", 12, function(){
+		QUnit.test("Default channel", 12, function(assert){
 			var sEventId = "Test3";
 			checkNumberOfListeners(oBus._defaultChannel, sEventId, 0);
 
@@ -119,7 +119,7 @@
 			checkNumberOfListeners(oBus._defaultChannel, sEventId, 0);
 		});
 
-		test("Custom channel", 12, function(){
+		QUnit.test("Custom channel", 12, function(assert){
 			var sEventId = "Test4";
 			var sChannelId = "TestChannel4";
 
@@ -148,8 +148,8 @@
 
 		var oObj11, oObj13, oObj21, oObj23, fHandler11, fHandler12, fHandler13, fHandler14, fHandler21, fHandler22, fHandler23, fHandler24;
 
-		module("Publish", {
-			setup : function(){
+		QUnit.module("Publish", {
+			beforeEach : function(){
 				oObj11 = {id: "Obj11"};
 				oObj13 = {id: "Obj13"};
 
@@ -191,7 +191,7 @@
 				oBus.subscribe("CustomChannel", "Test23", fHandler23, oObj23);
 				oBus.subscribe("CustomChannel", "Test24", fHandler24);
 			},
-			teardown : function(){
+			afterEach : function(){
 				oBus.unsubscribe("Test11", fHandler11, oObj11);
 				oBus.unsubscribe("Test12", fHandler12);
 				oBus.unsubscribe("Test13", fHandler13, oObj13);
@@ -203,35 +203,35 @@
 			}
 		});
 
-		test("Default Channel, with Listener, with Data", 5, function() {
+		QUnit.test("Default Channel, with Listener, with Data", 5, function(assert) {
 			oBus.publish("Test11", {data: "data11"});
 		});
 
-		test("Default Channel, no Listener, with Data", 5, function() {
+		QUnit.test("Default Channel, no Listener, with Data", 5, function(assert) {
 			oBus.publish("Test12", {data: "data12"});
 		});
 
-		test("Default Channel, with Listener, no Data", 4, function() {
+		QUnit.test("Default Channel, with Listener, no Data", 4, function(assert) {
 			oBus.publish("Test13");
 		});
 
-		test("Default Channel, no Listener, no Data", 4, function() {
+		QUnit.test("Default Channel, no Listener, no Data", 4, function(assert) {
 			oBus.publish("Test14");
 		});
 
-		test("Custom Channel, with Listener, with Data", 5, function() {
+		QUnit.test("Custom Channel, with Listener, with Data", 5, function(assert) {
 			oBus.publish("CustomChannel", "Test21", {data: "data21"});
 		});
 
-		test("Custom Channel, no Listener, with Data", 5, function() {
+		QUnit.test("Custom Channel, no Listener, with Data", 5, function(assert) {
 			oBus.publish("CustomChannel", "Test22", {data: "data22"});
 		});
 
-		test("Custom Channel, with Listener, no Data", 4, function() {
+		QUnit.test("Custom Channel, with Listener, no Data", 4, function(assert) {
 			oBus.publish("CustomChannel", "Test23");
 		});
 
-		test("Custom Channel, no Listener, no Data", 4, function() {
+		QUnit.test("Custom Channel, no Listener, no Data", 4, function(assert) {
 			oBus.publish("CustomChannel", "Test24");
 		});
 	</script>

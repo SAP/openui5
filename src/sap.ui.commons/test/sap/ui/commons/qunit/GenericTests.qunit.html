@@ -28,7 +28,7 @@
 			// TESTS
 			// =================================================================
 
-			module("Generic Tests");
+			QUnit.module("Generic Tests");
 
 			qutils.suppressErrors();
 
@@ -70,7 +70,7 @@
 					var oClass = typeof oClass === "function" && new oClass().getMetadata().getClass();
 					if ( !(oClass.prototype instanceof sap.ui.core.Control) )
 						return;
-					test("all pairs tests " + sControlName, function() {
+					QUnit.test("all pairs tests " + sControlName, function(assert) {
 						qutils.genericTest(oClass, "uiArea1", jQuery.extend({}, {
 							allPairTestValues : {
 							  icon : ["../images/controls/sap.ui.core.ListItem.gif","../images/controls/sap.ui.core.UIArea.gif"],
@@ -81,7 +81,7 @@
 				})(aControls[ic]);
 			}
 
-		  test("final", function() {
+		  QUnit.test("final", function(assert) {
 			  qutils.suppressErrors(false);
 		  });
 

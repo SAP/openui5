@@ -111,8 +111,8 @@
 			}
 		}
 
-		module("DOM Rendering");
-		test("Creating a toolbar should add it in DOM", function () {
+		QUnit.module("DOM Rendering");
+		QUnit.test("Creating a toolbar should add it in DOM", function (assert) {
 			var oOverflowTB = createOverflowToolbar();
 
 			strictEqual(oOverflowTB.$().length, 1, "Overflow Toolbar is in DOM");
@@ -121,12 +121,12 @@
 		});
 
 
-		module("Calculations");
+		QUnit.module("Calculations");
 
 
 		function testAllFlexBoxModes(sName, fnTest) {
 			["new", "old"].forEach(function(sMode) {
-				test("[" + sMode.toUpperCase() + " flexbox] " + sName, function () {
+				QUnit.test("[" + sMode.toUpperCase() + " flexbox] " + sName, function (assert) {
 					setFlexboxMode.call(this, "new");
 					fnTest.call(this, sName, fnTest);
 				});
@@ -316,7 +316,7 @@
 			oOverflowTB.destroy();
 		});
 
-		module("Priority");
+		QUnit.module("Priority");
 
 		testAllFlexBoxModes("Buttons with layout to stay in overflow never go to the toolbar", function () {
 
@@ -369,7 +369,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Buttons with priority NeverOverflow should never overflow", function () {
+		QUnit.test("Buttons with priority NeverOverflow should never overflow", function (assert) {
 
 			// Create a toolbar 75px and 5 buttons x 100px, so all buttons should overflow by default,
 			// but one of the buttons has special priority which forces the button to stay
@@ -391,7 +391,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Buttons with priority AlwaysOverflow should always overflow", function () {
+		QUnit.test("Buttons with priority AlwaysOverflow should always overflow", function (assert) {
 
 			// Create a toolbar 600px and 5 buttons x 100px, so there is enough space for all buttons,
 			// but two of the button has special priority whith force the buttons to overflow always
@@ -417,7 +417,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Buttons with priority Disappear should be hidden in the overflow area", function () {
+		QUnit.test("Buttons with priority Disappear should be hidden in the overflow area", function (assert) {
 
 			// Create a toolbar 600px and 5 buttons x 100px, so all buttons should be visible,
 			// but one of the button has special priority Disappear, so when it overflows it should be hidden in the overflow popover
@@ -450,7 +450,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Changing piority from Low to High should move the button from the overflow area back to the toolbar", function () {
+		QUnit.test("Changing piority from Low to High should move the button from the overflow area back to the toolbar", function (assert) {
 
 			// Create a toolbar 300px and 5 buttons x 100px, so there is no enogh space for all buttons.
 			// Since all buttons are with equal priority 'Low' they should overflow from right to the left.
@@ -482,7 +482,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Changing priority from Low to NeverOverflow should move the button to the overflow", function () {
+		QUnit.test("Changing priority from Low to NeverOverflow should move the button to the overflow", function (assert) {
 
 			// Create a toolbar 300px and 5 buttons x 100px, so there is no enogh space for all buttons.
 			// Since all buttons are with equal priority 'Low', they should overflow from right to the left.
@@ -515,7 +515,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Changing priority from High to Low should move the button to the overflow", function () {
+		QUnit.test("Changing priority from High to Low should move the button to the overflow", function (assert) {
 
 			// Create a toolbar 300px and 5 buttons x 100px, so there is no enogh space for all buttons.
 			// Since all buttons are with equal priority 'High' they should overflow from right to the left.
@@ -557,7 +557,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Changing priority from High to AlwaysOverflow should move the button to the overflow", function () {
+		QUnit.test("Changing priority from High to AlwaysOverflow should move the button to the overflow", function (assert) {
 
 			// Create a toolbar 300px and 5 buttons x 100px, so there is no enogh space for all buttons.
 			// Since all buttons are with equal priority 'High' they should overflow from right to the left.
@@ -598,7 +598,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Buttons with Priority High should overflow last among the buttons with Priority Low", function () {
+		QUnit.test("Buttons with Priority High should overflow last among the buttons with Priority Low", function (assert) {
 
 			// Create a toolbar 600px and 5 buttons x 100px, so there is enough space for all buttons,
 			// and position the button with Priority High in the rightmost in the toolbar
@@ -627,7 +627,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Button with Priority Low should overflow first among buttons with Priority High", function () {
+		QUnit.test("Button with Priority Low should overflow first among buttons with Priority High", function (assert) {
 
 			// Create a toolbar 600px and 5 buttons x 100px, so there is enough space for all buttons,
 			// and position the button with Priority Low in the leftmost in the toolbar
@@ -663,7 +663,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Buttons with equal priority should follow the general overflow order", function () {
+		QUnit.test("Buttons with equal priority should follow the general overflow order", function (assert) {
 
 			// Create a toolbar 600px and 5 buttons x 100px with priority Low
 			var oLeftMostButton = getButton('1');
@@ -695,7 +695,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("The order of the items in the overflow area should correspond to the overflow order", function () {
+		QUnit.test("The order of the items in the overflow area should correspond to the overflow order", function (assert) {
 
 			// Create a toolbar 75px and 5 buttons x 100px, so there is no enogh space and all buttons should overflow.
 			// The buttons have different priorities which affects the order of overflow,
@@ -734,7 +734,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Changing the priority of a group item should move the group back in the toolbar", function () {
+		QUnit.test("Changing the priority of a group item should move the group back in the toolbar", function (assert) {
 			// Create a toolbar 500px and 5 buttons x 100px
 			// Two of the buttons belongs to group number 1
 			var oButtonUnderTest1 = getButton('1', sap.m.OverflowToolbarPriority.Low, 1),
@@ -780,7 +780,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Changing the priority of a group item should move the group in the overflow area", function () {
+		QUnit.test("Changing the priority of a group item should move the group in the overflow area", function (assert) {
 			// Create a toolbar 500px and 5 buttons x 100px
 			// Two of the buttons belongs to group number 1
 			var oButtonUnderTest1 = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
@@ -830,9 +830,9 @@
 			oOverflowTB.destroy();
 		});
 
-		module("Grouping");
+		QUnit.module("Grouping");
 
-		test("Buttons in a group should overflow together", function () {
+		QUnit.test("Buttons in a group should overflow together", function (assert) {
 			// Create a toolbar 500px and 5 buttons x 100px
 			// Two of the buttons belongs to group number 1
 			var oGroupedButton1 = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
@@ -875,7 +875,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Buttons in a group should overflow together even if they are unordered", function () {
+		QUnit.test("Buttons in a group should overflow together even if they are unordered", function (assert) {
 			// Create a toolbar 500px and 5 buttons x 100px
 			// Two of the buttons belongs to group number 1
 			var oGroupedButton1 = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
@@ -918,7 +918,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Changing the group of a button should move it in the overflow", function () {
+		QUnit.test("Changing the group of a button should move it in the overflow", function (assert) {
 			// Create a toolbar 500px and 5 buttons x 100px
 			// Two of the buttons belongs to group number 1
 			var oButtonUnderTest = getButton('2', sap.m.OverflowToolbarPriority.Low),
@@ -962,7 +962,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Changing the group of a button should move it back to the toolbar", function () {
+		QUnit.test("Changing the group of a button should move it back to the toolbar", function (assert) {
 			// Create a toolbar 500px and 5 buttons x 100px
 			// Three of the buttons belongs to group number 1
 			var oButtonUnderTest = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
@@ -998,7 +998,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Group overall priority should be the max priority of its members", function () {
+		QUnit.test("Group overall priority should be the max priority of its members", function (assert) {
 			// Create a toolbar 500px and 5 buttons x 100px
 			// Two of the buttons belongs to group number 1
 			var oGroupedButton1 = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
@@ -1026,9 +1026,9 @@
 			oOverflowTB.destroy();
 		});
 
-		module("Data - aggregations and bindings");
+		QUnit.module("Data - aggregations and bindings");
 
-		test("[getContent] The content aggregation should contain the proper number of elements", function () {
+		QUnit.test("[getContent] The content aggregation should contain the proper number of elements", function (assert) {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					widthTypes = getSampleWidths();
@@ -1043,7 +1043,7 @@
 		});
 
 
-		test("[getContent] Modifying the controls the dynamic toolbar was created with affects its content aggregation", function () {
+		QUnit.test("[getContent] Modifying the controls the dynamic toolbar was created with affects its content aggregation", function (assert) {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					widthTypes = getSampleWidths(),
@@ -1065,7 +1065,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("[getContent] Shrinking and expanding the toolbar will not affect the order of the controls in its content aggregation when no controls have special layout", function () {
+		QUnit.test("[getContent] Shrinking and expanding the toolbar will not affect the order of the controls in its content aggregation when no controls have special layout", function (assert) {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					aInitialOrder,
@@ -1093,7 +1093,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("[getContent] Shrinking and expanding the toolbar will not affect the order of the controls in its content aggregation when some controls have special layout", function () {
+		QUnit.test("[getContent] Shrinking and expanding the toolbar will not affect the order of the controls in its content aggregation when some controls have special layout", function (assert) {
 			var aContent = getDefaultContent(true),
 					oOverflowTB,
 					aInitialOrder,
@@ -1123,7 +1123,7 @@
 		});
 
 
-		test("[addContent] Adding controls with addContent puts them at the end of the aggregation", function () {
+		QUnit.test("[addContent] Adding controls with addContent puts them at the end of the aggregation", function (assert) {
 			var aContent,
 					oOverflowTB,
 					newButton,
@@ -1147,7 +1147,7 @@
 		});
 
 
-		test("[insertContent] Adding controls with insertContent inserts them at the proper index of the aggregation", function () {
+		QUnit.test("[insertContent] Adding controls with insertContent inserts them at the proper index of the aggregation", function (assert) {
 			var aContent,
 					oOverflowTB,
 					newButton,
@@ -1172,7 +1172,7 @@
 
 		});
 
-		test("[removeContent] Removing a control with removeContent works no matter if the control is in the toolbar or popover", function () {
+		QUnit.test("[removeContent] Removing a control with removeContent works no matter if the control is in the toolbar or popover", function (assert) {
 			var aContent,
 					oOverflowTB,
 					removeAssociatedContentSpy,
@@ -1200,7 +1200,7 @@
 
 		});
 
-		test("[removeAllContent] Removing all controls with removeAllContent really removes all controls, even if there were some in the popover", function () {
+		QUnit.test("[removeAllContent] Removing all controls with removeAllContent really removes all controls, even if there were some in the popover", function (assert) {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					widthTypes = getSampleWidths();
@@ -1216,7 +1216,7 @@
 
 		});
 
-		test("[destroyContent] Destroying the aggregation does not leave out any controls in the popover", function () {
+		QUnit.test("[destroyContent] Destroying the aggregation does not leave out any controls in the popover", function (assert) {
 			var aContent,
 					oOverflowTB,
 					widthTypes = getSampleWidths();
@@ -1237,7 +1237,7 @@
 
 		});
 
-		test("[indexOfContent] Getting all controls by index is possible no matter whether a control is in the popover or in the toolbar", function () {
+		QUnit.test("[indexOfContent] Getting all controls by index is possible no matter whether a control is in the popover or in the toolbar", function (assert) {
 			var aContent,
 					oOverflowTB,
 					widthTypes = getSampleWidths();
@@ -1254,7 +1254,7 @@
 
 		});
 
-		test("[bindAggregation] Binding the control to a model makes it load the items from the model", function () {
+		QUnit.test("[bindAggregation] Binding the control to a model makes it load the items from the model", function (assert) {
 			var oOverflowTB,
 					oModel,
 					oButtonTemplate,
@@ -1319,7 +1319,7 @@
 
 		});
 
-		test("Destroying a control that is in the overflow is possible", function () {
+		QUnit.test("Destroying a control that is in the overflow is possible", function (assert) {
 
 			var btn = new sap.m.Button({
 						text: "Button in overflow",
@@ -1336,8 +1336,8 @@
 			oOverflowTB.destroy();
 		});
 
-		module("Layout");
-		test("Changing a control property that affects control size(visibility) forces a recalculation of the layout", function () {
+		QUnit.module("Layout");
+		QUnit.test("Changing a control property that affects control size(visibility) forces a recalculation of the layout", function (assert) {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					spy;
@@ -1360,7 +1360,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Changing a control property that does not affect control size(enabled) does not force a recalculation of the layout", function () {
+		QUnit.test("Changing a control property that does not affect control size(enabled) does not force a recalculation of the layout", function (assert) {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					spy;
@@ -1383,7 +1383,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Changing the layout of controls in the toolbar forces a recalculation of the layout", function () {
+		QUnit.test("Changing the layout of controls in the toolbar forces a recalculation of the layout", function (assert) {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					spy;
@@ -1403,7 +1403,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("[_doLayout] Control-size cache is invalidated only when necessary and resize handler is called always", function () {
+		QUnit.test("[_doLayout] Control-size cache is invalidated only when necessary and resize handler is called always", function (assert) {
 			// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
 			var aDefaultContent = [
 						new sap.m.Button({text: "1", width: "100px"}),
@@ -1457,7 +1457,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("[_cacheControlsInfo] Control caching works properly", function () {
+		QUnit.test("[_cacheControlsInfo] Control caching works properly", function (assert) {
 			var spyCache = this.spy(sap.m.OverflowToolbar.prototype, "_cacheControlsInfo"),
 					aDefaultContent = [
 						new sap.m.Label({text: "Label1", width: "100px"}),
@@ -1484,9 +1484,9 @@
 			oOverflowTB.destroy();
 		});
 
-		module("Resize handling");
+		QUnit.module("Resize handling");
 
-		test("Handling of resizes that don't move elements around", function () {
+		QUnit.test("Handling of resizes that don't move elements around", function (assert) {
 
 			var aDefaultContent = [
 					new sap.m.Button({text: "1", width: "100px"}),
@@ -1515,7 +1515,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Handling of resizes that move elements around", function () {
+		QUnit.test("Handling of resizes that move elements around", function (assert) {
 
 			var aDefaultContent = [
 						new sap.m.Button({text: "1", width: "100px"}),
@@ -1544,7 +1544,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Items must first overflow and then shrink", function () {
+		QUnit.test("Items must first overflow and then shrink", function (assert) {
 
 			var aDefaultContent = [
 						new sap.m.Label({text: "This is a very very very long label"}),
@@ -1570,9 +1570,9 @@
 			oOverflowTB.destroy();
 		});
 
-		module("Integration");
+		QUnit.module("Integration");
 
-		test("Sliders work inside an overflow toolbar", function () {
+		QUnit.test("Sliders work inside an overflow toolbar", function (assert) {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					spy,
@@ -1599,7 +1599,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Buttons with closeOverflowOnInteraction=false do not close the popover", function () {
+		QUnit.test("Buttons with closeOverflowOnInteraction=false do not close the popover", function (assert) {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					oBtn = new sap.m.Button({
@@ -1632,7 +1632,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Popover can listen to private interaction events from associative controls", function () {
+		QUnit.test("Popover can listen to private interaction events from associative controls", function (assert) {
 			var oOverflowTB = new sap.m.OverflowToolbar({width: 'auto'}),
 				oPopover = oOverflowTB._getPopover(),
 				oMenuItem = new sap.m.MenuItem({text:"Item1"}),
@@ -1670,9 +1670,9 @@
 			oOverflowTB.destroy();
 		});
 
-		module("Control size measurement");
+		QUnit.module("Control size measurement");
 
-		test("Size of a visible control reported correctly", function () {
+		QUnit.test("Size of a visible control reported correctly", function (assert) {
 			var oTestButton = new sap.m.Button({width: "200px"});
 			oTestButton.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -1681,7 +1681,7 @@
 			strictEqual(sSize, 200);
 		});
 
-		test("Size of an invisible control reported correctly", function () {
+		QUnit.test("Size of an invisible control reported correctly", function (assert) {
 			var oTestButton = new sap.m.Button({width: "200px", visible: false});
 			oTestButton.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -1690,7 +1690,7 @@
 			strictEqual(sSize, 0);
 		});
 
-		test("Size of a control that was measured before, but now not in the DOM, reported correctly", function () {
+		QUnit.test("Size of a control that was measured before, but now not in the DOM, reported correctly", function (assert) {
 			var oTestButton = new sap.m.Button();
 
 			var sSize = sap.m.OverflowToolbar._getOptimalControlWidth(oTestButton, 333);

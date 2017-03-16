@@ -24,8 +24,8 @@
 
 		var iListenedMessages;
 		var oLastEntry;
-		module("Test", {
-			setup : function() {
+		QUnit.module("Test", {
+			beforeEach : function() {
 				iListenedMessages = 0;
 				oLastEntry = null;
 			}
@@ -40,16 +40,16 @@
 		 */
 
 
-		test("GetLog", function () {
+		QUnit.test("GetLog", function (assert) {
 			var aLog = jQuery.sap.log.getLogEntries();
 			notStrictEqual(aLog, null, "jQuery.sap.log.getLogEntries() may not be null");
 		});
 
-		test("Configuration", function() {
+		QUnit.test("Configuration", function(assert) {
 			strictEqual(jQuery.sap.log.getLevel(), jQuery.sap.log.Level.WARNING, "configuration is evaluated");
 		});
 
-		test("Debug", function () {
+		QUnit.test("Debug", function (assert) {
 			// set log level and count messages
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
 			var aLog1 = jQuery.sap.log.getLogEntries();
@@ -72,7 +72,7 @@
 			strictEqual(oMyLogEntry.level, jQuery.sap.log.Level.DEBUG, "log level is wrong");
 		});
 
-		test("ChangeLogLevel", 0, function () {
+		QUnit.test("ChangeLogLevel", 0, function (assert) {
 			// set log level and count messages
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
 			var aLog1 = jQuery.sap.log.getLogEntries();
@@ -89,7 +89,7 @@
 			//assertEquals("log message is wrong", "Changing level to WARNING", oMyLogEntry.message);
 		});
 
-		test("ChangeLogLevelEffects", function () {
+		QUnit.test("ChangeLogLevelEffects", function (assert) {
 			// set log level and count messages
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
 			var aLog1 = jQuery.sap.log.getLogEntries();
@@ -131,7 +131,7 @@
 			oLastEntry = oLogEntry;
 		};
 
-		test("LogListener", function () {
+		QUnit.test("LogListener", function (assert) {
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
 			strictEqual(iListenedMessages, 0, "listened messages should initially be empty");
 			strictEqual(oLastEntry, null, "listened messages should initially be empty");
@@ -152,7 +152,7 @@
 			strictEqual(iListenedMessages, 1, "listened messages should still be 1");
 		});
 
-		test("MethodChaining", function (){
+		QUnit.test("MethodChaining", function (assert){
 			var log = jQuery.sap.log.setLevel(jQuery.sap.log.Level.INFO);
 			strictEqual(log, jQuery.sap.log, "The log instance should always be returned");
 			log = log.error("Error message");
@@ -167,9 +167,9 @@
 			strictEqual(log, jQuery.sap.log, "The log instance should always be returned");
 		});
 
-		module("ComponentLoggers");
+		QUnit.module("ComponentLoggers");
 
-		test("Basic Methods", function () {
+		QUnit.test("Basic Methods", function (assert) {
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ALL);
 			var mylog = jQuery.sap.log.getLogger("mylog");
 			jQuery.each(["fatal", "error", "warning", "info", "debug", "trace"], function(i,v) {
@@ -182,7 +182,7 @@
 			});
 		});
 
-		test("Individual Log Levels", function () {
+		QUnit.test("Individual Log Levels", function (assert) {
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ALL);
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.WARNING, "mylog");
 			var mylog = jQuery.sap.log.getLogger("mylog");
@@ -204,7 +204,7 @@
 
 		});
 
-		test("Method Chaining", function (){
+		QUnit.test("Method Chaining", function (assert){
 			var mylog0, mylog;
 			mylog = mylog0 = jQuery.sap.log.getLogger("mylog");
 			mylog = mylog.error("Error message");

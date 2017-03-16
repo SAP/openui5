@@ -69,13 +69,13 @@
 			}
 
 
-    	test("InitialCheck", function() {
+    	QUnit.test("InitialCheck", function(assert) {
     		equals(true, true, "...");
     	});
 
 
     	var oShell;
-    	test("Render Basic Shell", function() {
+    	QUnit.test("Render Basic Shell", function(assert) {
     		oShell = new sap.ui.ux3.Shell("myShell", {showLogoutButton:false});
     		oShell.placeAt("uiArea1");
     		sap.ui.getCore().applyChanges();
@@ -87,7 +87,7 @@
     	});
 
 
-    	test("Rendered Parts", function() {
+    	QUnit.test("Rendered Parts", function(assert) {
     		equals(jQuery(".sapUiUx3ShellHeader-logout").length, 0, "There should be no logout button");
     		equals(jQuery(".sapUiUx3ShellHeaderSep").length, 0, "There should be no header item separator");
 
@@ -105,7 +105,7 @@
     	});
 
 
-    	test("Destroy and remove control", function() {
+    	QUnit.test("Destroy and remove control", function(assert) {
     		oShell.destroy();
     		sap.ui.getCore().applyChanges();
     		var oDomRef = jQuery.sap.domById(oShell.getId());
@@ -113,7 +113,7 @@
     	});
 
 
-    	test("Content Padding / Full Height", function() {
+    	QUnit.test("Content Padding / Full Height", function(assert) {
     		oShell.destroy();
     		oShell = new sap.ui.ux3.Shell("myShell");
     		oShell.placeAt("uiArea1");
@@ -191,7 +191,7 @@
     	});
 
 
-    	test("HeaderTypes", function() {
+    	QUnit.test("HeaderTypes", function(assert) {
     		oShell.destroy();
     		oShell = new sap.ui.ux3.Shell("myShell", {
 			});
@@ -206,7 +206,7 @@
     	});
 
 
-    	test("Show / Hide Tools or Pane", function() {
+    	QUnit.test("Show / Hide Tools or Pane", function(assert) {
     		oShell.destroy();
     		oShell = new sap.ui.ux3.Shell("myShell", {
 			});
@@ -230,7 +230,7 @@
     	});
 
 
-    	test("Render Populated Shell", function() {
+    	QUnit.test("Render Populated Shell", function(assert) {
     		oShell.destroy();
     		oShell = new sap.ui.ux3.Shell("myShell", {
           appIcon:"http://www.sap.com/global/images/SAPLogo.gif", // put the SAP logo into the header
@@ -264,7 +264,7 @@
     	});
 
 
-    	test("Advanced Content", function() {
+    	QUnit.test("Advanced Content", function(assert) {
     		var header = jQuery(".sapUiUx3ShellHeader")[0];
     		ok(header.innerHTML.indexOf("") > -1, "Application Title must be present");
     		equal(jQuery.sap.byId(oShell.getId()+"-logoImg").attr("src"), "http://www.sap.com/global/images/SAPLogo.gif", "Application Logo must be displayed");
@@ -295,7 +295,7 @@
     		ok(!!oDomRef, "Feeder tool should exist in the page");
     	});
 
-			test("WorksetItemSelected Event", function() {
+			QUnit.test("WorksetItemSelected Event", function(assert) {
 				expect(5);
 
 				qutils.triggerMouseEvent("wi_so", "click", 1, 1, 1, 1);
@@ -307,7 +307,7 @@
 
     	});
 
-    	test("Logout Event", function() {
+    	QUnit.test("Logout Event", function(assert) {
 				expect(1);
 				var $logout = jQuery(".sapUiUx3ShellHeader-logout");
 				qutils.triggerMouseEvent($logout[0], "click", 1, 1, 1, 1);
@@ -449,7 +449,7 @@
 				}, 3000);
 			});
 
-			test("No Further Re-rendering", function() {
+			QUnit.test("No Further Re-rendering", function(assert) {
 				expect(1);
 				equal(renderCount, 1, "Still, only ONE re-rendering should have happened after further tests");
 			});
@@ -506,7 +506,7 @@
                 });
 			});
 
-			test("Change Design", function() {
+			QUnit.test("Change Design", function(assert) {
 				// Configure the test...
 
 				// Number of times the test will run
@@ -615,7 +615,7 @@
 			});
 
 
-            test("PaneBar Overflow", function() {
+            QUnit.test("PaneBar Overflow", function(assert) {
 
                 try {
                     oShell.destroy();

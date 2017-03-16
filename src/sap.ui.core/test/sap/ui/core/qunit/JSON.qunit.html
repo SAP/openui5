@@ -24,15 +24,15 @@
 
 		<script>
 
-	  		module("JSON Native Support basics");
-	  			test("JSON object", function() {
+	  		QUnit.module("JSON Native Support basics");
+	  			QUnit.test("JSON object", function(assert) {
 	  				ok( JSON, "JSON object exists");
 	  				ok( JSON.stringify, "JSON.stringify is defined");
 	  				ok( JSON.parse, "JSON.parse is defined");
 	  			});
 
-	  		module("JSON Stringify/Parse");
-	  			test("JSON Stringification", function() {
+	  		QUnit.module("JSON Stringify/Parse");
+	  			QUnit.test("JSON Stringification", function(assert) {
 						s = JSON.stringify(['e', {pluribus: 'unum'}]);
 						result = '["e",{"pluribus":"unum"}]';
 						equal(s, result, "Simple stringify");
@@ -51,7 +51,7 @@
 						result = '{"att1":"att1","att3":"att3"}';
 						equal(s, result, "Stringify with replacer")
 	  			});
-	  			test("JSON Parsing", function() {
+	  			QUnit.test("JSON Parsing", function(assert) {
 						s = '{"att1":"att1","att2":"att2","att3":"att3"}';
 						result = new Object();
 						result.att1 = "att1";
@@ -73,7 +73,7 @@
 						});
 						deepEqual(o, result, "Parse with reviver");
 	  			});
-	  			test("JSON Stringify/Parse piped", function() {
+	  			QUnit.test("JSON Stringify/Parse piped", function(assert) {
 						result = new Object();
 						result.att1 = "att1";
 						result.att2 = "att2";
@@ -88,8 +88,8 @@
 						deepEqual( o, result, "Piped stringify/parse");
 	  			});
 
-  			module("JSON toJSON method");
-  				test("JSON toJSON method", function() {
+  			QUnit.module("JSON toJSON method");
+  				QUnit.test("JSON toJSON method", function(assert) {
 						o = new Object();
 						o.att1 = "public"; /* only public attribute */
 						o.att2 = "att2";
@@ -104,8 +104,8 @@
 						equal(s, '{"att1":"public"}', "Stringify on an object having toJSON()");
 
   				});
-  			module("JSON on SAPUI5 Control");
-  				test("JSON Button", function() {
+  			QUnit.module("JSON on SAPUI5 Control");
+  				QUnit.test("JSON Button", function(assert) {
 					var sText = "Hello",
 					sTooltip = "abc",
 					sWidth = "111px",

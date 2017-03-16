@@ -88,7 +88,7 @@ sap.ui.define([
 		assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
 	});
 
-	QUnit.test("Should return that there is no open xhr when the request has been aborted", function () {
+	QUnit.test("Should return that there is no open xhr when the request has been aborted", function (assert) {
 		var oXHR = createAndSendXHR("/foo");
 		oXHR.abort();
 		assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
@@ -96,7 +96,7 @@ sap.ui.define([
 
 	QUnit.module("XHRCounter - sinon cleanup");
 
-	QUnit.test("Should restore the send function", function () {
+	QUnit.test("Should restore the send function", function (assert) {
 		var oXhr = new XMLHttpRequest();
 		var fnSendBeforeSinon = oXhr.send;
 
@@ -201,7 +201,7 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.test("Should return that there is no open xhr when the request has been aborted", function () {
+	QUnit.test("Should return that there is no open xhr when the request has been aborted", function (assert) {
 		var oXHR = createAndSendXHR("actions.js");
 		oXHR.abort();
 		assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
@@ -245,7 +245,7 @@ sap.ui.define([
 		assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
 	});
 
-	QUnit.test("Should combine faked and defaked requests", function () {
+	QUnit.test("Should combine faked and defaked requests", function (assert) {
 		createAndSendXHR("foo");
 		var oXHR = createAndSendXHR("actions.js");
 		assert.ok(XHRCounter.hasPendingRequests(), "there are pending xhrs");

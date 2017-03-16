@@ -45,19 +45,19 @@
 
 	qutils.delayTestStart();
 
-	module("Properties");
+	QUnit.module("Properties");
 
-	test("Default Values", function() {
+	QUnit.test("Default Values", function(assert) {
 		equals(oLayout1.getWidth(), "", "Default 'Width':");
 	});
 
-	test("Custom Values", function() {
+	QUnit.test("Custom Values", function(assert) {
 		equals(oLayout2.getWidth(), "200px", "Custom 'Width':");
 	});
 
-	module("Visual Appearence");
+	QUnit.module("Visual Appearence");
 
-	test("Visibility", function() {
+	QUnit.test("Visibility", function(assert) {
 		// controls must be one below the other -> same X coordinate, nut higher Y coordinate
 		var oButtonDom = jQuery.sap.domById('B1');
 		var oTextDom = jQuery.sap.domById('TF1');

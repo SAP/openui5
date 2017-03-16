@@ -104,7 +104,7 @@
 				}
 
 				QUnit.module("API", {
-					setup: function() {
+					beforeEach: function() {
 						this.oSelectDialog = new sap.m.SelectDialog("selectDialog", {
 							title: "my SelectDialog",
 							noDataText: "Sorry, no data is available",
@@ -112,7 +112,7 @@
 							multiSelect: true
 						});
 					},
-					teardown: function() {
+					afterEach: function() {
 						// cleanup
 						this.oSelectDialog.destroy();
 					}
@@ -148,11 +148,11 @@
 				});
 
 				QUnit.module("Rendering", {
-					setup: function() {
+					beforeEach: function() {
 						this.oSelectDialog = new sap.m.SelectDialog("selectDialog");
 						this.mockupData = generateData();
 					},
-					teardown: function() {
+					afterEach: function() {
 						// cleanup
 						this.oSelectDialog.destroy();
 						delete this.mockupData;
@@ -207,11 +207,11 @@
 				});
 
 				QUnit.module("XML Rendering", {
-					setup: function() {
+					beforeEach: function() {
 						this.oSelectDialog = null;
 
 					},
-					teardown: function() {
+					afterEach: function() {
 						// cleanup
 						this.oSelectDialog.destroy();
 						this.oXmlViewOrFragment.destroy();
@@ -259,7 +259,7 @@
 				});
 
 				QUnit.module("Multiselection", {
-					setup: function() {
+					beforeEach: function() {
 						// arrange
 						this.oSelectDialog = new sap.m.SelectDialog('selectDialog', {
 							multiSelect: true,
@@ -269,7 +269,7 @@
 						});
 						this.mockupData = generateData();
 					},
-					teardown: function() {
+					afterEach: function() {
 						// cleanup
 						this.oSelectDialog.destroy();
 						delete this.mockupData;
@@ -351,7 +351,7 @@
 				});
 
 				QUnit.module("Open and Close", {
-					setup: function() {
+					beforeEach: function() {
 						// arrange
 						this.oSelectDialog = new sap.m.SelectDialog('selectDialog', {
 							title: "my SelectDialog",
@@ -359,7 +359,7 @@
 						});
 						this.mockupData = generateData();
 					},
-					teardown: function() {
+					afterEach: function() {
 						// cleanup
 						this.oSelectDialog.destroy();
 						delete this.mockupData;
@@ -398,14 +398,14 @@
 				});
 
 				QUnit.module("Event testing", {
-					setup: function() {
+					beforeEach: function() {
 						// arrange
 						this.oSelectDialog = new sap.m.SelectDialog('selectDialog', {
 							title: "my SelectDialog"
 						});
 						this.mockupData = generateData();
 					},
-					teardown: function() {
+					afterEach: function() {
 						// cleanup
 						this.oSelectDialog.destroy();
 						delete this.mockupData;
@@ -613,12 +613,12 @@
 				});
 
 				QUnit.module("Destroy", {
-					setup: function() {
+					beforeEach: function() {
 
 						// arrange
 						this.oSelectDialog = new sap.m.SelectDialog('selectDialog');
 						this.mockupData = generateData();
-					}, teardown: function() {
+					}, afterEach: function() {
 
 						// cleanup
 						this.oSelectDialog.destroy();
@@ -750,12 +750,12 @@
 				});
 
 				QUnit.module("Keyboard and focus Handling", {
-					setup: function() {
+					beforeEach: function() {
 
 						// arrange
 						this.oSelectDialog = new sap.m.SelectDialog('selectDialog');
 						this.mockupData = generateData();
-					}, teardown: function() {
+					}, afterEach: function() {
 
 						// cleanup
 						this.oSelectDialog.destroy();

@@ -40,9 +40,9 @@
 	}
 
 	// boolean type tests
-	module("boolean type");
+	QUnit.module("boolean type");
 
-	test("boolean formatValue", function(){
+	QUnit.test("boolean formatValue", function(assert) {
 		var boolType = new sap.ui.model.type.Boolean();
 		equal(boolType.formatValue(true, "boolean"), true, "format test");
 		equal(boolType.formatValue(null, "boolean"), null, "format test");
@@ -56,7 +56,7 @@
 		raises(function(){boolType.formatValue(false, "float")}, "format test");
 	});
 
-	test("boolean parseValue", function(){
+	QUnit.test("boolean parseValue", function(assert) {
 		var boolType = new sap.ui.model.type.Boolean();
 		equal(boolType.parseValue(true, "boolean"), true, "parse test");
 		equal(boolType.parseValue(false, "boolean"), false, "parse test");
@@ -74,9 +74,9 @@
 	});
 
 	// string type tests
-		module("string type");
+		QUnit.module("string type");
 
-		test("string formatValue", function(){
+		QUnit.test("string formatValue", function(assert) {
 		var stringType = new sap.ui.model.type.String();
 		equal(stringType.formatValue("true", "boolean"), true, "format test");
 		equal(stringType.formatValue("false", "boolean"), false, "format test");
@@ -98,7 +98,7 @@
 
 	});
 
-	test("string parseValue", function(){
+	QUnit.test("string parseValue", function(assert) {
 		var stringType = new sap.ui.model.type.String();
 		equal(stringType.parseValue(true, "boolean"), "true", "parse test");
 		equal(stringType.parseValue(false, "boolean"), "false", "parse test");
@@ -112,7 +112,7 @@
 		raises(function(){stringType.parseValue(true, "untype")}, sap.ui.model.ParseException, "parse test");
 	});
 
-	test("string validateValue", function(){
+	QUnit.test("string validateValue", function(assert) {
 
 		var stringType = new sap.ui.model.type.String(null, {
 			minLength : 3,
@@ -165,9 +165,9 @@
 	});
 
 	// integer type tests
-	module("integer type");
+	QUnit.module("integer type");
 
-	test("integer formatValue", function(){
+	QUnit.test("integer formatValue", function(assert) {
 		var intType = new sap.ui.model.type.Integer();
 		equal(intType.formatValue(22, "string"), "22", "format test");
 		equal(intType.formatValue(-6622, "string"), "-6622", "format test");
@@ -185,7 +185,7 @@
 
 	});
 
-	test("integer parseValue", function(){
+	QUnit.test("integer parseValue", function(assert) {
 		var intType = new sap.ui.model.type.Integer();
 
 		equal(intType.parseValue("3333", "string"), 3333, "parse test");
@@ -202,7 +202,7 @@
 		raises(function(){intType.parseValue("test", "string")}, checkParseException, "parse test");
 	});
 
-	test("integer validateValue", function(){
+	QUnit.test("integer validateValue", function(assert) {
 		var intType = new sap.ui.model.type.Integer(null, {
 			minimum: 3,
 			maximum: 10
@@ -218,7 +218,7 @@
 
 	});
 
-	test("integer formatOptions", function(){
+	QUnit.test("integer formatOptions", function(assert) {
 		var intType = new sap.ui.model.type.Integer({
 			minIntegerDigits: 2,
 			maxIntegerDigits: 4
@@ -234,7 +234,7 @@
 
 	});
 
-	test("integer formatOptions.source", function(){
+	QUnit.test("integer formatOptions.source", function(assert) {
 		var intType = new sap.ui.model.type.Integer({
 			source:{
 				groupingEnabled: true
@@ -251,7 +251,7 @@
 
 	});
 
-	test("integer formatOptions.source and validateValue", function(){
+	QUnit.test("integer formatOptions.source and validateValue", function(assert) {
 		var intType = new sap.ui.model.type.Integer({
 			source: {
 				decimalSeparator: ",",
@@ -275,9 +275,9 @@
 
 
 	// float type tests
-	module("float type");
+	QUnit.module("float type");
 
-	test("float formatValue", function(){
+	QUnit.test("float formatValue", function(assert) {
 		var floatType = new sap.ui.model.type.Float();
 		equal(floatType.formatValue(22, "string"), "22", "format test");
 		equal(floatType.formatValue(-6622.333, "string"), "-6,622.333", "format test");
@@ -301,7 +301,7 @@
 
 	});
 
-	test("float parseValue", function(){
+	QUnit.test("float parseValue", function(assert) {
 		var floatType = new sap.ui.model.type.Float();
 
 		equal(floatType.parseValue("3333", "string"), 3333, "parse test");
@@ -318,7 +318,7 @@
 		raises(function(){floatType.parseValue("test", "string")}, sap.ui.model.ParseException, "parse test");
 	});
 
-	test("float validateValue", function(){
+	QUnit.test("float validateValue", function(assert) {
 		var floatType = new sap.ui.model.type.Float(null, {
 			minimum: 3,
 			maximum: 10
@@ -335,7 +335,7 @@
 
 	});
 
-	test("float formatOptions", function(){
+	QUnit.test("float formatOptions", function(assert) {
 		var floatType = new sap.ui.model.type.Float({
 			minFractionDigits: 2,
     		maxFractionDigits: 2
@@ -360,7 +360,7 @@
 
 	});
 
-	test("float formatOptions.source", function(){
+	QUnit.test("float formatOptions.source", function(assert) {
 		var floatType = new sap.ui.model.type.Float({
 			source:{}
  		});
@@ -378,7 +378,7 @@
 
 	});
 
-	test("float formatOptions.source and validateValue", function(){
+	QUnit.test("float formatOptions.source and validateValue", function(assert) {
 		var floatType = new sap.ui.model.type.Float({
 			source:{
 				decimalSeparator: ",",
@@ -401,9 +401,9 @@
 	});
 
 	// currency type tests
-	module("currency type");
+	QUnit.module("currency type");
 
-	test("currency formatValue", function(){
+	QUnit.test("currency formatValue", function(assert) {
 		var currencyType = new sap.ui.model.type.Currency();
 		equal(currencyType.formatValue([22, "EUR"], "string"), "EUR" + "\xa0" + "22.00", "format test");
 		equal(currencyType.formatValue([22, "JPY"], "string"), "JPY" + "\xa0" + "22", "format test");
@@ -420,7 +420,7 @@
 		raises(function(){currencyType.formatValue(22.0, "untype")}, sap.ui.model.FormatException, "format test");
 	});
 
-	test("currency parseValue", function(){
+	QUnit.test("currency parseValue", function(assert) {
 		var currencyType = new sap.ui.model.type.Currency();
 
 		deepEqual(currencyType.parseValue("3333", "string"), [3333, undefined], "parse test");
@@ -433,7 +433,7 @@
 		raises(function(){currencyType.parseValue("test", "string")}, checkParseException, "parse test");
 	});
 
-	test("currency validateValue", function(){
+	QUnit.test("currency validateValue", function(assert) {
 		var currencyType = new sap.ui.model.type.Currency(null, {
 			minimum: 3,
 			maximum: 10
@@ -450,7 +450,7 @@
 
 	});
 
-	test("currency formatOptions", function(){
+	QUnit.test("currency formatOptions", function(assert) {
 		var currencyType = new sap.ui.model.type.Currency({
 			showMeasure: false
 		});
@@ -477,7 +477,7 @@
 
 	});
 
-	test("currency formatOptions.source", function(){
+	QUnit.test("currency formatOptions.source", function(assert) {
 		var currencyType = new sap.ui.model.type.Currency({
 			source:{}
  		});
@@ -493,7 +493,7 @@
 
 	});
 
-	test("currency formatOptions.source and validateValue", function(){
+	QUnit.test("currency formatOptions.source and validateValue", function(assert) {
 		var currencyType = new sap.ui.model.type.Currency({
 			source:{}
  		}, {
@@ -513,9 +513,9 @@
 	});
 
 	// date type tests
-		module("date type");
+		QUnit.module("date type");
 
-		test("date formatValue", function(){
+		QUnit.test("date formatValue", function(assert) {
 			// as date object is locale dependend fill it manually
 			var dateValue = new Date(2003, 1, 1);
 
@@ -537,7 +537,7 @@
 
 		});
 
-		test("date parseValue", function(){
+		QUnit.test("date parseValue", function(assert) {
 			// as date object is locale dependend fill it manually
 			var dateValue = new Date(2003, 1, 1);
 
@@ -560,7 +560,7 @@
 			//raises(function(){dateType.parseValue("test", "string")}, sap.ui.model.ParseException, "parse test");
 		});
 
-		test("date validateValue", function(){
+		QUnit.test("date validateValue", function(assert) {
 			// as date object is locale dependend fill it manually
 			var dateValueMin = new Date(2000, 0, 1);
 			var dateValueMax = new Date(2000, 11, 31);
@@ -603,9 +603,9 @@
 		});
 
 		// time type tests
-		module("time type");
+		QUnit.module("time type");
 
-		test("time formatValue", function(){
+		QUnit.test("time formatValue", function(assert) {
 			var timeType  = new sap.ui.model.type.Time();
 			// as date object is locale dependend fill it manually
 			var	timeValue = new Date(2003, 1, 1, 16, 58, 49);
@@ -628,7 +628,7 @@
 
 		});
 
-		test("time parseValue", function(){
+		QUnit.test("time parseValue", function(assert) {
 			// as date object is locale dependend fill it manually
 			var	timeValue = new Date(1970, 0, 1, 16, 58, 49);
 
@@ -649,7 +649,7 @@
 			raises(function(){timeType.parseValue("test", "string")}, checkParseException, "parse test");
 		});
 
-		test("time validateValue", function(){
+		QUnit.test("time validateValue", function(assert) {
 			timeType = new sap.ui.model.type.Time({
 				source: {pattern: "HH:mm:ss"},
 				pattern: "hh-mm-ss"}, {
@@ -667,9 +667,9 @@
 		});
 
 		// dateTime type tests
-		module("dateTime type");
+		QUnit.module("dateTime type");
 
-		test("dateTime formatValue", function(){
+		QUnit.test("dateTime formatValue", function(assert) {
 			// as date object is locale dependend fill it manually
 			var dateValue = new Date(2003, 1, 1, 4, 5, 6, 7);
 
@@ -693,7 +693,7 @@
 
 		});
 
-		test("dateTime parseValue", function(){
+		QUnit.test("dateTime parseValue", function(assert) {
 			var dateValue = new Date(2003, 1, 1, 4, 5, 6);
 			var dateType  = new sap.ui.model.type.DateTime();
 			equal(dateType.parseValue("Feb 1, 2003, 4:05:06 AM", "string").getTime(), dateValue.getTime(), "parse test");
@@ -714,7 +714,7 @@
 			raises(function(){dateType.parseValue("test", "string")}, checkParseException, "parse test");
 		});
 
-		test("dateTime validateValue", function(){
+		QUnit.test("dateTime validateValue", function(assert) {
 			dateType = new sap.ui.model.type.DateTime({
 				source: {pattern: "dd.MM.yyyy HH:mm:ss"},
 				pattern: "yyyy/mm/dd hh/mm/ss"}, {
@@ -733,9 +733,9 @@
 
 
 		// filesize type tests
-		module("filesize type");
+		QUnit.module("filesize type");
 
-		test("filesize formatValue", function(){
+		QUnit.test("filesize formatValue", function(assert) {
 			var filesizeType = new sap.ui.model.type.FileSize();
 
 			equal(filesizeType.formatValue(null, "string"), null, "format test: null-string");
@@ -789,7 +789,7 @@
 			raises(function(){filesizeType.formatValue("1 kB", "untype")}, sap.ui.model.FormatException, "format test: 1kB-untype-inputformat");
 		});
 
-		test("filesize parseValue", function(){
+		QUnit.test("filesize parseValue", function(assert) {
 			var filesizeType = new sap.ui.model.type.FileSize();
 
 			equal(filesizeType.parseValue(null, "string"), null, "parse test: null-string");
@@ -835,7 +835,7 @@
 			raises(function(){filesizeType.parseValue(1000.5, "untype")}, sap.ui.model.ParseException, "parse test: 1000.5 kB-untype-inputformat");
 		});
 
-		test("filesize validateValue", function(){
+		QUnit.test("filesize validateValue", function(assert) {
 			var filesizeType = new sap.ui.model.type.FileSize(null, {
 				minimum: 1000,
 				maximum : 2000

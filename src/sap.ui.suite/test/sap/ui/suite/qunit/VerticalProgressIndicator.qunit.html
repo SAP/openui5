@@ -107,10 +107,10 @@
 			* QUINIT TESTS MODULE 'PROPERTIES'
 			*****************************************************/
 			// Set a Test Module for module "Properties"
-			module("Properties");
+			QUnit.module("Properties");
 
 			//Testcase 1: Default values
-			test("Default Values [Control 1]: ", function() {
+			QUnit.test("Default Values [Control 1]: ", function(assert) {
 				expect(4);
 				percentage = 0;
 				this.oBar = jQuery.sap.domById(sCtrlId + "1-bar");
@@ -125,7 +125,7 @@
 
 
 			//Testcase 2: Percentage set to 30 percent
-			test("Percentage set to 30 percent [Control 2]: ", function() {
+			QUnit.test("Percentage set to 30 percent [Control 2]: ", function(assert) {
 				expect(4);
 				percentage = 30;
 				this.oBar = jQuery.sap.domById(sCtrlId + "2-bar");
@@ -140,7 +140,7 @@
 
 
 			//Testcase 3: Percentage set to 0 percent
-			test("Percentage set to 0 percent [Control 3]: ", function() {
+			QUnit.test("Percentage set to 0 percent [Control 3]: ", function(assert) {
 				expect(4);
 				percentage = 0;
 				this.oBar = jQuery.sap.domById(sCtrlId + "3-bar");
@@ -155,7 +155,7 @@
 
 
 			//Testcase 4: Percentage set to 100 percent
-			test("Percentage set to 100 percent [Control 4]: ", function() {
+			QUnit.test("Percentage set to 100 percent [Control 4]: ", function(assert) {
 				expect(4);
 				percentage = 100;
 				this.oBar = jQuery.sap.domById(sCtrlId + "4-bar");
@@ -170,7 +170,7 @@
 
 
 			//Testcase 5: Percentage set to -30 percent
-			test("Percentage set to -30 percent [Control 5]: ", function() {
+			QUnit.test("Percentage set to -30 percent [Control 5]: ", function(assert) {
 				expect(4);
 				percentage = -30;
 				this.oBar = jQuery.sap.domById(sCtrlId + "5-bar");
@@ -185,7 +185,7 @@
 
 
 			//Testcase 6: Percentage set to 111 percent
-			test("Percentage set to 111 percent [Control 6]: ", function() {
+			QUnit.test("Percentage set to 111 percent [Control 6]: ", function(assert) {
 				expect(4);
 				percentage = 111;
 				this.oBar = jQuery.sap.domById(sCtrlId + "6-bar");
@@ -203,10 +203,10 @@
 			* QUINIT TESTS MODULE 'EVENTS'
 			*****************************************************/
 			// Set a Test Module for module "Events"
-			module("Events");
+			QUnit.module("Events");
 
 			//Testcase 7: Press Event
-			test("Press Event [Control 1]: ", function() {
+			QUnit.test("Press Event [Control 1]: ", function(assert) {
 				expect(1);
 				try {
 					oVPIndicator1.firePress();
@@ -217,7 +217,7 @@
 				});
 
 			//Testcase 8: DetachPress Event
-			test("Detach Press Eventhandler [Control 1]: ", function() {
+			QUnit.test("Detach Press Eventhandler [Control 1]: ", function(assert) {
 				expect(1);
 				oVPIndicator1.detachPress(pressEventHandler);
 				try {
@@ -235,16 +235,16 @@
 			* QUINIT TESTS MODULE 'TOOLTIPS'
 			*****************************************************/
 			// Set a Test Module for module "Tooltips"
-			module("Tooltips");
+			QUnit.module("Tooltips");
 
 			//Testcase 9: Manually set Tooltip
-			test("Manual Tooltip [Control 4]: ", function() {
+			QUnit.test("Manual Tooltip [Control 4]: ", function(assert) {
 				expect(1);
 				equals(sTooltip, oVPIndicator4.getTooltip(), "Manual Tooltip");
 			});
 
 			//Testcase 10: Automatic Tooltip
-			test("Automatic Tooltip [Control 2]: ", function() {
+			QUnit.test("Automatic Tooltip [Control 2]: ", function(assert) {
 				expect(1);
 				if(!this.oThis){
 								this.oThis = jQuery.sap.byId(sCtrlId + "2");
@@ -259,10 +259,10 @@
 			* QUINIT TESTS MODULE 'ARIA'
 			*****************************************************/
 			// Set a Test Module for module "ARIA"
-			module("ARIA");
+			QUnit.module("ARIA");
 
 			//Testcase 11: Default ARIA-Value
-			test("Default ARIA-Values [Control 1]: ", function() {
+			QUnit.test("Default ARIA-Values [Control 1]: ", function(assert) {
 				expect(3);
 				percentage = 0;
 				if(!this.oThis){
@@ -277,7 +277,7 @@
 			});
 
 			//Testcase 12: ARIA-Value for Percentage in Range (0-100)
-			test("ARIA-Value for Percentage in Range [Controls 2,3,4]: ", function() {
+			QUnit.test("ARIA-Value for Percentage in Range [Controls 2,3,4]: ", function(assert) {
 				expect(3);
 				this.oThis2 = jQuery.sap.byId(sCtrlId + "2");
 				this.oThis3 = jQuery.sap.byId(sCtrlId + "3");
@@ -292,7 +292,7 @@
 
 
 			//Testcase 13: ARIA-Value for Percentage out of Range (<0 or >100)
-			test("ARIA-Value for Percentage out of Range [Controls 5,6]: ", function() {
+			QUnit.test("ARIA-Value for Percentage out of Range [Controls 5,6]: ", function(assert) {
 				expect(2);
 				this.oThis5 = jQuery.sap.byId(sCtrlId + "5");
 				this.oThis6 = jQuery.sap.byId(sCtrlId + "6");

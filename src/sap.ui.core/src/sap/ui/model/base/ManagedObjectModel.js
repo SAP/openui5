@@ -16,6 +16,9 @@ sap.ui.define([
 	 *
 	 * @class Managed Object model that allows to bind to properties and aggregations of objects.
 	 *
+	 * Provides model access to a given {@link sap.ui.base.ManagedObject}. Such access allows to bind to properties and aggregations of
+	 * this object.
+	 *
 	 * @param {sap.ui.base.ManagedObject} oObject the managed object models root object
 	 * @param {object} oData an object for custom data
 	 * @alias sap.ui.model.base.ManagedObjectModel
@@ -31,7 +34,7 @@ sap.ui.define([
 			oData[CUSTOMDATAKEY] = {};
 			this._oObject = oObject;
 			this._mAggregationObjects = {};
-			this._aPropertyObjects = [];
+			this._mPropertyObjects = {};
 			JSONModel.apply(this, [oData]);
 		}
 	});
@@ -43,7 +46,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oData the data to set on the model
 	 * @param {boolean} [bMerge=false] whether to merge the data instead of replacing it
-	 * @private Might become public later
+	 * @private
 	 */
 	ManagedObjectModel.prototype.setData = function(oData, bMerge){
 		var _oData = {};
@@ -56,7 +59,7 @@ sap.ui.define([
 	 * Serializes the current custom JSON data of the model into a string.
 	 *
 	 * @return {string} sJSON the JSON data serialized as string
-	 * @private Might become public later
+	 * @private
 	 */
 	ManagedObjectModel.prototype.getJSON = function(){
 		return JSON.stringify(this.oData[CUSTOMDATAKEY]);
@@ -64,9 +67,10 @@ sap.ui.define([
 
 	/**
 	 * Sets a property of a control for a given path and context
+	 *
 	 * @param {string} sPath the path of the
 	 * @returns {boolean} true if the property was set, else false
-	 * @private Might become public later
+	 * @private
 	 */
 	ManagedObjectModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
 		var sResolvedPath = this.resolve(sPath, oContext),
@@ -114,6 +118,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Adds the binding to the model.
+	 */
+	ManagedObjectModel.prototype.addBinding = function(oBinding){
+		JSONModel.prototype.addBinding.apply(this, arguments);
+		this.checkUpdate();
+	};
+
+	ManagedObjectModel.prototype.removeBinding = function(oBinding){
+		JSONModel.prototype.removeBinding.apply(this, arguments);
+		if (oBinding._bAttached) {
+			oBinding._bAttached = false;
+			this._getObject(oBinding.getPath(), oBinding.getContext(), false);
+		}
+	};
+
+	/**
 	 * Overwrites the default property change event and enriches its parameters with the resolved path for convenience.
 	 *
 	 * @see sap.ui.model.Model.prototype.firePropertChange
@@ -131,14 +151,15 @@ sap.ui.define([
 	 * @see sap.ui.model.Model.prototype.bindProperty
 	 */
 	ManagedObjectModel.prototype.bindAggregation = function(sPath, oContext, mParameters) {
-		return new ManagedObjectModelPropertyBinding(this, sPath, oContext, mParameters);
+		return JSONModel.prototype.bindProperty.apply(this, arguments);
 	};
 
 	/**
 	 * @see sap.ui.model.Model.prototype.bindProperty
 	 */
 	ManagedObjectModel.prototype.bindProperty = function(sPath, oContext, mParameters) {
-		return new ManagedObjectModelPropertyBinding(this, sPath, oContext, mParameters);
+		var oBinding = new ManagedObjectModelPropertyBinding(this, sPath, oContext, mParameters);
+		return oBinding;
 	};
 
 	/**
@@ -179,15 +200,54 @@ sap.ui.define([
 
 	/**
 	 * Registers to the _change event for a property on an object
+	 * Each property has its own handler registered to the _change.
+	 * @param {sap.ui.base.ManagedObject} oObject the object for the property
+	 * @param {object} oProperty the property object from the metadata of the object
 	 * @private
 	 */
-	ManagedObjectModel.prototype._registerPropertyChange = function(oObject, sPropertyName) {
-		var sKey = oObject.getId() + "/@" + sPropertyName;
-		if (this._aPropertyObjects.length == 0) {
-			oObject.attachEvent("_change", sKey, this._handlePropertyChange, this);
+	ManagedObjectModel.prototype._registerPropertyChange = function(oObject, oProperty) {
+		if (!oObject || !oProperty) {
+			return;
 		}
-		if (this._aPropertyObjects.indexOf(sKey) === -1) {
-			this._aPropertyObjects.push(sKey);
+		var sPropertyName = oProperty.name,
+			sKey = oObject.getId() + "/@" + sPropertyName;
+		if (!this._mPropertyObjects.hasOwnProperty(sKey)) {
+			//no change handler for this property was registered, add one handler per property.
+			//pass on the key to the data of the event handler. the key is then accessible in the handler.
+			oObject.attachEvent("_change", sKey, this._handlePropertyChange, this);
+			this._mPropertyObjects[sKey] = {
+				object : oObject,
+				propertyName : sPropertyName,
+				count: 0
+			};
+		}
+		if (this._mPropertyObjects[sKey].hasOwnProperty("count")) {
+			//the change handler for this property is registered, increase the count.
+			this._mPropertyObjects[sKey].count++;
+		}
+	};
+
+	/**
+	 * Deregisters the handler from a property.
+	 * Each property has its own handler to registered to the _change.
+	 * @param {sap.ui.base.ManagedObject} oObject the object for the property
+	 * @param {object} oProperty the property object from the metadata of the object
+	 * @private
+	 */
+	ManagedObjectModel.prototype._deregisterPropertyChange = function(oObject, oProperty) {
+		if (!oObject || !oProperty) {
+			return;
+		}
+		var sPropertyName = oProperty.name,
+			sKey = oObject.getId() + "/@" + sPropertyName;
+		if (this._mPropertyObjects.hasOwnProperty(sKey)) {
+			//decrease the counter
+			this._mPropertyObjects[sKey].count--;
+			//there is no more bindings to the property if the counter becomes 0
+			if (this._mPropertyObjects[sKey].count === 0) {
+				oObject.detachEvent("_change", this._handlePropertyChange, this);
+				delete this._mPropertyObjects[sKey];
+			}
 		}
 	};
 
@@ -196,23 +256,79 @@ sap.ui.define([
 	 * @private
 	 */
 	ManagedObjectModel.prototype._handlePropertyChange = function(oEvent, sKey) {
-		if (this._aPropertyObjects.indexOf(sKey) > -1) {
+		//second parameter is the key as it was given by the event registration in _registerPropertyChange
+		if (this._mPropertyObjects.hasOwnProperty(sKey)) {
 			this.checkUpdate();
 		}
 	};
 
 	/**
-	 * Registers to the modifyAggregation event for a property on an object
+	 * Registers the handler from a aggregation.
+	 * @param {sap.ui.base.ManagedObject} oObject the object for the property
+	 * @param {object} oAggregation the aggregation object from the metadata of the object
 	 * @private
 	 */
-	ManagedObjectModel.prototype._registerAggregationChange = function(oObject, sAggregationName) {
-		var sKey = oObject.getId() + "/@" + sAggregationName;
+	ManagedObjectModel.prototype._registerAggregationChange = function(oObject, oAggregation) {
+		var sAggregationName = oAggregation.name,
+			sKey = oObject.getId() + "/@" + sAggregationName;
 		if (!this._mAggregationObjects.hasOwnProperty(sKey)) {
 			oObject._attachModifyAggregation(sAggregationName, sKey, this._handleAggregationChange, this);
 			this._mAggregationObjects[sKey] = {
 				object : oObject,
-				aggregationName : sAggregationName
+				aggregationName : sAggregationName,
+				count: 0
 			};
+			//workaround for some rare cases where a control updates an aggregation on its own and the added control is never
+			//a real child of the object we need to check for updates as well.
+			//here a modify event is not called but the length if the getAggregation changed.
+			var fnInvalidate = oObject.invalidate,
+				that = this;
+			oObject.invalidate = function(oOrigin) {
+				var iNewCount = 0;
+				if (!oObject.getAggregation(sAggregationName)) {
+					iNewCount = 0;
+				} else {
+					iNewCount = oObject.getAggregation(sAggregationName).length;
+				}
+				if (oObject.invalidate[sAggregationName] != iNewCount) {
+					oObject.invalidate[sAggregationName] = iNewCount;
+					//do another check update async for this case
+					//if _handleAggregationChange is called in between, there will be no updates as all values are already
+					//up to date, only in the rare case that _handleAggregationChange is not called, this will do something
+					that.checkUpdate(false, true);
+				}
+				fnInvalidate.apply(oObject, [oOrigin]);
+			};
+			oObject.invalidate.fn = fnInvalidate;
+			if (!oObject.getAggregation(sAggregationName)) {
+				oObject.invalidate[sAggregationName] = 0;
+			} else {
+				oObject.invalidate[sAggregationName] = oObject.getAggregation(sAggregationName).length;
+			}
+		}
+		if (this._mAggregationObjects[sKey].hasOwnProperty("count")) {
+			this._mAggregationObjects[sKey].count++;
+		}
+	};
+
+	/**
+	 * Deregisters the handler from a aggregation.
+	 * @param {sap.ui.base.ManagedObject} oObject the object for the property
+	 * @param {object} oAggregation the aggregation object from the metadata of the object
+	 * @private
+	 */
+	ManagedObjectModel.prototype._deregisterAggregationChange = function(oObject, oAggregation) {
+		var sAggregationName = oAggregation.name,
+			sKey = oObject.getId() + "/@" + sAggregationName;
+		if (this._mAggregationObjects.hasOwnProperty(sKey)) {
+			this._mAggregationObjects[sKey].count--;
+			if (this._mAggregationObjects[sKey].count === 0) {
+				oObject._detachModifyAggregation(sAggregationName, this._handleAggregationChange, this);
+				delete this._mAggregationObjects[sKey];
+				if (oObject.invalidate.fn) {
+					oObject.invalidate = oObject.invalidate.fn;
+				}
+			}
 		}
 	};
 
@@ -222,23 +338,7 @@ sap.ui.define([
 	 */
 	ManagedObjectModel.prototype._handleAggregationChange = function(oEvent, sKey) {
 		if (this._mAggregationObjects.hasOwnProperty(sKey)) {
-			if (oEvent.getParameter("type") === "insert") {
-				this.checkUpdate(true);
-			} else if (oEvent.getParameter("type") === "remove") {
-				var oObject = oEvent.getParameter("object").getParent();
-				if (oObject) {
-					var aFound = this._oObject.findAggregatedObjects(true, function(oProcessObject) {
-						if (oObject === oProcessObject) {
-							return true;
-						}
-					});
-					if (aFound.length === 0) {
-						delete this._mAggregationObjects[sKey];
-						oObject._detachModifyAggregation(sKey.split("/@")[1], this._handleAggregationChange, this);
-					}
-				}
-				this.checkUpdate(true);
-			}
+			this.checkUpdate();
 		}
 	};
 
@@ -311,9 +411,18 @@ sap.ui.define([
 	 * Supported selectors -> see _getSpecialNode
 	 * @private
 	 */
-	ManagedObjectModel.prototype._getObject = function(sPath, oContext) {
+	ManagedObjectModel.prototype._getObject = function(sPath, oContext, bChangeHandlers) {
 		var oNode = this._oObject,
 			sResolvedPath = "";
+
+		for (var i = 0; i < this.aBindings.length; i++) {
+			var oBinding = this.aBindings[i],
+				sResolved = this.resolve(oBinding.getPath(), oBinding.getContext());
+			if (sResolved && !oBinding._bAttached) {
+				oBinding._bAttached = true;
+				this._getObject(oBinding.getPath(), oBinding.getContext(), true);
+			}
+		}
 
 		if (typeof sPath === "string" && sPath.indexOf("/") != 0 && !oContext) {
 			return null;
@@ -359,15 +468,21 @@ sap.ui.define([
 				sParentPart = sPart;
 				var oNodeMetadata = oNode.getMetadata(),
 					oProperty = oNodeMetadata.getProperty(sPart);
-
 				if (oProperty) {
-					this._registerPropertyChange(oNode, sPart);
+					if (bChangeHandlers === true) {
+						this._registerPropertyChange(oNode, oProperty);
+					} else if (bChangeHandlers === false) {
+						this._deregisterPropertyChange(oNode, oProperty);
+					}
 					oNode = oNode[oProperty._sGetter]();
 				} else {
 					var oAggregation = oNodeMetadata.getAggregation(sPart) || oNodeMetadata.getAllPrivateAggregations()[sPart];
 					if (oAggregation) {
-						this._registerAggregationChange(oNode, sPart);
-						//TBD: Only allow access to the private aggregations of this._oObject?
+						if (bChangeHandlers === true) {
+							this._registerAggregationChange(oNode, oAggregation);
+						} else if (bChangeHandlers === false) {
+							this._deregisterAggregationChange(oNode, oAggregation);
+						}
 						oNode = oNode[oAggregation._sGetter] ? oNode[oAggregation._sGetter]() : oNode.getAggregation(sPart);
 					} else {
 						if (oNode && oNode[sPart] && typeof oNode[sPart] === "function") {
@@ -377,7 +492,6 @@ sap.ui.define([
 						}
 					}
 				}
-
 			} else if (jQuery.isArray(oNode) || jQuery.isPlainObject(oNode)) {
 				oNode = oNode[sPart];
 			} else {
@@ -400,16 +514,10 @@ sap.ui.define([
 		for (var n in this._mAggregationObjects) {
 			var o = this._mAggregationObjects[n];
 			o.object._detachModifyAggregation(o.aggregationName, this._handleAggregationChange, this);
+			if (o.object.invalidate.fn) {
+				o.object.invalidate = o.object.invalidate.fn;
+			}
 		}
-		this._aPropertyObjects = [];
-
-		this._oObject = null;
-		this.oData = null;
-		this.aBindings = [];
-		this.mContexts = {};
-		this.mSupportedBindingModes = {"OneWay": true, "TwoWay": true, "OneTime": true};
-		this.bLegacySyntax = false;
-		this.sUpdateTimer = null;
 		JSONModel.prototype.destroy.apply(this, arguments);
 	};
 

@@ -99,9 +99,9 @@
 			return oTable;
 		}
 
-		module("Display");
+		QUnit.module("Display");
 
-		test("Merge Label and Icon", function() {
+		QUnit.test("Merge Label and Icon", function(assert) {
  			var sut = createSUT("MergeDuplicates");
 			sut.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -119,7 +119,7 @@
 			sut.destroy();
 		});
 
-		test("Merge in Growing Feature", function() {
+		QUnit.test("Merge in Growing Feature", function(assert) {
 			var sut = createSUT("MergeDuplicates", true);
 			sut.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -148,7 +148,7 @@
 			sut.destroy();
 		});
 
-		test("Merge when Group Header occures", function() {
+		QUnit.test("Merge when Group Header occures", function(assert) {
 			var oLastNameSorter = new sap.ui.model.Sorter("lastName", false, true);
 
 			var sut = createSUT("MergeDuplicates", false, {sorter: oLastNameSorter});
@@ -178,7 +178,7 @@
 			sut.destroy();
 		});
 
-		test("Merge when Rerendering", function() {
+		QUnit.test("Merge when Rerendering", function(assert) {
 			var sut = createSUT("MergeDuplicates");
 			sut.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();

@@ -84,10 +84,10 @@
 
 	/*------------------------------------------------------------------------------------*/
 	QUnit.module("Breadcrumbs - API", {
-		setup: function () {
+		beforeEach: function () {
 			this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(4, oFactory.getText());
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oStandardBreadCrumbsControl.destroy();
 		}
 	});
@@ -207,12 +207,12 @@
 
 	/*------------------------------------------------------------------------------------*/
 	QUnit.module("Breadcrumbs - Mobile cases, small screen", {
-		setup: function () {
+		beforeEach: function () {
 			this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(4, oFactory.getText());
 			helpers.setMobile();
 			helpers.setSmallScreenSize();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oStandardBreadCrumbsControl.destroy();
 			helpers.resetMobile();
 			helpers.resetScreenSize();
@@ -242,7 +242,7 @@
 
 	/*------------------------------------------------------------------------------------*/
 	QUnit.module("Breadcrumbs - Special cases", {
-		teardown: function () {
+		afterEach: function () {
 			this.oStandardBreadCrumbsControl.destroy();
 		}
 	});
@@ -281,7 +281,7 @@
 	});
 
 	QUnit.module("Breadcrumbs - private functions", {
-		teardown: function () {
+		afterEach: function () {
 			this.oStandardBreadCrumbsControl.destroy();
 		}
 	});
@@ -375,10 +375,10 @@
 
 	/*------------------------------------------------------------------------------------*/
 	QUnit.module("Breadcrumbs - Accessibility", {
-		setup: function () {
+		beforeEach: function () {
 			this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(4, oFactory.getText());
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oStandardBreadCrumbsControl.destroy();
 		}
 	});

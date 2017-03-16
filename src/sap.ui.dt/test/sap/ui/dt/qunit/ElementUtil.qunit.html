@@ -308,7 +308,7 @@
 					assert.equal(aChildren.length, 6, 'then the vertical layout has now 6 children');
 				});
 
-				QUnit.test("when a control has non-multiple aggregations with existing items", function(assert){
+				QUnit.test("when a control has non-multiple aggregations with existing items", function(assert) {
 					var oFormElement = new sap.ui.layout.form.FormElement({label : "InputLabel"});
 					var oLabel = new sap.m.Label();
 					assert.equal(ElementUtil.isValidForAggregation(oFormElement, "label", oLabel), false,

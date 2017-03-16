@@ -84,15 +84,15 @@
 
 	qutils.delayTestStart();
 
-	module("Rendering");
+	QUnit.module("Rendering");
 
-	test("Standard categories", function() {
+	QUnit.test("Standard categories", function(assert) {
 		var $Leg1 = sap.ui.getCore().byId("Leg1").$();
 		var aLegendItems = $Leg1.children(".sapUiUnifiedLegendItem");
 		equal(aLegendItems.length, 4, "4 categories rendered");
 	});
 
-	test("Custom categories", function() {
+	QUnit.test("Custom categories", function(assert) {
 		var $Leg2 = sap.ui.getCore().byId("Leg2").$();
 		var aLegendItems = $Leg2.children(".sapUiUnifiedLegendItem");
 		equal(aLegendItems.length, 4, "4 categories rendered");
@@ -135,14 +135,14 @@
 		equal(oExtractedRGB[3], oExpectedRGB.B, sLabel + " (BLUE)");
 	}
 
-	test("Custom colors", function () {
+	QUnit.test("Custom colors", function (assert) {
 		var oCustomColorIfL4I6 = _getCssColorProperty(jQuery("#L4-I6 .sapUiUnifiedLegendSquareColor"), "background-color");
 		var oCustomColorIfL4I7 = _getCssColorProperty(jQuery("#L4-I7 .sapUiUnifiedLegendSquareColor"), "background-color");
 		_checkColor(oCustomColorIfL4I6, {R: 255, G:0, B: 255}, "Legend 4: custom color 1 item has the right color");
 		_checkColor(oCustomColorIfL4I7, {R: 255, G:0, B: 0}, "Legend 4: custom color 2 item has the right color");
 	});
 
-	test("Combination with Calendar", function() {
+	QUnit.test("Combination with Calendar", function(assert) {
 		var specialDates = oCal.getSpecialDates();
 		for (var i = 0; i < specialDates.length; i++) {
 			oLeg3.addItem(new sap.ui.unified.CalendarLegendItem({

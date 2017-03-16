@@ -53,7 +53,7 @@
 					return sap.ui.jsview(sName);
 				}
 
-				test("Should destroy correctly", function () {
+				QUnit.test("Should destroy correctly", function (assert) {
 					//Arrange
 					var oRouteMatchedSpy = this.spy(RouteMatchedHandler.prototype, "_onHandleRouteMatched"),
 							oRoutePatternMatchedSpy = this.spy(RouteMatchedHandler.prototype, "_handleRoutePatternMatched"),
@@ -87,7 +87,7 @@
 
 				QUnit.module("Transition Directions");
 
-				test("Should forward the Direction info to the TargetHandler", function () {
+				QUnit.test("Should forward the Direction info to the TargetHandler", function (assert) {
 					//Arrange
 					var view = createViewAndController("dummy"),
 							oRouter = new Router({
@@ -121,12 +121,12 @@
 				});
 
 				QUnit.module("Managing Containers", {
-					setup: function () {
+					beforeEach: function () {
 						this.oRouter = new Router({
 							myRoute: {}
 						});
 					},
-					teardown: function () {
+					afterEach: function () {
 						this.oRouter.destroy();
 					}
 				});
@@ -245,8 +245,8 @@
 					assert.strictEqual(oNavigateSpy.callCount, 1, "did call navigate");
 				});
 
-				module("Dialog closing", {
-					setup: function () {
+				QUnit.module("Dialog closing", {
+					beforeEach: function () {
 						var oPageToNavigateTo = new Page();
 						this.oNavContainer = new NavContainer({
 							pages: [ new Page(), oPageToNavigateTo ]
@@ -261,7 +261,7 @@
 							myRoute: {}
 						});
 					},
-					teardown: function () {
+					afterEach: function () {
 						this.oNavContainer.destroy();
 						this.oRouter.destroy();
 					}
@@ -291,11 +291,11 @@
 					strictEqual(oCloseAllDialogsSpy.callCount, iExpectedCallCount, "did close the dialogs");
 				}
 
-				test("Should close all dialogs", function () {
+				QUnit.test("Should close all dialogs", function (assert) {
 					closeDialogsTestCase.call(this, true);
 				});
 
-				test("Should not close all dialogs", function () {
+				QUnit.test("Should not close all dialogs", function (assert) {
 					closeDialogsTestCase.call(this, false);
 				});
 
@@ -313,8 +313,8 @@
 				});
 
 
-				module("Routing with targets", {
-					setup: function () {
+				QUnit.module("Routing with targets", {
+					beforeEach: function () {
 						this.oDummyMaster = createViewAndController("DummyMaster");
 						this.oDummyDetail = createViewAndController("DummyDetail");
 						this.oSplitContainer = new SplitContainer({
@@ -322,14 +322,14 @@
 							detailPages: [ this.oDummyDetail ]
 						});
 					},
-					teardown: function () {
+					afterEach: function () {
 						this.oSplitContainer.destroy();
 						this.oDummyMaster.destroy();
 						this.oDummyDetail.destroy();
 					}
 				});
 
-				test("Should also work for routes with targets", function () {
+				QUnit.test("Should also work for routes with targets", function (assert) {
 					//Arrange
 					var oMasterView = createViewAndController("Master"),
 						oDetailView = createViewAndController("Detail"),
@@ -429,7 +429,7 @@
 				///////////////////////////////////////////////////////
 				/// Integation test
 				///////////////////////////////////////////////////////
-				module("Integration tests");
+				QUnit.module("Integration tests");
 
 				QUnit.test("Should pass some data to the navContainer", function (assert) {
 					//Arrange
@@ -473,7 +473,7 @@
 				});
 
 				integrationTests.start({
-					setup: function (oConfig) {
+					beforeEach: function (oConfig) {
 						var oRouter = new Router(oConfig);
 
 						this.oRouter = oRouter;
@@ -484,7 +484,7 @@
 						this.oRouter.parse(sPatternOrName);
 						this.clock.tick(0);
 					},
-					teardown: function () {
+					afterEach: function () {
 						this.oRouter.destroy();
 						this.oRouteMatchedHandler.destroy();
 					}

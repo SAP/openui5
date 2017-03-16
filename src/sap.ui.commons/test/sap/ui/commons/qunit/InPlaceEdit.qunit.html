@@ -126,9 +126,9 @@
 
 	qutils.delayTestStart();
 
-	module("Rendering");
+	QUnit.module("Rendering");
 
-	test("Visual appearance", function() {
+	QUnit.test("Visual appearance", function(assert) {
 		equal(jQuery("#IPE1").get(0).offsetWidth, 200, "TextField: Width of the control");
 		equal(jQuery("#IPE1").text(), sStartText, "TextField: Displayed text");
 
@@ -153,7 +153,7 @@
 
 	});
 
-	test("Value states", function() {
+	QUnit.test("Value states", function(assert) {
 		ok(!jQuery("#IPE1").hasClass("sapUiIpeSucc"), "Normal state: Success CSS-class not rendered");
 		ok(!jQuery("#IPE1").hasClass("sapUiIpeWarn"), "Normal state: Warning CSS-class not rendered");
 		ok(!jQuery("#IPE1").hasClass("sapUiIpeErr"), "Normal state: Error CSS-class not rendered");
@@ -182,15 +182,15 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	module("Functions");
+	QUnit.module("Functions");
 
-	test("Properties", function() {
+	QUnit.test("Properties", function(assert) {
 		equal(oIPE1.getRequired(), true, "getRequired");
 	 });
 
-	module("Edit mode");
+	QUnit.module("Edit mode");
 
-	test("Visual appearance", function() {
+	QUnit.test("Visual appearance", function(assert) {
 		oIPE1.focus();
 		ok(jQuery.sap.domById("TF1"), "TextField1 rendered")
 		equal(jQuery("#IPE1").get(0).offsetWidth, 200, "Width of the control");
@@ -205,7 +205,7 @@
 		ok(jQuery.sap.domById("DdB1"), "DropdownBox1 rendered")
 	});
 
-	test("Link", function() {
+	QUnit.test("Link", function(assert) {
 		oIPE6.focus();
 		ok(!jQuery.sap.domById("IPE6--input"), "on focus no TextField rendered")
 		equal(jQuery("#IPE6--Edit").css("visibility"), "visible", "on focus Edit button visible");
@@ -253,7 +253,7 @@
 		}, 300);
 	});
 
-	module("Display mode");
+	QUnit.module("Display mode");
 
 	asyncTest("Visual appearance", function() {
 		oIPE4.focus(); // to toggle in display mode
@@ -305,9 +305,9 @@
 		}, 300);
 	});
 
-	module("Cleanup");
+	QUnit.module("Cleanup");
 
-	test("internal controls deleted", function() {
+	QUnit.test("internal controls deleted", function(assert) {
 		oIPE6.destroy();
 		ok(!oIPE6._oEditButton, "Edit button not longer exist");
 		ok(!oIPE6._oUndoButton, "Undo button not longer exist");

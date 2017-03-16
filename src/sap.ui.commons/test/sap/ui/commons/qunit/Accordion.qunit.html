@@ -4,7 +4,7 @@
 
      <script src="../shared-config.js"></script>
      <script id="sap-ui-bootstrap"
-         
+
           src="../../../../../resources/sap-ui-core.js"
           data-sap-ui-theme="sap_bluecrystal"
           data-sap-ui-noConflict="true"
@@ -70,22 +70,22 @@
 
 	   		qutils.delayTestStart();
 
-			module("Accordion API and Properties", {
-				setup : function () {
+			QUnit.module("Accordion API and Properties", {
+				beforeEach : function () {
 					this.oAccordion1 = createAccordion();
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oAccordion1.destroy();
 					this.oAccordion1 = null;
 				}
 			});
 
 			//OpenSectionsId property
-			test("OpenSectionsId Default value - the first added section", function() {
+			QUnit.test("OpenSectionsId Default value - the first added section", function(assert) {
 				strictEqual(this.oAccordion1.getOpenedSectionsId(), "section1", "OpenSectionsId should be the first added section id.");
 			});
-			test("SetOpenedSectionsId multiple values test", function() {
+			QUnit.test("SetOpenedSectionsId multiple values test", function(assert) {
 				this.oAccordion1.setOpenedSectionsId("section2,section3,section4");
 				this.oAccordion1.openDefaultSections();
 
@@ -98,7 +98,7 @@
 				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is was open by default");
 			});
 
-			test("SetOpenedSectionsId disabled section Id test", function() {
+			QUnit.test("SetOpenedSectionsId disabled section Id test", function(assert) {
 				this.oAccordion1.setOpenedSectionsId("section3");
 				this.oAccordion1.openDefaultSections();
 				sap.ui.getCore().applyChanges();
@@ -106,73 +106,73 @@
 				strictEqual(aSections[2].getCollapsed(), true, "Section 3 is closed as is disabled");
 			});
 
-			test("SetOpenedSectionsId invalid section Id test", function() {
+			QUnit.test("SetOpenedSectionsId invalid section Id test", function(assert) {
 				this.oAccordion1.setOpenedSectionsId("alabala");
 				var aSections = this.oAccordion1.getSections();
 				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open as the provided Id is not valid");
 			});
 
-			test("Set OpenedSectionsId", function() {
+			QUnit.test("Set OpenedSectionsId", function(assert) {
 				var sID = "section2";
 				this.oAccordion1.setOpenedSectionsId(sID);
 				strictEqual(this.oAccordion1.getOpenedSectionsId(), sID, "OpenSectionsId for accordion1 is correct ");
 			});
 
 			//Width property
-			test("Default Width value 200px", function() {
+			QUnit.test("Default Width value 200px", function(assert) {
 				strictEqual(this.oAccordion1.getWidth(), "200px", "Default width for accordion1 should be 200px");
 			});
 
 			//sections aggregation
-			test("sections Aggregation test", function() {
+			QUnit.test("sections Aggregation test", function(assert) {
 				strictEqual(this.oAccordion1.getAggregation("sections").length, 4, "4 sections should be added");
 			});
-			test("Sections aggregation visibility test", function() {
+			QUnit.test("Sections aggregation visibility test", function(assert) {
 				ok(this.oAccordion1.getSections, "Sections aggregation is visible");
 			});
-			test("Test getNumberOfOpenedSections", function() {
+			QUnit.test("Test getNumberOfOpenedSections", function(assert) {
 				strictEqual(this.oAccordion1.getNumberOfOpenedSections(), 1, "Should be 1");
 			});
 
 
-			module("Accordion API and Properties, no any section added", {
-				setup : function () {
+			QUnit.module("Accordion API and Properties, no any section added", {
+				beforeEach : function () {
 					this.oAccordion1 = createAccordion(true);
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oAccordion1.destroy();
 					this.oAccordion1 = null;
 				}
 			});
 
 			//Width property
-			test("Default Width value 200px", function() {
+			QUnit.test("Default Width value 200px", function(assert) {
 				strictEqual(this.oAccordion1.getWidth(), "200px", "Default width for accordion1 should be 200px");
 			});
 
 			//OpenSectionsId property
-			test("OpenedSectionsId Default value null", function() {
+			QUnit.test("OpenedSectionsId Default value null", function(assert) {
 				strictEqual(this.oAccordion1.getOpenedSectionsId(), "", "OpenedSectionsId should be null as no sections exist ");
 			});
 
 
 			//sections aggregation
-			test("sections Aggregation test", function() {
+			QUnit.test("sections Aggregation test", function(assert) {
 				strictEqual(this.oAccordion1.getAggregation("sections"), null, "No any section exist");
 			});
 
-			module("AccordionSection API and Properties", {
-				setup : function () {
+			QUnit.module("AccordionSection API and Properties", {
+				beforeEach : function () {
 					this.oAccordion1 = createAccordion();
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oAccordion1.destroy();
 					this.oAccordion1 = null;
 				}
 			});
 
-			test("API test - focusFirstControl", function() {
+			QUnit.test("API test - focusFirstControl", function(assert) {
 				var aSections = this.oAccordion1.getSections();
 				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 				//focus the first control of the first section
@@ -180,7 +180,7 @@
 				strictEqual(aSections[0].getContent()[0].$().is(":focus"), true, "The first button is focused");
 			});
 
-			test("API test - onThemeChanged", function() {
+			QUnit.test("API test - onThemeChanged", function(assert) {
 				var aSections = this.oAccordion1.getSections();
 				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 				aSections[0].onThemeChanged();
@@ -188,7 +188,7 @@
 				strictEqual(aSections[0].$("hdrL").css("width"), "20px", "The width is 20px");
 			});
 
-			test("API test - Enabled property", function() {
+			QUnit.test("API test - Enabled property", function(assert) {
 				var aSections = this.oAccordion1.getSections();
 				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 
@@ -202,12 +202,12 @@
 			});
 
 
-			module("Accordion Open/Close sections",{
-				setup : function () {
+			QUnit.module("Accordion Open/Close sections",{
+				beforeEach : function () {
 					this.oAccordion1 = createAccordion();
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oAccordion1.destroy();
 					this.oAccordion1 = null;
 				}
@@ -216,7 +216,7 @@
 
 
 			//Some keyboard shortcuts...
-			test("Accordion Open/Close sections", function() {
+			QUnit.test("Accordion Open/Close sections", function(assert) {
 
 				// Navigation + close/open sections
 				//Open the fourth section
@@ -233,18 +233,18 @@
 
 			});
 
-			module("Accordion Keyboard Handling Test",{
-				setup : function () {
+			QUnit.module("Accordion Keyboard Handling Test",{
+				beforeEach : function () {
 					this.oAccordion1 = createAccordion();
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function () {
+				afterEach : function () {
 					this.oAccordion1.destroy();
 					this.oAccordion1 = null;
 				}
 			} );
 
-			test("Space and Arrows Left & Right ", function() {
+			QUnit.test("Space and Arrows Left & Right ", function(assert) {
 
 				var aSections = this.oAccordion1.getSections();
 				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
@@ -274,7 +274,7 @@
 
 			});
 
-			test("Space and End buttons ", function() {
+			QUnit.test("Space and End buttons ", function(assert) {
 
 				var aSections = this.oAccordion1.getSections();
 				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
@@ -315,7 +315,7 @@
 
 			});
 
-			test("Space and HOME buttons ", function() {
+			QUnit.test("Space and HOME buttons ", function(assert) {
 
 				// test HOME button, when some of the first sections are disabled
 				this.oAccordion1.destroyAggregation("sections", true);		// note: suppress re-rendering
@@ -361,7 +361,7 @@
 				strictEqual(aSections[2].$("hdr").is(":focus"), true, "Section 3 is now focused as first 2 are disabled");
 			});
 
-			test("Space and Arrows Up & Down ", function() {
+			QUnit.test("Space and Arrows Up & Down ", function(assert) {
 
 				var aSections = this.oAccordion1.getSections();
 				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
@@ -391,7 +391,7 @@
 
 			});
 
-			test("Ctrl + PgDn ", function() {
+			QUnit.test("Ctrl + PgDn ", function(assert) {
 
 				var aSections = this.oAccordion1.getSections();
 				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
@@ -404,7 +404,7 @@
 
 			});
 
-			test("Ctrl + PgUp ", function() {
+			QUnit.test("Ctrl + PgUp ", function(assert) {
 
 				var aSections = this.oAccordion1.getSections();
 				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
@@ -417,7 +417,7 @@
 
 			});
 
-			test("Ctrl + ARROW DOWN ", function() {
+			QUnit.test("Ctrl + ARROW DOWN ", function(assert) {
 
 				var aSections = this.oAccordion1.getSections();
 				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
@@ -428,7 +428,7 @@
 				strictEqual(this.oAccordion1.getSections()[1].getTitle(), "My section 1", "Section1 is now at the second position");
 			});
 
-			test("Ctrl + ARROW UP ", function() {
+			QUnit.test("Ctrl + ARROW UP ", function(assert) {
 
 				var aSections = this.oAccordion1.getSections();
 				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");

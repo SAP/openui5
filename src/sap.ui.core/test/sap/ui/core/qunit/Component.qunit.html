@@ -90,15 +90,15 @@
 	//******************************************************
 
 
- 	module("Basic Components");
+ 	QUnit.module("Basic Components");
 
-	test("Simple Component Instance", function(){
+	QUnit.test("Simple Component Instance", function(assert){
 		ok(document.getElementById("CompCont1"));
 		var elem = jQuery.sap.byId("__component0---mybutn");
 		equal(elem.text(), "Text changed through settings", "Settings applied");
 	});
 
-	test("Nested Components", function(){
+	QUnit.test("Nested Components", function(assert){
 		ok(document.getElementById("ContVLayout"));
 		//check for ids of nested elements
 		ok(document.getElementById("vLayout---myLayout"));
@@ -109,7 +109,7 @@
 		ok(document.getElementById("vLayout---comp_button---mybutn"));
 	});
 
-	test("Components Metadata", function(){
+	QUnit.test("Components Metadata", function(assert){
 		var includes = ["css/vlayout.css","/js/includeme.js"];
 		var components =  ["samples.components.styledbutton"];
 		equal(oComp.getMetadata().getVersion(), "1.0", "Version retrieved");
@@ -119,7 +119,7 @@
 		equal(oComp.getMetadata().getUI5Version(), "1.13.0", "UI5 Version retrieved");
 	});
 
-	test("Components Metadata - Custom Configuration Entry", function(){
+	QUnit.test("Components Metadata - Custom Configuration Entry", function(assert){
 		var oSuccessMerged = test.comp2.Component.getMetadata().getCustomEntry("my.custom.config", true);
 		var oSuccessUnMerged = test.comp2.Component.getMetadata().getCustomEntry("my.custom.config", false);
 		var oFail = test.comp2.Component.getMetadata().getCustomEntry("properties");
@@ -131,7 +131,7 @@
 		ok(!oSuccessUnMerged.property2, "Property 2 not merged (does not exist).");
 	});
 
-	test("Components Metadata - Load from file", function(){
+	QUnit.test("Components Metadata - Load from file", function(assert){
 		jQuery.sap.require("samples.components.loadfromfile.Component");
 		var oMetadata = samples.components.loadfromfile.Component.getMetadata();
 
@@ -139,7 +139,7 @@
 		ok(oMetadata.hasProperty("prop1"), "Property 'prop1' available.");
 	});
 
-	test("Components Includes", function(){
+	QUnit.test("Components Includes", function(assert){
 		ok((typeof foo == 'function'), "function foo from included js exists");
 		sFontSize = "4px";
 		foo("comparea2", sFontSize);
@@ -148,7 +148,7 @@
 		equal(jQuery.sap.byId("vLayout---myTF").css("padding-left"), "321px", "CSS from include applied");
 	});
 
-	test("Factory Function", function(){
+	QUnit.test("Factory Function", function(assert){
 		var oComponent = sap.ui.component(oComp.getId());
 		equal(oComponent, oComp, "Factory function returns the same instance!");
 		oComponent = sap.ui.component({
@@ -159,7 +159,7 @@
 		equal(oComponent.getMetadata(), oComp.getMetadata(), "Component is equal!");
 	});
 
-	test("Component Data", function(){
+	QUnit.test("Component Data", function(assert){
 		ok(!!oComp.getComponentData(), "Component has component data");
 		equal(oComp.getComponentData().foo, "bar", "Component data is correct");
 		var oComponent = sap.ui.getCore().getComponent(oCompCont1.getComponent());
@@ -167,9 +167,9 @@
 		equal(oComponent.getComponentData().foo, "bar", "Component data is correct");
 	});
 
- 	module("Creation Context");
+ 	QUnit.module("Creation Context");
 
-	test("Basic Test", function(){
+	QUnit.test("Basic Test", function(assert){
 		// check that the layout has the reference to the component
 		var oLayout = oComp.byId("myLayout");
 		var sRefComponentId = oLayout._sOwnerId; // INTERNAL ONLY!
@@ -247,8 +247,8 @@
 		assert.ok(oTargets.bIsDestroyed, "Targets got destroyed when the component is destroyed");
 	});
 
-	module("Routing", {
-		setup : function () {
+	QUnit.module("Routing", {
+		beforeEach : function () {
 			// System under test
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "samples.components.targets"

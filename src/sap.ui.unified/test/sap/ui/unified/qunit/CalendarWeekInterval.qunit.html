@@ -29,7 +29,7 @@
 			var CalendarUtils = sap.ui.unified.calendar.CalendarUtils,
 				UniversalDate = sap.ui.core.date.UniversalDate;
 
-			module("Events", {
+			QUnit.module("Events", {
 				beforeEach: function () {
 					this.oPC = new sap.m.PlanningCalendar('pc1', {
 						startDate: new Date(2015, 0, 1, 8, 0, 0),
@@ -158,7 +158,7 @@
 				}
 			});
 
-			test("'_handleFocus()' has correct output", function () {
+			QUnit.test("'_handleFocus()' has correct output", function (assert) {
 				//prepare
 				var _handleFocusCalendarDateSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "_handleFocus"),
 					_focusDateExtendCalendarDateSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "_focusDateExtend"),
@@ -186,7 +186,7 @@
 				strictEqual(_focusDateExtendWeekDateSpy.callCount, 2, "CalendarWeekInterval '_focusDateExtend()' was not called");
 			});
 
-			test("'_focusDateExtend()' has correct output", function () {
+			QUnit.test("'_focusDateExtend()' has correct output", function (assert) {
 				//prepare
 				var _focusDateExtendSpy = this.spy(this.sut, "_focusDateExtend"),
 					oExpectedDate = CalendarUtils._createUniversalUTCDate(new Date(2015, 0, 3, 12, 0, 0));
@@ -203,7 +203,7 @@
 				ok(_focusDateExtendSpy.calledWith(oExpectedDate, true, false), "'_focusDateExtend()' was called with the correct parameters");
 			});
 
-			test("'_adjustFocusedDateUponYearChange()' has correct output", function () {
+			QUnit.test("'_adjustFocusedDateUponYearChange()' has correct output", function (assert) {
 				/**
 				 * These are some corner case dates for week number calculation (based on first day of week)
 				 * =============================================================================================

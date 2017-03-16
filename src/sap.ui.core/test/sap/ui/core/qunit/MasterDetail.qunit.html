@@ -69,7 +69,7 @@
 		"<member firstName=\"Frank\" lastName=\"Wallace\" gender=\"male\"></member>" +
 	"</teamMembers> </root>";
 
-	test("test bind Context with JSON model and property binding", function(){
+	QUnit.test("test bind Context with JSON model and property binding", function(assert) {
 		var oLabel = new sap.ui.commons.Label();
 		oLabel.setText("testText");
 		oLabel.placeAt("target1");
@@ -86,7 +86,7 @@
 
 	});
 
-	test("test2 bind Context with JSON model and property binding", function(){
+	QUnit.test("test2 bind Context with JSON model and property binding", function(assert) {
 		var oLabel = new sap.ui.commons.Label();
 		oLabel.setText("testText");
 		oLabel.placeAt("target1");
@@ -110,7 +110,7 @@
 		oLabel.destroy();
 	});
 
-	test("test bind Context with XML model and property binding", function(){
+	QUnit.test("test bind Context with XML model and property binding", function(assert) {
 		var oLabel = new sap.ui.commons.Label();
 		oLabel.setText("testText");
 		oLabel.placeAt("target1");
@@ -127,7 +127,7 @@
 
 	});
 
-	test("test2 bind Context with XML model and property binding", function(){
+	QUnit.test("test2 bind Context with XML model and property binding", function(assert) {
 		var oLabel = new sap.ui.commons.Label();
 		oLabel.setText("testText");
 		oLabel.placeAt("target1");
@@ -151,7 +151,7 @@
 		oLabel.destroy();
 	});
 
-	test("test bind Context with JSON model and aggregation binding", function(){
+	QUnit.test("test bind Context with JSON model and aggregation binding", function(assert) {
 		var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
 		var oItemTemplate = new sap.ui.core.ListItem();
 		oLB.placeAt("target2");
@@ -212,7 +212,7 @@
 
 	});
 
-	test("test bind Context with JSON model and aggregation binding with wrong path", function(){
+	QUnit.test("test bind Context with JSON model and aggregation binding with wrong path", function(assert) {
 		var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
 		var oItemTemplate = new sap.ui.core.ListItem();
 		oLB.placeAt("target2");
@@ -235,7 +235,7 @@
 
 	});
 
-	test("test bind Context with XML model and aggregation binding", function(){
+	QUnit.test("test bind Context with XML model and aggregation binding", function(assert) {
 		var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
 		var oItemTemplate = new sap.ui.core.ListItem();
 		oLB.placeAt("target2");
@@ -272,7 +272,7 @@
 
 	});
 
-	test("test bind Context with XML model and aggregation binding with wrong path", function(){
+	QUnit.test("test bind Context with XML model and aggregation binding with wrong path", function(assert) {
 		var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
 		var oItemTemplate = new sap.ui.core.ListItem();
 		oLB.placeAt("target2");

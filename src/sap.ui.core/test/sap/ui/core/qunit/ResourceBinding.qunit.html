@@ -37,7 +37,7 @@
 		sap.ui.getCore().setModel(oModel);
 	};
 
-	test("Binding getPath", 2, function(){
+	QUnit.test("Binding getPath", 2, function(assert) {
 		setup();
 		oBinding = oModel.bindProperty("TEST_TEXT");
 		// model stores the binding first when attach change was called
@@ -45,14 +45,14 @@
 		equal(oBinding.getPath(),"TEST_TEXT","Binding Path set properly");
 	});
 
-	test("Binding getModel", 1, function(){
+	QUnit.test("Binding getModel", 1, function(assert) {
 		setup();
 		oBinding = oModel.bindProperty("TEST_TEXT");
 		// check model of each binding...should be the same
 		equal(oBinding.getModel(), oModel, "Binding model");
 	});
 
-	test("Binding changeEvent", function(){
+	QUnit.test("Binding changeEvent", function(assert) {
 		setup();
 		oBinding = oModel.bindProperty("TEST_TEXT");
 
@@ -88,7 +88,7 @@
 		detach = false;
 	};
 
-	test("PropertyBinding getValue", function(){
+	QUnit.test("PropertyBinding getValue", function(assert) {
 		setup();
 		oBinding = oModel.bindProperty("TEST_TEXT");
 

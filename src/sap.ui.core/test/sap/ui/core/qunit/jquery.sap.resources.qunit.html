@@ -125,7 +125,7 @@
 				assert.equal(oProps.getText("transkey4"), "Test Text 1 zh_TW", "transkey4 accessed");
 				assert.equal(oProps.getText("transkey2"), "Test Text 2 en", "transkey2 accessed");
 				assert.equal(oProps.getText("transkey1"), "Test Text 1 Fallback", "transkey1 accessed");
-			}); 
+			});
 
 			QUnit.test("fallback for invalid locales (sync)", function(assert) {
 				loadBundle(assert, {url : "testdata/resources/bundle.hdbtextbundle", locale : "0815"}, testFallbackForInvalidLocales);
@@ -297,7 +297,7 @@
 
 			QUnit.module("other");
 
-			QUnit.test("enhancement", function(assert){
+			QUnit.test("enhancement", function(assert) {
 				var oBundle = jQuery.sap.resources({ url : "testdata/messages.properties" });
 				assert.equal(oBundle.getText("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
 				assert.equal(oBundle.getText("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
@@ -319,7 +319,7 @@
 					this.server.restore();
 				}
 			});
-			
+
 			QUnit.test("hasText (sync)", function(assert) {
 				var oBundle = jQuery.sap.resources({url : "fake.properties", locale: 'en'});
 				assert.ok(oBundle.hasText("key"), "hasText should return true for key 'key'");

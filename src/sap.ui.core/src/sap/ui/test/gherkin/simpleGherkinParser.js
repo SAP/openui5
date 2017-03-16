@@ -40,6 +40,13 @@ sap.ui.define(["jquery.sap.global"], function ($) {
      *         { text : "I have deposited 1$", keyword : "When" },
      *         { text : "I press the coffee button", keyword : "And" },
      *         { text : "I should be served a coffee", keyword : "Then" }
+     *       ],
+     *       examples : [
+     *         {
+     *           tags : ["@wip", "@integration", "@happy"],
+     *           name : "Coffee Types",
+     *           data : ["Java", "Capuccino"]
+     *         }
      *       ]
      *     }
      *   ]
@@ -66,7 +73,7 @@ sap.ui.define(["jquery.sap.global"], function ($) {
       for (var i = 0; i < aLines.length; ++i) {
         var sLine = aLines[i];
 
-        var bTagsMatch = !!sLine.match(/^(?:@\w+)(?:\s+@\w+)*$/);
+        var bTagsMatch = !!sLine.match(/^(?:@[^ @]+)(?:\s+@[^ @]+)*$/);
         if (bTagsMatch) {
           aTags = sLine.split(/\s+/);
           continue;
@@ -102,9 +109,15 @@ sap.ui.define(["jquery.sap.global"], function ($) {
           continue;
         }
 
-        var bExamplesMatch = !!sLine.match(/^Examples:/);
-        if (bExamplesMatch) {
-          oScenario.examples = [];
+        var aExamplesMatch = sLine.match(/^Examples:(.+)?/);
+        if (aExamplesMatch) {
+          oScenario.examples = oScenario.examples || [];
+          oScenario.examples.push({
+            tags: aScenarioTags.concat(aTags),
+            name: (aExamplesMatch[1]) ? aExamplesMatch[1].trim() : "",
+            data: []
+          });
+          aTags = [];
           continue;
         }
 
@@ -120,7 +133,7 @@ sap.ui.define(["jquery.sap.global"], function ($) {
           }
 
           if (oScenario.examples) {
-            oScenario.examples.push(vData);
+            oScenario.examples[oScenario.examples.length - 1].data.push(vData);
             continue;
           }
           oStep.data = oStep.data || [];

@@ -146,15 +146,15 @@
 		// test functions
 		qutils.delayTestStart();
 
-		module("Contol functions");
+		QUnit.module("Contol functions");
 
-		test("Form", function() {
+		QUnit.test("Form", function(assert) {
 			var oForm = sap.ui.getCore().byId("F1");
 
 			equal(oForm.getLayout().getId(), "Layout1", "getLayout() returns layout.")
 		});
 
-		test("Container", function() {
+		QUnit.test("Container", function(assert) {
 			var oContainer1 = sap.ui.getCore().byId("C1");
 			var oContainer2 = sap.ui.getCore().byId("C2");
 			var oContainer4 = sap.ui.getCore().byId("C4");
@@ -166,7 +166,7 @@
 			equal(oContainer1.getRenderedDomRef().id, oContainer1.getId(), "DOM for FormContainer rendered");
 		});
 
-		test("Element", function() {
+		QUnit.test("Element", function(assert) {
 			var oElement = sap.ui.getCore().byId("C1E1");
 			//label must return text if text entered, control if control enterd
 			equal(oElement.getLabel(), "Label1", "getLabel(): Label as text endered must return text");
@@ -179,9 +179,9 @@
 			equal(oElement.getRenderedDomRef().id, oElement.getId(), "DOM for FormElement rendered");
 		});
 
-		module("Rendering");
+		QUnit.module("Rendering");
 
-		test("Form", function() {
+		QUnit.test("Form", function(assert) {
 			ok(jQuery.sap.domById("F1"), "Form is rendered");
 			ok(jQuery.sap.domById("Layout1"), "Layout is rendered");
 			equal(jQuery("#F1").attr("title"), "Form tooltip", "Form tooltip rendered");
@@ -196,7 +196,7 @@
 			ok(!jQuery.sap.domById("F3"), "invisible Form is not rendered");
 		});
 
-		test("Container", function() {
+		QUnit.test("Container", function(assert) {
 			ok(jQuery.sap.domById("C1"), "Container is rendered");
 			ok(!jQuery.sap.domById("C1--Exp"), "Container1 no expander is rendered");
 			ok(jQuery('h4:contains("Container1")').get(0), "Title (as text) is renderd");
@@ -209,12 +209,12 @@
 			ok(!jQuery.sap.domById("C5"), "invisible Container is not rendered");
 		});
 
-		test("Element", function() {
+		QUnit.test("Element", function(assert) {
 			ok(jQuery.sap.domById("C1E1"), "Element is rendered");
 			ok(!jQuery.sap.domById("C4E2"), "invisible Element is not rendered");
 		});
 
-		test("FormControls", function() {
+		QUnit.test("FormControls", function(assert) {
 			ok(jQuery('label:contains("Label1")').get(0), "Label (as text) is renderd");
 			ok(jQuery('label:contains("Label1")').hasClass("sapMLabelRequired"), "Label1 is renderd as required");
 			equal(jQuery('label:contains("Label1")').attr("for"), "I1-inner", "Label1 (as text) is renderd for Input1");
@@ -232,7 +232,7 @@
 			ok(!jQuery.sap.domById("C5e1T1"), "Content of invisible Container is not rendered");
 		});
 
-		test("Aria", function() {
+		QUnit.test("Aria", function(assert) {
 			equal(jQuery("#F1").attr("role"), "form", "Form1: role \"form\" set");
 			equal(jQuery("#F1").attr("aria-labelledby"), "F1T", "Form1: aria-labelledby set");
 			ok(!jQuery("#F1").attr("aria-readonly"), "Form1: aria-readonly not set");
@@ -245,9 +245,9 @@
 			ok(!jQuery("#C4").attr("aria-labelledby"), "Container4: aria-labelledby not set");
 		});
 
-		module("Interaction");
+		QUnit.module("Interaction");
 
-		test("Container", function() {
+		QUnit.test("Container", function(assert) {
 			//expander function
 			var oContainer = sap.ui.getCore().byId("C3");
 			qutils.triggerEvent("tap", "C3--Exp");

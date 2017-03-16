@@ -11,10 +11,10 @@
     jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
     QUnit.module('API', {
-        setup: function() {
+        beforeEach: function() {
             this.LightBoxItem = new sap.m.LightBoxItem();
         },
-        teardown: function() {
+        afterEach: function() {
             this.LightBoxItem.destroy();
         }
     });

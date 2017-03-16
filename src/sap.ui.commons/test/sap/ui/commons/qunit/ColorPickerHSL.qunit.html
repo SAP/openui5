@@ -45,10 +45,10 @@
 			* QUINIT TESTS MODULE 'INITIALIZATION'
 			*****************************************************/
 			// Set a Test Module for module "Initialization"
-			module("Initialization");
+			QUnit.module("Initialization");
 
 			//Testcase 1: Initialize and immediately destroy
-			test("Initialize and immediately destroy", function() {
+			QUnit.test("Initialize and immediately destroy", function(assert) {
 				var oColorPicker = createColorPicker();
 
 				oColorPicker.destroy();
@@ -57,7 +57,7 @@
 			});
 
 			//Testcase 2: Initialize and immediately destroy
-			test("Default ColorPicker mode (HSV)", function() {
+			QUnit.test("Default ColorPicker mode (HSV)", function(assert) {
 				var oColorPicker = new sap.ui.commons.ColorPicker();
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -69,7 +69,7 @@
 			});
 
 			//Testcase 3: Initialize and immediately destroy
-			test("Color picker in HSL mode", function() {
+			QUnit.test("Color picker in HSL mode", function(assert) {
 				var oColorPicker = createColorPicker();
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -84,10 +84,10 @@
 			* QUINIT TESTS MODULE 'PROPERTIES'
 			*****************************************************/
 			// Set a Test Module for module "Properties"
-			module("Properties");
+			QUnit.module("Properties");
 
 			//Testcase 1: Default values
-			test("Default Input Parameters: ", function() {
+			QUnit.test("Default Input Parameters: ", function(assert) {
 				var oColorPicker = createColorPicker();
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -105,7 +105,7 @@
 			});
 
 			//Testcase 2: Named Parameter
-			test("Input Parameter 'lime': ", function() {
+			QUnit.test("Input Parameter 'lime': ", function(assert) {
 				var oColorPicker = createColorPicker({colorString: "lime"});
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -123,7 +123,7 @@
 			});
 
 			//Testcase 3: RGB Parameter
-			test("Input Parameter 'rgb120,177,60': ", function() {
+			QUnit.test("Input Parameter 'rgb120,177,60': ", function(assert) {
 				var oColorPicker = createColorPicker({colorString: "rgb120,177,60"});
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -141,7 +141,7 @@
 			});
 
 			//Testcase 4: HSL Parameter
-			test("Input Parameter 'hsl(120,100%,75%)': ", function() {
+			QUnit.test("Input Parameter 'hsl(120,100%,75%)': ", function(assert) {
 				var oColorPicker = createColorPicker({colorString: "hsl(120,100%,75%)"});
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -159,7 +159,7 @@
 			});
 
 			//Testcase 5: HSLa Parameter
-			test("Input Parameter 'hsla(204, 86%, 57%, 0.53)': ", function() {
+			QUnit.test("Input Parameter 'hsla(204, 86%, 57%, 0.53)': ", function(assert) {
 				var oColorPicker = createColorPicker({colorString: "hsla(204, 86%, 57%, 0.53)"});
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -177,7 +177,7 @@
 			});
 
 			//Testcase 6: HEX Parameter
-			test("Input Parameter '#18a': ", function() {
+			QUnit.test("Input Parameter '#18a': ", function(assert) {
 				var oColorPicker = createColorPicker({colorString: "#18a"});
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -195,7 +195,7 @@
 			});
 
 			//Testcase 7: wrong Parameter
-			test("Wrong Parameter 'hsl(370,44,88)': ", function() {
+			QUnit.test("Wrong Parameter 'hsl(370,44,88)': ", function(assert) {
 				var oColorPicker = createColorPicker({colorString: "hsl(370,44,88)"});
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -216,10 +216,10 @@
 			* QUINIT TESTS MODULE 'DATA-INPUT'
 			*****************************************************/
 			// Set a Test Module for module "Data-Changes"
-			module("Data-Changes");
+			QUnit.module("Data-Changes");
 
 			//Testcase: Lightness changed
-			test("Lightness changed => values calculated: ", function() {
+			QUnit.test("Lightness changed => values calculated: ", function(assert) {
 				var oColorPicker = createColorPicker();
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -240,7 +240,7 @@
 			});
 
 			//Testcase 8: Red changed
-			test("RED changed => H, S, L and HEX calculated: ", function() {
+			QUnit.test("RED changed => H, S, L and HEX calculated: ", function(assert) {
 				var oColorPicker = createColorPicker();
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -260,9 +260,9 @@
 				oColorPicker.destroy();
 			});
 
-			
+
 			//Testcase 9: Saturation changed
-			test("default hsl(120,100%,75%), SATURATION changed => R, G, B and HEX calculated: ", function() {
+			QUnit.test("default hsl(120,100%,75%), SATURATION changed => R, G, B and HEX calculated: ", function(assert) {
 				var oColorPicker = createColorPicker({colorString: "hsl(120,100%,75%)"});
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -283,7 +283,7 @@
 			});
 
 			//Testcase 10: Hex changed
-			test("HEX changed => R, G, B, H, S and L calculated: ", function() {
+			QUnit.test("HEX changed => R, G, B, H, S and L calculated: ", function(assert) {
 				var oColorPicker = createColorPicker({colorString: "hsl(120,100%,75%)"});
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -304,7 +304,7 @@
 			});
 
 			//Testcase 11: Input a wrong RGB-value
-			test("Wrong data - BLUE changed to 260 => H, S, L and HEX calculated: ", function() {
+			QUnit.test("Wrong data - BLUE changed to 260 => H, S, L and HEX calculated: ", function(assert) {
 				var oColorPicker = createColorPicker({colorString: "rgb120,177,60"});
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -325,7 +325,7 @@
 			});
 
 			//Testcase 12a: Input a wrong Blue - value
-			test("Wrong data - BLUE changed to -20: ", function() {
+			QUnit.test("Wrong data - BLUE changed to -20: ", function(assert) {
 				var oColorPicker = createColorPicker();
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -339,7 +339,7 @@
 				oColorPicker.destroy();
 			});
 
-			test("Wrong data - RED changed to 260: ", function() {
+			QUnit.test("Wrong data - RED changed to 260: ", function(assert) {
 				var oColorPicker = createColorPicker();
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -353,7 +353,7 @@
 				oColorPicker.destroy();
 			});
 
-			test("Wrong data - RED changed to -20: ", function() {
+			QUnit.test("Wrong data - RED changed to -20: ", function(assert) {
 				var oColorPicker = createColorPicker();
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -367,7 +367,7 @@
 				oColorPicker.destroy();
 			});
 
-			test("Wrong data - GREEN changed to 260: ", function() {
+			QUnit.test("Wrong data - GREEN changed to 260: ", function(assert) {
 				var oColorPicker = createColorPicker();
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -381,7 +381,7 @@
 				oColorPicker.destroy();
 			});
 
-			test("Wrong data - GREEN changed to -20: ", function() {
+			QUnit.test("Wrong data - GREEN changed to -20: ", function(assert) {
 				var oColorPicker = createColorPicker();
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -396,7 +396,7 @@
 			});
 
 			//Testcase 12: Input a wrong S / V - value
-			test("Wrong data - SATURATION changed to 120 => R, G, B and HEX calculated: ", function() {
+			QUnit.test("Wrong data - SATURATION changed to 120 => R, G, B and HEX calculated: ", function(assert) {
 				var oColorPicker = createColorPicker({colorString: "#18a"});
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -417,7 +417,7 @@
 			});
 
 			//Testcase 12a: Input a wrong Saturation - value
-			test("Wrong data - SATURATION changed to -20: ", function() {
+			QUnit.test("Wrong data - SATURATION changed to -20: ", function(assert) {
 				var oColorPicker = createColorPicker({colorString: "#18a"});
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -432,7 +432,7 @@
 			});
 
 			//Testcase 13: Input a wrong HUE - value
-			test("Wrong data - HUE changed to -30 => other values calculated: ", function() {
+			QUnit.test("Wrong data - HUE changed to -30 => other values calculated: ", function(assert) {
 				var oColorPicker = createColorPicker({colorString: "#7bffff"});
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -453,7 +453,7 @@
 			});
 
 			//Testcase 13a: Input a wrong HUE - value
-			test("Wrong data - HUE changed to 370: ", function() {
+			QUnit.test("Wrong data - HUE changed to 370: ", function(assert) {
 				var oColorPicker = createColorPicker({colorString: "#18a"});
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -468,7 +468,7 @@
 			});
 
 			//Testcase: Input a wrong ALPHA - value
-			test("Wrong data - Alpha changed to -5: ", function() {
+			QUnit.test("Wrong data - Alpha changed to -5: ", function(assert) {
 				var oColorPicker = createColorPicker();
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -483,7 +483,7 @@
 			});
 
 			//Testcase: Input a wrong ALPHA - value
-			test("Wrong data - Alpha changed to 2: ", function() {
+			QUnit.test("Wrong data - Alpha changed to 2: ", function(assert) {
 				var oColorPicker = createColorPicker();
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -498,7 +498,7 @@
 			});
 
 			//Testcase 14: Set new color string (RGB-value)
-			test("New color string 'rgb(249,238,227)': ", function() {
+			QUnit.test("New color string 'rgb(249,238,227)': ", function(assert) {
 				var oColorPicker = createColorPicker();
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -514,7 +514,7 @@
 			});
 
 			//Testcase 14: Set new color string (RGBA-value)
-			test("New color string 'rgba(249,238,227,0.5)': ", function() {
+			QUnit.test("New color string 'rgba(249,238,227,0.5)': ", function(assert) {
 				var oColorPicker = createColorPicker();
 
 				oColorPicker.placeAt("qunit-fixture");
@@ -534,10 +534,10 @@
 			* QUINIT TESTS MODULE 'RESULTS'
 			*****************************************************/
 			// Set a Test Module for module "Results"
-		module("Results");
+		QUnit.module("Results");
 
 			//Testcase 15: Results of named parameter
-			test("Result of Input Parameter 'lime': ", function() {
+			QUnit.test("Result of Input Parameter 'lime': ", function(assert) {
 				var colors = new Object();
 				function handleColorPickerChange(oEvent) {
 					colors = oEvent.getParameters();
@@ -561,7 +561,7 @@
 			});
 
 			//Testcase 16: Results of wrong parameter
-			test("Result of wrong parameter set hsl(370,44,88): ", function() {
+			QUnit.test("Result of wrong parameter set hsl(370,44,88): ", function(assert) {
 				var colors = new Object();
 				function handleColorPickerChange(oEvent) {
 					colors = oEvent.getParameters();
@@ -589,10 +589,10 @@
 			* QUINIT TESTS MODULE 'EVENTS'
 			*****************************************************/
 			// Set a Test Module for module "Events"
-			module("Events");
+			QUnit.module("Events");
 
 			//Testcase 17: Mouse-Event of Slider
-			test("Mouse-Event: Click on Slider: ", function() {
+			QUnit.test("Mouse-Event: Click on Slider: ", function(assert) {
 				var colors = new Object();
 				function handleColorPickerChange(oEvent) {
 					colors = oEvent.getParameters();
@@ -616,7 +616,7 @@
 			});
 
 			//Testcase 18: Mouse-Event of AlphaSlider
-			test("Mouse-Event: Click on Alpha Slider: ", function() {
+			QUnit.test("Mouse-Event: Click on Alpha Slider: ", function(assert) {
 				var colors = new Object();
 				function handleColorPickerChange(oEvent) {
 					colors = oEvent.getParameters();
@@ -640,9 +640,9 @@
 			});
 
 			//Testcase 19: Mouse-Event of Colorpipcker-Box
-			test("Mouse-Event: Click in ColorPicker-Box: ", function() {
+			QUnit.test("Mouse-Event: Click in ColorPicker-Box: ", function(assert) {
 				var oColorPicker = createColorPicker({id: "ColorPicker2", colorString: "hsl(120,100%,75%)"});
-				
+
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
@@ -663,7 +663,7 @@
 			});
 
 			//Testcase 20: Change evnt
-			test("ColorPicker change event", function() {
+			QUnit.test("ColorPicker change event", function(assert) {
 				//Arrange
 				var oSpy = this.spy();
 				var oColorPicker = createColorPicker();
@@ -683,7 +683,7 @@
 			});
 
 			//Testcase 21: LiveChange evnt
-			test("ColorPicker LiveChange event", function() {
+			QUnit.test("ColorPicker LiveChange event", function(assert) {
 				//Arrange
 				var oSpy = this.spy();
 				var oColorPicker = createColorPicker();
@@ -703,7 +703,7 @@
 			});
 
 			//Testcase: LiveChange evnt
-			test("ColorPicker change event gets new color values", function() {
+			QUnit.test("ColorPicker change event gets new color values", function(assert) {
 				//Arrange
 				var colors = new Object();
 				function handleColorPickerChange(oEvent) {
@@ -712,10 +712,10 @@
 				var oColorPicker = createColorPicker();
 					oColorPicker.attachChange(handleColorPickerChange);
 					oColorPicker.setColorString("red");
-	
+
 				oColorPicker.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
-	
+
 				equal(oColorPicker.oRedField.getValue(), colors.r.toString(), "Value of RED: 255");
 				equal(oColorPicker.oGreenField.getValue(), colors.g.toString(), "Value of GREEN: 0");
 				equal(oColorPicker.oBlueField.getValue(), colors.b.toString(), "Value of BLUE: 0");
@@ -723,10 +723,10 @@
 				equal(oColorPicker.oSatField.getValue(), colors.s.toString(), "Value of SATURATION: 100");
 				equal(oColorPicker.oLitField.getValue(), colors.l.toString(), "Value of LIGHTNESS: 50");
 				equal(oColorPicker.Color.hex, colors.hex , "Value of HEX: #ff0000");
-	
+
 				oColorPicker.setColorString("lime");
 				sap.ui.getCore().applyChanges();
-	
+
 				equal(oColorPicker.oRedField.getValue(), colors.r.toString(), "Value of RED: 0");
 				equal(oColorPicker.oGreenField.getValue(), colors.g.toString(), "Value of GREEN: 255");
 				equal(oColorPicker.oBlueField.getValue(), colors.b.toString(), "Value of BLUE: 0");
@@ -740,9 +740,9 @@
 			});
 
 
-		module("test isColor function e.g. test _parseColorString with bCheckOnly parameter set to true");
+		QUnit.module("test isColor function e.g. test _parseColorString with bCheckOnly parameter set to true");
 
-		test("isColor test with named color parameter 'aquamarine'", function() {
+		QUnit.test("isColor test with named color parameter 'aquamarine'", function(assert) {
 			//Arrange
 			var oColorPicker = createColorPicker();
 
@@ -757,7 +757,7 @@
 			oColorPicker.destroy();
 		});
 
-		test("isColor test with parameter 'dfggfdg'", function() {
+		QUnit.test("isColor test with parameter 'dfggfdg'", function(assert) {
 			//Arrange
 			var oColorPicker = createColorPicker();
 
@@ -772,7 +772,7 @@
 			oColorPicker.destroy();
 		});
 
-		test("isColor test with parameter '000055'", function() {
+		QUnit.test("isColor test with parameter '000055'", function(assert) {
 			//Arrange
 			var oColorPicker = createColorPicker();
 
@@ -787,7 +787,7 @@
 			oColorPicker.destroy();
 		});
 
-		test("isColor test with parameter '000055er'", function() {
+		QUnit.test("isColor test with parameter '000055er'", function(assert) {
 			//Arrange
 			var oColorPicker = createColorPicker();
 

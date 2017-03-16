@@ -193,7 +193,7 @@
 				}
 			});
 
-			QUnit.test("Should log an error if a control is not rendered", function () {
+			QUnit.test("Should log an error if a control is not rendered", function (assert) {
 				// Arrange
 				this.oControl = new Input();
 
@@ -214,7 +214,7 @@
 				sinon.assert.calledWith(this.fnErrorSpy,  sinon.match(/has no dom representation/), sinon.match(oEnterText._sLogPrefix));
 			});
 
-			QUnit.test("Should log a message if a control cannot be focused", function () {
+			QUnit.test("Should log a message if a control cannot be focused", function (assert) {
 				// Arrange
 				var oSpy = sinon.spy(jQuery.sap.log, "debug");
 				this.oControl = new Input({
@@ -233,7 +233,7 @@
 				sinon.assert.calledWith(oSpy,  sinon.match(/could not be focused/),  sinon.match(oEnterText._sLogPrefix));
 			});
 
-			QUnit.test("Should log an error if no text is passed to EnterText", function () {
+			QUnit.test("Should log an error if no text is passed to EnterText", function (assert) {
 				// Arrange
 				this.oControl = new Input();
 				this.oControl.placeAt("qunit-fixture");
@@ -249,7 +249,7 @@
 			});
 
 
-			QUnit.test("Should log an error if an empty text is passed to EnterText and clearTextFirst is false", function () {
+			QUnit.test("Should log an error if an empty text is passed to EnterText and clearTextFirst is false", function (assert) {
 				// Arrange
 				this.oControl = new Input();
 				this.oControl.placeAt("qunit-fixture");

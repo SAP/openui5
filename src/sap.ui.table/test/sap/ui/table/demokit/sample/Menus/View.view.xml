@@ -3,7 +3,8 @@
 		xmlns="sap.ui.table"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:u="sap.ui.unified"
-		xmlns:m="sap.m">
+		xmlns:m="sap.m"
+		height="100%">
 	<m:Page
 		showHeader="false"
 		enableScrolling="false"

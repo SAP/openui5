@@ -30,7 +30,7 @@
 
 			QUnit.module("processing");
 
-			QUnit.test("Should process a single action", function() {
+			QUnit.test("Should process a single action", function(assert) {
 				// Arrange
 				var fnAction = this.spy(),
 					oControlStub = {};
@@ -48,7 +48,7 @@
 				sinon.assert.calledWith(fnAction, oControlStub);
 			});
 
-			QUnit.test("Should process multiple Actions", function() {
+			QUnit.test("Should process multiple Actions", function(assert) {
 				// Arrange
 				var fnFirstAction = this.spy(),
 					fnSecondAction = this.spy(),

@@ -17,10 +17,10 @@ sap.ui.require([
 	}
 
 	//*********************************************************************************************
-	module("sap.ui.model.odata.ODataUtils");
+	QUnit.module("sap.ui.model.odata.ODataUtils");
 
 	//*********************************************************************************************
-	test("formatValue", function() {
+	QUnit.test("formatValue", function(assert) {
 		var oTime = time(49646000),
 			oDateTime = new Date(Date.UTC(2015, 4, 30, 13, 47, 26));
 
@@ -54,7 +54,7 @@ sap.ui.require([
 		});
 	});
 
-	test("compare", function () {
+	QUnit.test("compare", function (assert) {
 		var iDate1 = Date.UTC(2015, 4, 26),
 			iDate2 = Date.UTC(2015, 4, 30),
 			iTime1 = Date.UTC(1970, 0, 1, 12, 47, 36),
@@ -117,7 +117,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("compare as decimal", function () {
+	QUnit.test("compare as decimal", function (assert) {
 		var fnDecimal = ODataUtils.getComparator("Edm.Decimal"),
 			fnInt64 = ODataUtils.getComparator("Edm.Int64");
 
@@ -169,7 +169,7 @@ sap.ui.require([
 		});
 	});
 
-	test("setOrigin - argument configuration", function () {
+	QUnit.test("setOrigin - argument configuration", function (assert) {
 		// one string argument after service url
 		equals(ODataUtils.setOrigin("/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION;o=XYZ_999/", "aLiAsS"), "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION;o=XYZ_999/");
 		equals(ODataUtils.setOrigin("/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION/", "aLiAsS"), "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION;o=aLiAsS/");
@@ -290,7 +290,7 @@ sap.ui.require([
 		}), "/sap/opu/odata/IWBEP;o=CANT_TOUCH_THIS/TEA_TEST_APPLICATION;o=sid(DingDong.567)/?sap-client=400&myParam=abc");
 	});
 
-	test("setAnnotationOrigin", function(){
+	QUnit.test("setAnnotationOrigin", function(assert) {
 
 		// SID without force
 		equals(ODataUtils.setAnnotationOrigin("/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value", {

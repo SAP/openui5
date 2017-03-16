@@ -16,7 +16,7 @@ sap.ui.require([
 
   QUnit.module("QUnit Test Harness Tests", {
 
-    setup : function() {
+    beforeEach : function() {
 
       // mocks the test harness's QUnit executions (use this carefully, only for a very limited scope)
       var fMockQUnitSetup = function() {
@@ -36,11 +36,11 @@ sap.ui.require([
         this.oQUnitOkStub.restore();
       };
 
-      testHarnessTests.setup(fMockQUnitSetup, fMockQUnitTeardown, qUnitTestHarness);
+      testHarnessTests.beforeEach(fMockQUnitSetup, fMockQUnitTeardown, qUnitTestHarness);
     },
 
-    teardown: function() {
-      testHarnessTests.teardown();
+    afterEach: function() {
+      testHarnessTests.afterEach();
     }
 
   });
@@ -50,7 +50,7 @@ sap.ui.require([
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
   // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("Given invalid parameters, when I call 'test', then I get an error", function() {
+  QUnit.test("Given invalid parameters, when I call 'test', then I get an error", function(assert) {
 
     var sObjectError = "qUnitTestHarness.test: input all arguments via a single object";
     var sFeaturePathError = "qUnitTestHarness.test: parameter 'featurePath' must be a valid string";

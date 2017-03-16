@@ -81,11 +81,11 @@
 		}
 	}
 
-	module("Basic checks", {
-		teardown: destroyController
+	QUnit.module("Basic checks", {
+		afterEach: destroyController
 	});
 
-	test("autoSave", 5, function() {
+	QUnit.test("autoSave", 5, function(assert) {
 		var getPersDataCalls = 0,
 			setPersDataCalls = 0;
 		createController({
@@ -120,7 +120,7 @@
 
 	});
 
-	test("persoService unsupported value", 3, function() {
+	QUnit.test("persoService unsupported value", 3, function(assert) {
 		createController();
 
 		try {
@@ -148,7 +148,7 @@
 
 	});
 
-	test("persoService / table", 1, function() {
+	QUnit.test("persoService / table", 1, function(assert) {
 		var getPersDataCalls = 0;
 		createController({
 			persoService: {
@@ -181,8 +181,8 @@
 		equal(getPersDataCalls, 2, "getPersData of service should be called 2 times.");
 	});
 
-	module("Personalization interations", {
-		teardown: destroyController
+	QUnit.module("Personalization interations", {
+		afterEach: destroyController
 	});
 
 	asyncTest("Column visibility (autoSave)", 16, function() {
@@ -352,7 +352,7 @@
 
 	});
 
-	test("Manual table changes via API", 11, function() {
+	QUnit.test("Manual table changes via API", 11, function(assert) {
 		var getPersDataCalls = 0;
 		createController({
 			persoService: {
@@ -420,11 +420,11 @@
 
 	});
 
-	module("Personalization via CustomDataKey", {
-		teardown: destroyController
+	QUnit.module("Personalization via CustomDataKey", {
+		afterEach: destroyController
 	});
 
-	test("CustomDataKey", 11, function() {
+	QUnit.test("CustomDataKey", 11, function(assert) {
 
 		var getPersDataCalls = 0;
 		createController({

@@ -24,7 +24,7 @@
 	// Notification List Item API
 	//================================================================================
 	QUnit.module('API', {
-		setup: function() {
+		beforeEach: function() {
 			this.NotificationListItem = new sap.m.NotificationListItem();
 			this.list = new sap.m.List({
 				items: [
@@ -35,7 +35,7 @@
 			this.list.placeAt(RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.NotificationListItem.destroy();
 			this.list.destroy();
 		}
@@ -280,7 +280,7 @@
 	//================================================================================
 
 	QUnit.module('Rendering', {
-		setup: function() {
+		beforeEach: function() {
 			this.NotificationListItem = new sap.m.NotificationListItem();
 			this.list = new sap.m.List({
 				items: [
@@ -291,7 +291,7 @@
 			this.list.placeAt(RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.NotificationListItem.destroy();
 			this.list.destroy();
 		}
@@ -728,7 +728,7 @@
 	//================================================================================
 
 	QUnit.module('Events', {
-		setup: function() {
+		beforeEach: function() {
 			this.NotificationListItem = new sap.m.NotificationListItem();
 			this.list = new sap.m.List({
 				items: [
@@ -739,7 +739,7 @@
 			this.list.placeAt(RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.NotificationListItem.destroy();
 		}
 	});
@@ -814,7 +814,7 @@
 	//================================================================================
 
 	QUnit.module('Data Binding', {
-		setup: function() {
+		beforeEach: function() {
 			var model = new sap.ui.model.json.JSONModel();
 			var oItemTemplate = new sap.m.NotificationListItem({
 				close : function(oEvent) {
@@ -842,7 +842,7 @@
 			this.list.placeAt(RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.list.destroy();
 		}
 	});
@@ -863,7 +863,7 @@
 	//================================================================================
 
 	QUnit.module('ARIA support', {
-		setup: function() {
+		beforeEach: function() {
 			this.NotificationListItem = new sap.m.NotificationListItem();
 			this.list = new sap.m.List({
 				items: [
@@ -874,7 +874,7 @@
 			this.list.placeAt(RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.NotificationListItem.destroy();
 		}
 	});

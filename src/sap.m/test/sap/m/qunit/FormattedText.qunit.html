@@ -37,9 +37,9 @@
 			sap.ui.getCore().applyChanges();
 		}
 
-		module("Test the basic functions");
+		QUnit.module("Test the basic functions");
 
-		test("parameters", function() {
+		QUnit.test("parameters", function(assert) {
 			oFT.setWidth("100%").setHeight("auto");
 			setText("formatted text example");
 			strictEqual(oFT.getDomRef().style.width, "100%", "Width of the control is correct");
@@ -50,7 +50,7 @@
 			ok(!oFT.getDomRef().style.height, "The height css is cleared");
 		});
 
-		test("tags", function() {
+		QUnit.test("tags", function(assert) {
 			setText("<h1>" + sFT + "</h1>");
 			strictEqual(oFT.$().find("h1").text(), sFT, "The text of the h1 element is correct");
 			setText("<h3>" + sFT + "</h3>");
@@ -64,7 +64,7 @@
 			strictEqual(oFT.$().find("li").length, 3, "There are 3 li elements");
 		});
 
-		test("attributes", function() {
+		QUnit.test("attributes", function(assert) {
 			var $a;
 			setText('<a id="AAA" class="aaa" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</a>');
 			$a = oFT.$().find("a");
@@ -84,7 +84,7 @@
 			ok(!$a.attr("target"), "span::target is not rendered");
 		});
 
-		test("css classes", function() {
+		QUnit.test("css classes", function(assert) {
 			var $a;
 			setText("<h1>" + sFT + "</h1>");
 			$a = oFT.$().find("h1");
@@ -99,8 +99,8 @@
 			strictEqual($a.attr("class"), "sapMLnk abc", "a::class is rendered correctly");
 		});
 
-		module("Clean up");
-		test("cleanup", function(){
+		QUnit.module("Clean up");
+		QUnit.test("cleanup", function(assert){
 			oFT.destroy();
 			this.clock.tick(1000);
 			ok(!oFT.getDomRef(), "The control is removed");

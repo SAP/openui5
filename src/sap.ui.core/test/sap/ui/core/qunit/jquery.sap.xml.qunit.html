@@ -42,7 +42,7 @@
 						"<member firstName=\"Frank\" lastName=\"Wallace\"></member>" +
 					"</teamMembers>";
 
-		test("parse XML string no error", function(){
+		QUnit.test("parse XML string no error", function(assert) {
 			var oXMLDocument = jQuery.sap.parseXML(testdata);
 			ok(oXMLDocument.parseError.errorCode == 0, "check parse Error");
 			equal(oXMLDocument.getElementsByTagName("teamMembers")[0].childNodes.length,7, "check length");
@@ -57,7 +57,7 @@
 			equal(oXMLDocument.getElementsByTagName("member")[6].getAttribute("firstName"), "Frank", "name check");
 		});
 
-		test("parse XML string parse error", function(){
+		QUnit.test("parse XML string parse error", function(assert) {
 			var oXMLDocument = jQuery.sap.parseXML(testdataError);
 			ok(oXMLDocument.parseError.errorCode != 0, "check parse Error");
 			if (oXMLDocument.getElementsByTagName){
@@ -66,7 +66,7 @@
 			}
 		});
 
-		test("serialize XML document", function(){
+		QUnit.test("serialize XML document", function(assert) {
 			var oXMLDocument = jQuery.sap.parseXML(testdata);
 			var sXMLText = jQuery.sap.serializeXML(oXMLDocument);
 			ok(sXMLText, "check not undefined");
@@ -87,7 +87,7 @@
 
 		});
 
-		test("get parse error", function() {
+		QUnit.test("get parse error", function(assert) {
 			var oParseError = jQuery.sap.getParseError(jQuery.sap.parseXML(testdataError));
 			assert.ok(oParseError, "error found");
 		});

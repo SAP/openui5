@@ -183,7 +183,7 @@
 		bindings[0] = oModel.bindTree(sPath, oContext, aFilters || [], mParameters, aSorters);
 	};
 
-	test("TreeBinding getRootContexts getNodeContexts", function(){
+	QUnit.test("TreeBinding getRootContexts getNodeContexts", function(assert) {
 		setup();
 		createTreeBinding("/orgStructure");
 		var treeBinding = bindings[0],
@@ -217,43 +217,43 @@
 
 	});
 
-	test("TreeBinding relative getRootContexts getNodeContexts", function(){
+	QUnit.test("TreeBinding relative getRootContexts getNodeContexts", function(assert) {
 		 setup();
 		 createTreeBinding("orgStructure");
 		 var treeBinding = bindings[0],
 			 contexts,
 			 context;
-		 
+
 		 treeBinding.setContext(oModel.getContext("/"));
-		 
+
 		 equal(treeBinding.getPath(), "orgStructure", "TreeBinding path");
 		 equal(treeBinding.getModel(), oModel, "TreeBinding model");
-		 
+
 		 contexts = treeBinding.getRootContexts();
 		 equal(contexts.length, 1, "TreeBinding rootContexts length");
-		 
+
 		 context = contexts[0];
 		 equal(oModel.getProperty("name", context), "Peter Cliff", "TreeBinding root content");
-		 
+
 		 contexts = treeBinding.getNodeContexts(context);
 		 equal(contexts.length, 3, "TreeBinding nodeContexts length");
-		 
+
 		 context = contexts[0];
 		 equal(oModel.getProperty("name", context), "Inga Horst", "TreeBinding node content");
-		 
+
 		 context = contexts[2];
 		 equal(oModel.getProperty("name", context), "Catherine Platte", "TreeBinding node content");
-		 
+
 		 equal(treeBinding.getChildCount(contexts[0]), 3, "TreeBinding childcount");
 		 contexts = treeBinding.getNodeContexts(contexts[0]);
 		 equal(contexts.length, 3, "TreeBinding nodeContexts length");
-		 
+
 		 context = contexts[1];
 		 equal(oModel.getProperty("name", context), "Frank Wallace", "TreeBinding node content");
-		 
+
 	 });
-	 
-	test("TreeBinding getRootContexts getNodeContexts", function(){
+
+	QUnit.test("TreeBinding getRootContexts getNodeContexts", function(assert) {
 		setup();
 		createTreeBinding("/orgStructure");
 		var treeBinding = bindings[0],
@@ -296,7 +296,7 @@
 		equal(oModel.getProperty("name", context), "subnode2", "TreeBinding node content");
 	});
 
-	test("TreeBinding single filters", function(){
+	QUnit.test("TreeBinding single filters", function(assert) {
 		setup();
 		createTreeBinding("/orgStructure");
 
@@ -319,7 +319,7 @@
 		equal(oModel.getProperty(nodeContexts1[1].getPath()).name, "Catherine Platte", "TreeBinding filter value");
 	});
 
-	test("TreeBinding multi filters", function(){
+	QUnit.test("TreeBinding multi filters", function(assert) {
 		setup();
 		createTreeBinding("/orgStructure");
 
@@ -341,7 +341,7 @@
 		equal(oModel.getProperty(nodeContexts1[1].getPath()).name, "Catherine Platte", "TreeBinding filter value");
 	});
 
-	test("TreeBinding filters and setData again", function(){
+	QUnit.test("TreeBinding filters and setData again", function(assert) {
 		setup();
 		createTreeBinding("/orgStructure");
 
@@ -399,7 +399,7 @@
 		oModel.removeBinding(treeBinding);
 	});
 
-	test("TreeBinding - Application & Control filters - initial filters", function(){
+	QUnit.test("TreeBinding - Application & Control filters - initial filters", function(assert) {
 		setup();
 		createTreeBinding("/orgStructureAppControlFilter", null,
 			[new sap.ui.model.Filter("tree", sap.ui.model.FilterOperator.Contains, "#1")]
@@ -426,7 +426,7 @@
 		equal(oModel.getProperty(nodeContexts2[0].getPath()).name, "John Doe", "TreeBinding filter value");
 	});
 
-	test("TreeBinding - Application & Control filters - clear filters", function(){
+	QUnit.test("TreeBinding - Application & Control filters - clear filters", function(assert) {
 		setup();
 		createTreeBinding("/orgStructureAppControlFilter", null,
 			[new sap.ui.model.Filter("tree", sap.ui.model.FilterOperator.Contains, "#1")]
@@ -468,7 +468,7 @@
 		equal(nodeContexts2.length, 2, "2rd level length is 2");
 	});
 
-	test("TreeBinding - Application & Control filters - clear filters separately", function(){
+	QUnit.test("TreeBinding - Application & Control filters - clear filters separately", function(assert) {
 		setup();
 		createTreeBinding("/orgStructureAppControlFilter", null,
 			[new sap.ui.model.Filter("tree", sap.ui.model.FilterOperator.Contains, "#1")]
@@ -511,7 +511,7 @@
 		var nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
 		equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
 		equal(oModel.getProperty(nodeContexts2[0].getPath()).name, "John Doe", "TreeBinding filter value");
-		
+
 		//remove control filters by calling filter with no arguments
 		treeBinding.filter([], sap.ui.model.FilterType.Control);
 
@@ -528,7 +528,7 @@
 		equal(nodeContexts2.length, 2, "2rd level length is 2");
 	});
 
-	test("TreeBinding - Application & Control filters - changing filters", function(){
+	QUnit.test("TreeBinding - Application & Control filters - changing filters", function(assert) {
 		setup();
 		createTreeBinding("/orgStructureAppControlFilter");
 
@@ -570,7 +570,7 @@
 		equal(oModel.getProperty(nodeContexts2[0].getPath()).name, "John Doe", "TreeBinding filter value");
 	});
 
-	test("Display root node", function() {
+	QUnit.test("Display root node", function(assert) {
 		setup();
 		createTreeBinding("/orgStructure/0", null, [], {
 			displayRootNode: true
@@ -605,7 +605,7 @@
 		equal(oModel.getProperty("name", context), "Frank Wallace", "TreeBinding node content");
 	});
 
-	test("Bind aggregation", function() {
+	QUnit.test("Bind aggregation", function(assert) {
 		setup();
 		createTreeBinding("/orgStructure2", null, [], {
 			displayRootNode: true
@@ -643,7 +643,7 @@
 		equal(oModel.getProperty("name", context), "Gina Rush", "TreeBinding node content");
 	});
 
-	test("Paging", function() {
+	QUnit.test("Paging", function(assert) {
 		setup();
 		createTreeBinding("/orgStructure2", null, [], {
 			displayRootNode: true
@@ -678,7 +678,7 @@
 		equal(oModel.getProperty("name", context), "Gina Rush", "TreeBinding node content");
 	});
 
-	test("Sorting - Sorters in bindTree", function () {
+	QUnit.test("Sorting - Sorters in bindTree", function (assert) {
 		setup();
 		createTreeBinding("/orgStructure2", null, [], {
 			displayRootNode: true
@@ -714,7 +714,7 @@
 
 	});
 
-	test("Sorting - sort() call", function () {
+	QUnit.test("Sorting - sort() call", function (assert) {
 		setup();
 		createTreeBinding("/orgStructure2", null, [], {
 			displayRootNode: true
@@ -764,7 +764,7 @@
 		equal(aChildContexts[2].getProperty("name"), "Gina Rush", "Inga child node[2] after sorting is: Gina Rush");
 	});
 
-	test("Check public API calls for tree with >1000 nodes", function () {
+	QUnit.test("Check public API calls for tree with >1000 nodes", function (assert) {
 		//create a tree with 2 levels and 200 * 200 nodes
 		createData(200);
 		createTreeBinding("/root", null, [], {

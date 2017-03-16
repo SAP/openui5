@@ -13,10 +13,10 @@ var TableUtils = sap.ui.table.TableUtils;
 //************************************************************************
 
 QUnit.module("Misc", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -163,10 +163,10 @@ QUnit.test("isGroupingRow", function(assert) {
 
 
 QUnit.module("Grouping Modes", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -228,12 +228,12 @@ QUnit.test("Table default modes", function(assert) {
 
 
 QUnit.module("Rendering", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 		oTreeTable.setVisibleRowCount(12);
 		sap.ui.getCore().applyChanges();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -453,7 +453,7 @@ QUnit.test("GroupMenuButton", function(assert) {
 
 
 QUnit.module("sap.ui.table.Table: Experimental Grouping", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 		var oData = oModel.getData();
 		for (var i = 0; i < iNumberOfRows; i++) {
@@ -466,7 +466,7 @@ QUnit.module("sap.ui.table.Table: Experimental Grouping", {
 		oTable.setEnableGrouping(true);
 		sap.ui.getCore().applyChanges();
 	},
-	teardown: function () {
+	afterEach: function () {
 		destroyTables();
 	}
 });
@@ -522,7 +522,7 @@ QUnit.test("Collapse / Expand", function(assert) {
 	ok(oBinding.isExpanded(0), "Expanded");
 });
 
-QUnit.test("Reset Grouping", 3, function() {
+QUnit.test("Reset Grouping", 3, function(assert) {
 	var oBinding = oTable.getBinding("rows");
 	assert.equal(oBinding.getLength(), 8, "Row count before Grouping");
 

@@ -661,6 +661,16 @@
 		}
 	});
 
+	QUnit.test("Event 'selectionChange' is attached once", function(assert) {
+		//Arrange
+		nListeners = this.oUploadCollection._oList.mEventRegistry.selectionChange.length;
+		//Act
+		this.oUploadCollection.invalidate();
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(this.oUploadCollection._oList.mEventRegistry.selectionChange.length, nListeners, "Event 'selectionChange' is attached once");
+	});
+
 	QUnit.test("Set and get selected items in Multiple Mode", function(assert) {
 		//Arrange
 		var aAllItems = this.oUploadCollection.getItems();
@@ -1077,6 +1087,7 @@
 	/* --------------------------------------- */
 	QUnit.module("Drag and drop", {
 		beforeEach : function() {
+			this.$RootNode = jQuery(document.body);
 			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 				items : {
 					path : "/items",
@@ -1096,10 +1107,9 @@
 
 	QUnit.test("Drag file enter UIArea", function(assert) {
 		//Arrange
-		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
 		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		//Act
-		$RootNode.trigger("dragenter");
+		this.$RootNode.trigger("dragenter");
 		//Assert
 		assert.notOk(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
 		assert.ok(oStubCheckForFiles.called, "The check for files has been performed");
@@ -1107,10 +1117,9 @@
 
 	QUnit.test("Drag file over UIArea", function(assert) {
 		//Arrange
-		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
 		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		//Act
-		$RootNode.trigger("dragover");
+		this.$RootNode.trigger("dragover");
 		//Assert
 		assert.notOk(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
 		assert.ok(oStubCheckForFiles.called, "The check for files has been performed");
@@ -1118,11 +1127,10 @@
 
 	QUnit.test("Drag file leave UIArea", function(assert) {
 		//Arrange
-		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
 		this.oUploadCollection.$("drag-drop-area").removeClass("sapMUCDragDropOverlayHide");
-		this.oUploadCollection._oLastEnterUIArea = $RootNode[0];
+		this.oUploadCollection._oLastEnterUIArea = this.$RootNode[0];
 		//Act
-		this.oUploadCollection._$RootNode.trigger("dragleave");
+		this.$RootNode.trigger("dragleave");
 		//Assert
 		assert.ok(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is not visible");
 	});
@@ -1150,10 +1158,9 @@
 
 	QUnit.test("Drop file in UIArea", function(assert) {
 		//Arrange
-		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
 		this.oUploadCollection.$("drag-drop-area").removeClass("sapMUCDragDropOverlayHide");
 		//Act
-		this.oUploadCollection._$RootNode.trigger("drop");
+		this.$RootNode.trigger("drop");
 		//Assert
 		assert.ok(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is not visible");
 	});
@@ -1218,10 +1225,9 @@
 	QUnit.test("Drag drop icon is hidden when height of drag drop area smaller than 10rem", function(assert) {
 		//Arrange
 		sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
-		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
 		this.oUploadCollection.$("drag-drop-area").height(150);
 		//Act
-		$RootNode.trigger("dragenter");
+		this.$RootNode.trigger("dragenter");
 		//Assert
 		assert.ok(this.oUploadCollection.getAggregation("_dragDropIcon").$().is(':hidden'), "The drag and drop icon is hidden");
 	});
@@ -1229,10 +1235,9 @@
 	QUnit.test("Drag drop icon is hidden when height of drag drop area smaller than 10rem", function(assert) {
 		//Arrange
 		sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
-		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
 		this.oUploadCollection.$("drag-drop-area").height(150);
 		//Act
-		$RootNode.trigger("dragenter");
+		this.$RootNode.trigger("dragenter");
 		//Assert
 		assert.ok(this.oUploadCollection.getAggregation("_dragDropIcon").$().is(':hidden'), "The drag and drop icon is hidden");
 	});
@@ -1921,7 +1926,7 @@
 		assert.strictEqual(this.oUploadCollection.getProperty("uploadUrl"), sUploadUrl, "Property 'uploadUrl': default value is '" + sUploadUrl + "'");
 	});
 
-	QUnit.test("fileType", function() {
+	QUnit.test("fileType", function(assert) {
 		var aFileTypes = ["jpg", "png", "bmp", "unittest"];
 		testSetter(this.oUploadCollection, "fileType", aFileTypes, true, assert);
 	});
@@ -2127,7 +2132,7 @@
 	});
 
 	QUnit.module("Managing event delegates when entering and exiting edit mode", {
-		setup : function() {
+		beforeEach : function() {
 			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 				items : {
 					path : "/items",
@@ -2138,7 +2143,7 @@
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
 		}

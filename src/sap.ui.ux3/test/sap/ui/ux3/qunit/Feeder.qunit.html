@@ -54,16 +54,16 @@
 			placeholderText: sPlaceholderTextXSS
 			}).placeAt("uiArea3");
 
-		module("Appearance");
+		QUnit.module("Appearance");
 
-		test("Feeder styles", function() {
+		QUnit.test("Feeder styles", function(assert) {
 
 			ok(jQuery.sap.byId("Feeder1").height() > jQuery.sap.byId("Feeder2").height(), "Large feeder higher than medium feeder");
 			ok(jQuery.sap.byId("Feeder2").height() > jQuery.sap.byId("Feeder3").height(), "Medium feeder higher than comment feeder");
 
 		});
 
-		test("Output of Attribute", function() {
+		QUnit.test("Output of Attribute", function(assert) {
 			// image must be rendered
 			equal(jQuery.sap.byId("Feeder1-thumb").attr("src"), "../images/feeder/m_01.png", "Image rendered");
 
@@ -90,7 +90,7 @@
 
 		});
 
-		module("Behaviour");
+		QUnit.module("Behaviour");
 
 		asyncTest("Focus handling1", function() {
 			// click in empty text - placeholder must disapear
@@ -158,7 +158,7 @@
 			setTimeout(delayedCall, 0);
 		});
 
-		test('Multiline Text', function() {
+		QUnit.test('Multiline Text', function(assert) {
 
 			// Helper function which allows to test the multiline text method using different input code per browser/engine
 			function testInput(expected, inputValues) {

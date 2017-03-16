@@ -117,14 +117,14 @@
 		}
 
 		QUnit.module("Data binding", {
-			setup: function () {
+			beforeEach: function () {
 				this.oQuickViewPage = getQuickViewPage();
 
 				this.oQuickViewPage.setModel(oModel);
 				oPage.addContent(this.oQuickViewPage);
 				sap.ui.getCore().applyChanges();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oQuickViewPage.destroy();
 				this.oQuickViewPage = null;
 			}
@@ -175,14 +175,14 @@
 		});
 
 		QUnit.module("Rendering", {
-			setup: function () {
+			beforeEach: function () {
 				this.oQuickViewPage = getQuickViewPage();
 
 				this.oQuickViewPage.setModel(oModel);
 				oPage.addContent(this.oQuickViewPage);
 				sap.ui.getCore().applyChanges();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oQuickViewPage.destroy();
 				this.oQuickViewPage = null;
 			}

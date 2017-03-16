@@ -5,7 +5,7 @@
 
 	QUnit.module("sap.m.WizardProgressNavigator API", {
 		oSpies: {},
-		setup: function () {
+		beforeEach: function () {
 			this.oSpies.stepChanged = sinon.spy();
 			this.oProgressNavigator = new sap.m.WizardProgressNavigator({
 				stepChanged: this.oSpies.stepChanged,
@@ -14,7 +14,7 @@
 
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oProgressNavigator.destroy();
 		}
 	});
@@ -161,7 +161,7 @@
 	});
 
 	QUnit.module("sap.m.WizardProgressNavigator Data binding", {
-		setup: function () {
+		beforeEach: function () {
 			this.oProgressNavigator = new sap.m.WizardProgressNavigator();
 			this.oModel = new sap.ui.model.json.JSONModel({
 				steps: 5
@@ -170,7 +170,7 @@
 			this.oProgressNavigator.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oProgressNavigator.destroy();
 			this.oProgressNavigator = null;
 			this.oModel = null;
@@ -187,7 +187,7 @@
 	});
 
 	QUnit.module("sap.m.WizardProgressNavigator CSS Classes", {
-		setup: function () {
+		beforeEach: function () {
 			this.oProgressNavigator = new sap.m.WizardProgressNavigator({
 				stepCount: 5
 			});
@@ -195,7 +195,7 @@
 			this.oProgressNavigator.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oProgressNavigator.destroy();
 			this.oProgressNavigator = null;
 		}
@@ -293,7 +293,7 @@
 	});
 
 	QUnit.module("sap.m.WizardProgressNavigator Events", {
-		setup: function () {
+		beforeEach: function () {
 			var that = this;
 
 			this.oSpies = {};
@@ -317,7 +317,7 @@
 			this.oProgressNavigator.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oProgressNavigator.destroy();
 			this.oProgressNavigator = null;
 		}
@@ -346,7 +346,7 @@
 	});
 
 	QUnit.module("sap.m.WizardProgressNavigator Interaction", {
-		setup: function () {
+		beforeEach: function () {
 			this.oProgressNavigator = new sap.m.WizardProgressNavigator({
 				stepCount: 7
 			});
@@ -354,7 +354,7 @@
 			this.oProgressNavigator.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oProgressNavigator.destroy();
 			this.oProgressNavigator = null;
 		}
@@ -384,7 +384,7 @@
 	});
 
 	QUnit.module("sap.m.WizardProgressNavigator ARIA Support", {
-		setup: function () {
+		beforeEach: function () {
 			this.oProgressNavigator = new sap.m.WizardProgressNavigator({
 				stepCount: 5
 			});
@@ -394,7 +394,7 @@
 
 			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oProgressNavigator.destroy();
 			this.oProgressNavigator = null;
 		}

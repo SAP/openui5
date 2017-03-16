@@ -66,43 +66,43 @@
 
 		list.placeAt("list");
 
-		module("Rendering");
+		QUnit.module("Rendering");
 
-		test("ControlRendered", function() {
+		QUnit.test("ControlRendered", function(assert) {
 			ok(jQuery.sap.domById("test_list"), "List should be rendered.");
 			ok(jQuery.sap.domById(listItemId), "Worst case list item should be rendered.");
 		});
 
-		test("IntroRendered", function() {
+		QUnit.test("IntroRendered", function(assert) {
 			notEqual(jQuery.sap.domById(listItemId + "-intro"), null, "Worst case list item intro should be rendered.");
 		});
 
-		test("FlagRendered", function() {
+		QUnit.test("FlagRendered", function(assert) {
 			ok(jQuery.sap.domById(listItemId + "-flag"), "Flag marker should be rendered.");
 			ok(jQuery.sap.byId(listItemId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
 		});
 
-		test("FavoriteRendered", function() {
+		QUnit.test("FavoriteRendered", function(assert) {
 			ok(jQuery.sap.domById(listItemId + "-favorite"), "Favorite marker should be rendered.");
 			ok(jQuery.sap.byId(listItemId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
 		});
 
-		test("MarkersOrder", function() {
+		QUnit.test("MarkersOrder", function(assert) {
 
 			var markers = $("#" + listItemId + " .sapUiIcon");
 			equal(markers.eq(0).attr("data-sap-ui-icon-content").charCodeAt(0), 57445, "Favorite marker should be rendered first");
 			equal(markers.eq(1).attr("data-sap-ui-icon-content").charCodeAt(0), 57514, "Flag marker should be rendered second");
 		});
 
-		test("FirstStatusRendered", function() {
+		QUnit.test("FirstStatusRendered", function(assert) {
 			ok(jQuery.sap.domById(listItemId + "-status1"), "Worst case first status should be rendered.");
 		});
 
-		test("SecondStatusRendered", function() {
+		QUnit.test("SecondStatusRendered", function(assert) {
 			ok(jQuery.sap.domById(listItemId + "-status2"), "Worst case second status should be rendered.");
 		});
 
-		test("AttributesRendered", function() {
+		QUnit.test("AttributesRendered", function(assert) {
 
 			ok(jQuery.sap.domById(listItemId + "-firstAttr"), "Worst case first attribute should be rendered.");
 			ok(jQuery.sap.domById(listItemId + "-secondAttr"), "Worst case second attribute should be rendered.");
@@ -113,14 +113,14 @@
 			ok(jQuery.sap.domById(listItemId + "-fifthAttr"), "Worst case fifth attribute should be rendered.");
 		});
 
-		test("ObjectAttributeRowsRendered", function() {
+		QUnit.test("ObjectAttributeRowsRendered", function(assert) {
 
 			var $allRows = $("#worst_case .sapMObjLAttrRow");
 			ok($allRows.length === 5, "There should be five object attribute rows rendered");
 
 		});
 
-		test("RenderLockedIcon", function() {
+		QUnit.test("RenderLockedIcon", function(assert) {
 			var lockedOlI = new sap.m.ObjectListItem({
 				icon : "../images/action.png",
 				intro : "On behalf of John Smith",
@@ -142,7 +142,7 @@
 
 		/************* ARIA Rendering *******************/
 
-		test("ARIA attribute 'aria-labelledby' ID Refs list", function() {
+		QUnit.test("ARIA attribute 'aria-labelledby' ID Refs list", function(assert) {
 			// create ObjectListItem
 			var oAttrsAndStatuseListItem = new sap.m.ObjectListItem({
 				id: 'oAttrsAndStatuseListItemId',
@@ -197,7 +197,7 @@
         });
         list.addItem(showTextDir);
 
-        test("TitleNumberIntroTextDirection RTL rendering", function() {
+        QUnit.test("TitleNumberIntroTextDirection RTL rendering", function(assert) {
             equal($('#showTextDir-intro>span').attr("dir"), undefined, "intro has no dir attribute");
             equal($('#showTextDir-titleText').attr("dir"), "rtl", "title has attribute dir=rtl");
             equal($('#showTextDir-ObjectNumber').attr("dir"), "ltr", "ObjectNumber has attribute dir=ltr");
@@ -212,7 +212,7 @@
             equal($('#showTextDir-ObjectNumber').attr("dir"), undefined, "ObjectNumber has no dir attribute");
         });
 
-	test("Number properties create a private sap.m.ObjectNumber control", function () {
+	QUnit.test("Number properties create a private sap.m.ObjectNumber control", function (assert) {
 		var oObjectNumberAggregation = showTextDir.getAggregation("_objectNumber");
 		ok(oObjectNumberAggregation && oObjectNumberAggregation instanceof sap.m.ObjectNumber, "An instance of sap.m.ObjectNumber is created out of number, numberUnit, numberState, numberTextDirection properties");
 		strictEqual(oObjectNumberAggregation.getNumber(), showTextDir.getNumber(), "Both 'number' properties are in sync");
@@ -222,9 +222,9 @@
 	});
 
 	/******************************************************************/
-	module("Rendering Markers aggregation");
+	QUnit.module("Rendering Markers aggregation");
 
-		test("Render Draft and Favorite", function() {
+		QUnit.test("Render Draft and Favorite", function(assert) {
 			var markersOlI = new sap.m.ObjectListItem({
 				id: "markersOlI",
 				title : "Markers agregation",
@@ -245,7 +245,7 @@
 			markersOlI.destroy();
 		});
 
-		test("Render marker by setting the markers aggregation", function() {
+		QUnit.test("Render marker by setting the markers aggregation", function(assert) {
 			var markersOlI = new sap.m.ObjectListItem({
 				id: "markersOlI",
 				title : "Markers agregation",
@@ -268,9 +268,9 @@
 			markersOlI.destroy();
 		});
 
-		module("Rendering Markers aggregation");
+		QUnit.module("Rendering Markers aggregation");
 
-		test("Removing marker", function() {
+		QUnit.test("Removing marker", function(assert) {
 			var markersOlI = new sap.m.ObjectListItem({
 				id: "markersOlI",
 				title : "Markers agregation",
@@ -308,9 +308,9 @@
 		});
 		list.addItem(imageOLI1);
 
-		module("Active state");
+		QUnit.module("Active state");
 
-		test("TestActiveIcon", function() {
+		QUnit.test("TestActiveIcon", function(assert) {
 			imageOLI1.setActive(true);
 			var imageSrc = imageOLI1.$('img').attr('src');
 			strictEqual(imageSrc, imageOLI1.getActiveIcon(), "The icon should be active");
@@ -320,7 +320,7 @@
 			strictEqual(imageSrc, imageOLI1.getIcon(), "The icon should be inactive");
 		});
 
-		module("Icon / Image ratio");
+		QUnit.module("Icon / Image ratio");
 
 		asyncTest("Icon has equal width and height", function() {
 			var imageOLIIcon = new sap.m.ObjectListItem("imageOLIIcon", {
@@ -366,8 +366,8 @@
 
 		/******************************************************************/
 
-		module("Events", {
-				setup : function() {
+		QUnit.module("Events", {
+				beforeEach : function() {
 				pressed = undefined;
 			}
 		});
@@ -382,7 +382,7 @@
 
 		/******************************************************************/
 
-		module("Whitespace Handling");
+		QUnit.module("Whitespace Handling");
 
 		var liEmptyStatus1 = new sap.m.ObjectListItem({
 			title: "Empty first status",
@@ -423,7 +423,7 @@
 		    	state: sap.ui.core.ValueState.Success})
 		});
 
-		test("TestEmptyOLI", function (){
+		QUnit.test("TestEmptyOLI", function (assert){
 
 			ok(!liEmptyStatus1._hasStatus(), "Object list item has no rendered statuses");
 			ok(!liEmptyStatus2._hasStatus(), "Object list item has no rendered statuses");
@@ -446,7 +446,7 @@
 		});
 		list.addItem(markerOli);
 
-		module("Dynamic Marker States");
+		QUnit.module("Dynamic Marker States");
 
 		asyncTest("Flag Marker Set", function() {
 
@@ -516,9 +516,9 @@
 		imageOLI.placeAt("destroy-list");
 		titleOLI.placeAt("destroy-list");
 
-		module("Exiting");
+		QUnit.module("Exiting");
 
-		test("TestIconExit", function() {
+		QUnit.test("TestIconExit", function(assert) {
 
 			ok(!(iconOLI === null), "iconOLI is not null");
 			ok(sap.ui.getCore().byId("iconOLI"), "Icon is found in UI5 Core");
@@ -531,7 +531,7 @@
 			ok(!sap.ui.getCore().byId("iconOLI-lock"), "Locked icon removed from UI5 Core");
 		});
 
-		test("TestImageExit", function() {
+		QUnit.test("TestImageExit", function(assert) {
 
 			ok(!(imageOLI === null), "imageOLI is not null");
 			ok(sap.ui.getCore().byId("imageOLI-img"), "Image is found in UI5 Core");
@@ -539,7 +539,7 @@
 			ok(!sap.ui.getCore().byId("imageOLI-img"), "Image is removed from UI5 Core");
 		});
 
-		test("TestTitleExit", function() {
+		QUnit.test("TestTitleExit", function(assert) {
 
 			ok(!(titleOLI === null), "titleOLI is not null");
 			ok(sap.ui.getCore().byId("titleOLI-titleText"), "Title text is found in UI5 Core");

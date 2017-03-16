@@ -22,13 +22,13 @@
     //================================================================================
 
     QUnit.module('API', {
-        setup: function() {
+        beforeEach: function() {
             this.NotificationListGroup = new sap.m.NotificationListGroup();
 
             this.NotificationListGroup.placeAt(RENDER_LOCATION);
             sap.ui.getCore().applyChanges();
         },
-        teardown: function() {
+        afterEach: function() {
             this.NotificationListGroup.destroy();
         }
     });
@@ -267,7 +267,7 @@
 		assert.strictEqual(expandCollapseButton.getEnabled(), true, 'Should be enabled when "enableCollapseButtonWhenEmpty" is set to "true"');
 	});
 
-    QUnit.test('Reach max number of notifications', function(assert){
+    QUnit.test('Reach max number of notifications', function(assert) {
         //arrange
         var maxNumberOfNotifications = (sap.ui.Device.system.desktop ? 400 : 100) + 1;
         var expectedNumberOfNotifications = maxNumberOfNotifications - 1;
@@ -285,7 +285,7 @@
         assert.strictEqual(this.NotificationListGroup._maxNumberReached,  true, 'Max number of shown notifications should be reached.');
     });
 
-    QUnit.test('Remove notification after reaching max number of notifications', function(assert){
+    QUnit.test('Remove notification after reaching max number of notifications', function(assert) {
         //arrange
         var maxNumberOfNotifications = (sap.ui.Device.system.desktop ? 400 : 100);
         var lastNotification = new sap.m.NotificationListItem();
@@ -307,13 +307,13 @@
     //================================================================================
 
     QUnit.module('Rendering', {
-        setup: function() {
+        beforeEach: function() {
             this.NotificationListGroup = new sap.m.NotificationListGroup();
 
             this.NotificationListGroup.placeAt(RENDER_LOCATION);
             sap.ui.getCore().applyChanges();
         },
-        teardown: function() {
+        afterEach: function() {
             this.NotificationListGroup.destroy();
         }
     });
@@ -462,13 +462,13 @@
     //================================================================================
 
     QUnit.module('Events', {
-        setup: function() {
+        beforeEach: function() {
             this.NotificationListGroup = new sap.m.NotificationListGroup();
 
             this.NotificationListGroup.placeAt(RENDER_LOCATION);
             sap.ui.getCore().applyChanges();
         },
-        teardown: function() {
+        afterEach: function() {
             this.NotificationListGroup.destroy();
         }
     });
@@ -524,13 +524,13 @@
     //================================================================================
 
     QUnit.module('Group with 0 items', {
-        setup: function() {
+        beforeEach: function() {
             this.NotificationListGroup = new sap.m.NotificationListGroup();
 
             this.NotificationListGroup.placeAt(RENDER_LOCATION);
             sap.ui.getCore().applyChanges();
         },
-        teardown: function() {
+        afterEach: function() {
             this.NotificationListGroup.destroy();
         }
     });
@@ -608,13 +608,13 @@
     });
 
     QUnit.module('Test Visible property', {
-        setup: function() {
+        beforeEach: function() {
             this.NotificationListGroup = new sap.m.NotificationListGroup();
 
             this.NotificationListGroup.placeAt(RENDER_LOCATION);
             sap.ui.getCore().applyChanges();
         },
-        teardown: function() {
+        afterEach: function() {
             this.NotificationListGroup.destroy();
         }
     });
@@ -733,13 +733,13 @@
     });
 
     QUnit.module('Test buttons enabled state when just 1 item is in the group', {
-        setup: function() {
+        beforeEach: function() {
             this.NotificationListGroup = new sap.m.NotificationListGroup();
 
             this.NotificationListGroup.placeAt(RENDER_LOCATION);
             sap.ui.getCore().applyChanges();
         },
-        teardown: function() {
+        afterEach: function() {
             this.NotificationListGroup.destroy();
         }
     });
@@ -835,13 +835,13 @@
 	//================================================================================
 
 	QUnit.module('ARIA support', {
-		setup: function () {
+		beforeEach: function () {
 			this.NotificationListGroup = new sap.m.NotificationListGroup();
 
 			this.NotificationListGroup.placeAt(RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.NotificationListGroup.destroy();
 		}
 	});
@@ -936,7 +936,7 @@
 	//================================================================================
 
 	QUnit.module('Keyboard handling', {
-		setup: function () {
+		beforeEach: function () {
 			this.NotificationListGroup = new sap.m.NotificationListGroup({
 				items: [
 					new sap.m.NotificationListItem(),
@@ -948,7 +948,7 @@
 			this.NotificationListGroup.placeAt(RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.NotificationListGroup.destroy();
 		}
 	});

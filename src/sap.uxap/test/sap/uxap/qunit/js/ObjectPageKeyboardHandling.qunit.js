@@ -34,7 +34,7 @@
 
 	anchorBarView.placeAt("content");
 
-	module("AnchorBar", {
+	QUnit.module("AnchorBar", {
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
 			sap.ui.Device.system.phone = false;
@@ -312,7 +312,7 @@
 			true, "Five anchors should be skipped over and the last anchor shoud be focused");
 	});
 
-	module("Section/Subsection", {
+	QUnit.module("Section/Subsection", {
 		beforeEach: function () {
 			var sFocusable = "0",
 				sTabIndex = "tabIndex";

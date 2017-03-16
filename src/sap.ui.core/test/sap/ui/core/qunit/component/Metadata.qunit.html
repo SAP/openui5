@@ -336,7 +336,7 @@
 
 		});
 
-		test("ResourceRoots", function() {
+		QUnit.test("ResourceRoots", function(assert) {
 			if (this.iExpectedMetadataVersion === 1) {
 				ok(true, "Metadata version 1 does not support 'resourceRoots'. Skipping tests...");
 			} else {
@@ -357,7 +357,7 @@
 			}
 		});
 
-		test("Manifest Validation", function() {
+		QUnit.test("Manifest Validation", function(assert) {
 
 			deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
 			deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
@@ -374,8 +374,8 @@
 	 * TEST CODE: Component Metadata v1
 	 */
 
-	module("Component Metadata v1", {
-		setup: function() {
+	QUnit.module("Component Metadata v1", {
+		beforeEach: function() {
 			moduleSetup.call(this, "v1", 1);
 			// fix the specials in the metadata for the v1
 				[
@@ -391,7 +391,7 @@
 					delete oManifest["foo.bar"];
 				});
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -403,11 +403,11 @@
 	 * TEST CODE: Component Metadata v2
 	 */
 
-	module("Component Metadata v2", {
-		setup: function() {
+	QUnit.module("Component Metadata v2", {
+		beforeEach: function() {
 			moduleSetup.call(this, "v2", 2);
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -419,8 +419,8 @@
 	 * TEST CODE: Component Metadata v2
 	 */
 
-	module("Component Metadata v2 (manifest first)", {
-		setup: function() {
+	QUnit.module("Component Metadata v2 (manifest first)", {
+		beforeEach: function() {
 			moduleSetup.call(this, "v2", 2, true);
 			// fix the specials in the metadata for the v2 manifest first
 			this.oExpectedManifest["sap.app"]["description"] = this.oExpectedRawManifest["sap.app"]["description"];
@@ -428,7 +428,7 @@
 			this.oExpectedManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"] = this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"];
 			this.oExpectedManifest["sap.ui5"]["rootView"] = this.oExpectedRawManifest["sap.ui5"]["rootView"]["viewName"];
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -440,8 +440,8 @@
 	 * TEST CODE: Component Metadata v2
 	 */
 
-	module("Component Metadata v2 (manifest first with component name)", {
-		setup: function() {
+	QUnit.module("Component Metadata v2 (manifest first with component name)", {
+		beforeEach: function() {
 			moduleSetup.call(this, "v2", 2, true, true);
 			// fix the specials in the metadata for the v2 manifest first
 			this.oExpectedManifest["sap.app"]["description"] = this.oExpectedRawManifest["sap.app"]["description"];
@@ -449,7 +449,7 @@
 			this.oExpectedManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"] = this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"];
 			this.oExpectedManifest["sap.ui5"]["rootView"] = this.oExpectedRawManifest["sap.ui5"]["rootView"]["viewName"];
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -461,8 +461,8 @@
 	 * TEST CODE: Component Metadata v1 (inline)
 	 */
 
-	module("Component Metadata v1 (inline)", {
-		setup: function() {
+	QUnit.module("Component Metadata v1 (inline)", {
+		beforeEach: function() {
 			moduleSetup.call(this, "v1inline", 1);
 			// fix the specials in the metadata for the v1
 			[
@@ -478,7 +478,7 @@
 				delete oManifest["foo.bar"];
 			});
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -490,11 +490,11 @@
 	 * TEST CODE: Component Metadata v2 (inline)
 	 */
 
-	module("Component Metadata v2 (inline)", {
-		setup: function() {
+	QUnit.module("Component Metadata v2 (inline)", {
+		beforeEach: function() {
 			moduleSetup.call(this, "v2inline", 2);
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -506,16 +506,16 @@
 	 * TEST CODE: Component Metadata v1 (valdidate empty metadata)
 	 */
 
-	module("Component Metadata v1 (empty)", {
-		setup: function() {
+	QUnit.module("Component Metadata v1 (empty)", {
+		beforeEach: function() {
 			moduleSetup.call(this, "v1empty", 1);
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
 
-	test("Metadata Validation", function() {
+	QUnit.test("Metadata Validation", function(assert) {
 
 		equal(this.oMetadata.getName(), "sap.ui.test.v1empty.Component", "Name is correct!");
 		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
@@ -526,16 +526,16 @@
 	 * TEST CODE: Component Metadata v2 (valdidate empty manifest)
 	 */
 
-	module("Component Metadata v2 (empty)", {
-		setup: function() {
+	QUnit.module("Component Metadata v2 (empty)", {
+		beforeEach: function() {
 			moduleSetup.call(this, "v2empty", 2);
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
 
-	test("Manifest Validation", function() {
+	QUnit.test("Manifest Validation", function(assert) {
 
 		equal(this.oMetadata.getName(), "sap.ui.test.v2empty.Component", "Name is correct!");
 		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
@@ -546,16 +546,16 @@
 	 * TEST CODE: Component Metadata v1 (valdidate missing metadata)
 	 */
 
-	module("Component Metadata v1 (missing)", {
-		setup: function() {
+	QUnit.module("Component Metadata v1 (missing)", {
+		beforeEach: function() {
 			moduleSetup.call(this, "v1missing", 1);
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
 
-	test("Metadata Validation", function() {
+	QUnit.test("Metadata Validation", function(assert) {
 
 		equal(this.oMetadata.getName(), "sap.ui.test.v1missing.Component", "Name is correct!");
 		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
@@ -566,16 +566,16 @@
 	 * TEST CODE: Component Metadata v2 (validate missing manifest)
 	 */
 
-	module("Component Metadata v2 (missing)", {
-		setup: function() {
+	QUnit.module("Component Metadata v2 (missing)", {
+		beforeEach: function() {
 			moduleSetup.call(this, "v2missing", 2);
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
 
-	test("Manifest Validation", function() {
+	QUnit.test("Manifest Validation", function(assert) {
 
 		equal(this.oMetadata.getName(), "sap.ui.test.v2missing.Component", "Name is correct!");
 		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
@@ -587,11 +587,11 @@
 	 * TEST CODE: Component Metadata v1 & v2 (mixed)
 	 */
 
-	module("Component Metadata v1 & v2 (mixed)", {
-		setup: function() {
+	QUnit.module("Component Metadata v1 & v2 (mixed)", {
+		beforeEach: function() {
 			moduleSetup.call(this, "mixed", 2);
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -621,7 +621,7 @@
 
 	});
 
-	test("ResourceRoots", function() {
+	QUnit.test("ResourceRoots", function(assert) {
 		ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/anypath"))
 			.equals(new URI(jQuery.sap.getModulePath("x.y.z"))), "ResourceRoot 'x.y.z' registered (" + jQuery.sap.getModulePath("x.y.z") + ")");
 		ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
@@ -636,7 +636,7 @@
 			"ResourceRoot 'server.absolute' not registered (" + jQuery.sap.getModulePath("server.absolute") + ")");
 	});
 
-	test("Manifest Validation", function() {
+	QUnit.test("Manifest Validation", function(assert) {
 
 		deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
 		deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
@@ -649,8 +649,8 @@
 	 * TEST CODE: Component Metadata v1 & v2 (mixed/inheritance)
 	 */
 
-	module("Component Metadata v1 & v2 (mixed/inheritance)", {
-		setup: function() {
+	QUnit.module("Component Metadata v1 & v2 (mixed/inheritance)", {
+		beforeEach: function() {
 			moduleSetup.call(this, "inherit", 2);
 			// fix the specials in the metadata for the v1 & v2 mixed/inheritance
 			this.oExpectedMetadata.config.any9 = this.oExpectedMetadata.config.any3;
@@ -676,7 +676,7 @@
 
 			});
 		},
-		teardown: function() {
+		afterEach: function() {
 			moduleTeardown.call(this);
 		}
 	});
@@ -708,7 +708,7 @@
 
 	});
 
-	test("ResourceRoots", function() {
+	QUnit.test("ResourceRoots", function(assert) {
 		ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getParent().getComponentName(), "/anypath"))
 			.equals(new URI(jQuery.sap.getModulePath("x.y.z"))), "ResourceRoot 'x.y.z' registered (" + jQuery.sap.getModulePath("x.y.z") + ")");
 		ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
@@ -723,7 +723,7 @@
 			"ResourceRoot 'server.absolute' not registered (" + jQuery.sap.getModulePath("server.absolute") + ")");
 	});
 
-	test("Manifest Validation", function() {
+	QUnit.test("Manifest Validation", function(assert) {
 
 		deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
 		deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
@@ -736,7 +736,7 @@
 	 * TEST CODE: Component Metadata URI resolution
 	 */
 
-	module("Component Metadata: Resolve URI", {
+	QUnit.module("Component Metadata: Resolve URI", {
 		assertResolvedUri: function(sInput, sBase, sExpected) {
 			var sActual = sap.ui.core.Manifest._resolveUriRelativeTo(new URI(sInput), new URI(sBase)).toString();
 			assert.equal(sActual, sExpected, "Resolved URI is correct!");
@@ -776,8 +776,8 @@
 	 * TEST CODE: Version Check
 	 */
 
-	module("Component Metadata: Version Check", {
-		setup: function() {
+	QUnit.module("Component Metadata: Version Check", {
+		beforeEach: function() {
 			this.fnGetVersionInfo = sap.ui.getVersionInfo;
 			try {
 				this.oVersionInfo = this.fnGetVersionInfo();
@@ -797,7 +797,7 @@
 			}.bind(this);
 			sinon.spy(jQuery.sap.log, "warning");
 		},
-		teardown: function() {
+		afterEach: function() {
 			jQuery.sap.log.warning.restore();
 			sap.ui.getVersionInfo = this.fnGetVersionInfo;
 		}

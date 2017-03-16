@@ -79,13 +79,13 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		assert.ok(this.oFlexController);
 	});
 
-	QUnit.test("applyChange shall not crash if parameters are missing", function () {
+	QUnit.test("applyChange shall not crash if parameters are missing", function (assert) {
 		QUnit.expect(0);
 
 		this.oFlexController.applyChange(null, null);
 	});
 
-	QUnit.test('createAndApplyChange shall not crash if no change handler can be found', function (assert){
+	QUnit.test('createAndApplyChange shall not crash if no change handler can be found', function (assert) {
 
 		var oUtilsLogStub = this.stub(Utils.log, "warning");
 		var exceptionThrown = false;
@@ -103,7 +103,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		assert.ok(oUtilsLogStub.calledOnce, "a warning was logged");
 	});
 
-	QUnit.test('_resolveGetChangesForView does not crash, if change can be created and applied', function (assert){
+	QUnit.test('_resolveGetChangesForView does not crash, if change can be created and applied', function (assert) {
 
 		this.oChange = new Change(labelChangeContent);
 
@@ -139,7 +139,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		sinon.assert.called(changeHandlerApplyChangeStub);
 	});
 
-	QUnit.test("_resolveGetChangesForView does not crash and logs an error if no changes were passed", function (assert){
+	QUnit.test("_resolveGetChangesForView does not crash and logs an error if no changes were passed", function (assert) {
 
 		var mPropertyBagStub = {
 			unmergedChangesOnly: true
@@ -152,7 +152,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		assert.equal(aResolveArray.length, 0, "an empty array was returned");
 	});
 
-	QUnit.test('_resolveGetChangesForView applies changes with locale id', function (assert){
+	QUnit.test('_resolveGetChangesForView applies changes with locale id', function (assert) {
 
 		this.oChange = new Change(labelChangeContent);
 
@@ -269,7 +269,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		assert.ok(oLoggingStub.calledTwice, "the issues were logged");
 	});
 
-	QUnit.test("applyChange shall call the Change Handler", function () {
+	QUnit.test("applyChange shall call the Change Handler", function (assert) {
 		var fChangeHandler = sinon.stub();
 		fChangeHandler.applyChange = sinon.stub();
 		fChangeHandler.completeChangeContent = sinon.stub();
@@ -412,7 +412,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		assert.equal(oChange.getPackage(),"$TMP");
 	});
 
-	QUnit.test("discardChanges shall delete the changes from the persistence and save the deletion", function() {
+	QUnit.test("discardChanges shall delete the changes from the persistence and save the deletion", function(assert) {
 		var oChangePersistence = this.oFlexController._oChangePersistence = {
 			deleteChange: sinon.stub(),
 			saveDirtyChanges: sinon.stub().returns(Promise.resolve())
@@ -443,7 +443,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		});
 	});
 
-	QUnit.test("discardChanges with personalized only option shall delete the changes from the persistence and save the deletion only for USER layer", function() {
+	QUnit.test("discardChanges with personalized only option shall delete the changes from the persistence and save the deletion only for USER layer", function(assert) {
 		var oChangePersistence = this.oFlexController._oChangePersistence = {
 			deleteChange: sinon.stub(),
 			saveDirtyChanges: sinon.stub().returns(Promise.resolve())
@@ -469,7 +469,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		});
 	});
 
-	QUnit.test("discardChanges (with array items deletion) with personalized only option shall delete the changes from the persistence and save the deletion only for USER layer", function() {
+	QUnit.test("discardChanges (with array items deletion) with personalized only option shall delete the changes from the persistence and save the deletion only for USER layer", function(assert) {
 		var aChanges = [];
 		for (var i = 0; i < 6 ; i++){
 			aChanges.push(new Change({
@@ -609,7 +609,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		});
 	});
 
-	QUnit.test("createAndApplyChange shall remove the change from the persistence, if applying the change raised an exception", function (assert){
+	QUnit.test("createAndApplyChange shall remove the change from the persistence, if applying the change raised an exception", function (assert) {
 		var oControl = new Control();
 		var oChangeSpecificData = {
 			changeType: "hideControl"
@@ -1433,7 +1433,6 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 					"something": "createNewVariant"
 				}
 			});
-
 			this.oFlexController = new FlexController("someReference");
 		},
 		afterEach: function () {
@@ -1459,7 +1458,6 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		return this.oFlexController.isPersonalized().then(function (bIsPersonalized) {
 			assert.notOk(bIsPersonalized, "personalization was determined");
 		});
-
 	});
 
 }(sap.ui.fl.FlexController, sap.ui.fl.Change, sap.ui.fl.registry.ChangeRegistry, sap.ui.fl.Persistence, sap.ui.core.Control, sap.ui.fl.registry.Settings, sap.ui.fl.changeHandler.HideControl, sap.ui.fl.ChangePersistenceFactory, sap.ui.fl.Utils, sap.ui.fl.changeHandler.JsControlTreeModifier, sap.ui.fl.changeHandler.XmlTreeModifier, sap.ui.fl.context.ContextManager));

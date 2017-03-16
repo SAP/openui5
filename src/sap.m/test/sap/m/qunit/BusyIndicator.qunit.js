@@ -2,13 +2,13 @@
 	"use strict";
 
 	QUnit.module("sap.m.BusyIndicator API", {
-		setup: function () {
+		beforeEach: function () {
 			this.oBusyInd = new sap.m.BusyIndicator();
 
 			this.oBusyInd.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oBusyInd.destroy();
 			this.oBusyInd = null;
 		}
@@ -111,13 +111,13 @@
 	});
 
 	QUnit.module("sap.m.BusyIndicator Rendering", {
-		setup: function () {
+		beforeEach: function () {
 			this.oBusyInd = new sap.m.BusyIndicator();
 
 			this.oBusyInd.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oBusyInd.destroy();
 			this.oBusyInd = null;
 		}

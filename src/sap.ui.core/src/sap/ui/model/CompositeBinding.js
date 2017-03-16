@@ -213,7 +213,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 		}
 
 		oDataState.setValue(this.getValue());
-		oDataState.setInvalidValue(null);
+		oDataState.setInvalidValue(undefined);
 	};
 
 	/**

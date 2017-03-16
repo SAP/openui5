@@ -133,10 +133,10 @@
 		$HoveredDiv = oRating.$("hov");
 	};
 
-	module("Properties");
+	QUnit.module("Properties");
 
 	// check all properties
-	test("default Values", function() {
+	QUnit.test("default Values", function(assert) {
 		strictEqual(oRating0.getVisible(), true, "By default the rating is visible on " + oRating0);
 		strictEqual(oRating0.getEnabled(), true, "By default the rating is enabled " + oRating0);
 		strictEqual(oRating0.getMaxValue(), 5, "By default the rating max value is 5 on " + oRating0);
@@ -148,10 +148,10 @@
 		strictEqual(oRating0.getVisualMode(), "Half", "By default the visual mode is \"Half\" on " + oRating0);
 	});
 
-	module("HTML");
+	QUnit.module("HTML");
 
 	// check existence of all rendered divs
-	test("rendering", function() {
+	QUnit.test("rendering", function(assert) {
 		var i = 0;
 
 		// check HTML divs
@@ -170,7 +170,7 @@
 	});
 
 	// check if the ARIA attributes are rendered
-	test("aria attributes", function() {
+	QUnit.test("aria attributes", function(assert) {
 		var i = 0;
 
 		// check HTML divs
@@ -185,9 +185,9 @@
 		}
 	});
 
-	module("CSS and DOM");
+	QUnit.module("CSS and DOM");
 
-	test("css class and attributes", function() {
+	QUnit.test("css class and attributes", function(assert) {
 		var i = 0;
 
 		// check css classes
@@ -209,9 +209,9 @@
 	});
 
 
-	module("Methods");
+	QUnit.module("Methods");
 
-	test("getter / setter", function() {
+	QUnit.test("getter / setter", function(assert) {
 		sap.ui.getCore().applyChanges();
 
 		// 0
@@ -274,7 +274,7 @@
 		strictEqual(oRating0.getIconSize(), "10%", 'Check if the icon size is 10% on ' + oRating0);
 	});
 
-	test("value setter defaults", function() {
+	QUnit.test("value setter defaults", function(assert) {
 		var oRating = new sap.m.RatingIndicator({
 			value: 5
 		});
@@ -291,9 +291,9 @@
 		oRating.destroy();
 	});
 
-	module("Events");
+	QUnit.module("Events");
 
-	test("Firing events", function() {
+	QUnit.test("Firing events", function(assert) {
 		expect(6);
 		var touches = {
 				0: {
@@ -387,7 +387,7 @@
 		strictEqual(oRating4.getValue(), 0, "On touch start/end at " + oEventTap.pageX + "px  the rating value is 0 on control " + oRating4);
 	});
 
-	test("Keyboard navigation events", function() {
+	QUnit.test("Keyboard navigation events", function(assert) {
 		expect(5);
 		// default rating with no properties
 		var oRating = new sap.m.RatingIndicator({ visualMode: sap.m.RatingIndicatorVisualMode.Full }),
@@ -451,7 +451,7 @@
 		oRating.onsapdecrease();
 	});
 
-	test("Keyboard navigation events - boundary conditions", function() {
+	QUnit.test("Keyboard navigation events - boundary conditions", function(assert) {
 		var oRating = new sap.m.RatingIndicator();
 
 		oRating.onsapdecrease();
@@ -468,7 +468,7 @@
 		oRating.destroy();
 	});
 
-	test("NUMBER keys", function() {
+	QUnit.test("NUMBER keys", function(assert) {
 
 		//Arrange
 		var oRating = new sap.m.RatingIndicator({maxValue:6});
@@ -498,7 +498,7 @@
 		oRating.destroy();
 	});
 
-	test("Keyboard handling events in half mode", function() {
+	QUnit.test("Keyboard handling events in half mode", function(assert) {
 		expect(10);
 		var oRating = new sap.m.RatingIndicator("asd", {visualMode: sap.m.RatingIndicatorVisualMode.Half}),
 			fnTestIncreaseAndDecrease = function (fInitialRatingValue, fExpectedValueAfterDecrease, fExpectedValueAfterIncrease){
@@ -523,9 +523,9 @@
 		oRating.destroy();
 	});
 
-	module("Accessibility");
+	QUnit.module("Accessibility");
 
-	test("getAccessibilityInfo", function() {
+	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oControl = new sap.m.RatingIndicator({value: 5, maxValue: 10});
 		ok(!!oControl.getAccessibilityInfo, "RatingIndicator has a getAccessibilityInfo function");
 		var oInfo = oControl.getAccessibilityInfo();

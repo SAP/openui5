@@ -373,7 +373,7 @@ function runODataAnnotationTests() {
 
 	sap.ui.test.qunit.delayTestStart();
 
-	module("Synchronous loading");
+	QUnit.module("Synchronous loading");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
 		return function() {
@@ -431,11 +431,11 @@ function runODataAnnotationTests() {
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
 		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
-			test(sTestType, fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid));
+			QUnit.test(sTestType, fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid));
 		}
 	}
 
-	module("Asynchronous loading");
+	QUnit.module("Asynchronous loading");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
 		return function() {
@@ -580,7 +580,7 @@ function runODataAnnotationTests() {
 		}
 	}
 
-	module("V2: Asynchronous loading");
+	QUnit.module("V2: Asynchronous loading");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
 		return function() {
@@ -726,7 +726,7 @@ function runODataAnnotationTests() {
 	}
 
 
-	module("Asynchronous loading (joined events)");
+	QUnit.module("Asynchronous loading (joined events)");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
 		return function() {
@@ -879,7 +879,7 @@ function runODataAnnotationTests() {
 	}
 
 
-	module("V2: Asynchronous loading (joined events)");
+	QUnit.module("V2: Asynchronous loading (joined events)");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
 		return function() {
@@ -1035,7 +1035,7 @@ function runODataAnnotationTests() {
 	}
 
 
-	module("V1 only: Synchronous loading and MetaModel");
+	QUnit.module("V1 only: Synchronous loading and MetaModel");
 
 	var fnTestSynchronousLoading = function(mTest) {
 		expect(5);
@@ -1095,12 +1095,12 @@ function runODataAnnotationTests() {
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
 		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
-			test("V1 only: Synchronous Metadata loading and Metamodel - " + sTestType, fnTestSynchronousLoading.bind(this, aServices[i]));
+			QUnit.test("V1 only: Synchronous Metadata loading and Metamodel - " + sTestType, fnTestSynchronousLoading.bind(this, aServices[i]));
 		}
 	}
 
 
-	module("Multiple Annotation Sources Merged");
+	QUnit.module("Multiple Annotation Sources Merged");
 
 	asyncTest("Asynchronous loading", function() {
 		expect(12);
@@ -1200,7 +1200,7 @@ function runODataAnnotationTests() {
 		}
 	});
 
-	module("V2: Multiple Annotation Sources Merged");
+	QUnit.module("V2: Multiple Annotation Sources Merged");
 
 	asyncTest("Asynchronous loading", function() {
 		expect(6);
@@ -1264,10 +1264,10 @@ function runODataAnnotationTests() {
 
 	});
 
-	module("Additional tests for fixed bugs");
+	QUnit.module("Additional tests for fixed bugs");
 
 
-	test("Apply Function", function() {
+	QUnit.test("Apply Function", function(assert) {
 		expect(12);
 
 		var mTest = mAdditionalTestsServices["Apply Function"];
@@ -1458,7 +1458,7 @@ function runODataAnnotationTests() {
 	});
 
 
-	test("Multiple Property Annotations", function() {
+	QUnit.test("Multiple Property Annotations", function(assert) {
 		expect(11);
 
 		var mTest = mAdditionalTestsServices["Multiple Property Annotations"];
@@ -1651,7 +1651,7 @@ function runODataAnnotationTests() {
 	});
 
 
-	test("Qualifiers in Property Annotations", function() {
+	QUnit.test("Qualifiers in Property Annotations", function(assert) {
 		expect(8);
 
 		var mTest = mAdditionalTestsServices["Property Annotation Qualifiers"];
@@ -1786,7 +1786,7 @@ function runODataAnnotationTests() {
 	});
 
 
-	test("Other Property Values", function() {
+	QUnit.test("Other Property Values", function(assert) {
 		expect(8);
 
 		var mTest = mAdditionalTestsServices["Other Property Values"];
@@ -1917,7 +1917,7 @@ function runODataAnnotationTests() {
 	});
 
 
-	test("Aliases in Namespaces", function() {
+	QUnit.test("Aliases in Namespaces", function(assert) {
 		expect(8);
 
 		var mTest = mAdditionalTestsServices["Aliases in Namespaces"];
@@ -2050,7 +2050,7 @@ function runODataAnnotationTests() {
 		});
 	});
 
-	test("Namespaces in Other Property Values", function() {
+	QUnit.test("Namespaces in Other Property Values", function(assert) {
 		expect(22);
 
 		var mTest = mAdditionalTestsServices["Namespaces in Other Property Values"];
@@ -2459,7 +2459,7 @@ function runODataAnnotationTests() {
 		});
 	});
 
-	test("Text Properties", function() {
+	QUnit.test("Text Properties", function(assert) {
 		expect(14);
 
 		var mTest = mAdditionalTestsServices["Text Properties"];
@@ -2614,7 +2614,7 @@ function runODataAnnotationTests() {
 		});
 	});
 
-	test("Entity Containers", function() {
+	QUnit.test("Entity Containers", function(assert) {
 		expect(30);
 
 		var mTest = mAdditionalTestsServices["Entity Containers"];
@@ -3051,7 +3051,7 @@ function runODataAnnotationTests() {
 		});
 	});
 
-	test("Simple Values", function() {
+	QUnit.test("Simple Values", function(assert) {
 		expect(3);
 
 		var mTest = mAdditionalTestsServices["Simple Values"];
@@ -3112,7 +3112,7 @@ function runODataAnnotationTests() {
 	});
 
 
-	test("Collection with Namespace", function() {
+	QUnit.test("Collection with Namespace", function(assert) {
 		expect(6);
 
 		var mTest = mAdditionalTestsServices["Collection with Namespace"];
@@ -3181,7 +3181,7 @@ function runODataAnnotationTests() {
 		});
 	});
 
-	test("UrlRef", function() {
+	QUnit.test("UrlRef", function(assert) {
 		expect(78);
 
 		var mTest = mAdditionalTestsServices["UrlRef"];
@@ -3548,7 +3548,7 @@ function runODataAnnotationTests() {
 
 
 
-	test("Alias Replacement", function() {
+	QUnit.test("Alias Replacement", function(assert) {
 		expect(11);
 
 		var mTest = mAdditionalTestsServices["Alias Replacement"];
@@ -3587,7 +3587,7 @@ function runODataAnnotationTests() {
 
 
 
-	test("DynamicExpressions", function() {
+	QUnit.test("DynamicExpressions", function(assert) {
 		expect(15);
 
 		var mTest = mAdditionalTestsServices["DynamicExpressions"];
@@ -3621,7 +3621,7 @@ function runODataAnnotationTests() {
 		oModel.destroy();
 	});
 
-	test("DynamicExpressions 2", function() {
+	QUnit.test("DynamicExpressions 2", function(assert) {
 		expect(56);
 
 		var mTest = mAdditionalTestsServices["DynamicExpressions2"];
@@ -3688,7 +3688,7 @@ function runODataAnnotationTests() {
 		oModel.destroy();
 	});
 
-	test("CollectionsWithSimpleValues", function() {
+	QUnit.test("CollectionsWithSimpleValues", function(assert) {
 		expect(13);
 
 		var mTest = mAdditionalTestsServices["CollectionsWithSimpleValues"];
@@ -3720,7 +3720,7 @@ function runODataAnnotationTests() {
 		oModel.destroy();
 	});
 
-	test("Multiple Simple Values", function() {
+	QUnit.test("Multiple Simple Values", function(assert) {
 		expect(9);
 
 		var mTest = mAdditionalTestsServices["Simple Values 2"];

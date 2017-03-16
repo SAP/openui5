@@ -37,12 +37,12 @@
 	// API module                                                  //
 	// =========================================================== //
 
-	module("API");
+	QUnit.module("API");
 
 	// ------------------------------ //
 	// tests for default values       //
 	// ------------------------------ //
-	test("constructor - items : []", function() {
+	QUnit.test("constructor - items : []", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -69,7 +69,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("constructor - items : [aItems]", function() {
+	QUnit.test("constructor - items : [aItems]", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -114,7 +114,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("constructor - selectedItems : [Item]", function() {
+	QUnit.test("constructor - selectedItems : [Item]", function(assert) {
 
 		// system under test
 		var oItem = new sap.ui.core.Item({
@@ -141,7 +141,7 @@
 		// cleanup
 		oMultiComboBox.destroy();
 	});
-	test("constructor - items : [Item], selectedItems : [Item]", function() {
+	QUnit.test("constructor - items : [Item], selectedItems : [Item]", function(assert) {
 
 		// system under test
 		var oItem;
@@ -162,7 +162,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("constructor - selectedItems : [Id], items : [Item]", function() {
+	QUnit.test("constructor - selectedItems : [Id], items : [Item]", function(assert) {
 
 		// system under test
 		var oItem;
@@ -183,7 +183,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("constructor - selectedItems without keys: [Item1, Item2], selectedItems : [Item1, Item2]", function() {
+	QUnit.test("constructor - selectedItems without keys: [Item1, Item2], selectedItems : [Item1, Item2]", function(assert) {
 
 		// system under test
 		var oItem1, oItem2;
@@ -204,7 +204,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("constructor - selectedItems : [Item], items : [Item], setSelectedKey programatically - check fired events",
+	QUnit.test("constructor - selectedItems : [Item], items : [Item], setSelectedKey programatically - check fired events",
 			function() {
 
 				// system under test
@@ -233,7 +233,7 @@
 				oMultiComboBox.destroy();
 			});
 
-	test("constructor - selectedItems : [Item], items : [Item], removeSelectedKey programatically - check fired events",
+	QUnit.test("constructor - selectedItems : [Item], items : [Item], removeSelectedKey programatically - check fired events",
 			function() {
 
 				// system under test
@@ -263,7 +263,7 @@
 				oMultiComboBox.destroy();
 	});
 
-	test("constructor - selectedItems : [Item], items : [Item], removeSelectedKey via UI - check fired events",
+	QUnit.test("constructor - selectedItems : [Item], items : [Item], removeSelectedKey via UI - check fired events",
 		function() {
 
 			// system under test
@@ -309,7 +309,7 @@
 			oMultiComboBox.destroy();
 	});
 
-	test("constructor, check selectedKeys - items:[Items]", function() {
+	QUnit.test("constructor, check selectedKeys - items:[Items]", function(assert) {
 
 		// system under test
 		var oItem0, oItem1, oItem2;
@@ -397,7 +397,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("constructor, check selectedItems - items:[Items]", function() {
+	QUnit.test("constructor, check selectedItems - items:[Items]", function(assert) {
 
 		// system under test
 		var oItem0, oItem1, oItem2, oItemDummy = new sap.ui.core.Item({
@@ -460,7 +460,7 @@
 	// xxxMaxWidth()                  //
 	// ------------------------------ //
 
-	test("method: xxxMaxWidth() - maxWidth", function() {
+	QUnit.test("method: xxxMaxWidth() - maxWidth", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -483,7 +483,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: xxxMaxWidth() - maxWidth", function() {
+	QUnit.test("method: xxxMaxWidth() - maxWidth", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox();
@@ -508,7 +508,7 @@
 	// getSelectedXXX()               //
 	// ------------------------------ //
 
-	test("method: getSelectedXXX() - items : [Item], selectedItems : [Item]", function() {
+	QUnit.test("method: getSelectedXXX() - items : [Item], selectedItems : [Item]", function(assert) {
 
 		// system under test
 		var oItem;
@@ -528,7 +528,7 @@
 		// cleanup
 		oMultiComboBox.destroy();
 	});
-	test("method: getSelectedXXX() - items : [Item], selectedItems : [Item] - setSelectedItems(DummyItem)", function() {
+	QUnit.test("method: getSelectedXXX() - items : [Item], selectedItems : [Item] - setSelectedItems(DummyItem)", function(assert) {
 
 		// system under test
 		var oItem, oItemDummy;
@@ -552,7 +552,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: getSelectedXXX() - items : [Item], selectedItems : DummyId", function() {
+	QUnit.test("method: getSelectedXXX() - items : [Item], selectedItems : DummyId", function(assert) {
 
 		// system under test
 		var oItem;
@@ -572,7 +572,7 @@
 		// cleanup
 		oMultiComboBox.destroy();
 	});
-	test("method: getSelectedXXX() - items : [Items], selectedItems : [Items]", function() {
+	QUnit.test("method: getSelectedXXX() - items : [Items], selectedItems : [Items]", function(assert) {
 
 		// system under test
 		var oItem, oItem2;
@@ -609,7 +609,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: getSelectedXXX() - selectedItems : Id, items : [Items]", function() {
+	QUnit.test("method: getSelectedXXX() - selectedItems : Id, items : [Items]", function(assert) {
 
 		// system under test
 		var oItem;
@@ -651,7 +651,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: getSelectedXXX() - selectedItems : [dummy], items : [Items]", function() {
+	QUnit.test("method: getSelectedXXX() - selectedItems : [dummy], items : [Items]", function(assert) {
 
 		// system under test
 		var oItem;
@@ -689,7 +689,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: getSelectedXXX() - items : []", function() {
+	QUnit.test("method: getSelectedXXX() - items : []", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -704,7 +704,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: getSelectedXXX() - items, selectedItems : null", function() {
+	QUnit.test("method: getSelectedXXX() - items, selectedItems : null", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -738,7 +738,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test('method: getSelectedXXX() - items - addSelectedItem', function() {
+	QUnit.test('method: getSelectedXXX() - items - addSelectedItem', function(assert) {
 
 		// system under test
 		var oItem;
@@ -773,7 +773,7 @@
 	// addItem                        //
 	// ------------------------------ //
 
-	test("method: addItem() - with key and text", function() {
+	QUnit.test("method: addItem() - with key and text", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox();
@@ -807,7 +807,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: addItem() - with text", function() {
+	QUnit.test("method: addItem() - with text", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox();
@@ -840,7 +840,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: addItem()", function() {
+	QUnit.test("method: addItem()", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox();
@@ -871,7 +871,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: addItem() - twice", function() {
+	QUnit.test("method: addItem() - twice", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox();
@@ -904,7 +904,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: addItem(null)", function() {
+	QUnit.test("method: addItem(null)", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox();
@@ -935,7 +935,7 @@
 	// ------------------------------ //
 	// removeXXX                      //
 	// ------------------------------ //
-	test("method: removeItem(oItem)", function() {
+	QUnit.test("method: removeItem(oItem)", function(assert) {
 
 		// system under test
 		var oItem, oItemRemoved;
@@ -960,7 +960,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: removeItem(oItemDummy)", function() {
+	QUnit.test("method: removeItem(oItemDummy)", function(assert) {
 
 		// system under test
 		var oItem, oItemRemoved, oItemDummy = new sap.ui.core.Item();
@@ -985,7 +985,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: removeItem(null)", function() {
+	QUnit.test("method: removeItem(null)", function(assert) {
 
 		// system under test
 		var oItem, oItemRemoved;
@@ -1010,7 +1010,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: removeAllItems()", function() {
+	QUnit.test("method: removeAllItems()", function(assert) {
 
 		// system under test
 		var oItem, aItems;
@@ -1035,7 +1035,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: removeSelectedItem(oItem)", function() {
+	QUnit.test("method: removeSelectedItem(oItem)", function(assert) {
 
 		// system under test
 		var oItem, oItemRemoved;
@@ -1060,7 +1060,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: removeSelectedItem(oItemDummy)", function() {
+	QUnit.test("method: removeSelectedItem(oItemDummy)", function(assert) {
 
 		// system under test
 		var oItem, oItemRemoved, oItemDummy = new sap.ui.core.Item();
@@ -1085,7 +1085,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: removeSelectedItem(null)", function() {
+	QUnit.test("method: removeSelectedItem(null)", function(assert) {
 
 		// system under test
 		var oItem, oItemRemoved;
@@ -1110,7 +1110,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: removeSelectedItem(oItem) with customer key", function() {
+	QUnit.test("method: removeSelectedItem(oItem) with customer key", function(assert) {
 
 		// system under test
 		var oItem, oItemRemoved;
@@ -1136,7 +1136,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: removeAllSelectedItems()", function() {
+	QUnit.test("method: removeAllSelectedItems()", function(assert) {
 
 		// system under test
 		var oItem, aIds;
@@ -1161,7 +1161,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: removeAllSelectedItems() with customer key", function() {
+	QUnit.test("method: removeAllSelectedItems() with customer key", function(assert) {
 
 		// system under test
 		var oItem, aIds;
@@ -1187,7 +1187,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: clearSelection()", function() {
+	QUnit.test("method: clearSelection()", function(assert) {
 
 		// system under test
 		var oItem;
@@ -1212,7 +1212,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: destroyItems()", function() {
+	QUnit.test("method: destroyItems()", function(assert) {
 
 		// system under test
 		var oItem;
@@ -1241,7 +1241,7 @@
 	// insertItem                     //
 	// ------------------------------ //
 
-	test("method: insertItem()", function() {
+	QUnit.test("method: insertItem()", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox();
@@ -1273,7 +1273,7 @@
 	// _isListInSuggestMode          //
 	// ------------------------------ //
 
-	test("method: _isListInSuggestMode - complete list", function() {
+	QUnit.test("method: _isListInSuggestMode - complete list", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -1303,7 +1303,7 @@
 		this.clock.reset();
 	});
 
-	test("method: _isListInSuggestMode complete list with disabled item", function() {
+	QUnit.test("method: _isListInSuggestMode complete list with disabled item", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -1334,7 +1334,7 @@
 		this.clock.reset();
 	});
 
-	test("method: _isListInSuggestMode suggest list", function() {
+	QUnit.test("method: _isListInSuggestMode suggest list", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -1365,7 +1365,7 @@
 		this.clock.reset();
 	});
 
-	test("method: _isListInSuggestMode suggest list with disabled item", function() {
+	QUnit.test("method: _isListInSuggestMode suggest list with disabled item", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -1401,7 +1401,7 @@
 	// setSelectedItems()              //
 	// ------------------------------ //
 
-	test("method: setSelectedItems() - [null] : should give an warning when called with faulty parameter", function() {
+	QUnit.test("method: setSelectedItems() - [null] : should give an warning when called with faulty parameter", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox();
@@ -1432,7 +1432,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: setSelectedItems() - [two items with same text] : should take over", function() {
+	QUnit.test("method: setSelectedItems() - [two items with same text] : should take over", function(assert) {
 
 		// system under test
 		var oItem1, oItem2;
@@ -1465,7 +1465,7 @@
 		// cleanup
 		oMultiComboBox.destroy();
 	});
-	test("method: setSelectedKeys() - {} : should give an warning when called with faulty parameter", function() {
+	QUnit.test("method: setSelectedKeys() - {} : should give an warning when called with faulty parameter", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox();
@@ -1495,7 +1495,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: setSelectedItems() - [oItem]", function() {
+	QUnit.test("method: setSelectedItems() - [oItem]", function(assert) {
 
 		// system under test
 		var oItem;
@@ -1543,7 +1543,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: setSelectedItems() - [Id]", function() {
+	QUnit.test("method: setSelectedItems() - [Id]", function(assert) {
 
 		// system under test
 		var oItem;
@@ -1590,7 +1590,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("Firing event: setSelectedItems() set the selected item when the MultiComboBox popup menu is open", function() {
+	QUnit.test("Firing event: setSelectedItems() set the selected item when the MultiComboBox popup menu is open", function(assert) {
 
 		// system under test
 		var oItem;
@@ -1631,7 +1631,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: getSelectedKeys()", function() {
+	QUnit.test("method: getSelectedKeys()", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -1648,7 +1648,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: getSelectedKeys()", function() {
+	QUnit.test("method: getSelectedKeys()", function(assert) {
 
 		// system under test
 		var oItem;
@@ -1683,7 +1683,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: getSelectedKeys()", function() {
+	QUnit.test("method: getSelectedKeys()", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -1718,7 +1718,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: getSelectedKeys()", function() {
+	QUnit.test("method: getSelectedKeys()", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -1732,7 +1732,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("method: getSelectedKeys()", function() {
+	QUnit.test("method: getSelectedKeys()", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -1762,7 +1762,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("constructor - items:[] selectedKeys[sKey]", function() {
+	QUnit.test("constructor - items:[] selectedKeys[sKey]", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -1778,7 +1778,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("constructor - items:[] selectedKeys[sKey] - addItem(oItem)", function() {
+	QUnit.test("constructor - items:[] selectedKeys[sKey] - addItem(oItem)", function(assert) {
 
 		// system under test
 		var oItem;
@@ -1808,7 +1808,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("constructor - items:[] selectedItems[oItem] selectedKeys[sKey] - addItem(oItem)", function() {
+	QUnit.test("constructor - items:[] selectedItems[oItem] selectedKeys[sKey] - addItem(oItem)", function(assert) {
 
 		// system under test
 		var oItem1, oItem2;
@@ -1840,7 +1840,7 @@
 	});
 
 	// BCP 0020079747 0000613914 2015
-	test("it should not throw an exception, when the undefined value is passed in as an argument to the addSelectedKeys() method", function() {
+	QUnit.test("it should not throw an exception, when the undefined value is passed in as an argument to the addSelectedKeys() method", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox();
@@ -1855,7 +1855,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("constructor - binding", function() {
+	QUnit.test("constructor - binding", function(assert) {
 
 		// system under test
 		var oModel = new sap.ui.model.json.JSONModel({
@@ -1901,7 +1901,7 @@
 		oModel.destroy();
 	});
 
-	test("constructor - binding - destroyItems", function() {
+	QUnit.test("constructor - binding - destroyItems", function(assert) {
 
 		// system under test
 		var oModel = new sap.ui.model.json.JSONModel({
@@ -1946,7 +1946,7 @@
 		oModel.destroy();
 	});
 
-	test("constructor - selectedItems : [Item], items : [Item], removeSelectedKey via UI - check fired events",
+	QUnit.test("constructor - selectedItems : [Item], items : [Item], removeSelectedKey via UI - check fired events",
 		function() {
 
 			// system under test
@@ -2000,7 +2000,7 @@
 	//------------------------------ //
 	// _getXXXVisibleItemOf          //
 	// ----------------------------- //
-	test("_getNextVisibleItemOf", function() {
+	QUnit.test("_getNextVisibleItemOf", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -2035,7 +2035,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("_getPreviousVisibleItemOf", function() {
+	QUnit.test("_getPreviousVisibleItemOf", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -2073,7 +2073,7 @@
 	//------------------------------ //
 	// DisabledListItem              //
 	// ----------------------------- //
-	test("DisabledListItem 'LIST_ITEM_VISUALISATION' - constructor",
+	QUnit.test("DisabledListItem 'LIST_ITEM_VISUALISATION' - constructor",
 			function() {
 
 				// system under test
@@ -2111,7 +2111,7 @@
 				this.clock.reset();
 			});
 
-	test("DisabledListItem 'LIST_ITEM_VISUALISATION' - should not be shown in suggest list", function() {
+	QUnit.test("DisabledListItem 'LIST_ITEM_VISUALISATION' - should not be shown in suggest list", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -2152,7 +2152,7 @@
 		this.clock.reset();
 	});
 
-	test("DisabledListItem 'LIST_ITEM_VISUALISATION' - set disabled via API", function() {
+	QUnit.test("DisabledListItem 'LIST_ITEM_VISUALISATION' - set disabled via API", function(assert) {
 
 		var oSystem = {
 			desktop : true,
@@ -2200,7 +2200,7 @@
 	//------------------------------ //
 	// Selectable Item             //
 	// ----------------------------- //
-	test("setSelectable Item 'LIST_ITEM_VISUALISATION'", function() {
+	QUnit.test("setSelectable Item 'LIST_ITEM_VISUALISATION'", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -2236,7 +2236,7 @@
 		this.clock.reset();
 	});
 
-	test("setSelectable Dummy Item 'LIST_ITEM_VISUALISATION'", function() {
+	QUnit.test("setSelectable Dummy Item 'LIST_ITEM_VISUALISATION'", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -2274,7 +2274,7 @@
 		this.clock.reset();
 	});
 
-	test("setSelectable Item 'LIST_ITEM_VISUALISATION'", function() {
+	QUnit.test("setSelectable Item 'LIST_ITEM_VISUALISATION'", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -2311,7 +2311,7 @@
 		this.clock.reset();
 	});
 
-	test("setSelectable Item 'LIST_ITEM_VISUALISATION' - selection is stored", function() {
+	QUnit.test("setSelectable Item 'LIST_ITEM_VISUALISATION' - selection is stored", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -2352,7 +2352,7 @@
 	//------------------------------ //
 	// clearFilter                   //
 	// ----------------------------- //
-	test("clearFilter", function() {
+	QUnit.test("clearFilter", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -2388,7 +2388,7 @@
 		this.clock.reset();
 	});
 
-	test("clearFilter - after invisible", function() {
+	QUnit.test("clearFilter - after invisible", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -2425,7 +2425,7 @@
 		this.clock.reset();
 	});
 
-	test("clearFilter - disabled item", function() {
+	QUnit.test("clearFilter - disabled item", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -2462,7 +2462,7 @@
 		this.clock.reset();
 	});
 
-	test("clearFilter - disabled item after invisible", function() {
+	QUnit.test("clearFilter - disabled item after invisible", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -2500,7 +2500,7 @@
 		this.clock.reset();
 	});
 
-	test("clearFilter - disabled item after invisible", function() {
+	QUnit.test("clearFilter - disabled item after invisible", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -2583,7 +2583,7 @@
 		this.clock.reset();
 	});
 
-	test("Scenario 'FIXED_CHAR': add invalid character.", function() {
+	QUnit.test("Scenario 'FIXED_CHAR': add invalid character.", function(assert) {
 
 		// system under test
 		var oItem;
@@ -2626,7 +2626,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("Scenario 'FIXED_CHAR': overwrite selected character with invalid one.", function() {
+	QUnit.test("Scenario 'FIXED_CHAR': overwrite selected character with invalid one.", function(assert) {
 
 		// system under test
 		var oItem;
@@ -2669,7 +2669,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("Scenario 'TOKEN_ORDER': Order of tokens is the order how the items were selected", function() {
+	QUnit.test("Scenario 'TOKEN_ORDER': Order of tokens is the order how the items were selected", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -2733,7 +2733,7 @@
 	// Scenarios - event handling     //
 	// ------------------------------ //
 
-	test("Scenario 'EVENT_VALUE_ENTER': 'Algeria' + ENTER", function() {
+	QUnit.test("Scenario 'EVENT_VALUE_ENTER': 'Algeria' + ENTER", function(assert) {
 
 		// system under test
 		var oItem;
@@ -2766,7 +2766,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("Scenario 'EVENT_VALUE_DUMMY_ENTER': 'dummy' + ENTER", function() {
+	QUnit.test("Scenario 'EVENT_VALUE_DUMMY_ENTER': 'dummy' + ENTER", function(assert) {
 
 		// system under test
 		var oItem;
@@ -2799,7 +2799,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("Scenario 'EVENT_VALUE_SELECT_ENTER': 'Algeria' + select 'lgeria' + 'ustralia' + ENTER", function() {
+	QUnit.test("Scenario 'EVENT_VALUE_SELECT_ENTER': 'Algeria' + select 'lgeria' + 'ustralia' + ENTER", function(assert) {
 
 		// system under test
 		var oItem1, oItem2;
@@ -2842,7 +2842,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("Scenario 'EVENT_VALUE_PASTE': CTRL+V 'Algeria' ", function() {
+	QUnit.test("Scenario 'EVENT_VALUE_PASTE': CTRL+V 'Algeria' ", function(assert) {
 		// IE has security settings
 		// which prompt the user if he wants to let the page access the clipboard.
 		if (!sap.ui.Device.browser.internet_explorer) {
@@ -2886,7 +2886,7 @@
 		}
 	});
 
-	test("Scenario 'EVENT_VALUE_LINE_BREAK_PASTE': CTRL+V 'item1 item2' ", function() {
+	QUnit.test("Scenario 'EVENT_VALUE_LINE_BREAK_PASTE': CTRL+V 'item1 item2' ", function(assert) {
 		// IE has security settings
 		// which prompt the user if he wants to let the page access the clipboard.
 		if (!sap.ui.Device.browser.internet_explorer) {
@@ -2939,7 +2939,7 @@
 		}
 	});
 
-	test("Scenario 'EVENT_VALUE_FOCUSOUT': 'Algeria' + FOCUSOUT", function() {
+	QUnit.test("Scenario 'EVENT_VALUE_FOCUSOUT': 'Algeria' + FOCUSOUT", function(assert) {
 
 		// system under test
 		var oItem;
@@ -2974,7 +2974,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("Scenario 'EVENT_TOKEN_BACKSPACE': Token 'Algeria' + BACKSPACE + BACKSPACE", function() {
+	QUnit.test("Scenario 'EVENT_TOKEN_BACKSPACE': Token 'Algeria' + BACKSPACE + BACKSPACE", function(assert) {
 
 		// system under test
 		var oItem;
@@ -3008,7 +3008,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("Scenario 'EVENT_TOKEN_DELETE': Token 'Algeria' + BACKSPACE + DELETE", function() {
+	QUnit.test("Scenario 'EVENT_TOKEN_DELETE': Token 'Algeria' + BACKSPACE + DELETE", function(assert) {
 
 		// system under test
 		var oItem;
@@ -3042,7 +3042,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("Scenario 'EVENT_TOKENS_DELETE': 3 Tokens + CTRL+A + DELETE", function() {
+	QUnit.test("Scenario 'EVENT_TOKENS_DELETE': 3 Tokens + CTRL+A + DELETE", function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -3082,7 +3082,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("Scenario 'EVENT_TOKEN_DELETE_BUTTON': Token 'Algeria' + delete button on token", function() {
+	QUnit.test("Scenario 'EVENT_TOKEN_DELETE_BUTTON': Token 'Algeria' + delete button on token", function(assert) {
 
 		// system under test
 		var oItem;
@@ -3117,7 +3117,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("Scenario 'EVENT_VALUE_ESCAPE': 'Algeria' change to 'Dummy' + ESCAPE", function() {
+	QUnit.test("Scenario 'EVENT_VALUE_ESCAPE': 'Algeria' change to 'Dummy' + ESCAPE", function(assert) {
 
 		// system under test
 		var sInitValue = "Algeria";
@@ -3161,7 +3161,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'alg' + ALT+DOWNKEY + ENTER + ALT+UPKEY", function() {
+	QUnit.test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'alg' + ALT+DOWNKEY + ENTER + ALT+UPKEY", function(assert) {
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3201,7 +3201,7 @@
 		this.clock.reset();
 	});
 
-	test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'alg' + ALT+DOWNKEY + ENTER + ALT+UPKEY Case insensitive", function() {
+	QUnit.test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'alg' + ALT+DOWNKEY + ENTER + ALT+UPKEY Case insensitive", function(assert) {
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3242,7 +3242,7 @@
 		this.clock.reset();
 	});
 
-	test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'al' + ALT+DOWNKEY + ENTER + ALT+UPKEY", function() {
+	QUnit.test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'al' + ALT+DOWNKEY + ENTER + ALT+UPKEY", function(assert) {
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3286,7 +3286,7 @@
 		this.clock.reset();
 	});
 
-	test("Scenario 'EVENT_SELECTION_SPACE': ALT+DOWNKEY + SelectItem + ALT+UPKEY", function() {
+	QUnit.test("Scenario 'EVENT_SELECTION_SPACE': ALT+DOWNKEY + SelectItem + ALT+UPKEY", function(assert) {
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3341,7 +3341,7 @@
 		this.clock.reset();
 	});
 
-	test("Scenario 'EVENT_DESELECTION_SPACE': SelectedItem + ALT+DOWNKEY + DeselectItem + ALT+UPKEY", function() {
+	QUnit.test("Scenario 'EVENT_DESELECTION_SPACE': SelectedItem + ALT+DOWNKEY + DeselectItem + ALT+UPKEY", function(assert) {
 
 		var oSystem = {
 			desktop : true,
@@ -3398,7 +3398,7 @@
 		this.clock.reset();
 	});
 
-	test("Scenario CLICK_INPUT: tap into control", function() {
+	QUnit.test("Scenario CLICK_INPUT: tap into control", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -3461,7 +3461,7 @@
 
 	});
 
-	test("Clicking on token should not throw an exception", function() {
+	QUnit.test("Clicking on token should not throw an exception", function(assert) {
 		// system under test
 		var oItem = new sap.ui.core.Item({
 				key : "DZ",
@@ -3495,7 +3495,7 @@
 	// Scenarios - opening dropdown list //
 	// --------------------------------- //
 
-	test("Scenario OPEN_ALTDOWN", function() {
+	QUnit.test("Scenario OPEN_ALTDOWN", function(assert) {
 
 		var oSystem = {
 			desktop : true,
@@ -3539,7 +3539,7 @@
 		this.clock.reset();
 	});
 
-	test("Scenario OPEN_ALTUP", function() {
+	QUnit.test("Scenario OPEN_ALTUP", function(assert) {
 
 		var oSystem = {
 			desktop : true,
@@ -3582,7 +3582,7 @@
 		this.clock.reset();
 	});
 
-	test("Scenario OPEN_F4", function() {
+	QUnit.test("Scenario OPEN_F4", function(assert) {
 
 		var oSystem = {
 			desktop : true,
@@ -3625,7 +3625,7 @@
 		this.clock.reset();
 	});
 
-	test("Scenario OPEN_ARROW: tap on arrow", function() {
+	QUnit.test("Scenario OPEN_ARROW: tap on arrow", function(assert) {
 
 		var oSystem = {
 			desktop : true,
@@ -3670,7 +3670,7 @@
 		this.clock.reset();
 	});
 
-	test("Scenario OPEN_VALUE: Typing valid letters into InputField", function() {
+	QUnit.test("Scenario OPEN_VALUE: Typing valid letters into InputField", function(assert) {
 
 		var oSystem = {
 			desktop : true,
@@ -3714,7 +3714,7 @@
 		this.clock.reset();
 	});
 
-	test("Scenario OPEN_VALUE: Type valid letter into InputField and delete it", function() {
+	QUnit.test("Scenario OPEN_VALUE: Type valid letter into InputField and delete it", function(assert) {
 
 		var oSystem = {
 			desktop : true,
@@ -3758,7 +3758,7 @@
 		this.clock.reset();
 	});
 
-	test("Scenario OPEN_VALUE: Open MCB by Arrow + Down / F4 or by clicking arrow then type valid letter and delete it", function () {
+	QUnit.test("Scenario OPEN_VALUE: Open MCB by Arrow + Down / F4 or by clicking arrow then type valid letter and delete it", function (assert) {
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3797,7 +3797,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test(
+	QUnit.test(
 			"Scenario OPEN_SUGGEST_SPACE: Pushing SPACE on item in suggest list - suggest list is closing first and complete list is opening then",
 			function() {
 
@@ -3850,7 +3850,7 @@
 				this.clock.reset();
 			});
 
-	test("Scenario OPEN_SUGGEST_ARROW: Pushing twice ALT+DOWN etc. in suggest list - suggest list is closing first and complete list is opening then",
+	QUnit.test("Scenario OPEN_SUGGEST_ARROW: Pushing twice ALT+DOWN etc. in suggest list - suggest list is closing first and complete list is opening then",
 			function() {
 
 				var oSystem = {
@@ -3907,7 +3907,7 @@
 				this.clock.reset();
 			});
 
-	test("Scenario 'CLOSE_TAP': closing list via tapping on list item", function() {
+	QUnit.test("Scenario 'CLOSE_TAP': closing list via tapping on list item", function(assert) {
 
 		var oSystem = {
 			desktop : true,
@@ -3993,7 +3993,7 @@
 	// --------------------------------- //
 	// Arrow - pressed state             //
 	// --------------------------------- //
-	test("Arrow - pressed on arrow", function() {
+	QUnit.test("Arrow - pressed on arrow", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -4022,7 +4022,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("Arrow - pressed on control", function() {
+	QUnit.test("Arrow - pressed on control", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -4052,7 +4052,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("Arrow - tap on list item in suggest mode", function() {
+	QUnit.test("Arrow - tap on list item in suggest mode", function(assert) {
 
 		var oSystem = {
 			desktop : true,
@@ -4101,7 +4101,7 @@
 	// --------------------------------- //
 	// Focus - border                    //
 	// --------------------------------- //
-	test("FocusBorder - pressed on control", function() {
+	QUnit.test("FocusBorder - pressed on control", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -4129,7 +4129,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("FocusBorder - pressed on arrow", function() {
+	QUnit.test("FocusBorder - pressed on arrow", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -4157,7 +4157,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("FocusBorder - focus on list item", function() {
+	QUnit.test("FocusBorder - focus on list item", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -4191,7 +4191,7 @@
 		this.clock.reset();
 	});
 
-	test("FocusBorder - arrow + leave", function() {
+	QUnit.test("FocusBorder - arrow + leave", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -4221,7 +4221,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("FocusBorder - control + leave", function() {
+	QUnit.test("FocusBorder - control + leave", function(assert) {
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
 			items : [new sap.ui.core.Item({
@@ -4250,7 +4250,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("Input Value - reset on focus out", function() {
+	QUnit.test("Input Value - reset on focus out", function(assert) {
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
 			items : [new sap.ui.core.Item({
@@ -4289,7 +4289,7 @@
 		this.clock.reset();
 	});
 
-	test("Input Value - select Item on Tab out", function() {
+	QUnit.test("Input Value - select Item on Tab out", function(assert) {
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -4327,7 +4327,7 @@
 		oMultiComboBoxNext.destroy();
 	});
 
-	test("Keep picker open after re-rendering", function() {
+	QUnit.test("Keep picker open after re-rendering", function(assert) {
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
 			items : [new sap.ui.core.Item({
@@ -4362,7 +4362,7 @@
 		this.clock.reset();
 	});
 
-	test("Cancel selection", function() {
+	QUnit.test("Cancel selection", function(assert) {
 		// system under test
 		this.stub(sap.ui.Device, "system", {
 			desktop: false,
@@ -4398,7 +4398,7 @@
 		this.clock.reset();
 	});
 
-	test("method: _setContainerSizes() - Calculating correct sizes", function() {
+	QUnit.test("method: _setContainerSizes() - Calculating correct sizes", function(assert) {
 		// system under test
 		var oSystem = {
 			desktop : false,
@@ -4583,7 +4583,7 @@
 		oFocusinStub.restore();
 	});
 
-	module("Focus handling");
+	QUnit.module("Focus handling");
 
 	QUnit.test("Focusing a token inside the MCB should not add css focus indication to the MCB itself", function(assert) {
 		var oItem = new sap.ui.core.Item({ text: "test" }),
@@ -4651,7 +4651,7 @@
 		oButton.destroy();
 	});
 
-	QUnit.test("Tokenizer should scroll to end when focus is outside MCB", function() {
+	QUnit.test("Tokenizer should scroll to end when focus is outside MCB", function(assert) {
 
 		var oFakeEvent = sap.ui.base.Event,
 			oMultiComboBox = new sap.m.MultiComboBox({
@@ -4731,9 +4731,9 @@
 		oMultiComboBox.destroy();
 	});
 
-	module("Accessibility");
+	QUnit.module("Accessibility");
 
-	test("getAccessibilityInfo", function() {
+	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oComboBox = new sap.m.MultiComboBox({
 			value: "Value",
 			tooltip: "Tooltip",
@@ -4774,7 +4774,7 @@
 	});
 
 	QUnit.module("Keyboard handling", {
-		setup: function(){
+		beforeEach: function(){
 			this.oFirstItem = new sap.ui.core.Item({key: "Item1", text: "Item1"});
 			this.oMultiComboBox = new sap.m.MultiComboBox({
 				items: [
@@ -4786,7 +4786,7 @@
 			this.oTokenizer = this.oMultiComboBox._oTokenizer;
 			this.oMultiComboBox.placeAt("MultiComboBox-content");
 			sap.ui.getCore().applyChanges();
-		}, teardown: function() {
+		}, afterEach: function() {
 			this.oMultiComboBox.destroy();
 		}
 	});
@@ -4995,6 +4995,65 @@
 		assert.strictEqual(oMultiCombo.getSelectedItems()[0].getKey(), oData.selectedCustomKeys[0], "Selected items are not changed as the same item is in the new data.");
 
 		oMultiCombo.destroy();
+		oModel.destroy();
+	});
+
+	QUnit.test("Data binding: update seelctedkeys after model's value is formatted", function (assert) {
+		// arrange
+		var oFlatArrayDatatype = sap.ui.model.SimpleType.extend("example.FlatArray", {
+			formatValue: function(vValue, sInternalType) {
+				return vValue ? vValue.split(",") : [];
+			},
+			parseValue: function(vValue, sInternalType) {
+				return vValue ? vValue.join(",") : null;
+			},
+			validateValue: function(vValue) {}
+		  });
+
+		var oMultiComboBox = new sap.m.MultiComboBox({
+			items: {
+				path: "/items",
+				template: new sap.ui.core.Item({
+					key: "{}",
+					text: "{}"
+				})
+			},
+			selectedKeys: {
+			path: "/selectedKeys",
+				type: new oFlatArrayDatatype()
+			}
+		});
+
+		var oModel = new sap.ui.model.json.JSONModel({
+				items: ["sap", "ui", "5"],
+				selectedKeys: ""
+		});
+
+		oMultiComboBox.setModel(oModel);
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		var oNewSelectedItem = oMultiComboBox.getItems()[0];
+
+		// act
+		var oFakeParams = {
+			item: oNewSelectedItem,
+			id: oNewSelectedItem.getId(),
+			key: oNewSelectedItem.getKey(),
+			fireChangeEvent: true,
+			suppressInvalidate: true,
+			listItemUpdated: true
+		};
+		
+		oMultiComboBox.setSelection(oFakeParams);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 1, 'Only one token should be shown');
+
+		// cleanup
+		oMultiComboBox.destroy();
 		oModel.destroy();
 	});
 </script>

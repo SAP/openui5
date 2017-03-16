@@ -51,12 +51,12 @@
 		return oModel = new sap.ui.model.odata.v2.ODataModel(sUri, mOptions);
 	}
 
-	test("init MockServer Flight", function() {
+	QUnit.test("init MockServer Flight", function(assert) {
 		oServer = initServer(sServiceUri, "model/metadata1.xml", sDataRootPath);
 		ok(oServer,"Server initialized");
 	});
 
-	test("init Model", function() {
+	QUnit.test("init Model", function(assert) {
 		var oModel = initModel(sServiceUri);
 		ok(oModel,"Model initialized");
 		ok(oModel.getServiceMetadata(),"Metadata loaded");
@@ -80,33 +80,33 @@
  		};
 		oModel.attachMetadataFailed(handleFailed2);
 	});
-	test("get annotation 'sap:label'", function() {
+	QUnit.test("get annotation 'sap:label'", function(assert) {
 		var oModel = initModel(sServiceUri);
 		ok(oModel,"Model initialized");
 		equal(oModel.getProperty("/#Flight/FlightConnectionID/@sap:label"),"Flight Number");
 	});
-	test("get annotation 'sap:label' with namespace", function() {
+	QUnit.test("get annotation 'sap:label' with namespace", function(assert) {
 		var oModel = initModel(sServiceUri);
 		ok(oModel,"Model initialized");
 		equal(oModel.getProperty("/#UNKNOWN.Flight/FlightConnectionID/@sap:label"), undefined, "Unknown namespace");
 		equal(oModel.getProperty("/#RMTSAMPLEFLIGHT_2.Flight/FlightConnectionID/@sap:label"), "Flight Number", "Valid namespace");
 	});
-	test("get attribute 'type'", function() {
+	QUnit.test("get attribute 'type'", function(assert) {
 		var oModel = initModel(sServiceUri);
 		ok(oModel,"Model initialized");
 		equal(oModel.getProperty("/#Flight/FlightConnectionID/@type"),"Edm.String");
 		equal(oModel.getProperty("/#Flight/FirstClassOccupiedSeats/@type"),"Edm.Int32");
 	});
-	test("get complexType attribute 'type' (not supported yet)", function() {
+	QUnit.test("get complexType attribute 'type' (not supported yet)", function(assert) {
 		ok(!oModel.getProperty("/#Flight/FlightDetails/@type"),"only Property attributes could be resolved");
 	});
-	test("get property/entity object (not supported)", function() {
+	QUnit.test("get property/entity object (not supported)", function(assert) {
 		var oModel = initModel(sServiceUri);
 		ok(oModel,"Model initialized");
 		ok(!oModel.getProperty("/#Flight/FlightConnectionID"));
 		ok(!oModel.getProperty("/#Flight"));
 	});
-	test("get complexType property attributes", function() {
+	QUnit.test("get complexType property attributes", function(assert) {
 		equal(oModel.getProperty("/#Flight/FlightDetails/DepartureTime/@type"),"Edm.Time");
 		equal(oModel.getProperty("/#Flight/FlightDetails/DepartureTime/@sap:label"),"Departure");
 		oServer.stop();
@@ -114,7 +114,7 @@
 	});
 
 	// Usually we should not test internal methods, but these might be candidates to be made publicly available
-	module("Internal methods");
+	QUnit.module("Internal methods");
 
 	var mInternalTests = {
 		// Test data to check for

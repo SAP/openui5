@@ -72,7 +72,7 @@
 		oApp.to(oPage1); //back page1
 	});
 
-	module("Invalidation");
+	QUnit.module("Invalidation");
 
 	QUnit.test("do not invalidate parent upon first rendering", function (assert) {
 
@@ -122,7 +122,7 @@
 	});
 
 
-	module("Sections invalidation", {
+	QUnit.module("Sections invalidation", {
 		beforeEach: function () {
 			this.oView = sap.ui.xmlview("UxAP-ObjectPageState", {
 				viewName: "view.UxAP-ObjectPageState"
@@ -159,7 +159,7 @@
 		}, 1000); //dom calc delay
 	});
 
-	module("update content size", {
+	QUnit.module("update content size", {
 		beforeEach: function () {
 			this.oView = sap.ui.xmlview("UxAP-ObjectPageState", {
 				viewName: "view.UxAP-ObjectPageState"
@@ -204,7 +204,7 @@
 
 		var sModulePrefix = bUseIconTabBar ? "IconTabBar": "AnchorBar"
 
-		module(sModulePrefix + "Mode", {
+		QUnit.module(sModulePrefix + "Mode", {
 			beforeEach: function () {
 				this.oView = sap.ui.xmlview("UxAP-ObjectPageState", {
 					viewName: "view.UxAP-ObjectPageState"

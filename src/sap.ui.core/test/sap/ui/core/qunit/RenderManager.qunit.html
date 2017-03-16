@@ -184,20 +184,20 @@
 
 		qutils.delayTestStart();
 
-		module("Core API");
+		QUnit.module("Core API");
 
-		test("RenderManager.getConfiguration", function() {
+		QUnit.test("RenderManager.getConfiguration", function(assert) {
 			var rm = new sap.ui.core.RenderManager();
 			ok(rm.getConfiguration() === sap.ui.getCore().getConfiguration(), "getConfiguration returns the same like Core.getConfiguration");
 		});
 
-		test("Core.getRenderManager/createRenderManager", function() {
+		QUnit.test("Core.getRenderManager/createRenderManager", function(assert) {
 			var c = sap.ui.getCore();
 			ok(c.getRenderManager() != c.getRenderManager(), "Core.getRenderManager always returns a new RenderManager instance");
 			ok(c.createRenderManager() != c.createRenderManager(), "Core.createRenderManager always returns a new RenderManager instance");
 		});
 
-		module("Interfaces");
+		QUnit.module("Interfaces");
 
 		var aCommonFunctions = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData", "writeInvisiblePlaceholderData",
 			   	              "writeElementData", "writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses",
@@ -205,7 +205,7 @@
 			   	              "getConfiguration", "getHTML", "cleanupControlWithoutRendering"];
 		var aNonRendererFunctions = ["render", "flush", "destroy"];
 
-		test("Full Interface", function() {
+		QUnit.test("Full Interface", function(assert) {
 			var rm = sap.ui.getCore().createRenderManager();
 			var aAllFunctions = aCommonFunctions.concat(aNonRendererFunctions);
 			for(s in rm){
@@ -213,7 +213,7 @@
 			}
 		});
 
-		test("Renderer Interface", function() {
+		QUnit.test("Renderer Interface", function(assert) {
 			var rm = sap.ui.getCore().createRenderManager();
 			var oControl0 = new TestControl("TestContr0");
 			fCheckRendererInterface = function(rmIf){
@@ -226,18 +226,18 @@
 		});
 
 
-		module("Writer API");
+		QUnit.module("Writer API");
 
 		//No checks due to deprecation for
 		//translate, writeAcceleratorKey, writeAccessibilityState, getHTML
 
-		test("RenderManager.write", function() {
+		QUnit.test("RenderManager.write", function(assert) {
 			checkRMWriter("Hello, how are you?", true, 0, function(rm){
 				return rm.write("Hello", ",", " how are ", "you?");
 			});
 		});
 
-		test("RenderManager.writeEscaped", function() {
+		QUnit.test("RenderManager.writeEscaped", function(assert) {
 			checkRMWriter("Hello&#x20;&amp;&lt;&quot;&#x27;&#x5c;", true, 0, function(rm){
 				return rm.writeEscaped("Hello &<\"\'\\");
 			});
@@ -247,31 +247,31 @@
 			});
 		});
 
-		test("RenderManager.writeControlData", function() {
+		QUnit.test("RenderManager.writeControlData", function(assert) {
 			checkRMWriter(" id=\"TestElem1\" data-sap-ui=\"TestElem1\"", true, 0, function(rm){
 				return rm.writeControlData(new sap.ui.core.Control("TestElem1"));
 			});
 		});
 
-		test("RenderManager.writeElementData", function() {
+		QUnit.test("RenderManager.writeElementData", function(assert) {
 			checkRMWriter(" id=\"TestElem2\" data-sap-ui=\"TestElem2\"", true, 0, function(rm){
 				return rm.writeElementData(new sap.ui.core.Element("TestElem2"));
 			});
 		});
 
-		test("RenderManager.writeAttribute", function() {
+		QUnit.test("RenderManager.writeAttribute", function(assert) {
 			checkRMWriter(" attr=\"value\"", true, 0, function(rm){
 				return rm.writeAttribute("attr", "value");
 			});
 		});
 
-		test("RenderManager.writeAttributeEscaped", function() {
+		QUnit.test("RenderManager.writeAttributeEscaped", function(assert) {
 			checkRMWriter(" attr=\"value&#x20;&amp;&lt;&quot;&#x27;&#x5c;\"", true, 0, function(rm){
 				return rm.writeAttributeEscaped("attr", "value &<\"\'\\");
 			});
 		});
 
-		test("RenderManager.renderControl", function() {
+		QUnit.test("RenderManager.renderControl", function(assert) {
 			var oControl1 = new TestControl("TestContr1");
 			var oControl2 = new TestControl("TestContr2");
 			checkRMWriter(getTestControlHtml("TestContr1")+getTestControlHtml("TestContr2"), true, 2, function(rm){
@@ -283,7 +283,7 @@
 			});
 		});
 
-		test("RenderManager.addStyle", function() {
+		QUnit.test("RenderManager.addStyle", function(assert) {
 			checkRMWriter("", true, 0, function(rm){
 				ok(!rm.aStyleStack[rm.aStyleStack.length-1].aStyle, "Style infrastructure initially not available.");
 				rm.addStyle("att1");
@@ -294,7 +294,7 @@
 			});
 		});
 
-		test("RenderManager.writeStyles", function() {
+		QUnit.test("RenderManager.writeStyles", function(assert) {
 			checkRMWriter(" style=\"att1:val1;att2:val2\" ", true, 0, function(rm){
 				rm.addStyle("att1", "val1");
 				rm.addStyle("att2", "val2");
@@ -304,7 +304,7 @@
 			});
 		});
 
-		test("RenderManager.addClass", function() {
+		QUnit.test("RenderManager.addClass", function(assert) {
 			checkRMWriter("", true, 0, function(rm){
 				ok(!rm.aStyleStack[rm.aStyleStack.length-1].aClasses, "Class infrastructure initially not available.");
 				rm.addClass();
@@ -315,7 +315,7 @@
 			});
 		});
 
-		test("RenderManager.writeClasses", function() {
+		QUnit.test("RenderManager.writeClasses", function(assert) {
 			checkRMWriter(" class=\"Class1 Class2\" ", true, 0, function(rm){
 				rm.addClass("Class1");
 				rm.addClass("Class2");
@@ -344,7 +344,7 @@
 			});
 		});
 
-		test("RenderManager.writeAccessibilityState", function() {
+		QUnit.test("RenderManager.writeAccessibilityState", function(assert) {
 			var oControl1 = new ACCTestControl("TestACCContr1");
 			var oControl2 = new ACCTestControl("TestACCContr2", {
 				"editable" : false, //readonly
@@ -441,9 +441,9 @@
 			checkACCOutput(sOutput, "aria-labelledby=\"" + sText + "\"");
 		});
 
-		module("Non Renderer Functions");
+		QUnit.module("Non Renderer Functions");
 
-		test("RenderManager.destroy", function() {
+		QUnit.test("RenderManager.destroy", function(assert) {
 			var rm = new sap.ui.core.RenderManager();
 			var oControl4 = new TestControl("TestContr4");
 			rm.renderControl(oControl4);
@@ -579,7 +579,7 @@
 			}, sap.ui.Device.browser.safari ? 500 : 0);
 		});
 
-		test("RenderManager lock", function() {
+		QUnit.test("RenderManager lock", function(assert) {
 			var oCtrl1 = new TestControl();
 			var oCtrl2 = new TestControl();
 
@@ -606,7 +606,7 @@
 			equal(iCounter, 0, "Number of rerenderings of Ctrl2");
 		});
 
-		test("RenderManager writeIcon with Icon URL", function(){
+		QUnit.test("RenderManager writeIcon with Icon URL", function(assert) {
 			jQuery.sap.require("sap.ui.core.IconPool");
 			var rm = sap.ui.getCore().createRenderManager();
 			var oIconInfo = sap.ui.core.IconPool.getIconInfo("wrench");
@@ -659,7 +659,7 @@
 			jQuery.sap.byId("area6").empty();
 		});
 
-		test("RenderManager writeIcon with Icon URL. aria-label and aria-labelledby are set to null", function() {
+		QUnit.test("RenderManager writeIcon with Icon URL. aria-label and aria-labelledby are set to null", function(assert) {
 			jQuery.sap.require("sap.ui.core.IconPool");
 			var rm = sap.ui.getCore().createRenderManager();
 			var oIconInfo = sap.ui.core.IconPool.getIconInfo("wrench");
@@ -682,7 +682,7 @@
 			jQuery.sap.byId("area6").empty();
 		});
 
-		test("RenderManager writeIcon with Icon URL and aria-labelledby", function() {
+		QUnit.test("RenderManager writeIcon with Icon URL and aria-labelledby", function(assert) {
 			jQuery.sap.require("sap.ui.core.IconPool");
 			var rm = sap.ui.getCore().createRenderManager();
 			var oIconInfo = sap.ui.core.IconPool.getIconInfo("wrench");
@@ -706,7 +706,7 @@
 			jQuery.sap.byId("area6").empty();
 		});
 
-		test("RenderManager writeIcon with Image URL", function(){
+		QUnit.test("RenderManager writeIcon with Image URL", function(assert) {
 			var rm = sap.ui.getCore().createRenderManager(),
 				sImgURL = jQuery.sap.getModulePath("sap.ui.core", "/themes/base/img/Busy.gif");
 			rm.writeIcon(sImgURL, ["classA", "classB"], {
@@ -747,7 +747,7 @@
 			equal($img1.attr("alt"), "test alt message", "Attribute should be changed");
 		});
 
-		test("RenderManager should not break for controls with invalid renderer", function() {
+		QUnit.test("RenderManager should not break for controls with invalid renderer", function(assert) {
 
 			// define a control without an invalid renderer
 			sap.ui.core.Control.extend("my.InvalidRendererControl", {

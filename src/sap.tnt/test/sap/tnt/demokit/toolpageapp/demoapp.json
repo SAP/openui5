@@ -1,7 +1,7 @@
 {
 	"cwd": "test-resources/sap/tnt/demokit/toolpageapp/webapp/",
 	"files": [
-	"Component.js",
+		"Component.js",
 		"control/D3Chart.js",
 		"control/D3ColumnChart.js",
 		"control/D3ComparisonChart.js",
@@ -11,7 +11,7 @@
 		"controller/Home.controller.js",
 		"controller/settings/MasterSettings.controller.js",
 		"controller/Statistics.controller.js",
-		"css/shopAdminTitleCss.css",
+		"css/style.css",
 		"i18n/i18n.properties",
 		"images/homeImage.png",
 		"index.html",

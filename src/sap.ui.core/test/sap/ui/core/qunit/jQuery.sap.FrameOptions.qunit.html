@@ -122,7 +122,7 @@ function mockBrowserAPI(oTest, mOptions) {
 }
 
 function testDirectUnlock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin) {
-	test(sName, function() {
+	QUnit.test(sName, function(assert) {
 
 		// arrangements
 		var oMock = mockBrowserAPI(this, {
@@ -151,7 +151,7 @@ function testDirectUnlock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin)
 	});
 }
 function testDirectLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin) {
-	test(sName, function() {
+	QUnit.test(sName, function(assert) {
 
 		// arrangements
 		var oMock = mockBrowserAPI(this, {
@@ -183,7 +183,7 @@ function testDirectLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin) {
 	});
 }
 function testPostMessageLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin) {
-	test(sName, function() {
+	QUnit.test(sName, function(assert) {
 
 		// arrangements
 		var oMock = mockBrowserAPI(this, {
@@ -223,7 +223,7 @@ function testPostMessageLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrig
 	});
 }
 function testWhitelistUnlock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin) {
-	test(sName, function() {
+	QUnit.test(sName, function(assert) {
 
 		// arrangements
 		var oMock = mockBrowserAPI(this, {
@@ -261,7 +261,7 @@ function testWhitelistUnlock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrig
 	});
 }
 function testWhitelistService(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin, bActive, bFraming, bAllow) {
-	test(sName, function() {
+	QUnit.test(sName, function(assert) {
 
 		// arrangements
 		var oMock = mockBrowserAPI(this, {
@@ -372,19 +372,19 @@ sap.ui.test.qunit.delayTestStart();
 
 //                    test name,                                  environment,     parent mode,    frame option
 
-module("mode: deny", { teardown: teardown });
+QUnit.module("mode: deny", { afterEach: teardown });
 testDirectUnlock(    "no frame",                                  'NO_FRAME',      'SAFE',         'deny');
 testDirectLock(      "same origin",                               'SAME_ORIGIN',   'SAFE',         'deny');
 testDirectLock(      "different origin",                          'DIFF_ORIGIN',   'SAFE',         'deny');
 
-module("mode: allow", { teardown: teardown });
+QUnit.module("mode: allow", { afterEach: teardown });
 testDirectUnlock(    "no frame",                                  'NO_FRAME',      'SAFE',         'allow');
 testDirectUnlock(    "same origin",                               'SAME_ORIGIN',   'SAFE',         'allow');
 testDirectUnlock(    "different origin",                          'DIFF_ORIGIN',   'SAFE',         'allow');
 
 //                    test name,                                  environment,     parent mode,    frame option,  same origin,
 
-module("mode: trusted", { teardown: teardown });
+QUnit.module("mode: trusted", { afterEach: teardown });
 testDirectUnlock(    "no frame",                                  'NO_FRAME',      'SAFE',         'trusted');
 testDirectUnlock(    "same origin",                               'SAME_ORIGIN',   'SAFE',         'trusted');
 testDirectUnlock(    "same origin, unsafe",                       'SAME_ORIGIN',   'UNSAFE',       'trusted');
@@ -393,30 +393,30 @@ testDirectUnlock(    "same origin, no response",                  'SAME_ORIGIN',
 testPostMessageLock( "same origin not allowed",                   'SAME_ORIGIN',   'SAFE',         'trusted',     false);
 testPostMessageLock( "different origin",                          'DIFF_ORIGIN',   'SAFE',         'trusted');
 
-module("mode: trusted, whitelist", { teardown: teardown });
+QUnit.module("mode: trusted, whitelist", { afterEach: teardown });
 testWhitelistUnlock( "same origin not allowed, whitelist",        'SAME_ORIGIN',   'SAFE',         'trusted',     false);
 testWhitelistUnlock( "different origin, whitelist",               'DIFF_ORIGIN',   'SAFE',         'trusted');
 
 //                   test name,                                   environment,     parent mode,    frame option,  same origin,  active,   framing,  allow
 
-module("mode: trusted, witelist service, parent safe", { teardown: teardown });
+QUnit.module("mode: trusted, witelist service, parent safe", { afterEach: teardown });
 testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'SAFE',         'trusted',     false,        true,     true,     true);
 testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         true,     true,     true);
 testWhitelistService("diff origin, whitelistService, denied",     'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         true,     false,    false);
 testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         false,    true,     true);
 
-module("mode: trusted, witelist service, parent safe delayed", { teardown: teardown });
+QUnit.module("mode: trusted, witelist service, parent safe delayed", { afterEach: teardown });
 testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'SAFE_DELAYED', 'trusted',     false,        true,     true,     true);
 testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         true,     true,     true);
 testWhitelistService("diff origin, whitelistService, denied",     'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         true,     false,    false);
 testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         false,    true,     true);
 
-module("mode: trusted, witelist service, parent unsafe", { teardown: teardown });
+QUnit.module("mode: trusted, witelist service, parent unsafe", { afterEach: teardown });
 testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'UNSAFE',       'trusted',     false,        true,     true,     false);
 testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'UNSAFE',       'trusted',     true,         true,     true,     false);
 testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'UNSAFE',       'trusted',     true,         false,    true,     true);
 
-module("mode: trusted, witelist service, parent no response", { teardown: teardown });
+QUnit.module("mode: trusted, witelist service, parent no response", { afterEach: teardown });
 testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'NO_RESPONSE',  'trusted',     false,        true,     true,     false);
 testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'NO_RESPONSE',  'trusted',     true,         true,     true,     false);
 testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'NO_RESPONSE',  'trusted',     true,         false,    true,     true);

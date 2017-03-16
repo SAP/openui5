@@ -7,7 +7,7 @@
 <script src="../shared-config.js"></script>
 <script id="sap-ui-bootstrap" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
-	
+
 </script>
 
 <link rel="stylesheet"
@@ -40,12 +40,12 @@
 	// API module                                                  //
 	// =========================================================== //
 
-	module("API");
+	QUnit.module("API");
 
 	// ------------------------------ //
 	// tests for default values       //
 	// ------------------------------ //
-	test("constructor - items: []", function() {
+	QUnit.test("constructor - items: []", function(assert) {
 
 		// system under test
 		var oChartSelectionPanel = new sap.m.P13nChartSelectionPanel({
@@ -66,7 +66,7 @@
 		oChartSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems]", function() {
+	QUnit.test("constructor - items: [aItems]", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -110,7 +110,7 @@
 		oChartSelectionPanel.destroy();
 	});
 
-	test("constructor - [], addItem", function() {
+	QUnit.test("constructor - [], addItem", function(assert) {
 
 		// system under test
 		var oChartSelectionPanel = new sap.m.P13nChartSelectionPanel();
@@ -151,7 +151,7 @@
 		oChartSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems], insertItem", function() {
+	QUnit.test("constructor - items: [aItems], insertItem", function(assert) {
 
 		// system under test
 		var oItemA, oItemB = new sap.m.P13nItem({
@@ -195,7 +195,7 @@
 		oChartSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems], removeItem", function() {
+	QUnit.test("constructor - items: [aItems], removeItem", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -238,7 +238,7 @@
 		oChartSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems], removeItem dummy", function() {
+	QUnit.test("constructor - items: [aItems], removeItem dummy", function(assert) {
 
 		// system under test
 		var oItemA, oItemB = new sap.m.P13nItem({
@@ -281,7 +281,7 @@
 		oChartSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems], removeAllItems", function() {
+	QUnit.test("constructor - items: [aItems], removeAllItems", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -320,7 +320,7 @@
 		oChartSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems], destroyItems", function() {
+	QUnit.test("constructor - items: [aItems], destroyItems", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -356,7 +356,7 @@
 		oChartSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems], selectionItems: [aChartSelectionItems]", function() {
+	QUnit.test("constructor - items: [aItems], selectionItems: [aChartSelectionItems]", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -404,7 +404,7 @@
 		oChartSelectionPanel.destroy();
 	});
 
-	test("constructor - selectionItems: [aChartSelectionItems], items: [aItems]", function() {
+	QUnit.test("constructor - selectionItems: [aChartSelectionItems], items: [aItems]", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -452,7 +452,7 @@
 		oChartSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems], selectionItems: [aChartSelectionItems]", function() {
+	QUnit.test("constructor - items: [aItems], selectionItems: [aChartSelectionItems]", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -502,7 +502,7 @@
 		oChartSelectionPanel.destroy();
 	});
 
-	test("getOkPayload: â0 -> a0", function() {
+	QUnit.test("getOkPayload: â0 -> a0", function(assert) {
 
 		// system under test
 		var oChartSelectionItemA;
@@ -541,7 +541,7 @@
 		oChartSelectionPanel.destroy();
 	});
 
-	test("getOkPayload: a0 -> â0", function() {
+	QUnit.test("getOkPayload: a0 -> â0", function(assert) {
 
 		// system under test
 		var oChartSelectionPanel = new sap.m.P13nChartSelectionPanel({
@@ -573,7 +573,7 @@
 		oChartSelectionPanel.destroy();
 	});
 
-	test("getOkPayload: a0 -> a1", function() {
+	QUnit.test("getOkPayload: a0 -> a1", function(assert) {
 
 		// system under test
 		var oChartSelectionPanel = new sap.m.P13nChartSelectionPanel({
@@ -603,7 +603,7 @@
 		oChartSelectionPanel.destroy();
 	});
 
-	test("getOkPayload: a0 -> â1", function() {
+	QUnit.test("getOkPayload: a0 -> â1", function(assert) {
 
 		// system under test
 		var oChartSelectionPanel = new sap.m.P13nChartSelectionPanel({
@@ -635,7 +635,7 @@
 		oChartSelectionPanel.destroy();
 	});
 
-	test("getOkPayload: â0 -> â1", function() {
+	QUnit.test("getOkPayload: â0 -> â1", function(assert) {
 
 		// system under test
 		var oChartSelectionItemsA;
@@ -675,7 +675,7 @@
 		oChartSelectionPanel.destroy();
 	});
 
-	test("getOkPayload: â0 -> a1", function() {
+	QUnit.test("getOkPayload: â0 -> a1", function(assert) {
 
 		// system under test
 		var oChartSelectionItemsA;

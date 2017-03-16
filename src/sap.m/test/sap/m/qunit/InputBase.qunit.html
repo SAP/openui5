@@ -32,7 +32,7 @@
 			var fnTestControlProperty = function(mOptions) {
 				var sProperty = mOptions.property.charAt(0).toUpperCase() + mOptions.property.slice(1);
 
-				test("method: get" + sProperty + "()", function() {
+				QUnit.test("method: get" + sProperty + "()", function(assert) {
 					strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
 				});
 			};
@@ -41,13 +41,13 @@
 			/* API module                                                  */
 			/* =========================================================== */
 
-			module("API");
+			QUnit.module("API");
 
 			/* ------------------------------ */
 			/* tests for default values       */
 			/* ------------------------------ */
 
-			test("default values", function() {
+			QUnit.test("default values", function(assert) {
 
 				// system under test
 				var oInput = new sap.m.InputBase();
@@ -327,7 +327,7 @@
 			/* ------------------------------ */
 
 			var fnSetValueTestCase1 = function(mSettings) {
-				test("method: setValue() initial rendering", function() {
+				QUnit.test("method: setValue() initial rendering", function(assert) {
 
 					// system under test
 					var oInput = mSettings.control;
@@ -366,7 +366,7 @@
 			});
 
 			var fnSetValueTestCase2 = function(mSettings) {
-				test("method: setValue() after the initial rendering", function() {
+				QUnit.test("method: setValue() after the initial rendering", function(assert) {
 
 					// system under test
 					var oInput = mSettings.control;
@@ -409,7 +409,7 @@
 			});
 
 			var fnSetValueTestCase3 = function(mSettings) {
-				test("method: setValue() initial rendering should respect getMaxLength", function() {
+				QUnit.test("method: setValue() initial rendering should respect getMaxLength", function(assert) {
 
 					// arrange - stub for max length before rendering
 					sap.m.InputBase.prototype.getMaxLength = undefined;
@@ -457,7 +457,7 @@
 			});
 
 			var fnSetValueTestCase4 = function(mSettings) {
-				test("method: setValue() after the initial rendering should respect getMaxLength", function() {
+				QUnit.test("method: setValue() after the initial rendering should respect getMaxLength", function(assert) {
 
 					// stub for max length
 					sap.m.InputBase.prototype.getMaxLength = undefined;
@@ -505,7 +505,7 @@
 				output: "Te"
 			});
 
-			test("setValue should not update the last value when old and new one is same", function() {
+			QUnit.test("setValue should not update the last value when old and new one is same", function(assert) {
 				// system under test
 				var sInitValue = "init";
 				var sTestValue = "test";
@@ -527,7 +527,7 @@
 				oInput.destroy();
 			});
 
-			test("setValue should update the dom when old and new dom value is not same", function() {
+			QUnit.test("setValue should update the dom when old and new dom value is not same", function(assert) {
 
 				// system under test
 				var sValue = "test";
@@ -560,7 +560,7 @@
 			/* ------------------------------ */
 
 			var fnSetWidthTestCase1 = function(mSettings) {
-				test("method: setWidth() initial rendering", function() {
+				QUnit.test("method: setWidth() initial rendering", function(assert) {
 
 					// system under test
 					var oInput = mSettings.control;
@@ -599,7 +599,7 @@
 			});
 
 			var fnSetWidthTestCase2 = function(mSettings) {
-				test("method: setWidth() after initial rendering", function() {
+				QUnit.test("method: setWidth() after initial rendering", function(assert) {
 
 					// system under test
 					var oInput = mSettings.control;
@@ -642,7 +642,7 @@
 			/* setEnabled()                   */
 			/* ------------------------------ */
 
-			test("method: setEnabled() initial rendering test case 1", function() {
+			QUnit.test("method: setEnabled() initial rendering test case 1", function(assert) {
 
 				// system under test
 				var oInput = new sap.m.InputBase();
@@ -663,7 +663,7 @@
 				oInput.destroy();
 			});
 
-			test("method: setEnabled() test case 2", function() {
+			QUnit.test("method: setEnabled() test case 2", function(assert) {
 
 				// system under test
 				var oInput = new sap.m.InputBase({
@@ -682,7 +682,7 @@
 				oInput.destroy();
 			});
 
-			test("method: setEnabled() test case 3", function() {
+			QUnit.test("method: setEnabled() test case 3", function(assert) {
 
 				// system under test
 				var oInput = new sap.m.InputBase();
@@ -703,7 +703,7 @@
 			/* ------------------------------ */
 
 			var fnSetValueStateTestCase1 = function(mSettings) {
-				test("method: setValueState() initial rendering", function() {
+				QUnit.test("method: setValueState() initial rendering", function(assert) {
 
 					// system under test
 					var oInput = mSettings.control;
@@ -749,7 +749,7 @@
 			});
 
 			var fnSetValueStateTestCase2 = function(mSettings) {
-				test("method: setValueState() after initial rendering", function() {
+				QUnit.test("method: setValueState() after initial rendering", function(assert) {
 
 					// system under test
 					var oInput = mSettings.control;
@@ -789,7 +789,7 @@
 				output: "sapMInputBaseSuccess"
 			});
 
-			test("method: setValueState() invalid values", function() {
+			QUnit.test("method: setValueState() invalid values", function(assert) {
 				var oInput = new sap.m.InputBase({
 					valueState : null
 				}).placeAt("content");
@@ -811,7 +811,7 @@
 			/* setName()                      */
 			/* ------------------------------ */
 
-			test("method: setName() initial rendering", function() {
+			QUnit.test("method: setName() initial rendering", function(assert) {
 
 				// system under test
 				var oInput = new sap.m.InputBase({
@@ -829,7 +829,7 @@
 				oInput.destroy();
 			});
 
-			test("method: setName() after initial rendering", function() {
+			QUnit.test("method: setName() after initial rendering", function(assert) {
 
 				// system under test
 				var oInput = new sap.m.InputBase();
@@ -854,7 +854,7 @@
 			/* ------------------------------ */
 
 			var fnSetPlaceholderTestCase1 = function(mSettings) {
-				test("method: setPlaceholder() initial rendering", function() {
+				QUnit.test("method: setPlaceholder() initial rendering", function(assert) {
 
 					// system under test
 					var oInput = mSettings.control;
@@ -906,7 +906,7 @@
 			});
 
 			var fnSetPlaceholderTestCase2 = function(mSettings) {
-				test("method: setPlaceholder() after initial rendering", function() {
+				QUnit.test("method: setPlaceholder() after initial rendering", function(assert) {
 
 					// system under test
 					var oInput = mSettings.control;
@@ -967,7 +967,7 @@
 			/* ------------------------------ */
 
 			var fnSetEditableTestCase1 = function(mSettings) {
-				test("method: setEditable() initial rendering", function() {
+				QUnit.test("method: setEditable() initial rendering", function(assert) {
 
 					// system under test
 					var oInput = mSettings.control;
@@ -999,7 +999,7 @@
 			});
 
 			var fnSetEditableTestCase2 = function(mSettings) {
-				test("method: setEditable() after the initial rendering", function() {
+				QUnit.test("method: setEditable() after the initial rendering", function(assert) {
 
 					// system under test
 					var oInput = mSettings.control;
@@ -1036,7 +1036,7 @@
 			/* setVisible()                   */
 			/* ------------------------------ */
 
-			test("method: setVisible() initial rendering", function() {
+			QUnit.test("method: setVisible() initial rendering", function(assert) {
 
 				// system under test
 				var oInput = new sap.m.InputBase({
@@ -1059,7 +1059,7 @@
 			/* ------------------------------ */
 
 			var fnSetTextAlignTestCase1 = function(mSettings) {
-				test("method: setTextAlign() initial rendering", function() {
+				QUnit.test("method: setTextAlign() initial rendering", function(assert) {
 
 					// system under test
 					var oInput = mSettings.control;
@@ -1091,7 +1091,7 @@
 			});
 
 			var fnSetTextAlignTestCase2 = function(mSettings) {
-				test("method: setTextAlign() after the initial rendering", function() {
+				QUnit.test("method: setTextAlign() after the initial rendering", function(assert) {
 
 					// system under test
 					var oInput = mSettings.control;
@@ -1128,7 +1128,7 @@
 			/* destroy()                      */
 			/* ------------------------------ */
 
-			test("method: destroy()", function() {
+			QUnit.test("method: destroy()", function(assert) {
 
 				// system under test
 				var oInput = new sap.m.InputBase();
@@ -1287,9 +1287,9 @@
 			/* Text direction module                                       */
 			/* =========================================================== */
 
-			module("Text direction");
+			QUnit.module("Text direction");
 
-			test("textDirection set to RTL", function() {
+			QUnit.test("textDirection set to RTL", function(assert) {
 
 				var oInput = new sap.m.InputBase({
 					placeholder: "Text direction set to RTL",
@@ -1305,7 +1305,7 @@
 
 			});
 
-			test("textDirection set to LTR", function() {
+			QUnit.test("textDirection set to LTR", function(assert) {
 
 				var oInput = new sap.m.InputBase({
 					placeholder: "Text direction set to LTR",
@@ -1321,7 +1321,7 @@
 
 			});
 
-			test("textDirection set to RTL and textAlign set to BEGIN", function() {
+			QUnit.test("textDirection set to RTL and textAlign set to BEGIN", function(assert) {
 
 				var oInput = new sap.m.InputBase({
 					placeholder: "Text direction set to RTL",
@@ -1341,7 +1341,7 @@
 
 			});
 
-			test("textDirection set to LTR and textAlign set to END", function() {
+			QUnit.test("textDirection set to LTR and textAlign set to END", function(assert) {
 
 				var oInput = new sap.m.InputBase({
 					placeholder: "Text direction set to LTR",
@@ -1365,9 +1365,9 @@
 			/* Events module                                               */
 			/* =========================================================== */
 
-			module("Events");
+			QUnit.module("Events");
 
-			test("method: change() event", function() {
+			QUnit.test("method: change() event", function(assert) {
 
 				// system under test
 				var oInput = new sap.m.InputBase();
@@ -1388,7 +1388,7 @@
 				oInput.destroy();
 			});
 
-			test("it should prevent the change event from being fired", function() {
+			QUnit.test("it should prevent the change event from being fired", function(assert) {
 
 				// system under test
 				sap.m.InputBase.extend("InputSubclass", {
@@ -1420,7 +1420,7 @@
 				delete InputSubclass;
 			});
 
-			test("onChange should pass in additional parameters to the change event handler", function() {
+			QUnit.test("onChange should pass in additional parameters to the change event handler", function(assert) {
 
 				// system under test
 				var oInput = new sap.m.InputBase();
@@ -1446,7 +1446,7 @@
 				oInput.destroy();
 			});
 
-			test("onChange should pass in additional parameters to the change event handle", function() {
+			QUnit.test("onChange should pass in additional parameters to the change event handle", function(assert) {
 
 				// system under test
 				sap.m.InputBase.extend("InputSubclass", {
@@ -1483,7 +1483,7 @@
 				delete InputSubclass;
 			});
 
-			test("onChange handler should fire the change event when last known and dom value are not same", function() {
+			QUnit.test("onChange handler should fire the change event when last known and dom value are not same", function(assert) {
 				// system under test
 				var sInitValue = "Test";
 				var oInput = new sap.m.InputBase({
@@ -1524,7 +1524,7 @@
 				oInput.destroy();
 			});
 
-			test("onChange it should fire the change event sync", function() {
+			QUnit.test("onChange it should fire the change event sync", function(assert) {
 
 				// system under test
 				var sExpectedValue = "lorem ipsum";
@@ -1554,7 +1554,7 @@
 				oButton.destroy();
 			});
 
-			test("escape should return the last known value and fire private liveChange event", function() {
+			QUnit.test("escape should return the last known value and fire private liveChange event", function(assert) {
 
 				// system under test
 				var sInitValue = "Test";
@@ -1597,7 +1597,7 @@
 				oInput.destroy();
 			});
 
-			test("input event delegate should be fired in IE9 when CUT / DELETE / BACKSPACE is hit", function() {
+			QUnit.test("input event delegate should be fired in IE9 when CUT / DELETE / BACKSPACE is hit", function(assert) {
 
 				// system under test
 				var oInput = new sap.m.InputBase({
@@ -1632,9 +1632,9 @@
 			/* =========================================================== */
 			/* Focus And Cursor Position Module                            */
 			/* =========================================================== */
-			module("FocusAndCursorPosition");
+			QUnit.module("FocusAndCursorPosition");
 
-			test("getFocusDomRef should point the input field", function() {
+			QUnit.test("getFocusDomRef should point the input field", function(assert) {
 				// system under test
 				var oInput = new sap.m.InputBase();
 
@@ -1649,7 +1649,7 @@
 				oInput.destroy();
 			});
 
-			test("onAfterRendering cursor position and dom values should set to the last known values", function() {
+			QUnit.test("onAfterRendering cursor position and dom values should set to the last known values", function(assert) {
 				// system under test
 				var sTestValue = "Test";
 				var sTestCurPos = sTestValue.length / 2;
@@ -1682,7 +1682,7 @@
 			});
 
 
-			test("onAfterRendering last dom value should not be reverted when setProperty('value', ..) is called", function() {
+			QUnit.test("onAfterRendering last dom value should not be reverted when setProperty('value', ..) is called", function(assert) {
 				// system under test
 				var sTestValue = "Test";
 				var sInitValue = "Initial";
@@ -1719,7 +1719,7 @@
 			});
 
 
-			test("getFocusInfo and applyFocusInfo", function() {
+			QUnit.test("getFocusInfo and applyFocusInfo", function(assert) {
 				// system under test
 				var sInitValue = "Test";
 				var oInput = new sap.m.InputBase({
@@ -1747,7 +1747,7 @@
 			});
 
 			// BCP 1570778270
-			test("it should correctly restore the value in case of invalidation", function() {
+			QUnit.test("it should correctly restore the value in case of invalidation", function(assert) {
 
 				// system under test
 				var oInput = new sap.m.InputBase();
@@ -1772,8 +1772,8 @@
 				oInput.destroy();
 			});
 
-			module("TwowayBindingAndFormatters");
-			test("formatters should be applied for two-way binding formatters", function() {
+			QUnit.module("TwowayBindingAndFormatters");
+			QUnit.test("formatters should be applied for two-way binding formatters", function(assert) {
 				// custom formatter
 				function smile(sValue) {
 					return sValue + " :)";
@@ -1831,8 +1831,8 @@
 				oInput.destroy();
 			});
 
-			module("Accessibility");
-			test("DOM aria properties", function() {
+			QUnit.module("Accessibility");
+			QUnit.test("DOM aria properties", function(assert) {
 
 				var oInput = new sap.m.InputBase().placeAt("content");
 				sap.ui.getCore().applyChanges();
@@ -1879,7 +1879,7 @@
 				oText.destroy();
 			});
 
-			test("Placeholder should be in labelledby", function() {
+			QUnit.test("Placeholder should be in labelledby", function(assert) {
 				var sPlaceholder = "placeholder";
 				var oInput = new sap.m.InputBase({
 					placeholder: sPlaceholder
@@ -1910,7 +1910,7 @@
 				oText.destroy();
 			});
 
-			test("Tooltip should be in describedby", function() {
+			QUnit.test("Tooltip should be in describedby", function(assert) {
 				var sTooltip = "tooltip";
 				var oInput = new sap.m.InputBase({
 					tooltip: sTooltip
@@ -1924,7 +1924,7 @@
 				oInput.destroy();
 			});
 
-			test("it should render the tooltip and the invisible element with the same value (test case 1)", function() {
+			QUnit.test("it should render the tooltip and the invisible element with the same value (test case 1)", function(assert) {
 
 				// system under test
 				var oInput = new sap.m.InputBase({
@@ -1943,7 +1943,7 @@
 				oInput.destroy();
 			});
 
-			test("it should render the tooltip and the invisible element with the same value (test case 2)", function() {
+			QUnit.test("it should render the tooltip and the invisible element with the same value (test case 2)", function(assert) {
 
 				// system under test
 				var oInput = new sap.m.InputBase();
@@ -1964,7 +1964,7 @@
 				oInput.destroy();
 			});
 
-			test("it should not render the tooltip and the invisible element", function() {
+			QUnit.test("it should not render the tooltip and the invisible element", function(assert) {
 
 				// system under test
 				var oInput = new sap.m.InputBase();
@@ -1984,7 +1984,7 @@
 				oInput.destroy();
 			});
 
-			test("it should not render the tooltip and the invisible element (test case 2)", function() {
+			QUnit.test("it should not render the tooltip and the invisible element (test case 2)", function(assert) {
 
 				// system under test
 				var oInput = new sap.m.InputBase({
@@ -2007,7 +2007,7 @@
 			});
 
 			// BCP 1580094855
-			test("it should not render the tooltip (test case 3)", function() {
+			QUnit.test("it should not render the tooltip (test case 3)", function(assert) {
 
 				// arrange
 				sap.m.InputBase.extend("CustomInput", {
@@ -2039,7 +2039,7 @@
 				delete CustomInput;
 			});
 
-			test("it should keep other describedby associations when the tooltip is set to empty string", function() {
+			QUnit.test("it should keep other describedby associations when the tooltip is set to empty string", function(assert) {
 				sap.m.InputBase.extend("CustomInput", {
 					metadata: {
 						associations: {
@@ -2078,7 +2078,7 @@
 				delete CustomInput;
 			});
 
-			test("Renderer Hooks", function() {
+			QUnit.test("Renderer Hooks", function(assert) {
 				sap.m.InputBase.extend("my.TextField", {
 					metadata: {
 						associations: {
@@ -2143,7 +2143,7 @@
 				oText.destroy();
 			});
 
-			test("Label for should not be used for synthetic placeholder to support labelledby", function() {
+			QUnit.test("Label for should not be used for synthetic placeholder to support labelledby", function(assert) {
 				this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", true);
 				var fnOnTapSpy = this.spy(sap.m.InputBase.prototype, "ontap");
 				var fnFocusSpy = this.spy(sap.m.InputBase.prototype, "focus");
@@ -2165,7 +2165,7 @@
 				oInput.destroy();
 			});
 
-			test("getAccessibilityInfo", function() {
+			QUnit.test("getAccessibilityInfo", function(assert) {
 				var oInput = new sap.m.InputBase({value: "Value", tooltip: "Tooltip", placeholder: "Placeholder"});
 				ok(!!oInput.getAccessibilityInfo, "InputBase has a getAccessibilityInfo function");
 				var oInfo = oInput.getAccessibilityInfo();
@@ -2193,8 +2193,8 @@
 			});
 
 
-		module("invalid input event");
-		test("iE10+ should mark event invalid when an input field with a native placeholder is focused", function() {
+		QUnit.module("invalid input event");
+		QUnit.test("iE10+ should mark event invalid when an input field with a native placeholder is focused", function(assert) {
 			this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", false);
 			var fnOnInputSpy = this.spy(sap.m.InputBase.prototype, "oninput");
 			this.stub(sap.ui.Device, "browser", {
@@ -2220,7 +2220,7 @@
 			oInput.destroy();
 		});
 
-		test("iE11 should mark event invalid when an readonly input field fires input event", function() {
+		QUnit.test("iE11 should mark event invalid when an readonly input field fires input event", function(assert) {
 			var fnOnInputSpy = this.spy(sap.m.InputBase.prototype, "oninput");
 			this.stub(sap.ui.Device, "browser", {
 				msie: true,
@@ -2243,8 +2243,8 @@
 			oInput.destroy();
 		});
 
-		module("Renderer hooks");
-		test("writeInnerId() is called", function() {
+		QUnit.module("Renderer hooks");
+		QUnit.test("writeInnerId() is called", function(assert) {
 			var oInputBase = new sap.m.InputBase({}),
 				oRenderer = oInputBase.getRenderer();
 

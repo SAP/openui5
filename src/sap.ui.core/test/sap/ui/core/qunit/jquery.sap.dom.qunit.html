@@ -21,7 +21,7 @@
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script>
 
-		test("domById", function() {
+		QUnit.test("domById", function(assert) {
 			ok(jQuery.sap.domById('control1'), "jQuery.sap.domById('control1') may not be null");
 			equal(jQuery.sap.domById('contro10'), null, "jQuery.sap.domById('control10') should be null");
 
@@ -110,7 +110,7 @@
 
 		});
 
-		test("focus", function () {
+		QUnit.test("focus", function (assert) {
 			expect(1);
 			var invisibleDiv = jQuery.sap.domById("invisibleDiv");
 			var result = jQuery.sap.focus(invisibleDiv);
@@ -119,12 +119,12 @@
 			ok(true, "jQuery.sap.focus() may not have caused an error for invisible elements"); // would never be reached in case of error
 		});
 
-		test("SetGetCursorPos", function () {
+		QUnit.test("SetGetCursorPos", function (assert) {
 			jQuery('#textinput').cursorPos(4);
 			equal(jQuery('#textinput').cursorPos(), 4, "wrong cursor position after setting and getting");
 		});
 
-		test("SelectText", function() {
+		QUnit.test("SelectText", function(assert) {
 			if (window.getSelection) {	// Firefox, Opera, Safari
 
 				jQuery('#testsel').selectText(2,5);
@@ -162,7 +162,7 @@
 			}
 		});
 
-		test("selectText()/getSelectedText(): The input element's type 'number' does not support selection", function() {
+		QUnit.test("selectText()/getSelectedText(): The input element's type 'number' does not support selection", function(assert) {
 
 			// arrange
 			var $DomRef = jQuery("<input>", {
@@ -183,7 +183,7 @@
 			$DomRef.remove();
 		});
 
-		test("selectText() should return this to allow method chaining", function() {
+		QUnit.test("selectText() should return this to allow method chaining", function(assert) {
 
 			// arrange
 			var $Empty = jQuery();
@@ -195,7 +195,7 @@
 			strictEqual($This, $Empty);
 		});
 
-		test("getSelectedText() should return an empty string when the jQuery collection is empty", function() {
+		QUnit.test("getSelectedText() should return an empty string when the jQuery collection is empty", function(assert) {
 
 			// assert
 			strictEqual(jQuery().getSelectedText(), "");
@@ -203,7 +203,7 @@
 
 		function fnGetSelectedTextCase(mSettings) {
 
-			test("getSelectedText()", function() {
+			QUnit.test("getSelectedText()", function(assert) {
 
 				// arrange
 				var $DomRef = mSettings.input;
@@ -268,7 +268,7 @@
 			selectionEnd: 11
 		});
 
-		test("OuterHTML", function () {
+		QUnit.test("OuterHTML", function (assert) {
 			function getExpected(bReversAttributeOrder){
 				function att(n, v){
 					return " " + n + "=\"" + v + "\"";
@@ -285,7 +285,7 @@
 			ok(sOuterHTML === getExpected(false) || sOuterHTML === getExpected(true), "outerHTML is wrong, Current: '"+sOuterHTML+"'")
 		});
 
-		test("ContainsOrEquals", function () {
+		QUnit.test("ContainsOrEquals", function (assert) {
 			var oDomRef3 = jQuery.sap.domById('control3');
 			var oDomRef1 = jQuery.sap.domById('control1');
 			ok(jQuery.sap.containsOrEquals(oDomRef1,oDomRef3), "jQuery.sap.containsOrEquals(oDomRef1,oDomRef3) control3 is contained in control1");
@@ -297,7 +297,7 @@
 			ok(!jQuery.sap.containsOrEquals(oDomRef3,oDomRef1), "jQuery.sap.containsOrEquals(control3,control1) control1 is not contianed in control3");
 		});
 
-		test("Rect", function () {
+		QUnit.test("Rect", function (assert) {
 			var oRect = jQuery('#PositionedSpan').rect();
 			equal(oRect.left, 10,"jQuery('#PositionedSpan').rect() left is 10");
 			equal(oRect.top, 10, "jQuery('#PositionedSpan').rect() top is 10");
@@ -305,13 +305,13 @@
 			equal(oRect.height, 100, "jQuery('#PositionedSpan').rect() height is 100");
 		});
 
-		test("HasTabIndex", function () {
+		QUnit.test("HasTabIndex", function (assert) {
 			ok(!jQuery("#control2").hasTabIndex(), "control2 does actually not have a tabindex");
 			ok(jQuery("#control3").hasTabIndex(), "control3 does actually have a tabindex");
 		});
 
 		QUnit.module("focusable dom refs");
-		
+
 		QUnit.test("firstFocusableDomRef, simple container", function (assert) {
 			var oFocusableItem = jQuery('#control1').firstFocusableDomRef();
 			var oDomRef = jQuery.sap.domById('control3');
@@ -336,13 +336,13 @@
 			var oFocusableItem = jQuery('#container1').lastFocusableDomRef();
 			assert.ok( oFocusableItem, "a focusable item should be found in container1");
 			assert.equal( oFocusableItem, jQuery.sap.domById('container1-item2-button'), "it should be the button in item2");
-		});		
+		});
 
 		QUnit.test("firstFocusableDomRef, hidden ancestor", function (assert) {
 			var oFocusableItem = jQuery('#container2').firstFocusableDomRef();
 			assert.ok( !oFocusableItem, "no focusable item should be found in the hidden container2");
 		});
-		
+
 		QUnit.test("lastFocusableDomRef, simple container", function (assert) {
 			var oFocusableItem = jQuery('#container2').lastFocusableDomRef();
 			assert.ok( !oFocusableItem, "no focusable item should be found in the hidden container2");
@@ -350,7 +350,7 @@
 
 		QUnit.module("Others");
 
-		test("ParentByAttribute", function () {
+		QUnit.test("ParentByAttribute", function (assert) {
 			var oDomRef = jQuery.sap.domById('control2');
 			var oParentWithAttribute = jQuery(oDomRef).parentByAttribute("data-sap-ui-test");
 			notEqual(oParentWithAttribute, null, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test') is null)");
@@ -364,17 +364,17 @@
 			ok(oParentWithAttributeTrue, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test', 'true') should be not null");
 		});
 
-		test("OwnerWindow", 0, function () {
+		QUnit.test("OwnerWindow", 0, function (assert) {
 			// tests not easily possible, as there is no defined, stable environment with different windows
 		});
 
-		test("Focus", function () { // actually tests jQuery itself
+		QUnit.test("Focus", function (assert) { // actually tests jQuery itself
 			var oDomRef = jQuery.sap.domById('control3');
 			jQuery(oDomRef).focus();
 			equal(document.activeElement, oDomRef, "jQuery().focus() failed");
 		});
 
-		test("ScrollbarSize", function () {
+		QUnit.test("ScrollbarSize", function (assert) {
 			var size = jQuery.sap.scrollbarSize(true);
 			ok(size, "No size for scroll bar returned");
 			ok(typeof size.width === "number", "No width for scroll bar returned");
@@ -396,7 +396,7 @@
 			ok(typeof size.height === "number", "No height for scroll bar returned");
 		});
 
-		test("disableSelection", function() {
+		QUnit.test("disableSelection", function(assert) {
 
 			// arrange
 			var oDomRef = document.createElement("div");
@@ -417,7 +417,7 @@
 			document.body.removeChild(oDomRef);
 		});
 
-		test("enableSelection", function() {
+		QUnit.test("enableSelection", function(assert) {
 
 			// arrange
 			var oDomRef = document.createElement("div");
@@ -435,7 +435,7 @@
 			document.body.removeChild(oDomRef);
 		});
 
-		test("jQuery aria extensions", function() {
+		QUnit.test("jQuery aria extensions", function(assert) {
 			var $El = jQuery("<div>Aria Test</div>");
 			jQuery(document.body).append($El);
 
@@ -477,7 +477,7 @@
 			$El.remove();
 		});
 
-		test("DOMPatching", function() {
+		QUnit.test("DOMPatching", function(assert) {
 			var $Ref = jQuery('' +
 			'<div id="id" title="Ref" style="color:black" class="x" tabindex="-1">' +
 				'<!--Ref-->' +

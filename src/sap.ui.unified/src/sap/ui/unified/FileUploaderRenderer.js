@@ -104,7 +104,7 @@ sap.ui.define(['jquery.sap.global'],
 		var sName = oFileUploader.getName() || oFileUploader.getId();
 		oRm.write('<div class="sapUiFupInputMask"');
 		if (sTooltip.length) {
-			oRm.writeEscaped('title="' + sTooltip + '"');
+			oRm.writeAttributeEscaped('title', sTooltip);
 		}
 		oRm.write('>');
 		oRm.write('<input type="hidden" name="_charset_" aria-hidden="true">');

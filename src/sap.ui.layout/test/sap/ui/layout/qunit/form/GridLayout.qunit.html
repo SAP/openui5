@@ -442,9 +442,9 @@
 		// test functions
 		qutils.delayTestStart();
 
-		module("Rendering");
+		QUnit.module("Rendering");
 
-		test("Grid", function() {
+		QUnit.test("Grid", function(assert) {
 			ok(jQuery.sap.domById("F1"), "Form1 is rendered");
 			ok(jQuery.sap.domById("Layout1"), "Grid1 is rendered");
 			ok(jQuery("#Layout1").is("table"), "Grid1 is rendered as table");
@@ -458,26 +458,26 @@
 			ok(countCells("F3",8), "All rows of Form3 have max. 8 cells");
 		});
 
-		test("Container Full-Size", function() {
+		QUnit.test("Container Full-Size", function(assert) {
 			ok(!jQuery.sap.domById("C1--Exp"), "Container1 no expander is rendered");
 			ok(jQuery('h5:contains("Container1")').get(0), "Title (as text) is renderd");
 			equal(jQuery('h5:contains("Container1")').parent().attr("title"), "Container tooltip", "Container tooltip is renderd");
 		});
 
-		test("BackgroundDesign", function() {
+		QUnit.test("BackgroundDesign", function(assert) {
 			ok(jQuery("#Layout1").hasClass("sapUiFormBackgrTranslucent"), "Form1: translucent design per default");
 			ok(!jQuery("#Layout2").hasClass("sapUiFormBackgrTranslucent"), "Form2: no translucent design");
 			ok(!jQuery("#Layout2").hasClass("sapUiFormBackgrSolid"), "Form2: no solid design");
 			ok(jQuery("#Layout3").hasClass("sapUiFormBackgrSolid"), "Form1: solid design");
 		});
 
-		test("Element", function() {
+		QUnit.test("Element", function(assert) {
 			ok(jQuery.sap.domById("C1E1"), "Element is rendered");
 			ok(jQuery("#C1E1").is("tr"), "Element of foll size grid is rendered as table row");
 			ok(!jQuery.sap.domById("C7E7"), "invisible Element is not rendered");
 		});
 
-		test("FormControls Full-Size", function() {
+		QUnit.test("FormControls Full-Size", function(assert) {
 			ok(jQuery('label:contains("Label1")').get(0), "Label (as text) is renderd");
 			equal(jQuery('label:contains("Label1")').parent().attr("colspan"), "3", "Label 1 rendered over 3 grid cells");
 			ok(jQuery.sap.domById("C1E1_T1"), "Input is rendered");
@@ -532,7 +532,7 @@
 			ok(!jQuery.sap.domById("C8E1_T1"), "Content of invisible Container is not rendered");
 		});
 
-		test("Container Half-Size", function() {
+		QUnit.test("Container Half-Size", function(assert) {
 			ok(jQuery.sap.domById("C2T"), "Title2 (as Control) is rendered");
 			equal(jQuery("#C2T").attr("title"), "Title tooltip", "Title2 (as Control): tooltip is rendered");
 			ok(jQuery.sap.domById("C2T-ico"), "Title2 (as Control): image is rendered");
@@ -549,7 +549,7 @@
 			ok(jQuery("#F3C2E1_T1").parent().parent().next().children().first().hasClass("sapUiGridHeader"), "Form3(singleColumn) - Container3 - Element1: next half container rendered below");
 		});
 
-		test("FormControls Half-Size", function() {
+		QUnit.test("FormControls Half-Size", function(assert) {
 			equal(jQuery("#C2E1_T1").parent().attr("colspan"), "5", "Container2 - Element1: Field 1 rendered over 5 grid cells");
 			ok((jQuery("#C3E2_L1").parent().prev().prev().is("td") && jQuery("#C3E2_L1").parent().prev().prev().attr("colspan") == "8" && jQuery("#C3E2_L1").parent().prev().prev().children().length == 0), "Container2 - empty dummy cell rendered");
 
@@ -577,7 +577,7 @@
 		});
 
 
-		test("DOM representation", function() {
+		QUnit.test("DOM representation", function(assert) {
 			var oContainer = sap.ui.getCore().byId("C1");
 			ok(!oContainer.getRenderedDomRef(), "no DOM representation for FormContainers");
 
@@ -589,7 +589,7 @@
 			ok(!oElement.getRenderedDomRef(), "no DOM representation rendered for elements in half size containers");
 		});
 
-		test("Toolbar", function() {
+		QUnit.test("Toolbar", function(assert) {
 			ok(!jQuery.sap.domById("F4-T"), "Form6: Title not rendered");
 			ok(jQuery.sap.domById("F4-TB1"), "Form6: Toolbar rendered");
 			ok(!jQuery.sap.domById("F4-C1T"), "Form6: Title of Container1 not rendered");
@@ -597,9 +597,9 @@
 			ok(jQuery.sap.domById("F4-TB3"), "Form6: Toolbar of Container2 rendered");
 		});
 
-		module("Interaction");
+		QUnit.module("Interaction");
 
-		test("Container expander", function() {
+		QUnit.test("Container expander", function(assert) {
 			//expander function
 			var oContainer = sap.ui.getCore().byId("C3");
 			qutils.triggerEvent("tap", "C3--Exp");
@@ -610,7 +610,7 @@
 			equal(oContainer.getExpanded(), false, "Container3 getExpanded()")
 		});
 
-		test("change LayoutData", function() {
+		QUnit.test("change LayoutData", function(assert) {
 			var oControl = sap.ui.getCore().byId("F3C3E2_T1");
 			ok(!oControl.getLayoutData(), "Field initial has no LayoutData");
 			equal(jQuery("#F3C3E2_T1").parent().attr("colspan"), "8", "Field initial without LayoutData - colspan 8");
@@ -635,7 +635,7 @@
 			equal(jQuery("#F3C3E2_T1").parent().attr("colspan"), "8", "Field after deleting multiple LayoutData - colspan 8");
 		});
 
-		test("Keyboard Navigation", function() {
+		QUnit.test("Keyboard Navigation", function(assert) {
 			// no arrow navigation in sap.m nvironment
 			jQuery.sap.byId("C1E2_T1-inner").focus();
 			equal(jQuery.sap.byId("C1E2_T1-inner").is(":focus"), true, "Mouseclick: Container 1, Element 1, Field 1 - Selected");
@@ -670,9 +670,9 @@
 			equal(jQuery.sap.byId("C2E1_T1-inner").is(":focus"), true, "Shift+Tab: Container 2, Element 1, Field 1 - Selected");
 		});
 
-		module("Error handling");
+		QUnit.module("Error handling");
 
-		test("too much fields", function() {
+		QUnit.test("too much fields", function(assert) {
 			var aLogEntries = jQuery.sap.log.getLogEntries();
 			var findLogEntry = function(sMessage, iLevel){
 				for( var i=0; i < aLogEntries.length;i++){
@@ -715,7 +715,7 @@
 			ok(findLogEntry('Element "C7E5" - Too much fields for one row!',1),"Error entry in log found for Element5");
 		});
 
-		test("More hCells than Elements", function() {
+		QUnit.test("More hCells than Elements", function(assert) {
 			equal(jQuery("#C6E2_T1").parent().attr("rowspan"), "3", "Container6 - Element2: Field 1 (with vCells=2, hCells=3) rendered with rowspan 3");
 			equal(jQuery("#C6E2_T1").parent().parent().next().children().length, 0, "Container6 - Element2: first dummy row to fill up rowspan");
 			equal(jQuery("#C6E2_T1").parent().parent().next().next().children().length, 0, "Container6 - Element2: second dummy row to fill up rowspan");

@@ -92,23 +92,23 @@
 
 	qutils.delayTestStart();
 
-	module("Properties and Aggregations");
+	QUnit.module("Properties and Aggregations");
 
-	test("Properties - Default Values", function() {
+	QUnit.test("Properties - Default Values", function(assert) {
 		equals(oMenuBar1.getDesign(), "Standard", "Default 'design'");
 		equals(oMenuBar1.getWidth(), "100%", "Default 'width'");
 		equals(oMenuBar1.getEnabled(), true, "Default 'enabled'");
 		equals(oMenuBar1.getVisible(), true, "Default 'visible'");
 	});
 
-	test("Properties - Custom Values", function() {
+	QUnit.test("Properties - Custom Values", function(assert) {
 		equals(oMenuBar2.getDesign(), "Header", "Custom 'design'");
 		equals(oMenuBar5.getWidth(), "150px", "Custom 'width'");
 		equals(oMenuBar4.getEnabled(), false, "Custom 'enabled'");
 		equals(oMenuBar3.getVisible(), false, "Custom 'visible'");
 	});
 
-	test("Aggregation 'Items'", function() {
+	QUnit.test("Aggregation 'Items'", function(assert) {
 		equals(oMenuBar3.getItems().length, 6, "# Items");
 		oMenuBar3.removeItem(5);
 		equals(oMenuBar3.getItems().length, 5, "# Items after remove");
@@ -119,21 +119,21 @@
 		equals(oMenuBar3.getItems().length, 0, "# Items after destroy");
 	});
 
-	module("Appearance");
+	QUnit.module("Appearance");
 
-	test("Visibility", function() {
+	QUnit.test("Visibility", function(assert) {
 		equals(jQuery("#menubar1").length, 1, "Visible MenuBar is rendered");
 		equals(jQuery("#menubar3").length, 0, "Hidden MenuBar is not rendered");
 
 		equals(jQuery("#menubar1_item3").length, 0, "Hidden Menu item is not rendered");
 	});
 
-	test("Width", function() {
+	QUnit.test("Width", function(assert) {
 		equals(jQuery("#menubar1").outerWidth(), jQuery("#uiArea1").width(), "By default the MenuBar has 100% width");
 		equals(jQuery("#menubar5").outerWidth(), 150, "Fixed MenuBar width");
 	});
 
-	test("Enablement", function() {
+	QUnit.test("Enablement", function(assert) {
 		ok(!jQuery("#menubar1").hasClass("sapUiMnuBarDsbl"), "Enabled MenuBar has no special CSS class");
 		ok(jQuery("#menubar4").hasClass("sapUiMnuBarDsbl"), "Disabled MenuBar has special CSS class");
 		//All items (incl. overflow) are disabled
@@ -145,7 +145,7 @@
 		ok(jQuery("#menubar1_item4").hasClass("sapUiMnuBarItmDsbl"), "Item 4 disabled on enabled MenuBar");
 	});
 
-	test("Design", function() {
+	QUnit.test("Design", function(assert) {
 		ok(!jQuery("#menubar1").hasClass("sapUiMnuBarHeader"), "Standard MenuBar has no special CSS class");
 		jQuery("#menubar1").get(0).focus();
 		qutils.triggerKeyboardEvent("menubar1_item1", "SPACE"); //Open the menu
@@ -159,35 +159,35 @@
 		qutils.triggerKeyboardEvent("menubar2_item1_menuitem", "ESCAPE"); //Close the menu
 	});
 
-	test("Overflow", function() {
+	QUnit.test("Overflow", function(assert) {
 		ok(!jQuery("#menubar1-ovrflw").is(":visible"), "Overflow hidden if enough space");
 		ok(jQuery("#menubar5-ovrflw").is(":visible"), "Overflow visible if not enough space");
 		equals(oMenuBar5.oOvrFlwMnu.getItems().length, 4, "# Items in overflow menu");
 	});
 
-	module("Interaction - Mouse");
+	QUnit.module("Interaction - Mouse");
 
-	test("Click on item", function() {
+	QUnit.test("Click on item", function(assert) {
 		qutils.triggerEvent("click", "menubar1_item5", {});
 		checkMenuOpenedAndClosed(oMenuBar1, 5, true, "click");
 	});
 
-	test("Click on disabled item", function() {
+	QUnit.test("Click on disabled item", function(assert) {
 		qutils.triggerEvent("click", "menubar1_item4", {});
 		checkMenuOpenedAndClosed(oMenuBar1, 4, false, "click");
 	});
 
-	test("Click on overflow", function() {
+	QUnit.test("Click on overflow", function(assert) {
 		qutils.triggerEvent("click", "menubar5-ovrflw", {});
 		checkMenuOpenedAndClosed(oMenuBar5, "ovrflw", true, "click");
 	});
 
-	test("Click on disabled overflow", function() {
+	QUnit.test("Click on disabled overflow", function(assert) {
 		qutils.triggerEvent("click", "menubar6-ovrflw", {});
 		checkMenuOpenedAndClosed(oMenuBar6, "ovrflw", false, "click");
 	});
 
-	module("Interaction - Keyboard");
+	QUnit.module("Interaction - Keyboard");
 
 	asyncTest("Item navigation", function() {
 		jQuery("#menubar1").get(0).focus();
@@ -213,82 +213,82 @@
 		}, 0);
 	});
 
-	test("Enter on item", function() {
+	QUnit.test("Enter on item", function(assert) {
 		qutils.triggerKeyboardEvent("menubar1_item5", "ENTER");
 		checkMenuOpenedAndClosed(oMenuBar1, 5, true, "ENTER");
 	});
 
-	test("Enter on disabled item", function() {
+	QUnit.test("Enter on disabled item", function(assert) {
 		qutils.triggerKeyboardEvent("menubar1_item4", "ENTER");
 		checkMenuOpenedAndClosed(oMenuBar1, 4, false, "ENTER");
 	});
 
-	test("Enter on overflow", function() {
+	QUnit.test("Enter on overflow", function(assert) {
 		qutils.triggerKeyboardEvent("menubar5-ovrflw", "ENTER");
 		checkMenuOpenedAndClosed(oMenuBar5, "ovrflw", true, "ENTER");
 	});
 
-	test("Enter on disabled overflow", function() {
+	QUnit.test("Enter on disabled overflow", function(assert) {
 		qutils.triggerKeyboardEvent("menubar6-ovrflw", "ENTER");
 		checkMenuOpenedAndClosed(oMenuBar6, "ovrflw", false, "ENTER");
 	});
 
-	test("Space on item", function() {
+	QUnit.test("Space on item", function(assert) {
 		qutils.triggerKeyboardEvent("menubar1_item5", "SPACE");
 		checkMenuOpenedAndClosed(oMenuBar1, 5, true, "SPACE");
 	});
 
-	test("Space on disabled item", function() {
+	QUnit.test("Space on disabled item", function(assert) {
 		qutils.triggerKeyboardEvent("menubar1_item4", "SPACE");
 		checkMenuOpenedAndClosed(oMenuBar1, 4, false, "SPACE");
 	});
 
-	test("Space on overflow", function() {
+	QUnit.test("Space on overflow", function(assert) {
 		qutils.triggerKeyboardEvent("menubar5-ovrflw", "SPACE");
 		checkMenuOpenedAndClosed(oMenuBar5, "ovrflw", true, "SPACE");
 	});
 
-	test("Space on disabled overflow", function() {
+	QUnit.test("Space on disabled overflow", function(assert) {
 		qutils.triggerKeyboardEvent("menubar6-ovrflw", "SPACE");
 		checkMenuOpenedAndClosed(oMenuBar6, "ovrflw", false, "SPACE");
 	});
 
-	test("Alt+Down on item", function() {
+	QUnit.test("Alt+Down on item", function(assert) {
 		qutils.triggerKeyboardEvent("menubar1_item5", "ARROW_DOWN", false, true, false);
 		checkMenuOpenedAndClosed(oMenuBar1, 5, true, "ALT+ARROW_DOWN");
 	});
 
-	test("Alt+Down on disabled item", function() {
+	QUnit.test("Alt+Down on disabled item", function(assert) {
 		qutils.triggerKeyboardEvent("menubar1_item4", "ARROW_DOWN", false, true, false);
 		checkMenuOpenedAndClosed(oMenuBar1, 4, false, "ALT+ARROW_DOWN");
 	});
 
-	test("Alt+Down on overflow", function() {
+	QUnit.test("Alt+Down on overflow", function(assert) {
 		qutils.triggerKeyboardEvent("menubar5-ovrflw", "ARROW_DOWN", false, true, false);
 		checkMenuOpenedAndClosed(oMenuBar5, "ovrflw", true, "ALT+ARROW_DOWN");
 	});
 
-	test("Alt+Down on disabled overflow", function() {
+	QUnit.test("Alt+Down on disabled overflow", function(assert) {
 		qutils.triggerKeyboardEvent("menubar6-ovrflw", "ARROW_DOWN", false, true, false);
 		checkMenuOpenedAndClosed(oMenuBar6, "ovrflw", false, "ALT+ARROW_DOWN");
 	});
 
-	test("Down on item", function() {
+	QUnit.test("Down on item", function(assert) {
 		qutils.triggerKeyboardEvent("menubar1_item5", "ARROW_DOWN");
 		checkMenuOpenedAndClosed(oMenuBar1, 5, true, "ARROW_DOWN");
 	});
 
-	test("Down on disabled item", function() {
+	QUnit.test("Down on disabled item", function(assert) {
 		qutils.triggerKeyboardEvent("menubar1_item4", "ARROW_DOWN");
 		checkMenuOpenedAndClosed(oMenuBar1, 4, false, "ARROW_DOWN");
 	});
 
-	test("Down on overflow", function() {
+	QUnit.test("Down on overflow", function(assert) {
 		qutils.triggerKeyboardEvent("menubar5-ovrflw", "ARROW_DOWN");
 		checkMenuOpenedAndClosed(oMenuBar5, "ovrflw", true, "ARROW_DOWN");
 	});
 
-	test("Down on disabled overflow", function() {
+	QUnit.test("Down on disabled overflow", function(assert) {
 		qutils.triggerKeyboardEvent("menubar6-ovrflw", "ARROW_DOWN");
 		checkMenuOpenedAndClosed(oMenuBar6, "ovrflw", false, "ARROW_DOWN");
 	});

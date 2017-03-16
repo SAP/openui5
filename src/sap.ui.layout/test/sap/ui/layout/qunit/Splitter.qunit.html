@@ -84,9 +84,9 @@
 
 		sap.ui.getCore().applyChanges();
 
-		module("Absolute Area Sizes");
+		QUnit.module("Absolute Area Sizes");
 
-		test("Absolute Horizontal sizing", function() {
+		QUnit.test("Absolute Horizontal sizing", function(assert) {
 			oSplitter.setOrientation(sap.ui.core.Orientation.Horizontal);
 			oSplitter.getContentAreas()[0].getLayoutData().setSize("100px");
 			oSplitter.getContentAreas()[1].getLayoutData().setSize("200px");
@@ -107,7 +107,7 @@
 			oSplitter.rerender();
 		});
 
-		test("Absolute vertical sizing", function() {
+		QUnit.test("Absolute vertical sizing", function(assert) {
 			oSplitter.setOrientation(sap.ui.core.Orientation.Vertical);
 			oSplitter.getContentAreas()[0].getLayoutData().setSize("100px");
 			oSplitter.getContentAreas()[1].getLayoutData().setSize("200px");
@@ -191,9 +191,9 @@
 			oSplitter.destroy();
 		});
 
-		module("Automatic Area Sizes");
+		QUnit.module("Automatic Area Sizes");
 
-		test("Automatic horizontal sizing ", function() {
+		QUnit.test("Automatic horizontal sizing ", function(assert) {
 			oSplitter.setOrientation(sap.ui.core.Orientation.Horizontal);
 			oSplitter.getContentAreas()[0].getLayoutData().setSize("auto");
 			oSplitter.getContentAreas()[1].getLayoutData().setSize("auto");
@@ -215,7 +215,7 @@
 			oSplitter.rerender();
 		});
 
-		test("Automatic vertical sizing ", function() {
+		QUnit.test("Automatic vertical sizing ", function(assert) {
 			oSplitter.setOrientation(sap.ui.core.Orientation.Vertical);
 			oSplitter.getContentAreas()[0].getLayoutData().setSize("auto");
 			oSplitter.getContentAreas()[1].getLayoutData().setSize("auto");
@@ -238,9 +238,9 @@
 		});
 
 
-		module("Mixed Area Sizes");
+		QUnit.module("Mixed Area Sizes");
 
-		test("Mixed horizontal sizing", function() {
+		QUnit.test("Mixed horizontal sizing", function(assert) {
 			oSplitter.setOrientation(sap.ui.core.Orientation.Horizontal);
 			oSplitter.getContentAreas()[0].getLayoutData().setSize("10px");
 			oSplitter.getContentAreas()[1].getLayoutData().setSize("auto");
@@ -266,7 +266,7 @@
 			oSplitter.rerender();
 		});
 
-		test("Mixed vertical sizing", function() {
+		QUnit.test("Mixed vertical sizing", function(assert) {
 			oSplitter.setOrientation(sap.ui.core.Orientation.Vertical);
 			oSplitter.getContentAreas()[0].getLayoutData().setSize("10px");
 			oSplitter.getContentAreas()[1].getLayoutData().setSize("auto");
@@ -292,8 +292,8 @@
 			oSplitter.rerender();
 		});
 
-		module("General tests");
-		test("Events and Rerendering", function() {
+		QUnit.module("General tests");
+		QUnit.test("Events and Rerendering", function(assert) {
 			ok(iResizes === 3, "Number of resize-events fired (" + iResizes + ") is correct.");
 			ok(iRenderings === 7, "Number of rerenderings (" + iRenderings + ") is correct.");
 		});

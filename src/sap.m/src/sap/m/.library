@@ -62,6 +62,9 @@
                 <module>sap/m/UploadCollectionItem</module>
                 <module>sap/m/UploadCollectionParameter</module>
                 <module>sap/m/LoadState</module>
+                <module>sap/m/SelectionDetails</module>
+                <module>sap/m/SelectionDetailsItem</module>
+                <module>sap/m/SelectionDetailsLine</module>
             </modules>
         </component>
         <component>

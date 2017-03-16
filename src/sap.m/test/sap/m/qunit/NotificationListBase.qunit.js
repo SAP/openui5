@@ -19,10 +19,10 @@
     //================================================================================
 
     QUnit.module('API', {
-        setup: function() {
+        beforeEach: function() {
             this.NotificationListBase = new sap.m.NotificationListBase();
         },
-        teardown: function() {
+        afterEach: function() {
             this.NotificationListBase.destroy();
         }
     });
@@ -46,10 +46,10 @@
     //================================================================================
 
     QUnit.module('Public setters and getters', {
-        setup: function() {
+        beforeEach: function() {
             this.NotificationListBase = new sap.m.NotificationListBase();
         },
-        teardown: function() {
+        afterEach: function() {
             this.NotificationListBase.destroy();
         }
     });
@@ -107,10 +107,10 @@
     //================================================================================
 
     QUnit.module('Overwritten methods', {
-        setup: function() {
+        beforeEach: function() {
             this.NotificationListBase = new sap.m.NotificationListBase();
         },
-        teardown: function() {
+        afterEach: function() {
             this.NotificationListBase.destroy();
         }
     });
@@ -170,7 +170,7 @@
     //================================================================================
 
     QUnit.module('Handling aggregations', {
-        setup: function() {
+        beforeEach: function() {
             this.NotificationListBase = new sap.m.NotificationListBase();
 
             var data = {
@@ -205,7 +205,7 @@
                 type : '{buttonType}'
             });
         },
-        teardown: function() {
+        afterEach: function() {
             this.NotificationListBase.destroy();
         }
     });
@@ -430,10 +430,10 @@
     //================================================================================
 
     QUnit.module('Private getters for lazy loading', {
-        setup: function() {
+        beforeEach: function() {
             this.NotificationListBase = new sap.m.NotificationListBase();
         },
-        teardown: function() {
+        afterEach: function() {
             this.NotificationListBase.destroy();
         }
     });

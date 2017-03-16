@@ -67,8 +67,8 @@
 
 <!-- Do the tests -->
 <script language="javascript">
-	module("Basics", {
-		setup : function() {
+	QUnit.module("Basics", {
+		beforeEach : function() {
 			oBtn1.getLayoutData().setLinebreak(false);
 			oBtn2.getLayoutData().setLinebreak(false);
 
@@ -78,7 +78,7 @@
 		}
 	});
 
-	test("Button doubled size?", function() {
+	QUnit.test("Button doubled size?", function(assert) {
 		expect(1);
 		var $btn1 = jQuery.sap.byId("button1-cont0_0");
 		var $btn2 = jQuery.sap.byId("button2-cont0_1");
@@ -95,7 +95,7 @@
 		ok(bTest, "Button2 is twice of Button2");
 	});
 
-	test("Line break works & LayoutData event catched by Layout", function() {
+	QUnit.test("Line break works & LayoutData event catched by Layout", function(assert) {
 		expect(3);
 		oBtn2.getLayoutData().setLinebreak(true);
 		sap.ui.getCore().applyChanges();
@@ -116,8 +116,8 @@
 		ok(bTest, "Buttons put in separate rows with correct IDs");
 	});
 
-	module("Resize", {
-		setup : function() {
+	QUnit.module("Resize", {
+		beforeEach : function() {
 			oBtn1.getLayoutData().setLinebreak(false);
 			oBtn2.getLayoutData().setLinebreak(false);
 
@@ -177,8 +177,8 @@
 		}, 100);
 	});
 
-	module("Private functions");
-	test("_getElementRect", function () {
+	QUnit.module("Private functions");
+	QUnit.test("_getElementRect", function (assert) {
 		//prepare
 		jQuery("#qunit-fixture").append("<div id='myDiv' style='width:25.1412399px;height:30.321564px'/>");
 
@@ -193,7 +193,7 @@
 		ok(!oRFL._getElementRect(null), "When null is passed, null should be returned");
 	});
 
-	test("The private render manager is lazy initialized", function() {
+	QUnit.test("The private render manager is lazy initialized", function(assert) {
 		//prepare
 		var oResponsiveFlowLayout = {};
 		//act
@@ -212,8 +212,8 @@
 		oResponsiveFlowLayout.destroy();
 	});
 
-	module("destroy on exit");
-	test("Render manager is not created when control is not visible therefore it is not destroyed on exit", function() {
+	QUnit.module("destroy on exit");
+	QUnit.test("Render manager is not created when control is not visible therefore it is not destroyed on exit", function(assert) {
 		var oResponsiveFlowLayout = new rfl({visible: false});
 		var oExitSpy = sinon.spy(sap.ui.layout.ResponsiveFlowLayout.prototype, "exit");
 		//act
@@ -235,7 +235,7 @@
 		strictEqual(oResponsiveFlowLayout.oRm, null, "RenderManager is null since the destroy is not called on it");
 	});
 
-	test("Render manager is destroyed on exit of the control", function() {
+	QUnit.test("Render manager is destroyed on exit of the control", function(assert) {
 		var oResponsiveFlowLayout = new rfl();
 		//act
 		oResponsiveFlowLayout.placeAt("qunit-fixture");

@@ -27,7 +27,7 @@
 	}
 
 
-	test("New Element and its data", function() {
+	QUnit.test("New Element and its data", function(assert) {
 		element = new sap.ui.core.Element();
 		ok(element, "element must have been created");
 		ok(element.data, "element must have a 'data' function");
@@ -35,7 +35,7 @@
 	});
 
 
-	test("Adding and retrieving string data", function() {
+	QUnit.test("Adding and retrieving string data", function(assert) {
 		var returnValue = element.data("test", "abc");
 		ok(returnValue === element, "element must be returned");
 
@@ -54,7 +54,7 @@
 	});
 
 
-	test("Removing data", function() {
+	QUnit.test("Removing data", function(assert) {
 		// clear the data
 		var returnValue = element.data("test", null);
 		ok(returnValue === element, "element must be returned");
@@ -66,7 +66,7 @@
 	});
 
 
-	test("Adding and retrieving function data", function() {
+	QUnit.test("Adding and retrieving function data", function(assert) {
 		element.data("test_func", testFunction);
 		var data = element.data("test_func");
 
@@ -75,7 +75,7 @@
 	});
 
 
-	test("Adding and retrieving object data", function() {
+	QUnit.test("Adding and retrieving object data", function(assert) {
 		element.data("test_json", {"two":2});
 		var data = element.data("test_json");
 
@@ -90,7 +90,7 @@
 	});
 
 
-	test("Retrieving all data", function() {
+	QUnit.test("Retrieving all data", function(assert) {
 		var data = element.data();
 
 		equal(typeof data, "object", "Value must be an object");
@@ -109,7 +109,7 @@
 	});
 
 
-	test("Setting multiple data", function() {
+	QUnit.test("Setting multiple data", function(assert) {
 		element.data({
 			test_func: "f",
 			test_json: {"two":2},
@@ -130,7 +130,7 @@
 		ok(jQuery.isEmptyObject(element.data()), "element data should be empty");
 	});
 
-	test("Negative Test: invalid arguments", function() {
+	QUnit.test("Negative Test: invalid arguments", function(assert) {
 		raises(function() { element.data(1); }, "Getting data with a key of type number should raise an error");
 		raises(function() { element.data(3.14); }, "Getting data with a key of type number should raise an error");
 		raises(function() { element.data(true); }, "Getting data with a key of type boolean should raise an error");
@@ -143,7 +143,7 @@
 		*/
 	});
 
-	test("Cloning elements with data", function() {
+	QUnit.test("Cloning elements with data", function(assert) {
 		element.data({
 			string_data: "abc",
 			object_data: {"two":2}
@@ -167,7 +167,7 @@
 
 	var oModel;
 
-	test("Data Binding", function() {
+	QUnit.test("Data Binding", function(assert) {
 		oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData({
 			firstName: "Peter",
@@ -191,7 +191,7 @@
 
 	/*** XMLView usage ***/
 
-	test("Usage in XML View declaration with binding", function() {
+	QUnit.test("Usage in XML View declaration with binding", function(assert) {
 		var xml = '<core:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.commons" '
             + 'xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">'
 			+ '<Button id="myBtn" text="test" app:coords="{/data}"></Button></core:View>';
@@ -220,7 +220,7 @@
 	});
 
 
-	test("Write Data to HTML", function(){
+	QUnit.test("Write Data to HTML", function(assert) {
 		var btn = new sap.ui.commons.Button({text:"Hello"});
 
 		btn.data("test", "some payload", true);

@@ -29,7 +29,7 @@
 			jQuery.sap.require("sap.m.List");
 			jQuery.sap.require("sap.m.GrowingEnablement");
 
-			module("trigger");
+			QUnit.module("trigger");
 			asyncTest("Should update the trigger state correctly", function() {
 				//Arrange
 				var data = { items: [ {},{}] };
@@ -125,8 +125,8 @@
 				}, 0);
 			});
 
-			module("Integration tests");
-			test("Should determine if the list is scrollable", function() {
+			QUnit.module("Integration tests");
+			QUnit.test("Should determine if the list is scrollable", function(assert) {
 				//Arrange
 				var data = { items: [ {},{}] };
 
@@ -163,7 +163,7 @@
 				sut.destroy();
 			});
 
-			test("Should determine if the list is not scrollable", function() {
+			QUnit.test("Should determine if the list is not scrollable", function(assert) {
 				//Arrange
 				var oList = new sap.m.List({
 					growing : true,
@@ -206,7 +206,7 @@
 				}, 0);
 			});
 
-			module("Odata");
+			QUnit.module("Odata");
 			sinon.config.useFakeTimers = false;
 
 			function startMockServer() {

@@ -26,7 +26,7 @@
 		var fnTestControlProperty = function(mOptions) {
 			var sProperty = mOptions.property.charAt(0).toUpperCase() + mOptions.property.slice(1);
 
-			test("get" + sProperty + "()", function() {
+			QUnit.test("get" + sProperty + "()", function(assert) {
 				strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
 			});
 		};
@@ -35,7 +35,7 @@
 		/* tests for default property values */
 		/* --------------------------------- */
 
-		test("default property values", function() {
+		QUnit.test("default property values", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -85,9 +85,9 @@
 			oSelectList.destroy();
 		});
 
-		module("rendering");
+		QUnit.module("rendering");
 
-		test("rendering", function() {
+		QUnit.test("rendering", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -131,7 +131,7 @@
 			oSelectList.destroy();
 		});
 
-		module("getVisible");
+		QUnit.module("getVisible");
 
 		fnTestControlProperty({
 			control: new sap.m.SelectList({
@@ -155,7 +155,7 @@
 			description: "The control is visible"
 		});
 
-		module("getEnabled");
+		QUnit.module("getEnabled");
 
 		fnTestControlProperty({
 			control: new sap.m.SelectList(),
@@ -173,7 +173,7 @@
 			description: "The control is disabled"
 		});
 
-		module("getWidth()");
+		QUnit.module("getWidth()");
 
 		fnTestControlProperty({
 			control: new sap.m.SelectList({
@@ -245,7 +245,7 @@
 			description: 'The "width" is "125pt"'
 		});
 
-		module("getMaxWidth()");
+		QUnit.module("getMaxWidth()");
 
 		fnTestControlProperty({
 			control: new sap.m.SelectList({
@@ -317,9 +317,9 @@
 			description: 'The "maxWidth" is "125pt"'
 		});
 
-		module("getSelectedItem()");
+		QUnit.module("getSelectedItem()");
 
-		test("getSelectedItem()", function() {
+		QUnit.test("getSelectedItem()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -344,7 +344,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedItem()", function() {
+		QUnit.test("getSelectedItem()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -384,7 +384,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedItem()", function() {
+		QUnit.test("getSelectedItem()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -427,7 +427,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedItem()", function() {
+		QUnit.test("getSelectedItem()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -465,7 +465,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedItem()", function() {
+		QUnit.test("getSelectedItem()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -481,7 +481,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedItem()", function() {
+		QUnit.test("getSelectedItem()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -520,7 +520,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedItem()", function() {
+		QUnit.test("getSelectedItem()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -558,9 +558,9 @@
 			oSelectList.destroy();
 		});
 
-		module("getSelectedKey()");
+		QUnit.module("getSelectedKey()");
 
-		test("getSelectedKey()", function() {
+		QUnit.test("getSelectedKey()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -598,7 +598,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedKey()", function() {
+		QUnit.test("getSelectedKey()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -624,7 +624,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedKey()", function() {
+		QUnit.test("getSelectedKey()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -668,7 +668,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedKey()", function() {
+		QUnit.test("getSelectedKey()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -712,7 +712,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedKey()", function() {
+		QUnit.test("getSelectedKey()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -751,7 +751,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedKey()", function() {
+		QUnit.test("getSelectedKey()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -771,7 +771,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedKey()", function() {
+		QUnit.test("getSelectedKey()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -809,7 +809,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedKey()", function() {
+		QUnit.test("getSelectedKey()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -847,7 +847,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedKey()", function() {
+		QUnit.test("getSelectedKey()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -885,7 +885,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedKey()", function() {
+		QUnit.test("getSelectedKey()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -924,9 +924,9 @@
 			oSelectList.destroy();
 		});
 
-		module("getSelectedItemId()");
+		QUnit.module("getSelectedItemId()");
 
-		test("getSelectedItemId()", function() {
+		QUnit.test("getSelectedItemId()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -952,7 +952,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedItemId()", function() {
+		QUnit.test("getSelectedItemId()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -996,7 +996,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedItemId()", function() {
+		QUnit.test("getSelectedItemId()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -1040,7 +1040,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedItemId()", function() {
+		QUnit.test("getSelectedItemId()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -1079,7 +1079,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedItemId()", function() {
+		QUnit.test("getSelectedItemId()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -1095,7 +1095,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedItemId()", function() {
+		QUnit.test("getSelectedItemId()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -1133,7 +1133,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedItemId()", function() {
+		QUnit.test("getSelectedItemId()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -1171,7 +1171,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedItemId()", function() {
+		QUnit.test("getSelectedItemId()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -1209,7 +1209,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedItemId()", function() {
+		QUnit.test("getSelectedItemId()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -1247,7 +1247,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getSelectedItemId()", function() {
+		QUnit.test("getSelectedItemId()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -1281,9 +1281,9 @@
 			oSelectList.destroy();
 		});
 
-		module("setWidth()");
+		QUnit.module("setWidth()");
 
-		test("setWidth()", function() {
+		QUnit.test("setWidth()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -1310,9 +1310,9 @@
 			oSelectList.destroy();
 		});
 
-		module("setEnabled()");
+		QUnit.module("setEnabled()");
 
-		test("setEnabled()", function() {
+		QUnit.test("setEnabled()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -1339,9 +1339,9 @@
 			oSelectList.destroy();
 		});
 
-		module("addItem()");
+		QUnit.module("addItem()");
 
-		test("addItem()", function() {
+		QUnit.test("addItem()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList();
@@ -1364,7 +1364,7 @@
 			oSelectList.destroy();
 		});
 
-		test("it should not throw an error when showSecondaryValues property is set to true", function() {
+		QUnit.test("it should not throw an error when showSecondaryValues property is set to true", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -1388,9 +1388,9 @@
 			oSelectList.destroy();
 		});
 
-		module("insertItem()");
+		QUnit.module("insertItem()");
 
-		test("insertItem()", function() {
+		QUnit.test("insertItem()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList();
@@ -1415,9 +1415,9 @@
 			oSelectList.destroy();
 		});
 
-		module("setSelectedItem()");
+		QUnit.module("setSelectedItem()");
 
-		test("setSelectedItem()", function() {
+		QUnit.test("setSelectedItem()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList();
@@ -1444,7 +1444,7 @@
 			oSelectList.destroy();
 		});
 
-		test("setSelectedItem()", function() {
+		QUnit.test("setSelectedItem()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -1494,7 +1494,7 @@
 			oSelectList.destroy();
 		});
 
-		test("setSelectedItem()", function() {
+		QUnit.test("setSelectedItem()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -1543,7 +1543,7 @@
 			oSelectList.destroy();
 		});
 
-		test("setSelectedItem()", function() {
+		QUnit.test("setSelectedItem()", function(assert) {
 
 			//system under test
 			var oExpectedItem;
@@ -1584,7 +1584,7 @@
 			oSelectList.destroy();
 		});
 
-		test("setSelectedItem()", function() {
+		QUnit.test("setSelectedItem()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -1626,9 +1626,9 @@
 			oSelectList.destroy();
 		});
 
-		module("setSelectedItemId()");
+		QUnit.module("setSelectedItemId()");
 
-		test("setSelectedItemId()", function() {
+		QUnit.test("setSelectedItemId()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -1671,7 +1671,7 @@
 			oSelectList.destroy();
 		});
 
-		test("setSelectedItemId()", function() {
+		QUnit.test("setSelectedItemId()", function(assert) {
 
 			//system under test
 			var oExpectedItem;
@@ -1712,7 +1712,7 @@
 			oSelectList.destroy();
 		});
 
-		test("setSelectedItemId()", function() {
+		QUnit.test("setSelectedItemId()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -1755,7 +1755,7 @@
 			oSelectList.destroy();
 		});
 
-		test("setSelectedItemId() should set the value even if the corresponding item doesn't exist on the list", function() {
+		QUnit.test("setSelectedItemId() should set the value even if the corresponding item doesn't exist on the list", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -1775,9 +1775,9 @@
 			oSelectList.destroy();
 		});
 
-		module("setSelectedKey()");
+		QUnit.module("setSelectedKey()");
 
-		test("setSelectedKey() first rendering", function() {
+		QUnit.test("setSelectedKey() first rendering", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -1816,7 +1816,7 @@
 			oSelectList.destroy();
 		});
 
-		test("setSelectedKey() no rendering", function() {
+		QUnit.test("setSelectedKey() no rendering", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -1851,7 +1851,7 @@
 			oSelectList.destroy();
 		});
 
-		test("setSelectedKey() after the initial rendering", function() {
+		QUnit.test("setSelectedKey() after the initial rendering", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -1904,7 +1904,7 @@
 			oSelectList.destroy();
 		});
 
-		test("setSelectedKey()", function() {
+		QUnit.test("setSelectedKey()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -1946,9 +1946,9 @@
 			oSelectList.destroy();
 		});
 
-		module("keyboard navigation mode");
+		QUnit.module("keyboard navigation mode");
 
-		test("it should not enable the item navigation (initial rendering)", function() {
+		QUnit.test("it should not enable the item navigation (initial rendering)", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -1971,7 +1971,7 @@
 			oSelectList.destroy();
 		});
 
-		test("it should not enable the item navigation", function() {
+		QUnit.test("it should not enable the item navigation", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -1998,9 +1998,9 @@
 			oSelectList.destroy();
 		});
 
-		module("removeItem()");
+		QUnit.module("removeItem()");
 
-		test("it should give a warning when called with faulty parameter", function() {
+		QUnit.test("it should give a warning when called with faulty parameter", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList();
@@ -2023,7 +2023,7 @@
 			oSelectList.destroy();
 		});
 
-		test("removeItem() remove the selected item", function() {
+		QUnit.test("removeItem() remove the selected item", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -2114,7 +2114,7 @@
 			oModel.destroy();
 		});
 
-		test("removeItem() remove the selected item", function() {
+		QUnit.test("removeItem() remove the selected item", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -2182,7 +2182,7 @@
 			oModel.destroy();
 		});
 
-		test("removeItem()", function() {
+		QUnit.test("removeItem()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -2213,9 +2213,9 @@
 			oSelectList.destroy();
 		});
 
-		module("removeAllItems()");
+		QUnit.module("removeAllItems()");
 
-		test("removeAllItems()", function() {
+		QUnit.test("removeAllItems()", function(assert) {
 
 			// system under test
 			var aItems = [
@@ -2260,9 +2260,9 @@
 			oSelectList.destroy();
 		});
 
-		module("destroyItems()");
+		QUnit.module("destroyItems()");
 
-		test("destroyItems()", function() {
+		QUnit.test("destroyItems()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -2301,7 +2301,7 @@
 			oSelectList.destroy();
 		});
 
-		test("it should only remove the items, but not the busy indicator", function() {
+		QUnit.test("it should only remove the items, but not the busy indicator", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -2326,9 +2326,9 @@
 			oSelectList.destroy();
 		});
 
-		module("findFirstEnabledItem()");
+		QUnit.module("findFirstEnabledItem()");
 
-		test("findFirstEnabledItem()", function() {
+		QUnit.test("findFirstEnabledItem()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -2368,7 +2368,7 @@
 			oSelectList.destroy();
 		});
 
-		test("findFirstEnabledItem()", function() {
+		QUnit.test("findFirstEnabledItem()", function(assert) {
 
 			// system under test
 			var aItems = [
@@ -2409,7 +2409,7 @@
 			oSelectList.destroy();
 		});
 
-		test("findFirstEnabledItem()", function() {
+		QUnit.test("findFirstEnabledItem()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList();
@@ -2428,9 +2428,9 @@
 			oSelectList.destroy();
 		});
 
-		module("findLastEnabledItem()");
+		QUnit.module("findLastEnabledItem()");
 
-		test("findLastEnabledItem()", function() {
+		QUnit.test("findLastEnabledItem()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -2471,7 +2471,7 @@
 			oSelectList.destroy();
 		});
 
-		test("findLastEnabledItem()", function() {
+		QUnit.test("findLastEnabledItem()", function(assert) {
 
 			// system under test
 			var aItems = [
@@ -2512,7 +2512,7 @@
 			oSelectList.destroy();
 		});
 
-		test("findLastEnabledItem()", function() {
+		QUnit.test("findLastEnabledItem()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList();
@@ -2531,10 +2531,10 @@
 			oSelectList.destroy();
 		});
 
-		module("setSelectedIndex()");
+		QUnit.module("setSelectedIndex()");
 
 		var setSelectedIndexTestCase = function(sTestName, mOptions) {
-			test("setSelectedIndex()", function() {
+			QUnit.test("setSelectedIndex()", function(assert) {
 
 				// system under test
 				var oSelectList = mOptions.control;
@@ -2624,9 +2624,9 @@
 			});
 		}());
 
-		module("getItemAt()");
+		QUnit.module("getItemAt()");
 
-		test("getItemAt()", function() {
+		QUnit.test("getItemAt()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -2669,9 +2669,9 @@
 			oSelectList.destroy();
 		});
 
-		module("getFirstItem()");
+		QUnit.module("getFirstItem()");
 
-		test("getFirstItem()", function() {
+		QUnit.test("getFirstItem()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -2710,7 +2710,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getFirstItem()", function() {
+		QUnit.test("getFirstItem()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList();
@@ -2729,9 +2729,9 @@
 			oSelectList.destroy();
 		});
 
-		module("getLastItem()");
+		QUnit.module("getLastItem()");
 
-		test("getLastItem()", function() {
+		QUnit.test("getLastItem()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -2770,7 +2770,7 @@
 			oSelectList.destroy();
 		});
 
-		test("getLastItem()", function() {
+		QUnit.test("getLastItem()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList();
@@ -2789,9 +2789,9 @@
 			oSelectList.destroy();
 		});
 
-		module("getItemByKey()");
+		QUnit.module("getItemByKey()");
 
-		test("getItemByKey()", function() {
+		QUnit.test("getItemByKey()", function(assert) {
 
 			// system under test
 			var oExpectedItem0;
@@ -2838,9 +2838,9 @@
 			oSelectList.destroy();
 		});
 
-		module("getEnabledItems()");
+		QUnit.module("getEnabledItems()");
 
-		test("getEnabledItems()", function() {
+		QUnit.test("getEnabledItems()", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -2868,14 +2868,14 @@
 			oSelectList.destroy();
 		});
 
-		module("updateAggregation()");
+		QUnit.module("updateAggregation()");
 
 		// unit test for CSN 0120061532 0001266189 2014
 		//
 		// Do not clear the selection when items are destroyed.
 		// When using Two-Way Data Binding and the binding are refreshed,
 		// the items will be destroyed and the aggregation items is filled again.
-		test("updateAggregation() do not clear the selection when items are destroyed", function() {
+		QUnit.test("updateAggregation() do not clear the selection when items are destroyed", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -2926,7 +2926,7 @@
 		});
 
 		// BCP 1570825099
-		test("it should synchronize the selection (synchronous) after the items are filtered", function() {
+		QUnit.test("it should synchronize the selection (synchronous) after the items are filtered", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.Select({
@@ -3007,9 +3007,9 @@
 			oModel.destroy();
 		});
 
-		module("destroy()");
+		QUnit.module("destroy()");
 
-		test("destroy()", function() {
+		QUnit.test("destroy()", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -3048,9 +3048,9 @@
 			oSelectList.destroy();
 		});
 
-		module("_queryEnabledItemsDomRefs()");
+		QUnit.module("_queryEnabledItemsDomRefs()");
 
-		test("_queryEnabledItemsDomRefs()", function() {
+		QUnit.test("_queryEnabledItemsDomRefs()", function(assert) {
 
 			// system under test
 			var oEnabledItem;
@@ -3086,9 +3086,9 @@
 			oSelectList.destroy();
 		});
 
-		module("rendering");
+		QUnit.module("rendering");
 
-		test("list", function() {
+		QUnit.test("list", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList();
@@ -3106,7 +3106,7 @@
 			oSelectList.destroy();
 		});
 
-		test("list disabled", function() {
+		QUnit.test("list disabled", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
@@ -3124,7 +3124,7 @@
 			oSelectList.destroy();
 		});
 
-		test("list item", function() {
+		QUnit.test("list item", function(assert) {
 
 			// system under test
 			var oItem;
@@ -3148,7 +3148,7 @@
 			oSelectList.destroy();
 		});
 
-		test("list item disabled", function() {
+		QUnit.test("list item disabled", function(assert) {
 
 			// system under test
 			var oItem;
@@ -3173,7 +3173,7 @@
 			oSelectList.destroy();
 		});
 
-		test("list item separator", function() {
+		QUnit.test("list item separator", function(assert) {
 
 			// system under test
 			var oItem;
@@ -3199,7 +3199,7 @@
 			oSelectList.destroy();
 		});
 
-		test("it should display the item", function() {
+		QUnit.test("it should display the item", function(assert) {
 
 			// system under test
 			var oItem;
@@ -3223,7 +3223,7 @@
 			oSelectList.destroy();
 		});
 
-		test("it should display the item", function() {
+		QUnit.test("it should display the item", function(assert) {
 
 			// system under test
 			var oItem;
@@ -3250,7 +3250,7 @@
 			oSelectList.destroy();
 		});
 
-		test("it should not display the item", function() {
+		QUnit.test("it should not display the item", function(assert) {
 
 			// system under test
 			var oItem;
@@ -3278,9 +3278,9 @@
 			oSelectList.destroy();
 		});
 
-		module("touchstart");
+		QUnit.module("touchstart");
 
-		test("it should set the active state", function() {
+		QUnit.test("it should set the active state", function(assert) {
 
 			// system under test
 			var oItem;
@@ -3332,7 +3332,7 @@
 			oSelectList.destroy();
 		});
 
-		test("it should not set the active state", function() {
+		QUnit.test("it should not set the active state", function(assert) {
 
 			// system under test
 			var oItem;
@@ -3382,7 +3382,7 @@
 			oSelectList.destroy();
 		});
 
-		test("it should set and remove the active state (there is a movement)", function() {
+		QUnit.test("it should set and remove the active state (there is a movement)", function(assert) {
 
 			// system under test
 			var oItem;
@@ -3459,9 +3459,9 @@
 			oSelectList.destroy();
 		});
 
-		module("touchend");
+		QUnit.module("touchend");
 
-		test("it should set and remove the active state (no movement)", function() {
+		QUnit.test("it should set and remove the active state (no movement)", function(assert) {
 
 			// system under test
 			var oItem;
@@ -3533,9 +3533,9 @@
 			oSelectList.destroy();
 		});
 
-		module("tap");
+		QUnit.module("tap");
 
-		test("it should fire the press and selectionChange events", function() {
+		QUnit.test("it should fire the press and selectionChange events", function(assert) {
 
 			// system under test
 			var oItem;
@@ -3581,7 +3581,7 @@
 			oSelectList.destroy();
 		});
 
-		test("it should not fire the press and selectionChange events", function() {
+		QUnit.test("it should not fire the press and selectionChange events", function(assert) {
 
 			// system under test
 			var oItem;
@@ -3628,9 +3628,9 @@
 			oSelectList.destroy();
 		});
 
-		module("onsapselect");
+		QUnit.module("onsapselect");
 
-		test("onsapselect activates a item", function() {
+		QUnit.test("onsapselect activates a item", function(assert) {
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({

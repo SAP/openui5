@@ -51,39 +51,39 @@
 		var tcb1 = sap.ui.getCore().getControl("tcb1");
  		var tcb2 = sap.ui.getCore().getControl("tcb2");
 
-		module("Basic");
+		QUnit.module("Basic");
 
-		test("TextOk", function() {
+		QUnit.test("TextOk", function(assert) {
 			strictEqual(tcb1.getText(), sText, "tcb1.getText() returns wrong result");
 			strictEqual(tcb2.getText(), sText, "tcb2.getText() returns wrong result");
 		});
 
-		test("WidthOk", function() {
+		QUnit.test("WidthOk", function(assert) {
 			strictEqual(tcb1.getWidth(), sWidth, "tcb1.getWidth() returns wrong result");
 			strictEqual(tcb2.getWidth(), sWidth, "tcb2.getWidth() returns wrong result");
 		});
 
-		 	test("EnabledOk", function() {
+		 	QUnit.test("EnabledOk", function(assert) {
 			strictEqual(tcb1.getEnabled(), bEnabled, "tcb1.getEnabled() returns wrong result");
 			strictEqual(tcb2.getEnabled(), bEnabled, "tcb2.getEnabled() returns wrong result");
 		});
 
-		test("VisibleOk", function() {
+		QUnit.test("VisibleOk", function(assert) {
 			strictEqual(tcb1.getVisible(), bVisible, "tcb1.getVisible() returns wrong result");
 			strictEqual(tcb2.getVisible(), bVisible, "tcb2.getVisible() returns wrong result");
 		});
 
-		test("TooltipOk", function() {
+		QUnit.test("TooltipOk", function(assert) {
 			strictEqual(tcb1.getTooltip(), sTooltip, "tcb1.getTooltip() returns wrong result");
 			strictEqual(tcb2.getTooltip(), sTooltip, "tcb2.getTooltip() returns wrong result");
 		});
 
-		test("CheckedOk", function() {
+		QUnit.test("CheckedOk", function(assert) {
 			strictEqual(tcb1.getSelectionState(), sSelectionState, "tcb1.getSelectionState() returns wrong result");
 			strictEqual(tcb2.getSelectionState(), sSelectionState, "tcb2.getSelectionState() returns wrong result");
 		});
 
-		test("Visibility", function() {
+		QUnit.test("Visibility", function(assert) {
 			ok(jQuery.sap.domById("tcb1"), "TriStateCheckBox 1 should exist in page");
 			tcb1.setVisible(false);
 			sap.ui.getCore().applyChanges();
@@ -93,7 +93,7 @@
 			ok(jQuery.sap.domById("tcb1"), "TriStateCheckBox 1 should exist in page");
 		});
 
-		test("Width", function() {
+		QUnit.test("Width", function(assert) {
 			strictEqual(jQuery.sap.domById("tcb1").offsetWidth, 300, "actual width is wrong");
 			tcb1.setWidth("401px");
 			sap.ui.getCore().applyChanges();
@@ -103,7 +103,7 @@
 			strictEqual(jQuery.sap.domById("tcb1").offsetWidth, 300, "actual width is wrong after change");
 		});
 
-		test("ToggleOK", function(){
+		QUnit.test("ToggleOK", function(assert) {
 			strictEqual(tcb1.getSelectionState(), sSelectionState, "tcb1.getSelectionState() returns wrong state");
 			tcb1.toggle("Mixed");
 			strictEqual(tcb1.getSelectionState(), "Mixed", "tcb1.getSelectionState() returns wrong state after toggle to mixed");
@@ -111,7 +111,7 @@
 			strictEqual(tcb1.getSelectionState(), "Unchecked", "tcb1.getSelectionState() returns wrong state after toggle to checked");
 		});
 
-		test("CssClassesOk", function() {
+		QUnit.test("CssClassesOk", function(assert) {
 			var sSpan = jQuery.sap.domById("tcb1");
 			var sClasses = sSpan.className;
 			notStrictEqual(sClasses, null, "sClasses is null");
@@ -147,7 +147,7 @@
 			ok(sClasses.indexOf("sapUiTriCbRo") == -1, "tcb1 className is containing 'sapUiCbRo' after switching back to editable");
  		});
 
-		test("AriaOK", function(){
+		QUnit.test("AriaOK", function(assert) {
 			equal(jQuery("#tcb1").attr("role"), "checkbox", "Role of the TriStateCheckBox");
 			equal(jQuery("#tcb1").attr("aria-checked"), "mixed", "ARIA-Checked of 1. Checkbox");
 			equal(jQuery("#tcb1").children(".sapUiTriCbInner").attr("aria-labelledby"), "sapUiAriaLabeltcb1", "ARIA-LabelledBy of 1. Checkbox");

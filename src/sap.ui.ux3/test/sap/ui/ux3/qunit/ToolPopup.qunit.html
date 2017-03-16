@@ -81,7 +81,7 @@
 		opener : oBtn1
 	});
 
-	module("Open / Close with defaults");
+	QUnit.module("Open / Close with defaults");
 	asyncTest("Open default (right from button)", function() {
 		expect(4);
 
@@ -302,7 +302,7 @@
 
 	});
 
-	module("Open with 'setPosition'");
+	QUnit.module("Open with 'setPosition'");
 	asyncTest("Open above (set Position)", function() {
 		expect(6);
 
@@ -360,7 +360,7 @@
 
 	});
 
-	module("Collision detection");
+	QUnit.module("Collision detection");
 	asyncTest("fit", function() {
 		oWindowRect = jQuery(window).rect();
 		oWindowRect.width = $Window.width();
@@ -494,8 +494,8 @@
 	});
 
 	var oTPFocus;
-	module("Focus handling", {
-		setup : function() {
+	QUnit.module("Focus handling", {
+		beforeEach : function() {
 			oTPFocus = new sap.ui.ux3.ToolPopup("focusPopup", {
 				content : [ new sap.ui.commons.FormattedTextView("FormattedTextView1",{
 					htmlText : "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
@@ -516,7 +516,7 @@
 				oTPFocus.open();
 			};
 		},
-		teardown : function() {
+		afterEach : function() {
 			oTPFocus.destroy();
 		}
 	});
@@ -649,7 +649,7 @@
 		};
 	});
 
-	test("Focusable area (type check)", function() {
+	QUnit.test("Focusable area (type check)", function(assert) {
 		expect(4);
 
 		var oTF = new sap.ui.commons.TextField().placeAt("uiArea1");
@@ -809,8 +809,8 @@
 	});
 
 	var oTPMaxHeight;
-	module("Size of the ToolPopup", {
-		setup : function() {
+	QUnit.module("Size of the ToolPopup", {
+		beforeEach : function() {
 			oTPMaxHeight = new sap.ui.ux3.ToolPopup("focusPopup", {
 				content : [ new sap.ui.commons.Button({
 					text : "button1"
@@ -844,7 +844,7 @@
 
 			oBtn1.placeAt("uiArea1");
 		},
-		teardown : function() {
+		afterEach : function() {
 			oTPMaxHeight.destroy();
 		}
 	});
@@ -942,8 +942,8 @@
 
 	var oButtonContent;
 	var oTPContent;
-	module("Changing content", {
-		setup : function() {
+	QUnit.module("Changing content", {
+		beforeEach : function() {
 			oButtonContent = new sap.ui.commons.Button({
 				text : "Open"
 			}).placeAt("uiArea1");
@@ -957,7 +957,7 @@
 			});
 		},
 
-		teardown : function() {
+		afterEach : function() {
 			oTPContent.destroy();
 			oButtonContent.destroy();
 		}

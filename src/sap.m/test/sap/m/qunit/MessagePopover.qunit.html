@@ -29,7 +29,7 @@
 		QUnit.module("Public API", {
 			sCustomId: "custom-msg-popover-id",
 			oSpies: {},
-			setup: function () {
+			beforeEach: function () {
 				this.oSpies.beforeOpen = sinon.spy();
 				this.oSpies.afterOpen = sinon.spy();
 				this.oSpies.beforeClose = sinon.spy();
@@ -115,7 +115,7 @@
 					sap.ui.test.qunit.triggerEvent("tap", oItem);
 				});
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oMessagePopover.destroy();
 				this.oButton.destroy();
 
@@ -210,7 +210,7 @@
 			assert.strictEqual(iInterListItemCounter, iMPItemCounter, "Internal listItem's counter should be the same as MessagePopoverItems's counter");
 		});
 
-		QUnit.test("No Navaigation arrow should be shown if there is no description", function () {
+		QUnit.test("No Navigation arrow should be shown if there is no description", function (assert) {
 			var oStandardListItem;
 			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
 			this.oButton.addDependent(this.oMessagePopover);
@@ -565,9 +565,9 @@
 		});
 
 		QUnit.module("MessagePopoveritem Public API", {
-			setup: function() {
+			beforeEach: function() {
 				this.oMessagePopoverItem = new sap.m.MessagePopoverItem();
-			}, teardown: function() {
+			}, afterEach: function() {
 				this.oMessagePopoverItem.destroy();
 			}
 		});
@@ -586,7 +586,7 @@
 		});
 
 		QUnit.module("HTML representation", {
-			setup: function () {
+			beforeEach: function () {
 				this.oMessagePopover = new sap.m.MessagePopover();
 
 				this.oButton = new sap.m.Button({
@@ -596,7 +596,7 @@
 				this.oButton.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oMessagePopover.destroy();
 				this.oButton.destroy();
 
@@ -665,7 +665,7 @@
 		QUnit.module("Public API for async handlers", {
 			sCustomId: "custom-msg-popover-id",
 			oSpies : {},
-			setup: function () {
+			beforeEach: function () {
 				var that = this;
 
 				that.promiseDescription = new window.Promise(function(resolve) {
@@ -770,7 +770,7 @@
 					sap.ui.test.qunit.triggerEvent("tap", oItem);
 				});
 			},
-			teardown: function() {
+			afterEach: function() {
 				this.oMessagePopover.destroy();
 				this.oButton.destroy();
 
@@ -975,7 +975,7 @@
 		});
 
 		QUnit.module("Binding", {
-			setup: function () {
+			beforeEach: function () {
 				this.oButton2 = new sap.m.Button({text: "Press me"});
 
 				var oMessageTemplate = new sap.m.MessagePopoverItem({
@@ -1000,7 +1000,7 @@
 				this.oButton2.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oMessagepopover2.destroy();
 				this.oMessagepopover2 = null;
 

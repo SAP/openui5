@@ -51,27 +51,27 @@
 
 		qutils.delayTestStart();
 
-		module("Basic");
+		QUnit.module("Basic");
 
-		test("Check FocusHandler initialized", function() {
+		QUnit.test("Check FocusHandler initialized", function(assert) {
 			ok(oFocusHandler, "FocusHandler initialized");
 		});
 
-		test("Check FocusHandler initial state", function() {
+		QUnit.test("Check FocusHandler initial state", function(assert) {
 			equal(oFocusHandler.oCurrent, null, "Initial Value 'Current':");
 			equal(oFocusHandler.oLast, null, "Initial Value 'Last':");
 		});
 
-		test("Check FocusHandler.getCurrentFocusedControlId", function() {
+		QUnit.test("Check FocusHandler.getCurrentFocusedControlId", function(assert) {
 			equal(oFocusHandler.oCurrent, oFocusHandler.getCurrentFocusedControlId(), "Current not available:");
 			oControls["oControl1"].focus();
 			equal(oFocusHandler.oCurrent, oFocusHandler.getCurrentFocusedControlId(), "Current available:");
 			jQuery("#customInput").get(0).focus(); //Reset for next test
 		});
 
-		module("Focus Tracking");
+		QUnit.module("Focus Tracking");
 
-		test("Check Focus Tracking", function() {
+		QUnit.test("Check Focus Tracking", function(assert) {
 			equal(oFocusHandler.oCurrent, null, "Initial Value 'Current':");
 			oControls["oControl1"].focus();
 			equal(oFocusHandler.oCurrent, "oControl1", "Value 'Current' after control focus:");
@@ -83,7 +83,7 @@
 			equal(oFocusHandler.oCurrent, "oControl3", "Value 'Current' after control focus:");
 		});
 
-		test("Check sapfocusleave Event - Focus to Control", function() {
+		QUnit.test("Check sapfocusleave Event - Focus to Control", function(assert) {
 			oControls["oControl1"].focus();
 			var bHandlerCalled = false;
 			oControls["oControl1"].onsapfocusleave = function(oEvent){
@@ -99,7 +99,7 @@
 			ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
 		});
 
-		test("Check sapfocusleave Event - Focus to outer HTML", function() {
+		QUnit.test("Check sapfocusleave Event - Focus to outer HTML", function(assert) {
 			oControls["oControl1"].focus();
 			var bHandlerCalled = false;
 			oControls["oControl1"].onsapfocusleave = function(oEvent){
@@ -141,7 +141,7 @@
 			oControls["oControl2"].focus();
 		});
 
-		test("Check Custom Changes Reverted", function() {
+		QUnit.test("Check Custom Changes Reverted", function(assert) {
 			//This test should only check whether the changes in the focus handler in the last test
 			//are successfully reverted.
 			var bOk = true;

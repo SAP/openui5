@@ -148,41 +148,41 @@
 
 			qutils.delayTestStart();
 
-			module("Dates");
+			QUnit.module("Dates");
 
-			test("20150701", function() {
+			QUnit.test("20150701", function(assert) {
 				checkDate("20150701", 14, 9, 1436, 4, 1);
 			});
 
-			test("20140701", function() {
+			QUnit.test("20140701", function(assert) {
 				checkDate("20140701", 3, 9, 1435, 0, 5);
 			});
 
-			test("20150805", function() {
+			QUnit.test("20150805", function(assert) {
 				checkDate("20150805", 19, 10, 1436, 6, 0);
 			});
 
-			module("Navigation to next/previous Month");
+			QUnit.module("Navigation to next/previous Month");
 
-			test("20150701 -> next", function() {
+			QUnit.test("20150701 -> next", function(assert) {
 				checkMonthNavigation("20150701", 9, true);
 			});
 
-			test("20150701 -> prev", function() {
+			QUnit.test("20150701 -> prev", function(assert) {
 				checkMonthNavigation("20150701", 9, false);
 			});
 
-			module("Monthpicker");
+			QUnit.module("Monthpicker");
 
-			test("20150701 Monthpicker", function() {
+			QUnit.test("20150701 Monthpicker", function(assert) {
 				checkMonthPicker("20150701", 9);
 			});
 
-			test("20140701 Monthpicker", function() {
+			QUnit.test("20140701 Monthpicker", function(assert) {
 				checkMonthPicker("20140701", 9);
 			});
 
-			test("20150805 Monthpicker", function() {
+			QUnit.test("20150805 Monthpicker", function(assert) {
 				checkMonthPicker("20150805", 10);
 			});
 		</script>

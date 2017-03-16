@@ -59,9 +59,9 @@
 		<!-- Test functions -->
 		<script>
 
-			module("Appearance");
+			QUnit.module("Appearance");
 
-			test("OverlayDialog exists", function () {
+			QUnit.test("OverlayDialog exists", function (assert) {
 				var oDomRef = jQuery.sap.domById(oOverlayDialog.getId());
 				ok(oDomRef, "Rendered OverlayDialog should exist in the page");
 				equal(oDomRef.className, "sapUiUx3OD sapUiUx3Overlay", "Rendered OverlayDialog should have the classes 'sapUiUx3OD' and 'sapUiUx3Overlay'");
@@ -71,7 +71,7 @@
 				ok(!oDomRef, "close button should not be rendered");
 			});
 
-			module("Behaviour");
+			QUnit.module("Behaviour");
 
 			asyncTest("Open Method", function () {
 				expect(4);
@@ -96,7 +96,7 @@
 				}, 500);
 			});
 
-			test("Destroy and remove control", function () {
+			QUnit.test("Destroy and remove control", function (assert) {
 				oOverlayDialog.destroy();
 				sap.ui.getCore().applyChanges();
 				var oDomRef = jQuery.sap.domById(oOverlayDialog.getId());

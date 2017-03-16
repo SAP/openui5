@@ -27,8 +27,8 @@
 		jQuery.sap.require("sap.ui.core.routing.Targets");
 		jQuery.sap.require("sap.ui.core.routing.Views");
 
-		module("getTarget and target names", {
-			setup: function () {
+		QUnit.module("getTarget and target names", {
+			beforeEach: function () {
 				// System under test + Arrange
 				this.oViews = new sap.ui.core.routing.Views();
 				this.oTargets = new sap.ui.core.routing.Targets({
@@ -47,12 +47,12 @@
 					views: this.oViews
 				});
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oTargets.destroy();
 			}
 		});
 
-		test("Should be able to get an existing target by key", function () {
+		QUnit.test("Should be able to get an existing target by key", function (assert) {
 			// Act
 			var oTarget = this.oTargets.getTarget("myTarget");
 
@@ -61,7 +61,7 @@
 			strictEqual(oTarget._oViews, this.oViews, "Did pass the views instance");
 		});
 
-		test("Should return undefined if a target does not exist", function () {
+		QUnit.test("Should return undefined if a target does not exist", function (assert) {
 			// Act
 			var oTarget = this.oTargets.getTarget("foo");
 
@@ -69,7 +69,7 @@
 			strictEqual(oTarget, undefined, "Did not find such a target");
 		});
 
-		test("Should be able to get a child target", function () {
+		QUnit.test("Should be able to get a child target", function (assert) {
 			// Act
 			var oChild = this.oTargets.getTarget("myChild");
 
@@ -78,7 +78,7 @@
 			strictEqual(oChild._oParent, this.oTargets.getTarget("myParent"), "The parent was correctly passed to the target");
 		});
 
-		test("Should be able to get multiple targets", function () {
+		QUnit.test("Should be able to get multiple targets", function (assert) {
 			// Arrange
 			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 
@@ -93,7 +93,7 @@
 			sinon.assert.calledWith(oStub, sinon.match(/foo/), sinon.match(this.oTargets));
 		});
 
-		test("Should be able to add a new target", function () {
+		QUnit.test("Should be able to add a new target", function (assert) {
 			this.oTargets.addTarget("newTarget", {
 				viewName: "newView",
 				parent: "myParent"
@@ -105,7 +105,7 @@
 			strictEqual(oTarget._oParent, this.oTargets.getTarget("myParent"), "correct parent should be set");
 		});
 
-		test("Should kept the existing target and log an error message if 'addTarget' is called with the same name", function () {
+		QUnit.test("Should kept the existing target and log an error message if 'addTarget' is called with the same name", function (assert) {
 			// Arrange
 			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 
@@ -121,8 +121,8 @@
 			sinon.assert.calledWith(oStub, sinon.match(/myParent/), sinon.match(this.oTargets));
 		});
 
-		module("config - defaults and additional values", {
-			setup: function () {
+		QUnit.module("config - defaults and additional values", {
+			beforeEach: function () {
 				var oTargetConfig = {
 					controlAggregation: "foo",
 					someThingCustom: "bar",
@@ -139,7 +139,7 @@
 					config: oTargetConfig
 				});
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oTargets.destroy();
 			}
 		});
@@ -164,13 +164,13 @@
 			assert.strictEqual(oOptions.rootView, "changed", "Did pass one of the routing api values from the config");
 		});
 
-		module("config - invalid parent", {
-			teardown: function () {
+		QUnit.module("config - invalid parent", {
+			afterEach: function () {
 				this.oTargets.destroy();
 			}
 		});
 
-		test("Should complain about an non existing parent", function () {
+		QUnit.test("Should complain about an non existing parent", function (assert) {
 			// Arrange
 			var oIncorrectConfig = {
 						targets: {
@@ -188,8 +188,8 @@
 			sinon.assert.calledWith(oErrorStub, sinon.match(/was not found/), sinon.match(this.oTargets));
 		});
 
-		module("display", {
-			setup: function () {
+		QUnit.module("display", {
+			beforeEach: function () {
 				// System under test + Arrange
 				this.oTargets = new sap.ui.core.routing.Targets({
 					targets: {
@@ -200,12 +200,12 @@
 					}
 				});
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oTargets.destroy();
 			}
 		});
 
-		test("Should display one target", function () {
+		QUnit.test("Should display one target", function (assert) {
 			// Arrange
 			// Replace display with an empty fn
 			var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display", jQuery.noop);
@@ -219,7 +219,7 @@
 			strictEqual(fnSecondDisplayStub.callCount, 0, "Did not invoke display on the second target");
 		});
 
-		test("Should display multiple targets", function () {
+		QUnit.test("Should display multiple targets", function (assert) {
 			// Arrange
 			// Replace display with an empty fn
 			var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display", jQuery.noop);
@@ -233,7 +233,7 @@
 			strictEqual(fnSecondDisplayStub.callCount, 1, "Did invoke display on the second target");
 		});
 
-		test("Should log an error if user tries to display a non existing Target", function () {
+		QUnit.test("Should log an error if user tries to display a non existing Target", function (assert) {
 			// Assert
 			var oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 
@@ -244,7 +244,7 @@
 			sinon.assert.calledWith(oErrorStub, sinon.match(/does not exist/), sinon.match(this.oTargets));
 		});
 
-		test("Should log an error if user tries to display a non existing Target, but should display existing ones", function () {
+		QUnit.test("Should log an error if user tries to display a non existing Target, but should display existing ones", function (assert) {
 			// Assert
 			var oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 			var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display", jQuery.noop);
@@ -268,8 +268,8 @@
 			return sap.ui.view(oViewOptions);
 		}
 
-		module("display event", {
-			setup: function () {
+		QUnit.module("display event", {
+			beforeEach: function () {
 				this.oShell = new sap.ui.ux3.Shell();
 				this.oView = createView(
 						['<View xmlns="sap.ui.core">',
@@ -302,7 +302,7 @@
 						}
 				);
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oShell.destroy();
 				this.oTargets.destroy();
 				this.oViews.destroy();
@@ -311,7 +311,7 @@
 		});
 
 
-		test("should be able to fire/attach/detach the display event", function() {
+		QUnit.test("should be able to fire/attach/detach the display event", function(assert) {
 			// Arrange
 			var oParameters = { foo : "bar" },
 					fnEventSpy = this.spy(function(oEvent, oActualData) {
@@ -388,7 +388,7 @@
 			allPropertiesStrictEqual(oParameters.config, jQuery.extend(true, { name: "myTarget" }, this.oTargetsCofig.myTarget, this.oDefaultConfig));
 		});
 
-		test("Should fire the display event for multiple targets and children", function () {
+		QUnit.test("Should fire the display event for multiple targets and children", function (assert) {
 			// Arrange
 			var aTargetNames = [],
 				that = this,
@@ -421,7 +421,7 @@
 		});
 
 		QUnit.module("titleChanged event", {
-			setup: function () {
+			beforeEach: function () {
 				this.oApp = new sap.m.App();
 				this.oView = createView(
 						['<View xmlns="sap.ui.core">',
@@ -464,7 +464,7 @@
 					config: this.oDefaultConfig
 				});
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oApp.destroy();
 				this.oTargets.destroy();
 				this.oViews.destroy();
@@ -711,9 +711,9 @@
 			assert.strictEqual(aTargetNames.shift(), "mySecondTarget", "the second target got fired last");
 		});
 
-		module("destruction");
+		QUnit.module("destruction");
 
-		test("Should destroy all dependencies", function () {
+		QUnit.test("Should destroy all dependencies", function (assert) {
 			// Arrange
 			var oViews = new sap.ui.core.routing.Views(),
 				oFirstTarget,

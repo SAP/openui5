@@ -87,31 +87,31 @@
 			});
 			oGrid.placeAt('content');
 			if (jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-				module("CSS class presence check");
+				QUnit.module("CSS class presence check");
 				//check if all css classes are there as required
-				test("marginsOK", function(){
+				QUnit.test("marginsOK", function(assert) {
 					ok(!!jQuery("#grid1.sapUiGrid.sapUiGridHSpace1.sapUiGridVSpace1"), "CSS classes at root div of grid");
 				});
-				test("spanOK", function(){
+				QUnit.test("spanOK", function(assert) {
 					ok(!!jQuery("tf1").parent("sapUiGridSpanL4.sapUiGridSpanM6.sapUiGridSpanS10"), "CSS classes for custom span parameters");
 					ok(!!jQuery("tf2").parent("sapUiGridSpanL1.sapUiGridSpanM6.sapUiGridSpanS12"), "CSS classes for default span values");
 					ok(!!jQuery("tf3").parent("sapUiGridSpanL4.sapUiGridSpanS10"), "CSS classes for custom span parameters without M value");
 				});
-				test("indentOK", function(){
+				QUnit.test("indentOK", function(assert) {
 					ok(!!jQuery("#label2").parent(".sapUiGridIndentL1.sapUiGridIndentM0.sapUiGridIndentS0"), "CSS classes for custom indent");
 					ok(!!jQuery("#label2").parent("sapUiGridIndentL0.sapUiGridIndentM0.sapUiGridIndentS0"), "CSS classes for default indent 0");
 				});
-				test("moveOK", function(){
+				QUnit.test("moveOK", function(assert) {
 					ok(!!jQuery("#label1").parent("sapUiGridSpanBwdL1.sapUiGridSpanBwdM2"), "CSS classes for moveBackwards parameters");
 					ok(!!jQuery("#label2").parent("sapUiGridSpanFwdL1.sapUiGridSpanFwdM2.sapUiGridSpanFwdS1"), "CSS classes for moveForward parameters");
 				});
-				test("visibilityOK", function(){
+				QUnit.test("visibilityOK", function(assert) {
 					ok(!!jQuery("#tf4").parent(".sapUiGridHiddenM.sapUiGridHiddenL"), "CSS class for hidden on large and medium screens");
 				});
 
-				module("Accessibility");
+				QUnit.module("Accessibility");
 
-				test("getAccessibilityInfo", function() {
+				QUnit.test("getAccessibilityInfo", function(assert) {
 					var oLayout = new sap.ui.layout.Grid({
 						content: [
 							new sap.ui.layout.Grid(),

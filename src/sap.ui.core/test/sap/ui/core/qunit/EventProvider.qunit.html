@@ -20,7 +20,7 @@
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script>
 
-		test("InitialObject", 0, function() {
+		QUnit.test("InitialObject", 0, function(assert) {
 			var oObject = new sap.ui.base.EventProvider();
 			var mEventRegistry = oObject.mEventRegistry;
 
@@ -112,7 +112,7 @@
 			 return true;
 		}
 
-		test("FireEventSingleListener", function() {
+		QUnit.test("FireEventSingleListener", function(assert) {
 			var oObject = new sap.ui.base.EventProvider();
 			// simple registration
 			oObject.attachEvent("Fire1", handler1);
@@ -123,7 +123,7 @@
 			strictEqual(oEventInfo.id, "Fire1", "id of the received event");
 		});
 
-		test("ReservedNames", function() {
+		QUnit.test("ReservedNames", function(assert) {
 			var oObject = new sap.ui.base.EventProvider();
 //			assertEquals("number of event registrations for 'constructor'", undefined, count(oObject, "constructor"));
 			strictEqual(hasNoListeners(oObject, "constructor"), true, "number of event registrations for 'constructor'");
@@ -137,7 +137,7 @@
 			oObject.fireEvent("prototype", {name:"testReservedNames"} );
 		});
 
-		test("FireEventMultipleListeners", function() {
+		QUnit.test("FireEventMultipleListeners", function(assert) {
 			var oObject = new sap.ui.base.EventProvider();
 			oObject.attachEvent("Fire1", handler3);
 			oObject.attachEvent("Fire1", handler1, listenerA);
@@ -160,7 +160,7 @@
 			ok(mHandlers['handler1'], "handler3 received info");
 		});
 
-		test("FireEventDoubleRegistration", function() {
+		QUnit.test("FireEventDoubleRegistration", function(assert) {
 			var oObject = new sap.ui.base.EventProvider();
 			oObject.attachEvent("Fire1", handler1);
 			oObject.attachEvent("Fire1", handler1);
@@ -175,7 +175,7 @@
 			strictEqual(oEventInfo.handler, 'handler1', "handler1 received info");
 		});
 
-		test("AttachDetach", function() {
+		QUnit.test("AttachDetach", function(assert) {
 			var oObject = new sap.ui.base.EventProvider();
 			var mEventRegistry = oObject.mEventRegistry;
 			oObject.attachEvent("Fire1", handler1, listenerA);
@@ -218,7 +218,7 @@
 
 		})
 
-		test("FireEventWithAdditionalData", function() {
+		QUnit.test("FireEventWithAdditionalData", function(assert) {
 			var oObject = new sap.ui.base.EventProvider();
 			oObject.attachEvent("Fire4", {info: "Test data for event-handler function"}, handler4);
 			oObject.attachEvent("Fire4", {info: "Test data for event-handler function on listener object"}, handler4, listenerD);
@@ -240,7 +240,7 @@
 
 		});
 
-		test("PreventDefault", function() {
+		QUnit.test("PreventDefault", function(assert) {
 			var oObject = new sap.ui.base.EventProvider(),
 				bExecDefault;
 			oObject.attachEvent("noprevent", function(oEvent) {});
@@ -267,7 +267,7 @@
 			return oBubble2;
 		}
 
-		test("EventBubbling", function() {
+		QUnit.test("EventBubbling", function(assert) {
 			oBubble1.attachEvent("test", handler1);
 			oBubble2.attachEvent("test", handler2);
 			oBubble3.attachEvent("test", handler3);
@@ -282,7 +282,7 @@
 			oBubble3.detachEvent("test", handler3);
 		});
 
-		test("CancelBubble", function() {
+		QUnit.test("CancelBubble", function(assert) {
 			oBubble1.attachEvent("test", handler1);
 			oBubble2.attachEvent("test", handler2);
 			oBubble3.attachEvent("test", handler3);
@@ -314,7 +314,7 @@
 		});
 
 
-		test("attachEventOnce", 2, function() {
+		QUnit.test("attachEventOnce", 2, function(assert) {
 			var oEventProvider = new sap.ui.base.EventProvider();
 			var iCount = 0;
 			var that = this;

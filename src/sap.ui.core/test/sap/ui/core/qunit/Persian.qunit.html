@@ -45,9 +45,9 @@
 		];
 
 		//1. Instance related
-		module("Constructor");
-		
-		test("with no arguments", function () {
+		QUnit.module("Constructor");
+
+		QUnit.test("with no arguments", function (assert) {
 			var clock = sinon.useFakeTimers(); // 1, January 1970 = 11 Dey 1348 (11.10.1348)
 			var oPersianDate = new sap.ui.core.date.Persian(); //11 Dey 1348 (11.10.1348)
 			var now = new Date();// 1, January 1970
@@ -56,7 +56,7 @@
 			clock.restore();
 		});
 
-		test("with value parameter (timestamp)", function () {
+		QUnit.test("with value parameter (timestamp)", function (assert) {
 			var oPersianDate;
 
 			oPersianDate = new sap.ui.core.date.Persian("invalid Persian date timestamp");
@@ -83,7 +83,7 @@
 					oPersianDate, 1348, 9, 10, oGregorianDate.getDay(), oGregorianDate.getHours(), oGregorianDate.getMinutes(), oGregorianDate.getSeconds(), oGregorianDate.getMilliseconds());
 		});
 
-		test("with year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: invalid parameter type )", function () {
+		QUnit.test("with year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: invalid parameter type )", function (assert) {
 			// ------------- object -----------------------------
 			var oPersianDate = null;
 
@@ -134,7 +134,7 @@
 			ok(isInvalid(oPersianDate), "Constructor with invalid string as milliseconds must return invalid date");
 		});
 
-		test("with year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: valid values)", function () {
+		QUnit.test("with year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: valid values)", function (assert) {
 			var oPersianDate = null;
 			aTestData.forEach(function(oTestDate) {
 				oPersianDate = createPersianDateFromTestEntry(oTestDate);
@@ -142,7 +142,7 @@
 			})
 		});
 
-		test("with optional parameters", function () {
+		QUnit.test("with optional parameters", function (assert) {
 			var oPersianDate = new sap.ui.core.date.Persian(1430, 10);
 			verifyDate("new Persian(1430, 10) must be equal to 01.11.1430 (tuesday) 00:00:00.00 AM", oPersianDate, 1430, 10, 1);
 
@@ -150,9 +150,9 @@
 			verifyDate("new Persian(1430, 10, 2) msut be equal to 02.11.1430 (wednesday) 00:00:00.00 AM", oPersianDate, 1430, 10, 2)
 		});
 
-		module("Overflow/underflow");
+		QUnit.module("Overflow/underflow");
 
-		test("Overflow/underflow of month", function () {
+		QUnit.test("Overflow/underflow of month", function (assert) {
 			var oTestDate = aTestData[1],
 				oPersianDate;
 
@@ -175,7 +175,7 @@
 			verifyDate("month -1 in the constructor must underflow to previous year", oPersianDate, 1394, 11, 1);
 		});
 
-		test("Overflow/underflow of day", function () {
+		QUnit.test("Overflow/underflow of day", function (assert) {
 			var oTestDate = aTestData[1],
 				oPersianDate;
 
@@ -198,9 +198,9 @@
 			verifyDate("day 0 in the constructor must underflow to previous month", oPersianDate, 1394, 11, 29);
 		});
 
-		module("Setters/Getters");
+		QUnit.module("Setters/Getters");
 
-		test("Set/Get Full Year", function () {
+		QUnit.test("Set/Get Full Year", function (assert) {
 			var oTestDate = aTestData[1],
 				oPersianDate = createPersianDateFromTestEntry(oTestDate);
 
@@ -214,7 +214,7 @@
 			verifyDate("setFullYear with optional month", oPersianDate, 1394, 5, 23);
 		});
 
-		test("Set/Get Year", function () {
+		QUnit.test("Set/Get Year", function (assert) {
 			var oTestDate = aTestData[1],
 				oPersianDate = createPersianDateFromTestEntry(oTestDate);
 
@@ -222,9 +222,9 @@
 			verifyDate("setYear", oPersianDate, 1394, 0, 1);
 		});
 
-		module("Others");
+		QUnit.module("Others");
 
-		test("Setters have to return the time since 1.1.1970", function () {
+		QUnit.test("Setters have to return the time since 1.1.1970", function (assert) {
 			var oDate = new sap.ui.core.date.Persian(1395, 0, 1, 8, 10, 15, 119);
 
 			function check(iTimestamp, sSetter) {
@@ -251,7 +251,7 @@
 		});
 
 
-		test(".Now()", function () {
+		QUnit.test(".Now()", function (assert) {
 			var clock = sinon.useFakeTimers(0); // 1, January 1970 = 22 Shawwal 1389(22.10.1389)
 			equal(sap.ui.core.date.Persian.now(), 0, "Persian.now() must equal to the timestamp since 1 January 1970, 00:00:00 000");
 
@@ -262,7 +262,7 @@
 			clock.restore();
 		});
 
-		test("Convert Gregorian to Persian dates", function () {
+		QUnit.test("Convert Gregorian to Persian dates", function (assert) {
 			var oGregorianDate, oExpectedPersianDate, oCalculatedPersianDate;
 			for (var i = 0; i < aTestData.length; i++) {
 				oGregorianDate = createGregorianDateFromTestEntry(aTestData[i], true);
@@ -272,7 +272,7 @@
 			}
 		});
 
-		test("Convert Persian to Gregorian dates", function () {
+		QUnit.test("Convert Persian to Gregorian dates", function (assert) {
 			var oPersianDate, oExpectedGregorianDate, oCalculatedGregorianDate;
 			for (var i = 0; i < aTestData.length; i++) {
 				oPersianDate = createPersianDateFromTestEntry(aTestData[i], true);

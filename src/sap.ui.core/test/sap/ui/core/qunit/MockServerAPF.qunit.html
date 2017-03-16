@@ -26,8 +26,8 @@
 <script>
 jQuery.sap.require("sap.ui.core.util.MockServer");
 
-module('GIVEN APF model and data in MockServer', {
-    setup: function () {
+QUnit.module('GIVEN APF model and data in MockServer', {
+    beforeEach: function () {
         this.rootUri = "/apfService/";
         this.dataEntitySet = "ApfTestQueryResults";
         this.paramEntitySet = "ApfTestQuery";
@@ -91,37 +91,37 @@ module('GIVEN APF model and data in MockServer', {
             "NavID": "#9999"
         };
     },
-    teardown: function () {
+    afterEach: function () {
         this.oMockServer.stop();
         this.oMockServer.destroy();
     }
 });
 
-test("real initial data", function () {
+QUnit.test("real initial data", function (assert) {
     var rowExpr = "(SAPClient eq '999')";
     var wcaQuery = this.dataEntitySet + "?$filter=" + rowExpr;
     var response = jQuery.sap.sjax({url: this.rootUri + wcaQuery});
     equal(response.statusCode, "200");
 });
-test("ID initial data", function () {
+QUnit.test("ID initial data", function (assert) {
     var rowExpr = "(GenID eq 'ID_9999')";
     var wcaQuery = this.dataEntitySet + "?$filter=" + rowExpr;
     var response = jQuery.sap.sjax({url: this.rootUri + wcaQuery});
     equal(response.statusCode, "200");
 });
-test("predicate initial data", function () {
+QUnit.test("predicate initial data", function (assert) {
     var wcaQuery = this.dataEntitySet + "(GenID='ID_9999')";
     var response = jQuery.sap.sjax({url: this.rootUri + wcaQuery});
     equal(response.statusCode, "200");
 });
-test("query initial parameter data", function () {
+QUnit.test("query initial parameter data", function (assert) {
     var query = "ApfTestQuery(P_SAPClient='9999',P_FromDate='01012014',P_ToDate='01062014'," +
         "P_DisplayCurrency='eu',P_ExchangeRateType='eu',P_ExchangeRateDate='01012014'," +
         "P_AgingGridMeasureInDays=10,P_NetDueGridMeasureInDays=10,P_NetDueArrearsGridMsrInDays=10)";
     var response = jQuery.sap.sjax({url: this.rootUri + query});
     equal(response.statusCode, "200");
 });
-test("navigate from initial param to initial data", function () {
+QUnit.test("navigate from initial param to initial data", function (assert) {
     var query = "ApfTestQuery(P_SAPClient='9999',P_FromDate='01012014',P_ToDate='01062014'," +
         "P_DisplayCurrency='eu',P_ExchangeRateType='eu',P_ExchangeRateDate='01012014'," +
         "P_AgingGridMeasureInDays=10,P_NetDueGridMeasureInDays=10,P_NetDueArrearsGridMsrInDays=10)" +
@@ -131,7 +131,7 @@ test("navigate from initial param to initial data", function () {
 });
 
 
-test("POST table", function () {
+QUnit.test("POST table", function (assert) {
     var aTable = [
         ["GID_1", "#9999", "777", "c1", "Company 1", 1.11 ],
         ["GID_2", "#9999", "777", "c2", "Company 2", 2.22 ],
@@ -147,7 +147,7 @@ test("POST table", function () {
     equal(response.data.d.results.length, 5, "many");
 });
 
-test("POST table & filter by number", function () {
+QUnit.test("POST table & filter by number", function (assert) {
     var aTable = [
         ["GID_1", "#9999", "777", "c1", "Company 1", 1.11 ],
         ["GID_2", "#9999", "777", "c2", "Company 2", 2.22 ],
@@ -165,7 +165,7 @@ test("POST table & filter by number", function () {
 
 
 
-test("POST table GET results on parameter set #9999", function () {
+QUnit.test("POST table GET results on parameter set #9999", function (assert) {
     var ParameterCombination = [
         [ "777", "01012014", "01062014", "us", "us", "01012014", 10, 10, 10, "#111"
         ]
@@ -189,7 +189,7 @@ test("POST table GET results on parameter set #9999", function () {
     equal(response.data.d.results.length, 4, "many");
 });
 
-test("POST table GET results on parameter set #111", function () {
+QUnit.test("POST table GET results on parameter set #111", function (assert) {
     var parameter = [
         [ "777", "01012014", "01062014", "us", "us", "01012014", 10, 10, 10, "#111"
         ]

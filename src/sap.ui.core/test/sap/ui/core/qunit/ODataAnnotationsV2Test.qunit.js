@@ -334,7 +334,7 @@ function runODataAnnotationsV2Tests() {
 
 
 
-	module("Standard Tests for All Annotation Cases")
+	QUnit.module("Standard Tests for All Annotation Cases")
 
 	var fnTestLoading = function(mService) {
 		var oMetadata = new sap.ui.model.odata.ODataMetadata(mService.service + "$metadata", { asnc: true });
@@ -599,7 +599,7 @@ function runODataAnnotationsV2Tests() {
 	}
 
 
-	module("v2.ODataModel Integration Test")
+	QUnit.module("v2.ODataModel Integration Test")
 
 	var fnTestModelLoading = function(mService) {
 		// sap.ui.model.odata.v2.ODataModel.mServiceData = {};
@@ -698,7 +698,7 @@ function runODataAnnotationsV2Tests() {
 		}
 	}
 
-	module("Misc Test to increase test coverage");
+	QUnit.module("Misc Test to increase test coverage");
 
 	var fnTestMisc1 = function() {
 
@@ -836,7 +836,7 @@ function runODataAnnotationsV2Tests() {
 
 
 
-	module("Annotation Test Cases for Bugfixes and Specification Changes");
+	QUnit.module("Annotation Test Cases for Bugfixes and Specification Changes");
 
 
 	var fnTestLastModified = function() {

@@ -43,9 +43,9 @@
 		}
 
 	/* tests */
-	module("Basic rendering");
+	QUnit.module("Basic rendering");
 
-		test("Image is rendered when it's visible", function() {
+		QUnit.test("Image is rendered when it's visible", function(assert) {
 			// Arrange
 			var oImage = createImage();
 
@@ -62,7 +62,7 @@
 			oImage.destroy();
 		});
 
-		test("Image is not rendered when it's not visible", function() {
+		QUnit.test("Image is not rendered when it's not visible", function(assert) {
 			// Arrange
 			var oImage = createImage({
 				visible: false
@@ -82,9 +82,9 @@
 		});
 
 
-	module("Rendering decorative image");
+	QUnit.module("Rendering decorative image");
 
-		test("Alt text and tooltip", function() {
+		QUnit.test("Alt text and tooltip", function(assert) {
 			// Arrange
 			var oImage = createImage({
 				tooltip: sTooltip,
@@ -105,7 +105,7 @@
 			oImage.destroy();
 		});
 
-		test("Alt text and tooltip when empty", function() {
+		QUnit.test("Alt text and tooltip when empty", function(assert) {
 			// Arrange
 			var oImage = createImage({
 				decorative: true
@@ -122,7 +122,7 @@
 			oImage.destroy();
 		});
 
-		test("Decorative Image ARIA", function() {
+		QUnit.test("Decorative Image ARIA", function(assert) {
 			var oImage = createImage({
 				alt: "abcd"
 			});
@@ -147,9 +147,9 @@
 		});
 
 
-	module("Rendering non decorative image");
+	QUnit.module("Rendering non decorative image");
 
-		test("Alt text and tooltip", function() {
+		QUnit.test("Alt text and tooltip", function(assert) {
 			// Arrange
 			var oImage = createImage({
 				decorative: false,
@@ -171,7 +171,7 @@
 			oImage.destroy();
 		});
 
-		test("Alt text and tooltip when both are empty", function() {
+		QUnit.test("Alt text and tooltip when both are empty", function(assert) {
 			// Arrange
 			var oImage = createImage({
 				decorative: false
@@ -189,7 +189,7 @@
 			oImage.destroy();
 		});
 
-		test("Alt text and tooltip when one of them is empty", function() {
+		QUnit.test("Alt text and tooltip when one of them is empty", function(assert) {
 			// Arrange
 			var oImage = createImage({
 				decorative: false,
@@ -214,7 +214,7 @@
 			oImage.destroy();
 		});
 
-		test("Non decorative Image ARIA", function() {
+		QUnit.test("Non decorative Image ARIA", function(assert) {
 			var oImage = createImage({
 				decorative: false,
 				tooltip: sTooltip,
@@ -238,9 +238,9 @@
 		});
 
 
-	module("Mode property");
+	QUnit.module("Mode property");
 
-		test("Default mode property", function() {
+		QUnit.test("Default mode property", function(assert) {
 			var oImage = createImage();
 
 			// System under test
@@ -281,9 +281,9 @@
 		});
 
 
-	module("Dimensions");
+	QUnit.module("Dimensions");
 
-		test("Default Offset Dimensions", function() {
+		QUnit.test("Default Offset Dimensions", function(assert) {
 			var oImage = createImage();
 
 			// System under test
@@ -370,7 +370,7 @@
 		});
 
 
-	module("Density Aware");
+	QUnit.module("Density Aware");
 
 		if (window.devicePixelRatio > 1) {
 			asyncTest("Density Aware deafult value (true)", function() {
@@ -467,7 +467,7 @@
 		});
 
 
-	module("Src and ActiveSrc properties");
+	QUnit.module("Src and ActiveSrc properties");
 
 		if (window.devicePixelRatio === 1) {
 			asyncTest("Active Source Changed when pressed", function() {
@@ -560,9 +560,9 @@
 			oCore.applyChanges();
 		});
 
-	module("Tabindex");
+	QUnit.module("Tabindex");
 
-		test("Existence of attribute tabindex", function() {
+		QUnit.test("Existence of attribute tabindex", function(assert) {
 			var fn1 = function() {},
 				fn2 = function() {},
 				oImage = createImage({
@@ -605,9 +605,9 @@
 			oImage.destroy();
 		});
 
-		module("Accessibility");
+		QUnit.module("Accessibility");
 
-		test("getAccessibilityInfo", function() {
+		QUnit.test("getAccessibilityInfo", function(assert) {
 			var oImage = new sap.m.Image({alt: "Alt", tooltip: "Tooltip"});
 			ok(!!oImage.getAccessibilityInfo, "Image has a getAccessibilityInfo function");
 			var oInfo = oImage.getAccessibilityInfo();
@@ -630,7 +630,7 @@
 			oImage.destroy();
 		});
 
-	module("Bug fixes");
+	QUnit.module("Bug fixes");
 
 		asyncTest("Image with valid src under densityAware turned off", function() {
 			var oLoadSpy = sinon.spy(function() {

@@ -67,7 +67,7 @@
 	oView.placeAt('content');
 	sap.ui.getCore().applyChanges();
 
-	module("ObjectPageConfig");
+	QUnit.module("ObjectPageConfig");
 
 	QUnit
 		.test(
@@ -136,7 +136,7 @@
 
 		var oDataModel = new sap.ui.model.json.JSONModel();
 		oDataModel.loadData("model/HRData.json", {}, false);
-		
+
 		oView.setModel(oDataModel, "objectPageData");
 
 		sap.ui.getCore().applyChanges();

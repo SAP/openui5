@@ -141,14 +141,14 @@
             // TESTS
             // =================================================================
 
-            module("content property, preferDOM=false", {
-                setup : function() {
+            QUnit.module("content property, preferDOM=false", {
+                beforeEach : function() {
                 },
-                tearDown : function() {
+                afterEach : function() {
                 }
             });
 
-            test("single root, root control", function() {
+            QUnit.test("single root, root control", function(assert) {
 	            new sap.ui.core.HTML("html1", {
 	                content : FRAGMENT_1.content,
 	                preferDOM : false
@@ -159,7 +159,7 @@
 	            });
             });
 
-            test("single root, nested control", function() {
+            QUnit.test("single root, nested control", function(assert) {
 	            new sap.ui.commons.layout.MatrixLayout().createRow(
 	                    new sap.ui.core.HTML("html2", {
 	                        content : FRAGMENT_2.content,
@@ -171,7 +171,7 @@
 	            });
             });
 
-            test("invalidate UIArea", function() {
+            QUnit.test("invalidate UIArea", function(assert) {
 	            var oldDomRef = sap.ui.getCore().byId("html2").getDomRef();
 	            sap.ui.getCore().byId("html2").getUIArea().invalidate();
 
@@ -181,7 +181,7 @@
 	            });
             });
 
-            test("invalidate parent control", function() {
+            QUnit.test("invalidate parent control", function(assert) {
 	            var oldDomRef = sap.ui.getCore().byId("html2").getDomRef();
 	            sap.ui.getCore().byId("html2").getParent().invalidate();
 
@@ -191,7 +191,7 @@
 	            });
             });
 
-            test("invalidate HTML control", function() {
+            QUnit.test("invalidate HTML control", function(assert) {
 	            sap.ui.getCore().byId("html2").invalidate();
 
 	            afterRerendering(function() {
@@ -199,7 +199,7 @@
 	            });
             });
 
-            test("setting content", function() {
+            QUnit.test("setting content", function(assert) {
 	            oCore.byId("html2").setContent("");
 							oCore.applyChanges();
 			        equal(jQuery("#html2").size(), 0, "html2 DOM must be empty");
@@ -234,7 +234,7 @@
             });
 
 
-            test("destroy", function() {
+            QUnit.test("destroy", function(assert) {
             	equal(jQuery("#html1").size(), 1, "html1 DOM should exist");
             	equal(jQuery("#html2").size(), 1, "html2 DOM should exist");
             	sap.ui.getCore().byId("html1").destroy();
@@ -243,14 +243,14 @@
             	equal(jQuery("#html2").size(), 0, "html2 DOM should have been deleted");
             });
 
-            module("sap.ui.core.HTML, preferDOM=true", {
-                setup : function() {
+            QUnit.module("sap.ui.core.HTML, preferDOM=true", {
+                beforeEach : function() {
                 },
-                tearDown : function() {
+                afterEach : function() {
                 }
             });
 
-            test("content property + preferDOM, initial rendering", function() {
+            QUnit.test("content property + preferDOM, initial rendering", function(assert) {
 	            //Cleanup UIArea because placeAt only adds new control to UIArea
 	            sap.ui.getCore().getUIArea("uiAreaA").removeAllContent();
 	            new sap.ui.commons.layout.MatrixLayout().createRow(
@@ -263,7 +263,7 @@
 	            });
             });
 
-            test("content property + preferDOM, rerendering", function() {
+            QUnit.test("content property + preferDOM, rerendering", function(assert) {
 	            var oldDomRef = sap.ui.getCore().byId("html3").getDomRef();
 
 	            sap.ui.getCore().byId("html3").invalidate();
@@ -274,7 +274,7 @@
 	            });
             });
 
-            test("setting content", function() {
+            QUnit.test("setting content", function(assert) {
 	            oCore.byId("html3").setContent("");
 							oCore.applyChanges();
 			        equal(jQuery("#html3").size(), 0, "html3 DOM must be empty");
@@ -309,7 +309,7 @@
             });
 
 
-            test("survive removal", function() {
+            QUnit.test("survive removal", function(assert) {
             	// check preconditions
             	ok(sap.ui.getCore().byId("html3").getUIArea(), "html3 must be part of UIArea");
             	equal(jQuery("#html3").size(), 1, "html3 DOM should exist");
@@ -338,21 +338,21 @@
 
             });
 
-            test("destroy", function() {
+            QUnit.test("destroy", function(assert) {
             	equal(jQuery("#html3").size(), 1, "html3 DOM should exist");
             	sap.ui.getCore().byId("html3").destroy();
             	equal(jQuery("#html3").size(), 0, "html3 DOM should have been deleted");
             	equal(jQuery("#sap-ui-dummy-html3").size(), 0, "no dummy must exist");
             });
 
-            module("sap.ui.core.HTML, predefinedContent", {
-                setup : function() {
+            QUnit.module("sap.ui.core.HTML, predefinedContent", {
+                beforeEach : function() {
                 },
-                tearDown : function() {
+                afterEach : function() {
                 }
             });
 
-            test("predefined content, single root, root control", function() {
+            QUnit.test("predefined content, single root, root control", function(assert) {
 	            oPredefinedContent = jQuery("#html4")[0];
 	            new sap.ui.core.HTML("html4").placeAt("uiAreaB");
 
@@ -362,7 +362,7 @@
 	            });
             });
 
-            test("predefined content, invalidate UIArea", function() {
+            QUnit.test("predefined content, invalidate UIArea", function(assert) {
 	            sap.ui.getCore().byId("html4").getUIArea().invalidate();
 
 	            afterRerendering(function() {
@@ -370,7 +370,7 @@
 	            });
             });
 
-            test("predefined content, invalidate HTMLControl", function() {
+            QUnit.test("predefined content, invalidate HTMLControl", function(assert) {
 	            sap.ui.getCore().byId("html4").invalidate();
 
 	            afterRerendering(function() {
@@ -378,7 +378,7 @@
 	            });
             });
 
-            test("predefined content, rerender HTMLControl", function() {
+            QUnit.test("predefined content, rerender HTMLControl", function(assert) {
 	            sap.ui.getCore().byId("html4").rerender();
 	            // rerender is not async -> check immediately
 	            okFragment(FRAGMENT_3, "uiAreaB", "UIArea contains expected HTML fragment");
@@ -397,7 +397,7 @@
 
             // multiple roots test
 
-						test("content property, multiple roots", function() {
+						QUnit.test("content property, multiple roots", function(assert) {
 	            //Cleanup UIArea because placeAt only adds new control to UIArea
 	            sap.ui.getCore().getUIArea("uiAreaA").removeAllContent();
 	            new sap.ui.core.HTML("html6", {
@@ -413,7 +413,7 @@
 	            });
             });
 
-            test("predefined content, multiple roots, nested controls, initial rendering", function() {
+            QUnit.test("predefined content, multiple roots, nested controls, initial rendering", function(assert) {
 
 	            var layout = new sap.ui.commons.layout.MatrixLayout("layout7");
 	            var html = new sap.ui.core.HTML("html7");
@@ -429,7 +429,7 @@
 	            });
             });
 
-            test("predefined content, multiple roots, nested controls, rerendering", function() {
+            QUnit.test("predefined content, multiple roots, nested controls, rerendering", function(assert) {
 	            var layout = sap.ui.getCore().byId("layout7");
 	            var oldLayoutDomRef = layout.getDomRef();
 	            ok(oldLayoutDomRef != undefined, "layout has a domref");
@@ -449,7 +449,7 @@
             });
 
 
-            test("order of controls in UIArea", function() {
+            QUnit.test("order of controls in UIArea", function(assert) {
 	            var html = new sap.ui.core.HTML({content: FRAGMENT_1.content});
 							html.placeAt("uiAreaE");
 	            var button = new sap.ui.testlib.TestButton({text: "Button"});
@@ -470,7 +470,7 @@
 							equal($currentDom[1].tagName, "BUTTON");
             });
 
-			test("sanitization", function() {
+			QUnit.test("sanitization", function(assert) {
 				var offensiveContent = "<div><script>alert('hello')<\/script></div>",
 					sanitizedContent = "<div></div>",
 					html;

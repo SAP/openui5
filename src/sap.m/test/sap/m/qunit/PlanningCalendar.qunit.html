@@ -446,9 +446,9 @@
 
 		qutils.delayTestStart();
 
-		module("internal controls");
+		QUnit.module("internal controls");
 
-		test("PlanningCalendarRow", function() {
+		QUnit.test("PlanningCalendarRow", function(assert) {
 			var oRow = sap.ui.getCore().byId("PC1-Row1");
 			ok(oRow.getColumnListItem(), "ColumnListItem exist");
 			equal(oRow.getColumnListItem().getCells().length, 2, "row has 2 columns")
@@ -472,7 +472,7 @@
 			ok(jQuery.sap.equal(oCalendarRow.getNonWorkingHours(), [11, 12]), "Row2: CalendarRow - nonWorkingHours");
 		});
 
-		test("Table", function() {
+		QUnit.test("Table", function(assert) {
 			var oTable = sap.ui.getCore().byId("PC1-Table");
 
 			equal(oTable.getColumns().length, 2, "Table columns");
@@ -498,9 +498,9 @@
 			equal(oHeaderToolbar.getContent()[1].getId(), "PC1-Today", "Calendar head Toolbar: today button exist");
 		});
 
-		module("rendering");
+		QUnit.module("rendering");
 
-		test("table", function() {
+		QUnit.test("table", function(assert) {
 			var oTable = sap.ui.getCore().byId("PC1-Table");
 
 			ok(oTable.getDomRef(), "Table rendered");
@@ -521,7 +521,7 @@
 			ok(jQuery("#PC1-TimeInt").get(0), "CalendarTimeInterval rendered");
 		});
 
-		test("Appointments", function() {
+		QUnit.test("Appointments", function(assert) {
 			ok(jQuery("#PC1-R1H1").get(0), "Row1: IntervalHeader1 rendered");
 			ok(jQuery("#PC1-R1A1").get(0), "Row1: Appointment1 rendered");
 			ok(!jQuery("#PC1-R1A2").get(0), "Row1: Appointment2 not rendered");
@@ -548,7 +548,7 @@
 			equal(oExtractedRGB[3], oExpectedRGB.B, sLabel + " (BLUE)");
 		}
 
-		test("Check custom colors in Appointments", function () {
+		QUnit.test("Check custom colors in Appointments", function (assert) {
 		    var oAppointment$ = jQuery("#PC1-R1A1");
             ok(!oAppointment$.hasClass("sapUiCalendarAppType01"), "Row1: Color setting prevents default formatting");
 			var oBorderColor = _getCssColorProperty(oAppointment$, _getBorderColorPropertyName());
@@ -556,7 +556,7 @@
 			_checkColor(oBorderColor, {R: 255, G:0, B: 255}, "Row1: Appointment1 has the right custom border color");
 		});
 
-		test("Check custom colors in IntervalHeader", function () {
+		QUnit.test("Check custom colors in IntervalHeader", function (assert) {
 			var oIntervalHeader$ = jQuery("#PC1-R1H1");
 			var oBorderColor;
 			ok(!oIntervalHeader$.hasClass("sapUiCalendarRowAppsIntHeadType02"), "Row2: Color setting prevents default formatting");
@@ -565,9 +565,9 @@
 			_checkColor(oBorderColor, {R: 255, G:0, B: 0}, "Row2: IntervalHeader1 has the right custom border color");
 		});
 
-		module("Setters");
+		QUnit.module("Setters");
 
-		test("startDate", function() {
+		QUnit.test("startDate", function(assert) {
 			var oExpectedDate = new Date("2015", "0", "1", "08", "00");
 			var iStartTime = oPC1.getStartDate().getTime();
 			equal(oExpectedDate.getTime(), iStartTime, "Start date is OK");
@@ -587,7 +587,7 @@
 			ok(jQuery("#PC1-R1A2").get(0), "Row1: Appointment2 now rendered");
 		});
 
-		test("viewKey", function() {
+		QUnit.test("viewKey", function(assert) {
 			var sViewKey = oPC1.getViewKey();
 			equal(sViewKey, sap.ui.unified.CalendarIntervalType.Hour, "Default ViewKey")
 			equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Hour, "CalendarRow1 intervalType");
@@ -621,7 +621,7 @@
 			ok(jQuery("#PC1-MonthInt").get(0), "CalendarMonthInterval rendered");
 		});
 
-		test("singleSelection", function() {
+		QUnit.test("singleSelection", function(assert) {
 			var oTable = sap.ui.getCore().byId("PC1-Table");
 			ok(oPC1.getSingleSelection(), "Single selection is default");
 			equal(oTable.getMode(), sap.m.ListMode.SingleSelectMaster, "Table selection mode");
@@ -640,7 +640,7 @@
 			ok(!jQuery("#PC1-All").get(0), "Select All CheckBox not rendered");
 		});
 
-		test("width", function() {
+		QUnit.test("width", function(assert) {
 			ok(!oPC1.getWidth(), "no width set ad default");
 			var sStyle = oPC1.$().attr("style") || "";
 			ok(sStyle.search("width") < 0, "no width set on DOM")
@@ -653,7 +653,7 @@
 			equal(iWidth, 90 + "", "width set on DOM");
 		});
 
-		test("height", function() {
+		QUnit.test("height", function(assert) {
 			ok(!oPC1.getHeight(), "no height set ad default");
 			var sStyle = oPC1.$().attr("style") || "";
 			ok(sStyle.search("height") < 0, "no height set on DOM")
@@ -666,7 +666,7 @@
 			equal(iheight, 90 + "", "height set on DOM");
 		});
 
-		test("showIntervalHeaders", function() {
+		QUnit.test("showIntervalHeaders", function(assert) {
 			ok(oPC1.getShowIntervalHeaders(), "ShowIntervalHeaders is enabled by default");
 			ok(oPC1.getShowEmptyIntervalHeaders(), "ShowEmptyIntervalHeaders is enabled by default");
 			var aRows = oPC1.getRows();
@@ -688,7 +688,7 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		test("appointmentsReducedHeight", function() {
+		QUnit.test("appointmentsReducedHeight", function(assert) {
 			ok(!oPC1.getAppointmentsReducedHeight(), "AppointmentsReducedHeight is disabled by default");
 			var aRows = oPC1.getRows();
 			for(var i = 0; i < aRows.length; i++) {
@@ -705,7 +705,7 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		test("appointmentsVisualization", function() {
+		QUnit.test("appointmentsVisualization", function(assert) {
 			equal(oPC1.getAppointmentsVisualization(), sap.ui.unified.CalendarAppointmentVisualization.Standard, "AppointmentVisualization default set");
 			var aRows = oPC1.getRows();
 			for(var i = 0; i < aRows.length; i++) {
@@ -722,7 +722,7 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		test("showRowHeaders", function() {
+		QUnit.test("showRowHeaders", function(assert) {
 			ok(oPC1.getShowRowHeaders(), "ShowRowHeaders is enabled by default");
 
 			oPC1.setShowRowHeaders(false);
@@ -734,7 +734,7 @@
 			ok(jQuery("#PC1-Row1-Head").is(":visible"), "Row1 Header visible");
 		});
 
-		test("noDataText", function() {
+		QUnit.test("noDataText", function(assert) {
 			var oTable = sap.ui.getCore().byId("PC1-Table");
 			ok(!oPC1.getNoDataText(), "noDataText empty by default");
 			ok(!oTable.getProperty("noDataText"), "noDataText of table empty by default"); // use getProperty("noDataText") because getter is overwritten in ListBase
@@ -748,7 +748,7 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		test("minDate/maxDate", function() {
+		QUnit.test("minDate/maxDate", function(assert) {
 			ok(!oPC1.getMinDate(), "no minDate set by default");
 			ok(!sap.ui.getCore().byId("PC1-TimeInt").getMinDate(), "CalendarTimeInterval no minDate set by default");
 			ok(!sap.ui.getCore().byId("PC1-DateInt").getMinDate(), "CalendarDateInterval no minDate set by default");
@@ -786,7 +786,7 @@
 			ok(!sap.ui.getCore().byId("PC1-MonthInt").getMaxDate(), "CalendarMonthInterval no maxDate");
 		});
 
-		test("rows", function() {
+		QUnit.test("rows", function(assert) {
 			var oTable = sap.ui.getCore().byId("PC1-Table");
 			equal(oPC1.getRows().length, 2, "PlanningCalendarRows assigned");
 			var iIntervals = 12;
@@ -849,7 +849,7 @@
 			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
 		});
 
-		test("toolbarContent", function() {
+		QUnit.test("toolbarContent", function(assert) {
 			var oButton = new sap.m.Button("BX", {
 				icon: "sap-icon://home",
 				type: sap.m.ButtonType.Transparent
@@ -897,7 +897,7 @@
 			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
 		});
 
-		test("views", function() {
+		QUnit.test("views", function(assert) {
 			equal(oPC1.getViews().length, 0, "no views set in aggregation per default");
 
 			oPC1.setViewKey("D");
@@ -944,7 +944,7 @@
 			equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getShowSubIntervals(), false, "CalendarRow1 subIntervals");
 		});
 
-		test("specialDates", function() {
+		QUnit.test("specialDates", function(assert) {
 			var oTimeInterval = sap.ui.getCore().byId("PC1-TimeInt");
 			equal(oTimeInterval.getSpecialDates().length, 2, "TimeInterval gets SpecialDates from PlanningCalendar");
 			ok(jQuery("#PC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate rendered");
@@ -988,7 +988,7 @@
 			ok(!jQuery("#PC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate not longer rendered");
 		});
 
-		test("Row header", function() {
+		QUnit.test("Row header", function(assert) {
 			var oRow = sap.ui.getCore().byId("PC1-Row1");
 			var oRowHeader = oRow.getColumnListItem().getCells()[0];
 
@@ -1001,7 +1001,7 @@
 			equal(oRowHeader.getIcon(), "sap-icon://sap-ui5", "row header icon");
 		});
 
-		test("Row nonWorkingIntervals", function() {
+		QUnit.test("Row nonWorkingIntervals", function(assert) {
 			var oRow = sap.ui.getCore().byId("PC1-Row1");
 			var oCalendarRow = oRow.getCalendarRow();
 
@@ -1012,7 +1012,7 @@
 			ok(jQuery.sap.equal(oCalendarRow.getNonWorkingHours(), [11, 12]), "CalendarRow - nonWorkingHours");
 		});
 
-		test("Row selected", function() {
+		QUnit.test("Row selected", function(assert) {
 			var oRow = sap.ui.getCore().byId("PC1-Row1");
 			var oColumnListItem = oRow.getColumnListItem();
 			ok(!oRow.getSelected(), "Row not selected as default");
@@ -1024,7 +1024,7 @@
 			ok(oColumnListItem.getSelected(), "ColumnListItem now selected");
 		});
 
-		test("Row appointments", function() {
+		QUnit.test("Row appointments", function(assert) {
 			var oRow = sap.ui.getCore().byId("PC1-Row1");
 			var oCalendarRow = oRow.getCalendarRow();
 			ok(jQuery.sap.equal(oRow.getAppointments(), oCalendarRow.getAppointments()), "CalendarRow appointments");
@@ -1077,7 +1077,7 @@
 			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
 		});
 
-		test("Row intervalHeaders", function() {
+		QUnit.test("Row intervalHeaders", function(assert) {
 			var oRow = sap.ui.getCore().byId("PC1-Row1");
 			var oCalendarRow = oRow.getCalendarRow();
 			ok(jQuery.sap.equal(oRow.getIntervalHeaders(), oCalendarRow.getIntervalHeaders()), "CalendarRow IntervalHeaders");
@@ -1129,9 +1129,9 @@
 			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
 		});
 
-		module("events");
+		QUnit.module("events");
 
-		test("appointmentSelect", function() {
+		QUnit.test("appointmentSelect", function(assert) {
 			oSelectedAppointment = undefined;
 			qutils.triggerEvent("tap", "PC1-R1A1");
 			equal(oSelectedAppointment.getId(), "PC1-R1A1", "appointmentSelect event fired and appointment returned");
@@ -1139,7 +1139,7 @@
 			oSelectedAppointment = undefined;
 		});
 
-		test("rowSelectionChange", function() {
+		QUnit.test("rowSelectionChange", function(assert) {
 			equal(oPC1.getSelectedRows().length, 0, "No rows selected");
 
 			bRowSelectionChange = false;
@@ -1189,7 +1189,7 @@
 
 		});
 
-		test("startDateChange", function() {
+		QUnit.test("startDateChange", function(assert) {
 			bStartDateChange = false;
 			// via navigation on CalendarTimeInterval
 			qutils.triggerEvent("click", "PC1-TimeInt--Head-prev");
@@ -1264,7 +1264,7 @@
 			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
 		});
 
-		test("viewChange", function() {
+		QUnit.test("viewChange", function(assert) {
 			bViewChange = false;
 			jQuery("#PC1-IntType").focus();
 			qutils.triggerKeyboardEvent("PC1-IntType", "ARROW_DOWN");
@@ -1276,7 +1276,7 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		test("intervalselect", function() {
+		QUnit.test("intervalselect", function(assert) {
 			bIntervalSelect = false;
 			oIntervalStartDate = undefined;
 			oIntervalEndDate = undefined;
@@ -1305,7 +1305,7 @@
 			equal(oIntervalRow.getId(), "PC1-Row1", "row returned");
 		});
 
-		test("rowHeaderClick", function () {
+		QUnit.test("rowHeaderClick", function (assert) {
 			// Arrange
 			var oSpy,
 				oSecondRow = oPC1.getRows()[1], // Get second row
@@ -1331,7 +1331,7 @@
 			oPC1.detachEvent("rowHeaderClick", oSpy);
 		});
 
-		module("Proxy calls", {
+		QUnit.module("Proxy calls", {
 			beforeEach: function () {
 				this.sut = createPlanningCalendar("invalidationExample", new sap.m.SearchField(), new sap.m.Button(), new Date(2015, 0, 7), sap.ui.unified.CalendarIntervalType.Week);
 				this.sutInterval = this.sut.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
@@ -1344,7 +1344,7 @@
 			}
 		});
 
-		test("Calling 'invalidate()' on PlanningCalendar invokes its interval child 'invalidate()'", function () {
+		QUnit.test("Calling 'invalidate()' on PlanningCalendar invokes its interval child 'invalidate()'", function (assert) {
 			//prepare
 			var oPCInvalidateSpy = this.spy(this.sut, 'invalidate'),
 				oIntervalInvalidateSpy = this.spy(this.sutInterval, 'invalidate');
@@ -1358,7 +1358,7 @@
 			ok(oPCInvalidateSpy.callCount == oIntervalInvalidateSpy.callCount == 1, "Both methods are called exact (1) time");
 		});
 
-		test("Calling 'exit()' on PlanningCalendar invokes its interval child 'destroy()'", function () {
+		QUnit.test("Calling 'exit()' on PlanningCalendar invokes its interval child 'destroy()'", function (assert) {
 			//prepare
 			var oPCExitSpy = this.spy(this.sut, 'exit'),
 				oIntervalDestroySpy = this.spy(this.sutInterval, 'destroy');
@@ -1371,7 +1371,7 @@
 			ok(oPCExitSpy.callCount == oIntervalDestroySpy.callCount == 1, "Both methods are called exact (1) time");
 		});
 
-		test("'_handleCalendarSelect()' invokes its internal child methods 'fireSelect()'", function () {
+		QUnit.test("'_handleCalendarSelect()' invokes its internal child methods 'fireSelect()'", function (assert) {
 			//prepare
 			var oMonth = this.sutInterval.getAggregation('month')[0],
 				oMonthSelectSpy = this.spy(oMonth, 'fireSelect'),
@@ -1392,7 +1392,7 @@
 			strictEqual(oPlanningCalendarIntervalSelectSpy.callCount, 1, "PlanningCalendar IntervalSelect fired once");
 		});
 
-		test("'_handleYearSelect()' invokes its internal child '_adjustFocusedDateUponYearChange()'", function () {
+		QUnit.test("'_handleYearSelect()' invokes its internal child '_adjustFocusedDateUponYearChange()'", function (assert) {
 			//prepare
 			var oYearPicker = this.sutInterval.getAggregation('yearPicker'),
 					_adjustFocusedDateUponYearChangeStub, fnAdjustFocusedDateUponYearChange,
@@ -1417,7 +1417,7 @@
 			equal(iCalledWithYear, oYearPicker.getYear(), "'_adjustFocusedDateUponYearChange()' was called with the correct parameters iYear");
 		});
 
-		test("'_handleMonthSelect()' invokes its interval child '_adjustFocusedDateUponMonthChange()'", function () {
+		QUnit.test("'_handleMonthSelect()' invokes its interval child '_adjustFocusedDateUponMonthChange()'", function (assert) {
 			//prepare
 			var oMonthPicker = this.sutInterval.getAggregation('monthPicker'),
 					fnAdjustFocusedDateUponMonthChange, _adjustFocusedDateUponMonthChangeStub,
@@ -1441,7 +1441,7 @@
 			equal(iCalledWithMonth, oMonthPicker.getMonth(), "'_adjustFocusedDateUponMonthChange()' was called with the correct parameters iMonth");
 		});
 
-		module("Private API", {
+		QUnit.module("Private API", {
 			beforeEach: function () {
 				this.sut = createPlanningCalendar("invalidationExample", new sap.m.SearchField(), new sap.m.Button(), new Date(Date.UTC(2015, 0, 7)), sap.ui.unified.CalendarIntervalType.Week);
 				this.sutInterval = this.sut.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
@@ -1454,7 +1454,7 @@
 			}
 		});
 
-		test("'_updateTodayButtonState()' has correct output", function () {
+		QUnit.test("'_updateTodayButtonState()' has correct output", function (assert) {
 			//prepare
 			var _dateMatchesVisibleRangeSpy = this.spy(this.sut, '_dateMatchesVisibleRange');
 			//act
@@ -1463,7 +1463,7 @@
 			strictEqual(_dateMatchesVisibleRangeSpy.callCount, 1, "'_dateMatchesVisibleRangeSpy()' was called once");
 		});
 
-		test("today button enabled state is updated when the view is changed", function() {
+		QUnit.test("today button enabled state is updated when the view is changed", function(assert) {
 			//arrange
 			this.sut.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
 			this.sut.setStartDate(new Date());
@@ -1477,7 +1477,7 @@
 			strictEqual(oEnabledSpy.lastCall.args[0], false, 'today button state is updated correctly');
 		});
 
-		test("'_dateMatchesVisibleRange()' has correct output" , function () {
+		QUnit.test("'_dateMatchesVisibleRange()' has correct output" , function (assert) {
 			//prepare
 			var sViewKey = this.sut.getViewKey(),
 				oView = this.sut._getView(sViewKey),
@@ -1497,7 +1497,7 @@
 			}
 		});
 
-		test("'_getViews()' has correct output", function () {
+		QUnit.test("'_getViews()' has correct output", function (assert) {
 			//prepare
 			var sViewKey = this.sut.getViewKey(),
 				oWeekView = this.sut._getView(sViewKey);
@@ -1509,7 +1509,7 @@
 			strictEqual(oWeekView.getIntervalsL(), 7, "Correct number (7) intervals for L screen sizes");
 		});
 
-		module("Interaction", {
+		QUnit.module("Interaction", {
 			beforeEach: function() {
 				var oSearchField = new sap.m.SearchField(),
 						oButton = new sap.m.Button();
@@ -1530,7 +1530,7 @@
 			}
 		});
 
-		test("keyboard navigation", function(assert) {
+		QUnit.test("keyboard navigation", function(assert) {
 			// test here only interaction between rows, other things are tested on CalendarRow
 			var fnDone = assert.async();
 
@@ -1555,7 +1555,7 @@
 		});
 
 
-		test("keyboard navigation HOME & END for 1 Month view", function() {
+		QUnit.test("keyboard navigation HOME & END for 1 Month view", function(assert) {
 			_switchToView(sap.ui.unified.CalendarIntervalType.OneMonth, this.oPC2);
 			this.oPC2.setStartDate(this.o1Sep2016MidOfWeek);
 			this.oPC2.rerender();
@@ -1580,7 +1580,7 @@
 			equal(document.activeElement.id,  sMonthIdPrefix + "20160930", "30 of September focused");
 		});
 
-		test("When start date is defined the planning calendar should shift to the first day of the week that includes the start date ", function() {
+		QUnit.test("When start date is defined the planning calendar should shift to the first day of the week that includes the start date ", function(assert) {
 			//assert initial state
 			_assertDatesAreVisible.call(this, [
 						new Date(2016, 7, 29),
@@ -1607,7 +1607,7 @@
 					this.oPC2, "StartDate modified afterwards");
 		});
 
-		test("Navigation backward via back button", function() {
+		QUnit.test("Navigation backward via back button", function(assert) {
 			//act
 			_navBackward.call(this, this.oPC2);//one week before week 29th of August 2016 - 4th of September, 2016
 
@@ -1638,7 +1638,7 @@
 		});
 
 
-		test("Navigation backward via keyboard left arrow (outside the current visible area)", function(assert) {
+		QUnit.test("Navigation backward via keyboard left arrow (outside the current visible area)", function(assert) {
 			var $Days = this.oPC2IntervalRow.$("days"),
 					aDays = $Days.children(),
 					oNextTarget = aDays[0],
@@ -1678,7 +1678,7 @@
 			}, 0);
 		});
 
-		test("Navigation backward via keyboard left arrow (outside the current visible area) at the border of the DST (Nov->Oct)", function(assert) {
+		QUnit.test("Navigation backward via keyboard left arrow (outside the current visible area) at the border of the DST (Nov->Oct)", function(assert) {
 			//prepare
 			var oOriginalFormatLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
 					sOriginalFormatLocale = oOriginalFormatLocale.getLanguage() + "_" +  oOriginalFormatLocale.getRegion(),
@@ -1716,7 +1716,7 @@
 			}, 0);
 		});
 
-		test("Navigation forward via forward button", function() {
+		QUnit.test("Navigation forward via forward button", function(assert) {
 			//act
 			_navForward.call(this, this.oPC2);//one week after week 29th of August 2016 - 4th of September, 2016
 
@@ -1746,7 +1746,7 @@
 					this.oPC2, "Navigating forward twice");
 		});
 
-		test("Navigation forward via keyboard right (outside the current visible area)", function(assert) {
+		QUnit.test("Navigation forward via keyboard right (outside the current visible area)", function(assert) {
 			var $Days = this.oPC2IntervalRow.$("days"),
 					aDays = $Days.children(),
 					oNextTarget = aDays[aDays.length-1],
@@ -1787,7 +1787,7 @@
 			}, 0);
 		});
 
-		test("Navigation backward and forward", function() {
+		QUnit.test("Navigation backward and forward", function(assert) {
 			var i;
 			//act
 			for (i = 0; i < 10; i++) {
@@ -1810,7 +1810,7 @@
 					this.oPC2, "Navigating forward once");
 		});
 
-		test("Navigation (month picker) - switch month and shift the planning calendar to the week of the month containing the first day of the month", function(){
+		QUnit.test("Navigation (month picker) - switch month and shift the planning calendar to the week of the month containing the first day of the month", function(assert) {
 			//act
 			//November 2016. This leads to week 31 Oct - 6 Nov
 			_switchToMonth.call(this, this.oPC2, 10);
@@ -1865,7 +1865,7 @@
 					this.oPC2, "Month March->Feb should change the week");
 		});
 
-		test("Navigation (year picker) - the calendar should show the same calendar week in the picked year", function(){
+		QUnit.test("Navigation (year picker) - the calendar should show the same calendar week in the picked year", function(assert) {
 			/**
 			 * The initial start date of PlanningCalendar in this test is 1st of September 2016 (CW#35)
 			 */
@@ -2160,7 +2160,7 @@
 			sap.ui.getCore().getConfiguration().setFormatLocale("en-GB");
 		});
 
-		test("'Today' button should be disabled when current day is visible", function() {
+		QUnit.test("'Today' button should be disabled when current day is visible", function(assert) {
 			//assert
 			equal(_getTodayButton.call(this, this.oPC2).getEnabled(), true, "Today button should be enabled as current day IS NOT visible");
 
@@ -2170,7 +2170,7 @@
 			equal(_getTodayButton.call(this, this.oPC2).getEnabled(), false, "Today button should not be enabled  as current day IS visible");
 		});
 
-		test("Clicking 'Today' button navigates to the week of the current day", function () {
+		QUnit.test("Clicking 'Today' button navigates to the week of the current day", function (assert) {
 			//prepare
 			var oFakeNow = this.o10Sep2016,
 					clock = sinon.useFakeTimers(oFakeNow.getTime());
@@ -2197,7 +2197,7 @@
 
 		});
 
-		test("Clicking 'Today' button in week view then changing back to hours shows the hours unchanged", function () {
+		QUnit.test("Clicking 'Today' button in week view then changing back to hours shows the hours unchanged", function (assert) {
 			//act
 			var oFakeNow = new Date(2016, 8, 1, 3),
 					clock = sinon.useFakeTimers(oFakeNow.getTime()),
@@ -2247,7 +2247,7 @@
 			clock.restore();
 		});
 
-		test("'Today' button visibility works only with week view", function () {
+		QUnit.test("'Today' button visibility works only with week view", function (assert) {
 			//prepare
 			var oFakeNow = this.o10Sep2016,
 					clock = sinon.useFakeTimers(oFakeNow.getTime());
@@ -2273,7 +2273,7 @@
 			clock.restore();
 		});
 
-		test("If view changed from Week->Hours, we see hours for first day of the previously shown week", function () {
+		QUnit.test("If view changed from Week->Hours, we see hours for first day of the previously shown week", function (assert) {
 			var iInterval;
 			//startDate 1st of september 2016(Thursday)->show hours for the 1st day of week 29 Aug 2016 (Monday)
 			 //prepare
@@ -2311,7 +2311,7 @@
 
 		});
 
-		test("Navigation (month picker) - click today then switch month to the same", function() {
+		QUnit.test("Navigation (month picker) - click today then switch month to the same", function(assert) {
 			//prepare
 			_switchToView.call(this, sap.ui.unified.CalendarIntervalType.Week, this.oPC2);
 
@@ -2359,7 +2359,7 @@
 			oClock.restore();
 		});
 
-		test("Week view - click on different dates keeps the focus and week", function() {
+		QUnit.test("Week view - click on different dates keeps the focus and week", function(assert) {
 			//Prepare
 			var aWeekDays = this.oPC2IntervalRow.$("days").children();
 
@@ -2385,7 +2385,7 @@
 					this.oPC2, "Initial week should not be changed");
 		});
 
-		module("OneMonth view", {
+		QUnit.module("OneMonth view", {
 			beforeEach: function() {
 				var oSearchField = new sap.m.SearchField(),
 						oButton = new sap.m.Button();
@@ -2449,12 +2449,12 @@
 			}
 		});
 
-		test('OneMonth item is in the select', function() {
+		QUnit.test('OneMonth item is in the select', function(assert) {
 			//act and assert
 			_switchToView.call(this, sap.ui.unified.CalendarIntervalType.OneMonth, this.oPC);
 		});
 
-		test('interval shows 31 days', function() {
+		QUnit.test('interval shows 31 days', function(assert) {
 			//assert
 			equals(this.oPCInterval.getStartDate().getMonth(), 8, 'it is september');
 			equals(this.oPCInterval.getDays(), 31, 'interval has 31 days in september');
@@ -2467,7 +2467,7 @@
 			equals(this.oPCInterval.getDays(), 31, 'interval has 31 days in february');
 		});
 
-		test('start day is the first day of the month', function() {
+		QUnit.test('start day is the first day of the month', function(assert) {
 			//assert
 			equals(this.oPCInterval.getStartDate().getMonth(), 8, 'it is september');
 			equals(this.oPCInterval.getStartDate().getDate(), 1, 'interval starts at 1st of september');
@@ -2480,7 +2480,7 @@
 			equals(this.oPCInterval.getStartDate().getDate(), 1, 'interval starts at 1st of june');
 		});
 
-		test('last days belong to the next month', function() {
+		QUnit.test('last days belong to the next month', function(assert) {
 			//assert
 			var o1Oct2016 = this._get1stInNextMonth(this.o14Sep2016MidOfMonth);
 			var o1Mar2016 = this._get1stInNextMonth(this.o10Feb2016);
@@ -2496,12 +2496,12 @@
 			_assertDateIsVisible.call(this, o2Mar2016, this.oPC, '');
 		});
 
-		test('last days look different', function() {
+		QUnit.test('last days look different', function(assert) {
 			//assert
 			this._assertIntervalHasClass(31, this.oPC, 'sapUiCalItemOtherMonth'); //check that Oct 1 is disabled
 		});
 
-		test('last days display appointments', function() {
+		QUnit.test('last days display appointments', function(assert) {
 			var oAppointment1July2014 = sap.ui.getCore().byId(this.oPC.getId() + "-R1A4");
 
 			//act
@@ -2513,7 +2513,7 @@
 			ok(oAppointment1July2014.getDomRef(), "appointment is rendered");
 		});
 
-		test('intervalSelect fires correctly', function() {
+		QUnit.test('intervalSelect fires correctly', function(assert) {
 			var oRow = this._getFirstRow(this.oPC);
 			var eventParams = {};
             bIntervalSelect = false;
@@ -2537,7 +2537,7 @@
 					"intervalSelect was not fired because the click was on the next month's first days and this serves as navigation, not selection");
 		});
 
-		test('select fires correctly', function() {
+		QUnit.test('select fires correctly', function(assert) {
 			var oRow = this._getFirstRow(this.oPC);
 			var eventParams = {};
 			oRow.attachSelect(function(oEvent) {
@@ -2558,7 +2558,7 @@
 			equals(eventParams.multiSelect, false, 'multiSelect is correct');
 		});
 
-		test('last days intervals navigate to the next month', function() {
+		QUnit.test('last days intervals navigate to the next month', function(assert) {
 			//act
 			this._clickInterval(this._getFirstRow(this.oPC), 31); //click first row of next month's first day - 1 Oct 2016
 
@@ -2566,7 +2566,7 @@
 			equals(this.oPC.getStartDate().getMonth(), 9, 'month changed to october');
 		});
 
-		test('navigate backward with the arrows', function() {
+		QUnit.test('navigate backward with the arrows', function(assert) {
 			//act
 			_navBackward.call(this, this.oPC);
 
@@ -2575,7 +2575,7 @@
 			equals(this.oPC.getStartDate().getDate(), 1, 'start date is 1st');
 		});
 
-		test('navigate forward with the arrows', function() {
+		QUnit.test('navigate forward with the arrows', function(assert) {
 			//act
 			_navForward.call(this, this.oPC);
 
@@ -2584,7 +2584,7 @@
 			equals(this.oPC.getStartDate().getDate(), 1, 'start date is 1st');
 		});
 
-		test('change of year keeps month', function() {
+		QUnit.test('change of year keeps month', function(assert) {
 			//act
 			_switchToYear.call(this, this.oPC, 2017);
 
@@ -2593,7 +2593,7 @@
 			equals(this.oPC.getStartDate().getDate(), 1, 'start date is 1st');
 		});
 
-		test('today button is disabled when today is visible', function() {
+		QUnit.test('today button is disabled when today is visible', function(assert) {
 			var oToday = new Date();
 			var oTodayBtn = _getTodayButton.call(this, this.oPC);
 
@@ -2608,7 +2608,7 @@
 			equals(oTodayBtn.getEnabled(), false, 'today button is disabled when today is visible');
 		});
 
-		test('clicking today navigates to todays month', function() {
+		QUnit.test('clicking today navigates to todays month', function(assert) {
 			var oToday = new Date();
 
 			//act
@@ -2620,7 +2620,7 @@
 			equals(this.oPC.getStartDate().getDate(), 1, 'date is correct');
 		});
 
-		test('switch to hours view shows the first hours of the month', function() {
+		QUnit.test('switch to hours view shows the first hours of the month', function(assert) {
 			//act
 			_switchToView.call(this, sap.ui.unified.CalendarIntervalType.Hour, this.oPC);
 
@@ -2631,7 +2631,7 @@
 			equals(this.oPC.getStartDate().getHours(), 0, 'starts from midnight');
 		});
 
-		test('switch to days view starts from 1st', function() {
+		QUnit.test('switch to days view starts from 1st', function(assert) {
 			//act
 			_switchToView.call(this, sap.ui.unified.CalendarIntervalType.Day, this.oPC);
 
@@ -2641,7 +2641,7 @@
 			equals(this.oPC.getStartDate().getDate(), 1, 'date is 1st');
 		});
 
-		test('switch to month view starts from the same month', function() {
+		QUnit.test('switch to month view starts from the same month', function(assert) {
 			//act
 			_switchToView.call(this, sap.ui.unified.CalendarIntervalType.Month, this.oPC);
 
@@ -2650,7 +2650,7 @@
 			equals(this.oPC.getStartDate().getMonth(), 8, 'month is the same');
 		});
 
-		module("OneMonth view (size S)", {
+		QUnit.module("OneMonth view (size S)", {
 			beforeEach: function () {
 				this._simulateMobileEnvironment();
 				this.o14Sep2016MidOfMonth = new Date(2016, 8, 14);
@@ -2684,7 +2684,7 @@
 			}
 		});
 
-		test("'setViewKeys()' setter calls 'OneMonthInterval._setDisplayMode()' with correct 'iSize' parameter", function () {
+		QUnit.test("'setViewKeys()' setter calls 'OneMonthInterval._setDisplayMode()' with correct 'iSize' parameter", function (assert) {
 			//arrange
 			var oSetDisplayModeSpy = this.spy(sap.ui.unified.CalendarOneMonthInterval.prototype, "_setDisplayMode"),
 				iPhoneSize = 0;
@@ -2695,7 +2695,7 @@
 			strictEqual(oSetDisplayModeSpy.getCall(0).args[0], iPhoneSize, "The correct mode value is set");
 		});
 
-		test("'setViewKeys()' setter calls 'setStartDate()' setter with an auto switched to 1st day of the month date", function () {
+		QUnit.test("'setViewKeys()' setter calls 'setStartDate()' setter with an auto switched to 1st day of the month date", function (assert) {
 			//arrange
 			var oStartDateSetterSpy = this.spy(sap.m.PlanningCalendar.prototype, "setStartDate");
 			this._createCalendar();
@@ -2705,7 +2705,7 @@
 			strictEqual(oStartDateSetterSpy.getCall(2).args[0].getTime(), new Date(2016, 8, 1).getTime(), "The correct date is auto adjusted for the first day of month");
 		});
 
-		test("'setStartDate()' setter calls '_setRowsStartDate()' with correct date parameter", function () {
+		QUnit.test("'setStartDate()' setter calls '_setRowsStartDate()' with correct date parameter", function (assert) {
 			//arrange
 			this._createCalendar();
 			var oSetRowsStartDateSpy = this.spy(this._oPC, "_setRowsStartDate");
@@ -2718,7 +2718,7 @@
 			strictEqual(oSetRowsStartDateSpy.getCall(0).args[0].getTime(), new Date(2015, 3, 1).getTime(), "'_setRowsStartDate()' is called with correct parameter");
 		});
 
-		test("_setRowsStartDate", function() {
+		QUnit.test("_setRowsStartDate", function(assert) {
 			var oTestDate = new Date(5, 5, 5);
 			this._createCalendar();
 			this._oPC._setRowsStartDate(oTestDate);
@@ -2726,7 +2726,7 @@
 			equal(this._oPC.getRows()[1].getCalendarRow().getStartDate().getTime(), oTestDate.getTime(), 'row 2 start date');
 		});
 
-		test("'_handleTodayPress()' event handler adjust the startDate to the 1st day of month", function () {
+		QUnit.test("'_handleTodayPress()' event handler adjust the startDate to the 1st day of month", function (assert) {
 			//arrange
 			var oHandleTodayPressSpy = this.spy(sap.m.PlanningCalendar.prototype, "_handleTodayPress"),
 				oSetStartDateSpy;
@@ -2744,7 +2744,7 @@
 			oSetStartDateSpy.restore();
 		});
 
-		test("'_handleCalendarSelect()' event handler adjust the startDate to the 1st day of month", function () {
+		QUnit.test("'_handleCalendarSelect()' event handler adjust the startDate to the 1st day of month", function (assert) {
 			//arrange
 			var oHandleCalendarSelectSpy = this.spy(sap.m.PlanningCalendar.prototype, "_handleCalendarSelect"),
 				oPCInterval,
@@ -2762,7 +2762,7 @@
 			oHandleCalendarSelectSpy.restore();
 		});
 
-		test("'CalendarOneMonthInterval._createMonth()'", function () {
+		QUnit.test("'CalendarOneMonthInterval._createMonth()'", function (assert) {
 			//arrange
 			var oOneMonthIntervalCreateMonthSpy = this.spy(sap.ui.unified.CalendarOneMonthInterval.prototype, "_createMonth"),
 				oDateIntervalCreateMonthSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "_createMonth"),
@@ -2779,7 +2779,7 @@
 			oOneMonthIntervalCreateMonthSpy.restore();
 		});
 
-		test("'OneMonthDatesRow.init()' calls its super class 'init()' and sets its internal private property 'iMode' to the default value '2'", function () {
+		QUnit.test("'OneMonthDatesRow.init()' calls its super class 'init()' and sets its internal private property 'iMode' to the default value '2'", function (assert) {
 			//arrange
 			var oOneMonthDatesRow = sap.ui.unified.calendar.OneMonthDatesRow,
 				oOneMonthDatesRowSpy = this.spy(oOneMonthDatesRow.prototype, "init"),
@@ -2796,7 +2796,7 @@
 			oDatesRowSpy.restore();
 		});
 
-		test("'OneMonthDatesRow.setMode()' updates the iMode property", function () {
+		QUnit.test("'OneMonthDatesRow.setMode()' updates the iMode property", function (assert) {
 			//arrange
 			this._createCalendar();
 			//assert
@@ -2811,7 +2811,7 @@
 			strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 1, "'OneMonthDatesRow.setMode()' sets the internal 'iMode' property as expected");
 		});
 
-		test("'OneMonthDatesRow.setDate()' setter with a date calls its super class 'setDate()' setter", function () {
+		QUnit.test("'OneMonthDatesRow.setDate()' setter with a date calls its super class 'setDate()' setter", function (assert) {
 			//arrange
 			var oOneMonthDatesRowSpy = this.spy(sap.ui.unified.calendar.OneMonthDatesRow.prototype, "setDate"),
 				oDatesRowSpy = this.spy(sap.ui.unified.calendar.DatesRow.prototype, "setDate"),
@@ -2834,7 +2834,7 @@
 			oDatesRowSpy.restore();
 		});
 
-		test("'CalendarRow.Renderer' calls its 'renderSingleDayInterval()'", function () {
+		QUnit.test("'CalendarRow.Renderer' calls its 'renderSingleDayInterval()'", function (assert) {
 			//arrange
 			var oCalendarRowRenderer = sap.ui.unified.CalendarRowRenderer,
 				oCalendarRowRendererSpy = this.spy(oCalendarRowRenderer, "renderSingleDayInterval");
@@ -2846,9 +2846,9 @@
 			oCalendarRowRendererSpy.restore();
 		});
 
-		module("ARIA");
+		QUnit.module("ARIA");
 
-		test("Week day and date aria", function() {
+		QUnit.test("Week day and date aria", function(assert) {
 			oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
 			sap.ui.getCore().applyChanges();
 
@@ -2862,7 +2862,7 @@
 			strictEqual(jQuery("#PC1-DateInt--Month0-20150102").attr("aria-label"), sExpectedAria, "Correct week day and date aria are written");
 		});
 
-		module("views", {
+		QUnit.module("views", {
 			beforeEach: function () {
 				this.oPC = new sap.m.PlanningCalendar();
 			},
@@ -2872,7 +2872,7 @@
 			}
 		});
 
-		test("Toggle view select visibility", function (assert) {
+		QUnit.test("Toggle view select visibility", function (assert) {
 			// Assert
 			assert.strictEqual(this.oPC._oIntervalTypeSelect.getVisible(), true, "By default the planning calendar is " +
 					"created with multiple predefined views so the internal select control should be visible");
@@ -2901,7 +2901,7 @@
 					"select should not be visible");
 		});
 
-		test('_isNextMonth', function() {
+		QUnit.test('_isNextMonth', function(assert) {
 			this.oPC.setStartDate(new Date(2011, 10, 11));
 			ok(this.oPC._isNextMonth(new Date(2012, 10, 11)), 'month from the next year is some next month date');
 			ok(this.oPC._isNextMonth(new Date(2012, 9, 11)), 'previous month from the next year is some next month date');
@@ -2909,9 +2909,9 @@
 			ok(!this.oPC._isNextMonth(new Date(2011, 9, 30)), 'date from the prev month is not a next month date');
 		});
 
-		module('CalendarAppointment');
+		QUnit.module('CalendarAppointment');
 
-		test('_getComparer', function() {
+		QUnit.test('_getComparer', function(assert) {
 			var aAppInfos = [
 				new sap.ui.unified.CalendarAppointment({
 					startDate: new Date(2015, 0, 2, 8, 0),
@@ -2949,7 +2949,7 @@
 			equal(aSortedInfos[3].appointment.getTitle(), "3", 'item sorted correctly');
 		});
 
-		test('_getDateRangeIntersectionText', function() {
+		QUnit.test('_getDateRangeIntersectionText', function(assert) {
 			var aAppInfos = [
 					new sap.ui.unified.CalendarAppointment({
 						startDate: new Date(2015, 0, 3, 8, 0),

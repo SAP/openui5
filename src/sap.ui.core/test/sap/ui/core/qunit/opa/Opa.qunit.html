@@ -280,7 +280,7 @@ sap.ui.require([
 		this.clock.tick(5000);
 	});
 
-	module("Exception Handling");
+	QUnit.module("Exception Handling");
 
 	QUnit.test("Should throw an Exception and reject the emptyQueue promise if there is an error in the check or success", function(assert) {
 
@@ -340,7 +340,7 @@ sap.ui.require([
 	});
 
 
-	module("StopQueue", {
+	QUnit.module("StopQueue", {
 		beforeEach : function () {
 			this.fnErrorLogStub = sinon.stub(oLogger, "error", $.noop);
 			sinon.config.useFakeTimers = false;
@@ -351,7 +351,7 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("Should display a warning if 'stopQueue' is called without calling 'emptyQueue'", function() {
+	QUnit.test("Should display a warning if 'stopQueue' is called without calling 'emptyQueue'", function(assert) {
 		// System under Test
 		var fnSpy = this.spy(oLogger, "warning");
 		Opa.stopQueue();
@@ -383,7 +383,7 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.test("Should stop a Queue while polling", function () {
+	QUnit.test("Should stop a Queue while polling", function (assert) {
 		var oOpa = new Opa(),
 			fnDone = assert.async(),
 			fnSuccess = sinon.spy(),
@@ -748,7 +748,7 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("Should throw an exception if EmptyQueue function is called twice", function(assert){
+	QUnit.test("Should throw an exception if EmptyQueue function is called twice", function(assert) {
 		// System under Test
 		var oOpa = new Opa();
 

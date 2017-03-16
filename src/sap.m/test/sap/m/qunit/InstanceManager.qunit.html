@@ -172,13 +172,13 @@
 			var sCategoryId = "_category_",
 				oInstance = {property: "Property"};
 
-			module("Initial Check");
-			test("Initialization", function() {
+			QUnit.module("Initial Check");
+			QUnit.test("Initialization", function(assert) {
 				ok(sap.m.InstanceManager, "Instance Manager module has been loaded");
 			});
 
-			module("Add and remove normal object");
-			test("Add object", function(){
+			QUnit.module("Add and remove normal object");
+			QUnit.test("Add object", function(assert){
 				ok(im.isCategoryEmpty(sCategoryId), "Category is empty now");
 				im.addInstance(sCategoryId, oInstance);
 				ok(!im.isCategoryEmpty(sCategoryId), "Category is not empty anymore");
@@ -190,7 +190,7 @@
 				ok(im.isInstanceManaged(sCategoryId, oInstance), "Instance is still managed");
 			});
 
-			test("Remove object", function(){
+			QUnit.test("Remove object", function(assert){
 				im.removeInstance(sCategoryId, oInstance);
 				ok(im.isCategoryEmpty(sCategoryId), "Category is empty now");
 				ok(!im.isInstanceManaged(sCategoryId, oInstance), "Instance is not managed any more");
@@ -198,7 +198,7 @@
 			});
 
 
-			module("Open and close Dialog");
+			QUnit.module("Open and close Dialog");
 			asyncTest("Open Dialog", function(){
 				oDialog.open();
 				expect(3);
@@ -209,9 +209,9 @@
 				expect(3);
 			});
 
-            module("callbacks");
+            QUnit.module("callbacks");
 
-            test("Should close all dialogs and trigger a callback", function() {
+            QUnit.test("Should close all dialogs and trigger a callback", function(assert) {
 
                     //Arrange
 
@@ -252,7 +252,7 @@
                     strictEqual(callback.callCount, 1, "callback was executed");
             });
 
-			module("Open and close Popover");
+			QUnit.module("Open and close Popover");
 			asyncTest("Open Dialog", function(){
 				oPopover.openBy(oButton);
 				expect(3);

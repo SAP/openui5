@@ -154,18 +154,18 @@
 
 		/***************** TESTS ******************/
 
-		test("Page and List rendered", function() {
+		QUnit.test("Page and List rendered", function(assert) {
 			ok(jQuery.sap.domById("page1"), "page1 should be rendered");
 			ok(jQuery.sap.domById("growingList"), "growingList should be rendered");
 		});
 
 
-		test("Initial scroll position", function() {
+		QUnit.test("Initial scroll position", function(assert) {
 			equal(page1.getScrollDelegate().getScrollTop(), 0, "page1 should be scrolled to position 0");
 		});
 
 
-		test("Scrolling", function() {
+		QUnit.test("Scrolling", function(assert) {
 			page1.scrollTo(60, 0);
 
 			equal(getScrollPos(), -60, "Page should be scrolled to position 60");
@@ -187,7 +187,7 @@
 
 
 		if (!sap.ui.Device.browser.internet_explorer) { // known gap in IE
-			test("Scroll position after rerendering page1", function() {
+			QUnit.test("Scroll position after rerendering page1", function(assert) {
 				page1.rerender();
 
 				equal(getScrollPos(), -50, "Page should be scrolled to position 50");
@@ -264,7 +264,7 @@
 		});
 
 
-		test("Scroll position after rerendering the APP", function() {
+		QUnit.test("Scroll position after rerendering the APP", function(assert) {
 			app.rerender();
 
 			equal(getScrollPos(), -50, "Page should be scrolled to position 50");

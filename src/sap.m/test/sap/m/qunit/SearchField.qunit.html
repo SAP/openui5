@@ -96,8 +96,8 @@
 
 	qutils.delayTestStart();
 
-	module("Basic", {
-		setup : function() {
+	QUnit.module("Basic", {
+		beforeEach : function() {
 			sf1 = sap.ui.getCore().getControl("sf1");
 			sf2 = sap.ui.getCore().getControl("sf2");
 			sf3 = sap.ui.getCore().getControl("sf3");
@@ -105,7 +105,7 @@
 			sf2Dom = sf2.getFocusDomRef();
 			sf3Dom = sf3.getFocusDomRef();
 		},
-		teardown : function() {
+		afterEach : function() {
 			sf1 = null;
 			sf2 = null;
 			sf3 = null;
@@ -117,7 +117,7 @@
 	});
 
 	// test properties
-	test("Properties", function() {
+	QUnit.test("Properties", function(assert) {
 		equal(sf1.getValue(), sValue, "Value property, UI5");
 		equal(sf1Dom.value, sValue, "Value property, DOM");
 		equal(sf2.getPlaceholder(), sPlaceholder, "Placeholder property, UI5");
@@ -139,7 +139,7 @@
 		strictEqual(rightOffset, "0px", "Reset button is right aligned if showSearchButton == false");
 	});
 
-	test("Screen Reader", function() {
+	QUnit.test("Screen Reader", function(assert) {
 		var describedById = sf3Dom.getAttribute("aria-describedby");
 		var aLabels = describedById.split(' ');
 		var bLabelsExist = aLabels.every(function(id){
@@ -190,7 +190,7 @@
 	});
 
 	QUnit.module("Rendering", {
-		setup: function () {
+		beforeEach: function () {
 			this.SearchField = new sap.m.SearchField({
 				placeholder: sPlaceholder,
 				value: sValue,
@@ -200,7 +200,7 @@
 			}).placeAt("content");
 			sap.ui.getCore().applyChanges();
         },
-        teardown: function() {
+        afterEach: function() {
 			this.SearchField.destroy();
         }
     });

@@ -30,9 +30,9 @@
 
 		<script>
 
-			module("Spies");
+			QUnit.module("Spies");
 
-			test("Basic", 2, function() {
+			QUnit.test("Basic", 2, function(assert) {
 
 				var callback = sinon.spy();
 				var oButton = new sap.ui.commons.Button();
@@ -47,7 +47,7 @@
 			});
 
 
-			test("Existing methods", 2, function() {
+			QUnit.test("Existing methods", 2, function(assert) {
 				var callback = function() {};
 
 				var spy = sinon.spy(callback);
@@ -64,7 +64,7 @@
 			});
 
 
-			test("Replace existing methods of objects", 2, function() {
+			QUnit.test("Replace existing methods of objects", 2, function(assert) {
 				var obj = {
 					doSomething : function(msg) {}
 				};
@@ -83,9 +83,9 @@
 			});
 
 
-			module("Stubs");
+			QUnit.module("Stubs");
 
-			test("Basic", 1, function() {
+			QUnit.test("Basic", 1, function(assert) {
 				sinon.stub(jQuery, "ajax").yieldsTo("success", [1, 2, 3]);
 
 			    jQuery.ajax({
@@ -98,9 +98,9 @@
 			});
 
 
-			module("Mocks");
+			QUnit.module("Mocks");
 
-			test("Basic", 2, function() {
+			QUnit.test("Basic", 2, function(assert) {
 				var myAPI = { method: function () {} };
 
 			    var mock = sinon.mock(myAPI);
@@ -115,9 +115,9 @@
 			    mock.restore();
 			});
 
-			module("Faked Timers");
+			QUnit.module("Faked Timers");
 
-			test("Basic", 1, function() {
+			QUnit.test("Basic", 1, function(assert) {
 				var oClock = sinon.useFakeTimers();
 				setTimeout(function() {
 					ok(true, "Called without need of async test");
@@ -127,8 +127,8 @@
 			});
 
 
-			module("Faked XHR", {
-				setup : function() {
+			QUnit.module("Faked XHR", {
+				beforeEach : function() {
 					this.xhr = sinon.useFakeXMLHttpRequest();
 			        var requests = this.requests = [];
 
@@ -137,12 +137,12 @@
 			        };
 				},
 
-				teardown : function() {
+				afterEach : function() {
 					this.xhr.restore();
 				}
 			});
 
-			test("Basic", 2, function() {
+			QUnit.test("Basic", 2, function(assert) {
 				var callback = sinon.spy();
 
 				jQuery.ajax("test", {

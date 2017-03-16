@@ -72,11 +72,11 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		// TODO: analyze why this is needed!
 		initModel(false);
 	}
-	module("v2.ODataListBinding", {
-		setup : function() {
+	QUnit.module("v2.ODataListBinding", {
+		beforeEach : function() {
 			oModel = initModel(false);
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel = undefined;
 			removeSharedMetadata();
 		}
@@ -1168,7 +1168,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.getContexts(0, 2, 0);
 		})
 	});
-	test("Export to file URL", function(){
+	QUnit.test("Export to file URL", function(assert){
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var sUrl = oBinding.getDownloadUrl("csv");

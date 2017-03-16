@@ -77,9 +77,9 @@
 
 				jQuery.sap.require("sap.m.ios7");
 
-				module("initialization");
+				QUnit.module("initialization");
 
-				test("Should do nothing when not in ios 7", function () {
+				QUnit.test("Should do nothing when not in ios 7", function (assert) {
 					//System under Test + Act
 					var sut = new sap.m._Ios7();
 
@@ -91,7 +91,7 @@
 					sut.destroy();
 				});
 
-				test("Should have initialized the class", function() {
+				QUnit.test("Should have initialized the class", function(assert) {
 					stubIos7(this);
 
 					//System under Test + Act
@@ -107,13 +107,13 @@
 					sut.destroy();
 				});
 
-				module("events", {
-					setup : function() {
+				QUnit.module("events", {
+					beforeEach : function() {
 						simulateKeyboardClose();
 					}
 				});
 
-				test("Should handle portrait orientation change", function() {
+				QUnit.test("Should handle portrait orientation change", function(assert) {
 					stubIos7(this);
 					var oOrientationSpy = this.spy(sap.m._Ios7.prototype, "_onOrientationChange");
 					var oDetachSpy = this.spy(sap.m._Ios7.prototype, "_detachNavigationBarPolling");
@@ -137,7 +137,7 @@
 					sut.destroy();
 				});
 
-				test("Should handle landscape orientation change without keyboard open", function() {
+				QUnit.test("Should handle landscape orientation change without keyboard open", function(assert) {
 					//Arrange
 					stubIos7(this);
 					var oOrientationSpy = this.spy(sap.m._Ios7.prototype, "_onOrientationChange");
@@ -161,7 +161,7 @@
 					sut.destroy();
 				});
 
-				test("Should handle landscape orientation change with keyboard open", function() {
+				QUnit.test("Should handle landscape orientation change with keyboard open", function(assert) {
 					//Arrange
 					stubIos7(this);
 					var oOrientationSpy = this.spy(sap.m._Ios7.prototype, "_onOrientationChange");
@@ -190,7 +190,7 @@
 					sut.destroy();
 				});
 
-				test("Should attach the intervall properly", function () {
+				QUnit.test("Should attach the intervall properly", function (assert) {
 					stubIos7(this);
 					stubOrentationChange(this);
 					simulateWindowDifference(this, 0); // no navigation bar
@@ -218,7 +218,7 @@
 					strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of portrait");
 				});
 
-				test("Should fire the navigation bar event", function () {
+				QUnit.test("Should fire the navigation bar event", function (assert) {
 					//Arrange
 					stubIos7(this);
 					stubOrentationChange(this);
@@ -254,7 +254,7 @@
 					sut.destroy();
 				});
 
-				test("Should not fire the navigation bar event", function () {
+				QUnit.test("Should not fire the navigation bar event", function (assert) {
 					//Arrange
 					stubIos7Ipad(this);
 					stubOrentationChange(this);

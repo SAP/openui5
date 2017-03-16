@@ -58,23 +58,23 @@
 		<!-- Test functions -->
 		<script>
 
-			module("Appearance");
+			QUnit.module("Appearance");
 
-			test("Overlay exists", function () {
+			QUnit.test("Overlay exists", function (assert) {
 				equals(true, true, "...");
 				var oDomRef = jQuery.sap.domById(oOverlay.getId());
 				ok(oDomRef, "Rendered Overlay should exist in the page");
 				equal(oDomRef.className, "sapUiUx3Overlay", "Rendered Overlay should have the class 'sapUiUx3TI'");
 			});
 
-			module("Behaviour");
+			QUnit.module("Behaviour");
 
-			test("OpenNew Event", function () {
+			QUnit.test("OpenNew Event", function (assert) {
 				expect(1);
 				qutils.triggerMouseEvent(jQuery.sap.byId(oOverlay.getId() + "-openNew"), "click", 1, 1, 1, 1);
 			});
 
-			test("OpenNew via Keyboard Event", function () {
+			QUnit.test("OpenNew via Keyboard Event", function (assert) {
 				expect(2);
 				qutils.triggerKeyboardEvent(oOverlay.getId() + "-openNew", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				qutils.triggerKeyboardEvent(oOverlay.getId() + "-openNew", jQuery.sap.KeyCodes.SPACE, false, false, false);
@@ -106,7 +106,7 @@
 			});
 
 
-			test("Destroy and remove control", function () {
+			QUnit.test("Destroy and remove control", function (assert) {
 				oOverlay.destroy();
 				sap.ui.getCore().applyChanges();
 				var oDomRef = jQuery.sap.domById(oOverlay.getId());

@@ -8,11 +8,11 @@ jQuery.sap.require("sap.ui.core.LayoutData");
 	var oControl;
 
 	QUnit.module("sap.ui.fl.changeHandler.Base", {
-		setup: function () {
+		beforeEach: function () {
 			this.stubs = [];
 			this.oBaseHandler = Base;
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.stubs.forEach(function (stub) {
 				stub.restore();
 			});
@@ -24,7 +24,7 @@ jQuery.sap.require("sap.ui.core.LayoutData");
 	});
 
 
-	QUnit.test('setTextInChange', function () {
+	QUnit.test('setTextInChange', function (assert) {
 		var oChange = {
 			"selector": {
 				"id": "QUnit.testkey"

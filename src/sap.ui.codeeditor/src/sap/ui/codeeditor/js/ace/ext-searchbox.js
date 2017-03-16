@@ -1,4 +1,4 @@
-define("ace/ext/searchbox",["require","exports","module","ace/lib/dom","ace/lib/lang","ace/lib/event","ace/keyboard/hash_handler","ace/lib/keys"], function(require, exports, module) {
+ace.define("ace/ext/searchbox",["require","exports","module","ace/lib/dom","ace/lib/lang","ace/lib/event","ace/keyboard/hash_handler","ace/lib/keys"], function(require, exports, module) {
 "use strict";
 
 var dom = require("../lib/dom");
@@ -337,7 +337,9 @@ var SearchBox = function(editor, range, showReplaceForm) {
             wholeWord: this.wholeWordOption.checked,
             preventScroll: preventScroll
         });
-        dom.setCssClass(this.searchBox, "ace_nomatch", !range && this.searchInput.value);
+        var noMatch = !range && this.searchInput.value;
+        dom.setCssClass(this.searchBox, "ace_nomatch", noMatch);
+        this.editor._emit("findSearchBox", { match: !noMatch });
         this.highlight();
     };
     this.findNext = function() {
@@ -410,6 +412,6 @@ exports.Search = function(editor, isReplace) {
 
 });
                 (function() {
-                    window.require(["ace/ext/searchbox"], function() {});
+                    ace.require(["ace/ext/searchbox"], function() {});
                 })();
             

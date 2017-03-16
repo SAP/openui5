@@ -46,11 +46,11 @@
 	qutils.delayTestStart();
 
 
-	module("Initial check");
+	QUnit.module("Initial check");
 
 
 
-	test("Controls Check", function() {
+	QUnit.test("Controls Check", function(assert) {
 	 	image1 = sap.ui.getCore().getControl("i1");
 		map1 = sap.ui.getCore().getControl("m1");
 
@@ -59,7 +59,7 @@
 
 	});
 
-	test("Areas Check", function() {
+	QUnit.test("Areas Check", function(assert) {
 
 		if (map1) {
 			areas = map1.getAreas();
@@ -69,15 +69,15 @@
 
 
 
-	module("Properties");
+	QUnit.module("Properties");
 
 
-	test("Image Map Properties", function() {
+	QUnit.test("Image Map Properties", function(assert) {
 		ok(((map1.getName() !== undefined) && (areas != null)), "should not be null or undefined");
 		equals(map1.getName(), "Map1", "The name of the map that is referenced within the image");
 	});
 
-	test("Area properties", function() {
+	QUnit.test("Area properties", function(assert) {
 
 		el = areas[0];
 		equals(el.getShape(), "rect", "Shape is a Rectangle:");

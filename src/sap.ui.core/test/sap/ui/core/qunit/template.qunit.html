@@ -22,8 +22,8 @@
 	  Documentation can be found at http://docs.jquery.com/QUnit
 
 	  Example:
-      module("Module A");
-        test("1. a basic test example", function() {
+      QUnit.module("Module A");
+        QUnit.test("1. a basic test example", function(assert) {
         ok( true, "this test is fine" );
         var value = "hello1";
         equal( value, "hello1", "We expect value to be hello" );

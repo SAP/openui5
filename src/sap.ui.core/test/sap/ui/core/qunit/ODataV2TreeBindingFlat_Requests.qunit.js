@@ -1,5 +1,5 @@
-module("Remove and reinsert", {
-	setup: function() {
+QUnit.module("Remove and reinsert", {
+	beforeEach: function() {
 		fnSetupNewMockServer();
 		oMockServer.start();
 		oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, {
@@ -7,7 +7,7 @@ module("Remove and reinsert", {
 			defaultUpdateMethod: "PUT"
 		});
 	},
-	teardown: function() {
+	afterEach: function() {
 		oMockServer.stop();
 		delete oModel;
 	}
@@ -29,7 +29,7 @@ var fnSpyRequestsInDatajs = function (fnCallback) {
 		var aAllRequests = oRequest.data.__batchRequests;
 
 		fnCallback(aChangeRequests, aAllRequests);
-		
+
 		// ignore actual request sending if necessary
 		// most of the time, we only care for the validity of the parameters
 		if (!mParameters.suppressRequest) {
@@ -40,7 +40,7 @@ var fnSpyRequestsInDatajs = function (fnCallback) {
 
 var ensureCorrectChangeGroup = function () {
 	var sTreeChangeGroup = "sapTreeHM-" + jQuery.sap.uid();
-	
+
 	// make sure we have a change group
 	var mChangeGroups = oModel.getChangeGroups();
 	var sEntityType = "orgHierarchyType";
@@ -440,7 +440,7 @@ asyncTest("Request Creation - DELETE - 3 - in to deep", function(){
 			// register change event for loading the expanded children
 			oBinding.attachChange(handler3);
 		}
-		
+
 		function handler3 () {
 			oBinding.detachChange(handler3);
 
@@ -515,7 +515,7 @@ asyncTest("Request Creation - Refresh after Success - Event-Timing", function(){
 			// remove some nodes
 			oBinding.removeContext(oN1638.context);
 			oBinding.removeContext(oN1630.context);
-			
+
 			// and add another one
 			var oNewContext = oBinding.createEntry();
 			oBinding.addContexts(oN1005.context, [oNewContext]);
@@ -535,7 +535,7 @@ asyncTest("Request Creation - Refresh after Success - Event-Timing", function(){
 			}, {suppressRequest: false});
 
 			var bSuccessBeforeRefresh = false;
-			
+
 			// check if refresh was fired after the success handler of the application
 			// This test fails, if the refreshAfterChange behavior is broken.
 			// In this case the refresh event will be fired twice:
@@ -604,7 +604,7 @@ asyncTest("Request Creation - No Refresh after Error - Event-Timing", function()
 			// remove some nodes
 			oBinding.removeContext(oN1638.context);
 			oBinding.removeContext(oN1630.context);
-			
+
 			// and add another one
 			var oNewContext = oBinding.createEntry();
 			oBinding.addContexts(oN1005.context, [oNewContext]);

@@ -3,14 +3,14 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 
 (function(EventDelegate, ChangeRegistry) {
 
-	module("sap.ui.fl.core.EventDelegate", {
-		setup: function() {
+	QUnit.module("sap.ui.fl.core.EventDelegate", {
+		beforeEach: function() {
 		},
-		teardown: function() {
+		afterEach: function() {
 		}
 	});
 
-	test("constructor - required parameters", function() {
+	QUnit.test("constructor - required parameters", function(assert) {
 		//Arrange
 		var oControl = {name: "ThisShouldBeASAPUI5Control"};
 		var oSupportedRegistryItems = {"labelChange": "myLabelChange", "visibility": "myVisibilityChange"};
@@ -25,7 +25,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 		spyLog.restore();
 	});
 
-	test("constructor - without required parameters, errors should be logged", function() {
+	QUnit.test("constructor - without required parameters, errors should be logged", function(assert) {
 		//Arrange
 		var spyLog = sinon.spy(jQuery.sap.log, "error");
 		//Act
@@ -36,7 +36,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 		spyLog.restore();
 	});
 
-	test("registerControl - register control first time", function() {
+	QUnit.test("registerControl - register control first time", function(assert) {
 		//Arrange
 		var oSupportedRegistryItems = {"labelChange": "myLabelChange", "visibility": "myVisibilityChange"};
 		var registerExplicitStub = sinon.stub(EventDelegate, "registerExplicitChanges");
@@ -50,7 +50,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 		registerExplicitStub.restore();
 	});
 
-	test("registerControl - register control, already registered", function() {
+	QUnit.test("registerControl - register control, already registered", function(assert) {
 		//Arrange
 		var oSupportedRegistryItems = {"labelChange": "myLabelChange", "visibility": "myVisibilityChange"};
 		var registerExplicitStub = sinon.stub(EventDelegate, "registerExplicitChanges");
@@ -72,7 +72,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 		registerExplicitStub.restore();
 	});
 
-	test("registerExplicitChanges - register control when changetypes available", function() {
+	QUnit.test("registerExplicitChanges - register control when changetypes available", function(assert) {
 		//Arrange
 		var oSupportedRegistryItems = {"labelChange": "myLabelChange", "visibility": "myVisibilityChange"};
 		var changeRegSpy = sinon.spy(ChangeRegistry, "getInstance");
@@ -100,7 +100,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 		changeRegGetRegItemsStub.restore();
 	});
 
-	test("registerExplicitChanges - don't register control when no change types", function() {
+	QUnit.test("registerExplicitChanges - don't register control when no change types", function(assert) {
 		//Arrange
 		var oSupportedRegistryItems = {};
 		var changeRegSpy = sinon.spy(ChangeRegistry, "getInstance");

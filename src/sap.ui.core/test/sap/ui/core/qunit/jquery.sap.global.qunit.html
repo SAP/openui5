@@ -219,7 +219,7 @@
 
 			QUnit.module("includeStyleSheet");
 
-			QUnit.test("basic", function(assert){
+			QUnit.test("basic", function(assert) {
 				var oTestArea = jQuery.sap.domById("includeStyleSheetTest");
 				var sBefore = jQuery(oTestArea).css("backgroundColor");
 				var iLinkCnt = document.getElementsByTagName("LINK").length;
@@ -231,7 +231,7 @@
 				});
 			});
 
-			QUnit.test("basic (Promise)", function(assert){
+			QUnit.test("basic (Promise)", function(assert) {
 				var oTestArea = jQuery.sap.domById("includeStyleSheetTest");
 				var sBefore = jQuery(oTestArea).css("backgroundColor");
 				var iLinkCnt = document.getElementsByTagName("LINK").length;
@@ -245,7 +245,7 @@
 				});
 			});
 
-			QUnit.test("don't load twice", function(assert){
+			QUnit.test("don't load twice", function(assert) {
 				var sStyleSheetUrl = "../../../../../resources/sap/ui/layout/themes/sap_belize/library.css";
 				var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
 				assert.equal($link.length, 1, "initially, there should be exactly one matching link)");

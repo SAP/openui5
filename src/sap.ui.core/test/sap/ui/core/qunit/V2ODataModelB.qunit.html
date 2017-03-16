@@ -57,12 +57,12 @@
 		sap.ui.model.odata.v2.ODataModel.mServiceData = {};
 	}
 
-	/*module("ODataModelV2 XML", {
-		setup : function() {
+	/*QUnit.module("ODataModelV2 XML", {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel(false);
 		},
-		teardown : function() {
+		afterEach : function() {
 			cleanServiceDataCache();
 			oModel.destroy();
 			oModel = undefined;
@@ -88,11 +88,11 @@
 		oModel.attachMetadataLoaded(this, fnTest);
 	});*/
 
-	module("ODataModelV2 JSON", {
-		setup : function() {
+	QUnit.module("ODataModelV2 JSON", {
+		beforeEach : function() {
 			initServer();
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanServiceDataCache();
@@ -100,7 +100,7 @@
 		}
 	});
 
-	test("Mockserver initialisation",  function(){
+	QUnit.test("Mockserver initialisation",  function(assert){
 		oModel = initModel();
 		ok(oMockServer,"MockServer created");
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -970,11 +970,11 @@
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
-	module("ODataModelV2 write", {
-		setup : function() {
+	QUnit.module("ODataModelV2 write", {
+		beforeEach : function() {
 			initServer();
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanServiceDataCache();
@@ -2825,12 +2825,12 @@
 		});
 	});
 
-	module("ODataModelV2 Eventing", {
-		setup : function() {
+	QUnit.module("ODataModelV2 Eventing", {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel();
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanServiceDataCache();
@@ -3444,12 +3444,12 @@
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
-	module("ODataModelV2 abort requests", {
-		setup : function() {
+	QUnit.module("ODataModelV2 abort requests", {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel();
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanServiceDataCache();
@@ -3842,7 +3842,7 @@
 
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
-	
+
 	asyncTest("test oDataModel callFunction: Parameter without mode", function() {
 		oModel = initModel();
 		var fnTest = function(){
@@ -3904,7 +3904,7 @@
 			fnTest();
 		});
 	});
-	
+
 	asyncTest("test oDataModel callFunction: additional parameters", function() {
 		var mUrlParams = {
 			"SalesOrderID": "test",
@@ -3924,12 +3924,12 @@
 			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'&$expand=ToBusinessPartner&sap-some=sapTest", "Valid parameter is added to URL");
 			start();
 		});
-		
+
 		oModel.attachMetadataLoaded(this, function() {
 			fnTest();
 		});
 	});
-	
+
 	asyncTest("test oDataModel binding function import parameters deferred", function() {
 		var iCount = 0;
 		var oContext;
@@ -4054,12 +4054,12 @@
 
 	});
 
-	module("ODataModelV2 refresh", {
-		setup : function() {
+	QUnit.module("ODataModelV2 refresh", {
+		beforeEach : function() {
 			initServer();
 			oModel = initModel();
 		},
-		teardown : function() {
+		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanServiceDataCache();

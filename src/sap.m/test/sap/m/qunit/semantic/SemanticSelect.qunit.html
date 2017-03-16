@@ -22,17 +22,17 @@
 		jQuery.sap.require("sap.m.semantic.SortSelect");
 
 
-		module("Semantic Select Control", {
-			setUp: function () {
+		QUnit.module("Semantic Select Control", {
+			beforeEach: function () {
 
 			},
 
-			tearDown: function () {
+			afterEach: function () {
 				jQuery("#qunit-fixture-visible").html("");
 			}
 		});
 
-		test("has valid behavior", function () {
+		QUnit.test("has valid behavior", function (assert) {
 			// Arrange
 			var oModel = new sap.ui.model.json.JSONModel(),
 					aSampleData = [
@@ -113,7 +113,7 @@
 			oSemanticSelect.destroy();
 		});
 
-		test("selectedKey databinding", function () {
+		QUnit.test("selectedKey databinding", function (assert) {
 			// Arrange
 			var oModel = new sap.ui.model.json.JSONModel(),
 					aSampleData = {

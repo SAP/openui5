@@ -122,24 +122,24 @@ sap.ui.ux3.DataSetSimpleView</title>
 	oDataSet2.placeAt("content2");
 
 
-	test("InitialCheck", 3, function() {
+	QUnit.test("InitialCheck", 3, function(assert) {
 		ok(sap.ui.ux3.DataSet, "sap.ui.ux3.DataSet must be defined");
 		ok(sap.ui.ux3.DataSetItem, "sap.ui.ux3.DataSetItem must be defined");
 		ok(sap.ui.ux3.DataSetSimpleView,
 				"sap.ui.ux3.DataSetSimpleView must be defined");
 	});
 
-	module("DataSetItem");
+	QUnit.module("DataSetItem");
 
-	test("Instantiation", 2, function() {
+	QUnit.test("Instantiation", 2, function(assert) {
 		ok(oDataSetItem, "oDataSetItem must exist after creation");
 		ok(oDataSetItem instanceof sap.ui.ux3.DataSetItem,
 				"oDataSetItem must be instance of sap.ui.ux3.DataSetItem");
 	});
 
-	module("DataSetSimpleView");
+	QUnit.module("DataSetSimpleView");
 
-	test(
+	QUnit.test(
 			"Instantiation",
 			2,
 			function() {
@@ -149,15 +149,15 @@ sap.ui.ux3.DataSetSimpleView</title>
 						"oDataSetSimpleView must be instance of sap.ui.ux3.DataSetSimpleView");
 			});
 
-	module("DataSet");
+	QUnit.module("DataSet");
 
-	test("Instantiation", 2, function() {
+	QUnit.test("Instantiation", 2, function(assert) {
 		ok(oDataSet, "oDataSet must exist after creation");
 		ok(oDataSet instanceof sap.ui.ux3.DataSet,
 				"oDataSet must be instance of sap.ui.ux3.DataSet");
 	});
 
-	test("AddItems", 2, function() {
+	QUnit.test("AddItems", 2, function(assert) {
 		oDataSet.addItem(oDataSetItem);
 		equal(oDataSet.getItems().length, 1, "getItems must return 1 item");
 		oDataSetItem2 = oDataSetItem.clone();
@@ -165,14 +165,14 @@ sap.ui.ux3.DataSetSimpleView</title>
 		equal(oDataSet.getItems().length, 2, "getItems must return 2 items");
 	});
 
-	test("RemoveItems", 2, function() {
+	QUnit.test("RemoveItems", 2, function(assert) {
 		oDataSet.removeItem(oDataSetItem2);
 		equal(oDataSet.getItems().length, 1, "getItems must return 1 item");
 		oDataSet.removeItem(oDataSetItem);
 		equal(oDataSet.getItems().length, 0, "getItems must return 0 items");
 	});
 
-	test("LeadSelection", 3,
+	QUnit.test("LeadSelection", 3,
 			function() {
 				//add some items again
 				oDataSet.bindItems("/test",oDataSetItem);
@@ -187,7 +187,7 @@ sap.ui.ux3.DataSetSimpleView</title>
 						"LeadSelection: item 2 selected");
 			});
 
-	test("AddViews", 2, function() {
+	QUnit.test("AddViews", 2, function(assert) {
 		oDataSet.addView(oDataSetSimpleView);
 		equal(oDataSet.getViews().length, 1, "getView must return 1 view");
 		oDataSetSimpleView2 = new sap.ui.ux3.DataSetSimpleView("SV2",{
@@ -197,14 +197,14 @@ sap.ui.ux3.DataSetSimpleView</title>
 		equal(oDataSet.getViews().length, 2, "getViews must return 2 views");
 	});
 
-	test("RemoveViews", 2, function() {
+	QUnit.test("RemoveViews", 2, function(assert) {
 		oDataSet.removeView(oDataSetSimpleView2);
 		equal(oDataSet.getViews().length, 1, "getView must return 1 view");
 		oDataSet.removeView(oDataSetSimpleView);
 		equal(oDataSet.getViews().length, 0, "getView must return 0 views");
 	});
 
-	test("select view", 2,
+	QUnit.test("select view", 2,
 			function() {
 				oDataSet.addView(oDataSetSimpleView);
 				oDataSetSimpleView2 = new sap.ui.ux3.DataSetSimpleView("SV3",{
@@ -234,7 +234,7 @@ sap.ui.ux3.DataSetSimpleView</title>
 		}, 1000);
 	});
 
-	test("events", 6, function() {
+	QUnit.test("events", 6, function(assert) {
 		oDataSet.attachSearch(search);
 		oDataSet.attachSelectionChanged(handleSelection);
 		jQuery("#" + oDataSet.getId() + "-searchValue-tf-input").focus();
@@ -263,7 +263,7 @@ sap.ui.ux3.DataSetSimpleView</title>
 		},500);
 	});
 
-	test("Toolbar", 5, function() {
+	QUnit.test("Toolbar", 5, function(assert) {
 		ok(oDataSet.getShowSearchField(),"SearchField enabled")
 		ok(jQuery("#" + oDataSet.getId() + "-searchValue")[0],"SearchField rendered");
 		oDataSet.setShowSearchField(false);
@@ -276,9 +276,9 @@ sap.ui.ux3.DataSetSimpleView</title>
 		ok(!jQuery('#'+oButton.getId()).length,"Custom Toolbaritem removed");
 	});
 
-	module("DataSetSimpleView");
+	QUnit.module("DataSetSimpleView");
 
-	test("selection", 4, function() {
+	QUnit.test("selection", 4, function(assert) {
 		ok(jQuery.sap.byId(oDataSet.getItems()[3].getId()).hasClass("sapUiUx3DSSVSelected"),"class selected of item 1 is set");
 		qutils.triggerMouseEvent(jQuery.sap.byId(oDataSet.getItems()[1].getId()),
 				"click", 1, 1, 1, 1);
@@ -305,14 +305,14 @@ sap.ui.ux3.DataSetSimpleView</title>
 	};
 
 
-	test("Floating Layout", function() {
+	QUnit.test("Floating Layout", function(assert) {
 		ok(oDataSetLayout.$().hasClass("sapUiUx3DSSVFloating"), "class 'sapUiUx3DSSVFloating' is set");
 		var expectedItems = Math.floor(oDataSetLayout.$().width()/200);
 		equal(getNumberOfItemsPerRow(), expectedItems, expectedItems + " item(s) per row");
 		ok(jQuery(oDataSetLayout.$().children()[0]).outerWidth() - 200 <= 10 /*just some tolerance*/, "item has width of 200px");
 	});
 
-	test("Responsive Layout", function() {
+	QUnit.test("Responsive Layout", function(assert) {
 		oDataSetLayout.setResponsive(true);
 		oDataSetLayout.setItemMinWidth(200);
 		sap.ui.getCore().applyChanges();
@@ -330,7 +330,7 @@ sap.ui.ux3.DataSetSimpleView</title>
 		ok(Math.abs(oDataSetLayout.$().width() - iWidth) <= 10 /*just some tolerance*/, "items in a row occupy the whole row");
 	});
 
-	test("Single Row Layout", function() {
+	QUnit.test("Single Row Layout", function(assert) {
 		oDataSetLayout.setFloating(false);
 		oDataSetLayout.setResponsive(false);
 		oDataSetLayout.setItemMinWidth(0);
@@ -341,7 +341,7 @@ sap.ui.ux3.DataSetSimpleView</title>
 		ok(Math.abs(oDataSetLayout.$().width() - jQuery(oDataSetLayout.$().children()[0]).outerWidth()) <= 10 /*just some tolerance*/, "item occupies the whole row");
 	});
 
-	test("If the view is invisible, items will be destroyed on updateView", function() {
+	QUnit.test("If the view is invisible, items will be destroyed on updateView", function(assert) {
 		oDataSetLayout.setVisible(false);
 		sap.ui.getCore().applyChanges();
 

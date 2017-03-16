@@ -20,7 +20,7 @@
 
 		jQuery.sap.measure.setActive(true);
 
-		module("Performance");
+		QUnit.module("Performance");
 
 		asyncTest("Simple Measurement", 10, function() {
 			jQuery.sap.measure.clear();
@@ -116,7 +116,7 @@
 			setTimeout(delayedCall, 100);
 		});
 
-		test("add measurement", 12, function() {
+		QUnit.test("add measurement", 12, function(assert) {
 			var oMeasurement = jQuery.sap.measure.add("qUnit_Test_5", "This is the fifth test measure", 1335420000000, 1335420060000, 60000, 500);
 			equal(oMeasurement.id, "qUnit_Test_5", "ID in add set");
 			equal(oMeasurement.info, "This is the fifth test measure", "Text in add set");
@@ -134,7 +134,7 @@
 			equal(oMeasurement.duration, 500, "Duration time stored");
 		});
 
-		test("Get results", 15, function() {
+		QUnit.test("Get results", 15, function(assert) {
 			jQuery.sap.measure.remove("qUnit_Test_4");
 			var aMeasurements = jQuery.sap.measure.getAllMeasurements();
 			equal(aMeasurements.length, 4, "Number of measurements");
@@ -157,9 +157,9 @@
 			equal(aMeasurements.length, 0, "Number of measurements after clear");
 		});
 
-		module("test measure rendering");
+		QUnit.module("test measure rendering");
 
-		test("render Button", 7, function() {
+		QUnit.test("render Button", 7, function(assert) {
 			var oButton = new sap.ui.commons.Button("B1",{text:"Test"}).placeAt("target1");
 			sap.ui.getCore().applyChanges();
 			var aMeasurements = jQuery.sap.measure.getAllMeasurements();
@@ -188,7 +188,7 @@
 
 		});
 
-		test("Average", function() {
+		QUnit.test("Average", function(assert) {
 			jQuery.sap.measure.setActive(true);
 			jQuery.sap.measure.clear();
 			for (var i=0;i<1000;i++) {
@@ -202,7 +202,7 @@
 			ok(jQuery.sap.measure.getMeasurement("myId2").count === 1000, "1000 count processed for myId2");
 		});
 
-		test("registerMethod", function() {
+		QUnit.test("registerMethod", function(assert) {
 			jQuery.sap.measure.setActive(true);
 			jQuery.sap.measure.clear();
 			var f = function() {
@@ -239,7 +239,7 @@
 			ok(oObject.func2 === f , "function2 is reset");
 		});
 
-		test("Categories/Filtering/Completed measuremtents", function() {
+		QUnit.test("Categories/Filtering/Completed measuremtents", function(assert) {
 			jQuery.sap.measure.setActive(true,"test1");
 			jQuery.sap.measure.clear();
 			jQuery.sap.measure.start("test1string_1", "", "test1");
@@ -337,14 +337,14 @@
 
 		});
 
-		module("Interaction", {
-			setup: function() {
+		QUnit.module("Interaction", {
+			beforeEach: function() {
 				this.oButton = new sap.ui.commons.Button();
 				jQuery.sap.measure.endInteraction(true);
 				jQuery.sap.measure.clearInteractionMeasurements();
 				jQuery.sap.measure.clear();
 			},
-			teardown: function() {
+			afterEach: function() {
 				this.oButton.destroy();
 				jQuery.sap.measure.endInteraction(true);
 				jQuery.sap.measure.clearInteractionMeasurements();
@@ -352,19 +352,19 @@
 			}
 		});
 
-		test("startInteraction", function() {
+		QUnit.test("startInteraction", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			ok(!jQuery.sap.measure.getAllInteractionMeasurements().length, "No completed interaction");
 		});
 
-		test("endInteraction", function() {
+		QUnit.test("endInteraction", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			jQuery.sap.measure.endInteraction(true);
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 			ok(oMeasurement, "Measurement has been created");
 		});
 
-		test("getAllInteractionMeasurements", function() {
+		QUnit.test("getAllInteractionMeasurements", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			var aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
 			ok(Array.isArray(aMeasurements), "An array was returned");
@@ -381,7 +381,7 @@
 			strictEqual(aMeasurements.length, 3, "Measurements count is correct - pending interaction has been added");
 		});
 
-		test("filterInteractionMeasurements", function() {
+		QUnit.test("filterInteractionMeasurements", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			jQuery.sap.measure.endInteraction(true);
 			jQuery.sap.measure.startInteraction("flick", this.oButton);
@@ -401,14 +401,14 @@
 			equal(aFilteredMeasurements.length, 1, "Filter applied correctly");
 		});
 
-		test("getPendingInteractionMeasurement", function() {
+		QUnit.test("getPendingInteractionMeasurement", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			var oMeasurement = jQuery.sap.measure.getPendingInteractionMeasurement();
 			ok(oMeasurement, "Measuerement was returned");
 			strictEqual(oMeasurement.end, 0, "Measurements has not been finalized yet");
 		});
 
-		test("Interaction properties", function() {
+		QUnit.test("Interaction properties", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			jQuery.sap.measure.endInteraction(true);
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
@@ -431,7 +431,7 @@
 			ok(oMeasurement.bytesReceived === 0, "No processing");
 		});
 
-		test("Performance API depending measures", function() {
+		QUnit.test("Performance API depending measures", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			var oReq = new XMLHttpRequest();
 			oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
@@ -450,7 +450,7 @@
 			}
 		});
 
-		test("Request depending measures", function() {
+		QUnit.test("Request depending measures", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			var oReq = new XMLHttpRequest();
 			oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
@@ -469,7 +469,7 @@
 			}
 		});
 
-		test("jQuery.sap.measure Measurements", function() {
+		QUnit.test("jQuery.sap.measure Measurements", function(assert) {
 			jQuery.sap.measure.setActive(true);
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			jQuery.sap.require("sap.m.Button");
@@ -482,7 +482,7 @@
 			});
 		});
 
-		test("Component determination", function() {
+		QUnit.test("Component determination", function(assert) {
 			// setup
 			var oButton = this.oButton;
 			var sComponentName = "MyComponent";

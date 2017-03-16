@@ -33,9 +33,9 @@
 		/* API module                                                  */
 		/* =========================================================== */
 
-		module("API");
+		QUnit.module("API");
 
-		test("default values", function() {
+		QUnit.test("default values", function(assert) {
 
 			// system under test
 			var oPage = new sap.m.Page();
@@ -65,10 +65,10 @@
 		/* HTML module                                                 */
 		/* =========================================================== */
 
-		module("HTML");
+		QUnit.module("HTML");
 
 		var fnRendererTestCase = function(mOptions) {
-			test("rendering", function() {
+			QUnit.test("rendering", function(assert) {
 
 				// system under test
 				var oPage = mOptions.page;

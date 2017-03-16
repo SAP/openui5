@@ -158,6 +158,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
+		 * Returns whether a request is currently in process by the binding.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @return {boolean} Returns <code>true</code>, if the binding of the table is currently requesting data.
+		 * @private
+		 */
+		hasPendingRequest: function(oTable) {
+			return oTable != null && oTable._bPendingRequest === true;
+		},
+
+		/**
 		 * Checks whether the given object is of the given type (given in AMD module syntax)
 		 * without the need of loading the types module.
 		 * @param {sap.ui.base.ManagedObject} oObject The object to check

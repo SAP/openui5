@@ -112,7 +112,7 @@
 		ok(bChanged && bDataRequested,"dataRecieved fired");
 	};
 
-	test("check datajs AMD shim", function() {
+	QUnit.test("check datajs AMD shim", function(assert) {
 		ok(typeof define === "function" && define.amd, "precondition: AMD like define exists");
 		jQuery.sap.require("sap.ui.thirdparty.datajs");
 		ok(!!window.datajs, "global datajs object should exist");
@@ -151,7 +151,7 @@
 		deepEqual(oModel.oServiceData.oMetadata.mNamespaces, { 'foo': 'bar' }, 'metadataNamespaces');
 	}
 
-	test("constructor: legacy arguments", function() {
+	QUnit.test("constructor: legacy arguments", function(assert) {
 		var oModel = initModel(
 			sURI,           /* sServiceUrl */
 			true,           /* bJSON */
@@ -168,7 +168,7 @@
 
 		oModel.destroy();
 	});
-	test("constructor: parameters in 2nd argument", function() {
+	QUnit.test("constructor: parameters in 2nd argument", function(assert) {
 		var oModel = initModel(sURI /* sServiceUrl */, {
 			json: true,
 			user: "user",
@@ -190,7 +190,7 @@
 
 		oModel.destroy();
 	});
-	test("constructor: parameters in 1st argument", function() {
+	QUnit.test("constructor: parameters in 1st argument", function(assert) {
 		var oModel = initModel({
 			serviceUrl: sURI,
 			json: true,
@@ -870,7 +870,7 @@
 		});
 	});
 
-	test("test getKey decoded", function(){
+	QUnit.test("test getKey decoded", function(assert){
 
 		var oModel = initModel(sURI, false, "Categories"),
 			oObject = {
@@ -882,7 +882,7 @@
 		equal(oModel.getKey(oObject, true), "Customers('/?''+')", "Get customers key decoded");
 	});
 
-	test("test createKey", function(){
+	QUnit.test("test createKey", function(assert){
 
 		var oModel = initModel(sURI, false, "Categories");
 		equal(oModel.createKey("Products", {ProductID: 1}), "Products(1)", "Created product key");
@@ -1002,7 +1002,7 @@
 		oBinding.getContexts();
 	});
 
-	test("Custom Header test", function(){
+	QUnit.test("Custom Header test", function(assert){
 		var oModel = initModel(sURI, true);
 		oModel.setHeaders({"myCustomHeader1" : "value1", "myCustomHeader2" : "4.555"});
 
@@ -1216,7 +1216,7 @@
 		oLabel.getElementBinding().attachDataReceived(handler);
 	});
 
-	test("test ODataModel destroy cancel async metadata", function(){
+	QUnit.test("test ODataModel destroy cancel async metadata", function(assert){
 		cleanServiceDataCache();
 		jQuery.sap.require("sap.ui.thirdparty.datajs");
 		// spy on odata request function
@@ -1236,7 +1236,7 @@
 
 	});
 
-	test("test ODataModel destroy cancel load data", function(){
+	QUnit.test("test ODataModel destroy cancel load data", function(assert){
 		var oModel = initModel(sURI, true, "Categories");
 		//var oModel = new sap.ui.model.odata.ODataModel(sURI, { json: true, loadMetadataAsync: false });
 		sap.ui.getCore().setModel(oModel);
@@ -1269,11 +1269,11 @@
 
 	});
 
-	module("ODataModel.read", {
-		setup: function() {
+	QUnit.module("ODataModel.read", {
+		beforeEach: function() {
 			this.oModel = initModel(sURI, true);
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oModel.destroy();
 			delete this.oModel;
 		}
@@ -1473,12 +1473,12 @@
 		});
 	});
 
-	module("CSRF Token handling", {
-		setup: function() {
+	QUnit.module("CSRF Token handling", {
+		beforeEach: function() {
 			this.oModel = initModel(sURI, true);
 			updateCsrfToken();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oModel.destroy();
 			cleanServiceDataCache();
 			delete this.oModel;
@@ -1548,11 +1548,11 @@
 		}.bind(this));
 	});
 
-	module("Metamodel binding", {
-		setup: function() {
+	QUnit.module("Metamodel binding", {
+		beforeEach: function() {
 			this.oModel = initModel(sURI, false);
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oModel.destroy();
 			delete this.oModel;
 		}
@@ -1626,9 +1626,9 @@
 
 
 
-	module("Annotation Loading", {
-		setup: function() {},
-		teardown: function() {}
+	QUnit.module("Annotation Loading", {
+		beforeEach: function() {},
+		afterEach: function() {}
 	});
 
 

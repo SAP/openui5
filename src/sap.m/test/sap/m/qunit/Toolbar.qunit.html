@@ -49,8 +49,8 @@
 		return oTB;
 	}
 
-	module("Rendering");
-	test("test rendering and visible property", function() {
+	QUnit.module("Rendering");
+	QUnit.test("test rendering and visible property", function(assert) {
 		var oTB = createToolbar({
 			Toolbar : {},
 			Label : {text: "text"}
@@ -69,13 +69,13 @@
 		oTB.destroy();
 	});
 
-	test("test empty content", function() {
+	QUnit.test("test empty content", function(assert) {
 		var oTB = createToolbar({Toolbar : {}});
 		strictEqual(oTB.$().length, 1, "Bar is in DOM even without any content");
 		oTB.destroy();
 	});
 
-	test("test tooltip", function() {
+	QUnit.test("test tooltip", function(assert) {
 		var sTooltip = "tooltip";
 		var oTB = createToolbar({
 			Toolbar : {
@@ -86,7 +86,7 @@
 		oTB.destroy();
 	});
 
-	test("test design property", function() {
+	QUnit.test("test design property", function(assert) {
 		var oTB = createToolbar({
 			Toolbar : {},
 			Label : {text: "text"}
@@ -123,7 +123,7 @@
 		oTB.destroy();
 	});
 
-	test("Should add the IBar-CTX if style and tag are set", function() {
+	QUnit.test("Should add the IBar-CTX if style and tag are set", function(assert) {
 		// Arrange + System under Test
 		var oTB = createToolbar();
 
@@ -141,7 +141,7 @@
 		oTB.destroy();
 	});
 
-	test("test that Toolbar Separator is rendered", function() {
+	QUnit.test("test that Toolbar Separator is rendered", function(assert) {
 		var oToolbarSeparator = new sap.m.ToolbarSeparator();
 		var oTB = createToolbar({
 			Toolbar : {
@@ -158,9 +158,9 @@
 		oTB.destroy();
 	});
 
-	module("ARIA");
+	QUnit.module("ARIA");
 
-    test("Default ARIA attributes", function() {
+    QUnit.test("Default ARIA attributes", function(assert) {
         // Arrange + System under Test
         var oBtn = new sap.m.Button({
             text : "Button Text"
@@ -190,7 +190,7 @@
         oTB.destroy();
     });
 
-	test("ariaLabelledBy external label", function() {
+	QUnit.test("ariaLabelledBy external label", function(assert) {
 		// Arrange + System under Test
 		var oLabel = new sap.m.Label({
 			text : "Toolbar Label"
@@ -213,7 +213,7 @@
 		oTB.destroy();
 	});
 
-	test("ariaLabelledBy internal and external labels", function() {
+	QUnit.test("ariaLabelledBy internal and external labels", function(assert) {
 		// Arrange + System under Test
 		var oLabel = new sap.m.Label({
 			text : "Toolbar Label"
@@ -233,9 +233,9 @@
 		oTB.destroy();
 	});
 
-	module("Properties");
+	QUnit.module("Properties");
 
-	test("Should be able to add/remove undefined controls", function() {
+	QUnit.test("Should be able to add/remove undefined controls", function(assert) {
 		// System under Test
 		var oToolbar = new sap.m.Toolbar();
 
@@ -250,9 +250,9 @@
 		oToolbar.destroy();
 	})
 
-	module("Statics");
+	QUnit.module("Statics");
 
-	test("controls shoulds return correct original and initial width", function() {
+	QUnit.test("controls shoulds return correct original and initial width", function(assert) {
 		var isRelativeWidth = sap.m.Toolbar.isRelativeWidth;
 		var oConfig = {
 			"" : true,
@@ -277,7 +277,7 @@
 
 	});
 
-	test("controls shoulds return correct original and initial width", function() {
+	QUnit.test("controls shoulds return correct original and initial width", function(assert) {
 		var getOrigWidth = sap.m.Toolbar.getOrigWidth;
 
 		// test dummy control has no width
@@ -294,7 +294,7 @@
 		oSF.destroy();
 	});
 
-	test("should detect whether toolbar content is shrinkable or not", function() {
+	QUnit.test("should detect whether toolbar content is shrinkable or not", function(assert) {
 		// test wrapper
 		var testShrinkable = function(bExpected, sMessage, sControlName, oConfig) {
 			var sShrinkClass = "shrink";
@@ -341,8 +341,8 @@
 		});
 	});
 
-	module("Behaviour");
-	test("content property change handler should be registered correctly", function() {
+	QUnit.module("Behaviour");
+	QUnit.test("content property change handler should be registered correctly", function(assert) {
 		var oLabel = new sap.m.Label({text : "text"});
 		var oTB = createToolbar();
 		var vRetVal;
@@ -375,7 +375,7 @@
 		oTB.destroy();
 	});
 
-	test("when content property is changed toolbar should be informed", function() {
+	QUnit.test("when content property is changed toolbar should be informed", function(assert) {
 		var spy = this.spy(sap.m.Toolbar.prototype, "_onContentPropertyChanged");
 		var oLabel = new sap.m.Label({text : "text"});
 		var oTB = createToolbar({
@@ -391,7 +391,7 @@
 		oTB.destroy();
 	});
 
-	test("if there is no flexiable content toolbar should just render the items", function() {
+	QUnit.test("if there is no flexiable content toolbar should just render the items", function(assert) {
 		// stub for latest flex support
 		var spy = this.spy(sap.m.Toolbar.prototype, "_registerContentResize");
 		var oTB = createToolbar({
@@ -406,7 +406,7 @@
 		oTB.destroy();
 	});
 
-	test("should behave correct according to latest flex box support", function() {
+	QUnit.test("should behave correct according to latest flex box support", function(assert) {
 		// stub for latest flex support
 		var spy = this.spy(sap.m.Toolbar.prototype, "_registerContentResize");
 		this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", true);
@@ -421,7 +421,7 @@
 		oTB.destroy();
 	});
 
-	test("should behave correct according to old flex box support", function() {
+	QUnit.test("should behave correct according to old flex box support", function(assert) {
 		// stub for latest old flex support
 		var spy = this.spy(sap.m.Toolbar.prototype, "_registerContentResize");
 		this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", false);
@@ -437,7 +437,7 @@
 		oTB.destroy();
 	});
 
-	test("should detect endpoint changes", function() {
+	QUnit.test("should detect endpoint changes", function(assert) {
 		var oTB = createToolbar({
 			Toolbar : {},
 			Label : {text: "label"},
@@ -457,8 +457,8 @@
 		oTB.destroy();
 	});
 
-	module("Events");
-	test("active toolbar should fire press event", function() {
+	QUnit.module("Events");
+	QUnit.test("active toolbar should fire press event", function(assert) {
 		var oLabel = new sap.m.Label({text : "text"});
 		var fnPressSpy = this.spy();
 		var oTB = createToolbar({
@@ -483,7 +483,7 @@
 		oTB.destroy();
 	});
 
-	test("inactive toolbar should not fire press event", function() {
+	QUnit.test("inactive toolbar should not fire press event", function(assert) {
 		var oLabel = new sap.m.Label({text : "text"});
 		var fnPressSpy = this.spy();
 		var oTB = createToolbar({
@@ -508,7 +508,7 @@
 		oTB.destroy();
 	});
 
-	test("active toolbar should not fire press when the event is handled by the child control", function() {
+	QUnit.test("active toolbar should not fire press when the event is handled by the child control", function(assert) {
 		var oButton = new sap.m.Button({text : "text"});
 		var fnPressSpy = this.spy();
 		var oTB = createToolbar({
@@ -533,8 +533,8 @@
 		oTB.destroy();
 	});
 
-	module("Shrinkables");
-	test("Toolbar should not overflow with shrinkable items", function() {
+	QUnit.module("Shrinkables");
+	QUnit.test("Toolbar should not overflow with shrinkable items", function(assert) {
 		var sLongText = new Array(1000).join("text ");
 
 		// test wrapper
@@ -580,8 +580,8 @@
 
 	});
 
-	module("LayoutData");
-	test("should reapply layout data styles after content is rerendered", function() {
+	QUnit.module("LayoutData");
+	QUnit.test("should reapply layout data styles after content is rerendered", function(assert) {
 		var sMinWidth = "100px";
 		var oBtn = new sap.m.Button({
 			text : "Button Text",
@@ -610,7 +610,7 @@
 		oTB.destroy();
 	});
 
-	test("should reapply style after layout data is changed", function() {
+	QUnit.test("should reapply style after layout data is changed", function(assert) {
 		var sInitMinWidth = "100px";
 		var sLastMinWidth = "200px";
 		var oBtn = new sap.m.Button({
@@ -643,7 +643,7 @@
 		oTB.destroy();
 	});
 
-	test("setting layout data should apply changes with rerender", function() {
+	QUnit.test("setting layout data should apply changes with rerender", function(assert) {
 		var sMinWidth = "100px";
 		var oBtn = new sap.m.Button({
 			text : "Button Text"
@@ -672,8 +672,8 @@
 		oTB.destroy();
 	});
 
-	module("Element Margins");
-	test("Should add margins to elements in a Toolbar", function() {
+	QUnit.module("Element Margins");
+	QUnit.test("Should add margins to elements in a Toolbar", function(assert) {
 		// Arrange
 		var oFirstButton = new sap.m.Button("first"),
 			oMiddleButton = new sap.m.Button("middle"),

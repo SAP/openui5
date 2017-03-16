@@ -7,7 +7,7 @@ sap.ui.define([
 
 	var iExecutionDelay = Opa.config.executionDelay;
 
-	module("matchers without fake time");
+	QUnit.module("matchers without fake time");
 
 	QUnit.test("Should find a control by id without matchers", function(assert) {
 		// Arrange
@@ -116,7 +116,7 @@ sap.ui.define([
 		afterEach : function () { sinon.config.useFakeTimers = false; }
 	});
 
-	QUnit.test("Should execute a matcher and pass its value to success if no control is searched", function () {
+	QUnit.test("Should execute a matcher and pass its value to success if no control is searched", function (assert) {
 		var oOpa5 = new Opa5(),
 			fnMatcherStub = this.stub().returns("foo"),
 			fnActionSpy = this.spy(),
@@ -142,7 +142,7 @@ sap.ui.define([
 		this.clock.tick(1000);
 	});
 
-	QUnit.test("Should not call check if no matcher is matching", function() {
+	QUnit.test("Should not call check if no matcher is matching", function(assert) {
 		// Arrange
 		var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
 		oButton.placeAt("qunit-fixture");
@@ -181,7 +181,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Should call check when all matchers are matching", function() {
+	QUnit.test("Should call check when all matchers are matching", function(assert) {
 		// Arrange
 		var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
 		oButton.placeAt("qunit-fixture");
@@ -229,7 +229,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Should only pass matching controls to success", function() {
+	QUnit.test("Should only pass matching controls to success", function(assert) {
 		// Arrange
 		var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
 		var oButton2 = new sap.ui.commons.Button("myButton2", {text : "bar"});
@@ -271,7 +271,7 @@ sap.ui.define([
 		oButton2.destroy();
 	});
 
-	QUnit.test("Should only pass a single matching control to success", function() {
+	QUnit.test("Should only pass a single matching control to success", function(assert) {
 		// Arrange
 		var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
 		oButton.placeAt("qunit-fixture");
@@ -309,7 +309,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Should call a matcher which is an inline function", function() {
+	QUnit.test("Should call a matcher which is an inline function", function(assert) {
 		// Arrange
 		var oButton = new sap.ui.commons.Button("myButton3");
 		oButton.placeAt("qunit-fixture");

@@ -54,9 +54,9 @@
 
 		qutils.delayTestStart();
 
-		module("Properties");
+		QUnit.module("Properties");
 
-		test("Default Values", function() {
+		QUnit.test("Default Values", function(assert) {
 			var oDivider = oDividers["oDivider1"];
 			equals(oDivider.getWidth(), "100%", "Default 'width':");
 			equals(oDivider.getHeight(), "Medium", "Default 'height':");
@@ -64,7 +64,7 @@
 			equals(oDivider.getType(), "Area", "Default 'type':");
 		 });
 
-		test("Custom Values", function() {
+		QUnit.test("Custom Values", function(assert) {
 			var oDivider = oDividers["oDivider2"];
 			equals(oDivider.getWidth(), "50%", "Custom 'width':");
 			equals(oDivider.getHeight(), "Large", "Custom 'height':");
@@ -72,14 +72,14 @@
 			equals(oDivider.getType(), "Page", "Custom 'type':");
 		 });
 
-		module("Visual Appearence");
+		QUnit.module("Visual Appearence");
 
-		test("Visibility", function() {
+		QUnit.test("Visibility", function(assert) {
 			equals(jQuery("#oDivider2").get(0), undefined, "Invisible:");
 			ok(jQuery("#oDivider1").get(0), "Visible: expected defined");
 		});
 
-		test("Area Divider", function() {
+		QUnit.test("Area Divider", function(assert) {
 			for(var i=3; i<7; i++){
 				var oDivider = jQuery("#oDivider"+i);
 				var sDividerStyle = oDivider.attr("style");
@@ -103,7 +103,7 @@
 			}
 		});
 
-		test("Page Divider", function() {
+		QUnit.test("Page Divider", function(assert) {
 			for(var i=7; i<11; i++){
 				var oDivider = jQuery("#oDivider"+i);
 				var sDividerStyle = oDivider.attr("style");

@@ -14,7 +14,6 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			},
 			config : {
 				sample : {
-					stretch : true,
 					files : [
 						"Page.view.xml",
 						"Page.controller.js"

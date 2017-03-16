@@ -232,9 +232,9 @@
 
 			qutils.delayTestStart();
 
-			module("Properties");
+			QUnit.module("Properties");
 
-			test("Appointment", function() {
+			QUnit.test("Appointment", function(assert) {
 				var oAppointment = sap.ui.getCore().byId("App0");
 				equal(oAppointment.getKey(), "A0", "Appointment: key set");
 				equal(oAppointment.getTitle(), "Appointment 0", "Appointment: Title set");
@@ -244,9 +244,9 @@
 				equal(oAppointment.getSelected(), false, "Appointment: selected not set");
 			});
 
-			module("Rendering");
+			QUnit.module("Rendering");
 
-			test("Row", function() {
+			QUnit.test("Row", function(assert) {
 				ok(!jQuery("#Row1").attr("style"), "Row1: no width and heigh set");
 				ok(!jQuery("#Row1").attr("title"), "Row1: no tooltip set");
 				equal(jQuery("#Row1").attr("tabindex"), "-1", "Row1: tabindex set");
@@ -257,7 +257,7 @@
 				equal(jQuery("#Row2").attr("tabindex"), "0", "Row2: tabindex set");
 			});
 
-			test("Appointments row", function() {
+			QUnit.test("Appointments row", function(assert) {
 				var aIntervals = jQuery("#Row1-Apps").children(".sapUiCalendarRowAppsInt");
 				equal(aIntervals.length, 12, "Row1: per default 12 intervals rendered");
 				var sStyle = jQuery(aIntervals[0]).attr("style");
@@ -276,7 +276,7 @@
 				ok(!jQuery("#Row1-Now").is(":visible"), "Now indicatior is not visible");
 			});
 
-			test("Appointments row - non working items", function() {
+			QUnit.test("Appointments row - non working items", function(assert) {
 				var aIntervals = jQuery("#Row1-Apps").children(".sapUiCalendarRowAppsInt");
 				var bNonWorkingIntervals = false;
 
@@ -341,7 +341,7 @@
 				sap.ui.getCore().applyChanges();
 			});
 
-			test("Appointments - Hours view", function() {
+			QUnit.test("Appointments - Hours view", function(assert) {
 				var $Appointment0 = jQuery("#App0");
 				var $Appointment1 = jQuery("#App1");
 				var $Appointment2 = jQuery("#App2");
@@ -395,7 +395,7 @@
 
 			});
 
-			test("Interval headers - Hours view", function() {
+			QUnit.test("Interval headers - Hours view", function(assert) {
 				var oHead = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsIntHead")[0];
 				ok(oHead, "Interval0: Head area rendered");
 				equal(jQuery(oHead).children().length, 0, "Interval0: Head has no content");
@@ -417,7 +417,7 @@
 				ok(!oHead, "Row2: Interval0: no head area rendered");
 			});
 
-			test("Subintervals - Hours view", function() {
+			QUnit.test("Subintervals - Hours view", function(assert) {
 				var aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
 				equal(aSubintervals.length, 0, "No subintervals rendered");
 
@@ -436,7 +436,7 @@
 				equal(aSubintervals.length, 0, "No subintervals rendered");
 			});
 
-			test("Appointments - new start date", function() {
+			QUnit.test("Appointments - new start date", function(assert) {
 				var sLevel = jQuery("#App2").attr("data-sap-level");
 
 				var oDate = new Date();
@@ -478,7 +478,7 @@
 
 			});
 
-			test("Appointments - EmptyIntervalHeaders", function() {
+			QUnit.test("Appointments - EmptyIntervalHeaders", function(assert) {
 				oRow1.setShowEmptyIntervalHeaders(false);
 				sap.ui.getCore().applyChanges();
 				var oHead = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsIntHead")[0];
@@ -492,7 +492,7 @@
 
 			});
 
-			test("Appointments - change properties", function() {
+			QUnit.test("Appointments - change properties", function(assert) {
 				var oAppointment = sap.ui.getCore().byId("App0");
 				oAppointment.setKey("Ap0");
 				oAppointment.setTitle("App 0");
@@ -518,7 +518,7 @@
 
 			});
 
-			test("Appointments - days view", function() {
+			QUnit.test("Appointments - days view", function(assert) {
 				oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Day);
 				sap.ui.getCore().applyChanges();
 				var $Appointment0 = jQuery("#App0");
@@ -546,7 +546,7 @@
 				ok(!$Appointment8.get(0), "Appointment8 not rendered");
 			});
 
-			test("Interval headers - days view", function() {
+			QUnit.test("Interval headers - days view", function(assert) {
 				var oHead = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsIntHead")[0];
 				ok(oHead, "Interval0: Head area rendered");
 				equal(jQuery(oHead).children().length, 0, "Interval0: Head has no content");
@@ -564,7 +564,7 @@
 				ok(jQuery("#Row1-AppsInt1").hasClass("sapUiCalendarRowAppsIntFirst"), "Interval1 is first of month");
 			});
 
-			test("Subintervals - days view", function() {
+			QUnit.test("Subintervals - days view", function(assert) {
 				var aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
 				equal(aSubintervals.length, 0, "No subintervals rendered");
 
@@ -583,7 +583,7 @@
 				equal(aSubintervals.length, 0, "No subintervals rendered");
 			});
 
-			test("Appointments - month view", function() {
+			QUnit.test("Appointments - month view", function(assert) {
 				oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
 				sap.ui.getCore().applyChanges();
 				var $Appointment0 = jQuery("#App0");
@@ -615,7 +615,7 @@
 				ok($Appointment8.get(0), "Appointment8 rendered");
 			});
 
-			test("Interval headers - month view", function() {
+			QUnit.test("Interval headers - month view", function(assert) {
 				var oHead = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsIntHead")[0];
 				ok(oHead, "Interval0: Head area rendered");
 				equal(jQuery(oHead).children().length, 0, "Interval0: Head has no content");
@@ -630,7 +630,7 @@
 				ok(Math.abs(Math.floor(($Head.offset().left + $Head.outerWidth()) - (jQuery("#Row1-AppsInt2").offset().left + jQuery("#Row1-AppsInt2").outerWidth()))) <= 1, "Intervalhead has same end rendered as Interval 2"); // maybe it varias 1px because of rounding
 			});
 
-			test("Subintervals - months view", function() {
+			QUnit.test("Subintervals - months view", function(assert) {
 				var aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
 				equal(aSubintervals.length, 0, "No subintervals rendered");
 
@@ -663,7 +663,7 @@
 				equal(aSubintervals.length, 0, "No subintervals rendered");
 			});
 
-			test("Appointments - change intervals", function() {
+			QUnit.test("Appointments - change intervals", function(assert) {
 				oRow1.setIntervals(2);
 				sap.ui.getCore().applyChanges();
 				var aIntervals = jQuery("#Row1-Apps").children(".sapUiCalendarRowAppsInt");
@@ -685,9 +685,9 @@
 				ok(jQuery("#Row1-Group0").get(0), "Group appointment rendered");
 			});
 
-			module("Interaction");
+			QUnit.module("Interaction");
 
-			test("click on group-appointment", function() {
+			QUnit.test("click on group-appointment", function(assert) {
 				qutils.triggerEvent("tap", "Row1-Group0");
 
 				equal(iSelectedGroupAppointments, 7, "Selected Appointments in group");
@@ -699,7 +699,7 @@
 				ok(sap.ui.getCore().byId("App6").getSelected(), "Appointment1: selected property set");
 			});
 
-			test("click on appointment", function() {
+			QUnit.test("click on appointment", function(assert) {
 				var sSelectedTextId = sap.ui.unified.CalendarRow._oStaticSelectedText.getId();
 				var sAriaLabel1, sAriaLabel2, sAriaLabel3;
 				// initialize Row1
@@ -738,7 +738,7 @@
 				ok(sAriaLabel2.indexOf(sSelectedTextId) > -1, "Appointment2: selected ARIA text is still rendered");
 			});
 
-			test("click on interval", function() {
+			QUnit.test("click on interval", function(assert) {
 				oIntervalStartDate = undefined;
 				oIntervalEndDate = undefined;
 				bSubInterval = undefined;
@@ -774,7 +774,7 @@
 				sap.ui.getCore().applyChanges();
 			});
 
-			test("click on sub-interval", function() {
+			QUnit.test("click on sub-interval", function(assert) {
 				oRow1.setShowSubIntervals(true);
 				sap.ui.getCore().applyChanges();
 				var aSubIntervals = jQuery("#Row1-AppsInt1").children(".sapUiCalendarRowAppsSubInt");
@@ -816,7 +816,7 @@
 				sap.ui.getCore().applyChanges();
 			});
 
-			test("keyboard arrow navigation", function() {
+			QUnit.test("keyboard arrow navigation", function(assert) {
 				initializeRow1();
 				jQuery("#App1").focus();
 				equal(document.activeElement.id, "App1", "Appointment1 focused");
@@ -849,7 +849,7 @@
 				equal(oFormatYyyyMMddHHmm.format(oStartDate), "201502010800", "new Start date");
 			});
 
-			test("keyboard HOME/END navigation", function() {
+			QUnit.test("keyboard HOME/END navigation", function(assert) {
 				initializeRow1();
 				jQuery("#App1").focus();
 				bStartDateChange = false;
@@ -872,7 +872,7 @@
 				ok(!bStartDateChange, "StartDateChange event not fired");
 			});
 
-			test("keyboard selection", function() {
+			QUnit.test("keyboard selection", function(assert) {
 				jQuery("#App0").focus();
 				qutils.triggerKeydown("App0", "ENTER");
 				equal(sSelectedAppointmentId, "App0", "Appointment 0: ENTER fires select event");
@@ -881,7 +881,7 @@
 				ok(jQuery("#App0").hasClass("sapUiCalendarAppSel"), "Appointment0: selected rendered");
 			});
 
-			test("keyboard leaveRow", function() {
+			QUnit.test("keyboard leaveRow", function(assert) {
 				bLeaveRow = false;
 				sType = undefined;
 				jQuery("#App0").focus();
@@ -915,19 +915,19 @@
 				equal(sType, "sapend", "LeaveRow event 'type' parameter set");
 			});
 
-			module("functions");
+			QUnit.module("functions");
 
-			test("focusAppointment", function() {
+			QUnit.test("focusAppointment", function(assert) {
 				oRow1.focusAppointment(sap.ui.getCore().byId("App2"));
 				equal(document.activeElement.id, "App2", "Appointment2 focused");
 			});
 
-			test("focusNearestAppointment", function() {
+			QUnit.test("focusNearestAppointment", function(assert) {
 				oRow1.focusNearestAppointment(new Date("2015", "01", "01", "11", "00"));
 				equal(document.activeElement.id, "App1", "Appointment1 focused");
 			});
 
-			test("_determineVisibleAppointments", function () {
+			QUnit.test("_determineVisibleAppointments", function (assert) {
 				//arrange
 				var aAppointments = oRow2.getAppointments(),
 					oApp = aAppointments[0];
@@ -942,7 +942,7 @@
 				equal(oRow2._getVisibleAppointments().length, 1, "The number of visible appointments is as expected");
 			});
 
-		module("RTL", {
+		QUnit.module("RTL", {
 				beforeEach: function () {
 					//Arrange
 					this.bOriginalRTLMode = sap.ui.getCore().getConfiguration().getRTL();
@@ -980,7 +980,7 @@
 				}
 			});
 
-		test("keyboard arrow navigation", function() {
+		QUnit.test("keyboard arrow navigation", function(assert) {
 			jQuery("#App1RTL").focus();
 			equal(document.activeElement.id, "App1RTL", "Appointment1 focused");
 			equal(jQuery("#App1RTL").attr("tabindex"), "0", "Appointment1: tabindex 0 rendered");
@@ -1008,7 +1008,7 @@
 			equal(this.oRowRTL.getFocusedAppointment().getId(), "App0RTL", "Appointment0 returned by getFocusedAppointment");
 		});
 
-		test("Now indicator is displayed on the right", function() {
+		QUnit.test("Now indicator is displayed on the right", function(assert) {
 			var oDate = new Date();
 			oDate.setHours(oDate.getHours() - 3);
 			this.oRowRTL.setStartDate(oDate);

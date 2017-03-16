@@ -94,16 +94,16 @@
 	oa3.placeAt("objectAttributes");
 	oTable.placeAt("objectAttributes");
 
-	module("Rendering All Fields");
+	QUnit.module("Rendering All Fields");
 
-	test("AttributesRendered", function() {
+	QUnit.test("AttributesRendered", function(assert) {
 
 		notEqual(jQuery.sap.domById("oa1"), null, "Object attribute #1 should be rendered.");
 		notEqual(jQuery.sap.domById("oa2"), null, "Object attribute #2 should be rendered.");
 		notEqual(jQuery.sap.domById("oa3"), null, "Object attribute #3 should be rendered.");
 	});
 
-	test("Screen reader", function() {
+	QUnit.test("Screen reader", function(assert) {
 
 		// Arrange
 		var oObjectAttribute = new sap.m.ObjectAttribute({
@@ -123,9 +123,9 @@
 
 	});
 
-	module("Attributes Wrapping");
+	QUnit.module("Attributes Wrapping");
 
-	test("Attributes Wrapping in ObjectHeader", function() {
+	QUnit.test("Attributes Wrapping in ObjectHeader", function(assert) {
 
 		// arrange
 		var oAttr = new sap.m.ObjectAttribute("oOA1", {title: "Test",
@@ -148,7 +148,7 @@
 		oObjectHeader.destroy();
 	});
 
-	test("Attributes Wrapping in Responsive ObjectHeader", function() {
+	QUnit.test("Attributes Wrapping in Responsive ObjectHeader", function(assert) {
 
 		// arrange
 		var oAttr = new sap.m.ObjectAttribute("oOA2", {
@@ -200,9 +200,9 @@
 	});
 	/******************************************************************/
 
-	module("Aggregation customContent");
+	QUnit.module("Aggregation customContent");
 
-	test("Aggregation sap.m.Link", function() {
+	QUnit.test("Aggregation sap.m.Link", function(assert) {
 
 		// arrange
 		var oAttr = new sap.m.ObjectAttribute("attr", {
@@ -223,7 +223,7 @@
 	});
 	/******************************************************************/
 
-	module("Internal API");
+	QUnit.module("Internal API");
 
 	test ("TestIsEmpty", function() {
 
@@ -237,9 +237,9 @@
 
 	/******************************************************************/
 
-	module("Events");
+	QUnit.module("Events");
 
-	test("TestTap", function() {
+	QUnit.test("TestTap", function(assert) {
 		expect(3);
 		qutils.triggerEvent("tap", oa1.$().children()[0]); //should fire event
 		qutils.triggerEvent("tap", oa2.$().children()[0]); //should fire event
@@ -249,7 +249,7 @@
 		qutils.triggerEvent("tap", oa6.getId()); //should not fire event
 	});
 
-	test("Test table row is not clickable when ObjectAttribute is active", function() {
+	QUnit.test("Test table row is not clickable when ObjectAttribute is active", function(assert) {
 		expect(1);
 		qutils.triggerEvent("tap", oa7.$().children()[0]);
 		qutils.triggerEvent("tap", "table-item");
@@ -264,9 +264,9 @@
 		}, 500);
 	});
 
-	module("Keyboard handling");
+	QUnit.module("Keyboard handling");
 
-	test("Enter", function() {
+	QUnit.test("Enter", function(assert) {
 
 		// Arrange
 		var oObjectAttribute = new sap.m.ObjectAttribute({
@@ -289,7 +289,7 @@
 		oObjectAttribute.destroy();
 	});
 
-	test("Space", function() {
+	QUnit.test("Space", function(assert) {
 
 		// Arrange
 		var oObjectAttribute = new sap.m.ObjectAttribute({
@@ -312,8 +312,8 @@
 		oObjectAttribute.destroy();
 	});
 
-    module("rtl support");
-    test("Render text with the opposite direction", function() {
+    QUnit.module("rtl support");
+    QUnit.test("Render text with the opposite direction", function(assert) {
         // Arrange
         var oObjectAttribute = new sap.m.ObjectAttribute({
             title: "a",
@@ -331,6 +331,67 @@
         oObjectAttribute.destroy();
     });
 
+	QUnit.module("Active attribute", {
+		beforeEach: function () {
+			this.oActiveAttr = new sap.m.ObjectAttribute("oAAtt", {
+				title: "Title",
+				text: "Contract #D1234567890",
+				active: true
+			});
+		},
+		afterEach: function () {
+			this.oActiveAttr.destroy();
+		}
+	});
+
+
+	QUnit.test("Standalone active attribute is rendered in separate spans", function(assert) {
+		this.oActiveAttr.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		ok(this.oActiveAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
+		ok(this.oActiveAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span has class sapMObjectAttributeTitle.");
+		ok(this.oActiveAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span has class sapMObjectAttributeColon.");
+		ok(this.oActiveAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span has class sapMObjectAttributeText.");
+	});
+
+	QUnit.test("Active attribute inside ObjectListItem is rendered in separate spans", function(assert) {
+		var oObjectListItem = new sap.m.ObjectListItem("oOL4", {
+			attributes : [this.oActiveAttr]
+		});
+
+		oObjectListItem.placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		ok(this.oActiveAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
+		ok(this.oActiveAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span has class sapMObjectAttributeTitle.");
+		ok(this.oActiveAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span has class sapMObjectAttributeColon.");
+		ok(this.oActiveAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span has class sapMObjectAttributeText.");
+
+		// Clean up
+		oObjectListItem.destroy();
+	});
+
+	QUnit.test("Active attribute inside static ObjectHeader is rendered in separate spans", function(assert) {
+		var oObjectHeaderS = new sap.m.ObjectHeader({
+			attributes : [this.oActiveAttr]
+		});
+		oObjectHeaderS.placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		ok(this.oActiveAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
+		ok(this.oActiveAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span has class sapMObjectAttributeTitle.");
+		ok(this.oActiveAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span has class sapMObjectAttributeColon.");
+		ok(this.oActiveAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span has class sapMObjectAttributeText.");
+
+		// Clean up
+		oObjectHeaderS.destroy();
+	});
 </script>
 </head>
 

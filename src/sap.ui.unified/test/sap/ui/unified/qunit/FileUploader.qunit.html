@@ -67,9 +67,9 @@
 	/**
 	 * Test Public Interface
 	 */
-	module("public interface");
+	QUnit.module("public interface");
 
-	test("Test enabled property - setter/getter", function () {
+	QUnit.test("Test enabled property - setter/getter", function (assert) {
 		var oFileUploader = createFileUploader(),
 				$fileUploader,
 				sDisabledClassName = "sapUiFupDisabled",
@@ -100,7 +100,7 @@
 		oFileUploader.destroy();
 	});
 
-	test("Test fileType property - setter/getter - compatibility cases", function () {
+	QUnit.test("Test fileType property - setter/getter - compatibility cases", function (assert) {
 		//Setup
 		var oFileUploader = createFileUploader({
 			fileType: "doc,docx,txt,rtf"
@@ -124,7 +124,7 @@
 		oFileUploader.destroy();
 	});
 
-	test("Test fileType property - setter/getter - standard cases", function () {
+	QUnit.test("Test fileType property - setter/getter - standard cases", function (assert) {
 		//Setup
 		var oFileUploader = createFileUploader({
 				fileType: ["doc", "docx", "txt", "rtf"]
@@ -154,7 +154,7 @@
 		oFileUploader.destroy();
 	});
 
-	test("Test mimeType property - setter/getter - compatibility cases", function () {
+	QUnit.test("Test mimeType property - setter/getter - compatibility cases", function (assert) {
 		//Setup
 		var oFileUploader = createFileUploader({
 			mimeType: "image/png,image,image/jpeg,application/javascript"
@@ -178,7 +178,7 @@
 		oFileUploader.destroy();
 	});
 
-	test("Test mimeType property - setter/getter - standard cases", function () {
+	QUnit.test("Test mimeType property - setter/getter - standard cases", function (assert) {
 		//Setup
 		var oFileUploader = createFileUploader({
 				mimeType: ["image/png", "image", "image/jpeg", "application/javascript"]
@@ -208,8 +208,8 @@
 		oFileUploader.destroy();
 	});
 
-	module("File validation");
-	test("Test file type validation - handlechange()", function (){
+	QUnit.module("File validation");
+	QUnit.test("Test file type validation - handlechange()", function (assert){
 		//setup
 		var oFileUploader = createFileUploader({
 				fileType: ["bmp", "png", "jpg"]
@@ -284,7 +284,7 @@
 	});
 
 	if (!(!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10)) {
-		test("Testing the filename lenth validation handling - handlechange()", function () {
+		QUnit.test("Testing the filename lenth validation handling - handlechange()", function (assert) {
 			//setup
 			var oFileUploader = createFileUploader({
 					maximumFilenameLength: 10,
@@ -324,7 +324,7 @@
 		});
 	};
 
-	test("Testing the clearing of the input fields - clear()", function () {
+	QUnit.test("Testing the clearing of the input fields - clear()", function (assert) {
 		//setup
 		var oFileUploader = createFileUploader(),
 			oSpy = this.spy(oFileUploader, "setValue"),
@@ -354,8 +354,8 @@
 	/**
 	 * Test private functions
 	 */
-	module("private functions");
-	test("Testing sending passed files with XHR", function () {
+	QUnit.module("private functions");
+	QUnit.test("Testing sending passed files with XHR", function (assert) {
 		var oFileUploader = createFileUploader(),
 			aFiles = {
 				"0": createFakeFile({
@@ -383,7 +383,7 @@
 		oFileUploader.destroy();
 	});
 
-	test("Testing the filename length handling - _isFilenameTooLong", function () {
+	QUnit.test("Testing the filename length handling - _isFilenameTooLong", function (assert) {
 		//setup
 		var oFileUploader = createFileUploader({
 			maximumFilenameLength: 5

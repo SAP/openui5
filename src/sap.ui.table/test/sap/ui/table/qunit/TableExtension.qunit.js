@@ -41,12 +41,12 @@ var oStandardTable, oTreeTable, oAnalyticalTable;
 sap.ui.test.qunit.delayTestStart(500);
 
 QUnit.module("TableExtension", {
-	setup: function() {
+	beforeEach: function() {
 		oStandardTable = new sap.ui.table.Table();
 		oTreeTable = new sap.ui.table.TreeTable();
 		oAnalyticalTable = new sap.ui.table.AnalyticalTable();
 	},
-	teardown: function () {
+	afterEach: function () {
 		if (oStandardTable) {
 			oStandardTable.destroy();
 			oStandardTable = null;

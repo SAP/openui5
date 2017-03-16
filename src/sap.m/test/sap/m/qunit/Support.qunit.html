@@ -29,8 +29,8 @@
 			var sSupportTitle = "Technical Information";
 
 
-			module("Open API");
-			test("Test main control functionality", function() {
+			QUnit.module("Open API");
+			QUnit.test("Test main control functionality", function(assert) {
 				sap.m.Support.open();
 
 				this.clock.tick(500);
@@ -45,8 +45,8 @@
 				oSupport.destroy();
 			});
 
-			module("On and Off API");
-			test("Register/Unregister event", function() {
+			QUnit.module("On and Off API");
+			QUnit.test("Register/Unregister event", function(assert) {
 
 				var sEventName = "ontouchstart";
 				document[sEventName] = "alabala";

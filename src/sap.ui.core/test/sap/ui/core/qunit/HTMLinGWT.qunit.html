@@ -105,9 +105,9 @@
 
 			qutils.delayTestStart();
 
-			module("sap.ui.core.HTML", {
-				setup : function() {},
-				tearDown : function () {}
+			QUnit.module("sap.ui.core.HTML", {
+				beforeEach : function() {},
+				afterEach : function () {}
 			});
 
   			asyncTest("initialized", function() {

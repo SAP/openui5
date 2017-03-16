@@ -27,7 +27,7 @@
 		sinon.config.useFakeTimers = true;
 
 		QUnit.module("Rendering", {
-			setup : function () {
+			beforeEach : function () {
 
 				this.oRC = new sap.ui.commons.ResponsiveContainer({
 					defaultContent: new sap.ui.commons.TextView({
@@ -52,7 +52,7 @@
 				this.oRC.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oRC.destroy();
 				this.oRC = null;
 			}
@@ -63,7 +63,7 @@
 			assert.strictEqual(oFirstRange.getMetadata().getParent().getName(), "sap.ui.core.Element", "'sap.ui.commons.ResponsiveContainerRange' inherits correctly");
 		});
 
-		QUnit.test("Control is rendered correctly", function (assert){
+		QUnit.test("Control is rendered correctly", function (assert) {
 			var $hiddenDiv = this.oRC.$().find("> div");
 			var aRangeDivs = $hiddenDiv.find("> div");
 
@@ -77,7 +77,7 @@
 		});
 
 		QUnit.module("API", {
-			setup : function () {
+			beforeEach : function () {
 				this.oRCR = new sap.ui.commons.ResponsiveContainerRange();
 				this.oRC = new sap.ui.commons.ResponsiveContainer({
 					ranges: this.oRCR
@@ -85,27 +85,27 @@
 				this.oRC.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oRC.destroy();
 				this.oRCR.destroy();
 				this.oRC = null;
 			}
 		});
 
-		QUnit.test("Default API values ResponsiveContainer", function (assert){
+		QUnit.test("Default API values ResponsiveContainer", function (assert) {
 			//Assert
 			assert.strictEqual(this.oRC.getWidth(), "100%", "Width");
 			assert.strictEqual(this.oRC.getHeight(), "100%", "Height");
 		});
 
-		QUnit.test("Default API values ResponsiveContainerRange", function (assert){
+		QUnit.test("Default API values ResponsiveContainerRange", function (assert) {
 			//Assert
 			assert.strictEqual(this.oRCR.getWidth(), "", "Width");
 			assert.strictEqual(this.oRCR.getHeight(), "", "Height");
 			assert.strictEqual(this.oRCR.getKey(), "", "Key");
 		});
 
-		QUnit.test("setWidth", function (assert){
+		QUnit.test("setWidth", function (assert) {
 			//Act
 			this.oRC.setWidth("200px");
 			sap.ui.getCore().applyChanges();
@@ -114,7 +114,7 @@
 			assert.strictEqual(this.oRC.$().css("width"), "200px", "Dom width shoud be set to 200px");
 		});
 
-		QUnit.test("setHeight", function (assert){
+		QUnit.test("setHeight", function (assert) {
 			//Act
 			this.oRC.setHeight("200px");
 			sap.ui.getCore().applyChanges();
@@ -124,7 +124,7 @@
 		});
 
 		QUnit.module("Behaviour", {
-			setup : function () {
+			beforeEach : function () {
 
 				this.oRC = new sap.ui.commons.ResponsiveContainer({
 					width: "199px",
@@ -150,13 +150,13 @@
 				this.oRC.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oRC.destroy();
 				this.oRC = null;
 			}
 		});
 
-		QUnit.test("Default range", function (assert){
+		QUnit.test("Default range", function (assert) {
 			//Assert
 			assert.strictEqual(this.oRC.$().width(), 199, "Current width should equal 199px");
 			assert.strictEqual(this.oRC.findMatchingRange(), null, "Current range must be null");
@@ -197,7 +197,7 @@
 		});
 
 		QUnit.module("Events", {
-			setup : function () {
+			beforeEach : function () {
 
 				this.oRC = new sap.ui.commons.ResponsiveContainer({
 					width: "199px",
@@ -219,7 +219,7 @@
 				this.oRC.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oRC.destroy();
 				this.oRC = null;
 			}
@@ -243,12 +243,12 @@
 		});
 
 		QUnit.module("Cleanup", {
-			setup : function () {
+			beforeEach : function () {
 				this.oRC = new sap.ui.commons.ResponsiveContainer();
 				this.oRC.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oRC.destroy();
 				this.oRC = null;
 			}

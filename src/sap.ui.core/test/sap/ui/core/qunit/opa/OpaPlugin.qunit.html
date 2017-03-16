@@ -556,17 +556,17 @@ sap.ui.require([
 	});
 
 	QUnit.module("initialization", {
-		setup: function () {
+		beforeEach: function () {
 			this.fnLoggerSpy = sinon.spy(jQuery.sap.log, "getLogger");
 			this.oPlugin =  new OpaPlugin();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oPlugin.destroy();
 			this.fnLoggerSpy.restore();
 		}
 	});
 
-	QUnit.test("Should have the correct log prefix", function () {
+	QUnit.test("Should have the correct log prefix", function (assert) {
 		sinon.assert.calledWith(this.fnLoggerSpy, "sap.ui.test.OpaPlugin");
 
 		var sLogComponent = "a different log component";
@@ -672,7 +672,7 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("Should invoke the interactable matcher if interactable is true", function() {
+	QUnit.test("Should invoke the interactable matcher if interactable is true", function(assert) {
 		// Arrange
 		var fnInteractableSpy = this.spy(Interactable.prototype, "isMatching"),
 			fnWaitSpy = this.spy(_autoWaiter, "hasToWait");

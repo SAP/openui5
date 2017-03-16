@@ -176,9 +176,9 @@
 		var oTablePersoDialog1 = null;
 
 
-		module("Initial Check");
+		QUnit.module("Initial Check");
 
-		test("Initialization", function() {
+		QUnit.test("Initialization", function(assert) {
 			oTablePersoDialog = oTPC.getAggregation("_tablePersoDialog");
 			ok(!jQuery.sap.domById("__dialog0"), "TablePersoDialog is not rendered before it's ever opened.");
 			ok(oTablePersoDialog.getPersoDialogFor(), "TablePersoDialog is linked to a table");
@@ -189,9 +189,9 @@
 		});
 
 
-		module("Open, 'Reset All'-, 'Select All' Visibility");
+		QUnit.module("Open, 'Reset All'-, 'Select All' Visibility");
 
-		test("Open Dialog", function() {
+		QUnit.test("Open Dialog", function(assert) {
 			oTPC.setShowResetAll(false);
 			oTPC.setShowSelectAll(false);
 			//oTPC.setHasGrouping(true);
@@ -215,9 +215,9 @@
 		});
 
 
-		module("Personalizations");
+		QUnit.module("Personalizations");
 
-		test("Initial Column Info", function() {
+		QUnit.test("Initial Column Info", function(assert) {
 			var oPersData = oTablePersoDialog.retrievePersonalizations();
 			ok(oPersData.aColumns, "Column personalization information available");
 			strictEqual(oPersData.aColumns.length, 3, "Column personalization information for 3 columns");
@@ -235,7 +235,7 @@
 			strictEqual(oPersData.aColumns[2].visible, true, "Column 2 visibility is correct");
 		});
 
-		test("En/-disable Arrow Buttons", function() {
+		QUnit.test("En/-disable Arrow Buttons", function(assert) {
 			var oDataList = oTablePersoDialog._oDialog.getContent()[1].getContent()[0];
 			var oButtonUp = sap.ui.getCore().byId("__button0");
 			var oButtonDown = sap.ui.getCore().byId("__button1");
@@ -276,7 +276,7 @@
 
 
 
-		test("After Personalization but OK pressed", function() {
+		QUnit.test("After Personalization but OK pressed", function(assert) {
 			// Re open dialog
 			oTPC.openDialog();
 
@@ -306,8 +306,8 @@
 			strictEqual(oPersData.aColumns[2].text, "Modified Color", "Column 2 (Number) is now 1");
 		});
 
-		module("Many columns");
-		test("Table has more than 100 columns", function(){
+		QUnit.module("Many columns");
+		QUnit.test("Table has more than 100 columns", function(assert){
 			//Arrange
 			var oData2 = {
 				cols: function(){
@@ -356,7 +356,7 @@
 			oTable2.destroy();
 		});
 
-		test("Arrow buttons and scrolling", function(){
+		QUnit.test("Arrow buttons and scrolling", function(assert){
 			//Arrange
 			var oData3 = {
 					cols: function(){
@@ -422,9 +422,9 @@
 			oTable3.destroy();
 		});
 
-		module("Reset All");
+		QUnit.module("Reset All");
 
-		test("Check column captions after Reset All", function(){
+		QUnit.test("Check column captions after Reset All", function(assert){
 			//Arrange
 			var oData4 = {
 					cols: function(){
@@ -490,9 +490,9 @@
 
 
 
-		module("Close");
+		QUnit.module("Close");
 
-		test("Destroy TablePersoDialog", function(){
+		QUnit.test("Destroy TablePersoDialog", function(assert){
 			var oTablePersoDialog = new sap.m.TablePersoDialog({
 				persoDialogFor: oTable
 			});
@@ -503,9 +503,9 @@
 			strictEqual(oTablePersoDialog._oP13nModel, null, "Model bundle is nulled");
 		});
 
-		module("Keyboard handling");
+		QUnit.module("Keyboard handling");
 
-		test("Test Initial focus", function () {
+		QUnit.test("Test Initial focus", function (assert) {
 			// arrange
 			var oTable = new sap.m.Table("testInitialFocusTable", {
 				columns: [
@@ -567,7 +567,7 @@
 
 		});
 
-		test("Test Initial focus with grouping", function () {
+		QUnit.test("Test Initial focus with grouping", function (assert) {
 			// arrange
 			var oTable = new sap.m.Table("testInitialFocusTable", {
 				columns: [

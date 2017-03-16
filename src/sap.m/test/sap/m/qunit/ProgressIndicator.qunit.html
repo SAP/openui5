@@ -64,14 +64,14 @@
 	});
 
 	//basic rendering
-	test("basic rendering", function() {
+	QUnit.test("basic rendering", function(assert) {
 		var oDomRefPI = jQuery.sap.domById("pi1");
 		equal(oDomRefPI.style.width, "50%", "control width should be the same");
 		var oDomRefPIRemainingBar = jQuery.sap.domById("pi1" + "-remainingBar");
 		ok(oDomRefPIRemainingBar, "the remaining bar  is rendered");
 	});
 
-	test("tooltip", function() {
+	QUnit.test("tooltip", function(assert) {
 		var sTooltipText = "Some tooltip";
 		var oProgressIndicator = new sap.m.ProgressIndicator({
 			percentValue: 50,
@@ -88,12 +88,12 @@
 		oProgressIndicator.destroy();
 	});
 
-	test("percentValue greater half", function() {
+	QUnit.test("percentValue greater half", function(assert) {
 		equal(jQuery.sap.byId("pi1").hasClass("sapMPIValueGreaterHalf"), false, "css-class sapMPIValueGreaterHalf should not be set");
 		equal(jQuery.sap.byId("pi2").hasClass("sapMPIValueGreaterHalf"), true, "css-class sapMPIValueGreaterHalf should be set");
 	});
 
-	test("showValue", function() {
+	QUnit.test("showValue", function(assert) {
 		equal(jQuery.sap.byId("pi1").hasClass("sapMPIValueGreaterHalf"), false, "css-class sapMPIValueGreaterHalf should not be set");
 		equal(jQuery.sap.byId("pi2").hasClass("sapMPIValueGreaterHalf"), true, "css-class sapMPIValueGreaterHalf should be set");
 
@@ -104,7 +104,7 @@
 	});
 
 	//test of overwritten method setPercentValue()
-	test("setPercentValue min and max value", function() {
+	QUnit.test("setPercentValue min and max value", function(assert) {
 		var oProgIndicator = new sap.m.ProgressIndicator({
 			percentValue: 10
 		});
@@ -123,14 +123,14 @@
 		oProgIndicator.destroy();
 	});
 
-	test("setPercentValue wrong input (int out of range, too big)", function() {
+	QUnit.test("setPercentValue wrong input (int out of range, too big)", function(assert) {
 		var iPercentTest = 120;
 		oProgInd.setPercentValue(iPercentTest);
 		var iPercentAfter = oProgInd.getPercentValue();
 		equal(iPercentAfter, 0, "the value should be set to the default one");
 	});
 
-	test("setPercentValue wrong input (int out of range, too small)", function() {
+	QUnit.test("setPercentValue wrong input (int out of range, too small)", function(assert) {
 		var iPercentTest = -20;
 		oProgInd.setPercentValue(iPercentTest);
 		var iPercentAfter = oProgInd.getPercentValue();
@@ -138,7 +138,7 @@
 	});
 
 
-	test("setPercentValue with various values", function() {
+	QUnit.test("setPercentValue with various values", function(assert) {
 		var oProgressIndicator = new sap.m.ProgressIndicator({
 			percentValue: 0
 		}),
@@ -172,7 +172,7 @@
 		oProgressIndicator.destroy();
 	});
 
-	test("text should not be rendered when displayValue is not set", function() {
+	QUnit.test("text should not be rendered when displayValue is not set", function(assert) {
 		var oProgIndicator = new sap.m.ProgressIndicator({
 			percentValue: 50
 		});
@@ -186,7 +186,7 @@
 		oProgIndicator.destroy();
 	});
 
-	test("ARIA attributes should be present", function() {
+	QUnit.test("ARIA attributes should be present", function(assert) {
 		var oProgIndicator = new sap.m.ProgressIndicator({
 			percentValue: 50
 		});
@@ -202,7 +202,7 @@
 		oProgIndicator.destroy();
 	});
 
-	test("ARIA attributes should change when percent value changes", function() {
+	QUnit.test("ARIA attributes should change when percent value changes", function(assert) {
 		var oProgIndicator = new sap.m.ProgressIndicator({
 			percentValue: 50
 		});
@@ -224,7 +224,7 @@
 		oProgIndicator.destroy();
 	});
 
-	test("ARIA attributes should change when display value changes", function() {
+	QUnit.test("ARIA attributes should change when display value changes", function(assert) {
 		var oProgIndicator = new sap.m.ProgressIndicator({
 			percentValue: 50,
 			displayValue: "50/100"
@@ -241,7 +241,7 @@
 		oProgIndicator.destroy();
 	});
 
-	test("ARIA valuetext should contain information about the state", function() {
+	QUnit.test("ARIA valuetext should contain information about the state", function(assert) {
 		var oProgIndicator = new sap.m.ProgressIndicator({
 			percentValue: 50,
 			state: sap.ui.core.ValueState.Success
@@ -266,32 +266,32 @@
 		oProgIndicator.destroy();
 	});
 
-	test("explicitly setting textDirection to RTL should override the global setting", function(){
+	QUnit.test("explicitly setting textDirection to RTL should override the global setting", function(assert) {
 		var $TestSubject = jQuery.sap.byId("pi3").find("span");
 		var sDirAttribute = $TestSubject.attr("dir");
 		equal(sDirAttribute, 'rtl', "the attribute 'dir' should have it's value set to rtl");
 	});
 
-	test("explicitly setting textDirection to LTR should override the global setting", function(){
+	QUnit.test("explicitly setting textDirection to LTR should override the global setting", function(assert) {
 		var $TestSubject = jQuery.sap.byId("pi4").find("span");
 		var sDirAttribute = $TestSubject.attr("dir");
 		equal(sDirAttribute, 'ltr', "the attribute 'dir' should have it's value set to ltr");
 	});
 
-	test("not setting textDirection should not change the global text direction", function(){
+	QUnit.test("not setting textDirection should not change the global text direction", function(assert) {
 		var $TestSubject = jQuery.sap.byId("pi1").find("span");
 		var sDirAttribute = $TestSubject.attr("dir");
 		equal(sDirAttribute, undefined, "the attribute 'dir' should not exist");
 	});
 
-	test("explicitly setting textDirection to RTL should result in 'dir' attribute added", function(){
+	QUnit.test("explicitly setting textDirection to RTL should result in 'dir' attribute added", function(assert) {
 		var $TestSubject = jQuery.sap.byId("pi3").find("span");
 		var sDirAttribute = $TestSubject.attr("dir");
 		var bDirAttributeExists = sDirAttribute !== null && sDirAttribute !== undefined;
 		equal(bDirAttributeExists, true, "the attribute 'dir' should exist");
 	});
 
-	test("getAccessibilityInfo", function() {
+	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oControl = new sap.m.ProgressIndicator({percentValue: 50});
 		ok(!!oControl.getAccessibilityInfo, "ProgressIndicator has a getAccessibilityInfo function");
 		var oInfo = oControl.getAccessibilityInfo();

@@ -63,7 +63,7 @@
 		// async4_itemNavigation
 		// ==================================================
 
-		module("Item Navigation", {
+		QUnit.module("Item Navigation", {
 			beforeEach: function () {
 				oCtrl = sap.ui.getCore().getControl(sToolbarId);
 				notStrictEqual(oCtrl, null, "oCtrl must exist");
@@ -75,7 +75,7 @@
 			}
 		});
 
-		test("hidden buttons (visible=false) does not break the navigation", function (assert) {
+		QUnit.test("hidden buttons (visible=false) does not break the navigation", function (assert) {
 			var done = assert.async();
 			var oButtonA = new sap.ui.commons.Button({text: "A", width: "50px"});
 			var oButtonB = new sap.ui.commons.Button({text: "B", width: "50px", enabled: false});
@@ -138,7 +138,7 @@
 			}, 500);
 		});
 
-		test("Down arrow on overflow button opens the overflow popup", function (assert) {
+		QUnit.test("Down arrow on overflow button opens the overflow popup", function (assert) {
 			var done = assert.async();
 			var sOriginalWidth = jQuery("#content").css("width");
 			oCtrl.setWidth("300px");
@@ -159,7 +159,7 @@
 		});
 
 		// BCP: 1580009795
-		test("Right item retain its tabindex attribute after visibility switch", function () {
+		QUnit.test("Right item retain its tabindex attribute after visibility switch", function (assert) {
 			var done = assert.async();
 			var oButtonRightItem = new sap.ui.commons.Button({text: 'Right Item'});
 			oCtrl.addRightItem(oButtonRightItem);

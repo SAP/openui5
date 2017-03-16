@@ -36,7 +36,7 @@
 			sap.ui.Device.browser.chrome  && sap.ui.Device.browser.version > 32
 			// || sap.ui.Device.browser.safari  && sap.ui.Device.browser.version >= 7.1
 			// || sap.ui.Device.os.ios          && sap.ui.Device.browser.safari && sap.ui.Device.os.version >= 8
-			// || sap.ui.Device.browser.edge 
+			// || sap.ui.Device.browser.edge
 			// For Edge and Safari we currently replace the native promise with the polyfill due to timing issues (setTimeout vs Promise.resolve)
 		);
 	}
@@ -115,18 +115,18 @@
 
 		// qutils.delayTestStart();
 
-		module(sTestPrefix + "Basics");
+		QUnit.module(sTestPrefix + "Basics");
 
 		var bNative = P.toString().indexOf("[native code]") > -1;
 
-		test((bNative ? "Native" : "Custom") +" API tested", function() {
+		QUnit.test((bNative ? "Native" : "Custom") +" API tested", function(assert) {
 			var p = new P(function(res, rej) {
 				rej();
 			});
 			ok(!p._subscribers && bNative || p._subscribers && !bNative , (bNative ? "Native" : "Custom") + " Promise implementation active.");
 		});
 
-		test(sTestPrefix + "Native Support", function() {
+		QUnit.test(sTestPrefix + "Native Support", function(assert) {
 			doOnNativeSupport(function(){
 				ok(window.Promise.toString().indexOf("[native code]") > -1, "Firefox, Chrome and Safari support Promises natively.");
 			}, function(){
@@ -135,9 +135,9 @@
 		});
 
 
-		module(sTestPrefix + "promise.then");
+		QUnit.module(sTestPrefix + "promise.then");
 
-		test(sTestPrefix + "API available", function() {
+		QUnit.test(sTestPrefix + "API available", function(assert) {
 			var p = new P(function(res, rej){rej();});
 			ok(typeof(p.then) == "function", "promise.then is a function");
 		});
@@ -210,9 +210,9 @@
 		});
 
 
-		module(sTestPrefix + "promise.catch");
+		QUnit.module(sTestPrefix + "promise.catch");
 
-		test(sTestPrefix + "API available", function() {
+		QUnit.test(sTestPrefix + "API available", function(assert) {
 			var p = new P(function(res, rej){rej();});
 			ok(typeof(p["catch"]) == "function", "promise.catch is a function");
 		});
@@ -248,9 +248,9 @@
 		});
 
 
-		module(sTestPrefix + "Promise.resolve");
+		QUnit.module(sTestPrefix + "Promise.resolve");
 
-		test(sTestPrefix + "API available", function() {
+		QUnit.test(sTestPrefix + "API available", function(assert) {
 			ok(typeof(P.resolve) == "function", "Promise.resolve is a function");
 		});
 
@@ -428,9 +428,9 @@
 		});
 
 
-		module(sTestPrefix + "Promise.reject");
+		QUnit.module(sTestPrefix + "Promise.reject");
 
-		test(sTestPrefix + "API available", function() {
+		QUnit.test(sTestPrefix + "API available", function(assert) {
 			ok(typeof(P.reject) == "function", "Promise.reject is a function");
 		});
 
@@ -463,9 +463,9 @@
 		});
 
 
-		module(sTestPrefix + "Promise.all");
+		QUnit.module(sTestPrefix + "Promise.all");
 
-		test(sTestPrefix + "API available", function() {
+		QUnit.test(sTestPrefix + "API available", function(assert) {
 			ok(typeof(P.all) == "function", "Promise.all is a function");
 		});
 
@@ -553,9 +553,9 @@
 		});
 
 
-		module(sTestPrefix + "Promise.race");
+		QUnit.module(sTestPrefix + "Promise.race");
 
-		test(sTestPrefix + "API available", function() {
+		QUnit.test(sTestPrefix + "API available", function(assert) {
 			ok(typeof(P.race) == "function", "Promise.race is a function");
 		});
 
@@ -675,7 +675,7 @@
 		});
 
 
-		module(sTestPrefix + "then chaining");
+		QUnit.module(sTestPrefix + "then chaining");
 
 		asyncTest(sTestPrefix + "Chain Test 1", function() {
 			var log = createLog();
@@ -834,7 +834,7 @@
 	    });
 
 
-		module(sTestPrefix + "error handling");
+		QUnit.module(sTestPrefix + "error handling");
 
 		asyncTest(sTestPrefix + "throw error in promise.then", function() {
 			var p = asyncAction(false, "1", 10, false);
@@ -918,7 +918,7 @@
 			}, 30);
 		});
 
-		test(sTestPrefix + "Wrong argument in constructor", function(){
+		QUnit.test(sTestPrefix + "Wrong argument in constructor", function(assert) {
 			throws(function(){
 	            new P("not callable");
 	        }, Error);
@@ -959,7 +959,7 @@
 		});
 
 
-		module(sTestPrefix + "snyc");
+		QUnit.module(sTestPrefix + "snyc");
 
 		asyncTest(sTestPrefix + "sync resolve", function() {
 			var log = createLog();
@@ -1004,7 +1004,7 @@
 		});
 
 
-		module(sTestPrefix + "Assimilation");
+		QUnit.module(sTestPrefix + "Assimilation");
 
 		asyncTest(sTestPrefix + "resolve called with a successful promise", function() {
 	        var p1 = asyncAction(false, "X", 10, false);

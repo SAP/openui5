@@ -135,9 +135,9 @@
 	}
 
 
-	module("Basic");
+	QUnit.module("Basic");
 
-	test("test DataState API",function(){
+	QUnit.test("test DataState API",function(assert) {
 		var oDataState = new sap.ui.model.DataState();
 		var mChanges = oDataState.getChanges();
 		var aPropertyChecks = [
@@ -172,8 +172,14 @@
 		equal(oDataState.isDirty(),true, "Control Value set and dirty");
 		equal(oDataState.isControlDirty(),true, "Control Value set and controlDirty");
 		oDataState.setInvalidValue(null);
+		equal(oDataState.isDirty(),true, "Value other that Original Dirty");
+		equal(oDataState.isControlDirty(),true, "Control Value set and controlDirty");
+		oDataState.setInvalidValue(undefined);
 		equal(oDataState.isDirty(),false, "Control Value reset  and not dirty");
 		equal(oDataState.isControlDirty(),false, "Control Value reset and not controlDirty");
+		oDataState.setInvalidValue(false);
+		equal(oDataState.isDirty(),true, "Value other that Original Dirty");
+		equal(oDataState.isControlDirty(),true, "Control Value set and controlDirty");
 
 		//laundering
 		oDataState.setLaundering(true);

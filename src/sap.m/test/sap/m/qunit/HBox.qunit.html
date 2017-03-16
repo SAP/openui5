@@ -92,14 +92,14 @@
 			jQuery(document).ready(function() {
 				QUnit.start();
 				if (!jQuery.support.flexBoxLayout) {
-					test("Dummy Test", function() {
+					QUnit.test("Dummy Test", function(assert) {
 						ok(true, "At least one test needs to run to avoid test timeouts!");
 					});
 				}
 			});
 
 			if(jQuery.support.flexBoxLayout || jQuery.support.newFlexBoxLayout) {
-				test("Flex Boxes rendered", function() {
+				QUnit.test("Flex Boxes rendered", function(assert) {
 					ok(jQuery.sap.domById("hbox1"), "HBox 1 should be rendered");
 					equal(jQuery.sap.byId("hbox1").get(0).tagName, "UL", "HBox 1 should be rendered as UL");
 					ok(jQuery.sap.domById("item1"), "First item of HBox 1 should be rendered");
@@ -116,12 +116,12 @@
 			}
 
 			if(jQuery.support.newFlexBoxLayout) { // Browsers that should support the final spec
-				module('Final spec property tests');
-				test("display", function() {
+				QUnit.module('Final spec property tests');
+				QUnit.test("display", function(assert) {
 					equal(jQuery("#hbox1").css('display'), sVendorPrefix + "flex", "HBox display property should be set correctly in standard-compatible browsers");
 					equal(jQuery("#hbox2").css('display'), sVendorPrefix + "inline-flex", "HBox display property should be set correctly in standard-compatible browsers");
 				});
-				test("flex-direction", function() {
+				QUnit.test("flex-direction", function(assert) {
 					equal(jQuery("#hbox1").css(sVendorPrefix + 'flex-direction'), "row", "HBox " + sVendorPrefix + "flex-direction property should be set correctly in standard-compatible browsers");
 					equal(jQuery("#hbox2").css(sVendorPrefix + 'flex-direction'), "row-reverse", "HBox " + sVendorPrefix + "flex-direction property should be set correctly in standard-compatible browsers");
 				});
@@ -130,11 +130,11 @@
 // 					equal(jQuery("#hbox1").css(sVendorPrefix + 'flex-wrap'), "wrap", "HBox " + sVendorPrefix + "flex-wrap property should be set correctly in standard-compatible browsers");
 // 					if(!jQuery.browser.webkit) equal(jQuery("#hbox2").css(sVendorPrefix + 'flex-wrap'), "nowrap", "HBox " + sVendorPrefix + "flex-wrap property should be set correctly in standard-compatible browsers");
 // 				});
-				test("justify-content", function() {
+				QUnit.test("justify-content", function(assert) {
 					equal(jQuery("#hbox1").css(sVendorPrefix + 'justify-content'), "center", "HBox " + sVendorPrefix + "justify-content property should be set correctly in standard-compatible browsers");
 					equal(jQuery("#hbox2").css(sVendorPrefix + 'justify-content'), "flex-end", "HBox " + sVendorPrefix + "justify-content property should be set correctly in standard-compatible browsers");
 				});
-				test("align-items", function() {
+				QUnit.test("align-items", function(assert) {
 					equal(jQuery("#hbox1").css(sVendorPrefix + 'align-items'), "flex-end", "HBox " + sVendorPrefix + "align-items property should be set correctly in standard-compatible browsers");
 					equal(jQuery("#hbox2").css(sVendorPrefix + 'align-items'), "center", "HBox " + sVendorPrefix + "align-items property should be set correctly in standard-compatible browsers");
 				});
@@ -145,24 +145,24 @@
 			}
 
 			if(!jQuery.support.newFlexBoxLayout && jQuery.support.flexBoxLayout) { // Browsers that should support the old spec but not the final one
-				module('Old spec property tests');
-				test("display", function() {
+				QUnit.module('Old spec property tests');
+				QUnit.test("display", function(assert) {
 					equal(jQuery("#hbox1").css('display'), sVendorPrefix + "box", "HBox display property should be set correctly in standard-compatible browsers");
 					equal(jQuery("#hbox2").css('display'), sVendorPrefix + "inline-box", "HBox display property should be set correctly in standard-compatible browsers");
 				});
-				test("box-orient", function() {
+				QUnit.test("box-orient", function(assert) {
 					equal(jQuery("#hbox1").css(sVendorPrefix + 'box-orient'), "horizontal", "HBox " + sVendorPrefix + "box-orient property should be set correctly in standard-compatible browsers");
 					equal(jQuery("#hbox2").css(sVendorPrefix + 'box-orient'), "horizontal", "HBox " + sVendorPrefix + "box-orient property should be set correctly in standard-compatible browsers");
 				});
-				test("box-direction", function() {
+				QUnit.test("box-direction", function(assert) {
 					equal(jQuery("#hbox1").css(sVendorPrefix + 'box-direction'), "normal", "HBox " + sVendorPrefix + "box-direction property should be set correctly in standard-compatible browsers");
 					equal(jQuery("#hbox2").css(sVendorPrefix + 'box-direction'), "reverse", "HBox " + sVendorPrefix + "box-direction property should be set correctly in standard-compatible browsers");
 				});
-				test("box-pack", function() {
+				QUnit.test("box-pack", function(assert) {
 					equal(jQuery("#hbox1").css(sVendorPrefix + 'box-pack'), "center", "HBox " + sVendorPrefix + "box-pack property should be set correctly in standard-compatible browsers");
 					equal(jQuery("#hbox2").css(sVendorPrefix + 'box-pack'), "end", "HBox " + sVendorPrefix + "box-pack property should be set correctly in standard-compatible browsers");
 				});
-				test("box-align", function() {
+				QUnit.test("box-align", function(assert) {
 					equal(jQuery("#hbox1").css(sVendorPrefix + 'box-align'), "end", "HBox " + sVendorPrefix + "box-align property should be set correctly in standard-compatible browsers");
 					equal(jQuery("#hbox2").css(sVendorPrefix + 'box-align'), "center", "HBox " + sVendorPrefix + "box-align property should be set correctly in standard-compatible browsers");
 				});

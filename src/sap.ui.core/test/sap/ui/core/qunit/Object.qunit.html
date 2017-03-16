@@ -75,20 +75,20 @@
 			return this.value2;
 		};
 
-		module("Base", {
-			setup : function() {
+		QUnit.module("Base", {
+			beforeEach : function() {
 				oObject = new sap.ui.base.Object();
 				oNewClassInstance = new sap.test.NewClass(42);
 				oNewSubClassInstance = new sap.test.NewSubClass();
 			}
 		});
 
-		test("InitialObject", function() {
+		QUnit.test("InitialObject", function(assert) {
 			// assert("fresh object doesn't have interface", typeof oObject.oInterface === "undefined");
 			ok(oObject.getInterface === sap.ui.base.Object.prototype.getInterface, "fresh object doesn't have own getInterface implementation");
 		});
 
-		test("GetInterface", function() {
+		QUnit.test("GetInterface", function(assert) {
 			var oIntf1 = oNewClassInstance.getInterface();
 			ok(oIntf1 !== undefined && oIntf1 !== null, "interface returned");
 			// assert("object has interface member", oObject.oInterface && typeof oObject.oInterface === "object" );
@@ -106,26 +106,26 @@
 			}
 		});
 
-		test("GetMetadata", function() {
+		QUnit.test("GetMetadata", function(assert) {
 			ok(oNewClassInstance.getMetadata() != false, "metadata available");
 			ok(oNewSubClassInstance.getMetadata() != false, "metadata available");
 		});
 
-		test("BaseTypeSet", function() {
+		QUnit.test("BaseTypeSet", function(assert) {
 			ok(oNewClassInstance.getMetadata().getParent() != false, "basetype set");
 			strictEqual("sap.ui.base.Object", oNewClassInstance.getMetadata().getParent().getName(), "basetype as expected");
 			ok(oNewSubClassInstance.getMetadata().getParent() != false, "basetype set");
 			strictEqual(oNewClassInstance.getMetadata(), oNewSubClassInstance.getMetadata().getParent(), "basetype as expected");
 		});
 
-		test("PublicMethods", function() {
+		QUnit.test("PublicMethods", function(assert) {
 			assertArrayEquals("public methods", oNewClassInstance.getMetadata().getPublicMethods(), ["method1"]);
 			assertArrayEquals("public methods", oNewClassInstance.getMetadata().getAllPublicMethods(), ["method1"]);
 			assertArrayEquals("public methods", oNewSubClassInstance.getMetadata().getPublicMethods(), ["method2"]);
 			assertArrayEquals("public methods", oNewSubClassInstance.getMetadata().getAllPublicMethods(), ["method1", "method2"]);
 		});
 
-		test("Interfaces", function() {
+		QUnit.test("Interfaces", function(assert) {
 			assertArrayEquals("interfaces", oNewClassInstance.getMetadata().getInterfaces(), ["sap.ui.base.Poolable"]);
 			ok(oNewClassInstance.getMetadata().isInstanceOf("sap.ui.base.Poolable"), "isInstanceOf");
 			ok(!oNewClassInstance.getMetadata().isInstanceOf("sap.ui.base.PureImagination"), "isInstanceOf");

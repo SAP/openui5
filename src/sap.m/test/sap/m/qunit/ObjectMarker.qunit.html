@@ -22,9 +22,9 @@
 	<script>
 		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-		module("Rendering");
+		QUnit.module("Rendering");
 
-		test("Creating control should add it in the DOM", function () {
+		QUnit.test("Creating control should add it in the DOM", function (assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.Draft
@@ -41,7 +41,7 @@
 			oMarker.destroy();
 		});
 
-		test("Creating control w/o setting type property", function () {
+		QUnit.test("Creating control w/o setting type property", function (assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 			});
@@ -57,7 +57,7 @@
 			oMarker.destroy();
 		});
 
-		test("Creating an interactive control", function() {
+		QUnit.test("Creating an interactive control", function(assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.Draft,
@@ -75,7 +75,7 @@
 			oMarker.destroy();
 		});
 
-		test("Creating an non-interactive control", function() {
+		QUnit.test("Creating an non-interactive control", function(assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.Draft
@@ -92,9 +92,9 @@
 			oMarker.destroy();
 		});
 
-		module("Default rendering of different types");
+		QUnit.module("Default rendering of different types");
 
-		test("Flagged", function () {
+		QUnit.test("Flagged", function (assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.Flagged
@@ -112,7 +112,7 @@
 			oMarker.destroy();
 		});
 
-		test("Favorite", function () {
+		QUnit.test("Favorite", function (assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.Favorite
@@ -130,7 +130,7 @@
 			oMarker.destroy();
 		});
 
-		test("Draft", function () {
+		QUnit.test("Draft", function (assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.Draft
@@ -148,7 +148,7 @@
 			oMarker.destroy();
 		});
 
-		test("Locked", function () {
+		QUnit.test("Locked", function (assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.Locked
@@ -166,7 +166,7 @@
 			oMarker.destroy();
 		});
 
-		test("Locked By", function () {
+		QUnit.test("Locked By", function (assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.LockedBy
@@ -184,7 +184,7 @@
 			oMarker.destroy();
 		});
 
-		test("Unsaved", function () {
+		QUnit.test("Unsaved", function (assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.Unsaved
@@ -202,7 +202,7 @@
 			oMarker.destroy();
 		});
 
-		test("UnsavedBy", function () {
+		QUnit.test("UnsavedBy", function (assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.UnsavedBy
@@ -220,9 +220,9 @@
 			oMarker.destroy();
 		});
 
-		module("Visibility");
+		QUnit.module("Visibility");
 
-		test("Resize control to change the device size", function() {
+		QUnit.test("Resize control to change the device size", function(assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.Locked
@@ -245,7 +245,7 @@
 			oMarker.destroy();
 		});
 
-		test("Explicitly set visibility", function() {
+		QUnit.test("Explicitly set visibility", function(assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.Locked
@@ -286,7 +286,7 @@
 			oMarker.destroy();
 		});
 
-		test("Switch interactive/non-interactive mode", function() {
+		QUnit.test("Switch interactive/non-interactive mode", function(assert) {
 			var fn = function () {};
 
 			// Arrange
@@ -318,9 +318,9 @@
 			oMarker.destroy();
 		});
 
-		module("Eventing");
+		QUnit.module("Eventing");
 
-		test("Fire 'press' event when an inner link control is clicked", function() {
+		QUnit.test("Fire 'press' event when an inner link control is clicked", function(assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.Draft,
@@ -342,9 +342,9 @@
 			oMarker.destroy();
 		});
 
-		module("Binding");
+		QUnit.module("Binding");
 
-		test("Binding - standalone", function() {
+		QUnit.test("Binding - standalone", function(assert) {
 			// Arrange
 			var oModel = new sap.ui.model.json.JSONModel();
 			oModel.setData({ modelData: { type: sap.m.ObjectMarkerType.Locked }});
@@ -378,7 +378,7 @@
 			oMarker.destroy();
 		});
 
-		test("Binding - table", function() {
+		QUnit.test("Binding - table", function(assert) {
 			// Arrange
 			var oModel = new sap.ui.model.json.JSONModel();
 			oModel.setData({ modelData: [{ lastName: "Dente", name: "Al", type: sap.m.ObjectMarkerType.Locked }] });
@@ -417,9 +417,9 @@
 			oTable.destroy();
 		});
 
-		module("Helper methods");
+		QUnit.module("Helper methods");
 
-		test("_getInnerControl private method", function () {
+		QUnit.test("_getInnerControl private method", function (assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker();
 
@@ -433,7 +433,7 @@
 			ok(oMarker._getInnerControl(), "Inner control should be returned instead of null");
 		});
 
-		test("_adjustControl private method", function () {
+		QUnit.test("_adjustControl private method", function (assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker();
 
@@ -444,9 +444,9 @@
 					"it's properties");
 		});
 
-		module("AdditionalInfo");
+		QUnit.module("AdditionalInfo");
 
-		test("Setter and getter", function () {
+		QUnit.test("Setter and getter", function (assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker();
 
@@ -461,7 +461,7 @@
 			strictEqual(oMarker.getAdditionalInfo(), "by John Doe", "Previously set additional info should be retrieved");
 		});
 
-		test("Rendering", function () {
+		QUnit.test("Rendering", function (assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				additionalInfo: "by John Doe"
@@ -483,7 +483,7 @@
 					"include the text representation of the status set concatenated with the additional info");
 		});
 
-		test("Rendering when the type is LockedBy", function () {
+		QUnit.test("Rendering when the type is LockedBy", function (assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.LockedBy,
@@ -499,7 +499,7 @@
 			strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be get from the message bundle and the additional info passed as a parameter");
 		});
 
-		test("Rendering when the type is LockedBy but no additionalInfo is provided", function () {
+		QUnit.test("Rendering when the type is LockedBy but no additionalInfo is provided", function (assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.LockedBy
@@ -514,7 +514,7 @@
 			strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be 'Locked by another user' taken from messagebundle");
 		});
 
-		test("Rendering when the type is UnsavedBy", function () {
+		QUnit.test("Rendering when the type is UnsavedBy", function (assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.UnsavedBy,
@@ -530,7 +530,7 @@
 			strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be get from the message bundle and the additional info passed as a parameter");
 		});
 
-		test("Rendering when the type is UnsavedBy but no additionalInfo is provided", function () {
+		QUnit.test("Rendering when the type is UnsavedBy but no additionalInfo is provided", function (assert) {
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.UnsavedBy

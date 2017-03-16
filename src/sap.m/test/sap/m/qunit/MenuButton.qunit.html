@@ -36,7 +36,7 @@
 		}
 
 
-		module("Basic", {
+		QUnit.module("Basic", {
 			beforeEach: function () {
 				this.sut = new sap.m.MenuButton("menuButton1");
 				this.sut.setText("Menu Button");
@@ -57,11 +57,11 @@
 				this.oMenu = null;
 			}
 		});
-		test("Initial Rendering", function(){
+		QUnit.test("Initial Rendering", function(assert) {
 			notEqual(jQuery.sap.domById(this.sut.getId()), null, "MenuButton HTML Element should be rendered");
 			equal(jQuery.sap.domById(this.oMenu.getId()), null, "Menu HTML Element is not yet rendered");
 		});
-		test("Property - Default Values", function() {
+		QUnit.test("Property - Default Values", function(assert) {
 			this.sut.destroy();
 			this.sut = null;
 			this.sut = new sap.m.MenuButton('menuButton1');
@@ -72,12 +72,12 @@
 			equals(this.sut.getMenu(), null, "Default 'menu':");
 			strictEqual(this.sut.getAggregation('_button').getMetadata().getName() === 'sap.m.Button', true, 'Normal sap m button.');
 		});
-		test("Property - Custom Values", function() {
+		QUnit.test("Property - Custom Values", function(assert) {
 			equals(this.sut.getTooltip(), "This is a test tooltip", "Custom 'tooltip':");
 			equals(this.sut.getText(), "Menu Button", "Custom 'title':");
 		});
 
-		module("Accessibility (ARIA)", {
+		QUnit.module("Accessibility (ARIA)", {
 			beforeEach: function () {
 				this.sut = new sap.m.MenuButton("menuButton1", {
 					menu: new sap.m.Menu("menuButton1Menu", {
@@ -97,7 +97,7 @@
 			}
 		});
 
-		test("MenuButton in Split root aria attributes", function() {
+		QUnit.test("MenuButton in Split root aria attributes", function(assert) {
 			//arrange
 			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
 			sap.ui.getCore().applyChanges();
@@ -110,7 +110,7 @@
 			strictEqual(sAriaHasPopup, "true", '"aria-haspopup" is present and has a correct value');
 		});
 
-		test("MenuButton in Split mode", function () {
+		QUnit.test("MenuButton in Split mode", function (assert) {
 			//arrange
 			var sText = "Example";
 			this.sut.setText(sText);
@@ -138,7 +138,7 @@
 
 		});
 
-		test("MenuButton with tooltip in Split mode", function () {
+		QUnit.test("MenuButton with tooltip in Split mode", function (assert) {
 			//arrange
 			var sTooltip = "Some meaningful tooltip";
 			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
@@ -161,7 +161,7 @@
 			ok(!oArrowButton.getDomRef().hasAttribute("title"), "The inner '_arrowButton' button does not have DOM title property set to its Icon name");
 		});
 
-		test("MenuButton IconOnly in Split mode", function () {
+		QUnit.test("MenuButton IconOnly in Split mode", function (assert) {
 			var sIconName = "slim-arrow-down";
 			this.sut.setIcon("sap-icon://" + sIconName);
 			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
@@ -181,7 +181,7 @@
 			ok(!oArrowButton.getDomRef().hasAttribute("title"), "The inner '_arrowButton' button do not have DOM title property set to its Icon name");
 		});
 
-		test("MenuButton IconOnly with tooltip in Split mode", function () {
+		QUnit.test("MenuButton IconOnly with tooltip in Split mode", function (assert) {
 			//arrange
 			var sTooltip = "Some meaningful tooltip",
 				sIconName = "slim-arrow-down";
@@ -202,7 +202,7 @@
 			strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
 		});
 
-		test("Semantic MenuButton in Split mode", function () {
+		QUnit.test("Semantic MenuButton in Split mode", function (assert) {
 			//arrange
 			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
 			this.sut.setType(sap.m.ButtonType.Emphasized);
@@ -220,7 +220,7 @@
 			ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
 		});
 
-		test("Semantic MenuButton with tooltip in Split mode", function () {
+		QUnit.test("Semantic MenuButton with tooltip in Split mode", function (assert) {
 			var sTooltip = "Some meaningful tooltip";
 			this.sut.setTooltip(sTooltip);
 			this.sut.setIcon("sap-icon://slim-arrow-down");
@@ -244,7 +244,7 @@
 			ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
 		});
 
-		test("Semantic MenuButton IconOnly in Split mode", function () {
+		QUnit.test("Semantic MenuButton IconOnly in Split mode", function (assert) {
 			//arrange
 			var sIconName = "slim-arrow-down";
 			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
@@ -262,7 +262,7 @@
 			ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
 		});
 
-		test("Semantic MenuButton IconOnly with tooltip in Split mode", function () {
+		QUnit.test("Semantic MenuButton IconOnly with tooltip in Split mode", function (assert) {
 			var sTooltip = "Some meaningful tooltip",
 				sIconName = "slim-arrow-down";
 
@@ -284,7 +284,7 @@
 			strictEqual(oInnerButton.$().attr('title'), sTooltip, "The icon tooltip is successfully set");
 		});
 
-		module("Pressing", {
+		QUnit.module("Pressing", {
 			beforeEach: function () {
 				this.sut = new sap.m.MenuButton("menuButton1");
 				this.sut.setText("Menu Button");
@@ -310,7 +310,7 @@
 			}
 		});
 
-		test("Open with mouse", function(){
+		QUnit.test("Open with mouse", function(assert) {
 			/* ToDo: Currently the _handleButtonPress cannot be spied when triggered from the press event of the internal
 			 button - for this reason assertion is done on the opened control DOM - this test is tightly coupling with sap.m.Menu
 			 - must be decoupled like the keyboard open test below */
@@ -319,7 +319,7 @@
 		});
 
 
-		test("Open with keyboard", function(){
+		QUnit.test("Open with keyboard", function(assert) {
 			var fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
 			this.sut.onsapup();
 			strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapup' event.");
@@ -345,7 +345,7 @@
 			strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapshow' event.");
 		});
 
-		test("_menuItemSelected is fired", function() {
+		QUnit.test("_menuItemSelected is fired", function(assert) {
 			var fnHandleMenuItemSelected = sinon.spy();
 			this.sut.attachEvent("_menuItemSelected", fnHandleMenuItemSelected);
 
@@ -360,7 +360,7 @@
 			strictEqual(fnHandleMenuItemSelected.calledTwice, true, "_menuItemSelected handler is notified in split Mode");
 		});
 
-		test('SplitButton mode', function () {
+		QUnit.test('SplitButton mode', function (assert) {
 			this.sut.destroy();
 			this.sut = null;
 			this.sut = new sap.m.MenuButton({
@@ -418,7 +418,7 @@
 			strictEqual(jQuery('.sapMMenuBtnSplit').length, 1, 'Split button rendered');
 		});
 
-		module("SplitButton integration", {
+		QUnit.module("SplitButton integration", {
 			beforeEach: function () {
 				this.sut = new sap.m.MenuButton({
 					buttonMode: sap.m.MenuButtonMode.Split,
@@ -440,7 +440,7 @@
 			}
 		});
 
-		test("setProperty", function() {
+		QUnit.test("setProperty", function(assert) {
 			var oSpyControlSetProperty = this.spy(sap.ui.core.Control.prototype, "setProperty"),
 				oSpyButtonSetProperty = this.spy(sap.m.SplitButton.prototype, "setProperty");
 
@@ -475,11 +475,11 @@
 			ok(oSpyButtonSetProperty.calledWith("textDirection", sap.ui.core.TextDirection.RTL), "SplitButton's setProperty called for textDirection property");
 		});
 
-		test("_getFocusDomRef", function() {
+		QUnit.test("_getFocusDomRef", function(assert) {
 			strictEqual(this.sut.getFocusDomRef(), this.sut._getButtonControl().getDomRef(), "focus dom ref is right");
 		});
 
-		test("_handleButtonPress", function() {
+		QUnit.test("_handleButtonPress", function(assert) {
 			var oSpySetArrowState = this.spy(sap.m.SplitButton.prototype, "setArrowState"),
 				oSpyMenuOpenBy = this.spy(sap.m.Menu.prototype, "openBy");
 
@@ -504,7 +504,7 @@
 			ok(!oSpyMenuOpenBy.called, "Menu's openBy not called");
 		});
 
-		test("_menuClosed", function() {
+		QUnit.test("_menuClosed", function(assert) {
 			var oSpy = this.spy(sap.m.SplitButton.prototype, "setArrowState");
 			this.sut._menuClosed();
 
@@ -513,7 +513,7 @@
 			ok(oSpy.calledWith(false), "SplitButton's setArrowState(false) called");
 		});
 
-		test("SplitButton's setArrowState", function() {
+		QUnit.test("SplitButton's setArrowState", function(assert) {
 			var oSplitButton = this.sut._getButtonControl(),
 				$SplitButtonArrow = oSplitButton._getArrowButton().$();
 
@@ -533,7 +533,7 @@
 			ok(!$SplitButtonArrow.hasClass("sapMSBActive"), "Arrow is not active");
 		});
 
-		test("rerendering in static area", function() {
+		QUnit.test("rerendering in static area", function(assert) {
 
 			var oMenuButton = new sap.m.MenuButton({
 				buttonMode: sap.m.MenuButtonMode.Split,
@@ -573,7 +573,7 @@
 		});
 
 
-		module("SplitButton alone", {
+		QUnit.module("SplitButton alone", {
 			beforeEach: function() {
 				this.sut = new sap.m.SplitButton();
 			},
@@ -583,7 +583,7 @@
 			}
 		});
 
-		test("Keyboard handling", function() {
+		QUnit.test("Keyboard handling", function(assert) {
 			var oSplitButtonMain = this.sut._getTextButton(),
 				oSplitButtonArrow = this.sut._getArrowButton(),
 				oSpyTextButtonPress = this.spy(oSplitButtonMain, "firePress"),

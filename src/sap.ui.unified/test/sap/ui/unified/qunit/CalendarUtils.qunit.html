@@ -32,7 +32,7 @@
 			UniversalDate = sap.ui.core.date.UniversalDate;
 
 
-		module("getFirstDateOfWeek for week Sunday-Saturday (en_US locale)", {
+		QUnit.module("getFirstDateOfWeek for week Sunday-Saturday (en_US locale)", {
 			beforeEach: function () {
 				this.oStub = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
 					return new sap.ui.core.Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
@@ -43,37 +43,37 @@
 			}
 		});
 
-		test("getFirstDateOfWeek for US border case where the first day of week is in the previous year", function() {
+		QUnit.test("getFirstDateOfWeek for US border case where the first day of week is in the previous year", function(assert) {
 			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 0, 1, 0))).toString(), new Date(Date.UTC(2015, 11, 27, 0)).toString(),
 					"1 Jan 2016->27 Dec 2015");
 		});
 
-		test("getFirstDateOfWeek() for date at the middle of the month", function () {
+		QUnit.test("getFirstDateOfWeek() for date at the middle of the month", function (assert) {
 			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 18, 0))).toString(), new Date(Date.UTC(2016, 4, 15, 0)).toString(),
 					"18 May 2016->15 May 2016");
 		});
 
-		test("getFirstDateOfWeek() when 1st date of the month is at the beginning of the week", function () {
+		QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the beginning of the week", function (assert) {
 			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 1, 0))).toString(), new Date(Date.UTC(2016, 4, 1, 0)).toString(),
 					"1 May 2016->1 May 2016");
 		});
 
-		test("getFirstDateOfWeek() when 1st date of the month is at the end of the week", function () {
+		QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the end of the week", function (assert) {
 			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 9, 1, 0))).toString(), new Date(Date.UTC(2016, 8, 25, 0)).toString(),
 					"1 Oct 2016->25 Sep 2016");
 		});
 
-		test("getFirstDateOfWeek() when 1st date of the month is at the middle of the week", function () {
+		QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the middle of the week", function (assert) {
 			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 5, 1, 0))).toString(), new Date(Date.UTC(2016, 4, 29, 0)).toString(),
 					"1 Jun 2016->29 May 2016");
 		});
 
-		test("getFirstDateOfMonth() returns the first date of the month for a given date", function () {
+		QUnit.test("getFirstDateOfMonth() returns the first date of the month for a given date", function (assert) {
 			equal(CalendarUtils.getFirstDateOfMonth(new Date(Date.UTC(2016, 5, 12, 0))).toString(), new Date(Date.UTC(2016, 5, 1, 0)).toString(),
 				"12 Jun 2016 -> 1 Jun 2016");
 		});
 
-		module("getFirstDateOfWeek for week Monday-Sunday (en_GB locale)", {
+		QUnit.module("getFirstDateOfWeek for week Monday-Sunday (en_GB locale)", {
 			beforeEach: function () {
 				this.oStub = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
 					return new sap.ui.core.Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
@@ -84,32 +84,32 @@
 			}
 		});
 
-		test("getFirstDateOfWeek for non US border case where the first day of week is in the previous year", function () {
+		QUnit.test("getFirstDateOfWeek for non US border case where the first day of week is in the previous year", function (assert) {
 			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 0, 1, 0))).toString(), new Date(Date.UTC(2015, 11, 28, 0)).toString(),
 					"1 Jan 2016->28 Dec 2015");
 		});
 
-		test("getFirstDateOfWeek() for date at the middle of the month", function () {
+		QUnit.test("getFirstDateOfWeek() for date at the middle of the month", function (assert) {
 			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 18, 0))).toString(), new Date(Date.UTC(2016, 4, 16, 0)).toString(),
 					"18 May 2016->16 May 2016");
 		});
 
-		test("getFirstDateOfWeek() when 1st date of the month is at the beginning of the week", function () {
+		QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the beginning of the week", function (assert) {
 			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 1, 1, 0))).toString(), new Date(Date.UTC(2016, 1, 1, 0)).toString(),
 					"1 Feb 2016->1 Feb 2016");
 		});
 
-		test("getFirstDateOfWeek() when 1st date of the month is at the end of the week", function () {
+		QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the end of the week", function (assert) {
 			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 1, 0))).toString(), new Date(Date.UTC(2016, 3, 25, 0)).toString(),
 					"1 May 2016->25 Apr 2016");
 		});
 
-		test("getFirstDateOfWeek() when 1st date of the month is at the middle of the week", function () {
+		QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the middle of the week", function (assert) {
 			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 11, 1, 0))).toString(), new Date(Date.UTC(2016, 10, 28, 0)).toString(),
 					"1 Dec 2016->25 Nov 2016");
 		});
 
-		module("getNumberOfWeeksForAYear()", {
+		QUnit.module("getNumberOfWeeksForAYear()", {
 			beforeEach: function () {
 				this._oUI5Core = sap.ui.getCore();
 				this._oBigYears = {"en-US": [1972, 1977, 1983, 1988, 1994, 2000, 2005, 2011, 2016], "en-GB": [1970, 1976, 1981, 1987, 1992, 1998, 2004, 2009, 2015]};
@@ -128,7 +128,7 @@
 			}
 		});
 
-		test("en-US locale", function () {
+		QUnit.test("en-US locale", function (assert) {
 			//prepare
 			this._oUI5Core.getConfiguration().setFormatLocale('en-US');
 			this._oUI5Core.applyChanges();
@@ -141,7 +141,7 @@
 			}, this);
 		});
 
-		test("en-GB locale", function () {
+		QUnit.test("en-GB locale", function (assert) {
 			//prepare
 			this._oUI5Core.getConfiguration().setFormatLocale('en-GB');
 			this._oUI5Core.applyChanges();
@@ -154,9 +154,9 @@
 			}, this);
 		});
 
-		module("Calculate week number");
+		QUnit.module("Calculate week number");
 
-		test("Week number when locale is valid en-US", function() {
+		QUnit.test("Week number when locale is valid en-US", function(assert) {
 			// prepare
 			var iWeekNumber_enUS,
 				iWeekNumber_enUS_custom,
@@ -177,7 +177,7 @@
 			strictEqual(iWeekNumber_enUS_custom, 47, "The week is 47 for 17.11.2016 when locale is en-US");
 		});
 
-		test("Week number when locale is en-GB", function() {
+		QUnit.test("Week number when locale is en-GB", function(assert) {
 			// prepare
 			var iWeekNumber,
 				oDate,
@@ -195,7 +195,7 @@
 			strictEqual(iWeekNumber, 46, "The week is 46 for 17.11.2016 when locale is en-GB");
 		});
 
-		test("'isDateLastInMonth' checks if the corresponding date is last in a month depending on its parameter", function() {
+		QUnit.test("'isDateLastInMonth' checks if the corresponding date is last in a month depending on its parameter", function(assert) {
 			//prepare
 			var oSut = CalendarUtils,
 				oLastDateInTheMonth = new UniversalDate(Date.UTC(2015, 0, 31)),

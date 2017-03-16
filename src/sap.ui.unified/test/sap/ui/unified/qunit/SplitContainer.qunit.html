@@ -88,30 +88,30 @@
 		qutils.delayTestStart();
 
 
-		module("API");
+		QUnit.module("API");
 
-		test("Properties - Default Values", function() {
+		QUnit.test("Properties - Default Values", function(assert) {
 			equal(oSC.getShowSecondaryContent(), false, "Default 'showSecondaryContent'");
 			equal(oSC.getSecondaryContentSize(), "250px", "Default 'secondaryContentWidth'");
 		});
 
-		test("Properties - Custom Values", function() {
+		QUnit.test("Properties - Custom Values", function(assert) {
 			equal(oSC2.getShowSecondaryContent(), true, "Custom 'showSecondaryContent'");
 			equal(oSC2.getSecondaryContentSize(), "200px", "Custom 'secondaryContentWidth'");
 		});
 
-		test("Aggregation 'content'", function() {
+		QUnit.test("Aggregation 'content'", function(assert) {
 			testMultiAggregation("content", oSC2);
 		});
 
-		test("Aggregation 'secondaryContent'", function() {
+		QUnit.test("Aggregation 'secondaryContent'", function(assert) {
 			testMultiAggregation("secondaryContent", oSC2);
 		});
 
 
-		module("Rendering");
+		QUnit.module("Rendering");
 
-		test("Content", function() {
+		QUnit.test("Content", function(assert) {
 			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("sc-canvas"), jQuery.sap.domById("_ctnt")), "Content rendered correctly");
 			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("sc-pane"), jQuery.sap.domById("_sec_ctnt")), "Secondary Content rendered correctly");
 		});
@@ -125,7 +125,7 @@
 		});
 
 
-		module("Behavior");
+		QUnit.module("Behavior");
 
 		asyncTest("Open/Close Secondary Content", function() {
 			function checkVisibility(){

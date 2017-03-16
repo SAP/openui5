@@ -1,0 +1,43 @@
+<mvc:View
+	controllerName="sap.m.sample.ObjectAttributes.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<l:content>
+			<Label text="Not active Object Attribute with title and text" design="Bold" class="sapUiSmallMarginTop"/>
+			<ObjectAttribute binding="{/ProductCollection/0}" title="Weight" text="{WeightMeasure} {WeightUnit}" />
+
+			<Label text="Not active Object Attribute only with set text" design="Bold" class="sapUiSmallMarginTop"/>
+			<ObjectAttribute binding="{/ProductCollection/0}" text="{Width} x {Depth} x {Height} {DimUnit}" />
+
+			<Label text="Active Object Attribute with title and text which opens popup on press" design="Bold" class="sapUiSmallMarginTop"/>
+			<ObjectAttribute
+				title="Click to"
+				text="Provide feedback"
+				active="true"
+				press="handleFeedbacklinkPressed" />
+
+			<Label text="Active Object Attribute with title and text which opens link on press" design="Bold" class="sapUiSmallMarginTop"/>
+			<ObjectAttribute
+				title="Visit our site"
+				text="www.sap.com"
+				active="true"
+				press="handleSAPLinkPressed" />
+
+			<Label text="Active Object Attribute which has only title, therefore no link is displayed" design="Bold" class="sapUiSmallMarginTop"/>
+			<ObjectAttribute
+				title="Created by"
+				active="true"
+				press="handleFeedbacklinkPressed" />
+
+			<Label text="Active Object Attribute with long title and long text which will truncate and occupy 50% each" design="Bold" class="sapUiSmallMarginTop"/>
+			<ObjectAttribute
+				title="Some very long title that will strat to truncate on smaller screen"
+				text="Some very long text that will strat to truncate on smaller screen"
+				active="true"/>
+
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

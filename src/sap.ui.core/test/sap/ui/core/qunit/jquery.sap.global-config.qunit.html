@@ -16,9 +16,9 @@
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script>
 
-			module("Basic");
+			QUnit.module("Basic");
 
-			test("ExternalConfig", function() {
+			QUnit.test("ExternalConfig", function(assert) {
 
 				var oConfig = sap.ui.getCore().getConfiguration();
 

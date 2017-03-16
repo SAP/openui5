@@ -164,7 +164,7 @@
 			sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
 		});
 
-		QUnit.test("toggle style class without bAdd", function() {
+		QUnit.test("toggle style class without bAdd", function(assert) {
 			var sMyClass = "abc";
 
 			assert.expect(6); // this also verifies there is no rerendering
@@ -221,7 +221,7 @@
 			sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
 		});
 
-		QUnit.test("add two classes within one addStyleClass call and then remove them together in one removeStyleClass call", function() {
+		QUnit.test("add two classes within one addStyleClass call and then remove them together in one removeStyleClass call", function(assert) {
 			var	sMyClass = "abc",
 			 	sMyClass1 = "bcd",
 				sCombinedClass = sMyClass + " " + sMyClass1;

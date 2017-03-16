@@ -125,6 +125,7 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	Press.controlAdapters["sap.m.semantic.DetailPage"] = "navButton";
 	Press.controlAdapters["sap.m.ComboBox"] = "arrow";
 	Press.controlAdapters["sap.ui.comp.smartfilterbar.SmartFilterBar"] = "btnGo";
+	Press.controlAdapters["sap.m.ObjectAttribute"] = "text";
 
 	return Press;
 

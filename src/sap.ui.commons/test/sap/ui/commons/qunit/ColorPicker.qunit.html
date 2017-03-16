@@ -99,10 +99,10 @@
 			* QUINIT TESTS MODULE 'INITIALIZATION'
 			*****************************************************/
 			// Set a Test Module for module "Initialization"
-			module("Initialization");
+			QUnit.module("Initialization");
 
 			//Testcase 1: Initialize and immediately destroy
-			test("Initialize and immediately destroy", function() {
+			QUnit.test("Initialize and immediately destroy", function(assert) {
 				expect(1);
 
 				var cp = new sap.ui.commons.ColorPicker();
@@ -115,10 +115,10 @@
 			* QUINIT TESTS MODULE 'PROPERTIES'
 			*****************************************************/
 			// Set a Test Module for module "Properties"
-			module("Properties");
+			QUnit.module("Properties");
 
 			//Testcase 1: Default values
-			test("Default Input Parameters [Control 1]: ", function() {
+			QUnit.test("Default Input Parameters [Control 1]: ", function(assert) {
 				expect(7);
 				equal(oColorPicker1.oRedField.getValue(), "255" , "Default value RED: ");
 				equal(oColorPicker1.oGreenField.getValue(), "255" , "Default value GREEN: ");
@@ -130,7 +130,7 @@
 			});
 
 			//Testcase 2: Named Parameter
-			test("Input Parameter 'lime' [Control 2]: ", function() {
+			QUnit.test("Input Parameter 'lime' [Control 2]: ", function(assert) {
 				expect(7);
 				equal(oColorPicker2.oRedField.getValue(), "0" , "Value of RED: ");
 				equal(oColorPicker2.oGreenField.getValue(), "255" , "Value of GREEN: ");
@@ -142,7 +142,7 @@
 			});
 
 			//Testcase 3: RGB Parameter
-			test("Input Parameter 'rgb120,177,60' [Control 3]: ", function() {
+			QUnit.test("Input Parameter 'rgb120,177,60' [Control 3]: ", function(assert) {
 				expect(7);
 				equal(oColorPicker3.oRedField.getValue(), "120" , "Value of RED: ");
 				equal(oColorPicker3.oGreenField.getValue(), "177" , "Value of GREEN: ");
@@ -154,7 +154,7 @@
 			});
 
 			//Testcase 4: HSV Parameter
-			test("Input Parameter 'hsv(270,44,88)' [Control 4]: ", function() {
+			QUnit.test("Input Parameter 'hsv(270,44,88)' [Control 4]: ", function(assert) {
 				expect(7);
 				equal(oColorPicker4.oRedField.getValue(), "175" , "Value of RED: ");
 				equal(oColorPicker4.oGreenField.getValue(), "125" , "Value of GREEN: ");
@@ -166,7 +166,7 @@
 			});
 
 			//Testcase 5: HEX Parameter
-			test("Input Parameter '#18a' [Control 5]: ", function() {
+			QUnit.test("Input Parameter '#18a' [Control 5]: ", function(assert) {
 				expect(7);
 				equal(oColorPicker5.oRedField.getValue(), "17" , "Value of RED: ");
 				equal(oColorPicker5.oGreenField.getValue(), "136" , "Value of GREEN: ");
@@ -178,7 +178,7 @@
 			});
 
 			//Testcase 6: wrong Parameter
-			test("Wrong Parameter 'hsv(370,44,88)'=> default [Control 6]: ", function() {
+			QUnit.test("Wrong Parameter 'hsv(370,44,88)'=> default [Control 6]: ", function(assert) {
 				expect(7);
 				equal(oColorPicker6.oRedField.getValue(), "255" , "Value of RED: ");
 				equal(oColorPicker6.oGreenField.getValue(), "255" , "Value of GREEN: ");
@@ -194,10 +194,10 @@
 			* QUINIT TESTS MODULE 'DATA-INPUT'
 			*****************************************************/
 			// Set a Test Module for module "Data-Changes"
-			module("Data-Changes");
+			QUnit.module("Data-Changes");
 
 			//Testcase 7: Input a RGB-value
-			test("RED changed => H, S, V and HEX calculated [Control 1]: ", function() {
+			QUnit.test("RED changed => H, S, V and HEX calculated [Control 1]: ", function(assert) {
 				oColorPicker1.oRedField.setValue(123);
 				oColorPicker1.oRedField.fireChange({newValue:123});
 				expect(7);
@@ -211,7 +211,7 @@
 			});
 
 			//Testcase 8: Input a HSV-value
-			test("SATURATION changed => R, G, B and HEX calculated [Control 4]: ", function() {
+			QUnit.test("SATURATION changed => R, G, B and HEX calculated [Control 4]: ", function(assert) {
 				oColorPicker4.oSatField.setValue(4);
 				oColorPicker4.oSatField.fireChange({newValue:4});
 				expect(7);
@@ -225,7 +225,7 @@
 			});
 
 			//Testcase 9: Input a HEX-value
-			test("HEX changed => R, G, B, H, S and V calculated [Control 6]: ", function() {
+			QUnit.test("HEX changed => R, G, B, H, S and V calculated [Control 6]: ", function(assert) {
 				oColorPicker6.oHexField.setValue("16ba30");
 				oColorPicker6.oHexField.fireChange({newValue:"16ba30"});
 				expect(7);
@@ -239,7 +239,7 @@
 			});
 
 			//Testcase 10: Input a wrong RGB-value
-			test("Wrong data - BLUE changed to 260 => H, S, V and HEX calculated [Control 3]: ", function() {
+			QUnit.test("Wrong data - BLUE changed to 260 => H, S, V and HEX calculated [Control 3]: ", function(assert) {
 				oColorPicker3.oBlueField.setValue(260);
 				oColorPicker3.oBlueField.fireChange({newValue:oColorPicker3.oBlueField.getValue()});
 				expect(7);
@@ -253,7 +253,7 @@
 			});
 
 			//Testcase 11: Input a wrong S / V - value
-			test("Wrong data - SATURATION changed to 120 => R, G, B and HEX calculated [Control 5]: ", function() {
+			QUnit.test("Wrong data - SATURATION changed to 120 => R, G, B and HEX calculated [Control 5]: ", function(assert) {
 				oColorPicker5.oSatField.setValue(120);
 				oColorPicker5.oSatField.fireChange({newValue:oColorPicker5.oSatField.getValue()});
 				expect(7);
@@ -267,7 +267,7 @@
 			});
 
 			//Testcase 12: Input a wrong HUE - value
-			test("Wrong data - HUE changed to -30 => other values calculated [Control 1]: ", function() {
+			QUnit.test("Wrong data - HUE changed to -30 => other values calculated [Control 1]: ", function(assert) {
 				oColorPicker1.oHueField.setValue(-30);
 				oColorPicker1.oHueField.fireChange({newValue:oColorPicker1.oHueField.getValue()});
 				expect(7);
@@ -281,7 +281,7 @@
 			});
 
 			//Testcase 13: Set new color string (RGB-value)
-			test("New color string 'rgb(249,238,227)' [Control 3]: ", function() {
+			QUnit.test("New color string 'rgb(249,238,227)' [Control 3]: ", function(assert) {
 				oColorPicker3.setColorString("rgb(249,238,227)");
 				expect(3);
 				equal(oColorPicker3.oRedField.getValue(), "249" , "RED set from color string to 249: ");
@@ -293,10 +293,10 @@
 			* QUINIT TESTS MODULE 'RESULTS'
 			*****************************************************/
 			// Set a Test Module for module "Results"
-			module("Results");
+			QUnit.module("Results");
 
 			//Testcase 14: Results of named parameter
-			test("Result of Input Parameter 'lime' [Control 2]: ", function() {
+			QUnit.test("Result of Input Parameter 'lime' [Control 2]: ", function(assert) {
 				expect(7);
 				equal(oColorPicker2.oRedField.getValue(), colors2.r.toString() , "Value of RED: ");
 				equal(oColorPicker2.oGreenField.getValue(), colors2.g.toString() , "Value of GREEN: ");
@@ -308,7 +308,7 @@
 			});
 
 			//Testcase 15: Results of wrong parameter
-			test("Result of wrong parameter [Control 6]: ", function() {
+			QUnit.test("Result of wrong parameter [Control 6]: ", function(assert) {
 				expect(7);
 				equal(oColorPicker6.oRedField.getValue(), colors6.r.toString() , "Value of RED: ");
 				equal(oColorPicker6.oGreenField.getValue(), colors6.g.toString() , "Value of GREEN: ");
@@ -324,10 +324,10 @@
 			* QUINIT TESTS MODULE 'EVENTS'
 			*****************************************************/
 			// Set a Test Module for module "Events"
-			module("Events");
+			QUnit.module("Events");
 
 			//Testcase 16: Mouse-Event of Slider
-			test("Mouse-Event: Click on Slider [Control 6]: ", function() {
+			QUnit.test("Mouse-Event: Click on Slider [Control 6]: ", function(assert) {
 				expect(4);
 				equal(oColorPicker6.oHueField.getValue(), colors6.h.toString() , "Value of HUE before mouse events: ");
 				qutils.triggerMouseEvent("ColorPicker6-hSLD", "click", 166, 0, 0, 0 );
@@ -340,7 +340,7 @@
 			});
 
 			//Testcase 17: Mouse-Event of Colorpipcker-Box
-			test("Mouse-Event: Click in ColorPicker-Box [Control 4]: ", function() {
+			QUnit.test("Mouse-Event: Click in ColorPicker-Box [Control 4]: ", function(assert) {
 				var cpBoxOffset = jQuery.sap.byId("ColorPicker4-cpBox").offset();
 				expect(6);
 				equal(oColorPicker4.oSatField.getValue(), "4" , "SATURATION (before mouse events): ");

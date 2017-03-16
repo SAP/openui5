@@ -71,13 +71,13 @@
 
 	qutils.delayTestStart();
 
-	module("Rendering", {
-		setup: function() {
+	QUnit.module("Rendering", {
+		beforeEach: function() {
 			oStandardTree = createStandardTree();
 			oStandardTree.placeAt("target1");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			oStandardTree.destroy();
 			oStandardTree = null;
 		}
@@ -90,19 +90,19 @@
 			notEqual(jQuery.sap.domById("tree" + "-TreeCont"),	null, "Tree content is there");
 		});
 
-	module("Selection Mode 'Single'", {
-		setup: function() {
+	QUnit.module("Selection Mode 'Single'", {
+		beforeEach: function() {
 			oStandardTree = createStandardTree();
 			oStandardTree.placeAt("target1");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			oStandardTree.destroy();
 			oStandardTree = null;
 		}
 	});
 
-	test("Node selection", function() {
+	QUnit.test("Node selection", function(assert) {
 		var firstSelection = sap.ui.getCore().getControl("node1");
 		firstSelection.select();
 		ok(firstSelection.getIsSelected(), "Node 1 is selected");
@@ -112,7 +112,7 @@
 		ok(!firstSelection.getIsSelected(), "Node 1 is not selected anymore");
 	});
 
-	test("Node selection and collapsing (old)", function() {
+	QUnit.test("Node selection and collapsing (old)", function(assert) {
 		var tree = sap.ui.getCore().getControl("tree");
 		equal(tree.getSelectionMode(), "Legacy", "SelectionMode should be 'Legacy' by default");
 		var node1 = sap.ui.getCore().getControl("node1");
@@ -128,19 +128,19 @@
 		ok(node11.getIsSelected(), "Node 1.1 is selected");
 	});
 
-	module("Selection Mode 'Multi'", {
-		setup: function() {
+	QUnit.module("Selection Mode 'Multi'", {
+		beforeEach: function() {
 			oStandardTree = createStandardTree();
 			oStandardTree.placeAt("target1");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			oStandardTree.destroy();
 			oStandardTree = null;
 		}
 	});
 
-	test("SelectionType Single", function() {
+	QUnit.test("SelectionType Single", function(assert) {
 		var tree = sap.ui.getCore().getControl("tree");
 		tree.setSelectionMode("Multi");
 		equal(tree.getSelectionMode(), "Multi", "SelectionMode is set to 'Multi' now");
@@ -153,7 +153,7 @@
 		ok(!node1.getIsSelected(), "Node 1 is not selected");
 	});
 
-	test("Node selection and collapsing (new)", function() {
+	QUnit.test("Node selection and collapsing (new)", function(assert) {
 		var tree = sap.ui.getCore().getControl("tree");
 		tree.setSelectionMode("Multi");
 		equal(tree.getSelectionMode(), "Multi", "SelectionMode is set to 'Multi' now");
@@ -169,8 +169,8 @@
 		ok(node11.getIsSelected(), "Node 1.1 is selected");
 	});
 
-	module("Multiselect interactions", {
-		setup: function () {
+	QUnit.module("Multiselect interactions", {
+		beforeEach: function () {
 			var oData = {
 				"children": [
 					{"NAME": "A"},
@@ -224,13 +224,13 @@
 			oStandardTree.placeAt("target1");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			oStandardTree.destroy();
 			oStandardTree = null;
 		}
 	});
 
-	test("animate only last selection", function () {
+	QUnit.test("animate only last selection", function (assert) {
 		var oTree = oStandardTree,
 			aNodes = oTree.getNodes(),
 			$TreeCont = oTree.$().find(".sapUiTreeCont");

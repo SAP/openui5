@@ -39,9 +39,9 @@
 		oSegmentedButton.setSelectedButton("But2");
 		oSegmentedButton.placeAt("SegmentedButtonArea");
 
-		module("Appearance");
+		QUnit.module("Appearance");
 
-		test("Output", function() {
+		QUnit.test("Output", function(assert) {
 
 			ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
 			ok(jQuery.sap.byId("But2").hasClass('sapUiSegButtonSelected'), "Button with id 'But2' selected");
@@ -61,7 +61,7 @@
 			},500);
    		});
 
-		test("Visibility", function() {
+		QUnit.test("Visibility", function(assert) {
 			ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
 			oSegmentedButton.setVisible(false);
 			sap.ui.getCore().applyChanges();
@@ -85,10 +85,10 @@
 			},500);
 		});
 
-		module("Interaction");
+		QUnit.module("Interaction");
 
 
-		test("event", function() {
+		QUnit.test("event", function(assert) {
 			qutils.triggerMouseEvent("But5", "click");
 			equal(sSelected, "But5","Button selected with mouse- event fired");
 		});

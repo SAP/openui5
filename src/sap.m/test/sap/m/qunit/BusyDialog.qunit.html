@@ -27,12 +27,12 @@
 			sinon.config.useFakeTimers = true;
 
 			QUnit.module('Creating Default BusyDialog.', {
-				setup: function () {
+				beforeEach: function () {
 					this.busyDialog = new sap.m.BusyDialog();
 					this.id = '#' + this.busyDialog.sId;
 					this.busyDialog.open();
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.busyDialog.close();
 					this.busyDialog.destroy();
 					this.busyDialog = null;
@@ -68,7 +68,7 @@
 			// =========================================================================================================
 
 			QUnit.module('Creating BusyDialog with all available properties.', {
-				setup: function () {
+				beforeEach: function () {
 					this.busyDialog = new sap.m.BusyDialog({
 						text: 'I am a busy screen with text and a cancel button.',
 						title: 'Loading ...',
@@ -82,7 +82,7 @@
 					this.id = '#' + this.busyDialog.sId;
 					this.busyDialog.open();
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.busyDialog.close();
 					this.busyDialog.destroy();
 					this.busyDialog = null;
@@ -117,14 +117,14 @@
 			// =========================================================================================================
 
 			QUnit.module('Creating Default BusyDialog.', {
-				setup: function () {
+				beforeEach: function () {
 					this.busyDialog = new sap.m.BusyDialog();
 					this.id = '#' + this.busyDialog.sId;
 					this.busyDialog.open();
 
 					this.busyIndicator = this.busyDialog._busyIndicator;
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.busyDialog.close();
 					this.busyDialog.destroy();
 					this.busyDialog = null;
@@ -275,7 +275,7 @@
 			// =========================================================================================================
 
 			QUnit.module('Setting binding in BusyDialog.', {
-				setup: function () {
+				beforeEach: function () {
 					// Binding example =========================================================================================
 					var data = {
 						text: 'Initial text',
@@ -294,7 +294,7 @@
 					this.id = '#' + this.busyDialog.sId;
 					this.busyDialog.open();
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.busyDialog.close();
 					this.busyDialog.destroy();
 					this.busyDialog = null;
@@ -354,12 +354,12 @@
 			// =========================================================================================================
 
 			QUnit.module('Aria', {
-				setup: function () {
+				beforeEach: function () {
 					this.busyDialog = new sap.m.BusyDialog('busyAria', {
 					});
 
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.busyDialog.close();
 					this.busyDialog.destroy();
 					this.busyDialog = null;

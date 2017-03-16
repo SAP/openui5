@@ -58,9 +58,9 @@
 		}).placeAt("uiArea5");
 
 
-		module("Appearance");
+		QUnit.module("Appearance");
 
-		test("Output", function() {
+		QUnit.test("Output", function(assert) {
 			// default ValueHelpField
 
 			equal(jQuery.sap.domById("VHF3").offsetWidth, 200, "width of the field");
@@ -71,7 +71,7 @@
 
 		});
 
-		test("ARIA", function() {
+		QUnit.test("ARIA", function(assert) {
 			var oVHF = jQuery.sap.byId("VHF1");
 			var oVHFInput = jQuery("#VHF1 > input");
 			equal(oVHF.attr("aria-owns"), "VHF1-input VHF1-icon", "aria-owns");
@@ -85,7 +85,7 @@
 			equal(oVHFInput.attr("aria-invalid"), "true", "aria-invalid");
     });
 
-		test("hover", function() {
+		QUnit.test("hover", function(assert) {
 			// only test for image possible, not for hover CSS styles - this must be tested in QTP
 
 			//own image - but no own hover image -> no change
@@ -101,7 +101,7 @@
 
 		});
 
-		test("Change Image", function() {
+		QUnit.test("Change Image", function(assert) {
 			oVHF1.setIconURL("../images/ui5.png");
 			sap.ui.getCore().applyChanges();
 			equal(jQuery.sap.byId("VHF1").children("img").attr('src'), "../images/ui5.png", "URL image displayed");
@@ -129,9 +129,9 @@
 
 		});
 
-		module("Interaction");
+		QUnit.module("Interaction");
 
-		test("event", function() {
+		QUnit.test("event", function(assert) {
 			qutils.triggerMouseEvent("VHF1-icon", "click");
 			equal(sEvent, "ValueHelpRequest","Click - event fired");
 			sEvent = "";

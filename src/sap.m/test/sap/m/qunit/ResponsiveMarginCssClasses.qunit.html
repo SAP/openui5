@@ -161,7 +161,7 @@
 	});
 
 
-	module("Apply pre-defined css classes");
+	QUnit.module("Apply pre-defined css classes");
 
 	var fnTest = function(sCssProperty, sMarginClass, sExpectedMarginValue, bHorizontal) {
 		assert.ok( true, " " ); //Group tests
@@ -230,7 +230,7 @@
 	//Needed to identify the views which are created during test
 	var iCount = 0;
 
-	test("Test responsive margin classes", function() {
+	QUnit.test("Test responsive margin classes", function(assert) {
 
 		//Test Responsive Margins: resize the containing page and check how the
 		//elements respond.

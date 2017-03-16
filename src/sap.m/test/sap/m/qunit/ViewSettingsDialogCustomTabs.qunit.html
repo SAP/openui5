@@ -257,19 +257,19 @@
 				}
 			};
 
-		module("Custom tabs", {
-			setup : function () {
+		QUnit.module("Custom tabs", {
+			beforeEach : function () {
 				this.oVSD = new sap.m.ViewSettingsDialog();
 				this.oVSD.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oVSD.destroy();
 				this.oVSD = null;
 			}
 		});
 
-		test("Buttons for all custom tabs should be rendered", function () {
+		QUnit.test("Buttons for all custom tabs should be rendered", function (assert) {
 			var sId = this.oVSD.getId();
 
 			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory('taxi-settings'));
@@ -279,7 +279,7 @@
 			ok(jQuery.sap.domById(sId + "-custom-button-other-tab"), "Button is rendered custom tab.");
 		});
 
-		test("Check if all tabs contents are rendered when tab is focused.", function () {
+		QUnit.test("Check if all tabs contents are rendered when tab is focused.", function (assert) {
 			this.oVSD.insertAggregation('customTabs', new sap.m.ViewSettingsCustomTab({
 				id	 	: 'taxi-settings',
 				content : [
@@ -299,7 +299,7 @@
 			ok(jQuery.sap.domById('taxi-settings-button-content2'), "Custom page contents are rendered.");
 		});
 
-		test("Make sure 'reset' and 'back' buttons is not rendered when on custom page.", function () {
+		QUnit.test("Make sure 'reset' and 'back' buttons is not rendered when on custom page.", function (assert) {
 			var sId = this.oVSD.getId();
 
 			oVsdConfig.addSortItems(this.oVSD);
@@ -312,7 +312,7 @@
 		});
 
 		/* [start]  Actual unit tests of custom tabs */
-		test("Check the _isValidPredefinedPageId method for correctly invalidating page ids.", function () {
+		QUnit.test("Check the _isValidPredefinedPageId method for correctly invalidating page ids.", function (assert) {
 			var	sFirstCustomTabId	= 'taxi-settings5',
 				sSecondCustomTabId 	= 'other-tab5',
 				sSuccessMsg,
@@ -348,7 +348,7 @@
 			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
 		});
 
-		test("Check the _isValidPredefinedPageId method for correctly validating page ids.", function () {
+		QUnit.test("Check the _isValidPredefinedPageId method for correctly validating page ids.", function (assert) {
 			var sFirstCustomTabId	= 'taxi-settings5',
 				sSuccessMsg,
 				sPageId,
@@ -382,7 +382,7 @@
 			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
 		});
 
-		test("Check the _fetchValidPagesIds method for correctness.", function () {
+		QUnit.test("Check the _fetchValidPagesIds method for correctness.", function (assert) {
 			var	sFirstCustomTabId	= 'taxi-settings6',
 				sSecondCustomTabId 	= 'other-tab6',
 				bEmptyContent 		= true,
@@ -418,7 +418,7 @@
 			deepEqual(this.oVSD._fetchValidPagesIds().sort(), aVsd10ValidPageIds, sSuccessMsg);
 		});
 
-		test("Check the _determineValidPageId method for correctness.", function () {
+		QUnit.test("Check the _determineValidPageId method for correctness.", function (assert) {
 			var	sFirstCustomTabId	= 'taxi-settings6',
 				sSecondCustomTabId 	= 'other-tab6',
 				bEmptyContent 		= true,
@@ -579,7 +579,7 @@
 			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
 		});
 
-		test("Check if reserved tab ids are properly handled.", function () {
+		QUnit.test("Check if reserved tab ids are properly handled.", function (assert) {
 			var oTab = new sap.m.ViewSettingsCustomTab('sort');
 			var hasError = false;
 			try {
@@ -694,7 +694,7 @@
 
 
 		// test is needed because the VSD does some internal managing of the aggregations
-		test("Remove tab aggregation after tab was opened", function () {
+		QUnit.test("Remove tab aggregation after tab was opened", function (assert) {
 			var ct = new sap.m.ViewSettingsCustomTab({content : [new sap.m.Input({value: 'test1'}),new sap.m.Input({value: 'test2'})]});
 				this.oVSD.addCustomTab(ct);
 			// open first dialog - that will trigger switching the content parent from vsd custom tab aggregation to vsd page contet aggregation
@@ -709,7 +709,7 @@
 		});
 
 		// test is needed because the VSD does some internal managing of the aggregations
-		test("Remove all aggregations after tab was opened", function () {
+		QUnit.test("Remove all aggregations after tab was opened", function (assert) {
 			var ct = new sap.m.ViewSettingsCustomTab({content : [new sap.m.Input({value: 'test1'}),new sap.m.Input({value: 'test2'})]});
 			this.oVSD.addCustomTab(ct);
 			// open first dialog - that will trigger switching the content parent from vsd custom tab aggregation to vsd page contet aggregation
@@ -724,7 +724,7 @@
 		});
 
 		// test is needed because the VSD does some internal managing of the aggregations
-		test("Destroy tab aggregation after tab was opened", function () {
+		QUnit.test("Destroy tab aggregation after tab was opened", function (assert) {
 			var ct = new sap.m.ViewSettingsCustomTab({content : [new sap.m.Input({value: 'test1'}),new sap.m.Input({value: 'test2'})]});
 			this.oVSD.addCustomTab(ct);
 			// open first dialog - that will trigger switching the content parent from vsd custom tab aggregation to vsd page contet aggregation

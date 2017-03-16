@@ -158,9 +158,9 @@
 
 	qutils.delayTestStart();
 
-	module("Properties");
+	QUnit.module("Properties");
 
-	test("Default Values", function() {
+	QUnit.test("Default Values", function(assert) {
 		equal(oML1.getVisible(), true, "Default 'Visible':");
 		equal(oML1.getLayoutFixed(), true, "Default 'LayoutFixed':");
 		equal(oML2.getWidth(), "", "Default 'Width':");
@@ -168,22 +168,22 @@
 		equal(oML2.getColumns(), 0, "Default 'Columns':");
 	});
 
-	test("Custom Values", function() {
+	QUnit.test("Custom Values", function(assert) {
 		equal(oML1.getWidth(), "1000px", "Custom 'Width':");
 		deepEqual(oML1.getWidths(), ["100px", "150px", "300px", "auto", "200px"], "Custom 'Widths':");
 		equal(oML1.getColumns(), 5, "Custom 'Columns':");
 	});
 
-	test("Clone", function() {
+	QUnit.test("Clone", function(assert) {
 		ok(oML3.getWidths(), "original layout must have widths set");
 		var oML3_clone = oML3.clone();
 		ok(oML3_clone.getWidths(), "clone must have widths as well");
 		deepEqual(oML3_clone.getWidths(), oML3.getWidths(), "clone must have same widths");
 	})
 
-	module("Visual Appearence");
+	QUnit.module("Visual Appearence");
 
-	test("Visibility", function() {
+	QUnit.test("Visibility", function(assert) {
 		var oMLDom = jQuery.sap.domById('Matrix1');
 		equal(oMLDom.offsetWidth, 1000, "Width of the Matrix:");
 

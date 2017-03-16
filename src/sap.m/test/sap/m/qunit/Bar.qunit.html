@@ -28,7 +28,7 @@
 			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 			sinon.config.useFakeTimers = true;
 
-			module("rendering");
+			QUnit.module("rendering");
 
 			function renderingTest (fnAssertions) {
 
@@ -64,7 +64,7 @@
 				bar2.destroy();
 			};
 
-			test("Should render the bars", function() {
+			QUnit.test("Should render the bars", function(assert) {
 
 				renderingTest.call(this, function() {
 
@@ -76,7 +76,7 @@
 			});
 
 			// This is more like visual test, but will leave it as it is for now.
-			test("Should position the bars", function() {
+			QUnit.test("Should position the bars", function(assert) {
 
 				renderingTest.call(this, function() {
 
@@ -87,7 +87,7 @@
 
 			});
 
-			test("content Element position", function(){
+			QUnit.test("content Element position", function(assert) {
 
 				renderingTest.call(this, function() {
 
@@ -102,7 +102,7 @@
 
 			});
 
-			test("Should set the design class to the containers", function() {
+			QUnit.test("Should set the design class to the containers", function(assert) {
 				// Arrange
 				var sBarBaseContext = "sapMIBar-CTX";
 
@@ -122,7 +122,7 @@
 				oBar.destroy();
 			});
 
-			test("Should get the correct contexts", function() {
+			QUnit.test("Should get the correct contexts", function(assert) {
 				// System under Test
 				var oBar = new sap.m.Bar().placeAt("qunit-fixture");
 
@@ -142,7 +142,7 @@
 				oBar.destroy();
 			});
 
-			test("tag property", function(){
+			QUnit.test("tag property", function(assert) {
 
 				renderingTest.call(this, function() {
 
@@ -169,7 +169,7 @@
 
 			});
 
-			test("should add and remove the flexBox", function(){
+			QUnit.test("should add and remove the flexBox", function(assert) {
 
 				renderingTest.call(this, function() {
 
@@ -186,7 +186,7 @@
 				});
 			});
 
-			test("Should set the translucent class if on a touch device", function() {
+			QUnit.test("Should set the translucent class if on a touch device", function(assert) {
 				var //System under Test
 					sut = new sap.m.Bar({
 						translucent : true
@@ -206,7 +206,7 @@
 				sut.destroy();
 			});
 
-			test("Should not register resize handlers if the bar is invisible", function() {
+			QUnit.test("Should not register resize handlers if the bar is invisible", function(assert) {
 				var //System under Test
 						oBar = new sap.m.Bar({
 							visible : true,
@@ -233,7 +233,7 @@
 			var iStartEndPadding = 4;
 
 			jQuery.sap.require("sap.m.Button");
-			test("Each first child should not have margins and each none first should have", function() {
+			QUnit.test("Each first child should not have margins and each none first should have", function(assert) {
 				// Arrange
 				var oFirstButton = new sap.m.Button("first"),
 					oMiddleButton = new sap.m.Button("middle"),
@@ -313,7 +313,7 @@
 				}
 				return oSut;
 			}
-			test("Single left aggregation is set with with 100%", function() {
+			QUnit.test("Single left aggregation is set with with 100%", function(assert) {
 				//Sut
 				var sut = createSUTSingleAggregation("contentLeft"),
 						oBarWidths;
@@ -343,7 +343,7 @@
 				sut.destroy();
 			});
 
-			test("Single middle aggregation is set with with 100%", function() {
+			QUnit.test("Single middle aggregation is set with with 100%", function(assert) {
 				//Sut
 				var sut = createSUTSingleAggregation("contentMiddle"),
 						oBarWidths;
@@ -373,7 +373,7 @@
 				sut.destroy();
 			});
 
-			test("Single right aggregation is set with with 100%", function() {
+			QUnit.test("Single right aggregation is set with with 100%", function(assert) {
 				//Sut
 				var sut = createSUTSingleAggregation("contentRight"),
 						oBarWidths;
@@ -403,7 +403,7 @@
 				sut.destroy();
 			});
 
-				test("ariaLabbeledBy", function() {
+				QUnit.test("ariaLabbeledBy", function(assert) {
 
 				//Arrange
 				var oBar = new sap.m.Bar(),
@@ -424,7 +424,7 @@
 				return;
 			}
 
-			module("positioning");
+			QUnit.module("positioning");
 
 			function getJqueryObjectsForBar (oBar) {
 				var sBarId = oBar.getId();
@@ -501,7 +501,7 @@
 			}
 
 			function testAlsoForRTL(sName, fnTest) {
-				test(sName, function () {
+				QUnit.test(sName, function (assert) {
 					var config = sap.ui.getCore().getConfiguration();
 
 					//turn on rtl for this test
@@ -512,7 +512,7 @@
 					fnTest.call(this, sName, fnTest);
 				});
 
-				test(sName + " RTL", function () {
+				QUnit.test(sName + " RTL", function (assert) {
 					var config = sap.ui.getCore().getConfiguration();
 
 					//turn on rtl for this test
@@ -612,7 +612,7 @@
 				jQuery("#qunit-fixture").width("");
 			});
 
-			test("Should push the mid to the center of the remaining space, if the right content overlaps it", function() {
+			QUnit.test("Should push the mid to the center of the remaining space, if the right content overlaps it", function(assert) {
 				var config = sap.ui.getCore().getConfiguration();
 
 				//turn on rtl for this test
@@ -644,7 +644,7 @@
 				jQuery("#qunit-fixture").width("");
 			});
 
-			test("Should push the mid to the center of the remaining space, if the right content overlaps it RTL", function() {
+			QUnit.test("Should push the mid to the center of the remaining space, if the right content overlaps it RTL", function(assert) {
 				var config = sap.ui.getCore().getConfiguration();
 
 				//turn on rtl for this test
@@ -797,7 +797,7 @@
 				jQuery("#qunit-fixture").width("");
 			});
 
-			test("leftContent should not overlap the rightContent", function() {
+			QUnit.test("leftContent should not overlap the rightContent", function(assert) {
 				//Arrange + System under Test + Act
 				//left | right | mid
 				var sut = createAndPlaceSUT(300, 450, 0);
@@ -822,9 +822,9 @@
 			});
 
 
-			module("resizing");
+			QUnit.module("resizing");
 
-			test("Should attach to the resize handlers", function() {
+			QUnit.test("Should attach to the resize handlers", function(assert) {
 				//Arrange + System under Test + Act
 				//left | right | mid
 				var sut = createAndPlaceSUT(225, 225, 100);
@@ -872,7 +872,7 @@
 				jQuery("#qunit-fixture").width("");
 			});
 
-			test("Should not attach resizeHandlers if the bar has no content", function() {
+			QUnit.test("Should not attach resizeHandlers if the bar has no content", function(assert) {
 				//Arrange + System under Test + Act
 				//left | right | mid
 				var sut = new sap.m.Bar();
@@ -907,7 +907,7 @@
 				jQuery("#qunit-fixture").width("");
 			});
 
-			test("Should attach and detach resize listeners to the content", function() {
+			QUnit.test("Should attach and detach resize listeners to the content", function(assert) {
 
 				var oHandleResizeSpy = this.spy(sap.m.Bar.prototype, "_handleResize");
 

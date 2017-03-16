@@ -65,7 +65,7 @@
 
 		/* tests */
 
-		test("Initial Check", function() {
+		QUnit.test("Initial Check", function(assert) {
 			i1 = sap.ui.getCore().byId("i1");
 			i2 = sap.ui.getCore().byId("i2");
 
@@ -73,7 +73,7 @@
 			ok((i2 !== undefined) && (i2 != null), "i2 should not be null");
 		});
 
-		test("Alt text and tooltip", function() {
+		QUnit.test("Alt text and tooltip", function(assert) {
 			// i1 is decorative, i2 not
 
 			// read alt attribute from DOM
@@ -110,7 +110,7 @@
 			equal(jQuery.sap.domById(i2.getId()).getAttribute("title"), null, "title attribute of i2 should NOT be rendered");
 		});
 
-		test("Offset Dimensions", function() {
+		QUnit.test("Offset Dimensions", function(assert) {
 			// test the initial dimensions
 			var oDomRef = jQuery.sap.domById("i1");
 			equals(oDomRef.offsetWidth, parseInt(i1.getWidth()), "i1.offsetWidth should equal parseInt(i1.getWidth())");
@@ -118,7 +118,7 @@
 		});
 
 
-		test("Empty Source No Height", function() {
+		QUnit.test("Empty Source No Height", function(assert) {
 			// test the initial dimensions
 			var oImage = jQuery.sap.byId("imageNoSourceNoHeight");
 			ok(oImage.hasClass("sapUiImgNoSource"), "imageNoSourceNoHeight has the right class 'sapUiImgNoSource' set");
@@ -128,7 +128,7 @@
 		});
 
 
-		test("Empty Source", function() {
+		QUnit.test("Empty Source", function(assert) {
 			// test the initial dimensions
 			var oImage = jQuery.sap.byId("imageNoSource");
 			ok(oImage.hasClass("sapUiImgNoSource"), "imageNoSource has the right class 'sapUiImgNoSource' set");

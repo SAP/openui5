@@ -46,9 +46,9 @@
 
 
 		//1. Instance related
-		module("Constructor");
+		QUnit.module("Constructor");
 
-		test("with no arguments", function () {
+		QUnit.test("with no arguments", function (assert) {
 			var clock = sinon.useFakeTimers(); // 1, January 1970 = 1, January 45 Showa
 			var oJapaneseDate = new sap.ui.core.date.Japanese(); //1, January 45 Showa
 			var now = new Date();// 1, January 1970
@@ -57,7 +57,7 @@
 			clock.restore();
 		});
 
-		test("with value parameter (timestamp)", function () {
+		QUnit.test("with value parameter (timestamp)", function (assert) {
 			var oJapaneseDate;
 
 			oJapaneseDate = new sap.ui.core.date.Japanese("invalid Japanese date timestamp");
@@ -84,7 +84,7 @@
 					oJapaneseDate, 234, 44, 11, 31, oGregorianDate.getDay(), oGregorianDate.getHours(), oGregorianDate.getMinutes(), oGregorianDate.getSeconds(), oGregorianDate.getMilliseconds());
 		});
 
-		test("with year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: invalid parameter type )", function () {
+		QUnit.test("with year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: invalid parameter type )", function (assert) {
 			// ------------- object -----------------------------
 			var oJapaneseDate = null;
 
@@ -141,7 +141,7 @@
 			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as milliseconds must return invalid date");
 		});
 
-		test("with era, year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: valid values)", function () {
+		QUnit.test("with era, year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: valid values)", function (assert) {
 			var oJapaneseDate = null;
 			aTestData.forEach(function(oTestDate) {
 				oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
@@ -149,7 +149,7 @@
 			})
 		});
 
-		test("with gregorian year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: valid values)", function () {
+		QUnit.test("with gregorian year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: valid values)", function (assert) {
 			var oJapaneseDate = null;
 			aTestData.forEach(function(oTestDate) {
 				oJapaneseDate = createDateFromTestEntry(oTestDate, sap.ui.core.date.Japanese);
@@ -157,7 +157,7 @@
 			})
 		});
 
-		test("with year without era, when year is in current era and less than 100", function () {
+		QUnit.test("with year without era, when year is in current era and less than 100", function (assert) {
 			var oJapaneseDate = null, oJapanese;
 			aTestData.forEach(function(oTestDate) {
 				if (oTestDate.Japanese.era == 235) {
@@ -172,7 +172,7 @@
 			})
 		});
 
-		test("with optional parameters", function () {
+		QUnit.test("with optional parameters", function (assert) {
 			var oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 10);
 			verifyDate("new Japanese([235, 23], 10) must be equal to 01.11.23H", oJapaneseDate, 235, 23, 10, 1);
 
@@ -180,9 +180,9 @@
 			verifyDate("new Japanese([235, 23], 10, 2) msut be equal to 02.11.23H", oJapaneseDate, 235, 23, 10, 2)
 		});
 
-		module("Overflow/underflow");
+		QUnit.module("Overflow/underflow");
 
-		test("Overflow/underflow of date values", function () {
+		QUnit.test("Overflow/underflow of date values", function (assert) {
 			var oTestDate = aTestData[1],
 				oJapaneseDate;
 
@@ -223,7 +223,7 @@
 			verifyDate("day 0 in the constructor must underflow to previous month", oJapaneseDate, 235, 22, 11, 31);
 		});
 
-		test("Overflow/underflow of date values close to era borders", function () {
+		QUnit.test("Overflow/underflow of date values close to era borders", function (assert) {
 			var oTestDate, oJapaneseDate;
 
 			oTestDate = aTestData[3]; // end of Showa
@@ -259,9 +259,9 @@
 			verifyDate("day 7 in the constructor must underflow to previous era", oJapaneseDate, 234, 64, 0, 7);
 		});
 
-		module("Setters/Getters");
+		QUnit.module("Setters/Getters");
 
-		test("Set/Get Era", function () {
+		QUnit.test("Set/Get Era", function (assert) {
 			var oTestDate = aTestData[0],
 				oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
 
@@ -278,7 +278,7 @@
 			verifyDate("setEra with optional year, month, day", oJapaneseDate, 235, 5, 5, 23);
 		});
 
-		test("Set/Get Full Year", function () {
+		QUnit.test("Set/Get Full Year", function (assert) {
 			var oTestDate = aTestData[0],
 				oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
 
@@ -292,7 +292,7 @@
 			verifyDate("setFullYear with optional month", oJapaneseDate, 234, 5, 5, 23);
 		});
 
-		test("Set/Get Year", function () {
+		QUnit.test("Set/Get Year", function (assert) {
 			var oTestDate = aTestData[0],
 				oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
 
@@ -300,9 +300,9 @@
 			verifyDate("setYear", oJapaneseDate, 234, 5, 0, 1);
 		});
 
-		module("Others");
+		QUnit.module("Others");
 
-		test("Setters have to return the time since 1.1.1970", function () {
+		QUnit.test("Setters have to return the time since 1.1.1970", function (assert) {
 			var oDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, 8, 10, 15, 119);
 
 			function check(iTimestamp, sSetter) {
@@ -331,7 +331,7 @@
 		});
 
 
-		test(".Now()", function () {
+		QUnit.test(".Now()", function (assert) {
 			var clock = sinon.useFakeTimers(0); // 1, January 1970 = 22 Shawwal 1389(22.10.1389)
 			equal(sap.ui.core.date.Japanese.now(), 0, "Japanese.now() must equal to the timestamp since 1 January 1970, 00:00:00 000");
 
@@ -342,7 +342,7 @@
 			clock.restore();
 		});
 
-		test("Convert Gregorian to Japanese dates", function () {
+		QUnit.test("Convert Gregorian to Japanese dates", function (assert) {
 			var oGregorianDate, oExpectedJapaneseDate, oCalculatedJapaneseDate;
 			for (var i = 0; i < aTestData.length; i++) {
 				oGregorianDate = createGregorianDateFromTestEntry(aTestData[i], true);
@@ -352,7 +352,7 @@
 			}
 		});
 
-		test("Convert Japanese to Gregorian dates", function () {
+		QUnit.test("Convert Japanese to Gregorian dates", function (assert) {
 			var oJapaneseDate, oExpectedGregorianDate, oCalculatedGregorianDate;
 			for (var i = 0; i < aTestData.length; i++) {
 				oJapaneseDate = createJapaneseDateFromTestEntry(aTestData[i], true);

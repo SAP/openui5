@@ -45,9 +45,9 @@
 
 		qutils.delayTestStart();
 
-		module("Check for Unlocked Core");
+		QUnit.module("Check for Unlocked Core");
 
-		test("Control Events should be blocked depending on Core lock", function() {
+		QUnit.test("Control Events should be blocked depending on Core lock", function(assert) {
 			var pressed = false;
 			oButton.attachPress(function() {
 				pressed = true;

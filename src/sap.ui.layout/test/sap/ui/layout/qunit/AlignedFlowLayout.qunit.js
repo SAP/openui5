@@ -50,3 +50,23 @@ QUnit.test("it should not throw an exception when the content is destroyed", fun
 	// assert
 	assert.strictEqual(this.oAlignedFlowLayout.getContent().length, 0);
 });
+
+QUnit.test("the end item should not overflow its container", function(assert) {
+
+	// arrange
+	var oButton = new sap.m.Button();
+	this.oAlignedFlowLayout.addEndContent(oButton);
+	sap.ui.getCore().applyChanges();
+	var oDomRef = this.oAlignedFlowLayout.getDomRef(),
+		oItemDomRef = oButton.getDomRef().parentElement,
+		oItemStyles = getComputedStyle(oItemDomRef);
+
+	// assert
+	assert.ok(oDomRef.offsetHeight > 0);
+	assert.strictEqual(oItemStyles.position, "relative", 'it should set the "position" CSS property to "relative"');
+	assert.strictEqual(oItemDomRef.style.width, "", "it should not set the width to prevent a collisions when the end item is the only child");
+
+	if (!sap.ui.Device.browser.phantomJS) {
+		assert.strictEqual(oItemStyles.flexBasis, "auto");
+	}
+});

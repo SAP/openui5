@@ -29,9 +29,9 @@
 
 <script>
 	/***********************************************************************************************************************/
-	module("Control Lifecycle");
+	QUnit.module("Control Lifecycle");
 
-	test("Render", function() {
+	QUnit.test("Render", function(assert) {
 
 		//SUT
 		var sTitle = "My Title";
@@ -66,7 +66,7 @@
 		sut.destroy();
 	});
 
-	test("NotVisible", function() {
+	QUnit.test("NotVisible", function(assert) {
 		//SUT
 		var sTitle = "My Title";
 		var sText = "My Text";
@@ -85,7 +85,7 @@
 
 	});
 
-	test("Destroy", function() {
+	QUnit.test("Destroy", function(assert) {
 
 		//SUT
 		var sTitle = "My Title";
@@ -127,9 +127,9 @@
 	});
 
 	/***********************************************************************************************************************/
-	module("Internals");
+	QUnit.module("Internals");
 
-	test("Icon Getters", function() {
+	QUnit.test("Icon Getters", function(assert) {
 
 		//SUT
 		var sTitle = "My Title";
@@ -152,7 +152,7 @@
 		sut.destroy();
 	});
 
-	test("Should not rerender the ObjectIdentifier if the title is changed", function() {
+	QUnit.test("Should not rerender the ObjectIdentifier if the title is changed", function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
 			oRenderSpy,
@@ -179,7 +179,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("Should not rerender the ObjectIdentifier if the new  title is empty", function() {
+	QUnit.test("Should not rerender the ObjectIdentifier if the new  title is empty", function(assert) {
 		// Arrange
 		var sTextToSet = undefined,
 			oRenderSpy,
@@ -204,7 +204,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("Should not rerender the ObjectIdentifier if the title is empty initially", function() {
+	QUnit.test("Should not rerender the ObjectIdentifier if the title is empty initially", function(assert) {
 		// Arrange
 		var sTextToSet = "non empty",
 			oRenderSpy,
@@ -229,7 +229,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("Should not rerender the ObjectIdentifier if the text is changed", function() {
+	QUnit.test("Should not rerender the ObjectIdentifier if the text is changed", function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
 			oRenderSpy,
@@ -257,7 +257,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("Should not rerender the ObjectIdentifier if the new  text is empty", function() {
+	QUnit.test("Should not rerender the ObjectIdentifier if the new  text is empty", function(assert) {
 		// Arrange
 		var sTextToSet = undefined,
 			oRenderSpy,
@@ -283,7 +283,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("Should not rerender the ObjectIdentifier if the text is empty initially", function() {
+	QUnit.test("Should not rerender the ObjectIdentifier if the text is empty initially", function(assert) {
 		// Arrange
 		var sTextToSet = "non empty",
 			oRenderSpy,
@@ -309,7 +309,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("The title control should be invisible if the title is empty", function() {
+	QUnit.test("The title control should be invisible if the title is empty", function(assert) {
 
 		//Arrange
 		var sEmptyTitle = "",
@@ -344,7 +344,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("The title control should be visible if the title is not empty", function() {
+	QUnit.test("The title control should be visible if the title is not empty", function(assert) {
 
 		//Arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
@@ -362,7 +362,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("The text control should be invisible if the text is empty", function() {
+	QUnit.test("The text control should be invisible if the text is empty", function(assert) {
 
 		//Arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
@@ -380,7 +380,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("The text control should be visible if the text is not empty", function() {
+	QUnit.test("The text control should be visible if the text is not empty", function(assert) {
 
 		//Arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
@@ -399,9 +399,9 @@
 		oObjectIdentifier.destroy();
 	});
 
-	module("API");
+	QUnit.module("API");
 
-	test("default values", function() {
+	QUnit.test("default values", function(assert) {
 
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier(),
@@ -425,7 +425,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("setTitleActive()", function() {
+	QUnit.test("setTitleActive()", function(assert) {
 
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
@@ -443,7 +443,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("Setting textDirection to RTL", function() {
+	QUnit.test("Setting textDirection to RTL", function(assert) {
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title: 'Test title',
@@ -463,7 +463,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("Setting textDirection to LTR", function() {
+	QUnit.test("Setting textDirection to LTR", function(assert) {
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title: 'Test title',
@@ -484,10 +484,10 @@
 	});
 
 
-	module("Keyboard handling");
+	QUnit.module("Keyboard handling");
 
 	function checkKeyboardEventhandling(sTestName, oOptions) {
-		test(sTestName, function() {
+		QUnit.test(sTestName, function(assert) {
 			// arrange
 			var oObjectIdentifier = new sap.m.ObjectIdentifier({
 				titleActive: true,
@@ -520,9 +520,9 @@
 		keyCode : jQuery.sap.KeyCodes.SPACE
 	});
 
-	module("Event testing");
+	QUnit.module("Event testing");
 
-	test("ObjectIdentifier titlePress Event", function() {
+	QUnit.test("ObjectIdentifier titlePress Event", function(assert) {
 
 		// arrange
 		var oObjectIdentifier1 = new sap.m.ObjectIdentifier({
@@ -552,9 +552,9 @@
 	});
 
 	/***********************************************************************************************************************/
-	module("Styles");
+	QUnit.module("Styles");
 
-	test("Should add separator class if title added at runtime", function() {
+	QUnit.test("Should add separator class if title added at runtime", function(assert) {
 
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({ text: "not empty text"}).placeAt("qunit-fixture");
@@ -571,7 +571,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("Should add separator class if text added at runtime", function() {
+	QUnit.test("Should add separator class if text added at runtime", function(assert) {
 
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({ title: "not empty title"}).placeAt("qunit-fixture");
@@ -588,7 +588,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("Should remove separator class if title removed at runtime", function() {
+	QUnit.test("Should remove separator class if title removed at runtime", function(assert) {
 
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({ title : "not empty title",
@@ -606,7 +606,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("Should remove separator class if text removed at runtime", function() {
+	QUnit.test("Should remove separator class if text removed at runtime", function(assert) {
 
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({ title : "not empty title",
@@ -624,7 +624,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("Should have separator class if both title and text nonempty initially", function() {
+	QUnit.test("Should have separator class if both title and text nonempty initially", function(assert) {
 
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({ title : "not empty title",
@@ -638,7 +638,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("Should have no separator class if title is empty initially", function() {
+	QUnit.test("Should have no separator class if title is empty initially", function(assert) {
 
 		// System under Test
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({ text: "not empty text"}).placeAt("qunit-fixture");
@@ -651,7 +651,7 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("Should have no separator class if text is empty initially", function() {
+	QUnit.test("Should have no separator class if text is empty initially", function(assert) {
 
 		// System under Test
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({ title: "not empty title"}).placeAt("qunit-fixture");
@@ -664,9 +664,9 @@
 		oObjectIdentifier.destroy();
 	});
 
-	module("Databinding");
+	QUnit.module("Databinding");
 
-	test("Model sets titleActive = true", function() {
+	QUnit.test("Model sets titleActive = true", function(assert) {
 
 		//Arrange
 		var oModel = new sap.ui.model.json.JSONModel({
@@ -696,7 +696,7 @@
 
 	});
 
-	test("Model sets titleActive = false", function() {
+	QUnit.test("Model sets titleActive = false", function(assert) {
 
 		//Arrange
 		var oModel = new sap.ui.model.json.JSONModel({
@@ -725,7 +725,7 @@
 		oModel.destroy()
 	});
 
-	test("Formatter sets titleActive = true", function() {
+	QUnit.test("Formatter sets titleActive = true", function(assert) {
 
 		//Arrange
 		var oModel = new sap.ui.model.json.JSONModel({
@@ -759,7 +759,7 @@
 		oModel.destroy()
 	});
 
-	test("Formatter sets titleActive = false", function() {
+	QUnit.test("Formatter sets titleActive = false", function(assert) {
 
 		//Arrange
 		var oModel = new sap.ui.model.json.JSONModel({
@@ -793,7 +793,7 @@
 		oModel.destroy()
 	});
 
-	test("Binding a table cell item after table column has been destroyed", function() {
+	QUnit.test("Binding a table cell item after table column has been destroyed", function(assert) {
 
 		//Arrange
 		var oTable = new sap.m.Table({

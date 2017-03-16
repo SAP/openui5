@@ -25,7 +25,7 @@
 
 		var oCore = sap.ui.getCore();
 
-		module("API", {
+		QUnit.module("API", {
 			beforeEach: function () {
 				this.stepInput = new sap.m.StepInput();
 
@@ -37,14 +37,14 @@
 			}
 		});
 
-		test("DOM", function () {
+		QUnit.test("DOM", function (assert) {
 			//assert
 			var $stepInput = this.stepInput.$();
 			ok($stepInput.length > 0, "The control was successfully rendered");
 			equals($stepInput.attr("tabindex"), "-1", "tabindex attribute should be negative");
 		});
 
-		test("incrementButton", function () {
+		QUnit.test("incrementButton", function (assert) {
 			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
 
 			//assert
@@ -62,7 +62,7 @@
 					"The increment button successfully incremented the value");
 		});
 
-		test("decrementButton", function () {
+		QUnit.test("decrementButton", function (assert) {
 			var oDecrementButton = this.stepInput.getAggregation("_decrementButton");
 
 			//assert
@@ -80,7 +80,7 @@
 					"The decrement button successfully decremented the value");
 		});
 
-		test("input", function () {
+		QUnit.test("input", function (assert) {
 			strictEqual(this.stepInput._getInput().getMetadata().getName(), "sap.m.Input",
 					"the picker aggregation holds an instance of an input");
 			strictEqual(this.stepInput.getValue(), 0, "The default value is correctly set in the input");
@@ -90,7 +90,7 @@
 
 		});
 
-		module("Operations", {
+		QUnit.module("Operations", {
 			beforeEach: function () {
 				this.stepInput = new sap.m.StepInput({
 							value: 3,
@@ -106,7 +106,7 @@
 		});
 
 
-		test("Disable button based on the value", function () {
+		QUnit.test("Disable button based on the value", function (assert) {
 			//assert
 			strictEqual(this.stepInput._getIncrementButton().getEnabled(), true,
 					"The increment button is enabled as it should be");
@@ -131,14 +131,14 @@
 		});
 
 
-		test("Increment button enabled/disabled state", function () {
+		QUnit.test("Increment button enabled/disabled state", function (assert) {
 			this.stepInput._getInput().setValue(11);
 			this.stepInput.onfocusout();
 			strictEqual(this.stepInput._getIncrementButton().getEnabled(), false,
 					"The increment button is disabled as it should be because the value is 1 bigger than the max");
 		});
 
-		test("Error state when setting values out of the limit", function () {
+		QUnit.test("Error state when setting values out of the limit", function (assert) {
 			this.stepInput.setMin(3);
 			this.stepInput.setValue(2);
 			this.stepInput.onfocusout();
@@ -154,7 +154,7 @@
 		});
 
 
-		module("Floating point", {
+		QUnit.module("Floating point", {
 			beforeEach: function () {
 				this.stepInput = new sap.m.StepInput({
 					step: 1.1,
@@ -170,7 +170,7 @@
 			}
 		});
 
-		test("working with floating point", function () {
+		QUnit.test("working with floating point", function (assert) {
 			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
 			var oDecrementButton = this.stepInput.getAggregation("_decrementButton");
 
@@ -195,7 +195,7 @@
 					"The value is successfully decremented");
 		});
 
-		test("working with floating point value precision set to 2", function () {
+		QUnit.test("working with floating point value precision set to 2", function (assert) {
 			this.stepInput.setDisplayValuePrecision(2);
 			this.stepInput.setValue(431.15);
 			this.stepInput.setMin(410.00);
@@ -222,7 +222,7 @@
 					"The input's value is successfully decremented");
 		});
 
-		test("working with floating point value precision set to 20", function () {
+		QUnit.test("working with floating point value precision set to 20", function (assert) {
 			this.stepInput.setDisplayValuePrecision(20);
 			this.stepInput.setValue(0.01);
 			this.stepInput.setStep(0.06);
@@ -234,7 +234,7 @@
 			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "0.07000000000000000000", "The input's value is successfully incremented");
 		});
 
-		test("working with floating point value precision set to 17", function () {
+		QUnit.test("working with floating point value precision set to 17", function (assert) {
 			this.stepInput.setDisplayValuePrecision(17);
 			this.stepInput.setValue(0.01);
 			this.stepInput.setStep(0.02);
@@ -246,28 +246,28 @@
 			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "0.03000000000000000", "The input's value is successfully incremented");
 		});
 
-		test("setting default displayValuePrecision when it is not correct", function () {
+		QUnit.test("setting default displayValuePrecision when it is not correct", function (assert) {
 			this.stepInput.setDisplayValuePrecision(25);
 			oCore.applyChanges();
 
 			strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
 		});
 
-		test("setting default displayValuePrecision when it is not correct and can't be converted to int", function () {
+		QUnit.test("setting default displayValuePrecision when it is not correct and can't be converted to int", function (assert) {
 			this.stepInput.setDisplayValuePrecision("test");
 			oCore.applyChanges();
 
 			strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
 		});
 
-		test("setting default displayValuePrecision when it is undefined", function () {
+		QUnit.test("setting default displayValuePrecision when it is undefined", function (assert) {
 			this.stepInput.setDisplayValuePrecision();
 			oCore.applyChanges();
 
 			strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
 		});
 
-		test("displayValuePrecision formating when digits after the dot are more then the value precision", function () {
+		QUnit.test("displayValuePrecision formating when digits after the dot are more then the value precision", function (assert) {
 			this.stepInput.setDisplayValuePrecision(2);
 			this.stepInput.setValue(1.104);
 			oCore.applyChanges();
@@ -276,7 +276,7 @@
 			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.10", "The input value is correctly formatted");
 		});
 
-		test("displayValuePrecision formating when digits after the dot are less then the value precision", function () {
+		QUnit.test("displayValuePrecision formating when digits after the dot are less then the value precision", function (assert) {
 			this.stepInput.setDisplayValuePrecision(5);
 			this.stepInput.setValue(1.104);
 			oCore.applyChanges();
@@ -285,7 +285,7 @@
 			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.10400", "The input value is correctly formatted");
 		});
 
-		test("displayValuePrecision formating when there are no digits after the dot and the value precision is bigger than 0", function () {
+		QUnit.test("displayValuePrecision formating when there are no digits after the dot and the value precision is bigger than 0", function (assert) {
 			this.stepInput.setDisplayValuePrecision(5);
 			this.stepInput.setValue(0);
 			oCore.applyChanges();
@@ -294,7 +294,7 @@
 			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "0.00000", "The input value is correctly formatted");
 		});
 
-		test("displayValuePrecision formating when there are digits after the dot and the value precision is 0", function () {
+		QUnit.test("displayValuePrecision formating when there are digits after the dot and the value precision is 0", function (assert) {
 			this.stepInput.setDisplayValuePrecision(0);
 			this.stepInput.setValue(1.325);
 			oCore.applyChanges();
@@ -303,7 +303,7 @@
 			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1", "The input value is correctly formatted");
 		});
 
-		test("Formating when displayValuePrecision is equal to the step precision", function () {
+		QUnit.test("Formating when displayValuePrecision is equal to the step precision", function (assert) {
 			this.stepInput.setDisplayValuePrecision(4);
 			this.stepInput.setStep(1.0035);
 			this.stepInput.setValue(0.325);
@@ -317,7 +317,7 @@
 			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.3285", "The input value is correctly formatted");
 		});
 
-		test("Formating when displayValuePrecision is smaller than the step precision", function () {
+		QUnit.test("Formating when displayValuePrecision is smaller than the step precision", function (assert) {
 			this.stepInput.setDisplayValuePrecision(2);
 			this.stepInput.setStep(1.0035);
 			this.stepInput.setValue(0.325);
@@ -331,7 +331,7 @@
 			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.33", "The input value is correctly formatted");
 		});
 
-		test("Formating when displayValuePrecision is bigger than the step precision", function () {
+		QUnit.test("Formating when displayValuePrecision is bigger than the step precision", function (assert) {
 			this.stepInput.setDisplayValuePrecision(6);
 			this.stepInput.setStep(1.0035);
 			this.stepInput.setValue(0.325);
@@ -345,7 +345,7 @@
 			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.328500", "The input value is correctly formatted");
 		});
 
-		test("Formating when displayValuePrecision is equal to the step precision, but the given value is with smaller precision than the displayValuePrecision", function () {
+		QUnit.test("Formating when displayValuePrecision is equal to the step precision, but the given value is with smaller precision than the displayValuePrecision", function (assert) {
 			var oSI = new sap.m.StepInput({
 				value: 431.5,
 				min: 410.00,
@@ -363,7 +363,7 @@
 			oSI.destroy();
 		});
 
-		test("Formating when we have two different controls with values with different precision, but which will be resolved to one and the same display value", function () {
+		QUnit.test("Formating when we have two different controls with values with different precision, but which will be resolved to one and the same display value", function (assert) {
 			var oSI = new sap.m.StepInput({
 				value: 1.3267,
 				step: 0.004999,
@@ -402,7 +402,7 @@
 			oSI.destroy();
 		});
 
-		module("Keyboard Handling", {
+		QUnit.module("Keyboard Handling", {
 			beforeEach: function () {
 				this.oChangeSpy = sinon.spy();
 				this.stepInput = new sap.m.StepInput({
@@ -421,7 +421,7 @@
 			}
 		});
 
-		test("Value is changed upon Enter press", function() {
+		QUnit.test("Value is changed upon Enter press", function(assert) {
 			//prepare
 			var oInput = this.stepInput._getInput();
 
@@ -442,7 +442,7 @@
 			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
 		});
 
-		test("Change event is fired only once when element is focused, changed and then + button is clicked", function() {
+		QUnit.test("Change event is fired only once when element is focused, changed and then + button is clicked", function(assert) {
 			//prepare
 			var oInput = this.stepInput._getInput(),
 			oIncrementBtn = this.stepInput.getAggregation("_incrementButton");
@@ -463,7 +463,7 @@
 			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
 		});
 
-		test("Change Event is fired when  +/- buttons are clicked", function() {
+		QUnit.test("Change Event is fired when  +/- buttons are clicked", function(assert) {
 			//prepare
 			var oIncrementBtn = this.stepInput.getAggregation("_incrementButton"),
 					oDecrementBtn = this.stepInput.getAggregation("_decrementButton");
@@ -485,7 +485,7 @@
 			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
 		});
 
-		test("up/down increases/decreases the value", function () {
+		QUnit.test("up/down increases/decreases the value", function (assert) {
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
 			this.clock.tick(1000);
 			equal(this.stepInput.getAggregation("_input")._getInputValue(), 5,
@@ -505,7 +505,7 @@
 					"The input's value is decreasing with 5 after arrow up");
 		});
 
-		test("pageup and pagedown increases/decreases the value with a larger step", function () {
+		QUnit.test("pageup and pagedown increases/decreases the value with a larger step", function (assert) {
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
 			this.clock.tick(1000);
 			equal(this.stepInput.getAggregation("_input")._getInputValue(), 6, "The input's value is increasing with step=step*2 after pageup");
@@ -523,7 +523,7 @@
 					"The input's value is decreasing with step=step*2 after pageup");
 		});
 
-		test("shift+up/down increases/decreases the value with a larger step if specified", function () {
+		QUnit.test("shift+up/down increases/decreases the value with a larger step if specified", function (assert) {
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true, false, false);
 			this.clock.tick(1000);
 			equal(this.stepInput.getAggregation("_input")._getInputValue(), 6,
@@ -542,7 +542,7 @@
 					"The input's value is decreasing with step=2*step after arrow up");
 		});
 
-		test("shift+pageup/pagedown sets value to max/min", function () {
+		QUnit.test("shift+pageup/pagedown sets value to max/min", function (assert) {
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, true, false, false);
 			this.clock.tick(1000);
 			equal(this.stepInput.getAggregation("_input")._getInputValue(), 10,
@@ -554,7 +554,7 @@
 					"The input's value is set to min after page down");
 		});
 
-		test("ctrl+shift+up/down sets value to max/min", function () {
+		QUnit.test("ctrl+shift+up/down sets value to max/min", function (assert) {
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true, false, true);
 			this.clock.tick(1000);
 			equal(this.stepInput.getAggregation("_input")._getInputValue(), 10,
@@ -566,7 +566,7 @@
 					"The input's  value is set to min after page down");
 		});
 
-		module("Accessibility", {
+		QUnit.module("Accessibility", {
 			beforeEach: function () {
 				this.stepInput = new sap.m.StepInput({
 					value: 4,
@@ -583,7 +583,7 @@
 			}
 		});
 
-		test("Spinner specific aria attributes", function () {
+		QUnit.test("Spinner specific aria attributes", function (assert) {
 			var $input = this.stepInput.$("input-inner");
 
 			strictEqual($input.attr("role"), "spinbutton", "To have a proper role");
@@ -593,7 +593,7 @@
 			strictEqual($input.attr("aria-labelledby"), "__text0", "To have a label");
 		});
 
-		test("Spinner alter aria attributes", function () {
+		QUnit.test("Spinner alter aria attributes", function (assert) {
 			strictEqual(this.stepInput.$("input-inner").attr("aria-valuenow"), "4", "To have set value on init");
 
 			this.stepInput.setValue(9);
@@ -617,7 +617,7 @@
 			strictEqual(this.stepInput.$("input-inner").attr("aria-disabled"), undefined, "To set it as editable");
 		});
 
-	module("binding", {
+	QUnit.module("binding", {
 		beforeEach: function () {
 			this.stepInput = new sap.m.StepInput({
 				value: {
@@ -644,7 +644,7 @@
 		}
 	});
 
-		test("When value set via binding is undefined", function () {
+		QUnit.test("When value set via binding is undefined", function (assert) {
 			this.oModel.setData({});
 			this.stepInput.setModel(this.oModel);
 			oCore.applyChanges();
@@ -653,7 +653,7 @@
 			strictEqual(this.stepInput.getValue(), 0, "Value is set to the default one if it was undefined");
 		});
 
-		test("value set via binding", function () {
+		QUnit.test("value set via binding", function (assert) {
 			this.oModel.setData({
 				vValue: 6
 			});
@@ -664,7 +664,7 @@
 			equal(this.stepInput.getAggregation("_input")._getInputValue(), "6", "The input is set correctly");
 		});
 
-		test("value set via binding and has precision", function () {
+		QUnit.test("value set via binding and has precision", function (assert) {
 			this.oModel.setData({
 				vValue: 6,
 				vPrecision: 3
@@ -677,7 +677,7 @@
 			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "6.000", "The input is set and formated correctly");
 		});
 
-		test("less then Min value set via binding", function () {
+		QUnit.test("less then Min value set via binding", function (assert) {
 			this.oModel.setData({
 				vValue: 4,
 				vMin: 5
@@ -689,7 +689,7 @@
 			equal(this.stepInput.getAggregation("_input")._getInputValue(), "5", "The input is set correctly");
 		});
 
-		test("value 0 Min value set via binding", function () {
+		QUnit.test("value 0 Min value set via binding", function (assert) {
 			this.oModel.setData({
 				vValue: 0,
 				vMin: 5
@@ -702,7 +702,7 @@
 		});
 
 
-		module("calculate decimals", {
+		QUnit.module("calculate decimals", {
 			beforeEach: function () {
 				this.stepInput = new sap.m.StepInput();
 
@@ -714,11 +714,11 @@
 			}
 		});
 
-		test("Adding additional zeros to reach the precision value", function () {
+		QUnit.test("Adding additional zeros to reach the precision value", function (assert) {
 			strictEqual(this.stepInput._calcDecimals("34", 5), "34000", "returns '34000'");
 		});
 
-		test("Adding zeros equal to precision value", function () {
+		QUnit.test("Adding zeros equal to precision value", function (assert) {
 			strictEqual(this.stepInput._calcDecimals("0", 5), "00000", "returns '00000'");
 		});
 

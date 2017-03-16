@@ -66,8 +66,8 @@
 
 		var l1, l2;
 
-		module("Basic", {
-			setup : function() {
+		QUnit.module("Basic", {
+			beforeEach : function() {
 				l1 = sap.ui.getCore().getControl("l1");
 				l2 = sap.ui.getCore().getControl("l2");
 
@@ -82,7 +82,7 @@
 				ok(l2, "l2 should not be null");
 				ok(!jQuery.sap.domById("l3"), "l3 should not be rendered");
 			},
-			teardown : function() {
+			afterEach : function() {
 				l1 = null;
 				l2 = null;
 			}
@@ -90,33 +90,33 @@
 
 		// test property accessor methods
 
-		test("TextOk", function() {
+		QUnit.test("TextOk", function(assert) {
 			strictEqual(l1.getText(), sText, "l1.getText() returns result: " + l1.getText());
 			strictEqual(l2.getText(), sText, "l2.getText() returns result: " + l2.getText());
 		});
 
-		test("WidthOk", function() {
+		QUnit.test("WidthOk", function(assert) {
 			strictEqual(l1.getWidth(), sWidth, "l1.getWidth() returns result: " + l1.getWidth());
 			strictEqual(l2.getWidth(), sWidth, "l2.getWidth() returns result: " + l2.getWidth());
 		});
 
-		test("TextAlignOk", function() {
+		QUnit.test("TextAlignOk", function(assert) {
 			strictEqual(l1.getTextAlign(), oTextAlignEnd, "l1.getTextAlign() returns result: " + l1.getTextAlign());
 			strictEqual(l2.getTextAlign(), oTextAlignCenter, "l2.getTextAlign() returns result: " + l2.getTextAlign());
 		});
 
-		test("TextDirectionOk", function() {
+		QUnit.test("TextDirectionOk", function(assert) {
 			strictEqual(l1.getTextDirection(), oTextDirectionDefault, "l1.getTextDirection() returns result: " + l1.getTextDirection());
 			strictEqual(l2.getTextDirection(), oTextDirectionRTL, "l2.getTextDirection() returns result: " + l2.getTextDirection());
 			strictEqual(l2.$().attr("dir"), "rtl", "l2 has correct attribute 'dir' for RTL mode");
 		});
 
-		test("DesignOk", function() {
+		QUnit.test("DesignOk", function(assert) {
 			strictEqual(l1.getDesign(), oStandardDesign, "l1.getDesign() returns result: " + l1.getDesign());
 			strictEqual(l2.getDesign(), oBoldDesign, "l2.getDesign() returns result: " + l2.getDesign());
 		});
 
-		test("When width is not set max-width should apply to control", function() {
+		QUnit.test("When width is not set max-width should apply to control", function(assert) {
 			var sut = new sap.m.Label({text : "text"}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			ok(sut.$().hasClass("sapMLabelMaxWidth"), "Label has max width restriction for the trunctation.");
@@ -126,9 +126,9 @@
 			ok(!sut.$().hasClass("sapMLabelMaxWidth"), "Label has width and does not have max width restriction.");
 		});
 
-		module("tooltip");
+		QUnit.module("tooltip");
 
-		test("Should render a tooltip", function() {
+		QUnit.test("Should render a tooltip", function(assert) {
 			// System under Test + Act
 			var oLabel = new sap.m.Label({
 				tooltip : "foo"
@@ -145,7 +145,7 @@
 
 		//I build this one in because if you bind the tooltip of a label to a json model wich is connected to an input,
 		//blur will be triggered on every keystroke
-		test("Should supress rerendering when tooltip is set", function() {
+		QUnit.test("Should supress rerendering when tooltip is set", function(assert) {
 			// Arrange
 			var oRerenderingSpy = this.spy();
 
@@ -172,7 +172,7 @@
 			oLabel.destroy();
 		});
 
-		test("Should be able to set the text to 0", function() {
+		QUnit.test("Should be able to set the text to 0", function(assert) {
 			// System under Test
 			var oLabel = new sap.m.Label({
 				text : ""
@@ -189,13 +189,13 @@
 			oLabel.destroy();
 		});
 
-		test("Label should be shrinkable", function() {
+		QUnit.test("Label should be shrinkable", function(assert) {
 			var oLabel = new sap.m.Label;
 			ok(oLabel.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Label control implements IShrinkable interface");
 			oLabel.destroy();
 		});
 
-		test("Label should get required from labeled control", function() {
+		QUnit.test("Label should get required from labeled control", function(assert) {
 
 			ok(oLabel4.$().hasClass("sapMLabelRequired"), "Label is required");
 			oInput.setRequired(false);
@@ -213,9 +213,9 @@
 
 		});
 
-		module("Accessibility");
-		
-		test("getAccessibilityInfo", function() {
+		QUnit.module("Accessibility");
+
+		QUnit.test("getAccessibilityInfo", function(assert) {
 			var oControl = new sap.m.Label({text: "Text"});
 			ok(!!oControl.getAccessibilityInfo, "Label has a getAccessibilityInfo function");
 			var oInfo = oControl.getAccessibilityInfo();

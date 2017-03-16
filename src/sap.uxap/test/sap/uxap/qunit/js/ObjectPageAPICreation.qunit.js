@@ -68,7 +68,7 @@
 			}
 		};
 
-	module("IconTabBar is initially enabled", {
+	QUnit.module("IconTabBar is initially enabled", {
 		beforeEach: function () {
 			this.oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar();
 			helpers.renderObject(this.oObjectPage);
@@ -85,7 +85,7 @@
 		assert.strictEqual(this.oObjectPage.getShowAnchorBar(), true);
 	});
 
-	module("IconTabBar is initially not enabled", {
+	QUnit.module("IconTabBar is initially not enabled", {
 		beforeEach: function () {
 			this.oObjectPage = oFactory.getObjectPage();
 			helpers.renderObject(this.oObjectPage);
@@ -107,7 +107,7 @@
 	});
 
 
-	module("test scrollToSection API");
+	QUnit.module("test scrollToSection API");
 
 	QUnit.test("Calling scrollToSection when OPL is not rendered should do nothing", function (assert) {
 		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 5),
@@ -124,7 +124,7 @@
 		assert.ok(oLoggerSpy.calledWith("scrollToSection can only be used after the ObjectPage is rendered", oObjectPage), "Warning message is logged");
 	});
 
-	module("Use IconTabBar with no sections", {
+	QUnit.module("Use IconTabBar with no sections", {
 		beforeEach: function () {
 			this.oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar();
 			helpers.renderObject(this.oObjectPage);
@@ -147,7 +147,7 @@
 		assert.strictEqual(this.oObjectPage.$().find(".sapUxAPObjectPageNavigation *").length, 0, "empty anchor bar when no sections");
 	});
 
-	module("Use IconTabBar with one section", {
+	QUnit.module("Use IconTabBar with one section", {
 		beforeEach: function () {
 			this.NUMBER_OF_SECTIONS = 1;
 			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, this.NUMBER_OF_SECTIONS, true);
@@ -177,7 +177,7 @@
 		assert.ok(this.oObjectPage.$().find("#" + sSectionId + " *").length, "section is rendered");
 	});
 
-	module("test selectedSection association API", {
+	QUnit.module("test selectedSection association API", {
 		beforeEach: function () {
 			this.NUMBER_OF_SECTIONS = 3;
 			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, this.NUMBER_OF_SECTIONS, true);
@@ -208,7 +208,7 @@
 		}, this.iLoadingDelay);
 	});
 
-	module("IconTabBar section selection", {
+	QUnit.module("IconTabBar section selection", {
 		beforeEach: function () {
 			this.NUMBER_OF_SECTIONS = 3;
 			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, this.NUMBER_OF_SECTIONS, true);
@@ -357,7 +357,7 @@
 		}, this.iLoadingDelay);
 	});
 
-	module("ObjectPage API: sectionTitleLevel");
+	QUnit.module("ObjectPage API: sectionTitleLevel");
 
 	QUnit.test("test sections/subsections aria-level when sectionTitleLevel is TitleLevel.Auto", function (assert) {
 		var oObjectPage = oFactory.getObjectPageLayoutWithSectionTitleLevel(null),
@@ -445,7 +445,7 @@
 			"SubSection aria-level " + sSubSectionDefaultAriaLevel + ", lower than sectionTitleLevel:" + oObjectPageSectionTitleLevel + " by 1");
 	});
 
-	module("ObjectPage API: sectionTitleLevel - private methods");
+	QUnit.module("ObjectPage API: sectionTitleLevel - private methods");
 
 	QUnit.test("test _determineSectionBaseInternalTitleLevel and _shouldApplySectionTitleLevel", function (assert) {
 		var oObjectPage = oFactory.getObjectPageLayoutWithSectionTitleLevel(sap.ui.core.TitleLevel.H2),
@@ -486,7 +486,7 @@
 			"Correct, if the provided TitleLevel is not valid, TitleLevel.Auto should be returned " + sap.ui.core.TitleLevel.Auto);
 	});
 
-	module("ObjectPage API: AnchorBar", {
+	QUnit.module("ObjectPage API: AnchorBar", {
 		beforeEach: function () {
 			this.appControl = new sap.m.App();
 			this.oSampleView = sap.ui.xmlview("objectPageViewSample", {
@@ -522,7 +522,7 @@
 	});
 
 
-	module("ObjectPage API: ObjectPageHeader", {
+	QUnit.module("ObjectPage API: ObjectPageHeader", {
 		beforeEach: function () {
 			this.appControl = new sap.m.App();
 			this.oSampleView = sap.ui.xmlview("objectPageViewSample", {
@@ -560,7 +560,7 @@
 	});
 
 
-	module("ObjectPage API", {
+	QUnit.module("ObjectPage API", {
 		beforeEach: function () {
 			this.appControl = new sap.m.App();
 
@@ -702,7 +702,7 @@
 		assert.equal(oObjectPage.getSections()[3].getTitle(), "Recognition");
 		oSection2.addDelegate({
 			onAfterRendering: function () {
-				QUnit.test("Sections Rendering", function () {
+				QUnit.test("Sections Rendering", function (assert) {
 					//check sections
 					assert.strictEqual(checkObjectExists("#objectPageViewSample--sectionGoal"), true);
 					assert.strictEqual(checkObjectExists("#objectPageViewSample--sectionStatus"), true);

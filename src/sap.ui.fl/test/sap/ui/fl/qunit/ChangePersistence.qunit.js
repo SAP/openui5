@@ -160,20 +160,116 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		});
 	});
 
-	QUnit.test("getChangesForComponent shall return the changes for the component, filtering default variant changes", function(assert) {
+	QUnit.test("After run getChangesForComponent without includeVariants parameter", function(assert) {
 
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [{
-			fileType: "change",
-			changeType: "defaultVariant",
-			layer: "CUSTOMER"
-		}]}}));
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+			{
+				fileType: "change",
+				changeType: "defaultVariant",
+				layer: "CUSTOMER",
+				selector: { persistencyKey: "SmartFilter_Explored" }
+			},
+			{
+				fileType: "change",
+				changeType: "renameGroup",
+				layer: "CUSTOMER",
+				selector: { id: "controlId1" }
+			},
+			{
+				filetype: "change",
+				changetype: "removeField",
+				layer: "customer",
+				selector: {}
+			},
+			{
+				fileType: "variant",
+				changeType: "filterBar",
+				layer: "CUSTOMER",
+				selector: { persistencyKey: "SmartFilter_Explored" }
+			},
+			{
+				fileType: "variant",
+				changeType: "filterBar",
+				layer: "CUSTOMER"
+			},
+			{
+				fileType: "change",
+				changeType: "codeExt",
+				layer: "CUSTOMER",
+				selector: { id: "controlId2" }
+			},
+			{
+				fileType: "somethingelse"
+			}
+		]}}));
 
 		return this.oChangePersistence.getChangesForComponent().then(function(changes) {
-			assert.strictEqual(changes.length, 0, "No changes shall be returned");
+			assert.strictEqual(changes.length, 2, "only standard UI changes were returned, smart variants were excluded");
+			assert.ok(changes[0]._oDefinition.fileType === "change", "first change has file type change");
+			assert.ok(changes[0].getChangeType() === "renameGroup", "and change type renameGroup");
+			assert.ok(changes[1]._oDefinition.fileType === "change", "second change has file type change");
+			assert.ok(changes[1].getChangeType() === "codeExt", "and change type codeExt");
 		});
 	});
 
-	QUnit.test("getChangesForComponent shall only return the changes which are not over max layer", function(assert) {
+	QUnit.test("After run getChangesForComponent with includeVariants parameter", function(assert) {
+
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+			{
+				fileType: "change",
+				changeType: "defaultVariant",
+				layer: "CUSTOMER",
+				selector: { persistencyKey: "SmartFilter_Explored" }
+			},
+			{
+				fileType: "change",
+				changeType: "renameGroup",
+				layer: "CUSTOMER",
+				selector: { id: "controlId1" }
+			},
+			{
+				fileType: "change",
+				changeType: "removeField",
+				layer: "CUSTOMER",
+				selector: {}
+			},
+			{
+				fileType: "variant",
+				changeType: "filterBar",
+				layer: "CUSTOMER",
+				selector: { persistencyKey: "SmartFilter_Explored" }
+			},
+			{
+				fileType: "variant",
+				changeType: "filterBar",
+				layer: "CUSTOMER"
+			},
+			{
+				fileType: "change",
+				changeType: "codeExt",
+				layer: "CUSTOMER",
+				selector: { id: "controlId2" }
+			},
+			{
+				fileType: "somethingelse"
+			}
+		]}}));
+
+
+		return this.oChangePersistence.getChangesForComponent({includeVariants : true}).then(function(changes) {
+			assert.strictEqual(changes.length, 4, "both standard UI changes and smart variants were returned");
+			assert.ok(changes[0]._oDefinition.fileType === "change", "first change has file type change");
+			assert.ok(changes[0].getChangeType() === "defaultVariant", "and change type defaultVariant");
+			assert.ok(changes[1]._oDefinition.fileType === "change", "second change has file type change");
+			assert.ok(changes[1].getChangeType() === "renameGroup", "and change type renameGroup");
+			assert.ok(changes[2]._oDefinition.fileType === "variant", "third change has file type variant");
+			assert.ok(changes[2].getChangeType() === "filterBar", "and change type filterBar");
+			assert.ok(changes[3]._oDefinition.fileType === "change", "second change has file type change");
+			assert.ok(changes[3].getChangeType() === "codeExt", "and change type codeExt");
+		});
+	});
+
+	QUnit.test("getChangesForComponent shall only return changes in the max layer or below", function(assert) {
 
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 			{
@@ -223,6 +319,46 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		});
 	});
 
+	QUnit.test("getChangesForComponent shall ignore max layer parameter when current layer is set", function(assert) {
+
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+			{
+				fileName:"change2",
+				fileType: "change",
+				layer: "VENDOR",
+				selector: { id: "controlId" },
+				dependentSelector: []
+			},
+			{
+				fileName:"change3",
+				fileType: "change",
+				layer: "USER",
+				selector: { id: "anotherControlId" },
+				dependentSelector: []
+			},
+			{
+				fileName:"change4",
+				fileType: "change",
+				layer: "CUSTOMER",
+				selector: { id: "controlId" },
+				dependentSelector: []
+			},
+			{
+				fileName:"change5",
+				fileType: "change",
+				layer: "PARTNER",
+				selector: { id: "controlId" },
+				dependentSelector: []
+			}
+		]}}));
+
+		Utils.setMaxLayerParameter("CUSTOMER");
+
+		return this.oChangePersistence.getChangesForComponent({currentLayer: "CUSTOMER"}).then(function(oChanges) {
+			assert.strictEqual(oChanges.length, 1, "only changes which are under max layer are returned");
+			assert.ok(oChanges[0].getId() === "change4", "with correct id");
+		});
+	});
 
 	QUnit.test("getChangesForComponent shall also pass the returned data to the fl.Settings", function(assert) {
 		var sComponentName = this.sComponentName;
@@ -230,12 +366,69 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFileContent));
 		var oSettingsStoreInstanceStub = this.stub(Settings, "_storeInstance");
 
-
 		return this.oChangePersistence.getChangesForComponent().then(function() {
 			assert.ok(oSettingsStoreInstanceStub.calledOnce, "the _storeInstance function of the fl.Settings was called.");
 			var aPassedArguments = oSettingsStoreInstanceStub.getCall(0).args;
 			assert.equal(aPassedArguments[0], sComponentName, "the component name was passed to the function");
 			assert.equal(aPassedArguments[1], oFileContent, "the file content was passed to the function");
+		});
+	});
+
+	QUnit.test("getChangesForComponent shall also pass the returned data to the fl.Settings, but only if the data comes from the back end", function(assert) {
+		var sComponentName = this.sComponentName;
+		var oFileContent = {dummy:true};
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFileContent));
+		var oSettingsStoreInstanceStub = this.stub(Settings, "_storeInstance");
+
+		return this.oChangePersistence.getChangesForComponent().then(function() {
+			assert.ok(oSettingsStoreInstanceStub.notCalled, "the _storeInstance function of the fl.Settings was not called.");
+		});
+	});
+
+	QUnit.test("getChangesForComponent ignore filtering when ignoreMaxLayerParameter property is available", function(assert) {
+
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+			{
+				fileName:"change1",
+				fileType: "change",
+				layer: "USER",
+				selector: { id: "controlId" },
+				dependentSelector: []
+			},
+			{
+				fileName:"change2",
+				fileType: "change",
+				layer: "VENDOR",
+				selector: { id: "controlId" },
+				dependentSelector: []
+			},
+			{
+				fileName:"change3",
+				fileType: "change",
+				layer: "USER",
+				selector: { id: "anotherControlId" },
+				dependentSelector: []
+			},
+			{
+				fileName:"change4",
+				fileType: "change",
+				layer: "CUSTOMER",
+				selector: { id: "controlId" },
+				dependentSelector: []
+			},
+			{
+				fileName:"change5",
+				fileType: "change",
+				layer: "PARTNER",
+				selector: { id: "controlId" },
+				dependentSelector: []
+			}
+		]}}));
+
+		Utils.setMaxLayerParameter("CUSTOMER");
+
+		return this.oChangePersistence.getChangesForComponent({ignoreMaxLayerParameter : true}).then(function(oChanges) {
+			assert.strictEqual(oChanges.length, 5, "filtering is ignored, all changes are returned");
 		});
 	});
 
@@ -625,7 +818,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		});
 	});
 
-	QUnit.test("after a change creation has been saved, the change shall be added to the cache", function (assert){
+	QUnit.test("after a change creation has been saved, the change shall be added to the cache", function (assert) {
 		var oChangeContent = {
 			fileName: "Gizorillus",
 			layer: "VENDOR",
@@ -673,7 +866,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		}.bind(this));
 	});
 
-	QUnit.test("shall delete the change from the cache, after a change deletion has been saved", function (assert){
+	QUnit.test("shall delete the change from the cache, after a change deletion has been saved", function (assert) {
 		var oChangeContent = {
 			fileName: "Gizorillus",
 			layer: "VENDOR",

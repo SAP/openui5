@@ -9,7 +9,7 @@
     jQuery.sap.require("sap.uxap.ObjectPageSection");
     jQuery.sap.require("sap.uxap.ObjectPageHeader");
 
-    module("aat_UxAP-162", {
+    QUnit.module("aat_UxAP-162", {
     	beforeEach: function () {
     		this.objectPageSampleView = sap.ui.xmlview("UxAP-162_ObjectPageSample", {viewName : "view.UxAP-162_ObjectPageSample" });
 		},

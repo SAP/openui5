@@ -16,9 +16,9 @@
 	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 	<script>
 		var core = sap.ui.getCore();
-		module("Dimensions");
+		QUnit.module("Dimensions");
 
-		test('ShouldHaveAccessibilityAttributes', function () {
+		QUnit.test('ShouldHaveAccessibilityAttributes', function (assert) {
 			// SUT
 			var m = sap.m,
 				sut = new m.CustomTile(),

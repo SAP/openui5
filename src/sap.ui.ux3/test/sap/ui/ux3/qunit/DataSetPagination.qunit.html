@@ -127,8 +127,8 @@
 		</script>
 
 		<script>
-			module("Pagination");
-			test("Initial item count", function() {
+			QUnit.module("Pagination");
+			QUnit.test("Initial item count", function(assert) {
 				equal(sap.ui.getCore().byId(oDataSet.getSelectedView()).getInitialItemCount(), 10, "Initial item count");
 				equal(oDataSet.getItems().length, 27, "Item count after inital reload (fill scrollarea)");
 			});

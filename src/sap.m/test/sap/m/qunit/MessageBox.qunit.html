@@ -60,7 +60,7 @@
 		jQuery.sap.require("sap.ui.layout.VerticalLayout");
 		jQuery.sap.require("sap.m.InputListItem");
 
-		test("show", function () {
+		QUnit.test("show", function (assert) {
 			sap.m.MessageBox.show(sMessageText, {
 				title: sMessageTitle,
 				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.NO, "Custom Text"],
@@ -79,7 +79,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("simple show usage", function () {
+		QUnit.test("simple show usage", function (assert) {
 			sap.m.MessageBox.show(sMessageText);
 			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId(jQuery(".sapMMessageDialog")[0].getAttribute("id"));
@@ -87,7 +87,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("show with control as content", function () {
+		QUnit.test("show with control as content", function (assert) {
 			var oMessageBox, $TextArea,
 				sTextAreaId = "myTextArea",
 				oTextArea = new sap.m.TextArea(sTextAreaId, {
@@ -113,7 +113,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("show error", function () {
+		QUnit.test("show error", function (assert) {
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			sap.m.MessageBox.error(sMessageText, {
 				id: "messageboxError"
@@ -129,7 +129,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("show information", function () {
+		QUnit.test("show information", function (assert) {
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			sap.m.MessageBox.information(sMessageText, {
 				id: "messageboxInfo"
@@ -145,7 +145,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("show warning", function () {
+		QUnit.test("show warning", function (assert) {
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			sap.m.MessageBox.warning(sMessageText, {
 				id: "messageboxWarning"
@@ -161,7 +161,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("show success", function () {
+		QUnit.test("show success", function (assert) {
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			sap.m.MessageBox.success(sMessageText, {
 				id: "messageboxSuccess"
@@ -177,7 +177,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("disable horizontal scrolling", function () {
+		QUnit.test("disable horizontal scrolling", function (assert) {
 			var sLongText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Sed gravida sagittis semper. Maecenas non eros arcu. Aenean pharetra faucibus nisl sed cursus. Morbi ultrices lacus et facilisis venenatis. In porta pharetra libero, in maximus turpis semper vitae. Donec lectus mauris, consequat ut tincidunt pharetra, posuere vitae massa. Suspendisse rutrum ipsum dui, pulvinar mollis dolor ullamcorper a. Nam eleifend, neque sit amet dignissim commodo, mi lacus feugiat nunc, in elementum tortor enim congue purus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Sed gravida sagittis semper. Maecenas non eros arcu. Aenean pharetra faucibus nisl sed cursus. Morbi ultrices lacus et facilisis venenatis. In porta pharetra libero, in maximus turpis semper vitae. Donec lectus mauris, consequat ut tincidunt pharetra, posuere vitae massa. Suspendisse rutrum ipsum dui, pulvinar mollis dolor ullamcorper a. Nam eleifend, neque sit amet dignissim commodo, mi lacus feugiat nunc, in elementum tortor enim congue purus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Sed gravida sagittis semper. Maecenas non eros arcu. Aenean pharetra faucibus nisl sed cursus. Morbi ultrices lacus et facilisis venenatis. In porta pharetra libero, in maximus turpis semper vitae. Donec lectus mauris, consequat ut tincidunt pharetra, posuere vitae massa. Suspendisse rutrum ipsum dui, pulvinar mollis dolor ullamcorper a. Nam eleifend, neque sit amet dignissim commodo, mi lacus feugiat nunc, in elementum tortor enim congue purus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus.";
 
 			var oLayout = new sap.ui.layout.VerticalLayout({
@@ -222,7 +222,7 @@
 		});
 
 
-		test("initial focus to control", function () {
+		QUnit.test("initial focus to control", function (assert) {
 			var oButton = new sap.m.Button({
 				text: 'Do something'
 			});
@@ -247,7 +247,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("initial focus with string", function () {
+		QUnit.test("initial focus with string", function (assert) {
 			sap.m.MessageBox.show(sMessageText, {
 				title: sMessageTitle,
 				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.NO, "Custom Text"],
@@ -280,7 +280,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("show with set initial focus with sap.m.MessageBox.Action", function () {
+		QUnit.test("show with set initial focus with sap.m.MessageBox.Action", function (assert) {
 			var oFormatLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
 			sap.ui.getCore().getConfiguration().setFormatLocale("bg");
 			sap.m.MessageBox.show(sMessageText, {
@@ -318,7 +318,7 @@
 		});
 
 
-		test("alert", function () {
+		QUnit.test("alert", function (assert) {
 			sap.m.MessageBox.alert(sMessageText, {
 				onClose: callback,
 				title: sMessageTitle,
@@ -336,7 +336,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("confirm", function () {
+		QUnit.test("confirm", function (assert) {
 			sap.m.MessageBox.confirm(sMessageText, {
 				onClose: callback,
 				title: sMessageTitle,
@@ -354,7 +354,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("show with OLD API", function () {
+		QUnit.test("show with OLD API", function (assert) {
 			sap.m.MessageBox.show(sMessageText, null, sMessageTitle, [sap.m.MessageBox.Action.OK, "Custom Text", sap.m.MessageBox.Action.NO], callback, "messagebox1", sClassName);
 			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("messagebox1");
@@ -366,7 +366,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("show with OLD API and control as content", function () {
+		QUnit.test("show with OLD API and control as content", function (assert) {
 			var oMessageBox, $TextArea,
 				sTextAreaId = "myTextArea",
 				oTextArea = new sap.m.TextArea(sTextAreaId, {
@@ -387,7 +387,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("alert with OLD API", function () {
+		QUnit.test("alert with OLD API", function (assert) {
 			// MessageBox.alert(vMessage, fnCallback, sTitle, sDialogId, sStyleClass)
 			sap.m.MessageBox.alert(sMessageText, callback, sMessageTitle, "alertbox1", sClassName);
 			sap.ui.getCore().applyChanges();
@@ -400,7 +400,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("confirm with OLD API", function () {
+		QUnit.test("confirm with OLD API", function (assert) {
 			sap.m.MessageBox.confirm(sMessageText, callback, sMessageTitle, "confirmbox1", sClassName);
 			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("confirmbox1");
@@ -412,7 +412,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("alert with message which contains curly bracket", function () {
+		QUnit.test("alert with message which contains curly bracket", function (assert) {
 			sap.m.MessageBox.alert("I have {abc}");
 			sap.ui.getCore().applyChanges();
 			equal(jQuery("span:contains('I have {abc}')").length, 1, "Text with curly bracket is rendered");
@@ -420,7 +420,7 @@
 			sap.m.InstanceManager.getOpenDialogs()[0].destroy();
 		});
 
-		test("Text Direction Tests", function () {
+		QUnit.test("Text Direction Tests", function (assert) {
 			var sMessageBoxId = "messageboxRTL",
 					oMessageBox,
 					oMessageTextContainer;
@@ -458,7 +458,7 @@
 
 		//sap.ca.ui.MessageDialog replacemet
 		// these examples cover the usage of sap.ca.ui.MessageDialog described in sap.ca.ui.messageDialog.qunit.html
-		test("add details", function () {
+		QUnit.test("add details", function (assert) {
 			var sDetails = "Lorem ipsum dolor sit amet, eum an vidit porro ocurreret, has elit illud probatus ut. Ut est audire necessitatibus, case denique scribentur vel no. Ipsum suscipit te quo, eam ne justo insolens. His dico impedit offendit ea, decore eripuit volumus sea an, ut omnes cetero delectus eos.\n\nTota paulo graecis ei usu, mei te alii alia harum. Nulla singulis in nec, qui vide solum inani no. Lorem timeam posidonium nec te, decore noster ut eum, sit mazim delicata deterruisset cu. Id mea nemore delenit, eu ignota propriae eum.\n\nSolum atqui persecuti ut est, altera corrumpit te his. Nam justo epicurei mnesarchum ut, ne nam error ludus. Aeque utinam eum ad, homero audiam recteque nec ne, mazim constituam ne pri. Cum tollit dolorum interesset at. Pri partem tempor reprehendunt in, delectus vulputate sed ne. Etiam aeterno dolores eum ut.\n\nEx conceptam omittantur quo. Sit et petentium scripserit, te mea simul civibus scaevola. Mel solum ludus ea, ut sed cibo choro exerci. Eum discere quaestio ei, sed legendos platonem necessitatibus in. Eu duo populo mnesarchum vituperata."
 			sap.m.MessageBox.show("No connection can be established to the backend system ABC", {
 				id: "messagedialog1",
@@ -490,7 +490,7 @@
 		});
 		jQuery.sap.require("sap.ui.layout.VerticalLayout");
 
-		test("add details within control content", function () {
+		QUnit.test("add details within control content", function (assert) {
 			var oMessageBox, $Layout,
 				sLayoutId = "myLayout",
 				oLayout = new sap.ui.layout.VerticalLayout(sLayoutId, {
@@ -527,7 +527,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("pass simple json to details", function () {
+		QUnit.test("pass simple json to details", function (assert) {
 			var oJSON = {x: 1, y: 2, z: 3};
 
 			sap.m.MessageBox.show("No connection can be established to the backend system ABC", {
@@ -560,7 +560,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("pass control to details", function () {
+		QUnit.test("pass control to details", function (assert) {
 			var oJSON = new sap.m.Text("Hi");
 
 			sap.m.MessageBox.show("No connection can be established to the backend system ABC", {
@@ -594,7 +594,7 @@
 		});
 
 		// When the message box is used on phone device and contains exactly 2 buttons it should use internally beginButton and endButton aggregations instead of buttons.
-		test("When the message box is used on phone device and contains exactly 2 buttons:", function () {
+		QUnit.test("When the message box is used on phone device and contains exactly 2 buttons:", function (assert) {
 			this.stub(sap.ui.Device, "system", {
 				phone: true,
 				tablet: false,
@@ -617,7 +617,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("Aria-labelledby attrbute:", function () {
+		QUnit.test("Aria-labelledby attrbute:", function (assert) {
 			sap.m.MessageBox.show(sMessageText, {
 				title: sMessageTitle,
 				id: "messagebox6",
@@ -631,7 +631,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("When used with undefined message aria-labelledby attrbute", function () {
+		QUnit.test("When used with undefined message aria-labelledby attrbute", function (assert) {
 			sap.m.MessageBox.show(undefined, {
 				title: sMessageTitle,
 				id: "messagebox7",
@@ -645,7 +645,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("When used with details aria-labelledby attrbute:", function () {
+		QUnit.test("When used with details aria-labelledby attrbute:", function (assert) {
 			sap.m.MessageBox.show(sMessageText, {
 				title: sMessageTitle,
 				details: "Some details",
@@ -660,7 +660,7 @@
 			oMessageBox.destroy();
 		});
 
-		test("Language change", function () {
+		QUnit.test("Language change", function (assert) {
 			sap.ui.getCore().getConfiguration().setLanguage("de");
 			notEqual(sap.ui.getCore().getLibraryResourceBundle("sap.m"), sap.m.MessageBox._rb, "The MessageBox should have a different resource bundle before opening");
 			sap.m.MessageBox.show(sMessageText, {

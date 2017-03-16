@@ -63,10 +63,10 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 			this.mProperties.originalValue = [];
 			this.mProperties.originalInternalValue = [];
 			this.mProperties.value = [];
-			this.mProperties.invalidValue = null;
+			this.mProperties.invalidValue = undefined;
 			this.mProperties.internalValue = [];
 
-			this.mChangedProperties = jQuery.extend({},this.mProperties);
+			this.mChangedProperties = jQuery.sap.extend({},this.mProperties);
 
 			this.aDataStates = aDataStates;
 		}
@@ -79,7 +79,7 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 	 */
 	CompositeDataState.prototype._hasInnerInvalidValues = function() {
 		return this.aDataStates.reduce(function(bIsInvalid, oDataState) {
-			if (oDataState.getInvalidValue() !== null) {
+			if (oDataState.getInvalidValue() !== undefined) {
 				return true;
 			} else {
 				return bIsInvalid;
@@ -180,7 +180,7 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 	CompositeDataState.prototype.containsValues = function(vValue) {
 		if (Array.isArray(vValue)) {
 			for (var i = 0; i < vValue.length; i++) {
-				if (vValue[i] !== null && vValue[i] !== undefined) {
+				if (vValue[i] !== undefined) {
 					return true;
 				}
 			}
@@ -273,7 +273,7 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 	CompositeDataState.prototype.changed = function(bNewState) {
 		if (bNewState === false) {
 			//clear the changed properties as changed was reset;
-			this.mProperties = jQuery.extend({},this.mChangedProperties);
+			this.mProperties = jQuery.sap.extend({},this.mChangedProperties);
 
 			this.aDataStates.forEach(function(oDataState) {
 				oDataState.changed(false);

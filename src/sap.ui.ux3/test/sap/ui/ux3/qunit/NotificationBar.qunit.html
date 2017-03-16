@@ -97,15 +97,15 @@
 		title : "Messages"
 	});
 
-	module("Messages", {
-		setup : function() {
+	QUnit.module("Messages", {
+		beforeEach : function() {
 			jQuery.fx.off = true;
 		},
-		teardown : function() {
+		afterEach : function() {
 			jQuery.fx.off = fx;
 		}
 	});
-	test("Adding/removing messages", function() {
+	QUnit.test("Adding/removing messages", function(assert) {
 		expect(9);
 
 		var now = (new Date()).toUTCString();
@@ -164,7 +164,7 @@
 		ok(bTest, "Bar invisible in DOM");
 	});
 
-	test("Read-Only Messages", function() {
+	QUnit.test("Read-Only Messages", function(assert) {
 		expect(3);
 
 		oNotiBar.setMessageNotifier(oMN);
@@ -210,15 +210,15 @@
 	/*
 	 * Testing from None
 	 */
-	module("Resizing", {
-		setup : function() {
+	QUnit.module("Resizing", {
+		beforeEach : function() {
 			jQuery.fx.off = true;
 		},
-		teardown : function() {
+		afterEach : function() {
 			jQuery.fx.off = fx;
 		}
 	});
-	test("From None", function() {
+	QUnit.test("From None", function(assert) {
 		expect(3);
 		toggleVisibility(oNotiBar, "None", "Min");
 		toggleVisibility(oNotiBar, "None", "Default");
@@ -228,7 +228,7 @@
 	/*
 	 * Testing from Minimized
 	 */
-	test("From Minimized", function() {
+	QUnit.test("From Minimized", function(assert) {
 		expect(2);
 		toggleVisibility(oNotiBar, "Min", "None");
 		maximize(oNotiBar, "Min", "Default");
@@ -237,7 +237,7 @@
 	/*
 	 * Testing from Default
 	 */
-	test("From Default", function() {
+	QUnit.test("From Default", function(assert) {
 		expect(3);
 		toggleVisibility(oNotiBar, "Default", "None");
 		minimize(oNotiBar, "Default", "Min");
@@ -247,7 +247,7 @@
 	/*
 	 * Testing from Maximized
 	 */
-	test("From Maximized", function() {
+	QUnit.test("From Maximized", function(assert) {
 		expect(2);
 		toggleVisibility(oNotiBar, "Max", "None");
 		minimize(oNotiBar, "Max", "Default");
@@ -276,11 +276,11 @@
 	/*
 	 * Testing if a Callout opens and the message is displayed
 	 */
-	module("Open Callouts", {
-		setup : function() {
+	QUnit.module("Open Callouts", {
+		beforeEach : function() {
 			jQuery.fx.off = true;
 		},
-		teardown : function() {
+		afterEach : function() {
 			jQuery.fx.off = fx;
 		}
 	});
@@ -313,11 +313,11 @@
 		});
 	});
 
-	module("Testing ItemNavigation", {
-		setup : function() {
+	QUnit.module("Testing ItemNavigation", {
+		beforeEach : function() {
 			jQuery.fx.off = true;
 		},
-		teardown : function() {
+		afterEach : function() {
 			jQuery.fx.off = fx;
 
 			oNotiBar.destroyMessageNotifier()

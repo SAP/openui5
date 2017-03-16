@@ -31,14 +31,14 @@
 
 		sap.ui.core.routing.HashChanger.getInstance().init();
 
-		module("history management", {
-			setup : function() {
+		QUnit.module("history management", {
+			beforeEach : function() {
 				sap.ui.core.routing.HashChanger.getInstance().replaceHash(""); //since the initial hash will be parsed, we want it to be empty on every test
 			}
 		});
 
 		// singleton test only runs standalone
-		test("Should use the hashChanger in the singleton", function() {
+		QUnit.test("Should use the hashChanger in the singleton", function(assert) {
 			//System under Test
 			var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 			var sut = sap.ui.core.routing.History.getInstance(),

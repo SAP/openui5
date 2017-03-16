@@ -2,14 +2,14 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeTypeMetadata");
 
 (function(ChangeTypeMetadata) {
 
-	module("sap.ui.fl.registry.ChangeTypeMetadata", {
-		setup: function() {
+	QUnit.module("sap.ui.fl.registry.ChangeTypeMetadata", {
+		beforeEach: function() {
 		},
-		teardown: function() {
+		afterEach: function() {
 		}
 	});
 
-	test("constructor - required params and their getter", function() {
+	QUnit.test("constructor - required params and their getter", function(assert) {
 		//Arrange
 		var mParam = {
 			name: "ABC",
@@ -24,7 +24,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeTypeMetadata");
 		equal(instance.getChangeHandler(), "myChangeHandler");
 	});
 
-	test("constructor - shall log error messages for missing mandatory parameters", function() {
+	QUnit.test("constructor - shall log error messages for missing mandatory parameters", function(assert) {
 		//Arrange
 		var errorLogStub = sinon.stub(jQuery.sap.log, "error");
 
@@ -36,7 +36,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeTypeMetadata");
 		errorLogStub.restore();
 	});
 
-	test("constructor - all params and their getter", function() {
+	QUnit.test("constructor - all params and their getter", function(assert) {
 		//Arrange
 		var mParam = {
 			name: "ABC",

@@ -38,30 +38,30 @@
 		oDefaultDateTime = sap.ui.core.format.DateFormat.getDateTimeInstance(),
 		oDefaultTime = sap.ui.core.format.DateFormat.getTimeInstance();
 
-	test("format invalid date", function() {
+	QUnit.test("format invalid date", function(assert) {
 		var oDate = new Date("");
 		ok(isNaN(oDate.getTime()), "This is an invalid date");
 		strictEqual(oDefaultDate.format(oDate), "", "Formatting an invalid date should return ''");
 	});
 
-	test("format undefined date", function() {
+	QUnit.test("format undefined date", function(assert) {
 		var oDate;
 		strictEqual(oDefaultDate.format(oDate), "", "Formatting an undefined date should return ''");
 	});
 
-	test("format default date", function(){
+	QUnit.test("format default date", function(assert){
 		equal(oDefaultDate.format(oDateTime), "Sep 11, 2001", "default date");
 		equal(oDefaultDateTime.format(oDateTime), "Sep 11, 2001, 8:46:13 AM", "default datetime");
 		equal(oDefaultTime.format(oDateTime), "8:46:13 AM", "default time");
 	});
 
-	test("format default date UTC", function(){
+	QUnit.test("format default date UTC", function(assert){
 		equal(oDefaultDate.format(oTZDateTime, true), "Sep 10, 2001", "default date UTC");
 		equal(oDefaultDateTime.format(oTZDateTime, true), "Sep 10, 2001, 10:16:13 PM", "default datetime UTC");
 		equal(oDefaultTime.format(oTZDateTime, true), "10:16:13 PM", "default time UTC");
 	});
 
-	test("format date with given style", function(){
+	QUnit.test("format date with given style", function(assert){
 		var oDateTime = new Date("Tue Sep 11 08:46:13 2001");
 		// Overwrite getTimezoneOffset to get reproducible results independent of the
 		// timezone where the test is run in
@@ -82,21 +82,21 @@
 		equal(sap.ui.core.format.DateFormat.getTimeInstance({style: "full"}).format(oDateTime), "8:46:13 AM GMT+02:00", "full time");
 	});
 
-	test("format date for a specific locale", function(){
+	QUnit.test("format date for a specific locale", function(assert){
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		equal(sap.ui.core.format.DateFormat.getDateInstance(oLocale).format(oDateTime), "11.09.2001", "date with defaults for given locale");
 		equal(sap.ui.core.format.DateFormat.getDateTimeInstance(oLocale).format(oDateTime), "11.09.2001, 08:46:13", "datetime with defaults for given locale");
 		equal(sap.ui.core.format.DateFormat.getTimeInstance(oLocale).format(oDateTime), "08:46:13", "time with defaults for given locale");
 	});
 
-	test("format date with custom pattern for a specific locale", function () {
+	QUnit.test("format date with custom pattern for a specific locale", function (assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		equal(sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd MMM yyyy"}, oLocale).format(oDateTime), "11 Sep. 2001", "date with custom pattern for given locale");
 		equal(sap.ui.core.format.DateFormat.getDateTimeInstance({pattern: "dd MMM yyyy hh:mm:ss a"}, oLocale).format(oDateTime), "11 Sep. 2001 08:46:13 vorm.", "datetime with custom pattern for given locale");
 		equal(sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm:ss a"}, oLocale).format(oDateTime), "08:46:13 vorm.", "datetime with custom pattern for given locale");
 	});
 
-	test("format custom date", function(){
+	QUnit.test("format custom date", function(assert){
 		var oDate = new Date("Wed Jul 4 12:08:56 2001"),
 			sCustomPattern,
 			oCustomDate,
@@ -135,7 +135,7 @@
 		}
 	});
 
-	test("format custom date UTC", function(){
+	QUnit.test("format custom date UTC", function(assert){
 		var oDate = new Date("Wed Jul 4 12:08:56 2001 UTC"),
 			oCustomDate;
 
@@ -190,7 +190,7 @@
 		});
 	}
 
-	test("format date relative", function(){
+	QUnit.test("format date relative", function(assert){
 		doTestRelative(true, {pattern: "yyyy-MM-dd"}, "en", "yyyy-MM-dd, default range, en");
 		doTestRelative(true, {pattern: "yyyy-MM-dd"}, "de", "yyyy-MM-dd, default range, de");
 		doTestRelative(true, {relativeRange: [-9, 0]}, "en", "default style, range [-9, 0], en");
@@ -199,7 +199,7 @@
 		doTestRelative(true, {style: "long", relativeRange: [1, 5]}, "de", "style long, range [1, 5], de");
 	});
 
-	test("parse date relative", function(){
+	QUnit.test("parse date relative", function(assert){
 		doTestRelative(false, {pattern: "yyyy-MM-dd"}, "en", "yyyy-MM-dd, default range, en");
 		doTestRelative(false, {pattern: "yyyy-MM-dd"}, "de", "yyyy-MM-dd, default range, de");
 		doTestRelative(false, {relativeRange: [-9, 0]}, "en", "default style, range [-9, 0], en");
@@ -208,7 +208,7 @@
 		doTestRelative(false, {style: "long", relativeRange: [1, 5]}, "de", "style long, range [1, 5], de");
 	});
 
-	test("parse default date", function(){
+	QUnit.test("parse default date", function(assert){
 		var oDate = oDefaultDate.parse("May 23, 2008");
 		equal(oDate.getFullYear(), 2008, "Year 2008");
 		equal(oDate.getMonth(), 4, "Month May");
@@ -221,12 +221,12 @@
 		equal(oDate.getMinutes(), 23, "Minutes 23");
 	});
 
-	test("parse empty string", function(){
+	QUnit.test("parse empty string", function(assert){
 		var oDate = oDefaultDate.parse("");
 		equal(oDate, null, "parsing empty string returns null");
 	});
 
-	test("parse date two digit year", function(){
+	QUnit.test("parse date two digit year", function(assert){
 		var oFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "yyyy-MM-dd"}),
 			oDate;
 		oDate = oFormat.parse("2014-03-12");
@@ -247,7 +247,7 @@
 		equal(oDate.getFullYear(), 1994, "Year 1994");
 	});
 
-	test("parse date two digit year UTC", function(){
+	QUnit.test("parse date two digit year UTC", function(assert){
 		var oFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "yyyy-MM-dd", UTC: true}),
 			oDate;
 		oDate = oFormat.parse("2014-03-12");
@@ -268,7 +268,7 @@
 		equal(oDate.getFullYear(), 1994, "Year 1994");
 	});
 
-	test("parse default date UTC", function(){
+	QUnit.test("parse default date UTC", function(assert){
 		var oDate = oDefaultDate.parse("May 23, 2008", true);
 		equal(oDate.getUTCFullYear(), 2008, "Year 2008");
 		equal(oDate.getUTCMonth(), 4, "Month May");
@@ -281,7 +281,7 @@
 		equal(oDate.getUTCMinutes(), 23, "Minutes 23");
 	});
 
-	test("parse custom date", function(){
+	QUnit.test("parse custom date", function(assert){
 
 		function inclTimezoneOffset(iTimestamp){
 			return iTimestamp + (new Date(iTimestamp)).getTimezoneOffset()*60*1000;
@@ -311,7 +311,7 @@
 		}
 	});
 
-	test("parse custom format", function(){
+	QUnit.test("parse custom format", function(assert){
 
 		var oCustomDateFormats = {
 			"y": ["2001", 978307200000],
@@ -331,7 +331,7 @@
 		}
 	});
 
-	test("parse with strict check", function(){
+	QUnit.test("parse with strict check", function(assert){
 
 		var oFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "yyyy-MM-dd", strictParsing: true}),
 		    oDate;
@@ -362,7 +362,7 @@
 
 	});
 
-	test("parse short format without delimiter", function() {
+	QUnit.test("parse short format without delimiter", function(assert) {
 		var oDate = new Date("Mon Apr 7 00:00:00 2014"),
 			oFormat = sap.ui.core.format.DateFormat.getDateInstance(),
 			sDateIn = "040714", oDateOut = oFormat.parse(sDateIn);
@@ -382,7 +382,7 @@
 		ok((oDateOut.toString() === oDate.toString()), "ISO fallback: "+sDateIn + " to " + oDateOut);
 	});
 
-	test("parse and format two digit years", function() {
+	QUnit.test("parse and format two digit years", function(assert) {
 		var oFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern:"M/d/y"}),
 			sDate, oDate;
 		oDate = oFormat.parse("1/1/1");
@@ -400,7 +400,7 @@
 		equal(oDate.getFullYear(), 1, "Fullyear is still 1");
 	});
 
-	test("parse and format quarters", function(){
+	QUnit.test("parse and format quarters", function(assert){
 		var oDate = new Date("Wed Jul 4 2001"),
 			oQuarter1 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "qq"}),
 			oQuarter2 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "qqq"}),
@@ -418,7 +418,7 @@
 		equal(oQuarterCombined.parse("Wed, Jul 4 2001, Q3").valueOf(), oDate.valueOf(), "Wed, Jul 4 2001, Q3")
 	});
 
-	test("parse with fallback patterns", function(){
+	QUnit.test("parse with fallback patterns", function(assert){
 		var oLocaleEN = new sap.ui.core.Locale("en_US"),
 			oLocaleDE = new sap.ui.core.Locale("de_DE"),
 			oFormat,
@@ -467,7 +467,7 @@
 
 	});
 
-	test("parse and format fractional seconds", function(){
+	QUnit.test("parse and format fractional seconds", function(assert){
 		var oDate1 = new Date(1234),
 			oDate2 = new Date(14),
 			oMS1 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "s.S"}),
@@ -494,14 +494,14 @@
 		equal(oMS3.parse("0.123456", true).valueOf(), 123, "0.123456");
 	});
 
-	test("parse time format with am/pm appearing at the beginning", function() {
+	QUnit.test("parse time format with am/pm appearing at the beginning", function(assert) {
 		var oTimeStart = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "ah:mm:ss"});
 		notEqual(oTimeStart.parse("PM12:22:52").getTime(), oTimeStart.parse("AM12:22:52").getTime(), "PM/AM info should be correctly considered");
 	});
 
 
 	/** TODO: Move to sap.ui.core.date.Gregorian
-	test("DateFormat.calculateWeekNumber", function() {
+	QUnit.test("DateFormat.calculateWeekNumber", function(assert) {
 		var DateFormat = sap.ui.core.format.DateFormat;
 
 		var oDate = new Date(Date.UTC(2015, 5, 8));
@@ -565,7 +565,7 @@
 	});
 	**/
 
-	test("format and parse weekInYear pattern", function() {
+	QUnit.test("format and parse weekInYear pattern", function(assert) {
 		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 			pattern: "'W'w"
 		}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new sap.ui.core.Locale("xx-XX"));
@@ -603,7 +603,7 @@
 		equal(oDateFormat.format(new Date(2015, 0, 1)), "Calendar Week 01", "week number in Japanese calendar");
 	});
 
-	test("format and parse weekYear/weekInYear pattern", function() {
+	QUnit.test("format and parse weekYear/weekInYear pattern", function(assert) {
 		sap.ui.getCore().getConfiguration().setLanguage("en_US");
 		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 			pattern: "Y-w"
@@ -631,7 +631,7 @@
 		sap.ui.getCore().getConfiguration().setLanguage("en_US");
 	});
 
-	test("format and parse weekInYear and dayNumberOfWeek", function() {
+	QUnit.test("format and parse weekInYear and dayNumberOfWeek", function(assert) {
 		var oDate = new Date(2016, 10, 13); // 13th, November, 2016, Sunday
 		var sPattern = "Y/ww/u";
 
@@ -656,7 +656,7 @@
 		sap.ui.getCore().getConfiguration().setLanguage("en_US");
 	});
 
-	test("origin info", function() {
+	QUnit.test("origin info", function(assert) {
 		var oOriginDate = sap.ui.core.format.DateFormat.getInstance(), sValue = oOriginDate.format(oDateTime), oInfo = sValue.originInfo;
 		equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source")
 		equal(oInfo.locale, "en-US", "Origin Info: locale")
@@ -664,8 +664,8 @@
 		equal(oInfo.pattern, "MMM d, y", "Origin Info: pattern")
 	});
 
-	module("Scaling: Relative Time Formater", {
-		setup: function() {
+	QUnit.module("Scaling: Relative Time Formater", {
+		beforeEach: function() {
 			this.clock = sinon.useFakeTimers(1444724476000);
 			var oDate = new Date();
 			var oJan = new Date(oDate.getFullYear(), 0, 1);
@@ -673,7 +673,7 @@
 			// check whether the Daylight Saving Time is used in the current timezone
 			this.dst = oJan.getTimezoneOffset() !== oJul.getTimezoneOffset();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.clock.restore();
 		}
 	})
@@ -692,7 +692,7 @@
 		return new Date(oResult.getUTCFullYear(), oResult.getUTCMonth(), oResult.getUTCDate(), oResult.getUTCHours(), oResult.getUTCMinutes(), oResult.getUTCSeconds(), oResult.getUTCMilliseconds());
 	}
 
-	test("Time relative: format and parse", function() {
+	QUnit.test("Time relative: format and parse", function(assert) {
 		var aStyles = [undefined, 'wide', 'short', 'narrow'],
 			aTestData = [{
 				scale: "auto",
@@ -762,7 +762,7 @@
 		});
 	});
 
-	test("Date relative: format and parse", function() {
+	QUnit.test("Date relative: format and parse", function(assert) {
 		var oDate = sap.ui.core.format.DateFormat.getDateInstance({
 					relative: true,
 					relativeScale: "auto"
@@ -813,7 +813,7 @@
 		});
 	});
 
-	test("DateTime relative: format and parse", function() {
+	QUnit.test("DateTime relative: format and parse", function(assert) {
 		var aStyles = [undefined, 'wide', 'short', 'narrow'],
 			that = this,
 			aTestData = [{
@@ -865,11 +865,11 @@
 		});
 	 });
 
-	module("Islamic Date in locale en");
+	QUnit.module("Islamic Date in locale en");
 
 	var oDate = new Date("Wed Jul 4 2001");
 
-	test("format date to Islamic type with locale en", function() {
+	QUnit.test("format date to Islamic type with locale en", function(assert) {
 		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				calendarType: sap.ui.core.CalendarType.Islamic
 			});
@@ -877,13 +877,13 @@
 		equal(oDateFormat.format(oDate), "Rab. II 12, 1422 AH", "Date is formatted in Islamic calendar");
 	});
 
-	test("format date to Islamic type with relative and locale en", function() {
+	QUnit.test("format date to Islamic type with relative and locale en", function(assert) {
 		doTestRelative(true, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Islamic}, "en", "yyyy-MM-dd, default range, en with calendar type Islamic");
 		doTestRelative(true, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Islamic}, "en", "default style, range [-9, 0], en with calendar type Islamic");
 		doTestRelative(true, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Islamic}, "en", "style long, range [1, 5], en with calendar type Islamic");
 	});
 
-	test("parse date to Islamic type with locale en", function() {
+	QUnit.test("parse date to Islamic type with locale en", function(assert) {
 		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				calendarType: sap.ui.core.CalendarType.Islamic
 			});
@@ -895,7 +895,7 @@
 		equal(oDate.getDate(), 4, "Day 4th");
 	});
 
-	test("parse date to Islamic type with relative and locale en", function() {
+	QUnit.test("parse date to Islamic type with relative and locale en", function(assert) {
 		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Islamic}, "en", "yyyy-MM-dd, default range, en with calendar type Islamic");
 		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Islamic}, "en", "default style, range [-9, 0], en with calendar type Islamic");
 		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Islamic}, "en", "style long, range [1, 5], en with calendar type Islamic");
@@ -908,28 +908,28 @@
 		"12 ברביע ב׳ 1422 שנת היג׳רה"
 	];
 
-	module("Islamic Date in other locales", {
-		setup: function() {
+	QUnit.module("Islamic Date in other locales", {
+		beforeEach: function() {
 			sap.ui.getCore().getConfiguration().setCalendarType(sap.ui.core.CalendarType.Islamic);
 		},
-		teardown: function() {
+		afterEach: function() {
 			sap.ui.getCore().getConfiguration().setCalendarType(null);
 		}
 	});
 
 	["ar", "ar_EG", "ar_SA", "he"].forEach(function(sLocale, index) {
-		test("format Islamic date " + sLocale, function() {
+		QUnit.test("format Islamic date " + sLocale, function(assert) {
 			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance(new sap.ui.core.Locale(sLocale));
 			equal(oDateFormat.format(oDate), aResultLocal[index], "Date is formatted to Islamic Date in " + sLocale + " locale");
 		});
 
-		test("format Islamic date relative " + sLocale, function() {
+		QUnit.test("format Islamic date relative " + sLocale, function(assert) {
 			doTestRelative(true, {pattern: "yyyy-MM-dd"}, sLocale, "yyyy-MM-dd, default range, " + sLocale);
 			doTestRelative(true, {relativeRange: [-9, 0]}, sLocale, "default style, range [-9, 0], " + sLocale);
 			doTestRelative(true, {style: "long", relativeRange: [1, 5]}, sLocale, "style long, range [1, 5], " + sLocale);
 		});
 
-		test("parse Islamic date " + sLocale, function() {
+		QUnit.test("parse Islamic date " + sLocale, function(assert) {
 			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance(new sap.ui.core.Locale(sLocale));
 
 			var oDate = oDateFormat.parse(aResultLocal[index]);
@@ -939,18 +939,18 @@
 			equal(oDate.getDate(), 4, "Day 4th");
 		});
 
-		test("parse Islamic date relative " + sLocale, function() {
+		QUnit.test("parse Islamic date relative " + sLocale, function(assert) {
 			doTestRelative(false, {pattern: "yyyy-MM-dd"}, sLocale, "yyyy-MM-dd, default range, " + sLocale);
 			doTestRelative(false, {relativeRange: [-9, 0]}, sLocale, "default style, range [-9, 0], " + sLocale);
 			doTestRelative(false, {style: "long", relativeRange: [1, 5]}, sLocale, "style long, range [1, 5], " + sLocale);
 		});
 	});
 
-	module("Japanese Date");
+	QUnit.module("Japanese Date");
 
 	var oDate = new Date("Wed Jul 4 2001");
 
-	test("format date to Japanese type", function() {
+	QUnit.test("format date to Japanese type", function(assert) {
 		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				calendarType: sap.ui.core.CalendarType.Japanese
 			}, new sap.ui.core.Locale("ja_JP"));
@@ -958,13 +958,13 @@
 		equal(oDateFormat.format(oDate), "平成13年7月4日", "Date is formatted in Japanese calendar");
 	});
 
-	test("format date to Japanese type with relative", function() {
+	QUnit.test("format date to Japanese type with relative", function(assert) {
 		doTestRelative(true, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "yyyy-MM-dd, default range, en with calendar type Japanese");
 		doTestRelative(true, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "default style, range [-9, 0], en with calendar type Japanese");
 		doTestRelative(true, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "style long, range [1, 5], en with calendar type Japanese");
 	});
 
-	test("parse date to Japanese type", function() {
+	QUnit.test("parse date to Japanese type", function(assert) {
 		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				calendarType: sap.ui.core.CalendarType.Japanese
 			}, new sap.ui.core.Locale("ja_JP"));
@@ -976,17 +976,17 @@
 		equal(oDate.getDate(), 4, "Day 4th");
 	});
 
-	test("parse date to Japanese type with relative", function() {
+	QUnit.test("parse date to Japanese type with relative", function(assert) {
 		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "yyyy-MM-dd, default range, en with calendar type Japanese");
 		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "default style, range [-9, 0], en with calendar type Japanese");
 		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "style long, range [1, 5], en with calendar type Japanese");
 	});
 
-	module("Japanese Date in locale en");
+	QUnit.module("Japanese Date in locale en");
 
 	var oDate = new Date("Wed Jul 4 2001");
 
-	test("format date to Japanese type with locale en", function() {
+	QUnit.test("format date to Japanese type with locale en", function(assert) {
 		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				calendarType: sap.ui.core.CalendarType.Japanese
 			});
@@ -994,13 +994,13 @@
 		equal(oDateFormat.format(oDate), "Jul 4, 13 Heisei", "Date is formatted in Japanese calendar");
 	});
 
-	test("format date to Japanese type with relative and locale en", function() {
+	QUnit.test("format date to Japanese type with relative and locale en", function(assert) {
 		doTestRelative(true, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Japanese}, "en", "yyyy-MM-dd, default range, en with calendar type Japanese");
 		doTestRelative(true, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Japanese}, "en", "default style, range [-9, 0], en with calendar type Japanese");
 		doTestRelative(true, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Japanese}, "en", "style long, range [1, 5], en with calendar type Japanese");
 	});
 
-	test("parse date to Japanese type with locale en", function() {
+	QUnit.test("parse date to Japanese type with locale en", function(assert) {
 		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				calendarType: sap.ui.core.CalendarType.Japanese
 			});
@@ -1012,17 +1012,17 @@
 		equal(oDate.getDate(), 4, "Day 4th");
 	});
 
-	test("parse date to Japanese type with relative and locale en", function() {
+	QUnit.test("parse date to Japanese type with relative and locale en", function(assert) {
 		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Japanese}, "en", "yyyy-MM-dd, default range, en with calendar type Japanese");
 		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Japanese}, "en", "default style, range [-9, 0], en with calendar type Japanese");
 		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Japanese}, "en", "style long, range [1, 5], en with calendar type Japanese");
 	});
 
-	module("Persian Date");
+	QUnit.module("Persian Date");
 
 	var oDate = new Date("Wed Jul 4 2001");
 
-	test("format date to Persian type", function() {
+	QUnit.test("format date to Persian type", function(assert) {
 		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				calendarType: sap.ui.core.CalendarType.Persian
 			}, new sap.ui.core.Locale("fa_IR"));
@@ -1030,13 +1030,13 @@
 		equal(oDateFormat.format(oDate), "13 تیر 1380 ه‍.ش.", "Date is formatted in Persian calendar");
 	});
 
-	test("format date to Persian type with relative", function() {
+	QUnit.test("format date to Persian type with relative", function(assert) {
 		doTestRelative(true, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "yyyy-MM-dd, default range, en with calendar type Persian");
 		doTestRelative(true, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "default style, range [-9, 0], en with calendar type Persian");
 		doTestRelative(true, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "style long, range [1, 5], en with calendar type Persian");
 	});
 
-	test("parse date to Persian type", function() {
+	QUnit.test("parse date to Persian type", function(assert) {
 		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				calendarType: sap.ui.core.CalendarType.Persian
 			}, new sap.ui.core.Locale("fa_IR"));
@@ -1048,17 +1048,17 @@
 		equal(oDate.getDate(), 4, "Day 4th");
 	});
 
-	test("parse date to Persian type with relative", function() {
+	QUnit.test("parse date to Persian type with relative", function(assert) {
 		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "yyyy-MM-dd, default range, en with calendar type Persian");
 		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "default style, range [-9, 0], en with calendar type Persian");
 		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "style long, range [1, 5], en with calendar type Persian");
 	});
 
-	module("Persian Date in locale en");
+	QUnit.module("Persian Date in locale en");
 
 	var oDate = new Date("Wed Jul 4 2001");
 
-	test("format date to Persian type with locale en", function() {
+	QUnit.test("format date to Persian type with locale en", function(assert) {
 		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				calendarType: sap.ui.core.CalendarType.Persian
 			});
@@ -1066,13 +1066,13 @@
 		equal(oDateFormat.format(oDate), "Tir 13, 1380 AP", "Date is formatted in Persian calendar");
 	});
 
-	test("format date to Persian type with relative and locale en", function() {
+	QUnit.test("format date to Persian type with relative and locale en", function(assert) {
 		doTestRelative(true, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Persian}, "en", "yyyy-MM-dd, default range, en with calendar type Persian");
 		doTestRelative(true, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Persian}, "en", "default style, range [-9, 0], en with calendar type Persian");
 		doTestRelative(true, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Persian}, "en", "style long, range [1, 5], en with calendar type Persian");
 	});
 
-	test("parse date to Persian type with locale en", function() {
+	QUnit.test("parse date to Persian type with locale en", function(assert) {
 		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				calendarType: sap.ui.core.CalendarType.Persian
 			});
@@ -1084,7 +1084,7 @@
 		equal(oDate.getDate(), 4, "Day 4th");
 	});
 
-	test("parse date to Persian type with relative and locale en", function() {
+	QUnit.test("parse date to Persian type with relative and locale en", function(assert) {
 		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Persian}, "en", "yyyy-MM-dd, default range, en with calendar type Persian");
 		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Persian}, "en", "default style, range [-9, 0], en with calendar type Persian");
 		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Persian}, "en", "style long, range [1, 5], en with calendar type Persian");

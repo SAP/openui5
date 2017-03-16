@@ -115,7 +115,7 @@
 
 
 		var oCtrl = null;
-		module("Testing Overflow", {
+		QUnit.module("Testing Overflow", {
 			beforeEach: function () {
 				oCtrl = new sap.ui.commons.Toolbar("Toolbar", {width: "300px"}).placeAt("uiArea1");
 				addManyItems(oCtrl);
@@ -133,7 +133,7 @@
 		aItemsOnTheSecondRow = ["Toolbar_b_6", "Toolbar_b_7", "Toolbar_sep_8", "Toolbar_b_8", "Toolbar_b_9", "Toolbar_tf", "Toolbar_cmb"];
 
 
-		test("VisibleItems calculation with images involved", function (assert) {
+		QUnit.test("VisibleItems calculation with images involved", function (assert) {
 			var done = assert.async();
 			expect(2);
 
@@ -144,7 +144,7 @@
 			}, 1000);
 		});
 
-		test("Items on the second row preserves their order after close of overflow pop-up when there is at least one item with visibility=false", function (assert) {
+		QUnit.test("Items on the second row preserves their order after close of overflow pop-up when there is at least one item with visibility=false", function (assert) {
 			var done = assert.async();
 			var sOverflowButtonId = oCtrl.getId() + "-mn";
 			var oButton = sap.ui.getCore().byId(aItemsOnTheSecondRow[1]);
@@ -175,7 +175,7 @@
 		})
 
 
-		test("VisibleItems calculation with item size change", function (assert) {
+		QUnit.test("VisibleItems calculation with item size change", function (assert) {
 			var done = assert.async();
 			expect(2);
 			sap.ui.getCore().byId("Toolbar_b_0").setWidth("400px");
@@ -188,7 +188,7 @@
 		})
 
 
-		test("Test if emptyPopupOverflow method removes popup content from the DOM if called with the right parameter.", function (assert) {
+		QUnit.test("Test if emptyPopupOverflow method removes popup content from the DOM if called with the right parameter.", function (assert) {
 			var done = assert.async();
 			var oCtrl = new sap.ui.commons.Toolbar({
 				id: "Toolbar1",
@@ -213,7 +213,7 @@
 
 		});
 
-		test("Test if emptyPopupOverflow method moves popup content to the toolbar when called with the right parameter and the toolbar DOM is existing", function (assert) {
+		QUnit.test("Test if emptyPopupOverflow method moves popup content to the toolbar when called with the right parameter and the toolbar DOM is existing", function (assert) {
 			var done = assert.async();
 			var oCtrl = new sap.ui.commons.Toolbar({
 				id: "Toolbar2",
@@ -237,7 +237,7 @@
 			}, 500);
 		});
 
-		test("Test if emptyPopupOverflow method throws error if it has to move popup contents to the toolbar when the toolbar DOM is not existing;", function (assert) {
+		QUnit.test("Test if emptyPopupOverflow method throws error if it has to move popup contents to the toolbar when the toolbar DOM is not existing;", function (assert) {
 			var done = assert.async();
 			var oCtrl = new sap.ui.commons.Toolbar({
 				id: "Toolbar3",
@@ -293,7 +293,7 @@
 			}, 500);
 		});
 
-		test("Test if when opened the overflow popup is causing a (bug) toolbar resize when the toolbar is nested in horizontal layout.", function(assert) {
+		QUnit.test("Test if when opened the overflow popup is causing a (bug) toolbar resize when the toolbar is nested in horizontal layout.", function(assert) {
 			var done = assert.async();
 			var oCtrl = new sap.ui.commons.Toolbar({
 				id: 'Toolbar4',
@@ -353,7 +353,7 @@
 			}, 500);
 		});
 
-		test("Test invisible (API property visible=false) items must not break the overflow mechanism", function (assert) {
+		QUnit.test("Test invisible (API property visible=false) items must not break the overflow mechanism", function (assert) {
 			/* Toolbar (145px width) with 3 invisible (visible = false) and 3 visible items (all with width 50px).
 			 As there is no space for the 3th visible item, it goes into the overflow*/
 
@@ -383,7 +383,7 @@
 			}, 500);
 		});
 
-		test("Check if a very long button is now getting out of the overflow popup (CSS 1570140661).", function(assert) {
+		QUnit.test("Check if a very long button is now getting out of the overflow popup (CSS 1570140661).", function(assert) {
 			var done = assert.async();
 			var oCtrl = new sap.ui.commons.Toolbar({
 				id: 'Toolbar5',
@@ -408,7 +408,7 @@
 			}, 500);
 		});
 
-		test("Overflow buttons with width less than popup default does not change popup's width", function(assert) {
+		QUnit.test("Overflow buttons with width less than popup default does not change popup's width", function(assert) {
 			var done = assert.async();
 			var oCtrl = new sap.ui.commons.Toolbar({
 				id: 'Toolbar6',
@@ -431,7 +431,7 @@
 			}, 500);
 		});
 
-		test("Overflow button is not visible when the first item is FullHeight Separator and there is an invisible item",
+		QUnit.test("Overflow button is not visible when the first item is FullHeight Separator and there is an invisible item",
 				function(assert) {
 			var oCtrl = new sap.ui.commons.Toolbar({
 				id: 'Toolbar7',
@@ -446,14 +446,14 @@
 			equal(isOverflowVisible(oCtrl), false, "Overflow button must not be visible");
 		});
 
-		test("Overflow menu in popup is deleted upon toolbar destroy", function () {
+		QUnit.test("Overflow menu in popup is deleted upon toolbar destroy", function (assert) {
 			oCtrl.handleOverflowButtonTriggered();
 			ok(getPopupDomRef(oCtrl), "Overflow menu must be part of the dom");
 			oCtrl.destroy();
 			ok(!getPopupDomRef(oCtrl), "Once the toolbar is destroyed, the overflow menu must not be part of the dom");
 		});
 
-		test("Overflow button is visible when toolbar is insdie sap.ui.layout.Splitter and there is not free space", function () {
+		QUnit.test("Overflow button is visible when toolbar is insdie sap.ui.layout.Splitter and there is not free space", function (assert) {
 			var done = assert.async();
 			var oToolbar = new sap.ui.commons.Toolbar("tb14", {
 				items: [

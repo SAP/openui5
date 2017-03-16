@@ -17,7 +17,7 @@
 		};
 	};
 
-	test("Should record a hash change", function() {
+	QUnit.test("Should record a hash change", function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger);
@@ -33,7 +33,7 @@
 		strictEqual(sut.aHistory[2], "bar");
 	});
 
-	test("Should not record a hash replace", function() {
+	QUnit.test("Should not record a hash replace", function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger);
@@ -48,7 +48,7 @@
 		strictEqual(sut.aHistory[1], "bar", "should have the replace value");
 	});
 
-	test("Should replace an entry in the history if replace takes place", function() {
+	QUnit.test("Should replace an entry in the history if replace takes place", function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger);
@@ -61,7 +61,7 @@
 		strictEqual(sut.aHistory[0], "bar", "should have bar as value");
 	});
 
-	test("Should return newPage if a page was added to the history", function() {
+	QUnit.test("Should return newPage if a page was added to the history", function(assert) {
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		//Arrange
 		var uid = jQuery.sap.uid();
@@ -76,7 +76,7 @@
 		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.NewEntry, "should be a new entry");
 	});
 
-	test("Should return Unknown if the navigation direction is still unknown", function() {
+	QUnit.test("Should return Unknown if the navigation direction is still unknown", function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger);
@@ -98,7 +98,7 @@
 		strictEqual(sut.getDirection("foo"), sap.ui.core.routing.HistoryDirection.Unknown);
 	});
 
-	test("Should return NewEntry if the navigation direction is undefined but hashChanger triggered it", function() {
+	QUnit.test("Should return NewEntry if the navigation direction is undefined but hashChanger triggered it", function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger);
@@ -112,7 +112,7 @@
 		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.NewEntry, "should be a new entry");
 	});
 
-	test("Should return Unknown if the hash changes to something unexpected", function() {
+	QUnit.test("Should return Unknown if the hash changes to something unexpected", function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger);
@@ -126,7 +126,7 @@
 		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be unknown");
 	});
 
-	test("Should return undefined if the first hash is only an replacement", function() {
+	QUnit.test("Should return undefined if the first hash is only an replacement", function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger);
@@ -138,7 +138,7 @@
 		strictEqual(sut.getDirection(), undefined, "should be undefined");
 	});
 
-	test("Should return Unknown after a hash replacement", function() {
+	QUnit.test("Should return Unknown after a hash replacement", function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger);
@@ -160,7 +160,7 @@
 		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be unknown");
 	});
 
-	test("Should return Backwards if the hash was replaced before", function() {
+	QUnit.test("Should return Backwards if the hash was replaced before", function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger);
@@ -180,7 +180,7 @@
 		strictEqual(sut.getDirection("foo"), sap.ui.core.routing.HistoryDirection.Unknown, "should be unknown");
 	});
 
-	test("Should return Backwards if the hash was replaced before with the latest hash also in the history back", function() {
+	QUnit.test("Should return Backwards if the hash was replaced before with the latest hash also in the history back", function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger);
@@ -201,7 +201,7 @@
 		strictEqual(sut.getDirection("baz"), sap.ui.core.routing.HistoryDirection.Forwards, "should be unknown");
 	});
 
-	test("Should return NewEntry if the navigation direction is still unknown but hashChanger triggered it", function() {
+	QUnit.test("Should return NewEntry if the navigation direction is still unknown but hashChanger triggered it", function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger);
@@ -216,7 +216,7 @@
 		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.NewEntry, "should be a new entry");
 	});
 
-	test("Should detect a backward navigation", function() {
+	QUnit.test("Should detect a backward navigation", function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger)
@@ -232,7 +232,7 @@
 		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Backwards, "should be a forwards navigation");
 	});
 
-	test("Should detect a forward navigation", function() {
+	QUnit.test("Should detect a forward navigation", function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger)
@@ -250,7 +250,7 @@
 		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Forwards, "should be a forwards navigation");
 	});
 
-	test("Should detect unknown navigation after initialization", function() {
+	QUnit.test("Should detect unknown navigation after initialization", function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger)
@@ -286,7 +286,7 @@
 		strictEqual(sut.aHistory[1], "thing");
 	});
 
-	test("Should clean up the history", function() {
+	QUnit.test("Should clean up the history", function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger);
@@ -309,7 +309,7 @@
 		strictEqual(sut.aHistory.length, 3, "should have 2 entries in the history");
 	});
 
-	test("Should get the previous hash if there was no history before", function() {
+	QUnit.test("Should get the previous hash if there was no history before", function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger);
@@ -318,7 +318,7 @@
 		strictEqual(sut.getPreviousHash(), undefined, "should have foo as the previous page");
 	});
 
-	test("Should get the previous hash if there was a replacement before",  function() {
+	QUnit.test("Should get the previous hash if there was a replacement before",  function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger);
@@ -331,7 +331,7 @@
 		strictEqual(sut.getPreviousHash(), "bar", "should have foo as the previous page");
 	});
 
-	test("Should get the previous hash if the unknown state occures",   function() {
+	QUnit.test("Should get the previous hash if the unknown state occures",   function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger);
@@ -347,7 +347,7 @@
 		strictEqual(sut.getPreviousHash(), undefined, "should not have a previous page");
 	});
 
-	test("Should get the previous hash when going backwards",   function() {
+	QUnit.test("Should get the previous hash when going backwards",   function(assert) {
 		//System under Test
 		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		var sut = new sap.ui.core.routing.History(oHashChanger);

@@ -41,14 +41,14 @@
 
 
 			// make sure the methods exist
-    	test("InitialCheck", 4, function() {
+    	QUnit.test("InitialCheck", 4, function(assert) {
     		ok(oBtn.attachBrowserEvent, "oBtn.attachBrowserEvent should be an existing function");
     		equal(typeof(oBtn.attachBrowserEvent), "function", "oBtn.attachBrowserEvent should be an existing function");
     		ok(oBtn.detachBrowserEvent, "oBtn.detachBrowserEvent should be an existing function");
     		equal(typeof(oBtn.detachBrowserEvent), "function", "oBtn.detachBrowserEvent should be an existing function");
     	});
 
-    	test("Adding Handlers and Return Value", 6, function() {
+    	QUnit.test("Adding Handlers and Return Value", 6, function(assert) {
     		var result = oBtn.attachBrowserEvent("blur", myHandler1);
 
     		ok(result, "oBtn.attachBrowserEvent must return something");
@@ -60,7 +60,7 @@
     		equal(oBtn.aBindParameters[0].fnHandler, myHandler1, "oBtn.aBindParameters[0] handler should be myHandler1");
     	});
 
-    	test("Removing Handlers and Return Value", 4, function() {
+    	QUnit.test("Removing Handlers and Return Value", 4, function(assert) {
     		var result = oBtn.detachBrowserEvent("blur", myHandler1);
 
     		ok(result, "oBtn.detachBrowserEvent must return something");
@@ -70,7 +70,7 @@
     		equal(oBtn.aBindParameters.length, 0, "oBtn.aBindParameters should have no entry");
     	});
 
-    	test("Adding Invalid Handlers", 3, function() {
+    	QUnit.test("Adding Invalid Handlers", 3, function(assert) {
     		oBtn.attachBrowserEvent("blur", null);
     		equal(oBtn.aBindParameters.length, 0, "oBtn.aBindParameters should have no entry");
 
@@ -81,7 +81,7 @@
     		equal(oBtn.aBindParameters.length, 0, "oBtn.aBindParameters should have no entry");
     	});
 
-    	test("Removing Invalid Handlers", 2, function() {
+    	QUnit.test("Removing Invalid Handlers", 2, function(assert) {
     		oBtn.attachBrowserEvent("blur", myHandler1);
 
     		oBtn.detachBrowserEvent("blur", null);
@@ -91,7 +91,7 @@
     		equal(oBtn.aBindParameters.length, 1, "oBtn.aBindParameters should have one entry");
     	});
 
-    	test("Removing Other Handlers", 4, function() {
+    	QUnit.test("Removing Other Handlers", 4, function(assert) {
     		oBtn.attachBrowserEvent("blur", myHandler2);
     		equal(oBtn.aBindParameters.length, 2, "oBtn.aBindParameters should have two entries");
 
@@ -189,21 +189,21 @@
 			  names.push(this.getId ? this.getId() : "unknown");
 		  }
 
-			module("Context objects (oListener)", {
-				setup : function() {
+			QUnit.module("Context objects (oListener)", {
+				beforeEach : function() {
 					oLabel = new sap.ui.commons.Label({id : "c0", text:"something"});
 				  oLabel.placeAt("uiArea1");
 				  sap.ui.getCore().applyChanges();
 					clear();
 				},
-				teardown : function() {
+				afterEach : function() {
 					oLabel.destroy();
 					oLabel = undefined;
 				  sap.ui.getCore().applyChanges();
 				}
 			});
 
-		  test("no (default) context", function() {
+		  QUnit.test("no (default) context", function(assert) {
 			  oLabel.attachBrowserEvent("click", clickHandler);
 				equals(clicks, 0, "no event handler called so far");
 			  oLabel.$().click();
@@ -211,7 +211,7 @@
 				equals(names.sort().join(","), "c0", "control itself is used as this");
 		  });
 
-		  test("specific context", function() {
+		  QUnit.test("specific context", function(assert) {
 			  oLabel.attachBrowserEvent("click", clickHandler, oListener1);
 				equals(clicks, 0, "no event handler called so far");
 			  oLabel.$().click();
@@ -219,7 +219,7 @@
 				equals(names.sort().join(","), "l1", "given listener used as this");
 		  });
 
-		  test("multiple contexts", function() {
+		  QUnit.test("multiple contexts", function(assert) {
 			  oLabel.attachBrowserEvent("click", clickHandler, oListener1);
 			  oLabel.attachBrowserEvent("click", clickHandler);
 			  oLabel.attachBrowserEvent("click", clickHandler, oListener2);
@@ -229,7 +229,7 @@
 				equals(names.sort().join(","), "c0,l1,l2", "given listeners are used as this");
 		  });
 
-		  test("deregistration with context", function() {
+		  QUnit.test("deregistration with context", function(assert) {
 			  oLabel.attachBrowserEvent("click", clickHandler, oListener1);
 			  oLabel.$().click();
 				equals(clicks, 1, "event handler called once");
@@ -238,7 +238,7 @@
 				equals(clicks, 1, "event handler only called once");
 		  });
 
-		  test("deregistration with different context", function() {
+		  QUnit.test("deregistration with different context", function(assert) {
 			  oLabel.attachBrowserEvent("click", clickHandler, oListener1);
 			  oLabel.$().click();
 				equals(clicks, 1, "event handler called once");
@@ -247,7 +247,7 @@
 				equals(clicks, 2, "event handler called twice");
 		  });
 
-		  test("deregistration with multiple contexts", function() {
+		  QUnit.test("deregistration with multiple contexts", function(assert) {
 			  oLabel.attachBrowserEvent("click", clickHandler, oListener1);
 			  oLabel.attachBrowserEvent("click", clickHandler, oListener2);
 			  oLabel.$().click();

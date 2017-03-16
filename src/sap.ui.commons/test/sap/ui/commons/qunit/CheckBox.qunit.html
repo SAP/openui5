@@ -58,8 +58,8 @@
 		var c1, c2;
 
 
-		module("Basic", {
-			setup : function() {
+		QUnit.module("Basic", {
+			beforeEach : function() {
 				c1 = sap.ui.getCore().getControl("c1");
 				c2 = sap.ui.getCore().getControl("c2");
 
@@ -75,7 +75,7 @@
 				ok(c1, "c1 should not be null");
 				ok(c2, "c2 should not be null");
 			},
-			teardown : function() {
+			afterEach : function() {
 				c1 = null;
 				c2 = null;
 			}
@@ -83,32 +83,32 @@
 
 		// test control properties
 
-		test("TextOk", function() {
+		QUnit.test("TextOk", function(assert) {
 			strictEqual(c1.getText(), sText, "c1.getText() returns wrong result");
 			strictEqual(c2.getText(), sText, "c2.getText() returns wrong result");
 		});
 
-		test("WidthOk", function() {
+		QUnit.test("WidthOk", function(assert) {
 			strictEqual(c1.getWidth(), sWidth, "c1.getWidth() returns wrong result");
 			strictEqual(c2.getWidth(), sWidth, "c2.getWidth() returns wrong result");
 		});
 
-		test("EnabledOk", function() {
+		QUnit.test("EnabledOk", function(assert) {
 			strictEqual(c1.getEnabled(), bEnabled, "c1.getEnabled() returns wrong result");
 			strictEqual(c2.getEnabled(), bEnabled, "c2.getEnabled() returns wrong result");
 		});
 
-		test("VisibleOk", function() {
+		QUnit.test("VisibleOk", function(assert) {
 			strictEqual(c1.getVisible(), bVisible, "c1.getVisible() returns wrong result");
 			strictEqual(c2.getVisible(), bVisible, "c2.getVisible() returns wrong result");
 		});
 
-		test("TooltipOk", function() {
+		QUnit.test("TooltipOk", function(assert) {
 			strictEqual(c1.getTooltip(), sTooltip, "c1.getTooltip() returns wrong result");
 			strictEqual(c2.getTooltip(), sTooltip, "c2.getTooltip() returns wrong result");
 		});
 
-		test("CheckedOk", function() {
+		QUnit.test("CheckedOk", function(assert) {
 			strictEqual(c1.getChecked(), bChecked, "c1.getChecked() returns wrong result");
 			strictEqual(c2.getChecked(), bChecked, "c2.getChecked() returns wrong result");
 		});
@@ -118,7 +118,7 @@
 
 		// TODO: test event handler with event parameters
 
-		test("ChangeOk", function() {
+		QUnit.test("ChangeOk", function(assert) {
 			try {
 				c1.fireChange();
 				fail("exception should have been thrown when c1.fireChange() was called!");
@@ -134,7 +134,7 @@
 			}
 		});
 
-		test("DetachChangeOk", function() {
+		QUnit.test("DetachChangeOk", function(assert) {
 			c1.detachChange(foo);
 			try {
 				c1.fireChange();
@@ -157,7 +157,7 @@
 			return true;
 		}
 
-		test("MetadataOk", function() {
+		QUnit.test("MetadataOk", function(assert) {
 			var oMetadata = c1.getMetadata();
 			ok(oMetadata !== null, "c1.getMetadata() should not be null");
 			ok(oMetadata.getParent() !== null, "c1.getMetadata().getParent() should not be null");
@@ -171,7 +171,7 @@
 			ok(oAssociations["ariaLabelledBy"]["multiple"], "ariaLabelledBy multiple");
 		});
 
-		test("OffsetWidthOk", function() {
+		QUnit.test("OffsetWidthOk", function(assert) {
 			//test the pixel perfect width of the control
 			var oDomRef = window.document.getElementById("c1");
 			strictEqual(oDomRef.offsetWidth, parseInt(c1.getWidth()), "c1.offsetWidth should equal parseInt(c1.getWidth())");
@@ -182,7 +182,7 @@
     });
 
 		// toggle back and forth
-		test("ToggleOk", function() {
+		QUnit.test("ToggleOk", function(assert) {
 			strictEqual(c1.getChecked(), bChecked, "c1.getChecked() returns wrong result");
 			c1.toggle();
 			strictEqual(c1.getChecked(), !bChecked, "c1.getChecked() returns wrong result after toggling");
@@ -190,7 +190,7 @@
 			strictEqual(c1.getChecked(), bChecked, "c1.getChecked() returns wrong result after toggling back");
 		});
 
-		test("CssClassesOk", function() {
+		QUnit.test("CssClassesOk", function(assert) {
 			var sClasses = window.document.getElementById("c1").className;
 			notStrictEqual(sClasses, null, "sClasses is null");
 			ok(sClasses.indexOf("sapUiCb") > -1, "c1 className is missing 'sapUiCb'");

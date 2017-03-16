@@ -31,8 +31,8 @@
 				function (Targets, NavContainer, Page, Views, integrationTests, Route, helpers) {
 					"use strict";
 
-					module("add and execute navigations", {
-						setup: function () {
+					QUnit.module("add and execute navigations", {
+						beforeEach: function () {
 							this.oStartPage = new Page();
 							this.oNavContainer = new NavContainer({
 								pages: this.oStartPage
@@ -59,7 +59,7 @@
 								views: this.oViews
 							});
 						},
-						teardown: function () {
+						afterEach: function () {
 							this.oNavContainer.destroy();
 							this.oToPage.destroy();
 							this.oStartPage.destroy();
@@ -68,7 +68,7 @@
 						}
 					});
 
-					test("Should do a forward navigation", function () {
+					QUnit.test("Should do a forward navigation", function (assert) {
 						//Arrange
 						var that = this,
 								oToSpy = this.spy(this.oNavContainer, "to"),
@@ -257,7 +257,7 @@
 					}
 
 					integrationTests.start({
-						setup: function (oConfig) {
+						beforeEach: function (oConfig) {
 
 							modifyConfig(oConfig, oConfig);
 							this.oViews = new Views({async: false});
@@ -270,7 +270,7 @@
 						act: function (sPatternOrName) {
 							this.oTargets.display(sPatternOrName);
 						},
-						teardown: function () {
+						afterEach: function () {
 							this.oTargets.destroy();
 							this.oViews.destroy();
 						}

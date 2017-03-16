@@ -123,14 +123,14 @@
 
 			app.addPage(page).placeAt("content");
 
-			module("Initial Check");
+			QUnit.module("Initial Check");
 
-			test("Initialization", function () {
+			QUnit.test("Initialization", function (assert) {
 				ok(!jQuery.sap.domById("dialog"), "Dialog is not rendered before it's ever opened.");
 				equal(oDialog.oPopup._sF6NavMode, "SCOPE", "Dialog's popup navigation mode is set to SCOPE.")
 			});
 
-			module("Content preservation");
+			QUnit.module("Content preservation");
 
 			asyncTest("Preserve Dialog Content", function() {
 				this.clock.restore();
@@ -192,9 +192,9 @@
 				oDialog.open();
 			});
 
-			module("Open and Close");
+			QUnit.module("Open and Close");
 
-			test("Open Dialog", function () {
+			QUnit.test("Open Dialog", function (assert) {
 				oButton.firePress();
 				ok(oDialog.isOpen(), "Dialog is already open");
 				this.clock.tick(600);
@@ -222,14 +222,14 @@
 				ok(oTitleDom, "Title should be rendered");
 			});
 
-			test("Close Dialog. Test set origin parameter value", function () {
+			QUnit.test("Close Dialog. Test set origin parameter value", function (assert) {
 				expect(4);
 				oDialog.getBeginButton().$().trigger("tap");
 				this.clock.tick(500);
 			});
 
 
-			test("Open Message Dialog on phone", function () {
+			QUnit.test("Open Message Dialog on phone", function (assert) {
 				var oSystem = {
 					desktop: false,
 					tablet: false,
@@ -251,9 +251,9 @@
 				oDialog.destroy();
 			});
 
-			module("set properties");
+			QUnit.module("set properties");
 
-			test("Set vertical/horizontal scrolling to false", function () {
+			QUnit.test("Set vertical/horizontal scrolling to false", function (assert) {
 				var oDialog = new sap.m.Dialog({
 					content: new sap.ui.core.HTML({
 						content: "<div style='width: 1000px;height: 1000px'></div>"
@@ -273,7 +273,7 @@
 				oDialog.destroy();
 			});
 
-			test("Set vertical/horizontal scrolling to false", function () {
+			QUnit.test("Set vertical/horizontal scrolling to false", function (assert) {
 				var oDialog = new sap.m.Dialog({
 					content: new sap.ui.core.HTML({
 						content: "<div style='width: 1000px;height: 1000px'></div>"
@@ -293,7 +293,7 @@
 				oDialog.destroy();
 			});
 
-			test("Should adjust the scrolling pane if content is bigger than container", function () {
+			QUnit.test("Should adjust the scrolling pane if content is bigger than container", function (assert) {
 				//Arrange
 				this.stub(sap.ui.Device, "system", {desktop: true});
 
@@ -326,7 +326,7 @@
 				sut.destroy();
 			});
 
-			test("ShouldAdjustTheScrollingPaneIfContentIsSmallerThanContainer", function () {
+			QUnit.test("ShouldAdjustTheScrollingPaneIfContentIsSmallerThanContainer", function (assert) {
 				jQuery("html").addClass("sap-desktop");
 				//Arrange
 				this.stub(sap.ui.Device, "system", {desktop: true});
@@ -356,7 +356,7 @@
 				// jQuery("html").removeClass("sap-desktop");
 			});
 
-			test("Dialog: set stretch to true", function () {
+			QUnit.test("Dialog: set stretch to true", function (assert) {
 				jQuery("html").css("overflow", "hidden"); // hide scrollbar during test
 				var oDialog = new sap.m.Dialog({
 					stretch: true,
@@ -376,7 +376,7 @@
 				jQuery("html").css("overflow", ""); // restore scrollbar after test
 			});
 
-			test("Dialog: set stretchOnPhone to true should not stretch on desktop", function () {
+			QUnit.test("Dialog: set stretchOnPhone to true should not stretch on desktop", function (assert) {
 				var oDialog = new sap.m.Dialog({
 					stretchOnPhone: true
 				});
@@ -389,7 +389,7 @@
 				oDialog.destroy();
 			});
 
-			test("Dialog: set stretchOnPhone to true should stretch on phone", function () {
+			QUnit.test("Dialog: set stretchOnPhone to true should stretch on phone", function (assert) {
 				var oSystem = {
 					desktop: false,
 					tablet: false,
@@ -410,7 +410,7 @@
 				oDialog.destroy();
 			});
 
-			test("Dialog: set contentWidth when stretch set to true", function () {
+			QUnit.test("Dialog: set contentWidth when stretch set to true", function (assert) {
 				jQuery("html").css("overflow", "hidden"); // hide scrollbar during test
 				var oDialog = new sap.m.Dialog({
 					stretch: true,
@@ -432,7 +432,7 @@
 
 
 
-			test("Set contentWidth to a fixed value on desktop", function () {
+			QUnit.test("Set contentWidth to a fixed value on desktop", function (assert) {
 				var oSystem = {
 					desktop: true,
 					tablet: false,
@@ -462,7 +462,7 @@
 			if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9)) {
 				// this test is designed for phone and taken out from IE9 because it's not relevate to IE9
 				// and fails for some unknown reason
-				test("Set contentWidth to a fixed value on phone", function () {
+				QUnit.test("Set contentWidth to a fixed value on phone", function (assert) {
 					var oSystem = {
 						desktop: false,
 						tablet: false,
@@ -511,7 +511,7 @@
 				});
 			}
 
-			test("set ContentWidth/ContentHeight to percentage value", function () {
+			QUnit.test("set ContentWidth/ContentHeight to percentage value", function (assert) {
 				var oSystem = {
 					desktop: true,
 					phone: false,
@@ -533,7 +533,7 @@
 				oDialog.destroy();
 			});
 
-			test("set escapeHandler property", function (assert) {
+			QUnit.test("set escapeHandler property", function (assert) {
 				assert.expect(2);
 
 				var done = assert.async();
@@ -570,7 +570,7 @@
 				assert.strictEqual(fnEscapeHandlerFunctionSpy.callCount, 1, 'escapeHandler function should be called');
 			});
 
-			test("beginButton, endButton, buttons on desktop or tablet", function () {
+			QUnit.test("beginButton, endButton, buttons on desktop or tablet", function (assert) {
 				var oSystem = {
 					desktop: true,
 					phone: false,
@@ -636,7 +636,7 @@
 				});
 			});
 
-			test("beginButton, endButton, buttons on phone", function () {
+			QUnit.test("beginButton, endButton, buttons on phone", function (assert) {
 				var oSystem = {
 					desktop: false,
 					phone: true,
@@ -703,7 +703,7 @@
 				jQuery("html").addClass("sap-phone");
 			});
 
-			test("Setting starting and ending buttons", function () {
+			QUnit.test("Setting starting and ending buttons", function (assert) {
 				// Arrange
 				var oDialog = new sap.m.Dialog();
 				var testButton = new sap.m.Button();
@@ -723,7 +723,7 @@
 				oDialog.destroy();
 			});
 
-			test("Setting name aggregation title", function () {
+			QUnit.test("Setting name aggregation title", function (assert) {
 				// Arrange
 				var oDialog = new sap.m.Dialog();
 
@@ -736,9 +736,9 @@
 				oDialog.destroy();
 			});
 
-			module("Initial focus");
+			QUnit.module("Initial focus");
 
-			test("Association initialFocus", function () {
+			QUnit.test("Association initialFocus", function (assert) {
 				// Arrange
 				var oInput1 = new sap.m.Input();
 				var oInput2 = new sap.m.Input();
@@ -761,7 +761,7 @@
 				oDialog.destroy();
 			});
 
-			test("Association ariaLabelledBy", function () {
+			QUnit.test("Association ariaLabelledBy", function (assert) {
 				// Arrange
 				var TEXT_ID = "qunitText";
 				var oText = new sap.m.Text(TEXT_ID, {text : "Qunit test"});
@@ -798,7 +798,7 @@
 				oDialog.destroy();
 			});
 
-			test("Focusable elements in content area", function () {
+			QUnit.test("Focusable elements in content area", function (assert) {
 				// Arrange
 				var oInput1 = new sap.m.Input();
 				var oInput2 = new sap.m.Input();
@@ -820,7 +820,7 @@
 				oDialog.destroy();
 			});
 
-			test('Aggregations "beginButton" and "endButton" - both visible', function () {
+			QUnit.test('Aggregations "beginButton" and "endButton" - both visible', function (assert) {
 				// Arrange
 				var oButton1 = new sap.m.Button();
 				var oButton2 = new sap.m.Button();
@@ -843,7 +843,7 @@
 				oDialogInitialFocus.destroy();
 			});
 
-			test('Aggregations "beginButton" and "endButton" - only endButton visible', function () {
+			QUnit.test('Aggregations "beginButton" and "endButton" - only endButton visible', function (assert) {
 				// Arrange
 				var oButton1 = new sap.m.Button({visible: false});
 				var oButton2 = new sap.m.Button();
@@ -866,7 +866,7 @@
 				oDialog.destroy();
 			});
 
-			test("Aggregation \"buttons\" - two visible buttons", function () {
+			QUnit.test("Aggregation \"buttons\" - two visible buttons", function (assert) {
 				// Arrange
 				var oButton1 = new sap.m.Button();
 				var oButton2 = new sap.m.Button();
@@ -888,7 +888,7 @@
 				oDialog.destroy();
 			});
 
-			test("Aggregation \"buttons\" - only second button is visible", function () {
+			QUnit.test("Aggregation \"buttons\" - only second button is visible", function (assert) {
 				// Arrange
 				var oButton1 = new sap.m.Button({visible: false});
 				var oButton2 = new sap.m.Button();
@@ -910,7 +910,7 @@
 				oDialog.destroy();
 			});
 
-			test("No interactive elements or buttons", function () {
+			QUnit.test("No interactive elements or buttons", function (assert) {
 				// Arrange
 				var oDialog = new sap.m.Dialog();
 				overwriteAnimationIE(oDialog);
@@ -927,7 +927,7 @@
 				oDialog.destroy();
 			});
 
-			test("No phone special CSS class when runs on desktop", function () {
+			QUnit.test("No phone special CSS class when runs on desktop", function (assert) {
 				var oSystem = {
 					desktop: true,
 					tablet: false,
@@ -943,7 +943,7 @@
 				oDialog.destroy();
 			});
 
-			test("Initial focus shouldn't be set to input DOM element on mobile device", function () {
+			QUnit.test("Initial focus shouldn't be set to input DOM element on mobile device", function (assert) {
 				var oSystem = {
 					desktop: false,
 					tablet: true,
@@ -971,7 +971,7 @@
 				oDialog.destroy();
 			});
 
-			test("Controls in custom header is also in tab chain", function () {
+			QUnit.test("Controls in custom header is also in tab chain", function (assert) {
 				var oDialog = new sap.m.Dialog({
 					customHeader: new sap.m.Bar({
 						contentRight: [
@@ -1003,7 +1003,7 @@
 				oDialog.destroy();
 			});
 
-			test("Container Padding Classes", function () {
+			QUnit.test("Container Padding Classes", function (assert) {
 				// System under Test + Act
 				var oContainer = new sap.m.Dialog(),
 						sContentSelector = "section > .sapMDialogScroll > .sapMDialogScrollCont",
@@ -1047,7 +1047,7 @@
 				oContainer.destroy();
 			});
 
-			test("Clear CSS property 'display' from scrolling area before size calculation", function () {
+			QUnit.test("Clear CSS property 'display' from scrolling area before size calculation", function (assert) {
 				expect(2);
 				var oDialog = new sap.m.Dialog({
 					contentWidth: "450px",
@@ -1070,9 +1070,9 @@
 				jQuery('html').css('overflow', 'auto');
 			}, 1000);
 
-			module("Accessibility");
+			QUnit.module("Accessibility");
 
-			test("Check if ValueState is present", function () {
+			QUnit.test("Check if ValueState is present", function (assert) {
 				// Arrange
 				var oDialogSuccess = new sap.m.Dialog({
 					state: sap.ui.core.ValueState.Success
@@ -1131,7 +1131,7 @@
 				oDialogError.destroy();
 			});
 
-			test("Check if header toolbar role is set correctly", function(assert) {
+			QUnit.test("Check if header toolbar role is set correctly", function(assert) {
 			    // arrange
                 var oDialog = new sap.m.Dialog({
                 	title: "Some title",
@@ -1149,7 +1149,7 @@
 				oDialog.destroy();
 			});
 
-			test("Check if footer toolbar role is set correctly", function(assert) {
+			QUnit.test("Check if footer toolbar role is set correctly", function(assert) {
 				// arrange
 				var oDialog = new sap.m.Dialog({
 					title: "Some title",

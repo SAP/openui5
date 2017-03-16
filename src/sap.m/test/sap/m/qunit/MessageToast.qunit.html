@@ -40,9 +40,9 @@
 			/* HTML module                                                 */
 			/* =========================================================== */
 
-			module("HTML");
+			QUnit.module("HTML");
 
-			test("rendering", function() {
+			QUnit.test("rendering", function(assert) {
 
 				// act
 				sap.m.MessageToast.show("message toast");
@@ -69,14 +69,14 @@
 			/* API module                                                  */
 			/* =========================================================== */
 
-			module("Validate options");
+			QUnit.module("Validate options");
 
 			/* ------------------------------ */
 			/* duration                       */
 			/* ------------------------------ */
 
 			var isFiniteInteger = function(sTestName, vValue) {
-				test(sTestName, function() {
+				QUnit.test(sTestName, function(assert) {
 
 					// arrange
 					var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
@@ -105,7 +105,7 @@
 			/* width                          */
 			/* ------------------------------ */
 
-			test("width", function() {
+			QUnit.test("width", function(assert) {
 
 				// arrange
 				var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
@@ -125,7 +125,7 @@
 			/* ------------------------------------------ */
 
 			var isDockPosition = function(sTestName, vValue, iNumberOfErrors) {
-				test(sTestName, function() {
+				QUnit.test(sTestName, function(assert) {
 
 					// arrange
 					var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
@@ -163,7 +163,7 @@
 			/* ------------------------------ */
 
 			var isValidOf = function(sTestName, vValue, iNumberOfErrors) {
-				test(sTestName, function() {
+				QUnit.test(sTestName, function(assert) {
 
 					// arrange
 					var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
@@ -192,7 +192,7 @@
 			/* offset                         */
 			/* ------------------------------ */
 
-			test("offset", function() {
+			QUnit.test("offset", function(assert) {
 
 				// arrange
 				var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
@@ -212,7 +212,7 @@
 			/* ------------------------------ */
 
 			var isValidCollision = function(sTestName, vValue, iNumberOfErrors) {
-				test(sTestName, function() {
+				QUnit.test(sTestName, function(assert) {
 
 					// arrange
 					var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
@@ -248,7 +248,7 @@
 			/* ------------------------------ */
 
 			var isValidOnCloseFn = function (sTestName, vValue, iNumberOfErrors) {
-				test(sTestName, function() {
+				QUnit.test(sTestName, function(assert) {
 
 					// arrange
 					var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
@@ -273,7 +273,7 @@
 			/* ------------------------------ */
 
 			var isValidAutoCloseValue = function(sTestName, vValue, iNumberOfErrors) {
-				test(sTestName, function() {
+				QUnit.test(sTestName, function(assert) {
 
 					// arrange
 					var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
@@ -298,7 +298,7 @@
 			/* ------------------------------ */
 
 			var isValidAnimationTimingFunction = function(sTestName, vValue, iNumberOfErrors) {
-				test(sTestName, function() {
+				QUnit.test(sTestName, function(assert) {
 
 					// arrange
 					var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
@@ -339,7 +339,7 @@
 			/* ------------------------------ */
 
 			var fnCloseOnBrowserNavigationTestCase = function(bCloseOnBrowserNavigation) {
-				test("closeOnBrowserNavigation", function() {
+				QUnit.test("closeOnBrowserNavigation", function(assert) {
 
 					// arrange
 					var fnAddPopoverInstanceSpy = sinon.spy(sap.m.InstanceManager, "addPopoverInstance");
@@ -366,10 +366,10 @@
 			/* Events module                                               */
 			/* =========================================================== */
 
-			module("Events");
+			QUnit.module("Events");
 
 			var hasEventListeners = function(oDomRef, sEventType, b) {
-				test("Listeners", function() {
+				QUnit.test("Listeners", function(assert) {
 					var aResizeEventListeners = jQuery._data(oDomRef, "events")[sEventType];
 					var bBoundedListeners = aResizeEventListeners.some(function(oResizeEventListener) {
 						return oResizeEventListener.namespace === "sapMMessageToast";

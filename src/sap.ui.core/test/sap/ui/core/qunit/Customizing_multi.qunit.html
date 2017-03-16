@@ -80,13 +80,13 @@
 
 	// TESTS
 
-	test("sap.ui.core.CustomizingConfiguration available", function() {
+	QUnit.test("sap.ui.core.CustomizingConfiguration available", function(assert) {
 		expect(1);
 
 		ok(sap.ui.core.CustomizingConfiguration, "sap.ui.core.CustomizingConfiguration should be available now without requiring it");
 	});
 
-	test("sap.ui.core.CustomizingConfiguration returning the customizing data", function() {
+	QUnit.test("sap.ui.core.CustomizingConfiguration returning the customizing data", function(assert) {
 		expect(8);
 
 		equal(sap.ui.core.CustomizingConfiguration.getViewReplacement("testdata.customizing.sap.Sub1", oCompSub.getId()).viewName,
@@ -118,14 +118,14 @@
 
 	// View Replacement
 
-	test("View Replacement", function() {
+	QUnit.test("View Replacement", function(assert) {
 		ok(jQuery.sap.domById("customerComponent---mainView--sub1View--customTextInCustomSub1"), "Replacement XMLView should be rendered");
 		ok(!jQuery.sap.domById("customerComponent---mainView--sub1View--originalSapTextInSub1"), "Original XMLView should not be rendered");
 	});
 
 
 	// View Extension
-	test("View Extension", function() {
+	QUnit.test("View Extension", function(assert) {
 		ok(jQuery.sap.domById("customerComponent---mainView--sub2View--customFrag1BtnWithCustAction"), "XMLView Extension should be rendered");
 		ok(jQuery.sap.domById("buttonWithCustomerAction"), "JSView Extension should be rendered");
 		// extension within extension
@@ -136,13 +136,13 @@
 
 	// Controller Replacement
 
-	test("Controller Replacement", function() {
+	QUnit.test("Controller Replacement", function(assert) {
 		equal(sap.ui.getCore().byId("customerComponent---mainView").getController().getMetadata().getName(), "testdata.customizing.customersub.Main", "The controller has been replaced");
 	});
 
 	// Controller Extension
 
-	test("Controller Extension", function() {
+	QUnit.test("Controller Extension", function(assert) {
 
 		// check lifecycle methods
 		equal(aLifeCycleCalls.length, 6, "6 lifecycle methods should be called");
@@ -175,7 +175,7 @@
 	});
 
 
-	test("Controller Extension (Code Extensibility)", function() {
+	QUnit.test("Controller Extension (Code Extensibility)", function(assert) {
 
 		// check lifecycle methods
 		equal(oLifecycleSpy.callCount, 9, "9 lifecycle methods should be called");
@@ -197,7 +197,7 @@
 
 	// View/Property Modifications
 
-	test("Property Modifications", function() {
+	QUnit.test("Property Modifications", function(assert) {
 		var oControl = sap.ui.getCore().byId("customerComponent---mainView--sub3View--customizableText");
 		strictEqual(oControl.getVisible(), false, "'visible' property should be customizable");
 		strictEqual(oControl.getEnabled(), true, "'enabled' property should not be customizable");
@@ -206,7 +206,7 @@
 
 	// ExtensionPoint default content
 
-	test("ExtensionPoint default content", function() {
+	QUnit.test("ExtensionPoint default content", function(assert) {
 		var oFirstItem = sap.ui.getCore().byId("__item0-customerComponent---mainView--sub2View--lb-0");
 
 		ok(oFirstItem, "First ListItem should exist");

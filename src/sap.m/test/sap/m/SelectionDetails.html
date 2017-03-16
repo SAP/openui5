@@ -12,15 +12,149 @@
 	src="../../../resources/sap-ui-core.js">
 </script>
 
-<script type="text/javascript">
-	jQuery.sap.initMobile();
+<script>
+	var fnCreateLine = function(id, context) {
+		return new sap.m.SelectionDetailsItemLine(id, {
+			label: "{label}",
+			value: "{value}",
+			displayValue: "{displayValue}",
+			unit: "{unit}"
+		});
+	};
 
-	var oSelectionDetails = new sap.m.SelectionDetails();
+	var aItems = [
+		new sap.m.SelectionDetailsItem({
+			lines: {
+				path: "/lines/0",
+				factory: fnCreateLine
+			},
+			actions: [
+				new sap.ui.core.Item("item_action_1", {
+					key: "1",
+					text: "item action 1"
+				}), new sap.ui.core.Item("item_action_2", {
+					key: "2",
+					text: "item action 2"
+				})],
+			enableNav: true
+		}),
+		new sap.m.SelectionDetailsItem({
+			lines: {
+				path: "/lines/1",
+				factory: fnCreateLine
+			},
+			enableNav: false
+		})
+	];
 
-	/* new sap.m.Page("page", {
-		content: []
-	}).placeAt("content"); */
-	oSelectionDetails.placeAt("content");
+	var aActions = [
+		new sap.ui.core.Item("first_action",{
+			key: "1",
+			text: "action 1"
+		}),
+		new sap.ui.core.Item("second_action", {
+			key: "2",
+			text: "action 2"
+		})
+	];
+
+	var oModel = new sap.ui.model.json.JSONModel({
+		lines: [
+			[
+				{
+					label: "Company Name",
+					value: "Titanium laptop manufacturing company"
+				}, {
+					label: "Product Category",
+					value: "Laptop"
+				}, {
+					label: "Currency Code",
+					value: "EUR"
+				}, {
+					label: "Date",
+					displayValue: new Date().toLocaleString()
+				}, {
+					label: "Price",
+					value: "939,00",
+					unit: "EUR"
+				}
+			], [
+				{
+					label: "Company Name",
+					value: "Future Industries"
+				}, {
+					label: "Product Category",
+					value: "Satomobiles"
+				}, {
+					label: "Price",
+					value: "10,000.00",
+					unit: "Yuons"
+				}
+			]
+		],
+		actions: [
+			{
+				key: "1",
+				text: "action 1"
+			},
+			{
+				key: "2",
+				text: "action 2"
+			}
+		],
+		actionGroups: [
+			{
+				key: "1",
+				text: "action group 1"
+			},
+			{
+				key: "2",
+				text: "action group 2"
+			}
+		]
+	});
+
+	// set the model to the core
+	sap.ui.getCore().setModel(oModel);
+
+	var oActionTemplate = new sap.ui.core.Item({
+		key: "{key}",
+		text: "{text}"
+	});
+
+	var oActionGroupTemplate = new sap.ui.core.Item({
+		key: "{key}",
+		text: "{text}"
+	});
+
+	var oSelectionDetails = new sap.m.SelectionDetails("selectionDetails", {
+		items: aItems,
+		actions: {
+			path: "/actions",
+			template: oActionTemplate
+		},
+		actionGroups: {
+			path: "/actionGroups",
+			template: oActionGroupTemplate
+		},
+		actionPress: function(oEvent) {
+			sap.m.MessageToast.show(oEvent.getParameter("action").getText() + " is pressed" + "\n items are " + oEvent.getParameter("items"));
+		},
+		beforeOpen: function () {
+			sap.m.MessageToast.show("Event 'beforeOpen' triggered");
+		},
+		beforeClose: function () {
+			sap.m.MessageToast.show("Event 'beforeClose' triggered");
+		}
+	});
+
+	var oApp = new sap.m.App({
+		pages: new sap.m.Page({
+			title: "Selection Details",
+			content: [ oSelectionDetails ]
+		})
+	});
+	oApp.placeAt("content");
 </script>
 </head>
 

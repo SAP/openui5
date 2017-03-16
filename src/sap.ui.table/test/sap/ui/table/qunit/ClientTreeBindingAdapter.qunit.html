@@ -189,24 +189,24 @@
 			}
 		};
 
-		module("ClientBindingAdapter", {
-			setup: function() {
+		QUnit.module("ClientBindingAdapter", {
+			beforeEach: function() {
 				oModel = new sap.ui.model.json.JSONModel();
 				oModel.setData(jQuery.extend({}, oData));
 			},
-			teardown: function() {
+			afterEach: function() {
 				oModel = undefined;
 			}
 		});
 
-		test("Properties", function(){
+		QUnit.test("Properties", function(assert){
 			createTreeBindingAdapter("/bing/root", null, [], {});
 			equal(oBinding.getPath(), "/bing/root", "TreeBinding path");
 			equal(oBinding.getModel(), oModel, "TreeBinding model");
 			ok(oBinding instanceof sap.ui.model.ClientTreeBinding, "treeBinding class check");
 		});
 
-		test("getRootContexts getNodeContexts", function(){
+		QUnit.test("getRootContexts getNodeContexts", function(assert){
 			createTreeBindingAdapter("/bing/root", null, [], {
 				displayRootNode: false
 			});
@@ -253,7 +253,7 @@
 			oBinding.expand(1);
 		});
 
-		test("getRootContexts getNodeContexts - binding path is '/'", function(){
+		QUnit.test("getRootContexts getNodeContexts - binding path is '/'", function(assert){
 			createTreeBindingAdapter("/", null, [], {
 				displayRootNode: false
 			});
@@ -318,7 +318,7 @@
 			}
 		});
 
-		test("Display root node", function(){
+		QUnit.test("Display root node", function(assert){
 			createTreeBindingAdapter("/bing/root", null, [], {
 				displayRootNode: true
 			});
@@ -359,7 +359,7 @@
 
 		});
 
-		test("Number of expanded levels", function(){
+		QUnit.test("Number of expanded levels", function(assert){
 			createTreeBindingAdapter("/bing/root", null, [], {
 				displayRootNode: true,
 				numberOfExpandedLevels: 2
@@ -393,7 +393,7 @@
 
 
 
-		test("Pagesize increasing", function(){
+		QUnit.test("Pagesize increasing", function(assert){
 			createTreeBindingAdapter("/bing/root", [], null, {
 				displayRootNode: true
 			});
@@ -417,7 +417,7 @@
 			equal(oContext.getProperty("name"), "ZZZ", "ZZZ Node OK");
 		});
 
-		test("Pagesize not decreasing", function(){
+		QUnit.test("Pagesize not decreasing", function(assert){
 				createTreeBindingAdapter("/bing/root", [], null, {
 					displayRootNode: true
 				});
@@ -551,7 +551,7 @@
 			oBinding.expand(1);
 		});
 
-		test("The length of binding should be independent from the parameters passed to getContexts", function() {
+		QUnit.test("The length of binding should be independent from the parameters passed to getContexts", function(assert) {
 			var oContext, iLength1, iLength2;
 			createTreeBindingAdapter("/bing/root", [], null, {
 				collapseRecursive: false,
@@ -940,7 +940,7 @@
 			start();
 		});
 
-		test("Empty binding should not cause exceptions", function() {
+		QUnit.test("Empty binding should not cause exceptions", function(assert) {
 			createTreeBindingAdapter("/nothing", [], null, {
 				displayRootNode: true,
 				numberOfExpandedLevels: 2,
@@ -974,12 +974,12 @@
 			}]
 		};
 
-		module("ClientBindingAdapter - Model Data 2", {
-			setup: function() {
+		QUnit.module("ClientBindingAdapter - Model Data 2", {
+			beforeEach: function() {
 				oModel = new sap.ui.model.json.JSONModel();
 				oModel.setData(jQuery.extend({}, oData2));
 			},
-			teardown: function() {
+			afterEach: function() {
 				oModel = undefined;
 			}
 		});

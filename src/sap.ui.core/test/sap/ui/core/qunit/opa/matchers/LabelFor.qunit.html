@@ -174,7 +174,7 @@
                 assert.ok(bResult, "Match input in form");
             })
 
-            QUnit.test("Should match button associated with label", function(assert){
+            QUnit.test("Should match button associated with label", function(assert) {
                 var oMatcher = new LabelFor({text: "Label for button"});
                 var bResult = oMatcher.isMatching(this.oButton);
                 assert.ok(bResult, "Match button");

@@ -53,9 +53,9 @@
 	<script>
 	qutils.delayTestStart();
 
-	module("Properties");
+	QUnit.module("Properties");
 
-	test("Default Values", function() {
+	QUnit.test("Default Values", function(assert) {
 		var oProgInd = oProgInds["oProgInd1"];
 
 		equals(oProgInd.getVisible(), true, "Default 'visible':");
@@ -69,7 +69,7 @@
 		oProgInd.destroy();
 	 });
 
-	test("Properties", function() {
+	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd2"];
 
 		equals(oProgInd.getVisible(), true, "Default 'visible':");
@@ -83,7 +83,7 @@
 		oProgInd.destroy();
 	});
 
-	test("Properties", function() {
+	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd3"];
 
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
@@ -97,7 +97,7 @@
 		oProgInd.destroy();
 	});
 
-	test("Properties", function() {
+	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd4"];
 
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
@@ -111,7 +111,7 @@
 		oProgInd.destroy();
 	});
 
-	test("Properties", function() {
+	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd5"];
 
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
@@ -125,7 +125,7 @@
 		oProgInd.destroy();
 	});
 
-	test("Properties", function() {
+	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd6"];
 
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
@@ -139,7 +139,7 @@
 		oProgInd.destroy();
 	});
 
-	test("Properties", function() {
+	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd7"];
 
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
@@ -178,13 +178,13 @@
 	});
 
 	QUnit.module("Css Classes", {
-		setup: function () {
+		beforeEach: function () {
 			this.progressIndicator = new sap.ui.commons.ProgressIndicator();
 
 			this.progressIndicator.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.progressIndicator.destroy();
 			this.progressIndicator = null;
 		}

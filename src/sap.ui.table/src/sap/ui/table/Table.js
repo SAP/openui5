@@ -697,7 +697,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// text selection for column headers?
 		this._bAllowColumnHeaderTextSelection = false;
 
-		this._bDataRequested = false;
+		this._bPendingRequest = false;
 		this._iBindingLength = 0;
 
 		this._iTableRowContentHeight = 0;
@@ -1880,16 +1880,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		}
 
-		if (!bSecondCall) { // If it is the first call.
-			this._setBusy({
-				requestedLength: iFixedRowCount + iLength + iFixedBottomRowCount,
-				receivedLength: iReceivedLength,
-				contexts: aContexts,
-				reason: sReason
-			});
-			this._bDataRequested = false;
-		}
-
 		return aContexts;
 	};
 
@@ -1919,12 +1909,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._updateVSbRange();
 		this._bBindingLengthChanged = true;
 
-		if (sReason !== ChangeReason.Sort &&
-			sReason !== ChangeReason.Refresh) {
+		var oBinding = this.getBinding("rows");
+		var bClientBinding = TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientListBinding") ||
+							 TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientTreeBinding");
 
-			// In order to have less UI updates, the NoData text should not be updated when the reason is filter, sort or refresh.
-			// When refreshRows was called, the table will request data and later get another change event. In that turn, the
-			// NoData text gets updated.
+		if (oBinding == null || bClientBinding) {
+			// A client binding does not fire dataReceived events. Therefore we need to update the no data area here.
+			// When the binding has been removed, the table might not be completely re-rendered (just the content). But the bindingLengthChange event
+			// is fired. In this case we also need to update the no data area.
 			this._updateNoData();
 		}
 	};
@@ -1978,13 +1970,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype.updateRows = function(sReason) {
 		if (this._bExitCalled) {
 			return;
-		}
-
-		// if the binding length has changed due to filter or sorter, it may happened that the noData text was not updated in order
-		// to avoid flickering of the table.
-		// therefore we need to update the noData text here
-		if (this._bBindingLengthChanged) {
-			this._updateNoData();
 		}
 
 		// Rows should only be created/cloned when the number of rows can be determined. For the VisibleRowCountMode: Auto
@@ -2628,15 +2613,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	Table.prototype._handleRowCountModeAuto = function(iTableAvailableSpace) {
 		var oBinding = this.getBinding("rows");
+
 		if (oBinding && this.getRows().length > 0) {
 			return this._executeAdjustRows(iTableAvailableSpace);
 		} else {
-			var that = this;
 			var bReturn = !this._mTimeouts.handleRowCountModeAutoAdjustRows;
-			var iBusyIndicatorDelay = that.getBusyIndicatorDelay();
-			if (oBinding) {
-				that.setBusyIndicatorDelay(0);
-				that._setBusy(true);
+			var iBusyIndicatorDelay = this.getBusyIndicatorDelay();
+			var bBusyIndicatorEnabled = this.getEnableBusyIndicator();
+			var that = this;
+
+			if (oBinding && bBusyIndicatorEnabled) {
+				this.setBusyIndicatorDelay(0);
+				this.setBusy(true);
 			}
 
 			if (iTableAvailableSpace) {
@@ -2648,10 +2636,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					// table sizes were not updated by AdjustRows
 					that._updateTableSizes(false, true);
 				}
-				that._mTimeouts.handleRowCountModeAutoAdjustRows = undefined;
-				that._setBusy(false);
-				that.setBusyIndicatorDelay(iBusyIndicatorDelay);
+
+				delete that._mTimeouts.handleRowCountModeAutoAdjustRows;
+
+				if (oBinding && bBusyIndicatorEnabled) {
+					that.setBusyIndicatorDelay(iBusyIndicatorDelay);
+					that.setBusy(false);
+				}
 			}, 0);
+
 			return bReturn;
 		}
 	};
@@ -3789,77 +3782,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		});
 	};
 
-	/**
-	 *
-	 * @param {boolean|{requestedLength: int, receivedLength: int, contexts: Object[], reason: string}} mParameters
-	 * @private
-	 */
-	Table.prototype._setBusy = function (mParameters) {
-		if (!this.getEnableBusyIndicator() || mParameters == null) {
-			return;
-		}
-
-		var oBinding = this.getBinding("rows");
-		if (!oBinding) {
-			return;
-		}
-
-		var bSetBusy = false;
-		var iBindingLength = oBinding.getLength();
-
-		if (typeof mParameters === "boolean") {
-			bSetBusy = mParameters;
-
-		} else if (oBinding.isInitial()) {
-			bSetBusy = true;
-
-		} else if (iBindingLength === 0) {
-			// When the binding length is 0 there might be a request which has still to be processed, for example when filtering, sorting, or
-			// specifying that a column of an AnalyticalTable is summed.
-			bSetBusy = this._bDataRequested;
-
-		} else if (mParameters.reason === ChangeReason.Expand) {
-			// When expanding, if the child nodes of the expanded node are not yet loaded, another request will be issued by the binding. The
-			// returned contexts though are not undefined, but the ones which are currently displayed (the current state, before expanding).
-			// Because the required data can already be available, in which case no request will be issued, we need to check whether a request has
-			// actually been sent by the binding, by listening to its events.
-			bSetBusy = this._bDataRequested;
-
-		} else {
-			var iRequestedLength = isNaN(mParameters.requestedLength) ? -1 : mParameters.requestedLength;
-			var iReceivedLength = isNaN(mParameters.receivedLength) ? -1 : mParameters.receivedLength;
-			var aContexts = mParameters.contexts || [];
-			var bReceivedLessDataThanRequested = iReceivedLength < iRequestedLength;
-			var bReceivedAllData = iReceivedLength === iBindingLength;
-
-			// Determine whether all contexts have been loaded. If not, then another request will be issued by the binding.
-			// In this case we set the busy state of the table to true.
-
-			if (iReceivedLength === 0 || (bReceivedLessDataThanRequested && !bReceivedAllData)) {
-				bSetBusy = true;
-
-			} else {
-				// TreeBinding and AnalyticalBinding return either a contexts or a nodes array with the
-				// requested length. Both put undefined in it for contexts which need to be loaded.
-				// In case a contexts array is returned, check for undefined contexts.
-				// In case a nodes array is returned, check for nodes with an undefined context (node.context).
-
-				for (var i = 0; i < aContexts.length; i++) {
-					var oContext = aContexts[i];
-					var bIsUndefinedContext = oContext === undefined;
-					var bIsUndefinedContextOfNode = !bIsUndefinedContext && typeof oContext === "object" && "context" in oContext && oContext.context === undefined;
-
-					if (bIsUndefinedContext || bIsUndefinedContextOfNode){
-						bSetBusy = true;
-						break;
-					}
-				}
-			}
-		}
-
-		this.setBusy(bSetBusy);
-	};
-
 	Table.prototype.setBusy = function (bBusy, sBusySection) {
 		var bBusyChanged = this.getBusy() != bBusy;
 
@@ -3908,7 +3830,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype._onBindingDataRequestedListener = function (oEvent) {
 		if (oEvent.getSource() == this.getBinding("rows") && !oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
-			this._bDataRequested = true;
+			if (this.getEnableBusyIndicator()) {
+				this.setBusy(true);
+			}
+			this._bPendingRequest = true;
+			jQuery.sap.clearDelayedCall(this._mTimeouts.dataReceivedHandlerId);
 		}
 	};
 
@@ -3918,7 +3844,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype._onBindingDataReceivedListener = function (oEvent) {
 		if (oEvent.getSource() == this.getBinding("rows") && !oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
-			this._bDataRequested = false;
+			this._bPendingRequest = false;
+			jQuery.sap.clearDelayedCall(this._mTimeouts.dataReceivedHandlerId);
+
+			// The table will be set to busy when a request is sent, and set to not busy when a response is received.
+			// When scrolling down fast it can happen that there are multiple requests in the request queue of the binding, which will be processed
+			// sequentially. In this case the busy indicator will be shown and hidden multiple times (flickering) until all requests have been
+			// processed. With this timer we avoid the flickering, as the table will only be set to not busy after all requests have been processed.
+			// The same applied for updating the NoData area.
+			this._mTimeouts.dataReceivedHandlerId = jQuery.sap.delayedCall(0, this, function() {
+				if (this.getEnableBusyIndicator()) {
+					this.setBusy(false);
+				}
+				this._updateNoData();
+				delete this._mTimeouts.dataReceivedHandlerId;
+			});
 		}
 	};
 

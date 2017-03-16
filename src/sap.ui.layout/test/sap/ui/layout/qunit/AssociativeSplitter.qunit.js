@@ -17,7 +17,7 @@
 	}
 
 	QUnit.module("Responsiveness", {
-		setup: function () {
+		beforeEach: function () {
 			this.oSplitter = new sap.ui.layout.AssociativeSplitter();
 			this.oContainer = new sap.m.ScrollContainer({ content: this.oSplitter, width: "400px", height: "300px"});
 			this.oSplitter.addAssociatedContentArea(new sap.m.Button);
@@ -26,7 +26,7 @@
 			this.oContainer.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oContainer.destroy();
 		}
 	});

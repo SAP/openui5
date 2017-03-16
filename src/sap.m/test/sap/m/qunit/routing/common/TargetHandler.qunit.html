@@ -31,15 +31,15 @@
 					"use strict";
 
 					QUnit.module("add and execute navigations", {
-						setup: function () {
+						beforeEach: function () {
 							this.oTargets = new TargetHandler();
 						},
-						teardown: function () {
+						afterEach: function () {
 							this.oTargets.destroy();
 						}
 					});
 
-					test("Should do a forward navigation", function () {
+					QUnit.test("Should do a forward navigation", function (assert) {
 						//Arrange
 						var oStartPage = new Page(),
 							oToPage = new Page(),
@@ -71,7 +71,7 @@
 						oNavContainer.destroy();
 					});
 
-					test("Should do a backwards navigation", function () {
+					QUnit.test("Should do a backwards navigation", function (assert) {
 						//Arrange
 						var oStartPage = new Page(),
 							oToPage = new Page(),
@@ -106,7 +106,7 @@
 						oNavContainer.destroy();
 					});
 
-					test("Should not navigate if the currentPage is already displayed", function () {
+					QUnit.test("Should not navigate if the currentPage is already displayed", function (assert) {
 						//Arrange
 						var oPage = new Page(),
 								oNavContainer = new NavContainer({
@@ -137,7 +137,7 @@
 						strictEqual(oNavigateSpy.callCount, 1, "did call _handleRouteMatched");
 					});
 
-					test("Should do a forward navigation in master and detail of a splitContainer", function () {
+					QUnit.test("Should do a forward navigation in master and detail of a splitContainer", function (assert) {
 						//Arrange
 						var oMasterStartPage = new Page(),
 								oDetailStartPage = new Page(),
@@ -214,17 +214,17 @@
 						oTargets.destroy();
 					}
 
-					test("Should create one Navigation for a navContainer", function () {
+					QUnit.test("Should create one Navigation for a navContainer", function (assert) {
 						oneNavigationTest.call(this, NavContainer);
 					});
 
-					test("Should create one Navigation for a splitContainer in phone mode", function () {
+					QUnit.test("Should create one Navigation for a splitContainer in phone mode", function (assert) {
 						this.stub(sap.ui.Device.system, "phone", true);
 						oneNavigationTest.call(this, SplitContainer);
 					});
 
 					//this tests a bug that a queue was not emptied before
-					test("Should empty previous navigations", function () {
+					QUnit.test("Should empty previous navigations", function (assert) {
 						//Arrange
 						var fnAppyNavigationResultSpy = this.stub(TargetHandler.prototype, "_applyNavigationResult"),
 							oNavContainer = new NavContainer(),
@@ -259,7 +259,7 @@
 					});
 
 					QUnit.module("Dialog closing", {
-						setup: function () {
+						beforeEach: function () {
 							this.oStartPage = new Page();
 							this.oNavContainer = new NavContainer({
 								pages: [
@@ -271,14 +271,14 @@
 							});
 							this.oTargetHandler = new TargetHandler();
 						},
-						teardown: function () {
+						afterEach: function () {
 							this.oNavContainer.destroy();
 							this.oTargetHandler.destroy();
 							this.oStub.restore();
 						}
 					});
 
-					QUnit.test("Should close all dialogs", function () {
+					QUnit.test("Should close all dialogs", function (assert) {
 						// Arrange
 						var bHasInstances = function () {
 								return true;
@@ -305,7 +305,7 @@
 						oTargetPage.destroy();
 					});
 
-					QUnit.test("Should not close dialogs, if the current page is already displayed", function () {
+					QUnit.test("Should not close dialogs, if the current page is already displayed", function (assert) {
 						// System under test
 						var fnCloseSpy = this.spy(this.oTargetHandler, "_closeDialogs");
 
@@ -321,7 +321,7 @@
 						QUnit.strictEqual(fnCloseSpy.callCount, 0, "did not close the dialogs");
 					});
 
-					QUnit.test("Should set close all dialogs", function () {
+					QUnit.test("Should set close all dialogs", function (assert) {
 							//Assert
 							QUnit.ok(this.oTargetHandler.getCloseDialogs(), "default value is true");
 
@@ -333,16 +333,16 @@
 					});
 
 
-					module("Direction determinator",{
-						setup: function () {
+					QUnit.module("Direction determinator",{
+						beforeEach: function () {
 							this.oTargetHandler = new TargetHandler();
 						},
-						teardown: function () {
+						afterEach: function () {
 							this.oTargetHandler.destroy();
 						}
 					});
 
-					test("Should take the direction if it is passed directly", function () {
+					QUnit.test("Should take the direction if it is passed directly", function (assert) {
 
 						function directDirectionTestcase (sDirection, bExprectedBackwards) {
 							// Act
@@ -372,7 +372,7 @@
 						strictEqual(bResult, oTestOptions.expectedBackwards, "Did return the expected direction");
 					}
 
-					test("Should be backwards if the new viewlevel is lower than the current one", function () {
+					QUnit.test("Should be backwards if the new viewlevel is lower than the current one", function (assert) {
 
 						viewLevelDirectionTestcase.call(this, {
 							currentViewLevel : 1,
@@ -382,7 +382,7 @@
 
 					});
 
-					test("Should be forwards if the new viewlevel is greater than the current one", function () {
+					QUnit.test("Should be forwards if the new viewlevel is greater than the current one", function (assert) {
 
 						viewLevelDirectionTestcase.call(this, {
 							currentViewLevel : 0,
@@ -392,7 +392,7 @@
 
 					});
 
-					test("Should be forwards if the new viewlevel is equal to the current one", function () {
+					QUnit.test("Should be forwards if the new viewlevel is equal to the current one", function (assert) {
 
 						viewLevelDirectionTestcase.call(this, {
 							currentViewLevel : 0,
@@ -402,7 +402,7 @@
 
 					});
 
-					test("Should be forwards if the new viewlevel is undefined and the last one is not undefined", function () {
+					QUnit.test("Should be forwards if the new viewlevel is undefined and the last one is not undefined", function (assert) {
 
 
 						viewLevelDirectionTestcase.call(this, {
@@ -413,7 +413,7 @@
 
 					});
 
-					test("Should be forwards if the new viewlevel is defined but the last one is undefined", function () {
+					QUnit.test("Should be forwards if the new viewlevel is defined but the last one is undefined", function (assert) {
 
 						viewLevelDirectionTestcase.call(this, {
 							currentViewLevel : undefined,
@@ -423,7 +423,7 @@
 
 					});
 
-					test("Should be forwards if both are undefined", function () {
+					QUnit.test("Should be forwards if both are undefined", function (assert) {
 
 						viewLevelDirectionTestcase.call(this, {
 							currentViewLevel : undefined,
@@ -447,7 +447,7 @@
 						strictEqual(oStub.callCount, 1, "Did ask the history");
 					}
 
-					test("Should be forwards if history direction is not backwards", function () {
+					QUnit.test("Should be forwards if history direction is not backwards", function (assert) {
 
 						historyDirectionTestcase.call(this, {
 							historyDirection :HistoryDirection.Forwards,
@@ -456,7 +456,7 @@
 
 					});
 
-					test("Should be forwards if history direction is unknown", function () {
+					QUnit.test("Should be forwards if history direction is unknown", function (assert) {
 
 						historyDirectionTestcase.call(this, {
 							historyDirection : HistoryDirection.Unknown,
@@ -465,7 +465,7 @@
 
 					});
 
-					test("Should be backwards if history direction is backwards", function () {
+					QUnit.test("Should be backwards if history direction is backwards", function (assert) {
 
 						historyDirectionTestcase.call(this, {
 							historyDirection : HistoryDirection.Backwards,
@@ -474,7 +474,7 @@
 
 					});
 
-					test("Should not ask viewLevel or history if direction is given", function () {
+					QUnit.test("Should not ask viewLevel or history if direction is given", function (assert) {
 
 						// Arrange
 						this.oTargetHandler._iCurrentViewlevel = 0;
@@ -494,7 +494,7 @@
 					});
 
 
-					test("Should not ask history if viewLevel is given", function () {
+					QUnit.test("Should not ask history if viewLevel is given", function (assert) {
 
 						// Arrange
 						this.oTargetHandler._iCurrentViewLevel = 1;
@@ -512,7 +512,7 @@
 
 					});
 
-					test("Should return a forwards navigation if nothing is specified and should not ask the history", function () {
+					QUnit.test("Should return a forwards navigation if nothing is specified and should not ask the history", function (assert) {
 						// Arrange
 						var oStub = this.stub(History.prototype, "getDirection");
 
@@ -525,7 +525,7 @@
 						strictEqual(oStub.callCount, 0, "Did not ask the history");
 					});
 
-					test("Should remember the viewlevel after a direction is determined", function () {
+					QUnit.test("Should remember the viewlevel after a direction is determined", function (assert) {
 						this.oTargetHandler._getDirection({
 							viewLevel: 1,
 							direction: HistoryDirection.Forwards

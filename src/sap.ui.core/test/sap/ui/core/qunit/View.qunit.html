@@ -30,9 +30,9 @@
 	jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
 	jQuery.sap.require("sap.ui.core.mvc.XMLView");
 
-	module("sap.ui.core.mvc.View");
+	QUnit.module("sap.ui.core.mvc.View");
 
-	test("ID handling", 5, function () {
+	QUnit.test("ID handling", 5, function (assert) {
 
 		var oView = new sap.ui.core.mvc.View("dummy", {});
 		var sPrefixedId = oView.createId("anyid");
@@ -46,14 +46,14 @@
 		oView.destroy();
 	});
 
-	module("sap.ui.core.mvc.View#runPreprocessor(sync)", {
-		setup: function() {
+	QUnit.module("sap.ui.core.mvc.View#runPreprocessor(sync)", {
+		beforeEach: function() {
 			mock = sinon.mock(sap.ui.core.util.XMLPreprocessor);
 			expectProcess = mock.expects("process");
 			_mPreprocessors = jQuery.extend(true, {}, sap.ui.core.mvc.View._mPreprocessors);
 			sap.ui.core.mvc.View.PreprocessorType = {"Foo":"foo"};
 		},
-		teardown: function() {
+		afterEach: function() {
 			// restore the sinon spy to original state
 			mock.restore();
 			// remove existing global preprocessors
@@ -62,7 +62,7 @@
 		}
 	});
 
-	test("runPreprocessor w/o config", 3, function () {
+	QUnit.test("runPreprocessor w/o config", 3, function (assert) {
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({});
 
@@ -71,7 +71,7 @@
 		equal(oView.runPreprocessor("xml", oSource, true), oSource);
 	});
 
-	test("runPreprocessor w/ config", 2, function () {
+	QUnit.test("runPreprocessor w/ config", 2, function (assert) {
 		var oPreprocessors = {
 				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
 				// These types can be different for several view types.
@@ -99,7 +99,7 @@
 		expectProcess.verify();
 	});
 
-	test("runPreprocessor w/ config and settings", 5, function () {
+	QUnit.test("runPreprocessor w/ config and settings", 5, function (assert) {
 		var oPreprocessors = {
 				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
 				// These types can be different for several view types.
@@ -130,7 +130,7 @@
 	});
 
 
-	test("runPreprocessor w/ default preprocessor for xml view", 2, function () {
+	QUnit.test("runPreprocessor w/ default preprocessor for xml view", 2, function (assert) {
 		var oConfig = {},
 			sViewContent = [
 			    '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
@@ -149,7 +149,7 @@
 		strictEqual(oView._xContent, expectProcess.returnValues[0]);
 	});
 
-	test("runPreprocessor w/ invalid preprocessor", 2, function () {
+	QUnit.test("runPreprocessor w/ invalid preprocessor", 2, function (assert) {
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
@@ -169,7 +169,7 @@
 		sinon.assert.notCalled(expectProcess);
 	});
 
-	test("runPreprocessor w/ valid preprocessor", 1, function () {
+	QUnit.test("runPreprocessor w/ valid preprocessor", 1, function (assert) {
 		var oSource = {},
 			bCalled = false,
 			oView = new sap.ui.core.mvc.View({
@@ -194,7 +194,7 @@
 		}
 	});
 
-	test("runPreprocessor w/o known preprocessor", 2, function () {
+	QUnit.test("runPreprocessor w/o known preprocessor", 2, function (assert) {
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
@@ -208,7 +208,7 @@
 		sinon.assert.notCalled(expectProcess);
 	});
 
-	test("runPreprocessor w/o syncSupport preprocessor", 3, function () {
+	QUnit.test("runPreprocessor w/o syncSupport preprocessor", 3, function (assert) {
 		var oSource = {},
 			bCalled = false,
 			oView = new sap.ui.core.mvc.View({
@@ -233,14 +233,14 @@
 		sinon.assert.notCalled(expectProcess);
 	});
 
-	module("sap.ui.core.mvc.View#runPreprocessor (async)", {
-		setup: function() {
+	QUnit.module("sap.ui.core.mvc.View#runPreprocessor (async)", {
+		beforeEach: function() {
 			mock = sinon.mock(sap.ui.core.util.XMLPreprocessor);
 			expectProcess = mock.expects("process");
 			_mPreprocessors = jQuery.extend(true, {}, sap.ui.core.mvc.View._mPreprocessors);
 			sap.ui.core.mvc.View.PreprocessorType = {"Foo":"foo"};
 		},
-		teardown: function() {
+		afterEach: function() {
 			// restore the sinon spy to original state
 			mock.restore();
 			// remove existing global preprocessors
@@ -421,8 +421,8 @@
 		});
 	});
 
-	module("sap.ui.core.mvc.View#registerPreprocessor", {
-		setup: function() {
+	QUnit.module("sap.ui.core.mvc.View#registerPreprocessor", {
+		beforeEach: function() {
 			_mPreprocessors = jQuery.extend(true, {}, sap.ui.core.mvc.View._mPreprocessors);
 			this.sViewContent = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
@@ -439,7 +439,7 @@
 			},
 			spy = sinon.spy(sap.ui.core.mvc.View.prototype, "runPreprocessor");
 		},
-		teardown: function() {
+		afterEach: function() {
 			// restore the sinon spy to original state
 			sap.ui.core.mvc.View.prototype.runPreprocessor.restore();
 			// remove existing global preprocessors
@@ -447,7 +447,7 @@
 		}
 	});
 
-	test("register global preprocessor", 2, function () {
+	QUnit.test("register global preprocessor", 2, function (assert) {
 
 		// templating preprocessor set by default
 		deepEqual(
@@ -692,7 +692,7 @@
 		});
 	});
 
-	module("sap.ui.core.mvc.View#loaded");
+	QUnit.module("sap.ui.core.mvc.View#loaded");
 
 	asyncTest("Retrieve promise for view generally", 2, function() {
 		var oView = new sap.ui.core.mvc.View({});

@@ -57,14 +57,14 @@
 			QUnit.start();
 		});
 
-		test("Shell rendered", function() {
+		QUnit.test("Shell rendered", function(assert) {
 			ok(jQuery.sap.domById("myShell"), "Shell should be rendered");
 			ok(jQuery.sap.domById("myApp"), "App should be rendered");
 			ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
 		});
 
 
-		test("Shell should hide the branding bar when another Shell-like control is parent and has one", function() {
+		QUnit.test("Shell should hide the branding bar when another Shell-like control is parent and has one", function(assert) {
 			strictEqual(oShell.$().find(".sapMShellBrandingBar").length, 1, "branding bar should be rendered");
 			strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "block", "branding bar should normally be visible");
 
@@ -77,14 +77,14 @@
 
 
 		// Shell features
-		test("Shell features", function() {
+		QUnit.test("Shell features", function(assert) {
 			equal(byIdSuffix("-hdrTxt").text(), "Test Shell", "Title should be rendered");
 			equal(jQuery(".sapMShellHeaderRightText").text(), "Mr. Right", "Header right text should be rendered");
 			equal(byIdSuffix("-logo").attr("src"), "../images/SAPLogo.jpg", "Logo URL should be rendered");
 			equal(byIdSuffix("-logo").attr("alt"), "Logo", "Logo ALT should be 'Logo''");
 		});
 
-		test("Shell without title", function() {
+		QUnit.test("Shell without title", function(assert) {
 			var oShellNoTitle = new sap.m.Shell("myShellNotitle", {
 			});
 
@@ -99,7 +99,7 @@
 		});
 
 		// logout event
-		test("Shell logout event", function() {
+		QUnit.test("Shell logout event", function(assert) {
 			expect(2); // incl. logout handler
 			window.loggedOut = false;
 			qutils.triggerTouchEvent("tap", oShell.getId() + "-logout");
@@ -113,7 +113,7 @@
 			var sBgVariant = sap.ui.core.theming.Parameters.get("sapUiGlobalBackgroundVariant");
 
 			// bg image std
-			test("Shell background standard (tests the sap.m.BackgroundHelper as well)", function() {
+			QUnit.test("Shell background standard (tests the sap.m.BackgroundHelper as well)", function(assert) {
 				var bgDiv = byIdSuffix("-BG"),
 					style = window.getComputedStyle(bgDiv[0]);
 
@@ -128,7 +128,7 @@
 			});
 
 			// bg image - and make it custom
-			test("Shell background custom (tests the sap.m.BackgroundHelper as well)", function() {
+			QUnit.test("Shell background custom (tests the sap.m.BackgroundHelper as well)", function(assert) {
 				oShell.setBackgroundImage("test/x.png");
 				oShell.setBackgroundRepeat(false);
 				oShell.setBackgroundColor("#0f0");
@@ -147,7 +147,7 @@
 			});
 
 			// bg image - revert to standard again
-			test("Shell background reset (tests the sap.m.BackgroundHelper as well)", function() {
+			QUnit.test("Shell background reset (tests the sap.m.BackgroundHelper as well)", function(assert) {
 				oShell.setBackgroundImage(null);
 				oShell.setBackgroundRepeat(true);
 				oShell.setBackgroundColor(null);
@@ -168,9 +168,9 @@
 				equal(style.opacity, "1", "Background opacity should be set");
 			});
 
-			module("custom setters");
+			QUnit.module("custom setters");
 
-			test("setTitle modifies the dom, sets the property and doesn't re-render", function() {
+			QUnit.test("setTitle modifies the dom, sets the property and doesn't re-render", function(assert) {
 				var $Dom,
 					sExampleTitle = "example title",
 					oSetPropertySpy;
@@ -194,7 +194,7 @@
 				oShell.setProperty.restore();
 			});
 
-			test("setHeaderRightText modifies the dom, sets the property and doesn't re-render", function() {
+			QUnit.test("setHeaderRightText modifies the dom, sets the property and doesn't re-render", function(assert) {
 				var $Dom,
 					sExampleHeaderText = "username",
 					oSetPropertySpy;
@@ -218,7 +218,7 @@
 				oShell.setProperty.restore();
 			});
 
-			test("setAppWidthLimited modifies the dom, sets the property and doesn't re-render", function() {
+			QUnit.test("setAppWidthLimited modifies the dom, sets the property and doesn't re-render", function(assert) {
 				var $Dom,
 					oSetPropertySpy;
 
@@ -248,7 +248,7 @@
 				oShell.setProperty.restore();
 			});
 
-			test("setBackgroundOpacity modifies the dom only when value is valid, sets the property and doesn't re-render", function() {
+			QUnit.test("setBackgroundOpacity modifies the dom only when value is valid, sets the property and doesn't re-render", function(assert) {
 				var $Dom,
 						sExampleValidOpacity = 0.5,
 						sExampleInvalidOpacity = 2.5,
@@ -283,7 +283,7 @@
 				oShell.setProperty.restore();
 			});
 
-			test("setHomeIcon calls setIcons, sets the property and doesn't re-render", function() {
+			QUnit.test("setHomeIcon calls setIcons, sets the property and doesn't re-render", function(assert) {
 				var oSetPropertySpy,
 					oJQuerySapSetIconSpy,
 					oExampleIcons = {

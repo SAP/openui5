@@ -46,34 +46,34 @@
 	});
 	oToggleButton3.placeAt("uiArea3");
 
-	module("pressed state");
+	QUnit.module("pressed state");
 
-	test("TestGetPressedStateOK", function() {
+	QUnit.test("TestGetPressedStateOK", function(assert) {
 		equal(oToggleButton1.getPressed(), true, "getPressedState for testToggleButton_1");
 		equal(oToggleButton2.getPressed(), false, "getPressedState for testToggleButton_2");
 	});
 
-	test("Check Accessibility States", function() {
+	QUnit.test("Check Accessibility States", function(assert) {
 		strictEqual(oToggleButton1.$().attr("aria-pressed"), "true", "aria-pressed state is true for testToggleButton_1");
 		strictEqual(oToggleButton2.$().attr("aria-pressed"), "false", "aria-pressed state is false for testToggleButton_2");
 		strictEqual(oToggleButton3.$().attr("aria-disabled"), "true", "aria-disabled status is set");
 	});
 
-	test("TestPressedToUnpressedOK", function() {
+	QUnit.test("TestPressedToUnpressedOK", function(assert) {
 		qutils.triggerEvent("tap", oToggleButton1.getId());
 		sap.ui.getCore().applyChanges();
 		equal(oToggleButton1.getPressed(), false, "getPressedState");
 		strictEqual(oToggleButton1.$().attr("aria-pressed"), "false", "aria-pressed state is false for testToggleButton_1 after tap");
 	});
 
-	test("TestUnpressedToPressedOK", function() {
+	QUnit.test("TestUnpressedToPressedOK", function(assert) {
 		qutils.triggerEvent("tap", oToggleButton2.getId());
 		sap.ui.getCore().applyChanges();
 		equal(oToggleButton2.getPressed(), true, "getPressedState");
 		strictEqual(oToggleButton2.$().attr("aria-pressed"), "true", "aria-pressed state is true for testToggleButton_2 after tap");
 	});
 
-	test("Should not change the pressed state, from toggled to untoggled, on a tap Event if the toggle button is disabled", function() {
+	QUnit.test("Should not change the pressed state, from toggled to untoggled, on a tap Event if the toggle button is disabled", function(assert) {
 		// Arrange + System under Test
 		var oToggleButton = new sap.m.ToggleButton({
 				enabled : false,
@@ -93,7 +93,7 @@
 		strictEqual(oToggleButton.$().attr("aria-disabled"), "true", "aria-disabled is true");
 	});
 
-	test("Should not change the pressed state, from untoggled to toggled, on a tap Event if the toggle button is disabled", function() {
+	QUnit.test("Should not change the pressed state, from untoggled to toggled, on a tap Event if the toggle button is disabled", function(assert) {
 		// Arrange + System under Test
 		var oToggleButton = new sap.m.ToggleButton({
 				enabled : false,
@@ -112,7 +112,7 @@
 		strictEqual(oTapSpy.callCount, 1, "tap was fired");
 	});
 
-	test("Should change the pressed state, from toggled to untoggled, if it was called over the API", function() {
+	QUnit.test("Should change the pressed state, from toggled to untoggled, if it was called over the API", function(assert) {
 		// Arrange + System under Test
 		var oToggleButton = new sap.m.ToggleButton({
 				enabled : false,
@@ -129,7 +129,7 @@
 		strictEqual(oToggleButton.getPressed(), false, "the pressed state is still false");
 	});
 
-	test("Should change the pressed state, from untoggled to toggled, if it was called over the API", function() {
+	QUnit.test("Should change the pressed state, from untoggled to toggled, if it was called over the API", function(assert) {
 		// Arrange + System under Test
 		var oToggleButton = new sap.m.ToggleButton({
 				enabled : false,
@@ -147,9 +147,9 @@
 	});
 
 
-	module("Integration tests");
+	QUnit.module("Integration tests");
 
-	test("Should not change the pressed state on a tap Event if the toggle button is in a disabled Toolbar", function() {
+	QUnit.test("Should not change the pressed state on a tap Event if the toggle button is in a disabled Toolbar", function(assert) {
 		//Arrange
 		jQuery.sap.require("sap.m.Toolbar");
 		var oToolbar = new sap.m.Toolbar({
@@ -177,9 +177,9 @@
 		strictEqual(oTapSpy.callCount, 1, "tap was fired");
 	});
 
-	module("Accessibility");
+	QUnit.module("Accessibility");
 
-	test("getAccessibilityInfo", function() {
+	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oButton = new sap.m.ToggleButton({tooltip: "Tooltip"});
 		ok(!!oButton.getAccessibilityInfo, "ToggleButton has a getAccessibilityInfo function");
 		var oInfo = oButton.getAccessibilityInfo();

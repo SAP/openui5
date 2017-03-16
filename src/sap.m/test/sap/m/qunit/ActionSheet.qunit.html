@@ -90,13 +90,13 @@
 
 			app.addPage(page).placeAt("content");
 
-			module("Initial Check");
+			QUnit.module("Initial Check");
 
-			test("Initialization", function() {
+			QUnit.test("Initialization", function(assert) {
 				ok(!jQuery.sap.domById("actionsheet"), "ActionSheet is not rendered before it's ever opened.");
 			});
 
-			module("Open and Close - with Title and Cancel Button");
+			QUnit.module("Open and Close - with Title and Cancel Button");
 
 			asyncTest("Open ActionSheet - - with Title and Cancel Button", function(){
 				oButton.firePress();
@@ -130,7 +130,7 @@
 				oActionSheet.close();
 			});
 
-			module("Open and Close - with Title but no Cancel Button");
+			QUnit.module("Open and Close - with Title but no Cancel Button");
 
 			asyncTest("Open ActionSheet - - with Title  but no Cancel Button", function(){
 				oActionSheet.setShowCancelButton(false);
@@ -161,7 +161,7 @@
 				oActionSheet.close();
 			});
 
-			module("Open and Close - no Title but with Cancel Button");
+			QUnit.module("Open and Close - no Title but with Cancel Button");
 
 			asyncTest("Open ActionSheet - - no Title but with Cancel Button", function(){
 				oActionSheet.setShowCancelButton(true);
@@ -193,7 +193,7 @@
 				oActionSheet.close();
 			});
 
-			module("Open and Close - no Title and no Cancel Button");
+			QUnit.module("Open and Close - no Title and no Cancel Button");
 
 			asyncTest("Open ActionSheet - - no Title and no Cancel Button", function(){
 				oActionSheet.setShowCancelButton(false);
@@ -220,7 +220,7 @@
 				oActionSheet.close();
 			});
 
-			module("Additional Test");
+			QUnit.module("Additional Test");
 
 			asyncTest("Open an ActionSheet which is already aggregated in dependents aggregation", function(){
 				var oAC = new sap.m.ActionSheet({
@@ -286,7 +286,7 @@
 				}, 500)
 			});
 
-			module("keyboard handling");
+			QUnit.module("keyboard handling");
 
 			asyncTest('PageUp keyboard handling', function(){
 				expect(2);
@@ -516,9 +516,9 @@
 				}, 500)
 			});
 
-			module("Screen reader");
+			QUnit.module("Screen reader");
 
-			test("Popup should have ariaLabelledBy that points to the sPopupHiddenLabelId", function(assert) {
+			QUnit.test("Popup should have ariaLabelledBy that points to the sPopupHiddenLabelId", function(assert) {
 				var done = assert.async(),
 					oButton = new sap.m.Button({
 						text : "Open ActionSheet",
@@ -554,7 +554,7 @@
 				});
 			});
 
-			test('Dialog without a title on mobile phone should have ariaLabeleedBy pointing to the sPopupHiddenLabelId', function(assert){
+			QUnit.test('Dialog without a title on mobile phone should have ariaLabeleedBy pointing to the sPopupHiddenLabelId', function(assert) {
 				var done = assert.async(),
 					oSystem = {
 						desktop: false,
@@ -731,9 +731,9 @@
 
 			});
 
-			module("API");
+			QUnit.module("API");
 
- 			test('ActionSheet clone should create a duplicate', function() {
+ 			QUnit.test('ActionSheet clone should create a duplicate', function(assert) {
  				function mockButtonPressHandler() {
  					jQuery.sap.log.info('mock button press event handler was triggered');
  				}
@@ -775,7 +775,7 @@
 
  			});
 
-			test('After removing buttons the additional invisible texts should be cleaned', function () {
+			QUnit.test('After removing buttons the additional invisible texts should be cleaned', function (assert) {
 				var oButton = new sap.m.Button({text: "Button1"}),
 					oActionSheet = new sap.m.ActionSheet({
 						cancelButtonText: "Cancel",

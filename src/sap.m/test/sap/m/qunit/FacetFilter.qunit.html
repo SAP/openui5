@@ -25,9 +25,9 @@
 //	if(navigator.userAgent.indexOf("MSIE") === -1) {
 
 
-	module("Control Design");
+	QUnit.module("Control Design");
 
-	test("Aggregations", function() {
+	QUnit.test("Aggregations", function(assert) {
 
 		// The aggregations below are created programatically by FacetFilter when it is initialized, so make sure they are created.
 		var oFF = new sap.m.FacetFilter("someid");
@@ -56,7 +56,7 @@
 	});
 
 
-	test("Aggreations: list's items can be bound to a model with an arbitrary size limit", function(assert) {
+	QUnit.test("Aggreations: list's items can be bound to a model with an arbitrary size limit", function(assert) {
 		//prepare
 		var oFF = new sap.m.FacetFilter({type: sap.m.FacetFilterType.Light}),
 				oModel = new sap.ui.model.json.JSONModel(),
@@ -91,7 +91,7 @@
 		oFF.getAggregation("summaryBar").firePress();
 	});
 
-	test("Default Property Values & Override", function() {
+	QUnit.test("Default Property Values & Override", function(assert) {
 
 		var oFF = new sap.m.FacetFilter();
 		strictEqual(oFF.getVisible(), true, "Visibility should be enabled by default");
@@ -128,9 +128,9 @@
 	});
 
 
-	module("Private API");
+	QUnit.module("Private API");
 
-	test("FacetFilter.init", function() {
+	QUnit.test("FacetFilter.init", function(assert) {
 
 		var oFF = new sap.m.FacetFilter();
 		oFFS=oFF._enableTouchSupport();
@@ -151,7 +151,7 @@
 		oFF.destroy();
 	});
 
-	test("FacetFilter._getPopover", function() {
+	QUnit.test("FacetFilter._getPopover", function(assert) {
 
 		var oFF = new sap.m.FacetFilter();
 		oFF._getPopover();
@@ -231,7 +231,7 @@
 		});
 	}
 
-	test("FacetFilter._moveListToDisplayContainer, _restoreListFromDisplayContainer", function() {
+	QUnit.test("FacetFilter._moveListToDisplayContainer, _restoreListFromDisplayContainer", function(assert) {
 
 		var oFF = new sap.m.FacetFilter();
 		var oFFL1 = new sap.m.FacetFilterList()
@@ -280,7 +280,7 @@
 		destroyFF(oFF);
 	});
 
-	test("FacetFilter._getFacetDialog", function() {
+	QUnit.test("FacetFilter._getFacetDialog", function(assert) {
 
 		var oFF = new sap.m.FacetFilter();
 		var oDialog = oFF.getAggregation("dialog");
@@ -343,7 +343,7 @@
 		oFF._navToFilterItemsPage(oNavContainer.getPages()[0].getContent()[0].getItems()[0]);
 	});
 
-	test("FacetFilter._createFacetList", function() {
+	QUnit.test("FacetFilter._createFacetList", function(assert) {
 
 		var sFacet1 = "Facet1", sFacet2 = "Facet2", iFacet1AllCount = 4, iFacet2AllCount = 7;
 		var oFF = new sap.m.FacetFilter();
@@ -380,7 +380,7 @@
 		destroyFF(oFF);
 	});
 
-	test("FacetFilter._createFacetPage", function() {
+	QUnit.test("FacetFilter._createFacetPage", function(assert) {
 
 		var oFF = new sap.m.FacetFilter();
 		var oPage = oFF._createFacetPage();
@@ -402,7 +402,7 @@
 		oFF.destroy();
 	});
 
-	test("FacetFilter._createFilterItemsPage", function() {
+	QUnit.test("FacetFilter._createFilterItemsPage", function(assert) {
 
 		var oFF = new sap.m.FacetFilter();
 		var oPage = oFF._createFilterItemsPage();
@@ -413,7 +413,7 @@
 		oFF.destroy();
 	});
 
-	test("FacetFilter._createFilterItemsSearchFieldBar", function() {
+	QUnit.test("FacetFilter._createFilterItemsSearchFieldBar", function(assert) {
 
 		var oFF = new sap.m.FacetFilter();
 		var oFFL1 = new sap.m.FacetFilterList();
@@ -437,7 +437,7 @@
 		oFF.destroy();
 	});
 
-	test("FacetFilter._createSelectAllCheckboxBar", function() {
+	QUnit.test("FacetFilter._createSelectAllCheckboxBar", function(assert) {
 
 		var oFF = new sap.m.FacetFilter();
 		var oFFL1 = new sap.m.FacetFilterList();
@@ -474,7 +474,7 @@
 	});
 
 
-	test("FacetFilter._getFacetDialogNavContainer", function() {
+	QUnit.test("FacetFilter._getFacetDialogNavContainer", function(assert) {
 
 		var oFF = new sap.m.FacetFilter();
 		var oNavContainer = oFF._getFacetDialogNavContainer();
@@ -616,7 +616,7 @@
 		notEqual(oNavContainer.getPages()[1].getId(), oOldItemsPage && oOldItemsPage.getId(), 'New items page has been created');
 	});
 
-	test("FacetFilter._getSequencedLists", function() {
+	QUnit.test("FacetFilter._getSequencedLists", function(assert) {
 
 		var oFF = new sap.m.FacetFilter();
 		var aSequencedLists = oFF._getSequencedLists();
@@ -708,7 +708,7 @@
 		oFF.destroy();
 	});
 
-	test("FacetFilter._getButtonForList", function() {
+	QUnit.test("FacetFilter._getButtonForList", function(assert) {
 
 		var sListTitle = "List";
 		var oFF = new sap.m.FacetFilter();
@@ -725,7 +725,7 @@
 		destroyFF(oFF);
 	});
 
-	test("FacetFilter._getFacetRemoveIcon", function() {
+	QUnit.test("FacetFilter._getFacetRemoveIcon", function(assert) {
 
 		var oFF = new sap.m.FacetFilter({
 			showPersonalization: true
@@ -840,7 +840,7 @@
   });
 
 
-	test("FacetFilter._getAddFacetButton", function() {
+	QUnit.test("FacetFilter._getAddFacetButton", function(assert) {
 		var oFF = new sap.m.FacetFilter();
 		var oAddFacetButton = oFF.getAggregation("addFacetButton");
 		strictEqual(oAddFacetButton, oFF._getAddFacetButton(), "There should only be one instance of the add facet button created for the lifetime of the FacetFilter");
@@ -850,7 +850,7 @@
 		destroyFF(oFF);
 	});
 
-	test("FacetFilter._createResetButton", function() {
+	QUnit.test("FacetFilter._createResetButton", function(assert) {
 
 		var oFF = new sap.m.FacetFilter();
 		var oResetButton = oFF._createResetButton();
@@ -867,7 +867,7 @@
 		destroyFF(oFF);
 	});
 
-	test("FacetFilter._addOKButtonToPopover", function() {
+	QUnit.test("FacetFilter._addOKButtonToPopover", function(assert) {
 
 		var oFF = new sap.m.FacetFilter();
 		var oPopover = oFF._getPopover();
@@ -888,7 +888,7 @@
 		destroyFF(oFF);
 	});
 
-	test("FacetFilter._getSummaryBar", function() {
+	QUnit.test("FacetFilter._getSummaryBar", function(assert) {
 
 		var oFF = new sap.m.FacetFilter();
 		var oSummaryBar = oFF.getAggregation("summaryBar");
@@ -909,7 +909,7 @@
 		destroyFF(oFF);
 	});
 
-	test("FacetFilter._getSelectedItemsText", function() {
+	QUnit.test("FacetFilter._getSelectedItemsText", function(assert) {
 		var oFF = new sap.m.FacetFilter();
 		var oFFL = new sap.m.FacetFilterList({
 			   title : "List1",
@@ -935,7 +935,7 @@
 		destroyFF(oFF);
 	});
 
-	test("FacetFilter._getSummaryText", function() {
+	QUnit.test("FacetFilter._getSummaryText", function(assert) {
 
 		var oFF = oSCHelper.createFFWithModel();
 		var oFFL = oFF.getLists()[0];
@@ -953,7 +953,7 @@
 	});
 
 
-	test("FacetFilter._addResetToSummary, _removeResetFromSummary", function() {
+	QUnit.test("FacetFilter._addResetToSummary, _removeResetFromSummary", function(assert) {
 
 		var oFF = new sap.m.FacetFilter();
 		var oSummaryBar = oFF._getSummaryBar();
@@ -970,7 +970,7 @@
 		destroyFF(oFF);
 	});
 
-	test("FacetFilter._setButtonText", function() {
+	QUnit.test("FacetFilter._setButtonText", function(assert) {
 		var sItemText1 = "Val1", sItemText2 = "Val2", sItemText3 = "Val3";
 		var oFF = new sap.m.FacetFilter();
 		var oFFL = new sap.m.FacetFilterList({
@@ -1012,7 +1012,7 @@
 		destroyFF(oFF);
 	});
 
-	test("FacetFilterList.init", function() {
+	QUnit.test("FacetFilterList.init", function(assert) {
 
 		var oFFL = new sap.m.FacetFilterList();
 		strictEqual(oFFL.getMultiSelect(), true, "List multiSelect should be enabled by default");
@@ -1183,7 +1183,7 @@
 		oFF.openFilterDialog();
 	});
 
-	test("FacetFilterList._search, _getSearchValue", function() {
+	QUnit.test("FacetFilterList._search, _getSearchValue", function(assert) {
 
 		var aValues = [{text : "a"}, {text : "ba"}, {text : "c"}, {text: ''}, {text: ' '}, {text: null}, {}];
 		var oModel = new sap.ui.model.json.JSONModel({
@@ -1325,7 +1325,7 @@
 			openPopover(oFF, 0);
 		});
 
-		test("FacetFilterList._resetItemsBinding", function() {
+		QUnit.test("FacetFilterList._resetItemsBinding", function(assert) {
 
 			var oFFL = new sap.m.FacetFilterList();
 			oFFL.setSelectedKeys({"val1": "Val1", "val2": "Val2"});
@@ -1359,7 +1359,7 @@
 			oFFL.destroy();
 		});
 
-		test("FacetFilterList._getScrollingArrow", function() {
+		QUnit.test("FacetFilterList._getScrollingArrow", function(assert) {
 
 			var oFF = new sap.m.FacetFilter();
 
@@ -1391,7 +1391,7 @@
 			destroyFF(oFF);
 		});
 
-		test("FacetFilterItem.init", function() {
+		QUnit.test("FacetFilterItem.init", function(assert) {
 			var oItem = new sap.m.FacetFilterItem();
 
 			ok(oItem.hasStyleClass("sapMFFLI"), "sapMFFLI style class set");
@@ -1400,9 +1400,9 @@
 
 
 
-		module("Public API");
+		QUnit.module("Public API");
 
-		test("FacetFilterItem.setCount", function() {
+		QUnit.test("FacetFilterItem.setCount", function(assert) {
 
 			var iCount1 = 14, iCount2 = 67;
 			var oItem = new sap.m.FacetFilterItem();
@@ -1418,7 +1418,7 @@
 			oItem.destroy();
 		});
 
-		test("FacetFilterItem.setCounter", function() {
+		QUnit.test("FacetFilterItem.setCounter", function(assert) {
 
 			var iCount1 = 14, iCount2 = 67;
 			var oItem = new sap.m.FacetFilterItem();
@@ -1434,7 +1434,7 @@
 			oItem.destroy();
 		});
 
-		test("FacetFilter.openFilterDialog", function() {
+		QUnit.test("FacetFilter.openFilterDialog", function(assert) {
 
 			var oFF = new sap.m.FacetFilter();
 			oFF.openFilterDialog();
@@ -1448,7 +1448,7 @@
 			destroyFF(oFF);
 		});
 
-		test("FacetFilter.removeList, removeAggregation", function() {
+		QUnit.test("FacetFilter.removeList, removeAggregation", function(assert) {
 
 			var oFF = new sap.m.FacetFilter({
 				showPersonalization : true
@@ -1510,7 +1510,7 @@
 		});
 
 
-		test("FacetFilterList.removeSelections model inherited from core, binding in listOpen", function() {
+		QUnit.test("FacetFilterList.removeSelections model inherited from core, binding in listOpen", function(assert) {
 
 			var aItemsData = [{key: "1", text: "Val1"},{key: "2", text: "Val2"},{key: "3", text: "Val3"}];
 			var oModel = new sap.ui.model.json.JSONModel({
@@ -1543,7 +1543,7 @@
 			oFFL.fireListOpen();
 		});
 
-		test("FacetFilterList.removeSelections model set directly on list (not inherited)", function() {
+		QUnit.test("FacetFilterList.removeSelections model set directly on list (not inherited)", function(assert) {
 
 			var aItemsData = [{key: "1", text: "Val1"},{key: "2", text: "Val2"},{key: "3", text: "Val3"}];
 
@@ -1580,7 +1580,7 @@
 			destroyFF(oFF);
 		});
 
-		test("FacetFilterList.removeSelections no model and no binding", function() {
+		QUnit.test("FacetFilterList.removeSelections no model and no binding", function(assert) {
 			var oFFL = new sap.m.FacetFilterList();
 			oFFL.setSelectedKeys({"1": "Val1", "2": "Val2"});
 			oFFL.removeSelections(true);
@@ -1589,7 +1589,7 @@
 			oFFL.destroy();
 		});
 
-		test("FacetFilterList.getSelectedItems", function() {
+		QUnit.test("FacetFilterList.getSelectedItems", function(assert) {
 
 			var aItemsData = [{key: "1", text: "Val1"},{key: "2", text: "Val2"},{key: "3", text: "Val3"}];
 
@@ -1630,7 +1630,7 @@
 			destroyFF(oFF);
 		});
 
-		test("FacetFilterList.getSelectedItem", function() {
+		QUnit.test("FacetFilterList.getSelectedItem", function(assert) {
 
 			var aItemsData = [{key: "1", text: "Val1"},{key: "2", text: "Val2"},{key: "3", text: "Val3"}];
 
@@ -1690,7 +1690,7 @@
 			destroyFF(oFF);
 		});
 
-		test("FacetFilterList.removeItem", function() {
+		QUnit.test("FacetFilterList.removeItem", function(assert) {
 
 			var oFFL = new sap.m.FacetFilterList();
 			var oFFI1 = new sap.m.FacetFilterItem({text: "Val1", key: "1"});
@@ -1706,7 +1706,7 @@
 			oFFL.destroy();
 		});
 
-		test("FacetFilterList.removeSelectedKey, _removeSelectedKey", function() {
+		QUnit.test("FacetFilterList.removeSelectedKey, _removeSelectedKey", function(assert) {
 			var oFF = oSCHelper.createFFWithModel();
 			var oFFL = oFF.getLists()[0];
 
@@ -1745,7 +1745,7 @@
 			destroyFF(oFF);
 		});
 
-		test("FacetFilterList.removeSelectedKeys", function() {
+		QUnit.test("FacetFilterList.removeSelectedKeys", function(assert) {
 			var oFF = oSCHelper.createFFWithModel();
 			var oFFL = oFF.getLists()[0];
 
@@ -1758,7 +1758,7 @@
 			destroyFF(oFF);
 		});
 
-		test("FacetFilterList._setSearchValue", function() {
+		QUnit.test("FacetFilterList._setSearchValue", function(assert) {
 			var oFacetFilterList = new sap.m.FacetFilterList(),
 				sPredefinedSearchValue = "a";
 
@@ -1808,7 +1808,7 @@
 			openPopover(oFacetFilter, 0);
 		});
 		//BCP: 1680160703
-		test("FacetFilterList._handleSelectAllClick does not inform the list for item selection changes", function() {
+		QUnit.test("FacetFilterList._handleSelectAllClick does not inform the list for item selection changes", function(assert) {
 			var oFFL = new sap.m.FacetFilterList({
 				items: [
 					new sap.m.FacetFilterItem({
@@ -1844,7 +1844,7 @@
 			oFFL.destroy();
 		});
 
-		module("Events", {
+		QUnit.module("Events", {
 			beforeEach: function () {
 				//Arrange
 				this.oFacetFilter = new sap.m.FacetFilter({
@@ -2226,7 +2226,7 @@
 			});
 		}
 
-		test("Reset button & dialog with list items filtering sync", function () {
+		QUnit.test("Reset button & dialog with list items filtering sync", function (assert) {
 			var oFF = oSCHelper.createFFWithModel();
 			var oFFL = oFF.getLists()[0];
 			var oResetButton = oFF._createResetButton();
@@ -2246,7 +2246,7 @@
 			destroyFF(oFF);
 		});
 
-		test("FacetFilter CONFIRM event - popover close", function () {
+		QUnit.test("FacetFilter CONFIRM event - popover close", function (assert) {
 			//Arrange
 			var fnConfirmSpy = sinon.spy(),
 				fnListOpenSpy = sinon.spy(),
@@ -2306,7 +2306,7 @@
 			},500);
 		});
 
-		test("FacetFilter OK event - dialog close", function () {
+		QUnit.test("FacetFilter OK event - dialog close", function (assert) {
 			//Arrange
 			var fnConfirmSpy = sinon.spy(),
 					fnListOpenSpy = sinon.spy(),
@@ -2330,7 +2330,7 @@
 			strictEqual(fnConfirmSpy.callCount, 1, "Confirm event was fired");
 		});
 
-		module("List Container Rendering");
+		QUnit.module("List Container Rendering");
 
 		asyncTest("Popover rendering", function() {
 
@@ -2438,9 +2438,9 @@
 			openDialogFromAddFacet(oFF);
 		});
 
-		module("Properties");
+		QUnit.module("Properties");
 
-		test("FacetFilter.visible", function() {
+		QUnit.test("FacetFilter.visible", function(assert) {
 
 			var oFF = new sap.m.FacetFilter();
 			var oFFL = new sap.m.FacetFilterList();
@@ -2461,7 +2461,7 @@
 
 
 
-	test("FacetFilter.retainListSequence", function() {
+	QUnit.test("FacetFilter.retainListSequence", function(assert) {
 			var oFF = new sap.m.FacetFilter();
 
 
@@ -2536,7 +2536,7 @@
 			openPopover(oFF, 0);
 		});
 
-		test("FacetFilter.type", function() {
+		QUnit.test("FacetFilter.type", function(assert) {
 
 			// Verify Simple type
 			var sFFL1Title = "List1", sFFL2Title = "List2";
@@ -2758,7 +2758,7 @@
 			openPopover(oFF, 0);
 		});
 
-		test(
+		QUnit.test(
 				"FacetFilter.showReset",
 				function() {
 
@@ -2810,7 +2810,7 @@
 					destroyFF(oFF);
 				});
 
-		test("FacetFilter.showSummaryBar", function() {
+		QUnit.test("FacetFilter.showSummaryBar", function(assert) {
 
 			var oFF = new sap.m.FacetFilter();
 			oFF.placeAt("content");
@@ -2845,7 +2845,7 @@
 		});
 
 
-		test("FacetFilterList.active", function() {
+		QUnit.test("FacetFilterList.active", function(assert) {
 
 			var oFF = new sap.m.FacetFilter();
 			var oFFL = new sap.m.FacetFilterList();
@@ -2865,7 +2865,7 @@
 			destroyFF(oFF);
 		});
 
-		test("FacetFilterList.multiSelect", function() {
+		QUnit.test("FacetFilterList.multiSelect", function(assert) {
 
 			var oFFL = new sap.m.FacetFilterList();
 
@@ -2876,7 +2876,7 @@
 			oFFL.destroy();
 		});
 
-		test("FacetFilterList.mode", function() {
+		QUnit.test("FacetFilterList.mode", function(assert) {
 
 			var oFFL = new sap.m.FacetFilterList();
 
@@ -2893,7 +2893,7 @@
 			oFFL.destroy();
 		});
 
-		test("FacetFilterList.title", function() {
+		QUnit.test("FacetFilterList.title", function(assert) {
 
 			var initialTitle = "a", changedTitle = "b";
 			var oFF = new sap.m.FacetFilter();
@@ -2918,13 +2918,13 @@
 			destroyFF(oFF);
 		});
 
-		test("FacetFilter should be shrinkable", function() {
+		QUnit.test("FacetFilter should be shrinkable", function(assert) {
 			var oFF = new sap.m.FacetFilter();
 			ok(oFF.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Facet filter is shrinkable");
 			oFF.destroy();
 		});
 
-		module("Selection Text Update");
+		QUnit.module("Selection Text Update");
 
 		asyncTest("Selection button text updated after popover close", function() {
 
@@ -3017,7 +3017,7 @@
 		/////////////////////////////////////////////////daniel//////////////////////////////////////////////////
 
 
-	test("Keyboard", function() {
+	QUnit.test("Keyboard", function(assert) {
 
 		var oFF = createFF(oFF);
 		ok(oFF.$().find(":sapTabbable").length == 4, "Total 4 tabble fields");
@@ -3357,7 +3357,7 @@
 	}
 		//////////////////////////////////////end////////////////////////////////////////////////////////////
 
-		module("Selected keys");
+		QUnit.module("Selected keys");
 
 		/* Helper functions for the module */
 		var oSCHelper = {
@@ -3419,7 +3419,7 @@
 		}
 		/* END Helper functions for the module */
 
-		test("FacetFilterList._addSelectedKey", function() {
+		QUnit.test("FacetFilterList._addSelectedKey", function(assert) {
 			var oFF = oSCHelper.createFFWithModel();
 			var oFFL = oFF.getLists()[0];
 
@@ -3456,7 +3456,7 @@
 			destroyFF(oFF);
 		});
 
-		test("FacetFilterList._isItemSelected",
+		QUnit.test("FacetFilterList._isItemSelected",
 				function() {
 					var oFF = oSCHelper.createFFWithModel();
 					var oFFL = oFF.getLists()[0];
@@ -3485,7 +3485,7 @@
 					destroyFF(oFF);
 				});
 
-		test("Getting selected keys", function() {
+		QUnit.test("Getting selected keys", function(assert) {
 			var oFF = oSCHelper.createFFWithModel();
 			var oFFL = oFF.getLists()[0];
 
@@ -3504,7 +3504,7 @@
 			destroyFF(oFF);
 		});
 
-		test("Setting selected keys", function() {
+		QUnit.test("Setting selected keys", function(assert) {
 			var oFF = oSCHelper.createFFWithModel();
 			var oFFL = oFF.getLists()[0];
 			var oSelectedKeys = {
@@ -3547,7 +3547,7 @@
 			destroyFF(oFF);
 		});
 
-		test("Setting selected keys with binding aggregation", function() {
+		QUnit.test("Setting selected keys with binding aggregation", function(assert) {
 			var oFF = oSCHelper.createFFWithModel();
 			var oFFL = oFF.getLists()[0];
 
@@ -3564,7 +3564,7 @@
 			destroyFF(oFF);
 		});
 
-		test("Filter model after selection", function() {
+		QUnit.test("Filter model after selection", function(assert) {
 			var oFF = oSCHelper.createFFWithModel();
 			var oFFL = oFF.getLists()[0];
 			oFFL.setSelectedKeys({
@@ -3585,7 +3585,7 @@
 			destroyFF(oFF);
 		});
 
-		test("FacetFilterList.onItemSetSelected", function() {
+		QUnit.test("FacetFilterList.onItemSetSelected", function(assert) {
 			var oFF = oSCHelper.createFFWithModel();
 			var oFFL = oFF.getLists()[0];
 			oFFL.setActive(false);
@@ -3639,7 +3639,7 @@
 			oFFL._oGrowingDelegate.requestNewPage();
 		});
 
-		test("Items in non-growing list are preselected before the model is assigned", function() {
+		QUnit.test("Items in non-growing list are preselected before the model is assigned", function(assert) {
 
 			var oFF = oSCHelper.createFFWithBinding();
 			var oFFL = oFF.getLists()[0];
@@ -3659,7 +3659,7 @@
 			destroyFF(oFF);
 		});
 
-		test("Items in non-growing list are preselected before items binding", function() {
+		QUnit.test("Items in non-growing list are preselected before items binding", function(assert) {
 
 			var oFF = new sap.m.FacetFilter();
 			var oFFL = new sap.m.FacetFilterList({
@@ -3691,7 +3691,7 @@
 			destroyFF(oFF);
 		});
 
-		test("Update button text when items are preselected", function() {
+		QUnit.test("Update button text when items are preselected", function(assert) {
 			var oFF = oSCHelper.createFFWithModel(true);
 			var oFFL = oFF.getLists()[0];
 
@@ -3761,7 +3761,7 @@
 			destroyFF(oFF);
 		});
 
-		test("'All' checkbox initial state", function() {
+		QUnit.test("'All' checkbox initial state", function(assert) {
 			var oFF = new sap.m.FacetFilter(),
 				oFFL = new sap.m.FacetFilterList({
 					multiSelect: true
@@ -3806,7 +3806,7 @@
 			}, 500);
 		});
 
-		module('Group Headers', {
+		QUnit.module('Group Headers', {
 			beforeEach: function () {
 				oFF = new sap.m.FacetFilter({
 					showPersonalization: true
@@ -3886,7 +3886,7 @@
 			openPopover(oFF, 0);
 		});
 
-		test("Only items could be selected, not headers", function () {
+		QUnit.test("Only items could be selected, not headers", function (assert) {
 			//prepare
 			var oSpy, counter = 0;
 
@@ -3904,7 +3904,7 @@
 
 		});
 
-		module('Overflow Arrows', {
+		QUnit.module('Overflow Arrows', {
 			beforeEach: function () {
 				this.oFacetFilter = new sap.m.FacetFilter({
 					showPersonalization: true,
@@ -3968,7 +3968,7 @@
 				this.oHBox.destroy();
 			}
 		});
-		test("Overflow arrows are not shown when FacetFilter is inside an flex element", function () {
+		QUnit.test("Overflow arrows are not shown when FacetFilter is inside an flex element", function (assert) {
 			var sLeftArrowCSSVisibility = jQuery(this.oFacetFilter.getDomRef('arrowScrollLeft')).css('visibility');
 			var sRightArrowCSSVisibility = jQuery(this.oFacetFilter.getDomRef("arrowScrollRight")).css('visibility');
 
@@ -3976,7 +3976,7 @@
 			strictEqual(sRightArrowCSSVisibility, "hidden", "Right arrow is hidden");
 		});
 
-		module("Aria support", {
+		QUnit.module("Aria support", {
 			beforeEach: function () {
 				this.oFF = oSCHelper.createFFWithBinding(5);
 				for (var i = 0; i < 5; i++) {
@@ -4018,11 +4018,11 @@
 				equal(this.oFF.getRenderer().getAriaDescribedBy(this.oFF), aExpectedDescribedBy.join(" "), "FacetFilterRenderer.getAriaDescribedBy array check");
 			}
 		});
-		test("Facet filter list positioning - initial", function () {
+		QUnit.test("Facet filter list positioning - initial", function (assert) {
 			this.testFacetFilterList(5);
 		});
 
-		test("Facet filter list positioning - after removal of list(s)", function () {
+		QUnit.test("Facet filter list positioning - after removal of list(s)", function (assert) {
 			var aExpectedDescribedBy = [],
 					bAriaRemoveFacetFound = false,
 					oListToRemove = this.oFF.getLists()[2];

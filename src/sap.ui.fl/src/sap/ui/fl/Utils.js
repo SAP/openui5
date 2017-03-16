@@ -6,7 +6,7 @@ sap.ui.define([
 	"jquery.sap.global", "sap/ui/core/Component"
 ], function (jQuery, Component) {
 	"use strict";
-	//LREP layers stack
+	//Stack of layers in the layered repository
 	var aLayers = [
 			"VENDOR",
 			"PARTNER",
@@ -14,13 +14,13 @@ sap.ui.define([
 			"CUSTOMER",
 			"USER"
 		];
-	//precalculates layers index
+	//Precalculates index of layers
 	var mLayersIndex = {};
 	aLayers.forEach(function(sLayer, iIndex){
 		mLayersIndex[sLayer] = iIndex;
 	});
 	/**
-	 * Provides utility functions for the flexibility library
+	 * Provides utility functions for the SAPUI5 flexibility library
 	 *
 	 * @namespace
 	 * @alias sap.ui.fl.Utils
@@ -283,8 +283,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Sets the top layer at which the changes should be applied
-		 * If there is no input max layer is given, the highest layer in layer stack is used
+		 * Sets the top layer that the changes are applied to; if max layer is not specified, the highest layer in the layer stack is used.
+		 *
 		 * @param {string} sMaxLayer (optional) - name of the max layer
 		 * @public
 		 * @function
@@ -306,9 +306,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * Determines if a layer is over the max layer
+		 * Determines whether a layer is higher than the max layer.
 		 *
-		 * @param {String} sLayer - layer name which needs to be evaluated
+		 * @param {String} sLayer - Layer name to be evaluated
 		 * @returns {boolean} <code>true<code> if input layer is higher than max layer, otherwise <code>false<code>
 		 * @public
 		 * @function
@@ -319,7 +319,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Determines if filtering of changes base on layer is required
+		 * Determines if filtering of changes based on layer is required.
 		 *
 		 * @returns {boolean} <code>true<code> if the top layer is also the max layer, otherwise <code>false<code>
 		 * @public

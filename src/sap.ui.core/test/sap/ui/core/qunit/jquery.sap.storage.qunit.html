@@ -214,42 +214,42 @@
 
 		qutils.delayTestStart();
 
-		module("Basic");
+		QUnit.module("Basic");
 
-		test("Default Storage", function(){
+		QUnit.test("Default Storage", function(assert) {
 			testStorage(null, null, sap.ui.Device.os.ios ? SUPPORTED_CHECK_INACTIVE : SUPPORTED_CHECK_EXPECT_SUPPORT);
 		});
 
-		test("Session Storage", function(){
+		QUnit.test("Session Storage", function(assert) {
 			testStorage(jQuery.sap.storage.Type.session, "myprefix", sap.ui.Device.os.ios ? SUPPORTED_CHECK_INACTIVE : SUPPORTED_CHECK_EXPECT_SUPPORT);
 		});
 
-		test("Local Storage", function(){
+		QUnit.test("Local Storage", function(assert) {
 			testStorage(jQuery.sap.storage.Type.local, "myprefix", sap.ui.Device.os.ios ? SUPPORTED_CHECK_INACTIVE : SUPPORTED_CHECK_EXPECT_SUPPORT);
 		});
 
-		test("Global Storage", function(){
+		QUnit.test("Global Storage", function(assert) {
 			testStorage(jQuery.sap.storage.Type.global, "myprefix", sap.ui.Device.os.ios ? SUPPORTED_CHECK_INACTIVE : SUPPORTED_CHECK_EXPECT_NO_SUPPORT);
 		});
 
-		test("Custom Storage", function(){
+		QUnit.test("Custom Storage", function(assert) {
 			testStorage(new SimpleStorage("custom1"), "myprefix", SUPPORTED_CHECK_EXPECT_SUPPORT);
 		});
 
-		test("Not Supported", function(){
+		QUnit.test("Not Supported", function(assert) {
 			var s = new SimpleStorage("not supported");
 			s._supported = false;
 			testStorage(s, "myprefix", SUPPORTED_CHECK_EXPECT_NO_SUPPORT);
 		});
 
-		test("Cache", function(){
+		QUnit.test("Cache", function(assert) {
 			testCache(jQuery.sap.storage.Type.session, "myprefix", true);
 			testCache(jQuery.sap.storage.Type.local, "myprefix", true);
 			testCache(jQuery.sap.storage.Type.global, "myprefix", true);
 			testCache(new SimpleStorage("custom2"), "myprefix", false);
 		});
 
-		test("Prefixes", function(){
+		QUnit.test("Prefixes", function(assert) {
 			testPrefix(null);
 			testPrefix("myprefix");
 		});

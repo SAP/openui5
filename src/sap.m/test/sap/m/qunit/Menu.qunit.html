@@ -186,7 +186,7 @@
             oControl.bindAggregation("items", "/items", template);
         }
 
-        module('[PHONE] Basics', {
+        QUnit.module('[PHONE] Basics', {
             beforeEach: function () {
                 prepareMobilePlatform.call(this);
                 initMenu.call(this);
@@ -202,7 +202,7 @@
             }
         });
 
-        test('Opening/closing/reopening', function () {
+        QUnit.test('Opening/closing/reopening', function (assert) {
             //Assert
             strictEqual(this.sut._getVisualParent(), null, 'The menu is not initially rendered');
 
@@ -226,7 +226,7 @@
         });
 
 
-        test('ARIA attributes', function () {
+        QUnit.test('ARIA attributes', function (assert) {
             var fnSetBackButtonTooltipForPageWithParentSpy = sinon.spy(this.sut, "_setBackButtonTooltipForPageWithParent");
             this.sut.openBy();
             pressListItemAtIndex.call(this, 0);
@@ -235,7 +235,7 @@
             fnSetBackButtonTooltipForPageWithParentSpy.restore();
         });
 
-        module('Basics', {
+        QUnit.module('Basics', {
             beforeEach: function () {
                 initMenu.call(this);
             },
@@ -244,7 +244,7 @@
             }
         });
 
-        test("tooltip", function() {
+        QUnit.test("tooltip", function(assert) {
             this.sut.openBy();
             var oItemFridge = this.sut._getMenu().getItems()[0];
 
@@ -252,7 +252,7 @@
             equals(oItemFridge.getTooltip(), "it's cold in here", "item has a tooltip");
         });
 
-        test("visible", function() {
+        QUnit.test("visible", function(assert) {
             //Act
             this.sut.getItems()[0].setVisible(false);
             this.sut.openBy();
@@ -262,7 +262,7 @@
             equals(oItemFridge.getVisible(), false, "menu item is not visible");
         });
 
-        test("enabled", function() {
+        QUnit.test("enabled", function(assert) {
             //Act
             this.sut.getItems()[0].setEnabled(false);
             this.sut.openBy();
@@ -272,7 +272,7 @@
             equals(oItemFridge.getEnabled(), false, "menu item is not enabled");
         });
 
-        test('Opening/closing/reopening', function () {
+        QUnit.test('Opening/closing/reopening', function (assert) {
             //Assert
             strictEqual(this.sut._getVisualParent(), null, 'The menu is not initially rendered');
 
@@ -295,7 +295,7 @@
             strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
         });
 
-        test('Item selection event', function () {
+        QUnit.test('Item selection event', function (assert) {
             var fnFireItemSelectedSpy = sinon.spy(this.sut, "fireItemSelected");
 
             this.sut.openBy();
@@ -317,7 +317,7 @@
             fnFireItemSelectedSpy.restore();
         });
 
-        module("[PHONE] Custom mutators", {
+        QUnit.module("[PHONE] Custom mutators", {
             beforeEach: function() {
                 prepareMobilePlatform.call(this);
                 initMenu.call(this)
@@ -367,7 +367,7 @@
             }
         });
 
-        test("Menu's addItem adds list item to the correct list", function() {
+        QUnit.test("Menu's addItem adds list item to the correct list", function(assert) {
             var oItem,
                 sutListItem;
 
@@ -385,7 +385,7 @@
             equals(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
         });
 
-        test("MenuItem's addItem adds list item to the correct list", function() {
+        QUnit.test("MenuItem's addItem adds list item to the correct list", function(assert) {
             var oItem,
                 sutListItem;
             this.openMenu();
@@ -403,7 +403,7 @@
             equals(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
         });
 
-        test("MenuItem with no items: addItem to it adds a new page", function() {
+        QUnit.test("MenuItem with no items: addItem to it adds a new page", function(assert) {
             var oItem,
                 oAddedPage,
                 sutListItem;
@@ -434,7 +434,7 @@
             equals(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
         });
 
-        test("Menu with no items: addItem to it adds an item to the empty page", function() {
+        QUnit.test("Menu with no items: addItem to it adds an item to the empty page", function(assert) {
             //we need an empty menu
             var sut = new sap.m.Menu({
                     title: "Initial page"
@@ -461,7 +461,7 @@
             sut = null;
         });
 
-        module("Data binding", {
+        QUnit.module("Data binding", {
             beforeEach : function () {
                 this.sut = new sap.m.Menu();
                 this.oButton = new sap.m.Button();
@@ -482,7 +482,7 @@
             }
         });
 
-        test("Binding items", function () {
+        QUnit.test("Binding items", function (assert) {
             var aItems,
                 oItem,
                 sTitleSelector,
@@ -543,7 +543,7 @@
             strictEqual(jQuery("#"+sFirstSubSubItemId).length, 1, 'First sub sub item is changed in DOM after model property change.');
         });
 
-		test("filtering", function() {
+		QUnit.test("filtering", function(assert) {
 			var aItems,
 				oItemId,
 				oThirdData;
@@ -567,7 +567,7 @@
 			ok(!sap.ui.getCore().byId(oItemId), 'The item that does not fit in the filter is destroyed');
 		});
 
-        module("[PHONE] Data binding", {
+        QUnit.module("[PHONE] Data binding", {
             beforeEach : function () {
                 prepareMobilePlatform.call(this);
 
@@ -595,7 +595,7 @@
             }
         });
 
-        test("Change items in the model", function () {
+        QUnit.test("Change items in the model", function (assert) {
             var aItems,
                 oItem,
                 sTitleSelector,
@@ -636,7 +636,7 @@
             strictEqual(jQuery(sTitleSelector).length, 3, 'Item was successfully added.');
         });
 
-        module('MenuItem', {
+        QUnit.module('MenuItem', {
             beforeEach: function () {
                 this.sut = new sap.m.MenuItem({
                     text: "mi",
@@ -659,7 +659,7 @@
             }
         });
 
-        test("exit", function() {
+        QUnit.test("exit", function(assert) {
             this.sut._setVisualChild("a");
             this.sut._setVisualControl("b");
             this.sut._setVisualParent("c");
@@ -673,7 +673,7 @@
             strictEqual(this.sut._getVisualParent(), null, "no visual parent");
         });
 
-        test("_setVisualChild _getVisualChild", function() {
+        QUnit.test("_setVisualChild _getVisualChild", function(assert) {
             //Act
             this.sut._setVisualChild("a");
 
@@ -681,7 +681,7 @@
             strictEqual(this.sut._getVisualChild(), "a", "right visual child");
         });
 
-        test("_setVisualControl _getVisualControl", function() {
+        QUnit.test("_setVisualControl _getVisualControl", function(assert) {
             //Act
             this.sut._setVisualControl("b");
 
@@ -689,7 +689,7 @@
             strictEqual(this.sut._getVisualControl(), "b", "right visual control");
         });
 
-        test("_setVisualParent _getVisualParent", function() {
+        QUnit.test("_setVisualParent _getVisualParent", function(assert) {
             //Act
             this.sut._setVisualParent("c");
 
@@ -697,7 +697,7 @@
             strictEqual(this.sut._getVisualParent(), "c", "right visual parent");
         });
 
-        test("setProperty", function() {
+        QUnit.test("setProperty", function(assert) {
             var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
                 sPropertyKey = "text",
                 sPropertyValue = "new_mi_text";
@@ -710,7 +710,7 @@
             ok(oSpyFireEvent.calledWith("propertyChanged"), "propertyChanged fired");
         });
 
-        test("addAggregation", function() {
+        QUnit.test("addAggregation", function(assert) {
             var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
                 oNewMenuItem = new sap.m.MenuItem({ text: "new item " }),
                 sNewItemId = oNewMenuItem.getId();
@@ -727,7 +727,7 @@
             ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
         });
 
-        test("insertAggregation", function() {
+        QUnit.test("insertAggregation", function(assert) {
             var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
                 oNewMenuItem = new sap.m.MenuItem({ text: "new item " }),
                 sNewItemId = oNewMenuItem.getId();
@@ -741,7 +741,7 @@
             ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
         });
 
-        test("removeAggregation", function() {
+        QUnit.test("removeAggregation", function(assert) {
             var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
                 sSecondItemId = this.sut.getItems()[1].getId();
 
@@ -754,7 +754,7 @@
             ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
         });
 
-        test("removeAllAggregation", function() {
+        QUnit.test("removeAllAggregation", function(assert) {
             var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
                 aItems = this.sut.getItems(),
                 aResult;
@@ -768,7 +768,7 @@
             ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
         });
 
-        test("destroyAggregation", function() {
+        QUnit.test("destroyAggregation", function(assert) {
             var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
                 oFirstItem = this.sut.getItems()[0];
 
@@ -781,7 +781,7 @@
             ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
         });
 
-        module('MenuListItem', {
+        QUnit.module('MenuListItem', {
             beforeEach: function () {
                 this.menuItem = new sap.m.MenuItem({
                     text: "mi",
@@ -811,7 +811,7 @@
             }
         });
 
-        test("_getImage ", function() {
+        QUnit.test("_getImage ", function(assert) {
             var sImageStyleClass = "sapMMenuLIImgThumb",
                 oImage = this.sut._getImage(this.sut.getId() + "-img", sImageStyleClass, this.sut.getIcon(), this.sut.getIconDensityAware());
 
@@ -821,7 +821,7 @@
             strictEqual(oImage.getUseIconTooltip(), false, "arrow image has no tooltip");
         });
 
-        test("_getIconArrowRight", function() {
+        QUnit.test("_getIconArrowRight", function(assert) {
             var oImage = this.sut._getIconArrowRight();
 
             //Assert
@@ -831,7 +831,7 @@
             strictEqual(oImage.getUseIconTooltip(), false, "arrow image has no tooltip");
         });
 
-        test("_hasSubItems", function() {
+        QUnit.test("_hasSubItems", function(assert) {
             //Assert
             strictEqual(this.sut._hasSubItems(), true, "true when its associated MenuItem has sub-items");
 

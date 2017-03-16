@@ -21,13 +21,13 @@
 jQuery.sap.require("sap.m.CheckBox");
 jQuery.sap.require("sap.ui.core.ValueState");
 
-	module("Properties");
+	QUnit.module("Properties");
 
 	/* --------------------------------------- */
 	/* Test: Default Values                    */
 	/* --------------------------------------- */
 
-	test("Default Values", function(){
+	QUnit.test("Default Values", function(assert) {
 
 		var bEnabled = true;
 		var bEditable = true;
@@ -64,7 +64,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: 'visible=true'                            */
 	/* ----------------------------------------------- */
 
-	test("'visible=true'", function(){
+	QUnit.test("'visible=true'", function(assert) {
 
 		// system under test
 		var oCheckBox = new sap.m.CheckBox({visible: true});
@@ -85,7 +85,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: 'visible=false'                           */
 	/* ----------------------------------------------- */
 
-	test("'visible=false'", function(){
+	QUnit.test("'visible=false'", function(assert) {
 
 		// system under test
 		var oCheckBox = new sap.m.CheckBox({visible: false});
@@ -106,7 +106,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: 'enabled=true'                            */
 	/* ----------------------------------------------- */
 
-	test("'enabled=true'", function(){
+	QUnit.test("'enabled=true'", function(assert) {
 
 		// system under test
 		var bEnabled = true;
@@ -131,7 +131,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: 'enabled=false'                           */
 	/* ----------------------------------------------- */
 
-	test("'enabled=false'", function(){
+	QUnit.test("'enabled=false'", function(assert) {
 
 		// system under test
 		var bEnabled = false;
@@ -155,7 +155,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: 'editable=false'                          */
 	/* ----------------------------------------------- */
 
-	test("'editable=false'", function() {
+	QUnit.test("'editable=false'", function(assert) {
 
 		// system under test
 		var bEditable = false;
@@ -180,7 +180,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: 'selected=true'                           */
 	/* ----------------------------------------------- */
 
-	test("'selected=true'", function(){
+	QUnit.test("'selected=true'", function(assert) {
 
 		// system under test
 		var oCheckBox = new sap.m.CheckBox({selected: true});
@@ -203,7 +203,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: 'selected=false'						   */
 	/* ----------------------------------------------- */
 
-	test("'selected=false'", function(){
+	QUnit.test("'selected=false'", function(assert) {
 
 		// system under test
 		var oCheckBox = new sap.m.CheckBox({selected: false});
@@ -225,7 +225,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: 'ValueState=Error'						   */
 	/* ----------------------------------------------- */
 
-	test("'ValueState=Error'", function(){
+	QUnit.test("'ValueState=Error'", function(assert) {
 		// system under test
 		var oCheckBox = new sap.m.CheckBox({valueState: sap.ui.core.ValueState.Error});
 
@@ -245,7 +245,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: 'ValueState=Warning'						   */
 	/* ----------------------------------------------- */
 
-	test("'ValueState=Warning'", function(){
+	QUnit.test("'ValueState=Warning'", function(assert) {
 		// system under test
 		var oCheckBox = new sap.m.CheckBox({valueState: sap.ui.core.ValueState.Warning});
 
@@ -265,7 +265,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: 'name'                                    */
 	/* ----------------------------------------------- */
 
-	test("'name'", function(){
+	QUnit.test("'name'", function(assert) {
 
 		var sName = "my Name";
 
@@ -289,7 +289,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: getTabIndex (enabled=true)				   */
 	/* ----------------------------------------------- */
 
-	test("'getTabIndex (enabled=true)'", function(){
+	QUnit.test("'getTabIndex (enabled=true)'", function(assert) {
 
 		// system under test
 		var oCheckBox = new sap.m.CheckBox({enabled: true});
@@ -306,7 +306,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: getTabIndex (enabled=false				   */
 	/* ----------------------------------------------- */
 
-	test("'getTabIndex (enabled=false)'", function(){
+	QUnit.test("'getTabIndex (enabled=false)'", function(assert) {
 
 		// system under test
 		var oCheckBox = new sap.m.CheckBox({enabled: false});
@@ -323,7 +323,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: getTabIndex (tabIndex previously set explicitely via setTabIndex) */
 	/* ----------------------------------------------------------------------- */
 
-	test("'getTabIndex (tabIndex previously set explicitely via setTabIndex)'", function(){
+	QUnit.test("'getTabIndex (tabIndex previously set explicitely via setTabIndex)'", function(assert) {
 
 		// system under test
 		var oCheckBox = new sap.m.CheckBox();
@@ -343,7 +343,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: 'tabIndex' 							   */
 	/* ----------------------------------------------- */
 
-	test("'tabIndex'", function(){
+	QUnit.test("'tabIndex'", function(assert) {
 
 		var iTabIndex = 2;
 
@@ -403,7 +403,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		sap.m.Label.prototype[sSetterMethod].restore();
 	}
 
-	test("Should render the text of a Checkbox after rendering the checkbox without setting label properties", function() {
+	QUnit.test("Should render the text of a Checkbox after rendering the checkbox without setting label properties", function(assert) {
 		// Arrange
 		var oCheckBox = new sap.m.CheckBox();
 
@@ -426,7 +426,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: 'text' - via Constructor                  */
 	/* ----------------------------------------------- */
 
-	test("'text' - via Constructor", function(){
+	QUnit.test("'text' - via Constructor", function(assert) {
 
 		testSetLabelProperty("text", "my Text", "Constructor");
 	});
@@ -436,7 +436,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: 'text' - via Setter Method                */
 	/* ----------------------------------------------- */
 
-	test("'text' - via Setter Method", function(){
+	QUnit.test("'text' - via Setter Method", function(assert) {
 
 		testSetLabelProperty("text", "my Text", "Setter");
 	});
@@ -447,7 +447,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: 'textDirection' - via Constructor         */
 	/* ----------------------------------------------- */
 
-	test("'textDirection' - via Constructor", function(){
+	QUnit.test("'textDirection' - via Constructor", function(assert) {
 
 		testSetLabelProperty("textDirection", "RTL", "Constructor");
 		testSetLabelProperty("textDirection", "LTR", "Constructor");
@@ -459,7 +459,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: 'textDirection' - via Setter Method         */
 	/* ----------------------------------------------- */
 
-	test("'textDirection' - via Setter Method", function(){
+	QUnit.test("'textDirection' - via Setter Method", function(assert) {
 
 		testSetLabelProperty("textDirection", "RTL", "Setter");
 		testSetLabelProperty("textDirection", "LTR", "Setter");
@@ -470,7 +470,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
     /* Test: 'textAlign' - via Constructor         */
     /* ----------------------------------------------- */
 
-    test("'textAlign' - via Constructor", function(){
+    QUnit.test("'textAlign' - via Constructor", function(assert) {
         testSetLabelProperty("textAlign", "Begin", "Constructor");
         testSetLabelProperty("textAlign", "End", "Constructor");
         testSetLabelProperty("textAlign", "Left", "Constructor");
@@ -484,7 +484,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
     /* Test: 'textAlign' - via Setter Method         */
     /* ----------------------------------------------- */
 
-    test("'textAlign' - via Setter Method", function(){
+    QUnit.test("'textAlign' - via Setter Method", function(assert) {
         testSetLabelProperty("textAlign", "Begin", "Setter");
         testSetLabelProperty("textAlign", "End", "Setter");
         testSetLabelProperty("textAlign", "Left", "Setter");
@@ -498,7 +498,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: 'width' - via Constructor                 */
 	/* ----------------------------------------------- */
 
-	test("'width' - via Constructor", function(){
+	QUnit.test("'width' - via Constructor", function(assert) {
 
 		testSetLabelProperty("width", "100px", "Constructor");
 	});
@@ -508,20 +508,20 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: 'width' - via Setter Method               */
 	/* ----------------------------------------------- */
 
-	test("'width' - via Setter Method", function(){
+	QUnit.test("'width' - via Setter Method", function(assert) {
 
 		testSetLabelProperty("width", "100px", "Setter");
 	});
 
 
 
-	module("Basic CSS classes");
+	QUnit.module("Basic CSS classes");
 
 	/* ----------------------------------------------- */
 	/* Test: Existence                                 */
 	/* ----------------------------------------------- */
 
-	test("Existence", function(){
+	QUnit.test("Existence", function(assert) {
 
 		// system under test
 		var oCheckBox = new sap.m.CheckBox();
@@ -569,7 +569,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: sapMCbHoverable (non-desktop environment) */
 	/* ----------------------------------------------- */
 
-	test("sapMCbHoverable (non-desktop environment)", function(){
+	QUnit.test("sapMCbHoverable (non-desktop environment)", function(assert) {
 
 		testSapMCbHoverable(this, false, "CheckBox should not have class sapMCbHoverable");
 	});
@@ -579,19 +579,19 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: sapMCbHoverable (desktop environment)     */
 	/* ----------------------------------------------- */
 
-	test("sapMCbHoverable (desktop environment)", function(){
+	QUnit.test("sapMCbHoverable (desktop environment)", function(assert) {
 		testSapMCbHoverable(this, true, "CheckBox should have class sapMCbHoverable");
 	});
 
 
 
-	module("Events");
+	QUnit.module("Events");
 
 	/* ----------------------------------------------- */
 	/* Test: tap                                       */
 	/* ----------------------------------------------- */
 
-	test("tap", function(){
+	QUnit.test("tap", function(assert) {
 
 		// system under test
 		var oCheckBox = new sap.m.CheckBox();
@@ -629,7 +629,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: SPACE key                                 */
 	/* ----------------------------------------------- */
 	function testSpaceKey(sTestName, oOptions) {
-		test(sTestName, function() {
+		QUnit.test(sTestName, function(assert) {
 
 			//Arrange
 			var oSpy = this.spy();
@@ -670,7 +670,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	/* Test: ENTER key                                 */
 	/* ----------------------------------------------- */
 	function testEnterKey(sTestName, oOptions) {
-		test(sTestName, function() {
+		QUnit.test(sTestName, function(assert) {
 
 			//Arrange
 			var oSpy = this.spy();
@@ -706,9 +706,9 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		expectedMessageAria: "Property 'aria-checked' should be 'false'"
 	});
 
-	module("Accessibility");
+	QUnit.module("Accessibility");
 
-	test("getAccessibilityInfo", function() {
+	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oControl = new sap.m.CheckBox({text: "Text"});
 		ok(!!oControl.getAccessibilityInfo, "CheckBox has a getAccessibilityInfo function");
 		var oInfo = oControl.getAccessibilityInfo();

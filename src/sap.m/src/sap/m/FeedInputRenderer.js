@@ -24,6 +24,9 @@ var FeedInputRenderer = {
 		if (!oControl.getShowIcon()) {
 			oRm.addClass("sapMFeedInNoIcon");
 		}
+		if (!oControl.getEnabled()) {
+			oRm.addClass("sapMFeedInDisabled");
+		}
 		oRm.writeClasses();
 		oRm.write(">");
 		if (!!oControl.getShowIcon()) {

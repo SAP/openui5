@@ -22,9 +22,9 @@
 	<script>
 		sinon.config.useFakeTimers = false;
 
-		module("Initial Check");
+		QUnit.module("Initial Check");
 
-		test("Initialization on desktop", function() {
+		QUnit.test("Initialization on desktop", function(assert) {
 			var oSystem = {
 				desktop: true,
 				tablet: false,
@@ -62,7 +62,7 @@
 			oSplitApp.destroy();
 		});
 
-		module("Modes Check on desktop");
+		QUnit.module("Modes Check on desktop");
 		asyncTest("PopoverMode_portrait", function(){
 			var oSystem = {
 					desktop: true,
@@ -170,7 +170,7 @@
 			}, 400);
 		});
 
-		test("StretchCompressMode_portrait", function(){
+		QUnit.test("StretchCompressMode_portrait", function(assert){
 			var oSystem = {
 					desktop: true,
 					tablet: false,
@@ -216,7 +216,7 @@
 			oSplitApp.destroy();
 		});
 
-		test("PopoverMode_landscape", function(){
+		QUnit.test("PopoverMode_landscape", function(assert){
 			var oSystem = {
 					desktop: true,
 					tablet: false,
@@ -263,7 +263,7 @@
 			oSplitApp.destroy();
 		});
 
-		test("ShowHideMode_landscape", function(){
+		QUnit.test("ShowHideMode_landscape", function(assert){
 			var oSystem = {
 					desktop: true,
 					tablet: false,
@@ -310,7 +310,7 @@
 			oSplitApp.destroy();
 		});
 
-		test("StretchCompressMode_landscape", function(){
+		QUnit.test("StretchCompressMode_landscape", function(assert){
 			var oSystem = {
 					desktop: true,
 					tablet: false,
@@ -358,7 +358,7 @@
 			oSplitApp.destroy();
 		});
 
-		test("HideMode", function(){
+		QUnit.test("HideMode", function(assert){
 			var oSystem = {
 				desktop: true,
 				tablet: false,
@@ -400,7 +400,7 @@
 			oSplitApp.destroy();
 		});
 
-		module("Public Methods");
+		QUnit.module("Public Methods");
 		asyncTest("ShowMaster", function(){
 			var oSystem = {
 					desktop: true,
@@ -453,7 +453,7 @@
 			}, 500);
 		});
 
-		test("Initialization on phone", function() {
+		QUnit.test("Initialization on phone", function(assert) {
 			var oSystem = {
 				desktop: false,
 				tablet: false,
@@ -491,8 +491,8 @@
 		});
 
 		// Tests for all modes
-		module("Master / Detail page aggregation");
-		test("Master / Detail page aggregation returns the right pages in the right order", function() {
+		QUnit.module("Master / Detail page aggregation");
+		QUnit.test("Master / Detail page aggregation returns the right pages in the right order", function(assert) {
 			var oMasterPage = new sap.m.Page("master",{
 				title : "Master 1",
 				content: [new sap.m.Button("Button", {text: "That is a Button"})]
@@ -537,7 +537,7 @@
 			oSplitApp.destroy();
 		});
 
-		test("Adding / Removing Pages to/from Master / Detail", function() {
+		QUnit.test("Adding / Removing Pages to/from Master / Detail", function(assert) {
 			var oSplitApp = new sap.m.SplitApp("splitapp", {
 				masterPages: [
 					new sap.m.Page("master",{
@@ -601,7 +601,7 @@
 			oSplitApp.destroy();
 		});
 
-		test("Moving Page from Master to Detail", function() {
+		QUnit.test("Moving Page from Master to Detail", function(assert) {
 			var oSplitApp = new sap.m.SplitApp("splitapp", {
 				masterPages: [
 					new sap.m.Page("master",{
@@ -645,7 +645,7 @@
 			oSplitApp.destroy();
 		});
 
-		test("Insert Page", function() {
+		QUnit.test("Insert Page", function(assert) {
 			var oSplitApp = new sap.m.SplitApp("splitapp", {
 				masterPages: [
 					new sap.m.Page("master",{
@@ -704,7 +704,7 @@
 			oSplitApp.destroy();
 		});
 
-		test("Remove all pages", function() {
+		QUnit.test("Remove all pages", function(assert) {
 			var oSplitApp = new sap.m.SplitApp("splitapp", {
 				masterPages: [
 					new sap.m.Page("master",{

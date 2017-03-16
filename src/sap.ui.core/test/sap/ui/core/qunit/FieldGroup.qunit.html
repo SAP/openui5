@@ -261,7 +261,7 @@
 
 	});
 
-	test("get controls by field group", 18, function(){
+	QUnit.test("get controls by field group", 18, function(assert) {
 		var aGroup = oVerticalLayout.getControlsByFieldGroupId("group1");
 		equal(aGroup.length,3,"3 controls in group1");
 		var aGroup = oVerticalLayout.getControlsByFieldGroupId("group2");

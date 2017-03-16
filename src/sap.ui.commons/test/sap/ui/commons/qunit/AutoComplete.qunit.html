@@ -76,11 +76,11 @@
 
 		qutils.delayTestStart();
 
-		module("Control API", {
-			setup : function() {
+		QUnit.module("Control API", {
+			beforeEach : function() {
 				this.oAuto0 = new sap.ui.commons.AutoComplete();
 			},
-			teardown : function() {
+			afterEach : function() {
 				clear(this.oAuto0);
 				this.oAuto0.destroy();
 
@@ -89,12 +89,12 @@
 			}
 		});
 
-		test("Property Defaults", function() {
+		QUnit.test("Property Defaults", function(assert) {
 			equals(this.oAuto0.getEnableScrolling(), true, "Default 'enableScrolling'");
 			ok(this.oAuto0._filter === sap.ui.commons.AutoComplete._DEFAULTFILTER, "Default filter set");
 		});
 
-		test("Property Custom Values", function() {
+		QUnit.test("Property Custom Values", function(assert) {
 			this.oAuto0.setEnableScrolling(false);
 
 			function foo(){};
@@ -105,7 +105,7 @@
 			ok(this.oAuto0._filter === foo, "Custom filter set");
 		});
 
-		test("Deprecated APIs", function() {
+		QUnit.test("Deprecated APIs", function(assert) {
 			var oCustomLB = new sap.ui.commons.ListBox();
 			this.oAuto0.setListBox(oCustomLB);
 			this.oAuto0.setSelectedItemId("abc");
@@ -116,8 +116,8 @@
 			ok(oCustomLB != this.oAuto0._getListBox(), "Deprecated aggregation 'listBox'");
 		});
 
-		module("Suggestion - Static Items", {
-			setup : function() {
+		QUnit.module("Suggestion - Static Items", {
+			beforeEach : function() {
 				this.oAuto1 = new sap.ui.commons.AutoComplete({
 					maxPopupItems: 3
 				}).placeAt("uiArea1");
@@ -133,7 +133,7 @@
 
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function() {
+			afterEach : function() {
 				clear(this.oAuto1);
 				this.oAuto1.destroy();
 
@@ -201,14 +201,14 @@
 			}, 10);
 		});
 
-		module("Suggestion - Dynamic Items", {
-			setup : function() {
+		QUnit.module("Suggestion - Dynamic Items", {
+			beforeEach : function() {
 				this.oAuto2 = new sap.ui.commons.AutoComplete();
 				this.oAuto2.placeAt("uiArea2");
 
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function() {
+			afterEach : function() {
 				clear(this.oAuto2);
 				this.oAuto2.destroy();
 
@@ -251,8 +251,8 @@
 			}, 500);
 		});
 
-		module("Closing Popup", {
-			setup : function() {
+		QUnit.module("Closing Popup", {
+			beforeEach : function() {
 				this.oAuto1 = new sap.ui.commons.AutoComplete({
 					maxPopupItems: 3
 				}).placeAt("uiArea1");
@@ -268,7 +268,7 @@
 
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function() {
+			afterEach : function() {
 				clear(this.oAuto1);
 				this.oAuto1.destroy();
 
@@ -328,8 +328,8 @@
 			});
 		});
 
-		module("ARIA", {
-			setup : function() {
+		QUnit.module("ARIA", {
+			beforeEach : function() {
 				this.oAuto1 = new sap.ui.commons.AutoComplete({
 					maxPopupItems: 3
 				}).placeAt("uiArea1");
@@ -345,7 +345,7 @@
 
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function() {
+			afterEach : function() {
 				clear(this.oAuto1);
 				this.oAuto1.destroy();
 

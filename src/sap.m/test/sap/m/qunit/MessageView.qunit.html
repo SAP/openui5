@@ -28,7 +28,7 @@
 
         <script>
             QUnit.module("Public API", {
-                setup: function () {
+                beforeEach: function () {
                     var that = this;
 
                     this.oMessageView = new sap.m.MessageView();
@@ -120,7 +120,7 @@
 
                     this.oButton.firePress();
                 },
-                teardown: function () {
+                afterEach: function () {
                     this.oDialog.close();
 
                     this.oDialog.destroy();
@@ -248,7 +248,7 @@
                 assert.strictEqual(iInterListItemCounter, iMPItemCounter, "Internal listItem's counter should be the same as MessageItems's counter");
             });
 
-            QUnit.test("No navigation arrow should be shown if there is no description", function () {
+            QUnit.test("No navigation arrow should be shown if there is no description", function (assert) {
                 var oStandardListItem = this.oMessageView._oLists.all.getItems()[1];
 
                 assert.strictEqual(oStandardListItem.getType(), "Inactive", "The type of the ListItem should be Inactive");
@@ -344,7 +344,7 @@
             });
 
             QUnit.module("Core integration", {
-                setup: function () {
+                beforeEach: function () {
                     var that = this;
 
                     var oModel = new sap.ui.model.json.JSONModel({
@@ -387,7 +387,7 @@
 
                     this.oButton.firePress();
                 },
-                teardown: function () {
+                afterEach: function () {
                     sap.ui.getCore().getMessageManager().removeAllMessages();
 
                     this.oDialog.close();
@@ -411,7 +411,7 @@
             });
 
             QUnit.module("HTML representation", {
-                setup: function () {
+                beforeEach: function () {
                     var that = this;
 
                     this.oMessageView = new sap.m.MessageView();
@@ -432,7 +432,7 @@
 
                     sap.ui.getCore().applyChanges();
                 },
-                teardown: function () {
+                afterEach: function () {
                     this.oDialog.close();
 
                     this.oDialog.destroy();
@@ -478,7 +478,7 @@
             });
 
             QUnit.module("Binding", {
-                setup: function () {
+                beforeEach: function () {
                     var that = this;
 
                     this.oButton2 = new sap.m.Button({text: "Press me"});
@@ -513,7 +513,7 @@
 
                     sap.ui.getCore().applyChanges();
                 },
-                teardown: function () {
+                afterEach: function () {
                     this.oDialog2.close();
 
                     this.oDialog2.destroy();

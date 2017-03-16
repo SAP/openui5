@@ -113,10 +113,10 @@
 			}
 
 			QUnit.module("Rendering", {
-				setup: function () {
+				beforeEach: function () {
 					createBoundTree.call(this);
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.oBoundTree1.destroy();
 				}
 			});
@@ -126,11 +126,11 @@
 			});
 
 			QUnit.module("SimpleNode public methods", {
-				setup: function () {
+				beforeEach: function () {
 					createBoundTree.call(this);
 					getTreeNodes.call(this);
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.oBoundTree1.destroy();
 				}
 			});
@@ -148,11 +148,11 @@
 			});
 
 			QUnit.module("SimpleTree public methods", {
-				setup: function () {
+				beforeEach: function () {
 					createBoundTree.call(this);
 					getTreeNodes.call(this);
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.oBoundTree1.destroy();
 				}
 			});
@@ -172,11 +172,11 @@
 			});
 
 			QUnit.module("SimpleTree selection", {
-				setup: function () {
+				beforeEach: function () {
 					createBoundTree.call(this);
 			 		getTreeNodes.call(this);
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.oBoundTree1.destroy();
 				}
 			});
@@ -194,12 +194,12 @@
 			});
 
 			QUnit.module("SimpleTree keyboard navigation", {
-				setup: function () {
+				beforeEach: function () {
 					createBoundTree.call(this);
 					getTreeNodes.call(this);
 					getCorrectArrowsCodesDueToRTL.call(this);
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.oBoundTree1.destroy();
 				}
 			});

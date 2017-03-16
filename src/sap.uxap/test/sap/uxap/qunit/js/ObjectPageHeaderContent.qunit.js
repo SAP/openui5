@@ -6,7 +6,7 @@
 
 
 
-	module("API", {
+	QUnit.module("API", {
     	beforeEach: function () {
     		this.contentView = sap.ui.xmlview("UxAP-ObjectPageHeaderContent", {
     			viewName: "view.UxAP-ObjectPageHeaderContent"
@@ -42,7 +42,7 @@
 		assert.ok(aEditHeaderBtn.length === 1, "button is rendered inside the HeaderContent after rerender");
 	});
 
-	module("ObjectPageHeaderContent integration inside ObjectPageLayout", {
+	QUnit.module("ObjectPageHeaderContent integration inside ObjectPageLayout", {
     	beforeEach: function () {
     		this.contentView = sap.ui.xmlview("UxAP-ObjectPageHeaderContent", {
     			viewName: "view.UxAP-ObjectPageHeaderContent"

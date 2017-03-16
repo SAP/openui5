@@ -20,10 +20,10 @@
 
 		var core = sap.ui.getCore();
 
-		module("Dimensions");
+		QUnit.module("Dimensions");
 
 
-		test("ShouldRoundDimensionsToFloor", function() {
+		QUnit.test("ShouldRoundDimensionsToFloor", function(assert) {
 			// SUT
 			var sut = new sap.m.Tile();
 
@@ -67,7 +67,7 @@
 			},800);
 		});
 
-		test("ShouldSetTheSize", function() {
+		QUnit.test("ShouldSetTheSize", function(assert) {
 			// Arrange
 			var sut,
 				width = 3,
@@ -85,10 +85,10 @@
 		});
 
 
-		module("Properties");
+		QUnit.module("Properties");
 
 
-		test("ShouldSetRemoveable", function() {
+		QUnit.test("ShouldSetRemoveable", function(assert) {
 			// SUT
 			var sut = new sap.m.Tile();
 
@@ -100,7 +100,7 @@
 		});
 
 
-		test("ShouldSetIfATileIsDragged", function() {
+		QUnit.test("ShouldSetIfATileIsDragged", function(assert) {
 				// SUT
 				var sut = new sap.m.Tile();
 				sut.isEditable(true);
@@ -117,7 +117,7 @@
 		});
 
 
-		test("Should Set Visibility and trigger rerender of the TileContainer", function() {
+		QUnit.test("Should Set Visibility and trigger rerender of the TileContainer", function(assert) {
 			//Arrange
 			var result ,
 			//SUT
@@ -141,9 +141,9 @@
 
 
 
-		module("Events");
+		QUnit.module("Events");
 
-		test("ShouldReactOnTouchstart", function() {
+		QUnit.test("ShouldReactOnTouchstart", function(assert) {
 			// SUT
 			var sut = new sap.m.Tile();
 			sut.placeAt("qunit-fixture");
@@ -158,7 +158,7 @@
 			ok(sut.$().hasClass("sapMTileActive-CTX"));
 		});
 
-		test("ShouldReactOnTouchEnd", function() {
+		QUnit.test("ShouldReactOnTouchEnd", function(assert) {
 			//SUT
 			var sut = new sap.m.Tile();
 			sut.placeAt("qunit-fixture");
@@ -176,7 +176,7 @@
 
 		});
 
-		test("ShouldReactOnTouchMove", function() {
+		QUnit.test("ShouldReactOnTouchMove", function(assert) {
 			//SUT
 			var sut = new sap.m.Tile();
 			sut.placeAt("qunit-fixture");
@@ -193,7 +193,7 @@
 
 		});
 
-		test("ShouldPreventTapEventForChildren", function() {
+		QUnit.test("ShouldPreventTapEventForChildren", function(assert) {
 			//Arrange
 			var result ,
 
@@ -216,9 +216,9 @@
 			container.destroy();
 		});
 
-        module("Keyboard handling");
+        QUnit.module("Keyboard handling");
 
-        test("ShouldFirePressOnEnterOrSpace", function() {
+        QUnit.test("ShouldFirePressOnEnterOrSpace", function(assert) {
             //Arrange
             var result = 0,
             //SUT
@@ -243,7 +243,7 @@
         });
 
 
-		test('ShouldHaveAccessibilityAttributes', function () {
+		QUnit.test('ShouldHaveAccessibilityAttributes', function (assert) {
 			// SUT
 			var m 	  	= sap.m,
 				sut 	= new m.Tile(),
@@ -263,7 +263,7 @@
 			cnt.destroy();
 		});
 
-		test("ShouldHaveAriaDescribedByAttribute", function () {
+		QUnit.test("ShouldHaveAriaDescribedByAttribute", function (assert) {
 			var m = sap.m,
 					sut = new m.Tile(),
 					tiles = [sut, new m.Tile()],

@@ -22,14 +22,14 @@
 			*****************************************************/
 			QUnit.module("Application Header", {
 				oSpies: {},
-				setup: function () {
+				beforeEach: function () {
 					this.oAppHeader = new sap.ui.commons.ApplicationHeader();
 					this.oSpies.fnInitControlsSpy = sinon.spy(this.oAppHeader, "initControls");
 					this.oAppHeader.setLogoText("This is the title");
 					this.oAppHeader.placeAt("uiArea1");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown: function () {
+				afterEach: function () {
 					this.oAppHeader.exit();
 				}
 			});

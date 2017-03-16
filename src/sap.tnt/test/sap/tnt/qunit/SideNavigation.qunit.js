@@ -7,7 +7,7 @@
 	// Carousel Properties
 	//================================================================================
 	QUnit.module('API', {
-		setup: function () {
+		beforeEach: function () {
 			this.sideNavigation = new sap.tnt.SideNavigation({
 				item: new sap.tnt.NavigationList(),
 				fixedItem: new sap.tnt.NavigationList()
@@ -15,7 +15,7 @@
 			this.sideNavigation.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.sideNavigation.destroy();
 		}
 	});
@@ -46,7 +46,7 @@
 	});
 
 	QUnit.module('Events', {
-		setup: function () {
+		beforeEach: function () {
 			this.sideNavigation = new sap.tnt.SideNavigation({
 				item: new sap.tnt.NavigationList(),
 				fixedItem: new sap.tnt.NavigationList()
@@ -54,7 +54,7 @@
 			this.sideNavigation.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.sideNavigation.destroy();
 		}
 	});
@@ -82,7 +82,7 @@
 	});
 
 	QUnit.module('Privet methods', {
-		setup: function () {
+		beforeEach: function () {
 			this.sideNavigation = new sap.tnt.SideNavigation({
 				item: new sap.tnt.NavigationList(),
 				fixedItem: new sap.tnt.NavigationList()
@@ -90,7 +90,7 @@
 			this.sideNavigation.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.sideNavigation.destroy();
 		}
 	});

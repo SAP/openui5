@@ -61,7 +61,7 @@
 		var rb1, rb2;
 
 		QUnit.module('API', {
-			setup: function() {
+			beforeEach: function() {
 				// arrange
 				this.oRadioButton1 = new sap.ui.commons.RadioButton();
 				this.oRadioButton2 = new sap.ui.commons.RadioButton();
@@ -71,7 +71,7 @@
 				this.oRadioButton2.placeAt("qunit-fixture");
 				this.oRadioButton3.placeAt("qunit-fixture");
 			},
-			teardown: function() {
+			afterEach: function() {
 				// cleanup
 				this.oRadioButton1.destroy();
 				this.oRadioButton2.destroy();
@@ -108,8 +108,8 @@
 		});
 
 
-		module("Basic", {
-			setup : function() {
+		QUnit.module("Basic", {
+			beforeEach : function() {
 				rb1 = sap.ui.getCore().getControl("rb1");
 				rb2 = sap.ui.getCore().getControl("rb2");
 
@@ -127,7 +127,7 @@
 				ok(rb1, "rb1 should not be null");
 				ok(rb2, "rb2 should not be null");
 			},
-			teardown : function() {
+			afterEach : function() {
 				rb1 = null;
 				rb2 = null;
 			}
@@ -135,32 +135,32 @@
 
 		// test control properties
 
-		test("TextOk", function() {
+		QUnit.test("TextOk", function(assert) {
 			strictEqual(rb1.getText(), sText, "rb1.getText() returns wrong result");
 			strictEqual(rb2.getText(), sText, "rb2.getText() returns wrong result");
 		});
 
-		test("WidthOk", function() {
+		QUnit.test("WidthOk", function(assert) {
 			strictEqual(rb1.getWidth(), sWidth, "rb1.getWidth() returns wrong result");
 			strictEqual(rb2.getWidth(), sWidth, "rb2.getWidth() returns wrong result");
 		});
 
-		test("EnabledOk", function() {
+		QUnit.test("EnabledOk", function(assert) {
 			strictEqual(rb1.getEnabled(), bEnabled, "rb1.getEnabled() returns wrong result");
 			strictEqual(rb2.getEnabled(), bEnabled, "rb2.getEnabled() returns wrong result");
 		});
 
-		test("VisibleOk", function() {
+		QUnit.test("VisibleOk", function(assert) {
 			strictEqual(rb1.getVisible(), bVisible, "rb1.getVisible() returns wrong result");
 			strictEqual(rb2.getVisible(), bVisible, "rb2.getVisible() returns wrong result");
 		});
 
-		test("TooltipOk", function() {
+		QUnit.test("TooltipOk", function(assert) {
 			strictEqual(rb1.getTooltip(), sTooltip, "rb1.getTooltip() returns wrong result");
 			strictEqual(rb2.getTooltip(), sTooltip, "rb2.getTooltip() returns wrong result");
 		});
 
-		test("SelectedOk", function() {
+		QUnit.test("SelectedOk", function(assert) {
 			strictEqual(rb1.getSelected(), bSelected, "rb1.getSelected() returns wrong result");
 			strictEqual(rb2.getSelected(), bSelected, "rb2.getSelected() returns wrong result");
 		});
@@ -170,7 +170,7 @@
 
 		// TODO: test event handler with event parameters
 
-		test("SelectOk", function() {
+		QUnit.test("SelectOk", function(assert) {
 			try {
 				rb1.fireSelect();
 				fail("exception should have been thrown when rb1.fireSelect() was called!");
@@ -186,7 +186,7 @@
 			}
 		});
 
-		test("DetachSelectOk", function() {
+		QUnit.test("DetachSelectOk", function(assert) {
 			rb1.detachSelect(foo);
 			try {
 				rb1.fireSelect();
@@ -210,7 +210,7 @@
 			return true;
 		}
 
-		test("MetadataOk", function() {
+		QUnit.test("MetadataOk", function(assert) {
 			var oMetadata = rb1.getMetadata();
 			ok(oMetadata, "rb1.getMetadata() should not be null");
 			ok(oMetadata.getParent(), "rb1.getMetadata().getParent() should not be null");
@@ -224,7 +224,7 @@
 			ok(oAssociations["ariaLabelledBy"]["multiple"], "ariaLabelledBy multiple");
 		});
 
-		test("OffsetWidthOk", function() {
+		QUnit.test("OffsetWidthOk", function(assert) {
 			//test the pixel perfect width of the control
 			var oDomRef = window.document.getElementById("rb1");
 			strictEqual(oDomRef.offsetWidth, parseInt(rb1.getWidth()), "rb1.offsetWidth should equal parseInt(rb1.getWidth())");
@@ -235,7 +235,7 @@
     });
 
 		// toggle back and forth
-		test("SelectOk", function() {
+		QUnit.test("SelectOk", function(assert) {
 			strictEqual(rb1.getSelected(), bSelected, "rb1.getSelected() returns wrong result");
 
 			// select the first button - it should be selected
@@ -249,7 +249,7 @@
 			strictEqual(rb2.getSelected(), true, "rb2.getSelected() returns wrong result after selecting");
 		});
 
-		test("CssClassesOk", function() {
+		QUnit.test("CssClassesOk", function(assert) {
 			var sClasses = window.document.getElementById("rb1").className;
 			notStrictEqual(sClasses, null, "sClasses is null");
 			ok(sClasses.indexOf("sapUiRb") > -1, "rb1 className is missing 'sapUiRb'");
@@ -276,9 +276,9 @@
 			ok(sClasses.indexOf("sapUiRbRo") > -1, "rb1 className is missing 'sapUiRbRo'");
 		});
 
-			module("GroupName");
+			QUnit.module("GroupName");
 
-			test("_groupNames clean-up", function() {
+			QUnit.test("_groupNames clean-up", function(assert) {
 				this.oRadioButton = new sap.ui.commons.RadioButton();
 
 				this.oRadioButton.placeAt("qunit-fixture");

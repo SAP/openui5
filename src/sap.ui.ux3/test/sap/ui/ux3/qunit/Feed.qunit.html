@@ -91,9 +91,9 @@
 		}).placeAt("uiArea1");
 
 
-		module("Appearance");
+		QUnit.module("Appearance");
 
-		test("Output of elements", function() {
+		QUnit.test("Output of elements", function(assert) {
 			// feeder
 			ok(jQuery.sap.byId("Feed1").children(".sapUiFeeder").get(0), "Feeder rendered");
 			equal(sap.ui.getCore().getControl("Feed1-Feeder").getThumbnailSrc(), "../images/feeder/w_01.png", "ThumbnailSrc of feeder");
@@ -132,9 +132,9 @@
 			setTimeout(delayedCall, 0);
 		});
 
-		module("Behaviour");
+		QUnit.module("Behaviour");
 
-		test("live button", function() {
+		QUnit.test("live button", function(assert) {
 			qutils.triggerMouseEvent("Feed1-liveButton", "click");
 			equal(sEvent, "ToggleLive", "Event by clicking live button");
 			equal(sEventParameter, false, "live state after click on live button");
@@ -150,7 +150,7 @@
 			// if toggle button available test for toggle state
 		});
 
-		test("menu button", function() {
+		QUnit.test("menu button", function(assert) {
 			qutils.triggerMouseEvent("Feed1-toolsButton", "click");
 			qutils.triggerMouseEvent("MenuItem1", "click");
 			equal(sEvent, "ToolsItemSelected", "Event by clicking fist item of menu button");
@@ -175,7 +175,7 @@
 
 		});
 
-		test("search field", function() {
+		QUnit.test("search field", function(assert) {
 			var oSearchDomRef = sap.ui.getCore().getControl("Feed1-search").getFocusDomRef();
 			qutils.triggerCharacterInput(oSearchDomRef, "Test");
 			qutils.triggerKeyEvent("keyup", oSearchDomRef, jQuery.sap.KeyCodes.T);

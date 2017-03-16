@@ -43,12 +43,12 @@
 	// API module                                                  //
 	// =========================================================== //
 
-	module("API");
+	QUnit.module("API");
 
 	// ------------------------------ //
 	// tests for default values       //
 	// ------------------------------ //
-	test("constructor - items: []", function() {
+	QUnit.test("constructor - items: []", function(assert) {
 
 		// system under test
 		var oDimMeasurePanel = new sap.m.P13nDimMeasurePanel({
@@ -69,7 +69,7 @@
 		oDimMeasurePanel.destroy();
 	});
 
-	test("constructor - items: [aItems]", function() {
+	QUnit.test("constructor - items: [aItems]", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -113,7 +113,7 @@
 		oDimMeasurePanel.destroy();
 	});
 
-	test("constructor - [], addItem", function() {
+	QUnit.test("constructor - [], addItem", function(assert) {
 
 		// system under test
 		var oDimMeasurePanel = new sap.m.P13nDimMeasurePanel();
@@ -154,7 +154,7 @@
 		oDimMeasurePanel.destroy();
 	});
 
-	test("constructor - items: [aItems], insertItem", function() {
+	QUnit.test("constructor - items: [aItems], insertItem", function(assert) {
 
 		// system under test
 		var oItemA, oItemB = new sap.m.P13nItem({
@@ -198,7 +198,7 @@
 		oDimMeasurePanel.destroy();
 	});
 
-	test("constructor - items: [aItems], removeItem", function() {
+	QUnit.test("constructor - items: [aItems], removeItem", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -241,7 +241,7 @@
 		oDimMeasurePanel.destroy();
 	});
 
-	test("constructor - items: [aItems], removeItem dummy", function() {
+	QUnit.test("constructor - items: [aItems], removeItem dummy", function(assert) {
 
 		// system under test
 		var oItemA, oItemB = new sap.m.P13nItem({
@@ -284,7 +284,7 @@
 		oDimMeasurePanel.destroy();
 	});
 
-	test("constructor - items: [aItems], removeAllItems", function() {
+	QUnit.test("constructor - items: [aItems], removeAllItems", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -323,7 +323,7 @@
 		oDimMeasurePanel.destroy();
 	});
 
-	test("constructor - items: [aItems], destroyItems", function() {
+	QUnit.test("constructor - items: [aItems], destroyItems", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -359,7 +359,7 @@
 		oDimMeasurePanel.destroy();
 	});
 
-	test("constructor - items: [aItems], dimMeasureItems: [aDimMeasureItems]", function() {
+	QUnit.test("constructor - items: [aItems], dimMeasureItems: [aDimMeasureItems]", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -407,7 +407,7 @@
 		oDimMeasurePanel.destroy();
 	});
 
-	test("constructor - dimMeasureItems: [aDimMeasureItems], items: [aItems]", function() {
+	QUnit.test("constructor - dimMeasureItems: [aDimMeasureItems], items: [aItems]", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -455,7 +455,7 @@
 		oDimMeasurePanel.destroy();
 	});
 
-	test("constructor - items: [aItems], dimMeasureItems: [aDimMeasureItems]", function() {
+	QUnit.test("constructor - items: [aItems], dimMeasureItems: [aDimMeasureItems]", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -505,7 +505,7 @@
 		oDimMeasurePanel.destroy();
 	});
 
-	test("getOkPayload: â0 -> a0", function() {
+	QUnit.test("getOkPayload: â0 -> a0", function(assert) {
 
 		// system under test
 		var oDimMeasureItemA;
@@ -544,7 +544,7 @@
 		oDimMeasurePanel.destroy();
 	});
 
-	test("getOkPayload: a0 -> â0", function() {
+	QUnit.test("getOkPayload: a0 -> â0", function(assert) {
 
 		// system under test
 		var oDimMeasurePanel = new sap.m.P13nDimMeasurePanel({
@@ -576,7 +576,7 @@
 		oDimMeasurePanel.destroy();
 	});
 
-	test("getOkPayload: a0 -> a1", function() {
+	QUnit.test("getOkPayload: a0 -> a1", function(assert) {
 
 		// system under test
 		var oDimMeasurePanel = new sap.m.P13nDimMeasurePanel({
@@ -606,7 +606,7 @@
 		oDimMeasurePanel.destroy();
 	});
 
-	test("getOkPayload: a0 -> â1", function() {
+	QUnit.test("getOkPayload: a0 -> â1", function(assert) {
 
 		// system under test
 		var oDimMeasurePanel = new sap.m.P13nDimMeasurePanel({
@@ -638,7 +638,7 @@
 		oDimMeasurePanel.destroy();
 	});
 
-	test("getOkPayload: â0 -> â1", function() {
+	QUnit.test("getOkPayload: â0 -> â1", function(assert) {
 
 		// system under test
 		var oDimMeasureItemsA;
@@ -678,7 +678,7 @@
 		oDimMeasurePanel.destroy();
 	});
 
-	test("getOkPayload: â0 -> a1", function() {
+	QUnit.test("getOkPayload: â0 -> a1", function(assert) {
 
 		// system under test
 		var oDimMeasureItemsA;

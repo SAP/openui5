@@ -48,7 +48,7 @@
 		var fnTestControlProperty = function(mOptions) {
 			var sProperty = jQuery.sap.charToUpperCase(mOptions.property);
 
-			QUnit.test("get" + sProperty + "()", function() {
+			QUnit.test("get" + sProperty + "()", function(assert) {
 				assert.strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
 			});
 		};
@@ -3088,7 +3088,7 @@
 		QUnit.module("setSelectedIndex()");
 
 		var setSelectedIndexTestCase = function(sTestName, mOptions) {
-			QUnit.test("setSelectedIndex()", function() {
+			QUnit.test("setSelectedIndex()", function(assert) {
 
 				// system under test
 				var oComboBox = mOptions.control;
@@ -10567,7 +10567,7 @@
 
 		QUnit.module("Integration");
 
-		QUnit.test("Keep selected value on parent re-render", function () {
+		QUnit.test("Keep selected value on parent re-render", function (assert) {
 			var oComboBox = new sap.m.ComboBox({
 				items: [
 					new sap.ui.core.Item({key: "A", text: "Amount"}),

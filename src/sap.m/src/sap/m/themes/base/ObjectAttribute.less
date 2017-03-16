@@ -14,7 +14,8 @@
 }
 
 .sapMListTbl .sapMObjectAttributeActive .sapMText,
-.sapMObjectAttributeActive .sapMText {
+.sapMObjectAttributeActive .sapMText,
+.sapMObjectAttributeActive .sapMObjectAttributeText {
 	color: @sapUiLink;
 	cursor: pointer;
 	pointer-events: auto;
@@ -24,10 +25,30 @@
 	pointer-events: auto;
 }
 
+.sapMObjectAttributeActive .sapMObjectAttributeText:active,
+.sapMObjectAttributeActive .sapMObjectAttributeText:hover,
+.sapMObjectAttributeActive:focus .sapMObjectAttributeText,
 .sapMObjectAttributeActive .sapMText:active,
 .sapMObjectAttributeActive .sapMText:focus,
 .sapMObjectAttributeActive .sapMText:hover {
 	text-decoration: underline;
+}
+
+.sapMObjectAttributeActive {
+	display: block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeTitle,
+.sapMObjectAttributeActive .sapMObjectAttributeText {
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 50%;
+	vertical-align: middle;
 }
 
 .sapMObjectAttributeText > .sapMLnk {
@@ -46,12 +67,31 @@
 	outline: none;
 }
 
+.sapMLIBActive .sapMObjectAttributeText,
 .sapMLIBActive .sapMObjectAttributeDiv{
 	color: @sapUiListActiveTextColor;
 }
 
 html.sap-desktop .sapMObjectAttributeActive:focus {
 	outline: none;
+}
+
+.sapMObjectAttributeActive > span:only-of-type {
+	max-width: 100%;
+}
+
+.sapUxAPObjectPageHeaderContentItem .sapMObjectAttributeText {
+	line-height: normal;
+}
+
+html[data-sap-ui-browser^='ie'], html[data-sap-ui-browser^='ie'] {
+	.sapMObjectAttributeDiv {
+		padding: 0.25rem 0.25rem 0.25rem 0.25rem;
+	}
+
+	.sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+		outline-style: dashed;
+	}
 }
 
 /*=========================================== */
@@ -134,6 +174,10 @@ html.sap-desktop .sapMObjectAttributeActive:focus {
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText {
 	color: @sapUiLink;
 	cursor: pointer;
+}
+
+.sapMOH .sapMOHAttr .sapMObjectAttributeDiv > span:only-of-type {
+	max-width: 100%;
 }
 
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:active,

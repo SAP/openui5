@@ -39,7 +39,7 @@
 
 	QUnit.test("Internal aggregations created on init", function(assert) {
 		//Assert
-		assert.equal(this.oSelectionDetails.getAggregation("_button").getMetadata().getName(), "sap.m.OverflowToolbarButton", "Private button created");
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getMetadata().getName(), "sap.m.Button", "Private button created");
 	});
 
 	QUnit.module("Basic Rendering", {
@@ -109,6 +109,18 @@
 		assert.equal(this.oSelectionDetails.isEnabled(), true, "Method isEnabled returns true if the aggregation 'items' contains items");
 	});
 
+	QUnit.test("Method close", function(assert) {
+		// Arrange
+		this.oSelectionDetails.destroyAggregation("_popover");
+		var oSpy = sinon.spy(sap.m.ResponsivePopover.prototype, "close");
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button);
+		// Act
+		var oReturnedSelectionDetails = this.oSelectionDetails.close();
+		//Assert
+		assert.ok(oSpy.called, "The 'close' method was called");
+		assert.ok(oReturnedSelectionDetails instanceof sap.m.SelectionDetails, "Returned value is SelectionDetails control");
+	});
+
 	QUnit.module("Popover interaction", {
 		beforeEach : function() {
 			this.oSelectionDetails = new sap.m.SelectionDetails();
@@ -121,10 +133,10 @@
 		}
 	});
 
-	QUnit.test("Popover aggregation is filled when the Click processor is executed", function(assert) {
+	QUnit.test("Popover aggregation is filled when the Click handler is executed", function(assert) {
 		// Arrange
 		// Act
-		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button);
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button);
 		//Assert
 		assert.ok(this.oSelectionDetails.getAggregation("_popover"), "The aggregation is filled");
 	});
@@ -133,22 +145,11 @@
 		// Arrange
 		var oSpy = sinon.spy(sap.m.ResponsivePopover.prototype, "openBy");
 		// Act
-		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button);
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button);
 		//Assert
 		assert.ok(oSpy.calledOnce, "The 'openBy' function was called");
 		// Restore
 		oSpy.restore();
-	});
-
-	QUnit.test("Method close", function(assert) {
-		// Arrange
-		var oSpy = sinon.spy(sap.m.ResponsivePopover.prototype, "close");
-		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page);
-		// Act
-		var oReturnedSelectionDetails = this.oSelectionDetails.close();
-		//Assert
-		assert.ok(oSpy.called, "The 'close' method was called");
-		assert.ok(oReturnedSelectionDetails instanceof sap.m.SelectionDetails, "Returned value is SelectionDetails control");
 	});
 
 	QUnit.test("Click handler creates list items and puts them in the list", function(assert) {
@@ -156,7 +157,7 @@
 		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem();
 		this.oSelectionDetails.addItem(oSelectionDetailsItem);
 		// Act
-		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.OverflowToolbarButton, sap.m.List);
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
 		var oList = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-list");
 		//Assert
 		assert.equal(oList.getAggregation("items").length, 1, "One list item has been added to the list");
@@ -167,7 +168,7 @@
 		var sText = "myText";
 		this.oSelectionDetails.addAction(new sap.ui.core.Item({text: sText, enabled: true}));
 		// Act
-		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.OverflowToolbarButton, sap.m.List);
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
 		//Assert
 		var oButton = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-action-0");
 		assert.equal(oButton.getText(), sText, "Button has correct text");
@@ -178,14 +179,199 @@
 		// Arrange
 		var oAction = new sap.ui.core.Item();
 		this.oSelectionDetails.addAction(oAction);
-		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.OverflowToolbarButton, sap.m.List);
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
 		var oButton = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-action-0");
 		var oSpy = sinon.spy(this.oSelectionDetails, "fireActionPress");
 		// Act
 		oButton.firePress();
 		//Assert
-		assert.deepEqual(oSpy.getCall(0).args[0].action, oAction, "The actionPress event of SelectionDetails has been fired");
+		assert.deepEqual(oSpy.getCall(0).args[0].action, oAction, "The actionPress event of SelectionDetails has been triggered");
 	});
+
+	QUnit.test("ActionListItem is created for actiongroups aggregation", function(assert) {
+		// Arrange
+		var oActionGroup = new sap.ui.core.Item();
+		this.oSelectionDetails.addActionGroup(oActionGroup);
+		// Act
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		// Assert
+		assert.ok(sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-actiongroup-0"), "ActionListItem has been created");
+	});
+
+	QUnit.test("Press on the ActionListItem triggers action press event", function(assert) {
+		// Arrange
+		var oActionGroup = new sap.ui.core.Item();
+		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem();
+		this.oSelectionDetails.addActionGroup(oActionGroup);
+		this.oSelectionDetails.addItem(oSelectionDetailsItem);
+
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		var oActionListItem = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-actiongroup-0");
+		var oSpy = sinon.spy(this.oSelectionDetails, "fireActionPress");
+		// Act
+		oActionListItem.firePress();
+		// Assert
+		assert.deepEqual(oSpy.getCall(0).args[0].action, oActionGroup, "The actionPress event of SelectionDetails has been triggered");
+		assert.deepEqual(oSpy.getCall(0).args[0].items, [oSelectionDetailsItem], "The items are attached in the actionPress event");
+	});
+
+	QUnit.test("List is destroyed", function(assert) {
+		//Arrange
+		this.oSelectionDetails.addItem(new sap.m.SelectionDetailsItem);
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		var oSpy = sinon.spy(this.oSelectionDetails._oList, "destroy");
+		//Act
+		this.oSelectionDetails.destroy();
+		//Assert
+		assert.ok(oSpy.calledOnce, "List is destroyed");
+	});
+
+	QUnit.test("Toolbar for list actions is destroyed", function(assert) {
+		//Arrange
+		this.oSelectionDetails.addAction(new sap.ui.core.Item());
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		var oSpy = sinon.spy(this.oSelectionDetails._oToolbar, "destroy");
+		//Act
+		this.oSelectionDetails.destroy();
+		//Assert
+		assert.ok(oSpy.calledOnce, "Toolbar for actions on list level is destroyed");
+	});
+
+	QUnit.module("Control Facade", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Facade is not returning the original instance", function(assert) {
+		// Act
+		var oFacade = this.oSelectionDetails.getFacade();
+		//Assert
+		assert.notDeepEqual(this.oSelectionDetails, oFacade, "Proxy object is returned.");
+	});
+
+	QUnit.test("Facade proxy object is buffered on instance level", function(assert) {
+		// Act
+		var oFacadeFirstCall = this.oSelectionDetails.getFacade();
+		var oFacadeSecondCall = this.oSelectionDetails.getFacade();
+		//Assert
+		assert.equal(oFacadeFirstCall, oFacadeSecondCall, "Same proxy object is returned");
+	});
+
+	QUnit.test("Facade includes setText method", function(assert) {
+		// Arrange
+		var oFacade = this.oSelectionDetails.getFacade();
+		// Act
+		oFacade.setText("New Text for Details Button");
+		//Assert
+		assert.equal(this.oSelectionDetails.getText(), "New Text for Details Button", "setText proxy is working");
+	});
+
+	QUnit.test("Facade includes isOpen method", function(assert) {
+		// Act
+		var oFacade = this.oSelectionDetails.getFacade();
+		//Assert
+		assert.notOk(oFacade.isOpen(), "isOpen returns false");
+	});
+
+	QUnit.module("Factory Function", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Factory function not registered yet", function(assert) {
+		//Assert
+		assert.equal(this.oSelectionDetails._oItemFactory, null, "Factory function is undefined");
+	});
+
+	QUnit.test("Factory Function - only function provided", function(assert) {
+		//Arrange
+		fnFunction = function(){};
+		this.oSelectionDetails.registerSelectionDetailsItemFactory(fnFunction);
+		//Assert
+		assert.equal(this.oSelectionDetails._oItemFactory.fFunction, fnFunction, "Factory function is defined");
+		assert.ok(!this.oSelectionDetails._oItemFactory.data, "Factory data is undefined");
+	});
+
+	QUnit.test("Register Factory Function - data and function provided", function(assert) {
+		//Arrange
+		fnFunction = function(){};
+		oData = [1, 2];
+		this.oSelectionDetails.registerSelectionDetailsItemFactory(oData, fnFunction);
+		//Assert
+		assert.equal(this.oSelectionDetails._oItemFactory.fFunction, fnFunction, "Factory function is defined");
+		assert.equal(this.oSelectionDetails._oItemFactory.data, oData, "Factory data is defined");
+	});
+
+	QUnit.test("Factory Function - invalid data provided", function(assert) {
+		//Arrange
+		fnFunction = "Invalid data";
+		var result = this.oSelectionDetails.registerSelectionDetailsItemFactory(fnFunction);
+		//Assert
+		assert.equal(this.oSelectionDetails._oItemFactory, null, "Factory function is undefined");
+		assert.equal(result, this.oSelectionDetails, "Factory function returns SelectionDetails");
+	});
+
+	QUnit.module("Events", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Event 'beforeOpen' is triggered", function(assert) {
+		assert.expect(1);
+		//Arrange
+		this.oSelectionDetails.attachBeforeOpen(fnBeforeOpen);
+		//Act
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button);
+		//Assert
+		function fnBeforeOpen (oEvt) {
+			assert.ok(true, "Event was triggered");
+		}
+	});
+
+	QUnit.test("Event 'beforeClose' is triggered", function(assert) {
+		assert.expect(1);
+		//Arrange
+		this.oSelectionDetails.attachBeforeClose(fnBeforeClose);
+		//Act
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button);
+		//Assert
+		function fnBeforeClose (oEvt) {
+			assert.ok(true, "Event was triggered");
+		}
+	});
+
+	QUnit.test("Popover event 'beforeOpen' is delegated", function(assert) {
+		//Arrange
+		var oSpyBeforeOpen = sinon.spy(this.oSelectionDetails, "fireBeforeOpen");
+		var oSpyBeforeClose = sinon.spy(this.oSelectionDetails, "fireBeforeClose");
+		//Act
+		this.oSelectionDetails._delegatePopoverEvent({
+			sId: "beforeOpen"
+		});
+		//Assert
+		assert.ok(oSpyBeforeOpen.calledOnce, "Popover event 'beforeOpen' delegated.");
+		assert.notOk(oSpyBeforeClose.calledOnce, "Popover event 'beforeClose' not delegated.");
+	});
+
 
 </script>
 </head>

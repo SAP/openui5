@@ -62,15 +62,15 @@
 	// TEST functions
 	qutils.delayTestStart(2000);
 
-	module("Properties");
-	test("Default values", 3, function() {
+	QUnit.module("Properties");
+	QUnit.test("Default values", 3, function(assert) {
 		strictEqual(oP2R.getShowIcon(), false, "Default value for showIcon");
 		strictEqual(oP2R.getDescription(), sDescription, "Description value");
 		ok(!oP2R.getCustomIcon(), "Custom icon is not set");
 	});
 
-	module("Check HTML");
-	test("HTML", function() {
+	QUnit.module("Check HTML");
+	QUnit.test("HTML", function(assert) {
 		var $P2R = oP2R.$();
 		var iScroller = oPage1.getScrollDelegate()._scroller;
 		if (iScroller) { // this is executed when iScroll is used
@@ -89,7 +89,7 @@
 	});
 
 // Test pull to refresh functionality
-	module("Behavior");
+	QUnit.module("Behavior");
 
 	asyncTest("Pull Down", function() {
 		var iScroller = oPage1.getScrollDelegate()._scroller;

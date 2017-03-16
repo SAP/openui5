@@ -3,13 +3,13 @@
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	QUnit.module("HTML", {
-		setup: function () {
+		beforeEach: function () {
 			this.rangeSlider = new sap.m.RangeSlider();
 
 			this.rangeSlider.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.rangeSlider.destroy();
 			this.rangeSlider = null;
 		}
@@ -82,13 +82,13 @@
 	});
 
 	QUnit.module("API", {
-		setup: function () {
+		beforeEach: function () {
 			this.rangeSlider = new sap.m.RangeSlider();
 
 			this.rangeSlider.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.rangeSlider.destroy();
 			this.rangeSlider = null;
 		}
@@ -231,12 +231,12 @@
 		assert.strictEqual(oHandleDomRef, this.rangeSlider.getDomRef("handle2"), "The function should return the second handle");
 	});
 
-	QUnit.test("setValue()", function () {
+	QUnit.test("setValue()", function (assert) {
 		var that = this.rangeSlider.setValue();
 		assert.ok(that === this.rangeSlider, "The function should not do anything and return this for chaining");
 	});
 
-	QUnit.test("_calculateHandlePosition()", function () {
+	QUnit.test("_calculateHandlePosition()", function (assert) {
 		this.rangeSlider._fSliderWidth = 100;
 		this.rangeSlider._fSliderOffsetLeft = 0;
 		this.rangeSlider._fSliderPaddingLeft = 0;
@@ -254,7 +254,7 @@
 		assert.strictEqual(this.rangeSlider._calculateHandlePosition(value5), 100, "The function should return 100");
 	});
 
-	QUnit.test("_calculateHandlePosition() with even step", function () {
+	QUnit.test("_calculateHandlePosition() with even step", function (assert) {
 		this.rangeSlider._fSliderWidth = 100;
 		this.rangeSlider._fSliderOffsetLeft = 0;
 		this.rangeSlider._fSliderPaddingLeft = 0;
@@ -269,7 +269,7 @@
 		assert.strictEqual(this.rangeSlider._calculateHandlePosition(value3), 74, "The function should return 74");
 	});
 
-	QUnit.test("_calculateHandlePosition() with odd step", function () {
+	QUnit.test("_calculateHandlePosition() with odd step", function (assert) {
 		this.rangeSlider._fSliderWidth = 100;
 		this.rangeSlider._fSliderOffsetLeft = 0;
 		this.rangeSlider._fSliderPaddingLeft = 0;
@@ -286,7 +286,7 @@
 		assert.strictEqual(this.rangeSlider._calculateHandlePosition(value4), 72, "The function should return 72");
 	});
 
-	QUnit.test("_calculateHandlePosition() with decimal step", function () {
+	QUnit.test("_calculateHandlePosition() with decimal step", function (assert) {
 		this.rangeSlider._fSliderWidth = 100;
 		this.rangeSlider._fSliderOffsetLeft = 0;
 		this.rangeSlider._fSliderPaddingLeft = 0;
@@ -405,8 +405,92 @@
 		oSlider = null;
 	});
 
+	QUnit.test("The order of the arguments should not matter when setting the properties min/max, value/value2", function (assert) {
+		var check = function (oSliderConfig) {
+			var oSlider = new sap.m.RangeSlider(oSliderConfig).placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+
+			//Assert
+			assert.strictEqual(oSlider.getValue(), oSliderConfig.value, "'Value' property value should be adjusted correctly");
+			assert.strictEqual(oSlider.getValue2(), oSliderConfig.value2, "'Value2' property value should be adjusted correctly");
+			assert.strictEqual(oSlider.getMin(), oSliderConfig.min, "'Min' property values should be equal");
+			assert.strictEqual(oSlider.getMax(), oSliderConfig.max, "'Max' property values should be equal");
+			assert.strictEqual(oSlider.getRange()[0], oSlider.getValue(), "The start of the range should be equal to the value of the property 'value'");
+			assert.strictEqual(oSlider.getRange()[1], oSlider.getValue2(), "The end of the range should be equal to the value of the property 'value2'");
+
+			//Cleanup
+			oSlider.destroy();
+			oSlider = null;
+		}
+
+		check({value: 500, value2: 1000, min: 0, max: 2000});
+		check({value: 1000, value2: 500, min: 0, max: 2000});
+	});
+
+	QUnit.test("The values of value and value2 properties should be adjusted correctly when they are not in the boundaries of min and max values", function (assert) {
+		var check = function (oSliderConfig) {
+			var oSlider = new sap.m.RangeSlider(oSliderConfig).placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+
+			//Assert
+			assert.strictEqual(oSlider.getValue(), oSliderConfig.min, "'Value' property value should be equal to the min value");
+			assert.strictEqual(oSlider.getValue2(), oSliderConfig.max, "'Value2' property value should be equal to the max");
+			assert.strictEqual(oSlider.getMin(), oSliderConfig.min, "'Min' property values should be equal");
+			assert.strictEqual(oSlider.getMax(), oSliderConfig.max, "'Max' property values should be equal");
+			assert.strictEqual(oSlider.getRange()[0], oSlider.getValue(), "The start of the range should be equal to the value of the property 'value'");
+			assert.strictEqual(oSlider.getRange()[1], oSlider.getValue2(), "The end of the range should be equal to the value of the property 'value2'");
+
+			//Cleanup
+			oSlider.destroy();
+			oSlider = null;
+		}
+
+		check({value: 100, max: 500, value2: 600, min: 200});
+		check({value: 100, min: 200, max: 2000,value2: 5000});
+	});
+
+	QUnit.test("The order of the arguments should not matter when setting the properties min/max, range", function (assert) {
+		var check = function (oSliderConfig) {
+			var oSlider = new sap.m.RangeSlider(oSliderConfig).placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+
+			//Assert
+			assert.strictEqual(oSlider.getValue(), oSlider.getRange()[0], "'Value' property value should be equal to the start of the range");
+			assert.strictEqual(oSlider.getValue2(), oSlider.getRange()[1], "'Value2' property value should be equal to the end of the range");
+			assert.strictEqual(oSlider.getRange()[0], oSliderConfig.range[0], "'Range' property start value should be the adjusted correctly");
+			assert.strictEqual(oSlider.getRange()[1], oSliderConfig.range[1], "'Range' property end value should be the adjusted correctly");
+
+			//Cleanup
+			oSlider.destroy();
+			oSlider = null;
+		}
+
+		check({range: [500, 1000], min: -100, max: 2000});
+		check({min: -100, max: 2000, range: [500, 1000]});
+	});
+
+	QUnit.test("The values of the range property should be adjusted correctly when they are not in the boundaries of min and max values", function (assert) {
+		var check = function (oSliderConfig) {
+			var oSlider = new sap.m.RangeSlider(oSliderConfig).placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+
+			//Assert
+			assert.strictEqual(oSlider.getValue(), oSlider.getRange()[0], "'Value' property value should be equal to the start of the range");
+			assert.strictEqual(oSlider.getValue2(), oSlider.getRange()[1], "'Value2' property value should be equal to the end of the range");
+			assert.strictEqual(oSlider.getRange()[0], oSliderConfig.min, "'Range' property start value should be the adjusted correctly");
+			assert.strictEqual(oSlider.getRange()[1], oSliderConfig.max, "'Range' property end value should be the adjusted correctly");
+
+			//Cleanup
+			oSlider.destroy();
+			oSlider = null;
+		}
+
+		check({range: [-200, 3000], min: -100, max: 2000});
+		check({min: -100, max: 2000, range: [-500, 3000]});
+	});
+
 	QUnit.module("SAP KH", {
-		setup: function () {
+		beforeEach: function () {
 			this.oRangeSlider = new sap.m.RangeSlider({range: [20, 30]});
 			this.oRangeSlider.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
@@ -432,7 +516,7 @@
 				assert.notDeepEqual(this.oRangeSlider.getRange(), aCurRange, "Not equals");
 			};
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oEvent = null;
 			this.testSAPEvents = null;
 			this.oRangeSlider.destroy();
