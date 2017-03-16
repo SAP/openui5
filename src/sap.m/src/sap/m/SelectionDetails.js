@@ -398,11 +398,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	};
 
 	/**
-	 * TBW
+	 * Handles the selection change event. The event parameters need to follow this structure:
+	 * <code>
+	 * data: [
+	 * {
+	 * data: [{}],
+	 * displayData: [{}]
+	 * }
+	 * ]</code>
 	 * @param {sap.ui.base.Event} oEvent of selection change listener object
 	 */
 	SelectionDetails.prototype._handleSelectionChange = function (oEvent) {
-
+		var oEventParams = oEvent.getParameter("data");
+		if (jQuery.type(oEventParams) === "array") {
+			this._oSelectionData = oEventParams;
+		}
 	};
 
 	/* =========================================================== */
@@ -410,6 +420,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	/* =========================================================== */
 	/**
 	 * Method to register the factory function that creates the SelectionDetailsItems.
+	 * The factory function is called for every selected entry separately with three parameters.
+	 * First parameter is the display data array for each item out of the selection.
+	 * Second parameter is the data array for each item out of the selection.
+	 * Third parameter is <code>oData</code>. Can be undefined.
 	 * @protected
 	 * @param {any} oData Data to be passed to the factory function
 	 * @param {function} fnFunction The item factory function that returns SelectionDetailsItems

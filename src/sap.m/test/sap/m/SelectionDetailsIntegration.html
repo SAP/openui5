@@ -77,12 +77,25 @@
 	});
 
 	var oSelectionDetails = new sap.m.SelectionDetails("selectionDetails");
-	oSelectionDetails.registerSelectionDetailsItemFactory(function (oItemData) {
-		return new sap.m.SelectionDetailsItem();
-	});
+	oSelectionDetails.registerSelectionDetailsItemFactory(["MyFirstData", "MySecondData"],
+		function (aDisplayData, aData, oData) {
+			var aLines = [];
+			for (var i = 0; i < aDisplayData.length; i++) {
+				aLines.push(new sap.m.SelectionDetailsItemLine({
+					label : aDisplayData[i].label,
+					value: aDisplayData[i].value,
+					unit: aDisplayData[i].unit
+				}));
+			}
+			return new sap.m.SelectionDetailsItem({
+				enableNav: Math.random > 0.5 ? true: false,
+				lines : aLines
+			});
+		}
+	);
 
 	//Not yet implemented
-	//oSelectionDetails.attachSelectionHandler("_selectionDetails", oChangeButton);
+	oSelectionDetails.attachSelectionHandler("_selectionDetails", oChangeButton);
 
 	var oApp = new sap.m.App({
 		pages: new sap.m.Page({
