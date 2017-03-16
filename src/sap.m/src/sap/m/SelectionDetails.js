@@ -118,6 +118,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		}
 	}});
 
+	SelectionDetails._Direction = {
+		Forward: "forward",
+		Backward: "backward"
+	};
 	/* =========================================================== */
 	/* Lifecycle methods                                           */
 	/* =========================================================== */
@@ -337,6 +341,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 
 		aItems = this.getItems();
 		for (i = 0; i < aItems.length; i++) {
+			aItems[i].attachEvent("_navigate", this._onNavigate, this);
 			oListItem = aItems[i]._getListItem();
 			this._oList.addAggregation("items", oListItem, true);
 		}
@@ -395,6 +400,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			action: oData.action,
 			items: this.getItems(),
 			level: oData.level
+		});
+	};
+
+	/**
+	 * Handles the navigate on the SelectionDetailsItem by triggering the navigate event on the instance of SelectionDetails.
+	 * @param {sap.ui.base.Event} oEvent the navigation event that has been fired by the SelectionDetailsItem
+	 * @private
+	 */
+	SelectionDetails.prototype._onNavigate = function(oEvent) {
+		this.fireNavigate({
+			item: oEvent.getSource(),
+			direction: SelectionDetails._Direction.Forward
 		});
 	};
 

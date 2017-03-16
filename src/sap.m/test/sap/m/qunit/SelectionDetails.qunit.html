@@ -254,6 +254,32 @@
 		assert.ok(oSpy.calledOnce, "Toolbar for actions on list level is destroyed");
 	});
 
+	QUnit.module("Navigation", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("'_navigate' Event for the selectionDetailsItem results in navigate event on SelectionDetails", function(assert) {
+		//Arrange
+		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem();
+		this.oSelectionDetails.addItem(oSelectionDetailsItem);
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		var oSpy = sinon.spy(this.oSelectionDetails, "fireNavigate");
+
+		//Act
+		oSelectionDetailsItem.fireEvent("_navigate");
+		//Assert
+		assert.deepEqual(oSpy.getCall(0).args[0].item, oSelectionDetailsItem, "'navigate' event of SelectionDetails was called with correct 'item' parameter");
+		assert.deepEqual(oSpy.getCall(0).args[0].direction, "forward", "'navigate' event of SelectionDetails was called with correct 'direction' parameter");
+	});
+
 	QUnit.module("Control Facade", {
 		beforeEach : function() {
 			this.oSelectionDetails = new sap.m.SelectionDetails();
