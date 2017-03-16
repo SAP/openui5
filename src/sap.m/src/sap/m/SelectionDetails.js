@@ -26,13 +26,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 */
 	var SelectionDetails = Control.extend("sap.m.SelectionDetails", /** @lends sap.m.SelectionDetails.prototype */ { metadata : {
 		library : "sap.m",
-		properties : {
-
-			/**
-			 * The text to be displayed in the button. The value of this property is a translatable resource. It will be appended by the number of items selected on the chart, for example Details (3) for three selected items on the chart.
-			 */
-			text : {type : "string", group : "Appearance", defaultValue : "Details"}
-		},
 		defaultAggregation : "items",
 		aggregations : {
 				/**
@@ -124,6 +117,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	/* Lifecycle methods                                           */
 	/* =========================================================== */
 	SelectionDetails.prototype.init = function() {
+		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this.setAggregation("_button", new Button({
 			id : this.getId() + "-button",
 			type : library.ButtonType.Transparent,
@@ -133,7 +127,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	};
 
 	SelectionDetails.prototype.onBeforeRendering = function () {
-		this.getAggregation("_button").setProperty("text", this.getText(), true);
+		this.getAggregation("_button").setProperty("text", this._getButtonText(), true);
 	};
 
 	SelectionDetails.prototype.exit = function() {
@@ -187,7 +181,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @returns {sap.ui.base.Interface} the reduced facade for outer framework usages
 	 * @protected
 	 */
-	SelectionDetails.prototype._aFacadeMethods = ["setText", "getText", "isOpen"];
+	SelectionDetails.prototype._aFacadeMethods = ["isOpen"];
 	SelectionDetails.prototype.getFacade = function() {
 		var oFacade = new Interface(this, SelectionDetails.prototype._aFacadeMethods);
 		this.getFacade = jQuery.sap.getter(oFacade);
@@ -197,6 +191,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	/* =========================================================== */
 	/* Private methods                                             */
 	/* =========================================================== */
+
+	/**
+	 * Gets the text for the button in the toolbar.
+	 * @private
+	 * @returns {string} The text on the button
+	 */
+	SelectionDetails.prototype._getButtonText = function () {
+		return this._oRb.getText("SELECTIONDETAILS_BUTTON_TEXT", [this.getItems().length]);
+	};
+
 	/**
 	 * Calls the handler for the button click. Loads the necessary dependencies only when they are needed.
 	 * @private

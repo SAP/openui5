@@ -32,9 +32,9 @@
 		}
 	});
 
-	QUnit.test("Property 'text'", function(assert) {
+	QUnit.test("Button text", function(assert) {
 		//Assert
-		assert.equal(this.oSelectionDetails.getText(), "Details", "The default value for property text is 'Details'");
+		assert.ok((this.oSelectionDetails.getAggregation("_button").getText().length > 0), "The button text is set.");
 	});
 
 	QUnit.test("Internal aggregations created on init", function(assert) {
@@ -59,9 +59,12 @@
 		assert.ok(this.oSelectionDetails.$(), "Minimal dom strcture is present");
 	});
 
-	QUnit.test("Internal button has got the value of property text", function(assert) {
+	QUnit.test("Toolbar button is up to date", function(assert) {
+		// Arrange
+		this.oSelectionDetails.addItem(new sap.m.SelectionDetailsItem());
+		sap.ui.getCore().applyChanges();
 		//Assert
-		assert.equal(this.oSelectionDetails.getText(), this.oSelectionDetails.getAggregation("_button").getText(), "Property text is up to date");
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getText(), "Details (1)", "The button text is up to date");
 	});
 
 	QUnit.module("API methods", {
@@ -260,15 +263,6 @@
 		var oFacadeSecondCall = this.oSelectionDetails.getFacade();
 		//Assert
 		assert.equal(oFacadeFirstCall, oFacadeSecondCall, "Same proxy object is returned");
-	});
-
-	QUnit.test("Facade includes setText method", function(assert) {
-		// Arrange
-		var oFacade = this.oSelectionDetails.getFacade();
-		// Act
-		oFacade.setText("New Text for Details Button");
-		//Assert
-		assert.equal(this.oSelectionDetails.getText(), "New Text for Details Button", "setText proxy is working");
 	});
 
 	QUnit.test("Facade includes isOpen method", function(assert) {
