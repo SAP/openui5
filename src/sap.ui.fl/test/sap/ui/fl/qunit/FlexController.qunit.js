@@ -1433,7 +1433,6 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 					"something": "createNewVariant"
 				}
 			});
-
 			this.oFlexController = new FlexController("someReference");
 		},
 		afterEach: function () {
@@ -1459,7 +1458,6 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		return this.oFlexController.isPersonalized().then(function (bIsPersonalized) {
 			assert.notOk(bIsPersonalized, "personalization was determined");
 		});
-
 	});
 
 }(sap.ui.fl.FlexController, sap.ui.fl.Change, sap.ui.fl.registry.ChangeRegistry, sap.ui.fl.Persistence, sap.ui.core.Control, sap.ui.fl.registry.Settings, sap.ui.fl.changeHandler.HideControl, sap.ui.fl.ChangePersistenceFactory, sap.ui.fl.Utils, sap.ui.fl.changeHandler.JsControlTreeModifier, sap.ui.fl.changeHandler.XmlTreeModifier, sap.ui.fl.context.ContextManager));
