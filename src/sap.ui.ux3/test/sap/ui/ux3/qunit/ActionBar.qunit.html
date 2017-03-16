@@ -196,25 +196,25 @@
 
 	QUnit.test("Press \"Follow Up Toggle Pressed\" ", function(assert) {
 		qutils.triggerMouseEvent("ActionBar0001-Flag", "click");
-		ok(oEventData.action == "Flag" && oEventData.state == true,
+		assert.ok(oEventData.action == "Flag" && oEventData.state == true,
 				"ActionId: " + oEventData.action + ", State: " + oEventData.state);
 	});
 
 	QUnit.test("Press \"Follow Up Toggle Default\" ", function(assert) {
 		qutils.triggerMouseEvent("ActionBar0001-Flag", "click");
-		ok(oEventData.action == "Flag" && oEventData.state == false,
+		assert.ok(oEventData.action == "Flag" && oEventData.state == false,
 				"ActionId: " + oEventData.action + ", State: " + oEventData.state);
 	});
 
 	QUnit.test("Press \"Favorite Toggle Pressed\" ", function(assert) {
 		qutils.triggerMouseEvent("ActionBar0001-Favorite", "click");
-		ok(oEventData.action == "Favorite" && oEventData.state == true,
+		assert.ok(oEventData.action == "Favorite" && oEventData.state == true,
 				"ActionId: " + oEventData.action + ", State: " + oEventData.state);
 	});
 
 	QUnit.test("Press \"Favorite Toggle Default\" ", function(assert) {
 		qutils.triggerMouseEvent("ActionBar0001-Favorite", "click");
-		ok(oEventData.action == "Favorite" && oEventData.state == false,
+		assert.ok(oEventData.action == "Favorite" && oEventData.state == false,
 				"ActionId: " + oEventData.action + ", State: " + oEventData.state);
 	});
 

@@ -1,4 +1,4 @@
-/*global strictEqual, module, asyncTest, start, sinon, Promise, ok*/
+/*global sinon, Promise*/
 
 jQuery.sap.require("sap.ui.fl.Utils");
 jQuery.sap.require('sap.ui.fl.LrepConnector');

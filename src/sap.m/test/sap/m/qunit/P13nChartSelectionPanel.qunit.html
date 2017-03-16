@@ -308,7 +308,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		deepEqual(aItems, [
+		assert.deepEqual(aItems, [
 			oItemC, oItemB, oItemA
 		]);
 		assert.strictEqual(oChartSelectionPanel.getItems().length, 0);

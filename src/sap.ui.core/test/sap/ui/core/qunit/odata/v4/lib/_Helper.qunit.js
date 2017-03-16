@@ -212,21 +212,21 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("isSafeInteger", function (assert) {
-		function test(sNumber, bValue) {
+		function localTest(sNumber, bValue) {
 			assert.strictEqual(_Helper.isSafeInteger(sNumber), bValue, sNumber);
 		}
-		test(0, true);
-		test((Math.pow(2, 53) - 1), true);
-		test(Math.pow(2, 53), false);
-		test(1 - Math.pow(2, 53), true);
-		test(-Math.pow(2, 53), false);
-		test("foo", false);
-		test(3.14, false);
-		test(null, false);
-		test(undefined, false);
-		test(NaN, false);
-		test(Infinity, false);
-		test(-Infinity, false);
+		localTest(0, true);
+		localTest((Math.pow(2, 53) - 1), true);
+		localTest(Math.pow(2, 53), false);
+		localTest(1 - Math.pow(2, 53), true);
+		localTest(-Math.pow(2, 53), false);
+		localTest("foo", false);
+		localTest(3.14, false);
+		localTest(null, false);
+		localTest(undefined, false);
+		localTest(NaN, false);
+		localTest(Infinity, false);
+		localTest(-Infinity, false);
 	});
 
 	//*********************************************************************************************
@@ -463,7 +463,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	// Integration Tests with real backend
+	// Integration tests with real backend
 	if (TestUtils.isRealOData()) {
 		QUnit.test("Integration test for formatLiteral", function (assert) {
 			var done = assert.async(),

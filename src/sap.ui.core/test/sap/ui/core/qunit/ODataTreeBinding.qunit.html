@@ -416,7 +416,7 @@
 			assert.equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root content");
 			assert.equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
 
-			deepEqual(oBinding.oKeys, {
+			assert.deepEqual(oBinding.oKeys, {
 				"/Employees(2)/Employees1": [
 					"Employees(1)",
 					"Employees(3)",
@@ -425,10 +425,10 @@
 					"Employees(8)"
 				],
 			}, "Keys object has value for root");
-			deepEqual(oBinding.oLengths, {
+			assert.deepEqual(oBinding.oLengths, {
 				"/Employees(2)/Employees1": 5,
 			}, "Lengths object has value for root");
-			deepEqual(oBinding.oFinalLengths, {
+			assert.deepEqual(oBinding.oFinalLengths, {
 				"/Employees(2)/Employees1": true,
 			}, "FinalLengths object has value for root");
 
@@ -478,7 +478,7 @@
 			assert.equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root content");
 			assert.equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
 
-			deepEqual(oBinding.oKeys, {
+			assert.deepEqual(oBinding.oKeys, {
 				"/Employees(2)/Employees1": [
 					"Employees(1)",
 					"Employees(3)",
@@ -487,10 +487,10 @@
 					"Employees(8)"
 				],
 			}, "Keys object has value for root");
-			deepEqual(oBinding.oLengths, {
+			assert.deepEqual(oBinding.oLengths, {
 				"/Employees(2)/Employees1": 5,
 			}, "Lengths object has value for root");
-			deepEqual(oBinding.oFinalLengths, {
+			assert.deepEqual(oBinding.oFinalLengths, {
 				"/Employees(2)/Employees1": true,
 			}, "FinalLengths object has value for root");
 

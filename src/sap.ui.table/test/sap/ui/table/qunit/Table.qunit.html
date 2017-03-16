@@ -1904,7 +1904,7 @@
 		oTable.attachEvent("busyStateChanged", onBusyStateChangedEventHandler);
 		oTable.setBusyIndicatorDelay(0);
 
-		function test(bBusyIndicatorVisibleBefore, bBusyIndicatorVisibleAfter, bDataRequestedListener, bPendingRequest) {
+		function localTest(bBusyIndicatorVisibleBefore, bBusyIndicatorVisibleAfter, bDataRequestedListener, bPendingRequest) {
 			// Prepare for next test iteration.
 			oTable.setBusy(bBusyIndicatorVisibleBefore);
 			sap.ui.getCore().applyChanges();
@@ -1947,57 +1947,57 @@
 
 		// Busy indicator handling disabled: No busy state change.
 		oTable.setEnableBusyIndicator(false);
-		test(false, false, true, true);
-		test(true, true, true, true);
+		localTest(false, false, true, true);
+		localTest(true, true, true, true);
 
 		// No binding: No busy state change.
 		oTable.setEnableBusyIndicator(true);
 		this.stub(oTable, "getBinding").withArgs("rows").returns(undefined);
-		test(false, false, true, false);
-		test(true, true, true, false);
+		localTest(false, false, true, false);
+		localTest(true, true, true, false);
 
 		// Simulated asynchronous analytical binding request: No busy state change.
 		oTable.getBinding.restore();
 		oEvent.getParameter = function() {
 			return true;
 		};
-		test(false, false, true, false);
-		test(true, true, true, false);
+		localTest(false, false, true, false);
+		localTest(true, true, true, false);
 
 		// Data requested: Set busy state to true.
 		oEvent.getParameter = function() {
 			return false;
 		};
-		test(false, true, true, true);
-		test(true, true, true, true);
+		localTest(false, true, true, true);
+		localTest(true, true, true, true);
 
 		/* Data received */
 
 		// Busy indicator handling disabled: No busy state change.
 		oTable.setEnableBusyIndicator(false);
-		test(false, false, false, false);
-		test(true, true, false, false);
+		localTest(false, false, false, false);
+		localTest(true, true, false, false);
 
 		// No binding: No busy state change.
 		oTable.setEnableBusyIndicator(true);
 		this.stub(oTable, "getBinding").withArgs("rows").returns(undefined);
-		test(false, false, false, true);
-		test(true, true, false, true);
+		localTest(false, false, false, true);
+		localTest(true, true, false, true);
 
 		// Simulated asynchronous analytical binding request: No busy state change.
 		oTable.getBinding.restore();
 		oEvent.getParameter = function() {
 			return true;
 		};
-		test(false, false, false, true);
-		test(true, true, false, true);
+		localTest(false, false, false, true);
+		localTest(true, true, false, true);
 
 		// Data received: Set busy state to false.
 		oEvent.getParameter = function() {
 			return false;
 		};
-		test(false, false, false, false);
-		test(true, false, false, false);
+		localTest(false, false, false, false);
+		localTest(true, false, false, false);
 
 		// Cleanup
 		oTable.detachEvent("busyStateChanged", onBusyStateChangedEventHandler);

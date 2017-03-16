@@ -290,7 +290,7 @@
 						this._oDSC.setSideContentVisibility(sideContentVisibility);
 						this._oDSC._setResizeData(sBreakpoint, bIsInComparisonMode);
 
-						strictEqual(
+						assert.strictEqual(
 								this._oDSC._SCVisible,
 								bExpectedResult,
 								"Side content is hidden on " + "'" + sBreakpoint + "'" + " breakpoint when 'SideContentVisibility' property it set to " + sideContentVisibility
@@ -299,7 +299,7 @@
 					assertOnMainContentVisibility : function(sBreakpoint, bExpectedResult, bIsInComparisonMode) {
 						this._oDSC._setResizeData(sBreakpoint, bIsInComparisonMode);
 
-						strictEqual(
+						assert.strictEqual(
 								this._oDSC._MCVisible,
 								bExpectedResult,
 								"Main content is hidden on " + "'" + sBreakpoint + "'"
@@ -309,7 +309,7 @@
 						this._oDSC.setSideContentFallDown(sideContentFallDown);
 						this._oDSC._setResizeData(sBreakpoint, bIsInComparisonMode);
 
-						strictEqual(
+						assert.strictEqual(
 								this._oDSC[sSpanPropertyName],
 								bExpectedResult,
 								sContentName + " content span size is set to " + bExpectedResult + " when breakpoint is " + "'" + sBreakpoint + "'" + " and 'SideContentFallDown' property is set to " + sideContentFallDown
@@ -644,7 +644,7 @@
 				});
 
 				QUnit.test("Dynamic side content is created",function(assert) {
-					strictEqual(this._oDSC.$().length, 1, "Dynamic side content is created in the dom.");
+					assert.strictEqual(this._oDSC.$().length, 1, "Dynamic side content is created in the dom.");
 				});
 
 				QUnit.test("Current breakpoint is set",function(assert) {

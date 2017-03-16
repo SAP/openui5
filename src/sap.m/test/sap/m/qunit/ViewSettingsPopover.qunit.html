@@ -766,7 +766,7 @@
 		});
 
 		// TODO: Enable this test when BCP:1670234655 is resolved
-//		test("ok and cancel buttons", function() {
+//		QUnit.test("ok and cancel buttons", function(assert) {
 //			var oPopover;
 //
 //			this.sut.openBy(this.oOpeningButton);
@@ -1181,7 +1181,7 @@
 			}
 		});
 
-		test("Dialog", function (assert) {
+		QUnit.test("Dialog", function (assert) {
 			var done = assert.async();
 
 			jQuery.sap.delayedCall(0, this, function () {
@@ -1200,7 +1200,7 @@
 			});
 		});
 
-		test("Toolbar", function (assert) {
+		QUnit.test("Toolbar", function (assert) {
 			var done = assert.async();
 
 			jQuery.sap.delayedCall(0, this, function () {
@@ -1302,7 +1302,7 @@
 			}
 		});
 
-		test("Single sort data point", function (assert) {
+		QUnit.test("Single sort data point", function (assert) {
 			//Act
 			this.sut.openBy(this.oOpeningButton);
 			this.clock.tick(1000);
@@ -1321,7 +1321,7 @@
 			assert.strictEqual(this.sut.isOpen(), false, 'Popup is closed');
 		});
 
-		test("Single filter data point", function (assert) {
+		QUnit.test("Single filter data point", function (assert) {
 			//Act
 			this.sut.openBy(this.oOpeningButton);
 			this.clock.tick(1000);
@@ -1338,7 +1338,7 @@
 			assert.strictEqual(sap.ui.getCore().byId(this.sut.getId() + '-backbutton'), undefined, 'No back button');
 		});
 
-		test("Single group data point", function (assert) {
+		QUnit.test("Single group data point", function (assert) {
 			//Act
 			this.sut.openBy(this.oOpeningButton);
 			this.clock.tick(1000);
@@ -1424,7 +1424,7 @@
 			}
 		});
 
-		test("Single sort tab", function (assert) {
+		QUnit.test("Single sort tab", function (assert) {
 			//Act
 			this.sut.openBy(this.oOpeningButton);
 			this.clock.tick(1000);
@@ -1437,7 +1437,7 @@
 				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("VIEWSETTINGS_TITLE_SORT"));
 		});
 
-		test("Single group tab", function (assert) {
+		QUnit.test("Single group tab", function (assert) {
 			//Act
 			this.sut.removeAllAggregation('sortItems');
 			this.sut.addGroupItem(new sap.m.TabStripItem({
@@ -1455,7 +1455,7 @@
 				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("VIEWSETTINGS_TITLE_SORT"));
 		});
 
-		test("Single filter tab", function (assert) {
+		QUnit.test("Single filter tab", function (assert) {
 			//Act
 			this.sut.removeAllAggregation('groupItems');
 			this.sut.addFilterItem(new sap.m.TabStripItem({
@@ -1566,7 +1566,7 @@
 			}
 		});
 
-		test("No filter by default, setting and removing a filter", function (assert) {
+		QUnit.test("No filter by default, setting and removing a filter", function (assert) {
 			//Act
 			this.sut.openBy(this.oOpeningButton);
 			this.clock.tick(1000);
@@ -1658,7 +1658,7 @@
 
 		QUnit.module("Miscellaneous");
 
-		QUnit.test("Setting any property does not prevent internal popover to be destroyed ", function(assert){
+		QUnit.test("Setting any property does not prevent internal popover to be destroyed ", function(assert) {
 			var oVSP = new sap.m.ViewSettingsPopover({tooltip: "Hello"});
 			oVSP.placeAt('qunit-fixture');
 

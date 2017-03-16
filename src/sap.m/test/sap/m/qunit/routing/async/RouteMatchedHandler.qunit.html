@@ -313,7 +313,7 @@
 					closeDialogsTestCase.call(this, false);
 				});
 
-				test("Should get/set close all dialogs", function (assert) {
+				QUnit.test("Should get/set close all dialogs", function (assert) {
 					// System under test
 					var oRouteMatchedHandler = new RouteMatchedHandler(fnCreateRouter());
 
@@ -392,7 +392,7 @@
 					}.bind(this));
 				});
 
-				test("Should work with routes without targets mixed with routes with targets", function (assert) {
+				QUnit.test("Should work with routes without targets mixed with routes with targets", function (assert) {
 					//Arrange
 					var oMasterView = createViewAndController("Master"),
 						oDetailView = createViewAndController("Detail"),

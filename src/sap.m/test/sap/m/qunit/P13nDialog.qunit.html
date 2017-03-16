@@ -604,14 +604,14 @@
 			], aWarnings, aErrors);
 
 			// assertions
-			deepEqual(aWarnings, [
+			assert.deepEqual(aWarnings, [
 				{
 					columnKey: "columnKey4",
 					messageType: "Warning",
 					messageText: "A"
 				}
 			]);
-			deepEqual(aErrors, [
+			assert.deepEqual(aErrors, [
 				{
 					columnKey: "columnKey3",
 					messageType: "Error",

@@ -867,7 +867,7 @@
 			}
 		});
 
-		test("DOM and 'value' should be updated according to the user input ", function (assert) {
+		QUnit.test("DOM and 'value' should be updated according to the user input ", function (assert) {
 			var oControl = this.oMaskInput.setPlaceholderSymbol('_').setMask('aaaa'),
 				oOtherControl = new sap.m.Input({value: "some other value"});
 			oOtherControl.placeAt("content");

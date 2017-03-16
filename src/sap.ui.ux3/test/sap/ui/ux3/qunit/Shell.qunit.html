@@ -155,11 +155,11 @@
     				pad = $content.outerHeight();
     			}
 
- 				equal(pad, iTop + iBottom,
+ 				assert.equal(pad, iTop + iBottom,
  	    				"Padding Top/Bottom of Canvas when padding enabled=="+oShell.getApplyContentPadding()+", fullHeight=="+oShell.getFullHeightContent()+", padding-top=="+iTop+", padding-bottom=="+iBottom);
 
     			pad = $canvas.outerWidth()-$content.width();
-    			equal(pad, iLeft + iRight,
+    			assert.equal(pad, iLeft + iRight,
     					"Padding Left/Right of Canvas when padding enabled=="+oShell.getApplyContentPadding()+", fullHeight=="+oShell.getFullHeightContent()+", padding-left=="+iLeft+", padding-right=="+iRight);
 
     			if(oSettings.customClass){
@@ -480,7 +480,7 @@
 
                 // Begin testing
                 QUnit.config.testTimeout = (iRepetitions + 2) * 1000;
-                expect(iRepetitions);
+                assert.expect(iRepetitions);
 
                 // Clean up the shell and make it ready for testing...
                 try {
@@ -554,19 +554,19 @@
                 sap.ui.getCore().applyChanges();
 
                 // Standard Design is Standard. ;-)
-                ok(
+                assert.ok(
                     oShell.getDesignType() === sap.ui.ux3.ShellDesignType.Standard,
                     "Shell design Standard should be selected in the beginning"
                 );
-                ok(
+                assert.ok(
                     oShell.$().hasClass("sapUiUx3ShellDesignStandard"),
                     "Shell DOM-Element should have CSS class sapUiUx3ShellDesignStandard"
                 );
-                ok(
+                assert.ok(
                     !oShell.$().hasClass("sapUiUx3ShellDesignLight"),
                     "Shell DOM-Element must not have CSS class sapUiUx3ShellDesignLight"
                 );
-                ok(
+                assert.ok(
                     !oShell.$().hasClass("sapUiUx3ShellDesignCrystal"),
                     "Shell DOM-Element must not have CSS class sapUiUx3ShellDesignLight"
                 );
@@ -593,14 +593,14 @@
                     sap.ui.getCore().applyChanges();
 
                     for(var n = 0; n < oDesign.classes.length; ++n) {
-                    	ok(
+                    	assert.ok(
                     		oShell.$().hasClass(oDesign.classes[n]),
                     		"Design \"" + sDesign + "\" has class \"" + oDesign.classes[n] + "\""
                     	);
                     }
 
                     for(var n = 0; n < oDesign.notClasses.length; ++n) {
-                        ok(
+                        assert.ok(
                             !oShell.$().hasClass(oDesign.notClasses[n]),
                             "Design \"" + sDesign + "\" does not have class \"" + oDesign.notClasses[n] + "\""
                         );
@@ -609,7 +609,7 @@
                     // Check for ToolPopups and whether their inverted-property is set correctly
                     var aToolPopups = oShell.getToolPopups();
                     for (var n = 0; n < aToolPopups.length; ++n) {
-                    	ok(
+                    	assert.ok(
                     		aToolPopups[n].getInverted() == !oDesign.isLight,
                     		"ToolPopup \"" + aToolPopups[n].getId() + "\" is " +
                     		  (oDesign.isLight ? "not " : " ") + "inverted."
@@ -638,12 +638,12 @@
 
                 $OverflowButton = jQuery(".sapUiUx3ShellPaneOverflowButton");
 
-                ok(
+                assert.ok(
                 	$OverflowButton.length == 1,
                     "Overflow button was rendered."
                 );
 
-                ok(
+                assert.ok(
                 	$OverflowButton.css("display") == "none",
                 	"Overflow button is not displayed initially."
                 );
@@ -659,7 +659,7 @@
                     oShell._delayedCheckPaneBarOverflow();
                 }
 
-                ok($OverflowButton.css(
+                assert.ok($OverflowButton.css(
                 	"display") != "none",
                     "Overflow button visible after adding a ****load of items to the pane."
                 );
@@ -684,7 +684,7 @@
                 	}
                 }
 
-                ok(
+                assert.ok(
                 	bAllHiddenItemsInPane,
                     "All hidden overflow menu items are in the pane."
                 );
@@ -724,13 +724,13 @@
                     sap.ui.core.RenderManager.forceRepaint(document.getElementsByTagName("body")[0]);
 
                     if ($PaletteArea.width() > iLastWidth) {
-                        ok (true, "Palette area grew");
+                        assert.ok(true, "Palette area grew");
                     }
                     iLastWidth = $PaletteArea.width();
 
                     if (i < 500) {
                     	if ($PaletteArea.width() >= sap.ui.ux3.Shell.SIDE_BAR_BASE_WIDTH * 4) {
-                    		ok(
+                    		assert.ok(
                     		    true,
                     		    "Palette width grew to five times its basic size after ading a ****load of "
                                 +"Toolpopups to the pane."
@@ -741,7 +741,7 @@
                             window.setTimeout(fnGrowPalette, 20);
                     	}
                     } else {
-                        ok(
+                        assert.ok(
                             false,
                             "Palette area did not grow enough, even after 500 Toolpopups were added."
                         );

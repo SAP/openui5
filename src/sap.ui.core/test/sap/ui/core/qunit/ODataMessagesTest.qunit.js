@@ -1,5 +1,3 @@
-/* global module start test asyncTest expect ok equal deepEqual */
-
 QUnit.config.testTimeout = 6000;
 
 /* eslint-disable no-unused-vars */
@@ -219,7 +217,7 @@ function runODataMessagesTests() {
 	});
 
 
-	var fnTestTechnicalErrors = function(bJson) {
+	var fnTestTechnicalErrors = function(bJson, assert) {
 		var done = assert.async();
 
 		assert.expect(20);
@@ -290,7 +288,7 @@ function runODataMessagesTests() {
 				var bAllMessagesArrived = Object.keys(mAddesMessages).reduce(function(vPrev, sCurrent) {
 					return vPrev && mAddesMessages[sCurrent] === true;
 				}, true);
-				ok (bAllMessagesArrived, "All expected messages are there");
+				assert.ok(bAllMessagesArrived, "All expected messages are there");
 
 				fnStart();
 			};
@@ -334,7 +332,7 @@ function runODataMessagesTests() {
 	QUnit.test("Technical Errors (JSON)", fnTestTechnicalErrors.bind(this, true));
 	QUnit.test("Technical Errors (XML)", fnTestTechnicalErrors.bind(this, false));
 
-	var fnTestLongtextUrl = function(bJson) {
+	var fnTestLongtextUrl = function(bJson, assert) {
 		var done = assert.async();
 
 		assert.expect(15);
@@ -730,10 +728,10 @@ function runODataMessagesTests() {
 	// TODO: Function imports with multiple key fields
 
 
-	var fnTestBatchGroups = function(bUseBatch, bJSON) {
+	var fnTestBatchGroups = function(bUseBatch, bJSON, assert) {
 		var done = assert.async();
 
-		expect(bUseBatch ? 9 : 5);
+		assert.expect(bUseBatch ? 9 : 5);
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", {
 			useBatch: bUseBatch,
 			json: bJSON
@@ -792,10 +790,10 @@ function runODataMessagesTests() {
 
 
 
-	var fnTestWriteBatchGroups = function(bUseBatch, bJSON) {
+	var fnTestWriteBatchGroups = function(bUseBatch, bJSON, assert) {
 		var done = assert.async();
 
-		expect(bUseBatch ? 9 : 5);
+		assert.expect(bUseBatch ? 9 : 5);
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", {
 			useBatch: bUseBatch,
 			json: bJSON
@@ -854,7 +852,7 @@ function runODataMessagesTests() {
 
 
 
-	var fnTestFunctionImport = function() {
+	var fnTestFunctionImport = function(assert) {
 		var done = assert.async();
 
 		assert.expect(10);
@@ -908,7 +906,7 @@ function runODataMessagesTests() {
 
 
 
-	var fnTestFunctionImportWithInvalidTarget = function() {
+	var fnTestFunctionImportWithInvalidTarget = function(assert) {
 		var done = assert.async();
 
 		assert.expect(20);
@@ -990,7 +988,7 @@ function runODataMessagesTests() {
 
 	QUnit.test("Messages with 'invalid' targets",  fnTestFunctionImportWithInvalidTarget);
 
-	var fnTestRemoveMessagesWithBinding = function() {
+	var fnTestRemoveMessagesWithBinding = function(assert) {
 		var done = assert.async();
 
 		assert.expect(11);
@@ -1075,7 +1073,7 @@ function runODataMessagesTests() {
 	QUnit.test("Delete control messages when the binding is destroyed and on rebinding",  fnTestRemoveMessagesWithBinding);
 
 
-	var fnTestTransientMessages = function() {
+	var fnTestTransientMessages = function(assert) {
 		var done = assert.async();
 
 		assert.expect(19);
@@ -1126,7 +1124,7 @@ function runODataMessagesTests() {
 
 	QUnit.test("Transient messages with /#TRANSIENT#-target or transient-flag", fnTestTransientMessages);
 
-	var fnTestTransientMessageRemoval = function() {
+	var fnTestTransientMessageRemoval = function(assert) {
 		var done = assert.async();
 
 		assert.expect(35);

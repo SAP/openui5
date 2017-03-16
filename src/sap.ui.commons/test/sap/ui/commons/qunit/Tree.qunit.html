@@ -1232,7 +1232,7 @@
 			this.applyFilter("False");
 
 			// Assert
-			strictEqual(oNode31.bIsDestroyed, true, "Initial Node 31 should be destroyed on updateNodes fired " +
+			assert.strictEqual(oNode31.bIsDestroyed, true, "Initial Node 31 should be destroyed on updateNodes fired " +
 					"with reason filter. We destroy all old nodes on filtering to prevent memory leak and unpredictable " +
 					"selection behavior");
 

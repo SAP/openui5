@@ -958,7 +958,7 @@
 		var aContexts = this.oListBinding.getContexts(0, 10);
 		this.oModel.setData(testData.teamMembersNew);
 		aContexts = this.oListBinding.getContexts(0, 10);
-		deepEqual(aContexts.diff, [
+		assert.deepEqual(aContexts.diff, [
 			{ index : 1, type : "delete" },
 			{ index : 3, type : "insert" },
 			{ index : 6, type : "delete" },
@@ -971,7 +971,7 @@
 		var aContexts = this.oListBinding.getContexts(0, 10);
 		this.oModel.setProperty("/4/firstName", "Paul");
 		aContexts = this.oListBinding.getContexts(0, 10);
-		deepEqual(aContexts.diff, [
+		assert.deepEqual(aContexts.diff, [
 			{ index : 4, type : "delete" },
 			{ index : 4, type : "insert" }
 		], "Replace one property");
@@ -981,7 +981,7 @@
 			gender : "male"
 		});
 		aContexts = this.oListBinding.getContexts(0, 10);
-		deepEqual(aContexts.diff, [
+		assert.deepEqual(aContexts.diff, [
 			{ index : 4, type : "delete" },
 			{ index : 4, type : "insert" }
 		], "Replace whole entry");
@@ -1014,7 +1014,7 @@
 			gender : "male"
 		});
 		aContexts = this.oListBinding.getContexts(0, 10);
-		deepEqual(aContexts.diff, [
+		assert.deepEqual(aContexts.diff, [
 			{ index : 4, type : "delete" },
 			{ index : 4, type : "insert" }
 		], "Replace whole entry");

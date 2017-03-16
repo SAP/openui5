@@ -1084,11 +1084,11 @@
 				setTimeout(fnCheckChangeEvent, iDelay);
 			} else {
 				setTimeout(function() {
-					ok(
+					assert.ok(
 						iCurrentRepetition > 0,
 						"Test was triggered several times ("+ iCurrentRepetition +")"
 					);
-					ok(
+					assert.ok(
 						mTests.changed === mTests.changes,
 						"Number of triggered change-events equals number of changes ("+ mTests.changed +"/"+ mTests.changes +")"
 					);

@@ -1363,7 +1363,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			var handler = function(oEvent){
 				// contexts should be now loaded
 				var oBinding = oEvent.oSource;
-				ok (oBinding.isLengthFinal(), "Length should be final");
+				assert.ok(oBinding.isLengthFinal(), "Length should be final");
 				var aFilteredContexts = oBinding.getContexts();
 				assert.equal(aFilteredContexts.length, 2, "filtered content length");
 				assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
@@ -1376,7 +1376,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			};
 			var handler1 = function(oEvent){
 				var oBinding = oEvent.oSource;
-				ok (oBinding.isLengthFinal(), "Length should be final");
+				assert.ok(oBinding.isLengthFinal(), "Length should be final");
 				var aFilteredContexts = oBinding.getContexts();
 				assert.equal(aFilteredContexts.length, 0, "NE, contains, filtered content length");
 				oBinding.detachChange(handler1);

@@ -226,7 +226,7 @@
 
 	QUnit.module("Internal API");
 
-	test ("TestIsEmpty", function() {
+	QUnit.test("TestIsEmpty", function(assert) {
 
 		assert.ok(!oa1._isEmpty(), "Object attribute #1 is not empty");
 		assert.ok(!oa2._isEmpty(), "Object attribute #2 is not empty");

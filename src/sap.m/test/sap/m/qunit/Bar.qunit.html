@@ -80,7 +80,7 @@
 
 				renderingTest.call(this, function() {
 
-					equal (jQuery.sap.byId("myBar1").position().top, (jQuery.sap.byId("myBar").position().top + jQuery.sap.byId("myBar").outerHeight()),
+					assert.equal(jQuery.sap.byId("myBar1").position().top, (jQuery.sap.byId("myBar").position().top + jQuery.sap.byId("myBar").outerHeight()),
 							"Bar1 should be located below Bar");
 
 				});

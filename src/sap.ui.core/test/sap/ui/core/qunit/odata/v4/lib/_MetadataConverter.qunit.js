@@ -50,7 +50,7 @@ sap.ui.require([
 	function testExpression(assert, sXmlSnippet, vExpected) {
 		var aMatches, sPath;
 
-		function test() {
+		function localTest() {
 			var oXml = xml(assert, '\
 					<Edmx>\
 						<DataServices>\
@@ -62,13 +62,13 @@ sap.ui.require([
 							</Schema>\
 						</DataServices>\
 					</Edmx>'),
-				// code under test
+				// code under localTest
 				oResult = _MetadataConverter.convertXMLMetadata(oXml);
 			assert.deepEqual(oResult["foo."].$Annotations["foo.Bar"]["@foo.Term"], vExpected,
 				sXmlSnippet);
 		}
 
-		test();
+		localTest();
 
 		// Rewrite sXmlSnippet and vExpectedValue so that the (first) Path is converted to a
 		// (rather stupid) If and thus create a recursive expression.
@@ -80,7 +80,7 @@ sap.ui.require([
 			sPath = '{"$Path":"' + sPath.replace(/f\./g, "foo.") + '"}';
 			vExpected = JSON.parse(JSON.stringify(vExpected)
 				.replace(sPath, '{"$If":[true,' + sPath + ',null]}'));
-			test();
+			localTest();
 		}
 	}
 
@@ -200,15 +200,15 @@ sap.ui.require([
 		var oAggregate = {},
 			oMock = this.mock(_MetadataConverter);
 
-			function test(sPath, sExpected) {
+			function localTest(sPath, sExpected) {
 				assert.strictEqual(_MetadataConverter.resolveAliasInPath(sPath, oAggregate),
 					sExpected || sPath);
 			}
 
 			oMock.expects("resolveAlias").never();
 
-			test("Employees");
-			test("Employees/Team");
+			localTest("Employees");
+			localTest("Employees/Team");
 
 			oMock.expects("resolveAlias")
 				.withExactArgs("f.Some", sinon.match.same(oAggregate)).returns("foo.Some");
@@ -216,13 +216,13 @@ sap.ui.require([
 				.withExactArgs("f.Random", sinon.match.same(oAggregate)).returns("foo.Random");
 			oMock.expects("resolveAlias")
 				.withExactArgs("f.Path", sinon.match.same(oAggregate)).returns("foo.Path");
-			test("f.Some/f.Random/f.Path", "foo.Some/foo.Random/foo.Path");
+			localTest("f.Some/f.Random/f.Path", "foo.Some/foo.Random/foo.Path");
 
 			oMock.expects("resolveAlias")
 				.withExactArgs("f.Path", sinon.match.same(oAggregate)).returns("foo.Path");
 			oMock.expects("resolveAlias")
 				.withExactArgs("f.Term", sinon.match.same(oAggregate)).returns("foo.Term");
-			test("f.Path@f.Term", "foo.Path@foo.Term");
+			localTest("f.Path@f.Term", "foo.Path@foo.Term");
 
 			oMock.expects("resolveAlias")
 				.withExactArgs("f.Path", sinon.match.same(oAggregate)).returns("foo.Path");
@@ -230,7 +230,7 @@ sap.ui.require([
 				.withExactArgs("", sinon.match.same(oAggregate)).returns("");
 			oMock.expects("resolveAlias")
 				.withExactArgs("f.Term", sinon.match.same(oAggregate)).returns("foo.Term");
-			test("f.Path/@f.Term", "foo.Path/@foo.Term");
+			localTest("f.Path/@f.Term", "foo.Path/@foo.Term");
 	});
 
 	//*********************************************************************************************
@@ -502,7 +502,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("processFacetAttributes", function (assert) {
-		function test(sProperty, sValue, vExpectedValue) {
+		function localTest(sProperty, sValue, vExpectedValue) {
 			var oXml = xml(assert, '<Foo ' + sProperty + '="' + sValue + '"/>'),
 				oResult = {},
 				oExpectedResult = {};
@@ -514,13 +514,13 @@ sap.ui.require([
 			assert.deepEqual(oResult, oExpectedResult);
 		}
 
-		test("Precision", "8", 8);
-		test("Scale", "2", 2);
-		test("Scale", "variable", "variable");
-		test("Unicode", "false", false);
-		test("Unicode", "true", undefined);
-		test("MaxLength", "12345", 12345);
-		test("SRID", "42", "42");
+		localTest("Precision", "8", 8);
+		localTest("Scale", "2", 2);
+		localTest("Scale", "variable", "variable");
+		localTest("Unicode", "false", false);
+		localTest("Unicode", "true", undefined);
+		localTest("MaxLength", "12345", 12345);
+		localTest("SRID", "42", "42");
 	});
 
 	//*********************************************************************************************

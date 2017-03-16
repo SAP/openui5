@@ -464,7 +464,7 @@
 				this.oCurrency.setCurrency("JPY");
 
 				// Assert
-				strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once to re-render " +
+				assert.strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once to re-render " +
 						"the value");
 
 				assert.strictEqual($Value.text(), "51    ", "For JPY currency " +
@@ -475,7 +475,7 @@
 				this.oCurrency.setCurrency("EUR");
 
 				// Assert
-				strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once to re-render " +
+				assert.strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once to re-render " +
 						"the value");
 
 				assert.strictEqual($Value.text(), "50.99 ", "For EUR currency " +
@@ -486,7 +486,7 @@
 				this.oCurrency.setCurrency("BGN");
 
 				// Assert
-				strictEqual(this.oCurrency._renderValue.callCount, 0, "Internal method should not be called when the new " +
+				assert.strictEqual(this.oCurrency._renderValue.callCount, 0, "Internal method should not be called when the new " +
 						"currency has the same amount of decimal values");
 
 				assert.strictEqual($Value.text(), "50.99 ", "For switch to " +

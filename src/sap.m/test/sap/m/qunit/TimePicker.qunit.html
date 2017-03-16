@@ -1594,7 +1594,7 @@
 			tp.destroy();
 		});
 
-		/* Temporary disabled until robust solution (across all timezones is implemented) test("decrease time when daylight saving begins", function() {
+		/* Temporary disabled until robust solution (across all timezones is implemented) QUnit.test("decrease time when daylight saving begins", function(assert) {
 		 var tp = new sap.m.TimePicker();
 		 tp.placeAt("qunit-fixture");
 		 sap.ui.getCore().applyChanges();
@@ -1866,11 +1866,11 @@
 				sAriaAttributeValue = $innerInput.attr(sAriaAttributeName);
 
 				if (aExpectedStrings.length == 0) {
-					equal(sAriaAttributeValue, undefined, sScenario + ": " + sAriaAttributeName + " attribute for DOM element " +
+					assert.equal(sAriaAttributeValue, undefined, sScenario + ": " + sAriaAttributeName + " attribute for DOM element " +
 							$innerInput.get(0).id + " should be empty");
 					return;
 				}
-				ok(sAriaAttributeValue.length, sScenario + ": Expected " + sAriaAttributeName + " attribute for DOM element " +
+				assert.ok(sAriaAttributeValue.length, sScenario + ": Expected " + sAriaAttributeName + " attribute for DOM element " +
 						$innerInput.get(0).id);
 
 				aAriaAttributes = sAriaAttributeValue.split(" ");

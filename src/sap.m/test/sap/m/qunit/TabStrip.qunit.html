@@ -133,7 +133,7 @@
 			assert.strictEqual(fnActivateItemSpy.calledWith(srcControl), true, "On tap activates the correct item");
 
 			assert.strictEqual(fnFireItemPressSpy.calledOnce, false, "On tap does not fire an item press event");
-			strictEqual(fnSetSelectedItemSpy.calledOnce, true,
+			assert.strictEqual(fnSetSelectedItemSpy.calledOnce, true,
 					"On tap does not fire selection change when the same selected tab is pressed");
 
 			fnActivateItemSpy.restore();

@@ -207,8 +207,7 @@
 			}
 		});
 
-		test("Should not match the undefined pattern",
-				function() {
+		QUnit.test("Should not match the undefined pattern", function(assert) {
 					//Arrange
 					var callCount = 0,
 							matched = function(oEvent) {

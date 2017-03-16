@@ -175,12 +175,12 @@
 			oSut._focusDateExtend();
 
 			//assert
-			equal(oSpy_setFocusedDate.callCount, 1, "When this._oFocusedDateOneMonth present, it is set as focused date " +
+			assert.equal(oSpy_setFocusedDate.callCount, 1, "When this._oFocusedDateOneMonth present, it is set as focused date " +
 			"(call to _setFocusedDate)");
 			assert.equal(oSpy_setFocusedDate.getCall(0).args[0].getJSDate().toString(), new Date(Date.UTC(2015, 0, 31)).toString(),
 					"_setFocusedDate should be called with certain date parameter");
 
-			equal(oSpyDatesRow_setDate.callCount, 1, "When this._oFocusedDateOneMonth present, it is set to " +
+			assert.equal(oSpyDatesRow_setDate.callCount, 1, "When this._oFocusedDateOneMonth present, it is set to " +
 			"datesrow(call to DatesRow#.setDate)");
 			assert.equal(oSpyDatesRow_setDate.getCall(0).args[0].toString(), new Date(2015, 0, 31).toString(),
 					"DatesRow#setDate should be called with certain date parameter");

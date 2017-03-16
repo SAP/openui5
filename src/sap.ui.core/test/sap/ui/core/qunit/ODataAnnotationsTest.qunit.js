@@ -1,6 +1,3 @@
-/* global module start test asyncTest expect ok equal deepEqual */
-
-
 /**
  * Test-Function to be used in place of deepEquals which only tests for the existence of the given
  * values, not the absence of others.
@@ -1033,8 +1030,7 @@ function runODataAnnotationTests() {
 		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
 			QUnit.test(
 				"Asynchronous loading (joined events) - " + sTestType,
-				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
-			);
+				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid));
 		}
 	}
 
@@ -1292,18 +1288,18 @@ function runODataAnnotationTests() {
 		assert.ok(!!oMetadata, "Metadata is available.");
 		assert.ok(!!oAnnotations, "Annotations are available.");
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["Test.2014-12-08"],
 			"Test Annotations are available"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["Test.2014-12-08"]
 				["com.sap.vocabularies.UI.v1.Identification"],
 			"Namespace exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["Test.2014-12-08"]
 				["com.sap.vocabularies.UI.v1.Identification"]
@@ -1314,18 +1310,18 @@ function runODataAnnotationTests() {
 
 		var mNamespace = oAnnotations["Test.2014-12-08"]["com.sap.vocabularies.UI.v1.Identification"][0];
 
-		ok(
+		assert.ok(
 			!!mNamespace
 				["com.sap.vocabularies.UI.v1.Importance"],
 			"Sub-namespace exists"
 		);
-		ok(
+		assert.ok(
 			!!mNamespace
 				["com.sap.vocabularies.UI.v1.Importance"]
 				["EnumMember"],
 			"EnumMember exists"
 		);
-		equal(
+		assert.equal(
 			mNamespace
 				["com.sap.vocabularies.UI.v1.Importance"]
 				["EnumMember"],
@@ -1334,7 +1330,7 @@ function runODataAnnotationTests() {
 		);
 
 		assert.ok(!!mNamespace["RecordType"], "RecordType exists");
-		equal(
+		assert.equal(
 			mNamespace["RecordType"],
 			"com.sap.vocabularies.UI.v1.DataField",
 			"RecordType has correct value"
@@ -1388,18 +1384,18 @@ function runODataAnnotationTests() {
 			assert.ok(!!oMetadata, "Metadata is available.");
 			assert.ok(!!oAnnotations, "Annotations are available.");
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["Test.2014-12-08"],
 				"Test Annotations are available"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["Test.2014-12-08"]
 					["com.sap.vocabularies.UI.v1.Identification"],
 				"Namespace exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["Test.2014-12-08"]
 					["com.sap.vocabularies.UI.v1.Identification"]
@@ -1410,18 +1406,18 @@ function runODataAnnotationTests() {
 
 			var mNamespace = oAnnotations["Test.2014-12-08"]["com.sap.vocabularies.UI.v1.Identification"][0];
 
-			ok(
+			assert.ok(
 				!!mNamespace
 					["com.sap.vocabularies.UI.v1.Importance"],
 				"Sub-namespace exists"
 			);
-			ok(
+			assert.ok(
 				!!mNamespace
 					["com.sap.vocabularies.UI.v1.Importance"]
 					["EnumMember"],
 				"EnumMember exists"
 			);
-			equal(
+			assert.equal(
 				mNamespace
 					["com.sap.vocabularies.UI.v1.Importance"]
 					["EnumMember"],
@@ -1430,7 +1426,7 @@ function runODataAnnotationTests() {
 			);
 
 			assert.ok(!!mNamespace["RecordType"], "RecordType exists");
-			equal(
+			assert.equal(
 				mNamespace["RecordType"],
 				"com.sap.vocabularies.UI.v1.DataField",
 				"RecordType has correct value"
@@ -1486,17 +1482,17 @@ function runODataAnnotationTests() {
 
 		assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["MultiplePropertyAnnotations.Product"],
 			"Target namespace inside PropertyAnnotations exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["MultiplePropertyAnnotations.Product"]["Price/Amount"],
 			"Target values exist"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["MultiplePropertyAnnotations.Product"]
@@ -1505,7 +1501,7 @@ function runODataAnnotationTests() {
 			"Target value 1 exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["MultiplePropertyAnnotations.Product"]
@@ -1514,7 +1510,7 @@ function runODataAnnotationTests() {
 			"Target value 2 exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["MultiplePropertyAnnotations.Product"]
@@ -1524,7 +1520,7 @@ function runODataAnnotationTests() {
 			"Target value 1 property exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["MultiplePropertyAnnotations.Product"]
@@ -1534,7 +1530,7 @@ function runODataAnnotationTests() {
 			"Target value 2 property exists"
 		);
 
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["MultiplePropertyAnnotations.Product"]
@@ -1545,7 +1541,7 @@ function runODataAnnotationTests() {
 			"Target value 1 property exists"
 		);
 
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["MultiplePropertyAnnotations.Product"]
@@ -1583,17 +1579,17 @@ function runODataAnnotationTests() {
 
 			assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["MultiplePropertyAnnotations.Product"],
 				"Target namespace inside PropertyAnnotations exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["MultiplePropertyAnnotations.Product"]["Price/Amount"],
 				"Target values exist"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["MultiplePropertyAnnotations.Product"]
@@ -1602,7 +1598,7 @@ function runODataAnnotationTests() {
 				"Target value 1 exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["MultiplePropertyAnnotations.Product"]
@@ -1611,7 +1607,7 @@ function runODataAnnotationTests() {
 				"Target value 2 exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["MultiplePropertyAnnotations.Product"]
@@ -1621,7 +1617,7 @@ function runODataAnnotationTests() {
 				"Target value 1 property exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["MultiplePropertyAnnotations.Product"]
@@ -1631,7 +1627,7 @@ function runODataAnnotationTests() {
 				"Target value 2 property exists"
 			);
 
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["MultiplePropertyAnnotations.Product"]
@@ -1642,7 +1638,7 @@ function runODataAnnotationTests() {
 				"Target value 1 property exists"
 			);
 
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["MultiplePropertyAnnotations.Product"]
@@ -1680,18 +1676,18 @@ function runODataAnnotationTests() {
 
 		assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["PropertyAnnotationQualifiers.Product"],
 			"Target namespace inside PropertyAnnotations exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]["PropertyAnnotationQualifiers.Product"]["Price/Amount"],
 			"Target value exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["PropertyAnnotationQualifiers.Product"]
@@ -1700,7 +1696,7 @@ function runODataAnnotationTests() {
 			"Target value with Qualifier exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["PropertyAnnotationQualifiers.Product"]
@@ -1710,7 +1706,7 @@ function runODataAnnotationTests() {
 			"Target value with Qualifier value exists"
 		);
 
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["PropertyAnnotationQualifiers.Product"]
@@ -1749,18 +1745,18 @@ function runODataAnnotationTests() {
 
 			assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["PropertyAnnotationQualifiers.Product"],
 				"Target namespace inside PropertyAnnotations exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]["PropertyAnnotationQualifiers.Product"]["Price/Amount"],
 				"Target value exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["PropertyAnnotationQualifiers.Product"]
@@ -1769,7 +1765,7 @@ function runODataAnnotationTests() {
 				"Target value with Qualifier exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["PropertyAnnotationQualifiers.Product"]
@@ -1779,7 +1775,7 @@ function runODataAnnotationTests() {
 				"Target value with Qualifier value exists"
 			);
 
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["PropertyAnnotationQualifiers.Product"]
@@ -1816,18 +1812,18 @@ function runODataAnnotationTests() {
 
 		assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValues.Product"],
 			"Target namespace inside PropertyAnnotations exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]["OtherPropertyValues.Product"]["Price/Amount"],
 			"Target value exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValues.Product"]
@@ -1836,7 +1832,7 @@ function runODataAnnotationTests() {
 			"Target value with Qualifier exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValues.Product"]
@@ -1846,7 +1842,7 @@ function runODataAnnotationTests() {
 			"Target value with Qualifier value exists"
 		);
 
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValues.Product"]
@@ -1881,18 +1877,18 @@ function runODataAnnotationTests() {
 
 			assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValues.Product"],
 				"Target namespace inside PropertyAnnotations exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]["OtherPropertyValues.Product"]["Price/Amount"],
 				"Target value exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValues.Product"]
@@ -1901,7 +1897,7 @@ function runODataAnnotationTests() {
 				"Target value with Qualifier exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValues.Product"]
@@ -1911,7 +1907,7 @@ function runODataAnnotationTests() {
 				"Target value with Qualifier value exists"
 			);
 
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValues.Product"]
@@ -1949,18 +1945,18 @@ function runODataAnnotationTests() {
 
 		assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["NamespaceAliases.PurchaseOrder"],
 			"Target namespace inside PropertyAnnotations exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]["NamespaceAliases.PurchaseOrder"]["GrossAmount"],
 			"Target value exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["NamespaceAliases.PurchaseOrder"]
@@ -1969,7 +1965,7 @@ function runODataAnnotationTests() {
 			"Target value with correct alias replacement (none!) exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["NamespaceAliases.PurchaseOrder"]
@@ -1979,7 +1975,7 @@ function runODataAnnotationTests() {
 			"Target value with String value exists"
 		);
 
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["NamespaceAliases.PurchaseOrder"]
@@ -2016,18 +2012,18 @@ function runODataAnnotationTests() {
 
 			assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["NamespaceAliases.PurchaseOrder"],
 				"Target namespace inside PropertyAnnotations exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]["NamespaceAliases.PurchaseOrder"]["GrossAmount"],
 				"Target value exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["NamespaceAliases.PurchaseOrder"]
@@ -2036,7 +2032,7 @@ function runODataAnnotationTests() {
 				"Target value with correct alias replacement (none!) exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["NamespaceAliases.PurchaseOrder"]
@@ -2046,7 +2042,7 @@ function runODataAnnotationTests() {
 				"Target value with String value exists"
 			);
 
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["NamespaceAliases.PurchaseOrder"]
@@ -2083,13 +2079,13 @@ function runODataAnnotationTests() {
 
 		assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"],
 			"Target value exists"
 		);
 
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2097,7 +2093,7 @@ function runODataAnnotationTests() {
 				["com.sap.vocabularies.UI.v1.Name"],
 			"Target value's namespace has been correctly replaced"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2106,7 +2102,7 @@ function runODataAnnotationTests() {
 				["EnumMember"],
 			"Target value's child exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2118,7 +2114,7 @@ function runODataAnnotationTests() {
 		);
 
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2126,7 +2122,7 @@ function runODataAnnotationTests() {
 				["com.sap.vocabularies.Communication.v1.Name"],
 			"Target value's namespace has been correctly replaced"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2135,7 +2131,7 @@ function runODataAnnotationTests() {
 				["EnumMember"],
 			"Target value's child exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2147,7 +2143,7 @@ function runODataAnnotationTests() {
 		);
 
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2155,7 +2151,7 @@ function runODataAnnotationTests() {
 				["Org.OData.Measures.V1.Name"],
 			"Target value's namespace has been correctly replaced"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2164,7 +2160,7 @@ function runODataAnnotationTests() {
 				["EnumMember"],
 			"Target value's child exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2176,7 +2172,7 @@ function runODataAnnotationTests() {
 		);
 
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2184,7 +2180,7 @@ function runODataAnnotationTests() {
 				["Org.OData.Measures.V1.Name"],
 			"Target value's namespace has been correctly replaced"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2193,7 +2189,7 @@ function runODataAnnotationTests() {
 				["EnumMember"],
 			"Target value's child exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2205,7 +2201,7 @@ function runODataAnnotationTests() {
 		);
 
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2213,7 +2209,7 @@ function runODataAnnotationTests() {
 				["com.sap.vocabularies.Common.v1.Name"],
 			"Target value's namespace has been correctly replaced"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2222,7 +2218,7 @@ function runODataAnnotationTests() {
 				["EnumMember"],
 			"Target value's child exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2234,7 +2230,7 @@ function runODataAnnotationTests() {
 		);
 
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2242,7 +2238,7 @@ function runODataAnnotationTests() {
 				["FTGEN_HB_TE.Name"],
 			"Target value's namespace has been correctly replaced"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2251,7 +2247,7 @@ function runODataAnnotationTests() {
 				["EnumMember"],
 			"Target value's child exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2288,13 +2284,13 @@ function runODataAnnotationTests() {
 
 			assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"],
 				"Target value exists"
 			);
 
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2302,7 +2298,7 @@ function runODataAnnotationTests() {
 					["com.sap.vocabularies.UI.v1.Name"],
 				"Target value's namespace has been correctly replaced"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2311,7 +2307,7 @@ function runODataAnnotationTests() {
 					["EnumMember"],
 				"Target value's child exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2323,7 +2319,7 @@ function runODataAnnotationTests() {
 			);
 
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2331,7 +2327,7 @@ function runODataAnnotationTests() {
 					["com.sap.vocabularies.Communication.v1.Name"],
 				"Target value's namespace has been correctly replaced"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2340,7 +2336,7 @@ function runODataAnnotationTests() {
 					["EnumMember"],
 				"Target value's child exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2352,7 +2348,7 @@ function runODataAnnotationTests() {
 			);
 
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2360,7 +2356,7 @@ function runODataAnnotationTests() {
 					["Org.OData.Measures.V1.Name"],
 				"Target value's namespace has been correctly replaced"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2369,7 +2365,7 @@ function runODataAnnotationTests() {
 					["EnumMember"],
 				"Target value's child exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2381,7 +2377,7 @@ function runODataAnnotationTests() {
 			);
 
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2389,7 +2385,7 @@ function runODataAnnotationTests() {
 					["Org.OData.Measures.V1.Name"],
 				"Target value's namespace has been correctly replaced"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2398,7 +2394,7 @@ function runODataAnnotationTests() {
 					["EnumMember"],
 				"Target value's child exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2410,7 +2406,7 @@ function runODataAnnotationTests() {
 			);
 
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2418,7 +2414,7 @@ function runODataAnnotationTests() {
 					["com.sap.vocabularies.Common.v1.Name"],
 				"Target value's namespace has been correctly replaced"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2427,7 +2423,7 @@ function runODataAnnotationTests() {
 					["EnumMember"],
 				"Target value's child exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2439,7 +2435,7 @@ function runODataAnnotationTests() {
 			);
 
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2447,7 +2443,7 @@ function runODataAnnotationTests() {
 					["FTGEN_HB_TE.Name"],
 				"Target value's namespace has been correctly replaced"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2456,7 +2452,7 @@ function runODataAnnotationTests() {
 					["EnumMember"],
 				"Target value's child exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2493,38 +2489,38 @@ function runODataAnnotationTests() {
 
 		assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations group exists");
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"],
 			"PropertyAnnotation definition exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"],
 			"PropertyAnnotation definition value exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"],
 			"Name1 with replaced alias exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name2"],
 			"Name2 with replaced alias exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"],
 			"Name3 with replaced alias exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"]["EnumMember"],
 			"Name1 with replaced alias exists and has EnumMember child node"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name2"]["String"],
 			"Name2 with replaced alias exists and has String child node"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"]["Invalid"],
 			"Name3 with replaced alias exists and has Invalid child node"
 		);
@@ -2539,7 +2535,7 @@ function runODataAnnotationTests() {
 			"   test test   ",
 			"Name2 with replaced alias exists and has String child node that contains the exact text inclunding white-spaces"
 		);
-		deepEqual(
+		assert.deepEqual(
 			oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"]["Invalid"],
 			{},
 			"Name3 with replaced alias exists and has Invalid child node that only contains an empy object"
@@ -2571,38 +2567,38 @@ function runODataAnnotationTests() {
 
 			assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations group exists");
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"],
 				"PropertyAnnotation definition exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"],
 				"PropertyAnnotation definition value exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"],
 				"Name1 with replaced alias exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name2"],
 				"Name2 with replaced alias exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"],
 				"Name3 with replaced alias exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"]["EnumMember"],
 				"Name1 with replaced alias exists and has EnumMember child node"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name2"]["String"],
 				"Name2 with replaced alias exists and has String child node"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"]["Invalid"],
 				"Name3 with replaced alias exists and has Invalid child node"
 			);
@@ -2617,7 +2613,7 @@ function runODataAnnotationTests() {
 				"   test test   ",
 				"Name2 with replaced alias exists and has String child node that contains the exact text inclunding white-spaces"
 			);
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"]["Invalid"],
 				{},
 				"Name3 with replaced alias exists and has Invalid child node that only contains an empy object"
@@ -2652,27 +2648,27 @@ function runODataAnnotationTests() {
 
 		assert.ok(!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"], "Entity container exists");
 
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"],
 			"Entity in container exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"],
 			"Sub Entity in container exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
 			["ActivationAction"],
 			"Sub Entity value in container exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2680,7 +2676,7 @@ function runODataAnnotationTests() {
 			["String"],
 			"Sub Entity value in container exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2690,14 +2686,14 @@ function runODataAnnotationTests() {
 			"Sub Entity value in container exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
 			["EditAction"],
 			"Sub Entity value in container exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2705,7 +2701,7 @@ function runODataAnnotationTests() {
 			["String"],
 			"Sub Entity value in container exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2715,14 +2711,14 @@ function runODataAnnotationTests() {
 			"Sub Entity value in container exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
 			["ValidationFunction"],
 			"Sub Entity value in container exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2730,7 +2726,7 @@ function runODataAnnotationTests() {
 			["String"],
 			"Sub Entity value in container exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2740,14 +2736,14 @@ function runODataAnnotationTests() {
 			"Sub Entity value in container exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
 			["PreparationAction"],
 			"Sub Entity value in container exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2755,7 +2751,7 @@ function runODataAnnotationTests() {
 			["String"],
 			"Sub Entity value in container exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2765,29 +2761,29 @@ function runODataAnnotationTests() {
 			"Sub Entity value in container exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"],
 			"Entity in namespace exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"],
 			"Entity in namespace exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"]
 			[0],
 			"Entity entries in namespace exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"]
 			[0]
 			["PropertyPath"],
 			"Property exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"]
 			[0]
@@ -2796,36 +2792,36 @@ function runODataAnnotationTests() {
 			"Entity in namespace exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"],
 			"Entity in namespace exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"],
 			"Entity in namespace exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"]
 			[0],
 			"Entity entries in namespace exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"]
 			[0]
 			["PropertyPath"],
 			"Property exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"]
 			[1]
 			["PropertyPath"],
 			"Property exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"]
 			[0]
@@ -2833,7 +2829,7 @@ function runODataAnnotationTests() {
 			"SalesOrderID",
 			"Entity in namespace exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"]
 			[1]
@@ -2871,27 +2867,27 @@ function runODataAnnotationTests() {
 
 			assert.ok(!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"], "Entity container exists");
 
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"],
 				"Entity in container exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"],
 				"Sub Entity in container exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
 				["ActivationAction"],
 				"Sub Entity value in container exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2899,7 +2895,7 @@ function runODataAnnotationTests() {
 				["String"],
 				"Sub Entity value in container exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2909,14 +2905,14 @@ function runODataAnnotationTests() {
 				"Sub Entity value in container exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
 				["EditAction"],
 				"Sub Entity value in container exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2924,7 +2920,7 @@ function runODataAnnotationTests() {
 				["String"],
 				"Sub Entity value in container exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2934,14 +2930,14 @@ function runODataAnnotationTests() {
 				"Sub Entity value in container exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
 				["ValidationFunction"],
 				"Sub Entity value in container exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2949,7 +2945,7 @@ function runODataAnnotationTests() {
 				["String"],
 				"Sub Entity value in container exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2959,14 +2955,14 @@ function runODataAnnotationTests() {
 				"Sub Entity value in container exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
 				["PreparationAction"],
 				"Sub Entity value in container exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2974,7 +2970,7 @@ function runODataAnnotationTests() {
 				["String"],
 				"Sub Entity value in container exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2984,29 +2980,29 @@ function runODataAnnotationTests() {
 				"Sub Entity value in container exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"],
 				"Entity in namespace exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"],
 				"Entity in namespace exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"]
 				[0],
 				"Entity entries in namespace exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"]
 				[0]
 				["PropertyPath"],
 				"Property exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"]
 				[0]
@@ -3015,36 +3011,36 @@ function runODataAnnotationTests() {
 				"Entity in namespace exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"],
 				"Entity in namespace exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"],
 				"Entity in namespace exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"]
 				[0],
 				"Entity entries in namespace exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"]
 				[0]
 				["PropertyPath"],
 				"Property exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"]
 				[1]
 				["PropertyPath"],
 				"Property exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"]
 				[0]
@@ -3052,7 +3048,7 @@ function runODataAnnotationTests() {
 				"SalesOrderID",
 				"Entity in namespace exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"]
 				[1]
@@ -3085,7 +3081,7 @@ function runODataAnnotationTests() {
 
 		assert.ok(!!oAnnotations, "Annotations are available.");
 
-		deepEqual(
+		assert.deepEqual(
 			oAnnotations["SimpleValues.Test"]["com.sap.vocabularies.UI.v1.Name1"],
 			oAnnotations["SimpleValues.Test"]["com.sap.vocabularies.UI.v1.Name2"],
 			"Simple value attributes have the meaning as child elements"
@@ -3116,7 +3112,7 @@ function runODataAnnotationTests() {
 
 			assert.ok(!!oAnnotations, "Annotations are available.");
 
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations["SimpleValues.Test"]["com.sap.vocabularies.UI.v1.Name1"],
 				oAnnotations["SimpleValues.Test"]["com.sap.vocabularies.UI.v1.Name2"],
 				"Simple value attributes have the meaning as child elements"
@@ -3152,7 +3148,7 @@ function runODataAnnotationTests() {
 		assert.ok(!!oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"], "propertyAnnotations Entry exists");
 		assert.ok(!!oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"]["Value"], "propertyAnnotations Entry Value exists");
 
-		deepEqual(
+		assert.deepEqual(
 			oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"]["Value"]["UI.TestNS"],
 			oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"]["Value"]["UI.TestNoNS"],
 			"Collection with and without namespace have the same values"
@@ -3187,7 +3183,7 @@ function runODataAnnotationTests() {
 			assert.ok(!!oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"], "propertyAnnotations Entry exists");
 			assert.ok(!!oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"]["Value"], "propertyAnnotations Entry Value exists");
 
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"]["Value"]["UI.TestNS"],
 				oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"]["Value"]["UI.TestNoNS"],
 				"Collection with and without namespace have the same values"
@@ -4723,7 +4719,7 @@ function runODataAnnotationTests() {
 			var oAnnotations = oModel.getServiceAnnotations();
 
 			// Not using deepContains, because we want to make sure that "ui5.test.OverwriteMe" has been replaced
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations["ui5.test.Annotation"],
 				{
 					"ui5.test.SimpleAnnotation": {
@@ -4748,7 +4744,7 @@ function runODataAnnotationTests() {
 				"Correctly overwritten annotations: ui5.test.Annotation"
 			);
 
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations.propertyAnnotations.Test.NorthwindEntities,
 				{
 					"ui5.test.OverwriteMe": {
@@ -4770,7 +4766,7 @@ function runODataAnnotationTests() {
 				"Correctly overwritten annotations: propertyAnnotations.Test.NorthwindEntities"
 			);
 
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations.EntityContainer["ui5.test.NorthwindEntities"].X,
 				{
 					"ui5.test.OverwriteMe": {
@@ -4814,7 +4810,7 @@ function runODataAnnotationTests() {
 			var oAnnotations = oModel.getServiceAnnotations();
 
 			// Not using deepContains, because we want to make sure that "ui5.test.OverwriteMe" has been replaced
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations["ui5.test.Annotation"],
 				{
 					"ui5.test.SimpleAnnotation": {
@@ -4837,7 +4833,7 @@ function runODataAnnotationTests() {
 				"Correctly loaded annotations: ui5.test.Annotation"
 			);
 
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations.propertyAnnotations.Test.NorthwindEntities,
 				{
 					"ui5.test.OverwriteMe": {
@@ -4857,7 +4853,7 @@ function runODataAnnotationTests() {
 				"Correctly overwritten annotations: propertyAnnotations.Test.NorthwindEntities"
 			);
 
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations.EntityContainer["ui5.test.NorthwindEntities"].X,
 				{
 					"ui5.test.OverwriteMe": {
@@ -4880,7 +4876,7 @@ function runODataAnnotationTests() {
 			oModel.addAnnotationUrl(mTest.annotations[1]).then(function() {
 				var oAnnotations = oModel.getServiceAnnotations();
 
-				deepEqual(
+				assert.deepEqual(
 					oAnnotations["ui5.test.Annotation"],
 					{
 						"ui5.test.SimpleAnnotation": {
@@ -4905,7 +4901,7 @@ function runODataAnnotationTests() {
 					"Correctly overwritten annotations: ui5.test.Annotation"
 				);
 
-				deepEqual(
+				assert.deepEqual(
 					oAnnotations.propertyAnnotations.Test.NorthwindEntities,
 					{
 						"ui5.test.OverwriteMe": {
@@ -4927,7 +4923,7 @@ function runODataAnnotationTests() {
 					"Correctly overwritten annotations: propertyAnnotations.Test.NorthwindEntities"
 				);
 
-				deepEqual(
+				assert.deepEqual(
 					oAnnotations.EntityContainer["ui5.test.NorthwindEntities"].X,
 					{
 						"ui5.test.OverwriteMe": {

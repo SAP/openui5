@@ -535,7 +535,7 @@
 				assert.ok(jQuery.sap.byId(this.oVSD.getId() + "-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected");
 			});
 
-			test("Close ViewSettingsDialog", function (assert) {
+			QUnit.test("Close ViewSettingsDialog", function (assert) {
 				var done = assert.async(),
 					that = this;
 
@@ -666,7 +666,7 @@
 			if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
 				//do not run this tests on IE9 because of a timeout issue which need to be fixed
 			} else {
-				test("Cancel on cancel button press event", function (assert) {
+				QUnit.test("Cancel on cancel button press event", function (assert){
 					var core = sap.ui.getCore(),
 							done = assert.async(),
 							that = this,
@@ -708,7 +708,7 @@
 			if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
 				//do not run this tests on IE9 because of a timeout issue which need to be fixed
 			} else {
-				test("Cancel on key ESCAPE event", function (assert) {
+				QUnit.test("Cancel on key ESCAPE event", function (assert){
 					var core = sap.ui.getCore(),
 						that = this,
 						done = assert.async(),
@@ -763,7 +763,7 @@
 			if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
 				//do not run this tests on IE9 because of a timeout issue which need to be fixed
 			} else {
-				test("Confirm event", function (assert) {
+				QUnit.test("Confirm event", function (assert){
 					var done = assert.async(),
 						that = this;
 
@@ -831,7 +831,7 @@
 				}, 1500);
 			});
 
-			test("Grouping items selection", function (assert) {
+			QUnit.test("Grouping items selection", function (assert) {
 				var clock = sinon.useFakeTimers(),
 					fnOnConfirmObject = sinon.spy(function (oEvent) {
 						assert.ok(typeof oEvent.getParameter("groupItem") == "object", "Group Item is an object");
@@ -898,7 +898,7 @@
 				}
 			});
 
-			test("Destroy ViewSettingsDialog after all pages have been visited", function (assert) {
+			QUnit.test("Destroy ViewSettingsDialog after all pages have been visited", function (assert) {
 				var done = assert.async(),
 					that = this;
 
@@ -1248,7 +1248,7 @@
 			}
 		});
 
-		test("Check filter detail page and buttons render correctly", function  (assert) {
+		QUnit.test("Check filter detail page and buttons render correctly", function (assert) {
 			var done = assert.async(),
 					that = this;
 
@@ -1268,7 +1268,7 @@
 
 		});
 
-		QUnit.test("setSelectedFilterKeys with duplicate keys but different parents", function(assert){
+		QUnit.test("setSelectedFilterKeys with duplicate keys but different parents", function (assert) {
 			var aSelectedItems;
 
 			//arrange
@@ -1311,7 +1311,7 @@
 			equals(aSelectedItems[2].getParent().getKey(), "mySecondNameFilter");
 		});
 
-		test("Select and deselect a filter detail item works correctly", function  (assert) {
+		QUnit.test("Select and deselect a filter detail item works correctly", function (assert) {
 			var done = assert.async(),
 				that = this;
 
@@ -1335,7 +1335,7 @@
 			}.bind(this), 1000);
 		});
 
-		test("Select All checkbox works correctly", function  (assert) {
+		QUnit.test("Select All checkbox works correctly", function (assert) {
 			var done = assert.async(),
 					that = this;
 
@@ -1385,7 +1385,7 @@
 			}, 1000);
 		});
 
-		test("Query filter search field works correctly", function  (assert) {
+		QUnit.test("Query filter search field works correctly", function (assert) {
 			var done = assert.async(),
 				that = this,
 				fnIsVisible = function(oItem) {
@@ -1474,7 +1474,7 @@
 			}, 1000);
 		});
 
-		QUnit.test("StringFilter", function(assert){
+		QUnit.test("StringFilter", function (assert) {
 			var fnStringFilter = this.oVSD._getStringFilter();
 
 			//Assert
@@ -1493,7 +1493,7 @@
 			assert.ok(!fnStringFilter("ou", "mousepad mousepad"), "'anywordstartswith' does not match strings in the middle of the second word");
 		});
 
-		QUnit.test("setFilterSearchCallback", function(assert){
+		QUnit.test("setFilterSearchCallback", function (assert) {
 			var done = assert.async(),
 				that = this,
 				oCallbackSpy = {
@@ -1532,7 +1532,7 @@
 			}, 1000);
 		});
 
-		test("Query filter search field updates the select all checkbox", function  (assert) {
+		QUnit.test("Query filter search field updates the select all checkbox", function (assert){
 			var done = assert.async(),
 				that = this;
 
@@ -1558,7 +1558,7 @@
 			}, 1000);
 		});
 
-		test("Select All checkbox updates only the filtered items", function  (assert) {
+		QUnit.test("Select All checkbox updates only the filtered items", function (assert) {
 			var done = assert.async(),
 				that = this;
 
@@ -1574,7 +1574,7 @@
 					oSelectAllCheckbox = that.oVSD._selectAllCheckBox,
 					aSelectedItems;
 
-				aSelectedItems = that.oVSD._filterDetailList.getItems().filter(function(oItem) {
+				aSelectedItems = that.oVSD._filterDetailList.getItems().filter(function (oItem) {
 					return oItem.getSelected();
 				});
 
@@ -1622,7 +1622,7 @@
 		});
 
 		//BCP: 1570899196
-		QUnit.test("removeFilterItem works with index as a parameter", function(assert){
+		QUnit.test("removeFilterItem works with index as a parameter", function(assert) {
 			oVsdConfig.addFilterItems(this.oVSD);
 
 			var iFilterItemsCount = this.oVSD.getFilterItems().length;
@@ -1715,7 +1715,7 @@
 			}
 		});
 
-		test("Test for re-rendering after changing selections", function (assert) {
+		QUnit.test("Test for re-rendering after changing selections", function (assert) {
 			var delay = 1000,
 					done1 = assert.async(),
 					that = this;
@@ -1857,7 +1857,7 @@
 			}
 		});
 
-		test("Reopening filter detail page of a removed detail", function (assert) {
+		QUnit.test("Reopening filter detail page of a removed detail", function (assert) {
 			var delay = 1000,
 				done = assert.async(),
 				that = this;
@@ -1889,7 +1889,7 @@
 					that.oVSD.removeFilterItem(vsdFilterItem);
 					that.oVSD.open();
 					setTimeout(function () {
-						strictEqual(that.oVSD._vContentPage, 2, "Once filter details item is removed, " +
+						assert.strictEqual(that.oVSD._vContentPage, 2, "Once filter details item is removed, " +
 							"the filter parent page should be the current page");
 						done();
 					}, delay);
@@ -1897,7 +1897,7 @@
 			}, delay);
 		});
 
-		test("Reopening filter detail page after all filters are removed", function (assert) {
+		QUnit.test("Reopening filter detail page after all filters are removed", function (assert) {
 			var delay = 1000,
 				done = assert.async(),
 				that = this;
@@ -1929,7 +1929,7 @@
 					that.oVSD.removeAllFilterItems();
 					that.oVSD.open();
 					setTimeout(function () {
-						strictEqual(that.oVSD._vContentPage, 0, "If all filter items are removed, the first available" +
+						assert.strictEqual(that.oVSD._vContentPage, 0, "If all filter items are removed, the first available" +
 						" page should be current(in that case 'Sort/0')");
 						done();
 					}, delay);
@@ -1937,7 +1937,7 @@
 			}, delay);
 		});
 
-		test("Reopening filter detail page of a removed detail with model change - remove single filter", function (assert) {
+		QUnit.test("Reopening filter detail page of a removed detail with model change - remove single filter", function (assert) {
 			var delay = 1000,
 				done = assert.async(),
 				that = this;
@@ -1964,7 +1964,7 @@
 					that.oVSD.setModel(model2);
 					that.oVSD.open();
 					setTimeout(function () {
-						strictEqual(that.oVSD._vContentPage, 2, "If no given 'filter details item' exists in a model, " +
+						assert.strictEqual(that.oVSD._vContentPage, 2, "If no given 'filter details item' exists in a model, " +
 							"the current page should be the parent filters page.");
 						done();
 					}, delay);
@@ -1972,7 +1972,7 @@
 			}, delay);
 		});
 
-		test("Reopening filter detail page of a removed detail with model change - remove all filters", function (assert) {
+		QUnit.test("Reopening filter detail page of a removed detail with model change - remove all filters", function (assert) {
 			var delay = 1000,
 				done = assert.async(),
 				that = this;
@@ -2000,7 +2000,7 @@
 					that.oVSD.setModel(model2);
 					that.oVSD.open();
 					setTimeout(function () {
-						strictEqual(that.oVSD._vContentPage, 0, "If no filters item inside the new model, the first" +
+						assert.strictEqual(that.oVSD._vContentPage, 0, "If no filters item inside the new model, the first" +
 							" available page should be current(in that case 'Sort/0')");
 						done();
 					}, delay);
@@ -2402,7 +2402,7 @@
 
 		QUnit.module("Others");
 
-		QUnit.test("customControl is cloned as expected", function(assert){
+		QUnit.test("customControl is cloned as expected", function (assert) {
 			var oViewSettingsCustomItem = new sap.m.ViewSettingsCustomItem({
 				text     : "SomeText",
 				key      : "SomeKey",
@@ -2510,7 +2510,7 @@
 			}
 		});
 
-		test("Focus on sortItems is being preserved on re-rendering", function (assert) {
+		QUnit.test("Focus on sortItems is being preserved on re-rendering", function (assert) {
 			var aSortItems, sItemToSelect,
 					done = assert.async();
 
@@ -2526,7 +2526,7 @@
 			}.bind(this), 500);
 		});
 
-		test("Focus on groupItems is being preserved on re-rendering", function (assert) {
+		QUnit.test("Focus on groupItems is being preserved on re-rendering", function (assert) {
 			var aSortItems, sItemToSelect,
 					done = assert.async();
 

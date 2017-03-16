@@ -92,7 +92,7 @@ QUnit.test("encode URL", function(assert){
 	assert.equal(jQuery.sap.encodeURL(">&<\"\'\\/"), "%3e%26%3c%22%27%5c%2f", ">&<\"\'\\/");
 });
 QUnit.test("encode URL parameters", function(assert){
-	equal(jQuery.sap.encodeURLParameters({
+	assert.equal(jQuery.sap.encodeURLParameters({
 		"?": "=",
 		"&": "?",
 		">&<\"\'\\/": String.fromCharCode(256)

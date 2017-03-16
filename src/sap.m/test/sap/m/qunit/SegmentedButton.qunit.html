@@ -1444,7 +1444,7 @@
 		}
 	});
 
-	test("addItem", function (oAssert) {
+	QUnit.test("addItem", function (assert) {
 		// Arrange
 		var aItems,
 			aButtons;
@@ -1456,10 +1456,10 @@
 		this.applyChanges();
 
 		// Assert
-		oAssert.strictEqual(aItems.length, 1, "There should be one item");
-		oAssert.strictEqual(aButtons.length, 1, "There should be one button created");
-		oAssert.strictEqual(aButtons[0].getText(), aItems[0].getText(), "The button text should equal the item test");
-		oAssert.strictEqual(this.oSB.getSelectedButton(), aButtons[0].getId(),
+		assert.strictEqual(aItems.length, 1, "There should be one item");
+		assert.strictEqual(aButtons.length, 1, "There should be one button created");
+		assert.strictEqual(aButtons[0].getText(), aItems[0].getText(), "The button text should equal the item test");
+		assert.strictEqual(this.oSB.getSelectedButton(), aButtons[0].getId(),
 			"The button created should be the selected button");
 
 		// Act - add second button and set selection to the newly added button
@@ -1469,9 +1469,9 @@
 		this.applyChanges();
 
 		// Assert
-		oAssert.strictEqual(this.oSB.getItems().length, 2, "There should be two items");
-		oAssert.strictEqual(aButtons.length, 2, "There should be two buttons created from items");
-		oAssert.strictEqual(this.oSB.getSelectedButton(), aButtons[1].getId(),
+		assert.strictEqual(this.oSB.getItems().length, 2, "There should be two items");
+		assert.strictEqual(aButtons.length, 2, "There should be two buttons created from items");
+		assert.strictEqual(this.oSB.getSelectedButton(), aButtons[1].getId(),
 			"The second button created should be selected");
 
 		// Act - add third item
@@ -1480,13 +1480,13 @@
 		this.applyChanges();
 
 		// Assert
-		oAssert.strictEqual(this.oSB.getItems().length, 3, "There should be three items");
-		oAssert.strictEqual(aButtons.length, 3, "There should be three buttons");
-		oAssert.strictEqual(this.oSB.getSelectedButton(), aButtons[1].getId(),
+		assert.strictEqual(this.oSB.getItems().length, 3, "There should be three items");
+		assert.strictEqual(aButtons.length, 3, "There should be three buttons");
+		assert.strictEqual(this.oSB.getSelectedButton(), aButtons[1].getId(),
 			"The second button should remain selected");
 	});
 
-	test("removeItem", function (oAssert) {
+	QUnit.test("removeItem", function (assert){
 		var aItems;
 
 		// Arrange
@@ -1501,38 +1501,38 @@
 		this.applyChanges();
 
 		// Assert
-		oAssert.strictEqual(this.oSB.getItems().length, 2, "There are 2 items");
-		oAssert.strictEqual(this.oSB.getButtons().length, 2, "There are 2 buttons");
-		oAssert.strictEqual(this.oSB.$().find("li").length, 2, "There are 2 buttons rendered");
-		oAssert.strictEqual(this.oSB.getSelectedKey(), "b3", "Button with key 'b3' is selected");
+		assert.strictEqual(this.oSB.getItems().length, 2, "There are 2 items");
+		assert.strictEqual(this.oSB.getButtons().length, 2, "There are 2 buttons");
+		assert.strictEqual(this.oSB.$().find("li").length, 2, "There are 2 buttons rendered");
+		assert.strictEqual(this.oSB.getSelectedKey(), "b3", "Button with key 'b3' is selected");
 
 		// Act - remove Button 3
 		this.oSB.removeItem(aItems[2]);
 		this.applyChanges();
 
 		// Assert
-		oAssert.strictEqual(this.oSB.getButtons().length, 1, "There is one button");
-		oAssert.strictEqual(this.oSB.getSelectedKey(), "b1", "Button with key 'b1' is selected");
+		assert.strictEqual(this.oSB.getButtons().length, 1, "There is one button");
+		assert.strictEqual(this.oSB.getSelectedKey(), "b1", "Button with key 'b1' is selected");
 
 		// Act - remove last button
 		this.oSB.removeItem(aItems[0]);
 		this.applyChanges();
 
 		// Assert
-		oAssert.strictEqual(this.oSB.getButtons().length, 0, "There are no buttons");
-		oAssert.strictEqual(this.oSB.getSelectedKey(), "", "There is no selected key");
-		oAssert.strictEqual(this.oSB.$().find("li").length, 0, "There are no buttons rendered");
+		assert.strictEqual(this.oSB.getButtons().length, 0, "There are no buttons");
+		assert.strictEqual(this.oSB.getSelectedKey(), "", "There is no selected key");
+		assert.strictEqual(this.oSB.$().find("li").length, 0, "There are no buttons rendered");
 
 		// Act - adding an item after all ware removed
 		this.oSB.addItem(new sap.m.SegmentedButtonItem({key: "b4", text: "Button 4"}));
 		this.applyChanges();
 
 		// Assert
-		oAssert.strictEqual(this.oSB.$().find("li").length, 1, "There is one buttons rendered");
-		oAssert.strictEqual(this.oSB.getSelectedKey(), "b4", "Button with key 'b4' is selected");
+		assert.strictEqual(this.oSB.$().find("li").length, 1, "There is one buttons rendered");
+		assert.strictEqual(this.oSB.getSelectedKey(), "b4", "Button with key 'b4' is selected");
 	});
 
-	test("insertItem", function (oAssert) {
+	QUnit.test("insertItem", function (assert) {
 		// Arrange
 		this.oSB.addItem(new sap.m.SegmentedButtonItem({text: "Button 1"}));
 		this.oSB.addItem(new sap.m.SegmentedButtonItem({text: "Button 2"}));
@@ -1542,14 +1542,14 @@
 		this.applyChanges();
 
 		// Assert
-		oAssert.strictEqual(this.oSB.getItems().length, 3, "There are 3 items");
-		oAssert.strictEqual(this.oSB.getButtons().length, 3, "There are 3 buttons");
-		oAssert.strictEqual(this.oSB.$().find("li").length, 3, "There are 3 buttons rendered");
-		oAssert.strictEqual(this.oSB.getButtons()[1].getText(), "Button 3",
+		assert.strictEqual(this.oSB.getItems().length, 3, "There are 3 items");
+		assert.strictEqual(this.oSB.getButtons().length, 3, "There are 3 buttons");
+		assert.strictEqual(this.oSB.$().find("li").length, 3, "There are 3 buttons rendered");
+		assert.strictEqual(this.oSB.getButtons()[1].getText(), "Button 3",
 			"Button with text 'Button 3' should be the second button");
 	});
 
-	test("removeAllItems", function (oAssert) {
+	QUnit.test("removeAllItems", function (assert) {
 		// Arrange
 		this.oSB.addItem(new sap.m.SegmentedButtonItem({key: "b1", text: "Button 1"}));
 		this.oSB.addItem(new sap.m.SegmentedButtonItem({key: "b2", text: "Button 2"}));
@@ -1561,11 +1561,11 @@
 		this.applyChanges();
 
 		// Assert
-		oAssert.strictEqual(this.oSB.getItems().length, 0, "There are 0 items");
-		oAssert.strictEqual(this.oSB.getButtons().length, 0, "There are 0 buttons");
-		oAssert.strictEqual(this.oSB.getSelectedKey(), "", "There is no selected key");
-		oAssert.strictEqual(this.oSB.getSelectedButton(), null, "There is no selected button");
-		oAssert.strictEqual(this.oSB.$().find("li").length, 0, "There are 0 buttons rendered");
+		assert.strictEqual(this.oSB.getItems().length, 0, "There are 0 items");
+		assert.strictEqual(this.oSB.getButtons().length, 0, "There are 0 buttons");
+		assert.strictEqual(this.oSB.getSelectedKey(), "", "There is no selected key");
+		assert.strictEqual(this.oSB.getSelectedButton(), null, "There is no selected button");
+		assert.strictEqual(this.oSB.$().find("li").length, 0, "There are 0 buttons rendered");
 	});
 
 
@@ -2410,7 +2410,7 @@
 				null,
 				"The hidden select has not been instantiated");
 
-		strictEqual(oSegmentedButton._bInOverflow,
+		assert.strictEqual(oSegmentedButton._bInOverflow,
 				undefined,
 				"The property _bInOverflow does not exist at all");
 
@@ -2449,7 +2449,7 @@
 				"sap.m.Select",
 				"The hidden select is instantiated");
 
-		strictEqual(oSegmentedButton._bInOverflow,
+		assert.strictEqual(oSegmentedButton._bInOverflow,
 				true,
 				"The property _bInOverflow is set to true");
 
@@ -2563,7 +2563,7 @@
 				null,
 				"The hidden select has not been instantiated");
 
-		strictEqual(oSegmentedButton._bInOverflow,
+		assert.strictEqual(oSegmentedButton._bInOverflow,
 				undefined,
 				"The property _bInOverflow does not exist at all");
 
@@ -2705,17 +2705,17 @@
 		}
 	});
 
-	test("Objects needed for CustomStyleClass sync between item and internal button", function (oAssert) {
+	QUnit.test("Objects needed for CustomStyleClass sync between item and internal button", function (assert) {
 		// Arrange
 		var oB = this.oSBI.oButton,
 			oSBI = this.oSBI;
 
 		// Assert
-		oAssert.strictEqual(oB.aCustomStyleClasses, oSBI.aCustomStyleClasses, "This should be a reference to the same object");
-		oAssert.strictEqual(oB.mCustomStyleClassMap, oSBI.mCustomStyleClassMap, "This should be a reference to the same object");
+		assert.strictEqual(oB.aCustomStyleClasses, oSBI.aCustomStyleClasses, "This should be a reference to the same object");
+		assert.strictEqual(oB.mCustomStyleClassMap, oSBI.mCustomStyleClassMap, "This should be a reference to the same object");
 	});
 
-	test("CustomData sync", function (oAssert) {
+	QUnit.test("CustomData sync", function (assert) {
 		// Arrange
 		var oCustomData = new sap.ui.core.CustomData({
 			key: "my",
@@ -2724,22 +2724,22 @@
 		this.oSBI.addCustomData(oCustomData);
 
 		// Assert
-		oAssert.strictEqual(this.oSBI.oButton.getCustomData()[0], oCustomData,
+		assert.strictEqual(this.oSBI.oButton.getCustomData()[0], oCustomData,
 			"The CustomData returned from the internal button should be a reference to the same CustomData added in the item");
 	});
 
-	test("LayoutData sync", function (oAssert) {
+	QUnit.test("LayoutData sync", function (assert) {
 		// Arrange
 		// Keep in mind that we are using sap.ui.core.LayoutData which is an abstract class and this usage is ok only for testing
 		var oLayoutData = new sap.ui.core.LayoutData();
 		this.oSBI.setLayoutData(oLayoutData);
 
 		// Assert
-		oAssert.strictEqual(this.oSBI.oButton.getLayoutData(), oLayoutData,
+		assert.strictEqual(this.oSBI.oButton.getLayoutData(), oLayoutData,
 			"The LayoutData returned from the internal button should be a reference to the same LayoutData set in the item");
 	});
 
-	test("Press event", function (oAssert) {
+	QUnit.test("Press event", function (assert) {
 		// Arrange
 		var oSB = new sap.m.SegmentedButton({
 			items: [
@@ -2750,14 +2750,14 @@
 
 		this.oSBI.attachPress(function () {
 			// Assert
-			oAssert.ok(true, "Event attached to the item should be fired when the button event is fired");
+			assert.ok(true, "Event attached to the item should be fired when the button event is fired");
 		});
 
 		// Act
 		aButtons[0].firePress();
 	});
 
-	test("Cleanup - standalone", function (oAssert) {
+	QUnit.test("Cleanup - standalone", function (assert) {
 		// Arrange
 		var oDestroySpy = this.spy(this.oSBI.oButton, "destroy");
 
@@ -2765,14 +2765,14 @@
 		this.oSBI.destroy();
 
 		// Internal created button should be destroyed
-		oAssert.strictEqual(oDestroySpy.callCount, 1, "Destroy method of the button should be called once");
-		oAssert.strictEqual(this.oSBI.oButton, null, "Internal button pointer should be null");
+		assert.strictEqual(oDestroySpy.callCount, 1, "Destroy method of the button should be called once");
+		assert.strictEqual(this.oSBI.oButton, null, "Internal button pointer should be null");
 
 		// Cleanup
 		oDestroySpy.restore();
 	});
 
-	test("Cleanup - sap.m.SegmentedButton", function (oAssert) {
+	QUnit.test("Cleanup - sap.m.SegmentedButton", function (assert) {
 		// Arrange
 		var oSB = new sap.m.SegmentedButton({
 			items: [
@@ -2784,7 +2784,7 @@
 		oSB.destroy();
 
 		// Assert
-		oAssert.strictEqual(this.oSBI.oButton.bIsDestroyed, true, "The internal button should be marked for destruction");
+		assert.strictEqual(this.oSBI.oButton.bIsDestroyed, true, "The internal button should be marked for destruction");
 	});
 
 	QUnit.module("sap.ui.core.CustomData and 'items' aggregation", {
@@ -2828,28 +2828,28 @@
 		}
 	});
 
-	test("CustomData is rendered correct in the dom", function (oAssert) {
+	QUnit.test("CustomData is rendered correct in the dom", function (assert) {
 		// Arrange
 		var aBtn = this.oSB.getButtons();
 
 		// Assert
-		oAssert.strictEqual(aBtn[0].getCustomData()[0].getKey(), "my", "There is CustomData with key 'my' in the first button");
-		oAssert.strictEqual(aBtn[0].$().data("my"), 1, "There is CustomData attribute with value '1' rendered on the first button");
-		oAssert.strictEqual(aBtn[1].$().data("my"), 2, "There is CustomData attribute with value '2' rendered on the second button");
-		oAssert.strictEqual(aBtn[2].getCustomData().length, 0, "There is no CustomData on the third button");
-		oAssert.strictEqual(aBtn[2].$().data("my"), undefined, "There is no CustomData rendered on the third button");
+		assert.strictEqual(aBtn[0].getCustomData()[0].getKey(), "my", "There is CustomData with key 'my' in the first button");
+		assert.strictEqual(aBtn[0].$().data("my"), 1, "There is CustomData attribute with value '1' rendered on the first button");
+		assert.strictEqual(aBtn[1].$().data("my"), 2, "There is CustomData attribute with value '2' rendered on the second button");
+		assert.strictEqual(aBtn[2].getCustomData().length, 0, "There is no CustomData on the third button");
+		assert.strictEqual(aBtn[2].$().data("my"), undefined, "There is no CustomData rendered on the third button");
 	});
 
-	test("Update of item's CustomData Value property must be reflected in the SegmentedButton", function (oAssert) {
+	QUnit.test("Update of item's CustomData Value property must be reflected in the SegmentedButton", function (assert) {
 		// Act - change the CustomData value of the item
 		this.oCD.setValue("2222");
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		oAssert.strictEqual(this.oSB.getButtons()[0].$().data("my"), 2222, "The rendered CustomData on the first button should be updated");
+		assert.strictEqual(this.oSB.getButtons()[0].$().data("my"), 2222, "The rendered CustomData on the first button should be updated");
 	});
 
-	test("Update of item's CustomData Key property must be reflected in the SegmentedButton", function (oAssert) {
+	QUnit.test("Update of item's CustomData Key property must be reflected in the SegmentedButton", function (assert) {
 		// Arrange
 		var oFirstButton;
 
@@ -2861,19 +2861,19 @@
 		oFirstButton = this.oSB.getButtons()[0];
 
 		// Assert
-		oAssert.strictEqual(oFirstButton.$().data("my"), undefined,
+		assert.strictEqual(oFirstButton.$().data("my"), undefined,
 			"There should be no CustomData with key 'my' rendered on the first");
-		oAssert.strictEqual(oFirstButton.$().data("yours"), 1,
+		assert.strictEqual(oFirstButton.$().data("yours"), 1,
 			"There should be new CustomData with key 'yours' rendered on the first button");
 	});
 
-	test("Update of item's CustomData writeToDom property must be reflected in the SegmentedButton", function (oAssert) {
+	QUnit.test("Update of item's CustomData writeToDom property must be reflected in the SegmentedButton", function (assert) {
 		// Act - change the CustomData writeToDom property
 		this.oCD.setWriteToDom(false);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		oAssert.strictEqual(this.oSB.getButtons()[0].$().data(this.oCD.getKey()), undefined,
+		assert.strictEqual(this.oSB.getButtons()[0].$().data(this.oCD.getKey()), undefined,
 			"There should be new CustomData with key 'yours' rendered on the first button");
 	});
 

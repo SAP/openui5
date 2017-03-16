@@ -59,7 +59,7 @@
 				oCtrl.addItem(oItem0);
 				oCtrl.addItem(oItem1);
 				sap.ui.getCore().applyChanges();
-			} //, teardown: function(){}
+			}
 		});
 
 		QUnit.test("Initial Check", function(assert) {
@@ -153,7 +153,7 @@
 	  /**
 		 * Test tooltip
 		 */
-		test ("Tooltip", function() {
+		QUnit.test("Tooltip", function(assert) {
 			assert.equal(oCtrl.getTooltip(), sTooltip, "ListBox tooltip property must reflect settings");
 
 			// check tooltip in DOM
@@ -165,7 +165,7 @@
 		/**
 		 * Test DisplaySecondaryValues + DisplayIcons
 		 */
-		test ("DisplaySecondaryValues and DisplayIcons", function() {
+		QUnit.test("DisplaySecondaryValues and DisplayIcons", function(assert) {
 			var oDomRef = jQuery.sap.domById("item0");
 			assert.equal(oDomRef.childNodes.length, 1, "ListItem should only have one child node by default");
 
@@ -185,7 +185,7 @@
 		/**
 		 * Test text alignment
 		 */
-		test ("Text Alignment", function() {
+		QUnit.test("Text Alignment", function(assert){
 			oCtrl.setDisplaySecondaryValues(true);
 			oCtrl.setDisplayIcons(true);
 			sap.ui.getCore().applyChanges();
@@ -272,7 +272,7 @@
 				oCtrl.addItem(oItem0);
 				oCtrl.addItem(oItem1);
 				sap.ui.getCore().applyChanges();
-			} //, teardown: function(){}
+			}
 		});
 
 		/**
@@ -383,7 +383,7 @@
 				oCtrl.addItem(oItem0);
 				oCtrl.addItem(oItem1);
 				sap.ui.getCore().applyChanges();
-			} //, teardown: function(){}
+			}
 		});
 
 		QUnit.test("SetSelectedKeys + GetSelectedKeys", function(assert) {
@@ -413,7 +413,7 @@
 				oCtrl.addItem(oItem0);
 				oCtrl.addItem(oItem1);
 				sap.ui.getCore().applyChanges();
-			} //, teardown: function(){}
+			}
 		});
 
 		QUnit.test("GetSelectedItem", function(assert) {
@@ -539,7 +539,7 @@
 				}
 				oCtrl.setHeight("100px");
 				sap.ui.getCore().applyChanges();
-			} //, teardown: function(){}
+			}
 		});
 
 	  // ==================================================

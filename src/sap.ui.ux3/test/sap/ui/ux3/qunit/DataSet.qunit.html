@@ -126,7 +126,7 @@ sap.ui.ux3.DataSetSimpleView</title>
 		assert.expect(3);
 		assert.ok(sap.ui.ux3.DataSet, "sap.ui.ux3.DataSet must be defined");
 		assert.ok(sap.ui.ux3.DataSetItem, "sap.ui.ux3.DataSetItem must be defined");
-		ok(sap.ui.ux3.DataSetSimpleView,
+		assert.ok(sap.ui.ux3.DataSetSimpleView,
 				"sap.ui.ux3.DataSetSimpleView must be defined");
 	});
 
@@ -135,28 +135,26 @@ sap.ui.ux3.DataSetSimpleView</title>
 	QUnit.test("Instantiation", function(assert) {
 		assert.expect(2);
 		assert.ok(oDataSetItem, "oDataSetItem must exist after creation");
-		ok(oDataSetItem instanceof sap.ui.ux3.DataSetItem,
+		assert.ok(oDataSetItem instanceof sap.ui.ux3.DataSetItem,
 				"oDataSetItem must be instance of sap.ui.ux3.DataSetItem");
 	});
 
 	QUnit.module("DataSetSimpleView");
 
-	QUnit.test(
-			"Instantiation",
-			2,
-			function() {
-				ok(oDataSetSimpleView,
-						"oDataSetSimpleView must exist after creation");
-				ok(oDataSetSimpleView instanceof sap.ui.ux3.DataSetSimpleView,
-						"oDataSetSimpleView must be instance of sap.ui.ux3.DataSetSimpleView");
-			});
+	QUnit.test("Instantiation", function(assert) {
+		assert.expect(2);
+		assert.ok(oDataSetSimpleView,
+				"oDataSetSimpleView must exist after creation");
+		assert.ok(oDataSetSimpleView instanceof sap.ui.ux3.DataSetSimpleView,
+				"oDataSetSimpleView must be instance of sap.ui.ux3.DataSetSimpleView");
+	});
 
 	QUnit.module("DataSet");
 
 	QUnit.test("Instantiation", function(assert) {
 		assert.expect(2);
 		assert.ok(oDataSet, "oDataSet must exist after creation");
-		ok(oDataSet instanceof sap.ui.ux3.DataSet,
+		assert.ok(oDataSet instanceof sap.ui.ux3.DataSet,
 				"oDataSet must be instance of sap.ui.ux3.DataSet");
 	});
 

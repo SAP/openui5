@@ -1,6 +1,3 @@
-/* global module start test asyncTest expect ok equal deepEqual */
-
-
 /**
  * Test-Function to be used in place of deepEquals which only tests for the existence of the given
  * values, not the absence of others.

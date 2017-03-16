@@ -433,19 +433,19 @@
 		QUnit.test("change properties", function(assert) {
 
 			var $tabs = jQuery('#tabstrip1 .sapUiTabBarCnt').children();
-			ok ($tabs.length == 2, 'TabStrip has 2 tabs visible');
+			assert.ok($tabs.length == 2, 'TabStrip has 2 tabs visible');
 
 			oTabStrip1.getTabs()[2].setVisible(false);
 			sap.ui.getCore().applyChanges(); // rerendering must be finished
 
 			$tabs = jQuery('#tabstrip1 .sapUiTabBarCnt').children();
-			ok ($tabs.length == 1, 'TabStrip has 1 tabs visible');
+			assert.ok($tabs.length == 1, 'TabStrip has 1 tabs visible');
 
 			oTabStrip1.getTabs()[2].setVisible(true);
 			sap.ui.getCore().applyChanges(); // rerendering must be finished
 
 			$tabs = jQuery('#tabstrip1 .sapUiTabBarCnt').children();
-			ok ($tabs.length == 2, 'TabStrip has 2 tabs visible');
+			assert.ok($tabs.length == 2, 'TabStrip has 2 tabs visible');
 		});
 
 
@@ -457,15 +457,15 @@
 			var $tab = jQuery(firstTabId);
 			var mOffset = $tab.offset();
 
-			ok (oTabStrip1.getTabs()[0].getText() == 'First tab', 'First Tab is "First Tab"');
-			ok (oTabStrip1.getSelectedIndex() == 0, 'Selected index is 0"');
+			assert.ok(oTabStrip1.getTabs()[0].getText() == 'First tab', 'First Tab is "First Tab"');
+			assert.ok(oTabStrip1.getSelectedIndex() == 0, 'Selected index is 0"');
 
 			qutils.triggerMouseEvent($tab, "mousedown", 0, 0, mOffset.left + 10, mOffset.top + 10);
 			qutils.triggerMouseEvent($tab, "mousemove", 0, 0, mOffset.left + 200, mOffset.top + 10);
 			qutils.triggerMouseEvent($tab, "mouseup");
 
-			ok (oTabStrip1.getTabs()[0].getText() !='First tab', 'First Tab is not "First Tab"');
-			ok (oTabStrip1.getSelectedIndex() == 2, 'Selected index is 1"');
+			assert.ok(oTabStrip1.getTabs()[0].getText() !='First tab', 'First Tab is not "First Tab"');
+			assert.ok(oTabStrip1.getSelectedIndex() == 2, 'Selected index is 1"');
 
 			oTabStrip1.destroy();
 			oTabStrip2.destroy();

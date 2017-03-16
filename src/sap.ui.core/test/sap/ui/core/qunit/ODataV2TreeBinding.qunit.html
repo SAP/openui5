@@ -395,7 +395,7 @@
 				oContext = aContexts[4];
 				assert.equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root contexts[4] is correct (Laura)");
 
-				deepEqual(oBinding.oKeys, {
+				assert.deepEqual(oBinding.oKeys, {
 					"/Employees(2)/Employees1": [
 						"Employees(1)",
 						"Employees(3)",
@@ -405,7 +405,7 @@
 					]
 				}, "Keys object has value for root");
 
-				deepEqual(oBinding.oLengths, {
+				assert.deepEqual(oBinding.oLengths, {
 					"/Employees(1)": 1,
 					"/Employees(2)/Employees1": 5,
 					"/Employees(3)": 1,
@@ -414,7 +414,7 @@
 					"/Employees(8)": 1
 				}, "Lengths object has value for root");
 
-				deepEqual(oBinding.oFinalLengths, {
+				assert.deepEqual(oBinding.oFinalLengths, {
 					"/Employees(1)": true,
 					"/Employees(2)/Employees1": true,
 					"/Employees(3)": true,
@@ -454,7 +454,7 @@
 				oContext = aContexts[4];
 				assert.equal(oModel.getProperty("FirstName", oContext), "Laura", "After refresh: TreeBinding root contexts[4] is correct (Laura)");
 
-				deepEqual(oBinding.oKeys, {
+				assert.deepEqual(oBinding.oKeys, {
 					"/Employees(2)/Employees1": [
 						"Employees(1)",
 						"Employees(3)",
@@ -464,7 +464,7 @@
 					]
 				}, "Keys object has value for root");
 
-				deepEqual(oBinding.oLengths, {
+				assert.deepEqual(oBinding.oLengths, {
 					"/Employees(1)": 1,
 					"/Employees(2)/Employees1": 5,
 					"/Employees(3)": 1,
@@ -473,7 +473,7 @@
 					"/Employees(8)": 1
 				}, "Lengths object has value for root");
 
-				deepEqual(oBinding.oFinalLengths, {
+				assert.deepEqual(oBinding.oFinalLengths, {
 					"/Employees(1)": true,
 					"/Employees(2)/Employees1": true,
 					"/Employees(3)": true,
@@ -1486,7 +1486,7 @@
 			oBinding.filter(aFilters, "Control");
 
 			assert.equal(iWarningCount, 1, "Exactly one warning logged.");
-			equal(sMessage, "Filtering with ControlFilters is ONLY possible if the ODataTreeBinding is running in OperationMode.Client or " +
+			assert.equal(sMessage, "Filtering with ControlFilters is ONLY possible if the ODataTreeBinding is running in OperationMode.Client or " +
 					"OperationMode.Auto, in case the given threshold is lower than the total number of tree nodes.")
 
 			jQuery.sap.log.warning.restore();

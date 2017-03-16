@@ -1,4 +1,4 @@
-/*global strictEqual, module, asyncTest, stop, start, sinon, Promise, ok*/
+/*global sinon, Promise*/
 
 jQuery.sap.require("sap.ui.fl.Persistence");
 jQuery.sap.require("sap.ui.fl.Utils");
