@@ -234,9 +234,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.setProperty("placeholder", oRb.getText("FACETFILTER_SEARCH"),true);
 
 		// create an F5 ARIA announcement and remember its ID for later use in the renderer:
-		this._sAriaF5Label = new sap.ui.core.InvisibleText({
-			text: oRb.getText("SEARCHFIELD_ARIA_F5")
-		}).toStatic();
+		if (!SearchField.prototype._sAriaF5LabelId && sap.ui.getCore().getConfiguration().getAccessibility()) {
+			SearchField.prototype._sAriaF5LabelId = new InvisibleText({
+				text: oRb.getText("SEARCHFIELD_ARIA_F5")
+			}).toStatic().getId();
+		}
 	};
 
 	SearchField.prototype.getFocusDomRef = function() {
@@ -341,11 +343,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._oSuggest) {
 			this._oSuggest.destroy(true);
 			this._oSuggest = null;
-		}
-
-		if (this._sAriaF5Label) {
-			this._sAriaF5Label.destroy();
-			this._sAriaF5Label = null;
 		}
 	};
 
