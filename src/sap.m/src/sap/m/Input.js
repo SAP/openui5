@@ -488,7 +488,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		if (this._oList && this._oSuggestionPopup) {
 			if (this.getMaxSuggestionWidth()) {
-				this._oSuggestionPopup.setContentWidth(this.getMaxSuggestionWidth());
+				this._oSuggestionPopup.$('cont').css('max-width', this.getMaxSuggestionWidth());
 			} else {
 				this._oSuggestionPopup.setContentWidth((this.$().outerWidth()) + "px");
 			}
