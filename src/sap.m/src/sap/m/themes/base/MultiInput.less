@@ -3,6 +3,11 @@
 /* CSS for control sap.m/MultiInput.control */
 /* ============================================= */
 
+/* Workaround for missing disabled state of sap.m.Tokenizer */
+.sapMMultiInput.sapMInputBaseDisabled  {
+	pointer-events: none;
+}
+
 .sapMMultiInputBorder {
 	box-sizing: border-box;
 	position: relative;
