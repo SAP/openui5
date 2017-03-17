@@ -91,7 +91,7 @@
 
 			//Testcase 1: Default values
 			QUnit.test("Default Values [Control 1]: ", function(assert) {
-				expect(4);
+				assert.expect(4);
 				equals(oTaskCircle1.getValue(), 0 , "Default value: ");
 				equals(oTaskCircle1.getMaxValue(), 100 , "Default maximum value: ");
 				equals(oTaskCircle1.getMinValue(), 0 , "Default minimum value: ");
@@ -107,7 +107,7 @@
 
 			//Testcase 7: Press Event
 			QUnit.test("Press Event [Control 1]: ", function(assert) {
-				expect(1);
+				assert.expect(1);
 				try {
 						oTaskCircle1.firePress();
 						fail("exception should have been thrown!");
@@ -118,7 +118,7 @@
 
 			//Testcase 8: DetachPress Event
 			QUnit.test("Detach Press Eventhandler [Control 1]: ", function(assert) {
-				expect(1);
+				assert.expect(1);
 				oTaskCircle1.detachPress(pressEventHandler);
 				try {
 						oTaskCircle1.firePress();
@@ -139,13 +139,13 @@
 
 			//Testcase 9: Manually set Tooltip
 			QUnit.test("Manual Tooltip [Control 4]: ", function(assert) {
-				expect(1);
+				assert.expect(1);
 				equals(sTooltip, oTaskCircle4.getTooltip(), "Manual Tooltip");
 			});
 
 			//Testcase 10: Automatic Tooltip
 			QUnit.test("Automatic Tooltip [Control 2]: ", function(assert) {
-				expect(1);
+				assert.expect(1);
 				if(!this.oThis){
 								this.oThis = jQuery.sap.byId(sCtrlId + "2");
 								}
@@ -162,7 +162,7 @@
 
 			//Testcase 11: Default ARIA-Value
 			QUnit.test("Default ARIA-Values [Control 1]: ", function(assert) {
-				expect(3);
+				assert.expect(3);
 				if(!this.oThis){
 								this.oThis = jQuery.sap.byId(sCtrlId + "1");
 								}
@@ -176,7 +176,7 @@
 
 			//Testcase 12: ARIA-Value for positive values
 			QUnit.test("ARIA-Value for positive values [Controls 2,4,6]: ", function(assert) {
-				expect(3);
+				assert.expect(3);
 				this.oThis2 = jQuery.sap.byId(sCtrlId + "2");
 				this.oThis4 = jQuery.sap.byId(sCtrlId + "4");
 				this.oThis6 = jQuery.sap.byId(sCtrlId + "6");
@@ -191,7 +191,7 @@
 
 			//Testcase 13: ARIA-Value for negative values
 			QUnit.test("ARIA-Value for negative values [Control 5]: ", function(assert) {
-				expect(1);
+				assert.expect(1);
 				this.oThis5 = jQuery.sap.byId(sCtrlId + "5");
 		      	ValueNow5   = this.oThis5.attr('aria-valuenow');
 		      	equals(ValueNow5, "0",   "ARIA-value for -30 percent: ");

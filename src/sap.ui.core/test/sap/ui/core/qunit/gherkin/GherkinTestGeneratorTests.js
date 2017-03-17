@@ -555,7 +555,7 @@ sap.ui.require([
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("Given a non-WIP feature, calling 'tearDown' MUST execute 'closeApplication'", function(assert) {
 
-    expect(2);
+    assert.expect(2);
 
     var text = [
       "Feature: Serve humanity",
@@ -587,7 +587,7 @@ sap.ui.require([
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("Given feature with all @wip scenarios, calling 'tearDown' must NOT execute 'closeApplication'", function(assert) {
 
-    expect(2);
+    assert.expect(2);
 
     var text = [
       "Feature: Serve humanity",
@@ -629,7 +629,7 @@ sap.ui.require([
   QUnit.test("Given feature with some skipped scenarios, calling 'tearDown' must execute 'closeApplication' only for " +
        "non-skipped scenarios", function() {
 
-    expect(4);
+    assert.expect(4);
 
     var expectCloseApplication = false;
 
@@ -673,7 +673,7 @@ sap.ui.require([
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("Given @wip feature, calling 'tearDown' must NOT execute 'closeApplication'", function(assert) {
 
-    expect(1);
+    assert.expect(1);
 
     var text = [
       "@wip",
@@ -708,7 +708,7 @@ sap.ui.require([
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("Given feature with no scenarios, calling 'tearDown' must NOT execute 'closeApplication'", function(assert) {
 
-    expect(1);
+    assert.expect(1);
 
     var text = [
       "Feature: Serve humanity"
@@ -735,7 +735,7 @@ sap.ui.require([
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("Test steps share a context only within a single scenario", function(assert) {
 
-    expect(4);
+    assert.expect(4);
 
     var text = [
       "Feature: Schrödinger's coffee",

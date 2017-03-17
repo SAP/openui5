@@ -127,7 +127,7 @@
 		var expectedItemId;
 		QUnit.test("Item selection (mouse)", function(assert) {
 			var done = assert.async();
-			expect(5); // including event handler
+			assert.expect(5); // including event handler
 			var oldSel = oCtrl.getSelectedItem();
 			equal(oldSel, item3.getId(), "item 3 should be selected"); // make sure previous selection is right
 

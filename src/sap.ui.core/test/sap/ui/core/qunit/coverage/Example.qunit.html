@@ -53,7 +53,7 @@
 		});
 
 		QUnit.test("ID Generation", function(assert) {
-			expect(1);
+			assert.expect(1);
 			oListItem = new sap.ui.core.ListItem();
 			var oListItem2 = new sap.ui.core.ListItem();
 			assert.ok (oListItem.getId() != oListItem2.getId(), "generated IDs should be different and there should have been no error");

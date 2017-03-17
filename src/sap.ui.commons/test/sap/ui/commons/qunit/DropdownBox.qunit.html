@@ -338,7 +338,7 @@
 		});
 
 		QUnit.test("TestSelectItemFromListOK", function(assert){
-			expect(12); // two from reset, 8 from this method and 2 from the event handler (initiated via click events)
+			assert.expect(12); // two from reset, 8 from this method and 2 from the event handler (initiated via click events)
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
 			ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
@@ -441,7 +441,7 @@
 		});
 
 		QUnit.test("TestChangeOnEnterAfterTextInputOK", function(assert){
-			expect(4); // two from cleanup + two from the event handlers (the one from the module plus the local one)
+			assert.expect(4); // two from cleanup + two from the event handlers (the one from the module plus the local one)
 			resetBeforeTest();
 			var sInput = "second";
 			function fCheck(oEvent){
@@ -465,7 +465,7 @@
 		QUnit.test("TestChangeOnFocusLostAfterTextInputOK", function(assert){
 			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
-			// expect(4); // two from cleanup + two from the event handler
+			// assert.expect(4); // two from cleanup + two from the event handler
 			resetBeforeTest();
 			oDropdown.attachChange(oTest1);
 
@@ -480,7 +480,7 @@
 			var done = assert.async();
 			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
-			// expect(1); // 1 check
+			// assert.expect(1); // 1 check
 			setTimeout( function(){
 				equal(oDropdown.getValue(), sText, "DropdownBox should provide new value via getter method.");
 
@@ -490,7 +490,7 @@
 		});
 
 		QUnit.test("TestChangeOnEnterAfterUpDownOK", function(assert){
-			expect(3); // two from cleanup + the one from the event handler
+			assert.expect(3); // two from cleanup + the one from the event handler
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
@@ -505,7 +505,7 @@
 		QUnit.test("TestChangeOnFocusLostAfterUpDownOK", function(assert){
 			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
-			// expect(4); // two from cleanup + two from the event handler
+			// assert.expect(4); // two from cleanup + two from the event handler
 			resetBeforeTest();
 
 			oDropdown.attachChange(oTest3);
@@ -520,7 +520,7 @@
 			var done = assert.async();
 			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
-			// expect(2); // two checks
+			// assert.expect(2); // two checks
 			setTimeout( function(){
 				equal(oDropdown.getValue(), "third item", "DropdownBox' value should be \"third item\".");
 				equal(oDropdown.getInputDomRef().value, "third item", "ComobBox' selected value should be shown in HTML.");

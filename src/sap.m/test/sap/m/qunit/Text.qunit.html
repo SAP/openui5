@@ -135,7 +135,7 @@
 		});
 
 		QUnit.test("Null Text", function(assert) {
-			expect(2);
+			assert.expect(2);
 			t1.setText(null);
 			try {
 				oCore.applyChanges();

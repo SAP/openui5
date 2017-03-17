@@ -442,7 +442,7 @@
 
 		QUnit.test("TestSelectItemFromListOK", function(assert){
 			var done = assert.async();
-			expect(16); // two from reset, 12 from this method and 2 from the event handler (initiated via click events)
+			assert.expect(16); // two from reset, 12 from this method and 2 from the event handler (initiated via click events)
 
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
 			setTimeout( function(){
@@ -566,7 +566,7 @@
 		});
 
 		QUnit.test("TestChangeOnEnterAfterTextInputOK", function(assert){
-			expect(7); // two from cleanup + two from the event handler + 3 check
+			assert.expect(7); // two from cleanup + two from the event handler + 3 check
 			resetBeforeTest();
 
 			var sText = "Some new value";
@@ -594,7 +594,7 @@
 		QUnit.test("TestChangeOnFocusLostAfterTextInputOK", function(assert){
 			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
-			// expect(4); // two from cleanup + two from the event handler
+			// assert.expect(4); // two from cleanup + two from the event handler
 			resetBeforeTest();
 			oCombo.attachChange(oTest1);
 
@@ -608,7 +608,7 @@
 			var done = assert.async();
 			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
-			// expect(1); // 1 check
+			// assert.expect(1); // 1 check
 			setTimeout( function(){
 				equal(oCombo.getValue(), sText, "ComboBox should provide new value via getter method.");
 
@@ -621,7 +621,7 @@
 			equal(oEvent.getParameter("newValue"), "second item", "Entered value should be provided as Event parameter");
 		};
 		QUnit.test("TestChangeOnEnterAfterUpDownOK", function(assert){
-			expect(8); // two from cleanup + two from the event handler + 4 checks
+			assert.expect(8); // two from cleanup + two from the event handler + 4 checks
 			resetBeforeTest();
 
 			oCombo.attachChange(oTest2);
@@ -645,7 +645,7 @@
 		QUnit.test("TestChangeOnFocusLostAfterUpDownOK", function(assert){
 			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
-			// expect(4); // two from cleanup plus two from event handler (focusleave)
+			// assert.expect(4); // two from cleanup plus two from event handler (focusleave)
 			resetBeforeTest();
 
 			oCombo.attachChange(oTest3);
@@ -661,7 +661,7 @@
 			var done = assert.async();
 			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
-			// expect(2); // two checks
+			// assert.expect(2); // two checks
 			setTimeout( function(){
 				equal(oCombo.getValue(), "third item", "ComboBox' value should be \"third item\".");
 				equal(oCombo.getInputDomRef().value, "third item", "ComobBox' selected value should be shown in HTML.");

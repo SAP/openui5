@@ -294,7 +294,7 @@
 	QUnit.module("Events");
 
 	QUnit.test("Firing events", function(assert) {
-		expect(6);
+		assert.expect(6);
 		var touches = {
 				0: {
 						pageX: 150,
@@ -388,7 +388,7 @@
 	});
 
 	QUnit.test("Keyboard navigation events", function(assert) {
-		expect(5);
+		assert.expect(5);
 		// default rating with no properties
 		var oRating = new sap.m.RatingIndicator({ visualMode: sap.m.RatingIndicatorVisualMode.Full }),
 			check0function = function (evt) {
@@ -499,7 +499,7 @@
 	});
 
 	QUnit.test("Keyboard handling events in half mode", function(assert) {
-		expect(10);
+		assert.expect(10);
 		var oRating = new sap.m.RatingIndicator("asd", {visualMode: sap.m.RatingIndicatorVisualMode.Half}),
 			fnTestIncreaseAndDecrease = function (fInitialRatingValue, fExpectedValueAfterDecrease, fExpectedValueAfterIncrease){
 				oRating.setValue(fInitialRatingValue);

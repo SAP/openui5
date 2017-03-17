@@ -75,7 +75,7 @@
 
 			QUnit.test("Open Method", function (assert) {
 				var done = assert.async();
-				expect(4);
+				assert.expect(4);
 				ok(!oOverlayDialog.isOpen(), "Rendered OverlayDialog is not open");
 				oOverlayDialog.open();
 				ok(oOverlayDialog.isOpen(), "Rendered OverlayDialog is open");
@@ -89,7 +89,7 @@
 			// at the end close
 			QUnit.test("Close Event", function (assert) {
 				var done = assert.async();
-				expect(3);
+				assert.expect(3);
 				ok(oOverlayDialog.isOpen(), "Rendered OverlayDialog is open");
 				qutils.triggerMouseEvent(jQuery.sap.byId(oOverlayDialog.getId() + "-close"), "click", 1, 1, 1, 1);
 				setTimeout(function () {

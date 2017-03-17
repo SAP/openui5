@@ -1567,7 +1567,7 @@
 		// or even formatters with side-effects (e.g. calling setProperty in the Model), which can lead to performance
 		// issues and even endless loops if the formatters are called more often.
 		// Please make sure there is no alternative before changing this test case to allow more formatter invocations.
-		expect(4);
+		assert.expect(4);
 
 		var fnExecuteLater = function(fnFunction) {
 			return new Promise(function(fnResolve) {

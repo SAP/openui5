@@ -133,7 +133,7 @@
 		if (sap.ui.Device.browser.mozilla || sap.ui.Device.browser.safari || sap.ui.Device.browser.chrome || (sap.ui.Device.browser.msie && sap.ui.Device.browser.version >= 9)) {
 
 			QUnit.test("Scrolling - immediate", function(assert) {
-				expect(4);
+				assert.expect(4);
 
 				equal(getScrollPos(oSC2.getId(), "left"), 0, "ScrollContainer 2 should be scrolled to position 0");
 				oSC2.scrollTo(100,0,0);
@@ -147,7 +147,7 @@
 			/*
 			QUnit.test("Scrolling - delayed", function(assert) {
 				var done = assert.async();
-				expect(3);
+				assert.expect(3);
 
 				oSC2.scrollTo(50, 0, 300);
 
@@ -162,7 +162,7 @@
 
 
 			QUnit.test("Scrolling - wrong direction", function(assert) {
-				expect(3);
+				assert.expect(3);
 
 				oSC2.scrollTo(110,50,0);
 
@@ -173,7 +173,7 @@
 			});
 
 			QUnit.test("Rerendering after scrolling", function(assert) {
-				expect(3);
+				assert.expect(3);
 
 				oSC2.rerender();
 
@@ -186,7 +186,7 @@
 
 			QUnit.test("Scroll to end", function(assert) {
 				var done = assert.async();
-				expect(3);
+				assert.expect(3);
 
 				oSC2.scrollTo(9999,0,0); // try to scroll way beyond the end of the content
 
@@ -201,7 +201,7 @@
 
 			QUnit.test("Scrolling after resize", function(assert) {
 				var done = assert.async();
-				expect(3);
+				assert.expect(3);
 
 				jQuery.sap.byId("sc2-scroll").width("1100px"); // resize the content
 

@@ -75,7 +75,7 @@
 	});
 
 	QUnit.test("Button doubled size?", function(assert) {
-		expect(1);
+		assert.expect(1);
 		var $btn1 = jQuery.sap.byId("button1-cont0_0");
 		var $btn2 = jQuery.sap.byId("button2-cont0_1");
 		var rangeTolerance = 10;
@@ -92,7 +92,7 @@
 	});
 
 	QUnit.test("Line break works & LayoutData event catched by Layout", function(assert) {
-		expect(2);
+		assert.expect(2);
 		oBtn2.getLayoutData().setLinebreak(true);
 		sap.ui.getCore().applyChanges();
 
@@ -117,7 +117,7 @@
 	});
 	QUnit.test("Shrink", function(assert) {
 		var done = assert.async();
-		expect(2);
+		assert.expect(2);
 
 		var $layout = jQuery.sap.byId("uiArea1");
 		// this sets the layout to a size where the size falls below the min-width of a button
@@ -147,7 +147,7 @@
 
 	QUnit.test("Enlarge", function(assert) {
 		var done = assert.async();
-		expect(1);
+		assert.expect(1);
 
 		// have to wait more than 300ms until the layout recognized the minimization
 		setTimeout(function() {

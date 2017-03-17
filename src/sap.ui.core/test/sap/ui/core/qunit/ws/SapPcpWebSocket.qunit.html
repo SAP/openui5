@@ -84,10 +84,10 @@
 				var done = assert.async();
 
 				if (sap.ui.Device.support.websocket) {
-					expect(1);
+					assert.expect(1);
 				} else {
 					// skip test if browser doesn't support WebSockets
-					expect(0);
+					assert.expect(0);
 					done();
 					return;
 				}
@@ -105,10 +105,10 @@
 				var done = assert.async();
 
 				if (sap.ui.Device.support.websocket) {
-					expect(2);
+					assert.expect(2);
 				} else {
 					// skip test if browser doesn't support WebSockets
-					expect(0);
+					assert.expect(0);
 					done();
 					return;
 				}

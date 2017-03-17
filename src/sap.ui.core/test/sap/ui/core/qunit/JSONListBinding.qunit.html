@@ -351,7 +351,7 @@
 
 		var listBinding = bindings[0];
 		listBinding.sort();
-		expect(0);
+		assert.expect(0);
 	});
 
 	// should also work with other ListBinding implementations
@@ -631,7 +631,7 @@
 
 		var listBinding = bindings[0];
 		listBinding.filter([]);
-		expect(0);
+		assert.expect(0);
 	});
 
 	QUnit.test("without array", function(assert) {

@@ -337,7 +337,7 @@
 				});
 
 				QUnit.test("Scrolling", function(assert) {
-					expect(2);
+					assert.expect(2);
 					equal(getScrollPos("mySecondPage"), 0, "Page 2 should be scrolled to position 0");
 					oPage2.scrollTo(100, 0);
 					equal(getScrollPos("mySecondPage"), -100, "Page 2 should be scrolled to position 100");
@@ -369,7 +369,7 @@
 				});
 
 				QUnit.test("Restoring scrolling state after rendering", function(assert) {
-					expect(1); // event should not be fired after rerendering
+					assert.expect(1); // event should not be fired after rerendering
 					oPage2.rerender();
 					equal(getScrollPos("mySecondPage"), -100, "Page 2 should be scrolled to position 100");
 				});

@@ -222,7 +222,7 @@ function runODataMessagesTests() {
 	var fnTestTechnicalErrors = function(bJson) {
 		var done = assert.async();
 
-		expect(20);
+		assert.expect(20);
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/technical-errors/", {
 			useBatch: false,
@@ -337,7 +337,7 @@ function runODataMessagesTests() {
 	var fnTestLongtextUrl = function(bJson) {
 		var done = assert.async();
 
-		expect(15);
+		assert.expect(15);
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/technical-errors/", {
 			useBatch: false,
@@ -857,7 +857,7 @@ function runODataMessagesTests() {
 	var fnTestFunctionImport = function() {
 		var done = assert.async();
 
-		expect(10);
+		assert.expect(10);
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
@@ -911,7 +911,7 @@ function runODataMessagesTests() {
 	var fnTestFunctionImportWithInvalidTarget = function() {
 		var done = assert.async();
 
-		expect(20);
+		assert.expect(20);
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
@@ -993,7 +993,7 @@ function runODataMessagesTests() {
 	var fnTestRemoveMessagesWithBinding = function() {
 		var done = assert.async();
 
-		expect(11);
+		assert.expect(11);
 
 		var oInput3 = new sap.m.Input({
 			value: {
@@ -1078,7 +1078,7 @@ function runODataMessagesTests() {
 	var fnTestTransientMessages = function() {
 		var done = assert.async();
 
-		expect(19);
+		assert.expect(19);
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, jQuery.extend({}, mModelOptions, { json: true }));
 		sap.ui.getCore().setModel(oModel);
@@ -1129,7 +1129,7 @@ function runODataMessagesTests() {
 	var fnTestTransientMessageRemoval = function() {
 		var done = assert.async();
 
-		expect(35);
+		assert.expect(35);
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, jQuery.extend({}, mModelOptions, { json: true }));
 		sap.ui.getCore().setModel(oModel);

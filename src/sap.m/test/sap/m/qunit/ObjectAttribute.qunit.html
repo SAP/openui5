@@ -241,7 +241,7 @@
 	QUnit.module("Events");
 
 	QUnit.test("TestTap", function(assert) {
-		expect(3);
+		assert.expect(3);
 		qutils.triggerEvent("tap", oa1.$().children()[0]); //should fire event
 		qutils.triggerEvent("tap", oa2.$().children()[0]); //should fire event
 		qutils.triggerEvent("tap", oa3.$().children()[0]); //should fire event
@@ -251,14 +251,14 @@
 	});
 
 	QUnit.test("Test table row is not clickable when ObjectAttribute is active", function(assert) {
-		expect(1);
+		assert.expect(1);
 		qutils.triggerEvent("tap", oa7.$().children()[0]);
 		qutils.triggerEvent("tap", "table-item");
 	});
 
 	QUnit.test("Test table row is clickable when ObjectAttribute is not active", function(assert) {
 		var done = assert.async();
-		expect(3);
+		assert.expect(3);
 		oa7.setActive(false);
 		qutils.triggerEvent("tap", oa7.$().children()[0]);
 		setTimeout( function() {

@@ -84,7 +84,7 @@
 	QUnit.module("Open / Close with defaults");
 	QUnit.test("Open default (right from button)", function(assert) {
 		var done = assert.async();
-		expect(4);
+		assert.expect(4);
 
 		oBtn1.press = function() {
 			oTP1.open();
@@ -126,7 +126,7 @@
 
 	QUnit.test("Close with close button", function(assert) {
 		var done = assert.async();
-		expect(2);
+		assert.expect(2);
 
 		oTP1.setCloseDuration(1000);
 		oBtnClose.press = function() {
@@ -157,7 +157,7 @@
 
 	QUnit.test("Open below", function(assert) {
 		var done = assert.async();
-		expect(3);
+		assert.expect(3);
 
 		jQuery("#Placeholder")[0].focus();
 
@@ -206,12 +206,12 @@
 		oWindowRect.height = $Window.height();
 
 		if (oWindowRect.width === 0) {
-			expect(1);
+			assert.expect(1);
 			done();
 			ok(true, "Test skipped since window is too small");
 		}
 
-		expect(3);
+		assert.expect(3);
 
 		var fnClosed = function() {
 			oTP1.detachClosed(fnClosed);
@@ -262,7 +262,7 @@
 
 	QUnit.test("Open above (default)", function(assert) {
 		var done = assert.async();
-		expect(3);
+		assert.expect(3);
 		oTP1.close();
 		sap.ui.getCore().applyChanges();
 
@@ -308,7 +308,7 @@
 	QUnit.module("Open with 'setPosition'");
 	QUnit.test("Open above (set Position)", function(assert) {
 		var done = assert.async();
-		expect(6);
+		assert.expect(6);
 
 		oTP1.close();
 		sap.ui.getCore().applyChanges();
@@ -371,12 +371,12 @@
 		oWindowRect.height = $Window.height();
 
 		if (oWindowRect.width > 1175) {
-			expect(1);
+			assert.expect(1);
 			ok(true, "Fit-test not possible because window is too big");
 			done();
 			return;
 		}
-		expect(2);
+		assert.expect(2);
 
 		oTP2 = new sap.ui.ux3.ToolPopup("tp2", {
 			content : [ oBtnClose ],
@@ -437,12 +437,12 @@
 			url : "../../../../../resources/dummy_log/window_size/height=" + oWindowRect.height + ",width=" + oWindowRect.width
 		});
 		if (oWindowRect.width < 350) {
-			expect(1);
+			assert.expect(1);
 			ok(true, "Flip-test not possible because window is too small");
 			done();
 			return;
 		}
-		expect(3);
+		assert.expect(3);
 
 		oTP3 = new sap.ui.ux3.ToolPopup("tp3", {
 			content : [ oBtnClose ],
@@ -525,7 +525,7 @@
 	});
 	QUnit.test("Initial Focus (default)", function(assert) {
 		var done = assert.async();
-		expect(1);
+		assert.expect(1);
 
 		var fnOpened = function() {
 			oTPFocus.detachOpened(fnOpened);
@@ -542,7 +542,7 @@
 	});
 	QUnit.test("default button is focused by default", function(assert) {
 		var done = assert.async();
-		expect(1);
+		assert.expect(1);
 
 		oTPFocus.setDefaultButton("defaultBtn1");
 
@@ -560,7 +560,7 @@
 	});
 	QUnit.test("Determines the focus DOM reference", function(assert) {
 		var done = assert.async();
-		expect(1);
+		assert.expect(1);
 
 		oTPFocus.setDefaultButton("defaultBtn1");
 
@@ -578,7 +578,7 @@
 	});
 	QUnit.test("default button is focused by pressEnter", function(assert) {
 		var done = assert.async();
-		expect(1);
+		assert.expect(1);
 
 		oTPFocus.setInitialFocus("focusBtn2");
 		oTPFocus.setDefaultButton("defaultBtn1");
@@ -602,7 +602,7 @@
 	});
 	QUnit.test("Initial Focus (previsouly set)", function(assert) {
 		var done = assert.async();
-		expect(1);
+		assert.expect(1);
 
 		oTPFocus.setInitialFocus("focusBtn2");
 
@@ -622,7 +622,7 @@
 
 	QUnit.test("Autoclose", function(assert) {
 		var done = assert.async();
-		expect(1);
+		assert.expect(1);
 
 		var oTF = new sap.ui.commons.TextField().placeAt("uiArea1");
 		oTPFocus.setAutoClose(true);
@@ -659,7 +659,7 @@
 	});
 
 	QUnit.test("Focusable area (type check)", function(assert) {
-		expect(4);
+		assert.expect(4);
 
 		var oTF = new sap.ui.commons.TextField().placeAt("uiArea1");
 		oTPFocus.setAutoClose(true);
@@ -685,7 +685,7 @@
 
 	QUnit.test("Autoclose add focusable area", function(assert) {
 		var done = assert.async();
-		expect(1);
+		assert.expect(1);
 
 		var oTF = new sap.ui.commons.TextField().placeAt("uiArea1");
 		oTPFocus.setAutoClose(true);
@@ -738,7 +738,7 @@
 
 	QUnit.test("Autoclose remove focusable area", function(assert) {
 		var done = assert.async();
-		expect(1);
+		assert.expect(1);
 
 		var oTF = new sap.ui.commons.TextField().placeAt("uiArea1");
 		oTPFocus.setAutoClose(true);
@@ -796,7 +796,7 @@
 
 	QUnit.test("Autoclose on opener removal", function(assert) {
 		var done = assert.async();
-		expect(2);
+		assert.expect(2);
 
 		oTPFocus.setCloseDuration(0).close();
 		sap.ui.getCore().applyChanges();
@@ -863,7 +863,7 @@
 
 	QUnit.test("Max height of '200px'", function(assert) {
 		var done = assert.async();
-		expect(1);
+		assert.expect(1);
 
 		var fnOpened = function() {
 			oTPMaxHeight.detachOpened(fnOpened);
@@ -883,7 +883,7 @@
 
 	QUnit.test("Max width of 120px", function(assert) {
 		var done = assert.async();
-		expect(1);
+		assert.expect(1);
 
 		var fnOpened = function() {
 			oTPMaxHeight.detachOpened(fnOpened);
@@ -903,7 +903,7 @@
 
 	QUnit.test("Check Resize Handler Registration", function(assert) {
 		var done = assert.async();
-		expect(3);
+		assert.expect(3);
 
 		var fnOpened = function() {
 			oTPMaxHeight.detachOpened(fnOpened);
@@ -981,7 +981,7 @@
 
 	QUnit.test("Change Content", function(assert){
 		var done = assert.async();
-		expect(2);
+		assert.expect(2);
 		var that = this;
 
 		function row(sLabel, sText, sUrl) {

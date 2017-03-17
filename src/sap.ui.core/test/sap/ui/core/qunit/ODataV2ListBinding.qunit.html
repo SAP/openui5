@@ -980,7 +980,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("Event order", function(assert){
 		var done = assert.async();
-		expect(4);
+		assert.expect(4);
 		var oList = new sap.ui.commons.ListBox();
 		var oItem = new sap.ui.core.ListItem();
 

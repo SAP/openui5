@@ -124,7 +124,7 @@
 
 
 		QUnit.test("Properties", function(assert) {
-			expect(7);
+			assert.expect(7);
 
 			// test generation of setter and getter
 			ok(myControl.getText, "getter for property 'text' should be created");
@@ -312,7 +312,7 @@
 
 		QUnit.test("Event handler methods (on...)", function(assert) {
 			var done = assert.async();
-			expect(2);
+			assert.expect(2);
 			equal(myControl._state, "initial", "control state should be initialized");
 
 			// focus the control, which should trigger its event handler changing the _state

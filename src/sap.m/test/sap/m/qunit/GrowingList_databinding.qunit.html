@@ -123,7 +123,7 @@
 		// Tests
 
 		QUnit.test("GrowingList rendered", function(assert) {
-			expect(10); // incl. rendering
+			assert.expect(10); // incl. rendering
 			app.placeAt("content");
 			sap.ui.getCore().applyChanges();
 			ok(jQuery.sap.domById("gl"), "GrowingList should be rendered");
@@ -140,7 +140,7 @@
 
 		QUnit.test("Grow Tap", function(assert){
 			var done = assert.async();
-			expect(5); // no rerendering
+			assert.expect(5); // no rerendering
 			gl._oGrowingDelegate.requestNewPage(); // this context should be the trigger list item
 			window.setTimeout(function(){
 				equal($ul().children().length, 8, "GrowingList should have two headers and six items rendered");
@@ -156,7 +156,7 @@
 
 		QUnit.test("change data property", function(assert){
 			var done = assert.async();
-			expect(5);
+			assert.expect(5);
 			model.setProperty("name", "Adx", gl.getItems()[1].getBindingContext())
 
 			window.setTimeout(function(){
@@ -172,7 +172,7 @@
 		});
 
 		QUnit.test("New Data", function(assert) {
-			expect(7);
+			assert.expect(7);
 			model.setData(data2);
 			sap.ui.getCore().applyChanges();
 			equal($ul().children().length, 12, "GrowingList should have six headers and six items rendered");

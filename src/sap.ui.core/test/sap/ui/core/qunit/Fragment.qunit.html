@@ -325,7 +325,7 @@
 			});
 
 			QUnit.test("Inline JS Fragment", function(assert) {
-				expect(2); // incl. Button click handler
+				assert.expect(2); // incl. Button click handler
 
 				ok(jQuery.sap.domById("jsfragbtn"), "Fragment should be rendered");
 
@@ -334,7 +334,7 @@
 			});
 
 			QUnit.test("Inline XML Fragment", function(assert) {
-				expect(2); // incl. Button click handler
+				assert.expect(2); // incl. Button click handler
 
 				ok(jQuery.sap.domById("xmlfragbtn"), "Fragment should be rendered");
 
@@ -343,7 +343,7 @@
 			});
 
 			QUnit.test("Inline HTML Fragment", function(assert) {
-				expect(2); // incl. Button click handler
+				assert.expect(2); // incl. Button click handler
 
 				ok(jQuery.sap.domById("htmlfragbtn"), "Fragment should be rendered");
 
@@ -391,7 +391,7 @@
 
 
 			QUnit.test("XML Fragment in XMLView", function(assert) {
-				expect(8); // incl. Controller function on press
+				assert.expect(8); // incl. Controller function on press
 
 				var id = oXmlFragmentInXmlView.getId();
 				ok(jQuery.sap.domById(id), "XML Fragment should be rendered");
@@ -412,7 +412,7 @@
 			});
 
 			QUnit.test("XML Fragment in XMLView with given Fragment ID", function(assert) {
-				expect(8); // incl. Controller function on press
+				assert.expect(8); // incl. Controller function on press
 
 				var id = oXmlFragmentWithIdInXmlView.getId();
 				ok(jQuery.sap.domById(id), "Fragment should be rendered");
@@ -435,7 +435,7 @@
 
 
 			QUnit.test("JS Fragment in XMLView", function(assert) {
-				expect(8); // incl. Controller function on press
+				assert.expect(8); // incl. Controller function on press
 
 				var id = oJsFragmentInXmlView.getId();
 				ok(jQuery.sap.domById(id), "Fragment should be rendered");
@@ -456,7 +456,7 @@
 			});
 
 			QUnit.test("JS Fragment in XMLView with given Fragment ID", function(assert) {
-				expect(8); // incl. Controller function on press
+				assert.expect(8); // incl. Controller function on press
 
 				var id = oJsFragmentWithIdInXmlView.getId();
 				ok(jQuery.sap.domById(id), "Fragment should be rendered");
@@ -479,7 +479,7 @@
 
 
 			QUnit.test("HTML Fragment in XMLView", function(assert) {
-				expect(8); // incl. Controller function on press
+				assert.expect(8); // incl. Controller function on press
 
 				var id = oHtmlFragmentInXmlView.getId();
 				ok(jQuery.sap.domById(id), "Fragment should be rendered");
@@ -500,7 +500,7 @@
 			});
 
 			QUnit.test("HTML Fragment in XMLView with given Fragment ID", function(assert) {
-				expect(8); // incl. Controller function on press
+				assert.expect(8); // incl. Controller function on press
 
 				var id = oHtmlFragmentWithIdInXmlView.getId();
 				ok(jQuery.sap.domById(id), "Fragment should be rendered");
@@ -625,7 +625,7 @@
 			QUnit.module("Fragments with no Controller");
 
 			QUnit.test("XML Fragment loaded from file", function(assert) {
-				expect(2);
+				assert.expect(2);
 				var oFragment = sap.ui.xmlfragment("testdata.fragments.XMLTestFragmentNoController");
 				oFragment.placeAt("content4");
 				sap.ui.getCore().applyChanges();
@@ -639,7 +639,7 @@
 			});
 
 			QUnit.test("JS Fragment loaded from file", function(assert) {
-				expect(3); // including one check in the View' createContent method
+				assert.expect(3); // including one check in the View' createContent method
 				var oFragment = sap.ui.jsfragment("testdata.fragments.JSTestFragmentNoController");
 				oFragment.placeAt("content4");
 				sap.ui.getCore().applyChanges();
@@ -653,7 +653,7 @@
 			});
 
 			QUnit.test("HTML Fragment loaded from file", function(assert) {
-				expect(2);
+				assert.expect(2);
 				var oFragment = sap.ui.htmlfragment("testdata.fragments.HTMLTestFragmentNoController");
 				oFragment.placeAt("content4");
 				sap.ui.getCore().applyChanges();

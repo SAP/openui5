@@ -3768,7 +3768,7 @@
 	});
 	QUnit.test("Event order (single request): bindElement fails --> refresh", function(assert){
 		var done = assert.async();
-		expect(5);
+		assert.expect(5);
 		oModel.setUseBatch(false);
 		oLabel = new sap.ui.commons.Label();
 		oLabel.setModel(oModel);
@@ -3793,7 +3793,7 @@
 
 	QUnit.test("Event order (single request): bindElement fails", function(assert){
 		var done = assert.async();
-		expect(3);
+		assert.expect(3);
 		oModel.setUseBatch(false);
 		oLabel = new sap.ui.commons.Label();
 		oLabel.setModel(oModel);
@@ -3810,7 +3810,7 @@
 
 	QUnit.test("Event order (batch request): bindElement fails --> refresh", function(assert){
 		var done = assert.async();
-		expect(5);
+		assert.expect(5);
 		oLabel = new sap.ui.commons.Label();
 		oLabel.setModel(oModel);
 		var handler = function(oEvent) {
@@ -3834,7 +3834,7 @@
 
 	QUnit.test("Event order (batch request): bindElement fails", function(assert){
 		var done = assert.async();
-		expect(3);
+		assert.expect(3);
 		oLabel = new sap.ui.commons.Label();
 		oLabel.setModel(oModel);
 		var handler = function(oEvent) {
@@ -5258,7 +5258,7 @@
 
 	QUnit.test("test abort of all requests in batch request", function(assert) {
 		var done = assert.async();
-		expect(4);
+		assert.expect(4);
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
 			ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
@@ -5295,7 +5295,7 @@
 
 	QUnit.test("test abort of all requests in batch request of one group", function(assert) {
 		var done = assert.async();
-		expect(8);
+		assert.expect(8);
 		var iCounterBatch = 0;
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			iCounterBatch++;
@@ -5363,7 +5363,7 @@
 
 	QUnit.test("test abort of all requests in batch request of all groups", function(assert) {
 		var done = assert.async();
-		expect(8);
+		assert.expect(8);
 		var iCounterBatch = 0;
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			iCounterBatch++;
@@ -5430,7 +5430,7 @@
 
 	QUnit.test("test abort of requests in batch request with mixed groups and changesets", function(assert) {
 		var done = assert.async();
-		expect(9);
+		assert.expect(9);
 
 		var iBatchCompletedCount = 0;
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
@@ -5733,7 +5733,7 @@
 
 	QUnit.test("XMLHttpRequest abort of batch requests with ODataModel internal", function(assert) {
 		var done = assert.async();
-		expect(3);
+		assert.expect(3);
 		var that = this;
 		var iEventCounter = 0;
 		var bSuccess1 = false,

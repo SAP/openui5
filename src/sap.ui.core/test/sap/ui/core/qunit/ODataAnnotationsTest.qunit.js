@@ -1042,7 +1042,7 @@ function runODataAnnotationTests() {
 	QUnit.module("V1 only: Synchronous loading and MetaModel");
 
 	var fnTestSynchronousLoading = function(mTest) {
-		expect(5);
+		assert.expect(5);
 		var oModel = new sap.ui.model.odata.ODataModel(mTest.service, {
 			annotationURI : mTest.annotations,
 			skipMetadataAnnotationParsing: false,
@@ -1108,7 +1108,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("Asynchronous loading", function(assert) {
 		var done = assert.async();
-		expect(12);
+		assert.expect(12);
 		var asyncStartsExpected = 2; // The number of asynchronous starts expected before the real start is triggered
 
 		// Don't use metadata/annotation cache
@@ -1209,7 +1209,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("Asynchronous loading", function(assert) {
 		var done = assert.async();
-		expect(6);
+		assert.expect(6);
 		var asyncStartsExpected = 2; // The number of asynchronous starts expected before the real start is triggered
 
 		var oModel3 = new sap.ui.model.odata.v2.ODataModel(
@@ -1274,7 +1274,7 @@ function runODataAnnotationTests() {
 
 
 	QUnit.test("Apply Function", function(assert) {
-		expect(12);
+		assert.expect(12);
 
 		var mTest = mAdditionalTestsServices["Apply Function"];
 		var sServiceURI = mTest.service;
@@ -1368,7 +1368,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("V2: Apply Function", function(assert) {
 		var done = assert.async();
-		expect(12);
+		assert.expect(12);
 
 		var mTest = mAdditionalTestsServices["Apply Function"];
 		var sServiceURI = mTest.service;
@@ -1466,7 +1466,7 @@ function runODataAnnotationTests() {
 
 
 	QUnit.test("Multiple Property Annotations", function(assert) {
-		expect(11);
+		assert.expect(11);
 
 		var mTest = mAdditionalTestsServices["Multiple Property Annotations"];
 		var sServiceURI = mTest.service;
@@ -1562,7 +1562,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("V2: Multiple Property Annotations", function(assert) {
 		var done = assert.async();
-		expect(11);
+		assert.expect(11);
 
 		var mTest = mAdditionalTestsServices["Multiple Property Annotations"];
 		var sServiceURI = mTest.service;
@@ -1660,7 +1660,7 @@ function runODataAnnotationTests() {
 
 
 	QUnit.test("Qualifiers in Property Annotations", function(assert) {
-		expect(8);
+		assert.expect(8);
 
 		var mTest = mAdditionalTestsServices["Property Annotation Qualifiers"];
 		var sServiceURI = mTest.service;
@@ -1727,7 +1727,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("V2: Qualifiers in Property Annotations", function(assert) {
 		var done = assert.async();
-		expect(8);
+		assert.expect(8);
 
 		var mTest = mAdditionalTestsServices["Property Annotation Qualifiers"];
 		var sServiceURI = mTest.service;
@@ -1796,7 +1796,7 @@ function runODataAnnotationTests() {
 
 
 	QUnit.test("Other Property Values", function(assert) {
-		expect(8);
+		assert.expect(8);
 
 		var mTest = mAdditionalTestsServices["Other Property Values"];
 		var sServiceURI = mTest.service;
@@ -1860,7 +1860,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("V2: Other Property Values", function(assert) {
 		var done = assert.async();
-		expect(8);
+		assert.expect(8);
 
 		var mTest = mAdditionalTestsServices["Other Property Values"];
 		var sServiceURI = mTest.service;
@@ -1928,7 +1928,7 @@ function runODataAnnotationTests() {
 
 
 	QUnit.test("Aliases in Namespaces", function(assert) {
-		expect(8);
+		assert.expect(8);
 
 		var mTest = mAdditionalTestsServices["Aliases in Namespaces"];
 		var sServiceURI = mTest.service;
@@ -1994,7 +1994,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("V2: Aliases in Namespaces", function(assert) {
 		var done = assert.async();
-		expect(8);
+		assert.expect(8);
 
 		var mTest = mAdditionalTestsServices["Aliases in Namespaces"];
 		var sServiceURI = mTest.service;
@@ -2062,7 +2062,7 @@ function runODataAnnotationTests() {
 	});
 
 	QUnit.test("Namespaces in Other Property Values", function(assert) {
-		expect(22);
+		assert.expect(22);
 
 		var mTest = mAdditionalTestsServices["Namespaces in Other Property Values"];
 		var sServiceURI = mTest.service;
@@ -2266,7 +2266,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("V2: Namespaces in Other Property Values", function(assert) {
 		var done = assert.async();
-		expect(22);
+		assert.expect(22);
 
 		var mTest = mAdditionalTestsServices["Namespaces in Other Property Values"];
 		var sServiceURI = mTest.service;
@@ -2472,7 +2472,7 @@ function runODataAnnotationTests() {
 	});
 
 	QUnit.test("Text Properties", function(assert) {
-		expect(14);
+		assert.expect(14);
 
 		var mTest = mAdditionalTestsServices["Text Properties"];
 		var sServiceURI = mTest.service;
@@ -2549,7 +2549,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("V2: Text Properties", function(assert) {
 		var done = assert.async();
-		expect(14);
+		assert.expect(14);
 
 		var mTest = mAdditionalTestsServices["Text Properties"];
 		var sServiceURI = mTest.service;
@@ -2628,7 +2628,7 @@ function runODataAnnotationTests() {
 	});
 
 	QUnit.test("Entity Containers", function(assert) {
-		expect(30);
+		assert.expect(30);
 
 		var mTest = mAdditionalTestsServices["Entity Containers"];
 		var sServiceURI = mTest.service;
@@ -2846,7 +2846,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("V2: Entity Containers", function(assert) {
 		var done = assert.async();
-		expect(30);
+		assert.expect(30);
 
 		var mTest = mAdditionalTestsServices["Entity Containers"];
 		var sServiceURI = mTest.service;
@@ -3066,7 +3066,7 @@ function runODataAnnotationTests() {
 	});
 
 	QUnit.test("Simple Values", function(assert) {
-		expect(3);
+		assert.expect(3);
 
 		var mTest = mAdditionalTestsServices["Simple Values"];
 		var sServiceURI = mTest.service;
@@ -3096,7 +3096,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("V2: Simple Values", function(assert) {
 		var done = assert.async();
-		expect(3);
+		assert.expect(3);
 
 		var mTest = mAdditionalTestsServices["Simple Values"];
 		var sServiceURI = mTest.service;
@@ -3128,7 +3128,7 @@ function runODataAnnotationTests() {
 
 
 	QUnit.test("Collection with Namespace", function(assert) {
-		expect(6);
+		assert.expect(6);
 
 		var mTest = mAdditionalTestsServices["Collection with Namespace"];
 		var sServiceURI = mTest.service;
@@ -3162,7 +3162,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("V2: Collection with Namespace", function(assert) {
 		var done = assert.async();
-		expect(6);
+		assert.expect(6);
 
 		var mTest = mAdditionalTestsServices["Collection with Namespace"];
 		var sServiceURI = mTest.service;
@@ -3198,7 +3198,7 @@ function runODataAnnotationTests() {
 	});
 
 	QUnit.test("UrlRef", function(assert) {
-		expect(78);
+		assert.expect(78);
 
 		var mTest = mAdditionalTestsServices["UrlRef"];
 		var sServiceURI = mTest.service;
@@ -3295,7 +3295,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("V2: UrlRef", function(assert) {
 		var done = assert.async();
-		expect(78);
+		assert.expect(78);
 
 		var mTest = mAdditionalTestsServices["UrlRef"];
 		var sServiceURI = mTest.service;
@@ -3395,7 +3395,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("V2 only: Delayed Loading", function(assert) {
 		var done = assert.async();
-		expect(22);
+		assert.expect(22);
 
 		var mTest = mAdditionalTestsServices["Delayed Loading"];
 		var sServiceURI = mTest.service;
@@ -3468,7 +3468,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("V2 only: Delayed Parsing", function(assert) {
 		var done = assert.async();
-		expect(26);
+		assert.expect(26);
 
 		var mTest = mAdditionalTestsServices["Delayed Loading"];
 		var sServiceURI = mTest.service;
@@ -3568,7 +3568,7 @@ function runODataAnnotationTests() {
 
 
 	QUnit.test("Alias Replacement", function(assert) {
-		expect(11);
+		assert.expect(11);
 
 		var mTest = mAdditionalTestsServices["Alias Replacement"];
 		var sServiceURI = mTest.service;
@@ -3607,7 +3607,7 @@ function runODataAnnotationTests() {
 
 
 	QUnit.test("DynamicExpressions", function(assert) {
-		expect(15);
+		assert.expect(15);
 
 		var mTest = mAdditionalTestsServices["DynamicExpressions"];
 		var sServiceURI = mTest.service;
@@ -3641,7 +3641,7 @@ function runODataAnnotationTests() {
 	});
 
 	QUnit.test("DynamicExpressions 2", function(assert) {
-		expect(56);
+		assert.expect(56);
 
 		var mTest = mAdditionalTestsServices["DynamicExpressions2"];
 		var sServiceURI = mTest.service;
@@ -3708,7 +3708,7 @@ function runODataAnnotationTests() {
 	});
 
 	QUnit.test("CollectionsWithSimpleValues", function(assert) {
-		expect(13);
+		assert.expect(13);
 
 		var mTest = mAdditionalTestsServices["CollectionsWithSimpleValues"];
 		var sServiceURI = mTest.service;
@@ -3740,7 +3740,7 @@ function runODataAnnotationTests() {
 	});
 
 	QUnit.test("Multiple Simple Values", function(assert) {
-		expect(9);
+		assert.expect(9);
 
 		var mTest = mAdditionalTestsServices["Simple Values 2"];
 		var sServiceURI = mTest.service;
@@ -3775,7 +3775,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("If in Apply", function(assert) {
 		var done = assert.async();
-		expect(57);
+		assert.expect(57);
 		var mTest = mAdditionalTestsServices["If in Apply"];
 		var sServiceURI = mTest.service;
 		var mModelOptions = {
@@ -3846,7 +3846,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("Other Elements in LabeledElement", function(assert) {
 		var done = assert.async();
-		expect(97);
+		assert.expect(97);
 		var mTest = mAdditionalTestsServices["Other Elements in LabeledElement"];
 		var sServiceURI = mTest.service;
 		var mModelOptions = {
@@ -3951,7 +3951,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("V2 only: Annotated Metadata - Automated Parsing", function(assert) {
 		var done = assert.async();
-		expect(26);
+		assert.expect(26);
 
 		var mTestsDone = {
 			"annotations": false,
@@ -4067,7 +4067,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("Apply in If", function(assert) {
 		var done = assert.async();
-		expect(71);
+		assert.expect(71);
 
 		var mTest = mAdditionalTestsServices["Apply in If"];
 
@@ -4149,7 +4149,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("V2: Apply in If", function(assert) {
 		var done = assert.async();
-		expect(71);
+		assert.expect(71);
 
 		var mTest = mAdditionalTestsServices["Apply in If"];
 
@@ -4234,7 +4234,7 @@ function runODataAnnotationTests() {
 
 	QUnit.test("V2: Joined Loading with automated $metadata parsing", function(assert) {
 		var done = assert.async();
-		expect(16);
+		assert.expect(16);
 
 		var mTest = mAdditionalTestsServices["Joined Loading with automated $metadata parsing"];
 
@@ -4286,7 +4286,7 @@ function runODataAnnotationTests() {
 
 	var fnTestAnnotationInRecord = function(iModelVersion) {
 		var done = assert.async();
-		expect(54);
+		assert.expect(54);
 
 		var mTest = mAdditionalTestsServices["Default Annotated Service"];
 		var oModel = fnCreateModel(iModelVersion, mTest.service, mTest.annotations);
@@ -4368,7 +4368,7 @@ function runODataAnnotationTests() {
 
 	var fnTestEmptyCollection = function(iModelVersion) {
 		var done = assert.async();
-		expect(15);
+		assert.expect(15);
 
 		var mTest = mAdditionalTestsServices["Empty collection"];
 		var oModel = fnCreateModel(iModelVersion, mTest.service, mTest.annotations);
@@ -4404,7 +4404,7 @@ function runODataAnnotationTests() {
 
 	var fnTestEmptyCollection = function(iModelVersion) {
 		var done = assert.async();
-		expect(10);
+		assert.expect(10);
 
 		var mTest = mAdditionalTestsServices["Multiple Enums"];
 		var oModel = fnCreateModel(iModelVersion, mTest.service, mTest.annotations);
@@ -4445,7 +4445,7 @@ function runODataAnnotationTests() {
 
 	var fnTestCachedValueLists = function(iModelVersion) {
 		var done = assert.async();
-		expect(40);
+		assert.expect(40);
 
 		var mTest = mAdditionalTestsServices["Cached Value Lists"];
 		var oModel = fnCreateModel(iModelVersion, mTest.service, mTest.annotations);
@@ -4578,7 +4578,7 @@ function runODataAnnotationTests() {
 
 	var fnTestCachedMetadataValueLists = function(iModelVersion) {
 		var done = assert.async();
-		expect(14);
+		assert.expect(14);
 
 		var mTest = mAdditionalTestsServices["Cached Value Lists"];
 		var sServiceUrl1 = mTest.service + "?sap-value-list=1";
@@ -4640,7 +4640,7 @@ function runODataAnnotationTests() {
 
 	var fnTestCachedMetadataValueListsAdditionParameters = function(iModelVersion) {
 		var done = assert.async();
-		expect(14);
+		assert.expect(14);
 
 		var mTest = mAdditionalTestsServices["Cached Value Lists"];
 		var mMetadataUrlParams1 = {
@@ -4712,7 +4712,7 @@ function runODataAnnotationTests() {
 
 	var fnTestOverwritingOnTermLevel = function(iModelVersion) {
 		var done = assert.async();
-		expect(3);
+		assert.expect(3);
 
 		cleanOdataCache();
 		var mTest = mAdditionalTestsServices["Overwrite on Term Level"];
@@ -4805,7 +4805,7 @@ function runODataAnnotationTests() {
 
 	var fnTestOverwritingOnTermLevel2 = function(iModelVersion) {
 		var done = assert.async();
-		expect(6);
+		assert.expect(6);
 
 		var mTest = mAdditionalTestsServices["Overwrite on Term Level"];
 		var oModel = fnCreateModel(iModelVersion, mTest.service);
@@ -4960,7 +4960,7 @@ function runODataAnnotationTests() {
 
 	var fnTestAceptHeader = function(iModelVersion) {
 		var done = assert.async();
-		expect(12);
+		assert.expect(12);
 		var oModel = fnCreateModel(iModelVersion, "fakeService://testdata/odata/northwind/");
 		var oModel2 = fnCreateModel(iModelVersion, "fakeService://testdata/odata/northwind/");
 		var oModel3 = fnCreateModel(iModelVersion, "fakeService://testdata/odata/northwind/");
@@ -5146,7 +5146,7 @@ function runODataAnnotationTests() {
 
 	var fnTestNestedAnnotations = function(iModelVersion) {
 		var done = assert.async();
-		expect(150);
+		assert.expect(150);
 
 		cleanOdataCache();
 		var mTest = mAdditionalTestsServices["Nested Annotations"];

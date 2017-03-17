@@ -530,7 +530,7 @@
 
 	QUnit.test("Event order", function(assert){
 		var done = assert.async();
-		expect(4);
+		assert.expect(4);
 
 		var bChanged = false, bDataRequested = false, bDataReceived = false;
 

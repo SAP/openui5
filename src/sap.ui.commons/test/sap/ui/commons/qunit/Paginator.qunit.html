@@ -45,21 +45,21 @@
 
 
 		QUnit.test("Initial Check", function(assert) {
-			expect(2);
+			assert.expect(2);
 			ok(oCtrl, "Paginator should exist after creating");
   		var oDomRef = jQuery.sap.domById(sId);
   		ok(oDomRef, "Paginator root element should exist in the page");
 		});
 
 		QUnit.test("Last Page Link", function(assert) {
-			expect(2);
+			assert.expect(2);
   		var oDomRef = jQuery.sap.domById(sId + "--lastPageLink");
   		ok(oDomRef, "'Last Page' link should exist in the page");
   		equal(jQuery(oDomRef).text(), oResourceBundle.getText("PAGINATOR_OTHER_PAGE", [110]), "'Last Page' link should display 'Page 110'");
 		});
 
 		QUnit.test("Page Links", function(assert) {
-			expect(8);
+			assert.expect(8);
   		var $pages = jQuery.sap.byId(sId + "-pages");
   		equal($pages.length, 1, "pages ul tag should exist in the page");
   		equal($pages.children().length, 5, "pages ul tag should have five children");
@@ -72,7 +72,7 @@
 		});
 
 		QUnit.test("Change Current Page", function(assert) {
-			expect(3); // no event should be fired
+			assert.expect(3); // no event should be fired
 			oCtrl.setCurrentPage(2);
 			sap.ui.getCore().applyChanges();
   		var $pages = jQuery.sap.byId(sId + "-pages");
@@ -82,7 +82,7 @@
 		});
 
 		QUnit.test("Change Current Page To The Middle", function(assert) {
-			expect(9); // no event should be fired
+			assert.expect(9); // no event should be fired
 			oCtrl.setCurrentPage(50);
 			sap.ui.getCore().applyChanges();
   		var $pages = jQuery.sap.byId(sId + "-pages");
@@ -98,7 +98,7 @@
 		});
 
 		QUnit.test("Change Current Page Close To The End", function(assert) {
-			expect(6); // no event should be fired
+			assert.expect(6); // no event should be fired
 			oCtrl.setCurrentPage(109);
 			sap.ui.getCore().applyChanges();
   		var $pages = jQuery.sap.byId(sId + "-pages");
@@ -111,7 +111,7 @@
 		});
 
 		QUnit.test("Trigger Forward (mouse)", function(assert) {
-			expect(17); // including event handler
+			assert.expect(17); // including event handler
 			equal(lastTargetPage, null, "lastTargetPage should be initial");
 
 			// click forward once
@@ -144,7 +144,7 @@
 
 		QUnit.test("Trigger Back (mouse)", function(assert) {
 			var done = assert.async();
-			expect(16); // including event handlers
+			assert.expect(16); // including event handlers
 
 			// click back multiple times
 			var target = jQuery.sap.domById(sId + "--backLink");
@@ -180,7 +180,7 @@
 
 		QUnit.test("Trigger First (mouse)", function(assert) {
 			var done = assert.async();
-			expect(12); // including event handler
+			assert.expect(12); // including event handler
 
 			// click "Page 1"
 			var target = jQuery.sap.domById(sId + "--firstPageLink");

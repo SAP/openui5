@@ -3745,7 +3745,7 @@
 	});
 	QUnit.test("Event order (single request): bindElement - batch fails", function(assert){
 		var done = assert.async();
-		expect(3);
+		assert.expect(3);
 		cleanServiceDataCache();
 		var oModel = initModel(sURI);
 		oModel.setUseBatch(true);
@@ -3764,7 +3764,7 @@
 
 	QUnit.test("Event order (batch request): bindElement - batch fails --> refresh", function(assert){
 		var done = assert.async();
-		expect(5);
+		assert.expect(5);
 		cleanServiceDataCache();
 		var oModel = initModel(sURI);
 		oModel.setUseBatch(true);
@@ -3791,7 +3791,7 @@
 
 	QUnit.test("Event order: bindElement", function(assert){
 		var done = assert.async();
-		expect(4);
+		assert.expect(4);
 		cleanServiceDataCache();
 		var oModel = initModel(sURI);
 		oLabel = new sap.ui.commons.Label("myLabel2");
@@ -3810,7 +3810,7 @@
 
 	QUnit.test("Event order: bindElement (setModel after binding)", function(assert){
 		var done = assert.async();
-		expect(4);
+		assert.expect(4);
 		cleanServiceDataCache();
 		var oModel = initModel(sURI);
 		oLabel = new sap.ui.commons.Label("myLabel3");
@@ -3828,7 +3828,7 @@
 
 	QUnit.test("Event order: bindElement (already bound)", function(assert){
 		var done = assert.async();
-		expect(6);
+		assert.expect(6);
 		cleanServiceDataCache();
 		var oModel1 = initModel(sURI);
 		oLabel = new sap.ui.commons.Label("myLabel4");
@@ -3856,7 +3856,7 @@
 
 	QUnit.test("ContextBinding: Unresolved bindings must fire change with null context", function(assert){
 		var done = assert.async();
-		expect(2);
+		assert.expect(2);
 		cleanServiceDataCache();
 		var oModel = initModel(sURI);
 		var handler = function(oEvent) {
@@ -5206,7 +5206,7 @@
 
 	QUnit.test("Bindable response headers in metadata", function(assert) {
 		var done = assert.async();
-		expect(4);
+		assert.expect(4);
 
 
 		var batchDone = false, singleDone = false;
@@ -5284,7 +5284,7 @@
 
 	QUnit.test("Header normalization and lastModified in metadataLoaded-promise", function(assert) {
 		var done = assert.async();
-		expect(5);
+		assert.expect(5);
 
 		var oModel = initModel(sURI, {
 			json: false,
@@ -5326,7 +5326,7 @@
 
 	QUnit.test("ListBinding: Custom params", function(assert) {
 		var done = assert.async();
-		expect(6);
+		assert.expect(6);
 
 		var oModel = initModel(sURI);
 		oModel.metadataLoaded().then(function() {

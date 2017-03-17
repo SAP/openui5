@@ -853,7 +853,7 @@ function runODataAnnotationsV2Tests() {
 	var fnTestLastModified = function() {
 		var done = assert.async();
 
-		expect(4);
+		assert.expect(4);
 
 		var mService = mAdditionalTestsServices["LastModified Header"];
 

@@ -560,7 +560,7 @@
 	   * Tests event handling for event select of control ListBox.
 	   */
 		QUnit.test("Select Event", function(assert) {
-			expect(1); // needs to include the test in selectEventHandler !!
+			assert.expect(1); // needs to include the test in selectEventHandler !!
 			oCtrl.fireSelect();
 		});
 
