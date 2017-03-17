@@ -189,6 +189,7 @@
 		oButton.firePress();
 		//Assert
 		assert.deepEqual(oSpy.getCall(0).args[0].action, oAction, "The actionPress event of SelectionDetails has been triggered");
+		assert.equal(oSpy.getCall(0).args[0].level, "List", "The action level is on list level")
 	});
 
 	QUnit.test("ActionListItem is created for actiongroups aggregation", function(assert) {
@@ -216,6 +217,7 @@
 		// Assert
 		assert.deepEqual(oSpy.getCall(0).args[0].action, oActionGroup, "The actionPress event of SelectionDetails has been triggered");
 		assert.deepEqual(oSpy.getCall(0).args[0].items, [oSelectionDetailsItem], "The items are attached in the actionPress event");
+		assert.equal(oSpy.getCall(0).args[0].level, "Group", "The action level is on group level")
 	});
 
 	QUnit.test("List is destroyed", function(assert) {

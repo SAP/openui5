@@ -107,7 +107,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 					/**
 					 * If the action is pressed on one of the {@link sap.m.SelectionDetailsItem items}, the parameter contains a reference to the pressed {@link sap.m.SelectionDetailsItem item}. If a custom action or action group of the SelectionDetails popover is pressed, this parameter refers to all {@link sap.m.SelectionDetailsItem items}
 					 */
-					items : {type : "sap.m.SelectionDetailsItem"}
+					items : {type : "sap.m.SelectionDetailsItem"},
+
+					/**
+					 * The action level of action buttons. The available levels are Item, List and Group
+					 */
+					level : {type :"sap.m.SelectionDetailsActionLevel"}
 				}
 			}
 		}
@@ -288,7 +293,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 				text: oAction.getText(),
 				enabled: oAction.getEnabled(),
 				type : library.ButtonType.Transparent,
-				press: [oAction, this._onActionPress, this]
+				press: [{
+					action: oAction,
+					level: library.SelectionDetailsActionLevel.List
+				}, this._onActionPress, this]
 			});
 			this._oToolbar.addAggregation("content", oButton, true);
 		}
@@ -354,7 +362,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			oActionListItem = new ActionListItem(this.getId() + "-actiongroup-" + i, {
 				text: aActionGroupItems[i].getText(),
 				type: library.ListType.Navigation,
-				press: [aActionGroupItems[i], this._onActionPress, this]
+				press: [{
+					action: aActionGroupItems[i],
+					level: library.SelectionDetailsActionLevel.Group
+				}, this._onActionPress, this]
 			});
 			oList.addAggregation("items", oActionListItem, true);
 		}
@@ -366,10 +377,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @param {sap.ui.core.Item} The item that was used in the creation of the action button and action list item
 	 * @private
 	 */
-	SelectionDetails.prototype._onActionPress = function(oEvent, oAction) {
+	SelectionDetails.prototype._onActionPress = function(oEvent, oData) {
 		this.fireActionPress({
-			action: oAction,
-			items: this.getItems()
+			action: oData.action,
+			items: this.getItems(),
+			level: oData.level
 		});
 	};
 
