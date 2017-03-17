@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.TextArea.
-sap.ui.define(['jquery.sap.global', './InputBase', './library'],
-	function(jQuery, InputBase, library) {
+sap.ui.define(['jquery.sap.global', './InputBase', './library', "sap/ui/core/ResizeHandler"],
+	function(jQuery, InputBase, library, ResizeHandler) {
 	"use strict";
 
 
@@ -96,9 +96,20 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 		}
 	}});
 
+	TextArea.prototype.init = function() {
+		InputBase.prototype.init.call(this);
+		this.sResizeListenerId = null;
+	};
+
 	TextArea.prototype.exit = function() {
 		InputBase.prototype.exit.call(this);
 		jQuery(window).off("resize.sapMTextAreaGrowing");
+		this._detachResizeHandler();
+	};
+
+	TextArea.prototype.onBeforeRendering = function() {
+		InputBase.prototype.onBeforeRendering.call(this);
+		this._detachResizeHandler();
 	};
 
 	// Attach listeners on after rendering and find iscroll
@@ -109,6 +120,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 			oStyle;
 
 		if (this.getGrowing()) {
+			// Register resize event
+			this._sResizeListenerId = ResizeHandler.register(this, this._resizeHandler.bind(this));
 			// adjust textarea height
 			if (this.getGrowingMaxLines() > 0) {
 				oStyle = window.getComputedStyle(oTextArea);
@@ -123,7 +136,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 				oTextArea.style.maxHeight = fMaxHeight + "px";
 			}
 
-			this._adjustHeight(oTextArea);
+			this._adjustHeight();
 		}
 
 		if (!sap.ui.Device.support.touch) {
@@ -145,6 +158,31 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 					e.stopPropagation();
 				}
 			});
+		}
+	};
+
+	/**
+	 * Function is called when TextArea is resized
+	 *
+	 * @param {jQuery.Event} oEvent The event object
+	 * @private
+	 */
+	TextArea.prototype._resizeHandler = function (oEvent) {
+		/* If the TextArea is growing:true the height have to be recalculated.
+		When the windows size is increase the heightScroll is not correct.
+		For this reason is needed to set height to "auto" before height recalculation*/
+			this.getFocusDomRef().style.height = "auto";
+			this._adjustHeight();
+	};
+
+	/**
+	 * Detaches the resize handler
+	 * @private
+	 */
+	TextArea.prototype._detachResizeHandler = function () {
+		if (this._sResizeListenerId) {
+			ResizeHandler.deregister(this._sResizeListenerId);
+			this._sResizeListenerId = null;
 		}
 	};
 
@@ -243,10 +281,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 		return this;
 	};
 
-	TextArea.prototype._adjustHeight = function(oTextArea) {
-		var sHeight = oTextArea.scrollHeight + oTextArea.offsetHeight - oTextArea.clientHeight + "px";
-		if (this.getValue() && parseInt(sHeight, 10) !== 0) {
-			oTextArea.style.height = sHeight;
+	TextArea.prototype._adjustHeight = function() {
+		var oTextArea = this.getFocusDomRef(),
+			fHeight = oTextArea.scrollHeight + oTextArea.offsetHeight - oTextArea.clientHeight;
+
+		if (this.getValue() && fHeight !== 0) {
+			oTextArea.style.height = fHeight + "px";
 			this._updateOverflow();
 		}
 	};

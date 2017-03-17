@@ -400,6 +400,26 @@
 		oTA.destroy();
 	});
 
+	QUnit.test("height is adjust on resize event", function() {
+		var spyResizeHandler,
+			sLongText = new Array(1000).join("text "),
+			oTA = new sap.m.TextArea({
+			value: sLongText,
+			growing: true,
+			width: "100%"
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		spyResizeHandler = this.spy(sap.m.TextArea.prototype, "_resizeHandler");
+
+		oTA.setWidth("500px");
+		this.clock.tick(200);
+
+		assert.ok(oTA._sResizeListenerId, "TextArea has resize handler");
+		assert.strictEqual(spyResizeHandler.callCount, 1, "The resize handler was called once");
+		oTA.destroy();
+	});
+
 	QUnit.test("maxHeight should be defined if maxLines is set", function(assert) {
 		var sLongText = new Array(1000).join("text ");
 		var oTA = new sap.m.TextArea({
