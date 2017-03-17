@@ -2488,8 +2488,8 @@
 		},
 		{
 		  "id": "sap.m.sample.UploadCollectionSortingFiltering",
-		  "name": "With Sorting and Filtering Feature",
-		  "description": "Shows the UploadCollection with sorting and filtering feature. After setting the criteria for filtering and sorting you get the filtering information displayed in the info toolbar."
+		  "name": "With Grouping, Sorting and Filtering Feature",
+		  "description": "Shows the UploadCollection with grouping, sorting and filtering feature. After setting the criteria for filtering and sorting you get the filtering information displayed in the info toolbar."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsAll",

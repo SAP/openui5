@@ -6,8 +6,9 @@ sap.ui.define([
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/Filter',
 		'sap/ui/model/Sorter',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageToast, UploadCollectionParameter, Fragment, Controller, Filter, Sorter, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		'sap/m/GroupHeaderListItem'
+	], function(jQuery, MessageToast, UploadCollectionParameter, Fragment, Controller, Filter, Sorter, JSONModel, GroupHeaderListItem) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.UploadCollectionSortingFiltering.Page", {
@@ -47,7 +48,7 @@ sap.ui.define([
 			oSelect = this.getView().byId("tbSelect");
 			oSelect.setModel(oModelCB);
 
-			oFileTypesModel = new sap.ui.model.json.JSONModel();
+			oFileTypesModel = new JSONModel();
 
 			mFileTypesData = {
 				"items": [
@@ -98,6 +99,27 @@ sap.ui.define([
 					this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
 				}.bind(this)
 			});
+
+			this.mGroupFunctions = {
+				uploadedBy: function(oContext) {
+					return {
+						key: oContext.getProperty("attributes")[0].text, //'uploadedBy' value as attribute
+						text: "Uploaded By"
+					};
+				},
+				mimeType: function(oContext) {
+					return {
+						key: oContext.getProperty("mimeType"), //'mimeType' value as property
+						text: "Mime Type"
+					};
+				},
+				version: function(oContext) {
+					return {
+						key: oContext.getProperty("attributes")[3].text, //'version' value as attribute
+						text: "Version"
+					};
+				}
+			};
 		},
 
 		onExit: function() {
@@ -148,12 +170,19 @@ sap.ui.define([
 			var oInfoToolbar = oUploadCollection.getInfoToolbar();
 			var oBindingItems = oUploadCollection.getBinding("items");
 			var mParams = oEvent.getParameters();
+			var aSorters = [], sPath, vGroup, bDescending;
 
-			// apply sorter to binding
-			var aSorters = [];
+			// apply grouping
+			if (mParams.groupItem) {
+				sPath = mParams.groupItem.getKey();
+				bDescending = mParams.groupDescending;
+				vGroup = this.mGroupFunctions[sPath];
+				aSorters.push(new Sorter(sPath, bDescending, vGroup));
+			}
+			// apply sorting
 			if (mParams.sortItem) {
-				var sPath = mParams.sortItem.getKey();
-				var bDescending = mParams.sortDescending;
+				sPath = mParams.sortItem.getKey();
+				bDescending = mParams.sortDescending;
 				aSorters.push(new Sorter(sPath, bDescending));
 			}
 			oBindingItems.sort(aSorters);
@@ -191,9 +220,16 @@ sap.ui.define([
 			oUploadCollection.setFileType(oFileTypesMultiComboBox.getSelectedKeys());
 		},
 
-		getAttachmentTitleText: function(){
+		getAttachmentTitleText: function() {
 			var aItems = this.getView().byId("UploadCollection").getItems();
 			return "Uploaded (" + aItems.length + ")";
+		},
+
+		getGroupHeader: function(oGroup) {
+			return new GroupHeaderListItem({
+				title: (oGroup.text ? oGroup.text : "Version") + ": " + oGroup.key,
+				upperCase: false
+			});
 		}
 	});
 

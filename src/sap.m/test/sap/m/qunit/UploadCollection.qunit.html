@@ -679,7 +679,7 @@
 
 	QUnit.test("Event 'selectionChange' is attached once", function(assert) {
 		//Arrange
-		nListeners = this.oUploadCollection._oList.mEventRegistry.selectionChange.length;
+		var nListeners = this.oUploadCollection._oList.mEventRegistry.selectionChange.length;
 		//Act
 		this.oUploadCollection.invalidate();
 		sap.ui.getCore().applyChanges();
@@ -1871,6 +1871,49 @@
 
 		//Cleanup
 		oStub.restore();
+	});
+
+	QUnit.module("Grouping tests", {
+		beforeEach : function() {
+			this.oUploadCollection = new sap.m.UploadCollection({
+				items : {
+					path : "/items",
+					template : createItemTemplate(),
+					templateShareable : false,
+					sorter : new sap.ui.model.Sorter("contributor", false, function(oContext) {
+						return {
+							key: oContext.getProperty("contributor"),
+							upperCase: false
+						};
+					})
+				}
+			}).setModel(new sap.ui.model.json.JSONModel(oData));
+			this.oUploadCollection.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
+		}
+	});
+
+	QUnit.test("Rendering", function(assert) {
+		//Arrange
+		sinon.spy(this.oUploadCollection._oList, "addItemGroup");
+		var aList = this.oUploadCollection._oList,
+			aItems = aList.getItems();
+
+		//Act
+		this.oUploadCollection.rerender();
+
+		//Assert
+		assert.equal(this.oUploadCollection._oList.addItemGroup.callCount, 4, "Four groups were added");
+		assert.equal(aItems.length, 8, "Each item is part of a separate group (we have inside 4 group items, each with 1 collection item)");
+		jQuery.each(aItems, function(iIndex, oItem) {
+			if (oItem._bGroupHeader) {
+				assert.ok(oItem.getTitle().length > 0, "The group item has title property");
+			}
+		});
 	});
 
 	QUnit.module("Properties", {
