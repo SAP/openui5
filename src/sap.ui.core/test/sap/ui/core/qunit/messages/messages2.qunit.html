@@ -357,13 +357,13 @@
 
 		oModel.mMessages = mMessages
 		oModel.setMessages(mMessages);
-		equals(oCheckMessagesSpy.callCount, 0, "No changes detected - Skip check messages");
+		assert.equal(oCheckMessagesSpy.callCount, 0, "No changes detected - Skip check messages");
 
 		oModel.setMessages({"foo": {"key2": "value2"}});
-		equals(oCheckMessagesSpy.callCount, 1, "Changes detected - Check messages");
+		assert.equal(oCheckMessagesSpy.callCount, 1, "Changes detected - Check messages");
 
 		oModel.setMessages();
-		equals(oCheckMessagesSpy.callCount, 2, "Changes detected - Check messages");
+		assert.equal(oCheckMessagesSpy.callCount, 2, "Changes detected - Check messages");
 		assert.deepEqual(oModel.mMessages, {}, "Model messages cleared");
 	});
 

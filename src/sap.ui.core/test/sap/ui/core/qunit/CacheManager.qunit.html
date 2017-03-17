@@ -123,7 +123,7 @@
 					}
 					oCache._bSupportedEnvironment = null;
 					return oCache._getInstance().then(function (cmImpl) {
-						equals(cmImpl.name, sExpectedImplementation, "For environment [" + JSON.stringify(env) +
+						assert.equal(cmImpl.name, sExpectedImplementation, "For environment [" + JSON.stringify(env) +
 						"] implementation [" + sExpectedImplementation + "] is required");
 					});
 				}
@@ -249,14 +249,14 @@
 					return oCache.get("testKey");
 				}).then(function (value) {
 					assert.ok(oCache._instance, "After shutdown, on the first get the CM will reinit itself");
-					equals(typeof value, "undefined", "The implementation has been switched with dummy one, so no response is expected");
+					assert.equal(typeof value, "undefined", "The implementation has been switched with dummy one, so no response is expected");
 				}).then(function () {
 					return oCache._switchOn();
 				}).then(function () {
 					return oCache.get("testKey");
 				}).then(function (value) {
 					assert.ok(oCache._instance, "After shutdown, the first #get will reinit the instance");
-					equals(value, "testValue", "The implementation has been switched with real one, so a certain #get response is expected");
+					assert.equal(value, "testValue", "The implementation has been switched with real one, so a certain #get response is expected");
 				});
 			});
 

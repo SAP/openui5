@@ -70,7 +70,7 @@
 
 
     	QUnit.test("InitialCheck", function(assert) {
-    		equals(true, true, "...");
+    		assert.equal(true, true, "...");
     	});
 
 
@@ -88,20 +88,20 @@
 
 
     	QUnit.test("Rendered Parts", function(assert) {
-    		equals(jQuery(".sapUiUx3ShellHeader-logout").length, 0, "There should be no logout button");
-    		equals(jQuery(".sapUiUx3ShellHeaderSep").length, 0, "There should be no header item separator");
+    		assert.equal(jQuery(".sapUiUx3ShellHeader-logout").length, 0, "There should be no logout button");
+    		assert.equal(jQuery(".sapUiUx3ShellHeaderSep").length, 0, "There should be no header item separator");
 
     		var oDomRef = jQuery.sap.domById(oShell.getId() + "-tool-" + oShell.getId() + "-searchTool");
     		assert.ok(oDomRef, "Search tool should exist in the page");
     		var oDomRef = jQuery.sap.domById(oShell.getId() + "-tool-" + oShell.getId() + "-feederTool");
     		assert.ok(oDomRef, "Feeder tool should exist in the page");
 
-    		equals(jQuery(".sapUiUx3ShellToolPaletteArea").children().children().length, 3, "There should be two tools (plus an accessibility description)");
+    		assert.equal(jQuery(".sapUiUx3ShellToolPaletteArea").children().children().length, 3, "There should be two tools (plus an accessibility description)");
 
-    		equals(jQuery(".sapUiUx3ShellToolSep").length, 0, "There should be no tool separator");
+    		assert.equal(jQuery(".sapUiUx3ShellToolSep").length, 0, "There should be no tool separator");
 
     		assert.ok(jQuery.sap.domById("myShell-wsBar-list"), "Workset item navigation area should exist in the page");
-    		equals(jQuery.sap.byId("myShell-wsBar-list").children().length, 2, "There should not be any workset items, just the arrow and the dummy");
+    		assert.equal(jQuery.sap.byId("myShell-wsBar-list").children().length, 2, "There should not be any workset items, just the arrow and the dummy");
     	});
 
 
@@ -269,8 +269,8 @@
     		assert.ok(header.innerHTML.indexOf("") > -1, "Application Title must be present");
     		assert.equal(jQuery.sap.byId(oShell.getId()+"-logoImg").attr("src"), "http://www.sap.com/global/images/SAPLogo.gif", "Application Logo must be displayed");
 
-    		equals(jQuery(".sapUiUx3ShellHeader-logout").length, 1, "There should be a logout button");
-    		equals(jQuery(".sapUiUx3ShellHeaderSep").length, 0, "There should be no header item separator");
+    		assert.equal(jQuery(".sapUiUx3ShellHeader-logout").length, 1, "There should be a logout button");
+    		assert.equal(jQuery(".sapUiUx3ShellHeaderSep").length, 0, "There should be no header item separator");
 
     		var $wi = jQuery.sap.byId(oShell.getId() + "-wsBar-list");
     		assert.equal($wi.length, 1, "WorksetItem holder should exist");

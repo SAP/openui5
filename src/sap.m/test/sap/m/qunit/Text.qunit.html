@@ -55,11 +55,11 @@
 		var oDom;
 
 		QUnit.test("Default Values", function(assert) {
-			equals(t1.getTextDirection(), "Inherit", "text direction");
-			equals(t1.getVisible(), true, "visible");
-			equals(t1.getWrapping(), true, "wrapping");
-			equals(t1.getTextAlign(), sap.ui.core.TextAlign.Begin, "text align");
-			equals(t1.getWidth(), "", "width");
+			assert.equal(t1.getTextDirection(), "Inherit", "text direction");
+			assert.equal(t1.getVisible(), true, "visible");
+			assert.equal(t1.getWrapping(), true, "wrapping");
+			assert.equal(t1.getTextAlign(), sap.ui.core.TextAlign.Begin, "text align");
+			assert.equal(t1.getWidth(), "", "width");
 		});
 
 		QUnit.module("Appearance");
@@ -68,18 +68,18 @@
 			// test if visible
 			assert.ok(jQuery("#Text1").get(0), "Text 1 Visible");
 			// test if invisible
-			equals(jQuery("#Text3").get(0), undefined, "Text 3 Invisible");
+			assert.equal(jQuery("#Text3").get(0), undefined, "Text 3 Invisible");
 		});
 
 		QUnit.test("Text Output", function(assert) {
 			// test if result is in HTML
 			oDom = jQuery.sap.domById('Text1');
-			equals(oDom.innerHTML,"This is a simple Text.", "Displayed Text");
+			assert.equal(oDom.innerHTML,"This is a simple Text.", "Displayed Text");
 			// test if text is escaped
 			t1.setText("~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>");
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text1');
-			equals(jQuery(oDom).text(),"~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>", "Escaping HTML-Text");
+			assert.equal(jQuery(oDom).text(),"~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>", "Escaping HTML-Text");
 		});
 
 		/*test("Wrapping", function() {
@@ -88,47 +88,47 @@
 			var iLineHeight1 = oDom.clientHeight;
 			oDom = jQuery.sap.domById('Text2');
 			var iLineHeight2 = oDom.clientHeight;
-			equals(iLineHeight2, iLineHeight1 * 5, "Wrapping on => 5 Lines (lineheight: " + iLineHeight1 +")");
+			assert.equal(iLineHeight2, iLineHeight1 * 5, "Wrapping on => 5 Lines (lineheight: " + iLineHeight1 +")");
 			// test line height with wrapping off
 			t2.setWrapping(false);
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text2');
 			iLineHeight2 = oDom.clientHeight;
-			equals(iLineHeight2, iLineHeight1 * 3, "Wrapping off => 3 Lines (lineheight: " + iLineHeight1 +")");
+			assert.equal(iLineHeight2, iLineHeight1 * 3, "Wrapping off => 3 Lines (lineheight: " + iLineHeight1 +")");
 		});*/
 
 		QUnit.test("Width", function(assert) {
 			oDom = jQuery.sap.domById('Text2');
-			equals(oDom.style.width, "155px", "Defined width");
+			assert.equal(oDom.style.width, "155px", "Defined width");
 		});
 
 		QUnit.test("Text Align & RTL", function(assert) {
 			// default
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text1');
-			equals(jQuery(oDom).css("text-align"),"left","Default (Begin) Text Align");
+			assert.equal(jQuery(oDom).css("text-align"),"left","Default (Begin) Text Align");
 			// right
 			t1.setTextAlign(sap.ui.core.TextAlign.Right);
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text1');
-			equals(jQuery(oDom).css("text-align"),"right","Text Align Right");
+			assert.equal(jQuery(oDom).css("text-align"),"right","Text Align Right");
 			// end
 			t1.setTextAlign(sap.ui.core.TextAlign.End);
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text1');
-			equals(jQuery(oDom).css("text-align"),"right","Text Align End");
+			assert.equal(jQuery(oDom).css("text-align"),"right","Text Align End");
 			// RTL end
 			t1.setTextDirection(sap.ui.core.TextDirection.RTL);
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text1');
-			equals(jQuery(oDom).css("text-align"),"left","Text Align End in RTL");
-			equals(jQuery(oDom).attr("dir"),"rtl","Attribute 'dir' for Text Direction is set to RTL");
+			assert.equal(jQuery(oDom).css("text-align"),"left","Text Align End in RTL");
+			assert.equal(jQuery(oDom).attr("dir"),"rtl","Attribute 'dir' for Text Direction is set to RTL");
 
 			// RTL left
 			t1.setTextAlign(sap.ui.core.TextAlign.Left);
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text1');
-			equals(jQuery(oDom).css("text-align"),"left","Text Align Left in RTL");
+			assert.equal(jQuery(oDom).css("text-align"),"left","Text Align Left in RTL");
 			// reset
 			t1.setTextDirection(sap.ui.core.TextDirection.Inherit);
 			t1.setTextAlign(sap.ui.core.TextAlign.Begin);
@@ -140,14 +140,14 @@
 			try {
 				oCore.applyChanges();
 				oDom = jQuery.sap.domById('Text1');
-				equals(oDom.innerHTML,"", "Null Text");
+				assert.equal(oDom.innerHTML,"", "Null Text");
 			} catch (e) {
 				// do nothing but let "expect" raise an error
 			}
 			t1.setText("Hello World!");
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text1');
-			equals(oDom.innerHTML,"Hello World!", "Text entered again");
+			assert.equal(oDom.innerHTML,"Hello World!", "Text entered again");
 		});
 
 		QUnit.test("wrapping & no-wrapping", function(assert) {

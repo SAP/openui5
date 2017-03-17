@@ -26,30 +26,30 @@
 
 			jQuery.sap.require("sap.ui.core.util.serializer.ViewSerializer");
 
-			var checkView = function (oView) {
+			var checkView = function (oView, assert) {
 
 				var oLayout = oView.getContent()[0];
 
 				var aContent = oLayout.getContent();
 
-				equals(aContent.length, 4);
+				assert.equal(aContent.length, 4);
 
 				var oImage = aContent[0];
-				equals(oImage instanceof sap.ui.commons.Image, true);
-				equals(oImage.getSrc(), "http://www.sap.com/global/images/SAPLogo.gif");
-				equals(oImage.getAlt(), "alternative text for image");
+				assert.equal(oImage instanceof sap.ui.commons.Image, true);
+				assert.equal(oImage.getSrc(), "http://www.sap.com/global/images/SAPLogo.gif");
+				assert.equal(oImage.getAlt(), "alternative text for image");
 
 				var oNestedView = aContent[1];
-				equals(oNestedView instanceof sap.ui.core.mvc.HTMLView || oNestedView instanceof sap.ui.core.mvc.XMLView, true);
-				equals(oNestedView.getContent()[0] instanceof sap.ui.commons.Button, true);
+				assert.equal(oNestedView instanceof sap.ui.core.mvc.HTMLView || oNestedView instanceof sap.ui.core.mvc.XMLView, true);
+				assert.equal(oNestedView.getContent()[0] instanceof sap.ui.commons.Button, true);
 
 				var oLabel = aContent[2];
-				equals(oLabel instanceof sap.ui.commons.Label, true);
-				equals(oLabel.getText(), "Label");
+				assert.equal(oLabel instanceof sap.ui.commons.Label, true);
+				assert.equal(oLabel.getText(), "Label");
 
 				var oButton = aContent[3];
-				equals(oButton instanceof sap.ui.commons.Button, true);
-				equals(oButton.getText(), "Save");
+				assert.equal(oButton instanceof sap.ui.commons.Button, true);
+				assert.equal(oButton.getText(), "Save");
 
 			};
 
@@ -92,11 +92,11 @@
 				var oView = sap.ui.htmlview("restoredHtmlView1", {
 					viewContent : sHTMLResult
 				});
-				checkView(oView);
+				checkView(oView, assert);
 				var oView2 = sap.ui.xmlview("restoredxmlView1", {
 					viewContent : sXMLResult
 				});
-				checkView(oView2);
+				checkView(oView2, assert);
 			});
 
 			QUnit.test("Serialize, Re-Instantiate and Check an XML View", function (assert) {
@@ -112,11 +112,11 @@
 				var oView = sap.ui.htmlview("restoredHtmlView2", {
 					viewContent : sHTMLResult
 				});
-				checkView(oView);
+				checkView(oView, assert);
 				var oView2 = sap.ui.xmlview("restoredxmlView2", {
 					viewContent : sXMLResult
 				});
-				checkView(oView2);
+				checkView(oView2, assert);
 			});
 
 			QUnit.test("Serialize, Check if nested XMLView within the HTML View doesn't get converted", function (assert) {
@@ -124,10 +124,10 @@
 
 				var mXMLViews = oViewSerializer.serialize();
 				var sResult = mXMLViews["serializer.view.TestHtml"];
-				equals(sResult.indexOf("<template") === 0, true);
+				assert.equal(sResult.indexOf("<template") === 0, true);
 
 				var sNestedXMLResult = mXMLViews["serializer.view.NestedXmlView"];
-				equals(sNestedXMLResult.indexOf("<template") === -1, true);
+				assert.equal(sNestedXMLResult.indexOf("<template") === -1, true);
 			});
 
 			QUnit.test("Serialize, Check if nested HTMLView within the XML View doesn't get converted", function (assert) {
@@ -135,10 +135,10 @@
 
 				var mXMLViews = oViewSerializer.serialize();
 				var sResult = mXMLViews["serializer.view.TestXml"];
-				equals(sResult.indexOf("<template") === -1, true);
+				assert.equal(sResult.indexOf("<template") === -1, true);
 
 				var sNestedHTMLResult = mXMLViews["serializer.view.NestedHtmlView"];
-				equals(sNestedHTMLResult.indexOf("<template") === 0, true);
+				assert.equal(sNestedHTMLResult.indexOf("<template") === 0, true);
 			});
 
 			QUnit.test("Serialize, Check conversion of nested XMLView within the HTML View", function (assert) {
@@ -146,10 +146,10 @@
 
 				var mXMLViews = oViewSerializer.serializeToXML();
 				var sResult = mXMLViews["serializer.view.TestHtml"];
-				equals(sResult.indexOf("<template") === -1, true);
+				assert.equal(sResult.indexOf("<template") === -1, true);
 
 				var sNestedXMLResult = mXMLViews["serializer.view.NestedXmlView"];
-				equals(sNestedXMLResult.indexOf("<template") === -1, true);
+				assert.equal(sNestedXMLResult.indexOf("<template") === -1, true);
 			});
 
 			QUnit.test("Serialize, Check conversion of nested HTMLView within the XML View", function (assert) {
@@ -157,10 +157,10 @@
 
 				var mXMLViews = oViewSerializer.serializeToHTML();
 				var sResult = mXMLViews["serializer.view.TestXml"];
-				equals(sResult.indexOf("<template") === 0, true);
+				assert.equal(sResult.indexOf("<template") === 0, true);
 
 				var sNestedHTMLResult = mXMLViews["serializer.view.NestedHtmlView"];
-				equals(sNestedHTMLResult.indexOf("<template") === 0, true);
+				assert.equal(sNestedHTMLResult.indexOf("<template") === 0, true);
 			});
 
 			QUnit.test("Serialize, Check if a view that has no controller is still serializable", function (assert) {
@@ -168,15 +168,15 @@
 
 				var mXMLViews = oViewSerializer.serializeToHTML();
 				var sResult = mXMLViews["serializer.view.TestViewWithoutController"];
-				equals(sResult.indexOf("<template") === 0, true);
+				assert.equal(sResult.indexOf("<template") === 0, true);
 
 				mXMLViews = oViewSerializer.serializeToXML();
 				sResult = mXMLViews["serializer.view.TestViewWithoutController"];
-				equals(sResult.indexOf("<template") === -1, true);
+				assert.equal(sResult.indexOf("<template") === -1, true);
 
 				mXMLViews = oViewSerializer.serialize();
 				sResult = mXMLViews["serializer.view.TestViewWithoutController"];
-				equals(sResult.indexOf("<template") === -1, true);
+				assert.equal(sResult.indexOf("<template") === -1, true);
 			});
 
 		</script>

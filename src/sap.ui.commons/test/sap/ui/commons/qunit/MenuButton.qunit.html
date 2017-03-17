@@ -58,25 +58,25 @@
 			});
 
 			QUnit.test("Property - Default Values", function(assert) {
-				equals(oMenuButton2.getVisible(), true, "Default 'visible':");
-				equals(oMenuButton2.getTooltip(), null, "Default 'tooltip':");
-				equals(oMenuButton2.getEnabled(), true, "Default 'enabled':");
-				equals(oMenuButton2.getText(), "", "Default 'text':");
-				equals(oMenuButton2.getIcon(), "", "Default 'icon':");
-				equals(oMenuButton2.getIconFirst(), true, "Default 'iconFirst':");
-				equals(oMenuButton2.getWidth(), "", "Default 'width':");
-				equals(oMenuButton2.getMenu(), null, "Default 'menu':");
-				equals(oMenuButton2.getDockButton(), "", "Default 'dockButton':");
-				equals(oMenuButton2.getDockMenu(), "", "Default 'dockMenu':");
+				assert.equal(oMenuButton2.getVisible(), true, "Default 'visible':");
+				assert.equal(oMenuButton2.getTooltip(), null, "Default 'tooltip':");
+				assert.equal(oMenuButton2.getEnabled(), true, "Default 'enabled':");
+				assert.equal(oMenuButton2.getText(), "", "Default 'text':");
+				assert.equal(oMenuButton2.getIcon(), "", "Default 'icon':");
+				assert.equal(oMenuButton2.getIconFirst(), true, "Default 'iconFirst':");
+				assert.equal(oMenuButton2.getWidth(), "", "Default 'width':");
+				assert.equal(oMenuButton2.getMenu(), null, "Default 'menu':");
+				assert.equal(oMenuButton2.getDockButton(), "", "Default 'dockButton':");
+				assert.equal(oMenuButton2.getDockMenu(), "", "Default 'dockMenu':");
 			 });
 
 			QUnit.test("Property - Custom Values", function(assert) {
-				equals(oMenuButton1.getTooltip(), "This is a test tooltip", "Custom 'tooltip':");
-				equals(oMenuButton1.getText(), "Menu Button", "Custom 'text':");
-				equals(oMenuButton1.getIcon(), "../images/menu.gif", "Custom 'icon':");
-				equals(oMenuButton1.getIconFirst(), false, "Custom 'iconFirst':");
-				equals(oMenuButton1.getWidth(), "200px", "Custom 'width':");
-				equals(oMenuButton1.getMenu().getId(), oMenu1.getId(), "Custom 'menu':");
+				assert.equal(oMenuButton1.getTooltip(), "This is a test tooltip", "Custom 'tooltip':");
+				assert.equal(oMenuButton1.getText(), "Menu Button", "Custom 'text':");
+				assert.equal(oMenuButton1.getIcon(), "../images/menu.gif", "Custom 'icon':");
+				assert.equal(oMenuButton1.getIconFirst(), false, "Custom 'iconFirst':");
+				assert.equal(oMenuButton1.getWidth(), "200px", "Custom 'width':");
+				assert.equal(oMenuButton1.getMenu().getId(), oMenu1.getId(), "Custom 'menu':");
 			 });
 
 
@@ -110,8 +110,8 @@
 				oMenuButton1.focus();
 
 				var handler = function(oControlEvent){
-					equals(oControlEvent.getParameter("item").getId(), oMenuItem1.getId(), "Parameter 'item' of press event:");
-					equals(oControlEvent.getParameter("itemId"), oMenuItem1.getId(), "Parameter 'itemId' of press event:");
+					assert.equal(oControlEvent.getParameter("item").getId(), oMenuItem1.getId(), "Parameter 'item' of press event:");
+					assert.equal(oControlEvent.getParameter("itemId"), oMenuItem1.getId(), "Parameter 'itemId' of press event:");
 					oMenuButton1.detachPress(handler);
 					done();
 				};
@@ -126,8 +126,8 @@
 				oMenuButton1.focus();
 
 				var handler = function(oControlEvent){
-					equals(oControlEvent.getParameter("item").getId(), oMenuItem1.getId(), "Parameter 'item' of itemSelected event:");
-					equals(oControlEvent.getParameter("itemId"), oMenuItem1.getId(), "Parameter 'itemId' of itemSelected event:");
+					assert.equal(oControlEvent.getParameter("item").getId(), oMenuItem1.getId(), "Parameter 'item' of itemSelected event:");
+					assert.equal(oControlEvent.getParameter("itemId"), oMenuItem1.getId(), "Parameter 'itemId' of itemSelected event:");
 					oMenuButton1.detachItemSelected(handler);
 					done();
 				};

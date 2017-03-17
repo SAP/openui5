@@ -110,7 +110,7 @@
     QUnit.test("add Propagation Listener", function(assert) {
     	fnPropListener = function(data, object) {
 			assert.ok(data, "data passed");
-			equals(data.myData, "myData", "data object passed with data");
+			assert.equal(data.myData, "myData", "data object passed with data");
 			assert.ok(object instanceof sap.ui.base.ManagedObject, "ManagedObject passed");
 		}.bind(null,{myData:"myData"});
 		var spy = sinon.spy(window, "fnPropListener");
@@ -128,7 +128,7 @@
     QUnit.test("remove Propagation Listener", function(assert) {
     	fnPropListener = function(data, object) {
     		assert.ok(data, "data passed");
-			equals(data.myData, "myData", "data object passed with data");
+			assert.equal(data.myData, "myData", "data object passed with data");
 			assert.ok(object instanceof sap.ui.base.ManagedObject, "ManagedObject passed");
 		}.bind(null,{myData:"myData"});
     	ctrl.addPropagationListener(fnPropListener);

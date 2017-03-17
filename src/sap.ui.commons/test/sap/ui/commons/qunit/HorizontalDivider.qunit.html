@@ -58,24 +58,24 @@
 
 		QUnit.test("Default Values", function(assert) {
 			var oDivider = oDividers["oDivider1"];
-			equals(oDivider.getWidth(), "100%", "Default 'width':");
-			equals(oDivider.getHeight(), "Medium", "Default 'height':");
-			equals(oDivider.getVisible(), true, "Default 'visible':");
-			equals(oDivider.getType(), "Area", "Default 'type':");
+			assert.equal(oDivider.getWidth(), "100%", "Default 'width':");
+			assert.equal(oDivider.getHeight(), "Medium", "Default 'height':");
+			assert.equal(oDivider.getVisible(), true, "Default 'visible':");
+			assert.equal(oDivider.getType(), "Area", "Default 'type':");
 		 });
 
 		QUnit.test("Custom Values", function(assert) {
 			var oDivider = oDividers["oDivider2"];
-			equals(oDivider.getWidth(), "50%", "Custom 'width':");
-			equals(oDivider.getHeight(), "Large", "Custom 'height':");
-			equals(oDivider.getVisible(), false, "Custom 'visible':");
-			equals(oDivider.getType(), "Page", "Custom 'type':");
+			assert.equal(oDivider.getWidth(), "50%", "Custom 'width':");
+			assert.equal(oDivider.getHeight(), "Large", "Custom 'height':");
+			assert.equal(oDivider.getVisible(), false, "Custom 'visible':");
+			assert.equal(oDivider.getType(), "Page", "Custom 'type':");
 		 });
 
 		QUnit.module("Visual Appearence");
 
 		QUnit.test("Visibility", function(assert) {
-			equals(jQuery("#oDivider2").get(0), undefined, "Invisible:");
+			assert.equal(jQuery("#oDivider2").get(0), undefined, "Invisible:");
 			assert.ok(jQuery("#oDivider1").get(0), "Visible: expected defined");
 		});
 

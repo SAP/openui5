@@ -106,31 +106,31 @@
 		QUnit.module("API");
 
 		QUnit.test("Default Values", function(assert) {
-			equals(oRtt0.getTitle(), "", "Default 'title':");
-			equals(oRtt0.getImageSrc(), "", "Default 'imageSrc':");
-			equals(oRtt0.getText(), "", "Default 'text':");
-			equals(oRtt0.getOpenDuration(), 200, "Default 'openDuration':");
-			equals(oRtt0.getCloseDuration(), 200, "Default 'closeDuration':");
-			equals(oRtt0.getMyPosition(), "begin top", "Default 'myPosition':");
-			equals(oRtt0.getAtPosition(), "begin bottom", "Default 'atPosition':");
-			equals(oRtt0.getOffset(), "10 3", "Default 'offset':");
-			equals(oRtt0.getCollision(), "flip", "Default 'collision':");
+			assert.equal(oRtt0.getTitle(), "", "Default 'title':");
+			assert.equal(oRtt0.getImageSrc(), "", "Default 'imageSrc':");
+			assert.equal(oRtt0.getText(), "", "Default 'text':");
+			assert.equal(oRtt0.getOpenDuration(), 200, "Default 'openDuration':");
+			assert.equal(oRtt0.getCloseDuration(), 200, "Default 'closeDuration':");
+			assert.equal(oRtt0.getMyPosition(), "begin top", "Default 'myPosition':");
+			assert.equal(oRtt0.getAtPosition(), "begin bottom", "Default 'atPosition':");
+			assert.equal(oRtt0.getOffset(), "10 3", "Default 'offset':");
+			assert.equal(oRtt0.getCollision(), "flip", "Default 'collision':");
 		});
 
 		QUnit.test("Custom Values", function(assert) {
-			equals(oRtt2.getTitle(), sTitle, "Custom 'title':");
-			equals(oRtt2.getImageSrc(), sImageSrc, "Custom 'imageSrc':");
-			equals(oRtt2.getText(), sText, "Custom 'text':");
-			equals(oRtt2.getOpenDuration(), 600, "Custom 'openDuration':");
-			equals(oRtt2.getCloseDuration(), 600, "Custom 'closeDuration':");
-			equals(oRtt2.getMyPosition(), "begin bottom", "Custom 'myPosition':");
-			equals(oRtt2.getAtPosition(), "begin top", "Custom 'atPosition':");
-			equals(oRtt2.getOffset(), sRtt2Offset, "Custom 'offset':");
-			equals(oRtt2.getCollision(), "none", "Custom 'collision':");
+			assert.equal(oRtt2.getTitle(), sTitle, "Custom 'title':");
+			assert.equal(oRtt2.getImageSrc(), sImageSrc, "Custom 'imageSrc':");
+			assert.equal(oRtt2.getText(), sText, "Custom 'text':");
+			assert.equal(oRtt2.getOpenDuration(), 600, "Custom 'openDuration':");
+			assert.equal(oRtt2.getCloseDuration(), 600, "Custom 'closeDuration':");
+			assert.equal(oRtt2.getMyPosition(), "begin bottom", "Custom 'myPosition':");
+			assert.equal(oRtt2.getAtPosition(), "begin top", "Custom 'atPosition':");
+			assert.equal(oRtt2.getOffset(), sRtt2Offset, "Custom 'offset':");
+			assert.equal(oRtt2.getCollision(), "none", "Custom 'collision':");
 		});
 
 		QUnit.test("Control Attachment", function(assert) {
-			equals(oButton1.$().attr("title"), sDefaultTitle, "Default tooltip set when no RichTooltip is attached");
+			assert.equal(oButton1.$().attr("title"), sDefaultTitle, "Default tooltip set when no RichTooltip is attached");
 			oButton1.setTooltip(oRtt1);
 			sap.ui.getCore().applyChanges();
 			assert.ok(!oButton1.$().attr("title"), "No default tooltip set when RichTooltip is attached");
@@ -238,18 +238,18 @@
 
 				var jObj = jRtt1.find(".sapUiRttText");
 				assert.ok(jObj.size() == 1, "RichTooltip text section is available");
-				equals(jObj.text(), sText, "Text in text section ok:");
+				assert.equal(jObj.text(), sText, "Text in text section ok:");
 
 				jObj = jRtt1.find(".sapUiRttImage");
 				assert.ok(jObj.size() == bIconExpected ? 1 : 0, "RichTooltip image section is "+(bIconExpected ? "" : "not ")+"available");
 				if(bIconExpected){
-					equals(jObj.attr("src"), sImageSrc, "Image Source ok:");
+					assert.equal(jObj.attr("src"), sImageSrc, "Image Source ok:");
 				}
 
 				jObj = jRtt1.find(".sapUiRttTitle");
 				assert.ok(jObj.size() == bTitleExpected ? 1 : 0, "RichTooltip title section is "+(bTitleExpected ? "" : "not ")+"available");
 				if(bTitleExpected){
-					equals(jObj.text(), sTitle, "Text in title section ok:");
+					assert.equal(jObj.text(), sTitle, "Text in title section ok:");
 				}
 
 				assert.ok(jRtt1.find(".sapUiRttSep").size() == bTitleExpected ? 1 : 0, "RichTooltip title seperator section is "+(bTitleExpected ? "" : "not ")+"available");

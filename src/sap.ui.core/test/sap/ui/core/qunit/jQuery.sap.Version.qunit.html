@@ -141,7 +141,7 @@
 			assert.ok(jQuery.sap.Version(v1) === v1, "jQuery.sap.Version(v1) === v1");
 			var v = jQuery.sap.Version(v1.toString());
 			assert.ok(jQuery.sap.Version(v1) != v, "jQuery.sap.Version(v1) != jQuery.sap.Version(v1.toString())");
-			equals(v1.toString(), v.toString(), "jQuery.sap.Version(v1).toString() != jQuery.sap.Version(v1.toString()).toString()");
+			assert.equal(v1.toString(), v.toString(), "jQuery.sap.Version(v1).toString() != jQuery.sap.Version(v1.toString()).toString()");
 		});
 
 

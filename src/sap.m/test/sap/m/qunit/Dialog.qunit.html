@@ -153,7 +153,7 @@
 
 					assert.ok(oDialog.isOpen(), "Dialog is open");
 					assert.ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
-					equals(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
+					assert.equal(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
 
 					oDialog.attachAfterClose(start);
 
@@ -164,7 +164,7 @@
 					oDialog.detachAfterClose(fnClosed1);
 
 					assert.ok(!oDialog.isOpen(), "Dialog is closed");
-					equals(document.querySelector("#htmlControl").parentElement.id, "sap-ui-preserve", "HTML control rendered (preserved)");
+					assert.equal(document.querySelector("#htmlControl").parentElement.id, "sap-ui-preserve", "HTML control rendered (preserved)");
 
 					oDialog.attachAfterOpen(fnOpened2);
 
@@ -177,7 +177,7 @@
 
 					assert.ok(oDialog.isOpen(), "Dialog is open");
 					assert.ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
-					equals(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
+					assert.equal(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
 
 					oDialog.attachAfterClose(fnClosed1);
 
@@ -185,7 +185,7 @@
 				}.bind(this);
 
 
-				equals(document.querySelector("#htmlControl"), null, "HTML control not rendered");
+				assert.equal(document.querySelector("#htmlControl"), null, "HTML control not rendered");
 
 				oDialog.attachAfterOpen(fnOpened1);
 				oDialog.open();

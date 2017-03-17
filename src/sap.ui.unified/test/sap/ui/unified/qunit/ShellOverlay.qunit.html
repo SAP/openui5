@@ -23,7 +23,7 @@
 	<!-- Control initialization -->
 	<script>
 
-	function testMultiAggregation(sName, oCtrl){
+	function testMultiAggregation(sName, oCtrl, assert){
 		oCtrl.getMetadata()._enrichChildInfos();
 		var oAggMetaData = oCtrl.getMetadata().getAggregations()[sName];
 		var oType = jQuery.sap.getObject(oAggMetaData.type === "sap.ui.core.Control" ? "my.Test" : oAggMetaData.type);
@@ -51,11 +51,11 @@
 		assert.equal(_get().length, 1, "Number of "+sName+" controls after add");
 		_mutator(true, [new oType(sName+"_2"), 0]);
 		assert.equal(_get().length, 2, "Number of "+sName+" controls after insert");
-		equals(_get()[0].getId(), sName+"_2", "First "+sName+" control");
-		equals(_get()[1].getId(), sName+"_1", "Second "+sName+" control");
+		assert.equal(_get()[0].getId(), sName+"_2", "First "+sName+" control");
+		assert.equal(_get()[1].getId(), sName+"_1", "Second "+sName+" control");
 		oCtrl[oAggMetaData._sRemoveMutator](0);
 		assert.equal(_get().length, 1, "Number of "+sName+" controls after remove");
-		equals(_get()[0].getId(), sName+"_1", "First "+sName+" control");
+		assert.equal(_get()[0].getId(), sName+"_1", "First "+sName+" control");
 		_removeAll();
 		assert.equal(_get().length, 0, "Number of "+sName+" controls after removeAll");
 	};
@@ -123,7 +123,7 @@
 		QUnit.module("API");
 
 		QUnit.test("Aggregation 'content'", function(assert) {
-			testMultiAggregation("content", oShellOverlay0);
+			testMultiAggregation("content", oShellOverlay0, assert);
 		});
 
 		QUnit.test("Aggregation 'search'", function(assert) {

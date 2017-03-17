@@ -95,7 +95,7 @@
 
 		QUnit.test("Test ShowMore Feature (1)", function(assert) {
 			var done = assert.async();
-			equals( oRowRepeater.getNumberOfRows(), 10, "10 rows are expected to be visible at the start" );
+			assert.equal( oRowRepeater.getNumberOfRows(), 10, "10 rows are expected to be visible at the start" );
 			assert.ok( oRowRepeater.setShowMoreSteps(0), "setting ShowMoreSteps to zero" );
 			assert.ok( oRowRepeater.triggerShowMore(), "triggering show more" );
 			assert.ok( oRowRepeater.setShowMoreSteps(3), "setting ShowMoreSteps to 3" );
@@ -110,23 +110,23 @@
 			assert.ok( oRowRepeater.triggerShowMore(), "triggering show more" );
 			assert.ok( oRowRepeater.triggerShowMore(), "triggering show more" );
 			setTimeout(function() {
-				equals(oRowRepeater.getNumberOfRows(), 19, "19 rows are expected to be visible at the end");
+				assert.equal(oRowRepeater.getNumberOfRows(), 19, "19 rows are expected to be visible at the end");
 				done();
 			}, 1500);
 		});
 
 		QUnit.test("Test Resize Feature", function(assert) {
 			var done = assert.async();
-			equals( oRowRepeater.getNumberOfRows(), 19, "19 rows are expected to be visible at the start" );
+			assert.equal( oRowRepeater.getNumberOfRows(), 19, "19 rows are expected to be visible at the start" );
 			assert.ok( oRowRepeater.setShowMoreSteps(0), "setting ShowMoreSteps to zero" );
 			assert.ok( oRowRepeater.resize(5), "resize to 5 with ShowMoreSteps set to zero" );
-			equals( oRowRepeater.getNumberOfRows(), 19, "19 rows are still expected" );
+			assert.equal( oRowRepeater.getNumberOfRows(), 19, "19 rows are still expected" );
 			assert.ok( oRowRepeater.setShowMoreSteps(3), "setting ShowMoreSteps to 3" );
 			assert.ok( oRowRepeater.resize(10), "resize to 10" );
 			assert.ok( oRowRepeater.resize(20), "resize to 20" );
 			assert.ok( oRowRepeater.resize(7), "resize to 7" );
 			setTimeout(function() {
-				equals(oRowRepeater.getNumberOfRows(), 7, "7 rows are expected to be visible at the end");
+				assert.equal(oRowRepeater.getNumberOfRows(), 7, "7 rows are expected to be visible at the end");
 				done();
 			}, 1500);
 		});
@@ -134,7 +134,7 @@
 		QUnit.test("Test Paging Behaviour", function(assert) {
 			var done = assert.async();
 			assert.ok( oRowRepeater.gotoPage(5), "try to go to page 5, which should not work" );
-			equals( oRowRepeater.getCurrentPage(), 1, "we should still be on page 1" );
+			assert.equal( oRowRepeater.getCurrentPage(), 1, "we should still be on page 1" );
 			assert.ok( oRowRepeater.setShowMoreSteps(0), "setting ShowMoreSteps to zero" );
 			assert.ok( oRowRepeater.gotoPage(5), "go to page 5" );
 			assert.ok( oRowRepeater.firstPage(), "go to first page" );
@@ -147,7 +147,7 @@
 			assert.ok( oRowRepeater.previousPage(), "go to previous page" );
 			assert.ok( oRowRepeater.previousPage(), "go to previous page" );
 			setTimeout(function() {
-				equals(oRowRepeater.getCurrentPage(), 1, "we should again be on page 1");
+				assert.equal(oRowRepeater.getCurrentPage(), 1, "we should again be on page 1");
 				done();
 			}, 4000);
 		});

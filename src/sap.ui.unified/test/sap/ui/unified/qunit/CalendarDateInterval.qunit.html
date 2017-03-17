@@ -320,7 +320,7 @@
 				oCal4._getFocusedDate();
 
 				//Assert
-				equals(oCal4._oFocusedDate, oOldFocusedDate,
+				assert.equal(oCal4._oFocusedDate, oOldFocusedDate,
 						"_getFocusedDate() does not change the oFocusedDate after initial calculation");
 
 				var oNewDate = new Date(Date.UTC(2000, 1, 4));
@@ -330,7 +330,7 @@
 				oCal4._getFocusedDate(true);
 
 				//Assert
-				equals(oCal4._oFocusedDate.oDate.toString(), oNewDate.toString(),
+				assert.equal(oCal4._oFocusedDate.oDate.toString(), oNewDate.toString(),
 						"_getFocusedDate() changes the oFocusedDate if it's called with parameter bForceRecalculate = true");
 
 				var oSpy = sinon.spy(oCal4, "_getFocusedDate");

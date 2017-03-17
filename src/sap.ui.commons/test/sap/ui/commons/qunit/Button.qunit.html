@@ -106,36 +106,36 @@
 		b1.attachPress(pressEventHandler1);
 		jQuery("#b2").focus().click().mousedown().mouseup().mouseleave().blur();
 
-		equals(b1.getText(),sText,"Text for button1 is correct using 'equals()'!");
-		equals(b2.getText(),sText,"Text for button2 is correct using 'equals()'!");
+		assert.equal(b1.getText(),sText,"Text for button1 is correct using 'equals()'!");
+		assert.equal(b2.getText(),sText,"Text for button2 is correct using 'equals()'!");
 	 });
 	 QUnit.test("WidthOk", function(assert) {
-		equals(b1.getWidth(),sWidth,"Width for button1 is correct using 'equals()'!");
-		equals(b2.getWidth(),sWidth,"Width for button2 is correct using 'equals()'!");
+		assert.equal(b1.getWidth(),sWidth,"Width for button1 is correct using 'equals()'!");
+		assert.equal(b2.getWidth(),sWidth,"Width for button2 is correct using 'equals()'!");
 	 });
 	 QUnit.test("EnabledOk", function(assert) {
-			equals(b1.getEnabled(),true,"Enabled state for button1 is correct using 'equals()'!");
-			equals(b2.getEnabled(),false,"Enabled state for button2 is correct using 'equals()'!");
+			assert.equal(b1.getEnabled(),true,"Enabled state for button1 is correct using 'equals()'!");
+			assert.equal(b2.getEnabled(),false,"Enabled state for button2 is correct using 'equals()'!");
 		 });
 	  QUnit.test("VisibleOk", function(assert) {
-		equals(b1.getVisible(),true,"Visible state for button1 is correct using 'equals()'!");
-		equals(b2.getVisible(),true,"Visible state for button2 is correct using 'equals()'!");
+		assert.equal(b1.getVisible(),true,"Visible state for button1 is correct using 'equals()'!");
+		assert.equal(b2.getVisible(),true,"Visible state for button2 is correct using 'equals()'!");
 	 });
  	 QUnit.test("TooltipOk", function(assert) {
-		equals(b1.getTooltip(),sTooltip,"Tooltip state for button1 is correct using 'equals()'!");
-		equals(b2.getTooltip(),sTooltip,"Tooltip state for button2 is correct using 'equals()'!");
+		assert.equal(b1.getTooltip(),sTooltip,"Tooltip state for button1 is correct using 'equals()'!");
+		assert.equal(b2.getTooltip(),sTooltip,"Tooltip state for button2 is correct using 'equals()'!");
 	 });
  	 QUnit.test("IconFirstOk", function(assert) {
-		equals(b1.getIconFirst(),false,"IconFirst state for button1 is correct using 'equals()'!");
-		equals(b2.getIconFirst(),true,"IconFirst state for button2 is correct using 'equals()'!");
+		assert.equal(b1.getIconFirst(),false,"IconFirst state for button1 is correct using 'equals()'!");
+		assert.equal(b2.getIconFirst(),true,"IconFirst state for button2 is correct using 'equals()'!");
 	 });
  	 QUnit.test("IconOk", function(assert) {
-		equals(b1.getIcon(),sIcon,"Icon for button1 is correct using 'equals()'!");
-		equals(b2.getIcon(),sIcon,"Icon for button2 is correct using 'equals()'!");
+		assert.equal(b1.getIcon(),sIcon,"Icon for button1 is correct using 'equals()'!");
+		assert.equal(b2.getIcon(),sIcon,"Icon for button2 is correct using 'equals()'!");
 	 });
  	 QUnit.test("HelpIdOk", function(assert) {
-		equals(b1.getHelpId(),sHelpId,"HelpId for button1 is correct using 'equals()'!");
-		equals(b2.getHelpId(),sHelpId,"HelpId for button2 is correct using 'equals()'!");
+		assert.equal(b1.getHelpId(),sHelpId,"HelpId for button1 is correct using 'equals()'!");
+		assert.equal(b2.getHelpId(),sHelpId,"HelpId for button2 is correct using 'equals()'!");
 	 });
 
  	QUnit.module("SAPUI5 Button - test event handlers", {
@@ -154,11 +154,11 @@
 			assert.ok(false,"Exception should have been thrown!");
 		} catch (e) {
 			assert.ok(e == sPressMessage + " - Exception","Exception was thrown correctly!");
-			equals(e,sPressMessage + " - Exception","Exception was thrown correctly!")
+			assert.equal(e,sPressMessage + " - Exception","Exception was thrown correctly!")
 		}
 		b2.firePress();
 		assert.ok(msg == sPressMessage,"Event was fired correctly!");
-		equals(msg,sPressMessage,"Event was fired correctly!!")
+		assert.equal(msg,sPressMessage,"Event was fired correctly!!")
 	});
 
 	QUnit.test("Press event should not be fired when the button is set to invisible", function(assert) {
@@ -186,10 +186,10 @@
 			try {
 				b1.firePress();
 				assert.ok(true,"No event and thus no exception should be triggered!");
-				equals(!sPressMessage,false,"No event and thus no exception should be triggered!")
+				assert.equal(!sPressMessage,false,"No event and thus no exception should be triggered!")
 			} catch (e) {
 				assert.ok(e != sPressMessage + " - Exception","Exception shouldn't have been thrown!");
-				equals(e,!sPressMessage,"Exception shouldn't have been thrown!")
+				assert.equal(e,!sPressMessage,"Exception shouldn't have been thrown!")
 			}
 			// cleanup in order to be independent from order of execution of test-functions (e.g. in FF3 there was an issue)
 			b1.attachPress(pressEventHandler1);
@@ -217,9 +217,9 @@
 			assert.ok(oMetadata.getParent() != null,"b1.getMetadata().getParent() should not be null");
 			assert.ok(sap.ui.core.Control.getMetadata() == oMetadata.getParent(), "");
 			assert.ok(oMetadata.getProperties()["text"]["type"] == "string" ,"Text type is 'string'!");
-			equals(oMetadata.getProperties()["text"]["type"],"string" ,"Text type is 'string'!");
+			assert.equal(oMetadata.getProperties()["text"]["type"],"string" ,"Text type is 'string'!");
 			assert.ok(oMetadata.getAggregations().richTooltip != "undefined","Richtooltip is not 'null'");
-			equals(oMetadata.getAggregations().richTooltip ==  "undefined",false,"Richtooltip is not 'null'");
+			assert.equal(oMetadata.getAggregations().richTooltip ==  "undefined",false,"Richtooltip is not 'null'");
 			var oAssociations = oMetadata.getAssociations();
 			assert.strictEqual(oAssociations["ariaDescribedBy"]["type"], "sap.ui.core.Control", "ariaDescribedBy type");
 			assert.ok(oAssociations["ariaDescribedBy"]["multiple"], "ariaDescribedBy multiple");
@@ -231,12 +231,12 @@
 			//test the pixel perfect width of the control
 			var oDomRef = window.document.getElementById("b1");
 			assert.ok(parseInt(b1.getWidth()) == oDomRef.offsetWidth,"b1.offsetWidth == parseInt(b1.getWidth())");
-			equals(oDomRef.offsetWidth,parseInt(b1.getWidth()),"b1.offsetWidth == parseInt(b1.getWidth())");
+			assert.equal(oDomRef.offsetWidth,parseInt(b1.getWidth()),"b1.offsetWidth == parseInt(b1.getWidth())");
 			b2.setWidth("500px");
 			sap.ui.getCore().applyChanges();
 			oDomRef = window.document.getElementById("b2");
 			assert.ok(parseInt(oDomRef.offsetWidth) == 500,"b2.offsetWidth == 500)");
-			equals(parseInt(oDomRef.offsetWidth),500,"b2.offsetWidth == 500");
+			assert.equal(parseInt(oDomRef.offsetWidth),500,"b2.offsetWidth == 500");
 		});
 
 		QUnit.test("eventWithAdditionalDataOk", function(assert){

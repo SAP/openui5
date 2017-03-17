@@ -3247,7 +3247,7 @@
 		changeOperation(true, false, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+				assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 				done();
 			});
 		});
@@ -3261,7 +3261,7 @@
 		changeOperation(false, true, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+				assert.equal(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
 				done();
 			});
 		});
@@ -3275,7 +3275,7 @@
 		changeOperation(true, undefined, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+				assert.equal(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
 				done();
 			});
 		});
@@ -3289,7 +3289,7 @@
 		changeOperation(false, undefined, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+				assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 				done();
 			});
 		});
@@ -3305,7 +3305,7 @@
 		changeOperation(true, false, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+				assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 				done();
 			});
 		});
@@ -3322,7 +3322,7 @@
 		changeOperation(false, true, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+				assert.equal(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
 				done();
 			});
 		});
@@ -3339,7 +3339,7 @@
 		changeOperation(true, undefined, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+				assert.equal(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
 				done();
 			});
 		});
@@ -3356,7 +3356,7 @@
 		changeOperation(false, undefined, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+				assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 				done();
 			});
 		});
@@ -3374,7 +3374,7 @@
 		changeOperation(true, false, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+				assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 				done();
 			});
 		});
@@ -3391,7 +3391,7 @@
 		changeOperation(false, true, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+				assert.equal(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
 				done();
 			});
 		});
@@ -3408,7 +3408,7 @@
 		changeOperation(true, undefined, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+				assert.equal(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
 				done();
 			});
 		});
@@ -3425,7 +3425,7 @@
 		changeOperation(false, undefined, function(oData, oResponse) {
 			setTimeout(function() { // Because _refresh might get triggered *after*
 									// the success-callback is executed
-				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+				assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 				done();
 			});
 		});
@@ -3444,7 +3444,7 @@
 				Name : "Hello2"
 			}, {
 			success : function(oData, oResponse) {
-				equals(oRefreshSpy.called, false, "Refresh should not have been called");
+				assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 				done();
 			},
 			error : function(oError) {
@@ -3473,7 +3473,7 @@
 			success : function(oData, oResponse) {
 				setTimeout(function() { // Because _refresh might get triggered *after*
 										// the success-callback is executed
-					equals(oRefreshSpy.called, false, "Refresh should not have been called");
+					assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 					done();
 				}, 0);
 			},
@@ -3516,7 +3516,7 @@
 			success : function(oData, oResponse) {
 				setTimeout(function() { // Because _refresh might get triggered *after*
 										// the success-callback is executed
-					equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+					assert.equal(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
 					done();
 				}, 0);
 			},
@@ -3546,7 +3546,7 @@
 			success : function(oData, oResponse) {
 				setTimeout(function() { // Because _refresh might get triggered *after*
 										// the success-callback is executed
-					equals(oRefreshSpy.called, false, "Refresh should not have been called");
+					assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 					done();
 				}, 0);
 			},
@@ -3572,7 +3572,7 @@
 			success : function(oData, oResponse) {
 				setTimeout(function() { // Because _refresh might get triggered *after*
 										// the success-callback is executed
-					equals(oRefreshSpy.called, false, "Refresh should not have been called");
+					assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 					done();
 				}, 0);
 			},
@@ -3600,7 +3600,7 @@
 			success : function(oData, oResponse) {
 				setTimeout(function() { // Because _refresh might get triggered *after*
 										// the success-callback is executed
-					equals(oRefreshSpy.called, false, "Refresh should not have been called");
+					assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 					done();
 				}, 0);
 			},
@@ -3624,7 +3624,7 @@
 			success : function(oData, oResponse) {
 				setTimeout(function() { // Because _refresh might get triggered *after*
 										// the success-callback is executed
-					equals(oRefreshSpy.called, false, "Refresh should not have been called");
+					assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 					done();
 				}, 0);
 			},
@@ -3650,7 +3650,7 @@
 			success : function(oData, oResponse) {
 				setTimeout(function() { // Because _refresh might get triggered *after*
 										// the success-callback is executed
-					equals(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
+					assert.equal(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
 					done();
 				}, 0);
 			},
@@ -3674,7 +3674,7 @@
 			success : function(oData, oResponse) {
 				setTimeout(function() { // Because _refresh might get triggered *after*
 										// the success-callback is executed
-					equals(oRefreshSpy.called, false, "Refresh should not have been called");
+					assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 					done();
 				}, 0);
 			},
@@ -3699,7 +3699,7 @@
 		});
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
-			equals(oRefreshSpy.called, false, "Refresh should not have been called");
+			assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 			done();
 		});
 	});
@@ -3721,7 +3721,7 @@
 					oModel.submitChanges();
 
 					oModel.attachRequestCompleted(function(oEvent) {
-						equals(oRefreshSpy.called, false, "Refresh should not have been called");
+						assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 						done();
 					});
 				}, 0);
@@ -3745,7 +3745,7 @@
 					oModel.setRefreshAfterChange(true);
 
 					oModel.attachRequestCompleted(function(oEvent) {
-						equals(oRefreshSpy.called, false, "Refresh should not have been called");
+						assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 						done();
 					});
 				}, 0);
@@ -6948,8 +6948,8 @@
 
 
 			var fnSecondTest = function() {
-				equals(iElementBindingCounter[sap.ui.model.ChangeReason.Context], 3, "Correct number of context-changes");
-				equals(Object.keys(iElementBindingCounter).length, 1, "No other changes were fired");
+				assert.equal(iElementBindingCounter[sap.ui.model.ChangeReason.Context], 3, "Correct number of context-changes");
+				assert.equal(Object.keys(iElementBindingCounter).length, 1, "No other changes were fired");
 
 
 				oBinding = oList.getBinding("items");
@@ -6966,8 +6966,8 @@
 							break;
 
 						case 2:
-							equals(iListBindingCounter[sap.ui.model.ChangeReason.Context], 2, "Correct number of context-changes");
-							equals(Object.keys(iListBindingCounter).length, 1, "No other changes were fired");
+							assert.equal(iListBindingCounter[sap.ui.model.ChangeReason.Context], 2, "Correct number of context-changes");
+							assert.equal(Object.keys(iListBindingCounter).length, 1, "No other changes were fired");
 							oList.destroy();
 							done();
 					}

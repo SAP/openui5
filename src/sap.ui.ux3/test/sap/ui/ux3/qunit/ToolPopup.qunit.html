@@ -1074,7 +1074,7 @@
 			oTPContent.detachOpened(fnOpened2);
 
 			assert.ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
-			equals(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
+			assert.equal(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
 
 			oTPContent.attachClosed(start);
 
@@ -1084,7 +1084,7 @@
 		var fnClosed1 = function() {
 			oTPContent.detachClosed(fnClosed1);
 
-			equals(document.querySelector("#htmlControl").parentElement.id, "sap-ui-preserve", "HTML control rendered (preserved)");
+			assert.equal(document.querySelector("#htmlControl").parentElement.id, "sap-ui-preserve", "HTML control rendered (preserved)");
 
 			oTPContent.open();
 			oTPContent.attachOpened(fnOpened2);
@@ -1095,14 +1095,14 @@
 			oTPContent.detachOpened(fnOpened1);
 
 			assert.ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
-			equals(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
+			assert.equal(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
 
 			oTPContent.attachClosed(fnClosed1);
 			oTPContent.close();
 		}.bind(this);
 
 
-		equals(document.querySelector("#htmlControl"), null, "HTML control not rendered");
+		assert.equal(document.querySelector("#htmlControl"), null, "HTML control not rendered");
 
 		oTPContent.attachOpened(fnOpened1);
 		oTPContent.open();

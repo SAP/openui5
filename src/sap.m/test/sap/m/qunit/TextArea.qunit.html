@@ -335,14 +335,14 @@
 		oTA.focus();
 		oTA.updateDomValue("a");
 		sap.ui.test.qunit.triggerEvent("input", oTA.getFocusDomRef());
-		equals(oModel.getProperty("/value"), "" , "no model value update");
-		equals(oTA.getValue(), "a", "getter still returns the current dom value");
+		assert.equal(oModel.getProperty("/value"), "" , "no model value update");
+		assert.equal(oTA.getValue(), "a", "getter still returns the current dom value");
 
 		oTA.getFocusDomRef().blur();
 		this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
-		equals(oModel.getProperty("/value"), "a", "model value is updated on blur");
-		equals(oTA.getValue(), "a", "getter returns the current dom value");
-		equals(fnChangeSpy.callCount, 1 , "change event is fired on blur");
+		assert.equal(oModel.getProperty("/value"), "a", "model value is updated on blur");
+		assert.equal(oTA.getValue(), "a", "getter returns the current dom value");
+		assert.equal(fnChangeSpy.callCount, 1 , "change event is fired on blur");
 
 		oTA.setValueLiveUpdate(true);
 		fnChangeSpy.reset();
@@ -351,9 +351,9 @@
 		oTA.updateDomValue("b");
 		sap.ui.test.qunit.triggerEvent("input", oTA.getFocusDomRef());
 
-		equals(oModel.getProperty("/value"), "b", "model value is updated with LiveUpdate");
-		equals(oTA.getValue(), "b", "getter returns the current dom value");
-		equals(fnChangeSpy.callCount, 0, "no change event is fired");
+		assert.equal(oModel.getProperty("/value"), "b", "model value is updated with LiveUpdate");
+		assert.equal(oTA.getValue(), "b", "getter returns the current dom value");
+		assert.equal(fnChangeSpy.callCount, 0, "no change event is fired");
 
 		// cleanup
 		oTA.destroy();

@@ -586,9 +586,9 @@ QUnit.test("Paging when collapsing nodes", function(assert){
 
 			var aContexts = oBinding.getContexts(0, 10, 10);
 
-			equals(aContexts[0].getProperty("HIERARCHY_NODE"), "1001", "First node is correct");
-			equals(aContexts[4].getProperty("HIERARCHY_NODE"), "1149", "5th node is correct");
-			equals(aContexts[6].getProperty("HIERARCHY_NODE"), "1151", "7th node is correct");
+			assert.equal(aContexts[0].getProperty("HIERARCHY_NODE"), "1001", "First node is correct");
+			assert.equal(aContexts[4].getProperty("HIERARCHY_NODE"), "1149", "5th node is correct");
+			assert.equal(aContexts[6].getProperty("HIERARCHY_NODE"), "1151", "7th node is correct");
 
 			// expand node 2 again
 			oBinding.attachChange(handler4);
@@ -600,9 +600,9 @@ QUnit.test("Paging when collapsing nodes", function(assert){
 
 			var aContexts = oBinding.getContexts(0, 10, 10);
 
-			equals(aContexts[2].getProperty("HIERARCHY_NODE"), "1051", "3rd node is correct");
-			equals(aContexts[3].getProperty("HIERARCHY_NODE"), "1052", "4th node is correct");
-			equals(aContexts[6].getProperty("HIERARCHY_NODE"), "1055", "5th node is correct");
+			assert.equal(aContexts[2].getProperty("HIERARCHY_NODE"), "1051", "3rd node is correct");
+			assert.equal(aContexts[3].getProperty("HIERARCHY_NODE"), "1052", "4th node is correct");
+			assert.equal(aContexts[6].getProperty("HIERARCHY_NODE"), "1055", "5th node is correct");
 
 			// now scroll down to an unknown block
 			oBinding.attachChange(handler5);
@@ -614,9 +614,9 @@ QUnit.test("Paging when collapsing nodes", function(assert){
 
 			var aContexts = oBinding.getContexts(117, 10, 10);
 
-			equals(aContexts[0].getProperty("HIERARCHY_NODE"), "1252", "First node is correct");
-			equals(aContexts[2].getProperty("HIERARCHY_NODE"), "1254", "3rd node is correct");
-			equals(aContexts[8].getProperty("HIERARCHY_NODE"), "1260", "7th node is correct");
+			assert.equal(aContexts[0].getProperty("HIERARCHY_NODE"), "1252", "First node is correct");
+			assert.equal(aContexts[2].getProperty("HIERARCHY_NODE"), "1254", "3rd node is correct");
+			assert.equal(aContexts[8].getProperty("HIERARCHY_NODE"), "1260", "7th node is correct");
 
 			// now scroll down to an unknown block
 			oBinding.getContexts(117, 10, 10);

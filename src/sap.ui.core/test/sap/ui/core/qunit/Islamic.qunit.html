@@ -556,10 +556,10 @@
 					assert.ok(oIslamicDate.setFullYear(iYear, iMonth, iDate), "setFullYear must return value");
 				}
 
-				equals(bUTC ? oIslamicDate.getUTCFullYear() : oIslamicDate.getFullYear(), iYear, ": year");
-				equals(bUTC ? oIslamicDate.getUTCMonth() : oIslamicDate.getMonth(), iMonth, ": month");
-				equals(bUTC ? oIslamicDate.getUTCDate() : oIslamicDate.getDate(), iDate, ": date");
-				equals(bUTC ? oIslamicDate.getUTCHours() : oIslamicDate.getHours(), iOrigHours, ": hours must not be changed");
+				assert.equal(bUTC ? oIslamicDate.getUTCFullYear() : oIslamicDate.getFullYear(), iYear, ": year");
+				assert.equal(bUTC ? oIslamicDate.getUTCMonth() : oIslamicDate.getMonth(), iMonth, ": month");
+				assert.equal(bUTC ? oIslamicDate.getUTCDate() : oIslamicDate.getDate(), iDate, ": date");
+				assert.equal(bUTC ? oIslamicDate.getUTCHours() : oIslamicDate.getHours(), iOrigHours, ": hours must not be changed");
 			},
 
 			verifyMonth2Date: function (bUTC, iMonth, iDate, iMonthToStartFrom, iDateStartFrom) {
@@ -588,9 +588,9 @@
 					assert.ok(oIslamicDate.setMonth(iMonth, iDate), "setUTCMonth must return value");
 				}
 
-				equals(bUTC ? oIslamicDate.getUTCMonth() : oIslamicDate.getMonth(), iMonth, ": month");
-				equals(bUTC ? oIslamicDate.getUTCDate() : oIslamicDate.getDate(), iDate, ": date");
-				equals(bUTC ? oIslamicDate.getUTCHours() : oIslamicDate.getHours(), iOrigHours, ": hours must not be changed");
+				assert.equal(bUTC ? oIslamicDate.getUTCMonth() : oIslamicDate.getMonth(), iMonth, ": month");
+				assert.equal(bUTC ? oIslamicDate.getUTCDate() : oIslamicDate.getDate(), iDate, ": date");
+				assert.equal(bUTC ? oIslamicDate.getUTCHours() : oIslamicDate.getHours(), iOrigHours, ": hours must not be changed");
 			},
 
 			verifyHours2Milliseconds: function (bUTC, iHours, iMinutes, iSeconds, iMilliseconds) {
@@ -604,10 +604,10 @@
 					assert.ok(oIslamicDate.setHours(iHours, iMinutes, iSeconds, iMilliseconds), "setUTCHours must return value");
 				}
 
-				equals(bUTC ? oIslamicDate.getUTCHours() : oIslamicDate.getHours(), iHours, ": hours");
-				equals(bUTC ? oIslamicDate.getUTCMinutes() : oIslamicDate.getMinutes(), iMinutes, ": minutes");
-				equals(bUTC ? oIslamicDate.getUTCSeconds() : oIslamicDate.getSeconds(), iSeconds, ": seconds");
-				equals(bUTC ? oIslamicDate.getUTCMilliseconds() : oIslamicDate.getMilliseconds(), iMilliseconds, ": milliseconds");
+				assert.equal(bUTC ? oIslamicDate.getUTCHours() : oIslamicDate.getHours(), iHours, ": hours");
+				assert.equal(bUTC ? oIslamicDate.getUTCMinutes() : oIslamicDate.getMinutes(), iMinutes, ": minutes");
+				assert.equal(bUTC ? oIslamicDate.getUTCSeconds() : oIslamicDate.getSeconds(), iSeconds, ": seconds");
+				assert.equal(bUTC ? oIslamicDate.getUTCMilliseconds() : oIslamicDate.getMilliseconds(), iMilliseconds, ": milliseconds");
 			},
 
 			verifyMinutes2Milliseconds: function (bUTC, iMinutes, iSeconds, iMilliseconds) {
@@ -621,9 +621,9 @@
 					assert.ok(oIslamicDate.setMinutes(iMinutes, iSeconds, iMilliseconds), "setMinutes must return value");
 				}
 
-				equals(bUTC ? oIslamicDate.getUTCMinutes() : oIslamicDate.getMinutes(), iMinutes, ": minutes");
-				equals(bUTC ? oIslamicDate.getUTCSeconds() : oIslamicDate.getSeconds(), iSeconds, ": seconds");
-				equals(bUTC ? oIslamicDate.getUTCMilliseconds() : oIslamicDate.getMilliseconds(), iMilliseconds, ": milliseconds");
+				assert.equal(bUTC ? oIslamicDate.getUTCMinutes() : oIslamicDate.getMinutes(), iMinutes, ": minutes");
+				assert.equal(bUTC ? oIslamicDate.getUTCSeconds() : oIslamicDate.getSeconds(), iSeconds, ": seconds");
+				assert.equal(bUTC ? oIslamicDate.getUTCMilliseconds() : oIslamicDate.getMilliseconds(), iMilliseconds, ": milliseconds");
 			},
 
 			verifySeconds2Milliseconds: function (bUTC, iSeconds, iMilliseconds) {
@@ -637,8 +637,8 @@
 					assert.ok(oIslamicDate.setSeconds(iSeconds, iMilliseconds), "setSeconds must return value");
 				}
 
-				equals(bUTC ? oIslamicDate.getUTCSeconds() : oIslamicDate.getSeconds(), iSeconds, ": seconds");
-				equals(bUTC ? oIslamicDate.getUTCMilliseconds() : oIslamicDate.getMilliseconds(), iMilliseconds, ": milliseconds");
+				assert.equal(bUTC ? oIslamicDate.getUTCSeconds() : oIslamicDate.getSeconds(), iSeconds, ": seconds");
+				assert.equal(bUTC ? oIslamicDate.getUTCMilliseconds() : oIslamicDate.getMilliseconds(), iMilliseconds, ": milliseconds");
 			}
 		});
 		QUnit.test("Set/Get Full Year", function (assert) {
@@ -692,7 +692,7 @@
 			var iOrigHours = oIslamicDate.getHours();
 			oIslamicDate.setDate(iDate);
 			verifyDate("Setting an islamic date with given month must return the same date", oIslamicDate, 1436, 5, iDate, 0, 23, 16, 10, 118);
-			equals(oIslamicDate.getHours(), iOrigHours, "Setting an islamic date with given date must not change hours");
+			assert.equal(oIslamicDate.getHours(), iOrigHours, "Setting an islamic date with given date must not change hours");
 		});
 
 		QUnit.test("Get Day", function (assert) {

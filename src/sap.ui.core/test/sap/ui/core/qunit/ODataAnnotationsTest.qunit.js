@@ -16,7 +16,7 @@ function deepContains(oValue, oExpected, sMessage) {
 		}
 
 		if (Array.isArray(oExpected[sKey]) === Array.isArray(oValue[sKey])) {
-			equals(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
+			assert.equal(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
 		} else {
 			assert.ok(false, sMessage + "/" + sKey + " - one is an array, the other is not");
 		}
@@ -2525,12 +2525,12 @@ function runODataAnnotationTests() {
 			"Name3 with replaced alias exists and has Invalid child node"
 		);
 
-		equals(
+		assert.equal(
 			oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"]["EnumMember"],
 			"com.sap.vocabularies.UI.v1.Value",
 			"Name1 with replaced alias exists and has EnumMember child node that contains alias replaced tet with trimmed white-spaces"
 		);
-		equals(
+		assert.equal(
 			oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name2"]["String"],
 			"   test test   ",
 			"Name2 with replaced alias exists and has String child node that contains the exact text inclunding white-spaces"
@@ -2603,12 +2603,12 @@ function runODataAnnotationTests() {
 				"Name3 with replaced alias exists and has Invalid child node"
 			);
 
-			equals(
+			assert.equal(
 				oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"]["EnumMember"],
 				"com.sap.vocabularies.UI.v1.Value",
 				"Name1 with replaced alias exists and has EnumMember child node that contains alias replaced tet with trimmed white-spaces"
 			);
-			equals(
+			assert.equal(
 				oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name2"]["String"],
 				"   test test   ",
 				"Name2 with replaced alias exists and has String child node that contains the exact text inclunding white-spaces"
@@ -3996,9 +3996,9 @@ function runODataAnnotationTests() {
 			var sLabelString  = oModel.getMetaModel().getProperty("/dataServices/schema/0/entityType/0/property/0/com.sap.vocabularies.Common.v1.Label/String")
 			var sSource = oModel.getMetaModel().getProperty("/dataServices/schema/0/entityType/0/property/0/annotationSource/String")
 
-			equals(sContainerName, "NorthwindEntities", "EntityContainer \"NorthwindEntities\" available");
-			equals(sLabelString, bV4AnnotationsAvailable ? "LabelString" : undefined, "LabelString for \"CategoryID\" is correct");
-			equals(sSource, sV4AnnotationSource, "Correct annotation source");
+			assert.equal(sContainerName, "NorthwindEntities", "EntityContainer \"NorthwindEntities\" available");
+			assert.equal(sLabelString, bV4AnnotationsAvailable ? "LabelString" : undefined, "LabelString for \"CategoryID\" is correct");
+			assert.equal(sSource, sV4AnnotationSource, "Correct annotation source");
 		};
 
 
@@ -4255,9 +4255,9 @@ function runODataAnnotationTests() {
 			assert.ok(!!oMetadata, "Metadata is available.");
 			assert.ok(!!oAnnotations, "Annotations are available.");
 
-			equals(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path, "Annotations", "Annotation from correct source (Annotations)");
-			equals(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path, "Metadata", "Annotation from correct source (Metadata)");
-			equals(oAnnotations.UnitTest["Test.Merged"][0].Value.Path, "Annotations", "Merged annotations filled");
+			assert.equal(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path, "Annotations", "Annotation from correct source (Annotations)");
+			assert.equal(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path, "Metadata", "Annotation from correct source (Metadata)");
+			assert.equal(oAnnotations.UnitTest["Test.Merged"][0].Value.Path, "Annotations", "Merged annotations filled");
 
 
 			assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "First", "FromFirst annotation filled from first source");
@@ -4964,8 +4964,8 @@ function runODataAnnotationTests() {
 		sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		oModel.addAnnotationUrl("fakeService://replay-headers").then(function() {
 			var oAnnotations = oModel.getServiceAnnotations();
-			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "en-US", "Accept-Language header set correctly");
-			equals(oAnnotations["Replay.Headers"]["X-Unfug"], undefined, "Custom header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "en-US", "Accept-Language header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["X-Unfug"], undefined, "Custom header set correctly");
 
 			oModel.setHeaders({
 				"X-Unfug": "Rosinenbroetchen"
@@ -4974,8 +4974,8 @@ function runODataAnnotationTests() {
 			return oModel.addAnnotationUrl("fakeService://replay-headers");
 		}).then(function() {
 			var oAnnotations = oModel.getServiceAnnotations();
-			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "de", "Accept-Language header set correctly");
-			equals(oAnnotations["Replay.Headers"]["X-Unfug"]["String"], "Rosinenbroetchen", "Custom header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "de", "Accept-Language header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["X-Unfug"]["String"], "Rosinenbroetchen", "Custom header set correctly");
 
 			oModel.setHeaders({
 				"X-Unfug": "Quarkstrudel"
@@ -4984,8 +4984,8 @@ function runODataAnnotationTests() {
 			return oModel.addAnnotationUrl("fakeService://replay-headers");
 		}).then(function() {
 			var oAnnotations = oModel.getServiceAnnotations();
-			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "de-DE", "Accept-Language header set correctly");
-			equals(oAnnotations["Replay.Headers"]["X-Unfug"]["String"], "Quarkstrudel", "Custom header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "de-DE", "Accept-Language header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["X-Unfug"]["String"], "Quarkstrudel", "Custom header set correctly");
 
 			// Annotations cannot be removed, just replaced by subsequent Annotation documents, so we need a new model to test the header replay...
 			oModel2.setHeaders({
@@ -4996,8 +4996,8 @@ function runODataAnnotationTests() {
 			return oModel2.addAnnotationUrl("fakeService://replay-headers");
 		}).then(function() {
 			var oAnnotations = oModel2.getServiceAnnotations();
-			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "fr", "Accept-Language header set correctly");
-			equals(oAnnotations["Replay.Headers"]["X-Unfug"], undefined, "Custom header removed correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "fr", "Accept-Language header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["X-Unfug"], undefined, "Custom header removed correctly");
 
 			oModel2.setHeaders({
 				"X-Unfug": "Mohnschnecke"
@@ -5006,8 +5006,8 @@ function runODataAnnotationTests() {
 			return oModel2.addAnnotationUrl("fakeService://replay-headers");
 		}).then(function() {
 			var oAnnotations = oModel2.getServiceAnnotations();
-			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "de-DE", "Accept-Language header set correctly");
-			equals(oAnnotations["Replay.Headers"]["X-Unfug"]["String"], "Mohnschnecke", "Custom header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "de-DE", "Accept-Language header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["X-Unfug"]["String"], "Mohnschnecke", "Custom header set correctly");
 
 			// Annotations cannot be removed, just replaced by subsequent Annotation documents, so we need a new model to test the header replay...
 			oModel3.setHeaders({
@@ -5018,8 +5018,8 @@ function runODataAnnotationTests() {
 			return oModel3.addAnnotationUrl("fakeService://replay-headers");
 		}).then(function() {
 			var oAnnotations = oModel3.getServiceAnnotations();
-			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "en", "Accept-Language header set correctly");
-			equals(oAnnotations["Replay.Headers"]["X-Unfug"], undefined, "Custom header removed correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "en", "Accept-Language header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["X-Unfug"], undefined, "Custom header removed correctly");
 
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 
@@ -5045,7 +5045,7 @@ function runODataAnnotationTests() {
 		oModel.attachMetadataLoaded(function() {
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			equals(oAnnotations["NorthwindModel.Supplier"], undefined, "Annotations not loaded from service metadata");
+			assert.equal(oAnnotations["NorthwindModel.Supplier"], undefined, "Annotations not loaded from service metadata");
 
 			oModel.addAnnotationUrl(mTest.annotations[0]).then(function() {
 				var oAnnotations = oModel.getServiceAnnotations();
@@ -5151,7 +5151,7 @@ function runODataAnnotationTests() {
 		oModel.attachMetadataLoaded(function() {
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			equals(oAnnotations["NorthwindModel.Supplier"], undefined, "Annotations not loaded from service metadata");
+			assert.equal(oAnnotations["NorthwindModel.Supplier"], undefined, "Annotations not loaded from service metadata");
 
 			oModel.addAnnotationUrl(mTest.annotations[0]).then(function() {
 				var oAnnotations = oModel.getServiceAnnotations();

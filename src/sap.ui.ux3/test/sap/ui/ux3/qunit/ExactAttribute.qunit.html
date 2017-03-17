@@ -67,18 +67,18 @@
 
 		QUnit.test("API - Aggregation 'attributes'", function(assert) {
 			var oAtt = new sap.ui.ux3.ExactAttribute();
-			equals(oAtt.getAttributes().length, 0, "Initial number of sub attributes");
+			assert.equal(oAtt.getAttributes().length, 0, "Initial number of sub attributes");
 			oAtt.addAttribute(new sap.ui.ux3.ExactAttribute("aggtest1"));
-			equals(oAtt.getAttributes().length, 1, "Number of sub attributes after add");
+			assert.equal(oAtt.getAttributes().length, 1, "Number of sub attributes after add");
 			oAtt.insertAttribute(new sap.ui.ux3.ExactAttribute("aggtest2"), 0);
-			equals(oAtt.getAttributes().length, 2, "Number of sub attributes after insert");
-			equals(oAtt.getAttributes()[0].getId(), "aggtest2", "First Attribute");
-			equals(oAtt.getAttributes()[1].getId(), "aggtest1", "Second Attribute");
+			assert.equal(oAtt.getAttributes().length, 2, "Number of sub attributes after insert");
+			assert.equal(oAtt.getAttributes()[0].getId(), "aggtest2", "First Attribute");
+			assert.equal(oAtt.getAttributes()[1].getId(), "aggtest1", "Second Attribute");
 			oAtt.removeAttribute(0);
-			equals(oAtt.getAttributes().length, 1, "Number of sub attributes after remove");
-			equals(oAtt.getAttributes()[0].getId(), "aggtest1", "First Attribute");
+			assert.equal(oAtt.getAttributes().length, 1, "Number of sub attributes after remove");
+			assert.equal(oAtt.getAttributes()[0].getId(), "aggtest1", "First Attribute");
 			oAtt.removeAllAttributes();
-			equals(oAtt.getAttributes().length, 0, "Number of sub attributes after removeAll");
+			assert.equal(oAtt.getAttributes().length, 0, "Number of sub attributes after removeAll");
 		});
 
 		QUnit.test("API - Function 'getShowSubAttributesIndicator_Computed'", function(assert) {
@@ -108,7 +108,7 @@
 			}
 
 			for(var i=0; i<aTestAttributes.length; i++){
-				equals(aTestAttributes[i].attr.getShowSubAttributesIndicator_Computed(), aTestAttributes[i].expected, aTestAttributes[i].text);
+				assert.equal(aTestAttributes[i].attr.getShowSubAttributesIndicator_Computed(), aTestAttributes[i].expected, aTestAttributes[i].text);
 			}
 		});
 
@@ -119,7 +119,7 @@
 				var oAttribute = oEvent.getParameter("attribute");
 				if(bSupplyFunctionCallExpected){
 					assert.ok(oAtt.getSupplyActive(), "supplyActive must be set to true");
-					equals(oAtt.getId(), oAttribute.getId(), "Parameter attribute of supply event is correct.");
+					assert.equal(oAtt.getId(), oAttribute.getId(), "Parameter attribute of supply event is correct.");
 				}else{
 					assert.ok(false, "Supply function must not be called");
 				}
@@ -179,8 +179,8 @@
 
 			var sExpectedType = "";
 			var fDefaultTestFunction = function(oTestChangeListener, sType, oAttribute){
-				equals(sType, sExpectedType, "Expected change type");
-				equals(oAttribute.getId(), oAtt.getId(), "Expected changed attribute");
+				assert.equal(sType, sExpectedType, "Expected change type");
+				assert.equal(oAttribute.getId(), oAtt.getId(), "Expected changed attribute");
 			};
 			fCurrentTestFunction = fDefaultTestFunction;
 			var fFailTestFunction = function(oTestChangeListener, sType, oAttribute){
@@ -222,8 +222,8 @@
 
 			var oRemovedAtt;
 			var fExitOnRemoveTestFunction = function(oTestChangeListener, sType, oAttribute){
-				equals(sType, "attributes", "Expected change type");
-				equals(oAttribute.getId(), oAtt.getId(), "Expected changed attribute");
+				assert.equal(sType, "attributes", "Expected change type");
+				assert.equal(oAttribute.getId(), oAtt.getId(), "Expected changed attribute");
 				sExpectedType = "attributes";
 				fCurrentTestFunction = fDefaultTestFunction;
 			};
@@ -244,8 +244,8 @@
 				sExpectedType = "attributes";
 				fCurrentTestFunction = function(oTestChangeListener, sType, oAttribute){
 					assert.ok(!oTestChangeListener._bActive, "Change listener is not active");
-					equals(sType, sExpectedType, "Expected change type");
-					equals(oAttribute.getId(), oAtt.getId(), "Expected changed attribute");
+					assert.equal(sType, sExpectedType, "Expected change type");
+					assert.equal(oAttribute.getId(), oAtt.getId(), "Expected changed attribute");
 				};
 				oAtt.addAttribute(new sap.ui.ux3.ExactAttribute("att1_4"));
 				assert.ok(!oAtt.getAttributes()[0].getChangeListener(), "Sub attribute uses no change listener");
@@ -257,8 +257,8 @@
 			assert.ok(1, "--- BUBBLING ---");
 			oSubAtt = oAtt.getAttributes()[0];
 			fCurrentTestFunction = function(oTestChangeListener, sType, oAttribute){
-				equals(sType, sExpectedType, "Expected change type");
-				equals(oAttribute.getId(), oSubAtt.getId(), "Expected changed attribute");
+				assert.equal(sType, sExpectedType, "Expected change type");
+				assert.equal(oAttribute.getId(), oSubAtt.getId(), "Expected changed attribute");
 			};
 			sExpectedType = "text";
 			assert.ok(!oSubAtt.getChangeListener(), "Sub attribute still uses no change listener");

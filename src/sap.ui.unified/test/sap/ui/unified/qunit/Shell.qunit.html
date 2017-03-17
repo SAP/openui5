@@ -53,7 +53,7 @@
 	});
 
 
-	function testMultiAggregation(sName, oCtrl){
+	function testMultiAggregation(sName, oCtrl, assert){
 		oCtrl.getMetadata()._enrichChildInfos();
 		var oAggMetaData = oCtrl.getMetadata().getAllAggregations()[sName];
 		var oType = jQuery.sap.getObject(oAggMetaData.type === "sap.ui.core.Control" ? "my.Test" : oAggMetaData.type);
@@ -81,11 +81,11 @@
 		assert.equal(_get().length, 1, "Number of "+sName+" controls after add");
 		_mutator(true, [new oType(sName+"_2"), 0]);
 		assert.equal(_get().length, 2, "Number of "+sName+" controls after insert");
-		equals(_get()[0].getId(), sName+"_2", "First "+sName+" control");
-		equals(_get()[1].getId(), sName+"_1", "Second "+sName+" control");
+		assert.equal(_get()[0].getId(), sName+"_2", "First "+sName+" control");
+		assert.equal(_get()[1].getId(), sName+"_1", "Second "+sName+" control");
 		oCtrl[oAggMetaData._sRemoveMutator](0);
 		assert.equal(_get().length, 1, "Number of "+sName+" controls after remove");
-		equals(_get()[0].getId(), sName+"_1", "First "+sName+" control");
+		assert.equal(_get()[0].getId(), sName+"_1", "First "+sName+" control");
 		_removeAll();
 		assert.equal(_get().length, 0, "Number of "+sName+" controls after removeAll");
 	};
@@ -119,27 +119,27 @@
 		});
 
 		QUnit.test("Aggregation 'content'", function(assert) {
-			testMultiAggregation("content", oShell2);
+			testMultiAggregation("content", oShell2, assert);
 		});
 
 		QUnit.test("Aggregation 'paneContent'", function(assert) {
-			testMultiAggregation("paneContent", oShell2);
+			testMultiAggregation("paneContent", oShell2, assert);
 		});
 
 		QUnit.test("Aggregation 'curtainContent'", function(assert) {
-			testMultiAggregation("curtainContent", oShell2);
+			testMultiAggregation("curtainContent", oShell2, assert);
 		});
 
 		QUnit.test("Aggregation 'curtainPaneContent'", function(assert) {
-			testMultiAggregation("curtainPaneContent", oShell2);
+			testMultiAggregation("curtainPaneContent", oShell2, assert);
 		});
 
 		QUnit.test("Aggregation 'headItems'", function(assert) {
-			testMultiAggregation("headItems", oShell2);
+			testMultiAggregation("headItems", oShell2, assert);
 		});
 
 		QUnit.test("Aggregation 'headEndItems'", function(assert) {
-			testMultiAggregation("headEndItems", oShell2);
+			testMultiAggregation("headEndItems", oShell2, assert);
 		});
 
 		QUnit.test("Aggregation 'search'", function(assert) {

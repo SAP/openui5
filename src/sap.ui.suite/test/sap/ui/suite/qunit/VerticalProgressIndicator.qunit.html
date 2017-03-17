@@ -117,10 +117,10 @@
 				BarHeight = jQuery(this.oBar).css("height");
 				BarTop    = jQuery(this.oBar).css("top");
 				BarWidth  = jQuery(this.oBar).css("width");
-				equals(oVPIndicator1.getPercentage(), percentage, "Default Percentage: ");
-				equals(BarHeight, determineHeight(percentage)+"px",  "Default height of inner <DIV>: ");
-				equals(BarWidth,  '31px', "Default width of inner <DIV>: ");
-				equals(BarTop,    determineTop(percentage)+"px", "Default top position of inner <DIV>: ");
+				assert.equal(oVPIndicator1.getPercentage(), percentage, "Default Percentage: ");
+				assert.equal(BarHeight, determineHeight(percentage)+"px",  "Default height of inner <DIV>: ");
+				assert.equal(BarWidth,  '31px', "Default width of inner <DIV>: ");
+				assert.equal(BarTop,    determineTop(percentage)+"px", "Default top position of inner <DIV>: ");
 			});
 
 
@@ -132,10 +132,10 @@
 				BarHeight = jQuery(this.oBar).css("height");
 				BarTop    = jQuery(this.oBar).css("top");
 				BarWidth  = jQuery(this.oBar).css("width");
-				equals(oVPIndicator2.getPercentage(), percentage, "Current Percentage: ");
-				equals(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
-				equals(BarWidth,  '31px', "Current width of inner <DIV>: ");
-				equals(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
+				assert.equal(oVPIndicator2.getPercentage(), percentage, "Current Percentage: ");
+				assert.equal(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
+				assert.equal(BarWidth,  '31px', "Current width of inner <DIV>: ");
+				assert.equal(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
 			});
 
 
@@ -147,10 +147,10 @@
 				BarHeight = jQuery(this.oBar).css("height");
 				BarTop    = jQuery(this.oBar).css("top");
 				BarWidth  = jQuery(this.oBar).css("width");
-				equals(oVPIndicator3.getPercentage(), percentage, "Current Percentage: ");
-				equals(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
-				equals(BarWidth,  '31px', "Current width of inner <DIV>: ");
-				equals(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
+				assert.equal(oVPIndicator3.getPercentage(), percentage, "Current Percentage: ");
+				assert.equal(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
+				assert.equal(BarWidth,  '31px', "Current width of inner <DIV>: ");
+				assert.equal(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
 			});
 
 
@@ -162,10 +162,10 @@
 				BarHeight = jQuery(this.oBar).css("height");
 				BarTop    = jQuery(this.oBar).css("top");
 				BarWidth  = jQuery(this.oBar).css("width");
-				equals(oVPIndicator4.getPercentage(), percentage, "Current Percentage: ");
-				equals(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
-				equals(BarWidth,  '31px', "Current width of inner <DIV>: ");
-				equals(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
+				assert.equal(oVPIndicator4.getPercentage(), percentage, "Current Percentage: ");
+				assert.equal(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
+				assert.equal(BarWidth,  '31px', "Current width of inner <DIV>: ");
+				assert.equal(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
 			});
 
 
@@ -177,10 +177,10 @@
 				BarHeight = jQuery(this.oBar).css("height");
 				BarTop    = jQuery(this.oBar).css("top");
 				BarWidth  = jQuery(this.oBar).css("width");
-				equals(oVPIndicator5.getPercentage(), percentage, "Current Percentage: ");
-				equals(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
-				equals(BarWidth,  '31px', "Current width of inner <DIV>: ");
-				equals(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
+				assert.equal(oVPIndicator5.getPercentage(), percentage, "Current Percentage: ");
+				assert.equal(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
+				assert.equal(BarWidth,  '31px', "Current width of inner <DIV>: ");
+				assert.equal(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
 			});
 
 
@@ -192,10 +192,10 @@
 				BarHeight = jQuery(this.oBar).css("height");
 				BarTop    = jQuery(this.oBar).css("top");
 				BarWidth  = jQuery(this.oBar).css("width");
-				equals(oVPIndicator6.getPercentage(), percentage, "Current Percentage: ");
-				equals(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
-				equals(BarWidth,  '31px', "Current width of inner <DIV>: ");
-				equals(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
+				assert.equal(oVPIndicator6.getPercentage(), percentage, "Current Percentage: ");
+				assert.equal(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
+				assert.equal(BarWidth,  '31px', "Current width of inner <DIV>: ");
+				assert.equal(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
 			});
 
 
@@ -212,7 +212,7 @@
 					oVPIndicator1.firePress();
 					fail("exception should have been thrown!");
 				} catch (e) {
-					equals(sPressMessage, e, "Press Event triggered");
+					assert.equal(sPressMessage, e, "Press Event triggered");
 				}
 				});
 
@@ -240,7 +240,7 @@
 			//Testcase 9: Manually set Tooltip
 			QUnit.test("Manual Tooltip [Control 4]: ", function(assert) {
 				assert.expect(1);
-				equals(sTooltip, oVPIndicator4.getTooltip(), "Manual Tooltip");
+				assert.equal(sTooltip, oVPIndicator4.getTooltip(), "Manual Tooltip");
 			});
 
 			//Testcase 10: Automatic Tooltip
@@ -251,7 +251,7 @@
 								}
 				AriaValue = this.oThis.attr('aria-valuenow');
 				Tooltip   = this.oThis.attr('title');
-				equals(AriaValue, Tooltip + "%", "Automatic Tooltip");
+				assert.equal(AriaValue, Tooltip + "%", "Automatic Tooltip");
 			});
 
 
@@ -271,9 +271,9 @@
 		      	ValueNow = this.oThis.attr('aria-valuenow');
 		      	ValueMax = this.oThis.attr('aria-valuemax');
 		      	ValueMin = this.oThis.attr('aria-valuemin');
-		      	equals(ValueNow, determineAria(percentage)+"%",   "Default ARIA-value: ");
-		      	equals(ValueMax, "100%",   "Maximum ARIA-value: ");
-		      	equals(ValueMin, "0%",     "Minimum ARIA-value: ");
+		      	assert.equal(ValueNow, determineAria(percentage)+"%",   "Default ARIA-value: ");
+		      	assert.equal(ValueMax, "100%",   "Maximum ARIA-value: ");
+		      	assert.equal(ValueMin, "0%",     "Minimum ARIA-value: ");
 			});
 
 			//Testcase 12: ARIA-Value for Percentage in Range (0-100)
@@ -285,9 +285,9 @@
 		      	ValueNow2   = this.oThis2.attr('aria-valuenow');
 		      	ValueNow3   = this.oThis3.attr('aria-valuenow');
 		      	ValueNow4   = this.oThis4.attr('aria-valuenow');
-		      	equals(ValueNow2, determineAria(30)+"%",   "ARIA-value for 30%: ");
-		      	equals(ValueNow3, determineAria(0)+"%",   "ARIA-value for 0%: ");
-		      	equals(ValueNow4, determineAria(100)+"%",   "ARIA-value for 100%: ");
+		      	assert.equal(ValueNow2, determineAria(30)+"%",   "ARIA-value for 30%: ");
+		      	assert.equal(ValueNow3, determineAria(0)+"%",   "ARIA-value for 0%: ");
+		      	assert.equal(ValueNow4, determineAria(100)+"%",   "ARIA-value for 100%: ");
 			});
 
 
@@ -298,8 +298,8 @@
 				this.oThis6 = jQuery.sap.byId(sCtrlId + "6");
 		      	ValueNow5   = this.oThis5.attr('aria-valuenow');
 		      	ValueNow6   = this.oThis6.attr('aria-valuenow');
-		      	equals(ValueNow5, determineAria(-30)+"%",   "ARIA-value for -30%: ");
-		      	equals(ValueNow6, determineAria(111)+"%",   "ARIA-value for 111%: ");
+		      	assert.equal(ValueNow5, determineAria(-30)+"%",   "ARIA-value for -30%: ");
+		      	assert.equal(ValueNow6, determineAria(111)+"%",   "ARIA-value for 111%: ");
 			});
 
 

@@ -88,7 +88,7 @@
 	QUnit.test("Visibility", function(assert) {
 		// Visible
 		assert.ok(jQuery("#textView1").get(0), "Visible, expected defined");
-		equals(jQuery("#textView1-__clone0").get(0), undefined, "Invisible");
+		assert.equal(jQuery("#textView1-__clone0").get(0), undefined, "Invisible");
 	});
 
 	QUnit.test("Placeholders", function(assert) {

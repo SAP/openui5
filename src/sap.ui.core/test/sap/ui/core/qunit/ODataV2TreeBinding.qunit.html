@@ -2198,7 +2198,7 @@
 				oBinding.detachDataReceived(handler1);
 
 				var oData = oEvent.getParameter("data");
-				equals(oData.results.length, 4, "Data is set as an event-parameter of dataReceive event (getRootContexts)");
+				assert.equal(oData.results.length, 4, "Data is set as an event-parameter of dataReceive event (getRootContexts)");
 
 				oBinding.attachDataReceived(handler2);
 
@@ -2210,7 +2210,7 @@
 				oBinding.detachDataReceived(handler2);
 
 				var oData = oEvent.getParameter("data");
-				equals(oData.results.length, 3, "Data is set as an event-parameter of dataReceive event (getNodeContexts)");
+				assert.equal(oData.results.length, 3, "Data is set as an event-parameter of dataReceive event (getNodeContexts)");
 
 				done();
 			}

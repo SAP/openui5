@@ -78,7 +78,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		equals(jQuery("#NotVisible").get(0), undefined, "ObjectIdentifier is not being rendered.");
+		assert.equal(jQuery("#NotVisible").get(0), undefined, "ObjectIdentifier is not being rendered.");
 
 		//Cleanup
 		sut.destroy();
@@ -565,7 +565,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), true, "Should have separator class");
+		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), true, "Should have separator class");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -582,7 +582,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), true, "Should have separator class");
+		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), true, "Should have separator class");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -600,7 +600,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have separator class");
+		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have separator class");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -618,7 +618,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have separator class");
+		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have separator class");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -645,7 +645,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have no separator class");
+		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have no separator class");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -658,7 +658,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have no separator class");
+		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have no separator class");
 
 		//Cleanup
 		oObjectIdentifier.destroy();

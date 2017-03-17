@@ -250,13 +250,13 @@ function runODataMessagesTests() {
 				iExpectedMessages += 2;
 
 				var aMessages = oMessageModel.getProperty("/");
-				equals(aMessages.length, iExpectedMessages, "There should be more error messages");
+				assert.equal(aMessages.length, iExpectedMessages, "There should be more error messages");
 
-				equals(aMessages[iExpectedMessages - 2].getMessage(), "Field \"SALESORDERID\" cannot be changed since it is read only", "Correct message text");
-				equals(aMessages[iExpectedMessages - 2].getType(), sap.ui.core.MessageType.Error, "Correct message severity");
+				assert.equal(aMessages[iExpectedMessages - 2].getMessage(), "Field \"SALESORDERID\" cannot be changed since it is read only", "Correct message text");
+				assert.equal(aMessages[iExpectedMessages - 2].getType(), sap.ui.core.MessageType.Error, "Correct message severity");
 
-				equals(aMessages[iExpectedMessages - 1].getMessage(), "Some other error", "Correct message text");
-				equals(aMessages[iExpectedMessages - 1].getType(), sap.ui.core.MessageType.Error, "Correct message severity");
+				assert.equal(aMessages[iExpectedMessages - 1].getMessage(), "Some other error", "Correct message text");
+				assert.equal(aMessages[iExpectedMessages - 1].getType(), sap.ui.core.MessageType.Error, "Correct message severity");
 
 				fnStart();
 			};
@@ -265,7 +265,7 @@ function runODataMessagesTests() {
 				iExpectedMessages += 6;
 
 				var aMessages = oMessageModel.getProperty("/");
-				equals(aMessages.length, iExpectedMessages, "There should be more error messages");
+				assert.equal(aMessages.length, iExpectedMessages, "There should be more error messages");
 
 				// Important: In this case the message order has been changed since errors come before warnings
 				var mAddesMessages = {
@@ -281,7 +281,7 @@ function runODataMessagesTests() {
 					var oM = aMessages[i]
 					var sIdentifier = [oM.getType(), oM.getCode(), oM.getTarget(), oM.getMessage()].join("|");
 
-					equals(mAddesMessages[sIdentifier], false, "Message is as expected");
+					assert.equal(mAddesMessages[sIdentifier], false, "Message is as expected");
 					mAddesMessages[sIdentifier] = true;
 				}
 
@@ -320,7 +320,7 @@ function runODataMessagesTests() {
 				},
 				error: function() {
 					var aMessages = oMessageModel.getProperty("/");
-					equals(aMessages.length, iExpectedMessages, "There should be no extra error messages for status 900");
+					assert.equal(aMessages.length, iExpectedMessages, "There should be no extra error messages for status 900");
 
 					fnStart();
 				}
@@ -364,7 +364,7 @@ function runODataMessagesTests() {
 				iExpectedMessages += 2;
 
 				var aMessages = oMessageModel.getProperty("/");
-				equals(aMessages.length, iExpectedMessages, "There should be more error messages");
+				assert.equal(aMessages.length, iExpectedMessages, "There should be more error messages");
 
 				// All messages should have longtext URLs
 				for (var i = aMessages.length - 2; i < aMessages.length; ++i) {
@@ -378,7 +378,7 @@ function runODataMessagesTests() {
 				iExpectedMessages += 6;
 
 				var aMessages = oMessageModel.getProperty("/");
-				equals(aMessages.length, iExpectedMessages, "There should be more error messages");
+				assert.equal(aMessages.length, iExpectedMessages, "There should be more error messages");
 
 				// No messages should have longtext URLs
 				for (var i = aMessages.length - 6; i < aMessages.length; ++i) {
@@ -415,7 +415,7 @@ function runODataMessagesTests() {
 				},
 				error: function() {
 					var aMessages = oMessageModel.getProperty("/");
-					equals(aMessages.length, iExpectedMessages, "There should be no extra error messages for status 900");
+					assert.equal(aMessages.length, iExpectedMessages, "There should be no extra error messages for status 900");
 
 					fnStart();
 				}
@@ -753,12 +753,12 @@ function runODataMessagesTests() {
 			oModel.attachBatchRequestSent(function() {
 				assert.ok(bUseBatch, "Only receive batchRequestSent event in batch mode");
 				var aMessages = oMessageModel.getProperty("/");
-				equals(aMessages.length, 0, "No messages when requests have been sent");
+				assert.equal(aMessages.length, 0, "No messages when requests have been sent");
 			});
 			oModel.attachBatchRequestCompleted(function(oEvent) {
 				assert.ok(bUseBatch, "Only receive batchRequestCompleted event in batch mode");
 				var aMessages = oMessageModel.getProperty("/");
-				equals(aMessages.length, 1 + iRequestsCompleted, "One Message for the EntitySet plus one for every item");
+				assert.equal(aMessages.length, 1 + iRequestsCompleted, "One Message for the EntitySet plus one for every item");
 
 				onCompleted();
 			});
@@ -767,7 +767,7 @@ function runODataMessagesTests() {
 			oModel.attachRequestCompleted(function(oEvent) {
 				++iRequestsCompleted;
 				var aMessages = oMessageModel.getProperty("/");
-				equals(aMessages.length, 1 + iRequestsCompleted, "One Message for the EntitySet plus one for every item");
+				assert.equal(aMessages.length, 1 + iRequestsCompleted, "One Message for the EntitySet plus one for every item");
 
 				if (!bUseBatch && iRequestsCompleted === 3) {
 					onCompleted();
@@ -815,12 +815,12 @@ function runODataMessagesTests() {
 			oModel.attachBatchRequestSent(function() {
 				assert.ok(bUseBatch, "Only receive batchRequestSent event in batch mode");
 				var aMessages = oMessageModel.getProperty("/");
-				equals(aMessages.length, 0, "No messages when requests have been sent");
+				assert.equal(aMessages.length, 0, "No messages when requests have been sent");
 			});
 			oModel.attachBatchRequestCompleted(function(oEvent) {
 				assert.ok(bUseBatch, "Only receive batchRequestCompleted event in batch mode");
 				var aMessages = oMessageModel.getProperty("/");
-				equals(aMessages.length, 1 + iRequestsCompleted, "One Message for the EntitySet plus one for every item");
+				assert.equal(aMessages.length, 1 + iRequestsCompleted, "One Message for the EntitySet plus one for every item");
 
 				onCompleted();
 			});
@@ -829,7 +829,7 @@ function runODataMessagesTests() {
 			oModel.attachRequestCompleted(function(oEvent) {
 				++iRequestsCompleted;
 				var aMessages = oMessageModel.getProperty("/");
-				equals(aMessages.length, 1 + iRequestsCompleted, "One Message for the EntitySet plus one for every item");
+				assert.equal(aMessages.length, 1 + iRequestsCompleted, "One Message for the EntitySet plus one for every item");
 
 				if (!bUseBatch && iRequestsCompleted === 3) {
 					onCompleted();

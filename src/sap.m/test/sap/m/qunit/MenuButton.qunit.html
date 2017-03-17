@@ -65,16 +65,16 @@
 			this.sut.destroy();
 			this.sut = null;
 			this.sut = new sap.m.MenuButton('menuButton1');
-			equals(this.sut.getVisible(), true, "Default 'visible':");
-			equals(this.sut.getTooltip(), null, "Default 'tooltip':");
-			equals(this.sut.getEnabled(), true, "Default 'enabled':");
-			equals(this.sut.getText(), "", "Default 'title':");
-			equals(this.sut.getMenu(), null, "Default 'menu':");
+			assert.equal(this.sut.getVisible(), true, "Default 'visible':");
+			assert.equal(this.sut.getTooltip(), null, "Default 'tooltip':");
+			assert.equal(this.sut.getEnabled(), true, "Default 'enabled':");
+			assert.equal(this.sut.getText(), "", "Default 'title':");
+			assert.equal(this.sut.getMenu(), null, "Default 'menu':");
 			assert.strictEqual(this.sut.getAggregation('_button').getMetadata().getName() === 'sap.m.Button', true, 'Normal sap m button.');
 		});
 		QUnit.test("Property - Custom Values", function(assert) {
-			equals(this.sut.getTooltip(), "This is a test tooltip", "Custom 'tooltip':");
-			equals(this.sut.getText(), "Menu Button", "Custom 'title':");
+			assert.equal(this.sut.getTooltip(), "This is a test tooltip", "Custom 'tooltip':");
+			assert.equal(this.sut.getText(), "Menu Button", "Custom 'title':");
 		});
 
 		QUnit.module("Accessibility (ARIA)", {

@@ -249,7 +249,7 @@
             var oItemFridge = this.sut._getMenu().getItems()[0];
 
             //Assert
-            equals(oItemFridge.getTooltip(), "it's cold in here", "item has a tooltip");
+            assert.equal(oItemFridge.getTooltip(), "it's cold in here", "item has a tooltip");
         });
 
         QUnit.test("visible", function(assert) {
@@ -259,7 +259,7 @@
             var oItemFridge = this.sut._getMenu().getItems()[0];
 
             //Assert
-            equals(oItemFridge.getVisible(), false, "menu item is not visible");
+            assert.equal(oItemFridge.getVisible(), false, "menu item is not visible");
         });
 
         QUnit.test("enabled", function(assert) {
@@ -269,7 +269,7 @@
             var oItemFridge = this.sut._getMenu().getItems()[0];
 
             //Assert
-            equals(oItemFridge.getEnabled(), false, "menu item is not enabled");
+            assert.equal(oItemFridge.getEnabled(), false, "menu item is not enabled");
         });
 
         QUnit.test('Opening/closing/reopening', function (assert) {
@@ -376,13 +376,13 @@
             this.sut.addAggregation("items", oItem);
 
             //Assert
-            equals(this.getPages().length, 3, "The menu still has 3 pages.");
+            assert.equal(this.getPages().length, 3, "The menu still has 3 pages.");
 
             sutListItem = this.getListItemAtIndex(2);
 
             //Assert
             assert.ok(!!sutListItem, "There is a new ui item at the right place");
-            equals(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
+            assert.equal(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
         });
 
         QUnit.test("MenuItem's addItem adds list item to the correct list", function(assert) {
@@ -393,14 +393,14 @@
             this.sut.getItems()[0].addAggregation("items", oItem);
 
             //Assert
-            equals(this.getPages().length, 3, "The menu still has 3 pages.");
+            assert.equal(this.getPages().length, 3, "The menu still has 3 pages.");
 
             this.pressListItemAtIndex(0); //page title: item 1
             sutListItem = this.getListItemAtIndex(2);
 
             //Assert
             assert.ok(!!sutListItem, "There is a new ui item at the right place");
-            equals(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
+            assert.equal(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
         });
 
         QUnit.test("MenuItem with no items: addItem to it adds a new page", function(assert) {
@@ -408,30 +408,30 @@
                 oAddedPage,
                 sutListItem;
 
-            equals(this.getPages().length, 0, "The menu has no pages");
+            assert.equal(this.getPages().length, 0, "The menu has no pages");
 
             this.openMenu();
             oItem = this.newMenuItem();
             this.sut.getItems()[1].addAggregation("items", oItem);
 
             //Assert
-            equals(this.getPages().length, 4, "The menu has a new page");
+            assert.equal(this.getPages().length, 4, "The menu has a new page");
 
             oAddedPage = this.getLastPage();
 
             //Assert
-            equals(oAddedPage.getTitle(), this.sut.getItems()[1].getText(), "Title of the new page is alright");
+            assert.equal(oAddedPage.getTitle(), this.sut.getItems()[1].getText(), "Title of the new page is alright");
 
             this.pressListItemAtIndex(1); //page title: item 2
 
             //Assert
-            equals(this.getCurrentPage().getId(), oAddedPage.getId(), "The press event on the parent item leads to the new page");
+            assert.equal(this.getCurrentPage().getId(), oAddedPage.getId(), "The press event on the parent item leads to the new page");
 
             sutListItem = this.getListItemAtIndex(0);
 
             //Assert
             assert.ok(!!sutListItem, "There is a new ui item at the right place");
-            equals(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
+            assert.equal(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
         });
 
         QUnit.test("Menu with no items: addItem to it adds an item to the empty page", function(assert) {
@@ -453,9 +453,9 @@
             oSutListItem = sut._getNavContainer().getCurrentPage().getContent()[0].getItems()[0];
 
             //Assert
-            equals(aPages.length, 1, "The menu has 1 page");
+            assert.equal(aPages.length, 1, "The menu has 1 page");
             assert.ok(!!oSutListItem, "There is a new ui item at the right place");
-            equals(oSutListItem.getTitle(), oItem.getText(), "UI item has the right text");
+            assert.equal(oSutListItem.getTitle(), oItem.getText(), "UI item has the right text");
 
             sut.destroy();
             sut = null;

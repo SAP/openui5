@@ -11,7 +11,7 @@ function deepContains(oValue, oExpected, sMessage) {
 	for (var sKey in oExpected) {
 
 		if (Array.isArray(oExpected[sKey]) === Array.isArray(oValue[sKey])) {
-			equals(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
+			assert.equal(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
 		} else {
 			assert.ok(false, sMessage + "/" + sKey + " - one is an array, the other is not");
 		}
@@ -445,13 +445,13 @@ function runODataAnnotationsV2Tests() {
 			bSomeLoadedFired = true;
 			var aResults = oEvent.getParameter("result");
 			assert.ok(Array.isArray(aResults), "Result parameter contained an array of results");
-			equals(aResults.length, iAnnotations, "The correct number of Annotations was loaded");
+			assert.equal(aResults.length, iAnnotations, "The correct number of Annotations was loaded");
 
 			var iErrorsInResults = fnCountErrors(aResults);
 			assert.ok(iErrorsInResults < iAnnotations, "The failed event parameter \"result\" should NOT contain ONLY Error objects");
 
-			equals(iErrorsInResults, iErrors, "The number of Errors in the Results is the same as the number of error-events that occurred")
-			equals(aResults.length - iErrorsInResults, iSuccesses, "The number of successfully parsed entries in the Results is the same as the number of success-events that occurred")
+			assert.equal(iErrorsInResults, iErrors, "The number of Errors in the Results is the same as the number of error-events that occurred")
+			assert.equal(aResults.length - iErrorsInResults, iSuccesses, "The number of successfully parsed entries in the Results is the same as the number of success-events that occurred")
 		});
 
 		var bAllFailedFired = false;
@@ -462,13 +462,13 @@ function runODataAnnotationsV2Tests() {
 			var aErrors = oEvent.getParameter("result");
 
 			assert.ok(Array.isArray(aErrors), "Result parameter contained an array of errors");
-			equals(aErrors.length, iAnnotations, "The correct number of Annotations failed");
+			assert.equal(aErrors.length, iAnnotations, "The correct number of Annotations failed");
 
 			var iErrorsInResults = fnCountErrors(aErrors);
-			equals(iErrorsInResults, iAnnotations, "The failed event parameter \"result\" should contain only Error objects");
+			assert.equal(iErrorsInResults, iAnnotations, "The failed event parameter \"result\" should contain only Error objects");
 
-			equals(iErrorsInResults, iErrors, "The number of Errors in the Results is the same as the number of error-events that occurred")
-			equals(iSuccesses, 0, "No success events should have been fired")
+			assert.equal(iErrorsInResults, iErrors, "The number of Errors in the Results is the same as the number of error-events that occurred")
+			assert.equal(iSuccesses, 0, "No success events should have been fired")
 		});
 
 
@@ -479,12 +479,12 @@ function runODataAnnotationsV2Tests() {
 		};
 
 		pLoaded.then(function() {
-			equals(bSomeLoadedFired, true, "Loaded event should have been fired");
-			equals(bAllFailedFired, false, "Failed event should NOT have been fired");
+			assert.equal(bSomeLoadedFired, true, "Loaded event should have been fired");
+			assert.equal(bAllFailedFired, false, "Failed event should NOT have been fired");
 			fnEndTest();
 		}).catch(function() {
-			equals(bSomeLoadedFired, false, "Loaded event should NOT have been fired");
-			equals(bAllFailedFired, true, "Failed event should have been fired");
+			assert.equal(bSomeLoadedFired, false, "Loaded event should NOT have been fired");
+			assert.equal(bAllFailedFired, true, "Failed event should have been fired");
 			fnEndTest();
 		});
 	};
@@ -551,13 +551,13 @@ function runODataAnnotationsV2Tests() {
 			bLoadedFired = true;
 			var aResults = oEvent.getParameter("result");
 			assert.ok(Array.isArray(aResults), "Result parameter contained an array of results");
-			equals(aResults.length, iAnnotations, "The correct number of Annotations was loaded");
+			assert.equal(aResults.length, iAnnotations, "The correct number of Annotations was loaded");
 
 			var iErrorsInResults = fnCountErrors(aResults);
-			equals(iErrorsInResults, 0, "The failed event parameter \"result\" should NOT contain ANY Error objects");
+			assert.equal(iErrorsInResults, 0, "The failed event parameter \"result\" should NOT contain ANY Error objects");
 
-			equals(iErrorsInResults, iErrors, "The number of Errors in the Results is the same as the number of error-events that occurred")
-			equals(aResults.length, iSuccesses, "The number of successfully parsed entries in the Results is the same as the number of success-events that occurred")
+			assert.equal(iErrorsInResults, iErrors, "The number of Errors in the Results is the same as the number of error-events that occurred")
+			assert.equal(aResults.length, iSuccesses, "The number of successfully parsed entries in the Results is the same as the number of success-events that occurred")
 		});
 
 		var bFailedFired = false;
@@ -568,13 +568,13 @@ function runODataAnnotationsV2Tests() {
 			var aResults = oEvent.getParameter("result");
 
 			assert.ok(Array.isArray(aResults), "Result parameter contained an array of errors");
-			equals(aResults.length, iAnnotations, "The correct number of Annotations failed");
+			assert.equal(aResults.length, iAnnotations, "The correct number of Annotations failed");
 
 			var iErrorsInResults = fnCountErrors(aResults);
 			assert.ok(iErrorsInResults > 0, "The failed event parameter \"result\" should contain at least one Error object");
 
-			equals(iErrorsInResults, iErrors, "The number of Errors in the Results is the same as the number of error-events that occurred")
-			equals(iSuccesses, aResults.length - iErrorsInResults, "No success events should have been fired")
+			assert.equal(iErrorsInResults, iErrors, "The number of Errors in the Results is the same as the number of error-events that occurred")
+			assert.equal(iSuccesses, aResults.length - iErrorsInResults, "No success events should have been fired")
 		});
 
 
@@ -720,7 +720,7 @@ function runODataAnnotationsV2Tests() {
 		// Instantiate without options argument - use defaults
 		var oAnnotationsFromMetadata = new sap.ui.model.odata.v2.ODataAnnotations(oModel.oMetadata);
 
-		equals(oAnnotationsFromMetadata.getAnnotationsData(), oAnnotationsFromMetadata.getData(), "Check deprecated API");
+		assert.equal(oAnnotationsFromMetadata.getAnnotationsData(), oAnnotationsFromMetadata.getData(), "Check deprecated API");
 
 		var oAnnotations = new sap.ui.model.odata.v2.ODataAnnotations(oModel.oMetadata, { skipMetadata: true });
 
@@ -862,10 +862,10 @@ function runODataAnnotationsV2Tests() {
 		oModel.annotationsLoaded().then(function(aAnnotations) {
 			var iLastModified = new Date("Wed, 15 Nov 1995 04:58:08 GMT").getTime();
 
-			equals(Date.parse(aAnnotations[0].lastModified), iLastModified, "LastModified header exists for first annotation document");
-			equals(Date.parse(aAnnotations[1].lastModified), iLastModified, "LastModified header exists for second annotation document");
-			equals(Date.parse(aAnnotations[2].lastModified), iLastModified, "LastModified header exists for third annotation document");
-			equals(Date.parse(aAnnotations[3].lastModified), iLastModified, "LastModified header exists for fourth annotation document");
+			assert.equal(Date.parse(aAnnotations[0].lastModified), iLastModified, "LastModified header exists for first annotation document");
+			assert.equal(Date.parse(aAnnotations[1].lastModified), iLastModified, "LastModified header exists for second annotation document");
+			assert.equal(Date.parse(aAnnotations[2].lastModified), iLastModified, "LastModified header exists for third annotation document");
+			assert.equal(Date.parse(aAnnotations[3].lastModified), iLastModified, "LastModified header exists for fourth annotation document");
 
 			done();
 		});

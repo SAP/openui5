@@ -38,16 +38,16 @@
 			sap.ui.getCore().applyChanges();
 		}
 
-		function checkSuggestion(oAuto, aTexts){
-			checkPopup(oAuto, true);
+		function checkSuggestion(oAuto, aTexts, assert){
+			checkPopup(oAuto, true, assert);
 			var aItems = oAuto._getListBox().getItems();
-			equals(aItems.length, aTexts.length, "Number of visible items correct");
+			assert.equal(aItems.length, aTexts.length, "Number of visible items correct");
 			for(var i=0; i<aItems.length; i++){
 				assert.ok(jQuery.inArray(aItems[i].getText(), aTexts) >= 0, "Item '"+aItems[i].getText()+"' contained in suggestion list");
 			}
 		}
 
-		function checkPopup(oAuto, bExpectOpen){
+		function checkPopup(oAuto, bExpectOpen, assert){
 			if(bExpectOpen){
 				assert.ok(oAuto.oPopup && oAuto.oPopup.isOpen(), "Popup is open");
 			}else{
@@ -55,7 +55,7 @@
 			}
 		}
 
-		function checkStaticSuggestion(oAuto, sChar, aTexts, fCleanup, iCheckTimer){
+		function checkStaticSuggestion(oAuto, sChar, aTexts, fCleanup, iCheckTimer, assert, done){
 			oAuto.focus();
 
 			setTimeout(function(){
@@ -63,13 +63,13 @@
 				sap.ui.test.qunit.triggerEvent("input", oAuto.getFocusDomRef());
 				sap.ui.test.qunit.triggerKeyup(oAuto.getFocusDomRef(), sChar);
 				setTimeout(function(){
-					checkSuggestion(oAuto, aTexts);
+					checkSuggestion(oAuto, aTexts, assert);
 					if(fCleanup){
 						fCleanup(oAuto);
 					}else{
 						clear(oAuto);
 					}
-					QUnit.start();
+					done();
 				}, iCheckTimer || 200);
 			}, 10);
 		}
@@ -90,7 +90,7 @@
 		});
 
 		QUnit.test("Property Defaults", function(assert) {
-			equals(this.oAuto0.getEnableScrolling(), true, "Default 'enableScrolling'");
+			assert.equal(this.oAuto0.getEnableScrolling(), true, "Default 'enableScrolling'");
 			assert.ok(this.oAuto0._filter === sap.ui.commons.AutoComplete._DEFAULTFILTER, "Default filter set");
 		});
 
@@ -101,7 +101,7 @@
 
 			this.oAuto0.setFilterFunction(foo);
 
-			equals(this.oAuto0.getEnableScrolling(), false, "Custom 'enableScrolling'");
+			assert.equal(this.oAuto0.getEnableScrolling(), false, "Custom 'enableScrolling'");
 			assert.ok(this.oAuto0._filter === foo, "Custom filter set");
 		});
 
@@ -146,7 +146,7 @@
 			var done = assert.async();
 			this.oAuto1.onfocusin();
 
-			checkStaticSuggestion(this.oAuto1, "a", ["A0", "A1", "A2", "A3"]);
+			checkStaticSuggestion(this.oAuto1, "a", ["A0", "A1", "A2", "A3"], undefined, undefined, assert, done);
 
 		});
 
@@ -155,7 +155,7 @@
 			this.oAuto1.setEnableScrolling(false);
 			this.oAuto1.onfocusin();
 
-			checkStaticSuggestion(this.oAuto1, "a", ["A0", "A1", "A2"]);
+			checkStaticSuggestion(this.oAuto1, "a", ["A0", "A1", "A2"], undefined, undefined, assert, done);
 		});
 
 		QUnit.test("Custom Filter", function(assert) {
@@ -166,7 +166,7 @@
 				return jQuery.sap.endsWithIgnoreCase(oItem.getText(), sValue);
 			});
 
-			checkStaticSuggestion(this.oAuto1, "0", ["A0", "B0", "C0"]);
+			checkStaticSuggestion(this.oAuto1, "0", ["A0", "B0", "C0"], undefined, undefined, assert, done);
 		});
 
 		QUnit.test("Change Items (No Focus)", function(assert) {
@@ -178,10 +178,10 @@
 			var that = this;
 
 			setTimeout(function(){
-				checkPopup(that.oAuto1, false);
+				checkPopup(that.oAuto1, false, assert);
 				that.oAuto1.addItem(new sap.ui.core.ListItem({text: "C4"}));
 				setTimeout(function(){
-					checkPopup(that.oAuto1, false);
+					checkPopup(that.oAuto1, false, assert);
 					done();
 				}, 200);
 			}, 10);
@@ -196,11 +196,11 @@
 			var that = this;
 
 			setTimeout(function(){
-				checkPopup(that.oAuto1, false);
+				checkPopup(that.oAuto1, false, assert);
 				that.oAuto1.addItem(new sap.ui.core.ListItem({text: "A4"}));
 				that.oAuto1.removeItem(that.oAuto1.getItems()[0]);
 				setTimeout(function(){
-					checkSuggestion(that.oAuto1, ["A1", "A2", "A3", "A4"]);
+					checkSuggestion(that.oAuto1, ["A1", "A2", "A3", "A4"], assert);
 					done();
 				}, 200);
 			}, 10);
@@ -222,12 +222,12 @@
 			}
 		});
 
-		function dynamicItemSuggestionTest(oAuto2, fHandler, iDelay){
+		function dynamicItemSuggestionTest(oAuto2, fHandler, iDelay, assert, done){
 			oAuto2.attachSuggest(fHandler);
 			checkStaticSuggestion(oAuto2, "a", ["A0", "A1", "A2", "A3"], function(oAuto){
 				clear(oAuto, true);
 				oAuto.detachSuggest(fHandler);
-			}, iDelay);
+			}, iDelay, assert, done);
 		};
 
 		QUnit.test("Dynamic Items (sync)", function(assert) {
@@ -240,7 +240,7 @@
 				for(var j=0; j<4; j++){
 					that.oAuto2.addItem(new sap.ui.core.ListItem({text: "A"+j}));
 				}
-			}, 200);
+			}, 200, assert, done);
 		});
 
 		QUnit.test("Dynamic Items (async)", function(assert) {
@@ -255,7 +255,7 @@
 						that.oAuto2.addItem(new sap.ui.core.ListItem({text: "A"+j}));
 					}
 				}, 200);
-			}, 500);
+			}, 500, assert, done);
 		});
 
 		QUnit.module("Closing Popup", {
@@ -289,15 +289,15 @@
 			oAuto1.onfocusin();
 
 			setTimeout(function(){
-				checkPopup(oAuto1, false);
+				checkPopup(oAuto1, false, assert);
 				sap.ui.test.qunit.triggerCharacterInput(oAuto1.getFocusDomRef(), "a");
 				sap.ui.test.qunit.triggerEvent("input", oAuto1.getFocusDomRef());
 				sap.ui.test.qunit.triggerKeyup(oAuto1.getFocusDomRef(), "a");
 				setTimeout(function(){
-					checkPopup(oAuto1, true);
+					checkPopup(oAuto1, true, assert);
 
 					oAuto1.oPopup.attachClosed(function(){
-						checkPopup(oAuto1, false);
+						checkPopup(oAuto1, false, assert);
 						QUnit.start();
 					});
 
@@ -374,7 +374,7 @@
 				assert.ok(!sPos, "No aria-posinset attribute set "+sAdditionalText);
 			}else{
 				if(sPos){
-					equals(parseInt(sPos, 10), iExpPos, "aria-posinset attribute set "+sAdditionalText);
+					assert.equal(parseInt(sPos, 10), iExpPos, "aria-posinset attribute set "+sAdditionalText);
 				}else{
 					assert.ok(false, "aria-posinset attribute set "+sAdditionalText);
 				}
@@ -384,7 +384,7 @@
 				assert.ok(!sSize, "No aria-setsize attribute set "+sAdditionalText);
 			}else{
 				if(sSize){
-					equals(parseInt(sSize, 10), iExpSize, "aria-setsize attribute set "+sAdditionalText);
+					assert.equal(parseInt(sSize, 10), iExpSize, "aria-setsize attribute set "+sAdditionalText);
 				}else{
 					assert.ok(false, "aria-setsize attribute set "+sAdditionalText);
 				}
@@ -396,10 +396,10 @@
 				assert.ok(!$Ref.attr("aria-describedby"), "aria-describedby attribute not set "+sAdditionalText);
 			}
 
-			equals($Ref.attr("aria-live"), "polite", "aria-live attribute set "+sAdditionalText);
-			equals($Ref.attr("aria-relevant"), "all", "aria-relevant attribute set "+sAdditionalText);
-			equals($Ref.attr("aria-autocomplete"), "list", "aria-autocomplete attribute set "+sAdditionalText);
-			equals(jQuery(oAuto1.getDomRef()).attr("role"), "textbox", "role attribute set "+sAdditionalText);
+			assert.equal($Ref.attr("aria-live"), "polite", "aria-live attribute set "+sAdditionalText);
+			assert.equal($Ref.attr("aria-relevant"), "all", "aria-relevant attribute set "+sAdditionalText);
+			assert.equal($Ref.attr("aria-autocomplete"), "list", "aria-autocomplete attribute set "+sAdditionalText);
+			assert.equal(jQuery(oAuto1.getDomRef()).attr("role"), "textbox", "role attribute set "+sAdditionalText);
 		}
 
 		QUnit.test("Attributes", function(assert) {

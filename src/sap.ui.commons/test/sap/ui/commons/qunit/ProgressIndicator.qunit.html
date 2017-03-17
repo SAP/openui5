@@ -58,13 +58,13 @@
 	QUnit.test("Default Values", function(assert) {
 		var oProgInd = oProgInds["oProgInd1"];
 
-		equals(oProgInd.getVisible(), true, "Default 'visible':");
-		equals(oProgInd.getEnabled(), true, "Default 'enabled':");
-		equals(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
-		equals(oProgInd.getDisplayValue(), "0%", "Default 'display value':");
-		equals(oProgInd.getPercentValue(), 0, "Default 'percent value':");
-		equals(oProgInd.getShowValue(), true, "Default 'show value':");
-		equals(oProgInd.getWidth(), "100%", "Default 'width':");
+		assert.equal(oProgInd.getVisible(), true, "Default 'visible':");
+		assert.equal(oProgInd.getEnabled(), true, "Default 'enabled':");
+		assert.equal(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
+		assert.equal(oProgInd.getDisplayValue(), "0%", "Default 'display value':");
+		assert.equal(oProgInd.getPercentValue(), 0, "Default 'percent value':");
+		assert.equal(oProgInd.getShowValue(), true, "Default 'show value':");
+		assert.equal(oProgInd.getWidth(), "100%", "Default 'width':");
 
 		oProgInd.destroy();
 	 });
@@ -72,13 +72,13 @@
 	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd2"];
 
-		equals(oProgInd.getVisible(), true, "Default 'visible':");
-		equals(oProgInd.getEnabled(), true, "Default 'enabled':");
-		equals(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
-		equals(oProgInd.getDisplayValue(), "30%", "Custom 'display value':");
-		equals(oProgInd.getPercentValue(), 30, "Custom 'percent value':");
-		equals(oProgInd.getShowValue(), true, "Default 'show value':");
-		equals(oProgInd.getWidth(), "300px", "Custom 'width:");
+		assert.equal(oProgInd.getVisible(), true, "Default 'visible':");
+		assert.equal(oProgInd.getEnabled(), true, "Default 'enabled':");
+		assert.equal(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
+		assert.equal(oProgInd.getDisplayValue(), "30%", "Custom 'display value':");
+		assert.equal(oProgInd.getPercentValue(), 30, "Custom 'percent value':");
+		assert.equal(oProgInd.getShowValue(), true, "Default 'show value':");
+		assert.equal(oProgInd.getWidth(), "300px", "Custom 'width:");
 
 		oProgInd.destroy();
 	});
@@ -86,13 +86,13 @@
 	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd3"];
 
-		equals(oProgInd.getVisible(), true, "Custom 'visible':");
-		equals(oProgInd.getEnabled(), true, "Custom 'enabled':");
-		equals(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
-		equals(oProgInd.getDisplayValue(), "110%", "Custom 'display value':");
-		equals(oProgInd.getPercentValue(), 110, "Custom 'percent value':");
-		equals(oProgInd.getShowValue(), true, "Custom 'show value':");
-		equals(oProgInd.getWidth(), "300px", "Custom 'width:");
+		assert.equal(oProgInd.getVisible(), true, "Custom 'visible':");
+		assert.equal(oProgInd.getEnabled(), true, "Custom 'enabled':");
+		assert.equal(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
+		assert.equal(oProgInd.getDisplayValue(), "110%", "Custom 'display value':");
+		assert.equal(oProgInd.getPercentValue(), 110, "Custom 'percent value':");
+		assert.equal(oProgInd.getShowValue(), true, "Custom 'show value':");
+		assert.equal(oProgInd.getWidth(), "300px", "Custom 'width:");
 
 		oProgInd.destroy();
 	});
@@ -100,13 +100,13 @@
 	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd4"];
 
-		equals(oProgInd.getVisible(), true, "Custom 'visible':");
-		equals(oProgInd.getEnabled(), true, "Custom 'enabled':");
-		equals(oProgInd.getBarColor(), "POSITIVE", "Custom 'bar color':");
-		equals(oProgInd.getDisplayValue(), "50%", "Custom 'display value':");
-		equals(oProgInd.getPercentValue(), 50, "Custom 'percent value':");
-		equals(oProgInd.getShowValue(), true, "Custom 'show value':");
-		equals(oProgInd.getWidth(), "300px", "Custom 'width:");
+		assert.equal(oProgInd.getVisible(), true, "Custom 'visible':");
+		assert.equal(oProgInd.getEnabled(), true, "Custom 'enabled':");
+		assert.equal(oProgInd.getBarColor(), "POSITIVE", "Custom 'bar color':");
+		assert.equal(oProgInd.getDisplayValue(), "50%", "Custom 'display value':");
+		assert.equal(oProgInd.getPercentValue(), 50, "Custom 'percent value':");
+		assert.equal(oProgInd.getShowValue(), true, "Custom 'show value':");
+		assert.equal(oProgInd.getWidth(), "300px", "Custom 'width:");
 
 		oProgInd.destroy();
 	});
@@ -114,13 +114,13 @@
 	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd5"];
 
-		equals(oProgInd.getVisible(), true, "Custom 'visible':");
-		equals(oProgInd.getEnabled(), true, "Custom 'enabled':");
-		equals(oProgInd.getBarColor(), "NEGATIVE", "Custom 'bar color':");
-		equals(oProgInd.getDisplayValue(), "50%", "Custom 'display value':");
-		equals(oProgInd.getPercentValue(), 50, "Custom 'percent value':");
-		equals(oProgInd.getShowValue(), true, "Custom 'show value':");
-		equals(oProgInd.getWidth(), "300px", "Custom 'width:");
+		assert.equal(oProgInd.getVisible(), true, "Custom 'visible':");
+		assert.equal(oProgInd.getEnabled(), true, "Custom 'enabled':");
+		assert.equal(oProgInd.getBarColor(), "NEGATIVE", "Custom 'bar color':");
+		assert.equal(oProgInd.getDisplayValue(), "50%", "Custom 'display value':");
+		assert.equal(oProgInd.getPercentValue(), 50, "Custom 'percent value':");
+		assert.equal(oProgInd.getShowValue(), true, "Custom 'show value':");
+		assert.equal(oProgInd.getWidth(), "300px", "Custom 'width:");
 
 		oProgInd.destroy();
 	});
@@ -128,13 +128,13 @@
 	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd6"];
 
-		equals(oProgInd.getVisible(), true, "Custom 'visible':");
-		equals(oProgInd.getEnabled(), true, "Custom 'enabled':");
-		equals(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
-		equals(oProgInd.getDisplayValue(), "50%", "Custom 'display value':");
-		equals(oProgInd.getPercentValue(), 50, "Custom 'percent value':");
-		equals(oProgInd.getShowValue(), true, "Custom 'show value':");
-		equals(oProgInd.getWidth(), "100%", "Custom 'width:");
+		assert.equal(oProgInd.getVisible(), true, "Custom 'visible':");
+		assert.equal(oProgInd.getEnabled(), true, "Custom 'enabled':");
+		assert.equal(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
+		assert.equal(oProgInd.getDisplayValue(), "50%", "Custom 'display value':");
+		assert.equal(oProgInd.getPercentValue(), 50, "Custom 'percent value':");
+		assert.equal(oProgInd.getShowValue(), true, "Custom 'show value':");
+		assert.equal(oProgInd.getWidth(), "100%", "Custom 'width:");
 
 		oProgInd.destroy();
 	});
@@ -142,13 +142,13 @@
 	QUnit.test("Properties", function(assert) {
 		var oProgInd = oProgInds["oProgInd7"];
 
-		equals(oProgInd.getVisible(), true, "Custom 'visible':");
-		equals(oProgInd.getEnabled(), true, "Custom 'enabled':");
-		equals(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
-		equals(oProgInd.getDisplayValue(), "200%", "Custom 'display value':");
-		equals(oProgInd.getPercentValue(), 200, "Custom 'percent value':");
-		equals(oProgInd.getShowValue(), false, "Custom 'show value':");
-		equals(oProgInd.getWidth(), "10%", "Custom 'width:");
+		assert.equal(oProgInd.getVisible(), true, "Custom 'visible':");
+		assert.equal(oProgInd.getEnabled(), true, "Custom 'enabled':");
+		assert.equal(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
+		assert.equal(oProgInd.getDisplayValue(), "200%", "Custom 'display value':");
+		assert.equal(oProgInd.getPercentValue(), 200, "Custom 'percent value':");
+		assert.equal(oProgInd.getShowValue(), false, "Custom 'show value':");
+		assert.equal(oProgInd.getWidth(), "10%", "Custom 'width:");
 
 		oProgInd.destroy();
 	});

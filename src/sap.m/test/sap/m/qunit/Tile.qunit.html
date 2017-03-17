@@ -31,8 +31,8 @@
 			sut.setPos(1.8,2.4);
 
 			// Assert
-			equals(sut._posX,1)
-			equals(sut._posY,2)
+			assert.equal(sut._posX,1)
+			assert.equal(sut._posY,2)
 		});
 
 		QUnit.test("ShouldSetStyledForPosition", function(assert) {
@@ -97,7 +97,7 @@
 			sut.isEditable(false);
 
 			// Assert
-			equals(sut._bIsEditable,false)
+			assert.equal(sut._bIsEditable,false)
 		});
 
 

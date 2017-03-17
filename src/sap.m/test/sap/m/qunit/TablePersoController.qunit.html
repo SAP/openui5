@@ -207,7 +207,7 @@
 		try {
 			sap.ui.getCore().byId(oDialog.getLeftButton()).firePress();
 		} catch (e) {
-			equals(e, sPersoDoneMsg, "'PersonalizationDone' event triggered the correct function");
+			assert.equal(e, sPersoDoneMsg, "'PersonalizationDone' event triggered the correct function");
 			oTPC.detachPersonalizationsDone(fnPersoDone);
 			bPersonalizationDoneTriggered = true;
 		} finally {

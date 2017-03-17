@@ -163,17 +163,17 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 
 		var oComp = oTxt.getBinding("value");
 		assert.ok(oComp);
-		equals(oComp.getType(), null, "Type should be null");
-		equals(oComp.getPath(), null, "Path should be null");
-		equals(oComp.getModel(), null, "Model should be null");
-		equals(oComp.getContext(), null, "Context should be null");
-		equals(oComp.getBindings().length, 4, "Bindings check");
-		equals(oComp.getBindings()[0].getValue(), "Frank", "Bindings value check");
-		equals(oComp.getBindings()[1].getValue(), "Wallace", "Bindings value check");
-		equals(oComp.getBindings()[2].getValue(), "Ander", "Bindings value check");
-		equals(oComp.getBindings()[3].getValue(), 5.322, "Bindings value check");
+		assert.equal(oComp.getType(), null, "Type should be null");
+		assert.equal(oComp.getPath(), null, "Path should be null");
+		assert.equal(oComp.getModel(), null, "Model should be null");
+		assert.equal(oComp.getContext(), null, "Context should be null");
+		assert.equal(oComp.getBindings().length, 4, "Bindings check");
+		assert.equal(oComp.getBindings()[0].getValue(), "Frank", "Bindings value check");
+		assert.equal(oComp.getBindings()[1].getValue(), "Wallace", "Bindings value check");
+		assert.equal(oComp.getBindings()[2].getValue(), "Ander", "Bindings value check");
+		assert.equal(oComp.getBindings()[3].getValue(), 5.322, "Bindings value check");
 
-		equals(oComp.getBindings()[3].getExternalValue(), "5.322", "Bindings value check");
+		assert.equal(oComp.getBindings()[3].getExternalValue(), "5.322", "Bindings value check");
 	});
 
 	QUnit.test("Calculated fields model tests wrong path", function(assert) {

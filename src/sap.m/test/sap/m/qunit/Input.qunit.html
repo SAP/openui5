@@ -107,52 +107,52 @@
 	// test property accessor methods
 	QUnit.test("Value", function(assert) {
 		i1.setValue(value);
-		equals(i1.getValue(), value, "Input value is "+value);
+		assert.equal(i1.getValue(), value, "Input value is "+value);
 	});
 
 	QUnit.test("InputType", function(assert) {
 		var typeDefault = "Text";
-		equals(i1.getType(), typeDefault, "Input Type: Default");
+		assert.equal(i1.getType(), typeDefault, "Input Type: Default");
 	});
 
 	QUnit.test("InputEnabled", function(assert) {
 		var enabled = false;
 		i1.setEnabled(enabled);
-		equals(i1.getEnabled(), enabled, "Input is disabled");
+		assert.equal(i1.getEnabled(), enabled, "Input is disabled");
 		enabled = true;
 		i1.setEnabled(enabled);
-		equals(i1.getEnabled(), enabled, "Input is enabled");
+		assert.equal(i1.getEnabled(), enabled, "Input is enabled");
 	});
 
 	QUnit.test("ValueHelpOnly", function(assert) {
-		equals(i1.getValueHelpOnly(), false, "ValueHelpOnly Default: false");
+		assert.equal(i1.getValueHelpOnly(), false, "ValueHelpOnly Default: false");
 		var helponly = true;
 		i1.setValueHelpOnly(helponly);
-		equals(i1.getValueHelpOnly(), helponly, "ValueHelpOnly is true");
+		assert.equal(i1.getValueHelpOnly(), helponly, "ValueHelpOnly is true");
 	});
 
 	QUnit.test("Placeholder", function(assert) {
 		var placeholder = "Placeholder";
 		i1.setPlaceholder(placeholder);
-		equals(i1.getPlaceholder(), placeholder, "Placeholder for text");
+		assert.equal(i1.getPlaceholder(), placeholder, "Placeholder for text");
 
 		i2.setPlaceholder(placeholder);
-		equals(i2.getPlaceholder(), placeholder, "Placeholder for number field");
+		assert.equal(i2.getPlaceholder(), placeholder, "Placeholder for number field");
 	});
 
 	QUnit.test("Visible", function(assert) {
-		equals(i1.$().length, 1, "Visible input found");
-		equals(i3.$().length, 0, "Invisible input not found");
+		assert.equal(i1.$().length, 1, "Visible input found");
+		assert.equal(i3.$().length, 0, "Invisible input not found");
 	});
 
 	QUnit.test("Change", function(assert) {
 		i1.setValue("new");
 		sap.ui.getCore().applyChanges();
 		i1.attachChange(function() {
-			equals(this.getValue(), "new", "New value in onChange");
+			assert.equal(this.getValue(), "new", "New value in onChange");
 		});
 		i1.onChange(jQuery.Event("change"));
-		equals(i1.getValue(),"new", "Value after onchange");
+		assert.equal(i1.getValue(),"new", "Value after onchange");
 	});
 
 	QUnit.test("Event order", function(assert) {
@@ -214,30 +214,30 @@
 		sap.ui.test.qunit.triggerCharacterInput(i8.getFocusDomRef(), "a");
 		sap.ui.test.qunit.triggerEvent("input", i8.getFocusDomRef());
 
-		equals(oModel.getProperty("/testValue"),"" , "no valueLiveUpdate, no model value update");
-		equals(i8.getValue()                   ,"a", "no valueLiveUpdate, new value");
-		equals(fnFireChangeSpy.callCount       , 0 , "no valueLiveUpdate, no change event");
+		assert.equal(oModel.getProperty("/testValue"),"" , "no valueLiveUpdate, no model value update");
+		assert.equal(i8.getValue()                   ,"a", "no valueLiveUpdate, new value");
+		assert.equal(fnFireChangeSpy.callCount       , 0 , "no valueLiveUpdate, no change event");
 
 		sap.ui.test.qunit.triggerKeydown(i8.getFocusDomRef(), "ENTER");
 
-		equals(i8.getValue()                   ,"a", "no valueLiveUpdate, Enter, same new value");
-		equals(oModel.getProperty("/testValue"),"a", "no valueLiveUpdate, Enter, model value update");
-	    equals(fnFireChangeSpy.callCount       , 1 , "no valueLiveUpdate, Enter, change event");
+		assert.equal(i8.getValue()                   ,"a", "no valueLiveUpdate, Enter, same new value");
+		assert.equal(oModel.getProperty("/testValue"),"a", "no valueLiveUpdate, Enter, model value update");
+	    assert.equal(fnFireChangeSpy.callCount       , 1 , "no valueLiveUpdate, Enter, change event");
 
 		i8.setValueLiveUpdate(true);
 		i8.setValue("");
 		fnFireChangeSpy.reset();
 		sap.ui.test.qunit.triggerCharacterInput(i8.getFocusDomRef(), "a");
 		sap.ui.test.qunit.triggerEvent("input", i8.getFocusDomRef());
-		equals(oModel.getProperty("/testValue"),"a", "valueLiveUpdate, no model value update");
-		equals(i8.getValue()                   ,"a", "valueLiveUpdate, new value");
-		equals(fnFireChangeSpy.callCount       , 0,  "valueLiveUpdate, stil no change event");
+		assert.equal(oModel.getProperty("/testValue"),"a", "valueLiveUpdate, no model value update");
+		assert.equal(i8.getValue()                   ,"a", "valueLiveUpdate, new value");
+		assert.equal(fnFireChangeSpy.callCount       , 0,  "valueLiveUpdate, stil no change event");
 
 		sap.ui.test.qunit.triggerKeydown(i8.getFocusDomRef(), "ENTER");
 
-		equals(oModel.getProperty("/testValue"),"a", "valueLiveUpdate, no model value update");
-		equals(i8.getValue()                   ,"a", "no valueLiveUpdate, Enter, change");
-		equals(fnFireChangeSpy.callCount       , 1,  "no valueLiveUpdate, Enter, changeevent");
+		assert.equal(oModel.getProperty("/testValue"),"a", "valueLiveUpdate, no model value update");
+		assert.equal(i8.getValue()                   ,"a", "no valueLiveUpdate, Enter, change");
+		assert.equal(fnFireChangeSpy.callCount       , 1,  "no valueLiveUpdate, Enter, changeevent");
 
 		i8.setValueLiveUpdate(false);
 	});
@@ -245,24 +245,24 @@
 
 	QUnit.test("Value States", function(assert) {
 
-		equals(i4.$().hasClass('sapMInputBaseError'), true, "Before new value state : Error");
-		equals(i5.$().hasClass('sapMInputBaseWarning'), true, "Before new value state : Warning");
-		equals(i4.$().attr("title"), undefined, "No tooltip for error state");
-		equals(i5.$().attr("title"), undefined, "No tooltip for warning state");
+		assert.equal(i4.$().hasClass('sapMInputBaseError'), true, "Before new value state : Error");
+		assert.equal(i5.$().hasClass('sapMInputBaseWarning'), true, "Before new value state : Warning");
+		assert.equal(i4.$().attr("title"), undefined, "No tooltip for error state");
+		assert.equal(i5.$().attr("title"), undefined, "No tooltip for warning state");
 
 		i4.setValueState("Warning");
 		i5.setValueState("Error");
 		sap.ui.getCore().applyChanges();
 
-		equals(i4.$().hasClass('sapMInputBaseWarning'), true, "After new value state : Warning");
-		equals(i5.$().hasClass('sapMInputBaseError'), true, "After new value state : Error");
+		assert.equal(i4.$().hasClass('sapMInputBaseWarning'), true, "After new value state : Warning");
+		assert.equal(i5.$().hasClass('sapMInputBaseError'), true, "After new value state : Error");
 
 		i4.setValueState();
 		i5.setValueState("None");
 
-		equals(i4.getValueState(), "None", "Last value state : None");
-		equals(i5.getValueState(), "None", "Last value state : None");
-		equals(i5.$().attr("title"), undefined, "Tooltip is empty for valueState \"None\"");
+		assert.equal(i4.getValueState(), "None", "Last value state : None");
+		assert.equal(i5.getValueState(), "None", "Last value state : None");
+		assert.equal(i5.$().attr("title"), undefined, "Tooltip is empty for valueState \"None\"");
 	});
 
 	QUnit.test("Value Help Indicator", function(assert) {
@@ -2644,8 +2644,8 @@
 		oInputWithDes.setDescription("EUR");
 		oInputWithDes.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		equals(oInputWithDes.$().find(".sapMInputDescriptionText").text(), "EUR", "Input description is EUR");
- 		equals(oInputWithDes.$().find("input").outerWidth(), Math.round(oInputWithDes.$().width()*0.5), "input field has default width");
+		assert.equal(oInputWithDes.$().find(".sapMInputDescriptionText").text(), "EUR", "Input description is EUR");
+ 		assert.equal(oInputWithDes.$().find("input").outerWidth(), Math.round(oInputWithDes.$().width()*0.5), "input field has default width");
 
   		oInputWithDes.setFieldWidth("30%");
   		sap.ui.getCore().applyChanges();
@@ -2653,7 +2653,7 @@
 
   		oInputWithDes.setFieldWidth("100px");
   		sap.ui.getCore().applyChanges();
-  		equals(oInputWithDes.$().find("input").outerWidth(), "100", "input field has 100px width");
+  		assert.equal(oInputWithDes.$().find("input").outerWidth(), "100", "input field has 100px width");
 
   		oInputWithDes.destroy();
 	});

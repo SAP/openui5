@@ -78,8 +78,8 @@
 	<!-- Test help functions -->
 	<script>
 
-	var checkFocus = function(sId, sText){
-		equals(document.activeElement.id, sId, sText);
+	var checkFocus = function(sId, sText, assert){
+		assert.equal(document.activeElement.id, sId, sText);
 	};
 
 	var checkVisible = function(sId, bExpectVisible){
@@ -87,7 +87,7 @@
 		return (bExpectVisible && bVisible) || (!bExpectVisible && !bVisible);
 	};
 
-	var checkExpandState = function(sIdSuffix, bExpectExpanded){
+	var checkExpandState = function(sIdSuffix, bExpectExpanded, assert){
 		var sStepId = "s"+sIdSuffix;
 		var aSubStepIds = [sStepId+"a", sStepId+"b", sStepId+"c", sStepId+"d"];
 		for(var i=0; i<aSubStepIds.length; i++){
@@ -110,64 +110,64 @@
 		assert.ok(!oRoadMap2.getSelectedStep(), "Default 'selectedStep'");
 		assert.ok(!oRoadMap2.getFirstVisibleStep(), "Default 'firstVisibleStep'");
 		assert.ok(!oRoadMap2.getNumberOfVisibleSteps(), "Default 'numberOfVisibleSteps'");
-		equals(oRoadMap2.getWidth(), "100%", "Default 'width'");
-		equals(oRoadMap1.getVisible(), true, "Default 'visible'");
+		assert.equal(oRoadMap2.getWidth(), "100%", "Default 'width'");
+		assert.equal(oRoadMap1.getVisible(), true, "Default 'visible'");
 
-		equals(oRoadMap2.getSteps()[0].getVisible(), true, "Step: Default 'visible'");
-		equals(oRoadMap2.getSteps()[0].getEnabled(), true, "Step: Default 'enabled'");
-		equals(oRoadMap2.getSteps()[1].getExpanded(), false, "Step: Default 'expanded'");
+		assert.equal(oRoadMap2.getSteps()[0].getVisible(), true, "Step: Default 'visible'");
+		assert.equal(oRoadMap2.getSteps()[0].getEnabled(), true, "Step: Default 'enabled'");
+		assert.equal(oRoadMap2.getSteps()[1].getExpanded(), false, "Step: Default 'expanded'");
 		assert.ok(!oRoadMap2.getSteps()[0].getLabel(), "Step: Default 'label'");
 	});
 
 	QUnit.test("Properties - Custom Values", function(assert) {
-		equals(oRoadMap1.getSelectedStep(), "s4", "Custom 'selectedStep'");
-		equals(oRoadMap1.getFirstVisibleStep(), "s2", "Custom 'firstVisibleStep'");
-		equals(oRoadMap1.getNumberOfVisibleSteps(), 5, "Custom 'numberOfVisibleSteps'");
-		equals(oRoadMap1.getWidth(), "600px", "Custom 'width'");
-		equals(oRoadMap2.getVisible(), false, "Custom 'visible'");
+		assert.equal(oRoadMap1.getSelectedStep(), "s4", "Custom 'selectedStep'");
+		assert.equal(oRoadMap1.getFirstVisibleStep(), "s2", "Custom 'firstVisibleStep'");
+		assert.equal(oRoadMap1.getNumberOfVisibleSteps(), 5, "Custom 'numberOfVisibleSteps'");
+		assert.equal(oRoadMap1.getWidth(), "600px", "Custom 'width'");
+		assert.equal(oRoadMap2.getVisible(), false, "Custom 'visible'");
 
-		equals(oRoadMap2.getSteps()[1].getVisible(), false, "Step: Custom 'visible'");
-		equals(oRoadMap2.getSteps()[1].getEnabled(), false, "Step: Custom 'enabled'");
-		equals(oRoadMap2.getSteps()[0].getExpanded(), true, "Step: Custom 'expanded'");
-		equals(oRoadMap2.getSteps()[1].getLabel(), "Hallo", "Step: Custom 'label'");
+		assert.equal(oRoadMap2.getSteps()[1].getVisible(), false, "Step: Custom 'visible'");
+		assert.equal(oRoadMap2.getSteps()[1].getEnabled(), false, "Step: Custom 'enabled'");
+		assert.equal(oRoadMap2.getSteps()[0].getExpanded(), true, "Step: Custom 'expanded'");
+		assert.equal(oRoadMap2.getSteps()[1].getLabel(), "Hallo", "Step: Custom 'label'");
 	});
 
 	QUnit.test("Aggregation 'Steps'", function(assert) {
-		equals(oRoadMap2.getSteps().length, 2, "# Steps");
+		assert.equal(oRoadMap2.getSteps().length, 2, "# Steps");
 		oRoadMap2.addStep(new sap.ui.commons.RoadMapStep());
 		oRoadMap2.addStep(new sap.ui.commons.RoadMapStep());
-		equals(oRoadMap2.getSteps().length, 4, "# Steps after add");
+		assert.equal(oRoadMap2.getSteps().length, 4, "# Steps after add");
 		oRoadMap2.insertStep(new sap.ui.commons.RoadMapStep("newstep"), 1);
-		equals(oRoadMap2.getSteps().length, 5, "# Steps after insert");
-		equals(oRoadMap2.getSteps()[1].getId(), "newstep", "Id of inserted Step");
+		assert.equal(oRoadMap2.getSteps().length, 5, "# Steps after insert");
+		assert.equal(oRoadMap2.getSteps()[1].getId(), "newstep", "Id of inserted Step");
 		oRoadMap2.removeStep(0);
-		equals(oRoadMap2.getSteps().length, 4, "# Steps after insert");
+		assert.equal(oRoadMap2.getSteps().length, 4, "# Steps after insert");
 		oRoadMap2.destroySteps();
-		equals(oRoadMap2.getSteps().length, 0, "# Steps after destroy");
+		assert.equal(oRoadMap2.getSteps().length, 0, "# Steps after destroy");
 	});
 
 
 	QUnit.module("Appearance");
 
 	QUnit.test("Visibility", function(assert) {
-		equals(jQuery("#rm1").length, 1, "Visible Roadmap is rendered");
-		equals(jQuery("#rm2").length, 0, "Hidden Roadmap is not rendered");
+		assert.equal(jQuery("#rm1").length, 1, "Visible Roadmap is rendered");
+		assert.equal(jQuery("#rm2").length, 0, "Hidden Roadmap is not rendered");
 
-		equals(jQuery("#s6").length, 1, "Hidden step is rendered");
+		assert.equal(jQuery("#s6").length, 1, "Hidden step is rendered");
 		assert.ok(!jQuery("#s6").is(":visible"), "Hidden step is not visible");
 	});
 
 	QUnit.test("Width", function(assert) {
-		equals(jQuery("#rm3").width(), jQuery("#uiArea3").width(), "By default the Roadmap has 100% width");
-		equals(jQuery("#rm1").width(), 600, "Fixed Roadmap width");
+		assert.equal(jQuery("#rm3").width(), jQuery("#uiArea3").width(), "By default the Roadmap has 100% width");
+		assert.equal(jQuery("#rm1").width(), 600, "Fixed Roadmap width");
 	});
 
 	QUnit.test("# Visible Steps", function(assert) {
-		equals(jQuery("#s1").width()*5, jQuery("#rm1-steparea").width(), "5 Steps visible");
+		assert.equal(jQuery("#s1").width()*5, jQuery("#rm1-steparea").width(), "5 Steps visible");
 	});
 
 	QUnit.test("First visible Step", function(assert) {
-		equals(jQuery("#s1").width(), jQuery("#rm1-steparea").scrollLeft(), "Area scrolled to 2. step");
+		assert.equal(jQuery("#s1").width(), jQuery("#rm1-steparea").scrollLeft(), "Area scrolled to 2. step");
 	});
 
 	QUnit.test("Overflow", function(assert) {
@@ -198,8 +198,8 @@
 	});
 
 	QUnit.test("Expand State", function(assert) {
-		checkExpandState(3, false);
-		checkExpandState(5, true);
+		checkExpandState(3, false, assert);
+		checkExpandState(5, true, assert);
 	});
 
 
@@ -208,11 +208,11 @@
 	QUnit.test("Click on step", function(assert) {
 		var done = assert.async();
 		var handler = function(oControlEvent){
-			equals(oControlEvent.getParameter("stepId"), "s5a", "Selected item in event after mouse click:");
+			assert.equal(oControlEvent.getParameter("stepId"), "s5a", "Selected item in event after mouse click:");
 			assert.ok(jQuery("#s5a").hasClass("sapUiRoadMapSelected"), "Selected Step has special CSS class");
 			assert.ok(!jQuery("#s4").hasClass("sapUiRoadMapSelected"), "Previous selected Step has no special CSS class anymore");
 			setTimeout(function(){
-				checkFocus("s5a-box", "Focus on clicked step");
+				checkFocus("s5a-box", "Focus on clicked step", assert);
 				done();
 			}, 0);
 			oRoadMap1.detachStepSelected(handler);
@@ -234,7 +234,7 @@
 		setTimeout(function(){
 			assert.ok(jQuery("#s5a").hasClass("sapUiRoadMapSelected"), "Selected Step has still special CSS class");
 			assert.ok(!jQuery("#s2").hasClass("sapUiRoadMapSelected"), "Clicked Step has no special CSS class");
-			checkFocus("s2-box", "Focus on clicked step");
+			checkFocus("s2-box", "Focus on clicked step", assert);
 			oRoadMap1.detachStepSelected(handler);
 			done();
 		}, 500);
@@ -244,20 +244,20 @@
 		var done = assert.async();
 		var bExpandEventFired = false;
 		var handler = function(oControlEvent){
-			equals(oControlEvent.getParameter("stepId"), "s3", "Selected item in select event after mouse click:");
+			assert.equal(oControlEvent.getParameter("stepId"), "s3", "Selected item in select event after mouse click:");
 			assert.ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step has special CSS class");
 			assert.ok(!jQuery("#s5a").hasClass("sapUiRoadMapSelected"), "Previous selected Step has no special CSS class anymore");
 			assert.ok(bExpandEventFired, "Expand event was fired");
-			checkExpandState(3, true);
+			checkExpandState(3, true, assert);
 			setTimeout(function(){
-				checkFocus("s3-box", "Focus on clicked step");
+				checkFocus("s3-box", "Focus on clicked step", assert);
 				done();
 			}, 0);
 			oRoadMap1.detachStepSelected(handler);
 		};
 		var handler2 = function(oControlEvent){
 			var oStep = sap.ui.getCore().byId(oControlEvent.getParameter("stepId"));
-			equals(oStep.getId(), "s3", "Expanded item in expand event after mouse click:");
+			assert.equal(oStep.getId(), "s3", "Expanded item in expand event after mouse click:");
 			assert.ok(oStep.getExpanded(), "Step is expanded");
 			oRoadMap1.detachStepExpanded(handler2);
 			bExpandEventFired = true;
@@ -277,7 +277,7 @@
 		};
 		var handler2 = function(oControlEvent){
 			var oStep = sap.ui.getCore().byId(oControlEvent.getParameter("stepId"));
-			equals(oStep.getId(), "s3", "Expanded item in expand event after mouse click:");
+			assert.equal(oStep.getId(), "s3", "Expanded item in expand event after mouse click:");
 			assert.ok(!oStep.getExpanded(), "Step is not expanded");
 			oRoadMap1.detachStepExpanded(handler2);
 			bExpandEventFired = true;
@@ -285,8 +285,8 @@
 
 		setTimeout(function(){
 			assert.ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
-			checkExpandState(3, false);
-			checkFocus("s3-box", "Focus on clicked step");
+			checkExpandState(3, false, assert);
+			checkFocus("s3-box", "Focus on clicked step", assert);
 			assert.ok(bExpandEventFired, "Expand event was fired");
 			oRoadMap1.detachStepSelected(handler);
 			done();
@@ -301,8 +301,8 @@
 		var done = assert.async();
 		setTimeout(function(){
 			assert.ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
-			equals(jQuery("#rm1-steparea").scrollLeft(), 0, "Area scrolled to 1. step");
-			checkFocus("s3-box", "Focus still on previously clicked step");
+			assert.equal(jQuery("#rm1-steparea").scrollLeft(), 0, "Area scrolled to 1. step");
+			checkFocus("s3-box", "Focus still on previously clicked step", assert);
 			done();
 		}, 1500);
 		qutils.triggerEvent("click", "rm1-Start", {}); //Focus is set automatically by the step when selected
@@ -312,8 +312,8 @@
 		var done = assert.async();
 		setTimeout(function(){
 			assert.ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
-			equals(jQuery("#rm1-steparea").scrollLeft(), 0, "Area scrolled to 1. step");
-			checkFocus("s3-box", "Focus still on previously clicked step");
+			assert.equal(jQuery("#rm1-steparea").scrollLeft(), 0, "Area scrolled to 1. step");
+			checkFocus("s3-box", "Focus still on previously clicked step", assert);
 			done();
 		}, 1500);
 		qutils.triggerEvent("click", "rm1-Start", {}); //Focus is set automatically by the step when selected
@@ -323,8 +323,8 @@
 		var done = assert.async();
 		setTimeout(function(){
 			assert.ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
-			equals(jQuery("#rm1-steparea").scrollLeft(), jQuery("#s1").width(), "Area scrolled to 2. step");
-			checkFocus("s3-box", "Focus still on previously clicked step");
+			assert.equal(jQuery("#rm1-steparea").scrollLeft(), jQuery("#s1").width(), "Area scrolled to 2. step");
+			checkFocus("s3-box", "Focus still on previously clicked step", assert);
 			done();
 		}, 1500);
 		qutils.triggerEvent("click", "rm1-End", {}); //Focus is set automatically by the step when selected
@@ -336,7 +336,7 @@
 	QUnit.test("SPACE key on step", function(assert) {
 		var done = assert.async();
 		var handler = function(oControlEvent){
-			equals(oControlEvent.getParameter("stepId"), "s5a", "Selected item in event after SPACE:");
+			assert.equal(oControlEvent.getParameter("stepId"), "s5a", "Selected item in event after SPACE:");
 			assert.ok(jQuery("#s5a").hasClass("sapUiRoadMapSelected"), "Selected Step has special CSS class");
 			assert.ok(!jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Previous selected Step has no special CSS class anymore");
 			oRoadMap1.detachStepSelected(handler);
@@ -350,7 +350,7 @@
 	QUnit.test("ENTER key on step", function(assert) {
 		var done = assert.async();
 		var handler = function(oControlEvent){
-			equals(oControlEvent.getParameter("stepId"), "s4", "Selected item in event after ENTER:");
+			assert.equal(oControlEvent.getParameter("stepId"), "s4", "Selected item in event after ENTER:");
 			assert.ok(jQuery("#s4").hasClass("sapUiRoadMapSelected"), "Selected Step has special CSS class");
 			assert.ok(!jQuery("#s5a").hasClass("sapUiRoadMapSelected"), "Previous selected Step has no special CSS class anymore");
 			oRoadMap1.detachStepSelected(handler);
@@ -401,17 +401,17 @@
 		var done = assert.async();
 		var bExpandEventFired = false;
 		var handler = function(oControlEvent){
-			equals(oControlEvent.getParameter("stepId"), "s3", "Selected item in event after SPACE:");
+			assert.equal(oControlEvent.getParameter("stepId"), "s3", "Selected item in event after SPACE:");
 			assert.ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step has special CSS class");
 			assert.ok(!jQuery("#4").hasClass("sapUiRoadMapSelected"), "Previous selected Step has no special CSS class anymore");
 			assert.ok(bExpandEventFired, "Expand event was fired");
-			checkExpandState(3, true);
+			checkExpandState(3, true, assert);
 			oRoadMap1.detachStepSelected(handler);
 			done();
 		};
 		var handler2 = function(oControlEvent){
 			var oStep = sap.ui.getCore().byId(oControlEvent.getParameter("stepId"));
-			equals(oStep.getId(), "s3", "Expanded item in expand event after mouse click:");
+			assert.equal(oStep.getId(), "s3", "Expanded item in expand event after mouse click:");
 			assert.ok(oStep.getExpanded(), "Step is expanded");
 			oRoadMap1.detachStepExpanded(handler2);
 			bExpandEventFired = true;
@@ -433,7 +433,7 @@
 		};
 		var handler2 = function(oControlEvent){
 			var oStep = sap.ui.getCore().byId(oControlEvent.getParameter("stepId"));
-			equals(oStep.getId(), "s3", "Expanded item in expand event after mouse click:");
+			assert.equal(oStep.getId(), "s3", "Expanded item in expand event after mouse click:");
 			assert.ok(!oStep.getExpanded(), "Step is not expanded");
 			oRoadMap1.detachStepExpanded(handler2);
 			bExpandEventFired = true;
@@ -441,8 +441,8 @@
 
 		setTimeout(function(){
 			assert.ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
-			checkExpandState(3, false);
-			checkFocus("s3-box", "Focus on selected step");
+			checkExpandState(3, false, assert);
+			checkFocus("s3-box", "Focus on selected step", assert);
 			assert.ok(bExpandEventFired, "Expand event was fired");
 			oRoadMap1.detachStepSelected(handler);
 			done();
@@ -463,7 +463,7 @@
 		};
 		var handler2 = function(oControlEvent){
 			var oStep = sap.ui.getCore().byId(oControlEvent.getParameter("stepId"));
-			equals(oStep.getId(), "s3", "Expanded item in expand event after mouse click:");
+			assert.equal(oStep.getId(), "s3", "Expanded item in expand event after mouse click:");
 			assert.ok(oStep.getExpanded(), "Step is expanded");
 			oRoadMap1.detachStepExpanded(handler2);
 			bExpandEventFired = true;
@@ -471,8 +471,8 @@
 
 		setTimeout(function(){
 			assert.ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
-			checkExpandState(3, true);
-			checkFocus("s3-box", "Focus on selected step");
+			checkExpandState(3, true, assert);
+			checkFocus("s3-box", "Focus on selected step", assert);
 			assert.ok(bExpandEventFired, "Expand event was fired");
 			oRoadMap1.detachStepSelected(handler);
 			done();
@@ -493,7 +493,7 @@
 		};
 		var handler2 = function(oControlEvent){
 			var oStep = sap.ui.getCore().byId(oControlEvent.getParameter("stepId"));
-			equals(oStep.getId(), "s3", "Expanded item in expand event after mouse click:");
+			assert.equal(oStep.getId(), "s3", "Expanded item in expand event after mouse click:");
 			assert.ok(!oStep.getExpanded(), "Step is not expanded");
 			oRoadMap1.detachStepExpanded(handler2);
 			bExpandEventFired = true;
@@ -501,8 +501,8 @@
 
 		setTimeout(function(){
 			assert.ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
-			checkExpandState(3, false);
-			checkFocus("s3-box", "Focus on selected step");
+			checkExpandState(3, false, assert);
+			checkFocus("s3-box", "Focus on selected step", assert);
 			assert.ok(bExpandEventFired, "Expand event was fired");
 			oRoadMap1.detachStepSelected(handler);
 			done();
@@ -517,35 +517,35 @@
 		var done = assert.async();
 		jQuery("#rm1").get(0).focus();
 		setTimeout(function(){
-			checkFocus("s2-box", "First visible step is focused when entering the Roadmap");
+			checkFocus("s2-box", "First visible step is focused when entering the Roadmap", assert);
 			qutils.triggerKeyboardEvent("s2", "ARROW_LEFT");
 			setTimeout(function(){
-				checkFocus("s1-box", "Step 1 has focus after ARROW_LEFT");
+				checkFocus("s1-box", "Step 1 has focus after ARROW_LEFT", assert);
 				qutils.triggerKeyboardEvent("s1", "ARROW_LEFT");
 				setTimeout(function(){
-					checkFocus("s1-box", "Step 1 has still focus after ARROW_LEFT");
+					checkFocus("s1-box", "Step 1 has still focus after ARROW_LEFT", assert);
 					qutils.triggerKeyboardEvent("s1", "ARROW_RIGHT");
 					setTimeout(function(){
-						checkFocus("s2-box", "Step 2 has focus after ARROW_RIGHT");
+						checkFocus("s2-box", "Step 2 has focus after ARROW_RIGHT", assert);
 						qutils.triggerKeyboardEvent("s2", "ARROW_DOWN");
 						setTimeout(function(){
-							checkFocus("s3-box", "Step 3 has focus after ARROW_DOWN");
+							checkFocus("s3-box", "Step 3 has focus after ARROW_DOWN", assert);
 							qutils.triggerKeyboardEvent("s3", "ARROW_RIGHT");
 							setTimeout(function(){
-								checkFocus("s4-box", "Step 4 has focus after ARROW_RIGHT");
+								checkFocus("s4-box", "Step 4 has focus after ARROW_RIGHT", assert);
 								qutils.triggerKeyboardEvent("s4", "ARROW_DOWN");
 								setTimeout(function(){
-									checkFocus("s5-box", "Step 5 has focus after ARROW_DOWN");
+									checkFocus("s5-box", "Step 5 has focus after ARROW_DOWN", assert);
 									qutils.triggerKeyboardEvent("s5", "ARROW_UP");
 									setTimeout(function(){
-										checkFocus("s4-box", "Step 4 has focus after ARROW_UP");
+										checkFocus("s4-box", "Step 4 has focus after ARROW_UP", assert);
 										qutils.triggerKeyboardEvent("s4", "ARROW_RIGHT");
 										setTimeout(function(){
-											checkFocus("s5-box", "Step 5 has focus after ARROW_RIGHT");
+											checkFocus("s5-box", "Step 5 has focus after ARROW_RIGHT", assert);
 											qutils.triggerKeyboardEvent("s5", "ARROW_DOWN");
 											setTimeout(function(){
-												checkFocus("s5a-box", "Step 5a has focus after ARROW_DOWN");
-												equals(jQuery("#rm1-steparea").scrollLeft(), jQuery("#s1").width(), "Area scrolled to 2. step");
+												checkFocus("s5a-box", "Step 5a has focus after ARROW_DOWN", assert);
+												assert.equal(jQuery("#rm1-steparea").scrollLeft(), jQuery("#s1").width(), "Area scrolled to 2. step");
 												done();
 											}, 500);
 										}, 500);
@@ -563,15 +563,15 @@
 		var done = assert.async();
 		jQuery("#rm1").get(0).focus();
 		setTimeout(function(){
-			checkFocus("s2-box", "First visible step is focused when entering the Roadmap");
+			checkFocus("s2-box", "First visible step is focused when entering the Roadmap", assert);
 			qutils.triggerKeyboardEvent("s2", "END");
 			setTimeout(function(){
-				checkFocus("s7-box", "Step 7 has focus after END");
-				equals(jQuery("#rm1-steparea").scrollLeft(), jQuery("#s1").width()*5, "Area scrolled to step 5a");
+				checkFocus("s7-box", "Step 7 has focus after END", assert);
+				assert.equal(jQuery("#rm1-steparea").scrollLeft(), jQuery("#s1").width()*5, "Area scrolled to step 5a");
 				qutils.triggerKeyboardEvent("s7", "HOME");
 				setTimeout(function(){
-					checkFocus("s1-box", "Step 1 has focus after HOME");
-					equals(jQuery("#rm1-steparea").scrollLeft(), 0, "Area scrolled to step 1");
+					checkFocus("s1-box", "Step 1 has focus after HOME", assert);
+					assert.equal(jQuery("#rm1-steparea").scrollLeft(), 0, "Area scrolled to step 1");
 					done();
 				}, 1200);
 			}, 1200);

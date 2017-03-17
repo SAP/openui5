@@ -315,8 +315,8 @@
 
 			setTimeout(function() {
 				var oDomRef = window.document.getElementById(sControlId);
-				equals(oDomRef.offsetWidth, 150, "oImage.offsetWidth should equal 150");
-				equals(oDomRef.offsetHeight, 74, "oImage.offsetHeight should equal 74");
+				assert.equal(oDomRef.offsetWidth, 150, "oImage.offsetWidth should equal 150");
+				assert.equal(oDomRef.offsetHeight, 74, "oImage.offsetHeight should equal 74");
 
 				// Clean up
 				oImage.destroy();
@@ -340,8 +340,8 @@
 			// Assert
 			setTimeout(function() {
 				var oDomRef = jQuery.sap.domById(sControlId);
-				equals(oDomRef.offsetWidth, 292, "oImage.offsetWidth should equal 292");
-				equals(oDomRef.offsetHeight, 292, "oImage.offsetHeight should equal 292");
+				assert.equal(oDomRef.offsetWidth, 292, "oImage.offsetWidth should equal 292");
+				assert.equal(oDomRef.offsetHeight, 292, "oImage.offsetHeight should equal 292");
 
 				// Clean up
 				oImage.destroy();
@@ -364,8 +364,8 @@
 
 			setTimeout(function() {
 				var oDomRef = window.document.getElementById(sControlId);
-				equals(oDomRef.offsetWidth, 300, "oImage.offsetWidth should equal 300");
-				equals(oDomRef.offsetHeight, 148, "oImage.offsetHeight should equal 148");
+				assert.equal(oDomRef.offsetWidth, 300, "oImage.offsetWidth should equal 300");
+				assert.equal(oDomRef.offsetHeight, 148, "oImage.offsetHeight should equal 148");
 
 				// Clean up
 				oImage.destroy();
