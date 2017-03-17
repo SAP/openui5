@@ -44,12 +44,6 @@ html.sap-tablet:not(.sap-desktop) input, html.sap-tablet:not(.sap-desktop) texta
 .sapUiBLy {
 	background-color: @sapUiBlockLayerBackground;
 	opacity: 0.6;
-/* 	this overwrites the default position: fixed which extends the window when something rendered outside */
-	position: absolute;
-}
-
-html.sapUiMedia-Std-Desktop .sapUiBLy {
-	position: fixed; /* otherwise UX3 shell would not work... */
 }
 
 .sapUiSearchHighlightBG {
