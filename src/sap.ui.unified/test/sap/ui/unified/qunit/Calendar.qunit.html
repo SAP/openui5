@@ -407,7 +407,7 @@
 				oEvent.preventDefault = oSpy;
 
 				jQuery("#Cal2--MP").control(0).onsapspace(oEvent);
-				strictEqual(oSpy.callCount, 1, "SPACE is pressed, preventDefault event was fired");
+				assert.strictEqual(oSpy.callCount, 1, "SPACE is pressed, preventDefault event was fired");
 
 			});
 
@@ -466,7 +466,7 @@
 
 				jQuery("#Cal2--YP").control(0).onsapspace(oEvent);
 
-				strictEqual(oSpy.callCount, 1, "SPACE is pressed, preventDefault event was fired");
+				assert.strictEqual(oSpy.callCount, 1, "SPACE is pressed, preventDefault event was fired");
 			});
 
 			QUnit.test("Min/Max", function(assert) {

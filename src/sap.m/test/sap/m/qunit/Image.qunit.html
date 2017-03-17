@@ -597,7 +597,7 @@
 			equal($Image.attr("role"), "button", "role is set to button");
 
 			oImage.detachPress(fn2);
-			strictEqual($Image.attr("tabindex"), undefined, "no tabindex is output");
+			assert.strictEqual($Image.attr("tabindex"), undefined, "no tabindex is output");
 			equal($Image.attr("role"), "presentation", "role is set to presentation");
 
 			oImage.attachPress(fn2);
@@ -609,7 +609,7 @@
 			equal($Image.attr("role"), "button", "role is set to button");
 
 			oImage.detachPress(fn2);
-			strictEqual($Image.attr("tabindex"), undefined, "no tabindex is output");
+			assert.strictEqual($Image.attr("tabindex"), undefined, "no tabindex is output");
 			ok(!$Image.attr("role"), "role is removed");
 
 			//Clean up
@@ -625,19 +625,19 @@
 			ok(!oInfo, "getAccessibilityInfo returns no info object in case of decorative images");
 			oImage.setDecorative(false);
 			oInfo = oImage.getAccessibilityInfo();
-			strictEqual(oInfo.role, "img", "AriaRole");
-			strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_IMAGE"), "Type");
-			strictEqual(oInfo.description, "Alt", "Description");
-			strictEqual(oInfo.focusable, false, "Focusable");
+			assert.strictEqual(oInfo.role, "img", "AriaRole");
+			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_IMAGE"), "Type");
+			assert.strictEqual(oInfo.description, "Alt", "Description");
+			assert.strictEqual(oInfo.focusable, false, "Focusable");
 			ok(oInfo.enabled === undefined || oInfo.enabled === null, "Enabled");
 			ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 			oImage.setAlt("");
 			oImage.attachPress(function(){});
 			oInfo = oImage.getAccessibilityInfo();
-			strictEqual(oInfo.role, "button", "AriaRole");
-			strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
-			strictEqual(oInfo.description, "Tooltip", "Description");
-			strictEqual(oInfo.focusable, true, "Focusable");
+			assert.strictEqual(oInfo.role, "button", "AriaRole");
+			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+			assert.strictEqual(oInfo.description, "Tooltip", "Description");
+			assert.strictEqual(oInfo.focusable, true, "Focusable");
 			oImage.destroy();
 		});
 

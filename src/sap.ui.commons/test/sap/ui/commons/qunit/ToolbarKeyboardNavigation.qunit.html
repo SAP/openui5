@@ -152,7 +152,7 @@
 			var sOverflowButtonId = sToolbarId + "-mn";
 			clickDownArrow(sOverflowButtonId);
 			setTimeout(function () {
-				strictEqual(jQuery(getPopupDomRef()).css("visibility"), "visible", "Overflow popup should be visible");
+				assert.strictEqual(jQuery(getPopupDomRef()).css("visibility"), "visible", "Overflow popup should be visible");
 				jQuery("#content").css("width", sOriginalWidth);
 				done();
 			}, 100);
@@ -172,7 +172,7 @@
 					oCtrl.setVisible(true);
 					setTimeout(function () {
 						var iTabIndex = oCtrl.getRightItems()[0].$().attr("tabindex");
-						strictEqual(iTabIndex, '0', "After toggle toolbar visibility off->on, the right item must have tabindex='0'");
+						assert.strictEqual(iTabIndex, '0', "After toggle toolbar visibility off->on, the right item must have tabindex='0'");
 						done();
 					}, 500);
 				}, 500);

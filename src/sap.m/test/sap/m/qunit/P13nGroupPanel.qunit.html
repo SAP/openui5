@@ -95,13 +95,13 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nGroupPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
+			assert.strictEqual(oP13nGroupPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
 
 			oP13nGroupPanel.setContainerQuery(true);
-			strictEqual(oP13nGroupPanel.getContainerQuery(), true, "getContainerQuery should return true");
+			assert.strictEqual(oP13nGroupPanel.getContainerQuery(), true, "getContainerQuery should return true");
 
 			oP13nGroupPanel.setMaxGroups(5);
-			strictEqual(oP13nGroupPanel.getMaxGroups(), "5", "getMaxGroups should return 5");
+			assert.strictEqual(oP13nGroupPanel.getMaxGroups(), "5", "getMaxGroups should return 5");
 
 			// cleanup
 			oP13nGroupPanel.destroy();
@@ -119,7 +119,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nGroupPanel.validateConditions(), true, "validateConditions should return true");
+			assert.strictEqual(oP13nGroupPanel.validateConditions(), true, "validateConditions should return true");
 
 			oP13nGroupPanel.removeInvalidConditions();
 			oP13nGroupPanel.removeValidationErrors();
@@ -140,7 +140,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3");
+			assert.strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3");
 
 			// cleanup
 			oP13nGroupPanel.destroy();
@@ -159,7 +159,7 @@
 
 			// assertions
 			var nItems = 2;
-			strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
+			assert.strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
 
 			// cleanup
 			oP13nGroupPanel.destroy();
@@ -184,11 +184,11 @@
 
 			// assertions
 			var nItems = 3;
-			strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
+			assert.strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
 
 			oP13nGroupPanel.removeAllGroupItems();
 			nItems = 0;
-			strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
+			assert.strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
 
 			// cleanup
 			oP13nGroupPanel.destroy();
@@ -240,7 +240,7 @@
 			var nItems = 1;
 			var oConditionPanel = oP13nGroupPanel._oGroupPanel;
 			oConditionPanel._handleRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
-			strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
+			assert.strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
 
 			// Add item
 			nItems = 2;
@@ -251,7 +251,7 @@
 			oConditionGrid.keyField.setSelectedKey("c0");
 			oConditionPanel._changeField(oConditionGrid);
 
-			strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
+			assert.strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
 
 			// cleanup
 			oP13nGroupPanel.destroy();
@@ -282,8 +282,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3'");
-			strictEqual(oP13nGroupPanel.getGroupItems().length, 2, "length of getGroupItems should be 2'");
+			assert.strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3'");
+			assert.strictEqual(oP13nGroupPanel.getGroupItems().length, 2, "length of getGroupItems should be 2'");
 
 			// cleanup
 			oP13nGroupPanel.destroy();
@@ -324,8 +324,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3'");
-			strictEqual(oP13nGroupPanel.getGroupItems().length, 2, "length of getGroupItems should be 2'");
+			assert.strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3'");
+			assert.strictEqual(oP13nGroupPanel.getGroupItems().length, 2, "length of getGroupItems should be 2'");
 
 			// cleanup
 			oP13nGroupPanel.destroy();
@@ -368,8 +368,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3'");
-			strictEqual(oP13nGroupPanel.getGroupItems().length, 2, "length of getGroupItems should be 2'");
+			assert.strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3'");
+			assert.strictEqual(oP13nGroupPanel.getGroupItems().length, 2, "length of getGroupItems should be 2'");
 
 			// cleanup
 			oP13nGroupPanel.destroy();
@@ -387,8 +387,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3");
-			strictEqual(oP13nGroupPanel._oGroupPanel.getKeyFields().length, 4, "length of getItems should be 4");
+			assert.strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3");
+			assert.strictEqual(oP13nGroupPanel._oGroupPanel.getKeyFields().length, 4, "length of getItems should be 4");
 
 			// cleanup
 			oP13nGroupPanel.destroy();

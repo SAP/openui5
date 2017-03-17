@@ -112,14 +112,14 @@
 			jQuery(".test1").root();
 
 			var iNo2 = oTestPlugin.getNoOfUIAreas();
-			strictEqual(iNo2, iNo1 + 3, "Exaclty three UIAreas should have been created.");
+			assert.strictEqual(iNo2, iNo1 + 3, "Exaclty three UIAreas should have been created.");
 
 			var oUIArea = oCore.getUIArea("uiArea4");
 			notStrictEqual(oUIArea, null, "UI Area 4 should have been created.");
 			notStrictEqual(oUIArea, undefined, "UI Area 4 should have been created.");
 
 			var iNo3 = oTestPlugin.getNoOfUIAreas();
-			strictEqual(iNo3, iNo2, "No additional UIArea should have been created.");
+			assert.strictEqual(iNo3, iNo2, "No additional UIArea should have been created.");
 
 			oCore.unregisterPlugin(oTestPlugin);
 		});
@@ -140,11 +140,11 @@
 			jQuery(".test2").root();
 
 			var iNo2 = oTestPlugin.getNoOfUIAreas();
-			strictEqual(iNo2, iNo1 + 3, "Exactly three UIArea should have been created.");
+			assert.strictEqual(iNo2, iNo1 + 3, "Exactly three UIArea should have been created.");
 
-			strictEqual(jQuery("[id*=uiArea]").root().length + jQuery("[id*=id-]").root().length, iNo2, "jQuery method should return all relevant roots (i.e. UIArea DOMNodes), selector [id*=uiArea]");
+			assert.strictEqual(jQuery("[id*=uiArea]").root().length + jQuery("[id*=id-]").root().length, iNo2, "jQuery method should return all relevant roots (i.e. UIArea DOMNodes), selector [id*=uiArea]");
 
-			strictEqual(jQuery("div").root().length, iNo2, "jQuery method should return all relevant roots (i.e. UIArea DOMNodes), selector div");
+			assert.strictEqual(jQuery("div").root().length, iNo2, "jQuery method should return all relevant roots (i.e. UIArea DOMNodes), selector div");
 
 			oCore.unregisterPlugin(oTestPlugin);
 		});
@@ -177,7 +177,7 @@
 
 			var aCtrls = jQuery(".myClass").control();
 
-			strictEqual(aCtrls.length, 3, "All requested Controls should be returned");
+			assert.strictEqual(aCtrls.length, 3, "All requested Controls should be returned");
 		});
 
 		QUnit.test("GetUIAreasOk", function(assert) {
@@ -187,7 +187,7 @@
 
 			var aUIAreas = jQuery("div").uiarea();
 
-			strictEqual(aUIAreas.length, iNo, "All UIAreas should be returned");
+			assert.strictEqual(aUIAreas.length, iNo, "All UIAreas should be returned");
 
 			jQuery.each(aUIAreas, function(idx, aUIArea){
 				// as we cannot check directly via instanceof (our interface concept prevents that), do it differently
@@ -198,10 +198,10 @@
 		QUnit.test("GetRootOfControlOk", function(assert) {
 			var oCore = sap.ui.getCore();
 			var aUIAreas = jQuery(".presetup").uiarea();
-			strictEqual(aUIAreas.length, 0, "No UIareas should be returned");
+			assert.strictEqual(aUIAreas.length, 0, "No UIareas should be returned");
 
 			var aUIRoots = jQuery(".presetup").root();
-			strictEqual(aUIRoots.length, 2, "Two 'UI-roots' of the controls should be returned");
+			assert.strictEqual(aUIRoots.length, 2, "Two 'UI-roots' of the controls should be returned");
 			ok(jQuery.inArray(oCore.getUIArea("uiAreaPreSetup1"), aUIRoots) >= 0, "pre setup UIArea 1 should be returned");
 			ok(jQuery.inArray(oCore.getUIArea("uiAreaPreSetup2"), aUIRoots) >= 0, "pre setup UIArea 2 should be returned");
 		});

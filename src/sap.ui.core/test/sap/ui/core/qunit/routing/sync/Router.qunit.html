@@ -55,11 +55,11 @@
 			router.initialize();
 
 			//Assert
-			strictEqual(parseSpy.callCount, 1, "did notify for initial hash");
+			assert.strictEqual(parseSpy.callCount, 1, "did notify for initial hash");
 
 			hasher.setHash("foo");
 
-			strictEqual(parseSpy.callCount, 2, "did notify for hashChanged");
+			assert.strictEqual(parseSpy.callCount, 2, "did notify for hashChanged");
 
 			//Cleanup
 			router.destroy();
@@ -79,15 +79,15 @@
 			router.initialize();
 
 			//Assert
-			strictEqual(parseSpy.callCount, 1, "did notify for initial hash");
+			assert.strictEqual(parseSpy.callCount, 1, "did notify for initial hash");
 
 			router.stop();
 			hasher.setHash("foo");
 
-			strictEqual(parseSpy.callCount, 1, "did not notify for hashChanged");
+			assert.strictEqual(parseSpy.callCount, 1, "did not notify for hashChanged");
 
 			router.initialize();
-			strictEqual(parseSpy.callCount, 2, "did notify again and parse the current hash");
+			assert.strictEqual(parseSpy.callCount, 2, "did notify again and parse the current hash");
 
 			//Cleanup
 			router.destroy();
@@ -144,7 +144,7 @@
 			hasher.setHash("foo");
 
 			//Assert
-			strictEqual(parseSpy.callCount, 1, "did notify for initial hash but did not dispatch change after destroy");
+			assert.strictEqual(parseSpy.callCount, 1, "did notify for initial hash but did not dispatch change after destroy");
 
 		});
 
@@ -162,10 +162,10 @@
 			ok(oRouter.bIsDestroyed, "did set the destroy flag");
 			ok(oTargets.bIsDestroyed, "did destroy the targets");
 			ok(oRoute.bIsDestroyed, "did destroy the route");
-			strictEqual(oRouter._oRouter, null, "did free the crossroads router");
-			strictEqual(oRouter._oRoutes, null, "did free the UI5 routes");
-			strictEqual(oRouter._oTargets, null, "did free the UI5 targets");
-			strictEqual(oRouter._oConfig, null, "did free the config");
+			assert.strictEqual(oRouter._oRouter, null, "did free the crossroads router");
+			assert.strictEqual(oRouter._oRoutes, null, "did free the UI5 routes");
+			assert.strictEqual(oRouter._oTargets, null, "did free the UI5 targets");
+			assert.strictEqual(oRouter._oConfig, null, "did free the config");
 
 		});
 
@@ -241,7 +241,7 @@
 					router.destroy();
 
 					//Assert
-					strictEqual(callCount, 1,"did notify the child");
+					assert.strictEqual(callCount, 1,"did notify the child");
 
 				});
 
@@ -281,16 +281,16 @@
 			ok(aRoutes.subsubpage);
 
 			var route1 = aRoutes.name;
-			strictEqual(route1._oConfig.name, "name", "Route has correct name");
-			strictEqual(route1._oParent, undefined, "Route has no parent");
+			assert.strictEqual(route1._oConfig.name, "name", "Route has correct name");
+			assert.strictEqual(route1._oParent, undefined, "Route has no parent");
 
 			var route2 = aRoutes.subpage;
-			strictEqual(route2._oConfig.name, "subpage", "Route has correct name");
-			strictEqual(route2._oParent, route1, "Route has correct parent");
+			assert.strictEqual(route2._oConfig.name, "subpage", "Route has correct name");
+			assert.strictEqual(route2._oParent, route1, "Route has correct parent");
 
 			var route3 = aRoutes.subsubpage;
-			strictEqual(route3._oConfig.name, "subsubpage", "Route has correct name");
-			strictEqual(route3._oParent, route2, "Route has correct parent");
+			assert.strictEqual(route3._oConfig.name, "subsubpage", "Route has correct name");
+			assert.strictEqual(route3._oParent, route2, "Route has correct parent");
 
 			router = new sap.ui.core.routing.Router([
 				{
@@ -328,16 +328,16 @@
 			ok(aRoutes.subsubpage);
 
 			route1 = aRoutes.name;
-			strictEqual(route1._oConfig.name, "name", "Route has correct name");
-			strictEqual(route1._oParent, undefined, "Route has no parent");
+			assert.strictEqual(route1._oConfig.name, "name", "Route has correct name");
+			assert.strictEqual(route1._oParent, undefined, "Route has no parent");
 
 			route2 = aRoutes.subpage;
-			strictEqual(route2._oConfig.name, "subpage", "Route has correct name");
-			strictEqual(route2._oParent, route1, "Route has correct parent");
+			assert.strictEqual(route2._oConfig.name, "subpage", "Route has correct name");
+			assert.strictEqual(route2._oParent, route1, "Route has correct parent");
 
 			route3 = aRoutes.subsubpage;
-			strictEqual(route3._oConfig.name, "subsubpage", "Route has correct name");
-			strictEqual(route3._oParent, route2, "Route has correct parent");
+			assert.strictEqual(route3._oConfig.name, "subsubpage", "Route has correct name");
+			assert.strictEqual(route3._oParent, route2, "Route has correct parent");
 
 		});
 
@@ -399,9 +399,9 @@
 			this.clock.tick(0);
 
 			// Assert
-			strictEqual(fnFirstSpy.callCount, 1, "first route gets pattern matched");
-			strictEqual(fnChildSpy.callCount, 0, "child gets not pattern matched");
-			strictEqual(fnParentSpy.callCount, 1, "parent does also get pattern matched because of greedyness");
+			assert.strictEqual(fnFirstSpy.callCount, 1, "first route gets pattern matched");
+			assert.strictEqual(fnChildSpy.callCount, 0, "child gets not pattern matched");
+			assert.strictEqual(fnParentSpy.callCount, 1, "parent does also get pattern matched because of greedyness");
 
 			// Cleanup
 			oRouter.destroy();
@@ -440,9 +440,9 @@
 			this.clock.tick(0);
 
 			// Assert
-			strictEqual(fnFirstSpy.callCount, 1, "First route gets the hashchange");
-			strictEqual(fnSecondSpy.callCount, 0, "Second one is not greedy");
-			strictEqual(fnLastSpy.callCount, 1, "The Third route is greedy!");
+			assert.strictEqual(fnFirstSpy.callCount, 1, "First route gets the hashchange");
+			assert.strictEqual(fnSecondSpy.callCount, 0, "Second one is not greedy");
+			assert.strictEqual(fnLastSpy.callCount, 1, "The Third route is greedy!");
 
 			// Cleanup
 			oRouter.destroy();
@@ -470,7 +470,7 @@
 			this.clock.tick(0);
 
 			//Assert
-			strictEqual(spy.callCount, 1, "Did call the callback function once");
+			assert.strictEqual(spy.callCount, 1, "Did call the callback function once");
 
 			//Cleanup
 			router.destroy();
@@ -491,7 +491,7 @@
 			this.clock.tick(0);
 
 			//Assert
-			strictEqual(spy.callCount, 1, "Did call the callback function once");
+			assert.strictEqual(spy.callCount, 1, "Did call the callback function once");
 
 			//Cleanup
 			oRouter.destroy();
@@ -525,9 +525,9 @@
 			this.clock.tick(0);
 
 			//Assert
-			strictEqual(callCount, 1, "Did call the callback function once");
-			strictEqual(aArguments.foo, "foo", "parameter foo is passed");
-			strictEqual(aArguments.bar, "bar", "parameter bar is passed");
+			assert.strictEqual(callCount, 1, "Did call the callback function once");
+			assert.strictEqual(aArguments.foo, "foo", "parameter foo is passed");
+			assert.strictEqual(aArguments.bar, "bar", "parameter bar is passed");
 
 			//Cleanup
 			router.destroy();
@@ -584,9 +584,9 @@
 			this.clock.tick(0);
 
 			//Assert
-			strictEqual(beforeCallCount, 2, "Did call the callback function twice");
-			strictEqual(callCount, 2, "Did call the callback function twice");
-			strictEqual(patternCallCount, 1, "Did call the patternMatched function once");
+			assert.strictEqual(beforeCallCount, 2, "Did call the callback function twice");
+			assert.strictEqual(callCount, 2, "Did call the callback function twice");
+			assert.strictEqual(patternCallCount, 1, "Did call the patternMatched function once");
 			deepEqual(aArguments.foo, "foo", "Did pass foo as parameter it was: " + aArguments.foo);
 			ok(bParentCallFirst, "Parent route was called first");
 
@@ -619,7 +619,7 @@
 			this.clock.tick(0);
 
 			//Assert
-			strictEqual(callCount, 1, "Did call the callback function once");
+			assert.strictEqual(callCount, 1, "Did call the callback function once");
 
 			//Cleanup
 			router.destroy();
@@ -644,7 +644,7 @@
 			});
 
 			//Assert
-			strictEqual(result, "foo/bar", "Did pass foo bar as parameter");
+			assert.strictEqual(result, "foo/bar", "Did pass foo bar as parameter");
 
 			//Cleanup
 			router.destroy();
@@ -667,7 +667,7 @@
 			var oReturnValue = this.oRouter.navTo();
 
 			// Assert
-			strictEqual(oReturnValue, this.oRouter, "able to chain navTo");
+			assert.strictEqual(oReturnValue, this.oRouter, "able to chain navTo");
 		});
 
 		QUnit.module("View generation");
@@ -702,8 +702,8 @@
 			sap.ui.core.routing.HashChanger.getInstance().setHash("view1");
 
 			//Assert
-			strictEqual(oShell.getContent()[0].getId(), oButton.getId(), "Button is first content element");
-			strictEqual(oStub.callCount, 1, "Only one view is created");
+			assert.strictEqual(oShell.getContent()[0].getId(), oButton.getId(), "Button is first content element");
+			assert.strictEqual(oStub.callCount, 1, "Only one view is created");
 
 			//Cleanup
 			router.destroy();
@@ -747,7 +747,7 @@
 			router.initialize();
 
 			//Assert
-			strictEqual(oShell.getContent()[0].getId(), oView.getId(), "a created view was placed");
+			assert.strictEqual(oShell.getContent()[0].getId(), oView.getId(), "a created view was placed");
 
 			//Cleanup
 			router.destroy();
@@ -832,9 +832,9 @@
 			sap.ui.core.routing.HashChanger.getInstance().setHash("foo");
 
 			//Assert
-			strictEqual(oApp.getPages()[0].getContent()[0].getId(), oNavContainer.getId(), "oNavContainer is first page element in app");
-			strictEqual(oNavContainer.getPages()[0].getContent()[0].getId(), oNavContainer2.getId(), "oNavContainer2 is first page element in oNavContainer");
-			strictEqual(oNavContainer2.getPages()[0].getContent()[0].getId(), oNavContainer3.getId(), "oNavContainer3 is first page element in oNavContainer2");
+			assert.strictEqual(oApp.getPages()[0].getContent()[0].getId(), oNavContainer.getId(), "oNavContainer is first page element in app");
+			assert.strictEqual(oNavContainer.getPages()[0].getContent()[0].getId(), oNavContainer2.getId(), "oNavContainer2 is first page element in oNavContainer");
+			assert.strictEqual(oNavContainer2.getPages()[0].getContent()[0].getId(), oNavContainer3.getId(), "oNavContainer3 is first page element in oNavContainer2");
 
 			//Cleanup
 			router.destroy();
@@ -961,10 +961,10 @@
 			sap.ui.core.routing.HashChanger.getInstance().setHash("fullScreen");
 
 			//Assert
-			strictEqual(oApp.getPages().length, 2, "splitContainer and navContainer are added to App");
-			strictEqual(oNavContainer.getPages()[0].getContent()[0].getId(), oFullScreenContent.getId(), "FullScreenContent is first page element in oNavContainer");
-			strictEqual(oSplitContainer.getMasterPages()[0].getContent()[0].getId(), oMasterContent.getId(), "Master is first master-page element in oSplitContainer");
-			strictEqual(oSplitContainer.getDetailPages()[0].getContent()[0].getId(), oDetailContent.getId(), "Detail is first detail-page element in oSplitContainer");
+			assert.strictEqual(oApp.getPages().length, 2, "splitContainer and navContainer are added to App");
+			assert.strictEqual(oNavContainer.getPages()[0].getContent()[0].getId(), oFullScreenContent.getId(), "FullScreenContent is first page element in oNavContainer");
+			assert.strictEqual(oSplitContainer.getMasterPages()[0].getContent()[0].getId(), oMasterContent.getId(), "Master is first master-page element in oSplitContainer");
+			assert.strictEqual(oSplitContainer.getDetailPages()[0].getContent()[0].getId(), oDetailContent.getId(), "Detail is first detail-page element in oSplitContainer");
 
 			//Cleanup
 			router.destroy();
@@ -1007,7 +1007,7 @@
 			sap.ui.core.routing.HashChanger.getInstance().setHash("view1");
 
 			//Assert
-			strictEqual(oShell.getContent()[0].getId(), "test-view", "View has correct id");
+			assert.strictEqual(oShell.getContent()[0].getId(), "test-view", "View has correct id");
 
 			//Cleanup
 			router.destroy();
@@ -1045,9 +1045,9 @@
 		QUnit.test("Should create a view", function (assert) {
 			var that = this,
 				fnStub = this.stub(sap.ui, "view", function (oViewOptions) {
-					strictEqual(oViewOptions.viewName, "foo", "DId pass the viewname");
-					strictEqual(oViewOptions.type, "bar", "DId pass the type");
-					strictEqual(oViewOptions.id, "baz", "DId pass the id");
+					assert.strictEqual(oViewOptions.viewName, "foo", "DId pass the viewname");
+					assert.strictEqual(oViewOptions.type, "bar", "DId pass the type");
+					assert.strictEqual(oViewOptions.id, "baz", "DId pass the id");
 
 					return that.oView;
 				});
@@ -1056,8 +1056,8 @@
 			var oReturnValue = this.oRouter.getView("foo", "bar", "baz");
 
 			//Assert
-			strictEqual(oReturnValue, this.oView, "the view was created");
-			strictEqual(fnStub.callCount, 1, "the stub was invoked");
+			assert.strictEqual(oReturnValue, this.oView, "the view was created");
+			assert.strictEqual(fnStub.callCount, 1, "the stub was invoked");
 		});
 
 
@@ -1073,9 +1073,9 @@
 			var oRetrievedView = this.oRouter.getView("foo.bar", "bar", "baz");
 
 			//Assert
-			strictEqual(oRetrievedView, this.oView, "the view was returned");
-			strictEqual(oReturnValue, this.oRouter, "able to chain this function");
-			strictEqual(fnStub.callCount, 0, "the stub not invoked - view was loaded from the cache");
+			assert.strictEqual(oRetrievedView, this.oView, "the view was returned");
+			assert.strictEqual(oReturnValue, this.oRouter, "able to chain this function");
+			assert.strictEqual(fnStub.callCount, 0, "the stub not invoked - view was loaded from the cache");
 		});
 
 
@@ -1093,9 +1093,9 @@
 			// Arrange
 			var oParameters = { foo : "bar" },
 					fnEventSpy = this.spy(function(oEvent, oActualData) {
-						strictEqual(oActualData, oData, "the data is correct");
-						strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
-						strictEqual(this, oListener, "the this pointer is correct");
+						assert.strictEqual(oActualData, oData, "the data is correct");
+						assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
+						assert.strictEqual(this, oListener, "the this pointer is correct");
 					}),
 					oListener = {},
 					oData = { some : "data" },
@@ -1109,10 +1109,10 @@
 			this.oRouter.fireViewCreated();
 
 			// Assert
-			strictEqual(fnEventSpy.callCount, 1, "did call the attach spy only once");
-			strictEqual(oAttachReturnValue, this.oRouter, "did return this for chaining for attach");
-			strictEqual(oDetachReturnValue, this.oRouter, "did return this for chaining for detach");
-			strictEqual(oFireReturnValue, this.oRouter, "did return this for chaining for fire");
+			assert.strictEqual(fnEventSpy.callCount, 1, "did call the attach spy only once");
+			assert.strictEqual(oAttachReturnValue, this.oRouter, "did return this for chaining for attach");
+			assert.strictEqual(oDetachReturnValue, this.oRouter, "did return this for chaining for detach");
+			assert.strictEqual(oFireReturnValue, this.oRouter, "did return this for chaining for fire");
 		});
 
 		QUnit.test("Should fire the view created event if a view is created", function (assert) {
@@ -1134,10 +1134,10 @@
 			var oReturnValue = this.oRouter.getView(sViewName, sViewType);
 
 			// Assert
-			strictEqual(fnEventSpy.callCount, 1, "The view created event was fired");
-			strictEqual(oParameters.view, oView, "Did pass the view to the event parameters");
-			strictEqual(oParameters.viewName, sViewName, "Did pass the viewName to the event parameters");
-			strictEqual(oParameters.type, sViewType, "Did pass the viewType to the event parameters");
+			assert.strictEqual(fnEventSpy.callCount, 1, "The view created event was fired");
+			assert.strictEqual(oParameters.view, oView, "Did pass the view to the event parameters");
+			assert.strictEqual(oParameters.viewName, sViewName, "Did pass the viewName to the event parameters");
+			assert.strictEqual(oParameters.type, sViewType, "Did pass the viewType to the event parameters");
 		});
 
 		QUnit.module("titleChanged event", {
@@ -2003,7 +2003,7 @@
 			var oReturnValue = oRouter.getView("XML", "foo");
 
 			// Assert
-			strictEqual(fnOwnerSpy.callCount, 1, "Did run with owner");
+			assert.strictEqual(fnOwnerSpy.callCount, 1, "Did run with owner");
 			ok(fnOwnerSpy.calledBefore(fnViewStub), "Did invoke the owner function before creating the view");
 
 			// Cleanup
@@ -2062,13 +2062,13 @@
 			this.oRouter.parse(this.sPattern);
 
 			// Assert
-			strictEqual(this.oRouter._oTargets._oViews, this.oRouter._oViews, "Targets are using the same view repository");
-			strictEqual(this.oRouter._oTargets._oConfig, this.oDefaults, "Targets are using the same defaults as the router");
+			assert.strictEqual(this.oRouter._oTargets._oViews, this.oRouter._oViews, "Targets are using the same view repository");
+			assert.strictEqual(this.oRouter._oTargets._oConfig, this.oDefaults, "Targets are using the same defaults as the router");
 
-			strictEqual(oPlaceSpy.callCount, 1, "Did place myTarget");
+			assert.strictEqual(oPlaceSpy.callCount, 1, "Did place myTarget");
 			sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myTarget"));
 
-			strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
+			assert.strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
 		});
 
 		QUnit.test("Should display multiple targets referenced by a route", function (assert) {
@@ -2096,14 +2096,14 @@
 			this.oRouter.parse(this.sPattern);
 
 			// Assert
-			strictEqual(oPlaceSpy.callCount, 1, "Did place the first target");
-			strictEqual(oPlaceSecondSpy.callCount, 1, "Didplace the second target");
+			assert.strictEqual(oPlaceSpy.callCount, 1, "Did place the first target");
+			assert.strictEqual(oPlaceSecondSpy.callCount, 1, "Didplace the second target");
 
 			sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myTarget"));
 			sinon.assert.calledOn(oPlaceSecondSpy, this.oRouter.getTarget("secondTarget"));
 
-			strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
-			strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the second shell");
+			assert.strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
+			assert.strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the second shell");
 		});
 
 		QUnit.test("Should display child targets referenced by a route", function (assert) {
@@ -2132,13 +2132,13 @@
 			this.oRouter.parse(this.sPattern);
 
 			// Assert
-			strictEqual(oPlaceSpy.callCount, 1, "Did place myTarget");
-			strictEqual(oPlaceChildSpy.callCount, 1, "Did place myChild");
+			assert.strictEqual(oPlaceSpy.callCount, 1, "Did place myTarget");
+			assert.strictEqual(oPlaceChildSpy.callCount, 1, "Did place myChild");
 			sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myTarget"));
 			sinon.assert.calledOn(oPlaceChildSpy, this.oRouter.getTarget("myChild"));
 
-			strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
-			strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the shell");
+			assert.strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
+			assert.strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the shell");
 		});
 
 		QUnit.module("getTargets");
@@ -2147,7 +2147,7 @@
 			// System under test + arrange
 			var oRouter = new sap.ui.core.routing.Router({}, {}, null, {});
 
-			strictEqual(oRouter.getTargets(), oRouter._oTargets, "Did return the Targets instance");
+			assert.strictEqual(oRouter.getTargets(), oRouter._oTargets, "Did return the Targets instance");
 		});
 
 		QUnit.test("Should return undefined if no targets where defined", function (assert) {
@@ -2155,7 +2155,7 @@
 			// System under test + arrange
 			var oRouter = new sap.ui.core.routing.Router();
 
-			strictEqual(oRouter.getTargets(), undefined, "Did not create a Targets instance");
+			assert.strictEqual(oRouter.getTargets(), undefined, "Did not create a Targets instance");
 		});
 
 		QUnit.module("bypassed", {

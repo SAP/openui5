@@ -37,7 +37,7 @@
 		var sProperty = mOptions.property.charAt(0).toUpperCase() + mOptions.property.slice(1);
 
 		QUnit.test("get" + sProperty + "()", function(assert) {
-			strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
+			assert.strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
 		});
 	};
 
@@ -139,7 +139,7 @@
 		oSegmentedButton.setSelectedButton(oButton1);
 
 		// Assert before rendering
-		strictEqual(oButton1.getId(), oSegmentedButton.getSelectedButton(), "The id of Button1 should be set as property \"selectedButton\"");
+		assert.strictEqual(oButton1.getId(), oSegmentedButton.getSelectedButton(), "The id of Button1 should be set as property \"selectedButton\"");
 
 		oSegmentedButton.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -216,7 +216,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert (should be Button1 after rendering)
-		strictEqual(oSegmentedButton.getSelectedButton(), oButton1.getId(), "The first button should be selected when passing null to the association \"selectedButton\"");
+		assert.strictEqual(oSegmentedButton.getSelectedButton(), oButton1.getId(), "The first button should be selected when passing null to the association \"selectedButton\"");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -239,7 +239,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert (should be Button1 after rendering)
-		strictEqual(oSegmentedButton.getSelectedButton(), oButton1.getId(), "The first button should be selected when passing undefined to the association \"selectedButton\"");
+		assert.strictEqual(oSegmentedButton.getSelectedButton(), oButton1.getId(), "The first button should be selected when passing undefined to the association \"selectedButton\"");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -262,7 +262,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert (should be Button1 after rendering)
-		strictEqual(oSegmentedButton.getSelectedButton(), oButton1.getId(), "The first button should be selected when passing \"\" to the association \"selectedButton\"");
+		assert.strictEqual(oSegmentedButton.getSelectedButton(), oButton1.getId(), "The first button should be selected when passing \"\" to the association \"selectedButton\"");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -396,7 +396,7 @@
 		elementWidth = oSegmentedButton.getDomRef().getBoundingClientRect().width;
 
 		// Assert
-		strictEqual(oButton1.getDomRef().getBoundingClientRect().width +
+		assert.strictEqual(oButton1.getDomRef().getBoundingClientRect().width +
 					oButton2.getDomRef().getBoundingClientRect().width,
 					elementWidth, "Control outer width is the same as sum of all buttons width");
 
@@ -430,11 +430,11 @@
 		var oButtons = oSegmentedButton.getButtons();
 
 		// Assert
-		strictEqual(oButtons[0].$().attr("dir"), "rtl", "Button 1 dir attribute should be set to 'rtl'.");
-		strictEqual(oButtons[1].$().attr("dir"), "ltr", "Button 2 dir attribute should be set to 'ltr'.");
-		strictEqual(oButtons[2].$().attr("dir"), undefined, "Button 3 dir attribute should not be rendered.");
-		strictEqual(oButtons[3].$().attr("dir"), "rtl", "Button 4 dir attribute should be set to 'rtl' button created using the createButton method.");
-		strictEqual(oButtons[4].$().attr("dir"), "ltr", "Button 5 dir attribute should be set to 'ltr' button created using the createButton method.");
+		assert.strictEqual(oButtons[0].$().attr("dir"), "rtl", "Button 1 dir attribute should be set to 'rtl'.");
+		assert.strictEqual(oButtons[1].$().attr("dir"), "ltr", "Button 2 dir attribute should be set to 'ltr'.");
+		assert.strictEqual(oButtons[2].$().attr("dir"), undefined, "Button 3 dir attribute should not be rendered.");
+		assert.strictEqual(oButtons[3].$().attr("dir"), "rtl", "Button 4 dir attribute should be set to 'rtl' button created using the createButton method.");
+		assert.strictEqual(oButtons[4].$().attr("dir"), "ltr", "Button 5 dir attribute should be set to 'ltr' button created using the createButton method.");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -467,17 +467,17 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getButtons().length, 4, "Control should have 4 buttons from the button aggregation");
-		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 3, "Control should have 3 buttons visible");
-		strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 1, "Control should have 1 button invisible");
+		assert.strictEqual(oSegmentedButton.getButtons().length, 4, "Control should have 4 buttons from the button aggregation");
+		assert.strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 3, "Control should have 3 buttons visible");
+		assert.strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 1, "Control should have 1 button invisible");
 
 		//Act
 		oSegmentedButton.getButtons()[3].setVisible(true);
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 4, "Control should have 4 buttons visible");
-		strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 0, "Control should have 0 button invisible");
+		assert.strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 4, "Control should have 4 buttons visible");
+		assert.strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 0, "Control should have 0 button invisible");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -511,14 +511,14 @@
 		iButton3Width = oButton3.getDomRef().getBoundingClientRect().width;
 
 		// Assert
-		strictEqual(Math.floor(iButton2Width), Math.floor(iButton1Width), 'Second button width should be equal to the ' +
+		assert.strictEqual(Math.floor(iButton2Width), Math.floor(iButton1Width), 'Second button width should be equal to the ' +
 				'first button width (mind here we add 1px to the expected result because of the 2 borders of middle' +
 				'buttons)');
 
-		strictEqual(Math.floor(iButton3Width), Math.floor(iButton1Width), 'Third button width should be equal to the ' +
+		assert.strictEqual(Math.floor(iButton3Width), Math.floor(iButton1Width), 'Third button width should be equal to the ' +
 				'first button width');
 
-		strictEqual(iControlWidth, Math.round(iButton1Width + iButton2Width + iButton3Width), "The sum of all buttons width " +
+		assert.strictEqual(iControlWidth, Math.round(iButton1Width + iButton2Width + iButton3Width), "The sum of all buttons width " +
 				"should be the same as the control width");
 
 		// Cleanup
@@ -548,9 +548,9 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getItems().length, 3, "Control should have 3 items");
-		strictEqual(oSegmentedButton.getButtons().length, 3, "Control should have 3 buttons from the button aggregation");
-		strictEqual(oSegmentedButton.$().find("li").length, 3, "Control should have 3 buttons rendered");
+		assert.strictEqual(oSegmentedButton.getItems().length, 3, "Control should have 3 items");
+		assert.strictEqual(oSegmentedButton.getButtons().length, 3, "Control should have 3 buttons from the button aggregation");
+		assert.strictEqual(oSegmentedButton.$().find("li").length, 3, "Control should have 3 buttons rendered");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -582,8 +582,8 @@
 			$button2 = aButtons[1].$();
 
 
-		strictEqual($button1.attr("title"), "Tooltip 1", "First button should have a title with the setted value");
-		strictEqual($button2.attr("title"), undefined, "There should be no title for the second button");
+		assert.strictEqual($button1.attr("title"), "Tooltip 1", "First button should have a title with the setted value");
+		assert.strictEqual($button2.attr("title"), undefined, "There should be no title for the second button");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -616,18 +616,18 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getItems().length, 4, "Control should have 4 items");
-		strictEqual(oSegmentedButton.getButtons().length, 4, "Control should have 4 buttons from the button aggregation");
-		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 3, "Control should have 3 buttons visible");
-		strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 1, "Control should have 1 button invisible");
+		assert.strictEqual(oSegmentedButton.getItems().length, 4, "Control should have 4 items");
+		assert.strictEqual(oSegmentedButton.getButtons().length, 4, "Control should have 4 buttons from the button aggregation");
+		assert.strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 3, "Control should have 3 buttons visible");
+		assert.strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 1, "Control should have 1 button invisible");
 
 		//Act
 		oSegmentedButton.getItems()[3].setVisible(true);
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 4, "Control should have 4 buttons visible");
-		strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 0, "Control should have 0 button invisible");
+		assert.strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 4, "Control should have 4 buttons visible");
+		assert.strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 0, "Control should have 0 button invisible");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -661,14 +661,14 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn.sapMSegBBtnSel").length, 1, "1 selected button is rendered");
+		assert.strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn.sapMSegBBtnSel").length, 1, "1 selected button is rendered");
 
 		//Act
 		oSegmentedButton.setSelectedKey("k2");
 
 		//Assert
-		strictEqual(oSegmentedButton.getSelectedButton(), oSegmentedButton.getButtons()[1].getId(), "The invisible button is selected");
-		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn.sapMSegBBtnSel").length, 0, "No selected buttons are rendered");
+		assert.strictEqual(oSegmentedButton.getSelectedButton(), oSegmentedButton.getButtons()[1].getId(), "The invisible button is selected");
+		assert.strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn.sapMSegBBtnSel").length, 0, "No selected buttons are rendered");
 
 		//Cleanup
 		oSegmentedButton.destroy();
@@ -700,11 +700,11 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getItems().length, 3, "Control should have 3 items");
-		strictEqual(oSegmentedButton.getButtons().length, 3, "Control should have 3 buttons from the button aggregation");
-		strictEqual(oSegmentedButton.$().find("li").length, 3, "Control should have 3 buttons rendered");
-		strictEqual(oSegmentedButton.getButtons()[0].getText(), "Btn 1", "Button text should be equal to xml view ListItem text");
-		strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
+		assert.strictEqual(oSegmentedButton.getItems().length, 3, "Control should have 3 items");
+		assert.strictEqual(oSegmentedButton.getButtons().length, 3, "Control should have 3 buttons from the button aggregation");
+		assert.strictEqual(oSegmentedButton.$().find("li").length, 3, "Control should have 3 buttons rendered");
+		assert.strictEqual(oSegmentedButton.getButtons()[0].getText(), "Btn 1", "Button text should be equal to xml view ListItem text");
+		assert.strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
 
 		// Cleanup
 		oView.destroy();
@@ -755,14 +755,14 @@
 		// Assert
 		for (;i < aButtons.length;i++) {
 			// Buttons
-			strictEqual(aButtons[i].getId(), getExpectedButtonId(i),
+			assert.strictEqual(aButtons[i].getId(), getExpectedButtonId(i),
 					"Internal button id should be equal to the expected id");
 
-			strictEqual(aButtons[i].$().attr("id"), getExpectedButtonId(i),
+			assert.strictEqual(aButtons[i].$().attr("id"), getExpectedButtonId(i),
 					"Rendered button id should be equal to the expected id");
 
 			// Images|icons
-			strictEqual(aButtons[i].$().find(".sapMBtnIcon").attr("id"), getExpectedImageId(i),
+			assert.strictEqual(aButtons[i].$().find(".sapMBtnIcon").attr("id"), getExpectedImageId(i),
 					"Rendered image id should be equal to the expected id");
 		}
 
@@ -802,7 +802,7 @@
 
 		// Assert
 		ok(iBtn1Width > 0, "The width of the first button is greater than zero");
-		strictEqual(iBtn1Width, iBtn4Width, "The width of the first button is equal to the width of the last button");
+		assert.strictEqual(iBtn1Width, iBtn4Width, "The width of the first button is equal to the width of the last button");
 		ok((iBtn1Width * 2) < iBtn2Width, "The width of the first button multiplied is greater than the second button");
 		ok((iBtn1Width * 2) < iBtn3Width, "The width of the first button multiplied is greater than the third button");
 		ok((iBtn4Width * 2) < iBtn2Width, "The width of the last button multiplied is greater than the second button");
@@ -844,12 +844,12 @@
 		oButton1.firePress();
 
 		// Assert
-		strictEqual(fnFireSelectSpy.callCount, 0, "Event should not be fired, because the button is selected");
+		assert.strictEqual(fnFireSelectSpy.callCount, 0, "Event should not be fired, because the button is selected");
 
 		// Act
 		oButton2.firePress();
 		// Assert
-		strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired once");
+		assert.strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired once");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -878,7 +878,7 @@
 		// Act
 		oButton3.firePress();
 		// Assert
-		strictEqual(fnCallback.callCount, 2, "select event callback should be called twice");
+		assert.strictEqual(fnCallback.callCount, 2, "select event callback should be called twice");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -970,7 +970,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getSelectedButton(), oButton1.getId(), "initially the first button is selected");
+		assert.strictEqual(oSegmentedButton.getSelectedButton(), oButton1.getId(), "initially the first button is selected");
 		ok(oButton1.$().hasClass("sapMSegBBtnSel"),
 				"the first button's DOM element initially has style class \"sapMSegBBtnSel\"");
 
@@ -978,7 +978,7 @@
 		oThisForChaining = oSegmentedButton.setSelectedButton(oButton2);
 
 		// Assert
-		strictEqual(oSegmentedButton.getSelectedButton(), oButton2.getId(), "now the second button is selected");
+		assert.strictEqual(oSegmentedButton.getSelectedButton(), oButton2.getId(), "now the second button is selected");
 		ok(oButton2.$().hasClass("sapMSegBBtnSel"), "the second button's DOM element has style class \"sapMSegBBtnSel\"");
 		ok(oThisForChaining instanceof sap.m.SegmentedButton, "the setter should return 'this' instance of the control itself to enable chaining");
 
@@ -986,14 +986,14 @@
 		oSegmentedButton.setSelectedButton(oButton3.getId());
 
 		// Assert
-		strictEqual(oSegmentedButton.getSelectedButton(), oButton3.getId(), "now the third button is selected");
+		assert.strictEqual(oSegmentedButton.getSelectedButton(), oButton3.getId(), "now the third button is selected");
 		ok(oButton3.$().hasClass("sapMSegBBtnSel"), "the third button's DOM element has style class \"sapMSegBBtnSel\"");
 
 		// Act
 		oSegmentedButton.setSelectedButton("mumpitz");
 
 		// Assert
-		strictEqual(oSegmentedButton.getSelectedButton(), "mumpitz", "selectedButton association contains \"mumpitz\"");
+		assert.strictEqual(oSegmentedButton.getSelectedButton(), "mumpitz", "selectedButton association contains \"mumpitz\"");
 		ok(!oButton3.$().hasClass("sapMSegBBtnSel"),
 				"the third button's DOM element does not have style class \"sapMSegBBtnSel\" anymore");
 
@@ -1013,18 +1013,18 @@
 
 		oSegmentedButton.placeAt("qunit-fixture");
 
-		strictEqual(oSegmentedButton.getSelectedButton(), null, "by default the \"selectedButton\" aggregation is not filled before rendering");
+		assert.strictEqual(oSegmentedButton.getSelectedButton(), null, "by default the \"selectedButton\" aggregation is not filled before rendering");
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getButtons()[0].getId(), oSegmentedButton.getSelectedButton(), "By default the first button in the SegmentedButton should be selected");
-		strictEqual(oSegmentedButton.getSelectedButton(), oSegmentedButton.getButtons()[0].getId(), "by default the \"selectedButton\" aggregation should be the first button after rendering");
+		assert.strictEqual(oSegmentedButton.getButtons()[0].getId(), oSegmentedButton.getSelectedButton(), "By default the first button in the SegmentedButton should be selected");
+		assert.strictEqual(oSegmentedButton.getSelectedButton(), oSegmentedButton.getButtons()[0].getId(), "by default the \"selectedButton\" aggregation should be the first button after rendering");
 
-		strictEqual(oSegmentedButton.getWidth(), "", "by default width property is empty string");
-		strictEqual(oSegmentedButton.getWidth(), "", "by default width property is empty string");
-		strictEqual(oSegmentedButton.getVisible(), true, "By default the SegmentedButton control is visible");
-		strictEqual(oSegmentedButton.getEnabled(), true, "By default the SegmentedButton control control is enabled");
-		strictEqual(oSegmentedButton.getSelectedKey(), "", "By default the selectedKey aggregation should be undefined when the segmented button is initialized with the buttons aggregation");
+		assert.strictEqual(oSegmentedButton.getWidth(), "", "by default width property is empty string");
+		assert.strictEqual(oSegmentedButton.getWidth(), "", "by default width property is empty string");
+		assert.strictEqual(oSegmentedButton.getVisible(), true, "By default the SegmentedButton control is visible");
+		assert.strictEqual(oSegmentedButton.getEnabled(), true, "By default the SegmentedButton control control is enabled");
+		assert.strictEqual(oSegmentedButton.getSelectedKey(), "", "By default the selectedKey aggregation should be undefined when the segmented button is initialized with the buttons aggregation");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -1050,7 +1050,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getButtons().length, 2, "There should be 2 buttons");
+		assert.strictEqual(oSegmentedButton.getButtons().length, 2, "There should be 2 buttons");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -1073,7 +1073,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.indexOfButton(oButton), 2, "The button should be at second index");
+		assert.strictEqual(oSegmentedButton.indexOfButton(oButton), 2, "The button should be at second index");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -1166,8 +1166,8 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getButtons().length, 2, "The second button is removed");
-		strictEqual(oSegmentedButton.indexOfButton(oButton2), -1, "The second button is removed");
+		assert.strictEqual(oSegmentedButton.getButtons().length, 2, "The second button is removed");
+		assert.strictEqual(oSegmentedButton.indexOfButton(oButton2), -1, "The second button is removed");
 
 		// Cleanup
 		oButton2.destroy();
@@ -1199,10 +1199,10 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getButtons().length, 0, "All buttons are removed");
-		strictEqual(oSegmentedButton.indexOfButton(oButton1), -1, "the first button is removed");
-		strictEqual(oSegmentedButton.indexOfButton(oButton2), -1, "the second button is removed");
-		strictEqual(oSegmentedButton.indexOfButton(oButton3), -1, "the third button is removed");
+		assert.strictEqual(oSegmentedButton.getButtons().length, 0, "All buttons are removed");
+		assert.strictEqual(oSegmentedButton.indexOfButton(oButton1), -1, "the first button is removed");
+		assert.strictEqual(oSegmentedButton.indexOfButton(oButton2), -1, "the second button is removed");
+		assert.strictEqual(oSegmentedButton.indexOfButton(oButton3), -1, "the third button is removed");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -1231,7 +1231,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getButtons().length, 0, "There should be 0 buttons in the SegmentedButton");
+		assert.strictEqual(oSegmentedButton.getButtons().length, 0, "There should be 0 buttons in the SegmentedButton");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -1263,7 +1263,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
+		assert.strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -1325,16 +1325,16 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getSelectedKey(), "b1", "When not set selectedKey should be equal to the first key in the list 'b1'");
-		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b1", "When not set selectedKey property should be equal to the first key in the list 'b1'");
+		assert.strictEqual(oSegmentedButton.getSelectedKey(), "b1", "When not set selectedKey should be equal to the first key in the list 'b1'");
+		assert.strictEqual(oSegmentedButton.getProperty("selectedKey"), "b1", "When not set selectedKey property should be equal to the first key in the list 'b1'");
 
 		// Act
 		// Change selectedKey to "b2"
 		oThisForChaining = oSegmentedButton.setSelectedKey("b2");
 
 		// Assert
-		strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
-		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b2", "selectedKey property should be 'b2'");
+		assert.strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
+		assert.strictEqual(oSegmentedButton.getProperty("selectedKey"), "b2", "selectedKey property should be 'b2'");
 		ok(oThisForChaining instanceof sap.m.SegmentedButton, "the setter should return 'this' instance of the control itself to enable chaining");
 
 		// Act
@@ -1342,8 +1342,8 @@
 		oSegmentedButton.setSelectedKey("NonexistingKey");
 
 		// Assert
-		strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be unchanged = 'b2'");
-		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b2", "selectedKey property should be unchanged = 'b2'");
+		assert.strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be unchanged = 'b2'");
+		assert.strictEqual(oSegmentedButton.getProperty("selectedKey"), "b2", "selectedKey property should be unchanged = 'b2'");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -1376,7 +1376,7 @@
 		oSegmentedButton.getButtons()[1].$().trigger("click");
 
 		// Assert
-		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b2", "selectedKey property should be 'b2'");
+		assert.strictEqual(oSegmentedButton.getProperty("selectedKey"), "b2", "selectedKey property should be 'b2'");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -1416,18 +1416,18 @@
 		var oButton = oSegmentedButton.getButtons()[0];
 		var $LI = jQuery(oSegmentedButton.$().find("li")[0]);
 
-		strictEqual(oButton.getText(), "Btn changed", "Button text should have the new value");
-		strictEqual(oButton.getIcon(), "sap-icon://attachment", "Button should have the new value");
-		strictEqual(oButton.getTextDirection(), sap.ui.core.TextDirection.RTL, "Button should have the new value");
-		strictEqual(oButton.getEnabled(), false, "Button should have the new value");
-		strictEqual(oButton.getWidth(), "300px", "Button should have the new value");
-		strictEqual(oSegmentedButton.getSelectedKey(), "changed", "SegmentedButton getSelectedKey() should return the new value");
+		assert.strictEqual(oButton.getText(), "Btn changed", "Button text should have the new value");
+		assert.strictEqual(oButton.getIcon(), "sap-icon://attachment", "Button should have the new value");
+		assert.strictEqual(oButton.getTextDirection(), sap.ui.core.TextDirection.RTL, "Button should have the new value");
+		assert.strictEqual(oButton.getEnabled(), false, "Button should have the new value");
+		assert.strictEqual(oButton.getWidth(), "300px", "Button should have the new value");
+		assert.strictEqual(oSegmentedButton.getSelectedKey(), "changed", "SegmentedButton getSelectedKey() should return the new value");
 
-		strictEqual($LI.text(), "Btn changed", "Rendered li text should have the new value");
+		assert.strictEqual($LI.text(), "Btn changed", "Rendered li text should have the new value");
 		ok($LI.find(".sapMBtnIcon"), "Rendered li should contain a icon span");
-		strictEqual($LI.attr("dir"), "rtl", "Rendered li should have attribute dir equal to 'rtl'");
+		assert.strictEqual($LI.attr("dir"), "rtl", "Rendered li should have attribute dir equal to 'rtl'");
 		ok($LI.hasClass("sapMSegBBtnDis"), "Rendered li should have a disabled class");
-		strictEqual($LI.outerWidth(), 300, "Rendered li width must be equal the the new value");
+		assert.strictEqual($LI.outerWidth(), 300, "Rendered li width must be equal the the new value");
 
 	});
 
@@ -1592,14 +1592,14 @@
 			new sap.m.Button({width: "300px"}),
 			new sap.m.Button()
 		];
-		strictEqual(oSB._getButtonWidth(aButtons), "calc(50% - 150px)", "Resulting css width should be calc(50% - 150px)");
+		assert.strictEqual(oSB._getButtonWidth(aButtons), "calc(50% - 150px)", "Resulting css width should be calc(50% - 150px)");
 
 		aButtons = [
 			new sap.m.Button(),
 			new sap.m.Button({width: "300px"}),
 			new sap.m.Button({width: "300px"})
 		];
-		strictEqual(oSB._getButtonWidth(aButtons), "calc(100% - 600px)", "Resulting css width should be calc(100% - 600px)");
+		assert.strictEqual(oSB._getButtonWidth(aButtons), "calc(100% - 600px)", "Resulting css width should be calc(100% - 600px)");
 
 		aButtons = [
 			new sap.m.Button(),
@@ -1607,21 +1607,21 @@
 			new sap.m.Button({width: "60%"}),
 			new sap.m.Button({width: "300px"})
 		];
-		strictEqual(oSB._getButtonWidth(aButtons), "calc(20% - 150px)", "Resulting css width should be calc(20% - 150px)");
+		assert.strictEqual(oSB._getButtonWidth(aButtons), "calc(20% - 150px)", "Resulting css width should be calc(20% - 150px)");
 
 		aButtons = [
 			new sap.m.Button(),
 			new sap.m.Button({width: "70%"}),
 			new sap.m.Button()
 		];
-		strictEqual(oSB._getButtonWidth(aButtons), "15%", "Resulting css width should be 15%");
+		assert.strictEqual(oSB._getButtonWidth(aButtons), "15%", "Resulting css width should be 15%");
 
 		aButtons = [
 			new sap.m.Button({width: "100px"}),
 			new sap.m.Button({width: "100px"}),
 			new sap.m.Button({width: "100px"})
 		];
-		strictEqual(oSB._getButtonWidth(aButtons), false, "Resulting css width should be false because there are no buttons" +
+		assert.strictEqual(oSB._getButtonWidth(aButtons), false, "Resulting css width should be false because there are no buttons" +
 				"without custom widths");
 
 		aButtons = [
@@ -1629,7 +1629,7 @@
 			new sap.m.Button({width: "50%"}),
 			new sap.m.Button()
 		];
-		strictEqual(oSB._getButtonWidth(aButtons), "0%", "Resulting css width should be 0% because the other buttons" +
+		assert.strictEqual(oSB._getButtonWidth(aButtons), "0%", "Resulting css width should be 0% because the other buttons" +
 				" are occupying all the available width");
 
 		// Cleanup
@@ -1771,7 +1771,7 @@
 		oSB._updateWidth();
 
 		// Assert
-		strictEqual(oSB.$().attr("style"), "width: 81px;", "Result should be sum of all 4 button widths which is 80 " +
+		assert.strictEqual(oSB.$().attr("style"), "width: 81px;", "Result should be sum of all 4 button widths which is 80 " +
 				"plus one pixel added for the border");
 
 		// Act
@@ -1779,7 +1779,7 @@
 
 		// Assert
 		for (i = 0;i < aButtons.length;i++) {
-			strictEqual(aButtons[i].$().attr("style"), "width: 25%;", "Width of all buttons should be 25%");
+			assert.strictEqual(aButtons[i].$().attr("style"), "width: 25%;", "Width of all buttons should be 25%");
 		}
 
 		// Act
@@ -1825,7 +1825,7 @@
 		oSB._updateWidth();
 
 		// Assert
-		strictEqual(oSB.$().attr("style"), "width: 100%;", "a");
+		assert.strictEqual(oSB.$().attr("style"), "width: 100%;", "a");
 
 		// Restore jQuery.innerWidth method
 		jQuery.fn.innerWidth = this._ojQueryInnerWidthMethod;
@@ -1908,9 +1908,9 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getButtons()[6].getText(), oModel.getData().items[6].text,
+		assert.strictEqual(oSegmentedButton.getButtons()[6].getText(), oModel.getData().items[6].text,
 				"Button text should be equal to Model text");
-		strictEqual(oSegmentedButton.getButtons()[6].getEnabled(), oModel.getData().items[6].enabled,
+		assert.strictEqual(oSegmentedButton.getButtons()[6].getEnabled(), oModel.getData().items[6].enabled,
 				"Button enabled property should be equal to Model enabled property");
 
 		// Act
@@ -1919,9 +1919,9 @@
 		oSegmentedButton.getButtons()[6].setText('sLabel');
 
 		// Assert
-		strictEqual(oSegmentedButton.getButtons()[6].getEnabled(), oModel.getData().items[6].enabled,
+		assert.strictEqual(oSegmentedButton.getButtons()[6].getEnabled(), oModel.getData().items[6].enabled,
 				"Button enabled property should be equal to Model enabled property");
-		strictEqual(oSegmentedButton.getButtons()[6].getText(), 'sLabel',
+		assert.strictEqual(oSegmentedButton.getButtons()[6].getText(), 'sLabel',
 				"Button should have label: 'sLabel'");
 
 		// Cleanup
@@ -1969,19 +1969,19 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getSelectedKey(), oModel.getData().selectedKey,
+		assert.strictEqual(oSegmentedButton.getSelectedKey(), oModel.getData().selectedKey,
 				"selectedKey property should be equal to Model");
 
 		// Assert
-		strictEqual(oSegmentedButton.getItems()[0].getIcon(), oModel.getData().items[0].icon,
+		assert.strictEqual(oSegmentedButton.getItems()[0].getIcon(), oModel.getData().items[0].icon,
 				"Button icon should be equal to Model icon");
-		strictEqual(oSegmentedButton.getItems()[6].getText(), oModel.getData().items[6].text,
+		assert.strictEqual(oSegmentedButton.getItems()[6].getText(), oModel.getData().items[6].text,
 				"Button text should be equal to Model text");
-		strictEqual(oSegmentedButton.getItems()[1].getEnabled(), oModel.getData().items[1].enabled,
+		assert.strictEqual(oSegmentedButton.getItems()[1].getEnabled(), oModel.getData().items[1].enabled,
 				"Button enabled property should be equal to Model enabled property");
-		strictEqual(oSegmentedButton.getItems()[2].getTextDirection(), oModel.getData().items[2].textDirection,
+		assert.strictEqual(oSegmentedButton.getItems()[2].getTextDirection(), oModel.getData().items[2].textDirection,
 				"Button textDirection should be equal to Model textDirection");
-		strictEqual(oSegmentedButton.getItems()[5].getWidth(), oModel.getData().items[5].width,
+		assert.strictEqual(oSegmentedButton.getItems()[5].getWidth(), oModel.getData().items[5].width,
 				"Button width should be equal to Model text");
 
 		// Act
@@ -1992,10 +1992,10 @@
 		oModel.updateBindings(sap.ui.model.ChangeReason.Change);
 
 		// Assert
-		strictEqual(oSegmentedButton.getButtons()[6].getEnabled(), oModel.getData().items[6].enabled,
+		assert.strictEqual(oSegmentedButton.getButtons()[6].getEnabled(), oModel.getData().items[6].enabled,
 				"Button enabled property should be equal to Model enabled property after model update");
 
-		strictEqual(oSegmentedButton.getButtons()[6].getText(), 'sLabel',
+		assert.strictEqual(oSegmentedButton.getButtons()[6].getText(), 'sLabel',
 				"Button should have label: 'sLabel' after model update");
 
 		// Cleanup
@@ -2057,11 +2057,11 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getItems().length, 3, "Should have 3 items");
-		strictEqual(oSegmentedButton.getButtons().length, 3, "Should have 3 buttons");
-		strictEqual(oSegmentedButton.$().find("li").length, 3, "Should have 3 buttons rendered");
-		strictEqual(oSegmentedButton.getSelectedKey(), "b1", "selectedKey should be the default first item key");
-		strictEqual(oSegmentedButton.getItems()[0].getText(),
+		assert.strictEqual(oSegmentedButton.getItems().length, 3, "Should have 3 items");
+		assert.strictEqual(oSegmentedButton.getButtons().length, 3, "Should have 3 buttons");
+		assert.strictEqual(oSegmentedButton.$().find("li").length, 3, "Should have 3 buttons rendered");
+		assert.strictEqual(oSegmentedButton.getSelectedKey(), "b1", "selectedKey should be the default first item key");
+		assert.strictEqual(oSegmentedButton.getItems()[0].getText(),
 				"Initial btn 1", "Button text should be equal to initial Model text");
 
 		// Get the buttons prior to changing the model of the control.
@@ -2072,19 +2072,19 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getItems().length, 8, "Should have 8 items");
-		strictEqual(oSegmentedButton.getButtons().length, 8, "Should have 8 buttons");
-		strictEqual(oSegmentedButton.$().find("li").length, 8, "Should have 8 buttons rendered");
-		strictEqual(oSegmentedButton.getSelectedKey(), "b7", "selectedKey should be equal to the second model selectedKey");
-		strictEqual(oSegmentedButton.getButtons()[0].getText(), "btn 1",
+		assert.strictEqual(oSegmentedButton.getItems().length, 8, "Should have 8 items");
+		assert.strictEqual(oSegmentedButton.getButtons().length, 8, "Should have 8 buttons");
+		assert.strictEqual(oSegmentedButton.$().find("li").length, 8, "Should have 8 buttons rendered");
+		assert.strictEqual(oSegmentedButton.getSelectedKey(), "b7", "selectedKey should be equal to the second model selectedKey");
+		assert.strictEqual(oSegmentedButton.getButtons()[0].getText(), "btn 1",
 				"Button text should be equal to second Model text");
-		strictEqual(oSegmentedButton.getButtons()[1].getEnabled(), false,
+		assert.strictEqual(oSegmentedButton.getButtons()[1].getEnabled(), false,
 				"Button enabled should be equal to second Model enabled");
-		strictEqual(oSegmentedButton.getButtons()[2].getTextDirection(), sap.ui.core.TextDirection.RTL,
+		assert.strictEqual(oSegmentedButton.getButtons()[2].getTextDirection(), sap.ui.core.TextDirection.RTL,
 				"Button textDirection should be equal to second Model textDirection");
-		strictEqual(jQuery(oSegmentedButton.$().find("li")[2]).attr("dir"), sap.ui.core.TextDirection.RTL.toLowerCase(),
+		assert.strictEqual(jQuery(oSegmentedButton.$().find("li")[2]).attr("dir"), sap.ui.core.TextDirection.RTL.toLowerCase(),
 				"Button textDirection should be rendered to second Model textDirection");
-		strictEqual(oSegmentedButton.getButtons()[3].getIcon(), "sap-icon://home",
+		assert.strictEqual(oSegmentedButton.getButtons()[3].getIcon(), "sap-icon://home",
 				"Button icon should be equal to second Model icon");
 
 		// Cleanup
@@ -2115,21 +2115,21 @@
 			sap.ui.test.qunit.triggerKeyup(oButton1.getDomRef(), oOptions.keyCode);
 
 			// Assert
-			strictEqual(fnFireSelectSpy.callCount, 0, "Event should not be fired, because the button is selected");
+			assert.strictEqual(fnFireSelectSpy.callCount, 0, "Event should not be fired, because the button is selected");
 
 			// Act
 			sap.ui.test.qunit.triggerKeydown(oButton2.getDomRef(), oOptions.keyCode);
 			sap.ui.test.qunit.triggerKeyup(oButton2.getDomRef(), oOptions.keyCode);
 
 			// Assert
-			strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired once");
+			assert.strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired once");
 
 			// Act
 			sap.ui.test.qunit.triggerKeydown(oButton2.getDomRef(), oOptions.keyCode);
 			sap.ui.test.qunit.triggerKeyup(oButton2.getDomRef(), oOptions.keyCode);
 
 			// Assert
-			strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired once");
+			assert.strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired once");
 
 			// Cleanup
 			oSegmentedButton.destroy();
@@ -2189,7 +2189,7 @@
 
 		//Assert
 		var focussedButton = SegmentedIcons.$().find('.sapMSegBBtn').filter(":focus");
-		strictEqual(focussedButton.attr('id'),
+		assert.strictEqual(focussedButton.attr('id'),
 				'buttonIcon'+ options.expectedFocusedIndex,
 				"Button with index " + options.expectedFocusedIndex + " should be focussed.");
 
@@ -2289,15 +2289,15 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oButton1.$().attr("aria-checked"), "true", "Property 'aria-checked' of Button1 should be 'true'");
-		strictEqual(oButton2.$().attr("aria-checked"), "false", "Property 'aria-checked'  of Button2 should be 'false'");
-		strictEqual(oButton3.$().attr("aria-disabled"), "true", "Property 'aria-disabled' of Button3 should be 'true'");
+		assert.strictEqual(oButton1.$().attr("aria-checked"), "true", "Property 'aria-checked' of Button1 should be 'true'");
+		assert.strictEqual(oButton2.$().attr("aria-checked"), "false", "Property 'aria-checked'  of Button2 should be 'false'");
+		assert.strictEqual(oButton3.$().attr("aria-disabled"), "true", "Property 'aria-disabled' of Button3 should be 'true'");
 
 		oButton2.$().trigger("tap");	// in a real mobile browser both tap and click are fired
 		oButton2.$().trigger("click");
 
-		strictEqual(oButton1.$().attr("aria-checked"), "false", "Property 'aria-checked' of Button1 after deselect should be 'false'");
-		strictEqual(oButton2.$().attr("aria-checked"), "true", "Property 'aria-checked'  of Button2 after select should be 'true'");
+		assert.strictEqual(oButton1.$().attr("aria-checked"), "false", "Property 'aria-checked' of Button1 after deselect should be 'false'");
+		assert.strictEqual(oButton2.$().attr("aria-checked"), "true", "Property 'aria-checked'  of Button2 after select should be 'true'");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -2339,37 +2339,37 @@
 		var aButtons = oSegmentedButton.getButtons();
 
 		// Assert
-		strictEqual(aButtons[0].$().attr("aria-label"),
+		assert.strictEqual(aButtons[0].$().attr("aria-label"),
 				sap.ui.core.IconPool.getIconInfo("sap-icon://home").name + " button 1",
 				"Attribute aria-label on the first button should contain the generic icon name and the text of the button");
 
-		strictEqual(aButtons[1].$().attr("aria-label"),
+		assert.strictEqual(aButtons[1].$().attr("aria-label"),
 				sap.ui.core.IconPool.getIconInfo("sap-icon://attachment").name,
 				"Attribute aria-label on the second button should contain only the icon generic name");
 
-		strictEqual(aButtons[1].$().attr("title"),
+		assert.strictEqual(aButtons[1].$().attr("title"),
 				sap.ui.core.IconPool.getIconInfo("sap-icon://attachment").name,
 				"Tooltip on the second button should contain only the icon generic name");
 
-		strictEqual(aButtons[2].$().attr("aria-label"), undefined,
+		assert.strictEqual(aButtons[2].$().attr("aria-label"), undefined,
 				"If we don't have a SAP Icon we don't need the aria-label attribute");
 
-		strictEqual(aButtons[3].$().attr("aria-label"), undefined,
+		assert.strictEqual(aButtons[3].$().attr("aria-label"), undefined,
 				"Don't put aria-label for text and tooltip");
 
-		strictEqual(aButtons[3].$().attr("title"), "tooltip 4",
+		assert.strictEqual(aButtons[3].$().attr("title"), "tooltip 4",
 				"For text and tooltip use the later for title attr");
 
-		strictEqual(aButtons[4].$().attr("aria-label"), undefined,
+		assert.strictEqual(aButtons[4].$().attr("aria-label"), undefined,
 				"Don't use aria-label with icon + tooltip");
 
-		strictEqual(aButtons[4].$().attr("title"), "tooltip 5",
+		assert.strictEqual(aButtons[4].$().attr("title"), "tooltip 5",
 				"Read the title attr when icon + tooltip are used");
 
-		strictEqual(aButtons[5].$().attr("aria-label"), undefined,
+		assert.strictEqual(aButtons[5].$().attr("aria-label"), undefined,
 				"Don't use aria-label with icon, tooltip and text");
 
-		strictEqual(aButtons[5].$().attr("title"), "tooltip 6",
+		assert.strictEqual(aButtons[5].$().attr("title"), "tooltip 6",
 				"Read the title attr when icon, tooltip and text are used");
 
 		// Cleanup
@@ -2405,7 +2405,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getAggregation("_select"),
+		assert.strictEqual(oSegmentedButton.getAggregation("_select"),
 				null,
 				"The hidden select has not been instantiated");
 
@@ -2413,7 +2413,7 @@
 				undefined,
 				"The property _bInOverflow does not exist at all");
 
-		strictEqual(oSegmentedButton.$("select").length,
+		assert.strictEqual(oSegmentedButton.$("select").length,
 				0,
 				"The select is not in the DOM");
 
@@ -2444,7 +2444,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getAggregation("_select").getMetadata().getName(),
+		assert.strictEqual(oSegmentedButton.getAggregation("_select").getMetadata().getName(),
 				"sap.m.Select",
 				"The hidden select is instantiated");
 
@@ -2452,7 +2452,7 @@
 				true,
 				"The property _bInOverflow is set to true");
 
-		strictEqual(oSegmentedButton.$("select").length,
+		assert.strictEqual(oSegmentedButton.$("select").length,
 				1,
 				"The select in in the DOM");
 
@@ -2488,7 +2488,7 @@
 		this.clock.tick(1000);
 
 		// Assert
-		strictEqual(oSegmentedButton.getAggregation("_select").getItems()[0].getText(),
+		assert.strictEqual(oSegmentedButton.getAggregation("_select").getItems()[0].getText(),
 				newText,
 				"The select has been synced");
 
@@ -2524,7 +2524,7 @@
 		this.clock.tick(1000);
 
 		// Assert
-		strictEqual(oSegmentedButton.getAggregation("_select").getItems()[0].getText(),
+		assert.strictEqual(oSegmentedButton.getAggregation("_select").getItems()[0].getText(),
 				newText,
 				"The select has been synced");
 
@@ -2558,7 +2558,7 @@
 		this.clock.tick(1000);
 
 		// Assert
-		strictEqual(oSegmentedButton.getAggregation("_select"),
+		assert.strictEqual(oSegmentedButton.getAggregation("_select"),
 				null,
 				"The hidden select has not been instantiated");
 
@@ -2566,7 +2566,7 @@
 				undefined,
 				"The property _bInOverflow does not exist at all");
 
-		strictEqual(oSegmentedButton.$("select").length,
+		assert.strictEqual(oSegmentedButton.$("select").length,
 				0,
 				"The select is not in the DOM");
 
@@ -2605,14 +2605,14 @@
 		oSegmentedButton._toSelectMode();
 
 		// Assert
-		strictEqual(oSegmentedButton.getButtons().length, 4, "Control should still have 4 buttons");
-		strictEqual(oSegmentedButton.getAggregation("_select").getItems().length, 2, "Select should have 2 items");
+		assert.strictEqual(oSegmentedButton.getButtons().length, 4, "Control should still have 4 buttons");
+		assert.strictEqual(oSegmentedButton.getAggregation("_select").getItems().length, 2, "Select should have 2 items");
 
 		//Act
 		oSegmentedButton.getButtons()[1].setVisible(true);
 
 		// Assert
-		strictEqual(oSegmentedButton.getAggregation("_select").getItems().length, 3, "Select should have 3 items");
+		assert.strictEqual(oSegmentedButton.getAggregation("_select").getItems().length, 3, "Select should have 3 items");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -2663,7 +2663,7 @@
         // Assert
         ok(!bChangedHandlerCalled, "Initially the change event hasn't been fired");
         oTestItem.setText(sNewText);
-        strictEqual(oTestItem.getText(), sNewText, "The internal button has changed its text");
+        assert.strictEqual(oTestItem.getText(), sNewText, "The internal button has changed its text");
         ok(bChangedHandlerCalled, "The change event has been fired after the button's property has changed");
 
         // Cleanup
@@ -2687,7 +2687,7 @@
         // Assert
         ok(!bChangedHandlerCalled, "Initially the change event hasn't been fired");
         oTestItem.setText(sNewText);
-        strictEqual(oTestItem.getText(), sNewText, "The internal button has changed its text");
+        assert.strictEqual(oTestItem.getText(), sNewText, "The internal button has changed its text");
         ok(bChangedHandlerCalled, "The change event has been fired after the button's property has changed");
 
         // Cleanup

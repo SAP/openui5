@@ -49,8 +49,8 @@
 			result = sut.setDemandPopin(valueToSet);
 
 			//Assert
-			strictEqual(sut.getDemandPopin(), valueToSet,"demandPopin was set");
-			strictEqual(sut,result, "should be chainable");
+			assert.strictEqual(sut.getDemandPopin(), valueToSet,"demandPopin was set");
+			assert.strictEqual(sut,result, "should be chainable");
 			if(expectedValidateToBeCalled){
 				equal(bShouldInvalidate, invalidateWasCalled,"invalidate was called")
 			}
@@ -135,7 +135,7 @@
 			result = sut.isHidden();
 
 			//Assert
-			strictEqual(result, expectedResult);
+			assert.strictEqual(result, expectedResult);
 
 			//Cleanup
 			sut.destroy();
@@ -202,12 +202,12 @@
 
 
 		//Act
-		strictEqual(sut._screen,"phone");
+		assert.strictEqual(sut._screen,"phone");
 		sut._isWidthPredefined("600px");
 
 		//Assert
-		strictEqual(sut._screen,"tablet");
-		strictEqual(sut._minWidth,"600px");
+		assert.strictEqual(sut._screen,"tablet");
+		assert.strictEqual(sut._minWidth,"600px");
 
 		//Cleanup
 		sut.destroy();
@@ -226,7 +226,7 @@
 
 			//Assert
 			ok(sut._media);
-			strictEqual(sut._media.matches, matches);
+			assert.strictEqual(sut._media.matches, matches);
 
 			//Cleanup
 			sut.destroy();
@@ -505,15 +505,15 @@
 		sut.setDisplayViaMedia($("table")[0]);
 
 		//Assert
-		strictEqual(parent.$().find("td").css("display"), "table-cell");
-		strictEqual(parent.$().find("th").eq(1).css("display"), "table-cell");
+		assert.strictEqual(parent.$().find("td").css("display"), "table-cell");
+		assert.strictEqual(parent.$().find("th").eq(1).css("display"), "table-cell");
 
 		//Act
 		sut.setDisplay($("table")[0], false);
 
 		//Assert
-		strictEqual(parent.$().find("td").eq(1).css("display"), "none");
-		strictEqual(parent.$().find("th").eq(1).css("display"), "none");
+		assert.strictEqual(parent.$().find("td").eq(1).css("display"), "none");
+		assert.strictEqual(parent.$().find("th").eq(1).css("display"), "none");
 
 		//Cleanup
 		parent.destroy();
@@ -551,7 +551,7 @@
 		sut.applyAlignTo(label, align);
 
 		//Assert
-		strictEqual(label.getDomRef().style.textAlign, align.toLowerCase());
+		assert.strictEqual(label.getDomRef().style.textAlign, align.toLowerCase());
 
 		//Cleanup
 		label.destroy();
@@ -564,8 +564,8 @@
 			var sut = new sap.m.Column({minScreenWidth: width});
 
 			//Assert
-			strictEqual(sut._minWidth, px);
-			strictEqual(sut._screen, screen);
+			assert.strictEqual(sut._minWidth, px);
+			assert.strictEqual(sut._screen, screen);
 
 			//Cleanup
 			sut.destroy();

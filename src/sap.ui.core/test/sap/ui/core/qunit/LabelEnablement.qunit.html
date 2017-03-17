@@ -121,35 +121,35 @@
 		});
 
 		QUnit.test("No label assignment done", function(assert) {
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 0, "No label assigned to control 1");
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 0, "No label assigned to control 1");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
 			ok(!this.oLabel.$().attr("for"), "Label has no for attribute");
-			strictEqual(this.oControl1.$().attr("aria-labelledby"), "someLabelFromApplication testControl1-additionalLabel", "No aria-labelledby reference to label in control 1");
-			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
+			assert.strictEqual(this.oControl1.$().attr("aria-labelledby"), "someLabelFromApplication testControl1-additionalLabel", "No aria-labelledby reference to label in control 1");
+			assert.strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
 		});
 
 		QUnit.test("Label assignment done with LabelFor association", function(assert) {
 			this.oLabel.setLabelFor(this.oControl1);
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 1, "Label assigned to control 1");
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1)[0], "testLabel", "Label assigned to control 1");
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
-			strictEqual(this.oLabel.$().attr("for"), "testControl1", "Labels for attribute points to correct control");
-			strictEqual(this.oControl1.$().attr("aria-labelledby"), "testLabel someLabelFromApplication testControl1-additionalLabel", "aria-labelledby reference to label in control 1 available");
-			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 1, "Label assigned to control 1");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1)[0], "testLabel", "Label assigned to control 1");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
+			assert.strictEqual(this.oLabel.$().attr("for"), "testControl1", "Labels for attribute points to correct control");
+			assert.strictEqual(this.oControl1.$().attr("aria-labelledby"), "testLabel someLabelFromApplication testControl1-additionalLabel", "aria-labelledby reference to label in control 1 available");
+			assert.strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
 		});
 
 		QUnit.test("Label assignment done with setAlternativeLabelFor", function(assert) {
 			this.oLabel.setAlternativeLabelFor(this.oControl1);
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 1, "Label assigned to control 1");
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1)[0], "testLabel", "Label assigned to control 1");
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
-			strictEqual(this.oLabel.$().attr("for"), "testControl1", "Labels for attribute points to correct control");
-			strictEqual(this.oControl1.$().attr("aria-labelledby"), "testLabel someLabelFromApplication testControl1-additionalLabel", "aria-labelledby reference to label in control 1 available");
-			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 1, "Label assigned to control 1");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1)[0], "testLabel", "Label assigned to control 1");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
+			assert.strictEqual(this.oLabel.$().attr("for"), "testControl1", "Labels for attribute points to correct control");
+			assert.strictEqual(this.oControl1.$().attr("aria-labelledby"), "testLabel someLabelFromApplication testControl1-additionalLabel", "aria-labelledby reference to label in control 1 available");
+			assert.strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
 		});
 
 		QUnit.test("Label assignment done with LabelFor association and setAlternativeLabelFor - association wins", function(assert) {
@@ -157,43 +157,43 @@
 			this.oLabel.setAlternativeLabelFor(this.oControl2);
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 1, "Label assigned to control 1");
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1)[0], "testLabel", "Label assigned to control 1");
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
-			strictEqual(this.oLabel.$().attr("for"), "testControl1", "Labels for attribute points to correct control");
-			strictEqual(this.oControl1.$().attr("aria-labelledby"), "testLabel someLabelFromApplication testControl1-additionalLabel", "aria-labelledby reference to label in control 1 available");
-			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 1, "Label assigned to control 1");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1)[0], "testLabel", "Label assigned to control 1");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
+			assert.strictEqual(this.oLabel.$().attr("for"), "testControl1", "Labels for attribute points to correct control");
+			assert.strictEqual(this.oControl1.$().attr("aria-labelledby"), "testLabel someLabelFromApplication testControl1-additionalLabel", "aria-labelledby reference to label in control 1 available");
+			assert.strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
 		});
 
 		QUnit.test("Label assignment change is reflected", function(assert) {
 			this.oLabel.setLabelFor(this.oControl1);
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 1, "Label assigned to control 1");
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1)[0], "testLabel", "Label assigned to control 1");
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
-			strictEqual(this.oLabel.$().attr("for"), "testControl1", "Labels for attribute points to correct control");
-			strictEqual(this.oControl1.$().attr("aria-labelledby"), "testLabel someLabelFromApplication testControl1-additionalLabel", "aria-labelledby reference to label in control 1 available");
-			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 1, "Label assigned to control 1");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1)[0], "testLabel", "Label assigned to control 1");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
+			assert.strictEqual(this.oLabel.$().attr("for"), "testControl1", "Labels for attribute points to correct control");
+			assert.strictEqual(this.oControl1.$().attr("aria-labelledby"), "testLabel someLabelFromApplication testControl1-additionalLabel", "aria-labelledby reference to label in control 1 available");
+			assert.strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
 
 			this.oLabel.setLabelFor(this.oControl2);
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 0, "No label assigned to control 1");
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 1, "Label assigned to control 2");
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2)[0], "testLabel", "Label assigned to control 2");
-			strictEqual(this.oLabel.$().attr("for"), "testControl2", "Labels for attribute points to correct control");
-			strictEqual(this.oControl1.$().attr("aria-labelledby"), "someLabelFromApplication testControl1-additionalLabel", "No aria-labelledby reference to label in control 1");
-			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testLabel testControl2-additionalLabel", "aria-labelledby reference to label in control 2 available");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 0, "No label assigned to control 1");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 1, "Label assigned to control 2");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2)[0], "testLabel", "Label assigned to control 2");
+			assert.strictEqual(this.oLabel.$().attr("for"), "testControl2", "Labels for attribute points to correct control");
+			assert.strictEqual(this.oControl1.$().attr("aria-labelledby"), "someLabelFromApplication testControl1-additionalLabel", "No aria-labelledby reference to label in control 1");
+			assert.strictEqual(this.oControl2.$().attr("aria-labelledby"), "testLabel testControl2-additionalLabel", "aria-labelledby reference to label in control 2 available");
 
 			this.oLabel.setLabelFor(null);
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 0, "No label assigned to control 1");
-			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 0, "No label assigned to control 1");
+			assert.strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
 			ok(!this.oLabel.$().attr("for"), "Label has no for attribute");
-			strictEqual(this.oControl1.$().attr("aria-labelledby"), "someLabelFromApplication testControl1-additionalLabel", "No aria-labelledby reference to label in control 1");
-			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
+			assert.strictEqual(this.oControl1.$().attr("aria-labelledby"), "someLabelFromApplication testControl1-additionalLabel", "No aria-labelledby reference to label in control 1");
+			assert.strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
 		});
 
 		QUnit.module("Required Propagation", {
@@ -223,7 +223,7 @@
 			this.oLabel.setRequired(false);
 
 			// assert
-			strictEqual(fnInvalidateSpy.callCount, 0);
+			assert.strictEqual(fnInvalidateSpy.callCount, 0);
 		});
 
 		QUnit.test("LabelEnablement.isRequired", function(assert) {
@@ -251,7 +251,7 @@
 
 			this.oControl.setRequired(true);
 			sap.ui.getCore().applyChanges();
-			strictEqual(this.oControl.$().attr("aria-required"), "true", "Control required (explicitly via own property)");
+			assert.strictEqual(this.oControl.$().attr("aria-required"), "true", "Control required (explicitly via own property)");
 
 			this.oControl.setRequired(false);
 			sap.ui.getCore().applyChanges();
@@ -259,7 +259,7 @@
 
 			this.oLabel.setRequired(true);
 			sap.ui.getCore().applyChanges();
-			strictEqual(this.oControl.$().attr("aria-required"), "true", "Control required (implicitly via label property)");
+			assert.strictEqual(this.oControl.$().attr("aria-required"), "true", "Control required (implicitly via label property)");
 
 			this.oLabel.setLabelFor(null);
 			sap.ui.getCore().applyChanges();

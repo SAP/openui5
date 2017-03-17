@@ -240,9 +240,9 @@
 				// Arrange
 				var oParameters = { foo : "bar" },
 						fnEventSpy = this.spy(function(oEvent, oActualData) {
-							strictEqual(oActualData, oData, "the data is correct");
-							strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
-							strictEqual(this, oListener, "the this pointer is correct");
+							assert.strictEqual(oActualData, oData, "the data is correct");
+							assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
+							assert.strictEqual(this, oListener, "the this pointer is correct");
 						}),
 						oListener = {},
 						oData = { some : "data" },

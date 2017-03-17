@@ -170,11 +170,11 @@
 				var done = assert.async();
 				var that = this;
 
-				strictEqual(this.$PageContent.scrollTop(), this.$PageContentOverlay.scrollTop(), "initial scroll position is equal");
+				assert.strictEqual(this.$PageContent.scrollTop(), this.$PageContentOverlay.scrollTop(), "initial scroll position is equal");
 
 				this.$PageContentOverlay.scrollTop(20);
 				this.$PageContent.on("scroll", function() {
-					strictEqual(that.$PageContent.scrollTop(), 20, "page content is also scrolled to same position");
+					assert.strictEqual(that.$PageContent.scrollTop(), 20, "page content is also scrolled to same position");
 					done();
 				});
 			});
@@ -185,7 +185,7 @@
 
 				this.$PageContent.scrollTop(20);
 				this.$PageContentOverlay.on("scroll", function() {
-					strictEqual(that.$PageContentOverlay.scrollTop(), 20, "page content overlay is also scrolled to same position");
+					assert.strictEqual(that.$PageContentOverlay.scrollTop(), 20, "page content overlay is also scrolled to same position");
 					done();
 				});
 			});

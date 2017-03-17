@@ -366,30 +366,30 @@
 				$containerContent = oContainer.$().find(sContentSelector);
 
 				// Assert
-				strictEqual($containerContent.css("padding-left"), "0px", "The container has no left content padding when class \"sapUiNoContentPadding\" is set");
-				strictEqual($containerContent.css("padding-right"), "0px", "The container has no right content padding when class \"sapUiNoContentPadding\" is set");
-				strictEqual($containerContent.css("padding-top"), "0px", "The container has no top content padding when class \"sapUiNoContentPadding\" is set");
-				strictEqual($containerContent.css("padding-bottom"), "0px", "The container has no bottom content padding when class \"sapUiNoContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-left"), "0px", "The container has no left content padding when class \"sapUiNoContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-right"), "0px", "The container has no right content padding when class \"sapUiNoContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-top"), "0px", "The container has no top content padding when class \"sapUiNoContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-bottom"), "0px", "The container has no bottom content padding when class \"sapUiNoContentPadding\" is set");
 
 				// Act
 				oContainer.removeStyleClass("sapUiNoContentPadding");
 				oContainer.addStyleClass("sapUiContentPadding");
 
 				// Assert
-				strictEqual($containerContent.css("padding-left"), "16px", "The container has 1rem left content padding when class \"sapUiContentPadding\" is set");
-				strictEqual($containerContent.css("padding-right"), "16px", "The container has 1rem right content padding when class \"sapUiContentPadding\" is set");
-				strictEqual($containerContent.css("padding-top"), "16px", "The container has 1rem top content padding when class \"sapUiContentPadding\" is set");
-				strictEqual($containerContent.css("padding-bottom"), "16px", "The container has 1rem bottom content padding when class \"sapUiContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-left"), "16px", "The container has 1rem left content padding when class \"sapUiContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-right"), "16px", "The container has 1rem right content padding when class \"sapUiContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-top"), "16px", "The container has 1rem top content padding when class \"sapUiContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-bottom"), "16px", "The container has 1rem bottom content padding when class \"sapUiContentPadding\" is set");
 
 				// Act
 				oContainer.removeStyleClass("sapUiContentPadding");
 				oContainer.addStyleClass("sapUiResponsiveContentPadding");
 
 				// Assert
-				strictEqual($containerContent.css("padding-left"), sResponsiveSizeLeftRight, "The container should have " + sResponsiveSizeLeftRight + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-left"));
-				strictEqual($containerContent.css("padding-right"), sResponsiveSizeLeftRight, "The container should have " + sResponsiveSizeLeftRight + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-right"));
-				strictEqual($containerContent.css("padding-top"), sResponsiveSizeTopBottom, "The container should have " + sResponsiveSizeTopBottom + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-top"));
-				strictEqual($containerContent.css("padding-bottom"), sResponsiveSizeTopBottom, "The container should have " + sResponsiveSizeTopBottom + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-bottom"));
+				assert.strictEqual($containerContent.css("padding-left"), sResponsiveSizeLeftRight, "The container should have " + sResponsiveSizeLeftRight + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-left"));
+				assert.strictEqual($containerContent.css("padding-right"), sResponsiveSizeLeftRight, "The container should have " + sResponsiveSizeLeftRight + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-right"));
+				assert.strictEqual($containerContent.css("padding-top"), sResponsiveSizeTopBottom, "The container should have " + sResponsiveSizeTopBottom + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-top"));
+				assert.strictEqual($containerContent.css("padding-bottom"), sResponsiveSizeTopBottom, "The container should have " + sResponsiveSizeTopBottom + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-bottom"));
 
 				// Cleanup
 				oContainer.destroy();

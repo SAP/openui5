@@ -27,10 +27,10 @@
 		oHashChanger.setHash("bar");
 
 		//Assert
-		strictEqual(sut.aHistory.length, 3, "should have 3 entries in the history");
-		strictEqual(sut.aHistory[0], "", "the first entry is the initial hash");
-		strictEqual(sut.aHistory[1], "foo");
-		strictEqual(sut.aHistory[2], "bar");
+		assert.strictEqual(sut.aHistory.length, 3, "should have 3 entries in the history");
+		assert.strictEqual(sut.aHistory[0], "", "the first entry is the initial hash");
+		assert.strictEqual(sut.aHistory[1], "foo");
+		assert.strictEqual(sut.aHistory[2], "bar");
 	});
 
 	QUnit.test("Should not record a hash replace", function(assert) {
@@ -43,9 +43,9 @@
 		oHashChanger.replaceHash("bar"); //replace with bar
 
 		//Assert
-		strictEqual(sut.aHistory.length, 2, "should have 2 entries in the history");
-		strictEqual(sut.aHistory[0], "", "should have the initial value first");
-		strictEqual(sut.aHistory[1], "bar", "should have the replace value");
+		assert.strictEqual(sut.aHistory.length, 2, "should have 2 entries in the history");
+		assert.strictEqual(sut.aHistory[0], "", "should have the initial value first");
+		assert.strictEqual(sut.aHistory[1], "bar", "should have the replace value");
 	});
 
 	QUnit.test("Should replace an entry in the history if replace takes place", function(assert) {
@@ -57,8 +57,8 @@
 		oHashChanger.replaceHash("bar"); //replace with bar
 
 		//Assert
-		strictEqual(sut.aHistory.length, 1, "should have 1 entry in the history");
-		strictEqual(sut.aHistory[0], "bar", "should have bar as value");
+		assert.strictEqual(sut.aHistory.length, 1, "should have 1 entry in the history");
+		assert.strictEqual(sut.aHistory[0], "bar", "should have bar as value");
 	});
 
 	QUnit.test("Should return newPage if a page was added to the history", function(assert) {
@@ -73,7 +73,7 @@
 		oHashChanger.setHash(uid);
 
 		//Assert
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.NewEntry, "should be a new entry");
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.NewEntry, "should be a new entry");
 	});
 
 	QUnit.test("Should return Unknown if the navigation direction is still unknown", function(assert) {
@@ -82,20 +82,20 @@
 		var sut = new sap.ui.core.routing.History(oHashChanger);
 
 		//Act + Assert
-		strictEqual(sut.getDirection(), undefined); //since we did not navigate yet
-		strictEqual(sut.getDirection("biz"), undefined); //since we did not navigate yet
+		assert.strictEqual(sut.getDirection(), undefined); //since we did not navigate yet
+		assert.strictEqual(sut.getDirection("biz"), undefined); //since we did not navigate yet
 
 		sut._hashChange("foo");
-		strictEqual(sut.getDirection(""), sap.ui.core.routing.HistoryDirection.Unknown);
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown);
+		assert.strictEqual(sut.getDirection(""), sap.ui.core.routing.HistoryDirection.Unknown);
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown);
 
 		sut._hashChange("bar");
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown);
-		strictEqual(sut.getDirection("foo"), sap.ui.core.routing.HistoryDirection.Unknown);
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown);
+		assert.strictEqual(sut.getDirection("foo"), sap.ui.core.routing.HistoryDirection.Unknown);
 
 		sut._hashChange("foo");
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown);
-		strictEqual(sut.getDirection("foo"), sap.ui.core.routing.HistoryDirection.Unknown);
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown);
+		assert.strictEqual(sut.getDirection("foo"), sap.ui.core.routing.HistoryDirection.Unknown);
 	});
 
 	QUnit.test("Should return NewEntry if the navigation direction is undefined but hashChanger triggered it", function(assert) {
@@ -109,7 +109,7 @@
 		sut._hashChange("foo");
 
 		//Assert
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.NewEntry, "should be a new entry");
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.NewEntry, "should be a new entry");
 	});
 
 	QUnit.test("Should return Unknown if the hash changes to something unexpected", function(assert) {
@@ -123,7 +123,7 @@
 		sut._hashChange("bar");
 
 		//Assert
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be unknown");
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be unknown");
 	});
 
 	QUnit.test("Should return undefined if the first hash is only an replacement", function(assert) {
@@ -135,7 +135,7 @@
 		oHashChanger.replaceHash("foo");
 
 		//Assert
-		strictEqual(sut.getDirection(), undefined, "should be undefined");
+		assert.strictEqual(sut.getDirection(), undefined, "should be undefined");
 	});
 
 	QUnit.test("Should return Unknown after a hash replacement", function(assert) {
@@ -151,13 +151,13 @@
 		hasher.replaceHash(sHashPrefix + "foo");
 
 		//Assert
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Backwards, "should be backwards");
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Backwards, "should be backwards");
 
 		//Act
 		oHashChanger.replaceHash("baz");
 
 		//Assert
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be unknown");
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be unknown");
 	});
 
 	QUnit.test("Should return Backwards if the hash was replaced before", function(assert) {
@@ -174,10 +174,10 @@
 		hasher.replaceHash(sHashPrefix + "bar");
 
 		//Assert
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Backwards, "should be backwards because we changed to bar");
-		strictEqual(sut.getDirection(""), sap.ui.core.routing.HistoryDirection.Backwards, "should be backwards because it was the initial");
-		strictEqual(sut.getDirection("baz"), sap.ui.core.routing.HistoryDirection.Forwards, "should be forwards");
-		strictEqual(sut.getDirection("foo"), sap.ui.core.routing.HistoryDirection.Unknown, "should be unknown");
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Backwards, "should be backwards because we changed to bar");
+		assert.strictEqual(sut.getDirection(""), sap.ui.core.routing.HistoryDirection.Backwards, "should be backwards because it was the initial");
+		assert.strictEqual(sut.getDirection("baz"), sap.ui.core.routing.HistoryDirection.Forwards, "should be forwards");
+		assert.strictEqual(sut.getDirection("foo"), sap.ui.core.routing.HistoryDirection.Unknown, "should be unknown");
 	});
 
 	QUnit.test("Should return Backwards if the hash was replaced before with the latest hash also in the history back", function(assert) {
@@ -196,9 +196,9 @@
 		hasher.replaceHash(sHashPrefix + "bar");
 
 		//Assert
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Backwards, "should be backwards because we were going back");
-		strictEqual(sut.getDirection("foo"), sap.ui.core.routing.HistoryDirection.Backwards, "should be backwards because it was the last hash");
-		strictEqual(sut.getDirection("baz"), sap.ui.core.routing.HistoryDirection.Forwards, "should be unknown");
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Backwards, "should be backwards because we were going back");
+		assert.strictEqual(sut.getDirection("foo"), sap.ui.core.routing.HistoryDirection.Backwards, "should be backwards because it was the last hash");
+		assert.strictEqual(sut.getDirection("baz"), sap.ui.core.routing.HistoryDirection.Forwards, "should be unknown");
 	});
 
 	QUnit.test("Should return NewEntry if the navigation direction is still unknown but hashChanger triggered it", function(assert) {
@@ -207,13 +207,13 @@
 		var sut = new sap.ui.core.routing.History(oHashChanger);
 
 		sut._hashChange("bar"); //make the state unknown
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be Unknown");
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be Unknown");
 
 		//Act
 		oHashChanger.setHash("foo");
 
 		//Assert
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.NewEntry, "should be a new entry");
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.NewEntry, "should be a new entry");
 	});
 
 	QUnit.test("Should detect a backward navigation", function(assert) {
@@ -229,7 +229,7 @@
 		hasher.replaceHash(sHashPrefix + "foo");
 
 		//Assert
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Backwards, "should be a forwards navigation");
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Backwards, "should be a forwards navigation");
 	});
 
 	QUnit.test("Should detect a forward navigation", function(assert) {
@@ -247,7 +247,7 @@
 		hasher.replaceHash(sHashPrefix + "bar");
 
 		//Assert
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Forwards, "should be a forwards navigation");
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Forwards, "should be a forwards navigation");
 	});
 
 	QUnit.test("Should detect unknown navigation after initialization", function(assert) {
@@ -270,20 +270,20 @@
 		sut._hashChange("foo");
 
 		//Assert
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be an unknown navigation");
-		strictEqual(sut.aHistory.length, 1, "history should be cleaned after unknown occured");
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be an unknown navigation");
+		assert.strictEqual(sut.aHistory.length, 1, "history should be cleaned after unknown occured");
 
 		//since the app did not navigate again its still unknown
 		sut._hashChange("any");
 
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be an unknown navigation");
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be an unknown navigation");
 
 		sut._hashSet(new HashChangeEvent("thing")); // get rid of the unknown state
 		sut._hashChange("thing");
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.NewEntry, "should add a newpage again");
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.NewEntry, "should add a newpage again");
 
-		strictEqual(sut.aHistory.length, 2, "should have 2 entries in the history");
-		strictEqual(sut.aHistory[1], "thing");
+		assert.strictEqual(sut.aHistory.length, 2, "should have 2 entries in the history");
+		assert.strictEqual(sut.aHistory[1], "thing");
 	});
 
 	QUnit.test("Should clean up the history", function(assert) {
@@ -299,14 +299,14 @@
 		oHashChanger.setHash("biz");
 
 		//Assert
-		strictEqual(sut.iHistoryPosition, 2, "should be at entry 2 of the history");
-		strictEqual(sut.aHistory.length, 3, "should have 3 entries in the history");
+		assert.strictEqual(sut.iHistoryPosition, 2, "should be at entry 2 of the history");
+		assert.strictEqual(sut.aHistory.length, 3, "should have 3 entries in the history");
 
 		hasher.replaceHash(sHashPrefix + "foo");
 
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Backwards, "should be a forwards navigation");
-		strictEqual(sut.iHistoryPosition, 1, "should be at entry one of the history");
-		strictEqual(sut.aHistory.length, 3, "should have 2 entries in the history");
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Backwards, "should be a forwards navigation");
+		assert.strictEqual(sut.iHistoryPosition, 1, "should be at entry one of the history");
+		assert.strictEqual(sut.aHistory.length, 3, "should have 2 entries in the history");
 	});
 
 	QUnit.test("Should get the previous hash if there was no history before", function(assert) {
@@ -315,7 +315,7 @@
 		var sut = new sap.ui.core.routing.History(oHashChanger);
 
 		//Assert + Act
-		strictEqual(sut.getPreviousHash(), undefined, "should have foo as the previous page");
+		assert.strictEqual(sut.getPreviousHash(), undefined, "should have foo as the previous page");
 	});
 
 	QUnit.test("Should get the previous hash if there was a replacement before",  function(assert) {
@@ -328,7 +328,7 @@
 		oHashChanger.setHash("baz"); // add a new entry
 
 		//Assert + Act
-		strictEqual(sut.getPreviousHash(), "bar", "should have foo as the previous page");
+		assert.strictEqual(sut.getPreviousHash(), "bar", "should have foo as the previous page");
 	});
 
 	QUnit.test("Should get the previous hash if the unknown state occures",   function(assert) {
@@ -343,8 +343,8 @@
 		hasher.replaceHash(sHashPrefix + "foo"); //replace to foo - unknown
 
 		//Assert + Act
-		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be a forwards navigation");
-		strictEqual(sut.getPreviousHash(), undefined, "should not have a previous page");
+		assert.strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be a forwards navigation");
+		assert.strictEqual(sut.getPreviousHash(), undefined, "should not have a previous page");
 	});
 
 	QUnit.test("Should get the previous hash when going backwards",   function(assert) {
@@ -361,7 +361,7 @@
 		hasher.replaceHash(sHashPrefix + "bar");
 
 		//Assert + Act
-		strictEqual(sut.getPreviousHash(), "foo", "should have foo as the previous page");
+		assert.strictEqual(sut.getPreviousHash(), "foo", "should have foo as the previous page");
 	});
 
 	QUnit.test("Should return new Entry if the browser history length increases",   function(assert) {

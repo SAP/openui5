@@ -91,7 +91,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nSortPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
+			assert.strictEqual(oP13nSortPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
 
 			// cleanup
 			oP13nSortPanel.destroy();
@@ -109,7 +109,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3");
+			assert.strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3");
 
 			// cleanup
 			oP13nSortPanel.destroy();
@@ -128,7 +128,7 @@
 
 			// assertions
 			var nItems = 2;
-			strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
+			assert.strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
 
 			// cleanup
 			oP13nSortPanel.destroy();
@@ -179,7 +179,7 @@
 			var nItems = 1;
 			var oConditionPanel = oP13nSortPanel._oSortPanel;
 			oConditionPanel._handleRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
-			strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
+			assert.strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
 
 			// Add item
 			nItems = 2;
@@ -190,7 +190,7 @@
 			oConditionGrid.keyField.setSelectedKey("c0");
 			oConditionPanel._changeField(oConditionGrid);
 
-			strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
+			assert.strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
 
 			// cleanup
 			oP13nSortPanel.destroy();
@@ -219,8 +219,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
-			strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
+			assert.strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
+			assert.strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
 
 			// cleanup
 			oP13nSortPanel.destroy();
@@ -259,8 +259,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3'");
-			strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
+			assert.strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3'");
+			assert.strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
 
 			// cleanup
 			oP13nSortPanel.destroy();
@@ -301,8 +301,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3'");
-			strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
+			assert.strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3'");
+			assert.strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
 
 			// cleanup
 			oP13nSortPanel.destroy();
@@ -320,8 +320,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3");
-			strictEqual(oP13nSortPanel._oSortPanel.getKeyFields().length, 4, "length of getItems should be 4");
+			assert.strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3");
+			assert.strictEqual(oP13nSortPanel._oSortPanel.getKeyFields().length, 4, "length of getItems should be 4");
 
 			// cleanup
 			oP13nSortPanel.destroy();

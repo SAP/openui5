@@ -41,16 +41,16 @@
 		});
 
 		QUnit.test("Width", function(assert) {
-			strictEqual(oLink1.getDomRef().offsetWidth, 200, "oLink1 width should be correct");
+			assert.strictEqual(oLink1.getDomRef().offsetWidth, 200, "oLink1 width should be correct");
 		});
 
 		QUnit.test("href", function(assert) {
 			var href = oLink1.getDomRef().href;
-			strictEqual(href.indexOf("x.html"), href.length - "x.html".length, "oLink1 href should be correct");
+			assert.strictEqual(href.indexOf("x.html"), href.length - "x.html".length, "oLink1 href should be correct");
 		});
 
 		QUnit.test("Target", function(assert) {
-			strictEqual(oLink1.getDomRef().target, "_blank", "oLink1 target should be correct");
+			assert.strictEqual(oLink1.getDomRef().target, "_blank", "oLink1 target should be correct");
 		});
 
 		QUnit.test("Press event", function(assert) {
@@ -151,7 +151,7 @@
 
 			var $oLink = oLink1.$();
 
-			strictEqual($oLink.attr("tabIndex"), "-1", "Property 'tabIndex' should be '-1'");
+			assert.strictEqual($oLink.attr("tabIndex"), "-1", "Property 'tabIndex' should be '-1'");
 
 			oLink1.destroy();
 		});
@@ -168,7 +168,7 @@
 
 			var $oLink = oLink1.$();
 
-			strictEqual($oLink.attr("tabIndex"), "-1", "Property 'tabIndex' should be '-1'");
+			assert.strictEqual($oLink.attr("tabIndex"), "-1", "Property 'tabIndex' should be '-1'");
 
 			oLink1.destroy();
 		});
@@ -185,7 +185,7 @@
 
 			var $oLink = oLink1.$();
 
-			strictEqual($oLink.attr("tabIndex"), "0", "Property 'tabIndex' should be '0'");
+			assert.strictEqual($oLink.attr("tabIndex"), "0", "Property 'tabIndex' should be '0'");
 
 			oLink1.destroy();
 		});
@@ -206,39 +206,39 @@
 			var $oLink = oLink1.$();
 
 			// ARIA role
-			strictEqual($oLink.attr("role"), "link", "Property 'role' should be 'link'");
+			assert.strictEqual($oLink.attr("role"), "link", "Property 'role' should be 'link'");
 
 			// ARIA disabled
 			oLink1.setEnabled(false);
-			strictEqual($oLink.attr("aria-disabled"), "true", "Property 'aria-disabled' should be 'true'");
+			assert.strictEqual($oLink.attr("aria-disabled"), "true", "Property 'aria-disabled' should be 'true'");
 			oLink1.setEnabled(true);
-			strictEqual($oLink.attr("aria-disabled"), undefined, "Property 'aria-disabled' should not exist");
+			assert.strictEqual($oLink.attr("aria-disabled"), undefined, "Property 'aria-disabled' should not exist");
 
 			// ARIA describedby for Subtle link
 			oLink1.setSubtle(true);
-			strictEqual($oLink.attr("aria-describedby"). length > 0, true, "Property 'aria-describedby' should exist");
-			strictEqual((($oLink.attr("aria-describedby").indexOf(oLink1._sAriaLinkSubtleId)) !== -1), true,
+			assert.strictEqual($oLink.attr("aria-describedby"). length > 0, true, "Property 'aria-describedby' should exist");
+			assert.strictEqual((($oLink.attr("aria-describedby").indexOf(oLink1._sAriaLinkSubtleId)) !== -1), true,
 				"Subtle ID: " + oLink1._sAriaLinkSubtleId + " should be included in aria-describedby");
 
 			oLink1.setSubtle(false);
-			strictEqual($oLink.attr("aria-describedby"), undefined, "Property 'aria-describedby' should not exist");
+			assert.strictEqual($oLink.attr("aria-describedby"), undefined, "Property 'aria-describedby' should not exist");
 
 			// ARIA describedby for Emphasized link
 			oLink1.setEmphasized(true);
-			strictEqual($oLink.attr("aria-describedby").length > 0, true, "Property 'aria-describedby' should exist");
-			strictEqual((($oLink.attr("aria-describedby").indexOf(oLink1._sAriaLinkEmphasizedId)) !== -1), true,
+			assert.strictEqual($oLink.attr("aria-describedby").length > 0, true, "Property 'aria-describedby' should exist");
+			assert.strictEqual((($oLink.attr("aria-describedby").indexOf(oLink1._sAriaLinkEmphasizedId)) !== -1), true,
 				"Emphasized ID: " + oLink1._sAriaLinkEmphasizedId + " should be included in aria-describedby");
 
 			oLink1.setEmphasized(false);
-			strictEqual($oLink.attr("aria-describedby"), undefined, "Property 'aria-describedby' should not exist");
+			assert.strictEqual($oLink.attr("aria-describedby"), undefined, "Property 'aria-describedby' should not exist");
 
 			oLink1.addAriaLabelledBy("id1");
 			sap.ui.getCore().applyChanges();
-			strictEqual(oLink1.$().attr("aria-labelledby"), "id1 " + oLink1.getId(), "Property 'aria-labelledby' should contain the link ID");
+			assert.strictEqual(oLink1.$().attr("aria-labelledby"), "id1 " + oLink1.getId(), "Property 'aria-labelledby' should contain the link ID");
 
 			oLink1.removeAriaLabelledBy("id1");
 			sap.ui.getCore().applyChanges();
-			strictEqual(oLink1.$().attr("aria-labelledby"), undefined, "Property 'aria-labelledby' should not exist");
+			assert.strictEqual(oLink1.$().attr("aria-labelledby"), undefined, "Property 'aria-labelledby' should not exist");
 
 			oLink1.destroy();
 		});
@@ -252,7 +252,7 @@
 			oLink.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
+			assert.strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
 
 			oLink.destroy();
 		});
@@ -267,8 +267,8 @@
 			oLink.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(oLink.$().attr('dir'), 'rtl', "The dir element must be set to 'rtl'");
-			strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
+			assert.strictEqual(oLink.$().attr('dir'), 'rtl', "The dir element must be set to 'rtl'");
+			assert.strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
 
 			oLink.destroy();
 		});
@@ -283,8 +283,8 @@
 			oLink.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(oLink.$().attr('dir'), 'ltr', "The dir element must be set to 'ltr'");
-			strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
+			assert.strictEqual(oLink.$().attr('dir'), 'ltr', "The dir element must be set to 'ltr'");
+			assert.strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
 
 			oLink.destroy();
 		});
@@ -297,7 +297,7 @@
 			oLink.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(oLink.$().attr('dir'), undefined, "The dir attribute should not be rendered");
+			assert.strictEqual(oLink.$().attr('dir'), undefined, "The dir attribute should not be rendered");
 
 			oLink.destroy();
 		});
@@ -307,17 +307,17 @@
 			ok(!!oControl.getAccessibilityInfo, "Link has a getAccessibilityInfo function");
 			var oInfo = oControl.getAccessibilityInfo();
 			ok(!!oInfo, "getAccessibilityInfo returns a info object");
-			strictEqual(oInfo.role, "link", "AriaRole");
-			strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_LINK"), "Type");
-			strictEqual(oInfo.description, "Text", "Description");
-			strictEqual(oInfo.focusable, true, "Focusable");
-			strictEqual(oInfo.enabled, true, "Enabled");
+			assert.strictEqual(oInfo.role, "link", "AriaRole");
+			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_LINK"), "Type");
+			assert.strictEqual(oInfo.description, "Text", "Description");
+			assert.strictEqual(oInfo.focusable, true, "Focusable");
+			assert.strictEqual(oInfo.enabled, true, "Enabled");
 			ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 			oControl.setText("");
 			oControl.setEnabled(false);
 			oInfo = oControl.getAccessibilityInfo();
-			strictEqual(oInfo.description, "HRef", "Description");
-			strictEqual(oInfo.focusable, false, "Focusable");
+			assert.strictEqual(oInfo.description, "HRef", "Description");
+			assert.strictEqual(oInfo.focusable, false, "Focusable");
 			oControl.destroy();
 		});
 

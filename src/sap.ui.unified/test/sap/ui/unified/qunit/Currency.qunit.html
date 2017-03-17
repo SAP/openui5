@@ -43,23 +43,23 @@
 
 			QUnit.test("DOM", function (assert) {
 				//assert
-				strictEqual(this.sut.$().length, 1, "Currency control was rendered successfully and is present in DOM");
+				assert.strictEqual(this.sut.$().length, 1, "Currency control was rendered successfully and is present in DOM");
 			});
 
 			QUnit.test("Testing property defaults", function (assert) {
 				//assert
-				strictEqual(this.sut.getValue(), 0, "Default value is correct");
-				strictEqual(this.sut.getCurrency(), "", "Default currency is correct");
-				strictEqual(this.sut.getMaxPrecision(), 3, "Default precision is correct");
-				strictEqual(this.sut.getUseSymbol(), true, "Default useSymbol is correct");
+				assert.strictEqual(this.sut.getValue(), 0, "Default value is correct");
+				assert.strictEqual(this.sut.getCurrency(), "", "Default currency is correct");
+				assert.strictEqual(this.sut.getMaxPrecision(), 3, "Default precision is correct");
+				assert.strictEqual(this.sut.getUseSymbol(), true, "Default useSymbol is correct");
 			});
 
 			QUnit.test("Control default state/visibility with no parameters", function (assert) {
 				// Assert
-				strictEqual(this.sut.$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control has no class " +
+				assert.strictEqual(this.sut.$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control has no class " +
 						"sapUiUfdCurrencyNoVal applied");
-				strictEqual(this.fnGetRenderedValue(), "0.00\u2007", "Default value rendered");
-				strictEqual(this.fnGetRenderedCurrency(), "", "No currency rendered");
+				assert.strictEqual(this.fnGetRenderedValue(), "0.00\u2007", "Default value rendered");
+				assert.strictEqual(this.fnGetRenderedCurrency(), "", "No currency rendered");
 			});
 
 			QUnit.test("Control visibility with no model and setValue set to undefined", function (assert) {
@@ -67,8 +67,8 @@
 				this.sut.setValue(undefined);
 
 				// Assert
-				strictEqual(this.sut._bRenderNoValClass, undefined, "_bRenderNoValClass should be undefined");
-				strictEqual(this.sut.$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control has no class " +
+				assert.strictEqual(this.sut._bRenderNoValClass, undefined, "_bRenderNoValClass should be undefined");
+				assert.strictEqual(this.sut.$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control has no class " +
 						"sapUiUfdCurrencyNoVal applied when value set to undefined and value is not bound to a model");
 			});
 
@@ -80,10 +80,10 @@
 				this.sut.setUseSymbol(false);
 
 				//assert
-				strictEqual(this.sut.getValue(), 5, "Value setter is correct");
-				strictEqual(this.sut.getCurrency(), "AUD", "Currency setter is correct");
-				strictEqual(this.sut.getMaxPrecision(), 8, "MaxPrecision setter is correct");
-				strictEqual(this.sut.getUseSymbol(), false, "UseSymbol setter is correct");
+				assert.strictEqual(this.sut.getValue(), 5, "Value setter is correct");
+				assert.strictEqual(this.sut.getCurrency(), "AUD", "Currency setter is correct");
+				assert.strictEqual(this.sut.getMaxPrecision(), 8, "MaxPrecision setter is correct");
+				assert.strictEqual(this.sut.getUseSymbol(), false, "UseSymbol setter is correct");
 			});
 
 			QUnit.test("Test properly currency formatting", function (assert) {
@@ -93,27 +93,27 @@
 				this.sut.setUseSymbol(false);
 				sap.ui.getCore().applyChanges();
 
-				strictEqual(this.fnGetRenderedValue(), "45,012.91\u2007", "Default formatting for EUR");
+				assert.strictEqual(this.fnGetRenderedValue(), "45,012.91\u2007", "Default formatting for EUR");
 
 				this.sut.setMaxPrecision(0);
 				sap.ui.getCore().applyChanges();
-				strictEqual(this.fnGetRenderedValue(), "45,012", "Format number without precision in EUR");
+				assert.strictEqual(this.fnGetRenderedValue(), "45,012", "Format number without precision in EUR");
 
 				this.sut.setMaxPrecision(-1);
 				sap.ui.getCore().applyChanges();
-				strictEqual(this.fnGetRenderedValue(), "45,01", "Unlikely usage: Precision with negative value for EUR");
+				assert.strictEqual(this.fnGetRenderedValue(), "45,01", "Unlikely usage: Precision with negative value for EUR");
 
 				this.sut.setCurrency("JPY");
 				sap.ui.getCore().applyChanges();
-				strictEqual(this.fnGetRenderedValue(), "45,01", "Unlikely usage: Precision with negative value for JPY");
+				assert.strictEqual(this.fnGetRenderedValue(), "45,01", "Unlikely usage: Precision with negative value for JPY");
 
 				this.sut.setMaxPrecision(0);
 				sap.ui.getCore().applyChanges();
-				strictEqual(this.fnGetRenderedValue(), "45,013", "Format number without precision in JPY");
+				assert.strictEqual(this.fnGetRenderedValue(), "45,013", "Format number without precision in JPY");
 
 				this.sut.setMaxPrecision(2);
 				sap.ui.getCore().applyChanges();
-				strictEqual(this.fnGetRenderedValue(), "45,013\u2008\u2007\u2007", "Format number with 2 decimals in JPY");
+				assert.strictEqual(this.fnGetRenderedValue(), "45,013\u2008\u2007\u2007", "Format number with 2 decimals in JPY");
 			});
 
 			QUnit.test("MaxPrecision changes the rendered value", function (assert) {
@@ -124,16 +124,16 @@
 				iStringLength = this.sut.getValue().toString().length;
 				sap.ui.getCore().applyChanges();
 				//assert
-				strictEqual(this.fnGetRenderedValue(), "55.21\u2007", "The default maxPrecision value resulted in adding one figure space to the back of the value");
+				assert.strictEqual(this.fnGetRenderedValue(), "55.21\u2007", "The default maxPrecision value resulted in adding one figure space to the back of the value");
 				//arrange
 				this.sut.setMaxPrecision(5);
 				sap.ui.getCore().applyChanges();
 				//assert
-				strictEqual(this.fnGetRenderedValue(), "55.21\u2007\u2007\u2007", "New maxPrecision value added two more figure spaces to the back of the value");
+				assert.strictEqual(this.fnGetRenderedValue(), "55.21\u2007\u2007\u2007", "New maxPrecision value added two more figure spaces to the back of the value");
 				this.sut.setMaxPrecision(1);
 				sap.ui.getCore().applyChanges();
 				//assert
-				strictEqual(this.fnGetRenderedValue(), "55.2", "New maxPrecision value subtracted the value with one");
+				assert.strictEqual(this.fnGetRenderedValue(), "55.2", "New maxPrecision value subtracted the value with one");
 			});
 
 			QUnit.test("Special * currency", function (assert) {
@@ -142,12 +142,12 @@
 				this.sut.setValue(123.23);
 				sap.ui.getCore().applyChanges();
 				//assert
-				strictEqual(this.fnGetRenderedValue(), "", "Nothing is rendered even when change value");
+				assert.strictEqual(this.fnGetRenderedValue(), "", "Nothing is rendered even when change value");
 				//arrange
 				this.sut.setCurrency("BGN");
 				sap.ui.getCore().applyChanges();
 				//assert
-				strictEqual(this.fnGetRenderedValue(), "123.23\u2007", "Value is rendered when currency is other than *");
+				assert.strictEqual(this.fnGetRenderedValue(), "123.23\u2007", "Value is rendered when currency is other than *");
 			});
 
 			QUnit.module("Control API - helper methods", {
@@ -161,59 +161,59 @@
 
 			QUnit.test("_getCurrency private method", function (assert) {
 				// Assert
-				strictEqual(this.oCurrency._getCurrency(), "", "No currency returned by default");
+				assert.strictEqual(this.oCurrency._getCurrency(), "", "No currency returned by default");
 
 				// Act
 				this.oCurrency.setCurrency("EUR");
 				// Assert
-				strictEqual(this.oCurrency._getCurrency(), "€", "Symbol for currency returned");
+				assert.strictEqual(this.oCurrency._getCurrency(), "€", "Symbol for currency returned");
 
 				// Act
 				this.oCurrency.setUseSymbol(false);
 				// Assert
-				strictEqual(this.oCurrency._getCurrency(), "EUR", "ISO 4217 code for EURO returned");
+				assert.strictEqual(this.oCurrency._getCurrency(), "EUR", "ISO 4217 code for EURO returned");
 			});
 
 			QUnit.test("getFormattedValue method", function (assert) {
 				// Assert
-				strictEqual(this.oCurrency.getFormattedValue(), "0.00 ", "By default we get '0.00 '");
+				assert.strictEqual(this.oCurrency.getFormattedValue(), "0.00 ", "By default we get '0.00 '");
 
 				// Act
 				this.oCurrency.setValue(45012.91);
 				this.oCurrency.setCurrency("EUR");
 				// Assert
-				strictEqual(this.oCurrency.getFormattedValue(), "45,012.91\u2007", "Default formatting for EUR");
+				assert.strictEqual(this.oCurrency.getFormattedValue(), "45,012.91\u2007", "Default formatting for EUR");
 
 				// Act
 				this.oCurrency.setMaxPrecision(0);
 				// Assert
-				strictEqual(this.oCurrency.getFormattedValue(), "45,012", "Format number without precision in EUR");
+				assert.strictEqual(this.oCurrency.getFormattedValue(), "45,012", "Format number without precision in EUR");
 
 				// Act
 				this.oCurrency.setMaxPrecision(-1);
 				// Assert
-				strictEqual(this.oCurrency.getFormattedValue(), "45,01", "Unlikely usage: Precision with negative value for EUR");
+				assert.strictEqual(this.oCurrency.getFormattedValue(), "45,01", "Unlikely usage: Precision with negative value for EUR");
 
 				// Act
 				this.oCurrency.setCurrency("JPY");
 				// Assert
-				strictEqual(this.oCurrency.getFormattedValue(), "45,01", "Unlikely usage: Precision with negative value for JPY");
+				assert.strictEqual(this.oCurrency.getFormattedValue(), "45,01", "Unlikely usage: Precision with negative value for JPY");
 
 				// Act
 				this.oCurrency.setMaxPrecision(0);
 				// Assert
-				strictEqual(this.oCurrency.getFormattedValue(), "45,013", "Format number without precision in JPY");
+				assert.strictEqual(this.oCurrency.getFormattedValue(), "45,013", "Format number without precision in JPY");
 
 				// Act
 				this.oCurrency.setMaxPrecision(2);
 				// Assert
-				strictEqual(this.oCurrency.getFormattedValue(), "45,013\u2008\u2007\u2007", "Format number with 2 decimals in JPY");
+				assert.strictEqual(this.oCurrency.getFormattedValue(), "45,013\u2008\u2007\u2007", "Format number with 2 decimals in JPY");
 
 				// Act
 				this.oCurrency.setValue(undefined);
 				this.oCurrency.setMaxPrecision(0);
 				// Assert
-				strictEqual(this.oCurrency.getFormattedValue(), "0", "For undefined value we expect 0 as a result");
+				assert.strictEqual(this.oCurrency.getFormattedValue(), "0", "For undefined value we expect 0 as a result");
 			});
 
 			QUnit.module("Data binding", {
@@ -258,7 +258,7 @@
 
 			QUnit.test("Length of data binding", function (assert) {
 				//assert
-				strictEqual(this.sut.getItems().length, Object.keys(this.oData.currencyCollection).length, "All currencies are rendered and present in the DOM");
+				assert.strictEqual(this.sut.getItems().length, Object.keys(this.oData.currencyCollection).length, "All currencies are rendered and present in the DOM");
 			});
 
 			QUnit.test("Property data binding", function (assert) {
@@ -270,10 +270,10 @@
 				//assert
 				for (iIndex = 0; iIndex < aItems.length; iIndex++) {
 					oCurrency = aItems[iIndex];
-					strictEqual(oCurrency.getCurrency(), this.oData.currencyCollection[iIndex].currency, "Control " + (iIndex + 1) + " currency is correctly bound");
-					strictEqual(oCurrency.getValue(), oCurrency.getValue() ? this.oData.currencyCollection[iIndex].value : 0, "Control " + (iIndex + 1) + " value is correctly bound");
-					strictEqual(oCurrency.getMaxPrecision(), this.oData.currencyCollection[iIndex].maxPrecision, "Control " + (iIndex + 1) + " maxPrecision is correctly bound");
-					strictEqual(oCurrency.getUseSymbol(), this.oData.currencyCollection[iIndex].useSymbol, "Control " + (iIndex + 1) + " useSymbol is correctly bound");
+					assert.strictEqual(oCurrency.getCurrency(), this.oData.currencyCollection[iIndex].currency, "Control " + (iIndex + 1) + " currency is correctly bound");
+					assert.strictEqual(oCurrency.getValue(), oCurrency.getValue() ? this.oData.currencyCollection[iIndex].value : 0, "Control " + (iIndex + 1) + " value is correctly bound");
+					assert.strictEqual(oCurrency.getMaxPrecision(), this.oData.currencyCollection[iIndex].maxPrecision, "Control " + (iIndex + 1) + " maxPrecision is correctly bound");
+					assert.strictEqual(oCurrency.getUseSymbol(), this.oData.currencyCollection[iIndex].useSymbol, "Control " + (iIndex + 1) + " useSymbol is correctly bound");
 				}
 			});
 
@@ -323,17 +323,17 @@
 			});
 
 			QUnit.test("Internal _bHasBoundValue value set correct on model bound", function (assert) {
-				strictEqual(this.aItems[0]._bRenderNoValClass, true, "Value should be true");
-				strictEqual(this.aItems[1]._bRenderNoValClass, false, "Value should be false");
-				strictEqual(this.aItems[2]._bRenderNoValClass, true, "Value should be true");
-				strictEqual(this.aItems[3]._bRenderNoValClass, true, "Value should be true");
+				assert.strictEqual(this.aItems[0]._bRenderNoValClass, true, "Value should be true");
+				assert.strictEqual(this.aItems[1]._bRenderNoValClass, false, "Value should be false");
+				assert.strictEqual(this.aItems[2]._bRenderNoValClass, true, "Value should be true");
+				assert.strictEqual(this.aItems[3]._bRenderNoValClass, true, "Value should be true");
 			});
 
 			QUnit.test("Undefined value from model", function (assert) {
-				strictEqual(this.aItems[0].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
-				strictEqual(this.aItems[1].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Class sapUiUfdCurrencyNoVal is not applied to control");
-				strictEqual(this.aItems[2].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
-				strictEqual(this.aItems[3].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
+				assert.strictEqual(this.aItems[0].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
+				assert.strictEqual(this.aItems[1].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Class sapUiUfdCurrencyNoVal is not applied to control");
+				assert.strictEqual(this.aItems[2].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
+				assert.strictEqual(this.aItems[3].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
 			});
 
 			QUnit.test("Setting value from undefined to number and back", function (assert) {
@@ -342,7 +342,7 @@
 				// Act
 				this.aItems[0].setValue(120);
 				// Assert
-				strictEqual($Item.hasClass("sapUiUfdCurrencyNoVal"), false, "Class sapUiUfdCurrencyNoVal is not applied to control");
+				assert.strictEqual($Item.hasClass("sapUiUfdCurrencyNoVal"), false, "Class sapUiUfdCurrencyNoVal is not applied to control");
 
 				// Act
 				this.aItems[0].setValue(undefined);
@@ -364,13 +364,13 @@
 				var oModel = new sap.ui.model.json.JSONModel({value: null});
 				oCurrency.setModel(oModel);
 				// Assert
-				strictEqual(oCurrency.$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
+				assert.strictEqual(oCurrency.$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
 
 				// Act
 				oCurrency.unbindProperty('value');
 				oCurrency.setValue(200);
 				// Assert
-				strictEqual(oCurrency.$().hasClass("sapUiUfdCurrencyNoVal"), false, "Class sapUiUfdCurrencyNoVal is not applied to control");
+				assert.strictEqual(oCurrency.$().hasClass("sapUiUfdCurrencyNoVal"), false, "Class sapUiUfdCurrencyNoVal is not applied to control");
 
 				// Cleanup
 				oCurrency.destroy();
@@ -404,9 +404,9 @@
 				this.oCurrency.setCurrency("USD");
 
 				// Assert
-				strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once");
-				strictEqual(this.oCurrency._renderCurrency.callCount, 1, "Internal method should be called once");
-				strictEqual(this.oCurrencyRenderer.render.callCount, 0, "Currency renderer should not be called");
+				assert.strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once");
+				assert.strictEqual(this.oCurrency._renderCurrency.callCount, 1, "Internal method should be called once");
+				assert.strictEqual(this.oCurrencyRenderer.render.callCount, 0, "Currency renderer should not be called");
 			});
 
 			QUnit.test("MaxPrecision and UseSymbol setters", function (assert) {
@@ -415,9 +415,9 @@
 				this.oCurrency.setMaxPrecision(2);
 
 				// Assert
-				strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once");
-				strictEqual(this.oCurrency._renderCurrency.callCount, 1, "Internal method should be called once");
-				strictEqual(this.oCurrencyRenderer.render.callCount, 0, "Currency renderer should not be called");
+				assert.strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once");
+				assert.strictEqual(this.oCurrency._renderCurrency.callCount, 1, "Internal method should be called once");
+				assert.strictEqual(this.oCurrencyRenderer.render.callCount, 0, "Currency renderer should not be called");
 			});
 
 			QUnit.test("Special * currency case - Both methods should be called when changing currency to something different then *", function (assert) {
@@ -434,8 +434,8 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once");
-				strictEqual(this.oCurrency._renderCurrency.callCount, 1, "Internal method should be called once");
+				assert.strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once");
+				assert.strictEqual(this.oCurrency._renderCurrency.callCount, 1, "Internal method should be called once");
 
 				// Resetting counters after modification
 				this.sandbox.reset();
@@ -445,8 +445,8 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once");
-				strictEqual(this.oCurrency._renderCurrency.callCount, 1, "Internal method should be called once");
+				assert.strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once");
+				assert.strictEqual(this.oCurrency._renderCurrency.callCount, 1, "Internal method should be called once");
 			});
 
 			QUnit.test("Live switch between currency's with different decimal values", function (assert) {
@@ -467,7 +467,7 @@
 				strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once to re-render " +
 						"the value");
 
-				strictEqual($Value.text(), "51    ", "For JPY currency " +
+				assert.strictEqual($Value.text(), "51    ", "For JPY currency " +
 						"decimals should be removed and value padded according to precision");
 
 				// Act
@@ -478,7 +478,7 @@
 				strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once to re-render " +
 						"the value");
 
-				strictEqual($Value.text(), "50.99 ", "For EUR currency " +
+				assert.strictEqual($Value.text(), "50.99 ", "For EUR currency " +
 						"decimals should be added again and value padded according to precision");
 
 				// Act
@@ -489,7 +489,7 @@
 				strictEqual(this.oCurrency._renderValue.callCount, 0, "Internal method should not be called when the new " +
 						"currency has the same amount of decimal values");
 
-				strictEqual($Value.text(), "50.99 ", "For switch to " +
+				assert.strictEqual($Value.text(), "50.99 ", "For switch to " +
 						"BGN from EUR currency's decimals should remain unchanged");
 			});
 
@@ -523,8 +523,8 @@
 
 			QUnit.test("Currency control is rendered correctly", function (assert) {
 				// Assert
-				strictEqual(this.aControls[0].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control should not have the class 'sapUiUfdCurrencyNoVal' applied");
-				strictEqual(this.aControls[1].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control should not have the class 'sapUiUfdCurrencyNoVal' applied");
+				assert.strictEqual(this.aControls[0].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control should not have the class 'sapUiUfdCurrencyNoVal' applied");
+				assert.strictEqual(this.aControls[1].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control should not have the class 'sapUiUfdCurrencyNoVal' applied");
 			});
 
 			QUnit.module("Accessibility");
@@ -534,12 +534,12 @@
 				ok(!!oControl.getAccessibilityInfo, "Currency has a getAccessibilityInfo function");
 				var oInfo = oControl.getAccessibilityInfo();
 				ok(!!oInfo, "getAccessibilityInfo returns a info object");
-				strictEqual(oInfo.role, undefined, "AriaRole");
-				strictEqual(oInfo.type, undefined, "Type");
-				strictEqual(oInfo.description, "100.00 EUR", "Description");
-				strictEqual(oInfo.focusable, undefined, "Focusable");
-				strictEqual(oInfo.enabled, undefined, "Enabled");
-				strictEqual(oInfo.editable, undefined, "Editable");
+				assert.strictEqual(oInfo.role, undefined, "AriaRole");
+				assert.strictEqual(oInfo.type, undefined, "Type");
+				assert.strictEqual(oInfo.description, "100.00 EUR", "Description");
+				assert.strictEqual(oInfo.focusable, undefined, "Focusable");
+				assert.strictEqual(oInfo.enabled, undefined, "Enabled");
+				assert.strictEqual(oInfo.editable, undefined, "Editable");
 				oControl.destroy();
 			});
 
@@ -553,7 +553,7 @@
 				sap.ui.getCore().applyChanges();
 
 				dirText = jQuery("#cDir").find(".sapUiUfdCurrencyValue").attr("dir");
-				strictEqual(dirText, "ltr", "Text direction should be set to ltr");
+				assert.strictEqual(dirText, "ltr", "Text direction should be set to ltr");
 
 				oCurrency.destroy();
 			});
@@ -570,7 +570,7 @@
 				sap.ui.getCore().applyChanges();
 
 				dirText = jQuery("#cDir").find(".sapUiUfdCurrencyValue").attr("dir");
-				strictEqual(dirText, "ltr", "Text direction should be set to ltr in RTL mode");
+				assert.strictEqual(dirText, "ltr", "Text direction should be set to ltr in RTL mode");
 
 				// Clean up
 				sap.ui.getCore().getConfiguration().setRTL(bRTL);

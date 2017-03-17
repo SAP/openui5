@@ -95,7 +95,7 @@
 			process: sap.ui.core.util.XMLPreprocessor.process
 		};
 
-		strictEqual(oView.mPreprocessors.foo[0], oPreprocessors.foo, "preprocessors stored at view");
+		assert.strictEqual(oView.mPreprocessors.foo[0], oPreprocessors.foo, "preprocessors stored at view");
 		expectProcess.verify();
 	});
 
@@ -123,9 +123,9 @@
 
 		oPreprocessors.foo._settings.foo = "bar";
 		sinon.assert.calledOnce(oSpy);
-		strictEqual(oSpy.args[0][2].foo, oPreprocessors.foo._settings.foo, "Configured object instance gets passed to the preprocessor");
+		assert.strictEqual(oSpy.args[0][2].foo, oPreprocessors.foo._settings.foo, "Configured object instance gets passed to the preprocessor");
 		ok(oSpy.args[0][2].foo === "bar", "Property got set correctly");
-		strictEqual(oSpy.args[0][2].foofoo, oPreprocessors.foo.foofoo, "Relevant settings have been passed to the pp");
+		assert.strictEqual(oSpy.args[0][2].foofoo, oPreprocessors.foo.foofoo, "Relevant settings have been passed to the pp");
 		ok(Object.keys(oSpy.args[0][2]).length == 3, "Only relevant settings have been passed to the pp");
 	});
 
@@ -146,7 +146,7 @@
 			viewContent: sViewContent
 		});
 		sinon.assert.calledOnce(expectProcess);
-		strictEqual(oView._xContent, expectProcess.returnValues[0]);
+		assert.strictEqual(oView._xContent, expectProcess.returnValues[0]);
 	});
 
 	QUnit.test("runPreprocessor w/ invalid preprocessor", 2, function (assert) {
@@ -301,10 +301,10 @@
 		expectProcess.once().withExactArgs(oSource, oViewInfo, oPreprocessors.foo._settings);
 
 
-		strictEqual(oView.mPreprocessors.foo[0], oPreprocessors.foo, "preprocessors stored at view");
+		assert.strictEqual(oView.mPreprocessors.foo[0], oPreprocessors.foo, "preprocessors stored at view");
 
 		oView.runPreprocessor("foo", oSource).then(function(oProcessedSource) {
-			strictEqual(oProcessedSource, oResult, "Results equal");
+			assert.strictEqual(oProcessedSource, oResult, "Results equal");
 			expectProcess.verify();
 			done();
 		});
@@ -333,7 +333,7 @@
 		oView.runPreprocessor("foo", {}).then(function() {
 			oPreprocessors.foo.settings.foo = "bar";
 			sinon.assert.calledOnce(oSpy);
-			strictEqual(oSpy.args[0][2].settings.foo, oPreprocessors.foo.settings.foo, "Configured object instance gets passed to the preprocessor");
+			assert.strictEqual(oSpy.args[0][2].settings.foo, oPreprocessors.foo.settings.foo, "Configured object instance gets passed to the preprocessor");
 			ok(oSpy.args[0][2].settings.foo === "bar", "Property got set correctly");
 			ok(Object.keys(oSpy.args[0][2]).length == 2, "Nothing has been added to the pp config");
 			done();
@@ -357,7 +357,7 @@
 
 		oView.attachAfterInit(function() {
 			sinon.assert.calledOnce(expectProcess);
-			strictEqual(oView._xContent, expectProcess.returnValues[0]);
+			assert.strictEqual(oView._xContent, expectProcess.returnValues[0]);
 			expectProcess.verify();
 			done();
 		});

@@ -215,10 +215,10 @@
 	QUnit.test("Number properties create a private sap.m.ObjectNumber control", function (assert) {
 		var oObjectNumberAggregation = showTextDir.getAggregation("_objectNumber");
 		ok(oObjectNumberAggregation && oObjectNumberAggregation instanceof sap.m.ObjectNumber, "An instance of sap.m.ObjectNumber is created out of number, numberUnit, numberState, numberTextDirection properties");
-		strictEqual(oObjectNumberAggregation.getNumber(), showTextDir.getNumber(), "Both 'number' properties are in sync");
-		strictEqual(oObjectNumberAggregation.getNumberUnit(), showTextDir.getNumberUnit(), "Both 'numberUnit' properties are in sync");
-		strictEqual(oObjectNumberAggregation.getState(), showTextDir.getNumberState(), "Both 'ValueStates' properties are in sync");
-		strictEqual(oObjectNumberAggregation.getTextDirection(), showTextDir.getNumberTextDirection(), "Both 'ValueStates' properties are in sync");
+		assert.strictEqual(oObjectNumberAggregation.getNumber(), showTextDir.getNumber(), "Both 'number' properties are in sync");
+		assert.strictEqual(oObjectNumberAggregation.getNumberUnit(), showTextDir.getNumberUnit(), "Both 'numberUnit' properties are in sync");
+		assert.strictEqual(oObjectNumberAggregation.getState(), showTextDir.getNumberState(), "Both 'ValueStates' properties are in sync");
+		assert.strictEqual(oObjectNumberAggregation.getTextDirection(), showTextDir.getNumberTextDirection(), "Both 'ValueStates' properties are in sync");
 	});
 
 	/******************************************************************/
@@ -313,11 +313,11 @@
 		QUnit.test("TestActiveIcon", function(assert) {
 			imageOLI1.setActive(true);
 			var imageSrc = imageOLI1.$('img').attr('src');
-			strictEqual(imageSrc, imageOLI1.getActiveIcon(), "The icon should be active");
+			assert.strictEqual(imageSrc, imageOLI1.getActiveIcon(), "The icon should be active");
 
 			imageOLI1.setActive(false);
 			imageSrc = imageOLI1.$('img').attr('src');
-			strictEqual(imageSrc, imageOLI1.getIcon(), "The icon should be inactive");
+			assert.strictEqual(imageSrc, imageOLI1.getIcon(), "The icon should be inactive");
 		});
 
 		QUnit.module("Icon / Image ratio");

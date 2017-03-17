@@ -111,7 +111,7 @@
 			$MergedIcon = oTable.getItems()[3].getCells()[0].$();
 
  			ok($MergedLabel.hasClass("sapMListTblCellDupCnt"), "duplicated label should be merged.");
- 			strictEqual($MergedLabel.text(), "Male", "duplicated label is still available in the dom for screen readers.");
+ 			assert.strictEqual($MergedLabel.text(), "Male", "duplicated label is still available in the dom for screen readers.");
 
  			ok($MergedIcon.hasClass("sapMListTblCellDupCnt"), "duplicated icon should be merged.");
 
@@ -139,7 +139,7 @@
 				var $FirstIconAfterGrowing =  oTable.getItems()[5].getCells()[0].$();
 
 				ok($FirstLabelAfterGrowing.hasClass("sapMListTblCellDupCnt"), "label of the first item after growing should be merged.");
-	 			strictEqual($FirstLabelAfterGrowing.text(), "Male", "duplicated label is still available in the dom for screen readers.");
+	 			assert.strictEqual($FirstLabelAfterGrowing.text(), "Male", "duplicated label is still available in the dom for screen readers.");
 
 				ok($FirstIconAfterGrowing.hasClass("sapMListTblCellDupCnt"), "icon of the first item after growing should be merged.");
 			});

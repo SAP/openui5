@@ -42,8 +42,8 @@
 		QUnit.test("parameters", function(assert) {
 			oFT.setWidth("100%").setHeight("auto");
 			setText("formatted text example");
-			strictEqual(oFT.getDomRef().style.width, "100%", "Width of the control is correct");
-			strictEqual(oFT.getDomRef().style.height, "auto", "Height of the control is correct");
+			assert.strictEqual(oFT.getDomRef().style.width, "100%", "Width of the control is correct");
+			assert.strictEqual(oFT.getDomRef().style.height, "auto", "Height of the control is correct");
 			oFT.setWidth("").setHeight("");
 			sap.ui.getCore().applyChanges();
 			ok(!oFT.getDomRef().style.width, "The width css is cleared");
@@ -52,16 +52,16 @@
 
 		QUnit.test("tags", function(assert) {
 			setText("<h1>" + sFT + "</h1>");
-			strictEqual(oFT.$().find("h1").text(), sFT, "The text of the h1 element is correct");
+			assert.strictEqual(oFT.$().find("h1").text(), sFT, "The text of the h1 element is correct");
 			setText("<h3>" + sFT + "</h3>");
-			strictEqual(oFT.$().find("h3").text(), sFT, "The text of the h3 element is correct");
+			assert.strictEqual(oFT.$().find("h3").text(), sFT, "The text of the h3 element is correct");
 			setText("<div>" + sFT + "</div>");
 			ok(!oFT.$().find("div").length, "The div element is not rendered");
 			setText("<a href=\"//www.sap.com\">" + sFT + "</a>");
-			strictEqual(oFT.$().find("a").text(), sFT, "The text of the a element is correct");
+			assert.strictEqual(oFT.$().find("a").text(), sFT, "The text of the a element is correct");
 			setText("<ul><li>1</li><li>2</li><li>3</li></ul>");
-			strictEqual(oFT.$().find("ul").length, 1, "One ul element is rendered");
-			strictEqual(oFT.$().find("li").length, 3, "There are 3 li elements");
+			assert.strictEqual(oFT.$().find("ul").length, 1, "One ul element is rendered");
+			assert.strictEqual(oFT.$().find("li").length, 3, "There are 3 li elements");
 		});
 
 		QUnit.test("attributes", function(assert) {
@@ -69,18 +69,18 @@
 			setText('<a id="AAA" class="aaa" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</a>');
 			$a = oFT.$().find("a");
 			ok(!$a.attr("id"), "id is not rendered");
-			strictEqual($a.attr("href"), sFT, "a::href is rendered");
-			strictEqual($a[0].style.color, "red", "a::style is rendered");
-			strictEqual($a.attr("target"), "_top", "a::target attribute _top");
+			assert.strictEqual($a.attr("href"), sFT, "a::href is rendered");
+			assert.strictEqual($a[0].style.color, "red", "a::style is rendered");
+			assert.strictEqual($a.attr("target"), "_top", "a::target attribute _top");
 			setText('<a href="' +  sFT + '"' + sFT + '</a>');
 			$a = oFT.$().find("a");
-			strictEqual($a.attr("target"), "_blank", "default a::target attribute is _blank");
+			assert.strictEqual($a.attr("target"), "_blank", "default a::target attribute is _blank");
 			setText('<span id="AAA" class="aaa" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</span>');
 			$a = oFT.$().find("span");
 			ok(!$a.attr("id"), "id is not rendered");
 			ok(!$a.attr("href"), "span::href is not rendered");
-			strictEqual($a.attr("class"), "aaa", "a::class is rendered");
-			strictEqual($a[0].style.color, "red", "a::style is rendered");
+			assert.strictEqual($a.attr("class"), "aaa", "a::class is rendered");
+			assert.strictEqual($a[0].style.color, "red", "a::style is rendered");
 			ok(!$a.attr("target"), "span::target is not rendered");
 		});
 
@@ -88,15 +88,15 @@
 			var $a;
 			setText("<h1>" + sFT + "</h1>");
 			$a = oFT.$().find("h1");
-			strictEqual($a.attr("class"), "sapMTitle sapMTitleStyleH1", "h1::class is rendered correctly");
+			assert.strictEqual($a.attr("class"), "sapMTitle sapMTitleStyleH1", "h1::class is rendered correctly");
 
 			setText("<h6 class='abc'>" + sFT + "</h6>");
 			$a = oFT.$().find("h6");
-			strictEqual($a.attr("class"), "sapMTitle sapMTitleStyleH6 abc", "h6::class is rendered correctly");
+			assert.strictEqual($a.attr("class"), "sapMTitle sapMTitleStyleH6 abc", "h6::class is rendered correctly");
 
 			setText('<a id="AAA" class="abc" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</a>');
 			$a = oFT.$().find("a");
-			strictEqual($a.attr("class"), "sapMLnk abc", "a::class is rendered correctly");
+			assert.strictEqual($a.attr("class"), "sapMLnk abc", "a::class is rendered correctly");
 		});
 
 		QUnit.module("Clean up");

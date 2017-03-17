@@ -133,9 +133,9 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		/*********************************************************************************************************/
 
 		function checkSaveAndGetSavedChanges(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length, 1, 'Save result contains one entry');
-			strictEqual(results[0].status, 'success', 'Change successfully saved in backend');
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length, 1, 'Save result contains one entry');
+			assert.strictEqual(results[0].status, 'success', 'Change successfully saved in backend');
 			return deletionPersistnce.getChanges();
 		}
 
@@ -148,14 +148,14 @@ jQuery.sap.require('sap.ui.fl.Cache');
 					containsChangeId = true;
 				}
 			});
-			strictEqual(containsChangeId, true, 'Change successfully recieved from backend');
+			assert.strictEqual(containsChangeId, true, 'Change successfully recieved from backend');
 
 			return deletionPersistnce.saveAll();
 		}
 
 		function checkDeletion(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length > 0, true, 'Change successfully deleted from backend');
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length > 0, true, 'Change successfully deleted from backend');
 			done();
 		}
 	});
@@ -191,9 +191,9 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		/*********************************************************************************************************/
 
 		function checkSavedAndGetSavedChanges(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length, 1, 'Save result contains one entry');
-			strictEqual(results[0].status, 'success', 'Change successfully saved in backend');
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length, 1, 'Save result contains one entry');
+			assert.strictEqual(results[0].status, 'success', 'Change successfully saved in backend');
 			return deletionPersistnce.getChanges();
 		}
 
@@ -208,14 +208,14 @@ jQuery.sap.require('sap.ui.fl.Cache');
 					actualLayer = change.getLayer();
 				}
 			});
-			strictEqual(actualLayer, expectedLayer, 'Layer has been set according to specified Layer');
-			strictEqual(containsChangeId, true, 'Change successfully recieved from backend');
+			assert.strictEqual(actualLayer, expectedLayer, 'Layer has been set according to specified Layer');
+			assert.strictEqual(containsChangeId, true, 'Change successfully recieved from backend');
 			return deletionPersistnce.saveAll();
 		}
 
 		function checkDeletion(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length > 0, true, 'Change successfully deleted from backend');
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length > 0, true, 'Change successfully deleted from backend');
 			done();
 		}
 	}
@@ -240,9 +240,9 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		/*********************************************************************************************************/
 
 		function checkSaveAndGetSavedChanges(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length, 1, 'Save result contains one entry');
-			strictEqual(results[0].status, 'success', 'Change successfully saved in backend');
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length, 1, 'Save result contains one entry');
+			assert.strictEqual(results[0].status, 'success', 'Change successfully saved in backend');
 			return updatePersistnce.getChanges();
 		}
 
@@ -269,13 +269,13 @@ jQuery.sap.require('sap.ui.fl.Cache');
 					actualVariantName = change.getText('variantName');
 				}
 			});
-			strictEqual(actualVariantName, expectedNewVariantName, 'Variant name has been updated in backend');
+			assert.strictEqual(actualVariantName, expectedNewVariantName, 'Variant name has been updated in backend');
 			return deletionPersistnce.saveAll();
 		}
 
 		function checkDeletion(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length > 0, true, 'Change successfully deleted from backend');
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length > 0, true, 'Change successfully deleted from backend');
 			done();
 		}
 	});
@@ -349,7 +349,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		function checkChangesAndBackendCalls(changes) {
 			var creation = changes[Object.keys(changes)[0]].getDefinition().creation;
 			ok(creation, 'Creation string is filled');
-			strictEqual(isNaN(new Date(creation)), false, 'Creation string is a valid date');
+			assert.strictEqual(isNaN(new Date(creation)), false, 'Creation string is a valid date');
 			sinon.assert.calledOnce(LrepConnector.prototype.loadChanges);
 			done();
 		}

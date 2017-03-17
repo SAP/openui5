@@ -64,8 +64,8 @@
 
 	QUnit.module("Properties");
 	QUnit.test("Default values", 3, function(assert) {
-		strictEqual(oP2R.getShowIcon(), false, "Default value for showIcon");
-		strictEqual(oP2R.getDescription(), sDescription, "Description value");
+		assert.strictEqual(oP2R.getShowIcon(), false, "Default value for showIcon");
+		assert.strictEqual(oP2R.getDescription(), sDescription, "Description value");
 		ok(!oP2R.getCustomIcon(), "Custom icon is not set");
 	});
 
@@ -82,8 +82,8 @@
 		ok($P2R.length > 0, "Pull down control is rendered");
 		ok($P2R.children(".sapMPullDownCI").length == 0, "No custom logo is rendered initially");
 		ok(!$P2R.hasClass("sapMPullDownLogo"), "Standard logo is not shown");
-		strictEqual($P2R.children(".sapMPullDownText").text(), sPullDwn, "Pull down text is set correctly");
-		strictEqual($P2R.children(".sapMPullDownInfo").text(), sDescription, "Pull down description is set correctly");
+		assert.strictEqual($P2R.children(".sapMPullDownText").text(), sPullDwn, "Pull down text is set correctly");
+		assert.strictEqual($P2R.children(".sapMPullDownInfo").text(), sDescription, "Pull down description is set correctly");
 		ok(!($P2R.hasClass("sapMFlip")), "Arrow is not rotated");
 		ok(!($P2R.hasClass("sapLoading")), "Loading class is not set");
 	});
@@ -116,7 +116,7 @@
 			});
 
 			// Check HTML
-			strictEqual(oP2R._iState, 1, "New state after pull should be 1 - release to refresh");
+			assert.strictEqual(oP2R._iState, 1, "New state after pull should be 1 - release to refresh");
 			var $P2R = oP2R.$();
 			ok($P2R.children(".sapMPullDownText").text() == sRelease, "Release text is set correctly");
 			ok($P2R.position().top >= 0, "Control is visible");
@@ -132,17 +132,17 @@
 
 				//
 				setTimeout(function() {
-					strictEqual(oP2R._iState, 2, "New state after release should be 2 - loading");
+					assert.strictEqual(oP2R._iState, 2, "New state after release should be 2 - loading");
 					ok($P2R.children(".sapMPullDownText").text() == sLoading, "Loading text is set");
-					strictEqual($P2R.children(".sapMPullDownInfo").text(), sRefresh, "Description is set");
+					assert.strictEqual($P2R.children(".sapMPullDownInfo").text(), sRefresh, "Description is set");
 					ok($P2R.hasClass("sapMLoading"), "Loading css is set");
 					oP2R.hide(); // Close
 					oP2R.setDescription(sDescription);
 
 					setTimeout(function() {
-						strictEqual(oP2R._iState, 0, "New state after hide should be 0 - initial");
-						strictEqual($P2R.children(".sapMPullDownText").text(), sPullDwn, "Initial text is restored");
-						strictEqual($P2R.children(".sapMPullDownInfo").text(), sDescription, "Initial description is restored");
+						assert.strictEqual(oP2R._iState, 0, "New state after hide should be 0 - initial");
+						assert.strictEqual($P2R.children(".sapMPullDownText").text(), sPullDwn, "Initial text is restored");
+						assert.strictEqual($P2R.children(".sapMPullDownInfo").text(), sDescription, "Initial description is restored");
 						ok($P2R.position().top + $P2R.height() - jQuery("#page1-intHeader").height() <= 0, "Control is hidden over the top of the parent container");
 						ok(!($P2R.hasClass("sapMFlip")), "Arrow is not rotated");
 						done();

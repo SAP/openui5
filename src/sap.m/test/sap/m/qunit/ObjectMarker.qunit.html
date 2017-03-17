@@ -35,7 +35,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oMarker.$().length, 1, "Control is in the DOM.");
+			assert.strictEqual(oMarker.$().length, 1, "Control is in the DOM.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -51,7 +51,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oMarker.$().children().length, 0, "Object Marker inner control is not rendered when type is not set.");
+			assert.strictEqual(oMarker.$().children().length, 0, "Object Marker inner control is not rendered when type is not set.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -363,7 +363,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oMarker.getType(), sap.m.ObjectMarkerType.Locked, "Control type is set to 'Locked' via binding");
+			assert.strictEqual(oMarker.getType(), sap.m.ObjectMarkerType.Locked, "Control type is set to 'Locked' via binding");
 
 			// Act
 			var sExpectedText = oRB.getText('OM_FAVORITE');
@@ -372,7 +372,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oMarker.$("text").text(), sExpectedText, "Control type is displayed as 'Favorite' after re-binding");
+			assert.strictEqual(oMarker.$("text").text(), sExpectedText, "Control type is displayed as 'Favorite' after re-binding");
 
 			// Cleanup
 			oMarker.destroy();
@@ -411,7 +411,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oTable.$().find(".sapMLnk").text(), sExpectedText, "Object Marker type is set to 'Locked' via binding");
+			assert.strictEqual(oTable.$().find(".sapMLnk").text(), sExpectedText, "Object Marker type is set to 'Locked' via binding");
 
 			// Cleanup
 			oTable.destroy();
@@ -424,7 +424,7 @@
 			var oMarker = new sap.m.ObjectMarker();
 
 			// Assert
-			strictEqual(oMarker._getInnerControl(), null, "Requesting inner control without setting type should return null");
+			assert.strictEqual(oMarker._getInnerControl(), null, "Requesting inner control without setting type should return null");
 
 			// Act
 			oMarker.setType(sap.m.ObjectMarkerType.Flagged);
@@ -438,7 +438,7 @@
 			var oMarker = new sap.m.ObjectMarker();
 
 			// Assert
-			strictEqual(oMarker._adjustControl(), false, "Adjusting inner control without setting type should return false thus" +
+			assert.strictEqual(oMarker._adjustControl(), false, "Adjusting inner control without setting type should return false thus" +
 					"not trying to execute further adjustments to the control because in this setup the control will not" +
 					"render and no inner control will be available that would cause errors from the method trying to access" +
 					"it's properties");
@@ -451,14 +451,14 @@
 			var oMarker = new sap.m.ObjectMarker();
 
 			// Assert
-			strictEqual(oMarker.getAdditionalInfo(), "", "The default additional info value of the API should be an empty string");
+			assert.strictEqual(oMarker.getAdditionalInfo(), "", "The default additional info value of the API should be an empty string");
 
 			// Act
 			oMarker.setAdditionalInfo("by John Doe");
 
 			// Assert
-			strictEqual(oMarker.getProperty("additionalInfo"), "by John Doe", "Previously set additional info should be retrieved");
-			strictEqual(oMarker.getAdditionalInfo(), "by John Doe", "Previously set additional info should be retrieved");
+			assert.strictEqual(oMarker.getProperty("additionalInfo"), "by John Doe", "Previously set additional info should be retrieved");
+			assert.strictEqual(oMarker.getAdditionalInfo(), "by John Doe", "Previously set additional info should be retrieved");
 		});
 
 		QUnit.test("Rendering", function (assert) {
@@ -471,15 +471,15 @@
 			var sExpectedText = oRB.getText('OM_LOCKED');
 
 			// Assert
-			strictEqual(oMarker.$().children().length, 0, "There should be nothing rendered without a type applied");
+			assert.strictEqual(oMarker.$().children().length, 0, "There should be nothing rendered without a type applied");
 
 			// Act
 			oMarker.setType(sap.m.ObjectMarkerType.Locked);
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oMarker.$().children().length, 1, "There rendered content when type is applied");
-			strictEqual(oMarker.$().text(), sExpectedText + " by John Doe", "The rendered text in the element should " +
+			assert.strictEqual(oMarker.$().children().length, 1, "There rendered content when type is applied");
+			assert.strictEqual(oMarker.$().text(), sExpectedText + " by John Doe", "The rendered text in the element should " +
 					"include the text representation of the status set concatenated with the additional info");
 		});
 
@@ -496,7 +496,7 @@
 
 
 			// Assert
-			strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be get from the message bundle and the additional info passed as a parameter");
+			assert.strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be get from the message bundle and the additional info passed as a parameter");
 		});
 
 		QUnit.test("Rendering when the type is LockedBy but no additionalInfo is provided", function (assert) {
@@ -511,7 +511,7 @@
 
 
 			// Assert
-			strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be 'Locked by another user' taken from messagebundle");
+			assert.strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be 'Locked by another user' taken from messagebundle");
 		});
 
 		QUnit.test("Rendering when the type is UnsavedBy", function (assert) {
@@ -527,7 +527,7 @@
 
 
 			// Assert
-			strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be get from the message bundle and the additional info passed as a parameter");
+			assert.strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be get from the message bundle and the additional info passed as a parameter");
 		});
 
 		QUnit.test("Rendering when the type is UnsavedBy but no additionalInfo is provided", function (assert) {
@@ -542,7 +542,7 @@
 
 
 			// Assert
-			strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be 'Unsaved by another user' taken from messagebundle");
+			assert.strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be 'Unsaved by another user' taken from messagebundle");
 		});
 	</script>
 </head>

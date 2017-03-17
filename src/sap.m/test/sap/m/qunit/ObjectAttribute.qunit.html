@@ -284,7 +284,7 @@
 		var oPressSpy = sinon.spy(sap.m.ObjectAttribute.prototype, "firePress");
 		sap.ui.test.qunit.triggerKeydown(oObjectAttribute.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
 
-		strictEqual(oPressSpy.callCount, 1, "Enter is pressed, press event was fired");
+		assert.strictEqual(oPressSpy.callCount, 1, "Enter is pressed, press event was fired");
 
 		// Clean up
 		sap.m.ObjectAttribute.prototype.firePress.restore();
@@ -307,7 +307,7 @@
 		var oPressSpy = sinon.spy(sap.m.ObjectAttribute.prototype, "firePress");
 		sap.ui.test.qunit.triggerKeydown(oObjectAttribute.getFocusDomRef(), jQuery.sap.KeyCodes.SPACE);
 
-		strictEqual(oPressSpy.callCount, 1, "Space is pressed, press event was fired");
+		assert.strictEqual(oPressSpy.callCount, 1, "Space is pressed, press event was fired");
 
 		// Clean up
 		sap.m.ObjectAttribute.prototype.firePress.restore();

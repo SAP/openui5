@@ -97,17 +97,17 @@ sap.ui.require([
 			var sDesc = oFixture.d || oFixture.t;
 
 			function testCompare(fnComparator) {
-				strictEqual(fnComparator(oFixture.s1 , oFixture.s2), 0, sDesc + ": s === s");
-				strictEqual(fnComparator(oFixture.s1 , oFixture.gt), -1, sDesc + ": s < gt");
-				strictEqual(fnComparator(oFixture.gt , oFixture.s2), 1, sDesc + ": gt > s");
+				assert.strictEqual(fnComparator(oFixture.s1 , oFixture.s2), 0, sDesc + ": s === s");
+				assert.strictEqual(fnComparator(oFixture.s1 , oFixture.gt), -1, sDesc + ": s < gt");
+				assert.strictEqual(fnComparator(oFixture.gt , oFixture.s2), 1, sDesc + ": gt > s");
 
 				ok(isNaN(fnComparator(oFixture.s1, null)), sDesc + ": s, null");
 				ok(isNaN(fnComparator(null, oFixture.s2)), sDesc + ": null, s");
 				ok(isNaN(fnComparator(oFixture.s1, undefined)), sDesc + ": s, undefined");
 				ok(isNaN(fnComparator(undefined, oFixture.s2)), sDesc + ": undefined, s");
 
-				strictEqual(fnComparator(null, null), 0, sDesc + ": null,null");
-				strictEqual(fnComparator(undefined, undefined), 0,
+				assert.strictEqual(fnComparator(null, null), 0, sDesc + ": null,null");
+				assert.strictEqual(fnComparator(undefined, undefined), 0,
 					sDesc + ": undefined,undefined");
 			}
 
@@ -121,7 +121,7 @@ sap.ui.require([
 		var fnDecimal = ODataUtils.getComparator("Edm.Decimal"),
 			fnInt64 = ODataUtils.getComparator("Edm.Int64");
 
-		strictEqual(fnDecimal, fnInt64, "functions identical, no need to test Int64 separately");
+		assert.strictEqual(fnDecimal, fnInt64, "functions identical, no need to test Int64 separately");
 
 		[
 			{p1: "11", p2: "2", r: 1, t: "first is longer"},
@@ -162,9 +162,9 @@ sap.ui.require([
 				ok(isNaN(fnDecimal(oFixture.p1, oFixture.p2)), oFixture.t);
 				ok(isNaN(fnInt64(oFixture.p1, oFixture.p2)), oFixture.t);
 			} else {
-				strictEqual(ODataUtils.compare(oFixture.p1, oFixture.p2, true),
+				assert.strictEqual(ODataUtils.compare(oFixture.p1, oFixture.p2, true),
 					oFixture.r, oFixture.t);
-				strictEqual(fnDecimal(oFixture.p1, oFixture.p2), oFixture.r, oFixture.t);
+				assert.strictEqual(fnDecimal(oFixture.p1, oFixture.p2), oFixture.r, oFixture.t);
 			}
 		});
 	});

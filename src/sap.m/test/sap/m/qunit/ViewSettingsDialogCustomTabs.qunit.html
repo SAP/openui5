@@ -325,27 +325,27 @@
 			sPageId 			= 'sort';
 			sSuccessMsgPrefix 	= '"' + sPageId + '"';
 			sSuccessMsg 		= ' is NOT a valid predefined page id when no ' + sPageId + ' items are added.';
-			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+			assert.strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
 
 			sPageId 			= 'filter';
 			sSuccessMsgPrefix 	= '"' + sPageId + '"';
 			sSuccessMsg 		= ' is NOT a valid predefined page id when no ' + sPageId + ' items are added.';
-			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+			assert.strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
 
 			sPageId 			= 'group';
 			sSuccessMsgPrefix 	= '"' + sPageId + '"';
 			sSuccessMsg 		= ' is NOT a valid predefined page id when no custom tabs are added.';
-			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+			assert.strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
 
 			sPageId 			= sFirstCustomTabId;
 			sSuccessMsgPrefix 	= '"' + sPageId + '"';
 			sSuccessMsg 		= ' is NOT a valid predefined page id when no custom tabs are added.';
-			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+			assert.strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
 
 			sPageId 			= sSecondCustomTabId;
 			sSuccessMsgPrefix 	= '"' + sPageId + '"';
 			sSuccessMsg 		= ' is NOT a valid predefined page id.';
-			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+			assert.strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
 		});
 
 		QUnit.test("Check the _isValidPredefinedPageId method for correctly validating page ids.", function (assert) {
@@ -358,20 +358,20 @@
 			sPageId 			= 'sort';
 			sSuccessMsgPrefix 	= '"' + sPageId + '"';
 			sSuccessMsg 		= ' is a valid predefined page id after ' + sPageId + ' items are added.';
-			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , true, sSuccessMsgPrefix + sSuccessMsg);
+			assert.strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , true, sSuccessMsgPrefix + sSuccessMsg);
 
 			oVsdConfig.addFilterItems(this.oVSD);
 			sPageId 			= 'filter';
 			sSuccessMsgPrefix 	= '"' + sPageId + '"';
 			sSuccessMsg 		= ' is a valid predefined page id after ' + sPageId + ' items are added.';
-			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , true, sSuccessMsgPrefix + sSuccessMsg);
+			assert.strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , true, sSuccessMsgPrefix + sSuccessMsg);
 
 
 			oVsdConfig.addGroupItems(this.oVSD);
 			sPageId 			= 'group';
 			sSuccessMsgPrefix 	= '"' + sPageId + '"';
 			sSuccessMsg 		= ' is a valid predefined page id after ' + sPageId + ' items are added.';
-			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , true, sSuccessMsgPrefix + sSuccessMsg);
+			assert.strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , true, sSuccessMsgPrefix + sSuccessMsg);
 
 
 			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
@@ -379,7 +379,7 @@
 			sPageId 			= sFirstCustomTabId;
 			sSuccessMsgPrefix 	= '"' + sPageId + '"';
 			sSuccessMsg 		= ' is a valid predefined page id after it was added.';
-			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+			assert.strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
 		});
 
 		QUnit.test("Check the _fetchValidPagesIds method for correctness.", function (assert) {
@@ -642,7 +642,7 @@
 
 					setTimeout(function () {
 						that.oVSD.open();
-						strictEqual(jQuery('#' + that.oVSD.getId() + '-title').text(), sTitle, "The title should be " + sTitle);
+						assert.strictEqual(jQuery('#' + that.oVSD.getId() + '-title').text(), sTitle, "The title should be " + sTitle);
 						done();
 					}, delay);
 				}, delay);
@@ -682,11 +682,11 @@
 				that.oVSD.open();
 				that.oVSD._switchToPage('taxi-settings2');
 				// the text of the second control on the page is binded to a model
-				strictEqual(that.oVSD._getPage1().getContent()[0].getText(), 'lorem ipsum checkbox label');
+				assert.strictEqual(that.oVSD._getPage1().getContent()[0].getText(), 'lorem ipsum checkbox label');
 				setTimeout(function () {
 					that.oVSD._switchToPage('taxi-settings');
 					// the text of the second control on the page is binded to a model
-					strictEqual(that.oVSD._getPage1().getContent()[0].getText(), 'lorem ipsum checkbox label');
+					assert.strictEqual(that.oVSD._getPage1().getContent()[0].getText(), 'lorem ipsum checkbox label');
 					done();
 				}, delay);
 			}, delay);
@@ -700,12 +700,12 @@
 			// open first dialog - that will trigger switching the content parent from vsd custom tab aggregation to vsd page contet aggregation
 			this.oVSD.open();
 			// assert the content of the custom tab aggregation has been transferred to the page
-			strictEqual(this.oVSD.getAggregation('customTabs')[0].getContent().length, 0, 'First VSD instance custom tab aggregation has no content');
-			strictEqual(this.oVSD._getPage1().getAggregation('content').length, 2, 'First VSD instance page has two contents');
+			assert.strictEqual(this.oVSD.getAggregation('customTabs')[0].getContent().length, 0, 'First VSD instance custom tab aggregation has no content');
+			assert.strictEqual(this.oVSD._getPage1().getAggregation('content').length, 2, 'First VSD instance page has two contents');
 			this.oVSD.removeAggregation('customTabs', ct);
 			// assert that the aggregation is removed and the page has no contents
-			strictEqual(this.oVSD.getAggregation('customTabs').length, 0, 'First VSD instance has no custom tabs');
-			strictEqual(this.oVSD._getPage1().getAggregation('content').length, 0, 'First VSD instance page has no contents');
+			assert.strictEqual(this.oVSD.getAggregation('customTabs').length, 0, 'First VSD instance has no custom tabs');
+			assert.strictEqual(this.oVSD._getPage1().getAggregation('content').length, 0, 'First VSD instance page has no contents');
 		});
 
 		// test is needed because the VSD does some internal managing of the aggregations
@@ -715,12 +715,12 @@
 			// open first dialog - that will trigger switching the content parent from vsd custom tab aggregation to vsd page contet aggregation
 			this.oVSD.open();
 			// assert the content of the custom tab aggregation has been transferred to the page
-			strictEqual(this.oVSD.getAggregation('customTabs')[0].getContent().length, 0, 'First VSD instance custom tab aggregation has no content');
-			strictEqual(this.oVSD._getPage1().getAggregation('content').length, 2, 'First VSD instance page has two contents');
+			assert.strictEqual(this.oVSD.getAggregation('customTabs')[0].getContent().length, 0, 'First VSD instance custom tab aggregation has no content');
+			assert.strictEqual(this.oVSD._getPage1().getAggregation('content').length, 2, 'First VSD instance page has two contents');
 			this.oVSD.removeAllAggregation('customTabs');
 			// assert that the aggregation is removed and the pag has no contents
-			strictEqual(this.oVSD.getAggregation('customTabs'), null, 'First VSD instance has no custom tabs aggregation');
-			strictEqual(this.oVSD._getPage1().getAggregation('content').length, 0, 'First VSD instance page has no contents');
+			assert.strictEqual(this.oVSD.getAggregation('customTabs'), null, 'First VSD instance has no custom tabs aggregation');
+			assert.strictEqual(this.oVSD._getPage1().getAggregation('content').length, 0, 'First VSD instance page has no contents');
 		});
 
 		// test is needed because the VSD does some internal managing of the aggregations
@@ -730,12 +730,12 @@
 			// open first dialog - that will trigger switching the content parent from vsd custom tab aggregation to vsd page contet aggregation
 			this.oVSD.open();
 			// assert the content of the custom tab aggregation has been transferred to the page
-			strictEqual(this.oVSD.getAggregation('customTabs')[0].getContent().length, 0, 'First VSD instance custom tab aggregation has no content');
-			strictEqual(this.oVSD._getPage1().getAggregation('content').length, 2, 'First VSD instance page has two contents');
+			assert.strictEqual(this.oVSD.getAggregation('customTabs')[0].getContent().length, 0, 'First VSD instance custom tab aggregation has no content');
+			assert.strictEqual(this.oVSD._getPage1().getAggregation('content').length, 2, 'First VSD instance page has two contents');
 			this.oVSD.destroyAggregation('customTabs', ct);
 			// assert that the aggregation is removed and the page has no contents
-			strictEqual(this.oVSD.getAggregation('customTabs'), null, 'First VSD instance has no custom tabs aggregation');
-			strictEqual(this.oVSD._getPage1().getAggregation('content').length, 0, 'First VSD instance page has no contents');
+			assert.strictEqual(this.oVSD.getAggregation('customTabs'), null, 'First VSD instance has no custom tabs aggregation');
+			assert.strictEqual(this.oVSD._getPage1().getAggregation('content').length, 0, 'First VSD instance page has no contents');
 		});
 
 

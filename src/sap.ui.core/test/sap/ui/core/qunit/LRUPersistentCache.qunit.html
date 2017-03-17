@@ -355,7 +355,7 @@
 					oCache.del("key1");
 					oCache.get("key2").then(function (value) {
 						//check
-						strictEqual(typeof value, "undefined", "Get (ro) waits running [del]");
+						assert.strictEqual(typeof value, "undefined", "Get (ro) waits running [del]");
 						done();
 					});
 				});
@@ -366,7 +366,7 @@
 				//act
 				oCache.get("key1").then(function (value) {
 					//check
-					strictEqual(typeof value, "undefined", "Get item (ro) still does not see any item, because [get] started before [set]");
+					assert.strictEqual(typeof value, "undefined", "Get item (ro) still does not see any item, because [get] started before [set]");
 				});
 				//act
 				oCache.set("key1", this.o1MB).then(function () {
@@ -382,7 +382,7 @@
 					//act
 					oCache.get("key1").then(function (value) {
 						//check
-						strictEqual(value, "smallValue", "Get item (ro) sees the old value (before update transaction completes) as it started before [update]");
+						assert.strictEqual(value, "smallValue", "Get item (ro) sees the old value (before update transaction completes) as it started before [update]");
 					});
 					//act
 					oCache.set("key1", "smallValueUpdated").then(function () {
@@ -413,7 +413,7 @@
 					oCache.set("key1", "smallValueUpdated");
 					oCache.get("key1").then(function (value) {
 						//check
-						strictEqual(value, "smallValueUpdated", "Get (ro) waits running [update]");
+						assert.strictEqual(value, "smallValueUpdated", "Get (ro) waits running [update]");
 						done();
 					});
 				});

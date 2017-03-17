@@ -83,9 +83,9 @@
 					//System under Test + Act
 					var sut = new sap.m._Ios7();
 
-					strictEqual(sut._bIntervallAttached, undefined, "the interval property was not initialized");
-					strictEqual(sut._bInputIsOpen, undefined, "the keyboard property was not initialized");
-					strictEqual(sut._bNavigationBarEventFired, undefined, "the navBar property was not initialized");
+					assert.strictEqual(sut._bIntervallAttached, undefined, "the interval property was not initialized");
+					assert.strictEqual(sut._bInputIsOpen, undefined, "the keyboard property was not initialized");
+					assert.strictEqual(sut._bNavigationBarEventFired, undefined, "the navBar property was not initialized");
 
 					//Cleanup
 					sut.destroy();
@@ -98,10 +98,10 @@
 					var sut = new sap.m._Ios7();
 
 					//Assert
-					strictEqual(sut._bIntervallAttached, false, "the interval property was initialized");
-					strictEqual(sut._bInputIsOpen, false, "the keyboard property was initialized");
-					strictEqual(sut._bNavigationBarEventFired, false, "the navBar property was initialized");
-					strictEqual(sut.getNavigationBarHeight(), 0, "the navBar height was 0");
+					assert.strictEqual(sut._bIntervallAttached, false, "the interval property was initialized");
+					assert.strictEqual(sut._bInputIsOpen, false, "the keyboard property was initialized");
+					assert.strictEqual(sut._bNavigationBarEventFired, false, "the navBar property was initialized");
+					assert.strictEqual(sut.getNavigationBarHeight(), 0, "the navBar height was 0");
 
 					//Cleanup
 					sut.destroy();
@@ -128,10 +128,10 @@
 					//Act
 					simulateOrietationChange(this, false);
 
-					strictEqual(oOrientationSpy.callCount, 1, "the orientation change was registered");
-					strictEqual(oScrollToSpy.callCount, 1, "scroll to was called");
-					strictEqual(oDetachSpy.callCount, 1, "polling was detached, since we are in portrait");
-					strictEqual(oAttachSpy.callCount, 0, "polling not attached, since we are in portrait");
+					assert.strictEqual(oOrientationSpy.callCount, 1, "the orientation change was registered");
+					assert.strictEqual(oScrollToSpy.callCount, 1, "scroll to was called");
+					assert.strictEqual(oDetachSpy.callCount, 1, "polling was detached, since we are in portrait");
+					assert.strictEqual(oAttachSpy.callCount, 0, "polling not attached, since we are in portrait");
 
 					//Cleanup
 					sut.destroy();
@@ -152,10 +152,10 @@
 					//Act
 					simulateOrietationChange(this, true);
 
-					strictEqual(oOrientationSpy.callCount, 1, "the orientation change was registered");
-					strictEqual(oScrollToSpy.callCount, 1, "scroll to was called");
-					strictEqual(oDetachSpy.callCount, 0, "polling was not detached, since we are in landscape");
-					strictEqual(oAttachSpy.callCount, 1, "polling was attached, since we are in landscape and the keyboard was closed");
+					assert.strictEqual(oOrientationSpy.callCount, 1, "the orientation change was registered");
+					assert.strictEqual(oScrollToSpy.callCount, 1, "scroll to was called");
+					assert.strictEqual(oDetachSpy.callCount, 0, "polling was not detached, since we are in landscape");
+					assert.strictEqual(oAttachSpy.callCount, 1, "polling was attached, since we are in landscape and the keyboard was closed");
 
 					//Cleanup
 					sut.destroy();
@@ -180,11 +180,11 @@
 					simulateOrietationChange(this, true);
 					simulateKeyboardOpen();
 
-					strictEqual(oOrientationSpy.callCount, 1, "the orientation change was registered");
-					strictEqual(oScrollToSpy.callCount, 2, "scroll to was called");
-					strictEqual(oDetachSpy.callCount, 2, "polling was detached, since we are in landscape and the keyboard was open");
-					strictEqual(oAttachSpy.callCount, 1, "polling was attached on orientation change");
-					strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of landscape and open keyboard");
+					assert.strictEqual(oOrientationSpy.callCount, 1, "the orientation change was registered");
+					assert.strictEqual(oScrollToSpy.callCount, 2, "scroll to was called");
+					assert.strictEqual(oDetachSpy.callCount, 2, "polling was detached, since we are in landscape and the keyboard was open");
+					assert.strictEqual(oAttachSpy.callCount, 1, "polling was attached on orientation change");
+					assert.strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of landscape and open keyboard");
 
 					//Cleanup
 					sut.destroy();
@@ -199,23 +199,23 @@
 					var sut = new sap.m._Ios7();
 
 					simulateKeyboardOpen();
-					strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of portrait");
+					assert.strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of portrait");
 
 					simulateOrietationChange(this, true);
 					simulateKeyboardOpen();
-					strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of landscape with keyboard open");
+					assert.strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of landscape with keyboard open");
 
 					simulateKeyboardClose();
-					strictEqual(sut._bIntervallAttached, true, "the interval property was attached because of landscape with keyboard close");
+					assert.strictEqual(sut._bIntervallAttached, true, "the interval property was attached because of landscape with keyboard close");
 
 					simulateKeyboardOpen();
-					strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of landscape with keyboard open");
+					assert.strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of landscape with keyboard open");
 
 					simulateKeyboardClose();
-					strictEqual(sut._bIntervallAttached, true, "the interval property was attached because of landscape with keyboard close");
+					assert.strictEqual(sut._bIntervallAttached, true, "the interval property was attached because of landscape with keyboard close");
 
 					simulateOrietationChange(this, false);
-					strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of portrait");
+					assert.strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of portrait");
 				});
 
 				QUnit.test("Should fire the navigation bar event", function (assert) {
@@ -228,28 +228,28 @@
 					//System under Test
 					var sut = new sap.m._Ios7();
 					sut.attachEvent("navigationBarShownInLandscape", oEventSpy);
-					strictEqual(sut._bInputIsOpen, false, "the keyboard property was initialized");
+					assert.strictEqual(sut._bInputIsOpen, false, "the keyboard property was initialized");
 
 					simulateKeyboardOpen();
-					strictEqual(sut._bInputIsOpen, true, "the keyboard was opened");
+					assert.strictEqual(sut._bInputIsOpen, true, "the keyboard was opened");
 					simulateOrietationChange(this, true);
-					strictEqual(sut._bInputIsOpen, false, "the keyboard was closed by the orientation change");
+					assert.strictEqual(sut._bInputIsOpen, false, "the keyboard was closed by the orientation change");
 					simulateKeyboardOpen();
 					//simulate the nav bar opening
 					simulateWindowDifference(this, 100);
 					this.clock.tick(1000);
 
-					strictEqual(oEventSpy.callCount, 0, "event was not fired because the keyboard was opened");
-					strictEqual(sut.getNavigationBarHeight(), 0, "the navBar height was 0");
+					assert.strictEqual(oEventSpy.callCount, 0, "event was not fired because the keyboard was opened");
+					assert.strictEqual(sut.getNavigationBarHeight(), 0, "the navBar height was 0");
 
 					simulateKeyboardClose();
 					this.clock.tick(1000)
-					strictEqual(sut._bInputIsOpen, false, "the keyboard was closed");
-					strictEqual(oEventSpy.callCount, 1, "event was fired");
-					strictEqual(sut.getNavigationBarHeight(), 100, "the navBar height was 100");
+					assert.strictEqual(sut._bInputIsOpen, false, "the keyboard was closed");
+					assert.strictEqual(oEventSpy.callCount, 1, "event was fired");
+					assert.strictEqual(sut.getNavigationBarHeight(), 100, "the navBar height was 100");
 
 					simulateOrietationChange(this, false);
-					strictEqual(sut.getNavigationBarHeight(), 0, "the navBar height was 0");
+					assert.strictEqual(sut.getNavigationBarHeight(), 0, "the navBar height was 0");
 					//Cleanup
 					sut.destroy();
 				});
@@ -264,23 +264,23 @@
 					//System under Test
 					var sut = new sap.m._Ios7();
 					sut.attachEvent("navigationBarShownInLandscape", oEventSpy);
-					strictEqual(sut._bInputIsOpen, false, "the keyboard property was initialized");
+					assert.strictEqual(sut._bInputIsOpen, false, "the keyboard property was initialized");
 
 					simulateKeyboardOpen();
-					strictEqual(sut._bInputIsOpen, true, "the keyboard was opened");
+					assert.strictEqual(sut._bInputIsOpen, true, "the keyboard was opened");
 					simulateOrietationChange(this, true);
-					strictEqual(sut._bInputIsOpen, false, "the keyboard was closed by the orientation change");
+					assert.strictEqual(sut._bInputIsOpen, false, "the keyboard was closed by the orientation change");
 					simulateKeyboardOpen();
 					//simulate the nav bar opening
 					simulateWindowDifference(this, 100);
 					this.clock.tick(1000);
 
-					strictEqual(oEventSpy.callCount, 0, "event was not fired because the keyboard was opened");
+					assert.strictEqual(oEventSpy.callCount, 0, "event was not fired because the keyboard was opened");
 
 					simulateKeyboardClose();
 					this.clock.tick(1000)
-					strictEqual(sut._bInputIsOpen, false, "the keyboard was closed");
-					strictEqual(oEventSpy.callCount, 0, "event was fired");
+					assert.strictEqual(sut._bInputIsOpen, false, "the keyboard was closed");
+					assert.strictEqual(oEventSpy.callCount, 0, "event was fired");
 
 					//Cleanup
 					sut.destroy();

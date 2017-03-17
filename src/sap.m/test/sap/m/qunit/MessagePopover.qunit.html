@@ -1054,11 +1054,11 @@
 			this.oMessagepopover2.openBy(this.oButton2);
 			this.clock.tick(500);
 
-			strictEqual(this.oMessagepopover2._oLists.error.getItems()[0].getTitle(), "One", "Title is properly set");
+			assert.strictEqual(this.oMessagepopover2._oLists.error.getItems()[0].getTitle(), "One", "Title is properly set");
 
 			this.oMessagepopover2.getModel().setProperty("/0/message", "Two");
 			this.clock.tick(500);
-			strictEqual(this.oMessagepopover2._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
+			assert.strictEqual(this.oMessagepopover2._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
 		});
 
 		QUnit.test("Adding item to MessagePopover", function (assert) {

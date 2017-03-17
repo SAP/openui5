@@ -69,45 +69,45 @@
 			QUnit.test("Try add master page more than once", function(assert) {
 				//Assert
 				var page = new sap.m.Page("master3");
-				strictEqual(this.sut.getMasterPages().length, 2, "initial master pages are 2");
+				assert.strictEqual(this.sut.getMasterPages().length, 2, "initial master pages are 2");
 
 				this.sut.addMasterPage(page);
-				strictEqual(this.sut.getMasterPages().length, 3, "Now master pages are 3");
+				assert.strictEqual(this.sut.getMasterPages().length, 3, "Now master pages are 3");
 
 				// try to add it again
 				this.sut.addMasterPage(page);
-				strictEqual(this.sut.getMasterPages().length, 3, "Now master pages should remain 3");
+				assert.strictEqual(this.sut.getMasterPages().length, 3, "Now master pages should remain 3");
 
 			});
 
 			QUnit.test("Properties default values", function(assert) {
-				strictEqual(this.sut.getDefaultTransitionNameDetail(), "slide", "Default value of the property is 'slide'");
+				assert.strictEqual(this.sut.getDefaultTransitionNameDetail(), "slide", "Default value of the property is 'slide'");
 
-				strictEqual(this.sut.getDefaultTransitionNameMaster(), "slide", "Default value of the property is 'slide'");
+				assert.strictEqual(this.sut.getDefaultTransitionNameMaster(), "slide", "Default value of the property is 'slide'");
 
-				strictEqual(this.sut.getMode(), sap.m.SplitAppMode.ShowHideMode, "Default value of the property mode is 'ShowHideMode'");
+				assert.strictEqual(this.sut.getMode(), sap.m.SplitAppMode.ShowHideMode, "Default value of the property mode is 'ShowHideMode'");
 
-				strictEqual(this.sut.getMasterButtonText(), "", "Default value of the property masterButtonText is 'null'");
+				assert.strictEqual(this.sut.getMasterButtonText(), "", "Default value of the property masterButtonText is 'null'");
 
-				strictEqual(this.sut.getBackgroundColor(), "", "Default value of the property backgroundColor is 'null'");
+				assert.strictEqual(this.sut.getBackgroundColor(), "", "Default value of the property backgroundColor is 'null'");
 
-				strictEqual(this.sut.getBackgroundImage(), "", "Default value of the property backgroundImage is 'null'");
+				assert.strictEqual(this.sut.getBackgroundImage(), "", "Default value of the property backgroundImage is 'null'");
 
-				strictEqual(this.sut.getBackgroundRepeat(), false, "Default value of the property backgroundRepeat is 'false'");
+				assert.strictEqual(this.sut.getBackgroundRepeat(), false, "Default value of the property backgroundRepeat is 'false'");
 
-				strictEqual(this.sut.getBackgroundOpacity(), 1, "Default value of the property backgroundOpacity is '1'");
+				assert.strictEqual(this.sut.getBackgroundOpacity(), 1, "Default value of the property backgroundOpacity is '1'");
 			});
 
 			QUnit.test("Try add detail page twice", function(assert) {
 				var page = new sap.m.Page("detail3");
-				strictEqual(this.sut.getDetailPages().length, 2, "initial detail pages are 2");
+				assert.strictEqual(this.sut.getDetailPages().length, 2, "initial detail pages are 2");
 
 				this.sut.addDetailPage(page);
-				strictEqual(this.sut.getDetailPages().length, 3, "Now detail pages are 3");
+				assert.strictEqual(this.sut.getDetailPages().length, 3, "Now detail pages are 3");
 
 				// try to add it again
 				this.sut.addDetailPage(page);
-				strictEqual(this.sut.getDetailPages().length, 3, "Now details pages should remain 3");
+				assert.strictEqual(this.sut.getDetailPages().length, 3, "Now details pages should remain 3");
 			});
 
 			QUnit.test("Destroy showMasterBtn during page navigation", function(assert){
@@ -485,7 +485,7 @@
 				ok(jQuery.contains(oHeader.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef(), "Master button is inserted into the custom header"));
 
 				oSplitContainer.removeDetailPage(oPage);
-				strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader function is restored after remove the Page from SplitContainer");
+				assert.strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader function is restored after remove the Page from SplitContainer");
 
 				oPage.destroy();
 				oSplitContainer.destroy();
@@ -530,7 +530,7 @@
 
 				// Assert
 				ok(oPage._getAnyHeader(), "Header is in page");
-				strictEqual(oPage._getAnyHeader().getContentLeft()[0], oSC._oShowMasterBtn, "Master button is inserted into the page in nav container");
+				assert.strictEqual(oPage._getAnyHeader().getContentLeft()[0], oSC._oShowMasterBtn, "Master button is inserted into the page in nav container");
 
 				oSC.destroy();
 			});
@@ -554,8 +554,8 @@
 
 				oSC.removeDetailPage(oPage);
 
-				strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader should be restored");
-				strictEqual(oPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "setShowNavButton should be restored");
+				assert.strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader should be restored");
+				assert.strictEqual(oPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "setShowNavButton should be restored");
 			});
 
 			QUnit.test("Functions on page shouldn't be patched when runs on phone", function(assert) {
@@ -572,8 +572,8 @@
 						detailPages: oPage
 					});
 
-				strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader shouldn't be patched");
-				strictEqual(oPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "setShowNavButton shouldn't be patched");
+				assert.strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader shouldn't be patched");
+				assert.strictEqual(oPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "setShowNavButton shouldn't be patched");
 
 				oSC.destroy();
 			});
@@ -709,8 +709,8 @@
 
 				oNavContainer.addPage(oDetailPage);
 
-				strictEqual(oDetailPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "function setShowNavButtton is already restored");
-				strictEqual(oDetailPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "function setCustomHeader is already restored");
+				assert.strictEqual(oDetailPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "function setShowNavButtton is already restored");
+				assert.strictEqual(oDetailPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "function setCustomHeader is already restored");
 
 
 				oSplitContainer.addDetailPage(oDetailPage);
@@ -863,13 +863,13 @@
 				this.sut.to(MASTER_PAGE_ID);
 				this.sut.to("master");
 				this.sut.backToPage(MASTER_PAGE_ID);
-				strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
+				assert.strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
 
 				//test detail page navigation
 				this.sut.to(DETAIL_PAGE_ID);
 				this.sut.to("detail");
 				this.sut.backToPage(DETAIL_PAGE_ID);
-				strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail2");
+				assert.strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail2");
 			});
 
 			QUnit.test("Test insertPreviousPage ", function(assert) {
@@ -880,13 +880,13 @@
 				this.sut.insertPreviousPage(MASTER_PAGE_ID);
 				this.sut.to("master");
 				this.sut.backToPage(MASTER_PAGE_ID);
-				strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
+				assert.strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
 
 				//test detail page navigation
 				this.sut.insertPreviousPage(DETAIL_PAGE_ID);
 				this.sut.to("detail");
 				this.sut.backToPage(DETAIL_PAGE_ID);
-				strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail2");
+				assert.strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail2");
 			});
 
 			QUnit.test("Test backMaster  ", function(assert) {
@@ -896,7 +896,7 @@
 				this.sut.to(MASTER_PAGE_ID);
 				this.sut.to("master");
 				this.sut.backMaster();
-				strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
+				assert.strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
 			});
 
 			QUnit.test("Test backMasterToPage", function(assert) {
@@ -905,7 +905,7 @@
 				this.sut.to(MASTER_PAGE_ID);
 				this.sut.to("master");
 				this.sut.backMasterToPage(MASTER_PAGE_ID);
-				strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
+				assert.strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
 			});
 
 			QUnit.test("Test backDetailToPage  ", function(assert) {
@@ -915,7 +915,7 @@
 				this.sut.to(DETAIL_PAGE_ID);
 				this.sut.to("detail");
 				this.sut.backDetailToPage(DETAIL_PAGE_ID);
-				strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail2");
+				assert.strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail2");
 			});
 
 			QUnit.test("Test backToTopDetail   ", function(assert) {
@@ -925,7 +925,7 @@
 				this.sut.to(DETAIL_PAGE_ID);
 				this.sut.to("detail2");
 				this.sut.backToTopDetail ();
-				strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail");
+				assert.strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail");
 			});
 
 			QUnit.test("Test backToTopMaster ", function(assert) {
@@ -934,7 +934,7 @@
 				this.sut.to(MASTER_PAGE_ID);
 				this.sut.to("master2");
 				this.sut.backToTopMaster();
-				strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master");
+				assert.strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master");
 			});
 
 			QUnit.test("Mater button tooltip updating", function(assert) {
@@ -967,14 +967,14 @@
 
 				this.sut.addMasterPage(page);
 
-				strictEqual(this.sut.indexOfMasterPage(page), 2, "Index should be 2");
+				assert.strictEqual(this.sut.indexOfMasterPage(page), 2, "Index should be 2");
 			});
 
 			QUnit.test("Test indexOfDetailPage ", function(assert) {
 				var page = page = new sap.m.Page("detail3");
 
 				this.sut.addDetailPage(page);
-				strictEqual(this.sut.indexOfDetailPage(page), 2, "Index should be 2");
+				assert.strictEqual(this.sut.indexOfDetailPage(page), 2, "Index should be 2");
 			});
 
 			QUnit.test("Test addPage ", function(assert) {
@@ -982,48 +982,48 @@
 
 				this.sut.addPage(page, true);
 
-				strictEqual(this.sut.indexOfMasterPage(page), 2, "Index should be 2");
-				strictEqual(this.sut.getMasterPages().length, 3, "Master pages now are 3");
+				assert.strictEqual(this.sut.indexOfMasterPage(page), 2, "Index should be 2");
+				assert.strictEqual(this.sut.getMasterPages().length, 3, "Master pages now are 3");
 
 				// remove page
 				this.sut.removeMasterPage(page, true);
-				strictEqual(this.sut.getMasterPages().length, 2, "Master pages now are 2");
+				assert.strictEqual(this.sut.getMasterPages().length, 2, "Master pages now are 2");
 
 				// add Detail Page
 				this.sut.addPage(page, false);
-				strictEqual(this.sut.getDetailPages().length, 3, "Detail pages now are 3");
+				assert.strictEqual(this.sut.getDetailPages().length, 3, "Detail pages now are 3");
 			});
 
 			QUnit.test("Test getCurrentPage ", function(assert) {
-				strictEqual(this.sut.getCurrentPage(true).sId, "master", "Current master page is 'master'");
+				assert.strictEqual(this.sut.getCurrentPage(true).sId, "master", "Current master page is 'master'");
 
-				strictEqual(this.sut.getCurrentPage(false).sId, "detail", "Current detail page is 'detail'");
+				assert.strictEqual(this.sut.getCurrentPage(false).sId, "detail", "Current detail page is 'detail'");
 			});
 
 			QUnit.test("Test getPreviousPage ", function(assert) {
 				this.sut.to("master2");
-				strictEqual(this.sut.getPreviousPage(true).sId, "master", "Current master page is 'master'");
+				assert.strictEqual(this.sut.getPreviousPage(true).sId, "master", "Current master page is 'master'");
 
 				this.sut.to("detail2");
-				strictEqual(this.sut.getPreviousPage(false).sId, "detail", "Current detail page is 'detail'");
+				assert.strictEqual(this.sut.getPreviousPage(false).sId, "detail", "Current detail page is 'detail'");
 			});
 
 			QUnit.test("Test getMasterPage / getDetailPage ", function(assert) {
 				var PAGE_ID1 = "master",
 					PAGE_ID2 = "detail";
 
-				strictEqual(this.sut.getMasterPage(PAGE_ID1).sId, PAGE_ID1, "Expected page is is 'master'");
+				assert.strictEqual(this.sut.getMasterPage(PAGE_ID1).sId, PAGE_ID1, "Expected page is is 'master'");
 
-				strictEqual(this.sut.getDetailPage(PAGE_ID2).sId, PAGE_ID2, "Expected page is is 'detail'");
+				assert.strictEqual(this.sut.getDetailPage(PAGE_ID2).sId, PAGE_ID2, "Expected page is is 'detail'");
 			});
 
 			QUnit.test("Test getPage ", function(assert) {
 				var PAGE_ID1 = "master",
 						PAGE_ID2 = "detail";
 
-				strictEqual(this.sut.getPage(PAGE_ID1, true).sId, PAGE_ID1, "Expected page is is 'master'");
+				assert.strictEqual(this.sut.getPage(PAGE_ID1, true).sId, PAGE_ID1, "Expected page is is 'master'");
 
-				strictEqual(this.sut.getPage(PAGE_ID2, false).sId, PAGE_ID2, "Expected page is is 'detail'");
+				assert.strictEqual(this.sut.getPage(PAGE_ID2, false).sId, PAGE_ID2, "Expected page is is 'detail'");
 			});
 
 
@@ -1044,12 +1044,12 @@
 
 				this.sut.insertDetailPage(page, 0, true);
 
-				strictEqual(this.sut.indexOfDetailPage(page), 0, "Index should be 0");
-				strictEqual(this.sut.getDetailPages().length, 1, "Detail pages now are 1");
+				assert.strictEqual(this.sut.indexOfDetailPage(page), 0, "Index should be 0");
+				assert.strictEqual(this.sut.getDetailPages().length, 1, "Detail pages now are 1");
 
 				// remove all detail pages
 				this.sut.removeAllDetailPages(false);
-				strictEqual(this.sut.getDetailPages().length, 0, "Detail pages now are 0");
+				assert.strictEqual(this.sut.getDetailPages().length, 0, "Detail pages now are 0");
 			});
 
 			QUnit.test("Test insertMasterPage / removeMasterPage / removeAllMasterPages ", function(assert) {
@@ -1057,18 +1057,18 @@
 
 				this.sut.insertMasterPage(page, 0, true);
 
-				strictEqual(this.sut.indexOfMasterPage(page), 0, "Index should be 0");
-				strictEqual(this.sut.getMasterPages().length, 1, "Master pages now are 1");
+				assert.strictEqual(this.sut.indexOfMasterPage(page), 0, "Index should be 0");
+				assert.strictEqual(this.sut.getMasterPages().length, 1, "Master pages now are 1");
 
 				// remove page
 				this.sut.removeMasterPage(page, true);
-				strictEqual(this.sut.getMasterPages().length, 0, "Master pages now are 0");
+				assert.strictEqual(this.sut.getMasterPages().length, 0, "Master pages now are 0");
 
 				// remove all master pages
 				this.sut.insertMasterPage(page, 0, true);
 				this.sut.removeAllMasterPages(false);
 				sap.ui.getCore().applyChanges();
-				strictEqual(this.sut.getMasterPages().length, 0, "Master pages now are 0");
+				assert.strictEqual(this.sut.getMasterPages().length, 0, "Master pages now are 0");
 			});
 
 			QUnit.module("Add master and detail pages");
@@ -1097,8 +1097,8 @@
 				var oMasterPage1 = sap.ui.getCore().byId("master1");
 
 				//assert
-				strictEqual(this.sut._oMasterNav.getPages()[0].getId(), "master1", "First page should be master1");
-				strictEqual(this.sut._oDetailNav.getPages()[0].getId(), "master1", "First page should be master1");
+				assert.strictEqual(this.sut._oMasterNav.getPages()[0].getId(), "master1", "First page should be master1");
+				assert.strictEqual(this.sut._oDetailNav.getPages()[0].getId(), "master1", "First page should be master1");
 			});
 
 		</script>

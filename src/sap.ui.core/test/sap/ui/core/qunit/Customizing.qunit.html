@@ -82,13 +82,13 @@
 		equal(sap.ui.core.CustomizingConfiguration.getControllerExtension("testdata.customizing.sap.Sub2").controllerName,
 				"testdata.customizing.customer.Sub2ControllerExtension",
 				"sap.ui.core.CustomizingConfiguration should return the Controller extension data");
-		strictEqual(sap.ui.core.CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub3", "customizableText").visible,
+		assert.strictEqual(sap.ui.core.CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub3", "customizableText").visible,
 				false,
 				"sap.ui.core.CustomizingConfiguration should return the View modification data");
-		strictEqual(sap.ui.core.CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub4", "customizableText1").visible,
+		assert.strictEqual(sap.ui.core.CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub4", "customizableText1").visible,
 				false,
 				"sap.ui.core.CustomizingConfiguration should return the View modification data");
-		strictEqual(sap.ui.core.CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub5", "Button2").visible,
+		assert.strictEqual(sap.ui.core.CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub5", "Button2").visible,
 				false,
 				"sap.ui.core.CustomizingConfiguration should return the View modification data");
 	});
@@ -132,16 +132,16 @@
 		equal(aLifeCycleCalls[4], "Sub2 Controller onAfterRendering()", "5th lifecycle method to be called should be: Sub2 Controller onAfterRendering()");
 		equal(aLifeCycleCalls[5], "Sub2ControllerExtension Controller onAfterRendering()", "6th lifecycle method to be called should be: Sub2ControllerExtension Controller onAfterRendering()");
 
-		strictEqual(iStandardSub2ControllerCalled, 0, "Standard Controller should not have been called yet");
-		strictEqual(iCustomSub2ControllerCalled, 0, "Custom Controller should not have been called yet");
+		assert.strictEqual(iStandardSub2ControllerCalled, 0, "Standard Controller should not have been called yet");
+		assert.strictEqual(iCustomSub2ControllerCalled, 0, "Custom Controller should not have been called yet");
 		// trigger custom action
 		qutils.triggerEvent("click", "theComponent---mainView--sub2View--customFrag1BtnWithCustAction");
-		strictEqual(iStandardSub2ControllerCalled, 0, "Standard Controller should still not have been called");
-		strictEqual(iCustomSub2ControllerCalled, 1, "Custom Controller should have been called now");
+		assert.strictEqual(iStandardSub2ControllerCalled, 0, "Standard Controller should still not have been called");
+		assert.strictEqual(iCustomSub2ControllerCalled, 1, "Custom Controller should have been called now");
 		// trigger standard action
 		qutils.triggerEvent("click", "theComponent---mainView--sub2View--standardBtnWithStandardAction");
-		strictEqual(iStandardSub2ControllerCalled, 1, "Standard Controller should have been called now");
-		strictEqual(iCustomSub2ControllerCalled, 1, "Custom Controller should not have been called again");
+		assert.strictEqual(iStandardSub2ControllerCalled, 1, "Standard Controller should have been called now");
+		assert.strictEqual(iCustomSub2ControllerCalled, 1, "Custom Controller should not have been called again");
 
 		// check members
 		var oController = sap.ui.getCore().byId("theComponent---mainView--sub2View").getController();
@@ -182,11 +182,11 @@
 
 	QUnit.test("Property Modifications", function(assert) {
 		var oControl = sap.ui.getCore().byId("theComponent---mainView--sub3View--customizableText");
-		strictEqual(oControl.getVisible(), false, "'visible' property should be customizable");
-		strictEqual(oControl.getEnabled(), true, "'enabled' property should not be customizable");
+		assert.strictEqual(oControl.getVisible(), false, "'visible' property should be customizable");
+		assert.strictEqual(oControl.getEnabled(), true, "'enabled' property should not be customizable");
 
 		oControl = sap.ui.getCore().byId("theComponent---mainView--sub2View--btnToHide");
-		strictEqual(oControl.getVisible(), false, "'visible' property should be customizable");
+		assert.strictEqual(oControl.getVisible(), false, "'visible' property should be customizable");
 	});
 
 

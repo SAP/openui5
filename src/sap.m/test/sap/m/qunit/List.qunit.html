@@ -1581,12 +1581,12 @@
 		});
 		oStdLI.ontouchstart(oTouchStart);
 
-		strictEqual(oIcon.getSrc(), sIcon, "Icon has correct path before active handling.");
+		assert.strictEqual(oIcon.getSrc(), sIcon, "Icon has correct path before active handling.");
 
 		// wait active feedback
 		this.clock.tick(300);
 
-		strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon has correct path during active handling");
+		assert.strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon has correct path during active handling");
 		var oTouchEnd = createEvent("touchend", oStdLI.getDomRef(), {
 			srcControl : oStdLI,
 			targetTouches : [{
@@ -1596,7 +1596,7 @@
 		});
 		oStdLI.ontouchend(oTouchEnd);
 
-		strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon is changed with the previous state after active handling");
+		assert.strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon is changed with the previous state after active handling");
 	});
 
 	QUnit.module("StandartListItem RTL attributes");

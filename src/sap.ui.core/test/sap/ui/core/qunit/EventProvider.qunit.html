@@ -118,19 +118,19 @@
 			oObject.attachEvent("Fire1", handler1);
 			globalEvents = [];
 			oObject.fireEvent("Fire1", {name:"testFireEventSingleListener"} );
-			strictEqual(globalEvents.length, 1, "number of received events");
+			assert.strictEqual(globalEvents.length, 1, "number of received events");
 			var oEventInfo = globalEvents.pop();
-			strictEqual(oEventInfo.id, "Fire1", "id of the received event");
+			assert.strictEqual(oEventInfo.id, "Fire1", "id of the received event");
 		});
 
 		QUnit.test("ReservedNames", function(assert) {
 			var oObject = new sap.ui.base.EventProvider();
 //			assertEquals("number of event registrations for 'constructor'", undefined, count(oObject, "constructor"));
-			strictEqual(hasNoListeners(oObject, "constructor"), true, "number of event registrations for 'constructor'");
+			assert.strictEqual(hasNoListeners(oObject, "constructor"), true, "number of event registrations for 'constructor'");
 //			assertEquals("number of event registrations or 'length'", undefined, count(oObject, "length"));
-			strictEqual(hasNoListeners(oObject, "length"), true, "number of event registrations or 'length'");
+			assert.strictEqual(hasNoListeners(oObject, "length"), true, "number of event registrations or 'length'");
 //			assertEquals("number of event registrations or 'prototype'", undefined, count(oObject, "prototype"));
-			strictEqual(hasNoListeners(oObject, "prototype"), true, "number of event registrations or 'prototype'");
+			assert.strictEqual(hasNoListeners(oObject, "prototype"), true, "number of event registrations or 'prototype'");
 			globalEvents = [];
 			oObject.fireEvent("constructor", {name:"testReservedNames"} );
 			oObject.fireEvent("length", {name:"testReservedNames"} );
@@ -147,13 +147,13 @@
 			ok(globalEvents.length == 3, "3 events received");
 			var mHandlers = { handler1 : false, handler2 : false, handler3 : false };
 			var oEventInfo = globalEvents.pop();
-			strictEqual(oEventInfo.id, "Fire1", "correct event id");
+			assert.strictEqual(oEventInfo.id, "Fire1", "correct event id");
 			mHandlers[oEventInfo.handler] = true;
 			oEventInfo = globalEvents.pop();
-			strictEqual(oEventInfo.id, "Fire1", "object is the right");
+			assert.strictEqual(oEventInfo.id, "Fire1", "object is the right");
 			mHandlers[oEventInfo.handler] = true;
 			oEventInfo = globalEvents.pop();
-			strictEqual(oEventInfo.id, "Fire1", "object is the right");
+			assert.strictEqual(oEventInfo.id, "Fire1", "object is the right");
 			mHandlers[oEventInfo.handler] = true;
 			ok(mHandlers['handler1'], "handler1 received info");
 			ok(mHandlers['handler1'], "handler2 received info");
@@ -166,13 +166,13 @@
 			oObject.attachEvent("Fire1", handler1);
 			globalEvents = [];
 			oObject.fireEvent("Fire1", {name:"Fire1"} );
-			strictEqual(globalEvents.length, 2, "2 events received");
+			assert.strictEqual(globalEvents.length, 2, "2 events received");
 			var oEventInfo = globalEvents.pop();
-			strictEqual(oEventInfo.id, "Fire1", "object is the right");
-			strictEqual(oEventInfo.handler, 'handler1', "handler1 received info");
+			assert.strictEqual(oEventInfo.id, "Fire1", "object is the right");
+			assert.strictEqual(oEventInfo.handler, 'handler1', "handler1 received info");
 			oEventInfo = globalEvents.pop();
-			strictEqual(oEventInfo.id, "Fire1", "object is the right");
-			strictEqual(oEventInfo.handler, 'handler1', "handler1 received info");
+			assert.strictEqual(oEventInfo.id, "Fire1", "object is the right");
+			assert.strictEqual(oEventInfo.handler, 'handler1', "handler1 received info");
 		});
 
 		QUnit.test("AttachDetach", function(assert) {
@@ -185,35 +185,35 @@
 			oObject.attachEvent("Fire_2", handler1, listenerB);
 			oObject.attachEvent("Fire_2", handler1, listenerC);
 
-			strictEqual(count(oObject, "Fire1"), 3, "registration for Fire1 complete");
-			strictEqual(count(oObject, "Fire_2"), 3, "registration for Fire_2 complete");
+			assert.strictEqual(count(oObject, "Fire1"), 3, "registration for Fire1 complete");
+			assert.strictEqual(count(oObject, "Fire_2"), 3, "registration for Fire_2 complete");
 
 			oObject.detachEvent("Fire1", handler1, listenerA);
-			strictEqual(count(oObject, "Fire1"), 2, "registration removed");
+			assert.strictEqual(count(oObject, "Fire1"), 2, "registration removed");
 			oObject.detachEvent("Fire1", handler1, listenerA);
-			strictEqual(count(oObject, "Fire1"), 2, "no double remove");
+			assert.strictEqual(count(oObject, "Fire1"), 2, "no double remove");
 			oObject.detachEvent("Fire1", handler2, listenerA);
-			strictEqual(count(oObject, "Fire1"), 2, "no detach with wrong combination");
+			assert.strictEqual(count(oObject, "Fire1"), 2, "no detach with wrong combination");
 			oObject.detachEvent("Fire"+1, handler2, listenerB);
-			strictEqual(count(oObject, "Fire1"), 1, "2nd registration removed");
+			assert.strictEqual(count(oObject, "Fire1"), 1, "2nd registration removed");
 			oObject.detachEvent("Fire1", handler3, listenerC);
-			strictEqual(count(oObject, "Fire1"), undefined, "last registration removed -> deleted");
+			assert.strictEqual(count(oObject, "Fire1"), undefined, "last registration removed -> deleted");
 			// typeof mEventRegistry["Fire1"] === "undefined");
 
 			oObject.detachEvent("Fire_2", handler1);
-			strictEqual(count(oObject, "Fire_2"), 3, "wrong params -> no remove");
+			assert.strictEqual(count(oObject, "Fire_2"), 3, "wrong params -> no remove");
 			oObject.detachEvent("Fire_2", handler1, listenerA);
-			strictEqual(count(oObject, "Fire_2"), 2, "1st remove");
+			assert.strictEqual(count(oObject, "Fire_2"), 2, "1st remove");
 			oObject.detachEvent("Fire_2", handler1, listenerA);
-			strictEqual(count(oObject, "Fire_2"), 2, "no remove, already removed");
+			assert.strictEqual(count(oObject, "Fire_2"), 2, "no remove, already removed");
 			oObject.detachEvent("Fire_2", handler1, listenerB);
-			strictEqual(count(oObject, "Fire_2"), 1, "2nd remove");
+			assert.strictEqual(count(oObject, "Fire_2"), 1, "2nd remove");
 			oObject.attachEvent("Fire_2", handler1);
-			strictEqual(count(oObject, "Fire_2"), 2, "attach");
+			assert.strictEqual(count(oObject, "Fire_2"), 2, "attach");
 			oObject.detachEvent("Fire_2", handler1);
-			strictEqual(count(oObject, "Fire_2"), 1, "remove again");
+			assert.strictEqual(count(oObject, "Fire_2"), 1, "remove again");
 			oObject.detachEvent("Fire_2", handler1, listenerC);
-			strictEqual(count(oObject, "Fire_2"), undefined, "last remove");
+			assert.strictEqual(count(oObject, "Fire_2"), undefined, "last remove");
 			//typeof mEventRegistry["Fire1"] === "undefined");
 
 		})
@@ -226,17 +226,17 @@
 			oObject.fireEvent("Fire4", {source:"testFireEventWithAdditionalData"} );
 			ok(globalEvents.length == 2, "2 events received");
 			var oEventInfo = globalEvents.shift();
-			strictEqual(oEventInfo.id, "Fire4", "id of the received event");
-			strictEqual(oEventInfo.listener, oObject, "listener object should be the EventProvider instance")
+			assert.strictEqual(oEventInfo.id, "Fire4", "id of the received event");
+			assert.strictEqual(oEventInfo.listener, oObject, "listener object should be the EventProvider instance")
 			notStrictEqual(oEventInfo.additionalData, null, "additional (static) data should be present");
 			notStrictEqual(oEventInfo.additionalData.info, null, "additional (static) data should be present");
-			strictEqual(oEventInfo.additionalData.info, "Test data for event-handler function", "additional (static) data should be present");
+			assert.strictEqual(oEventInfo.additionalData.info, "Test data for event-handler function", "additional (static) data should be present");
 			oEventInfo = globalEvents.shift();
-			strictEqual(oEventInfo.id, "Fire4", "id of the received event");
-			strictEqual(oEventInfo.listener, listenerD, "listener object should be the event listener object")
+			assert.strictEqual(oEventInfo.id, "Fire4", "id of the received event");
+			assert.strictEqual(oEventInfo.listener, listenerD, "listener object should be the event listener object")
 			notStrictEqual(oEventInfo.additionalData, null, "additional (static) data should be present");
 			notStrictEqual(oEventInfo.additionalData.info, null, "additional (static) data should be present");
-			strictEqual(oEventInfo.additionalData.info, "Test data for event-handler function on listener object", "additional (static) data should be present");
+			assert.strictEqual(oEventInfo.additionalData.info, "Test data for event-handler function on listener object", "additional (static) data should be present");
 
 		});
 

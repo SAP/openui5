@@ -181,19 +181,19 @@
 		QUnit.test("enabaling the overflowItemsToUppercase", function (assert) {
 			var oOverflowMenu = oCtrl._getOverflowMenu();
 
-			strictEqual(oCtrl.getOverflowItemsToUpperCase(), false, "the property is disabled by default");
+			assert.strictEqual(oCtrl.getOverflowItemsToUpperCase(), false, "the property is disabled by default");
 
 			oCtrl.setOverflowItemsToUpperCase(true);
 
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(oOverflowMenu.hasStyleClass("sapUiUx3NavBarUpperCaseText"), true,  "the items in the menu are uppercased")
+			assert.strictEqual(oOverflowMenu.hasStyleClass("sapUiUx3NavBarUpperCaseText"), true,  "the items in the menu are uppercased")
 
 			oCtrl.setOverflowItemsToUpperCase(false);
 
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(oOverflowMenu.hasStyleClass("sapUiUx3NavBarUpperCaseText"), false,  "the items in the menu are with their original case")
+			assert.strictEqual(oOverflowMenu.hasStyleClass("sapUiUx3NavBarUpperCaseText"), false,  "the items in the menu are with their original case")
 		})
 
 		QUnit.test("Overflow", function(assert) {

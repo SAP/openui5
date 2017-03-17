@@ -82,7 +82,7 @@
 		oProgressIndicator.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		strictEqual(oProgressIndicator.$().attr("title"), sTooltipText, "Tooltip is in the DOM");
+		assert.strictEqual(oProgressIndicator.$().attr("title"), sTooltipText, "Tooltip is in the DOM");
 
 		sTooltipText = undefined;
 		oProgressIndicator.destroy();
@@ -113,12 +113,12 @@
 		sap.ui.getCore().applyChanges();
 
 		oProgIndicator.setPercentValue(0);
-		strictEqual(oProgIndicator.$().hasClass("sapMPIValueMin"), true, "sapMPIValueMin class added");
-		strictEqual(oProgIndicator.$().hasClass("sapMPIValueMax"), false, "sapMPIValueMax not added");
+		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIValueMin"), true, "sapMPIValueMin class added");
+		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIValueMax"), false, "sapMPIValueMax not added");
 
 		oProgIndicator.setPercentValue(100);
-		strictEqual(oProgIndicator.$().hasClass("sapMPIValueMin"), false, "sapMPIValueMin removed");
-		strictEqual(oProgIndicator.$().hasClass("sapMPIValueMax"), true, "sapMPIValueMax added");
+		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIValueMin"), false, "sapMPIValueMin removed");
+		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIValueMax"), true, "sapMPIValueMax added");
 
 		oProgIndicator.destroy();
 	});
@@ -180,8 +180,8 @@
 		oProgIndicator.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		strictEqual(oProgIndicator.$().find(".sapMPITextLeft").text(), "", "no text is rendered");
-		strictEqual(oProgIndicator.$().find(".sapMPITextRight").text(), "", "no text is rendered");
+		assert.strictEqual(oProgIndicator.$().find(".sapMPITextLeft").text(), "", "no text is rendered");
+		assert.strictEqual(oProgIndicator.$().find(".sapMPITextRight").text(), "", "no text is rendered");
 
 		oProgIndicator.destroy();
 	});
@@ -194,10 +194,10 @@
 		oProgIndicator.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuemin"), 10), 0, "aria-valuemin should equal 0");
-		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 50, "aria-valuenow should equal 50");
-		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuemax"), 10), 100, "aria-valuemax should equal 100");
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50%", "aria-valuetext should be 50%");
+		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuemin"), 10), 0, "aria-valuemin should equal 0");
+		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 50, "aria-valuenow should equal 50");
+		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuemax"), 10), 100, "aria-valuemax should equal 100");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50%", "aria-valuetext should be 50%");
 
 		oProgIndicator.destroy();
 	});
@@ -210,16 +210,16 @@
 		oProgIndicator.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 50, "aria-valuenow should equal 50");
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50%", "aria-valuetext should be 50%");
+		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 50, "aria-valuenow should equal 50");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50%", "aria-valuetext should be 50%");
 
 		oProgIndicator.setPercentValue(15);
-		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 15, "aria-valuenow should equal 15");
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "15%", "aria-valuetext should be 15%");
+		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 15, "aria-valuenow should equal 15");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "15%", "aria-valuetext should be 15%");
 
 		oProgIndicator.setPercentValue(95);
-		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 95, "aria-valuenow should equal 95");
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "95%", "aria-valuetext should be 95%");
+		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 95, "aria-valuenow should equal 95");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "95%", "aria-valuetext should be 95%");
 
 		oProgIndicator.destroy();
 	});
@@ -233,10 +233,10 @@
 		oProgIndicator.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50/100", "aria-valuetext should be '50/100'");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50/100", "aria-valuetext should be '50/100'");
 
 		oProgIndicator.setDisplayValue("65/100");
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "65/100", "aria-valuetext should be '65/100'");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "65/100", "aria-valuetext should be '65/100'");
 
 		oProgIndicator.destroy();
 	});
@@ -251,17 +251,17 @@
 		sap.ui.getCore().applyChanges();
 
 		var stateText = oProgIndicator._getStateText();
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
 
 		oProgIndicator.setState(sap.ui.core.ValueState.Error);
 		sap.ui.getCore().applyChanges();
 		stateText = oProgIndicator._getStateText();
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
 
 		oProgIndicator.setState(sap.ui.core.ValueState.Warning);
 		sap.ui.getCore().applyChanges();
 		stateText = oProgIndicator._getStateText();
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
 
 		oProgIndicator.destroy();
 	});
@@ -296,18 +296,18 @@
 		ok(!!oControl.getAccessibilityInfo, "ProgressIndicator has a getAccessibilityInfo function");
 		var oInfo = oControl.getAccessibilityInfo();
 		ok(!!oInfo, "getAccessibilityInfo returns a info object");
-		strictEqual(oInfo.role, "progressbar", "AriaRole");
-		strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_PROGRESS"), "Type");
-		strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [50]), "Description");
-		strictEqual(oInfo.focusable, true, "Focusable");
-		strictEqual(oInfo.enabled, true, "Enabled");
+		assert.strictEqual(oInfo.role, "progressbar", "AriaRole");
+		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_PROGRESS"), "Type");
+		assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [50]), "Description");
+		assert.strictEqual(oInfo.focusable, true, "Focusable");
+		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 		oControl.setPercentValue(10);
 		oControl.setEnabled(false);
 		oInfo = oControl.getAccessibilityInfo();
-		strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [10]), "Description");
-		strictEqual(oInfo.focusable, false, "Focusable");
-		strictEqual(oInfo.enabled, false, "Enabled");
+		assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [10]), "Description");
+		assert.strictEqual(oInfo.focusable, false, "Focusable");
+		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		oControl.destroy();
 	});
 </script>

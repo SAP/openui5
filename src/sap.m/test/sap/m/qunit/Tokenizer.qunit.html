@@ -35,7 +35,7 @@
 	});
 
 	QUnit.test("test scroll width", function(assert) {
-		strictEqual(tokenizer.getScrollWidth(), 0, 'Scroll width should be 0 when control is not rendered');
+		assert.strictEqual(tokenizer.getScrollWidth(), 0, 'Scroll width should be 0 when control is not rendered');
 	});
 
 	QUnit.module("Basic", {

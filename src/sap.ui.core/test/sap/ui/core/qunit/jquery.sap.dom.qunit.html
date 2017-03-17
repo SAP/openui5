@@ -177,7 +177,7 @@
 			$DomRef.getSelectedText();
 
 			// assertions
-			strictEqual(oReturnValue, $DomRef, "No exception is thrown");
+			assert.strictEqual(oReturnValue, $DomRef, "No exception is thrown");
 
 			// cleanup
 			$DomRef.remove();
@@ -192,13 +192,13 @@
 			var $This = $Empty.selectText(0, 6);
 
 			// assert
-			strictEqual($This, $Empty);
+			assert.strictEqual($This, $Empty);
 		});
 
 		QUnit.test("getSelectedText() should return an empty string when the jQuery collection is empty", function(assert) {
 
 			// assert
-			strictEqual(jQuery().getSelectedText(), "");
+			assert.strictEqual(jQuery().getSelectedText(), "");
 		});
 
 		function fnGetSelectedTextCase(mSettings) {
@@ -212,7 +212,7 @@
 				$DomRef.selectText(mSettings.selectionStart , mSettings.selectionEnd);
 
 				// assertions
-				strictEqual($DomRef.getSelectedText(), mSettings.output);
+				assert.strictEqual($DomRef.getSelectedText(), mSettings.output);
 
 				// cleanup
 				$DomRef.remove();
@@ -411,7 +411,7 @@
 			var oSelectstarListener = jQuery._data(oDomRef, "events")[sEvent];
 
 			// assertions
-			strictEqual(oSelectstarListener.length, 1);
+			assert.strictEqual(oSelectstarListener.length, 1);
 
 			// cleanup
 			document.body.removeChild(oDomRef);
@@ -429,7 +429,7 @@
 			jQuery(oDomRef).enableSelection();
 
 			// assertions
-			strictEqual(jQuery._data(oDomRef, "events"), undefined);
+			assert.strictEqual(jQuery._data(oDomRef, "events"), undefined);
 
 			// cleanup
 			document.body.removeChild(oDomRef);
@@ -440,39 +440,39 @@
 			jQuery(document.body).append($El);
 
 			$El.addAriaLabelledBy("test1");
-			strictEqual($El.attr("aria-labelledby"), "test1", "aria-labelledby attribute is added to the DOM");
+			assert.strictEqual($El.attr("aria-labelledby"), "test1", "aria-labelledby attribute is added to the DOM");
 			$El.addAriaDescribedBy("test1");
-			strictEqual($El.attr("aria-describedby"), "test1", "aria-describedby attribute is added to the DOM");
+			assert.strictEqual($El.attr("aria-describedby"), "test1", "aria-describedby attribute is added to the DOM");
 
 			$El.addAriaLabelledBy("test1");
-			strictEqual($El.attr("aria-labelledby"), "test1", "already existing aria-labelledby is ignored");
+			assert.strictEqual($El.attr("aria-labelledby"), "test1", "already existing aria-labelledby is ignored");
 			$El.addAriaDescribedBy("test1");
-			strictEqual($El.attr("aria-describedby"), "test1", "already existing aria-describedby is ignored");
+			assert.strictEqual($El.attr("aria-describedby"), "test1", "already existing aria-describedby is ignored");
 
 			$El.addAriaLabelledBy("test");
-			strictEqual($El.attr("aria-labelledby"), "test1 test", "new aria-labelledby attribute is added with space concating");
+			assert.strictEqual($El.attr("aria-labelledby"), "test1 test", "new aria-labelledby attribute is added with space concating");
 			$El.addAriaDescribedBy("test");
-			strictEqual($El.attr("aria-describedby"), "test1 test", "new aria-describedby attribute is added with space concating");
+			assert.strictEqual($El.attr("aria-describedby"), "test1 test", "new aria-describedby attribute is added with space concating");
 
 			$El.removeAriaLabelledBy("t");
-			strictEqual($El.attr("aria-labelledby"), "test1 test", "non-existing aria-labelledby is ignored");
+			assert.strictEqual($El.attr("aria-labelledby"), "test1 test", "non-existing aria-labelledby is ignored");
 			$El.removeAriaDescribedBy("t");
-			strictEqual($El.attr("aria-describedby"), "test1 test", "non-existing aria-describedby is ignored");
+			assert.strictEqual($El.attr("aria-describedby"), "test1 test", "non-existing aria-describedby is ignored");
 
 			$El.removeAriaLabelledBy("test1");
-			strictEqual($El.attr("aria-labelledby"), "test", "existing aria-labelledby is removed from DOM");
+			assert.strictEqual($El.attr("aria-labelledby"), "test", "existing aria-labelledby is removed from DOM");
 			$El.removeAriaDescribedBy("test1");
-			strictEqual($El.attr("aria-describedby"), "test", "existing aria-describedby is removed from DOM");
+			assert.strictEqual($El.attr("aria-describedby"), "test", "existing aria-describedby is removed from DOM");
 
 			$El.removeAriaLabelledBy("test");
-			strictEqual($El.attr("aria-labelledby"), undefined, "last existing aria-labelledby is removed the attribute");
+			assert.strictEqual($El.attr("aria-labelledby"), undefined, "last existing aria-labelledby is removed the attribute");
 			$El.removeAriaDescribedBy("test");
-			strictEqual($El.attr("aria-describedby"), undefined, "last existing aria-describedby is removed the attribute");
+			assert.strictEqual($El.attr("aria-describedby"), undefined, "last existing aria-describedby is removed the attribute");
 
 			$El.removeAriaLabelledBy("test");
-			strictEqual($El.attr("aria-labelledby"), undefined, "non-existing aria-labelledby is ignored");
+			assert.strictEqual($El.attr("aria-labelledby"), undefined, "non-existing aria-labelledby is ignored");
 			$El.removeAriaDescribedBy("test");
-			strictEqual($El.attr("aria-describedby"), undefined, "non-existing aria-describedby is ignored");
+			assert.strictEqual($El.attr("aria-describedby"), undefined, "non-existing aria-describedby is ignored");
 
 			$El.remove();
 		});
@@ -496,13 +496,13 @@
 			jQuery(document.body).append($Ref);
 
 			// test the patch
-			strictEqual(jQuery.sap.replaceDOM($Ref[0], $New.outerHTML(), true), true, "Should apply the patch");
+			assert.strictEqual(jQuery.sap.replaceDOM($Ref[0], $New.outerHTML(), true), true, "Should apply the patch");
 			ok($Ref[0].isEqualNode($New[0]), "Patch is applied correctly");
-			strictEqual($Ref._sapTest_dataEvents(), undefined, "Events are removed while patching");
+			assert.strictEqual($Ref._sapTest_dataEvents(), undefined, "Events are removed while patching");
 
 			// test replace
 			$Ref.append("<div></div>");
-			strictEqual(jQuery.sap.replaceDOM($Ref[0], $New[0]), false, "Should replace the reference DOM");
+			assert.strictEqual(jQuery.sap.replaceDOM($Ref[0], $New[0]), false, "Should replace the reference DOM");
 			$Ref = jQuery("#id"); // get it again since it is replaced
 			ok($Ref[0].isEqualNode($New[0]), "Replace is done correctly");
 

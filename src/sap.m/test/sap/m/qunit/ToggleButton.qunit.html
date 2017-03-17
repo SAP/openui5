@@ -54,23 +54,23 @@
 	});
 
 	QUnit.test("Check Accessibility States", function(assert) {
-		strictEqual(oToggleButton1.$().attr("aria-pressed"), "true", "aria-pressed state is true for testToggleButton_1");
-		strictEqual(oToggleButton2.$().attr("aria-pressed"), "false", "aria-pressed state is false for testToggleButton_2");
-		strictEqual(oToggleButton3.$().attr("aria-disabled"), "true", "aria-disabled status is set");
+		assert.strictEqual(oToggleButton1.$().attr("aria-pressed"), "true", "aria-pressed state is true for testToggleButton_1");
+		assert.strictEqual(oToggleButton2.$().attr("aria-pressed"), "false", "aria-pressed state is false for testToggleButton_2");
+		assert.strictEqual(oToggleButton3.$().attr("aria-disabled"), "true", "aria-disabled status is set");
 	});
 
 	QUnit.test("TestPressedToUnpressedOK", function(assert) {
 		qutils.triggerEvent("tap", oToggleButton1.getId());
 		sap.ui.getCore().applyChanges();
 		equal(oToggleButton1.getPressed(), false, "getPressedState");
-		strictEqual(oToggleButton1.$().attr("aria-pressed"), "false", "aria-pressed state is false for testToggleButton_1 after tap");
+		assert.strictEqual(oToggleButton1.$().attr("aria-pressed"), "false", "aria-pressed state is false for testToggleButton_1 after tap");
 	});
 
 	QUnit.test("TestUnpressedToPressedOK", function(assert) {
 		qutils.triggerEvent("tap", oToggleButton2.getId());
 		sap.ui.getCore().applyChanges();
 		equal(oToggleButton2.getPressed(), true, "getPressedState");
-		strictEqual(oToggleButton2.$().attr("aria-pressed"), "true", "aria-pressed state is true for testToggleButton_2 after tap");
+		assert.strictEqual(oToggleButton2.$().attr("aria-pressed"), "true", "aria-pressed state is true for testToggleButton_2 after tap");
 	});
 
 	QUnit.test("Should not change the pressed state, from toggled to untoggled, on a tap Event if the toggle button is disabled", function(assert) {
@@ -88,9 +88,9 @@
 		qutils.triggerEvent("tap", oToggleButton.getId());
 
 		// Assert
-		strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
-		strictEqual(oTapSpy.callCount, 1, "tap was fired");
-		strictEqual(oToggleButton.$().attr("aria-disabled"), "true", "aria-disabled is true");
+		assert.strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
+		assert.strictEqual(oTapSpy.callCount, 1, "tap was fired");
+		assert.strictEqual(oToggleButton.$().attr("aria-disabled"), "true", "aria-disabled is true");
 	});
 
 	QUnit.test("Should not change the pressed state, from untoggled to toggled, on a tap Event if the toggle button is disabled", function(assert) {
@@ -108,8 +108,8 @@
 		qutils.triggerEvent("tap", oToggleButton.getId());
 
 		// Assert
-		strictEqual(oToggleButton.getPressed(), false, "the pressed state is still false");
-		strictEqual(oTapSpy.callCount, 1, "tap was fired");
+		assert.strictEqual(oToggleButton.getPressed(), false, "the pressed state is still false");
+		assert.strictEqual(oTapSpy.callCount, 1, "tap was fired");
 	});
 
 	QUnit.test("Should change the pressed state, from toggled to untoggled, if it was called over the API", function(assert) {
@@ -126,7 +126,7 @@
 		oToggleButton.setPressed(false);
 
 		// Assert
-		strictEqual(oToggleButton.getPressed(), false, "the pressed state is still false");
+		assert.strictEqual(oToggleButton.getPressed(), false, "the pressed state is still false");
 	});
 
 	QUnit.test("Should change the pressed state, from untoggled to toggled, if it was called over the API", function(assert) {
@@ -143,7 +143,7 @@
 		oToggleButton.setPressed(true);
 
 		// Assert
-		strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
+		assert.strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
 	});
 
 
@@ -170,11 +170,11 @@
 		qutils.triggerEvent("tap", oToggleButton.getId());
 
 		// Assert
-		strictEqual(oToggleButton.getEnabled(), false, "the enabled state of the toolbar got propagated");
-		strictEqual(oToggleButton.$().attr("aria-disabled"), "true", "aria-disabled is true");
-		strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
+		assert.strictEqual(oToggleButton.getEnabled(), false, "the enabled state of the toolbar got propagated");
+		assert.strictEqual(oToggleButton.$().attr("aria-disabled"), "true", "aria-disabled is true");
+		assert.strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
 		ok(oToggleButton.$("inner").hasClass("sapMToggleBtnPressed"), "still has the pressed class")
-		strictEqual(oTapSpy.callCount, 1, "tap was fired");
+		assert.strictEqual(oTapSpy.callCount, 1, "tap was fired");
 	});
 
 	QUnit.module("Accessibility");
@@ -184,23 +184,23 @@
 		ok(!!oButton.getAccessibilityInfo, "ToggleButton has a getAccessibilityInfo function");
 		var oInfo = oButton.getAccessibilityInfo();
 		ok(!!oInfo, "getAccessibilityInfo returns a info object");
-		strictEqual(oInfo.role, "button", "AriaRole");
-		strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
-		strictEqual(oInfo.description, "Tooltip", "Description");
-		strictEqual(oInfo.focusable, true, "Focusable");
-		strictEqual(oInfo.enabled, true, "Enabled");
+		assert.strictEqual(oInfo.role, "button", "AriaRole");
+		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+		assert.strictEqual(oInfo.description, "Tooltip", "Description");
+		assert.strictEqual(oInfo.focusable, true, "Focusable");
+		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 		oButton.setText("Text");
 		oButton.setEnabled(false);
 		oInfo = oButton.getAccessibilityInfo();
-		strictEqual(oInfo.description, "Text", "Description");
-		strictEqual(oInfo.focusable, false, "Focusable");
-		strictEqual(oInfo.enabled, false, "Enabled");
+		assert.strictEqual(oInfo.description, "Text", "Description");
+		assert.strictEqual(oInfo.focusable, false, "Focusable");
+		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		oButton.setText(null);
 		oButton.setTooltip(null);
 		oButton.setIcon("sap-icon://search");
 		oInfo = oButton.getAccessibilityInfo();
-		strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("Icon.search"), "Description");
+		assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("Icon.search"), "Description");
 		oButton.setPressed(true);
 		oInfo = oButton.getAccessibilityInfo();
 		strictEqual(oInfo.description,

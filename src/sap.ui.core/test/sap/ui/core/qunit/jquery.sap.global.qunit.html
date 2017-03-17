@@ -241,7 +241,7 @@
 					promisify: true
 				}).then(function() {
 					notStrictEqual(jQuery(oTestArea).css("backgroundColor"), sBefore, "background-color should have changed");
-					strictEqual(document.getElementsByTagName("LINK").length, iLinkCnt, "no new link element should have been created");
+					assert.strictEqual(document.getElementsByTagName("LINK").length, iLinkCnt, "no new link element should have been created");
 				});
 			});
 

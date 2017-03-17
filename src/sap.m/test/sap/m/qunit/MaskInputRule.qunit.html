@@ -41,10 +41,10 @@
 					maskFormatSymbol1 = 'a',
 					maskFormatSymbol2 = '9';
 			oRule.setMaskFormatSymbol(maskFormatSymbol1);
-			strictEqual(oRule.getMaskFormatSymbol(), maskFormatSymbol1, "The mask format symbol has the same value as the last set one");
+			assert.strictEqual(oRule.getMaskFormatSymbol(), maskFormatSymbol1, "The mask format symbol has the same value as the last set one");
 
 			oRule.setMaskFormatSymbol(maskFormatSymbol2);
-			strictEqual(oRule.getMaskFormatSymbol(), maskFormatSymbol2, "The mask format symbol has the same value as the last set one");
+			assert.strictEqual(oRule.getMaskFormatSymbol(), maskFormatSymbol2, "The mask format symbol has the same value as the last set one");
 		});
 
 		QUnit.test("Setting an invalid Mask Format Symbol is not accepted", function (assert) {
@@ -80,10 +80,10 @@
 					regex1 = 'a-z',
 					regex2 = '0-9';
 			oRule.setRegex(regex1);
-			strictEqual(oRule.getRegex(), regex1, "The regex has the same value as the last set one");
+			assert.strictEqual(oRule.getRegex(), regex1, "The regex has the same value as the last set one");
 
 			oRule.setRegex(regex2);
-			strictEqual(oRule.getRegex(), regex2, "The regex has the same value as the last set one");
+			assert.strictEqual(oRule.getRegex(), regex2, "The regex has the same value as the last set one");
 		});
 
 		QUnit.test("Regex default value", function (assert) {

@@ -175,7 +175,7 @@
 		oButton.onclick({ preventDefault:  jQuery.noop, stopPropagation:  jQuery.noop });
 
 		// Assert
-		strictEqual(oRenderSpy.callCount, 0, "Press event not fired");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Press event not fired");
 
 		// Cleanup
 		oButton.setVisible(true);
@@ -221,9 +221,9 @@
 			ok(oMetadata.getAggregations().richTooltip != "undefined","Richtooltip is not 'null'");
 			equals(oMetadata.getAggregations().richTooltip ==  "undefined",false,"Richtooltip is not 'null'");
 			var oAssociations = oMetadata.getAssociations();
-			strictEqual(oAssociations["ariaDescribedBy"]["type"], "sap.ui.core.Control", "ariaDescribedBy type");
+			assert.strictEqual(oAssociations["ariaDescribedBy"]["type"], "sap.ui.core.Control", "ariaDescribedBy type");
 			ok(oAssociations["ariaDescribedBy"]["multiple"], "ariaDescribedBy multiple");
-			strictEqual(oAssociations["ariaLabelledBy"]["type"], "sap.ui.core.Control", "ariaLabelledBy type");
+			assert.strictEqual(oAssociations["ariaLabelledBy"]["type"], "sap.ui.core.Control", "ariaLabelledBy type");
 			ok(oAssociations["ariaLabelledBy"]["multiple"], "ariaLabelledBy multiple");
 		});
 
@@ -274,8 +274,8 @@
 			equal(jQuery("#btnTooltipWithIconOnly").attr("title"), sTooltip, "Tooltip should be preserved");
 
 			var $IconSpan = jQuery("#btnTooltipWithIconOnly>span");
-			strictEqual($IconSpan.attr("aria-label"), undefined, "aria-label shouldn't exist");
-			strictEqual($IconSpan.attr("title"), undefined, "The sap icon should not have tooltip");
+			assert.strictEqual($IconSpan.attr("aria-label"), undefined, "aria-label shouldn't exist");
+			assert.strictEqual($IconSpan.attr("title"), undefined, "The sap icon should not have tooltip");
 			equal($IconSpan.attr("aria-hidden"), "true", "The icon should be hidden for the assistive technology");
 			oButton.destroy();
 		});

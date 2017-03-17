@@ -43,10 +43,10 @@
 				sMask1 = '1a9a-aa4', /* 1 and 4 are immutable characters*/
 				sMask2 = 'aa9a-aa4';
 			oControl.setMask(sMask1);
-			strictEqual(oControl.getMask(), sMask1, "The mask has the same value as the last set one");
+			assert.strictEqual(oControl.getMask(), sMask1, "The mask has the same value as the last set one");
 
 			oControl.setMask(sMask2);
-			strictEqual(oControl.getMask(), sMask2, "The mask has the same value as the last set one");
+			assert.strictEqual(oControl.getMask(), sMask2, "The mask has the same value as the last set one");
 		});
 
 		QUnit.test("Setting empty mask should give a warning", function (assert){
@@ -107,33 +107,33 @@
 			//Act
 			oControl.setValue(null);
 			//Assert
-			strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
+			assert.strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
 			ok(!oControl._oTempValue.differsFromOriginal(), "When setting 'null' buffer is not modified");
 
 			//Act
 			oControl.setValue(undefined);
 			//Assert
-			strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
+			assert.strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
 			ok(!oControl._oTempValue.differsFromOriginal(), "When setting 'undefined' buffer is not modified");
 
 			//Act
 			oControl.setValue("");
 			//Assert
-			strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
+			assert.strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
 			ok(!oControl._oTempValue.differsFromOriginal(), "When setting empty string buffer is not modified");
 
 			//Act
 			oControl.setValue("bc-d9");
 			//Assert
-			strictEqual(oControl.getValue(), "bc-d9", "When setValue is called with mask incompatible string, the value it is not modified.");
-			strictEqual(getMaskInputDomValue(oControl), "bc-d9", "The value was updated successfully (EVEN NOT VALID)");
+			assert.strictEqual(oControl.getValue(), "bc-d9", "When setValue is called with mask incompatible string, the value it is not modified.");
+			assert.strictEqual(getMaskInputDomValue(oControl), "bc-d9", "The value was updated successfully (EVEN NOT VALID)");
 			ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "bc-d_", "Buffer is successfully modified with the correct ALREADY VALIDATED value");
 
 			//Act
 			oControl.setValue("bc-de");
 			//Assert
-			strictEqual(oControl.getValue(), "bc-de", "When setValue is called with mask compatible string, the value is not modified.");
-			strictEqual(getMaskInputDomValue(oControl), "bc-de", "The value was updated successfully");
+			assert.strictEqual(oControl.getValue(), "bc-de", "When setValue is called with mask compatible string, the value is not modified.");
+			assert.strictEqual(getMaskInputDomValue(oControl), "bc-de", "The value was updated successfully");
 			ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "bc-de", "Buffer is successfully modified");
 
 			//Prepare
@@ -180,10 +180,10 @@
 				sPlaceHolderSymbol2 = '+';
 
 			oControl.setPlaceholderSymbol(sPlaceHolderSymbol1);
-			strictEqual(oControl.getPlaceholderSymbol(), sPlaceHolderSymbol1, "The placeholder symbol has the same value as the last set one");
+			assert.strictEqual(oControl.getPlaceholderSymbol(), sPlaceHolderSymbol1, "The placeholder symbol has the same value as the last set one");
 
 			oControl.setPlaceholderSymbol(sPlaceHolderSymbol2);
-			strictEqual(oControl.getPlaceholderSymbol(), sPlaceHolderSymbol2, "The placeholder symbol has the same value as the last set one");
+			assert.strictEqual(oControl.getPlaceholderSymbol(), sPlaceHolderSymbol2, "The placeholder symbol has the same value as the last set one");
 		});
 
 		QUnit.test("Setting an invalid placeholder symbol is not accepted", function (assert){
@@ -243,7 +243,7 @@
 			var oControl = this.oMaskInput.setMask("999^9");
 
 			jQuery(oControl).focus();
-			strictEqual(getMaskInputDomValue(oControl), "___9", "Result value should have 1 escaped rule character as " +
+			assert.strictEqual(getMaskInputDomValue(oControl), "___9", "Result value should have 1 escaped rule character as " +
 					"immutable on their predefined place");
 		});
 
@@ -251,7 +251,7 @@
 			var oControl = this.oMaskInput.setMask("^99aaa^aaa^a");
 
 			jQuery(oControl).focus();
-			strictEqual(getMaskInputDomValue(oControl), "9____a__a", "Result value should have 3 escaped rule characters as " +
+			assert.strictEqual(getMaskInputDomValue(oControl), "9____a__a", "Result value should have 3 escaped rule characters as " +
 					"immutable on their predefined place");
 		});
 
@@ -259,7 +259,7 @@
 			var oControl = this.oMaskInput.setMask("99^^99");
 
 			jQuery(oControl).focus();
-			strictEqual(getMaskInputDomValue(oControl), "__^__", "Result value should have 1 immutable character which is the" +
+			assert.strictEqual(getMaskInputDomValue(oControl), "__^__", "Result value should have 1 immutable character which is the" +
 					"escape character");
 		});
 
@@ -282,13 +282,13 @@
 				return that.oMaskInput._getSkipIndexes(sValue).toString();
 			};
 
-			strictEqual(this.oMaskInput._getSkipIndexes().length, 0, "Calling the method with no arguments should return " +
+			assert.strictEqual(this.oMaskInput._getSkipIndexes().length, 0, "Calling the method with no arguments should return " +
 					"empty array");
-			strictEqual(getSkipIndexes("99^9"), "2", "One escape character should be at position 2");
-			strictEqual(getSkipIndexes("^99^9^"), "0,2,3", "Multiple escape characters. Consider here we are taking " +
+			assert.strictEqual(getSkipIndexes("99^9"), "2", "One escape character should be at position 2");
+			assert.strictEqual(getSkipIndexes("^99^9^"), "0,2,3", "Multiple escape characters. Consider here we are taking " +
 					"care for fixing the position of every consecutive escape character after the first one");
-			strictEqual(getSkipIndexes("^99^^9^"), "0,2,4", "Escape the escape character");
-			strictEqual(getSkipIndexes("^^^^^^"), "0,1,2", "Six escape character should produce " +
+			assert.strictEqual(getSkipIndexes("^99^^9^"), "0,2,4", "Escape the escape character");
+			assert.strictEqual(getSkipIndexes("^^^^^^"), "0,1,2", "Six escape character should produce " +
 					"3 skipped indexes (escape characters) and 3 escape characters as immutable as they are escaped");
 
 		});
@@ -301,12 +301,12 @@
 				return that.oMaskInput._getMaskArray(sMask, aSkipIndexes).toString();
 			};
 
-			strictEqual(this.oMaskInput._getMaskArray().length, 0, "Calling the method with no arguments should return " +
+			assert.strictEqual(this.oMaskInput._getMaskArray().length, 0, "Calling the method with no arguments should return " +
 					"empty array");
-			strictEqual(getMaskArray("99^9", [2]), "9,9,9", "One skip index");
-			strictEqual(getMaskArray("^99^9^", [0, 2, 3]), "9,9,9", "Multiple skip indexes");
-			strictEqual(getMaskArray("^99^^9^", [0, 2, 4]), "9,9,^,9", "Escape the escape character");
-			strictEqual(getMaskArray("^^^^^^", [0, 1, 2]), "^,^,^", "Multiple escape the escape character. Should return " +
+			assert.strictEqual(getMaskArray("99^9", [2]), "9,9,9", "One skip index");
+			assert.strictEqual(getMaskArray("^99^9^", [0, 2, 3]), "9,9,9", "Multiple skip indexes");
+			assert.strictEqual(getMaskArray("^99^^9^", [0, 2, 4]), "9,9,^,9", "Escape the escape character");
+			assert.strictEqual(getMaskArray("^^^^^^", [0, 1, 2]), "^,^,^", "Multiple escape the escape character. Should return " +
 					"array of three escaped characters as immutable ones");
 
 		});
@@ -351,17 +351,17 @@
 
 		QUnit.test("Del button", function (assert){
 			var oControl = this.oMaskInput.setPlaceholderSymbol('_');
-			strictEqual(this.setAndDel('delete', 'aaaaa', 'abcde', 0), "_bcde", "Delete single character");
-			strictEqual(this.setAndDel('delete', 'aaaaa', 'abcd', 4), "abcd_", "Try deleting non existing character");
-			strictEqual(this.setAndDel('delete', '9a-9-aa', '2b-2-de', 1), '2_-2-de', "Delete parameter before immutable character");
-			strictEqual(this.setAndDel('delete', 'aaaaa', 'abcde', 0, 3), "___de", "Delete selection");
+			assert.strictEqual(this.setAndDel('delete', 'aaaaa', 'abcde', 0), "_bcde", "Delete single character");
+			assert.strictEqual(this.setAndDel('delete', 'aaaaa', 'abcd', 4), "abcd_", "Try deleting non existing character");
+			assert.strictEqual(this.setAndDel('delete', '9a-9-aa', '2b-2-de', 1), '2_-2-de', "Delete parameter before immutable character");
+			assert.strictEqual(this.setAndDel('delete', 'aaaaa', 'abcde', 0, 3), "___de", "Delete selection");
 		});
 
 		QUnit.test("Backspace button", function (assert){
 			var oControl = this.oMaskInput.setPlaceholderSymbol('_');
-			strictEqual(this.setAndDel('backspace', '99/9', '12/3', 2), "1_/3", "Delete single character");
-			strictEqual(this.setAndDel('backspace', '99/9', '12/3', 3), "1_/3", "Delete single character behind immutable character");
-			strictEqual(this.setAndDel('backspace', '99/9', '12/3', 2, 4), "12/_", "Delete selection with immutable characters");
+			assert.strictEqual(this.setAndDel('backspace', '99/9', '12/3', 2), "1_/3", "Delete single character");
+			assert.strictEqual(this.setAndDel('backspace', '99/9', '12/3', 3), "1_/3", "Delete single character behind immutable character");
+			assert.strictEqual(this.setAndDel('backspace', '99/9', '12/3', 2, 4), "12/_", "Delete selection with immutable characters");
 		});
 
 		QUnit.module("Paste", {
@@ -433,7 +433,7 @@
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
 
-			strictEqual(getMaskInputDomValue(oControl), '1###-##4', "On intial focus, the mask that the user needs to follow is shown");
+			assert.strictEqual(getMaskInputDomValue(oControl), '1###-##4', "On intial focus, the mask that the user needs to follow is shown");
 			checkForEmptyValue(oControl);
 		});
 
@@ -462,7 +462,7 @@
 			this.clock.tick(1000);
 
 			//assert
-			strictEqual(this.oMaskInput._getInputValue(), "123_-____-__", "The correct value is set through the keypress events");
+			assert.strictEqual(this.oMaskInput._getInputValue(), "123_-____-__", "The correct value is set through the keypress events");
 			checkCursorIsAtPosition(this.oMaskInput, 3, "When partially value is present and we focus again the caret is on the first placeholder position");
 		});
 
@@ -489,7 +489,7 @@
 			this.clock.tick(1000);
 
 			//assert
-			strictEqual(this.oMaskInput._getInputValue(), "1234-5678-90", "The correct value is set through the keypress events");
+			assert.strictEqual(this.oMaskInput._getInputValue(), "1234-5678-90", "The correct value is set through the keypress events");
 			checkSelection(this.oMaskInput, 0, this.oMaskInput.getMask().length, "When complete value is present (no placeholders are left) and we focus the input all the input is selected");
 		});
 
@@ -508,7 +508,7 @@
 			jQuery(oOtherControl).focus();
 			this.clock.tick(1000);
 			checkForEmptyValue(oControl);
-			strictEqual(getMaskInputDomValue(oControl), "", "Once deleted the DOM should be empty");
+			assert.strictEqual(getMaskInputDomValue(oControl), "", "Once deleted the DOM should be empty");
 			oOtherControl.destroy();
 		});
 
@@ -522,15 +522,15 @@
 
 			oControl.setValue('#1-23');
 			jQuery(oControl).focus();
-			strictEqual(getMaskInputDomValue(oControl), "#1-23", "The value was not validated on focusin");
+			assert.strictEqual(getMaskInputDomValue(oControl), "#1-23", "The value was not validated on focusin");
 			ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "12-3#", "Buffer is successfully modified with the correct ALREADY VALIDATED value");
 
 
 			jQuery(oOtherControl).focus();
 			this.clock.tick(1000);
 
-			strictEqual(getMaskInputDomValue(oControl), '12-3#', "DOM value is validated against MaskInput rules on focusout");
-			strictEqual(oControl._oTempValue._aContent.join(''), '12-3#', "The buffer value is identical with the DOM value");
+			assert.strictEqual(getMaskInputDomValue(oControl), '12-3#', "DOM value is validated against MaskInput rules on focusout");
+			assert.strictEqual(oControl._oTempValue._aContent.join(''), '12-3#', "The buffer value is identical with the DOM value");
 
 			oOtherControl.destroy();
 		});
@@ -546,7 +546,7 @@
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
 
-			strictEqual(getMaskInputDomValue(oControl), '##-##', "On intial focus, the mask that the user needs to follow is shown");
+			assert.strictEqual(getMaskInputDomValue(oControl), '##-##', "On intial focus, the mask that the user needs to follow is shown");
 		});
 
 		QUnit.test("Focus after partially filled value is set through the API", function (assert){
@@ -559,7 +559,7 @@
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
 
-			strictEqual(getMaskInputDomValue(oControl), '#a-bc');
+			assert.strictEqual(getMaskInputDomValue(oControl), '#a-bc');
 		});
 
 		QUnit.module("Events", {
@@ -874,17 +874,17 @@
 			sap.ui.getCore().applyChanges();
 			this.clock.tick(1000);
 
-			strictEqual(getMaskInputDomValue(oControl), "", "Unless focused an empty dom value should remain empty");
+			assert.strictEqual(getMaskInputDomValue(oControl), "", "Unless focused an empty dom value should remain empty");
 			checkForEmptyValue(oControl);
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
 
-			strictEqual(getMaskInputDomValue(oControl), '____', "the maskInput has the expected mask string in the dom after focus is reached");
+			assert.strictEqual(getMaskInputDomValue(oControl), '____', "the maskInput has the expected mask string in the dom after focus is reached");
 			checkForEmptyValue(oControl);
 			jQuery(oOtherControl).focus();
 			this.clock.tick(1000);
 
-			strictEqual(getMaskInputDomValue(oControl), '', "the maskInput lost the focus without any user input characters, so the getValue should return an empty string");
+			assert.strictEqual(getMaskInputDomValue(oControl), '', "the maskInput lost the focus without any user input characters, so the getValue should return an empty string");
 			checkForEmptyValue(oControl);
 			oOtherControl.destroy();
 
@@ -999,7 +999,7 @@
 
 			jQuery(oOtherControl).focus();
 			this.clock.tick(1000);
-			strictEqual(oControl.getValue(), "12#", "On complete the value should change");
+			assert.strictEqual(oControl.getValue(), "12#", "On complete the value should change");
 			//user goes back and enters input
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
@@ -1007,7 +1007,7 @@
 
 			jQuery(oOtherControl).focus();
 			this.clock.tick(1000);
-			strictEqual(oControl.getValue(), "123", "On complete the value should change");
+			assert.strictEqual(oControl.getValue(), "123", "On complete the value should change");
 
 			oOtherControl.destroy();
 		});
@@ -1062,7 +1062,7 @@
 			var $AriaLabel = this.oMaskInput.$().find("#" + this.oMaskInput.getId() + "-labelledby");
 			//assert
 			ok($AriaLabel.length > 0, "The hidden aria description is present in the DOM");
-			strictEqual(this.oRenderer.getLabelledByAnnouncement(this.oMaskInput), $AriaLabel.text(), "The message is rendered correctly");
+			assert.strictEqual(this.oRenderer.getLabelledByAnnouncement(this.oMaskInput), $AriaLabel.text(), "The message is rendered correctly");
 		});
 
 		QUnit.test("Testing aria description", function (assert){
@@ -1070,7 +1070,7 @@
 			var $AriaDescripttion = this.oMaskInput.$().find("#" + this.oMaskInput.getId() + "-describedby");
 			//assert
 			ok($AriaDescripttion.length > 0, "The hidden aria description is present in the DOM");
-			strictEqual(this.oRenderer.getDescribedByAnnouncement(this.oMaskInput), $AriaDescripttion.text(), "The message is rendered correctly");
+			assert.strictEqual(this.oRenderer.getDescribedByAnnouncement(this.oMaskInput), $AriaDescripttion.text(), "The message is rendered correctly");
 		});
 
 		function checkForDeleteAndBackspace() {

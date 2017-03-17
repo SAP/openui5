@@ -81,7 +81,7 @@
 			this.oTarget.display();
 
 			// Assert
-			strictEqual(oButton.getParent(), this.oShell, "the view was placed inside of the shell");
+			assert.strictEqual(oButton.getParent(), this.oShell, "the view was placed inside of the shell");
 
 			// Cleanup
 			oButton.destroy();
@@ -91,9 +91,9 @@
 			// Arrange
 			var that = this,
 				oStub = this.stub(this.oViews, "_getView", function (oOptions) {
-					strictEqual(oOptions.viewName, "bar.foo");
-					strictEqual(oOptions.type, "XML");
-					strictEqual(oOptions.id, "baz");
+					assert.strictEqual(oOptions.viewName, "bar.foo");
+					assert.strictEqual(oOptions.type, "XML");
+					assert.strictEqual(oOptions.id, "baz");
 					return that.oView;
 				});
 
@@ -101,7 +101,7 @@
 			this.oTarget.display();
 
 			// Assert
-			strictEqual(oStub.callCount, 1, "Did inform the view creation");
+			assert.strictEqual(oStub.callCount, 1, "Did inform the view creation");
 		});
 
 		QUnit.test("Should use the _getView to create a unprefixed id if _bUseRawViewId is set", function (assert) {
@@ -109,9 +109,9 @@
 			var that = this,
 				oSpy = this.spy(this.oViews, "_getView"),
 				oStub = this.stub(this.oViews, "_getViewWithGlobalId", function (oOptions) {
-					strictEqual(oOptions.viewName, "bar.foo");
-					strictEqual(oOptions.type, "XML");
-					strictEqual(oOptions.id, "baz");
+					assert.strictEqual(oOptions.viewName, "bar.foo");
+					assert.strictEqual(oOptions.type, "XML");
+					assert.strictEqual(oOptions.id, "baz");
 					return that.oView;
 				});
 
@@ -120,8 +120,8 @@
 			this.oTarget.display();
 
 			// Assert
-			strictEqual(oStub.callCount, 1, "Did inform the view creation");
-			strictEqual(oSpy.callCount, 0, "Did not use the prefix version");
+			assert.strictEqual(oStub.callCount, 1, "Did inform the view creation");
+			assert.strictEqual(oSpy.callCount, 0, "Did not use the prefix version");
 		});
 
 		QUnit.test("Should clear a target aggregation", function (assert) {
@@ -140,8 +140,8 @@
 			this.oTarget.display();
 
 			// Assert
-			strictEqual(this.oShell.getContent().length, 1, "only one button is inside of the the Shell");
-			strictEqual(this.oShell.getContent()[0], oButton, "it is the displayed button");
+			assert.strictEqual(this.oShell.getContent().length, 1, "only one button is inside of the the Shell");
+			assert.strictEqual(this.oShell.getContent()[0], oButton, "it is the displayed button");
 			//TODO: Should we destroy in this case? Is it a regression if we do so?
 			//ok(oExistingButton.bIsDestroyed, "the button got destroyed");
 
@@ -247,8 +247,8 @@
 
 			// Assert
 			var oShell = this.oParentView.byId("myShell");
-			strictEqual(oShell.getContent().length, 1, "something was placed inside the shell");
-			strictEqual(oShell.getContent()[0], this.oChildView, "it is the child view");
+			assert.strictEqual(oShell.getContent().length, 1, "something was placed inside the shell");
+			assert.strictEqual(oShell.getContent()[0], this.oChildView, "it is the child view");
 		});
 
 		QUnit.test("Should display a child target", function (assert) {
@@ -271,8 +271,8 @@
 
 			// Assert
 			var oShell = this.oParentView.byId("myShell");
-			strictEqual(oShell.getContent().length, 1, "something was placed inside the shell");
-			strictEqual(oShell.getContent()[0], this.oChildView, "it is the child view");
+			assert.strictEqual(oShell.getContent().length, 1, "something was placed inside the shell");
+			assert.strictEqual(oShell.getContent()[0], this.oChildView, "it is the child view");
 
 			// Cleanup
 			oParentTarget.destroy();
@@ -314,9 +314,9 @@
 			// Arrange
 			var oParameters = { foo : "bar" },
 				fnEventSpy = this.spy(function(oEvent, oActualData) {
-					strictEqual(oActualData, oData, "the data is correct");
-					strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
-					strictEqual(this, oListener, "the this pointer is correct");
+					assert.strictEqual(oActualData, oData, "the data is correct");
+					assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
+					assert.strictEqual(this, oListener, "the this pointer is correct");
 				}),
 				oListener = {},
 				oData = { some : "data" },
@@ -330,10 +330,10 @@
 			this.oTarget.fireDisplay();
 
 			// Assert
-			strictEqual(fnEventSpy.callCount, 1, "did call the attach spy only once");
-			strictEqual(oAttachReturnValue, this.oTarget, "did return this for chaining for attach");
-			strictEqual(oDetachReturnValue, this.oTarget, "did return this for chaining for detach");
-			strictEqual(oFireReturnValue, this.oTarget, "did return this for chaining for fire");
+			assert.strictEqual(fnEventSpy.callCount, 1, "did call the attach spy only once");
+			assert.strictEqual(oAttachReturnValue, this.oTarget, "did return this for chaining for attach");
+			assert.strictEqual(oDetachReturnValue, this.oTarget, "did return this for chaining for detach");
+			assert.strictEqual(oFireReturnValue, this.oTarget, "did return this for chaining for fire");
 		});
 
 		QUnit.test("Should fire the display event", function (assert) {

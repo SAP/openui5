@@ -219,7 +219,7 @@
 			setTimeout(function() {
 				openRtt("c2", true);
 				setTimeout(function() {
-					strictEqual(oRtt2.getDomRef(), null, "Tooltip should not be rendered");
+					assert.strictEqual(oRtt2.getDomRef(), null, "Tooltip should not be rendered");
 					closeRtt("c2", true);
 					setTimeout(function() {
 						oRtt2.setVisible(true);

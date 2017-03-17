@@ -170,10 +170,10 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 		ok(!/.*<script>.*/.test(oObjectIdentifier.$().find(".sapMObjectIdentifierTitle").html()), "Did not contain an unescaped script tag");
-		strictEqual(oObjectIdentifier.getTitle(), sTextToSet, "Did set the non encoded string as value");
+		assert.strictEqual(oObjectIdentifier.getTitle(), sTextToSet, "Did set the non encoded string as value");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -197,8 +197,8 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -222,8 +222,8 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -247,10 +247,10 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 		ok(!/.*<script>.*/.test(oObjectIdentifier.$().children(".sapMObjectIdentifierText").html()), "Did not contain an unescaped script tag");
-		strictEqual(oObjectIdentifier.getText(), sTextToSet, "Did set the non encoded string as value");
+		assert.strictEqual(oObjectIdentifier.getText(), sTextToSet, "Did set the non encoded string as value");
 		notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
 
 		//Cleanup
@@ -275,8 +275,8 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 		equal(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is not visible");
 
 		//Cleanup
@@ -301,8 +301,8 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 		notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
 
 		//Cleanup
@@ -321,7 +321,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		strictEqual($(oObjectIdentifier.$("title").children()[0]).text(), sEmptyTitle, "The title text is empty as expected");
+		assert.strictEqual($(oObjectIdentifier.$("title").children()[0]).text(), sEmptyTitle, "The title text is empty as expected");
 		equal(oObjectIdentifier.$("title").children(0).css("display"), "none", "The title control should not be visible if title is empty initially");
 
 		//Act
@@ -329,7 +329,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		strictEqual($(oObjectIdentifier.$("title").children()[0]).text(), sDummyTitle, "The title text is correctly set");
+		assert.strictEqual($(oObjectIdentifier.$("title").children()[0]).text(), sDummyTitle, "The title text is correctly set");
 		notEqual(oObjectIdentifier.$("title").children(0).css("display"), "none", "The title control should be visible if title is not empty");
 
 		//Act
@@ -337,7 +337,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		strictEqual($(oObjectIdentifier.$("title").children()[0]).text(), sEmptyTitle, "The title text is empty as expected");
+		assert.strictEqual($(oObjectIdentifier.$("title").children()[0]).text(), sEmptyTitle, "The title text is empty as expected");
 		equal(oObjectIdentifier.$("title").children(0).css("display"), "none", "The title control should not be visible if title is empty");
 
 		//Cleanup
@@ -411,14 +411,14 @@
 			oObjectIdentifierTextControlText = oObjectIdentifierTextControl.getText();
 
 		// assertions for title
-		strictEqual(oObjectIdentifier.getTitleActive(), false, 'Default value for titleActive is false');
+		assert.strictEqual(oObjectIdentifier.getTitleActive(), false, 'Default value for titleActive is false');
 		ok(oObjectIdentifierTitleControl === oObjectIdentifier.getAggregation("_titleControl"), 'The title control is present and properly assigned to its private aggregation');
 		ok(oObjectIdentifierTitleControl instanceof sap.m.Text, 'The default type of title control is correct');
-		strictEqual(oObjectIdentifierTitleControl.getVisible(), false, 'No title control is visible');
-		strictEqual(oObjectIdentifierTitleText.length === 0, true, 'The title text is empty');
+		assert.strictEqual(oObjectIdentifierTitleControl.getVisible(), false, 'No title control is visible');
+		assert.strictEqual(oObjectIdentifierTitleText.length === 0, true, 'The title text is empty');
 		// assertions for text
 		ok(oObjectIdentifierTextControl === oObjectIdentifier.getAggregation("_textControl"), 'The text control is present and properly assigned to its private aggregation');
-		strictEqual(oObjectIdentifierTextControl.getVisible(), false, 'No text control is visible');
+		assert.strictEqual(oObjectIdentifierTextControl.getVisible(), false, 'No text control is visible');
 		ok(oObjectIdentifierTextControlText.length === 0, 'The text of ObjectIdentifier\'s text is empty');
 
 		// cleanup
@@ -504,7 +504,7 @@
 			this.clock.tick(1);
 
 			// assertions
-			strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired");
+			assert.strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired");
 
 			// cleanup
 			 oObjectIdentifier.destroy();
@@ -543,8 +543,8 @@
 		this.clock.tick(1);
 
 		// assertions
-		strictEqual(fnFireSelectSpy1.callCount, 1, "Event should be fired once");
-		strictEqual(fnFireSelectSpy2.callCount, 0, "Event should not be fired, ObjectIdentifier's titleActive property is false");
+		assert.strictEqual(fnFireSelectSpy1.callCount, 1, "Event should be fired once");
+		assert.strictEqual(fnFireSelectSpy2.callCount, 0, "Event should not be fired, ObjectIdentifier's titleActive property is false");
 
 		// cleanup
 		oObjectIdentifier1.destroy();

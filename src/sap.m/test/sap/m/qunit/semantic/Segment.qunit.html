@@ -40,7 +40,7 @@
 			var oSegment = new sap.m.semantic.Segment(null, oToolbar);
 
 			// Assert
-			strictEqual(oSegment != null, true, "Segment is created");
+			assert.strictEqual(oSegment != null, true, "Segment is created");
 
 			// Cleanup
 			oToolbar.destroy();
@@ -58,33 +58,33 @@
 			oSegment.addContent(oBtn1);
 
 			// Assert
-			strictEqual(oToolbar.indexOfContent(oBtn1), 0, "Button is added");
+			assert.strictEqual(oToolbar.indexOfContent(oBtn1), 0, "Button is added");
 
 			// Act
 			oSegment.addContent(oBtn2);
 
 			// Assert
-			strictEqual(oToolbar.indexOfContent(oBtn2), 1, "Button is added");
+			assert.strictEqual(oToolbar.indexOfContent(oBtn2), 1, "Button is added");
 
 			// Act
 			oSegment.insertContent(oBtn3, 1);
 
 			// Assert
-			strictEqual(oToolbar.indexOfContent(oBtn3), 1, "Button is inserted");
+			assert.strictEqual(oToolbar.indexOfContent(oBtn3), 1, "Button is inserted");
 
 			// Act
 			var oResult = oSegment.removeContent(oBtn1);
 
 			// Assert
-			strictEqual(oResult, oBtn1, "Button is removed");
-			strictEqual(oSegment.getContent().length, 2, "has correct length");
+			assert.strictEqual(oResult, oBtn1, "Button is removed");
+			assert.strictEqual(oSegment.getContent().length, 2, "has correct length");
 
 			// Act
 			oResult = oSegment.removeAllContent();
 
 			// Assert
-			strictEqual(oResult.length, 2, "Buttons are removed");
-			strictEqual(oSegment.getContent().length, 0, "has correct length");
+			assert.strictEqual(oResult.length, 2, "Buttons are removed");
+			assert.strictEqual(oSegment.getContent().length, 0, "has correct length");
 
 			// Cleanup
 			oToolbar.destroy();

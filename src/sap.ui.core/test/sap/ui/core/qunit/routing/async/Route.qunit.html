@@ -147,9 +147,9 @@
 							aTargetNames = ["async1", "async2", "async3"],
 							oRoute = new sap.ui.core.routing.Route(this.oRouterStub, { name : sName, target : aTargetNames }),
 							fnEventSpy = this.spy(function(oEvent, oActualData) {
-								strictEqual(oActualData, oData, "the data is correct");
-								strictEqual(oEvent.getParameters().name, sName, "the name is correct");
-								strictEqual(this, oListener, "the this pointer is correct");
+								assert.strictEqual(oActualData, oData, "the data is correct");
+								assert.strictEqual(oEvent.getParameters().name, sName, "the name is correct");
+								assert.strictEqual(this, oListener, "the this pointer is correct");
 							}),
 							oListener = {},
 							oData = {some: "data"},
@@ -160,8 +160,8 @@
 
 						return oSequencePromise.then(function(aValues) {
 							// Assert
-							strictEqual(fnEventSpy.callCount, 1, "did call the attach spy for the event " + sEventName);
-							strictEqual(oAttachReturnValue, oRoute, "did return this for chaining for the event " + sEventName);
+							assert.strictEqual(fnEventSpy.callCount, 1, "did call the attach spy for the event " + sEventName);
+							assert.strictEqual(oAttachReturnValue, oRoute, "did return this for chaining for the event " + sEventName);
 						});
 					});
 				}
@@ -197,8 +197,8 @@
 
 						// Assert
 						return oSequencePromise.then(function(aValues) {
-							strictEqual(fnEventSpy.callCount, 0, "did not call the spy since it was detached");
-							strictEqual(oDetachedReturnValue, oRoute, "did return this for chaining");
+							assert.strictEqual(fnEventSpy.callCount, 0, "did not call the spy since it was detached");
+							assert.strictEqual(oDetachedReturnValue, oRoute, "did return this for chaining");
 						});
 					});
 				}

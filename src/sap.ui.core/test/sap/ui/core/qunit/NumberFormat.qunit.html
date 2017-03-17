@@ -1385,17 +1385,17 @@
 		aResult = oFormat.parse("1234567.89");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		equal(aResult[0], 1234567.89, "Number is parsed correctly");
-		strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
+		assert.strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("\u20ac" + " 1,234,567.89");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		equal(aResult[0], 1234567.89, "Number is parsed correctly");
-		strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("$ 1234567.89");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		equal(aResult[0], 1234567.89, "Number is parsed correctly");
-		strictEqual(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
+		assert.strictEqual(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
 
 		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
 			showMeasure: false
@@ -1416,7 +1416,7 @@
 		aResult = oFormat.parse("1234567.89");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		equal(aResult[0], 1234567.89, "Number is parsed correctly");
-		strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
+		assert.strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
 
 		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
 			parseAsString: true
@@ -1675,13 +1675,13 @@
 						aParsed;
 
 					// format
-					strictEqual(oFormat.format(nValue), "", nValue + " is formatted to empty string");
+					assert.strictEqual(oFormat.format(nValue), "", nValue + " is formatted to empty string");
 
 					// parse
 					if (sMethod === "getCurrencyInstance") {
 						aParsed = oFormat.parse("");
 						nParsed = aParsed[0];
-						strictEqual(aParsed[1], undefined, "currency code is parse as undefined");
+						assert.strictEqual(aParsed[1], undefined, "currency code is parse as undefined");
 					} else {
 						nParsed = oFormat.parse("");
 					}
@@ -1689,7 +1689,7 @@
 					if (nParsed !== nParsed) {
 						ok(nCompareValue !== nCompareValue, "empty string is parsed as NaN");
 					} else {
-						strictEqual(nParsed, nCompareValue, "empty string is parsed as " + aCompareValues[index2][index1]);
+						assert.strictEqual(nParsed, nCompareValue, "empty string is parsed as " + aCompareValues[index2][index1]);
 					}
 				});
 			});

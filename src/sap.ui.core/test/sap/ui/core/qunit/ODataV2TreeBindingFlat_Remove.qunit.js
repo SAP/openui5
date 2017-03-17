@@ -842,7 +842,7 @@ QUnit.test("Create new node and added to a node which already has children", fun
 			var oContext = createContext(3000);
 			oBinding.addContexts(oN1001.context, [oContext]);
 			equal(oN1001.addedSubtrees.length, 1, "Node 1001 has an added node");
-			strictEqual(oN1001.addedSubtrees[0]._getSubtree()[0].context, oContext, "The node is correctly added");
+			assert.strictEqual(oN1001.addedSubtrees[0]._getSubtree()[0].context, oContext, "The node is correctly added");
 			equal(oBinding.getLength(), 627, "The length is increased by 1 after added a new node");
 
 			done();
@@ -877,7 +877,7 @@ QUnit.test("Create new node and added to a leaf node", function(assert) {
 			var oContext = createContext(3000);
 			oBinding.addContexts(oN1017.context, [oContext]);
 			equal(oN1017.addedSubtrees.length, 1, "Node 1001 has an added node");
-			strictEqual(oN1017.addedSubtrees[0]._getSubtree()[0].context, oContext, "The node is correctly added");
+			assert.strictEqual(oN1017.addedSubtrees[0]._getSubtree()[0].context, oContext, "The node is correctly added");
 			equal(oBinding.getLength(), 626, "The length is not yet increased by 1 after added a new node");
 			equal(oBinding.hasChildren(oN1017.context), true, "Node 1017 is not a leaf node anymore but collapsed");
 			ok(!oN1017.nodeState.isLeaf, "Node 1017 isn't a leaf anymore");

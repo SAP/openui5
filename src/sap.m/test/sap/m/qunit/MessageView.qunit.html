@@ -533,13 +533,13 @@
             QUnit.test("Updating item's binding should update its property", function (assert) {
                 this.oDialog2.open();
 
-                strictEqual(this.oMessageView2._oLists.error.getItems()[0].getTitle(), "One", "Title is properly set");
+                assert.strictEqual(this.oMessageView2._oLists.error.getItems()[0].getTitle(), "One", "Title is properly set");
 
                 this.oMessageView2.getModel().setProperty("/0/message", "Two");
 
                 this.clock.tick(500);
 
-                strictEqual(this.oMessageView2._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
+                assert.strictEqual(this.oMessageView2._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
             });
 
             QUnit.test("Removing all items", function (assert) {

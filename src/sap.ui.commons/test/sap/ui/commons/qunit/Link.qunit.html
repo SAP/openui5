@@ -80,39 +80,39 @@
 		// test property accessor methods
 
 		QUnit.test("TextOk", function(assert) {
-			strictEqual(l1.getText(), sText, "l1.getText()");
-			strictEqual(l2.getText(), sText, "l2.getText()");
+			assert.strictEqual(l1.getText(), sText, "l1.getText()");
+			assert.strictEqual(l2.getText(), sText, "l2.getText()");
 		});
 
 		QUnit.test("EnabledOk", function(assert) {
-			strictEqual(l1.getEnabled(), bEnabled, "l1.getEnabled()");
+			assert.strictEqual(l1.getEnabled(), bEnabled, "l1.getEnabled()");
 
-			strictEqual(l2.getEnabled(), bEnabled, "l2.getEnabled()");
+			assert.strictEqual(l2.getEnabled(), bEnabled, "l2.getEnabled()");
 		});
 
 		QUnit.test("VisibleOk", function(assert) {
-			strictEqual(l1.getVisible(), bVisible, "l1.getVisible()");
-			strictEqual(l2.getVisible(), bVisible, "l2.getVisible()");
+			assert.strictEqual(l1.getVisible(), bVisible, "l1.getVisible()");
+			assert.strictEqual(l2.getVisible(), bVisible, "l2.getVisible()");
 		});
 
 		QUnit.test("TooltipOk", function(assert) {
-			strictEqual(l1.getTooltip(), sTooltip, "l1.getTooltip()");
-			strictEqual(l2.getTooltip(), sTooltip, "l2.getTooltip()");
+			assert.strictEqual(l1.getTooltip(), sTooltip, "l1.getTooltip()");
+			assert.strictEqual(l2.getTooltip(), sTooltip, "l2.getTooltip()");
 		});
 
 		QUnit.test("HelpIdOk", function(assert) {
-			strictEqual(l1.getHelpId(), sHelpId, "l1.getHelpId()");
-			strictEqual(l2.getHelpId(), sHelpId, "l2.getHelpId()");
+			assert.strictEqual(l1.getHelpId(), sHelpId, "l1.getHelpId()");
+			assert.strictEqual(l2.getHelpId(), sHelpId, "l2.getHelpId()");
 		});
 
 		QUnit.test("HrefOk", function(assert) {
-			strictEqual(l1.getHref(), sHref, "l1.getHref()");
-			strictEqual(l2.getHref(), sHref, "l2.getHref()");
+			assert.strictEqual(l1.getHref(), sHref, "l1.getHref()");
+			assert.strictEqual(l2.getHref(), sHref, "l2.getHref()");
 		});
 
 		QUnit.test("TargetOk", function(assert) {
-			strictEqual(l1.getTarget(), sTarget, "l1.getTarget()");
-			strictEqual(l2.getTarget(), sTarget, "l2.getTarget()");
+			assert.strictEqual(l1.getTarget(), sTarget, "l1.getTarget()");
+			assert.strictEqual(l2.getTarget(), sTarget, "l2.getTarget()");
 		});
 
 		// test event handlers
@@ -124,14 +124,14 @@
 				l1.firePress();
 				fail("exception should have been thrown!");
 			} catch (e) {
-				strictEqual(e, sPressMessage, "l1.firePress()");
+				assert.strictEqual(e, sPressMessage, "l1.firePress()");
 			}
 
 			try {
 				l2.firePress();
 				fail("exception should have been thrown!");
 			} catch (e) {
-				strictEqual(e, sPressMessage, "l2.firePress()");
+				assert.strictEqual(e, sPressMessage, "l2.firePress()");
 			}
 		});
 
@@ -164,12 +164,12 @@
 			ok(oMetadata, "l1.getMetadata() should not be null");
 			ok(oMetadata.getParent(), "l1.getMetadata().getParent() should not be null");
 			ok(oMetadata.getParent() === sap.ui.core.Control.getMetadata());
-			strictEqual(oMetadata.getProperties()["text"]["type"], "string");
+			assert.strictEqual(oMetadata.getProperties()["text"]["type"], "string");
 			ok(isEmpty(oMetadata.getAggregations()));
 			var oAssociations = oMetadata.getAssociations();
-			strictEqual(oAssociations["ariaDescribedBy"]["type"], "sap.ui.core.Control", "ariaDescribedBy type");
+			assert.strictEqual(oAssociations["ariaDescribedBy"]["type"], "sap.ui.core.Control", "ariaDescribedBy type");
 			ok(oAssociations["ariaDescribedBy"]["multiple"], "ariaDescribedBy multiple");
-			strictEqual(oAssociations["ariaLabelledBy"]["type"], "sap.ui.core.Control", "ariaLabelledBy type");
+			assert.strictEqual(oAssociations["ariaLabelledBy"]["type"], "sap.ui.core.Control", "ariaLabelledBy type");
 			ok(oAssociations["ariaLabelledBy"]["multiple"], "ariaLabelledBy multiple");
 		});
 

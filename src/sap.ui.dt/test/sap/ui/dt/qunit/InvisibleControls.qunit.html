@@ -94,7 +94,7 @@
 
 
 			QUnit.test("when the SplitContainer is rendered", function(assert) {
-				strictEqual(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1), undefined, "no overlays for controls in hidden page are created");
+				assert.strictEqual(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1), undefined, "no overlays for controls in hidden page are created");
 				ok(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton2), "overlays for controls in visible page are created");
 			});
 
@@ -143,7 +143,7 @@
 
 			QUnit.test("when DesignTime is rendered", function(assert) {
 				var oCustomDataOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oCustomData);
-				strictEqual(oCustomDataOverlay, undefined, "then no overlay for the control in the ignored aggregation is created");
+				assert.strictEqual(oCustomDataOverlay, undefined, "then no overlay for the control in the ignored aggregation is created");
 			});
 
 			QUnit.test("when the aggregation overlay for the ignored aggregation is manually switched to 'visible: true'", function(assert) {
@@ -163,7 +163,7 @@
 				sap.ui.getCore().applyChanges();
 
 				var oCustomDataOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oCustomData);
-				strictEqual(oCustomDataOverlay, undefined, "then no overlay is created for it");
+				assert.strictEqual(oCustomDataOverlay, undefined, "then no overlay is created for it");
 			});
 
 		</script>

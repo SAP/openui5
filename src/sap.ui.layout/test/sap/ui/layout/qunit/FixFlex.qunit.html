@@ -24,7 +24,7 @@
 		var sProperty = mOptions.property.charAt(0).toUpperCase() + mOptions.property.slice(1);
 
 		QUnit.test("get" + sProperty + "()", function(assert) {
-			strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
+			assert.strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
 		});
 	};
 
@@ -174,10 +174,10 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(iFixChildWidth, $FixChild.outerWidth(), "Width is not changed");
-		strictEqual(iFixChildHeight, $FixChild.outerHeight(), "Height is not changed");
-		strictEqual(iFlexChildWidth, $FlexChild.outerWidth(), "Width is not changed");
-		strictEqual(iFlexChildHeight, $FlexChild.outerHeight(), "Height is not changed");
+		assert.strictEqual(iFixChildWidth, $FixChild.outerWidth(), "Width is not changed");
+		assert.strictEqual(iFixChildHeight, $FixChild.outerHeight(), "Height is not changed");
+		assert.strictEqual(iFlexChildWidth, $FlexChild.outerWidth(), "Width is not changed");
+		assert.strictEqual(iFlexChildHeight, $FlexChild.outerHeight(), "Height is not changed");
 
 		// Cleanup
 		oFixFlex.destroy();
@@ -208,7 +208,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(jQuery(oFixFlex.$().children()[0]).height(), SIZE, "Fix container should be " + SIZE + "px high.");
+		assert.strictEqual(jQuery(oFixFlex.$().children()[0]).height(), SIZE, "Fix container should be " + SIZE + "px high.");
 
 		// Cleanup
 		oFixFlex.destroy();

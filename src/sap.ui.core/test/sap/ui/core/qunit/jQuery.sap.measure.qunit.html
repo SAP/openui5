@@ -371,17 +371,17 @@
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			var aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
 			ok(Array.isArray(aMeasurements), "An array was returned");
-			strictEqual(aMeasurements.length, 0, "Measurements count is correct");
+			assert.strictEqual(aMeasurements.length, 0, "Measurements count is correct");
 			jQuery.sap.measure.endInteraction(true);
 			aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
-			strictEqual(aMeasurements.length, 1, "Measurements count is correct");
+			assert.strictEqual(aMeasurements.length, 1, "Measurements count is correct");
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			jQuery.sap.measure.endInteraction(true);
 			aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
-			strictEqual(aMeasurements.length, 2, "Measurements count is correct");
+			assert.strictEqual(aMeasurements.length, 2, "Measurements count is correct");
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements(/*bFinalize =*/true);
-			strictEqual(aMeasurements.length, 3, "Measurements count is correct - pending interaction has been added");
+			assert.strictEqual(aMeasurements.length, 3, "Measurements count is correct - pending interaction has been added");
 		});
 
 		QUnit.test("filterInteractionMeasurements", function(assert) {
@@ -408,7 +408,7 @@
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			var oMeasurement = jQuery.sap.measure.getPendingInteractionMeasurement();
 			ok(oMeasurement, "Measuerement was returned");
-			strictEqual(oMeasurement.end, 0, "Measurements has not been finalized yet");
+			assert.strictEqual(oMeasurement.end, 0, "Measurements has not been finalized yet");
 		});
 
 		QUnit.test("Interaction properties", function(assert) {

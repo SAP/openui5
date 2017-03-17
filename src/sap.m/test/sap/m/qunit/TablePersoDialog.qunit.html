@@ -182,9 +182,9 @@
 			oTablePersoDialog = oTPC.getAggregation("_tablePersoDialog");
 			ok(!jQuery.sap.domById("__dialog0"), "TablePersoDialog is not rendered before it's ever opened.");
 			ok(oTablePersoDialog.getPersoDialogFor(), "TablePersoDialog is linked to a table");
-			strictEqual(oTablePersoDialog.getPersoDialogFor(), "idRandomDataTable", "TablePersoDialog is linked to the correct table");
+			assert.strictEqual(oTablePersoDialog.getPersoDialogFor(), "idRandomDataTable", "TablePersoDialog is linked to the correct table");
 			var oPersData = oTablePersoDialog.retrievePersonalizations();
-			strictEqual(oPersData.aColumns, undefined, "No personalization data until dialog opened");
+			assert.strictEqual(oPersData.aColumns, undefined, "No personalization data until dialog opened");
 			ok(sap.ui.getCore().byId("__dialog1"), "Columns dialog does not yet exist");
 		});
 
@@ -199,7 +199,7 @@
 			ok(sap.ui.getCore().byId("__dialog1"), "Columns dialog exists after open() called");
 			ok(jQuery.sap.domById("__dialog1-title"), "Columns dialog has a title rendered");
 			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			strictEqual(sap.ui.getCore().byId("__dialog1").getTitle(), oRb.getText("PERSODIALOG_COLUMNS_TITLE"), "Columns dialog title is 'Columns'");
+			assert.strictEqual(sap.ui.getCore().byId("__dialog1").getTitle(), oRb.getText("PERSODIALOG_COLUMNS_TITLE"), "Columns dialog title is 'Columns'");
 			//Check if Reset ALL Button is invisible
 			ok(jQuery('#'+oTPC.getAggregation("_tablePersoDialog")._oDialog.getId() + '-header-BarRight').children().length == 0, 'Reset All button should be hidden');
 			//Check if Select All is invisible
@@ -220,19 +220,19 @@
 		QUnit.test("Initial Column Info", function(assert) {
 			var oPersData = oTablePersoDialog.retrievePersonalizations();
 			ok(oPersData.aColumns, "Column personalization information available");
-			strictEqual(oPersData.aColumns.length, 3, "Column personalization information for 3 columns");
-			strictEqual(oPersData.aColumns[0].id, "empty_component-idRandomDataTable-columnName", "Column 0 ID is correct");
-			strictEqual(oPersData.aColumns[1].id, "empty_component-idRandomDataTable-columnColor", "Column 1 ID is correct");
-			strictEqual(oPersData.aColumns[2].id, "empty_component-idRandomDataTable-columnNumber", "Column 2 ID is correct");
-			strictEqual(oPersData.aColumns[0].order, 0, "Column 0 order is correct");
-			strictEqual(oPersData.aColumns[1].order, 1, "Column 1 order is correct");
-			strictEqual(oPersData.aColumns[2].order, 2, "Column 2 order is correct");
-			strictEqual(oPersData.aColumns[0].text, "Name", "Column 0 text is correct");
-			strictEqual(oPersData.aColumns[1].text, "Modified Color", "Column 1 text is correct");
-			strictEqual(oPersData.aColumns[2].text, "Number", "Column 2 text is correct");
-			strictEqual(oPersData.aColumns[0].visible, true, "column 0 visibility is correct");
-			strictEqual(oPersData.aColumns[1].visible, true, "Column 1 visibility is correct");
-			strictEqual(oPersData.aColumns[2].visible, true, "Column 2 visibility is correct");
+			assert.strictEqual(oPersData.aColumns.length, 3, "Column personalization information for 3 columns");
+			assert.strictEqual(oPersData.aColumns[0].id, "empty_component-idRandomDataTable-columnName", "Column 0 ID is correct");
+			assert.strictEqual(oPersData.aColumns[1].id, "empty_component-idRandomDataTable-columnColor", "Column 1 ID is correct");
+			assert.strictEqual(oPersData.aColumns[2].id, "empty_component-idRandomDataTable-columnNumber", "Column 2 ID is correct");
+			assert.strictEqual(oPersData.aColumns[0].order, 0, "Column 0 order is correct");
+			assert.strictEqual(oPersData.aColumns[1].order, 1, "Column 1 order is correct");
+			assert.strictEqual(oPersData.aColumns[2].order, 2, "Column 2 order is correct");
+			assert.strictEqual(oPersData.aColumns[0].text, "Name", "Column 0 text is correct");
+			assert.strictEqual(oPersData.aColumns[1].text, "Modified Color", "Column 1 text is correct");
+			assert.strictEqual(oPersData.aColumns[2].text, "Number", "Column 2 text is correct");
+			assert.strictEqual(oPersData.aColumns[0].visible, true, "column 0 visibility is correct");
+			assert.strictEqual(oPersData.aColumns[1].visible, true, "Column 1 visibility is correct");
+			assert.strictEqual(oPersData.aColumns[2].visible, true, "Column 2 visibility is correct");
 		});
 
 		QUnit.test("En/-disable Arrow Buttons", function(assert) {
@@ -301,9 +301,9 @@
 
 			var oPersData = oTablePersoDialog.retrievePersonalizations();
 
-			strictEqual(oPersData.aColumns[0].visible, false, "column 0 visibility is now false");
-			strictEqual(oPersData.aColumns[1].text, "Number", "Column 1 (Color) order is now 2");
-			strictEqual(oPersData.aColumns[2].text, "Modified Color", "Column 2 (Number) is now 1");
+			assert.strictEqual(oPersData.aColumns[0].visible, false, "column 0 visibility is now false");
+			assert.strictEqual(oPersData.aColumns[1].text, "Number", "Column 1 (Color) order is now 2");
+			assert.strictEqual(oPersData.aColumns[2].text, "Modified Color", "Column 2 (Number) is now 1");
 		});
 
 		QUnit.module("Many columns");
@@ -349,7 +349,7 @@
 
 			//Assert
 			var oTablePersoDialog2 = oTPC2.getTablePersoDialog();
-			strictEqual(oTablePersoDialog2._oList.getItems().length == 110, true, "TablePersoDialog displays 110 rows");
+			assert.strictEqual(oTablePersoDialog2._oList.getItems().length == 110, true, "TablePersoDialog displays 110 rows");
 
 			//Clean up
 			oTPC2.destroy();
@@ -497,10 +497,10 @@
 				persoDialogFor: oTable
 			});
 			oTablePersoDialog.destroy();
-			strictEqual(oTablePersoDialog._oColumnItemTemplate, null, "ListItem template is destroyed");
-			strictEqual(oTablePersoDialog._oDialog, null, "Dialog is destroyed");
-			strictEqual(oTablePersoDialog._oRb, null, "Resource bundle is nulled");
-			strictEqual(oTablePersoDialog._oP13nModel, null, "Model bundle is nulled");
+			assert.strictEqual(oTablePersoDialog._oColumnItemTemplate, null, "ListItem template is destroyed");
+			assert.strictEqual(oTablePersoDialog._oDialog, null, "Dialog is destroyed");
+			assert.strictEqual(oTablePersoDialog._oRb, null, "Resource bundle is nulled");
+			assert.strictEqual(oTablePersoDialog._oP13nModel, null, "Model bundle is nulled");
 		});
 
 		QUnit.module("Keyboard handling");
@@ -561,7 +561,7 @@
 			// assert
 			var actual = oTPC.getTablePersoDialog()._oList.getSelectedItem().getId();
 			var expected = oTPC.getTablePersoDialog()._oList.getItems()[0].getId();
-			strictEqual(actual, expected, 'The focus should be on the first list item.');
+			assert.strictEqual(actual, expected, 'The focus should be on the first list item.');
 			oTPC.destroy();
 			oTable.destroy();
 
@@ -633,7 +633,7 @@
 			// assert
 			var actual = oTPC.getTablePersoDialog()._oList.getSelectedItem().getId();
 			var expected = oTPC.getTablePersoDialog()._oList.getItems()[1].getId();
-			strictEqual(actual, expected, 'The focus should be on the first list item.');
+			assert.strictEqual(actual, expected, 'The focus should be on the first list item.');
 			oTPC.destroy();
 			oTable.destroy();
 		});
