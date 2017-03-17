@@ -1,0 +1,507 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>ColorPicker - sap.ui.unified.ColorPicker</title>
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.unified, sap.m"
+			data-sap-ui-language="en-US">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+		<script>
+
+
+			(function () {
+
+				var CONSTANTS = new sap.ui.unified.ColorPicker()._getConstants(), // Get control constants
+					applyChanges = sap.ui.getCore().applyChanges;
+
+				QUnit.module("sap.ui.unified.ColorPickerHelper");
+
+				QUnit.test("Responsive mode", function (oAssert) {
+					// Arrange
+					var oHelper = sap.ui.unified.ColorPickerHelper,
+						oFactory = oHelper.factory,
+						oRBGroup,
+						oSlider;
+
+					// Assert - Properties
+					oAssert.strictEqual(oHelper.isResponsive(), true, "Helper should be in responsive mode");
+					oAssert.ok(oHelper.bFinal, "All further overwriting of this object is prohibited");
+
+					// Assert - Factory
+					oAssert.ok(oFactory.createLabel() instanceof sap.m.Label,
+						"Factory label control should be instance of sap.m.Label");
+
+					oAssert.ok(oFactory.createInput() instanceof sap.m.InputBase,
+						"Factory input control should be instance of sap.m.InputBase");
+
+					// RadioButton group and RadioButtonItem
+					oRBGroup = oFactory.createRadioButtonGroup({
+						buttons: oHelper.factory.createRadioButtonItem()
+					});
+					oAssert.ok(oRBGroup instanceof sap.m.RadioButtonGroup,
+						"Factory RadioButtonGroup control should be instance of sap.m.RadioButtonGroup");
+					oAssert.ok(oRBGroup.getButtons()[0] instanceof sap.m.RadioButton,
+						"Factory RadioButtonGroup items aggregation should be propagated to buttons " +
+						"aggregation and returned item from createRadioButtonItem should be instance of " +
+						"sap.m.RadioButton");
+
+					// Slider
+					oSlider = oFactory.createSlider({step: 0.1});
+					oAssert.ok(oSlider instanceof sap.m.Slider, "Factory Slider control should be instance of sap.m.Slider");
+				});
+
+				QUnit.module("Private methods", {
+					beforeEach: function () {
+						this.oCP = new sap.ui.unified.ColorPicker();
+					},
+					afterEach: function () {
+						this.oCP.destroy();
+						this.oCP = null;
+					}
+				});
+
+				QUnit.test("_updateControlVisualState", function (oAssert) {
+					// Arrange
+					this.oCP._createLayout(); // Force creation of inner controls
+					var oGrid = this.oCP.getAggregation("_grid"),
+						oLayoutData = this.oCP._oLayoutData;
+
+					// Act
+					this.oCP._updateControlVisualState();
+
+					// Assert
+					oAssert.strictEqual(oLayoutData.swatches.getSpanM(), 3, 'Property "spanM" should be set to 3');
+					oAssert.notOk(oLayoutData.swatches.getLinebreak(), 'Property "linebreak" should be false');
+					oAssert.notOk(oGrid.hasStyleClass(CONSTANTS.HSLClass),
+						'The grid should not have class "' + CONSTANTS.HSLClass + '"');
+
+					// Act - switch to HSL mode
+					this.oCP.setMode(sap.ui.unified.ColorPickerMode.HSL);
+					this.oCP._updateControlVisualState();
+
+					// Assert
+					oAssert.strictEqual(oLayoutData.swatches.getSpanM(), 4, 'Property "spanM" should be set to 4');
+					oAssert.ok(oLayoutData.swatches.getLinebreak(), 'Property "linebreak" should be true');
+					oAssert.ok(oGrid.hasStyleClass(CONSTANTS.HSLClass),
+						'The grid should have class "' + CONSTANTS.HSLClass + '"');
+				});
+
+				QUnit.test("_updateControlVisualState - mock commons control mode", function (oAssert) {
+					// Arrange
+					this.oCP.bResponsive = false; // Mock commons mode
+
+					this.oCP._createLayout(); // Force creation of inner controls
+					var oGrid = this.oCP.getAggregation("_grid"),
+						oLayoutData = this.oCP._oLayoutData;
+
+					// Act
+					this.oCP._updateControlVisualState();
+
+					// Assert
+					oAssert.strictEqual(oLayoutData.swatches.getSpanS(), 3, 'Property "spanS" should be set to 3');
+					oAssert.notOk(oLayoutData.swatches.getLinebreak(), 'Property "linebreak" should be false');
+					oAssert.notOk(oGrid.hasStyleClass(CONSTANTS.HSLClass),
+						'The grid should not have class "' + CONSTANTS.HSLClass + '"');
+
+					// Act - switch to HSL mode
+					this.oCP.setMode(sap.ui.unified.ColorPickerMode.HSL);
+					this.oCP._updateControlVisualState();
+
+					// Assert
+					oAssert.strictEqual(oLayoutData.swatches.getSpanS(), 4, 'Property "spanS" should be set to 4');
+					oAssert.ok(oLayoutData.swatches.getLinebreak(), 'Property "linebreak" should be true');
+					oAssert.ok(oGrid.hasStyleClass(CONSTANTS.HSLClass),
+						'The grid should have class "' + CONSTANTS.HSLClass + '"');
+
+					// Restore mocked mode
+					this.oCP.bResponsive = true;
+				});
+
+				QUnit.test("_createRowFromInput", function (oAssert) {
+					// Arrange
+					var oInput = new sap.m.InputBase(),
+						sTooltipID = "COLORPICKER_HEX",
+						sTooltipResult = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText(sTooltipID),
+						oLabel,
+						oUnitLabel,
+						oHL;
+
+					// Act
+					oHL = this.oCP._createRowFromInput(oInput, sTooltipID, "Static label", "Unit label");
+
+					// Assert
+					oAssert.ok(oHL instanceof sap.ui.layout.HorizontalLayout,
+						"The returned control should be instance of sap.ui.layout.HorizontalLayout");
+
+					oAssert.strictEqual(oInput.getTooltip(), sTooltipResult,
+						"Tooltip applied to the input control should match the returned from the resource bundle");
+
+					// Arrange - Label
+					oLabel = oHL.getContent()[0];
+
+
+					// Assert
+					oAssert.strictEqual(oLabel.getText(), "Static label", "Label text should match the argument passed");
+					oAssert.strictEqual(oLabel.getTooltip(), sTooltipResult,
+						"Tooltip applied to the label control should match the returned from the resource bundle");
+					oAssert.ok(oLabel.hasStyleClass(CONSTANTS.LabelClass),
+						'Label class "' + CONSTANTS.LabelClass + '" should be applied to the label');
+
+					// Arrange - Unit Label
+					oUnitLabel = oHL.getContent()[2];
+
+					// Assert
+					oAssert.strictEqual(oUnitLabel.getText(), "Unit label", "Unit label text should match the argument passed");
+					oAssert.ok(oUnitLabel.hasStyleClass(CONSTANTS.LabelClass),
+						'Class "' + CONSTANTS.LabelClass + '" should be applied to the unit label');
+					oAssert.ok(oUnitLabel.hasStyleClass(CONSTANTS.UnitLabelClass),
+						'Class "' + CONSTANTS.UnitLabelClass + '" should be applied to the unit	 label');
+
+					// Act - using only 2 arguments
+					oHL = this.oCP._createRowFromInput(oInput, sTooltipID, "Static label");
+
+					// Assert
+					oAssert.strictEqual(oHL.getContent().length, 2,
+						"When using the method with only 2 arguments the returned HorizontalLayout should contain " +
+						"only 2 items in it's 'content' aggregation");
+				});
+
+				QUnit.test("_adaptControlToLibrary", function (oAssert) {
+					// Arrange
+					var oSpy = sinon.spy(this.oCP, "_adaptControlToLibrary"),
+						oGrid;
+
+					// Act
+					this.oCP._createLayout(); // Force creation of inner controls
+					oGrid = this.oCP.getAggregation("_grid");
+
+					// Assert
+					oAssert.strictEqual(oSpy.callCount, 1, "Method should be called only once");
+					oAssert.strictEqual(oGrid._iBreakPointTablet, 314, "The breakpoint for tablet should be changed");
+					oAssert.ok(oGrid.hasStyleClass(CONSTANTS.CPResponsiveClass), "Responsive CSS class is applied to the Grid");
+					oAssert.strictEqual(this.oCP._adaptControlToLibrary, jQuery.noop,
+						"The method can't be called more than once on this instance");
+
+					// Cleanup
+					oSpy.restore();
+				});
+
+				QUnit.test("_createLayout", function (oAssert) {
+					// Arrange
+					var aAggregations,
+						oCounts = {},
+						oGrid,
+						sName,
+						i;
+
+					// Act - init creation of internal controls
+					this.oCP.placeAt("qunit-fixture");
+					applyChanges();
+					oGrid = this.oCP.getAggregation("_grid");
+
+					// Assert
+					oAssert.ok(oGrid instanceof sap.ui.layout.Grid,
+						"Grid control should be created");
+
+					// Act - Get all child aggregations of the Grid recursively
+					aAggregations = oGrid.findAggregatedObjects(true, true);
+
+					// Count by control type
+					for (i = 0; i < aAggregations.length; i++) {
+						sName = aAggregations[i].getMetadata().getElementName();
+						oCounts[sName] = 1 + (oCounts[sName] || 0);
+					}
+
+					// Assert
+					oAssert.ok(oGrid.getDomRef(), "The internally created grid is rendered and has a dom reference");
+					oAssert.strictEqual(oCounts["sap.ui.core.HTML"], 2, "There should be 3 HTML controls created");
+					oAssert.strictEqual(oCounts["sap.ui.layout.VerticalLayout"], 2, "There should be 2 VerticalLayouts created");
+					oAssert.strictEqual(oCounts["sap.m.Slider"], 2, "There should be 2 Sliders created");
+					oAssert.strictEqual(oCounts["sap.m.Label"], 12, "There should be 12 labels created");
+					oAssert.strictEqual(oCounts["sap.m.InputBase"], 9, "There should be 9 inputs created");
+					oAssert.strictEqual(oCounts["sap.m.RadioButtonGroup"], 1, "There should be 1 RadioButton group created");
+					oAssert.strictEqual(oCounts["sap.ui.unified._ColorPickerBox"], 1, "There should be 1 ColorPickerBox created");
+				});
+
+				QUnit.test("_createLayout lifecycle", function (oAssert) {
+					// Arrange
+					var oSpy = sinon.spy(this.oCP, "_createLayout");
+
+					// Act
+					this.oCP.placeAt("qunit-fixture");
+					applyChanges();
+
+					// Assert
+					oAssert.strictEqual(oSpy.callCount, 1, "Internal controls should be created only once");
+					oAssert.strictEqual(this.oCP._bLayoutControlsCreated, true,
+						"Flag for internal control creation is set to true");
+
+					// Cleanup
+					oSpy.restore();
+				});
+
+				QUnit.test("exit - cleanup", function (oAssert) {
+					// Arrange
+					this.oCP.placeAt("qunit-fixture");
+					applyChanges();
+
+					// Act
+					this.oCP.destroy();
+
+					// Assert - internally created controls which have a pointer on the control context should be destroyed
+					['oCPBox',
+					'oAlphaField',
+					'oAlphaSlider',
+					'oBlueField',
+					'oGreenField',
+					'oHexField',
+					'oHueField',
+					'oLitField',
+					'oRGBorHSLRBGroup',
+					'oRedField',
+					'oSatField',
+					'oSlider',
+					'oValField'].forEach(function (sControlName) {
+						oAssert.ok(this.oCP[sControlName].bIsDestroyed,
+							"Internally created control ColorPicker." + sControlName + " should be destroyed");
+					}.bind(this));
+				});
+
+				QUnit.module("sap.ui.unified._ColorPickerBox", {
+					beforeEach: function () {
+						this.oCPBox = new sap.ui.unified._ColorPickerBox();
+					},
+					afterEach: function () {
+						this.oCPBox.destroy();
+						this.oCPBox = null;
+					}
+				});
+
+				QUnit.test("rendering", function (oAssert) {
+					// Act
+					this.oCPBox.placeAt("qunit-fixture");
+					applyChanges();
+
+					// Assert
+					oAssert.ok(this.oCPBox.getDomRef(), "Control is rendered");
+				});
+
+				QUnit.test("Methods and internals", function (oAssert) {
+					// Arrange
+					var iWidth,
+						oOffset,
+						oHandle;
+
+					// Act
+					this.oCPBox.placeAt("qunit-fixture");
+					applyChanges();
+
+					// Assert - getWidth
+					iWidth = this.oCPBox.getWidth();
+					oAssert.ok(jQuery.isNumeric(iWidth), "Returned value is integer");
+					oAssert.ok(iWidth > 0, "Returned value is greater than zero");
+
+					// Assert - getOffset
+					oOffset = this.oCPBox.getOffset();
+					oAssert.strictEqual(typeof oOffset.left, "number", "Object.left has left key and it's value is a number");
+
+					// Assert - getHandle
+					oHandle = this.oCPBox.getHandle();
+					oAssert.strictEqual(oHandle.length, 1, "There is one jQuery dom handle returned");
+				});
+
+				QUnit.test("Internal RTL flag", function (oAssert) {
+					// Arrange
+					var bFrameworkRtlMode = sap.ui.getCore().getConfiguration().getRTL();
+
+					// Assert
+					oAssert.strictEqual(this.oCPBox.bRtl, bFrameworkRtlMode,
+						"Boolean flag should be set to '" + bFrameworkRtlMode + "'");
+				});
+
+				QUnit.test("select event", function (oAssert) {
+					// Arrange
+
+					// Mock getWidth method to return a fixed number
+					this.oCPBox.getWidth = function () {return 100};
+					this.oCPBox.attachSelect(function (oEvent) {
+						// Assert
+						oAssert.ok(true, "Select event is fired");
+						oAssert.ok(Number.isInteger(oEvent.getParameter("value")),
+							"The returned event has a parameter 'value' and it's a number");
+
+						oAssert.ok(Number.isInteger(oEvent.getParameter("saturation")),
+							"The returned event has a parameter 'saturation' and it's a number");
+					});
+
+					// Act
+					this.oCPBox.ontouchmove({offsetX: 10, offsetY: 10});
+				});
+
+				QUnit.test("ontouchstart and ontouchend events", function (oAssert) {
+					// Arrange
+					var oSpy = sinon.spy(this.oCPBox, "handleTouch"),
+						oMockEventData = {offsetX: 10, offsetY: 10};
+
+					// Act - emulate 'ontouchstart' event with mock data
+					this.oCPBox.ontouchstart(oMockEventData);
+
+					// Assert
+					oAssert.strictEqual(oSpy.callCount, 1,
+						"On event 'ontouchstart' the method 'handleTouch' should also be called to handle initial Color Picker box interaction");
+
+					// Arrange - reset spy counters
+					oSpy.reset();
+
+					// Act - emulate 'ontouchend' event with mock data
+					this.oCPBox.ontouchend(oMockEventData);
+
+					// Assert
+					oAssert.strictEqual(oSpy.callCount, 1,
+						"On event 'ontouchend' the method 'handleTouch' should also be called to handle last Color Picker box interaction");
+
+					// Cleanup
+					oSpy.restore();
+				});
+
+				QUnit.test("ontouchmove event", function (oAssert) {
+					// Arrange
+					var oSpy = sinon.spy(this.oCPBox, "calculateValuesFromEvent"),
+						oEventSpy = sinon.spy(this.oCPBox, "fireSelect");
+
+					// Act - emulate 'ontouchmove' event with valid mock data
+					this.oCPBox.ontouchstart({offsetX: 10, offsetY: 10});
+
+					// Assert
+					oAssert.strictEqual(oSpy.callCount, 1, "Method 'calculateValuesFromEvent' should be called once");
+					oAssert.strictEqual(oEventSpy.callCount, 1, "Event 'fireSelect' called once");
+
+					// Arrange - reset spy counters
+					oSpy.reset();
+					oEventSpy.reset();
+
+					// Act - emulate 'ontouchmove' event with invalid mock data
+					this.oCPBox.ontouchmove({offsetX: undefined, offsetY: undefined});
+
+					// Assert
+					oAssert.strictEqual(oSpy.callCount, 1, "Method 'calculateValuesFromEvent' should be called once");
+					oAssert.strictEqual(oEventSpy.callCount, 0, "Event 'fireSelect' should not be called");
+				});
+
+				QUnit.test("calculateValuesFromEvent - calculations", function (oAssert) {
+					// Arrange
+					var oResult;
+
+					// Mock getWidth method to return a fixed number
+					this.oCPBox.getWidth = function () {
+						return 100
+					};
+
+					// Mock getOffset method to return offset object with a fixed offset from screen top
+					this.oCPBox.getOffset = function () {
+						return {left: 0, top: 0}
+					};
+
+					// Act
+					oResult = this.oCPBox.calculateValuesFromEvent({offsetX: 10, offsetY: 10});
+
+					// Assert
+					oAssert.strictEqual(oResult.value, 10, "Result value should be 10");
+					oAssert.strictEqual(oResult.saturation, 90, "Result saturation should be 90");
+
+					// Act - out of range numbers negative
+					oResult = this.oCPBox.calculateValuesFromEvent({offsetX: -1, offsetY: -1});
+
+					// Assert
+					oAssert.strictEqual(oResult.value, 0, "Result value should be 0");
+					oAssert.strictEqual(oResult.saturation, 100, "Result saturation should be 100");
+
+					// Act - out of range numbers positive
+					oResult = this.oCPBox.calculateValuesFromEvent({offsetX: 101, offsetY: 101});
+
+					// Assert
+					oAssert.strictEqual(oResult.value, 100, "Result value should be 100");
+					oAssert.strictEqual(oResult.saturation, 0, "Result saturation should be 0");
+
+					// Act - passing event with no position data
+					oResult = this.oCPBox.calculateValuesFromEvent({offsetX: undefined, offsetY: undefined});
+
+					// Assert
+					oAssert.strictEqual(oResult, false, "Passing event with no position data should return 'false'");
+
+					// Act - passing event with pageX and pageY coordinates
+					oResult = this.oCPBox.calculateValuesFromEvent({offsetX: undefined, offsetY: undefined, pageX: 10, pageY: 10});
+
+					// Assert
+					oAssert.strictEqual(oResult.value, 10, "Result value should be 10");
+					oAssert.strictEqual(oResult.saturation, 90, "Result saturation should be 90");
+
+					// Act - passing event with targetTouches coordinates
+					oResult = this.oCPBox.calculateValuesFromEvent({
+						offsetX: undefined,
+						offsetY: undefined,
+						targetTouches: [
+							{pageX: 10, pageY: 10}
+						]
+					});
+
+					// Assert
+					oAssert.strictEqual(oResult.value, 10, "Result value should be 10");
+					oAssert.strictEqual(oResult.saturation, 90, "Result saturation should be 90");
+				});
+
+				QUnit.test("calculateValuesFromEvent - Right To Left mode", function (oAssert) {
+					// Arrange
+					var oResult;
+
+					// Mock getWidth method to return a fixed number
+					this.oCPBox.getWidth = function () {
+						return 100
+					};
+
+					// Mock Right To Left mode (Note: only value is affected here as in this mode only X coordinates are flipped)
+					this.oCPBox.bRtl = true;
+
+					// Act
+					oResult = this.oCPBox.calculateValuesFromEvent({offsetX: 10, offsetY: 0});
+
+					// Assert
+					oAssert.strictEqual(oResult.value, 90, "Result value should be 90");
+
+					// Act
+					oResult = this.oCPBox.calculateValuesFromEvent({offsetX: -1, offsetY: 0});
+
+					// Assert
+					oAssert.strictEqual(oResult.value, 100, "Result value should be 100");
+
+					// Act
+					oResult = this.oCPBox.calculateValuesFromEvent({offsetX: 101, offsetY: 0});
+
+					// Assert
+					oAssert.strictEqual(oResult.value, 0, "Result value should be 0");
+				});
+
+			})();
+
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1 id="qunit-header">QUnit tests: sap.ui.unified.calendar.Month</h1>
+		<div id="qunit-fixture"></div>
+	<div id="test"></div>
+	</body>
+</html>

@@ -28,7 +28,8 @@ sap.ui.define(['jquery.sap.global',
 		dependencies : ["sap.ui.core"],
 		types: [
 			"sap.ui.unified.CalendarDayType",
-			"sap.ui.unified.ContentSwitcherAnimation"
+			"sap.ui.unified.ContentSwitcherAnimation",
+			"sap.ui.unified.ColorPickerMode"
 		],
 		interfaces: [],
 		controls: [
@@ -47,6 +48,7 @@ sap.ui.define(['jquery.sap.global',
 			"sap.ui.unified.CalendarLegend",
 			"sap.ui.unified.CalendarRow",
 			"sap.ui.unified.ContentSwitcher",
+			"sap.ui.unified.ColorPicker",
 			"sap.ui.unified.Currency",
 			"sap.ui.unified.FileUploader",
 			"sap.ui.unified.Menu",
@@ -276,6 +278,29 @@ sap.ui.define(['jquery.sap.global',
 
 	};
 
+	/**
+	 * different styles for a ColorPicker.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.unified.ColorPickerMode = {
+
+		/**
+		 * Color picker works with HSV values.
+		 * @public
+		 */
+		HSV : "HSV",
+
+		/**
+		 * Color picker works with HSL values.
+		 * @public
+		 */
+		HSL : "HSL"
+
+	};
+
 	sap.ui.base.Object.extend("sap.ui.unified._ContentRenderer", {
 		constructor : function(oControl, sContentContainerId, oContent, fAfterRenderCallback) {
 			sap.ui.base.Object.apply(this);
@@ -332,6 +357,21 @@ sap.ui.define(['jquery.sap.global',
 
 
 	sap.ui.unified._iNumberOfOpenedShellOverlays = 0;
+
+	// Default implementation of ColorPickerHelper - to be overwritten by commons or mobile library
+	if (!sap.ui.unified.ColorPickerHelper) {
+		sap.ui.unified.ColorPickerHelper = {
+			isResponsive: function () { return false; },
+			factory: {
+				createLabel:  function () { throw new Error("no Label control available"); },
+				createInput:  function () { throw new Error("no Input control available"); },
+				createSlider: function () { throw new Error("no Slider control available"); },
+				createRadioButtonGroup: function () { throw new Error("no RadioButtonGroup control available"); },
+				createRadioButtonItem: function () { throw new Error("no RadioButtonItem control available"); }
+			},
+			bFinal: false
+		};
+	}
 
 	//factory for the FileUploader to create TextField and Button to be overwritten by commons and mobile library
 	if (!sap.ui.unified.FileUploaderHelper) {

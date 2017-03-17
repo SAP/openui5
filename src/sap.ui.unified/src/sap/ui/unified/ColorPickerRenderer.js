@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides default renderer for control sap.ui.commons.ColorPicker
+// Provides default renderer for control sap.ui.unified.ColorPicker
 sap.ui.define(['jquery.sap.global'],
 	function(jQuery) {
 	"use strict";
@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeControlData(oControl);
 		oRm.writeClasses();
 		oRm.write(">"); // <DIV> element
-		oRm.renderControl(oControl.oMatrix);
+		oRm.renderControl(oControl.getAggregation("_grid"));
 		oRm.write("</div>");  // outer DIV
 
 	};

@@ -34,6 +34,8 @@
 			var colors2 = new Object(),
 				colors6 = new Object();
 
+			// Get control constants
+			var CONSTANTS = new sap.ui.unified.ColorPicker()._getConstants();
 
 			/****************************************************
 			* EVENT-HANDLER
@@ -283,6 +285,7 @@
 			//Testcase 13: Set new color string (RGB-value)
 			QUnit.test("New color string 'rgb(249,238,227)' [Control 3]: ", function(assert) {
 				oColorPicker3.setColorString("rgb(249,238,227)");
+				sap.ui.getCore().applyChanges();
 				assert.expect(3);
 				assert.equal(oColorPicker3.oRedField.getValue(), "249" , "RED set from color string to 249: ");
 				assert.equal(oColorPicker3.oGreenField.getValue(), "238" , "GREEN set from color string to 238: ");
@@ -341,19 +344,142 @@
 
 			//Testcase 17: Mouse-Event of Colorpipcker-Box
 			QUnit.test("Mouse-Event: Click in ColorPicker-Box [Control 4]: ", function(assert) {
-				var cpBoxOffset = jQuery.sap.byId("ColorPicker4-cpBox").offset();
+				// Arrange
+				var oCPBox = oColorPicker4.oCPBox,
+					cpBoxOffset = oCPBox.$().offset(),
+					oCPBoxDomRef = oCPBox.getDomRef();
+
 				assert.expect(6);
+
+				// Assert
 				assert.equal(oColorPicker4.oSatField.getValue(), "4" , "SATURATION (before mouse events): ");
 				assert.equal(oColorPicker4.oValField.getValue(), "88" , "VALUE (before mouse events): ");
-				qutils.triggerMouseEvent("ColorPicker4-cpBox", "mousedown", 0, 0, cpBoxOffset.left + 10, cpBoxOffset.top + 10 );
-				qutils.triggerMouseEvent("ColorPicker4-cpBox", "mouseup", 0, 0, cpBoxOffset.left + 10, cpBoxOffset.top + 10 );
+
+				// Act
+				sap.ui.test.qunit.triggerTouchEvent("touchstart", oCPBoxDomRef, {
+					targetTouches: {
+						0: {
+							pageX: cpBoxOffset.left + 10,
+							pageY: cpBoxOffset.top + 10
+						}
+					},
+					srcControl: oCPBox
+				});
+
+				// Assert
 				assert.equal(oColorPicker4.oSatField.getValue(), "90" , "SATURATION (after mouse event 1): ");
 				assert.equal(oColorPicker4.oValField.getValue(), "9" , "VALUE (after mouse event 1): ");
-				qutils.triggerMouseEvent("ColorPicker4-cpBox", "mousedown", 0, 0, cpBoxOffset.left + 33, cpBoxOffset.top + 33 );
-				qutils.triggerMouseEvent("ColorPicker4-cpBox", "mouseup", 0, 0, cpBoxOffset.left + 33, cpBoxOffset.top + 33 );
+
+				// Act
+				sap.ui.test.qunit.triggerTouchEvent("touchstart", oCPBoxDomRef, {
+					targetTouches: {
+						0: {
+							pageX: cpBoxOffset.left + 33,
+							pageY: cpBoxOffset.top + 33
+						}
+					},
+					srcControl: oCPBox
+				});
+
+				// Assert
 				assert.equal(oColorPicker4.oSatField.getValue(), "68" , "SATURATION (after mouse event 2): ");
 				assert.equal(oColorPicker4.oValField.getValue(), "31" , "VALUE (after mouse event 2	): ");
 			});
+
+			QUnit.module("sap.ui.unified._ColorPickerHelper");
+
+			QUnit.test("Responsive mode", function (oAssert) {
+				// Arrange
+				var oHelper = sap.ui.unified.ColorPickerHelper,
+					oFactory = oHelper.factory,
+					oRBGroup,
+					oSlider;
+
+				// Assert - Properties
+				oAssert.strictEqual(oHelper.isResponsive(), false, "Helper should be in responsive mode");
+				oAssert.notOk(oHelper.bFinal, "Further overwriting of this object is not prohibited");
+
+				// Assert - Factory
+				oAssert.ok(oFactory.createLabel() instanceof sap.ui.commons.Label,
+					"Factory label control should be instance of sap.ui.commons.Label");
+
+				oAssert.ok(oFactory.createInput() instanceof sap.ui.commons.TextField,
+					"Factory input control should be instance of sap.ui.commons.TextField");
+
+				// RadioButton group and RadioButtonItem
+				oRBGroup = oFactory.createRadioButtonGroup({
+					// Keep in mind that we are using the "buttons" aggregation here
+					buttons: oHelper.factory.createRadioButtonItem()
+				});
+				oAssert.ok(oRBGroup instanceof sap.ui.commons.RadioButtonGroup,
+					"Factory RadioButtonGroup control should be instance of sap.ui.commons.RadioButtonGroup");
+				oAssert.ok(oRBGroup.getItems()[0] instanceof sap.ui.core.Item,
+					"Factory RadioButtonGroup buttons aggregation should be propagated to items " +
+					"aggregation and returned item from createRadioButtonItem should be instance of " +
+					"sap.ui.core.Item");
+
+				// Slider
+				oSlider = oFactory.createSlider({
+					// Keep in mind that we are using the "step" property here
+					step: 0.1
+				});
+				oAssert.ok(oSlider instanceof sap.ui.commons.Slider,
+					"Factory Slider control should be instance of sap.ui.commons.Slider");
+				oAssert.strictEqual(oSlider.getSmallStepWidth(), 0.1, 'used "step" property should be ' +
+					'propagated to the "smallStepWidth" property during creation');
+			});
+
+			QUnit.module("Private methods", {
+				beforeEach: function () {
+					this.oCP = new sap.ui.commons.ColorPicker();
+				},
+				afterEach: function () {
+					this.oCP.destroy();
+					this.oCP = null;
+				}
+			});
+
+			QUnit.test("_adaptControlToLibrary", function (oAssert) {
+				// Arrange
+				var oGrid;
+
+				// Act
+				this.oCP._createLayout(); // Force creation of inner controls
+				oGrid = this.oCP.getAggregation("_grid");
+
+				// Assert
+				oAssert.notStrictEqual(oGrid._iBreakPointTablet, 314, "The breakpoint for tablet should not be changed to 314");
+				oAssert.notOk(oGrid.hasStyleClass(CONSTANTS.CPResponsiveClass), "Responsive CSS class is not applied to the Grid");
+			});
+
+			QUnit.test("_createLayout", function (oAssert) {
+				// Arrange
+				var aAggregations,
+					oCounts = {},
+					sName,
+					i;
+
+				// Act - init creation of internal controls
+				this.oCP._createLayout();
+				oGrid = this.oCP.getAggregation("_grid");
+
+				// Act - Get all child aggregations of the Grid recursively
+				aAggregations = oGrid.findAggregatedObjects(true, true);
+
+				// Count by control type
+				for (i = 0; i < aAggregations.length; i++) {
+					sName = aAggregations[i].getMetadata().getElementName();
+					oCounts[sName] = 1 + (oCounts[sName] || 0);
+				}
+
+				// Assert
+				oAssert.strictEqual(oCounts["sap.ui.commons.Slider"], 2, "There should be 2 Sliders created");
+				oAssert.strictEqual(oCounts["sap.ui.commons.Label"], 12, "There should be 12 labels created");
+				oAssert.strictEqual(oCounts["sap.ui.commons.TextField"], 9, "There should be 9 inputs created");
+				oAssert.strictEqual(oCounts["sap.ui.commons.RadioButtonGroup"], 1, "There should be 1 RadioButton group created");
+				oAssert.strictEqual(oCounts["sap.ui.core.Item"], 2, "There should be 2 Items created");
+			});
+
 
 		</script>
 	</head>

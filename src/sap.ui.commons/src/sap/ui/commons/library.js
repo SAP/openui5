@@ -199,24 +199,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 *
 	 * @enum {string}
 	 * @public
+	 * @deprecated Since version 1.48.0. Moved to sap.ui.unified library. Please use this one.
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.ui.commons.ColorPickerMode = {
-
-			/**
-			 * Color picker works with HSV values.
-			 * @public
-			 */
-			HSV : "HSV",
-
-			/**
-			 * Color picker works with HSL values.
-			 * @public
-			 */
-			HSL : "HSL"
-
-	};
-
+	sap.ui.commons.ColorPickerMode = sap.ui.unified.ColorPickerMode;
 
 	/**
 	 * Marker interface for common controls which are suitable for use within a FormattedTextView.
@@ -1195,6 +1181,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		"vertical"   : sap.ui.core.Orientation.Vertical,
 		"horizontal" : sap.ui.core.Orientation.Horizontal
 	};
+
+	// implements ColorPicker helper factory with common controls
+	if (!sap.ui.unified.ColorPickerHelper || !sap.ui.unified.ColorPickerHelper.bFinal) {
+		sap.ui.unified.ColorPickerHelper = {
+			isResponsive: function () {
+				return false;
+			},
+			factory: {
+				createLabel: function (mConfig) {
+					return new sap.ui.commons.Label(mConfig);
+				},
+				createInput: function (mConfig) {
+					return new sap.ui.commons.TextField(mConfig);
+				},
+				createSlider: function (mConfig) {
+					if (mConfig && mConfig.step) {
+						mConfig.smallStepWidth = mConfig.step;
+						delete mConfig.step;
+					}
+					return new sap.ui.commons.Slider(mConfig);
+				},
+				createRadioButtonGroup: function (mConfig) {
+					if (mConfig && mConfig.buttons) {
+						mConfig.items = mConfig.buttons;
+						delete mConfig.buttons;
+					}
+					return new sap.ui.commons.RadioButtonGroup(mConfig);
+				},
+				createRadioButtonItem: function (mConfig) {
+					return new sap.ui.core.Item(mConfig);
+				}
+			},
+			bFinal: false /* to allow mobile to overwrite  */
+		};
+	}
 
 	// implement Form helper factory with common controls
 	if (!sap.ui.layout.form.FormHelper || !sap.ui.layout.form.FormHelper.bFinal) {
