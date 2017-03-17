@@ -23,8 +23,10 @@ sap.ui.define([
 
 	asODataBinding(ODataParentBinding.prototype);
 
-	// regular expression converting path to metadata path
-	var rNotMetaContext = /\([^/]*|\/\d+|^\d+\//g;
+
+	var sClassName = "sap.ui.model.odata.v4.ODataParentBinding",
+		// regular expression converting path to metadata path
+		rNotMetaContext = /\([^/]*|\/\d+|^\d+\//g;
 
 	/**
 	 * Changes this binding's parameters and refreshes the binding. The parameters are changed
@@ -70,6 +72,46 @@ sap.ui.define([
 		if (bChanged) {
 			this.applyParameters(mBindingParameters, ChangeReason.Change);
 		}
+	};
+
+	/*
+	 * Checks dependent bindings for updates or refreshes the binding if the canonical path of its
+	 * parent context changed.
+	 *
+	 * @throws {Error} If called with parameters
+	 */
+	// @override
+	ODataParentBinding.prototype.checkUpdate = function () {
+		var that = this;
+
+		function updateDependents() {
+			// Do not fire a change event in ListBinding, there is no change in the list of contexts
+			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+				oDependentBinding.checkUpdate();
+			});
+		}
+
+		if (arguments.length > 0) {
+			throw new Error("Unsupported operation: " + sClassName + "#checkUpdate must not be"
+				+ " called with parameters");
+		}
+
+		this.oCachePromise.then(function (oCache) {
+			if (oCache && that.bRelative && that.oContext.fetchCanonicalPath) {
+				that.oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
+					// entity of context changed
+					if (oCache.$canonicalPath !== sCanonicalPath) {
+						that.refreshInternal();
+					} else {
+						updateDependents();
+					}
+				})["catch"](function (oError) {
+					that.oModel.reportError("Failed to update " + that, sClassName, oError);
+				});
+			} else {
+				updateDependents();
+			}
+		});
 	};
 
 	/**

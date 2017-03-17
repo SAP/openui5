@@ -662,4 +662,167 @@ sap.ui.require([
 			oBinding.deleteFromCache("$auto");
 		}, new Error("Cannot delete a deferred operation"));
 	});
+
+	//*********************************************************************************************
+	[
+		{sPath : "/Employees"}, // absolute binding
+		{sPath : "TEAM_2_MANAGER"}, // relative binding without context
+		{sPath : "/Employees(ID='1')", oContext : {}} // absolute binding with context (edge case)
+	].forEach(function (oFixture) {
+		QUnit.test("checkUpdate: absolute binding or relative binding without context"
+				+ JSON.stringify(oFixture),
+			function (assert) {
+				var bRelative = oFixture.sPath[0] !== '/',
+					oBinding = new ODataParentBinding({
+						oCachePromise : _SyncPromise.resolve(
+							bRelative ? undefined : { /* cache */}),
+						oContext : oFixture.oContext,
+						oModel : {
+							getDependentBindings : function () {}
+						},
+						sPath : oFixture.sPath,
+						bRelative : bRelative
+					}),
+					oDependent0 = {checkUpdate : function () {}},
+					oDependent1 = {checkUpdate : function () {}};
+
+				this.mock(oBinding.oModel).expects("getDependentBindings")
+					.withExactArgs(sinon.match.same(oBinding))
+					.returns([oDependent0, oDependent1]);
+				this.mock(oDependent0).expects("checkUpdate").withExactArgs();
+				this.mock(oDependent1).expects("checkUpdate").withExactArgs();
+
+				// code under test
+				oBinding.checkUpdate();
+
+				assert.throws(function () {
+					// code under test
+					oBinding.checkUpdate(true);
+				}, new Error("Unsupported operation:"
+					+ " sap.ui.model.odata.v4.ODataParentBinding#checkUpdate must not be called"
+					+ " with parameters"));
+
+			}
+		);
+	});
+	//TODO fire change event only if the binding's length changed, i.e. if getContexts will provide
+	//  a different result compared to the previous call
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate: relative binding with standard context", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oCachePromise : _SyncPromise.resolve(undefined),
+				oContext : {/*simulate standard context*/},
+				oModel : {
+					getDependentBindings : function () {}
+				},
+				sPath : "TEAM_2_MANAGER",
+				bRelative : true
+			}),
+			oDependent0 = {checkUpdate : function () {}},
+			oDependent1 = {checkUpdate : function () {}};
+
+		this.mock(oBinding.oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oBinding))
+			.returns([oDependent0, oDependent1]);
+		this.mock(oDependent0).expects("checkUpdate").withExactArgs();
+		this.mock(oDependent1).expects("checkUpdate").withExactArgs();
+
+		// code under test
+		oBinding.checkUpdate();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate: relative binding with cache, parent binding data has changed",
+			function (assert) {
+		var oBinding = new ODataParentBinding({
+				oCachePromise : _SyncPromise.resolve({
+					$canonicalPath : "/TEAMS('4711')/TEAM_2_EMPLOYEES"
+				}),
+				oContext : {
+					fetchCanonicalPath : function () {}
+				},
+				sPath : "TEAM_2_MANAGER",
+				refreshInternal : function () {},
+				bRelative : true
+			}),
+			oPathPromise = Promise.resolve("/TEAMS('8192')/TEAM_2_EMPLOYEES");
+
+		this.mock(oBinding.oContext).expects("fetchCanonicalPath").withExactArgs()
+			.returns(_SyncPromise.resolve(oPathPromise)); // data for path "/TEAMS/1" has changed
+		this.mock(oBinding).expects("refreshInternal").withExactArgs();
+
+		// code under test
+		oBinding.checkUpdate();
+
+		return oPathPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate: relative binding with cache, parent binding not changed",
+			function (assert) {
+		var sPath = "/TEAMS('4711')/TEAM_2_EMPLOYEES",
+			oBinding = new ODataParentBinding({
+				oCachePromise : _SyncPromise.resolve({
+					$canonicalPath : sPath
+				}),
+				oContext : {
+					fetchCanonicalPath : function () {}
+				},
+				oModel : {
+					getDependentBindings : function () {}
+				},
+				sPath : "TEAM_2_MANAGER",
+				refreshInternal : function () {},
+				bRelative : true
+			}),
+			oDependent0 = {checkUpdate : function () {}},
+			oDependent1 = {checkUpdate : function () {}},
+			oPathPromise = Promise.resolve(sPath);
+
+		this.mock(oBinding.oContext).expects("fetchCanonicalPath").withExactArgs()
+			.returns(_SyncPromise.resolve(oPathPromise));
+		this.mock(oBinding.oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oBinding))
+			.returns([oDependent0, oDependent1]);
+		this.mock(oDependent0).expects("checkUpdate").withExactArgs();
+		this.mock(oDependent1).expects("checkUpdate").withExactArgs();
+
+		// code under test
+		oBinding.checkUpdate();
+
+		return oPathPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate: error handling", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oCachePromise : _SyncPromise.resolve({}),
+				oContext : {
+					fetchCanonicalPath : function () {}
+				},
+				oModel : {
+					reportError : function () {}
+				},
+				sPath : "TEAM_2_EMPLOYEES",
+				refreshInternal : function () {},
+				bRelative : true,
+				toString : function () {
+					return "foo";
+				}
+			}),
+			oError = {},
+			oPathPromise = Promise.reject(oError);
+
+		this.mock(oBinding.oContext).expects("fetchCanonicalPath").withExactArgs()
+			.returns(_SyncPromise.resolve(oPathPromise));
+		this.mock(oBinding.oModel).expects("reportError")
+			.withExactArgs("Failed to update foo", "sap.ui.model.odata.v4.ODataParentBinding",
+				sinon.match.same(oError));
+
+		// code under test
+		oBinding.checkUpdate();
+
+		return oPathPromise.then(undefined, function () {});
+	});
 });
