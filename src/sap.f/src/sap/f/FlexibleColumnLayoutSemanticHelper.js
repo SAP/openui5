@@ -48,6 +48,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @param {sap.f.FlexibleColumnLayout} oFlexibleColumnLayout The <code>sap.f.FlexibleColumnLayout</code> object whose state will be manipulated
 	 * @param {object} oSettings Determines the rules that will be used by the helper
+	 * @param {sap.f.LayoutType} oSettings.defaultTwoColumnLayoutType Determines what two-column layout type will be suggested by default: <code>sap.f.LayoutType.TwoColumnsBeginExpanded</code> (default) or <code>sap.f.LayoutType.TwoColumnsMidExpanded</code>
 	 * @param {sap.f.LayoutType} oSettings.defaultThreeColumnLayoutType Determines what three-column layout type will be suggested by default: <code>sap.f.LayoutType.ThreeColumnsMidExpanded</code> (default) or <code>sap.f.LayoutType.ThreeColumnsEndExpanded</code>
 	 * @public
 	 * @since 1.46.0
@@ -59,7 +60,8 @@ sap.ui.define([
 
 		// Currently only the the default 3-column type is configurable
 		this._defaultLayoutType = LT.OneColumn;
-		this._defaultTwoColumnLayoutType = LT.TwoColumnsBeginExpanded;
+		this._defaultTwoColumnLayoutType = [LT.TwoColumnsBeginExpanded, LT.TwoColumnsMidExpanded].indexOf(oSettings.defaultTwoColumnLayoutType) !== -1 ?
+			oSettings.defaultTwoColumnLayoutType : LT.TwoColumnsBeginExpanded;
 		this._defaultThreeColumnLayoutType = [LT.ThreeColumnsMidExpanded, LT.ThreeColumnsEndExpanded].indexOf(oSettings.defaultThreeColumnLayoutType) !== -1 ?
 			oSettings.defaultThreeColumnLayoutType : LT.ThreeColumnsMidExpanded;
 	};
